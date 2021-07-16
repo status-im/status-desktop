@@ -153,7 +153,8 @@ QtObject {
     readonly property string ens_connected: "connected"
     readonly property string ens_connected_dkey: "connected-different-key"
 
-    readonly property string editLabel: ` <span class="isEdited">` + qsTr("(edited)") + `</span>`
+    //% "(edited)"
+    readonly property string editLabel: ` <span class="isEdited">` + qsTrId("-edited-") + `</span>`
 
     readonly property var ensState: {
         //% "Username already taken :("

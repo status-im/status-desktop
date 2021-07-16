@@ -28,7 +28,8 @@ Item {
         anchors.top: parent.top
         anchors.topMargin: 16
         anchors.horizontalCenter: parent.horizontalCenter
-        text: qsTr("Chat")
+        //% "Chat"
+        text: qsTrId("chat")
     }
 
     SearchBox {
@@ -61,7 +62,8 @@ Item {
         visible: nbRequests > 0
         height: visible ? implicitHeight : 0
 
-        title: qsTr("Contact requests")
+        //% "Contact requests"
+        title: qsTrId("contact-requests")
         requestsCount: nbRequests
 
         sensor.onClicked: openPopup(contactRequestsPopup)
@@ -97,7 +99,8 @@ Item {
                 font.pixelSize: 15
                 color: Theme.palette.directColor5
                 anchors.centerIn: parent
-                text: qsTr("No search results")
+                //% "No search results"
+                text: qsTrId("no-search-results")
             }
         }
 
@@ -246,7 +249,8 @@ Item {
 
                 toastMessage.close()
 
-                toastMessage.title = qsTr("Community imported")
+                //% "Community imported"
+                toastMessage.title = qsTrId("community-imported")
                 toastMessage.source = ""
                 toastMessage.iconRotates = false
                 toastMessage.dissapearInMs = 4000
@@ -254,7 +258,8 @@ Item {
             else if (state === Constants.communityImportingInProgress)
             {
                 toastMessage.uuid = communityImportingProcessId
-                toastMessage.title = qsTr("Importing community is in progress")
+                //% "Importing community is in progress"
+                toastMessage.title = qsTrId("importing-community-is-in-progress")
                 toastMessage.source = "../../img/loading.svg"
                 toastMessage.iconRotates = true
                 toastMessage.dissapearInMs = -1

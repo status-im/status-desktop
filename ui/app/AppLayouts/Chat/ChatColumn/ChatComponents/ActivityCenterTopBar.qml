@@ -20,7 +20,8 @@ Item {
 
        StatusButton {
            id: allBtn
-           text: qsTr("All")
+           //% "All"
+           text: qsTrId("all")
            type: "secondary"
            size: "small"
            highlighted: activityCenter.currentFilter === ActivityCenter.Filter.All
@@ -29,7 +30,8 @@ Item {
 
        StatusButton {
            id: mentionsBtn
-           text: qsTr("Mentions")
+           //% "Mentions"
+           text: qsTrId("mentions")
            type: "secondary"
            enabled: hasMentions
            size: "small"
@@ -39,7 +41,8 @@ Item {
 
        StatusButton {
            id: repliesbtn
-           text: qsTr("Replies")
+           //% "Replies"
+           text: qsTrId("replies")
            enabled: hasReplies
            type: "secondary"
            size: "small"
@@ -49,7 +52,8 @@ Item {
 
        StatusButton {
            id: contactRequestsBtn
-           text: qsTr("Contact requests")
+           //% "Contact requests"
+           text: qsTrId("contact-requests")
            enabled: hasContactRequests
            type: "secondary"
            size: "small"
@@ -80,7 +84,8 @@ Item {
 
            StatusToolTip {
              visible: markAllReadBtn.hovered
-             text: qsTr("Mark all as Read")
+             //% "Mark all as Read"
+             text: qsTrId("mark-all-as-read")
            }
        }
 
@@ -97,14 +102,19 @@ Item {
                    icon.source: hideReadNotifications ? "../../../../img/eye.svg" : "../../../../img/eye-barred.svg"
                    icon.width: 16
                    icon.height: 16
-                   text: hideReadNotifications ? qsTr("Show read notifications") : qsTr("Hide read notifications")
+                   text: hideReadNotifications ?
+                             //% "Show read notifications"
+                             qsTrId("show-read-notifications") :
+                             //% "Hide read notifications"
+                             qsTrId("hide-read-notifications")
                    onTriggered: hideReadNotifications = !hideReadNotifications
                }
                Action {
                    icon.source: "../../../../img/bell.svg"
                    icon.width: 16
                    icon.height: 16
-                   text: qsTr("Notification settings")
+                   //% "Notification settings"
+                   text: qsTrId("chat-notification-preferences")
                    onTriggered: {
                        activityCenter.close()
                        appMain.changeAppSection(Constants.profile)

@@ -42,11 +42,13 @@ ModalPopup {
     function isFormValid() {
         return Utils.validateAndReturnError(nameInput.text,
                                             communityNameValidator,
-                                            qsTr("community name"),
+                                            //% "community name"
+                                            qsTrId("community-name"),
                                             maxCommunityNameLength) === ""
                && Utils.validateAndReturnError(descriptionTextArea.text,
                                                communityDescValidator,
-                                               qsTr("community decription"),
+                                               //% "community decription"
+                                               qsTrId("community-decription"),
                                                maxCommunityDescLength) === ""
                && Utils.validateAndReturnError(colorPicker.text,
                                                communityColorValidator) === ""
@@ -94,7 +96,8 @@ ModalPopup {
                 onTextEdited: {
                     validationError = Utils.validateAndReturnError(text,
                                                                    communityNameValidator,
-                                                                   qsTr("community name"),
+                                                                   //% "community name"
+                                                                   qsTrId("community-name"),
                                                                    maxCommunityNameLength)
                 }
             }
@@ -120,7 +123,8 @@ ModalPopup {
 
                     validationError = Utils.validateAndReturnError(text,
                                                                    communityDescValidator,
-                                                                   qsTr("community decription"),
+                                                                   //% "community decription"
+                                                                   qsTrId("community-decription"),
                                                                    maxCommunityDescLength)
                 }
             }
@@ -275,8 +279,10 @@ ModalPopup {
                 property string defaultColor: Style.current.blue
 
                 id: colorPicker
-                label: qsTr("Community color")
-                placeholderText: qsTr("Pick a color")
+                //% "Community color"
+                label: qsTrId("community-color")
+                //% "Pick a color"
+                placeholderText: qsTrId("pick-a-color")
                 anchors.top: imageValidation.bottom
                 anchors.topMargin: Style.current.smallPadding
                 textField.text: defaultColor
@@ -301,7 +307,8 @@ ModalPopup {
 
                 ColorDialog {
                     id: colorDialog
-                    title: qsTr("Please choose a color")
+                    //% "Please choose a color"
+                    title: qsTrId("please-choose-a-color")
                     color: colorPicker.defaultColor
                     onAccepted: {
                         colorPicker.text = colorDialog.color
@@ -327,12 +334,16 @@ ModalPopup {
                 isEnabled: false
                 anchors.top: separator1.bottom
                 anchors.topMargin: Style.current.halfPadding
-                text: qsTr("Membership requirement")
+                //% "Membership requirement"
+                text: qsTrId("membership-title")
                 currentValue: {
                     switch (membershipRequirementSettingPopup.checkedMembership) {
-                        case Constants.communityChatInvitationOnlyAccess: return qsTr("Require invite from another member")
-                        case Constants.communityChatOnRequestAccess: return qsTr("Require approval")
-                        default: return qsTr("No requirement")
+                        //% "Require invite from another member"
+                        case Constants.communityChatInvitationOnlyAccess: return qsTrId("membership-invite")
+                        //% "Require approval"
+                        case Constants.communityChatOnRequestAccess: return qsTrId("membership-approval")
+                        //% "No requirement"
+                        default: return qsTrId("membership-free")
                     }
                 }
                 onClicked: {
@@ -350,7 +361,8 @@ ModalPopup {
                 font.pixelSize: 13
                 color: Style.current.secondaryText
                 width: parent.width * 0.78
-                text: qsTr("You can require new members to meet certain criteria before they can join. This can be changed at any time")
+                //% "You can require new members to meet certain criteria before they can join. This can be changed at any time"
+                text: qsTrId("membership-none-placeholder")
             }
 
             // Feature commented temporarily
@@ -360,13 +372,15 @@ ModalPopup {
                 anchors.top: privateExplanation.bottom
                 anchors.topMargin: Style.current.padding
                 isEnabled: profileModel.profile.ensVerified
-                text: qsTr("Require ENS username")
+                //% "Require ENS username"
+                text: qsTrId("membership-ens")
                 isSwitch: true
                 onClicked: switchChecked = checked
 
                 StatusToolTip {
                     visible: !ensOnlySwitch.isEnabled && ensMouseArea.isHovered
-                    text: qsTr("You can only enable this setting if you have an ENS name")
+                    //% "You can only enable this setting if you have an ENS name"
+                    text: qsTrId("you-can-only-enable-this-setting-if-you-have-an-ens-name")
                 }
 
                 MouseArea {
@@ -390,7 +404,8 @@ ModalPopup {
                 wrapMode: Text.WordWrap
                 anchors.topMargin: isEdit ? 0 : Style.current.halfPadding
                 width: parent.width
-                text: qsTr("Your community requires an ENS username to be able to join")
+                //% "Your community requires an ENS username to be able to join"
+                text: qsTrId("membership-ens-description")
             }
             */
         }

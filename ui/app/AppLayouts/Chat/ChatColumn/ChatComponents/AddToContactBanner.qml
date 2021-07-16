@@ -21,7 +21,8 @@ Item {
 
     StyledText {
         id: addToContactsTxt
-        text: qsTr("Add to contacts")
+        //% "Add to contacts"
+        text: qsTrId("add-to-contacts")
         color: Style.current.primary
         anchors.centerIn: parent
     }

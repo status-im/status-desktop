@@ -175,7 +175,8 @@ ModalPopup {
         NoFriendsRectangle {
             visible: contactList.membersData.count === 0 && memberCount > 0
             width: 340
-            text: qsTr("All your contacts are already in the group")
+            //% "All your contacts are already in the group"
+            text: qsTrId("group-chat-all-contacts-invited")
             textColor: Style.current.textColor
             anchors.top: searchBox.bottom
             anchors.topMargin: Style.current.xlPadding
@@ -226,7 +227,8 @@ ModalPopup {
             id: pinnedMessagesBtn
             visible: pinnedCount > 0
             height: visible ? implicitHeight : 0
-            text: qsTr("Pinned messages")
+            //% "Pinned messages"
+            text: qsTrId("pinned-messages")
             currentValue: pinnedCount
             anchors.top: separator.bottom
             anchors.topMargin: visible ? Style.current.halfPadding : 0

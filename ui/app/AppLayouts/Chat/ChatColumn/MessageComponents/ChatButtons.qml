@@ -119,7 +119,8 @@ Rectangle {
 
                 StatusToolTip {
                     visible: btn.hovered
-                    text: qsTr("Edit")
+                    //% "Edit"
+                    text: qsTrId("edit")
                 }
             }
         }
@@ -141,7 +142,8 @@ Rectangle {
 
             StatusToolTip {
                 visible: otherBtn.hovered
-                text: qsTr("More")
+                //% "More"
+                text: qsTrId("more")
             }
         }
     }

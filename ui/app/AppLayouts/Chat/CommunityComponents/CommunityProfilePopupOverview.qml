@@ -50,9 +50,11 @@ Column {
     }
 
     StatusDescriptionListItem {
-        title: qsTr("Share community")
+        //% "Share community"
+        title: qsTrId("share-community")
         subTitle: `${Constants.communityLinkPrefix}${communityId.substring(0, 4)}...${communityId.substring(communityId.length -2)}`
-        tooltip.text: qsTr("Copy to clipboard")
+        //% "Copy to clipboard"
+        tooltip.text: qsTrId("copy-to-clipboard")
         icon.name: "copy"
         iconButton.onClicked: {
             let link = `${Constants.communityLinkPrefix}${communityId}`
@@ -73,7 +75,8 @@ Column {
 
         property int nbRequests: chatsModel.communities.activeCommunity.communityMembershipRequests.nbRequests
 
-        title: qsTr("Members")
+        //% "Members"
+        title: qsTrId("members-label")
         icon.name: "group-chat"
         label: nbMembers.toString()
         sensor.onClicked: root.membersListButtonClicked()
@@ -93,7 +96,8 @@ Column {
 
     StatusListItem {
         anchors.horizontalCenter: parent.horizontalCenter
-        title: qsTr("Notifications")
+        //% "Notifications"
+        title: qsTrId("notifications")
         icon.name: "notification"
         components: [
             StatusSwitch {
@@ -111,7 +115,8 @@ Column {
     StatusListItem {
         anchors.horizontalCenter: parent.horizontalCenter
         visible: isAdmin
-        title: qsTr("Edit community")
+        //% "Edit community"
+        title: qsTrId("edit-community")
         icon.name: "edit"
         type: StatusListItem.Type.Secondary
         sensor.onClicked: root.editButtonClicked()
@@ -120,7 +125,8 @@ Column {
     StatusListItem {
         anchors.horizontalCenter: parent.horizontalCenter
         visible: isAdmin
-        title: qsTr("Transfer ownership")
+        //% "Transfer ownership"
+        title: qsTrId("transfer-ownership")
         icon.name: "exchange"
         type: StatusListItem.Type.Secondary
         sensor.onClicked: root.transferOwnershipButtonClicked()
@@ -128,7 +134,8 @@ Column {
 
     StatusListItem {
         anchors.horizontalCenter: parent.horizontalCenter
-        title: qsTr("Leave community")
+        //% "Leave community"
+        title: qsTrId("leave-community")
         icon.name: "arrow-right"
         icon.height: 16
         icon.width: 20
@@ -137,12 +144,13 @@ Column {
         sensor.onClicked: root.leaveButtonClicked()
     }
 
+    //% "Roles"
     /*     // TODO add this back when roles exist */
 /* //        Loader { */
 /* //            active: isAdmin */
 /* //            width: parent.width */
 /* //            sourceComponent: CommunityPopupButton { */
-/* //                label: qsTr("Roles") */
+/* //                label: qsTrId("community-roles") */
 /* //                iconName: "roles" */
 /* //                width: parent.width */
 /* //                onClicked: console.log("TODO:") */

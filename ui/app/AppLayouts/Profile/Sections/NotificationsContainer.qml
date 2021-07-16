@@ -253,7 +253,8 @@ ScrollView {
             width: parent.width
 
             StatusSettingsLineButton {
-                text: qsTr("Notify on new requests")
+                //% "Notify on new requests"
+                text: qsTrId("notify-on-new-requests")
                 isSwitch: true
                 switchChecked: appSettings.notifyOnNewRequests
                 onClicked: {

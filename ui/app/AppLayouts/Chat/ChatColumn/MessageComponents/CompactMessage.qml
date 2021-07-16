@@ -132,7 +132,8 @@ Item {
                     }
 
                     StyledText {
-                        text: qsTr("Pinned by %1").arg(chatsModel.alias(pinnedBy))
+                        //% "Pinned by %1"
+                        text: qsTrId("pinned-by--1").arg(chatsModel.alias(pinnedBy))
                         anchors.left: pinImage.right
                         anchors.verticalCenter: parent.verticalCenter
                         font.pixelSize: 13
@@ -210,7 +211,8 @@ Item {
                     anchors.leftMargin: Style.current.halfPadding
                     anchors.top: editTextInput.bottom
                     bgColor: Style.current.transparent
-                    text: qsTr("Cancel")
+                    //% "Cancel"
+                    text: qsTrId("browsing-cancel")
                     onClicked: {
                         isEdit = false
                         editTextInput.textInput.text = Emoji.parse(message)
@@ -222,7 +224,8 @@ Item {
                     anchors.left: cancelBtn.right
                     anchors.leftMargin: Style.current.halfPadding
                     anchors.top: editTextInput.bottom
-                    text: qsTr("Save")
+                    //% "Save"
+                    text: qsTrId("save")
                     onClicked: {
                         let msg = chatsModel.plainText(Emoji.deparse(editTextInput.textInput.text))
                         if (msg.length > 0){

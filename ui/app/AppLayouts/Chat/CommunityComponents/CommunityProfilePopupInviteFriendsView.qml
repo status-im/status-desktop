@@ -24,7 +24,8 @@ Column {
             contactFieldAndList.validationError = error
             return
         }
-        contactFieldAndList.successMessage = qsTr("Invite successfully sent")
+        //% "Invite successfully sent"
+        contactFieldAndList.successMessage = qsTrId("invite-successfully-sent")
     }
 
     StatusModalDivider {
@@ -32,9 +33,11 @@ Column {
     }
 
     StatusDescriptionListItem {
-        title: qsTr("Share community")
+        //% "Share community"
+        title: qsTrId("share-community")
         subTitle: `${Constants.communityLinkPrefix}${communityId.substring(0, 4)}...${communityId.substring(communityId.length -2)}`
-        tooltip.text: qsTr("Copy to clipboard")
+        //% "Copy to clipboard"
+        tooltip.text: qsTrId("copy-to-clipboard")
         icon.name: "copy"
         iconButton.onClicked: {
             let link = `${Constants.communityLinkPrefix}${communityId}`

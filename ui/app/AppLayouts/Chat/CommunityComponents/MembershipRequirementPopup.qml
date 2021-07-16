@@ -12,7 +12,8 @@ ModalPopup {
     id: popup
     height: 600
 
-    title: qsTr("Membership requirement")
+    //% "Membership requirement"
+    title: qsTrId("membership-title")
 
     ScrollView {
         property ScrollBar vScrollBar: ScrollBar.vertical
@@ -37,8 +38,10 @@ ModalPopup {
             spacing: Style.current.padding
 
             MembershipRadioButton {
-                text: qsTr("Require approval")
-                description: qsTr("Your community is free to join, but new members are required to be approved by the community creator first")
+                //% "Require approval"
+                text: qsTrId("membership-approval")
+                //% "Your community is free to join, but new members are required to be approved by the community creator first"
+                description: qsTrId("membership-approval-description")
                 buttonGroup: membershipRequirementGroup
                 checked: popup.checkedMembership === Constants.communityChatOnRequestAccess
                 onRadioCheckedChanged: {
@@ -49,8 +52,10 @@ ModalPopup {
             }
 
             MembershipRadioButton {
-                text: qsTr("Require invite from another member")
-                description: qsTr("Your community can only be joined by an invitation from existing community members")
+                //% "Require invite from another member"
+                text: qsTrId("membership-invite")
+                //% "Your community can only be joined by an invitation from existing community members"
+                description: qsTrId("membership-invite-description")
                 buttonGroup: membershipRequirementGroup
                 checked: popup.checkedMembership === Constants.communityChatInvitationOnlyAccess
                 onRadioCheckedChanged: {
@@ -60,16 +65,20 @@ ModalPopup {
                 }
             }
 
+            //% "Require ENS username"
+            //% "Your community requires an ENS username to be able to join"
             // This should be a check box
 //            MembershipRadioButton {
-//                text: qsTr("Require ENS username")
-//                description: qsTr("Your community requires an ENS username to be able to join")
+//                text: qsTrId("membership-ens")
+//                description: qsTrId("membership-ens-description")
 //                buttonGroup: membershipRequirementGroup
 //            }
 
             MembershipRadioButton {
-                text: qsTr("No requirement")
-                description: qsTr("Your community is free for anyone to join")
+                //% "No requirement"
+                text: qsTrId("membership-free")
+                //% "Your community is free for anyone to join"
+                description: qsTrId("membership-free-description")
                 buttonGroup: membershipRequirementGroup
                 hideSeparator: true
                 checked: popup.checkedMembership === Constants.communityChatPublicAccess

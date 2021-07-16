@@ -35,7 +35,8 @@ Item {
         }
 
         StatusSettingsLineButton {
-            text: qsTr("Minimize on close")
+            //% "Minimize on close"
+            text: qsTrId("minimize-on-close")
             isSwitch: true
             switchChecked: !appSettings.quitOnClose
             onClicked: function (checked) {
@@ -110,7 +111,8 @@ Item {
         }
 
         StatusSettingsLineButton {
-            text: qsTr("Activity Center")
+            //% "Activity Center"
+            text: qsTrId("activity-center")
             isSwitch: true
             switchChecked: appSettings.isActivityCenterEnabled
             onClicked: {
@@ -124,7 +126,8 @@ Item {
         }
 
         StatusSettingsLineButton {
-            text: qsTr("Online users")
+            //% "Online users"
+            text: qsTrId("online-users")
             isSwitch: true
             switchChecked: appSettings.showOnlineUsers
             onClicked: {
@@ -133,7 +136,8 @@ Item {
         }
 
         StatusSettingsLineButton {
-            text: qsTr("Waku Bloom Mode")
+            //% "Waku Bloom Mode"
+            text: qsTrId("waku-bloom-mode")
             isSwitch: true
             switchChecked: nodeModel.wakuBloomFilterMode
             onClicked: function (checked) {
@@ -188,8 +192,10 @@ Item {
         property string settingsProp: ""
         height: 310
         showCancelButton: true
-        confirmationText: qsTr("This feature is experimental and is meant for testing purposes by core contributors and the community. It's not meant for real use and makes no claims of security or integrity of funds or data. Use at your own risk.")
-        confirmButtonLabel: qsTr("I understand")
+        //% "This feature is experimental and is meant for testing purposes by core contributors and the community. It's not meant for real use and makes no claims of security or integrity of funds or data. Use at your own risk."
+        confirmationText: qsTrId("this-feature-is-experimental-and-is-meant-for-testing-purposes-by-core-contributors-and-the-community--it-s-not-meant-for-real-use-and-makes-no-claims-of-security-or-integrity-of-funds-or-data--use-at-your-own-risk-")
+        //% "I understand"
+        confirmButtonLabel: qsTrId("i-understand")
         onConfirmButtonClicked: {
             appSettings[settingsProp] = true
             settingsProp = ""

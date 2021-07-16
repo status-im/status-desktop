@@ -70,7 +70,8 @@ Item {
         if (!assetFound) {
             return
         }
-        txtAssetBalance.text = qsTr("Balance: ") + (parseFloat(assetFound.value) === 0.0 ? "0" : Utils.stripTrailingZeros(assetFound.value))
+        //% "Balance: "
+        txtAssetBalance.text = qsTrId("balance--") + (parseFloat(assetFound.value) === 0.0 ? "0" : Utils.stripTrailingZeros(assetFound.value))
         txtAssetSymbol.text = " " + assetFound.symbol
     }
 

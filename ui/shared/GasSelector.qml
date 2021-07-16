@@ -84,7 +84,8 @@ Item {
         id: prioritytext
         anchors.top: parent.top
         anchors.left: parent.left
-        text: qsTr("Priority")
+        //% "Priority"
+        text: qsTrId("priority")
         font.weight: Font.Medium
         font.pixelSize: 13
         color: Style.current.textColor
@@ -94,7 +95,9 @@ Item {
         id: buttonAdvanced
         anchors.verticalCenter: prioritytext.verticalCenter
         anchors.right: parent.right
-        text: advancedMode ? qsTr("Use suggestions") : qsTr("Use custom")
+        //% "Use suggestions"
+        //% "Use custom"
+        text: advancedMode ? qsTrId("use-suggestions") : qsTrId("use-custom")
         flat: true
         font.pixelSize: 13
         onClicked: advancedMode = !advancedMode
@@ -114,7 +117,8 @@ Item {
 
         GasSelectorButton {
             buttonGroup: gasGroup
-            text: qsTr("Low")
+            //% "Low"
+            text: qsTrId("low")
             price: slowestGasPrice
             gasLimit: inputGasLimit ? inputGasLimit.text : ""
             getGasEthValue: root.getGasEthValue
@@ -126,7 +130,8 @@ Item {
             id: optimalGasButton
             buttonGroup: gasGroup
             checkedByDefault: true
-            text: qsTr("Optimal")
+            //% "Optimal"
+            text: qsTrId("optimal")
             price: {
                 const price = (fastestGasPrice + slowestGasPrice) / 2
                 // Setting the gas price field here because the binding didn't work
@@ -142,7 +147,8 @@ Item {
 
         GasSelectorButton {
             buttonGroup: gasGroup
-            text: qsTr("High")
+            //% "High"
+            text: qsTrId("high")
             price: fastestGasPrice
             gasLimit: inputGasLimit ? inputGasLimit.text : ""
             getGasEthValue: root.getGasEthValue
@@ -162,7 +168,8 @@ Item {
 
         Input {
             id: inputGasLimit
-            label: qsTr("Gas amount limit")
+            //% "Gas amount limit"
+            label: qsTrId("gas-amount-limit")
             text: "21000"
             customHeight: 56
             anchors.top: parent.top
@@ -181,7 +188,8 @@ Item {
 
         Input {
             id: inputGasPrice
-            label: qsTr("Per-gas overall limit")
+            //% "Per-gas overall limit"
+            label: qsTrId("per-gas-overall-limit")
             anchors.top: parent.top
             anchors.left: undefined
             anchors.right: parent.right
@@ -208,7 +216,8 @@ Item {
 
         StyledText {
             id: maxPriorityFeeText
-            text: qsTr("Maximum priority fee: %1 ETH").arg(selectedGasEthValue)
+            //% "Maximum priority fee: %1 ETH"
+            text: qsTrId("maximum-priority-fee---1-eth").arg(selectedGasEthValue)
             anchors.top: inputGasLimit.bottom
             anchors.topMargin: 19
             font.pixelSize: 13
@@ -227,7 +236,8 @@ Item {
 
         StyledText {
             id: maxPriorityFeeDetailsText
-            text: qsTr("Maximum overall price for the transaction. If the block base fee exceeds this, it will be included in a following block with a lower base fee.")
+            //% "Maximum overall price for the transaction. If the block base fee exceeds this, it will be included in a following block with a lower base fee."
+            text: qsTrId("maximum-overall-price-for-the-transaction--if-the-block-base-fee-exceeds-this--it-will-be-included-in-a-following-block-with-a-lower-base-fee-")
             width: parent.width
             anchors.top: maxPriorityFeeText.bottom
             anchors.topMargin: Style.current.smallPadding

@@ -8,7 +8,8 @@ import "./"
 
 Rectangle {
     property var buttonGroup
-    property string text: qsTr("Low")
+    //% "Low"
+    property string text: qsTrId("low")
     property string gasLimit
     property double price: 1
     property string defaultCurrency: "USD"

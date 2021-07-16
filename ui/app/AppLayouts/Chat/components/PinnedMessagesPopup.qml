@@ -13,7 +13,8 @@ ModalPopup {
 
         StyledText {
             id: title
-            text: qsTr("Pinned messages")
+            //% "Pinned messages"
+            text: qsTrId("pinned-messages")
             anchors.top: parent.top
             anchors.left: parent.left
             font.bold: true
@@ -24,8 +25,10 @@ ModalPopup {
             property int nbMessages: pinnedMessageListView.count
 
             id: nbPinnedMessages
-            text: nbMessages > 1 ? qsTr("%1 messages").arg(nbMessages) :
-                                   qsTr("%1 message").arg(nbMessages)
+            //% "%1 messages"
+            text: nbMessages > 1 ? qsTrId("-1-messages").arg(nbMessages) :
+                                   //% "%1 message"
+                                   qsTrId("-1-message").arg(nbMessages)
             anchors.left: parent.left
             anchors.top: title.bottom
             anchors.topMargin: 2
@@ -48,7 +51,8 @@ ModalPopup {
 
         StyledText {
             visible: pinnedMessageListView.count === 0
-            text: qsTr("Pinned messages will appear here.")
+            //% "Pinned messages will appear here."
+            text: qsTrId("pinned-messages-will-appear-here-")
             anchors.centerIn: parent
             color: Style.current.secondaryText
         }

@@ -127,7 +127,8 @@ ModalPopup {
 
         StatusRadioButtonRow {
             id: mainnetRadioBtn
-            text: qsTr("Main network")
+            //% "Main network"
+            text: qsTrId("mainnet-network")
             buttonGroup: networkChainGroup
             checked: true
             onRadioCheckedChanged: {
@@ -139,7 +140,8 @@ ModalPopup {
         }
 
         StatusRadioButtonRow {
-            text: qsTr("Ropsten test network")
+            //% "Ropsten test network"
+            text: qsTrId("ropsten-network")
             buttonGroup: networkChainGroup
             onRadioCheckedChanged: {
                 if (checked) {
@@ -150,7 +152,8 @@ ModalPopup {
         }
 
         StatusRadioButtonRow {
-            text: qsTr("Rinkeby test network")
+            //% "Rinkeby test network"
+            text: qsTrId("rinkeby-network")
             buttonGroup: networkChainGroup
             onRadioCheckedChanged: {
                 if (checked) {
@@ -162,7 +165,8 @@ ModalPopup {
 
         StatusRadioButtonRow {
             id: customRadioBtn
-            text: qsTr("Custom")
+            //% "Custom"
+            text: qsTrId("custom")
             buttonGroup: networkChainGroup
             onRadioCheckedChanged: {
                 if (checked) {

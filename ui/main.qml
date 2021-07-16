@@ -133,7 +133,8 @@ StatusWindow {
         menu: Menu {
             MenuItem {
                 visible: !applicationWindow.visible
-                text: qsTr("Open Status")
+                //% "Open Status"
+                text: qsTrId("open-status")
                 onTriggered: {
                     applicationWindow.visible = true;
                     applicationWindow.requestActivate();

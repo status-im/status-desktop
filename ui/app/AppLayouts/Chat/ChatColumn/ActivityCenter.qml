@@ -183,7 +183,8 @@ Popup {
                 height: visible ? showMoreBtn.height + showMoreBtn.anchors.topMargin : 0
                 StatusButton {
                     id: showMoreBtn
-                    text: qsTr("Show more")
+                    //% "Show more"
+                    text: qsTrId("show-more")
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.top: parent.top
                     anchors.topMargin: Style.current.smallPadding

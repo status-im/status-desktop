@@ -18,7 +18,8 @@ ModalPopup {
 
         StyledText {
             id: titleText
-            text: qsTr("Membership requests")
+            //% "Membership requests"
+            text: qsTrId("membership-requests")
             anchors.top: parent.top
             anchors.topMargin: 2
             anchors.left: parent.left

@@ -113,7 +113,8 @@ StatusAppLayout {
         navBarChatButton: StatusNavBarTabButton {
             icon.name: "chat"
             checked: !chatsModel.communities.activeCommunity.active  && appView.currentIndex === Utils.getAppSectionIndex(Constants.chat)
-            tooltip.text: qsTr("Chat")
+            //% "Chat"
+            tooltip.text: qsTrId("chat")
             badge.value: chatsModel.messageView.unreadDirectMessagesAndMentionsCount + profileModel.contacts.contactRequests.count
             badge.visible: badge.value > 0 || (chatsModel.messageView.unreadMessagesCount > 0 && !checked)
             badge.anchors.rightMargin: badge.value > 0 ? 0 : 4
@@ -158,21 +159,24 @@ StatusAppLayout {
                 }
 
                 StatusMenuItem {
-                    text: qsTr("Invite People")
+                    //% "Invite People"
+                    text: qsTrId("invite-people")
                     icon.name: "share-ios"
                     enabled: chatsModel.communities.observedCommunity.canManageUsers
                     onTriggered: openPopup(inviteFriendsToCommunityPopup, { communityId: model.id })
                 }
 
                 StatusMenuItem {
-                    text: qsTr("View Community")
+                    //% "View Community"
+                    text: qsTrId("view-community")
                     icon.name: "group-chat"
                     onTriggered: openPopup(communityMembersPopup, {community: chatsModel.communities.observedCommunity})
                 }
 
                 StatusMenuItem {
                     enabled: false//chatsModel.communities.observedCommunity.admin
-                    text: qsTr("Edit Community")
+                    //% "Edit Community"
+                    text: qsTrId("edit-community")
                     icon.name: "edit"
                     onTriggered: openPopup(editCommunityPopup, {community: chatsModel.communities.observedCommunity})
                 }
@@ -180,7 +184,8 @@ StatusAppLayout {
                 StatusMenuSeparator {}
 
                 StatusMenuItem {
-                    text: qsTr("Leave Community")
+                    //% "Leave Community"
+                    text: qsTrId("leave-community")
                     icon.name: "arrow-right"
                     icon.width: 14
                     iconRotation: 180
@@ -193,7 +198,8 @@ StatusAppLayout {
         navBarTabButtons: [
             StatusNavBarTabButton {
                 icon.name: "wallet"
-                tooltip.text: qsTr("Wallet")
+                //% "Wallet"
+                tooltip.text: qsTrId("wallet")
                 visible: enabled
                 enabled: isExperimental === "1" || appSettings.isWalletEnabled
                 checked: appView.currentIndex == Utils.getAppSectionIndex(Constants.wallet)
@@ -203,7 +209,8 @@ StatusAppLayout {
             StatusNavBarTabButton {
                 enabled: isExperimental === "1" || appSettings.isBrowserEnabled
                 visible: enabled
-                tooltip.text: qsTr("Browser")
+                //% "Browser"
+                tooltip.text: qsTrId("browser")
                 icon.name: "browser"
                 checked: appView.currentIndex == Utils.getAppSectionIndex(Constants.browser)
                 onClicked: appMain.changeAppSection(Constants.browser)
@@ -212,7 +219,8 @@ StatusAppLayout {
             StatusNavBarTabButton {
                 enabled: isExperimental === "1" || appSettings.timelineEnabled
                 visible: enabled
-                tooltip.text: qsTr("Timeline")
+                //% "Timeline"
+                tooltip.text: qsTrId("timeline")
                 icon.name: "status-update"
                 checked: appView.currentIndex == Utils.getAppSectionIndex(Constants.timeline)
                 onClicked: appMain.changeAppSection(Constants.timeline)
@@ -220,7 +228,8 @@ StatusAppLayout {
 
             StatusNavBarTabButton {
                 id: profileBtn
-                tooltip.text: qsTr("Profile")
+                //% "Profile"
+                tooltip.text: qsTrId("profile")
                 icon.name: "profile"
                 checked: appView.currentIndex == Utils.getAppSectionIndex(Constants.profile)
                 onClicked: appMain.changeAppSection(Constants.profile)
@@ -471,10 +480,14 @@ StatusAppLayout {
                 return
             }
             const isContact = profileModel.contacts.isAdded(address)
-            systemTray.showMessage(isContact ? qsTr("Contact request accepted") :
-                                               qsTr("New contact request"),
-                                   isContact ? qsTr("You can now chat with %1").arg(Utils.removeStatusEns(name)) :
-                                               qsTr("%1 requests to become contacts").arg(Utils.removeStatusEns(name)),
+            //% "Contact request accepted"
+            systemTray.showMessage(isContact ? qsTrId("contact-request-accepted") :
+                                               //% "New contact request"
+                                               qsTrId("new-contact-request"),
+                                   //% "You can now chat with %1"
+                                   isContact ? qsTrId("you-can-now-chat-with--1").arg(Utils.removeStatusEns(name)) :
+                                               //% "%1 requests to become contacts"
+                                               qsTrId("-1-requests-to-become-contacts").arg(Utils.removeStatusEns(name)),
                                    SystemTrayIcon.NoIcon,
                                    Constants.notificationPopupTTL)
         }

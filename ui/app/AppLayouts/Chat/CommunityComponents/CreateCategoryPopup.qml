@@ -37,13 +37,16 @@ StatusModal {
     function isFormValid() {
         return Utils.validateAndReturnError(popup.contentComponent.categoryName.text,
                                             categoryNameValidator,
-                                            qsTr("category name"),
+                                            //% "category name"
+                                            qsTrId("category-name"),
                                             maxCategoryNameLength) === ""
     }
 
     header.title: isEdit ?
-            qsTr("Edit category") : 
-            qsTr("New category")
+            //% "Edit category"
+            qsTrId("edit-category") : 
+            //% "New category"
+            qsTrId("new-category")
 
     content: ScrollView {
         id: scrollView
@@ -81,13 +84,15 @@ StatusModal {
                     anchors.left: undefined
                     anchors.right: undefined
 
-                    placeholderText: qsTr("Category title")
+                    //% "Category title"
+                    placeholderText: qsTrId("category-title")
                     maxLength: maxCategoryNameLength
 
                     onTextEdited: {
                         validationError = Utils.validateAndReturnError(text,
                                                                       categoryNameValidator,
-                                                                      qsTr("category name"),
+                                                                      //% "category name"
+                                                                      qsTrId("category-name"),
                                                                       maxCategoryNameLength)
                     }
                 }
@@ -103,7 +108,8 @@ StatusModal {
                 width: parent.width - 32
                 height: 34
                 StatusBaseText {
-                    text: qsTr("Channels")
+                    //% "Channels"
+                    text: qsTrId("channels")
                     anchors.bottom: parent.bottom
                     anchors.bottomMargin: 4
                     font.pixelSize: 15
@@ -162,13 +168,16 @@ StatusModal {
                 anchors.horizontalCenter: parent.horizontalCenter
                 visible: isEdit
 
-                title: qsTr("Delete category")
+                //% "Delete category"
+                title: qsTrId("delete-category")
                 icon.name: "delete"
                 type: StatusListItem.Type.Danger
                 sensor.onClicked: {
                     openPopup(deleteCategoryConfirmationDialogComponent, {
-                        title: qsTr("Delete %1 category").arg(popup.contentComponent.categoryName.text),
-                        confirmationText: qsTr("Are you sure you want to delete %1 category? Channels inside the category won’t be deleted.").arg(popup.contentComponent.categoryName.text)
+                        //% "Delete %1 category"
+                        title: qsTrId("delete--1-category").arg(popup.contentComponent.categoryName.text),
+                        //% "Are you sure you want to delete %1 category? Channels inside the category won’t be deleted."
+                        confirmationText: qsTrId("are-you-sure-you-want-to-delete--1-category--channels-inside-the-category-won-t-be-deleted-").arg(popup.contentComponent.categoryName.text)
                         
                     })
                 }
@@ -208,8 +217,10 @@ StatusModal {
         StatusButton {
             enabled: isFormValid()
             text: isEdit ?
-                qsTr("Save") :
-                qsTr("Create")
+                //% "Save"
+                qsTrId("save") :
+                //% "Create"
+                qsTrId("create")
             onClicked: {
                 if (!isFormValid()) {
                     scrollView.scrollBackUp()
@@ -237,8 +248,10 @@ StatusModal {
     MessageDialog {
         id: categoryError
         title: isEdit ? 
-                qsTr("Error editing the category") :
-                qsTr("Error creating the category")
+                //% "Error editing the category"
+                qsTrId("error-editing-the-category") :
+                //% "Error creating the category"
+                qsTrId("error-creating-the-category")
         icon: StandardIcon.Critical
         standardButtons: StandardButton.Ok
     }

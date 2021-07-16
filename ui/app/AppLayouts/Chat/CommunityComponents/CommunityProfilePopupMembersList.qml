@@ -37,7 +37,8 @@ Item {
                 id: memberSearch
                 width: parent.width - 32
                 anchors.centerIn: parent
-                placeholderText: qsTr("Member name")
+                //% "Member name"
+                placeholderText: qsTrId("member-name")
             }
         }
 
@@ -45,7 +46,8 @@ Item {
             id: inviteButton
             anchors.horizontalCenter: parent.horizontalCenter
             visible: isAdmin
-            title: qsTr("Invite People")
+            //% "Invite People"
+            title: qsTrId("invite-people")
             icon.name: "share-ios"
             type: StatusListItem.Type.Secondary
             sensor.onClicked: root.inviteButtonClicked()
@@ -66,7 +68,8 @@ Item {
             visible: isAdmin && nbRequests > 0
             anchors.horizontalCenter: parent.horizontalCenter
 
-            title: qsTr("Membership requests")
+            //% "Membership requests"
+            title: qsTrId("membership-requests")
             requestsCount: nbRequests
             sensor.onClicked: membershipRequestPopup.open()
         }
@@ -93,7 +96,8 @@ Item {
 
             StatusBaseText {
                 anchors.centerIn: parent
-                text: qsTr("Community members will appear here")
+                //% "Community members will appear here"
+                text: qsTrId("community-members-will-appear-here")
                 font.pixelSize: 15
                 color: Theme.palette.baseColor1
             }
@@ -106,7 +110,8 @@ Item {
 
             StatusBaseText {
                 anchors.centerIn: parent
-                text: qsTr("No contacts found")
+                //% "No contacts found"
+                text: qsTrId("no-contacts-found")
                 font.pixelSize: 15
                 color: Theme.palette.baseColor1
             }
@@ -140,7 +145,8 @@ Item {
                             return !model.userName.endsWith(".eth") && !!nickname ?
                                 nickname : Utils.removeStatusEns(model.userName)
                         }
-                        return qsTr("You")
+                        //% "You"
+                        return qsTrId("You")
                     }
 
                     components: [
@@ -165,7 +171,8 @@ Item {
                                 }
 
                                 StatusMenuItem {
-                                    text: qsTr("View Profile")
+                                    //% "View Profile"
+                                    text: qsTrId("view-profile")
                                     icon.name: "channel"
                                     onTriggered: openProfilePopup(model.userName, model.pubKey, memberItem.image.source, '', memberItem.nickname)
                                 }
@@ -175,7 +182,8 @@ Item {
                                 }
 
                                 StatusMenuItem {
-                                    text: qsTr("Kick")
+                                    //% "Kick"
+                                    text: qsTrId("kick")
                                     icon.name: "arrow-right"
                                     iconRotation: 180
                                     type: StatusMenuItem.Type.Danger
@@ -184,7 +192,8 @@ Item {
                                 }
 
                                 StatusMenuItem {
-                                    text: qsTr("Ban")
+                                    //% "Ban"
+                                    text: qsTrId("ban")
                                     icon.name: "cancel"
                                     type: StatusMenuItem.Type.Danger
                                     enabled: chatsModel.communities.activeCommunity.admin

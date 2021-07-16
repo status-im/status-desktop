@@ -21,7 +21,8 @@ ModalPopup {
     //% "Confirm"
     property string confirmButtonLabel: qsTrId("close-app-button")
     //% "Cancel"
-    property string cancelButtonLabel: qsTr("Cancel")
+    //% "Cancel"
+    property string cancelButtonLabel: qsTrId("browsing-cancel")
     //% "Are you sure you want to this?"
     property string confirmationText: qsTrId("are-you-sure-you-want-to-this-")
 

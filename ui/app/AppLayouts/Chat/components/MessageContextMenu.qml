@@ -143,8 +143,10 @@ PopupMenu {
 
     Action {
         id: pinAction
-        text: pinnedMessage ? qsTr("Unpin") :
-                              qsTr("Pin")
+        //% "Unpin"
+        text: pinnedMessage ? qsTrId("unpin") :
+                              //% "Pin"
+                              qsTrId("pin")
         onTriggered: {
             if (pinnedMessage) {
                 chatsModel.messageView.unPinMessage(messageId, chatsModel.channelView.activeChannel.id)
@@ -173,7 +175,8 @@ PopupMenu {
     Action {
         id: copyAction
         enabled: !emojiOnly
-        text: qsTr("Copy")
+        //% "Copy"
+        text: qsTrId("copy-to-clipboard")
         onTriggered: {
             chatsModel.copyToClipboard(messageContextMenu.text)
             messageContextMenu.close()
@@ -185,7 +188,8 @@ PopupMenu {
 
     Action {
         id: copyLinkAction
-        text: qsTr("Copy link")
+        //% "Copy link"
+        text: qsTrId("copy-link")
         onTriggered: {
             chatsModel.copyToClipboard(linkUrls.split(" ")[0])
             messageContextMenu.close()
@@ -198,7 +202,8 @@ PopupMenu {
 
     PopupMenu {
         id: copyLinkMenu
-        title: qsTr("Copy link")
+        //% "Copy link"
+        title: qsTrId("copy-link")
 
         Repeater {
             id: linksRepeater
@@ -243,7 +248,8 @@ PopupMenu {
 
     Action {
         id: editMessageAction
-        text: qsTr("Edit message")
+        //% "Edit message"
+        text: qsTrId("edit-message")
         onTriggered: {
             onClickEdit();
         }

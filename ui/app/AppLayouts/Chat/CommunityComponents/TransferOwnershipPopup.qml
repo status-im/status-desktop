@@ -12,7 +12,8 @@ ModalPopup {
     id: popup
     height: 504
 
-    title: qsTr("Transfer ownership")
+    //% "Transfer ownership"
+    title: qsTrId("transfer-ownership")
 
     onClosed: {
         popup.destroy();
@@ -25,7 +26,8 @@ ModalPopup {
             property string elidedPkey: popup.privateKey.substring(0, 15) + "..." + popup.privateKey.substring(popup.privateKey.length - 16)
 
             id: pKeyInput
-            label: qsTr("Community private key")
+            //% "Community private key"
+            label: qsTrId("community-key")
             text: elidedPkey
             textField.onFocusChanged: {
                 if (textField.focus) {
@@ -41,7 +43,8 @@ ModalPopup {
 
         StyledText {
             id: infoText1
-            text: qsTr("You should keep it safe and only share it with people you trust to take ownership of your community")
+            //% "You should keep it safe and only share it with people you trust to take ownership of your community"
+            text: qsTrId("you-should-keep-it-safe-and-only-share-it-with-people-you-trust-to-take-ownership-of-your-community")
             anchors.top: pKeyInput.bottom
             wrapMode: Text.WordWrap
             anchors.topMargin: Style.current.padding
@@ -52,7 +55,8 @@ ModalPopup {
 
         StyledText {
             id: infoText2
-            text: qsTr("You can also use this key to import your community on another device")
+            //% "You can also use this key to import your community on another device"
+            text: qsTrId("you-can-also-use-this-key-to-import-your-community-on-another-device")
             anchors.top: infoText1.bottom
             wrapMode: Text.WordWrap
             anchors.topMargin: Style.current.bigPadding
