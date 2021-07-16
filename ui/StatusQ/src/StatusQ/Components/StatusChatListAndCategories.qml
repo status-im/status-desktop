@@ -12,6 +12,7 @@ Item {
 
     property string selectedChatId: ""
     property bool showCategoryActionButtons: false
+    property bool showPopupMenu: true
     property alias chatList: statusChatList.chatListItems
     property alias categoryList: statusChatListCategories
     property alias sensor: sensor
@@ -37,7 +38,7 @@ Item {
         height: statusChatListAndCategories.height
         acceptedButtons: Qt.LeftButton | Qt.RightButton
         onClicked: {
-            if (mouse.button === Qt.RightButton && !!statusChatListAndCategories.popupMenu) {
+            if (mouse.button === Qt.RightButton && showPopupMenu && !!statusChatListAndCategories.popupMenu) {
                 popupMenuSlot.item.popup(mouse.x + 4, mouse.y + 6)
                 return
             }
