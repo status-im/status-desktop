@@ -15,7 +15,7 @@ Column {
     property string headerTitle: ""
     property string headerSubtitle: ""
     property string headerImageSource: ""
-    property string description: ""
+    property var community
 
     signal membersListButtonClicked()
     signal notificationsButtonClicked(bool checked)
@@ -33,7 +33,7 @@ Column {
             anchors.right: parent.right
             anchors.leftMargin: 16
             anchors.rightMargin: 16
-            text: root.description
+            text: root.community.description
             font.pixelSize: 15
             color: Theme.palette.directColor1
             wrapMode: Text.Wrap
@@ -46,14 +46,12 @@ Column {
     }
 
     StatusDescriptionListItem {
-        //% "Share community"
-        title: qsTrId("share-community")
-        subTitle: `${Constants.communityLinkPrefix}${communityId.substring(0, 4)}...${communityId.substring(communityId.length -2)}`
-        //% "Copy to clipboard"
-        tooltip.text: qsTrId("copy-to-clipboard")
+        title: qsTr("Share community")
+        subTitle: `${Constants.communityLinkPrefix}${root.community.id.substring(0, 4)}...${root.community.id.substring(root.community.id.length -2)}`
+        tooltip.text: qsTr("Copy to clipboard")
         icon.name: "copy"
         iconButton.onClicked: {
-            let link = `${Constants.communityLinkPrefix}${communityId}`
+            let link = `${Constants.communityLinkPrefix}${root.community.id}`
             chatsModel.copyToClipboard(link)
             tooltip.visible = !tooltip.visible
         }
@@ -69,12 +67,12 @@ Column {
         id: membersListItem
         anchors.horizontalCenter: parent.horizontalCenter
 
-        property int nbRequests: chatsModel.communities.activeCommunity.communityMembershipRequests.nbRequests
+        property int nbRequests: root.community.communityMembershipRequests.nbRequests
 
         //% "Members"
         title: qsTrId("members-label")
         icon.name: "group-chat"
-        label: nbMembers.toString()
+        label: root.community.nbMembers.toString()
         sensor.onClicked: root.membersListButtonClicked()
 
         components: [
@@ -97,7 +95,7 @@ Column {
         icon.name: "notification"
         components: [
             StatusSwitch {
-                checked: !chatsModel.communities.activeCommunity.muted
+                checked: !root.community.muted
                 onClicked: root.notificationsButtonClicked(checked)
             }
         ]
@@ -110,9 +108,8 @@ Column {
 
     StatusListItem {
         anchors.horizontalCenter: parent.horizontalCenter
-        visible: isAdmin
-        //% "Edit community"
-        title: qsTrId("edit-community")
+        visible: root.community.isAdmin || root.community.admin
+        title: qsTr("Edit community")
         icon.name: "edit"
         type: StatusListItem.Type.Secondary
         sensor.onClicked: root.editButtonClicked()
@@ -120,9 +117,8 @@ Column {
 
     StatusListItem {
         anchors.horizontalCenter: parent.horizontalCenter
-        visible: isAdmin
-        //% "Transfer ownership"
-        title: qsTrId("transfer-ownership")
+        visible: root.community.isAdmin || root.community.admin
+        title: qsTr("Transfer ownership")
         icon.name: "exchange"
         type: StatusListItem.Type.Secondary
         sensor.onClicked: root.transferOwnershipButtonClicked()
@@ -143,7 +139,7 @@ Column {
     //% "Roles"
     /*     // TODO add this back when roles exist */
 /* //        Loader { */
-/* //            active: isAdmin */
+/* //            active: root.community.isAdmin */
 /* //            width: parent.width */
 /* //            sourceComponent: CommunityPopupButton { */
 /* //                label: qsTrId("community-roles") */

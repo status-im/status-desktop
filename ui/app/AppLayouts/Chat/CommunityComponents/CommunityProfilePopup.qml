@@ -7,14 +7,9 @@ import StatusQ.Popups 0.1
 import "../../../../imports"
 
 StatusModal {
-    property string communityId: chatsModel.communities.activeCommunity.id
-    property string name: chatsModel.communities.activeCommunity.name
-    property string description: chatsModel.communities.activeCommunity.description
-    property int access: chatsModel.communities.activeCommunity.access
-    property string source: chatsModel.communities.activeCommunity.source
-    property string communityColor: chatsModel.communities.activeCommunity.communityColor
-    property int nbMembers: chatsModel.communities.activeCommunity.nbMembers
-    property bool isAdmin: chatsModel.communities.activeCommunity.isAdmin
+
+    property var community
+
     id: popup
 
     onClosed: {
@@ -44,9 +39,9 @@ StatusModal {
             CommunityProfilePopupOverview {
                 width: stack.width
 
-                headerTitle: chatsModel.communities.activeCommunity.name
+                headerTitle: popup.community.name
                 headerSubtitle: {
-                    switch(access) {
+                    switch(popup.community.access) {
                         //% "Public community"
                         case Constants.communityChatPublicAccess: return qsTrId("public-community");
                         //% "Invitation only community"
@@ -57,16 +52,28 @@ StatusModal {
                         default: return qsTrId("unknown-community");
                     }
                 }
-                headerImageSource: chatsModel.communities.activeCommunity.thumbnailImage
-                description: chatsModel.communities.activeCommunity.description
+                headerImageSource: popup.community.thumbnailImage
+                community: popup.community
 
                 onMembersListButtonClicked: popup.contentComponent.push(membersList)
                 onNotificationsButtonClicked: {
-                    chatsModel.communities.setCommunityMuted(chatsModel.communities.activeCommunity.id, checked)
+                    chatsModel.communities.setCommunityMuted(popup.community.id, checked)
                 }
-                onEditButtonClicked: openPopup(editCommunityPopup)
+                onEditButtonClicked: openPopup(editCommunityPopup, {
+                    community: popup.community
+                })
                 onTransferOwnershipButtonClicked: openPopup(transferOwnershipPopup, {privateKey: chatsModel.communities.exportComumnity()})
-                onLeaveButtonClicked: chatsModel.communities.leaveCommunity(communityId)
+                onLeaveButtonClicked: chatsModel.communities.leaveCommunity(popup.community.id)
+            }
+        }
+
+        Component {
+            id: transferOwnershipPopup
+            TransferOwnershipPopup {
+                anchors.centerIn: parent
+                onClosed: {
+                    destroy()
+                }
             }
         }
 
@@ -74,10 +81,9 @@ StatusModal {
             id: membersList
             CommunityProfilePopupMembersList {
                 width: stack.width
-                //% "Members"
-                headerTitle: qsTrId("members-label")
-                headerSubtitle: popup.nbMembers.toString()
-                members: chatsModel.communities.activeCommunity.members
+                headerTitle: qsTr("Members")
+                headerSubtitle: popup.community.nbMembers.toString()
+                community: popup.community
                 onInviteButtonClicked: popup.contentComponent.push(inviteFriendsView)
             }
         }
@@ -86,8 +92,8 @@ StatusModal {
             id: inviteFriendsView
             CommunityProfilePopupInviteFriendsView {
                 width: stack.width
-                //% "Invite friends"
-                headerTitle: qsTrId("invite-friends")
+                headerTitle: qsTr("Invite friends")
+                community: popup.community
 
                 contactListSearch.chatKey.text: ""
                 contactListSearch.pubKey: ""

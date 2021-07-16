@@ -15,10 +15,11 @@ Column {
 
     property string headerTitle: ""
 
+    property var community
     property alias contactListSearch: contactFieldAndList
 
     function sendInvites(pubKeys) {
-        const error = chatsModel.communities.inviteUsersToCommunityById(popup.communityId, JSON.stringify(pubKeys))
+        const error = chatsModel.communities.inviteUsersToCommunityById(root.community.id, JSON.stringify(pubKeys))
         if (error) {
             console.error('Error inviting', error)
             contactFieldAndList.validationError = error
@@ -29,14 +30,12 @@ Column {
     }
 
     StatusDescriptionListItem {
-        //% "Share community"
-        title: qsTrId("share-community")
-        subTitle: `${Constants.communityLinkPrefix}${communityId.substring(0, 4)}...${communityId.substring(communityId.length -2)}`
-        //% "Copy to clipboard"
-        tooltip.text: qsTrId("copy-to-clipboard")
+        title: qsTr("Share community")
+        subTitle: `${Constants.communityLinkPrefix}${root.community.id.substring(0, 4)}...${root.community.id.substring(root.community.id.length -2)}`
+        tooltip.text: qsTr("Copy to clipboard")
         icon.name: "copy"
         iconButton.onClicked: {
-            let link = `${Constants.communityLinkPrefix}${communityId}`
+            let link = `${Constants.communityLinkPrefix}${root.community.id}`
             chatsModel.copyToClipboard(link)
             tooltip.visible = !tooltip.visible
         }
