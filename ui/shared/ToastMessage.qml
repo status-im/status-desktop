@@ -5,34 +5,52 @@ import "../imports"
 import "."
 
 Popup {
-    property url source: "../app/img/check-circle.svg"
-    property color iconColor: Style.current.primary
-    property bool iconRotates: false
-    property string title: "Transaction pending..."
-    //% "View on Etherscan"
-    readonly property string defaultLinkText: qsTrId("view-on-etherscan")
-    property string link: "https://etherscan.io/"
-    property string linkText: defaultLinkText
-
     id: root
     closePolicy: Popup.NoAutoClose
     height: 68
     padding: 0
     margins: 0
-    width: Math.max(Math.max(titleText.width, linkText.width) + toastImage.width + 12 * 4, 343)
+    width: Math.max(Math.max(titleText.width, linkStyledText.width)
+                    + (toastImage.visible? toastImage.width + rowId.spacing : 0)
+                    + rowId.leftPadding + rowId.rightPadding,
+                    343)
     x: parent.width - width - Style.current.bigPadding
     y: parent.height - height - Style.current.bigPadding
 
+
+    //% "View on Etherscan"
+    readonly property string defaultLinkText: qsTrId("view-on-etherscan")
+
+    property string uuid: "" // set this if you want to distinct among multiple toasts
+    property url source: "../app/img/check-circle.svg"
+    property color iconColor: Style.current.primary
+    property bool iconRotates: false
+    property string title: "Transaction pending..."
+    property string link: "https://etherscan.io/"
+    property string linkText: defaultLinkText
+    property int dissapearInMs: 4000 /* setting this to -1 makes caller responsible to close it */
+    property bool displayCloseButton: true
+    property bool displayLink: true    
+
     onOpened: {
+        if(dissapearInMs == -1)
+            return
+
         timer.setTimeout(function() {
             root.close()
-        }, 4000);
+        }, dissapearInMs);
     }
     onClosed: {
         // Reset props
+        source = "../app/img/check-circle.svg"
         iconColor = Style.current.primary
         iconRotates = false
-        root.linkText = defaultLinkText
+        title = "Transaction pending..."
+        link = "https://etherscan.io/"
+        linkText = defaultLinkText
+        dissapearInMs = 4000
+        displayCloseButton = true
+        displayLink = true
     }
 
     Timer {
@@ -60,54 +78,58 @@ Popup {
         }
     }
 
-    RoundedIcon {
-        id: toastImage
-        width: 32
-        height: 32
-        iconHeight: 20
-        iconWidth: 20
-        color: Utils.setColorAlpha(root.iconColor, 0.1)
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.left: parent.left
-        source: root.source
-        anchors.leftMargin: 12
-        iconColor: root.iconColor
-        rotates: root.iconRotates
-    }
+    Row {
+        id: rowId
+        anchors.fill: parent
+        leftPadding: 12
+        rightPadding: 12
+        topPadding: Style.current.padding
+        bottomPadding: Style.current.padding
+        spacing: 12
 
-    StyledText {
-        id: titleText
-        text: root.title
-        anchors.left: toastImage.right
-        anchors.top: parent.top
-        font.pixelSize: 13
-        font.weight: Font.Medium
-        anchors.topMargin: Style.current.padding
-        anchors.leftMargin: 12
-    }
+        RoundedIcon {
+            id: toastImage
+            visible: root.source != ""
+            width: 32
+            height: 32
+            iconHeight: 20
+            iconWidth: 20
+            color: Utils.setColorAlpha(root.iconColor, 0.1)
+            anchors.verticalCenter: parent.verticalCenter
+            source: root.source
+            iconColor: root.iconColor
+            rotates: root.iconRotates
+        }
 
-    StyledText {
-        id: linkText
-        //% "<a href='%1' style='color:%2;text-decoration:none;'>%3</a>"
-        text: qsTrId("-a-href---1--style--color--2-text-decoration-none----3--a-")
-            .arg(Style.current.textColorTertiary)
-            .arg(root.link)
-            .arg(root.linkText)
-        color: Style.current.textColorTertiary
-        textFormat: Text.RichText
-        anchors.left: toastImage.right
-        anchors.top: titleText.bottom
-        font.pixelSize: 13
-        font.weight: Font.Medium
-        anchors.leftMargin: 12
-        onLinkActivated: {
-            appMain.openLink(root.link)
-            root.close()
+        Column {
+            anchors.verticalCenter: parent.verticalCenter
+
+            StyledText {
+                id: titleText
+                text: root.title
+                font.pixelSize: 13
+                font.weight: Font.Medium
+            }
+
+            StyledText {
+                id: linkStyledText
+                visible: displayLink
+                text: `<a href='${root.link}' style='color:${Style.current.textColorTertiary};text-decoration:none;'>${root.linkText}</a>`
+                color: Style.current.textColorTertiary
+                textFormat: Text.RichText
+                font.pixelSize: 13
+                font.weight: Font.Medium
+                onLinkActivated: {
+                    appMain.openLink(root.link)
+                    root.close()
+                }
+            }
         }
     }
 
     SVGImage {
         id: closeImage
+        visible: displayCloseButton
         anchors.right: parent.right
         anchors.top: parent.top
         source: "../app/img/plusSign.svg"
@@ -126,15 +148,10 @@ Popup {
         }
     }
     ColorOverlay {
+        visible: displayCloseButton
         anchors.fill: closeImage
         source: closeImage
         rotation: 45
         color: Style.current.textColor
     }
 }
-
-/*##^##
-Designer {
-    D{i:0;formeditorColor:"#4c4e50";formeditorZoom:1.5;height:68;width:343}
-}
-##^##*/
