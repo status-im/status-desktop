@@ -37,8 +37,11 @@ Item {
             qsTrId("-1-members").arg(chatsModel.communities.activeCommunity.nbMembers)
         chatInfoButton.image.source: chatsModel.communities.activeCommunity.thumbnailImage
         chatInfoButton.icon.color: chatsModel.communities.activeCommunity.communityColor
-        chatInfoButton.onClicked: communityProfilePopup.open()
         menuButton.visible: chatsModel.communities.activeCommunity.admin && chatsModel.communities.activeCommunity.canManageUsers
+        chatInfoButton.onClicked: openPopup(communityProfilePopup, {
+            community: chatsModel.communities.activeCommunity
+        })
+
         popupMenu: StatusPopupMenu {
             StatusMenuItem {
                 //% "Create channel"
@@ -274,24 +277,6 @@ Item {
                 destroy()
             }
         }
-    }
-
-    Component {
-        id: transferOwnershipPopup
-        TransferOwnershipPopup {}
-    }
-
-    CommunityProfilePopup {
-        id: communityProfilePopup
-        anchors.centerIn: parent
-        communityId: chatsModel.communities.activeCommunity.id
-        name: chatsModel.communities.activeCommunity.name
-        description: chatsModel.communities.activeCommunity.description
-        access: chatsModel.communities.activeCommunity.access
-        nbMembers: chatsModel.communities.activeCommunity.nbMembers
-        isAdmin: chatsModel.communities.activeCommunity.admin
-        source: chatsModel.communities.activeCommunity.thumbnailImage
-        communityColor: chatsModel.communities.activeCommunity.communityColor
     }
 
     Component {
