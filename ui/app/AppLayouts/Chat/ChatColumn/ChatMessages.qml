@@ -19,6 +19,7 @@ SplitView {
     property alias chatLogView: chatLogView
     property alias scrollToMessage: chatLogView.scrollToMessage
 
+    property var messageContextMenuInst
     property var messageList: MessagesData {}
     property bool loadingMessages: false
     property real scrollY: chatLogView.visibleArea.yPosition * chatLogView.contentHeight
@@ -248,11 +249,9 @@ SplitView {
                 }
             }
 
-
             model: messageListDelegate
             section.property: "sectionIdentifier"
             section.criteria: ViewSection.FullString
-
         }
 
         MessageDialog {
@@ -317,6 +316,8 @@ SplitView {
                         z = index;
                     }
                 }
+                messageContextMenu: svRoot.messageContextMenuInst
+
                 // This is used in order to have access to the previous message and determine the timestamp
                 // we can't rely on the index because the sequence of messages is not ordered on the nim side
                 prevMessageIndex: {

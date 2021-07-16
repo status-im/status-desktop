@@ -6,12 +6,13 @@ import "../../../../../shared/status"
 import "../../../../../imports"
 
 Item {
-    property int imageMargin: 4
-    signal hoverChanged(bool hovered)
-
     id: root
     height: 20
     width: childrenRect.width
+
+    property int imageMargin: 4
+    signal hoverChanged(bool hovered)
+    signal addEmojiClicked()
 
     function lastTwoItems(nodes) {
         //% " and "
@@ -210,7 +211,7 @@ Item {
                     if (typeof isMessageActive !== "undefined") {
                         setMessageActive(messageId, true)
                     }
-                    clickMessage(false, false, false, null, true)
+                    root.addEmojiClicked();
                 }
             }
 
