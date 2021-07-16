@@ -4,6 +4,7 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
+import StatusQ.Popups 0.1
 
 Rectangle {
     id: statusModalHeader
@@ -66,5 +67,10 @@ Rectangle {
         width: parent.width
         height: parent.radius
         color: parent.color
+
+        StatusModalDivider {
+            anchors.bottom: parent.bottom
+            width: parent.width
+        }
     }
 }
