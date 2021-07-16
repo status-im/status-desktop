@@ -38,9 +38,8 @@ Item {
         chatInfoButton.image.source: chatsModel.communities.activeCommunity.thumbnailImage
         chatInfoButton.icon.color: chatsModel.communities.activeCommunity.communityColor
         chatInfoButton.onClicked: communityProfilePopup.open()
-
+        menuButton.visible: chatsModel.communities.activeCommunity.admin && chatsModel.communities.activeCommunity.canManageUsers
         popupMenu: StatusPopupMenu {
-
             StatusMenuItem {
                 //% "Create channel"
                 text: qsTrId("create-channel")
@@ -57,7 +56,7 @@ Item {
                 onTriggered: openPopup(createCategoryPopup, {communityId: chatsModel.communities.activeCommunity.id})
             }
 
-            StatusMenuSeparator {}
+           StatusMenuSeparator {}
 
             StatusMenuItem {
                 //% "Invite people"
@@ -68,7 +67,6 @@ Item {
             }
         }
     }
-
     Loader {
         id: membershipRequests
 
@@ -125,6 +123,7 @@ Item {
             categoryList.model: chatsModel.communities.activeCommunity.categories
 
             showCategoryActionButtons: chatsModel.communities.activeCommunity.admin
+            showPopupMenu: chatsModel.communities.activeCommunity.admin && chatsModel.communities.activeCommunity.canManageUsers
             selectedChatId: chatsModel.channelView.activeChannel.id
 
             onChatItemSelected: chatsModel.channelView.setActiveChannel(id)
@@ -135,7 +134,6 @@ Item {
             })
 
             popupMenu: StatusPopupMenu {
-
                 StatusMenuItem {
                     //% "Create channel"
                     text: qsTrId("create-channel")
