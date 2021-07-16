@@ -529,7 +529,8 @@ Rectangle {
         folder: shortcuts.pictures
         selectMultiple: true
         nameFilters: [
-            qsTr("Image files (%1)").arg(Constants.acceptedDragNDropImageExtensions.map(img => "*" + img).join(" "))
+            //% "Image files (%1)"
+            qsTrId("image-files---1-").arg(Constants.acceptedDragNDropImageExtensions.map(img => "*" + img).join(" "))
         ]
         onAccepted: {
             imageBtn.highlighted = false

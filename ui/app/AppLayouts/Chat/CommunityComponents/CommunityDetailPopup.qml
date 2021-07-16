@@ -86,7 +86,8 @@ ModalPopup {
 
         StyledText {
             visible: popup.ensOnly
-            text: qsTr(" - ENS Only")
+            //% " - ENS Only"
+            text: qsTrId("---ens-only")
             anchors.left: accessText.right
             anchors.verticalCenter: accessText.verticalCenter
             anchors.topMargin: 2
@@ -208,19 +209,26 @@ ModalPopup {
             }
             text: {
                 if (ensOnly && !profileModel.profile.ensVerified) {
-                    return qsTr("Membership requires an ENS username")
+                    //% "Membership requires an ENS username"
+                    return qsTrId("membership-requires-an-ens-username")
                 }
                 if (canJoin) {
-                    return qsTr("Join ‘%1’").arg(popup.name);
+                    //% "Join ‘%1’"
+                    return qsTrId("join---1-").arg(popup.name);
                 }
                 if (isPendingRequest) {
-                     return qsTr("Pending")
+                     //% "Pending"
+                     return qsTrId("invite-chat-pending")
                 }
                 switch(access) {
-                case Constants.communityChatPublicAccess: return qsTr("Join ‘%1’").arg(popup.name);
-                case Constants.communityChatInvitationOnlyAccess: return qsTr("You need to be invited");
-                case Constants.communityChatOnRequestAccess: return qsTr("Request to join ‘%1’").arg(popup.name);
-                default: return qsTr("Unknown community");
+                //% "Join ‘%1’"
+                case Constants.communityChatPublicAccess: return qsTrId("join---1-").arg(popup.name);
+                //% "You need to be invited"
+                case Constants.communityChatInvitationOnlyAccess: return qsTrId("you-need-to-be-invited");
+                //% "Request to join ‘%1’"
+                case Constants.communityChatOnRequestAccess: return qsTrId("request-to-join---1-").arg(popup.name);
+                //% "Unknown community"
+                default: return qsTrId("unknown-community");
                 }
             }
             enabled: {
@@ -244,7 +252,8 @@ ModalPopup {
                                                               profileModel.profile.ensVerified ? profileModel.profile.username : "")
                     if (!error) {
                         enabled = false
-                        text = qsTr("Pending")
+                        //% "Pending"
+                        text = qsTrId("invite-chat-pending")
                     }
                 } else {
                     error = chatsModel.communities.joinCommunity(popup.communityId, true)

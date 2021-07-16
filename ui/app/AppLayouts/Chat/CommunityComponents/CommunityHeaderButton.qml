@@ -66,8 +66,10 @@ Button {
             StyledText {
                 id: communityNbMember
                 text: chatsModel.communities.activeCommunity.nbMembers === 1 ? 
-                    qsTr("1 member") : 
-                    qsTr("%1 members").arg(chatsModel.communities.activeCommunity.nbMembers)
+                    //% "1 member"
+                    qsTrId("1-member") : 
+                    //% "%1 members"
+                    qsTrId("-1-members").arg(chatsModel.communities.activeCommunity.nbMembers)
                 anchors.left: communityName.left
                 anchors.top: communityName.bottom
                 font.pixelSize: 14

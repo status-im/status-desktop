@@ -97,7 +97,8 @@ Popup {
             anchors.verticalCenter: parent.verticalCenter
             anchors.right: parent.right
             anchors.rightMargin: Style.current.padding
-            placeholderText: qsTr("Search")
+            //% "Search"
+            placeholderText: qsTrId("search")
             placeholderTextColor: Style.current.secondaryText
             selectByMouse: true
             font.pixelSize: 28
@@ -127,7 +128,8 @@ Popup {
 
         StyledText {
             id: inText
-            text: qsTr("In:")
+            //% "In:"
+            text: qsTrId("in-")
             anchors.left: parent.left
             anchors.leftMargin: 12
             anchors.verticalCenter: parent.verticalCenter
@@ -162,7 +164,8 @@ Popup {
 
         StyledText {
             id: sectionTitle
-            text: qsTr("Messages")
+            //% "Messages"
+            text: qsTrId("messages")
             font.pixelSize: 15
             color: Style.current.secondaryText
             anchors.top: sep2.bottom

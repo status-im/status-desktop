@@ -8,8 +8,10 @@ import ".."
 StatusChatImageValidator {
     id: root
 
-    errorMessage: qsTr("Format not supported.")
-    secondaryErrorMessage: qsTr("Upload %1 only").arg(Constants.acceptedDragNDropImageExtensions.map(ext => ext.replace(".", "").toUpperCase() + "s").join(", "))
+    //% "Format not supported."
+    errorMessage: qsTrId("format-not-supported-")
+    //% "Upload %1 only"
+    secondaryErrorMessage: qsTrId("upload--1-only").arg(Constants.acceptedDragNDropImageExtensions.map(ext => ext.replace(".", "").toUpperCase() + "s").join(", "))
 
     onImagesChanged: {
         let isValid = true

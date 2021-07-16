@@ -21,7 +21,8 @@ ModalPopup {
 
         StyledText {
             id: groupName
-            text: qsTr("Communities")
+            //% "Communities"
+            text: qsTrId("communities")
             anchors.top: parent.top
             anchors.left: parent.left
             font.bold: true
@@ -69,7 +70,8 @@ ModalPopup {
                     icon.source: "../../../img/import.svg"
                     icon.width: 16
                     icon.height: 16
-                    text: qsTr("Access existing community")
+                    //% "Access existing community"
+                    text: qsTrId("access-existing-community")
                     onTriggered: openPopup(importCommunitiesPopupComponent)
                 }
             }
@@ -194,8 +196,10 @@ ModalPopup {
                 StyledText {
                     id: communityMembers
                     text: nbMembers === 1 ?
-                              qsTr("1 member") :
-                              qsTr("%1 members").arg(nbMembers)
+                              //% "1 member"
+                              qsTrId("1-member") :
+                              //% "%1 members"
+                              qsTrId("-1-members").arg(nbMembers)
                     anchors.left: communityDesc.left
                     anchors.right: parent.right
                     anchors.top: communityDesc.bottom
@@ -223,7 +227,8 @@ ModalPopup {
 
     footer: StatusButton {
         id: createBtn
-        text: qsTr("Create a community")
+        //% "Create a community"
+        text: qsTrId("create-community")
         anchors.right: parent.right
         onClicked: {
             openPopup(createCommunitiesPopupComponent)

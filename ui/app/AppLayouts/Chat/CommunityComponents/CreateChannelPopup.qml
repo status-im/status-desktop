@@ -36,7 +36,8 @@ StatusModal {
     onOpened: {
         contentComponent.channelName.text = ""
         if (isEdit) {
-            header.title = qsTr("Edit #%1").arg(channel.name);
+            //% "Edit #%1"
+            header.title = qsTrId("edit---1").arg(channel.name);
             contentComponent.channelName.text = channel.name
         }
         contentComponent.channelName.forceActiveFocus(Qt.MouseFocusReason)
@@ -47,11 +48,13 @@ StatusModal {
     function isFormValid() {
         return Utils.validateAndReturnError(contentComponent.channelName.text,
                                             channelNameValidator,
-                                            qsTr("channel name"),
+                                            //% "channel name"
+                                            qsTrId("channel-name"),
                                             maxChannelNameLength) === ""
                && Utils.validateAndReturnError(contentComponent.channelDescription.text,
                                                channelDescValidator,
-                                               qsTr("channel decription"),
+                                               //% "channel decription"
+                                               qsTrId("channel-decription"),
                                                maxChannelDescLength) === ""
     }
 
@@ -87,7 +90,8 @@ StatusModal {
                     id: nameInput
                     width: parent.width - 32
                     anchors.centerIn: parent
-                    placeholderText: qsTr("Channel name")
+                    //% "Channel name"
+                    placeholderText: qsTrId("name-your-channel-placeholder")
                     maxLength: popup.maxChannelNameLength
 
                     onTextEdited: {
@@ -95,7 +99,8 @@ StatusModal {
 
                         validationError = Utils.validateAndReturnError(text,
                                                                         channelNameValidator,
-                                                                        qsTr("channel name"),
+                                                                        //% "channel name"
+                                                                        qsTrId("channel-name"),
                                                                         maxChannelNameLength)
                     }
                 }
@@ -120,8 +125,10 @@ StatusModal {
                     anchors.top: parent.top
                     anchors.topMargin: 10
 
-                    label: qsTr("Description")
-                    placeholderText: qsTr("Describe the channel")
+                    //% "Description"
+                    label: qsTrId("description")
+                    //% "Describe the channel"
+                    placeholderText: qsTrId("describe-channel")
 
                     customHeight: 88
 
@@ -136,7 +143,8 @@ StatusModal {
 
                         validationError = Utils.validateAndReturnError(text,
                                                                         channelDescValidator,
-                                                                        qsTr("channel description"),
+                                                                        //% "channel description"
+                                                                        qsTrId("channel-description"),
                                                                         maxChannelDescLength)
                     }
                 }
@@ -156,7 +164,8 @@ StatusModal {
             /*     width: parent.width */
             /*     height: 56 */
             /*     sensor.enabled: false */
-            /*     title: qsTr("Private channel") */
+            //% "Private channel"
+            /*     title: qsTrId("private-channel") */
             /*     components: [ */
             /*         StatusSwitch { */
             /*             id: privateSwitch */
@@ -172,7 +181,8 @@ StatusModal {
             /*     anchors.leftMargin: 16 */
             /*     color: Theme.palette.baseColor1 */
             /*     wrapMode: Text.WordWrap */
-            /*     text: qsTr("By making a channel private, only members with selected permission will be able to access it") */
+            //% "By making a channel private, only members with selected permission will be able to access it"
+            /*     text: qsTrId("by-making-a-channel-private--only-members-with-selected-permission-will-be-able-to-access-it") */
             /* } */
 
             /* StatusModalDivider { */
@@ -184,7 +194,8 @@ StatusModal {
             /*     width: parent.width */
             /*     height: 56 */
             /*     sensor.enabled: false */
-            /*     title: qsTr("Message limit") */
+            //% "Message limit"
+            /*     title: qsTrId("message-limit") */
             /*     components: [ */
             /*         StatusSwitch {} */
             /*     ] */
@@ -198,12 +209,14 @@ StatusModal {
             /*     anchors.leftMargin: 16 */
             /*     color: Theme.palette.baseColor1 */
             /*     wrapMode: Text.WordWrap */
-            /*     text: qsTr("Limit channel members to sending one message per chose time interval") */
+            //% "Limit channel members to sending one message per chose time interval"
+            /*     text: qsTrId("limit-channel-members-to-sending-one-message-per-chose-time-interval") */
             /* } */
 
             StatusListItem {
                 anchors.horizontalCenter: parent.horizontalCenter
-                title: qsTr("Pinned messages")
+                //% "Pinned messages"
+                title: qsTrId("pinned-messages")
                 icon.name: "pin"
                 label: chatsModel.messageView.pinnedMessagesList.count
                 components: [
@@ -227,8 +240,10 @@ StatusModal {
         StatusButton {
             enabled: isFormValid()
             text: isEdit ?
-                  qsTr("Save") :
-                  qsTr("Create")
+                  //% "Save"
+                  qsTrId("save") :
+                  //% "Create"
+                  qsTrId("create")
             onClicked: {
                 if (!isFormValid()) {
                     scrollView.scrollBackUp()

@@ -405,7 +405,8 @@ QtObject {
         }
         if (index > -1) {
             const pk = link.substring(index + 3)
-            result.title = qsTr("Start a 1 on 1 chat with %1").arg(utilsModel.generateAlias(pk))
+            //% "Start a 1 on 1 chat with %1"
+            result.title = qsTrId("start-a-1-on-1-chat-with--1").arg(utilsModel.generateAlias(pk))
             result.callback = function () {
                 chatsModel.channelView.joinPrivateChat(pk, "");
             }
@@ -427,7 +428,8 @@ QtObject {
                 return result
             }
 
-            result.title = qsTr("Join the %1 community").arg(communityName)
+            //% "Join the %1 community"
+            result.title = qsTrId("join-the--1-community").arg(communityName)
             result.communityId = communityId
             result.callback = function () {
                 const isUserMemberOfCommunity = chatsModel.communities.isUserMemberOfCommunity(communityId)
@@ -449,7 +451,8 @@ QtObject {
         index = link.lastIndexOf("/")
         if (index > -1) {
             const chatId = link.substring(index + 1)
-            result.title = qsTr("Join the %1 public channel").arg(chatId)
+            //% "Join the %1 public channel"
+            result.title = qsTrId("join-the--1-public-channel").arg(chatId)
             result.callback = function () {
                 chatsModel.channelView.joinPublicChat(chatId);
             }
@@ -467,7 +470,8 @@ QtObject {
         const result = getLinkTitleAndCb(link)
 
         return {
-            site: qsTr("Status app link"),
+            //% "Status app link"
+            site: qsTrId("status-app-link"),
             title: result.title,
             communityId: result.communityId,
             fetching: result.fetching,
@@ -609,19 +613,23 @@ QtObject {
         let errMsg = ""
 
         if(validation & Utils.Validate.NoEmpty && str === "") {
-            errMsg = qsTr("You need to enter a %1").arg(fieldName)
+            //% "You need to enter a %1"
+            errMsg = qsTrId("you-need-to-enter-a--1").arg(fieldName)
         }
 
         if(validation & Utils.Validate.TextLength && str.length > limit) {
-            errMsg = qsTr("The %1 cannot exceed %2 characters").arg(fieldName, limit)
+            //% "The %1 cannot exceed %2 characters"
+            errMsg = qsTrId("the--1-cannot-exceed--2-characters").arg(fieldName, limit)
         }
 
         if(validation & Utils.Validate.TextHexColor && !isHexColor(str)) {
-            errMsg = qsTr("Must be an hexadecimal color (eg: #4360DF)")
+            //% "Must be an hexadecimal color (eg: #4360DF)"
+            errMsg = qsTrId("must-be-an-hexadecimal-color--eg---4360df-")
         }
 
         if(validation & Utils.Validate.TextLowercaseLettersNumberAndDashes && !isValidChannelName(str)) {
-            errMsg = qsTr("Use only lowercase letters (a to z), numbers & dashes (-). Do not use chat keys.")
+            //% "Use only lowercase letters (a to z), numbers & dashes (-). Do not use chat keys."
+            errMsg = qsTrId("use-only-lowercase-letters--a-to-z---numbers---dashes------do-not-use-chat-keys-")
         }
 
         return errMsg

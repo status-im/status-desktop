@@ -111,7 +111,8 @@ Item {
         }
 
         StatusSettingsLineButton {
-            text: qsTr("Allow new contact requests")
+            //% "Allow new contact requests"
+            text: qsTrId("allow-new-contact-requests")
             isSwitch: true
             switchChecked: !profileModel.profile.messagesFromContactsOnly
             onClicked: function (checked) {

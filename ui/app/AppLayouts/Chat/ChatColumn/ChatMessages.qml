@@ -213,8 +213,10 @@ SplitView {
                     chatColumnLayout.currentNotificationChatId = null
                     chatColumnLayout.currentNotificationCommunityId = communityId
                     systemTray.showMessage("Status",
-                                        accepted ? qsTr("You have been accepted into the ‘%1’ community").arg(communityName) :
-                                                    qsTr("Your request to join the ‘%1’ community was declined").arg(communityName),
+                                        //% "You have been accepted into the ‘%1’ community"
+                                        accepted ? qsTrId("you-have-been-accepted-into-the---1--community").arg(communityName) :
+                                                    //% "Your request to join the ‘%1’ community was declined"
+                                                    qsTrId("your-request-to-join-the---1--community-was-declined").arg(communityName),
                                         SystemTrayIcon.NoIcon,
                                         Constants.notificationPopupTTL)
                 }
@@ -222,8 +224,10 @@ SplitView {
                 onMembershipRequestPushed: function (communityId, communityName, pubKey) {
                     chatColumnLayout.currentNotificationChatId = null
                     chatColumnLayout.currentNotificationCommunityId = communityId
-                    systemTray.showMessage(qsTr("New membership request"),
-                                        qsTr("%1 asks to join ‘%2’").arg(Utils.getDisplayName(pubKey)).arg(communityName),
+                    //% "New membership request"
+                    systemTray.showMessage(qsTrId("new-membership-request"),
+                                        //% "%1 asks to join ‘%2’"
+                                        qsTrId("-1-asks-to-join---2-").arg(Utils.getDisplayName(pubKey)).arg(communityName),
                                         SystemTrayIcon.NoIcon,
                                         Constants.notificationPopupTTL)
                 }

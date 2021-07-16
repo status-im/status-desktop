@@ -7,7 +7,8 @@ import "../imports"
 Item {
     //% "Insufficient balance"
     property string balanceErrorMessage: qsTrId("insufficient-balance")
-    property string greaterThanOrEqualTo0ErrorMessage: qsTr("Must be greater than or equal to 0")
+    //% "Must be greater than or equal to 0"
+    property string greaterThanOrEqualTo0ErrorMessage: qsTrId("must-be-greater-than-or-equal-to-0")
     //% "This needs to be a number"
     property string invalidInputErrorMessage: qsTrId("this-needs-to-be-a-number")
     //% "Please enter an amount"
@@ -134,7 +135,8 @@ Item {
                 return root.validationError
             }
             if (formattedInputValue === 0) {
-                return qsTr("The amount is 0. Proceed only if this is desired.")
+                //% "The amount is 0. Proceed only if this is desired."
+                return qsTrId("the-amount-is-0--proceed-only-if-this-is-desired-")
             }
             return ""
         }

@@ -50,7 +50,8 @@ ModalPopup {
         }
 
         if(!success){
-            sendingError.text = qsTr("Invalid transaction parameters")
+            //% "Invalid transaction parameters"
+            sendingError.text = qsTrId("invalid-transaction-parameters")
             sendingError.open()
             root.close()
         }

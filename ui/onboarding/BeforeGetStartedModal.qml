@@ -9,7 +9,8 @@ import "../shared/status"
 ModalPopup {
     id: popup
     displayCloseButton: false
-    title: qsTr("Before you get started...")
+    //% "Before you get started..."
+    title: qsTrId("before-you-get-started---")
     width: 430
     height: 300
 
@@ -20,7 +21,8 @@ ModalPopup {
         StatusCheckBox {
             id: acknowledge
             Layout.preferredWidth: parent.width
-            text: qsTr("I acknowledge that Status Desktop is in Beta and by using it, I take the full responsibility for all risks concerning my data and funds.")
+            //% "I acknowledge that Status Desktop is in Beta and by using it, I take the full responsibility for all risks concerning my data and funds."
+            text: qsTrId("i-acknowledge-that-status-desktop-is-in-beta-and-by-using-it--i-take-the-full-responsibility-for-all-risks-concerning-my-data-and-funds-")
         }
 
         StatusCheckBox {
@@ -32,11 +34,13 @@ ModalPopup {
                 leftPadding: termsOfUse.indicator.width + termsOfUse.spacing
 
                 StyledText {
-                    text: qsTr("I accept")
+                    //% "I accept"
+                    text: qsTrId("i-accept")
                 }
 
                 StyledText {
-                    text: qsTr("Terms of Use")
+                    //% "Terms of Use"
+                    text: qsTrId("terms-of-service")
                     color: Style.current.blue
 
                     MouseArea {
@@ -65,7 +69,8 @@ ModalPopup {
 
         StyledText {
             id: ppText
-            text: qsTr("Privacy Policy")
+            //% "Privacy Policy"
+            text: qsTrId("privacy-policy")
             color: Style.current.blue
             anchors.verticalCenter: parent.verticalCenter
             anchors.left: parent.left
@@ -92,7 +97,8 @@ ModalPopup {
             enabled: acknowledge.checked && termsOfUse.checked
             width: 146
             height: 44
-            text: qsTr("Get Started")
+            //% "Get Started"
+            text: qsTrId("get-started")
 
             onClicked: {
                 popup.close()

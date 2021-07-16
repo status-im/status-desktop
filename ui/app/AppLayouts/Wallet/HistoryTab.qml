@@ -206,7 +206,8 @@ Item {
 
                 StyledText {
                     id: timeIndicator
-                    text: qsTr("At ")
+                    //% "At "
+                    text: qsTrId("at-")
                     color: Style.current.secondaryText
                     font.pixelSize: Style.current.primaryTextFontSize
                     font.strikeout: false
@@ -226,7 +227,8 @@ Item {
         visible: walletModel.isNonArchivalNode
         height: visible ? implicitHeight : 0
         anchors.top: parent.top
-        text: qsTr("Status Desktop is connected to a non-archival node. Transaction history may be incomplete.")
+        //% "Status Desktop is connected to a non-archival node. Transaction history may be incomplete."
+        text: qsTrId("status-desktop-is-connected-to-a-non-archival-node--transaction-history-may-be-incomplete-")
         font.pixelSize: Style.current.primaryTextFontSize
         color: Style.current.danger
     }
@@ -236,7 +238,8 @@ Item {
         anchors.top: nonArchivalNodeError.bottom
         visible: transactionListRoot.count === 0
         height: visible ? implicitHeight : 0
-        text: qsTr("No transactions found")
+        //% "No transactions found"
+        text: qsTrId("no-transactions-found")
         font.pixelSize: Style.current.primaryTextFontSize
     }
 

@@ -24,8 +24,10 @@ Item {
             errorText.text = onboardingModel.validateMnemonic(mnemonicTextField.textField.text)
             const regex = new RegExp('word [a-z]+ not found in the dictionary', 'i');
             if (regex.test(errorText.text)) {
-                errorText.text = qsTr('Invalid seed phrase') + '. ' +
-                        qsTr("This seed phrase doesn't match our supported dictionary. Check for misspelled words.")
+                //% "Invalid seed phrase"
+                errorText.text = qsTrId("custom-seed-phrase") + '. ' +
+                        //% "This seed phrase doesn't match our supported dictionary. Check for misspelled words."
+                        qsTrId("custom-seed-phrase-text-1")
             }
         }
         return errorText.text === ""

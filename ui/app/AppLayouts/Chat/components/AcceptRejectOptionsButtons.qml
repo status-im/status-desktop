@@ -74,7 +74,8 @@ Row {
                 icon.width: menuButton.iconSize
                 icon.height: menuButton.iconSize
                 icon.color: Style.current.danger
-                text: qsTr("Decline and block")
+                //% "Decline and block"
+                text: qsTrId("decline-and-block")
                 onTriggered: root.blockClicked()
             }
         }

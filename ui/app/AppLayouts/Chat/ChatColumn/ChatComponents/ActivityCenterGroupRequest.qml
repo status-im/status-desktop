@@ -116,7 +116,8 @@ Item {
                     name = name.substring(0, 9) + "..." + name.substring(name.length - 10)
                 }
 
-                return qsTr("%1 invited you to join the group")
+                //% "%1 invited you to join the group"
+                return qsTrId("-1-invited-you-to-join-the-group")
                 .arg(`<style type="text/css">`+
                      `a {`+
                      `color: ${Style.current.primary};`+

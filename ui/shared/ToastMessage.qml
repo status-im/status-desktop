@@ -25,7 +25,8 @@ Popup {
     property url source: "../app/img/check-circle.svg"
     property color iconColor: Style.current.primary
     property bool iconRotates: false
-    property string title: "Transaction pending..."
+    //% "Transaction pending..."
+    property string title: qsTrId("ens-transaction-pending")
     property string link: "https://etherscan.io/"
     property string linkText: defaultLinkText
     property int dissapearInMs: 4000 /* setting this to -1 makes caller responsible to close it */
@@ -45,7 +46,8 @@ Popup {
         source = "../app/img/check-circle.svg"
         iconColor = Style.current.primary
         iconRotates = false
-        title = "Transaction pending..."
+        //% "Transaction pending..."
+        title = qsTrId("ens-transaction-pending")
         link = "https://etherscan.io/"
         linkText = defaultLinkText
         dissapearInMs = 4000

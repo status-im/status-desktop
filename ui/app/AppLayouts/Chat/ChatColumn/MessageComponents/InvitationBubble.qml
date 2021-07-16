@@ -45,8 +45,10 @@ Item {
             property var onConfirmed: (function(){})
             height: 310
             showCancelButton: true
-            confirmationText: qsTr("This feature is experimental and is meant for testing purposes by core contributors and the community. It's not meant for real use and makes no claims of security or integrity of funds or data. Use at your own risk.")
-            confirmButtonLabel: qsTr("I understand")
+            //% "This feature is experimental and is meant for testing purposes by core contributors and the community. It's not meant for real use and makes no claims of security or integrity of funds or data. Use at your own risk."
+            confirmationText: qsTrId("this-feature-is-experimental-and-is-meant-for-testing-purposes-by-core-contributors-and-the-community--it-s-not-meant-for-real-use-and-makes-no-claims-of-security-or-integrity-of-funds-or-data--use-at-your-own-risk-")
+            //% "I understand"
+            confirmButtonLabel: qsTrId("i-understand")
             onConfirmButtonClicked: {
                 appSettings.communitiesEnabled = true
                 onConfirmed()
@@ -87,7 +89,8 @@ Item {
                         when: invitedCommunity.ensOnly && !profileModel.profile.ensVerified
                         PropertyChanges {
                             target: joinBtn
-                            text: qsTr("Membership requires an ENS username")
+                            //% "Membership requires an ENS username"
+                            text: qsTrId("membership-requires-an-ens-username")
                             enabled: false
                         }
                     },
@@ -96,7 +99,8 @@ Item {
                         when: invitedCommunity.access === Constants.communityChatInvitationOnlyAccess
                         PropertyChanges {
                             target: joinBtn
-                            text: qsTr("You need to be invited")
+                            //% "You need to be invited"
+                            text: qsTrId("you-need-to-be-invited")
                             enabled: false
                         }
                     },
@@ -106,7 +110,8 @@ Item {
                               rectangleBubble.isPendingRequest
                         PropertyChanges {
                             target: joinBtn
-                            text: qsTr("Pending")
+                            //% "Pending"
+                            text: qsTrId("invite-chat-pending")
                             enabled: false
                         }
                     },
@@ -115,7 +120,8 @@ Item {
                         when: invitedCommunity.joined && invitedCommunity.isMember
                         PropertyChanges {
                             target: joinBtn
-                            text: qsTr("View")
+                            //% "View"
+                            text: qsTrId("view")
                         }
                     },
                     State {
@@ -125,7 +131,8 @@ Item {
                             invitedCommunity.canRequestAccess
                         PropertyChanges {
                             target: joinBtn
-                            text: qsTr("Request Access")
+                            //% "Request Access"
+                            text: qsTrId("request-access")
 
                         }
                     },
@@ -135,7 +142,8 @@ Item {
                               invitedCommunity.isMember
                         PropertyChanges {
                             target: joinBtn
-                            text: qsTr("Join")
+                            //% "Join"
+                            text: qsTrId("join")
                         }
                     }
                 ]
@@ -171,13 +179,16 @@ Item {
                     text: {
                         if (chatsModel.channelView.activeChannel.chatType === Constants.chatTypeOneToOne) {
                             return isCurrentUser ? 
-                        qsTr("You invited %1 to join a community").arg(chatsModel.userNameOrAlias(chatsModel.channelView.activeChannel.id))
+                        //% "You invited %1 to join a community"
+                        qsTrId("you-invited--1-to-join-a-community").arg(chatsModel.userNameOrAlias(chatsModel.channelView.activeChannel.id))
                                 //% "%1 invited you to join a community"
                                 : qsTrId("-1-invited-you-to-join-a-community").arg(displayUserName)
                         } else {
                             return isCurrentUser ? 
-                                qsTr("You shared a community")
-                                : qsTr("A community has been shared")
+                                //% "You shared a community"
+                                qsTrId("you-shared-a-community")
+                                //% "A community has been shared"
+                                : qsTrId("a-community-has-been-shared")
                         }
                     }
                     anchors.top: title.bottom
@@ -251,7 +262,8 @@ Item {
                     width: parent.width
                     height: 44
                     enabled: true
-                    text: qsTr("Unsupported state")
+                    //% "Unsupported state"
+                    text: qsTrId("unsupported-state")
                     onClicked: {
                         let onBtnClick = function(){
                             let error

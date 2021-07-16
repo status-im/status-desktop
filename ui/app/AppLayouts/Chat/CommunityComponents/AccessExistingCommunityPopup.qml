@@ -17,13 +17,15 @@ ModalPopup {
         keyValidationError = ""
 
         if (keyInput.text.trim() === "") {
-            keyValidationError = qsTr("You need to enter a key")
+            //% "You need to enter a key"
+            keyValidationError = qsTrId("you-need-to-enter-a-key")
         }
 
         return !keyValidationError
     }
 
-    title: qsTr("Access existing community")
+    //% "Access existing community"
+    title: qsTrId("access-existing-community")
 
     onClosed: {
         popup.destroy();
@@ -34,14 +36,16 @@ ModalPopup {
 
         StyledTextArea {
             id: keyInput
-            label: qsTr("Community private key")
+            //% "Community private key"
+            label: qsTrId("community-key")
             placeholderText: "0x0..."
             customHeight: 110
         }
 
         StyledText {
             id: infoText1
-            text: qsTr("Entering a community key will grant you the ownership of that community. Please be responsible with it and don’t share the key with people you don’t trust.")
+            //% "Entering a community key will grant you the ownership of that community. Please be responsible with it and don’t share the key with people you don’t trust."
+            text: qsTrId("entering-a-community-key-will-grant-you-the-ownership-of-that-community--please-be-responsible-with-it-and-don-t-share-the-key-with-people-you-don-t-trust-")
             anchors.top: keyInput.bottom
             wrapMode: Text.WordWrap
             anchors.topMargin: Style.current.bigPadding
@@ -53,7 +57,8 @@ ModalPopup {
 
     footer: StatusButton {
         id: btnBack
-        text: qsTr("Import")
+        //% "Import"
+        text: qsTrId("import")
         anchors.right: parent.right
         onClicked: {
             if (!validate()) {
@@ -77,7 +82,8 @@ ModalPopup {
 
         MessageDialog {
             id: creatingError
-            title: qsTr("Error importing the community")
+            //% "Error importing the community"
+            title: qsTrId("error-importing-the-community")
             icon: StandardIcon.Critical
             standardButtons: StandardButton.Ok
         }

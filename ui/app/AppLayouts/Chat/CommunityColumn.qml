@@ -31,8 +31,10 @@ Item {
 
         chatInfoButton.title: chatsModel.communities.activeCommunity.name
         chatInfoButton.subTitle: chatsModel.communities.activeCommunity.nbMembers === 1 ? 
-            qsTr("1 Member") : 
-            qsTr("%1 Members").arg(chatsModel.communities.activeCommunity.nbMembers)
+            //% "1 Member"
+            qsTrId("1-member") : 
+            //% "%1 Members"
+            qsTrId("-1-members").arg(chatsModel.communities.activeCommunity.nbMembers)
         chatInfoButton.image.source: chatsModel.communities.activeCommunity.thumbnailImage
         chatInfoButton.icon.color: chatsModel.communities.activeCommunity.communityColor
         chatInfoButton.onClicked: communityProfilePopup.open()
@@ -40,14 +42,16 @@ Item {
         popupMenu: StatusPopupMenu {
 
             StatusMenuItem {
-                text: qsTr("Create channel")
+                //% "Create channel"
+                text: qsTrId("create-channel")
                 icon.name: "channel"
                 enabled: chatsModel.communities.activeCommunity.admin
                 onTriggered: openPopup(createChannelPopup, {communityId: chatsModel.communities.activeCommunity.id})
             }
 
             StatusMenuItem {
-                text: qsTr("Create category")
+                //% "Create category"
+                text: qsTrId("create-category")
                 icon.name: "channel-category"
                 enabled: chatsModel.communities.activeCommunity.admin
                 onTriggered: openPopup(createCategoryPopup, {communityId: chatsModel.communities.activeCommunity.id})
@@ -56,7 +60,8 @@ Item {
             StatusMenuSeparator {}
 
             StatusMenuItem {
-                text: qsTr("Invite people")
+                //% "Invite people"
+                text: qsTrId("invite-people")
                 icon.name: "share-ios"
                 enabled: chatsModel.communities.activeCommunity.canManageUsers
                 onTriggered: openPopup(inviteFriendsToCommunityPopup, {communityId: chatsModel.communities.activeCommunity.id})
@@ -76,7 +81,8 @@ Item {
         active: chatsModel.communities.activeCommunity.admin && nbRequests > 0
         sourceComponent: Component {
             StatusContactRequestsIndicatorListItem {
-                title: qsTr("Membership requests")
+                //% "Membership requests"
+                title: qsTrId("membership-requests")
                 requestsCount: membershipRequests.nbRequests
                 sensor.onClicked: membershipRequestPopup.open()
             }
@@ -131,14 +137,16 @@ Item {
             popupMenu: StatusPopupMenu {
 
                 StatusMenuItem {
-                    text: qsTr("Create channel")
+                    //% "Create channel"
+                    text: qsTrId("create-channel")
                     icon.name: "channel"
                     enabled: chatsModel.communities.activeCommunity.admin
                     onTriggered: openPopup(createChannelPopup, {communityId: chatsModel.communities.activeCommunity.id})
                 }
 
                 StatusMenuItem {
-                    text: qsTr("Create category")
+                    //% "Create category"
+                    text: qsTrId("create-category")
                     icon.name: "channel-category"
                     enabled: chatsModel.communities.activeCommunity.admin
                     onTriggered: openPopup(createCategoryPopup, {communityId: chatsModel.communities.activeCommunity.id})
@@ -147,7 +155,8 @@ Item {
                 StatusMenuSeparator {}
 
                 StatusMenuItem {
-                    text: qsTr("Invite people")
+                    //% "Invite people"
+                    text: qsTrId("invite-people")
                     icon.name: "share-ios"
                     enabled: chatsModel.communities.activeCommunity.canManageUsers
                     onTriggered: openPopup(inviteFriendsToCommunityPopup, {communityId: chatsModel.communities.activeCommunity.id})
@@ -164,7 +173,8 @@ Item {
 
                 StatusMenuItem { 
                     enabled: chatsModel.communities.activeCommunity.admin
-                    text: qsTr("Edit Category")
+                    //% "Edit Category"
+                    text: qsTrId("edit-category")
                     icon.name: "edit"
                     onTriggered: {
                         openPopup(createCategoryPopup, {
@@ -182,13 +192,16 @@ Item {
 
                 StatusMenuItem {
                     enabled: chatsModel.communities.activeCommunity.admin
-                    text: qsTr("Delete Category")
+                    //% "Delete Category"
+                    text: qsTrId("delete-category")
                     icon.name: "delete"
                     type: StatusMenuItem.Type.Danger
                     onTriggered: {
                         openPopup(deleteCategoryConfirmationDialogComponent, {
-                            title: qsTr("Delete %1 category").arg(categoryItem.name),
-                            confirmationText: qsTr("Are you sure you want to delete %1 category? Channels inside the category won’t be deleted.")
+                            //% "Delete %1 category"
+                            title: qsTrId("delete--1-category").arg(categoryItem.name),
+                            //% "Are you sure you want to delete %1 category? Channels inside the category won’t be deleted."
+                            confirmationText: qsTrId("are-you-sure-you-want-to-delete--1-category--channels-inside-the-category-won-t-be-deleted-")
                                 .arg(categoryItem.name),
                             categoryId: categoryItem.id
                         })
@@ -309,7 +322,8 @@ Item {
 
     MessageDialog {
         id: deleteError
-        title: qsTr("Error deleting the category")
+        //% "Error deleting the category"
+        title: qsTrId("error-deleting-the-category")
         icon: StandardIcon.Critical
         standardButtons: StandardButton.Ok
     }

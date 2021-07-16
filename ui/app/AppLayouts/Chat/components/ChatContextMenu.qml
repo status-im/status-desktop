@@ -17,10 +17,12 @@ StatusPopupMenu {
             if (chatItem) {
                 switch (chatItem.chatType) {
                     case Constants.chatTypeOneToOne:
-                      return qsTr("View Profile")
+                      //% "View Profile"
+                      return qsTrId("view-profile")
                       break;
                     case Constants.chatTypePrivateGroupChat:
-                      return qsTr("View Group")
+                      //% "View Group"
+                      return qsTrId("view-group")
                       break;
                 }
             }
@@ -53,8 +55,10 @@ StatusPopupMenu {
 
     StatusMenuItem {
         text: chatItem && chatItem.muted ? 
-              qsTr("Unmute chat") : 
-              qsTr("Mute chat")
+              //% "Unmute chat"
+              qsTrId("unmute-chat") : 
+              //% "Mute chat"
+              qsTrId("mute-chat")
         icon.name: "notification"
         enabled: chatItem && chatItem.chatType !== Constants.chatTypePrivateGroupChat
         onTriggered: {
@@ -66,20 +70,23 @@ StatusPopupMenu {
     }
 
     StatusMenuItem {
-        text: qsTr("Mark as Read")
+        //% "Mark as Read"
+        text: qsTrId("mark-as-read")
         icon.name: "checkmark-circle"
         enabled: chatItem && chatItem.chatType !== Constants.chatTypePrivateGroupChat
         onTriggered: chatsModel.channelView.markChatItemAsRead(chatItem.id)
     }
 
     StatusMenuItem {
-        text: qsTr("Clear history")
+        //% "Clear history"
+        text: qsTrId("clear-history")
         icon.name: "close-circle"
         onTriggered: chatsModel.channelView.clearChatHistory(chatItem.id)
     }
 
     StatusMenuItem {
-        text: qsTr("Edit Channel")
+        //% "Edit Channel"
+        text: qsTrId("edit-channel")
         icon.name: "edit"
         enabled: chatsModel.communities.activeCommunity.active &&
             chatsModel.communities.activeCommunity.admin
@@ -96,8 +103,10 @@ StatusPopupMenu {
     StatusMenuItem {
         id: deleteOrLeaveMenuItem
         text: chatItem && chatItem.chatType === Constants.chatTypeOneToOne ? 
-            qsTr("Delete chat") : 
-            qsTr("Leave chat")
+            //% "Delete chat"
+            qsTrId("delete-chat") : 
+            //% "Leave chat"
+            qsTrId("leave-chat")
         icon.name: chatItem && chatItem.chatType === Constants.chatTypeOneToOne ? "delete" : "arrow-right"
         icon.width: chatItem && chatItem.chatType === Constants.chatTypeOneToOne ? 18 : 14
         iconRotation: chatItem && chatItem.chatType === Constants.chatTypeOneToOne ? 0 : 180
@@ -105,8 +114,10 @@ StatusPopupMenu {
         type: StatusMenuItem.Type.Danger
         onTriggered: {
             let label = chatItem && chatItem.chatType === Constants.chatTypeOneToOne ? 
-                qsTr("Delete chat") :
-                qsTr("Leave chat")
+                //% "Delete chat"
+                qsTrId("delete-chat") :
+                //% "Leave chat"
+                qsTrId("leave-chat")
             openPopup(deleteChatConfirmationDialogComponent, { 
                 title: label,
                 confirmButtonLabel: label,
@@ -122,7 +133,8 @@ StatusPopupMenu {
         ConfirmationDialog {
             property string chatId
             btnType: "warn"
-            confirmationText: qsTr("Are you sure you want to leave this chat?")
+            //% "Are you sure you want to leave this chat?"
+            confirmationText: qsTrId("are-you-sure-you-want-to-leave-this-chat-")
             onClosed: {
                 destroy()
             }

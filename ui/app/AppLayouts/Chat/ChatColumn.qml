@@ -241,15 +241,21 @@ StackLayout {
                     case Constants.chatTypeOneToOne:
                         return (profileModel.contacts.isAdded(topBar.chatId) ?
                             profileModel.contacts.contactRequestReceived(topBar.chatId) ?
-                                qsTr("Contact") :
-                                qsTr("Contact request pending") :
-                            qsTr("Not a contact"))
+                                //% "Contact"
+                                qsTrId("chat-is-a-contact") :
+                                //% "Contact request pending"
+                                qsTrId("contact-request-pending") :
+                            //% "Not a contact"
+                            qsTrId("chat-is-not-a-contact"))
                     case Constants.chatTypePublic:
-                        return qsTr("Public chat")
+                        //% "Public chat"
+                        return qsTrId("public-chat")
                     case Constants.chatTypePrivateGroupChat:
                         let cnt = chatsModel.channelView.activeChannel.members.rowCount();
-                        if(cnt > 1) return qsTr("%1 members").arg(cnt);
-                        return qsTr("1 member");
+                        //% "%1 members"
+                        if(cnt > 1) return qsTrId("-1-members").arg(cnt);
+                        //% "1 member"
+                        return qsTrId("1-member");
                     case Constants.chatTypeCommunity:
                     default:
                         return ""

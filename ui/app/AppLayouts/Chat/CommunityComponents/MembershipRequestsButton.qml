@@ -17,7 +17,8 @@ Rectangle {
     color: Style.current.secondaryBackground
 
     StyledText {
-        text: qsTr("Membership requests")
+        //% "Membership requests"
+        text: qsTrId("membership-requests")
         font.pixelSize: 15
         anchors.left: parent.left
         anchors.leftMargin: Style.current.padding
