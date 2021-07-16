@@ -228,10 +228,50 @@ Item {
             }
         }
     }
-}
 
-/*##^##
-Designer {
-    D{i:0;autoSize:true;formeditorColor:"#ffffff";height:480;width:640}
+    Connections {
+        target: chatsModel.communities
+        onImportingCommunityStateChanged: {
+            if (state !== Constants.communityImported &&
+                state !== Constants.communityImportingInProgress &&
+                state !== Constants.communityImportingError)
+            {
+                return
+            }
+
+            if (state === Constants.communityImported)
+            {
+                if (toastMessage.uuid !== communityImportingProcessId)
+                    return
+
+                toastMessage.close()
+
+                toastMessage.title = qsTr("Community imported")
+                toastMessage.source = ""
+                toastMessage.iconRotates = false
+                toastMessage.dissapearInMs = 4000
+            }
+            else if (state === Constants.communityImportingInProgress)
+            {
+                toastMessage.uuid = communityImportingProcessId
+                toastMessage.title = qsTr("Importing community is in progress")
+                toastMessage.source = "../../img/loading.svg"
+                toastMessage.iconRotates = true
+                toastMessage.dissapearInMs = -1
+            }
+            else if (state === Constants.communityImportingError)
+            {
+                if (toastMessage.uuid !== communityImportingProcessId)
+                    return
+
+                toastMessage.close()
+                return
+            }
+
+            toastMessage.displayCloseButton = false
+            toastMessage.displayLink = false
+            toastMessage.iconColor = Style.current.primary
+            toastMessage.open()
+        }
+    }
 }
-##^##*/

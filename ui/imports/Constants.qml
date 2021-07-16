@@ -3,6 +3,10 @@ pragma Singleton
 import QtQuick 2.13
 
 QtObject {
+    readonly property int communityImported: 0
+    readonly property int communityImportingInProgress: 1
+    readonly property int communityImportingError: 2
+
     readonly property int chatTypeOneToOne: 1
     readonly property int chatTypePublic: 2
     readonly property int chatTypePrivateGroupChat: 3

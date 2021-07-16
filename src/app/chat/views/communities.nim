@@ -12,6 +12,12 @@ import ../../../status/types
 logScope:
   topics = "communities-view"
 
+type
+  CommunityImportState {.pure.} = enum
+    Imported,
+    InProgress,
+    Error
+
 QtObject:
   type CommunitiesView* = ref object of QObject
     status: Status
@@ -20,6 +26,8 @@ QtObject:
     communityList*: CommunityList
     joinedCommunityList*: CommunityList
     myCommunityRequests*: seq[CommunityMembershipRequest]
+    importingCommunityState: CommunityImportState
+    communityImportingProcessId: string
 
   proc setup(self: CommunitiesView) =
     self.QObject.setup
@@ -33,12 +41,23 @@ QtObject:
 
   proc newCommunitiesView*(status: Status): CommunitiesView =
     new(result, delete)
+    result.importingCommunityState = CommunityImportState.Imported
     result.status = status
     result.activeCommunity = newCommunityItemView(status)
     result.observedCommunity = newCommunityItemView(status)
     result.communityList = newCommunityList(status)
     result.joinedCommunityList = newCommunityList(status)
     result.setup
+
+  proc importingCommunityStateChanged*(self: CommunitiesView, state: int, communityImportingProcessId: string) {.signal.}
+
+  proc setImportCommunityState(self: CommunitiesView, state: CommunityImportState, communityImportingProcessId: string) =
+    if (self.importingCommunityState == state):
+      return
+
+    self.communityImportingProcessId = communityImportingProcessId
+    self.importingCommunityState = state
+    self.importingCommunityStateChanged(state.int, communityImportingProcessId)
 
   proc calculateUnreadMessages*(self: CommunitiesView, community: var Community) =
     var unreadTotal = 0
@@ -230,6 +249,8 @@ QtObject:
     # @cammellos mentioned this would likely changed in Communities Phase 3, so
     # no need to polish now.
 
+    self.setImportCommunityState(CommunityImportState.Imported, self.communityImportingProcessId)
+
   proc isCommunityRequestPending*(self: CommunitiesView, communityId: string): bool {.slot.} =
     for communityRequest in self.myCommunityRequests:
       if (communityRequest.communityId == communityId):
@@ -369,10 +390,22 @@ QtObject:
       error "Error exporting the community", msg = e.msg
       result = fmt"Error exporting the community: {e.msg}"
 
-  proc importCommunity*(self: CommunitiesView, communityKey: string): string {.slot.} =
+  proc importCommunity*(self: CommunitiesView, communityKey: string, communityImportingProcessId: string): string {.slot.} =
     try:
-      discard self.status.chat.importCommunity(communityKey)
+      self.setImportCommunityState(CommunityImportState.InProgress, communityImportingProcessId)
+      let response = self.status.chat.importCommunity(communityKey)
+
+      let jsonNode = response.parseJSON()
+      if (jsonNode.contains("error")):
+        if (jsonNode["error"].contains("message")):
+          let msg = jsonNode["error"]["message"].getStr()
+          result = fmt"Error importing the community: {msg}"
+        else:
+          result = fmt"Error importing the community: unknown error"
+        self.setImportCommunityState(CommunityImportState.Error, communityImportingProcessId)
+
     except Exception as e:
+      self.setImportCommunityState(CommunityImportState.Error, communityImportingProcessId)
       error "Error importing the community", msg = e.msg
       result = fmt"Error importing the community: {e.msg}"
 
