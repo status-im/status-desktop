@@ -28,10 +28,6 @@ Column {
         contactFieldAndList.successMessage = qsTrId("invite-successfully-sent")
     }
 
-    StatusModalDivider {
-        bottomPadding: 8
-    }
-
     StatusDescriptionListItem {
         //% "Share community"
         title: qsTrId("share-community")

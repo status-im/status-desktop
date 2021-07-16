@@ -101,6 +101,7 @@ StatusModal {
 
     leftButtons: [
         StatusRoundButton {
+            id: backButton
             icon.name: "arrow-right"
             icon.height: 16
             icon.width: 20
@@ -115,8 +116,7 @@ StatusModal {
 
     rightButtons: [
         StatusButton {
-            //% "Invite"
-            text: qsTrId("community-invite-title")
+            text: qsTr("Invite")
             visible: popup.contentComponent.depth > 2
             height: !visible ? 0 : implicitHeight
             enabled: popup.contentComponent.currentItem.contactListSearch !== undefined && popup.contentComponent.currentItem.contactListSearch.pubKeys.length > 0
