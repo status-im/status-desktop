@@ -2,6 +2,7 @@
 #define   Publisher  "Status.im"
 #define   URL        "https://status.im"
 #define   ExeName    "Status.exe"
+#define   IcoName    "status.ico"
 
 [Setup]
 
@@ -14,13 +15,12 @@ AppPublisher={#Publisher}
 AppPublisherURL={#URL}
 AppSupportURL={#URL}
 AppUpdatesURL={#URL}
+DefaultDirName=C:\{#Name}
+UsePreviousAppDir=no
 
 WizardStyle=modern
 
-UninstallDisplayIcon={app}\Status.exe
-
-; Defalut install path
-DefaultDirName={commonpf}\{#Name}
+UninstallDisplayIcon={app}\{#ExeName}
 
 DefaultGroupName={#Name}
 
@@ -28,7 +28,7 @@ DefaultGroupName={#Name}
 OutputBaseFileName={#BaseName}
 
 ; Icon file
-SetupIconFile=resources\status.ico
+SetupIconFile=resources\{#IcoName}
 
 ; Compression
 Compression=lzma
@@ -57,8 +57,18 @@ Source: "resources\*"; DestDir: "{app}\resources"; Flags: ignoreversion recurses
 
 Source: "vendor\*"; DestDir: "{app}\vendor"; Flags: ignoreversion recursesubdirs createallsubdirs
 
+[Tasks]
+Name: "desktopicon"; Description: "Create a &desktop icon"; GroupDescription: "Additional icons:"; Components: main; Flags: unchecked
+Name: quicklaunchicon; Description: "Create a &Quick Launch icon"; GroupDescription: "Additional icons:"; Components: main; Flags: unchecked
+
+[Icons]
+Name: "{userdesktop}\{#Name}"; Filename: "{app}\{#ExeName}"; IconFilename: "{app}\resources\{#IcoName}"; Tasks: desktopicon
+
+Name: "{commonprograms}\{#Name}"; Filename: "{app}\{#ExeName}"; IconFilename: "{app}\resources\{#IcoName}"; Tasks: quicklaunchicon
+
 [UninstallDelete]
 Type: filesandordirs; Name: "{app}"
+Type: files; Name: "{userdesktop}\{#Name}"
 
 
 [Registry]
