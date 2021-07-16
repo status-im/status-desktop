@@ -5,13 +5,14 @@ import "../../../../../shared/status"
 import "../../../../../imports"
 
 Rectangle {
+    id: buttonsContainer
     property bool parentIsHovered: false
     property bool showEdit: true
     signal hoverChanged(bool hovered)
     property int containerMargin: 2
     property int contentType: 2
+    property var messageContextMenu
 
-    id: buttonsContainer
     visible: !activityCenterMessage &&
              (buttonsContainer.parentIsHovered || isMessageActive)
              && contentType !== Constants.transactionType
@@ -65,10 +66,10 @@ Rectangle {
                 setMessageActive(messageId, true)
                 clickMessage(false, false, false, null, true)
                 if (!forceHoverHandler) {
-                    messageContextMenu.x = buttonsContainer.x + buttonsContainer.width - messageContextMenu.width
+                    buttonsContainer.messageContextMenu.x = buttonsContainer.x + buttonsContainer.width - buttonsContainer.messageContextMenu.width
 
                     // The Math.max is to make sure that the menu is rendered
-                    messageContextMenu.y -= Math.max(messageContextMenu.emojiContainer.height, 56) + Style.current.padding
+                    buttonsContainer.messageContextMenu.y -= Math.max(buttonsContainer.messageContextMenu.emojiContainer.height, 56) + Style.current.padding
                 }
             }
             onHoveredChanged: {

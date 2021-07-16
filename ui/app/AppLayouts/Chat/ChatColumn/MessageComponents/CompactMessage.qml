@@ -5,6 +5,7 @@ import "../../../../../shared/status"
 import "../../../../../imports"
 
 Item {
+    id: root
     property var clickMessage: function () {}
     property int chatHorizontalPadding: Style.current.halfPadding
     property int chatVerticalPadding: 7
@@ -16,8 +17,8 @@ Item {
     property bool isMessageActive: typeof activeMessage !== "undefined" && activeMessage === messageId
     property bool headerRepeatCondition: (authorCurrentMsg !== authorPrevMsg || shouldRepeatHeader || dateGroupLbl.visible || chatReply.active)
     property bool showEdit: true
-
-    id: root
+    property var messageContextMenu
+    signal addEmoji(bool isProfileClick, bool isSticker, bool isImage , var image, bool emojiOnly, bool hideEmojiPicker)
 
     width: parent.width
     height: messageContainer.height + messageContainer.anchors.topMargin
@@ -42,6 +43,7 @@ Item {
         // This is not exactly like the design because the hover becomes messed up with the buttons on top of another Message
         anchors.topMargin: -Style.current.halfPadding
         showEdit: root.showEdit
+        messageContextMenu: root.messageContextMenu
     }
 
     Loader {
@@ -410,6 +412,11 @@ Item {
         sourceComponent: Component {
             EmojiReactions {
                 onHoverChanged: setHovered(messageId, hovered)
+                onAddEmojiClicked: {
+                    root.addEmoji(false, false, false, null, true, false);
+                    messageContextMenu.x = (messageContainer.chatText.textField.leftPadding + 4);
+                    messageContextMenu.y -= (56 + Style.current.padding);
+                }
             }
         }
     }

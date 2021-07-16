@@ -7,6 +7,17 @@ import "./MessageComponents"
 import "../components"
 
 Item {
+    id: root
+    width: parent.width
+    anchors.right: !isCurrentUser ? undefined : parent.right
+    height: {
+        switch (contentType) {
+            case Constants.chatIdentifier:
+                return (childrenRect.height + 50);
+            default: return childrenRect.height;
+        }
+    }
+    z: (typeof chatLogView === "undefined") ? 1 : (chatLogView.count - index)
     property string fromAuthor: "0x0011223344556677889910"
     property string userName: "Jotaro Kujo"
     property string alias: ""
@@ -42,15 +53,7 @@ Item {
     property string replaces: ""
     property bool isEdited: false
     property bool showEdit: true
-
-    z: {
-        if (typeof chatLogView === "undefined") {
-            return 1
-        }
-
-        return chatLogView.count - index
-    }
-
+    property var messageContextMenu
     property string displayUserName: {
         if (isCurrentUser) {
             //% "You"
@@ -183,17 +186,6 @@ Item {
         }
     }
 
-    id: root
-    width: parent.width
-    anchors.right: !isCurrentUser ? undefined : parent.right
-    height: {
-        switch(contentType) {
-            case Constants.chatIdentifier:
-                return childrenRect.height + 50
-            default: return childrenRect.height
-        }
-    }
-
     property var clickMessage: function(isProfileClick, isSticker = false, isImage = false, image = null, emojiOnly = false, hideEmojiPicker = false) {
         if (placeholderMessage || activityCenterMessage) {
             return
@@ -210,17 +202,17 @@ Item {
 
         // Get contact nickname
         let nickname = appMain.getUserNickname(fromAuthor)
-        messageContextMenu.messageId = root.messageId
-        messageContextMenu.linkUrls = root.linkUrls
-        messageContextMenu.isProfile = !!isProfileClick
-        messageContextMenu.isSticker = isSticker
-        messageContextMenu.emojiOnly = emojiOnly
-        messageContextMenu.hideEmojiPicker = hideEmojiPicker
-        messageContextMenu.pinnedMessage = pinnedMessage
-        messageContextMenu.show(userName, fromAuthor, root.profileImageSource || identicon, plainText, nickname, emojiReactionsModel)
+        messageContextMenu.messageId = root.messageId;
+        messageContextMenu.linkUrls = root.linkUrls;
+        messageContextMenu.isProfile = !!isProfileClick;
+        messageContextMenu.isSticker = isSticker;
+        messageContextMenu.emojiOnly = emojiOnly;
+        messageContextMenu.hideEmojiPicker = hideEmojiPicker;
+        messageContextMenu.pinnedMessage = pinnedMessage;
+        messageContextMenu.show(userName, fromAuthor, root.profileImageSource || identicon, plainText, nickname, emojiReactionsModel);
         // Position the center of the menu where the mouse is
         if (messageContextMenu.x + messageContextMenu.width + Style.current.padding < root.width) {
-            messageContextMenu.x = messageContextMenu.x - messageContextMenu.width / 2
+            messageContextMenu.x = messageContextMenu.x - messageContextMenu.width / 2;
         }
     }
 
@@ -446,6 +438,10 @@ Item {
             contentType: root.contentType
             showEdit: root.showEdit
             container: root
+            messageContextMenu: root.messageContextMenu
+            onAddEmoji: {
+                root.clickMessage(isProfileClick, isSticker, isImage , image, emojiOnly, hideEmojiPicker);
+            }
         }
     }
 }

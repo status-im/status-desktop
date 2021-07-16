@@ -8,6 +8,9 @@ import "../../../../shared/status"
 import "./"
 
 PopupMenu {
+    id: messageContextMenu
+    width: messageContextMenu.isProfile ? profileHeader.width : emojiContainer.width
+
     property string messageId
     property bool isProfile: false
     property bool isSticker: false
@@ -18,10 +21,6 @@ PopupMenu {
     property bool isCurrentUser: false
     property string linkUrls: ""
     property alias emojiContainer: emojiContainer
-
-    id: messageContextMenu
-    width: messageContextMenu.isProfile ? profileHeader.width : emojiContainer.width
-
     property var identicon: ""
     property var userName: ""
     property string nickname: ""
@@ -29,14 +28,13 @@ PopupMenu {
     property var text: ""
     property var emojiReactionsReactedByUser: []
     property var onClickEdit: function(){}
+    property var reactionModel
 
-    subMenuIcons: [
-        {
+    subMenuIcons: [{
             source: Qt.resolvedUrl("../../../../shared/img/copy-to-clipboard-icon"),
             width: 16,
             height: 16
-        }
-    ]
+        }]
 
     function show(userNameParam, fromAuthorParam, identiconParam, textParam, nicknameParam, emojiReactionsModel) {
         userName = userNameParam || ""
@@ -50,7 +48,7 @@ PopupMenu {
                 newEmojiReactions[emojiReaction.emojiId] = emojiReaction.currentUserReacted
             })
         }
-        emojiReactionsReactedByUser = newEmojiReactions
+        emojiReactionsReactedByUser = newEmojiReactions;
 
         const numLinkUrls = messageContextMenu.linkUrls.split(" ").length
         copyLinkMenu.enabled = numLinkUrls > 1
@@ -60,10 +58,9 @@ PopupMenu {
 
     Item {
         id: emojiContainer
-        visible: !hideEmojiPicker && (messageContextMenu.emojiOnly || !messageContextMenu.isProfile)
         width: emojiRow.width
         height: visible ? emojiRow.height : 0
-
+        visible: !hideEmojiPicker && (messageContextMenu.emojiOnly || !messageContextMenu.isProfile)
         Row {
             id: emojiRow
             spacing: Style.current.smallPadding
@@ -85,15 +82,16 @@ PopupMenu {
         }
     }
 
-    Rectangle {
-        property bool hovered: false
-
+    Item {
         id: profileHeader
         visible: messageContextMenu.isProfile
         width: 200
         height: visible ? profileImage.height + username.height + Style.current.padding : 0
-        color: hovered ? Style.current.backgroundHover : Style.current.transparent
-
+        Rectangle {
+            anchors.fill: parent
+            visible: mouseArea.containsMouse
+            color: Style.current.backgroundHover
+        }
         StatusImageIdenticon {
             id: profileImage
             source: identicon
@@ -120,15 +118,10 @@ PopupMenu {
         }
 
         MouseArea {
-            cursorShape: Qt.PointingHandCursor
+            id: mouseArea
             anchors.fill: parent
             hoverEnabled: true
-            onEntered: {
-                profileHeader.hovered = true
-            }
-            onExited: {
-                profileHeader.hovered = false
-            }
+            cursorShape: Qt.PointingHandCursor
             onClicked: {
                 openProfilePopup(userName, fromAuthor, identicon);
                 messageContextMenu.close()
