@@ -33,13 +33,15 @@ SplitView {
     ScrollView {
         id: root
         contentItem: chatLogView
-        
+
         SplitView.fillWidth: true
         SplitView.minimumWidth: 200
 
         height: parent.height
         ScrollBar.vertical.policy: chatLogView.contentHeight > chatLogView.height ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+
+        property int countOnStartUp: 0
 
         ListView {
             id: chatLogView
@@ -261,6 +263,14 @@ SplitView {
             icon: StandardIcon.Critical
         }
 
+        Timer {
+            id: modelLoadingDelayTimer
+            interval: 1000
+            onTriggered: {
+                root.countOnStartUp = messageListDelegate.count;
+            }
+        }
+
         DelegateModelGeneralized {
             id: messageListDelegate
             lessThan: [
@@ -301,7 +311,12 @@ SplitView {
                 pinnedBy: model.pinnedBy
                 gapFrom: model.gapFrom
                 gapTo: model.gapTo
-
+                Component.onCompleted: {
+                    if ((root.countOnStartUp > 0) && (root.countOnStartUp - 1) < index) {
+                        //new message, increment z order
+                        z = index;
+                    }
+                }
                 // This is used in order to have access to the previous message and determine the timestamp
                 // we can't rely on the index because the sequence of messages is not ordered on the nim side
                 prevMessageIndex: {
@@ -320,6 +335,9 @@ SplitView {
                 }
                 scrollToBottom: chatLogView.scrollToBottom
                 timeout: model.timeout
+            }
+            Component.onCompleted: {
+                modelLoadingDelayTimer.start();
             }
         }
     }
@@ -343,9 +361,6 @@ SplitView {
         id: userListComponent
         UserList { }
     }
-    
-
-    
 }
 
 /*##^##
