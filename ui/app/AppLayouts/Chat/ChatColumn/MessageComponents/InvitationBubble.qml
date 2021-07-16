@@ -207,7 +207,7 @@ Item {
                     anchors.right: parent.right
                     anchors.rightMargin: root.innerMargin
                     font.weight: Font.Bold
-                    wrapMode: Text.WordWrap
+                    wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                     font.pixelSize: 17
                 }
 
@@ -220,7 +220,7 @@ Item {
                     anchors.leftMargin: root.innerMargin
                     anchors.right: parent.right
                     anchors.rightMargin: root.innerMargin
-                    wrapMode: Text.WordWrap
+                    wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                     font.pixelSize: 15
                 }
 
