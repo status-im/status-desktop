@@ -27,10 +27,6 @@ Column {
         contactFieldAndList.successMessage = qsTr("Invite successfully sent")
     }
 
-    StatusModalDivider {
-        bottomPadding: 8
-    }
-
     StatusDescriptionListItem {
         title: qsTr("Share community")
         subTitle: `${Constants.communityLinkPrefix}${communityId.substring(0, 4)}...${communityId.substring(communityId.length -2)}`

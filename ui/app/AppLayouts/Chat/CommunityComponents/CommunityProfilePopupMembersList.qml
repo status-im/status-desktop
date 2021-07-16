@@ -27,8 +27,6 @@ Item {
 
         id: memberSearchAndInviteButton
 
-        StatusModalDivider {}
-
         Item {
             width: parent.width
             height: 76
@@ -84,6 +82,7 @@ Item {
         anchors.top: memberSearchAndInviteButton.bottom
 
         contentHeight: Math.max(300, memberListColumn.height)
+        bottomPadding: 8
         clip: true
 
         Item {
@@ -196,10 +195,5 @@ Item {
                 }
             }
         }
-    }
-
-    StatusModalDivider { 
-      anchors.top: scrollView.bottom
-      topPadding: 8 
     }
 }
