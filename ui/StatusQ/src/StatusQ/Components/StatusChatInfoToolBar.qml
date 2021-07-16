@@ -11,6 +11,7 @@ Item {
     implicitHeight: 56
 
     property alias chatInfoButton: statusChatInfoButton
+    property alias menuButton: statusMenuButton
     property Component popupMenu
 
     signal chatInfoButtonClicked()
@@ -32,7 +33,7 @@ Item {
     }
 
     StatusRoundButton {
-        id: menuButton
+        id: statusMenuButton
         anchors.right: parent.right
         anchors.rightMargin: 8
         anchors.verticalCenter: parent.verticalCenter
@@ -49,14 +50,14 @@ Item {
             State {
                 name: "default"
                 PropertyChanges {
-                    target: menuButton
+                    target: statusMenuButton
                     icon.rotation: 0
                 }
             },
             State {
                 name: "pressed"
                 PropertyChanges {
-                    target: menuButton
+                    target: statusMenuButton
                     icon.rotation: 45
                     highlighted: true
                 }
@@ -87,8 +88,8 @@ Item {
 
         onClicked: {
             statusChatInfoToolBar.addButtonClicked(mouse)
-            menuButton.state = "pressed"
-            popupMenuSlot.item.popup(menuButton.width-popupMenuSlot.item.width, menuButton.height + 4)
+            statusMenuButton.state = "pressed"
+            popupMenuSlot.item.popup(statusMenuButton.width-popupMenuSlot.item.width, statusMenuButton.height + 4)
         }
 
         Loader {
@@ -96,7 +97,7 @@ Item {
             active: !!statusChatInfoToolBar.popupMenu
             onLoaded: {
                 popupMenuSlot.item.closeHandler = function () {
-                    menuButton.state = "default"
+                    statusMenuButton.state = "default"
                 }
             }
         }
