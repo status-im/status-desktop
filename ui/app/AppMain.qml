@@ -174,9 +174,8 @@ StatusAppLayout {
                 }
 
                 StatusMenuItem {
-                    enabled: false//chatsModel.communities.observedCommunity.admin
-                    //% "Edit Community"
-                    text: qsTrId("edit-community")
+                    enabled: chatsModel.communities.observedCommunity.admin
+                    text: qsTr("Edit Community")
                     icon.name: "edit"
                     onTriggered: openPopup(editCommunityPopup, {community: chatsModel.communities.observedCommunity})
                 }

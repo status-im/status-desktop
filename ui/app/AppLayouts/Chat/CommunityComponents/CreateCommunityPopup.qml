@@ -4,9 +4,14 @@ import QtGraphicalEffects 1.13
 import QtQuick.Dialogs 1.3
 import "../../../../imports"
 import "../../../../shared"
-import "../../../../shared/status"
 
-ModalPopup {
+import StatusQ.Core 0.1
+import StatusQ.Core.Theme 0.1
+import StatusQ.Components 0.1
+import StatusQ.Controls 0.1
+import StatusQ.Popups 0.1
+
+StatusModal {
     property QtObject community: chatsModel.communities.activeCommunity
 
     property bool isEdit: false
@@ -23,320 +28,313 @@ ModalPopup {
                                                    | Utils.Validate.TextHexColor
 
     id: popup
-    height: 600
 
     onOpened: {
         if (isEdit) {
-            nameInput.text = community.name;
-            descriptionTextArea.text = community.description;
-            colorPicker.defaultColor = community.communityColor;
+            contentComponent.communityName.text = community.name;
+            contentComponent.communityDescription.text = community.description;
+            contentComponent.communityColor.color = community.communityColor;
+            contentComponent.communityColor.colorSelected = true
             if (community.largeImage) {
-                addImageButton.selectedImage = community.largeImage
+                contentComponent.communityImage.selectedImage = community.largeImage
             }
             membershipRequirementSettingPopup.checkedMembership = community.access
         }
-        nameInput.forceActiveFocus(Qt.MouseFocusReason)
+        contentComponent.communityName.forceActiveFocus(Qt.MouseFocusReason)
     }
     onClosed: destroy()
 
     function isFormValid() {
-        return Utils.validateAndReturnError(nameInput.text,
+        return Utils.validateAndReturnError(contentComponent.communityName.text,
                                             communityNameValidator,
                                             //% "community name"
                                             qsTrId("community-name"),
                                             maxCommunityNameLength) === ""
-               && Utils.validateAndReturnError(descriptionTextArea.text,
+               && Utils.validateAndReturnError(contentComponent.communityDescription.text,
                                                communityDescValidator,
                                                //% "community decription"
                                                qsTrId("community-decription"),
                                                maxCommunityDescLength) === ""
-               && Utils.validateAndReturnError(colorPicker.text,
+               && Utils.validateAndReturnError(contentComponent.communityColor.color.toString().toUpperCase(),
                                                communityColorValidator) === ""
     }
 
-    title: isEdit ?
+    header.title: isEdit ?
             //% "Edit community"
             qsTrId("edit-community") :
             //% "New community"
             qsTrId("new-community")
 
-    ScrollView {
-        property ScrollBar vScrollBar: ScrollBar.vertical
+    content: ScrollView {
 
         id: scrollView
-        anchors.fill: parent
-        rightPadding: Style.current.padding
-        anchors.rightMargin: -Style.current.padding
-        anchors.topMargin: -Style.current.padding
-        leftPadding: Style.current.padding
-        topPadding: Style.current.padding
-        anchors.leftMargin: -Style.current.padding
+
+        property ScrollBar vScrollBar: ScrollBar.vertical
+
+        property alias communityName: nameInput
+        property alias communityDescription: descriptionTextArea
+        property alias communityColor: colorDialog
+        property alias communityImage: addImageButton
+        property alias imageCropperModal: imageCropperModal
+
         contentHeight: content.height
+        bottomPadding: 8
+        height: Math.min(content.height, 432)
+        width: popup.width
+        
         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-        ScrollBar.vertical.policy: ScrollBar.AlwaysOn
+
         clip: true
 
         function scrollBackUp() {
             vScrollBar.setPosition(0)
         }
 
-        Item {
+        Column {
             id: content
-            height: childrenRect.height + 100 // Bottom padding
-            width: parent.width
+            width: popup.width
 
-            Input {
-                id: nameInput
-                //% "Name your community"
-                label: qsTrId("name-your-community")
-                //% "A catchy name"
-                placeholderText: qsTrId("name-your-community-placeholder")
-                maxLength: maxCommunityNameLength
+            Item {
+                width: parent.width
+                height: 76
+                Input {
+                    id: nameInput
 
-                onTextEdited: {
-                    validationError = Utils.validateAndReturnError(text,
-                                                                   communityNameValidator,
-                                                                   //% "community name"
-                                                                   qsTrId("community-name"),
-                                                                   maxCommunityNameLength)
-                }
-            }
+                    width: parent.width - 32
+                    anchors.centerIn: parent
 
-            StyledTextArea {
-                id: descriptionTextArea
-                //% "Give it a short description"
-                label: qsTrId("give-a-short-description-community")
-                //% "What your community is about"
-                placeholderText: qsTrId("what-your-community-is-about")
+                    //% "A catchy name"
+                    placeholderText: qsTrId("name-your-community-placeholder")
+                    maxLength: maxCommunityNameLength
 
-                anchors.top: nameInput.bottom
-                anchors.topMargin: Style.current.bigPadding
-                customHeight: 88
-                textField.wrapMode: TextEdit.Wrap
-
-                onTextChanged: {
-                    if(text.length > maxCommunityDescLength)
-                    {
-                        textField.remove(maxCommunityDescLength, text.length)
-                        return
+                    onTextEdited: {
+                        validationError = Utils.validateAndReturnError(text,
+                                                                      communityNameValidator,
+                                                                      qsTr("community name"),
+                                                                      maxCommunityNameLength)
                     }
-
-                    validationError = Utils.validateAndReturnError(text,
-                                                                   communityDescValidator,
-                                                                   //% "community decription"
-                                                                   qsTrId("community-decription"),
-                                                                   maxCommunityDescLength)
                 }
             }
 
-            StyledText {
-                id: charLimit
-                text: `${descriptionTextArea.text.length}/${maxCommunityDescLength}`
-                anchors.top: descriptionTextArea.bottom
-                anchors.topMargin: !descriptionTextArea.validationError ? 5 : - Style.current.smallPadding
-                anchors.right: descriptionTextArea.right
-                font.pixelSize: 12
-                color: !descriptionTextArea.validationError ? Style.current.textColor : Style.current.danger
+            Item {
+                height: descriptionTextArea.height + 26
+
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.leftMargin: 16
+                anchors.rightMargin: 16
+
+                StyledTextArea {
+                    id: descriptionTextArea
+                    label: qsTr("Description")
+                    //% "What your community is about"
+                    placeholderText: qsTrId("what-your-community-is-about")
+
+                    customHeight: 88
+                    textField.wrapMode: TextEdit.Wrap
+
+                    onTextChanged: {
+                        if(text.length > maxCommunityDescLength)
+                        {
+                            textField.remove(maxCommunityDescLength, text.length)
+                            return
+                        }
+
+                        validationError = Utils.validateAndReturnError(text,
+                                                                      communityDescValidator,
+                                                                      qsTr("community decription"),
+                                                                      maxCommunityDescLength)
+                    }
+                }
+
+                StyledText {
+                    id: charLimit
+                    text: `${descriptionTextArea.text.length}/${maxCommunityDescLength}`
+                    anchors.right: descriptionTextArea.right
+                    font.pixelSize: 12
+                    color: !descriptionTextArea.validationError ? Style.current.textColor : Style.current.danger
+                }
             }
 
-            StyledText {
+            StatusBaseText {
                 id: thumbnailText
                 //% "Thumbnail image"
                 text: qsTrId("thumbnail-image")
-                anchors.top: charLimit.bottom
-                anchors.topMargin: Style.current.smallPadding
                 font.pixelSize: 13
-                color: Style.current.textColor
-                font.weight: Font.Medium
+                color: Theme.palette.directColor1
+                anchors.left: parent.left
+                anchors.leftMargin: 16
             }
 
-
-            Rectangle {
-                id: addImageButton
-                color: imagePreview.visible ? "transparent" : Style.current.inputBackground
-                width: 128
-                height: width
-                radius: width / 2
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.top: thumbnailText.bottom
-                anchors.topMargin: Style.current.padding
-                property string selectedImage: ""
-
-
-                FileDialog {
-                    id: imageDialog
-                    //% "Please choose an image"
-                    title: qsTrId("please-choose-an-image")
-                    folder: shortcuts.pictures
-                    nameFilters: [
-                        //% "Image files (*.jpg *.jpeg *.png)"
-                        qsTrId("image-files----jpg---jpeg---png-")
-                    ]
-                    onAccepted: {
-                        addImageButton.selectedImage = imageDialog.fileUrls[0]
-                        imageCropperModal.open()
-                    }
-                }
+            Item {
+                width: parent.width
+                height: addImageButton.height + 32
 
                 Rectangle {
-                    id: imagePreviewCropper
-                    clip: true
-                    width: parent.width
-                    height: parent.height
-                    radius: parent.width / 2
-                    visible: !!addImageButton.selectedImage
-
-                    Image {
-                        id: imagePreview
-                        visible: !!addImageButton.selectedImage
-                        source: addImageButton.selectedImage
-                        fillMode: Image.PreserveAspectFit
-                        width: parent.width
-                        height: parent.height
-                    }
-                    layer.enabled: true
-                    layer.effect: OpacityMask {
-                        maskSource: Rectangle {
-                            anchors.centerIn: parent
-                            width: imageCropperModal.width
-                            height: imageCropperModal.height
-                            radius: width / 2
-                        }
-                    }
-                }
-
-                Item {
-                    id: addImageCenter
-                    visible: !imagePreview.visible
-                    width: uploadText.width
-                    height: childrenRect.height
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.verticalCenter: parent.verticalCenter
-
-                    SVGImage {
-                        id: imageImg
-                        source: "../../../img/images_icon.svg"
-                        width: 20
-                        height: 18
-                        anchors.horizontalCenter: parent.horizontalCenter
-                    }
-
-                    StyledText {
-                        id: uploadText
-                        //% "Upload"
-                        text: qsTrId("upload")
-                        anchors.top: imageImg.bottom
-                        anchors.topMargin: 5
-                        font.pixelSize: 15
-                        color: Style.current.secondaryText
-                    }
-                }
-
-                Rectangle {
-                    color: Style.current.primary
-                    width: 40
+                    id: addImageButton
+                    color: imagePreview.visible ? "transparent" : Style.current.inputBackground
+                    width: 128
                     height: width
                     radius: width / 2
-                    anchors.top: parent.top
-                    anchors.right: parent.right
-                    anchors.rightMargin: Style.current.halfPadding
+                    anchors.centerIn: parent
+                    property string selectedImage: ""
 
-                    SVGImage {
-                        source: "../../../img/plusSign.svg"
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: 13
-                        height: 13
+                    FileDialog {
+                        id: imageDialog
+                        //% "Please choose an image"
+                        title: qsTrId("please-choose-an-image")
+                        folder: shortcuts.pictures
+                        nameFilters: [
+                            //% "Image files (*.jpg *.jpeg *.png)"
+                            qsTrId("image-files----jpg---jpeg---png-")
+                        ]
+                        onAccepted: {
+                            addImageButton.selectedImage = imageDialog.fileUrls[0]
+                            imageCropperModal.open()
+                        }
+                    }
+
+                    Rectangle {
+                        id: imagePreviewCropper
+                        clip: true
+                        width: parent.width
+                        height: parent.height
+                        radius: parent.width / 2
+                        visible: !!addImageButton.selectedImage
+
+                        Image {
+                            id: imagePreview
+                            visible: !!addImageButton.selectedImage
+                            source: addImageButton.selectedImage
+                            fillMode: Image.PreserveAspectFit
+                            width: parent.width
+                            height: parent.height
+                        }
+                        layer.enabled: true
+                        layer.effect: OpacityMask {
+                            maskSource: Rectangle {
+                                anchors.centerIn: parent
+                                width: imageCropperModal.width
+                                height: imageCropperModal.height
+                                radius: width / 2
+                            }
+                        }
+                    }
+
+                    Item {
+                        id: addImageCenter
+                        visible: !imagePreview.visible
+                        width: uploadText.width
+                        height: childrenRect.height
+                        anchors.centerIn: parent
+
+                        SVGImage {
+                            id: imageImg
+                            source: "../../../img/images_icon.svg"
+                            width: 20
+                            height: 18
+                            anchors.horizontalCenter: parent.horizontalCenter
+                        }
+
+                        StyledText {
+                            id: uploadText
+                            //% "Upload"
+                            text: qsTrId("upload")
+                            anchors.top: imageImg.bottom
+                            anchors.topMargin: 5
+                            font.pixelSize: 15
+                            color: Style.current.secondaryText
+                        }
+                    }
+
+                    StatusRoundButton {
+                        type: StatusRoundButton.Type.Secondary
+                        icon.name: "add"
+                        anchors.top: parent.top
+                        anchors.right: parent.right
+                        anchors.rightMargin: Style.current.halfPadding
+                        highlighted: sensor.containsMouse
+                    }
+
+                    MouseArea {
+                        id: sensor
+                        hoverEnabled: true
+                        anchors.fill: parent
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: imageDialog.open()
+                    }
+
+                    ImageCropperModal {
+                        id: imageCropperModal
+                        selectedImage: addImageButton.selectedImage
+                        ratio: "1:1"
+                    }
+                }
+            }
+
+            StatusBaseText {
+                text: qsTr("Community colour")
+                font.pixelSize: 13
+                color: Theme.palette.directColor1
+                anchors.left: parent.left
+                anchors.leftMargin: 16
+            }
+
+            Item {
+                anchors.horizontalCenter: parent.horizontalCenter
+                height: colorSelectorButton.height + 16
+                width: parent.width - 32
+
+                StatusPickerButton {
+                    id: colorSelectorButton
+                    anchors.top: parent.top
+                    anchors.topMargin: 10
+
+                    property string validationError: ""
+
+                    bgColor: colorDialog.colorSelected ? 
+                        colorDialog.color : Theme.palette.baseColor2
+                    contentColor: colorDialog.colorSelected ? Theme.palette.indirectColor1 : Theme.palette.baseColor1
+                    text: colorDialog.colorSelected ?
+                        colorDialog.color.toString().toUpperCase() : 
+                        qsTr("Pick a color")
+
+                    onClicked: colorDialog.open();
+                    onTextChanged: {
+                        if (colorDialog.colorSelected) {
+                            validationError = Utils.validateAndReturnError(text, communityColorValidator)
+                        }
+                    }
+
+                    ColorDialog {
+                        id: colorDialog
+                        property bool colorSelected: false
+                        color: Theme.palette.primaryColor1
+                        onAccepted: colorSelected = true
                     }
                 }
 
-                MouseArea {
-                    anchors.fill: parent
-                    cursorShape: Qt.PointingHandCursor
-                    onClicked: imageDialog.open()
-                }
-
-                ImageCropperModal {
-                    id: imageCropperModal
-                    selectedImage: addImageButton.selectedImage
-                    ratio: "1:1"
-                }
-
-            }
-            StyledText {
-                id: imageValidation
-                visible: text && text !== ""
-                anchors.top: addImageButton.bottom
-                anchors.topMargin: Style.current.smallPadding
-                anchors.left: parent.left
-                anchors.right: parent.right
-                horizontalAlignment: Text.AlignHCenter
-                wrapMode: Text.WordWrap
-                color: Style.current.danger
-            }
-
-            Input {
-                property string defaultColor: Style.current.blue
-
-                id: colorPicker
-                //% "Community color"
-                label: qsTrId("community-color")
-                //% "Pick a color"
-                placeholderText: qsTrId("pick-a-color")
-                anchors.top: imageValidation.bottom
-                anchors.topMargin: Style.current.smallPadding
-                textField.text: defaultColor
-                textField.onReleased: colorDialog.open()
-
-                onTextChanged: {
-                    validationError = Utils.validateAndReturnError(text, communityColorValidator)
-                }
-
-                StatusIconButton {
-                    icon.name: "caret"
-                    iconRotation: -90
-                    iconColor: Style.current.textColor
-                    icon.width: 13
-                    icon.height: 7
-                    anchors.right: parent.right
-                    anchors.rightMargin: Style.current.smallPadding
-                    anchors.top: parent.top
-                    anchors.topMargin: colorPicker.textField.height / 2 - height / 2 + Style.current.bigPadding
-                    onClicked: colorDialog.open()
-                }
-
-                ColorDialog {
-                    id: colorDialog
-                    //% "Please choose a color"
-                    title: qsTrId("please-choose-a-color")
-                    color: colorPicker.defaultColor
-                    onAccepted: {
-                        colorPicker.text = colorDialog.color
-                    }
+                StatusBaseText {
+                    text: colorSelectorButton.validationError
+                    visible: !!text
+                    color: Theme.palette.dangerColor1
+                    anchors.top: colorSelectorButton.bottom
+                    anchors.topMargin: 4
+                    anchors.right: colorSelectorButton.right
                 }
             }
 
-            Separator {
-                id: separator1
-                anchors.top: colorPicker.bottom
-                anchors.topMargin: isEdit ? 0 : Style.current.bigPadding
-                anchors.left: parent.left
-                anchors.leftMargin: -Style.current.padding
-                anchors.right: parent.right
-                anchors.rightMargin: -Style.current.padding
+            StatusModalDivider {
+                topPadding: 8
+                bottomPadding: 8
                 visible: !isEdit
             }
 
-            StatusSettingsLineButton {
-                id: membershipRequirementSetting
-                // TODO: remove 'isEnabled: false' when we no longer need to force
-                // "request access" membership
-                isEnabled: false
-                anchors.top: separator1.bottom
-                anchors.topMargin: Style.current.halfPadding
-                //% "Membership requirement"
-                text: qsTrId("membership-title")
-                currentValue: {
+            StatusListItem {
+                anchors.horizontalCenter: parent.horizontalCenter
+                visible: !isEdit
+                title: qsTr("Membership requirement")
+                label: {
                     switch (membershipRequirementSettingPopup.checkedMembership) {
                         //% "Require invite from another member"
                         case Constants.communityChatInvitationOnlyAccess: return qsTrId("membership-invite")
@@ -346,23 +344,26 @@ ModalPopup {
                         default: return qsTrId("membership-free")
                     }
                 }
-                onClicked: {
-                    membershipRequirementSettingPopup.open()
-                }
+                sensor.onClicked: membershipRequirementSettingPopup.open()
+                components: [
+                    StatusIcon {
+                        icon: "chevron-down"
+                        rotation: 270
+                        color: Theme.palette.baseColor1
+                    }
+                ]
             }
 
-            StyledText {
+            StatusBaseText {
                 visible: !isEdit
                 height: visible ? implicitHeight : 0
-                id: privateExplanation
-                anchors.top: membershipRequirementSetting.bottom
                 wrapMode: Text.WordWrap
-                anchors.topMargin: isEdit ? 0 : Style.current.halfPadding
                 font.pixelSize: 13
-                color: Style.current.secondaryText
+                color: Theme.palette.baseColor1
                 width: parent.width * 0.78
-                //% "You can require new members to meet certain criteria before they can join. This can be changed at any time"
-                text: qsTrId("membership-none-placeholder")
+                text: qsTr("You can require new members to meet certain criteria before they can join. This can be changed at any time")
+                anchors.left: parent.left
+                anchors.leftMargin: 16
             }
 
             // Feature commented temporarily
@@ -410,23 +411,11 @@ ModalPopup {
             */
         }
 
-        MembershipRequirementPopup {
-            id: membershipRequirementSettingPopup
-            // TODO: remove the 'checkedMemership' setting when we no longer need
-            // to force "require approval" membership
-            checkedMembership: Constants.communityChatOnRequestAccess
-        }
     }
 
-    footer: Item {
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.bottom: parent.bottom
-        height: btnCreateEdit.height
-
+    leftButtons: [
         StatusRoundButton {
             id: btnBack
-            anchors.left: parent.left
             visible: isEdit
             icon.name: "arrow-right"
             icon.width: 20
@@ -434,6 +423,9 @@ ModalPopup {
             rotation: 180
             onClicked: popup.destroy()
         }
+    ]
+
+    rightButtons: [
         StatusButton {
             id: btnCreateEdit
             enabled: isFormValid()
@@ -442,38 +434,42 @@ ModalPopup {
                 qsTrId("Save") :
                 //% "Create"
                 qsTrId("create")
-            anchors.right: parent.right
             onClicked: {
                 if (!isFormValid()) {
-                    scrollView.scrollBackUp()
+                    popup.contentComponent.scrollBackUp()
                     return
                 }
 
                 let error = false;
                 if(isEdit) {
-                    error = chatsModel.communities.editCommunity(community.id,
-                                                    Utils.filterXSS(nameInput.text),
-                                                    Utils.filterXSS(descriptionTextArea.text),
-                                                    membershipRequirementSettingPopup.checkedMembership,
-                                                    false,
-                                                    colorPicker.text,
-                                                    // to retain the existing image, pass "" for the image path
-                                                    addImageButton.selectedImage ===  community.largeImage ? "" : addImageButton.selectedImage,
-                                                    imageCropperModal.aX,
-                                                    imageCropperModal.aY,
-                                                    imageCropperModal.bX,
-                                                    imageCropperModal.bY)
+                    error = chatsModel.communities.editCommunity(
+                        community.id,
+                        Utils.filterXSS(popup.contentComponent.communityName.text),
+                        Utils.filterXSS(popup.contentComponent.communityDescription.text),
+                        membershipRequirementSettingPopup.checkedMembership,
+                        false,
+                        popup.contentComponent.communityColor.color.toString().toUpperCase(),
+                        // to retain the existing image, pass "" for the image path
+                        popup.contentComponent.communityImage.selectedImage ===  community.largeImage ? "" : 
+                            popup.contentComponent.communityImage.selectedImage,
+                        popup.contentComponent.imageCropperModal.aX,
+                        popup.contentComponent.imageCropperModal.aY,
+                        popup.contentComponent.imageCropperModal.bX,
+                        popup.contentComponent.imageCropperModal.bY
+                  )
                 } else {
-                    error = chatsModel.communities.createCommunity(Utils.filterXSS(nameInput.text),
-                                                    Utils.filterXSS(descriptionTextArea.text),
-                                                    membershipRequirementSettingPopup.checkedMembership,
-                                                    false, // ensOnlySwitch.switchChecked, // TODO:
-                                                    colorPicker.text,
-                                                    addImageButton.selectedImage,
-                                                    imageCropperModal.aX,
-                                                    imageCropperModal.aY,
-                                                    imageCropperModal.bX,
-                                                    imageCropperModal.bY)
+                    error = chatsModel.communities.createCommunity(
+                        Utils.filterXSS(popup.contentComponent.communityName.text),
+                        Utils.filterXSS(popup.contentComponent.communityDescription.text),
+                        membershipRequirementSettingPopup.checkedMembership,
+                        false, // ensOnlySwitch.switchChecked, // TODO:
+                        popup.contentComponent.communityColor.color.toString().toUpperCase(),
+                        popup.contentComponent.communityImage.selectedImage,
+                        popup.contentComponent.imageCropperModal.aX,
+                        popup.contentComponent.imageCropperModal.aY,
+                        popup.contentComponent.imageCropperModal.bX,
+                        popup.contentComponent.imageCropperModal.bY
+                    )
                 }
 
                 if (error) {
@@ -483,15 +479,22 @@ ModalPopup {
 
                 popup.close()
             }
-
-            MessageDialog {
-                id: creatingError
-                //% "Error creating the community"
-                title: qsTrId("error-creating-the-community")
-                icon: StandardIcon.Critical
-                standardButtons: StandardButton.Ok
-            }
         }
+    ]
+
+    MessageDialog {
+        id: creatingError
+        //% "Error creating the community"
+        title: qsTrId("error-creating-the-community")
+        icon: StandardIcon.Critical
+        standardButtons: StandardButton.Ok
+    }
+
+    MembershipRequirementPopup {
+        id: membershipRequirementSettingPopup
+        // TODO: remove the 'checkedMemership' setting when we no longer need
+        // to force "require approval" membership
+        checkedMembership: Constants.communityChatOnRequestAccess
     }
 }
 

@@ -210,6 +210,7 @@ Item {
     Component {
         id: createCommunitiesPopupComponent
         CreateCommunityPopup {
+            anchors.centerIn: parent
             onClosed: {
                 destroy()
             }
