@@ -278,6 +278,11 @@ PopupMenu {
         enabled: !isSticker && !emojiOnly
     }
 
+    Separator {
+        visible: deleteMessageAction.enabled
+        height: visible ? Style.current.halfPadding : 0
+    }
+
     Action {
         text: qsTr("Jump to")
         onTriggered: {
@@ -301,7 +306,7 @@ PopupMenu {
 
             let confirmationDialog = openPopup(genericConfirmationDialog, {
                                                    title: qsTr("Confirm deleting this message"),
-                                                   confirmationText: qsTr("Are you sure you want to delete this message? Be aware that other clients are not garanteed to delete the message as well."),
+                                                   confirmationText: qsTr("Are you sure you want to delete this message? Be aware that other clients are not guaranteed to delete the message as well."),
                                                    height: 260,
                                                    "checkbox.visible": true,
                                                    executeConfirm: function () {
@@ -315,6 +320,7 @@ PopupMenu {
                                                })
         }
         icon.source: "../../../img/delete.svg"
+        icon.color: Style.current.danger
         icon.width: 16
         icon.height: 16
         enabled: isCurrentUser

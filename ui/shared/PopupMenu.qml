@@ -16,7 +16,7 @@ Menu {
 
     delegate: MenuItem {
         property color textColor: this.action.icon.color.toString() !== "#00000000" ? this.action.icon.color : Style.current.textColor
-        property color hoverColor: this.action.type === "danger" ? Style.current.buttonWarnBackgroundColor : Style.current.backgroundHover
+        property color hoverColor: popupMenuItem.action.icon.color === Style.current.danger ? Style.current.buttonWarnBackgroundColor : Style.current.backgroundHover
         property int subMenuIndex: {
             if (!this.subMenu) {
                 return -1
