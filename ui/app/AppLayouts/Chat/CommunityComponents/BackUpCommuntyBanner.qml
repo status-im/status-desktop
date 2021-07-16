@@ -60,5 +60,15 @@ Rectangle {
             openPopup(transferOwnershipPopup, {privateKey: chatsModel.communities.exportComumnity()})
         }
     }
+
+    Component {
+        id: transferOwnershipPopup
+        TransferOwnershipPopup {
+            anchors.centerIn: parent
+            onClosed: {
+                destroy()
+            }
+        }
+    }
 }
 

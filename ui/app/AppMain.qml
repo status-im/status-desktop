@@ -167,7 +167,9 @@ StatusAppLayout {
                 StatusMenuItem {
                     text: qsTr("View Community")
                     icon.name: "group-chat"
-                    onTriggered: openPopup(communityMembersPopup, {community: chatsModel.communities.observedCommunity})
+                    onTriggered: openPopup(communityProfilePopup, {
+                        community: chatsModel.communities.observedCommunity
+                    })
                 }
 
                 StatusMenuItem {
@@ -500,9 +502,12 @@ StatusAppLayout {
     }
 
     Component {
-        id: communityMembersPopup
-        CommunityMembersPopup {
+        id: communityProfilePopup
+
+        CommunityProfilePopup {
+            id: communityProfilePopup
             anchors.centerIn: parent
+
             onClosed: {
                 destroy()
             }
