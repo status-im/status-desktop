@@ -23,12 +23,8 @@ Column {
     signal transferOwnershipButtonClicked()
     signal leaveButtonClicked()
 
-    StatusModalDivider {
-        bottomPadding: 8
-    }
-
     Item {
-        height: 46
+        height: Math.max(46, communityDescription.height + 16)
         width: parent.width
         StatusBaseText {
             id: communityDescription
