@@ -20,6 +20,7 @@ Item {
     property string headerSubtitle: ""
     property string headerImageSource: ""
     property alias members: memberList.model
+    property var community
 
     signal inviteButtonClicked()
 
@@ -42,7 +43,7 @@ Item {
         StatusListItem {
             id: inviteButton
             anchors.horizontalCenter: parent.horizontalCenter
-            visible: isAdmin
+            visible: root.community.admin || root.community.isAdmin
             title: qsTr("Invite People")
             icon.name: "share-ios"
             type: StatusListItem.Type.Secondary
@@ -59,9 +60,9 @@ Item {
 
             id: memberRequestsButton
 
-            property int nbRequests: chatsModel.communities.activeCommunity.communityMembershipRequests.nbRequests
+            property int nbRequests: root.community.communityMembershipRequests.nbRequests
             width: parent.width - 32
-            visible: isAdmin && nbRequests > 0
+            visible: (root.community.isAdmin || root.community.admin) && nbRequests > 0
             anchors.horizontalCenter: parent.horizontalCenter
 
             title: qsTr("Membership requests")
@@ -119,6 +120,7 @@ Item {
 
             Repeater {
                 id: memberList
+                model: root.community.members
                 delegate: StatusListItem {
 
                     id: memberItem
@@ -170,7 +172,7 @@ Item {
                                 }
 
                                 StatusMenuSeparator {
-                                    visible: chatsModel.communities.activeCommunity.admin
+                                    visible: root.community.admin
                                 }
 
                                 StatusMenuItem {
@@ -178,7 +180,7 @@ Item {
                                     icon.name: "arrow-right"
                                     iconRotation: 180
                                     type: StatusMenuItem.Type.Danger
-                                    enabled: chatsModel.communities.activeCommunity.admin
+                                    enabled: root.community.admin
                                     onTriggered: chatsModel.communities.removeUserFromCommunity(model.pubKey)
                                 }
 
@@ -186,8 +188,8 @@ Item {
                                     text: qsTr("Ban")
                                     icon.name: "cancel"
                                     type: StatusMenuItem.Type.Danger
-                                    enabled: chatsModel.communities.activeCommunity.admin
-                                    onTriggered: chatsModel.communities.banUserFromCommunity(model.pubKey, chatsModel.communities.activeCommunity.id)
+                                    enabled: root.community.admin
+                                    onTriggered: chatsModel.communities.banUserFromCommunity(model.pubKey, root.community.id)
                                 }
                             }
                         }
