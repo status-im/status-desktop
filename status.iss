@@ -58,8 +58,8 @@ Source: "resources\*"; DestDir: "{app}\resources"; Flags: ignoreversion recurses
 Source: "vendor\*"; DestDir: "{app}\vendor"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Tasks]
-Name: "desktopicon"; Description: "Create a &desktop icon"; GroupDescription: "Additional icons:"; Components: main; Flags: unchecked
-Name: quicklaunchicon; Description: "Create a &Quick Launch icon"; GroupDescription: "Additional icons:"; Components: main; Flags: unchecked
+Name: desktopicon; Description: "Create a &desktop icon"; GroupDescription: "Additional icons:";
+Name: quicklaunchicon; Description: "Create a &Quick Launch icon"; GroupDescription: "Additional icons:"; Flags: unchecked
 
 [Icons]
 Name: "{userdesktop}\{#Name}"; Filename: "{app}\{#ExeName}"; IconFilename: "{app}\resources\{#IcoName}"; Tasks: desktopicon
