@@ -68,8 +68,8 @@ Name: "{commonprograms}\{#Name}"; Filename: "{app}\{#ExeName}"; IconFilename: "{
 
 [UninstallDelete]
 Type: filesandordirs; Name: "{app}"
+Type: filesandordirs; Name: "{localappdata}\Status"
 Type: files; Name: "{userdesktop}\{#Name}"
-
 
 [Registry]
 Root: HKCU; Subkey: "Software\Classes\status-im"; ValueType: "string"; ValueData: "URL:status-im protocol"; Flags: uninsdeletekey
