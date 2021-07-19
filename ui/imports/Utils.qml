@@ -446,13 +446,29 @@ QtObject {
             return result
         }
 
+        // Group chat
+        index = link.lastIndexOf("/g/")
+        if (index > -1) {
+            let indexAdminPk = link.lastIndexOf("a=")
+            let indexChatName = link.lastIndexOf("a1=")
+            let indexChatId = link.lastIndexOf("a2=")
+            const pubKey = link.substring(indexAdminPk + 2, indexChatName - 1)
+            const chatName = link.substring(indexChatName + 3, indexChatId - 1)
+            const chatId = link.substring(indexChatId + 3, link.length)
+            result.title = qsTr("Join the %1 group chat").arg(chatName)
+            result.callback = function () {
+                chatsModel.groups.joinGroupChatFromInvitation(chatName, chatId, pubKey);
+            }
+
+            return result
+        }
+
         // Public chat
         // This needs to be the last check because it is as VERY loose check
         index = link.lastIndexOf("/")
         if (index > -1) {
             const chatId = link.substring(index + 1)
-            //% "Join the %1 public channel"
-            result.title = qsTrId("join-the--1-public-channel").arg(chatId)
+            result.title = qsTr("Join the %1 public channel").arg(chatId)
             result.callback = function () {
                 chatsModel.channelView.joinPublicChat(chatId);
             }

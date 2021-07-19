@@ -366,13 +366,21 @@ proc getUserName*(self: ChatModel, id: string, defaultUserName: string):string =
   else:
     return defaultUserName
 
-proc createGroup*(self: ChatModel, groupName: string, pubKeys: seq[string]) =
-  var response = parseJson(status_chat.createGroup(groupName, pubKeys))
+proc processGroupChatCreation*(self: ChatModel, result: string) =
+  var response = parseJson(result)
   var (chats, messages) = formatChatUpdate(response)
   let chat = chats[0]
   self.channels[chat.id] = chat
   self.events.emit("chatUpdate", ChatUpdateArgs(messages: messages, chats: chats, contacts: @[]))
   self.events.emit("activeChannelChanged", ChatIdArg(chatId: chat.id))
+
+proc createGroup*(self: ChatModel, groupName: string, pubKeys: seq[string]) =
+  var result = status_chat.createGroup(groupName, pubKeys)
+  self.processGroupChatCreation(result) 
+
+proc createGroupChatFromInvitation*(self: ChatModel, groupName: string, chatID: string, adminPK: string) =
+  var result = status_chat.createGroupChatFromInvitation(groupName, chatID, adminPK)
+  self.processGroupChatCreation(result)
 
 proc addGroupMembers*(self: ChatModel, chatId: string, pubKeys: seq[string]) =
   var response = status_chat.addGroupMembers(chatId, pubKeys)

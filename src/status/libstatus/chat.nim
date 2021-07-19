@@ -253,6 +253,9 @@ proc renameGroup*(chatId: string, newName: string): string =
 proc createGroup*(groupName: string, pubKeys: seq[string]): string =
   callPrivateRPC("createGroupChatWithMembers".prefix, %* [nil, groupName, pubKeys])
 
+proc createGroupChatFromInvitation*(groupName: string, chatID: string, adminPK: string): string =
+  callPrivateRPC("createGroupChatFromInvitation".prefix, %* [groupName, chatID, adminPK])
+
 proc addGroupMembers*(chatId: string, pubKeys: seq[string]): string =
   callPrivateRPC("addMembersToGroupChat".prefix, %* [nil, chatId, pubKeys])
 

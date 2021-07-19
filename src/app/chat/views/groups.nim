@@ -37,6 +37,9 @@ QtObject:
     let pubKeysSeq = map(parseJson(pubKeys).getElems(), proc(x:JsonNode):string = x.getStr)
     self.status.chat.createGroup(groupName, pubKeysSeq)
 
+  proc joinGroupChatFromInvitation*(self: GroupsView, groupName: string, chatID: string, adminPK: string) {.slot.} =
+    self.status.chat.createGroupChatFromInvitation(groupName, chatID, adminPK)
+
   proc addMembers*(self: GroupsView, chatId: string, pubKeys: string) {.slot.} =
     let pubKeysSeq = map(parseJson(pubKeys).getElems(), proc(x:JsonNode):string = x.getStr)
     self.status.chat.addGroupMembers(chatId, pubKeysSeq)
