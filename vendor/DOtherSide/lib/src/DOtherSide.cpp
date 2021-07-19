@@ -127,12 +127,8 @@ void dos_qapplication_initialize_opengl()
     QCoreApplication::setAttribute(Qt::AA_ShareOpenGLContexts);
 }
 
-void dos_qguiapplication_create()
+void dos_qguiapplication_create(int argc, char** argv)
 {
-    static int argc = 1;
-    static char empty[1] = {0};
-    static char *argv[] = {empty};
-
     register_meta_types();
 
     new QGuiApplication(argc, argv);
