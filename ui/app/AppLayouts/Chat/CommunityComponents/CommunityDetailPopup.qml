@@ -1,11 +1,17 @@
 import QtQuick 2.12
+import QtQuick.Controls 2.3
 import QtQuick.Dialogs 1.3
+
+import StatusQ.Core 0.1
+import StatusQ.Core.Theme 0.1
+import StatusQ.Components 0.1
+import StatusQ.Controls 0.1
+import StatusQ.Popups 0.1
+
 import "../../../../imports"
 import "../../../../shared"
-import "../../../../shared/status"
-import "../ContactsColumn"
 
-ModalPopup {
+StatusModal {
     property QtObject community: chatsModel.communities.observedCommunity
     property string communityId: community.id
     property string name: community.name
@@ -21,213 +27,153 @@ ModalPopup {
 
     id: popup
 
-    header: Item {
-        height: childrenRect.height
-        width: parent.width
-
-
-        Loader {
-            id: communityImg
-            sourceComponent: !!popup.source ? commmunityImgCmp : letterIdenticonCmp
+    header.title: name
+    header.subTitle: {
+        let subTitle = ""
+        switch(access) {
+            case Constants.communityChatPublicAccess:
+                subTitle = qsTr("Public community");
+                break;
+            case Constants.communityChatInvitationOnlyAccess: 
+                subTitle = qsTr("Invitation only community");
+                break;
+            case Constants.communityChatOnRequestAccess: 
+                subTitle = qsTr("On request community");
+                break;
+            default: 
+                subTitle = qsTrId("Unknown community");
+                break;
         }
+        if (ensOnly) {
+            subTitle += qsTr(" - ENS only")
+        }
+        return subTitle
+    }
 
-        Component {
-            id: commmunityImgCmp
-            RoundedImage {
-                source: popup.source
-                width: 40
-                height: 40
+    content: Column {
+        width: popup.width
+
+        Item {
+            height: childrenRect.height + 8
+            width: parent.width - 32
+            anchors.horizontalCenter: parent.horizontalCenter
+
+            StatusBaseText {
+                id: description
+                anchors.top: parent.top
+                anchors.topMargin: 16
+                text: popup.description
+                font.pixelSize: 15
+                color: Theme.palette.directColor1
+                wrapMode: Text.WordWrap
+            }
+
+            StatusIcon {
+                id: statusIcon
+                anchors.top: description.bottom
+                anchors.topMargin: 16
+                anchors.left: parent.left
+                icon: "tiny/contact"
+                width: 16
+                color: Theme.palette.directColor1
+            }
+
+            StatusBaseText {
+                text: qsTr("%1 members").arg(nbMembers)
+                font.pixelSize: 15
+                font.weight: Font.Medium
+                color: Theme.palette.directColor1
+                anchors.left: statusIcon.right
+                anchors.leftMargin: 2
+                anchors.verticalCenter: statusIcon.verticalCenter
             }
         }
 
-        Component {
-            id: letterIdenticonCmp
-            StatusLetterIdenticon {
-                width: 40
-                height: 40
-                chatName: popup.name
-                color: popup.communityColor
+        StatusModalDivider {
+            topPadding: 8
+            bottomPadding: 8
+        }
+
+        Item {
+            anchors.horizontalCenter: parent.horizontalCenter
+            width: parent.width - 32
+            height: 34
+            StatusBaseText {
+                text: qsTr("Channels")
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: 4
+                font.pixelSize: 15
+                color: Theme.palette.baseColor1
             }
         }
 
-        StyledTextEdit {
-            id: communityName
-            text:  popup.name
-            anchors.top: parent.top
-            anchors.topMargin: 2
-            anchors.left: communityImg.right
-            anchors.leftMargin: Style.current.smallPadding
-            font.bold: true
-            font.pixelSize: 17
-            readOnly: true
-        }
-
-        StyledText {
-            id: accessText
-            text: {
-                switch(access) {
-                //% "Public community"
-                case Constants.communityChatPublicAccess: return qsTrId("public-community");
-                //% "Invitation only community"
-                case Constants.communityChatInvitationOnlyAccess: return qsTrId("invitation-only-community");
-                //% "On request community"
-                case Constants.communityChatOnRequestAccess: return qsTrId("on-request-community");
-                //% "Unknown community"
-                default: return qsTrId("unknown-community");
+        ScrollView {
+            width: popup.width
+            height: 300
+            ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+            clip: true
+            ListView {
+                id: chatList
+                anchors.fill: parent
+                clip: true
+                model: community.chats
+                boundsBehavior: Flickable.StopAtBounds
+                delegate: StatusListItem {
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    title: "#" + model.name
+                    subTitle: model.description
+                    icon.isLetterIdenticon: true
+                    icon.background.color: popup.communityColor
                 }
             }
-            anchors.left: communityName.left
-            anchors.top: communityName.bottom
-            anchors.topMargin: 2
-            font.pixelSize: 15
-            font.weight: Font.Thin
-            color: Style.current.secondaryText
-        }
-
-        StyledText {
-            visible: popup.ensOnly
-            text: qsTr(" - ENS Only")
-            anchors.left: accessText.right
-            anchors.verticalCenter: accessText.verticalCenter
-            anchors.topMargin: 2
-            font.pixelSize: 15
-            font.weight: Font.Thin
-            color: Style.current.secondaryText
-        }
-    }
-
-    StyledText {
-        id: descriptionText
-        text: popup.description
-        wrapMode: Text.Wrap
-        width: parent.width
-        font.pixelSize: 15
-        font.weight: Font.Thin
-    }
-
-    Item {
-        id: memberContainer
-        width: parent.width
-        height: memberImage.height
-        anchors.top: descriptionText.bottom
-        anchors.topMargin: Style.current.padding
-
-        SVGImage {
-            id: memberImage
-            source: "../../../img/member.svg"
-            width: 16
-            height: 16
-        }
-
-
-        StyledText {
-            text: nbMembers === 1 ? 
-                  //% "1 member"
-                  qsTrId("1-member") : 
-                  //% "%1 members"
-                  qsTrId("-1-members").arg(popup.nbMembers)
-            wrapMode: Text.WrapAnywhere
-            width: parent.width
-            anchors.left: memberImage.right
-            anchors.leftMargin: 4
-            font.pixelSize: 15
-            font.weight: Font.Medium
         }
     }
 
 
-    Separator {
-        id: sep1
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.top: memberContainer.bottom
-        anchors.topMargin: Style.current.smallPadding
-        anchors.leftMargin: -Style.current.padding
-        anchors.rightMargin: -Style.current.padding
-    }
-
-    StyledText {
-        id: chatsTitle
-        //% "Chats"
-        text: qsTrId("chats")
-        anchors.top: sep1.bottom
-        anchors.topMargin: Style.current.bigPadding
-        font.pixelSize: 15
-        font.weight: Font.Thin
-    }
-
-
-    ListView {
-        id: chatsList
-        width: parent.width
-        anchors.top: chatsTitle.bottom
-        anchors.topMargin: 4
-        anchors.bottom: parent.bottom
-        clip: true
-        model: community.chats
-        boundsBehavior: Flickable.StopAtBounds
-        delegate: Channel {
-            id: channelItem
-            unviewedMessagesCount: ""
-            width: parent.width
-            name: model.name
-            lastMessage: model.description
-            contentType: Constants.messageType
-            color: Style.current.transparent
-            enableMouseArea: false
-        }
-    }
-
-    footer: Item {
-        width: parent.width
-        height: backButton.height
-
-        StatusIconButton {
+    leftButtons: [
+        StatusRoundButton {
             id: backButton
-            icon.name: "leave_chat"
-            width: 44
-            height: 44
-            iconColor: Style.current.primary
-            highlighted: true
-            icon.color: Style.current.primary
-            icon.width: 28
-            icon.height: 28
-            radius: width / 2
+            icon.name: "arrow-right"
+            icon.height: 16
+            icon.width: 20
+            rotation: 180
             onClicked: {
                 openPopup(communitiesPopupComponent)
                 popup.close()
             }
         }
+    ]
 
+    rightButtons: [
         StatusButton {
             property bool isPendingRequest: {
                 if (access !== Constants.communityChatOnRequestAccess) {
                     return false
                 }
-                return chatsModel.communities.isCommunityRequestPending(communityId)
+                return chatsModel.communities.isCommunityRequestPending(popup.communityId)
             }
             text: {
-                if (ensOnly && !profileModel.profile.ensVerified) {
+                if (popup.ensOnly && !profileModel.profile.ensVerified) {
                     return qsTr("Membership requires an ENS username")
                 }
-                if (canJoin) {
+                if (popup.canJoin) {
                     return qsTr("Join ‘%1’").arg(popup.name);
                 }
                 if (isPendingRequest) {
                      return qsTr("Pending")
                 }
-                switch(access) {
-                case Constants.communityChatPublicAccess: return qsTr("Join ‘%1’").arg(popup.name);
-                case Constants.communityChatInvitationOnlyAccess: return qsTr("You need to be invited");
-                case Constants.communityChatOnRequestAccess: return qsTr("Request to join ‘%1’").arg(popup.name);
-                default: return qsTr("Unknown community");
+                switch(popup.access) {
+                    case Constants.communityChatPublicAccess: return qsTr("Join ‘%1’").arg(popup.name);
+                    case Constants.communityChatInvitationOnlyAccess: return qsTr("You need to be invited");
+                    case Constants.communityChatOnRequestAccess: return qsTr("Request to join ‘%1’").arg(popup.name);
+                    default: return qsTr("Unknown community");
                 }
             }
             enabled: {
-                if (ensOnly && !profileModel.profile.ensVerified) {
+                if (popup.ensOnly && !profileModel.profile.ensVerified) {
                     return false
                 }
-                if (access === Constants.communityChatInvitationOnlyAccess || isPendingRequest) {
+                if (popup.access === Constants.communityChatInvitationOnlyAccess || isPendingRequest) {
                     return false
                 }
                 if (canJoin) {
@@ -235,8 +181,6 @@ ModalPopup {
                 }
                 return true
             }
-
-            anchors.right: parent.right
             onClicked: {
                 let error
                 if (access === Constants.communityChatOnRequestAccess && !popup.isMember) {
@@ -258,14 +202,14 @@ ModalPopup {
                 popup.close()
             }
         }
+    ]
 
-        MessageDialog {
-            id: joiningError
-            //% "Error joining the community"
-            title: qsTrId("error-joining-the-community")
-            icon: StandardIcon.Critical
-            standardButtons: StandardButton.Ok
-        }
+    MessageDialog {
+        id: joiningError
+        //% "Error joining the community"
+        title: qsTrId("error-joining-the-community")
+        icon: StandardIcon.Critical
+        standardButtons: StandardButton.Ok
     }
 }
 
