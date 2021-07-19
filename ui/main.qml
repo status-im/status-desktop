@@ -129,7 +129,20 @@ StatusWindow {
     SystemTrayIcon {
         id: systemTray
         visible: true
-        icon.source: "shared/img/status-logo.svg"
+        icon.source: {
+            if (production){
+                if(Qt.platform.os == "osx")
+                    return "shared/img/status-logo-round-rect.svg"
+                else
+                    return "shared/img/status-logo-circle.svg"
+            }
+            else {
+                if(Qt.platform.os == "osx")
+                    return "shared/img/status-logo-dev-round-rect.svg"
+                else
+                    return "shared/img/status-logo-dev-circle.svg"
+            }
+        }
         menu: Menu {
             MenuItem {
                 visible: !applicationWindow.visible
