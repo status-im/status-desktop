@@ -158,6 +158,17 @@ void dos_qguiapplication_quit()
     qGuiApp->quit();
 }
 
+void dos_qguiapplication_icon(const char *filename)
+{
+    qGuiApp->setWindowIcon(QIcon(filename));
+}
+
+void dos_qguiapplication_installEventFilter(::DosQQmlApplicationEngine *vptr)
+{
+    DockClicker *dockClicker = new DockClicker(vptr);
+    qGuiApp->installEventFilter(dockClicker);
+}
+
 void dos_qapplication_create(char *appName)
 {
     static int argc = 1;
