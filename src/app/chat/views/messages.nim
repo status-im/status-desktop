@@ -463,7 +463,7 @@ QtObject:
     self.upsertChannel(chatId)
     if self.messageList[chatId].changeMessagePinned(messageId, false, ""):
       try:
-        self.pinnedMessagesList[chatId].remove(messageId)
+        discard self.pinnedMessagesList[chatId].deleteMessage(messageId)
       except Exception as e:
         error "Error removing ", msg = e.msg
 
@@ -475,7 +475,7 @@ QtObject:
     self.status.chat.setPinMessage(messageId, chatId, false)
     self.removePinMessage(messageId, chatId)
 
-  proc addPinnedMessages*(self: MessageView, pinnedMessages: seq[Message]) =
+  proc refreshPinnedMessages*(self: MessageView, pinnedMessages: seq[Message]) =
     for pinnedMessage in pinnedMessages:
       if (pinnedMessage.isPinned):
         self.addPinMessage(pinnedMessage.id, pinnedMessage.localChatId, pinnedMessage.pinnedBy)
