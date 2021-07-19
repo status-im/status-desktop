@@ -57,6 +57,9 @@ Item {
             this.active = false // kill an opened instance
         }
         sourceComponent: SetPubKeyModal {
+            onOpened: {
+                walletModel.gasView.getGasPricePredictions()
+            }
             onClosed: {
                 transactionDialog.closed()
             }

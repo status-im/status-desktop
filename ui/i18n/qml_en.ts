@@ -4377,13 +4377,13 @@ Assets won’t be sent yet.</translation>
         </message>
         <message id="use-suggestions">
             <location filename="../shared/GasSelector.qml" line="100"/>
-            <source>Use suggestionsUse custom</source>
-            <translation>Use suggestionsUse custom</translation>
+            <source>Use suggestions</source>
+            <translation>Use suggestions</translation>
         </message>
         <message id="use-custom">
             <location filename="../shared/GasSelector.qml" line="100"/>
-            <source/>
-            <translation>undefined</translation>
+            <source>Use custom</source>
+            <translation>Use custom</translation>
         </message>
         <message id="low">
             <location filename="../shared/GasSelector.qml" line="121"/>

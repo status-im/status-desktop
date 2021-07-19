@@ -8,10 +8,11 @@ import "../../../../../shared/status"
 
 ModalPopup {
     id: root
-    readonly property var asset: JSON.parse(walletModel.getStatusToken())
+    readonly property var asset: JSON.parse(walletModel.tokensView.getStatusToken())
     property string ensUsername: ""
     property string ensPrice: "10"
 
+    height: 504
     //% "Authorize %1 %2"
     title: qsTrId("authorize--1--2").arg(Utils.stripTrailingZeros(ensPrice)).arg(asset.symbol)
 
@@ -48,8 +49,8 @@ ModalPopup {
         id: stack
         height: parent.height
         anchors.fill: parent
-        anchors.leftMargin: Style.current.padding
-        anchors.rightMargin: Style.current.padding
+        initialItem: group1
+        isLastGroup: stack.currentGroup === group4
         onGroupActivated: {
             root.title = group.headerText
             btnNext.text = group.footerText
@@ -60,7 +61,7 @@ ModalPopup {
             headerText: qsTrId("authorize--1--2").arg(Utils.stripTrailingZeros(root.ensPrice)).arg(root.asset.symbol)
             //% "Continue"
             footerText: qsTrId("continue")
-
+            showBackBtn: false
             AccountSelector {
                 id: selectFromAccount
                 accounts: walletModel.accountsView.accounts
@@ -90,12 +91,14 @@ ModalPopup {
             }
             GasSelector {
                 id: gasSelector
-                visible: false
+                anchors.top: selectFromAccount.bottom
+                anchors.topMargin: Style.current.bigPadding * 2
                 slowestGasPrice: parseFloat(walletModel.gasView.safeLowGasPrice)
                 fastestGasPrice: parseFloat(walletModel.gasView.fastestGasPrice)
                 getGasEthValue: walletModel.gasView.getGasEthValue
                 getFiatValue: walletModel.balanceView.getFiatValue
                 defaultCurrency: walletModel.balanceView.defaultCurrency
+                width: stack.width
                 property var estimateGas: Backpressure.debounce(gasSelector, 600, function() {
                     if (!(root.ensUsername !== "" && selectFromAccount.selectedAccount)) {
                         selectedGasLimit = 380000
@@ -157,6 +160,23 @@ ModalPopup {
     footer: Item {
         width: parent.width
         height: btnNext.height
+
+        StatusRoundButton {
+            id: btnBack
+            anchors.left: parent.left
+            icon.name: "arrow-right"
+            icon.width: 20
+            icon.height: 16
+            rotation: 180
+            visible: stack.currentGroup.showBackBtn
+            enabled: stack.currentGroup.isValid || stack.isLastGroup
+            onClicked: {
+                if (typeof stack.currentGroup.onBackClicked === "function") {
+                    return stack.currentGroup.onBackClicked()
+                }
+                stack.back()
+            }
+        }
         
         StatusButton {
             id: btnNext
