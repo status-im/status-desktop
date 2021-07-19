@@ -87,8 +87,8 @@ ModalPopup {
             text: confirmationDialog.cancelButtonLabel
             anchors.bottom: parent.bottom
             onClicked: {
-                if (executeConfirm && typeof executeConfirm === "function") {
-                    executeConfirm()
+                if (executeCancel && typeof executeCancel === "function") {
+                    executeCancel()
                 }
                 confirmationDialog.cancelButtonClicked()
             }
