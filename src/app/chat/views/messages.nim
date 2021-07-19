@@ -422,6 +422,7 @@ QtObject:
   proc deleteMessage*(self: MessageView, channelId: string, messageId: string): bool =
     result = self.messageList[channelId].deleteMessage(messageId)
     if (result):
+      self.pinnedMessagesList[channelId].deleteMessage(messageId)
       self.hideMessage(messageId)
 
   proc deleteMessageWhichReplacedMessageWithId*(self: MessageView, channelId: string, messageId: string): bool =
