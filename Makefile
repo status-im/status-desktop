@@ -309,7 +309,7 @@ $(STATUS_CLIENT_DMG): nim_status_client $(DMG_TOOL)
 	cp Info.plist $(MACOS_OUTER_BUNDLE)/Contents/
 	cp bin/nim_status_client $(MACOS_OUTER_BUNDLE)/Contents/MacOS/
 	cp status.icns $(MACOS_OUTER_BUNDLE)/Contents/Resources/
-	cp status.svg $(MACOS_OUTER_BUNDLE)/Contents/
+	cp status-macos.svg $(MACOS_OUTER_BUNDLE)/Contents/
 	cp -R resources.rcc $(MACOS_OUTER_BUNDLE)/Contents/
 	cp -R $(FLEETS) $(MACOS_OUTER_BUNDLE)/Contents/
 	mkdir -p $(MACOS_OUTER_BUNDLE)/Contents/i18n

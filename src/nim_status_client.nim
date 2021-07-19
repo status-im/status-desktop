@@ -56,14 +56,19 @@ proc mainProc() =
   QResource.registerResource(app.applicationDirPath & resources)
 
   let statusAppIcon =
-    if defined(macosx):
-      "" # not used in macOS
-    elif defined(windows) and defined(production):
-      "/../resources/status.svg"
-    elif defined(development):
-      "/../status-dev.svg"
+    if defined(production):
+      if defined(macosx):
+        "" # not used in macOS
+      elif defined(windows):
+        "/../resources/status.svg"
+      else:
+        "/../status.svg"
     else:
-      "/../status.svg"
+      if defined(macosx):
+        "" # not used in macOS
+      else:
+        "/../status-dev.svg"
+
   if not defined(macosx):
     app.icon(app.applicationDirPath & statusAppIcon)
 
@@ -200,6 +205,9 @@ proc mainProc() =
 
   engine.setRootContextProperty("signals", signalController.variant)
   engine.setRootContextProperty("mailserver", mailserverController.variant)
+
+  var prValue = newQVariant(if defined(production): true else: false)
+  engine.setRootContextProperty("production", prValue)
 
   engine.load(newQUrl("qrc:///main.qml"))
 
