@@ -10,6 +10,7 @@ logScope:
 QtObject:
   type ReactionView* = ref object of QObject
     messageList: ptr OrderedTable[string, ChatMessageList]
+    pinnedMessageList: ptr OrderedTable[string, ChatMessageList]
     activeChannel: ChatItemView
     status: Status
     pubKey*: string
@@ -20,10 +21,11 @@ QtObject:
   proc delete*(self: ReactionView) =
     self.QObject.delete
 
-  proc newReactionView*(status: Status, messageList: ptr OrderedTable[string, ChatMessageList], activeChannel: ChatItemView): ReactionView =
+  proc newReactionView*(status: Status, messageList: ptr OrderedTable[string, ChatMessageList], pinnedMessageList: ptr OrderedTable[string, ChatMessageList], activeChannel: ChatItemView): ReactionView =
     new(result, delete)
     result = ReactionView()
     result.messageList = messageList
+    result.pinnedMessageList = pinnedMessageList
     result.status = status
     result.activeChannel = activeChannel
     result.setup
@@ -82,6 +84,7 @@ QtObject:
           # Remove the reaction
           oldReactions.delete(reaction.id)
           messageList.setMessageReactions(reaction.messageId, $oldReactions)
+          self.pinnedMessageList[][chatId].setMessageReactions(reaction.messageId, $oldReactions)
         continue
 
       oldReactions[reaction.id] = %* {
@@ -89,3 +92,4 @@ QtObject:
         "emojiId": reaction.emojiId
       }
       messageList.setMessageReactions(reaction.messageId, $oldReactions)
+      self.pinnedMessageList[][chatId].setMessageReactions(reaction.messageId, $oldReactions)
