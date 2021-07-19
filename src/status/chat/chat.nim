@@ -115,7 +115,7 @@ type StatusUpdateType* {.pure.}= enum
 type StatusUpdate* = object
   publicKey*: string
   statusType*: StatusUpdateType
-  clock*: int64
+  clock*: uint64
   text*: string
 
 type Community* = object
