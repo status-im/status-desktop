@@ -14,6 +14,7 @@ ToolTip {
     topPadding: Style.current.smallPadding
     bottomPadding: Style.current.smallPadding
     delay: 200
+
     background: Item {
         id: tooltipBg
         Rectangle {
@@ -41,7 +42,7 @@ ToolTip {
                 }
             }
             y: {
-                if (orientation === "bottom") {
+                if ((orientation === "bottom") || (tooltip.y > 0)) {
                     return -height / 2 + 5
                 }
                 if (orientation === "top") {
@@ -64,4 +65,3 @@ ToolTip {
         bottomPadding: Style.current.smallPadding
     }
 }
-
