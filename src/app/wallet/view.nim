@@ -102,6 +102,9 @@ QtObject:
     self.balanceView.getAccountBalanceSuccess(jsonResponse)
     self.updateView()
 
+  proc getLatestBlockNumber*(self: WalletView): int {.slot.} =
+    return self.status.wallet.getLatestBlockNumber()
+
   proc getDefaultAddress*(self: WalletView): string {.slot.} =
     result = $self.status.wallet.getWalletAccounts()[0].address
 

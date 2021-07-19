@@ -20,9 +20,9 @@ ModalPopup {
 
     StyledText {
       id: confirmationsCount
-      // TODO get the right value
-      //% "9999 Confirmations"
-      text: qsTrId("9999-confirmations")
+      text: {
+        return walletModel.getLatestBlockNumber() - utilsModel.hex2Dec(blockNumber) + qsTrId(" confirmation(s)")
+      }
       font.pixelSize: 14
     }
 
@@ -97,7 +97,7 @@ ModalPopup {
 
     Address {
       id: valueHash
-      text: blockHash
+      text: id
       width: 160
       maxWidth: parent.width - labelHash.width - Style.current.padding
       color: Style.current.textColor
