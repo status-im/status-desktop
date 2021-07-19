@@ -1,4 +1,5 @@
 import QtQuick 2.13
+import QtGraphicalEffects 1.13
 import "../../../../shared"
 import "../../../../shared/status"
 import "../../../../imports"
@@ -31,6 +32,11 @@ Rectangle {
         source: "../../../img/key.svg"
         width: 40
         height: 40
+        ColorOverlay {
+            anchors.fill: parent
+            source: parent
+            color: Style.current.blue
+        }
     }
 
     StyledText {
