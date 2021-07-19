@@ -1,110 +1,155 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.3
-import QtGraphicalEffects 1.13
-import QtQuick.Dialogs 1.3
-import "../../../../imports"
-import "../../../../shared"
-import "../../../../shared/status"
 
-ModalPopup {
+import StatusQ.Core 0.1
+import StatusQ.Core.Theme 0.1
+import StatusQ.Components 0.1
+import StatusQ.Controls 0.1
+import StatusQ.Popups 0.1
+
+import "../../../../imports"
+
+StatusModal {
     property int checkedMembership: Constants.communityChatPublicAccess
 
     id: popup
-    height: 600
 
-    //% "Membership requirement"
-    title: qsTrId("membership-title")
+    header.title: qsTr("Membership requirement")
 
-    ScrollView {
-        property ScrollBar vScrollBar: ScrollBar.vertical
+    ButtonGroup {
+        id: membershipRequirementGroup
+    }
 
-        id: scrollView
-        anchors.fill: parent
-        rightPadding: Style.current.bigPadding
-        anchors.rightMargin: - Style.current.bigPadding
-        leftPadding: Style.current.bigPadding
-        anchors.leftMargin: - Style.current.bigPadding
-        contentHeight: content.height
-        ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-        clip: true
+    content: Column {
+        width: popup.width
+        spacing: 8
 
-        ButtonGroup {
-            id: membershipRequirementGroup
-        }
-
-        Column {
-            id: content
+        Item { 
             width: parent.width
-            spacing: Style.current.padding
+            height: parent.spacing
+        }
 
-            MembershipRadioButton {
-                //% "Require approval"
-                text: qsTrId("membership-approval")
-                //% "Your community is free to join, but new members are required to be approved by the community creator first"
-                description: qsTrId("membership-approval-description")
-                buttonGroup: membershipRequirementGroup
-                checked: popup.checkedMembership === Constants.communityChatOnRequestAccess
-                onRadioCheckedChanged: {
-                    if (checked) {
-                        popup.checkedMembership = Constants.communityChatOnRequestAccess
+        StatusListItem {
+            anchors.horizontalCenter: parent.horizontalCenter
+            title: qsTr("Require approval")
+            sensor.onClicked: requestAccessRadio.checked = true
+            components: [
+                StatusRadioButton {
+                    id: requestAccessRadio
+                    checked: popup.checkedMembership === Constants.communityChatOnRequestAccess
+                    ButtonGroup.group: membershipRequirementGroup
+                    onCheckedChanged: {
+                        if (checked) {
+                            popup.checkedMembership = Constants.communityChatOnRequestAccess
+                        }
                     }
                 }
-            }
+            ]
+        }
 
-            MembershipRadioButton {
-                //% "Require invite from another member"
-                text: qsTrId("membership-invite")
-                //% "Your community can only be joined by an invitation from existing community members"
-                description: qsTrId("membership-invite-description")
-                buttonGroup: membershipRequirementGroup
-                checked: popup.checkedMembership === Constants.communityChatInvitationOnlyAccess
-                onRadioCheckedChanged: {
-                    if (checked) {
-                        popup.checkedMembership = Constants.communityChatInvitationOnlyAccess
+        StatusBaseText {
+            wrapMode: Text.WordWrap
+            font.pixelSize: 13
+            color: Theme.palette.baseColor1
+            width: parent.width * 0.78
+            text: qsTr("Your community is free to join, but new members are required to be approved by the community creator first")
+            anchors.left: parent.left
+            anchors.leftMargin: 32
+        }
+
+        StatusListItem {
+            anchors.horizontalCenter: parent.horizontalCenter
+            title: qsTr("Require invite from another member")
+            sensor.onClicked: inviteOnlyRadio.checked = true
+            components: [
+                StatusRadioButton {
+                    id: inviteOnlyRadio
+                    checked: popup.checkedMembership === Constants.communityChatInvitationOnlyAccess
+                    ButtonGroup.group: membershipRequirementGroup
+                    onCheckedChanged: {
+                        if (checked) {
+                            popup.checkedMembership = Constants.communityChatInvitationOnlyAccess
+                        }
                     }
                 }
-            }
+            ]
+        }
 
-            //% "Require ENS username"
-            //% "Your community requires an ENS username to be able to join"
-            // This should be a check box
-//            MembershipRadioButton {
-//                text: qsTrId("membership-ens")
-//                description: qsTrId("membership-ens-description")
-//                buttonGroup: membershipRequirementGroup
-//            }
+        StatusBaseText {
+            wrapMode: Text.WordWrap
+            font.pixelSize: 13
+            color: Theme.palette.baseColor1
+            width: parent.width * 0.78
+            text: qsTr("Your community can only be joined by an invitation from existing community members")
+            anchors.left: parent.left
+            anchors.leftMargin: 32
+        }
 
-            MembershipRadioButton {
-                //% "No requirement"
-                text: qsTrId("membership-free")
-                //% "Your community is free for anyone to join"
-                description: qsTrId("membership-free-description")
-                buttonGroup: membershipRequirementGroup
-                hideSeparator: true
-                checked: popup.checkedMembership === Constants.communityChatPublicAccess
-                onRadioCheckedChanged: {
-                    if (checked) {
-                        popup.checkedMembership = Constants.communityChatPublicAccess
+        /* TODO: add functionality to configure this setting */
+        /* StatusListItem { */
+        /*     anchors.horizontalCenter: parent.horizontalCenter */
+        /*     title: qsTr("Require ENS username") */
+        /*     components: [ */
+        /*         StatusRadioButton { */
+        /*             checked: //... */
+        /*             ButtonGroup.group: membershipRequirementGroup */
+        /*             onCheckedChanged: { */
+        /*                // ... */
+        /*             } */
+        /*         } */
+        /*     ] */
+        /* } */
+        /* StatusBaseText { */
+        /*     wrapMode: Text.WordWrap */
+        /*     font.pixelSize: 13 */
+        /*     color: Theme.palette.baseColor1 */
+        /*     width: parent.width * 0.78 */
+        /*     text: qsTr("Your community requires an ENS username to be able to join") */
+        /*     anchors.left: parent.left */
+        /*     anchors.leftMargin: 32 */
+        /* } */
+
+        StatusListItem {
+            anchors.horizontalCenter: parent.horizontalCenter
+            title: qsTr("No requirement")
+            sensor.onClicked: publicRadio.checked = true
+            components: [
+                StatusRadioButton {
+                    id: publicRadio
+                    checked: popup.checkedMembership === Constants.communityChatPublicAccess
+                    ButtonGroup.group: membershipRequirementGroup
+                    onCheckedChanged: {
+                        if (checked) {
+                            popup.checkedMembership = Constants.communityChatPublicAccess
+                        }
                     }
                 }
-            }
+            ]
+        }
+
+        StatusBaseText {
+            wrapMode: Text.WordWrap
+            font.pixelSize: 13
+            color: Theme.palette.baseColor1
+            width: parent.width * 0.78
+            text: qsTr("Your community is free for anyone to join")
+            anchors.left: parent.left
+            anchors.leftMargin: 32
+        }
+
+        Item { 
+            width: parent.width
+            height: parent.spacing
         }
     }
 
-    footer: StatusIconButton {
-        id: backButton
-        icon.name: "leave_chat"
-        width: 44
-        height: 44
-        iconColor: Style.current.primary
-        highlighted: true
-        icon.color: Style.current.primary
-        icon.width: 28
-        icon.height: 28
-        radius: width / 2
-        onClicked: {
-            popup.close()
+    leftButtons: [
+        StatusRoundButton {
+            icon.name: "arrow-right"
+            icon.width: 20
+            icon.height: 16
+            rotation: 180
+            onClicked: popup.close()
         }
-    }
+    ]
 }
-
