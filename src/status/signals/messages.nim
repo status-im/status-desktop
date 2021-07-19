@@ -204,12 +204,12 @@ proc toChat*(jsonChat: JsonNode): Chat =
       result.membershipUpdateEvents.add(jsonMember.toChatMembershipEvent)
 
 proc toStatusUpdate*(jsonStatusUpdate: JsonNode): StatusUpdate =
-  let statusTypeInt = jsonStatusUpdate{"status-type"}.getInt
+  let statusTypeInt = jsonStatusUpdate{"statusType"}.getInt
   let statusType: StatusUpdateType = if statusTypeInt >= ord(low(StatusUpdateType)) or statusTypeInt <= ord(high(StatusUpdateType)): StatusUpdateType(statusTypeInt) else: StatusUpdateType.Unknown
   result = StatusUpdate(
-    publicKey: jsonStatusUpdate{"public-key"}.getStr,
+    publicKey: jsonStatusUpdate{"publicKey"}.getStr,
     statusType: statusType,
-    clock: jsonStatusUpdate{"clock"}.getBiggestInt,
+    clock: uint64(jsonStatusUpdate{"clock"}.getBiggestInt),
     text: jsonStatusUpdate{"text"}.getStr
   )
 
