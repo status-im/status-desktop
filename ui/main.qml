@@ -143,14 +143,20 @@ StatusWindow {
                     return "shared/img/status-logo-dev-circle.svg"
             }
         }
+
+        function openStatusWindow() {
+            applicationWindow.show()
+            applicationWindow.raise()
+            applicationWindow.requestActivate()
+        }
+
         menu: Menu {
             MenuItem {
                 visible: !applicationWindow.visible
                 //% "Open Status"
                 text: qsTrId("open-status")
                 onTriggered: {
-                    applicationWindow.visible = true;
-                    applicationWindow.requestActivate();
+                    systemTray.openStatusWindow()
                 }
             }
             
@@ -166,12 +172,9 @@ StatusWindow {
         }
 
         onActivated: {
-            if (reason === SystemTrayIcon.Context) {
-                return
+            if (reason !== SystemTrayIcon.Context) {
+                openStatusWindow()
             }
-            applicationWindow.show()
-            applicationWindow.raise()
-            applicationWindow.requestActivate()
         }
     }
 

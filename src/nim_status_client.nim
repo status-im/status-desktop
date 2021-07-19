@@ -47,7 +47,7 @@ proc mainProc() =
   enableHDPI()
   initializeOpenGL()
 
-  let app = newQApplication("Status Desktop")
+  let app = newQGuiApplication()
   let resources =
     if defined(windows) and defined(production):
       "/../resources/resources.rcc"
