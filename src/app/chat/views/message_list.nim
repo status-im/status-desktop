@@ -313,16 +313,6 @@ QtObject:
     self.countChanged()
     self.endInsertRows()
 
-  proc remove*(self: ChatMessageList, messageId: string) =
-    if not self.messageIndex.hasKey(messageId): return
-
-    let index = self.getMessageIndex(messageId)
-    self.beginRemoveRows(newQModelIndex(), index, index)
-    self.messages.delete(index)
-    self.messageIndex.del(messageId)
-    self.countChanged()
-    self.endRemoveRows()
-
   proc getMessageById*(self: ChatMessageList, messageId: string): Message =
     if (not self.messageIndex.hasKey(messageId)): return
     return self.messages[self.messageIndex[messageId]]
@@ -344,9 +334,11 @@ QtObject:
 
   proc changeMessagePinned*(self: ChatMessageList, messageId: string, pinned: bool, pinnedBy: string): bool {.discardable.} =
     if not self.messageIndex.hasKey(messageId): return false
+
     let msgIdx = self.messageIndex[messageId]
     if msgIdx < 0: return false
     if msgIdx >= self.messages.len: return false
+    
     var message = self.messages[msgIdx]
     message.isPinned = pinned
     message.pinnedBy = pinnedBy

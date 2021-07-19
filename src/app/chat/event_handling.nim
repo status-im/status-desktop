@@ -61,7 +61,7 @@ proc handleChatEvents(self: ChatController) =
     if (evArgs.communityMembershipRequests.len > 0):
       self.view.communities.addMembershipRequests(evArgs.communityMembershipRequests)
     if (evArgs.pinnedMessages.len > 0):
-      self.view.addPinnedMessages(evArgs.pinnedMessages)
+      self.view.refreshPinnedMessages(evArgs.pinnedMessages)
     if (evArgs.activityCenterNotifications.len > 0):
       self.view.addActivityCenterNotification(evArgs.activityCenterNotifications)
       self.view.communities.updateNotifications(evArgs.activityCenterNotifications)

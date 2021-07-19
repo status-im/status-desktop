@@ -436,8 +436,8 @@ QtObject:
   proc deleteMessageWhichReplacedMessageWithId*(self: ChatsView, channelId: string, messageId: string): bool =
     result = self.messageView.deleteMessageWhichReplacedMessageWithId(channelId, messageId)
 
-  proc addPinnedMessages*(self: ChatsView, pinnedMessages: seq[Message]) =
-    self.messageView.addPinnedMessages(pinnedMessages)
+  proc refreshPinnedMessages*(self: ChatsView, pinnedMessages: seq[Message]) =
+    self.messageView.refreshPinnedMessages(pinnedMessages)
 
   proc clearMessages*(self: ChatsView, id: string) =
     self.messageView.clearMessages(id)
