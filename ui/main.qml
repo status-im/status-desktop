@@ -120,6 +120,8 @@ StatusWindow {
         Style.changeTheme(globalSettings.theme)
         setX(Qt.application.screens[0].width / 2 - width / 2);
         setY(Qt.application.screens[0].height / 2 - height / 2);
+
+        applicationWindow.updatePosition();
     }
 
     signal navigateTo(string path)
