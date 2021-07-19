@@ -85,6 +85,8 @@ Menu {
 
         contentItem: StatusBaseText {
             anchors.left: statusPopupMenuItem.indicator.right
+            anchors.right: arrowIcon.visible ? arrowIcon.left : arrowIcon.right
+            anchors.rightMargin: 8
             anchors.leftMargin: 4
 
             horizontalAlignment: Text.AlignLeft
@@ -106,6 +108,7 @@ Menu {
         }
 
         arrow: StatusIcon {
+            id: arrowIcon
             anchors.verticalCenter: parent.verticalCenter
             anchors.right: parent.right
             anchors.rightMargin: 8
