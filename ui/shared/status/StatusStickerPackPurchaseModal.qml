@@ -8,7 +8,7 @@ import "../../shared/status"
 
 ModalPopup {
     id: root
-    readonly property var asset: JSON.parse(walletModel.getStatusToken())
+    readonly property var asset: JSON.parse(walletModel.tokensView.getStatusToken())
     property int stickerPackId: -1
     property string packPrice
     property bool showBackBtn: false
@@ -99,7 +99,9 @@ ModalPopup {
             }
             GasSelector {
                 id: gasSelector
-                visible: false
+                visible: true
+                anchors.top: selectFromAccount.bottom
+                anchors.topMargin: Style.current.bigPadding * 2
                 slowestGasPrice: parseFloat(walletModel.gasView.safeLowGasPrice)
                 fastestGasPrice: parseFloat(walletModel.gasView.fastestGasPrice)
                 getGasEthValue: walletModel.gasView.getGasEthValue

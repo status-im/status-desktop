@@ -33,12 +33,13 @@ Item {
             this.active = false // kill an opened instance
         }
         sourceComponent: RegisterENSModal {
+            onOpened: {
+                walletModel.gasView.getGasPricePredictions()
+            }
             onClosed: {
                 transactionDialog.closed()
             }
             ensUsername: username
-            width: 425
-            height: 425
         }
     }
 

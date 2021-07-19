@@ -4124,12 +4124,12 @@ Assets won’t be sent yet.</source>
     </message>
     <message id="use-suggestions">
         <location filename="../shared/GasSelector.qml" line="100"/>
-        <source>Use suggestionsUse custom</source>
+        <source>Use suggestions</source>
         <translation type="unfinished"></translation>
     </message>
     <message id="use-custom">
         <location filename="../shared/GasSelector.qml" line="100"/>
-        <source></source>
+        <source>Use custom</source>
         <translation type="unfinished"></translation>
     </message>
     <message id="low">

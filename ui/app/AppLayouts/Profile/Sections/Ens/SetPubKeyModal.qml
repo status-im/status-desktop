@@ -95,7 +95,9 @@ ModalPopup {
             }
             GasSelector {
                 id: gasSelector
-                visible: false
+                visible: true
+                anchors.top: selectFromAccount.bottom
+                anchors.topMargin: Style.current.bigPadding * 2
                 slowestGasPrice: parseFloat(walletModel.gasView.safeLowGasPrice)
                 fastestGasPrice: parseFloat(walletModel.gasView.fastestGasPrice)
                 getGasEthValue: walletModel.gasView.getGasEthValue
