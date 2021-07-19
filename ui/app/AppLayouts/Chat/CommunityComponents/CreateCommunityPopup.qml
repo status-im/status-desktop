@@ -483,6 +483,7 @@ StatusModal {
     }
 
     MembershipRequirementPopup {
+        anchors.centerIn: parent
         id: membershipRequirementSettingPopup
         // TODO: remove the 'checkedMemership' setting when we no longer need
         // to force "require approval" membership
