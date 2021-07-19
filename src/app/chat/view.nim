@@ -113,7 +113,12 @@ QtObject:
     result.connected = false
     result.currentSuggestions = newSuggestionsList()
     result.activityNotificationList = newActivityNotificationList(status)
-    result.reactions = newReactionView(status, result.messageView.messageList.addr, result.channelView.activeChannel)
+    result.reactions = newReactionView(
+      status,
+      result.messageView.messageList.addr,
+      result.messageView.pinnedMessagesList.addr,
+      result.channelView.activeChannel
+    )
     result.stickers = newStickersView(status, result.channelView.activeChannel)
     result.groups = newGroupsView(status,result.channelView.activeChannel)
     result.transactions = newTransactionsView(status)
