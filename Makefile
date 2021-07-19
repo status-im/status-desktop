@@ -155,6 +155,7 @@ ifeq ($(RELEASE),false)
  # Enable debugging symbols in DOtherSide, in case we need GDB backtraces
  CFLAGS += -g
  CXXFLAGS += -g
+ RCC_PARAMS = --no-compress
 else
  # Additional optimization flags for release builds are not included at present;
  # adding them will involve refactoring config.nims in the root of this repo
@@ -209,8 +210,8 @@ rcc:
 	echo -e $(BUILD_MSG) "resources.rcc"
 	rm -f ./resources.rcc
 	rm -f ./ui/resources.qrc
-	./ui/generate-rcc.sh
-	rcc -binary ui/resources.qrc -o ./resources.rcc
+	go run ui/generate-rcc.go -source=ui -output=ui/resources.qrc
+	rcc -binary $(RCC_PARAMS) ui/resources.qrc -o ./resources.rcc
 
 # default token is a free-tier token with limited capabilities and usage
 # limits; our docs should include directions for community contributor to setup
