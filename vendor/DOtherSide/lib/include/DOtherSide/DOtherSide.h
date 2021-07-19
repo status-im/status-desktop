@@ -66,7 +66,7 @@ DOS_API void DOS_CALL dos_qapplication_initialize_opengl(void);
 
 /// \brief Create a QGuiApplication
 /// \note The created QGuiApplication should be freed by calling dos_qguiapplication_delete()
-DOS_API void DOS_CALL dos_qguiapplication_create(void);
+DOS_API void DOS_CALL dos_qguiapplication_create(int argc, char** argv);
 
 /// \brief Calls the QGuiApplication::exec() function of the current QGuiApplication
 /// \note A QGuiApplication should have been already created through dos_qguiapplication_create()
