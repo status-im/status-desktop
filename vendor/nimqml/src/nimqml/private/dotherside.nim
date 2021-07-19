@@ -138,10 +138,12 @@ proc dos_qapplication_clipboard_setText(content: cstring) {.cdecl, dynlib: dynLi
 proc dos_qapplication_installEventFilter(engine: DosQQmlApplicationEngine) {.cdecl, dynlib: dynLibName, importc.}
 
 # QGuiApplication
-proc dos_qguiapplication_create() {.cdecl, dynlib: dynLibName, importc.}
+proc dos_qguiapplication_create(argc: cint, argv: cstringArray) {.cdecl, dynlib: dynLibName, importc.}
 proc dos_qguiapplication_exec() {.cdecl, dynlib: dynLibName, importc.}
 proc dos_qguiapplication_quit() {.cdecl, dynlib: dynLibName, importc.}
+proc dos_qguiapplication_icon(filename: cstring) {.cdecl, dynlib: dynLibName, importc.}
 proc dos_qguiapplication_delete() {.cdecl, dynlib: dynLibName, importc.}
+proc dos_qguiapplication_installEventFilter(engine: DosQQmlApplicationEngine) {.cdecl, dynlib: dynLibName, importc.}
 
 # QQmlContext
 proc dos_qqmlcontext_setcontextproperty(context: DosQQmlContext, propertyName: cstring, propertyValue: DosQVariant) {.cdecl, dynlib: dynLibName, importc.}
