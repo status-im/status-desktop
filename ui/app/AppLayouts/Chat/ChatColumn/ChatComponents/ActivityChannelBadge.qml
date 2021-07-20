@@ -25,7 +25,7 @@ Rectangle {
     property string profileImage: realChatType === Constants.chatTypeOneToOne ? appMain.getProfileImage(chatId) || ""  : ""
 
     id: wrapper
-    height: 24
+    height: visible ? 24 : 0
     width: childrenRect.width + 12
     color: Style.current.transparent
     border.color: Style.current.borderSecondary

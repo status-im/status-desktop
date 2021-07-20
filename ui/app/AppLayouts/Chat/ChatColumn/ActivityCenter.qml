@@ -155,7 +155,8 @@ Popup {
                         width: parent.width
                         sourceComponent: {
                             switch (model.notificationType) {
-                            case Constants.activityCenterNotificationTypeMention:return messageNotificationComponent
+                            case Constants.activityCenterNotificationTypeOneToOne:
+                            case Constants.activityCenterNotificationTypeMention:
                             case Constants.activityCenterNotificationTypeReply: return messageNotificationComponent
                             case Constants.activityCenterNotificationTypeGroupRequest: return groupRequestNotificationComponent
                             default: return null

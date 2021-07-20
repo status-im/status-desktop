@@ -420,3 +420,5 @@ proc toActivityCenterNotification*(jsonNotification: JsonNode): ActivityCenterNo
 
   if jsonNotification.contains("message") and jsonNotification{"message"}.kind != JNull: 
     result.message = jsonNotification{"message"}.toMessage()
+  elif activityCenterNotificationType == ActivityCenterNotificationType.NewOneToOne and jsonNotification.contains("lastMessage") and jsonNotification{"lastMessage"}.kind != JNull:
+    result.message = jsonNotification{"lastMessage"}.toMessage()
