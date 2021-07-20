@@ -469,5 +469,5 @@ QtObject:
     debug "Requesting messages"
     # TODO: the mailservers must change depending on whether we are using wakuV1 or wakuV2 
     # in the meantime I'm hardcoding a specific mailserver
-    echo self.status.mailservers.setMailserver("16Uiu2HAmVVi6Q4j7MAKVibquW8aA27UNrA4Q8Wkz9EetGViu8ZF1")
+    echo self.status.mailservers.setMailserver("16Uiu2HAm4v86W3bmT1BiH6oSPzcsSr24iDQpSN5Qa992BCjjwgrD")
     echo self.status.mailservers.requestAllHistoricMessages()
