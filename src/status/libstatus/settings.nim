@@ -8,7 +8,7 @@ import
   ./core, ../types, ../signals/types as statusgo_types, ./accounts/constants,
   ../utils
 
-from status_go import getNodeConfig
+from status_go import nil
 
 var
   settings {.threadvar.}: JsonNode
@@ -115,8 +115,22 @@ proc getMailservers*():JsonNode =
   let fleet = getSetting[string](Setting.Fleet, $Fleet.PROD)
   result = callPrivateRPC("mailservers_getMailservers").parseJSON()["result"]
 
+proc getNodeConfig*():JsonNode =
+  result = status_go.getNodeConfig().parseJSON()
+
+  # setting correct values in json
+  let currNetwork = getSetting[string](Setting.Networks_CurrentNetwork, constants.DEFAULT_NETWORK_NAME)
+  let networks = getSetting[JsonNode](Setting.Networks_Networks)
+  let networkConfig = networks.getElems().find((n:JsonNode) => n["id"].getStr() == currNetwork)
+  var newDataDir = networkConfig["config"]["DataDir"].getStr
+  newDataDir.removeSuffix("_rpc")
+  result["DataDir"] = newDataDir.newJString()
+  result["KeyStoreDir"] = newJString("./keystore")
+  result["LogFile"] = newJString("./geth.log")
+  result["ShhextConfig"]["BackupDisabledDataDir"] = newJString("./")
+
 proc getWakuVersion*():int =
-  let nodeConfig = getNodeConfig().parseJSON()
+  let nodeConfig = getNodeConfig()
   if nodeConfig["WakuConfig"]["Enabled"].getBool():
     return 1
   if nodeConfig["WakuV2Config"]["Enabled"].getBool():
@@ -124,10 +138,7 @@ proc getWakuVersion*():int =
   return 0
 
 proc setWakuVersion*(newVersion: int) =
-  let nodeConfig = getNodeConfig().parseJSON()
-  nodeConfig["KeyStoreDir"] = newJString("./keystore")
-  nodeConfig["LogFile"] = newJString("./geth.log")
-  nodeConfig["ShhextConfig"]["BackupDisabledDataDir"] = newJString("./")  
+  let nodeConfig = getNodeConfig()
   if newVersion == 1:
     nodeConfig["WakuConfig"]["Enabled"] = newJBool(true)
     nodeConfig["WakuV2Config"]["Enabled"] = newJBool(false)
@@ -139,4 +150,50 @@ proc setWakuVersion*(newVersion: int) =
     nodeConfig["NoDiscovery"] = newJBool(true)
     nodeConfig["Rendezvous"] = newJBool(false)
   discard saveSetting(Setting.NodeConfig, nodeConfig)
+
+proc setNetwork*(network: string): StatusGoError =
+  let statusGoResult = saveSetting(Setting.Networks_CurrentNetwork, network)
+  if statusGoResult.error != "":
+    return statusGoResult
+
+  let networks = getSetting[JsonNode](Setting.Networks_Networks)
+  let networkConfig = networks.getElems().find((n:JsonNode) => n["id"].getStr() == network)
+
+  var nodeConfig = getNodeConfig()
+  let upstreamUrl = networkConfig["config"]["UpstreamConfig"]["URL"]
+  var newDataDir = networkConfig["config"]["DataDir"].getStr
+  newDataDir.removeSuffix("_rpc")
+  
+  nodeConfig["NetworkId"] = networkConfig["config"]["NetworkId"]
+  nodeConfig["DataDir"] = newDataDir.newJString()
+  nodeConfig["UpstreamConfig"]["Enabled"] = networkConfig["config"]["UpstreamConfig"]["Enabled"]
+  nodeConfig["UpstreamConfig"]["URL"] = upstreamUrl
+
+  return saveSetting(Setting.NodeConfig, nodeConfig)
+
+proc setBloomFilterMode*(bloomFilterMode: bool): StatusGoError =
+  let statusGoResult = saveSetting(Setting.WakuBloomFilterMode, bloomFilterMode)
+  if statusGoResult.error != "":
+    return statusGoResult
+
+  var nodeConfig = getNodeConfig()
+  nodeConfig["WakuConfig"]["BloomFilterMode"] = newJBool(bloomFilterMode)
+
+  return saveSetting(Setting.NodeConfig, nodeConfig)
+
+proc setFleet*(fleetConfig: FleetConfig, fleet: Fleet): StatusGoError =
+  let statusGoResult = saveSetting(Setting.Fleet, $fleet)
+  if statusGoResult.error != "":
+    return statusGoResult
+
+  var nodeConfig = getNodeConfig()
+  nodeConfig["ClusterConfig"]["Fleet"] = newJString($fleet)
+  nodeConfig["ClusterConfig"]["BootNodes"] = %* fleetConfig.getNodes(fleet, FleetNodes.Bootnodes)
+  nodeConfig["ClusterConfig"]["TrustedMailServers"] = %* fleetConfig.getNodes(fleet, FleetNodes.Mailservers)
+  nodeConfig["ClusterConfig"]["StaticNodes"] = %* fleetConfig.getNodes(fleet, FleetNodes.Whisper)
+  nodeConfig["ClusterConfig"]["RendezvousNodes"] = %* fleetConfig.getNodes(fleet, FleetNodes.Rendezvous)
+  nodeConfig["ClusterConfig"]["WakuNodes"] =  %* fleetConfig.getNodes(fleet, FleetNodes.Waku)
+  nodeConfig["ClusterConfig"]["WakuStoreNodes"] =  %* fleetConfig.getNodes(fleet, FleetNodes.Waku)
+
+  return saveSetting(Setting.NodeConfig, nodeConfig)
 
