@@ -204,6 +204,7 @@ Item {
         let nickname = appMain.getUserNickname(fromAuthor)
         messageContextMenu.messageId = root.messageId;
         messageContextMenu.linkUrls = root.linkUrls;
+        messageContextMenu.contentType = root.contentType
         messageContextMenu.isProfile = !!isProfileClick;
         messageContextMenu.isCurrentUser = root.isCurrentUser
         messageContextMenu.isText = root.isText

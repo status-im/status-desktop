@@ -54,7 +54,7 @@ proc handleChatEvents(self: ChatController) =
           # was not deleted.
           discard self.view.deleteMessageWhichReplacedMessageWithId(message.chatId, message.replace)
       if (message.deleted):
-        self.view.deleteMessage(message.chatId, message.id)
+        discard self.view.deleteMessage(message.chatId, message.id)
 
 
     self.view.reactions.push(evArgs.emojiReactions)

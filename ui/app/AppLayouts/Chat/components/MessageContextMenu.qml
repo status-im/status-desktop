@@ -13,6 +13,7 @@ PopupMenu {
     closePolicy: Popup.CloseOnPressOutside | Popup.CloseOnEscape
 
     property string messageId
+    property int contentType
     property bool isProfile: false
     property bool isSticker: false
     property bool emojiOnly: false
@@ -298,6 +299,12 @@ PopupMenu {
     
     Action {
         id: deleteMessageAction
+        enabled: isCurrentUser &&
+                 (contentType === Constants.messageType ||
+                  contentType === Constants.stickerType ||
+                  contentType === Constants.emojiType ||
+                  contentType === Constants.imageType ||
+                  contentType === Constants.audioType)
         text: qsTr("Delete message")
         onTriggered: {
             if (!appSettings.showDeleteMessageWarning) {
@@ -323,6 +330,5 @@ PopupMenu {
         icon.color: Style.current.danger
         icon.width: 16
         icon.height: 16
-        enabled: isCurrentUser
     }
 }
