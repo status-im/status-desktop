@@ -8,7 +8,7 @@ Rectangle {
     id: statusListItem
 
     implicitWidth: 448
-    implicitHeight: 64
+    implicitHeight: Math.max(64, statusListItemTitleArea.height + 16)
 
     enum Type {
         Primary,
@@ -34,6 +34,7 @@ Rectangle {
 
     property string title: ""
     property string subTitle: ""
+    property string tertiaryTitle: ""
     property real leftPadding: 16
     property real rightPadding: 16
     property StatusIconSettings icon: StatusIconSettings {
@@ -69,6 +70,7 @@ Rectangle {
     property alias sensor: sensor
     property alias statusListItemTitle: statusListItemTitle
     property alias statusListItemSubTitle: statusListItemSubTitle
+    property alias statusListItemTertiaryTitle: statusListItemTertiaryTitle
     property alias statusListItemComponentsSlot: statusListItemComponentsSlot
 
     property list<Item> components
@@ -144,10 +146,13 @@ Rectangle {
         }
 
         Item {
+            id: statusListItemTitleArea
             anchors.left: iconOrImage.active ? iconOrImage.right : parent.left
             anchors.leftMargin: statusListItem.leftPadding
             anchors.verticalCenter: parent.verticalCenter
-            height: statusListItemTitle.height + (statusListItemSubTitle.visible ? statusListItemSubTitle.height : 0)
+            height: statusListItemTitle.height + 
+              (statusListItemSubTitle.visible ? statusListItemSubTitle.height : 0) +
+              (statusListItemTertiaryTitle.visible ? statusListItemTertiaryTitle.height : 0)
 
             StatusBaseText {
                 id: statusListItemTitle
@@ -171,8 +176,17 @@ Rectangle {
 
                 text: statusListItem.subTitle
                 font.pixelSize: 15
-                color: Theme.palette.baseColor1
+                color: !statusListItem.tertiaryTitle ? Theme.palette.baseColor1 : Theme.palette.directColor1
                 visible: !!statusListItem.subTitle
+            }
+
+            StatusBaseText {
+                id: statusListItemTertiaryTitle
+                anchors.top: statusListItemSubTitle.bottom
+                text: statusListItem.tertiaryTitle
+                color: Theme.palette.baseColor1
+                font.pixelSize: 13
+                visible: !!statusListItem.tertiaryTitle
             }
         }
 

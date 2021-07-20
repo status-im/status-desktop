@@ -146,6 +146,15 @@ GridLayout {
     StatusListItem {
         title: "Title"
         subTitle: "Subtitle"
+        tertiaryTitle: "Tertiary title"
+
+        statusListItemTitle.font.pixelSize: 17
+        statusListItemTitle.font.weight: Font.Bold
+    }
+
+    StatusListItem {
+        title: "Title"
+        subTitle: "Subtitle"
         icon.name: "info"
     }
 
