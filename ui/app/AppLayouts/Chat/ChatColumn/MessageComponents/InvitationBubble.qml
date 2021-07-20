@@ -63,7 +63,7 @@ Item {
             }
         }
     }
-    
+
 
     Loader {
         id: rectangleBubbleLoader
@@ -127,8 +127,8 @@ Item {
                     State {
                         name: "requestToJoin"
                         when: invitedCommunity.access === Constants.communityChatOnRequestAccess &&
-                            //   !invitedCommunity.joined && !invitedCommunity.isMember
-                            invitedCommunity.canRequestAccess
+                              //   !invitedCommunity.joined && !invitedCommunity.isMember
+                              invitedCommunity.canRequestAccess
                         PropertyChanges {
                             target: joinBtn
                             //% "Request Access"
@@ -178,17 +178,17 @@ Item {
                     id: invitedYou
                     text: {
                         if (chatsModel.channelView.activeChannel.chatType === Constants.chatTypeOneToOne) {
-                            return isCurrentUser ? 
-                        //% "You invited %1 to join a community"
-                        qsTrId("you-invited--1-to-join-a-community").arg(chatsModel.userNameOrAlias(chatsModel.channelView.activeChannel.id))
-                                //% "%1 invited you to join a community"
-                                : qsTrId("-1-invited-you-to-join-a-community").arg(displayUserName)
+                            return isCurrentUser ?
+                                        //% "You invited %1 to join a community"
+                                        qsTrId("you-invited--1-to-join-a-community").arg(chatsModel.userNameOrAlias(chatsModel.channelView.activeChannel.id))
+                                        //% "%1 invited you to join a community"
+                                      : qsTrId("-1-invited-you-to-join-a-community").arg(displayUserName)
                         } else {
-                            return isCurrentUser ? 
-                                //% "You shared a community"
-                                qsTrId("you-shared-a-community")
-                                //% "A community has been shared"
-                                : qsTrId("a-community-has-been-shared")
+                            return isCurrentUser ?
+                                        //% "You shared a community"
+                                        qsTrId("you-shared-a-community")
+                                        //% "A community has been shared"
+                                      : qsTrId("a-community-has-been-shared")
                         }
                     }
                     anchors.top: title.bottom
@@ -254,55 +254,60 @@ Item {
                     anchors.top: communityNbMembers.bottom
                     anchors.topMargin: Style.current.halfPadding
                 }
-
-                StatusButton {
-                    id: joinBtn
-                    type: "secondary"
-                    anchors.top: sep2.bottom
+                Item {
                     width: parent.width
                     height: 44
-                    enabled: true
-                    //% "Unsupported state"
-                    text: qsTrId("unsupported-state")
-                    onClicked: {
-                        let onBtnClick = function(){
-                            let error
+                    anchors.bottom: parent.bottom
+                    clip: true
+                    StatusButton {
+                        id: joinBtn
+                        type: "secondary"
+                        anchors.top: parent.top
+                        anchors.topMargin: -Style.current.smallPadding
+                        borderRadius: 16
+                        width: parent.width
+                        height: 54
+                        enabled: true
+                        //% "Unsupported state"
+                        text: qsTrId("unsupported-state")
+                        onClicked: {
+                            let onBtnClick = function(){
+                                let error
 
-                            if (rectangleBubble.state === "joined") {
-                                chatsModel.communities.setActiveCommunity(communityId);
-                                return
-                            } else if (rectangleBubble.state === "unjoined") {
-                                error = chatsModel.communities.joinCommunity(communityId, true)
-                            }
-                            else if (rectangleBubble.state === "requestToJoin") {
-                                error = chatsModel.communities.requestToJoinCommunity(communityId,
-                                                                        profileModel.profile.ensVerified ? profileModel.profile.username : "")
-                                if (!error) {
-                                    rectangleBubble.isPendingRequest = chatsModel.communities.isCommunityRequestPending(communityId)
+                                if (rectangleBubble.state === "joined") {
+                                    chatsModel.communities.setActiveCommunity(communityId);
+                                    return
+                                } else if (rectangleBubble.state === "unjoined") {
+                                    error = chatsModel.communities.joinCommunity(communityId, true)
+                                }
+                                else if (rectangleBubble.state === "requestToJoin") {
+                                    error = chatsModel.communities.requestToJoinCommunity(communityId,
+                                                                                          profileModel.profile.ensVerified ? profileModel.profile.username : "")
+                                    if (!error) {
+                                        rectangleBubble.isPendingRequest = chatsModel.communities.isCommunityRequestPending(communityId)
+                                    }
+                                }
+
+                                if (error) {
+                                    joiningError.text = error
+                                    return joiningError.open()
                                 }
                             }
 
-                            if (error) {
-                                joiningError.text = error
-                                return joiningError.open()
+                            if (appSettings.communitiesEnabled) {
+                                onBtnClick();
+                            } else {
+                                openPopup(confirmationPopupComponent, { onConfirmed: onBtnClick });
                             }
                         }
 
-                        if(appSettings.communitiesEnabled){
-                            onBtnClick();
-                        } else {
-                            openPopup(confirmationPopupComponent, {
-                                onConfirmed: onBtnClick
-                            });
+                        MessageDialog {
+                            id: joiningError
+                            //% "Error joining the community"
+                            title: qsTrId("error-joining-the-community")
+                            icon: StandardIcon.Critical
+                            standardButtons: StandardButton.Ok
                         }
-                    }
-
-                    MessageDialog {
-                        id: joiningError
-                        //% "Error joining the community"
-                        title: qsTrId("error-joining-the-community")
-                        icon: StandardIcon.Critical
-                        standardButtons: StandardButton.Ok
                     }
                 }
             }
