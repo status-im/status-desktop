@@ -460,7 +460,7 @@ QtObject:
     let chatId = self.messageView.getChatIdForMessage(messageId)
     if (chatId.len == 0):
       return
-    self.deleteMessage(chatId, messageId)
+    discard self.deleteMessage(chatId, messageId)
 
 
   proc clearMessages*(self: ChatsView, id: string) =
