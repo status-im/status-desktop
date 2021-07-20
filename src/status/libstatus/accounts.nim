@@ -194,8 +194,7 @@ proc setupAccount*(fleetConfig: FleetConfig, account: GeneratedAccount, password
     let accountData = getAccountData(account)
     let installationId = $genUUID()
     var settingsJSON = getAccountSettings(account, constants.DEFAULT_NETWORKS, installationId)
-    var nodeConfig = getNodeConfig(fleetConfig, installationId, constants.DEFAULT_NETWORK_NAME, Fleet.PROD, true)
-
+    var nodeConfig = getNodeConfig(fleetConfig, installationId, constants.DEFAULT_NETWORK_NAME, Fleet.PROD, false, true)
     result = saveAccountAndLogin(account, $accountData, password, $nodeConfig, $settingsJSON)
 
   except StatusGoException as e:

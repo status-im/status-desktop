@@ -137,6 +137,7 @@ Item {
 
         StatusSettingsLineButton {
             //% "Waku Bloom Mode"
+            visible: profileModel.fleets.fleet != Constants.waku_prod && profileModel.fleets.fleet != Constants.waku_test
             text: qsTrId("waku-bloom-mode")
             isSwitch: true
             switchChecked: nodeModel.wakuBloomFilterMode
@@ -152,7 +153,7 @@ Item {
                     id: confirmDialog
                     //% "Warning!"
                     title: qsTrId("close-app-title")
-                    confirmationText: qsTrId("The account will be logged out. When you login again, the selected mode will be enabled")
+                    confirmationText: qsTr("The account will be logged out. When you login again, the selected mode will be enabled")
                     onConfirmButtonClicked: {
                         nodeModel.setWakuBloomFilterMode(bloomFilterMode)
                     }

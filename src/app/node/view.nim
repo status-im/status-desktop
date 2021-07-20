@@ -85,5 +85,9 @@ QtObject:
   proc init*(self: NodeView) {.slot.} =
     self.wakuBloomFilterMode = self.status.settings.getSetting[:bool](Setting.WakuBloomFilterMode)
 
-
-
+  proc wakuVersion*(self: NodeView): int {.slot.} =
+    var fleetStr = self.status.settings.getSetting[:string](Setting.Fleet)
+    let fleet = parseEnum[Fleet](fleetStr)
+    let isWakuV2 = if fleet == WakuV2Prod or fleet == WakuV2Test: true else: false
+    if isWakuV2: return 2
+    return 1

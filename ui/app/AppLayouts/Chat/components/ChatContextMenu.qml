@@ -53,6 +53,13 @@ StatusPopupMenu {
         visible: viewProfileMenuItem.enabled
     }
 
+
+    Action {
+        enabled: profileModel.fleets.fleet == Constants.waku_prod || profileModel.fleets.fleet == Constants.waku_test
+        text: qsTr("Test WakuV2 - requestAllHistoricMessages")
+        onTriggered: chatsModel.requestAllHistoricMessages()
+    }
+
     StatusMenuItem {
         text: chatItem && chatItem.muted ? 
               //% "Unmute chat"
