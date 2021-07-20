@@ -1,4 +1,4 @@
-import NimQml, Tables, std/wrapnils
+import NimQml, std/wrapnils
 import ../../../status/chat/chat
 
 QtObject:

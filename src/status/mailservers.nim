@@ -3,9 +3,6 @@ import json
 import libstatus/mailservers as status_mailservers
 import ../eventemitter
 
-#TODO: temporary?
-import types as LibStatusTypes
-
 type
     MailserversModel* = ref object
         events*: EventEmitter
