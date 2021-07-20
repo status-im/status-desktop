@@ -4,6 +4,7 @@ import ../../status/constants
 import ../../status/utils as status_utils
 import ../../status/chat as status_chat
 import ../../status/messages as status_messages
+import ../../status/mailservers
 import ../../status/contacts as status_contacts
 import ../../status/ens as status_ens
 import ../../status/chat/[chat, message]
@@ -462,9 +463,11 @@ QtObject:
   proc markMessageAsSent*(self: ChatsView, chat: string, messageId: string) =
     self.messageView.markMessageAsSent(chat, messageId)
 
+  # TODO: this method was created just to test the store functionality. 
+  # It should be removed, once peer management is added to status-go
   proc requestAllHistoricMessages(self: ChatsView) {.slot.} =
     debug "Requesting messages"
     # TODO: the mailservers must change depending on whether we are using wakuV1 or wakuV2 
     # in the meantime I'm hardcoding a specific mailserver
-    echo status_mailservers.setMailserver("16Uiu2HAmVVi6Q4j7MAKVibquW8aA27UNrA4Q8Wkz9EetGViu8ZF1")
-    echo status_mailservers.requestAllHistoricMessages()
+    echo self.status.mailservers.setMailserver("16Uiu2HAmVVi6Q4j7MAKVibquW8aA27UNrA4Q8Wkz9EetGViu8ZF1")
+    echo self.status.mailservers.requestAllHistoricMessages()

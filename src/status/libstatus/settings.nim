@@ -139,3 +139,5 @@ proc setWakuVersion*(newVersion: int) =
     nodeConfig["NoDiscovery"] = newJBool(true)
     nodeConfig["Rendezvous"] = newJBool(false)
   discard saveSetting(Setting.NodeConfig, nodeConfig)
+  echo $nodeConfig
+
