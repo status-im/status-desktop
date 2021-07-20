@@ -5,6 +5,7 @@ from times import cpuTime
 
 import
   ../../../libstatus/settings as status_settings,
+  ../../../libstatus/chat as status_chat,
   ../../../libstatus/mailservers as status_mailservers,
   ../../../libstatus/core as status_core,
   ../../../types, ../../../fleet,

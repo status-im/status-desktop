@@ -57,3 +57,6 @@ proc getCurrentNetwork*(): Network =
 
 proc getCurrentNetwork*(self: SettingsModel): Network =
     result = getCurrentNetwork()
+
+proc setWakuVersion*(self: SettingsModel, newVersion: int) =
+  libstatus_settings.setWakuVersion(newVersion)
