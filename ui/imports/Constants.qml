@@ -18,6 +18,7 @@ QtObject {
     readonly property int communityChatOnRequestAccess: 3
 
 
+    readonly property int activityCenterNotificationTypeOneToOne: 1
     readonly property int activityCenterNotificationTypeGroupRequest: 2
     readonly property int activityCenterNotificationTypeMention: 3
     readonly property int activityCenterNotificationTypeReply: 4
