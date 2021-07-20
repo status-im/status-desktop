@@ -1,4 +1,4 @@
-library 'status-jenkins-lib@feat/windows-installer'
+library 'status-jenkins-lib@v1.2.19'
 
 pipeline {
   agent { label 'windows' }
@@ -26,7 +26,7 @@ pipeline {
   environment {
     TARGET = 'windows'
     /* Improve make performance */
-    MAKEFLAGS = '-j4 V=1'
+    MAKEFLAGS = '-j4'
     /* Disable colors in Nim compiler logs */
     NIMFLAGS = '--colors:off'
     /* Control output the filename */
