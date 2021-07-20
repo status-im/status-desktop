@@ -6,7 +6,6 @@ import "../../../../shared/status"
 import "../ChatColumn"
 
 Popup {
-    property var searchResults
     property string chatId: chatsModel.channelView.activeChannel.id
 
     id: popup
@@ -24,7 +23,8 @@ Popup {
         const noResultHeight = 122
         let minHeight = 560
         const maxHeight = parent.height - 200
-        if (!searchResults || !searchResults.length || !searchResultContent.visible) {
+
+        if (!searchResultContent.visible) {
             return noResultHeight
         }
 
@@ -32,10 +32,10 @@ Popup {
             return maxHeight
         }
 
-        if (messageColumn.height < minHeight - noResultHeight) {
+        if (listView.height < minHeight - noResultHeight) {
             return minHeight
         }
-        if (messageColumn.height > maxHeight - noResultHeight) {
+        if (listView.height > maxHeight - noResultHeight) {
             return maxHeight
         }
     }
@@ -75,19 +75,7 @@ Popup {
         }
 
         property var searchMessages: Backpressure.debounce(searchInput, 400, function (value) {
-            if (value === "") {
-                searchResultContent.visible = false
-                return
-            }
-
-            // TODO add loading?
-            const messageIdsStr = chatsModel.messageView.messageList.messageSearch(value)
-            try {
-                searchResultContent.visible = true
-                searchResults = JSON.parse(messageIdsStr)
-            } catch (e) {
-                console.error ("Error parsing search result", e)
-            }
+            chatsModel.messageView.searchMessages(value)
         })
 
         StyledTextField {
@@ -105,7 +93,9 @@ Popup {
             background: Rectangle {
                 color: Style.current.transparent
             }
-            onTextChanged: Qt.callLater(searchHeader.searchMessages, searchInput.text)
+            onTextChanged: {
+                searchHeader.searchMessages(searchInput.text)
+            }
         }
 
         Separator {
@@ -150,7 +140,7 @@ Popup {
 
     Item {
         id: searchResultContent
-        visible: !!popup.searchResults && popup.searchResults.length > 0
+        visible: chatsModel.messageView.searchResultMessageModel.count > 0
         width: parent.width
         anchors.bottom: parent.bottom
         anchors.top: channelBadge.bottom
@@ -183,66 +173,53 @@ Popup {
             width: parent.width
             clip: true
 
-            Column {
-                id: messageColumn
-                width: parent.width
-                spacing: 0
+            ListView{
+                id: listView
+                model: chatsModel.messageView.searchResultMessageModel
 
-                Repeater {
-                    model: popup.searchResults
+                delegate: Message {
 
-                    delegate: Message {
-                        property var messageItem: ({})
-
-                        function getMessage() {
-                            chatsModel.messageView.setObservedMessageItem(popup.chatId, modelData)
-                            return chatsModel.messageView.observedMessageItem
+                    anchors.right: undefined
+                    messageId: model.messageId
+                    fromAuthor: model.fromAuthor
+                    chatId: model.chatId
+                    userName: model.userName
+                    alias: model.alias
+                    localName: model.localName
+                    message: model.message
+                    plainText: model.plainText
+                    identicon: model.identicon
+                    isCurrentUser: model.isCurrentUser
+                    timestamp: model.timestamp
+                    sticker: model.sticker
+                    contentType: model.contentType
+                    outgoingStatus: model.outgoingStatus
+                    responseTo: model.responseTo
+                    imageClick: imagePopup.openPopup.bind(imagePopup)
+                    linkUrls: model.linkUrls
+                    communityId: model.communityId
+                    hasMention: model.hasMention
+                    stickerPackId: model.stickerPackId
+                    pinnedBy: model.pinnedBy
+                    pinnedMessage: model.isPinned
+                    activityCenterMessage: true
+                    clickMessage: function (isProfileClick) {
+                        if (isProfileClick) {
+                            const pk = model.fromAuthor
+                            const userProfileImage = appMain.getProfileImage(pk)
+                            return openProfilePopup(chatsModel.userNameOrAlias(pk), pk, userProfileImage || utilsModel.generateIdenticon(pk))
                         }
 
-                        Component.onCompleted: {
-                            messageItem = getMessage()
-                        }
+                        popup.close()
 
-                        anchors.right: undefined
-                        messageId: messageItem.messageId
-                        fromAuthor: messageItem.fromAuthor
-                        chatId: messageItem.chatId
-                        userName: messageItem.userName
-                        alias: messageItem.alias
-                        localName: messageItem.localName
-                        message: messageItem.message
-                        plainText: messageItem.plainText
-                        identicon: messageItem.identicon
-                        isCurrentUser: messageItem.isCurrentUser
-                        timestamp: messageItem.timestamp
-                        sticker: messageItem.sticker
-                        contentType: messageItem.contentType
-                        outgoingStatus: messageItem.outgoingStatus
-                        responseTo: messageItem.responseTo
-                        imageClick: imagePopup.openPopup.bind(imagePopup)
-                        linkUrls: messageItem.linkUrls
-                        communityId: messageItem.communityId
-                        hasMention: messageItem.hasMention
-                        stickerPackId: messageItem.stickerPackId
-                        pinnedBy: messageItem.pinnedBy
-                        pinnedMessage: messageItem.isPinned
-                        activityCenterMessage: true
-                        clickMessage: function (isProfileClick) {
-                            if (isProfileClick) {
-                                const pk = messageItem.fromAuthor
-                                const userProfileImage = appMain.getProfileImage(pk)
-                                return openProfilePopup(chatsModel.userNameOrAlias(pk), pk, userProfileImage || utilsModel.generateIdenticon(pk))
-                            }
-
-                            popup.close()
-
-                            positionAtMessage(messageItem.messageId)
-                        }
-
-                        prevMessageIndex: -1
-                        prevMsgTimestamp: ""
+                        positionAtMessage(model.messageId)
                     }
+
+                    prevMessageIndex: -1
+                    prevMsgTimestamp: ""
                 }
+
+
             }
         }
     }
