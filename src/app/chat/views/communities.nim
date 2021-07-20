@@ -471,6 +471,15 @@ QtObject:
             chat.muted = true
           return chat
 
+  proc setCommunityMuted*(self: CommunitiesView, communityId: string, muted: bool) {.slot.} =
+    self.status.chat.setCommunityMuted(communityId, muted)
+    if (communityId == self.activeCommunity.communityItem.id):
+      self.activeCommunity.setMuted(muted)
+
+    var community = self.joinedCommunityList.getCommunityById(communityId)
+    community.muted = muted
+    self.joinedCommunityList.replaceCommunity(community)
+
   proc markNotificationsAsRead*(self: CommunitiesView, markAsReadProps: MarkAsReadNotificationProperties) =
     if(markAsReadProps.communityId.len == 0 and markAsReadProps.channelId.len == 0):
       # Remove all notifications from all communities and their channels for set types.

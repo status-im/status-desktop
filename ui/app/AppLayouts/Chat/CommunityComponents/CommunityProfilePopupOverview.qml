@@ -98,7 +98,7 @@ Column {
         components: [
             StatusSwitch {
                 checked: !root.community.muted
-                onClicked: root.notificationsButtonClicked(checked)
+                onClicked: root.notificationsButtonClicked(!checked)
             }
         ]
     }
