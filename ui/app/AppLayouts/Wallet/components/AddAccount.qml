@@ -13,7 +13,7 @@ StatusRoundButton {
     width: 36
     height: 36
     readonly property var onAfterAddAccount: function() {
-        walletInfoContainer.changeSelectedAccount(walletModel.accounts.rowCount() - 1)
+        walletInfoContainer.changeSelectedAccount(walletModel.accountsView.accounts.rowCount() - 1)
     }
 
     onClicked: {

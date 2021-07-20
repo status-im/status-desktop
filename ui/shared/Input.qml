@@ -176,14 +176,14 @@ Item {
         visible: !!validationError
         id: validationErrorText
         text: validationError
-        anchors.top: inputRectangle.bottom
+        anchors.top: inputField.bottom
         anchors.topMargin: validationErrorTopMargin
         selectByMouse: true
         readOnly: true
         font.pixelSize: 12
         height: 16
         color: validationErrorColor
-        width: inputRectangle.width
+        width: inputField.width
         wrapMode: TextEdit.Wrap
     }
 }
