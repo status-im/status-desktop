@@ -116,7 +116,7 @@ ScrollView {
 
             StatusSettingsLineButton {
                 //% "Play a sound when receiving a notification"
-                text: qsTrId("play-a-sound-when-receiving-a-notification")
+                text: qsTr("play-a-sound-when-receiving-a-notification")
                 isSwitch: true
                 switchChecked: appSettings.notificationSoundsEnabled
                 onClicked: {
@@ -126,7 +126,7 @@ ScrollView {
 
             StatusSettingsLineButton {
                 //% "Use your operating system's notifications"
-                text: qsTrId("use-your-operating-system-s-notifications")
+                text: qsTr("use-your-operating-system-s-notifications")
                 isSwitch: true
                 switchChecked: appSettings.useOSNotifications
                 onClicked: {
@@ -273,8 +273,9 @@ ScrollView {
                         showMutedContacts: true
                     })
                     //% "Muted contacts"
-                    mutedChatsModal.title = qsTrId("muted-contacts")
-                    mutedChatsModal.open()
+                    mutedChatsModal.title = qsTrId("muted-contacts");
+                    mutedChatsModal.noContentText = qsTr("Muted contacts will appear here");
+                    mutedChatsModal.open();
                 }
             }
 
@@ -289,8 +290,9 @@ ScrollView {
                         showMutedContacts: false
                     })
                     //% "Muted chats"
-                    mutedChatsModal.title = qsTrId("muted-chats")
-                    mutedChatsModal.open()
+                    mutedChatsModal.title = qsTrId("muted-chats");
+                    mutedChatsModal.noContentText = qsTr("Muted chats will appear here");
+                    mutedChatsModal.open();
                 }
 
                 StyledText {
