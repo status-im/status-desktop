@@ -4,7 +4,7 @@ import "../../../../../shared"
 import "../../../../../shared/status"
 
 Item {
-    visible: chatsModel.channelView.activeChannel.chatType === Constants.chatTypeOneToOne && (!isContact || !contactRequestReceived)
+    visible: chatsModel.channelView.activeChannel.chatType === Constants.chatTypeOneToOne && (!isContact /*|| !contactRequestReceived*/)
     width: parent.width
     height: childrenRect.height
 
@@ -18,10 +18,9 @@ Item {
 
     StyledText {
         id: contactText1
-        //% "You need to be mutual contacts with this person for them to receive your messages"
-        text: !isContact ? qsTrId("you-need-to-be-mutual-contacts-with-this-person-for-them-to-receive-your-messages") :
-                           //% "Waiting for %1 to accept your request"
-                           qsTrId("waiting-for--1-to-accept-your-request").arg(Utils.removeStatusEns(chatsModel.channelView.activeChannel.name))
+        text: qsTr("You need to be mutual contacts with this person for them to receive your messages")
+//        text: !isContact ? qsTr("You need to be mutual contacts with this person for them to receive your messages") :
+//                           qsTr("Waiting for %1 to accept your request").arg(Utils.removeStatusEns(chatsModel.channelView.activeChannel.name))
         anchors.top: waveImg.bottom
         horizontalAlignment: Text.AlignHCenter
         wrapMode: Text.WordWrap
