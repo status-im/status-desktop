@@ -58,17 +58,12 @@ QtObject:
       timedoutMessages: HashSet[string]
       userList: UserListView
 
-  proc delete(self: ChatMessageList) =
+  proc delete*(self: ChatMessageList) =
     self.messages = @[]
     self.isEdited = initTable[string, bool]()
     self.messageIndex = initTable[string, int]()
     self.timedoutMessages = initHashSet[string]()
     self.QAbstractListModel.delete
-
-  proc setup(self: ChatMessageList) =
-    self.QAbstractListModel.setup
-
-  proc countChanged*(self: ChatMessageList) {.signal.}
 
   proc fetchMoreMessagesButton(self: ChatMessageList): Message =
     result = Message()
@@ -83,21 +78,34 @@ QtObject:
     self.messages.add(self.fetchMoreMessagesButton())
     self.messages.add(self.chatIdentifier(self.id))
 
-  proc newChatMessageList*(chatId: string, status: Status, addFakeMessages: bool = true): ChatMessageList =
-    new(result, delete)
-    result.messages = @[]
-    result.id = chatId
+  proc setup*(self: ChatMessageList, chatId: string, status: Status, addFakeMessages: bool) =
+    self.messages = @[]
+    self.id = chatId
 
     if addFakeMessages:
-      result.addFakeMessages()
+      self.addFakeMessages()
 
-    result.messageIndex = initTable[string, int]()
-    result.timedoutMessages = initHashSet[string]()
-    result.isEdited = initTable[string, bool]()
-    result.userList = newUserListView(status)
-    result.status = status
-    result.setup
-  
+    self.messageIndex = initTable[string, int]()
+    self.timedoutMessages = initHashSet[string]()
+    self.isEdited = initTable[string, bool]()
+    self.userList = newUserListView(status)
+    self.status = status
+
+    self.QAbstractListModel.setup
+
+  proc newChatMessageList*(chatId: string, status: Status, addFakeMessages: bool): ChatMessageList =
+    new(result, delete)
+    result.setup(chatId, status, addFakeMessages)
+
+  proc countChanged*(self: ChatMessageList) {.signal.}
+
+  proc count*(self: ChatMessageList): int {.slot.}  =
+    self.messages.len
+
+  QtProperty[int] count:
+    read = count
+    notify = countChanged
+
   proc hasMessage*(self: ChatMessageList, messageId: string): bool =
     return self.messageIndex.hasKey(messageId)
 
@@ -156,13 +164,6 @@ QtObject:
 
   method rowCount(self: ChatMessageList, index: QModelIndex = nil): int =
     return self.messages.len
-
-  proc count*(self: ChatMessageList): int {.slot.}  =
-    self.messages.len
-
-  QtProperty[int] count:
-    read = count
-    notify = countChanged
 
   proc getReactions*(self:ChatMessageList, messageId: string):string =
     if not self.messageReactions.hasKey(messageId): return ""
@@ -303,18 +304,28 @@ QtObject:
     self.messageIndex[message.id] = self.messages.len
     self.messages.add(message)
     self.userList.add(message)
-    self.countChanged()
     self.endInsertRows()
+    self.countChanged()
 
   proc add*(self: ChatMessageList, messages: seq[Message]) =
-    self.beginInsertRows(newQModelIndex(), self.messages.len, self.messages.len)
+    self.beginInsertRows(newQModelIndex(), self.messages.len, self.messages.len + messages.len - 1)
     for message in messages:
       if self.messageIndex.hasKey(message.id): continue
       self.messageIndex[message.id] = self.messages.len
       self.messages.add(message)
       self.userList.add(message)
-    self.countChanged()
     self.endInsertRows()
+    self.countChanged()
+
+  proc remove*(self: ChatMessageList, messageId: string) =
+    if not self.messageIndex.hasKey(messageId): return
+
+    let index = self.getMessageIndex(messageId)
+    self.beginRemoveRows(newQModelIndex(), index, index)
+    self.messages.delete(index)
+    self.messageIndex.del(messageId)
+    self.endRemoveRows()
+    self.countChanged()
 
   proc getMessageById*(self: ChatMessageList, messageId: string): Message =
     if (not self.messageIndex.hasKey(messageId)): return
@@ -323,9 +334,11 @@ QtObject:
   proc clear*(self: ChatMessageList, addFakeMessages: bool = true) =
     self.beginResetModel()
     self.messages = @[]
+    self.messageIndex.clear
     if (addFakeMessages):
       self.addFakeMessages()
     self.endResetModel()
+    self.countChanged()
 
   proc setMessageReactions*(self: ChatMessageList, messageId: string, newReactions: string)=
     self.messageReactions[messageId] = newReactions    
@@ -391,12 +404,3 @@ QtObject:
 
   QtProperty[QVariant] userList:
     read = getUserList
-
-  proc messageSearch*(self: ChatMessageList, searchTerm: string): string {.slot.} =
-    let lowercaseTerm = searchTerm.toLowerAscii
-    var messageIds: seq[string] = @[]
-    for message in self.messages:
-      if message.text.toLowerAscii.contains(lowercaseTerm):
-        # TODO try to send a Variant
-        messageIds.add(message.id)
-    return messageIds.toJson
