@@ -11,7 +11,7 @@ Rectangle {
     property bool active: false
     property url source: "../../../../img/eye.svg"
     property string text: "My Profile"
-    property var onClicked: function () {}
+    signal clicked()
 
     id: menuButton
     color: {
@@ -79,7 +79,7 @@ Rectangle {
           menuButton.hovered = false
         }
         onClicked: function () {
-            menuButton.onClicked()
+            menuButton.clicked()
         }
     }
 }

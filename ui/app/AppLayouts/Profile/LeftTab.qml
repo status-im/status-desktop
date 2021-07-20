@@ -4,7 +4,6 @@ import "../../../shared"
 import "./LeftTab"
 
 Rectangle {
-    property alias currentTab: profileMenu.profileCurrentIndex
     property alias changeProfileSection: profileMenu.changeProfileSection
 
     id: profileInfoContainer

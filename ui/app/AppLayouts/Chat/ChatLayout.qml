@@ -15,6 +15,7 @@ StatusAppTwoPanelLayout {
     property alias chatColumn: chatColumn
     property bool stickersLoaded: false
     property bool profilePopupOpened: false
+    signal profileButtonClicked()
 
     Connections {
         target: chatsModel.stickers
@@ -44,6 +45,9 @@ StatusAppTwoPanelLayout {
     Component {
         id: contactsColumnComponent
         ContactsColumn {
+            onOpenProfileClicked: {
+                chatView.profileButtonClicked();
+            }
         }
     }
 
