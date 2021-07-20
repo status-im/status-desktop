@@ -184,13 +184,10 @@ Item {
                     switch (chatsModel.channelView.activeChannel.chatType) {
                     case Constants.chatTypeOneToOne:
                         return (profileModel.contacts.isAdded(topBar.chatId) ?
-                            profileModel.contacts.contactRequestReceived(topBar.chatId) ?
-                                //% "Contact"
-                                qsTrId("chat-is-a-contact") :
-                                //% "Contact request pending"
-                                qsTrId("contact-request-pending") :
-                            //% "Not a contact"
-                            qsTrId("chat-is-not-a-contact"))
+                                    //% "Contact"
+                                    qsTrId("chat-is-a-contact") :
+                                    //% "Not a contact"
+                                    qsTrId("chat-is-not-a-contact"))
                     case Constants.chatTypePublic:
                         //% "Public chat"
                         return qsTrId("public-chat")
@@ -397,7 +394,7 @@ Item {
                             return chatsModel.channelView.activeChannel.isMember
                         }
                         if (chatsModel.channelView.activeChannel.chatType === Constants.chatTypeOneToOne) {
-                            return isContact && contactRequestReceived
+                            return isContact
                         }
                         const community = chatsModel.communities.activeCommunity
                         return !community.active ||
