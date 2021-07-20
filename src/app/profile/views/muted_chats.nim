@@ -1,15 +1,10 @@
-import NimQml, sequtils, strutils, sugar, os, json, chronicles
+import NimQml, sequtils, strutils, json, chronicles
 import chronicles
 import ../../chat/views/channels_list
-import ../../../status/profile/profile
 import ../../../status/profile as status_profile
 import ../../../status/contacts as status_contacts
 import ../../../status/status
-import ../../../status/ens as status_ens
 import ../../../status/chat/chat
-import ../../../status/types
-import ../../../status/constants as accountConstants
-import ../../utils/image_utils
 
 logScope:
   topics = "muted-chats-view"

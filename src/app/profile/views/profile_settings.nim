@@ -1,9 +1,7 @@
 import NimQml, os
 import chronicles
 import profile_info
-import ../../../status/profile/profile
 import ../../../status/status
-import ../../../status/types
 import ../../../status/constants as accountConstants
 
 logScope:
