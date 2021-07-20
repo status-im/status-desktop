@@ -1,6 +1,6 @@
-proc setup*(application: QApplication, appName: string) =
+proc setup*(application: QApplication) =
   ## Setup a new QApplication
-  dos_qapplication_create(appName.cstring)
+  dos_qapplication_create()
   application.deleted = false
 
 proc exec*(application: QApplication) =
@@ -28,7 +28,7 @@ proc delete*(application: QApplication) =
   dos_qapplication_delete()
   application.deleted = true
 
-proc newQApplication*(appName: string = "Unknown"): QApplication =
+proc newQApplication*(): QApplication =
   ## Return a new QApplication
   new(result, delete)
-  result.setup(appName)
+  result.setup()

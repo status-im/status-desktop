@@ -2,13 +2,7 @@ import os
 
 proc setup*(self: QGuiApplication) =
   ## Setup a new QGuiApplication
-  var argv = allocCStringArray([])
-  argv[0] = getAppFilename().cstring
-  for argi in 1..paramCount():
-    argv[argi] = paramStr(argi).cstring
-
-  var argc = paramCount() + 1
-  dos_qguiapplication_create(argc.cint, argv)
+  dos_qguiapplication_create()
   self.deleted = false
 
 proc delete*(self: QGuiApplication) =
