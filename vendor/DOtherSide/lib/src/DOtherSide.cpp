@@ -127,8 +127,11 @@ void dos_qapplication_initialize_opengl()
     QCoreApplication::setAttribute(Qt::AA_ShareOpenGLContexts);
 }
 
-void dos_qguiapplication_create(int argc, char** argv)
+void dos_qguiapplication_create()
 {
+    static int argc = 1;
+    static char *argv[] = {"Status"};
+
     register_meta_types();
 
     new QGuiApplication(argc, argv);
@@ -165,10 +168,10 @@ void dos_qguiapplication_installEventFilter(::DosQQmlApplicationEngine *vptr)
     qGuiApp->installEventFilter(dockClicker);
 }
 
-void dos_qapplication_create(char *appName)
+void dos_qapplication_create()
 {
     static int argc = 1;
-    static char *argv[] = {appName};
+    static char *argv[] = {"Status"};
 
     register_meta_types();
 
