@@ -15,6 +15,7 @@ ToolTip {
 
     property int maxWidth: 800
     property int orientation: StatusToolTip.Orientation.Top
+    property alias arrow: arrow
 
     implicitWidth: Math.min(maxWidth, textContent.implicitWidth + 16)
     leftPadding: 8
@@ -32,6 +33,7 @@ ToolTip {
             anchors.bottomMargin: 8
         }
         Rectangle {
+            id: arrow
             color: statusToolTipContentBackground.color
             height: 20
             width: 20

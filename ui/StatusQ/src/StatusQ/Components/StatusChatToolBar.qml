@@ -159,6 +159,7 @@ Rectangle {
                 text: "Activity"
                 orientation: StatusToolTip.Orientation.Bottom
                 y: parent.height + 12
+                arrow.x: width - (parent.width-4)
             }
         }
 
