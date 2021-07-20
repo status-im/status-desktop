@@ -124,7 +124,10 @@ proc join*(self: ChatModel, chatId: string, chatType: ChatType, ensName: string 
 
 
 proc createOneToOneChat*(self: ChatModel, publicKey: string, ensName: string = "") =
-  if self.hasChannel(publicKey): return
+  if self.hasChannel(publicKey): 
+    self.emitTopicAndJoin(self.channels[publicKey])
+    return
+
   var chat = newChat(publicKey, ChatType.OneToOne)
   if ensName != "":
     chat.name = ensName
