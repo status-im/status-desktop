@@ -15,10 +15,10 @@ import StatusQ.Components 0.1
 import StatusQ.Popups 0.1
 
 Item {
+    id: contactsColumn
     property int chatGroupsListViewCount: channelList.chatListItems.count
     property alias searchStr: searchBox.text
-
-    id: contactsColumn
+    signal openProfileClicked()
 
     Layout.fillHeight: true
     width: 304
@@ -194,6 +194,9 @@ Item {
         PrivateChatPopup {
             onClosed: {
                 destroy()
+            }
+            onProfileClicked: {
+                contactsColumn.openProfileClicked();
             }
         }
     }

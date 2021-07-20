@@ -7,7 +7,6 @@ import "./components"
 import "./constants.js" as ProfileConstants
 
 ScrollView {
-    property int profileCurrentIndex: ProfileConstants.PROFILE
     readonly property int btnheight: 42
     readonly property int w: 340
     property var changeProfileSection: function (sectionId) {
@@ -31,8 +30,8 @@ ScrollView {
                 active: profileMenu.profileCurrentIndex === modelData.id
                 Layout.fillWidth: true
                 width: profileMenu.width
-                onClicked: function () {
-                    profileMenu.profileCurrentIndex = modelData.id
+                onClicked: {
+                    Config.currentMenuTab = modelData.id;
                 }
             }
         }
@@ -55,7 +54,7 @@ ScrollView {
                 Layout.fillWidth: true
                 width: profileMenu.width
                 onClicked: function () {
-                    profileMenu.profileCurrentIndex = modelData.id
+                    Config.currentMenuTab = modelData.id;
                 }
             }
         }
@@ -77,7 +76,7 @@ ScrollView {
                     if (modelData.function === "exit") {
                         return Qt.quit()
                     }
-                    profileMenu.profileCurrentIndex = modelData.id
+                    Config.currentMenuTab = modelData.id;
                 }
             }
         }

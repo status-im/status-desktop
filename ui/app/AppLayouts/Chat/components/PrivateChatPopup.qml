@@ -7,14 +7,15 @@ import "../../../../shared/status"
 import "./"
 
 ModalPopup {
+    id: popup
+    //% "New chat"
+    title: qsTrId("new-chat")
+
+    signal profileClicked()
     function doJoin(pk, ensName) {
         chatsModel.channelView.joinPrivateChat(pk, Utils.isChatKey(pk) ? "" : ensName);
         popup.close();
     }
-
-    id: popup
-    //% "New chat"
-    title: qsTrId("new-chat")
 
     onOpened: {
         contactFieldAndList.chatKey.text = ""
@@ -34,6 +35,49 @@ ModalPopup {
         onUserClicked: function (isContact, pubKey, ensName) {
             chatsModel.channelView.joinPrivateChat(pubKey, Utils.isChatKey(pubKey) ? "" : ensName);
             popup.close();
+        }
+    }
+
+    Control {
+        width: 124
+        height: 36
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 24
+        anchors.horizontalCenter: parent.horizontalCenter
+        background: Rectangle {
+            anchors.fill: parent
+            radius: 34
+            color: Style.current.roundedButtonSecondaryHoveredBackgroundColor
+        }
+        contentItem: Item {
+            anchors.fill: parent
+            SVGImage {
+                id: dollarEmoji
+                width: 32
+                height: 32
+                anchors.left: parent.left
+                anchors.leftMargin: 2
+                anchors.verticalCenter: parent.verticalCenter
+                source: Qt.resolvedUrl("../../../../imports/twemoji/svg/1f911.svg")
+            }
+
+            StyledText {
+                anchors.left: dollarEmoji.right
+                anchors.leftMargin: 6
+                anchors.verticalCenter: parent.verticalCenter
+                text: qsTr("My Profile")
+                font.pixelSize: 15
+                color: Style.current.white
+            }
+        }
+        MouseArea {
+            anchors.fill: parent
+            cursorShape: "PointingHandCursor"
+            onClicked: {
+                popup.profileClicked();
+                Config.currentMenuTab = 0;
+                popup.close();
+            }
         }
     }
 }

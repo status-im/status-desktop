@@ -271,6 +271,9 @@ StatusAppLayout {
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignLeft | Qt.AlignTop
             Layout.fillHeight: true
+            onProfileButtonClicked: {
+                appMain.changeAppSection(Constants.profile);
+            }
         }
 
         WalletLayout {
