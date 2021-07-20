@@ -130,14 +130,13 @@ StatusWindow {
         id: systemTray
         visible: true
         icon.source: {
-            if (production){
-                if(Qt.platform.os == "osx")
+            if (production) {
+                if (Qt.platform.os == "osx")
                     return "shared/img/status-logo-round-rect.svg"
                 else
                     return "shared/img/status-logo-circle.svg"
-            }
-            else {
-                if(Qt.platform.os == "osx")
+            } else {
+                if (Qt.platform.os == "osx")
                     return "shared/img/status-logo-dev-round-rect.svg"
                 else
                     return "shared/img/status-logo-dev-circle.svg"
@@ -152,7 +151,6 @@ StatusWindow {
 
         menu: Menu {
             MenuItem {
-                visible: !applicationWindow.visible
                 //% "Open Status"
                 text: qsTrId("open-status")
                 onTriggered: {
@@ -161,7 +159,6 @@ StatusWindow {
             }
             
             MenuSeparator {
-                visible: !applicationWindow.visible
             }
 
             MenuItem {
