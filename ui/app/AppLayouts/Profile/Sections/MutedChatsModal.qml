@@ -11,6 +11,7 @@ ModalPopup {
     //% "Muted chats"
     title: qsTrId("muted-chats")
     property bool showMutedContacts: false
+    property string noContentText: ""
 
     onClosed: {
         root.destroy()
@@ -87,5 +88,11 @@ ModalPopup {
                 }
             }
         }
+    }
+
+    StyledText {
+        anchors.centerIn: parent
+        visible: (mutedChatsList.count === 0)
+        text: root.noContentText
     }
 }
