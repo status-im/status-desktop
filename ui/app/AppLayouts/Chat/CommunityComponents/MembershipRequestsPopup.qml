@@ -1,167 +1,126 @@
 import QtQuick 2.12
+import QtQuick.Controls 2.3
+
+import StatusQ.Core 0.1
+import StatusQ.Core.Theme 0.1
+import StatusQ.Controls 0.1
+import StatusQ.Components 0.1
+import StatusQ.Popups 0.1
+
 import "../../../../imports"
 import "../../../../shared"
-import "../../../../shared/status"
 
-ModalPopup {
-    property alias membershipRequestList: membershipRequestList
-
+StatusModal {
     id: popup
 
     onOpened: {
-        errorText.text = ""
+        contentComponent.errorText.text = ""
     }
 
-    header: Item {
-        height: 60
-        width: parent.width
+    header.title: qsTr("Membership requests")
+    header.subTitle: contentComponent.membershipRequestList.count
 
-        StyledText {
-            id: titleText
-            //% "Membership requests"
-            text: qsTrId("membership-requests")
-            anchors.top: parent.top
-            anchors.topMargin: 2
-            anchors.left: parent.left
-            font.bold: true
-            font.pixelSize: 17
-            wrapMode: Text.WordWrap
-        }
+    content: Column {
+        property alias errorText: errorText
+        property alias membershipRequestList: membershipRequestList
+        width: popup.width
 
-        StyledText {
-            id: nbRequestsText
-            text: membershipRequestList.count
-            width: 160
-            anchors.left: titleText.left
-            anchors.top: titleText.bottom
-            anchors.topMargin: 2
-            font.pixelSize: 15
-            color: Style.current.secondaryText
-        }
-
-        Separator {
-            anchors.bottom: parent.bottom
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.rightMargin: -Style.current.padding
-            anchors.leftMargin: -Style.current.padding
-        }
-    }
-
-    Item {
-        anchors.fill: parent
-
-        StyledText {
+        StatusBaseText {
             id: errorText
             visible: !!text
             height: visible ? implicitHeight : 0
-            color: Style.current.danger
-            anchors.top: parent.top
+            color: Theme.palette.dangerColor1
             horizontalAlignment: Text.AlignHCenter
             wrapMode: Text.Wrap
-            anchors.topMargin: visible ? Style.current.smallPadding : 0
             width: parent.width
         }
 
-        ListView {
-            id: membershipRequestList
-            model: chatsModel.communities.activeCommunity.communityMembershipRequests
-            anchors.top: errorText.bottom
-            anchors.topMargin: Style.current.smallPadding
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.rightMargin: -Style.current.padding
-            anchors.leftMargin: -Style.current.padding
-            height: parent.height
+        Item {
+            height: 8
+            width: parent.width
+        }
 
-            delegate: Item {
-                property int contactIndex: profileModel.contacts.list.getContactIndexByPubkey(publicKey)
-                property string identicon: utilsModel.generateIdenticon(publicKey)
-                property string profileImage: contactIndex === -1 ? identicon :
-                                                                    profileModel.contacts.list.rowData(contactIndex, 'thumbnailImage') || identicon
-                property string displayName: Utils.getDisplayName(publicKey, contactIndex)
+        ScrollView {
+            width: parent.width
+            ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+            topPadding: 8
+            bottomPadding: 8
+            height: 300
+            clip: true
 
-                id: requestLine
-                height: 52
-                width: parent.width
+            ListView {
+                id: membershipRequestList
+                anchors.fill: parent
+                model: chatsModel.communities.activeCommunity.communityMembershipRequests
+                clip: true
 
-                StatusImageIdenticon {
-                    id: accountImage
-                    width: 36
-                    height: 36
-                    anchors.left: parent.left
-                    anchors.verticalCenter: parent.verticalCenter
-                    source: requestLine.profileImage
-                    anchors.leftMargin: Style.current.padding
-                }
+                delegate: StatusListItem {
+                    anchors.horizontalCenter: parent.horizontalCenter
 
-                StyledText {
-                    text: requestLine.displayName
-                    elide: Text.ElideRight
-                    anchors.left: accountImage.right
-                    anchors.leftMargin: Style.current.padding
-                    anchors.right: thumbsUp.left
-                    anchors.rightMargin: Style.current.padding
-                    anchors.verticalCenter: parent.verticalCenter
-                    font.pixelSize: 15
-                    color: Style.current.secondaryText
-                }
+                    property int contactIndex: profileModel.contacts.list.getContactIndexByPubkey(model.publicKey)
+                    property string nickname: appMain.getUserNickname(model.publicKey)
+                    property string profileImage: contactIndex === -1 ? "" : profileModel.contacts.list.rowData(contactIndex, 'thumbnailImage') 
+                    property string displayName: Utils.getDisplayName(publicKey, contactIndex)
 
-                SVGImage {
-                    id: thumbsUp
-                    source: "../../../img/thumbsUp.svg"
-                    fillMode: Image.PreserveAspectFit
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.right: thumbsDown.left
-                    anchors.rightMargin: Style.current.padding
-                    width: 28
+                    image.isIdenticon: !profileImage && model.identicon
+                    image.source: profileImage || model.identicon
 
-                    MouseArea {
-                        anchors.fill: parent
-                        cursorShape: Qt.PointingHandCursor
-                        onClicked: {
-                            errorText.text = ""
-                            const error = chatsModel.communities.acceptRequestToJoinCommunity(id)
-                            if (error) {
-                                errorText.text = error
+                    title: displayName
+
+                    components: [
+                        StatusRoundIcon {
+                            icon.name: "thumbs-up"
+                            icon.color: Theme.palette.white
+                            icon.background.width: 28
+                            icon.background.height: 28
+                            icon.background.color: Theme.palette.successColor1
+                            MouseArea {
+                                id: thumbsUpSensor
+                                hoverEnabled: true
+                                anchors.fill: parent
+                                cursorShape: Qt.PointingHandCursor
+                                onClicked: {
+                                    errorText.text = ""
+                                    const error = chatsModel.communities.acceptRequestToJoinCommunity(id)
+                                    if (error) {
+                                        errorText.text = error
+                                    }
+                                }
+                            }
+                        },
+                        StatusRoundIcon {
+                            icon.name: "thumbs-down"
+                            icon.color: Theme.palette.white
+                            icon.background.width: 28
+                            icon.background.height: 28
+                            icon.background.color: Theme.palette.dangerColor1
+                            MouseArea {
+                                id: thumbsDownSensor
+                                hoverEnabled: true
+                                anchors.fill: parent
+                                cursorShape: Qt.PointingHandCursor
+                                onClicked: {
+                                    errorText.text = ""
+                                    const error = chatsModel.communities.declineRequestToJoinCommunity(id)
+                                    if (error) {
+                                        errorText.text = error
+                                    }
+                                }
                             }
                         }
-                    }
-                }
-
-                SVGImage {
-                    id: thumbsDown
-                    source: "../../../img/thumbsDown.svg"
-                    fillMode: Image.PreserveAspectFit
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.right: parent.right
-                    anchors.rightMargin: Style.current.padding
-                    width: 28
-
-                    MouseArea {
-                        anchors.fill: parent
-                        cursorShape: Qt.PointingHandCursor
-                        onClicked: {
-                            errorText.text = ""
-                            const error = chatsModel.communities.declineRequestToJoinCommunity(id)
-                            if (error) {
-                                errorText.text = error
-                            }
-                        }
-                    }
+                    ]
                 }
             }
-
         }
     }
 
-    footer: StatusRoundButton {
-        id: btnBack
-        anchors.left: parent.left
-        icon.name: "arrow-right"
-        icon.width: 20
-        icon.height: 16
-        rotation: 180
-        onClicked: popup.close()
-    }
+    leftButtons: [
+        StatusRoundButton {
+            icon.name: "arrow-right"
+            icon.width: 20
+            icon.height: 16
+            rotation: 180
+            onClicked: popup.close()
+        }
+    ]
 }

@@ -69,7 +69,7 @@ Item {
             //% "Membership requests"
             title: qsTrId("membership-requests")
             requestsCount: nbRequests
-            sensor.onClicked: membershipRequestPopup.open()
+            sensor.onClicked: openPopup(membershipRequestPopup)
         }
 
         StatusModalDivider {
@@ -203,6 +203,16 @@ Item {
                         }
                     ]
                 }
+            }
+        }
+    }
+
+    Component {
+        id: membershipRequestPopup
+        MembershipRequestsPopup {
+            anchors.centerIn: parent
+            onClosed: {
+                destroy()
             }
         }
     }

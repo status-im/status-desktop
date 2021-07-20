@@ -80,12 +80,13 @@ Item {
         anchors.horizontalCenter: parent.horizontalCenter
 
         active: chatsModel.communities.activeCommunity.admin && nbRequests > 0
+        height: nbRequests > 0 ? 64 : 0
         sourceComponent: Component {
             StatusContactRequestsIndicatorListItem {
                 //% "Membership requests"
                 title: qsTrId("membership-requests")
                 requestsCount: membershipRequests.nbRequests
-                sensor.onClicked: membershipRequestPopup.open()
+                sensor.onClicked: openPopup(membershipRequestPopup)
             }
         }
     }
@@ -311,9 +312,16 @@ Item {
         standardButtons: StandardButton.Ok
     }
 
-    MembershipRequestsPopup {
+    Component {
         id: membershipRequestPopup
+        MembershipRequestsPopup {
+            anchors.centerIn: parent
+            onClosed: {
+                destroy()
+            }
+        }
     }
+
 }
 
 /*##^##

@@ -79,6 +79,8 @@ Column {
             StatusBadge {
                 visible: !!membersListItem.nbRequests
                 value: membersListItem.nbRequests
+                anchors.top: parent.top
+                anchors.topMargin: 2
             },
             StatusIcon {
                 icon: "chevron-down"
