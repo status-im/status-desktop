@@ -7,5 +7,12 @@ QtObject {
     property StatusImageSettings image: StatusImageSettings {
         width: 40
         height: 40
+        isIdenticon: false
+    }
+
+    property StatusIconSettings icon: StatusIconSettings {
+        width: 40
+        height: 40
+        isLetterIdenticon: false
     }
 }

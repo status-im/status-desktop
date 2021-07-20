@@ -38,6 +38,16 @@ Column {
         onClicked: modalWithContentAccess.open()
     }
 
+    StatusButton {
+        text: "Modal with letter identicon"
+        onClicked: modalWithLetterIdenticon.open()
+    }
+
+    StatusButton {
+        text: "Modal with identicon"
+        onClicked: modalWithIdenticon.open()
+    }
+
     StatusModal {
         id: simpleModal
         anchors.centerIn: parent
@@ -153,6 +163,59 @@ Column {
         anchors.centerIn: parent
         header.title: "Header"
         header.subTitle: "SubTitle"
+
+        content: StatusBaseText {
+            id: text
+            anchors.centerIn: parent
+            text: "Some text content"
+            font.pixelSize: 15
+            color: Theme.palette.directColor1
+        }
+
+        rightButtons: [
+            StatusButton {
+                text: "Change text"
+                onClicked: {
+                    modalWithContentAccess.contentComponent.text = "Changed!"
+                }
+            }
+        ]
+    }
+
+    StatusModal {
+        id: modalWithLetterIdenticon
+        anchors.centerIn: parent
+        header.title: "Header"
+        header.subTitle: "SubTitle"
+        header.icon.isLetterIdenticon: true
+        header.icon.background.color: "red"
+
+        content: StatusBaseText {
+            id: text
+            anchors.centerIn: parent
+            text: "Some text content"
+            font.pixelSize: 15
+            color: Theme.palette.directColor1
+        }
+
+        rightButtons: [
+            StatusButton {
+                text: "Change text"
+                onClicked: {
+                    modalWithContentAccess.contentComponent.text = "Changed!"
+                }
+            }
+        ]
+    }
+
+    StatusModal {
+        id: modalWithIdenticon
+        anchors.centerIn: parent
+        header.title: "Header"
+        header.subTitle: "SubTitle"
+        header.image.source: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAlklEQVR4nOzW0QmDQBAG4SSkl7SUQlJGCrElq9F3QdjjVhh/5nv3cFhY9vUIYQiNITSG0Bh
+CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2ImYgiNITTlTdG1nUZ5a92VITQxITFiJmIIjSE0htAYQrMHAAD//+wwFVpz+yqXAAAAAElFTkSuQmCC"
+        header.image.isIdenticon: true
 
         content: StatusBaseText {
             id: text

@@ -16,18 +16,62 @@ Row {
     property StatusImageSettings image: StatusImageSettings {
         width: 40
         height: 40
+        isIdenticon: false
+    }
+
+    property StatusIconSettings icon: StatusIconSettings {
+        width: 40
+        height: 40
+        isLetterIdenticon: false
     }
 
     spacing: 8
 
-    StatusRoundedImage {
-        id: headerImage
+    Loader {
+        id: iconOrImage
         anchors.verticalCenter: parent.verticalCenter
-        width: statusImageWithTitle.image.width
-        height: statusImageWithTitle.image.height
-        image.source:  statusImageWithTitle.image.source
-        showLoadingIndicator: true
-        visible: !!statusImageWithTitle.image.source.toString()
+        sourceComponent: {
+            if (statusImageWithTitle.icon.isLetterIdenticon) {
+                return statusLetterIdenticon
+            }
+            return statusRoundedImageCmp
+        }
+        active: statusImageWithTitle.icon.isLetterIdenticon || 
+                !!statusImageWithTitle.image.source.toString()
+    }
+
+    Component {
+        id: statusLetterIdenticon
+        StatusLetterIdenticon {
+            width: statusImageWithTitle.icon.width
+            height: statusImageWithTitle.icon.height
+            color: statusImageWithTitle.icon.background.color
+            name: statusImageWithTitle.title
+        }
+    }
+
+    Component {
+        id: statusRoundedImageCmp
+        Item {
+            width: statusImageWithTitle.image.width
+            height: statusImageWithTitle.image.height
+            StatusRoundedImage {
+                id: statusRoundedImage
+                image.source:  statusImageWithTitle.image.source
+                width: statusImageWithTitle.image.width
+                height: statusImageWithTitle.image.height
+                color: statusImageWithTitle.image.isIdenticon ?
+                    Theme.palette.statusRoundedImage.backgroundColor :
+                    "transparent"
+                border.width: statusImageWithTitle.image.isIdenticon ? 1 : 0
+                border.color: Theme.palette.directColor7
+                showLoadingIndicator: true
+            }
+            Loader {
+                sourceComponent: statusLetterIdenticon
+                active: statusRoundedImage.image.status === Image.Error
+            }
+        }
     }
 
     Column {

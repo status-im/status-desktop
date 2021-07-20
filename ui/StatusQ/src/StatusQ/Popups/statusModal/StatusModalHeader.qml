@@ -14,6 +14,7 @@ Rectangle {
     property alias actionButton: actionButtonLoader.sourceComponent
 
     property alias image: imageWithTitle.image
+    property alias icon: imageWithTitle.icon
     property bool editable: false
 
     signal editButtonClicked
@@ -25,7 +26,6 @@ Rectangle {
     radius: 16
 
     color: Theme.palette.statusModal.backgroundColor
-
 
     StatusImageWithTitle {
         id: imageWithTitle
