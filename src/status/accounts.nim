@@ -63,40 +63,16 @@ proc generateIdenticon*(self: AccountModel, publicKey: string): string =
   result = generateIdenticon(publicKey)
 
 proc changeNetwork*(self: AccountModel, fleetConfig: FleetConfig, network: string) =
-
-  # 1. update current network setting
-  var statusGoResult = status_settings.saveSetting(Setting.Networks_CurrentNetwork, network)
-  if statusGoResult.error != "":
-    error "Error saving current network setting", msg=statusGoResult.error
-
-  # 2. update node config setting
-  let installationId = status_settings.getSetting[string](Setting.InstallationId)
-
-  let networks = getSetting[JsonNode](Setting.Networks_Networks)
-  let networkData = networks.getElems().find((n:JsonNode) => n["id"].getStr() == network)
-
-  let updatedNodeConfig = status_accounts.getNodeConfig(fleetConfig, installationId, networkData)
-
-  updatedNodeConfig["KeyStoreDir"] = newJString("./keystore")
-  updatedNodeConfig["LogFile"] = newJString("./geth.log")
-  updatedNodeConfig["ShhextConfig"]["BackupDisabledDataDir"] = newJString("./")  
-
-  statusGoResult = status_settings.saveSetting(Setting.NodeConfig, updatedNodeConfig)
+  var statusGoResult = status_settings.setNetwork(network)
   if statusGoResult.error != "":
     error "Error saving updated node config", msg=statusGoResult.error
 
-  # 3. remove all installed sticker packs (pack ids do not match across networks)
+  # remove all installed sticker packs (pack ids do not match across networks)
   statusGoResult = status_settings.saveSetting(Setting.Stickers_PacksInstalled, %* {})
   if statusGoResult.error != "":
     error "Error removing all installed sticker packs", msg=statusGoResult.error
 
-  # 4. remove all recent stickers (pack ids do not match across networks)
+  # remove all recent stickers (pack ids do not match across networks)
   statusGoResult = status_settings.saveSetting(Setting.Stickers_Recent, %* {})
   if statusGoResult.error != "":
     error "Error removing all recent stickers", msg=statusGoResult.error
-
-proc getNodeConfig*(self: AccountModel, fleetConfig: FleetConfig, installationId: string, networkConfig: JsonNode, fleet: Fleet = Fleet.PROD, bloomFilterMode = false): JsonNode =
-  result = status_accounts.getNodeConfig(fleetConfig, installationId, networkConfig, fleet, bloomFilterMode)
-
-proc getNodeConfig*(self: AccountModel, fleetConfig: FleetConfig, installationId: string, currentNetwork: string = DEFAULT_NETWORK_NAME, fleet: Fleet = Fleet.PROD, bloomFilterMode = false): JsonNode =
-  result = status_accounts.getNodeConfig(fleetConfig, installationId, currentNetwork, fleet, bloomFilterMode)

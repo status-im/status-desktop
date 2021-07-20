@@ -60,3 +60,12 @@ proc getCurrentNetwork*(self: SettingsModel): Network =
 
 proc setWakuVersion*(self: SettingsModel, newVersion: int) =
   libstatus_settings.setWakuVersion(newVersion)
+
+proc setBloomFilterMode*(self: SettingsModel, bloomFilterMode: bool): StatusGoError =
+  libstatus_settings.setBloomFilterMode(bloomFilterMode)
+
+proc setFleet*(self: SettingsModel, fleetConfig: FleetConfig, fleet: Fleet): StatusGoError =
+  libstatus_settings.setFleet(fleetConfig, fleet)
+
+proc getNodeConfig*(self: SettingsModel): JsonNode =
+  libstatus_settings.getNodeConfig()

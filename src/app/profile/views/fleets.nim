@@ -25,11 +25,11 @@ QtObject:
     self.fleetChanged($self.status.settings.getFleet())
 
   proc setFleet*(self: Fleets, newFleet: string) {.slot.} =
-    discard self.status.settings.saveSetting(Setting.Fleet, newFleet)
     let fleet = parseEnum[Fleet](newFleet)
-    let installationId = self.status.settings.getSetting[:string](Setting.InstallationId)
-    let updatedNodeConfig = self.status.accounts.getNodeConfig(self.status.fleet.config, installationId, $self.status.settings.getCurrentNetwork(), fleet)
-    discard self.status.settings.saveSetting(Setting.NodeConfig, updatedNodeConfig)
+    let statusGoResult = self.status.settings.setFleet(self.status.fleet.config, fleet)
+    if statusGoResult.error != "":
+      error "Error saving updated node config", msg=statusGoResult.error
+
     let isWakuV2 = if fleet == WakuV2Prod or fleet == WakuV2Test: true else: false
     # Updating waku version because it makes no sense for some fleets to run under wakuv1 or v2 config
     if isWakuV2:

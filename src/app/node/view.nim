@@ -74,12 +74,9 @@ QtObject:
     notify = receivedMessage
 
   proc setWakuBloomFilterMode*(self: NodeView, bloomFilterMode: bool) {.slot.} =
-    discard self.status.settings.saveSetting(Setting.WakuBloomFilterMode, bloomFilterMode)
-    var fleetStr = self.status.settings.getSetting[:string](Setting.Fleet)
-    let fleet = if fleetStr == "": Fleet.PROD else: parseEnum[Fleet](fleetStr)
-    let installationId = self.status.settings.getSetting[:string](Setting.InstallationId)
-    let updatedNodeConfig = self.status.accounts.getNodeConfig(self.status.fleet.config, installationId, $self.status.settings.getCurrentNetwork(), fleet, bloomFilterMode)    
-    discard self.status.settings.saveSetting(Setting.NodeConfig, updatedNodeConfig)
+    let statusGoResult = self.status.settings.setBloomFilterMode(bloomFilterMode)
+    if statusGoResult.error != "":
+      error "Error saving updated node config", msg=statusGoResult.error
     quit(QuitSuccess) # quits the app TODO: change this to logout instead when supported
 
   proc init*(self: NodeView) {.slot.} =
