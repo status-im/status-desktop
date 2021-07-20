@@ -218,6 +218,8 @@ Popup {
                     prevMessageIndex: -1
                     prevMsgTimestamp: ""
                 }
+
+
             }
         }
     }
