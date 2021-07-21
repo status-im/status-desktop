@@ -134,7 +134,7 @@ Column {
         icon.height: 16
         icon.width: 20
         icon.rotation: 180
-        type: StatusListItem.Type.Secondary
+        type: StatusListItem.Type.Danger
         sensor.onClicked: root.leaveButtonClicked()
     }
 
