@@ -181,7 +181,7 @@ Rectangle {
             id: statusChatInfoButtonSubTitle
             anchors.left: statusChatInfoButtonTitle.left
             anchors.top: statusChatInfoButtonTitle.bottom
-            visible: !!statusChatInfoButton.subTitle
+            visible: !!statusChatInfoButton.subTitle || statusChatInfoButton.pinnedMessagesCount > 0
             height: visible ? chatType.height : 0
             width: childrenRect.width
 
@@ -200,13 +200,13 @@ Rectangle {
                 anchors.left: chatType.right
                 anchors.leftMargin: 4
                 anchors.verticalCenter: chatType.verticalCenter
-                visible: pinIcon.visible
+                visible: !!chatType.text && pinIcon.visible
             }
 
             StatusIcon {
                 id: pinIcon
 
-                anchors.left: divider.right
+                anchors.left: divider.visible ? divider.right : parent.left
                 anchors.leftMargin: -2
                 anchors.verticalCenter: chatType.verticalCenter
                 height: 14
