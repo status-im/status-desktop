@@ -163,7 +163,9 @@ StatusAppLayout {
                     text: qsTrId("invite-people")
                     icon.name: "share-ios"
                     enabled: chatsModel.communities.observedCommunity.canManageUsers
-                    onTriggered: openPopup(inviteFriendsToCommunityPopup, { communityId: model.id })
+                    onTriggered: openPopup(inviteFriendsToCommunityPopup, {
+                        community: chatsModel.communities.observedCommunity
+                    })
                 }
 
                 StatusMenuItem {

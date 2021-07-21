@@ -76,7 +76,9 @@ Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: manageBtn.top
         anchors.bottomMargin: Style.current.halfPadding
-        onClicked: openPopup(inviteFriendsToCommunityPopup)
+        onClicked: openPopup(inviteFriendsToCommunityPopup, {
+            community: chatsModel.communities.activeCommunity
+        })
     }
 
     StatusButton {
