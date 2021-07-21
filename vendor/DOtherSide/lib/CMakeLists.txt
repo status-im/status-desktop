@@ -22,6 +22,7 @@ macro(add_target name type)
         include/DOtherSide/Utils.h
         include/DOtherSide/DosDockClicker.h
         include/DOtherSide/DOtherSideStatusWindow.h
+        include/DOtherSide/DOtherSideSingleInstance.h
         src/DOtherSide.cpp
         src/DosQMetaObject.cpp
         src/DosQDeclarative.cpp
@@ -32,6 +33,7 @@ macro(add_target name type)
         src/DosQQuickImageProvider.cpp
         src/DosDockClicker.cpp
         src/DOtherSideStatusWindow.cpp
+        src/DOtherSideSingleInstance.cpp
     )
 
     if (APPLE)

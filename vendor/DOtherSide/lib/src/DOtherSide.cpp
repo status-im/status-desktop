@@ -59,6 +59,7 @@
 #include "DOtherSide/DosQQuickImageProvider.h"
 #include "DOtherSide/DosDockClicker.h"
 #include "DOtherSide/DOtherSideStatusWindow.h"
+#include "DOtherSide/DOtherSideSingleInstance.h"
 
 namespace {
 
@@ -1291,4 +1292,24 @@ char *dos_qurl_replaceHostAndAddPath(char* url, char* newScheme, char* newHost, 
     }
 
     return convert_to_cstring(newQurl.toString());
+}
+
+DosSingleInstance *dos_singleinstance_create(const char *uniqueName)
+{
+    return new SingleInstance(QString::fromUtf8(uniqueName));
+}
+
+void dos_singleinstance_delete(DosSingleInstance *vptr)
+{
+    auto dsi = static_cast<SingleInstance *>(vptr);
+    delete dsi;
+}
+
+bool dos_singleinstance_isfirst(DosSingleInstance *vptr)
+{
+    auto dsi = static_cast<SingleInstance *>(vptr);
+    if (dsi) {
+        return dsi->isFirstInstance();
+    }
+    return false;
 }

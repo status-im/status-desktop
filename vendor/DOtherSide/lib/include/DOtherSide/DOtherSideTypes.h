@@ -95,6 +95,9 @@ typedef void DosQQuickImageProvider;
 /// A pointer to a QPixmap
 typedef void DosPixmap;
 
+/// A pointer to SingleInstance
+typedef void DosSingleInstance;
+
 /// A pixmap callback to be supplied to an image provider
 /// \param id Image source id
 /// \param width pointer to the width of the image
