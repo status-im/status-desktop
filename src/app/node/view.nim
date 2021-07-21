@@ -10,6 +10,7 @@ QtObject:
     callResult: string
     lastMessage*: string
     wakuBloomFilterMode*: bool
+    fullNode*: bool
 
   proc setup(self: NodeView) =
     self.QObject.setup
@@ -20,6 +21,7 @@ QtObject:
     result.callResult = "Use this tool to call JSONRPC methods"
     result.lastMessage = ""
     result.wakuBloomFilterMode = false
+    result.fullNode = false
     result.setup
 
   proc delete*(self: NodeView) =
@@ -69,9 +71,20 @@ QtObject:
   proc getWakuBloomFilterMode*(self: NodeView): bool {.slot.} =
     result = self.wakuBloomFilterMode
 
+  proc getBloomLevel*(self: NodeView): string {.slot.} =
+    if self.wakuBloomFilterMode and not self.fullNode:
+      return "normal"
+    if self.wakuBloomFilterMode and self.fullNode:
+      return "full"
+    return "light"
+
   QtProperty[bool] wakuBloomFilterMode:
     read = getWakuBloomFilterMode
-    notify = receivedMessage
+    notify = initialized
+
+  QtProperty[string] bloomLevel:
+    read = getBloomLevel
+    notify = initialized
 
   proc setWakuBloomFilterMode*(self: NodeView, bloomFilterMode: bool) {.slot.} =
     let statusGoResult = self.status.settings.setBloomFilterMode(bloomFilterMode)
@@ -80,7 +93,10 @@ QtObject:
     quit(QuitSuccess) # quits the app TODO: change this to logout instead when supported
 
   proc init*(self: NodeView) {.slot.} =
+    let nodeConfig = self.status.settings.getNodeConfig()
     self.wakuBloomFilterMode = self.status.settings.getSetting[:bool](Setting.WakuBloomFilterMode)
+    self.fullNode = nodeConfig["WakuConfig"]["FullNode"].getBool()
+    self.initialized()
 
   proc wakuVersion*(self: NodeView): int {.slot.} =
     var fleetStr = self.status.settings.getSetting[:string](Setting.Fleet)
@@ -88,3 +104,22 @@ QtObject:
     let isWakuV2 = if fleet == WakuV2Prod or fleet == WakuV2Test: true else: false
     if isWakuV2: return 2
     return 1
+
+  proc setBloomLevel*(self: NodeView, level: string) {.slot.} =
+    var FullNode = false
+    var BloomFilterMode = false
+    case level:
+    of "light":
+      BloomFilterMode = false
+      FullNode = false
+    of "full":
+      BloomFilterMode = true
+      FullNode = true
+    else:
+      BloomFilterMode = true
+      FullNode = false
+
+    let statusGoResult = self.status.settings.setBloomLevel(BloomFilterMode, FullNode)
+    if statusGoResult.error != "":
+      error "Error saving updated node config", msg=statusGoResult.error
+    quit(QuitSuccess) # quits the app TODO: change this to logout instead when supported
