@@ -9,6 +9,10 @@ type
     vptr*: ByteAddress
     slot*: string
 
+  SlotArg* = ref object of RootObj
+    vptr*: ByteAddress
+    slot*: string
+
 proc finish*[T](arg: QObjectTaskArg, payload: T) =
   signal_handler(cast[pointer](arg.vptr), Json.encode(payload), arg.slot)
 

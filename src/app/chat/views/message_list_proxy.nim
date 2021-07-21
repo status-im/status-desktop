@@ -20,9 +20,14 @@ QtObject:
     result.setup(status)
 
   proc setSourceMessages*(self: MessageListProxyModel, messages: seq[Message]) =
+    ## Sets source messages which will be filtered.
     self.sourceMessages = messages
 
   proc setFilter*(self: MessageListProxyModel, filter: string, caseSensitive: bool) =
+    ## This proc filters messages that contain passed "filter" from the previously 
+    ## set source model, respecting case sensitivity or not, based on the passed 
+    ## "caseSensitive" parameter.
+
     self.clear(false)
 
     if (filter.len == 0):
@@ -40,3 +45,10 @@ QtObject:
       return
 
     self.add(matchedMessages)
+
+  proc setFilteredMessages*(self: MessageListProxyModel, messages: seq[Message]) =
+    ## Sets filtered messages. Messages passed to this proc will be immediately
+    ## added to the view model and displayed to user. Method is convenient for 
+    ## displaying already filtered messages (for example filtered response from DB)
+    self.clear(false)
+    self.add(messages)
