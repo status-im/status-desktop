@@ -30,6 +30,7 @@ Row {
     Loader {
         id: iconOrImage
         anchors.verticalCenter: parent.verticalCenter
+        width: active ? 40 : 0
         sourceComponent: {
             if (statusImageWithTitle.icon.isLetterIdenticon) {
                 return statusLetterIdenticon
