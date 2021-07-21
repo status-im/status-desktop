@@ -348,6 +348,7 @@ StatusAppLayout {
         property bool isBrowserEnabled: false
         property bool isActivityCenterEnabled: false
         property bool showOnlineUsers: false
+        property bool isGifWidgetEnabled: false
         property bool displayChatImages: false
         property bool useCompactMode: true
         property bool timelineEnabled: true

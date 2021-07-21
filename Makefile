@@ -221,6 +221,10 @@ DEFAULT_TOKEN := 220a1abb4b6943a093c35d0ce4fb0732
 INFURA_TOKEN ?= $(DEFAULT_TOKEN)
 NIM_PARAMS += -d:INFURA_TOKEN:"$(INFURA_TOKEN)"
 
+DEFAULT_TENOR_API_KEY := DU7DWZ27STB2
+TENOR_API_KEY ?= $(DEFAULT_TENOR_API_KEY)
+NIM_PARAMS += -d:TENOR_API_KEY:"$(TENOR_API_KEY)"
+
 # generate a status-desktop.log file with chronicles output. This file will be truncated each time the app starts
 NIM_PARAMS += -d:chronicles_sinks="textlines[stdout],textlines[nocolors,file(status-desktop.log,truncate)]"
 

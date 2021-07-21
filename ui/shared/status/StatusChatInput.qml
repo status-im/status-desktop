@@ -79,6 +79,28 @@ Rectangle {
         messageInputField.insert(start, text.replace(/\n/g, "<br/>"));
     }
 
+    function togglePopup(popup, btn) {
+        if (popup !== stickersPopup) {
+            stickersPopup.close()
+        }
+
+        if (popup !== gifPopup) {
+            gifPopup.close()
+        }
+
+        if (popup !== emojiPopup) {
+            emojiPopup.close()
+        }
+
+        if (popup.opened) {
+            popup.close()
+            btn.highlighted = false
+        } else {
+            popup.open()
+            btn.highlighted = true
+        }
+    }
+
     property var interpretMessage: function (msg) {
         if (msg.startsWith("/shrug")) {
             return  msg.replace("/shrug", "") + " ¯\\\\\\_(ツ)\\_/¯"
@@ -614,6 +636,23 @@ Rectangle {
         }
     }
 
+    StatusGifPopup {
+        id: gifPopup
+        width: 360
+        height: 440
+        x: parent.width - width - Style.current.halfPadding
+        y: -height
+        gifSelected: function (event, url) {
+            messageInputField.text = url
+            control.sendMessage(event)
+            gifBtn.highlighted = false
+            messageInputField.forceActiveFocus();
+        }
+        onClosed: {
+            gifBtn.highlighted = false
+        }
+    }
+
     StatusEmojiPopup {
         id: emojiPopup
         width: 360
@@ -1042,15 +1081,22 @@ Rectangle {
                 anchors.bottom: parent.bottom
                 icon.name: "emojiBtn"
                 type: "secondary"
+                onClicked: togglePopup(emojiPopup, emojiBtn)
+            }
+
+            StatusIconButton {
+                id: gifBtn
+                visible: appSettings.isGifWidgetEnabled
+                anchors.right: emojiBtn.left
+                anchors.rightMargin: 2
+                anchors.bottom: parent.bottom
+                icon.name: "wallet"
+                type: "secondary"
                 onClicked: {
-                    stickersPopup.close()
-                    if (emojiPopup.opened) {
-                        emojiPopup.close()
-                        highlighted = false
-                    } else {
-                        emojiPopup.open()
-                        highlighted = true
+                    if (!gifPopup.opened) {
+                        chatsModel.gif.load()
                     }
+                    togglePopup(gifPopup, gifBtn)
                 }
             }
 
@@ -1063,16 +1109,7 @@ Rectangle {
                 visible: !isEdit && profileModel.network.current === Constants.networkMainnet && emojiBtn.visible
                 width: visible ? 32 : 0
                 type: "secondary"
-                onClicked: {
-                    emojiPopup.close()
-                    if (stickersPopup.opened) {
-                        stickersPopup.close()
-                        highlighted = false
-                    } else {
-                        stickersPopup.open()
-                        highlighted = true
-                    }
-                }
+                onClicked: togglePopup(stickersPopup, stickersBtn)
             }
         }
     }
