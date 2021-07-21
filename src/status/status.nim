@@ -33,7 +33,7 @@ proc newStatusInstance*(fleetConfig: string): Status =
   result.tasks = newTaskRunner()
   result.events = createEventEmitter()
   result.fleet = fleet.newFleetModel(fleetConfig)
-  result.chat = chat.newChatModel(result.events)
+  result.chat = chat.newChatModel(result.events, result.tasks)
   result.accounts = accounts.newAccountModel(result.events)
   result.wallet = wallet.newWalletModel(result.events)
   result.wallet.initEvents()

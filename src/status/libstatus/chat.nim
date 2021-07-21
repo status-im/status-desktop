@@ -630,3 +630,11 @@ proc unreadActivityCenterNotificationsCount*(): int =
 
   if rpcResult{"result"}.kind != JNull:
     return rpcResult["result"].getInt
+
+proc asyncSearchMessages*(chatId: string, searchTerm: string, caseSensitive: bool, success: var bool): string =
+  success = true
+  try:
+    result = callPrivateRPC("allChatMessagesWhichMatchTerm".prefix, %* [chatId, searchTerm, caseSensitive])
+  except RpcException as e:
+    success = false
+    result = e.msg

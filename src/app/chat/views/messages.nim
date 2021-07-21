@@ -13,9 +13,6 @@ import ../../../status/tasks/marathon/mailserver/worker
 
 import communities, chat_item, channels_list, communities, community_list, message_list, channel, message_item, message_list_proxy
 
-# TODO: remove me
-import ../../../status/libstatus/chat as libstatus_chat
-
 logScope:
   topics = "messages-view"
 
@@ -338,7 +335,7 @@ QtObject:
 
     let messages = rpcResponseObj{"messages"}
     if(messages != nil and messages.kind != JNull):
-      let chatMessages = libstatus_chat.parseChatMessagesResponse(messages)
+      let chatMessages = status_chat.parseChatMessagesResponse(messages)
       self.status.chat.chatMessages(chatId, true, chatMessages[0], chatMessages[1])
 
     let rxns = rpcResponseObj{"reactions"}
@@ -348,7 +345,7 @@ QtObject:
 
     let pinnedMsgs = rpcResponseObj{"pinnedMessages"}
     if(pinnedMsgs != nil and pinnedMsgs.kind != JNull):
-      let pinnedMessages = libstatus_chat.parseChatPinnedMessagesResponse(pinnedMsgs)
+      let pinnedMessages = status_chat.parseChatPinnedMessagesResponse(pinnedMsgs)
       self.status.chat.pinnedMessagesByChatID(chatId, pinnedMessages[0], pinnedMessages[1])
 
   proc hideLoadingIndicator*(self: MessageView) {.slot.} =
@@ -503,10 +500,38 @@ QtObject:
   QtProperty[QVariant] searchResultMessageModel:
     read = getSearchResultMessageModel
 
+  proc onSearchMessages*(self: MessageView, response: string) {.slot.} =
+    let responseObj = response.parseJson
+    if (responseObj.kind != JObject):
+      error "search messages response is not an json object"
+      return
+
+    let chatId = if(responseObj.contains("chatId")): responseObj{"chatId"}.getStr else : ""
+    if (chatId.len == 0):
+      error "search messages response either doesn't contain chatId or it is empty"
+      return
+
+    let messagesObj = if(responseObj.contains("messages")): responseObj{"messages"} else: newJObject()
+    if (messagesObj.kind != JObject):
+      error "search messages response either doesn't contain messages object or it is empty"
+      return
+
+    let (cursor, messages) = status_chat.parseChatMessagesResponse(messagesObj)
+    
+    self.searchResultMessageModel.setFilteredMessages(messages)
+
   proc searchMessages*(self: MessageView, searchTerm: string) {.slot.} =
-    # channelId is used here only to support message search in currently selected channel
+    if (searchTerm.len == 0):
+      self.searchResultMessageModel.clear(false)
+      return
+
+    # chatId is used here only to support message search in currently selected channel
     # later when we decide to apply message search over multiple channels MessageListProxyModel
     # will be updated to support setting list of sourcer messages.
-    let channelId = self.channelView.activeChannel.id
-    self.searchResultMessageModel.setSourceMessages(self.messageList[channelId].messages)
-    self.searchResultMessageModel.setFilter(searchTerm, false)
+    let chatId = self.channelView.activeChannel.id
+    let slot = SlotArg(
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "onSearchMessages"
+    )
+
+    self.status.chat.asyncSearchMessages(slot, chatId, searchTerm, false)

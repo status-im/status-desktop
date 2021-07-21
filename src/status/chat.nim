@@ -9,6 +9,7 @@ import ../eventemitter
 import profile/profile
 import contacts
 import chat/[chat, message]
+import tasks/[qt, task_runner_impl]
 import signals/messages
 import ens
 
@@ -56,6 +57,7 @@ type
   ChatModel* = ref object
     publicKey*: string
     events*: EventEmitter
+    tasks*: TaskRunner
     communitiesToFetch*: seq[string]
     mailserverReady*: bool
     contacts*: Table[string, Profile]
@@ -77,9 +79,10 @@ type
 
 include chat/utils
 
-proc newChatModel*(events: EventEmitter): ChatModel =
+proc newChatModel*(events: EventEmitter, tasks: TaskRunner): ChatModel =
   result = ChatModel()
   result.events = events
+  result.tasks = tasks
   result.mailserverReady = false
   result.communitiesToFetch = @[]
   result.contacts = initTable[string, Profile]()
@@ -634,3 +637,44 @@ proc parseReactionsResponse*(chatId: string, rpcResult: JsonNode): (string, seq[
 
 proc parseChatMessagesResponse*(rpcResult: JsonNode): (string, seq[Message]) =
   result = status_chat.parseChatMessagesResponse(rpcResult)
+
+# This is still not proper place for such methods, but anyway better then calling
+# them directly from the view part. Such methods should be placed in appropriate 
+# utils file and may be used on many places from there.
+proc parseChatPinnedMessagesResponse*(rpcResult: JsonNode): (string, seq[Message]) =
+  result = status_chat.parseChatPinnedMessagesResponse(rpcResult)
+
+#################################################
+# Async search messages by term
+#################################################
+type
+  AsyncSearchMessageTaskArg = ref object of QObjectTaskArg
+    chatId: string
+    searchTerm: string
+    caseSensitive: bool
+
+const asyncSearchMessagesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[AsyncSearchMessageTaskArg](argEncoded)
+  var messages: JsonNode
+  var success: bool
+  let response = status_chat.asyncSearchMessages(arg.chatId, arg.searchTerm, arg.caseSensitive, success)
+
+  if(success):
+    messages = response.parseJson()["result"]
+
+  let responseJson = %*{
+    "chatId": arg.chatId,
+    "messages": messages
+  }
+  arg.finish(responseJson)
+
+proc asyncSearchMessages*(self: ChatModel, slot: SlotArg, chatId: string, searchTerm: string, caseSensitive: bool) =
+  let arg = AsyncSearchMessageTaskArg(
+    tptr: cast[ByteAddress](asyncSearchMessagesTask),
+    vptr: slot.vptr,
+    slot: slot.slot,
+    chatId: chatId,
+    searchTerm: searchTerm,
+    caseSensitive: caseSensitive
+  )
+  self.tasks.threadpool.start(arg)
