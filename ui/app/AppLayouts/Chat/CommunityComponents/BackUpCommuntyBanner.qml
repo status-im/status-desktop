@@ -65,7 +65,7 @@ Rectangle {
             let hiddenBannerIds = appSettings.hiddenCommunityBackUpBanners
             hiddenBannerIds.push(chatsModel.communities.activeCommunity.id)
             appSettings.hiddenCommunityBackUpBanners = hiddenBannerIds
-            openPopup(transferOwnershipPopup, {privateKey: chatsModel.communities.exportComumnity()})
+            openPopup(transferOwnershipPopup, {privateKey: chatsModel.communities.exportCommunity()})
         }
     }
 

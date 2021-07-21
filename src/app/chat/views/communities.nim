@@ -383,7 +383,7 @@ QtObject:
   proc inviteUsersToCommunity*(self: CommunitiesView, pubKeysJSON: string): string {.slot.} =
     self.inviteUsersToCommunityById(self.activeCommunity.id(), pubKeysJSON)
 
-  proc exportComumnity*(self: CommunitiesView): string {.slot.} =
+  proc exportCommunity*(self: CommunitiesView): string {.slot.} =
     try:
       result = self.status.chat.exportCommunity(self.activeCommunity.communityItem.id)
     except Exception as e:
