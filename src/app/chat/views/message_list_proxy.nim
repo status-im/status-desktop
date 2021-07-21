@@ -52,3 +52,4 @@ QtObject:
     ## displaying already filtered messages (for example filtered response from DB)
     self.clear(false)
     self.add(messages)
+
