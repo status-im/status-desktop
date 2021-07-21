@@ -1,4 +1,4 @@
-import NimQml, json, sequtils, chronicles, strutils, strformat
+import NimQml, json, sequtils, chronicles, strutils, strformat, tables
 import ../../../status/status
 import ../../../status/chat/chat
 import ./channels_list
@@ -17,6 +17,20 @@ type
     Imported,
     InProgress,
     Error
+
+proc mergeChat(community: var Community, chat: Chat): bool =
+  var i = 0
+  for c in community.chats:
+    if (c.id == chat.id):
+      chat.canPost = community.chats[i].canPost
+      chat.categoryId = community.chats[i].categoryId
+      chat.mentionsCount = community.chats[i].mentionsCount
+      community.chats[i] = chat
+      return true
+
+    i = i + 1
+
+  return false
 
 QtObject:
   type CommunitiesView* = ref object of QObject
@@ -71,24 +85,30 @@ QtObject:
     self.activeCommunity.setCommunityItem(self.joinedCommunityList.getCommunityById(self.activeCommunity.communityItem.id))
     self.activeCommunity.triggerMemberUpdate()
 
+  proc populateChats(self: CommunitiesView, communities: var seq[Community]): seq[Community] =
+    result = @[]
+    for community in communities.mitems():
+      for chat in self.status.chat.channels.values:
+        if chat.chatType != ChatType.CommunityChat:
+          continue
+
+        if chat.communityId != community.id:
+          continue
+
+        discard mergeChat(community, chat)
+
+      result.add(community)
+
   proc updateCommunityChat*(self: CommunitiesView, newChat: Chat) =
     var community = self.joinedCommunityList.getCommunityById(newChat.communityId)
     if (community.id == ""):
       return
-    var i = 0
-    var found = false
-    for chat in community.chats:
-      if (chat.id == newChat.id):
-        # canPost and categoryId are not available in the newChat so we need to check what we had before
-        newChat.canPost = community.chats[i].canPost
-        newChat.categoryId = community.chats[i].categoryId
-        newChat.mentionsCount = community.chats[i].mentionsCount
-        community.chats[i] = newChat
-        found = true
-      i = i + 1
+
+    let found = mergeChat(community, newChat)
+
     if (not found):
       community.chats.add(newChat)
-    
+
     self.calculateUnreadMessages(community)
     self.joinedCommunityList.replaceCommunity(community)
     if (self.activeCommunity.active and self.activeCommunity.communityItem.id == community.id):
@@ -124,7 +144,8 @@ QtObject:
 
   proc getCommunitiesIfNotFetched*(self: CommunitiesView): CommunityList =
     if (not self.communityList.fetched):
-      let communities = self.status.chat.getAllComunities()
+      var communities = self.status.chat.getAllComunities()
+      communities = self.populateChats(communities)
       self.communityList.setNewData(communities)
       self.communityList.fetched = true
     return self.communityList
@@ -140,7 +161,8 @@ QtObject:
     
   proc getJoinedComunities*(self: CommunitiesView): QVariant {.slot.} =
     if (not self.joinedCommunityList.fetched):
-      let communities = self.status.chat.getJoinedComunities()
+      var communities = self.status.chat.getJoinedComunities()
+      communities = self.populateChats(communities)
       self.joinedCommunityList.setNewData(communities)
       self.joinedCommunityList.fetched = true
 
@@ -212,6 +234,8 @@ QtObject:
   proc communityChanged*(self: CommunitiesView, communityId: string) {.signal.}
 
   proc addCommunityToList*(self: CommunitiesView, community: var Community) =
+    var communities = @[community]
+    community = self.populateChats(communities)[0]
     let communityCheck = self.communityList.getCommunityById(community.id)
     if (communityCheck.id == ""):
       self.communityList.addCommunityItemToList(community)
@@ -281,6 +305,9 @@ QtObject:
      
       if (community.id == ""):
         return "Community was not edited. Please try again later"
+
+      var communities = @[community]
+      community = self.populateChats(communities)[0]
       self.communityList.replaceCommunity(community)
       self.joinedCommunityList.replaceCommunity(community)
       self.setActiveCommunity(community.id)
