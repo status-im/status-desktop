@@ -21,6 +21,8 @@ StatusModal {
     header.title: contentComponent.currentItem.headerTitle
     header.subTitle: contentComponent.currentItem.headerSubtitle || ""
     header.image.source: contentComponent.currentItem.headerImageSource || ""
+    header.icon.isLetterIdenticon: contentComponent.currentItem.headerTitle == popup.community.name && !contentComponent.currentItem.headerImageSource
+    header.icon.background.color: popup.community.communityColor
 
     content: StackView {
         id: stack
