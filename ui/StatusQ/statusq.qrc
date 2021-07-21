@@ -15,6 +15,7 @@
         <file>src/StatusQ/Popups/qmldir</file>
         <file>src/StatusQ/Popups/StatusPopupMenu.qml</file>
         <file>src/StatusQ/Popups/StatusMenuSeparator.qml</file>
+        <file>src/StatusQ/Popups/StatusMenuHeadline.qml</file>
         <file>src/StatusQ/Popups/StatusMenuItem.qml</file>
         <file>src/StatusQ/Popups/StatusModalDivider.qml</file>
         <file>src/StatusQ/Components/qmldir</file>
