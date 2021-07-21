@@ -198,6 +198,7 @@ Item {
                         //% "1 member"
                         return qsTrId("1-member");
                     case Constants.chatTypeCommunity:
+                        return chatsModel.channelView.activeChannel.description
                     default:
                         return ""
                     }
