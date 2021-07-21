@@ -175,10 +175,17 @@ proc setBloomFilterMode*(bloomFilterMode: bool): StatusGoError =
   let statusGoResult = saveSetting(Setting.WakuBloomFilterMode, bloomFilterMode)
   if statusGoResult.error != "":
     return statusGoResult
-
   var nodeConfig = getNodeConfig()
   nodeConfig["WakuConfig"]["BloomFilterMode"] = newJBool(bloomFilterMode)
+  return saveSetting(Setting.NodeConfig, nodeConfig)
 
+proc setBloomLevel*(bloomFilterMode: bool, fullNode: bool): StatusGoError =
+  let statusGoResult = saveSetting(Setting.WakuBloomFilterMode, bloomFilterMode)
+  if statusGoResult.error != "":
+    return statusGoResult
+  var nodeConfig = getNodeConfig()
+  nodeConfig["WakuConfig"]["BloomFilterMode"] = newJBool(bloomFilterMode)
+  nodeConfig["WakuConfig"]["FullNode"] = newJBool(fullNode)
   return saveSetting(Setting.NodeConfig, nodeConfig)
 
 proc setFleet*(fleetConfig: FleetConfig, fleet: Fleet): StatusGoError =
