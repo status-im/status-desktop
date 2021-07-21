@@ -66,7 +66,9 @@ Item {
                 text: qsTrId("invite-people")
                 icon.name: "share-ios"
                 enabled: chatsModel.communities.activeCommunity.canManageUsers
-                onTriggered: openPopup(inviteFriendsToCommunityPopup, {communityId: chatsModel.communities.activeCommunity.id})
+                onTriggered: openPopup(inviteFriendsToCommunityPopup, {
+                    community: chatsModel.communities.activeCommunity
+                })
             }
         }
     }
@@ -161,7 +163,9 @@ Item {
                     text: qsTrId("invite-people")
                     icon.name: "share-ios"
                     enabled: chatsModel.communities.activeCommunity.canManageUsers
-                    onTriggered: openPopup(inviteFriendsToCommunityPopup, {communityId: chatsModel.communities.activeCommunity.id})
+                    onTriggered: openPopup(inviteFriendsToCommunityPopup, {
+                        community: chatsModel.communities.activeCommunity
+                    })
                 }
             }
 

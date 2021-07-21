@@ -2,36 +2,37 @@ import QtQuick 2.12
 import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.3
 import QtQml.Models 2.3
+
+import StatusQ.Controls 0.1
+import StatusQ.Components 0.1
+import StatusQ.Popups 0.1
+
 import "../../../../imports"
 import "../../../../shared"
-import "../../../../shared/status"
-import "./"
 import "../components"
 
-ModalPopup {
+StatusModal {
     id: popup
 
-    property string communityId: chatsModel.communities.activeCommunity.id
-    property var goBack
+    property var community
 
     onOpened: {
-        contactFieldAndList.contactListSearch.chatKey.text = ""
-        contactFieldAndList.contactListSearch.pubKey = ""
-        contactFieldAndList.contactListSearch.pubKeys = []
-        contactFieldAndList.contactListSearch.ensUsername = ""
-        contactFieldAndList.contactListSearch.chatKey.forceActiveFocus(Qt.MouseFocusReason)
-        contactFieldAndList.contactListSearch.existingContacts.visible = profileModel.contacts.list.hasAddedContacts()
-        contactFieldAndList.contactListSearch.noContactsRect.visible = !contactFieldAndList.contactListSearch.existingContacts.visible
+        contentComponent.community = community
+
+        contentComponent.contactListSearch.chatKey.text = ""
+        contentComponent.contactListSearch.pubKey = ""
+        contentComponent.contactListSearch.pubKeys = []
+        contentComponent.contactListSearch.ensUsername = ""
+        contentComponent.contactListSearch.chatKey.forceActiveFocus(Qt.MouseFocusReason)
+        contentComponent.contactListSearch.existingContacts.visible = profileModel.contacts.list.hasAddedContacts()
+        contentComponent.contactListSearch.noContactsRect.visible = !contentComponent.contactListSearch.existingContacts.visible
     }
 
     //% "Invite friends"
-    title: qsTrId("invite-friends")
+    header.title: qsTrId("invite-friends")
 
-    height: 630
-
-    CommunityProfilePopupInviteFriendsView {
+    content: CommunityProfilePopupInviteFriendsView {
         id: contactFieldAndList
-        anchors.fill: parent
         contactListSearch.onUserClicked: {
             if (isContact) {
                 // those are just added to the list to by added by the bunch
@@ -41,35 +42,27 @@ ModalPopup {
         }
     }
 
-    footer: Item {
-        width: parent.width
-        height: inviteBtn.height
-
+    leftButtons: [
         StatusRoundButton {
-            id: btnBack
-            anchors.left: parent.left
-            visible: !!popup.goBack
             icon.name: "arrow-right"
-            icon.width: 20
             icon.height: 16
+            icon.width: 20
             rotation: 180
             onClicked: {
-                // Go back? Make it work when it's
-                popup.goBack()
+                popup.close()
             }
         }
+    ]
 
+    rightButtons: [
         StatusButton {
-            id: inviteBtn
-            anchors.bottom: parent.bottom
-            anchors.right: parent.right
-            enabled: contactFieldAndList.contactListSearch.pubKeys.length > 0
+            enabled: popup.contentComponent.contactListSearch.pubKeys.length > 0
             //% "Invite"
             text: qsTrId("invite-button")
             onClicked : {
-                contactFieldAndList.sendInvites(contactFieldAndList.contactListSearch.pubKeys)
+                popup.contentComponent.sendInvites(popup.contentComponent.contactListSearch.pubKeys)
             }
         }
-    }
+    ]
 }
 
