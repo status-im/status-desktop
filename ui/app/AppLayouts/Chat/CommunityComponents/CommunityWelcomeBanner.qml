@@ -89,8 +89,8 @@ Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.bottom
         anchors.bottomMargin: Style.current.padding
-        onClicked: {
-          communityProfilePopup.open()
-        }
+        onClicked: openPopup(communityProfilePopup, {
+            community: chatsModel.communities.activeCommunity
+        })
     }
 }
