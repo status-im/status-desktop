@@ -178,12 +178,12 @@ Item {
         text: validationError
         anchors.top: inputField.bottom
         anchors.topMargin: validationErrorTopMargin
+        anchors.right: inputField.right
         selectByMouse: true
         readOnly: true
         font.pixelSize: 12
         height: 16
         color: validationErrorColor
-        width: inputField.width
         wrapMode: TextEdit.Wrap
     }
 }

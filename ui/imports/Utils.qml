@@ -629,8 +629,7 @@ QtObject {
         let errMsg = ""
 
         if(validation & Utils.Validate.NoEmpty && str === "") {
-            //% "You need to enter a %1"
-            errMsg = qsTrId("you-need-to-enter-a--1").arg(fieldName)
+            errMsg = qsTr("You need to enter a %1").arg(fieldName)
         }
 
         if(validation & Utils.Validate.TextLength && str.length > limit) {
