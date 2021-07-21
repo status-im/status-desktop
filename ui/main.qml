@@ -93,15 +93,15 @@ StatusWindow {
         target: applicationWindow
         onClosing: {
             if (loader.sourceComponent == login) {
-                applicationWindow.visible = false;
-                close.accepted = false;
+                applicationWindow.visible = false
+                close.accepted = false
             }
             else if (loader.sourceComponent == app) {
                 if (loader.item.appSettings.quitOnClose) {
-                    Qt.quit();
+                    close.accepted = true
                 } else {
-                    applicationWindow.visible = false;
-                    close.accepted = false;
+                    applicationWindow.visible = false
+                    close.accepted = false
                 }
             }
         }

@@ -44,10 +44,16 @@ proc mainProc() =
   status.tasks.marathon.registerWorker(mailserverWorker)
   status.initNode()
 
+  defer: 
+    info "Status app is shutting down..."
+    status.tasks.teardown()
+
   enableHDPI()
   initializeOpenGL()
 
   let app = newQGuiApplication()
+  defer: app.delete()
+
   let resources =
     if defined(windows) and defined(production):
       "/../resources/resources.rcc"
@@ -85,6 +91,7 @@ proc mainProc() =
   let networkAccessFactory = newQNetworkAccessManagerFactory(TMPDIR & "netcache")
 
   let engine = newQQmlApplicationEngine()
+  defer: engine.delete()
   engine.addImportPath("qrc:/./StatusQ/src")
   engine.setNetworkAccessManagerFactory(networkAccessFactory)
   app.installEventFilter(engine)
@@ -103,46 +110,56 @@ proc mainProc() =
     netAccMgr.setNetworkAccessible(NetworkAccessibility.Accessible)
 
   let signalController = signals.newController(status)
+  defer: signalController.delete()
 
   # We need this global variable in order to be able to access the application
   # from the non-closure callback passed to `libstatus.setSignalEventCallback`
   signalsQObjPointer = cast[pointer](signalController.vptr)
 
   var wallet = wallet.newController(status)
+  defer: wallet.delete()
   engine.setRootContextProperty("walletModel", wallet.variant)
 
   var chat = chat.newController(status)
+  defer: chat.delete()
   engine.setRootContextProperty("chatsModel", chat.variant)
 
   var node = node.newController(status, netAccMgr)
+  defer: node.delete()
   engine.setRootContextProperty("nodeModel", node.variant)
 
   var utilsController = utilsView.newController(status)
+  defer: utilsController.delete()
   engine.setRootContextProperty("utilsModel", utilsController.variant)
 
   var browserController = browserView.newController(status)
+  defer: browserController.delete()
   engine.setRootContextProperty("browserModel", browserController.variant)
 
   proc changeLanguage(locale: string) =
     engine.setTranslationPackage(joinPath(i18nPath, fmt"qml_{locale}.qm"))
 
   var profile = profile.newController(status, changeLanguage)
+  defer: profile.delete()
   engine.setRootContextProperty("profileModel", profile.variant)
 
   var provider = provider.newController(status)
+  defer: provider.delete()
   engine.setRootContextProperty("web3Provider", provider.variant)
 
   var login = login.newController(status)
+  defer: login.delete()
   var onboarding = onboarding.newController(status)
+  defer: onboarding.delete()
 
   status.events.once("login") do(a: Args):
     var args = AccountArgs(a)
 
     status.tasks.marathon.onLoggedIn()
 
-    # Delete login and onboarding from memory to remove any mnemonic that would have been saved in the accounts list
-    login.delete()
-    onboarding.delete()
+    # Reset login and onboarding to remove any mnemonic that would have been saved in the accounts list
+    login.reset()
+    onboarding.reset()
 
     status.startMessenger()
     profile.init(args.account)
@@ -161,23 +178,7 @@ proc mainProc() =
   let isExperimental = if getEnv("EXPERIMENTAL") == "1": "1" else: "0" # value explicity passed to avoid trusting input
   let experimentalFlag = newQVariant(isExperimental)
   engine.setRootContextProperty("isExperimental", experimentalFlag)
-
-  defer:
-    error "TODO: if user is logged in, logout"
-    provider.delete()
-    engine.delete()
-    app.delete()
-    signalController.delete()
-    login.delete()
-    onboarding.delete()
-    wallet.delete()
-    chat.delete()
-    profile.delete()
-    utilsController.delete()
-    browserController.delete()
-    status.tasks.teardown()
-
-
+    
   # Initialize only controllers whose init functions
   # do not need a running node
   proc initControllers() =

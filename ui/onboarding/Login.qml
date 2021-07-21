@@ -128,8 +128,9 @@ Item {
             id: txtPassword
             anchors.top: addressText.bottom
             anchors.topMargin: Style.current.padding * 2
+            enabled: !loading
             //% "Enter password"
-            placeholderText: qsTrId("enter-password")
+            placeholderText: loading ? qsTr("Connecting...") : qsTrId("enter-password")
             textField.echoMode: TextInput.Password
             textField.focus: true
             Keys.onReturnPressed: {
@@ -140,6 +141,7 @@ Item {
                 loading = false
             }
         }
+
         StatusRoundButton {
             id: submitBtn
             size: "medium"
@@ -147,9 +149,9 @@ Item {
             icon.name: "arrow-right"
             icon.width: 18
             icon.height: 14
-            visible: txtPassword.text.length > 0
+            opacity: (loading || txtPassword.text.length > 0) ? 1 : 0
             anchors.left: txtPassword.right
-            anchors.leftMargin: Style.current.padding
+            anchors.leftMargin: (loading || txtPassword.text.length > 0) ? Style.current.padding : Style.current.smallPadding
             anchors.verticalCenter: txtPassword.verticalCenter
             state: loading ? "pending" : "default"
             onClicked: {
@@ -159,6 +161,20 @@ Item {
                 setCurrentFlow(true);
                 loading = true
                 loginModel.login(txtPassword.textField.text)
+                txtPassword.textField.clear()
+            }
+
+            // https://www.figma.com/file/BTS422M9AkvWjfRrXED3WC/%F0%9F%91%8B-Onboarding%E2%8E%9CDesktop?node-id=6%3A0
+            Behavior on opacity {
+                OpacityAnimator {
+                    from: 0.5
+                    duration: 200
+                }
+            }
+            Behavior on anchors.leftMargin {
+                NumberAnimation {
+                    duration: 200
+                }
             }
         }
 
@@ -167,9 +183,15 @@ Item {
             ignoreUnknownSignals: true
             onLoginResponseChanged: {
                 if (error) {
-                    errMsg.visible = true;
-                    loading = false;
-
+                    // SQLITE_NOTADB: "file is not a database"
+                    if (error === "file is not a database") {
+                        errMsg.text = errMsg.incorrectPasswordMsg
+                    } else {
+                        errMsg.text = qsTr("Login failed: %1").arg(error.toUpperCase())
+                    }
+                    errMsg.visible = true
+                    loading = false
+                    txtPassword.textField.forceActiveFocus()
                 }
             }
         }
@@ -191,12 +213,13 @@ Item {
 
         StyledText {
             id: errMsg
+            //% "Login failed. Please re-enter your password and try again."
+            readonly property string incorrectPasswordMsg: qsTrId("login-failed--please-re-enter-your-password-and-try-again-")
             anchors.top: generateKeysLinkText.bottom
             anchors.topMargin: Style.current.smallPadding
             anchors.horizontalCenter: parent.horizontalCenter
             visible: false
-            //% "Login failed. Please re-enter your password and try again."
-            text: qsTrId("login-failed--please-re-enter-your-password-and-try-again-")
+            text: incorrectPasswordMsg
             font.pixelSize: 13
             color: Style.current.danger
         }
