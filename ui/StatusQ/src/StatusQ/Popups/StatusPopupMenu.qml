@@ -4,6 +4,7 @@ import QtGraphicalEffects 1.13
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ.Components 0.1
 import StatusQ.Popups 0.1
 
 
@@ -54,13 +55,27 @@ Menu {
                 implicitHeight: 24
                 StatusIcon {
                     anchors.centerIn: parent
-                    width: !!statusPopupMenuItem.action.icon.width ?
-                      statusPopupMenuItem.action.icon.width : 18
+                    width: {
+                        let width = statusPopupMenuItem.action.icon.width ||
+                            statusPopupMenuItem.action.iconSettings.width
+
+                        return !!width ? width : 18
+                    }
                     rotation: statusPopupMenuItem.action.iconRotation
-                    icon: statusPopupMenuItem.subMenu ?
-                        statusPopupMenu.subMenuItemIcons[statusPopupMenuItem.subMenuIndex] :
-                        statusPopupMenuItem.action.icon.name
+                    icon: {
+                        if (statusPopupMenuItem.subMenu) {
+                            return statusPopupMenu.subMenuItemIcons[statusPopupMenuItem.subMenuIndex]
+                        }
+                        return statusPopupMenuItem.action.icon.name ||
+                          statusPopupMenuItem.action.iconSettings.name
+                    }   
                     color: {
+                        let c = statusPopupMenuItem.action.iconSettings.color ||
+                            statusPopupMenuItem.action.icon.color
+                          
+                        if (!Qt.colorEqual(c, "transparent")) {
+                            return c
+                        }
                         switch (statusPopupMenuItem.action.type) {
                             case StatusMenuItem.Type.Danger:
                               return Theme.palette.dangerColor1
@@ -73,13 +88,66 @@ Menu {
             }
         }
 
+        Component {
+            id: statusLetterIdenticonCmp
+            Item {
+                implicitWidth: 24
+                implicitHeight: 24
+
+                StatusLetterIdenticon {
+                    anchors.centerIn: parent
+                    width: 16
+                    height: 16
+                    color: {
+                        let subMenuItemIcon = statusPopupMenu.subMenuItemIcons[statusPopupMenuItem.subMenuIndex]
+                        return subMenuItemIcon && subMenuItemIcon.color ? subMenuItemIcon.color : statusPopupMenuItem.action.iconSettings.background.color
+                    }
+                    name: statusPopupMenuItem.text
+                    letterSize: 11
+                }
+            }
+        }
+
+        Component {
+            id: statusRoundImageCmp
+
+            Item {
+                implicitWidth: 24
+                implicitHeight: 24
+                StatusRoundedImage {
+                    anchors.centerIn: parent
+                    width: statusPopupMenuItem.action.image.width
+                    height: statusPopupMenuItem.action.image.height
+                    image.source: statusPopupMenuItem.subMenu ?
+                        statusPopupMenu.subMenuItemIcons[statusPopupMenuItem.subMenuIndex].source :
+                        statusPopupMenuItem.action.image.source
+                    border.width: (statusPopupMenuItem.subMenu && statusPopupMenu.subMenuItemIcons[statusPopupMenuItem.subMenuIndex].isIdenticon) || 
+                        statusPopupMenuItem.action.image.isIdenticon ? 1 : 0
+                    border.color: Theme.palette.directColor7
+                }
+            }
+        }
+
         indicator: Loader {
-            sourceComponent: indicatorComponent
+            sourceComponent: {
+                let subMenuItemIcon = statusPopupMenu.subMenuItemIcons[parent.subMenuIndex]
+                
+                if ((parent.subMenu && subMenuItemIcon && subMenuItemIcon.source) || !!statusPopupMenuItem.action.image.source.toString()) {
+                    return statusRoundImageCmp
+                }
+
+                return (parent.subMenu && subMenuItemIcon && subMenuItemIcon.isLetterIdenticon) || 
+                    statusPopupMenuItem.action.iconSettings.isLetterIdenticon ? 
+                    statusLetterIdenticonCmp : indicatorComponent
+            }
             anchors.verticalCenter: parent.verticalCenter
             anchors.left: parent.left
             anchors.leftMargin: 8
             active: (parent.subMenu && !!statusPopupMenu.subMenuItemIcons[parent.subMenuIndex] ||
-                !!statusPopupMenuItem.action.icon.name) &&
+                (!!statusPopupMenuItem.action.icon.name ||
+                !!statusPopupMenuItem.action.iconSettings.name) ||
+                !!statusPopupMenuItem.action.iconSettings.isLetterIdenticon ||
+                !!statusPopupMenuItem.action.image.source.toString()) &&
                 statusPopupMenuItem.action.enabled
         }
 
@@ -163,5 +231,4 @@ Menu {
             }
         }
     }
-
 }
