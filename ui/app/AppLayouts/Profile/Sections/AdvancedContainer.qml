@@ -135,30 +135,80 @@ Item {
             }
         }
 
-        StatusSettingsLineButton {
-            //% "Waku Bloom Mode"
-            visible: profileModel.fleets.fleet != Constants.waku_prod && profileModel.fleets.fleet != Constants.waku_test
-            text: qsTrId("waku-bloom-mode")
-            isSwitch: true
-            switchChecked: nodeModel.wakuBloomFilterMode
-            onClicked: function (checked) {
-                openPopup(bloomConfirmationDialogComponent, {bloomFilterMode: checked})
-            }
+        StatusSectionHeadline {
+            text: qsTr("Bloom filter level")
+            topPadding: Style.current.bigPadding
+            bottomPadding: Style.current.padding
+        }
+
+        Row {
+            spacing: 11
 
             Component {
                 id: bloomConfirmationDialogComponent
                 ConfirmationDialog {
-                    property bool bloomFilterMode: false
+                    property string mode: "normal"
 
                     id: confirmDialog
                     //% "Warning!"
                     title: qsTrId("close-app-title")
                     confirmationText: qsTr("The account will be logged out. When you login again, the selected mode will be enabled")
                     onConfirmButtonClicked: {
-                        nodeModel.setWakuBloomFilterMode(bloomFilterMode)
+                        nodeModel.setBloomLevel(mode)
                     }
                     onClosed: {
+                        switch(nodeModel.bloomLevel){
+                            case "light":  btnBloomLight.click(); break;
+                            case "normal":  btnBloomNormal.click(); break;
+                            case "full":  btnBloomFull.click(); break;
+                        }
                         destroy()
+                    }
+                }
+            }
+
+            ButtonGroup {
+                id: bloomGroup
+            }
+
+            BloomSelectorButton {
+                id: btnBloomLight
+                buttonGroup: bloomGroup
+                checkedByDefault: nodeModel.bloomLevel == "light"
+                btnText: qsTr("Light Node")
+                onToggled: {
+                    if (nodeModel.bloomLevel != "light") {
+                        openPopup(bloomConfirmationDialogComponent, {mode: "light"})
+                    } else {
+                        btnBloomLight.click()
+                    }
+                }
+            }
+
+            BloomSelectorButton {
+                id: btnBloomNormal
+                buttonGroup: bloomGroup
+                checkedByDefault: nodeModel.bloomLevel == "normal"
+                btnText: qsTr("Normal")
+                onToggled: {
+                    if (nodeModel.bloomLevel != "normal") {
+                        openPopup(bloomConfirmationDialogComponent, {mode: "normal"})
+                    } else {
+                        btnBloomNormal.click()
+                    }
+                }
+            }
+
+            BloomSelectorButton {
+                id: btnBloomFull
+                buttonGroup: bloomGroup
+                checkedByDefault: nodeModel.bloomLevel == "full"
+                btnText: qsTr("Full Node")
+                onToggled: {
+                    if (nodeModel.bloomLevel != "full") {
+                        openPopup(bloomConfirmationDialogComponent, {mode: "full"})
+                    } else {
+                        btnBloomFull.click()
                     }
                 }
             }

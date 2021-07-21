@@ -69,3 +69,6 @@ proc setFleet*(self: SettingsModel, fleetConfig: FleetConfig, fleet: Fleet): Sta
 
 proc getNodeConfig*(self: SettingsModel): JsonNode =
   libstatus_settings.getNodeConfig()
+
+proc setBloomLevel*(self: SettingsModel, bloomFilterMode: bool, fullNode: bool): StatusGoError =
+  libstatus_settings.setBloomLevel(bloomFilterMode, fullNode)
