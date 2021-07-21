@@ -130,5 +130,7 @@ type
     Take,                   # The ownership is passed to the wrapper
     Clone                   # The node should be cloned
 
+  SingleInstance* = ref object of QObject
+
 const
   UserRole* = 0x100
