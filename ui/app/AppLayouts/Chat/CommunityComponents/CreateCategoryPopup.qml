@@ -230,7 +230,7 @@ StatusModal {
                 let error = ""
 
                 if (isEdit) {
-                    error = chatsModel.communities.editCommunityCategory(communityId, categoryId, Utils.filterXSS(nameInput.text), JSON.stringify(channels))
+                    error = chatsModel.communities.editCommunityCategory(communityId, categoryId, Utils.filterXSS(popup.contentComponent.categoryName.text), JSON.stringify(channels))
                 } else {
                     error = chatsModel.communities.createCommunityCategory(communityId, Utils.filterXSS(popup.contentComponent.categoryName.text), JSON.stringify(channels))
                 }
