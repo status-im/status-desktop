@@ -1,4 +1,28 @@
 <a name=""></a>
+##  (2021-07-21)
+
+
+#### Bug Fixes
+
+* **StatusChatListCategory:**  ensures showActionButtons is taken into account ([52cb97e4](52cb97e4))
+* **StatusPopupMenu:**  ensure menu items elide ([d1f8e3e5](d1f8e3e5))
+
+#### Features
+
+* **StatusChatInfoToolBar:**  make statusMenuButton public ([38c04cb9](38c04cb9))
+* **StatusChatListAndCategories:**  new API showPopupMenu ([9cfcdace](9cfcdace))
+* **StatusChatListItem:**  introduce muted badge visuals ([a404ba07](a404ba07), closes [#259](259))
+* **StatusListItem:**
+  *  support tertiaryTitle ([03131996](03131996), closes [#275](275))
+  *  add identicon support ([214ef6b0](214ef6b0), closes [#261](261))
+* **StatusModal:**
+  *  introduce support for identicons and letter identicons ([fda9b71f](fda9b71f), closes [#269](269))
+  *  render header and footer border by default ([18dbaadd](18dbaadd), closes [#265](265))
+* **StatusToolTip:**  expose `arrow` for fine-grain control ([51b7c71d](51b7c71d))
+
+
+
+<a name=""></a>
 ##  v0.1.0 (2021-07-15)
 
 
