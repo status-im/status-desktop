@@ -5,6 +5,7 @@ StatusChatInput 1.0 StatusChatInput.qml
 StatusEmojiCategoryButton 1.0 StatusEmojiCategoryButton.qml
 StatusEmojiPopup 1.0 StatusEmojiPopup.qml
 StatusEmojiSection 1.0 StatusEmojiSection.qml
+StatusGifPopup 1.0 StatusGifPopup.qml
 StatusIconButton 1.0 StatusIconButton.qml
 StatusImageIdenticon 1.0 StatusImageIdenticon.qml
 StatusLetterIdenticon 1.0 StatusLetterIdenticon.qml

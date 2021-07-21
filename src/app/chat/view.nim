@@ -9,7 +9,7 @@ import ../../status/ens as status_ens
 import ../../status/chat/[chat, message]
 import ../../status/profile/profile
 import web3/[conversions, ethtypes]
-import views/[channels_list, message_list, chat_item, suggestions_list, reactions, stickers, groups, transactions, communities, community_list, community_item, format_input, ens, activity_notification_list, channel, messages, message_item]
+import views/[channels_list, message_list, chat_item, suggestions_list, reactions, stickers, groups, transactions, communities, community_list, community_item, format_input, ens, activity_notification_list, channel, messages, message_item, gif]
 import ../utils/image_utils
 import ../../status/tasks/[qt, task_runner_impl]
 import ../../status/tasks/marathon/mailserver/worker
@@ -80,6 +80,7 @@ QtObject:
       callResult: string
       reactions*: ReactionView
       stickers*: StickersView
+      gif*: GifView
       groups*: GroupsView
       transactions*: TransactionsView
       communities*: CommunitiesView
@@ -97,6 +98,7 @@ QtObject:
     self.activityNotificationList.delete
     self.reactions.delete
     self.stickers.delete
+    self.gif.delete
     self.groups.delete
     self.transactions.delete
     self.communities.delete
@@ -120,6 +122,7 @@ QtObject:
       result.channelView.activeChannel
     )
     result.stickers = newStickersView(status, result.channelView.activeChannel)
+    result.gif = newGifView()
     result.groups = newGroupsView(status,result.channelView.activeChannel)
     result.transactions = newTransactionsView(status)
 
@@ -354,6 +357,12 @@ QtObject:
 
   QtProperty[QVariant] stickers:
     read = getStickers
+
+  proc getGif*(self: ChatsView): QVariant {.slot.} =
+    newQVariant(self.gif)
+
+  QtProperty[QVariant] gif:
+    read = getGif
 
   proc getGroups*(self: ChatsView): QVariant {.slot.} =
     newQVariant(self.groups)

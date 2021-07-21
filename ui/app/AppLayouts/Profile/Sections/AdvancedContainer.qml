@@ -163,6 +163,15 @@ Item {
             }
         }
 
+        StatusSettingsLineButton {
+            text: qsTr("GIF Widget")
+            isSwitch: true
+            switchChecked: appSettings.isGifWidgetEnabled
+            onClicked: {
+                appSettings.isGifWidgetEnabled = !appSettings.isGifWidgetEnabled
+            }
+        }
+
         // StatusSettingsLineButton {
         //     //% "Node Management"
         //     text: qsTrId("node-management")
