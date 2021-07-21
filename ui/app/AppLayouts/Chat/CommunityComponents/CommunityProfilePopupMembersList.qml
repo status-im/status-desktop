@@ -10,6 +10,7 @@ import StatusQ.Popups 0.1
 
 import "../../../../imports"
 import "../../../../shared"
+import "../components"
 
 Item {
     id: root
@@ -174,7 +175,14 @@ Item {
                                     //% "View Profile"
                                     text: qsTrId("view-profile")
                                     icon.name: "channel"
-                                    onTriggered: openProfilePopup(model.userName, model.pubKey, memberItem.image.source, '', memberItem.nickname)
+                                    onTriggered: openPopup(profilePopup, {
+                                       noFooter: profileModel.profile.pubKey !== model.pubKey,
+                                       userName: model.userName,
+                                       fromAuthor: model.pubKey, 
+                                       identicon: memberItem.image.source,
+                                       text: '', 
+                                       nickname: memberItem.nickname
+                                    })
                                 }
 
                                 StatusMenuSeparator {
@@ -211,6 +219,16 @@ Item {
         id: membershipRequestPopup
         MembershipRequestsPopup {
             anchors.centerIn: parent
+            onClosed: {
+                destroy()
+            }
+        }
+    }
+
+    Component {
+        id: profilePopup
+        ProfilePopup {
+            height: 504
             onClosed: {
                 destroy()
             }
