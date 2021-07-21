@@ -4,8 +4,6 @@
 #include <QQuickWindow>
 #include <QScreen>
 
-class QLocalServer;
-
 class StatusWindow: public QQuickWindow
 {
     Q_OBJECT
@@ -15,7 +13,6 @@ class StatusWindow: public QQuickWindow
 public:
 
     explicit StatusWindow(QWindow *parent = nullptr);
-    ~StatusWindow();
 
     Q_INVOKABLE void toggleFullScreen();
 
@@ -33,14 +30,12 @@ signals:
     void secondInstanceDetected();
 
 private:
-    void checkSingleInstance();
     void removeTitleBar();
     void showTitleBar();
     void initCallbacks();
 
 private:
     bool m_isFullScreen;
-    QLocalServer *m_localServer;
 };
 
 #endif // STATUSWINDOW_H
