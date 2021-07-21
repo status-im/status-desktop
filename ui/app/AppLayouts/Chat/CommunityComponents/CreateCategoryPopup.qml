@@ -128,7 +128,7 @@ StatusModal {
                     anchors.horizontalCenter: parent.horizontalCenter
                     width: parent.width - 32
                     visible: popup.isEdit ? 
-                        model.category === popup.categoryId || model.categoryId === "" : 
+                        model.categoryId === popup.categoryId || model.categoryId === "" : 
                         model.categoryId === ""
 
                     title: "#" + model.name
@@ -139,16 +139,16 @@ StatusModal {
                     components: [
                         StatusCheckBox {
                             id: channelItemCheckbox
-                            checked: popup.isEdit ? channels.indexOf(model.id) > - 1 : false
+                            checked: popup.isEdit ? popup.channels.indexOf(model.id) > - 1 : false
                             onCheckedChanged: {
-                                var idx = channels.indexOf(model.id)
+                                var idx = popup.channels.indexOf(model.id)
                                 if(checked){
                                     if(idx === -1){
-                                        channels.push(model.id)
+                                        popup.channels.push(model.id)
                                     }
                                 } else {
                                     if(idx > -1){
-                                        channels.splice(idx, 1);
+                                        popup.channels.splice(idx, 1);
                                     }
                                 }
                             }
