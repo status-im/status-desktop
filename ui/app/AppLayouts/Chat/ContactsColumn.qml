@@ -16,12 +16,12 @@ import StatusQ.Popups 0.1
 
 Item {
     id: contactsColumn
+    width: 304
+    height: parent.height
+
     property int chatGroupsListViewCount: channelList.chatListItems.count
     property alias searchStr: searchBox.text
     signal openProfileClicked()
-
-    Layout.fillHeight: true
-    width: 304
 
     MouseArea {
         anchors.fill: parent

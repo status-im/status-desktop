@@ -15,14 +15,13 @@ import "./CommunityComponents"
 
 
 Item {
+    id: root
+    width: 304
+    height: parent.height
+
     // TODO unhardcode
     property int chatGroupsListViewCount: communityChatListAndCategories.chatList.count
     property Component pinnedMessagesPopupComponent
-
-    id: root
-
-    Layout.fillHeight: true
-    width: 304
 
     StatusChatInfoToolBar {
         id: communityHeader

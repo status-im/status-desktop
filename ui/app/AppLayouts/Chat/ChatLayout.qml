@@ -6,11 +6,15 @@ import "../../../shared"
 import "../../../shared/status"
 import "."
 import "components"
+import "./ChatColumn"
+import "./CommunityComponents"
 
 import StatusQ.Layout 0.1
 
-StatusAppTwoPanelLayout {
+StatusAppThreePanelLayout {
     id: chatView
+
+    handle: SplitViewHandle { implicitWidth: 5 }
 
     property alias chatColumn: chatColumn
     property bool stickersLoaded: false
@@ -31,15 +35,25 @@ StatusAppTwoPanelLayout {
 
     leftPanel: Loader {
         id: contactColumnLoader
-        anchors.fill: parent
-        anchors.horizontalCenter: parent.horizontalCenter
         sourceComponent: appSettings.communitiesEnabled && chatsModel.communities.activeCommunity.active ? communtiyColumnComponent : contactsColumnComponent
     }
 
-    rightPanel: ChatColumn {
+    centerPanel: ChatColumn {
         id: chatColumn
-        anchors.fill: parent
         chatGroupsListViewCount: contactColumnLoader.item.chatGroupsListViewCount
+    }
+
+    showRightPanel: chatColumn.showUsers && (chatsModel.channelView.activeChannel.chatType !== Constants.chatTypeOneToOne)
+    rightPanel: appSettings.communitiesEnabled && chatsModel.communities.activeCommunity.active ? communityUserListComponent : userListComponent
+
+    Component {
+        id: communityUserListComponent
+        CommunityUserList { currentTime: chatColumn.currentTime }
+    }
+
+    Component {
+        id: userListComponent
+        UserList { currentTime: chatColumn.currentTime; userList: chatColumn.userList }
     }
 
     Component {
@@ -104,7 +118,7 @@ StatusAppTwoPanelLayout {
         confirmationText: qsTrId("are-you-sure-you-want-to-remove-this-contact-")
         onConfirmButtonClicked: {
             if (profileModel.contacts.isAdded(chatColumn.contactToRemove)) {
-              profileModel.contacts.removeContact(chatColumn.contactToRemove)
+                profileModel.contacts.removeContact(chatColumn.contactToRemove)
             }
             removeContactConfirmationDialog.parentPopup.close();
             removeContactConfirmationDialog.close();

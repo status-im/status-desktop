@@ -14,8 +14,10 @@ import "./MessageComponents"
 import "../ContactsColumn"
 import "../CommunityComponents"
 
-SplitView {
+Item {
     id: svRoot
+    anchors.fill: parent
+
     property alias chatLogView: chatLogView
     property alias scrollToMessage: chatLogView.scrollToMessage
 
@@ -24,21 +26,12 @@ SplitView {
     property bool loadingMessages: false
     property real scrollY: chatLogView.visibleArea.yPosition * chatLogView.contentHeight
     property int newMessages: 0
-    property var currentTime
-
-    Layout.fillWidth: true
-    Layout.fillHeight: true
-
-    handle: SplitViewHandle { implicitWidth: 5}
 
     ScrollView {
         id: root
+        anchors.fill: parent
+        contentHeight: childrenRect.height
         contentItem: chatLogView
-
-        SplitView.fillWidth: true
-        SplitView.minimumWidth: 200
-
-        height: parent.height
         ScrollBar.vertical.policy: chatLogView.contentHeight > chatLogView.height ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
 
@@ -341,26 +334,6 @@ SplitView {
                 modelLoadingDelayTimer.start();
             }
         }
-    }
-
-    Loader {
-        property int defaultWidth: 250
-        SplitView.preferredWidth: active ? defaultWidth : 0
-        SplitView.minimumWidth: active ? 50 : 0
-        active: showUsers && chatsModel.channelView.activeChannel.chatType !== Constants.chatTypeOneToOne
-        anchors.top: parent.top
-        anchors.bottom: parent.bottom
-        sourceComponent:appSettings.communitiesEnabled && chatsModel.communities.activeCommunity.active ? communityUserListComponent : userListComponent
-    }
-
-    Component {
-        id: communityUserListComponent
-        CommunityUserList { }
-    }
-
-    Component {
-        id: userListComponent
-        UserList { }
     }
 }
 
