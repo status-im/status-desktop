@@ -31,7 +31,8 @@ StatusModal {
     
     property Component pinnedMessagesPopupComponent
 
-    header.title: qsTr("New channel")
+    //% "New channel"
+    header.title: qsTrId("create-channel-title")
 
     onOpened: {
         contentComponent.channelName.text = ""

@@ -56,7 +56,8 @@ StatusPopupMenu {
 
     Action {
         enabled: profileModel.fleets.fleet == Constants.waku_prod || profileModel.fleets.fleet == Constants.waku_test
-        text: qsTr("Test WakuV2 - requestAllHistoricMessages")
+        //% "Test WakuV2 - requestAllHistoricMessages"
+        text: qsTrId("test-wakuv2---requestallhistoricmessages")
         onTriggered: chatsModel.requestAllHistoricMessages()
     }
 

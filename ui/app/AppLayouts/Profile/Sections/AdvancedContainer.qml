@@ -136,7 +136,8 @@ Item {
         }
 
         StatusSectionHeadline {
-            text: qsTr("Bloom filter level")
+            //% "Bloom filter level"
+            text: qsTrId("bloom-filter-level")
             topPadding: Style.current.bigPadding
             bottomPadding: Style.current.padding
         }
@@ -152,7 +153,8 @@ Item {
                     id: confirmDialog
                     //% "Warning!"
                     title: qsTrId("close-app-title")
-                    confirmationText: qsTr("The account will be logged out. When you login again, the selected mode will be enabled")
+                    //% "The account will be logged out. When you login again, the selected mode will be enabled"
+                    confirmationText: qsTrId("the-account-will-be-logged-out--when-you-login-again--the-selected-mode-will-be-enabled")
                     onConfirmButtonClicked: {
                         nodeModel.setBloomLevel(mode)
                     }
@@ -175,7 +177,8 @@ Item {
                 id: btnBloomLight
                 buttonGroup: bloomGroup
                 checkedByDefault: nodeModel.bloomLevel == "light"
-                btnText: qsTr("Light Node")
+                //% "Light Node"
+                btnText: qsTrId("light-node")
                 onToggled: {
                     if (nodeModel.bloomLevel != "light") {
                         openPopup(bloomConfirmationDialogComponent, {mode: "light"})
@@ -189,7 +192,8 @@ Item {
                 id: btnBloomNormal
                 buttonGroup: bloomGroup
                 checkedByDefault: nodeModel.bloomLevel == "normal"
-                btnText: qsTr("Normal")
+                //% "Normal"
+                btnText: qsTrId("normal")
                 onToggled: {
                     if (nodeModel.bloomLevel != "normal") {
                         openPopup(bloomConfirmationDialogComponent, {mode: "normal"})
@@ -203,7 +207,8 @@ Item {
                 id: btnBloomFull
                 buttonGroup: bloomGroup
                 checkedByDefault: nodeModel.bloomLevel == "full"
-                btnText: qsTr("Full Node")
+                //% "Full Node"
+                btnText: qsTrId("full-node")
                 onToggled: {
                     if (nodeModel.bloomLevel != "full") {
                         openPopup(bloomConfirmationDialogComponent, {mode: "full"})

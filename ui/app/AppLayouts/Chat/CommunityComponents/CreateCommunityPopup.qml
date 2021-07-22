@@ -110,7 +110,8 @@ StatusModal {
                     onTextEdited: {
                         validationError = Utils.validateAndReturnError(text,
                                                                       communityNameValidator,
-                                                                      qsTr("community name"),
+                                                                      //% "community name"
+                                                                      qsTrId("community-name"),
                                                                       maxCommunityNameLength)
                     }
                 }
@@ -126,7 +127,8 @@ StatusModal {
 
                 StyledTextArea {
                     id: descriptionTextArea
-                    label: qsTr("Description")
+                    //% "Description"
+                    label: qsTrId("description")
                     //% "What your community is about"
                     placeholderText: qsTrId("what-your-community-is-about")
 
@@ -142,7 +144,8 @@ StatusModal {
 
                         validationError = Utils.validateAndReturnError(text,
                                                                       communityDescValidator,
-                                                                      qsTr("community decription"),
+                                                                      //% "community decription"
+                                                                      qsTrId("community-decription"),
                                                                       maxCommunityDescLength)
                     }
                 }
@@ -273,7 +276,8 @@ StatusModal {
             }
 
             StatusBaseText {
-                text: qsTr("Community colour")
+                //% "Community colour"
+                text: qsTrId("community-color")
                 font.pixelSize: 13
                 color: Theme.palette.directColor1
                 anchors.left: parent.left
@@ -297,7 +301,8 @@ StatusModal {
                     contentColor: colorDialog.colorSelected ? Theme.palette.indirectColor1 : Theme.palette.baseColor1
                     text: colorDialog.colorSelected ?
                         colorDialog.color.toString().toUpperCase() : 
-                        qsTr("Pick a color")
+                        //% "Pick a color"
+                        qsTrId("pick-a-color")
 
                     onClicked: colorDialog.open();
                     onTextChanged: {
@@ -333,7 +338,8 @@ StatusModal {
             StatusListItem {
                 anchors.horizontalCenter: parent.horizontalCenter
                 visible: !isEdit
-                title: qsTr("Membership requirement")
+                //% "Membership requirement"
+                title: qsTrId("membership-title")
                 label: {
                     switch (membershipRequirementSettingPopup.checkedMembership) {
                         //% "Require invite from another member"
@@ -361,7 +367,8 @@ StatusModal {
                 font.pixelSize: 13
                 color: Theme.palette.baseColor1
                 width: parent.width * 0.78
-                text: qsTr("You can require new members to meet certain criteria before they can join. This can be changed at any time")
+                //% "You can require new members to meet certain criteria before they can join. This can be changed at any time"
+                text: qsTrId("membership-none-placeholder")
                 anchors.left: parent.left
                 anchors.leftMargin: 16
             }

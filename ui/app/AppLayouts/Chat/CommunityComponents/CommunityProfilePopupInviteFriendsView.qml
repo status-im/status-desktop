@@ -30,9 +30,11 @@ Column {
     }
 
     StatusDescriptionListItem {
-        title: qsTr("Share community")
+        //% "Share community"
+        title: qsTrId("share-community")
         subTitle: `${Constants.communityLinkPrefix}${root.community && root.community.id.substring(0, 4)}...${root.community && root.community.id.substring(root.community.id.length -2)}`
-        tooltip.text: qsTr("Copy to clipboard")
+        //% "Copy to clipboard"
+        tooltip.text: qsTrId("copy-to-clipboard")
         icon.name: "copy"
         iconButton.onClicked: {
             let link = `${Constants.communityLinkPrefix}${root.community.id}`

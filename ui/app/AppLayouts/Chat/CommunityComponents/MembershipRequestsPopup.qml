@@ -17,7 +17,8 @@ StatusModal {
         contentComponent.errorText.text = ""
     }
 
-    header.title: qsTr("Membership requests")
+    //% "Membership requests"
+    header.title: qsTrId("membership-requests")
     header.subTitle: contentComponent.membershipRequestList.count
 
     content: Column {
