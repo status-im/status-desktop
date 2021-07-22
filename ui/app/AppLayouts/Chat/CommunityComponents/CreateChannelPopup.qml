@@ -263,7 +263,7 @@ StatusModal {
                                                                 channel.id,
                                                                 Utils.filterXSS(popup.contentComponent.channelName.text),
                                                                 Utils.filterXSS(popup.contentComponent.channelDescription.text),
-                      categoryId)
+                      channel.categoryId)
                                                                 // TODO: pass the private value when private channels
                                                                 // are implemented
                                                                 //privateSwitch.checked)

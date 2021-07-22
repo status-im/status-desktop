@@ -46,6 +46,11 @@ QtObject:
   QtProperty[string] communityId:
     read = communityId
 
+  proc categoryId*(self: ChatItemView): string {.slot.} = result = ?.self.chatItem.categoryId
+
+  QtProperty[string] categoryId:
+    read = categoryId
+
   proc description*(self: ChatItemView): string {.slot.} = result = ?.self.chatItem.description
   
   QtProperty[string] description:

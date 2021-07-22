@@ -396,7 +396,7 @@ QtObject:
 
   proc editCommunityChannel*(self: ChatsView, communityId: string, channelId: string, name: string, description: string, categoryId: string): string {.slot.} =
     try:
-      let chat = self.status.chat.editCommunityChannel(communityId, channelId, name, description)
+      let chat = self.status.chat.editCommunityChannel(communityId, channelId, name, description, categoryId)
 
       chat.categoryId = categoryId
       self.communities.joinedCommunityList.replaceChannelInCommunity(communityId, chat)
