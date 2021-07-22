@@ -103,9 +103,17 @@ QtObject:
     self.endResetModel()
 
   proc addChatItemToList*(self: ChannelsList, channel: Chat): int =
-    self.beginInsertRows(newQModelIndex(), 0, 0)
-    self.chats.insert(channel, 0)
-    self.endInsertRows()
+    var found = false
+    for chat in self.chats:
+      if chat.id == channel.id:
+        found = true
+        break
+    
+    if not found:
+      self.beginInsertRows(newQModelIndex(), 0, 0)
+      self.chats.insert(channel, 0)
+      self.endInsertRows()
+    
     result = 0
 
   proc removeChatItemFromList*(self: ChannelsList, channel: string): int =
