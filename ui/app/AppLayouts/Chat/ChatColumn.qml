@@ -83,24 +83,30 @@ Item {
 
     function populateSuggestions() {
         chatInput.suggestionsList.clear()
-        const len = chatsModel.suggestionList.rowCount()
 
         idMap = {}
 
+        let isCommunity = chatsModel.communities.activeCommunity.active
+        let dataSource = isCommunity ? chatsModel.communities.activeCommunity.members : chatsModel.suggestionList
+        
+        const len = dataSource.rowCount()
         for (let i = 0; i < len; i++) {
-            const contactAddr = chatsModel.suggestionList.rowData(i, "address");
+            const contactAddr = dataSource.rowData(i, "address");
             if(idMap[contactAddr]) continue;
             suggestionsObj.push({
-                                    alias: chatsModel.suggestionList.rowData(i, "alias"),
-                                    ensName: chatsModel.suggestionList.rowData(i, "ensName"),
+                                    alias: dataSource.rowData(i, "alias"),
+                                    ensName: dataSource.rowData(i, "ensName"),
                                     address: contactAddr,
-                                    identicon: getProfileImage(contactAddr, false, false) || chatsModel.suggestionList.rowData(i, "identicon"),
-                                    localNickname: chatsModel.suggestionList.rowData(i, "localNickname")
+                                    identicon: getProfileImage(contactAddr, false, false) || dataSource.rowData(i, "identicon"),
+                                    localNickname: dataSource.rowData(i, "localNickname")
                                 })
 
             chatInput.suggestionsList.append(suggestionsObj[suggestionsObj.length - 1]);
             idMap[contactAddr] = true;
         }
+
+        if (!isCommunity) return;
+
         const len2 = chatsModel.messageView.messageList.rowCount();
         for (let f = 0; f < len2; f++) {
             addSuggestionFromMessageList(f);
