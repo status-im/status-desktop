@@ -10,6 +10,7 @@ import "./"
 PopupMenu {
     id: messageContextMenu
     width: messageContextMenu.isProfile ? profileHeader.width : emojiContainer.width
+    closePolicy: Popup.CloseOnPressOutside | Popup.CloseOnEscape
 
     property string messageId
     property bool isProfile: false
@@ -17,6 +18,7 @@ PopupMenu {
     property bool emojiOnly: false
     property bool hideEmojiPicker: false
     property bool pinnedMessage: false
+    property bool showJumpTo: false
     property bool isText: false
     property bool isCurrentUser: false
     property string linkUrls: ""
@@ -29,6 +31,8 @@ PopupMenu {
     property var emojiReactionsReactedByUser: []
     property var onClickEdit: function(){}
     property var reactionModel
+
+    signal closeParentPopup
 
     subMenuIcons: [{
             source: Qt.resolvedUrl("../../../../shared/img/copy-to-clipboard-icon"),
@@ -53,7 +57,7 @@ PopupMenu {
         const numLinkUrls = messageContextMenu.linkUrls.split(" ").length
         copyLinkMenu.enabled = numLinkUrls > 1
         copyLinkAction.enabled = !!messageContextMenu.linkUrls && numLinkUrls === 1 && !emojiOnly && !messageContextMenu.isProfile
-        popup();
+        popup()
     }
 
     Item {
@@ -263,13 +267,27 @@ PopupMenu {
                 appMain.changeAppSection(Constants.chat)
                 chatsModel.channelView.joinPrivateChat(fromAuthor, "")
             } else {
-              showReplyArea()
+                showReplyArea()
             }
+            messageContextMenu.closeParentPopup()
             messageContextMenu.close()
         }
         icon.source: "../../../img/messageActive.svg"
         icon.width: 16
         icon.height: 16
         enabled: !isSticker && !emojiOnly
+    }
+
+    Action {
+        text: qsTr("Jump to")
+        onTriggered: {
+            positionAtMessage(messageContextMenu.messageId)
+            messageContextMenu.closeParentPopup()
+            messageContextMenu.close()
+        }
+        icon.source: "../../../img/arrow-up.svg"
+        icon.width: 16
+        icon.height: 16
+        enabled: messageContextMenu.pinnedMessage && messageContextMenu.showJumpTo
     }
 }

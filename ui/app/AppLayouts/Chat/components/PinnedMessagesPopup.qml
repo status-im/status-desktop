@@ -2,6 +2,7 @@ import QtQuick 2.13
 import "../../../../imports"
 import "../../../../shared"
 import "../../../../shared/status"
+import "../data"
 import "../ChatColumn"
 
 ModalPopup {
@@ -70,7 +71,13 @@ ModalPopup {
             anchors.topMargin: -Style.current.halfPadding
             clip: true
 
+            function closePopup() {
+                popup.close()
+            }
+
             delegate: Message {
+                id: messageItem
+                property var view: ListView.view
                 fromAuthor: model.fromAuthor
                 chatId: model.chatId
                 userName: model.userName
@@ -96,8 +103,18 @@ ModalPopup {
                 pinnedMessage: true
                 pinnedBy: model.pinnedBy
                 forceHoverHandler: true
+                activityCenterMessage: false
                 isEdited: model.isEdited
                 showEdit: false
+                messageContextMenu: MessageContextMenu {
+                    showJumpTo: true
+                    pinnedMessage: true
+                    reactionModel: EmojiReactions { }
+
+                    onCloseParentPopup: {
+                        messageItem.view.closePopup()
+                    }
+                }
             }
         }
     }

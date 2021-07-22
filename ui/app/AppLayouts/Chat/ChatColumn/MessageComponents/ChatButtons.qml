@@ -91,6 +91,9 @@ Rectangle {
             onClicked: {
                 SelectedMessage.set(messageId, fromAuthor);
                 showReplyArea()
+                if (messageContextMenu.closeParentPopup) {
+                    messageContextMenu.closeParentPopup()
+                }
             }
             onHoveredChanged: {
                 buttonsContainer.hoverChanged(this.hovered)
