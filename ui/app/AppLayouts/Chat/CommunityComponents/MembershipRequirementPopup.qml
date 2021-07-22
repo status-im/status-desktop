@@ -14,7 +14,8 @@ StatusModal {
 
     id: popup
 
-    header.title: qsTr("Membership requirement")
+    //% "Membership requirement"
+    header.title: qsTrId("membership-title")
 
     ButtonGroup {
         id: membershipRequirementGroup
@@ -31,7 +32,8 @@ StatusModal {
 
         StatusListItem {
             anchors.horizontalCenter: parent.horizontalCenter
-            title: qsTr("Require approval")
+            //% "Require approval"
+            title: qsTrId("membership-approval")
             sensor.onClicked: requestAccessRadio.checked = true
             components: [
                 StatusRadioButton {
@@ -52,14 +54,16 @@ StatusModal {
             font.pixelSize: 13
             color: Theme.palette.baseColor1
             width: parent.width * 0.78
-            text: qsTr("Your community is free to join, but new members are required to be approved by the community creator first")
+            //% "Your community is free to join, but new members are required to be approved by the community creator first"
+            text: qsTrId("membership-approval-description")
             anchors.left: parent.left
             anchors.leftMargin: 32
         }
 
         StatusListItem {
             anchors.horizontalCenter: parent.horizontalCenter
-            title: qsTr("Require invite from another member")
+            //% "Require invite from another member"
+            title: qsTrId("membership-invite")
             sensor.onClicked: inviteOnlyRadio.checked = true
             components: [
                 StatusRadioButton {
@@ -80,7 +84,8 @@ StatusModal {
             font.pixelSize: 13
             color: Theme.palette.baseColor1
             width: parent.width * 0.78
-            text: qsTr("Your community can only be joined by an invitation from existing community members")
+            //% "Your community can only be joined by an invitation from existing community members"
+            text: qsTrId("membership-invite-description")
             anchors.left: parent.left
             anchors.leftMargin: 32
         }
@@ -88,7 +93,8 @@ StatusModal {
         /* TODO: add functionality to configure this setting */
         /* StatusListItem { */
         /*     anchors.horizontalCenter: parent.horizontalCenter */
-        /*     title: qsTr("Require ENS username") */
+        //% "Require ENS username"
+        /*     title: qsTrId("membership-ens") */
         /*     components: [ */
         /*         StatusRadioButton { */
         /*             checked: //... */
@@ -104,14 +110,16 @@ StatusModal {
         /*     font.pixelSize: 13 */
         /*     color: Theme.palette.baseColor1 */
         /*     width: parent.width * 0.78 */
-        /*     text: qsTr("Your community requires an ENS username to be able to join") */
+        //% "Your community requires an ENS username to be able to join"
+        /*     text: qsTrId("membership-ens-description") */
         /*     anchors.left: parent.left */
         /*     anchors.leftMargin: 32 */
         /* } */
 
         StatusListItem {
             anchors.horizontalCenter: parent.horizontalCenter
-            title: qsTr("No requirement")
+            //% "No requirement"
+            title: qsTrId("membership-free")
             sensor.onClicked: publicRadio.checked = true
             components: [
                 StatusRadioButton {
@@ -132,7 +140,8 @@ StatusModal {
             font.pixelSize: 13
             color: Theme.palette.baseColor1
             width: parent.width * 0.78
-            text: qsTr("Your community is free for anyone to join")
+            //% "Your community is free for anyone to join"
+            text: qsTrId("membership-free-description")
             anchors.left: parent.left
             anchors.leftMargin: 32
         }

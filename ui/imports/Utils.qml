@@ -251,17 +251,21 @@ QtObject {
         const diffMs = now - messageDate
         const diffMin = Math.floor(diffMs / 60000)
         if (diffMin < 1) {
-            return qsTr("NOW")
+            //% "NOW"
+            return qsTrId("now")
         }
         const diffHour = Math.floor(diffMin / 60)
         if (diffHour < 1) {
-            return qsTr("%1M").arg(diffMin)
+            //% "%1M"
+            return qsTrId("-1m").arg(diffMin)
         }
         const diffDay = Math.floor(diffHour / 24)
         if (diffDay < 1) {
-            return qsTr("%1H").arg(diffHour)
+            //% "%1H"
+            return qsTrId("-1h").arg(diffHour)
         }
-        return qsTr("%1D").arg(diffDay)
+        //% "%1D"
+        return qsTrId("-1d").arg(diffDay)
     }
 
     function formatShortDateStr(longStr) {
@@ -426,7 +430,8 @@ QtObject {
             const pubKey = link.substring(indexAdminPk + 2, indexChatName - 1)
             const chatName = link.substring(indexChatName + 3, indexChatId - 1)
             const chatId = link.substring(indexChatId + 3, link.length)
-            result.title = qsTr("Join the %1 group chat").arg(chatName)
+            //% "Join the %1 group chat"
+            result.title = qsTrId("join-the--1-group-chat").arg(chatName)
             result.callback = function () {
                 chatsModel.groups.joinGroupChatFromInvitation(chatName, chatId, pubKey);
             }
@@ -439,7 +444,8 @@ QtObject {
         index = link.lastIndexOf("/")
         if (index > -1) {
             const chatId = link.substring(index + 1)
-            result.title = qsTr("Join the %1 public channel").arg(chatId)
+            //% "Join the %1 public channel"
+            result.title = qsTrId("join-the--1-public-channel").arg(chatId)
             result.callback = function () {
                 chatsModel.channelView.joinPublicChat(chatId);
             }
@@ -590,7 +596,8 @@ QtObject {
         let errMsg = ""
 
         if(validation & Utils.Validate.NoEmpty && str === "") {
-            errMsg = qsTr("You need to enter a %1").arg(fieldName)
+            //% "You need to enter a %1"
+            errMsg = qsTrId("you-need-to-enter-a--1").arg(fieldName)
         }
 
         if(validation & Utils.Validate.TextLength && str.length > limit) {

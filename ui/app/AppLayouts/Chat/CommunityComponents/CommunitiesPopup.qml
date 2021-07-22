@@ -21,7 +21,8 @@ StatusModal {
         searchBox.forceActiveFocus(Qt.MouseFocusReason)
     }
 
-    header.title: qsTr("Communities")
+    //% "Communities"
+    header.title: qsTrId("communities")
     headerActionButton: StatusFlatRoundButton {
         type: StatusFlatRoundButton.Type.Secondary
         width: 32
@@ -34,7 +35,8 @@ StatusModal {
             id: contextMenu
             StatusMenuItem {
                 icon.name: "download"
-                text: qsTr("Access existing community")
+                //% "Access existing community"
+                text: qsTrId("access-existing-community")
                 onTriggered: openPopup(importCommunitiesPopupComponent)
             }
         }
@@ -113,7 +115,8 @@ StatusModal {
                     height: visible ? implicitHeight : 0
                     anchors.horizontalCenter: parent.horizontalCenter
                     title: name
-                    subTitle: qsTr("%1 members").arg(nbMembers)
+                    //% "%1 members"
+                    subTitle: qsTrId("-1-members").arg(nbMembers)
                     image.source: thumbnailImage
                     icon.isLetterIdenticon: !!!thumbnailImage
                     icon.background.color: communityColor
@@ -134,7 +137,8 @@ StatusModal {
 
     rightButtons: [
         StatusButton {
-            text: qsTr("Create a community")
+            //% "Create a community"
+            text: qsTrId("create-community")
             onClicked: {
                 openPopup(createCommunitiesPopupComponent)
                 popup.close()

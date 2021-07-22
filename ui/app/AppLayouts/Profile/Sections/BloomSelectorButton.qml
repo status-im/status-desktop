@@ -8,7 +8,8 @@ import "../../../../shared/status"
 
 Rectangle {
     property var buttonGroup
-    property string btnText: qsTr("TODO")
+    //% "TODO"
+    property string btnText: qsTrId("todo")
     property bool hovered: false
     property bool checkedByDefault: false
     

@@ -32,20 +32,24 @@ StatusModal {
         let subTitle = ""
         switch(access) {
             case Constants.communityChatPublicAccess:
-                subTitle = qsTr("Public community");
+                //% "Public community"
+                subTitle = qsTrId("public-community");
                 break;
             case Constants.communityChatInvitationOnlyAccess: 
-                subTitle = qsTr("Invitation only community");
+                //% "Invitation only community"
+                subTitle = qsTrId("invitation-only-community");
                 break;
             case Constants.communityChatOnRequestAccess: 
-                subTitle = qsTr("On request community");
+                //% "On request community"
+                subTitle = qsTrId("on-request-community");
                 break;
             default: 
                 subTitle = qsTrId("Unknown community");
                 break;
         }
         if (ensOnly) {
-            subTitle += qsTr(" - ENS only")
+            //% " - ENS only"
+            subTitle += qsTrId("---ens-only")
         }
         return subTitle
     }
@@ -79,7 +83,8 @@ StatusModal {
             }
 
             StatusBaseText {
-                text: qsTr("%1 members").arg(nbMembers)
+                //% "%1 members"
+                text: qsTrId("-1-members").arg(nbMembers)
                 font.pixelSize: 15
                 font.weight: Font.Medium
                 color: Theme.palette.directColor1
@@ -99,7 +104,8 @@ StatusModal {
             width: parent.width - 32
             height: 34
             StatusBaseText {
-                text: qsTr("Channels")
+                //% "Channels"
+                text: qsTrId("channels")
                 anchors.bottom: parent.bottom
                 anchors.bottomMargin: 4
                 font.pixelSize: 15
@@ -154,20 +160,26 @@ StatusModal {
             }
             text: {
                 if (popup.ensOnly && !profileModel.profile.ensVerified) {
-                    return qsTr("Membership requires an ENS username")
+                    //% "Membership requires an ENS username"
+                    return qsTrId("membership-requires-an-ens-username")
                 }
                 if (popup.canJoin) {
-                    return qsTr("Join ‘%1’").arg(popup.name);
+                    //% "Join ‘%1’"
+                    return qsTrId("join---1-").arg(popup.name);
                 }
                 if (isPendingRequest) {
                      //% "Pending"
                      return qsTrId("invite-chat-pending")
                 }
                 switch(popup.access) {
-                    case Constants.communityChatPublicAccess: return qsTr("Join ‘%1’").arg(popup.name);
-                    case Constants.communityChatInvitationOnlyAccess: return qsTr("You need to be invited");
-                    case Constants.communityChatOnRequestAccess: return qsTr("Request to join ‘%1’").arg(popup.name);
-                    default: return qsTr("Unknown community");
+                    //% "Join ‘%1’"
+                    case Constants.communityChatPublicAccess: return qsTrId("join---1-").arg(popup.name);
+                    //% "You need to be invited"
+                    case Constants.communityChatInvitationOnlyAccess: return qsTrId("you-need-to-be-invited");
+                    //% "Request to join ‘%1’"
+                    case Constants.communityChatOnRequestAccess: return qsTrId("request-to-join---1-").arg(popup.name);
+                    //% "Unknown community"
+                    default: return qsTrId("unknown-community");
                 }
             }
             enabled: {

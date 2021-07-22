@@ -83,7 +83,8 @@ StatusModal {
             id: membersList
             CommunityProfilePopupMembersList {
                 width: stack.width
-                headerTitle: qsTr("Members")
+                //% "Members"
+                headerTitle: qsTrId("members-label")
                 headerSubtitle: popup.community.nbMembers.toString()
                 community: popup.community
                 onInviteButtonClicked: popup.contentComponent.push(inviteFriendsView)
@@ -94,7 +95,8 @@ StatusModal {
             id: inviteFriendsView
             CommunityProfilePopupInviteFriendsView {
                 width: stack.width
-                headerTitle: qsTr("Invite friends")
+                //% "Invite friends"
+                headerTitle: qsTrId("invite-friends")
                 community: popup.community
 
                 contactListSearch.chatKey.text: ""
@@ -124,7 +126,8 @@ StatusModal {
 
     rightButtons: [
         StatusButton {
-            text: qsTr("Invite")
+            //% "Invite"
+            text: qsTrId("community-invite-title")
             visible: popup.contentComponent.depth > 2
             height: !visible ? 0 : implicitHeight
             enabled: popup.contentComponent.currentItem.contactListSearch !== undefined && popup.contentComponent.currentItem.contactListSearch.pubKeys.length > 0

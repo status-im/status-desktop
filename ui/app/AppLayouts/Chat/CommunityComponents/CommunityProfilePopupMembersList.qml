@@ -46,7 +46,8 @@ Item {
             id: inviteButton
             anchors.horizontalCenter: parent.horizontalCenter
             visible: root.community.admin || root.community.isAdmin
-            title: qsTr("Invite People")
+            //% "Invite People"
+            title: qsTrId("invite-people")
             icon.name: "share-ios"
             type: StatusListItem.Type.Secondary
             sensor.onClicked: root.inviteButtonClicked()

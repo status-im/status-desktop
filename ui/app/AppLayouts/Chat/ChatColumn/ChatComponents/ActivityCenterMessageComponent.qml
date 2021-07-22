@@ -42,7 +42,8 @@ Item {
 
             StatusToolTip {
                 visible: markReadBtn.hovered
-                text: qsTr("Mark as Read")
+                //% "Mark as Read"
+                text: qsTrId("mark-as-read")
                 orientation: "left"
                 x: - width - Style.current.padding
                 y: markReadBtn.height / 2 - height / 2 + 4

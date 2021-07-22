@@ -95,9 +95,9 @@ Item {
         id: buttonAdvanced
         anchors.verticalCenter: prioritytext.verticalCenter
         anchors.right: parent.right
-        text: advancedMode ? 
+        text: advancedMode ?
             //% "Use suggestions"
-            qsTrId("use-suggestions") : 
+            qsTrId("use-suggestions") :
             //% "Use custom"
             qsTrId("use-custom")
         flat: true

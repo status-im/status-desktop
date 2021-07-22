@@ -46,9 +46,11 @@ Column {
     }
 
     StatusDescriptionListItem {
-        title: qsTr("Share community")
+        //% "Share community"
+        title: qsTrId("share-community")
         subTitle: `${Constants.communityLinkPrefix}${root.community.id.substring(0, 4)}...${root.community.id.substring(root.community.id.length -2)}`
-        tooltip.text: qsTr("Copy to clipboard")
+        //% "Copy to clipboard"
+        tooltip.text: qsTrId("copy-to-clipboard")
         icon.name: "copy"
         iconButton.onClicked: {
             let link = `${Constants.communityLinkPrefix}${root.community.id}`
@@ -111,7 +113,8 @@ Column {
     StatusListItem {
         anchors.horizontalCenter: parent.horizontalCenter
         visible: root.community.isAdmin || root.community.admin
-        title: qsTr("Edit community")
+        //% "Edit community"
+        title: qsTrId("edit-community")
         icon.name: "edit"
         type: StatusListItem.Type.Secondary
         sensor.onClicked: root.editButtonClicked()
@@ -120,7 +123,8 @@ Column {
     StatusListItem {
         anchors.horizontalCenter: parent.horizontalCenter
         visible: root.community.isAdmin || root.community.admin
-        title: qsTr("Transfer ownership")
+        //% "Transfer ownership"
+        title: qsTrId("transfer-ownership")
         icon.name: "exchange"
         type: StatusListItem.Type.Secondary
         sensor.onClicked: root.transferOwnershipButtonClicked()

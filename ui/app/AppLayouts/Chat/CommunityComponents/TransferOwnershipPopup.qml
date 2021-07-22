@@ -14,7 +14,8 @@ StatusModal {
 
     property string privateKey
 
-    header.title: qsTr("Transfer ownership")
+    //% "Transfer ownership"
+    header.title: qsTrId("transfer-ownership")
 
     onClosed: {
         popup.destroy();
@@ -38,7 +39,8 @@ StatusModal {
                 id: pKeyInput
                 width: parent.width
 
-                label: qsTr("Community private key")
+                //% "Community private key"
+                label: qsTrId("community-key")
                 text: elidedPkey
                 textField.onFocusChanged: {
                     if (textField.focus) {
@@ -54,7 +56,8 @@ StatusModal {
 
             StatusBaseText {
                 id: infoText1
-                text: qsTr("You should keep it safe and only share it with people you trust to take ownership of your community")
+                //% "You should keep it safe and only share it with people you trust to take ownership of your community"
+                text: qsTrId("you-should-keep-it-safe-and-only-share-it-with-people-you-trust-to-take-ownership-of-your-community")
                 wrapMode: Text.WordWrap
                 width: parent.width
                 font.pixelSize: 13
@@ -63,7 +66,8 @@ StatusModal {
 
             StatusBaseText {
                 id: infoText2
-                text: qsTr("You can also use this key to import your community on another device")
+                //% "You can also use this key to import your community on another device"
+                text: qsTrId("you-can-also-use-this-key-to-import-your-community-on-another-device")
                 wrapMode: Text.WordWrap
                 width: parent.width
                 font.pixelSize: 13
