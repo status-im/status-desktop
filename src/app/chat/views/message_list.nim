@@ -68,6 +68,8 @@ QtObject:
   proc setup(self: ChatMessageList) =
     self.QAbstractListModel.setup
 
+  proc countChanged*(self: ChatMessageList) {.signal.}
+
   proc fetchMoreMessagesButton(self: ChatMessageList): Message =
     result = Message()
     result.contentType = ContentType.FetchMoreMessagesButton;
@@ -95,7 +97,6 @@ QtObject:
     result.userList = newUserListView(status)
     result.status = status
     result.setup
-
   
   proc hasMessage*(self: ChatMessageList, messageId: string): bool =
     return self.messageIndex.hasKey(messageId)
@@ -116,6 +117,7 @@ QtObject:
     for i in countup(0, self.messages.len - 1):
       self.messageIndex[self.messages[i].id] = i
     self.endRemoveRows()
+    self.countChanged()
 
     return true
 
@@ -154,8 +156,6 @@ QtObject:
 
   method rowCount(self: ChatMessageList, index: QModelIndex = nil): int =
     return self.messages.len
-
-  proc countChanged*(self: ChatMessageList) {.signal.}
 
   proc count*(self: ChatMessageList): int {.slot.}  =
     self.messages.len
