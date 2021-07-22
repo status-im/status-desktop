@@ -404,3 +404,11 @@ QtObject:
 
   QtProperty[QVariant] userList:
     read = getUserList
+
+  proc getMessageIdWhichReplacedMessageWithId*(self: ChatMessageList, replacedMessageId: string): string =
+    ## Returns id of the message which replaced a message with a certain id.
+    ## Returns message id as a string or an empty string if there is no such message.
+
+    for message in self.messages:
+      if (message.replace == replacedMessageId):
+        return message.id

@@ -1,3 +1,4 @@
+import NimQml
 import json, strutils, sequtils, tables, chronicles, times, sugar
 import libstatus/chat as status_chat
 import libstatus/chatCommands as status_chat_commands
@@ -53,21 +54,7 @@ type
 
   ReactionsLoadedArgs* = ref object of Args
     reactions*: seq[Reaction]
-
-  ChatModel* = ref object
-    publicKey*: string
-    events*: EventEmitter
-    tasks*: TaskRunner
-    communitiesToFetch*: seq[string]
-    mailserverReady*: bool
-    contacts*: Table[string, Profile]
-    channels*: Table[string, Chat]
-    msgCursor*: Table[string, string]
-    pinnedMsgCursor*: Table[string, string]
-    activityCenterCursor*: string
-    emojiCursor*: Table[string, string]
-    lastMessageTimestamps*: Table[string, int64]
-    
+  
   MessageArgs* = ref object of Args
     id*: string
     channel*: string
@@ -78,603 +65,712 @@ type
     notificationTypes*: seq[ActivityCenterNotificationType]
 
 include chat/utils
+include chat/async_tasks
 
-proc newChatModel*(events: EventEmitter, tasks: TaskRunner): ChatModel =
-  result = ChatModel()
-  result.events = events
-  result.tasks = tasks
-  result.mailserverReady = false
-  result.communitiesToFetch = @[]
-  result.contacts = initTable[string, Profile]()
-  result.channels = initTable[string, Chat]()
-  result.msgCursor = initTable[string, string]()
-  result.pinnedMsgCursor = initTable[string, string]()
-  result.emojiCursor = initTable[string, string]()
-  result.lastMessageTimestamps = initTable[string, int64]()
+QtObject:
+  type ChatModel* = ref object of QObject
+      publicKey*: string
+      events*: EventEmitter
+      tasks*: TaskRunner
+      communitiesToFetch*: seq[string]
+      mailserverReady*: bool
+      contacts*: Table[string, Profile]
+      channels*: Table[string, Chat]
+      msgCursor*: Table[string, string]
+      pinnedMsgCursor*: Table[string, string]
+      activityCenterCursor*: string
+      emojiCursor*: Table[string, string]
+      lastMessageTimestamps*: Table[string, int64]
 
-proc delete*(self: ChatModel) =
-  discard
-
-proc update*(self: ChatModel, chats: seq[Chat], messages: seq[Message], emojiReactions: seq[Reaction], communities: seq[Community], communityMembershipRequests: seq[CommunityMembershipRequest], pinnedMessages: seq[Message], activityCenterNotifications: seq[ActivityCenterNotification], statusUpdates: seq[StatusUpdate], deletedMessages: seq[string]) =
-  for chat in chats:
-    self.channels[chat.id] = chat
-
-  for message in messages:
-    let chatId = message.chatId
-    let ts = times.convert(Milliseconds, Seconds, message.whisperTimestamp.parseInt())
-    if not self.lastMessageTimestamps.hasKey(chatId):
-      self.lastMessageTimestamps[chatId] = ts
-    else:
-      if self.lastMessageTimestamps[chatId] > ts:
-        self.lastMessageTimestamps[chatId] = ts
-      
-  self.events.emit("chatUpdate", ChatUpdateArgs(messages: messages,chats: chats, contacts: @[], emojiReactions: emojiReactions, communities: communities, communityMembershipRequests: communityMembershipRequests, pinnedMessages: pinnedMessages, activityCenterNotifications: activityCenterNotifications, statusUpdates: statusUpdates, deletedMessages: deletedMessages))
-
-proc hasChannel*(self: ChatModel, chatId: string): bool =
-  self.channels.hasKey(chatId)
-
-proc getActiveChannel*(self: ChatModel): string =
-  if (self.channels.len == 0): "" else: toSeq(self.channels.values)[self.channels.len - 1].id
-
-proc emitTopicAndJoin(self: ChatModel, chat: Chat) =
-  let filterResult = status_chat.loadFilters(@[status_chat.buildFilter(chat)])
-  self.events.emit("channelJoined", ChannelArgs(chat: chat))
-
-
-proc join*(self: ChatModel, chatId: string, chatType: ChatType, ensName: string = "", pubKey: string = "") =
-  if self.hasChannel(chatId): return
-  var chat = newChat(chatId, ChatType(chatType))
-  self.channels[chat.id] = chat
-  status_chat.saveChat(chatId, chatType, color=chat.color, ensName=ensName, profile=pubKey)
-  self.emitTopicAndJoin(chat)
-
-
-proc createOneToOneChat*(self: ChatModel, publicKey: string, ensName: string = "") =
-  if self.hasChannel(publicKey): 
-    self.emitTopicAndJoin(self.channels[publicKey])
-    return
-
-  var chat = newChat(publicKey, ChatType.OneToOne)
-  if ensName != "":
-    chat.name = ensName
-    chat.ensName = ensName
-  self.channels[chat.id] = chat
-  discard status_chat.createOneToOneChat(publicKey)
-  self.emitTopicAndJoin(chat)
-
-
-proc createPublicChat*(self: ChatModel, chatId: string) =
-  if self.hasChannel(chatId): return
-  var chat = newChat(chatId, ChatType.Public)
-  self.channels[chat.id] = chat
-  discard status_chat.createPublicChat(chatId)
-  self.emitTopicAndJoin(chat)
-
-
-proc updateContacts*(self: ChatModel, contacts: seq[Profile]) =
-  for c in contacts:
-    self.contacts[c.id] = c
-  self.events.emit("chatUpdate", ChatUpdateArgs(contacts: contacts))
-
-proc requestMissingCommunityInfos*(self: ChatModel) =
-  if (self.communitiesToFetch.len == 0):
-    return
-  for communityId in self.communitiesToFetch:
-    status_chat.requestCommunityInfo(communityId)
-
-proc init*(self: ChatModel, pubKey: string) =
-  self.publicKey = pubKey
-
-  var contacts = getAddedContacts()
-  var chatList = status_chat.loadChats()
-
-  let profileUpdatesChatIds = chatList.filter(c => c.chatType == ChatType.Profile).map(c => c.id)
-
-  if chatList.filter(c => c.chatType == ChatType.Timeline).len == 0:
-    var timelineChannel = newChat(status_utils.getTimelineChatId(), ChatType.Timeline)
-    self.join(timelineChannel.id, timelineChannel.chatType)
-    chatList.add(timelineChannel)
-
-  let timelineChatId = status_utils.getTimelineChatId(pubKey)
-
-  if not profileUpdatesChatIds.contains(timelineChatId):
-    var profileUpdateChannel = newChat(timelineChatId, ChatType.Profile)
-    status_chat.saveChat(profileUpdateChannel.id, profileUpdateChannel.chatType, profile=pubKey)
-    chatList.add(profileUpdateChannel)
-
-  # For profile updates and timeline, we have to make sure that for
-  # each added contact, a chat has been saved for the currently logged-in
-  # user. Users that will use a version of Status with timeline support for the
-  # first time, won't have any of those otherwise.
-  if profileUpdatesChatIds.filter(id => id != timelineChatId).len != contacts.len:
-    for contact in contacts:
-      if not profileUpdatesChatIds.contains(status_utils.getTimelineChatId(contact.address)):
-        let profileUpdatesChannel = newChat(status_utils.getTimelineChatId(contact.address), ChatType.Profile)
-        status_chat.saveChat(profileUpdatesChannel.id, profileUpdatesChannel.chatType, ensName=contact.ensName, profile=contact.address)
-        chatList.add(profileUpdatesChannel)
-
-  var filters:seq[JsonNode] = @[]
-  for chat in chatList:
-    if self.hasChannel(chat.id):
-      continue
-    filters.add status_chat.buildFilter(chat)
-    self.channels[chat.id] = chat
-    self.events.emit("channelLoaded", ChannelArgs(chat: chat))
-
-  if filters.len == 0: return
-
-  let filterResult = status_chat.loadFilters(filters)
-
-  self.events.emit("chatsLoaded", ChatArgs(chats: chatList))
-
-
-  self.events.once("mailserverAvailable") do(a: Args):
-    self.mailserverReady = true
-    self.requestMissingCommunityInfos()
-
-  self.events.on("contactUpdate") do(a: Args):
-    var evArgs = ContactUpdateArgs(a)
-    self.updateContacts(evArgs.contacts)
-
-proc leave*(self: ChatModel, chatId: string) =
-  self.removeChatFilters(chatId)
-
-  if self.channels[chatId].chatType == ChatType.PrivateGroupChat:
-    let leaveGroupResponse = status_chat.leaveGroupChat(chatId)
-    self.emitUpdate(leaveGroupResponse)
-
-  discard status_chat.deactivateChat(self.channels[chatId])
-
-  self.channels.del(chatId)
-  discard status_chat.clearChatHistory(chatId)
-  self.events.emit("channelLeft", ChatIdArg(chatId: chatId))
-
-proc clearHistory*(self: ChatModel, chatId: string) =
-  discard status_chat.clearChatHistory(chatId)
-  let chat = self.channels[chatId]
-  self.events.emit("chatHistoryCleared", ChannelArgs(chat: chat))
-
-proc setActiveChannel*(self: ChatModel, chatId: string) =
-  self.events.emit("activeChannelChanged", ChatIdArg(chatId: chatId))
-
-proc processMessageUpdateAfterSend(self: ChatModel, response: string, forceActiveChat: bool = false): (seq[Chat], seq[Message])  =
-  result = self.processChatUpdate(parseJson(response))
-  var (chats, messages) = result
-  if chats.len == 0 and messages.len == 0:
-    self.events.emit("sendingMessageFailed", MessageArgs())
-  else:
-    if (forceActiveChat):
-      chats[0].isActive = true
-    self.events.emit("chatUpdate", ChatUpdateArgs(messages: messages, chats: chats, contacts: @[]))
-    for msg in messages:
-      self.events.emit("sendingMessage", MessageArgs(id: msg.id, channel: msg.chatId))
-
-proc sendMessage*(self: ChatModel, chatId: string, msg: string, replyTo: string = "", contentType: int = ContentType.Message.int, communityId: string = "", forceActiveChat: bool = false) =
-  var response = status_chat.sendChatMessage(chatId, msg, replyTo, contentType, communityId)
-  discard self.processMessageUpdateAfterSend(response, forceActiveChat)
-
-proc editMessage*(self: ChatModel, messageId: string, msg: string) =
-  var response = status_chat.editMessage(messageId, msg)
-  discard self.processMessageUpdateAfterSend(response, false)
-
-proc deleteMessageAndSend*(self: ChatModel, messageId: string) =
-  var response = status_chat.deleteMessageAndSend(messageId)    
-  discard self.processMessageUpdateAfterSend(response, false)
-
-proc sendImage*(self: ChatModel, chatId: string, image: string) =
-  var response = status_chat.sendImageMessage(chatId, image)
-  discard self.processMessageUpdateAfterSend(response)
-
-proc sendImages*(self: ChatModel, chatId: string, images: var seq[string]) =
-  var response = status_chat.sendImageMessages(chatId, images)
-  discard self.processMessageUpdateAfterSend(response)
-
-proc sendSticker*(self: ChatModel, chatId: string, sticker: Sticker) =
-  var response = status_chat.sendStickerMessage(chatId, sticker)
-  self.events.emit("stickerSent", StickerArgs(sticker: sticker, save: true))
-  var (chats, messages) = self.processChatUpdate(parseJson(response))
-  self.events.emit("chatUpdate", ChatUpdateArgs(messages: messages, chats: chats, contacts: @[]))
-  self.events.emit("sendingMessage", MessageArgs(id: messages[0].id, channel: messages[0].chatId))
-
-proc chatMessages*(self: ChatModel, chatId: string, initialLoad:bool = true) =
-  if not self.msgCursor.hasKey(chatId):
-    self.msgCursor[chatId] = "";
-
-  # Messages were already loaded, since cursor will 
-  # be nil/empty if there are no more messages
-  if(not initialLoad and self.msgCursor[chatId] == ""): return
-
-  let messageTuple = status_chat.chatMessages(chatId, self.msgCursor[chatId])
-  self.msgCursor[chatId] = messageTuple[0];
-
-  if messageTuple[1].len > 0:
-    let lastMsgIndex = messageTuple[1].len - 1
-    let ts = times.convert(Milliseconds, Seconds, messageTuple[1][lastMsgIndex].whisperTimestamp.parseInt())
-    self.lastMessageTimestamps[chatId] = ts
-
-  self.events.emit("messagesLoaded", MsgsLoadedArgs(messages: messageTuple[1]))
-
-
-proc statusUpdates*(self: ChatModel) =
-  let statusUpdates = status_chat.statusUpdates()
-  self.events.emit("messagesLoaded", MsgsLoadedArgs(statusUpdates: statusUpdates))
-
-proc chatMessages*(self: ChatModel, chatId: string, initialLoad:bool = true, cursor: string = "", messages: seq[Message]) =
-  if not self.msgCursor.hasKey(chatId):
-    self.msgCursor[chatId] = "";
-
-  # Messages were already loaded, since cursor will 
-  # be nil/empty if there are no more messages
-  if(not initialLoad and self.msgCursor[chatId] == ""): return
-
-  self.msgCursor[chatId] = cursor
-
-  if messages.len > 0:
-    let lastMsgIndex = messages.len - 1
-    let ts = times.convert(Milliseconds, Seconds, messages[lastMsgIndex].whisperTimestamp.parseInt())
-    self.lastMessageTimestamps[chatId] = ts
-
-  self.events.emit("messagesLoaded", MsgsLoadedArgs(messages: messages))
-
-proc chatReactions*(self: ChatModel, chatId: string, initialLoad:bool = true, cursor: string = "", reactions: seq[Reaction]) =
-  try:
-    if not self.emojiCursor.hasKey(chatId):
-      self.emojiCursor[chatId] = "";
-
-    # Messages were already loaded, since cursor will 
-    # be nil/empty if there are no more messages
-    if(not initialLoad and self.emojiCursor[chatId] == ""): return
-
-    self.emojiCursor[chatId] = cursor;
-    self.events.emit("reactionsLoaded", ReactionsLoadedArgs(reactions: reactions))
-  except Exception as e:
-    error "Error reactions", msg = e.msg
-
-proc chatReactions*(self: ChatModel, chatId: string, initialLoad:bool = true) =
-  try:
-    if not self.emojiCursor.hasKey(chatId):
-      self.emojiCursor[chatId] = "";
-
-    # Messages were already loaded, since cursor will 
-    # be nil/empty if there are no more messages
-    if(not initialLoad and self.emojiCursor[chatId] == ""): return
-
-    let reactionTuple = status_chat.getEmojiReactionsByChatId(chatId, self.emojiCursor[chatId])
-    self.emojiCursor[chatId] = reactionTuple[0];
-    self.events.emit("reactionsLoaded", ReactionsLoadedArgs(reactions: reactionTuple[1]))
-  except Exception as e:
-    error "Error reactions", msg = e.msg
+  proc setup(self: ChatModel) = 
+    self.QObject.setup
   
-proc addEmojiReaction*(self: ChatModel, chatId: string, messageId: string, emojiId: int) =
-  let reactions = status_chat.addEmojiReaction(chatId, messageId, emojiId)
-  self.events.emit("reactionsLoaded", ReactionsLoadedArgs(reactions: reactions))
+  proc delete*(self: ChatModel) =
+    self.QObject.delete
 
-proc removeEmojiReaction*(self: ChatModel, emojiReactionId: string) =
-  let reactions = status_chat.removeEmojiReaction(emojiReactionId)
-  self.events.emit("reactionsLoaded", ReactionsLoadedArgs(reactions: reactions))
+  proc newChatModel*(events: EventEmitter, tasks: TaskRunner): ChatModel =
+    new(result, delete)
+    result.events = events
+    result.tasks = tasks
+    result.mailserverReady = false
+    result.communitiesToFetch = @[]
+    result.contacts = initTable[string, Profile]()
+    result.channels = initTable[string, Chat]()
+    result.msgCursor = initTable[string, string]()
+    result.pinnedMsgCursor = initTable[string, string]()
+    result.emojiCursor = initTable[string, string]()
+    result.lastMessageTimestamps = initTable[string, int64]()
+  
+    result.setup()
 
-proc markAllChannelMessagesRead*(self: ChatModel, chatId: string): JsonNode =
-  var response = status_chat.markAllRead(chatId)
-  result = parseJson(response)
-  if self.channels.hasKey(chatId):
-    self.channels[chatId].unviewedMessagesCount = 0
-    self.channels[chatId].mentionsCount = 0
-    self.events.emit("channelUpdate", ChatUpdateArgs(messages: @[], chats: @[self.channels[chatId]], contacts: @[]))
+  proc update*(self: ChatModel, chats: seq[Chat], messages: seq[Message], emojiReactions: seq[Reaction], communities: seq[Community], communityMembershipRequests: seq[CommunityMembershipRequest], pinnedMessages: seq[Message], activityCenterNotifications: seq[ActivityCenterNotification]) =
+    for chat in chats:
+      self.channels[chat.id] = chat
 
-proc markMessagesSeen*(self: ChatModel, chatId: string, messageIds: seq[string]): JsonNode =
-  var response = status_chat.markMessagesSeen(chatId, messageIds)
-  result = parseJson(response)
-  if self.channels.hasKey(chatId):
-    self.channels[chatId].unviewedMessagesCount = 0
-    self.channels[chatId].mentionsCount = 0
-    self.events.emit("channelUpdate", ChatUpdateArgs(messages: @[], chats: @[self.channels[chatId]], contacts: @[]))
+    for message in messages:
+      let chatId = message.chatId
+      let ts = times.convert(Milliseconds, Seconds, message.whisperTimestamp.parseInt())
+      if not self.lastMessageTimestamps.hasKey(chatId):
+        self.lastMessageTimestamps[chatId] = ts
+      else:
+        if self.lastMessageTimestamps[chatId] > ts:
+          self.lastMessageTimestamps[chatId] = ts
+        
+    self.events.emit("chatUpdate", ChatUpdateArgs(messages: messages,chats: chats, contacts: @[], emojiReactions: emojiReactions, communities: communities, communityMembershipRequests: communityMembershipRequests, pinnedMessages: pinnedMessages, activityCenterNotifications: activityCenterNotifications))
+  
+  proc processChatUpdate(self: ChatModel, response: JsonNode): (seq[Chat], seq[Message]) =
+    var chats: seq[Chat] = @[]
+    var messages: seq[Message] = @[]
+    if response{"result"}{"messages"} != nil:
+      for jsonMsg in response["result"]["messages"]:
+        messages.add(jsonMsg.toMessage())
+    if response{"result"}{"chats"} != nil:
+      for jsonChat in response["result"]["chats"]:
+        let chat = jsonChat.toChat
+        self.channels[chat.id] = chat
+        chats.add(chat) 
+    result = (chats, messages)
 
-proc confirmJoiningGroup*(self: ChatModel, chatId: string) =
-    var response = status_chat.confirmJoiningGroup(chatId)
+  proc emitUpdate(self: ChatModel, response: string) =
+    var (chats, messages) = self.processChatUpdate(parseJson(response))
+    self.events.emit("chatUpdate", ChatUpdateArgs(messages: messages, chats: chats, contacts: @[]))
+
+  proc removeFiltersByChatId(self: ChatModel, chatId: string, filters: JsonNode)
+
+  proc removeChatFilters(self: ChatModel, chatId: string) =
+    # TODO: this code should be handled by status-go / stimbus instead of the client
+    # Clients should not have to care about filters. For more info about filters:
+    # https://github.com/status-im/specs/blob/master/docs/stable/3-whisper-usage.md#keys-management
+    let filters = parseJson(status_chat.loadFilters(@[]))["result"]
+
+    case self.channels[chatId].chatType
+    of ChatType.Public:
+      for filter in filters:
+        if filter["chatId"].getStr == chatId:
+          status_chat.removeFilters(chatId, filter["filterId"].getStr)
+    of ChatType.OneToOne, ChatType.Profile:
+      # Check if user does not belong to any active chat group
+      var inGroup = false
+      for channel in self.channels.values:
+        if channel.isActive and channel.id != chatId and channel.chatType == ChatType.PrivateGroupChat:
+          inGroup = true
+          break
+      if not inGroup: self.removeFiltersByChatId(chatId, filters)
+    of ChatType.PrivateGroupChat:
+      for member in self.channels[chatId].members:
+        # Check that any of the members are not in other active group chats, or that you don’t have a one-to-one open.
+        var hasConversation = false
+        for channel in self.channels.values:
+          if (channel.isActive and channel.chatType == ChatType.OneToOne and channel.id == member.id) or
+            (channel.isActive and channel.id != chatId and channel.chatType == ChatType.PrivateGroupChat and channel.isMember(member.id)):
+            hasConversation = true
+            break
+        if not hasConversation: self.removeFiltersByChatId(member.id, filters)
+    else:
+      error "Unknown chat type removed", chatId
+
+  proc removeFiltersByChatId(self: ChatModel, chatId: string, filters: JsonNode) =
+    var partitionedTopic = ""
+    for filter in filters:
+      # Contact code filter should be removed
+      if filter["identity"].getStr == chatId and filter["chatId"].getStr.endsWith("-contact-code"):
+        status_chat.removeFilters(chatId, filter["filterId"].getStr)
+
+      # Remove partitioned topic if no other user in an active group chat or one-to-one is from the 
+      # same partitioned topic
+      if filter["identity"].getStr == chatId and filter["chatId"].getStr.startsWith("contact-discovery-"):
+        partitionedTopic = filter["topic"].getStr
+        var samePartitionedTopic = false
+        for f in filters.filterIt(it["topic"].getStr == partitionedTopic and it["filterId"].getStr != filter["filterId"].getStr):
+          let fIdentity = f["identity"].getStr;
+          if self.channels.hasKey(fIdentity) and self.channels[fIdentity].isActive:
+            samePartitionedTopic = true
+            break
+        if not samePartitionedTopic:
+          status_chat.removeFilters(chatId, filter["filterId"].getStr)
+
+  proc hasChannel*(self: ChatModel, chatId: string): bool =
+    self.channels.hasKey(chatId)
+
+  proc getActiveChannel*(self: ChatModel): string =
+    if (self.channels.len == 0): "" else: toSeq(self.channels.values)[self.channels.len - 1].id
+
+  proc emitTopicAndJoin(self: ChatModel, chat: Chat) =
+    let filterResult = status_chat.loadFilters(@[status_chat.buildFilter(chat)])
+    self.events.emit("channelJoined", ChannelArgs(chat: chat))
+
+  proc join*(self: ChatModel, chatId: string, chatType: ChatType, ensName: string = "", pubKey: string = "") =
+    if self.hasChannel(chatId): return
+    var chat = newChat(chatId, ChatType(chatType))
+    self.channels[chat.id] = chat
+    status_chat.saveChat(chatId, chatType, color=chat.color, ensName=ensName, profile=pubKey)
+    self.emitTopicAndJoin(chat)
+
+  proc createOneToOneChat*(self: ChatModel, publicKey: string, ensName: string = "") =
+    if self.hasChannel(publicKey): 
+      self.emitTopicAndJoin(self.channels[publicKey])
+      return
+
+    var chat = newChat(publicKey, ChatType.OneToOne)
+    if ensName != "":
+      chat.name = ensName
+      chat.ensName = ensName
+    self.channels[chat.id] = chat
+    discard status_chat.createOneToOneChat(publicKey)
+    self.emitTopicAndJoin(chat)
+
+  proc createPublicChat*(self: ChatModel, chatId: string) =
+    if self.hasChannel(chatId): return
+    var chat = newChat(chatId, ChatType.Public)
+    self.channels[chat.id] = chat
+    discard status_chat.createPublicChat(chatId)
+    self.emitTopicAndJoin(chat)
+
+
+  proc updateContacts*(self: ChatModel, contacts: seq[Profile]) =
+    for c in contacts:
+      self.contacts[c.id] = c
+    self.events.emit("chatUpdate", ChatUpdateArgs(contacts: contacts))
+
+  proc requestMissingCommunityInfos*(self: ChatModel) =
+    if (self.communitiesToFetch.len == 0):
+      return
+    for communityId in self.communitiesToFetch:
+      status_chat.requestCommunityInfo(communityId)
+
+  proc deleteMessageAndSend*(self: ChatModel, messageId: string) =
+    var response = status_chat.deleteMessageAndSend(messageId)    
+    discard self.processMessageUpdateAfterSend(response, false)
+
+  proc sendImage*(self: ChatModel, chatId: string, image: string) =
+    var response = status_chat.sendImageMessage(chatId, image)
+    discard self.processMessageUpdateAfterSend(response)
+
+  proc init*(self: ChatModel, pubKey: string) =
+    self.publicKey = pubKey
+
+    var contacts = getAddedContacts()
+    var chatList = status_chat.loadChats()
+
+    let profileUpdatesChatIds = chatList.filter(c => c.chatType == ChatType.Profile).map(c => c.id)
+
+    if chatList.filter(c => c.chatType == ChatType.Timeline).len == 0:
+      var timelineChannel = newChat(status_utils.getTimelineChatId(), ChatType.Timeline)
+      self.join(timelineChannel.id, timelineChannel.chatType)
+      chatList.add(timelineChannel)
+
+    let timelineChatId = status_utils.getTimelineChatId(pubKey)
+
+    if not profileUpdatesChatIds.contains(timelineChatId):
+      var profileUpdateChannel = newChat(timelineChatId, ChatType.Profile)
+      status_chat.saveChat(profileUpdateChannel.id, profileUpdateChannel.chatType, profile=pubKey)
+      chatList.add(profileUpdateChannel)
+
+    # For profile updates and timeline, we have to make sure that for
+    # each added contact, a chat has been saved for the currently logged-in
+    # user. Users that will use a version of Status with timeline support for the
+    # first time, won't have any of those otherwise.
+    if profileUpdatesChatIds.filter(id => id != timelineChatId).len != contacts.len:
+      for contact in contacts:
+        if not profileUpdatesChatIds.contains(status_utils.getTimelineChatId(contact.address)):
+          let profileUpdatesChannel = newChat(status_utils.getTimelineChatId(contact.address), ChatType.Profile)
+          status_chat.saveChat(profileUpdatesChannel.id, profileUpdatesChannel.chatType, ensName=contact.ensName, profile=contact.address)
+          chatList.add(profileUpdatesChannel)
+
+    var filters:seq[JsonNode] = @[]
+    for chat in chatList:
+      if self.hasChannel(chat.id):
+        continue
+      filters.add status_chat.buildFilter(chat)
+      self.channels[chat.id] = chat
+      self.events.emit("channelLoaded", ChannelArgs(chat: chat))
+
+    if filters.len == 0: return
+
+    let filterResult = status_chat.loadFilters(filters)
+
+    self.events.emit("chatsLoaded", ChatArgs(chats: chatList))
+
+
+    self.events.once("mailserverAvailable") do(a: Args):
+      self.mailserverReady = true
+      self.requestMissingCommunityInfos()
+
+    self.events.on("contactUpdate") do(a: Args):
+      var evArgs = ContactUpdateArgs(a)
+      self.updateContacts(evArgs.contacts)
+
+  proc statusUpdates*(self: ChatModel) =
+    let statusUpdates = status_chat.statusUpdates()
+    self.events.emit("messagesLoaded", MsgsLoadedArgs(statusUpdates: statusUpdates))
+
+  proc leave*(self: ChatModel, chatId: string) =
+    self.removeChatFilters(chatId)
+
+    if self.channels[chatId].chatType == ChatType.PrivateGroupChat:
+      let leaveGroupResponse = status_chat.leaveGroupChat(chatId)
+      self.emitUpdate(leaveGroupResponse)
+
+    discard status_chat.deactivateChat(self.channels[chatId])
+
+    self.channels.del(chatId)
+    discard status_chat.clearChatHistory(chatId)
+    self.events.emit("channelLeft", ChatIdArg(chatId: chatId))
+
+  proc clearHistory*(self: ChatModel, chatId: string) =
+    discard status_chat.clearChatHistory(chatId)
+    let chat = self.channels[chatId]
+    self.events.emit("chatHistoryCleared", ChannelArgs(chat: chat))
+
+  proc setActiveChannel*(self: ChatModel, chatId: string) =
+    self.events.emit("activeChannelChanged", ChatIdArg(chatId: chatId))
+
+  proc processMessageUpdateAfterSend(self: ChatModel, response: string, forceActiveChat: bool = false): (seq[Chat], seq[Message])  =
+    result = self.processChatUpdate(parseJson(response))
+    var (chats, messages) = result
+    if chats.len == 0 and messages.len == 0:
+      self.events.emit("sendingMessageFailed", MessageArgs())
+    else:
+      if (forceActiveChat):
+        chats[0].isActive = true
+      self.events.emit("chatUpdate", ChatUpdateArgs(messages: messages, chats: chats, contacts: @[]))
+      for msg in messages:
+        self.events.emit("sendingMessage", MessageArgs(id: msg.id, channel: msg.chatId))
+
+  proc sendMessage*(self: ChatModel, chatId: string, msg: string, replyTo: string = "", contentType: int = ContentType.Message.int, communityId: string = "", forceActiveChat: bool = false) =
+    var response = status_chat.sendChatMessage(chatId, msg, replyTo, contentType, communityId)
+    discard self.processMessageUpdateAfterSend(response, forceActiveChat)
+
+  proc editMessage*(self: ChatModel, messageId: string, msg: string) =
+    var response = status_chat.editMessage(messageId, msg)
+    discard self.processMessageUpdateAfterSend(response, false)
+
+  proc sendImage*(self: ChatModel, chatId: string, image: string) =
+    var response = status_chat.sendImageMessage(chatId, image)
+    discard self.processMessageUpdateAfterSend(response)
+
+  proc sendImages*(self: ChatModel, chatId: string, images: var seq[string]) =
+    var response = status_chat.sendImageMessages(chatId, images)
+    discard self.processMessageUpdateAfterSend(response)
+
+  proc sendSticker*(self: ChatModel, chatId: string, sticker: Sticker) =
+    var response = status_chat.sendStickerMessage(chatId, sticker)
+    self.events.emit("stickerSent", StickerArgs(sticker: sticker, save: true))
+    var (chats, messages) = self.processChatUpdate(parseJson(response))
+    self.events.emit("chatUpdate", ChatUpdateArgs(messages: messages, chats: chats, contacts: @[]))
+    self.events.emit("sendingMessage", MessageArgs(id: messages[0].id, channel: messages[0].chatId))
+
+  proc addEmojiReaction*(self: ChatModel, chatId: string, messageId: string, emojiId: int) =
+    let reactions = status_chat.addEmojiReaction(chatId, messageId, emojiId)
+    self.events.emit("reactionsLoaded", ReactionsLoadedArgs(reactions: reactions))
+
+  proc removeEmojiReaction*(self: ChatModel, emojiReactionId: string) =
+    let reactions = status_chat.removeEmojiReaction(emojiReactionId)
+    self.events.emit("reactionsLoaded", ReactionsLoadedArgs(reactions: reactions))
+
+  proc markAllChannelMessagesRead*(self: ChatModel, chatId: string): JsonNode =
+    var response = status_chat.markAllRead(chatId)
+    result = parseJson(response)
+    if self.channels.hasKey(chatId):
+      self.channels[chatId].unviewedMessagesCount = 0
+      self.channels[chatId].mentionsCount = 0
+      self.events.emit("channelUpdate", ChatUpdateArgs(messages: @[], chats: @[self.channels[chatId]], contacts: @[]))
+
+  proc markMessagesSeen*(self: ChatModel, chatId: string, messageIds: seq[string]): JsonNode =
+    var response = status_chat.markMessagesSeen(chatId, messageIds)
+    result = parseJson(response)
+    if self.channels.hasKey(chatId):
+      self.channels[chatId].unviewedMessagesCount = 0
+      self.channels[chatId].mentionsCount = 0
+      self.events.emit("channelUpdate", ChatUpdateArgs(messages: @[], chats: @[self.channels[chatId]], contacts: @[]))
+
+  proc confirmJoiningGroup*(self: ChatModel, chatId: string) =
+      var response = status_chat.confirmJoiningGroup(chatId)
+      self.emitUpdate(response)
+
+  proc renameGroup*(self: ChatModel, chatId: string, newName: string) =
+    var response = status_chat.renameGroup(chatId, newName)
     self.emitUpdate(response)
 
-proc renameGroup*(self: ChatModel, chatId: string, newName: string) =
-  var response = status_chat.renameGroup(chatId, newName)
-  self.emitUpdate(response)
+  proc getUserName*(self: ChatModel, id: string, defaultUserName: string):string =
+    if(self.contacts.hasKey(id)):
+      return userNameOrAlias(self.contacts[id])
+    else:
+      return defaultUserName
 
-proc getUserName*(self: ChatModel, id: string, defaultUserName: string):string =
-  if(self.contacts.hasKey(id)):
-    return userNameOrAlias(self.contacts[id])
-  else:
-    return defaultUserName
+  proc processGroupChatCreation*(self: ChatModel, result: string) =
+    var response = parseJson(result)
+    var (chats, messages) = formatChatUpdate(response)
+    let chat = chats[0]
+    self.channels[chat.id] = chat
+    self.events.emit("chatUpdate", ChatUpdateArgs(messages: messages, chats: chats, contacts: @[]))
+    self.events.emit("activeChannelChanged", ChatIdArg(chatId: chat.id))
 
-proc processGroupChatCreation*(self: ChatModel, result: string) =
-  var response = parseJson(result)
-  var (chats, messages) = formatChatUpdate(response)
-  let chat = chats[0]
-  self.channels[chat.id] = chat
-  self.events.emit("chatUpdate", ChatUpdateArgs(messages: messages, chats: chats, contacts: @[]))
-  self.events.emit("activeChannelChanged", ChatIdArg(chatId: chat.id))
+  proc createGroup*(self: ChatModel, groupName: string, pubKeys: seq[string]) =
+    var result = status_chat.createGroup(groupName, pubKeys)
+    self.processGroupChatCreation(result) 
 
-proc createGroup*(self: ChatModel, groupName: string, pubKeys: seq[string]) =
-  var result = status_chat.createGroup(groupName, pubKeys)
-  self.processGroupChatCreation(result) 
+  proc createGroupChatFromInvitation*(self: ChatModel, groupName: string, chatID: string, adminPK: string) =
+    var result = status_chat.createGroupChatFromInvitation(groupName, chatID, adminPK)
+    self.processGroupChatCreation(result)
 
-proc createGroupChatFromInvitation*(self: ChatModel, groupName: string, chatID: string, adminPK: string) =
-  var result = status_chat.createGroupChatFromInvitation(groupName, chatID, adminPK)
-  self.processGroupChatCreation(result)
+  proc addGroupMembers*(self: ChatModel, chatId: string, pubKeys: seq[string]) =
+    var response = status_chat.addGroupMembers(chatId, pubKeys)
+    self.emitUpdate(response)
 
-proc addGroupMembers*(self: ChatModel, chatId: string, pubKeys: seq[string]) =
-  var response = status_chat.addGroupMembers(chatId, pubKeys)
-  self.emitUpdate(response)
+  proc kickGroupMember*(self: ChatModel, chatId: string, pubKey: string) =
+    var response = status_chat.kickGroupMember(chatId, pubKey)
+    self.emitUpdate(response)
 
-proc kickGroupMember*(self: ChatModel, chatId: string, pubKey: string) =
-  var response = status_chat.kickGroupMember(chatId, pubKey)
-  self.emitUpdate(response)
+  proc makeAdmin*(self: ChatModel, chatId: string, pubKey: string) =
+    var response = status_chat.makeAdmin(chatId, pubKey)
+    self.emitUpdate(response)
 
-proc makeAdmin*(self: ChatModel, chatId: string, pubKey: string) =
-  var response = status_chat.makeAdmin(chatId, pubKey)
-  self.emitUpdate(response)
+  proc resendMessage*(self: ChatModel, messageId: string) =
+    discard status_chat.reSendChatMessage(messageId)
 
-proc resendMessage*(self: ChatModel, messageId: string) =
-  discard status_chat.reSendChatMessage(messageId)
+  proc muteChat*(self: ChatModel, chat: Chat) =
+    discard status_chat.muteChat(chat.id)
+    self.events.emit("chatUpdate", ChatUpdateArgs(messages: @[], chats: @[chat], contacts: @[]))
 
-proc muteChat*(self: ChatModel, chat: Chat) =
-  discard status_chat.muteChat(chat.id)
-  self.events.emit("chatUpdate", ChatUpdateArgs(messages: @[], chats: @[chat], contacts: @[]))
+  proc unmuteChat*(self: ChatModel, chat: Chat) =
+    discard status_chat.unmuteChat(chat.id)
+    self.events.emit("chatUpdate", ChatUpdateArgs(messages: @[], chats: @[chat], contacts: @[]))
 
-proc unmuteChat*(self: ChatModel, chat: Chat) =
-  discard status_chat.unmuteChat(chat.id)
-  self.events.emit("chatUpdate", ChatUpdateArgs(messages: @[], chats: @[chat], contacts: @[]))
+  proc processUpdateForTransaction*(self: ChatModel, messageId: string, response: string) =
+    var (chats, messages) = self.processMessageUpdateAfterSend(response)
+    self.events.emit("messageDeleted", MessageArgs(id: messageId, channel: chats[0].id))
 
-proc processUpdateForTransaction*(self: ChatModel, messageId: string, response: string) =
-  var (chats, messages) = self.processMessageUpdateAfterSend(response)
-  self.events.emit("messageDeleted", MessageArgs(id: messageId, channel: chats[0].id))
+  proc acceptRequestAddressForTransaction*(self: ChatModel, messageId: string, address: string) =
+    let response = status_chat_commands.acceptRequestAddressForTransaction(messageId, address)
+    self.processUpdateForTransaction(messageId, response)
 
-proc acceptRequestAddressForTransaction*(self: ChatModel, messageId: string, address: string) =
-  let response = status_chat_commands.acceptRequestAddressForTransaction(messageId, address)
-  self.processUpdateForTransaction(messageId, response)
+  proc declineRequestAddressForTransaction*(self: ChatModel, messageId: string) =
+    let response = status_chat_commands.declineRequestAddressForTransaction(messageId)
+    self.processUpdateForTransaction(messageId, response)
 
-proc declineRequestAddressForTransaction*(self: ChatModel, messageId: string) =
-  let response = status_chat_commands.declineRequestAddressForTransaction(messageId)
-  self.processUpdateForTransaction(messageId, response)
+  proc declineRequestTransaction*(self: ChatModel, messageId: string) =
+    let response = status_chat_commands.declineRequestTransaction(messageId)
+    self.processUpdateForTransaction(messageId, response)
 
-proc declineRequestTransaction*(self: ChatModel, messageId: string) =
-  let response = status_chat_commands.declineRequestTransaction(messageId)
-  self.processUpdateForTransaction(messageId, response)
+  proc requestAddressForTransaction*(self: ChatModel, chatId: string, fromAddress: string, amount: string, tokenAddress: string) =
+    let address = if (tokenAddress == ZERO_ADDRESS): "" else: tokenAddress
+    let response = status_chat_commands.requestAddressForTransaction(chatId, fromAddress, amount, address)
+    discard self.processMessageUpdateAfterSend(response)
 
-proc requestAddressForTransaction*(self: ChatModel, chatId: string, fromAddress: string, amount: string, tokenAddress: string) =
-  let address = if (tokenAddress == ZERO_ADDRESS): "" else: tokenAddress
-  let response = status_chat_commands.requestAddressForTransaction(chatId, fromAddress, amount, address)
-  discard self.processMessageUpdateAfterSend(response)
+  proc acceptRequestTransaction*(self: ChatModel, transactionHash: string, messageId: string, signature: string) =
+    let response = status_chat_commands.acceptRequestTransaction(transactionHash, messageId, signature)
+    discard self.processMessageUpdateAfterSend(response)
 
-proc acceptRequestTransaction*(self: ChatModel, transactionHash: string, messageId: string, signature: string) =
-  let response = status_chat_commands.acceptRequestTransaction(transactionHash, messageId, signature)
-  discard self.processMessageUpdateAfterSend(response)
+  proc requestTransaction*(self: ChatModel, chatId: string, fromAddress: string, amount: string, tokenAddress: string) =
+    let address = if (tokenAddress == ZERO_ADDRESS): "" else: tokenAddress
+    let response = status_chat_commands.requestTransaction(chatId, fromAddress, amount, address)
+    discard self.processMessageUpdateAfterSend(response)
 
-proc requestTransaction*(self: ChatModel, chatId: string, fromAddress: string, amount: string, tokenAddress: string) =
-  let address = if (tokenAddress == ZERO_ADDRESS): "" else: tokenAddress
-  let response = status_chat_commands.requestTransaction(chatId, fromAddress, amount, address)
-  discard self.processMessageUpdateAfterSend(response)
+  proc getAllComunities*(self: ChatModel): seq[Community] =
+    result = status_chat.getAllComunities()
 
-proc getAllComunities*(self: ChatModel): seq[Community] =
-  result = status_chat.getAllComunities()
+  proc getJoinedComunities*(self: ChatModel): seq[Community] =
+    result = status_chat.getJoinedComunities()
 
-proc getJoinedComunities*(self: ChatModel): seq[Community] =
-  result = status_chat.getJoinedComunities()
+  proc createCommunity*(self: ChatModel, name: string, description: string, access: int, ensOnly: bool, color: string, imageUrl: string, aX: int, aY: int, bX: int, bY: int): Community =
+    result = status_chat.createCommunity(name, description, access, ensOnly, color, imageUrl, aX, aY, bX, bY)
 
-proc createCommunity*(self: ChatModel, name: string, description: string, access: int, ensOnly: bool, color: string, imageUrl: string, aX: int, aY: int, bX: int, bY: int): Community =
-  result = status_chat.createCommunity(name, description, access, ensOnly, color, imageUrl, aX, aY, bX, bY)
+  proc editCommunity*(self: ChatModel, id: string, name: string, description: string, access: int, ensOnly: bool, color: string, imageUrl: string, aX: int, aY: int, bX: int, bY: int): Community =
+    result = status_chat.editCommunity(id, name, description, access, ensOnly, color, imageUrl, aX, aY, bX, bY)
 
-proc editCommunity*(self: ChatModel, id: string, name: string, description: string, access: int, ensOnly: bool, color: string, imageUrl: string, aX: int, aY: int, bX: int, bY: int): Community =
-  result = status_chat.editCommunity(id, name, description, access, ensOnly, color, imageUrl, aX, aY, bX, bY)
+  proc createCommunityChannel*(self: ChatModel, communityId: string, name: string, description: string): Chat =
+    result = status_chat.createCommunityChannel(communityId, name, description)
 
-proc createCommunityChannel*(self: ChatModel, communityId: string, name: string, description: string): Chat =
-  result = status_chat.createCommunityChannel(communityId, name, description)
-
-proc editCommunityChannel*(self: ChatModel, communityId: string, channelId: string, name: string, description: string, categoryId: string): Chat =
+  proc editCommunityChannel*(self: ChatModel, communityId: string, channelId: string, name: string, description: string, categoryId: string): Chat =
   result = status_chat.editCommunityChannel(communityId, channelId, name, description, categoryId)
 
-proc deleteCommunityChat*(self: ChatModel, communityId: string, channelId: string) =
-  status_chat.deleteCommunityChat(communityId, channelId)
+  proc deleteCommunityChat*(self: ChatModel, communityId: string, channelId: string) =
+    status_chat.deleteCommunityChat(communityId, channelId)
 
-proc createCommunityCategory*(self: ChatModel, communityId: string, name: string, channels: seq[string]): CommunityCategory =
-  result = status_chat.createCommunityCategory(communityId, name, channels)
+  proc createCommunityCategory*(self: ChatModel, communityId: string, name: string, channels: seq[string]): CommunityCategory =
+    result = status_chat.createCommunityCategory(communityId, name, channels)
 
-proc editCommunityCategory*(self: ChatModel, communityId: string, categoryId: string, name: string, channels: seq[string]) =
-  status_chat.editCommunityCategory(communityId, categoryId, name, channels)
+  proc editCommunityCategory*(self: ChatModel, communityId: string, categoryId: string, name: string, channels: seq[string]) =
+    status_chat.editCommunityCategory(communityId, categoryId, name, channels)
 
-proc deleteCommunityCategory*(self: ChatModel, communityId: string, categoryId: string) =
-  status_chat.deleteCommunityCategory(communityId, categoryId)
+  proc deleteCommunityCategory*(self: ChatModel, communityId: string, categoryId: string) =
+    status_chat.deleteCommunityCategory(communityId, categoryId)
 
-proc reorderCommunityChannel*(self: ChatModel, communityId: string, categoryId: string, chatId: string, position: int) =
-  status_chat.reorderCommunityChat(communityId, categoryId, chatId, position)
+  proc reorderCommunityChannel*(self: ChatModel, communityId: string, categoryId: string, chatId: string, position: int) =
+    status_chat.reorderCommunityChat(communityId, categoryId, chatId, position)
 
-proc joinCommunity*(self: ChatModel, communityId: string) =
-  status_chat.joinCommunity(communityId)
+  proc joinCommunity*(self: ChatModel, communityId: string) =
+    status_chat.joinCommunity(communityId)
 
-proc requestCommunityInfo*(self: ChatModel, communityId: string) =
-  if (not self.mailserverReady):
-    self.communitiesToFetch.add(communityId)
-    self.communitiesToFetch = self.communitiesToFetch.deduplicate()
-    return
-  status_chat.requestCommunityInfo(communityId)
+  proc requestCommunityInfo*(self: ChatModel, communityId: string) =
+    if (not self.mailserverReady):
+      self.communitiesToFetch.add(communityId)
+      self.communitiesToFetch = self.communitiesToFetch.deduplicate()
+      return
+    status_chat.requestCommunityInfo(communityId)
 
-proc leaveCommunity*(self: ChatModel, communityId: string) =
-  status_chat.leaveCommunity(communityId)
+  proc leaveCommunity*(self: ChatModel, communityId: string) =
+    status_chat.leaveCommunity(communityId)
 
-proc inviteUserToCommunity*(self: ChatModel, communityId: string, pubKey: string) =
-  status_chat.inviteUsersToCommunity(communityId, @[pubKey])
+  proc inviteUserToCommunity*(self: ChatModel, communityId: string, pubKey: string) =
+    status_chat.inviteUsersToCommunity(communityId, @[pubKey])
 
-proc inviteUsersToCommunity*(self: ChatModel, communityId: string, pubKeys: seq[string]) =
-  status_chat.inviteUsersToCommunity(communityId, pubKeys)
+  proc inviteUsersToCommunity*(self: ChatModel, communityId: string, pubKeys: seq[string]) =
+    status_chat.inviteUsersToCommunity(communityId, pubKeys)
 
-proc removeUserFromCommunity*(self: ChatModel, communityId: string, pubKey: string) =
-  status_chat.removeUserFromCommunity(communityId, pubKey)
+  proc removeUserFromCommunity*(self: ChatModel, communityId: string, pubKey: string) =
+    status_chat.removeUserFromCommunity(communityId, pubKey)
 
-proc banUserFromCommunity*(self: ChatModel, pubKey: string, communityId: string): string =
-  return status_chat.banUserFromCommunity(pubKey, communityId)
+  proc banUserFromCommunity*(self: ChatModel, pubKey: string, communityId: string): string =
+    return status_chat.banUserFromCommunity(pubKey, communityId)
 
-proc exportCommunity*(self: ChatModel, communityId: string): string =
-  result = status_chat.exportCommunity(communityId)
+  proc exportCommunity*(self: ChatModel, communityId: string): string =
+    result = status_chat.exportCommunity(communityId)
 
-proc importCommunity*(self: ChatModel, communityKey: string): string =
-  result = status_chat.importCommunity(communityKey)
+  proc importCommunity*(self: ChatModel, communityKey: string): string =
+    result = status_chat.importCommunity(communityKey)
 
-proc requestToJoinCommunity*(self: ChatModel, communityKey: string, ensName: string): seq[CommunityMembershipRequest] =
-  status_chat.requestToJoinCommunity(communityKey, ensName)
+  proc requestToJoinCommunity*(self: ChatModel, communityKey: string, ensName: string): seq[CommunityMembershipRequest] =
+    status_chat.requestToJoinCommunity(communityKey, ensName)
 
-proc acceptRequestToJoinCommunity*(self: ChatModel, requestId: string) =
-  status_chat.acceptRequestToJoinCommunity(requestId)
+  proc acceptRequestToJoinCommunity*(self: ChatModel, requestId: string) =
+    status_chat.acceptRequestToJoinCommunity(requestId)
 
-proc declineRequestToJoinCommunity*(self: ChatModel, requestId: string) =
-  status_chat.declineRequestToJoinCommunity(requestId)
+  proc declineRequestToJoinCommunity*(self: ChatModel, requestId: string) =
+    status_chat.declineRequestToJoinCommunity(requestId)
 
-proc pendingRequestsToJoinForCommunity*(self: ChatModel, communityKey: string): seq[CommunityMembershipRequest] =
-  result = status_chat.pendingRequestsToJoinForCommunity(communityKey)
+  proc pendingRequestsToJoinForCommunity*(self: ChatModel, communityKey: string): seq[CommunityMembershipRequest] =
+    result = status_chat.pendingRequestsToJoinForCommunity(communityKey)
 
-proc setCommunityMuted*(self: ChatModel, communityId: string, muted: bool) =
-  status_chat.setCommunityMuted(communityId, muted)
+  proc setCommunityMuted*(self: ChatModel, communityId: string, muted: bool) =
+    status_chat.setCommunityMuted(communityId, muted)
 
-proc myPendingRequestsToJoin*(self: ChatModel): seq[CommunityMembershipRequest] =
-  result = status_chat.myPendingRequestsToJoin()
+  proc myPendingRequestsToJoin*(self: ChatModel): seq[CommunityMembershipRequest] =
+    result = status_chat.myPendingRequestsToJoin()
 
-proc setPinMessage*(self: ChatModel, messageId: string, chatId: string, pinned: bool) =
-  status_chat.setPinMessage(messageId, chatId, pinned)
+  proc setPinMessage*(self: ChatModel, messageId: string, chatId: string, pinned: bool) =
+    status_chat.setPinMessage(messageId, chatId, pinned)
 
-proc pinnedMessagesByChatID*(self: ChatModel, chatId: string): seq[Message] =
-  if not self.pinnedMsgCursor.hasKey(chatId):
-    self.pinnedMsgCursor[chatId] = "";
+  proc activityCenterNotifications*(self: ChatModel, initialLoad: bool = true) =
+    # Notifications were already loaded, since cursor will 
+    # be nil/empty if there are no more notifs
+    if(not initialLoad and self.activityCenterCursor == ""): return
 
-  let messageTuple = status_chat.pinnedMessagesByChatID(chatId, self.pinnedMsgCursor[chatId])
-  self.pinnedMsgCursor[chatId] = messageTuple[0];
+    let activityCenterNotificationsTuple = status_chat.activityCenterNotification(self.activityCenterCursor)
+    self.activityCenterCursor = activityCenterNotificationsTuple[0];
 
-  result = messageTuple[1]
+    self.events.emit("activityCenterNotificationsLoaded", ActivityCenterNotificationsArgs(activityCenterNotifications: activityCenterNotificationsTuple[1]))
 
-proc pinnedMessagesByChatID*(self: ChatModel, chatId: string, cursor: string = "", pinnedMessages: seq[Message]) =
-  self.pinnedMsgCursor[chatId] = cursor
+  proc activityCenterNotifications*(self: ChatModel, cursor: string = "", activityCenterNotifications: seq[ActivityCenterNotification]) =
+    self.activityCenterCursor = cursor
 
-  self.events.emit("pinnedMessagesLoaded", MsgsLoadedArgs(messages: pinnedMessages))
+    self.events.emit("activityCenterNotificationsLoaded", ActivityCenterNotificationsArgs(activityCenterNotifications: activityCenterNotifications))
 
-proc activityCenterNotifications*(self: ChatModel, initialLoad: bool = true) =
-  # Notifications were already loaded, since cursor will 
-  # be nil/empty if there are no more notifs
-  if(not initialLoad and self.activityCenterCursor == ""): return
+  proc markAllActivityCenterNotificationsRead*(self: ChatModel): string =
+    try:
+      status_chat.markAllActivityCenterNotificationsRead()
+    except Exception as e:
+      error "Error marking all as read", msg = e.msg
+      result = e.msg
+    
+    # This proc should accept ActivityCenterNotificationType in order to clear all notifications
+    # per type, that's why we have this part here. If we add all types to notificationsType that 
+    # means that we need to clear all notifications for all types.
+    var types : seq[ActivityCenterNotificationType]
+    for t in ActivityCenterNotificationType:
+      types.add(t)
 
-  let activityCenterNotificationsTuple = status_chat.activityCenterNotification(self.activityCenterCursor)
-  self.activityCenterCursor = activityCenterNotificationsTuple[0];
+    self.events.emit("markNotificationsAsRead", MarkAsReadNotificationProperties(notificationTypes: types))
 
-  self.events.emit("activityCenterNotificationsLoaded", ActivityCenterNotificationsArgs(activityCenterNotifications: activityCenterNotificationsTuple[1]))
+  proc markActivityCenterNotificationRead*(self: ChatModel, notificationId: string,
+  markAsReadProps: MarkAsReadNotificationProperties): string =
+    try:
+      status_chat.markActivityCenterNotificationsRead(@[notificationId])
+    except Exception as e:
+      error "Error marking as read", msg = e.msg
+      result = e.msg
+    
+    self.events.emit("markNotificationsAsRead", markAsReadProps)
 
-proc activityCenterNotifications*(self: ChatModel, cursor: string = "", activityCenterNotifications: seq[ActivityCenterNotification]) =
-  self.activityCenterCursor = cursor
+  proc acceptActivityCenterNotifications*(self: ChatModel, ids: seq[string]): string =
+    try:
+      let response = status_chat.acceptActivityCenterNotifications(ids)
 
-  self.events.emit("activityCenterNotificationsLoaded", ActivityCenterNotificationsArgs(activityCenterNotifications: activityCenterNotifications))
+      let resultTuple = self.processChatUpdate(parseJson(response))
+      let (chats, messages) = resultTuple
+      self.events.emit("chatUpdate", ChatUpdateArgs(messages: messages, chats: chats))
 
-proc markAllActivityCenterNotificationsRead*(self: ChatModel): string =
-  try:
-    status_chat.markAllActivityCenterNotificationsRead()
-  except Exception as e:
-    error "Error marking all as read", msg = e.msg
-    result = e.msg
+    except Exception as e:
+      error "Error marking as accepted", msg = e.msg
+      result = e.msg
+
+  proc dismissActivityCenterNotifications*(self: ChatModel, ids: seq[string]): string =
+    try:
+      discard status_chat.dismissActivityCenterNotifications(ids)
+    except Exception as e:
+      error "Error marking as dismissed", msg = e.msg
+      result = e.msg
+
+  proc unreadActivityCenterNotificationsCount*(self: ChatModel): int =
+    status_chat.unreadActivityCenterNotificationsCount()
+
+  proc getLinkPreviewData*(link: string, success: var bool): JsonNode =
+    result = status_chat.getLinkPreviewData(link, success)
+
+  proc getCommunityIdForChat*(self: ChatModel, chatId: string): string =
+    if (not self.hasChannel(chatId)):
+      return ""
+    return self.channels[chatId].communityId
+
+  proc asyncSearchMessages*(self: ChatModel, chatId: string, searchTerm: string, caseSensitive: bool) =
+    if (chatId.len == 0):
+      info "empty channel id set for fetching more messages"
+      return
+
+    if (searchTerm.len == 0):
+      return
+
+    let arg = AsyncSearchMessageTaskArg(
+      tptr: cast[ByteAddress](asyncSearchMessagesTask),
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "onAsyncSearchMessages",
+      chatId: chatId,
+      searchTerm: searchTerm,
+      caseSensitive: caseSensitive
+    )
+    self.tasks.threadpool.start(arg)
+
+  proc onAsyncSearchMessages*(self: ChatModel, response: string) {.slot.} =
+    let responseObj = response.parseJson
+    if (responseObj.kind != JObject):
+      info "search messages response is not an json object"
+      return
+
+    var chatId: string
+    discard responseObj.getProp("chatId", chatId)
+
+    var messagesObj: JsonNode
+    if (not responseObj.getProp("messages", messagesObj)):
+      info "search messages response doesn't contain messages property"
+      return
+
+    var messagesArray: JsonNode
+    if (not messagesObj.getProp("messages", messagesArray)):
+      info "search messages response doesn't contain messages array"
+      return      
+
+    var messages: seq[Message] = @[]
+    if (messagesArray.kind == JArray):
+      for jsonMsg in messagesArray:
+        messages.add(jsonMsg.toMessage())
+    
+    self.events.emit("searchMessagesLoaded", MsgsLoadedArgs(messages: messages))
   
-  # This proc should accept ActivityCenterNotificationType in order to clear all notifications
-  # per type, that's why we have this part here. If we add all types to notificationsType that 
-  # means that we need to clear all notifications for all types.
-  var types : seq[ActivityCenterNotificationType]
-  for t in ActivityCenterNotificationType:
-    types.add(t)
+  proc loadMoreMessagesForChannel*(self: ChatModel, channelId: string) =
+    if (channelId.len == 0):
+      info "empty channel id set for fetching more messages"
+      return
 
-  self.events.emit("markNotificationsAsRead", MarkAsReadNotificationProperties(notificationTypes: types))
+    let arg = AsyncFetchChatMessagesTaskArg(
+      tptr: cast[ByteAddress](asyncFetchChatMessagesTask),
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "onLoadMoreMessagesForChannel",
+      chatId: channelId,
+      chatCursor: self.msgCursor[channelId],
+      emojiCursor: self.emojiCursor[channelId],
+      pinnedMsgCursor: self.pinnedMsgCursor[channelId],
+      limit: 20
+    )
 
-proc markActivityCenterNotificationRead*(self: ChatModel, notificationId: string,
-markAsReadProps: MarkAsReadNotificationProperties): string =
-  try:
-    status_chat.markActivityCenterNotificationsRead(@[notificationId])
-  except Exception as e:
-    error "Error marking as read", msg = e.msg
-    result = e.msg
-  
-  self.events.emit("markNotificationsAsRead", markAsReadProps)
+    self.tasks.threadpool.start(arg)
 
-proc acceptActivityCenterNotifications*(self: ChatModel, ids: seq[string]): string =
-  try:
-    let response = status_chat.acceptActivityCenterNotifications(ids)
+  proc loadInitialMessagesForChannel*(self: ChatModel, channelId: string) =
+    if (channelId.len == 0):
+      info "empty channel id set for loading initial messages"
+      return
 
-    let resultTuple = self.processChatUpdate(parseJson(response))
-    let (chats, messages) = resultTuple
-    self.events.emit("chatUpdate", ChatUpdateArgs(messages: messages, chats: chats))
+    if(not self.msgCursor.hasKey(channelId)):
+      self.msgCursor[channelId] = ""
+    else:
+      return
 
-  except Exception as e:
-    error "Error marking as accepted", msg = e.msg
-    result = e.msg
+    if(not self.emojiCursor.hasKey(channelId)):
+      self.emojiCursor[channelId] = ""
+    else:
+      return
 
-proc dismissActivityCenterNotifications*(self: ChatModel, ids: seq[string]): string =
-  try:
-    discard status_chat.dismissActivityCenterNotifications(ids)
-  except Exception as e:
-    error "Error marking as dismissed", msg = e.msg
-    result = e.msg
+    if(not self.pinnedMsgCursor.hasKey(channelId)):
+      self.pinnedMsgCursor[channelId] = ""
+    else:
+      return
 
-proc unreadActivityCenterNotificationsCount*(self: ChatModel): int =
-  status_chat.unreadActivityCenterNotificationsCount()
+    self.loadMoreMessagesForChannel(channelId)
 
-proc getLinkPreviewData*(link: string, success: var bool): JsonNode =
-  result = status_chat.getLinkPreviewData(link, success)
+  proc onLoadMoreMessagesForChannel*(self: ChatModel, response: string) {.slot.} =
+    let responseObj = response.parseJson
+    if (responseObj.kind != JObject):
+      info "load more messages response is not an json object"
+      
+      # notify view
+      self.events.emit("messagesLoaded", MsgsLoadedArgs())
+      self.events.emit("reactionsLoaded", ReactionsLoadedArgs())
+      self.events.emit("pinnedMessagesLoaded", MsgsLoadedArgs())
+      return
+    
+    var chatId: string
+    discard responseObj.getProp("chatId", chatId)
+    
+    # handling chat messages
+    var chatMessagesObj: JsonNode
+    var chatCursor: string
+    discard responseObj.getProp("messages", chatMessagesObj)
+    discard responseObj.getProp("messagesCursor", chatCursor)
 
-proc rpcChatMessages*(chatId: string, cursorVal: JsonNode, limit: int, success: var bool): string =
-  result = status_chat.rpcChatMessages(chatId, cursorVal, limit, success)
+    self.msgCursor[chatId] = chatCursor
 
-proc getCommunityIdForChat*(self: ChatModel, chatId: string): string =
-  if (not self.hasChannel(chatId)):
-    return ""
-  return self.channels[chatId].communityId
-  
+    var messages: seq[Message] = @[]
+    if (chatMessagesObj.kind == JArray):
+      for jsonMsg in chatMessagesObj:
+        messages.add(jsonMsg.toMessage())
 
-proc rpcReactions*(chatId: string, cursorVal: JsonNode, limit: int, success: var bool): string =
-  result = status_chat.rpcReactions(chatId, cursorVal, limit, success)
+    if messages.len > 0:
+      let lastMsgIndex = messages.len - 1
+      let ts = times.convert(Milliseconds, Seconds, messages[lastMsgIndex].whisperTimestamp.parseInt())
+      self.lastMessageTimestamps[chatId] = ts
 
-proc rpcPinnedChatMessages*(chatId: string, cursorVal: JsonNode, limit: int, success: var bool): string =
-  result = status_chat.rpcPinnedChatMessages(chatId, cursorVal, limit, success)
+    # handling reactions
+    var reactionsObj: JsonNode
+    var reactionsCursor: string
+    discard responseObj.getProp("reactions", reactionsObj)
+    discard responseObj.getProp("reactionsCursor", reactionsCursor)
 
-proc parseReactionsResponse*(chatId: string, rpcResult: JsonNode): (string, seq[Reaction]) =
-  result = status_chat.parseReactionsResponse(chatId, rpcResult)
+    self.emojiCursor[chatId] = reactionsCursor;
 
-proc parseChatMessagesResponse*(rpcResult: JsonNode): (string, seq[Message]) =
-  result = status_chat.parseChatMessagesResponse(rpcResult)
+    var reactions: seq[Reaction] = @[]
+    if (reactionsObj.kind == JArray):
+      for jsonMsg in reactionsObj:
+        reactions.add(jsonMsg.toReaction)
 
-# This is still not proper place for such methods, but anyway better then calling
-# them directly from the view part. Such methods should be placed in appropriate 
-# utils file and may be used on many places from there.
-proc parseChatPinnedMessagesResponse*(rpcResult: JsonNode): (string, seq[Message]) =
-  result = status_chat.parseChatPinnedMessagesResponse(rpcResult)
+    # handling pinned messages
+    var pinnedMsgObj: JsonNode
+    var pinnedMsgCursor: string
+    discard responseObj.getProp("pinnedMessages", pinnedMsgObj)
+    discard responseObj.getProp("pinnedMessagesCursor", pinnedMsgCursor)
 
-#################################################
-# Async search messages by term
-#################################################
-type
-  AsyncSearchMessageTaskArg = ref object of QObjectTaskArg
-    chatId: string
-    searchTerm: string
-    caseSensitive: bool
+    self.pinnedMsgCursor[chatId] = pinnedMsgCursor
 
-const asyncSearchMessagesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
-  let arg = decode[AsyncSearchMessageTaskArg](argEncoded)
-  var messages: JsonNode
-  var success: bool
-  let response = status_chat.asyncSearchMessages(arg.chatId, arg.searchTerm, arg.caseSensitive, success)
+    var pinnedMessages: seq[Message] = @[]
+    if (pinnedMsgObj.kind == JArray):
+      for jsonMsg in pinnedMsgObj:
+        var msgObj: JsonNode
+        if(jsonMsg.getProp("message", msgObj)):
+          var msg: Message
+          msg = msgObj.toMessage()
+          discard jsonMsg.getProp("pinnedBy", msg.pinnedBy)
+          pinnedMessages.add(msg)
 
-  if(success):
-    messages = response.parseJson()["result"]
-
-  let responseJson = %*{
-    "chatId": arg.chatId,
-    "messages": messages
-  }
-  arg.finish(responseJson)
-
-proc asyncSearchMessages*(self: ChatModel, slot: SlotArg, chatId: string, searchTerm: string, caseSensitive: bool) =
-  let arg = AsyncSearchMessageTaskArg(
-    tptr: cast[ByteAddress](asyncSearchMessagesTask),
-    vptr: slot.vptr,
-    slot: slot.slot,
-    chatId: chatId,
-    searchTerm: searchTerm,
-    caseSensitive: caseSensitive
-  )
-  self.tasks.threadpool.start(arg)
+    # notify view
+    self.events.emit("messagesLoaded", MsgsLoadedArgs(messages: messages))
+    self.events.emit("reactionsLoaded", ReactionsLoadedArgs(reactions: reactions))
+    self.events.emit("pinnedMessagesLoaded", MsgsLoadedArgs(messages: pinnedMessages))

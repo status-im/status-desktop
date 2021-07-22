@@ -73,14 +73,6 @@ proc loadChats*(): seq[Chat] =
         result.add(chat)
   result.sort(sortChats)
 
-proc parseChatMessagesResponse*(rpcResult: JsonNode): (string, seq[Message]) =
-  var messages: seq[Message] = @[]
-  let messagesObj = rpcResult{"messages"}
-  if(messagesObj != nil and messagesObj.kind != JNull):
-    for jsonMsg in messagesObj:
-      messages.add(jsonMsg.toMessage())
-  return (rpcResult{"cursor"}.getStr, messages)
-
 proc parseActivityCenterNotifications*(rpcResult: JsonNode): (string, seq[ActivityCenterNotification]) =
   var notifs: seq[ActivityCenterNotification] = @[]
   var msg: Message
@@ -95,33 +87,13 @@ proc statusUpdates*(): seq[StatusUpdate] =
     for jsonStatusUpdate in rpcResult["statusUpdates"]:
       result.add(jsonStatusUpdate.toStatusUpdate)
 
-proc rpcChatMessages*(chatId: string, cursorVal: JsonNode, limit: int, success: var bool): string =
+proc fetchChatMessages*(chatId: string, cursorVal: string, limit: int, success: var bool): string =
   success = true
   try:
     result = callPrivateRPC("chatMessages".prefix, %* [chatId, cursorVal, limit])
   except RpcException as e:
     success = false
     result = e.msg
-
-proc chatMessages*(chatId: string, cursor: string = ""): (string, seq[Message]) =
-  var cursorVal: JsonNode
-  
-  if cursor == "":
-    cursorVal = newJNull()
-  else:
-    cursorVal = newJString(cursor)
-
-  var success: bool
-  let callResult = rpcChatMessages(chatId, cursorVal, 20, success)
-  if success:
-    result = parseChatMessagesResponse(callResult.parseJson()["result"])
-
-proc parseReactionsResponse*(chatId: string, rpcResult: JsonNode): (string, seq[Reaction]) =
-  var reactions: seq[Reaction] = @[]
-  if rpcResult != nil and rpcResult.kind != JNull and rpcResult.len != 0:
-    for jsonMsg in rpcResult:
-      reactions.add(jsonMsg.toReaction)
-  return (rpcResult{"cursor"}.getStr, reactions)
 
 proc editMessage*(messageId: string, msg: string): string =
   callPrivateRPC("editMessage".prefix, %* [
@@ -134,26 +106,13 @@ proc editMessage*(messageId: string, msg: string): string =
 proc deleteMessageAndSend*(messageId: string): string =
   callPrivateRPC("deleteMessageAndSend".prefix, %* [messageId])
 
-proc rpcReactions*(chatId: string, cursorVal: JsonNode, limit: int, success: var bool): string =
+proc rpcReactions*(chatId: string, cursorVal: string, limit: int, success: var bool): string =
   success = true
   try:
     result = callPrivateRPC("emojiReactionsByChatID".prefix, %* [chatId, cursorVal, limit])
   except RpcException as e:
     success = false
     result = e.msg
-
-proc getEmojiReactionsByChatId*(chatId: string, cursor: string = ""): (string, seq[Reaction]) =
-  var cursorVal: JsonNode
-  
-  if cursor == "":
-    cursorVal = newJNull()
-  else:
-    cursorVal = newJString(cursor)
-
-  var success: bool
-  let rpcResult = rpcReactions(chatId, cursorVal, 20, success)
-  if success:
-    result = parseReactionsResponse(chatId, rpcResult.parseJson()["result"])
 
 proc addEmojiReaction*(chatId: string, messageId: string, emojiId: int): seq[Reaction] =
   let rpcResult = parseJson(callPrivateRPC("sendEmojiReaction".prefix, %* [chatId, messageId, emojiId]))["result"]
@@ -552,18 +511,7 @@ proc banUserFromCommunity*(pubKey: string, communityId: string): string =
 proc setCommunityMuted*(communityId: string, muted: bool) =
   discard callPrivateRPC("setCommunityMuted".prefix, %*[communityId, muted])
 
-proc parseChatPinnedMessagesResponse*(rpcResult: JsonNode): (string, seq[Message]) =
-  var messages: seq[Message] = @[]
-  let messagesObj = rpcResult{"pinnedMessages"}
-  if(messagesObj != nil and messagesObj.kind != JNull):
-    var msg: Message
-    for jsonMsg in messagesObj:
-      msg = jsonMsg["message"].toMessage()
-      msg.pinnedBy = $jsonMsg{"pinnedBy"}.getStr
-      messages.add(msg)
-  return (rpcResult{"cursor"}.getStr, messages)
-
-proc rpcPinnedChatMessages*(chatId: string, cursorVal: JsonNode, limit: int, success: var bool): string =
+proc rpcPinnedChatMessages*(chatId: string, cursorVal: string, limit: int, success: var bool): string =
   success = true
   try:
     result = callPrivateRPC("chatPinnedMessages".prefix, %* [chatId, cursorVal, limit])
@@ -571,19 +519,6 @@ proc rpcPinnedChatMessages*(chatId: string, cursorVal: JsonNode, limit: int, suc
   except RpcException as e:
     success = false
     result = e.msg
-
-proc pinnedMessagesByChatID*(chatId: string, cursor: string): (string, seq[Message]) =
-  var cursorVal: JsonNode
-  
-  if cursor == "":
-    cursorVal = newJNull()
-  else:
-    cursorVal = newJString(cursor)
-
-  var success: bool
-  let callResult = rpcPinnedChatMessages(chatId, cursorVal, 20, success)
-  if success:
-    result = parseChatPinnedMessagesResponse(callResult.parseJson()["result"])
 
 proc setPinMessage*(messageId: string, chatId: string, pinned: bool) =
   discard callPrivateRPC("sendPinMessage".prefix, %*[{
