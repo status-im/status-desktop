@@ -48,166 +48,173 @@ StatusModal {
             //% "New category"
             qsTrId("new-category")
 
-    content: ScrollView {
-        id: scrollView
-
+    content: Column {
+                
         width: popup.width
-        height: Math.min(content.height, 432)
-
-        property ScrollBar vScrollBar: ScrollBar.vertical
         property alias categoryName: nameInput
 
-        contentHeight: content.height
-        ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-        clip: true
+        Item {
+            width: parent.width
+            height: 76
+            Input {
+                id: nameInput
+                width: parent.width -32
 
-        function scrollBackUp() {
-            vScrollBar.setPosition(0)
+                anchors.centerIn: parent
+                anchors.left: undefined
+                anchors.right: undefined
+
+                //% "Category title"
+                placeholderText: qsTrId("category-title")
+                maxLength: maxCategoryNameLength
+
+                onTextEdited: {
+                    validationError = Utils.validateAndReturnError(text,
+                                                                  categoryNameValidator,
+                                                                  //% "category name"
+                                                                  qsTrId("category-name"),
+                                                                  maxCategoryNameLength)
+                }
+            }
         }
 
-        Column {
-            id: content
-            width: parent.width
+        StatusModalDivider {
+            topPadding: 8
+            bottomPadding: 8
+        }
 
-            StatusModalDivider {
-                bottomPadding: 8
+        ScrollView {
+            id: scrollView
+
+            width: popup.width
+            height: Math.min(content.height, 300)
+            anchors.horizontalCenter: parent.horizontalCenter
+
+            property ScrollBar vScrollBar: ScrollBar.vertical
+
+            contentHeight: content.height
+            ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+            clip: true
+
+            function scrollBackUp() {
+                vScrollBar.setPosition(0)
             }
 
             Item {
+                id: content
                 width: parent.width
-                height: 76
-                Input {
-                    id: nameInput
-                    width: parent.width -32
+                height: channelsLabel.height + communityChannelList.height
 
-                    anchors.centerIn: parent
-                    anchors.left: undefined
-                    anchors.right: undefined
-
-                    //% "Category title"
-                    placeholderText: qsTrId("category-title")
-                    maxLength: maxCategoryNameLength
-
-                    onTextEdited: {
-                        validationError = Utils.validateAndReturnError(text,
-                                                                      categoryNameValidator,
-                                                                      //% "category name"
-                                                                      qsTrId("category-name"),
-                                                                      maxCategoryNameLength)
-                    }
-                }
-            }
-
-            StatusModalDivider {
-                topPadding: 8
-                bottomPadding: 8
-            }
-
-            Item {
-                anchors.horizontalCenter: parent.horizontalCenter
-                width: parent.width - 32
-                height: 34
-                StatusBaseText {
-                    //% "Channels"
-                    text: qsTrId("channels")
-                    anchors.bottom: parent.bottom
-                    anchors.bottomMargin: 4
-                    font.pixelSize: 15
-                    color: Theme.palette.baseColor1
-                }
-            }
-
-            ListView {
-                id: communityChannelList
-                height: childrenRect.height
-                model: chatsModel.communities.activeCommunity.chats
-                anchors.left: parent.left
-                anchors.right: parent.right
-
-                delegate: StatusListItem {
+                Item {
+                    id: channelsLabel
                     anchors.horizontalCenter: parent.horizontalCenter
                     width: parent.width - 32
-                    visible: popup.isEdit ? 
-                        model.categoryId === popup.categoryId || model.categoryId === "" : 
-                        model.categoryId === ""
+                    height: 34
+                    StatusBaseText {
+                        //% "Channels"
+                        text: qsTrId("channels")
+                        anchors.bottom: parent.bottom
+                        anchors.bottomMargin: 4
+                        font.pixelSize: 15
+                        color: Theme.palette.baseColor1
+                    }
+                }
 
-                    title: "#" + model.name
-                    icon.isLetterIdenticon: true
-                    icon.background.color: model.color
-                    sensor.onClicked: channelItemCheckbox.checked = !channelItemCheckbox.checked
+                ListView {
+                    id: communityChannelList
 
-                    components: [
-                        StatusCheckBox {
-                            id: channelItemCheckbox
-                            checked: popup.isEdit ? popup.channels.indexOf(model.id) > - 1 : false
-                            onCheckedChanged: {
-                                var idx = popup.channels.indexOf(model.id)
-                                if(checked){
-                                    if(idx === -1){
-                                        popup.channels.push(model.id)
-                                    }
-                                } else {
-                                    if(idx > -1){
-                                        popup.channels.splice(idx, 1);
+                    anchors.top: channelsLabel.bottom
+                    height: childrenRect.height
+                    width: parent.width
+                    model: chatsModel.communities.activeCommunity.chats
+                    interactive: false
+                    clip: true
+
+                    delegate: StatusListItem {
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        visible: popup.isEdit ? 
+                            model.categoryId === popup.categoryId || model.categoryId === "" : 
+                            model.categoryId === ""
+                        height: visible ? implicitHeight : 0
+                        title: "#" + model.name
+                        icon.isLetterIdenticon: true
+                        icon.background.color: model.color
+                        sensor.onClicked: channelItemCheckbox.checked = !channelItemCheckbox.checked
+
+                        components: [
+                            StatusCheckBox {
+                                id: channelItemCheckbox
+                                checked: popup.isEdit ? popup.channels.indexOf(model.id) > - 1 : false
+                                onCheckedChanged: {
+                                    var idx = popup.channels.indexOf(model.id)
+                                    if(checked){
+                                        if(idx === -1){
+                                            popup.channels.push(model.id)
+                                        }
+                                    } else {
+                                        if(idx > -1){
+                                            popup.channels.splice(idx, 1);
+                                        }
                                     }
                                 }
                             }
-                        }
-                    ]
+                        ]
+                    }
                 }
             }
+        }
 
-            StatusModalDivider {
-                visible: deleteCategoryButton.visible
-                topPadding: 8
-                bottomPadding: 8
+        StatusModalDivider {
+            visible: deleteCategoryButton.visible
+            topPadding: 8
+            bottomPadding: 8
+        }
+
+        StatusListItem {
+            id: deleteCategoryButton
+            anchors.horizontalCenter: parent.horizontalCenter
+            visible: isEdit
+
+            //% "Delete category"
+            title: qsTrId("delete-category")
+            icon.name: "delete"
+            type: StatusListItem.Type.Danger
+            sensor.onClicked: {
+                openPopup(deleteCategoryConfirmationDialogComponent, {
+                    //% "Delete %1 category"
+                    title: qsTrId("delete--1-category").arg(popup.contentComponent.categoryName.text),
+                    //% "Are you sure you want to delete %1 category? Channels inside the category won’t be deleted."
+                    confirmationText: qsTrId("are-you-sure-you-want-to-delete--1-category--channels-inside-the-category-won-t-be-deleted-").arg(popup.contentComponent.categoryName.text)
+                    
+                })
             }
+        }
 
-            StatusListItem {
-                id: deleteCategoryButton
-                anchors.horizontalCenter: parent.horizontalCenter
-                visible: isEdit
+        Item {
+            height: 8
+            width: parent.width
+        }
 
-                //% "Delete category"
-                title: qsTrId("delete-category")
-                icon.name: "delete"
-                type: StatusListItem.Type.Danger
-                sensor.onClicked: {
-                    openPopup(deleteCategoryConfirmationDialogComponent, {
-                        //% "Delete %1 category"
-                        title: qsTrId("delete--1-category").arg(popup.contentComponent.categoryName.text),
-                        //% "Are you sure you want to delete %1 category? Channels inside the category won’t be deleted."
-                        confirmationText: qsTrId("are-you-sure-you-want-to-delete--1-category--channels-inside-the-category-won-t-be-deleted-").arg(popup.contentComponent.categoryName.text)
-                        
-                    })
+        Component {
+            id: deleteCategoryConfirmationDialogComponent
+            ConfirmationDialog {
+                btnType: "warn"
+                height: 216
+                showCancelButton: true
+                onClosed: {
+                    destroy()
                 }
-            }
-
-            StatusModalDivider {
-                topPadding: 8
-            }
-
-            Component {
-                id: deleteCategoryConfirmationDialogComponent
-                ConfirmationDialog {
-                    btnType: "warn"
-                    height: 216
-                    showCancelButton: true
-                    onClosed: {
-                        destroy()
+                onCancelButtonClicked: {
+                    close();
+                }
+                onConfirmButtonClicked: function(){
+                    const error = chatsModel.communities.deleteCommunityCategory(chatsModel.communities.activeCommunity.id, popup.categoryId)
+                    if (error) {
+                        creatingError.text = error
+                        return creatingError.open()
                     }
-                    onCancelButtonClicked: {
-                        close();
-                    }
-                    onConfirmButtonClicked: function(){
-                        const error = chatsModel.communities.deleteCommunityCategory(chatsModel.communities.activeCommunity.id, popup.categoryId)
-                        if (error) {
-                            creatingError.text = error
-                            return creatingError.open()
-                        }
-                        close();
-                        popup.close()
-                    }
+                    close();
+                    popup.close()
                 }
             }
         }
