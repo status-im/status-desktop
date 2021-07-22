@@ -257,10 +257,11 @@ QtObject:
           discard self.status.chat.markMessagesSeen(msg.chatId, @[msg.id])
           self.newMessagePushed()
 
-        if not channel.muted:
+        let isGroupSelf = msg.fromAuthor == self.pubKey and msg.contentType == ContentType.Group
+        let isEdit = msg.editedAt != "0" or msg.contentType == ContentType.Edit
+        if not channel.muted and not isEdit and not isGroupSelf:
           let isAddedContact = channel.chatType.isOneToOne and self.isAddedContact(channel.id)
-          if msg.editedAt == "0": # Do not push notifications for edit messages
-            self.messageNotificationPushed(msg.chatId, escape_html(msg.text), msg.contentType.int, channel.chatType.int, msg.timestamp, msg.identicon, msg.userName, msg.hasMention, isAddedContact, channel.name)
+          self.messageNotificationPushed(msg.chatId, escape_html(msg.text), msg.contentType.int, channel.chatType.int, msg.timestamp, msg.identicon, msg.userName, msg.hasMention, isAddedContact, channel.name)
 
   proc markMessageAsSent*(self:MessageView, chat: string, messageId: string) =
     if self.messageList.contains(chat):
