@@ -17,6 +17,7 @@ StatusListItem {
     icon.background.height: 20
     icon.background.color: "transparent"
 
+    statusListItemIcon.anchors.topMargin: 14
 
     color: {
         if (selected) {

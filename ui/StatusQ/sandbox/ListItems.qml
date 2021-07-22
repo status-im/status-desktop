@@ -154,6 +154,16 @@ GridLayout {
 
     StatusListItem {
         title: "Title"
+        subTitle: "Super long description that causes a multiline paragraph and makes the size of the component grow. Let's see how it behaves."
+        tertiaryTitle: "Tertiary title"
+        icon.name: "info"
+
+        statusListItemTitle.font.pixelSize: 17
+        statusListItemTitle.font.weight: Font.Bold
+    }
+
+    StatusListItem {
+        title: "Title"
         subTitle: "Subtitle"
         icon.name: "info"
     }
