@@ -21,9 +21,7 @@ import "../Wallet"
 
 Item {
     id: chatColumnLayout
-    Layout.fillWidth: true
-    Layout.fillHeight: true
-    Layout.minimumWidth: 300
+    anchors.fill: parent
 
     property alias pinnedMessagesPopupComponent: pinnedMessagesPopupComponent
     property int chatGroupsListViewCount: 0
@@ -46,6 +44,7 @@ Item {
     property var idMap: ({})
     property var suggestionsObj: ([])
     property Timer timer: Timer { }
+    property var userList
     property var onActivated: function () {
         chatInput.textInput.forceActiveFocus(Qt.MouseFocusReason)
     }
@@ -305,10 +304,13 @@ Item {
                     Loader {
                         active: stackLayoutChatMessages.currentIndex === index
                         sourceComponent: ChatMessages {
+                            id: chatMessages
                             messageList: model.messages
-                            currentTime: chatColumnLayout.currentTime
                             messageContextMenuInst: MessageContextMenu {
                                 reactionModel: EmojiReactions { }
+                            }
+                            Component.onCompleted: {
+                                chatColumnLayout.userList = chatMessages.messageList.userList;
                             }
                         }
                     }

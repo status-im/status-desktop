@@ -14,18 +14,42 @@ import "../ChatColumn/MessageComponents"
 import "../ChatColumn/"
 import "../ContactsColumn"
 
-Rectangle {
+Item {
+    id: root
+    anchors.fill: parent
+    property var userList
+    property var currentTime
+
+    Rectangle {
+        anchors.fill: parent
+        color: Style.current.secondaryMenuBackground
+    }
+
     property QtObject community: chatsModel.communities.activeCommunity
 
-    id: root
-
-    color: Style.current.secondaryMenuBackground
+    StyledText {
+        id: titleText
+        anchors.top: parent.top
+        anchors.topMargin: Style.current.padding
+        anchors.left: parent.left
+        anchors.leftMargin: Style.current.padding
+        opacity: (root.width > 50) ? 1.0 : 0.0
+        visible: (opacity > 0.1)
+        font.pixelSize: Style.current.primaryTextFontSize
+        text: qsTr("Members")
+    }
 
     ListView {
         id: userListView
-        anchors.fill: parent
-        anchors.bottomMargin: Style.current.bigPadding
-        spacing: 0
+        anchors {
+            top: titleText.bottom
+            topMargin: Style.current.padding
+            left: parent.left
+            right: parent.right
+            rightMargin: Style.current.halfPadding
+            bottom: parent.bottom
+            bottomMargin: Style.current.bigPadding
+        }
         boundsBehavior: Flickable.StopAtBounds
         model: userListDelegate
     }
@@ -33,8 +57,8 @@ Rectangle {
     DelegateModelGeneralized {
         id: userListDelegate
         lessThan: [
-            function(left, right) { 
-                return left.lastSeen > right.lastSeen 
+            function(left, right) {
+                return left.lastSeen > right.lastSeen
             }
         ]
         model: community.members
@@ -45,8 +69,8 @@ Rectangle {
             name: !model.userName.endsWith(".eth") && !!nickname ? nickname : Utils.removeStatusEns(model.userName)
             identicon: model.identicon
             lastSeen: chatsModel.communities.activeCommunity.memberLastSeen(model.pubKey)
-            currentTime: svRoot.currentTime
             statusType: chatsModel.communities.activeCommunity.memberStatus(model.pubKey)
+            currentTime: root.currentTime
         }
     }
 }

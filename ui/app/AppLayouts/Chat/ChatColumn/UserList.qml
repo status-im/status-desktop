@@ -14,39 +14,58 @@ import "./samples/"
 import "./MessageComponents"
 import "../ContactsColumn"
 
+Item {
+    id: root
+    anchors.fill: parent
+    property var userList
+    property var currentTime
 
-Rectangle {
-    id: userList
+    Rectangle {
+        anchors.fill: parent
+        color: Style.current.secondaryMenuBackground
+    }
 
-
-    
-    color: Style.current.secondaryMenuBackground
-
-
+    StyledText {
+        id: titleText
+        anchors.top: parent.top
+        anchors.topMargin: Style.current.padding
+        anchors.left: parent.left
+        anchors.leftMargin: Style.current.padding
+        opacity: (root.width > 50) ? 1.0 : 0.0
+        visible: (opacity > 0.1)
+        font.pixelSize: Style.current.primaryTextFontSize
+        text: qsTr("Members")
+    }
 
     ListView {
         id: userListView
-        anchors.fill: parent
-        anchors.bottomMargin: Style.current.bigPadding
-        spacing: 0
+        anchors {
+            left: parent.left
+            top: titleText.bottom
+            topMargin: Style.current.padding
+            right: parent.right
+            rightMargin: Style.current.halfPadding
+            bottom: parent.bottom
+            bottomMargin: Style.current.bigPadding
+        }
         boundsBehavior: Flickable.StopAtBounds
         model: userListDelegate
     }
-    
+
     DelegateModelGeneralized {
         id: userListDelegate
         lessThan: [
-            function(left, right) { 
-                return left.lastSeen > right.lastSeen 
+            function (left, right) {
+                return (left.lastSeen > right.lastSeen);
             }
         ]
-        model: messageList.userList
+        model: root.userList
         delegate: User {
             publicKey: model.publicKey
             name: model.userName
             identicon: model.identicon
             lastSeen: model.lastSeen
-            currentTime: svRoot.currentTime
+            currentTime: root.currentTime
         }
     }
 }
