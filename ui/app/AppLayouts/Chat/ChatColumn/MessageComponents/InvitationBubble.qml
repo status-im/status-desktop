@@ -18,11 +18,22 @@ Item {
     width: rectangleBubbleLoader.width
 
     function getCommunity() {
-        let community = JSON.parse(chatsModel.communities.list.getCommunityByIdJson(communityId));
-        if (community) {
-            community.nbMembers = community.members.length;
+        try {
+            const communityJson = chatsModel.communities.list.getCommunityByIdJson(communityId)
+            if (!communityJson) {
+                return null
+            }
+
+            let community = JSON.parse(communityJson);
+            if (community) {
+                community.nbMembers = community.members.length;
+            }
+            return community
+        } catch (e) {
+            console.error("Error parsing community", e)
         }
-        return community
+
+       return null
     }
 
     Component.onCompleted: {
