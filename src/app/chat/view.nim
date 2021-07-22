@@ -322,7 +322,9 @@ QtObject:
     for chat in chats:
       if (chat.communityId != ""):
         self.communities.updateCommunityChat(chat)
-        return
+        if(self.channelView.activeChannel.id == chat.id):
+          self.activeChannelChanged()
+        continue
       self.messageView.upsertChannel(chat.id)
       self.channelView.chats.updateChat(chat)
       if(self.channelView.activeChannel.id == chat.id):
