@@ -249,7 +249,7 @@ Rectangle {
                     anchors.top: parent.top
                     width: parent.width
 
-                    chatInfoButton.title: "Amazing Funny Squirrel"        
+                    chatInfoButton.title: "Amazing Funny Squirrel"
                     chatInfoButton.subTitle: "Contact"
                     chatInfoButton.icon.color: Theme.palette.miscColor7
                     chatInfoButton.type: StatusChatInfoButton.Type.OneToOneChat
@@ -295,11 +295,10 @@ Rectangle {
     Component {
         id: statusAppCommunityView
 
-        StatusAppTwoPanelLayout {
-
+        StatusAppThreePanelLayout {
+            id: root
             leftPanel: Item {
                 id: leftPanel
-                anchors.fill: parent
 
                 StatusChatInfoToolBar {
                     id: statusChatInfoToolBar
@@ -348,8 +347,8 @@ Rectangle {
 
                     StatusChatListAndCategories {
                         id: communityCategories
-                        height: implicitHeight > (leftPanel.height - 64) ? implicitHeight + 8 : leftPanel.height - 64
                         width: leftPanel.width
+                        height: implicitHeight > (leftPanel.height - 64) ? implicitHeight + 8 : leftPanel.height - 64
 
                         chatList.model: demoCommunityChatListItems
                         categoryList.model: demoCommunityCategoryItems
@@ -370,12 +369,12 @@ Rectangle {
                                 icon.name: "notification"
                             }
 
-                            StatusMenuItem { 
+                            StatusMenuItem {
                                 text: "Mark as Read"
                                 icon.name: "checkmark-circle"
                             }
 
-                            StatusMenuItem { 
+                            StatusMenuItem {
                                 text: "Edit Category"
                                 icon.name: "edit"
                             }
@@ -439,20 +438,62 @@ Rectangle {
                 }
             }
 
-            rightPanel: Item {
-                anchors.fill: parent
-
+            centerPanel: Item {
                 StatusChatToolBar {
                     anchors.top: parent.top
                     width: parent.width
 
-                    chatInfoButton.title: "general"        
+                    chatInfoButton.title: "general"
                     chatInfoButton.subTitle: "Community Chat"
                     chatInfoButton.icon.color: Theme.palette.miscColor6
                     chatInfoButton.type: StatusChatInfoButton.Type.CommunityChat
-
                     searchButton.onClicked: searchButton.highlighted = !searchButton.highlighted
                     membersButton.onClicked: membersButton.highlighted = !membersButton.highlighted
+                    onMembersButtonClicked: {
+                        root.showRightPanel = !root.showRightPanel;
+                    }
+                }
+            }
+
+            rightPanel: Item {
+                StatusBaseText {
+                    id: titleText
+                    anchors.top: parent.top
+                    anchors.topMargin:16
+                    anchors.left: parent.left
+                    anchors.leftMargin: 16
+                    font.pixelSize: 15
+                    text: qsTr("Members")
+                }
+
+                ListView {
+                    anchors.top: titleText.bottom
+                    anchors.topMargin: 16
+                    anchors.left: parent.left
+                    anchors.leftMargin: 8
+                    anchors.right: parent.right
+                    anchors.rightMargin: 8
+                    anchors.bottom: parent.bottom
+                    anchors.bottomMargin: 16
+                    boundsBehavior: Flickable.StopAtBounds
+                    model: ["John", "Nick", "Maria", "Mike"]
+                    delegate: Row {
+                        width: parent.width
+                        height: 30
+                        spacing: 8
+                        Rectangle {
+                            width: 24
+                            height: 24
+                            radius: width/2
+                            color: Qt.rgba(Math.random(), Math.random(), Math.random(), 255)
+                        }
+                        StatusBaseText {
+                            height: parent.height
+                            horizontalAlignment: Text.AlignHCenter
+                            font.pixelSize: 15
+                            text: modelData
+                        }
+                    }
                 }
             }
         }
@@ -507,7 +548,7 @@ Rectangle {
                             }
                         }
 
-                        Item { 
+                        Item {
                             id: invisibleSeparator
                             height: 16
                             width: parent.width
@@ -570,15 +611,15 @@ Rectangle {
 
         anchors.centerIn: parent
 
-        header.title: "Cryptokitties"        
+        header.title: "Cryptokitties"
         header.subTitle: "Public Community"
         header.image.source: "https://pbs.twimg.com/profile_images/1369221718338895873/T_5fny6o_400x400.jpg"
 
         content: Column {
             width: demoCommunityDetailModal.width
 
-            StatusModalDivider { 
-                bottomPadding: 8 
+            StatusModalDivider {
+                bottomPadding: 8
             }
 
             StatusBaseText {
