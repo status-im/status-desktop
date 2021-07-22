@@ -44,8 +44,7 @@ QtObject:
     self.categories.setCategories(communityItem.categories)
     self.members.setMembers(communityItem.members)
     self.nbMembersChanged()
-    if communityItem.membershipRequests.len > 0:
-      self.communityMembershipRequestList.setNewData(communityItem.membershipRequests)
+    self.communityMembershipRequestList.setNewData(communityItem.membershipRequests)
 
   proc activeChanged*(self: CommunityItemView) {.signal.}
 
