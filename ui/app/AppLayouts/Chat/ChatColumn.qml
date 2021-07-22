@@ -105,7 +105,7 @@ Item {
             idMap[contactAddr] = true;
         }
 
-        if (!isCommunity) return;
+        if (isCommunity) return;
 
         const len2 = chatsModel.messageView.messageList.rowCount();
         for (let f = 0; f < len2; f++) {
