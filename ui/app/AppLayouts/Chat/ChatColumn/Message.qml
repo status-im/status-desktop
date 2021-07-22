@@ -212,6 +212,7 @@ Item {
         messageContextMenu.emojiOnly = emojiOnly;
         messageContextMenu.hideEmojiPicker = hideEmojiPicker;
         messageContextMenu.pinnedMessage = pinnedMessage;
+        messageContextMenu.isCurrentUser = isCurrentUser;
         messageContextMenu.show(userName, fromAuthor, root.profileImageSource || identicon, plainText, nickname, emojiReactionsModel);
         // Position the center of the menu where the mouse is
         if (messageContextMenu.x + messageContextMenu.width + Style.current.padding < root.width) {

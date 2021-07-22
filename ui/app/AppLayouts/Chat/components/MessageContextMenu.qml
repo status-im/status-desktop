@@ -112,7 +112,7 @@ PopupMenu {
 
         StyledText {
             id: username
-            text: Utils.removeStatusEns(userName)
+            text: Utils.removeStatusEns(isCurrentUser ? profileModel.ens.preferredUsername || userName : userName)
             elide: Text.ElideRight
             maximumLineCount: 3
             horizontalAlignment: Text.AlignHCenter

@@ -6,7 +6,7 @@ import "../../../../shared"
 import "../../../../shared/status"
 
 Item {
-    property string ensName: profileModel.profile.preferredUsername || ""
+    property string ensName: profileModel.ens.preferredUsername || ""
     property string username: profileModel.profile.username
     property string pubkey: profileModel.profile.pubKey
 
@@ -146,8 +146,8 @@ Item {
         TextWithLabel {
             //% "Share Profile URL"
             label: qsTrId("share-profile-url")
-            text: `${Constants.userLinkPrefix}${pubkey.substring(0, 5)}...${pubkey.substring(pubkey.length - 5)}`
-            textToCopy: Constants.userLinkPrefix + pubkey
+            text: `${Constants.userLinkPrefix}${ensName !== "" ? ensName : (pubkey.substring(0, 5) + "..." + pubkey.substring(pubkey.length - 5))}`
+            textToCopy: Constants.userLinkPrefix + (ensName !== "" ? ensName : pubkey)
         }
     }
 }

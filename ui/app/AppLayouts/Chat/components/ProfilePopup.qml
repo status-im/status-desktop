@@ -24,6 +24,7 @@ ModalPopup {
     property bool isEnsVerified: false
     property bool noFooter: false
     property bool isBlocked: false
+    property bool isCurrentUser: false
 
     signal blockButtonClicked(name: string, address: string)
     signal unblockButtonClicked(name: string, address: string)
@@ -46,7 +47,7 @@ ModalPopup {
         isEnsVerified = chatsModel.ensView.isEnsVerified(this.fromAuthor)
         isBlocked = profileModel.contacts.isContactBlocked(this.fromAuthor);
         alias = chatsModel.alias(this.fromAuthor) || ""
-        
+        isCurrentUser = profileModel.profile.pubKey === this.fromAuthor
         noFooter = !showFooter;
         popup.open()
     }
@@ -67,7 +68,7 @@ ModalPopup {
 
         StyledText {
             id: profileName
-            text:  Utils.removeStatusEns(userName)
+            text:  Utils.removeStatusEns(isCurrentUser ? profileModel.ens.preferredUsername || userName : userName)
             elide: Text.ElideRight
             anchors.top: parent.top
             anchors.topMargin: Style.current.padding
@@ -137,9 +138,9 @@ ModalPopup {
             id: ensText
             //% "ENS username"
             label: qsTrId("ens-username")
-            text: userName
+            text: isCurrentUser ? profileModel.ens.preferredUsername || userName : userName
             anchors.top: parent.top
-            visible: isEnsVerified
+            visible: isEnsVerified || profileModel.ens.preferredUsername !== ""
             height: visible ? implicitHeight : 0
             textToCopy: userName
         }
@@ -187,10 +188,36 @@ ModalPopup {
             id: valueShareURL
             //% "Share Profile URL"
             label: qsTrId("share-profile-url")
-            text: Constants.userLinkPrefix + fromAuthor.substr(0, 4) + "..." + fromAuthor.substr(fromAuthor.length - 5)
+            text: {
+                let user = ""
+                if (isCurrentUser) {
+                    user = profileModel.ens.preferredUsername
+                } else {
+                    if (isEnsVerified) {
+                        user = userName.startsWith("@") ? userName.substring(1) : userName
+                    }
+                }
+                if (user === ""){
+                    user = fromAuthor.substr(0, 4) + "..." + fromAuthor.substr(fromAuthor.length - 5)
+                }
+                return Constants.userLinkPrefix +  user;
+            }
             anchors.top: separator.top
             anchors.topMargin: popup.innerMargin
-            textToCopy: Constants.userLinkPrefix + fromAuthor
+            textToCopy: {
+                let user = ""
+                if (isCurrentUser) {
+                    user = profileModel.ens.preferredUsername
+                } else {
+                    if (isEnsVerified) {
+                        user = userName.startsWith("@") ? userName.substring(1) : userName
+                    }
+                }
+                if (user === ""){
+                    user = fromAuthor
+                }
+                return Constants.userLinkPrefix +  user;
+            }
         }
 
         Separator {
