@@ -65,6 +65,9 @@ QtObject:
     else:
       result = self.status.accounts.generateAlias(pk)
 
+  proc localNickname(self: CommunityMembersView, pk: string): string =
+    if self.status.chat.contacts.hasKey(pk):
+      result = self.status.chat.contacts[pk].localNickname
 
   method data(self: CommunityMembersView, index: QModelIndex, role: int): QVariant =
     if not index.isValid:
@@ -79,6 +82,17 @@ QtObject:
       of CommunityMembersRoles.PubKey: result = newQVariant(communityMemberPubkey)
       of CommunityMembersRoles.Identicon: result = newQVariant(self.identicon(communityMemberPubkey))
       
+  proc rowData(self: CommunityMembersView, index: int, column: string): string {.slot.} =
+    if (index >= self.members.len):
+      return
+    let communityMemberPubkey = self.members[index]
+    case column:
+      of "alias": result = self.alias(communityMemberPubkey)
+      of "address": result = communityMemberPubkey
+      of "identicon": result = self.identicon(communityMemberPubkey)
+      of "localNickname": result = self.localNickname(communityMemberPubkey)
+      of "ensName": result = self.userName(communityMemberPubkey, self.alias(communityMemberPubkey))
+
   method roleNames(self: CommunityMembersView): Table[int, string] =
     {
       CommunityMembersRoles.UserName.int:"userName",
