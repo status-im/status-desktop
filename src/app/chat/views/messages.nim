@@ -3,7 +3,6 @@ import NimQml, Tables, json, sequtils, chronicles, times, re, sugar, strutils, o
 import ../../../status/[status, contacts, types, mailservers]
 import ../../../status/signals/types as signal_types
 import ../../../status/ens as status_ens
-import ../../../status/chat as status_chat
 import ../../../status/messages as status_messages
 import ../../../status/utils as status_utils
 import ../../../status/chat/[chat, message]
@@ -19,47 +18,6 @@ logScope:
 type
   ChatViewRoles {.pure.} = enum
     MessageList = UserRole + 1
-
-type
-  AsyncMessageLoadTaskArg = ref object of QObjectTaskArg
-    chatId: string
-
-const asyncMessageLoadTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
-  let arg = decode[AsyncMessageLoadTaskArg](argEncoded)
-  var messages: JsonNode
-  var msgCallSuccess: bool
-  let msgCallResult = status_chat.rpcChatMessages(arg.chatId, newJString(""), 20, msgCallSuccess)
-  if(msgCallSuccess):
-    messages = msgCallResult.parseJson()["result"]
-
-  var reactions: JsonNode
-  var reactionsCallSuccess: bool
-  let reactionsCallResult = status_chat.rpcReactions(arg.chatId, newJString(""), 20, reactionsCallSuccess)
-  if(reactionsCallSuccess):
-    reactions = reactionsCallResult.parseJson()["result"]
-
-  var pinnedMessages: JsonNode
-  var pinnedMessagesCallSuccess: bool
-  let pinnedMessagesCallResult = status_chat.rpcPinnedChatMessages(arg.chatId, newJString(""), 20, pinnedMessagesCallSuccess)
-  if(pinnedMessagesCallSuccess):
-    pinnedMessages = pinnedMessagesCallResult.parseJson()["result"]
-
-  let responseJson = %*{
-    "chatId": arg.chatId,
-    "messages": messages,
-    "reactions": reactions,
-    "pinnedMessages": pinnedMessages
-  }
-  arg.finish(responseJson)
-
-proc asyncMessageLoad[T](self: T, slot: string, chatId: string) =
-  let arg = AsyncMessageLoadTaskArg(
-    tptr: cast[ByteAddress](asyncMessageLoadTask),
-    vptr: cast[ByteAddress](self.vptr),
-    slot: slot,
-    chatId: chatId
-  )
-  self.status.tasks.threadpool.start(arg)
 
 QtObject:
   type MessageView* = ref object of QAbstractListModel
@@ -243,12 +201,12 @@ QtObject:
           self.messageList[timelineChatId].add(msg)
           # if self.channelView.activeChannel.id == timelineChatId: self.activeChannelChanged()
           if self.channelView.activeChannel.id == timelineChatId: self.channelView.activeChannelChanged()
-          msgIndex = self.messageList[timelineChatId].messages.len - 1
+          msgIndex = self.messageList[timelineChatId].count - 1
         else:
           self.messageList[msg.chatId].add(msg)
           if self.pinnedMessagesList[msg.chatId].contains(msg):
             self.pinnedMessagesList[msg.chatId].add(msg)
-          msgIndex = self.messageList[msg.chatId].messages.len - 1
+          msgIndex = self.messageList[msg.chatId].count - 1
       self.messagePushed(msgIndex)
       if self.channelOpenTime.getOrDefault(msg.chatId, high(int64)) < msg.timestamp.parseFloat.fromUnixFloat.toUnix:
         var channel = self.channelView.chats.getChannelById(msg.chatId)
@@ -304,49 +262,14 @@ QtObject:
   proc messagesLoaded*(self: MessageView) {.signal.}
 
   proc loadMoreMessages*(self: MessageView) {.slot.} =
-    trace "Loading more messages", chaId = self.channelView.activeChannel.id
-    self.status.chat.chatMessages(self.channelView.activeChannel.id, false)
-    self.status.chat.chatReactions(self.channelView.activeChannel.id, false)
-    self.status.chat.statusUpdates()
-    self.messagesLoaded();
+    let channelId = self.channelView.activeChannel.id
+    self.status.chat.loadMoreMessagesForChannel(channelId)
 
-  proc loadMoreMessagesWithIndex*(self: MessageView, channelIndex: int) {.slot.} =
-    if (self.channelView.chats.chats.len == 0): return
-    let selectedChannel = self.channelView.getChannel(channelIndex)
-    if (selectedChannel == nil): return
-    trace "Loading more messages", chaId = selectedChannel.id
-    self.status.chat.chatMessages(selectedChannel.id, false)
-    self.status.chat.chatReactions(selectedChannel.id, false)
-    self.status.chat.statusUpdates()
+  proc onMessagesLoaded*(self: MessageView, messages: var seq[Message]) =
+    self.pushMessages(messages)
     self.messagesLoaded();
-
+    
   proc loadingMessagesChanged*(self: MessageView, value: bool) {.signal.}
-
-  proc asyncMessageLoad*(self: MessageView, chatId: string) {.slot.} =
-    self.asyncMessageLoad("asyncMessageLoaded", chatId)
-
-  proc asyncMessageLoaded*(self: MessageView, rpcResponse: string) {.slot.} =
-    let
-      rpcResponseObj = rpcResponse.parseJson
-      chatId = rpcResponseObj{"chatId"}.getStr
-
-    if chatId == "": # .getStr() returns "" when field is not found
-      return
-
-    let messages = rpcResponseObj{"messages"}
-    if(messages != nil and messages.kind != JNull):
-      let chatMessages = status_chat.parseChatMessagesResponse(messages)
-      self.status.chat.chatMessages(chatId, true, chatMessages[0], chatMessages[1])
-
-    let rxns = rpcResponseObj{"reactions"}
-    if(rxns != nil and rxns.kind != JNull):
-      let reactions = status_chat.parseReactionsResponse(chatId, rxns)
-      self.status.chat.chatReactions(chatId, true, reactions[0], reactions[1])
-
-    let pinnedMsgs = rpcResponseObj{"pinnedMessages"}
-    if(pinnedMsgs != nil and pinnedMsgs.kind != JNull):
-      let pinnedMessages = status_chat.parseChatPinnedMessagesResponse(pinnedMsgs)
-      self.status.chat.pinnedMessagesByChatID(chatId, pinnedMessages[0], pinnedMessages[1])
 
   proc hideLoadingIndicator*(self: MessageView) {.slot.} =
     self.loadingMessages = false
@@ -410,13 +333,12 @@ QtObject:
       discard self.pinnedMessagesList[channelId].deleteMessage(messageId)
       self.hideMessage(messageId)
 
-  proc deleteMessageWhichReplacedMessageWithId*(self: MessageView, channelId: string, messageId: string): bool =
-    var msgIdToBeDeleted: string
-    for message in self.messageList[channelId].messages:
-      if (message.replace == messageId):
-        msgIdToBeDeleted = message.id
-        break
-    
+  proc deleteMessageWhichReplacedMessageWithId*(self: MessageView, channelId: string, replacedMessageId: string): bool =
+    ## Deletes a message which replaced a message with id "replacedMessageId" from
+    ## a channel with id "channelId" and returns true if such message is successfully
+    ## deleted, otherwise returns false.
+
+    let msgIdToBeDeleted = self.messageList[channelId].getMessageIdWhichReplacedMessageWithId(replacedMessageId)    
     if (msgIdToBeDeleted.len == 0):
       return false
 
@@ -500,26 +422,6 @@ QtObject:
   QtProperty[QVariant] searchResultMessageModel:
     read = getSearchResultMessageModel
 
-  proc onSearchMessages*(self: MessageView, response: string) {.slot.} =
-    let responseObj = response.parseJson
-    if (responseObj.kind != JObject):
-      error "search messages response is not an json object"
-      return
-
-    let chatId = if(responseObj.contains("chatId")): responseObj{"chatId"}.getStr else : ""
-    if (chatId.len == 0):
-      error "search messages response either doesn't contain chatId or it is empty"
-      return
-
-    let messagesObj = if(responseObj.contains("messages")): responseObj{"messages"} else: newJObject()
-    if (messagesObj.kind != JObject):
-      error "search messages response either doesn't contain messages object or it is empty"
-      return
-
-    let (cursor, messages) = status_chat.parseChatMessagesResponse(messagesObj)
-    
-    self.searchResultMessageModel.setFilteredMessages(messages)
-
   proc searchMessages*(self: MessageView, searchTerm: string) {.slot.} =
     if (searchTerm.len == 0):
       self.searchResultMessageModel.clear(false)
@@ -529,10 +431,8 @@ QtObject:
     # later when we decide to apply message search over multiple channels MessageListProxyModel
     # will be updated to support setting list of sourcer messages.
     let chatId = self.channelView.activeChannel.id
-    let slot = SlotArg(
-      vptr: cast[ByteAddress](self.vptr),
-      slot: "onSearchMessages"
-    )
+    self.status.chat.asyncSearchMessages(chatId, searchTerm, false)
 
-    self.status.chat.asyncSearchMessages(slot, chatId, searchTerm, false)
+  proc onSearchMessagesLoaded*(self: MessageView, messages: seq[Message]) =
+    self.searchResultMessageModel.setFilteredMessages(messages)
 
