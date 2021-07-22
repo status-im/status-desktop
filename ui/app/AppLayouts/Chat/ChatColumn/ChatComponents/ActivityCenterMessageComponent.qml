@@ -38,7 +38,8 @@ Item {
             icon.height: 24
             width: 32
             height: 32
-            onClicked: chatsModel.activityNotificationList.markActivityCenterNotificationRead(model.id)
+
+            onClicked: chatsModel.activityNotificationList.markActivityCenterNotificationRead(model.id, model.message.communityId, model.message.chatId, model.notificationType)
 
             StatusToolTip {
                 visible: markReadBtn.hovered
