@@ -20,6 +20,10 @@ proc handleChatEvents(self: ChatController) =
   # Display already pinned messages
   self.status.events.on("pinnedMessagesLoaded") do(e:Args):
     self.view.pushPinnedMessages(MsgsLoadedArgs(e).messages)
+  # Display community pinned messages
+  self.status.events.on("pinnedCommunityMessagesLoaded") do(e:Args):
+    debug "GOT THE EVENT PLSESSESS"
+    self.view.addPinMessages(MsgsLoadedArgs(e).messages)
 
   self.status.events.on("activityCenterNotificationsLoaded") do(e:Args):
     let notifications = ActivityCenterNotificationsArgs(e).activityCenterNotifications
@@ -64,6 +68,12 @@ proc handleChatEvents(self: ChatController) =
           continue
         
         self.view.communities.addCommunityToList(community)
+
+        debug "ANY PINNED MESSAGES??", len = community.pinnedMessages.len
+        if (community.pinnedMessages.len > 0):
+          debug "PInned messages"
+          self.view.refreshPinnedMessages(community.pinnedMessages)
+
         if (self.view.communities.activeCommunity.active and self.view.communities.activeCommunity.communityItem.id == community.id):
           if (self.view.channelView.activeChannel.chatItem != nil):
             let communityChannel = self.view.communities.activeCommunity.chats.getChannelById(self.view.channelView.activeChannel.chatItem.id)

@@ -463,6 +463,9 @@ QtObject:
     discard self.deleteMessage(chatId, messageId)
 
 
+  proc addPinMessages*(self: ChatsView, pinnedMessages: seq[Message]) =
+    self.messageView.addPinMessages(pinnedMessages)
+
   proc clearMessages*(self: ChatsView, id: string) =
     self.messageView.clearMessages(id)
 

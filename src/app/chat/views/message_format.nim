@@ -1,4 +1,4 @@
-import NimQml, Tables, json, re
+import NimQml, Tables, json, re, chronicles
 import ../../../status/status
 import ../../../status/accounts
 import ../../../status/chat

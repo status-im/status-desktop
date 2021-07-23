@@ -112,7 +112,10 @@ ModalPopup {
                     userName: model.userName
                     alias: model.alias
                     localName: model.localName
-                    message: model.message
+                    message: {
+                        console.log('Message', model.message, 'plaintext', model.plainText)
+                        return model.message
+                    }
                     plainText: model.plainText
                     identicon: model.identicon
                     isCurrentUser: model.isCurrentUser

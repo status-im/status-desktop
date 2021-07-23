@@ -27,9 +27,9 @@ proc reset*(self: OnboardingController) =
 proc handleNodeLogin(self: OnboardingController, response: NodeSignal) =
   if not self.view.isCurrentFlow: return
   if self.view.currentAccount.account != nil:
-    self.view.setLastLoginResponse(response.event)
     if ?.response.event.error == "":
       self.status.events.emit("login", AccountArgs(account: self.view.currentAccount.account.toAccount))
+    self.view.setLastLoginResponse(response.event)
 
 proc init*(self: OnboardingController) =
   let accounts = self.status.accounts.generateAddresses()

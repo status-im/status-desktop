@@ -2,6 +2,7 @@ import json, random, strutils, sequtils, sugar, chronicles, tables
 import json_serialization
 import ../utils
 import ../wallet/account
+import ../libstatus/core as status_core
 import ../libstatus/wallet as status_wallet
 import ../libstatus/accounts as status_accounts
 import ../libstatus/accounts/constants as constants
@@ -217,6 +218,16 @@ proc toStatusUpdate*(jsonStatusUpdate: JsonNode): StatusUpdate =
     text: jsonStatusUpdate{"text"}.getStr
   )
 
+proc toPinnedMessage*(jsonMsg: JsonNode): Message =
+  try:
+    let messageJson = jsonMsg["rawMessage"].getStr.parseJson
+    var msg = messageJson.toMessage()
+    msg.pinnedBy = $jsonMsg{"pinnedBy"}.getStr
+    return msg
+  except Exception as e:
+    error "Error parsing pinned message data"
+  
+
 proc toCommunity*(jsonCommunity: JsonNode): Community =
   result = Community(
     id: jsonCommunity{"id"}.getStr,
@@ -258,6 +269,15 @@ proc toCommunity*(jsonCommunity: JsonNode): Community =
         chatType: ChatType.CommunityChat,
         private: chat{"permissions"}{"private"}.getBool
       ))
+
+      if chat.hasKey("pinnedMessages") and chat{"pinnedMessages"}.len > 0:
+        debug "got pinned messages ", len = chat{"pinnedMessages"}.len
+        for pindId, pinnedMessage in chat{"pinnedMessages"}:
+          echo "pinned message"
+          var pinnedMessageParsed = pinnedMessage.toPinnedMessage()
+          pinnedMessageParsed.isPinned = true
+          result.pinnedMessages.add(pinnedMessageParsed)
+        echo "Done"
 
   if jsonCommunity.hasKey("categories") and jsonCommunity["categories"].kind != JNull:
     for catId, cat in jsonCommunity{"categories"}:

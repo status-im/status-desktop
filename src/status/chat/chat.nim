@@ -124,6 +124,7 @@ type Community* = object
   lastChannelSeen*: string
   description*: string
   chats*: seq[Chat]
+  pinnedMessages*: seq[Message]
   categories*: seq[CommunityCategory]
   members*: seq[string]
   access*: int

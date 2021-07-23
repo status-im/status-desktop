@@ -309,9 +309,10 @@ proc getAllComunities*(): seq[Community] =
       communities.add(community)
   return communities
 
-proc getJoinedComunities*(): seq[Community] =
+proc getJoinedCommunities*(): seq[Community] =
   var communities: seq[Community] = @[]
   let rpcResult = callPrivateRPC("joinedCommunities".prefix).parseJSON()
+  echo rpcResult
   if rpcResult{"result"}.kind != JNull:
     for jsonCommunity in rpcResult["result"]:
       var community = jsonCommunity.toCommunity()
@@ -551,20 +552,21 @@ proc setCommunityMuted*(communityId: string, muted: bool) =
 
 proc parseChatPinnedMessagesResponse*(rpcResult: JsonNode): (string, seq[Message]) =
   var messages: seq[Message] = @[]
-  let messagesObj = rpcResult{"pinnedMessages"}
-  if(messagesObj != nil and messagesObj.kind != JNull):
-    var msg: Message
-    for jsonMsg in messagesObj:
-      msg = jsonMsg["message"].toMessage()
-      msg.pinnedBy = $jsonMsg{"pinnedBy"}.getStr
-      messages.add(msg)
-  return (rpcResult{"cursor"}.getStr, messages)
+  return ("", messages)
+  # let messagesObj = rpcResult{"pinnedMessages"}
+  # if(messagesObj != nil and messagesObj.kind != JNull):
+  #   var msg: Message
+  #   for jsonMsg in messagesObj:
+  #     msg = jsonMsg["message"].toMessage()
+  #     msg.pinnedBy = $jsonMsg{"pinnedBy"}.getStr
+  #     messages.add(msg)
+  # echo "PATSEDJFJKJFWFPFK"
+  # return (rpcResult{"cursor"}.getStr, messages)
 
 proc rpcPinnedChatMessages*(chatId: string, cursorVal: JsonNode, limit: int, success: var bool): string =
   success = true
   try:
     result = callPrivateRPC("chatPinnedMessages".prefix, %* [chatId, cursorVal, limit])
-    debug "chatPinnedMessages", result
   except RpcException as e:
     success = false
     result = e.msg

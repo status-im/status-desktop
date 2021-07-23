@@ -243,9 +243,10 @@ QtObject:
           if self.channelView.activeChannel.id == timelineChatId: self.channelView.activeChannelChanged()
           msgIndex = self.messageList[timelineChatId].messages.len - 1
         else:
-          self.messageList[msg.chatId].add(msg)
           if self.pinnedMessagesList[msg.chatId].contains(msg):
             self.pinnedMessagesList[msg.chatId].add(msg)
+            msg.isPinned = true
+          self.messageList[msg.chatId].add(msg)
           msgIndex = self.messageList[msg.chatId].messages.len - 1
       self.messagePushed(msgIndex)
       if self.channelOpenTime.getOrDefault(msg.chatId, high(int64)) < msg.timestamp.parseFloat.fromUnixFloat.toUnix:
@@ -464,6 +465,18 @@ QtObject:
       message.pinnedBy = pinnedBy
       self.pinnedMessagesList[chatId].add(message)
 
+  proc addPinMessage*(self: MessageView, message: Message) =
+    self.upsertChannel(message.chatId)
+    debug "Lets go", chatId = message.chatId, id = message.id
+    # TODO figure out why it isn't showing, overwritten maybe?
+    self.messageList[message.chatId].changeMessagePinned(message.id, true, message.pinnedBy)
+    debug "Did find the pinned message"
+    self.pinnedMessagesList[message.chatId].add(message)
+
+  proc addPinMessages*(self: MessageView, pinnedMessages: seq[Message]) =
+    for pinnedMessage in pinnedMessages:
+      self.addPinMessage(pinnedMessage)
+
   proc removePinMessage*(self: MessageView, messageId: string, chatId: string) =
     self.upsertChannel(chatId)
     if self.messageList[chatId].changeMessagePinned(messageId, false, ""):
@@ -482,6 +495,7 @@ QtObject:
 
   proc refreshPinnedMessages*(self: MessageView, pinnedMessages: seq[Message]) =
     for pinnedMessage in pinnedMessages:
+      debug "Pin message", isPinned = pinnedMessage.isPinned, text = pinnedMessage.text
       if (pinnedMessage.isPinned):
         self.addPinMessage(pinnedMessage.id, pinnedMessage.localChatId, pinnedMessage.pinnedBy)
       else:

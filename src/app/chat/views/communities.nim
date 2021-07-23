@@ -159,10 +159,11 @@ QtObject:
 
   proc joinedCommunitiesChanged*(self: CommunitiesView) {.signal.}
     
-  proc getJoinedComunities*(self: CommunitiesView): QVariant {.slot.} =
+  proc getJoinedCommunities*(self: CommunitiesView): QVariant {.slot.} =
     if (not self.joinedCommunityList.fetched):
-      var communities = self.status.chat.getJoinedComunities()
+      var communities = self.status.chat.getJoinedCommunities()
       communities = self.populateChats(communities)
+
       self.joinedCommunityList.setNewData(communities)
       self.joinedCommunityList.fetched = true
 
@@ -172,7 +173,7 @@ QtObject:
     return newQVariant(self.joinedCommunityList)
 
   QtProperty[QVariant] joinedCommunities:
-    read = getJoinedComunities
+    read = getJoinedCommunities
     notify = joinedCommunitiesChanged
   
   proc getCommunityNameById*(self: CommunitiesView, communityId: string): string {.slot.} =

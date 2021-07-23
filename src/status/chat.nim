@@ -452,8 +452,16 @@ proc requestTransaction*(self: ChatModel, chatId: string, fromAddress: string, a
 proc getAllComunities*(self: ChatModel): seq[Community] =
   result = status_chat.getAllComunities()
 
-proc getJoinedComunities*(self: ChatModel): seq[Community] =
-  result = status_chat.getJoinedComunities()
+proc getJoinedCommunities*(self: ChatModel): seq[Community] =
+  result = status_chat.getJoinedCommunities()
+  for community in result:
+    debug "Community pinend", len = community.pinnedMessages.len
+    if (community.pinnedMessages.len > 0):
+      debug "Emit"
+      self.events.emit("pinnedCommunityMessagesLoaded", MsgsLoadedArgs(messages: community.pinnedMessages))
+
+      # parent.refreshPinnedMessages(community.pinnedMessages)
+      # self.status.events.emit("pinnedCommunityMessagesLoaded", MsgsLoadedArgs(messages: community.pinnedMessages))
 
 proc createCommunity*(self: ChatModel, name: string, description: string, access: int, ensOnly: bool, color: string, imageUrl: string, aX: int, aY: int, bX: int, bY: int): Community =
   result = status_chat.createCommunity(name, description, access, ensOnly, color, imageUrl, aX, aY, bX, bY)
