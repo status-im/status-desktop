@@ -125,7 +125,8 @@ Item {
 
                     elide: StatusBaseText.ElideRight
                     font.family: Theme.palette.baseFont.name
-                    color: Theme.palette.baseColor1
+                    color: statusBaseInput.enabled ? Theme.palette.baseColor1 :
+                        Theme.palette.directColor6
                 }
             }
         } // Flickable
