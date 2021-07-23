@@ -38,6 +38,7 @@ SplitView {
     Control {
         SplitView.preferredWidth: root.showRightPanel ? 250 : 0
         SplitView.minimumWidth: root.showRightPanel ? 50 : 0
+        opacity: root.showRightPanel ? 1.0 : 0.0
         visible: (opacity > 0.1)
         contentItem: Loader {
             anchors.fill: parent
