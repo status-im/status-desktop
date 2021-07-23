@@ -16,7 +16,7 @@ lupdate_only{
 SOURCES = *.qml \
           app/*.qml \
           shared/*.qml \
-          import/*.qml \
+          imports/*.qml \
           shared/status/*.qml \
           onboarding/*.qml \
           onboarding/Login/*.qml \

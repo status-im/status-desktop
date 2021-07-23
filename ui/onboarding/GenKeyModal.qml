@@ -1,9 +1,9 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtGraphicalEffects 1.13
+import StatusQ.Controls 0.1
 import "../imports"
 import "../shared"
-import "../shared/status"
 import "./Login"
 
 ModalPopup {
