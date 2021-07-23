@@ -56,7 +56,12 @@ Item {
         clip: true
 
         border.width: 1
-        border.color: edit.activeFocus ? Theme.palette.primaryColor1 : "transparent"
+        border.color: {
+            if (edit.activeFocus) {
+                return Theme.palette.primaryColor1;
+            }
+            return sensor.containsMouse ? Theme.palette.primaryColor2 : "transparent"
+        }
 
         Flickable {
             id: flick
@@ -132,9 +137,10 @@ Item {
         } // Flickable
 
         MouseArea {
+            id: sensor
+            hoverEnabled: true
             anchors.fill: parent
             cursorShape: Qt.IBeamCursor
-            enabled: !edit.activeFocus
             onClicked: edit.forceActiveFocus()
         }
     } // Rectangle
