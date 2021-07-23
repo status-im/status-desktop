@@ -1,9 +1,9 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Dialogs 1.3
+import StatusQ.Controls 0.1
 import "../imports"
 import "../shared"
-import "../shared/status"
 
 ModalPopup {
     property bool loading: false
