@@ -33,7 +33,6 @@ Item {
     property bool isConnected: false
     property string contactToRemove: ""
     property bool showUsers: false
-    property var doNotShowAddToContactBannerToThose: ([])
     property string activeChatId: chatsModel.channelView.activeChannel.id
     property bool isBlocked: profileModel.contacts.isContactBlocked(activeChatId)
     property bool isContact: profileModel.contacts.isAdded(activeChatId)
@@ -293,11 +292,6 @@ Item {
                         connectedStatusRect.visible = true
                     }
                 }
-            }
-
-            AddToContactBanner {
-                Layout.alignment: Qt.AlignTop
-                Layout.fillWidth: true
             }
 
             StackLayout {
