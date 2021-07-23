@@ -34,8 +34,8 @@ Item {
 
     property real leftPadding: 16
     property real rightPadding: 16
-    property real topPadding: 11
-    property real bottomPadding: 11
+    property real topPadding: 12
+    property real bottomPadding: 12
 
     property real minimumHeight: 0
     property real maximumHeight: 0
@@ -43,7 +43,7 @@ Item {
     property bool valid: true
 
     implicitWidth: 448
-    implicitHeight: multiline ? Math.max(edit.implicitHeight + topPadding + bottomPadding, 40) : 40
+    implicitHeight: multiline ? Math.max(edit.implicitHeight + topPadding + bottomPadding, 44) : 44
 
     Rectangle {
         width: parent.width
@@ -139,6 +139,7 @@ Item {
                         visible: edit.text.length === 0
                         anchors.left: parent.left
                         anchors.right: parent.right
+                        anchors.verticalCenter: parent.verticalCenter
                         font.pixelSize: 15
 
                         elide: StatusBaseText.ElideRight

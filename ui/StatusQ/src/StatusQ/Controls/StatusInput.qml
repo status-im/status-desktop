@@ -35,7 +35,10 @@ Rectangle {
         anchors.left: parent.left
         anchors.topMargin: visible ? 8 : 0
         anchors.leftMargin: 16
+        anchors.right: charLimitLabel.visible ? charLimitLabel.left : parent.right
+        anchors.rightMargin: 16
         visible: !!root.label
+        elide: Text.ElideRight
 
         text: root.label
         font.pixelSize: 15
@@ -49,9 +52,9 @@ Rectangle {
         anchors.right: parent.right
         anchors.topMargin: visible ? 11 : 0
         anchors.rightMargin: 16
-        visible: !!root.charLimit
+        visible: root.charLimit > 0
 
-        text: "0 / " + root.charLimit
+        text: "%1 / %2".arg(statusBaseInput.text.length).arg(root.charLimit)
         font.pixelSize: 12
         color: statusBaseInput.enabled ? Theme.palette.baseColor1 : Theme.palette.directColor6
     }
@@ -74,6 +77,8 @@ Rectangle {
         anchors.topMargin: 11
         anchors.right: parent.right
         anchors.rightMargin: 16
+        anchors.left: parent.left
+        anchors.leftMargin: 16
 
         height: visible ? implicitHeight : 0
         visible: !!root.errorMessage && !statusBaseInput.valid
@@ -81,5 +86,7 @@ Rectangle {
         font.pixelSize: 12
         color: Theme.palette.dangerColor1
         text: root.errorMessage
+        horizontalAlignment: Text.AlignRight
+        wrapMode: Text.WordWrap
     }
 }
