@@ -68,86 +68,88 @@ Item {
             return sensor.containsMouse ? Theme.palette.primaryColor2 : "transparent"
         }
 
-        Flickable {
-            id: flick
-
-            anchors.fill: parent
-            anchors.leftMargin: statusBaseInput.leftPadding
-            anchors.rightMargin: statusBaseInput.rightPadding + clearable ? clearButtton.width : 0
-            anchors.topMargin: statusBaseInput.topPadding
-            anchors.bottomMargin: statusBaseInput.bottomPadding
-            contentWidth: edit.paintedWidth
-            contentHeight: edit.paintedHeight
-            clip: true
-
-            QC.ScrollBar.vertical: QC.ScrollBar { interactive: multiline }
-
-
-            function ensureVisible(r) {
-                if (contentX >= r.x)
-                    contentX = r.x;
-                else if (contentX+width <= r.x+r.width)
-                    contentX = r.x+r.width-width;
-                if (contentY >= r.y)
-                    contentY = r.y;
-                else if (contentY+height <= r.y+r.height)
-                    contentY = r.y+r.height-height;
-            }
-
-
-
-            TextEdit {
-                id: edit
-                width: flick.width
-                selectByMouse: true
-                anchors.verticalCenter: parent.verticalCenter
-                focus: true
-
-                font.pixelSize: 15
-                font.family: Theme.palette.baseFont.name
-                color: Theme.palette.directColor1
-
-                onCursorRectangleChanged: flick.ensureVisible(cursorRectangle)
-                wrapMode: TextEdit.NoWrap
-
-                Keys.onReturnPressed: {
-                    if (multiline) {
-                        event.accepted = false
-                    } else {
-                        event.accepted = true
-                    }
-                }
-
-                Keys.onEnterPressed: {
-                    if (multiline) {
-                        event.accepted = false
-                    } else {
-                        event.accepted = true
-                    }
-                }
-
-                StatusBaseText {
-                    id: placeholder
-                    visible: edit.text.length === 0
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    font.pixelSize: 15
-
-                    elide: StatusBaseText.ElideRight
-                    font.family: Theme.palette.baseFont.name
-                    color: statusBaseInput.enabled ? Theme.palette.baseColor1 :
-                        Theme.palette.directColor6
-                }
-            }
-        } // Flickable
-
         MouseArea {
             id: sensor
             hoverEnabled: true
             anchors.fill: parent
             cursorShape: Qt.IBeamCursor
             onClicked: edit.forceActiveFocus()
-        }
+            Flickable {
+                id: flick
+
+                anchors.fill: parent
+                anchors.leftMargin: statusBaseInput.leftPadding
+                anchors.rightMargin: statusBaseInput.rightPadding + clearable ? clearButtton.width : 0
+                anchors.topMargin: statusBaseInput.topPadding
+                anchors.bottomMargin: statusBaseInput.bottomPadding
+                contentWidth: edit.paintedWidth
+                contentHeight: edit.paintedHeight
+                clip: true
+
+                QC.ScrollBar.vertical: QC.ScrollBar { interactive: multiline }
+
+
+                function ensureVisible(r) {
+                    if (contentX >= r.x)
+                        contentX = r.x;
+                    else if (contentX+width <= r.x+r.width)
+                        contentX = r.x+r.width-width;
+                    if (contentY >= r.y)
+                        contentY = r.y;
+                    else if (contentY+height <= r.y+r.height)
+                        contentY = r.y+r.height-height;
+                }
+
+
+
+                TextEdit {
+                    id: edit
+                    width: flick.width
+                    selectByMouse: true
+                    selectionColor: Theme.palette.primaryColor2
+                    selectedTextColor: color
+                    anchors.verticalCenter: parent.verticalCenter
+                    focus: true
+
+                    font.pixelSize: 15
+                    font.family: Theme.palette.baseFont.name
+                    color: Theme.palette.directColor1
+
+                    onCursorRectangleChanged: flick.ensureVisible(cursorRectangle)
+                    wrapMode: TextEdit.NoWrap
+
+                    Keys.onReturnPressed: {
+                        if (multiline) {
+                            event.accepted = false
+                        } else {
+                            event.accepted = true
+                        }
+                    }
+
+                    Keys.onEnterPressed: {
+                        if (multiline) {
+                            event.accepted = false
+                        } else {
+                            event.accepted = true
+                        }
+                    }
+
+                    StatusBaseText {
+                        id: placeholder
+                        visible: edit.text.length === 0
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        font.pixelSize: 15
+
+                        elide: StatusBaseText.ElideRight
+                        font.family: Theme.palette.baseFont.name
+                        color: statusBaseInput.enabled ? Theme.palette.baseColor1 :
+                            Theme.palette.directColor6
+                    }
+                }
+            }
+        } // Flickable
+
     } // Rectangle
 
     StatusFlatRoundButton {
