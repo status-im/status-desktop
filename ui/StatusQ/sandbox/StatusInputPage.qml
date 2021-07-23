@@ -25,6 +25,11 @@ Column {
     }
 
     StatusBaseInput {
+        placeholderText: "Invalid"
+        valid: false
+    }
+
+    StatusBaseInput {
         multiline: true
         placeholderText: "Multiline"
     }

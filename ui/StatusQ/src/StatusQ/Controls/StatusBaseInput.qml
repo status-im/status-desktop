@@ -40,6 +40,8 @@ Item {
     property real minimumHeight: 0
     property real maximumHeight: 0
 
+    property bool valid: true
+
     implicitWidth: 448
     implicitHeight: multiline ? Math.max(edit.implicitHeight + topPadding + bottomPadding, 40) : 40
 
@@ -57,6 +59,9 @@ Item {
 
         border.width: 1
         border.color: {
+            if (!statusBaseInput.valid) {
+                return Theme.palette.dangerColor1;
+            }
             if (edit.activeFocus) {
                 return Theme.palette.primaryColor1;
             }
