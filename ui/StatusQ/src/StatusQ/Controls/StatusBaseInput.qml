@@ -40,7 +40,7 @@ Item {
     property real minimumHeight: 0
     property real maximumHeight: 0
 
-    implicitWidth: 200
+    implicitWidth: 448
     implicitHeight: multiline ? Math.max(edit.implicitHeight + topPadding + bottomPadding, 40) : 40
 
     Rectangle {
