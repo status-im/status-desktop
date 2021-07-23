@@ -12,6 +12,7 @@ Column {
     property string linkUrls: ""
     property var container
     property bool isCurrentUser: false
+    property bool isImageLink: false
     readonly property string uuid: Utils.uuid()
     spacing: Style.current.halfPadding
 
@@ -116,12 +117,22 @@ Column {
                 // Reset the height in case we set it to 0 below. See note below
                 // for more information
                 this.height = undefined
-                if (appSettings.displayChatImages && Utils.hasImageExtension(link)) {
-                    linkData = {
-                        thumbnailUrl: link
+                if (Utils.hasImageExtension(link)) {
+                    if (appSettings.displayChatImages) {
+                        linkData = {
+                            thumbnailUrl: link
+                        }
+                        return unfurledImageComponent
+                    } else {
+                        if (isImageLink && index > 0) {
+                            return
+                        }
+
+                        isImageLink = true
+                        return enableLinkComponent
                     }
-                    return unfurledImageComponent
                 }
+
                 let linkWhiteListed = false
                 const linkHostname = Utils.getHostname(link)
                 const linkExists = Object.keys(appSettings.whitelistedUnfurlingSites).some(function(whitelistedHostname) {
@@ -186,9 +197,7 @@ Column {
                 source: linkData.thumbnailUrl
                 imageWidth: 300
                 isCurrentUser: root.isCurrentUser
-                onClicked: {
-                    clickMessage(false, false, true, linkImage.imageAlias)
-                }
+                onClicked: clickMessage(false, false, true, linkImage.imageAlias)
             }
         }
     }
@@ -299,8 +308,9 @@ Column {
 
             StyledText {
                 id: enableText
-                //% "Enable link previews in chat?"
-                text: qsTrId("enable-link-previews")
+                text: isImageLink ? qsTr("Enable automatic image unfurling") :
+                                    //% "Enable link previews in chat?"
+                                    qsTrId("enable-link-previews")
                 horizontalAlignment: Text.AlignHCenter
                 width: parent.width
                 wrapMode: Text.WordWrap
