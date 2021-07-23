@@ -3,6 +3,8 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import "../../../imports"
 import "../../../shared"
+import "../../../shared/status"
+
 
 Item {
     id: nodeView
@@ -13,6 +15,10 @@ Item {
         id: rpcColumn
         spacing: 0
         anchors.fill: parent
+
+        Rate {
+
+        }
 
         ColumnLayout {
             id: messageContainer

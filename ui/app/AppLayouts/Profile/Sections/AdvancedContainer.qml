@@ -126,6 +126,21 @@ Item {
         }
 
         StatusSettingsLineButton {
+            //% "Node Management"
+            text: qsTrId("node-management")
+            isSwitch: true
+            switchChecked: appSettings.nodeManagementEnabled
+            onClicked: {
+                if (!appSettings.nodeManagementEnabled) {
+                    confirmationPopup.settingsProp = "nodeManagementEnabled"
+                    confirmationPopup.open()
+                } else {
+                    appSettings.nodeManagementEnabled = false
+                }
+            }
+        }
+
+        StatusSettingsLineButton {
             id: onlineUsers
             //% "Online users"
             text: qsTrId("online-users")
@@ -150,6 +165,16 @@ Item {
                         profileModel.setSendUserStatus(checked)
                     }
                 }
+            }
+        }
+
+        StatusSettingsLineButton {
+            //% "GIF Widget"
+            text: qsTrId("gif-widget")
+            isSwitch: true
+            switchChecked: appSettings.isGifWidgetEnabled
+            onClicked: {
+                appSettings.isGifWidgetEnabled = !appSettings.isGifWidgetEnabled
             }
         }
 
@@ -236,31 +261,6 @@ Item {
                 }
             }
         }        
-
-        StatusSettingsLineButton {
-            //% "GIF Widget"
-            text: qsTrId("gif-widget")
-            isSwitch: true
-            switchChecked: appSettings.isGifWidgetEnabled
-            onClicked: {
-                appSettings.isGifWidgetEnabled = !appSettings.isGifWidgetEnabled
-            }
-        }
-
-        // StatusSettingsLineButton {
-        //     //% "Node Management"
-        //     text: qsTrId("node-management")
-        //     isSwitch: true
-        //     switchChecked: appSettings.nodeManagementEnabled
-        //     onClicked: {
-        //         if (!appSettings.nodeManagementEnabled) {
-        //             confirmationPopup.settingsProp = "nodeManagementEnabled"
-        //             confirmationPopup.open()
-        //         } else {
-        //             appSettings.nodeManagementEnabled = false
-        //         }
-        //     }
-        // }
     }
 
     NetworksModal {

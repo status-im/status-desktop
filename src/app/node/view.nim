@@ -1,5 +1,6 @@
 import NimQml, chronicles, strutils, json
 import ../../status/[status, node, types, settings, accounts]
+import ../../status/signals/types as signal_types
 
 logScope:
   topics = "node-view"
@@ -11,6 +12,7 @@ QtObject:
     lastMessage*: string
     wakuBloomFilterMode*: bool
     fullNode*: bool
+    stats*: Stats
 
   proc setup(self: NodeView) =
     self.QObject.setup
@@ -123,3 +125,21 @@ QtObject:
     if statusGoResult.error != "":
       error "Error saving updated node config", msg=statusGoResult.error
     quit(QuitSuccess) # quits the app TODO: change this to logout instead when supported
+
+  proc statsChanged*(self: NodeView) {.signal.}
+
+  proc setStats*(self: NodeView, stats: Stats) =
+    self.stats = stats
+    self.statsChanged()
+
+  proc uploadRate*(self: NodeView): string {.slot.} = $self.stats.uploadRate
+
+  QtProperty[string] uploadRate:
+    read = uploadRate
+    notify = statsChanged
+
+  proc downloadRate*(self: NodeView): string {.slot.} = $self.stats.downloadRate
+
+  QtProperty[string] downloadRate:
+    read = downloadRate
+    notify = statsChanged

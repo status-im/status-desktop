@@ -1,6 +1,6 @@
 import NimQml, tables, json, chronicles, strutils, json_serialization
 import ../types as status_types
-import types, messages, discovery, whisperFilter, envelopes, expired, wallet, mailserver, communities
+import types, messages, discovery, whisperFilter, envelopes, expired, wallet, mailserver, communities, stats
 import ../status
 import ../../eventemitter
 
@@ -57,6 +57,7 @@ QtObject:
       of SignalType.MailserverRequestCompleted: mailserver.fromCompletedEvent(jsonSignal)
       of SignalType.MailserverRequestExpired: mailserver.fromExpiredEvent(jsonSignal)
       of SignalType.CommunityFound: communities.fromEvent(jsonSignal)
+      of SignalType.Stats: stats.fromEvent(jsonSignal)
       else: Signal()
 
     if(signalType == SignalType.NodeLogin):

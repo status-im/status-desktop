@@ -231,6 +231,15 @@ StatusAppLayout {
             },
 
             StatusNavBarTabButton {
+                enabled: isExperimental === "1" || appSettings.nodeManagementEnabled
+                visible: enabled
+                tooltip.text: qsTr("Node Management")
+                icon.name: "node"
+                checked: appView.currentIndex == Utils.getAppSectionIndex(Constants.node)
+                onClicked: appMain.changeAppSection(Constants.node)
+            },
+
+            StatusNavBarTabButton {
                 id: profileBtn
                 //% "Profile"
                 tooltip.text: qsTrId("profile")
