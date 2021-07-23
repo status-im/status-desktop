@@ -8,7 +8,7 @@ import StatusQ.Controls 0.1
 import Sandbox 0.1
 
 GridLayout {
-    columns: 6
+    columns: 1
     columnSpacing: 5
     rowSpacing: 5
 
@@ -142,33 +142,5 @@ GridLayout {
         from: 0
         to: 100
         value: 40
-    }
-
-    StatusBaseInput {
-        placeholderText: "One line"
-    }
-
-    StatusBaseInput {
-        multiline: true
-        placeholderText: "Multiline"
-    }
-
-    StatusBaseInput {
-        multiline: true
-        placeholderText: "Multiline with static height"
-        implicitHeight: 100
-    }
-
-    Item {
-        implicitHeight: 300
-        implicitWidth: 300
-
-        StatusBaseInput {
-            anchors.centerIn: parent
-            multiline: true
-            placeholderText: "Multiline with max/min"
-            minimumHeight: 80
-            maximumHeight: 200
-        }
     }
 }

@@ -9,6 +9,7 @@
         <file>ListItems.qml</file>
         <file>StatusChatInfoToolBarPage.qml</file>
         <file>StatusPopupMenuPage.qml</file>
+        <file>StatusInputPage.qml</file>
         <file>ThemeSwitch.qml</file>
         <file>Layout.qml</file>
         <file>Popups.qml</file>

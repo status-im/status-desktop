@@ -143,6 +143,11 @@ StatusWindow {
                             selected: page.sourceComponent == controlsComponent
                             onClicked: page.sourceComponent = controlsComponent
                         }
+                        StatusNavigationListItem { 
+                            title: "StatusInput" 
+                            selected: page.sourceComponent == statusInputPageComponent
+                            onClicked: page.sourceComponent = statusInputPageComponent
+                        }
                         StatusListSectionHeadline { text: "StatusQ.Components" }
                         StatusNavigationListItem { 
                             title: "List Items"
@@ -234,6 +239,11 @@ StatusWindow {
     Component {
         id: controlsComponent
         Controls {}
+    }
+
+    Component {
+        id: statusInputPageComponent
+        StatusInputPage {}
     }
 
     Component {
