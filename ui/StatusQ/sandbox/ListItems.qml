@@ -295,6 +295,27 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
         type: StatusListItem.Type.Danger
     }
 
+    StatusListItem {
+        title: "List Item with Badge"
+        subTitle: "Subtitle"
+        image.source: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAlklEQVR4nOzW0QmDQBAG4SSkl7SUQlJGCrElq9F3QdjjVhh/5nv3cFhY9vUIYQiNITSG0Bh
+CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2ImYgiNITTlTdG1nUZ5a92VITQxITFiJmIIjSE0htAYQrMHAAD//+wwFVpz+yqXAAAAAElFTkSuQmCC"
+        image.isIdenticon: true
+        badge.image.source: "https://pbs.twimg.com/profile_images/1369221718338895873/T_5fny6o_400x400.jpg"
+        badge.primaryText: "CryptoKitties"
+        badge.secondaryText: "#test"
+    }
+
+    StatusListItem {
+        title: "List Item with Badge 2"
+        subTitle: "Subtitle"
+        icon.isLetterIdenticon: true
+        badge.primaryText: "CryptoKitties"
+        badge.secondaryText: "#test"
+        badge.icon.color: "orange"
+        badge.icon.isLetterIdenticon: true
+    }
+
     StatusDescriptionListItem {
         title: "Title"
         subTitle: "Subtitle"

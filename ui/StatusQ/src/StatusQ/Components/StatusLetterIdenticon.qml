@@ -14,7 +14,9 @@ Rectangle {
     radius: width / 2
 
     StatusBaseText {
-        text: (statusLetterIdenticon.name.charAt(0) == "#" ? statusLetterIdenticon.name.charAt(1) : statusLetterIdenticon.name.charAt(0)).toUpperCase()
+        text: ((statusLetterIdenticon.name.charAt(0) === "#")
+              || (statusLetterIdenticon.name.charAt(0) === "@") ?
+              statusLetterIdenticon.name.charAt(1) : statusLetterIdenticon.name.charAt(0)).toUpperCase()
         font.weight: Font.Bold
         font.pixelSize: statusLetterIdenticon.letterSize
         color: Qt.rgba(255, 255, 255, 0.7)

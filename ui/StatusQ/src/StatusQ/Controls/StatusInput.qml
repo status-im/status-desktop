@@ -4,9 +4,8 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 
-Rectangle {
+Item {
     id: root
-
     implicitWidth: 480
     height: (label.visible ? 
                   label.anchors.topMargin +
@@ -22,7 +21,6 @@ Rectangle {
                   errorMessage.height :
                   0) + 8
 
-    color: "transparent"
     property alias input: statusBaseInput
     property string label: ""
     property int charLimit: 0

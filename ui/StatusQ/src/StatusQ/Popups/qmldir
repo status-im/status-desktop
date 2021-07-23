@@ -5,4 +5,7 @@ StatusPopupMenu 0.1 StatusPopupMenu.qml
 StatusMenuItem 0.1 StatusMenuItem.qml
 StatusMenuHeadline 0.1 StatusMenuHeadline.qml
 StatusModal 0.1 StatusModal.qml
+StatusSearchPopup 0.1 StatusSearchPopup.qml
 StatusModalDivider 0.1 StatusModalDivider.qml
+StatusSearchPopupMenuItem 0.1 StatusSearchPopupMenuItem.qml
+StatusSearchLocationMenu 0.1 StatusSearchLocationMenu.qml

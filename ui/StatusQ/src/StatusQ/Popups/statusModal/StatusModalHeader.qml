@@ -20,7 +20,7 @@ Rectangle {
     signal editButtonClicked
     signal close
 
-    implicitHeight: Math.max(closeButton.height, imageWithTitle.implicitHeight) + 32
+    implicitHeight: visible? Math.max(closeButton.height, imageWithTitle.implicitHeight) + 32 : 0
     implicitWidth: 480
 
     radius: 16

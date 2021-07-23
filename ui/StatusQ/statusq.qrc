@@ -250,5 +250,9 @@
         <file>src/StatusQ/Popups/statusModal/StatusModalHeader.qml</file>
         <file>src/StatusQ/Popups/StatusModal.qml</file>
         <file>src/StatusQ/Core/StatusModalHeaderSettings.qml</file>
+        <file>src/StatusQ/Popups/StatusSearchPopup.qml</file>
+        <file>src/StatusQ/Components/StatusListItemBadge.qml</file>
+        <file>src/StatusQ/Popups/StatusSearchPopupMenuItem.qml</file>
+        <file>src/StatusQ/Popups/StatusSearchLocationMenu.qml</file>
     </qresource>
 </RCC>

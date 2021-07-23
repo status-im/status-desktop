@@ -10,15 +10,17 @@ import StatusQ.Popups 0.1
 
 Menu {
     id: statusPopupMenu
-
-    closePolicy: Popup.CloseOnReleaseOutside | Popup.CloseOnEscape 
+    closePolicy: Popup.CloseOnReleaseOutsideParent | Popup.CloseOnEscape
     topPadding: 8
     bottomPadding: 8
 
     property int menuItemCount: 0
     property var subMenuItemIcons: []
+
     property var openHandler
     property var closeHandler
+
+    signal menuItemClicked(int menuIndex)
 
     onOpened: {
         if (typeof openHandler === "function") {
@@ -34,19 +36,21 @@ Menu {
 
     delegate: MenuItem {
         id: statusPopupMenuItem
-
+        implicitWidth: parent ? parent.width : 0
         implicitHeight: action.enabled ? 38 : 0
 
         property int subMenuIndex
 
         Component.onCompleted: {
-            if (subMenu) {
+            if (!!subMenu) {
                 subMenuIndex = statusPopupMenu.menuItemCount
                 statusPopupMenu.menuItemCount += 1
             }
         }
 
-        action: StatusMenuItem {}
+        action: StatusMenuItem {
+            onTriggered: { statusPopupMenu.menuItemClicked(statusPopupMenuItem.subMenuIndex); }
+        }
 
         Component {
             id: indicatorComponent
@@ -63,12 +67,17 @@ Menu {
                     }
                     rotation: statusPopupMenuItem.action.iconRotation
                     icon: {
-                        if (statusPopupMenuItem.subMenu) {
-                            return statusPopupMenu.subMenuItemIcons[statusPopupMenuItem.subMenuIndex]
+                        if (statusPopupMenuItem.subMenu && !!statusPopupMenu.subMenuItemIcons[statusPopupMenuItem.subMenuIndex] &&
+                            statusPopupMenu.subMenuItemIcons[statusPopupMenuItem.subMenuIndex].icon.toString() !== "") {
+                            return statusPopupMenu.subMenuItemIcons[statusPopupMenuItem.subMenuIndex].icon;
+                        } else if (!!statusPopupMenuItem.action && statusPopupMenuItem.action.icon.name !== "") {
+                            return statusPopupMenuItem.action.icon.name;
+                        } else if (statusPopupMenuItem.action.iconSettings.name !== "") {
+                            return statusPopupMenuItem.action.iconSettings.name;
+                        } else {
+                            return "";
                         }
-                        return statusPopupMenuItem.action.icon.name ||
-                          statusPopupMenuItem.action.iconSettings.name
-                    }   
+                    }
                     color: {
                         let c = statusPopupMenuItem.action.iconSettings.color ||
                             statusPopupMenuItem.action.icon.color
@@ -195,7 +204,7 @@ Menu {
 
         background: Rectangle {
             color: {
-                if (hovered) {
+                if (statusPopupMenuItem.hovered) {
                     return statusPopupMenuItem.action.type === StatusMenuItem.Type.Danger ? Theme.palette.dangerColor3 : Theme.palette.statusPopupMenu.hoverBackgroundColor
                 }
                 return "transparent"
@@ -204,9 +213,8 @@ Menu {
 
         MouseArea {
             id: sensor
-
             anchors.fill: parent
-            cursorShape: Qt.PointingHandCursor 
+            cursorShape: Qt.PointingHandCursor
             hoverEnabled: statusPopupMenuItem.action.enabled
             onPressed: mouse.accepted = false
         }

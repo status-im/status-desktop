@@ -19,6 +19,8 @@ QC.Popup {
     property alias contentComponent: contentLoader.item
     property alias rightButtons: footerImpl.rightButtons
     property alias leftButtons: footerImpl.leftButtons
+    property bool showHeader: true
+    property bool showFooter: true
 
     signal editButtonClicked()
 
@@ -46,8 +48,9 @@ QC.Popup {
         width: parent.width
         Spares.StatusModalHeader {
             id: headerImpl
-            width: 480
+            width: visible ? parent.width : 0
 
+            visible: statusModal.showHeader
             title: header.title
             subTitle: header.subTitle
             image: header.image
@@ -59,14 +62,15 @@ QC.Popup {
 
         Loader {
             id: contentLoader
+            width: parent.width
             active: true
-            anchors.horizontalCenter: parent.horizontalCenter
             sourceComponent: statusModal.content
         }
 
         Spares.StatusModalFooter {
             id: footerImpl
-            width: 480
+            width: visible ? parent.width : 0
+            visible: statusModal.showFooter
         }
     }
 }

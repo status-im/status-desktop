@@ -30,7 +30,7 @@ Rectangle {
         }
     }
 
-    implicitHeight: rootLayout.implicitHeight + 30
+    implicitHeight: visible ? rootLayout.implicitHeight + 30 : 0
 
     RowLayout {
         id: rootLayout

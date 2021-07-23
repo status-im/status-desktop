@@ -1,4 +1,6 @@
 import QtQuick 2.13
+import QtQuick.Controls 2.12
+import QtQuick.Layouts 1.12
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
@@ -33,8 +35,11 @@ Rectangle {
     radius: 8
 
     property string title: ""
+    property string titleAsideText: ""
     property string subTitle: ""
     property string tertiaryTitle: ""
+    property alias badge: statusListItemBadge
+
     property real leftPadding: 16
     property real rightPadding: 16
     property bool enabled: true
@@ -107,6 +112,7 @@ Rectangle {
                 }
                 return !!statusListItem.icon.name ? statusRoundedIcon : statusRoundedImage
             }
+
             active: statusListItem.icon.isLetterIdenticon || 
                     !!statusListItem.icon.name || 
                     !!statusListItem.image.source.toString()
@@ -158,15 +164,15 @@ Rectangle {
             anchors.leftMargin: statusListItem.leftPadding
             anchors.rightMargin: statusListItem.rightPadding
             anchors.verticalCenter: parent.verticalCenter
-            height: statusListItemTitle.height + 
-              (statusListItemSubTitle.visible ? statusListItemSubTitle.height : 0) +
-              (statusListItemTertiaryTitle.visible ? statusListItemTertiaryTitle.height : 0)
+            height: childrenRect.height
 
             StatusBaseText {
                 id: statusListItemTitle
                 text: statusListItem.title
-                width: parent.width
+                width: contentWidth < (parent.width - statusListItemTitleAsideText.contentWidth) ?
+                       contentWidth : (parent.width - statusListItemTitleAsideText.contentWidth)
                 font.pixelSize: 15
+                height: visible ? contentHeight : 0
                 wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                 color: {
                   if (!statusListItem.enabled) {
@@ -184,12 +190,24 @@ Rectangle {
             }
 
             StatusBaseText {
+                id: statusListItemTitleAsideText
+                anchors.left: statusListItemTitle.right
+                anchors.leftMargin: 4
+                anchors.verticalCenter: statusListItemTitle.verticalCenter
+                text: statusListItem.titleAsideText
+                font.pixelSize: 10
+                color: Theme.palette.baseColor1
+                visible: !!statusListItem.titleAsideText
+            }
+
+            StatusBaseText {
                 id: statusListItemSubTitle
                 anchors.top: statusListItemTitle.bottom
                 width: parent.width
                 text: statusListItem.subTitle
                 font.pixelSize: 15
                 color: !statusListItem.enabled || !statusListItem.tertiaryTitle ? Theme.palette.baseColor1 : Theme.palette.directColor1
+                height: visible ? contentHeight : 0
                 visible: !!statusListItem.subTitle
                 wrapMode: Text.WrapAtWordBoundaryOrAnywhere
             }
@@ -198,11 +216,19 @@ Rectangle {
                 id: statusListItemTertiaryTitle
                 anchors.top: statusListItemSubTitle.bottom
                 width: parent.width
+                height: visible ? contentHeight : 0
                 text: statusListItem.tertiaryTitle
                 color: Theme.palette.baseColor1
                 font.pixelSize: 13
                 visible: !!statusListItem.tertiaryTitle
                 wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+            }
+
+            StatusListItemBadge {
+                id: statusListItemBadge
+                anchors.top: statusListItemTertiaryTitle.bottom
+                width: contentItem.width
+                implicitHeight: visible ? 22 : 0
             }
         }
 

@@ -299,14 +299,14 @@ Rectangle {
                     StatusChatList {
                         anchors.horizontalCenter: parent.horizontalCenter
 
-                        chatListItems.model: demoChatListItems
+                        chatListItems.model: models.demoChatListItems
                         selectedChatId: "0"
                         onChatItemSelected: selectedChatId = id
                         onChatItemUnmuted: {
-                            for (var i = 0; i < demoChatListItems.count; i++) {
-                                let item = demoChatListItems.get(i);
+                            for (var i = 0; i < models.demoChatListItems.count; i++) {
+                                let item = models.demoChatListItems.get(i);
                                 if (item.chatId === id) {
-                                    demoChatListItems.setProperty(i, "muted", false)
+                                    models.demoChatListItems.setProperty(i, "muted", false)
                                 }
                             }
                         }
@@ -412,7 +412,7 @@ Rectangle {
             handle: Rectangle {
                 implicitWidth: 5
                 color: SplitHandle.pressed ? Theme.palette.baseColor2
-                    : (SplitHandle.hovered ? Qt.darker(Theme.palette.baseColor5, 1.1) : "transparent")
+                                           : (SplitHandle.hovered ? Qt.darker(Theme.palette.baseColor5, 1.1) : "transparent")
             }
             leftPanel: Item {
                 id: leftPanel
@@ -467,8 +467,8 @@ Rectangle {
                         width: leftPanel.width
                         height: implicitHeight > (leftPanel.height - 64) ? implicitHeight + 8 : leftPanel.height - 64
 
-                        chatList.model: demoCommunityChatListItems
-                        categoryList.model: demoCommunityCategoryItems
+                        chatList.model: models.demoCommunityChatListItems
+                        categoryList.model: models.demoCommunityCategoryItems
 
                         showCategoryActionButtons: true
                         onChatItemSelected: selectedChatId = id
@@ -557,6 +557,7 @@ Rectangle {
 
             centerPanel: Item {
                 StatusChatToolBar {
+                    id: statusChatToolBar
                     anchors.top: parent.top
                     width: parent.width
 
@@ -564,11 +565,60 @@ Rectangle {
                     chatInfoButton.subTitle: "Community Chat"
                     chatInfoButton.icon.color: Theme.palette.miscColor6
                     chatInfoButton.type: StatusChatInfoButton.Type.CommunityChat
-                    searchButton.onClicked: searchButton.highlighted = !searchButton.highlighted
+                    onSearchButtonClicked: {
+                        searchButton.highlighted = !searchButton.highlighted;
+                        searchPopup.searchSelectionButton.primaryText = demoCommunityDetailModal.header.title;
+                        searchPopup.searchSelectionButton.image.source = demoCommunityDetailModal.header.image.source;
+                        searchPopup.open();
+                    }
                     membersButton.onClicked: membersButton.highlighted = !membersButton.highlighted
                     onMembersButtonClicked: {
                         root.showRightPanel = !root.showRightPanel;
                     }
+                }
+
+                StatusSearchPopup {
+                    id: searchPopup
+                    searchOptionsPopupMenu: searchPopupMenu
+                    onAboutToHide: {
+                        if (searchPopupMenu.visible) {
+                            searchPopupMenu.close();
+                        }
+                        //clear menu
+                        for (var i = 2; i < searchPopupMenu.count; i++) {
+                            searchPopupMenu.removeItem(searchPopupMenu.takeItem(i));
+                        }
+                    }
+                    onClosed: {
+                        statusChatToolBar.searchButton.highlighted = false
+                        searchPopupMenu.dismiss();
+                    }
+                    onSearchTextChanged: {
+                        if (searchPopup.searchText !== "") {
+                            searchPopup.loading = true;
+                            searchModelSimTimer.start();
+                        } else {
+                            searchPopup.searchResults = [];
+                            searchModelSimTimer.stop();
+                        }
+                    }
+                    Timer {
+                        id: searchModelSimTimer
+                        interval: 500
+                        onTriggered: {
+                            if (searchPopup.searchText.startsWith("c")) {
+                                searchPopup.searchResults = models.searchResultsA;
+                            } else {
+                                searchPopup.searchResults = models.searchResultsB;
+                            }
+                            searchPopup.loading = false;
+                        }
+                    }
+                }
+                StatusSearchLocationMenu {
+                    id: searchPopupMenu
+                    searchPopup: searchPopup
+                    locatioModel: models.optionsModel
                 }
             }
 
@@ -654,7 +704,7 @@ Rectangle {
                         spacing: 4
 
                         Repeater {
-                            model: demoProfileGeneralMenuItems
+                            model: models.demoProfileGeneralMenuItems
                             delegate: StatusNavigationListItem {
                                 title: model.title
                                 icon.name: model.icon
@@ -664,7 +714,7 @@ Rectangle {
                         StatusListSectionHeadline { text: "Settings" }
 
                         Repeater {
-                            model: demoProfileSettingsMenuItems
+                            model: models.demoProfileSettingsMenuItems
                             delegate: StatusNavigationListItem {
                                 title: model.title
                                 icon.name: model.icon
@@ -678,7 +728,7 @@ Rectangle {
                         }
 
                         Repeater {
-                            model: demoProfileOtherMenuItems
+                            model: models.demoProfileOtherMenuItems
                             delegate: StatusNavigationListItem {
                                 title: model.title
                                 icon.name: model.icon
@@ -833,194 +883,7 @@ Rectangle {
         }
     }
 
-    ListModel {
-        id: demoChatListItems
-        ListElement {
-            chatId: "0"
-            name: "#status"
-            chatType: StatusChatListItem.Type.PublicChat
-            muted: false
-            unreadMessagesCount: 0
-            mentionsCount: 0
-            color: "blue"
-        }
-        ListElement {
-            chatId: "1"
-            name: "status-desktop"
-            chatType: StatusChatListItem.Type.PublicChat
-            muted: false
-            color: "red"
-            unreadMessagesCount: 1
-            mentionsCount: 1
-        }
-        ListElement {
-            chatId: "2"
-            name: "Amazing Funny Squirrel"
-            chatType: StatusChatListItem.Type.OneToOneChat
-            muted: false
-            color: "green"
-            identicon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAlklEQVR4nOzW0QmDQBAG4SSkl7SUQlJGCrElq9F3QdjjVhh/5nv3cFhY9vUIYQiNITSG0Bh
-CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2ImYgiNITTlTdG1nUZ5a92VITQxITFiJmIIjSE0htAYQrMHAAD//+wwFVpz+yqXAAAAAElFTkSuQmCC"
-            unreadMessagesCount: 0
-        }
-        ListElement {
-            chatId: "3"
-            name: "Black Ops"
-            chatType: StatusChatListItem.Type.GroupChat
-            muted: false
-            color: "purple"
-            unreadMessagesCount: 0
-        }
-        ListElement {
-            chatId: "4"
-            name: "Spectacular Growing Otter"
-            chatType: StatusChatListItem.Type.OneToOneChat
-            muted: true
-            color: "Orange"
-            unreadMessagesCount: 0
-        }
-        ListElement {
-            chatId: "5"
-            name: "channel-with-a-super-duper-long-name"
-            chatType: StatusChatListItem.Type.PublicChat
-            muted: false
-            color: "green"
-            unreadMessagesCount: 0
-        }
-    }
-
-    ListModel {
-        id: demoCommunityChatListItems
-        ListElement {
-            chatId: "0"
-            name: "general"
-            chatType: StatusChatListItem.Type.CommunityChat
-            muted: false
-            unreadMessagesCount: 0
-            color: "orange"
-        }
-        ListElement {
-            chatId: "1"
-            name: "random"
-            chatType: StatusChatListItem.Type.CommunityChat
-            muted: false
-            unreadMessagesCount: 0
-            color: "orange"
-            categoryId: "public"
-        }
-        ListElement {
-            chatId: "2"
-            name: "watercooler"
-            chatType: StatusChatListItem.Type.CommunityChat
-            muted: false
-            unreadMessagesCount: 0
-            color: "orange"
-            categoryId: "public"
-        }
-        ListElement {
-            chatId: "3"
-            name: "language-design"
-            chatType: StatusChatListItem.Type.CommunityChat
-            muted: false
-            unreadMessagesCount: 0
-            color: "orange"
-            categoryId: "dev"
-        }
-    }
-
-    ListModel {
-        id: demoCommunityCategoryItems
-        ListElement {
-            categoryId: "public"
-            name: "Public"
-        }
-        ListElement {
-            categoryId: "dev"
-            name: "Development"
-        }
-    }
-
-    ListModel {
-        id: demoProfileGeneralMenuItems
-
-        ListElement {
-            title: "My Profile"
-            icon: "profile"
-        }
-
-        ListElement {
-            title: "Contacts"
-            icon: "contact"
-        }
-
-        ListElement {
-            title: "ENS Usernames"
-            icon: "username"
-        }
-
-    }
-
-    ListModel {
-        id: demoProfileSettingsMenuItems
-
-        ListElement {
-            title: "Privacy & Security"
-            icon: "security"
-        }
-
-        ListElement {
-            title: "Appearance"
-            icon: "appearance"
-        }
-
-        ListElement {
-            title: "Browser"
-            icon: "browser"
-        }
-
-        ListElement {
-            title: "Sounds"
-            icon: "sound"
-        }
-
-        ListElement {
-            title: "Language"
-            icon: "language"
-        }
-
-        ListElement {
-            title: "Notifications"
-            icon: "notification"
-        }
-
-        ListElement {
-            title: "Sync settings"
-            icon: "mobile"
-        }
-
-        ListElement {
-            title: "Advanced"
-            icon: "settings"
-        }
-
-    }
-
-    ListModel {
-        id: demoProfileOtherMenuItems
-
-        ListElement {
-            title: "Need help?"
-            icon: "help"
-        }
-
-        ListElement {
-            title: "About"
-            icon: "info"
-        }
-
-        ListElement {
-            title: "Sign out & Quit"
-            icon: "logout"
-        }
+    Models {
+        id: models
     }
 }

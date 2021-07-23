@@ -19,3 +19,4 @@ StatusNavigationPanelHeadline 0.1 StatusNavigationPanelHeadline.qml
 StatusRoundIcon 0.1 StatusRoundIcon.qml
 StatusRoundedImage 0.1 StatusRoundedImage.qml
 StatusMacWindowButtons 0.1 StatusMacWindowButtons.qml
+StatusListItemBadge 0.1 StatusListItemBadge.qml

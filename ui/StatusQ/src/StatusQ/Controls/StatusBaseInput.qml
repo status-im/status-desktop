@@ -179,8 +179,8 @@ Item {
 
     StatusFlatRoundButton {
         id: clearButtton
-        visible: edit.text.length != 0 && 
-            statusBaseInput.clearable && 
+        visible: edit.text.length != 0 &&
+            statusBaseInput.clearable &&
             !statusBaseInput.multiline &&
             edit.activeFocus
         anchors.right: parent.right

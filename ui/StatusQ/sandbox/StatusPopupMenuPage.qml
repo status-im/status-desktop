@@ -46,7 +46,7 @@ GridLayout {
 
     StatusPopupMenu {
         id: complexMenu
-        subMenuItemIcons: ['info']
+        subMenuItemIcons: [{ icon: 'info' }]
 
         StatusMenuItem { 
             text: "One" 
@@ -82,7 +82,7 @@ GridLayout {
         id: customMenu
 
         subMenuItemIcons: [
-            "chat", 
+            { icon: "chat" },
             { 
                 source: "https://pbs.twimg.com/profile_images/1369221718338895873/T_5fny6o_400x400.jpg" 
             },
