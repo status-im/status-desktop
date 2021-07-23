@@ -20,6 +20,11 @@ Column {
     }
 
     StatusBaseInput {
+        placeholderText: "Clearable"
+        clearable: true
+    }
+
+    StatusBaseInput {
         multiline: true
         placeholderText: "Multiline"
     }

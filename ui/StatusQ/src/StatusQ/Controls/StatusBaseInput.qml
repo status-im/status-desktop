@@ -147,7 +147,10 @@ Item {
 
     StatusFlatRoundButton {
         id: clearButtton
-        visible: edit.text.length != 0 && statusBaseInput.clearable && !statusBaseInput.multiline
+        visible: edit.text.length != 0 && 
+            statusBaseInput.clearable && 
+            !statusBaseInput.multiline &&
+            edit.activeFocus
         anchors.right: parent.right
         anchors.rightMargin: 11
         anchors.verticalCenter: parent.verticalCenter
@@ -157,6 +160,7 @@ Item {
         icon.name: "clear"
         icon.width: 14
         icon.height: 14
+        icon.color: Theme.palette.baseColor1
         onClicked: {
             edit.clear()
         }
