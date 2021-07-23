@@ -91,7 +91,9 @@ StatusModal {
                         color: Theme.palette.directColor1
                     }
 
-                    StatusModalDivider {}
+                    StatusModalDivider {
+                        bottomPadding: 8
+                    }
                 }
             }
 
@@ -115,8 +117,10 @@ StatusModal {
                     height: visible ? implicitHeight : 0
                     anchors.horizontalCenter: parent.horizontalCenter
                     title: name
-                    //% "%1 members"
-                    subTitle: qsTrId("-1-members").arg(nbMembers)
+                    subTitle: description
+                    tertiaryTitle: qsTrId("%1 members").arg(nbMembers)
+                    statusListItemTitle.font.weight: Font.Bold
+                    statusListItemTitle.font.pixelSize: 17
                     image.source: thumbnailImage
                     icon.isLetterIdenticon: !!!thumbnailImage
                     icon.background.color: communityColor
