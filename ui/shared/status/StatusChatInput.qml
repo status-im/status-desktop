@@ -318,7 +318,7 @@ Rectangle {
                    event.key === Qt.Key_QuoteLeft ||
                    event.key === Qt.Key_Space ||
                    event.key === Qt.Key_AsciiTilde) {
-            formatInputMessage()
+            //formatInputMessage()
         }
 
         if (event.key !== Qt.Key_Escape) {
@@ -844,20 +844,20 @@ Rectangle {
                     }
                 }
 
-                onReleased: function (event) {
-                    const now = Date.now()
-                    if (messageInputField.selectedText.trim() !== "") {
-                        // If it's a double click, just check the mouse position
-                        // If it's a mouse select, use the start and end position average)
-                        let x = now < messageInputField.lastClick + 500 ? x = event.x :
-                                                                          (messageInputField.cursorRectangle.x + event.x) / 2
-                        x -= textFormatMenu.width / 2
+//                onReleased: function (event) {
+//                    const now = Date.now()
+//                    if (messageInputField.selectedText.trim() !== "") {
+//                        // If it's a double click, just check the mouse position
+//                        // If it's a mouse select, use the start and end position average)
+//                        let x = now < messageInputField.lastClick + 500 ? x = event.x :
+//                                                                          (messageInputField.cursorRectangle.x + event.x) / 2
+//                        x -= textFormatMenu.width / 2
 
-                        textFormatMenu.popup(x, -messageInputField.height-2)
-                        messageInputField.forceActiveFocus();
-                    }
-                    lastClick = now
-                }
+//                        textFormatMenu.popup(x, -messageInputField.height-2)
+//                        messageInputField.forceActiveFocus();
+//                    }
+//                    lastClick = now
+//                }
 
                 StatusTextFormatMenu {
                     readonly property var formationChars: (["*", "`", "~"])
