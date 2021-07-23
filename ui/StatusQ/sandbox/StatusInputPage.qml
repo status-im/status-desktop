@@ -15,6 +15,7 @@ Column {
     }
 
     StatusInput {
+        label: "Label"
         input.placeholderText: "Disabled"
         input.enabled: false
     }
@@ -31,6 +32,30 @@ Column {
 
     StatusInput {
         label: "Label"
+        input.placeholderText: "Placeholder"
+        input.clearable: true
+    }
+
+    StatusInput {
+        charLimit: 30
+        input.placeholderText: "Placeholder"
+        input.clearable: true
+    }
+
+    StatusInput {
+        label: "Label"
+        charLimit: 30
+        input.placeholderText: "Placeholder"
+        input.clearable: true
+    }
+
+    StatusInput {
+        label: "Label"
+        charLimit: 30
+        errorMessage: "Error message"
+
+        input.clearable: true
+        input.valid: false
         input.placeholderText: "Placeholder"
     }
 

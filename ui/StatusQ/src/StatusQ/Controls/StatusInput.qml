@@ -4,17 +4,29 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 
-Item {
+Rectangle {
     id: root
 
     implicitWidth: 480
-    height: label.anchors.topMargin +
-            label.height + 
+    height: (label.visible ? 
+                  label.anchors.topMargin +
+                  label.height :
+              charLimitLabel.visible ?
+                  charLimitLabel.anchors.topMargin +
+                  charLimitLabel.height :
+              0) +
             statusBaseInput.anchors.topMargin +
-            statusBaseInput.height + 8
+            statusBaseInput.height + 
+            (errorMessage.visible ? 
+                  errorMessage.anchors.topMargin +
+                  errorMessage.height :
+                  0) + 8
 
+    color: "transparent"
     property alias input: statusBaseInput
     property string label: ""
+    property int charLimit: 0
+    property string errorMessage: ""
 
     StatusBaseText {
         id: label
@@ -27,16 +39,47 @@ Item {
 
         text: root.label
         font.pixelSize: 15
-        color: Theme.palette.directColor1
+        color: statusBaseInput.enabled ? Theme.palette.directColor1 : Theme.palette.baseColor1
+    }
+
+    StatusBaseText {
+        id: charLimitLabel
+        height: visible ? implicitHeight : 0
+        anchors.top: parent.top
+        anchors.right: parent.right
+        anchors.topMargin: visible ? 11 : 0
+        anchors.rightMargin: 16
+        visible: !!root.charLimit
+
+        text: "0 / " + root.charLimit
+        font.pixelSize: 12
+        color: statusBaseInput.enabled ? Theme.palette.baseColor1 : Theme.palette.directColor6
     }
 
     StatusBaseInput {
         id: statusBaseInput
-        anchors.top:  label.bottom
+        anchors.top:  label.visible ? label.bottom : 
+                charLimitLabel.visible ? charLimitLabel.bottom : parent.top
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.topMargin: 8
+        anchors.topMargin: charLimitLabel.visible ? 11 : 8
         anchors.leftMargin: 16
         anchors.rightMargin: 16
+    }
+
+    StatusBaseText {
+        id: errorMessage
+
+        anchors.top: statusBaseInput.bottom
+        anchors.topMargin: 11
+        anchors.right: parent.right
+        anchors.rightMargin: 16
+
+        height: visible ? implicitHeight : 0
+        visible: !!root.errorMessage && !statusBaseInput.valid
+
+        font.pixelSize: 12
+        color: Theme.palette.dangerColor1
+        text: root.errorMessage
     }
 }
