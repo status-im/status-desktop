@@ -101,7 +101,6 @@ DISTFILES += \
     app/AppLayouts/Chat/ChatColumn/ChatComponents/ActivityCenterMessageComponent.qml \
     app/AppLayouts/Chat/ChatColumn/ChatComponents/ActivityCenterTopBar.qml \
     app/AppLayouts/Chat/ChatColumn/ChatComponents/ActivityChannelBadge.qml \
-    app/AppLayouts/Chat/ChatColumn/ChatComponents/AddToContactBanner.qml \
     app/AppLayouts/Chat/ChatColumn/ChatComponents/ChatCommandButton.qml \
     app/AppLayouts/Chat/ChatColumn/ChatComponents/ChatCommandModal.qml \
     app/AppLayouts/Chat/ChatColumn/ChatComponents/ChatCommandsPopup.qml \
