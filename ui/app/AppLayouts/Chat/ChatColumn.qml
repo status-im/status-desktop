@@ -305,26 +305,17 @@ Item {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 clip: true
+                currentIndex: chatsModel.messageView.getMessageListIndex(chatsModel.channelView.activeChannelIndex)
                 Repeater {
                     model: chatsModel.messageView
                     Loader {
-                        active: false
+                        active: stackLayoutChatMessages.currentIndex === index
                         sourceComponent: ChatMessages {
                             messageList: model.messages
                             currentTime: chatColumnLayout.currentTime
                             messageContextMenuInst: MessageContextMenu {
                                 reactionModel: EmojiReactions { }
                             }
-                        }
-                    }
-                }
-
-                Connections {
-                    target: chatsModel.channelView
-                    onActiveChannelChanged: {
-                        stackLayoutChatMessages.currentIndex = chatsModel.messageView.getMessageListIndex(chatsModel.channelView.activeChannelIndex)
-                        if(stackLayoutChatMessages.currentIndex > -1 && !stackLayoutChatMessages.children[stackLayoutChatMessages.currentIndex].active){
-                            stackLayoutChatMessages.children[stackLayoutChatMessages.currentIndex].active = true;
                         }
                     }
                 }

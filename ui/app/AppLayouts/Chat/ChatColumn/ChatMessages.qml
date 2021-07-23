@@ -329,7 +329,7 @@ SplitView {
                     return -1;
                 }
                 nextMessageIndex: {
-                    if (msgDelegate.DelegateModel.itemsIndex <= 1) {
+                    if (msgDelegate.DelegateModel.itemsIndex < 1) {
                         return -1
                     }
                     return messageListDelegate.items.get(msgDelegate.DelegateModel.itemsIndex - 1).model.index
