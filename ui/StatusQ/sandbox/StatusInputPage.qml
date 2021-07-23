@@ -10,40 +10,45 @@ import Sandbox 0.1
 Column {
     spacing: 8
 
-    StatusBaseInput {
-        placeholderText: "Placeholder"
+    StatusInput {
+        input.placeholderText: "Placeholder"
     }
 
-    StatusBaseInput {
-        placeholderText: "Disabled"
-        enabled: false
+    StatusInput {
+        input.placeholderText: "Disabled"
+        input.enabled: false
     }
 
-    StatusBaseInput {
-        placeholderText: "Clearable"
-        clearable: true
+    StatusInput {
+        input.placeholderText: "Clearable"
+        input.clearable: true
     }
 
-    StatusBaseInput {
-        placeholderText: "Invalid"
-        valid: false
+    StatusInput {
+        input.placeholderText: "Invalid"
+        input.valid: false
     }
 
-    StatusBaseInput {
-        multiline: true
-        placeholderText: "Multiline"
+    StatusInput {
+        label: "Label"
+        input.placeholderText: "Placeholder"
     }
 
-    StatusBaseInput {
-        multiline: true
-        placeholderText: "Multiline with static height"
-        implicitHeight: 100
+    StatusInput {
+        input.multiline: true
+        input.placeholderText: "Multiline"
     }
 
-    StatusBaseInput {
-        multiline: true
-        placeholderText: "Multiline with max/min"
-        minimumHeight: 80
-        maximumHeight: 200
+    StatusInput {
+        input.multiline: true
+        input.placeholderText: "Multiline with static height"
+        input.implicitHeight: 100
+    }
+
+    StatusInput {
+        input.multiline: true
+        input.placeholderText: "Multiline with max/min"
+        input.minimumHeight: 80
+        input.maximumHeight: 200
     }
 }
