@@ -4,6 +4,7 @@ import QtGraphicalEffects 1.13
 import QtQuick.Layouts 1.13
 import QtMultimedia 5.13
 import QtQuick.Dialogs 1.3
+import DotherSide 0.1
 import "../../imports"
 import "../../shared"
 import "../../app/AppLayouts/Chat/ChatColumn/samples"
@@ -217,7 +218,6 @@ Rectangle {
         insertInTextInput(messageInputField.selectionEnd, wrapWith);
 
         messageInputField.deselect()
-        formatInputMessage()
     }
     function unwrapSelection(unwrapWith, selectedTextWithFormationChars) {
         if (messageInputField.selectionStart - messageInputField.selectionEnd === 0) return
@@ -233,7 +233,6 @@ Rectangle {
         insertInTextInput(messageInputField.selectionStart, changedString)
 
         messageInputField.deselect()
-        formatInputMessage()
     }
 
     function getPlainText() {
@@ -313,22 +312,6 @@ Rectangle {
         }
     }
 
-    function formatInputMessage() {
-        const posBeforeEnd = messageInputField.length - messageInputField.cursorPosition;
-
-        // Remove align center spans
-        // TODO fix Those spans are added automatically by QT when you press space after an emoji. They break the code formation process
-
-        // strikethrough
-        setFormatInInput(chatsModel.formatInputView.formatInputStrikeThrough, '<span style=" text-decoration: line-through;">', '</span>', '~', 2)
-        // bold
-        setFormatInInput(chatsModel.formatInputView.formatInputBold, '<b>', '</b>', '*', 2)
-        // code
-        setFormatInInput(chatsModel.formatInputView.formatInputCode, '<code>', '</code>', '`', 1)
-        // italic
-        setFormatInInput(chatsModel.formatInputView.formatInputItalic, '<i>', '</i>', '*', 1)
-    }
-
     function onRelease(event) {
         if (event.key === Qt.Key_Backspace && textFormatMenu.opened) {
             textFormatMenu.close()
@@ -340,11 +323,6 @@ Rectangle {
             const plainText = messageInputField.getText(0, messageInputField.length);
             messageInputField.remove(0, messageInputField.length);
             insertInTextInput(0, plainText);
-        } else if (event.key === Qt.Key_Asterisk ||
-                   event.key === Qt.Key_QuoteLeft ||
-                   event.key === Qt.Key_Space ||
-                   event.key === Qt.Key_AsciiTilde) {
-            formatInputMessage()
         }
 
         if (event.key !== Qt.Key_Escape) {
@@ -856,11 +834,13 @@ Rectangle {
             anchors.right: actions.left
             anchors.rightMargin: Style.current.halfPadding
             ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+            StatusSyntaxHighlighter {
+                quickTextDocument: messageInputField.textDocument
+            }
 
             TextArea {
-                property var lastClick: 0
-
                 id: messageInputField
+                property var lastClick: 0
                 textFormat: Text.RichText
                 font.pixelSize: 15
                 font.family: Style.current.fontRegular.name
