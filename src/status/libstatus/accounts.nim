@@ -7,7 +7,6 @@ import ../types as types
 import accounts/constants
 import ../signals/types as signal_types
 import ../wallet/account
-from settings as status_settings import nil
 
 proc getNetworkConfig(currentNetwork: string): JsonNode =
   result = constants.DEFAULT_NETWORKS.first("id", currentNetwork)

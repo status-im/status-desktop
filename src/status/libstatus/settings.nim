@@ -1,5 +1,5 @@
 import
-  json, tables, sugar, sequtils, strutils, atomics
+  json, tables, sugar, sequtils, strutils, atomics, os
 
 import
   json_serialization, chronicles, uuids
@@ -54,7 +54,12 @@ proc getSetting*[T](name: Setting, defaultValue: T, useCached: bool = true): T =
   let settings: JsonNode = getSettings(useCached, $name == "mnemonic")
   if not settings.contains($name) or settings{$name}.isEmpty():
     return defaultValue
-  result = Json.decode($settings{$name}, T)
+  let value = $settings{$name}
+  try:
+    result = Json.decode(value, T)
+  except Exception as e:
+    error "Error decoding setting", name=name, value=value, msg=e.msg
+    raise e
 
 proc getSetting*[T](name: Setting, useCached: bool = true): T =
   result = getSetting(name, default(type(T)), useCached)
