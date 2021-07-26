@@ -114,19 +114,9 @@ Item {
             }
         }
 
-        Address {
-            id: addressText
-            width: 90
-            text: loginModel.currentAccount.address
-            font.pixelSize: 15
-            anchors.top: usernameText.bottom
-            anchors.topMargin: 4
-            anchors.horizontalCenter: parent.horizontalCenter
-        }
-
         Input {
             id: txtPassword
-            anchors.top: addressText.bottom
+            anchors.top: changeAccountBtn.bottom
             anchors.topMargin: Style.current.padding * 2
             enabled: !loading
             //% "Enter password"

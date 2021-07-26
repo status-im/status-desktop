@@ -10,9 +10,9 @@ type
   AccountRoles {.pure.} = enum
     Username = UserRole + 1
     Identicon = UserRole + 2
-    Address = UserRole + 3
-    ThumbnailImage = UserRole + 4
-    LargeImage = UserRole + 5
+    ThumbnailImage = UserRole + 3
+    LargeImage = UserRole + 4
+    KeyUid = UserRole + 5
 
 QtObject:
   type LoginView* = ref object of QAbstractListModel
@@ -45,7 +45,6 @@ QtObject:
     self.currentAccount.setAccount(GeneratedAccount(
       name: currNodeAcct.name,
       identicon: currNodeAcct.identicon,
-      address: currNodeAcct.keyUid,
       keyUid: currNodeAcct.keyUid,
       identityImage: currNodeAcct.identityImage
     ))
@@ -80,7 +79,7 @@ QtObject:
     case assetRole:
     of AccountRoles.Username: result = newQVariant(asset.name)
     of AccountRoles.Identicon: result = newQVariant(asset.identicon)
-    of AccountRoles.Address: result = newQVariant(asset.keyUid)
+    of AccountRoles.KeyUid: result = newQVariant(asset.keyUid)
     of AccountRoles.ThumbnailImage:
       if (not asset.identityImage.isNil):
         result = newQVariant(asset.identityImage.thumbnail)
@@ -95,15 +94,15 @@ QtObject:
   method roleNames(self: LoginView): Table[int, string] =
     { AccountRoles.Username.int:"username",
     AccountRoles.Identicon.int:"identicon",
-    AccountRoles.Address.int:"address",
     AccountRoles.ThumbnailImage.int:"thumbnailImage",
-    AccountRoles.LargeImage.int:"largeImage" }.toTable
+    AccountRoles.LargeImage.int:"largeImage",
+    AccountRoles.KeyUid.int:"keyUid" }.toTable
 
   proc login(self: LoginView, password: string): string {.slot.} =
     var currentAccountId = 0
     var i = 0
     for account in self.accounts:
-      if (account.keyUid == self.currentAccount.address):
+      if (account.keyUid == self.currentAccount.keyUid):
         currentAccountId = i
         break
       i = i + 1

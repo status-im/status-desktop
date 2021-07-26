@@ -52,9 +52,9 @@ QtObject:
     read = largeImage
     notify = identityImageChanged
 
-  proc address*(self: AccountInfoView): string {.slot.} = result = ?.self.account.address
-  QtProperty[string] address:
-    read = address
+  proc keyUid*(self: AccountInfoView): string {.slot.} = result = ?.self.account.keyUid
+  QtProperty[string] keyUid:
+    read = keyUid
     notify = accountChanged
 
   proc id*(self: AccountInfoView): string {.slot.} = result = ?.self.account.id

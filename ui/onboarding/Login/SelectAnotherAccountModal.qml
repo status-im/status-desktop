@@ -16,8 +16,8 @@ ModalPopup {
         anchors.fill: parent
 
         accounts: loginModel
-        isSelected: function (index, address) {
-            return loginModel.currentAccount.address === address
+        isSelected: function (index, keyUid) {
+            return loginModel.currentAccount.keyUid === keyUid
         }
 
         onAccountSelect: function(index) {

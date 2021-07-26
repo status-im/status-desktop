@@ -354,7 +354,7 @@ DISTFILES += \
     onboarding/KeysMain.qml \
     onboarding/Login.qml \
     onboarding/Login/AccountList.qml \
-    onboarding/Login/AddressView.qml \
+    onboarding/Login/AccountView.qml \
     onboarding/Login/ConfirmAddExistingKeyModal.qml \
     onboarding/Login/SelectAnotherAccountModal.qml \
     onboarding/Login/qmldir \
