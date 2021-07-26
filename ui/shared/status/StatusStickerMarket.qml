@@ -51,7 +51,7 @@ Item {
 
             ModalPopup {
                 id: stickerPackDetailsPopup
-                height: 472
+                height: 540
                 header: StatusStickerPackDetails {
                     packThumb: thumbnail
                     packName: name
