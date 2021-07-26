@@ -18,7 +18,7 @@ Column {
         width: parent.width
         spacing: 10
         StyledText {
-            text: "Upload"
+            text: qsTr("Upload")
             width: 250
             anchors.verticalCenter: parent.verticalCenter
         }
@@ -38,7 +38,7 @@ Column {
 
             StyledText {
                 color: Style.current.secondaryText
-                text: qsTrId("Kb/s")
+                text: qsTr("Kb/s")
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.right: uploadRate.right
                 anchors.rightMargin: Style.current.padding
@@ -47,7 +47,7 @@ Column {
         }
 
         StyledText {
-            text: "Download"
+            text: qsTr("Download")
             width: 273
             anchors.verticalCenter: parent.verticalCenter
         }
@@ -67,7 +67,7 @@ Column {
 
             StyledText {
                 color: Style.current.secondaryText
-                text: qsTrId("Kb/s")
+                text: qsTr("Kb/s")
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.right: downloadRate.right
                 anchors.rightMargin: Style.current.padding
