@@ -31,6 +31,11 @@ PopupMenu {
     property var emojiReactionsReactedByUser: []
     property var onClickEdit: function(){}
     property var reactionModel
+    property bool canPin: {
+        const nbPinnedMessages = chatsModel.messageView.pinnedMessagesList.count
+
+        return nbPinnedMessages < Constants.maxNumberOfPins
+    }
 
     signal closeParentPopup
 
@@ -140,13 +145,24 @@ PopupMenu {
 
     Action {
         id: pinAction
-        //% "Unpin"
-        text: pinnedMessage ? qsTrId("unpin") :
-                              //% "Pin"
-                              qsTrId("pin")
+        text: {
+            if (pinnedMessage) {
+                //% "Unpin"
+                return qsTrId("unpin")
+            }
+            //% "Pin"
+            return qsTrId("pin")
+
+        }
         onTriggered: {
             if (pinnedMessage) {
                 chatsModel.messageView.unPinMessage(messageId, chatsModel.channelView.activeChannel.id)
+                return
+            }
+
+            if (!canPin) {
+                // Open pin modal so that the user can unpin one
+                openPopup(pinnedMessagesPopupComponent, {messageToPin: messageId})
                 return
             }
 

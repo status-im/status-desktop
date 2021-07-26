@@ -147,6 +147,8 @@ QtObject {
     readonly property int maxUploadFiles: 5
     readonly property double maxUploadFilesizeMB: 0.5
 
+    readonly property int maxNumberOfPins: 3
+
     readonly property var acceptedImageExtensions: [".png", ".jpg", ".jpeg", ".svg", ".gif"]
     readonly property var acceptedDragNDropImageExtensions: [".png", ".jpg", ".jpeg", ".heif", "tif", ".tiff"]
 
