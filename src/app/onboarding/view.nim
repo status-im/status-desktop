@@ -9,7 +9,8 @@ type
   AccountRoles {.pure.} = enum
     Username = UserRole + 1,
     Identicon = UserRole + 2,
-    Address = UserRole + 3
+    KeyUid = UserRole + 3,
+    Address = UserRole + 4
 
 QtObject:
   type OnboardingView* = ref object of QAbstractListModel
@@ -59,11 +60,13 @@ QtObject:
     case assetRole:
     of AccountRoles.Username: result = newQVariant(asset.name)
     of AccountRoles.Identicon: result = newQVariant(asset.identicon)
-    of AccountRoles.Address: result = newQVariant(asset.keyUid)
+    of AccountRoles.KeyUid: result = newQVariant(asset.keyUid)
+    of AccountRoles.Address: result = newQVariant(asset.address)
 
   method roleNames(self: OnboardingView): Table[int, string] =
     { AccountRoles.Username.int:"username",
     AccountRoles.Identicon.int:"identicon",
+    AccountRoles.KeyUid.int:"keyUid",
     AccountRoles.Address.int:"address" }.toTable
 
   proc storeAccountAndLogin(self: OnboardingView, selectedAccountIndex: int, password: string): string {.slot.} =

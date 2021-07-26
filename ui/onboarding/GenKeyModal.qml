@@ -20,7 +20,7 @@ ModalPopup {
         interactive: false
 
         accounts: onboardingModel
-        isSelected: function (index, address) {
+        isSelected: function (index) {
             return index === selectedIndex
         }
         onAccountSelect: function(index) {

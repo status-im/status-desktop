@@ -8,22 +8,23 @@ ListView {
     property var isSelected: function () {}
     property var onAccountSelect: function () {}
 
-    id: addressesView
+    id: accountsView
     anchors.fill: parent
     model: accounts
     focus: true
     spacing: Style.current.smallPadding
     clip: true
 
-    delegate: AddressView {
+    delegate: AccountView {
         username: model.username
-        address: model.address
         identicon: model.thumbnailImage || model.identicon
-        isSelected: function (index, address) {
-            return addressesView.isSelected(index, address)
+        keyUid: model.keyUid
+        address: model.address || ''
+        isSelected: function (index, keyUid) {
+            return accountsView.isSelected(index, keyUid)
         }
         onAccountSelect: function (index) {
-            addressesView.onAccountSelect(index)
+            accountsView.onAccountSelect(index)
         }
     }
 }
