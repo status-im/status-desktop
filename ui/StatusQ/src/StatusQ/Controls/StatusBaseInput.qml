@@ -42,6 +42,12 @@ Item {
 
     property bool valid: true
 
+    property StatusIconSettings icon: StatusIconSettings {
+        width: 24
+        height: 24
+        name: ""
+    }
+
     implicitWidth: 448
     implicitHeight: multiline ? Math.max(edit.implicitHeight + topPadding + bottomPadding, 44) : 44
 
@@ -74,11 +80,29 @@ Item {
             anchors.fill: parent
             cursorShape: Qt.IBeamCursor
             onClicked: edit.forceActiveFocus()
+
+            StatusIcon {
+                id: statusIcon
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.left: parent.left
+                anchors.leftMargin: 10
+                anchors.topMargin: 10
+
+                icon: statusBaseInput.icon.name
+                width: statusBaseInput.icon.width
+                height: statusBaseInput.icon.height
+                color: Theme.palette.baseColor1
+                visible: !!statusBaseInput.icon.name
+            }
+
             Flickable {
                 id: flick
 
-                anchors.fill: parent
-                anchors.leftMargin: statusBaseInput.leftPadding
+                anchors.top: parent.top
+                anchors.bottom: parent.bottom
+                anchors.left: statusIcon.visible ? statusIcon.right : parent.left
+                anchors.right: parent.right
+                anchors.leftMargin: statusIcon.visible ? 8 : statusBaseInput.leftPadding
                 anchors.rightMargin: statusBaseInput.rightPadding + clearable ? clearButtton.width : 0
                 anchors.topMargin: statusBaseInput.topPadding
                 anchors.bottomMargin: statusBaseInput.bottomPadding

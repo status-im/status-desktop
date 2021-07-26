@@ -32,6 +32,13 @@ Column {
 
     StatusInput {
         label: "Label"
+
+        input.icon.name: "search"
+        input.placeholderText: "Input with icon"
+    }
+
+    StatusInput {
+        label: "Label"
         input.placeholderText: "Placeholder"
         input.clearable: true
     }
