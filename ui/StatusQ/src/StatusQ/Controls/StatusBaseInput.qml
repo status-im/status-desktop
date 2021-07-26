@@ -21,6 +21,8 @@ Item {
     property alias selectionStart: edit.selectionStart
     property alias selectionEnd: edit.selectionEnd
 
+    property alias text: edit.text
+
     property alias color: edit.color
     property alias font: edit.font
     property alias verticalAlignmet: edit.verticalAlignment
