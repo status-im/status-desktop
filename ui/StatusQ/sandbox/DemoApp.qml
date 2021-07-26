@@ -408,6 +408,12 @@ Rectangle {
 
         StatusAppThreePanelLayout {
             id: root
+
+            handle: Rectangle {
+                implicitWidth: 5
+                color: SplitHandle.pressed ? Theme.palette.baseColor2
+                    : (SplitHandle.hovered ? Qt.darker(Theme.palette.baseColor5, 1.1) : "transparent")
+            }
             leftPanel: Item {
                 id: leftPanel
 
@@ -567,12 +573,15 @@ Rectangle {
             }
 
             rightPanel: Item {
+                id: rightPanel
                 StatusBaseText {
                     id: titleText
                     anchors.top: parent.top
                     anchors.topMargin:16
                     anchors.left: parent.left
                     anchors.leftMargin: 16
+                    opacity: (rightPanel.width > 50) ? 1.0 : 0.0
+                    visible: (opacity > 0.1)
                     font.pixelSize: 15
                     text: qsTr("Members")
                 }
@@ -601,6 +610,8 @@ Rectangle {
                         StatusBaseText {
                             height: parent.height
                             horizontalAlignment: Text.AlignHCenter
+                            opacity: (rightPanel.width > 50) ? 1.0 : 0.0
+                            visible: (opacity > 0.1)
                             font.pixelSize: 15
                             color: Theme.palette.directColor1
                             text: modelData

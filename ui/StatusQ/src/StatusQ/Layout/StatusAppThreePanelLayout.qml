@@ -16,6 +16,7 @@ SplitView {
     property bool showRightPanel
 
     Control {
+        SplitView.minimumWidth: 300
         SplitView.preferredWidth: 300
         SplitView.fillHeight: true
         contentItem: (!!leftPanel) ? leftPanel : null
