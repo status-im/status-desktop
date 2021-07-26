@@ -585,6 +585,10 @@ Item {
         Connections {
             target: chatsModel.messageView
 
+            onSearchedMessageLoaded: {
+                positionAtMessage(messageId)
+            }
+
             onMessageNotificationPushed: function(chatId, msg, contentType, chatType, timestamp, identicon, username, hasMention, isAddedContact, channelName) {
                 if (appSettings.notificationSetting == Constants.notifyAllMessages ||
                         (appSettings.notificationSetting == Constants.notifyJustMentions && hasMention)) {
