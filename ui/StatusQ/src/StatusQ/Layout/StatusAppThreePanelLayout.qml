@@ -26,6 +26,7 @@ SplitView {
     }
 
     Control {
+        SplitView.minimumWidth: 300
         SplitView.fillWidth: true
         SplitView.fillHeight: true
         contentItem: (!!centerPanel) ? centerPanel : null
