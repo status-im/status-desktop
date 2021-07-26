@@ -126,7 +126,6 @@ ModalPopup {
             GasValidator {
                 id: gasValidator
                 anchors.bottom: parent.bottom
-                anchors.bottomMargin: 8
                 selectedAccount: selectFromAccount.selectedAccount
                 selectedAsset: root.asset
                 selectedAmount: parseFloat(packPrice)
