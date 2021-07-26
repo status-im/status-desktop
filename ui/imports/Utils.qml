@@ -382,9 +382,14 @@ QtObject {
         }
         if (index > -1) {
             const pk = link.substring(index + 3)
-            result.title = qsTrId("start-a-1-on-1-chat-with--1").arg(utilsModel.generateAlias(pk))
+            result.title = qsTr("Start a 1-on-1 chat with %1")
+                            .arg(isChatKey(pk) ? utilsModel.generateAlias(pk) : ("@" + removeStatusEns(pk)))
             result.callback = function () {
-                chatsModel.channelView.joinPrivateChat(pk, "");
+                if(isChatKey(pk)){
+                    chatsModel.channelView.joinPrivateChat(pk, "");
+                } else {
+                    chatsModel.channelView.joinWithENS(pk);
+                }
             }
             return result
         }
@@ -463,7 +468,7 @@ QtObject {
         const result = getLinkTitleAndCb(link)
 
         return {
-            site: qsTrId("status-app-link"),
+            site: "https://join.status.im",
             title: result.title,
             communityId: result.communityId,
             fetching: result.fetching,

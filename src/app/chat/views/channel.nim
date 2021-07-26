@@ -202,6 +202,11 @@ QtObject:
     self.setActiveChannel(pubKey)
     ChatType.OneToOne.int
 
+  proc joinWithENS*(self: ChannelView, ensName: string): int {.slot.} =
+    let pubKey = status_ens.pubkey(ensName)
+    if pubKey == "": return
+    self.joinPrivateChat(pubKey, ensName)
+
   # TODO(pascal): replace with `leaveChat`, which is id based
   # instead of index based, when refactoring/removing `ChannelContextMenu` 
   # (they still make use of this)

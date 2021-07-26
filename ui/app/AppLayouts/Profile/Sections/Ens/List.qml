@@ -19,6 +19,7 @@ Item {
     property string message: qsTrId("ens-test-message")
     property string authorCurrentMsg: "0"
     property string authorPrevMsg: "1"
+    property bool isText: true
     property var clickMessage: function(){}
     property string identicon: profileModel.profile.identicon
     property int timestamp: 1577872140
