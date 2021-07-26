@@ -11,7 +11,7 @@ import StatusQ.Popups 0.1
 Rectangle {
     id: demoApp
     height: 602
-    width: 902
+    width: 1002
     border.width: 1
     border.color: Theme.palette.baseColor2
 

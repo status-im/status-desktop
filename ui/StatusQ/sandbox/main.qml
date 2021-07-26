@@ -15,7 +15,7 @@ import StatusQ.Platform 0.1
 StatusWindow {
     id: rootWindow
     width: Qt.platform.os == "ios" || Qt.platform.os == "android" ? Screen.width
-                                                                  :  1024
+                                                                  :  1224
     height: Qt.platform.os == "ios" || Qt.platform.os == "android" ? Screen.height
                                                                    :840
     visible: true
