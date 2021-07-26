@@ -226,7 +226,7 @@ QtObject:
 
   proc messageNotificationPushed*(self: MessageView, chatId: string, text: string, contentType: int, chatType: int, timestamp: string, identicon: string, username: string, hasMention: bool, isAddedContact: bool, channelName: string) {.signal.}
 
-  proc pushMessages*(self:MessageView, messages: var seq[Message]) =
+  proc pushMessages*(self:MessageView, messages: var seq[Message], chats: seq[Chat] = @[]) =
     for msg in messages.mitems:
       self.upsertChannel(msg.chatId)
       msg.userName = self.status.chat.getUserName(msg.fromAuthor, msg.alias)
@@ -260,6 +260,10 @@ QtObject:
         if not channel.muted and not isEdit and not isGroupSelf:
           let isAddedContact = channel.chatType.isOneToOne and self.isAddedContact(channel.id)
           self.messageNotificationPushed(msg.chatId, escape_html(msg.text), msg.contentType.int, channel.chatType.int, msg.timestamp, msg.identicon, msg.userName, msg.hasMention, isAddedContact, channel.name)
+    
+    for chat in chats:
+      if chat.chatType == ChatType.PrivateGroupChat and self.messageList.hasKey(chat.id):
+        self.messageList[chat.id].addChatUpdate(chat)
 
   proc markMessageAsSent*(self:MessageView, chat: string, messageId: string) =
     if self.messageList.contains(chat):

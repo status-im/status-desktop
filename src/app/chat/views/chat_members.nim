@@ -58,7 +58,7 @@ QtObject:
   method roleNames(self: ChatMembersView): Table[int, string] =
     {
       ChatMemberRoles.UserName.int:"userName",
-      ChatMemberRoles.PubKey.int:"pubKey",
+      ChatMemberRoles.PubKey.int:"publicKey",
       ChatMemberRoles.IsAdmin.int: "isAdmin",
       ChatMemberRoles.Joined.int: "joined",
       ChatMemberRoles.Identicon.int: "identicon",
