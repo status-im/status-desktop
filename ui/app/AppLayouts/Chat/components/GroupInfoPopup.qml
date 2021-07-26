@@ -31,7 +31,7 @@ ModalPopup {
         const contacts = getContactListObject()
 
         contacts.forEach(function (contact) {
-            if(popup.channel.contains(contact.pubKey) ||
+            if(popup.channel.contains(contact.publicKey) ||
                     !contact.isContact) {
                 return;
             }
@@ -278,12 +278,12 @@ ModalPopup {
                 width: parent.width
                 height: identicon.height
 
-                property string nickname: appMain.getUserNickname(model.pubKey)
+                property string nickname: appMain.getUserNickname(model.publicKey)
 
                 StatusImageIdenticon {
                     id: identicon
                     anchors.left: parent.left
-                    source: appMain.getProfileImage(model.pubKey)|| model.identicon
+                    source: appMain.getProfileImage(model.publicKey)|| model.identicon
                 }
 
                 StyledText {
@@ -295,7 +295,7 @@ ModalPopup {
                     font.pixelSize: 17
 
                     StyledText {
-                        visible: model.pubKey === profileModel.profile.pubKey
+                        visible: model.publicKey === profileModel.profile.pubKey
                         anchors.left: parent.right
                         anchors.leftMargin: 5
                         //% "(You)"
@@ -307,8 +307,8 @@ ModalPopup {
                         anchors.fill: parent
                         cursorShape: Qt.PointingHandCursor
                         onClicked: {
-                            const userProfileImage = appMain.getProfileImage(model.pubKey)
-                            openProfilePopup(model.userName, model.pubKey, userProfileImage || model.identicon, '', contactRow.nickname, popup)
+                            const userProfileImage = appMain.getProfileImage(model.publicKey)
+                            openProfilePopup(model.userName, model.publicKey, userProfileImage || model.identicon, '', contactRow.nickname, popup)
                         }
                     }
                 }
@@ -348,7 +348,7 @@ ModalPopup {
                                 icon.height: 16
                                 //% "Make Admin"
                                 text: qsTrId("make-admin")
-                                onTriggered: chatsModel.groups.makeAdmin(popup.channel.id,  model.pubKey)
+                                onTriggered: chatsModel.groups.makeAdmin(popup.channel.id,  model.publicKey)
                             }
                             Action {
                                 icon.source: "../../../img/remove-from-group.svg"
@@ -357,7 +357,7 @@ ModalPopup {
                                 icon.color: Style.current.red
                                 //% "Remove From Group"
                                 text: qsTrId("remove-from-group")
-                                onTriggered: chatsModel.groups.kickMember(popup.channel.id,  model.pubKey)
+                                onTriggered: chatsModel.groups.kickMember(popup.channel.id,  model.publicKey)
                             }
                         }
                     }

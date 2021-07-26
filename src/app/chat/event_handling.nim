@@ -4,7 +4,8 @@ import # std libs
 import # status-desktop libs
   ../../status/chat/chat as status_chat, ./views/communities,
   ../../status/tasks/marathon,
-  ../../status/tasks/marathon/mailserver/worker
+  ../../status/tasks/marathon/mailserver/worker,
+  ./views/messages
 
 proc handleChatEvents(self: ChatController) =
   # Display already saved messages
@@ -36,7 +37,7 @@ proc handleChatEvents(self: ChatController) =
     self.view.hideLoadingIndicator()
     self.view.updateUsernames(evArgs.contacts)
     self.view.updateChats(evArgs.chats)
-    self.view.pushMessages(evArgs.messages)
+    self.view.pushMessages(evArgs.messages, evArgs.chats)
 
     # TODO: update current user status (once it's possible to switch between ONLINE and DO_NOT_DISTURB)
 
@@ -102,6 +103,8 @@ proc handleChatEvents(self: ChatController) =
     # Do not add community chats to the normal chat list
     elif channel.chat.chatType != ChatType.Profile and channel.chat.chatType != status_chat.ChatType.CommunityChat:
       discard self.view.channelView.chats.addChatItemToList(channel.chat)
+      self.view.messageView.upsertChannel(channel.chat.id)
+      self.view.messageView.messageList[channel.chat.id].addChatUpdate(channel.chat)
 
     if channel.chat.chatType == status_chat.ChatType.CommunityChat:
       self.view.communities.updateCommunityChat(channel.chat)

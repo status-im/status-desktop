@@ -1,8 +1,10 @@
 import NimQml, Tables, json, chronicles, sequtils
 import ../../../status/status
 import ../../../status/accounts
-import ../../../status/chat
-import ../../../status/chat/[message]
+import ../../../status/chat as status_chat
+import ../../../status/chat/[message, chat]
+import ../../../status/ens
+
 import strutils
 
 type
@@ -69,6 +71,58 @@ QtObject:
       UserListRoles.LocalName.int:"localName",
       UserListRoles.Identicon.int:"identicon"
     }.toTable
+
+  proc add*(self: UserListView, members: seq[ChatMember]) =
+    # Adding chat members
+    for m in members:
+      let pk = m.id
+      if self.userDetails.hasKey(pk): continue
+
+      var userName: string
+      var alias: string
+      var identicon: string
+      var localName: string
+      
+      if self.status.chat.contacts.hasKey(pk):
+        userName = ens.userNameOrAlias(self.status.chat.contacts[pk])
+        alias = self.status.chat.contacts[pk].alias
+        identicon = self.status.chat.contacts[pk].identicon
+        localName = self.status.chat.contacts[pk].localNickname
+      else:
+        userName = m.username
+        alias = m.username
+        identicon = m.identicon
+        localName = ""
+
+      self.beginInsertRows(newQModelIndex(), self.users.len, self.users.len)
+      self.userDetails[pk] = User(
+          userName: userName,
+          alias: alias,
+          localName: localName,
+          lastSeen: "0",
+          identicon: identicon
+      )
+      self.users.add(pk)
+      self.endInsertRows()
+    
+    # Checking for removed members
+    var toDelete: seq[string]
+    for userPublicKey in self.users:
+      var found = false
+      for m in members:
+        if m.id == userPublicKey: 
+          found = true
+          break
+      if not found:
+        toDelete.add(userPublicKey)
+
+    # Removing deleted members
+    if toDelete.len > 0:
+      self.beginResetModel()
+      for pkToDelete in toDelete:
+        self.users.del(self.users.find(pkToDelete))
+        self.userDetails.del(pkToDelete)
+      self.endResetModel()
 
   proc add*(self: UserListView, message: Message) =
     if self.userDetails.hasKey(message.fromAuthor):

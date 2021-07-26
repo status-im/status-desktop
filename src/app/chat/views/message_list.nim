@@ -1,8 +1,8 @@
 import NimQml, Tables, sets, json, sugar, chronicles, sequtils
 import ../../../status/status
 import ../../../status/accounts
-import ../../../status/chat
-import ../../../status/chat/[message,stickers]
+import ../../../status/chat as status_chat
+import ../../../status/chat/[message,stickers,chat]
 import ../../../status/profile/profile
 import ../../../status/ens
 import strutils
@@ -286,6 +286,11 @@ QtObject:
 
   proc contains*(self: ChatMessageList, message: Message):bool =
     return self.messageIndex.hasKey(message.id)
+
+  proc addChatUpdate*(self: ChatMessageList, chat: Chat) =
+    # Using chat update to add/remove members to a group chat
+    if chat.chatType == ChatType.PrivateGroupChat:
+      self.userList.add(chat.members)
 
   proc add*(self: ChatMessageList, message: Message) =
     if self.messageIndex.hasKey(message.id) and message.editedAt == "0": return # duplicated msg

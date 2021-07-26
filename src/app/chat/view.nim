@@ -438,8 +438,8 @@ QtObject:
     let task = RequestMessagesTaskArg( `method`: "requestMoreMessages", chatId: self.channelView.activeChannel.id)
     mailserverWorker.start(task)
 
-  proc pushMessages*(self: ChatsView, messages: var seq[Message]) =
-    self.messageView.pushMessages(messages)
+  proc pushMessages*(self: ChatsView, messages: var seq[Message], chats: seq[Chat] = @[]) =
+    self.messageView.pushMessages(messages, chats)
 
   proc pushPinnedMessages*(self: ChatsView, pinnedMessages: var seq[Message]) =
     self.messageView.pushPinnedMessages(pinnedMessages)
