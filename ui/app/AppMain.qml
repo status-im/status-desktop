@@ -370,6 +370,7 @@ StatusAppLayout {
         property bool onlyShowContactsProfilePics: true
         property bool quitOnClose: false
         property string skinColor: ""
+        property bool showDeleteMessageWarning: true
 
         // Browser settings
         property bool showBrowserSelector: true
@@ -555,6 +556,17 @@ StatusAppLayout {
             }
         }
     }
+
+    Component {
+        id: genericConfirmationDialog
+        ConfirmationDialog {
+            onClosed: {
+                destroy()
+            }
+        }
+    }
+
+
 
     ToastMessage {
         id: toastMessage

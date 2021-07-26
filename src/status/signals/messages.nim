@@ -75,6 +75,10 @@ proc fromEvent*(event: JsonNode): Signal =
     for jsonCommunity in event["event"]["requestsToJoinCommunity"]:
       signal.membershipRequests.add(jsonCommunity.toCommunityMembershipRequest)
 
+  if event["event"]{"removedMessages"} != nil:
+    for messageId in event["event"]["removedMessages"]:
+      signal.deletedMessages.add(messageId.getStr)
+
   if event["event"]{"activityCenterNotifications"} != nil:
     for jsonNotification in event["event"]["activityCenterNotifications"]:
       signal.activityCenterNotification.add(jsonNotification.toActivityCenterNotification())
@@ -347,6 +351,7 @@ proc toMessage*(jsonMsg: JsonNode): Message =
       audio: $jsonMsg{"audio"}.getStr,
       communityId: $jsonMsg{"communityId"}.getStr,
       audioDurationMs: jsonMsg{"audioDurationMs"}.getInt,
+      deleted: jsonMsg{"deleted"}.getBool,
       hasMention: false
     )
 

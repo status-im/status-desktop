@@ -456,6 +456,13 @@ QtObject:
   proc refreshPinnedMessages*(self: ChatsView, pinnedMessages: seq[Message]) =
     self.messageView.refreshPinnedMessages(pinnedMessages)
 
+  proc deleteMessage*(self: ChatsView, messageId: string) =
+    let chatId = self.messageView.getChatIdForMessage(messageId)
+    if (chatId.len == 0):
+      return
+    self.deleteMessage(chatId, messageId)
+
+
   proc clearMessages*(self: ChatsView, id: string) =
     self.messageView.clearMessages(id)
 

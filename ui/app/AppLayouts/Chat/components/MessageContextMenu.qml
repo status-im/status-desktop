@@ -250,7 +250,7 @@ PopupMenu {
         onTriggered: {
             onClickEdit();
         }
-        icon.source: "../../../img/profileActive.svg"
+        icon.source: "../../../img/edit-message.svg"
         icon.width: 16
         icon.height: 16
         enabled: isCurrentUser && isText
@@ -289,5 +289,34 @@ PopupMenu {
         icon.width: 16
         icon.height: 16
         enabled: messageContextMenu.pinnedMessage && messageContextMenu.showJumpTo
+    }
+    
+    Action {
+        id: deleteMessageAction
+        text: qsTr("Delete message")
+        onTriggered: {
+            if (!appSettings.showDeleteMessageWarning) {
+                return chatsModel.messageView.deleteMessage(messageId)
+            }
+
+            let confirmationDialog = openPopup(genericConfirmationDialog, {
+                                                   title: qsTr("Confirm deleting this message"),
+                                                   confirmationText: qsTr("Are you sure you want to delete this message? Be aware that other clients are not garanteed to delete the message as well."),
+                                                   height: 260,
+                                                   "checkbox.visible": true,
+                                                   executeConfirm: function () {
+                                                       if (confirmationDialog.checkbox.checked) {
+                                                           appSettings.showDeleteMessageWarning = false
+                                                       }
+
+                                                       confirmationDialog.close()
+                                                       chatsModel.messageView.deleteMessage(messageId)
+                                                   }
+                                               })
+        }
+        icon.source: "../../../img/delete.svg"
+        icon.width: 16
+        icon.height: 16
+        enabled: isCurrentUser
     }
 }
