@@ -11,6 +11,7 @@ import "./CommunityComponents"
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 import StatusQ.Popups 0.1
 
@@ -20,14 +21,14 @@ Item {
     height: parent.height
 
     property int chatGroupsListViewCount: channelList.chatListItems.count
-    property alias searchStr: searchBox.text
+    property alias searchStr: searchInput.text
     signal openProfileClicked()
 
     MouseArea {
         anchors.fill: parent
         onClicked: {
             //steal focus from search field
-            addChat.forceActiveFocus();
+            actionButton.forceActiveFocus();
         }
     }
 
@@ -40,25 +41,122 @@ Item {
         text: qsTrId("chat")
     }
 
-    SearchBox {
-        id: searchBox
+    Item {
+        id: searchInputWrapper
         anchors.top: headline.bottom
-        anchors.topMargin: Style.current.padding
-        anchors.right: addChat.left
-        anchors.rightMargin: Style.current.padding
-        anchors.left: parent.left
-        anchors.leftMargin: Style.current.padding
-        Keys.onEscapePressed: {
-            addChat.forceActiveFocus();
-        }
-    }
+        anchors.topMargin: 16
+        width: parent.width
+        height: searchInput.height
 
-    AddChat {
-        id: addChat
-        anchors.right: parent.right
-        anchors.rightMargin: Style.current.padding
-        anchors.top: headline.bottom
-        anchors.topMargin: Style.current.padding
+        StatusBaseInput {
+            id: searchInput
+
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.left: parent.left
+            anchors.right: actionButton.left
+            anchors.leftMargin: 16
+            anchors.rightMargin: 16
+
+            height: 36
+            topPadding: 8
+            bottomPadding: 0
+            placeholderText: qsTr("Search")
+            icon.name: "search"
+            Keys.onEscapePressed: {
+                actionButton.forceActiveFocus();
+            }
+        }
+
+        StatusRoundButton {
+            id: actionButton
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.right: parent.right
+            anchors.rightMargin: 8
+            width: 32
+            height: 32
+
+            type: StatusRoundButton.Type.Secondary
+            icon.name: "add"
+            state: "default"
+
+            onClicked: chatContextMenu.popup(actionButton.width-chatContextMenu.width, actionButton.height + 4)
+            states: [
+                State {
+                    name: "default"
+                    PropertyChanges {
+                        target: actionButton
+                        icon.rotation: 0
+                        highlighted: false
+                    }
+                },
+                State {
+                    name: "pressed"
+                    PropertyChanges {
+                        target: actionButton
+                        icon.rotation: 45
+                        highlighted: true
+                    }
+                }
+            ]
+
+            transitions: [
+                Transition {
+                    from: "default"
+                    to: "pressed"
+
+                    RotationAnimation {
+                        duration: 150
+                        direction: RotationAnimation.Clockwise
+                        easing.type: Easing.InCubic
+                    }
+                },
+                Transition {
+                    from: "pressed"
+                    to: "default"
+                    RotationAnimation {
+                        duration: 150
+                        direction: RotationAnimation.Counterclockwise
+                        easing.type: Easing.OutCubic
+                    }
+                }
+            ]
+
+            StatusPopupMenu {
+                id: chatContextMenu
+
+                onOpened: {
+                    actionButton.state = "pressed"
+                }
+
+                onClosed: {
+                    actionButton.state = "default"
+                }
+
+                StatusMenuItem {
+                    text: qsTr("Start new chat")
+                    icon.name: "private-chat"
+                    onTriggered: openPopup(privateChatPopupComponent)
+                }
+
+                StatusMenuItem {
+                    text: qsTr("Start group chat")
+                    icon.name: "group-chat"
+                    onTriggered: openPopup(groupChatPopupComponent)
+                }
+
+                StatusMenuItem {
+                    text: qsTr("Join public chat")
+                    icon.name: "public-chat"
+                    onTriggered: openPopup(publicChatPopupComponent)
+                }
+
+                StatusMenuItem {
+                    text: qsTr("Communities")
+                    icon.name: "communities"
+                    onTriggered: openPopup(communitiesPopupComponent)
+                }
+            }
+        }
     }
 
     StatusContactRequestsIndicatorListItem {
@@ -66,7 +164,7 @@ Item {
 
         property int nbRequests: profileModel.contacts.contactRequests.count
 
-        anchors.top: searchBox.bottom
+        anchors.top: searchInputWrapper.bottom
         anchors.topMargin: visible ? Style.current.padding : 0
         anchors.horizontalCenter: parent.horizontalCenter
 
