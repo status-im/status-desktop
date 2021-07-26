@@ -17,8 +17,8 @@ StatusModal {
     id: popup
 
     onOpened: {
-        searchBox.text = "";
-        searchBox.forceActiveFocus(Qt.MouseFocusReason)
+        contentComponent.searchBox.text = "";
+        contentComponent.searchBox.forceActiveFocus(Qt.MouseFocusReason)
     }
 
     //% "Communities"
@@ -44,6 +44,7 @@ StatusModal {
 
     content: Column {
         width: popup.width
+        property alias searchBox: searchBox
 
         Item {
             height: 68
