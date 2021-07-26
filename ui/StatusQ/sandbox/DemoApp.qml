@@ -172,8 +172,119 @@ Rectangle {
                     text: "Chat"
                 }
 
-                Column {
+                Item {
+                    id: searchInputWrapper
                     anchors.top: headline.bottom
+                    anchors.topMargin: 16
+                    width: parent.width
+                    height: searchInput.height
+
+                    StatusBaseInput {
+                        id: searchInput
+
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.left: parent.left
+                        anchors.right: actionButton.left
+                        anchors.leftMargin: 16
+                        anchors.rightMargin: 16
+
+                        height: 36
+                        topPadding: 8
+                        bottomPadding: 0
+                        placeholderText: "Search"
+                        icon.name: "search"
+                    }
+
+                    StatusRoundButton {
+                        id: actionButton
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.right: parent.right
+                        anchors.rightMargin: 8
+                        width: 32
+                        height: 32
+
+                        type: StatusRoundButton.Type.Secondary
+                        icon.name: "add"
+                        state: "default"
+
+                        onClicked: chatContextMenu.popup(actionButton.width-chatContextMenu.width, actionButton.height + 4)
+                        states: [
+                            State {
+                                name: "default"
+                                PropertyChanges {
+                                    target: actionButton
+                                    icon.rotation: 0
+                                    highlighted: false
+                                }
+                            },
+                            State {
+                                name: "pressed"
+                                PropertyChanges {
+                                    target: actionButton
+                                    icon.rotation: 45
+                                    highlighted: true
+                                }
+                            }
+                        ]
+
+                        transitions: [
+                            Transition {
+                                from: "default"
+                                to: "pressed"
+
+                                RotationAnimation {
+                                    duration: 150
+                                    direction: RotationAnimation.Clockwise
+                                    easing.type: Easing.InCubic
+                                }
+                            },
+                            Transition {
+                                from: "pressed"
+                                to: "default"
+                                RotationAnimation {
+                                    duration: 150
+                                    direction: RotationAnimation.Counterclockwise
+                                    easing.type: Easing.OutCubic
+                                }
+                            }
+                        ]
+
+                        StatusPopupMenu {
+                            id: chatContextMenu
+
+                            onOpened: {
+                                actionButton.state = "pressed"
+                            }
+
+                            onClosed: {
+                                actionButton.state = "default"
+                            }
+
+                            StatusMenuItem {
+                                text: "Start new chat"
+                                icon.name: "private-chat"
+                            }
+
+                            StatusMenuItem {
+                                text: "Start group chat"
+                                icon.name: "group-chat"
+                            }
+
+                            StatusMenuItem {
+                                text: "Join public chat"
+                                icon.name: "public-chat"
+                            }
+
+                            StatusMenuItem {
+                                text: "Communities"
+                                icon.name: "communities"
+                            }
+                        }
+                    }
+                }
+
+                Column {
+                    anchors.top: searchInputWrapper.bottom
                     anchors.topMargin: 16
                     width: parent.width
                     spacing: 8
@@ -491,6 +602,7 @@ Rectangle {
                             height: parent.height
                             horizontalAlignment: Text.AlignHCenter
                             font.pixelSize: 15
+                            color: Theme.palette.directColor1
                             text: modelData
                         }
                     }
