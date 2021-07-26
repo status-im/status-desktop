@@ -38,6 +38,7 @@ type MessageSignal* = ref object of Signal
   membershipRequests*: seq[CommunityMembershipRequest]
   activityCenterNotification*: seq[ActivityCenterNotification]
   statusUpdates*: seq[StatusUpdate]
+  deletedMessages*: seq[string]
 
 type CommunitySignal* = ref object of Signal
   community*: Community

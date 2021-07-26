@@ -205,6 +205,8 @@ Item {
         messageContextMenu.messageId = root.messageId;
         messageContextMenu.linkUrls = root.linkUrls;
         messageContextMenu.isProfile = !!isProfileClick;
+        messageContextMenu.isCurrentUser = root.isCurrentUser
+        messageContextMenu.isText = root.isText
         messageContextMenu.isSticker = isSticker;
         messageContextMenu.emojiOnly = emojiOnly;
         messageContextMenu.hideEmojiPicker = hideEmojiPicker;

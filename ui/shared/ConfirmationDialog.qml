@@ -11,6 +11,7 @@ ModalPopup {
     property Popup parentPopup
     property string btnType: "warn"
     property bool showCancelButton: false
+    property alias checkbox: checkbox
 
 
     height: 186
@@ -31,14 +32,31 @@ ModalPopup {
     signal confirmButtonClicked()
     signal cancelButtonClicked()
 
-    StyledText {
-        id: innerText
-        text: confirmationDialog.confirmationText
-        font.pixelSize: 15
-        anchors.left: parent.left
-        anchors.right: parent.right
-        wrapMode: Text.WordWrap
+    property var executeConfirm
+    property var executeCancel
+
+    Item {
+        anchors.fill: parent
+
+        StyledText {
+            id: innerText
+            text: confirmationDialog.confirmationText
+            font.pixelSize: 15
+            anchors.left: parent.left
+            anchors.right: parent.right
+            wrapMode: Text.WordWrap
+        }
+
+        StatusCheckBox {
+            id: checkbox
+            visible: false
+            anchors.top: innerText.bottom
+            anchors.topMargin: Style.current.halfPadding
+            Layout.preferredWidth: parent.width
+            text: qsTr("Do not show this again")
+        }
     }
+
 
     footer: Item {
         id: footerContainer
@@ -48,11 +66,17 @@ ModalPopup {
         StatusButton {
             id: confirmButton
             type: confirmationDialog.btnType
-            anchors.right: cancelButton.left
-            anchors.rightMargin: Style.current.smallPadding
+            anchors.right: cancelButton.visible ? cancelButton.left : parent.right
+            anchors.rightMargin: cancelButton.visible ? Style.current.smallPadding : 0
             text: confirmationDialog.confirmButtonLabel
             anchors.bottom: parent.bottom
-            onClicked: confirmationDialog.confirmButtonClicked()
+            onClicked: {
+                if (executeConfirm && typeof executeConfirm === "function") {
+                    executeConfirm()
+                }
+
+                confirmationDialog.confirmButtonClicked()
+            }
         }
 
         StatusButton {
@@ -62,7 +86,12 @@ ModalPopup {
             anchors.rightMargin: Style.current.smallPadding
             text: confirmationDialog.cancelButtonLabel
             anchors.bottom: parent.bottom
-            onClicked: confirmationDialog.cancelButtonClicked()
+            onClicked: {
+                if (executeConfirm && typeof executeConfirm === "function") {
+                    executeConfirm()
+                }
+                confirmationDialog.cancelButtonClicked()
+            }
         }
     }
 }

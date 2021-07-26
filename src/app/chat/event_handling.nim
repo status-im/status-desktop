@@ -53,6 +53,9 @@ proc handleChatEvents(self: ChatController) =
           # replaced the initial one. That's why we call this proce here in case message with "message.replace"
           # was not deleted.
           discard self.view.deleteMessageWhichReplacedMessageWithId(message.chatId, message.replace)
+      if (message.deleted):
+        self.view.deleteMessage(message.chatId, message.id)
+
 
     self.view.reactions.push(evArgs.emojiReactions)
     if (evArgs.communities.len > 0):
@@ -76,6 +79,10 @@ proc handleChatEvents(self: ChatController) =
     if (evArgs.activityCenterNotifications.len > 0):
       self.view.addActivityCenterNotification(evArgs.activityCenterNotifications)
       self.view.communities.updateNotifications(evArgs.activityCenterNotifications)
+
+    if (evArgs.deletedMessages.len > 0):
+      for messageId in evArgs.deletedMessages:
+        self.view.deleteMessage(messageId)
 
   self.status.events.on("channelUpdate") do(e: Args):
     var evArgs = ChatUpdateArgs(e)

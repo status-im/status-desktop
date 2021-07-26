@@ -29,6 +29,7 @@ type
     communityMembershipRequests*: seq[CommunityMembershipRequest]
     activityCenterNotifications*: seq[ActivityCenterNotification]
     statusUpdates*: seq[StatusUpdate]
+    deletedMessages*: seq[string]
 
   ChatIdArg* = ref object of Args
     chatId*: string
@@ -91,7 +92,7 @@ proc newChatModel*(events: EventEmitter): ChatModel =
 proc delete*(self: ChatModel) =
   discard
 
-proc update*(self: ChatModel, chats: seq[Chat], messages: seq[Message], emojiReactions: seq[Reaction], communities: seq[Community], communityMembershipRequests: seq[CommunityMembershipRequest], pinnedMessages: seq[Message], activityCenterNotifications: seq[ActivityCenterNotification], statusUpdates: seq[StatusUpdate]) =
+proc update*(self: ChatModel, chats: seq[Chat], messages: seq[Message], emojiReactions: seq[Reaction], communities: seq[Community], communityMembershipRequests: seq[CommunityMembershipRequest], pinnedMessages: seq[Message], activityCenterNotifications: seq[ActivityCenterNotification], statusUpdates: seq[StatusUpdate], deletedMessages: seq[string]) =
   for chat in chats:
     self.channels[chat.id] = chat
 
@@ -104,7 +105,7 @@ proc update*(self: ChatModel, chats: seq[Chat], messages: seq[Message], emojiRea
       if self.lastMessageTimestamps[chatId] > ts:
         self.lastMessageTimestamps[chatId] = ts
       
-  self.events.emit("chatUpdate", ChatUpdateArgs(messages: messages,chats: chats, contacts: @[], emojiReactions: emojiReactions, communities: communities, communityMembershipRequests: communityMembershipRequests, pinnedMessages: pinnedMessages, activityCenterNotifications: activityCenterNotifications, statusUpdates: statusUpdates))
+  self.events.emit("chatUpdate", ChatUpdateArgs(messages: messages,chats: chats, contacts: @[], emojiReactions: emojiReactions, communities: communities, communityMembershipRequests: communityMembershipRequests, pinnedMessages: pinnedMessages, activityCenterNotifications: activityCenterNotifications, statusUpdates: statusUpdates, deletedMessages: deletedMessages))=
 
 proc hasChannel*(self: ChatModel, chatId: string): bool =
   self.channels.hasKey(chatId)
@@ -251,6 +252,10 @@ proc sendMessage*(self: ChatModel, chatId: string, msg: string, replyTo: string 
 
 proc editMessage*(self: ChatModel, messageId: string, msg: string) =
   var response = status_chat.editMessage(messageId, msg)
+  discard self.processMessageUpdateAfterSend(response, false)
+
+proc deleteMessageAndSend*(self: ChatModel, messageId: string) =
+  var response = status_chat.deleteMessageAndSend(messageId)    
   discard self.processMessageUpdateAfterSend(response, false)
 
 proc sendImage*(self: ChatModel, chatId: string, image: string) =
