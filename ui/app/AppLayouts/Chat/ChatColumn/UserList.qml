@@ -39,6 +39,8 @@ Item {
 
     ListView {
         id: userListView
+        clip: true
+        ScrollBar.vertical: ScrollBar { }
         anchors {
             left: parent.left
             top: titleText.bottom
