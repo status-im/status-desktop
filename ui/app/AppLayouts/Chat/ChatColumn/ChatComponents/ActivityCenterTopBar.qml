@@ -50,16 +50,16 @@ Item {
            onClicked: activityCenter.currentFilter = ActivityCenter.Filter.Replies
        }
 
-       StatusButton {
-           id: contactRequestsBtn
-           //% "Contact requests"
-           text: qsTrId("contact-requests")
-           enabled: hasContactRequests
-           type: "secondary"
-           size: "small"
-           highlighted: activityCenter.currentFilter === ActivityCenter.Filter.ContactRequests
-           onClicked: activityCenter.currentFilter = ActivityCenter.Filter.ContactRequests
-       }
+//       StatusButton {
+//           id: contactRequestsBtn
+//           //% "Contact requests"
+//           text: qsTrId("contact-requests")
+//           enabled: hasContactRequests
+//           type: "secondary"
+//           size: "small"
+//           highlighted: activityCenter.currentFilter === ActivityCenter.Filter.ContactRequests
+//           onClicked: activityCenter.currentFilter = ActivityCenter.Filter.ContactRequests
+//       }
     }
 
     Row {

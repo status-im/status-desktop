@@ -18,7 +18,7 @@ Popup {
     property int currentFilter: ActivityCenter.Filter.All
     property bool hasMentions: false
     property bool hasReplies: false
-    property bool hasContactRequests: contactList.count > 0
+//    property bool hasContactRequests: false
 
     property bool hideReadNotifications: false
 
@@ -70,31 +70,31 @@ Popup {
             }
 
             // TODO remove this once it is handled by the activity center
-            Repeater {
-                id: contactList
-                model: profileModel.contacts.contactRequests
+//            Repeater {
+//                id: contactList
+//                model: profileModel.contacts.contactRequests
 
-                delegate: ContactRequest {
-                    visible: !hideReadNotifications &&
-                             (activityCenter.currentFilter === ActivityCenter.Filter.All || activityCenter.currentFilter === ActivityCenter.Filter.ContactRequests)
-                    name: Utils.removeStatusEns(model.name)
-                    address: model.address
-                    localNickname: model.localNickname
-                    identicon: model.thumbnailImage || model.identicon
-                    // TODO set to transparent bg if the notif is read
-                    color: Utils.setColorAlpha(Style.current.blue, 0.1)
-                    radius: 0
-                    profileClick: function (showFooter, userName, fromAuthor, identicon, textParam, nickName) {
-                        var popup = profilePopupComponent.createObject(contactList);
-                        popup.openPopup(showFooter, userName, fromAuthor, identicon, textParam, nickName);
-                    }
-                    onBlockContactActionTriggered: {
-                        blockContactConfirmationDialog.contactName = name
-                        blockContactConfirmationDialog.contactAddress = address
-                        blockContactConfirmationDialog.open()
-                    }
-                }
-            }
+//                delegate: ContactRequest {
+//                    visible: !hideReadNotifications &&
+//                             (activityCenter.currentFilter === ActivityCenter.Filter.All || activityCenter.currentFilter === ActivityCenter.Filter.ContactRequests)
+//                    name: Utils.removeStatusEns(model.name)
+//                    address: model.address
+//                    localNickname: model.localNickname
+//                    identicon: model.thumbnailImage || model.identicon
+//                    // TODO set to transparent bg if the notif is read
+//                    color: Utils.setColorAlpha(Style.current.blue, 0.1)
+//                    radius: 0
+//                    profileClick: function (showFooter, userName, fromAuthor, identicon, textParam, nickName) {
+//                        var popup = profilePopupComponent.createObject(contactList);
+//                        popup.openPopup(showFooter, userName, fromAuthor, identicon, textParam, nickName);
+//                    }
+//                    onBlockContactActionTriggered: {
+//                        blockContactConfirmationDialog.contactName = name
+//                        blockContactConfirmationDialog.contactAddress = address
+//                        blockContactConfirmationDialog.open()
+//                    }
+//                }
+//            }
 
             Repeater {
                 model: notifDelegateList
@@ -129,7 +129,6 @@ Popup {
                                 hasReplies = true
                             }
                             break
-
                         }
                     }
 
