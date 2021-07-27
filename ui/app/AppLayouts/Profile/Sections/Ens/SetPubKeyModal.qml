@@ -5,6 +5,7 @@ import QtQuick.Dialogs 1.3
 import "../../../../../imports"
 import "../../../../../shared"
 import "../../../../../shared/status"
+import "../../../Wallet/"
 
 ModalPopup {
     id: root
@@ -22,12 +23,16 @@ ModalPopup {
         standardButtons: StandardButton.Ok
     }
 
+    height: 540
+
     function sendTransaction() {
         try {
             let responseStr = profileModel.ens.setPubKey(root.ensUsername,
                                                         selectFromAccount.selectedAccount.address,
                                                         gasSelector.selectedGasLimit,
-                                                        gasSelector.selectedGasPrice,
+                                                        gasSelector.eip1599Enabled ? "" : gasSelector.selectedGasPrice,
+                                                        gasSelector.selectedTipLimit,
+                                                        gasSelector.selectedOverallLimit,
                                                         transactionSigner.enteredPassword)
             let response = JSON.parse(responseStr)
 
@@ -166,6 +171,13 @@ ModalPopup {
     footer: Item {
         width: parent.width
         height: btnNext.height
+
+        Component {
+            id: transactionSettingsConfirmationPopupComponent
+            TransactionSettingsConfirmationPopup {
+
+            }
+        }
         
         StatusButton {
             id: btnNext
@@ -179,6 +191,25 @@ ModalPopup {
                     if (stack.isLastGroup) {
                         return root.sendTransaction()
                     }
+
+                    if(gasSelector.eip1599Enabled && stack.currentGroup === group2 && gasSelector.advancedMode){
+                        if(gasSelector.showPriceLimitWarning || gasSelector.showTipLimitWarning){
+                            openPopup(transactionSettingsConfirmationPopupComponent, {
+                                currentBaseFee: gasSelector.latestBaseFee,
+                                currentMinimumTip: gasSelector.perGasTipLimitFloor,
+                                currentAverageTip: gasSelector.perGasTipLimitAverage,
+                                tipLimit: gasSelector.selectedTipLimit,
+                                suggestedTipLimit: gasSelector.perGasTipLimitFloor, // TODO:
+                                priceLimit: gasSelector.selectedOverallLimit,
+                                suggestedPriceLimit: gasSelector.latestBaseFee + gasSelector.perGasTipLimitFloor,
+                                onConfirm: function(){
+                                    stack.next();
+                                }
+                            })
+                            return
+                        }
+                    }
+                    
                     stack.next()
                 }
             }

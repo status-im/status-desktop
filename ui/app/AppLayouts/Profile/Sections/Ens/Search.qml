@@ -65,7 +65,6 @@ Item {
             }
             ensUsername: ensUsername.text || ""
             width: 400
-            height: 400
         }
     }
 

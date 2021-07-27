@@ -42,14 +42,14 @@ proc init*(self: StickersModel) =
     var evArgs = StickerArgs(e)
     self.addStickerToRecent(evArgs.sticker, evArgs.save)
 
-proc buildTransaction(packId: Uint256, address: Address, price: Uint256, approveAndCall: var ApproveAndCall[100], sntContract: var Erc20Contract, gas = "", gasPrice = ""): TransactionData =
+proc buildTransaction(packId: Uint256, address: Address, price: Uint256, approveAndCall: var ApproveAndCall[100], sntContract: var Erc20Contract, gas = "", gasPrice = "", isEIP1559Enabled = false, maxPriorityFeePerGas = "", maxFeePerGas = ""): TransactionData =
   sntContract = status_contracts.getSntContract()
   let
     stickerMktContract = status_contracts.getContract("sticker-market")
     buyToken = BuyToken(packId: packId, address: address, price: price)
     buyTxAbiEncoded = stickerMktContract.methods["buyToken"].encodeAbi(buyToken)
   approveAndCall = ApproveAndCall[100](to: stickerMktContract.address, value: price, data: DynamicBytes[100].fromHex(buyTxAbiEncoded))
-  transactions.buildTokenTransaction(address, sntContract.address, gas, gasPrice)
+  transactions.buildTokenTransaction(address, sntContract.address, gas, gasPrice, isEIP1559Enabled, maxPriorityFeePerGas, maxFeePerGas)
 
 proc estimateGas*(packId: int, address: string, price: string, success: var bool): int =
   var
@@ -67,7 +67,7 @@ proc estimateGas*(packId: int, address: string, price: string, success: var bool
   if success:
     result = fromHex[int](response)
 
-proc buyPack*(self: StickersModel, packId: int, address, price, gas, gasPrice, password: string, success: var bool): string =
+proc buyPack*(self: StickersModel, packId: int, address, price, gas, gasPrice: string, isEIP1559Enabled: bool, maxPriorityFeePerGas: string, maxFeePerGas: string, password: string, success: var bool): string =
   var
     sntContract: Erc20Contract
     approveAndCall: ApproveAndCall[100]
@@ -78,7 +78,10 @@ proc buyPack*(self: StickersModel, packId: int, address, price, gas, gasPrice, p
       approveAndCall,
       sntContract,
       gas,
-      gasPrice
+      gasPrice,
+      isEIP1559Enabled,
+      maxPriorityFeePerGas,
+      maxFeePerGas
     )
 
   result = sntContract.methods["approveAndCall"].send(tx, approveAndCall, password, success)

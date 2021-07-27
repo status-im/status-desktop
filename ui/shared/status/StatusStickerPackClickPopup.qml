@@ -60,12 +60,14 @@ ModalPopup {
                     if (packId < 0  || !selectedAccount || !price) return 325000
                     return chatsModel.stickers.estimate(packId, selectedAccount.address, price, uuid)
                 }
-                onSendTransaction: function(selectedAddress, gasLimit, gasPrice, password) {
+                onSendTransaction: function(selectedAddress, gasLimit, gasPrice, tipLimit, overallLimit, password) {
                     return chatsModel.stickers.buy(packId,
                                                    selectedAddress,
                                                    price,
                                                    gasLimit,
                                                    gasPrice,
+                                                   tipLimit,
+                                                   overallLimit,
                                                    password)
                 }
                 onClosed: {

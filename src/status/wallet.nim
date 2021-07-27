@@ -230,6 +230,14 @@ proc maxPriorityFeePerGas*(self: WalletModel):string =
     error "Error obtaining max priority fee per gas", error=response
     raise newException(StatusGoException, "Error obtaining max priority fee per gas")    
 
+proc suggestFees*(self: WalletModel):JsonNode =
+  let response = status_wallet.suggestFees().parseJson()
+  if response.hasKey("result"):
+    return response["result"].getElems()[0]
+  else:
+    error "Error obtaining suggested fees", error=response
+    raise newException(StatusGoException, "Error obtaining suggested fees")    
+
 proc initAccounts*(self: WalletModel) =
   self.tokens = status_tokens.getVisibleTokens()
   let accounts = status_wallet.getWalletAccounts()
@@ -415,7 +423,7 @@ proc setLatestBaseFee*(self: WalletModel, latestBaseFee: string) =
   self.latestBaseFee = latestBaseFee
 
 proc getLatestBaseFee*(self: WalletModel): string =
-  result = wei2Gwei(self.latestBaseFee)
+  result = self.latestBaseFee
 
 proc isEIP1559Enabled*(self: WalletModel, blockNumber: int):bool =
   let networkId = status_settings.getCurrentNetworkDetails().config.networkId
@@ -423,7 +431,7 @@ proc isEIP1559Enabled*(self: WalletModel, blockNumber: int):bool =
     of 3: 10499401 # Ropsten
     of 4: 8897988 # Rinkeby
     of 5: 5062605 # Goerli
-    of 1: 12965000 # Mainnet
+    of 1: 12965000  + 50 # Mainnet
     else: -1
   if activationBlock > -1 and blockNumber >= activationBlock:
     result = true

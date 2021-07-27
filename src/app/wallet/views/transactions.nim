@@ -153,7 +153,14 @@ QtObject:
     return self.status.wallet.isEIP1559Enabled()
 
   proc getLatestBaseFee(self: TransactionsView): string {.slot.} =
-    return self.status.wallet.getLatestBaseFee()
+    var baseFeeWei:string = self.status.wallet.getLatestBaseFee()
+    var baseFeeGwei:string = wei2Gwei(baseFeeWei)
+    var unit:string = "wei"
+    var amount = baseFeeWei
+    if parseFloat(baseFeeGwei) > 1:
+      unit = "gwei"
+      amount = baseFeeGwei
+    return $(%*{"gwei": baseFeeGwei, "amount": amount, "unit": unit})  
 
   QtProperty[bool] isEIP1559Enabled:
     read = isEIP1559Enabled

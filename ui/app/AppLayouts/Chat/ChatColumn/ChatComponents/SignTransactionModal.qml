@@ -5,6 +5,7 @@ import QtQuick.Dialogs 1.3
 import "../../../../../imports"
 import "../../../../../shared"
 import "../../../../../shared/status"
+import "../../../Wallet/"
 
 ModalPopup {
     property var selectedAccount
@@ -26,7 +27,9 @@ ModalPopup {
                                                  selectRecipient.selectedRecipient.address,
                                                  root.selectedAmount,
                                                  selectedGasLimit,
-                                                 selectedGasPrice,
+                                                 gasSelector.eip1599Enabled ? "" : gasSelector.selectedGasPrice,
+                                                 gasSelector.selectedTipLimit,
+                                                 gasSelector.selectedOverallLimit,
                                                  enteredPassword,
                                                  stack.uuid)
         } else {
@@ -36,7 +39,9 @@ ModalPopup {
                                                  root.selectedAsset.address,
                                                  root.selectedAmount,
                                                  selectedGasLimit,
-                                                 selectedGasPrice,
+                                                 gasSelector.eip1599Enabled ? "" : gasSelector.selectedGasPrice,
+                                                 gasSelector.selectedTipLimit,
+                                                 gasSelector.selectedOverallLimit,
                                                  enteredPassword,
                                                  stack.uuid)
         }
@@ -52,7 +57,7 @@ ModalPopup {
 
     //% "Send"
     title: qsTrId("command-button-send")
-    height: 504
+    height: 540
 
     property MessageDialog sendingError: MessageDialog {
         id: sendingError
@@ -60,7 +65,6 @@ ModalPopup {
         title: qsTrId("error-sending-the-transaction")
         icon: StandardIcon.Critical
         standardButtons: StandardButton.Ok
-        onAccepted: root.close()
     }
 
     onClosed: {
@@ -268,6 +272,14 @@ ModalPopup {
                 stack.back()
             }
         }
+
+        Component {
+            id: transactionSettingsConfirmationPopupComponent
+            TransactionSettingsConfirmationPopup {
+
+            }
+        }
+
         StatusButton {
             id: btnNext
             anchors.right: parent.right
@@ -284,11 +296,21 @@ ModalPopup {
                                                     transactionSigner.enteredPassword)
                     }
 
-                    if(gasSelector.eip1599Enabled){
-                        console.log("EIP1559 enabled")
+                    if(gasSelector.eip1599Enabled && stack.currentGroup === group2 && gasSelector.advancedMode){
                         if(gasSelector.showPriceLimitWarning || gasSelector.showTipLimitWarning){
-                            console.log("SHOW POPUP")
-                            // return
+                            openPopup(transactionSettingsConfirmationPopupComponent, {
+                                currentBaseFee: gasSelector.latestBaseFee,
+                                currentMinimumTip: gasSelector.perGasTipLimitFloor,
+                                currentAverageTip: gasSelector.perGasTipLimitAverage,
+                                tipLimit: gasSelector.selectedTipLimit,
+                                suggestedTipLimit: gasSelector.perGasTipLimitFloor, // TODO:
+                                priceLimit: gasSelector.selectedOverallLimit,
+                                suggestedPriceLimit: gasSelector.latestBaseFee + gasSelector.perGasTipLimitFloor,
+                                onConfirm: function(){
+                                    stack.next();
+                                }
+                            })
+                            return
                         }
                     }
 

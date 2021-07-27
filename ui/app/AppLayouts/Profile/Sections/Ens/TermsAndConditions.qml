@@ -39,10 +39,12 @@ Item {
                 if (username === "" || !selectedAccount) return 380000;
                 return profileModel.ens.registerENSGasEstimate(username, selectedAccount.address)
             }
-            onSendTransaction: function(selectedAddress, gasLimit, gasPrice, password) {
+            onSendTransaction: function(selectedAddress, gasLimit, gasPrice, tipLimit, overallLimit, password) {
                 return profileModel.ens.registerENS(username,
                                                     selectedAddress,
                                                     gasLimit,
+                                                    tipLimit,
+                                                    overallLimit,
                                                     gasPrice,
                                                     password)
             }

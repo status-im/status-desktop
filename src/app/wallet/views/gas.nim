@@ -126,5 +126,22 @@ QtObject:
     result = self.status.wallet.maxPriorityFeePerGas()
     debug "Max priority fee per gas", value=result
 
+  proc suggestedFees*(self: GasView): string {.slot.} =
+    var maxPriorityFeePerGas = "0"
+    var maxFeePerGas = "0"
+    try:
+      let suggestedFees = self.status.wallet.suggestFees()
+      maxPriorityFeePerGas = wei2Gwei(suggestedFees{"maxPriorityFeePerGas"}.getStr("0"))
+      maxFeePerGas = wei2Gwei(suggestedFees{"maxFeePerGas"}.getStr("0"))
+    except:
+      let
+        e = getCurrentException()
+        msg = getCurrentExceptionMsg()
+      debug "Error obtaining suggested fees", msg
+    return $(%* {"maxPriorityFeePerGas": maxPriorityFeePerGas, "maxFeePerGas": maxFeePerGas})
+
   QtProperty[string] maxPriorityFeePerGas:
     read = maxPriorityFeePerGas
+
+  QtProperty[string] suggestedFees:
+    read = suggestedFees

@@ -132,3 +132,7 @@ proc checkRecentHistory*(addresses: seq[string]): string =
 proc maxPriorityFeePerGas*(): string =
   let payload = %* []
   result = callPrivateRPC("eth_maxPriorityFeePerGas", payload)
+
+proc suggestFees*(): string =
+  let payload = %* []
+  result = callPrivateRPC("wallet_suggestFees", payload)

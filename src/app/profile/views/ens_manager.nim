@@ -216,10 +216,11 @@ QtObject:
     if not success:
       result = 380000
   
-  proc registerENS*(self: EnsManager, username: string, address: string, gas: string, gasPrice: string, password: string): string {.slot.} =
+  proc registerENS*(self: EnsManager, username: string, address: string, gas: string, gasPrice: string, maxPriorityFeePerGas: string, maxFeePerGas: string, password: string): string {.slot.} =
+    let eip1559Enabled = self.status.wallet.isEIP1559Enabled()
     var success: bool
     let pubKey = self.status.settings.getSetting[:string](Setting.PublicKey, "0x0")
-    let response = registerUsername(username, pubKey, address, gas, gasPrice, password, success)
+    let response = registerUsername(username, pubKey, address, gas, gasPrice, eip1559Enabled, maxPriorityFeePerGas, maxFeePerGas, password, success)
     result = $(%* { "result": %response, "success": %success })
 
     if success:
@@ -235,10 +236,11 @@ QtObject:
     if not success:
       result = 80000
 
-  proc setPubKey(self: EnsManager, username: string, address: string, gas: string, gasPrice: string, password: string): string {.slot.} =
+  proc setPubKey*(self: EnsManager, username: string, address: string, gas: string, gasPrice: string, maxPriorityFeePerGas: string, maxFeePerGas: string, password: string): string {.slot.} =
+    let eip1559Enabled = self.status.wallet.isEIP1559Enabled()
     var success: bool
     let pubKey = self.status.settings.getSetting[:string](Setting.PublicKey, "0x0")
-    let response = setPubKey(username, pubKey, address, gas, gasPrice, password, success)
+    let response = setPubKey(username, pubKey, address, gas, gasPrice, eip1559Enabled, maxPriorityFeePerGas, maxFeePerGas, password, success)
     result = $(%* { "result": %response, "success": %success })
     if success:
       self.transactionWasSent(response)

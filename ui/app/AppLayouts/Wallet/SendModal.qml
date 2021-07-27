@@ -23,9 +23,6 @@ ModalPopup {
         title: qsTrId("error-sending-the-transaction")
         icon: StandardIcon.Critical
         standardButtons: StandardButton.Ok
-        onAccepted: {
-            root.close()
-        }
     }
 
     function sendTransaction() {

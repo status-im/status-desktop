@@ -5,6 +5,7 @@ import QtQuick.Dialogs 1.3
 import "../../imports"
 import "../../shared"
 import "../../shared/status"
+import "../../app/AppLayouts/Wallet/"
 
 ModalPopup {
     id: root
@@ -12,12 +13,14 @@ ModalPopup {
     property string assetPrice
     property string contractAddress
     property var estimateGasFunction: (function(userAddress, uuid) { return 0; })
-    property var onSendTransaction: (function(userAddress, gasLimit, gasPrice, password){ return ""; })
+    property var onSendTransaction: (function(userAddress, gasLimit, gasPrice, tipLimit, overallLimit, password){ return ""; })
     property var onSuccess: (function(){})
 
     Component.onCompleted: {
         walletModel.gasView.getGasPricePredictions()
     }
+
+    height: 540
 
     //% "Authorize %1 %2"
     title: qsTrId("authorize--1--2").arg(Utils.stripTrailingZeros(assetPrice)).arg(asset.symbol)
@@ -39,7 +42,9 @@ ModalPopup {
     function sendTransaction() {
         let responseStr = onSendTransaction(selectFromAccount.selectedAccount.address,
                                          gasSelector.selectedGasLimit,
-                                         gasSelector.selectedGasPrice,
+                                         gasSelector.eip1599Enabled ? "" : gasSelector.selectedGasPrice,
+                                         gasSelector.selectedTipLimit,
+                                         gasSelector.selectedOverallLimit,
                                          transactionSigner.enteredPassword);
 
         let response = JSON.parse(responseStr)
@@ -190,6 +195,14 @@ ModalPopup {
                 stack.back()
             }
         }
+
+        Component {
+            id: transactionSettingsConfirmationPopupComponent
+            TransactionSettingsConfirmationPopup {
+
+            }
+        }
+
         StatusButton {
             id: btnNext
             anchors.right: parent.right
@@ -203,6 +216,25 @@ ModalPopup {
                     if (stack.isLastGroup) {
                         return root.sendTransaction()
                     }
+
+                    if(gasSelector.eip1599Enabled && stack.currentGroup === group2 && gasSelector.advancedMode){
+                        if(gasSelector.showPriceLimitWarning || gasSelector.showTipLimitWarning){
+                            openPopup(transactionSettingsConfirmationPopupComponent, {
+                                currentBaseFee: gasSelector.latestBaseFee,
+                                currentMinimumTip: gasSelector.perGasTipLimitFloor,
+                                currentAverageTip: gasSelector.perGasTipLimitAverage,
+                                tipLimit: gasSelector.selectedTipLimit,
+                                suggestedTipLimit: gasSelector.perGasTipLimitFloor, // TODO:
+                                priceLimit: gasSelector.selectedOverallLimit,
+                                suggestedPriceLimit: gasSelector.latestBaseFee + gasSelector.perGasTipLimitFloor,
+                                onConfirm: function(){
+                                    stack.next();
+                                }
+                            })
+                            return
+                        }
+                    }
+
                     stack.next()
                 }
             }

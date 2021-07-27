@@ -15,9 +15,32 @@ Item {
     property double fastestGasPrice: 100
 
     property string maxPriorityFeePerGas: "0"
+    property var suggestedFees: {
+        let r = JSON.parse(walletModel.gasView.suggestedFees)
+        r.maxPriorityFeePerGas = parseFloat(r.maxPriorityFeePerGas)
+        r.maxFeePerGas = parseFloat(r.maxFeePerGas)
+        return r
+    }
     property bool eip1599Enabled: walletModel.transactionsView.isEIP1559Enabled
-    property double latestBaseFee: (eip1599Enabled ? parseFloat(walletModel.transactionsView.latestBaseFee) : 0)
 
+    property var latestBaseFee: JSON.parse(walletModel.transactionsView.latestBaseFee)
+    
+    property double latestBaseFeeGwei: {
+        if (!eip1599Enabled) return 0;
+        return parseFloat(latestBaseFee.gwei)
+    }
+
+    property double latestBaseFeeAmount: {
+        if (!eip1599Enabled) return 0;
+        return parseFloat(latestBaseFee.amount)
+    }
+
+    property string latestBaseFeeUnit: {
+        if (!eip1599Enabled) return "gwei";
+        return latestBaseFee.unit
+    }
+        
+    property var getGasGweiValue: function () {}
     property var getGasEthValue: function () {}
     property var getFiatValue: function () {}
     property string defaultCurrency: "USD"
@@ -47,9 +70,9 @@ Item {
     property double perGasTipLimitAverage: 1.5 // Matches status-react average-priority-fee
 
     // TODO: determine how to calculate this? ask @roman
-    property double eip1559LowPrice: 1
-    property double eip1559OptimalPrice: 5
-    property double eip1559HighPrice: 9
+    property double eip1559LowPrice: 0.1
+    property double eip1559OptimalPrice: suggestedFees.maxFeePerGas
+    property double eip1559HighPrice: eip1559OptimalPrice * 2
 
     // TODO: determine how to calculate this? ask @roman
     property double perGasOverallLimitFloor: 40
@@ -72,15 +95,12 @@ Item {
     }
 
     function appendError(accum, error, nonBlocking = false) {
-        return accum + `<span class="${nonBlocking ? "non-blocking" : ""}">${error}.</span>`
+        return accum + ` <span class="${nonBlocking ? "non-blocking" : ""}">${error}.</span>`
     }
 
 
     function checkLimits(){
         if(!eip1599Enabled) return;
-
-        // TODO: should gas limit be validated if it's below the estimated gas?
-        // "Not enough gas"
 
         let inputTipLimit = parseFloat(inputPerGasTipLimit.text || "0.00")
         let inputOverallLimit = parseFloat(inputGasPrice.text || "0.00")
@@ -101,8 +121,9 @@ Item {
         }
 
         // Per-gas overall limit rules
-        if(inputOverallLimit < latestBaseFee){
-            errorMsg = appendError(errorMsg, qsTr("The limit is below the current base fee of %1 gwei").arg(latestBaseFee))
+        console.log(inputOverallLimit, latestBaseFeeGwei)
+        if(inputOverallLimit < latestBaseFeeGwei){
+            errorMsg = appendError(errorMsg, qsTr("The limit is below the current base fee of %1 %2").arg(latestBaseFeeAmount).arg(latestBaseFeeUnit))
             showPriceLimitWarning = true
         } else if(inputOverallLimit < perGasOverallLimitFloor){
             errorMsg = appendError(errorMsg, qsTr("The limit should be at least %1 Gwei above the base fee").arg(perGasOverallLimitFloor))
@@ -179,6 +200,7 @@ Item {
         id: prioritytext
         anchors.top: parent.top
         anchors.left: parent.left
+        visible: !advancedMode
         //% "Priority"
         text: qsTrId("priority")
         font.weight: Font.Medium
@@ -188,11 +210,11 @@ Item {
 
     StyledText {
         id: baseFeeText
-        visible: advancedMode
+        visible: eip1599Enabled && advancedMode
         anchors.top: parent.top
         anchors.left: prioritytext.right
         anchors.leftMargin: Style.current.smallPadding
-        text: qsTr("Current base fee: %1 Gwei").arg(latestBaseFee)
+        text: qsTr("Current base fee: %1 %2").arg(latestBaseFeeAmount).arg(latestBaseFeeUnit)
         font.weight: Font.Medium
         font.pixelSize: 13
         color: Style.current.secondaryText
@@ -380,8 +402,13 @@ Item {
             id: maxPriorityFeeText
             anchors.left: parent.left
             //% "Maximum priority fee: %1 ETH"
-            text: qsTrId("maximum-priority-fee---1-eth").arg(selectedGasEthValue)
-            anchors.top: errorsText.bottom
+            text: {
+                console.log(selectedGasEthValue, selectedGasEthValue > 0.00009, selectedGasEthValue < 0.000001)
+                let v = selectedGasEthValue > 0.00009 ? selectedGasEthValue : 
+                    (selectedGasEthValue < 0.000001 ? "0.000000..." : selectedGasEthValue.toFixed(6))
+                return qsTrId("maximum-priority-fee---1-eth").arg(v)
+            
+            }anchors.top: errorsText.bottom
             anchors.topMargin: Style.current.smallPadding + 5
             font.pixelSize: 13
             color: Style.current.textColor
@@ -389,7 +416,7 @@ Item {
 
         StyledText {
             id: maxPriorityFeeFiatText
-            text: `${selectedGasFiatValue} ${root.defaultCurrency}`
+            text: `${selectedGasFiatValue} ${root.defaultCurrency.toUpperCase()}`
             anchors.verticalCenter: maxPriorityFeeText.verticalCenter
             anchors.left: maxPriorityFeeText.right
             anchors.leftMargin: 6
