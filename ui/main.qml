@@ -261,7 +261,9 @@ StatusWindow {
 
         DSM.State {
             id: appState
-            onEntered: loader.sourceComponent = app
+            onEntered: Qt.callLater(function() {
+                loader.sourceComponent = app
+            })
 
             DSM.SignalTransition {
                 targetState: stateLogin
