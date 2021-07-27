@@ -41,6 +41,8 @@ Item {
 
     ListView {
         id: userListView
+        clip: true
+        ScrollBar.vertical: ScrollBar { }
         anchors {
             top: titleText.bottom
             topMargin: Style.current.padding
