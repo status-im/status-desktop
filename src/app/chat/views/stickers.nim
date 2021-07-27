@@ -113,8 +113,15 @@ QtObject:
     self.gasEstimateReturned(estimateResult.estimate, estimateResult.uuid)
 
   proc buy*(self: StickersView, packId: int, address: string, price: string, gas: string, gasPrice: string, password: string): string {.slot.} =
+    try:
+      validateTransactionInput(address, address, "", price, gas, gasPrice, "", "ok")
+    except Exception as e:
+      error "Error buying sticker pack", msg = e.msg
+      return ""
+
     var success: bool
     let response = self.status.stickers.buyPack(packId, address, price, gas, gasPrice, password, success)
+
     # TODO:
     # check if response["error"] is not null and handle the error
     result = $(%* { "result": %response, "success": %success })
