@@ -20,7 +20,9 @@ Item {
                 (model.notificationType === Constants.activityCenterNotificationTypeReply && activityCenter.currentFilter === ActivityCenter.Filter.Replies)
     }
     width: parent.width
-    height: visible ? messageNotificationContent.height : 0
+    // Setting a height of 0 breaks the layout for when it comes back visible
+    // The Item never goes back to actually have a height or width
+    height: visible ? messageNotificationContent.height : 0.01
 
     function openProfile() {
         const pk = model.author
@@ -58,8 +60,13 @@ Item {
         AcceptRejectOptionsButtons {
             id: buttons
             onAcceptClicked: {
+                const setActiveChannel = chatsModel.channelView.setActiveChannel
+                const chatId = model.message.chatId
+                const messageId = model.message.messageId
                 profileModel.contacts.addContact(model.author)
                 chatsModel.activityNotificationList.acceptActivityCenterNotification(model.id)
+                setActiveChannel(chatId)
+                positionAtMessage(messageId)
             }
             onDeclineClicked: chatsModel.activityNotificationList.dismissActivityCenterNotification(model.id)
             onProfileClicked: root.openProfile()
