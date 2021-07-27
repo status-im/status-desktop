@@ -297,19 +297,6 @@ Item {
         id: fetchMoreMessagesButtonComponent
         Item {
             id: wrapper
-            readonly property int gapNowAndOldest: nextMessageIndex > -1 ? (Date.now() / 1000 - nextMsgTimestamp / 1000) : 0
-            readonly property int gapNowAndJoined: Date.now() / 1000 - +chatsModel.channelView.activeChannel.joined / 1000
-            readonly property int maxGapInSeconds: Constants.maxNbDaysToFetch * Constants.fetchRangeLast24Hours
-
-            visible: {
-                if (!chatsModel.channelView.activeChannel) {
-                    return false
-                }
-                return gapNowAndOldest < maxGapInSeconds
-                        && gapNowAndJoined > maxGapInSeconds
-                        && (chatsModel.channelView.activeChannel.chatType !== Constants.chatTypePrivateGroupChat
-                            || chatsModel.channelView.activeChannel.isMember)
-            }
             height: childrenRect.height + Style.current.smallPadding * 2
             anchors.left: parent.left
             anchors.right: parent.right
