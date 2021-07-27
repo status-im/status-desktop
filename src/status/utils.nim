@@ -145,6 +145,7 @@ proc validateTransactionInput*(from_addr, to_addr, assetAddress, value, gas, gas
   if parseFloat(value) < 0: raise newException(ValueError, "value should be a number >= 0")
   if parseInt(gas) <= 0: raise newException(ValueError, "gas should be a number > 0")
   if parseFloat(gasPrice) <= 0: raise newException(ValueError, "gasPrice should be a number > 0")
+
   if uuid.isEmptyOrWhitespace(): raise newException(ValueError, "uuid is required")
 
   if assetAddress != "": # If a token is being used
