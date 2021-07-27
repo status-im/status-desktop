@@ -1,4 +1,39 @@
 <a name=""></a>
+## v0.3.0 (2021-07-27)
+
+
+#### Features
+
+* **Controls:**  introduce `StatusInput` ([646c00bd](646c00bd), closes [#288](288))
+* **Popups:**  introduce `StatusMenuHeadline` component ([246bec0d](246bec0d))
+* **StatusBaseInput:**
+  *  add icon support ([c8e90349](c8e90349), closes [#242](242))
+  *  add visual validity state ([e8cce72c](e8cce72c), closes [#287](287))
+  *  add hover state visuals ([e1ebdaae](e1ebdaae), closes [#285](285))
+* **StatusInput:**  implement error message and charlimit APIs ([3cf53d02](3cf53d02), closes [#290](290))
+* **StatusPopupMenu:**  add support for letter identicons, identicons and images ([3c4c7f04](3c4c7f04), closes [#263](263))
+* **StatusQ.Layout:**  introducing StatusAppThreePanelLayout ([ffc6fcb4](ffc6fcb4), closes [#272](272))
+* **sandbox:**  make use of `StatusInput` in chat view ([731a0f8c](731a0f8c))
+
+#### Bug Fixes
+
+* **StatusAppThreePanelLayout:**
+  *  limit right panel width to 300px ([d327c515](d327c515))
+  *  limit center panel width to 300px ([762ff87b](762ff87b))
+  *  hide right panel when closed ([61705990](61705990))
+* **StatusBaseInput:**
+  *  some minor style adjustment to adhere to design ([f16e857c](f16e857c))
+  *  ensure input text is selectable with mouse ([ab303593](ab303593))
+  *  ensure clear button has the correct color ([de1cec7e](de1cec7e), closes [#286](286))
+  *  add visuals for disabled state ([35f20e33](35f20e33), closes [#284](284))
+  *  expose text prop alias ([116ddfbb](116ddfbb))
+* **StatusChatInfoButton:**  ensure pin icon button is always rendered ([baefedb8](baefedb8), closes [#278](278))
+* **StatusListItem:**  ensure title area wraps text ([e3f79314](e3f79314))
+* **StatusModal:**  reset image/identicon width when loader state has changed ([e4e7ebe3](e4e7ebe3))
+
+
+
+<a name=""></a>
 ## v0.2.0 (2021-07-21)
 
 
