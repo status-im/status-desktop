@@ -66,7 +66,7 @@ Item {
             publicKey: model.publicKey
             name: model.userName
             identicon: model.identicon
-            lastSeen: model.lastSeen
+            lastSeen: model.lastSeen / 1000
             currentTime: root.currentTime
         }
     }

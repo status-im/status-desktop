@@ -82,7 +82,6 @@ Item {
             radius: 20
             color: {
                 let lastSeenMinutesAgo = (currentTime/1000 - parseInt(lastSeen)) / 60
-                
                 if (!chatsModel.isOnline) {
                     return Style.current.darkGrey 
                 }
