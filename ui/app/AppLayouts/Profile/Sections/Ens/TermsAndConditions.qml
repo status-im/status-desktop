@@ -32,14 +32,26 @@ Item {
         function closed() {
             this.active = false // kill an opened instance
         }
-        sourceComponent: RegisterENSModal {
-            onOpened: {
-                walletModel.gasView.getGasPricePredictions()
+        sourceComponent: StatusSNTTransactionModal {
+            assetPrice: "10"
+            contractAddress: utilsModel.ensRegisterAddress
+            estimateGasFunction: function(selectedAccount, uuid) {
+                if (username === "" || !selectedAccount) return 380000;
+                return profileModel.ens.registerENSGasEstimate(username, selectedAccount.address)
+            }
+            onSendTransaction: function(selectedAddress, gasLimit, gasPrice, password) {
+                return profileModel.ens.registerENS(username,
+                                                    selectedAddress,
+                                                    gasLimit,
+                                                    gasPrice,
+                                                    password)
+            }
+            onSuccess: function(){
+                usernameRegistered(username);
             }
             onClosed: {
                 transactionDialog.closed()
             }
-            ensUsername: username
         }
     }
 

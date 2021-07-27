@@ -53,15 +53,26 @@ ModalPopup {
         anchors.topMargin: Style.current.padding
         Component {
             id: stickerPackPurchaseModal
-            StatusStickerPackPurchaseModal {
+            StatusSNTTransactionModal {
+                contractAddress: utilsModel.stickerMarketAddress
+                assetPrice: price
+                estimateGasFunction: function(selectedAccount, uuid) {
+                    if (packId < 0  || !selectedAccount || !price) return 325000
+                    return chatsModel.stickers.estimate(packId, selectedAccount.address, price, uuid)
+                }
+                onSendTransaction: function(selectedAddress, gasLimit, gasPrice, password) {
+                    return chatsModel.stickers.buy(packId,
+                                                   selectedAddress,
+                                                   price,
+                                                   gasLimit,
+                                                   gasPrice,
+                                                   password)
+                }
                 onClosed: {
                     destroy()
                 }
-                stickerPackId: packId
-                packPrice: price
                 width: stickerPackDetailsPopup.width
                 height: stickerPackDetailsPopup.height
-                showBackBtn: stickerPackDetailsPopup.opened
             }
         }
     }
