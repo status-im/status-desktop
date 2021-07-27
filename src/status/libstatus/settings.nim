@@ -59,7 +59,7 @@ proc getSetting*[T](name: Setting, defaultValue: T, useCached: bool = true): T =
     result = Json.decode(value, T)
   except Exception as e:
     error "Error decoding setting", name=name, value=value, msg=e.msg
-    raise e
+    return defaultValue
 
 proc getSetting*[T](name: Setting, useCached: bool = true): T =
   result = getSetting(name, default(type(T)), useCached)
