@@ -632,6 +632,37 @@ Item {
         Component.onCompleted: {
             chatInput.textInput.forceActiveFocus(Qt.MouseFocusReason)
         }
+
+        Connections {
+            target: chatsModel.stickers
+            onTransactionWasSent: {
+                //% "Transaction pending..."
+                toastMessage.title = qsTr("Transaction pending")
+                toastMessage.source = "../../../img/loading.svg"
+                toastMessage.iconColor = Style.current.primary
+                toastMessage.iconRotates = true
+                toastMessage.link = `${walletModel.utilsView.etherscanLink}/${txResult}`
+                toastMessage.open()
+            }
+            onTransactionCompleted: {
+                toastMessage.title = !success ? 
+                                     //% "Could not buy Stickerpack"
+                                     qsTrId("could-not-buy-stickerpack")
+                                     :
+                                     //% "Stickerpack bought successfully"
+                                     qsTrId("stickerpack-bought-successfully");
+                if (success) {
+                    toastMessage.source = "../../../img/check-circle.svg"
+                    toastMessage.iconColor = Style.current.success
+                } else {
+                    toastMessage.source = "../../../img/block-icon.svg"
+                    toastMessage.iconColor = Style.current.danger
+                }
+
+                toastMessage.link = `${walletModel.utilsView.etherscanLink}/${txHash}`
+                toastMessage.open()
+            }
+        }
     }
 }
 

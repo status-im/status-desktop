@@ -10,6 +10,8 @@ import "../../app/AppLayouts/Chat/ChatColumn/samples"
 Item {
     id: root
     property var stickerPacks: StickerPackData {}
+    property var stickerPurchasePopup
+
     signal backClicked
     signal uninstallClicked(int packId)
     signal installClicked(var stickers, int packId, int index)
@@ -82,22 +84,40 @@ Item {
                     onCancelClicked: root.cancelClicked(packId)
                     onUpdateClicked: root.updateClicked(packId)
                     onBuyClicked: {
-                        openPopup(stickerPackPurchaseModal)
+                        root.stickerPurchasePopup = openPopup(stickerPackPurchaseModal)
                         root.buyClicked(packId)
                     }
                 }
             }
             Component {
                 id: stickerPackPurchaseModal
-                StatusStickerPackPurchaseModal {
+                StatusSNTTransactionModal {
+                    contractAddress: utilsModel.stickerMarketAddress
+                    assetPrice: price
+                    estimateGasFunction: function(selectedAccount, uuid) {
+                        if (packId < 0  || !selectedAccount || !price) return 325000
+                        return chatsModel.stickers.estimate(packId, selectedAccount.address, price, uuid)
+                    }
+                    onSendTransaction: function(selectedAddress, gasLimit, gasPrice, password) {
+                        return chatsModel.stickers.buy(packId,
+                                                       selectedAddress,
+                                                       price,
+                                                       gasLimit,
+                                                       gasPrice,
+                                                       password)
+                    }
                     onClosed: {
                         destroy()
                     }
-                    stickerPackId: packId
-                    packPrice: price
                     width: stickerPackDetailsPopup.width
                     height: stickerPackDetailsPopup.height
-                    showBackBtn: stickerPackDetailsPopup.opened
+                }
+            }
+
+            Connections {
+                target: chatsModel.stickers
+                onGasEstimateReturned: {
+                    stickerPurchasePopup.setAsyncGasLimitResult(uuid, estimate)
                 }
             }
             
@@ -126,7 +146,7 @@ Item {
                     onCancelClicked: root.cancelClicked(packId)
                     onUpdateClicked: root.updateClicked(packId)
                     onBuyClicked: {
-                        openPopup(stickerPackPurchaseModal)
+                        root.stickerPurchasePopup = openPopup(stickerPackPurchaseModal)
                         root.buyClicked(packId)
                     }
                 }
