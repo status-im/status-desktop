@@ -179,6 +179,9 @@ Item {
             anchors.right: inputGasPrice.left
             anchors.rightMargin: Style.current.padding
             placeholderText: "21000"
+            validator: IntValidator{
+                bottom: 1
+            }
             validationErrorAlignment: TextEdit.AlignRight
             validationErrorTopMargin: 8
             onTextChanged: {
