@@ -639,8 +639,8 @@ Item {
         Connections {
             target: chatsModel.stickers
             onTransactionWasSent: {
-                //% "Transaction pending"
-                toastMessage.title = qsTrId("transaction-pending")
+                //% "Transaction pending..."
+                toastMessage.title = qsTr("Transaction pending...")
                 toastMessage.source = "../../../img/loading.svg"
                 toastMessage.iconColor = Style.current.primary
                 toastMessage.iconRotates = true
