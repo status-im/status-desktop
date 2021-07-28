@@ -172,7 +172,8 @@ DOS_API void DOS_CALL dos_qqmlapplicationengine_load_data(DosQQmlApplicationEngi
 /// \brief Calls the load and install function for translations and calls retranslate on QQmlApplicationEngine
 /// \param vptr The QQmlApplicationEngine
 /// \param data The UTF-8 string of the path to the translation file (.qm)
-DOS_API void DOS_CALL dos_qapplication_load_translation(DosQQmlApplicationEngine *vptr, const char* translationPackage);
+/// \param shouldRetranslate Should retranslate() be called after loading a translation
+DOS_API void DOS_CALL dos_qapplication_load_translation(DosQQmlApplicationEngine *vptr, const char* translationPackage, bool shouldRetranslate);
 
 /// \brief Calls the QQmlApplicationEngine::addImportPath function
 /// \param vptr The QQmlApplicationEngine
