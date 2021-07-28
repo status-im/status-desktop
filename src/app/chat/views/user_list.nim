@@ -118,11 +118,12 @@ QtObject:
 
     # Removing deleted members
     if toDelete.len > 0:
-      self.beginResetModel()
       for pkToDelete in toDelete:
-        self.users.del(self.users.find(pkToDelete))
+        let idx = self.users.find(pkToDelete)
+        self.beginRemoveRows(newQModelIndex(), idx, idx)
+        self.users.del(idx)
         self.userDetails.del(pkToDelete)
-      self.endResetModel()
+        self.endRemoveRows()
 
   proc add*(self: UserListView, message: Message) =
     if self.userDetails.hasKey(message.fromAuthor):
