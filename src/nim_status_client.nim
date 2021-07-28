@@ -28,6 +28,8 @@ proc mainProc() =
   if defined(macosx) and defined(production):
     setCurrentDir(getAppDir())
 
+  var currentLanguageCode: string
+
   let fleets =
     if defined(windows) and defined(production):
       "/../resources/fleets.json"
@@ -137,6 +139,10 @@ proc mainProc() =
   engine.setRootContextProperty("browserModel", browserController.variant)
 
   proc changeLanguage(locale: string) =
+    if (locale == currentLanguageCode):
+      return
+
+    currentLanguageCode = locale
     engine.setTranslationPackage(joinPath(i18nPath, fmt"qml_{locale}.qm"))
 
   var profile = profile.newController(status, changeLanguage)
@@ -209,6 +215,11 @@ proc mainProc() =
 
   var prValue = newQVariant(if defined(production): true else: false)
   engine.setRootContextProperty("production", prValue)
+
+  # We're applying default language before we load qml. Also we're aware that 
+  # switch language at runtime will have some impact to cpu usage.
+  # https://doc.qt.io/archives/qtjambi-4.5.2_01/com/trolltech/qt/qtjambi-linguist-programmers.html
+  changeLanguage("en")
 
   engine.load(newQUrl("qrc:///main.qml"))
 
