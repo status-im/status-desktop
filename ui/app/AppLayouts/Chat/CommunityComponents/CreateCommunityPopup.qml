@@ -340,6 +340,8 @@ StatusModal {
                 visible: !isEdit
                 //% "Membership requirement"
                 title: qsTrId("membership-title")
+                // TODO: remove 'isEnabled: false' when we no longer need to force "request access" membership
+                enabled: false
                 label: {
                     switch (membershipRequirementSettingPopup.checkedMembership) {
                         //% "Require invite from another member"
@@ -361,7 +363,8 @@ StatusModal {
             }
 
             StatusBaseText {
-                visible: !isEdit
+                // TODO: remove 'false' when we no longer need to force "request access" membership
+                visible: false && !isEdit
                 height: visible ? implicitHeight : 0
                 wrapMode: Text.WordWrap
                 font.pixelSize: 13
