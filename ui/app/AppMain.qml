@@ -413,9 +413,10 @@ StatusAppLayout {
 
     Connections {
         target: profileModel.settings
-        onSettingsFileChanged: {
+        onGlobalSettingsFileChanged: {
             profileModel.changeLocale(globalSettings.locale)
-
+        }
+        onSettingsFileChanged: {
             // Since https://github.com/status-im/status-desktop/commit/93668ff75
             // we're hiding the setting to change appearance for compact normal mode
             // of the UI. For now, compact mode is the new default.

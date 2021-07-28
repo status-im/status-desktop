@@ -32,6 +32,10 @@ StatusWindow {
         fileName: profileModel.settings.globalSettingsFile
         property string locale: "en"
         property int theme: 2
+
+        Component.onCompleted: {
+            profileModel.changeLocale(locale)
+        }
     }
 
     id: applicationWindow
