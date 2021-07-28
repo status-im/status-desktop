@@ -11,6 +11,8 @@ import "../../app/AppLayouts/Chat/ChatColumn"
 
 import "./emojiList.js" as EmojiJSON
 
+import StatusQ.Core.Theme 0.1
+
 Rectangle {
     id: control
     signal sendTransactionCommandButtonClicked()
@@ -737,7 +739,7 @@ Rectangle {
             return messageInputField.implicitHeight
         }
 
-        color: isEdit ? Style.current.secondaryInputBackground : Style.current.inputBackground
+        color: isEdit ? Theme.palette.statusChatInput.secondaryBackgroundColor : Style.current.inputBackground
         radius: control.isStatusUpdateInput ? 36 :
                                               height > defaultInputFieldHeight + 1 || extendedArea.visible ? 16 : 32
 
@@ -861,7 +863,7 @@ Rectangle {
                 placeholderText: qsTrId("type-a-message")
                 placeholderTextColor: Style.current.secondaryText
                 selectByMouse: true
-                color: isEdit ? Style.current.secondaryInputText : Style.current.textColor
+                color: isEdit ? Theme.palette.directColor1 : Style.current.textColor
                 topPadding: control.isStatusUpdateInput ? 18 : Style.current.smallPadding
                 bottomPadding: control.isStatusUpdateInput ? 14 : 12
                 Keys.onPressed: onKeyPress(event)
