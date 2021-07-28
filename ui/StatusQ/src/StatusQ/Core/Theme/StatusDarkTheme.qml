@@ -172,5 +172,9 @@ ThemePalette {
     property QtObject statusRoundedImage: QtObject {
         property color backgroundColor: baseColor3
     }
+
+    property QtObject statusChatInput: QtObject {
+        property color secondaryBackgroundColor: "#414141"
+    }
 }
 

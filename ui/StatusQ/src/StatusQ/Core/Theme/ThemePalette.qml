@@ -134,6 +134,10 @@ QtObject {
         property color backgroundColor
     }
 
+    property QtObject statusChatInput: QtObject {
+        property color secondaryBackgroundColor
+    }
+
     function alphaColor(color, alpha) {
         let actualColor = Qt.darker(color, 1)
         actualColor.a = alpha
