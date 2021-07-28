@@ -18,13 +18,7 @@ ModalPopup {
     readonly property int maxMembers: 10
     property var pubKeys: []
     property int channelType: GroupInfoPopup.ChannelType.ActiveChannel
-    property QtObject channel: {
-        if (channelType === GroupInfoPopup.ChannelType.ActiveChannel) {
-            return chatsModel.channelView.activeChannel
-         } else if (channelType === GroupInfoPopup.ChannelType.ContextChannel) {
-            return chatsModel.channelView.contextChannel
-         }
-    }
+    property QtObject channel
     property bool isAdmin: false
     property Component pinnedMessagesPopupComponent
 

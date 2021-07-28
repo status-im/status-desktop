@@ -44,7 +44,10 @@ StatusPopupMenu {
                 )
             }
             if (chatItem.chatType === Constants.chatTypePrivateGroupChat) {
-                return openPopup(groupInfoPopupComponent, {channelType: GroupInfoPopup.ChannelType.ContextChannel})
+                return openPopup(groupInfoPopupComponent, {
+                    channel: chatItem,
+                    channelType: GroupInfoPopup.ChannelType.ContextChannel
+                })
             }
         }
     }

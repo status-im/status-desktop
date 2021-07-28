@@ -222,7 +222,10 @@ Item {
                 chatInfoButton.onClicked: {
                     switch (chatsModel.channelView.activeChannel.chatType) {
                     case Constants.chatTypePrivateGroupChat:
-                        openPopup(groupInfoPopupComponent, {channelType: GroupInfoPopup.ChannelType.ActiveChannel})
+                        openPopup(groupInfoPopupComponent, {
+                            channelType: GroupInfoPopup.ChannelType.ActiveChannel,
+                            channel: chatsModel.channelView.activeChannel
+                        })
                         break;
                     case Constants.chatTypeOneToOne:
                         openProfilePopup(chatsModel.userNameOrAlias(chatsModel.channelView.activeChannel.id),
