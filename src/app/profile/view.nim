@@ -80,6 +80,7 @@ QtObject:
   proc setNewProfile*(self: ProfileView, profile: Profile) =
     self.profile.setProfile(profile)
     self.profileSettings.removeUnknownAccountSettings()
+    self.profileChanged()
 
   QtProperty[QVariant] profile:
     read = getProfile
