@@ -1,4 +1,8 @@
 import QtQuick 2.13
+import QtQml.Models 2.13
+import QtQuick.Controls 2.13 as QC
+import QtGraphicalEffects 1.13
+
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
@@ -7,7 +11,10 @@ import StatusQ.Controls 0.1
 Rectangle {
     id: statusChatListItem
 
+    objectName: "chatItem"
+    property int originalOrder: -1
     property string chatId: ""
+    property string categoryId: ""
     property string name: ""
     property alias badge: statusBadge
     property bool hasUnreadMessages: false
@@ -20,6 +27,8 @@ Rectangle {
     property int type: StatusChatListItem.Type.PublicChat
     property bool highlighted: false
     property bool selected: false
+    property bool dragged: false
+    property alias sensor: sensor
 
     signal clicked(var mouse)
     signal unmute()
@@ -46,11 +55,13 @@ Rectangle {
         return sensor.containsMouse || highlighted ? Theme.palette.statusChatListItem.hoverBackgroundColor : Theme.palette.baseColor4
     }
 
+    opacity: dragged ? 0.7 : 1
+
     MouseArea {
         id: sensor
 
         anchors.fill: parent
-        cursorShape: Qt.PointingHandCursor 
+        cursorShape: Qt.PointingHandCursor
         acceptedButtons: Qt.LeftButton | Qt.RightButton
         hoverEnabled: true
 
@@ -63,7 +74,7 @@ Rectangle {
             anchors.verticalCenter: parent.verticalCenter
 
             sourceComponent: !!statusChatListItem.image.source.toString() ?
-                statusRoundedImageCmp : statusLetterIdenticonCmp
+                                 statusRoundedImageCmp : statusLetterIdenticonCmp
         }
 
         Component {
@@ -89,8 +100,8 @@ Rectangle {
                     image.source: statusChatListItem.image.source
                     showLoadingIndicator: true
                     color: statusChatListItem.image.isIdenticon ?
-                        Theme.palette.statusRoundedImage.backgroundColor :
-                        "transparent"
+                               Theme.palette.statusRoundedImage.backgroundColor :
+                               "transparent"
                     border.width: statusChatListItem.image.isIdenticon ? 1 : 0
                     border.color: Theme.palette.directColor7
                 }
@@ -114,27 +125,27 @@ Rectangle {
                 if (statusChatListItem.muted && !sensor.containsMouse && !statusChatListItem.highlighted) {
                     return 0.4
                 }
-                return statusChatListItem.hasMention || 
-                  statusChatListItem.hasUnreadMessages || 
-                  statusChatListItem.selected ||
-                  statusChatListItem.highlighted ||
-                  statusBadge.visible ||
-                  sensor.containsMouse ? 1.0 : 0.7
+                return statusChatListItem.hasMention ||
+                        statusChatListItem.hasUnreadMessages ||
+                        statusChatListItem.selected ||
+                        statusChatListItem.highlighted ||
+                        statusBadge.visible ||
+                        sensor.containsMouse ? 1.0 : 0.7
             }
 
             icon: {
                 switch (statusChatListItem.type) {
-                    case StatusChatListItem.Type.PublicCat:
-                        return Theme.palette.name == "light" ? "tiny/public-chat" : "tiny/public-chat-white"
-                        break;
-                    case StatusChatListItem.Type.GroupChat:
-                        return Theme.palette.name == "light" ? "tiny/group" : "tiny/group-white"
-                        break;
-                    case StatusChatListItem.Type.CommunityChat:
-                        return Theme.palette.name == "light" ? "tiny/channel" : "tiny/channel-white"
-                        break;
-                    default:
-                        return Theme.palette.name == "light" ? "tiny/public-chat" : "tiny/public-chat-white"
+                case StatusChatListItem.Type.PublicCat:
+                    return Theme.palette.name == "light" ? "tiny/public-chat" : "tiny/public-chat-white"
+                    break;
+                case StatusChatListItem.Type.GroupChat:
+                    return Theme.palette.name == "light" ? "tiny/group" : "tiny/group-white"
+                    break;
+                case StatusChatListItem.Type.CommunityChat:
+                    return Theme.palette.name == "light" ? "tiny/channel" : "tiny/channel-white"
+                    break;
+                default:
+                    return Theme.palette.name == "light" ? "tiny/public-chat" : "tiny/public-chat-white"
                 }
             }
         }
@@ -144,30 +155,30 @@ Rectangle {
             anchors.left: statusIcon.visible ? statusIcon.right : identicon.right
             anchors.leftMargin: statusIcon.visible ? 1 : 8
             anchors.right: mutedIcon.visible ? mutedIcon.left :
-                statusBadge.visible ? statusBadge.left : parent.right
+                                               statusBadge.visible ? statusBadge.left : parent.right
             anchors.rightMargin: 6
             anchors.verticalCenter: parent.verticalCenter
 
-            text: statusChatListItem.type === StatusChatListItem.Type.PublicChat &&
-                !statusChatListItem.name.startsWith("#") ?
-                "#" + statusChatListItem.name :
-                statusChatListItem.name
+            text: (statusChatListItem.type === StatusChatListItem.Type.PublicChat &&
+                  !statusChatListItem.name.startsWith("#") ?
+                      "#" + statusChatListItem.name :
+                      statusChatListItem.name)
             elide: Text.ElideRight
             color: {
                 if (statusChatListItem.muted && !sensor.containsMouse && !statusChatListItem.highlighted) {
                     return Theme.palette.directColor5
                 }
-                return statusChatListItem.hasMention || 
-                  statusChatListItem.hasUnreadMessages ||
-                  statusChatListItem.selected ||
-                  statusChatListItem.highlighted ||
-                  sensor.containsMouse ||
-                  statusBadge.visible ? Theme.palette.directColor1 : Theme.palette.directColor4
+                return statusChatListItem.hasMention ||
+                        statusChatListItem.hasUnreadMessages ||
+                        statusChatListItem.selected ||
+                        statusChatListItem.highlighted ||
+                        sensor.containsMouse ||
+                        statusBadge.visible ? Theme.palette.directColor1 : Theme.palette.directColor4
             }
             font.weight: !statusChatListItem.muted &&
-              (statusChatListItem.hasMention || 
-              statusChatListItem.hasUnreadMessages ||
-              statusBadge.visible) ? Font.Bold : Font.Medium
+                         (statusChatListItem.hasMention ||
+                          statusChatListItem.hasUnreadMessages ||
+                          statusBadge.visible) ? Font.Bold : Font.Medium
             font.pixelSize: 15
         }
 
@@ -184,7 +195,7 @@ Rectangle {
             MouseArea {
                 id: mutedIconSensor
                 hoverEnabled: true
-                cursorShape: Qt.PointingHandCursor 
+                cursorShape: Qt.PointingHandCursor
                 anchors.fill: parent
                 onClicked: statusChatListItem.unmute()
             }
@@ -207,6 +218,5 @@ Rectangle {
             border.color: color
             visible: statusBadge.value > 0
         }
-
     }
 }

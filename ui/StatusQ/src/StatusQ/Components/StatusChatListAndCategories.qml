@@ -16,6 +16,7 @@ Item {
     property alias chatList: statusChatList.chatListItems
     property alias categoryList: statusChatListCategories
     property alias sensor: sensor
+    property bool draggableItems: false
 
     property Component categoryPopupMenu
     property Component chatListPopupMenu
@@ -23,6 +24,7 @@ Item {
 
     signal chatItemSelected(string id)
     signal chatItemUnmuted(string id)
+    signal chatItemReordered(string categoryId, string chatId, int from, int to)
     signal categoryAddButtonClicked(string id)
 
     onPopupMenuChanged: {
@@ -54,14 +56,17 @@ Item {
             StatusChatList {
                 id: statusChatList
                 anchors.horizontalCenter: parent.horizontalCenter
-                visible: !!chatListItems.model && chatListItems.count > 0
+                visible: chatListItems.count > 0
                 selectedChatId: statusChatListAndCategories.selectedChatId
                 onChatItemSelected: statusChatListAndCategories.chatItemSelected(id)
                 onChatItemUnmuted: statusChatListAndCategories.chatItemUnmuted(id)
+                onChatItemReordered: statusChatListAndCategories.chatItemReordered(categoryId, id, from, to)
+                draggableItems: statusChatListAndCategories.draggableItems
                 filterFn: function (model) {
                     return !!!model.categoryId
                 }
                 popupMenu: statusChatListAndCategories.chatListPopupMenu
+
             }
 
             Repeater {
@@ -78,6 +83,8 @@ Item {
                     chatList.selectedChatId: statusChatListAndCategories.selectedChatId
                     chatList.onChatItemSelected: statusChatListAndCategories.chatItemSelected(id)
                     chatList.onChatItemUnmuted: statusChatListAndCategories.chatItemUnmuted(id)
+                    chatList.onChatItemReordered: statusChatListAndCategories.chatItemReordered(model.categoryId, id, from, to)
+                    chatList.draggableItems: statusChatListAndCategories.draggableItems
 
                     popupMenu: statusChatListAndCategories.categoryPopupMenu
                     chatListPopupMenu: statusChatListAndCategories.chatListPopupMenu

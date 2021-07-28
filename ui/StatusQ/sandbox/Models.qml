@@ -13,6 +13,7 @@ QtObject {
             unreadMessagesCount: 0
             mentionsCount: 0
             color: "blue"
+            position: 0
         }
         ListElement {
             chatId: "1"
@@ -22,6 +23,7 @@ QtObject {
             color: "red"
             unreadMessagesCount: 1
             mentionsCount: 1
+            position: 1
         }
         ListElement {
             chatId: "2"
@@ -32,6 +34,7 @@ QtObject {
             identicon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAlklEQVR4nOzW0QmDQBAG4SSkl7SUQlJGCrElq9F3QdjjVhh/5nv3cFhY9vUIYQiNITSG0Bh
 CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2ImYgiNITTlTdG1nUZ5a92VITQxITFiJmIIjSE0htAYQrMHAAD//+wwFVpz+yqXAAAAAElFTkSuQmCC"
             unreadMessagesCount: 0
+            position: 2
         }
         ListElement {
             chatId: "3"
@@ -40,6 +43,7 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
             muted: false
             color: "purple"
             unreadMessagesCount: 0
+            position: 3
         }
         ListElement {
             chatId: "4"
@@ -48,6 +52,7 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
             muted: true
             color: "Orange"
             unreadMessagesCount: 0
+            position: 4
         }
         ListElement {
             chatId: "5"
@@ -56,6 +61,7 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
             muted: false
             color: "green"
             unreadMessagesCount: 0
+            position: 5
         }
     }
 
@@ -68,6 +74,7 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
             muted: false
             unreadMessagesCount: 0
             color: "orange"
+            position: 0
         }
         ListElement {
             chatId: "1"
@@ -77,6 +84,7 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
             unreadMessagesCount: 0
             color: "orange"
             categoryId: "public"
+            position: 0
         }
         ListElement {
             chatId: "2"
@@ -86,6 +94,7 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
             unreadMessagesCount: 0
             color: "orange"
             categoryId: "public"
+            position: 1
         }
         ListElement {
             chatId: "3"
@@ -95,6 +104,7 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
             unreadMessagesCount: 0
             color: "orange"
             categoryId: "dev"
+            position: 0
         }
     }
 
