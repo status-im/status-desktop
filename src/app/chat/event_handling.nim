@@ -37,7 +37,8 @@ proc handleChatEvents(self: ChatController) =
     self.view.hideLoadingIndicator()
     self.view.updateUsernames(evArgs.contacts)
     self.view.updateChats(evArgs.chats)
-    self.view.pushMessages(evArgs.messages, evArgs.chats)
+    self.view.pushMessages(evArgs.messages)
+    self.view.pushMembers(evArgs.chats)
 
     # TODO: update current user status (once it's possible to switch between ONLINE and DO_NOT_DISTURB)
 
@@ -97,7 +98,7 @@ proc handleChatEvents(self: ChatController) =
     elif channel.chat.chatType != ChatType.Profile and channel.chat.chatType != status_chat.ChatType.CommunityChat:
       discard self.view.channelView.chats.addChatItemToList(channel.chat)
       self.view.messageView.upsertChannel(channel.chat.id)
-      self.view.messageView.messageList[channel.chat.id].addChatUpdate(channel.chat)
+      self.view.messageView.messageList[channel.chat.id].addChatMembers(channel.chat.members)
 
     if channel.chat.chatType == status_chat.ChatType.CommunityChat:
       self.view.communities.updateCommunityChat(channel.chat)
