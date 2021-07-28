@@ -160,6 +160,10 @@ Item {
                     chatItem = chatsModel.channelView.getChatItemById(id)
                 }
             }
+
+            onReorder: function (chatId, from, to) {
+                chatsModel.communities.reorderCommunityChannel(chatsModel.communities.activeCommunity.id, categoryId, chatId, to);
+            }
         }
 
         EmptyView {

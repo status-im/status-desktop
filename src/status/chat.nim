@@ -474,6 +474,9 @@ proc deleteCommunityCategory*(self: ChatModel, communityId: string, categoryId: 
 proc reorderCommunityChannel*(self: ChatModel, communityId: string, categoryId: string, chatId: string, position: int) =
   status_chat.reorderCommunityChat(communityId, categoryId, chatId, position)
 
+proc reorderCommunityCategory*(self: ChatModel, communityId: string, categoryId: string, position: int) =
+  status_chat.reorderCommunityCategory(communityId, categoryId, position)
+
 proc joinCommunity*(self: ChatModel, communityId: string) =
   status_chat.joinCommunity(communityId)
 

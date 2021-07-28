@@ -139,6 +139,9 @@ Item {
                 categoryId: id
             })
 
+            onReorderChat: {
+c            }
+
             popupMenu: StatusPopupMenu {
                 StatusMenuItem {
                     //% "Create channel"
