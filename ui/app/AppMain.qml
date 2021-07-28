@@ -474,15 +474,6 @@ StatusAppLayout {
     }
 
     Connections {
-        target: profileModel
-        ignoreUnknownSignals: true
-        enabled: removeMnemonicAfterLogin
-        onInitialized: {
-            profileModel.mnemonic.remove()
-        }
-    }
-
-    Connections {
         target: profileModel.contacts
         onContactRequestAdded: {
             if (!appSettings.notifyOnNewRequests) {
