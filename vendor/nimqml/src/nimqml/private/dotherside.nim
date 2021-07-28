@@ -158,7 +158,7 @@ proc dos_qqmlapplicationengine_load_data(engine: DosQQmlApplicationEngine, data:
 proc dos_qqmlapplicationengine_add_import_path(engine: DosQQmlApplicationEngine, path: cstring) {.cdecl, dynlib: dynLibName, importc.}
 proc dos_qqmlapplicationengine_context(engine: DosQQmlApplicationEngine): DosQQmlContext {.cdecl, dynlib: dynLibName, importc.}
 proc dos_qqmlapplicationengine_delete(engine: DosQQmlApplicationEngine) {.cdecl, dynlib: dynLibName, importc.}
-proc dos_qapplication_load_translation(engine: DosQQmlApplicationEngine, content: cstring) {.cdecl, dynlib: dynLibName, importc.}
+proc dos_qapplication_load_translation(engine: DosQQmlApplicationEngine, content: cstring, shouldRetranslate: bool) {.cdecl, dynlib: dynLibName, importc.}
 
 # QVariant
 proc dos_qvariant_create(): DosQVariant {.cdecl, dynlib: dynLibName, importc.}
