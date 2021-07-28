@@ -390,6 +390,16 @@ StatusWindow {
         }
     }
 
+    Connections {
+        target: profileModel
+        ignoreUnknownSignals: true
+        enabled: removeMnemonicAfterLogin
+        onInitialized: {
+            profileModel.mnemonic.remove()
+        }
+    }
+
+
     Component {
         id: genKey
         GenKey {
