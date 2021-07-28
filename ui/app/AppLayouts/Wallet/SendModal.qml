@@ -15,7 +15,7 @@ ModalPopup {
 
     //% "Send"
     title: qsTrId("command-button-send")
-    height: 504
+    height: 540
 
     property MessageDialog sendingError: MessageDialog {
         id: sendingError
@@ -156,8 +156,8 @@ ModalPopup {
             }
             GasValidator {
                 id: gasValidator
-                anchors.bottom: parent.bottom
-                anchors.bottomMargin: 8
+                anchors.top: gasSelector.bottom
+                anchors.topMargin: 8
                 selectedAccount: selectFromAccount.selectedAccount
                 selectedAmount: parseFloat(txtAmount.selectedAmount)
                 selectedAsset: txtAmount.selectedAsset
