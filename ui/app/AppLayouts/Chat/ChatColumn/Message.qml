@@ -186,7 +186,7 @@ Item {
         }
     }
 
-    property var clickMessage: function(isProfileClick, isSticker = false, isImage = false, image = null, emojiOnly = false, hideEmojiPicker = false) {
+    property var clickMessage: function(isProfileClick, isSticker = false, isImage = false, image = null, emojiOnly = false, hideEmojiPicker = false, isReply = false) {
         if (placeholderMessage || activityCenterMessage) {
             return
         }
@@ -200,11 +200,10 @@ Item {
             SelectedMessage.set(messageId, fromAuthor);
         }
 
-        // Get contact nickname
-        let nickname = appMain.getUserNickname(fromAuthor)
-        messageContextMenu.messageId = root.messageId;
-        messageContextMenu.linkUrls = root.linkUrls;
+
+        messageContextMenu.messageId = root.messageId
         messageContextMenu.contentType = root.contentType
+        messageContextMenu.linkUrls = root.linkUrls;
         messageContextMenu.isProfile = !!isProfileClick;
         messageContextMenu.isCurrentUser = root.isCurrentUser
         messageContextMenu.isText = root.isText
@@ -214,6 +213,15 @@ Item {
         messageContextMenu.pinnedMessage = pinnedMessage;
         messageContextMenu.isCurrentUser = isCurrentUser;
         messageContextMenu.show(userName, fromAuthor, root.profileImageSource || identicon, plainText, nickname, emojiReactionsModel);
+
+        if (isReply) {
+            let nickname = appMain.getUserNickname(repliedMessageAuthor)
+            messageContextMenu.show(repliedMessageAuthor, repliedMessageAuthorPubkey, repliedMessageUserImage || repliedMessageUserIdenticon, plainText, nickname, emojiReactionsModel);
+        } else {
+            let nickname = appMain.getUserNickname(fromAuthor)
+            messageContextMenu.show(userName, fromAuthor, root.profileImageSource || identicon, plainText, nickname, emojiReactionsModel);
+        }
+
         // Position the center of the menu where the mouse is
         if (messageContextMenu.x + messageContextMenu.width + Style.current.padding < root.width) {
             messageContextMenu.x = messageContextMenu.x - messageContextMenu.width / 2;

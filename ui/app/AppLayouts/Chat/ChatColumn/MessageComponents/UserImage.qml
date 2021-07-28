@@ -40,7 +40,7 @@ Loader {
                     acceptedButtons: Qt.LeftButton | Qt.RightButton
                     anchors.fill: parent
                     onClicked: {
-                        clickMessage(true)
+                        clickMessage(true, false, false, null, false, false, isReplyImage)
                     }
                 }
             }
