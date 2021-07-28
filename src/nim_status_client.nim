@@ -141,9 +141,9 @@ proc mainProc() =
   proc changeLanguage(locale: string) =
     if (locale == currentLanguageCode):
       return
-
     currentLanguageCode = locale
-    engine.setTranslationPackage(joinPath(i18nPath, fmt"qml_{locale}.qm"))
+    let shouldRetranslate = not defined(linux)
+    engine.setTranslationPackage(joinPath(i18nPath, fmt"qml_{locale}.qm"), shouldRetranslate)
 
   var profile = profile.newController(status, changeLanguage)
   defer: profile.delete()
