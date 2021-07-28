@@ -124,7 +124,9 @@ Item {
                 return implicitHeight
             }
               
+            draggableItems: true
             chatList.model: chatsModel.communities.activeCommunity.chats
+
             categoryList.model: chatsModel.communities.activeCommunity.categories
 
             showCategoryActionButtons: chatsModel.communities.activeCommunity.admin
@@ -133,6 +135,10 @@ Item {
 
             onChatItemSelected: chatsModel.channelView.setActiveChannel(id)
             onChatItemUnmuted: chatsModel.channelView.unmuteChatItem(id)
+            onChatItemReordered: function (categoryId, chatId, from, to) {
+                chatsModel.communities.reorderCommunityChannel(chatsModel.communities.activeCommunity.id, categoryId, chatId, to);
+            }
+
             onCategoryAddButtonClicked: openPopup(createChannelPopup, {
                 communityId: chatsModel.communities.activeCommunity.id,
                 categoryId: id

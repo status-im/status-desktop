@@ -23,6 +23,7 @@ proc mergeChat(community: var Community, chat: Chat): bool =
     if (c.id == chat.id):
       chat.canPost = community.chats[i].canPost
       chat.categoryId = community.chats[i].categoryId
+      chat.position = community.chats[i].position
       community.chats[i] = chat
       return true
 
@@ -341,7 +342,25 @@ QtObject:
     except Exception as e:
       error "Error creating the category", msg = e.msg
       result = fmt"Error creating the category: {e.msg}"
+  
+  
+  proc reorderCommunityCategory*(self: CommunitiesView, communityId: string, categoryId: string, position: int): string {.slot} =
+    result = ""
+    try:
+      self.status.chat.reorderCommunityCategory(communityId, categoryId, position)
+    except Exception as e:
+      error "Error reorder the category", msg = e.msg
+      result = fmt"Error reorder the category: {e.msg}"
 
+  proc reorderCommunityChannel*(self: CommunitiesView, communityId: string, categoryId: string, chatId: string, position: int): string {.slot} =
+    result = ""
+    try:
+      self.status.chat.reorderCommunityChannel(communityId, categoryId, chatId, position)
+    except Exception as e:
+      error "Error reorder the channel", msg = e.msg
+      result = fmt"Error reorder the channel: {e.msg}"
+
+       
   proc setObservedCommunity*(self: CommunitiesView, communityId: string) {.slot.} =
     if(communityId == ""): return
     var community = self.communityList.getCommunityById(communityId) 

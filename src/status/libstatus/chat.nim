@@ -425,6 +425,17 @@ proc reorderCommunityChat*(communityId: string, categoryId: string, chatId: stri
   if rpcResult.contains("error"):
     raise newException(StatusGoException, rpcResult["error"]["message"].getStr())
 
+proc reorderCommunityCategory*(communityId: string, categoryId: string, position: int) =
+  let rpcResult = callPrivateRPC("reorderCommunityCategory".prefix, %*[
+    {
+      "communityId": communityId,
+      "categoryId": categoryId,
+      "position": position
+    }]).parseJSON()
+  if rpcResult.contains("error"):
+    raise newException(StatusGoException, rpcResult["error"]["message"].getStr())
+
+
 proc deleteCommunityCategory*(communityId: string, categoryId: string) =
   let rpcResult = callPrivateRPC("deleteCommunityCategory".prefix, %*[
     {

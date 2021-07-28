@@ -88,6 +88,7 @@ type Chat* = ref object
   muted*: bool
   canPost*: bool
   ensName*: string
+  position*: int
 
 type RemovedMessage* = object
   chatId*: string
@@ -180,7 +181,8 @@ proc toJsonNode*(self: Chat): JsonNode =
     "name": (if self.ensName != "": self.ensName else: self.name),
     "timestamp": self.timestamp,
     "unviewedMessagesCount": self.unviewedMessagesCount,
-    "joined": self.joined
+    "joined": self.joined,
+    "position": self.position
   }
 
 proc findIndexById*(self: seq[Chat], id: string): int =
