@@ -14,19 +14,21 @@ let TENOR_API_KEY_RESOLVED =
     TENOR_API_KEY
 
 const baseUrl = "https://g.tenor.com/v1/"
-let defaultParams = fmt("&media_filter=basic&limit=10&key={TENOR_API_KEY_RESOLVED}")
+let defaultParams = fmt("&media_filter=minimal&limit=50&key={TENOR_API_KEY_RESOLVED}")
 
 type
   GifItem* = object
     id*: int
     title*: string
     url*: string
+    height*: int
 
 proc toGifItem(jsonMsg: JsonNode): GifItem =
   return GifItem(
     id: jsonMsg{"id"}.getInt,
     title: jsonMsg{"title"}.getStr,
-    url: jsonMsg{"media"}[0]["gif"]["url"].getStr
+    url: jsonMsg{"media"}[0]["gif"]["url"].getStr,
+    height: jsonMsg{"media"}[0]["gif"]["dims"][1].getInt
   )
 
 proc `$`*(self: GifItem): string =
@@ -51,6 +53,7 @@ proc tenorQuery(self: GifClient, path: string): seq[GifItem] =
 
     return items
   except:
+    echo getCurrentExceptionMsg()
     return @[]
 
 proc search*(self: GifClient, query: string): seq[GifItem] =
