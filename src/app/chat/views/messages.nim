@@ -431,6 +431,19 @@ QtObject:
         if (message.id == messageId):
           return chatId
 
+  proc removeChat*(self: MessageView, chatId: string) =
+    if (not self.messageList.hasKey(chatId)):
+      return
+
+    let index = self.getMessageListIndexById(chatId)
+    if (index < 0 or index >= self.messageList.len):
+      return
+
+    self.beginRemoveRows(newQModelIndex(), index, index)
+    self.messageList[chatId].delete
+    self.messageList.del(chatId)
+    self.endRemoveRows()
+
   proc getSearchResultMessageModel*(self: MessageView): QVariant {.slot.} = 
     newQVariant(self.searchResultMessageModel)
 

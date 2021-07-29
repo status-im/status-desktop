@@ -300,12 +300,7 @@ QtObject:
 
   proc removeChat*(self: ChatsView, chatId: string) =
     discard self.channelView.chats.removeChatItemFromList(chatId)
-    if (self.messageView.messageList.hasKey(chatId)):
-      let index = self.messageView.getMessageListIndexById(chatId)
-      self.beginRemoveRows(newQModelIndex(), index, index)
-      self.messageView.messageList[chatId].delete
-      self.messageView.messageList.del(chatId)
-      self.endRemoveRows()
+    self.messageView.removeChat(chatId)
 
   proc toggleReaction*(self: ChatsView, messageId: string, emojiId: int) {.slot.} =
     if self.channelView.activeChannel.id == status_utils.getTimelineChatId():
