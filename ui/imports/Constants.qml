@@ -145,7 +145,7 @@ QtObject {
     readonly property string userLinkPrefix: 'https://join.status.im/u/'
 
     readonly property int maxUploadFiles: 5
-    readonly property double maxUploadFilesizeMB: 0.5
+    readonly property double maxUploadFilesizeMB: 10
 
     readonly property int maxNumberOfPins: 3
 
