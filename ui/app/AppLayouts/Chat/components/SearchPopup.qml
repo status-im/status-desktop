@@ -215,7 +215,7 @@ Popup {
                         if(chatsModel.messageView.isMessageDisplayed(model.messageId))
                             positionAtMessage(model.messageId)
                         else
-                            chatsModel.messageView.loadMessagesTillMessageWithIdIsLoaded(model.messageId)
+                            chatsModel.messageView.loadMessagesUntillMessageWithIdIsLoaded(model.messageId)
                     }
 
                     prevMessageIndex: -1

@@ -308,7 +308,7 @@ Item {
                         active: stackLayoutChatMessages.currentIndex === index
                         sourceComponent: ChatMessages {
                             id: chatMessages
-                            messageList: model.messages
+                            messageList: messages
                             messageContextMenuInst: MessageContextMenu {
                                 reactionModel: EmojiReactions { }
                             }

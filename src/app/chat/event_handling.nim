@@ -13,6 +13,7 @@ proc handleChatEvents(self: ChatController) =
   self.status.events.on("messagesLoaded") do(e:Args):
     let evArgs = MsgsLoadedArgs(e)
     self.view.onMessagesLoaded(evArgs.messages)
+    self.view.onMessagesLoaded(msgArgs.chatId, msgArgs.messages)
     for statusUpdate in evArgs.statusUpdates:
       self.view.communities.updateMemberVisibility(statusUpdate)    
       

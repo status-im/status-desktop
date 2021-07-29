@@ -438,8 +438,8 @@ QtObject:
     let task = RequestMessagesTaskArg( `method`: "requestMoreMessages", chatId: self.channelView.activeChannel.id)
     mailserverWorker.start(task)
 
-  proc onMessagesLoaded*(self: ChatsView, messages: var seq[Message]) =
-    self.messageView.onMessagesLoaded(messages)
+  proc onMessagesLoaded*(self: ChatsView, chatId: string, messages: var seq[Message]) =
+    self.messageView.onMessagesLoaded(chatId, messages)
 
   proc onSearchMessagesLoaded*(self: ChatsView, messages: seq[Message]) =
     self.messageView.onSearchMessagesLoaded(messages)

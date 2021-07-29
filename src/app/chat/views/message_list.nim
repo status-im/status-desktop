@@ -57,6 +57,8 @@ QtObject:
       messageReactions*: Table[string, string]
       timedoutMessages: HashSet[string]
       userList: UserListView
+      loadingHistoryMessages: bool
+      initialMessagesLoaded: bool
 
   proc delete*(self: ChatMessageList) =
     self.messages = @[]
@@ -81,6 +83,8 @@ QtObject:
   proc setup*(self: ChatMessageList, chatId: string, status: Status, addFakeMessages: bool) =
     self.messages = @[]
     self.id = chatId
+    self.loadingHistoryMessages = false
+    self.initialMessagesLoaded = false
 
     if addFakeMessages:
       self.addFakeMessages()
@@ -96,6 +100,41 @@ QtObject:
   proc newChatMessageList*(chatId: string, status: Status, addFakeMessages: bool): ChatMessageList =
     new(result, delete)
     result.setup(chatId, status, addFakeMessages)
+
+  #################################################
+  # Properties
+  #################################################
+  proc loadingHistoryMessagesChanged*(self: ChatMessageList) {.signal.}
+
+  proc setLoadingHistoryMessages*(self: ChatMessageList, value: bool) =
+    if (value == self.loadingHistoryMessages):
+      return
+
+    self.loadingHistoryMessages = value
+    self.loadingHistoryMessagesChanged()
+
+  proc getLoadingHistoryMessages*(self: ChatMessageList): QVariant {.slot.} =
+    return newQVariant(self.loadingHistoryMessages)
+
+  QtProperty[QVariant] loadingHistoryMessages:
+    read = getLoadingHistoryMessages
+    notify = loadingHistoryMessagesChanged
+
+  proc initialMessagesLoadedChanged*(self: ChatMessageList) {.signal.}
+
+  proc setInitialMessagesLoaded*(self: ChatMessageList, value: bool) =
+    if (value == self.initialMessagesLoaded):
+      return
+
+    self.initialMessagesLoaded = value
+    self.initialMessagesLoadedChanged()
+
+  proc getInitialMessagesLoaded*(self: ChatMessageList): QVariant {.slot.} =
+    return newQVariant(self.initialMessagesLoaded)
+
+  QtProperty[QVariant] initialMessagesLoaded:
+    read = getInitialMessagesLoaded
+    notify = initialMessagesLoadedChanged
 
   proc countChanged*(self: ChatMessageList) {.signal.}
 
