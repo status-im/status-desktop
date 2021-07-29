@@ -188,7 +188,7 @@ PopupMenu {
 
     Action {
         id: copyAction
-        enabled: !emojiOnly
+        enabled: !isProfile && !emojiOnly
         //% "Copy"
         text: qsTrId("copy-to-clipboard")
         onTriggered: {
