@@ -36,7 +36,7 @@ ModalPopup {
             verticalOffset: 5
             radius: 10
             samples: 15
-            color: "#22000000"
+            color: Style.current.dropShadow
         }
     }
 

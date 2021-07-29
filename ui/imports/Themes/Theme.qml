@@ -33,6 +33,7 @@ QtObject {
     property color orange: "#FE8F59"
 
     property color background
+    property color dropShadow
     property color backgroundHover
     property color backgroundHoverLight
     property color border
