@@ -10,7 +10,7 @@ ScrollView {
     readonly property int btnheight: 42
     readonly property int w: 340
     property var changeProfileSection: function (sectionId) {
-        profileCurrentIndex = sectionId
+        Config.currentMenuTab = sectionId
     }
     contentHeight: menuItems.height + 24
 
@@ -27,11 +27,11 @@ ScrollView {
                 menuItemId: modelData.id
                 text: modelData .text
                 source: "../../../img/profile/" + modelData.filename
-                active: profileMenu.profileCurrentIndex === modelData.id
+                active: Config.currentMenuTab === modelData.id
                 Layout.fillWidth: true
                 width: profileMenu.width
                 onClicked: {
-                    Config.currentMenuTab = modelData.id;
+                    Config.currentMenuTab = modelData.id
                 }
             }
         }
@@ -49,12 +49,12 @@ ScrollView {
                 menuItemId: modelData.id
                 text: modelData .text
                 source: "../../../img/profile/" + modelData.filename
-                active: profileMenu.profileCurrentIndex === modelData.id
+                active: Config.currentMenuTab === modelData.id
                 visible: modelData.ifEnabled !== "browser" || appSettings.isBrowserEnabled
                 Layout.fillWidth: true
                 width: profileMenu.width
                 onClicked: function () {
-                    Config.currentMenuTab = modelData.id;
+                    Config.currentMenuTab = modelData.id
                 }
             }
         }
@@ -69,22 +69,16 @@ ScrollView {
                 menuItemId: modelData.id
                 text: modelData.text
                 source: "../../../img/profile/" + modelData.filename
-                active: profileMenu.profileCurrentIndex === modelData.id
+                active: Config.currentMenuTab === modelData.id
                 Layout.fillWidth: true
                 width: profileMenu.width
                 onClicked: function () {
                     if (modelData.function === "exit") {
                         return Qt.quit()
                     }
-                    Config.currentMenuTab = modelData.id;
+                    Config.currentMenuTab = modelData.id
                 }
             }
         }
     }
 }
-
-/*##^##
-Designer {
-    D{i:0;formeditorColor:"#ffffff";height:500;width:340}
-}
-##^##*/
