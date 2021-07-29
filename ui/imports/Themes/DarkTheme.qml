@@ -34,6 +34,7 @@ Theme {
     property color orange: "#FFA500"
 
     property color background: "#2C2C2C"
+    property color dropShadow: "#66000000"
     property color appBarDividerColor: darkGrey
     property color border: darkGrey
     property color borderSecondary: tenPercentWhite
