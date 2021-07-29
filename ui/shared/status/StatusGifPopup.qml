@@ -41,7 +41,7 @@ Popup {
 
     Connections {
         target: chatsModel.gif
-        onItemsLoaded: {
+        onDataLoaded: {
             loading = false
         }
     }
@@ -88,6 +88,7 @@ Popup {
 
     Component {
         id: gifItems
+
         ScrollView {
             id: scrollView
             property ScrollBar vScrollBar: ScrollBar.vertical
@@ -98,34 +99,30 @@ Popup {
             ScrollBar.vertical.policy: ScrollBar.AlwaysOn
             ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
 
-            Column {
+            Row {
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter
+                spacing: 4
 
-                spacing: 5
+                StatusGifColumn {
+                    gifList.model: chatsModel.gif.columnA
+                    gifWidth: (popup.width / 3) - 12
+                    gifSelected: popup.gifSelected
+                }
 
-                Repeater {
-                    id: gifSectionsRepeater
-                    model: chatsModel.gif.items
+                StatusGifColumn {
+                    gifList.model: chatsModel.gif.columnB
+                    gifWidth: (popup.width / 3) - 12
+                    gifSelected: popup.gifSelected
+                }
 
-                    delegate: Rectangle {
-                        width: animation.width
-                        height: animation.height
-
-                        AnimatedImage {
-                            id: animation
-                            source: model.url
-                        }
-
-                        MouseArea {
-                            anchors.fill: parent
-                            onClicked: function (event) {
-                                gifSelected(event, model.url)
-                            }
-                        }
-                    }
+                StatusGifColumn {
+                    gifList.model: chatsModel.gif.columnC
+                    gifWidth: (popup.width / 3) - 12
+                    gifSelected: popup.gifSelected
                 }
             }
+
         }
     }
 }

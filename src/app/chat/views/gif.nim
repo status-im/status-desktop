@@ -7,9 +7,11 @@ import ../../../status/gif
 
 QtObject:
   type GifView* = ref object of QObject
-    items*: GifList
+    columnA*: GifList
+    columnB*: GifList
+    columnC*: GifList
     client: GifClient
-    
+
   proc setup(self: GifView) =
     self.QObject.setup
 
@@ -20,25 +22,62 @@ QtObject:
     new(result, delete)
     result = GifView()
     result.client = newGifClient()
-    result.items = newGifList()
+    result.columnA = newGifList()
+    result.columnB = newGifList()
+    result.columnC = newGifList()
     result.setup()
 
-  proc getItemsList*(self: GifView): QVariant {.slot.} =
-    result = newQVariant(self.items)
+  proc dataLoaded*(self: GifView) {.signal.}
 
-  proc itemsLoaded*(self: GifView) {.signal.}
+  proc getColumnAList*(self: GifView): QVariant {.slot.} =
+    result = newQVariant(self.columnA)
 
-  QtProperty[QVariant] items:
-    read = getItemsList
-    notify = itemsLoaded
+  QtProperty[QVariant] columnA:
+    read = getColumnAList
+    notify = dataLoaded
+
+  proc getColumnBList*(self: GifView): QVariant {.slot.} =
+    result = newQVariant(self.columnB)
+
+  QtProperty[QVariant] columnB:
+    read = getColumnBList
+    notify = dataLoaded
+
+  proc getColumnCList*(self: GifView): QVariant {.slot.} =
+    result = newQVariant(self.columnC)
+
+  QtProperty[QVariant] columnC:
+    read = getColumnCList
+    notify = dataLoaded
+
+  proc updateColumns(self: GifView, data: seq[GifItem]) =
+    var columnAData: seq[GifItem] = @[]
+    var columnAHeight = 0
+    var columnBData: seq[GifItem] = @[]
+    var columnBHeight = 0
+    var columnCData: seq[GifItem] = @[]
+    var columnCHeight = 0
+
+    for item in data:
+      if columnAHeight <= columnBHeight:
+        columnAData.add(item)
+        columnAHeight += item.height
+      elif columnBHeight <= columnCHeight:
+        columnBData.add(item)
+        columnBHeight += item.height
+      else:
+        columnCData.add(item)
+        columnCHeight += item.height
+
+    self.columnA.setNewData(columnAData)
+    self.columnB.setNewData(columnBData)
+    self.columnC.setNewData(columnCData)
+    self.dataLoaded()
 
   proc load*(self: GifView) {.slot.} =
     let data = self.client.getTrendings()
-    self.items.setNewData(data)
-    self.itemsLoaded()
+    self.updateColumns(data)
 
-  proc search*(self: GifView, query: string) {.slot.} = 
+  proc search*(self: GifView, query: string) {.slot.} =
     let data = self.client.search(query)
-    self.items.setNewData(data)
-    self.itemsLoaded()
-  
+    self.updateColumns(data)
