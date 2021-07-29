@@ -627,6 +627,10 @@ StatusAppLayout {
         StatusIdenticon {}
     }
 
+    NotificationWindow {
+        id: notificationWindow
+    }
+
     StatusInputListPopup {
         id: channelPicker
         //% "Where do you want to go?"

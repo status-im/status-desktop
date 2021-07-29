@@ -415,10 +415,6 @@ StatusWindow {
         }
     }
 
-    NotificationWindow {
-        id: notificationWindow
-    }
-
     MacTrafficLights {
 //        parent: Overlay.overlay
         anchors.left: parent.left

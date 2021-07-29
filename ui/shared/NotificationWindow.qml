@@ -18,7 +18,8 @@ Item {
     property string identicon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAZAAAAGQAQMAAAC6caSPAAAABlBMVEXMzMz////TjRV2AAAAAWJLR0QB/wIt3gAAACpJREFUGBntwYEAAAAAw6D7Uw/gCtUAAAAAAAAAAAAAAAAAAAAAAAAAgBNPsAABAjKCqQAAAABJRU5ErkJggg=="
 
     property var processClick: Backpressure.oneInTime(root, 1000, function () {
-        notificationSound.play()
+        notificationSound.stop()
+        Qt.callLater(notificationSound.play)
         var w1 = winInit.createObject(null)
         w1.destroy()
     })

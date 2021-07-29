@@ -23,7 +23,7 @@ Item {
             anchors.left: parent.left
             anchors.leftMargin: 24
             //% "Sound volume"
-            text: qsTrId("sound-volume") + " " + volume.value
+            text: qsTrId("sound-volume") + " " + (volume.value > 0 ? volume.value.toFixed(1) : 0)
             font.pixelSize: 15
         }
 
