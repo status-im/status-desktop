@@ -37,6 +37,7 @@ Rectangle {
     property string tertiaryTitle: ""
     property real leftPadding: 16
     property real rightPadding: 16
+    property bool enabled: true
     property StatusIconSettings icon: StatusIconSettings {
         height: 20
         width: 20
@@ -88,6 +89,7 @@ Rectangle {
     MouseArea {
         id: sensor
 
+        enabled: statusListItem.enabled
         anchors.fill: parent
         cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
         acceptedButtons: Qt.LeftButton | Qt.RightButton
@@ -167,6 +169,9 @@ Rectangle {
                 font.pixelSize: 15
                 wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                 color: {
+                  if (!statusListItem.enabled) {
+                    return Theme.palette.baseColor1
+                  }
                   switch (statusListItem.type) {
                       case StatusListItem.Type.Primary:
                           return Theme.palette.directColor1
@@ -184,7 +189,7 @@ Rectangle {
                 width: parent.width
                 text: statusListItem.subTitle
                 font.pixelSize: 15
-                color: !statusListItem.tertiaryTitle ? Theme.palette.baseColor1 : Theme.palette.directColor1
+                color: !statusListItem.enabled || !statusListItem.tertiaryTitle ? Theme.palette.baseColor1 : Theme.palette.directColor1
                 visible: !!statusListItem.subTitle
                 wrapMode: Text.WrapAtWordBoundaryOrAnywhere
             }
