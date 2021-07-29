@@ -1,6 +1,7 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQml.Models 2.13
+import QtGraphicalEffects 1.13
 import "../../../../shared"
 import "../../../../shared/status"
 import "../../../../imports"
@@ -23,17 +24,24 @@ Popup {
     property bool hideReadNotifications: false
 
     id: activityCenter
-    modal: true
+    modal: false
 
-    Overlay.modal: Rectangle {
-        color: Qt.rgba(0, 0, 0, 0.4)
-    }
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
     parent: Overlay.overlay
+
     width: 560
     background: Rectangle {
         color: Style.current.background
         radius: Style.current.radius
+        layer.enabled: true
+        layer.effect: DropShadow {
+            verticalOffset: 3
+            radius: Style.current.radius
+            samples: 15
+            fast: true
+            cached: true
+            color: Style.current.dropShadow
+        }
     }
     x: applicationWindow.width - activityCenter.width - Style.current.halfPadding
     onOpened: {
