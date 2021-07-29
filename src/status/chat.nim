@@ -46,6 +46,7 @@ type
     active*: bool
 
   MsgsLoadedArgs* = ref object of Args
+    chatId*: string
     messages*: seq[Message]
     statusUpdates*: seq[StatusUpdate]
 
@@ -76,10 +77,10 @@ QtObject:
       mailserverReady*: bool
       contacts*: Table[string, Profile]
       channels*: Table[string, Chat]
-      msgCursor*: Table[string, string]
-      pinnedMsgCursor*: Table[string, string]
+      msgCursor: Table[string, string]
+      pinnedMsgCursor: Table[string, string]
       activityCenterCursor*: string
-      emojiCursor*: Table[string, string]
+      emojiCursor: Table[string, string]
       lastMessageTimestamps*: Table[string, int64]
 
   proc setup(self: ChatModel) = 
@@ -665,12 +666,21 @@ QtObject:
       for jsonMsg in messagesArray:
         messages.add(jsonMsg.toMessage())
     
-    self.events.emit("searchMessagesLoaded", MsgsLoadedArgs(messages: messages))
+    self.events.emit("searchMessagesLoaded", MsgsLoadedArgs(chatId: chatId, messages: messages))
   
   proc loadMoreMessagesForChannel*(self: ChatModel, channelId: string) =
     if (channelId.len == 0):
       info "empty channel id set for fetching more messages"
       return
+
+    if(not self.msgCursor.hasKey(channelId)):
+      self.msgCursor[channelId] = ""
+
+    if(not self.emojiCursor.hasKey(channelId)):
+      self.emojiCursor[channelId] = ""
+
+    if(not self.pinnedMsgCursor.hasKey(channelId)):
+      self.pinnedMsgCursor[channelId] = ""
 
     let arg = AsyncFetchChatMessagesTaskArg(
       tptr: cast[ByteAddress](asyncFetchChatMessagesTask),
@@ -690,19 +700,13 @@ QtObject:
       info "empty channel id set for loading initial messages"
       return
 
-    if(not self.msgCursor.hasKey(channelId)):
-      self.msgCursor[channelId] = ""
-    else:
+    if(self.msgCursor.hasKey(channelId)):
       return
 
-    if(not self.emojiCursor.hasKey(channelId)):
-      self.emojiCursor[channelId] = ""
-    else:
+    if(self.emojiCursor.hasKey(channelId)):
       return
 
-    if(not self.pinnedMsgCursor.hasKey(channelId)):
-      self.pinnedMsgCursor[channelId] = ""
-    else:
+    if(self.pinnedMsgCursor.hasKey(channelId)):
       return
 
     self.loadMoreMessagesForChannel(channelId)
@@ -771,6 +775,6 @@ QtObject:
           pinnedMessages.add(msg)
 
     # notify view
-    self.events.emit("messagesLoaded", MsgsLoadedArgs(messages: messages))
+    self.events.emit("messagesLoaded", MsgsLoadedArgs(chatId: chatId, messages: messages))
     self.events.emit("reactionsLoaded", ReactionsLoadedArgs(reactions: reactions))
-    self.events.emit("pinnedMessagesLoaded", MsgsLoadedArgs(messages: pinnedMessages))
+    self.events.emit("pinnedMessagesLoaded", MsgsLoadedArgs(chatId: chatId, messages: pinnedMessages))

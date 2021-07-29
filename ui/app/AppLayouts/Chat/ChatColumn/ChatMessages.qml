@@ -22,7 +22,6 @@ Item {
     property alias scrollToMessage: chatLogView.scrollToMessage
 
     property var messageContextMenuInst
-    property var messageList: MessagesData {}
     property real scrollY: chatLogView.visibleArea.yPosition * chatLogView.contentHeight
     property int newMessages: 0
     property int countOnStartUp: 0
@@ -223,10 +222,10 @@ Item {
         }
 
         property var loadMsgs : Backpressure.oneInTime(chatLogView, 500, function() {
-            if(chatsModel.messageView.loadingHistoryMessages)
+            if(!messages.initialMessagesLoaded || messages.loadingHistoryMessages)
                 return
 
-            chatsModel.messageView.loadMoreMessages();
+            chatsModel.messageView.loadMoreMessages(chatId);
         });
 
         onContentYChanged: {
@@ -263,7 +262,7 @@ Item {
             function(left, right) { return left.clock > right.clock }
         ]
 
-        model: messageList
+        model: messages
 
         delegate: Message {
             id: msgDelegate

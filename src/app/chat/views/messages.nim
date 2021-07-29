@@ -18,6 +18,7 @@ logScope:
 type
   ChatViewRoles {.pure.} = enum
     MessageList = UserRole + 1
+    ChatId
 
 QtObject:
   type MessageView* = ref object of QAbstractListModel
@@ -33,7 +34,6 @@ QtObject:
     unreadDirectMessagesAndMentionsCount: int
     channelOpenTime*: Table[string, int64]
     searchedMessageId: string
-    loadingHistoryMessages: bool
 
   proc setup(self: MessageView) = self.QAbstractListModel.setup
   proc delete*(self: MessageView) =
@@ -59,32 +59,14 @@ QtObject:
     result.unreadMessageCnt = 0
     result.searchResultMessageModel = newMessageListProxyModel(status)
     result.unreadDirectMessagesAndMentionsCount = 0
-    result.loadingHistoryMessages = false
     result.setup
 
   #################################################
   # Forward declaration section
   #################################################
-  proc checkIfSearchedMessageIsLoaded(self: MessageView)
-
-  #################################################
-  # Properties
-  #################################################
-  proc loadingHistoryMessagesChanged*(self: MessageView) {.signal.}
-
-  proc setLoadingHistoryMessages*(self: MessageView, value: bool) =
-    if (value == self.loadingHistoryMessages):
-      return
-
-    self.loadingHistoryMessages = value
-    self.loadingHistoryMessagesChanged()
-
-  proc getLoadingHistoryMessages*(self: MessageView): QVariant {.slot.} =
-    return newQVariant(self.loadingHistoryMessages)
-
-  QtProperty[QVariant] loadingHistoryMessages:
-    read = getLoadingHistoryMessages
-    notify = loadingHistoryMessagesChanged
+  proc checkIfSearchedMessageIsLoaded(self: MessageView, chatId: string)
+  proc setLoadingHistoryMessages*(self: MessageView, chatId: string, value: bool)
+  proc setInitialMessagesLoaded*(self: MessageView, chatId: string, value: bool)
 
   proc replaceMentionsWithPubKeys(self: MessageView, mentions: seq[string], contacts: seq[Profile], message: string, predicate: proc (contact: Profile): string): string =
     var updatedMessage = message
@@ -286,18 +268,17 @@ QtObject:
 
   proc messagesLoaded*(self: MessageView) {.signal.}
 
-  proc loadMoreMessages*(self: MessageView) {.slot.} =
-    let channelId = self.channelView.activeChannel.id
-
-    self.setLoadingHistoryMessages(true)
+  proc loadMoreMessages*(self: MessageView, channelId: string) {.slot.} =
+    self.setLoadingHistoryMessages(channelId, true)
     self.status.chat.loadMoreMessagesForChannel(channelId)
 
-  proc onMessagesLoaded*(self: MessageView, messages: var seq[Message]) =
+  proc onMessagesLoaded*(self: MessageView, chatId: string, messages: var seq[Message]) =
     self.pushMessages(messages)
-    self.messagesLoaded();
-    self.setLoadingHistoryMessages(false)
+    self.messagesLoaded()
 
-    self.checkIfSearchedMessageIsLoaded()
+    self.setInitialMessagesLoaded(chatId, true)
+    self.setLoadingHistoryMessages(chatId, false)
+    self.checkIfSearchedMessageIsLoaded(chatId)
     
   proc loadingMessagesChanged*(self: MessageView, value: bool) {.signal.}
 
@@ -432,10 +413,15 @@ QtObject:
       return
     if index.row < 0 or index.row >= self.messageList.len:
       return
-    return newQVariant(toSeq(self.messageList.values)[index.row])
+
+    let chatViewRole = role.ChatViewRoles
+    case chatViewRole:
+      of ChatViewRoles.ChatId: result = newQVariant(toSeq(self.messageList.keys)[index.row])
+      of ChatViewRoles.MessageList: result = newQVariant(toSeq(self.messageList.values)[index.row])
 
   method roleNames(self: MessageView): Table[int, string] =
     {
+      ChatViewRoles.ChatId.int:"chatId",
       ChatViewRoles.MessageList.int:"messages"
     }.toTable
 
@@ -472,13 +458,15 @@ QtObject:
 
     return message.id != ""
 
-  proc loadMessagesTillMessageWithIdIsLoaded*(self: MessageView, messageId: string) {.slot.} =
+  proc loadMessagesUntillMessageWithIdIsLoaded*(self: MessageView, messageId: string) {.slot.} =
     self.searchedMessageId = messageId
-    self.loadMoreMessages()
+    let chatId = self.channelView.activeChannel.id
+
+    self.loadMoreMessages(chatId)
 
   proc searchedMessageLoaded*(self: MessageView, messageId: string) {.signal.}
 
-  proc checkIfSearchedMessageIsLoaded(self: MessageView) =
+  proc checkIfSearchedMessageIsLoaded(self: MessageView, chatId: string) =
     if (self.searchedMessageId.len == 0):
       return
 
@@ -486,4 +474,13 @@ QtObject:
       self.searchedMessageLoaded(self.searchedMessageId)
       self.searchedMessageId = ""
     else:
-      self.loadMoreMessages()
+      self.loadMoreMessages(chatId)
+  
+  proc setLoadingHistoryMessages*(self: MessageView, chatId: string, value: bool) =
+    if self.messageList.hasKey(chatId):
+      self.messageList[chatId].setLoadingHistoryMessages(value)
+
+  proc setInitialMessagesLoaded*(self: MessageView, chatId: string, value: bool) =
+    if self.messageList.hasKey(chatId):
+      self.messageList[chatId].setInitialMessagesLoaded(value)
+    
