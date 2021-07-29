@@ -159,18 +159,18 @@ Item {
                 placeholderText: qsTrId("enter-contact-code")
                 customHeight: 44
                 fontPixelSize: 15
-                Keys.onReleased: {
-                    if (text !== "") {
-                        if (!addContactModal.validate(addContactSearchInput.text)) {
-                            searchResults.reset();
-                            contactsContainer.isPending = false;
-                            return;
-                        }
-
-                        Qt.callLater(addContactModal.lookupContact, addContactSearchInput.text);
-                    } else {
-                        addContactModal.validationError = "";
+                onTextEdited: {
+                    if (addContactSearchInput.text === "") {
+                        searchResults.reset();
+                        return;
                     }
+                    if (!addContactModal.validate(addContactSearchInput.text)) {
+                        searchResults.reset();
+                        contactsContainer.isPending = false;
+                        return;
+                    }
+
+                    Qt.callLater(addContactModal.lookupContact, addContactSearchInput.text);
                 }
 
 
