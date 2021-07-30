@@ -22,25 +22,28 @@ ModalPopup {
             id: languageGroup
         }
 
-        ConfirmationDialog {
+        Loader {
             id: languageChangeConfirmationDialog
-            property string newLocale
+            active: Qt.platform.os === Constants.linux
+            sourceComponent: ConfirmationDialog {
+                property string newLocale
+                title: qsTr("Change language")
+                confirmationText: qsTr("Display language has been changed. You must restart the application for changes to take effect.")
+                showCancelButton: true
+                confirmButtonLabel: qsTr("Close the app now")
+                cancelButtonLabel: qsTr("I'll do that later")
+                onConfirmButtonClicked: {
+                    profileModel.changeLocale(newLocale)
+                    Qt.quit();
+                }
+                onCancelButtonClicked: {
+                    languageChangeConfirmationDialog.item.close()
+                    popup.close()
+                }
+            }
 
-            title: qsTr("Change language")
-            confirmationText: qsTr("Display language has been changed. You must restart the application for changes to take effect.")
-            showCancelButton: true
-            confirmButtonLabel: qsTr("Close the app now")
-            cancelButtonLabel: qsTr("I'll do that later")
-            onConfirmButtonClicked: {
-                console.log("NEW LOCALE?", newLocale)
-                profileModel.changeLocale(newLocale)
-                Qt.quit();
-            }
-            onCancelButtonClicked: {
-                languageChangeConfirmationDialog.close()
-                popup.close()
-            }
         }
+        
 
         ScrollView {
             width: parent.width
@@ -70,9 +73,9 @@ ModalPopup {
                         onRadioCheckedChanged: {
                             if (checked && globalSettings.locale !== modelData.locale) {
                                 globalSettings.locale = modelData.locale
-                                if (utilsModel.getOs() === Constants.linux) {
-                                    languageChangeConfirmationDialog.newLocale = modelData.locale
-                                    languageChangeConfirmationDialog.open()
+                                if (Qt.platform.os === Constants.linux) {
+                                    languageChangeConfirmationDialog.item.newLocale = modelData.locale
+                                    languageChangeConfirmationDialog.item.open()
                                 } else {
                                     profileModel.changeLocale(modelData.locale)
                                 }
