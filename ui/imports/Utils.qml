@@ -271,25 +271,44 @@ QtObject {
     function formatShortDateStr(longStr) {
         const dmKeys = {
             // Days
+            //% "Sun"
             Sunday: qsTrId("sun"),
+            //% "Mon"
             Monday: qsTrId("mon"),
+            //% "Tue"
             Tuesday: qsTrId("tue"),
+            //% "Wed"
             Wednesday: qsTrId("wed"),
+            //% "Thu"
             Thursday: qsTrId("thu"),
+            //% "Fri"
             Friday: qsTrId("fri"),
+            //% "Sat"
             Saturday: qsTrId("sat"),
             // Months
+            //% "Jan"
             January: qsTrId("jan"),
+            //% "Feb"
             February: qsTrId("feb"),
+            //% "Mar"
             March: qsTrId("mar"),
+            //% "Apr"
             April: qsTrId("apr"),
+            //% "May"
             May: qsTrId("may"),
+            //% "Jun"
             June: qsTrId("jun"),
+            //% "Jul"
             July: qsTrId("jul"),
+            //% "Aug"
             August: qsTrId("aug"),
+            //% "Sep"
             September: qsTrId("sep"),
+            //% "Oct"
             October: qsTrId("oct"),
+            //% "Nov"
             November: qsTrId("nov"),
+            //% "Dec"
             December: qsTrId("dec")
         };
 
@@ -317,14 +336,22 @@ QtObject {
         if (now.toDateString() === messageDate.toDateString()) {
             return (hours < 10 ? "0" + hours : hours) + ":" + (minutes < 10 ? "0" + minutes : minutes)
         } else if (yesterday.toDateString() === messageDate.toDateString()) {
+            //% "Yesterday"
             return qsTrId("yesterday")
         } else if (lastWeek.getTime() < messageDate.getTime()) {
+            //% "Sunday"
             let days = [qsTrId("sunday"),
+                        //% "Monday"
                         qsTrId("monday"),
+                        //% "Tuesday"
                         qsTrId("tuesday"),
+                        //% "Wednesday"
                         qsTrId("wednesday"),
+                        //% "Thursday"
                         qsTrId("thursday"),
+                        //% "Friday"
                         qsTrId("friday"),
+                        //% "Saturday"
                         qsTrId("saturday")];
             return days[messageDate.getDay()];
         } else {
@@ -409,6 +436,7 @@ QtObject {
                 return result
             }
 
+            //% "Join the %1 community"
             result.title = qsTrId("join-the--1-community").arg(communityName)
             result.communityId = communityId
             result.callback = function () {
@@ -515,11 +543,17 @@ QtObject {
 
     function getNetworkName(network){
         switch(network){
+            //% "Mainnet with upstream RPC"
             case Constants.networkMainnet: return qsTrId("mainnet-with-upstream-rpc")
+            //% "POA Network"
             case Constants.networkPOA: return qsTrId("poa-network")
+            //% "xDai Chain"
             case Constants.networkXDai: return qsTrId("xdai-chain")
+            //% "Goerli with upstream RPC"
             case Constants.networkGoerli: return qsTrId("goerli-with-upstream-rpc")
+            //% "Rinkeby with upstream RPC"
             case Constants.networkRinkeby: return qsTrId("rinkeby-with-upstream-rpc")
+            //% "Ropsten with upstream RPC"
             case Constants.networkRopsten: return qsTrId("ropsten-with-upstream-rpc")
             default: return network
         }
@@ -529,17 +563,20 @@ QtObject {
         switch (item) {
             case "first":
                 if (firstPasswordField.text === "") {
+                    //% "You need to enter a password"
                     return [false, qsTrId("you-need-to-enter-a-password")];
                 } else if (firstPasswordField.text.length < 6) {
-                    return [false, qsTr("Password needs to be 6 characters or more")];
+                    return [false, qsTrId("Password needs to be 6 characters or more")];
                 }
                 return [true, ""];
 
             case "repeat":
                 if (repeatPasswordField.text === "") {
+                    //% "You need to repeat your password"
                     return [false, qsTrId("you-need-to-repeat-your-password")];
                 } else if (repeatPasswordField.text !== firstPasswordField.text) {
-                    return [false, qsTr("Passwords don't match")];
+                    //% "Passwords don't match"
+                    return [false, qsTrId("passwords-don-t-match")];
                 }
                 return [true, ""];
 
@@ -606,14 +643,17 @@ QtObject {
         }
 
         if(validation & Utils.Validate.TextLength && str.length > limit) {
+            //% "The %1 cannot exceed %2 characters"
             errMsg = qsTrId("the--1-cannot-exceed--2-characters").arg(fieldName, limit)
         }
 
         if(validation & Utils.Validate.TextHexColor && !isHexColor(str)) {
+            //% "Must be an hexadecimal color (eg: #4360DF)"
             errMsg = qsTrId("must-be-an-hexadecimal-color--eg---4360df-")
         }
 
         if(validation & Utils.Validate.TextLowercaseLettersNumberAndDashes && !isValidChannelName(str)) {
+            //% "Use only lowercase letters (a to z), numbers & dashes (-). Do not use chat keys."
             errMsg = qsTrId("use-only-lowercase-letters--a-to-z---numbers---dashes------do-not-use-chat-keys-")
         }
 
