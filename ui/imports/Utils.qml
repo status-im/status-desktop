@@ -409,7 +409,8 @@ QtObject {
         }
         if (index > -1) {
             const pk = link.substring(index + 3)
-            result.title = qsTr("Start a 1-on-1 chat with %1")
+            //% "Start a 1-on-1 chat with %1"
+            result.title = qsTrId("start-a-1-on-1-chat-with--1")
                             .arg(isChatKey(pk) ? utilsModel.generateAlias(pk) : ("@" + removeStatusEns(pk)))
             result.callback = function () {
                 if(isChatKey(pk)){
@@ -566,7 +567,8 @@ QtObject {
                     //% "You need to enter a password"
                     return [false, qsTrId("you-need-to-enter-a-password")];
                 } else if (firstPasswordField.text.length < 6) {
-                    return [false, qsTrId("Password needs to be 6 characters or more")];
+                    //% "Password needs to be 6 characters or more"
+                    return [false, qsTrId("password-needs-to-be-6-characters-or-more")];
                 }
                 return [true, ""];
 

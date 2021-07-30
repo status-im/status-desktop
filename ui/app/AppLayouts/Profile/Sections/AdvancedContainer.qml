@@ -127,7 +127,8 @@ Item {
 
         StatusSettingsLineButton {
             id: onlineUsers
-            text: qsTr("Online users")
+            //% "Online users"
+            text: qsTrId("online-users")
             isSwitch: true
             switchChecked: appSettings.showOnlineUsers
             onClicked: {
@@ -140,7 +141,8 @@ Item {
             anchors.left: parent.left
             anchors.right: parent.right
             sourceComponent: StatusSettingsLineButton {
-                text: qsTr("Broadcast user status")
+                //% "Broadcast user status"
+                text: qsTrId("broadcast-user-status")
                 isSwitch: true
                 switchChecked: profileModel.profile.sendUserStatus
                 onClicked: function (checked) {
@@ -236,7 +238,8 @@ Item {
         }        
 
         StatusSettingsLineButton {
-            text: qsTr("GIF Widget")
+            //% "GIF Widget"
+            text: qsTrId("gif-widget")
             isSwitch: true
             switchChecked: appSettings.isGifWidgetEnabled
             onClicked: {

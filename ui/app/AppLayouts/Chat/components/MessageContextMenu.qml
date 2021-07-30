@@ -301,7 +301,8 @@ PopupMenu {
     }
 
     Action {
-        text: qsTr("Jump to")
+        //% "Jump to"
+        text: qsTrId("jump-to")
         onTriggered: {
             positionAtMessage(messageContextMenu.messageId)
             messageContextMenu.closeParentPopup()
@@ -321,15 +322,18 @@ PopupMenu {
                   contentType === Constants.emojiType ||
                   contentType === Constants.imageType ||
                   contentType === Constants.audioType)
-        text: qsTr("Delete message")
+        //% "Delete message"
+        text: qsTrId("delete-message")
         onTriggered: {
             if (!appSettings.showDeleteMessageWarning) {
                 return chatsModel.messageView.deleteMessage(messageId)
             }
 
             let confirmationDialog = openPopup(genericConfirmationDialog, {
-                                                   title: qsTr("Confirm deleting this message"),
-                                                   confirmationText: qsTr("Are you sure you want to delete this message? Be aware that other clients are not guaranteed to delete the message as well."),
+                                                   //% "Confirm deleting this message"
+                                                   title: qsTrId("confirm-deleting-this-message"),
+                                                   //% "Are you sure you want to delete this message? Be aware that other clients are not guaranteed to delete the message as well."
+                                                   confirmationText: qsTrId("are-you-sure-you-want-to-delete-this-message--be-aware-that-other-clients-are-not-guaranteed-to-delete-the-message-as-well-"),
                                                    height: 260,
                                                    "checkbox.visible": true,
                                                    executeConfirm: function () {

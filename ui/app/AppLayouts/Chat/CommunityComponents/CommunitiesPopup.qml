@@ -119,7 +119,8 @@ StatusModal {
                     anchors.horizontalCenter: parent.horizontalCenter
                     title: name
                     subTitle: description
-                    tertiaryTitle: qsTr("%1 members").arg(nbMembers)
+                    //% "%1 members"
+                    tertiaryTitle: qsTrId("-1-members").arg(nbMembers)
                     statusListItemTitle.font.weight: Font.Bold
                     statusListItemTitle.font.pixelSize: 17
                     image.source: thumbnailImage
