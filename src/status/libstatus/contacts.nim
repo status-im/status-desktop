@@ -1,45 +1,34 @@
-import json, strmisc, atomics
+import json, strmisc
 import core, ../utils, ../types
-from ../profile/profile import Profile
 
-var
-  contacts {.threadvar.}: JsonNode
-  contactsInited {.threadvar.}: bool
-  dirty: Atomic[bool]
+# this module is made stateless intentionally
+# all caching logic is done in status/contacts.nim
 
-# TODO: remove Profile from here
-proc blockContact*(contact: Profile): string =
+proc blockContact*(id: string, ensVerified: bool, ensName: string, alias: string, identicon: string, systemTags: seq[string], localNickname: string): string =
   callPrivateRPC("blockContact".prefix, %* [
     {
-      "id": contact.id,
-      "ensVerified": contact.ensVerified,
-      "alias": contact.alias,
-      "identicon": contact.identicon,
-      "systemTags": contact.systemTags
+      "id": id,
+      "ensVerified": ensVerified,
+      "alias": alias,
+      "identicon": identicon,
+      "systemTags": systemTags,
+      "localNickname": localNickname
     }
   ])
 
 proc getContactByID*(id: string): string =
-  result = callPrivateRPC("getContactByID".prefix, %* [id])
-  dirty.store(true)
+  callPrivateRPC("getContactByID".prefix, %* [id])
 
 proc getContacts*(): JsonNode =
-  let cacheIsDirty = (not contactsInited) or dirty.load
-  if not cacheIsDirty:
-    result = contacts
+  let response = callPrivateRPC("contacts".prefix, %* []).parseJson
+  if response["result"].kind == JNull:
+    result = %* []
   else:
-    let payload = %* []
-    let response = callPrivateRPC("contacts".prefix, payload).parseJson
-    if response["result"].kind == JNull:
-      result = %* []
-    else:
-      result = response["result"]
-    dirty.store(false)
-    contacts = result
-    contactsInited = true
+    result = response["result"]
 
 proc saveContact*(id: string, ensVerified: bool, ensName: string, alias: string, identicon: string, thumbnail: string, systemTags: seq[string], localNickname: string): string =
-  let payload = %* [{
+  callPrivateRPC("saveContact".prefix, %* [
+    {
       "id": id,
       "name": ensName,
       "ensVerified": ensVerified,
@@ -48,11 +37,8 @@ proc saveContact*(id: string, ensVerified: bool, ensName: string, alias: string,
       "images": {"thumbnail": {"Payload": thumbnail.partition(",")[2]}},
       "systemTags": systemTags,
       "localNickname": localNickname
-    }]
-  # TODO: StatusGoError handling
-  result = callPrivateRPC("saveContact".prefix, payload)
-  dirty.store(true)
+    }
+  ])
 
 proc requestContactUpdate*(publicKey: string): string =
-  result = callPrivateRPC("sendContactUpdate".prefix, %* [publicKey, "", ""])
-  dirty.store(true)
+  callPrivateRPC("sendContactUpdate".prefix, %* [publicKey, "", ""])

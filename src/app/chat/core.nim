@@ -37,7 +37,7 @@ proc init*(self: ChatController) =
 
   # self.view.pubKey = pubKey
   self.view.setPubKey(pubKey)
-  self.status.chat.init(pubKey)
+  self.status.chat.init(pubKey, self.status.contacts)
   self.status.stickers.init()
   self.view.reactions.init()
   

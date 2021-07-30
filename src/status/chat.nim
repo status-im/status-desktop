@@ -159,10 +159,10 @@ proc requestMissingCommunityInfos*(self: ChatModel) =
   for communityId in self.communitiesToFetch:
     status_chat.requestCommunityInfo(communityId)
 
-proc init*(self: ChatModel, pubKey: string) =
+proc init*(self: ChatModel, pubKey: string, statusContacts: ContactModel) =
   self.publicKey = pubKey
 
-  var contacts = getAddedContacts()
+  var contacts = statusContacts.getAddedContacts()
   var chatList = status_chat.loadChats()
 
   let profileUpdatesChatIds = chatList.filter(c => c.chatType == ChatType.Profile).map(c => c.id)
@@ -290,7 +290,6 @@ proc chatMessages*(self: ChatModel, chatId: string, initialLoad:bool = true) =
     self.lastMessageTimestamps[chatId] = ts
 
   self.events.emit("messagesLoaded", MsgsLoadedArgs(messages: messageTuple[1]))
-
 
 proc statusUpdates*(self: ChatModel) =
   let statusUpdates = status_chat.statusUpdates()

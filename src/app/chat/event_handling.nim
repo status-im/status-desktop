@@ -10,6 +10,8 @@ proc handleChatEvents(self: ChatController) =
   # Display already saved messages
   self.status.events.on("messagesLoaded") do(e:Args):
     let evArgs = MsgsLoadedArgs(e)
+    if evArgs.messages.len > 0:
+      self.status.chat.statusUpdates()
     self.view.pushMessages(evArgs.messages)
     for statusUpdate in evArgs.statusUpdates:
       self.view.communities.updateMemberVisibility(statusUpdate)    
