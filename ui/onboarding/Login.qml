@@ -119,8 +119,11 @@ Item {
             anchors.top: changeAccountBtn.bottom
             anchors.topMargin: Style.current.padding * 2
             enabled: !loading
-            //% "Enter password"
-            placeholderText: loading ? qsTr("Connecting...") : qsTrId("enter-password")
+            placeholderText: loading ? 
+                //% "Connecting..."
+                qsTrId("connecting") :
+                //% "Enter password"
+                qsTrId("enter-password")
             textField.echoMode: TextInput.Password
             textField.focus: true
             Keys.onReturnPressed: {
@@ -177,7 +180,8 @@ Item {
                     if (error === "file is not a database") {
                         errMsg.text = errMsg.incorrectPasswordMsg
                     } else {
-                        errMsg.text = qsTr("Login failed: %1").arg(error.toUpperCase())
+                        //% "Login failed: %1"
+                        errMsg.text = qsTrId("login-failed---1").arg(error.toUpperCase())
                     }
                     errMsg.visible = true
                     loading = false

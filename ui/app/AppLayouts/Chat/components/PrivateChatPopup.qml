@@ -65,7 +65,8 @@ ModalPopup {
                 anchors.left: dollarEmoji.right
                 anchors.leftMargin: 6
                 anchors.verticalCenter: parent.verticalCenter
-                text: qsTr("My Profile")
+                //% "My Profile"
+                text: qsTrId("my-profile")
                 font.pixelSize: 15
                 color: Style.current.white
             }

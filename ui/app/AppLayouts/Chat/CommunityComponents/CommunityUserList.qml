@@ -36,7 +36,8 @@ Item {
         opacity: (root.width > 50) ? 1.0 : 0.0
         visible: (opacity > 0.1)
         font.pixelSize: Style.current.primaryTextFontSize
-        text: qsTr("Members")
+        //% "Members"
+        text: qsTrId("members-label")
     }
 
     ListView {

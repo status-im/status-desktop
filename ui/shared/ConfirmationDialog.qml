@@ -53,7 +53,8 @@ ModalPopup {
             anchors.top: innerText.bottom
             anchors.topMargin: Style.current.halfPadding
             Layout.preferredWidth: parent.width
-            text: qsTr("Do not show this again")
+            //% "Do not show this again"
+            text: qsTrId("do-not-show-this-again")
         }
     }
 

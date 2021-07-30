@@ -28,7 +28,8 @@ ModalPopup {
 
         StyledText {
             id: title
-            text: !!messageToPin ? qsTr("Pin limit reached") :
+            //% "Pin limit reached"
+            text: !!messageToPin ? qsTrId("pin-limit-reached") :
                                                //% "Pinned messages"
                                                qsTrId("pinned-messages")
             anchors.top: parent.top
@@ -43,7 +44,8 @@ ModalPopup {
             id: nbPinnedMessages
             text: {
                 if (!!messageToPin) {
-                    return qsTr("Unpin a previous message first")
+                    //% "Unpin a previous message first"
+                    return qsTrId("unpin-a-previous-message-first")
                 }
 
                 //% "%1 messages"
@@ -191,7 +193,8 @@ ModalPopup {
             id: btnUnpin
             visible: !!messageToPin
             enabled: !!messageToUnpin
-            text: qsTr("Unpin")
+            //% "Unpin"
+            text: qsTrId("unpin")
             type: "warn"
             anchors.right: parent.right
             onClicked: {

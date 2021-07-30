@@ -308,7 +308,8 @@ Column {
 
             StyledText {
                 id: enableText
-                text: isImageLink ? qsTr("Enable automatic image unfurling") :
+                //% "Enable automatic image unfurling"
+                text: isImageLink ? qsTrId("enable-automatic-image-unfurling") :
                                     //% "Enable link previews in chat?"
                                     qsTrId("enable-link-previews")
                 horizontalAlignment: Text.AlignHCenter

@@ -60,7 +60,8 @@ Item {
             height: 36
             topPadding: 8
             bottomPadding: 0
-            placeholderText: qsTr("Search")
+            //% "Search"
+            placeholderText: qsTrId("search")
             icon.name: "search"
             Keys.onEscapePressed: {
                 actionButton.forceActiveFocus();
@@ -133,25 +134,29 @@ Item {
                 }
 
                 StatusMenuItem {
-                    text: qsTr("Start new chat")
+                    //% "Start new chat"
+                    text: qsTrId("start-new-chat")
                     icon.name: "private-chat"
                     onTriggered: openPopup(privateChatPopupComponent)
                 }
 
                 StatusMenuItem {
-                    text: qsTr("Start group chat")
+                    //% "Start group chat"
+                    text: qsTrId("start-group-chat")
                     icon.name: "group-chat"
                     onTriggered: openPopup(groupChatPopupComponent)
                 }
 
                 StatusMenuItem {
-                    text: qsTr("Join public chat")
+                    //% "Join public chat"
+                    text: qsTrId("new-public-group-chat")
                     icon.name: "public-chat"
                     onTriggered: openPopup(publicChatPopupComponent)
                 }
 
                 StatusMenuItem {
-                    text: qsTr("Communities")
+                    //% "Communities"
+                    text: qsTrId("communities")
                     icon.name: "communities"
                     onTriggered: openPopup(communitiesPopupComponent)
                 }
