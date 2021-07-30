@@ -10,6 +10,7 @@ import StatusQ.Popups 0.1
 StatusPopupMenu {
 
     property var chatItem
+    property bool communityActive: chatsModel.communities.activeCommunity.active
 
     StatusMenuItem {
         id: viewProfileMenuItem
@@ -19,11 +20,9 @@ StatusPopupMenu {
                     case Constants.chatTypeOneToOne:
                       //% "View Profile"
                       return qsTrId("view-profile")
-                      break;
                     case Constants.chatTypePrivateGroupChat:
                       //% "View Group"
                       return qsTrId("view-group")
-                      break;
                 }
             }
             return ""
@@ -58,7 +57,7 @@ StatusPopupMenu {
 
 
     Action {
-        enabled: profileModel.fleets.fleet == Constants.waku_prod || profileModel.fleets.fleet == Constants.waku_test
+        enabled: profileModel.fleets.fleet == Constants.waku_prod || profileModel.fleets.fleet === Constants.waku_test
         //% "Test WakuV2 - requestAllHistoricMessages"
         text: qsTrId("test-wakuv2---requestallhistoricmessages")
         onTriggered: chatsModel.requestAllHistoricMessages()
@@ -99,7 +98,7 @@ StatusPopupMenu {
         //% "Edit Channel"
         text: qsTrId("edit-channel")
         icon.name: "edit"
-        enabled: chatsModel.communities.activeCommunity.active &&
+        enabled: communityActive &&
             chatsModel.communities.activeCommunity.admin
         onTriggered: openPopup(editChannelPopup, {
             communityId: chatsModel.communities.activeCommunity.id,
@@ -113,30 +112,35 @@ StatusPopupMenu {
 
     StatusMenuItem {
         id: deleteOrLeaveMenuItem
-        text: chatItem && chatItem.chatType === Constants.chatTypeOneToOne ? 
-            //% "Delete chat"
-            qsTrId("delete-chat") : 
-            //% "Leave chat"
-            qsTrId("leave-chat")
-        icon.name: chatItem && chatItem.chatType === Constants.chatTypeOneToOne ? "delete" : "arrow-right"
+        text: {
+            if (communityActive) {
+                return qsTr("Delete Channel")
+            }
+            return chatItem && chatItem.chatType === Constants.chatTypeOneToOne ?
+                        //% "Delete chat"
+                        qsTrId("delete-chat") :
+                        //% "Leave chat"
+                        qsTrId("leave-chat")
+        }
+        icon.name: chatItem && chatItem.chatType === Constants.chatTypeOneToOne || communityActive ? "delete" : "arrow-right"
         icon.width: chatItem && chatItem.chatType === Constants.chatTypeOneToOne ? 18 : 14
         iconRotation: chatItem && chatItem.chatType === Constants.chatTypeOneToOne ? 0 : 180
 
         type: StatusMenuItem.Type.Danger
         onTriggered: {
-            let label = chatItem && chatItem.chatType === Constants.chatTypeOneToOne ? 
-                //% "Delete chat"
-                qsTrId("delete-chat") :
-                //% "Leave chat"
-                qsTrId("leave-chat")
-            openPopup(deleteChatConfirmationDialogComponent, { 
-                title: label,
-                confirmButtonLabel: label,
-                chatId: chatItem.id 
-            })
+            let label = chatItem && chatItem.chatType === Constants.chatTypeOneToOne ?
+                    //% "Delete chat"
+                    qsTrId("delete-chat") :
+                    //% "Leave chat"
+                    qsTrId("leave-chat")
+            openPopup(deleteChatConfirmationDialogComponent, {
+                          title: label,
+                          confirmButtonLabel: label,
+                          chatId: chatItem.id
+                      })
         }
 
-        enabled: !chatsModel.communities.activeCommunity.active
+        enabled: !communityActive || chatsModel.communities.activeCommunity.admin
     }
 
     Component {
@@ -144,13 +148,17 @@ StatusPopupMenu {
         ConfirmationDialog {
             property string chatId
             btnType: "warn"
-            //% "Are you sure you want to leave this chat?"
-            confirmationText: qsTrId("are-you-sure-you-want-to-leave-this-chat-")
+            confirmationText: communityActive ? qsTr("Are you sure you want to delete this channel?") :
+                                                qsTr("Are you sure you want to leave this chat?")
             onClosed: {
                 destroy()
             }
             onConfirmButtonClicked: {
-                chatsModel.channelView.leaveChat(chatId)
+                if (communityActive) {
+                    chatsModel.communities.deleteCommunityChat(chatsModel.communities.activeCommunity.id, chatId)
+                } else {
+                    chatsModel.channelView.leaveChat(chatId)
+                }
                 close();
             }
         }
