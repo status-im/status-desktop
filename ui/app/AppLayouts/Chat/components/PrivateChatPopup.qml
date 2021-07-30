@@ -51,14 +51,14 @@ ModalPopup {
         }
         contentItem: Item {
             anchors.fill: parent
-            SVGImage {
+            RoundedImage {
                 id: dollarEmoji
                 width: 32
                 height: 32
                 anchors.left: parent.left
                 anchors.leftMargin: 2
                 anchors.verticalCenter: parent.verticalCenter
-                source: Qt.resolvedUrl("../../../../imports/twemoji/svg/1f911.svg")
+                source: appMain.getProfileImage(profileModel.profile.pubKey)
             }
 
             StyledText {
