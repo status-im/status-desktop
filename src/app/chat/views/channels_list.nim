@@ -181,6 +181,7 @@ QtObject:
 
     let index = self.createIndex(idx, 0, nil)
     self.chats[idx].unviewedMessagesCount = 0
+    self.chats[idx].unviewedMentionsCount = 0
 
     self.dataChanged(index, index, @[ChannelsRoles.UnreadMessages.int])
 
@@ -191,6 +192,7 @@ QtObject:
 
     let index = self.createIndex(idx, 0, nil)
     self.chats[idx].mentionsCount = 0
+    self.chats[idx].unviewedMentionsCount = 0
 
     self.dataChanged(index, index, @[ChannelsRoles.MentionsCount.int])
 
@@ -205,18 +207,7 @@ QtObject:
 
     let index = self.createIndex(idx, 0, nil)
     self.chats[idx].mentionsCount.dec
-
-    self.dataChanged(index, index, @[ChannelsRoles.MentionsCount.int])
-
-  proc incrementMentions*(self: ChannelsList, channelId: string) : bool =
-    result = false
-    let idx = self.chats.findIndexById(channelId)
-    if idx == -1: 
-      return
-
-    let index = self.createIndex(idx, 0, nil)
-    self.chats[idx].mentionsCount.inc
-    result = true
+    self.chats[idx].unviewedMentionsCount.dec
 
     self.dataChanged(index, index, @[ChannelsRoles.MentionsCount.int])
 

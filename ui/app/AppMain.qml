@@ -169,7 +169,8 @@ StatusAppLayout {
             icon.color: model.communityColor
             icon.source: model.thumbnailImage
 
-            badge.visible: !checked && model.unviewedMessagesCount > 0
+            badge.value: model.unviewedMentionsCount + model.requestsCount
+            badge.visible: badge.value > 0 || (!checked && model.unviewedMessagesCount > 0)
             badge.border.color: hovered ? Theme.palette.statusBadge.hoverBorderColor : Theme.palette.statusBadge.borderColor
             badge.border.width: 2
             badge.anchors.rightMargin: 4

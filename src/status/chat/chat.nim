@@ -80,10 +80,11 @@ type Chat* = ref object
   lastClockValue*: int64 # indicates the last clock value to be used when sending messages
   deletedAtClockValue*: int64 # indicates the clock value at time of deletion, messages with lower clock value of this should be discarded
   unviewedMessagesCount*: int
+  unviewedMentionsCount*: int
   lastMessage*: Message
   members*: seq[ChatMember]
   membershipUpdateEvents*: seq[ChatMembershipEvent]
-  mentionsCount*: int
+  mentionsCount*: int  # Using this is not a good approach, we should instead use unviewedMentionsCount and refer to it always.
   muted*: bool
   canPost*: bool
   ensName*: string
@@ -128,6 +129,7 @@ type Community* = object
   members*: seq[string]
   access*: int
   unviewedMessagesCount*: int
+  unviewedMentionsCount*: int
   admin*: bool
   joined*: bool
   verified*: bool
@@ -235,3 +237,18 @@ proc isAdmin*(self: Chat, pubKey: string): bool =
     if member.id == pubKey:
       return member.joined and member.admin
   return false
+
+proc recalculateUnviewedMessages*(community: var Community) =
+  var total = 0
+  for chat in community.chats:
+    total += chat.unviewedMessagesCount
+  
+  community.unviewedMessagesCount = total
+
+proc recalculateMentions*(community: var Community) =
+  echo "(recalculateMentions) chatId: ", community.id, "  before: ", community.unviewedMentionsCount
+  var total = 0
+  for chat in community.chats:
+    total += chat.unviewedMentionsCount
+    
+  community.unviewedMentionsCount = total

@@ -249,3 +249,14 @@ QtObject:
     categoryItemView.setCategoryItem(category)
     self.categoryItemViews[id] = categoryItemView
     return categoryItemView
+
+  proc clearAllMentions*(self: CommunityItemView) =
+    self.chats.clearAllMentionsFromAllChannels()
+    self.communityItem.unviewedMentionsCount = 0
+    self.chatsChanged()
+
+  proc decrementMentions*(self: CommunityItemView, channelId: string) =
+    self.chats.decrementMentions(channelId)
+    self.communityItem.unviewedMentionsCount -= 1
+    self.chatsChanged()
+

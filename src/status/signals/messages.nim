@@ -174,6 +174,7 @@ proc toChat*(jsonChat: JsonNode): Chat =
     lastClockValue: jsonChat{"lastClockValue"}.getBiggestInt,
     deletedAtClockValue: jsonChat{"deletedAtClockValue"}.getBiggestInt, 
     unviewedMessagesCount: jsonChat{"unviewedMessagesCount"}.getInt,
+    unviewedMentionsCount: jsonChat{"unviewedMentionsCount"}.getInt,
     mentionsCount: 0,
     muted: false,
     ensName: "",
