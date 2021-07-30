@@ -85,7 +85,9 @@ Column {
                     popupMenuSlot.item.openHandler = originalOpenHandler
                     return
                 }
-                statusChatList.chatItemSelected(model.chatId || model.id)
+                if (!statusChatListItem.selected) {
+                    statusChatList.chatItemSelected(model.chatId || model.id)
+                }
             }
             onUnmute: statusChatList.chatItemUnmuted(model.chatId || model.id)
             visible: {
