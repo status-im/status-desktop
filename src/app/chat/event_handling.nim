@@ -28,7 +28,6 @@ proc handleChatEvents(self: ChatController) =
   self.status.events.on("activityCenterNotificationsLoaded") do(e:Args):
     let notifications = ActivityCenterNotificationsArgs(e).activityCenterNotifications
     self.view.pushActivityCenterNotifications(notifications)
-    self.view.communities.updateNotifications(notifications)
 
   self.status.events.on("contactBlocked") do(e: Args):
     var evArgs = ContactBlockedArgs(e)
@@ -86,7 +85,6 @@ proc handleChatEvents(self: ChatController) =
       self.view.refreshPinnedMessages(evArgs.pinnedMessages)
     if (evArgs.activityCenterNotifications.len > 0):
       self.view.addActivityCenterNotification(evArgs.activityCenterNotifications)
-      self.view.communities.updateNotifications(evArgs.activityCenterNotifications)
 
     if (evArgs.deletedMessages.len > 0):
       for messageId in evArgs.deletedMessages:

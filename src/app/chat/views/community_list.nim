@@ -10,23 +10,25 @@ import # status-desktop libs
 type
   CommunityRoles {.pure.} = enum
     Id = UserRole + 1,
-    Name = UserRole + 2
-    Description = UserRole + 3
-    Access = UserRole + 4
-    Admin = UserRole + 5
-    Joined = UserRole + 6
-    Verified = UserRole + 7
-    NumMembers = UserRole + 8
-    ThumbnailImage = UserRole + 9
-    LargeImage = UserRole + 10
-    EnsOnly = UserRole + 11
-    CanRequestAccess = UserRole + 12
-    CanManageUsers = UserRole + 13
-    CanJoin = UserRole + 14
-    IsMember = UserRole + 15
-    UnviewedMessagesCount = UserRole + 16
-    CommunityColor = UserRole + 17
-    Muted = UserRole + 18
+    Name
+    Description
+    Access
+    Admin
+    Joined
+    Verified
+    NumMembers
+    ThumbnailImage
+    LargeImage
+    EnsOnly
+    CanRequestAccess
+    CanManageUsers
+    CanJoin
+    IsMember
+    UnviewedMessagesCount
+    UnviewedMentionsCount
+    RequestsCount
+    CommunityColor
+    Muted
 
 QtObject:
   type
@@ -75,6 +77,8 @@ QtObject:
       of "isMember": result = $community.isMember
       of "nbMembers": result = $community.members.len
       of "unviewedMessagesCount": result = $community.unviewedMessagesCount
+      of "unviewedMentionsCount": result = $community.unviewedMentionsCount
+      of "requestsCount": result = $community.membershipRequests.len
       of "thumbnailImage":
         if (not community.communityImage.isNil):
           result = community.communityImage.thumbnail
@@ -111,6 +115,8 @@ QtObject:
       of CommunityRoles.IsMember: result = newQVariant(communityItem.isMember.bool)
       of CommunityRoles.NumMembers: result = newQVariant(communityItem.members.len)
       of CommunityRoles.UnviewedMessagesCount: result = newQVariant(communityItem.unviewedMessagesCount)
+      of CommunityRoles.UnviewedMentionsCount: result = newQVariant(communityItem.unviewedMentionsCount)
+      of CommunityRoles.RequestsCount: result = newQVariant(communityItem.membershipRequests.len)
       of CommunityRoles.ThumbnailImage:
         if (not communityItem.communityImage.isNil):
           result = newQVariant(communityItem.communityImage.thumbnail)
@@ -145,17 +151,26 @@ QtObject:
       CommunityRoles.Muted.int: "muted",
       CommunityRoles.NumMembers.int: "nbMembers",
       CommunityRoles.UnviewedMessagesCount.int: "unviewedMessagesCount",
+      CommunityRoles.UnviewedMentionsCount.int: "unviewedMentionsCount",
+      CommunityRoles.RequestsCount.int: "requestsCount",
       CommunityRoles.ThumbnailImage.int:"thumbnailImage",
       CommunityRoles.LargeImage.int:"largeImage",
       CommunityRoles.CommunityColor.int:"communityColor"
     }.toTable
 
-  proc setNewData*(self: CommunityList, communityList: seq[Community]) =
+  proc setNewData*(self: CommunityList, communityList: var seq[Community]) =
+    for c in communityList.mitems:
+      c.recalculateUnviewedMessages()
+      c.recalculateMentions()
+
     self.beginResetModel()
     self.communities = communityList
     self.endResetModel()
 
-  proc addCommunityItemToList*(self: CommunityList, community: Community) =
+  proc addCommunityItemToList*(self: CommunityList, community: var Community) =
+    community.recalculateUnviewedMessages()
+    community.recalculateMentions()
+
     self.beginInsertRows(newQModelIndex(), self.communities.len, self.communities.len)
     self.communities.add(community)
     self.endInsertRows()
@@ -218,8 +233,16 @@ QtObject:
     let bottomRight = self.createIndex(index, index, nil)
     var oldCommunity = self.communities[index]
     community.memberStatus = oldCommunity.memberStatus
+
+    community.recalculateUnviewedMessages()
+    community.recalculateMentions()
+
     self.communities[index] = community
-    self.dataChanged(topLeft, bottomRight, @[CommunityRoles.Name.int, CommunityRoles.Description.int, CommunityRoles.UnviewedMessagesCount.int, CommunityRoles.ThumbnailImage.int])
+    self.dataChanged(topLeft, bottomRight, @[CommunityRoles.Name.int, 
+      CommunityRoles.Description.int, 
+      CommunityRoles.UnviewedMessagesCount.int, 
+      CommunityRoles.UnviewedMentionsCount.int, 
+      CommunityRoles.ThumbnailImage.int])
 
   proc removeCategoryFromCommunity*(self: CommunityList, communityId: string, categoryId:string) =
     var community = self.getCommunityById(communityId)
@@ -238,11 +261,14 @@ QtObject:
       # Clear unread messages for each channel in community. 
       for c in self.communities[idx].chats:
         c.unviewedMessagesCount = 0
+        c.unviewedMentionsCount = 0
 
     let index = self.createIndex(idx, 0, nil)
     self.communities[idx].unviewedMessagesCount = 0
+    self.communities[idx].unviewedMentionsCount = 0
 
-    self.dataChanged(index, index, @[CommunityRoles.UnviewedMessagesCount.int])
+    self.dataChanged(index, index, @[CommunityRoles.UnviewedMessagesCount.int, 
+      CommunityRoles.UnviewedMentionsCount.int])
   
   proc clearAllMentions*(self: CommunityList, communityId: string, clearFromChannels : bool) =
     let idx = self.communities.findIndexById(communityId)
@@ -254,6 +280,13 @@ QtObject:
       # as mentins are not exposed to qml using roles from this model.
       for c in self.communities[idx].chats:
         c.mentionsCount = 0
+        c.unviewedMentionsCount = 0
+
+    self.communities[idx].unviewedMentionsCount = 0
+
+    let index = self.createIndex(idx, 0, nil)
+    self.dataChanged(index, index, @[CommunityRoles.UnviewedMentionsCount.int,
+      CommunityRoles.ThumbnailImage.int])
 
     # If we decide in one moment to expose mention role we should do that here.
 
@@ -267,9 +300,17 @@ QtObject:
       return
 
     self.communities[comIndex].chats[chatIndex].mentionsCount.dec
+    self.communities[comIndex].chats[chatIndex].unviewedMentionsCount.dec
 
-  proc incrementMentions*(self: CommunityList, channelId : string) =
-    for c in self.communities:
-      let chatIndex = c.chats.findIndexById(channelId)
-      if (chatIndex != -1): 
-        c.chats[chatIndex].mentionsCount.inc
+    self.communities[comIndex].unviewedMentionsCount.dec
+
+    let index = self.createIndex(comIndex, 0, nil)
+    self.dataChanged(index, index, @[CommunityRoles.UnviewedMentionsCount.int])
+
+  proc updateMentions*(self: CommunityList, communityId : string) =
+    let comIndex = self.communities.findIndexById(communityId)
+    if (comIndex == -1): 
+      return
+    self.communities[comIndex].recalculateMentions()
+    let index = self.createIndex(comIndex, 0, nil)
+    self.dataChanged(index, index, @[CommunityRoles.UnviewedMentionsCount.int])

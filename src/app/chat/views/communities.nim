@@ -24,7 +24,6 @@ proc mergeChat(community: var Community, chat: Chat): bool =
     if (c.id == chat.id):
       chat.canPost = community.chats[i].canPost
       chat.categoryId = community.chats[i].categoryId
-      chat.mentionsCount = community.chats[i].mentionsCount
       community.chats[i] = chat
       return true
 
@@ -73,13 +72,6 @@ QtObject:
     self.importingCommunityState = state
     self.importingCommunityStateChanged(state.int, communityImportingProcessId)
 
-  proc calculateUnreadMessages*(self: CommunitiesView, community: var Community) =
-    var unreadTotal = 0
-    for chatItem in community.chats:
-      unreadTotal = unreadTotal + chatItem.unviewedMessagesCount
-    if unreadTotal != community.unviewedMessagesCount:
-      community.unviewedMessagesCount = unreadTotal
-
   proc updateMemberVisibility*(self: CommunitiesView, statusUpdate: StatusUpdate) =
     self.joinedCommunityList.updateMemberVisibility(statusUpdate)
     self.activeCommunity.setCommunityItem(self.joinedCommunityList.getCommunityById(self.activeCommunity.communityItem.id))
@@ -109,7 +101,6 @@ QtObject:
     if (not found):
       community.chats.add(newChat)
 
-    self.calculateUnreadMessages(community)
     self.joinedCommunityList.replaceCommunity(community)
     if (self.activeCommunity.active and self.activeCommunity.communityItem.id == community.id):
       self.activeCommunity.changeChats(community.chats)
@@ -164,6 +155,8 @@ QtObject:
       var communities = self.status.chat.getJoinedComunities()
       communities = self.populateChats(communities)
       self.joinedCommunityList.setNewData(communities)
+      for c in communities:
+        self.addMembershipRequests(self.pendingRequestsToJoinForCommunity(c.id))
       self.joinedCommunityList.fetched = true
 
       # Also fetch requests
@@ -200,7 +193,6 @@ QtObject:
 
   proc setActiveCommunity*(self: CommunitiesView, communityId: string) {.slot.} =
     if(communityId == ""): return
-    self.addMembershipRequests(self.pendingRequestsToJoinForCommunity(communityId))
     self.activeCommunity.setCommunityItem(self.joinedCommunityList.getCommunityById(communityId))
     self.activeCommunity.setActive(true)
     self.activeCommunityChanged()
@@ -219,7 +211,8 @@ QtObject:
       if (not self.userCanJoin(communityId) or self.isUserMemberOfCommunity(communityId)):
         return
       self.status.chat.joinCommunity(communityId)
-      self.joinedCommunityList.addCommunityItemToList(self.communityList.getCommunityById(communityId))
+      var community = self.communityList.getCommunityById(communityId)
+      self.joinedCommunityList.addCommunityItemToList(community)
       if (setActive):
         self.setActiveCommunity(communityId)
     except Exception as e:
@@ -284,7 +277,7 @@ QtObject:
     result = ""
     try:
       var image = image_utils.formatImagePath(imagePath)
-      let community = self.status.chat.createCommunity(name, description, access, ensOnly, color, image, aX, aY, bX, bY)
+      var community = self.status.chat.createCommunity(name, description, access, ensOnly, color, image, aX, aY, bX, bY)
      
       if (community.id == ""):
         return "Community was not created. Please try again later"
@@ -527,7 +520,7 @@ QtObject:
           of ActivityCenterNotificationType.NewPrivateGroupChat:
             debug "Clear all private group chat notifications"
           of ActivityCenterNotificationType.Mention:
-            self.activeCommunity.chats.clearAllMentionsFromAllChannels()
+            self.activeCommunity.clearAllMentions()
   
             for c in self.joinedCommunityList.communities:
               # We don't need to update channels from the currently active community.
@@ -549,7 +542,8 @@ QtObject:
             debug "Clear private group chat notification"
           of ActivityCenterNotificationType.Mention:
             if (markAsReadProps.communityId == self.activeCommunity.communityItem.id):
-              self.activeCommunity.chats.decrementMentions(markAsReadProps.channelId)
+              self.activeCommunity.decrementMentions(markAsReadProps.channelId)
+              self.joinedCommunityList.updateMentions(markAsReadProps.communityId)
             else:
               for c in self.joinedCommunityList.communities:
                 # We don't need to update channels from the currently active community.
@@ -558,23 +552,5 @@ QtObject:
 
           of ActivityCenterNotificationType.Reply:
             debug "Clear reply notification"
-          else:
-            debug "Unknown notification"
-
-  proc updateNotifications*(self: CommunitiesView, notifications: seq[ActivityCenterNotification]) =
-    for n in notifications:
-      if (not n.read):
-        case n.notificationType:
-          of ActivityCenterNotificationType.NewOneToOne:
-            debug "Update one to one notification"
-          of ActivityCenterNotificationType.NewPrivateGroupChat:
-            debug "Update private group chat notification"
-          of ActivityCenterNotificationType.Mention:
-            let incremented = self.activeCommunity.chats.incrementMentions(n.chatId)
-            if (not incremented):
-              self.joinedCommunityList.incrementMentions(n.chatId)
-          
-          of ActivityCenterNotificationType.Reply:
-            debug "Update reply notification"
           else:
             debug "Unknown notification"
