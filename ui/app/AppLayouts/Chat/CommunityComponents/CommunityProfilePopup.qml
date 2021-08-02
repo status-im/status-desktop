@@ -65,7 +65,10 @@ StatusModal {
                     community: popup.community
                 })
                 onTransferOwnershipButtonClicked: openPopup(transferOwnershipPopup, {privateKey: chatsModel.communities.exportCommunity()})
-                onLeaveButtonClicked: chatsModel.communities.leaveCommunity(popup.community.id)
+                onLeaveButtonClicked: {
+                    chatsModel.communities.leaveCommunity(popup.community.id)
+                    popup.close()
+                }
             }
         }
 
