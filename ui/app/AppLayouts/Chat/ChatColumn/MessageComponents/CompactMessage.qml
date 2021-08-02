@@ -24,6 +24,14 @@ Item {
     height: messageContainer.height + messageContainer.anchors.topMargin
             + (dateGroupLbl.visible ? dateGroupLbl.height + dateGroupLbl.anchors.topMargin : 0)
 
+    Timer {
+        id: ensureMessageFullyVisibleTimer
+        interval: 1
+        onTriggered: {
+            chatLogView.positionViewAtIndex(ListView.currentIndex, ListView.Contain)
+        }
+    }
+
     MouseArea {
         enabled: !placeholderMessage
         anchors.fill: messageContainer
@@ -195,16 +203,38 @@ Item {
             sourceComponent: Item {
                 id: editText
                 height: childrenRect.height
+
+                property bool suggestionsOpened: false
+                Keys.onEscapePressed: {
+                    if (!suggestionsOpened) {
+                        cancelBtn.clicked()
+                    }
+                    suggestionsOpened = false
+                }
+
                 StatusChatInput {
+                    id: editTextInput
+                    readonly property string originalText: Utils.getMessageWithStyle(Emoji.parse(message))
                     Component.onCompleted: {
-                        textInput.forceActiveFocus();
+                        suggestionsList.clear()
+                        for (let i = 0; i < chatInput.suggestionsList.count; i++) {
+                            suggestionsList.append(chatInput.suggestionsList.get(i))
+                        }
+                        textInput.forceActiveFocus()
                         textInput.cursorPosition = textInput.length
                     }
-                    id: editTextInput
                     chatInputPlaceholder: qsTrId("type-a-message-")
                     chatType: chatsModel.channelView.activeChannel.chatType
                     isEdit: true
-                    textInput.text: Utils.getMessageWithStyle(Emoji.parse(message.replace(/(<a href="\/\/0x[0-9A-Fa-f]+" class="mention">)/g, "$1@")))
+                    textInput.text: originalText
+                    onSendMessage: {
+                        saveBtn.clicked()
+                    }
+                    suggestions.onVisibleChanged: {
+                        if (suggestions.visible) {
+                            editText.suggestionsOpened = true
+                        }
+                    }
                 }
 
                 StatusButton {
@@ -218,6 +248,7 @@ Item {
                     onClicked: {
                         isEdit = false
                         editTextInput.textInput.text = Emoji.parse(message)
+                        ensureMessageFullyVisibleTimer.start()
                     }
                 }
 
@@ -228,6 +259,7 @@ Item {
                     anchors.top: editTextInput.bottom
                     //% "Save"
                     text: qsTrId("save")
+                    enabled: editTextInput.textInput.text.trim().length > 0
                     onClicked: {
                         let msg = chatsModel.plainText(Emoji.deparse(editTextInput.textInput.text))
                         if (msg.length > 0){
@@ -251,7 +283,7 @@ Item {
             anchors.right: parent.right
             anchors.rightMargin: root.chatHorizontalPadding
             visible: !isEdit
-            
+
             ChatText {
                 readonly property int leftPadding: chatImage.anchors.leftMargin + chatImage.width + root.chatHorizontalPadding
                 id: chatText
