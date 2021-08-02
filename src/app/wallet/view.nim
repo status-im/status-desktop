@@ -127,7 +127,7 @@ QtObject:
     # If it's the first account we ever get, use its list as our first lists
     if (self.accountsView.accounts.rowCount == 1):
       self.tokensView.setCurrentAssetList(account.assetList)
-      discard self.accountsView.setCurrentAccountByIndex(0)
+      self.setCurrentAccountByIndex(0)
 
   proc transactionCompleted*(self: WalletView, success: bool, txHash: string, revertReason: string = "") {.signal.}
 
