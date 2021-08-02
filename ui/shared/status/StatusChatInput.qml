@@ -833,7 +833,7 @@ Rectangle {
 
         StatusImageIdenticon {
             id: profileImage
-            source: profileModel.profile.identicon
+            source: profileModel.profile.thumbnailImage || profileModel.profile.identicon
             anchors.left: parent.left
             anchors.leftMargin: Style.current.smallPadding
             anchors.top: parent.top
