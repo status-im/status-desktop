@@ -37,6 +37,17 @@ Popup {
     onOpened: {
         searchBox.text = ""
         searchBox.forceActiveFocus(Qt.MouseFocusReason)
+        if (appSettings.isTenorWarningAccepted) {
+            chatsModel.gif.load()
+        } else {
+            confirmationPopup.open()
+        }
+    }
+
+    onClosed: {
+        if (confirmationPopup.opened) {
+            confirmationPopup.close()
+        }
     }
 
     Connections {
@@ -71,19 +82,88 @@ Popup {
             }
         }
 
+        StyledText {
+            text: qsTr("TRENDING")
+            visible: searchBox.text === ""
+            color: Style.current.secondaryText
+            font.pixelSize: 13
+            topPadding: gifHeader.headerMargin
+            leftPadding: gifHeader.headerMargin
+        }
+
         Loader {
             Layout.fillWidth: true
             Layout.rightMargin: Style.current.smallPadding / 2
-            Layout.topMargin: Style.current.smallPadding
             Layout.alignment: Qt.AlignTop | Qt.AlignLeft
             Layout.preferredHeight: 400 - gifHeader.height
-            sourceComponent: loading ? gifLoading : gifItems
+            sourceComponent: gifItems
         }
     }
 
-    Component {
-        id: gifLoading
-        StatusLoadingIndicator {}
+    Popup {
+        id: confirmationPopup
+        modal: false
+        anchors.centerIn: parent
+        height: 290
+        width: 280
+        closePolicy: Popup.NoAutoClose
+
+        background: Rectangle {
+            radius: Style.current.radius
+            color: Style.current.background
+            border.color: Style.current.border
+            layer.enabled: true
+            layer.effect: DropShadow{
+                verticalOffset: 3
+                radius: 8
+                samples: 15
+                fast: true
+                cached: true
+                color: "#22000000"
+            }
+        }
+
+        Column {
+            anchors.fill: parent
+            spacing: 12
+
+            SVGImage {
+                id: gifImage
+                anchors.horizontalCenter: parent.horizontalCenter
+                source: "./assets/img/gif.svg"
+            }
+            
+            StyledText {
+                id: title
+                anchors.horizontalCenter: parent.horizontalCenter
+                text: qsTr("Enable Tenor GIFs?")
+                font.weight: Font.Medium
+                font.pixelSize: Style.current.primaryTextFontSize
+            }
+
+            StyledText {
+                id: headline
+                anchors.horizontalCenter: parent.horizontalCenter
+                text: qsTr("Once enabled, GIFs posted in the chat may share your metadata with Tenor.")
+                width: parent.width
+                horizontalAlignment: Text.AlignHCenter
+                wrapMode: Text.WordWrap
+                font.pixelSize: 13
+                color: Style.current.secondaryText
+            }
+
+            StatusButton {
+                id: removeBtn
+                anchors.horizontalCenter: parent.horizontalCenter
+                //% "Remove"
+                text: qsTrId("Enable")
+                onClicked: {
+                    appSettings.isTenorWarningAccepted = true
+                    chatsModel.gif.load()
+                    confirmationPopup.close()
+                }
+            }
+        }
     }
 
     Component {
@@ -102,23 +182,23 @@ Popup {
             Row {
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter
-                spacing: 4
+                spacing: Style.current.halfPadding
 
                 StatusGifColumn {
                     gifList.model: chatsModel.gif.columnA
-                    gifWidth: (popup.width / 3) - 12
+                    gifWidth: (popup.width / 3) - Style.current.padding
                     gifSelected: popup.gifSelected
                 }
 
                 StatusGifColumn {
                     gifList.model: chatsModel.gif.columnB
-                    gifWidth: (popup.width / 3) - 12
+                    gifWidth: (popup.width / 3) - Style.current.padding
                     gifSelected: popup.gifSelected
                 }
 
                 StatusGifColumn {
                     gifList.model: chatsModel.gif.columnC
-                    gifWidth: (popup.width / 3) - 12
+                    gifWidth: (popup.width / 3) - Style.current.padding
                     gifSelected: popup.gifSelected
                 }
             }

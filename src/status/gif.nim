@@ -21,6 +21,7 @@ type
     id*: int
     title*: string
     url*: string
+    tinyUrl*: string
     height*: int
 
 proc toGifItem(jsonMsg: JsonNode): GifItem =
@@ -28,11 +29,12 @@ proc toGifItem(jsonMsg: JsonNode): GifItem =
     id: jsonMsg{"id"}.getInt,
     title: jsonMsg{"title"}.getStr,
     url: jsonMsg{"media"}[0]["gif"]["url"].getStr,
+    tinyUrl: jsonMsg{"media"}[0]["tinygif"]["url"].getStr,
     height: jsonMsg{"media"}[0]["gif"]["dims"][1].getInt
   )
 
 proc `$`*(self: GifItem): string =
-  return fmt"GifItem(id:{self.id}, title:{self.title}, url:{self.url})"
+  return fmt"GifItem(id:{self.id}, title:{self.title}, url:{self.url}, tinyUrl:{self.tinyUrl}, height:{self.height})"
 
 type
   GifClient* = ref object
