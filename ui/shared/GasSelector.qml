@@ -69,14 +69,6 @@ Item {
     property double perGasTipLimitFloor: 1 // Matches status-react minimum-priority-fee
     property double perGasTipLimitAverage: 1.5 // Matches status-react average-priority-fee
 
-    // TODO: determine how to calculate this? ask @roman
-    property double eip1559LowPrice: 0.1
-    property double eip1559OptimalPrice: suggestedFees.maxFeePerGas
-    property double eip1559HighPrice: eip1559OptimalPrice * 2
-
-    // TODO: determine how to calculate this? ask @roman
-    property double perGasOverallLimitFloor: 40
-    property double perGasOverallLimitAverage: 50
 
     property bool showPriceLimitWarning : false
     property bool showTipLimitWarning : false
@@ -121,14 +113,13 @@ Item {
         }
 
         // Per-gas overall limit rules
-        console.log(inputOverallLimit, latestBaseFeeGwei)
         if(inputOverallLimit < latestBaseFeeGwei){
             errorMsg = appendError(errorMsg, qsTr("The limit is below the current base fee of %1 %2").arg(latestBaseFeeAmount).arg(latestBaseFeeUnit))
             showPriceLimitWarning = true
-        } else if(inputOverallLimit < perGasOverallLimitFloor){
-            errorMsg = appendError(errorMsg, qsTr("The limit should be at least %1 Gwei above the base fee").arg(perGasOverallLimitFloor))
-        } else if(inputOverallLimit < perGasOverallLimitAverage) {
-            errorMsg = appendError(errorMsg, qsTr("The maximum miner tip after the current base fee will be %1 Gwei, the minimum miner tip is currently %2 Gwei").arg(perGasOverallLimitAverage).arg(perGasOverallLimitFloor), true)
+        } else if((inputOverallLimit - inputTipLimit) < latestBaseFeeGwei){
+            errorMsg = appendError(errorMsg, qsTr("The limit should be at least %1 Gwei above the base fee").arg(perGasTipLimitFloor))
+        } else if((inputOverallLimit - perGasTipLimitAverage) < latestBaseFeeGwei) {
+            errorMsg = appendError(errorMsg, qsTr("The maximum miner tip after the current base fee will be %1 Gwei, the minimum miner tip is currently %2 Gwei").arg(inputOverallLimit).arg(perGasTipLimitFloor), true)
             showTipLimitWarning = true
         }
 
@@ -200,7 +191,6 @@ Item {
         id: prioritytext
         anchors.top: parent.top
         anchors.left: parent.left
-        visible: !advancedMode
         //% "Priority"
         text: qsTrId("priority")
         font.weight: Font.Medium
@@ -249,12 +239,24 @@ Item {
         GasSelectorButton {
             buttonGroup: gasGroup
             text: qsTr("Low")
-            price: eip1599Enabled ? eip1559LowPrice : slowestGasPrice
+            price: {
+                if (!eip1599Enabled) return slowestGasPrice;
+                return perGasTipLimitFloor + 1
+            }
             gasLimit: inputGasLimit ? inputGasLimit.text : ""
             getGasEthValue: root.getGasEthValue
             getFiatValue: root.getFiatValue
             defaultCurrency: root.defaultCurrency
-            onChecked: inputGasPrice.text = price
+            onChecked: {
+                if (eip1599Enabled){
+                    inputPerGasTipLimit.text = perGasTipLimitFloor;
+                    inputGasPrice.text = perGasTipLimitFloor + 1
+                } else {
+                    inputGasPrice.text = price
+                }
+                root.updateGasEthValue()
+                root.checkLimits()
+            }
         }
         GasSelectorButton {
             id: optimalGasButton
@@ -263,31 +265,46 @@ Item {
             //% "Optimal"
             text: qsTrId("optimal")
             price: {
-                if (eip1599Enabled){
-                    return eip1559OptimalPrice
-                }
-                
-                const price = (fastestGasPrice + slowestGasPrice) / 2
-                // Setting the gas price field here because the binding didn't work
-                inputGasPrice.text = price
-                return price
+                if (!eip1599Enabled) return eip1559OptimalPrice;
+                return perGasTipLimitAverage + 1
             }
             gasLimit: inputGasLimit ? inputGasLimit.text : ""
             getGasEthValue: root.getGasEthValue
             getFiatValue: root.getFiatValue
             defaultCurrency: root.defaultCurrency
-            onChecked: inputGasPrice.text = price
+            onChecked: {
+                if (eip1599Enabled){
+                    inputPerGasTipLimit.text = perGasTipLimitAverage;
+                    inputGasPrice.text = perGasTipLimitAverage + 1
+                } else {
+                    inputGasPrice.text = price
+                }
+                root.updateGasEthValue()
+                root.checkLimits()
+            }
         }
 
         GasSelectorButton {
             buttonGroup: gasGroup
             text: qsTr("High")
-            price: eip1599Enabled ? eip1559HighPrice :fastestGasPrice
+            price: {
+                if (!eip1599Enabled) return eip1559HighPrice;
+                return perGasTipLimitAverage + 1.25
+            }
             gasLimit: inputGasLimit ? inputGasLimit.text : ""
             getGasEthValue: root.getGasEthValue
             getFiatValue: root.getFiatValue
             defaultCurrency: root.defaultCurrency
-            onChecked: inputGasPrice.text = price
+            onChecked: {
+                if (eip1599Enabled){
+                    inputPerGasTipLimit.text = (perGasTipLimitAverage + 0.25);
+                    inputGasPrice.text = (perGasTipLimitAverage + 1.25)
+                } else {
+                    inputGasPrice.text = price
+                }
+                root.updateGasEthValue()
+                root.checkLimits()
+            }
         }
     }
 
@@ -403,12 +420,11 @@ Item {
             anchors.left: parent.left
             //% "Maximum priority fee: %1 ETH"
             text: {
-                console.log(selectedGasEthValue, selectedGasEthValue > 0.00009, selectedGasEthValue < 0.000001)
                 let v = selectedGasEthValue > 0.00009 ? selectedGasEthValue : 
                     (selectedGasEthValue < 0.000001 ? "0.000000..." : selectedGasEthValue.toFixed(6))
                 return qsTrId("maximum-priority-fee---1-eth").arg(v)
-            
-            }anchors.top: errorsText.bottom
+            }
+            anchors.top: errorsText.bottom
             anchors.topMargin: Style.current.smallPadding + 5
             font.pixelSize: 13
             color: Style.current.textColor
