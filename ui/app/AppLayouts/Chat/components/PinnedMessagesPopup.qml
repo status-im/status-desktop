@@ -143,7 +143,9 @@ ModalPopup {
                         reactionModel: EmojiReactions { }
 
                         onCloseParentPopup: {
-                            messageItem.view.closePopup()
+                            if (messageItem.view) {
+                                messageItem.view.closePopup()
+                            }
                         }
                     }
                 }
