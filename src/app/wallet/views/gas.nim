@@ -56,9 +56,9 @@ QtObject:
 
     discard gasLimit.parseInt(gasLimitInt)
 
-    # The following two check prevents app crash, cause we're trying to promote 
-    # gweiValueInt and gasLimitInt to unsigned 256 int, and these two numbers
-    # must be positive numbers, because of overflow.
+    # The following check prevents app crash, cause we're trying to promote 
+    # gasLimitInt to unsigned 256 int, and this number must be a positive number,
+    # because of overflow.
     var gwei = gweiValue.parseFloat()
     if (gwei < 0):
       gwei = 0
