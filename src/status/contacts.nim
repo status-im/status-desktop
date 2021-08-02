@@ -26,7 +26,6 @@ proc getContactByID*(self: ContactModel, id: string): Profile =
   if self.contactsMap.hasKey(id):
     return self.contactsMap[id]
 
-  echo "*** getContactByID cache miss: ", id
   let response = status_contacts.getContactByID(id)
   # TODO: change to options
   let responseResult = parseJSON($response)["result"]
