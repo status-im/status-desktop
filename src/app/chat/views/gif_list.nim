@@ -7,6 +7,7 @@ type
     Url = UserRole + 1
     Id = UserRole + 2
     Title = UserRole + 3
+    TinyUrl = UserRole + 4
 
 QtObject:
   type
@@ -41,10 +42,12 @@ QtObject:
       of GifRoles.Url: result = newQVariant(gif.url)
       of GifRoles.Id: result = newQVariant(gif.id)
       of GifRoles.Title: result = newQVariant(gif.title)
+      of GifRoles.TinyUrl: result = newQVariant(gif.tinyUrl)
 
   method roleNames(self: GifList): Table[int, string] =
     {
       GifRoles.Url.int:"url",
       GifRoles.Id.int:"id",
-      GifRoles.Title.int:"title"
+      GifRoles.Title.int:"title",
+      GifRoles.TinyUrl.int:"tinyUrl"
     }.toTable
