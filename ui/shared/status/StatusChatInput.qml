@@ -1092,14 +1092,9 @@ Rectangle {
                 anchors.right: emojiBtn.left
                 anchors.rightMargin: 2
                 anchors.bottom: parent.bottom
-                icon.name: "wallet"
+                icon.name: "gif-icon"
                 type: "secondary"
-                onClicked: {
-                    if (!gifPopup.opened) {
-                        chatsModel.gif.load()
-                    }
-                    togglePopup(gifPopup, gifBtn)
-                }
+                onClicked: togglePopup(gifPopup, gifBtn)
             }
 
             StatusIconButton {
