@@ -7,14 +7,37 @@ import "../../imports"
 import "../../shared"
 
 Popup {
+    enum Category {
+        Trending,
+        Recent,
+        Favorite,
+        Search
+    }
+
     id: popup
-    property var loading: true
     property var gifSelected: function () {}
     property var searchGif: Backpressure.debounce(searchBox, 500, function (query) {
-        loading = true
         chatsModel.gif.search(query)
     });
+    property var toggleCategory: function(newCategory) {
+        previousCategory = currentCategory
+        currentCategory = newCategory
+        searchBox.text = ""
+        if (currentCategory === StatusGifPopup.Category.Trending) {
+            chatsModel.gif.getTrendings()
+        } else if(currentCategory === StatusGifPopup.Category.Favorite) {
+            chatsModel.gif.getFavorites()
+        } else if(currentCategory === StatusGifPopup.Category.Recent) {
+            chatsModel.gif.getRecents()
+        }
+    }
+    property var toggleFavorite: function(item) {
+        chatsModel.gif.toggleFavorite(item.id, currentCategory === StatusGifPopup.Category.Favorite)
+    }
     property alias searchString: searchBox.text
+    property int currentCategory: StatusGifPopup.Category.Trending
+    property int previousCategory: StatusGifPopup.Category.Trending
+
     modal: false
     width: 360
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
@@ -38,7 +61,7 @@ Popup {
         searchBox.text = ""
         searchBox.forceActiveFocus(Qt.MouseFocusReason)
         if (appSettings.isTenorWarningAccepted) {
-            chatsModel.gif.load()
+            chatsModel.gif.getTrendings()
         } else {
             confirmationPopup.open()
         }
@@ -47,13 +70,6 @@ Popup {
     onClosed: {
         if (confirmationPopup.opened) {
             confirmationPopup.close()
-        }
-    }
-
-    Connections {
-        target: chatsModel.gif
-        onDataLoaded: {
-            loading = false
         }
     }
 
@@ -70,6 +86,8 @@ Popup {
 
             SearchBox {
                 id: searchBox
+                placeholderText: qsTr("Search Tenor")
+                enabled: appSettings.isTenorWarningAccepted
                 anchors.right: parent.right
                 anchors.rightMargin: gifHeader.headerMargin
                 anchors.top: parent.top
@@ -77,13 +95,46 @@ Popup {
                 anchors.left: parent.left
                 anchors.leftMargin: gifHeader.headerMargin
                 Keys.onReleased: {
+                    if (searchBox.text === "") {
+                        toggleCategory(previousCategory)
+                        return
+                    }
+                    if (popup.currentCategory !== StatusGifPopup.Category.Search) {
+                        popup.previousCategory = popup.currentCategory
+                        popup.currentCategory = StatusGifPopup.Category.Search
+                    }
                     Qt.callLater(searchGif, searchBox.text);
                 }
+            }
+
+            StatusIconButton {
+                id: clearBtn
+                icon.name: "close-icon"
+                type: "secondary"
+                visible: searchBox.text !== ""
+                icon.width: 14
+                icon.height: 14
+                width: 14
+                height: 14
+                anchors.right: searchBox.right
+                anchors.rightMargin: Style.current.padding
+                anchors.verticalCenter: searchBox.verticalCenter
+                onClicked: toggleCategory(previousCategory)
             }
         }
 
         StyledText {
-            text: qsTr("TRENDING")
+            id: headerText
+            text: {
+                if (currentCategory === StatusGifPopup.Category.Trending) {
+                    return qsTr("TRENDING")
+                } else if(currentCategory === StatusGifPopup.Category.Favorite) {
+                    return qsTr("FAVORITES")
+                } else if(currentCategory === StatusGifPopup.Category.Recent) {
+                    return qsTr("RECENT")
+                }
+                return ""
+            }
             visible: searchBox.text === ""
             color: Style.current.secondaryText
             font.pixelSize: 13
@@ -94,9 +145,46 @@ Popup {
         Loader {
             Layout.fillWidth: true
             Layout.rightMargin: Style.current.smallPadding / 2
+            Layout.leftMargin: Style.current.smallPadding / 2
             Layout.alignment: Qt.AlignTop | Qt.AlignLeft
-            Layout.preferredHeight: 400 - gifHeader.height
-            sourceComponent: gifItems
+            Layout.preferredHeight: {
+                const headerTextHeight = searchBox.text === "" ? headerText.height : 0
+                return 400 - gifHeader.height - headerTextHeight
+            }
+            sourceComponent: chatsModel.gif.columnA.rowCount() == 0 ? empty : gifItems
+        }
+
+        Row {
+            id: categorySelector
+            Layout.fillWidth: true
+            leftPadding: Style.current.smallPadding / 2
+            rightPadding: Style.current.smallPadding / 2
+            spacing: 0
+
+            StatusCategoryButton {
+                source: `../../app/img/gifCategories/trending.svg`
+                active: StatusGifPopup.Category.Trending === popup.currentCategory
+                changeCategory: function () {
+                    toggleCategory(StatusGifPopup.Category.Trending)
+                }
+                enabled: appSettings.isTenorWarningAccepted
+            }
+            StatusCategoryButton {
+                source: `../../app/img/gifCategories/recent.svg`
+                active: StatusGifPopup.Category.Recent === popup.currentCategory
+                changeCategory: function () {
+                    toggleCategory(StatusGifPopup.Category.Recent)
+                }
+                enabled: appSettings.isTenorWarningAccepted
+            }
+            StatusCategoryButton {
+                source: `../../app/img/gifCategories/favorite.svg`
+                active: StatusGifPopup.Category.Favorite === popup.currentCategory
+                changeCategory: function () {
+                    toggleCategory(StatusGifPopup.Category.Favorite)
+                }
+                enabled: appSettings.isTenorWarningAccepted
+            }
         }
     }
 
@@ -130,7 +218,7 @@ Popup {
             SVGImage {
                 id: gifImage
                 anchors.horizontalCenter: parent.horizontalCenter
-                source: "./assets/img/gif.svg"
+                source: `./assets/img/gif-${Style.current.name}.svg`
             }
             
             StyledText {
@@ -159,7 +247,7 @@ Popup {
                 text: qsTrId("Enable")
                 onClicked: {
                     appSettings.isTenorWarningAccepted = true
-                    chatsModel.gif.load()
+                    chatsModel.gif.getTrendings()
                     confirmationPopup.close()
                 }
             }
@@ -167,8 +255,30 @@ Popup {
     }
 
     Component {
-        id: gifItems
+        id: empty
+        Rectangle {
+            height: parent.height
+            width: parent.width
+            
+            StyledText {
+                anchors.centerIn: parent
+                text: {
+                    if(currentCategory === StatusGifPopup.Category.Favorite) {
+                        return qsTr("Favorite GIFs will appear here")
+                    } else if(currentCategory === StatusGifPopup.Category.Recent) {
+                        return qsTr("Recent GIFs will appear here")
+                    }
 
+                    return ""
+                }
+                font.pixelSize: 15
+                color: Style.current.secondaryText
+            }
+        }
+    }
+
+    Component {
+        id: gifItems
         ScrollView {
             id: scrollView
             property ScrollBar vScrollBar: ScrollBar.vertical
@@ -188,18 +298,21 @@ Popup {
                     gifList.model: chatsModel.gif.columnA
                     gifWidth: (popup.width / 3) - Style.current.padding
                     gifSelected: popup.gifSelected
+                    toggleFavorite: popup.toggleFavorite
                 }
 
                 StatusGifColumn {
                     gifList.model: chatsModel.gif.columnB
                     gifWidth: (popup.width / 3) - Style.current.padding
                     gifSelected: popup.gifSelected
+                    toggleFavorite: popup.toggleFavorite
                 }
 
                 StatusGifColumn {
                     gifList.model: chatsModel.gif.columnC
                     gifWidth: (popup.width / 3) - Style.current.padding
                     gifSelected: popup.gifSelected
+                    toggleFavorite: popup.toggleFavorite
                 }
             }
 

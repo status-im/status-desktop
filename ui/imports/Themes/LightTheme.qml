@@ -32,6 +32,7 @@ Theme {
     property color fivePercentBlack: "#E5E5E5"
     property color tenPercentBlue: Qt.rgba(67, 96, 223, 0.1)
     property color orange: "#FFA500"
+    property color yellow: "#FFCA0F"
 
     property color background: white
     property color dropShadow: "#22000000"

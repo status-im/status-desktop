@@ -11,6 +11,7 @@ Column {
     property alias gifList: repeater
     property var gifWidth: 0
     property var gifSelected: function () {}
+    property var toggleFavorite: function () {}
 
     Repeater {
         id: repeater
@@ -34,12 +35,45 @@ Column {
                 }
             }
 
+            StatusIconButton {
+                id: starButton
+                icon.name: "star-icon"
+                iconColor: {
+                    if (model.isFavorite) {
+                        return Style.current.yellow
+                    }
+                    return Style.current.secondaryText
+                }
+                hoveredIconColor: {
+                    if (iconColor === Style.current.yellow) {
+                        return Style.current.secondaryText
+                    }
+                    return Style.current.yellow
+                }
+                highlightedBackgroundOpacity: 0
+                anchors.right: parent.right
+                anchors.bottom: parent.bottom
+                width: 24
+                height: 24
+                z: 1
+                padding: 10
+                onClicked: {
+                    root.toggleFavorite(model)
+                    if (starButton.iconColor === Style.current.yellow) {
+                        starButton.iconColor = Style.current.secondaryText
+                    } else {
+                        starButton.iconColor = Style.current.yellow
+                    }
+                }
+            }
+
             AnimatedImage {
                 id: animation
                 visible: animation.status == Image.Ready
                 source: model.tinyUrl
                 width: root.gifWidth
                 fillMode: Image.PreserveAspectFit
+                z: 0
                 layer.enabled: true
                 layer.effect: OpacityMask {
                     maskSource: Rectangle {
@@ -53,9 +87,13 @@ Column {
             }
 
             MouseArea {
+                id: mouseArea
+                cursorShape: Qt.PointingHandCursor
                 anchors.fill: parent
+                hoverEnabled: true
                 onClicked: function (event) {
                     root.gifSelected(event, model.url)
+                    chatsModel.gif.addToRecents(model.id)
                 }
             }
         }

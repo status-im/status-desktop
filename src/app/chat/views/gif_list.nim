@@ -8,19 +8,22 @@ type
     Id = UserRole + 2
     Title = UserRole + 3
     TinyUrl = UserRole + 4
+    IsFavorite = UserRole + 5
 
 QtObject:
   type
     GifList* = ref object of QAbstractListModel
       gifs*: seq[GifItem]
+      client: GifClient
 
   proc setup(self: GifList) = self.QAbstractListModel.setup
 
   proc delete(self: GifList) = self.QAbstractListModel.delete
 
-  proc newGifList*(): GifList =
+  proc newGifList*(client: GifClient): GifList =
     new(result, delete)
     result.gifs = @[]
+    result.client = client
     result.setup()
 
   proc setNewData*(self: GifList, gifs: seq[GifItem]) =
@@ -43,11 +46,13 @@ QtObject:
       of GifRoles.Id: result = newQVariant(gif.id)
       of GifRoles.Title: result = newQVariant(gif.title)
       of GifRoles.TinyUrl: result = newQVariant(gif.tinyUrl)
+      of GifRoles.IsFavorite: result = newQVariant(self.client.isFavorite(gif))
 
   method roleNames(self: GifList): Table[int, string] =
     {
       GifRoles.Url.int:"url",
       GifRoles.Id.int:"id",
       GifRoles.Title.int:"title",
-      GifRoles.TinyUrl.int:"tinyUrl"
+      GifRoles.TinyUrl.int:"tinyUrl",
+      GifRoles.IsFavorite.int:"isFavorite"
     }.toTable

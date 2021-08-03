@@ -22,9 +22,9 @@ QtObject:
     new(result, delete)
     result = GifView()
     result.client = newGifClient()
-    result.columnA = newGifList()
-    result.columnB = newGifList()
-    result.columnC = newGifList()
+    result.columnA = newGifList(result.client)
+    result.columnB = newGifList(result.client)
+    result.columnC = newGifList(result.client)
     result.setup()
 
   proc dataLoaded*(self: GifView) {.signal.}
@@ -69,15 +69,51 @@ QtObject:
         columnCData.add(item)
         columnCHeight += item.height
 
+
     self.columnA.setNewData(columnAData)
     self.columnB.setNewData(columnBData)
     self.columnC.setNewData(columnCData)
     self.dataLoaded()
 
-  proc load*(self: GifView) {.slot.} =
+  proc findGifItem(self: GifView, id: string): GifItem =
+    for item in self.columnA.gifs:
+      if item.id == id:
+        return item
+
+    for item in self.columnB.gifs:
+      if item.id == id:
+        return item
+
+    for item in self.columnC.gifs:
+      if item.id == id:
+        return item
+
+    raise newException(ValueError, "Invalid id " & $id)
+
+  proc getTrendings*(self: GifView) {.slot.} =
     let data = self.client.getTrendings()
+    self.updateColumns(data)
+
+  proc getFavorites*(self: GifView) {.slot.} =
+    let data = self.client.getFavorites()
+    self.updateColumns(data)
+
+  proc getRecents*(self: GifView) {.slot.} =
+    let data = self.client.getRecents()
     self.updateColumns(data)
 
   proc search*(self: GifView, query: string) {.slot.} =
     let data = self.client.search(query)
     self.updateColumns(data)
+
+  proc toggleFavorite*(self: GifView, id: string, reload: bool = false) {.slot.} =
+    let gifItem = self.findGifItem(id)
+    self.client.toggleFavorite(gifItem)
+
+    if reload:
+      self.getFavorites()
+
+  proc addToRecents*(self: GifView, id: string) {.slot.} =
+    let gifItem = self.findGifItem(id)
+    self.client.addToRecents(gifItem)
+    

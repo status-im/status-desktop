@@ -336,7 +336,7 @@ Popup {
             Repeater {
                 model: EmojiJSON.emojiCategories
 
-                StatusEmojiCategoryButton {
+                StatusCategoryButton {
                     source: `../../app/img/emojiCategories/${modelData}.svg`
                     active: index === scrollView.activeCategory
                     changeCategory: function () {

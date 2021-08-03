@@ -1088,7 +1088,7 @@ Rectangle {
 
             StatusIconButton {
                 id: gifBtn
-                visible: appSettings.isGifWidgetEnabled
+                visible: !isEdit && appSettings.isGifWidgetEnabled
                 anchors.right: emojiBtn.left
                 anchors.rightMargin: 2
                 anchors.bottom: parent.bottom

@@ -193,6 +193,8 @@ type
     DappsAddress = "dapps-address"
     Stickers_PacksInstalled = "stickers/packs-installed"
     Stickers_Recent = "stickers/recent-stickers"
+    Gifs_Recent = "gifs/recent-gifs"
+    Gifs_Favorite = "gifs/favorite-gifs"
     WalletRootAddress = "wallet-root-address"
     LatestDerivedPath = "latest-derived-path"
     PreferredUsername = "preferred-name"
