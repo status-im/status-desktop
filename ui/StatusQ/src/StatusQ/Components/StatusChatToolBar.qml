@@ -88,10 +88,17 @@ Rectangle {
             type: StatusFlatRoundButton.Type.Secondary
             visible: !!statusChatToolBar.popupMenu
 
+            property bool showMoreMenu: false
             onClicked: {
-                statusChatToolBar.menuButtonClicked()
+                if (showMoreMenu) {
+                    popupMenuSlot.item.popup(-popupMenuSlot.item.width + menuButton.width, menuButton.height + 4)
+                }
                 highlighted = true
-                popupMenuSlot.item.popup(-popupMenuSlot.item.width + menuButton.width, menuButton.height + 4)
+                statusChatToolBar.menuButtonClicked()
+            }
+
+            onPressed: {
+                showMoreMenu = !showMoreMenu;
             }
 
             StatusToolTip {
