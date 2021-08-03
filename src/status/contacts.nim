@@ -15,6 +15,9 @@ type
   ContactUpdateArgs* = ref object of Args
     contacts*: seq[Profile]
 
+  ContactBlockedArgs* = ref object of Args
+    contact*: Profile
+
 proc newContactModel*(events: EventEmitter): ContactModel =
     result = ContactModel()
     result.events = events
@@ -35,7 +38,7 @@ proc blockContact*(self: ContactModel, id: string): string =
   if (index > -1):
     contact.systemTags.delete(index)
   discard status_contacts.blockContact(contact)
-  self.events.emit("contactBlocked", Args())
+  self.events.emit("contactBlocked", ContactBlockedArgs(contact: contact))
   
 
 proc unblockContact*(self: ContactModel, id: string): string =
