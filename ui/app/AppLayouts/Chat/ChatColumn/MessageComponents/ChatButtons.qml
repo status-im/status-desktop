@@ -138,12 +138,14 @@ Rectangle {
                 if (typeof isMessageActive !== "undefined") {
                     setMessageActive(messageId, true)
                 }
-                clickMessage(false, isSticker, false, null, false, true)
+                clickMessage(false, isSticker, false, null, false, true);
+                messageContextMenu.parent = otherBtn;
+                messageContextMenu.x = 0;
+                messageContextMenu.y = (parent.height/2);
             }
             onHoveredChanged: {
                 buttonsContainer.hoverChanged(this.hovered)
             }
-
             StatusToolTip {
                 visible: otherBtn.hovered
                 //% "More"
