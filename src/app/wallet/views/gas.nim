@@ -127,18 +127,28 @@ QtObject:
     debug "Max priority fee per gas", value=result
 
   proc suggestedFees*(self: GasView): string {.slot.} =
-    var maxPriorityFeePerGas = "0"
-    var maxFeePerGas = "0"
-    try:
-      let suggestedFees = self.status.wallet.suggestFees()
-      maxPriorityFeePerGas = wei2Gwei(suggestedFees{"maxPriorityFeePerGas"}.getStr("0"))
-      maxFeePerGas = wei2Gwei(suggestedFees{"maxFeePerGas"}.getStr("0"))
-    except:
-      let
-        e = getCurrentException()
-        msg = getCurrentExceptionMsg()
-      debug "Error obtaining suggested fees", msg
-    return $(%* {"maxPriorityFeePerGas": maxPriorityFeePerGas, "maxFeePerGas": maxFeePerGas})
+    let maxPriorityFeePerGas = self.status.wallet.maxPriorityFeePerGas()
+    let gasPrice = self.status.wallet.getGasPrice().u256
+    let baseFee = self.status.wallet.getLatestBaseFee().u256 * 2
+    let maxPriorityFeePerGasL = 2000000000.u256 # 2 Gwei
+    var maxPriorityFeePerGasM = if gasPrice > baseFee: ((gasPrice - baseFee) div 2) else: maxPriorityFeePerGasL
+    if maxPriorityFeePerGasM < maxPriorityFeePerGasL: 
+      maxPriorityFeePerGasM = maxPriorityFeePerGasL
+
+    var maxPriorityFeePerGasH = if gasPrice > baseFee: gasPrice - baseFee else: maxPriorityFeePerGasL
+    if maxPriorityFeePerGasH < maxPriorityFeePerGasL:
+      maxPriorityFeePerGasH = maxPriorityFeePerGasL
+
+    return $(%* {
+      "gasPrice": $gasPrice,
+      "baseFee": parseFloat(wei2gwei($baseFee)),
+      "maxPriorityFeePerGasL": parseFloat(wei2gwei($maxPriorityFeePerGasL)),
+      "maxFeePerGasL": parseFloat(wei2gwei($(baseFee + maxPriorityFeePerGasL))),
+      "maxPriorityFeePerGasM": parseFloat(wei2gwei($maxPriorityFeePerGasM)),
+      "maxFeePerGasM": parseFloat(wei2gwei($(baseFee + maxPriorityFeePerGasM))),
+      "maxPriorityFeePerGasH": parseFloat(wei2gwei($maxPriorityFeePerGasH)),
+      "maxFeePerGasH": parseFloat(wei2gwei($(baseFee + maxPriorityFeePerGasH)))
+    })
 
   QtProperty[string] maxPriorityFeePerGas:
     read = maxPriorityFeePerGas

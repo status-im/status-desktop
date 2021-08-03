@@ -15,12 +15,8 @@ Item {
     property double fastestGasPrice: 100
 
     property string maxPriorityFeePerGas: "0"
-    property var suggestedFees: {
-        let r = JSON.parse(walletModel.gasView.suggestedFees)
-        r.maxPriorityFeePerGas = parseFloat(r.maxPriorityFeePerGas)
-        r.maxFeePerGas = parseFloat(r.maxFeePerGas)
-        return r
-    }
+    property var suggestedFees: JSON.parse(walletModel.gasView.suggestedFees)
+
     property bool eip1599Enabled: walletModel.transactionsView.isEIP1559Enabled
 
     property var latestBaseFee: JSON.parse(walletModel.transactionsView.latestBaseFee)
@@ -30,16 +26,6 @@ Item {
         return parseFloat(latestBaseFee.gwei)
     }
 
-    property double latestBaseFeeAmount: {
-        if (!eip1599Enabled) return 0;
-        return parseFloat(latestBaseFee.amount)
-    }
-
-    property string latestBaseFeeUnit: {
-        if (!eip1599Enabled) return "gwei";
-        return latestBaseFee.unit
-    }
-        
     property var getGasGweiValue: function () {}
     property var getGasEthValue: function () {}
     property var getFiatValue: function () {}
@@ -72,6 +58,10 @@ Item {
 
     property bool showPriceLimitWarning : false
     property bool showTipLimitWarning : false
+
+    function formatDec(num){
+       return Math.round((num + Number.EPSILON) * 100) / 100
+    }
 
     function updateGasEthValue() {
         // causes error on application load without this null check
@@ -114,7 +104,7 @@ Item {
 
         // Per-gas overall limit rules
         if(inputOverallLimit < latestBaseFeeGwei){
-            errorMsg = appendError(errorMsg, qsTr("The limit is below the current base fee of %1 %2").arg(latestBaseFeeAmount).arg(latestBaseFeeUnit))
+            errorMsg = appendError(errorMsg, qsTr("The limit is below the current base fee of %1 %2").arg(latestBaseFeeGwei).arg("Gwei"))
             showPriceLimitWarning = true
         } else if((inputOverallLimit - inputTipLimit) < latestBaseFeeGwei){
             errorMsg = appendError(errorMsg, qsTr("The limit should be at least %1 Gwei above the base fee").arg(perGasTipLimitFloor))
@@ -204,7 +194,7 @@ Item {
         anchors.top: parent.top
         anchors.left: prioritytext.right
         anchors.leftMargin: Style.current.smallPadding
-        text: qsTr("Current base fee: %1 %2").arg(latestBaseFeeAmount).arg(latestBaseFeeUnit)
+        text: qsTr("Current base fee: %1 %2").arg(latestBaseFeeGwei).arg("Gwei")
         font.weight: Font.Medium
         font.pixelSize: 13
         color: Style.current.secondaryText
@@ -249,8 +239,8 @@ Item {
             defaultCurrency: root.defaultCurrency
             onChecked: {
                 if (eip1599Enabled){
-                    inputPerGasTipLimit.text = perGasTipLimitFloor;
-                    inputGasPrice.text = perGasTipLimitFloor + 1
+                    inputPerGasTipLimit.text = formatDec(suggestedFees.maxPriorityFeePerGasL);
+                    inputGasPrice.text = formatDec(suggestedFees.maxFeePerGasL);
                 } else {
                     inputGasPrice.text = price
                 }
@@ -274,8 +264,8 @@ Item {
             defaultCurrency: root.defaultCurrency
             onChecked: {
                 if (eip1599Enabled){
-                    inputPerGasTipLimit.text = perGasTipLimitAverage;
-                    inputGasPrice.text = perGasTipLimitAverage + 1
+                    inputPerGasTipLimit.text = formatDec(suggestedFees.maxPriorityFeePerGasM);
+                    inputGasPrice.text = formatDec(suggestedFees.maxFeePerGasM);
                 } else {
                     inputGasPrice.text = price
                 }
@@ -297,8 +287,8 @@ Item {
             defaultCurrency: root.defaultCurrency
             onChecked: {
                 if (eip1599Enabled){
-                    inputPerGasTipLimit.text = (perGasTipLimitAverage + 0.25);
-                    inputGasPrice.text = (perGasTipLimitAverage + 1.25)
+                    inputPerGasTipLimit.text = formatDec(suggestedFees.maxPriorityFeePerGasH);
+                    inputGasPrice.text = formatDec(suggestedFees.maxFeePerGasH);
                 } else {
                     inputGasPrice.text = price
                 }

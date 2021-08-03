@@ -136,3 +136,7 @@ proc maxPriorityFeePerGas*(): string =
 proc suggestFees*(): string =
   let payload = %* []
   result = callPrivateRPC("wallet_suggestFees", payload)
+
+proc getGasPrice*(): string =
+  let payload = %* []
+  result = callPrivateRPC("eth_gasPrice", payload)

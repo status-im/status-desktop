@@ -419,6 +419,15 @@ proc watchTransaction*(transactionHash: string): string =
 proc hex2Token*(self: WalletModel, input: string, decimals: int): string =
   result = status_wallet.hex2Token(input, decimals)
 
+proc getGasPrice*(self: WalletModel): string =
+  let response = status_wallet.getGasPrice().parseJson
+  if response.hasKey("result"):
+    return $fromHex(Stuint[256], response["result"].getStr)
+  else:
+    error "Error obtaining max priority fee per gas", error=response
+    raise newException(StatusGoException, "Error obtaining gas price")    
+
+
 proc setLatestBaseFee*(self: WalletModel, latestBaseFee: string) =
   self.latestBaseFee = latestBaseFee
 
