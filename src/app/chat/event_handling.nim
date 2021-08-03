@@ -2,9 +2,10 @@ import # std libs
   strutils
 
 import # status-desktop libs
-  ../../status/chat/chat as status_chat, ./views/communities,
+  ../../status/chat/chat as status_chat,
   ../../status/tasks/marathon,
   ../../status/tasks/marathon/mailserver/worker,
+  ./views/communities,
   ./views/messages
 
 proc handleChatEvents(self: ChatController) =
@@ -26,6 +27,10 @@ proc handleChatEvents(self: ChatController) =
     let notifications = ActivityCenterNotificationsArgs(e).activityCenterNotifications
     self.view.pushActivityCenterNotifications(notifications)
     self.view.communities.updateNotifications(notifications)
+
+  self.status.events.on("contactBlocked") do(e: Args):
+    var evArgs = ContactBlockedArgs(e)
+    self.view.removeChat(evArgs.contact.address)
 
   self.status.events.on("contactUpdate") do(e: Args):
     var evArgs = ContactUpdateArgs(e)
