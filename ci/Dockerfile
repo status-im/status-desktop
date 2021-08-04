@@ -14,8 +14,13 @@ RUN export DEBIAN_FRONTEND=noninteractive \
  && sudo apt install -yq software-properties-common \
  && sudo add-apt-repository -y ppa:git-core/ppa \
  && sudo apt update -yq \
+ && sudo apt purge -yq gnupg \
  && sudo apt install -yq --fix-missing \
-      build-essential cmake git s3cmd libpcre3-dev libnss3 libxcomposite1 libxtst6 jq gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-libav gstreamer1.0-tools gstreamer1.0-alsa gstreamer1.0-pulseaudio
+      build-essential cmake jq git s3cmd gnupg2 \
+      libpcre3-dev libnss3 libxcomposite1 libxtst6 \
+      gstreamer1.0-plugins-good gstreamer1.0-plugins-bad \
+      gstreamer1.0-plugins-ugly gstreamer1.0-libav \
+      gstreamer1.0-tools gstreamer1.0-alsa gstreamer1.0-pulseaudio
 
 # Installing Golang
 RUN GOLANG_SHA256="aed845e4185a0b2a3c3d5e1d0a35491702c55889192bb9c30e67a3de6849c067" \
@@ -40,5 +45,5 @@ USER jenkins
 ENV HOME="/home/jenkins"
 
 LABEL maintainer="jakub@status.im"
-LABEL source="https://github.com/status-im/nim-status-client"
+LABEL source="https://github.com/status-im/status-desktop"
 LABEL description="Build image for the Status Desktop client written in Nim."

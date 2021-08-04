@@ -248,12 +248,13 @@ $(APPIMAGE_TOOL):
 	echo -e "\e[92mFetching:\e[39m appimagetool"
 	rm -rf tmp/linux
 	mkdir -p tmp/linux/tools
-	wget https://github.com/AppImage/AppImageKit/releases/download/continuous/$(_APPIMAGE_TOOL)
+	wget -nv https://github.com/AppImage/AppImageKit/releases/download/continuous/$(_APPIMAGE_TOOL)
 	mv $(_APPIMAGE_TOOL) tmp/linux/tools/
 	chmod +x $(APPIMAGE_TOOL)
 
 STATUS_CLIENT_APPIMAGE ?= pkg/Status.AppImage
 STATUS_CLIENT_TARBALL ?= pkg/Status.tar.gz
+STATUS_CLIENT_TARBALL_FULL ?= $(shell realpath $(STATUS_CLIENT_TARBALL))
 
 $(STATUS_CLIENT_APPIMAGE): override RESOURCES_LAYOUT := -d:production
 $(STATUS_CLIENT_APPIMAGE): nim_status_client $(APPIMAGE_TOOL) nim-status.desktop
@@ -288,11 +289,18 @@ $(STATUS_CLIENT_APPIMAGE): nim_status_client $(APPIMAGE_TOOL) nim-status.desktop
 
 	mkdir -p pkg
 	$(APPIMAGE_TOOL) tmp/linux/dist $(STATUS_CLIENT_APPIMAGE)
+# if LINUX_GPG_PRIVATE_KEY_FILE is not set then we don't generate a signature
+ifdef LINUX_GPG_PRIVATE_KEY_FILE
+	scripts/sign-linux-file.sh $(STATUS_CLIENT_APPIMAGE)
+endif
 
 $(STATUS_CLIENT_TARBALL): $(STATUS_CLIENT_APPIMAGE)
-	tar czvf $(STATUS_CLIENT_TARBALL) \
-		-C $(shell dirname $(STATUS_CLIENT_APPIMAGE)) \
-		$(shell basename $(STATUS_CLIENT_APPIMAGE))
+	cd $(shell dirname $(STATUS_CLIENT_APPIMAGE)) && \
+	tar czvf $(STATUS_CLIENT_TARBALL_FULL) --ignore-failed-read \
+		$(shell basename $(STATUS_CLIENT_APPIMAGE)){,.asc}
+ifdef LINUX_GPG_PRIVATE_KEY_FILE
+	scripts/sign-linux-file.sh $(STATUS_CLIENT_TARBALL)
+endif
 
 DMG_TOOL := node_modules/.bin/create-dmg
 

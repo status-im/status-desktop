@@ -17,7 +17,9 @@ CODESIGN_OPTS_EXTRA=("${@}")
 
 function clean_up {
     STATUS=$?
-    [[ $? -eq 0 ]] || echo -e "\n###### ERROR: See above for details."
+    if [[ "${STATUS}" -eq 0 ]]; then
+        echo -e "\n###### ERROR: See above for details."
+    fi
     set +e
 
     echo -e "\n###### Cleaning up..."

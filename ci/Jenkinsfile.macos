@@ -1,4 +1,4 @@
-library 'status-jenkins-lib@v1.2.20'
+library 'status-jenkins-lib@ci-linux-signing'
 
 pipeline {
   agent {
