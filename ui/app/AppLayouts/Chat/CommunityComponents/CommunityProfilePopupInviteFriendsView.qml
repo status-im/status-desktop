@@ -45,15 +45,24 @@ Column {
     }
 
     StatusModalDivider {
-        bottomPadding: 16
+        bottomPadding: Style.current.padding
+    }
+
+    StyledText {
+        id: headline
+        text: qsTr("Contacts")
+        font.pixelSize: Style.current.primaryTextFontSize
+        color: Style.current.secondaryText
+        anchors.left: parent.left
+        anchors.leftMargin: Style.current.padding
     }
 
     ContactsListAndSearch {
         id: contactFieldAndList
-        anchors.topMargin: Style.current.smallPadding
         anchors.horizontalCenter: parent.horizontalCenter
         width: parent.width - 32
         showCheckbox: true
         hideCommunityMembers: true
+        showSearch: false
     }
 }
