@@ -137,6 +137,7 @@ proc getPackData*(id: Stuint[256], running: var Atomic[bool]): StickerPack =
     sticker.packId = truncate(id, int))
   result.id = truncate(id, int)
   result.price = packData.price
+  client.close()
 
 proc tokenOfOwnerByIndex*(address: Address, idx: Stuint[256]): int =
   let

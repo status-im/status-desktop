@@ -21,10 +21,10 @@ proc newBalanceManager*(): BalanceManager =
 var balanceManager = newBalanceManager()
 
 proc getPrice(crypto: string, fiat: string): string =
+  let secureSSLContext = newContext()
+  let client = newHttpClient(sslContext = secureSSLContext)
   try:
     let url: string = fmt"https://min-api.cryptocompare.com/data/price?fsym={crypto}&tsyms={fiat}"
-    let secureSSLContext = newContext()
-    let client = newHttpClient(sslContext = secureSSLContext)
     client.headers = newHttpHeaders({ "Content-Type": "application/json" })
 
     let response = client.request(url)
@@ -32,6 +32,8 @@ proc getPrice(crypto: string, fiat: string): string =
   except Exception as e:
     error "Error getting price", message = e.msg
     result = "0.0"
+  finally:
+    client.close()
 
 proc getEthBalance(address: string): string =
   var balance = status_wallet.getBalance(address)
