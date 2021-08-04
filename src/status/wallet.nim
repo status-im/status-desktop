@@ -356,16 +356,18 @@ proc getGasPricePredictions*(): GasPricePrediction =
   if status_settings.getCurrentNetwork() != Network.Mainnet:
     # TODO: what about other chains like xdai?
     return GasPricePrediction(safeLow: 1.0, standard: 2.0, fast: 3.0, fastest: 4.0)
+  let secureSSLContext = newContext()
+  let client = newHttpClient(sslContext = secureSSLContext)
   try:
     let url: string = fmt"https://etherchain.org/api/gasPriceOracle"
-    let secureSSLContext = newContext()
-    let client = newHttpClient(sslContext = secureSSLContext)
     client.headers = newHttpHeaders({ "Content-Type": "application/json" })
     let response = client.request(url)
     result = Json.decode(response.body, GasPricePrediction)
   except Exception as e:
     echo "error getting gas price predictions"
     echo e.msg
+  finally:
+    client.close()
 
 proc checkRecentHistory*(self: WalletModel, addresses: seq[string]): string =
   result = status_wallet.checkRecentHistory(addresses)
