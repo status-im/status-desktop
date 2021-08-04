@@ -130,7 +130,7 @@ StatusAppLayout {
             }
         }
 
-        navBarCommunityTabButtons.model: chatsModel.communities.joinedCommunities
+        navBarCommunityTabButtons.model: appSettings.communitiesEnabled && chatsModel.communities.joinedCommunities
         navBarCommunityTabButtons.delegate: StatusNavBarTabButton {
             onClicked: {
                 appMain.changeAppSection(Constants.chat)
