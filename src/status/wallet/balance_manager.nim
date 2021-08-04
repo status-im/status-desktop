@@ -59,22 +59,23 @@ proc convertValue*(balance: string, fromCurrency: string, toCurrency: string): f
   balanceManager.pricePairs.cacheValue(cacheKey, fiat_crypto_price)
   parseFloat(balance) * parseFloat(fiat_crypto_price)
 
-proc updateBalance*(asset: Asset, currency: string, refreshCache: bool) =
+proc updateBalance*(asset: Asset, currency: string, refreshCache: bool): float =
   var token_balance = getBalance(asset.symbol, asset.accountAddress, asset.address, refreshCache)
   let fiat_balance = convertValue(token_balance, asset.symbol, currency)
   asset.value = token_balance
   asset.fiatBalanceDisplay = fmt"{fiat_balance:.2f} {currency}"
   asset.fiatBalance = fmt"{fiat_balance:.2f}"
+  return fiat_balance
 
 proc updateBalance*(account: WalletAccount, currency: string, refreshCache: bool = false) =
   try:
-    let eth_balance = getBalance("ETH", account.address, "", refreshCache)
-    let usd_balance = convertValue(eth_balance, "ETH", currency)
-    var totalAccountBalance = usd_balance
-    account.realFiatBalance = some(totalAccountBalance)
-    account.balance = some(fmt"{totalAccountBalance:.2f} {currency}")
+    var usd_balance = 0.0
     for asset in account.assetList:
-      updateBalance(asset, currency, refreshCache)
+      let assetFiatBalance = updateBalance(asset, currency, refreshCache)
+      usd_balance = usd_balance + assetFiatBalance
+
+    account.realFiatBalance = some(usd_balance)
+    account.balance = some(fmt"{usd_balance:.2f} {currency}")
   except RpcException:
     error "Error in updateBalance", message = getCurrentExceptionMsg()
 
