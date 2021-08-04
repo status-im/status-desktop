@@ -59,8 +59,8 @@ Item {
     property bool showPriceLimitWarning : false
     property bool showTipLimitWarning : false
 
-    function formatDec(num){
-       return Math.round((num + Number.EPSILON) * 100) / 100
+    function formatDec(num, dec){
+       return Math.round((num + Number.EPSILON) * Math.pow(10, dec)) / Math.pow(10, dec)
     }
 
     function updateGasEthValue() {
@@ -231,7 +231,7 @@ Item {
             text: qsTr("Low")
             price: {
                 if (!eip1599Enabled) return slowestGasPrice;
-                return perGasTipLimitFloor + 1
+                return formatDec(suggestedFees.maxFeePerGasL, 6)
             }
             gasLimit: inputGasLimit ? inputGasLimit.text : ""
             getGasEthValue: root.getGasEthValue
@@ -239,8 +239,8 @@ Item {
             defaultCurrency: root.defaultCurrency
             onChecked: {
                 if (eip1599Enabled){
-                    inputPerGasTipLimit.text = formatDec(suggestedFees.maxPriorityFeePerGasL);
-                    inputGasPrice.text = formatDec(suggestedFees.maxFeePerGasL);
+                    inputPerGasTipLimit.text = formatDec(suggestedFees.maxPriorityFeePerGasL, 2);
+                    inputGasPrice.text = formatDec(suggestedFees.maxFeePerGasL, 2);
                 } else {
                     inputGasPrice.text = price
                 }
@@ -255,8 +255,14 @@ Item {
             //% "Optimal"
             text: qsTrId("optimal")
             price: {
-                if (!eip1599Enabled) return eip1559OptimalPrice;
-                return perGasTipLimitAverage + 1
+                if (!eip1599Enabled) {
+                     const price = (fastestGasPrice + slowestGasPrice) / 2
+                    // Setting the gas price field here because the binding didn't work
+                    inputGasPrice.text = price
+                    return price
+                }
+
+                return formatDec(suggestedFees.maxFeePerGasM, 6)
             }
             gasLimit: inputGasLimit ? inputGasLimit.text : ""
             getGasEthValue: root.getGasEthValue
@@ -264,8 +270,8 @@ Item {
             defaultCurrency: root.defaultCurrency
             onChecked: {
                 if (eip1599Enabled){
-                    inputPerGasTipLimit.text = formatDec(suggestedFees.maxPriorityFeePerGasM);
-                    inputGasPrice.text = formatDec(suggestedFees.maxFeePerGasM);
+                    inputPerGasTipLimit.text = formatDec(suggestedFees.maxPriorityFeePerGasM, 2);
+                    inputGasPrice.text = formatDec(suggestedFees.maxFeePerGasM, 2);
                 } else {
                     inputGasPrice.text = price
                 }
@@ -278,8 +284,8 @@ Item {
             buttonGroup: gasGroup
             text: qsTr("High")
             price: {
-                if (!eip1599Enabled) return eip1559HighPrice;
-                return perGasTipLimitAverage + 1.25
+                if (!eip1599Enabled) return fastestGasPrice;
+                return formatDec(suggestedFees.maxFeePerGasH,6);
             }
             gasLimit: inputGasLimit ? inputGasLimit.text : ""
             getGasEthValue: root.getGasEthValue
@@ -287,8 +293,8 @@ Item {
             defaultCurrency: root.defaultCurrency
             onChecked: {
                 if (eip1599Enabled){
-                    inputPerGasTipLimit.text = formatDec(suggestedFees.maxPriorityFeePerGasH);
-                    inputGasPrice.text = formatDec(suggestedFees.maxFeePerGasH);
+                    inputPerGasTipLimit.text = formatDec(suggestedFees.maxPriorityFeePerGasH, 2);
+                    inputGasPrice.text = formatDec(suggestedFees.maxFeePerGasH, 2);
                 } else {
                     inputGasPrice.text = price
                 }

@@ -127,21 +127,22 @@ QtObject:
     debug "Max priority fee per gas", value=result
 
   proc suggestedFees*(self: GasView): string {.slot.} =
-    let maxPriorityFeePerGas = self.status.wallet.maxPriorityFeePerGas()
+    let maxPriorityFeePerGas = self.status.wallet.maxPriorityFeePerGas().u256
     let gasPrice = self.status.wallet.getGasPrice().u256
     let baseFee = self.status.wallet.getLatestBaseFee().u256 * 2
     let maxPriorityFeePerGasL = 2000000000.u256 # 2 Gwei
-    var maxPriorityFeePerGasM = if gasPrice > baseFee: ((gasPrice - baseFee) div 2) else: maxPriorityFeePerGasL
+    var maxPriorityFeePerGasM = if gasPrice > baseFee: (maxPriorityFeePerGas div 2) else: maxPriorityFeePerGasL
     if maxPriorityFeePerGasM < maxPriorityFeePerGasL: 
       maxPriorityFeePerGasM = maxPriorityFeePerGasL
 
-    var maxPriorityFeePerGasH = if gasPrice > baseFee: gasPrice - baseFee else: maxPriorityFeePerGasL
+    var maxPriorityFeePerGasH = if gasPrice > baseFee: maxPriorityFeePerGas else: maxPriorityFeePerGasL
     if maxPriorityFeePerGasH < maxPriorityFeePerGasL:
       maxPriorityFeePerGasH = maxPriorityFeePerGasL
 
     return $(%* {
       "gasPrice": $gasPrice,
       "baseFee": parseFloat(wei2gwei($baseFee)),
+      "maxPriorityFeePerGas": maxPriorityFeePerGas,
       "maxPriorityFeePerGasL": parseFloat(wei2gwei($maxPriorityFeePerGasL)),
       "maxFeePerGasL": parseFloat(wei2gwei($(baseFee + maxPriorityFeePerGasL))),
       "maxPriorityFeePerGasM": parseFloat(wei2gwei($maxPriorityFeePerGasM)),
