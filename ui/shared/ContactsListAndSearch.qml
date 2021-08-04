@@ -16,6 +16,7 @@ Item {
     property string ensUsername : ""
     property bool showCheckbox: false
     property bool showContactList: true
+    property bool showSearch: true
     signal userClicked(bool isContact, string pubKey, string ensName, string address)
     property var pubKeys: ([])
     property bool hideCommunityMembers: false
@@ -50,6 +51,7 @@ Item {
         id: chatKey
         //% "Enter ENS username or chat key"
         placeholderText: qsTrId("enter-contact-code")
+        visible: showSearch
         Keys.onReleased: {
             successMessage = "";
             searchResults.pubKey = "";
@@ -150,7 +152,14 @@ Item {
         visible: showContactList
         hideCommunityMembers: root.hideCommunityMembers
         anchors.topMargin: this.height > 0 ? Style.current.halfPadding : 0
-        anchors.top: message.visible? message.bottom : chatKey.bottom
+        anchors.top: {
+            if (message.visible) {
+                return message.bottom
+            }
+            if (chatKey.visible) {
+                return chatKey.bottom
+            }
+        }
         showCheckbox: root.showCheckbox
         filterText: chatKey.text
         pubKeys: root.pubKeys
