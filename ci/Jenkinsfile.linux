@@ -1,10 +1,10 @@
-library 'status-jenkins-lib@v1.2.20'
+library 'status-jenkins-lib@ci-linux-signing'
 
 pipeline {
   agent {
     docker { 
       label 'linux'
-      image 'statusteam/nim-status-client-build:1.0.2'
+      image 'statusteam/nim-status-client-build:1.0.3'
       /* allows jenkins use cat and mounts '/dev/fuse' for linuxdeployqt */
       args '--entrypoint="" --cap-add SYS_ADMIN --security-opt apparmor:unconfined --device /dev/fuse'
     }
@@ -64,14 +64,9 @@ pipeline {
     }
 
     stage('Package') {
-      steps {
-        withCredentials([string(
-          credentialsId: utils.getInfuraTokenCred(),
-          variable: 'INFURA_TOKEN'
-        )]) {
-          sh 'make tgz-linux'
-        }
-      }
+      steps { script {
+        linux.bundle('tgz-linux')
+      } }
     }
 
     stage('Parallel Upload') {
@@ -84,7 +79,7 @@ pipeline {
         }
         stage('Archive') {
           steps { script {
-            archiveArtifacts(env.STATUS_CLIENT_TARBALL)
+            archiveArtifacts("${env.STATUS_CLIENT_TARBALL}*")
           } }
         }
       }
