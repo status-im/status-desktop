@@ -200,7 +200,6 @@ Item {
             SelectedMessage.set(messageId, fromAuthor);
         }
 
-
         messageContextMenu.messageId = root.messageId
         messageContextMenu.contentType = root.contentType
         messageContextMenu.linkUrls = root.linkUrls;
@@ -212,7 +211,6 @@ Item {
         messageContextMenu.hideEmojiPicker = hideEmojiPicker;
         messageContextMenu.pinnedMessage = pinnedMessage;
         messageContextMenu.isCurrentUser = isCurrentUser;
-        messageContextMenu.show(userName, fromAuthor, root.profileImageSource || identicon, plainText, nickname, emojiReactionsModel);
 
         if (isReply) {
             let nickname = appMain.getUserNickname(repliedMessageAuthor)
