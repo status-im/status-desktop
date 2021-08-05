@@ -34,6 +34,8 @@ type GasPricePrediction* = object
   standard*: float
   fast*: float
   fastest*: float
+  currentBaseFee*: float
+  recommendedBaseFee*: float
 
 type DerivedAccount* = object
   publicKey*: string
