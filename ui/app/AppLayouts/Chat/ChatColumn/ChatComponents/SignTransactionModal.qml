@@ -19,7 +19,7 @@ ModalPopup {
 
     property alias transactionSigner: transactionSigner
 
-    property var sendTransaction: function(selectedGasLimit, selectedGasPrice, enteredPassword) {
+    property var sendTransaction: function(selectedGasLimit, selectedGasPrice, selectedTipLimit, selectedOveralLimit, enteredPassword) {
         let success = false
         if(root.selectedAsset.address == Constants.zeroAddress){
             success = walletModel.transactionsView.transferEth(
@@ -292,7 +292,9 @@ ModalPopup {
                 if (validity.isValid && !validity.isPending) {
                     if (stack.isLastGroup) {
                         return root.sendTransaction(gasSelector.selectedGasLimit,
-                                                    gasSelector.selectedGasPrice,
+                                                    gasSelector.eip1599Enabled ? "" : gasSelector.selectedGasPrice,
+                                                    gasSelector.selectedTipLimit,
+                                                    gasSelector.selectedOverallLimit,
                                                     transactionSigner.enteredPassword)
                     }
 

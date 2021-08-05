@@ -116,8 +116,8 @@ proc process(self: ProviderModel, data: Web3SendAsyncReadOnly): string =
       let password = request["password"].getStr()
       let selectedGasLimit = request["selectedGasLimit"].getStr()
       let selectedGasPrice = request["selectedGasPrice"].getStr()
-      let selectedTipLimit = request["selectedTipLimit"].getStr()
-      let selectedOverallLimit = request["selectedOverallLimit"].getStr()
+      let selectedTipLimit = request{"selectedTipLimit"}.getStr()
+      let selectedOverallLimit = request{"selectedOverallLimit"}.getStr()
       let txData = if (request["params"][0].hasKey("data") and request["params"][0]["data"].kind != JNull):
         request["params"][0]["data"].getStr()
       else:

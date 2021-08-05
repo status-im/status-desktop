@@ -190,9 +190,11 @@ Rectangle {
                 });
 
                 // TODO change sendTransaction function to the postMessage one
-                sendDialog.sendTransaction = function (selectedGasLimit, selectedGasPrice, enteredPassword) {
+                sendDialog.sendTransaction = function (selectedGasLimit, selectedGasPrice, selectedTipLimit, selectedOverallLimit, enteredPassword) {
                     request.payload.selectedGasLimit = selectedGasLimit
                     request.payload.selectedGasPrice = selectedGasPrice
+                    request.payload.selectedTipLimit = selectedTipLimit
+                    request.payload.selectedOverallLimit = selectedOverallLimit
                     request.payload.password = enteredPassword
                     request.payload.params[0].value = value
 
@@ -512,7 +514,7 @@ Rectangle {
                 anchors.top: parent.top
                 anchors.topMargin: browserHeader.height
                 focus: true
-                url: "https://dap.ps"
+                url: "about:blank"
                 webChannel: channel
                 onLinkHovered: function(hoveredUrl) {
                     if (hoveredUrl === "")
