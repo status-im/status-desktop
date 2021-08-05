@@ -35,6 +35,15 @@ Item {
     signal settingsLoaded()
     signal openContactsPopup()
 
+    property var currentPlayback: null
+
+    function stopPlayback() {
+        if (currentPlayback != null) {
+            currentPlayback.pause()
+            currentPlayback = null
+        }
+    }
+
     function changeAppSection(section) {
         chatsModel.communities.activeCommunity.active = false
         appView.currentIndex = Utils.getAppSectionIndex(section)

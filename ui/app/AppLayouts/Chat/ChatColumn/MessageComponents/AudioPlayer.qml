@@ -17,6 +17,26 @@ Rectangle {
     radius: 20
     color: Theme.palette.baseColor2
 
+    Component.onDestruction: {
+        if (appMain.currentPlayback == player.playback) {
+            appMain.currentPlayback = null
+        }
+    }
+
+    Connections {
+        target: player.playback
+        function onPlayingChanged() {
+            if (player.playback.playing) {
+                appMain.stopPlayback()
+                appMain.currentPlayback = player.playback
+            } else {
+                if (appMain.currentPlayback == player.playback) {
+                    appMain.currentPlayback = null
+                }
+            }
+        }
+    }
+
     StatusBaseText {
         visible: !!player.playback.error
         anchors.fill: parent

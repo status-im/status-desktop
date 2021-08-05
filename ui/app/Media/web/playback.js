@@ -23,6 +23,9 @@ function initPlayback(playbackContext, waveformElementId) {
     _wavesurfer.on('audioprocess', function () {
         _playbackContext.position = _wavesurfer.getCurrentTime();
     });
+    _wavesurfer.on('seek', function () {
+        _wavesurfer.play();
+    });
     _wavesurfer.on('play', function () {
         _playbackContext.playing = true;
     });
