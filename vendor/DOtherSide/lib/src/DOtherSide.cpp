@@ -59,6 +59,7 @@
 #include "DOtherSide/DosQQuickImageProvider.h"
 #include "DOtherSide/DOtherSideStatusWindow.h"
 #include "DOtherSide/DOtherSideSingleInstance.h"
+#include "DOtherSide/DOtherSideStatusSyntaxHighlighter.h"
 
 #include "DOtherSide/StatusEvents/StatusDockShowAppEvent.h"
 #include "DOtherSide/StatusEvents/StatusOSThemeEvent.h"
@@ -69,6 +70,7 @@ void register_meta_types()
 {
     qRegisterMetaType<QVector<int>>();
     qmlRegisterType<StatusWindow>("DotherSide", 0 , 1, "StatusWindow");
+    qmlRegisterType<StatusSyntaxHighlighterHelper>("DotherSide", 0 , 1, "StatusSyntaxHighlighter");
 }
 
 }
