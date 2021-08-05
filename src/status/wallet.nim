@@ -109,8 +109,9 @@ proc getLatestBlock*(): tuple[blockNumber: int, baseFee: string] =
     return (blockNumber, baseFee)
   return (-1, "")
 
-proc checkPendingTransactions*(self: WalletModel) =
-  let latestBlockNumber = self.getLatestBlockNumber()
+proc getLatestBlockNumber*(self: WalletModel): int = getLatestBlock()[0]
+
+proc checkPendingTransactions*(self: WalletModel, latestBlockNumber: int) =
   if latestBlockNumber == -1:
     return
 

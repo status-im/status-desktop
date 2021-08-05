@@ -23,9 +23,9 @@ proc `%`*(x: TransactionData): JsonNode =
   if x.gasPrice.isSome:
     result["gasPrice"] = %("0x" & x.gasPrice.unsafeGet.toHex.stripLeadingZeros)
   if x.maxFeePerGas.isSome:
-    result["maxFeePerGas"] = %x.maxFeePerGas.unsafeGet
+    result["maxFeePerGas"] = %("0x" & x.maxFeePerGas.unsafeGet.toHex)
   if x.maxPriorityFeePerGas.isSome:
-    result["maxPriorityFeePerGas"] = %x.maxPriorityFeePerGas.unsafeGet
+    result["maxPriorityFeePerGas"] = %("0x" & x.maxPriorityFeePerGas.unsafeGet.toHex)
   if x.value.isSome:
     result["value"] = %("0x" & x.value.unsafeGet.toHex)
   result["data"] = %x.data

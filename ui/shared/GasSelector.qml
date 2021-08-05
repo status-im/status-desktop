@@ -363,9 +363,11 @@ Item {
         }
 
         StyledText {
-            id: maxPriorityFeeText
-            //% "Maximum priority fee: %1 ETH"
-            text: qsTrId("maximum-priority-fee---1-eth").arg(selectedGasEthValue)
+            id: errorsText
+            text: ""
+            width: parent.width - Style.current.padding
+            visible: text != ""
+            height: visible ? undefined : 0
             anchors.top: inputGasLimit.bottom
             anchors.topMargin: Style.current.smallPadding + 5
             font.pixelSize: 13
@@ -376,10 +378,13 @@ Item {
 
         StyledText {
             id: maxPriorityFeeText
-            text: qsTr("Maximum priority fee: %1 ETH").arg(selectedGasEthValue)
+            anchors.left: parent.left
+            //% "Maximum priority fee: %1 ETH"
+            text: qsTrId("maximum-priority-fee---1-eth").arg(selectedGasEthValue)
             anchors.top: errorsText.bottom
-            anchors.topMargin: 19
+            anchors.topMargin: Style.current.smallPadding + 5
             font.pixelSize: 13
+            color: Style.current.textColor
         }
 
         StyledText {

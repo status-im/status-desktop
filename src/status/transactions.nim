@@ -19,8 +19,8 @@ proc buildTransaction*(source: Address, value: Uint256, gas = "", gasPrice = "",
 
   if isEIP1559Enabled:
     result.txType = "0x02"
-    result.maxPriorityFeePerGas = (if maxPriorityFeePerGas.isEmptyOrWhitespace: int.none else: gwei2Wei(parseFloat(maxPriorityFeePerGas)).truncate(int).some)
-    result.maxFeePerGas = (if maxFeePerGas.isEmptyOrWhitespace: int.none else: gwei2Wei(parseFloat(maxFeePerGas)).truncate(int).some)
+    result.maxPriorityFeePerGas = if maxFeePerGas.isEmptyOrWhitespace: Uint256.none else: gwei2Wei(parseFloat(maxPriorityFeePerGas)).some
+    result.maxFeePerGas = (if maxFeePerGas.isEmptyOrWhitespace: Uint256.none else: gwei2Wei(parseFloat(maxFeePerGas)).some)
   else:
     result.txType = "0x00"
 
