@@ -24,6 +24,9 @@ StatusAppLayout {
     anchors.fill: parent
 
     property alias appSettings: appSettings
+
+    property bool profilePopupOpened: false
+
     signal settingsLoaded()
 
     function changeAppSection(section) {
@@ -103,6 +106,27 @@ StatusAppLayout {
             } else {
                 Qt.openUrlExternally(link)
             }
+        }
+    }
+
+    function openProfilePopup(userNameParam, fromAuthorParam, identiconParam, textParam, nicknameParam, parentPopup){
+        var popup = profilePopupComponent.createObject(appMain);
+        if(parentPopup){
+            popup.parentPopup = parentPopup;
+        }
+        popup.openPopup(profileModel.profile.pubKey !== fromAuthorParam, userNameParam, fromAuthorParam, identiconParam, textParam, nicknameParam);
+        profilePopupOpened = true
+    }
+
+    property Component profilePopupComponent: ProfilePopup {
+        id: profilePopup
+        height: 504
+        onClosed: {
+            if(profilePopup.parentPopup){
+                profilePopup.parentPopup.close();
+            }
+            profilePopupOpened = false
+            destroy()
         }
     }
 
@@ -254,6 +278,37 @@ StatusAppLayout {
                 badge.border.width: 2
             }
         ]
+
+        navBarProfileButton: StatusNavBarTabButton {
+            id: profileButton
+            icon.source: profileModel.profile.thumbnailImage || ""
+            badge.visible: true
+            badge.anchors.rightMargin: 4
+            badge.anchors.topMargin: 25
+            badge.implicitHeight: 15
+            badge.implicitWidth: 15
+            badge.border.color: hovered ? Theme.palette.statusBadge.hoverBorderColor : Theme.palette.statusAppNavBar.backgroundColor
+            badge.color: {
+                return profileModel.profile.sendUserStatus ? Style.current.green : Style.current.darkGrey
+                /*
+                // Use this code once support for custom user status is added
+                switch(profileModel.profile.currentUserStatus){
+                    case Constants.statusType_Online:
+                        return Style.current.green;
+                    case Constants.statusType_DoNotDisturb:
+                        return Style.current.red;
+                    default:
+                        return Style.current.darkGrey;
+                }*/
+            }
+            badge.border.width: 3
+            onClicked: userStatusContextMenu.open()
+
+            UserStatusContextMenu {
+                id: userStatusContextMenu
+                y: profileButton.y - userStatusContextMenu.height
+            }
+        }
     }
 
     appView: StackLayout {

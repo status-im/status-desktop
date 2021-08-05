@@ -203,6 +203,8 @@ type
     PinnedMailservers = "pinned-mailservers"
     WakuBloomFilterMode = "waku-bloom-filter-mode"
     SendUserStatus = "send-status-updates?"
+    CurrentUserStatus = "current-user-status"
+
 
   UpstreamConfig* = ref object
     enabled* {.serializedFieldName("Enabled").}: bool

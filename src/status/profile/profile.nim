@@ -6,6 +6,7 @@ type Profile* = ref object
   ensVerified*: bool
   messagesFromContactsOnly*: bool
   sendUserStatus*: bool
+  currentUserStatus*: int
   identityImage*: IdentityImage
   appearance*: int
   systemTags*: seq[string]
