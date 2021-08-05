@@ -514,7 +514,7 @@ Rectangle {
                 anchors.top: parent.top
                 anchors.topMargin: browserHeader.height
                 focus: true
-                url: "about:blank"
+                url: "https://dap.ps"
                 webChannel: channel
                 onLinkHovered: function(hoveredUrl) {
                     if (hoveredUrl === "")
