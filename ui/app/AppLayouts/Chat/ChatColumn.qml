@@ -236,6 +236,7 @@ Item {
                 }
 
                 membersButton.visible: appSettings.showOnlineUsers && chatsModel.channelView.activeChannel.chatType !== Constants.chatTypeOneToOne
+                membersButton.highlighted: showUsers
                 notificationButton.visible: appSettings.isActivityCenterEnabled
                 notificationCount: chatsModel.activityNotificationList.unreadCount
 
