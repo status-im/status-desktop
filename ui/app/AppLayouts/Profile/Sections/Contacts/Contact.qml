@@ -62,8 +62,8 @@ Rectangle {
                 contactContextMenu.popup()
                 return
             }
-            chatsModel.channelView.joinPrivateChat(container.address, "");
             changeAppSection(Constants.chat)
+            chatsModel.channelView.joinPrivateChat(address, "")
         }
     }
 
