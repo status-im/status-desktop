@@ -24,6 +24,7 @@ macro(add_target name type)
         include/DOtherSide/StatusEvents/StatusOSThemeEvent.h
         include/DOtherSide/DOtherSideStatusWindow.h
         include/DOtherSide/DOtherSideSingleInstance.h
+        include/DOtherSide/DOtherSideStatusSyntaxHighlighter.h
         src/DOtherSide.cpp
         src/DosQMetaObject.cpp
         src/DosQDeclarative.cpp
@@ -36,6 +37,7 @@ macro(add_target name type)
         src/StatusEvents/StatusOSThemeEvent.cpp
         src/DOtherSideStatusWindow.cpp
         src/DOtherSideSingleInstance.cpp
+        src/DOtherSideStatusSyntaxHighlighter.cpp
     )
 
     if (APPLE)
