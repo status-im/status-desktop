@@ -104,7 +104,7 @@ QtObject:
   
     result.setup()
 
-  proc update*(self: ChatModel, chats: seq[Chat], messages: seq[Message], emojiReactions: seq[Reaction], communities: seq[Community], communityMembershipRequests: seq[CommunityMembershipRequest], pinnedMessages: seq[Message], activityCenterNotifications: seq[ActivityCenterNotification]) =
+  proc update*(self: ChatModel, chats: seq[Chat], messages: seq[Message], emojiReactions: seq[Reaction], communities: seq[Community], communityMembershipRequests: seq[CommunityMembershipRequest], pinnedMessages: seq[Message], activityCenterNotifications: seq[ActivityCenterNotification], statusUpdates: seq[StatusUpdate], deletedMessages: seq[string]) =
     for chat in chats:
       self.channels[chat.id] = chat
 
@@ -117,7 +117,7 @@ QtObject:
         if self.lastMessageTimestamps[chatId] > ts:
           self.lastMessageTimestamps[chatId] = ts
         
-    self.events.emit("chatUpdate", ChatUpdateArgs(messages: messages,chats: chats, contacts: @[], emojiReactions: emojiReactions, communities: communities, communityMembershipRequests: communityMembershipRequests, pinnedMessages: pinnedMessages, activityCenterNotifications: activityCenterNotifications))
+    self.events.emit("chatUpdate", ChatUpdateArgs(messages: messages,chats: chats, contacts: @[], emojiReactions: emojiReactions, communities: communities, communityMembershipRequests: communityMembershipRequests, pinnedMessages: pinnedMessages, activityCenterNotifications: activityCenterNotifications, statusUpdates: statusUpdates, deletedMessages: deletedMessages))
   
   proc processChatUpdate(self: ChatModel, response: JsonNode): (seq[Chat], seq[Message]) =
     var chats: seq[Chat] = @[]
@@ -239,14 +239,6 @@ QtObject:
     for communityId in self.communitiesToFetch:
       status_chat.requestCommunityInfo(communityId)
 
-  proc deleteMessageAndSend*(self: ChatModel, messageId: string) =
-    var response = status_chat.deleteMessageAndSend(messageId)    
-    discard self.processMessageUpdateAfterSend(response, false)
-
-  proc sendImage*(self: ChatModel, chatId: string, image: string) =
-    var response = status_chat.sendImageMessage(chatId, image)
-    discard self.processMessageUpdateAfterSend(response)
-
   proc init*(self: ChatModel, pubKey: string) =
     self.publicKey = pubKey
 
@@ -353,6 +345,10 @@ QtObject:
   proc sendImages*(self: ChatModel, chatId: string, images: var seq[string]) =
     var response = status_chat.sendImageMessages(chatId, images)
     discard self.processMessageUpdateAfterSend(response)
+
+  proc deleteMessageAndSend*(self: ChatModel, messageId: string) =
+    var response = status_chat.deleteMessageAndSend(messageId)    
+    discard self.processMessageUpdateAfterSend(response, false)
 
   proc sendSticker*(self: ChatModel, chatId: string, sticker: Sticker) =
     var response = status_chat.sendStickerMessage(chatId, sticker)
@@ -484,7 +480,7 @@ QtObject:
     result = status_chat.createCommunityChannel(communityId, name, description)
 
   proc editCommunityChannel*(self: ChatModel, communityId: string, channelId: string, name: string, description: string, categoryId: string): Chat =
-  result = status_chat.editCommunityChannel(communityId, channelId, name, description, categoryId)
+    result = status_chat.editCommunityChannel(communityId, channelId, name, description, categoryId)
 
   proc deleteCommunityChat*(self: ChatModel, communityId: string, channelId: string) =
     status_chat.deleteCommunityChat(communityId, channelId)
