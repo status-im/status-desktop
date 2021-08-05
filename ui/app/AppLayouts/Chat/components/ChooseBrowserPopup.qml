@@ -31,6 +31,9 @@ ModalPopup {
             anchors.horizontalCenter: parent.horizontalCenter
             onClicked: {
                 appSettings.showBrowserSelector = !rememberChoiceCheckBox.checked
+                if (rememberChoiceCheckBox.checked) {
+                    appSettings.openLinksInStatus = true
+                }
                 changeAppSection(Constants.browser)
                 browserLayoutContainer.item.openUrlInNewTab(popup.link)
                 popup.close()
@@ -44,7 +47,11 @@ ModalPopup {
             anchors.horizontalCenter: parent.horizontalCenter
             onClicked: {
                 appSettings.showBrowserSelector = !rememberChoiceCheckBox.checked
+                if (rememberChoiceCheckBox.checked) {
+                    appSettings.openLinksInStatus = false
+                }
                 Qt.openUrlExternally(popup.link)
+                popup.close()
             }
         }
 
