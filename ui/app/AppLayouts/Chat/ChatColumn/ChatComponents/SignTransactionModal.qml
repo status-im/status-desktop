@@ -296,7 +296,7 @@ ModalPopup {
                                                     transactionSigner.enteredPassword)
                     }
 
-                    if(gasSelector.eip1599Enabled && stack.currentGroup === group2 && gasSelector.advancedMode){
+                    if(gasSelector.eip1599Enabled && stack.currentGroup === groupSelectGas && gasSelector.advancedMode){
                         if(gasSelector.showPriceLimitWarning || gasSelector.showTipLimitWarning){
                             openPopup(transactionSettingsConfirmationPopupComponent, {
                                 currentBaseFee: gasSelector.latestBaseFeeGwei,
