@@ -156,23 +156,6 @@ ScrollView {
                 }
             }
 
-            Loader {
-                active: onlineUsers.switchChecked
-                anchors.left: parent.left
-                anchors.right: parent.right
-                sourceComponent: StatusSettingsLineButton {
-                    //% "Broadcast user status"
-                    text: qsTrId("broadcast-user-status")
-                    isSwitch: true
-                    switchChecked: profileModel.profile.sendUserStatus
-                    onClicked: function (checked) {
-                        if (profileModel.profile.sendUserStatus !== checked) {
-                            profileModel.setSendUserStatus(checked)
-                        }
-                    }
-                }
-            }
-
             StatusSettingsLineButton {
                 //% "GIF Widget"
                 text: qsTrId("gif-widget")

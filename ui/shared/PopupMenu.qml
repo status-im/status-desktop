@@ -14,8 +14,10 @@ Menu {
     topPadding: paddingSize
     bottomPadding: paddingSize
 
+    property string overrideTextColor: ""
+
     delegate: MenuItem {
-        property color textColor: this.action.icon.color.toString() !== "#00000000" ? this.action.icon.color : Style.current.textColor
+        property color textColor: popupMenu.overrideTextColor !== "" ? popupMenu.overrideTextColor : (this.action.icon.color.toString() !== "#00000000" ? this.action.icon.color : Style.current.textColor)
         property color hoverColor: popupMenuItem.action.icon.color === Style.current.danger ? Style.current.buttonWarnBackgroundColor : Style.current.backgroundHover
         property int subMenuIndex: {
             if (!this.subMenu) {

@@ -186,4 +186,3 @@ QtObject:
       return
     self.profile.setSendUserStatus(sendUserStatus)
     self.status.saveSetting(Setting.SendUserStatus, sendUserStatus)
-

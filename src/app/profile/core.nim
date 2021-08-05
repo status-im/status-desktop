@@ -41,11 +41,14 @@ proc init*(self: ProfileController, account: Account) =
   let appearance = self.status.settings.getSetting[:int](Setting.Appearance)
   let messagesFromContactsOnly = self.status.settings.getSetting[:bool](Setting.MessagesFromContactsOnly)
   let sendUserStatus = self.status.settings.getSetting[:bool](Setting.SendUserStatus)
+  let currentUserStatus = self.status.settings.getSetting[:JsonNode](Setting.CurrentUserStatus)["statusType"].getInt()
+
   profile.appearance = appearance
   profile.id = pubKey
   profile.address = account.keyUid
   profile.messagesFromContactsOnly = messagesFromContactsOnly
   profile.sendUserStatus = sendUserStatus
+  profile.currentUserStatus = currentUserStatus
 
   let identityImage = self.status.profile.getIdentityImage(profile.address)
 
