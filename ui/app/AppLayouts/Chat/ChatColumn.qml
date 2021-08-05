@@ -309,6 +309,7 @@ Item {
                         active: stackLayoutChatMessages.currentIndex === index
                         sourceComponent: ChatMessages {
                             id: chatMessages
+                            messageList: messages
                             messageContextMenuInst: MessageContextMenu {
                                 reactionModel: EmojiReactions { }
                             }

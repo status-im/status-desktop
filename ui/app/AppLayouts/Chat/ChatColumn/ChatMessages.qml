@@ -22,6 +22,8 @@ Item {
     property alias scrollToMessage: chatLogView.scrollToMessage
 
     property var messageContextMenuInst
+    property var messageList: MessagesData {}
+
     property real scrollY: chatLogView.visibleArea.yPosition * chatLogView.contentHeight
     property int newMessages: 0
     property int countOnStartUp: 0
