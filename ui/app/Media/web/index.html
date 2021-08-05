@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Status Media</title>
+<link rel="stylesheet" href="styles.css">
+<script src="qwebchannel.js"></script>
+<script src="wavesurfer.js"></script>
+<script src="playback.js"></script>
+</head>
+<body>
+
+<div id="waveform"></div>
+
+<script>
+window.onload = function() {
+    new QWebChannel(qt.webChannelTransport, function(channel) {
+        initPlayback(channel.objects.playbackContext, "#waveform");
+    });
+}
+</script>
+
+</body>
+</html>

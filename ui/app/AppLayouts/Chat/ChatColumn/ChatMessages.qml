@@ -308,6 +308,8 @@ Item {
             gapFrom: model.gapFrom
             gapTo: model.gapTo
             visible: !model.hide
+            audio: model.audio
+            audioDurationMs: model.audioDurationMs
             Component.onCompleted: {
                 if ((root.countOnStartUp > 0) && (root.countOnStartUp - 1) < index) {
                     //new message, increment z order

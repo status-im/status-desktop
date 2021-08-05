@@ -48,6 +48,8 @@ Item {
     property bool isEdited: false
     property bool showEdit: true
     property var messageContextMenu
+    property string audio: ""
+    property int audioDurationMs: -1
     property string displayUserName: {
         if (isCurrentUser) {
             //% "You"
