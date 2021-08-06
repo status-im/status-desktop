@@ -99,7 +99,8 @@ QtObject {
                                     `color: ${isCurrentUser && !useCompactMode ? Style.current.white : Style.current.textColor};`+
                                 `}`+
                                 `a.mention {`+
-                                    `color: ${isCurrentUser ? Style.current.cyan : Style.current.turquoise};`+
+                                    `color: ${isCurrentUser ? Style.current.mentionColor : Style.current.turquoise};`+
+                                    `background-color: ${Style.current.mentionBgColor};` +
                                 `}`+
                                 `</style>`+
                             `</head>`+
