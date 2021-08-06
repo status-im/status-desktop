@@ -11,14 +11,11 @@ Item {
     height:  Style.current.smallPadding + prioritytext.height +
              (advancedMode ? advancedModeItemGroup.height : selectorButtons.height)
 
-    property double slowestGasPrice: 0
-    property double fastestGasPrice: 100
+    property double gasPrice: 0
 
-    property string maxPriorityFeePerGas: "0"
-    property var suggestedFees: JSON.parse(walletModel.gasView.suggestedFees)
-
+   
     property bool eip1599Enabled: walletModel.transactionsView.isEIP1559Enabled
-
+    property var suggestedFees: JSON.parse(walletModel.gasView.suggestedFees)
     property var latestBaseFee: JSON.parse(walletModel.transactionsView.latestBaseFee)
     
     property double latestBaseFeeGwei: {
@@ -37,8 +34,6 @@ Item {
 
     property alias selectedTipLimit: inputPerGasTipLimit.text
     property alias selectedOverallLimit: inputGasPrice.text
-  
-
 
     property double selectedGasEthValue
     property double selectedGasFiatValue
@@ -238,7 +233,7 @@ Item {
             buttonGroup: gasGroup
             text: qsTr("Low")
             price: {
-                if (!eip1599Enabled) return slowestGasPrice;
+                if (!eip1599Enabled) return gasPrice;
                 return formatDec(suggestedFees.maxFeePerGasL, 6)
             }
             gasLimit: inputGasLimit ? inputGasLimit.text : ""
@@ -264,7 +259,7 @@ Item {
             text: qsTrId("optimal")
             price: {
                 if (!eip1599Enabled) {
-                     const price = (fastestGasPrice + slowestGasPrice) / 2
+                     const price = gasPrice
                     // Setting the gas price field here because the binding didn't work
                     inputGasPrice.text = price
                     return price
@@ -292,7 +287,7 @@ Item {
             buttonGroup: gasGroup
             text: qsTr("High")
             price: {
-                if (!eip1599Enabled) return fastestGasPrice;
+                if (!eip1599Enabled) return gasPrice;
                 return formatDec(suggestedFees.maxFeePerGasH,6);
             }
             gasLimit: inputGasLimit ? inputGasLimit.text : ""

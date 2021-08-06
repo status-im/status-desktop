@@ -231,7 +231,7 @@ Rectangle {
                 }
 
                 sendDialog.open();
-                walletModel.gasView.getGasPricePredictions()
+                walletModel.gasView.getGasPrice()
             } else if (request.type === Constants.web3SendAsyncReadOnly && ["eth_sign", "personal_sign", "eth_signTypedData", "eth_signTypedData_v3"].indexOf(request.payload.method) > -1) {
                 const signDialog = signMessageModalComponent.createObject(browserWindow, {
                         request,

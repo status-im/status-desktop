@@ -17,7 +17,7 @@ ModalPopup {
     property var onSuccess: (function(){})
 
     Component.onCompleted: {
-        walletModel.gasView.getGasPricePredictions()
+        walletModel.gasView.getGasPrice()
     }
 
     height: 540
@@ -114,13 +114,11 @@ ModalPopup {
                 id: gasSelector
                 anchors.top: selectFromAccount.bottom
                 anchors.topMargin: Style.current.bigPadding * 2
-                slowestGasPrice: parseFloat(walletModel.gasView.safeLowGasPrice)
-                fastestGasPrice: parseFloat(walletModel.gasView.fastestGasPrice)
+                gasPrice: parseFloat(walletModel.gasView.gasPrice)
                 getGasEthValue: walletModel.gasView.getGasEthValue
                 getFiatValue: walletModel.balanceView.getFiatValue
                 defaultCurrency: walletModel.balanceView.defaultCurrency
                 width: stack.width
-                maxPriorityFeePerGas: walletModel.gasView.maxPriorityFeePerGas
                 
                 property var estimateGas: Backpressure.debounce(gasSelector, 600, function() {
                     return root.estimateGasFunction(selectFromAccount.selectedAccount, uuid);

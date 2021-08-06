@@ -522,7 +522,7 @@ Item {
             SendModal {
                 id: sendTransactionWithEns
                 onOpened: {
-                    walletModel.gasView.getGasPricePredictions()
+                    walletModel.gasView.getGasPrice()
                 }
                 onClosed: {
                     txModalLoader.closed()

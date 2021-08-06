@@ -58,7 +58,7 @@ Item {
         }
         sourceComponent: SetPubKeyModal {
             onOpened: {
-                walletModel.gasView.getGasPricePredictions()
+                walletModel.gasView.getGasPrice()
             }
             onClosed: {
                 transactionDialog.closed()

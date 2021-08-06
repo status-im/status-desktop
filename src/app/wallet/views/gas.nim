@@ -3,7 +3,8 @@ import NimQml, json, sequtils, chronicles, strutils, strformat, json
 
 import
   ../../../status/[status, wallet, utils, types],
-  ../../../status/tasks/[qt, task_runner_impl]
+  ../../../status/tasks/[qt, task_runner_impl],
+  ../../../status/libstatus/wallet as status_wallet
 
 import account_item
 
@@ -15,7 +16,11 @@ type
 const getGasPredictionsTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let
     arg = decode[GasPredictionsTaskArg](argEncoded)
-    output = %getGasPricePredictions()
+    response = status_wallet.getGasPrice().parseJson
+  var output = "0"
+  echo response
+  if response.hasKey("result"):
+    output = $fromHex(Stuint[256], response["result"].getStr)
   arg.finish(output)
 
 proc getGasPredictions[T](self: T, slot: string) =
@@ -32,10 +37,7 @@ logScope:
 QtObject:
   type GasView* = ref object of QObject
       status: Status
-      safeLowGasPrice: string
-      standardGasPrice: string
-      fastGasPrice: string
-      fastestGasPrice: string
+      gasPrice: string
       defaultGasLimit: string
 
   proc setup(self: GasView) = self.QObject.setup
@@ -44,10 +46,7 @@ QtObject:
   proc newGasView*(status: Status): GasView =
     new(result, delete)
     result.status = status
-    result.safeLowGasPrice = "0"
-    result.standardGasPrice = "0"
-    result.fastGasPrice = "0"
-    result.fastestGasPrice = "0"
+    result.gasPrice = "0"
     result.defaultGasLimit = "21000"
     result.setup
 
@@ -85,38 +84,21 @@ QtObject:
     else:
       result = $(%* { "result": "-1", "success": %success, "error": { "message": %response } })
 
-  proc gasPricePredictionsChanged*(self: GasView) {.signal.}
+  proc gasPriceChanged*(self: GasView) {.signal.}
 
-  proc getGasPricePredictions*(self: GasView) {.slot.} =
-    self.getGasPredictions("getGasPricePredictionsResult")
+  proc getGasPrice*(self: GasView) {.slot.} =
+    if not self.status.wallet.isEIP1559Enabled():
+      self.getGasPredictions("getGasPriceResult")
 
-  proc getGasPricePredictionsResult(self: GasView, gasPricePredictionsJson: string) {.slot.} =
-    let prediction = Json.decode(gasPricePredictionsJson, GasPricePrediction)
-    self.safeLowGasPrice = fmt"{prediction.safeLow:.3f}"
-    self.standardGasPrice = fmt"{prediction.standard:.3f}"
-    self.fastGasPrice = fmt"{prediction.fast:.3f}"
-    self.fastestGasPrice = fmt"{prediction.fastest:.3f}"
-    self.gasPricePredictionsChanged()
+  proc getGasPriceResult(self: GasView, gasPrice: string) {.slot.} =
+    let p = parseFloat(wei2gwei(gasPrice))
+    self.gasPrice = fmt"{p:.3f}"
+    self.gasPriceChanged()
 
-  proc safeLowGasPrice*(self: GasView): string {.slot.} = result = ?.self.safeLowGasPrice
-  QtProperty[string] safeLowGasPrice:
-    read = safeLowGasPrice
-    notify = gasPricePredictionsChanged
-
-  proc standardGasPrice*(self: GasView): string {.slot.} = result = ?.self.standardGasPrice
-  QtProperty[string] standardGasPrice:
-    read = standardGasPrice
-    notify = gasPricePredictionsChanged
-
-  proc fastGasPrice*(self: GasView): string {.slot.} = result = ?.self.fastGasPrice
-  QtProperty[string] fastGasPrice:
-    read = fastGasPrice
-    notify = gasPricePredictionsChanged
-
-  proc fastestGasPrice*(self: GasView): string {.slot.} = result = ?.self.fastestGasPrice
-  QtProperty[string] fastestGasPrice:
-    read = fastestGasPrice
-    notify = gasPricePredictionsChanged
+  proc gasPrice*(self: GasView): string {.slot.} = result = ?.self.gasPrice
+  QtProperty[string] gasPrice:
+    read = gasPrice
+    notify = gasPriceChanged
 
   proc defaultGasLimit*(self: GasView): string {.slot.} = result = ?.self.defaultGasLimit
   QtProperty[string] defaultGasLimit:

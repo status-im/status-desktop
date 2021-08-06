@@ -588,7 +588,7 @@ StatusAppLayout {
         }
         sourceComponent: SendModal {
             onOpened: {
-                walletModel.gasView.getGasPricePredictions()
+                walletModel.gasView.getGasPrice()
             }
             onClosed: {
                 sendModal.closed()

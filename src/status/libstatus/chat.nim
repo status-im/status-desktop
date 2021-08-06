@@ -567,7 +567,6 @@ proc rpcPinnedChatMessages*(chatId: string, cursorVal: JsonNode, limit: int, suc
   success = true
   try:
     result = callPrivateRPC("chatPinnedMessages".prefix, %* [chatId, cursorVal, limit])
-    debug "chatPinnedMessages", result
   except RpcException as e:
     success = false
     result = e.msg

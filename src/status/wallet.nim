@@ -374,21 +374,6 @@ proc getTransfersByAddress*(self: WalletModel, address: string, toBlock: Uint256
 proc validateMnemonic*(self: WalletModel, mnemonic: string): string =
   result = status_wallet.validateMnemonic(mnemonic).parseJSON()["error"].getStr
 
-proc getGasPricePredictions*(): GasPricePrediction =
-  if status_settings.getCurrentNetwork() != Network.Mainnet:
-    # TODO: what about other chains like xdai?
-    return GasPricePrediction(safeLow: 1.0, standard: 2.0, fast: 3.0, fastest: 4.0)
-  try:
-    let url: string = fmt"https://etherchain.org/api/gasPriceOracle"
-    let secureSSLContext = newContext()
-    let client = newHttpClient(sslContext = secureSSLContext)
-    client.headers = newHttpHeaders({ "Content-Type": "application/json" })
-    let response = client.request(url)
-    result = Json.decode(response.body, GasPricePrediction)
-  except Exception as e:
-    echo "error getting gas price predictions"
-    echo e.msg
-
 proc checkRecentHistory*(self: WalletModel, addresses: seq[string]): string =
   result = status_wallet.checkRecentHistory(addresses)
 
@@ -440,7 +425,7 @@ proc isEIP1559Enabled*(self: WalletModel, blockNumber: int):bool =
     of 3: 10499401 # Ropsten
     of 4: 8897988 # Rinkeby
     of 5: 5062605 # Goerli
-    of 1: 12965000  + 50 # Mainnet
+    of 1: 12965000 # Mainnet
     else: -1
   if activationBlock > -1 and blockNumber >= activationBlock:
     result = true
