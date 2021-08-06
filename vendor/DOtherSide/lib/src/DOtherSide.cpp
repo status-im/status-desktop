@@ -65,6 +65,7 @@
 #include "DOtherSide/StatusEvents/StatusDockShowAppEvent.h"
 #include "DOtherSide/StatusEvents/StatusOSThemeEvent.h"
 #include "DOtherSide/StatusNotification/StatusOSNotification.h"
+#include "DOtherSide/DosSpellchecker.h"
 
 namespace {
 
@@ -73,6 +74,7 @@ void register_meta_types()
     qRegisterMetaType<QVector<int>>();
     qmlRegisterType<StatusWindow>("DotherSide", 0 , 1, "StatusWindow");
     qmlRegisterType<StatusSyntaxHighlighterHelper>("DotherSide", 0 , 1, "StatusSyntaxHighlighter");
+    qmlRegisterType<SpellChecker>("DotherSide", 0, 1, "SpellChecker");
 }
 
 }
