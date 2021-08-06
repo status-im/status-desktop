@@ -188,6 +188,11 @@ QtObject:
     read = muted
     notify = mutedChanged
 
+  proc position*(self: ChatItemView): int {.slot.} = result = ?.self.chatItem.position
+
+  QtProperty[int] position:
+    read = position
+
   proc contains*(self: ChatItemView, pubKey: string): bool {.slot.} =
     if self.chatItem.isNil: return false
     return self.chatItem.contains(pubKey)

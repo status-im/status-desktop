@@ -281,7 +281,7 @@ StatusWindow {
         property alias droppedUrls: rptDraggedPreviews.model
         readonly property int chatView: Utils.getAppSectionIndex(Constants.chat)
         readonly property int timelineView: Utils.getAppSectionIndex(Constants.timeline)
-        property bool enabled: containsDrag && loader.item &&
+        property bool enabled: containsDrag && drag.source.objectName !== "chatItem" && loader.item &&
                                (
                                    // in chat view
                                    (loader.item.currentView === chatView &&
@@ -308,10 +308,17 @@ StatusWindow {
         onDropped: (drop) => {
                        if (enabled) {
                            droppedOnValidScreen(drop)
+                       } else {
+                           drop.accepted = false
                        }
                        cleanup()
                    }
         onEntered: {
+            if (!enabled) {
+                drag.accepted = false
+                return
+            }
+
             // needed because drag.urls is not a normal js array
             rptDraggedPreviews.model = drag.urls.filter(img => Utils.hasDragNDropImageExtension(img))
         }

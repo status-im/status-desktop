@@ -1,4 +1,5 @@
 import NimQml, Tables
+import algorithm
 import ../../../status/chat/[chat, message]
 import ../../../status/status
 import ../../../status/ens
@@ -97,9 +98,16 @@ QtObject:
       ChannelsRoles.CategoryId.int: "categoryId"
     }.toTable
 
+  proc sortChats(x, y: Chat): int =
+    if x.position < y.position: -1
+    elif x.position == y.position: 0
+    else: 1
+
   proc setChats*(self: ChannelsList, chats: seq[Chat]) =
     self.beginResetModel()
-    self.chats = chats
+    var copy = chats
+    copy.sort(sortChats)
+    self.chats = copy
     self.endResetModel()
 
   proc addChatItemToList*(self: ChannelsList, channel: Chat): int =

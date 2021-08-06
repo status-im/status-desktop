@@ -433,3 +433,5 @@ DISTFILES += \
     shared/status/StatusRadioButtonRow.qml \
     shared/status/StatusSettingsLineButton.qml \
     sounds/ErrorSound.qml
+
+DISTFILES += $$files("StatusQ/*", true)

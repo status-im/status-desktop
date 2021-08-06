@@ -157,6 +157,8 @@ proc toChat*(jsonChat: JsonNode): Chat =
   let chatTypeInt = jsonChat{"chatType"}.getInt
   let chatType: ChatType = if chatTypeInt >= ord(low(ChatType)) or chatTypeInt <= ord(high(ChatType)): ChatType(chatTypeInt) else: ChatType.Unknown
 
+  echo $jsonChat
+
   result = Chat(
     id: jsonChat{"id"}.getStr,
     communityId: jsonChat{"communityId"}.getStr,
@@ -174,7 +176,8 @@ proc toChat*(jsonChat: JsonNode): Chat =
     muted: false,
     ensName: "",
     joined: 0,
-    private: jsonChat{"private"}.getBool
+    private: jsonChat{"private"}.getBool,
+    position: jsonChat{"position"}.getInt
   )
 
   if jsonChat.hasKey("muted") and jsonChat["muted"].kind != JNull: 

@@ -126,6 +126,7 @@ Item {
             }
               
             chatList.model: chatsModel.communities.activeCommunity.chats
+
             categoryList.model: chatsModel.communities.activeCommunity.categories
 
             showCategoryActionButtons: chatsModel.communities.activeCommunity.admin
@@ -139,8 +140,9 @@ Item {
                 categoryId: id
             })
 
-            onReorderChat: {
-c            }
+            onReorderChat: function (categoryId, chatId, from, to) {
+                chatsModel.communities.reorderCommunityChannel(chatsModel.communities.activeCommunity.id, categoryId, chatId, to);
+            }
 
             popupMenu: StatusPopupMenu {
                 StatusMenuItem {
