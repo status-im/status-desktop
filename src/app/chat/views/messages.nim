@@ -10,7 +10,7 @@ import ../../../status/profile/profile
 import ../../../status/tasks/[qt, task_runner_impl]
 import ../../../status/tasks/marathon/mailserver/worker
 
-import communities, chat_item, channels_list, communities, community_list, message_list, channel, message_item, message_list_proxy
+import communities, chat_item, channels_list, communities, community_list, message_list, channel, message_item
 
 logScope:
   topics = "messages-view"
@@ -24,7 +24,6 @@ QtObject:
   type MessageView* = ref object of QAbstractListModel
     status: Status
     messageList*: OrderedTable[string, ChatMessageList]
-    searchResultMessageModel*: MessageListProxyModel 
     pinnedMessagesList*: OrderedTable[string, ChatMessageList]
     channelView*: ChannelView
     communities*: CommunitiesView
@@ -44,8 +43,7 @@ QtObject:
     self.messageList = initOrderedTable[string, ChatMessageList]()
     self.pinnedMessagesList = initOrderedTable[string, ChatMessageList]()
     self.channelOpenTime = initTable[string, int64]()
-    self.QAbstractListModel.delete
-    self.searchResultMessageModel.delete
+    self.QAbstractListModel.delete    
 
   proc newMessageView*(status: Status, channelView: ChannelView, communitiesView: CommunitiesView): MessageView =
     new(result, delete)
@@ -57,7 +55,6 @@ QtObject:
     result.messageList[status_utils.getTimelineChatId()] = newChatMessageList(status_utils.getTimelineChatId(), result.status, false)
     result.loadingMessages = false
     result.unreadMessageCnt = 0
-    result.searchResultMessageModel = newMessageListProxyModel(status)
     result.unreadDirectMessagesAndMentionsCount = 0
     result.setup
 
@@ -448,34 +445,13 @@ QtObject:
     self.messageList.del(chatId)
     self.endRemoveRows()
 
-  proc getSearchResultMessageModel*(self: MessageView): QVariant {.slot.} = 
-    newQVariant(self.searchResultMessageModel)
-
-  # we just need to expose model to qml, there is no need for exposing notifying signal
-  QtProperty[QVariant] searchResultMessageModel:
-    read = getSearchResultMessageModel
-
-  proc searchMessages*(self: MessageView, searchTerm: string) {.slot.} =
-    if (searchTerm.len == 0):
-      self.searchResultMessageModel.clear(false)
-      return
-
-    # chatId is used here only to support message search in currently selected channel
-    # later when we decide to apply message search over multiple channels MessageListProxyModel
-    # will be updated to support setting list of sourcer messages.
-    let chatId = self.channelView.activeChannel.id
-    self.status.chat.asyncSearchMessages(chatId, searchTerm, false)
-
-  proc onSearchMessagesLoaded*(self: MessageView, messages: seq[Message]) =
-    self.searchResultMessageModel.setFilteredMessages(messages)
-
-  proc isMessageDisplayed*(self: MessageView, messageId: string): bool {.slot.} =
+  proc isMessageDisplayed(self: MessageView, messageId: string): bool =
     let chatId = self.channelView.activeChannel.id
     var message = self.messageList[chatId].getMessageById(messageId)
 
     return message.id != ""
 
-  proc loadMessagesUntillMessageWithIdIsLoaded*(self: MessageView, messageId: string) {.slot.} =
+  proc loadMessagesUntillMessageWithIdIsLoaded*(self: MessageView, messageId: string) =
     self.searchedMessageId = messageId
     let chatId = self.channelView.activeChannel.id
 
@@ -501,3 +477,8 @@ QtObject:
     if self.messageList.hasKey(chatId):
       self.messageList[chatId].setInitialMessagesLoaded(value)
     
+  proc switchToMessage*(self: MessageView, messageId: string) =
+    if (self.isMessageDisplayed(messageId)):
+      self.searchedMessageLoaded(messageId)
+    else:
+      self.loadMessagesUntillMessageWithIdIsLoaded(messageId)

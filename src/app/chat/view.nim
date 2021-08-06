@@ -16,6 +16,7 @@ import ../../status/tasks/[qt, task_runner_impl]
 import ../../status/tasks/marathon/mailserver/worker
 import ../../status/signals/types as signal_types
 import ../../status/types
+import views/message_search/[view_controller]
 
 # TODO: remove me
 import ../../status/libstatus/chat as libstatus_chat
@@ -76,6 +77,7 @@ QtObject:
       ensView: EnsView
       channelView*: ChannelView
       messageView*: MessageView
+      messageSearchViewController: MessageSearchViewController
       currentSuggestions*: SuggestionsList
       activityNotificationList*: ActivityNotificationList
       callResult: string
@@ -103,6 +105,7 @@ QtObject:
     self.groups.delete
     self.transactions.delete
     self.communities.delete
+    self.messageSearchViewController.delete
     self.QAbstractListModel.delete
 
   proc newChatsView*(status: Status): ChatsView =
@@ -113,6 +116,8 @@ QtObject:
     result.communities = newCommunitiesView(status)
     result.channelView = newChannelView(status, result.communities)
     result.messageView = newMessageView(status, result.channelView, result.communities)
+    result.messageSearchViewController = newMessageSearchViewController(status, 
+      result.channelView, result.communities)
     result.connected = false
     result.currentSuggestions = newSuggestionsList()
     result.activityNotificationList = newActivityNotificationList(status)
@@ -159,6 +164,12 @@ QtObject:
   proc getMessageView*(self: ChatsView): QVariant {.slot.} = newQVariant(self.messageView)
   QtProperty[QVariant] messageView:
     read = getMessageView
+
+  proc getMessageSearchViewController*(self: ChatsView): QVariant {.slot.} = 
+    newQVariant(self.messageSearchViewController)
+
+  QtProperty[QVariant] messageSearchViewController:
+    read = getMessageSearchViewController
 
   proc plainText(self: ChatsView, input: string): string {.slot.} =
     result = plain_text(input)
@@ -443,7 +454,7 @@ QtObject:
     self.messageView.onMessagesLoaded(chatId, messages)
 
   proc onSearchMessagesLoaded*(self: ChatsView, messages: seq[Message]) =
-    self.messageView.onSearchMessagesLoaded(messages)
+    self.messageSearchViewController.onSearchMessagesLoaded(messages)
 
   proc pushMessages*(self: ChatsView, messages: var seq[Message]) =
     self.messageView.pushMessages(messages)
@@ -496,3 +507,23 @@ QtObject:
     # in the meantime I'm hardcoding a specific mailserver
     echo self.status.mailservers.setMailserver("16Uiu2HAm4v86W3bmT1BiH6oSPzcsSr24iDQpSN5Qa992BCjjwgrD")
     echo self.status.mailservers.requestAllHistoricMessages()
+
+  proc switchToSearchedItem*(self: ChatsView, itemId: string) {.slot.} =
+    let info = self.messageSearchViewController.getItemInfo(itemId)
+    if(info.isEmpty()):
+      return
+
+    if (info.communityId.len > 0):
+      self.communities.setActiveCommunity(info.communityId)
+      if (info.channelId.len > 0):
+        self.channelView.setActiveChannel(info.channelId)
+        if (info.messageId.len > 0):
+          self.messageView.switchToMessage(info.messageId)
+    else:
+      self.communities.activeCommunity.setActive(false)
+      if (info.channelId.len > 0):
+        self.channelView.setActiveChannel(info.channelId)
+        if (info.messageId.len > 0):
+          self.messageView.switchToMessage(info.messageId)
+
+
