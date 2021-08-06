@@ -16,6 +16,13 @@ Item {
     property bool isHovered: typeof hoveredMessage !== "undefined" && hoveredMessage === messageId
     property bool isMessageActive: typeof activeMessage !== "undefined" && activeMessage === messageId
     property bool headerRepeatCondition: (authorCurrentMsg !== authorPrevMsg || shouldRepeatHeader || dateGroupLbl.visible || chatReply.active)
+    property bool showMoreButton: switch (chatsModel.channelView.activeChannel.chatType) {
+                                               case Constants.chatTypeOneToOne: return true
+                                               case Constants.chatTypePrivateGroupChat: return chatsModel.channelView.activeChannel.isAdmin(profileModel.profile.pubKey) ? true : isCurrentUser
+                                               case Constants.chatTypePublic: return isCurrentUser
+                                               case Constants.chatTypeCommunity: return chatsModel.communities.activeCommunity.admin ? true : isCurrentUser
+                                               case Constants.chatTypeStatusUpdate: return false
+                                               }
     property bool showEdit: true
     property var messageContextMenu
     signal addEmoji(bool isProfileClick, bool isSticker, bool isImage , var image, bool emojiOnly, bool hideEmojiPicker)
@@ -52,6 +59,7 @@ Item {
         anchors.topMargin: -Style.current.halfPadding
         showEdit: root.showEdit
         messageContextMenu: root.messageContextMenu
+        showMoreButton: root.showMoreButton
     }
 
     Loader {

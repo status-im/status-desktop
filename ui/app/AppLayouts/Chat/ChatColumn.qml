@@ -23,6 +23,7 @@ Item {
     id: chatColumnLayout
     anchors.fill: parent
 
+    property var messageContextMenu
     property alias pinnedMessagesPopupComponent: pinnedMessagesPopupComponent
     property int chatGroupsListViewCount: 0
     property bool isReply: false
@@ -310,9 +311,7 @@ Item {
                         sourceComponent: ChatMessages {
                             id: chatMessages
                             messageList: messages
-                            messageContextMenuInst: MessageContextMenu {
-                                reactionModel: EmojiReactions { }
-                            }
+                            messageContextMenuInst: messageContextMenu
                             Component.onCompleted: {
                                 chatColumnLayout.userList = chatMessages.messageList.userList;
                             }

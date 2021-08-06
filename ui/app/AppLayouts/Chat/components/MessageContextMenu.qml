@@ -2,14 +2,17 @@ import QtQuick 2.12
 import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.3
 import QtQml.Models 2.3
+
+import StatusQ.Popups 0.1
+
 import "../../../../imports"
 import "../../../../shared"
 import "../../../../shared/status"
 import "./"
 
-PopupMenu {
+StatusPopupMenu {
     id: messageContextMenu
-    width: messageContextMenu.isProfile ? profileHeader.width : emojiContainer.width
+    width: emojiContainer.visible ? emojiContainer.width : 176
     closePolicy: Popup.CloseOnPressOutside | Popup.CloseOnEscape
 
     property string messageId
@@ -40,12 +43,6 @@ PopupMenu {
 
     signal closeParentPopup
 
-    subMenuIcons: [{
-            source: Qt.resolvedUrl("../../../../shared/img/copy-to-clipboard-icon"),
-            width: 16,
-            height: 16
-        }]
-
     function show(userNameParam, fromAuthorParam, identiconParam, textParam, nicknameParam, emojiReactionsModel) {
         userName = userNameParam || ""
         nickname = nicknameParam || ""
@@ -60,9 +57,11 @@ PopupMenu {
         }
         emojiReactionsReactedByUser = newEmojiReactions;
 
+        /* // copy link feature not ready yet
         const numLinkUrls = messageContextMenu.linkUrls.split(" ").length
         copyLinkMenu.enabled = numLinkUrls > 1
         copyLinkAction.enabled = !!messageContextMenu.linkUrls && numLinkUrls === 1 && !emojiOnly && !messageContextMenu.isProfile
+        */
         popup()
     }
 
@@ -73,9 +72,9 @@ PopupMenu {
         visible: !hideEmojiPicker && (messageContextMenu.emojiOnly || !messageContextMenu.isProfile)
         Row {
             id: emojiRow
-            spacing: Style.current.smallPadding
-            leftPadding: Style.current.smallPadding
-            rightPadding: Style.current.smallPadding
+            spacing: Style.current.halfPadding
+            leftPadding: Style.current.halfPadding
+            rightPadding: Style.current.halfPadding
             bottomPadding: messageContextMenu.emojiOnly ? 0 : Style.current.padding
 
             Repeater {
@@ -95,7 +94,7 @@ PopupMenu {
     Item {
         id: profileHeader
         visible: messageContextMenu.isProfile
-        width: 200
+        width: parent.width
         height: visible ? profileImage.height + username.height + Style.current.padding : 0
         Rectangle {
             anchors.fill: parent
@@ -144,63 +143,8 @@ PopupMenu {
         visible: !messageContextMenu.emojiOnly && !messageContextMenu.hideEmojiPicker
     }
 
-    Action {
-        id: pinAction
-        text: {
-            if (pinnedMessage) {
-                //% "Unpin"
-                return qsTrId("unpin")
-            }
-            //% "Pin"
-            return qsTrId("pin")
-
-        }
-        onTriggered: {
-            if (pinnedMessage) {
-                chatsModel.messageView.unPinMessage(messageId, chatsModel.channelView.activeChannel.id)
-                return
-            }
-
-            if (!canPin) {
-                // Open pin modal so that the user can unpin one
-                openPopup(pinnedMessagesPopupComponent, {messageToPin: messageId})
-                return
-            }
-
-            chatsModel.messageView.pinMessage(messageId, chatsModel.channelView.activeChannel.id)
-            messageContextMenu.close()
-        }
-        icon.source: "../../../img/pin"
-        icon.width: 16
-        icon.height: 16
-        enabled: {
-            switch (chatsModel.channelView.activeChannel.chatType) {
-            case Constants.chatTypePublic: return false
-            case Constants.chatTypeStatusUpdate: return false
-            case Constants.chatTypeOneToOne: return true
-            case Constants.chatTypePrivateGroupChat: return chatsModel.channelView.activeChannel.isAdmin(profileModel.profile.pubKey)
-            case Constants.chatTypeCommunity: return chatsModel.communities.activeCommunity.admin
-            }
-
-            return false
-        }
-    }
-
-    Action {
-        id: copyAction
-        enabled: !isProfile && !emojiOnly
-        //% "Copy"
-        text: qsTrId("copy-to-clipboard")
-        onTriggered: {
-            chatsModel.copyToClipboard(messageContextMenu.text)
-            messageContextMenu.close()
-        }
-        icon.source: "../../../../shared/img/copy-to-clipboard-icon"
-        icon.width: 16
-        icon.height: 16
-    }
-
-    Action {
+    /*  // copy link feature not ready yet
+    StatusMenuItem {
         id: copyLinkAction
         //% "Copy link"
         text: qsTrId("copy-link")
@@ -208,9 +152,7 @@ PopupMenu {
             chatsModel.copyToClipboard(linkUrls.split(" ")[0])
             messageContextMenu.close()
         }
-        icon.source: "../../../../shared/img/copy-to-clipboard-icon"
-        icon.width: 16
-        icon.height: 16
+        icon.name: "link"
         enabled: false
     }
 
@@ -245,8 +187,9 @@ PopupMenu {
             }
         }
     }
+    */
 
-    Action {
+    StatusMenuItem {
         id: viewProfileAction
         //% "View Profile"
         text: qsTrId("view-profile")
@@ -254,26 +197,12 @@ PopupMenu {
             openProfilePopup(userName, fromAuthor, identicon, "", nickname);
             messageContextMenu.close()
         }
-        icon.source: "../../../img/profileActive.svg"
-        icon.width: 16
-        icon.height: 16
-        enabled: !emojiOnly && !copyLinkAction.enabled
+        icon.name: "profile"
+        enabled: isProfile
     }
 
-    Action {
-        id: editMessageAction
-        //% "Edit message"
-        text: qsTrId("edit-message")
-        onTriggered: {
-            onClickEdit();
-        }
-        icon.source: "../../../img/edit-message.svg"
-        icon.width: 16
-        icon.height: 16
-        enabled: isCurrentUser && isText
-    }
-
-    Action {
+    StatusMenuItem {
+        id: sendMessageOrReplyTo
         text: messageContextMenu.isProfile ?
                   //% "Send message"
                   qsTrId("send-message") :
@@ -289,34 +218,71 @@ PopupMenu {
             messageContextMenu.closeParentPopup()
             messageContextMenu.close()
         }
-        icon.source: "../../../img/messageActive.svg"
-        icon.width: 16
-        icon.height: 16
-        enabled: !isSticker && !emojiOnly
+        icon.name: "chat"
+        enabled: isProfile || (!hideEmojiPicker && !emojiOnly && !isProfile)
     }
 
-    Separator {
-        visible: deleteMessageAction.enabled
-        height: visible ? Style.current.halfPadding : 0
-    }
-
-    Action {
-        //% "Jump to"
-        text: qsTrId("jump-to")
+    StatusMenuItem {
+        id: editMessageAction
+        //% "Edit message"
+        text: qsTrId("edit-message")
         onTriggered: {
-            positionAtMessage(messageContextMenu.messageId)
-            messageContextMenu.closeParentPopup()
+            onClickEdit();
+        }
+        icon.name: "edit"
+        enabled: isCurrentUser && !hideEmojiPicker && !emojiOnly && !isProfile
+    }
+
+    StatusMenuItem {
+        id: pinAction
+        text: {
+            if (pinnedMessage) {
+                //% "Unpin"
+                return qsTrId("unpin")
+            }
+            //% "Pin"
+            return qsTrId("pin")
+
+        }
+        onTriggered: {
+            if (pinnedMessage) {
+                chatsModel.messageView.unPinMessage(messageId, chatsModel.channelView.activeChannel.id)
+                return
+            }
+
+            if (!canPin) {
+                // Open pin modal so that the user can unpin one
+                openPopup(pinnedMessagesPopupComponent, {messageToPin: messageId})
+                return
+            }
+
+            chatsModel.messageView.pinMessage(messageId, chatsModel.channelView.activeChannel.id)
             messageContextMenu.close()
         }
-        icon.source: "../../../img/arrow-up.svg"
-        icon.width: 16
-        icon.height: 16
-        enabled: messageContextMenu.pinnedMessage && messageContextMenu.showJumpTo
+        icon.name: "pin"
+        enabled: {
+            if(isProfile || emojiOnly)
+                return false
+
+            switch (chatsModel.channelView.activeChannel.chatType) {
+            case Constants.chatTypePublic: return false
+            case Constants.chatTypeStatusUpdate: return false
+            case Constants.chatTypeOneToOne: return true
+            case Constants.chatTypePrivateGroupChat: return chatsModel.channelView.activeChannel.isAdmin(profileModel.profile.pubKey)
+            case Constants.chatTypeCommunity: return chatsModel.communities.activeCommunity.admin
+            }
+
+            return false
+        }
     }
-    
-    Action {
+
+    StatusMenuSeparator {
+        visible: deleteMessageAction.enabled
+    }
+
+    StatusMenuItem {
         id: deleteMessageAction
-        enabled: isCurrentUser &&
+        enabled: isCurrentUser && !isProfile && !emojiOnly &&
                  (contentType === Constants.messageType ||
                   contentType === Constants.stickerType ||
                   contentType === Constants.emojiType ||
@@ -346,9 +312,7 @@ PopupMenu {
                                                    }
                                                })
         }
-        icon.source: "../../../img/delete.svg"
-        icon.color: Style.current.danger
-        icon.width: 16
-        icon.height: 16
+        icon.name: "delete"
+        type: StatusMenuItem.Type.Danger
     }
 }

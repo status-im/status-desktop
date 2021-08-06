@@ -12,6 +12,7 @@ Rectangle {
     property int containerMargin: 2
     property int contentType: 2
     property var messageContextMenu
+    property bool showMoreButton: true
 
     visible: !activityCenterMessage &&
              (buttonsContainer.parentIsHovered || isMessageActive)
@@ -131,6 +132,7 @@ Rectangle {
 
         StatusIconButton {
             id: otherBtn
+            visible: showMoreButton
             icon.name: "dots-icon"
             width: 32
             height: 32
@@ -139,9 +141,8 @@ Rectangle {
                     setMessageActive(messageId, true)
                 }
                 clickMessage(false, isSticker, false, null, false, true);
-                messageContextMenu.parent = otherBtn;
-                messageContextMenu.x = 0;
-                messageContextMenu.y = (parent.height/2);
+                buttonsContainer.messageContextMenu.x = buttonsContainer.x + buttonsContainer.width - buttonsContainer.messageContextMenu.width
+                messageContextMenu.y = parent.height/2 + Style.current.smallPadding
             }
             onHoveredChanged: {
                 buttonsContainer.hoverChanged(this.hovered)
