@@ -200,6 +200,7 @@ Item {
             SelectedMessage.set(messageId, fromAuthor);
         }
 
+        messageContextMenu.parent = root
         messageContextMenu.messageId = root.messageId
         messageContextMenu.contentType = root.contentType
         messageContextMenu.linkUrls = root.linkUrls;

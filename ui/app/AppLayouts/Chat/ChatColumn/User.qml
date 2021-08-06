@@ -109,7 +109,13 @@ Item {
                 wrapper.hovered = false
             }
             onClicked: {
-                console.log("TODO: do something")
+                if (mouse.button === Qt.LeftButton) {
+                    openProfilePopup(wrapper.name, wrapper.publicKey, (wrapper.profileImage || wrapper.identicon), "", appMain.getUserNickname(wrapper.publicKey));
+                }
+                 else if (mouse.button === Qt.RightButton) {
+                    messageContextMenu.isProfile = true;
+                    messageContextMenu.show(wrapper.name, wrapper.publicKey, (wrapper.profileImage || wrapper.identicon), "", appMain.getUserNickname(wrapper.publicKey))
+                }
             }
         }
 

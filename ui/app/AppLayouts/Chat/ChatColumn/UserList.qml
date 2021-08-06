@@ -19,6 +19,7 @@ Item {
     anchors.fill: parent
     property var userList
     property var currentTime
+    property var messageContextMenu
 
     Rectangle {
         anchors.fill: parent
