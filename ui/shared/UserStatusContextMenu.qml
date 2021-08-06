@@ -56,7 +56,7 @@ PopupMenu {
             anchors.right: parent.right
             anchors.rightMargin: Style.current.smallPadding
             font.weight: Font.Medium
-            font.pixelSize: 12
+            font.pixelSize: Style.current.tertiaryTextFontSize
             color: Style.current.secondaryText
         }
 
