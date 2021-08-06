@@ -10,6 +10,8 @@ Rectangle {
     id: statusAppNavBar
 
     property StatusNavBarTabButton navBarChatButton
+    property StatusNavBarTabButton navBarProfileButton
+
     property list<StatusNavBarTabButton> navBarTabButtons
     property alias navBarCommunityTabButtons: navBarCommunityTabButtons
 
@@ -31,6 +33,12 @@ Rectangle {
     onNavBarChatButtonChanged: {
         if (!!navBarChatButton) {
             navBarChatButton.parent = navBarChatButtonSlot
+        }
+    }
+
+    onNavBarProfileButtonChanged: {
+        if (!!navBarProfileButton) {
+            navBarProfileButton.parent = navBarProfileButtonSlot
         }
     }
 
@@ -75,7 +83,9 @@ Rectangle {
             if (navBarContentHeight > statusAppNavBar.height) {
                 height = statusAppNavBar.height - 
                          statusAppNavBar.navBarContentHeightWithoutCommunityButtons -
-                         (!!navBarTabButtonsSlot.anchors.bottom ? navBarTabButtonsSlot.anchors.bottomMargin : navBarTabButtonsSlot.anchors.topMargin)
+                         (!!navBarTabButtonsSlot.anchors.bottom ? navBarTabButtonsSlot.anchors.bottomMargin : navBarTabButtonsSlot.anchors.topMargin) -
+                         navBarProfileButtonSlot.height -
+                         navBarProfileButtonSlot.anchors.bottomMargin
                 bottomPadding = 16
                 topPadding = 16
             } else {
@@ -122,7 +132,7 @@ Rectangle {
             if (navBarContentHeight > statusAppNavBar.height) {
                 anchors.top = undefined
                 anchors.topMargin = 0
-                anchors.bottom = statusAppNavBar.bottom
+                anchors.bottom = navBarProfileButtonSlot.top
                 anchors.bottomMargin = 32
             } else {
                 anchors.bottom = undefined
@@ -131,6 +141,16 @@ Rectangle {
                 anchors.topMargin = separator.visible ? 16 : navBarChatButtonSlot.anchors.topMargin
             }
         }
+    }
+
+    Item {
+        id: navBarProfileButtonSlot
+        anchors.horizontalCenter: parent.horizontalCenter
+        height: visible ? statusAppNavBar.navBarProfileButton.height : 0
+        width: visible ? statusAppNavBar.navBarProfileButton.width : 0
+        visible: !!statusAppNavBar.navBarProfileButton
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: visible ? 32 : 0
     }
 }
 
