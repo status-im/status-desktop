@@ -446,7 +446,6 @@ StatusAppLayout {
                 // Add Status links to whitelist
                 whiteListedSites.push({title: "Status", address: Constants.deepLinkPrefix, imageSite: false})
                 whiteListedSites.push({title: "Status", address: Constants.joinStatusLink, imageSite: false})
-
                 const settings = appSettings.whitelistedUnfurlingSites
 
                 // Set Status links as true. We intercept thoseURLs so it is privacy-safe
@@ -481,6 +480,15 @@ StatusAppLayout {
                 console.error('Could not parse the whitelist for sites', e)
             }
             appMain.settingsLoaded()
+        }
+    }
+
+    Connections {
+        target: profileModel
+        ignoreUnknownSignals: true
+        enabled: removeMnemonicAfterLogin
+        onInitialized: {
+            profileModel.mnemonic.remove()
         }
     }
 
