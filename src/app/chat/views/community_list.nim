@@ -314,3 +314,14 @@ QtObject:
     self.communities[comIndex].recalculateMentions()
     let index = self.createIndex(comIndex, 0, nil)
     self.dataChanged(index, index, @[CommunityRoles.UnviewedMentionsCount.int])
+
+  proc getChannelByIdAndBelongingCommunity*(self: CommunityList, chatId: string, 
+    chat: var Chat, community: var Community): bool =
+    for co in self.communities:
+      for ch in co.chats:
+        if ch.id == chatId:
+          community = co
+          chat = ch
+          return true
+    
+    return false

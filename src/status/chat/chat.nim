@@ -246,7 +246,6 @@ proc recalculateUnviewedMessages*(community: var Community) =
   community.unviewedMessagesCount = total
 
 proc recalculateMentions*(community: var Community) =
-  echo "(recalculateMentions) chatId: ", community.id, "  before: ", community.unviewedMentionsCount
   var total = 0
   for chat in community.chats:
     total += chat.unviewedMentionsCount

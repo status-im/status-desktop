@@ -12,7 +12,7 @@ import contacts
 import chat/[chat, message]
 import tasks/[qt, task_runner_impl]
 import signals/messages
-import ens
+import ens, accounts
 
 logScope:
   topics = "chat-model"
@@ -621,6 +621,9 @@ QtObject:
     return self.channels[chatId].communityId
 
   proc asyncSearchMessages*(self: ChatModel, chatId: string, searchTerm: string, caseSensitive: bool) =
+    ## Asynchronous search for messages which contain the searchTerm and belong
+    ## to the chat with chatId.
+
     if (chatId.len == 0):
       info "empty channel id set for fetching more messages"
       return
@@ -628,11 +631,34 @@ QtObject:
     if (searchTerm.len == 0):
       return
 
-    let arg = AsyncSearchMessageTaskArg(
-      tptr: cast[ByteAddress](asyncSearchMessagesTask),
+    let arg = AsyncSearchMessagesInChatTaskArg(
+      tptr: cast[ByteAddress](asyncSearchMessagesInChatTask),
       vptr: cast[ByteAddress](self.vptr),
       slot: "onAsyncSearchMessages",
       chatId: chatId,
+      searchTerm: searchTerm,
+      caseSensitive: caseSensitive
+    )
+    self.tasks.threadpool.start(arg)
+
+  proc asyncSearchMessages*(self: ChatModel, communityIds: seq[string], chatIds: seq[string], searchTerm: string, caseSensitive: bool) =
+    ## Asynchronous search for messages which contain the searchTerm and belong
+    ## to either any chat/channel from chatIds array or any channel of community 
+    ## from communityIds array.
+
+    if (communityIds.len == 0 and chatIds.len == 0):
+      info "either community ids or chat ids or both must be set"
+      return
+
+    if (searchTerm.len == 0):
+      return
+
+    let arg = AsyncSearchMessagesInChatsAndCommunitiesTaskArg(
+      tptr: cast[ByteAddress](asyncSearchMessagesInChatsAndCommunitiesTask),
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "onAsyncSearchMessages",
+      communityIds: communityIds,
+      chatIds: chatIds, 
       searchTerm: searchTerm,
       caseSensitive: caseSensitive
     )
@@ -774,3 +800,31 @@ QtObject:
     self.events.emit("messagesLoaded", MsgsLoadedArgs(chatId: chatId, messages: messages))
     self.events.emit("reactionsLoaded", ReactionsLoadedArgs(reactions: reactions))
     self.events.emit("pinnedMessagesLoaded", MsgsLoadedArgs(chatId: chatId, messages: pinnedMessages))
+
+  proc userNameOrAlias*(self: ChatModel, pubKey: string, 
+    prettyForm: bool = false): string =
+    ## Returns ens name or alias, in case if prettyForm is true and ens name
+    ## ends with ".stateofus.eth" that part will be removed.
+    var alias: string
+    if self.contacts.hasKey(pubKey):
+      alias = ens.userNameOrAlias(self.contacts[pubKey])
+    else:
+      alias = generateAlias(pubKey)
+
+    if (prettyForm and alias.endsWith(".stateofus.eth")):
+      alias = alias[0 .. ^15]
+
+    return alias
+
+  proc chatName*(self: ChatModel, chatItem: Chat): string =
+    if (not chatItem.chatType.isOneToOne): 
+      return chatItem.name
+
+    if (self.contacts.hasKey(chatItem.id) and 
+      self.contacts[chatItem.id].hasNickname()):
+      return self.contacts[chatItem.id].localNickname
+
+    if chatItem.ensName != "":
+      return "@" & userName(chatItem.ensName).userName(true)
+
+    return self.userNameOrAlias(chatItem.id)

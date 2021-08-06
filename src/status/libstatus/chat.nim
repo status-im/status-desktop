@@ -569,7 +569,15 @@ proc unreadActivityCenterNotificationsCount*(): int =
 proc asyncSearchMessages*(chatId: string, searchTerm: string, caseSensitive: bool, success: var bool): string =
   success = true
   try:
-    result = callPrivateRPC("allChatMessagesWhichMatchTerm".prefix, %* [chatId, searchTerm, caseSensitive])
+    result = callPrivateRPC("allMessagesFromChatWhichMatchTerm".prefix, %* [chatId, searchTerm, caseSensitive])
+  except RpcException as e:
+    success = false
+    result = e.msg
+
+proc asyncSearchMessages*(communityIds: seq[string], chatIds: seq[string], searchTerm: string, caseSensitive: bool, success: var bool): string =
+  success = true
+  try:
+    result = callPrivateRPC("allMessagesFromChatsAndCommunitiesWhichMatchTerm".prefix, %* [communityIds, chatIds, searchTerm, caseSensitive])
   except RpcException as e:
     success = false
     result = e.msg

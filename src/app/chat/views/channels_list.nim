@@ -1,7 +1,6 @@
 import NimQml, Tables
 import ../../../status/chat/[chat, message]
 import ../../../status/status
-import ../../../status/ens
 import ../../../status/accounts
 import strutils
 
@@ -39,19 +38,6 @@ QtObject:
     result.status = status
     result.setup()
 
-  proc userNameOrAlias(self: ChannelsList, pubKey: string): string =
-    if self.status.chat.contacts.hasKey(pubKey):
-      return ens.userNameOrAlias(self.status.chat.contacts[pubKey])
-    generateAlias(pubKey)
-
-  proc chatName(self: ChannelsList, chatItem: Chat): string =
-    if not chatItem.chatType.isOneToOne: return chatItem.name
-    if self.status.chat.contacts.hasKey(chatItem.id) and self.status.chat.contacts[chatItem.id].hasNickname():
-      return self.status.chat.contacts[chatItem.id].localNickname
-    if chatItem.ensName != "":
-      return "@" & userName(chatItem.ensName).userName(true)      
-    return self.userNameOrAlias(chatItem.id)
-
   method rowCount*(self: ChannelsList, index: QModelIndex = nil): int = self.chats.len
 
   proc renderBlock(self: ChannelsList, message: Message): string
@@ -66,7 +52,7 @@ QtObject:
 
     let chatItemRole = role.ChannelsRoles
     case chatItemRole:
-      of ChannelsRoles.Name: result = newQVariant(self.chatName(chatItem))
+      of ChannelsRoles.Name: result = newQVariant(self.status.chat.chatName(chatItem))
       of ChannelsRoles.Timestamp: result = newQVariant($chatItem.timestamp)
       of ChannelsRoles.LastMessage: result = newQVariant(self.renderBlock(chatItem.lastMessage))
       of ChannelsRoles.ContentType: result = newQVariant(chatItem.lastMessage.contentType.int)
@@ -134,6 +120,13 @@ QtObject:
   proc getChannelById*(self: ChannelsList, chatId: string): Chat =
     for chat in self.chats:
       if chat.id == chatId:
+        return chat
+  
+  proc getChannelById*(self: ChannelsList, chatId: string, found: var bool): Chat =
+    found = false
+    for chat in self.chats:
+      if chat.id == chatId:
+        found = true
         return chat
   
   proc getChannelByName*(self: ChannelsList, name: string): Chat =
@@ -213,7 +206,7 @@ QtObject:
 
   proc renderInline(self: ChannelsList, elem: TextItem): string =
     case elem.textType:
-    of "mention": result = self.userNameOrAlias(elem.literal)
+    of "mention": result = self.status.chat.userNameOrAlias(elem.literal)
     of "link": result = elem.destination
     else: result = escape_html(elem.literal)
 

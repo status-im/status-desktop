@@ -179,7 +179,6 @@ DISTFILES += \
     app/AppLayouts/Chat/components/InviteFriendsPopup.qml \
     app/AppLayouts/Chat/components/MessageContextMenu.qml \
     app/AppLayouts/Chat/components/NicknamePopup.qml \
-    app/AppLayouts/Chat/components/SearchPopup.qml \
     app/AppLayouts/Chat/components/SuggestedChannels.qml \
     app/AppLayouts/Chat/components/GroupInfoPopup.qml \
     app/AppLayouts/Chat/data/channelList.js \
