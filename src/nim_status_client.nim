@@ -19,7 +19,6 @@ import ./status/tasks/marathon/mailserver/controller as mailserver_controller
 import ./status/tasks/marathon/mailserver/worker as mailserver_worker
 
 var signalsQObjPointer: pointer
-var mailserverQObjPointer: pointer
 
 logScope:
   topics = "main"
@@ -112,7 +111,9 @@ proc mainProc() =
     netAccMgr.setNetworkAccessible(NetworkAccessibility.Accessible)
 
   let signalController = signals.newController(status)
-  defer: signalController.delete()
+  defer:
+    signalsQObjPointer = nil
+    signalController.delete()
 
   # We need this global variable in order to be able to access the application
   # from the non-closure callback passed to `libstatus.setSignalEventCallback`
@@ -227,7 +228,8 @@ proc mainProc() =
   # it will be passed as a regular C function to libstatus. This means that
   # we cannot capture any local variables here (we must rely on globals)
   var callback: SignalCallback = proc(p0: cstring) {.cdecl.} =
-    signal_handler(signalsQObjPointer, p0, "receiveSignal")
+    if signalsQObjPointer != nil:
+      signal_handler(signalsQObjPointer, p0, "receiveSignal")
 
   status_go.setSignalEventCallback(callback)
 
