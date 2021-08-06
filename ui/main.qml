@@ -265,9 +265,7 @@ StatusWindow {
 
         DSM.State {
             id: appState
-            onEntered: Qt.callLater(function() {
-                loader.sourceComponent = app
-            })
+            onEntered: loader.sourceComponent = app
 
             DSM.SignalTransition {
                 targetState: stateLogin
@@ -389,16 +387,6 @@ StatusWindow {
             }
         }
     }
-
-    Connections {
-        target: profileModel
-        ignoreUnknownSignals: true
-        enabled: removeMnemonicAfterLogin
-        onInitialized: {
-            profileModel.mnemonic.remove()
-        }
-    }
-
 
     Component {
         id: genKey
