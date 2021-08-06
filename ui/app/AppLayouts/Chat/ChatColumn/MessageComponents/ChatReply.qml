@@ -162,7 +162,8 @@ Loader {
                 color: root.elementsColor
                 readOnly: true
                 selectByMouse: true
-                font.pixelSize: Style.current.secondaryTextFontSize
+                font.pixelSize: Style.current.additionalTextSize
+                font.weight: Font.Medium
                 anchors.left: userImage.left
                 width: root.longReply ? parent.width : implicitWidth
                 height: 20
