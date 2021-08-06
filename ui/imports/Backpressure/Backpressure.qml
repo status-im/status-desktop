@@ -21,13 +21,13 @@ Item {
             owner = backpressure;
         }
 
-        owner.Component.onDestruction.connect(cleanup);
+        owner.Component.destruction.connect(cleanup);
 
         var obj = Qt.createQmlObject('import QtQuick 2.0; Timer {running: false; repeat: false; interval: ' + timeout + '}', backpressure, "setTimeout");
         obj.triggered.connect(function() {
             callback();
             obj.destroy();
-            owner.Component.onDestruction.disconnect(cleanup);
+            owner.Component.destruction.disconnect(cleanup);
             delete _timers[tid];
         });
         obj.running = true;

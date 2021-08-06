@@ -1,14 +1,17 @@
-#################################################
-# Async search messages by term
-#################################################
-type
-  AsyncSearchMessageTaskArg = ref object of QObjectTaskArg
-    chatId: string
+type 
+  AsyncSearchMessagesTaskArg = ref object of QObjectTaskArg
     searchTerm: string
     caseSensitive: bool
 
-const asyncSearchMessagesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
-  let arg = decode[AsyncSearchMessageTaskArg](argEncoded)
+#################################################
+# Async search messages in chat with chatId by term
+#################################################
+type
+  AsyncSearchMessagesInChatTaskArg = ref object of AsyncSearchMessagesTaskArg
+    chatId: string
+
+const asyncSearchMessagesInChatTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[AsyncSearchMessagesInChatTaskArg](argEncoded)
   var messages: JsonNode
   var success: bool
   let response = status_chat.asyncSearchMessages(arg.chatId, arg.searchTerm, arg.caseSensitive, success)
@@ -18,6 +21,30 @@ const asyncSearchMessagesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall
 
   let responseJson = %*{
     "chatId": arg.chatId,
+    "messages": messages
+  }
+  arg.finish(responseJson)
+
+#################################################
+# Async search messages in chats/channels and communities by term
+#################################################
+type
+  AsyncSearchMessagesInChatsAndCommunitiesTaskArg = ref object of AsyncSearchMessagesTaskArg
+    communityIds: seq[string]
+    chatIds: seq[string]
+
+const asyncSearchMessagesInChatsAndCommunitiesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[AsyncSearchMessagesInChatsAndCommunitiesTaskArg](argEncoded)
+  var messages: JsonNode
+  var success: bool
+  let response = status_chat.asyncSearchMessages(arg.communityIds, arg.chatIds, arg.searchTerm, arg.caseSensitive, success)
+
+  if(success):
+    messages = response.parseJson()["result"]
+
+  let responseJson = %*{
+    "communityIds": arg.communityIds,
+    "chatIds": arg.chatIds,
     "messages": messages
   }
   arg.finish(responseJson)
