@@ -18,7 +18,6 @@ const getGasPredictionsTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.}
     arg = decode[GasPredictionsTaskArg](argEncoded)
     response = status_wallet.getGasPrice().parseJson
   var output = "0"
-  echo response
   if response.hasKey("result"):
     output = $fromHex(Stuint[256], response["result"].getStr)
   arg.finish(output)
