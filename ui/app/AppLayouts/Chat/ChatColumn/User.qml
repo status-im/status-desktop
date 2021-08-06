@@ -86,9 +86,9 @@ Item {
                     return Style.current.darkGrey 
                 }
 
-                if (isCurrentUser || lastSeenMinutesAgo < 5){
+                if (isCurrentUser || lastSeenMinutesAgo < 5.5){
                     return statusType == Constants.statusType_DoNotDisturb ? Style.current.red : Style.current.green;
-                } else if (lastSeenMinutesAgo < 20) {
+                } else if (lastSeenMinutesAgo < 7) {
                     return statusType == Constants.statusType_DoNotDisturb ? Style.current.red : Style.current.orange;
                 }
 
