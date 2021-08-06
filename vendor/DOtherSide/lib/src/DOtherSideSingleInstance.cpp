@@ -20,6 +20,10 @@ SingleInstance::SingleInstance(const QString &uniqueName, QObject *parent)
     // note: this is an ad-hoc timeout value selected based on prior experience.
     if (!localSocket.waitForConnected(100)) {
         connect(m_localServer, &QLocalServer::newConnection, this, &SingleInstance::secondInstanceDetected);
+        // on *nix a crashed process will leave /tmp/xyz file preventing to start a new server.
+        // therefore, if we were unable to connect, then we assume the server died and we need to clean up.
+        // p.s. on Windows, this function does nothing.
+        QLocalServer::removeServer(socketName);
         if (!m_localServer->listen(socketName)) {
             qWarning() << "QLocalServer::listen(" << socketName << ") failed";
         }
