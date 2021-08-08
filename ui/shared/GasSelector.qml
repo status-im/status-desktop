@@ -32,6 +32,7 @@ Item {
     property string defaultCurrency: "USD"
     property alias selectedGasPrice: inputGasPrice.text
     property alias selectedGasLimit: inputGasLimit.text
+    property string defaultGasLimit: "0"
 
 
     property alias selectedTipLimit: inputPerGasTipLimit.text
@@ -86,13 +87,19 @@ Item {
 
         let inputTipLimit = parseFloat(inputPerGasTipLimit.text || "0.00")
         let inputOverallLimit = parseFloat(inputGasPrice.text || "0.00")
-
+        let gasLimit = parseInt(inputGasLimit.text, 10)
         errorsText.text = "";
 
         showPriceLimitWarning = false
         showTipLimitWarning = false
 
         let errorMsg = "";
+        
+        if(gasLimit < 21000) {
+            errorMsg = appendError(errorMsg, qsTr("Min 21000 units"))
+        } else if (gasLimit < parseInt(defaultGasLimit)){
+            errorMsg = appendError(errorMsg, qsTr("Not enough gas").arg(perGasTipLimitAverage), true)
+        }
 
         // Per-gas tip limit rules
         if(inputTipLimit < perGasTipLimitFloor){
@@ -166,6 +173,7 @@ Item {
         if (inputLimit <= 0.00) {
             inputGasLimit.validationError = root.greaterThan0ErrorMessage
         }
+
         if (inputPrice <= 0.00) {
             inputGasPrice.validationError = root.greaterThan0ErrorMessage
         }
@@ -317,6 +325,7 @@ Item {
             //% "Gas amount limit"
             label: qsTrId("gas-amount-limit")
             text: "21000"
+            inputLabel.color: Style.current.secondaryText
             customHeight: 56
             anchors.top: parent.top
             anchors.left: parent.left
@@ -339,6 +348,7 @@ Item {
         Input {
             id: inputPerGasTipLimit
             label: qsTr("Per-gas tip limit")
+            inputLabel.color: Style.current.secondaryText
             anchors.top: parent.top
             anchors.right: inputGasPrice.left
             anchors.rightMargin: Style.current.padding
@@ -372,6 +382,7 @@ Item {
             id: inputGasPrice
             //% "Per-gas overall limit"
             label: qsTrId("per-gas-overall-limit")
+            inputLabel.color: Style.current.secondaryText
             anchors.top: parent.top
             anchors.left: undefined
             anchors.right: parent.right

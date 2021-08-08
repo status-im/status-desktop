@@ -36,6 +36,7 @@ ModalPopup {
     function setAsyncGasLimitResult(uuid, value) {
         if (uuid === gasSelector.uuid) {
             gasSelector.selectedGasLimit = value
+            gasSelector.defaultGasLimit = value
         }
     }
 
@@ -227,6 +228,8 @@ ModalPopup {
                                 suggestedTipLimit: gasSelector.perGasTipLimitFloor, // TODO:
                                 priceLimit: gasSelector.selectedOverallLimit,
                                 suggestedPriceLimit: gasSelector.latestBaseFeeGwei + gasSelector.perGasTipLimitFloor,
+                                showPriceLimitWarning: gasSelector.showPriceLimitWarning,
+                                showTipLimitWarning: gasSelector.showTipLimitWarning,
                                 onConfirm: function(){
                                     stack.next();
                                 }

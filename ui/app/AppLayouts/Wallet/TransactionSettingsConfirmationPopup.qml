@@ -8,7 +8,7 @@ import "../../../shared"
 ModalPopup {
     id: popup
 
-    height: 450
+    height: 300 + (showPriceLimitWarning ? 65 : 0) + (showTipLimitWarning ? 65 : 0)
     width: 400
     title: qsTr("Are you sure?")
 
@@ -21,6 +21,9 @@ ModalPopup {
     property double suggestedTipLimit: 0
     property double priceLimit: 0
     property double suggestedPriceLimit: 0
+
+    property bool showPriceLimitWarning: false
+    property bool showTipLimitWarning: false
 
     Column {
         id: content
@@ -103,7 +106,8 @@ ModalPopup {
         Rectangle {
             id: tipLimitRect
             width: 368
-            height: 70
+            visible: showTipLimitWarning
+            height: visible ? 70 : 0
             radius: 8
             color: Style.current.backgroundHoverLight
 
@@ -163,7 +167,8 @@ ModalPopup {
         Rectangle {
             id: minPriceLimitRect
             width: 368
-            height: 70
+            visible: showPriceLimitWarning
+            height: visible ? 70 : 0
             radius: 8
             color: Style.current.backgroundHoverLight
 
@@ -224,7 +229,6 @@ ModalPopup {
     footer: Item {
         id: footerContainer
         width: parent.width
-        height: popup.height
 
         StatusButton {
             id: cancelButton
@@ -244,7 +248,7 @@ ModalPopup {
             anchors.bottom: parent.bottom
             onClicked: {
                 popup.onConfirm();
-                destroy();
+                popup.destroy();
             }
         }
     }

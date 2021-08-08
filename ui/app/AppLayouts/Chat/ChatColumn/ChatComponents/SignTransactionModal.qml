@@ -126,8 +126,7 @@ ModalPopup {
             id: groupSelectGas
             //% "Network fee"
             headerText: qsTrId("network-fee")
-            //% "Preview"
-            footerText: qsTrId("preview")
+            footerText: qsTr("Continue")
             showNextBtn: false
             onBackClicked: function() {
                 stack.pop()
@@ -149,6 +148,7 @@ ModalPopup {
                         root.selectedAsset && root.selectedAsset.address &&
                         root.selectedAmount)) {
                         selectedGasLimit = 250000
+                        defaultGasLimit = selectedGasLimit
                         return
                     }
                     
@@ -169,6 +169,7 @@ ModalPopup {
                         return
                     }
                     selectedGasLimit = gasEstimate.result
+                    defaultGasLimit = selectedGasLimit
                 })
             }
             GasValidator {
@@ -308,6 +309,8 @@ ModalPopup {
                                 suggestedTipLimit: gasSelector.perGasTipLimitFloor, // TODO:
                                 priceLimit: gasSelector.selectedOverallLimit,
                                 suggestedPriceLimit: gasSelector.latestBaseFeeGwei + gasSelector.perGasTipLimitFloor,
+                                showPriceLimitWarning: gasSelector.showPriceLimitWarning,
+                                showTipLimitWarning: gasSelector.showTipLimitWarning,
                                 onConfirm: function(){
                                     stack.next();
                                 }

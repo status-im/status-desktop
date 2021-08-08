@@ -113,9 +113,11 @@ ModalPopup {
                 property var estimateGas: Backpressure.debounce(gasSelector, 600, function() {
                     if (!(root.ensUsername !== "" && selectFromAccount.selectedAccount)) {
                         selectedGasLimit = 80000;
+                        defaultGasLimit = selectedGasLimit;
                         return;
                     }
-                    selectedGasLimit = profileModel.ens.setPubKeyGasEstimate(root.ensUsername, selectFromAccount.selectedAccount.address)
+                    selectedGasLimit = profileModel.ens.setPubKeyGasEstimate(root.ensUsername, selectFromAccount.selectedAccount.address);
+                    defaultGasLimit = selectedGasLimit;
                 })
             }
             GasValidator {
@@ -199,9 +201,11 @@ ModalPopup {
                                 currentMinimumTip: gasSelector.perGasTipLimitFloor,
                                 currentAverageTip: gasSelector.perGasTipLimitAverage,
                                 tipLimit: gasSelector.selectedTipLimit,
-                                suggestedTipLimit: gasSelector.perGasTipLimitFloor, // TODO:
+                                suggestedTipLimit: gasSelector.perGasTipLimitFloor,
                                 priceLimit: gasSelector.selectedOverallLimit,
                                 suggestedPriceLimit: gasSelector.latestBaseFeeGwei + gasSelector.perGasTipLimitFloor,
+                                showPriceLimitWarning: gasSelector.showPriceLimitWarning,
+                                showTipLimitWarning: gasSelector.showTipLimitWarning,
                                 onConfirm: function(){
                                     stack.next();
                                 }

@@ -114,7 +114,7 @@ ModalPopup {
             //% "Send"
             headerText: qsTrId("command-button-send")
             //% "Preview"
-            footerText: qsTrId("preview")
+            footerText: qsTr("Continue")
 
             AssetAndAmountInput {
                 id: txtAmount
@@ -156,7 +156,9 @@ ModalPopup {
                         console.warn(qsTrId("error-estimating-gas---1").arg(gasEstimate.error.message))
                         return
                     }
+
                     selectedGasLimit = gasEstimate.result
+                    defaultGasLimit = selectedGasLimit
                 })
             }
             GasValidator {
@@ -256,9 +258,11 @@ ModalPopup {
                                 currentMinimumTip: gasSelector.perGasTipLimitFloor,
                                 currentAverageTip: gasSelector.perGasTipLimitAverage,
                                 tipLimit: gasSelector.selectedTipLimit,
-                                suggestedTipLimit: gasSelector.perGasTipLimitFloor, // TODO:
+                                suggestedTipLimit: gasSelector.perGasTipLimitFloor,
                                 priceLimit: gasSelector.selectedOverallLimit,
                                 suggestedPriceLimit: gasSelector.latestBaseFeeGwei + gasSelector.perGasTipLimitFloor,
+                                showPriceLimitWarning: gasSelector.showPriceLimitWarning,
+                                showTipLimitWarning: gasSelector.showTipLimitWarning,
                                 onConfirm: function(){
                                     stack.next();
                                 }

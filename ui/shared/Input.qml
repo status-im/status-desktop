@@ -6,6 +6,8 @@ import "."
 
 Item {
     property alias textField: inputValue
+    property alias inputLabel: inputLabel
+    
     property string placeholderText: "My placeholder"
     property string placeholderTextColor: Style.current.secondaryText
     property alias text: inputValue.text
