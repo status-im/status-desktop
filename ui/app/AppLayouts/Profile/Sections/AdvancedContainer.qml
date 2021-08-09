@@ -248,7 +248,17 @@ ScrollView {
                         }
                     }
                 }
-            }        
+            }
+
+            StatusSettingsLineButton {
+                text: qsTr("Stickers/ENS on ropsten")
+                visible: profileModel.network.current === Constants.networkRopsten
+                isSwitch: true
+                switchChecked: appSettings.stickersEnsRopsten
+                onClicked: {
+                    appSettings.stickersEnsRopsten = !appSettings.stickersEnsRopsten
+                }
+            }
         }
 
         NetworksModal {

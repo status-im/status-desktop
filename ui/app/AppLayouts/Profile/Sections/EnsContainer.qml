@@ -26,8 +26,8 @@ Item {
     signal goToWelcome();
     signal goToList();
 
-    function goToStart(){                  /* Comment this to use on testnet      */
-        if(profileModel.ens.rowCount() > 0 && profileModel.network.current === "mainnet_rpc"){
+    function goToStart(){
+        if(profileModel.ens.rowCount() > 0 && networkGuarded){
             goToList();
         } else {
             goToWelcome();

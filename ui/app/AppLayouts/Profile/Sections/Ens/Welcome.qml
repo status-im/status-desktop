@@ -271,7 +271,7 @@ Item {
         anchors.bottom: parent.bottom
         anchors.bottomMargin: Style.current.padding
         anchors.horizontalCenter: parent.horizontalCenter
-        enabled:  profileModel.network.current === Constants.networkMainnet // Comment this to use on testnet
+        enabled: networkGuarded
         //% "Start"
         text: enabled ? 
           qsTrId("start") :

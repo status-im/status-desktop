@@ -1103,7 +1103,7 @@ Rectangle {
                 anchors.leftMargin: 2
                 anchors.bottom: parent.bottom
                 icon.name: "stickers_icon"
-                visible: !isEdit && profileModel.network.current === Constants.networkMainnet && emojiBtn.visible
+                visible: !isEdit && networkGuarded && emojiBtn.visible
                 width: visible ? 32 : 0
                 type: "secondary"
                 onClicked: togglePopup(stickersPopup, stickersBtn)
