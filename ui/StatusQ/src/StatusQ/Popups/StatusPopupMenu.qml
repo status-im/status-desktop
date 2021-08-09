@@ -132,23 +132,30 @@ Menu {
             sourceComponent: {
                 let subMenuItemIcon = statusPopupMenu.subMenuItemIcons[parent.subMenuIndex]
                 
-                if ((parent.subMenu && subMenuItemIcon && subMenuItemIcon.source) || !!statusPopupMenuItem.action.image.source.toString()) {
+                if ((parent.subMenu && subMenuItemIcon && subMenuItemIcon.source) || 
+                    statusPopupMenuItem.action.image && !!statusPopupMenuItem.action.image.source.toString()) {
                     return statusRoundImageCmp
                 }
 
                 return (parent.subMenu && subMenuItemIcon && subMenuItemIcon.isLetterIdenticon) || 
-                    statusPopupMenuItem.action.iconSettings.isLetterIdenticon ? 
+                    (statusPopupMenuItem.action.iconsSettings && statusPopupMenuItem.action.iconSettings.isLetterIdenticon) ? 
                     statusLetterIdenticonCmp : indicatorComponent
             }
             anchors.verticalCenter: parent.verticalCenter
             anchors.left: parent.left
             anchors.leftMargin: 8
-            active: (parent.subMenu && !!statusPopupMenu.subMenuItemIcons[parent.subMenuIndex] ||
-                (!!statusPopupMenuItem.action.icon.name ||
-                !!statusPopupMenuItem.action.iconSettings.name) ||
-                !!statusPopupMenuItem.action.iconSettings.isLetterIdenticon ||
-                !!statusPopupMenuItem.action.image.source.toString()) &&
-                statusPopupMenuItem.action.enabled
+            active: {
+                if (enabled) {
+                    let hasIconSettings = !!statusPopupMenuItem.action.icon.name ||
+                      (statusPopupMenuItem.action.iconSettings && 
+                        (!!statusPopupMenuItem.action.iconSettings.name || !!statusPopupMenuItem.action.iconSettings.isLetterIdenticon))
+
+                    let hasImageSettings = statusPopupMenuItem.action.image && !!statusPopupMenuItem.action.image.source.toString()
+
+                    return enabled && (parent.subMenu && !!statusPopupMenu.subMenuItemIcons[parent.subMenuIndex]) || hasIconSettings || hasImageSettings
+                }
+                return false
+            }      
         }
 
         contentItem: StatusBaseText {
