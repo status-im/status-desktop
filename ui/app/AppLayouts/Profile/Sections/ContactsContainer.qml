@@ -219,6 +219,7 @@ Item {
             anchors.topMargin: Style.current.bigPadding
             anchors.bottom: parent.bottom
             contacts: profileModel.contacts.addedContacts
+            hideBlocked: true
             searchString: searchBox.text
         }
 

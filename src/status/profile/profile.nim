@@ -17,7 +17,7 @@ const contactBlocked* = ":contact/blocked"
 const contactRequest* = ":contact/request-received"
 
 proc isContact*(self: Profile): bool =
-  result = self.systemTags.contains(contactAdded) and not self.systemTags.contains(":contact/blocked")
+  result = self.systemTags.contains(contactAdded)
 
 proc isBlocked*(self: Profile): bool =
   result = self.systemTags.contains(contactBlocked)

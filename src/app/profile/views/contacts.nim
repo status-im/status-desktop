@@ -77,14 +77,17 @@ QtObject:
       self.contactList.updateContact(contact)
       if contact.systemTags.contains(contactAdded):
         self.addedContacts.updateContact(contact)
+
       if contact.isBlocked():
         self.blockedContacts.updateContact(contact)
+
       if contact.requestReceived() and not contact.systemTags.contains(contactAdded) and not contact.systemTags.contains(contactBlocked):
         self.contactRequests.updateContact(contact)
+
       if not requestAlreadyAdded and contact.requestReceived():
         self.contactRequestAdded(status_ens.userNameOrAlias(contact), contact.address)
 
-      self.contactListChanged()
+    self.contactListChanged()
 
   proc getContactList(self: ContactsView): QVariant {.slot.} =
     return newQVariant(self.contactList)
@@ -172,7 +175,7 @@ QtObject:
       return
 
     let contact = self.status.contacts.getContactByID(id)
-    
+
     if contact != nil:
       self.contactToAdd = contact
     else:

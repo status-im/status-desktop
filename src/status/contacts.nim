@@ -11,12 +11,9 @@ type
   ContactModel* = ref object
     events*: EventEmitter
 
-type 
+type
   ContactUpdateArgs* = ref object of Args
     contacts*: seq[Profile]
-
-  ContactBlockedArgs* = ref object of Args
-    contact*: Profile
 
 proc newContactModel*(events: EventEmitter): ContactModel =
     result = ContactModel()
@@ -34,12 +31,8 @@ proc getContactByID*(self: ContactModel, id: string): Profile =
 proc blockContact*(self: ContactModel, id: string): string =
   var contact = self.getContactByID(id)
   contact.systemTags.add(contactBlocked)
-  let index = contact.systemTags.find(contactAdded)
-  if (index > -1):
-    contact.systemTags.delete(index)
-  discard status_contacts.blockContact(contact)
-  self.events.emit("contactBlocked", ContactBlockedArgs(contact: contact))
-  
+  discard status_contacts.saveContact(contact.id, contact.ensVerified, contact.ensName, contact.alias, contact.identicon, contact.identityImage.thumbnail, contact.systemTags, contact.localNickname)
+  self.events.emit("contactBlocked", Args())
 
 proc unblockContact*(self: ContactModel, id: string): string =
   var contact = self.getContactByID(id)

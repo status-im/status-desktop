@@ -46,7 +46,7 @@ Item {
                 name: model.name
                 address: model.address
                 identicon: model.thumbnailImage || model.identicon
-                visible: model.isContact && (root.filterText === "" ||
+                visible: model.isContact && !model.isBlocked && (root.filterText === "" ||
                     root.matchesAlias(model.name.toLowerCase(), root.filterText.toLowerCase()) ||
                     model.name.toLowerCase().includes(root.filterText.toLowerCase()) ||
                     model.address.toLowerCase().includes(root.filterText.toLowerCase())) &&

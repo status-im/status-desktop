@@ -14,8 +14,8 @@ proc handleChatEvents(self: ChatController) =
     let evArgs = MsgsLoadedArgs(e)
     self.view.onMessagesLoaded(evArgs.chatId, evArgs.messages)
     for statusUpdate in evArgs.statusUpdates:
-      self.view.communities.updateMemberVisibility(statusUpdate)    
-      
+      self.view.communities.updateMemberVisibility(statusUpdate)
+
   # Display emoji reactions
   self.status.events.on("reactionsLoaded") do(e:Args):
     self.view.reactions.push(ReactionsLoadedArgs(e).reactions)
@@ -29,10 +29,6 @@ proc handleChatEvents(self: ChatController) =
     let notifications = ActivityCenterNotificationsArgs(e).activityCenterNotifications
     self.view.pushActivityCenterNotifications(notifications)
     self.view.communities.updateNotifications(notifications)
-
-  self.status.events.on("contactBlocked") do(e: Args):
-    var evArgs = ContactBlockedArgs(e)
-    self.view.removeChat(evArgs.contact.address)
 
   self.status.events.on("contactUpdate") do(e: Args):
     var evArgs = ContactUpdateArgs(e)
