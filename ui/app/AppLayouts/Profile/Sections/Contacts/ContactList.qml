@@ -14,6 +14,7 @@ ListView {
     property string searchString: ""
     property string lowerCaseSearchString: searchString.toLowerCase()
     property string contactToRemove: ""
+    property bool hideBlocked: false
 
     property Component profilePopupComponent: ProfilePopup {
         id: profilePopup
@@ -23,7 +24,7 @@ ListView {
     width: parent.width
 
     model: contacts
-    
+
     delegate: Contact {
         name: Utils.removeStatusEns(model.name)
         address: model.address
@@ -35,9 +36,15 @@ ListView {
             var popup = profilePopupComponent.createObject(contactList);
             popup.openPopup(showFooter, userName, fromAuthor, identicon, textParam, nickName);
         }
-        visible: searchString === "" ||
-                 model.name.toLowerCase().includes(lowerCaseSearchString) ||
-                 model.address.toLowerCase().includes(lowerCaseSearchString)
+        visible: {
+          if (hideBlocked && model.isBlocked) {
+            return false
+          }
+
+          return searchString === "" ||
+            model.name.toLowerCase().includes(lowerCaseSearchString) ||
+            model.address.toLowerCase().includes(lowerCaseSearchString)
+        }
         onBlockContactActionTriggered: {
             blockContactConfirmationDialog.contactName = name
             blockContactConfirmationDialog.contactAddress = address

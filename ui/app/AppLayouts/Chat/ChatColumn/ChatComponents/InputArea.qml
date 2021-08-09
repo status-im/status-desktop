@@ -49,7 +49,7 @@ Item {
                     community.admin ||
                     chatsModel.channelView.activeChannel.canPost
         }
-        enabled: !isBlocked
+        isContactBlocked: isBlocked
         chatInputPlaceholder: isBlocked ?
                 //% "This user has been blocked."
                 qsTrId("this-user-has-been-blocked-") :

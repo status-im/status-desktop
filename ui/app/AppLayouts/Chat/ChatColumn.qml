@@ -299,6 +299,24 @@ Item {
                 }
             }
 
+            Rectangle {
+                id: blockedBanner
+                Layout.fillWidth: true
+                height: 40
+                Layout.alignment: Qt.AlignHCenter
+                visible: isBlocked
+                color: Style.current.red
+                opacity: 0.1
+            }
+
+            Text {
+                id: blockedText
+                anchors.centerIn: blockedBanner
+                visible: isBlocked
+                color: Style.current.red
+                text: qsTr("Blocked")
+            }
+
             StackLayout {
                 id: stackLayoutChatMessages
                 Layout.fillWidth: true
@@ -324,6 +342,7 @@ Item {
             Connections {
                 target: chatsModel.channelView
                 onActiveChannelChanged: {
+                    isBlocked = profileModel.contacts.isContactBlocked(activeChatId);
                     chatInput.suggestions.hide();
                     chatInput.textInput.forceActiveFocus(Qt.MouseFocusReason)
                     populateSuggestions();
@@ -400,7 +419,7 @@ Item {
                                 community.admin ||
                                 chatsModel.channelView.activeChannel.canPost
                     }
-                    enabled: !isBlocked
+                    isContactBlocked: isBlocked
                     chatInputPlaceholder: isBlocked ?
                                               //% "This user has been blocked."
                                               qsTrId("this-user-has-been-blocked-") :
@@ -443,6 +462,7 @@ Item {
                         }
                     }
                 }
+
             }
         }
 

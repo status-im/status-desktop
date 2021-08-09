@@ -26,6 +26,7 @@ Rectangle {
     property bool isReply: false
     property bool isImage: false
     property bool isEdit: false
+    property bool isContactBlocked: false
 
     property var recentStickers
     property var stickerPackList
@@ -695,6 +696,7 @@ Rectangle {
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 16
         visible: !isEdit && control.chatType === Constants.chatTypeOneToOne && !control.isStatusUpdateInput
+        enabled: !control.isContactBlocked
         onClicked: {
             highlighted = true
             chatCommandsPopup.open()
@@ -711,7 +713,8 @@ Rectangle {
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 16
         visible: !isEdit && control.chatType !== Constants.chatTypePublic && !control.isStatusUpdateInput
-        
+        enabled: !control.isContactBlocked
+
         onClicked: {
             highlighted = true
             imageDialog.open()
@@ -720,6 +723,7 @@ Rectangle {
 
     Rectangle {
         id: messageInput
+        enabled: !control.isContactBlocked
         property int maxInputFieldHeight: control.isStatusUpdateInput ? 124 : 112
         property int defaultInputFieldHeight: control.isStatusUpdateInput ? 56 : 40
         anchors.left: imageBtn.visible ? imageBtn.right : parent.left
@@ -727,7 +731,7 @@ Rectangle {
         anchors.top: control.isStatusUpdateInput ? parent.top : undefined
         anchors.bottom: !control.isStatusUpdateInput ? parent.bottom : undefined
         anchors.bottomMargin: control.isStatusUpdateInput ? 0 : 12
-        anchors.right: parent.right
+        anchors.right: unblockBtn.visible ? unblockBtn.left : parent.right
         anchors.rightMargin: Style.current.smallPadding
         height: {
             if (messageInputField.implicitHeight <= messageInput.defaultInputFieldHeight) {
@@ -859,8 +863,7 @@ Rectangle {
                 font.pixelSize: 15
                 font.family: Style.current.fontRegular.name
                 wrapMode: TextArea.Wrap
-                //% "Type a message"
-                placeholderText: qsTrId("type-a-message")
+                placeholderText: control.chatInputPlaceholder
                 placeholderTextColor: Style.current.secondaryText
                 selectByMouse: true
                 color: isEdit ? Theme.palette.directColor1 : Style.current.textColor
@@ -1108,6 +1111,22 @@ Rectangle {
                 type: "secondary"
                 onClicked: togglePopup(stickersPopup, stickersBtn)
             }
+        }
+    }
+
+    StatusButton {
+        id: unblockBtn
+        visible: control.isContactBlocked
+        height: messageInput.height - Style.current.halfPadding
+        anchors.right: parent.right
+        anchors.rightMargin: Style.current.halfPadding
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: Style.current.padding
+        borderRadius: Style.current.radius
+        text: qsTr("Unblock")
+        type: "warn"
+        onClicked: function (event) {
+            profileModel.contacts.unblockContact(chatsModel.channelView.activeChannel.id)
         }
     }
 }

@@ -26,9 +26,9 @@ ScrollView {
             isVisible: {
                 if (selectMode) {
                     return !searchString || model.name.toLowerCase().includes(searchString)
-                } else {
-                    return isChecked || isUser
                 }
+
+                return isChecked || isUser
             }
             showCheckbox: root.selectMode
             pubKey: model.pubKey

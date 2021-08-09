@@ -20,14 +20,12 @@ ModalPopup {
     title: qsTrId("block-user")
 
     StyledText {
-        //% "Blocking will remove any messages you received from %1 and stop new messages from reaching you."
-        text: qsTrId("blocking-will-remove-any-messages-you-received-from--1-and-stop-new-messages-from-reaching-you-").arg(contactName)
+        text: qsTr("Blocking will stop new messages from reaching you from %1.").arg(contactName)
         font.pixelSize: 15
         anchors.left: parent.left
         anchors.right: parent.right
         wrapMode: Text.WordWrap
     }
-    
 
     footer: Item {
         id: footerContainer

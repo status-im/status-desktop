@@ -7,18 +7,6 @@ var
   contactsInited {.threadvar.}: bool
   dirty: Atomic[bool]
 
-# TODO: remove Profile from here
-proc blockContact*(contact: Profile): string =
-  callPrivateRPC("blockContact".prefix, %* [
-    {
-      "id": contact.id,
-      "ensVerified": contact.ensVerified,
-      "alias": contact.alias,
-      "identicon": contact.identicon,
-      "systemTags": contact.systemTags
-    }
-  ])
-
 proc getContactByID*(id: string): string =
   result = callPrivateRPC("getContactByID".prefix, %* [id])
   dirty.store(true)

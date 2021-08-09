@@ -67,6 +67,10 @@ StatusAppLayout {
         const contacts = []
         let contact
         for (let i = 0; i < nbContacts; i++) {
+            if (profileModel.contacts.list.rowData(i, "isBlocked") === "true") {
+                continue
+            }
+
             contact = {
                 name: profileModel.contacts.list.rowData(i, "name"),
                 localNickname: profileModel.contacts.list.rowData(i, "localNickname"),
