@@ -140,6 +140,10 @@ Item {
                 targetState: welcomeState
                 signal: goToWelcome
             }
+            DSM.SignalTransition {
+                targetState: ensReleasedState
+                signal: done
+            }
         }
 
         DSM.State {
@@ -170,6 +174,15 @@ Item {
         DSM.State {
             id: ensRegisteredState
             onEntered:loader.sourceComponent = ensRegistered
+            DSM.SignalTransition {
+                targetState: listState
+                signal: next
+            }
+        }
+
+        DSM.State {
+            id: ensReleasedState
+            onEntered:loader.sourceComponent = ensReleased
             DSM.SignalTransition {
                 targetState: listState
                 signal: next
@@ -241,6 +254,14 @@ Item {
     }
 
     Component {
+        id: ensReleased
+        ENSReleased {
+            ensUsername: selectedUsername
+            onOkBtnClicked: next(null)
+        }
+    }
+
+    Component {
         id: ensConnected
         ENSConnected {
             ensUsername: selectedUsername
@@ -265,6 +286,10 @@ Item {
         ENSDetails {
             username: selectedUsername
             onBackBtnClicked: back();
+            onUsernameReleased: {
+                selectedUsername = username;
+                done(username);
+            }
         }
     }
 

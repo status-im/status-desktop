@@ -16,6 +16,7 @@ import transactions
 import algorithm
 import web3/[ethtypes, conversions], stew/byteutils, stint
 import libstatus/eth/contracts
+import libstatus/eth/transactions as eth_transactions
 import chronicles, libp2p/[multihash, multicodec, cid]
 
 import ./settings as status_settings
@@ -171,6 +172,54 @@ proc getPrice*(): Stuint[256] =
   if response.result == "0x":
     raise newException(RpcException, "Error getting ens username price: 0x")
   result = fromHex(Stuint[256], response.result)
+
+proc releaseEstimateGas*(username: string, address: string, success: var bool): int =
+  let
+    label = fromHex(FixedBytes[32], label(username))
+    ensUsernamesContract = contracts.getContract("ens-usernames")
+    release = Release(label: label)
+
+  var tx = transactions.buildTokenTransaction(parseAddress(address), ensUsernamesContract.address, "", "")
+  try:
+    let response = ensUsernamesContract.methods["release"].estimateGas(tx, release, success)
+    if success:
+      result = fromHex[int](response)
+  except RpcException as e:
+    raise
+
+proc release*(username: string, address: string, gas, gasPrice,  password: string, success: var bool): string =
+  let
+    label = fromHex(FixedBytes[32], label(username))
+    ensUsernamesContract = contracts.getContract("ens-usernames")
+    release = Release(label: label)
+
+  var tx = transactions.buildTokenTransaction(parseAddress(address), ensUsernamesContract.address, "", "")
+  try:
+    result = ensUsernamesContract.methods["release"].send(tx, release, password, success)
+    if success:
+      trackPendingTransaction(result, address, $ensUsernamesContract.address, PendingTransactionType.ReleaseENS, username)
+  except RpcException as e:
+    raise
+
+proc getExpirationTime*(username: string, success: var bool): int =
+  let 
+    label = fromHex(FixedBytes[32], label(username))
+    expTime = ExpirationTime(label: label)
+    ensUsernamesContract = contracts.getContract("ens-usernames")
+
+  var tx = transactions.buildTransaction(parseAddress("0x0000000000000000000000000000000000000000"), 0.u256)
+  tx.to = ensUsernamesContract.address.some
+  tx.data = ensUsernamesContract.methods["getExpirationTime"].encodeAbi(expTime)
+  var response = ""
+  try:
+    response = eth_transactions.call(tx).result
+    success = true
+  except RpcException as e:
+    success = false
+    error "Error obtaining expiration time", err=e.msg
+
+  if success:
+    result = fromHex[int](response)
 
 proc extractCoordinates*(pubkey: string):tuple[x: string, y:string] =
   result = ("0x" & pubkey[4..67], "0x" & pubkey[68..131])

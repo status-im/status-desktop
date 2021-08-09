@@ -24,7 +24,7 @@ proc sendTransaction*(tx: EthSend, password: string): RpcResponse =
   trace "Transaction sent succesfully", hash=result.result
 
 proc call*(tx: EthSend): RpcResponse =
-  let responseStr = core.callPrivateRPC("eth_call", %*[%tx])
+  let responseStr = core.callPrivateRPC("eth_call", %*[%tx, "latest"])
   result = Json.decode(responseStr, RpcResponse)
   if not result.error.isNil:
     raise newException(RpcException, "Error calling method: " & result.error.message)

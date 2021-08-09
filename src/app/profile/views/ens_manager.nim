@@ -11,7 +11,7 @@ import ../../../status/wallet
 import sets
 import web3/ethtypes
 import ../../../status/tasks/[qt, task_runner_impl]
-
+import chronicles
 type
   EnsRoles {.pure.} = enum
     UserName = UserRole + 1
@@ -45,11 +45,21 @@ const detailsTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
     arg = decode[DetailsTaskArg](argEncoded)
     address = status_ens.address(arg.username)
     pubkey = status_ens.pubkey(arg.username)
-    json = %* {
-      "ensName": arg.username,
-      "address": address,
-      "pubkey": pubkey
-    }
+
+  var isStatus:bool = false
+  var expirationTime:int = 0
+  if arg.username.endsWith(domain):
+    isStatus = true
+    var success = false
+    expirationTime = status_ens.getExpirationTime(arg.username.replace(domain, ""), success)
+
+  let json = %* {
+    "ensName": arg.username,
+    "address": address,
+    "pubkey": pubkey,
+    "isStatus": isStatus,
+    "expirationTime": expirationTime
+  }
   arg.finish(json)
 
 proc details[T](self: T, slot: string, username: string) =
@@ -87,8 +97,9 @@ QtObject:
     let pendingTransactions = self.status.wallet.getPendingTransactions()
     if (pendingTransactions == ""):
       return
+
     for trx in pendingTransactions.parseJson{"result"}.getElems():
-      if trx["type"].getStr == $PendingTransactionType.RegisterENS:
+      if trx["type"].getStr == $PendingTransactionType.RegisterENS or trx["type"].getStr == $PendingTransactionType.SetPubKey:
         self.usernames.add trx["additionalData"].getStr
         self.pendingUsernames.incl trx["additionalData"].getStr
 
@@ -105,6 +116,19 @@ QtObject:
     self.beginInsertRows(newQModelIndex(), self.usernames.len, self.usernames.len)
     self.usernames.add(username)
     self.endInsertRows()
+
+  proc remove*(self: EnsManager, username: string) =
+    var idx = -1
+    var i = 0
+    for u in self.usernames:
+      if u == username:
+        idx = i
+        break
+      i = i + 1
+    if idx == -1: return
+    self.beginRemoveRows(newQModelIndex(), idx, idx)
+    self.usernames.delete(idx)
+    self.endRemoveRows()
 
   proc getPreferredUsername(self: EnsManager): string {.slot.} =
     result = self.status.settings.getSetting[:string](Setting.PreferredUsername, "")
@@ -138,12 +162,12 @@ QtObject:
     self.loading(true)
     self.details("setDetails", username)
 
-  proc detailsObtained(self: EnsManager, ensName: string, address: string, pubkey: string) {.signal.}
+  proc detailsObtained(self: EnsManager, ensName: string, address: string, pubkey: string, isStatus: bool, expirationTime: int) {.signal.}
 
   proc setDetails(self: EnsManager, details: string): string {.slot.} =
     self.loading(false)
     let detailsJson = details.parseJson
-    self.detailsObtained(detailsJson["ensName"].getStr, detailsJson["address"].getStr, detailsJson["pubkey"].getStr)
+    self.detailsObtained(detailsJson["ensName"].getStr, detailsJson["address"].getStr, detailsJson["pubkey"].getStr, detailsJson["isStatus"].getBool, detailsJson["expirationTime"].getInt)
 
   method rowCount(self: EnsManager, index: QModelIndex = nil): int =
     return self.usernames.len
@@ -227,6 +251,22 @@ QtObject:
       var ensUsername = formatUsername(username, true)
       self.pendingUsernames.incl(ensUsername)
       self.add ensUsername
+
+  proc releaseEstimate(self: EnsManager, ensUsername: string, address: string): int {.slot.} =
+    var success: bool
+    result = releaseEstimateGas(ensUsername, address, success)
+    if not success:
+      result = 100000
+
+  proc release*(self: EnsManager, username: string, address: string, gas: string, gasPrice: string, password: string): string {.slot.} =
+    var success: bool
+    let response = release(username, address, gas, gasPrice, password, success)
+    result = $(%* { "result": %response, "success": %success })
+
+    if success:
+      self.transactionWasSent(response)
+      self.pendingUsernames.excl(username)
+      self.remove(username)
 
   proc setPubKeyGasEstimate(self: EnsManager, ensUsername: string, address: string): int {.slot.} =
     var success: bool

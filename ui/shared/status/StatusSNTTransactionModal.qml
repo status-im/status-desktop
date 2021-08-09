@@ -115,7 +115,9 @@ ModalPopup {
                 defaultCurrency: walletModel.balanceView.defaultCurrency
                 width: stack.width
                 property var estimateGas: Backpressure.debounce(gasSelector, 600, function() {
-                    return root.estimateGasFunction(selectFromAccount.selectedAccount, uuid);
+                    let estimatedGas = root.estimateGasFunction(selectFromAccount.selectedAccount, uuid);
+                    gasSelector.selectedGasLimit = estimatedGas
+                    return estimatedGas;
                 })
             }
             GasValidator {
