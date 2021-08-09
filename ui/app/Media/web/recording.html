@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Status Media</title>
+<script src="qwebchannel.js"></script>
+<script src="opus-recorder/recorder.js"></script>
+<script src="recording.js"></script>
+</head>
+<body>
+
+<script>
+window.onload = function() {
+    new QWebChannel(qt.webChannelTransport, function(channel) {
+        initRecording(channel.objects.recordingContext);
+    });
+}
+</script>
+
+</body>
+</html>

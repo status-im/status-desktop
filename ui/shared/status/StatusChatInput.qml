@@ -694,6 +694,17 @@ Rectangle {
         }
     }
 
+    StatusVoiceRecordPopup {
+        id: voiceRecordPopup
+        width: 260
+        height: 48
+        x: parent.width - width - Style.current.halfPadding
+        y: -height
+        onClosed: {
+            voiceRecordBtn.highlighted = false
+        }
+    }
+
     StatusIconButton {
         id: chatCommandsBtn
         icon.name: "chat-commands"
@@ -1042,7 +1053,7 @@ Rectangle {
             id: actions
             width: control.isStatusUpdateInput ?
                        imageBtn2.width + sendBtn.anchors.leftMargin + sendBtn.width :
-                       emojiBtn.width + stickersBtn.anchors.leftMargin + stickersBtn.width
+                       emojiBtn.width + stickersBtn.anchors.leftMargin + stickersBtn.width + voiceRecordBtn.width
             anchors.bottom: control.isStatusUpdateInput && extendedArea.visible ? extendedArea.bottom : parent.bottom
             anchors.bottomMargin: control.isStatusUpdateInput ? Style.current.smallPadding+2: 4
             anchors.right: parent.right
@@ -1120,6 +1131,18 @@ Rectangle {
                 width: visible ? 32 : 0
                 type: "secondary"
                 onClicked: togglePopup(stickersPopup, stickersBtn)
+            }
+
+            StatusIconButton {
+                id: voiceRecordBtn
+                anchors.left: stickersBtn.right
+                anchors.leftMargin: 2
+                anchors.bottom: parent.bottom
+                icon.name: "microphone"
+                visible: !isEdit
+                width: visible ? 32 : 0
+                type: "secondary"
+                onClicked: togglePopup(voiceRecordPopup, voiceRecordBtn)
             }
         }
     }

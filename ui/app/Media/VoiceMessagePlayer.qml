@@ -9,7 +9,7 @@ WebEngineView {
     property color waveColor
     property color progressColor
 
-    url: "qrc:/app/Media/web/index.html"
+    url: "qrc:/app/Media/web/playback.html"
     settings.playbackRequiresUserGesture: false
     onLoadingChanged: {
         if (loadRequest.errorString) {
@@ -32,7 +32,7 @@ WebEngineView {
                 WebChannel.id: "playbackContext"
 
                 property real volume: appSettings.volume
-                property string audioSrc: "http://ia902606.us.archive.org/35/items/shortpoetry_047_librivox/song_cjrg_teasdale_64kb.mp3"
+                property string audioSrc: ""
                 property color backgroundColor: root.backgroundColor
                 property color waveColor: root.waveColor
                 property color progressColor: root.progressColor
