@@ -91,7 +91,7 @@ proc confirmTransactionStatus(self: WalletModel, pendingTransactions: JsonNode, 
     if transactionReceipt.kind != JNull:
       status_wallet.deletePendingTransaction(trx["hash"].getStr)
       let ev = TransactionMinedArgs(
-                data: trx["data"].getStr,
+                data: trx["additionalData"].getStr,
                 transactionHash: trx["hash"].getStr,
                 success: transactionReceipt{"status"}.getStr == "0x1",
                 revertReason: ""
