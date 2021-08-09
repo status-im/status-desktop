@@ -26,6 +26,7 @@ StatusAppLayout {
     property alias appSettings: appSettings
 
     property bool profilePopupOpened: false
+    property bool networkGuarded: profileModel.network.current === Constants.networkMainnet || (profileModel.network.current === Constants.networkRopsten && appSettings.stickersEnsRopsten)
 
     signal settingsLoaded()
 
@@ -454,6 +455,9 @@ StatusAppLayout {
         property bool devToolsEnabled: false
         property bool pdfViewerEnabled: true
         property bool compatibilityMode: true
+
+        // Ropsten settings
+        property bool stickersEnsRopsten: false
     }
 
     ErrorSound {
