@@ -10,7 +10,7 @@ import
 export
   GetPackData, PackData, BuyToken, ApproveAndCall, Transfer, BalanceOf, Register, SetPubkey,
   TokenOfOwnerByIndex, TokenPackId, TokenUri, FixedBytes, DynamicBytes, toHex, fromHex,
-  decodeContractResponse, encodeAbi, estimateGas, send, call
+  decodeContractResponse, encodeAbi, estimateGas, send, call, ExpirationTime, Release
 
 
 logScope:
@@ -204,7 +204,9 @@ proc allContracts(): seq[Contract] =
       Contract(name: "ens-usernames", network: Network.Mainnet, address: parseAddress("0xDB5ac1a559b02E12F29fC0eC0e37Be8E046DEF49"),
           methods: [
             ("register", Method(signature: "register(bytes32,address,bytes32,bytes32)")),
-            ("getPrice", Method(signature: "getPrice()"))
+            ("getPrice", Method(signature: "getPrice()")),
+            ("getExpirationTime", Method(signature: "getExpirationTime(bytes32)")),
+            ("release", Method(signature: "release(bytes32)"))
           ].toTable
       ),
       Contract(name: "ens-resolver", network: Network.Mainnet, address: parseAddress("0x4976fb03C32e5B8cfe2b6cCB31c09Ba78EBaBa41"),
@@ -234,10 +236,12 @@ proc allContracts(): seq[Contract] =
       ),
       newErc721Contract("sticker-pack", Network.Testnet, parseAddress("0xf852198d0385c4b871e0b91804ecd47c6ba97351"), "PACK", false, @[("tokenPackId", Method(signature: "tokenPackId(uint256)"))]),
       newErc721Contract("kudos", Network.Testnet, parseAddress("0xcd520707fc68d153283d518b29ada466f9091ea8"), "KDO", true),
-      Contract(name: "ens-usernames", network: Network.Testnet, address: parseAddress("0x11d9F481effd20D76cEE832559bd9Aca25405841"),
+      Contract(name: "ens-usernames", network: Network.Testnet, address: parseAddress("0xdaae165beb8c06e0b7613168138ebba774aff071"),
           methods: [
             ("register", Method(signature: "register(bytes32,address,bytes32,bytes32)")),
-            ("getPrice", Method(signature: "getPrice()"))
+            ("getPrice", Method(signature: "getPrice()")),
+            ("getExpirationTime", Method(signature: "getExpirationTime(bytes32)")),
+            ("release", Method(signature: "release(bytes32)"))
           ].toTable
       ),
       Contract(name: "ens-resolver", network: Network.Testnet, address: parseAddress("0x42D63ae25990889E35F215bC95884039Ba354115"),

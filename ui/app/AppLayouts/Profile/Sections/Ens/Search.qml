@@ -47,25 +47,33 @@ Item {
         Qt.callLater(validateENS, ensUsername, isStatus)
     }
 
-    Loader {
-        id: transactionDialog
-        function open() {
-            this.active = true
-            this.item.open()
-        }
-        function closed() {
-            this.active = false // kill an opened instance
-        }
-        sourceComponent: SetPubKeyModal {
+    Component {
+        id: transactionDialogComponent
+        StatusETHTransactionModal {
             onOpened: {
                 walletModel.gasView.getGasPricePredictions()
             }
+            title: qsTr("Connect username with your pubkey")
             onClosed: {
-                transactionDialog.closed()
+                destroy()
             }
-            ensUsername: ensUsername.text || ""
-            width: 400
-            height: 400
+            estimateGasFunction: function(selectedAccount) {
+                if (ensUsername.text === "" || !selectedAccount) return 80000;
+                return profileModel.ens.setPubKeyGasEstimate(ensUsername.text + (isStatus ? ".stateofus.eth" : "" ), selectedAccount.address)
+            }
+            onSendTransaction: function(selectedAddress, gasLimit, gasPrice, password) {
+                return profileModel.ens.setPubKey(ensUsername.text + (isStatus ? ".stateofus.eth" : "" ),
+                                                  selectedAddress,
+                                                  gasLimit,
+                                                  gasPrice,
+                                                  password)
+            }
+            onSuccess: function(){
+                usernameUpdated(ensUsername.text);
+            }
+
+            width: 475
+            height: 500
         }
     }
 
@@ -181,7 +189,7 @@ Item {
                 }
 
                 if(ensStatus === Constants.ens_connected_dkey || ensStatus === Constants.ens_owned){
-                    transactionDialog.open();
+                    openPopup(transactionDialogComponent)
                     return;
                 }
             }

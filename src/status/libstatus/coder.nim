@@ -29,6 +29,12 @@ type
     x*: FixedBytes[32]
     y*: FixedBytes[32]
 
+  ExpirationTime* = object
+    label*: FixedBytes[32]
+
+  Release* = object
+    label*: FixedBytes[32]
+
   ApproveAndCall*[N: static[int]] = object
     to*: Address
     value*: Stuint[256]

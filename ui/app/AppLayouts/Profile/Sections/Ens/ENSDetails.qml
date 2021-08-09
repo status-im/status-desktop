@@ -10,8 +10,10 @@ Item {
     property string username: ""
     property string walletAddress: "-"
     property string key: "-"
+    property var expiration: 0
 
     signal backBtnClicked();
+    signal usernameReleased(username: string);
 
     StyledText {
         id: sectionTitle
@@ -49,12 +51,17 @@ Item {
                 keyLbl.textToCopy = pubkey;
                 walletAddressLbl.visible = true;
                 keyLbl.visible = true;
+                releaseBtn.visible = isStatus
+                releaseBtn.enabled = (Date.now() / 1000) > expirationTime && expirationTime > 0 && profileModel.ens.preferredUsername != username
+                expiration = new Date(expirationTime * 1000).getTime()
         }
         onLoading: {
             loadingImg.active = isLoading
             if(!isLoading) return;
             walletAddressLbl.visible = false;
             keyLbl.visible = false;
+            releaseBtn.visible = false;
+            expiration = 0;
         }
     }
 
@@ -83,6 +90,63 @@ Item {
         anchors.top: walletAddressLbl.bottom
         anchors.topMargin: 24
     }
+
+    Component {
+        id: transactionDialogComponent
+        StatusETHTransactionModal {
+            onOpened: {
+                walletModel.gasView.getGasPricePredictions()
+            }
+            title: qsTr("Connect username with your pubkey")
+            onClosed: {
+                destroy()
+            }
+            estimateGasFunction: function(selectedAccount) {
+                if (username === "" || !selectedAccount) return 100000;
+                return profileModel.ens.releaseEstimate(Utils.removeStatusEns(username), selectedAccount.address)
+            }
+            onSendTransaction: function(selectedAddress, gasLimit, gasPrice, password) {
+                return profileModel.ens.release(username,
+                                                  selectedAddress,
+                                                  gasLimit,
+                                                  gasPrice,
+                                                  password)
+            }
+            onSuccess: function(){
+               usernameReleased(username);
+            }
+
+            width: 475
+            height: 500
+        }
+    }
+
+    StatusButton {
+        id: releaseBtn
+        visible: false
+        enabled: false
+        anchors.top: keyLbl.bottom
+        anchors.topMargin: 24
+        anchors.left: parent.left
+        anchors.leftMargin: 24
+        text: qsTrId("Release username")
+        onClicked: {
+            openPopup(transactionDialogComponent)
+        }
+    }
+
+    Text {
+        visible: releaseBtn.visible && !releaseBtn.enabled
+        anchors.top: releaseBtn.bottom
+        anchors.topMargin: 2
+        anchors.left: parent.left
+        anchors.leftMargin: 24
+        text: profileModel.ens.preferredUsername != username ?
+              qsTr("Username locked. You won’t be able to release it until %1").arg(Utils.formatShortDateStr(new Date(expiration).toDateString())):
+              qsTr("This is current preferred username. It can't be released")
+        color: Style.current.darkGrey
+    }
+
 
     StatusButton {
         anchors.bottom: parent.bottom

@@ -2,17 +2,52 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import QtQuick.Dialogs 1.3
-import "../../../../../imports"
-import "../../../../../shared"
-import "../../../../../shared/status"
+import "../../imports"
+import "../../shared"
+import "../../shared/status"
 
 ModalPopup {
     id: root
     readonly property var asset: {"name": "Ethereum", "symbol": "ETH"}
-    property string ensUsername: ""
 
-    //% "Connect username with your pubkey"
-    title: qsTrId("connect-username-with-your-pubkey")
+    title: qsTr("Contract interaction")
+
+    property var estimateGasFunction: (function(userAddress) { return 0; })
+    property var onSendTransaction: (function(userAddress, gasLimit, gasPrice, password){ return ""; })
+    property var onSuccess: (function(){})
+
+    Component.onCompleted: {
+        walletModel.gasView.getGasPricePredictions()
+    }
+
+
+    function sendTransaction() {
+        try {
+            let responseStr = onSendTransaction(selectFromAccount.selectedAccount.address,
+                                            gasSelector.selectedGasLimit,
+                                            gasSelector.selectedGasPrice,
+                                            transactionSigner.enteredPassword);
+
+            let response = JSON.parse(responseStr)
+
+            if (!response.success) {
+                if (Utils.isInvalidPasswordMessage(response.result)){
+                    //% "Wrong password"
+                    transactionSigner.validationError = qsTrId("wrong-password")
+                    return
+                }
+                sendingError.text = response.result
+                return sendingError.open()
+            }
+
+            onSuccess();
+            root.close();
+        } catch (e) {
+            console.error('Error sending the transaction', e)
+            sendingError.text = "Error sending the transaction: " + e.message;
+            return sendingError.open()
+        }
+    }
 
     property MessageDialog sendingError: MessageDialog {
         id: sendingError
@@ -20,33 +55,6 @@ ModalPopup {
         title: qsTrId("error-sending-the-transaction")
         icon: StandardIcon.Critical
         standardButtons: StandardButton.Ok
-    }
-
-    function sendTransaction() {
-        try {
-            let responseStr = profileModel.ens.setPubKey(root.ensUsername,
-                                                        selectFromAccount.selectedAccount.address,
-                                                        gasSelector.selectedGasLimit,
-                                                        gasSelector.selectedGasPrice,
-                                                        transactionSigner.enteredPassword)
-            let response = JSON.parse(responseStr)
-
-            if (!response.success) {
-                if (Utils.isInvalidPasswordMessage(response.error.message)){
-                    //% "Wrong password"
-                    transactionSigner.validationError = qsTrId("wrong-password")
-                    return
-                }
-                sendingError.text = response.error.message
-                return sendingError.open()
-            }
-
-            usernameUpdated(root.ensUsername);
-        } catch (e) {
-            console.error('Error sending the transaction', e)
-            sendingError.text = "Error sending the transaction: " + e.message;
-            return sendingError.open()
-        }
     }
 
     TransactionStackView {
@@ -61,8 +69,7 @@ ModalPopup {
         }
         TransactionFormGroup {
             id: group1
-            //% "Connect username with your pubkey"
-            headerText: qsTrId("connect-username-with-your-pubkey")
+            headerText: root.title
             //% "Continue"
             footerText: qsTrId("continue")
 
@@ -104,11 +111,9 @@ ModalPopup {
                 getFiatValue: walletModel.balanceView.getFiatValue
                 defaultCurrency: walletModel.balanceView.defaultCurrency
                 property var estimateGas: Backpressure.debounce(gasSelector, 600, function() {
-                    if (!(root.ensUsername !== "" && selectFromAccount.selectedAccount)) {
-                        selectedGasLimit = 80000;
-                        return;
-                    }
-                    selectedGasLimit = profileModel.ens.setPubKeyGasEstimate(root.ensUsername, selectFromAccount.selectedAccount.address)
+                    let estimatedGas = root.estimateGasFunction(selectFromAccount.selectedAccount);
+                    gasSelector.selectedGasLimit = estimatedGas
+                    return estimatedGas;
                 })
             }
             GasValidator {
@@ -123,8 +128,7 @@ ModalPopup {
         }
         TransactionFormGroup {
             id: group3
-            //% "Connect username with your pubkey"
-            headerText: qsTrId("connect-username-with-your-pubkey")
+            headerText: root.title
             //% "Sign with password"
             footerText: qsTrId("sign-with-password")
 
@@ -148,8 +152,7 @@ ModalPopup {
         }
         TransactionFormGroup {
             id: group4
-            //% "Connect username with your pubkey"
-            headerText: qsTrId("connect-username-with-your-pubkey")
+            headerText: root.title
             //% "Sign with password"
             footerText: qsTrId("sign-with-password")
 
@@ -164,6 +167,23 @@ ModalPopup {
     footer: Item {
         width: parent.width
         height: btnNext.height
+
+        StatusRoundButton {
+            id: btnBack
+            anchors.left: parent.left
+            icon.name: "arrow-right"
+            icon.width: 20
+            icon.height: 16
+            rotation: 180
+            visible: stack.currentGroup.showBackBtn
+            enabled: stack.currentGroup.isValid || stack.isLastGroup
+            onClicked: {
+                if (typeof stack.currentGroup.onBackClicked === "function") {
+                    return stack.currentGroup.onBackClicked()
+                }
+                stack.back()
+            }
+        }
         
         StatusButton {
             id: btnNext
