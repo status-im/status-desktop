@@ -183,7 +183,7 @@ Item {
                             contactsContainer.isPending = false
                             return
                         }
-                        searchResults.username = utilsModel.generateAlias(resolvedPubKey)
+                        searchResults.username = Utils.isChatKey(addContactSearchInput.text) ? utilsModel.generateAlias(resolvedPubKey) : Utils.addStatusEns(addContactSearchInput.text.trim())
                         searchResults.userAlias = Utils.compactAddress(resolvedPubKey, 4)
                         searchResults.pubKey = resolvedPubKey
                         searchResults.showProfileNotFoundMessage = false
