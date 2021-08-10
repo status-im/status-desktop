@@ -94,7 +94,7 @@ Rectangle {
 
             function formatDuration(sec) {
                 let t = new Date(1970, 0, 1); // Epoch
-                t.setSeconds(sec)
+                t.setMilliseconds(sec * 1000.0)
                 return Qt.formatTime(t, sec >= 3600 ? "h:mm:ss" : "m:ss")
             }
         }
