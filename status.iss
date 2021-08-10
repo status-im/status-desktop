@@ -17,11 +17,8 @@ AppSupportURL={#URL}
 AppUpdatesURL={#URL}
 DefaultDirName=C:\{#Name}
 UsePreviousAppDir=no
-
 WizardStyle=modern
-
 UninstallDisplayIcon={app}\{#ExeName}
-
 DefaultGroupName={#Name}
 
 ; output dir for installer
@@ -30,8 +27,7 @@ OutputBaseFileName={#BaseName}
 ; Icon file
 SetupIconFile=resources\{#IcoName}
 
-; Compression
-Compression=lzma
+; Compression (default is lzma2/max)
 SolidCompression=yes
 
 [Languages]
@@ -62,16 +58,19 @@ Name: desktopicon; Description: "Create a &desktop icon"; GroupDescription: "Add
 Name: quicklaunchicon; Description: "Create a &Quick Launch icon"; GroupDescription: "Additional icons:"; Flags: unchecked
 
 [Icons]
+Name: "{group}\{#Name}"; Filename: "{app}\{#ExeName}"; WorkingDir: "{app}"
+Name: "{group}\Uninstall {#Name}"; Filename: "{uninstallexe}"
 Name: "{userdesktop}\{#Name}"; Filename: "{app}\{#ExeName}"; IconFilename: "{app}\resources\{#IcoName}"; Tasks: desktopicon
-
 Name: "{commonprograms}\Status\{#Name}"; Filename: "{app}\{#ExeName}"; IconFilename: "{app}\resources\{#IcoName}"; Tasks: quicklaunchicon
-
 Name: "{commonstartup}\{#Name}"; Filename: "{app}\{#ExeName}"; IconFilename: "{app}\resources\{#IcoName}"; Tasks: quicklaunchicon
+
+[Run]
+Filename: "{app}\{#ExeName}"; Description: {cm:LaunchProgram,{#Name}}; Flags: nowait postinstall skipifsilent
 
 [UninstallDelete]
 Type: filesandordirs; Name: "{app}"
 Type: files; Name: "{userdesktop}\{#Name}"
-
+Type: files; Name: "{commondesktop}\{#Name}"
 
 [Registry]
 Root: HKCU; Subkey: "Software\Classes\status-im"; ValueType: "string"; ValueData: "URL:status-im protocol"; Flags: uninsdeletekey
