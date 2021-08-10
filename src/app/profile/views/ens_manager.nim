@@ -267,6 +267,10 @@ QtObject:
       self.transactionWasSent(response)
       self.pendingUsernames.excl(username)
       self.remove(username)
+      let preferredUsername = self.status.settings.getSetting[:string](Setting.PreferredUsername, "")
+      if username == preferredUsername:
+        self.setPreferredUsername("")
+
 
   proc setPubKeyGasEstimate(self: EnsManager, ensUsername: string, address: string): int {.slot.} =
     var success: bool

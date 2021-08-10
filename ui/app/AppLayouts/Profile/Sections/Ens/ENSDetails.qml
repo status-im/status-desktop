@@ -141,9 +141,7 @@ Item {
         anchors.topMargin: 2
         anchors.left: parent.left
         anchors.leftMargin: 24
-        text: profileModel.ens.preferredUsername != username ?
-              qsTr("Username locked. You won’t be able to release it until %1").arg(Utils.formatShortDateStr(new Date(expiration).toDateString())):
-              qsTr("This is current preferred username. It can't be released")
+        text: qsTr("Username locked. You won’t be able to release it until %1").arg(Utils.formatShortDateStr(new Date(expiration).toDateString()))
         color: Style.current.darkGrey
     }
 
