@@ -21,6 +21,7 @@ type
     Id = UserRole + 11
     Description = UserRole + 12
     CategoryId = UserRole + 13
+    Position = UserRole + 14
 
 QtObject:
   type
@@ -80,6 +81,7 @@ QtObject:
       of ChannelsRoles.Id: result = newQVariant($chatItem.id)
       of ChannelsRoles.CategoryId: result = newQVariant(chatItem.categoryId)
       of ChannelsRoles.Description: result = newQVariant(chatItem.description)
+      of ChannelsRoles.Position: result = newQVariant(chatItem.position)
 
   method roleNames(self: ChannelsList): Table[int, string] =
     {
@@ -95,7 +97,8 @@ QtObject:
       ChannelsRoles.Muted.int: "muted",
       ChannelsRoles.Id.int: "id",
       ChannelsRoles.Description.int: "description",
-      ChannelsRoles.CategoryId.int: "categoryId"
+      ChannelsRoles.CategoryId.int: "categoryId",
+      ChannelsRoles.Position.int: "position"
     }.toTable
 
   proc sortChats(x, y: Chat): int =
@@ -172,7 +175,19 @@ QtObject:
 
     self.chats[idx] = channel
 
-    self.dataChanged(topLeft, bottomRight, @[ChannelsRoles.Name.int, ChannelsRoles.Description.int, ChannelsRoles.ContentType.int, ChannelsRoles.LastMessage.int, ChannelsRoles.Timestamp.int, ChannelsRoles.UnreadMessages.int, ChannelsRoles.Identicon.int, ChannelsRoles.ChatType.int, ChannelsRoles.Color.int, ChannelsRoles.MentionsCount.int, ChannelsRoles.Muted.int])
+    self.dataChanged(topLeft, bottomRight,
+     @[ChannelsRoles.Name.int,
+      ChannelsRoles.Description.int,
+      ChannelsRoles.ContentType.int,
+      ChannelsRoles.LastMessage.int,
+      ChannelsRoles.Timestamp.int, 
+      ChannelsRoles.UnreadMessages.int, 
+      ChannelsRoles.Identicon.int, 
+      ChannelsRoles.ChatType.int, 
+      ChannelsRoles.Color.int, 
+      ChannelsRoles.MentionsCount.int, 
+      ChannelsRoles.Muted.int,
+      ChannelsRoles.Position.int])
 
   proc clearUnreadMessages*(self: ChannelsList, channelId: string) =
     let idx = self.chats.findIndexById(channelId)
