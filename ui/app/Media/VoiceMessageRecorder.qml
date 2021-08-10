@@ -2,26 +2,12 @@ import QtQuick 2.0
 import QtWebEngine 1.10
 import QtWebChannel 1.0
 
-WebEngineView {
+BaseWebEngineView {
     id: root
     property alias recording: recordingContext
 
     url: "qrc:/app/Media/web/recording.html"
-    settings.playbackRequiresUserGesture: false
-    onLoadingChanged: {
-        if (loadRequest.errorString) {
-            console.error(loadRequest.errorString)
-        }
-    }
-    onJavaScriptConsoleMessage: {
-        console.log("JavaScript: (" + sourceID + ":" + lineNumber + ") " + message)
-    }
-    onFeaturePermissionRequested: {
-        grantFeaturePermission(securityOrigin, feature, true)
-    }
-    onContextMenuRequested: {
-        request.accepted = true
-    }
+
     webChannel: WebChannel {
         registeredObjects: [
             QtObject {

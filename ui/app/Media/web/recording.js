@@ -1,14 +1,36 @@
-const _durationNotificationInterval = 300;
-
 let _recordingContext;
 let _recorder;
 let _durationTimerId;
 let _startedAt;
 
-async function initRecording(recordingContext) {
+function initRecording(recordingContext) {
+    if (!Recorder.isRecordingSupported()) {
+        _recordingContext.handleError("Audio recording is not supported.");
+        return
+    }
+
     _recordingContext = recordingContext;
-    _recordingContext.stop.connect(stopRecording);
-    await startRecording();
+    _recordingContext.stop.connect(function() {
+        if (_recorder) {
+            _recorder.stop();
+        }
+    });
+
+    const recorderOptions = {
+        // https://github.com/chris-rudmin/opus-recorder
+        encoderPath: 'opus-recorder/encoderWorker.min.js',
+        numberOfChannels: 1,
+        recordingGain: _recordingContext.micLevel,
+        encoderApplication: 2048,
+    };
+
+    _recorder = new Recorder(recorderOptions);
+    _recorder.start().catch(function(err){
+        _recordingContext.handleError(error);
+    });
+    _recorder.onstart = restartDurationTimer;
+    _recorder.ondataavailable = dataAvailable;
+    _recordingContext.duration = 0;
 }
 
 function stopDurationTimer() {
@@ -23,45 +45,21 @@ function restartDurationTimer() {
     _startedAt = new Date();
 
     _durationTimerId = setInterval(() => {
-        let duration = (new Date() - _startedAt) / 1000.0;
+        const duration = (new Date() - _startedAt) / 1000.0;
         if (_recorder && _startedAt) {
             _recordingContext.duration = duration;
         }
     },
-    _durationNotificationInterval);
+    100);
 }
 
-async function startRecording() {
+function dataAvailable(arrayBuffer) {
     if (_recorder) {
-        return;
-    }
-
-    let recorderOptions = {
-        encoderPath: 'opus-recorder/encoderWorker.min.js',
-        numberOfChannels: 1,
-        recordingGain: _recordingContext.micLevel,
-    };
-
-    _recorder = new Recorder(recorderOptions);
-    _recorder.start().catch(function(err){
-        _recordingContext.handleError(error);
-    });
-    _recorder.onstart = restartDurationTimer;
-    _recorder.ondataavailable = onRecordingAvailable;
-    _recordingContext.duration = 0;
-}
-
-function onRecordingAvailable(data) {
-    if (_recorder) {
-        let duration = (new Date() - _startedAt) / 1000.0;
-        _recordingContext.handleRecorded(btoa(String.fromCharCode(...new Uint8Array(data))), duration);
+        const duration = (new Date() - _startedAt) / 1000.0;
+        const audioBase64 = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
+        _recordingContext.handleRecorded(audioBase64, duration);
         _recorder.close();
         stopDurationTimer();
     }
 }
 
-function stopRecording() {
-    if (_recorder) {
-        _recorder.stop();
-    }
-}
