@@ -108,6 +108,8 @@ QtObject:
         msg = "Account already exists. Please try importing another account."
       result = StatusGoError(error: msg).toJson
 
+  proc moveToAppState*(self: OnboardingView) {.signal.}
+
   proc loginResponseChanged*(self: OnboardingView, error: string) {.signal.}
 
   proc setLastLoginResponse*(self: OnboardingView, loginResponse: StatusGoError) =

@@ -168,6 +168,13 @@ proc mainProc() =
     login.reset()
     onboarding.reset()
 
+    status.events.emit("loginCompleted", args)
+    login.moveToAppState()
+    onboarding.moveToAppState()
+
+  status.events.once("loginCompleted") do(a: Args):
+    var args = AccountArgs(a)
+    
     status.startMessenger()
     profile.init(args.account)
     wallet.init()
@@ -176,7 +183,6 @@ proc mainProc() =
     utilsController.init()
     browserController.init()
     node.init()
-
     wallet.checkPendingTransactions()
 
   engine.setRootContextProperty("loginModel", login.variant)
