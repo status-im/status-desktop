@@ -93,16 +93,10 @@ Button {
             visible: !loadingIndicator.active
         }
 
-
-        Component {
-            id: loadingComponent
-            StatusLoadingIndicator {}
-        }
-
         Loader {
             id: loadingIndicator
             active: control.state === "pending"
-            sourceComponent: loadingComponent
+            sourceComponent: StatusLoadingIndicator {}
             height: loadingIndicator.visible ? 
                                     control.size === "large" ?
                                     23 : 17 
