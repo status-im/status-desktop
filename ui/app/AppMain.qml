@@ -717,8 +717,8 @@ StatusAppLayout {
                                                          });
         }
         onClicked: function (index) {
-            chatsModel.channelView.setActiveChannelByIndex(index)
             appMain.changeAppSection(Constants.chat)
+            chatsModel.channelView.setActiveChannelByIndex(index)
             channelPicker.close()
         }
     }
