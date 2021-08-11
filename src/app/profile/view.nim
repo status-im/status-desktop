@@ -2,6 +2,7 @@ import NimQml, sequtils, strutils, sugar, os, json, chronicles
 import views/[mailservers_list, ens_manager, contacts, devices, mailservers, mnemonic, network, fleets, profile_info, device_list, dapp_list, profile_picture, profile_settings, muted_chats]
 import chronicles
 import ../chat/views/channels_list
+import ../../status/libstatus/accounts as status_accounts
 import ../../status/profile/profile
 import ../../status/profile as status_profile
 import ../../status/contacts as status_contacts
@@ -119,6 +120,11 @@ QtObject:
 
   QtProperty[QVariant] ens:
     read = getEnsManager
+
+  proc changePassword(self: ProfileView, password: string, newPassword: string): bool {.slot.} =
+    if not status_accounts.changeDatabasePassword(self.profile.address, password, newPassword):
+      return false
+    quit(QuitSuccess) # quits the app TODO: change this to logout instead when supported
 
   proc getLinkPreviewWhitelist*(self: ProfileView): string {.slot.} =
     result = $(self.status.profile.getLinkPreviewWhitelist())

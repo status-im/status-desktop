@@ -24,7 +24,7 @@ Item {
             id: labelSecurity
             //% "Security"
             text: qsTrId("security")
-            bottomPadding: 4
+            bottomPadding: Style.current.halfPadding
         }
 
         StatusSettingsLineButton {
@@ -38,8 +38,19 @@ Item {
             }
         }
 
+        StatusSettingsLineButton {
+            text: qsTr("Change password")
+            onClicked: {
+                changePasswordModal.open()
+            }
+        }
+
         BackupSeedModal {
             id: backupSeedModal
+        }
+
+        ChangePasswordModal {
+            id: changePasswordModal
         }
 
         Item {
@@ -57,7 +68,7 @@ Item {
             //% "Privacy"
             text: qsTrId("privacy")
             topPadding: Style.current.padding
-            bottomPadding: 4
+            bottomPadding: Style.current.halfPadding
         }
 
         StatusSettingsLineButton {

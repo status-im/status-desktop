@@ -238,6 +238,13 @@ proc verifyAccountPassword*(address: string, password: string): bool =
 
   return false
 
+proc changeDatabasePassword*(keyUID: string, password: string, newPassword: string): bool =
+  let hashedPassword = hashPassword(password)
+  let hashedNewPassword = hashPassword(newPassword)
+  let changeResult = $status_go.changeDatabasePassword(keyUID, hashedPassword, hashedNewPassword)
+  let error = parseJson(changeResult)["error"].getStr
+  return error == ""
+
 proc multiAccountImportMnemonic*(mnemonic: string): GeneratedAccount =
   let mnemonicJson = %* {
     "mnemonicPhrase": mnemonic,
