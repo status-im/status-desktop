@@ -427,7 +427,7 @@ StatusWindow {
 
         onClose: {
             if (loader.sourceComponent == login) {
-                applicationWindow.visible = false;
+                Qt.quit();
             }
             else if (loader.sourceComponent == app) {
                 if (loader.item.appSettings.quitOnClose) {
