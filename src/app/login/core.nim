@@ -23,6 +23,9 @@ proc delete*(self: LoginController) =
 proc reset*(self: LoginController) =
   self.view.removeAccounts()
 
+proc moveToAppState*(self: LoginController) =
+  self.view.moveToAppState()
+
 proc handleNodeLogin(self: LoginController, response: NodeSignal) =
   if not self.view.isCurrentFlow: return
   if self.view.currentAccount.account != nil:

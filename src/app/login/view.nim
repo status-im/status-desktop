@@ -115,6 +115,8 @@ QtObject:
         msg = getCurrentExceptionMsg()
       result = StatusGoError(error: msg).toJson
 
+  proc moveToAppState*(self: LoginView) {.signal.}
+
   proc loginResponseChanged*(self: LoginView, error: string) {.signal.}
 
   proc setLastLoginResponse*(self: LoginView, loginResponse: StatusGoError) =

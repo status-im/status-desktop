@@ -207,8 +207,7 @@ StatusWindow {
 
                 DSM.SignalTransition {
                     targetState: appState
-                    signal: onboardingModel.loginResponseChanged
-                    guard: !error
+                    signal: onboardingModel.moveToAppState
                 }
             }
 
@@ -218,8 +217,7 @@ StatusWindow {
 
                 DSM.SignalTransition {
                     targetState: appState
-                    signal: onboardingModel.loginResponseChanged
-                    guard: !error
+                    signal: onboardingModel.moveToAppState
                 }
             }
 
@@ -229,8 +227,7 @@ StatusWindow {
 
                 DSM.SignalTransition {
                     targetState: appState
-                    signal: loginModel.loginResponseChanged
-                    guard: !error
+                    signal: loginModel.moveToAppState
                 }
 
                 DSM.SignalTransition {
