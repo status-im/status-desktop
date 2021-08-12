@@ -15,6 +15,7 @@ ToolTip {
 
     property int maxWidth: 800
     property int orientation: StatusToolTip.Orientation.Top
+    property int offset: 0
     property alias arrow: arrow
 
     implicitWidth: Math.min(maxWidth, textContent.implicitWidth + 16)
@@ -41,13 +42,13 @@ ToolTip {
             radius: 1
             x: {
                 if (orientation === StatusToolTip.Orientation.Top || orientation === StatusToolTip.Orientation.Bottom) {
-                    return statusToolTipBackground.width / 2 - width / 2
+                    return statusToolTipBackground.width / 2 - width / 2 + offset
                 }
                 if (orientation === StatusToolTip.Orientation.Left) {
-                    return statusToolTipContentBackground.width - (width / 2) - 8
+                    return statusToolTipContentBackground.width - (width / 2) - 8 + offset
                 }
                 if (orientation === StatusToolTip.Orientation.Right) {
-                    return -width/2 + 8
+                    return -width/2 + 8 + offset
                 }
             }
             y: {
