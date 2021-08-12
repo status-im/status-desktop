@@ -1,4 +1,21 @@
 <a name=""></a>
+##  v0.4.0 (2021-08-12)
+
+
+#### Bug Fixes
+
+* **StatusAppNavBar:**  add profile button (#311) ([2e1359c9](2e1359c9))
+* **StatusChatListItem:**  don't signal item selection if already selected ([b345c75a](b345c75a), closes [#303](303))
+* **StatusPopupMenu:**  ensure icon or image settings exist ([90aa9d76](90aa9d76), closes [#295](295))
+
+#### Features
+
+* **StatusListItem:**  add enabled prop to StatusListItem (#302) ([7e03daea](7e03daea))
+* **StatusQ.Theme.Core:**  introduce theme colors for StatusChatInput (#299) ([556e5cca](556e5cca))
+
+
+
+<a name=""></a>
 ## v0.3.0 (2021-07-27)
 
 
