@@ -56,12 +56,10 @@ Rectangle {
             type: StatusFlatRoundButton.Type.Secondary
             onClicked: statusChatToolBar.searchButtonClicked()
 
-            StatusToolTip {
-                visible: !!text && parent.hovered
-                text: "Search"
-                orientation: StatusToolTip.Orientation.Bottom
-                y: parent.height + 12
-            }
+            // initializing the tooltip
+            tooltip.text: "Search"
+            tooltip.orientation: StatusToolTip.Orientation.Bottom
+            tooltip.y: parent.height + 12
         }
 
         StatusFlatRoundButton {
@@ -72,12 +70,10 @@ Rectangle {
             type: StatusFlatRoundButton.Type.Secondary
             onClicked: statusChatToolBar.membersButtonClicked()
 
-            StatusToolTip {
-                visible: !!text && parent.hovered
-                text: "Members"
-                orientation: StatusToolTip.Orientation.Bottom
-                y: parent.height + 12
-            }
+            // initializing the tooltip
+            tooltip.text: "Members"
+            tooltip.orientation: StatusToolTip.Orientation.Bottom
+            tooltip.y: parent.height + 12
         }
 
         StatusFlatRoundButton {
@@ -87,6 +83,12 @@ Rectangle {
             icon.name: "more"
             type: StatusFlatRoundButton.Type.Secondary
             visible: !!statusChatToolBar.popupMenu
+
+            // initializing the tooltip
+            tooltip.visible: !!tooltip.text && menuButton.hovered && !popupMenuSlot.item.opened
+            tooltip.text: "More"
+            tooltip.orientation: StatusToolTip.Orientation.Bottom
+            tooltip.y: parent.height + 12
 
             property bool showMoreMenu: false
             onClicked: {
@@ -99,13 +101,6 @@ Rectangle {
 
             onPressed: {
                 showMoreMenu = !showMoreMenu;
-            }
-
-            StatusToolTip {
-                visible: !!text && parent.hovered && !popupMenuSlot.item.opened
-                text: "More"
-                orientation: StatusToolTip.Orientation.Bottom
-                y: parent.height + 12
             }
 
             Loader {
@@ -137,6 +132,11 @@ Rectangle {
             icon.height: 21
             type: StatusFlatRoundButton.Type.Secondary
 
+            // initializing the tooltip
+            tooltip.text: "Activity"
+            tooltip.orientation: StatusToolTip.Orientation.Bottom
+            tooltip.y: parent.height + 12
+
             onClicked: statusChatToolBar.notificationButtonClicked()
 
             StatusBadge {
@@ -159,14 +159,6 @@ Rectangle {
                 value: statusChatToolBar.notificationCount
                 border.width: 2
                 border.color: parent.hovered ? Theme.palette.baseColor2 : Theme.palette.statusAppLayout.backgroundColor
-            }
-
-            StatusToolTip {
-                visible: !!text && parent.hovered
-                text: "Activity"
-                orientation: StatusToolTip.Orientation.Bottom
-                y: parent.height + 12
-                arrow.x: width - (parent.width-4)
             }
         }
 
