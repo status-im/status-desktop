@@ -62,9 +62,6 @@ Rectangle {
         anchors.top: backUpText.bottom
         anchors.topMargin: Style.current.padding
         onClicked: {
-            let hiddenBannerIds = appSettings.hiddenCommunityBackUpBanners
-            hiddenBannerIds.push(chatsModel.communities.activeCommunity.id)
-            appSettings.hiddenCommunityBackUpBanners = hiddenBannerIds
             openPopup(transferOwnershipPopup, {privateKey: chatsModel.communities.exportCommunity()})
         }
     }
@@ -74,6 +71,9 @@ Rectangle {
         TransferOwnershipPopup {
             anchors.centerIn: parent
             onClosed: {
+                let hiddenBannerIds = appSettings.hiddenCommunityBackUpBanners
+                hiddenBannerIds.push(chatsModel.communities.activeCommunity.id)
+                appSettings.hiddenCommunityBackUpBanners = hiddenBannerIds
                 destroy()
             }
         }
