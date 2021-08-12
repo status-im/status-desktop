@@ -239,6 +239,7 @@ Item {
                 membersButton.visible: appSettings.showOnlineUsers && chatsModel.channelView.activeChannel.chatType !== Constants.chatTypeOneToOne
                 membersButton.highlighted: showUsers
                 notificationButton.visible: appSettings.isActivityCenterEnabled
+                notificationButton.tooltip.offset: showUsers ? 0 : 14
                 notificationCount: chatsModel.activityNotificationList.unreadCount
 
                 onSearchButtonClicked: searchPopup.open()
