@@ -56,17 +56,18 @@ Source: "vendor\*"; DestDir: "{app}\vendor"; Flags: ignoreversion recursesubdirs
 
 [Tasks]
 Name: desktopicon; Description: "Create a &desktop icon"; GroupDescription: "Additional icons:";
-Name: quicklaunchicon; Description: "Create a &Quick Launch icon"; GroupDescription: "Additional icons:"; Flags: unchecked
+Name: startmenuicon; Description: "Create &Start Menu icons"; GroupDescription: "Additional icons:";
 
 [Icons]
-Name: "{group}\{#Name}"; Filename: "{app}\{#ExeName}"; WorkingDir: "{app}"
-Name: "{group}\Uninstall {#Name}"; Filename: "{uninstallexe}"
+Name: "{group}\{#Name}"; Filename: "{app}\{#ExeName}"; WorkingDir: "{app}"; Tasks: startmenuicon
+Name: "{group}\Uninstall {#Name}"; Filename: "{uninstallexe}"; Tasks: startmenuicon
 Name: "{userdesktop}\{#Name}"; Filename: "{app}\{#ExeName}"; IconFilename: "{app}\resources\{#IcoName}"; Tasks: desktopicon
-Name: "{commonprograms}\Status\{#Name}"; Filename: "{app}\{#ExeName}"; IconFilename: "{app}\resources\{#IcoName}"; Tasks: quicklaunchicon
-Name: "{commonstartup}\{#Name}"; Filename: "{app}\{#ExeName}"; IconFilename: "{app}\resources\{#IcoName}"; Tasks: quicklaunchicon
 
 [Run]
 Filename: "{app}\{#ExeName}"; Description: {cm:LaunchProgram,{#Name}}; Flags: nowait postinstall skipifsilent
+
+[UninstallRun]
+Filename: "{cmd}"; Parameters: "/C ""taskkill /im {#ExeName} /f /t"
 
 [UninstallDelete]
 Type: filesandordirs; Name: "{app}"
