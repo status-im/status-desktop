@@ -20,7 +20,8 @@ macro(add_target name type)
         include/DOtherSide/DosIQAbstractItemModelImpl.h
         include/DOtherSide/DosQAbstractItemModel.h
         include/DOtherSide/Utils.h
-        include/DOtherSide/DosDockClicker.h
+        include/DOtherSide/StatusEvents/StatusDockShowAppEvent.h
+        include/DOtherSide/StatusEvents/StatusOSThemeEvent.h
         include/DOtherSide/DOtherSideStatusWindow.h
         include/DOtherSide/DOtherSideSingleInstance.h
         src/DOtherSide.cpp
@@ -31,7 +32,8 @@ macro(add_target name type)
         src/DosQObjectImpl.cpp
         src/DosQAbstractItemModel.cpp
         src/DosQQuickImageProvider.cpp
-        src/DosDockClicker.cpp
+        src/StatusEvents/StatusDockShowAppEvent.cpp
+        src/StatusEvents/StatusOSThemeEvent.cpp
         src/DOtherSideStatusWindow.cpp
         src/DOtherSideSingleInstance.cpp
     )
