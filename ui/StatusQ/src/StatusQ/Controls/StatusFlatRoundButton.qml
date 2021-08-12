@@ -34,6 +34,7 @@ Rectangle {
     property bool loading: false
 
     property alias hovered: sensor.containsMouse
+    property alias tooltip: statusToolTip
 
     property bool highlighted: false
 
@@ -151,4 +152,9 @@ Rectangle {
         onReleased: statusFlatRoundButton.released(mouse)
         onPressAndHold: statusFlatRoundButton.pressAndHold(mouse)
     } // Sensor
+
+    StatusToolTip {
+        id: statusToolTip
+        visible: !!text && parent.hovered
+    } // Tooltip
 } // Rectangle
