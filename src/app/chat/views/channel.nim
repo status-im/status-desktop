@@ -154,7 +154,7 @@ QtObject:
   proc setActiveChannel*(self: ChannelView, channel: string) {.slot.} =
     if (channel.len == 0):
       return
-    
+
     if (channel == backToFirstChat):
       if (self.activeChannel.id.len == 0):
         self.setActiveChannelByIndex(0)
@@ -162,7 +162,10 @@ QtObject:
 
     let selectedChannel = self.getChannelById(channel)
     self.activeChannel.setChatItem(selectedChannel)
-    
+
+    if not self.communities.activeCommunity.active:
+      self.previousActiveChannelIndex = self.chats.chats.findIndexById(self.activeChannel.id)
+
     discard self.status.chat.markAllChannelMessagesRead(self.activeChannel.id)
 
     self.activeChannelChanged()
