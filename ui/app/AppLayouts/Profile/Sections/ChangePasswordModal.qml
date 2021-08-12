@@ -120,14 +120,12 @@ ModalPopup {
 
             onClicked: {
                 popup.loading = true
-                Qt.callLater(function() {
-                    if (profileModel.changePassword(currentPasswordField.text, firstPasswordField.text)) {
-                        popup.close()
-                    } else {
-                        reset()
-                        changePasswordError = qsTr("Failed to change password.")
-                    }
-                })
+                if (profileModel.changePassword(currentPasswordField.text, firstPasswordField.text)) {
+                    popup.close()
+                } else {
+                    reset()
+                    changePasswordError = qsTr("Failed to change password.")
+                }
             }
         }
     }
