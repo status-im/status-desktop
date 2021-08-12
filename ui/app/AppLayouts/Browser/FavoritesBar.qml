@@ -7,7 +7,7 @@ import "../../../imports"
 RowLayout {
     id: favoritesBar
     spacing: 0
-    height: 38
+    height: browserModel.bookmarks.rowCount() > 0 ? 38: 0
 
     ListView {
         id: bookmarkList
