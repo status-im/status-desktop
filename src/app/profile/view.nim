@@ -122,7 +122,10 @@ QtObject:
     read = getEnsManager
 
   proc changePassword(self: ProfileView, password: string, newPassword: string): bool {.slot.} =
-    if not status_accounts.changeDatabasePassword(self.profile.address, password, newPassword):
+    try:
+      if not status_accounts.changeDatabasePassword(self.profile.address, password, newPassword):
+        return false
+    except:
       return false
     quit(QuitSuccess) # quits the app TODO: change this to logout instead when supported
 
