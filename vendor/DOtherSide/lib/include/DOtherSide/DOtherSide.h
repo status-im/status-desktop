@@ -82,11 +82,11 @@ DOS_API void DOS_CALL dos_qguiapplication_delete(void);
 
 DOS_API void DOS_CALL dos_qguiapplication_icon(const char *filename);
 
-DOS_API void dos_qguiapplication_installEventFilter(DosQQmlApplicationEngine *vptr);
+DOS_API void dos_qguiapplication_installEventFilter(DosStatusEventObject *vptr);
 
 DOS_API void dos_qapplication_clipboard_setText(const char* text);
 
-DOS_API void dos_qapplication_installEventFilter(DosQQmlApplicationEngine *vptr);
+DOS_API void dos_qapplication_installEventFilter(DosStatusEventObject *vptr);
 
 /// @}
 
@@ -992,6 +992,11 @@ DOS_API bool DOS_CALL dos_singleinstance_isfirst(DosSingleInstance *vptr);
 DOS_API void DOS_CALL dos_singleinstance_delete(DosSingleInstance *vptr);
 
 /// @}
+
+/// Status event object
+DOS_API DosStatusEventObject* dos_statusevent_create_showAppEvent(DosQQmlApplicationEngine* vptr);
+DOS_API DosStatusEventObject* dos_statusevent_create_osThemeEvent(DosQQmlApplicationEngine* vptr);
+DOS_API void dos_statusevent_delete(DosStatusEventObject* vptr);
 
 #ifdef __cplusplus
 }
