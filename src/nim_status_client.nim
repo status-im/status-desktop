@@ -45,10 +45,6 @@ proc mainProc() =
   status.tasks.marathon.registerWorker(mailserverWorker)
   status.initNode()
 
-  defer: 
-    info "Status app is shutting down..."
-    status.tasks.teardown()
-
   enableHDPI()
   initializeOpenGL()
 
@@ -184,6 +180,11 @@ proc mainProc() =
     browserController.init()
     node.init()
     wallet.checkPendingTransactions()
+
+  # this should be the last defer in the scope
+  defer:
+    info "Status app is shutting down..."
+    status.tasks.teardown()
 
   engine.setRootContextProperty("loginModel", login.variant)
   engine.setRootContextProperty("onboardingModel", onboarding.variant)
