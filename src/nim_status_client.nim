@@ -92,7 +92,14 @@ proc mainProc() =
   defer: engine.delete()
   engine.addImportPath("qrc:/./StatusQ/src")
   engine.setNetworkAccessManagerFactory(networkAccessFactory)
-  app.installEventFilter(engine)
+  
+  # Register events objects
+  let dockShowAppEvent = newStatusDockShowAppEventObject(engine)
+  defer: dockShowAppEvent.delete()
+  let osThemeEvent = newStatusOSThemeEventObject(engine)
+  defer: osThemeEvent.delete()
+  app.installEventFilter(dockShowAppEvent)
+  app.installEventFilter(osThemeEvent)
 
   let netAccMgr = newQNetworkAccessManager(engine.getNetworkAccessManager())
 

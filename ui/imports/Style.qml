@@ -15,20 +15,22 @@ QtObject {
     property ThemePalette statusQLightTheme: StatusLightTheme {}
     property ThemePalette statusQDarkTheme: StatusDarkTheme {}
 
+    property var changeTheme: function (theme, isCurrentSystemThemeDark) {
 
-    property var changeTheme: function (theme) {
         switch (theme) {
             case Universal.Light:
-              current = lightTheme; 
+              current = lightTheme;
               Theme.palette = statusQLightTheme
               break;
             case Universal.Dark:
-              current = darkTheme; 
+              current = darkTheme;
               Theme.palette = statusQDarkTheme
               break;
-            default: 
-              current = lightTheme; 
-              Theme.palette = statusQLightTheme
+            case Universal.System:
+              current = isCurrentSystemThemeDark? darkTheme : lightTheme;
+              Theme.palette = isCurrentSystemThemeDark? statusQDarkTheme : statusQLightTheme
+              break;
+            default:
               console.log('Unknown theme. Valid themes are "light" and "dark"')
         }
     }

@@ -39,6 +39,7 @@ StatusWindow {
     }
 
     id: applicationWindow
+    objectName: "mainWindow"
     minimumWidth: 900
     minimumHeight: 600
     width: 1232
@@ -120,8 +121,22 @@ StatusWindow {
         }
     }
 
+    // The easiest way to get current system theme (is it light or dark) without using
+    // OS native methods is to check lightness (0 - 1.0) of the window color.
+    // If it's too high (0.85+) means light theme is an active.
+    SystemPalette {
+        id: systemPalette
+        function isCurrentSystemThemeDark() {
+            return window.hslLightness < 0.85
+        }
+    }
+
+    function changeThemeFromOutside() {
+        Style.changeTheme(globalSettings.theme, systemPalette.isCurrentSystemThemeDark())
+    }
+
     Component.onCompleted: {
-        Style.changeTheme(globalSettings.theme)
+        Style.changeTheme(globalSettings.theme, systemPalette.isCurrentSystemThemeDark())
         setX(Qt.application.screens[0].width / 2 - width / 2);
         setY(Qt.application.screens[0].height / 2 - height / 2);
 

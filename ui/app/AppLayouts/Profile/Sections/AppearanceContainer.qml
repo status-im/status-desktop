@@ -22,7 +22,7 @@ ScrollView {
 
     function updateTheme(theme) {
         globalSettings.theme = theme
-        Style.changeTheme(theme)
+        Style.changeTheme(theme, systemPalette.isCurrentSystemThemeDark())
     }
 
     function updateFontSize(fontSize) {
