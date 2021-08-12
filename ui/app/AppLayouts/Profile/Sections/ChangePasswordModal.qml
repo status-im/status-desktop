@@ -37,7 +37,7 @@ ModalPopup {
 
     ColumnLayout {
         anchors.fill: parent
-        anchors.margins: 32
+        anchors.margins: Style.current.xlPadding
         spacing: Style.current.xlPadding
 
         Input {
@@ -93,7 +93,7 @@ ModalPopup {
             Layout.alignment: Qt.AlignHCenter
             horizontalAlignment: Text.AlignHCenter
             color: Style.current.danger
-            font.pixelSize: 12
+            font.pixelSize: Style.current.tertiaryTextFontSize
         }
 
         StyledText {
@@ -103,7 +103,7 @@ ModalPopup {
             Layout.alignment: Qt.AlignHCenter
             horizontalAlignment: Text.AlignHCenter
             color: Style.current.secondaryText
-            font.pixelSize: 12
+            font.pixelSize: Style.current.tertiaryTextFontSize
         }
     }
 
