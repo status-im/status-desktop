@@ -23,8 +23,14 @@ QtObject:
 
   proc delete(self: WalletView) =
     self.accountsView.delete
+    self.collectiblesView.delete
+    self.transactionsView.delete
+    self.tokensView.delete
+    self.dappBrowserView.delete
     self.gasView.delete
     self.ensView.delete
+    self.historyView.delete
+    self.balanceView.delete
     self.utilsView.delete
     self.QAbstractListModel.delete
 
