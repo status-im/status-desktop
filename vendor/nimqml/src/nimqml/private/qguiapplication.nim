@@ -16,8 +16,8 @@ proc delete*(self: QGuiApplication) =
 proc icon*(application: QGuiApplication, filename: string) =
   dos_qguiapplication_icon(filename.cstring)
 
-proc installEventFilter*(application: QGuiApplication, engine: QQmlApplicationEngine) =
-  dos_qguiapplication_installEventFilter(engine.vptr)
+proc installEventFilter*(application: QGuiApplication, event: StatusEventObject) =
+  dos_qguiapplication_installEventFilter(event.vptr)
 
 proc newQGuiApplication*(): QGuiApplication =
   ## Return a new QGuiApplication

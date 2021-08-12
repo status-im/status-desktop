@@ -17,8 +17,8 @@ proc icon*(application: QApplication, filename: string) =
 proc setClipboardText*(text: string = "") =
   dos_qapplication_clipboard_setText(text.cstring)
 
-proc installEventFilter*(application: QApplication, engine: QQmlApplicationEngine) =
-  dos_qapplication_installEventFilter(engine.vptr)
+proc installEventFilter*(application: QApplication, event: StatusEventObject) =
+  dos_qapplication_installEventFilter(event.vptr)
 
 proc delete*(application: QApplication) =
   ## Delete the given QApplication
