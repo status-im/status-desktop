@@ -1,7 +1,8 @@
 import NimQml, chronicles, os, strformat
 
 import app/chat/core as chat
-import app/wallet/core as wallet
+import app/wallet/v1/core as wallet
+import app/wallet/v2/core as walletV2
 import app/node/core as node
 import app/utilsView/core as utilsView
 import app/browser/core as browserView
@@ -119,6 +120,10 @@ proc mainProc() =
   defer: wallet.delete()
   engine.setRootContextProperty("walletModel", wallet.variant)
 
+  var wallet2 = walletV2.newController(status)
+  defer: wallet2.delete()
+  engine.setRootContextProperty("walletV2Model", wallet2.variant)
+
   var chat = chat.newController(status)
   defer: chat.delete()
   engine.setRootContextProperty("chatsModel", chat.variant)
@@ -174,6 +179,7 @@ proc mainProc() =
     status.startMessenger()
     profile.init(args.account)
     wallet.init()
+    wallet2.init()
     provider.init()
     chat.init()
     utilsController.init()
@@ -213,6 +219,7 @@ proc mainProc() =
     # chat.reset()
     # node.reset()
     # wallet.reset()
+    # wallet2.reset()
     # profile.reset()
 
     # 2. Re-init controllers that don't require a running node

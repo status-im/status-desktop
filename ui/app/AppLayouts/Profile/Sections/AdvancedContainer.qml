@@ -86,6 +86,20 @@ ScrollView {
             }
 
             StatusSettingsLineButton {
+                text: qsTr("Wallet v2")
+                isSwitch: true
+                switchChecked: appSettings.isWalletV2Enabled
+                onClicked: {
+                    if (!appSettings.isWalletV2Enabled) {
+                        confirmationPopup.settingsProp = "isWalletV2Enabled"
+                        confirmationPopup.open()
+                    } else {
+                        appSettings.isWalletV2Enabled = false
+                    }
+                }
+            }
+
+            StatusSettingsLineButton {
                 //% "Dapp Browser"
                 text: qsTrId("dapp-browser")
                 isSwitch: true

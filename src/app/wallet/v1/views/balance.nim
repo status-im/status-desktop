@@ -2,9 +2,9 @@ import atomics, strutils, sequtils, json, tables, chronicles, web3/[ethtypes, co
 import NimQml, json, sequtils, chronicles, strutils, strformat, json
 
 import
-  ../../../status/[status, wallet, tokens],
-  ../../../status/tokens as status_tokens,
-  ../../../status/tasks/[qt, task_runner_impl]
+  ../../../../status/[status, wallet, tokens],
+  ../../../../status/tokens as status_tokens,
+  ../../../../status/tasks/[qt, task_runner_impl]
 
 import account_item, accounts, transactions, history
 

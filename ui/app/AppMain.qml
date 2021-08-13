@@ -9,6 +9,7 @@ import "../shared/status"
 import "./AppLayouts"
 import "./AppLayouts/Timeline"
 import "./AppLayouts/Wallet"
+import "./AppLayouts/WalletV2"
 import "./AppLayouts/Chat/components"
 import "./AppLayouts/Chat/CommunityComponents"
 import Qt.labs.platform 1.1
@@ -236,6 +237,15 @@ StatusAppLayout {
             },
 
             StatusNavBarTabButton {
+                icon.name: "wallet"
+                tooltip.text: qsTr("Wallet v2")
+                visible: enabled
+                enabled: isExperimental === "1" || appSettings.isWalletV2Enabled
+                checked: appView.currentIndex == Utils.getAppSectionIndex(Constants.walletv2)
+                onClicked: appMain.changeAppSection(Constants.walletv2)
+            },
+
+            StatusNavBarTabButton {
                 enabled: isExperimental === "1" || appSettings.isBrowserEnabled
                 visible: enabled
                 //% "Browser"
@@ -330,6 +340,10 @@ StatusAppLayout {
             if(this.children[currentIndex] === walletLayoutContainer){
                 walletLayoutContainer.showSigningPhrasePopup();
             }
+
+            if(this.children[currentIndex] === walletV2LayoutContainer){
+                walletV2LayoutContainer.showSigningPhrasePopup();
+            }
         }
 
         ChatLayout {
@@ -400,6 +414,13 @@ StatusAppLayout {
             Layout.alignment: Qt.AlignLeft | Qt.AlignTop
             Layout.fillHeight: true
         }
+
+        WalletV2Layout {
+            id: walletV2LayoutContainer
+            Layout.fillWidth: true
+            Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+            Layout.fillHeight: true
+        }
     }
 
     Settings {
@@ -410,6 +431,7 @@ StatusAppLayout {
         property var profileSplitView
         property bool communitiesEnabled: false
         property bool isWalletEnabled: false
+        property bool isWalletV2Enabled: false
         property bool nodeManagementEnabled: false
         property bool isBrowserEnabled: false
         property bool isActivityCenterEnabled: false

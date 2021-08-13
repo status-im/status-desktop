@@ -2,9 +2,9 @@ import atomics, strformat, strutils, sequtils, json, std/wrapnils, parseUtils, t
 import NimQml, json, sequtils, chronicles, strutils, strformat, json
 
 import
-  ../../../status/[status, settings, wallet, tokens, utils, types],
-  ../../../status/wallet/collectibles as status_collectibles,
-  ../../../status/tasks/[qt, task_runner_impl]
+  ../../../../status/[status, settings, wallet, tokens, utils, types],
+  ../../../../status/wallet/collectibles as status_collectibles,
+  ../../../../status/tasks/[qt, task_runner_impl]
 
 import collectibles_list, accounts, account_list, account_item
 

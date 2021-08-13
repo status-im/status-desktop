@@ -1,9 +1,9 @@
 import NimQml, json, sequtils, chronicles, strutils, strformat, json
 
 import
-  ../../../status/[status, settings, types],
-  ../../../status/signals/types as signal_types,
-  ../../../status/wallet as status_wallet
+  ../../../../status/[status, settings, types],
+  ../../../../status/signals/types as signal_types,
+  ../../../../status/wallet as status_wallet
 
 import account_list, account_item
 

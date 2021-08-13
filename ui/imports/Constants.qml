@@ -41,6 +41,7 @@ QtObject {
 
     readonly property string chat: "chat"
     readonly property string wallet: "wallet"
+    readonly property string walletv2: "walletV2"
     readonly property string timeline: "timeline"
     readonly property string browser: "browser"
     readonly property string profile: "profile"
