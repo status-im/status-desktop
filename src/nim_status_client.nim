@@ -164,9 +164,9 @@ proc mainProc() =
     login.reset()
     onboarding.reset()
 
-    status.events.emit("loginCompleted", args)
     login.moveToAppState()
     onboarding.moveToAppState()
+    status.events.emit("loginCompleted", args)
 
   status.events.once("loginCompleted") do(a: Args):
     var args = AccountArgs(a)
