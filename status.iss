@@ -21,6 +21,7 @@ PrivilegesRequired=lowest
 WizardStyle=modern
 UninstallDisplayIcon={app}\{#ExeName}
 DefaultGroupName={#Name}
+CloseApplications=yes
 
 ; output dir for installer
 OutputBaseFileName={#BaseName}
@@ -56,18 +57,14 @@ Source: "vendor\*"; DestDir: "{app}\vendor"; Flags: ignoreversion recursesubdirs
 
 [Tasks]
 Name: desktopicon; Description: "Create a &desktop icon"; GroupDescription: "Additional icons:";
-Name: startmenuicon; Description: "Create &Start Menu icons"; GroupDescription: "Additional icons:";
 
 [Icons]
-Name: "{group}\{#Name}"; Filename: "{app}\{#ExeName}"; WorkingDir: "{app}"; Tasks: startmenuicon
-Name: "{group}\Uninstall {#Name}"; Filename: "{uninstallexe}"; Tasks: startmenuicon
+Name: "{group}\{#Name}"; Filename: "{app}\{#ExeName}"; WorkingDir: "{app}"
+Name: "{group}\Uninstall {#Name}"; Filename: "{uninstallexe}"
 Name: "{userdesktop}\{#Name}"; Filename: "{app}\{#ExeName}"; IconFilename: "{app}\resources\{#IcoName}"; Tasks: desktopicon
 
 [Run]
 Filename: "{app}\{#ExeName}"; Description: {cm:LaunchProgram,{#Name}}; Flags: nowait postinstall skipifsilent
-
-[UninstallRun]
-Filename: "{cmd}"; Parameters: "/C ""taskkill /im {#ExeName} /f /t"
 
 [UninstallDelete]
 Type: filesandordirs; Name: "{app}"
@@ -81,6 +78,37 @@ Root: HKCU; Subkey: "Software\Classes\status-im\DefaultIcon"; ValueType: "string
 Root: HKCU; Subkey: "Software\Classes\status-im\shell\open\command"; ValueType: "string"; ValueData: """{app}\Status.exe"" ""--url=""%1"""
 
 [Code]
+function IsAppRunning(const FileName : string): Boolean;
+var
+  FSWbemLocator: Variant;
+  FWMIService: Variant;
+  FWbemObjectSet: Variant;
+begin
+  Result := false;
+  FSWbemLocator := CreateOleObject('WBEMScripting.SWBEMLocator');
+  FWMIService := FSWbemLocator.ConnectServer('', 'root\CIMV2', '', '');
+  FWbemObjectSet := FWMIService.ExecQuery(Format('SELECT Name FROM Win32_Process Where Name="%s"',[FileName]));
+  Result := (FWbemObjectSet.Count > 0);
+  FWbemObjectSet := Unassigned;
+  FWMIService := Unassigned;
+  FSWbemLocator := Unassigned;
+end;
+
+function InitializeUninstall(): Boolean;
+var
+  ErrorCode: Integer;
+begin
+  Result := true;
+  if IsAppRunning('{#ExeName}') then
+  begin
+    if MsgBox('Status application is still running. Do you want to terminate the app?', mbConfirmation, MB_YESNO or MB_DEFBUTTON1) = IDYES
+    then
+      ShellExec('', ExpandConstant('{sys}\taskkill.exe'),'/f /im {#ExeName}', '', SW_HIDE, ewWaitUntilTerminated, ErrorCode)
+    else
+      Result := false;
+  end
+end;
+
 procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);
 begin
   if CurUninstallStep = usPostUninstall then
@@ -91,3 +119,4 @@ begin
         DelTree(ExpandConstant('{localappdata}\Status'), True, True, True);
   end;
 end;
+
