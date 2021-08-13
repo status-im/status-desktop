@@ -73,7 +73,7 @@ PopupMenu {
     }
 
     Separator {
-        anchors.bottom: viewProfileAction.top
+        anchors.bottom: profileHeader.bottom
     }
 
     overrideTextColor: Style.current.textColor
