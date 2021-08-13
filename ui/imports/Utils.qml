@@ -120,6 +120,7 @@ QtObject {
         case Constants.profile: sectionId = 4; break;
         case Constants.node: sectionId = 5; break;
         case Constants.ui: sectionId = 6; break;
+        case Constants.walletv2: sectionId = 7; break;
         case Constants.community: sectionId = 99; break;
         }
         if (sectionId === -1) {

@@ -1,5 +1,5 @@
 import NimQml, tables
-from ../../../status/wallet import Transaction
+from ../../../../status/wallet import Transaction
 
 type
   TransactionRoles {.pure.} = enum

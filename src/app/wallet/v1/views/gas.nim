@@ -2,8 +2,8 @@ import atomics, strformat, strutils, sequtils, json, std/wrapnils, parseUtils, c
 import NimQml, json, sequtils, chronicles, strutils, strformat, json
 
 import
-  ../../../status/[status, wallet, utils, types],
-  ../../../status/tasks/[qt, task_runner_impl]
+  ../../../../status/[status, wallet, utils, types],
+  ../../../../status/tasks/[qt, task_runner_impl]
 
 import account_item
 

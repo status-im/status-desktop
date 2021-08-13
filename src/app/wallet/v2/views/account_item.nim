@@ -1,11 +1,9 @@
 import NimQml, std/wrapnils, strformat, options
-from ../../../status/wallet import WalletAccount
-import ./asset_list
+from ../../../../status/wallet import WalletAccount
 
 QtObject:
   type AccountItemView* = ref object of QObject
     account*: WalletAccount
-    assetList*: AssetList
 
   proc setup(self: AccountItemView) =
     self.QObject.setup
@@ -15,14 +13,11 @@ QtObject:
 
   proc newAccountItemView*(): AccountItemView =
     new(result, delete)
-    let accountItemView = AccountItemView()
-    accountItemView.assetList = newAssetList()
-    result = accountItemView
+    result = AccountItemView()
     result.setup
 
   proc setAccountItem*(self: AccountItemView, account: WalletAccount) =
     self.account = account
-    self.assetList.setNewData(account.assetList)
 
   proc name*(self: AccountItemView): string {.slot.} = result = ?.self.account.name
   QtProperty[string] name:
@@ -61,7 +56,3 @@ QtObject:
   proc walletType*(self: AccountItemView): string {.slot.} = result = ?.self.account.walletType
   QtProperty[string] walletType:
     read = walletType
-
-  proc assets*(self: AccountItemView): QVariant {.slot.} = result = newQVariant(?.self.assetList)
-  QtProperty[QVariant] assets:
-    read = assets

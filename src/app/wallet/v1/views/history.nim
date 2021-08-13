@@ -3,9 +3,9 @@ from sugar import `=>`, `->`
 import NimQml, json, sequtils, chronicles, strutils, json
 
 import
-  ../../../status/[status, wallet, types, utils],
-  ../../../status/wallet as status_wallet,
-  ../../../status/tasks/[qt, task_runner_impl]
+  ../../../../status/[status, wallet, types, utils],
+  ../../../../status/wallet as status_wallet,
+  ../../../../status/tasks/[qt, task_runner_impl]
 
 import account_list, account_item, transaction_list, accounts, transactions
 
