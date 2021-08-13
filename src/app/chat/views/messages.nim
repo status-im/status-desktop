@@ -123,9 +123,6 @@ QtObject:
     else:
       self.status.chat.editMessage(messageId, m)
 
-  proc deleteMessage*(self: MessageView, messageId: string) {.slot.} =
-    self.status.chat.deleteMessageAndSend(messageId)
-
   proc sendMessage*(self: MessageView, message: string, replyTo: string, contentType: int = ContentType.Message.int, isStatusUpdate: bool = false, contactsString: string = "") {.slot.} =
     self.sendOrEditMessage(message, replyTo, contentType, isStatusUpdate, contactsString, false, "")
 
@@ -430,6 +427,11 @@ QtObject:
       for message in messageList.messages:
         if (message.id == messageId):
           return chatId
+
+  proc deleteMessage*(self: MessageView, messageId: string) {.slot.} =
+    self.status.chat.deleteMessageAndSend(messageId)
+    let chatId = self.getChatIdForMessage(messageId)
+    discard self.deleteMessage(chatId, messageId)
 
   proc removeChat*(self: MessageView, chatId: string) =
     if (not self.messageList.hasKey(chatId)):
