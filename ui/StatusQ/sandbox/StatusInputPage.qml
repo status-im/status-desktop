@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.14
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
+import StatusQ.Controls.Validators 0.1
 
 import Sandbox 0.1
 
@@ -64,6 +65,22 @@ Column {
         input.clearable: true
         input.valid: false
         input.placeholderText: "Placeholder"
+    }
+
+    StatusInput {
+        label: "Label"
+        charLimit: 30
+        input.placeholderText: "Input with validator"
+
+        validators: [
+            StatusMinLengthValidator { minLength: 10 }
+        ]
+
+        onTextChanged: {
+            if (errors && errors.minLength) {
+                errorMessage = `Value can't be shorter than ${errors.minLength.min} but got ${errors.minLength.actual}`
+            }
+        }
     }
 
     StatusInput {

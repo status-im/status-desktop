@@ -3,6 +3,7 @@ import QtQuick 2.14
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
+import StatusQ.Controls.Validators 0.1
 
 Item {
     id: root
@@ -22,9 +23,14 @@ Item {
                   0) + 8
 
     property alias input: statusBaseInput
+    property alias valid: statusBaseInput.valid
+    property alias text: statusBaseInput.text
     property string label: ""
     property int charLimit: 0
     property string errorMessage: ""
+    property list<StatusValidator> validators
+
+    property var errors: ({})
 
     StatusBaseText {
         id: label
@@ -68,6 +74,24 @@ Item {
         anchors.rightMargin: 16
 
         maximumLength: root.charLimit
+
+        onTextChanged: {
+            if (root.validators.length) {
+                for (let idx in root.validators) {
+                    let result = root.validators[idx].validate(statusBaseInput.text)
+
+                    if (typeof result === "boolean" && result) {
+                        statusBaseInput.valid = true
+                    } else {
+                        if (!root.errors) {
+                            root.errors = {}
+                        }
+                        root.errors[root.validators[idx].name] = result
+                        statusBaseInput.valid = false
+                    }
+                }
+            }
+        }
     }
 
     StatusBaseText {
