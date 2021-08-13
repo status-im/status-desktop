@@ -232,7 +232,7 @@ Item {
 
         onContentYChanged: {
             scrollDownButton.visible = (contentHeight - (scrollY + height) > 400)
-            if(scrollY < 500){
+            if(scrollDownButton.visible && scrollY < 500){
                 loadMsgs();
             }
         }
