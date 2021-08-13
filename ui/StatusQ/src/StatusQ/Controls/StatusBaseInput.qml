@@ -39,6 +39,7 @@ Item {
 
     property real minimumHeight: 0
     property real maximumHeight: 0
+    property int maximumLength: 0
 
     property bool valid: true
 
@@ -128,17 +129,17 @@ Item {
 
                 TextEdit {
                     id: edit
+                    property string previousText: text
+
                     width: flick.width
                     selectByMouse: true
                     selectionColor: Theme.palette.primaryColor2
                     selectedTextColor: color
                     anchors.verticalCenter: parent.verticalCenter
                     focus: true
-
                     font.pixelSize: 15
                     font.family: Theme.palette.baseFont.name
                     color: Theme.palette.directColor1
-
                     onCursorRectangleChanged: flick.ensureVisible(cursorRectangle)
                     wrapMode: TextEdit.NoWrap
 
@@ -155,6 +156,21 @@ Item {
                             event.accepted = false
                         } else {
                             event.accepted = true
+                        }
+                    }
+
+                    onTextChanged: {
+                        if (statusBaseInput.maximumLength > 0) {
+                            if (text.length > statusBaseInput.maximumLength) {
+                                var cursor = cursorPosition;
+                                text = previousText;
+                                if (cursor > text.length) {
+                                    cursorPosition = text.length;
+                                } else {
+                                    cursorPosition = cursor-1;
+                                }
+                            }
+                            previousText = text
                         }
                     }
 

@@ -66,6 +66,8 @@ Item {
         anchors.topMargin: charLimitLabel.visible ? 11 : 8
         anchors.leftMargin: 16
         anchors.rightMargin: 16
+
+        maximumLength: root.charLimit
     }
 
     StatusBaseText {
