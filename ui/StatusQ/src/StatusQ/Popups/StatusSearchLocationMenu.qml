@@ -9,7 +9,7 @@ StatusPopupMenu {
     id: root
 
     property var searchPopup
-    property var locatioModel
+    property var locationModel
 
     signal subMenuClicked()
     signal subMenuItemClicked()
@@ -28,7 +28,7 @@ StatusPopupMenu {
     //Dummy item to keep seperator in right position
     MenuItem { implicitHeight: 0.00001 }
     Instantiator {
-        model: root.locatioModel
+        model: root.locationModel
         delegate: Loader {
             sourceComponent: (!!model.subItems && model.subItems.count > 0) ? subMenus : subMenuItemComponent
             onLoaded: {

@@ -618,7 +618,7 @@ Rectangle {
                 StatusSearchLocationMenu {
                     id: searchPopupMenu
                     searchPopup: searchPopup
-                    locatioModel: models.optionsModel
+                    locationModel: models.optionsModel
                 }
             }
 
