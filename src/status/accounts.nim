@@ -76,3 +76,11 @@ proc changeNetwork*(self: AccountModel, fleetConfig: FleetConfig, network: strin
   statusGoResult = status_settings.saveSetting(Setting.Stickers_Recent, %* {})
   if statusGoResult.error != "":
     error "Error removing all recent stickers", msg=statusGoResult.error
+
+proc changePassword*(self: AccountModel, keyUID: string,  password: string, newPassword: string): bool =
+  try:
+    if not status_accounts.changeDatabasePassword(keyUID, password, newPassword):
+      return false
+  except:
+    return false
+  return true

@@ -122,12 +122,9 @@ QtObject:
     read = getEnsManager
 
   proc changePassword(self: ProfileView, password: string, newPassword: string): bool {.slot.} =
-    try:
-      if not status_accounts.changeDatabasePassword(self.profile.address, password, newPassword):
-        return false
-    except:
-      return false
-    quit(QuitSuccess) # quits the app TODO: change this to logout instead when supported
+    if self.status.accounts.changePassword(self.profile.address, password, newPassword):
+      quit(QuitSuccess) # quits the app TODO: change this to logout instead when supported
+    return false
 
   proc getLinkPreviewWhitelist*(self: ProfileView): string {.slot.} =
     result = $(self.status.profile.getLinkPreviewWhitelist())
