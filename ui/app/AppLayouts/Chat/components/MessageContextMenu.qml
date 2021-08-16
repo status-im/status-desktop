@@ -13,7 +13,6 @@ import "./"
 StatusPopupMenu {
     id: messageContextMenu
     width: emojiContainer.visible ? emojiContainer.width : 176
-    closePolicy: Popup.CloseOnPressOutside | Popup.CloseOnEscape
 
     property string messageId
     property int contentType
@@ -22,7 +21,7 @@ StatusPopupMenu {
     property bool emojiOnly: false
     property bool hideEmojiPicker: false
     property bool pinnedMessage: false
-    property bool showJumpTo: false
+    property bool pinnedPopup: false
     property bool isText: false
     property bool isCurrentUser: false
     property string linkUrls: ""
@@ -37,11 +36,10 @@ StatusPopupMenu {
     property var reactionModel
     property bool canPin: {
         const nbPinnedMessages = chatsModel.messageView.pinnedMessagesList.count
-
         return nbPinnedMessages < Constants.maxNumberOfPins
     }
 
-    signal closeParentPopup
+    signal shouldCloseParentPopup
 
     function show(userNameParam, fromAuthorParam, identiconParam, textParam, nicknameParam, emojiReactionsModel) {
         userName = userNameParam || ""
@@ -282,7 +280,7 @@ StatusPopupMenu {
 
     StatusMenuItem {
         id: deleteMessageAction
-        enabled: isCurrentUser && !isProfile && !emojiOnly &&
+        enabled: isCurrentUser && !isProfile && !emojiOnly && !pinnedPopup &&
                  (contentType === Constants.messageType ||
                   contentType === Constants.stickerType ||
                   contentType === Constants.emojiType ||
@@ -314,5 +312,16 @@ StatusPopupMenu {
         }
         icon.name: "delete"
         type: StatusMenuItem.Type.Danger
+    }
+
+    StatusMenuItem {
+        enabled: messageContextMenu.pinnedPopup
+        text: qsTr("Jump to")
+        onTriggered: {
+            positionAtMessage(messageContextMenu.messageId)
+            messageContextMenu.close()
+            messageContextMenu.shouldCloseParentPopup()
+        }
+        icon.name: "up"
     }
 }
