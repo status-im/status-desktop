@@ -274,6 +274,12 @@ QtObject:
   proc copyToClipboard*(self: ChatsView, content: string) {.slot.} =
     setClipBoardText(content)
 
+  proc copyImageToClipboard*(self: ChatsView, content: string) {.slot} =
+    setClipBoardImage(content)
+
+  proc downloadImage*(self: ChatsView, content: string, path: string) {.slot} =
+    downloadImage(content, path)
+
   proc linkPreviewDataWasReceived*(self: ChatsView, previewData: string) {.signal.}
 
   proc linkPreviewDataReceived(self: ChatsView, previewData: string) {.slot.} =

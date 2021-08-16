@@ -186,12 +186,12 @@ Item {
         }
     }
 
-    property var clickMessage: function(isProfileClick, isSticker = false, isImage = false, image = null, emojiOnly = false, hideEmojiPicker = false, isReply = false) {
+    property var clickMessage: function(isProfileClick, isSticker = false, isImage = false, image = null, emojiOnly = false, hideEmojiPicker = false, isReply = false, isRightClickOnImage = false, imageSource = "") {
         if (placeholderMessage || activityCenterMessage) {
             return
         }
 
-        if (isImage) {
+        if (isImage && !isRightClickOnImage) {
             imageClick(image);
             return;
         }
@@ -212,6 +212,8 @@ Item {
         messageContextMenu.hideEmojiPicker = hideEmojiPicker;
         messageContextMenu.pinnedMessage = pinnedMessage;
         messageContextMenu.isCurrentUser = isCurrentUser;
+        messageContextMenu.isRightClickOnImage = isRightClickOnImage
+        messageContextMenu.imageSource = imageSource
 
         if (isReply) {
             let nickname = appMain.getUserNickname(repliedMessageAuthor)

@@ -317,7 +317,14 @@ Item {
                     ChatImage {
                         imageSource: image
                         imageWidth: 200
-                        onClicked: root.clickMessage(false, false, true, image)
+                        onClicked: {
+                            if (button === Qt.LeftButton) {
+                                root.clickMessage(false, false, true, image)
+                            }
+                            else if (button === Qt.RightButton) {
+                                root.clickMessage(false, false, true, image, false, true, false, true, imageSource)
+                            }
+                        }
                         container: root.container
                     }
                 }
