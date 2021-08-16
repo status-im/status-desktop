@@ -32,6 +32,26 @@ Item {
 
     property var errors: ({})
 
+    function validate() {
+        if (validators.length) {
+            for (let idx in validators) {
+                let result = validators[idx].validate(statusBaseInput.text)
+
+                if (typeof result === "boolean" && result) {
+                    statusBaseInput.valid = true
+                } else {
+                    if (!errors) {
+                        errors = {}
+                    }
+                    errors[validators[idx].name] = result
+                    statusBaseInput.valid = false
+                }
+            }
+        }
+    }
+
+    Component.onCompleted: validate()
+
     StatusBaseText {
         id: label
         height: visible ? 17 : 0
@@ -74,24 +94,7 @@ Item {
         anchors.rightMargin: 16
 
         maximumLength: root.charLimit
-
-        onTextChanged: {
-            if (root.validators.length) {
-                for (let idx in root.validators) {
-                    let result = root.validators[idx].validate(statusBaseInput.text)
-
-                    if (typeof result === "boolean" && result) {
-                        statusBaseInput.valid = true
-                    } else {
-                        if (!root.errors) {
-                            root.errors = {}
-                        }
-                        root.errors[root.validators[idx].name] = result
-                        statusBaseInput.valid = false
-                    }
-                }
-            }
-        }
+        onTextChanged: root.validate()
     }
 
     StatusBaseText {
