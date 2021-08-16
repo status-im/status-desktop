@@ -20,6 +20,12 @@ proc setClipboardText*(text: string = "") =
 proc installEventFilter*(application: QApplication, event: StatusEventObject) =
   dos_qapplication_installEventFilter(event.vptr)
 
+proc setClipboardImage*(text: string = "") =
+  dos_qapplication_clipboard_setImage(text.cstring)
+
+proc downloadImage*(imageSource: string = "", filePath = "") =
+  dos_qapplication_download_image(imageSource.cstring, filePath.cstring)
+
 proc delete*(application: QApplication) =
   ## Delete the given QApplication
   if application.deleted:
