@@ -22,6 +22,7 @@ Item {
                                                case Constants.chatTypePublic: return isCurrentUser
                                                case Constants.chatTypeCommunity: return chatsModel.communities.activeCommunity.admin ? true : isCurrentUser
                                                case Constants.chatTypeStatusUpdate: return false
+                                               default: return false
                                                }
     property bool showEdit: true
     property var messageContextMenu

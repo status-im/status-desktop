@@ -101,14 +101,14 @@ ModalPopup {
             function closePopup() {
                 popup.close()
             }
+            
             delegate: Item {
+                property var listView: ListView.view
                 width: parent.width
                 height: messageItem.height
 
                 Message {
                     id: messageItem
-                    property var view: ListView.view
-
                     fromAuthor: model.fromAuthor
                     chatId: model.chatId
                     userName: model.userName
@@ -138,14 +138,11 @@ ModalPopup {
                     isEdited: model.isEdited
                     showEdit: false
                     messageContextMenu: MessageContextMenu {
-                        showJumpTo: true
+                        pinnedPopup: true
                         pinnedMessage: true
-                        reactionModel: EmojiReactions { }
-
-                        onCloseParentPopup: {
-                            if (messageItem.view) {
-                                messageItem.view.closePopup()
-                            }
+                        reactionModel: EmojiReactions {}
+                        onShouldCloseParentPopup: {
+                            listView.closePopup()
                         }
                     }
                 }
