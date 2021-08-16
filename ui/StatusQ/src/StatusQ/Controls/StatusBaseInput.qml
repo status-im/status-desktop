@@ -20,6 +20,7 @@ Item {
     property alias selectedTextColor: edit.selectedTextColor
     property alias selectionStart: edit.selectionStart
     property alias selectionEnd: edit.selectionEnd
+    property alias cursorPosition: edit.cursorPosition
 
     property alias text: edit.text
 
