@@ -10,7 +10,7 @@ Item {
     property url source
     property bool playing: true
     property bool isAnimated: !!source && source.toString().endsWith('.gif')
-    signal clicked(var image)
+    signal clicked(var image, var button)
     property var container
     property alias imageAlias: imageMessage
     property bool allCornersRounded: false
@@ -104,6 +104,7 @@ Item {
 
         MouseArea {
             cursorShape: Qt.PointingHandCursor
+            acceptedButtons: Qt.LeftButton | Qt.RightButton
             anchors.fill: parent
             onClicked: {
                 if (imageContainer.isAnimated) {
@@ -112,7 +113,7 @@ Item {
                     imageContainer.playing = !imageContainer.playing
                     return
                 }
-                imageContainer.clicked(imageMessage)
+                imageContainer.clicked(imageMessage, mouse.button)
             }
         }
     }

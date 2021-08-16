@@ -172,6 +172,17 @@ Item {
 
         StatusImageModal {
             id: imagePopup
+            onClicked: {
+                if (button === Qt.LeftButton) {
+                    imagePopup.close()
+                }
+                else if(button === Qt.RightButton) {
+                    messageContextMenu.imageSource = imagePopup.imageSource
+                    messageContextMenu.hideEmojiPicker = true
+                    messageContextMenu.isRightClickOnImage = true;
+                    messageContextMenu.show()
+                }
+            }
         }
 
         ColumnLayout {

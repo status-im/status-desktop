@@ -8,6 +8,10 @@ import "../../shared"
 
 Popup {
     id: root
+
+    signal clicked(var button)
+    property string imageSource: messageImage.source
+
     modal: true
     Overlay.modal: Rectangle {
         color: "#40000000"
@@ -51,8 +55,11 @@ Popup {
         smooth: false
 
         MouseArea {
-            onClicked: root.close()
             anchors.fill: parent
+            acceptedButtons: Qt.LeftButton | Qt.RightButton
+            onClicked: {
+                root.clicked(mouse.button)
+            }
         }
     }
 }

@@ -2,6 +2,7 @@ import QtQuick 2.12
 import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.3
 import QtQml.Models 2.3
+import QtQuick.Dialogs 1.0
 
 import StatusQ.Popups 0.1
 
@@ -24,6 +25,7 @@ StatusPopupMenu {
     property bool pinnedPopup: false
     property bool isText: false
     property bool isCurrentUser: false
+    property bool isRightClickOnImage: false
     property string linkUrls: ""
     property alias emojiContainer: emojiContainer
     property var identicon: ""
@@ -34,6 +36,7 @@ StatusPopupMenu {
     property var emojiReactionsReactedByUser: []
     property var onClickEdit: function(){}
     property var reactionModel
+    property string imageSource: ""
     property bool canPin: {
         const nbPinnedMessages = chatsModel.messageView.pinnedMessagesList.count
         return nbPinnedMessages < Constants.maxNumberOfPins
@@ -188,6 +191,28 @@ StatusPopupMenu {
     */
 
     StatusMenuItem {
+        id: copyImageAction
+        text: qsTr("Copy image")
+        onTriggered: {
+            chatsModel.copyImageToClipboard(imageSource ? imageSource : "")
+            messageContextMenu.close()
+        }
+        icon.name: "copy"
+        enabled: isRightClickOnImage
+    }
+
+    StatusMenuItem {
+        id: downloadImageAction
+        text: qsTr("Download image")
+        onTriggered: {
+            fileDialog.open()
+            messageContextMenu.close()
+        }
+        icon.name: "download"
+        enabled: isRightClickOnImage
+    }
+
+    StatusMenuItem {
         id: viewProfileAction
         //% "View Profile"
         text: qsTrId("view-profile")
@@ -217,7 +242,7 @@ StatusPopupMenu {
             messageContextMenu.close()
         }
         icon.name: "chat"
-        enabled: isProfile || (!hideEmojiPicker && !emojiOnly && !isProfile)
+        enabled: isProfile || (!hideEmojiPicker && !emojiOnly && !isProfile && !isRightClickOnImage)
     }
 
     StatusMenuItem {
@@ -228,7 +253,7 @@ StatusPopupMenu {
             onClickEdit();
         }
         icon.name: "edit"
-        enabled: isCurrentUser && !hideEmojiPicker && !emojiOnly && !isProfile
+        enabled: isCurrentUser && !hideEmojiPicker && !emojiOnly && !isProfile && !isRightClickOnImage
     }
 
     StatusMenuItem {
@@ -259,7 +284,7 @@ StatusPopupMenu {
         }
         icon.name: "pin"
         enabled: {
-            if(isProfile || emojiOnly)
+            if(isProfile || emojiOnly || isRightClickOnImage)
                 return false
 
             switch (chatsModel.channelView.activeChannel.chatType) {
@@ -280,7 +305,7 @@ StatusPopupMenu {
 
     StatusMenuItem {
         id: deleteMessageAction
-        enabled: isCurrentUser && !isProfile && !emojiOnly && !pinnedPopup &&
+        enabled: isCurrentUser && !isProfile && !emojiOnly && !pinnedPopup && !isRightClickOnImage &&
                  (contentType === Constants.messageType ||
                   contentType === Constants.stickerType ||
                   contentType === Constants.emojiType ||
@@ -323,5 +348,19 @@ StatusPopupMenu {
             messageContextMenu.shouldCloseParentPopup()
         }
         icon.name: "up"
+    }
+
+    FileDialog {
+        id: fileDialog
+        title: qsTr("Please choose a directory")
+        selectFolder: true
+        modality: Qt.NonModal
+        onAccepted: {
+            chatsModel.downloadImage(imageSource ? imageSource : "", fileDialog.fileUrls)
+            fileDialog.close()
+        }
+        onRejected: {
+            fileDialog.close()
+        }
     }
 }
