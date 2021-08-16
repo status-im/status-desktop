@@ -1,4 +1,22 @@
 <a name=""></a>
+##  v0.5.0 (2021-08-16)
+
+
+#### Bug Fixes
+
+* **StatusChatToolBar:**  Use updated StatusFlatRoundButton ([d24c2e62](d24c2e62))
+
+#### Features
+
+* **StatusBaseInput:**  enforce `maximumLength` if it's set ([f635bad6](f635bad6))
+* **StatusFlatRoundButton:**  Adding tooltip to the button ([5a0489ba](5a0489ba))
+* **StatusIcon:**  add `play-filled` and `pause-filled` icons ([58a30716](58a30716), closes [#310](310))
+* **StatusInput:**  introduce new validator pipeline ([ba4f27f9](ba4f27f9), closes [#298](298))
+* **StatusToolTip:**  Adding an offset property ([ee429683](ee429683))
+
+
+
+<a name=""></a>
 ##  v0.4.0 (2021-08-12)
 
 
