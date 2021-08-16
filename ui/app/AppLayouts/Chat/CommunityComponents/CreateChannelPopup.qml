@@ -1,15 +1,12 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.3
-import QtGraphicalEffects 1.13
 import QtQuick.Dialogs 1.3
 import "../../../../imports"
-import "../components"
-import "../../../../shared"
-import "../../../../shared/status"
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
+import StatusQ.Controls.Validators 0.1
 import StatusQ.Components 0.1
 import StatusQ.Popups 0.1
 
@@ -21,13 +18,7 @@ StatusModal {
     property string categoryId: ""
 
     readonly property int maxChannelNameLength: 30
-    readonly property var channelNameValidator: Utils.Validate.NoEmpty
-                                                | Utils.Validate.TextLength
-                                                | Utils.Validate.TextLowercaseLettersNumberAndDashes
-
     readonly property int maxChannelDescLength: 140
-    readonly property var channelDescValidator: Utils.Validate.NoEmpty
-                                                | Utils.Validate.TextLength
     
     property Component pinnedMessagesPopupComponent
 
@@ -35,28 +26,20 @@ StatusModal {
     header.title: qsTrId("create-channel-title")
 
     onOpened: {
-        contentComponent.channelName.text = ""
+        contentComponent.channelName.input.text = ""
         if (isEdit) {
             //% "Edit #%1"
             header.title = qsTrId("edit---1").arg(channel.name);
-            contentComponent.channelName.text = channel.name
+            contentComponent.channelName.input.text = channel.name
         }
-        contentComponent.channelName.forceActiveFocus(Qt.MouseFocusReason)
+        contentComponent.channelName.input.forceActiveFocus(Qt.MouseFocusReason)
     }
 
     onClosed: destroy()
 
     function isFormValid() {
-        return Utils.validateAndReturnError(contentComponent.channelName.text,
-                                            channelNameValidator,
-                                            //% "channel name"
-                                            qsTrId("channel-name"),
-                                            maxChannelNameLength) === ""
-               && Utils.validateAndReturnError(contentComponent.channelDescription.text,
-                                               channelDescValidator,
-                                               //% "channel decription"
-                                               qsTrId("channel-decription"),
-                                               maxChannelDescLength) === ""
+        return contentComponent.channelName.valid &&
+               contentComponent.channelDescription.valid
     }
 
     content: ScrollView {
@@ -83,28 +66,16 @@ StatusModal {
             id: content
             width: popup.width
 
-            Item {
-                width: parent.width
-                height: 76
-
-                Input {
-                    id: nameInput
-                    width: parent.width - 32
-                    anchors.centerIn: parent
-                    //% "Channel name"
-                    placeholderText: qsTrId("name-your-channel-placeholder")
-                    maxLength: popup.maxChannelNameLength
-
-                    onTextEdited: {
-                        text = Utils.convertSpacesToDashesAndUpperToLowerCase(text);
-
-                        validationError = Utils.validateAndReturnError(text,
-                                                                        channelNameValidator,
-                                                                        //% "channel name"
-                                                                        qsTrId("channel-name"),
-                                                                        maxChannelNameLength)
-                    }
+            StatusInput {
+                id: nameInput
+                charLimit: popup.maxChannelNameLength
+                input.placeholderText: qsTr("Channel name")
+                input.onTextChanged: {
+                    input.text = Utils.convertSpacesToDashesAndUpperToLowerCase(input.text);
+                    input.cursorPosition = input.text.length
+                    errorMessage = Utils.getErrorMessage(errors, qsTr("channel name"))
                 }
+                validators: [StatusMinLengthValidator { minLength: 1 }]
             }
 
             StatusModalDivider {
@@ -112,54 +83,19 @@ StatusModal {
                 bottomPadding: 8
             }
 
-            Item {
-                height: descriptionTextArea.height + 26
+            StatusInput {
+                id: descriptionTextArea
+                label: qsTr("Description")
+                charLimit: 140
 
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.leftMargin: 16
-                anchors.rightMargin: 16
-
-                StyledTextArea {
-                    id: descriptionTextArea
-
-                    anchors.top: parent.top
-                    anchors.topMargin: 10
-
-                    //% "Description"
-                    label: qsTrId("description")
-                    //% "Describe the channel"
-                    placeholderText: qsTrId("describe-channel")
-
-                    customHeight: 88
-
-                    text: popup.isEdit ? popup.channel.description : ""
-
-                    onTextChanged: {
-                        if(text.length > maxChannelDescLength)
-                        {
-                            textField.remove(maxChannelDescLength, text.length)
-                            return
-                        }
-
-                        validationError = Utils.validateAndReturnError(text,
-                                                                        channelDescValidator,
-                                                                        //% "channel description"
-                                                                        qsTrId("channel-description"),
-                                                                        maxChannelDescLength)
-                    }
-                }
-
-                StyledText {
-                    id: charLimit
-                    text: `${descriptionTextArea.text.length}/${maxChannelDescLength}`
-                    anchors.top: descriptionTextArea.top
-                    anchors.right: descriptionTextArea.right
-                    font.pixelSize: 12
-                    color: !descriptionTextArea.validationError ? Theme.palette.baseColor1 : Theme.palette.dangerColor1
-                }
+                input.placeholderText: qsTr("Describe the channel")
+                input.multiline: true
+                input.implicitHeight: 88
+                input.text: popup.isEdit ? popup.channel.description : ""
+                input.onTextChanged: errorMessage = Utils.getErrorMessage(errors, qsTr("channel description"))
+                validators: [StatusMinLengthValidator { minLength: 1 }]
             }
-      
+
             /* TODO: use the code below to enable private channels and message limit */
             /* StatusListItem { */
             /*     width: parent.width */
@@ -253,8 +189,8 @@ StatusModal {
                 let error = "";
                 if (!isEdit) {
                     error = chatsModel.createCommunityChannel(communityId,
-                                                                Utils.filterXSS(popup.contentComponent.channelName.text),
-                                                                Utils.filterXSS(popup.contentComponent.channelDescription.text),
+                                                                Utils.filterXSS(popup.contentComponent.channelName.input.text),
+                                                                Utils.filterXSS(popup.contentComponent.channelDescription.input.text),
                       categoryId)
                                                                 // TODO: pass the private value when private channels
                                                                 // are implemented
@@ -262,8 +198,8 @@ StatusModal {
                 } else {
                     error = chatsModel.editCommunityChannel(communityId,
                                                                 channel.id,
-                                                                Utils.filterXSS(popup.contentComponent.channelName.text),
-                                                                Utils.filterXSS(popup.contentComponent.channelDescription.text),
+                                                                Utils.filterXSS(popup.contentComponent.channelName.input.text),
+                                                                Utils.filterXSS(popup.contentComponent.channelDescription.input.text),
                       channel.categoryId)
                                                                 // TODO: pass the private value when private channels
                                                                 // are implemented
