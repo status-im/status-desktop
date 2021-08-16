@@ -11,17 +11,14 @@ StatusPopupMenu {
     property var searchPopup
     property var locationModel
 
-    signal subMenuClicked()
-    signal subMenuItemClicked()
-    signal anywhereItemClicked()
-    signal menuItemNoSubMenuClicked()
+    signal itemClicked(string firstLevelItemValue, string secondLevelItemValue)
 
     StatusMenuItem {
         text: "Anywhere"
         onTriggered: {
             searchPopup.resetSelectionBadge();
             searchPopup.searchSelectionButton.primaryText = text;
-            root.anywhereItemClicked();
+            root.itemClicked("", "");
         }
     }
     StatusMenuSeparator { }
@@ -74,7 +71,7 @@ StatusPopupMenu {
                 searchPopup.searchSelectionButton.iconSettings.name = iconSettings.name;
                 searchPopup.searchSelectionButton.iconSettings.color = !!iconSettings.color ? iconSettings.color : Theme.palette.primaryColor1
                 searchPopup.searchSelectionButton.iconSettings.isLetterIdenticon = !iconSettings.name && !image.source
-                root.menuItemNoSubMenuClicked();
+                root.itemClicked(value, "")
             }
         }
     }
@@ -125,8 +122,8 @@ StatusPopupMenu {
                                 searchPopup.searchSelectionButton.iconSettings.color = !!menuLoader.parentIdenticonColor ? menuLoader.parentIdenticonColor : Theme.palette.primaryColor1;
                                 searchPopup.searchSelectionButton.iconSettings.isLetterIdenticon = !menuLoader.parentIconName && !menuLoader.parentImageSource
                             }
-                            root.subMenuItemClicked();
-                            root.dismiss();
+                            root.itemClicked(menuLoader.parentValue, value)
+                            root.dismiss()
                         }
                     }
                 }
@@ -142,8 +139,8 @@ StatusPopupMenu {
         searchPopup.searchSelectionButton.iconSettings.name = menuItem.parentIconName;
         searchPopup.searchSelectionButton.iconSettings.color = menuItem.parentIdenticonColor;
         searchPopup.searchSelectionButton.iconSettings.isLetterIdenticon = !menuItem.parentIconName && !menuItem.parentImageSource
-        root.subMenuClicked();
+        root.itemClicked(menuItem.parentValue, "")
         //TODO fix error "QML StatusPopupMenu: cannot find any window to open popup in."
-        root.dismiss();
+        root.dismiss()
     }
 }
