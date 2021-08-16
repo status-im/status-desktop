@@ -142,7 +142,7 @@ Item {
                     font.family: Theme.palette.baseFont.name
                     color: Theme.palette.directColor1
                     onCursorRectangleChanged: flick.ensureVisible(cursorRectangle)
-                    wrapMode: TextEdit.NoWrap
+                    wrapMode: statusBaseInput.multiline ? Text.WrapAtWordBoundaryOrAnywhere : TextEdit.NoWrap
 
                     Keys.onReturnPressed: {
                         if (multiline) {
