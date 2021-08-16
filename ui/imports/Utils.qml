@@ -668,6 +668,17 @@ QtObject {
         return errMsg
     }
 
+    function getErrorMessage(errors, fieldName) {
+        if (errors) {
+            if (errors.minLength) {
+                return errors.minLength.min === 1 ?
+                    qsTr("You need to enter a %1").arg(fieldName) :
+                    qsTr("Value has to be at least %1 characters long").arg(errors.minLength.min)
+            }
+        }
+        return ""
+    }
+
     /* Validation section end */
 
 
