@@ -29,17 +29,9 @@ Item {
 
         id: memberSearchAndInviteButton
 
-        Item {
-            width: parent.width
-            height: 76
-
-            Input {
-                id: memberSearch
-                width: parent.width - 32
-                anchors.centerIn: parent
-                //% "Member name"
-                placeholderText: qsTrId("member-name")
-            }
+        StatusInput {
+            id: memberSearch
+            input.placeholderText: qsTr("Member name")
         }
 
         StatusListItem {
@@ -107,7 +99,7 @@ Item {
         Item {
             width: parent.width
             height: 300
-            visible: !!memberSearch.text && !!memberList.count && !memberListColumn.height
+            visible: !!memberSearch.input.text && !!memberList.count && !memberListColumn.height
 
             StatusBaseText {
                 anchors.centerIn: parent
@@ -134,9 +126,9 @@ Item {
                     property string nickname: appMain.getUserNickname(model.pubKey)
                     property string profileImage: appMain.getProfileImage(model.pubKey)
 
-                    visible: !!!memberSearch.text || 
-                        model.userName.toLowerCase().includes(memberSearch.text.toLowerCase()) ||
-                        nickname.toLowerCase().includes(memberSearch.text.toLowerCase())
+                    visible: !!!memberSearch.input.text || 
+                        model.userName.toLowerCase().includes(memberSearch.input.text.toLowerCase()) ||
+                        nickname.toLowerCase().includes(memberSearch.input.text.toLowerCase())
                     anchors.horizontalCenter: parent.horizontalCenter
 
                     image.isIdenticon: !profileImage
