@@ -11,6 +11,7 @@ import "./ChatColumn"
 import "./CommunityComponents"
 
 import StatusQ.Layout 0.1
+import StatusQ.Popups 0.1
 
 StatusAppThreePanelLayout {
     id: chatView
@@ -31,6 +32,115 @@ StatusAppThreePanelLayout {
     property var onActivated: function () {
         chatsModel.channelView.restorePreviousActiveChannel()
         chatColumn.onActivated()
+    }
+
+    StatusSearchLocationMenu {
+        id: searchPopupMenu
+        searchPopup: searchPopup
+        locationModel: chatsModel.messageSearchViewController.locationMenuModel
+
+        onItemClicked: {
+            chatsModel.messageSearchViewController.setSearchLocation(firstLevelItemValue, secondLevelItemValue)
+            if(searchPopup.searchText !== "")
+                searchMessages(searchPopup.searchText)
+        }
+    }
+
+    property var searchMessages: Backpressure.debounce(searchPopup, 400, function (value) {
+        chatsModel.messageSearchViewController.searchMessages(value)
+    })
+
+    Connections {
+        target: chatsModel.messageSearchViewController.locationMenuModel
+        onModelAboutToBeReset: {
+            for (var i = 2; i <= searchPopupMenu.count; i++) {
+                //clear menu
+                if (!!searchPopupMenu.takeItem(i)) {
+                    searchPopupMenu.removeItem(searchPopupMenu.takeItem(i));
+                }
+            }
+        }
+    }
+
+    StatusSearchPopup {
+        id: searchPopup
+
+        noResultsLabel: qsTr("No results")
+        defaultSearchLocationText: qsTr("Anywhere")
+
+        searchOptionsPopupMenu: searchPopupMenu
+        searchResults: chatsModel.messageSearchViewController.resultModel
+        onSearchTextChanged: {
+            searchMessages(searchPopup.searchText);
+        }
+        onAboutToHide: {
+            if (searchPopupMenu.visible) {
+                searchPopupMenu.close();
+            }
+        }
+        onClosed: {
+            searchPopupMenu.dismiss();
+        }
+        onOpened: {
+            searchPopup.resetSearchSelection();
+            chatsModel.messageSearchViewController.prepareLocationMenuModel()
+
+            const jsonObj = chatsModel.messageSearchViewController.getSearchLocationObject()
+
+            if (!jsonObj) {
+                return
+            }
+
+            let obj = JSON.parse(jsonObj)
+            if (obj.location === "") {
+                if(obj.subLocation === "") {
+                    chatsModel.messageSearchViewController.setSearchLocation("", "")
+                }
+                else {
+                    searchPopup.setSearchSelection(obj.subLocation.text,
+                                       "",
+                                       obj.subLocation.imageSource,
+                                       obj.subLocation.isIdenticon,
+                                       obj.subLocation.iconName,
+                                       obj.subLocation.identiconColor)
+
+                    chatsModel.messageSearchViewController.setSearchLocation("", obj.subLocation.value)
+                }
+            }
+            else {
+                if (obj.location.title === "Chat") {
+                    searchPopup.setSearchSelection(obj.subLocation.text,
+                                       "",
+                                       obj.subLocation.imageSource,
+                                       obj.subLocation.isIdenticon,
+                                       obj.subLocation.iconName,
+                                       obj.subLocation.identiconColor)
+
+                    chatsModel.messageSearchViewController.setSearchLocation(obj.location.value, obj.subLocation.value)
+                }
+                else {
+                    searchPopup.setSearchSelection(obj.location.title,
+                                       obj.subLocation.text,
+                                       obj.location.imageSource,
+                                       obj.location.isIdenticon,
+                                       obj.location.iconName,
+                                       obj.location.identiconColor)
+
+                    chatsModel.messageSearchViewController.setSearchLocation(obj.location.value, obj.subLocation.value)
+                }
+            }
+        }
+        onResultItemClicked: {
+            searchPopup.close()
+
+            chatsModel.switchToSearchedItem(itemId)
+        }
+
+        onResultItemTitleClicked: {
+            const pk = titleId
+            const userProfileImage = appMain.getProfileImage(pk)
+            return openProfilePopup(chatsModel.userNameOrAlias(pk), pk, userProfileImage || utilsModel.generateIdenticon(pk))
+        }
     }
 
     leftPanel: Loader {

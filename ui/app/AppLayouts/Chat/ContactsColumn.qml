@@ -21,7 +21,6 @@ Item {
     height: parent.height
 
     property int chatGroupsListViewCount: channelList.chatListItems.count
-    property alias searchStr: searchInput.text
     signal openProfileClicked()
 
     MouseArea {
@@ -48,23 +47,29 @@ Item {
         width: parent.width
         height: searchInput.height
 
-        StatusBaseInput {
-            id: searchInput
-
+        Item {
             anchors.verticalCenter: parent.verticalCenter
             anchors.left: parent.left
             anchors.right: actionButton.left
             anchors.leftMargin: 16
             anchors.rightMargin: 16
+            implicitHeight: searchInput.height
+            implicitWidth: searchInput.width
 
-            height: 36
-            topPadding: 8
-            bottomPadding: 0
-            //% "Search"
-            placeholderText: qsTrId("search")
-            icon.name: "search"
-            Keys.onEscapePressed: {
-                actionButton.forceActiveFocus();
+            StatusBaseInput {
+                id: searchInput
+                height: 36
+                width: parent.width
+                topPadding: 8
+                bottomPadding: 0
+                //% "Search"
+                placeholderText: qsTrId("search")
+                icon.name: "search"
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                onClicked: searchPopup.open()
             }
         }
 
@@ -202,23 +207,6 @@ Item {
 
         clip: true
 
-        Item {
-            id: noSearchResults
-            anchors.top: parent.top
-            anchors.horizontalCenter: parent.horizontalCenter
-            width: parent.width
-            visible: !!!channelList.height && contactsColumn.searchStr !== ""
-            height: visible ? 300 : 0
-
-            StatusBaseText {
-                font.pixelSize: 15
-                color: Theme.palette.directColor5
-                anchors.centerIn: parent
-                //% "No search results"
-                text: qsTrId("no-search-results")
-            }
-        }
-
         StatusChatList {
             id: channelList
 
@@ -230,10 +218,6 @@ Item {
 
             profileImageFn: function (id) {
                 return appMain.getProfileImage(id)
-            }
-
-            filterFn: function (chatListItem) {
-                return !!!contactsColumn.searchStr || chatListItem.name.toLowerCase().includes(contactsColumn.searchStr.toLowerCase())
             }
 
             Connections {
@@ -264,14 +248,6 @@ Item {
                     chatItem = chatsModel.channelView.getChatItemById(id)
                 }
             }
-        }
-
-        EmptyView {
-            id: emptyViewAndSuggestions
-            width: parent.width
-            visible: !appSettings.hideChannelSuggestions && !noSearchResults.visible
-            anchors.top: noSearchResults.visible ? noSearchResults.bottom : channelList.bottom
-            anchors.topMargin: 32
         }
     }
 
