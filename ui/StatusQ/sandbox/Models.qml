@@ -229,13 +229,15 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
 
     property ListModel optionsModel: ListModel {
         ListElement {
-            title: "Item with icon";
+            value: "item_1"
+            title: "Item with icon"
             imageSource: ""
             iconName: "chat"
             iconColor: ""
             isIdenticon: false
             subItems: [
                 ListElement {
+                    value: "sub_item_1_1"
                     text: "Profile image item"
                     imageSource: "https://pbs.twimg.com/profile_images/1369221718338895873/T_5fny6o_400x400.jpg"
                     iconName: ""
@@ -243,6 +245,7 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
                     isIdenticon: false
                 },
                 ListElement {
+                    value: "sub_item_1_2"
                     text: "identicon item"
                     imageSource: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAlklEQVR4nOzW0QmDQBAG4SSkl7SUQlJGCrElq9F3QdjjVhh/5nv3cFhY9vUIYQiNITSG0BhCExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2ImYgiNITTlTdG1nUZ5a92VITQxITFiJmIIjSE0htAYQrMHAAD//+wwFVpz+yqXAAAAAElFTkSuQmCC"
                     iconName: ""
@@ -250,6 +253,7 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
                     isIdenticon: true
                 }]}
         ListElement {
+            value: "item_2"
             title: "Community item";
             imageSource: "https://pbs.twimg.com/profile_images/1369221718338895873/T_5fny6o_400x400.jpg"
             iconName: ""
@@ -257,6 +261,7 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
             isIdenticon: false
             subItems: [
                 ListElement {
+                    value: "sub_item_2_1"
                     text: "welcome"
                     imageSource: ""
                     iconName: "channel"
@@ -264,6 +269,7 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
                     isIdenticon: false
                 },
                 ListElement {
+                    value: "sub_item_2_2"
                     text: "support"
                     imageSource: ""
                     iconName: "channel"
@@ -271,6 +277,7 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
                     isIdenticon: false
                 },
                 ListElement {
+                    value: "sub_item_2_3"
                     text: "news"
                     imageSource: ""
                     iconName: "channel"
@@ -278,6 +285,7 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
                     isIdenticon: false
                 }]}
         ListElement {
+            value: "item_3"
             title: "Other";
             imageSource: "";
             iconName: "info"
@@ -285,6 +293,7 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
             isIdenticon: false
             subItems: [
                 ListElement {
+                    value: "sub_item_3_1"
                     text: "news"
                     imageSource: ""
                     iconName: "channel"
@@ -292,6 +301,7 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
                     isIdenticon: false
                 }]}
         ListElement {
+            value: "item_4"
             title: "Letter identicon";
             imageSource: "";
             iconName: ""
@@ -299,6 +309,7 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
             isIdenticon: false
             subItems: [
                 ListElement {
+                    value: "sub_item_4_1"
                     text: "news"
                     imageSource: ""
                     iconName: "channel"

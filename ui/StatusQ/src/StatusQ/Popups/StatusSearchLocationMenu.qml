@@ -33,6 +33,7 @@ StatusPopupMenu {
             sourceComponent: (!!model.subItems && model.subItems.count > 0) ? subMenus : subMenuItemComponent
             onLoaded: {
                 if (!!model.subItems && model.subItems.count > 0)  {
+                    item.parentValue = model.value
                     item.title = model.title;
                     item.subItemsModel = model.subItems;
                     item.parentIconName = model.iconName;
@@ -48,6 +49,7 @@ StatusPopupMenu {
                                    });
                     root.insertMenu(index+2, item);
                 } else {
+                    item.value = model.value
                     item.text = model.title;
                     item.iconSettings.name = model.iconName;
                     item.iconSettings.color = model.iconColor;
@@ -82,6 +84,7 @@ StatusPopupMenu {
         StatusPopupMenu {
             id: menu
             property var subItemsModel
+            property string parentValue
             property string parentIconName
             property string parentImageSource
             property string parentIdenticonColor
@@ -89,6 +92,7 @@ StatusPopupMenu {
             Repeater {
                 id: menuLoader
                 model: menu.subItemsModel
+                property string parentValue: menu.parentValue
                 property string parentTitleText: menu.title
                 property string parentIconName: menu.parentIconName
                 property string parentImageSource: menu.parentImageSource
@@ -97,6 +101,7 @@ StatusPopupMenu {
                 Loader {
                     id: subMenuLoader
                     sourceComponent: StatusSearchPopupMenuItem {
+                        value: model.value
                         text: model.text
                         image.source: model.imageSource
                         iconSettings.name: model.iconName

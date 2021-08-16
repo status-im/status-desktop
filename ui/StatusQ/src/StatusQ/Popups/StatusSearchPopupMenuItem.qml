@@ -9,6 +9,8 @@ MenuItem {
     id: root
     implicitHeight: 38
 
+    property string value: ""
+
     property StatusImageSettings image: StatusImageSettings {
         height: 16
         width: 16
