@@ -41,6 +41,7 @@ ModalPopup {
         anchors.top: parent.top
         onClicked: {
             appMain.openLink(popup.buttonLink)
+            popup.close()
         }
     }
 }
