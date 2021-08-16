@@ -16,8 +16,7 @@ StatusPopupMenu {
     StatusMenuItem {
         text: "Anywhere"
         onTriggered: {
-            searchPopup.resetSelectionBadge();
-            searchPopup.searchSelectionButton.primaryText = text;
+            searchPopup.resetSearchSelection();
             root.itemClicked("", "");
         }
     }
@@ -64,13 +63,13 @@ StatusPopupMenu {
         id: subMenuItemComponent
         StatusSearchPopupMenuItem {
             onClicked: {
-                searchPopup.resetSelectionBadge()
-                searchPopup.searchSelectionButton.primaryText = text;
-                searchPopup.searchSelectionButton.image.source = image.source;
-                searchPopup.searchSelectionButton.image.isIdenticon = image.isIdenticon;
-                searchPopup.searchSelectionButton.iconSettings.name = iconSettings.name;
-                searchPopup.searchSelectionButton.iconSettings.color = !!iconSettings.color ? iconSettings.color : Theme.palette.primaryColor1
-                searchPopup.searchSelectionButton.iconSettings.isLetterIdenticon = !iconSettings.name && !image.source
+                searchPopup.resetSearchSelection()
+                searchPopup.setSearchSelection(text,
+                                               "",
+                                               image.source,
+                                               image.isIdenticon,
+                                               iconSettings.name,
+                                               iconSettings.color)
                 root.itemClicked(value, "")
             }
         }
@@ -105,22 +104,21 @@ StatusPopupMenu {
                         iconSettings.color: model.iconColor
                         image.isIdenticon: model.isIdenticon
                         onTriggered: {
-                            searchPopup.resetSelectionBadge();
+                            searchPopup.resetSearchSelection()
                             if (menuLoader.parentTitleText === "Chat") {
-                                searchPopup.searchSelectionButton.primaryText = model.text;
-                                searchPopup.searchSelectionButton.image.source = model.imageSource;
-                                searchPopup.searchSelectionButton.image.isIdenticon = model.isIdenticon;
-                                searchPopup.searchSelectionButton.iconSettings.name = model.iconName;
-                                searchPopup.searchSelectionButton.iconSettings.color = !!model.iconColor ? model.iconColor : Theme.palette.primaryColor1;
-                                searchPopup.searchSelectionButton.iconSettings.isLetterIdenticon = !model.iconName && !model.imageSource
+                                searchPopup.setSearchSelection(model.text,
+                                                               "",
+                                                               model.imageSource,
+                                                               model.isIdenticon,
+                                                               model.iconName,
+                                                               model.iconColor)
                             } else {
-                                searchPopup.searchSelectionButton.primaryText = menuLoader.parentTitleText;
-                                searchPopup.searchSelectionButton.secondaryText = model.text;
-                                searchPopup.searchSelectionButton.image.source = menuLoader.parentImageSource;
-                                searchPopup.searchSelectionButton.image.isIdenticon = menuLoader.parentIsIdenticon;
-                                searchPopup.searchSelectionButton.iconSettings.name = menuLoader.parentIconName;
-                                searchPopup.searchSelectionButton.iconSettings.color = !!menuLoader.parentIdenticonColor ? menuLoader.parentIdenticonColor : Theme.palette.primaryColor1;
-                                searchPopup.searchSelectionButton.iconSettings.isLetterIdenticon = !menuLoader.parentIconName && !menuLoader.parentImageSource
+                                searchPopup.setSearchSelection(menuLoader.parentTitleText,
+                                                   model.text,
+                                                   menuLoader.parentImageSource,
+                                                   menuLoader.parentIsIdenticon,
+                                                   menuLoader.parentIconName,
+                                                   menuLoader.parentIdenticonColor)
                             }
                             root.itemClicked(menuLoader.parentValue, value)
                             root.dismiss()
@@ -131,14 +129,14 @@ StatusPopupMenu {
         }
     }
     onMenuItemClicked: {
-        searchPopup.resetSelectionBadge();
+        searchPopup.resetSearchSelection()
         let menuItem = root.menuAt(root.currentIndex)
-        searchPopup.searchSelectionButton.primaryText = menuItem.title;
-        searchPopup.searchSelectionButton.image.source = menuItem.parentImageSource;
-        searchPopup.searchSelectionButton.image.isIdenticon = menuItem.parentIsIdenticon;
-        searchPopup.searchSelectionButton.iconSettings.name = menuItem.parentIconName;
-        searchPopup.searchSelectionButton.iconSettings.color = menuItem.parentIdenticonColor;
-        searchPopup.searchSelectionButton.iconSettings.isLetterIdenticon = !menuItem.parentIconName && !menuItem.parentImageSource
+        searchPopup.setSearchSelection(menuItem.title,
+                           "",
+                           menuItem.parentImageSource,
+                           menuItem.parentIsIdenticon,
+                           menuItem.parentIconName,
+                           menuItem.parentIdenticonColor)
         root.itemClicked(menuItem.parentValue, "")
         //TODO fix error "QML StatusPopupMenu: cannot find any window to open popup in."
         root.dismiss()

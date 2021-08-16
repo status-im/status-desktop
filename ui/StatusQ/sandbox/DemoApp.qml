@@ -567,8 +567,9 @@ Rectangle {
                     chatInfoButton.type: StatusChatInfoButton.Type.CommunityChat
                     onSearchButtonClicked: {
                         searchButton.highlighted = !searchButton.highlighted;
-                        searchPopup.searchSelectionButton.primaryText = demoCommunityDetailModal.header.title;
-                        searchPopup.searchSelectionButton.image.source = demoCommunityDetailModal.header.image.source;
+                        searchPopup.setSearchSelection(demoCommunityDetailModal.header.title,
+                                                       "",
+                                                       demoCommunityDetailModal.header.image.source);
                         searchPopup.open();
                     }
                     membersButton.onClicked: membersButton.highlighted = !membersButton.highlighted

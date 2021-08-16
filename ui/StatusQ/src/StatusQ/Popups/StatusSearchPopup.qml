@@ -19,21 +19,32 @@ StatusModal {
 
     property string searchText: contentComponent.searchText
     property string noResultsLabel: "No results"
+    property string defaultSearchLocationText: "Anywhere"
     property bool loading
     property Menu searchOptionsPopupMenu: Menu { }
     property var searchResults: [ ]
     property var searchSelectionButton
-    function resetSelectionBadge() {
-        searchSelectionButton.iconSettings.name = ""
-        searchSelectionButton.iconSettings.isLetterIdenticon = false
-        searchSelectionButton.iconSettings.color = "transparent"
-        searchSelectionButton.image.source = ""
-        searchSelectionButton.image.isIdenticon = false
-        searchSelectionButton.primaryText = qsTr("Anywhere");
-        searchSelectionButton.secondaryText = "";
 
     signal resultItemClicked(string itemId)
     signal resultItemTitleClicked(string titleId)
+
+    function setSearchSelection(text = "",
+                                secondaryText = "",
+                                imageSource = "",
+                                isIdenticon = "",
+                                iconName = "",
+                                iconColor = "") {
+        searchSelectionButton.primaryText = text
+        searchSelectionButton.secondaryText = secondaryText
+        searchSelectionButton.image.source = imageSource
+        searchSelectionButton.image.isIdenticon = isIdenticon
+        searchSelectionButton.iconSettings.name = iconName
+        searchSelectionButton.iconSettings.color = iconColor !== ""? iconColor : Theme.palette.primaryColor1
+        searchSelectionButton.iconSettings.isLetterIdenticon = !iconName && !imageSource
+    }
+
+    function resetSearchSelection() {
+        setSearchSelection(defaultSearchLocationText, "", "", false, "", "transparent")
     }
 
     content: Item {
@@ -134,9 +145,10 @@ StatusModal {
                                 Loader {
                                     Layout.preferredWidth: active ? 16 : 0
                                     Layout.preferredHeight: 16
-                                    active: searchOptionsMenuButton.iconSettings.name ||
+                                    active: searchOptionsMenuButton.primaryText !== defaultSearchLocationText &&
+                                        (searchOptionsMenuButton.iconSettings.name ||
                                         searchOptionsMenuButton.iconSettings.isLetterIdenticon ||
-                                        !!searchOptionsMenuButton.image.source.toString()
+                                        !!searchOptionsMenuButton.image.source.toString())
 
                                     sourceComponent: {
                                         if (!!searchOptionsMenuButton.image.source.toString()) {
@@ -231,14 +243,14 @@ StatusModal {
                     anchors.left: searchOptionsMenuButton.right
                     anchors.leftMargin: 4
                     anchors.verticalCenter: parent.verticalCenter
-                    opacity: (searchOptionsMenuButton.primaryText === qsTr("Anywhere")) ? 0.0 : 1.0
+                    opacity: (searchOptionsMenuButton.primaryText === defaultSearchLocationText) ? 0.0 : 1.0
                     visible: (opacity > 0.1)
                     type: StatusFlatRoundButton.Type.Secondary
                     icon.name: "close"
                     icon.color: Theme.palette.directColor1
                     icon.width: 20
                     icon.height: 20
-                    onClicked: { root.resetSelectionBadge(); }
+                    onClicked: { root.resetSearchSelection(); }
                 }
             }
 
@@ -321,7 +333,7 @@ StatusModal {
         }
     }
     onClosed: {
-        root.resetSelectionBadge();
+        root.resetSearchSelection();
         root.loading = false;
         contentComponent.searchText = "";
     }
