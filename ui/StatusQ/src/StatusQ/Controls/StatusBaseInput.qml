@@ -43,6 +43,8 @@ Item {
     property int maximumLength: 0
 
     property bool valid: true
+    property bool pristine: true
+    property bool dirty: false
 
     property StatusIconSettings icon: StatusIconSettings {
         width: 24
@@ -67,7 +69,7 @@ Item {
 
         border.width: 1
         border.color: {
-            if (!statusBaseInput.valid) {
+            if (!statusBaseInput.valid && statusBaseInput.dirty) {
                 return Theme.palette.dangerColor1;
             }
             if (edit.activeFocus) {
@@ -144,6 +146,12 @@ Item {
                     onCursorRectangleChanged: flick.ensureVisible(cursorRectangle)
                     wrapMode: statusBaseInput.multiline ? Text.WrapAtWordBoundaryOrAnywhere : TextEdit.NoWrap
 
+                    onActiveFocusChanged: {
+                        if (statusBaseInput.pristine) {
+                            statusBaseInput.pristine = false
+                        }
+                    }
+
                     Keys.onReturnPressed: {
                         if (multiline) {
                             event.accepted = false
@@ -161,6 +169,7 @@ Item {
                     }
 
                     onTextChanged: {
+                        statusBaseInput.dirty = true
                         if (statusBaseInput.maximumLength > 0) {
                             if (text.length > statusBaseInput.maximumLength) {
                                 var cursor = cursorPosition;
