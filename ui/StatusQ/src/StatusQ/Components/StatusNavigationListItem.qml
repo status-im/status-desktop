@@ -6,7 +6,6 @@ import StatusQ.Components 0.1
 StatusListItem {
     id: statusNavigationListItem
 
-    signal clicked(var mouse)
     property bool selected: false
     property alias badge: statusBadge
 

@@ -34,6 +34,9 @@ Rectangle {
 
     radius: 8
 
+    property string itemId: ""
+    property string titleId: ""
+
     property string title: ""
     property string titleAsideText: ""
     property string subTitle: ""
@@ -83,6 +86,9 @@ Rectangle {
 
     property list<Item> components
 
+    signal clicked(string itemId)
+    signal titleClicked(string titleId)
+
     onComponentsChanged: {
         if (components.length) {
             for (let idx in components) {
@@ -99,6 +105,10 @@ Rectangle {
         cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
         acceptedButtons: Qt.LeftButton | Qt.RightButton
         hoverEnabled: true
+
+        onClicked: {
+            statusListItem.clicked(statusListItem.itemId)
+        }
 
         Loader {
             id: iconOrImage
@@ -186,6 +196,15 @@ Rectangle {
                       case StatusListItem.Type.Danger:
                           return Theme.palette.dangerColor1
                   }
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    cursorShape: containsMouse? Qt.PointingHandCursor : Qt.ArrowCursor
+                    hoverEnabled: true
+                    onClicked: {
+                        statusListItem.titleClicked(statusListItem.titleId)
+                    }
                 }
             }
 

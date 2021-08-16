@@ -23,14 +23,11 @@ StatusListItem {
     property alias menuButton: menuButton
     property alias toggleButton: toggleButton
 
-    signal clicked(var mouse)
     signal addButtonClicked(var mouse)
     signal menuButtonClicked(var mouse)
     signal toggleButtonClicked(var mouse)
 
     color: sensor.containsMouse || highlighted ? Theme.palette.baseColor2 : "transparent"
-
-    sensor.onClicked: statusChatListCategoryItem.clicked(mouse)
 
     statusListItemTitle.color: Theme.palette.directColor4
     statusListItemTitle.font.weight: Font.Medium

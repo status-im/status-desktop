@@ -31,6 +31,9 @@ StatusModal {
         searchSelectionButton.image.isIdenticon = false
         searchSelectionButton.primaryText = qsTr("Anywhere");
         searchSelectionButton.secondaryText = "";
+
+    signal resultItemClicked(string itemId)
+    signal resultItemTitleClicked(string titleId)
     }
 
     content: Item {
@@ -257,8 +260,10 @@ StatusModal {
                     ScrollBar.vertical: ScrollBar { }
                     delegate: StatusListItem {
                         width: view.width
-                        title: model.name
-                        statusListItemTitle.color: model.name.startsWith("@") ? Theme.palette.primaryColor1 : Theme.palette.directColor1
+                        itemId: model.itemId
+                        titleId: model.titleId
+                        title: model.title
+                        statusListItemTitle.color: model.title.startsWith("@") ? Theme.palette.primaryColor1 : Theme.palette.directColor1
                         subTitle: model.content
                         radius: 0
                         statusListItemSubTitle.height: model.content !== "" ? 20 : 0
@@ -272,6 +277,14 @@ StatusModal {
                         badge.image.source: model.badgeImage
                         badge.icon.isLetterIdenticon: model.isLetterIdenticon
                         badge.icon.color: model.badgeIdenticonColor
+
+                        onClicked: {
+                            root.resultItemClicked(itemId)
+                        }
+
+                        onTitleClicked: {
+                            root.resultItemTitleClicked(titleId)
+                        }
                     }
                     section.property: "sectionName"
                     section.criteria: ViewSection.FullString
