@@ -34,7 +34,7 @@ Item {
 
     StatusBaseText {
         id: label
-        height: visible ? implicitHeight : 0
+        height: visible ? 17 : 0
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.topMargin: visible ? 8 : 0
