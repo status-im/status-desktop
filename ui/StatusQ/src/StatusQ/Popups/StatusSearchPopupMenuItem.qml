@@ -38,7 +38,7 @@ MenuItem {
             Layout.alignment: Qt.AlignVCenter
             visible: !!root.iconSettings.name && !root.image.source.toString()
             icon:  root.iconSettings.name
-            color: root.iconSettings.color
+            color: (icon === "channel")? Theme.palette.directColor1 : root.iconSettings.color
         }
         StatusRoundedImage {
             Layout.preferredWidth: visible ? root.image.width : 0

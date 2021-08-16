@@ -218,10 +218,18 @@ StatusModal {
                                     color: Theme.palette.baseColor1
                                     icon: "next"
                                 }
+                                StatusIcon {
+                                    Layout.preferredWidth: 17.5
+                                    Layout.preferredHeight: 17.5
+                                    Layout.alignment: Qt.AlignVCenter
+                                    visible: !!searchOptionsMenuButton.secondaryText
+                                    color: Theme.palette.directColor1
+                                    icon: "channel"
+                                }
                                 StatusBaseText {
                                     color: Theme.palette.directColor1
                                     visible: !!searchOptionsMenuButton.secondaryText
-                                    text: "# " + searchOptionsMenuButton.secondaryText
+                                    text: searchOptionsMenuButton.secondaryText
                                     font.weight: Font.Medium
                                 }
                                 StatusIcon {
