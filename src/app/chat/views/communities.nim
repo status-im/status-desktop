@@ -1,7 +1,6 @@
 import NimQml, json, sequtils, chronicles, strutils, strformat, tables
 import ../../../status/status
 import ../../../status/chat/chat
-import ./channels_list
 import ./community_list
 import ./community_item
 import ./community_membership_request_list
