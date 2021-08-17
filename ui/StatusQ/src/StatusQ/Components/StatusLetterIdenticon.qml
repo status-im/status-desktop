@@ -5,6 +5,7 @@ import StatusQ.Core.Theme 0.1
 Rectangle {
     id: statusLetterIdenticon
 
+    property alias identiconText: identiconText
     property string name
     property int letterSize: 21
 
@@ -14,6 +15,7 @@ Rectangle {
     radius: width / 2
 
     StatusBaseText {
+        id: identiconText
         text: ((statusLetterIdenticon.name.charAt(0) === "#")
               || (statusLetterIdenticon.name.charAt(0) === "@") ?
               statusLetterIdenticon.name.charAt(1) : statusLetterIdenticon.name.charAt(0)).toUpperCase()
