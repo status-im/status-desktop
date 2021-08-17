@@ -3,16 +3,18 @@ import NimQml, chronicles, stint
 
 import
   ../../../status/[status, wallet],
-  views/[accounts, account_list]
+  views/[accounts, account_list, collectibles]
 
 QtObject:
   type
     WalletView* = ref object of QAbstractListModel
       status: Status
       accountsView: AccountsView
+      collectiblesView: CollectiblesView
 
   proc delete(self: WalletView) =
     self.accountsView.delete
+    self.collectiblesView.delete
     self.QAbstractListModel.delete
 
   proc setup(self: WalletView) =
@@ -22,21 +24,28 @@ QtObject:
     new(result, delete)
     result.status = status
     result.accountsView = newAccountsView(status)
+    result.collectiblesView = newCollectiblesView(status)
     result.setup
 
   proc getAccounts(self: WalletView): QVariant {.slot.} = newQVariant(self.accountsView)
   QtProperty[QVariant] accountsView:
     read = getAccounts
 
+  proc getCollectibles(self: WalletView): QVariant {.slot.} = 
+    return newQVariant(self.collectiblesView)
+
+  QtProperty[QVariant] collectiblesView:
+    read = getCollectibles
+
   proc updateView*(self: WalletView) =
     # TODO:
     self.accountsView.triggerUpdateAccounts()
 
-
   proc setCurrentAccountByIndex*(self: WalletView, index: int) {.slot.} =
     if self.accountsView.setCurrentAccountByIndex(index):
       let selectedAccount = self.accountsView.accounts.getAccount(index)
-      # TODO: load account details/transactions/collectibles/etc
+      self.collectiblesView.loadCollections(selectedAccount)
+      # TODO: load account details/transactions/etc
 
   proc addAccountToList*(self: WalletView, account: WalletAccount) =
     self.accountsView.addAccountToList(account)

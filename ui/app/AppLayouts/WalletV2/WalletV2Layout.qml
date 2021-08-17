@@ -69,8 +69,36 @@ Item {
                     Layout.fillHeight: true
                     Layout.fillWidth: true
 
-                    StyledText {
-                        text: "TODO"
+                    TabBar {
+                        id: walletTabBar
+                        anchors.right: parent.right
+                        anchors.rightMargin: Style.current.bigPadding
+                        anchors.left: parent.left
+                        anchors.leftMargin: Style.current.bigPadding
+                        anchors.top: parent.top
+                        anchors.topMargin: Style.current.padding
+                        height: collectiblesBtn.height
+                        background: Rectangle {
+                            color: Style.current.transparent
+                        }
+                        StatusTabButton {
+                            id: collectiblesBtn
+                            btnText: qsTr("Collectibles")
+                        }
+                    }
+
+                    StackLayout {
+                        id: stackLayout
+                        anchors.top: walletTabBar.bottom
+                        anchors.right: parent.right
+                        anchors.bottom: parent.bottom
+                        anchors.left: parent.left
+                        anchors.topMargin: Style.current.bigPadding
+                        currentIndex: walletTabBar.currentIndex
+
+                        CollectiblesTab {
+                            id: collectiblesTab
+                        }
                     }
                 }
             }
