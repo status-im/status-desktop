@@ -1,8 +1,6 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.3
-import QtQml.Models 2.3
-import QtGraphicalEffects 1.13
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -17,8 +15,8 @@ StatusModal {
     id: popup
 
     onOpened: {
-        contentComponent.searchBox.text = "";
-        contentComponent.searchBox.forceActiveFocus(Qt.MouseFocusReason)
+        contentComponent.searchBox.input.text = "";
+        contentComponent.searchBox.input.forceActiveFocus(Qt.MouseFocusReason)
     }
 
     //% "Communities"
@@ -46,23 +44,21 @@ StatusModal {
         width: popup.width
         property alias searchBox: searchBox
 
-        Item {
-            height: 68
-            width: parent.width - 32
-            anchors.horizontalCenter: parent.horizontalCenter
-            SearchBox {
-                id: searchBox
-                anchors.verticalCenter: parent.verticalCenter
-                //% "Search for communities or topics"
-                placeholderText: qsTrId("search-for-communities-or-topics")
-                iconWidth: 17
-                iconHeight: 17
-                customHeight: 36
-                fontPixelSize: 15
-            }
+        Item { 
+            height: 8
+            width: parent.width
         }
 
-        StatusModalDivider {}
+        StatusInput {
+            id: searchBox
+            input.placeholderText: qsTr("Search for communities or topics")
+            input.icon.name: "search"
+            input.height: 36
+            input.topPadding: 9
+            input.bottomPadding: 0
+        }
+
+        StatusModalDivider { topPadding: 8 }
 
         ScrollView {
             width: parent.width
@@ -109,10 +105,10 @@ StatusModal {
                 model: chatsModel.communities.list
                 delegate: StatusListItem {
                     visible: {
-                        if (!searchBox.text) {
+                        if (!searchBox.input.text) {
                             return true
                         }
-                        const lowerCaseSearchStr = searchBox.text.toLowerCase()
+                        const lowerCaseSearchStr = searchBox.input.text.toLowerCase()
                         return name.toLowerCase().includes(lowerCaseSearchStr) || description.toLowerCase().includes(lowerCaseSearchStr)
                     }
                     height: visible ? implicitHeight : 0
