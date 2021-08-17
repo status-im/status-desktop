@@ -859,7 +859,8 @@ Rectangle {
                 persistentSelection: true
                 onTextChanged: {
                     var symbols = ":='xX><0O;*dB8-D#%\\";
-                    if ((length > 1) && (symbols.indexOf(getText((cursorPosition - 2), (cursorPosition - 1))) !== -1)) {
+                    if ((length > 1) && (symbols.indexOf(getText((cursorPosition - 2), (cursorPosition - 1))) !== -1)
+                        && (!getText((cursorPosition - 7), cursorPosition).includes("http"))) {
                         const emojis = EmojiJSON.emoji_json.filter(function (emoji) {
                             if (emoji.aliases_ascii.includes(getText((cursorPosition - 2), cursorPosition)) ||
                                 emoji.aliases_ascii.includes(getText((cursorPosition - 3), cursorPosition))) {
