@@ -313,14 +313,13 @@ Item {
                 visible: isBlocked
                 color: Style.current.red
                 opacity: 0.1
-            }
 
-            Text {
-                id: blockedText
-                anchors.centerIn: blockedBanner
-                visible: isBlocked
-                color: Style.current.red
-                text: qsTr("Blocked")
+                Text {
+                    id: blockedText
+                    anchors.centerIn: blockedBanner
+                    color: Style.current.red
+                    text: qsTr("Blocked")
+                }
             }
 
             StackLayout {
