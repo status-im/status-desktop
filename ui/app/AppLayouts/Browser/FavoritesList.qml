@@ -4,41 +4,37 @@ import "../../../shared/status"
 import "../../../imports"
 import "./components"
 
-Item {
-    id: bookmarkListContainer
-
-    ListView {
-        id: bookmarkList
-        model: browserModel.bookmarks
-        spacing: Style.current.padding
-        orientation : ListView.Horizontal
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.horizontalCenterOffset: -(addBookmarkBtn.width + spacing) /2
-        width: Math.min(childrenRect.width, parent.width - addBookmarkBtn.width - spacing)
-        delegate: BookmarkButton {
-            id: bookmarkBtn
-            text: name
-            onClicked: {
-                currentWebView.url = determineRealURL(url)
+GridView {
+    id: bookmarkGrid
+    cellWidth: 100
+    cellHeight: 100
+    model: browserModel.bookmarks
+    delegate: BookmarkButton {
+        id: bookmarkBtn
+        text: name
+        source: imageUrl
+        webUrl: determineRealURL(url)
+        onClicked: {
+            if (!webUrl.toString()) {
+                addFavoriteModal.open()
+            } else {
+                currentWebView.url = webUrl
             }
-            source: imageUrl
-            onRightClicked: {
-                favoriteMenu.url = url
-                favoriteMenu.x = bookmarkList.x + bookmarkBtn.x + mouse.x
-                favoriteMenu.y = Qt.binding(function () {return bookmarkListContainer.y + mouse.y + favoriteMenu.height})
-                favoriteMenu.open()
-            }
+        }
+        onRightClicked: {
+            favoriteMenu.url = url
+            favoriteMenu.x = bookmarkGrid.x + bookmarkBtn.x + mouse.x
+            favoriteMenu.y = Qt.binding(function () {return bookmarkGrid.y + mouse.y + favoriteMenu.height})
+            favoriteMenu.open()
         }
     }
 
-    BookmarkButton {
-        id: addBookmarkBtn
-        //% "Add favorite"
-        text: qsTrId("add-favorite")
-        onClicked: {
-            addFavoriteModal.open()
+    Component.onCompleted: {
+        // Add fav button at the end of the grid
+        var index = browserModel.bookmarks.getBookmarkIndexByUrl("")
+        if (index !== -1) {
+            browserModel.removeBookmark("")
         }
-        anchors.left: bookmarkList.right
-        anchors.leftMargin: bookmarkList.spacing
+            browserModel.addBookmark("", qsTr("Add Favorite"))
     }
 }
