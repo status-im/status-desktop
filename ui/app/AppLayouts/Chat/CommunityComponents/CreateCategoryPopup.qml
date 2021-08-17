@@ -1,6 +1,5 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.3
-import QtGraphicalEffects 1.13
 import QtQuick.Dialogs 1.3
 import "../../../../imports"
 import "../../../../shared"
@@ -9,6 +8,7 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
+import StatusQ.Controls.Validators 0.1
 import StatusQ.Popups 0.1
 
 StatusModal {
@@ -27,19 +27,15 @@ StatusModal {
 
     onOpened: {
         if(isEdit){
-            popup.contentComponent.categoryName.text = categoryName
+            popup.contentComponent.categoryName.input.text = categoryName
             channels = JSON.parse(chatsModel.communities.activeCommunity.getChatIdsByCategory(categoryId))
         }
-        popup.contentComponent.categoryName.forceActiveFocus(Qt.MouseFocusReason)
+        popup.contentComponent.categoryName.input.forceActiveFocus(Qt.MouseFocusReason)
     }
     onClosed: destroy()
 
     function isFormValid() {
-        return Utils.validateAndReturnError(popup.contentComponent.categoryName.text,
-                                            categoryNameValidator,
-                                            //% "category name"
-                                            qsTrId("category-name"),
-                                            maxCategoryNameLength) === ""
+        return contentComponent.categoryName.valid
     }
 
     header.title: isEdit ?
@@ -53,29 +49,12 @@ StatusModal {
         width: popup.width
         property alias categoryName: nameInput
 
-        Item {
-            width: parent.width
-            height: 76
-            Input {
-                id: nameInput
-                width: parent.width -32
-
-                anchors.centerIn: parent
-                anchors.left: undefined
-                anchors.right: undefined
-
-                //% "Category title"
-                placeholderText: qsTrId("category-title")
-                maxLength: maxCategoryNameLength
-
-                onTextEdited: {
-                    validationError = Utils.validateAndReturnError(text,
-                                                                  categoryNameValidator,
-                                                                  //% "category name"
-                                                                  qsTrId("category-name"),
-                                                                  maxCategoryNameLength)
-                }
-            }
+        StatusInput {
+            id: nameInput
+            charLimit: maxCategoryNameLength
+            input.placeholderText: qsTr("Category title")
+            validators: [StatusMinLengthValidator { minLength: 1 }]
+            onTextChanged: errorMessage = Utils.getErrorMessage(errors, "category name")
         }
 
         StatusModalDivider {
@@ -182,9 +161,9 @@ StatusModal {
             sensor.onClicked: {
                 openPopup(deleteCategoryConfirmationDialogComponent, {
                     //% "Delete %1 category"
-                    title: qsTrId("delete--1-category").arg(popup.contentComponent.categoryName.text),
+                    title: qsTrId("delete--1-category").arg(popup.contentComponent.categoryName.input.text),
                     //% "Are you sure you want to delete %1 category? Channels inside the category won’t be deleted."
-                    confirmationText: qsTrId("are-you-sure-you-want-to-delete--1-category--channels-inside-the-category-won-t-be-deleted-").arg(popup.contentComponent.categoryName.text)
+                    confirmationText: qsTrId("are-you-sure-you-want-to-delete--1-category--channels-inside-the-category-won-t-be-deleted-").arg(popup.contentComponent.categoryName.input.text)
                     
                 })
             }
@@ -237,9 +216,9 @@ StatusModal {
                 let error = ""
 
                 if (isEdit) {
-                    error = chatsModel.communities.editCommunityCategory(communityId, categoryId, Utils.filterXSS(popup.contentComponent.categoryName.text), JSON.stringify(channels))
+                    error = chatsModel.communities.editCommunityCategory(communityId, categoryId, Utils.filterXSS(popup.contentComponent.categoryName.input.text), JSON.stringify(channels))
                 } else {
-                    error = chatsModel.communities.createCommunityCategory(communityId, Utils.filterXSS(popup.contentComponent.categoryName.text), JSON.stringify(channels))
+                    error = chatsModel.communities.createCommunityCategory(communityId, Utils.filterXSS(popup.contentComponent.categoryName.input.text), JSON.stringify(channels))
                 }
 
                 if (error) {
