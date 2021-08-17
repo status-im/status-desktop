@@ -207,7 +207,7 @@ QtObject:
     self.recentStickers.addStickerToList(sticker)
     self.recentStickersUpdated()
 
-  proc send*(self: StickersView, hash: string, pack: int) {.slot.} =
+  proc send*(self: StickersView, hash: string, replyTo: string, pack: int) {.slot.} =
     let sticker = Sticker(hash: hash, packId: pack)
     self.addRecentStickerToList(sticker)
-    self.status.chat.sendSticker(self.activeChannel.id, sticker)
+    self.status.chat.sendSticker(self.activeChannel.id, replyTo, sticker)

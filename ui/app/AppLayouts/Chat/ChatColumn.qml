@@ -442,7 +442,7 @@ Item {
                         txModalLoader.item.open()
                     }
                     onStickerSelected: {
-                        chatsModel.stickers.send(hashId, packId)
+                        chatsModel.stickers.send(hashId, chatInput.isReply ? SelectedMessage.messageId : "", packId)
                     }
                     onSendMessage: {
                         if (chatInput.fileUrls.length > 0){

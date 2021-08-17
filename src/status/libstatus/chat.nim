@@ -181,13 +181,13 @@ proc sendImageMessages*(chatId: string, images: var seq[string]): string =
     )
   callPrivateRPC("sendChatMessages".prefix, %* [imagesJson])
 
-proc sendStickerMessage*(chatId: string, sticker: Sticker): string =
+proc sendStickerMessage*(chatId: string, replyTo: string, sticker: Sticker): string =
   let preferredUsername = getSetting[string](Setting.PreferredUsername, "")
   callPrivateRPC("sendChatMessage".prefix, %* [
     {
       "chatId": chatId,
       "text": "Update to latest version to see a nice sticker here!",
-      "responseTo": nil,
+      "responseTo": replyTo,
       "ensName": preferredUsername,
       "sticker": {
         "hash": sticker.hash,

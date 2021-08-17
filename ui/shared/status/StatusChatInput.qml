@@ -24,6 +24,7 @@ Rectangle {
     property bool paste: false;
     property bool isColonPressed: false;
     property bool isReply: false
+
     property bool isImage: false
     property bool isEdit: false
     property bool isContactBlocked: false
@@ -681,6 +682,7 @@ Rectangle {
         stickerPackList: control.stickerPackList
         onStickerSelected: {
             control.stickerSelected(hashId, packId)
+            control.hideExtendedArea();
             messageInputField.forceActiveFocus();
         }
         onClosed: {

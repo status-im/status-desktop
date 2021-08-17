@@ -350,8 +350,8 @@ QtObject:
     var response = status_chat.deleteMessageAndSend(messageId)    
     discard self.processMessageUpdateAfterSend(response, false)
 
-  proc sendSticker*(self: ChatModel, chatId: string, sticker: Sticker) =
-    var response = status_chat.sendStickerMessage(chatId, sticker)
+  proc sendSticker*(self: ChatModel, chatId: string, replyTo: string, sticker: Sticker) =
+    var response = status_chat.sendStickerMessage(chatId, replyTo, sticker)
     self.events.emit("stickerSent", StickerArgs(sticker: sticker, save: true))
     var (chats, messages) = self.processChatUpdate(parseJson(response))
     self.events.emit("chatUpdate", ChatUpdateArgs(messages: messages, chats: chats, contacts: @[]))
