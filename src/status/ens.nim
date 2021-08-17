@@ -185,7 +185,7 @@ proc releaseEstimateGas*(username: string, address: string, success: var bool): 
     if success:
       result = fromHex[int](response)
   except RpcException as e:
-    raise
+    error "Could not estimate gas for ens release", err=e.msg
 
 proc release*(username: string, address: string, gas, gasPrice,  password: string, success: var bool): string =
   let
@@ -199,7 +199,7 @@ proc release*(username: string, address: string, gas, gasPrice,  password: strin
     if success:
       trackPendingTransaction(result, address, $ensUsernamesContract.address, PendingTransactionType.ReleaseENS, username)
   except RpcException as e:
-    raise
+    error "Could not estimate gas for ens release", err=e.msg
 
 proc getExpirationTime*(username: string, success: var bool): int =
   let 
