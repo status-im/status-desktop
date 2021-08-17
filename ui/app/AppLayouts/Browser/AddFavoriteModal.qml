@@ -147,7 +147,10 @@ ModalPopup {
                 }
 
                 if (!popup.modifiyModal) {
+                    // remove "add favorite" button at the end, add new bookmark, add "add favorite" button back
+                    browserModel.removeBookmark("")
                     browserModel.addBookmark(urlInput.text, nameInput.text)
+                    browserModel.addBookmark("", qsTr("Add Favorite"))
                 } else if (popup.ogName !== nameInput.text || popup.ogUrl !== urlInput.text) {
                     browserModel.modifyBookmark(popup.ogUrl, urlInput.text, nameInput.text)
                 }

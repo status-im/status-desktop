@@ -458,6 +458,10 @@ property Component sendTransactionModalComponent: SignTransactionModal {}
                 return qsTrId("new-tab")
             })
 
+            if (createAsStartPage) {
+                tab.item.url = "https://dap.ps"
+            }
+
             tab.item.profile = profile;
             if (appSettings.browserHomepage !== "") {
                 tab.item.url = appSettings.browserHomepage
@@ -512,7 +516,6 @@ property Component sendTransactionModalComponent: SignTransactionModal {}
                 anchors.top: parent.top
                 anchors.topMargin: browserHeader.height
                 focus: true
-                url: "https://dap.ps"
                 webChannel: channel
                 onLinkHovered: function(hoveredUrl) {
                     if (hoveredUrl === "")
@@ -673,7 +676,8 @@ property Component sendTransactionModalComponent: SignTransactionModal {}
                             anchors.horizontalCenter: emptyPageImage.horizontalCenter
                             anchors.top: emptyPageImage.bottom
                             anchors.topMargin: 30
-                            width: parent.width - Style.current.bigPadding * 2
+                            width: (parent.width < 700) ? (Math.floor(parent.width/cellWidth)*cellWidth) : 700
+                            height: parent.height - emptyPageImage.height - 20
                         }
                     }
                 }

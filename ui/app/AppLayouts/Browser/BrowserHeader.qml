@@ -161,7 +161,10 @@ Rectangle {
                 anchors.rightMargin: Style.current.halfPadding
                 onClicked: {
                     if (!addressBar.currentFavorite) {
+                        // remove "add favorite" button at the end, add new bookmark, add "add favorite" button back
+                        browserModel.removeBookmark("")
                         browserModel.addBookmark(currentWebView.url, currentWebView.title)
+                        browserModel.addBookmark("", qsTr("Add Favorite"))
                     }
 
                     addFavoriteModal.modifiyModal = true
