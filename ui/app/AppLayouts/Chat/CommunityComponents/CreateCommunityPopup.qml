@@ -9,6 +9,7 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
+import StatusQ.Controls.Validators 0.1
 import StatusQ.Popups 0.1
 
 StatusModal {
@@ -17,13 +18,7 @@ StatusModal {
     property bool isEdit: false
 
     readonly property int maxCommunityNameLength: 30
-    readonly property var communityNameValidator: Utils.Validate.NoEmpty
-                                                  | Utils.Validate.TextLength
-
     readonly property int maxCommunityDescLength: 140
-    readonly property var communityDescValidator: Utils.Validate.NoEmpty
-                                                  | Utils.Validate.TextLength
-
     readonly property var communityColorValidator: Utils.Validate.NoEmpty
                                                    | Utils.Validate.TextHexColor
 
@@ -31,8 +26,8 @@ StatusModal {
 
     onOpened: {
         if (isEdit) {
-            contentComponent.communityName.text = community.name;
-            contentComponent.communityDescription.text = community.description;
+            contentComponent.communityName.input.text = community.name;
+            contentComponent.communityDescription.input.text = community.description;
             contentComponent.communityColor.color = community.communityColor;
             contentComponent.communityColor.colorSelected = true
             if (community.largeImage) {
@@ -40,23 +35,14 @@ StatusModal {
             }
             membershipRequirementSettingPopup.checkedMembership = community.access
         }
-        contentComponent.communityName.forceActiveFocus(Qt.MouseFocusReason)
+        contentComponent.communityName.input.forceActiveFocus(Qt.MouseFocusReason)
     }
     onClosed: destroy()
 
     function isFormValid() {
-        return Utils.validateAndReturnError(contentComponent.communityName.text,
-                                            communityNameValidator,
-                                            //% "community name"
-                                            qsTrId("community-name"),
-                                            maxCommunityNameLength) === ""
-               && Utils.validateAndReturnError(contentComponent.communityDescription.text,
-                                               communityDescValidator,
-                                               //% "community decription"
-                                               qsTrId("community-decription"),
-                                               maxCommunityDescLength) === ""
-               && Utils.validateAndReturnError(contentComponent.communityColor.color.toString().toUpperCase(),
-                                               communityColorValidator) === ""
+        return contentComponent.communityName.valid && contentComponent.communityDescription.valid &&
+            Utils.validateAndReturnError(contentComponent.communityColor.color.toString().toUpperCase(),
+                                        communityColorValidator) === ""
     }
 
     header.title: isEdit ?
@@ -94,79 +80,41 @@ StatusModal {
             id: content
             width: popup.width
 
-            Item {
+            Item { 
+                height: 8
                 width: parent.width
-                height: 76
-                Input {
-                    id: nameInput
-
-                    width: parent.width - 32
-                    anchors.centerIn: parent
-
-                    //% "A catchy name"
-                    placeholderText: qsTrId("name-your-community-placeholder")
-                    maxLength: maxCommunityNameLength
-
-                    onTextEdited: {
-                        validationError = Utils.validateAndReturnError(text,
-                                                                      communityNameValidator,
-                                                                      //% "community name"
-                                                                      qsTrId("community-name"),
-                                                                      maxCommunityNameLength)
-                    }
-                }
             }
 
-            Item {
-                height: descriptionTextArea.height + 26
+            StatusInput {
+                id: nameInput
+                charLimit: maxCommunityNameLength
+                input.placeholderText: qsTr("A catchy name")
+                validators: [StatusMinLengthValidator { minLength: 1 }]
+                onTextChanged: errorMessage = Utils.getErrorMessage(errors, "community name")
+            }
 
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.leftMargin: 16
-                anchors.rightMargin: 16
+            StatusInput {
+                id: descriptionTextArea
+                label: qsTr("Description")
+                charLimit: maxCommunityDescLength
 
-                StyledTextArea {
-                    id: descriptionTextArea
-                    //% "Description"
-                    label: qsTrId("description")
-                    //% "What your community is about"
-                    placeholderText: qsTrId("what-your-community-is-about")
+                input.placeholderText: qsTr("What your community is about")
+                input.multiline: true
+                input.implicitHeight: 88
 
-                    customHeight: 88
-                    textField.wrapMode: TextEdit.Wrap
-
-                    onTextChanged: {
-                        if(text.length > maxCommunityDescLength)
-                        {
-                            textField.remove(maxCommunityDescLength, text.length)
-                            return
-                        }
-
-                        validationError = Utils.validateAndReturnError(text,
-                                                                      communityDescValidator,
-                                                                      //% "community decription"
-                                                                      qsTrId("community-decription"),
-                                                                      maxCommunityDescLength)
-                    }
-                }
-
-                StyledText {
-                    id: charLimit
-                    text: `${descriptionTextArea.text.length}/${maxCommunityDescLength}`
-                    anchors.right: descriptionTextArea.right
-                    font.pixelSize: 12
-                    color: !descriptionTextArea.validationError ? Style.current.textColor : Style.current.danger
-                }
+                validators: [StatusMinLengthValidator { minLength: 1 }]
+                onTextChanged: errorMessage = Utils.getErrorMessage(errors, "community description")
             }
 
             StatusBaseText {
                 id: thumbnailText
                 //% "Thumbnail image"
                 text: qsTrId("thumbnail-image")
-                font.pixelSize: 13
+                font.pixelSize: 15
                 color: Theme.palette.directColor1
                 anchors.left: parent.left
                 anchors.leftMargin: 16
+                anchors.topMargin: 8
             }
 
             Item {
@@ -239,14 +187,14 @@ StatusModal {
                             anchors.horizontalCenter: parent.horizontalCenter
                         }
 
-                        StyledText {
+                        StatusBaseText {
                             id: uploadText
                             //% "Upload"
                             text: qsTrId("upload")
                             anchors.top: imageImg.bottom
                             anchors.topMargin: 5
                             font.pixelSize: 15
-                            color: Style.current.secondaryText
+                            color: Theme.palette.baseColor1
                         }
                     }
 
@@ -278,7 +226,7 @@ StatusModal {
             StatusBaseText {
                 //% "Community colour"
                 text: qsTrId("community-color")
-                font.pixelSize: 13
+                font.pixelSize: 15
                 color: Theme.palette.directColor1
                 anchors.left: parent.left
                 anchors.leftMargin: 16
@@ -454,8 +402,8 @@ StatusModal {
                 if(isEdit) {
                     error = chatsModel.communities.editCommunity(
                         community.id,
-                        Utils.filterXSS(popup.contentComponent.communityName.text),
-                        Utils.filterXSS(popup.contentComponent.communityDescription.text),
+                        Utils.filterXSS(popup.contentComponent.communityName.input.text),
+                        Utils.filterXSS(popup.contentComponent.communityDescription.input.text),
                         membershipRequirementSettingPopup.checkedMembership,
                         false,
                         popup.contentComponent.communityColor.color.toString().toUpperCase(),
@@ -469,8 +417,8 @@ StatusModal {
                   )
                 } else {
                     error = chatsModel.communities.createCommunity(
-                        Utils.filterXSS(popup.contentComponent.communityName.text),
-                        Utils.filterXSS(popup.contentComponent.communityDescription.text),
+                        Utils.filterXSS(popup.contentComponent.communityName.input.text),
+                        Utils.filterXSS(popup.contentComponent.communityDescription.input.text),
                         membershipRequirementSettingPopup.checkedMembership,
                         false, // ensOnlySwitch.switchChecked, // TODO:
                         popup.contentComponent.communityColor.color.toString().toUpperCase(),
