@@ -13,6 +13,8 @@ ModalPopup {
     property int seedWord2Idx: -1;
     property string validationError: ""
 
+    focus: visible
+
     onOpened: {
         seedWord1Idx = -1;
         seedWord2Idx = -1;
@@ -143,9 +145,19 @@ ModalPopup {
     }
 
     Item {
+        id: textInput
         visible: seedWord1Idx > -1 || seedWord2Idx > -1
         anchors.left: parent.left
         anchors.right: parent.right
+        focus: visible
+        onActiveFocusChanged: {
+            if (activeFocus)
+                txtFieldWord.forceActiveFocus(Qt.MouseFocusReason)
+        }
+        Keys.onReturnPressed: function(event) {
+            confirmButton.clicked()
+        }
+
         StyledText {
             id: txtChk
             //% "Check your seed phrase"
@@ -223,6 +235,7 @@ ModalPopup {
     
 
     footer: StatusButton {
+        id: confirmButton
         text: showWarning ? 
                 //% "Okay, continue"
                 qsTrId("ok-continue") : 
@@ -231,6 +244,10 @@ ModalPopup {
         anchors.right: parent.right
         anchors.rightMargin: Style.current.smallPadding
         anchors.bottom: parent.bottom
+        focus: !textInput.visible
+        Keys.onReturnPressed: function(event) {
+            confirmButton.clicked()
+        }
         onClicked: {
             if(showWarning){
                 showWarning = false;

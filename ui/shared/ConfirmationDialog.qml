@@ -18,6 +18,7 @@ ModalPopup {
     width: 400
     //% "Confirm your action"
     title: qsTrId("confirm-your-action")
+    focus: visible
 
     //% "Confirm"
     property string confirmButtonLabel: qsTrId("close-app-button")
@@ -71,6 +72,10 @@ ModalPopup {
             anchors.rightMargin: cancelButton.visible ? Style.current.smallPadding : 0
             text: confirmationDialog.confirmButtonLabel
             anchors.bottom: parent.bottom
+            focus: true
+            Keys.onReturnPressed: function(event) {
+                confirmButton.clicked()
+            }
             onClicked: {
                 if (executeConfirm && typeof executeConfirm === "function") {
                     executeConfirm()
