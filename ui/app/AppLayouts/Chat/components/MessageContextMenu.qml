@@ -275,7 +275,8 @@ StatusPopupMenu {
     }
 
     StatusMenuSeparator {
-        visible: deleteMessageAction.enabled
+        visible: deleteMessageAction.enabled && (viewProfileAction.visible
+                || sendMessageOrReplyTo.visible || editMessageAction.visible || pinAction.visible)
     }
 
     StatusMenuItem {
