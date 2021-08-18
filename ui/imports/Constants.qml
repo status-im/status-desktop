@@ -182,4 +182,13 @@ QtObject {
         //% "Continuing will require a transaction to connect the username with your current chat key."
         "connected-different-key": qsTrId("ens-username-connected-with-different-key"),
     }
+
+    readonly property QtObject osNotificationType: QtObject{
+        readonly property int newContactRequest: 1
+        readonly property int acceptedContactRequest: 2
+        readonly property int joinCommunityRequest: 3
+        readonly property int acceptedIntoCommunity: 4
+        readonly property int rejectedByCommunity: 5
+        readonly property int newMessage: 6
+    }
 }

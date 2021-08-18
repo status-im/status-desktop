@@ -199,27 +199,38 @@ Item {
         Connections {
             target: chatsModel.communities
 
+            // Note:
+            // Whole this Connection object (both slots) should be moved to the nim side.
+            // Left here only cause we don't have a way to deal with translations on the nim side.
+
             onMembershipRequestChanged: function (communityId, communityName, accepted) {
                 chatColumnLayout.currentNotificationChatId = null
                 chatColumnLayout.currentNotificationCommunityId = communityId
-                systemTray.showMessage("Status",
-                                       //% "You have been accepted into the ‘%1’ community"
-                                       accepted ? qsTrId("you-have-been-accepted-into-the---1--community").arg(communityName) :
-                                                  //% "Your request to join the ‘%1’ community was declined"
-                                                  qsTrId("your-request-to-join-the---1--community-was-declined").arg(communityName),
-                                       SystemTrayIcon.NoIcon,
-                                       Constants.notificationPopupTTL)
+                chatsModel.showOSNotification("Status",
+                                              //% "You have been accepted into the ‘%1’ community"
+                                              accepted ? qsTrId("you-have-been-accepted-into-the---1--community").arg(communityName) :
+                                                         //% "Your request to join the ‘%1’ community was declined"
+                                                         qsTrId("your-request-to-join-the---1--community-was-declined").arg(communityName),
+                                              accepted? Constants.osNotificationType.acceptedIntoCommunity :
+                                                        Constants.osNotificationType.rejectedByCommunity,
+                                              communityId,
+                                              "",
+                                              "",
+                                              appSettings.useOSNotifications)
             }
 
             onMembershipRequestPushed: function (communityId, communityName, pubKey) {
                 chatColumnLayout.currentNotificationChatId = null
                 chatColumnLayout.currentNotificationCommunityId = communityId
                 //% "New membership request"
-                systemTray.showMessage(qsTrId("new-membership-request"),
-                                       //% "%1 asks to join ‘%2’"
-                                       qsTrId("-1-asks-to-join---2-").arg(Utils.getDisplayName(pubKey)).arg(communityName),
-                                       SystemTrayIcon.NoIcon,
-                                       Constants.notificationPopupTTL)
+                chatsModel.showOSNotification(qsTrId("new-membership-request"),
+                                              //% "%1 asks to join ‘%2’"
+                                              qsTrId("-1-asks-to-join---2-").arg(Utils.getDisplayName(pubKey)).arg(communityName),
+                                              Constants.osNotificationType.joinCommunityRequest,
+                                              communityId,
+                                              "",
+                                              "",
+                                              appSettings.useOSNotifications)
             }
         }
 

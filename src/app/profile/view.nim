@@ -11,6 +11,7 @@ import ../../status/ens as status_ens
 import ../../status/chat/chat
 import ../../status/types
 import ../../status/constants as accountConstants
+import ../../status/notifications/[os_notifications, os_notification_details]
 import qrcode/qrcode
 import ../utils/image_utils
 
@@ -192,3 +193,13 @@ QtObject:
       return
     self.profile.setSendUserStatus(sendUserStatus)
     self.status.saveSetting(Setting.SendUserStatus, sendUserStatus)
+
+  proc showOSNotification*(self: ProfileView, title: string, message: string, 
+    notificationType: int, useOSNotifications: bool) {.slot.} =
+
+    let details = OsNotificationDetails(
+      notificationType: notificationType.OsNotificationType
+    )
+
+    self.status.osnotifications.showNotification(title, message, details,
+    useOSNotifications)

@@ -147,6 +147,12 @@ StatusWindow {
     
     property bool currentlyHasANotification: false
 
+    function makeStatusAppActive() {
+        applicationWindow.show()
+        applicationWindow.raise()
+        applicationWindow.requestActivate()
+    }
+
     SystemTrayIcon {
         id: systemTray
         visible: true
@@ -164,18 +170,12 @@ StatusWindow {
             }
         }
 
-        function openStatusWindow() {
-            applicationWindow.show()
-            applicationWindow.raise()
-            applicationWindow.requestActivate()
-        }
-
         menu: Menu {
             MenuItem {
                 //% "Open Status"
                 text: qsTrId("open-status")
                 onTriggered: {
-                    systemTray.openStatusWindow()
+                    applicationWindow.makeStatusAppActive()
                 }
             }
             
@@ -191,7 +191,7 @@ StatusWindow {
 
         onActivated: {
             if (reason !== SystemTrayIcon.Context) {
-                openStatusWindow()
+                applicationWindow.makeStatusAppActive()
             }
         }
     }

@@ -9,14 +9,16 @@ import ../../status/contacts as status_contacts
 import ../../status/ens as status_ens
 import ../../status/chat/[chat, message]
 import ../../status/profile/profile
-import web3/[conversions, ethtypes]
-import views/[channels_list, message_list, chat_item, reactions, stickers, groups, transactions, communities, community_list, community_item, format_input, ens, activity_notification_list, channel, messages, message_item, gif]
-import ../utils/image_utils
 import ../../status/tasks/[qt, task_runner_impl]
 import ../../status/tasks/marathon/mailserver/worker
 import ../../status/signals/types as signal_types
 import ../../status/types
+import ../../status/notifications/[os_notifications, os_notification_details]
+import ../utils/image_utils
+import web3/[conversions, ethtypes]
 import views/message_search/[view_controller]
+import views/[channels_list, message_list, chat_item, reactions, stickers, groups, transactions, communities, community_list, community_item, format_input, ens, activity_notification_list, channel, messages, message_item, gif]
+
 
 # TODO: remove me
 import ../../status/libstatus/chat as libstatus_chat
@@ -503,22 +505,59 @@ QtObject:
     echo self.status.mailservers.setMailserver("16Uiu2HAm4v86W3bmT1BiH6oSPzcsSr24iDQpSN5Qa992BCjjwgrD")
     echo self.status.mailservers.requestAllHistoricMessages()
 
+  proc switchTo*(self: ChatsView, communityId: string, channelId: string, 
+    messageId: string) =
+    ## This method displays community with communityId as an active one (if 
+    ## communityId is empty, "Chat" section will be active), then displays 
+    ## channel/chat with channelId as an active one and finally display message
+    ## with messageId as a central message in the message list.    
+    if (communityId.len > 0):
+      self.communities.setActiveCommunity(communityId)
+      if (channelId.len > 0):
+        self.channelView.setActiveChannel(channelId)
+        if (messageId.len > 0):
+          self.messageView.switchToMessage(messageId)
+    else:
+      self.communities.activeCommunity.setActive(false)
+      if (channelId.len > 0):
+        self.channelView.setActiveChannel(channelId)
+        if (messageId.len > 0):
+          self.messageView.switchToMessage(messageId)
+
   proc switchToSearchedItem*(self: ChatsView, itemId: string) {.slot.} =
     let info = self.messageSearchViewController.getItemInfo(itemId)
     if(info.isEmpty()):
       return
 
-    if (info.communityId.len > 0):
-      self.communities.setActiveCommunity(info.communityId)
-      if (info.channelId.len > 0):
-        self.channelView.setActiveChannel(info.channelId)
-        if (info.messageId.len > 0):
-          self.messageView.switchToMessage(info.messageId)
-    else:
-      self.communities.activeCommunity.setActive(false)
-      if (info.channelId.len > 0):
-        self.channelView.setActiveChannel(info.channelId)
-        if (info.messageId.len > 0):
-          self.messageView.switchToMessage(info.messageId)
+    self.switchTo(info.communityId, info.channelId, info.messageId)
 
+  proc notificationClicked*(self:ChatsView, notificationType: int) {.signal.}
 
+  proc onOsNotificationClicked*(self: ChatsView, details: OsNotificationDetails) =
+    # A logic what should be done depends on details.notificationType and should be
+    # defined here in this method.
+    # So far if notificationType is:
+    # - NewContactRequest or AcceptedContactRequest we are switching to Chat section
+    # - JoinCommunityRequest or AcceptedIntoCommunity we are switching to that Community
+    # - RejectedByCommunity we are switching to Chat section
+    # - NewMessage we are switching to appropriate chat/channel and a message inside it
+    
+    self.switchTo(details.communityId, details.channelId, details.messageId)
+    
+    # Notify qml about the changes, cause changing section cannot be performed 
+    # completely from the nim side.
+    self.notificationClicked(details.notificationType.int)
+
+  proc showOSNotification*(self: ChatsView, title: string, message: string, 
+    notificationType: int, communityId: string, channelId: string, 
+    messageId: string, useOSNotifications: bool) {.slot.} =
+
+    let details = OsNotificationDetails(
+      notificationType: notificationType.OsNotificationType,
+      communityId: communityId,
+      channelId: channelId,
+      messageId: messageId
+    )
+    
+    self.status.osnotifications.showNotification(title, message, details, 
+    useOSNotifications)
