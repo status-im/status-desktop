@@ -102,8 +102,7 @@ Rectangle {
             anchors.topMargin: statusChatInfoButtonSubTitle.visible ? 0 : 8
             anchors.left: identicon.right
             anchors.leftMargin: 8
-
-            width: statusIcon.width + chatName.anchors.leftMargin + chatName.width + (mutedIcon.visible ? mutedIcon.width + mutedIcon.anchors.leftMargin : 0)
+            anchors.right: parent.right
             height: chatName.height
 
             StatusIcon {
@@ -138,7 +137,8 @@ Rectangle {
                 anchors.left: statusIcon.visible ? statusIcon.right : parent.left
                 anchors.leftMargin: statusIcon.visible ? 1 : 0
                 anchors.top: parent.top
-
+                anchors.right: parent.right
+                elide: Text.ElideRight
                 text: statusChatInfoButton.type === StatusChatInfoButton.Type.PublicChat &&
                     !statusChatInfoButton.title.startsWith("#") ?
                     "#" + statusChatInfoButton.title :
@@ -180,13 +180,15 @@ Rectangle {
         Item {
             id: statusChatInfoButtonSubTitle
             anchors.left: statusChatInfoButtonTitle.left
+            anchors.right: parent.right
             anchors.top: statusChatInfoButtonTitle.bottom
             visible: !!statusChatInfoButton.subTitle || statusChatInfoButton.pinnedMessagesCount > 0
             height: visible ? chatType.height : 0
-            width: childrenRect.width
 
             StatusBaseText {
                 id: chatType
+                width: parent.width
+                elide: Text.ElideRight
                 text: statusChatInfoButton.subTitle
                 color: Theme.palette.baseColor1
                 font.pixelSize: 12
