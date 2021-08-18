@@ -33,6 +33,7 @@ Item {
     property bool networkGuarded: profileModel.network.current === Constants.networkMainnet || (profileModel.network.current === Constants.networkRopsten && appSettings.stickersEnsRopsten)
 
     signal settingsLoaded()
+    signal openContactsPopup()
 
     function changeAppSection(section) {
         chatsModel.communities.activeCommunity.active = false
@@ -453,21 +454,25 @@ Item {
             anchors.fill: parent
             currentIndex: 0
             onCurrentIndexChanged: {
-                if (typeof this.children[currentIndex].onActivated === "function") {
+                var obj = this.children[currentIndex];
+                if(!obj)
+                    return
+
+                if (obj.onActivated && typeof obj.onActivated === "function") {
                     this.children[currentIndex].onActivated()
                 }
 
-                if(this.children[currentIndex] === browserLayoutContainer && browserLayoutContainer.active == false){
+                if(obj === browserLayoutContainer && browserLayoutContainer.active == false){
                     browserLayoutContainer.active = true;
                 }
 
-                timelineLayoutContainer.active = this.children[currentIndex] === timelineLayoutContainer
+                timelineLayoutContainer.active = obj === timelineLayoutContainer
 
-                if(this.children[currentIndex] === walletLayoutContainer){
+                if(obj === walletLayoutContainer){
                     walletLayoutContainer.showSigningPhrasePopup();
                 }
 
-                if(this.children[currentIndex] === walletV2LayoutContainer){
+                if(obj === walletV2LayoutContainer){
                     walletV2LayoutContainer.showSigningPhrasePopup();
                 }
             }
@@ -613,6 +618,31 @@ Item {
         }
 
         Connections {
+            target: chatsModel
+            onNotificationClicked: {
+                applicationWindow.makeStatusAppActive()
+
+                switch(notificationType){
+                case Constants.osNotificationType.newContactRequest:
+                    appView.currentIndex = Utils.getAppSectionIndex(Constants.chat)
+                    appMain.openContactsPopup()
+                    break
+                case Constants.osNotificationType.acceptedContactRequest:
+                    appView.currentIndex = Utils.getAppSectionIndex(Constants.chat)
+                    break
+                case Constants.osNotificationType.joinCommunityRequest:
+                case Constants.osNotificationType.acceptedIntoCommunity:
+                case Constants.osNotificationType.rejectedByCommunity:
+                    appView.currentIndex = Utils.getAppSectionIndex(Constants.community)
+                    break
+                case Constants.osNotificationType.newMessage:
+                    appView.currentIndex = Utils.getAppSectionIndex(Constants.chat)
+                    break
+                }
+            }
+        }
+
+        Connections {
             target: profileModel
             ignoreUnknownSignals: true
             enabled: removeMnemonicAfterLogin
@@ -627,17 +657,24 @@ Item {
                 if (!appSettings.notifyOnNewRequests) {
                     return
                 }
+
                 const isContact = profileModel.contacts.isAdded(address)
+
+                // Note:
+                // Whole this Connection object should be moved to the nim side.
+                // Left here only cause we don't have a way to deal with translations on the nim side.
+
                 //% "Contact request accepted"
-                systemTray.showMessage(isContact ? qsTrId("contact-request-accepted") :
-                                                //% "New contact request"
-                                                qsTrId("new-contact-request"),
-                                    //% "You can now chat with %1"
-                                    isContact ? qsTrId("you-can-now-chat-with--1").arg(Utils.removeStatusEns(name)) :
-                                                //% "%1 requests to become contacts"
-                                                qsTrId("-1-requests-to-become-contacts").arg(Utils.removeStatusEns(name)),
-                                    SystemTrayIcon.NoIcon,
-                                    Constants.notificationPopupTTL)
+                profileModel.showOSNotification(isContact ? qsTrId("contact-request-accepted") :
+                                                            //% "New contact request"
+                                                            qsTrId("new-contact-request"),
+                                                //% "You can now chat with %1"
+                                                isContact ? qsTrId("you-can-now-chat-with--1").arg(Utils.removeStatusEns(name)) :
+                                                            //% "%1 requests to become contacts"
+                                                            qsTrId("-1-requests-to-become-contacts").arg(Utils.removeStatusEns(name)),
+                                                isContact? Constants.osNotificationType.acceptedContactRequest :
+                                                           Constants.osNotificationType.newContactRequest,
+                                                appSettings.useOSNotifications)
             }
         }
 

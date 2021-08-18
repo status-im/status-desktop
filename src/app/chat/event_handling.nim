@@ -3,6 +3,7 @@ import # std libs
 
 import # status-desktop libs
   ../../status/chat/chat as status_chat,
+  ../../status/notifications/os_notifications,
   ../../status/tasks/marathon,
   ../../status/tasks/marathon/mailserver/worker,
   ./views/communities,
@@ -206,3 +207,8 @@ proc handleMailserverEvents(self: ChatController) =
       slot: "requestAllHistoricMessagesResult"
     )
     mailserverWorker.start(task)
+
+proc handleSystemEvents(self: ChatController) =
+  self.status.events.on("osNotificationClicked") do(e:Args):
+    let arg = OsNotificationsArgs(e)
+    self.view.onOsNotificationClicked(arg.details)

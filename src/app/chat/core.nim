@@ -31,6 +31,7 @@ include signal_handling
 proc init*(self: ChatController) =
   self.handleMailserverEvents()
   self.handleChatEvents()
+  self.handleSystemEvents()
   self.handleSignals()
 
   let pubKey = self.status.settings.getSetting[:string](Setting.PublicKey, "0x0")

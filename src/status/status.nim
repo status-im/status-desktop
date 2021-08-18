@@ -3,6 +3,7 @@ import libstatus/core as libstatus_core
 import libstatus/settings as libstatus_settings
 import types as libstatus_types
 import chat, accounts, wallet, node, network, messages, contacts, profile, stickers, permissions, fleet, settings, mailservers, browser, tokens, provider
+import notifications/os_notifications
 import ../eventemitter
 import ./tasks/task_runner_impl
 import bitops, stew/byteutils, chronicles
@@ -28,6 +29,7 @@ type Status* = ref object
   browser*: BrowserModel
   tokens*: TokensModel
   provider*: ProviderModel
+  osnotifications*: OsNotifications
 
 proc newStatusInstance*(fleetConfig: string): Status =
   result = Status()
@@ -50,6 +52,7 @@ proc newStatusInstance*(fleetConfig: string): Status =
   result.browser = browser.newBrowserModel(result.events)
   result.tokens = tokens.newTokensModel(result.events)
   result.provider = provider.newProviderModel(result.events, result.permissions)
+  result.osnotifications = newOsNotifications(result.events)
 
 proc initNode*(self: Status) =
   self.tasks.init()

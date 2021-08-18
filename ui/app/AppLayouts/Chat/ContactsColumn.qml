@@ -23,6 +23,12 @@ Item {
     property int chatGroupsListViewCount: channelList.chatListItems.count
     signal openProfileClicked()
 
+    Component.onCompleted: {
+        appMain.openContactsPopup.connect(function(){
+            openPopup(contactRequestsPopup)
+        })
+    }
+
     MouseArea {
         anchors.fill: parent
         onClicked: {

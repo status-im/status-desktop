@@ -565,7 +565,7 @@ Item {
                 positionAtMessage(messageId)
             }
 
-            onMessageNotificationPushed: function(chatId, msg, contentType, chatType, timestamp, identicon, username, hasMention, isAddedContact, channelName) {
+            onMessageNotificationPushed: function(messageId, communityId, chatId, msg, contentType, chatType, timestamp, identicon, username, hasMention, isAddedContact, channelName) {
                 if (appSettings.notificationSetting == Constants.notifyAllMessages ||
                         (appSettings.notificationSetting == Constants.notifyJustMentions && hasMention)) {
                     if (chatId === chatsModel.channelView.activeChannel.id && applicationWindow.active === true) {
@@ -600,14 +600,17 @@ Item {
                     }
 
                     currentlyHasANotification = true
-                    if (appSettings.useOSNotifications && systemTray.supportsMessages) {
-                        systemTray.showMessage(name,
-                                               message,
-                                               SystemTrayIcon.NoIcon,
-                                               Constants.notificationPopupTTL)
-                    } else {
-                        notificationWindow.notifyUser(chatId, name, message, chatType, identicon, chatColumnLayout.clickOnNotification)
-                    }
+
+                    // Note:
+                    // Show notification should be moved to the nim side.
+                    // Left here only cause we don't have a way to deal with translations on the nim side.
+                    chatsModel.showOSNotification(name,
+                                                  message,
+                                                  Constants.osNotificationType.newMessage,
+                                                  communityId,
+                                                  chatId,
+                                                  messageId,
+                                                  appSettings.useOSNotifications)
                 }
             }
         }
