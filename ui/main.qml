@@ -42,8 +42,8 @@ StatusWindow {
     objectName: "mainWindow"
     minimumWidth: 900
     minimumHeight: 600
-    width: 1232
-    height: 770
+    width: Math.min(1232, Screen.desktopAvailableWidth - 64)
+    height: Math.min(770, Screen.desktopAvailableHeight - 64)
     color: Style.current.background
     title: {
         // Set application settings
