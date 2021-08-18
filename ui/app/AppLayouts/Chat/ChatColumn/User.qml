@@ -11,6 +11,7 @@ Item {
     property string lastSeen: ""
     property string identicon
     property int statusType: Constants.statusType_Online
+    property color offlineColor: Style.current.darkGrey
     property bool hovered: false
     property bool enableMouseArea: true
     property var currentTime
@@ -54,10 +55,9 @@ Item {
             chatType: Constants.chatTypeOneToOne
             identicon: wrapper.profileImage || wrapper.identicon
             anchors.left: parent.left
-            anchors.leftMargin: Style.current.smallPadding
+            anchors.leftMargin: Style.current.padding
             anchors.verticalCenter: parent.verticalCenter
         }
-
 
         StyledText {
             id: contactInfo
@@ -83,7 +83,7 @@ Item {
             color: {
                 let lastSeenMinutesAgo = (currentTime/1000 - parseInt(lastSeen)) / 60
                 if (!chatsModel.isOnline) {
-                    return Style.current.darkGrey 
+                    return offlineColor
                 }
 
                 if (isCurrentUser || lastSeenMinutesAgo < 5.5){
@@ -92,7 +92,7 @@ Item {
                     return statusType == Constants.statusType_DoNotDisturb ? Style.current.red : Style.current.orange;
                 }
 
-                return Style.current.darkGrey
+                return offlineColor
             }
         }
 
