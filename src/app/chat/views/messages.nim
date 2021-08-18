@@ -228,6 +228,8 @@ QtObject:
           let isAddedContact = channel.chatType.isOneToOne and self.isAddedContact(channel.id)
           self.messageNotificationPushed(msg.chatId, escape_html(msg.text), msg.contentType.int, channel.chatType.int, msg.timestamp, msg.identicon, msg.userName, msg.hasMention, isAddedContact, channel.name)
 
+        self.channelOpenTime[msg.chatId] = now().toTime.toUnix * 1000
+
   proc markMessageAsSent*(self:MessageView, chat: string, messageId: string) =
     if self.messageList.contains(chat):
       self.messageList[chat].markMessageAsSent(messageId)
