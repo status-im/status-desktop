@@ -1,4 +1,4 @@
-import NimQml, chronicles, os, strformat
+import NimQml, chronicles, os, strformat, times
 
 import app/chat/core as chat
 import app/wallet/v1/core as wallet
@@ -27,6 +27,9 @@ logScope:
 proc mainProc() =
   if defined(macosx) and defined(production):
     setCurrentDir(getAppDir())
+
+  let logFile = fmt"app_{getTime().toUnix}.log"
+  discard defaultChroniclesStream.output.open(LOGDIR & logFile, fmAppend)
 
   var currentLanguageCode: string
 
