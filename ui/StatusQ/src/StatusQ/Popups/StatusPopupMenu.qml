@@ -10,7 +10,7 @@ import StatusQ.Popups 0.1
 
 Menu {
     id: statusPopupMenu
-    closePolicy: Popup.CloseOnReleaseOutsideParent | Popup.CloseOnEscape
+    closePolicy: Popup.CloseOnPressOutside | Popup.CloseOnEscape
     topPadding: 8
     bottomPadding: 8
 
