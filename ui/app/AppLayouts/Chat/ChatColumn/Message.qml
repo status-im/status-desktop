@@ -214,6 +214,7 @@ Item {
         messageContextMenu.isCurrentUser = isCurrentUser;
         messageContextMenu.isRightClickOnImage = isRightClickOnImage
         messageContextMenu.imageSource = imageSource
+        messageContextMenu.onClickEdit = function() {root.isEdit = true}
 
         if (isReply) {
             let nickname = appMain.getUserNickname(repliedMessageAuthor)

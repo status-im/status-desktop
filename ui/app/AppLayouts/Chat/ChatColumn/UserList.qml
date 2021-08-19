@@ -13,13 +13,17 @@ import "../components"
 import "./samples/"
 import "./MessageComponents"
 import "../ContactsColumn"
+import "../data"
 
 Item {
     id: root
     anchors.fill: parent
     property var userList
     property var currentTime
-    property var messageContextMenu
+    property var messageContextMenu: MessageContextMenu {
+        id: quickActionMessageOptionsMenu
+        reactionModel: EmojiReactions { }
+    }
 
     Rectangle {
         anchors.fill: parent

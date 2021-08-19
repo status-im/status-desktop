@@ -23,7 +23,6 @@ Item {
     id: chatColumnLayout
     anchors.fill: parent
 
-    property var messageContextMenu
     property alias pinnedMessagesPopupComponent: pinnedMessagesPopupComponent
     property int chatGroupsListViewCount: 0
     property bool isReply: false
@@ -87,7 +86,7 @@ Item {
 
         let isCommunity = chatsModel.communities.activeCommunity.active
         let dataSource = isCommunity ? chatsModel.communities.activeCommunity.members : chatsModel.suggestionList
-        
+
         const len = dataSource.rowCount()
         for (let i = 0; i < len; i++) {
             const contactAddr = dataSource.rowData(i, "address");
@@ -341,7 +340,9 @@ Item {
                         sourceComponent: ChatMessages {
                             id: chatMessages
                             messageList: messages
-                            messageContextMenuInst: messageContextMenu
+                            messageContextMenuInst: MessageContextMenu {
+                                reactionModel: EmojiReactions { }
+                            }
                             Component.onCompleted: {
                                 chatColumnLayout.userList = chatMessages.messageList.userList;
                             }
@@ -684,7 +685,7 @@ Item {
                 toastMessage.open()
             }
             onTransactionCompleted: {
-                toastMessage.title = !success ? 
+                toastMessage.title = !success ?
                                      //% "Could not buy Stickerpack"
                                      qsTrId("could-not-buy-stickerpack")
                                      :

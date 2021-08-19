@@ -238,7 +238,6 @@ StatusPopupMenu {
             } else {
                 showReplyArea()
             }
-            messageContextMenu.closeParentPopup()
             messageContextMenu.close()
         }
         icon.name: "chat"
