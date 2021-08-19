@@ -101,7 +101,7 @@ PopupMenu {
             root.close()
         }
 
-        icon.color: Style.current.darkGrey
+        icon.color: Style.current.midGrey
         icon.source: "img/offline.svg"
         icon.width: 16
         icon.height: 16

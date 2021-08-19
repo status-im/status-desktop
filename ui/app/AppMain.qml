@@ -305,7 +305,7 @@ StatusAppLayout {
             badge.implicitWidth: 15
             badge.border.color: hovered ? Theme.palette.statusBadge.hoverBorderColor : Theme.palette.statusAppNavBar.backgroundColor
             badge.color: {
-                return profileModel.profile.sendUserStatus ? Style.current.green : Style.current.darkGrey
+                return profileModel.profile.sendUserStatus ? Style.current.green : Style.current.midGrey
                 /*
                 // Use this code once support for custom user status is added
                 switch(profileModel.profile.currentUserStatus){
@@ -314,7 +314,7 @@ StatusAppLayout {
                     case Constants.statusType_DoNotDisturb:
                         return Style.current.red;
                     default:
-                        return Style.current.darkGrey;
+                        return Style.current.midGrey;
                 }*/
             }
             badge.border.width: 3
