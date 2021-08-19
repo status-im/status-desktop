@@ -834,9 +834,6 @@ Rectangle {
             anchors.right: actions.left
             anchors.rightMargin: Style.current.halfPadding
             ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-            StatusSyntaxHighlighter {
-                quickTextDocument: messageInputField.textDocument
-            }
 
             TextArea {
                 id: messageInputField
@@ -884,6 +881,10 @@ Rectangle {
                         messageInputField.forceActiveFocus();
                     }
                     lastClick = now
+                }
+
+                StatusSyntaxHighlighter {
+                   quickTextDocument: messageInputField.textDocument
                 }
 
                 StatusTextFormatMenu {
