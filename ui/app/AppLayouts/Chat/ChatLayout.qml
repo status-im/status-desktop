@@ -41,7 +41,6 @@ StatusAppThreePanelLayout {
     centerPanel: ChatColumn {
         id: chatColumn
         chatGroupsListViewCount: contactColumnLoader.item.chatGroupsListViewCount
-        messageContextMenu: quickActionMessageOptionsMenu
     }
 
     showRightPanel: chatColumn.showUsers && (chatsModel.channelView.activeChannel.chatType !== Constants.chatTypeOneToOne)
@@ -54,7 +53,7 @@ StatusAppThreePanelLayout {
 
     Component {
         id: userListComponent
-        UserList { currentTime: chatColumn.currentTime; userList: chatColumn.userList; messageContextMenu: quickActionMessageOptionsMenu }
+        UserList { currentTime: chatColumn.currentTime; userList: chatColumn.userList;}
     }
 
     Component {
@@ -87,11 +86,6 @@ StatusAppThreePanelLayout {
                 destroy();
             }
         }
-    }
-
-    MessageContextMenu {
-        id: quickActionMessageOptionsMenu
-        reactionModel: EmojiReactions { }
     }
 
     ConfirmationDialog {
