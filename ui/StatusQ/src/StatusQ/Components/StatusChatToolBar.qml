@@ -37,7 +37,6 @@ Rectangle {
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: parent.left
         anchors.leftMargin: 12
-        anchors.right: actionButtons.left
         onClicked: statusChatToolBar.chatInfoButtonClicked()
     }
 
@@ -46,7 +45,7 @@ Rectangle {
         anchors.right: parent.right
         anchors.rightMargin: 8
         anchors.verticalCenter: parent.verticalCenter
-        width: childrenRect.width
+
         spacing: 8
 
         StatusFlatRoundButton {
