@@ -227,6 +227,8 @@ let
   STATUSGODIR* = joinPath(baseDir, "data") & sep
   KEYSTOREDIR* = joinPath(baseDir, "data", "keystore") & sep
   TMPDIR* = joinPath(baseDir, "tmp") & sep
+  LOGDIR* = joinPath(baseDir, "logs") & sep
 
 createDir(DATADIR)
 createDir(TMPDIR)
+createDir(LOGDIR)

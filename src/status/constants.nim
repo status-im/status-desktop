@@ -4,3 +4,4 @@ export DATADIR
 export STATUSGODIR
 export KEYSTOREDIR
 export TMPDIR
+export LOGDIR
