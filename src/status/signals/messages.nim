@@ -29,6 +29,8 @@ proc toCommunityMembershipRequest*(jsonCommunityMembershipRequest: JsonNode): Co
 
 proc toActivityCenterNotification*(jsonNotification: JsonNode): ActivityCenterNotification
 
+proc toRemovedMessage*(jsonRemovedMessage: JsonNode): RemovedMessage
+
 proc fromEvent*(event: JsonNode): Signal = 
   var signal:MessageSignal = MessageSignal()
   signal.messages = @[]
@@ -76,8 +78,8 @@ proc fromEvent*(event: JsonNode): Signal =
       signal.membershipRequests.add(jsonCommunity.toCommunityMembershipRequest)
 
   if event["event"]{"removedMessages"} != nil:
-    for messageId in event["event"]["removedMessages"]:
-      signal.deletedMessages.add(messageId.getStr)
+    for jsonRemovedMessage in event["event"]["removedMessages"]:
+      signal.deletedMessages.add(jsonRemovedMessage.toRemovedMessage)
 
   if event["event"]{"activityCenterNotifications"} != nil:
     for jsonNotification in event["event"]["activityCenterNotifications"]:
@@ -281,6 +283,12 @@ proc toCommunityMembershipRequest*(jsonCommunityMembershipRequest: JsonNode): Co
     state: jsonCommunityMembershipRequest{"state"}.getInt,
     communityId: jsonCommunityMembershipRequest{"communityId"}.getStr,
     our: jsonCommunityMembershipRequest{"our"}.getStr,
+  )
+
+proc toRemovedMessage*(jsonRemovedMessage: JsonNode): RemovedMessage =
+  result = RemovedMessage(
+    chatId: jsonRemovedMessage{"chatId"}.getStr,
+    messageId: jsonRemovedMessage{"messageId"}.getStr,
   )
 
 proc toTextItem*(jsonText: JsonNode): TextItem =

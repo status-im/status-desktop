@@ -89,6 +89,10 @@ type Chat* = ref object
   canPost*: bool
   ensName*: string
 
+type RemovedMessage* = object
+  chatId*: string
+  messageId*: string
+
 type CommunityAccessLevel* = enum
   unknown = 0
   public = 1
