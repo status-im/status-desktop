@@ -42,7 +42,7 @@ QtObject:
     self.communityItem = communityItem
     self.chats.setChats(communityItem.chats)
     self.categories.setCategories(communityItem.categories)
-    self.members.setMembers(communityItem.members)
+    self.members.setCommunity(communityItem)
     self.nbMembersChanged()
     self.communityMembershipRequestList.setNewData(communityItem.membershipRequests)
 
@@ -138,7 +138,7 @@ QtObject:
   QtProperty[bool] isMember:
     read = isMember
 
-  proc nbMembers*(self: CommunityItemView): int {.slot.} = result = ?.self.members.members.len
+  proc nbMembers*(self: CommunityItemView): int {.slot.} = result = ?.self.communityItem.members.len
   
   QtProperty[int] nbMembers:
     read = nbMembers
@@ -208,7 +208,7 @@ QtObject:
       result = self.communityItem.memberStatus[pubKey].statusType.int
 
   proc hasMember*(self: CommunityItemView, pubKey: string): bool {.slot.} =
-    result = self.members.members.contains(pubKey)
+    result = self.communityItem.members.contains(pubKey)
 
   QtProperty[QVariant] members:
     read = getMembers

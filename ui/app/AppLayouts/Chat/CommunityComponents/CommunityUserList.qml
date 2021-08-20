@@ -27,31 +27,6 @@ Item {
 
     property QtObject community: chatsModel.communities.activeCommunity
 
-    onCommunityChanged: {
-        proxyModel.clear()
-        for (let r = 0; r < community.members.rowCount(); r++) {
-            const pubKey = community.members.rowData(r, "address")
-            const nickname = appMain.getUserNickname(pubKey)
-            const identicon = community.members.rowData(r, "identicon")
-            const ensName = community.members.rowData(r, "ensName")
-            const name = !ensName.endsWith(".eth") && !!nickname ? nickname : Utils.removeStatusEns(ensName)
-            const statusType = chatsModel.communities.activeCommunity.memberStatus(pubKey)
-            const lastSeen = chatsModel.communities.activeCommunity.memberLastSeen(pubKey)
-            const lastSeenMinutesAgo = (currentTime / 1000 - parseInt(lastSeen)) / 60
-            const online = (pubKey === profileModel.profile.pubKey) || (lastSeenMinutesAgo < 7)
-
-            proxyModel.append({
-                pubKey: pubKey,
-                name: name,
-                identicon: identicon,
-                lastSeen: lastSeen,
-                statusType: statusType,
-                online: online,
-                sortKey: "%1%2".arg(online ? "A" : "B").arg(name)
-            })
-        }
-    }
-
     StyledText {
         id: titleText
         anchors.top: parent.top
@@ -103,12 +78,10 @@ Item {
                 return left.sortKey.localeCompare(right.sortKey) < 0
             }
         ]
-        model: ListModel {
-            id: proxyModel
-        }
+        model: community.members
         delegate: User {
             publicKey: model.pubKey
-            name: model.name
+            name: model.userName
             identicon: model.identicon
             lastSeen: model.lastSeen
             statusType: model.statusType
