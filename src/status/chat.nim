@@ -31,7 +31,7 @@ type
     communityMembershipRequests*: seq[CommunityMembershipRequest]
     activityCenterNotifications*: seq[ActivityCenterNotification]
     statusUpdates*: seq[StatusUpdate]
-    deletedMessages*: seq[string]
+    deletedMessages*: seq[RemovedMessage]
 
   ChatIdArg* = ref object of Args
     chatId*: string
@@ -104,7 +104,7 @@ QtObject:
   
     result.setup()
 
-  proc update*(self: ChatModel, chats: seq[Chat], messages: seq[Message], emojiReactions: seq[Reaction], communities: seq[Community], communityMembershipRequests: seq[CommunityMembershipRequest], pinnedMessages: seq[Message], activityCenterNotifications: seq[ActivityCenterNotification], statusUpdates: seq[StatusUpdate], deletedMessages: seq[string]) =
+  proc update*(self: ChatModel, chats: seq[Chat], messages: seq[Message], emojiReactions: seq[Reaction], communities: seq[Community], communityMembershipRequests: seq[CommunityMembershipRequest], pinnedMessages: seq[Message], activityCenterNotifications: seq[ActivityCenterNotification], statusUpdates: seq[StatusUpdate], deletedMessages: seq[RemovedMessage]) =
     for chat in chats:
       self.channels[chat.id] = chat
 

@@ -83,8 +83,8 @@ proc handleChatEvents(self: ChatController) =
       self.view.addActivityCenterNotification(evArgs.activityCenterNotifications)
 
     if (evArgs.deletedMessages.len > 0):
-      for messageId in evArgs.deletedMessages:
-        self.view.deleteMessage(messageId)
+      for m in evArgs.deletedMessages:
+        discard self.view.deleteMessage(m.chatId, m.messageId)
 
   self.status.events.on("channelUpdate") do(e: Args):
     var evArgs = ChatUpdateArgs(e)
