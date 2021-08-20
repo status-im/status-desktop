@@ -427,6 +427,10 @@ Item {
             statusAgeEpoch: root.statusAgeEpoch
             clickMessage: root.clickMessage
             container: root
+            messageContextMenu: root.messageContextMenu
+            onAddEmoji: {
+                root.clickMessage(isProfileClick, isSticker, isImage , image, emojiOnly, hideEmojiPicker);
+            }
         }
     }
 

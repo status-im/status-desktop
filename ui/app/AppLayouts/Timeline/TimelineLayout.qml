@@ -35,20 +35,11 @@ ScrollView {
         popup.openPopup(profileModel.profile.pubKey !== fromAuthorParam, userNameParam, fromAuthorParam, identiconParam, textParam, nicknameParam);
     }
 
-
-    MessageContextMenu {
-        id: messageContextMenu
-    }
-
     StatusImageModal {
         id: imagePopup
         onClicked: {
             root.close()
         }
-    }
-
-    EmojiReactions {
-        id: reactionModel
     }
 
     property Component profilePopupComponent: ProfilePopup {
@@ -175,6 +166,9 @@ ScrollView {
                     return -1;
                 }
                 timeout: model.timeout
+                messageContextMenu: MessageContextMenu {
+                    reactionModel: EmojiReactions { }
+                }
             }
         }
 
