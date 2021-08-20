@@ -526,7 +526,6 @@ property Component sendTransactionModalComponent: SignTransactionModal {}
                         hideStatusText.stop();
                     }
                 }
-                backgroundColor: Style.current.background
 
                 function changeZoomFactor(newFactor) {
                     // FIXME there seems to be a bug in the WebEngine where the zoomFactor only update 1/2 times
