@@ -83,8 +83,6 @@ Item {
         model: userListDelegate
         section.property: "online"
         section.delegate: Item {
-            id: sectionItem
-            property bool online: !!section
             width: parent.width
             height: 24
 
@@ -93,7 +91,7 @@ Item {
                 anchors.leftMargin: Style.current.padding
                 font.pixelSize: Style.current.additionalTextSize
                 color: Style.current.darkGrey
-                text: sectionItem.online ? qsTr("Online") : qsTr("Offline")
+                text: section === 'true' ? qsTr("Online") : qsTr("Offline")
             }
         }
     }
