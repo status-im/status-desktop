@@ -11,14 +11,18 @@ MouseArea {
     property bool hovered: containsMouse
     property var container
     property int statusAgeEpoch: 0
+    property var messageContextMenu
 
     anchors.top: parent.top
     anchors.topMargin: 0
-    height: (isImage ? chatImageContent.height : chatText.height) + chatName.height + 2* Style.current.padding + (emojiReactions !== "" ? 20 : 0)
+    height: (isImage ? chatImageContent.height : chatText.height) + chatName.height + 2* Style.current.padding + (emojiReactionsModel.length ? 20 : 0)
     width: parent.width
     hoverEnabled: true
     cursorShape: Qt.PointingHandCursor
     propagateComposedEvents: true
+
+    signal addEmoji(bool isProfileClick, bool isSticker, bool isImage , var image, bool emojiOnly, bool hideEmojiPicker)
+
     onClicked: {
         mouse.accepted = false
     }
@@ -117,7 +121,7 @@ MouseArea {
 
         Loader {
             id: emojiReactionLoader
-            active: emojiReactions !== ""
+            active: emojiReactionsModel.length
             sourceComponent: emojiReactionsComponent
             anchors.left: chatImage.right
             anchors.leftMargin: Style.current.halfPadding
@@ -127,7 +131,13 @@ MouseArea {
 
         Component {
             id: emojiReactionsComponent
-            EmojiReactions {}
+            EmojiReactions {
+                onAddEmojiClicked: {
+                    root.addEmoji(false, false, false, null, true, false);
+                    messageContextMenu.x = (chatText.textField.leftPadding + 4);
+                    messageContextMenu.y -= (56 + Style.current.padding);
+                }
+            }
         }
 
         Separator {
