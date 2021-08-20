@@ -305,14 +305,18 @@ Item {
                 }
             }
 
-            Rectangle {
-                id: blockedBanner
+            Item {
                 Layout.fillWidth: true
-                height: 40
+                Layout.preferredHeight: 40
                 Layout.alignment: Qt.AlignHCenter
                 visible: isBlocked
-                color: Style.current.red
-                opacity: 0.1
+
+                Rectangle {
+                    id: blockedBanner
+                    anchors.fill: parent
+                    color: Style.current.red
+                    opacity: 0.1
+                }
 
                 Text {
                     id: blockedText
