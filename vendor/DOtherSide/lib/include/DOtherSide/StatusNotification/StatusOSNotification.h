@@ -5,7 +5,7 @@
 #include <QHash>
 
 #ifdef Q_OS_WIN
-
+#include "windows.h"
 #elif defined Q_OS_MACOS
 class NotificationHelper;
 #endif
@@ -25,6 +25,15 @@ signals:
     void notificationClicked(QString identifier);
 
 #ifdef Q_OS_WIN
+public:
+    QHash<uint, QString> m_identifiers;
+
+private:
+    bool initNotificationWin();
+    void stringToLimitedWCharArray(QString in, wchar_t* target, int maxLength);
+
+private:
+    HWND m_hwnd;
 
 #elif defined Q_OS_MACOS
 private:
