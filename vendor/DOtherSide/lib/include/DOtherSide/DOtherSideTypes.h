@@ -101,6 +101,9 @@ typedef void DosSingleInstance;
 /// A pointer to a status event object which is actualy a QObject
 typedef void DosStatusEventObject;
 
+/// A pointer to a status os notification object which is actualy a QObject
+typedef DosQObject DosStatusOSNotificationObject;
+
 /// A pixmap callback to be supplied to an image provider
 /// \param id Image source id
 /// \param width pointer to the width of the image
