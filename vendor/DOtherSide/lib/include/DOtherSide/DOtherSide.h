@@ -1002,6 +1002,12 @@ DOS_API DosStatusEventObject* dos_statusevent_create_showAppEvent(DosQQmlApplica
 DOS_API DosStatusEventObject* dos_statusevent_create_osThemeEvent(DosQQmlApplicationEngine* vptr);
 DOS_API void dos_statusevent_delete(DosStatusEventObject* vptr);
 
+/// Status notification object
+DOS_API DosStatusOSNotificationObject* dos_statusosnotification_create();
+DOS_API void dos_statusosnotification_show_notification(DosStatusOSNotificationObject* vptr, 
+    const char* title, const char* message, const char* identifier);
+DOS_API void dos_statusosnotification_delete(DosStatusOSNotificationObject* vptr);
+
 #ifdef __cplusplus
 }
 #endif
