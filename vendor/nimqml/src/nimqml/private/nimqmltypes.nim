@@ -135,6 +135,8 @@ type
   StatusEventObject* = ref object of RootObj ## \
     ## A StatusEventObject
     vptr: DosStatusEventObject
+
+  StatusOSNotificationObject* = ref object of QObject 
     
 const
   UserRole* = 0x100

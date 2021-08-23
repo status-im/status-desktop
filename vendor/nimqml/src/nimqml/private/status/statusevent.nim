@@ -1,10 +1,8 @@
 
-#import ../[nimqmltypes, dotherside]
-
-proc setupDockShowAppEventObject*(self: StatusEventObject, engine: QQmlApplicationEngine) =
+proc setupDockShowAppEventObject(self: StatusEventObject, engine: QQmlApplicationEngine) =
   self.vptr = dos_statusevent_create_showAppEvent(engine.vptr)
 
-proc setupOSThemeEventObject*(self: StatusEventObject, engine: QQmlApplicationEngine) =
+proc setupOSThemeEventObject(self: StatusEventObject, engine: QQmlApplicationEngine) =
   self.vptr = dos_statusevent_create_osThemeEvent(engine.vptr)
 
 proc delete*(self: StatusEventObject) =
