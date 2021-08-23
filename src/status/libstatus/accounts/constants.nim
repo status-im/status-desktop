@@ -135,6 +135,7 @@ var NODE_CONFIG* = %* {
     "Enabled": true
   },
   "Rendezvous": true,
+  "RegisterTopics": @["whispermail"],
   "RequireTopics": {
     "whisper": {
       "Max": 2,
