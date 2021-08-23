@@ -88,7 +88,7 @@ QtObject:
   proc setCollectionsList(self: CollectiblesView, raw: string) {.slot.} =
     var newData: seq[OpenseaCollection] = @[]
     let collectionsJSON = parseJson(raw)
-    if collectionsJSON["result"].kind != JNull:
+    if not collectionsJSON{"result"}.isNil and collectionsJSON{"result"}.kind != JNull:
       for jsonOpenseaCollection in collectionsJSON{"result"}:
         let collection = jsonOpenseaCollection.toOpenseaCollection()
         newData.add(collection)
@@ -110,7 +110,7 @@ QtObject:
   proc setAssetsList(self: CollectiblesView, raw: string) {.slot.} =
     var newData: seq[OpenseaAsset] = @[]
     let assetsJSON = parseJson(raw)
-    if assetsJSON{"assets"}{"result"}.kind != JNull:
+    if not assetsJSON{"assets"}{"result"}.isNil and assetsJSON{"assets"}{"result"}.kind != JNull:
       for jsonOpenseaAsset in assetsJSON{"assets"}{"result"}:
         newData.add(jsonOpenseaAsset.toOpenseaAsset())
 
