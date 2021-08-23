@@ -79,8 +79,8 @@ Item {
     Loader {
         id: rectangleBubbleLoader
         active: !!invitedCommunity
-        width: item.width
-        height: item.height
+        width: item ? item.width : 0
+        height: item ? item.height : 0
 
         sourceComponent: Component {
             Rectangle {

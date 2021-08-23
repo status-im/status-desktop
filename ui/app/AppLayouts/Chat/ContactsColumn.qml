@@ -196,9 +196,8 @@ Item {
         height: (contentHeight < (parent.height - contactRequests.height - Style.current.padding)) ? contentHeight : (parent.height - contactRequests.height - Style.current.padding)
         anchors.top: contactRequests.bottom
         anchors.topMargin: Style.current.padding
-        contentHeight: channelList.height + 2 * Style.current.padding + emptyViewAndSuggestions.height + emptyViewAndSuggestions.anchors.topMargin
+        contentHeight: channelList.childrenRect.height
         anchors.horizontalCenter: parent.horizontalCenter
-
 
         leftPadding: Style.current.halfPadding
         rightPadding: Style.current.halfPadding
