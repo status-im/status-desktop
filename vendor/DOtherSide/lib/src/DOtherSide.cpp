@@ -64,6 +64,7 @@
 
 #include "DOtherSide/StatusEvents/StatusDockShowAppEvent.h"
 #include "DOtherSide/StatusEvents/StatusOSThemeEvent.h"
+#include "DOtherSide/StatusNotification/StatusOSNotification.h"
 
 namespace {
 
@@ -143,7 +144,7 @@ void dos_qapplication_initialize_opengl()
 void dos_qguiapplication_create()
 {
     static int argc = 1;
-    static char *argv[] = {"Status"};
+    static char *argv[] = {(char*)"Status"};
 
     register_meta_types();
 
@@ -209,7 +210,7 @@ void dos_qguiapplication_installEventFilter(::DosStatusEventObject* vptr)
 void dos_qapplication_create()
 {
     static int argc = 1;
-    static char *argv[] = {"Status"};
+    static char *argv[] = {(char*)"Status"};
 
     register_meta_types();
 
@@ -1368,4 +1369,24 @@ void dos_statusevent_delete(DosStatusEventObject* vptr)
 {
     auto qobject = static_cast<QObject*>(vptr);
     qobject->deleteLater();
+}
+
+::DosStatusOSNotificationObject* dos_statusosnotification_create()
+{
+    return new StatusOSNotification();
+}
+
+void dos_statusosnotification_show_notification(DosStatusOSNotificationObject* vptr, 
+    const char* title, const char* message, const char* identifier)
+{
+    auto notificationObj = static_cast<StatusOSNotification*>(vptr);
+    if(notificationObj)
+        notificationObj->showNotification(title, message, identifier);
+}
+
+void dos_statusosnotification_delete(DosStatusOSNotificationObject* vptr)
+{
+    auto qobject = static_cast<QObject*>(vptr);
+    if(qobject)
+        qobject->deleteLater();
 }
