@@ -13,6 +13,7 @@ QtObject:
     wakuBloomFilterMode*: bool
     fullNode*: bool
     stats*: Stats
+    peerSize: int
 
   proc setup(self: NodeView) =
     self.QObject.setup
@@ -143,3 +144,18 @@ QtObject:
   QtProperty[string] downloadRate:
     read = downloadRate
     notify = statsChanged
+
+  proc getPeerSize*(self: NodeView): int {.slot.} = self.peerSize
+
+  proc peerSizeChanged*(self: NodeView, value: int) {.signal.}
+
+  proc setPeerSize*(self: NodeView, value: int) {.slot.} =
+    self.peerSize = value
+    self.peerSizeChanged(value)
+
+  proc resetPeers*(self: NodeView) {.slot.} =
+    self.setPeerSize(0)
+
+  QtProperty[int] peerSize:
+    read = getPeerSize
+    notify = peerSizeChanged
