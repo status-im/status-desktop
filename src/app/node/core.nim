@@ -30,7 +30,9 @@ proc init*(self: NodeController) =
     self.view.setLastMessage($WalletSignal(e).blockNumber)
 
   self.status.events.on(SignalType.DiscoverySummary.event) do(e:Args):
-    self.status.network.peerSummaryChange(DiscoverySummarySignal(e).enodes)
+    var data = DiscoverySummarySignal(e)
+    self.status.network.peerSummaryChange(data.enodes)
+    self.view.setPeerSize(data.enodes.len)
 
   self.status.events.on(SignalType.Stats.event) do (e:Args):
     self.view.setStats(StatsSignal(e).stats)

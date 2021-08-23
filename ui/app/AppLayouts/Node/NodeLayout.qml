@@ -20,6 +20,31 @@ Item {
 
         }
 
+        RowLayout {
+            id: peerContainer2
+            Layout.fillWidth: true
+            StyledText {
+                id: peerDescription
+                color: Style.current.lightBlueText
+                text: "Peers"
+                Layout.rightMargin: Style.current.padding
+                Layout.leftMargin: Style.current.padding
+                Layout.fillWidth: true
+                font.weight: Font.Medium
+                font.pixelSize: 20
+            }
+            StyledText {
+                id: peerNumber
+                color: Style.current.lightBlueText
+                text: nodeModel.peerSize
+                Layout.rightMargin: Style.current.padding
+                Layout.leftMargin: Style.current.padding
+                Layout.fillWidth: true
+                font.weight: Font.Medium
+                font.pixelSize: 20
+            }
+        }
+
         ColumnLayout {
             id: messageContainer
             Layout.fillHeight: true
