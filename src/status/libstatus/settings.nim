@@ -144,6 +144,7 @@ proc getWakuVersion*():int =
 
 proc setWakuVersion*(newVersion: int) =
   let nodeConfig = getNodeConfig()
+  nodeConfig["RegisterTopics"] = %* @["whispermail"]
   if newVersion == 1:
     nodeConfig["WakuConfig"]["Enabled"] = newJBool(true)
     nodeConfig["WakuV2Config"]["Enabled"] = newJBool(false)
