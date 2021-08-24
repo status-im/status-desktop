@@ -64,7 +64,7 @@ Menu {
                 icon.name: menuItem.action.icon.name
                 icon.width: menuItem.action.icon.width
                 icon.height: menuItem.action.icon.height
-                onClicked: menuItem.action.trigger()
+                onClicked: menuItem.action.actionTriggered()
                 highlighted: menuItem.action.checked
                 StatusToolTip {
                     visible: parent.hovered
