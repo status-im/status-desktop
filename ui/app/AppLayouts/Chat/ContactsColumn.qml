@@ -196,7 +196,8 @@ Item {
         height: (contentHeight < (parent.height - contactRequests.height - Style.current.padding)) ? contentHeight : (parent.height - contactRequests.height - Style.current.padding)
         anchors.top: contactRequests.bottom
         anchors.topMargin: Style.current.padding
-        contentHeight: channelList.childrenRect.height
+        anchors.bottom: contactsColumn.bottom
+        contentHeight: channelList.childrenRect.height + emptyViewAndSuggestions.childrenRect.height
         anchors.horizontalCenter: parent.horizontalCenter
 
         leftPadding: Style.current.halfPadding
@@ -247,6 +248,14 @@ Item {
                     chatItem = chatsModel.channelView.getChatItemById(id)
                 }
             }
+        }
+
+        EmptyView {
+            id: emptyViewAndSuggestions
+            visible: !appSettings.hideChannelSuggestions
+            width: parent.width
+            anchors.top: channelList.bottom
+            anchors.topMargin: Style.current.padding
         }
     }
 
