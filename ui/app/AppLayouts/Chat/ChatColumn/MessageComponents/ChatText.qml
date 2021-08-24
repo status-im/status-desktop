@@ -88,7 +88,7 @@ Item {
                 return Emoji.parse(msg, Emoji.size.middle);
             } else {
                 if(isEdited){
-                    let index = msg.length - 4
+                    let index = msg.endsWith("code>") ? msg.length : msg.length - 4
                     return Utils.getMessageWithStyle(Emoji.parse(msg.slice(0, index) + Constants.editLabel + msg.slice(index)), appSettings.useCompactMode, isCurrentUser, hoveredLink)
                 }
                 return Utils.getMessageWithStyle(Emoji.parse(msg), appSettings.useCompactMode, isCurrentUser, hoveredLink)

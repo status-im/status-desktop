@@ -209,6 +209,49 @@ Item {
             anchors.right: parent.right
             anchors.rightMargin: root.chatHorizontalPadding
             height: (item !== null && typeof(item)!== 'undefined')? item.height: 0
+            property string sourceText
+
+            onActiveChanged: {
+                if (!active) {
+                    return
+                }
+
+                let mentionsMap = new Map()
+                let index = 0
+                while (true) {
+                    index = message.indexOf("<a href=", index)
+                    if (index < 0) {
+                        break
+                    }
+                    let endIndex = message.indexOf("</a>", index)
+                    if (endIndex < 0) {
+                        index += 8 // "<a href="
+                        continue
+                    }
+                    let addrIndex = message.indexOf("0x", index + 8)
+                    if (addrIndex < 0) {
+                        index += 8 // "<a href="
+                        continue
+                    }
+                    let addrEndIndex = message.indexOf('"', addrIndex)
+                    if (addrEndIndex < 0) {
+                        index += 8 // "<a href="
+                        continue
+                    }
+                    let address = message.substring(addrIndex, addrEndIndex)
+                    let linkTag = message.substring(index, endIndex + 5) // "</a>"
+                    mentionsMap.set(address, linkTag)
+                    index += linkTag.length
+                }
+
+                sourceText = plainText
+                for (let [key, value] of mentionsMap) {
+                    sourceText = sourceText.replace(new RegExp(key, 'g'), value)
+                }
+                sourceText = sourceText.replace(/\n/g, "<br />")
+                sourceText = Utils.getMessageWithStyle(sourceText, appSettings.useCompactMode, isCurrentUser)
+            }
+
             sourceComponent: Item {
                 id: editText
                 height: childrenRect.height
@@ -223,11 +266,10 @@ Item {
 
                 StatusChatInput {
                     id: editTextInput
-                    readonly property string originalText: Utils.getMessageWithStyle(Emoji.parse(message))
                     chatInputPlaceholder: qsTrId("type-a-message-")
                     chatType: chatsModel.channelView.activeChannel.chatType
                     isEdit: true
-                    textInput.text: originalText
+                    textInput.text: editMessageLoader.sourceText
                     onSendMessage: {
                         saveBtn.clicked()
                     }

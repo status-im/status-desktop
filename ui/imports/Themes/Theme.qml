@@ -12,6 +12,8 @@ QtObject {
     property QtObject fontHexLight: FontLoader { id: _fontHexLight; source: "../../fonts/InterStatus/InterStatus-Light.otf"; }
     property QtObject fontHexRegular: FontLoader { id: _fontHexRegular; source: "../../fonts/InterStatus/InterStatus-Regular.otf"; }
 
+    property QtObject fontCodeRegular: FontLoader { id: _fontCodeRegular; source: "../../fonts/RobotoMono/RobotoMono-Regular.ttf"; }
+
     property string name
 
     property color white

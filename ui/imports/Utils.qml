@@ -53,8 +53,13 @@ QtObject {
         return `<style type="text/css">` +
                     `p, img, a, del, code, blockquote { margin: 0; padding: 0; }` +
                     `code {` +
+                        `font-family: ${Style.current.fontCodeRegular.name};` +
+                        `font-weight: 400;` +
+                        `font-size: ${Style.current.secondaryTextFontSize};` +
+                        `padding: 2px 4px;` +
+                        `border-radius: 4px;` +
                         `background-color: ${Style.current.codeBackground};` +
-                        `color: ${Style.current.white};` +
+                        `color: ${Style.current.black};` +
                         `white-space: pre;` +
                     `}` +
                     `p {` +
@@ -95,19 +100,19 @@ QtObject {
 
     function getReplyMessageStyle(msg, isCurrentUser, useCompactMode) {
         return `<style type="text/css">`+
-                                `a {`+
-                                    `color: ${isCurrentUser && !useCompactMode ? Style.current.white : Style.current.textColor};`+
-                                `}`+
-                                `a.mention {`+
-                                    `color: ${isCurrentUser ? Style.current.mentionColor : Style.current.turquoise};`+
-                                    `background-color: ${Style.current.mentionBgColor};` +
-                                `}`+
-                                `</style>`+
-                            `</head>`+
-                            `<body>`+
-                                `${msg}`+
-                            `</body>`+
-                        `</html>`
+                    `a {`+
+                        `color: ${isCurrentUser && !useCompactMode ? Style.current.white : Style.current.textColor};`+
+                    `}`+
+                    `a.mention {`+
+                        `color: ${isCurrentUser ? Style.current.mentionColor : Style.current.turquoise};`+
+                        `background-color: ${Style.current.mentionBgColor};` +
+                    `}`+
+               `</style>`+
+               `</head>`+
+               `<body>`+
+                   `${msg}`+
+               `</body>`+
+            `</html>`
     }
 
     function getAppSectionIndex(section) {
