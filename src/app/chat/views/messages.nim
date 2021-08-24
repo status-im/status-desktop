@@ -65,63 +65,55 @@ QtObject:
   proc setLoadingHistoryMessages*(self: MessageView, chatId: string, value: bool)
   proc setInitialMessagesLoaded*(self: MessageView, chatId: string, value: bool)
 
-  proc replaceMentionsWithPubKeys(self: MessageView, mentions: seq[string], contacts: seq[Profile], message: string, predicate: proc (contact: Profile): string): string =
-    var updatedMessage = message
-    for mention in mentions:
-      let matches = contacts.filter(c => "@" & predicate(c).toLowerAscii == mention.toLowerAscii).map(c => c.address)
-      if matches.len > 0:
-        let pubKey = matches[0]
-        var startIndex = 0
-        var index = updatedMessage.find(mention)
-
-        while index > -1:
-          if index == 0 or updatedMessage[index-1] == ' ':
-            updatedMessage = updatedMessage.replaceWord(mention, '@' & pubKey)
-          startIndex = index + mention.len
-          index = updatedMessage.find(mention, startIndex)
-
-    result = updatedMessage
-
-  proc hideMessage(self: MessageView, mId: string) {.signal.}
-
-  proc sendOrEditMessage*(self: MessageView, message: string, replyTo: string, contentType: int = ContentType.Message.int, isStatusUpdate: bool = false, contactsString: string = "", isEdit: bool = false, messageId: string = "") {.slot.} =
+  proc replaceMentionsWithPubKeys(self: MessageView, message: string): string =
     let aliasPattern = re(r"(@[A-z][a-z]+ [A-z][a-z]* [A-z][a-z]*)", flags = {reStudy, reIgnoreCase})
     let ensPattern = re(r"(@\w+(?=(\.stateofus)?\.eth))", flags = {reStudy, reIgnoreCase})
     let namePattern = re(r"(@\w+)", flags = {reStudy, reIgnoreCase})
 
-    var contacts: seq[Profile]
-    if (contactsString == ""):
-      contacts = self.status.contacts.getContacts()
-    else:
-      let contactsJSON = parseJson(contactsString)
-      contacts = @[]
-      for contact in contactsJSON:
-        contacts.add(Profile(
-          address: contact["address"].str,
-          alias: contact["alias"].str,
-          ensName: contact["ensName"].str
-        ))
-
     let aliasMentions = findAll(message, aliasPattern)
     let ensMentions = findAll(message, ensPattern)
     let nameMentions = findAll(message, namePattern)
+    var updatedMessage = message
 
-    var m = self.replaceMentionsWithPubKeys(aliasMentions, contacts, message, (c => c.alias))
-    m = self.replaceMentionsWithPubKeys(ensMentions, contacts, m, (c => c.ensName))
-    m = self.replaceMentionsWithPubKeys(nameMentions, contacts, m, (c => c.ensName.split(".")[0]))
+    for publicKey in self.messageList[self.channelView.activeChannel.id].userList.users:
+      let user = self.messageList[self.channelView.activeChannel.id].userList.userDetails[publicKey]
+      
+      for mention in aliasMentions:
+        if "@" & user.alias.toLowerAscii != mention.toLowerAscii:
+          continue
 
+        updatedMessage = updatedMessage.replaceWord(mention, '@' & publicKey)
+
+      for mention in ensMentions:
+        if "@" & user.userName.toLowerAscii != mention.toLowerAscii:
+          continue
+
+        updatedMessage = updatedMessage.replaceWord(mention, '@' & publicKey)
+
+      for mention in nameMentions:
+        if "@" & user.userName.split(".")[0].toLowerAscii != mention.toLowerAscii:
+          continue
+
+        updatedMessage = updatedMessage.replaceWord(mention, '@' & publicKey)
+
+    return updatedMessage
+
+  proc hideMessage(self: MessageView, mId: string) {.signal.}
+
+  proc sendOrEditMessage*(self: MessageView, message: string, replyTo: string, contentType: int = ContentType.Message.int, isStatusUpdate: bool = false, isEdit: bool = false, messageId: string = "") {.slot.} =
+    let updatedMessage = self.replaceMentionsWithPubKeys(message)
     var channelId = self.channelView.activeChannel.id
 
     if isStatusUpdate:
       channelId = "@" & self.pubKey
 
     if not isEdit:
-      self.status.chat.sendMessage(channelId, m, replyTo, contentType)
+      self.status.chat.sendMessage(channelId, updatedMessage, replyTo, contentType)
     else:
-      self.status.chat.editMessage(messageId, m)
+      self.status.chat.editMessage(messageId, updatedMessage)
 
-  proc sendMessage*(self: MessageView, message: string, replyTo: string, contentType: int = ContentType.Message.int, isStatusUpdate: bool = false, contactsString: string = "") {.slot.} =
-    self.sendOrEditMessage(message, replyTo, contentType, isStatusUpdate, contactsString, false, "")
+  proc sendMessage*(self: MessageView, message: string, replyTo: string, contentType: int = ContentType.Message.int, isStatusUpdate: bool = false) {.slot.} =
+    self.sendOrEditMessage(message, replyTo, contentType, isStatusUpdate, false, "")
 
   proc verifyMessageSent*(self: MessageView, data: string) {.slot.} =
     let messageData = data.parseJson
@@ -138,8 +130,8 @@ QtObject:
 
   proc messageEdited(self: MessageView, editedMessageId: string, editedMessageContent: string) {.signal.}
 
-  proc editMessage*(self: MessageView, messageId: string, originalMessageId: string, message: string, contactsString: string = "") {.slot.} =
-    self.sendOrEditMessage(message, "", ContentType.Message.int, false, contactsString, true, originalMessageId)
+  proc editMessage*(self: MessageView, messageId: string, originalMessageId: string, message: string) {.slot.} =
+    self.sendOrEditMessage(message, "", ContentType.Message.int, false, true, originalMessageId)
     self.messageEdited(originalMessageId, message)
 
   proc messagePushed*(self: MessageView, messageIndex: int) {.signal.}

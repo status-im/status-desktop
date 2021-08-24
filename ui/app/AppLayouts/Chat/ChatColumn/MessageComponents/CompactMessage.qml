@@ -224,14 +224,6 @@ Item {
                 StatusChatInput {
                     id: editTextInput
                     readonly property string originalText: Utils.getMessageWithStyle(Emoji.parse(message))
-                    Component.onCompleted: {
-                        suggestionsList.clear()
-                        for (let i = 0; i < chatInput.suggestionsList.count; i++) {
-                            suggestionsList.append(chatInput.suggestionsList.get(i))
-                        }
-                        textInput.forceActiveFocus()
-                        textInput.cursorPosition = textInput.length
-                    }
                     chatInputPlaceholder: qsTrId("type-a-message-")
                     chatType: chatsModel.channelView.activeChannel.chatType
                     isEdit: true
@@ -274,7 +266,7 @@ Item {
                         if (msg.length > 0){
                             msg = chatInput.interpretMessage(msg)
                             isEdit = false
-                            chatsModel.messageView.editMessage(messageId, contentType == Constants.editType ? replaces : messageId, msg, JSON.stringify(suggestionsObj));
+                            chatsModel.messageView.editMessage(messageId, contentType == Constants.editType ? replaces : messageId, msg);
                         }
                     }
                 }

@@ -327,6 +327,7 @@ QtObject:
       if (forceActiveChat):
         chats[0].isActive = true
       self.events.emit("chatUpdate", ChatUpdateArgs(messages: messages, chats: chats, contacts: @[]))
+  
       for msg in messages:
         self.events.emit("sendingMessage", MessageArgs(id: msg.id, channel: msg.chatId))
 
