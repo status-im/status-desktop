@@ -10,7 +10,7 @@ import ../../status/ens as status_ens
 import ../../status/chat/[chat, message]
 import ../../status/profile/profile
 import web3/[conversions, ethtypes]
-import views/[channels_list, message_list, chat_item, suggestions_list, reactions, stickers, groups, transactions, communities, community_list, community_item, format_input, ens, activity_notification_list, channel, messages, message_item, gif]
+import views/[channels_list, message_list, chat_item, reactions, stickers, groups, transactions, communities, community_list, community_item, format_input, ens, activity_notification_list, channel, messages, message_item, gif]
 import ../utils/image_utils
 import ../../status/tasks/[qt, task_runner_impl]
 import ../../status/tasks/marathon/mailserver/worker
@@ -78,7 +78,6 @@ QtObject:
       channelView*: ChannelView
       messageView*: MessageView
       messageSearchViewController: MessageSearchViewController
-      currentSuggestions*: SuggestionsList
       activityNotificationList*: ActivityNotificationList
       callResult: string
       reactions*: ReactionView
@@ -94,10 +93,9 @@ QtObject:
 
   proc setup(self: ChatsView) = self.QAbstractListModel.setup
 
-  proc delete(self: ChatsView) = 
+  proc delete(self: ChatsView) =
     self.formatInputView.delete
     self.ensView.delete
-    self.currentSuggestions.delete
     self.activityNotificationList.delete
     self.reactions.delete
     self.stickers.delete
@@ -116,10 +114,9 @@ QtObject:
     result.communities = newCommunitiesView(status)
     result.channelView = newChannelView(status, result.communities)
     result.messageView = newMessageView(status, result.channelView, result.communities)
-    result.messageSearchViewController = newMessageSearchViewController(status, 
+    result.messageSearchViewController = newMessageSearchViewController(status,
       result.channelView, result.communities)
     result.connected = false
-    result.currentSuggestions = newSuggestionsList()
     result.activityNotificationList = newActivityNotificationList(status)
     result.reactions = newReactionView(
       status,
@@ -165,7 +162,7 @@ QtObject:
   QtProperty[QVariant] messageView:
     read = getMessageView
 
-  proc getMessageSearchViewController*(self: ChatsView): QVariant {.slot.} = 
+  proc getMessageSearchViewController*(self: ChatsView): QVariant {.slot.} =
     newQVariant(self.messageSearchViewController)
 
   QtProperty[QVariant] messageSearchViewController:
@@ -181,7 +178,7 @@ QtObject:
       let tmpImagePath = image_resizer(image, 2000, TMPDIR)
 
       var channelId = self.channelView.activeChannel.id
-      
+
       if isStatusUpdate:
         channelId = "@" & self.pubKey
 
@@ -220,12 +217,6 @@ QtObject:
     if self.status.chat.contacts.hasKey(pubKey):
       return status_ens.userNameOrAlias(self.status.chat.contacts[pubKey])
     generateAlias(pubKey)
-
-  proc getCurrentSuggestions(self: ChatsView): QVariant {.slot.} =
-    return newQVariant(self.currentSuggestions)
-
-  QtProperty[QVariant] suggestionList:
-    read = getCurrentSuggestions
 
   proc activityNotificationsChanged*(self: ChatsView) {.signal.}
 
@@ -266,7 +257,7 @@ QtObject:
           if channel.name == "" or channel.name == channel.id:
             if channel.ensName != "":
               channel.name = channel.ensName
-            else: 
+            else:
               channel.name = contact.username
         else:
           channel.name = contact.localNickname
@@ -336,16 +327,20 @@ QtObject:
         self.communities.updateCommunityChat(chat)
         if(self.channelView.activeChannel.id == chat.id):
           self.activeChannelChanged()
+
         continue
+
       self.messageView.upsertChannel(chat.id)
       self.channelView.chats.updateChat(chat)
+
       if(self.channelView.activeChannel.id == chat.id):
         self.channelView.activeChannel.setChatItem(chat)
         self.activeChannelChanged()
-        self.currentSuggestions.setNewData(self.status.contacts.getContacts())
+
       if self.channelView.contextChannel.id == chat.id:
         self.channelView.contextChannel.setChatItem(chat)
         self.channelView.contextChannelChanged()
+
     self.messageView.calculateUnreadMessages()
 
   proc isConnected*(self: ChatsView): bool {.slot.} =
@@ -490,7 +485,7 @@ QtObject:
   proc calculateUnreadMessages*(self: ChatsView) =
     self.messageView.calculateUnreadMessages()
 
-  proc sendingMessage*(self: ChatsView) = 
+  proc sendingMessage*(self: ChatsView) =
     self.messageView.sendingMessage()
 
   proc sendingMessageFailed*(self: ChatsView) =
@@ -499,11 +494,11 @@ QtObject:
   proc markMessageAsSent*(self: ChatsView, chat: string, messageId: string) =
     self.messageView.markMessageAsSent(chat, messageId)
 
-  # TODO: this method was created just to test the store functionality. 
+  # TODO: this method was created just to test the store functionality.
   # It should be removed, once peer management is added to status-go
   proc requestAllHistoricMessages(self: ChatsView) {.slot.} =
     debug "Requesting messages"
-    # TODO: the mailservers must change depending on whether we are using wakuV1 or wakuV2 
+    # TODO: the mailservers must change depending on whether we are using wakuV1 or wakuV2
     # in the meantime I'm hardcoding a specific mailserver
     echo self.status.mailservers.setMailserver("16Uiu2HAm4v86W3bmT1BiH6oSPzcsSr24iDQpSN5Qa992BCjjwgrD")
     echo self.status.mailservers.requestAllHistoricMessages()

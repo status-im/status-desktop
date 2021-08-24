@@ -41,7 +41,6 @@ Item {
     property string activeMessage
     property var currentTime: 0
     property var idMap: ({})
-    property var suggestionsObj: ([])
     property Timer timer: Timer { }
     property var userList
     property var onActivated: function () {
@@ -61,52 +60,6 @@ Item {
             activeMessage = messageId
         } else if (activeMessage === messageId) {
             activeMessage = ""
-        }
-    }
-
-    function addSuggestionFromMessageList(i){
-        const contactAddr = chatsModel.messageView.messageList.getMessageData(i, "publicKey");
-        if(idMap[contactAddr]) return;
-        suggestionsObj.push({
-                                alias: chatsModel.messageView.messageList.getMessageData(i, "alias"),
-                                ensName: chatsModel.messageView.messageList.getMessageData(i, "ensName"),
-                                address: contactAddr,
-                                identicon: chatsModel.messageView.messageList.getMessageData(i, "identicon"),
-                                localNickname: chatsModel.messageView.messageList.getMessageData(i, "localName")
-                            })
-        chatInput.suggestionsList.append(suggestionsObj[suggestionsObj.length - 1]);
-        idMap[contactAddr] = true;
-    }
-
-    function populateSuggestions() {
-        chatInput.suggestionsList.clear()
-
-        idMap = {}
-
-        let isCommunity = chatsModel.communities.activeCommunity.active
-        let dataSource = isCommunity ? chatsModel.communities.activeCommunity.members : chatsModel.suggestionList
-
-        const len = dataSource.rowCount()
-        for (let i = 0; i < len; i++) {
-            const contactAddr = dataSource.rowData(i, "address");
-            if(idMap[contactAddr]) continue;
-            suggestionsObj.push({
-                                    alias: dataSource.rowData(i, "alias"),
-                                    ensName: dataSource.rowData(i, "ensName"),
-                                    address: contactAddr,
-                                    identicon: getProfileImage(contactAddr, false, false) || dataSource.rowData(i, "identicon"),
-                                    localNickname: dataSource.rowData(i, "localNickname")
-                                })
-
-            chatInput.suggestionsList.append(suggestionsObj[suggestionsObj.length - 1]);
-            idMap[contactAddr] = true;
-        }
-
-        if (isCommunity) return;
-
-        const len2 = chatsModel.messageView.messageList.rowCount();
-        for (let f = 0; f < len2; f++) {
-            addSuggestionFromMessageList(f);
         }
     }
 
@@ -356,21 +309,6 @@ Item {
                     isBlocked = profileModel.contacts.isContactBlocked(activeChatId);
                     chatInput.suggestions.hide();
                     chatInput.textInput.forceActiveFocus(Qt.MouseFocusReason)
-                    populateSuggestions();
-                }
-            }
-
-            Connections {
-                target: chatsModel.messageView
-                onMessagePushed: {
-                    addSuggestionFromMessageList(messageIndex);
-                }
-            }
-
-            Connections {
-                target: profileModel
-                onContactsChanged: {
-                    populateSuggestions();
                 }
             }
 
@@ -462,7 +400,7 @@ Item {
                         let msg = chatsModel.plainText(Emoji.deparse(chatInput.textInput.text))
                         if (msg.length > 0){
                             msg = chatInput.interpretMessage(msg)
-                            chatsModel.messageView.sendMessage(msg, chatInput.isReply ? SelectedMessage.messageId : "", Utils.isOnlyEmoji(msg) ? Constants.emojiType : Constants.messageType, false, JSON.stringify(suggestionsObj));
+                            chatsModel.messageView.sendMessage(msg, chatInput.isReply ? SelectedMessage.messageId : "", Utils.isOnlyEmoji(msg) ? Constants.emojiType : Constants.messageType, false);
                             if(event) event.accepted = true
                             sendMessageSound.stop();
                             Qt.callLater(sendMessageSound.play);

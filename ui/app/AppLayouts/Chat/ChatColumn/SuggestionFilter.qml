@@ -32,9 +32,16 @@ Item {
         if (!isFilteringPropertyOk())
             return
 
-        var length = sourceModel.count
+        var length = sourceModel.rowCount()
         for (var i = 0; i < length; ++i) {
-            var item = sourceModel.get(i);
+            const publicKey = sourceModel.rowData(i, "publicKey");
+            var item = {
+                alias: sourceModel.rowData(i, "alias"),
+                userName: sourceModel.rowData(i, "userName"),
+                publicKey: publicKey,
+                identicon: getProfileImage(publicKey, false, false) || sourceModel.rowData(i, "identicon"),
+                localName: sourceModel.rowData(i, "localName")
+            }
             if (isAcceptedItem(item)) {
                 filterModel.append(item)
             }

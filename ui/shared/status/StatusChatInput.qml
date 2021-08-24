@@ -47,10 +47,9 @@ Rectangle {
 
     property var fileUrls: []
 
-    property alias suggestionsList: suggestions
-    property alias suggestions: suggestionsBox
-
     property var imageErrorMessageLocation: StatusChatInput.ImageErrorMessageLocation.Top
+
+    property alias suggestions: suggestionsBox
 
     enum ImageErrorMessageLocation {
         Top,
@@ -522,10 +521,6 @@ Rectangle {
                                 }
     }
 
-    ListModel {
-        id: suggestions
-    }
-
     FileDialog {
         id: imageDialog
         //% "Please choose an image"
@@ -567,17 +562,17 @@ Rectangle {
 
     SuggestionBox {
         id: suggestionsBox
-        model: suggestions
+        model: chatsModel.messageView.messageList.userList
         x : messageInput.x
         y: -height - Style.current.smallPadding
         width: messageInput.width
         filter: messageInputField.text
         cursorPosition: messageInputField.cursorPosition
-        property: ["ensName", "localNickname", "alias"]
+        property: ["userName", "localName", "alias"]
         onItemSelected: function (item, lastAtPosition, lastCursorPosition) {
             const hasEmoji = Emoji.hasEmoji(messageInputField.text)
 
-            const properties = "ensName, alias"; // Ignore localNickname
+            const properties = "userName, alias"; // Ignore localName
 
             let aliasName = item[properties.split(",").map(p => p.trim()).find(p => !!item[p])]
             aliasName = aliasName.replace(/(\.stateofus)?\.eth/, "")

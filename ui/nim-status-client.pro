@@ -106,7 +106,6 @@ DISTFILES += \
     app/AppLayouts/Chat/ChatColumn/ChatComponents/ChatCommandsPopup.qml \
     app/AppLayouts/Chat/ChatColumn/ChatComponents/ChatInputButton.qml \
     app/AppLayouts/Chat/ChatColumn/ChatComponents/ChatRequestMessage.qml \
-    app/AppLayouts/Chat/ChatColumn/ChatComponents/InputArea.qml \
     app/AppLayouts/Chat/ChatColumn/ChatComponents/RequestModal.qml \
     app/AppLayouts/Chat/ChatColumn/ChatComponents/SignTransactionModal.qml \
     app/AppLayouts/Chat/ChatColumn/CompactMessage.qml \

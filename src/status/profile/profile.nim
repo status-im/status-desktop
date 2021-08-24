@@ -1,4 +1,4 @@
-import json
+import json, strformat
 import ../types
 
 type Profile* = ref object
@@ -11,6 +11,8 @@ type Profile* = ref object
   appearance*: int
   systemTags*: seq[string]
 
+proc `$`*(self: Profile): string =
+  return fmt"Profile(id:{self.id}, username:{self.username})"
 
 const contactAdded* = ":contact/added"
 const contactBlocked* = ":contact/blocked"

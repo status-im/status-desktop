@@ -17,8 +17,8 @@ type
     Identicon = UserRole + 6
 
   User = object
-    username: string
-    alias: string
+    username*: string
+    alias*: string
     localName: string
     lastSeen: string
     identicon: string
@@ -27,8 +27,8 @@ QtObject:
   type
     UserListView* = ref object of QAbstractListModel
       status: Status
-      users: seq[string]
-      userDetails: OrderedTable[string, User]
+      users*: seq[string]
+      userDetails*: OrderedTable[string, User]
 
   proc delete(self: UserListView) =
     self.userDetails.clear()
@@ -44,6 +44,19 @@ QtObject:
     result.status = status
     result.setup
 
+  proc rowData(self: UserListView, index: int, column: string): string {.slot.} =
+    if (index >= self.users.len):
+      return
+
+    let publicKey = self.users[index]
+    case column:
+      of "publicKey": result = publicKey
+      of "userName": result = self.userDetails[publicKey].username
+      of "lastSeen": result = self.userDetails[publicKey].lastSeen
+      of "alias": result = self.userDetails[publicKey].alias
+      of "localName": result = self.userDetails[publicKey].localName
+      of "identicon": result = self.userdetails[publicKey].identicon
+
   method rowCount*(self: UserListView, index: QModelIndex = nil): int = self.users.len
 
   method data(self: UserListView, index: QModelIndex, role: int): QVariant =
@@ -51,11 +64,11 @@ QtObject:
       return
     if index.row < 0 or index.row >= self.users.len:
       return
-    
+
     let pubkey = self.users[index.row]
 
     case role.UserListRoles:
-      of UserListRoles.UserName: result = newQVariant(self.userDetails[pubkey].userName)
+      of UserListRoles.UserName: result = newQVariant(self.userDetails[pubkey].username)
       of UserListRoles.LastSeen: result = newQVariant(self.userDetails[pubkey].lastSeen)
       of UserListRoles.Alias: result = newQVariant(self.userDetails[pubkey].alias)
       of UserListRoles.LocalName: result = newQVariant(self.userDetails[pubkey].localName)
@@ -82,7 +95,7 @@ QtObject:
       var alias: string
       var identicon: string
       var localName: string
-      
+
       if self.status.chat.contacts.hasKey(pk):
         userName = ens.userNameOrAlias(self.status.chat.contacts[pk])
         alias = self.status.chat.contacts[pk].alias
@@ -104,13 +117,13 @@ QtObject:
       )
       self.users.add(pk)
       self.endInsertRows()
-    
+
     # Checking for removed members
     var toDelete: seq[string]
     for userPublicKey in self.users:
       var found = false
       for m in members:
-        if m.id == userPublicKey: 
+        if m.id == userPublicKey:
           found = true
           break
       if not found:

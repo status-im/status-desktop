@@ -56,7 +56,7 @@ QtObject:
       isEdited*: Table[string, bool]
       messageReactions*: Table[string, string]
       timedoutMessages: HashSet[string]
-      userList: UserListView
+      userList*: UserListView
       loadingHistoryMessages: bool
       initialMessagesLoaded: bool
 
@@ -152,7 +152,7 @@ QtObject:
     return self.messages[self.messageIndex[messageId]]
 
   proc deleteMessage*(self: ChatMessageList, messageId: string): bool =
-    if not self.messageIndex.hasKey(messageId): 
+    if not self.messageIndex.hasKey(messageId):
       return false
 
     let messageIndex = self.messageIndex[messageId]
@@ -180,7 +180,7 @@ QtObject:
     self.messages[msgIdx].parsedText = message.parsedText
     self.messages[msgIdx].text = message.text
     self.dataChanged(topLeft, bottomRight, @[ChatMessageRoles.Message.int, ChatMessageRoles.PlainText.int, ChatMessageRoles.IsEdited.int])
-  
+
   proc resetTimeOut*(self: ChatMessageList, messageId: string) =
     if not self.messageIndex.hasKey(messageId): return
     let msgIdx = self.messageIndex[messageId]
@@ -332,8 +332,8 @@ QtObject:
 
   proc add*(self: ChatMessageList, message: Message) =
     if self.messageIndex.hasKey(message.id) and message.editedAt == "0": return # duplicated msg
-    
-    if message.editedAt != "0": 
+
+    if message.editedAt != "0":
       self.isEdited[message.id] = true
       if self.messageIndex.hasKey(message.id):
         self.replaceMessage(message)
@@ -380,7 +380,7 @@ QtObject:
     self.countChanged()
 
   proc setMessageReactions*(self: ChatMessageList, messageId: string, newReactions: string)=
-    self.messageReactions[messageId] = newReactions    
+    self.messageReactions[messageId] = newReactions
     if not self.messageIndex.hasKey(messageId): return
     let msgIdx = self.messageIndex[messageId]
     let topLeft = self.createIndex(msgIdx, 0, nil)
@@ -393,7 +393,7 @@ QtObject:
     let msgIdx = self.messageIndex[messageId]
     if msgIdx < 0: return false
     if msgIdx >= self.messages.len: return false
-    
+
     var message = self.messages[msgIdx]
     message.isPinned = pinned
     message.pinnedBy = pinnedBy
