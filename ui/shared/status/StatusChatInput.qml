@@ -213,25 +213,41 @@ Rectangle {
     function wrapSelection(wrapWith) {
         if (messageInputField.selectionStart - messageInputField.selectionEnd === 0) return
 
+        // calulate the new selection start and end positions
+        var newSelectionStart = messageInputField.selectionStart + wrapWith.length
+        var newSelectionEnd = messageInputField.selectionEnd - messageInputField.selectionStart + newSelectionStart
+
         insertInTextInput(messageInputField.selectionStart, wrapWith);
         insertInTextInput(messageInputField.selectionEnd, wrapWith);
 
-        messageInputField.deselect()
+        messageInputField.select(newSelectionStart, newSelectionEnd)
     }
+
     function unwrapSelection(unwrapWith, selectedTextWithFormationChars) {
-        if (messageInputField.selectionStart - messageInputField.selectionEnd === 0) return
+            if (messageInputField.selectionStart - messageInputField.selectionEnd === 0) return
 
-        selectedTextWithFormationChars = selectedTextWithFormationChars.trim()
-        // Check if the selectedTextWithFormationChars has formation chars and if so, calculate how many so we can adapt the start and end pos
-        const selectTextDiff = (selectedTextWithFormationChars.length - messageInputField.selectedText.length) / 2
+            // calulate the new selection start and end positions
+            var newSelectionStart = messageInputField.selectionStart -  unwrapWith.length
+            var newSelectionEnd = messageInputField.selectionEnd-messageInputField.selectionStart + newSelectionStart
 
-        const changedString = selectedTextWithFormationChars.replace(unwrapWith, '').replace(unwrapWith, '')
+            selectedTextWithFormationChars = selectedTextWithFormationChars.trim()
+            // Check if the selectedTextWithFormationChars has formation chars and if so, calculate how many so we can adapt the start and end pos
+            const selectTextDiff = (selectedTextWithFormationChars.length - messageInputField.selectedText.length) / 2
 
-        messageInputField.remove(messageInputField.selectionStart - selectTextDiff, messageInputField.selectionEnd + selectTextDiff)
+            // Remove the deselected option from the before and after the selected text
+            const prefixChars = messageInputField.getText((messageInputField.selectionStart - selectTextDiff), messageInputField.selectionStart)
+            const updatedPrefixChars = prefixChars.replace(unwrapWith, '')
+            const postfixChars = messageInputField.getText(messageInputField.selectionEnd, (messageInputField.selectionEnd + selectTextDiff))
+            const updatedPostfixChars = postfixChars.replace(unwrapWith, '')
 
-        insertInTextInput(messageInputField.selectionStart, changedString)
+            // Create updated selected string with pre and post formatting characters
+            const updatedSelectedStringWithFormatChars = updatedPrefixChars + messageInputField.selectedText + updatedPostfixChars
 
-        messageInputField.deselect()
+            messageInputField.remove(messageInputField.selectionStart - selectTextDiff, messageInputField.selectionEnd + selectTextDiff)
+
+            insertInTextInput(messageInputField.selectionStart, updatedSelectedStringWithFormatChars)
+
+            messageInputField.select(newSelectionStart, newSelectionEnd)
     }
 
     function getPlainText() {
@@ -927,7 +943,7 @@ Rectangle {
                         icon.name: "format-text-italic"
                         //% "Italic"
                         text: qsTrId("italic")
-                        checked: textFormatMenu.surroundedBy("*") && !textFormatMenu.surroundedBy("**")
+                        checked: (textFormatMenu.surroundedBy("*") && !textFormatMenu.surroundedBy("**")) || textFormatMenu.surroundedBy("***")
                     }
                     StatusChatInputTextFormationAction {
                         wrapper: "~~"
