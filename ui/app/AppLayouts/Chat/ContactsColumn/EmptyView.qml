@@ -52,11 +52,6 @@ Rectangle {
             icon.height: 20
             icon.width: 20
             iconColor: Style.current.midGrey
-        }
-
-        MouseArea {
-            anchors.fill: closeImg
-            cursorShape: Qt.PointingHandCursor
             onClicked: {
                 appSettings.hideChannelSuggestions = true
             }
