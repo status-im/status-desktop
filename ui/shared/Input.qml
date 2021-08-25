@@ -1,5 +1,8 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
+
+import StatusQ.Popups 0.1
+
 import "../imports"
 import "../shared/status"
 import "."
@@ -102,6 +105,19 @@ Item {
             }
             onEditingFinished: inputBox.editingFinished(inputBox.text)
             onTextEdited: inputBox.textEdited(inputBox.text)
+
+            MouseArea {
+                anchors.fill: parent
+                acceptedButtons: Qt.RightButton | Qt.LeftButton
+                onClicked: {
+                    if((mouse.button === Qt.RightButton) && inputValue.canPaste) {
+                        rightClickContextMenu.popup()
+                    }
+                    else {
+                        inputValue.forceActiveFocus(Qt.MouseFocusReason)
+                    }
+                }
+            }
         }
 
         SVGImage {
@@ -185,6 +201,22 @@ Item {
         height: 16
         color: validationErrorColor
         wrapMode: TextEdit.Wrap
+    }
+
+    StatusPopupMenu {
+        id: rightClickContextMenu
+
+        StatusMenuItem {
+            enabled: inputValue.canPaste
+            text: qsTrId("Paste")
+            onTriggered: {
+                inputValue.paste()
+            }
+        }
+
+        onClosed: {
+            inputValue.forceActiveFocus(Qt.MouseFocusReason)
+        }
     }
 }
 
