@@ -85,7 +85,7 @@ MouseArea {
                 StatusChatImage {
                     imageSource: image
                     imageWidth: 200
-                    onClicked: root.clickMessage(false, false, true, image)
+                    onClicked: imageClick(image)
                     container: root.container
                 }
             }
@@ -105,6 +105,10 @@ MouseArea {
             icon.width: 20
             icon.height: 20
             onClicked: {
+                // Set parent, X & Y positions for the messageContextMenu
+                messageContextMenu.parent = emojiBtn
+                messageContextMenu.setXPosition = function() { return -messageContextMenu.width + emojiBtn.width}
+                messageContextMenu.setYPosition = function() { return -messageContextMenu.height - 4}
                 root.clickMessage(false, false, false, null, true)
             }
         }
@@ -134,8 +138,10 @@ MouseArea {
             EmojiReactions {
                 onAddEmojiClicked: {
                     root.addEmoji(false, false, false, null, true, false);
-                    messageContextMenu.x = (chatText.textField.leftPadding + 4);
-                    messageContextMenu.y -= (56 + Style.current.padding);
+                    // Set parent, X & Y positions for the messageContextMenu
+                    messageContextMenu.parent = emojiReactionLoader
+                    messageContextMenu.setXPosition = function() { return (messageContextMenu.parent.x + 4)}
+                    messageContextMenu.setYPosition = function() { return (-messageContextMenu.height - 4)}
                 }
             }
         }

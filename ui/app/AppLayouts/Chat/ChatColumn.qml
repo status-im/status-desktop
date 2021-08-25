@@ -120,6 +120,11 @@ Item {
         }
     }
 
+    MessageContextMenu {
+        id: contextmenu
+        reactionModel: EmojiReactions { }
+    }
+
     StackLayout {
         anchors.fill: parent
         currentIndex:  chatsModel.channelView.activeChannelIndex > -1 && chatGroupsListViewCount > 0 ? 0 : 1
@@ -131,10 +136,10 @@ Item {
                     imagePopup.close()
                 }
                 else if(button === Qt.RightButton) {
-                    messageContextMenu.imageSource = imagePopup.imageSource
-                    messageContextMenu.hideEmojiPicker = true
-                    messageContextMenu.isRightClickOnImage = true;
-                    messageContextMenu.show()
+                    contextmenu.imageSource = imagePopup.imageSource
+                    contextmenu.hideEmojiPicker = true
+                    contextmenu.isRightClickOnImage = true;
+                    contextmenu.show()
                 }
             }
         }
@@ -295,9 +300,7 @@ Item {
                         sourceComponent: ChatMessages {
                             id: chatMessages
                             messageList: messages
-                            messageContextMenuInst: MessageContextMenu {
-                                reactionModel: EmojiReactions { }
-                            }
+                            messageContextMenuInst: contextmenu
                             Component.onCompleted: {
                                 chatColumnLayout.userList = chatMessages.messageList.userList;
                             }

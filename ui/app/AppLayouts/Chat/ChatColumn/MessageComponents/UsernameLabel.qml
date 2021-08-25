@@ -32,6 +32,10 @@ Item {
                 root.isHovered = false
             }
             onClicked: {
+                // Set parent, X & Y positions for the messageContextMenu
+                messageContextMenu.parent = root
+                messageContextMenu.setXPosition = function() { return 0}
+                messageContextMenu.setYPosition = function() { return root.height + 4}
                 clickMessage(true)
             }
         }

@@ -12,6 +12,10 @@ MouseArea {
             return clickMessage(false, isSticker, false)
         }
         if(mouse.button === Qt.RightButton) {
+            // Set parent, X & Y positions for the messageContextMenu
+            messageContextMenu.parent = root
+            messageContextMenu.setXPosition = function() { return (mouse.x)}
+            messageContextMenu.setYPosition = function() { return (mouse.y)}
             clickMessage(false, isSticker, false)
             if (typeof isMessageActive !== "undefined") {
                 setMessageActive(messageId, true)

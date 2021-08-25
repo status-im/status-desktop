@@ -38,7 +38,7 @@ ScrollView {
     StatusImageModal {
         id: imagePopup
         onClicked: {
-            root.close()
+            close()
         }
     }
 

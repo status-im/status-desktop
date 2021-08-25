@@ -191,16 +191,10 @@ Item {
             return
         }
 
-        if (isImage && !isRightClickOnImage) {
-            imageClick(image);
-            return;
-        }
-
         if (!isProfileClick) {
             SelectedMessage.set(messageId, fromAuthor);
         }
 
-        messageContextMenu.parent = root
         messageContextMenu.messageId = root.messageId
         messageContextMenu.contentType = root.contentType
         messageContextMenu.linkUrls = root.linkUrls;
@@ -224,10 +218,8 @@ Item {
             messageContextMenu.show(userName, fromAuthor, root.profileImageSource || identicon, plainText, nickname, emojiReactionsModel);
         }
 
-        // Position the center of the menu where the mouse is
-        if (messageContextMenu.x + messageContextMenu.width + Style.current.padding < root.width) {
-            messageContextMenu.x = messageContextMenu.x - messageContextMenu.width / 2;
-        }
+         messageContextMenu.x = messageContextMenu.setXPosition()
+         messageContextMenu.y = messageContextMenu.setYPosition()
     }
 
     Loader {

@@ -171,7 +171,7 @@ Item {
                         imageSource: image
                         imageWidth: 250
                         isCurrentUser: root.isCurrentUser
-                        onClicked: root.clickMessage(false, false, true, image)
+                        onClicked: imageClick(image)
                         container: root.container
                     }
                 }

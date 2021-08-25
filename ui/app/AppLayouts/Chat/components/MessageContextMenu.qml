@@ -37,9 +37,19 @@ StatusPopupMenu {
     property var onClickEdit: function(){}
     property var reactionModel
     property string imageSource: ""
+    property var setXPosition: function() {return 0}
+    property var setYPosition: function() {return 0}
     property bool canPin: {
         const nbPinnedMessages = chatsModel.messageView.pinnedMessagesList.count
         return nbPinnedMessages < Constants.maxNumberOfPins
+    }
+
+    onHeightChanged: {
+        messageContextMenu.y = setYPosition()
+    }
+
+    onWidthChanged: {
+        messageContextMenu.x = setXPosition()
     }
 
     signal shouldCloseParentPopup
