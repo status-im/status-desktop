@@ -60,6 +60,10 @@ type
     id*: string
     channel*: string
 
+  MessageSendingSuccess* = ref object of Args
+    chat*: Chat
+    message*: Message
+
   MarkAsReadNotificationProperties* = ref object of Args
     communityId*: string
     channelId*: string
@@ -119,21 +123,22 @@ QtObject:
         
     self.events.emit("chatUpdate", ChatUpdateArgs(messages: messages,chats: chats, contacts: @[], emojiReactions: emojiReactions, communities: communities, communityMembershipRequests: communityMembershipRequests, pinnedMessages: pinnedMessages, activityCenterNotifications: activityCenterNotifications, statusUpdates: statusUpdates, deletedMessages: deletedMessages))
   
-  proc processChatUpdate(self: ChatModel, response: JsonNode): (seq[Chat], seq[Message]) =
+  proc parseChatResponse(self: ChatModel, response: string): (seq[Chat], seq[Message]) =
+    var parsedResponse = parseJson(response)
     var chats: seq[Chat] = @[]
     var messages: seq[Message] = @[]
-    if response{"result"}{"messages"} != nil:
-      for jsonMsg in response["result"]["messages"]:
+    if parsedResponse{"result"}{"messages"} != nil:
+      for jsonMsg in parsedResponse["result"]["messages"]:
         messages.add(jsonMsg.toMessage())
-    if response{"result"}{"chats"} != nil:
-      for jsonChat in response["result"]["chats"]:
+    if parsedResponse{"result"}{"chats"} != nil:
+      for jsonChat in parsedResponse["result"]["chats"]:
         let chat = jsonChat.toChat
         self.channels[chat.id] = chat
         chats.add(chat) 
     result = (chats, messages)
 
   proc emitUpdate(self: ChatModel, response: string) =
-    var (chats, messages) = self.processChatUpdate(parseJson(response))
+    var (chats, messages) = self.parseChatResponse(response)
     self.events.emit("chatUpdate", ChatUpdateArgs(messages: messages, chats: chats, contacts: @[]))
 
   proc removeFiltersByChatId(self: ChatModel, chatId: string, filters: JsonNode)
@@ -318,26 +323,22 @@ QtObject:
   proc setActiveChannel*(self: ChatModel, chatId: string) =
     self.events.emit("activeChannelChanged", ChatIdArg(chatId: chatId))
 
-  proc processMessageUpdateAfterSend(self: ChatModel, response: string, forceActiveChat: bool = false): (seq[Chat], seq[Message])  =
-    result = self.processChatUpdate(parseJson(response))
+  proc processMessageUpdateAfterSend(self: ChatModel, response: string): (seq[Chat], seq[Message])  =
+    result = self.parseChatResponse(response)
     var (chats, messages) = result
     if chats.len == 0 and messages.len == 0:
-      self.events.emit("sendingMessageFailed", MessageArgs())
-    else:
-      if (forceActiveChat):
-        chats[0].isActive = true
-      self.events.emit("chatUpdate", ChatUpdateArgs(messages: messages, chats: chats, contacts: @[]))
-  
-      for msg in messages:
-        self.events.emit("sendingMessage", MessageArgs(id: msg.id, channel: msg.chatId))
+      self.events.emit("messageSendingFailed", Args())
+      return
+    
+    self.events.emit("messageSendingSuccess", MessageSendingSuccess(message: messages[0], chat: chats[0]))
 
-  proc sendMessage*(self: ChatModel, chatId: string, msg: string, replyTo: string = "", contentType: int = ContentType.Message.int, communityId: string = "", forceActiveChat: bool = false) =
+  proc sendMessage*(self: ChatModel, chatId: string, msg: string, replyTo: string = "", contentType: int = ContentType.Message.int, communityId: string = "") =
     var response = status_chat.sendChatMessage(chatId, msg, replyTo, contentType, communityId)
-    discard self.processMessageUpdateAfterSend(response, forceActiveChat)
+    discard self.processMessageUpdateAfterSend(response)
 
   proc editMessage*(self: ChatModel, messageId: string, msg: string) =
     var response = status_chat.editMessage(messageId, msg)
-    discard self.processMessageUpdateAfterSend(response, false)
+    discard self.processMessageUpdateAfterSend(response)
 
   proc sendImage*(self: ChatModel, chatId: string, image: string) =
     var response = status_chat.sendImageMessage(chatId, image)
@@ -349,12 +350,12 @@ QtObject:
 
   proc deleteMessageAndSend*(self: ChatModel, messageId: string) =
     var response = status_chat.deleteMessageAndSend(messageId)    
-    discard self.processMessageUpdateAfterSend(response, false)
+    discard self.processMessageUpdateAfterSend(response)
 
   proc sendSticker*(self: ChatModel, chatId: string, replyTo: string, sticker: Sticker) =
     var response = status_chat.sendStickerMessage(chatId, replyTo, sticker)
     self.events.emit("stickerSent", StickerArgs(sticker: sticker, save: true))
-    var (chats, messages) = self.processChatUpdate(parseJson(response))
+    var (chats, messages) = self.parseChatResponse(response)
     self.events.emit("chatUpdate", ChatUpdateArgs(messages: messages, chats: chats, contacts: @[]))
     self.events.emit("sendingMessage", MessageArgs(id: messages[0].id, channel: messages[0].chatId))
 
@@ -598,8 +599,7 @@ QtObject:
     try:
       let response = status_chat.acceptActivityCenterNotifications(ids)
 
-      let resultTuple = self.processChatUpdate(parseJson(response))
-      let (chats, messages) = resultTuple
+      let (chats, messages) = self.parseChatResponse(response)
       self.events.emit("chatUpdate", ChatUpdateArgs(messages: messages, chats: chats))
 
     except Exception as e:

@@ -140,7 +140,6 @@ QtObject:
 
   proc add*(self: UserListView, message: Message) =
     if self.userDetails.hasKey(message.fromAuthor):
-        self.beginResetModel()
         self.userDetails[message.fromAuthor] = User(
             userName: message.userName,
             alias: message.alias,
@@ -148,7 +147,22 @@ QtObject:
             lastSeen: message.timestamp,
             identicon: message.identicon
         )
-        self.endResetModel()
+        var index = 0
+        for publicKey in self.users:
+          if publicKey == message.fromAuthor:
+            break
+          
+          index+=1
+
+        let topLeft = self.createIndex(index, index, nil)
+        let bottomRight = self.createIndex(index, index, nil)
+        self.dataChanged(topLeft, bottomRight, @[
+          UserListRoles.UserName.int,
+          UserListRoles.LastSeen.int,
+          UserListRoles.Alias.int,
+          UserListRoles.LocalName.int,
+          UserListRoles.Identicon.int
+        ])
     else:
         self.beginInsertRows(newQModelIndex(), self.users.len, self.users.len)
         self.userDetails[message.fromAuthor] = User(

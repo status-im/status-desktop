@@ -43,7 +43,7 @@ QtObject:
     self.messageList = initOrderedTable[string, ChatMessageList]()
     self.pinnedMessagesList = initOrderedTable[string, ChatMessageList]()
     self.channelOpenTime = initTable[string, int64]()
-    self.QAbstractListModel.delete    
+    self.QAbstractListModel.delete
 
   proc newMessageView*(status: Status, channelView: ChannelView, communitiesView: CommunitiesView): MessageView =
     new(result, delete)
@@ -77,7 +77,7 @@ QtObject:
 
     for publicKey in self.messageList[self.channelView.activeChannel.id].userList.users:
       let user = self.messageList[self.channelView.activeChannel.id].userList.userDetails[publicKey]
-      
+
       for mention in aliasMentions:
         if "@" & user.alias.toLowerAscii != mention.toLowerAscii:
           continue
@@ -115,16 +115,12 @@ QtObject:
   proc sendMessage*(self: MessageView, message: string, replyTo: string, contentType: int = ContentType.Message.int, isStatusUpdate: bool = false) {.slot.} =
     self.sendOrEditMessage(message, replyTo, contentType, isStatusUpdate, false, "")
 
-  proc verifyMessageSent*(self: MessageView, data: string) {.slot.} =
-    let messageData = data.parseJson
-    self.messageList[messageData["chatId"].getStr].checkTimeout(messageData["id"].getStr)
-
   proc resendMessage*(self: MessageView, chatId: string, messageId: string) {.slot.} =
     self.status.messages.trackMessage(messageId, chatId)
     self.status.chat.resendMessage(messageId)
     self.messageList[chatId].resetTimeOut(messageId)
 
-  proc sendingMessage*(self: MessageView) {.signal.}
+  proc sendingMessageSuccess*(self: MessageView) {.signal.}
 
   proc sendingMessageFailed*(self: MessageView) {.signal.}
 
@@ -177,7 +173,7 @@ QtObject:
 
   proc messageNotificationPushed*(self: MessageView, chatId: string, text: string, contentType: int, chatType: int, timestamp: string, identicon: string, username: string, hasMention: bool, isAddedContact: bool, channelName: string) {.signal.}
 
-  proc pushMembers*(self:MessageView, chats: seq[Chat]) = 
+  proc pushMembers*(self:MessageView, chats: seq[Chat]) =
     for chat in chats:
       if chat.chatType == ChatType.PrivateGroupChat and self.messageList.hasKey(chat.id):
         self.messageList[chat.id].addChatMembers(chat.members)
@@ -192,21 +188,24 @@ QtObject:
         if (chat.chatType == ChatType.Profile):
           let timelineChatId = status_utils.getTimelineChatId()
           self.messageList[timelineChatId].add(msg)
-          # if self.channelView.activeChannel.id == timelineChatId: self.activeChannelChanged()
+
           if self.channelView.activeChannel.id == timelineChatId: self.channelView.activeChannelChanged()
           msgIndex = self.messageList[timelineChatId].count - 1
         else:
           self.messageList[msg.chatId].add(msg)
           if self.pinnedMessagesList[msg.chatId].contains(msg):
             self.pinnedMessagesList[msg.chatId].add(msg)
+
           msgIndex = self.messageList[msg.chatId].count - 1
+
       self.messagePushed(msgIndex)
       if self.channelOpenTime.getOrDefault(msg.chatId, high(int64)) < msg.timestamp.parseFloat.fromUnixFloat.toUnix:
         var channel = self.channelView.chats.getChannelById(msg.chatId)
         if (channel == nil):
           channel = self.communities.getChannel(msg.chatId)
           if (channel == nil):
-            continue          
+            continue
+
         if msg.chatId == self.channelView.activeChannel.id:
           discard self.status.chat.markMessagesSeen(msg.chatId, @[msg.id])
           self.newMessagePushed()
@@ -267,7 +266,7 @@ QtObject:
     self.setInitialMessagesLoaded(chatId, true)
     self.setLoadingHistoryMessages(chatId, false)
     self.checkIfSearchedMessageIsLoaded(chatId)
-    
+
   proc loadingMessagesChanged*(self: MessageView, value: bool) {.signal.}
 
   proc hideLoadingIndicator*(self: MessageView) {.slot.} =
@@ -337,7 +336,7 @@ QtObject:
     ## a channel with id "channelId" and returns true if such message is successfully
     ## deleted, otherwise returns false.
 
-    let msgIdToBeDeleted = self.messageList[channelId].getMessageIdWhichReplacedMessageWithId(replacedMessageId)    
+    let msgIdToBeDeleted = self.messageList[channelId].getMessageIdWhichReplacedMessageWithId(replacedMessageId)
     if (msgIdToBeDeleted.len == 0):
       return false
 
@@ -393,7 +392,7 @@ QtObject:
       else:
         self.removePinMessage(pinnedMessage.id, pinnedMessage.localChatId)
 
-  method rowCount*(self: MessageView, index: QModelIndex = nil): int = 
+  method rowCount*(self: MessageView, index: QModelIndex = nil): int =
     result = self.messageList.len
 
   method data(self: MessageView, index: QModelIndex, role: int): QVariant =
@@ -460,7 +459,7 @@ QtObject:
       self.searchedMessageId = ""
     else:
       self.loadMoreMessages(chatId)
-  
+
   proc setLoadingHistoryMessages*(self: MessageView, chatId: string, value: bool) =
     if self.messageList.hasKey(chatId):
       self.messageList[chatId].setLoadingHistoryMessages(value)
@@ -468,7 +467,7 @@ QtObject:
   proc setInitialMessagesLoaded*(self: MessageView, chatId: string, value: bool) =
     if self.messageList.hasKey(chatId):
       self.messageList[chatId].setInitialMessagesLoaded(value)
-    
+
   proc switchToMessage*(self: MessageView, messageId: string) =
     if (self.isMessageDisplayed(messageId)):
       self.searchedMessageLoaded(messageId)

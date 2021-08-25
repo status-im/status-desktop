@@ -76,7 +76,7 @@ ScrollView {
                 var msg = chatsModel.plainText(Emoji.deparse(statusUpdateInput.textInput.text))
                 if (msg.length > 0){
                     msg = statusUpdateInput.interpretMessage(msg)
-                    chatsModel.messageView.sendMessage(msg, "", Utils.isOnlyEmoji(msg) ? Constants.emojiType : Constants.messageType, true, "");
+                    chatsModel.messageView.sendMessage(msg, "", Utils.isOnlyEmoji(msg) ? Constants.emojiType : Constants.messageType, true);
                     statusUpdateInput.textInput.text = "";
                     if(event) event.accepted = true
                     sendMessageSound.stop()

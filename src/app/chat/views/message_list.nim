@@ -339,10 +339,11 @@ QtObject:
         self.replaceMessage(message)
         return
 
+    self.userList.add(message)
+
     self.beginInsertRows(newQModelIndex(), self.messages.len, self.messages.len)
     self.messageIndex[message.id] = self.messages.len
     self.messages.add(message)
-    self.userList.add(message)
     self.endInsertRows()
     self.countChanged()
 
