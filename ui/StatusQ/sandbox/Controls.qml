@@ -115,6 +115,36 @@ GridLayout {
         pinnedMessagesCount: 1
     }
 
+    Item {
+        implicitWidth: 100
+        implicitHeight: 48
+        StatusChatInfoButton {
+            title: "Iuri Matias elided"
+            subTitle: "Contact"
+            icon.color: Theme.palette.miscColor7
+            image.source: "https://pbs.twimg.com/profile_images/1369221718338895873/T_5fny6o_400x400.jpg"
+            type: StatusChatInfoButton.Type.OneToOneChat
+            muted: true
+            pinnedMessagesCount: 1
+            width: 100
+        }
+    }
+
+    Item {
+        implicitWidth: 100
+        implicitHeight: 48
+        StatusChatInfoButton {
+            title: "Iuri Matias big not elided"
+            subTitle: "Contact"
+            icon.color: Theme.palette.miscColor7
+            image.source: "https://pbs.twimg.com/profile_images/1369221718338895873/T_5fny6o_400x400.jpg"
+            type: StatusChatInfoButton.Type.OneToOneChat
+            muted: true
+            pinnedMessagesCount: 1
+            width: 400
+        }
+    }
+
     StatusChatInfoButton {
         title: "group"
         subTitle: "Group Chat"

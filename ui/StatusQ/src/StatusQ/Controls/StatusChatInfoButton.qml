@@ -7,11 +7,11 @@ import StatusQ.Components 0.1
 Rectangle {
     id: statusChatInfoButton
 
-    implicitWidth: identicon.width + 
-        Math.max(
-          statusChatInfoButtonTitle.anchors.leftMargin + statusChatInfoButtonTitle.width,
-          statusChatInfoButtonTitle.anchors.leftMargin + statusChatInfoButtonSubTitle.width
-        ) + 8
+    implicitWidth: identicon.width +
+                   Math.max(
+                       statusChatInfoButtonTitle.anchors.leftMargin + statusChatInfoButtonTitle.implicitWidth,
+                       statusChatInfoButtonTitle.anchors.leftMargin + statusChatInfoButtonSubTitle.implicitWidth
+                       ) + 8
     implicitHeight: 48
 
     property string title: ""
@@ -57,8 +57,8 @@ Rectangle {
             anchors.verticalCenter: parent.verticalCenter
 
             sourceComponent: !!statusChatInfoButton.image.source.toString() ?
-                statusRoundImageComponent :
-                statusLetterIdenticonComponent
+                                 statusRoundImageComponent :
+                                 statusLetterIdenticonComponent
         }
 
         Component {
@@ -103,8 +103,15 @@ Rectangle {
             anchors.left: identicon.right
             anchors.leftMargin: 8
 
-            width: statusIcon.width + chatName.anchors.leftMargin + chatName.width + (mutedIcon.visible ? mutedIcon.width + mutedIcon.anchors.leftMargin : 0)
+            width: Math.min(parent.width - anchors.leftMargin
+                            - identicon.width - identicon.anchors.leftMargin,
+                            implicitWidth)
             height: chatName.height
+
+            implicitWidth: statusIcon.width + chatName.anchors.leftMargin + chatName.implicitWidth
+                           + mutedDelta
+
+            property real mutedDelta: mutedIcon.visible ? mutedIcon.width + 8 : 0
 
             StatusIcon {
                 id: statusIcon
@@ -117,17 +124,17 @@ Rectangle {
                 color: statusChatInfoButton.muted ? Theme.palette.baseColor1 : Theme.palette.directColor1
                 icon: {
                     switch (statusChatInfoButton.type) {
-                        case StatusChatInfoButton.Type.PublicCat:
-                            return "tiny/public-chat"
-                            break;
-                        case StatusChatInfoButton.Type.GroupChat:
-                            return "tiny/group"
-                            break;
-                        case StatusChatInfoButton.Type.CommunityChat:
-                            return "tiny/channel"
-                            break;
-                        default:
-                            return "tiny/public-chat"
+                    case StatusChatInfoButton.Type.PublicCat:
+                        return "tiny/public-chat"
+                        break;
+                    case StatusChatInfoButton.Type.GroupChat:
+                        return "tiny/group"
+                        break;
+                    case StatusChatInfoButton.Type.CommunityChat:
+                        return "tiny/channel"
+                        break;
+                    default:
+                        return "tiny/public-chat"
                     }
                 }
             }
@@ -139,10 +146,15 @@ Rectangle {
                 anchors.leftMargin: statusIcon.visible ? 1 : 0
                 anchors.top: parent.top
 
+                elide: Text.ElideRight
+                width: Math.min(implicitWidth, parent.width
+                                - statusIcon.width
+                                - statusChatInfoButtonTitle.mutedDelta)
+
                 text: statusChatInfoButton.type === StatusChatInfoButton.Type.PublicChat &&
-                    !statusChatInfoButton.title.startsWith("#") ?
-                    "#" + statusChatInfoButton.title :
-                    statusChatInfoButton.title
+                      !statusChatInfoButton.title.startsWith("#") ?
+                          "#" + statusChatInfoButton.title :
+                          statusChatInfoButton.title
                 color: statusChatInfoButton.muted ? Theme.palette.directColor5 : Theme.palette.directColor1
                 font.pixelSize: 15
                 font.weight: Font.Medium
@@ -162,7 +174,7 @@ Rectangle {
                 MouseArea {
                     id: mutedIconSensor
                     hoverEnabled: true
-                    cursorShape: Qt.PointingHandCursor 
+                    cursorShape: Qt.PointingHandCursor
                     anchors.fill: parent
                     onClicked: statusChatInfoButton.unmute()
                 }
@@ -183,13 +195,26 @@ Rectangle {
             anchors.top: statusChatInfoButtonTitle.bottom
             visible: !!statusChatInfoButton.subTitle || statusChatInfoButton.pinnedMessagesCount > 0
             height: visible ? chatType.height : 0
-            width: childrenRect.width
+            width: Math.min(parent.width - statusChatInfoButtonTitle.anchors.leftMargin
+                            - identicon.width - identicon.anchors.leftMargin - 8,
+                            implicitWidth)
+
+            implicitWidth: chatType.implicitWidth + pinIconDelta + 8
+
+
+            property real pinIconDelta: pinIcon.visible ? pinIcon.width + pinIcon.anchors.leftMargin
+                                                          + divider.width + divider.anchors.leftMargin
+                                                        : 0
 
             StatusBaseText {
                 id: chatType
                 text: statusChatInfoButton.subTitle
                 color: Theme.palette.baseColor1
                 font.pixelSize: 12
+
+                elide: Text.ElideRight
+                width: Math.min(parent.width - (pinIcon.visible ? divider.width + divider.anchors.leftMargin + pinIcon.width + pinIcon.anchors.leftMargin : 0),
+                                implicitWidth)
             }
 
             Rectangle {
@@ -231,7 +256,7 @@ Rectangle {
                     id: pinCountSensor
                     anchors.fill: parent
                     hoverEnabled: true
-                    cursorShape: Qt.PointingHandCursor 
+                    cursorShape: Qt.PointingHandCursor
                     onClicked: statusChatInfoButton.pinnedMessagesCountClicked(mouse)
                 }
             }

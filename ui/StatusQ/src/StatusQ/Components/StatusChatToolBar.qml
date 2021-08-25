@@ -37,6 +37,7 @@ Rectangle {
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: parent.left
         anchors.leftMargin: 12
+        width: Math.min(implicitWidth, parent.width - actionButtons.implicitWidth - anchors.leftMargin * 2)
         onClicked: statusChatToolBar.chatInfoButtonClicked()
     }
 
