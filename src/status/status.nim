@@ -5,6 +5,7 @@ import types as libstatus_types
 import chat, accounts, wallet, node, network, messages, contacts, profile, stickers, permissions, fleet, settings, mailservers, browser, tokens, provider
 import ../eventemitter
 import ./tasks/task_runner_impl
+import bitops, stew/byteutils, chronicles
 
 export chat, accounts, node, messages, contacts, profile, network, permissions, fleet, task_runner_impl, eventemitter
 
@@ -75,3 +76,13 @@ proc getNodeVersion*(self: Status): string =
 # TODO: duplicated??
 proc saveSetting*(self: Status, setting: Setting, value: string | bool) =
   discard libstatus_settings.saveSetting(setting, value)
+
+proc getBloomFilter*(self: Status): string =
+  result = libstatus_core.getBloomFilter()
+
+proc getBloomFilterBitsSet*(self: Status): int =
+  let bloomFilter = libstatus_core.getBloomFilter()
+  var bitCount = 0;
+  for b in hexToSeqByte(bloomFilter):
+    bitCount += countSetBits(b)
+  return bitCount

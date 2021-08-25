@@ -1,9 +1,29 @@
 import NimQml, chronicles, strutils, json
 import ../../status/[status, node, types, settings, accounts]
 import ../../status/signals/types as signal_types
+import ../../status/tasks/[qt, task_runner_impl]
 
 logScope:
   topics = "node-view"
+
+type
+  BloomBitsSetTaskArg = ref object of QObjectTaskArg
+    bitsSet: int
+
+const bloomBitsSetTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let
+    arg = decode[BloomBitsSetTaskArg](argEncoded)
+    output = getBloomFilterBitsSet(nil)
+  arg.finish(output)
+
+proc bloomFiltersBitsSet[T](self: T, slot: string) =
+  let arg = BloomBitsSetTaskArg(
+    tptr: cast[ByteAddress](bloomBitsSetTask),
+    vptr: cast[ByteAddress](self.vptr),
+    slot: slot
+  )
+  self.status.tasks.threadpool.start(arg)
+
 
 QtObject:
   type NodeView* = ref object of QObject
@@ -14,6 +34,7 @@ QtObject:
     fullNode*: bool
     stats*: Stats
     peerSize: int
+    bloomBitsSet: int
 
   proc setup(self: NodeView) =
     self.QObject.setup
@@ -132,6 +153,22 @@ QtObject:
   proc setStats*(self: NodeView, stats: Stats) =
     self.stats = stats
     self.statsChanged()
+
+  proc getBitsSet*(self: NodeView) =
+    self.bloomFiltersBitsSet("bitsSet")
+
+  proc getBloomBitsSet(self: NodeView): int {.slot.} =
+    self.bloomBitsSet
+
+  proc bloomBitsSetChanged(self: NodeView) {.signal.}
+
+  proc bitsSet*(self: NodeView, bitsSet: string) {.slot.} =
+    self.bloomBitsSet = parseInt(bitsSet)
+    self.bloomBitsSetChanged();
+
+  QtProperty[int] bloomBits:
+    read = getBloomBitsSet
+    notify = bloomBitsSetChanged
 
   proc uploadRate*(self: NodeView): string {.slot.} = $self.stats.uploadRate
 

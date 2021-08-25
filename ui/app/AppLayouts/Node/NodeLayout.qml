@@ -45,6 +45,30 @@ Item {
             }
         }
 
+        RowLayout {
+            id: bloomF
+            Layout.fillWidth: true
+            StyledText {
+                color: Style.current.lightBlueText
+                text: "Bloom Filter Usage"
+                Layout.rightMargin: Style.current.padding
+                Layout.leftMargin: Style.current.padding
+                Layout.fillWidth: true
+                font.weight: Font.Medium
+                font.pixelSize: 20
+            }
+            StyledText {
+                id: bloomPerc
+                color: Style.current.lightBlueText
+                text: ((nodeModel.bloomBits / 512) * 100).toFixed(2) + "%"
+                Layout.rightMargin: Style.current.padding
+                Layout.leftMargin: Style.current.padding
+                Layout.fillWidth: true
+                font.weight: Font.Medium
+                font.pixelSize: 20
+            }
+        }
+
         ColumnLayout {
             id: messageContainer
             Layout.fillHeight: true
