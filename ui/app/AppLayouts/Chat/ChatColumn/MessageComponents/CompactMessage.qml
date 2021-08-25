@@ -310,10 +310,14 @@ Item {
                         imageSource: image
                         imageWidth: 200
                         onClicked: {
-                            if (button === Qt.LeftButton) {
-                                root.clickMessage(false, false, true, image)
+                            if (mouse.button === Qt.LeftButton) {
+                                imageClick(image)
                             }
-                            else if (button === Qt.RightButton) {
+                            else if (mouse.button === Qt.RightButton) {
+                                // Set parent, X & Y positions for the messageContextMenu
+                                messageContextMenu.parent = root
+                                messageContextMenu.setXPosition = function() { return (mouse.x)}
+                                messageContextMenu.setYPosition = function() { return (mouse.y)}
                                 root.clickMessage(false, false, true, image, false, true, false, true, imageSource)
                             }
                         }
@@ -453,11 +457,14 @@ Item {
 
         sourceComponent: Component {
             EmojiReactions {
+                id: emojiRect
                 onHoverChanged: setHovered(messageId, hovered)
                 onAddEmojiClicked: {
                     root.addEmoji(false, false, false, null, true, false);
-                    messageContextMenu.x = (messageContainer.chatText.textField.leftPadding + 4);
-                    messageContextMenu.y -= (56 + Style.current.padding);
+                    // Set parent, X & Y positions for the messageContextMenu
+                    messageContextMenu.parent = emojiReactionLoader
+                    messageContextMenu.setXPosition = function() { return (messageContextMenu.parent.x + 4)}
+                    messageContextMenu.setYPosition = function() { return (-messageContextMenu.height - 4)}
                 }
             }
         }

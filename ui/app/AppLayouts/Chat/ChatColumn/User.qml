@@ -113,6 +113,10 @@ Item {
                     openProfilePopup(wrapper.name, wrapper.publicKey, (wrapper.profileImage || wrapper.identicon), "", appMain.getUserNickname(wrapper.publicKey));
                 }
                  else if (mouse.button === Qt.RightButton) {
+                    // Set parent, X & Y positions for the messageContextMenu
+                    messageContextMenu.parent = rectangle
+                    messageContextMenu.setXPosition = function() { return 0}
+                    messageContextMenu.setYPosition = function() { return rectangle.height}
                     messageContextMenu.isProfile = true;
                     messageContextMenu.show(wrapper.name, wrapper.publicKey, (wrapper.profileImage || wrapper.identicon), "", appMain.getUserNickname(wrapper.publicKey))
                 }

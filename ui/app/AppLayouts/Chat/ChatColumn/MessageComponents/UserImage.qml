@@ -40,6 +40,10 @@ Loader {
                     acceptedButtons: Qt.LeftButton | Qt.RightButton
                     anchors.fill: parent
                     onClicked: {
+                        // Set parent, X & Y positions for the messageContextMenu
+                        messageContextMenu.parent = root
+                        messageContextMenu.setXPosition = function() { return root.width + 4}
+                        messageContextMenu.setYPosition = function() { return root.height/2 + 4}
                         clickMessage(true, false, false, null, false, false, isReplyImage)
                     }
                 }

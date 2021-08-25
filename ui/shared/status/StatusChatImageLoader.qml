@@ -10,7 +10,7 @@ Item {
     property url source
     property bool playing: applicationWindow.active
     property bool isAnimated: !!source && source.toString().endsWith('.gif')
-    signal clicked(var image, var button)
+    signal clicked(var image, var mouse)
     property var container
     property alias imageAlias: imageMessage
     property bool allCornersRounded: false
@@ -113,7 +113,7 @@ Item {
                     imageContainer.playing = !imageContainer.playing
                     return
                 }
-                imageContainer.clicked(imageMessage, mouse.button)
+                imageContainer.clicked(imageMessage, mouse)
             }
         }
     }

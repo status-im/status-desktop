@@ -197,7 +197,7 @@ Column {
                 source: linkData.thumbnailUrl
                 imageWidth: 300
                 isCurrentUser: root.isCurrentUser
-                onClicked: clickMessage(false, false, true, linkImage.imageAlias)
+                onClicked: imageClick(linkImage.imageAlias)
             }
         }
     }

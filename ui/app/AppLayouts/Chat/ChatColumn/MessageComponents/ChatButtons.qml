@@ -65,13 +65,11 @@ Rectangle {
             height: 32
             onClicked: {
                 setMessageActive(messageId, true)
+                // Set parent, X & Y positions for the messageContextMenu
+                buttonsContainer.messageContextMenu.parent = buttonsContainer
+                buttonsContainer.messageContextMenu.setXPosition = function() { return (-Math.abs(buttonsContainer.width - buttonsContainer.messageContextMenu.emojiContainer.width))}
+                buttonsContainer.messageContextMenu.setYPosition = function() { return (-buttonsContainer.messageContextMenu.height - 4)}
                 clickMessage(false, false, false, null, true)
-                if (!forceHoverHandler) {
-                    buttonsContainer.messageContextMenu.x = buttonsContainer.x + buttonsContainer.width - buttonsContainer.messageContextMenu.width
-
-                    // The Math.max is to make sure that the menu is rendered
-                    buttonsContainer.messageContextMenu.y -= Math.max(buttonsContainer.messageContextMenu.emojiContainer.height, 56) + Style.current.padding
-                }
             }
             onHoveredChanged: {
                 buttonsContainer.hoverChanged(this.hovered)
@@ -140,9 +138,11 @@ Rectangle {
                 if (typeof isMessageActive !== "undefined") {
                     setMessageActive(messageId, true)
                 }
+                // Set parent, X & Y positions for the messageContextMenu
+                buttonsContainer.messageContextMenu.parent = buttonsContainer
+                buttonsContainer.messageContextMenu.setXPosition = function() { return (-Math.abs(buttonsContainer.width - 176))}
+                buttonsContainer.messageContextMenu.setYPosition = function() { return (-buttonsContainer.messageContextMenu.height - 4)}
                 clickMessage(false, isSticker, false, null, false, true);
-                buttonsContainer.messageContextMenu.x = buttonsContainer.x + buttonsContainer.width - buttonsContainer.messageContextMenu.width
-                messageContextMenu.y = parent.height/2 + Style.current.smallPadding
             }
             onHoveredChanged: {
                 buttonsContainer.hoverChanged(this.hovered)
