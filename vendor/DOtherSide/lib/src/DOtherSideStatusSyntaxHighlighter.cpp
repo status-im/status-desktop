@@ -21,8 +21,7 @@ StatusSyntaxHighlighter::StatusSyntaxHighlighter(QTextDocument *parent)
 //ITALIC
 
 //CODE
-    singlelineCodeBlockFormat.setFont(QFontDatabase::systemFont(QFontDatabase::FixedFont));
-    singlelineCodeBlockFormat.setFontPointSize(15);
+    singlelineCodeBlockFormat.setFontFamily("Roboto Mono");
     rule.pattern = QRegularExpression(QStringLiteral("\\`(.*?)\\`"));
     rule.format = singlelineCodeBlockFormat;
     highlightingRules.append(rule);
@@ -36,8 +35,7 @@ StatusSyntaxHighlighter::StatusSyntaxHighlighter(QTextDocument *parent)
 //STRIKETHROUGH
 
 //CODE BLOCK
-    multiLineCodeBlockFormat.setFont(QFontDatabase::systemFont(QFontDatabase::FixedFont));
-    multiLineCodeBlockFormat.setFontPointSize(15);
+    multiLineCodeBlockFormat.setFontFamily("Roboto Mono");
     rule.pattern = QRegularExpression(QStringLiteral("\\`\\`\\`(.*?)\\`\\`\\`"));
     rule.format = multiLineCodeBlockFormat;
     highlightingRules.append(rule);
