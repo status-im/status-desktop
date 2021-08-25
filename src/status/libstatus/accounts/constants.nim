@@ -162,9 +162,9 @@ var NODE_CONFIG* = %* {
     "URL": "https://mainnet.infura.io/v3/" & INFURA_TOKEN_RESOLVED
   },
    "WakuConfig": {
-    "BloomFilterMode": false,
+    "BloomFilterMode": true,
     "Enabled": true,
-    "LightClient": false,
+    "LightClient": true,
     "MinimumPoW": 0.001
   },
   "WakuV2Config": {

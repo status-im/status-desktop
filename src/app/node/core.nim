@@ -36,5 +36,6 @@ proc init*(self: NodeController) =
 
   self.status.events.on(SignalType.Stats.event) do (e:Args):
     self.view.setStats(StatsSignal(e).stats)
+    self.view.getBitsSet()
 
   self.view.init()

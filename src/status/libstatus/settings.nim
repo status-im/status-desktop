@@ -192,6 +192,7 @@ proc setBloomLevel*(bloomFilterMode: bool, fullNode: bool): StatusGoError =
   var nodeConfig = getNodeConfig()
   nodeConfig["WakuConfig"]["BloomFilterMode"] = newJBool(bloomFilterMode)
   nodeConfig["WakuConfig"]["FullNode"] = newJBool(fullNode)
+  nodeConfig["WakuConfig"]["LightClient"] = newJBool(not fullNode)
   return saveSetting(Setting.NodeConfig, nodeConfig)
 
 proc setFleet*(fleetConfig: FleetConfig, fleet: Fleet): StatusGoError =

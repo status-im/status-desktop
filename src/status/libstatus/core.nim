@@ -57,3 +57,6 @@ proc signMessage*(rpcParams: string): string =
 
 proc signTypedData*(data: string, address: string, password: string): string =
   return $status_go.signTypedData(data, address, password)
+
+proc getBloomFilter*(): string =
+  return $callPrivateRPC("bloomFilter".prefix, %* []).parseJSON()["result"].getStr
