@@ -105,6 +105,22 @@ Rectangle {
         }
     }
 
+    function insertMention(aliasName, lastAtPosition, lastCursorPosition) {
+        const hasEmoji = Emoji.hasEmoji(messageInputField.text)
+        const spanPlusAlias = `${Constants.mentionSpanTag}@${aliasName}</span> `
+
+        let rightIndex = hasEmoji ? lastCursorPosition + 2 : lastCursorPosition
+
+        messageInputField.remove(lastAtPosition, rightIndex)
+        messageInputField.insert(lastAtPosition, spanPlusAlias)
+        messageInputField.cursorPosition = lastAtPosition + aliasName.length + 2
+
+        if (messageInputField.cursorPosition === 0) {
+            // It reset to 0 for some reason, go back to the end
+            messageInputField.cursorPosition = messageInputField.length
+        }
+    }
+
     property var interpretMessage: function (msg) {
         if (msg.startsWith("/shrug")) {
             return  msg.replace("/shrug", "") + " ¯\\\\\\_(ツ)\\_/¯"
@@ -208,6 +224,13 @@ Rectangle {
         }
 
         isColonPressed = (event.key === Qt.Key_Colon) && (event.modifiers & Qt.ShiftModifier);
+
+        if (event.key === Qt.Key_Space && suggestionsBox.formattedPlainTextFilter.length > 1 && suggestionsBox.formattedPlainTextFilter.trim().split(" ").length === 1) {
+            let aliasName = suggestionsBox.formattedPlainTextFilter
+            let lastCursorPosition = suggestionsBox.suggestionFilter.cursorPosition
+            let lastAtPosition = suggestionsBox.suggestionFilter.lastAtPosition
+            insertMention(aliasName, lastAtPosition, lastCursorPosition)
+        }
     }
 
     function wrapSelection(wrapWith) {
@@ -570,28 +593,12 @@ Rectangle {
         cursorPosition: messageInputField.cursorPosition
         property: ["userName", "localName", "alias"]
         onItemSelected: function (item, lastAtPosition, lastCursorPosition) {
-            const hasEmoji = Emoji.hasEmoji(messageInputField.text)
-
             const properties = "userName, alias"; // Ignore localName
-
             let aliasName = item[properties.split(",").map(p => p.trim()).find(p => !!item[p])]
+            aliasName = aliasName.replace("@", "")
             aliasName = aliasName.replace(/(\.stateofus)?\.eth/, "")
 
-            const spanPlusAlias = `${Constants.mentionSpanTag}@${aliasName}</span> `
-
-            let rightIndex = hasEmoji ? lastCursorPosition + 2 : lastCursorPosition
-
-            messageInputField.remove(lastAtPosition, rightIndex)
-
-            messageInputField.insert(lastAtPosition, spanPlusAlias)
-
-
-            messageInputField.cursorPosition = lastAtPosition + aliasName.length + 2
-            if (messageInputField.cursorPosition === 0) {
-                // It reset to 0 for some reason, go back to the end
-                messageInputField.cursorPosition = messageInputField.length
-            }
-
+            insertMention(aliasName, lastAtPosition, lastCursorPosition)
             suggestionsBox.suggestionsModel.clear()
         }
     }

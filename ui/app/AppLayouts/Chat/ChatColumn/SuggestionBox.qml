@@ -33,6 +33,7 @@ Rectangle {
     property alias suggestionsModel: filterItem.model
     property alias filter: filterItem.filter
     property alias formattedPlainTextFilter: filterItem.formattedFilter
+    property alias suggestionFilter: filterItem
     property alias property: filterItem.property
     property int cursorPosition
     signal itemSelected(var item, int lastAtPosition, int lastCursorPosition)
