@@ -50,7 +50,7 @@ Item {
             Layout.fillWidth: true
             StyledText {
                 color: Style.current.lightBlueText
-                text: "Bloom Filter Usage"
+                text: qsTr("Bloom Filter Usage")
                 Layout.rightMargin: Style.current.padding
                 Layout.leftMargin: Style.current.padding
                 Layout.fillWidth: true
