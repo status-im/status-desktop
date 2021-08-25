@@ -146,9 +146,31 @@ Item {
                     onCancelClicked: root.cancelClicked(packId)
                     onUpdateClicked: root.updateClicked(packId)
                     onBuyClicked: {
+                        if (!appSettings.isWalletEnabled) {
+                            confirmationPopup.open()
+                            return
+                        }
                         root.stickerPurchasePopup = openPopup(stickerPackPurchaseModal)
                         root.buyClicked(packId)
                     }
+                }
+            }
+
+            ConfirmationDialog {
+                id: confirmationPopup
+                height: 310
+                showCancelButton: true
+                confirmationText: qsTr("This feature is experimental and is meant for testing purposes by core contributors and the community. It's not meant for real use and makes no claims of security or integrity of funds or data. Use at your own risk.")
+                confirmButtonLabel: qsTr("I understand")
+                onConfirmButtonClicked: {
+                    appSettings.isWalletEnabled = true
+                    close()
+                    root.stickerPurchasePopup = openPopup(stickerPackPurchaseModal)
+                    root.buyClicked(packId)
+                }
+
+                onCancelButtonClicked: {
+                    close()
                 }
             }
         }
