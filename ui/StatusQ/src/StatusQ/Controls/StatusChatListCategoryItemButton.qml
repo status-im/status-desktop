@@ -1,5 +1,6 @@
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
+import StatusQ.Core 0.1
 
 StatusFlatRoundButton {
     id: statusChatListCategoryItemButton
@@ -9,7 +10,7 @@ StatusFlatRoundButton {
     radius: 4
 
     property bool highlighted: false
-    property alias tooltip: statusToolTip
+    property StatusTooltipSettings tooltip: StatusTooltipSettings {}
 
     type: StatusFlatRoundButton.Type.Secondary
     icon.width: 20
@@ -22,6 +23,9 @@ StatusFlatRoundButton {
     StatusToolTip {
         id: statusToolTip
         visible: !!text && parent.hovered
+        text: tooltip.text
+        orientation: tooltip.orientation
+        offset: tooltip.offset
     }
 }
 

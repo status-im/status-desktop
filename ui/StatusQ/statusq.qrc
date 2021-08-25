@@ -257,5 +257,6 @@
         <file>src/StatusQ/Components/StatusListItemBadge.qml</file>
         <file>src/StatusQ/Popups/StatusSearchPopupMenuItem.qml</file>
         <file>src/StatusQ/Popups/StatusSearchLocationMenu.qml</file>
+        <file>src/StatusQ/Core/StatusTooltipSettings.qml</file>
     </qresource>
 </RCC>
