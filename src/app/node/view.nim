@@ -154,7 +154,7 @@ QtObject:
     self.stats = stats
     self.statsChanged()
 
-  proc getBitsSet*(self: NodeView) =
+  proc fetchBitsSet*(self: NodeView) =
     self.bloomFiltersBitsSet("bitsSet")
 
   proc getBloomBitsSet(self: NodeView): int {.slot.} =
