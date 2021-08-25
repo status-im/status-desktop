@@ -181,7 +181,7 @@ Item {
         Connections {
             target: chatsModel.messageView
 
-            onSendingMessage: {
+            onSendingMessageSuccess: {
                 chatLogView.scrollToBottom(true)
             }
 

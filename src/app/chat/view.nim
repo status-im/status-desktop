@@ -485,8 +485,8 @@ QtObject:
   proc calculateUnreadMessages*(self: ChatsView) =
     self.messageView.calculateUnreadMessages()
 
-  proc sendingMessage*(self: ChatsView) =
-    self.messageView.sendingMessage()
+  proc sendingMessageSuccess*(self: ChatsView) =
+    self.messageView.sendingMessageSuccess()
 
   proc sendingMessageFailed*(self: ChatsView) =
     self.messageView.sendingMessageFailed()

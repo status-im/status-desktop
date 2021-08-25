@@ -13,7 +13,7 @@ type
     confirmations*: HashSet[string]
 
   MessageSentArgs* = ref object of Args
-    id*: string
+    messageId*: string
     chatId*: string
 
 proc newMessagesModel*(events: EventEmitter): MessagesModel =
@@ -31,21 +31,21 @@ proc delete*(self: MessagesModel) =
 # first, hence why we check if there's a confirmation (an envelope.sent) 
 # inside trackMessage to emit the "messageSent" event
 
-proc trackMessage*(self: MessagesModel, id: string, chatId: string) =
-  if self.messages.hasKey(id): return
+proc trackMessage*(self: MessagesModel, messageId: string, chatId: string) =
+  if self.messages.hasKey(messageId): return
 
-  self.messages[id] = MessageDetails(status: "sending", chatId: chatId)
-  if self.confirmations.contains(id):
-    self.confirmations.excl(id)
-    self.messages[id].status = "sent"
-    discard updateOutgoingMessageStatus(id, "sent")
-    self.events.emit("messageSent", MessageSentArgs(id: id, chatId: chatId))
+  self.messages[messageId] = MessageDetails(status: "sending", chatId: chatId)
+  if self.confirmations.contains(messageId):
+    self.confirmations.excl(messageId)
+    self.messages[messageId].status = "sent"
+    discard updateOutgoingMessageStatus(messageId, "sent")
+    self.events.emit("messageSent", MessageSentArgs(messageId: messageId, chatId: chatId))
 
 proc updateStatus*(self: MessagesModel, messageIds: seq[string]) =
   for messageId in messageIds:
     if self.messages.hasKey(messageId):
       self.messages[messageId].status = "sent"
       discard updateOutgoingMessageStatus(messageId, "sent")
-      self.events.emit("messageSent", MessageSentArgs(id: messageId, chatId: self.messages[messageId].chatId))
+      self.events.emit("messageSent", MessageSentArgs(messageId: messageId, chatId: self.messages[messageId].chatId))
     else:
       self.confirmations.incl(messageId)

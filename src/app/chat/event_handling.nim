@@ -34,6 +34,11 @@ proc handleChatEvents(self: ChatController) =
     self.view.updateUsernames(evArgs.contacts)
     self.view.updateChannelForContacts(evArgs.contacts)
 
+  # DO NOT ADD ANY LOGIC IN CHAT UPDATE
+  # If you are emitting this event or handling new logic, you are probably
+  # doing something wrong. The solution to your problem is probably
+  # to add a dedicated event. Adding more logic here can only cause the 
+  # app to be slower
   self.status.events.on("chatUpdate") do(e: Args):
     var evArgs = ChatUpdateArgs(e)
     self.view.hideLoadingIndicator()
@@ -111,6 +116,7 @@ proc handleChatEvents(self: ChatController) =
     if channel.chat.chatType == status_chat.ChatType.CommunityChat:
       self.view.communities.updateCommunityChat(channel.chat)
     self.status.chat.loadInitialMessagesForChannel(channel.chat.id)
+  
   self.status.events.on("chatsLoaded") do(e:Args):
     self.view.calculateUnreadMessages()
     self.view.setActiveChannelByIndex(0)
@@ -146,18 +152,21 @@ proc handleChatEvents(self: ChatController) =
   self.status.events.on("activeChannelChanged") do(e: Args):
     self.view.setActiveChannel(ChatIdArg(e).chatId)
 
-  self.status.events.on("sendingMessage") do(e:Args):
-    var msg = MessageArgs(e)
-    self.status.messages.trackMessage(msg.id, msg.channel)
-    self.view.sendingMessage()
+  self.status.events.on("messageSendingSuccess") do(e:Args):
+    let event = MessageSendingSuccess(e)
+    self.status.messages.trackMessage(event.message.id, event.chat.id)
+    var messages = @[event.message]
+    self.view.pushMessages(messages)
+    self.view.messageView.calculateUnreadMessages()
+    self.view.sendingMessageSuccess()
 
-  self.status.events.on("sendingMessageFailed") do(e:Args):
+  self.status.events.on("messageSendingFailed") do(e:Args):
     var msg = MessageArgs(e)
     self.view.sendingMessageFailed()
 
   self.status.events.on("messageSent") do(e:Args):
     var msg = MessageSentArgs(e)
-    self.view.markMessageAsSent(msg.chatId, msg.id)
+    self.view.markMessageAsSent(msg.chatId, msg.messageId)
 
   self.status.events.on("network:disconnected") do(e: Args):
     self.view.setConnected(false)
