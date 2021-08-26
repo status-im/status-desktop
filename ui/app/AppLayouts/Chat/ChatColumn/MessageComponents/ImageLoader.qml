@@ -8,7 +8,7 @@ Item {
     property int imageWidth: 350
     property bool isCurrentUser: false
     property url source
-    property bool playing: true
+    property bool playing: applicationWindow.active
     property bool isAnimated: !!source && source.toString().endsWith('.gif')
     signal clicked(var image, var button)
     property var container
