@@ -124,7 +124,7 @@ Item {
                 return implicitHeight
             }
               
-            draggableItems: true
+            draggableItems: chatsModel.communities.activeCommunity.admin
             chatList.model: chatsModel.communities.activeCommunity.chats
 
             categoryList.model: chatsModel.communities.activeCommunity.categories
