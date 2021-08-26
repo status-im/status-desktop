@@ -425,8 +425,8 @@ proc reorderCommunityChat*(communityId: string, categoryId: string, chatId: stri
   if rpcResult.contains("error"):
     raise newException(StatusGoException, rpcResult["error"]["message"].getStr())
 
-proc reorderCommunityCategory*(communityId: string, categoryId: string, position: int) =
-  let rpcResult = callPrivateRPC("reorderCommunityCategory".prefix, %*[
+proc reorderCommunityCategories*(communityId: string, categoryId: string, position: int) =
+  let rpcResult = callPrivateRPC("reorderCommunityCategories".prefix, %*[
     {
       "communityId": communityId,
       "categoryId": categoryId,

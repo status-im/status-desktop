@@ -344,10 +344,10 @@ QtObject:
       result = fmt"Error creating the category: {e.msg}"
   
   
-  proc reorderCommunityCategory*(self: CommunitiesView, communityId: string, categoryId: string, position: int): string {.slot} =
+  proc reorderCommunityCategories*(self: CommunitiesView, communityId: string, categoryId: string, position: int): string {.slot} =
     result = ""
     try:
-      self.status.chat.reorderCommunityCategory(communityId, categoryId, position)
+      self.status.chat.reorderCommunityCategories(communityId, categoryId, position)
     except Exception as e:
       error "Error reorder the category", msg = e.msg
       result = fmt"Error reorder the category: {e.msg}"
