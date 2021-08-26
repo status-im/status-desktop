@@ -4,6 +4,7 @@ import QtQuick.Controls 2.13 as QC
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ.Core.Utils 0.1
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 
@@ -27,18 +28,6 @@ Column {
     signal chatItemSelected(string id)
     signal chatItemUnmuted(string id)
     signal chatItemReordered(string id, int from, int to)
-
-    function getAbsolutePosition(node) {
-        var returnPos = {};
-        returnPos.x = 0;
-        returnPos.y = 0;
-        if (node !== undefined && node !== null) {
-            var parentValue = getAbsolutePosition(node.parent);
-            returnPos.x = parentValue.x + node.x;
-            returnPos.y = parentValue.y + node.y;
-        }
-        return returnPos;
-    }
 
     onPopupMenuChanged: {
         if (!!popupMenu) {
@@ -192,7 +181,7 @@ Column {
                 id: draggedListItemLoader
                 active: dragSensor.active
                 sourceComponent: StatusChatListItem {
-                    property var globalPosition: statusChatList.getAbsolutePosition(draggable)
+                    property var globalPosition: Utils.getAbsolutePosition(draggable)
                     parent: QC.Overlay.overlay
                     sensor.cursorShape: dragSensor.cursorShape
                     Drag.active: dragSensor.active

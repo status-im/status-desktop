@@ -468,6 +468,7 @@ Rectangle {
                         height: implicitHeight > (leftPanel.height - 64) ? implicitHeight + 8 : leftPanel.height - 64
 
                         draggableItems: true
+                        draggableCategories: false
                         chatList.model: models.demoCommunityChatListItems
                         categoryList.model: models.demoCommunityCategoryItems
 

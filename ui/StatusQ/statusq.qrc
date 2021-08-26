@@ -7,6 +7,7 @@
         <file>src/StatusQ/Core/Theme/Theme.qml</file>
         <file>src/StatusQ/Core/Theme/qmldir</file>
         <file>src/StatusQ/Core/Theme/StatusColors.qml</file>
+        <file>src/StatusQ/Core/Utils/Utils.qml</file>
         <file>src/StatusQ/Core/StatusIcon.qml</file>
         <file>src/StatusQ/Core/StatusImageSettings.qml</file>
         <file>src/StatusQ/Core/StatusIconSettings.qml</file>

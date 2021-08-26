@@ -113,10 +113,12 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
         ListElement {
             categoryId: "public"
             name: "Public"
+            position: 0
         }
         ListElement {
             categoryId: "dev"
             name: "Development"
+            position: 1
         }
     }
 

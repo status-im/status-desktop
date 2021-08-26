@@ -7,16 +7,21 @@ Column {
     id: statusChatListCategory
 
     spacing: 0
+    opacity: dragged ? 0.5 : 1
 
+    objectName: "chatListCategory"
+    property int originalOrder: -1
     property string categoryId: ""
     property string name: ""
     property bool opened: true
+    property bool dragged: false
 
     property alias showActionButtons: statusChatListCategoryItem.showActionButtons
     property alias addButton: statusChatListCategoryItem.addButton
     property alias menuButton: statusChatListCategoryItem.menuButton
     property alias toggleButton: statusChatListCategoryItem.toggleButton
     property alias chatList: statusChatList
+    property alias dragSensor: statusChatListCategoryItem.sensor
 
     property Component chatListPopupMenu
     property Component popupMenu
@@ -31,9 +36,11 @@ Column {
         id: statusChatListCategoryItem
         title: statusChatListCategory.name
         opened: statusChatListCategory.opened
+        sensor.pressAndHoldInterval: 150
 
         showMenuButton: showActionButtons && !!statusChatListCategory.popupMenu
 
+        highlighted: statusChatListCategory.dragged
         sensor.onClicked: {
             if (mouse.button === Qt.RightButton && showActionButtons && !!statusChatListCategory.popupMenu) {
                 highlighted = true

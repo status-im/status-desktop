@@ -1,0 +1,4 @@
+module StatusQ.Core.Utils
+
+singleton Utils 0.1 Utils.qml
+
