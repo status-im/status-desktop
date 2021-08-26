@@ -179,8 +179,6 @@ Rectangle {
             StatusBaseText {
                 id: statusListItemTitle
                 text: statusListItem.title
-                width: contentWidth < (parent.width - statusListItemTitleAsideText.contentWidth) ?
-                       contentWidth : (parent.width - statusListItemTitleAsideText.contentWidth)
                 font.pixelSize: 15
                 height: visible ? contentHeight : 0
                 wrapMode: Text.WrapAtWordBoundaryOrAnywhere

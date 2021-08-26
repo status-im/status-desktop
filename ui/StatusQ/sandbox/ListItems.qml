@@ -291,6 +291,11 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
 
     StatusListItem {
         title: "Title"
+        titleAsideText: "test"
+    }
+
+    StatusListItem {
+        title: "Title"
         icon.name: "delete"
         type: StatusListItem.Type.Danger
     }
