@@ -486,8 +486,8 @@ QtObject:
   proc deleteCommunityChat*(self: ChatModel, communityId: string, channelId: string) =
     status_chat.deleteCommunityChat(communityId, channelId)
 
-  proc reorderCommunityCategory*(self: ChatModel, communityId: string, categoryId: string, position: int) =
-    status_chat.reorderCommunityCategory(communityId, categoryId, position)
+  proc reorderCommunityCategories*(self: ChatModel, communityId: string, categoryId: string, position: int) =
+    status_chat.reorderCommunityCategories(communityId, categoryId, position)
 
   proc createCommunityCategory*(self: ChatModel, communityId: string, name: string, channels: seq[string]): CommunityCategory =
     result = status_chat.createCommunityCategory(communityId, name, channels)

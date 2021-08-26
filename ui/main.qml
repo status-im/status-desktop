@@ -299,7 +299,9 @@ StatusWindow {
         property alias droppedUrls: rptDraggedPreviews.model
         readonly property int chatView: Utils.getAppSectionIndex(Constants.chat)
         readonly property int timelineView: Utils.getAppSectionIndex(Constants.timeline)
-        property bool enabled: containsDrag && drag.source.objectName !== "chatItem" && loader.item &&
+        property bool enabled: containsDrag && 
+                               drag.source.objectName !== "chatItem" &&
+                               drag.source.objectName !== "chatListCategory" && loader.item &&
                                (
                                    // in chat view
                                    (loader.item.currentView === chatView &&

@@ -125,6 +125,7 @@ Item {
             }
               
             draggableItems: chatsModel.communities.activeCommunity.admin
+            draggableCategories: chatsModel.communities.activeCommunity.admin
             chatList.model: chatsModel.communities.activeCommunity.chats
 
             categoryList.model: chatsModel.communities.activeCommunity.categories
@@ -135,8 +136,11 @@ Item {
 
             onChatItemSelected: chatsModel.channelView.setActiveChannel(id)
             onChatItemUnmuted: chatsModel.channelView.unmuteChatItem(id)
-            onChatItemReordered: function (categoryId, chatId, from, to) {
-                chatsModel.communities.reorderCommunityChannel(chatsModel.communities.activeCommunity.id, categoryId, chatId, to);
+            onChatItemReordered: function (categoryId, id, from, to) {
+                chatsModel.communities.reorderCommunityChannel(chatsModel.communities.activeCommunity.id, categoryId, id, to);
+            }
+            onChatListCategoryReordered: function (categoryId, from, to) {
+                chatsModel.communities.reorderCommunityCategories(chatsModel.communities.activeCommunity.id, categoryId, to);
             }
 
             onCategoryAddButtonClicked: openPopup(createChannelPopup, {

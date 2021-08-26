@@ -1,4 +1,5 @@
 import NimQml, Tables
+import algorithm
 import ../../../status/chat/[chat]
 import ../../../status/status
 import ../../../status/accounts
@@ -49,9 +50,16 @@ QtObject:
       CategoryRoles.Id.int: "categoryId"
     }.toTable
 
+  proc sortCategories(x, y: CommunityCategory): int =
+    if x.position < y.position: -1
+    elif x.position == y.position: 0
+    else: 1
+
   proc setCategories*(self: CategoryList, categories: seq[CommunityCategory]) =
     self.beginResetModel()
-    self.categories = categories
+    var c = categories
+    c.sort(sortCategories)
+    self.categories = c
     self.endResetModel()
 
   proc getCategoryById*(self: CategoryList, id: string): CommunityCategory =
@@ -72,3 +80,4 @@ QtObject:
     self.categories.delete(idx)
     self.endRemoveRows()
     result = self.categories.len
+
