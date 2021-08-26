@@ -37,7 +37,7 @@ Item {
         StatusListItem {
             id: inviteButton
             anchors.horizontalCenter: parent.horizontalCenter
-            visible: root.community.admin || root.community.isAdmin
+            visible: !!(root.community.admin || root.community.isAdmin)
             //% "Invite People"
             title: qsTrId("invite-people")
             icon.name: "share-ios"
@@ -124,7 +124,7 @@ Item {
                     id: memberItem
 
                     property string nickname: appMain.getUserNickname(model.pubKey)
-                    property string profileImage: appMain.getProfileImage(model.pubKey)
+                    property string profileImage: appMain.getProfileImage(model.pubKey) || ""
 
                     visible: !!!memberSearch.input.text || 
                         model.userName.toLowerCase().includes(memberSearch.input.text.toLowerCase()) ||
