@@ -4,7 +4,6 @@ import StatusQ.Core.Theme 0.1
 
 SplitView {
     id: root
-
     implicitWidth: 822
     implicitHeight: 600
 
@@ -39,7 +38,7 @@ SplitView {
 
     Control {
         SplitView.preferredWidth: root.showRightPanel ? 250 : 0
-        SplitView.minimumWidth: root.showRightPanel ? 50 : 0
+        SplitView.minimumWidth: root.showRightPanel ? 58 : 0
         opacity: root.showRightPanel ? 1.0 : 0.0
         visible: (opacity > 0.1)
         contentItem: Loader {
