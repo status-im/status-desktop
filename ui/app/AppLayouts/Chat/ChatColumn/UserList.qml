@@ -25,18 +25,13 @@ Item {
         reactionModel: EmojiReactions { }
     }
 
-    Rectangle {
-        anchors.fill: parent
-        color: Style.current.secondaryMenuBackground
-    }
-
     StyledText {
         id: titleText
         anchors.top: parent.top
         anchors.topMargin: Style.current.padding
         anchors.left: parent.left
         anchors.leftMargin: Style.current.padding
-        opacity: (root.width > 50) ? 1.0 : 0.0
+        opacity: (root.width > 58) ? 1.0 : 0.0
         visible: (opacity > 0.1)
         font.pixelSize: Style.current.primaryTextFontSize
         //% "Members"

@@ -19,12 +19,6 @@ Item {
     anchors.fill: parent
     property var userList
     property var currentTime
-
-    Rectangle {
-        anchors.fill: parent
-        color: Style.current.secondaryMenuBackground
-    }
-
     property QtObject community: chatsModel.communities.activeCommunity
 
     StyledText {
@@ -33,7 +27,7 @@ Item {
         anchors.topMargin: Style.current.padding
         anchors.left: parent.left
         anchors.leftMargin: Style.current.padding
-        opacity: (root.width > 50) ? 1.0 : 0.0
+        opacity: (root.width > 58) ? 1.0 : 0.0
         visible: (opacity > 0.1)
         font.pixelSize: Style.current.primaryTextFontSize
         font.bold: true
@@ -50,23 +44,26 @@ Item {
             topMargin: Style.current.padding
             left: parent.left
             right: parent.right
-            rightMargin: Style.current.padding
+            rightMargin: Style.current.halfPadding
             bottom: parent.bottom
             bottomMargin: Style.current.bigPadding
         }
         boundsBehavior: Flickable.StopAtBounds
         model: userListDelegate
         section.property: "online"
-        section.delegate: Item {
-            width: parent.width
-            height: 24
-
-            StyledText {
-                anchors.fill: parent
-                anchors.leftMargin: Style.current.padding
-                font.pixelSize: Style.current.additionalTextSize
-                color: Style.current.darkGrey
-                text: section === 'true' ? qsTr("Online") : qsTr("Offline")
+        section.delegate: (root.width > 58) ? sectionDelegateComponent : null
+        Component {
+            id: sectionDelegateComponent
+            Item {
+                width: parent.width
+                height: 24
+                StyledText {
+                    anchors.fill: parent
+                    anchors.leftMargin: Style.current.padding
+                    font.pixelSize: Style.current.additionalTextSize
+                    color: Style.current.darkGrey
+                    text: section === 'true' ? qsTr("Online") : qsTr("Offline")
+                }
             }
         }
     }
