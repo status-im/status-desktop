@@ -1,4 +1,32 @@
 <a name=""></a>
+##  v0.6.0 (2021-08-24)
+
+
+#### Features
+
+* **StatusBaseInput:**  introduce `dirty` and `pristine` properties ([ea340801](ea340801), closes [#327](327))
+* **StatusChatList:**  Add drag and drop support of list items ([c679854d](c679854d))
+* **StatusLetterIdenticon:**  Expose the text component ([d16719ad](d16719ad))
+* **StatusListItem:**  introduce itemId and titleId properties and their handlers ([01da7508](01da7508))
+* **StatusSearchPopupMenuItem:**
+  *  New APIs resetSearchSelection and setSearchSelection ([78edcb37](78edcb37))
+  *  new API ([b133d10f](b133d10f))
+
+#### Bug Fixes
+
+* **StatusBaseInput:**
+  *  ensure wrapmode works as expectefd in multiline mode ([0243852c](0243852c), closes [#324](324))
+  *  expose cursorPosition ([ea6743a7](ea6743a7), closes [#323](323))
+* **StatusChatListCategory:**  emit original mouse event data in clicked signal ([5da9cb06](5da9cb06), closes [#333](333))
+* **StatusInput:**
+  *  ensure validation is performed on initialization ([4b107a0e](4b107a0e), closes [#326](326))
+  *  remove recursive binding in label height ([51d8b55b](51d8b55b))
+* **StatusSearchLocationMenu:**  typo fix ([c306b682](c306b682))
+* **StatusSearchPopup:**  replace "#" character with "channel" icon ([2de261c4](2de261c4))
+
+
+
+<a name=""></a>
 ##  v0.5.0 (2021-08-16)
 
 
