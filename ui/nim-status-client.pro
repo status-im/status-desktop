@@ -179,7 +179,6 @@ DISTFILES += \
     app/AppLayouts/Chat/components/GroupInfoPopup.qml \
     app/AppLayouts/Chat/data/channelList.js \
     app/AppLayouts/Profile/LeftTab/Constants.js \
-    app/AppLayouts/Profile/LeftTab/components/MenuButton.qml \
     app/AppLayouts/Chat/data/EmojiReactions.qml \
     app/AppLayouts/Profile/Sections/AppearanceContainer.qml \
     app/AppLayouts/Profile/Sections/NetworksModal.qml \
