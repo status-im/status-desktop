@@ -123,8 +123,8 @@ StatusPopupMenu {
                         qsTrId("leave-chat")
         }
         icon.name: chatItem && chatItem.chatType === Constants.chatTypeOneToOne || communityActive ? "delete" : "arrow-right"
-        icon.width: chatItem && chatItem.chatType === Constants.chatTypeOneToOne ? 18 : 14
-        iconRotation: chatItem && chatItem.chatType === Constants.chatTypeOneToOne ? 0 : 180
+        icon.width: chatItem && chatItem.chatType === Constants.chatTypeOneToOne || communityActive ? 18 : 14
+        iconRotation: chatItem && chatItem.chatType === Constants.chatTypeOneToOne || communityActive ? 0 : 180
 
         type: StatusMenuItem.Type.Danger
         onTriggered: {
