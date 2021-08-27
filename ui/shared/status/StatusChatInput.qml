@@ -358,7 +358,7 @@ Rectangle {
         // we can only get it in the `released` event
         if (paste) {
             paste = false;
-            const plainText = messageInputField.getText(0, messageInputField.length);
+            const plainText = messageInputField.getFormattedText(0, messageInputField.length);
             messageInputField.remove(0, messageInputField.length);
             insertInTextInput(0, plainText);
         }
