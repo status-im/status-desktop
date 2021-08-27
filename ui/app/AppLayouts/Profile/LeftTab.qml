@@ -1,23 +1,20 @@
 import QtQuick 2.13
+
+import StatusQ.Components 0.1
 import "../../../imports"
-import "../../../shared"
 import "./LeftTab"
 
-Rectangle {
+Item {
     property alias changeProfileSection: profileMenu.changeProfileSection
 
     id: profileInfoContainer
-    color: Style.current.secondaryMenuBackground
 
-    StyledText {
+    StatusNavigationPanelHeadline {
         id: title
-        //% "Profile"
-        text: qsTrId("profile")
+        text: qsTr("Profile")
         anchors.top: parent.top
         anchors.topMargin: Style.current.padding
         anchors.horizontalCenter: parent.horizontalCenter
-        font.weight: Font.Bold
-        font.pixelSize: 17
     }
 
     Menu {

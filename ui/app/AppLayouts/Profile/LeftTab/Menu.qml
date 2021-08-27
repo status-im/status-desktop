@@ -1,17 +1,17 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
+
+import StatusQ.Components 0.1
+
 import "../../../../imports"
-import "../../../../shared"
-import "./components"
 import "./constants.js" as ProfileConstants
 
 ScrollView {
-    readonly property int btnheight: 42
-    readonly property int w: 340
     property var changeProfileSection: function (sectionId) {
         Config.currentMenuTab = sectionId
     }
+    ScrollBar.horizontal.policy: Qt.ScrollBarAlwaysOff
     contentHeight: menuItems.height + 24
 
     id: profileMenu
@@ -19,59 +19,47 @@ ScrollView {
 
     Column {
         id: menuItems
-        spacing: 8
+        spacing: 4
 
         Repeater {
             model: ProfileConstants.mainMenuButtons
-            delegate: MenuButton {
-                menuItemId: modelData.id
-                text: modelData .text
-                source: "../../../img/profile/" + modelData.filename
-                active: Config.currentMenuTab === modelData.id
-                Layout.fillWidth: true
-                width: profileMenu.width
-                onClicked: {
-                    Config.currentMenuTab = modelData.id
-                }
+            delegate: StatusNavigationListItem {
+                itemId: modelData.id
+                title: modelData.text
+                icon.name: modelData.icon
+                selected: Config.currentMenuTab === modelData.id
+                onClicked: Config.currentMenuTab = modelData.id
             }
         }
 
-        StyledText {
-            topPadding: 10
-            leftPadding: 20
-            text: "Settings"
-            color: Style.current.secondaryText
-        }
+        StatusListSectionHeadline { text: "Settings" }
 
         Repeater {
             model: ProfileConstants.settingsMenuButtons
-            delegate: MenuButton {
-                menuItemId: modelData.id
-                text: modelData .text
-                source: "../../../img/profile/" + modelData.filename
-                active: Config.currentMenuTab === modelData.id
+            delegate: StatusNavigationListItem {
+                itemId: modelData.id
+                title: modelData.text
+                icon.name: modelData.icon
+                selected: Config.currentMenuTab === modelData.id
+                onClicked: Config.currentMenuTab = modelData.id
                 visible: modelData.ifEnabled !== "browser" || appSettings.isBrowserEnabled
-                Layout.fillWidth: true
-                width: profileMenu.width
-                onClicked: function () {
-                    Config.currentMenuTab = modelData.id
-                }
             }
         }
 
-        StyledText {
-            text: " "
+        Item {
+            id: invisibleSeparator
+            height: 16
+            width: parent.width
         }
 
         Repeater {
             model: ProfileConstants.extraMenuButtons
-            delegate: MenuButton {
-                menuItemId: modelData.id
-                text: modelData.text
-                source: "../../../img/profile/" + modelData.filename
-                active: Config.currentMenuTab === modelData.id
-                Layout.fillWidth: true
-                width: profileMenu.width
+            delegate: StatusNavigationListItem {
+                itemId: modelData.id
+                title: modelData.text
+                icon.name: modelData.icon
+                selected: Config.currentMenuTab === modelData.id
+                visible: modelData.ifEnabled !== "browser" || appSettings.isBrowserEnabled
                 onClicked: function () {
                     if (modelData.function === "exit") {
                         return Qt.quit()

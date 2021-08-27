@@ -17,67 +17,67 @@ var SIGNOUT = 14
 var mainMenuButtons = [{
                        "id": PROFILE,
                        "text": qsTr("My Profile"),
-                       "filename": "myProfile.svg"
+                       "icon": "profile"
                    }, {
                        "id": CONTACTS,
                        "text": qsTr("Contacts"),
-                       "filename": "contacts.svg"
+                       "icon": "contact"
                    }, {
                        "id": ENS,
                        "text": qsTr("ENS usernames"),
-                       "filename": "ensUsernames.svg"
+                       "icon": "username"
                    }]
 
 var settingsMenuButtons = [{
                        "id": PRIVACY_AND_SECURITY,
                        "text": qsTr("Privacy and security"),
-                       "filename": "security.svg"
+                       "icon": "security"
                    }, {
                        "id": APPEARANCE,
                        "text": qsTr("Appearance"),
-                       "filename": "appearance.svg"
+                       "icon": "appearance"
                    }, {
                        "id": SOUND,
                        "text": qsTr("Sound"),
-                       "filename": "sound.svg"
+                       "icon": "sound"
                    }, {
                        "id": LANGUAGE,
                        "text": qsTr("Language"),
-                       "filename": "globe.svg"
+                       "icon": "language"
                    }, {
                        "id": NOTIFICATIONS,
                        "text": qsTr("Notifications"),
-                       "filename": "notifications.svg"
+                       "icon": "notification"
                    }, {
                        "id": SYNC_SETTINGS,
                        "text": qsTr("Sync settings"),
-                       "filename": "sync.svg"
+                       "icon": "mobile"
                    }, {
                        "id": DEVICES_SETTINGS,
                        "text": qsTr("Devices settings"),
-                       "filename": "sync.svg"
+                       "icon": "mobile"
                    },  {
                         "id": BROWSER_SETTINGS,
                         "text": qsTr("Browser settings"),
-                        "filename": "../compassActive.svg",
+                        "icon": "browser",
                         "ifEnabled": "browser"
                     }, {
                        "id": ADVANCED,
                        "text": qsTr("Advanced"),
-                       "filename": "advanced.svg"
+                       "icon": "settings"
                    }]
 
 var extraMenuButtons = [{
                        "id": NEED_HELP,
                        "text": qsTr("Need help?"),
-                       "filename": "help.svg"
+                       "icon": "help"
                    }, {
                        "id": ABOUT,
                        "text": qsTr("About"),
-                       "filename": "about.svg"
+                       "icon": "info"
                    }, {
                        "id": SIGNOUT,
                        "function": "exit",
                        "text": qsTr("Sign out & Quit"),
-                       "filename": "signout.svg"
+                       "icon": "logout"
                    }]
