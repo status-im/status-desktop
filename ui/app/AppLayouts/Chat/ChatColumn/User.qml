@@ -6,14 +6,20 @@ import "../../../../imports"
 import "../components"
 
 Item {
+    id: wrapper
+    anchors.right: parent.right
+    anchors.top: applicationWindow.top
+    anchors.left: parent.left
+    height: rectangle.height + 4
+
     property string publicKey: ""
     property string name: "channelName"
     property string lastSeen: ""
     property string identicon
-    property int statusType: Constants.statusType_Online
-    property color offlineColor: Style.current.darkGrey
+    property int statusType: -1
     property bool hovered: false
     property bool enableMouseArea: true
+    property bool isOnline: chatsModel.isOnline
     property var currentTime
     property color color: {
         if (wrapper.hovered) {
@@ -21,16 +27,15 @@ Item {
         }
         return Style.current.transparent
     }
-
     property string profileImage: appMain.getProfileImage(publicKey) || ""
     property bool isCurrentUser: publicKey === profileModel.profile.pubKey
-    id: wrapper
-    anchors.right: parent.right
-    anchors.top: applicationWindow.top
-    anchors.left: parent.left
-    height: rectangle.height + 4
 
     Rectangle {
+        id: rectangle
+        width: parent.width
+        height: 40
+        radius: 8
+        color: wrapper.color
         Connections {
             target: profileModel.contacts.list
             onContactChanged: {
@@ -39,12 +44,6 @@ Item {
                 }
             }
         }
-
-        id: rectangle
-        color: wrapper.color
-        radius: 8
-        height: 40
-        width: parent.width
 
         StatusIdenticon {
             id: contactImage
@@ -74,25 +73,29 @@ Item {
         }
 
         Rectangle {
+            width: 10
+            height: 10
+            radius: (width/2)
             anchors.left: contactImage.right
             anchors.leftMargin: -Style.current.smallPadding
             anchors.bottom: contactImage.bottom
-            height: 10
-            width: 10
-            radius: 20
+            visible: wrapper.isOnline
             color: {
-                let lastSeenMinutesAgo = (currentTime/1000 - parseInt(lastSeen)) / 60
-                if (!chatsModel.isOnline) {
-                    return offlineColor
+                if (visible) {
+                    var lastSeenMinutesAgo = ((currentTime/1000 - parseInt(lastSeen)) / 60);
+                    if (statusType === Constants.statusType_DoNotDisturb) {
+                        return Style.current.red;
+                    } else if (isCurrentUser || (lastSeenMinutesAgo < 5.5)) {
+                        return Style.current.green;
+                    } else if (((statusType !== -1) && (lastSeenMinutesAgo > 5.5)) ||
+                               ((statusType === -1) && (lastSeenMinutesAgo < 7))) {
+                        return Style.current.orange;
+                    } else if ((statusType === -1) && (lastSeenMinutesAgo > 7)) {
+                        return "transparent";
+                    }
+                } else {
+                    return "transparent";
                 }
-
-                if (isCurrentUser || lastSeenMinutesAgo < 5.5){
-                    return statusType == Constants.statusType_DoNotDisturb ? Style.current.red : Style.current.green;
-                } else if (lastSeenMinutesAgo < 7) {
-                    return statusType == Constants.statusType_DoNotDisturb ? Style.current.red : Style.current.orange;
-                }
-
-                return offlineColor
             }
         }
 

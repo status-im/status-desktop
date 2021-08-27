@@ -60,6 +60,7 @@ Item {
                 StyledText {
                     anchors.fill: parent
                     anchors.leftMargin: Style.current.padding
+                    verticalAlignment: Text.AlignVCenter
                     font.pixelSize: Style.current.additionalTextSize
                     color: Style.current.darkGrey
                     text: section === 'true' ? qsTr("Online") : qsTr("Offline")
@@ -83,7 +84,7 @@ Item {
             lastSeen: model.lastSeen
             statusType: model.statusType
             currentTime: root.currentTime
-            offlineColor: "transparent"
+            isOnline: model.online
         }
     }
 }
