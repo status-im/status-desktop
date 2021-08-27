@@ -31,6 +31,7 @@ Rectangle {
         id: imageWithTitle
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: parent.left
+        anchors.right: actionButtonLoader.left
         anchors.leftMargin: 16
 
         editable: statusModalHeader.editable

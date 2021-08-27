@@ -77,15 +77,21 @@ Row {
 
     Column {
         id: textLayout
-
+        width: !iconOrImage.active ? parent.width :
+              parent.width - iconOrImage.width - parent.spacing
         Row {
+            id: headerTitleRow
+            width: parent.width
             spacing: 4
             StatusBaseText {
                 id: headerTitle
                 font.family: Theme.palette.baseFont.name
                 font.pixelSize: 17
                 font.bold: true
+                elide: Text.ElideRight
                 color: Theme.palette.directColor1
+                width: !editButton.visible ? parent.width : 
+                      parent.width - editButton.width - parent.spacing
             }
             StatusFlatRoundButton {
                 id: editButton
@@ -109,6 +115,8 @@ Row {
             font.family: Theme.palette.baseFont.name
             font.pixelSize: 15
             color:Theme.palette.baseColor1
+            width: parent.width
+            elide: Text.ElideRight
         }
     }
 }
