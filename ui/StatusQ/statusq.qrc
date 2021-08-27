@@ -258,5 +258,10 @@
         <file>src/StatusQ/Popups/StatusSearchPopupMenuItem.qml</file>
         <file>src/StatusQ/Popups/StatusSearchLocationMenu.qml</file>
         <file>src/StatusQ/Core/StatusTooltipSettings.qml</file>
+        <file>src/StatusQ/Platform/StatusWindowsTitleBar.qml</file>
+        <file>src/assets/img/icons/windows_titlebar/close.svg</file>
+        <file>src/assets/img/icons/windows_titlebar/maximize.svg</file>
+        <file>src/assets/img/icons/windows_titlebar/minimise.svg</file>
+        <file>src/assets/img/icons/windows_titlebar/status.svg</file>
     </qresource>
 </RCC>

@@ -7,6 +7,7 @@ import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 import StatusQ.Layout 0.1
 import StatusQ.Popups 0.1
+import StatusQ.Platform 0.1
 
 Rectangle {
     id: demoApp
@@ -15,38 +16,27 @@ Rectangle {
     border.width: 1
     border.color: Theme.palette.baseColor2
 
-    Row {
-        anchors.top: demoApp.top
-        anchors.left: demoApp.left
-        anchors.topMargin: 14
-        anchors.leftMargin: 14
+    property string titleStyle: "osx"
 
-        spacing: 6
+    StatusMacTrafficLights {
+        anchors.left: parent.left
+        anchors.top: parent.top
+        anchors.margins: 13
         z: statusAppLayout.z + 1
+        visible: titleStyle === "osx"
+    }
 
-        Rectangle {
-            color: "#E24640"
-            height: 12
-            width: 12
-            radius: 6
-        }
-        Rectangle {
-            color: "#FFC12F"
-            height: 12
-            width: 12
-            radius: 6
-        }
-        Rectangle {
-            color: "#2ACB42"
-            height: 12
-            width: 12
-            radius: 6
-        }
+    StatusWindowsTitleBar {
+        id: windowsTitle
+        anchors.top: parent.top
+        width: parent.width
+        z: statusAppLayout.z + 1
+        visible: titleStyle === "windows"
     }
 
     StatusAppLayout {
         id: statusAppLayout
-        anchors.top: demoApp.top
+        anchors.top: windowsTitle.visible ? windowsTitle.bottom : demoApp.top
         anchors.left: demoApp.left
         anchors.topMargin: demoApp.border.width
         anchors.leftMargin: demoApp.border.width

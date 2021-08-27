@@ -1,5 +1,5 @@
 module StatusQ.Platform
 
 StatusMacTrafficLights 0.1 StatusMacTrafficLights.qml
-
+StatusWindowsTitleBar 0.1 StatusWindowsTitleBar.qml
 

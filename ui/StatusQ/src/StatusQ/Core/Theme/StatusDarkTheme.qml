@@ -104,6 +104,7 @@ ThemePalette {
     directColor6: getColor('white', 0.2)
     directColor7: getColor('white', 0.1)
     directColor8: getColor('white', 0.05)
+    directColor9: getColor('white', 0.2)
 
     indirectColor1: getColor('black')
     indirectColor2: getColor('black', 0.7)

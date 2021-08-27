@@ -287,6 +287,36 @@ StatusWindow {
         Rectangle {
             anchors.fill: parent
             color: Theme.palette.baseColor3
+
+            Row {
+                id: platformSwitch
+                anchors.left: demoApp.left
+                anchors.bottom: demoApp.top
+                anchors.bottomMargin: 20
+                spacing: 2
+
+                Text {
+                    text: "OSX"
+                    font.pixelSize: 15
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+
+                StatusSwitch {
+                    onCheckedChanged: {
+                        if (checked) {
+                            demoApp.titleStyle = "windows"
+                        } else {
+                            demoApp.titleStyle = "osx"
+                        }
+                    }
+                }
+
+                Text {
+                    text: "Win"
+                    font.pixelSize: 15
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+            }
             DemoApp {
                 id: demoApp
                 anchors.verticalCenter: parent.verticalCenter
@@ -308,6 +338,27 @@ StatusWindow {
         anchors.left: parent.left
         anchors.top: parent.top
         anchors.margins: 13
+
+        visible: Qt.platform.os == "osx"
+
+        onClose: {
+            rootWindow.close()
+        }
+
+        onMinimised: {
+            rootWindow.showMinimized()
+        }
+
+        onMaximized: {
+            rootWindow.toggleFullScreen()
+        }
+    }
+
+    StatusWindowsTitleBar {
+        anchors.top: parent.top
+        width: parent.width
+
+        visible: Qt.platform.os == "windows"
 
         onClose: {
             rootWindow.close()

@@ -64,6 +64,7 @@ QtObject {
     property color directColor6
     property color directColor7
     property color directColor8
+    property color directColor9
 
     property color indirectColor1
     property color indirectColor2
