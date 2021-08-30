@@ -2,13 +2,18 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import QtGraphicalEffects 1.13
+
 import "../../../../imports"
 import "../../../../shared"
-import "../../../../shared/status"
-import "./"
 
-ModalPopup {
+import StatusQ.Core.Theme 0.1
+import StatusQ.Components 0.1
+import StatusQ.Controls 0.1
+import StatusQ.Popups 0.1
+
+StatusModal {
     id: popup
+    anchors.centerIn: parent
 
     property Popup parentPopup
 
@@ -35,9 +40,6 @@ ModalPopup {
     signal contactAdded(publicKey: string)
     signal contactRemoved(publicKey: string)
 
-    clip: true
-    noTopMargin: true
-
     function openPopup(showFooter, userNameParam, fromAuthorParam, identiconParam, textParam, nicknameParam) {
         userName = userNameParam || ""
         nickname = nicknameParam || ""
@@ -52,66 +54,130 @@ ModalPopup {
         popup.open()
     }
 
-    header: Item {
-        height: 78
-        width: parent.width
+    header.title: Utils.removeStatusEns(isCurrentUser ? profileModel.ens.preferredUsername || userName : userName)
+    header.subTitle: isEnsVerified ? alias : fromAuthor
+    header.subTitleElide: Text.ElideMiddle
+    header.image.source: identicon
 
-        RoundedImage {
-            id: profilePic
-            width: 40
-            height: 40
-            border.color: Style.current.border
-            border.width: 1
-            anchors.verticalCenter: parent.verticalCenter
-            source: identicon
-        }
+    headerActionButton: StatusFlatRoundButton {
+        type: StatusFlatRoundButton.Type.Secondary
+        width: 32
+        height: 32
 
-        StyledText {
-            id: profileName
-            text:  Utils.removeStatusEns(isCurrentUser ? profileModel.ens.preferredUsername || userName : userName)
-            elide: Text.ElideRight
+        icon.width: 20
+        icon.height: 20
+        icon.name: "qr"
+        onClicked: contentComponent.qrCodePopup.open()
+    }
+
+    content: Item {
+        width: popup.width
+        height: modalContent.height
+
+        property alias qrCodePopup: qrCodePopup
+        property alias unblockContactConfirmationDialog: unblockContactConfirmationDialog
+        property alias blockContactConfirmationDialog: blockContactConfirmationDialog
+        property alias removeContactConfirmationDialog: removeContactConfirmationDialog
+
+        Column {
+            id: modalContent
             anchors.top: parent.top
-            anchors.topMargin: Style.current.padding
-            anchors.left: profilePic.right
-            anchors.leftMargin: Style.current.halfPadding
-            anchors.right: qrCodeButton.left
-            anchors.rightMargin: Style.current.padding
-            font.bold: true
-            font.pixelSize: 17
-        }
+            width: parent.width
 
-        StyledText {
-            text: isEnsVerified ? alias : fromAuthor
-            elide: !isEnsVerified ? Text.ElideMiddle : Text.ElideRight
-            anchors.left: profilePic.right
-            anchors.leftMargin: Style.current.smallPadding
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: Style.current.padding
-            anchors.right: qrCodeButton.left
-            anchors.rightMargin: Style.current.padding
-            anchors.topMargin: 2
-            font.pixelSize: 14
-            color: Style.current.secondaryText
-        }
+            Item {
+                height: 16
+                width: parent.width
+            }
 
-        StatusIconButton {
-            id: qrCodeButton
-            icon.name: "qr-code-icon"
-            anchors.verticalCenter: profileName.verticalCenter
-            anchors.right: parent.right
-            anchors.rightMargin: 52
-            iconColor: Style.current.textColor
-            onClicked: qrCodePopup.open()
-            width: 32
-            height: 32
-        }
+            StatusDescriptionListItem {
+                title: qsTr("ENS username")
+                subTitle: isCurrentUser ? profileModel.ens.preferredUsername || userName : userName
+                tooltip.text: qsTr("Copy to clipboard")
+                icon.name: "copy"
+                iconButton.onClicked: {
+                    chatsModel.copyToClipboard(userName)
+                    tooltip.visible = !tooltip.visible
+                }
+                width: parent.width
+            }
 
-        Separator {
-            anchors.bottom: parent.bottom
-            anchors.left: parent.left
-            anchors.leftMargin: -Style.current.padding
-            anchors.right: parent.right
-            anchors.rightMargin: -Style.current.padding
+            StatusDescriptionListItem {
+                title: qsTr("Chat key")
+                subTitle: fromAuthor
+                subTitleComponent.elide: Text.ElideMiddle
+                subTitleComponent.width: 320
+                subTitleComponent.font.family: Theme.palette.monoFont.name
+                tooltip.text: qsTr("Copy to clipboard")
+                icon.name: "copy"
+                iconButton.onClicked: {
+                    chatsModel.copyToClipboard(fromAuthor)
+                    tooltip.visible = !tooltip.visible
+                }
+                width: parent.width
+            }
+
+            StatusModalDivider {
+                topPadding: 12
+                bottomPadding: 16
+            }
+
+            StatusDescriptionListItem {
+                title: qsTr("Share Profile URL")
+                subTitle: {
+                    let user = ""
+                    if (isCurrentUser) {
+                        user = profileModel.ens.preferredUsername
+                    } else {
+                        if (isEnsVerified) {
+                            user = userName.startsWith("@") ? userName.substring(1) : userName
+                        }
+                    }
+                    if (user === ""){
+                        user = fromAuthor.substr(0, 4) + "..." + fromAuthor.substr(fromAuthor.length - 5)
+                    }
+                    return Constants.userLinkPrefix +  user;
+                }
+                tooltip.text: qsTr("Copy to clipboard")
+                icon.name: "copy"
+                iconButton.onClicked: {
+                    let user = ""
+                    if (isCurrentUser) {
+                        user = profileModel.ens.preferredUsername
+                    } else {
+                        if (isEnsVerified) {
+                            user = userName.startsWith("@") ? userName.substring(1) : userName
+                        }
+                    }
+                    if (user === ""){
+                        user = fromAuthor
+                    }
+
+                    chatsModel.copyToClipboard(Constants.userLinkPrefix + user)
+                    tooltip.visible = !tooltip.visible
+                }
+                width: parent.width
+            }
+
+            StatusModalDivider {
+                topPadding: 8
+                bottomPadding: 12
+            }
+
+            StatusDescriptionListItem {
+                title: qsTr("Chat settings")
+                subTitle: qsTr("Nickname")
+                value: nickname ? nickname : qsTr("None")
+                sensor.enabled: true
+                sensor.onClicked: {
+                    nicknamePopup.open()
+                }
+                width: parent.width
+            }
+
+            Item {
+                width: parent.width
+                height: 16
+            }
         }
 
         ModalPopup {
@@ -129,156 +195,40 @@ ModalPopup {
                 smooth: false
             }
         }
-    }
 
-    Item {
-        anchors.fill: parent
-
-        TextWithLabel {
-            id: ensText
-            //% "ENS username"
-            label: qsTrId("ens-username")
-            text: isCurrentUser ? profileModel.ens.preferredUsername || userName : userName
-            anchors.top: parent.top
-            visible: isEnsVerified || profileModel.ens.preferredUsername !== ""
-            height: visible ? implicitHeight : 0
-            textToCopy: userName
-        }
-
-        StyledText {
-            id: labelChatKey
-            //% "Chat key"
-            text: qsTrId("chat-key")
-            font.pixelSize: 13
-            font.weight: Font.Medium
-            color: Style.current.secondaryText
-            anchors.top: ensText.bottom
-            anchors.topMargin: ensText.visible ? popup.innerMargin : 0
-        }
-
-        Address {
-            id: valueChatKey
-            text: fromAuthor
-            width: 160
-            maxWidth: parent.width - (3 * Style.current.smallPadding) - copyBtn.width
-            color: Style.current.textColor
-            font.pixelSize: 15
-            anchors.top: labelChatKey.bottom
-            anchors.topMargin: 4
-        }
-
-        CopyToClipBoardButton {
-            id: copyBtn
-            anchors.top: labelChatKey.bottom
-            anchors.left: valueChatKey.right
-            textToCopy: valueChatKey.text
-        }
-
-        Separator {
-            id: separator
-            anchors.top: valueChatKey.bottom
-            anchors.topMargin: popup.innerMargin
-            anchors.left: parent.left
-            anchors.leftMargin: -Style.current.padding
-            anchors.right: parent.right
-            anchors.rightMargin: -Style.current.padding
-        }
-
-        TextWithLabel {
-            id: valueShareURL
-            //% "Share Profile URL"
-            label: qsTrId("share-profile-url")
-            text: {
-                let user = ""
-                if (isCurrentUser) {
-                    user = profileModel.ens.preferredUsername
-                } else {
-                    if (isEnsVerified) {
-                        user = userName.startsWith("@") ? userName.substring(1) : userName
-                    }
-                }
-                if (user === ""){
-                    user = fromAuthor.substr(0, 4) + "..." + fromAuthor.substr(fromAuthor.length - 5)
-                }
-                return Constants.userLinkPrefix +  user;
-            }
-            anchors.top: separator.top
-            anchors.topMargin: popup.innerMargin
-            textToCopy: {
-                let user = ""
-                if (isCurrentUser) {
-                    user = profileModel.ens.preferredUsername
-                } else {
-                    if (isEnsVerified) {
-                        user = userName.startsWith("@") ? userName.substring(1) : userName
-                    }
-                }
-                if (user === ""){
-                    user = fromAuthor
-                }
-                return Constants.userLinkPrefix +  user;
+        UnblockContactConfirmationDialog {
+            id: unblockContactConfirmationDialog
+            onUnblockButtonClicked: {
+                profileModel.contacts.unblockContact(fromAuthor)
+                unblockContactConfirmationDialog.close();
+                popup.close()
+                popup.contactUnblocked(fromAuthor)
             }
         }
 
-        Separator {
-            id: separator2
-            anchors.top: valueShareURL.bottom
-            anchors.topMargin: popup.innerMargin
-            anchors.left: parent.left
-            anchors.leftMargin: -Style.current.padding
-            anchors.right: parent.right
-            anchors.rightMargin: -Style.current.padding
-        }
+        BlockContactConfirmationDialog {
+            id: blockContactConfirmationDialog
+            onBlockButtonClicked: {
+                profileModel.contacts.blockContact(fromAuthor)
+                blockContactConfirmationDialog.close();
+                popup.close()
 
-        TextWithLabel {
-            id: chatSettings
-            visible: profileModel.profile.pubKey !== fromAuthor
-            //% "Chat settings"
-            label: qsTrId("chat-settings")
-            //% "Nickname"
-            text: qsTrId("nickname")
-            anchors.top: separator2.top
-            anchors.topMargin: popup.innerMargin
-        }
-
-        SVGImage {
-            id: nicknameCaret
-            visible: profileModel.profile.pubKey !== fromAuthor
-            source: "../../../img/caret.svg"
-            rotation: -90
-            anchors.right: parent.right
-            anchors.rightMargin: Style.current.padding
-            anchors.bottom: chatSettings.bottom
-            anchors.bottomMargin: 5
-            width: 13
-            height: 7
-            fillMode: Image.PreserveAspectFit
-            ColorOverlay {
-                anchors.fill: parent
-                source: parent
-                color: Style.current.secondaryText
+                popup.contactBlocked(fromAuthor)
             }
         }
 
-        StyledText {
-            id: nicknameText
-            visible: profileModel.profile.pubKey !== fromAuthor
-            //% "None"
-            text: nickname ? nickname : qsTrId("none")
-            anchors.right: nicknameCaret.left
-            anchors.rightMargin: Style.current.padding
-            anchors.verticalCenter: nicknameCaret.verticalCenter
-            color: Style.current.secondaryText
-        }
+        ConfirmationDialog {
+            id: removeContactConfirmationDialog
+            title: qsTr("Remove contact")
+            confirmationText: qsTr("Are you sure you want to remove this contact?")
+            onConfirmButtonClicked: {
+                if (profileModel.contacts.isAdded(fromAuthor)) {
+                    profileModel.contacts.removeContact(fromAuthor);
+                }
+                removeContactConfirmationDialog.close();
+                popup.close();
 
-        MouseArea {
-            cursorShape: Qt.PointingHandCursor
-            anchors.left: chatSettings.left
-            anchors.right: nicknameCaret.right
-            anchors.top: chatSettings.top
-            anchors.bottom: chatSettings.bottom
-            onClicked: {
-                nicknamePopup.open()
+                popup.contactRemoved(fromAuthor);
             }
         }
 
@@ -293,127 +243,45 @@ ModalPopup {
         }
     }
 
-    footer: Item {
-        id: footerContainer
-        visible: !noFooter
-        width: parent.width
-        height: children[0].height
-
-        StatusButton {
-            id: blockBtn
-            anchors.right: addToContactsButton.left
-            anchors.rightMargin: addToContactsButton ? Style.current.padding : 0
-            anchors.bottom: parent.bottom
-            type: "warn"
-            showBorder: true
-            bgColor: "transparent"
-            borderColor: Style.current.border
-            hoveredBorderColor: Style.current.transparent
+    rightButtons: [
+        StatusFlatButton {
             text: isBlocked ?
-                      //% "Unblock User"
-                      qsTrId("unblock-user") :
-                      //% "Block User"
-                      qsTrId("block-user")
+                qsTr("Unblock User") :
+                qsTr("Block User")
+            type: StatusBaseButton.Type.Danger
             onClicked: {
                 if (isBlocked) {
-                    unblockContactConfirmationDialog.contactName = userName;
-                    unblockContactConfirmationDialog.contactAddress = fromAuthor;
-                    unblockContactConfirmationDialog.open();
+                    contentComponent.unblockContactConfirmationDialog.contactName = userName;
+                    contentComponent.unblockContactConfirmationDialog.contactAddress = fromAuthor;
+                    contentComponent.unblockContactConfirmationDialog.open();
                     return;
                 }
-                blockContactConfirmationDialog.contactName = userName;
-                blockContactConfirmationDialog.contactAddress = fromAuthor;
-                blockContactConfirmationDialog.open();
+                ontentComponent.blockContactConfirmationDialog.contactName = userName;
+                contentComponent.blockContactConfirmationDialog.contactAddress = fromAuthor;
+                contentComponent.blockContactConfirmationDialog.open();
             }
-        }
+        },
+
+        StatusFlatButton {
+            property bool isAdded:  profileModel.contacts.isAdded(fromAuthor)
+            visible: !isBlocked && isAdded
+            type: StatusBaseButton.Type.Danger
+            text: qsTr('Remove Contact')
+            onClicked: {
+                contentComponent.removeContactConfirmationDialog.parentPopup = popup;
+                contentComponent.removeContactConfirmationDialog.open();
+            }
+        },
 
         StatusButton {
             property bool isAdded:  profileModel.contacts.isAdded(fromAuthor)
-
-            id: addToContactsButton
-            anchors.right: sendMessageBtn.left
-            anchors.rightMargin: sendMessageBtn.visible ? Style.current.padding : 0
-            text: isAdded ?
-                      //% "Remove Contact"
-                      qsTrId("remove-contact") :
-                      //% "Add to contacts"
-                      qsTrId("add-to-contacts")
-            anchors.bottom: parent.bottom
-            type: isAdded ? "warn" : "primary"
-            showBorder: isAdded
-            borderColor: Style.current.border
-            bgColor: isAdded ? "transparent" : Style.current.buttonBackgroundColor
-            hoveredBorderColor: Style.current.transparent
-            visible: !isBlocked
-            width: visible ? implicitWidth : 0
+            text: qsTr("Add to contacts")
+            visible: !isBlocked && !isAdded
             onClicked: {
-                if (profileModel.contacts.isAdded(fromAuthor)) {
-                    removeContactConfirmationDialog.parentPopup = profilePopup;
-                    removeContactConfirmationDialog.open();
-                } else {
-                    profileModel.contacts.addContact(fromAuthor);
-                    contactAdded(fromAuthor);
-                    profilePopup.close();
-                }
-            }
-        }
-
-        StatusButton {
-            id: sendMessageBtn
-            anchors.right: parent.right
-            anchors.bottom: parent.bottom
-            //% "Send message"
-            text: qsTrId("send-message")
-            visible: !isBlocked && chatsModel.channelView.activeChannel.id !== popup.fromAuthor
-            width: visible ? implicitWidth : 0
-            onClicked: {
-                appMain.changeAppSection(Constants.chat)
-                chatsModel.channelView.joinPrivateChat(fromAuthor, "")
-                popup.close()
-                let pp = parentPopup
-                while (pp) {
-                    pp.close()
-                    pp = pp.parentPopup
-                }
-            }
-        }
-
-        BlockContactConfirmationDialog {
-            id: blockContactConfirmationDialog
-            onBlockButtonClicked: {
-                profileModel.contacts.blockContact(fromAuthor)
-                blockContactConfirmationDialog.close();
-                popup.close()
-
-                contactBlocked(fromAuthor)
-            }
-        }
-
-        UnblockContactConfirmationDialog {
-            id: unblockContactConfirmationDialog
-            onUnblockButtonClicked: {
-                profileModel.contacts.unblockContact(fromAuthor)
-                unblockContactConfirmationDialog.close();
-                popup.close()
-                contactUnblocked(fromAuthor)
-            }
-        }
-
-        ConfirmationDialog {
-            id: removeContactConfirmationDialog
-            // % "Remove contact"
-            title: qsTrId("remove-contact")
-            //% "Are you sure you want to remove this contact?"
-            confirmationText: qsTrId("are-you-sure-you-want-to-remove-this-contact-")
-            onConfirmButtonClicked: {
-                if (profileModel.contacts.isAdded(fromAuthor)) {
-                    profileModel.contacts.removeContact(fromAuthor);
-                }
-                removeContactConfirmationDialog.close();
+                profileModel.contacts.addContact(fromAuthor);
+                popup.contactAdded(fromAuthor);
                 popup.close();
-
-                contactRemoved(fromAuthor);
             }
         }
-    }
+    ]
 }

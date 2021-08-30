@@ -129,7 +129,6 @@ Item {
 
     property Component profilePopupComponent: ProfilePopup {
         id: profilePopup
-        height: 504
         onClosed: {
             if(profilePopup.parentPopup){
                 profilePopup.parentPopup.close();

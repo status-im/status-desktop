@@ -221,7 +221,6 @@ Item {
     Component {
         id: profilePopup
         ProfilePopup {
-            height: 504
             onClosed: {
                 destroy()
             }
