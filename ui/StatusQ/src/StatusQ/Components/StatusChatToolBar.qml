@@ -93,15 +93,19 @@ Rectangle {
 
             property bool showMoreMenu: false
             onClicked: {
-                if (showMoreMenu) {
+                if (!showMoreMenu) {
                     popupMenuSlot.item.popup(-popupMenuSlot.item.width + menuButton.width, menuButton.height + 4)
+                    statusChatToolBar.menuButtonClicked()
                 }
-                highlighted = true
-                statusChatToolBar.menuButtonClicked()
             }
 
-            onPressed: {
-                showMoreMenu = !showMoreMenu;
+            Timer {
+                id: menuClosedUpdater
+                interval: 100
+                repeat: false
+                onTriggered: {
+                    menuButton.showMoreMenu = false
+                }
             }
 
             Loader {
@@ -110,9 +114,15 @@ Rectangle {
                 onLoaded: {
                     popupMenuSlot.item.closeHandler = function () {
                         menuButton.highlighted = false
+                        menuClosedUpdater.start()
+                    }
+
+                    popupMenuSlot.item.openHandler = function () {
+                        menuButton.highlighted = true
+                        menuButton.showMoreMenu = true
                     }
                 }
-            }
+            }          
         }
 
         Rectangle {
