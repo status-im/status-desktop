@@ -44,7 +44,6 @@ ScrollView {
 
     property Component profilePopupComponent: ProfilePopup {
         id: profilePopup
-        height: 450
         onClosed: {
             if(profilePopup.parentPopup){
                 profilePopup.parentPopup.close();
