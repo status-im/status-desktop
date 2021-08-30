@@ -1,4 +1,25 @@
 <a name=""></a>
+##  v0.7.0 (2021-08-30)
+
+
+#### Features
+
+* **StatusChatListAndCategories:**  add drag and drop support for cate… (#349) ([a4178bd6](a4178bd6), closes [#227](227))
+* **StatusChatListCategoryItem:**  Add tooltips settings ([f9775e4d](f9775e4d))
+* **StatusPopupMenu:**  changed close policy ([2d8fd576](2d8fd576))
+* **StatusWindowsTitleBar:**  Add windows title bar ([faca4765](faca4765))
+
+#### Bug Fixes
+
+* **StatusAppThreePanelLayout:**  increase minimum width in right panel ([7da4bdee](7da4bdee))
+* **StatusBaseInput:**  fix click to focus ([138458d1](138458d1))
+* **StatusChatInfoButton:**  Add self-calculated implicitWIdth and elide to texts ([7ef61ed3](7ef61ed3))
+* **StatusListItem:**  don't set width on title item ([ee5ec7b3](ee5ec7b3))
+* **StatusModal:**  ensure header and subtitles elide if needed ([503a07bf](503a07bf), closes [#256](256))
+
+
+
+<a name=""></a>
 ##  v0.6.0 (2021-08-24)
 
 
