@@ -8,12 +8,14 @@ Rectangle {
 
     property string title: ""
     property string subTitle: ""
+    property string value: ""
     property StatusIconSettings icon: StatusIconSettings {
         width: 23
         height: 23
     }
     property alias tooltip: statusToolTip
     property alias iconButton: statusFlatRoundButton
+    property alias sensor: sensor
 
     implicitWidth: 448
     implicitHeight: 56
@@ -21,48 +23,76 @@ Rectangle {
 
     color: Theme.palette.statusListItem.backgroundColor
 
-    StatusBaseText {
-        id: statusDescriptionListItemTitle
-        anchors.top: parent.top
-        anchors.left: parent.left
-        anchors.leftMargin: 16
-        anchors.topMargin: 5
+    MouseArea {
+        id: sensor
+        anchors.fill: parent
+        hoverEnabled: true
+        enabled: false
+        cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
 
-        color: Theme.palette.baseColor1
-        text: statusDescriptionListItem.title
-        font.pixelSize: 13
-        font.weight: Font.Medium
-    }
+        StatusBaseText {
+            id: statusDescriptionListItemTitle
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.leftMargin: 16
+            anchors.topMargin: 5
 
-    StatusBaseText {
-        id: statusDescriptionListItemSubTitle
-        anchors.top: statusDescriptionListItemTitle.bottom
-        anchors.left: parent.left
-        anchors.leftMargin: 16
-        anchors.topMargin: 4
+            color: Theme.palette.baseColor1
+            text: statusDescriptionListItem.title
+            font.pixelSize: 13
+            font.weight: Font.Medium
+        }
 
-        text: statusDescriptionListItem.subTitle
-        color: Theme.palette.directColor1
-        font.pixelSize: 15
-        font.weight: Font.Normal
-    }
+        StatusBaseText {
+            id: statusDescriptionListItemSubTitle
+            anchors.top: statusDescriptionListItemTitle.bottom
+            anchors.left: parent.left
+            anchors.leftMargin: 16
+            anchors.topMargin: 4
 
-    StatusFlatRoundButton {
-        id: statusFlatRoundButton
-        visible: !!statusDescriptionListItem.icon.name
-        anchors.verticalCenter: statusDescriptionListItemSubTitle.verticalCenter
-        anchors.left: statusDescriptionListItemSubTitle.right
-        anchors.leftMargin: 4
+            text: statusDescriptionListItem.subTitle
+            color: Theme.palette.directColor1
+            font.pixelSize: 15
+            font.weight: Font.Normal
+        }
 
-        width: 32
-        height: 32
+        StatusFlatRoundButton {
+            id: statusFlatRoundButton
+            visible: !!statusDescriptionListItem.icon.name
+            anchors.verticalCenter: statusDescriptionListItemSubTitle.verticalCenter
+            anchors.left: statusDescriptionListItemSubTitle.right
+            anchors.leftMargin: 4
 
-        icon.name: statusDescriptionListItem.icon.name
-        icon.width: statusDescriptionListItem.icon.width
-        icon.height: statusDescriptionListItem.icon.height
+            width: 32
+            height: 32
 
-        StatusToolTip {
-            id: statusToolTip
+            icon.name: statusDescriptionListItem.icon.name
+            icon.width: statusDescriptionListItem.icon.width
+            icon.height: statusDescriptionListItem.icon.height
+
+            StatusToolTip {
+                id: statusToolTip
+            }
+        }
+
+        Row {
+            anchors.right: parent.right
+            anchors.rightMargin: 15
+            anchors.verticalCenter: parent.verticalCenter
+            visible: !!statusDescriptionListItem.value
+
+            StatusBaseText {
+                text: statusDescriptionListItem.value
+                color: Theme.palette.baseColor1
+                font.pixelSize: 15
+                anchors.verticalCenter: parent.verticalCenter
+            }
+
+            StatusIcon {
+                icon: "chevron-down"
+                rotation: 270
+                color: Theme.palette.baseColor1
+            }
         }
     }
 }

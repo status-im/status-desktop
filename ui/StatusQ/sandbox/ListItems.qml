@@ -329,6 +329,13 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
     StatusDescriptionListItem {
         title: "Title"
         subTitle: "Subtitle"
+        value: "None"
+        sensor.enabled: true
+    }
+
+    StatusDescriptionListItem {
+        title: "Title"
+        subTitle: "Subtitle"
         tooltip.text: "Tooltip"
         icon.name: "info"
         iconButton.onClicked: tooltip.visible = !tooltip.visible
