@@ -117,6 +117,9 @@ ModalPopup {
             popup.changeNickname(nicknameInput.textField.text)
             profileModel.contacts.changeContactNickname(fromAuthor, nicknameInput.textField.text)
             popup.close()
+            if (!!chatsModel.communities.activeCommunity) {
+                chatsModel.communities.activeCommunity.triggerMembersUpdate()
+            }
         }
     }
 }

@@ -194,7 +194,7 @@ QtObject:
   proc getMembers*(self: CommunityItemView): QVariant {.slot.} =
     result = newQVariant(self.members)
 
-  proc triggerMemberUpdate*(self: CommunityItemView) =
+  proc triggerMembersUpdate*(self: CommunityItemView) {.slot.} =
     self.members.triggerUpdate()
 
   proc memberLastSeen*(self: CommunityItemView, pubKey: string): string {.slot.} =
