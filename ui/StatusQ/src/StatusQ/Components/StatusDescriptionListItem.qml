@@ -8,6 +8,7 @@ Rectangle {
 
     property string title: ""
     property string subTitle: ""
+    property alias subTitleComponent: statusDescriptionListItemSubTitle
     property string value: ""
     property StatusIconSettings icon: StatusIconSettings {
         width: 23
@@ -77,9 +78,10 @@ Rectangle {
 
         Row {
             anchors.right: parent.right
-            anchors.rightMargin: 15
+            anchors.rightMargin: 16
             anchors.verticalCenter: parent.verticalCenter
             visible: !!statusDescriptionListItem.value
+            spacing: 8
 
             StatusBaseText {
                 text: statusDescriptionListItem.value
