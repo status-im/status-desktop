@@ -35,12 +35,6 @@ Item {
         spacing: appSettings.useCompactMode ? 0 : 4
         boundsBehavior: Flickable.StopAtBounds
         clip: true
-        flickDeceleration: {
-            if (utilsModel.getOs() === Constants.windows) {
-                return 5000
-            }
-            return 10000
-        }
         verticalLayoutDirection: ListView.BottomToTop
 
         // This header and Connections is to create an invisible padding so that the chat identifier is at the top

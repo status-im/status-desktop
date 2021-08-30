@@ -1,4 +1,4 @@
-import QtQuick 2.3
+import QtQuick 2.14
 import "../../../../../shared"
 import "../../../../../imports"
 
@@ -11,8 +11,8 @@ Column {
     spacing: Style.current.padding
     visible: authorCurrentMsg === ""
     anchors.horizontalCenter: parent.horizontalCenter
-    anchors.top: parent.top
-    anchors.topMargin: this.visible ? Style.current.bigPadding : 0
+    topPadding: visible ? Style.current.bigPadding : 0
+    bottomPadding: visible? 50 : 0
 
     Rectangle {
         id: circleId
@@ -137,9 +137,3 @@ Column {
         }
     }
 }
-
-/*##^##
-Designer {
-    D{i:0;autoSize:true;formeditorZoom:0.5;height:480;width:640}
-}
-##^##*/

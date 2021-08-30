@@ -14,7 +14,7 @@ Item {
 
     id: root
     anchors.left: parent.left
-    height: childrenRect.height
+    height: rectangleBubbleLoader.height
     width: rectangleBubbleLoader.width
 
     function getCommunity() {
@@ -79,8 +79,6 @@ Item {
     Loader {
         id: rectangleBubbleLoader
         active: !!invitedCommunity
-        width: item ? item.width : 0
-        height: item ? item.height : 0
 
         sourceComponent: Component {
             Rectangle {
@@ -88,7 +86,14 @@ Item {
                 property alias button: joinBtn
                 property bool isPendingRequest: chatsModel.communities.isCommunityRequestPending(communityId)
                 width: 270
-                height: childrenRect.height + Style.current.halfPadding
+                height: title.height + title.anchors.topMargin +
+                        invitedYou.height + invitedYou.anchors.topMargin +
+                        sep1.height + sep1.anchors.topMargin +
+                        communityName.height + communityName.anchors.topMargin +
+                        communityDesc.height + communityDesc.anchors.topMargin +
+                        communityNbMembers.height + communityNbMembers.anchors.topMargin +
+                        sep2.height + sep2.anchors.topMargin +
+                        btnItemId.height + btnItemId.anchors.topMargin
                 radius: 16
                 color: Style.current.background
                 border.color: Style.current.border
@@ -266,6 +271,7 @@ Item {
                     anchors.topMargin: Style.current.halfPadding
                 }
                 Item {
+                    id: btnItemId
                     width: parent.width
                     height: 44
                     anchors.bottom: parent.bottom
@@ -325,9 +331,3 @@ Item {
         }
     }
 }
-
-/*##^##
-Designer {
-    D{i:0;formeditorColor:"#4c4e50";formeditorZoom:1.25}
-}
-##^##*/
