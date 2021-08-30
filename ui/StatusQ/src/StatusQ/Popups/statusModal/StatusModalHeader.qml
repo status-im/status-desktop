@@ -11,6 +11,8 @@ Rectangle {
 
     property alias title: imageWithTitle.title
     property alias subTitle: imageWithTitle.subTitle
+    property int titleElide
+    property int subTitleElide
     property alias actionButton: actionButtonLoader.sourceComponent
 
     property alias image: imageWithTitle.image
@@ -35,6 +37,8 @@ Rectangle {
         anchors.leftMargin: 16
 
         editable: statusModalHeader.editable
+        titleElide: statusModalHeader.titleElide
+        subTitleElide: statusModalHeader.subTitleElide
         onEditButtonClicked: statusModalHeader.editButtonClicked()
     }
 

@@ -9,6 +9,8 @@ Row {
 
     property alias title: headerTitle.text
     property alias subTitle: headerSubTitle.text
+    property int titleElide: Text.ElideRight
+    property int subTitleElide: Text.ElideRight
     property bool editable: false
 
     signal editButtonClicked
@@ -88,7 +90,7 @@ Row {
                 font.family: Theme.palette.baseFont.name
                 font.pixelSize: 17
                 font.bold: true
-                elide: Text.ElideRight
+                elide: statusImageWithTitle.titleElide
                 color: Theme.palette.directColor1
                 width: !editButton.visible ? parent.width : 
                       parent.width - editButton.width - parent.spacing
@@ -116,7 +118,7 @@ Row {
             font.pixelSize: 15
             color:Theme.palette.baseColor1
             width: parent.width
-            elide: Text.ElideRight
+            elide: statusImageWithTitle.subTitleElide
         }
     }
 }

@@ -52,7 +52,9 @@ QC.Popup {
 
             visible: statusModal.showHeader
             title: header.title
+            titleElide: header.titleElide
             subTitle: header.subTitle
+            subTitleElide: header.subTitleElide
             image: header.image
             icon: header.icon
 
