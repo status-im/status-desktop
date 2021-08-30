@@ -164,8 +164,9 @@ QtObject:
       if(self.meassgeSearchLocation.len == 0 and
         co.name.toLower.startsWith(self.meassgeSearchTerm.toLower)):
         let item = initSearchResultItem(co.id, "", "", co.id, co.name, 
-          sr_constants.SEARCH_RESULT_COMMUNITIES_SECTION_NAME, false, 
-          co.communityImage.thumbnail, "", "", co.communityColor)
+          sr_constants.SEARCH_RESULT_COMMUNITIES_SECTION_NAME, 
+          co.communityImage.thumbnail, co.communityColor, "", "", 
+          co.communityImage.thumbnail, co.communityColor)
 
         self.resultItems.add(co.id, ResultItemInfo(communityId: co.id))
         items.add(item)
@@ -182,8 +183,9 @@ QtObject:
 
           if(chatNameRaw.toLower.startsWith(self.meassgeSearchTerm.toLower)):
             let item = initSearchResultItem(c.id, "", "", c.id, chatName, 
-              sr_constants.SEARCH_RESULT_CHANNELS_SECTION_NAME,
-              c.identicon.len > 0, c.identicon, "", "", c.color)
+            sr_constants.SEARCH_RESULT_CHANNELS_SECTION_NAME, 
+            c.identicon, c.color, "", "", c.identicon, c.color, 
+            c.identicon.len > 0)
 
             self.resultItems.add(c.id, ResultItemInfo(communityId: co.id, 
             channelId: c.id))
@@ -200,9 +202,9 @@ QtObject:
 
         if(chatNameRaw.toLower.startsWith(self.meassgeSearchTerm.toLower)):
           let item = initSearchResultItem(c.id, "", "", c.id, chatName, 
-            sr_constants.SEARCH_RESULT_CHATS_SECTION_NAME,
-            c.identicon.len > 0, c.identicon, "", "", c.color)
-          
+          sr_constants.SEARCH_RESULT_CHATS_SECTION_NAME, c.identicon, c.color,
+          "", "", c.identicon, c.color, c.identicon.len > 0)
+
           self.resultItems.add(c.id, ResultItemInfo(communityId: "", 
             channelId: c.id))
           items.add(item)
@@ -217,6 +219,7 @@ QtObject:
 
       var found = false
       var chat = self.channelView.chats.getChannelById(m.chatId, found)
+      let image = if(m.image.len > 0): m.image else: m.identicon
       if (found):
         var channel = self.status.chat.chatName(chat)
         if (channel.endsWith(".stateofus.eth")):
@@ -227,8 +230,8 @@ QtObject:
           alias = "You"
 
         let item = initSearchResultItem(m.id, m.text, m.timestamp, m.fromAuthor,
-        alias, sr_constants.SEARCH_RESULT_MESSAGES_SECTION_NAME, 
-        chat.identicon.len == 0, chat.identicon, channel, "", chat.color)
+        alias, sr_constants.SEARCH_RESULT_MESSAGES_SECTION_NAME, image, "",
+        channel, "", chat.identicon, chat.color, chat.identicon.len == 0)
 
         self.resultItems.add(m.id, ResultItemInfo(communityId: "", 
             channelId: chat.id, messageId: m.id))
@@ -249,10 +252,9 @@ QtObject:
             alias = "You"
 
           let item = initSearchResultItem(m.id, m.text, m.timestamp, m.fromAuthor,
-          m.alias, sr_constants.SEARCH_RESULT_MESSAGES_SECTION_NAME,
-          community.communityImage.thumbnail.len == 0, 
-          community.communityImage.thumbnail, community.name, channel, 
-          community.communityColor)
+          m.alias, sr_constants.SEARCH_RESULT_MESSAGES_SECTION_NAME, image, "",
+          community.name, channel, community.communityImage.thumbnail,
+          community.communityColor, community.communityImage.thumbnail.len == 0)
 
           self.resultItems.add(m.id, ResultItemInfo(communityId: community.id, 
             channelId: chat.id, messageId: m.id))

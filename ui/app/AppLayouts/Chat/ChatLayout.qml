@@ -70,6 +70,11 @@ StatusAppThreePanelLayout {
 
         searchOptionsPopupMenu: searchPopupMenu
         searchResults: chatsModel.messageSearchViewController.resultModel
+
+        formatTimestampFn: function (ts) {
+            return new Date(parseInt(ts, 10)).toLocaleString(Qt.locale(globalSettings.locale))
+        }
+
         onSearchTextChanged: {
             searchMessages(searchPopup.searchText);
         }

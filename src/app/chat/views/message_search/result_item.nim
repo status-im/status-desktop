@@ -7,17 +7,18 @@ type SearchResultItem* = object
   titleId: string
   title: string  
   sectionName: string
-  isLetterIdenticon: bool
-  badgeImage: string
+  image: string
+  color: string
   badgePrimaryText: string
   badgeSecondaryText: string
-  badgeIdenticonColor: string
+  badgeImage: string
+  badgeIconColor: string
+  badgeIsLetterIdenticon: bool
 
 proc initSearchResultItem*(itemId, content, time, titleId, title,
-  sectionName: string,
-  isLetterIdenticon: bool = false,
-  badgeImage, badgePrimaryText, badgeSecondaryText, 
-  badgeIdenticonColor: string = ""): SearchResultItem =
+  sectionName: string, image, color, badgePrimaryText, badgeSecondaryText, 
+  badgeImage, badgeIconColor: string = "", badgeIsLetterIdenticon: bool = false): 
+  SearchResultItem =
 
   result.itemId = itemId
   result.content = content
@@ -25,11 +26,13 @@ proc initSearchResultItem*(itemId, content, time, titleId, title,
   result.titleId = titleId
   result.title = title
   result.sectionName = sectionName
-  result.isLetterIdenticon = isLetterIdenticon
-  result.badgeImage = badgeImage
+  result.image = image
+  result.color = color
   result.badgePrimaryText = badgePrimaryText
   result.badgeSecondaryText = badgeSecondaryText
-  result.badgeIdenticonColor = badgeIdenticonColor
+  result.badgeImage = badgeImage
+  result.badgeIconColor = badgeIconColor
+  result.badgeIsLetterIdenticon = badgeIsLetterIdenticon
 
 proc `$`*(self: SearchResultItem): string =
   result = "MessageSearchResultItem("
@@ -39,11 +42,13 @@ proc `$`*(self: SearchResultItem): string =
   result &= fmt"titleId:{self.titleId}, "
   result &= fmt"title:{self.title}"
   result &= fmt"sectionName:{self.sectionName}"  
-  result &= fmt"isLetterIdenticon:{self.isLetterIdenticon}"
-  result &= fmt"badgeImage:{self.badgeImage}"
+  result &= fmt"image:{self.image}"
+  result &= fmt"color:{self.color}"
   result &= fmt"badgePrimaryText:{self.badgePrimaryText}"
   result &= fmt"badgeSecondaryText:{self.badgeSecondaryText}"
-  result &= fmt"badgeIdenticonColor:{self.badgeIdenticonColor}"
+  result &= fmt"badgeImage:{self.badgeImage}"
+  result &= fmt"badgeIconColor:{self.badgeIconColor}"
+  result &= fmt"badgeIsLetterIdenticon:{self.badgeIsLetterIdenticon}"
   result &= ")"
 
 method getItemId*(self: SearchResultItem): string {.base.} =
@@ -64,11 +69,11 @@ method getTitle*(self: SearchResultItem): string {.base.} =
 method getSectionName*(self: SearchResultItem): string {.base.} =
   return self.sectionName
 
-method getIsLetterIdentIcon*(self: SearchResultItem): bool {.base.} =
-  return self.isLetterIdenticon
+method getImage*(self: SearchResultItem): string {.base.} =
+  return self.image
 
-method getBadgeImage*(self: SearchResultItem): string {.base.} =
-  return self.badgeImage
+method getColor*(self: SearchResultItem): string {.base.} =
+  return self.color
 
 method getBadgePrimaryText*(self: SearchResultItem): string {.base.} =
   return self.badgePrimaryText
@@ -76,5 +81,11 @@ method getBadgePrimaryText*(self: SearchResultItem): string {.base.} =
 method getBadgeSecondaryText*(self: SearchResultItem): string {.base.} =
   return self.badgeSecondaryText
 
-method getBadgeIdenticonColor*(self: SearchResultItem): string {.base.} =
-  return self.badgeIdenticonColor
+method getBadgeImage*(self: SearchResultItem): string {.base.} =
+  return self.badgeImage
+
+method getBadgeIconColor*(self: SearchResultItem): string {.base.} =
+  return self.badgeIconColor
+
+method getBadgeIsLetterIdenticon*(self: SearchResultItem): bool {.base.} =
+  return self.badgeIsLetterIdenticon
