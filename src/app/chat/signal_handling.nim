@@ -18,6 +18,16 @@ proc handleSignals(self: ChatController) =
       )
     mailserverWorker.start(task)
 
+  self.status.events.on(SignalType.PeerStats.event) do(e:Args):
+    var data = PeerStatsSignal(e)
+    let
+      mailserverWorker = self.status.tasks.marathon[MailserverWorker().name]
+      task = PeerSummaryChangeTaskArg(
+        `method`: "peerSummaryChange",
+        peers: data.peers
+      )
+    mailserverWorker.start(task)
+
   self.status.events.on(SignalType.EnvelopeSent.event) do(e:Args):
     var data = EnvelopeSentSignal(e)
     self.status.messages.updateStatus(data.messageIds)

@@ -35,6 +35,11 @@ proc init*(self: NodeController) =
     self.status.network.peerSummaryChange(data.enodes)
     self.view.setPeerSize(data.enodes.len)
 
+  self.status.events.on(SignalType.PeerStats.event) do(e:Args):
+    var data = PeerStatsSignal(e)
+    self.status.network.peerSummaryChange(data.peers)
+    self.view.setPeerSize(data.peers.len)
+
   self.status.events.on(SignalType.Stats.event) do (e:Args):
     self.view.setStats(StatsSignal(e).stats)
     self.view.fetchBitsSet()
