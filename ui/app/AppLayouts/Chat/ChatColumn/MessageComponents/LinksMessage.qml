@@ -190,7 +190,7 @@ Column {
             width: linkImage.width
             height: linkImage.height
             isCurrentUser: root.isCurrentUser
-            MessageComponents.ImageLoader {
+            StatusChatImageLoader {
                 id: linkImage
                 anchors.centerIn: parent
                 container: root.container
@@ -218,7 +218,7 @@ Column {
             height: linkImage.height + (Style.current.smallPadding * 2) + linkTitle.height + 2 + linkSite.height
             isCurrentUser: root.isCurrentUser
 
-            MessageComponents.ImageLoader {
+            StatusChatImageLoader {
                 id: linkImage
                 container: root.container
                 source: linkData.thumbnailUrl

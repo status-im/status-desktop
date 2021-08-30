@@ -6,7 +6,10 @@ import "../../shared"
 
 Rectangle {
     id: root
-    height: 50
+    height: (root.contentType === Constants.imageType) ?
+                replyToUsername.height + imageThumbnail.height + Style.current.padding :
+                (root.contentType === Constants.stickerType) ?
+                    replyToUsername.height + stickerThumbnail.height + Style.current.padding  : 50
     color: Style.current.replyBackground
     radius: 16
     clip: true
@@ -14,6 +17,9 @@ Rectangle {
     property string userName: ""
     property string message : ""
     property string identicon: ""
+    property string image: ""
+    property string sticker: ""
+    property int contentType: -1
 
     signal closeButtonClicked()
 
@@ -47,6 +53,7 @@ Rectangle {
         anchors.bottom: parent.bottom
         clip: true
         color: Style.current.transparent
+        visible: (root.contentType !== Constants.imageType) && (root.contentType !== Constants.stickerType)
 
         StyledText {
             id: replyText
@@ -58,6 +65,29 @@ Rectangle {
             textFormat: Text.RichText
             color: Style.current.textColor
         }
+    }
+
+    StatusChatImage {
+        id: imageThumbnail
+        anchors.left: replyToUsername.left
+        anchors.top: replyToUsername.bottom
+        anchors.topMargin: 2
+        imageWidth: 64
+        imageSource: root.image
+        chatHorizontalPadding: 0
+        container: root.container
+        visible: root.contentType === Constants.imageType
+    }
+
+    StatusSticker {
+        id: stickerThumbnail
+        anchors.left: replyToUsername.left
+        anchors.top: replyToUsername.bottom
+        anchors.topMargin: 2
+        imageWidth: 64
+        imageHeight: 64
+        color: Style.current.transparent
+        contentType: root.contentType
     }
 
     RoundButton {

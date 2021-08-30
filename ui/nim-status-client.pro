@@ -111,7 +111,6 @@ DISTFILES += \
     app/AppLayouts/Chat/ChatColumn/CompactMessage.qml \
     app/AppLayouts/Chat/ChatColumn/MessageComponents/ChannelIdentifier.qml \
     app/AppLayouts/Chat/ChatColumn/MessageComponents/ChatButtons.qml \
-    app/AppLayouts/Chat/ChatColumn/MessageComponents/ChatImage.qml \
     app/AppLayouts/Chat/ChatColumn/MessageComponents/ChatReply \
     app/AppLayouts/Chat/ChatColumn/MessageComponents/ChatReply.qml \
     app/AppLayouts/Chat/ChatColumn/MessageComponents/ChatText.qml \
@@ -119,14 +118,12 @@ DISTFILES += \
     app/AppLayouts/Chat/ChatColumn/MessageComponents/CompactMessage.qml \
     app/AppLayouts/Chat/ChatColumn/MessageComponents/DateGroup.qml \
     app/AppLayouts/Chat/ChatColumn/MessageComponents/EmojiReactions.qml \
-    app/AppLayouts/Chat/ChatColumn/MessageComponents/ImageLoader.qml \
     app/AppLayouts/Chat/ChatColumn/MessageComponents/InvitationBubble.qml \
     app/AppLayouts/Chat/ChatColumn/MessageComponents/LinksMessage.qml \
     app/AppLayouts/Chat/ChatColumn/MessageComponents/MessageMouseArea.qml \
     app/AppLayouts/Chat/ChatColumn/MessageComponents/NormalMessage.qml \
     app/AppLayouts/Chat/ChatColumn/MessageComponents/RectangleCorner.qml \
     app/AppLayouts/Chat/ChatColumn/MessageComponents/SentMessage.qml \
-    app/AppLayouts/Chat/ChatColumn/MessageComponents/Sticker.qml \
     app/AppLayouts/Chat/ChatColumn/MessageComponents/TransactionBubble.qml \
     app/AppLayouts/Chat/ChatColumn/MessageComponents/TransactionComponents/AcceptTransaction.qml \
     app/AppLayouts/Chat/ChatColumn/MessageComponents/TransactionComponents/SendTransactionButton.qml \
@@ -429,6 +426,9 @@ DISTFILES += \
     shared/status/StatusInputListPopup.qml \
     shared/status/StatusRadioButtonRow.qml \
     shared/status/StatusSettingsLineButton.qml \
+    shared/status/StatusChatImage.qml \
+    shared/status/StatusChatImageLoader.qml \
+    shared/status/StatusSticker.qml \
     sounds/ErrorSound.qml
 
 DISTFILES += $$files("StatusQ/*", true)

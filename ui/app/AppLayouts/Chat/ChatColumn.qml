@@ -71,8 +71,11 @@ Item {
         let userName = chatsModel.messageView.messageList.getMessageData(replyMessageIndex, "userName")
         let message = chatsModel.messageView.messageList.getMessageData(replyMessageIndex, "message")
         let identicon = chatsModel.messageView.messageList.getMessageData(replyMessageIndex, "identicon")
+        let image = chatsModel.messageView.messageList.getMessageData(replyMessageIndex, "image")
+        let sticker = chatsModel.messageView.messageList.getMessageData(replyMessageIndex, "sticker")
+        let contentType = chatsModel.messageView.messageList.getMessageData(replyMessageIndex, "contentType")
 
-        chatInput.showReplyArea(userName, message, identicon)
+        chatInput.showReplyArea(userName, message, identicon, contentType, image, sticker)
     }
 
     function requestAddressForTransaction(address, amount, tokenAddress, tokenDecimals = 18) {
