@@ -20,6 +20,7 @@ type SignalType* {.pure.} = enum
   DiscoveryStarted = "discovery.started"
   DiscoveryStopped = "discovery.stopped"
   DiscoverySummary = "discovery.summary"
+  PeerStats = "wakuv2.peerstats"
   SubscriptionsData = "subscriptions.data"
   SubscriptionsError = "subscriptions.error"
   WhisperFilterAdded = "whisper.filter.added"

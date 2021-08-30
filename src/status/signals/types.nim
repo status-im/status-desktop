@@ -67,6 +67,9 @@ type WhisperFilterSignal* = ref object of Signal
 type DiscoverySummarySignal* = ref object of Signal
   enodes*: seq[string]
 
+type PeerStatsSignal* = ref object of Signal
+  peers*: seq[string]
+
 type Stats* = object
   uploadRate*: uint64
   downloadRate*: uint64
