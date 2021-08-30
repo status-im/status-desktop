@@ -289,14 +289,15 @@ StatusModal {
                         statusListItemSubTitle.height: model.content !== "" ? 20 : 0
                         statusListItemSubTitle.elide: Text.ElideRight
                         statusListItemSubTitle.color: Theme.palette.black
-                        icon.isLetterIdenticon: (model.badgeImage === "")
+                        icon.isLetterIdenticon: (model.image === "")
+                        icon.background.color: model.color
                         titleAsideText: model.time
-                        image.source: model.badgeImage
+                        image.source: model.image
                         badge.primaryText: model.badgePrimaryText
                         badge.secondaryText: model.badgeSecondaryText
                         badge.image.source: model.badgeImage
-                        badge.icon.isLetterIdenticon: model.isLetterIdenticon
-                        badge.icon.color: model.badgeIdenticonColor
+                        badge.icon.isLetterIdenticon: model.badgeIsLetterIdenticon
+                        badge.icon.color: model.badgeIconColor
 
                         onClicked: {
                             root.resultItemClicked(itemId)
