@@ -2,3 +2,4 @@ AddAccount 1.0 AddAccount.qml
 HeaderButton 1.0 HeaderButton.qml
 CollectibleCollection 1.0 CollectibleCollection.qml
 CollectibleModal 1.0 CollectibleModal.qml
+AddAccountPopup 1.0 AddAccountPopup.qml
