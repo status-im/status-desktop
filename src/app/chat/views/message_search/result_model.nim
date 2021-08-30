@@ -10,11 +10,13 @@ type
     TitleId
     Title
     SectionName
-    IsLetterIdenticon
-    BadgeImage
+    Image
+    Color
     BadgePrimaryText
     BadgeSecondaryText
-    BadgeIdenticonColor
+    BadgeImage
+    BadgeIconColor
+    BadgeIsLetterIdenticon
 
 QtObject:
   type
@@ -55,11 +57,13 @@ QtObject:
       MessageSearchResultModelRole.TitleId.int:"titleId",
       MessageSearchResultModelRole.Title.int:"title",
       MessageSearchResultModelRole.SectionName.int:"sectionName",
-      MessageSearchResultModelRole.IsLetterIdenticon.int:"isLetterIdenticon",
-      MessageSearchResultModelRole.BadgeImage.int:"badgeImage",
+      MessageSearchResultModelRole.Image.int:"image",
+      MessageSearchResultModelRole.Color.int:"color",
       MessageSearchResultModelRole.BadgePrimaryText.int:"badgePrimaryText",
       MessageSearchResultModelRole.BadgeSecondaryText.int:"badgeSecondaryText",
-      MessageSearchResultModelRole.BadgeIdenticonColor.int:"badgeIdenticonColor"
+      MessageSearchResultModelRole.BadgeImage.int:"badgeImage",
+      MessageSearchResultModelRole.BadgeIconColor.int:"badgeIconColor",
+      MessageSearchResultModelRole.BadgeIsLetterIdenticon.int:"badgeIsLetterIdenticon"
     }.toTable
 
   method data(self: MessageSearchResultModel, index: QModelIndex, role: int): QVariant =
@@ -85,16 +89,20 @@ QtObject:
       result = newQVariant(item.getTitle)
     of MessageSearchResultModelRole.SectionName: 
       result = newQVariant(item.getSectionName)
-    of MessageSearchResultModelRole.IsLetterIdenticon: 
-      result = newQVariant(item.getIsLetterIdentIcon)
-    of MessageSearchResultModelRole.BadgeImage: 
-      result = newQVariant(item.getBadgeImage)
+    of MessageSearchResultModelRole.Image: 
+      result = newQVariant(item.getImage)
+    of MessageSearchResultModelRole.Color: 
+      result = newQVariant(item.getColor)
     of MessageSearchResultModelRole.BadgePrimaryText: 
       result = newQVariant(item.getBadgePrimaryText)
     of MessageSearchResultModelRole.BadgeSecondaryText: 
       result = newQVariant(item.getBadgeSecondaryText)
-    of MessageSearchResultModelRole.BadgeIdenticonColor: 
-      result = newQVariant(item.getBadgeIdenticonColor)
+    of MessageSearchResultModelRole.BadgeImage: 
+      result = newQVariant(item.getBadgeImage)
+    of MessageSearchResultModelRole.BadgeIconColor: 
+      result = newQVariant(item.getBadgeIconColor)
+    of MessageSearchResultModelRole.BadgeIsLetterIdenticon: 
+      result = newQVariant(item.getBadgeIsLetterIdentIcon)
 
   proc add*(self: MessageSearchResultModel, item: SearchResultItem) =
     self.beginInsertRows(newQModelIndex(), self.resultList.len, self.resultList.len)
