@@ -2,6 +2,7 @@ import QtQuick 2.14
 import QtQuick.Shapes 1.13
 import QtGraphicalEffects 1.13
 import "../../../../../shared"
+import "../../../../../shared/status"
 import "../../../../../imports"
 
 Loader {
@@ -113,7 +114,7 @@ Loader {
                 anchors.leftMargin: 5
             }
 
-            ChatImage {
+            StatusChatImage {
                 id: imgReplyImage
                 visible: repliedMessageType === Constants.imageType
                 imageWidth: 50
@@ -133,13 +134,15 @@ Loader {
                 anchors.topMargin: nameMargin
                 anchors.left: userImage.left
                 sourceComponent: Component {
-                    Sticker {
+                    StatusSticker {
                         id: stickerId
                         imageHeight: 56
                         imageWidth: 56
                         stickerData: chatsModel.messageView.messageList.getMessageData(replyMessageIndex, "sticker")
                         contentType: repliedMessageType
-                        container: root.container
+                        onLoaded: {
+                            scrollToBottom(true, root.container)
+                        }
                     }
                 }
             }

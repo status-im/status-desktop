@@ -82,7 +82,7 @@ MouseArea {
             z: 51
 
             sourceComponent: Component {
-                ChatImage {
+                StatusChatImage {
                     imageSource: image
                     imageWidth: 200
                     onClicked: root.clickMessage(false, false, true, image)

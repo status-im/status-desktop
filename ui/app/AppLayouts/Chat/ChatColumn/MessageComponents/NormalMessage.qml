@@ -1,5 +1,6 @@
 import QtQuick 2.13
 import "../../../../../shared"
+import "../../../../../shared/status"
 import "../../../../../imports"
 
 Item {
@@ -165,7 +166,7 @@ Item {
                     width: chatImageComponent.width + 2 * chatBox.chatHorizontalPadding
                     height: chatImageComponent.height
 
-                    ChatImage {
+                    StatusChatImage {
                         id: chatImageComponent
                         imageSource: image
                         imageWidth: 250
@@ -191,15 +192,17 @@ Item {
             }
         }
 
-        Sticker {
+        StatusSticker {
             id: stickerId
             anchors.left: parent.left
             anchors.leftMargin: chatBox.chatHorizontalPadding
             anchors.top: parent.top
             anchors.topMargin: chatBox.chatVerticalPadding
             color: Style.current.transparent
-            container: root.container
             contentType: root.contentType
+            onLoaded: {
+                scrollToBottom(true, root.container)
+            }
         }
 
         MessageMouseArea {

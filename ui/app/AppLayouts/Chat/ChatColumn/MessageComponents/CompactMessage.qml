@@ -306,7 +306,7 @@ Item {
                 z: 51
 
                 sourceComponent: Component {
-                    ChatImage {
+                    StatusChatImage {
                         imageSource: image
                         imageWidth: 200
                         onClicked: {
@@ -337,14 +337,16 @@ Item {
                         width: stickerId.width + 2 * root.chatVerticalPadding
                         height: stickerId.height + 2 * root.chatVerticalPadding
 
-                        Sticker {
+                        StatusSticker {
                             id: stickerId
                             anchors.top: parent.top
                             anchors.topMargin: root.chatVerticalPadding
                             anchors.left: parent.left
                             anchors.leftMargin: root.chatVerticalPadding
                             contentType: root.contentType
-                            container: root.container
+                            onLoaded: {
+                                scrollToBottom(true, root.container)
+                            }
                         }
                     }
                 }

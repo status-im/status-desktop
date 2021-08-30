@@ -541,11 +541,14 @@ Rectangle {
         control.fileUrls = imageArea.imageSource
     }
 
-    function showReplyArea(userName, message, identicon) {
+    function showReplyArea(userName, message, identicon, contentType, image, sticker) {
         isReply = true
         replyArea.userName = userName
         replyArea.message = message
         replyArea.identicon = identicon
+        replyArea.contentType = contentType
+        replyArea.image = image
+        replyArea.sticker = sticker
         messageInputField.forceActiveFocus();
     }
 
