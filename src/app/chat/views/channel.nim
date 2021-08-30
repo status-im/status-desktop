@@ -19,7 +19,6 @@ QtObject:
     activeChannel*: ChatItemView
     previousActiveChannelIndex*: int
     contextChannel*: ChatItemView
-    chatItemViews: Table[string, ChatItemView]
 
   proc setup(self: ChannelView) = self.QObject.setup
   proc delete*(self: ChannelView) =
@@ -296,11 +295,9 @@ QtObject:
     result = selectedChannel.muted  
 
   proc getChatItemById*(self: ChannelView, id: string): QObject {.slot.} =
-    if self.chatItemViews.hasKey(id): return self.chatItemViews[id]
     let chat = self.getChannelById(id)
     let chatItemView = newChatItemView(self.status)
     chatItemView.setChatItem(chat)
-    self.chatItemViews[id] = chatItemView
     return chatItemView
 
   proc removeChat*(self: ChannelView, chatId: string) =

@@ -26,6 +26,8 @@ StatusModal {
     header.title: qsTrId("create-channel-title")
 
     onOpened: {
+        contentComponent.channelId = channel.id
+        contentComponent.channelCategoryId = channel.categoryId
         contentComponent.channelName.input.text = ""
         if (isEdit) {
             //% "Edit #%1"
@@ -33,6 +35,7 @@ StatusModal {
             contentComponent.channelName.input.text = channel.name
         }
         contentComponent.channelName.input.forceActiveFocus(Qt.MouseFocusReason)
+        contentComponent.channelDescription.input.text = channel.description
     }
 
     onClosed: destroy()
@@ -50,6 +53,8 @@ StatusModal {
 
         property alias channelName: nameInput
         property alias channelDescription: descriptionTextArea
+        property string channelId
+        property string channelCategoryId
 
         contentHeight: content.height
         height: Math.min(content.height, 432)
@@ -91,7 +96,6 @@ StatusModal {
                 input.placeholderText: qsTr("Describe the channel")
                 input.multiline: true
                 input.implicitHeight: 88
-                input.text: popup.isEdit ? popup.channel.description : ""
                 input.onTextChanged: errorMessage = Utils.getErrorMessage(errors, qsTr("channel description"))
                 validators: [StatusMinLengthValidator { minLength: 1 }]
             }
@@ -191,16 +195,16 @@ StatusModal {
                     error = chatsModel.createCommunityChannel(communityId,
                                                                 Utils.filterXSS(popup.contentComponent.channelName.input.text),
                                                                 Utils.filterXSS(popup.contentComponent.channelDescription.input.text),
-                      categoryId)
+                                                                categoryId)
                                                                 // TODO: pass the private value when private channels
                                                                 // are implemented
                                                                 //privateSwitch.checked)
                 } else {
                     error = chatsModel.editCommunityChannel(communityId,
-                                                                channel.id,
+                                                                popup.contentComponent.channelId,
                                                                 Utils.filterXSS(popup.contentComponent.channelName.input.text),
                                                                 Utils.filterXSS(popup.contentComponent.channelDescription.input.text),
-                      channel.categoryId)
+                                                                popup.contentComponent.channelCategoryId)
                                                                 // TODO: pass the private value when private channels
                                                                 // are implemented
                                                                 //privateSwitch.checked)
