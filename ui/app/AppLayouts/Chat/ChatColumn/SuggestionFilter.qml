@@ -1,5 +1,6 @@
 import QtQuick 2.13
 
+
 Item {
     id: component
     property alias model: filterModel
@@ -24,53 +25,45 @@ Item {
     }
 
     function invalidateFilter() {
-        if (sourceModel === undefined)
-            return;
-
-        filterModel.clear();
+        filterModel.clear();     
 
         if (!isFilteringPropertyOk())
             return
 
-        var length = sourceModel.rowCount()
-        for (var i = 0; i < length; ++i) {
+        var filter = getFilter()
+        if (!isFilterReady(filter))
+            return
+
+        const all = shouldShowAll(filter)
+
+        for (var i = 0; i < sourceModel.rowCount(); ++i) {
             const publicKey = sourceModel.rowData(i, "publicKey");
-            var item = {
+            const item = {
                 alias: sourceModel.rowData(i, "alias"),
                 userName: sourceModel.rowData(i, "userName"),
                 publicKey: publicKey,
                 identicon: getProfileImage(publicKey, false, false) || sourceModel.rowData(i, "identicon"),
                 localName: sourceModel.rowData(i, "localName")
             }
-            if (isAcceptedItem(item)) {
+            if (all || isAcceptedItem(filter, item)) {
                 filterModel.append(item)
             }
         }
     }
 
-    function isAcceptedItem(item) {
-        let properties = this.property
-            .filter(p => !!item[p])
-
-        if (properties.length === 0 || this.filter.length === 0 || this.cursorPosition === 0) {
-            return false
+    function getFilter() {
+        if (this.filter.length === 0 || this.cursorPosition === 0) {
+            return
         }
 
-        let filter = chatsModel.plainText(this.filter)
-        // Prevents suggestions to show up at all
-        if (filter.indexOf("@") === -1)  {
-          return false
-        }
+        return chatsModel.plainText(this.filter)
+    }
 
-        let cursorAtEnd = this.cursorPosition === filter.length;
-        let hasAtBeforeCursor = filter.charAt(this.cursorPosition - 1) === "@" 
-        let hasWhiteSpaceBeforeAt = filter.charAt(this.cursorPosition - 2) === " " || filter.charAt(this.cursorPosition - 2) === "\n"
-        let hasWhiteSpaceAfterAt = filter.charAt(this.cursorPosition) === " "
-        let hasWhiteSpaceBeforeCursor = filter.charAt(this.cursorPosition - 1) === " "
-
-        if (filter.charAt(this.cursorPosition - 2) === "@" && hasWhiteSpaceBeforeCursor) {
-            return false
-        }
+    function shouldShowAll(filter) {
+        var cursorAtEnd = this.cursorPosition === filter.length;
+        var hasAtBeforeCursor = filter.charAt(this.cursorPosition - 1) === "@" 
+        var hasWhiteSpaceBeforeAt = filter.charAt(this.cursorPosition - 2) === " " || filter.charAt(this.cursorPosition - 2) === "\n"
+        var hasWhiteSpaceAfterAt = filter.charAt(this.cursorPosition) === " "
 
         if (filter === "@" ||
                 (hasAtBeforeCursor && hasWhiteSpaceBeforeAt && hasWhiteSpaceAfterAt) ||
@@ -80,6 +73,36 @@ Item {
             return true
         }
 
+        return false
+    }
+
+    function isFilterReady(filter) {
+        if (filter === undefined) {
+            return false
+        }
+
+        // Prevents suggestions to show up at all
+        if (filter.indexOf("@") === -1)  {
+          return false
+        }
+
+        let hasWhiteSpaceBeforeCursor = filter.charAt(this.cursorPosition - 1) === " "
+
+        if (filter.charAt(this.cursorPosition - 2) === "@" && hasWhiteSpaceBeforeCursor) {
+            return false
+        }
+
+        return true
+    }
+
+    function isAcceptedItem(filter, item) {
+        let properties = this.property
+            .filter(p => !!item[p])
+
+        if (properties.length === 0) {
+            return false
+        }
+        
         let filterWithoutAt = filter.substring(lastAtPosition + 1, this.cursorPosition)
         filterWithoutAt = filterWithoutAt.replace(/\*/g, "")
         component.formattedFilter = filterWithoutAt
