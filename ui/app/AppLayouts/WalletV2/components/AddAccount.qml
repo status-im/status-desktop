@@ -1,24 +1,28 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
+import StatusQ.Controls 0.1
 import "../../../../shared"
 import "../../../../shared/status"
 import "../../../../imports"
 
-StatusRoundButton {
+StatusFlatButton {
     id: btnAdd
-    icon.name: "plusSign"
-    pressedIconRotation: 45
-    size: "medium"
-    type: "secondary"
-    width: 36
-    height: 36
+    width: 138
+    height: 38
+    size: StatusBaseButton.Size.Small
+    text: qsTr("Add account")
+    icon.name: "add"
+    icon.width: 14
+    icon.height: 14
+    readonly property var onAfterAddAccount: function() {
+        walletInfoContainer.changeSelectedAccount(walletModel.accountsView.accounts.rowCount() - 1);
+    }
 
     onClicked: {
         if (newAccountMenu.opened) {
-            newAccountMenu.close()
+            newAccountMenu.close();
         } else {
-            let x = btnAdd.iconX + btnAdd.icon.width / 2 - newAccountMenu.width / 2
-            newAccountMenu.popup(x, btnAdd.height + 4)
+            newAccountMenu.popup(0, btnAdd.height + 4);
         }
     }
 
@@ -43,20 +47,13 @@ StatusRoundButton {
             onTriggered: console.log("TODO")
         }
         Action {
-            //% "Enter a seed phrase"
-            text: qsTrId("enter-a-seed-phrase")
-            icon.source: "../../../img/enter_seed_phrase.svg"
-            icon.width: 19
-            icon.height: 19
-            onTriggered: console.log("TODO")
-        }
-        Action {
-            //% "Enter a private key"
-            text: qsTrId("enter-a-private-key")
+            text: qsTr("Add with key or seed phrase")
             icon.source: "../../../img/enter_private_key.svg"
             icon.width: 19
             icon.height: 19
-            onTriggered: console.log("TODO")
+            onTriggered: {
+                addAccountPopupLoader.active = !addAccountPopupLoader.active;
+            }
         }
         onAboutToShow: {
             btnAdd.state = "pressed"
@@ -66,10 +63,22 @@ StatusRoundButton {
             btnAdd.state = "default"
         }
     }
-}
 
-/*##^##
-Designer {
-    D{i:0;height:36;width:36}
+    Loader {
+        id: addAccountPopupLoader
+        active: false
+        sourceComponent: AddAccountPopup {
+            id: addAccountPopup
+            anchors.centerIn: parent
+            onAddAccountClicked: { btnAdd.onAfterAddAccount(); }
+            onClosed: {
+                addAccountPopupLoader.active = false;
+            }
+        }
+        onLoaded: {
+            if (status === Loader.Ready) {
+                item.open();
+            }
+        }
+    }
 }
-##^##*/

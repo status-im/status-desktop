@@ -2,11 +2,15 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import QtGraphicalEffects 1.13
+import StatusQ.Core 0.1
+import StatusQ.Core.Theme 0.1
 import "../../../imports"
 import "../../../shared"
 import "./components"
 
 Rectangle {
+    id: walletInfoContainer
+    color: Style.current.secondaryMenuBackground
     property int selectedAccount: 0
     property var changeSelectedAccount: function(newIndex) {
         if (newIndex > walletV2Model.accountsView.accounts) {
@@ -15,8 +19,6 @@ Rectangle {
         selectedAccount = newIndex
         walletV2Model.setCurrentAccountByIndex(newIndex)
     }
-    id: walletInfoContainer
-    color: Style.current.secondaryMenuBackground
 
     StyledText {
         id: title
@@ -60,11 +62,6 @@ Rectangle {
             anchors.top: walletAmountValue.bottom
             font.weight: Font.Medium
             font.pixelSize: 13
-        }
-
-        AddAccount {
-            anchors.top: parent.top
-            anchors.right: parent.right
         }
     }
 
@@ -160,28 +157,26 @@ Rectangle {
                     rectangle.hovered = false
                 }
                 onClicked: {
-                    changeSelectedAccount(index)
+                    walletInfoContainer.changeSelectedAccount(index)
                 }
             }
         }
     }
 
     ScrollView {
-        anchors.bottom: parent.bottom
-        anchors.top: walletValueTextContainer.bottom
-        anchors.topMargin: Style.current.padding
+        id: accountsList
         anchors.right: parent.right
         anchors.left: parent.left
-        Layout.fillWidth: true
-        Layout.fillHeight: true
+        height: (listView.count <= 8) ? (listView.count * 64) : 530
+        anchors.top: walletValueTextContainer.bottom
+        anchors.topMargin: Style.current.padding
         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
         ScrollBar.vertical.policy: listView.contentHeight > listView.height ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
 
         ListView {
             id: listView
-
-            spacing: 5
             anchors.fill: parent
+            spacing: 5
             boundsBehavior: Flickable.StopAtBounds
 
             delegate: walletDelegate
@@ -210,6 +205,33 @@ Rectangle {
             }
 
             model: walletV2Model.accountsView.accounts
+        }
+    }
+
+    AddAccount {
+        id: addAccountButton
+        anchors.left: parent.left
+        anchors.leftMargin: Style.current.padding
+        anchors.top: accountsList.bottom
+        anchors.topMargin: 31
+    }
+
+    RowLayout {
+        id: savedAdressesLabel
+        height: 20
+        anchors.left: parent.left
+        anchors.leftMargin: Style.current.padding
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 22
+        StatusIcon {
+            color: Theme.palette.baseColor1
+            Layout.alignment: Qt.AlignVCenter
+            icon: "address"
+        }
+        StatusBaseText {
+            Layout.alignment: Qt.AlignVCenter
+            text: qsTr("Saved addresses")
+            color: Theme.palette.baseColor1
         }
     }
 }
