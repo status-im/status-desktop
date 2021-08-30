@@ -200,8 +200,10 @@ Rectangle {
                     anchors.fill: parent
                     cursorShape: containsMouse? Qt.PointingHandCursor : Qt.ArrowCursor
                     hoverEnabled: true
+                    propagateComposedEvents: true
                     onClicked: {
                         statusListItem.titleClicked(statusListItem.titleId)
+                        mouse.accepted = false
                     }
                 }
             }
