@@ -75,7 +75,7 @@ QtObject:
   proc updateMemberVisibility*(self: CommunitiesView, statusUpdate: StatusUpdate) =
     self.joinedCommunityList.updateMemberVisibility(statusUpdate)
     self.activeCommunity.setCommunityItem(self.joinedCommunityList.getCommunityById(self.activeCommunity.communityItem.id))
-    self.activeCommunity.triggerMemberUpdate()
+    self.activeCommunity.triggerMembersUpdate()
 
   proc populateChats(self: CommunitiesView, communities: var seq[Community]): seq[Community] =
     result = @[]
