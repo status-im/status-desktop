@@ -100,7 +100,7 @@ Item {
             anchors.left: statusIcon.visible ? statusIcon.right : parent.left
             anchors.right: parent.right
             anchors.leftMargin: statusIcon.visible ? 8 : statusBaseInput.leftPadding
-            anchors.rightMargin: statusBaseInput.rightPadding + clearable ? clearButtton.width : 0
+            anchors.rightMargin: statusBaseInput.rightPadding + clearable ? clearButton.width : 0
             anchors.topMargin: statusBaseInput.topPadding
             anchors.bottomMargin: statusBaseInput.bottomPadding
             contentWidth: edit.paintedWidth
@@ -205,20 +205,20 @@ Item {
     } // Rectangle
 
     StatusFlatRoundButton {
-        id: clearButtton
+        id: clearButton
         visible: edit.text.length != 0 &&
                  statusBaseInput.clearable &&
                  !statusBaseInput.multiline &&
                  edit.activeFocus
         anchors.right: parent.right
-        anchors.rightMargin: 11
+        anchors.rightMargin: 8
         anchors.verticalCenter: parent.verticalCenter
         type: StatusFlatRoundButton.Type.Secondary
-        width: 14
-        height: 14
+        width: 24
+        height: 24
         icon.name: "clear"
-        icon.width: 14
-        icon.height: 14
+        icon.width: 16
+        icon.height: 16
         icon.color: Theme.palette.baseColor1
         onClicked: {
             edit.clear()
