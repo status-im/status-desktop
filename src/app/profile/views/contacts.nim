@@ -152,13 +152,17 @@ QtObject:
     read = getContactToAddPubKey
     notify = contactToAddChanged
 
-  proc isAdded*(self: ContactsView, id: string): bool {.slot.} =
-    if id == "": return false
-    self.status.contacts.isAdded(id)
+  proc isAdded*(self: ContactsView, pubkey: string): bool {.slot.} =
+    for contact in self.addedContacts.contacts:
+      if contact.id == pubkey:
+        return true
+    return false
 
-  proc contactRequestReceived*(self: ContactsView, id: string): bool {.slot.} =
-    if id == "": return false
-    self.status.contacts.contactRequestReceived(id)
+  proc contactRequestReceived*(self: ContactsView, pubkey: string): bool {.slot.} =
+    for contact in self.contactRequests.contacts:
+      if contact.id == pubkey:
+        return true
+    return false
 
   proc lookupContact*(self: ContactsView, value: string) {.slot.} =
     if value == "":
