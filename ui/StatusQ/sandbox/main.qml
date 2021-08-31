@@ -139,6 +139,11 @@ StatusWindow {
                             onClicked: page.sourceComponent = buttonsComponent
                         }
                         StatusNavigationListItem { 
+                            title: "StatusSwitchTab" 
+                            selected: page.sourceComponent == statusTabSwitchesComponent
+                            onClicked: page.sourceComponent = statusTabSwitchesComponent
+                        }
+                        StatusNavigationListItem { 
                             title: "Controls" 
                             selected: page.sourceComponent == controlsComponent
                             onClicked: page.sourceComponent = controlsComponent
@@ -279,6 +284,11 @@ StatusWindow {
     Component {
         id: statusModalComponent
         Popups {}
+    }
+
+    Component {
+        id: statusTabSwitchesComponent
+        StatusTabSwitchPage {}
     }
 
     Component {

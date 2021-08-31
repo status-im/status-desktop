@@ -263,5 +263,7 @@
         <file>src/assets/img/icons/windows_titlebar/maximize.svg</file>
         <file>src/assets/img/icons/windows_titlebar/minimise.svg</file>
         <file>src/assets/img/icons/windows_titlebar/status.svg</file>
+        <file>src/StatusQ/Controls/StatusSwitchTabButton.qml</file>
+        <file>src/StatusQ/Controls/StatusSwitchTabBar.qml</file>
     </qresource>
 </RCC>

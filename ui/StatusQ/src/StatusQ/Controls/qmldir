@@ -17,3 +17,5 @@ StatusSlider 0.1 StatusSlider.qml
 StatusBaseInput 0.1 StatusBaseInput.qml
 StatusInput 0.1 StatusInput.qml
 StatusPickerButton 0.1 StatusPickerButton.qml
+StatusSwitchTabButton 0.1 StatusSwitchTabButton.qml
+StatusSwitchTabBar 0.1 StatusSwitchTabBar.qml

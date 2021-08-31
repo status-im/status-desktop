@@ -177,5 +177,9 @@ ThemePalette {
     property QtObject statusChatInput: QtObject {
         property color secondaryBackgroundColor: "#414141"
     }
+
+    property QtObject statusSwitchTab: QtObject {
+        property color backgroundColor: baseColor3
+    }
 }
 

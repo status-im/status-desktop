@@ -139,6 +139,10 @@ QtObject {
         property color secondaryBackgroundColor
     }
 
+    property QtObject statusSwitchTab: QtObject {
+        property color backgroundColor
+    }
+
     function alphaColor(color, alpha) {
         let actualColor = Qt.darker(color, 1)
         actualColor.a = alpha
