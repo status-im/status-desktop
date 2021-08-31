@@ -25,22 +25,26 @@ proc delete*(self: NodeController) =
   delete self.variant
   delete self.view
 
+proc setPeers(self: NodeController, peers: seq[string]) =
+  self.status.network.peerSummaryChange(peers)
+  self.view.setPeerSize(peers.len)
+
 proc init*(self: NodeController) =
   self.status.events.on(SignalType.Wallet.event) do(e:Args):
     self.view.setLastMessage($WalletSignal(e).blockNumber)
 
   self.status.events.on(SignalType.DiscoverySummary.event) do(e:Args):
     var data = DiscoverySummarySignal(e)
-    self.status.network.peerSummaryChange(data.enodes)
-    self.view.setPeerSize(data.enodes.len)
+    self.setPeers(data.enodes)
 
   self.status.events.on(SignalType.PeerStats.event) do(e:Args):
     var data = PeerStatsSignal(e)
-    self.status.network.peerSummaryChange(data.peers)
-    self.view.setPeerSize(data.peers.len)
+    self.setPeers(data.peers)
 
   self.status.events.on(SignalType.Stats.event) do (e:Args):
     self.view.setStats(StatsSignal(e).stats)
     self.view.fetchBitsSet()
 
   self.view.init()
+
+  self.setPeers(self.status.network.fetchPeers())

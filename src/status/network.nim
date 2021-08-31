@@ -1,8 +1,9 @@
 import chronicles
 import ../eventemitter
 import libstatus/settings
+import libstatus/core
 import json
-import uuids
+import uuids, strutils
 import json_serialization
 import types
 
@@ -20,6 +21,16 @@ proc newNetworkModel*(events: EventEmitter): NetworkModel =
   result.events = events
   result.peers = @[]
   result.connected = false
+
+proc fetchPeers*(self: NetworkModel): seq[string] =
+  var fleetStr = getSetting[string](Setting.Fleet)
+  if fleetStr == "": fleetStr = "eth.prod"
+  let fleet = parseEnum[Fleet](fleetStr)
+  let isWakuV2 = if fleet == WakuV2Prod or fleet == WakuV2Test: true else: false
+  if isWakuV2:
+    return wakuV2Peers()
+  else:
+   return adminPeers()
 
 proc peerSummaryChange*(self: NetworkModel, peers: seq[string]) =
   if peers.len == 0 and self.connected:
