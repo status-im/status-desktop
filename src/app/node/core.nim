@@ -44,11 +44,6 @@ proc init*(self: NodeController) =
     var data = PeerStatsSignal(e)
     self.setPeers(data.peers)
 
-  self.status.events.on(SignalType.PeerStats.event) do(e:Args):
-    var data = PeerStatsSignal(e)
-    self.status.network.peerSummaryChange(data.peers)
-    self.view.setPeerSize(data.peers.len)
-
   self.status.events.on(SignalType.Stats.event) do (e:Args):
     self.view.setStats(StatsSignal(e).stats)
     if not self.isWakuV2: self.view.fetchBitsSet()
