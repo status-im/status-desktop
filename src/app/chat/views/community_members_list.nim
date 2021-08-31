@@ -118,6 +118,17 @@ QtObject:
       of CommunityMembersRoles.Online: result = newQVariant(self.isOnline(communityMemberPubkey))
       of CommunityMembersRoles.SortKey: result = newQVariant(self.sortKey(communityMemberPubkey))
 
+  proc rowData(self: CommunityMembersView, index: int, column: string): string {.slot.} =
+    if (index >= self.community.members.len):
+      return
+    let communityMemberPubkey = self.community.members[index]
+    case column:
+      of "alias": result = self.alias(communityMemberPubkey)
+      of "publicKey": result = communityMemberPubkey
+      of "identicon": result = self.identicon(communityMemberPubkey)
+      of "localName": result = self.localNickname(communityMemberPubkey)
+      of "userName": result = self.userName(communityMemberPubkey, self.alias(communityMemberPubkey))
+
   method roleNames(self: CommunityMembersView): Table[int, string] =
     {
       CommunityMembersRoles.UserName.int:"userName",
