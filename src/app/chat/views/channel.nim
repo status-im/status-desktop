@@ -93,13 +93,13 @@ QtObject:
     if (self.chats.chats.len == 0): return
     let selectedChannel = self.getChannel(channelIndex)
     if (selectedChannel == nil): return
-    discard self.status.chat.markAllChannelMessagesRead(selectedChannel.id)
+    self.status.chat.asyncMarkAllChannelMessagesRead(selectedChannel.id)
 
   proc markChatItemAsRead*(self: ChannelView, id: string) {.slot.} =
     if (self.chats.chats.len == 0): return
     let selectedChannel = self.getChannelById(id)
     if (selectedChannel == nil): return
-    discard self.status.chat.markAllChannelMessagesRead(selectedChannel.id)
+    self.status.chat.asyncMarkAllChannelMessagesRead(selectedChannel.id)
 
   proc clearUnreadIfNeeded*(self: ChannelView, channel: var Chat) =
     if (not channel.isNil and (channel.unviewedMessagesCount > 0 or channel.mentionsCount > 0)):
@@ -166,7 +166,7 @@ QtObject:
     if not self.communities.activeCommunity.active:
       self.previousActiveChannelIndex = self.chats.chats.findIndexById(self.activeChannel.id)
 
-    discard self.status.chat.markAllChannelMessagesRead(self.activeChannel.id)
+    self.status.chat.asyncMarkAllChannelMessagesRead(self.activeChannel.id)
 
     self.activeChannelChanged()
 

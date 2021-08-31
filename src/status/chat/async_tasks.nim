@@ -50,6 +50,20 @@ const asyncSearchMessagesInChatsAndCommunitiesTask: Task = proc(argEncoded: stri
   arg.finish(responseJson)
 
 #################################################
+# Async mark messages read
+#################################################
+type
+  AsyncMarkAllReadTaskArg = ref object of QObjectTaskArg
+    chatId: string
+
+const asyncMarkAllReadTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[AsyncMarkAllReadTaskArg](argEncoded)
+  arg.finish(%*{
+    "response": status_chat.markAllRead(arg.chatId),
+    "chatId": arg.chatId,
+  })
+
+#################################################
 # Async load messages
 #################################################
 type
