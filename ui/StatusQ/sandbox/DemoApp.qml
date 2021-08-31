@@ -113,16 +113,16 @@ Rectangle {
                     tooltip.text: "Wallet"
                 },
                 StatusNavBarTabButton {
-                    icon.name: "browser"
+                    icon.name: "bigger/browser"
                     tooltip.text: "Browser"
                 },
                 StatusNavBarTabButton {
-                    icon.name: "status-update"
+                    icon.name: "bigger/status-update"
                     tooltip.text: "Timeline"
                 },
                 StatusNavBarTabButton {
                     id: profileNavButton
-                    icon.name: "profile"
+                    icon.name: "bigger/settings"
                     badge.visible: true
                     badge.anchors.rightMargin: 4
                     badge.anchors.topMargin: 5
