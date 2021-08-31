@@ -121,10 +121,10 @@ QtObject:
     let communityMemberPubkey = self.community.members[index]
     case column:
       of "alias": result = self.alias(communityMemberPubkey)
-      of "address": result = communityMemberPubkey
+      of "publicKey": result = communityMemberPubkey
       of "identicon": result = self.identicon(communityMemberPubkey)
-      of "localNickname": result = self.localNickname(communityMemberPubkey)
-      of "ensName": result = self.userName(communityMemberPubkey, self.alias(communityMemberPubkey))
+      of "localName": result = self.localNickname(communityMemberPubkey)
+      of "userName": result = self.userName(communityMemberPubkey, self.alias(communityMemberPubkey))
 
   method roleNames(self: CommunityMembersView): Table[int, string] =
     {
