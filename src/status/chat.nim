@@ -367,25 +367,37 @@ QtObject:
     let reactions = status_chat.removeEmojiReaction(emojiReactionId)
     self.events.emit("reactionsLoaded", ReactionsLoadedArgs(reactions: reactions))
 
-  proc markAllChannelMessagesRead*(self: ChatModel, chatId: string): JsonNode =
-    var response = status_chat.markAllRead(chatId)
+  proc onMarkMessagesRead(self: ChatModel, response: string, chatId: string): JsonNode =
     result = parseJson(response)
     if self.channels.hasKey(chatId):
       self.channels[chatId].unviewedMessagesCount = 0
       self.channels[chatId].mentionsCount = 0
       self.events.emit("channelUpdate", ChatUpdateArgs(messages: @[], chats: @[self.channels[chatId]], contacts: @[]))
+
+  proc onAsyncMarkMessagesRead(self: ChatModel, response: string) {.slot.} =
+    let parsedResponse = parseJson(response)
+    discard self.onMarkMessagesRead(parsedResponse{"response"}.getStr, parsedResponse{"chatId"}.getStr)
+
+  proc markAllChannelMessagesRead*(self: ChatModel, chatId: string): JsonNode =
+    var response = status_chat.markAllRead(chatId)
+    return self.onMarkMessagesRead(response, chatId)
+
+  proc asyncMarkAllChannelMessagesRead*(self: ChatModel, chatId: string) =
+    let arg = AsyncMarkAllReadTaskArg(
+      tptr: cast[ByteAddress](asyncMarkAllReadTask),
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "onAsyncMarkMessagesRead",
+      chatId: chatId,
+    )
+    self.tasks.threadpool.start(arg)
 
   proc markMessagesSeen*(self: ChatModel, chatId: string, messageIds: seq[string]): JsonNode =
     var response = status_chat.markMessagesSeen(chatId, messageIds)
-    result = parseJson(response)
-    if self.channels.hasKey(chatId):
-      self.channels[chatId].unviewedMessagesCount = 0
-      self.channels[chatId].mentionsCount = 0
-      self.events.emit("channelUpdate", ChatUpdateArgs(messages: @[], chats: @[self.channels[chatId]], contacts: @[]))
+    return self.onMarkMessagesRead(response, chatId)
 
   proc confirmJoiningGroup*(self: ChatModel, chatId: string) =
-      var response = status_chat.confirmJoiningGroup(chatId)
-      self.emitUpdate(response)
+    var response = status_chat.confirmJoiningGroup(chatId)
+    self.emitUpdate(response)
 
   proc renameGroup*(self: ChatModel, chatId: string, newName: string) =
     var response = status_chat.renameGroup(chatId, newName)
