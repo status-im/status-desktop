@@ -85,6 +85,12 @@ Item {
                             id: collectiblesBtn
                             btnText: qsTr("Collectibles")
                         }
+                        StatusTabButton {
+                            id: settingsBtn
+                            anchors.left: collectiblesBtn.right
+                            anchors.leftMargin: walletInfoContent.width - collectiblesBtn.width - 100
+                            btnText: qsTr("Settings")
+                        }
                     }
 
                     StackLayout {
@@ -93,11 +99,15 @@ Item {
                         anchors.right: parent.right
                         anchors.bottom: parent.bottom
                         anchors.left: parent.left
-                        anchors.topMargin: Style.current.bigPadding
+                        anchors.topMargin: Style.current.padding
                         currentIndex: walletTabBar.currentIndex
 
                         CollectiblesTab {
                             id: collectiblesTab
+                        }
+
+                        SettingsTab {
+                            id: settingsTab
                         }
                     }
                 }
