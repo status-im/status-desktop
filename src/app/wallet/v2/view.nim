@@ -2,7 +2,7 @@ import atomics, strformat, strutils, sequtils, json, std/wrapnils, parseUtils, t
 import NimQml, chronicles, stint
 
 import status/[status, wallet2]
-import views/[accounts, account_list, collectibles]
+import views/[accounts, account_list, collectibles, settings]
 import views/buy_sell_crypto/[service_controller]
 import ../../../app_service/[main]
 
@@ -13,6 +13,7 @@ QtObject:
       appService: AppService
       accountsView: AccountsView
       collectiblesView: CollectiblesView
+      settingsView*: SettingsView
       cryptoServiceController: CryptoServiceController
 
   proc delete(self: WalletView) =
@@ -20,6 +21,7 @@ QtObject:
     self.collectiblesView.delete
     self.cryptoServiceController.delete
     self.QAbstractListModel.delete
+    self.settingsView.delete
 
   proc setup(self: WalletView) =
     self.QAbstractListModel.setup
@@ -30,6 +32,7 @@ QtObject:
     result.appService = appService
     result.accountsView = newAccountsView(status)
     result.collectiblesView = newCollectiblesView(status, appService)
+    result.settingsView = newSettingsView()
     result.cryptoServiceController = newCryptoServiceController(status, appService)
     result.setup
 
@@ -41,6 +44,10 @@ QtObject:
 
   proc getCollectibles(self: WalletView): QVariant {.slot.} = 
     return newQVariant(self.collectiblesView)
+
+  proc getSettings(self: WalletView): QVariant {.slot.} = newQVariant(self.settingsView)
+  QtProperty[QVariant] settingsView:
+    read = getSettings
 
   QtProperty[QVariant] collectiblesView:
     read = getCollectibles
@@ -61,6 +68,12 @@ QtObject:
     if (self.accountsView.accounts.rowCount == 1):
       self.setCurrentAccountByIndex(0)
 
+  proc setSigningPhrase*(self: WalletView, signingPhrase: string) =
+    self.settingsView.setSigningPhrase(signingPhrase)
+
+  proc setEtherscanLink*(self: WalletView, link: string) =
+    self.settingsView.setEtherscanLink(link)
+    
   proc getCryptoServiceController*(self: WalletView): QVariant {.slot.} =
     newQVariant(self.cryptoServiceController)
 

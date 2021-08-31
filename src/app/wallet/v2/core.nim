@@ -48,6 +48,9 @@ proc init*(self: WalletController) =
     var data = WalletSignal(e)
     debug "TODO: handle wallet signal", signalType=data.eventType
 
+  self.view.setSigningPhrase(self.status.settings.getSetting[:string](Setting.SigningPhrase))
+  self.view.setEtherscanLink(self.status.settings.getCurrentNetworkDetails().etherscanLink)
+  
   self.status.events.on("cryptoServicesFetched") do(e: Args):
     var args = CryptoServicesArg(e)
     self.view.onCryptoServicesFetched(args.services)
