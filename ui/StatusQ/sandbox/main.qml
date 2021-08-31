@@ -169,6 +169,11 @@ StatusWindow {
                             selected: page.sourceComponent == othersComponent
                             onClicked: page.sourceComponent = othersComponent
                         }
+                        StatusNavigationListItem {
+                            title: "StatusExpandableSettingsItem"
+                            selected: page.sourceComponent == settingsComponent
+                            onClicked: page.sourceComponent = settingsComponent
+                        }
                         StatusListSectionHeadline { text: "StatusQ.Popup" }
                         StatusNavigationListItem { 
                             title: "StatusPopupMenu"
@@ -289,6 +294,11 @@ StatusWindow {
     Component {
         id: statusTabSwitchesComponent
         StatusTabSwitchPage {}
+    }
+
+    Component {
+        id: settingsComponent
+        StatusExpandableSettingsItemPage{}
     }
 
     Component {

@@ -243,6 +243,7 @@
         <file>src/assets/img/icons/add-contact.svg</file>
         <file>src/assets/img/icons/add-circle.svg</file>
         <file>src/assets/img/icons/activity.svg</file>
+        <file>src/assets/img/icons/seed-phrase.svg</file>
         <file>src/StatusQ/Components/StatusChatListCategoryItem.qml</file>
         <file>src/StatusQ/Components/StatusChatListCategory.qml</file>
         <file>src/StatusQ/Controls/StatusBaseInput.qml</file>
@@ -265,5 +266,6 @@
         <file>src/assets/img/icons/windows_titlebar/status.svg</file>
         <file>src/StatusQ/Controls/StatusSwitchTabButton.qml</file>
         <file>src/StatusQ/Controls/StatusSwitchTabBar.qml</file>
+        <file>src/StatusQ/Components/StatusExpandableSettingsItem.qml</file>
     </qresource>
 </RCC>

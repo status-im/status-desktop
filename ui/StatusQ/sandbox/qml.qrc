@@ -13,5 +13,6 @@
         <file>ThemeSwitch.qml</file>
         <file>Layout.qml</file>
         <file>Popups.qml</file>
+        <file>StatusExpandableSettingsItemPage.qml</file>
     </qresource>
 </RCC>
