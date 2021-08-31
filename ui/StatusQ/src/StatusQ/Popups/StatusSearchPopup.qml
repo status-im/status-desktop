@@ -28,6 +28,10 @@ StatusModal {
     signal resultItemClicked(string itemId)
     signal resultItemTitleClicked(string titleId)
 
+    property var formatTimestampFn: function (ts) {
+        return ts
+    }
+
     function setSearchSelection(text = "",
                                 secondaryText = "",
                                 imageSource = "",
@@ -291,7 +295,7 @@ StatusModal {
                         statusListItemSubTitle.color: Theme.palette.black
                         icon.isLetterIdenticon: (model.image === "")
                         icon.background.color: model.color
-                        titleAsideText: model.time
+                        titleAsideText: root.formatTimestampFn(model.time)
                         image.source: model.image
                         badge.primaryText: model.badgePrimaryText
                         badge.secondaryText: model.badgeSecondaryText
