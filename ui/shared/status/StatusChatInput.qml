@@ -604,7 +604,12 @@ Rectangle {
 
     SuggestionBox {
         id: suggestionsBox
-        model: chatsModel.messageView.messageList.userList
+        model: {
+            if (chatsModel.communities.activeCommunity.active) {
+                return chatsModel.communities.activeCommunity.members
+            }
+            return chatsModel.messageView.messageList.userList
+        }
         x : messageInput.x
         y: -height - Style.current.smallPadding
         width: messageInput.width
