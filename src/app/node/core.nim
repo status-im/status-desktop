@@ -1,5 +1,5 @@
 import NimQml, chronicles
-import status/[signals, status, node, network]
+import status/[signals, status, node, network, settings]
 import ../../app_service/[main]
 import eventemitter
 import view
@@ -13,6 +13,7 @@ type NodeController* = ref object
   view*: NodeView
   variant*: QVariant
   networkAccessMananger*: QNetworkAccessManager
+  isWakuV2: bool
 
 proc newController*(status: Status, appService: AppService, nam: QNetworkAccessManager): NodeController =
   result = NodeController()
@@ -26,25 +27,30 @@ proc delete*(self: NodeController) =
   delete self.variant
   delete self.view
 
+proc setPeers(self: NodeController, peers: seq[string]) =
+  self.status.network.peerSummaryChange(peers)
+  self.view.setPeerSize(peers.len)
+
 proc init*(self: NodeController) =
+  self.isWakuV2 = self.status.settings.getWakuVersion() == 2
   self.status.events.on(SignalType.Wallet.event) do(e:Args):
     self.view.setLastMessage($WalletSignal(e).blockNumber)
 
   self.status.events.on(SignalType.DiscoverySummary.event) do(e:Args):
     var data = DiscoverySummarySignal(e)
-    self.status.network.peerSummaryChange(data.enodes)
-    self.view.setPeerSize(data.enodes.len)
+    self.setPeers(data.enodes)
 
   self.status.events.on(SignalType.PeerStats.event) do(e:Args):
     var data = PeerStatsSignal(e)
-    self.status.network.peerSummaryChange(data.peers)
-    self.view.setPeerSize(data.peers.len)
+    self.setPeers(data.peers)
 
   self.status.events.on(SignalType.Stats.event) do (e:Args):
     self.view.setStats(StatsSignal(e).stats)
-    self.view.fetchBitsSet()
+    if not self.isWakuV2: self.view.fetchBitsSet()
 
   self.status.events.on(SignalType.ChroniclesLogs.event) do(e:Args):
     self.view.log(ChroniclesLogsSignal(e).content)
 
   self.view.init()
+
+  self.setPeers(self.status.network.fetchPeers())

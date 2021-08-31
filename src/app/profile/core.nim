@@ -66,7 +66,7 @@ proc init*(self: ProfileController, account: Account) =
   self.view.ens.init()
   self.view.initialized()
 
-  for name, endpoint in self.status.fleet.config.getMailservers(self.status.settings.getFleet()).pairs():
+  for name, endpoint in self.status.fleet.config.getMailservers(self.status.settings.getFleet(), self.status.settings.getWakuVersion() == 2).pairs():
     let mailserver = MailServer(name: name, endpoint: endpoint)
     self.view.mailservers.add(mailserver)
 
