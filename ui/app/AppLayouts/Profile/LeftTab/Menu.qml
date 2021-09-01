@@ -44,8 +44,14 @@ ScrollView {
                 title: modelData.text
                 icon.name: modelData.icon
                 selected: Config.currentMenuTab === modelData.id
-                onClicked: Config.currentMenuTab = modelData.id
-                visible: modelData.ifEnabled !== "browser" || appSettings.isBrowserEnabled
+                onClicked: Config.currentMenuTab = modelData.id              
+                visible: {
+                    if((profileModel.fleets.fleet == Constants.waku_prod || profileModel.fleets.fleet === Constants.waku_test) && modelData.id === 8){
+                        // Disable sync settings. - TODO: remove this once wakuV2 compatibility is added
+                        return false;
+                    } 
+                    return modelData.ifEnabled !== "browser" || appSettings.isBrowserEnabled
+                }
                 badge.value: (!profileModel.mnemonic.isBackedUp && (settingsMenuDelegate.title ===
                              ProfileConstants.settingsMenuButtons[0].text)) ? 1 : 0
             }
