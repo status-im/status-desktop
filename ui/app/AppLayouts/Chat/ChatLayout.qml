@@ -158,12 +158,12 @@ StatusAppThreePanelLayout {
 
     Component {
         id: communityUserListComponent
-        CommunityUserList { currentTime: chatColumn.currentTime }
+        CommunityUserList { currentTime: chatColumn.currentTime; messageContextMenu: quickActionMessageOptionsMenu }
     }
 
     Component {
         id: userListComponent
-        UserList { currentTime: chatColumn.currentTime; userList: chatColumn.userList;}
+        UserList { currentTime: chatColumn.currentTime; userList: chatColumn.userList; messageContextMenu: quickActionMessageOptionsMenu}
     }
 
     Component {
@@ -211,6 +211,11 @@ StatusAppThreePanelLayout {
             removeContactConfirmationDialog.parentPopup.close();
             removeContactConfirmationDialog.close();
         }
+    }
+
+    MessageContextMenu {
+        id: quickActionMessageOptionsMenu
+        reactionModel: EmojiReactions { }
     }
 }
 
