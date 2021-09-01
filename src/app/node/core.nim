@@ -33,6 +33,7 @@ proc setPeers(self: NodeController, peers: seq[string]) =
 
 proc init*(self: NodeController) =
   self.isWakuV2 = self.status.settings.getWakuVersion() == 2
+  
   self.status.events.on(SignalType.Wallet.event) do(e:Args):
     self.view.setLastMessage($WalletSignal(e).blockNumber)
 

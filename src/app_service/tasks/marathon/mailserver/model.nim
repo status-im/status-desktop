@@ -71,6 +71,9 @@ proc init*(self: MailserverModel) =
       "/../resources/fleets.json"
     else:
       "/../fleets.json"
+
+  self.wakuVersion = status_settings.getWakuVersion()
+
   let fleetConfig = readFile(joinPath(getAppDir(), fleets))
   self.fleet = newFleetModel(fleetConfig)
   self.wakuVersion = status_settings.getWakuVersion()
@@ -118,7 +121,7 @@ proc connect(self: MailserverModel, nodeAddr: string) =
     else:
       status_mailservers.update(nodeAddr)
       self.nodes[nodeAddr] = MailserverStatus.Connecting
-
+      
     self.lastConnectionAttempt = cpuTime()
 
   if connected:
