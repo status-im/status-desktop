@@ -1,5 +1,5 @@
 import
-  algorithm, chronos, chronicles, json, math, os, random, sequtils, sets,
+  algorithm, chronos, chronicles, json, math, os, random, sequtils, sets, strutils,
   tables
 from times import cpuTime
 
@@ -39,6 +39,7 @@ type
     activeMailserver*: string
     lastConnectionAttempt*: float
     fleet*: FleetModel
+    wakuVersion*: int
 
   MailserverStatus* = enum
     Unknown = -1,
@@ -66,9 +67,12 @@ proc init*(self: MailserverModel) =
       "/../resources/fleets.json"
     else:
       "/../fleets.json"
+
+  self.wakuVersion = status_settings.getWakuVersion()
+
   let fleetConfig = readFile(joinPath(getAppDir(), fleets))
   self.fleet = newFleetModel(fleetConfig)
-  self.mailservers = toSeq(self.fleet.config.getMailservers(status_settings.getFleet()).values)
+  self.mailservers = toSeq(self.fleet.config.getMailservers(status_settings.getFleet(), self.wakuVersion == 2).values)
   for mailserver in status_settings.getMailservers().getElems():
     self.mailservers.add(mailserver["address"].getStr())
 
@@ -80,19 +84,19 @@ proc isActiveMailserverAvailable*(self: MailserverModel): bool =
   else:
     result = self.nodes[self.activeMailserver] == MailserverStatus.Connected
 
-proc connect(self: MailserverModel, enode: string) =
-  debug "Connecting to mailserver", enode=enode.substr[enode.len-40..enode.len-1]
+proc connect(self: MailserverModel, nodeAddr: string) =
+  debug "Connecting to mailserver", nodeAddr
   var connected = false
   # TODO: this should come from settings
   var knownMailservers = initHashSet[string]()
   for m in self.mailservers:
     knownMailservers.incl m
-  if not knownMailservers.contains(enode): 
-    warn "Mailserver not known", enode
+  if not knownMailservers.contains(nodeAddr): 
+    warn "Mailserver not known", nodeAddr
     return
 
-  self.activeMailserver = enode
-  self.events.emit("mailserver:changed", MailserverArgs(peer: enode))
+  self.activeMailserver = nodeAddr
+  self.events.emit("mailserver:changed", MailserverArgs(peer: nodeAddr))
 
   # Adding a peer and marking it as connected can't be executed sync, because
   # There's a delay between requesting a peer being added, and a signal being 
@@ -100,12 +104,21 @@ proc connect(self: MailserverModel, enode: string) =
   # Connecting and once a peerConnected signal is received, we mark it as 
   # Connected
 
-  if self.nodes.hasKey(enode) and self.nodes[enode] == MailserverStatus.Connected:
+  if self.nodes.hasKey(nodeAddr) and self.nodes[nodeAddr] == MailserverStatus.Connected:
     connected = true
   else:
     # Attempt to connect to mailserver by adding it as a peer
-    status_mailservers.update(enode)
-    self.nodes[enode] = MailserverStatus.Connecting
+    if self.wakuVersion == 2:
+      if status_core.dialPeer(nodeAddr): # WakuV2 dial is sync (should it be async?)
+        let multiAddressParts = nodeAddr.split("/")
+        let peerId = multiAddressParts[multiAddressParts.len - 1]
+        discard status_mailservers.setMailserver(peerId)
+        self.nodes[nodeAddr] = MailserverStatus.Connected
+        connected = true
+    else:
+      status_mailservers.update(nodeAddr)
+      self.nodes[nodeAddr] = MailserverStatus.Connecting
+    
     self.lastConnectionAttempt = cpuTime()
 
   if connected:
@@ -163,8 +176,8 @@ proc fillGaps*(self: MailserverModel, chatId: string, messageIds: seq[string]) =
 proc findNewMailserver(self: MailserverModel) =
   warn "Finding a new mailserver..."
   
-  let mailserversReply = parseJson(status_mailservers.ping(self.mailservers, 500))["result"]
-  
+  let mailserversReply = parseJson(status_mailservers.ping(self.mailservers, 500, self.wakuVersion == 2))["result"]
+
   var availableMailservers:seq[(string, int)] = @[]
   for reply in mailserversReply: 
     if(reply["error"].kind != JNull): continue # The results with error are ignored
@@ -187,7 +200,12 @@ proc cycleMailservers(self: MailserverModel) =
   if self.activeMailserver != "":
     warn "Disconnecting active mailserver", peer=self.activeMailserver
     self.nodes[self.activeMailserver] = MailserverStatus.Disconnected
-    removePeer(self.activeMailserver)
+    if self.wakuVersion == 2:
+      let multiAddressParts = self.activeMailserver.split("/")
+      let peerId = multiAddressParts[multiAddressParts.len - 1]
+      dropPeerByID(peerId)
+    else:
+      removePeer(self.activeMailserver)
     self.activeMailserver = ""
   self.findNewMailserver()
 

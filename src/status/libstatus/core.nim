@@ -71,3 +71,13 @@ proc wakuV2Peers*(): seq[string] =
   for (id, proto) in response.pairs:
     if proto.len != 0:
       result.add(id)
+
+proc dialPeer*(address: string):bool =
+  let response = callPrivateRPC("dialPeer".prefix, %* [address]).parseJSON()
+  if response.hasKey("error"):
+    error "waku peer could not be dialed", response
+    return false
+  return true
+
+proc dropPeerByID*(peerID: string) =
+  echo callPrivateRPC("dropPeer".prefix, %* [peerID])

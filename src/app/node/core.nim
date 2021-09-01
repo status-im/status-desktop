@@ -1,6 +1,6 @@
 import NimQml, chronicles
 import ../../status/signals/types
-import ../../status/[status, node, network]
+import ../../status/[status, node, network, settings]
 import ../../status/types as status_types
 import ../../eventemitter
 import view
@@ -13,6 +13,7 @@ type NodeController* = ref object
   view*: NodeView
   variant*: QVariant
   networkAccessMananger*: QNetworkAccessManager
+  isWakuV2: bool
 
 proc newController*(status: Status, nam: QNetworkAccessManager): NodeController =
   result = NodeController()
@@ -30,6 +31,8 @@ proc setPeers(self: NodeController, peers: seq[string]) =
   self.view.setPeerSize(peers.len)
 
 proc init*(self: NodeController) =
+  self.isWakuV2 = self.status.settings.getWakuVersion() == 2
+
   self.status.events.on(SignalType.Wallet.event) do(e:Args):
     self.view.setLastMessage($WalletSignal(e).blockNumber)
 
@@ -43,7 +46,7 @@ proc init*(self: NodeController) =
 
   self.status.events.on(SignalType.Stats.event) do (e:Args):
     self.view.setStats(StatsSignal(e).stats)
-    self.view.fetchBitsSet()
+    if not self.isWakuV2: self.view.fetchBitsSet()
 
   self.view.init()
 

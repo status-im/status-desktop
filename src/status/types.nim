@@ -278,9 +278,13 @@ proc getNodes*(self: FleetConfig, fleet: Fleet, nodeType: FleetNodes = FleetNode
   if not self.fleet[$fleet].hasKey($nodeType): return
   result = toSeq(self.fleet[$fleet][$nodeType].values)
 
-proc getMailservers*(self: FleetConfig, fleet: Fleet): Table[string, string] =
-  if not self.fleet[$fleet].hasKey($FleetNodes.Mailservers): 
+proc getMailservers*(self: FleetConfig, fleet: Fleet, isWakuV2: bool): Table[string, string] =
+  # TODO: If using wakuV2, this assumes that Waku nodes in fleet.status.json are also store nodes. 
+  # Maybe it make senses to add a "waku-store" section in case we want to have separate node types?
+  # Discuss with @iurimatias, @cammellos and Vac team
+  let fleetKey = if isWakuV2: $FleetNodes.Waku else: $FleetNodes.Mailservers
+  if not self.fleet[$fleet].hasKey(fleetKey) :  
     result = initTable[string,string]()
     return
-  result = self.fleet[$fleet][$FleetNodes.Mailservers]
+  result = self.fleet[$fleet][fleetKey]
 
