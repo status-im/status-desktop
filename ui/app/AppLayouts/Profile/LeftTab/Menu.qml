@@ -50,7 +50,13 @@ ScrollView {
                 text: modelData .text
                 source: "../../../img/profile/" + modelData.filename
                 active: Config.currentMenuTab === modelData.id
-                visible: modelData.ifEnabled !== "browser" || appSettings.isBrowserEnabled
+                visible: {
+                    if((profileModel.fleets.fleet == Constants.waku_prod || profileModel.fleets.fleet === Constants.waku_test) && modelData.id === 8){
+                        // Disable sync settings. - TODO: remove this once wakuV2 compatibility is added
+                        return false;
+                    } 
+                    return modelData.ifEnabled !== "browser" || appSettings.isBrowserEnabled
+                }
                 Layout.fillWidth: true
                 width: profileMenu.width
                 onClicked: function () {

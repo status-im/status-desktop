@@ -213,7 +213,7 @@ proc checkConnection*(self: MailserverModel) {.async.} =
   while true:
     debug "Verifying mailserver connection state..."
     let pinnedMailserver = status_settings.getPinnedMailserver()
-    if pinnedMailserver != "" and self.activeMailserver != pinnedMailserver:
+    if self.wakuVersion == 1 and pinnedMailserver != "" and self.activeMailserver != pinnedMailserver:
       # connect to current mailserver from the settings
       self.mailservers.add(pinnedMailserver)
       self.connect(pinnedMailserver) 
