@@ -68,6 +68,22 @@ Column {
     }
 
     StatusInput {
+        label: "StatusInput"
+        secondaryLabel: "with right icon"
+        input.icon.width: 15
+        input.icon.height: 11
+        input.icon.name: text !== "" ? "checkmark" : ""
+        input.leftIcon: false
+    }
+
+    StatusInput {
+        label: "Label"
+        secondaryLabel: "secondary label"
+        input.placeholderText: "Placeholder"
+        input.implicitHeight: 56
+    }
+
+    StatusInput {
         label: "Label"
         charLimit: 30
         input.placeholderText: "Input with validator"

@@ -45,23 +45,23 @@ Item {
     property bool valid: true
     property bool pristine: true
     property bool dirty: false
+    property bool leftIcon: true
 
     property StatusIconSettings icon: StatusIconSettings {
         width: 24
         height: 24
         name: ""
+        color: Theme.palette.baseColor1
     }
 
     implicitWidth: 448
-    implicitHeight: multiline ? Math.max(edit.implicitHeight + topPadding + bottomPadding, 44) : 44
+    implicitHeight: multiline ? Math.max((edit.implicitHeight + topPadding + bottomPadding), 44) : 44
 
     Rectangle {
         width: parent.width
         height: maximumHeight != 0 ? Math.min(
                                          minimumHeight != 0 ? Math.max(statusBaseInput.implicitHeight, minimumHeight)
-                                                            : implicitHeight,
-                                         maximumHeight)
-                                   : parent.height
+                                         : statusBaseInput.implicitHeight, maximumHeight) : parent.height
         color: Theme.palette.baseColor2
         radius: 8
 
@@ -80,36 +80,37 @@ Item {
 
         StatusIcon {
             id: statusIcon
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.left: parent.left
-            anchors.leftMargin: 10
             anchors.topMargin: 10
-
+            anchors.left: statusBaseInput.leftIcon ? parent.left : undefined
+            anchors.right: !statusBaseInput.leftIcon ? parent.right : undefined
+            anchors.leftMargin: 10
+            anchors.rightMargin: 10
+            anchors.verticalCenter: parent.verticalCenter
             icon: statusBaseInput.icon.name
             width: statusBaseInput.icon.width
             height: statusBaseInput.icon.height
-            color: Theme.palette.baseColor1
+            color: statusBaseInput.icon.color
             visible: !!statusBaseInput.icon.name
         }
 
         Flickable {
             id: flick
-
             anchors.top: parent.top
             anchors.bottom: parent.bottom
-            anchors.left: statusIcon.visible ? statusIcon.right : parent.left
-            anchors.right: parent.right
-            anchors.leftMargin: statusIcon.visible ? 8 : statusBaseInput.leftPadding
-            anchors.rightMargin: statusBaseInput.rightPadding + clearable ? clearButton.width : 0
+            anchors.left: (statusIcon.visible && statusBaseInput.leftIcon) ?
+                          statusIcon.right : parent.left
+            anchors.right: (statusIcon.visible && !statusBaseInput.leftIcon) ?
+                            statusIcon.left : parent.right
+            anchors.leftMargin: statusIcon.visible && statusBaseInput.leftIcon ? 8
+                                : statusBaseInput.leftPadding
+            anchors.rightMargin: statusBaseInput.rightPadding + clearable ? clearButton.width
+                                 : statusIcon.visible && !leftIcon ? 8: 0
             anchors.topMargin: statusBaseInput.topPadding
             anchors.bottomMargin: statusBaseInput.bottomPadding
             contentWidth: edit.paintedWidth
             contentHeight: edit.paintedHeight
-            clip: true
             boundsBehavior: Flickable.StopAtBounds
-
             QC.ScrollBar.vertical: QC.ScrollBar { interactive: multiline; enabled: multiline }
-
             function ensureVisible(r) {
                 if (contentX >= r.x)
                     contentX = r.x;
@@ -120,25 +121,21 @@ Item {
                 else if (contentY+height <= r.y+r.height)
                     contentY = r.y+r.height-height;
             }
-
-
-
             TextEdit {
                 id: edit
                 property string previousText: text
-
                 width: flick.width
+                height: flick.height
+                verticalAlignment: Text.AlignVCenter
                 selectByMouse: true
                 selectionColor: Theme.palette.primaryColor2
                 selectedTextColor: color
-                anchors.verticalCenter: parent.verticalCenter
                 focus: true
                 font.pixelSize: 15
                 font.family: Theme.palette.baseFont.name
                 color: Theme.palette.directColor1
-                onCursorRectangleChanged: flick.ensureVisible(cursorRectangle)
+                onCursorRectangleChanged: { flick.ensureVisible(cursorRectangle); }
                 wrapMode: statusBaseInput.multiline ? Text.WrapAtWordBoundaryOrAnywhere : TextEdit.NoWrap
-
                 onActiveFocusChanged: {
                     if (statusBaseInput.pristine) {
                         statusBaseInput.pristine = false
@@ -178,15 +175,14 @@ Item {
                         previousText = text
                     }
                 }
-
                 StatusBaseText {
                     id: placeholder
-                    visible: edit.text.length === 0
+                    visible: (edit.text.length === 0)
                     anchors.left: parent.left
                     anchors.right: parent.right
+                    anchors.rightMargin: statusBaseInput.rightPadding
                     anchors.verticalCenter: parent.verticalCenter
                     font.pixelSize: 15
-
                     elide: StatusBaseText.ElideRight
                     font.family: Theme.palette.baseFont.name
                     color: statusBaseInput.enabled ? Theme.palette.baseColor1 :
