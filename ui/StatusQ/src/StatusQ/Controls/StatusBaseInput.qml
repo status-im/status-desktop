@@ -106,8 +106,9 @@ Item {
             contentWidth: edit.paintedWidth
             contentHeight: edit.paintedHeight
             clip: true
+            boundsBehavior: Flickable.StopAtBounds
 
-            QC.ScrollBar.vertical: QC.ScrollBar { interactive: multiline }
+            QC.ScrollBar.vertical: QC.ScrollBar { interactive: multiline; enabled: multiline }
 
 
             function ensureVisible(r) {
