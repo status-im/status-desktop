@@ -5,12 +5,20 @@ import QtQuick.Controls 2.14 as QC
 import StatusQ.Core.Utils 0.1
 import StatusQ.Components 0.1
 import StatusQ.Popups 0.1
+import StatusQ.Core 0.1
 
 Item {
     id: statusChatListAndCategories
 
     implicitHeight: chatListsAndCategories.height
     implicitWidth: chatListsAndCategories.width
+
+    property StatusTooltipSettings categoryAddButtonToolTip: StatusTooltipSettings {
+        text: "Add channel inside category"
+    }
+    property StatusTooltipSettings categoryMenuButtonToolTip: StatusTooltipSettings {
+        text: "More"
+    }
 
     property string selectedChatId: ""
     property bool showCategoryActionButtons: false
@@ -120,6 +128,9 @@ Item {
                                 dragActive = true
                             }
                         }
+
+                        addButton.tooltip: statusChatListAndCategories.addButtonToolTip
+                        menuButton.tooltip: statusChatListAndCategories.menuButtonToolTip
 
                         originalOrder: model.position
                         categoryId: model.categoryId
