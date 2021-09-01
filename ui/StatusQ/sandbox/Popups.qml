@@ -145,7 +145,7 @@ Column {
             }
         ]
 
-        content: StatusBaseText {
+        contentItem: StatusBaseText {
             anchors.centerIn: parent
             text: "Some text content"
             font.pixelSize: 15
@@ -169,7 +169,7 @@ Column {
         header.title: "Header"
         header.subTitle: "SubTitle"
 
-        content: StatusBaseText {
+        contentItem: StatusBaseText {
             id: text
             anchors.centerIn: parent
             text: "Some text content"
@@ -181,7 +181,7 @@ Column {
             StatusButton {
                 text: "Change text"
                 onClicked: {
-                    modalWithContentAccess.contentComponent.text = "Changed!"
+                    modalWithContentAccess.contentItem.text = "Changed!"
                 }
             }
         ]
@@ -195,8 +195,7 @@ Column {
         header.icon.isLetterIdenticon: true
         header.icon.background.color: "red"
 
-        content: StatusBaseText {
-            id: text
+        contentItem: StatusBaseText {
             anchors.centerIn: parent
             text: "Some text content"
             font.pixelSize: 15
@@ -207,7 +206,7 @@ Column {
             StatusButton {
                 text: "Change text"
                 onClicked: {
-                    modalWithContentAccess.contentComponent.text = "Changed!"
+                    modalWithLetterIdenticon.contentItem.text = "Changed!"
                 }
             }
         ]
@@ -222,8 +221,7 @@ Column {
 CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2ImYgiNITTlTdG1nUZ5a92VITQxITFiJmIIjSE0htAYQrMHAAD//+wwFVpz+yqXAAAAAElFTkSuQmCC"
         header.image.isIdenticon: true
 
-        content: StatusBaseText {
-            id: text
+        contentItem: StatusBaseText {
             anchors.centerIn: parent
             text: "Some text content"
             font.pixelSize: 15
@@ -234,7 +232,7 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
             StatusButton {
                 text: "Change text"
                 onClicked: {
-                    modalWithContentAccess.contentComponent.text = "Changed!"
+                    modalWithIdenticon.contentItem.text = "Changed!"
                 }
             }
         ]
@@ -250,8 +248,7 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
 CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2ImYgiNITTlTdG1nUZ5a92VITQxITFiJmIIjSE0htAYQrMHAAD//+wwFVpz+yqXAAAAAElFTkSuQmCC"
         header.image.isIdenticon: true
 
-        content: StatusBaseText {
-            id: text
+        contentItem: StatusBaseText {
             anchors.centerIn: parent
             text: "Some text content"
             font.pixelSize: 15
@@ -262,7 +259,7 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
             StatusButton {
                 text: "Change text"
                 onClicked: {
-                    modalWithContentAccess.contentComponent.text = "Changed!"
+                    modalWithLongTitles.contentItem.text = "Changed!"
                 }
             }
         ]

@@ -752,7 +752,7 @@ Rectangle {
             icon.name: "notification"
         }
 
-        content: StatusBaseText {
+        contentItem: StatusBaseText {
             anchors.centerIn: parent
             text: "Contact request will be shown here"
             font.pixelSize: 15
@@ -781,7 +781,7 @@ Rectangle {
         header.subTitle: "Public Community"
         header.image.source: "https://pbs.twimg.com/profile_images/1369221718338895873/T_5fny6o_400x400.jpg"
 
-        content: Column {
+        contentItem: Column {
             width: demoCommunityDetailModal.width
 
             StatusModalDivider {

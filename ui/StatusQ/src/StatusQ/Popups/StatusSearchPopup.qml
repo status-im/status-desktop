@@ -17,7 +17,7 @@ StatusModal {
     showHeader: false
     showFooter: false
 
-    property string searchText: contentComponent.searchText
+    property string searchText: contentItem.searchText
     property string noResultsLabel: "No results"
     property string defaultSearchLocationText: "Anywhere"
     property bool loading
@@ -51,7 +51,7 @@ StatusModal {
         setSearchSelection(defaultSearchLocationText, "", "", false, "", "transparent")
     }
 
-    content: Item {
+    contentItem: Item {
         width: parent.width
         height: root.height
         property alias searchText: inputText.text
@@ -348,6 +348,6 @@ StatusModal {
     onClosed: {
         root.resetSearchSelection();
         root.loading = false;
-        contentComponent.searchText = "";
+        contentItem.searchText = "";
     }
 }
