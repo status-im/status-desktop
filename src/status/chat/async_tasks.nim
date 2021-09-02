@@ -1,3 +1,5 @@
+include ../utils/json_utils
+
 type 
   AsyncSearchMessagesTaskArg = ref object of QObjectTaskArg
     searchTerm: string
