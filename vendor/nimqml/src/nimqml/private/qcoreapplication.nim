@@ -1,5 +1,5 @@
-proc enableHDPI*() =
-  dos_qapplication_enable_hdpi()
+proc enableHDPI*(uiScaleFilePath: string) =
+  dos_qapplication_enable_hdpi(uiScaleFilePath)
 
 proc initializeOpenGL*() =
   dos_qapplication_initialize_opengl()

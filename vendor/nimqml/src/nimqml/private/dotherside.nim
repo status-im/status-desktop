@@ -126,7 +126,7 @@ proc dos_chararray_delete(str: cstring) {.cdecl, dynlib: dynLibName, importc.}
 
 # QCoreApplication
 proc dos_qcoreapplication_application_dir_path(): cstring {.cdecl, dynlib: dynLibName, importc.}
-proc dos_qapplication_enable_hdpi() {.cdecl, dynlib: dynLibName, importc.}
+proc dos_qapplication_enable_hdpi(uiScaleFilePath: cstring) {.cdecl, dynlib: dynLibName, importc.}
 proc dos_qapplication_initialize_opengl() {.cdecl, dynlib: dynLibName, importc.}
 
 # QApplication
