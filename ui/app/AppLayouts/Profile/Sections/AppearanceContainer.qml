@@ -214,6 +214,9 @@ ScrollView {
 
             ConfirmAppRestartModal {
                 id: confirmAppRestartModal
+                onClosed: {
+                    zoomSlider.value = zoomSlider.initialValue
+                }
             }
         }
 

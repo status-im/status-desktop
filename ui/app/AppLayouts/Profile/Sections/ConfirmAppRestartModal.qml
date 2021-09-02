@@ -14,7 +14,7 @@ ModalPopup {
     title: qsTr("Application Restart")
 
     StyledText {
-        text: qsTr("Status app will be closed. Please restart it for the changes to take into effect.")
+        text: qsTr("Please restart the application to apply the changes.")
         font.pixelSize: 15
         anchors.left: parent.left
         anchors.right: parent.right
@@ -30,7 +30,7 @@ ModalPopup {
             anchors.right: parent.right
             anchors.rightMargin: Style.current.smallPadding
             type: "warn"
-            text: qsTr("Proceed")
+            text: qsTr("Restart")
             anchors.bottom: parent.bottom
             onClicked: Qt.quit()
         }
