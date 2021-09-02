@@ -172,6 +172,72 @@ ScrollView {
             }
         }
 
+        StyledText {
+            id: labelZoom
+            anchors.top: fontSizeSliderLegend.bottom
+            anchors.topMargin: Style.current.xlPadding
+            anchors.left: parent.left
+            font.pixelSize: 15
+            text: qsTr("Change Zoom (requires restart)")
+        }
+
+        StatusSlider {
+            id: zoomSlider
+            anchors.top: labelZoom.bottom
+            anchors.topMargin: Style.current.padding
+            width: parent.width
+            minimumValue: 50
+            maximumValue: 200
+            stepSize: 50
+            value: parseFloat(utilsModel.readTextFile(uiScaleFilePath)) * 100
+            onValueChanged: {
+                utilsModel.writeTextFile(uiScaleFilePath, value / 100.0)
+            }
+        }
+
+        RowLayout {
+            id: zoomSliderLegend
+            anchors.top: zoomSlider.bottom
+            anchors.topMargin: Style.current.padding
+            anchors.left: parent.left
+            anchors.right: parent.right
+            spacing: 0
+
+            StyledText {
+                font.pixelSize: 15
+                text: "50%"
+            }
+
+            Item {
+                Layout.fillWidth: true
+            }
+
+            StyledText {
+                font.pixelSize: 15
+                Layout.leftMargin: width / 2
+                text: "100%"
+            }
+
+            Item {
+                Layout.fillWidth: true
+            }
+
+            StyledText {
+                font.pixelSize: 15
+                Layout.leftMargin: width / 2
+                text: "150%"
+            }
+
+            Item {
+                Layout.fillWidth: true
+            }
+
+            StyledText {
+                font.pixelSize: 15
+                text: "200%"
+            }
+        }
+
         // StatusSectionHeadline {
         //     id: sectionHeadlineChatMode
         //     //% "Chat mode"
@@ -225,7 +291,7 @@ ScrollView {
             //% "Appearance"
             text: qsTrId("appearance")
             // anchors.top: chatModeSection.bottom
-            anchors.top: fontSizeSliderLegend.bottom
+            anchors.top: zoomSliderLegend.bottom
             anchors.topMargin: Style.current.padding*3
             anchors.left: parent.left
             anchors.right: parent.right

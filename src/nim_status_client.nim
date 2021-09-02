@@ -49,7 +49,8 @@ proc mainProc() =
   status.tasks.marathon.registerWorker(mailserverWorker)
   status.initNode()
 
-  enableHDPI()
+  let uiScaleFilePath = joinPath(DATADIR, "ui-scale")
+  enableHDPI(uiScaleFilePath)
   initializeOpenGL()
 
   let app = newQGuiApplication()
@@ -95,6 +96,7 @@ proc mainProc() =
   defer: engine.delete()
   engine.addImportPath("qrc:/./StatusQ/src")
   engine.setNetworkAccessManagerFactory(networkAccessFactory)
+  engine.setRootContextProperty("uiScaleFilePath", newQVariant(uiScaleFilePath))
   
   # Register events objects
   let dockShowAppEvent = newStatusDockShowAppEventObject(engine)
