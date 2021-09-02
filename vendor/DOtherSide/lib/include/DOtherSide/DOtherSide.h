@@ -60,7 +60,7 @@ DOS_API void DOS_CALL dos_qcoreapplication_process_events(DosQEventLoopProcessEv
 /// \brief Force the event loop to spin and process the given events until no more available or timed out
 DOS_API void DOS_CALL dos_qcoreapplication_process_events_timed(DosQEventLoopProcessEventFlag flags, int ms);
 
-DOS_API void DOS_CALL dos_qapplication_enable_hdpi(void);
+DOS_API void DOS_CALL dos_qapplication_enable_hdpi(const char *uiScaleFilePath);
 
 DOS_API void DOS_CALL dos_qapplication_initialize_opengl(void);
 
