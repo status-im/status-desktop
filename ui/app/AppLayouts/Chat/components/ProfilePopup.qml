@@ -70,7 +70,7 @@ StatusModal {
         onClicked: contentComponent.qrCodePopup.open()
     }
 
-    content: Item {
+    contentItem: Item {
         width: popup.width
         height: modalContent.height
 

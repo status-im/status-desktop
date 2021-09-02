@@ -44,7 +44,7 @@ StatusModal {
             //% "New category"
             qsTrId("new-category")
 
-    content: Column {
+    contentItem: Column {
                 
         width: popup.width
         property alias categoryName: nameInput

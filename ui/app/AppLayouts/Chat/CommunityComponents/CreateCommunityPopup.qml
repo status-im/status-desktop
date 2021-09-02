@@ -51,7 +51,7 @@ StatusModal {
             //% "New community"
             qsTrId("new-community")
 
-    content: ScrollView {
+    contentItem: ScrollView {
 
         id: scrollView
 

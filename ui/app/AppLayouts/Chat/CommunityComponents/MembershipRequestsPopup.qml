@@ -21,7 +21,7 @@ StatusModal {
     header.title: qsTrId("membership-requests")
     header.subTitle: contentComponent.membershipRequestList.count
 
-    content: Column {
+    contentItem: Column {
         property alias errorText: errorText
         property alias membershipRequestList: membershipRequestList
         width: popup.width

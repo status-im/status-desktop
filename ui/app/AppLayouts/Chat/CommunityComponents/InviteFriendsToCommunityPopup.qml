@@ -31,7 +31,7 @@ StatusModal {
     //% "Invite friends"
     header.title: qsTrId("invite-friends")
 
-    content: CommunityProfilePopupInviteFriendsView {
+    contentItem: CommunityProfilePopupInviteFriendsView {
         id: contactFieldAndList
         contactListSearch.onUserClicked: {
             if (isContact) {

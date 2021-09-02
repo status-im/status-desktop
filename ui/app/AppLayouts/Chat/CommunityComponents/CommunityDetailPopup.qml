@@ -54,7 +54,7 @@ StatusModal {
         return subTitle
     }
 
-    content: Column {
+    contentItem: Column {
         width: popup.width
 
         Item {
