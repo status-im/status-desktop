@@ -183,21 +183,37 @@ ScrollView {
 
         StatusSlider {
             id: zoomSlider
+            readonly property int initialValue: {
+                let scaleFactorStr = utilsModel.readTextFile(uiScaleFilePath)
+                if (scaleFactorStr === "") {
+                    return 100
+                }
+                let scaleFactor = parseFloat(scaleFactorStr)
+                if (isNaN(scaleFactor)) {
+                    return 100
+                }
+                return scaleFactor * 100
+            }
             anchors.top: labelZoom.bottom
             anchors.topMargin: Style.current.padding
             width: parent.width
             minimumValue: 50
             maximumValue: 200
             stepSize: 50
-            value: {
-                let scaleFactorStr = utilsModel.readTextFile(uiScaleFilePath)
-                if (scaleFactorStr === "") {
-                    return 100
-                }
-                return parseFloat(scaleFactorStr) * 100
-            }
+            value: initialValue
             onValueChanged: {
-                utilsModel.writeTextFile(uiScaleFilePath, value / 100.0)
+                if (value !== initialValue) {
+                    utilsModel.writeTextFile(uiScaleFilePath, value / 100.0)
+                }
+            }
+            onPressedChanged: {
+                if (!pressed && value !== initialValue) {
+                    confirmAppRestartModal.open()
+                }
+            }
+
+            ConfirmAppRestartModal {
+                id: confirmAppRestartModal
             }
         }
 
