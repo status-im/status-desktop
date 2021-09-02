@@ -190,7 +190,10 @@ QtObject:
     notify = newVersionChanged
   
   proc readTextFile*(self: UtilsView, filepath: string): string {.slot.} =
-    return readFile(filepath)
+    try:
+      return readFile(filepath)
+    except:
+      return ""
 
   proc writeTextFile*(self: UtilsView, filepath: string, text: string): bool {.slot.} =
     try:
