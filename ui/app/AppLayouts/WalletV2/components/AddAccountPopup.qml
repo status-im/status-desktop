@@ -14,8 +14,7 @@ import StatusQ.Popups 0.1
 
 StatusModal {
     id: popup
-    width: 574
-    height: (keyOrSeedPhraseInput.height > 100) ? 517 : 498
+    height: (keyOrSeedPhraseInput.input.edit.contentHeight > 56 || seedPhraseInserted) ? 517 : 498
     header.title: qsTr("Add account")
     onOpened: {
         keyOrSeedPhraseInput.input.edit.forceActiveFocus(Qt.MouseFocusReason);
@@ -34,7 +33,17 @@ StatusModal {
     }
 
     function validate() {
-        return (keyOrSeedPhraseInput.valid && accountNameInput.valid);
+        if (popup.isSeedCountValid && !popup.seedPhraseNotFound()) {
+            var validCount = 0;
+            var accountsList = seedAccountDetails.activeAccountsList;
+            for (var i = 0; i < accountsList.count; i++) {
+                if (accountsList.itemAtIndex(i).nameInputValid) {
+                    validCount++;
+                }
+            }
+        }
+        return (popup.isSeedCountValid && !popup.seedPhraseNotFound()) ? (validCount === accountsList.count) :
+               (keyOrSeedPhraseInput.valid && pkeyAccountDetails.nameInputValid);
     }
 
     contentItem: Item {
@@ -46,10 +55,7 @@ StatusModal {
         height: parent.height
 
         Item {
-            id: seedOrPKInputContainer
-            width: parent.width
-            height: 120 + ((keyOrSeedPhraseInput.height > 100) ? 30 : 0)
-
+            id: leftContent
             StatusInput {
                 id: keyOrSeedPhraseInput
                 width: parent.width
@@ -74,6 +80,12 @@ StatusModal {
                 ]
                 onTextChanged: {
                     popup.seedPhraseInserted = keyOrSeedPhraseInput.text.includes(" ");
+                    if (popup.seedPhraseInserted) {
+                        popup.seedPhraseInserted = true;
+                        seedAccountDetails.searching = true;
+                        seedAccountDetails.timer.start();
+                    }
+
                     popup.isSeedCountValid = (!!keyOrSeedPhraseInput.text && (keyOrSeedPhraseInput.text.match(/(\w+)/g).length === 12));
                     if (text === "") {
                         errorMessage = qsTr("You need to enter a valid private key or seed phrase");
@@ -95,68 +107,93 @@ StatusModal {
             }
         }
 
-        Separator {
+        Rectangle {
             id: separator
-            anchors.left: parent.left
-            anchors.leftMargin: 16
-            anchors.right: parent.right
-            anchors.rightMargin: 16
-            anchors.top: seedOrPKInputContainer.bottom
-            anchors.topMargin: (2*popup.marginBetweenInputs)
+            color: Theme.palette.statusPopupMenu.separatorColor
         }
 
-        Row {
-            id: accountNameInputRow
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.rightMargin: 10
+        PKeyAccountDetails {
+            id: pkeyAccountDetails
+            width: parent.width
+            height: parent.height/2
             anchors.top: separator.bottom
-            anchors.topMargin: popup.marginBetweenInputs
-            height: (parent.height/2)
-            StatusInput {
-                id: accountNameInput
-                implicitWidth: (parent.width - emojiDropDown.width)
-                input.implicitHeight: 56
-                input.placeholderText: qsTrId("enter-an-account-name...")
-                label: qsTrId("account-name")
-                validators: [StatusMinLengthValidator { minLength: 1 }]
-                onTextChanged: {
-                    errorMessage = (accountNameInput.text === "") ?
-                                qsTrId("you-need-to-enter-an-account-name") : ""
-                }
-            }
-            Item {
-                id: emojiDropDown
-                //emoji placeholder
-                width: 80
-                height: parent.height
-                anchors.top: parent.top
-                anchors.topMargin: 11
-                StyledText {
-                    id: inputLabel
-                    text: "Emoji"
-                    font.weight: Font.Medium
-                    font.pixelSize: 13
-                    color: Style.current.textColor
-                }
-                Rectangle {
-                    width: parent.width
-                    height: 56
-                    anchors.top: inputLabel.bottom
-                    anchors.topMargin: 7
-                    radius: 10
-                    color: "pink"
-                    opacity: 0.6
-                }
-            }
         }
+
+        SeedAddAccountView {
+            id: seedAccountDetails
+            width: (parent.width/2)
+            height: parent.height
+            anchors.right: parent.right
+        }
+
+        states: [
+            State {
+                when: (popup.isSeedCountValid && !popup.seedPhraseNotFound())
+                PropertyChanges {
+                    target: popup
+                    width: 907
+                }
+                PropertyChanges {
+                    target: pkeyAccountDetails
+                    opacity: 0.0
+                }
+                PropertyChanges {
+                    target: leftContent
+                    width: contentItem.width/2
+                    height: contentItem.height
+                }
+                PropertyChanges {
+                    target: separator
+                    width: 1
+                    height: contentItem.height
+                }
+                AnchorChanges {
+                    target: separator
+                    anchors.left: leftContent.right
+                }
+                PropertyChanges {
+                    target: seedAccountDetails
+                    opacity: 1.0
+                }
+            },
+            State {
+                when: !(popup.isSeedCountValid && !popup.seedPhraseNotFound())
+                PropertyChanges {
+                    target: popup
+                    width: 574
+                }
+                PropertyChanges {
+                    target: seedAccountDetails
+                    opacity: 0.0
+                }
+                PropertyChanges {
+                    target: leftContent
+                    width: contentItem.width
+                    height: 120
+                }
+                PropertyChanges {
+                    target: pkeyAccountDetails
+                    opacity: 1.0
+                }
+                PropertyChanges {
+                    target: separator
+                    width: contentItem.width
+                    height: 1
+                    anchors.topMargin: (2*popup.marginBetweenInputs)
+                }
+                AnchorChanges {
+                    target: separator
+                    anchors.left: contentItem.left
+                    anchors.top: leftContent.bottom
+                }
+            }
+        ]
     }
 
     rightButtons: [
         StatusButton {
             text: popup.loading ? qsTrId("loading") : qsTrId("add-account")
-            enabled: !popup.loading && (accountNameInput.text !== "")
-                     && (keyOrSeedPhraseInput.correctWordCount || (keyOrSeedPhraseInput.text !== ""))
+            enabled: (!popup.loading && popup.validate())
 
             MessageDialog {
                 id: accountError
@@ -172,14 +209,25 @@ StatusModal {
                     popup.loading = false;
                 } else {
                     //TODO account color to be verified with design
-                    const result = popup.seedPhraseInserted ?
-                                     walletModel.accountsView.addAccountsFromSeed(keyOrSeedPhraseInput.text, "", accountNameInput.text, "") :
-                                     walletModel.accountsView.addAccountsFromPrivateKey(keyOrSeedPhraseInput.text, "", accountNameInput.text, "");
+                    var result;
+                    if (popup.isSeedCountValid && !popup.seedPhraseNotFound()) {
+                        var accountsList = seedAccountDetails.activeAccountsList;
+                        for (var i = 0; i < accountsList.count; i++) {
+                            //TODO remove password requirement
+                            if (!!accountsList.itemAtIndex(i)) {
+                                result = walletModel.accountsView.addAccountsFromSeed(accountsList.itemAtIndex(i).accountAddress, "", accountsList.itemAtIndex(i).accountName, "")
+                            }
+                        }
+                    } else {
+                        result = walletModel.accountsView.addAccountsFromPrivateKey(keyOrSeedPhraseInput.text, "", pkeyAccountDetails.accountName, "");
+                    }
                     popup.loading = false;
                     if (result) {
                         let resultJson = JSON.parse(result);
-                        accountError.text = resultJson.error;
-                        accountError.open();
+                        if (!Utils.isInvalidPasswordMessage(resultJson.error)) {
+                            accountError.text = resultJson.error;
+                            accountError.open();
+                        }
                         errorSound.play();
                         return;
                     }
