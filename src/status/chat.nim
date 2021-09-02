@@ -14,6 +14,9 @@ import tasks/[qt, task_runner_impl]
 import signals/messages
 import ens, accounts
 
+include chat/utils
+include chat/async_tasks
+
 logScope:
   topics = "chat-model"
 
@@ -68,9 +71,6 @@ type
     communityId*: string
     channelId*: string
     notificationTypes*: seq[ActivityCenterNotificationType]
-
-include chat/utils
-include chat/async_tasks
 
 QtObject:
   type ChatModel* = ref object of QObject
