@@ -189,7 +189,13 @@ ScrollView {
             minimumValue: 50
             maximumValue: 200
             stepSize: 50
-            value: parseFloat(utilsModel.readTextFile(uiScaleFilePath)) * 100
+            value: {
+                let scaleFactorStr = utilsModel.readTextFile(uiScaleFilePath)
+                if (scaleFactorStr === "") {
+                    return 100
+                }
+                return parseFloat(scaleFactorStr) * 100
+            }
             onValueChanged: {
                 utilsModel.writeTextFile(uiScaleFilePath, value / 100.0)
             }
