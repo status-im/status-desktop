@@ -21,7 +21,7 @@ StatusModal {
         popup.destroy();
     }
 
-    content: Item {
+    contentItem: Item {
         width: popup.width
         height: Math.max(300, content.height + 32)
         Column {

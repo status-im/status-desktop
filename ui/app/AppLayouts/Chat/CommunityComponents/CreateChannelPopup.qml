@@ -45,7 +45,7 @@ StatusModal {
                contentComponent.channelDescription.valid
     }
 
-    content: ScrollView {
+    contentItem: ScrollView {
 
         id: scrollView
 

@@ -40,7 +40,7 @@ StatusModal {
         }
     }
 
-    content: Column {
+    contentItem: Column {
         width: popup.width
         property alias searchBox: searchBox
 

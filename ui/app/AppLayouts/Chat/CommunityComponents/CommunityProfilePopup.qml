@@ -24,7 +24,7 @@ StatusModal {
     header.icon.isLetterIdenticon: contentComponent.currentItem.headerTitle == popup.community.name && !contentComponent.currentItem.headerImageSource
     header.icon.background.color: popup.community.communityColor
 
-    content: StackView {
+    contentItem: StackView {
         id: stack
         initialItem: profileOverview
         anchors.centerIn: parent

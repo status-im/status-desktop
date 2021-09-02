@@ -21,7 +21,7 @@ StatusModal {
         id: membershipRequirementGroup
     }
 
-    content: Column {
+    contentItem: Column {
         width: popup.width
         spacing: 8
 
