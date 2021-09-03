@@ -21,43 +21,54 @@ Item {
     Layout.fillHeight: true
     Layout.fillWidth: true
 
-    StyledText {
-        id: title
-        text: currentAccount.name
+    Row {
+        id: accountRow
         anchors.top: parent.top
         anchors.topMargin: 56
         anchors.left: parent.left
         anchors.leftMargin: 24
-        font.weight: Font.Medium
-        font.pixelSize: 28
+
+        spacing: 8
+
+        StyledText {
+            id: title
+            anchors.verticalCenter: parent.verticalCenter
+            text: currentAccount.name
+            font.weight: Font.Medium
+            font.pixelSize: 28
+        }
+
+        Rectangle {
+            id: separatorDot
+            width: 8
+            height: 8
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.verticalCenterOffset: 1
+            color: Style.current.primary
+            radius: 50
+        }
+
+        StyledText {
+            id: walletBalance
+            anchors.verticalCenter: parent.verticalCenter
+            text: currentAccount.balance.toUpperCase()
+            font.pixelSize: 22
+        }
     }
 
-    Rectangle {
-        id: separatorDot
-        width: 8
-        height: 8
-        color: Style.current.primary
-        anchors.top: title.verticalCenter
-        anchors.topMargin: -3
-        anchors.left: title.right
-        anchors.leftMargin: 8
-        radius: 50
-    }
-
-    StyledText {
-        id: walletBalance
-        text: currentAccount.balance.toUpperCase()
-        anchors.left: separatorDot.right
-        anchors.leftMargin: 8
-        anchors.verticalCenter: title.verticalCenter
-        font.pixelSize: 22
+    MouseArea {
+        anchors.fill: accountRow
+        cursorShape: Qt.PointingHandCursor
+        onClicked: {
+            openPopup(shareModalComponent);
+        }
     }
 
     StatusExpandableAddress {
         id: walletAddress
         address: currentAccount.address
-        anchors.top: title.bottom
-        anchors.left: title.left
+        anchors.top: accountRow.bottom
+        anchors.left: accountRow.left
         addressWidth: 180
         anchors.leftMargin: 0
         anchors.topMargin: 0
@@ -137,6 +148,15 @@ Item {
                     icon.height: 16
                     onTriggered: console.log("TODO")
                 }
+            }
+        }
+    }
+
+    Component {
+        id: shareModalComponent
+        ShareModal {
+            onClosed: {
+                destroy();
             }
         }
     }
