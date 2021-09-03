@@ -397,6 +397,7 @@ $(STATUS_CLIENT_EXE): nim_status_client nim_windows_launcher $(NIM_WINDOWS_PREBU
 	cat windows-install.txt | unix2dos > $(OUTPUT)/INSTALL.txt
 	cp status.ico status.svg resources.rcc $(FLEETS) $(OUTPUT)/resources/
 	cp ui/i18n/* $(OUTPUT)/resources/i18n
+	cp cacert.pem $(OUTPUT)/bin/cacert.pem
 	cp bin/nim_status_client.exe $(OUTPUT)/bin/Status.exe
 	cp bin/nim_windows_launcher.exe $(OUTPUT)/Status.exe
 	rcedit $(OUTPUT)/bin/Status.exe --set-icon $(OUTPUT)/resources/status.ico
