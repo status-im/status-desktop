@@ -110,7 +110,6 @@ Item {
 
             QC.ScrollBar.vertical: QC.ScrollBar { interactive: multiline; enabled: multiline }
 
-
             function ensureVisible(r) {
                 if (contentX >= r.x)
                     contentX = r.x;
@@ -161,6 +160,8 @@ Item {
                         event.accepted = true
                     }
                 }
+
+                Keys.forwardTo: [statusBaseInput]
 
                 onTextChanged: {
                     statusBaseInput.dirty = true

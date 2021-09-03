@@ -95,6 +95,8 @@ Item {
 
         maximumLength: root.charLimit
         onTextChanged: root.validate()
+
+        Keys.forwardTo: [root]
     }
 
     StatusBaseText {
