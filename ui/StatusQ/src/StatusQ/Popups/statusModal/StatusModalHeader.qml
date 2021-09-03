@@ -18,6 +18,7 @@ Rectangle {
     property alias image: imageWithTitle.image
     property alias icon: imageWithTitle.icon
     property bool editable: false
+    property Component popupMenu
 
     signal editButtonClicked
     signal close
@@ -28,6 +29,12 @@ Rectangle {
     radius: 16
 
     color: Theme.palette.statusModal.backgroundColor
+
+    onPopupMenuChanged: {
+        if (!!popupMenu) {
+            popupMenuSlot.sourceComponent = popupMenu
+        }
+    }
 
     StatusImageWithTitle {
         id: imageWithTitle
@@ -40,6 +47,15 @@ Rectangle {
         titleElide: statusModalHeader.titleElide
         subTitleElide: statusModalHeader.subTitleElide
         onEditButtonClicked: statusModalHeader.editButtonClicked()
+    }
+
+    MouseArea {
+        anchors.fill: imageWithTitle
+        visible: !!statusModalHeader.popupMenu
+        cursorShape: Qt.PointingHandCursor
+        onClicked: {
+            popupMenuSlot.item.popup(imageWithTitle.x, imageWithTitle.y + imageWithTitle.height + 8)
+        }
     }
 
     Loader {
@@ -77,5 +93,10 @@ Rectangle {
             anchors.bottom: parent.bottom
             width: parent.width
         }
+    }
+
+    Loader {
+        id: popupMenuSlot
+        active: !!statusModalHeader.popupMenu
     }
 }

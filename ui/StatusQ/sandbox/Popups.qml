@@ -53,6 +53,11 @@ Column {
         onClicked: modalWithLongTitles.open()
     }
 
+    StatusButton {
+        text: "Modal with Header Popup Menu"
+        onClicked: modalWithHeaderPopupMenu.open()
+    }
+
     StatusModal {
         id: simpleModal
         anchors.centerIn: parent
@@ -263,5 +268,34 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
                 }
             }
         ]
+    }
+
+    StatusModal {
+        id: modalWithHeaderPopupMenu
+        anchors.centerIn: parent
+        header.title: "helloworld.eth"
+        header.subTitle: "Basic address"
+        header.popupMenu: StatusPopupMenu {
+            id: popupMenu
+            Repeater {
+                model: dummyAccountsModel
+                delegate: Loader {
+                    sourceComponent: popupMenu.delegate
+                    onLoaded: {
+                        item.action.text = model.name
+                        item.action.iconSettings.name = model.iconName
+                    }
+                }
+            }
+            onMenuItemClicked: {
+                popupMenu.dismiss()
+            }
+        }
+    }
+
+    ListModel {
+        id: dummyAccountsModel
+        ListElement{name: "Account 1"; iconName: "filled-account"}
+        ListElement{name: "Account 2"; iconName: "filled-account"}
     }
 }

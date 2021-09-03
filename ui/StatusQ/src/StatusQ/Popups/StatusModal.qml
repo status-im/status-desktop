@@ -54,6 +54,7 @@ QC.Popup {
             subTitleElide: header.subTitleElide
             image: header.image
             icon: header.icon
+            popupMenu: header.popupMenu
 
             onEditButtonClicked: statusModal.editButtonClicked()
             onClose: statusModal.close()

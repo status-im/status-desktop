@@ -5,6 +5,7 @@ QtObject {
     property string subTitle
     property int titleElide: Text.ElideRight
     property int subTitleElide: Text.ElideRight
+    property Component popupMenu
     property StatusImageSettings image: StatusImageSettings {
         width: 40
         height: 40
