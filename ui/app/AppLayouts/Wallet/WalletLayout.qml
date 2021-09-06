@@ -91,15 +91,11 @@ Item {
                         }
                         StatusTabButton {
                             id: collectiblesBtn
-                            anchors.left: assetBtn.right
-                            anchors.leftMargin: 32
                             //% "Collectibles"
                             btnText: qsTrId("wallet-collectibles")
                         }
                         StatusTabButton {
                             id: historyBtn
-                            anchors.left: collectiblesBtn.right
-                            anchors.leftMargin: 32
                             //% "History"
                             btnText: qsTrId("history")
                         }

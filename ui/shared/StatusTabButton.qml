@@ -4,33 +4,35 @@ import "../imports"
 
 TabButton {
     property string btnText: "Default Button"
-
+    implicitWidth: tabBtnText.width + 32
     id: tabButton
-    width: tabBtnText.width
-    height: tabBtnText.height + 11
-    text: ""
     padding: 0
     background: Rectangle {
+        implicitHeight: 36
         color: Style.current.transparent
         border.width: 0
+
+        Rectangle {
+            visible: tabButton.checked || tabButton.hovered
+            color: tabButton.checked ? Style.current.primary : Style.current.secondaryBackground
+            anchors.bottom: parent.bottom
+            width: 24
+            anchors.horizontalCenter: parent.horizontalCenter
+            height: 3
+            radius: 4
+        }
     }
 
-    StyledText {
-        id: tabBtnText
-        text: btnText
-        font.weight: Font.Medium
-        font.pixelSize: 15
-        color: parent.checked || parent.hovered ? Style.current.textColor : Style.current.secondaryText
-    }
-
-    Rectangle {
-        visible: parent.checked || parent.hovered
-        color: parent.checked ? Style.current.primary : Style.current.secondaryBackground
-        anchors.bottom: parent.bottom
-        width: 40
-        anchors.horizontalCenter: parent.horizontalCenter
-        height: 3
-        radius: 4
+    contentItem: Item {
+        height: 36
+        StyledText {
+            id: tabBtnText
+            text: btnText
+            font.weight: Font.Medium
+            font.pixelSize: 15
+            color: tabButton.checked || tabButton.hovered ? Style.current.textColor : Style.current.secondaryText
+            anchors.horizontalCenter: parent.horizontalCenter
+        }
     }
 
     MouseArea {
