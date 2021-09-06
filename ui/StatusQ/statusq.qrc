@@ -267,5 +267,6 @@
         <file>src/StatusQ/Controls/StatusSwitchTabButton.qml</file>
         <file>src/StatusQ/Controls/StatusSwitchTabBar.qml</file>
         <file>src/StatusQ/Components/StatusExpandableSettingsItem.qml</file>
+        <file>src/assets/img/icons/snt.svg</file>
     </qresource>
 </RCC>
