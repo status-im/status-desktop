@@ -12,6 +12,7 @@ ScrollView {
     width: parent.width
     contentHeight: advancedContainer.height + 100
     clip: true
+    property bool isWakuV2: profileModel.fleets.fleet == Constants.waku_prod || profileModel.fleets.fleet === Constants.waku_test
 
     Item {
         id: advancedContainer
@@ -201,6 +202,7 @@ ScrollView {
             }
 
             StatusSectionHeadline {
+                visible: !isWakuV2
                 //% "Bloom filter level"
                 text: qsTrId("bloom-filter-level")
                 topPadding: Style.current.bigPadding
@@ -208,6 +210,7 @@ ScrollView {
             }
 
             Row {
+                visible: !isWakuV2
                 spacing: 11
 
                 Component {
@@ -283,6 +286,78 @@ ScrollView {
                     }
                 }
             }
+
+            StatusSectionHeadline {
+                visible: isWakuV2
+                text: qsTr("WakuV2 mode")
+                topPadding: Style.current.bigPadding
+                bottomPadding: Style.current.padding
+            }
+
+            Row {
+                spacing: 11
+                visible: isWakuV2
+                Component {
+                    id: wakuV2ModeConfirmationDialogComponent
+                    ConfirmationDialog {
+                        property bool mode: false
+
+                        id: confirmDialog
+                        //% "Warning!"
+                        title: qsTrId("close-app-title")
+                        //% "The account will be logged out. When you login again, the selected mode will be enabled"
+                        confirmationText: qsTrId("the-account-will-be-logged-out--when-you-login-again--the-selected-mode-will-be-enabled")
+                        onConfirmButtonClicked: {
+                            nodeModel.setWakuV2LightClient(mode)
+                        }
+                        onClosed: {
+                            if(nodeModel.WakuV2LightClient){
+                                btnWakuV2Light.click()
+                            } else {
+                                btnWakuV2Full.click();
+                            }
+                            destroy()
+                        }
+                    }
+                }
+
+                ButtonGroup {
+                    id: wakuV2Group
+                }
+
+                BloomSelectorButton {
+                    id: btnWakuV2Light
+                    buttonGroup: wakuV2Group
+                    checkedByDefault: nodeModel.WakuV2LightClient
+                    //% "Light Node"
+                    btnText: qsTrId("light-node")
+                    onToggled: {
+                        if (!nodeModel.WakuV2LightClient) {
+                            openPopup(wakuV2ModeConfirmationDialogComponent, {light: true})
+                        } else {
+                            btnWakuV2Light.click()
+                        }
+                    }
+                }
+
+                BloomSelectorButton {
+                    id: btnWakuV2Full
+                    buttonGroup: wakuV2Group
+                    checkedByDefault: !nodeModel.WakuV2LightClient
+                    //% "Full Node"
+                    btnText: qsTrId("full-node")
+                    onToggled: {
+                        if (nodeModel.WakuV2LightClient) {
+                            openPopup(wakuV2ModeConfirmationDialogComponent, {light: false})
+                        } else {
+                            btnWakuV2Full.click()
+                        }
+                    }
+                }
+            }
+
+
+
 
             StatusSettingsLineButton {
                 text: qsTr("Download messages")
