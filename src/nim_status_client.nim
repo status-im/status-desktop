@@ -1,4 +1,4 @@
-import NimQml, chronicles, os, strformat, times
+import NimQml, chronicles, os, strformat, times, md5
 
 import app/chat/core as chat
 import app/wallet/v1/core as wallet
@@ -65,6 +65,12 @@ proc mainProc() =
     else:
       "/../resources.rcc"
   QResource.registerResource(app.applicationDirPath & resources)
+
+  let singleInstance = newSingleInstance($toMD5(getAppDir()))
+  defer: singleInstance.delete()
+  if singleInstance.secondInstance():
+    info "Terminating the app as the second instance"
+    quit()
 
   let statusAppIcon =
     if defined(production):
@@ -207,6 +213,7 @@ proc mainProc() =
 
   engine.setRootContextProperty("loginModel", login.variant)
   engine.setRootContextProperty("onboardingModel", onboarding.variant)
+  engine.setRootContextProperty("singleInstance", newQVariant(singleInstance))
 
   let isExperimental = if getEnv("EXPERIMENTAL") == "1": "1" else: "0" # value explicity passed to avoid trusting input
   let experimentalFlag = newQVariant(isExperimental)
