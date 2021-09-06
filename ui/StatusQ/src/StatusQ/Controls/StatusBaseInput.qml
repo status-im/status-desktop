@@ -22,6 +22,7 @@ Item {
     property alias selectionEnd: edit.selectionEnd
     property alias cursorPosition: edit.cursorPosition
 
+    property alias edit: edit
     property alias text: edit.text
 
     property alias color: edit.color
