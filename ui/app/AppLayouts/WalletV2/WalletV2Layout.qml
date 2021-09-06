@@ -71,8 +71,6 @@ Item {
 
                     TabBar {
                         id: walletTabBar
-                        anchors.right: parent.right
-                        anchors.rightMargin: Style.current.bigPadding
                         anchors.left: parent.left
                         anchors.leftMargin: Style.current.bigPadding
                         anchors.top: parent.top
