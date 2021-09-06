@@ -286,8 +286,17 @@ Item {
             visible: !isEdit
 
             ChatText {
-                readonly property int leftPadding: chatImage.anchors.leftMargin + chatImage.width + root.chatHorizontalPadding
                 id: chatText
+                readonly property int leftPadding: chatImage.anchors.leftMargin + chatImage.width + root.chatHorizontalPadding
+                visible: {
+                    const urls = root.linkUrls.split(" ")
+                    if (urls.length === 1 && Utils.hasImageExtension(urls[0]) && appSettings.displayChatImages) {
+                        return false
+                    }
+
+                    return isText || isEmoji
+                }
+
                 anchors.top: parent.top
                 anchors.topMargin: isEmoji ? 2 : 0
                 anchors.left: parent.left
