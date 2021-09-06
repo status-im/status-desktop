@@ -120,6 +120,18 @@ StatusWindow {
             }
         }
     }
+	
+	Connections {
+        target: singleInstance
+
+        onSecondInstanceDetected: {
+            console.log("User attempted to run the second instance of the application")
+            // activating this instance to give user visual feedback
+            applicationWindow.show()
+            applicationWindow.raise()
+            applicationWindow.requestActivate()
+        }
+    }
 
     // The easiest way to get current system theme (is it light or dark) without using
     // OS native methods is to check lightness (0 - 1.0) of the window color.
