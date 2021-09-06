@@ -21,6 +21,8 @@ from web3/conversions import `$`
 
 export account, collectibles
 
+include wallet2/async_tasks
+
 logScope:
   topics = "status-wallet2"
 
@@ -211,3 +213,22 @@ QtObject:
 
   proc getOpenseaAssets*(address: string, collectionSlug: string, limit: int): string =
     result = status_wallet.getOpenseaAssets(address, collectionSlug, limit)
+
+  proc asyncFetchCryptoServices*(self: StatusWalletController) =
+    ## Asynchronous request for the list of services to buy/sell crypto.
+    let arg = QObjectTaskArg(
+      tptr: cast[ByteAddress](asyncGetCryptoServicesTask),
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "onAsyncFetchCryptoServices"
+    )
+    self.tasks.threadpool.start(arg)
+
+  proc onAsyncFetchCryptoServices*(self: StatusWalletController, 
+    response: string) {.slot.} =
+    let responseArray = response.parseJson
+    if (responseArray.kind != JArray):
+      info "received crypto services is not a json array"
+      self.events.emit("cryptoServicesFetched", CryptoServicesArg())
+      return
+
+    self.events.emit("cryptoServicesFetched", CryptoServicesArg(services: responseArray))

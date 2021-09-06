@@ -136,3 +136,12 @@ proc getOpenseaCollections*(address: string): string =
 proc getOpenseaAssets*(address: string, collectionSlug: string, limit: int): string =
   let payload = %* [address, collectionSlug, limit]
   result = callPrivateRPC("wallet_getOpenseaAssetsByOwnerAndCollection", payload)
+
+proc fetchCryptoServices*(success: var bool): string =
+  success = true
+  try:
+    result = callPrivateRPC("wallet_getCryptoOnRamps")
+  except Exception as e:
+    success = false
+    error "Error getting crypto services: ", msg = e.msg
+    result = ""

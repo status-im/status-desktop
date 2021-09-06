@@ -43,3 +43,7 @@ proc init*(self: WalletController) =
   self.status.events.on(SignalType.Wallet.event) do(e:Args):
     var data = WalletSignal(e)
     debug "TODO: handle wallet signal", signalType=data.eventType
+
+  self.status.events.on("cryptoServicesFetched") do(e: Args):
+    var args = CryptoServicesArg(e)
+    self.view.onCryptoServicesFetched(args.services)
