@@ -2,7 +2,7 @@ import libstatus/accounts as libstatus_accounts
 import libstatus/core as libstatus_core
 import libstatus/settings as libstatus_settings
 import types as libstatus_types
-import chat, accounts, wallet, node, network, messages, contacts, profile, stickers, permissions, fleet, settings, mailservers, browser, tokens, provider
+import chat, accounts, wallet, wallet2, node, network, messages, contacts, profile, stickers, permissions, fleet, settings, mailservers, browser, tokens, provider
 import notifications/os_notifications
 import ../eventemitter
 import ./tasks/task_runner_impl
@@ -17,6 +17,7 @@ type Status* = ref object
   messages*: MessagesModel
   accounts*: AccountModel
   wallet*: WalletModel
+  wallet2*: StatusWalletController
   node*: NodeModel
   profile*: ProfileModel
   contacts*: ContactModel
@@ -40,6 +41,7 @@ proc newStatusInstance*(fleetConfig: string): Status =
   result.accounts = accounts.newAccountModel(result.events)
   result.wallet = wallet.newWalletModel(result.events)
   result.wallet.initEvents()
+  result.wallet2 = wallet2.newStatusWalletController(result.events, result.tasks)
   result.node = node.newNodeModel()
   result.messages = messages.newMessagesModel(result.events)
   result.profile = profile.newProfileModel()

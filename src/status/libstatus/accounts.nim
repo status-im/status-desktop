@@ -6,7 +6,6 @@ import ../utils as utils
 import ../types as types
 import accounts/constants
 import ../signals/types as signal_types
-import ../wallet/account
 
 proc getNetworkConfig(currentNetwork: string): JsonNode =
   result = constants.DEFAULT_NETWORKS.first("id", currentNetwork)
@@ -323,15 +322,15 @@ proc saveAccount*(account: GeneratedAccount, password: string, color: string, ac
     error "Error storing the new account. Bad password?"
     raise
 
-proc changeAccount*(account: WalletAccount): string =
+proc changeAccount*(name, address, publicKey, walletType, iconColor: string): string =
   try:
     let response = callPrivateRPC("accounts_saveAccounts", %* [
       [{
-        "color": account.iconColor,
-        "name": account.name,
-        "address": account.address,
-        "public-key": account.publicKey,
-        "type": account.walletType,
+        "color": iconColor,
+        "name": name,
+        "address": address,
+        "public-key": publicKey,
+        "type": walletType,
         "path": "m/44'/60'/0'/0/1" # <--- TODO: fix this. Derivation path is not supposed to change
       }]
     ])
