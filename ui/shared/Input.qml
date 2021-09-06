@@ -42,7 +42,9 @@ Item {
     signal textEdited(string inputValue)
 
     id: inputBox
-    implicitHeight: inputRectangle.height + (hasLabel ? inputLabel.height + labelMargin : 0) + (!!validationError ? (validationErrorText.height + validationErrorTopMargin) : 0)
+    implicitHeight: inputRectangle.height + 
+        (hasLabel ? inputLabel.height + labelMargin : 0) + 
+        (!!validationError ? (validationErrorText.height + validationErrorTopMargin) : 0)
     height: implicitHeight
     anchors.right: parent.right
     anchors.left: parent.left
@@ -64,13 +66,25 @@ Item {
         color: Style.current.textColor
     }
 
-    Item {
+    Rectangle {
         id: inputField
         anchors.right: parent.right
         anchors.left: parent.left
         height: customHeight
         anchors.top: inputBox.hasLabel ? inputLabel.bottom : parent.top
         anchors.topMargin: inputBox.hasLabel ? inputBox.labelMargin : 0
+        color: bgColor
+        radius: Style.current.radius
+        border.width: (!!validationError || inputValue.focus) ? 1 : 0
+        border.color: {
+            if (!!validationError) {
+                return validationErrorColor
+            }
+            if (!inputBox.readOnly && inputValue.focus) {
+                return Style.current.inputBorderFocus
+            }
+            return Style.current.transparent
+        }
 
         StyledTextField {
             id: inputValue
@@ -92,18 +106,7 @@ Item {
             background: Rectangle {
                 id: inputRectangle
                 anchors.fill: parent
-                color: bgColor
-                radius: Style.current.radius
-                border.width: (!!validationError || inputValue.focus) ? 1 : 0
-                border.color: {
-                    if (!!validationError) {
-                        return validationErrorColor
-                    }
-                    if (!inputBox.readOnly && inputValue.focus) {
-                        return Style.current.inputBorderFocus
-                    }
-                    return Style.current.transparent
-                }
+                color: "transparent"
             }
             onEditingFinished: inputBox.editingFinished(inputBox.text)
             onTextEdited: inputBox.textEdited(inputBox.text)
@@ -138,7 +141,7 @@ Item {
             active: inputBox.copyToClipboard || inputBox.pasteFromClipboard
             anchors.verticalCenter: parent.verticalCenter
             anchors.right: parent.right
-            anchors.rightMargin: 8
+            anchors.rightMargin: 12
             sourceComponent: Component {
                 Item {
                     width: copyBtn.width
@@ -195,12 +198,12 @@ Item {
         id: validationErrorText
         text: validationError
         anchors.top: inputField.bottom
-        anchors.topMargin: validationErrorTopMargin
+        anchors.topMargin: visible ? validationErrorTopMargin : 0
         anchors.right: inputField.right
         selectByMouse: true
         readOnly: true
         font.pixelSize: 12
-        height: 16
+        height: visible ? 16 : 0
         color: validationErrorColor
         wrapMode: TextEdit.Wrap
     }
