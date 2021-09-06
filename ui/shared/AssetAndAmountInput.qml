@@ -26,9 +26,12 @@ Item {
     property string validationError
     property var formattedInputValue
 
+    property alias txtFiatBalance: txtFiatBalance
+    property alias txtFiatSymbol: txtFiatSymbol
+
     id: root
 
-    height: inputAmount.height + (inputAmount.validationError ? -16 - inputAmount.validationErrorTopMargin : 0) + txtFiatBalance.height + txtFiatBalance.anchors.topMargin
+    height: inputAmount.height + txtFiatBalance.height + txtFiatBalance.anchors.topMargin
     anchors.right: parent.right
     anchors.left: parent.left
 
