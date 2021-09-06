@@ -3,12 +3,12 @@ import NimQml, json, sequtils, chronicles, strutils, strformat, json
 import
   ../../../../status/[status, settings, types],
   ../../../../status/signals/types as signal_types,
-  ../../../../status/wallet as status_wallet
+  ../../../../status/wallet2 as status_wallet
 
 import account_list, account_item
 
 logScope:
-  topics = "accounts-view"
+  topics = "app-wallet2-accounts-view"
 
 QtObject:
   type AccountsView* = ref object of QObject
@@ -34,24 +34,24 @@ QtObject:
 
   proc generateNewAccount*(self: AccountsView, password: string, accountName: string, color: string): string {.slot.} =
     try:
-      self.status.wallet.generateNewAccount(password, accountName, color)
+      self.status.wallet2.generateNewAccount(password, accountName, color)
     except StatusGoException as e:
       result = StatusGoError(error: e.msg).toJson
 
   proc addAccountsFromSeed*(self: AccountsView, seed: string, password: string, accountName: string, color: string): string {.slot.} =
     try:
-      self.status.wallet.addAccountsFromSeed(seed.strip(), password, accountName, color)
+      self.status.wallet2.addAccountsFromSeed(seed.strip(), password, accountName, color)
     except StatusGoException as e:
       result = StatusGoError(error: e.msg).toJson
 
   proc addAccountsFromPrivateKey*(self: AccountsView, privateKey: string, password: string, accountName: string, color: string): string {.slot.} =
     try:
-      self.status.wallet.addAccountsFromPrivateKey(privateKey, password, accountName, color)
+      self.status.wallet2.addAccountsFromPrivateKey(privateKey, password, accountName, color)
     except StatusGoException as e:
       result = StatusGoError(error: e.msg).toJson
 
   proc addWatchOnlyAccount*(self: AccountsView, address: string, accountName: string, color: string): string {.slot.} =
-    self.status.wallet.addWatchOnlyAccount(address, accountName, color)
+    self.status.wallet2.addWatchOnlyAccount(address, accountName, color)
 
   proc currentAccountChanged*(self: AccountsView) {.signal.}
 
@@ -62,14 +62,14 @@ QtObject:
     self.accountListChanged()
 
   proc changeAccountSettings*(self: AccountsView, address: string, accountName: string, color: string): string {.slot.} =
-    result = self.status.wallet.changeAccountSettings(address, accountName, color)
+    result = self.status.wallet2.changeAccountSettings(address, accountName, color)
     if (result == ""):
       self.currentAccountChanged()
       self.accountListChanged()
       self.accounts.forceUpdate()
 
   proc deleteAccount*(self: AccountsView, address: string): string {.slot.} =
-    result = self.status.wallet.deleteAccount(address)
+    result = self.status.wallet2.deleteAccount(address)
     if (result == ""):
       let index = self.accounts.getAccountindexByAddress(address)
       if (index == -1):
@@ -127,7 +127,7 @@ QtObject:
     self.currentAccount.address
 
   proc setAccountItems*(self: AccountsView) =
-    for account in self.status.wallet.accounts:
+    for account in self.status.wallet2.getAccounts():
       if account.address == self.currentAccount.address:
         self.currentAccount.setAccountItem(account)
       

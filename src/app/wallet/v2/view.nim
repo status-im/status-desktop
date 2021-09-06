@@ -1,9 +1,8 @@
 import atomics, strformat, strutils, sequtils, json, std/wrapnils, parseUtils, tables
 import NimQml, chronicles, stint
 
-import
-  ../../../status/[status, wallet],
-  views/[accounts, account_list, collectibles]
+import ../../../status/[status, wallet2]
+import views/[accounts, account_list, collectibles]
 
 QtObject:
   type
@@ -27,7 +26,9 @@ QtObject:
     result.collectiblesView = newCollectiblesView(status)
     result.setup
 
-  proc getAccounts(self: WalletView): QVariant {.slot.} = newQVariant(self.accountsView)
+  proc getAccounts(self: WalletView): QVariant {.slot.} = 
+    newQVariant(self.accountsView)
+
   QtProperty[QVariant] accountsView:
     read = getAccounts
 

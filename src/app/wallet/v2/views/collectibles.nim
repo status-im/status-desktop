@@ -1,13 +1,13 @@
 import NimQml, Tables, json, chronicles
 
 import
-  ../../../../status/[status, wallet],
+  ../../../../status/[status, wallet2],
   ../../../../status/tasks/[qt, task_runner_impl]
 
 import collection_list, asset_list
 
 logScope:
-  topics = "collectibles-view"
+  topics = "app-wallet2-collectibles-view"
 
 type
   LoadCollectionsTaskArg = ref object of QObjectTaskArg
@@ -15,7 +15,7 @@ type
 
 const loadCollectionsTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[LoadCollectionsTaskArg](argEncoded)
-  let output = wallet.getOpenseaCollections(arg.address)
+  let output = wallet2.getOpenseaCollections(arg.address)
   arg.finish(output)
 
 proc loadCollections[T](self: T, slot: string, address: string) =
@@ -36,7 +36,7 @@ const loadAssetsTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[LoadAssetsTaskArg](argEncoded)
   let output = %*{
     "collectionSlug": arg.collectionSlug,
-    "assets": parseJson(wallet.getOpenseaAssets(arg.address, arg.collectionSlug, arg.limit)),
+    "assets": parseJson(wallet2.getOpenseaAssets(arg.address, arg.collectionSlug, arg.limit)),
   }
   arg.finish(output)
 

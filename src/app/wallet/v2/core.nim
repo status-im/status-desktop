@@ -4,12 +4,12 @@ import view
 import views/[account_list, account_item]
 import ../../../status/types as status_types
 import ../../../status/signals/types
-import ../../../status/[status, wallet, settings]
-import ../../../status/wallet/account as WalletTypes
+import ../../../status/[status, wallet2, settings]
+import ../../../status/wallet2/account as WalletTypes
 import ../../../eventemitter
 
 logScope:
-  topics = "wallet-core"
+  topics = "app-wallet2"
 
 type WalletController* = ref object
   status: Status
@@ -27,7 +27,8 @@ proc delete*(self: WalletController) =
   delete self.view
 
 proc init*(self: WalletController) =
-  var accounts = self.status.wallet.accounts
+  self.status.wallet2.init()
+  var accounts = self.status.wallet2.getAccounts()
   for account in accounts:
     self.view.addAccountToList(account)
 

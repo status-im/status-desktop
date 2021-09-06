@@ -322,7 +322,8 @@ proc changeAccountSettings*(self: WalletModel, address: string, accountName: str
     error "No account found with that address", address
   selectedAccount.name = accountName
   selectedAccount.iconColor = color
-  result = status_accounts.changeAccount(selectedAccount)
+  result = status_accounts.changeAccount(selectedAccount.name, selectedAccount.address, 
+    selectedAccount.publicKey, selectedAccount.walletType, selectedAccount.iconColor)
 
 proc deleteAccount*(self: WalletModel, address: string): string =
   result = status_accounts.deleteAccount(address)
