@@ -3,6 +3,7 @@ import NimQml, chronicles, stint
 
 import ../../../status/[status, wallet2]
 import views/[accounts, account_list, collectibles]
+import views/buy_sell_crypto/[service_controller]
 
 QtObject:
   type
@@ -10,10 +11,12 @@ QtObject:
       status: Status
       accountsView: AccountsView
       collectiblesView: CollectiblesView
+      cryptoServiceController: CryptoServiceController
 
   proc delete(self: WalletView) =
     self.accountsView.delete
     self.collectiblesView.delete
+    self.cryptoServiceController.delete
     self.QAbstractListModel.delete
 
   proc setup(self: WalletView) =
@@ -24,6 +27,7 @@ QtObject:
     result.status = status
     result.accountsView = newAccountsView(status)
     result.collectiblesView = newCollectiblesView(status)
+    result.cryptoServiceController = newCryptoServiceController(status)
     result.setup
 
   proc getAccounts(self: WalletView): QVariant {.slot.} = 
@@ -53,3 +57,12 @@ QtObject:
     # If it's the first account we ever get, use its list as our first lists
     if (self.accountsView.accounts.rowCount == 1):
       self.setCurrentAccountByIndex(0)
+
+  proc getCryptoServiceController*(self: WalletView): QVariant {.slot.} =
+    newQVariant(self.cryptoServiceController)
+
+  QtProperty[QVariant] cryptoServiceController:
+    read = getCryptoServiceController
+
+  proc onCryptoServicesFetched*(self: WalletView, jsonNode: JsonNode) =
+    self.cryptoServiceController.onCryptoServicesFetched(jsonNode)
