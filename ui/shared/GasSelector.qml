@@ -60,6 +60,9 @@ Item {
        return Math.round((num + Number.EPSILON) * Math.pow(10, dec)) / Math.pow(10, dec)
     }
 
+    property real gasSelectorButtonWidth: 130
+    property real gasSelectorButtonHeight: 120
+
     function updateGasEthValue() {
         // causes error on application load without this null check
         if (!inputGasPrice || !inputGasLimit) {
@@ -255,6 +258,8 @@ Item {
                 root.updateGasEthValue()
                 root.checkLimits()
             }
+            width: root.gasSelectorButtonWidth
+            height: root.gasSelectorButtonHeight
         }
         GasSelectorButton {
             id: optimalGasButton
@@ -286,6 +291,8 @@ Item {
                 root.updateGasEthValue()
                 root.checkLimits()
             }
+            width: root.gasSelectorButtonWidth
+            height: root.gasSelectorButtonHeight
         }
 
         GasSelectorButton {
@@ -309,6 +316,8 @@ Item {
                 root.updateGasEthValue()
                 root.checkLimits()
             }
+            width: root.gasSelectorButtonWidth
+            height: root.gasSelectorButtonHeight
         }
     }
 
