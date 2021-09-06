@@ -38,6 +38,7 @@ QtObject:
     stats*: Stats
     peerSize: int
     bloomBitsSet: int
+    wakuV2LightClient: bool
 
   proc setup(self: NodeView) =
     self.QObject.setup
@@ -50,6 +51,7 @@ QtObject:
     result.lastMessage = ""
     result.wakuBloomFilterMode = false
     result.fullNode = false
+    result.wakuV2LightClient = false
     result.setup
 
   proc delete*(self: NodeView) =
@@ -124,6 +126,7 @@ QtObject:
     let nodeConfig = self.status.settings.getNodeConfig()
     self.wakuBloomFilterMode = self.status.settings.getSetting[:bool](Setting.WakuBloomFilterMode)
     self.fullNode = nodeConfig["WakuConfig"]["FullNode"].getBool()
+    self.wakuV2LightClient = nodeConfig["WakuV2Config"]{"LightClient"}.getBool()
     self.initialized()
 
   proc wakuVersion*(self: NodeView): int {.slot.} =
@@ -202,3 +205,16 @@ QtObject:
     notify = peerSizeChanged
 
   proc log*(self: NodeView, logContent: string) {.signal.}
+  
+  proc getWakuV2LightClient(self: NodeView): bool {.slot.} = self.wakuV2LightClient
+
+  QtProperty[bool] WakuV2LightClient:
+    read = getWakuV2LightClient
+    notify = initialized
+
+  proc setWakuV2LightClient*(self: NodeView, enabled: bool) {.slot.} =
+    let statusGoResult = self.status.settings.setV2LightMode(enabled)
+    if statusGoResult.error != "":
+      error "Error saving updated node config", msg=statusGoResult.error
+    else:
+      quit(QuitSuccess) # quits the app TODO: change this to logout instead when supported
