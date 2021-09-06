@@ -1,4 +1,36 @@
 <a name=""></a>
+##  v0.8.0 (2021-09-06)
+
+
+#### Bug Fixes
+
+* **StatusBaseInput:**
+  *  fix one line scroll ([d64aa6de](d64aa6de))
+  *  Make clear button bigger ([387bfe77](387bfe77))
+* **StatusChatToolBar:**  Fix mouse event catching after menu closing ([fbecac4a](fbecac4a))
+* **StatusInput:**  Forward keys events to root ([061c7d1c](061c7d1c))
+* **StatusListItem:**  Add propogateCompostedEvents to title mouse area ([5c706fdc](5c706fdc))
+* **StatusModal:**  Remove self-calculating height ([3187de54](3187de54))
+
+#### Features
+
+*   introduce bigger versions of navbar icons ([0a4d3860](0a4d3860))
+* **StatusBaseInput:**  introduce focussed property ([ddfca7a8](ddfca7a8), closes [#373](373))
+* **StatusChatListAndCategories:**  Add tooltip settings for categories buttons ([64098e84](64098e84))
+* **StatusDescriptionListItem:**
+  *  expose subtitle component for fine control ([1749cc0e](1749cc0e))
+  *  introduce support for `value` ([a963ef80](a963ef80))
+* **StatusExpandableSettingsItem:**   Added new component for wallet settings ([f3ab4ce9](f3ab4ce9))
+* **StatusInput:**  Introduced secondaryLabel property ([d648230d](d648230d), closes [#383](383))
+* **StatusModal:**
+  *  Add popup menu support for StatusModal ([8a94fb54](8a94fb54))
+  *  add ability to set elide config of header titles ([28e514f9](28e514f9), closes [#353](353))
+* **StatusQ.Controls:**  introduce StatusSwitchTabBar and StatusSwitchTabButton ([d449f0e9](d449f0e9), closes [#365](365))
+* **StatusSearchPopup:**  add function hook to allow timestamp formatting ([b45aba4b](b45aba4b), closes [#363](363))
+* **qrc:**  Add new icon needed for share modal ([38fb8f61](38fb8f61))
+
+
+<a name=""></a>
 ##  v0.7.0 (2021-08-30)
 
 
