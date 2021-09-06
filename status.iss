@@ -17,11 +17,12 @@ AppSupportURL={#URL}
 AppUpdatesURL={#URL}
 DefaultDirName={localappdata}\{#Name}App
 UsePreviousAppDir=no
-PrivilegesRequired=lowest
+PrivilegesRequired=admin
 WizardStyle=modern
 UninstallDisplayIcon={app}\{#ExeName}
 DefaultGroupName={#Name}
 CloseApplications=yes
+ArchitecturesInstallIn64BitMode=x64
 
 ; output dir for installer
 OutputBaseFileName={#BaseName}
@@ -64,6 +65,7 @@ Name: "{group}\Uninstall {#Name}"; Filename: "{uninstallexe}"
 Name: "{userdesktop}\{#Name}"; Filename: "{app}\{#ExeName}"; IconFilename: "{app}\resources\{#IcoName}"; Tasks: desktopicon
 
 [Run]
+Filename: "{app}\vendor\vc_redist.x64.exe"; Parameters: "/install /quiet /norestart"; StatusMsg: "Installing VS2017 redistributable package (64 Bit)";
 Filename: "{app}\{#ExeName}"; Description: {cm:LaunchProgram,{#Name}}; Flags: nowait postinstall skipifsilent
 
 [UninstallDelete]
@@ -72,10 +74,10 @@ Type: files; Name: "{userdesktop}\{#Name}"
 Type: files; Name: "{commondesktop}\{#Name}"
 
 [Registry]
-Root: HKCU; Subkey: "Software\Classes\status-im"; ValueType: "string"; ValueData: "URL:status-im protocol"; Flags: uninsdeletekey
-Root: HKCU; Subkey: "Software\Classes\status-im"; ValueType: "string"; ValueName: "URL Protocol"; ValueData: ""
-Root: HKCU; Subkey: "Software\Classes\status-im\DefaultIcon"; ValueType: "string"; ValueData: "{app}\Status.exe,1"
-Root: HKCU; Subkey: "Software\Classes\status-im\shell\open\command"; ValueType: "string"; ValueData: """{app}\Status.exe"" ""--url=""%1"""
+Root: HKCR; Subkey: "status-im"; ValueType: "string"; ValueData: "URL:status-im Protocol"; Flags: uninsdeletekey
+Root: HKCR; Subkey: "status-im"; ValueType: "string"; ValueName: "URL Protocol"; ValueData: ""
+Root: HKCR; Subkey: "status-im\DefaultIcon"; ValueType: "string"; ValueData: "{app}\Status.exe,1"
+Root: HKCR; Subkey: "status-im\shell\open\command"; ValueType: "string"; ValueData: """{app}\bin\Status.exe"" ""--uri=%1"""
 
 [Code]
 function IsAppRunning(const FileName : string): Boolean;

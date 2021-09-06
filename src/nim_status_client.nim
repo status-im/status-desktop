@@ -135,7 +135,7 @@ proc mainProc() =
   defer: wallet2.delete()
   engine.setRootContextProperty("walletV2Model", wallet2.variant)
 
-  var chat = chat.newController(status, appService)
+  var chat = chat.newController(status, appService, OPENURI)
   defer: chat.delete()
   engine.setRootContextProperty("chatsModel", chat.variant)
 
