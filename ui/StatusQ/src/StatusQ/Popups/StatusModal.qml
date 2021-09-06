@@ -24,7 +24,6 @@ QC.Popup {
     parent: QC.Overlay.overlay
 
     width: 480
-    implicitHeight: contentItem.implicitHeight + headerImpl.implicitHeight + footerImpl.implicitHeight
 
     topPadding: headerImpl.implicitHeight
     bottomPadding: footerImpl.implicitHeight
