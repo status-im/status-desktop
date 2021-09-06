@@ -55,7 +55,7 @@ Item {
 
             RowLayout {
                 id: walletInfoContainer
-                anchors.bottom: parent.bottom
+                anchors.bottom: walletFooter.top
                 anchors.bottomMargin: 0
                 anchors.left: parent.left
                 anchors.leftMargin: 0
@@ -102,13 +102,11 @@ Item {
                     }
                 }
             }
+
+            WalletFooter {
+                id: walletFooter
+                anchors.bottom: parent.bottom
+            }
         }
     }
 }
-
-
-/*##^##
-Designer {
-    D{i:0;autoSize:true;formeditorColor:"#ffffff";height:770;width:1152}
-}
-##^##*/
