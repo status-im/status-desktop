@@ -47,6 +47,10 @@ type
     Connecting = 1
     Connected = 2, 
 
+proc peerIdFromMultiAddress(nodeAddr: string): string =
+  let multiAddressParts = nodeAddr.split("/")
+  return multiAddressParts[multiAddressParts.len - 1]
+
 proc cmpMailserverReply(x, y: (string, int)): int =
   if x[1] > y[1]: 1
   elif x[1] == y[1]: 0
@@ -95,25 +99,23 @@ proc connect(self: MailserverModel, nodeAddr: string) =
     warn "Mailserver not known", nodeAddr
     return
 
-  self.activeMailserver = nodeAddr
+  self.activeMailserver = if self.wakuVersion == 2: peerIdFromMultiAddress(nodeAddr) else: nodeAddr
   self.events.emit("mailserver:changed", MailserverArgs(peer: nodeAddr))
 
-  # Adding a peer and marking it as connected can't be executed sync, because
+  # Adding a peer and marking it as connected can't be executed sync in WakuV1, because
   # There's a delay between requesting a peer being added, and a signal being 
   # received after the peer was added. So we first set the peer status as 
   # Connecting and once a peerConnected signal is received, we mark it as 
   # Connected
 
-  if self.nodes.hasKey(nodeAddr) and self.nodes[nodeAddr] == MailserverStatus.Connected:
+  if self.nodes.hasKey(self.activeMailserver) and self.nodes[self.activeMailserver] == MailserverStatus.Connected:
     connected = true
   else:
     # Attempt to connect to mailserver by adding it as a peer
     if self.wakuVersion == 2:
       if status_core.dialPeer(nodeAddr): # WakuV2 dial is sync (should it be async?)
-        let multiAddressParts = nodeAddr.split("/")
-        let peerId = multiAddressParts[multiAddressParts.len - 1]
-        discard status_mailservers.setMailserver(peerId)
-        self.nodes[nodeAddr] = MailserverStatus.Connected
+        discard status_mailservers.setMailserver(self.activeMailserver)
+        self.nodes[self.activeMailserver] = MailserverStatus.Connected
         connected = true
     else:
       status_mailservers.update(nodeAddr)
@@ -201,9 +203,7 @@ proc cycleMailservers(self: MailserverModel) =
     warn "Disconnecting active mailserver", peer=self.activeMailserver
     self.nodes[self.activeMailserver] = MailserverStatus.Disconnected
     if self.wakuVersion == 2:
-      let multiAddressParts = self.activeMailserver.split("/")
-      let peerId = multiAddressParts[multiAddressParts.len - 1]
-      dropPeerByID(peerId)
+      dropPeerByID(self.activeMailserver)
     else:
       removePeer(self.activeMailserver)
     self.activeMailserver = ""
