@@ -253,6 +253,8 @@ QtObject:
         self.joinedCommunityList.replaceCommunity(community)
       self.joinedCommunitiesChanged()
 
+    # Fetch latest requests for community
+    self.addMembershipRequests(self.pendingRequestsToJoinForCommunity(community.id))
     if (community.isMember == true):
       var i = 0
       for communityRequest in self.myCommunityRequests:
