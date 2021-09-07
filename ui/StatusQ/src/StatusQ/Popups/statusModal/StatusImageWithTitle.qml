@@ -119,6 +119,7 @@ Row {
             color:Theme.palette.baseColor1
             width: parent.width
             elide: statusImageWithTitle.subTitleElide
+            visible: !!statusImageWithTitle.subTitle
         }
     }
 }

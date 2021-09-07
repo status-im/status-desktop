@@ -14,6 +14,11 @@ Column {
     }
 
     StatusButton {
+        text: "Simple title modal"
+        onClicked: simpleTitleModal.open()
+    }
+
+    StatusButton {
         text: "Modal with header image"
         onClicked: headerImageModal.open()
     }
@@ -63,6 +68,12 @@ Column {
         anchors.centerIn: parent
         header.title: "Some Title"
         header.subTitle: "Subtitle"
+    }
+
+    StatusModal {
+        id: simpleTitleModal
+        anchors.centerIn: parent
+        header.title: "Some Title"
     }
 
     StatusModal {
