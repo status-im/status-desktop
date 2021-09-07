@@ -1,6 +1,7 @@
 import json
 
-import ./settings, ../types
+import ./settings
+import ../types/[setting]
 
 proc getRecentGifs*(): JsonNode =
   return settings.getSetting[JsonNode](Setting.Gifs_Recent, %*{})

@@ -2,8 +2,10 @@ import atomics, strformat, strutils, sequtils, json, std/wrapnils, parseUtils, c
 import NimQml, json, sequtils, chronicles, strutils, strformat, json
 
 import
-  ../../../../status/[status, wallet, utils, types],
-  ../../../../status/tasks/[qt, task_runner_impl]
+  ../../../../status/[status, wallet, utils],
+  ../../../../status/types/[gas_prediction]
+import ../../../../app_service/[main]
+import ../../../../app_service/tasks/[qt, threadpool]
 
 import account_item
 
@@ -24,7 +26,7 @@ proc getGasPredictions[T](self: T, slot: string) =
     vptr: cast[ByteAddress](self.vptr),
     slot: slot
   )
-  self.status.tasks.threadpool.start(arg)
+  self.appService.threadpool.start(arg)
 
 logScope:
   topics = "gas-view"
@@ -32,6 +34,7 @@ logScope:
 QtObject:
   type GasView* = ref object of QObject
       status: Status
+      appService: AppService
       safeLowGasPrice: string
       standardGasPrice: string
       fastGasPrice: string
@@ -41,9 +44,10 @@ QtObject:
   proc setup(self: GasView) = self.QObject.setup
   proc delete(self: GasView) = self.QObject.delete
 
-  proc newGasView*(status: Status): GasView =
+  proc newGasView*(status: Status, appService: AppService): GasView =
     new(result, delete)
     result.status = status
+    result.appService = appService
     result.safeLowGasPrice = "0"
     result.standardGasPrice = "0"
     result.fastGasPrice = "0"

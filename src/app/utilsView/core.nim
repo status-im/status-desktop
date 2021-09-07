@@ -1,7 +1,6 @@
 import NimQml, chronicles
-import ../../status/signals/types
 import ../../status/[status, node, network]
-import ../../status/types as status_types
+import ../../app_service/[main]
 import view
 import ../../eventemitter
 
@@ -10,13 +9,15 @@ logScope:
 
 type UtilsController* = ref object
   status*: Status
+  appService: AppService
   view*: UtilsView
   variant*: QVariant
 
-proc newController*(status: Status): UtilsController =
+proc newController*(status: Status, appService: AppService): UtilsController =
   result = UtilsController()
   result.status = status
-  result.view = newUtilsView(status)
+  result.appService = appService
+  result.view = newUtilsView(status, appService)
   result.variant = newQVariant(result.view)
 
 proc delete*(self: UtilsController) =

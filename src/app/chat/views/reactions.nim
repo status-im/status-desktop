@@ -1,8 +1,8 @@
 import NimQml, tables, json, chronicles
-import ../../../status/[status, chat/message, chat/chat, settings]
+import ../../../status/[status, chat/chat, settings]
 import message_list, chat_item
 import ../../../status/utils as status_utils
-import ../../../status/types
+import ../../../status/types/[message, setting]
 
 logScope:
   topics = "reactions-view"

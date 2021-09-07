@@ -2,7 +2,9 @@ import NimQml, Tables, json, sequtils, chronicles, times, re, sugar, strutils, o
 
 import ../../../status/[status, contacts]
 import ../../../status/ens as status_ens
-import ../../../status/tasks/[qt, task_runner_impl]
+import ../../../app_service/[main]
+import ../../../app_service/tasks/[qt, threadpool]
+import ../../../app_service/tasks/marathon/mailserver/worker
 
 logScope:
   topics = "ens-view"
@@ -23,18 +25,20 @@ proc resolveEns[T](self: T, slot: string, ens: string) =
     vptr: cast[ByteAddress](self.vptr),
     slot: slot, ens: ens
   )
-  self.status.tasks.threadpool.start(arg)
+  self.appService.threadpool.start(arg)
 
 QtObject:
   type EnsView* = ref object of QObject
     status: Status
+    appService: AppService
 
   proc setup(self: EnsView) = self.QObject.setup
   proc delete*(self: EnsView) = self.QObject.delete
 
-  proc newEnsView*(status: Status): EnsView =
+  proc newEnsView*(status: Status, appService: AppService): EnsView =
     new(result, delete)
     result.status = status
+    result.appService = appService
     result.setup
 
   proc isEnsVerified*(self: EnsView, id: string): bool {.slot.} =

@@ -7,13 +7,14 @@ import ../../status/messages as status_messages
 import ../../status/mailservers
 import ../../status/contacts as status_contacts
 import ../../status/ens as status_ens
-import ../../status/chat/[chat, message]
+import ../../status/chat/[chat]
 import ../../status/profile/profile
-import ../../status/tasks/[qt, task_runner_impl]
-import ../../status/tasks/marathon/mailserver/worker
-import ../../status/signals/types as signal_types
-import ../../status/types
-import ../../status/notifications/[os_notifications, os_notification_details]
+import ../../status/types/[activity_center_notification, os_notification, rpc_response]
+import ../../app_service/[main]
+import ../../app_service/tasks/[qt, threadpool]
+import ../../app_service/tasks/marathon/mailserver/worker
+import ../../app_service/signals/[base]
+import ../../status/notifications/[os_notifications]
 import ../utils/image_utils
 import web3/[conversions, ethtypes]
 import views/message_search/[view_controller]
@@ -48,7 +49,7 @@ proc getLinkPreviewData[T](self: T, slot: string, link: string, uuid: string) =
     link: link,
     uuid: uuid
   )
-  self.status.tasks.threadpool.start(arg)
+  self.appService.threadpool.start(arg)
 
 const asyncActivityNotificationLoadTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncActivityNotificationLoadTaskArg](argEncoded)
@@ -69,12 +70,13 @@ proc asyncActivityNotificationLoad[T](self: T, slot: string) =
     vptr: cast[ByteAddress](self.vptr),
     slot: slot
   )
-  self.status.tasks.threadpool.start(arg)
+  self.appService.threadpool.start(arg)
 
 QtObject:
   type
     ChatsView* = ref object of QAbstractListModel
       status: Status
+      appService: AppService
       formatInputView: FormatInputView
       ensView: EnsView
       channelView*: ChannelView
@@ -108,16 +110,17 @@ QtObject:
     self.messageSearchViewController.delete
     self.QAbstractListModel.delete
 
-  proc newChatsView*(status: Status): ChatsView =
+  proc newChatsView*(status: Status, appService: AppService): ChatsView =
     new(result, delete)
     result.status = status
+    result.appService = appService
     result.formatInputView = newFormatInputView()
-    result.ensView = newEnsView(status)
+    result.ensView = newEnsView(status, appService)
     result.communities = newCommunitiesView(status)
-    result.channelView = newChannelView(status, result.communities)
-    result.messageView = newMessageView(status, result.channelView, result.communities)
+    result.channelView = newChannelView(status, appService, result.communities)
+    result.messageView = newMessageView(status, appService, result.channelView, result.communities)
     result.messageSearchViewController = newMessageSearchViewController(status,
-      result.channelView, result.communities)
+      appService, result.channelView, result.communities)
     result.connected = false
     result.activityNotificationList = newActivityNotificationList(status)
     result.reactions = newReactionView(
@@ -126,7 +129,7 @@ QtObject:
       result.messageView.pinnedMessagesList.addr,
       result.channelView.activeChannel
     )
-    result.stickers = newStickersView(status, result.channelView.activeChannel)
+    result.stickers = newStickersView(status, appService, result.channelView.activeChannel)
     result.gif = newGifView()
     result.groups = newGroupsView(status,result.channelView.activeChannel)
     result.transactions = newTransactionsView(status)
@@ -393,7 +396,7 @@ QtObject:
     if isActiveMailserverAvailable:
       self.messageView.setLoadingMessages(true)
       let
-        mailserverWorker = self.status.tasks.marathon[MailserverWorker().name]
+        mailserverWorker = self.appService.marathon[MailserverWorker().name]
         task = RequestMessagesTaskArg(`method`: "requestMessages")
       mailserverWorker.start(task)
 
@@ -443,7 +446,7 @@ QtObject:
   proc requestMoreMessages*(self: ChatsView, fetchRange: int) {.slot.} =
     self.messageView.loadingMessages = true
     self.messageView.loadingMessagesChanged(true)
-    let mailserverWorker = self.status.tasks.marathon[MailserverWorker().name]
+    let mailserverWorker = self.appService.marathon[MailserverWorker().name]
     let task = RequestMessagesTaskArg( `method`: "requestMoreMessages", chatId: self.channelView.activeChannel.id)
     mailserverWorker.start(task)
 
@@ -559,5 +562,5 @@ QtObject:
       messageId: messageId
     )
     
-    self.status.osnotifications.showNotification(title, message, details, 
-    useOSNotifications)
+    self.appService.osNotificationService.showNotification(title, message, 
+    details, useOSNotifications)

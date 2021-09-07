@@ -1,8 +1,8 @@
 import NimQml, Tables, json, chronicles
 
-import
-  ../../../../status/[status, wallet2],
-  ../../../../status/tasks/[qt, task_runner_impl]
+import ../../../../status/[status, wallet2]
+import ../../../../app_service/[main]
+import ../../../../app_service/tasks/[qt, threadpool]
 
 import collection_list, asset_list
 
@@ -24,7 +24,7 @@ proc loadCollections[T](self: T, slot: string, address: string) =
     vptr: cast[ByteAddress](self.vptr),
     slot: slot, address: address,
   )
-  self.status.tasks.threadpool.start(arg)
+  self.appService.threadpool.start(arg)
 
 type
   LoadAssetsTaskArg = ref object of QObjectTaskArg
@@ -46,11 +46,12 @@ proc loadAssets[T](self: T, slot: string, address: string, collectionSlug: strin
     vptr: cast[ByteAddress](self.vptr),
     slot: slot, address: address, collectionSlug: collectionSlug, limit: 200
   )
-  self.status.tasks.threadpool.start(arg)
+  self.appService.threadpool.start(arg)
 
 QtObject:
   type CollectiblesView* = ref object of QObject
       status: Status
+      appService: AppService
       collections: CollectionList
       isLoading: bool
       assets: Table[string, AssetList]
@@ -63,9 +64,10 @@ QtObject:
       list.delete
     self.QObject.delete
 
-  proc newCollectiblesView*(status: Status): CollectiblesView =
+  proc newCollectiblesView*(status: Status, appService: AppService): CollectiblesView =
     new(result, delete)
     result.status = status
+    result.appService = appService
     result.collections = newCollectionList()
     result.assets = initTable[string, AssetList]()
     result.isLoading = false

@@ -1,7 +1,9 @@
 import NimQml, chronicles, strutils, json
-import ../../status/[status, node, types, settings, accounts]
-import ../../status/signals/types as signal_types
-import ../../status/tasks/[qt, task_runner_impl]
+import ../../status/[status, node, settings, accounts]
+import ../../status/types/[setting]
+import ../../app_service/[main]
+import ../../app_service/signals/[stats]
+import ../../app_service/tasks/[qt, threadpool]
 
 logScope:
   topics = "node-view"
@@ -22,12 +24,13 @@ proc bloomFiltersBitsSet[T](self: T, slot: string) =
     vptr: cast[ByteAddress](self.vptr),
     slot: slot
   )
-  self.status.tasks.threadpool.start(arg)
+  self.appService.threadpool.start(arg)
 
 
 QtObject:
   type NodeView* = ref object of QObject
     status*: Status
+    appService: AppService
     callResult: string
     lastMessage*: string
     wakuBloomFilterMode*: bool
@@ -39,9 +42,10 @@ QtObject:
   proc setup(self: NodeView) =
     self.QObject.setup
 
-  proc newNodeView*(status: Status): NodeView =
+  proc newNodeView*(status: Status, appService: AppService): NodeView =
     new(result)
     result.status = status
+    result.appService = appService
     result.callResult = "Use this tool to call JSONRPC methods"
     result.lastMessage = ""
     result.wakuBloomFilterMode = false

@@ -2,10 +2,13 @@ import NimQml, strformat, strutils, chronicles, sugar, sequtils
 
 import view
 import views/[asset_list, account_list, account_item]
-import ../../../status/types as status_types
-import ../../../status/signals/types
+
 import ../../../status/[status, wallet, settings]
 import ../../../status/wallet/account as WalletTypes
+import ../../../status/types/[transaction, setting]
+import ../../../app_service/[main]
+import ../../../app_service/signals/[base]
+import ../../../app_service/signals/wallet as wallet_signal
 import ../../../eventemitter
 
 logScope:
@@ -13,13 +16,15 @@ logScope:
 
 type WalletController* = ref object
   status: Status
+  appService: AppService
   view*: WalletView
   variant*: QVariant
 
-proc newController*(status: Status): WalletController =
+proc newController*(status: Status, appService: AppService): WalletController =
   result = WalletController()
   result.status = status
-  result.view = newWalletView(status)
+  result.appService = appService
+  result.view = newWalletView(status, appService)
   result.variant = newQVariant(result.view)
 
 proc delete*(self: WalletController) =

@@ -9,9 +9,10 @@ import ../../status/contacts as status_contacts
 import ../../status/status
 import ../../status/ens as status_ens
 import ../../status/chat/chat
-import ../../status/types
+import ../../status/types/[setting, os_notification]
 import ../../status/constants as accountConstants
-import ../../status/notifications/[os_notifications, os_notification_details]
+import ../../status/notifications/[os_notifications]
+import ../../app_service/[main]
 import qrcode/qrcode
 import ../utils/image_utils
 
@@ -32,6 +33,7 @@ QtObject:
     fleets*: Fleets
     network*: NetworkView
     status*: Status
+    appService: AppService
     changeLanguage*: proc(locale: string)
     ens*: EnsManager
 
@@ -53,23 +55,24 @@ QtObject:
     if not self.mailservers.isNil: self.mailservers.delete
     self.QObject.delete
 
-  proc newProfileView*(status: Status, changeLanguage: proc(locale: string)): ProfileView =
+  proc newProfileView*(status: Status, appService: AppService, changeLanguage: proc(locale: string)): ProfileView =
     new(result, delete)
     result = ProfileView()
     result.profile = newProfileInfoView()
     result.profilePicture = newProfilePictureView(status, result.profile)
     result.profileSettings = newProfileSettingsView(status, result.profile)
     result.mutedChats = newMutedChatsView(status)
-    result.contacts = newContactsView(status)
+    result.contacts = newContactsView(status, appService)
     result.devices = newDevicesView(status)
     result.network = newNetworkView(status)
     result.mnemonic = newMnemonicView(status)
-    result.mailservers = newMailserversView(status)
+    result.mailservers = newMailserversView(status, appService)
     result.dappList = newDappList(status)
-    result.ens = newEnsManager(status)
+    result.ens = newEnsManager(status, appService)
     result.fleets = newFleets(status)
     result.changeLanguage = changeLanguage
     result.status = status
+    result.appService = appService
     result.setup
 
   proc initialized*(self: ProfileView) {.signal.}
@@ -201,5 +204,5 @@ QtObject:
       notificationType: notificationType.OsNotificationType
     )
 
-    self.status.osnotifications.showNotification(title, message, details,
-    useOSNotifications)
+    self.appService.osNotificationService.showNotification(title, message, 
+    details, useOSNotifications)

@@ -5,7 +5,8 @@ import ../../../status/chat/chat
 import contact_list
 import ../../../status/profile/profile
 import ../../../status/ens as status_ens
-import ../../../status/tasks/[qt, task_runner_impl]
+import ../../../app_service/[main]
+import ../../../app_service/tasks/[qt, threadpool]
 
 logScope:
   topics = "contacts-view"
@@ -28,11 +29,12 @@ proc lookupContact[T](self: T, slot: string, value: string) =
     slot: slot,
     value: value
   )
-  self.status.tasks.threadpool.start(arg)
+  self.appService.threadpool.start(arg)
 
 QtObject:
   type ContactsView* = ref object of QObject
     status: Status
+    appService: AppService
     contactList*: ContactList
     contactRequests*: ContactList
     addedContacts*: ContactList
@@ -49,9 +51,10 @@ QtObject:
     self.blockedContacts.delete
     self.QObject.delete
 
-  proc newContactsView*(status: Status): ContactsView =
+  proc newContactsView*(status: Status, appService: AppService): ContactsView =
     new(result, delete)
     result.status = status
+    result.appService = appService
     result.contactList = newContactList()
     result.contactRequests = newContactList()
     result.addedContacts = newContactList()

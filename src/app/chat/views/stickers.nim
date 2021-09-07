@@ -5,8 +5,12 @@ import # vendor libs
   chronicles, NimQml
 
 import # status-desktop libs
-  ../../../status/[status, stickers, wallet, types, utils],
-  sticker_pack_list, sticker_list, chat_item, ../../../status/tasks/[qt, task_runner_impl]
+  ../../../status/[status, stickers, wallet, utils],
+  sticker_pack_list, sticker_list, chat_item
+import ../../../status/types/[sticker, pending_transaction_type]
+import ../../../app_service/[main]
+import ../../../app_service/tasks/[qt, threadpool]
+import ../../../app_service/tasks/marathon/mailserver/worker
 
 logScope:
   topics = "stickers-view"
@@ -48,7 +52,7 @@ proc estimate[T](self: T, slot: string, packId: int, address: string, price: str
     price: price,
     uuid: uuid
   )
-  self.status.tasks.threadpool.start(arg)
+  self.appService.threadpool.start(arg)
 
 const obtainAvailableStickerPacksTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[ObtainAvailableStickerPacksTaskArg](argEncoded)
@@ -64,13 +68,14 @@ proc obtainAvailableStickerPacks[T](self: T, slot: string) =
     tptr: cast[ByteAddress](obtainAvailableStickerPacksTask),
     vptr: cast[ByteAddress](self.vptr),
     slot: slot,
-    running: cast[ByteAddress](addr self.status.tasks.threadpool.running)
+    running: cast[ByteAddress](addr self.appService.threadpool.running)
   )
-  self.status.tasks.threadpool.start(arg)
+  self.appService.threadpool.start(arg)
 
 QtObject:
   type StickersView* = ref object of QObject
     status: Status
+    appService: AppService
     activeChannel: ChatItemView
     stickerPacks*: StickerPackList
     recentStickers*: StickerList
@@ -81,10 +86,11 @@ QtObject:
   proc delete*(self: StickersView) =
     self.QObject.delete
 
-  proc newStickersView*(status: Status, activeChannel: ChatItemView): StickersView =
+  proc newStickersView*(status: Status, appService: AppService, activeChannel: ChatItemView): StickersView =
     new(result, delete)
     result = StickersView()
     result.status = status
+    result.appService = appService
     result.stickerPacks = newStickerPackList()
     result.recentStickers = newStickerList()
     result.activeChannel = activeChannel

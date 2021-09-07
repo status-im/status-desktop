@@ -2,7 +2,9 @@ import NimQml, chronicles
 import ../../../status/[status, settings]
 import ../../../status/profile/mailserver
 import mailservers_list
-import ../../../status/tasks/marathon/mailserver/worker
+import ../../../app_service/[main]
+import ../../../app_service/tasks/[qt, threadpool]
+import ../../../app_service/tasks/marathon/mailserver/worker
 
 logScope:
   topics = "mailservers-view"
@@ -10,6 +12,7 @@ logScope:
 QtObject:
   type MailserversView* = ref object of QObject
     status: Status
+    appService: AppService
     mailserversList*: MailServersList
 
   proc setup(self: MailserversView) =
@@ -19,9 +22,10 @@ QtObject:
     self.mailserversList.delete
     self.QObject.delete
 
-  proc newMailserversView*(status: Status): MailserversView =
+  proc newMailserversView*(status: Status, appService: AppService): MailserversView =
     new(result, delete)
     result.status = status
+    result.appService = appService
     result.mailserversList = newMailServersList()
     result.setup
 
@@ -38,7 +42,7 @@ QtObject:
 
   proc getActiveMailserver(self: MailserversView): string {.slot.} =
     let
-      mailserverWorker = self.status.tasks.marathon[MailserverWorker().name]
+      mailserverWorker = self.appService.marathon[MailserverWorker().name]
       task = GetActiveMailserverTaskArg(
         `method`: "getActiveMailserver",
         vptr: cast[ByteAddress](self.vptr),
@@ -64,7 +68,7 @@ QtObject:
       self.status.settings.pinMailserver()
     else:
       let
-        mailserverWorker = self.status.tasks.marathon[MailserverWorker().name]
+        mailserverWorker = self.appService.marathon[MailserverWorker().name]
         task = GetActiveMailserverTaskArg(
           `method`: "getActiveMailserver",
           vptr: cast[ByteAddress](self.vptr),

@@ -1,8 +1,7 @@
 import json, times, strutils, sequtils, chronicles, json_serialization, algorithm, strformat, sugar
 import core, ../utils
-import ../chat/[chat, message]
-import ../signals/messages
-import ../types
+import ../types/[chat, message, community, activity_center_notification, 
+  status_update, rpc_response, setting, sticker]
 import ./settings as status_settings
 
 proc buildFilter*(chat: Chat):JsonNode =

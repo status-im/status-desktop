@@ -5,10 +5,8 @@ import
 
 import libstatus/settings as libstatus_settings
 import ../eventemitter
-import signals/types
-
-#TODO: temporary?
-import types as LibStatusTypes
+import ./types/[fleet, network, setting]
+import ../app_service/signals/[base]
 
 type
     SettingsModel* = ref object
@@ -34,7 +32,7 @@ proc getSetting2*[T](name: Setting, defaultValue: T, useCached: bool = true): T 
 proc getSetting2*[T](name: Setting, useCached: bool = true): T =
   result = libstatus_settings.getSetting[T](name, useCached)
 
-proc getCurrentNetworkDetails*(self: SettingsModel): LibStatusTypes.NetworkDetails =
+proc getCurrentNetworkDetails*(self: SettingsModel): NetworkDetails =
   result = libstatus_settings.getCurrentNetworkDetails()
 
 proc getMailservers*(self: SettingsModel):JsonNode =

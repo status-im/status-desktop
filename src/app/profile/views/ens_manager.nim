@@ -3,14 +3,15 @@ import Tables
 import json
 import sequtils
 import strutils
-from ../../../status/types import Setting, PendingTransactionType, RpcException
 import ../../../status/ens as status_ens
 import ../../../status/utils as status_utils
 import ../../../status/[status, settings, wallet]
 import ../../../status/wallet
+import ../../../status/types/[setting, transaction, rpc_response]
+import ../../../app_service/[main]
+import ../../../app_service/tasks/[qt, threadpool]
 import sets
 import web3/ethtypes
-import ../../../status/tasks/[qt, task_runner_impl]
 import chronicles
 type
   EnsRoles {.pure.} = enum
@@ -38,7 +39,7 @@ proc validate[T](self: T, slot: string, ens: string, isStatus: bool, usernames: 
     isStatus: isStatus,
     usernames: usernames
   )
-  self.status.tasks.threadpool.start(arg)
+  self.appService.threadpool.start(arg)
 
 const detailsTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let
@@ -69,13 +70,14 @@ proc details[T](self: T, slot: string, username: string) =
     slot: slot,
     username: username
   )
-  self.status.tasks.threadpool.start(arg)
+  self.appService.threadpool.start(arg)
 
 QtObject:
   type EnsManager* = ref object of QAbstractListModel
     usernames*: seq[string]
     pendingUsernames*: HashSet[string]
     status: Status
+    appService: AppService
 
   proc setup(self: EnsManager) = self.QAbstractListModel.setup
 
@@ -83,10 +85,11 @@ QtObject:
     self.usernames = @[]
     self.QAbstractListModel.delete
 
-  proc newEnsManager*(status: Status): EnsManager =
+  proc newEnsManager*(status: Status, appService: AppService): EnsManager =
     new(result, delete)
     result.usernames = @[]
     result.status = status
+    result.appService = appService
     result.pendingUsernames = initHashSet[string]()
     result.setup
 

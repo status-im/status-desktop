@@ -2,6 +2,7 @@ import NimQml, json, strutils, chronicles
 
 import service_model, service_item
 
+import ../../../../../app_service/[main]
 import ../../../../../status/[status, wallet2]
 
 logScope:
@@ -10,6 +11,7 @@ logScope:
 QtObject:
   type CryptoServiceController* = ref object of QObject
     status: Status
+    appService: AppService
     cryptoServiceModel: CryptoServiceModel 
     servicesFetched: bool
 
@@ -20,9 +22,11 @@ QtObject:
     self.cryptoServiceModel.delete
     self.QObject.delete    
 
-  proc newCryptoServiceController*(status: Status): CryptoServiceController =
+  proc newCryptoServiceController*(status: Status, appService: AppService): 
+    CryptoServiceController =
     new(result, delete)
     result.status = status
+    result.appService = appService
     result.cryptoServiceModel = newCryptoServiceModel()
     result.servicesFetched = false
     result.setup
@@ -37,7 +41,7 @@ QtObject:
 
   proc fetchCryptoServices*(self: CryptoServiceController) {.slot.} =
     if(not self.servicesFetched):
-      self.status.wallet2.asyncFetchCryptoServices()
+      self.appService.walletService.asyncFetchCryptoServices()
     else:
       self.fetchCryptoServicesFetched()
       

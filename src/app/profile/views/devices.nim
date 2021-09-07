@@ -1,7 +1,7 @@
 import NimQml, chronicles
 import ../../../status/status
 import ../../../status/devices as status_devices
-import ../../../status/profile/devices
+import ../../../status/types/[installation]
 import device_list
 
 logScope:

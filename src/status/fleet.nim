@@ -1,5 +1,6 @@
-import json
-import types
+import ./types/[fleet]
+
+export fleet
 
 type
   FleetModel* = ref object

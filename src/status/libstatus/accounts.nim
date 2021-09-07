@@ -3,9 +3,9 @@ import json, os, nimcrypto, uuids, json_serialization, chronicles, strutils
 from status_go import multiAccountGenerateAndDeriveAddresses, generateAlias, identicon, saveAccountAndLogin, login, openAccounts, getNodeConfig
 import core
 import ../utils as utils
-import ../types as types
+import ../types/[account, fleet, rpc_response]
+import ../../app_service/signals/[base]
 import accounts/constants
-import ../signals/types as signal_types
 
 proc getNetworkConfig(currentNetwork: string): JsonNode =
   result = constants.DEFAULT_NETWORKS.first("id", currentNetwork)
@@ -98,7 +98,7 @@ proc saveAccountAndLogin*(
   accountData: string,
   password: string,
   configJSON: string,
-  settingsJSON: string): types.Account =
+  settingsJSON: string): Account =
   let hashedPassword = hashPassword(password)
   let subaccountData = %* [
     {
@@ -180,7 +180,7 @@ proc getAccountSettings*(account: GeneratedAccount, defaultNetworks: JsonNode, i
     "installation-id": installationId
   }
 
-proc setupAccount*(fleetConfig: FleetConfig, account: GeneratedAccount, password: string): types.Account =
+proc setupAccount*(fleetConfig: FleetConfig, account: GeneratedAccount, password: string): Account =
   try:
     let storeDerivedResult = storeDerivedAccounts(account, password)
     let accountData = getAccountData(account)

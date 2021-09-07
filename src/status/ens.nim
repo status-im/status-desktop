@@ -7,7 +7,7 @@ import json_serialization
 import tables
 import strformat
 import libstatus/core
-import types
+import ./types/[transaction, setting, rpc_response]
 import utils
 import libstatus/wallet
 import stew/byteutils

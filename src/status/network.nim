@@ -4,7 +4,7 @@ import libstatus/settings
 import json
 import uuids
 import json_serialization
-import types
+import ./types/[setting]
 
 logScope:
   topics = "network-model"

@@ -2,8 +2,9 @@ import NimQml, Tables, json, chronicles, sequtils
 import ../../../status/status
 import ../../../status/accounts
 import ../../../status/chat as status_chat
-import ../../../status/chat/[message, chat]
+import ../../../status/chat/[chat]
 import ../../../status/ens
+import ../../../status/types/[message]
 
 import strutils
 

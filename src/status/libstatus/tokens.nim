@@ -5,8 +5,8 @@ import
   web3/[ethtypes, conversions], json_serialization
 
 import 
-  ./settings, ./core, ./wallet, ./eth/contracts
-from ../types import Setting, Network, RpcResponse, RpcException
+  ./settings, ./core, ./wallet, ./eth/contracts,
+  ../types/[setting, network, rpc_response]
 from ../utils import parseAddress
 
 logScope:

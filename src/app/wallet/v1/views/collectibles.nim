@@ -2,9 +2,10 @@ import atomics, strformat, strutils, sequtils, json, std/wrapnils, parseUtils, t
 import NimQml, json, sequtils, chronicles, strutils, strformat, json
 
 import
-  ../../../../status/[status, settings, wallet, tokens, utils, types],
-  ../../../../status/wallet/collectibles as status_collectibles,
-  ../../../../status/tasks/[qt, task_runner_impl]
+  ../../../../status/[status, settings, wallet, tokens, utils],
+  ../../../../status/wallet/collectibles as status_collectibles
+import ../../../../app_service/[main]
+import ../../../../app_service/tasks/[qt, threadpool]
 
 import collectibles_list, accounts, account_list, account_item
 
@@ -43,13 +44,14 @@ proc loadCollectibles[T](self: T, slot: string, address: string, collectiblesTyp
     tptr: cast[ByteAddress](loadCollectiblesTask),
     vptr: cast[ByteAddress](self.vptr),
     slot: slot, address: address, collectiblesType: collectiblesType,
-    running: cast[ByteAddress](addr self.status.tasks.threadpool.running)
+    running: cast[ByteAddress](addr self.appService.threadpool.running)
   )
-  self.status.tasks.threadpool.start(arg)
+  self.appService.threadpool.start(arg)
 
 QtObject:
   type CollectiblesView* = ref object of QObject
       status: Status
+      appService: AppService
       accountsView*: AccountsView
       currentCollectiblesLists*: CollectiblesList
 
@@ -58,9 +60,10 @@ QtObject:
     self.currentCollectiblesLists.delete
     self.QObject.delete
 
-  proc newCollectiblesView*(status: Status, accountsView: AccountsView): CollectiblesView =
+  proc newCollectiblesView*(status: Status, appService: AppService, accountsView: AccountsView): CollectiblesView =
     new(result, delete)
     result.status = status
+    result.appService = appService
     result.currentCollectiblesLists = newCollectiblesList()
     result.accountsView = accountsView # TODO: not ideal but a solution for now
     result.setup
