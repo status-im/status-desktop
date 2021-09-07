@@ -67,7 +67,7 @@ StatusModal {
         icon.width: 20
         icon.height: 20
         icon.name: "qr"
-        onClicked: contentComponent.qrCodePopup.open()
+        onClicked: contentItem.qrCodePopup.open()
     }
 
     contentItem: Item {
@@ -251,14 +251,14 @@ StatusModal {
             type: StatusBaseButton.Type.Danger
             onClicked: {
                 if (isBlocked) {
-                    contentComponent.unblockContactConfirmationDialog.contactName = userName;
-                    contentComponent.unblockContactConfirmationDialog.contactAddress = fromAuthor;
-                    contentComponent.unblockContactConfirmationDialog.open();
+                    contentItem.unblockContactConfirmationDialog.contactName = userName;
+                    contentItem.unblockContactConfirmationDialog.contactAddress = fromAuthor;
+                    contentItem.unblockContactConfirmationDialog.open();
                     return;
                 }
                 ontentComponent.blockContactConfirmationDialog.contactName = userName;
-                contentComponent.blockContactConfirmationDialog.contactAddress = fromAuthor;
-                contentComponent.blockContactConfirmationDialog.open();
+                contentItem.blockContactConfirmationDialog.contactAddress = fromAuthor;
+                contentItem.blockContactConfirmationDialog.open();
             }
         },
 
@@ -268,8 +268,8 @@ StatusModal {
             type: StatusBaseButton.Type.Danger
             text: qsTr('Remove Contact')
             onClicked: {
-                contentComponent.removeContactConfirmationDialog.parentPopup = popup;
-                contentComponent.removeContactConfirmationDialog.open();
+                contentItem.removeContactConfirmationDialog.parentPopup = popup;
+                contentItem.removeContactConfirmationDialog.open();
             }
         },
 
