@@ -256,7 +256,7 @@ StatusModal {
                     contentItem.unblockContactConfirmationDialog.open();
                     return;
                 }
-                ontentComponent.blockContactConfirmationDialog.contactName = userName;
+                contentItem.blockContactConfirmationDialog.contactName = userName;
                 contentItem.blockContactConfirmationDialog.contactAddress = fromAuthor;
                 contentItem.blockContactConfirmationDialog.open();
             }
