@@ -103,6 +103,17 @@ Column {
     }
 
     StatusInput {
+        label: "Label"
+        input.placeholderText: "Input width component (right side)"
+        input.component: StatusIcon {
+            icon: "cancel"
+            height: 16
+            color: Theme.palette.dangerColor1
+        }
+    }
+
+
+    StatusInput {
         input.multiline: true
         input.placeholderText: "Multiline"
     }
