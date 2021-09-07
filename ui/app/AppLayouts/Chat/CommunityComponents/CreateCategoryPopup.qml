@@ -27,15 +27,15 @@ StatusModal {
 
     onOpened: {
         if(isEdit){
-            popup.contentComponent.categoryName.input.text = categoryName
+            popup.contentItem.categoryName.input.text = categoryName
             channels = JSON.parse(chatsModel.communities.activeCommunity.getChatIdsByCategory(categoryId))
         }
-        popup.contentComponent.categoryName.input.forceActiveFocus(Qt.MouseFocusReason)
+        popup.contentItem.categoryName.input.forceActiveFocus(Qt.MouseFocusReason)
     }
     onClosed: destroy()
 
     function isFormValid() {
-        return contentComponent.categoryName.valid
+        return contentItem.categoryName.valid
     }
 
     header.title: isEdit ?
@@ -161,9 +161,9 @@ StatusModal {
             sensor.onClicked: {
                 openPopup(deleteCategoryConfirmationDialogComponent, {
                     //% "Delete %1 category"
-                    title: qsTrId("delete--1-category").arg(popup.contentComponent.categoryName.input.text),
+                    title: qsTrId("delete--1-category").arg(popup.contentItem.categoryName.input.text),
                     //% "Are you sure you want to delete %1 category? Channels inside the category won’t be deleted."
-                    confirmationText: qsTrId("are-you-sure-you-want-to-delete--1-category--channels-inside-the-category-won-t-be-deleted-").arg(popup.contentComponent.categoryName.input.text)
+                    confirmationText: qsTrId("are-you-sure-you-want-to-delete--1-category--channels-inside-the-category-won-t-be-deleted-").arg(popup.contentItem.categoryName.input.text)
                     
                 })
             }
@@ -216,9 +216,9 @@ StatusModal {
                 let error = ""
 
                 if (isEdit) {
-                    error = chatsModel.communities.editCommunityCategory(communityId, categoryId, Utils.filterXSS(popup.contentComponent.categoryName.input.text), JSON.stringify(channels))
+                    error = chatsModel.communities.editCommunityCategory(communityId, categoryId, Utils.filterXSS(popup.contentItem.categoryName.input.text), JSON.stringify(channels))
                 } else {
-                    error = chatsModel.communities.createCommunityCategory(communityId, Utils.filterXSS(popup.contentComponent.categoryName.input.text), JSON.stringify(channels))
+                    error = chatsModel.communities.createCommunityCategory(communityId, Utils.filterXSS(popup.contentItem.categoryName.input.text), JSON.stringify(channels))
                 }
 
                 if (error) {
