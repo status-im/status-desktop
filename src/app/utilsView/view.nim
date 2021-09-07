@@ -5,7 +5,7 @@ import status/stickers
 import status/tokens as status_tokens
 import status/utils as status_utils
 import status/ens as status_ens
-import status/types/[network]
+import status/types/[network_type]
 import ../../app_service/[main]
 import ../../app_service/tasks/[qt, threadpool]
 import ../utils/image_utils
@@ -177,12 +177,12 @@ QtObject:
     self.newVersionChanged()
 
   proc checkForUpdates*(self: UtilsView) {.slot.} =
-    if self.status.settings.getCurrentNetwork() != Network.Mainnet: return
+    if self.status.settings.getCurrentNetwork() != NetworkType.Mainnet: return
     debug "Check for updates - sync"
     self.latestVersionSuccess(getLatestVersionJSON())
 
   proc asyncCheckForUpdates*(self: UtilsView) {.slot.} =
-    if self.status.settings.getCurrentNetwork() != Network.Mainnet: return
+    if self.status.settings.getCurrentNetwork() != NetworkType.Mainnet: return
     self.asyncRequestLatestVersion("latestVersionSuccess")
 
   proc getNewVersion*(self: UtilsView): string {.slot.} =
