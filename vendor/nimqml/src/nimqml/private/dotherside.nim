@@ -34,7 +34,8 @@ type
   DosQAbstractListModel = distinct pointer
   DosStatusEvent = distinct pointer
   DosStatusOSNotification = DosQObject
-
+  DosQSettings = DosQObject
+  
   DosParameterDefinition = object
     name: cstring
     metaType: cint
@@ -347,22 +348,6 @@ proc dos_event_create_showAppEvent(engine: DosQQmlApplicationEngine): DosStatusE
 proc dos_event_create_osThemeEvent(engine: DosQQmlApplicationEngine): DosStatusEvent {.cdecl, dynlib: dynLibName, importc.}
 proc dos_event_delete(vptr: DosStatusEvent) {.cdecl, dynlib: dynLibName, importc.}
 
-<<<<<<< HEAD
-# DosStatusOSNotificationObject
-proc dos_statusosnotification_create(): DosStatusOSNotificationObject
-  {.cdecl, dynlib: dynLibName, importc.}
-proc dos_statusosnotification_show_notification(vptr: DosStatusOSNotificationObject,
-  title: cstring, messsage: cstring, identifier: cstring)
-  {.cdecl, dynlib: dynLibName, importc.}
-proc dos_statusosnotification_delete(vptr: DosStatusOSNotificationObject)
-  {.cdecl, dynlib: dynLibName, importc.}
-
-proc dos_to_local_file(fileUrl: cstring): cstring
-  {.cdecl, dynlib: dynLibName, importc.}
-
-proc dos_from_local_file(filePath: cstring): cstring
-  {.cdecl, dynlib: dynLibName, importc.}
-=======
 # DosStatusOSNotification
 proc dos_osnotification_create(): DosStatusOSNotification 
   {.cdecl, dynlib: dynLibName, importc.}
@@ -372,5 +357,22 @@ proc dos_osnotification_show_notification(vptr: DosStatusOSNotification,
 proc dos_osnotification_delete(vptr: DosStatusOSNotification) 
   {.cdecl, dynlib: dynLibName, importc.}
 
+# QSettings
+proc dos_qsettings_create(fileName: cstring, format: int): DosQSettings 
   {.cdecl, dynlib: dynLibName, importc.}
->>>>>>> c58455f... refactor(@desktop/general): status custom events and os notification renamed type and methods
+proc dos_qsettings_value(vptr: DosQSettings, key: cstring, 
+  defaultValue: DosQVariant): DosQVariant
+  {.cdecl, dynlib: dynLibName, importc.}
+proc dos_qsettings_set_value(vptr: DosQSettings, key: cstring, 
+    value: DosQVariant)
+  {.cdecl, dynlib: dynLibName, importc.}
+proc dos_qsettings_remove(vptr: DosQSettings, key: cstring)
+  {.cdecl, dynlib: dynLibName, importc.}
+proc dos_qsettings_delete(vptr: DosQSettings) 
+  {.cdecl, dynlib: dynLibName, importc.}
+
+proc dos_to_local_file(fileUrl: cstring): cstring
+  {.cdecl, dynlib: dynLibName, importc.}
+
+proc dos_from_local_file(filePath: cstring): cstring
+  {.cdecl, dynlib: dynLibName, importc.}

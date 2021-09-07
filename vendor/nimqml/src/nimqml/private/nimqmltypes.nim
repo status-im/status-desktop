@@ -44,6 +44,8 @@ type
   QResource* = ref object of RootObj ## \
     # A QResource
 
+  QSettings* = ref object of QObject ## \
+
   QtItemFlag*{.pure, size: sizeof(cint).} = enum ## \
     ## Item flags
     ##
