@@ -17,15 +17,15 @@ StatusModal {
     property var community
 
     onOpened: {
-        contentComponent.community = community
+        contentItem.community = community
 
-        contentComponent.contactListSearch.chatKey.text = ""
-        contentComponent.contactListSearch.pubKey = ""
-        contentComponent.contactListSearch.pubKeys = []
-        contentComponent.contactListSearch.ensUsername = ""
-        contentComponent.contactListSearch.chatKey.forceActiveFocus(Qt.MouseFocusReason)
-        contentComponent.contactListSearch.existingContacts.visible = profileModel.contacts.list.hasAddedContacts()
-        contentComponent.contactListSearch.noContactsRect.visible = !contentComponent.contactListSearch.existingContacts.visible
+        contentItem.contactListSearch.chatKey.text = ""
+        contentItem.contactListSearch.pubKey = ""
+        contentItem.contactListSearch.pubKeys = []
+        contentItem.contactListSearch.ensUsername = ""
+        contentItem.contactListSearch.chatKey.forceActiveFocus(Qt.MouseFocusReason)
+        contentItem.contactListSearch.existingContacts.visible = profileModel.contacts.list.hasAddedContacts()
+        contentItem.contactListSearch.noContactsRect.visible = !contentItem.contactListSearch.existingContacts.visible
     }
 
     //% "Invite friends"
@@ -56,11 +56,11 @@ StatusModal {
 
     rightButtons: [
         StatusButton {
-            enabled: popup.contentComponent.contactListSearch.pubKeys.length > 0
+            enabled: popup.contentItem.contactListSearch.pubKeys.length > 0
             //% "Invite"
             text: qsTrId("invite-button")
             onClicked : {
-                popup.contentComponent.sendInvites(popup.contentComponent.contactListSearch.pubKeys)
+                popup.contentItem.sendInvites(popup.contentItem.contactListSearch.pubKeys)
             }
         }
     ]
