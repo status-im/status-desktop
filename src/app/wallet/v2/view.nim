@@ -44,7 +44,7 @@ QtObject:
   proc setCurrentAccountByIndex*(self: WalletView, index: int) {.slot.} =
     if self.accountsView.setCurrentAccountByIndex(index):
       let selectedAccount = self.accountsView.accounts.getAccount(index)
-      self.collectiblesView.loadCollections(selectedAccount)
+      # self.collectiblesView.loadCollections(selectedAccount)
       # TODO: load account details/transactions/etc
 
   proc addAccountToList*(self: WalletView, account: WalletAccount) =
