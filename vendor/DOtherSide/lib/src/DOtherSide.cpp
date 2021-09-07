@@ -62,9 +62,9 @@
 #include "DOtherSide/DOtherSideSingleInstance.h"
 #include "DOtherSide/DOtherSideStatusSyntaxHighlighter.h"
 
-#include "DOtherSide/StatusEvents/StatusDockShowAppEvent.h"
-#include "DOtherSide/StatusEvents/StatusOSThemeEvent.h"
-#include "DOtherSide/StatusNotification/StatusOSNotification.h"
+#include "DOtherSide/Status/DockShowAppEvent.h"
+#include "DOtherSide/Status/OSThemeEvent.h"
+#include "DOtherSide/Status/OSNotification.h"
 #include "DOtherSide/DosSpellchecker.h"
 
 namespace {
@@ -203,7 +203,7 @@ void dos_qguiapplication_icon(const char *filename)
     qGuiApp->setWindowIcon(QIcon(filename));
 }
 
-void dos_qguiapplication_installEventFilter(::DosStatusEventObject* vptr)
+void dos_qguiapplication_installEventFilter(::DosEvent* vptr)
 {
     auto qobject = static_cast<QObject*>(vptr);
     qGuiApp->installEventFilter(qobject);
@@ -240,7 +240,7 @@ void dos_qapplication_quit()
     QMetaObject::invokeMethod(qApp, "quit", Qt::QueuedConnection);
 }
 
-void dos_qapplication_installEventFilter(::DosStatusEventObject* vptr)
+void dos_qapplication_installEventFilter(::DosEvent* vptr)
 {
     auto qobject = static_cast<QObject*>(vptr);
     qApp->installEventFilter(qobject);
@@ -1355,43 +1355,49 @@ bool dos_singleinstance_isfirst(DosSingleInstance *vptr)
     return false;
 }
 
-::DosStatusEventObject* dos_statusevent_create_showAppEvent(::DosQQmlApplicationEngine* vptr)
+#pragma region Events
+::DosEvent* dos_event_create_showAppEvent(::DosQQmlApplicationEngine* vptr)
 {
     auto engine = static_cast<QQmlApplicationEngine*>(vptr);
-    return new StatusDockShowAppEvent(engine);
+    return new Status::DockShowAppEvent(engine);
 }
 
-::DosStatusEventObject* dos_statusevent_create_osThemeEvent(::DosQQmlApplicationEngine* vptr)
+::DosEvent* dos_event_create_osThemeEvent(::DosQQmlApplicationEngine* vptr)
 {
     auto engine = static_cast<QQmlApplicationEngine*>(vptr);
-    return new StatusOSThemeEvent(engine);
+    return new Status::OSThemeEvent(engine);
 }
 
-void dos_statusevent_delete(DosStatusEventObject* vptr)
+void dos_event_delete(DosEvent* vptr)
 {
     auto qobject = static_cast<QObject*>(vptr);
     qobject->deleteLater();
 }
+#pragma endregion
 
-::DosStatusOSNotificationObject* dos_statusosnotification_create()
+#pragma region OSNotification
+
+::DosOSNotification* dos_osnotification_create()
 {
-    return new StatusOSNotification();
+    return new Status::OSNotification();
 }
 
-void dos_statusosnotification_show_notification(DosStatusOSNotificationObject* vptr,
+void dos_osnotification_show_notification(DosOSNotification* vptr, 
     const char* title, const char* message, const char* identifier)
 {
-    auto notificationObj = static_cast<StatusOSNotification*>(vptr);
+    auto notificationObj = static_cast<Status::OSNotification*>(vptr);
     if(notificationObj)
         notificationObj->showNotification(title, message, identifier);
 }
 
-void dos_statusosnotification_delete(DosStatusOSNotificationObject* vptr)
+void dos_osnotification_delete(DosOSNotification* vptr)
 {
     auto qobject = static_cast<QObject*>(vptr);
     if(qobject)
         qobject->deleteLater();
 }
+
+#pragma endregion
 
 char* dos_to_local_file(const char* fileUrl)
 {

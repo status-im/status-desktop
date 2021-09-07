@@ -1,4 +1,4 @@
-#include "DOtherSide/StatusEvents/StatusDockShowAppEvent.h"
+#include "DOtherSide/Status/DockShowAppEvent.h"
 
 #include <QQuickWindow>
 
@@ -9,14 +9,16 @@
     installing filters.
 */
 
-StatusDockShowAppEvent::StatusDockShowAppEvent(DosQQmlApplicationEngine* vptr, 
+using namespace Status;
+
+DockShowAppEvent::DockShowAppEvent(DosQQmlApplicationEngine* vptr, 
     QObject* parent)
     : QObject(parent) 
 {
     m_engine = static_cast<QQmlApplicationEngine*>(vptr);
 }
 
-bool StatusDockShowAppEvent::eventFilter(QObject* obj, QEvent* event)
+bool DockShowAppEvent::eventFilter(QObject* obj, QEvent* event)
 {
 #ifdef Q_OS_MACOS
     if (event->type() == QEvent::ApplicationStateChange) 
