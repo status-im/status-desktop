@@ -11,40 +11,123 @@ Column {
     leftPadding: 20
     rightPadding: 20
 
-    StatusExpandableSettingsItem {
+    Rectangle {
+        width: parent.width
+        height: 30
+        color: Theme.palette.baseColor2
+        StatusBaseText {
+            anchors.verticalCenter: parent.verticalCenter
+            text: "Type Primary"
+            color: Theme.palette.directColor1
+        }
+    }
+
+    StatusExpandableItem {
         anchors.horizontalCenter: parent.horizontalCenter
 
         expandable: false
         icon.name: "seed-phrase"
-        primaryText: qsTr("Back up seed phrase")
-        secondaryText: qsTr("Back up your seed phrase now to secure this account ajhaDH SDHSAHDLSADBSA,DLISAHDLASD ADASDHASLDHALSDHAS DAS,DASJDGLIASGD")
+        primaryText: "Back up seed phrase"
+        secondaryText: "Back up your seed phrase now to secure this account ajhaDH SDHSAHDLSADBSA,DLISAHDLASD ADASDHASLDHALSDHAS DAS,DASJDGLIASGD"
         button.text: qsTr("Back up seed phrase")
     }
 
-    StatusExpandableSettingsItem {
+    StatusExpandableItem {
         anchors.horizontalCenter: parent.horizontalCenter
 
         expandable: true
         icon.name: "secret"
-        primaryText: qsTr("Account signing phrase")
-        secondaryText: qsTr("View your signing phrase and ensure that you never get scammed")
+        primaryText: "Account signing phrase"
+        secondaryText: "View your signing phrase and ensure that you never get scammed. View your signing phrase and ensure that you never get scammed."
         expandableComponent: notImplemented
     }
 
-    StatusExpandableSettingsItem {
+    StatusExpandableItem {
         anchors.horizontalCenter: parent.horizontalCenter
 
         expandable: true
         icon.name: "seed-phrase"
-        primaryText: qsTr("View private key")
-        secondaryText: qsTr("Back up your seed phrase now to secure this account")
+        primaryText: "View private key"
+        secondaryText: "Back up your seed phrase now to secure this account"
         expandableComponent: notImplemented
-        button.text: qsTr("View private key")
+        button.text: "View private key"
         button.icon.name: "tiny/public-chat"
         button.onClicked: {
             // To-do open  enter password Modal
             expanded = !expanded
         }
+    }
+
+    Rectangle {
+        width: parent.width
+        height: 30
+        color:  Theme.palette.baseColor2
+        StatusBaseText {
+            anchors.verticalCenter: parent.verticalCenter
+            text: "Type Secondary"
+            color: Theme.palette.directColor1
+        }
+    }
+
+    StatusExpandableItem {
+        anchors.horizontalCenter: parent.horizontalCenter
+
+        type: StatusExpandableItem.Type.Secondary
+        expandable: true
+        image.source: "https://pbs.twimg.com/profile_images/1369221718338895873/T_5fny6o_400x400.jpg"
+        primaryText: "CryptoKitties"
+        additionalText: "1456 USD"
+        expandableComponent: notImplemented
+    }
+
+    StatusExpandableItem {
+        anchors.horizontalCenter: parent.horizontalCenter
+
+        type: StatusExpandableItem.Type.Secondary
+        expandable: true
+        image.source: "https://pbs.twimg.com/profile_images/1369221718338895873/T_5fny6o_400x400.jpg"
+        primaryText: "Adding Really long text to test scenario of having very long text along with tertiary text"
+        additionalText: "564.90 USD"
+        expandableComponent: notImplemented
+    }
+
+    StatusExpandableItem {
+        anchors.horizontalCenter: parent.horizontalCenter
+
+        type: StatusExpandableItem.Type.Secondary
+        expandable: true
+        primaryText: "CryptoKitties"
+        additionalText: "1456 USD"
+        expandableComponent: notImplemented
+    }
+
+    Rectangle {
+        width: parent.width
+        height: 30
+        color:  Theme.palette.baseColor2
+        StatusBaseText {
+            anchors.verticalCenter: parent.verticalCenter
+            text: "Type Tertiary"
+            color: Theme.palette.directColor1
+        }
+    }
+
+    StatusExpandableItem {
+        anchors.horizontalCenter: parent.horizontalCenter
+
+        type: StatusExpandableItem.Type.Tertiary
+        expandable: true
+        primaryText: "CryptoKitties"
+        expandableComponent: notImplemented
+    }
+
+    StatusExpandableItem {
+        anchors.horizontalCenter: parent.horizontalCenter
+
+        type: StatusExpandableItem.Type.Tertiary
+        expandable: true
+        primaryText: "Rescue Moon"
+        expandableComponent: notImplemented
     }
 
     Component {

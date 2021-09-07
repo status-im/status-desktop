@@ -170,7 +170,7 @@ StatusWindow {
                             onClicked: page.sourceComponent = othersComponent
                         }
                         StatusNavigationListItem {
-                            title: "StatusExpandableSettingsItem"
+                            title: "StatusExpandableItem"
                             selected: page.sourceComponent == settingsComponent
                             onClicked: page.sourceComponent = settingsComponent
                         }
