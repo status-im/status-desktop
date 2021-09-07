@@ -14,12 +14,12 @@ StatusModal {
     id: popup
 
     onOpened: {
-        contentComponent.errorText.text = ""
+        contentItem.errorText.text = ""
     }
 
     //% "Membership requests"
     header.title: qsTrId("membership-requests")
-    header.subTitle: contentComponent.membershipRequestList.count
+    header.subTitle: contentItem.membershipRequestList.count
 
     contentItem: Column {
         property alias errorText: errorText
