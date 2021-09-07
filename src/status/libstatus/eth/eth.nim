@@ -2,7 +2,7 @@ import
   web3/ethtypes
 
 import
-  transactions, ../../types
+  transactions, ../../types/[rpc_response]
 
 proc sendTransaction*(tx: var EthSend, password: string, success: var bool): string =
   success = true

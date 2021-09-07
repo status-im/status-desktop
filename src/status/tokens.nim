@@ -1,15 +1,6 @@
-import json, json_serialization
-
-import 
-  sugar, sequtils, strutils, atomics
-
 import libstatus/tokens as status_tokens
 import libstatus/eth/contracts
 import ../eventemitter
-import signals/types
-
-#TODO: temporary?
-import types as LibStatusTypes
 
 type
     TokensModel* = ref object

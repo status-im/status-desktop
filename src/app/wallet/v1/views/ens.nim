@@ -3,8 +3,9 @@ import NimQml, json, sequtils, chronicles, strutils, strformat, json
 
 import
   ../../../../status/[status, settings, wallet, tokens],
-  ../../../../status/ens as status_ens,
-  ../../../../status/tasks/[qt, task_runner_impl]
+  ../../../../status/ens as status_ens
+import ../../../../app_service/[main]
+import ../../../../app_service/tasks/[qt, threadpool]
 
 import account_list, account_item, transaction_list, accounts, asset_list, token_list
 
@@ -28,18 +29,20 @@ proc resolveEns[T](self: T, slot: string, ens: string, uuid: string) =
     vptr: cast[ByteAddress](self.vptr),
     slot: slot, ens: ens, uuid: uuid
   )
-  self.status.tasks.threadpool.start(arg)
+  self.appService.threadpool.start(arg)
 
 QtObject:
   type EnsView* = ref object of QObject
       status: Status
+      appService: AppService
 
   proc setup(self: EnsView) = self.QObject.setup
   proc delete(self: EnsView) = self.QObject.delete
 
-  proc newEnsView*(status: Status): EnsView =
+  proc newEnsView*(status: Status, appService: AppService): EnsView =
     new(result, delete)
     result.status = status
+    result.appService = appService
     result.setup
 
   proc resolveENS*(self: EnsView, ens: string, uuid: string) {.slot.} =

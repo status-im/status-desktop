@@ -7,7 +7,7 @@ import # vendor libs
 
 import # status-desktop libs
   ../libstatus/core as status, ../libstatus/eth/contracts as contracts,
-  ../stickers as status_stickers, ../types,
+  ../stickers as status_stickers,
   web3/[conversions, ethtypes], ../utils, account
 
 const CRYPTOKITTY* = "cryptokitty"

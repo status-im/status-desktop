@@ -2,7 +2,7 @@ import NimQml
 import Tables
 import json, sequtils
 import ../../../status/settings
-import ../../../status/types
+import ../../../status/types/[setting]
 import ../../../status/status
 
 type

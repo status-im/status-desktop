@@ -1,7 +1,7 @@
 import NimQml, chronicles
-import ../../status/signals/types
 import ../../status/[status, node, network]
-import ../../status/types as status_types
+import ../../app_service/[main]
+import ../../app_service/signals/[base, wallet, discovery_summary, stats]
 import ../../eventemitter
 import view
 
@@ -10,14 +10,16 @@ logScope:
 
 type NodeController* = ref object
   status*: Status
+  appService: AppService
   view*: NodeView
   variant*: QVariant
   networkAccessMananger*: QNetworkAccessManager
 
-proc newController*(status: Status, nam: QNetworkAccessManager): NodeController =
+proc newController*(status: Status, appService: AppService, nam: QNetworkAccessManager): NodeController =
   result = NodeController()
   result.status = status
-  result.view = newNodeView(status)
+  result.appService = appService
+  result.view = newNodeView(status, appService)
   result.variant = newQVariant(result.view)
   result.networkAccessMananger = nam
 

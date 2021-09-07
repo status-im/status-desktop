@@ -4,11 +4,13 @@ import NimQml, chronicles, stint
 import ../../../status/[status, wallet2]
 import views/[accounts, account_list, collectibles]
 import views/buy_sell_crypto/[service_controller]
+import ../../../app_service/[main]
 
 QtObject:
   type
     WalletView* = ref object of QAbstractListModel
       status: Status
+      appService: AppService
       accountsView: AccountsView
       collectiblesView: CollectiblesView
       cryptoServiceController: CryptoServiceController
@@ -22,12 +24,13 @@ QtObject:
   proc setup(self: WalletView) =
     self.QAbstractListModel.setup
 
-  proc newWalletView*(status: Status): WalletView =
+  proc newWalletView*(status: Status, appService: AppService): WalletView =
     new(result, delete)
     result.status = status
+    result.appService = appService
     result.accountsView = newAccountsView(status)
-    result.collectiblesView = newCollectiblesView(status)
-    result.cryptoServiceController = newCryptoServiceController(status)
+    result.collectiblesView = newCollectiblesView(status, appService)
+    result.cryptoServiceController = newCryptoServiceController(status, appService)
     result.setup
 
   proc getAccounts(self: WalletView): QVariant {.slot.} = 

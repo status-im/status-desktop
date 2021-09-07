@@ -3,10 +3,11 @@ from sugar import `=>`, `->`
 import NimQml, json, sequtils, chronicles, strutils, json
 
 import
-  ../../../../status/[status, wallet, types, utils],
+  ../../../../status/[status, wallet, utils],
   ../../../../status/wallet as status_wallet,
-  ../../../../status/tasks/[qt, task_runner_impl]
-
+  ../../../../status/types/[transaction]
+import ../../../../app_service/[main]
+import ../../../../app_service/tasks/[qt, threadpool]
 import account_list, account_item, transaction_list, accounts, transactions
 
 logScope:
@@ -39,11 +40,12 @@ proc loadTransactions*[T](self: T, slot: string, address: string, toBlock: Uint2
     limit: limit,
     loadMore: loadMore
   )
-  self.status.tasks.threadpool.start(arg)
+  self.appService.threadpool.start(arg)
 
 QtObject:
   type HistoryView* = ref object of QObject
       status: Status
+      appService: AppService
       accountsView: AccountsView
       transactionsView*: TransactionsView
       fetchingHistoryState: Table[string, bool]
@@ -51,9 +53,11 @@ QtObject:
   proc setup(self: HistoryView) = self.QObject.setup
   proc delete(self: HistoryView) = self.QObject.delete
 
-  proc newHistoryView*(status: Status, accountsView: AccountsView, transactionsView: TransactionsView): HistoryView =
+  proc newHistoryView*(status: Status, appService: AppService, 
+    accountsView: AccountsView, transactionsView: TransactionsView): HistoryView =
     new(result, delete)
     result.status = status
+    result.appService = appService
     result.fetchingHistoryState = initTable[string, bool]()
     result.accountsView = accountsView
     result.transactionsView = transactionsView

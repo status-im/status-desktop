@@ -10,14 +10,14 @@ import app/profile/core as profile
 import app/onboarding/core as onboarding
 import app/login/core as login
 import app/provider/core as provider
-import status/signals/core as signals
-import status/types
+import status/types/[account]
 import status/constants
 import status_go
 import status/status as statuslib
-import ./eventemitter
-import ./status/tasks/marathon/mailserver/controller as mailserver_controller
-import ./status/tasks/marathon/mailserver/worker as mailserver_worker
+import eventemitter
+import app_service/tasks/marathon/mailserver/controller as mailserver_controller
+import app_service/tasks/marathon/mailserver/worker as mailserver_worker
+import app_service/main
 
 var signalsQObjPointer: pointer
 
@@ -45,8 +45,9 @@ proc mainProc() =
     mailserverController = mailserver_controller.newController(status)
     mailserverWorker = mailserver_worker.newMailserverWorker(cast[ByteAddress](mailserverController.vptr))
 
-  # TODO: create and register an ipcWorker
-  status.tasks.marathon.registerWorker(mailserverWorker)
+  let appService = newAppService(status, mailserverWorker)
+  defer: appService.delete()
+
   status.initNode()
 
   let uiScaleFilePath = joinPath(DATADIR, "ui-scale")
@@ -119,32 +120,30 @@ proc mainProc() =
     netAccMgr.clearConnectionCache()
     netAccMgr.setNetworkAccessible(NetworkAccessibility.Accessible)
 
-  let signalController = signals.newController(status)
-  defer:
-    signalsQObjPointer = nil
-    signalController.delete()
 
   # We need this global variable in order to be able to access the application
   # from the non-closure callback passed to `libstatus.setSignalEventCallback`
-  signalsQObjPointer = cast[pointer](signalController.vptr)
+  signalsQObjPointer = cast[pointer](appService.signalController.vptr)
+  defer:
+    signalsQObjPointer = nil
 
-  var wallet = wallet.newController(status)
+  var wallet = wallet.newController(status, appService)
   defer: wallet.delete()
   engine.setRootContextProperty("walletModel", wallet.variant)
 
-  var wallet2 = walletV2.newController(status)
+  var wallet2 = walletV2.newController(status, appService)
   defer: wallet2.delete()
   engine.setRootContextProperty("walletV2Model", wallet2.variant)
 
-  var chat = chat.newController(status)
+  var chat = chat.newController(status, appService)
   defer: chat.delete()
   engine.setRootContextProperty("chatsModel", chat.variant)
 
-  var node = node.newController(status, netAccMgr)
+  var node = node.newController(status, appService, netAccMgr)
   defer: node.delete()
   engine.setRootContextProperty("nodeModel", node.variant)
 
-  var utilsController = utilsView.newController(status)
+  var utilsController = utilsView.newController(status, appService)
   defer: utilsController.delete()
   engine.setRootContextProperty("utilsModel", utilsController.variant)
 
@@ -159,7 +158,7 @@ proc mainProc() =
     let shouldRetranslate = not defined(linux)
     engine.setTranslationPackage(joinPath(i18nPath, fmt"qml_{locale}.qm"), shouldRetranslate)
 
-  var profile = profile.newController(status, changeLanguage)
+  var profile = profile.newController(status, appService, changeLanguage)
   defer: profile.delete()
   engine.setRootContextProperty("profileModel", profile.variant)
 
@@ -175,7 +174,7 @@ proc mainProc() =
   status.events.once("login") do(a: Args):
     var args = AccountArgs(a)
 
-    status.tasks.marathon.onLoggedIn()
+    appService.onLoggedIn()
 
     # Reset login and onboarding to remove any mnemonic that would have been saved in the accounts list
     login.reset()
@@ -202,7 +201,6 @@ proc mainProc() =
   # this should be the last defer in the scope
   defer:
     info "Status app is shutting down..."
-    status.tasks.teardown()
 
   engine.setRootContextProperty("loginModel", login.variant)
   engine.setRootContextProperty("onboardingModel", onboarding.variant)
@@ -237,7 +235,7 @@ proc mainProc() =
     # 2. Re-init controllers that don't require a running node
     initControllers()
 
-  engine.setRootContextProperty("signals", signalController.variant)
+  engine.setRootContextProperty("signals", appService.signalController.variant)
   engine.setRootContextProperty("mailserver", mailserverController.variant)
 
   var prValue = newQVariant(if defined(production): true else: false)

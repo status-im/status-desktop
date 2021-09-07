@@ -1,8 +1,7 @@
 import system
 import libstatus/settings
-import types
+import types/[setting, installation]
 import libstatus/installations
-import profile/devices
 import json
 
 proc setDeviceName*(name: string) =

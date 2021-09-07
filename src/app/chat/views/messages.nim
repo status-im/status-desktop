@@ -1,14 +1,15 @@
 import NimQml, Tables, json, sequtils, chronicles, times, re, sugar, strutils, os, strformat, algorithm
 
-import ../../../status/[status, contacts, types, mailservers]
-import ../../../status/signals/types as signal_types
+import ../../../status/[status, contacts, mailservers]
 import ../../../status/ens as status_ens
 import ../../../status/messages as status_messages
 import ../../../status/utils as status_utils
-import ../../../status/chat/[chat, message]
+import ../../../status/chat/[chat]
 import ../../../status/profile/profile
-import ../../../status/tasks/[qt, task_runner_impl]
-import ../../../status/tasks/marathon/mailserver/worker
+import ../../../status/types/[message]
+import ../../../app_service/[main]
+import ../../../app_service/tasks/[qt, threadpool]
+import ../../../app_service/tasks/marathon/mailserver/worker
 
 import communities, chat_item, channels_list, communities, community_list, message_list, channel, message_item
 
@@ -23,6 +24,7 @@ type
 QtObject:
   type MessageView* = ref object of QAbstractListModel
     status: Status
+    appService: AppService
     messageList*: OrderedTable[string, ChatMessageList]
     pinnedMessagesList*: OrderedTable[string, ChatMessageList]
     channelView*: ChannelView
@@ -45,9 +47,10 @@ QtObject:
     self.channelOpenTime = initTable[string, int64]()
     self.QAbstractListModel.delete
 
-  proc newMessageView*(status: Status, channelView: ChannelView, communitiesView: CommunitiesView): MessageView =
+  proc newMessageView*(status: Status, appService: AppService, channelView: ChannelView, communitiesView: CommunitiesView): MessageView =
     new(result, delete)
     result.status = status
+    result.appService = appService
     result.channelView = channelView
     result.communities = communitiesView
     result.messageList = initOrderedTable[string, ChatMessageList]()
@@ -260,7 +263,7 @@ QtObject:
 
   proc loadMoreMessages*(self: MessageView, channelId: string) {.slot.} =
     self.setLoadingHistoryMessages(channelId, true)
-    self.status.chat.loadMoreMessagesForChannel(channelId)
+    self.appService.chatService.loadMoreMessagesForChannel(channelId)
 
   proc onMessagesLoaded*(self: MessageView, chatId: string, messages: var seq[Message]) =
     self.pushMessages(messages)
@@ -290,7 +293,7 @@ QtObject:
 
   proc fillGaps*(self: MessageView, messageId: string) {.slot.} =
     self.setLoadingMessages(true)
-    let mailserverWorker = self.status.tasks.marathon[MailserverWorker().name]
+    let mailserverWorker = self.appService.marathon[MailserverWorker().name]
     let task = FillGapsTaskArg( `method`: "fillGaps", chatId: self.channelView.activeChannel.id, messageIds: @[messageId])
     mailserverWorker.start(task)
 

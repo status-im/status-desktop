@@ -3,8 +3,11 @@ import NimQml, json, sequtils, chronicles, strutils, strformat, json, stint
 
 import
   ../../../../status/[status, settings, wallet, tokens, utils],
-  ../../../../status/wallet as status_wallet,
-  ../../../../status/tasks/[qt, task_runner_impl]
+  ../../../../status/wallet as status_wallet
+
+import ../../../../app_service/[main]
+import ../../../../app_service/tasks/[qt, threadpool]
+import ../../../../app_service/tasks/marathon/mailserver/worker
 
 import account_list, account_item, transaction_list, accounts
 
@@ -46,7 +49,7 @@ proc sendTransaction[T](self: T, slot: string, from_addr: string, to: string, as
     assetAddress: assetAddress, value: value, gas: gas,
     gasPrice: gasPrice, password: password, uuid: uuid
   )
-  self.status.tasks.threadpool.start(arg)
+  self.appService.threadpool.start(arg)
 
 const watchTransactionTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let
@@ -61,11 +64,12 @@ proc watchTransaction[T](self: T, slot: string, transactionHash: string) =
     vptr: cast[ByteAddress](self.vptr),
     slot: slot, transactionHash: transactionHash
   )
-  self.status.tasks.threadpool.start(arg)
+  self.appService.threadpool.start(arg)
 
 QtObject:
   type TransactionsView* = ref object of QObject
       status: Status
+      appService: AppService
       accountsView*: AccountsView
       transactionsView*: TransactionsView
       currentTransactions*: TransactionList
@@ -75,9 +79,10 @@ QtObject:
     self.currentTransactions.delete
     self.QObject.delete
 
-  proc newTransactionsView*(status: Status, accountsView: AccountsView): TransactionsView =
+  proc newTransactionsView*(status: Status, appService: AppService, accountsView: AccountsView): TransactionsView =
     new(result, delete)
     result.status = status
+    result.appService = appService
     result.accountsView = accountsView # TODO: not ideal but a solution for now
     result.currentTransactions = newTransactionList()
     result.setup

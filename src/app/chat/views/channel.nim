@@ -4,7 +4,7 @@ import ../../../status/[status, contacts]
 import ../../../status/ens as status_ens
 import ../../../status/chat as status_chat
 import ../../../status/chat/[chat]
-import ../../../status/tasks/[task_runner_impl]
+import ../../../app_service/[main]
 
 import communities, chat_item, channels_list, communities, community_list
 
@@ -14,6 +14,7 @@ logScope:
 QtObject:
   type ChannelView* = ref object of QObject
     status: Status
+    appService: AppService
     communities*: CommunitiesView
     chats*: ChannelsList
     activeChannel*: ChatItemView
@@ -27,9 +28,10 @@ QtObject:
     self.contextChannel.delete
     self.QObject.delete
 
-  proc newChannelView*(status: Status, communities: CommunitiesView): ChannelView =
+  proc newChannelView*(status: Status, appService: AppService, communities: CommunitiesView): ChannelView =
     new(result, delete)
     result.status = status
+    result.appService = appService
     result.chats = newChannelsList(status)
     result.activeChannel = newChatItemView(status)
     result.contextChannel = newChatItemView(status)
@@ -92,13 +94,13 @@ QtObject:
     if (self.chats.chats.len == 0): return
     let selectedChannel = self.getChannel(channelIndex)
     if (selectedChannel == nil): return
-    self.status.chat.asyncMarkAllChannelMessagesRead(selectedChannel.id)
+    self.appService.chatService.asyncMarkAllChannelMessagesRead(selectedChannel.id)
 
   proc markChatItemAsRead*(self: ChannelView, id: string) {.slot.} =
     if (self.chats.chats.len == 0): return
     let selectedChannel = self.getChannelById(id)
     if (selectedChannel == nil): return
-    self.status.chat.asyncMarkAllChannelMessagesRead(selectedChannel.id)
+    self.appService.chatService.asyncMarkAllChannelMessagesRead(selectedChannel.id)
 
   proc clearUnreadIfNeeded*(self: ChannelView, channel: var Chat) =
     if (not channel.isNil and (channel.unviewedMessagesCount > 0 or channel.mentionsCount > 0)):
@@ -165,7 +167,7 @@ QtObject:
     if not self.communities.activeCommunity.active:
       self.previousActiveChannelIndex = self.chats.chats.findIndexById(self.activeChannel.id)
 
-    self.status.chat.asyncMarkAllChannelMessagesRead(self.activeChannel.id)
+    self.appService.chatService.asyncMarkAllChannelMessagesRead(self.activeChannel.id)
 
     self.activeChannelChanged()
 

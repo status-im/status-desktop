@@ -1,5 +1,5 @@
 import json, json, options, json_serialization, stint, chronicles
-import core, conversions, ../types, ../utils, strutils, strformat
+import core, conversions, ../types/[transaction, rpc_response], ../utils, strutils, strformat
 from status_go import validateMnemonic#, startWallet
 import ../wallet/account
 import web3/ethtypes
@@ -31,17 +31,17 @@ proc getWalletAccounts*(): seq[WalletAccount] =
 proc getTransactionReceipt*(transactionHash: string): string =
   result = callPrivateRPC("eth_getTransactionReceipt", %* [transactionHash])
 
-proc getTransfersByAddress*(address: string, toBlock: Uint256, limit: int, loadMore: bool = false): seq[types.Transaction] =
+proc getTransfersByAddress*(address: string, toBlock: Uint256, limit: int, loadMore: bool = false): seq[Transaction] =
   try:
     let
       toBlockParsed = "0x" & stint.toHex(toBlock)
       limitParsed = "0x" & limit.toHex.stripLeadingZeros
       transactionsResponse = getTransfersByAddress(address, toBlockParsed, limitParsed, loadMore)
       transactions = parseJson(transactionsResponse)["result"]
-    var accountTransactions: seq[types.Transaction] = @[]
+    var accountTransactions: seq[Transaction] = @[]
 
     for transaction in transactions:
-      accountTransactions.add(types.Transaction(
+      accountTransactions.add(Transaction(
         id: transaction["id"].getStr,
         typeValue: transaction["type"].getStr,
         address: transaction["address"].getStr,

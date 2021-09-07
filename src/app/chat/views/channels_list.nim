@@ -1,8 +1,9 @@
 import NimQml, Tables
 import algorithm
-import ../../../status/chat/[chat, message]
+import ../../../status/chat/[chat]
 import ../../../status/status
 import ../../../status/accounts
+import ../../../status/types/[message]
 import strutils
 
 type

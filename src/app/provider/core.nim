@@ -1,5 +1,4 @@
 import NimQml, chronicles
-import ../../status/signals/types
 import ../../status/status
 import view
 

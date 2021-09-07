@@ -1,7 +1,7 @@
 import options, chronicles, json, json_serialization, sequtils, sugar
 import libstatus/accounts as status_accounts
 import libstatus/settings as status_settings
-import types
+import ./types/[account, fleet, sticker, setting]
 import utils
 import ../eventemitter
 

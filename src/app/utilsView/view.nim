@@ -1,12 +1,13 @@
 import NimQml, os, strformat, strutils, parseUtils, chronicles
 import stint
 import ../../status/[status, wallet, settings, updates]
-import ../../status/tasks/[qt, task_runner_impl]
 import ../../status/stickers
 import ../../status/tokens as status_tokens
-import ../../status/types
 import ../../status/utils as status_utils
 import ../../status/ens as status_ens
+import ../../status/types/[network]
+import ../../app_service/[main]
+import ../../app_service/tasks/[qt, threadpool]
 import ../utils/image_utils
 import web3/[ethtypes, conversions]
 import stew/byteutils
@@ -20,6 +21,7 @@ type CheckForNewVersionTaskArg = ref object of QObjectTaskArg
 QtObject:
   type UtilsView* = ref object of QObject
     status*: Status
+    appService: AppService
     newVersion*: string
 
   proc setup(self: UtilsView) =
@@ -33,10 +35,11 @@ QtObject:
   proc delete*(self: UtilsView) =
     self.QObject.delete
 
-  proc newUtilsView*(status: Status): UtilsView =
+  proc newUtilsView*(status: Status, appService: AppService): UtilsView =
     new(result, delete)
     result = UtilsView()
     result.status = status
+    result.appService = appService
     result.setup
 
   proc getOs*(self: UtilsView): string {.slot.} =
@@ -159,7 +162,7 @@ QtObject:
       vptr: cast[ByteAddress](self.vptr),
       slot: slot
     )
-    self.status.tasks.threadpool.start(arg)
+    self.appService.threadpool.start(arg)
 
   proc latestVersionSuccess*(self: UtilsView, latestVersionJSON: string) {.slot.} =
     let latestVersionObj = parseJSON(latestVersionJSON)

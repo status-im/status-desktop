@@ -3,11 +3,10 @@ import # std libs
 
 import # status-desktop libs
   ../../status/chat/chat as status_chat,
-  ../../status/notifications/os_notifications,
-  ../../status/tasks/marathon,
-  ../../status/tasks/marathon/mailserver/worker,
   ./views/communities,
   ./views/messages
+import ../../app_service/tasks/[qt, threadpool]
+import ../../app_service/tasks/marathon/mailserver/worker
 
 proc handleChatEvents(self: ChatController) =
   # Display already saved messages
@@ -116,7 +115,7 @@ proc handleChatEvents(self: ChatController) =
 
     if channel.chat.chatType == status_chat.ChatType.CommunityChat:
       self.view.communities.updateCommunityChat(channel.chat)
-    self.status.chat.loadInitialMessagesForChannel(channel.chat.id)
+    self.loadInitialMessagesForChannel(channel.chat.id)
   
   self.status.events.on("chatsLoaded") do(e:Args):
     self.view.calculateUnreadMessages()
@@ -141,7 +140,7 @@ proc handleChatEvents(self: ChatController) =
       discard self.view.channelView.chats.addChatItemToList(channel.chat)
       self.view.setActiveChannel(channel.chat.id)
 
-    self.status.chat.loadInitialMessagesForChannel(channel.chat.id)
+    self.loadInitialMessagesForChannel(channel.chat.id)
     self.status.chat.statusUpdates()
 
   self.status.events.on("channelLeft") do(e: Args):
@@ -190,7 +189,7 @@ proc handleChatEvents(self: ChatController) =
     self.view.communities.markNotificationsAsRead(markAsReadProps)
 
 proc handleMailserverEvents(self: ChatController) =
-  let mailserverWorker = self.status.tasks.marathon[MailserverWorker().name]
+  let mailserverWorker = self.appService.marathon[MailserverWorker().name]
   # TODO: test mailserver topics when joining chat
   
   self.status.events.on("channelJoined") do(e:Args):

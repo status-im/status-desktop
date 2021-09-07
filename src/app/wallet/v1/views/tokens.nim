@@ -1,8 +1,8 @@
 import atomics, strformat, strutils, sequtils, json, std/wrapnils, parseUtils, tables, chronicles, web3/[ethtypes, conversions], stint
 import NimQml, json, sequtils, chronicles, strutils, strformat, json
 
-import ../../../../status/[status, settings, wallet, tokens, utils, types]
-
+import ../../../../status/[status, settings, wallet, tokens, utils]
+import ../../../../app_service/[main]
 import account_list, account_item, transaction_list, accounts, asset_list, token_list
 
 logScope:
@@ -11,6 +11,7 @@ logScope:
 QtObject:
   type TokensView* = ref object of QObject
       status: Status
+      appService: AppService
       accountsView: AccountsView
       currentAssetList*: AssetList
       defaultTokenList: TokenList
@@ -23,13 +24,14 @@ QtObject:
     self.customTokenList.delete
     self.QObject.delete
 
-  proc newTokensView*(status: Status, accountsView: AccountsView): TokensView =
+  proc newTokensView*(status: Status, appService: AppService, accountsView: AccountsView): TokensView =
     new(result, delete)
     result.status = status
+    result.appService = appService
     result.accountsView = accountsView
     result.currentAssetList = newAssetList()
-    result.defaultTokenList = newTokenList(status)
-    result.customTokenList = newTokenList(status)
+    result.defaultTokenList = newTokenList(status, appService)
+    result.customTokenList = newTokenList(status, appService)
     result.setup
 
   proc hasAsset*(self: TokensView, symbol: string): bool {.slot.} =

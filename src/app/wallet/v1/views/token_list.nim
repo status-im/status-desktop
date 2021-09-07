@@ -6,7 +6,10 @@ import # vendor libs
 
 import # status-desktop libs
   ../../../../status/[utils, tokens, settings],
-  ../../../../status/tasks/[qt, task_runner_impl], ../../../../status/status
+  ../../../../status/status
+import ../../../../app_service/[main]
+import ../../../../app_service/tasks/[qt, threadpool]
+import ../../../../app_service/tasks/marathon/mailserver/worker
 from web3/conversions import `$`
 
 type
@@ -46,11 +49,12 @@ proc getTokenDetails[T](self: T, slot: string, address: string) =
     vptr: cast[ByteAddress](self.vptr),
     slot: slot,
     address: address)
-  self.status.tasks.threadpool.start(arg)
+  self.appService.threadpool.start(arg)
 
 QtObject:
   type TokenList* = ref object of QAbstractListModel
-    status*: Status
+    status: Status
+    appService: AppService
     tokens*: seq[Erc20Contract]
     isCustom*: bool
 
@@ -76,10 +80,11 @@ QtObject:
     self.isCustom = true
     self.endResetModel()
 
-  proc newTokenList*(status: Status): TokenList =
+  proc newTokenList*(status: Status, appService: AppService): TokenList =
     new(result, delete)
     result.tokens = @[]
     result.status = status
+    result.appService = appService
     result.setup
 
   proc rowData(self: TokenList, index: int, column: string): string {.slot.} =

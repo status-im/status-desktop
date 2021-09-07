@@ -1,4 +1,7 @@
-proc formatChatUpdate(response: JsonNode): (seq[Chat], seq[Message]) =
+import json
+import ../types/[message, chat]
+
+proc formatChatUpdate*(response: JsonNode): (seq[Chat], seq[Message]) =
   var chats: seq[Chat] = @[]
   var messages: seq[Message] = @[]
   if response["result"]{"messages"} != nil:

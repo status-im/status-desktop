@@ -1,6 +1,6 @@
 import NimQml
 import ../../status/[status, ens, chat/stickers, wallet, settings, provider]
-import ../../status/types
+import ../../status/types/[setting]
 import json, json_serialization, sets, strutils
 import chronicles
 import nbaser

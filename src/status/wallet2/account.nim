@@ -1,7 +1,7 @@
 import options, json, strformat
 
 from ../../eventemitter import Args
-import ../types
+import ../types/[transaction]
 
 type CollectibleList* = ref object
     collectibleType*, collectiblesJSON*, error*: string

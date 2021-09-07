@@ -5,7 +5,7 @@ import
   nimcrypto, web3/[encoding, ethtypes]
 
 import 
-  ../../types, ../coder, eth, transactions
+  ../../types/[rpc_response], ../coder, eth, transactions
 
 export sendTransaction
 

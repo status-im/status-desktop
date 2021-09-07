@@ -1,6 +1,6 @@
 import NimQml
 import Tables
-import ../../../status/profile/devices
+import ../../../status/types/[installation]
 
 type
   DeviceRoles {.pure.} = enum

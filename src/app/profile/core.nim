@@ -1,7 +1,5 @@
 import NimQml, json, strutils, sugar, sequtils, tables
 import json_serialization
-import ../../status/signals/types
-import ../../status/types as status_types
 import ../../status/profile/[profile, mailserver]
 import ../../status/[status, settings]
 import ../../status/contacts as status_contacts
@@ -9,24 +7,29 @@ import ../../status/chat as status_chat
 import ../../status/devices as status_devices
 import ../../status/chat/chat
 import ../../status/wallet
+import ../../status/types/[account, transaction, setting]
+import ../../app_service/[main]
+import ../../app_service/signals/[base, messages]
+import ../../app_service/tasks/marathon/mailserver/events
 import ../../eventemitter
 import view
 import views/[ens_manager, devices, network, mailservers, contacts, muted_chats]
 import ../chat/views/channels_list
 import chronicles
-import ../../status/tasks/marathon/mailserver/events
 
 const DEFAULT_NETWORK_NAME* = "mainnet_rpc"
 
 type ProfileController* = ref object
   view*: ProfileView
   variant*: QVariant
-  status*: Status
+  status: Status
+  appService: AppService
 
-proc newController*(status: Status, changeLanguage: proc(locale: string)): ProfileController =
+proc newController*(status: Status, appService: AppService, changeLanguage: proc(locale: string)): ProfileController =
   result = ProfileController()
   result.status = status
-  result.view = newProfileView(status, changeLanguage)
+  result.appService = appService
+  result.view = newProfileView(status, appService, changeLanguage)
   result.variant = newQVariant(result.view)
 
 proc delete*(self: ProfileController) =

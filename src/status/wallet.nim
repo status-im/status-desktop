@@ -10,13 +10,14 @@ import libstatus/wallet as status_wallet
 import libstatus/accounts/constants as constants
 import libstatus/eth/[eth, contracts]
 from libstatus/core import getBlockByNumber
-from types import PendingTransactionType, GeneratedAccount, DerivedAccount, Transaction, Setting, GasPricePrediction, `%`, StatusGoException, Network, RpcResponse, RpcException
 from utils as libstatus_utils import eth2Wei, gwei2Wei, first, toUInt64, parseAddress
-import wallet/[balance_manager, account, collectibles]
+import wallet/[balance_manager, collectibles]
+import wallet/account as wallet_account
 import transactions
 import ../eventemitter
 import options
-export account, collectibles
+import ./types/[account, transaction, network, setting, gas_prediction, rpc_response]
+export wallet_account, collectibles
 export Transaction
 
 logScope:
@@ -256,7 +257,7 @@ proc addNewGeneratedAccount(self: WalletModel, generatedAccount: GeneratedAccoun
     # wallet_checkRecentHistory populates the status-go db that
     # wallet_getTransfersByAddress reads from
     discard status_wallet.checkRecentHistory(self.accounts.map(account => account.address))
-    self.events.emit("newAccountAdded", AccountArgs(account: account))
+    self.events.emit("newAccountAdded", wallet_account.AccountArgs(account: account))
   except Exception as e:
     raise newException(StatusGoException, fmt"Error adding new account: {e.msg}")
 

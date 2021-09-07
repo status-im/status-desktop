@@ -1,11 +1,13 @@
-import NimQml, Tables, json, strutils, chronicles
+import NimQml, Tables, json, strutils, chronicles, json_serialization
 
 import result_model, result_item, location_menu_model, location_menu_item, location_menu_sub_item
 import constants as sr_constants
 
-import ../../../../status/[status, types]
-import ../../../../status/chat/[message, chat]
+import ../../../../status/[status]
+import ../../../../status/chat/[chat]
+import ../../../../status/types/[message, setting]
 import ../../../../status/libstatus/[settings]
+import ../../../../app_service/[main]
 import ../communities
 import ../channel
 import ../chat_item
@@ -28,6 +30,7 @@ method isEmpty*(self: ResultItemInfo): bool {.base.} =
 QtObject:
   type MessageSearchViewController* = ref object of QObject
     status: Status
+    appService: AppService
     channelView: ChannelView
     communitiesView: CommunitiesView
     resultItems: Table[string, ResultItemInfo] # [resuiltItemId, ResultItemInfo]
@@ -47,10 +50,12 @@ QtObject:
     self.resultItems.clear
     self.QObject.delete    
 
-  proc newMessageSearchViewController*(status: Status, channelView: ChannelView, 
-    communitiesView: CommunitiesView): MessageSearchViewController =
+  proc newMessageSearchViewController*(status: Status, appService: AppService, 
+    channelView: ChannelView, communitiesView: CommunitiesView): 
+    MessageSearchViewController =
     new(result, delete)
     result.status = status
+    result.appService = appService
     result.channelView = channelView
     result.communitiesView = communitiesView
     result.resultItems = initTable[string, ResultItemInfo]()
@@ -147,7 +152,7 @@ QtObject:
       for co in self.communitiesView.joinedCommunityList.communities:
         communities.add(co.id)
 
-    self.status.chat.asyncSearchMessages(communities, chats, 
+    self.appService.chatService.asyncSearchMessages(communities, chats, 
       self.meassgeSearchTerm, false)
 
   proc onSearchMessagesLoaded*(self: MessageSearchViewController, 

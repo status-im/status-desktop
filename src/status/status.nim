@@ -1,14 +1,13 @@
 import libstatus/accounts as libstatus_accounts
 import libstatus/core as libstatus_core
 import libstatus/settings as libstatus_settings
-import types as libstatus_types
 import chat, accounts, wallet, wallet2, node, network, messages, contacts, profile, stickers, permissions, fleet, settings, mailservers, browser, tokens, provider
 import notifications/os_notifications
 import ../eventemitter
-import ./tasks/task_runner_impl
 import bitops, stew/byteutils, chronicles
+import ./types/[setting]
 
-export chat, accounts, node, messages, contacts, profile, network, permissions, fleet, task_runner_impl, eventemitter
+export chat, accounts, node, messages, contacts, profile, network, permissions, fleet, eventemitter
 
 type Status* = ref object
   events*: EventEmitter
@@ -24,7 +23,6 @@ type Status* = ref object
   network*: NetworkModel
   stickers*: StickersModel
   permissions*: PermissionsModel
-  tasks*: TaskRunner
   settings*: SettingsModel
   mailservers*: MailserversModel
   browser*: BrowserModel
@@ -34,14 +32,13 @@ type Status* = ref object
 
 proc newStatusInstance*(fleetConfig: string): Status =
   result = Status()
-  result.tasks = newTaskRunner()
   result.events = createEventEmitter()
   result.fleet = fleet.newFleetModel(fleetConfig)
-  result.chat = chat.newChatModel(result.events, result.tasks)
+  result.chat = chat.newChatModel(result.events)
   result.accounts = accounts.newAccountModel(result.events)
   result.wallet = wallet.newWalletModel(result.events)
   result.wallet.initEvents()
-  result.wallet2 = wallet2.newStatusWalletController(result.events, result.tasks)
+  result.wallet2 = wallet2.newStatusWalletController(result.events)
   result.node = node.newNodeModel()
   result.messages = messages.newMessagesModel(result.events)
   result.profile = profile.newProfileModel()
@@ -57,7 +54,6 @@ proc newStatusInstance*(fleetConfig: string): Status =
   result.osnotifications = newOsNotifications(result.events)
 
 proc initNode*(self: Status) =
-  self.tasks.init()
   libstatus_accounts.initNode()
 
 proc startMessenger*(self: Status) =

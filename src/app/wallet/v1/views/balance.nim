@@ -3,8 +3,9 @@ import NimQml, json, sequtils, chronicles, strutils, strformat, json
 
 import
   ../../../../status/[status, wallet, tokens],
-  ../../../../status/tokens as status_tokens,
-  ../../../../status/tasks/[qt, task_runner_impl]
+  ../../../../status/tokens as status_tokens
+import ../../../../app_service/[main]
+import ../../../../app_service/tasks/[qt, threadpool]
 
 import account_item, accounts, transactions, history
 
@@ -34,11 +35,12 @@ proc initBalances[T](self: T, slot: string, address: string, tokenList: seq[stri
     vptr: cast[ByteAddress](self.vptr),
     slot: slot, address: address, tokenList: tokenList
   )
-  self.status.tasks.threadpool.start(arg)
+  self.appService.threadpool.start(arg)
 
 QtObject:
   type BalanceView* = ref object of QObject
       status: Status
+      appService: AppService
       totalFiatBalance: string
       accountsView: AccountsView
       transactionsView*: TransactionsView
@@ -47,9 +49,10 @@ QtObject:
   proc setup(self: BalanceView) = self.QObject.setup
   proc delete(self: BalanceView) = self.QObject.delete
 
-  proc newBalanceView*(status: Status, accountsView: AccountsView, transactionsView: TransactionsView, historyView: HistoryView): BalanceView =
+  proc newBalanceView*(status: Status, appService: AppService, accountsView: AccountsView, transactionsView: TransactionsView, historyView: HistoryView): BalanceView =
     new(result, delete)
     result.status = status
+    result.appService = appService
     result.totalFiatBalance = ""
     result.accountsView = accountsView
     result.transactionsView = transactionsView

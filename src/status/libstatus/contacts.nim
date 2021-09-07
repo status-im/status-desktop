@@ -1,6 +1,5 @@
 import json, strmisc, atomics
-import core, ../utils, ../types
-from ../profile/profile import Profile
+import core, ../utils
 
 var
   contacts {.threadvar.}: JsonNode

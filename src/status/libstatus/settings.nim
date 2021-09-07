@@ -5,8 +5,10 @@ import
   json_serialization, chronicles, uuids
 
 import
-  ./core, ../types, ../signals/types as statusgo_types, ./accounts/constants,
-  ../utils
+  ./core, ./accounts/constants, ../utils
+
+import ../types/[setting, network, fleet]
+import ../../app_service/signals/[base]
 
 from status_go import nil
 

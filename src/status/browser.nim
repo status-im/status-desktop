@@ -1,10 +1,7 @@
-import json
-
 import libstatus/browser as status_browser
 import ../eventemitter
 
-#TODO: temporary?
-import types as LibStatusTypes
+import ./types/[bookmark]
 
 type
     BrowserModel* = ref object
