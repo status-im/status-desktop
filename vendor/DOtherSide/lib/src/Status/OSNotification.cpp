@@ -1,4 +1,4 @@
-#include "DOtherSide/StatusNotification/StatusOSNotification.h"
+#include "DOtherSide/StatusNotification/OSNotification.h"
 
 #ifdef Q_OS_WIN
 #include <shellapi.h>
@@ -7,12 +7,16 @@
 #include <winuser.h>
 #include <comdef.h>
 
+using namespace Status;
+
 static const UINT NOTIFYICONID = 0;
 
-static std::pair<HWND, StatusOSNotification *> HWND_INSTANCE_PAIR;
+static std::pair<HWND, OSNotification *> HWND_INSTANCE_PAIR;
 #endif
 
-StatusOSNotification::StatusOSNotification(QObject *parent)
+using namespace Status;
+
+OSNotification::OSNotification(QObject *parent)
     : QObject(parent)
 {
 #ifdef Q_OS_WIN
@@ -24,7 +28,7 @@ StatusOSNotification::StatusOSNotification(QObject *parent)
 #endif
 }
 
-StatusOSNotification::~StatusOSNotification()
+OSNotification::~OSNotification()
 {
 #ifdef Q_OS_MACOS
     if(m_notificationHelper)
@@ -52,7 +56,7 @@ LRESULT CALLBACK StatusWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
     return DefWindowProc(hwnd, uMsg, wParam, lParam);
 }
 
-void StatusOSNotification::stringToLimitedWCharArray(QString in, wchar_t* target, 
+void OSNotification::stringToLimitedWCharArray(QString in, wchar_t* target, 
     int maxLength)
 {
     const int length = qMin(maxLength - 1, in.size());
@@ -62,7 +66,7 @@ void StatusOSNotification::stringToLimitedWCharArray(QString in, wchar_t* target
     target[length] = wchar_t(0);
 }
 
-bool StatusOSNotification::initNotificationWin()
+bool OSNotification::initNotificationWin()
 {
     // m_hwnd should be init only once, but that would be a case if we create system 
     // tray window from here. But since we already have system tray added in the
@@ -98,7 +102,7 @@ bool StatusOSNotification::initNotificationWin()
 
     ATOM atom = RegisterClassEx(&wc);
     if (!atom)
-        printf("StatusOsNotification registering window class failed.\n");
+        printf("Status::OsNotification registering window class failed.\n");
 
     m_hwnd = FindWindowExA(0, 0, className, windowName);
     if(m_hwnd)
@@ -111,7 +115,7 @@ bool StatusOSNotification::initNotificationWin()
 }
 #endif
 
-void StatusOSNotification::showNotification(const QString& title, 
+void OSNotification::showNotification(const QString& title, 
     const QString& message, const QString& identifier)
 {
 #ifdef Q_OS_WIN

@@ -82,11 +82,11 @@ DOS_API void DOS_CALL dos_qguiapplication_delete(void);
 
 DOS_API void DOS_CALL dos_qguiapplication_icon(const char *filename);
 
-DOS_API void dos_qguiapplication_installEventFilter(DosStatusEventObject *vptr);
+DOS_API void dos_qguiapplication_installEventFilter(DosEvent *vptr);
 
 DOS_API void dos_qapplication_clipboard_setText(const char* text);
 
-DOS_API void dos_qapplication_installEventFilter(DosStatusEventObject *vptr);
+DOS_API void dos_qapplication_installEventFilter(DosEvent *vptr);
 
 DOS_API void dos_qapplication_clipboard_setImage(const char *text);
 
@@ -998,16 +998,25 @@ DOS_API void DOS_CALL dos_singleinstance_delete(DosSingleInstance *vptr);
 
 /// @}
 
-/// Status event object
-DOS_API DosStatusEventObject* dos_statusevent_create_showAppEvent(DosQQmlApplicationEngine* vptr);
-DOS_API DosStatusEventObject* dos_statusevent_create_osThemeEvent(DosQQmlApplicationEngine* vptr);
-DOS_API void dos_statusevent_delete(DosStatusEventObject* vptr);
+#pragma region Events exposed methods
 
-/// Status notification object
-DOS_API DosStatusOSNotificationObject* dos_statusosnotification_create();
-DOS_API void dos_statusosnotification_show_notification(DosStatusOSNotificationObject* vptr,
+DOS_API DosEvent* dos_event_create_showAppEvent(DosQQmlApplicationEngine* vptr);
+DOS_API DosEvent* dos_event_create_osThemeEvent(DosQQmlApplicationEngine* vptr);
+DOS_API void dos_event_delete(DosEvent* vptr);
+
+#pragma endregion
+
+#pragma region OS notification exposed methods
+
+DOS_API DosOSNotification* dos_osnotification_create();
+DOS_API void dos_osnotification_show_notification(DosOSNotification* vptr, 
     const char* title, const char* message, const char* identifier);
-DOS_API void dos_statusosnotification_delete(DosStatusOSNotificationObject* vptr);
+DOS_API void dos_osnotification_delete(DosOSNotification* vptr);
+
+#pragma endregion
+
+
+#pragma endregion
 
 DOS_API char *dos_to_local_file(const char* fileUrl);
 

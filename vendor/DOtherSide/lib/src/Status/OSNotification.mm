@@ -1,18 +1,20 @@
-#include "DOtherSide/StatusNotification/StatusOSNotification.h"
+#include "DOtherSide/StatusNotification/OSNotification.h"
 
 #ifdef Q_OS_MACOS
 
 #import <AppKit/AppKit.h>
 
+using namespace Status;
+
 @interface NotificationDelegate : NSObject <NSUserNotificationCenterDelegate>
-- (instancetype)initStatusOSNotification:(StatusOSNotification*) instance;
+- (instancetype)initOSNotification:(OSNotification*) instance;
 @end
 
 class NotificationHelper
 {
 public:
-    NotificationHelper(StatusOSNotification* instance) {
-        delegate = [[NotificationDelegate alloc] initStatusOSNotification:instance];
+    NotificationHelper(OSNotification* instance) {
+        delegate = [[NotificationDelegate alloc] initOSNotification:instance];
         NSUserNotificationCenter.defaultUserNotificationCenter.delegate = delegate;
     }
 
@@ -26,7 +28,7 @@ public:
     NotificationDelegate* delegate;
 };
 
-void StatusOSNotification::initNotificationMacOs()
+void OSNotification::initNotificationMacOs()
 {
     if (!m_notificationHelper)
     {
@@ -34,7 +36,7 @@ void StatusOSNotification::initNotificationMacOs()
     }
 }
 
-void StatusOSNotification::showNotificationMacOs(QString title, QString message, 
+void OSNotification::showNotificationMacOs(QString title, QString message, 
     QString identifier)
 {
     if (!m_notificationHelper)
@@ -54,10 +56,10 @@ void StatusOSNotification::showNotificationMacOs(QString title, QString message,
 }
 
 @implementation NotificationDelegate {
-    StatusOSNotification* instance;
+    OSNotification* instance;
 }
 
-- (instancetype)initStatusOSNotification:(StatusOSNotification*)ins
+- (instancetype)initOSNotification:(OSNotification*)ins
 {
     self = [super init];
     if (self) {

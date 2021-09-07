@@ -98,11 +98,13 @@ typedef void DosPixmap;
 /// A pointer to SingleInstance
 typedef void DosSingleInstance;
 
-/// A pointer to a status event object which is actualy a QObject
-typedef void DosStatusEventObject;
+/// A pointer to a event object which is actualy a QObject
+typedef void DosEvent;
 
-/// A pointer to a status os notification object which is actualy a QObject
-typedef DosQObject DosStatusOSNotificationObject;
+/// A pointer to a os notification object which is actualy a QObject
+typedef DosQObject DosOSNotification;
+
+
 
 /// A pixmap callback to be supplied to an image provider
 /// \param id Image source id
