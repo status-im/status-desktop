@@ -26,23 +26,23 @@ StatusModal {
     header.title: qsTrId("create-channel-title")
 
     onOpened: {
-        contentComponent.channelId = channel.id
-        contentComponent.channelCategoryId = channel.categoryId
-        contentComponent.channelName.input.text = ""
+        contentItem.channelName.input.text = ""
+        contentItem.channelName.input.forceActiveFocus(Qt.MouseFocusReason)
         if (isEdit) {
             //% "Edit #%1"
             header.title = qsTrId("edit---1").arg(channel.name);
-            contentComponent.channelName.input.text = channel.name
+            contentItem.channelId = channel.id
+            contentItem.channelCategoryId = channel.categoryId
+            contentItem.channelName.input.text = channel.name
+            contentItem.channelDescription.input.text = channel.description
         }
-        contentComponent.channelName.input.forceActiveFocus(Qt.MouseFocusReason)
-        contentComponent.channelDescription.input.text = channel.description
     }
 
     onClosed: destroy()
 
     function isFormValid() {
-        return contentComponent.channelName.valid &&
-               contentComponent.channelDescription.valid
+        return contentItem.channelName.valid &&
+               contentItem.channelDescription.valid
     }
 
     contentItem: ScrollView {
@@ -154,6 +154,11 @@ StatusModal {
             /*     text: qsTrId("limit-channel-members-to-sending-one-message-per-chose-time-interval") */
             /* } */
 
+            Item {
+                width: parent.width
+                height: 8
+            }
+
             StatusListItem {
                 anchors.horizontalCenter: parent.horizontalCenter
                 //% "Pinned messages"
@@ -171,8 +176,9 @@ StatusModal {
                 sensor.onClicked: openPopup(pinnedMessagesPopupComponent)
             }
 
-            StatusModalDivider {
-                topPadding: 8
+            Item {
+                width: parent.width
+                height: 8
             }
         }
     }
@@ -193,18 +199,18 @@ StatusModal {
                 let error = "";
                 if (!isEdit) {
                     error = chatsModel.createCommunityChannel(communityId,
-                                                                Utils.filterXSS(popup.contentComponent.channelName.input.text),
-                                                                Utils.filterXSS(popup.contentComponent.channelDescription.input.text),
+                                                                Utils.filterXSS(popup.contentItem.channelName.input.text),
+                                                                Utils.filterXSS(popup.contentItem.channelDescription.input.text),
                                                                 categoryId)
                                                                 // TODO: pass the private value when private channels
                                                                 // are implemented
                                                                 //privateSwitch.checked)
                 } else {
                     error = chatsModel.editCommunityChannel(communityId,
-                                                                popup.contentComponent.channelId,
-                                                                Utils.filterXSS(popup.contentComponent.channelName.input.text),
-                                                                Utils.filterXSS(popup.contentComponent.channelDescription.input.text),
-                                                                popup.contentComponent.channelCategoryId)
+                                                                popup.contentItem.channelId,
+                                                                Utils.filterXSS(popup.contentItem.channelName.input.text),
+                                                                Utils.filterXSS(popup.contentItem.channelDescription.input.text),
+                                                                popup.contentItem.channelCategoryId)
                                                                 // TODO: pass the private value when private channels
                                                                 // are implemented
                                                                 //privateSwitch.checked)
