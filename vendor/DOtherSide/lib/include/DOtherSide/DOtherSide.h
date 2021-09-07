@@ -1015,6 +1015,18 @@ DOS_API void dos_osnotification_delete(DosOSNotification* vptr);
 
 #pragma endregion
 
+#pragma region QSettings
+
+DOS_API DosQSettings* dos_qsettings_create(const char* fileName, int format);
+DOS_API DosQVariant* dos_qsettings_value(DosQSettings* vptr, const char* key, 
+    DosQVariant* defaultValue);
+DOS_API void dos_qsettings_set_value(DosQSettings* vptr, const char* key, 
+    DosQVariant* value);
+DOS_API void dos_qsettings_remove(DosQSettings* vptr, const char* key);
+DOS_API void dos_qsettings_delete(DosQSettings* vptr);
+
+#pragma endregion
+
 
 #pragma endregion
 

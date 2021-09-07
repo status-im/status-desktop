@@ -46,6 +46,7 @@
 #include <QtQuick/QQuickView>
 #include <QtQuick/QQuickImageProvider>
 #include <QTranslator>
+#include <QSettings>
 #ifdef QT_QUICKCONTROLS2_LIB
 #include <QtQuickControls2/QQuickStyle>
 #endif
@@ -1397,6 +1398,65 @@ void dos_osnotification_delete(DosOSNotification* vptr)
         qobject->deleteLater();
 }
 
+#pragma endregion
+
+#pragma region QSettings
+
+DosQSettings* dos_qsettings_create(const char* fileName, int format)
+{
+    QSettings::Format fileFormat = QSettings::NativeFormat;
+    if(format == 1)
+        fileFormat = QSettings::IniFormat;
+
+    return new QSettings(QString(fileName), fileFormat);
+}
+
+DosQVariant* dos_qsettings_value(DosQSettings* vptr, const char* key, 
+    DosQVariant* defaultValue)
+{
+    auto defaultValuePtr = static_cast<QVariant*>(defaultValue);
+    auto settings = static_cast<QSettings*>(vptr);
+    if(settings)
+    {
+        if(defaultValuePtr)
+        {
+            auto result = new QVariant(settings->value(QString(key), *defaultValuePtr));
+            return static_cast<DosQVariant*>(result);
+        }
+    }
+
+    return defaultValue;
+}
+
+void dos_qsettings_set_value(DosQSettings* vptr, const char* key, 
+    DosQVariant* value)
+{
+    auto settings = static_cast<QSettings*>(vptr);
+    if(settings)
+    {
+        auto valuePtr = static_cast<QVariant*>(value);
+        if(valuePtr)
+        {
+            return settings->setValue(QString(key), *valuePtr);
+        }
+    }
+}
+
+void dos_qsettings_remove(DosQSettings* vptr, const char* key)
+{
+    auto settings = static_cast<QSettings*>(vptr);
+    if(settings)
+    {
+        return settings->remove(QString(key));
+    }
+}
+
+void dos_qsettings_delete(DosQSettings* vptr)
+{
+    auto qobject = static_cast<QObject*>(vptr);
+    if(qobject)
+        qobject->deleteLater();
+}
 #pragma endregion
 
 char* dos_to_local_file(const char* fileUrl)
