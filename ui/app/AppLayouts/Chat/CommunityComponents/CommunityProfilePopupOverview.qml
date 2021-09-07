@@ -41,7 +41,6 @@ Column {
     }
 
     StatusModalDivider {
-        topPadding: 8
         bottomPadding: 8
     }
 

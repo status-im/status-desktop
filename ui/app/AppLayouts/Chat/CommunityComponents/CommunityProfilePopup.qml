@@ -27,7 +27,6 @@ StatusModal {
     contentItem: StackView {
         id: stack
         initialItem: profileOverview
-        anchors.centerIn: parent
         width: popup.width
         height: currentItem.implicitHeight || currentItem.height
 
