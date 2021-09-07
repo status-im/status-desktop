@@ -66,7 +66,7 @@ proc mainProc() =
       "/../resources.rcc"
   QResource.registerResource(app.applicationDirPath & resources)
 
-  let singleInstance = newSingleInstance($toMD5(getAppDir()))
+  let singleInstance = newSingleInstance($toMD5(DATADIR))
   defer: singleInstance.delete()
   if singleInstance.secondInstance():
     info "Terminating the app as the second instance"
