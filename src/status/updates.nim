@@ -34,8 +34,8 @@ proc getLatestVersion*(): VersionInfo =
 
     # Read version from folder
     let secureSSLContext = newContext()
-    let client = newHttpClient(sslContext = secureSSLContext)
-    result.version = client.getContent(url & "/VERSION" ).strip()
+    let client = newHttpClient(sslContext = secureSSLContext, timeout = CHECK_VERSION_TIMEOUT_MS)
+    result.version = client.getContent(url & "/VERSION").strip()
     result.url = url
 
 proc isNewer*(currentVersion, versionToCheck: string): bool =
