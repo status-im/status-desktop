@@ -66,6 +66,7 @@
 #include "DOtherSide/Status/DockShowAppEvent.h"
 #include "DOtherSide/Status/OSThemeEvent.h"
 #include "DOtherSide/Status/OSNotification.h"
+#include "DOtherSide/Status/KeychainManager.h"
 #include "DOtherSide/DosSpellchecker.h"
 
 namespace {
@@ -1456,6 +1457,60 @@ void dos_qsettings_delete(DosQSettings* vptr)
     auto qobject = static_cast<QObject*>(vptr);
     if(qobject)
         qobject->deleteLater();
+}
+#pragma endregion
+
+#pragma region KeychainManager
+DosKeychainManager* dos_keychainmanager_create(const char* service, 
+    const char* authenticationReason)
+{
+    return new Status::KeychainManager(QString(service), QString(authenticationReason));
+}
+
+char* dos_keychainmanager_read_data_sync(DosKeychainManager* vptr, 
+    const char* key)
+{
+    auto obj = static_cast<Status::KeychainManager*>(vptr);
+    if(obj)
+    {
+        return convert_to_cstring(obj->readDataSync(QString(key)));
+    }
+
+    return convert_to_cstring(QString());
+}
+
+void dos_keychainmanager_read_data_async(DosKeychainManager* vptr, 
+    const char* key)
+{
+    auto obj = static_cast<Status::KeychainManager*>(vptr);
+    if(obj)
+        obj->readDataAsync(QString(key));
+}
+
+void dos_keychainmanager_store_data_async(DosKeychainManager* vptr, 
+    const char* key, const char* data)
+{
+    auto obj = static_cast<Status::KeychainManager*>(vptr);
+    if(obj)
+    {
+        obj->storeDataAsync(QString(key), QString(data));
+    }
+}
+
+void dos_keychainmanager_delete_data_async(DosKeychainManager* vptr, 
+    const char* key)
+{
+    auto obj = static_cast<Status::KeychainManager*>(vptr);
+    if(obj)
+        obj->deleteDataAsync(QString(key));
+}
+
+void dos_keychainmanager_delete(DosKeychainManager* vptr)
+{
+    auto qobject = static_cast<QObject*>(vptr);
+    if(qobject)
+        qobject->deleteLater();
+
 }
 #pragma endregion
 
