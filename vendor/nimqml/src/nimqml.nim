@@ -36,7 +36,7 @@ include "nimqml/private/nimqmlmacros.nim"
 include "nimqml/private/singleinstance.nim"
 include "nimqml/private/status/statusevent.nim"
 include "nimqml/private/status/statusosnotification.nim"
-
+include "nimqml/private/status/statuskeychainmanager.nim"
 
 proc signal_handler*(receiver: pointer, signal: cstring, slot: cstring) =
   var dosqobj = cast[DosQObject](receiver)

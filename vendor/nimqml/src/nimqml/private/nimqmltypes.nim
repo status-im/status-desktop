@@ -140,7 +140,7 @@ type
 
   StatusOSNotification* = ref object of QObject 
 
-  StatusOSNotificationObject* = ref object of QObject 
+  StatusKeychainManager* = ref object of QObject
     
 const
   UserRole* = 0x100
