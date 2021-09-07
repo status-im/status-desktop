@@ -68,6 +68,30 @@ ThemePalette {
         source: "../../../assets/fonts/InterStatus/InterStatus-Black.otf"
     }
 
+    property QtObject codeFont: FontLoader {
+        source: "../../../assets/fonts/RobotoMono/RobotoMono-Regular.ttf"
+    }
+
+    property QtObject codeFontThin: FontLoader {
+        source: "../../../assets/fonts/RobotoMono/RobotoMono-Thin.ttf"
+    }
+
+    property QtObject codeFontExtraLight: FontLoader {
+        source: "../../../assets/fonts/RobotoMono/RobotoMono-ExtraLight.ttf"
+    }
+
+    property QtObject codeFontLight: FontLoader {
+        source: "../../../assets/fonts/RobotoMono/RobotoMono-Light.ttf"
+    }
+
+    property QtObject codeFontMedium: FontLoader {
+        source: "../../../assets/fonts/RobotoMono/RobotoMono-Medium.ttf"
+    }
+
+    property QtObject codeFontBold: FontLoader {
+        source: "../../../assets/fonts/RobotoMono/RobotoMono-Bold.ttf"
+    }
+
     baseColor1: getColor('grey5')
     baseColor2: getColor('grey4')
     baseColor3: getColor('grey3')
