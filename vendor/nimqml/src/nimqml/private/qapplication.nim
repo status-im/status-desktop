@@ -17,7 +17,7 @@ proc icon*(application: QApplication, filename: string) =
 proc setClipboardText*(text: string = "") =
   dos_qapplication_clipboard_setText(text.cstring)
 
-proc installEventFilter*(application: QApplication, event: StatusEventObject) =
+proc installEventFilter*(application: QApplication, event: StatusEvent) =
   dos_qapplication_installEventFilter(event.vptr)
 
 proc setClipboardImage*(text: string = "") =

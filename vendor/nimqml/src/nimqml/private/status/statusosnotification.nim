@@ -1,14 +1,14 @@
-proc setup(self: StatusOSNotificationObject) =
-  self.vptr = dos_statusosnotification_create()
+proc setup(self: StatusOSNotification) =
+  self.vptr = dos_osnotification_create()
 
-proc delete*(self: StatusOSNotificationObject) =
-  dos_statusosnotification_delete(self.vptr)
+proc delete*(self: StatusOSNotification) =
+  dos_osnotification_delete(self.vptr)
   self.vptr.resetToNil
 
-proc newStatusOSNotificationObject*(): StatusOSNotificationObject =
+proc newStatusOSNotification*(): StatusOSNotification =
   new(result, delete)
   result.setup()
 
-proc showNotification*(self: StatusOSNotificationObject, title: string, 
+proc showNotification*(self: StatusOSNotification, title: string, 
   message: string, identifier: string) =
-  dos_statusosnotification_show_notification(self.vptr, title, message, identifier)
+  dos_osnotification_show_notification(self.vptr, title, message, identifier)
