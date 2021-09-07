@@ -15,8 +15,8 @@ StatusModal {
     id: popup
 
     onOpened: {
-        contentComponent.searchBox.input.text = "";
-        contentComponent.searchBox.input.forceActiveFocus(Qt.MouseFocusReason)
+        contentItem.searchBox.input.text = "";
+        contentItem.searchBox.input.forceActiveFocus(Qt.MouseFocusReason)
     }
 
     //% "Communities"
