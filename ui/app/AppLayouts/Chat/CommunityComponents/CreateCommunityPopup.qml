@@ -26,22 +26,22 @@ StatusModal {
 
     onOpened: {
         if (isEdit) {
-            contentComponent.communityName.input.text = community.name;
-            contentComponent.communityDescription.input.text = community.description;
-            contentComponent.communityColor.color = community.communityColor;
-            contentComponent.communityColor.colorSelected = true
+            contentItem.communityName.input.text = community.name;
+            contentItem.communityDescription.input.text = community.description;
+            contentItem.communityColor.color = community.communityColor;
+            contentItem.communityColor.colorSelected = true
             if (community.largeImage) {
-                contentComponent.communityImage.selectedImage = community.largeImage
+                contentItem.communityImage.selectedImage = community.largeImage
             }
             membershipRequirementSettingPopup.checkedMembership = community.access
         }
-        contentComponent.communityName.input.forceActiveFocus(Qt.MouseFocusReason)
+        contentItem.communityName.input.forceActiveFocus(Qt.MouseFocusReason)
     }
     onClosed: destroy()
 
     function isFormValid() {
-        return contentComponent.communityName.valid && contentComponent.communityDescription.valid &&
-            Utils.validateAndReturnError(contentComponent.communityColor.color.toString().toUpperCase(),
+        return contentItem.communityName.valid && contentItem.communityDescription.valid &&
+            Utils.validateAndReturnError(contentItem.communityColor.color.toString().toUpperCase(),
                                         communityColorValidator) === ""
     }
 
@@ -394,7 +394,7 @@ StatusModal {
                 qsTrId("create")
             onClicked: {
                 if (!isFormValid()) {
-                    popup.contentComponent.scrollBackUp()
+                    popup.contentItem.scrollBackUp()
                     return
                 }
 
@@ -402,31 +402,31 @@ StatusModal {
                 if(isEdit) {
                     error = chatsModel.communities.editCommunity(
                         community.id,
-                        Utils.filterXSS(popup.contentComponent.communityName.input.text),
-                        Utils.filterXSS(popup.contentComponent.communityDescription.input.text),
+                        Utils.filterXSS(popup.contentItem.communityName.input.text),
+                        Utils.filterXSS(popup.contentItem.communityDescription.input.text),
                         membershipRequirementSettingPopup.checkedMembership,
                         false,
-                        popup.contentComponent.communityColor.color.toString().toUpperCase(),
+                        popup.contentItem.communityColor.color.toString().toUpperCase(),
                         // to retain the existing image, pass "" for the image path
-                        popup.contentComponent.communityImage.selectedImage ===  community.largeImage ? "" : 
-                            popup.contentComponent.communityImage.selectedImage,
-                        popup.contentComponent.imageCropperModal.aX,
-                        popup.contentComponent.imageCropperModal.aY,
-                        popup.contentComponent.imageCropperModal.bX,
-                        popup.contentComponent.imageCropperModal.bY
+                        popup.contentItem.communityImage.selectedImage ===  community.largeImage ? "" : 
+                            popup.contentItem.communityImage.selectedImage,
+                        popup.contentItem.imageCropperModal.aX,
+                        popup.contentItem.imageCropperModal.aY,
+                        popup.contentItem.imageCropperModal.bX,
+                        popup.contentItem.imageCropperModal.bY
                   )
                 } else {
                     error = chatsModel.communities.createCommunity(
-                        Utils.filterXSS(popup.contentComponent.communityName.input.text),
-                        Utils.filterXSS(popup.contentComponent.communityDescription.input.text),
+                        Utils.filterXSS(popup.contentItem.communityName.input.text),
+                        Utils.filterXSS(popup.contentItem.communityDescription.input.text),
                         membershipRequirementSettingPopup.checkedMembership,
                         false, // ensOnlySwitch.switchChecked, // TODO:
-                        popup.contentComponent.communityColor.color.toString().toUpperCase(),
-                        popup.contentComponent.communityImage.selectedImage,
-                        popup.contentComponent.imageCropperModal.aX,
-                        popup.contentComponent.imageCropperModal.aY,
-                        popup.contentComponent.imageCropperModal.bX,
-                        popup.contentComponent.imageCropperModal.bY
+                        popup.contentItem.communityColor.color.toString().toUpperCase(),
+                        popup.contentItem.communityImage.selectedImage,
+                        popup.contentItem.imageCropperModal.aX,
+                        popup.contentItem.imageCropperModal.aY,
+                        popup.contentItem.imageCropperModal.bX,
+                        popup.contentItem.imageCropperModal.bY
                     )
                 }
 
