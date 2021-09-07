@@ -107,6 +107,8 @@ typedef void DosEvent;
 /// A pointer to a os notification object which is actualy a QObject
 typedef DosQObject DosOSNotification;
 
+/// A pointer to a keychain manager object which is actualy a QObject
+typedef DosQObject DosKeychainManager;
 
 
 /// A pixmap callback to be supplied to an image provider
