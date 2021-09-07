@@ -1,14 +1,16 @@
-#include "DOtherSide/StatusEvents/StatusOSThemeEvent.h"
+#include "DOtherSide/Status/OSThemeEvent.h"
 
 #include <QQuickWindow>
 
-StatusOSThemeEvent::StatusOSThemeEvent(DosQQmlApplicationEngine* vptr, QObject* parent)
+using namespace Status;
+
+OSThemeEvent::OSThemeEvent(DosQQmlApplicationEngine* vptr, QObject* parent)
     : QObject(parent) 
 {
     m_engine = static_cast<QQmlApplicationEngine*>(vptr);
 }
 
-bool StatusOSThemeEvent::eventFilter(QObject *obj, QEvent *event)
+bool OSThemeEvent::eventFilter(QObject *obj, QEvent *event)
 {
     if (event->type() == QEvent::PaletteChange ||
         event->type() == QEvent::ApplicationPaletteChange)
