@@ -13,15 +13,15 @@ StatusModal {
     id: popup
 
     onClosed: {
-        while (contentComponent.depth > 1) {
-            contentComponent.pop()
+        while (contentItem.depth > 1) {
+            contentItem.pop()
         }
     }
 
-    header.title: contentComponent.currentItem.headerTitle
-    header.subTitle: contentComponent.currentItem.headerSubtitle || ""
-    header.image.source: contentComponent.currentItem.headerImageSource || ""
-    header.icon.isLetterIdenticon: contentComponent.currentItem.headerTitle == popup.community.name && !contentComponent.currentItem.headerImageSource
+    header.title: contentItem.currentItem.headerTitle
+    header.subTitle: contentItem.currentItem.headerSubtitle || ""
+    header.image.source: contentItem.currentItem.headerImageSource || ""
+    header.icon.isLetterIdenticon: contentItem.currentItem.headerTitle == popup.community.name && !contentItem.currentItem.headerImageSource
     header.icon.background.color: popup.community.communityColor
 
     contentItem: StackView {
@@ -29,7 +29,7 @@ StatusModal {
         initialItem: profileOverview
         anchors.centerIn: parent
         width: popup.width
-        height: currentItem.implicitHeight || currentItem.height
+        implicitHeight: currentItem.implicitHeight || currentItem.height
 
         pushEnter: Transition { enabled: false }
         pushExit: Transition { enabled: false }
@@ -57,7 +57,7 @@ StatusModal {
                 headerImageSource: popup.community.thumbnailImage
                 community: popup.community
 
-                onMembersListButtonClicked: popup.contentComponent.push(membersList)
+                onMembersListButtonClicked: popup.contentItem.push(membersList)
                 onNotificationsButtonClicked: {
                     chatsModel.communities.setCommunityMuted(popup.community.id, checked)
                 }
@@ -90,7 +90,7 @@ StatusModal {
                 headerTitle: qsTrId("members-label")
                 headerSubtitle: popup.community.nbMembers.toString()
                 community: popup.community
-                onInviteButtonClicked: popup.contentComponent.push(inviteFriendsView)
+                onInviteButtonClicked: popup.contentItem.push(inviteFriendsView)
             }
         }
 
@@ -119,10 +119,10 @@ StatusModal {
             icon.height: 16
             icon.width: 20
             rotation: 180
-            visible: contentComponent.depth > 1
+            visible: contentItem.depth > 1
             height: !visible ? 0 : implicitHeight
             onClicked: {
-                contentComponent.pop()
+                contentItem.pop()
             }
         }
     ]
@@ -131,12 +131,12 @@ StatusModal {
         StatusButton {
             //% "Invite"
             text: qsTrId("community-invite-title")
-            visible: popup.contentComponent.depth > 2
+            visible: popup.contentItem.depth > 2
             height: !visible ? 0 : implicitHeight
-            enabled: popup.contentComponent.currentItem.contactListSearch !== undefined && popup.contentComponent.currentItem.contactListSearch.pubKeys.length > 0
+            enabled: popup.contentItem.currentItem.contactListSearch !== undefined && popup.contentItem.currentItem.contactListSearch.pubKeys.length > 0
             onClicked: {
-                popup.contentComponent.currentItem.sendInvites(popup.contentComponent.currentItem.contactListSearch.pubKeys)
-                popup.contentComponent.pop()
+                popup.contentItem.currentItem.sendInvites(popup.contentItem.currentItem.contactListSearch.pubKeys)
+                popup.contentItem.pop()
             }
         }
     ]

@@ -14,7 +14,7 @@ import "../components"
 
 Item {
     id: root
-    height: childrenRect.height
+    implicitHeight: childrenRect.height
     implicitWidth: 480
 
     property string headerTitle: ""
