@@ -1027,6 +1027,19 @@ DOS_API void dos_qsettings_delete(DosQSettings* vptr);
 
 #pragma endregion
 
+#pragma region KeychainManager exposed methods
+
+DOS_API DosKeychainManager* dos_keychainmanager_create(const char* service, 
+    const char* authenticationReason);
+DOS_API char* dos_keychainmanager_read_data_sync(DosKeychainManager* vptr, 
+    const char* key);
+DOS_API void dos_keychainmanager_read_data_async(DosKeychainManager* vptr, 
+    const char* key);
+DOS_API void dos_keychainmanager_store_data_async(DosKeychainManager* vptr, 
+    const char* key, const char* data);
+DOS_API void dos_keychainmanager_delete_data_async(DosKeychainManager* vptr, 
+    const char* key);
+DOS_API void dos_keychainmanager_delete(DosKeychainManager* vptr);
 
 #pragma endregion
 

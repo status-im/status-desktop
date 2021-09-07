@@ -1,4 +1,4 @@
-#include "DOtherSide/StatusNotification/OSNotification.h"
+#include "DOtherSide/Status/OSNotification.h"
 
 #ifdef Q_OS_MACOS
 
