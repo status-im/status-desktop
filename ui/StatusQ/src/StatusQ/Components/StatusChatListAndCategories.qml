@@ -129,8 +129,8 @@ Item {
                             }
                         }
 
-                        addButton.tooltip: statusChatListAndCategories.addButtonToolTip
-                        menuButton.tooltip: statusChatListAndCategories.menuButtonToolTip
+                        addButton.tooltip: statusChatListAndCategories.categoryAddButtonToolTip
+                        menuButton.tooltip: statusChatListAndCategories.categoryMenuButtonToolTip
 
                         originalOrder: model.position
                         categoryId: model.categoryId
