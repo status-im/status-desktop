@@ -93,19 +93,8 @@ Rectangle {
 
             property bool showMoreMenu: false
             onClicked: {
-                if (!showMoreMenu) {
-                    popupMenuSlot.item.popup(-popupMenuSlot.item.width + menuButton.width, menuButton.height + 4)
-                    statusChatToolBar.menuButtonClicked()
-                }
-            }
-
-            Timer {
-                id: menuClosedUpdater
-                interval: 100
-                repeat: false
-                onTriggered: {
-                    menuButton.showMoreMenu = false
-                }
+                popupMenuSlot.item.popup(-popupMenuSlot.item.width + menuButton.width, menuButton.height + 4)
+                statusChatToolBar.menuButtonClicked()
             }
 
             Loader {
@@ -114,15 +103,13 @@ Rectangle {
                 onLoaded: {
                     popupMenuSlot.item.closeHandler = function () {
                         menuButton.highlighted = false
-                        menuClosedUpdater.start()
                     }
 
                     popupMenuSlot.item.openHandler = function () {
                         menuButton.highlighted = true
-                        menuButton.showMoreMenu = true
                     }
                 }
-            }          
+            }
         }
 
         Rectangle {
@@ -131,7 +118,7 @@ Rectangle {
             color: Theme.palette.directColor7
             anchors.verticalCenter: parent.verticalCenter
             visible: notificationButton.visible &&
-                (menuButton.visible || membersButton.visible || searchButton.visible)
+                     (menuButton.visible || membersButton.visible || searchButton.visible)
         }
 
         StatusFlatRoundButton {
