@@ -1,10 +1,10 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtGraphicalEffects 1.13
-import "../../../imports"
-import "../../../shared"
-import "../../../shared/status/core"
-import "./components"
+import "../../../../imports"
+import "../../../../shared"
+import "../../../../shared/status/core"
+import "../components"
 
 import StatusQ.Components 0.1
 

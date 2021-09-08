@@ -8,27 +8,16 @@ import "./components"
 import "./components/network"
 
 Item {
+    id: walletHeader
+    anchors.left: parent.left
+    anchors.right: parent.right
+    height: walletAddress.y + walletAddress.height
+
     property var currentAccount: walletV2Model.accountsView.currentAccount
     property var changeSelectedAccount
 
-    id: walletHeader
-    height: walletAddress.y + walletAddress.height
-    anchors.right: parent.right
-    anchors.rightMargin: 0
-    anchors.left: parent.left
-    anchors.leftMargin: 0
-    anchors.top: parent.top
-    anchors.topMargin: 0
-    Layout.fillHeight: true
-    Layout.fillWidth: true
-
     Row {
         id: accountRow
-        anchors.top: parent.top
-        anchors.topMargin: 24
-        anchors.left: parent.left
-        anchors.leftMargin: 24
-
         spacing: 8
 
         StyledText {
@@ -72,16 +61,11 @@ Item {
         anchors.top: accountRow.bottom
         anchors.left: accountRow.left
         addressWidth: 180
-        anchors.leftMargin: 0
-        anchors.topMargin: 0
     }
 
     NetworkSelect {
         id: networkSelect
-        anchors.top: parent.top
-        anchors.topMargin: 30
         anchors.right: parent.right
-        anchors.rightMargin: 90
     }
 
     Component {

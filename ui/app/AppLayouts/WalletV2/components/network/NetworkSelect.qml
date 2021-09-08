@@ -4,8 +4,8 @@ import "../../../../../imports"
 
 Item {
     id: root
-
-    width: selectRectangle.width + Style.current.padding
+    width: selectRectangle.width
+    height: childrenRect.height
 
     Rectangle {
         id: selectRectangle
@@ -49,6 +49,7 @@ Item {
     }
 
     NetworkFilter {
+        id: networkFilter
         anchors.topMargin: Style.current.halfPadding
         anchors.top: selectRectangle.bottom
         width: root.width
@@ -56,7 +57,7 @@ Item {
 
     NetworkSelectPopup {
         id: selectPopup
-        y: root.height + root.anchors.topMargin + Style.current.padding
-        x: parent.width - width - Style.current.padding
+        x: (parent.width - width)
+        y: (root.height - networkFilter.height)
     }
 }
