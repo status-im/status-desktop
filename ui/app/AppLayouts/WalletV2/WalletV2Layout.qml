@@ -3,6 +3,8 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import "../../../imports"
 import "../../../shared"
+import "views"
+import "views/assets"
 import "."
 import "./components"
 
@@ -27,8 +29,8 @@ Item {
     SignPhraseModal {
         id: signPhrasePopup
     }
-        
-    SeedPhraseBackupWarning { 
+
+    SeedPhraseBackupWarning {
         id: seedPhraseWarning
         width: parent.width
         anchors.top: parent.top
@@ -53,65 +55,93 @@ Item {
 
         rightPanel: Item {
             anchors.fill: parent
-
-            WalletHeader {
-                id: walletHeader
-                changeSelectedAccount: leftTab.changeSelectedAccount
-                visible: !collectiblesDetailPage.active
-            }
-
             RowLayout {
                 id: walletInfoContainer
+                anchors.top: parent.top
+                anchors.topMargin: 31
                 anchors.bottom: walletFooter.top
-                anchors.bottomMargin: 0
+                anchors.bottomMargin: 24
                 anchors.left: parent.left
-                anchors.leftMargin: 0
+                anchors.leftMargin: 80
                 anchors.right: parent.right
-                anchors.rightMargin: 0
-                anchors.top: walletHeader.bottom
-                anchors.topMargin: 23
                 visible: !collectiblesDetailPage.active
-
-                Item {
-                    id: walletInfoContent
-                    Layout.fillHeight: true
+                anchors.rightMargin: 80
+                StackBaseView {
+                    id: stackView
                     Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    initialItem: Item {
+                        id: walletInfoContent
+                        WalletHeader {
+                            id: walletHeader
+                            changeSelectedAccount: leftTab.changeSelectedAccount
+                        }
+                        TabBar {
+                            id: walletTabBar
+                            anchors.right: parent.right
+                            anchors.left: parent.left
+                            anchors.top: walletHeader.bottom
+                            anchors.topMargin: Style.current.padding
+                            height: childrenRect.height
+                            spacing: 24
+                            background: Rectangle {
+                                color: Style.current.transparent
+                            }
+                            StatusTabButton {
+                                id: assetsBtn
+                                btnText: qsTr("Assets")
+                            }
+                            StatusTabButton {
+                                id: positionsBtn
+                                btnText: qsTr("Positions")
+                            }
+                            StatusTabButton {
+                                id: collectiblesBtn
+                                btnText: qsTr("Collectibles")
+                            }
+                            StatusTabButton {
+                                id: activityBtn
+                                btnText: qsTr("Activity")
+                            }
+                            StatusTabButton {
+                                id: settingsBtn
+                                btnText: qsTr("Settings")
+                            }
+                        }
 
-                    TabBar {
-                        id: walletTabBar
-                        anchors.right: parent.right
-                        anchors.rightMargin: Style.current.bigPadding
-                        anchors.left: parent.left
-                        anchors.leftMargin: Style.current.bigPadding
-                        anchors.top: parent.top
-                        anchors.topMargin: Style.current.padding
-                        height: collectiblesBtn.height
-                        background: Rectangle {
-                            color: Style.current.transparent
-                        }
-                        StatusTabButton {
-                            id: collectiblesBtn
-                            btnText: qsTr("Collectibles")
-                        }
-                        StatusTabButton {
-                            id: settingsBtn
-                            anchors.left: collectiblesBtn.right
-                            anchors.leftMargin: walletInfoContent.width - collectiblesBtn.width - 100
-                            btnText: qsTr("Settings")
+                        StackLayout {
+                            id: stackLayout
+                            anchors.top: walletTabBar.bottom
+                            anchors.right: parent.right
+                            anchors.bottom: parent.bottom
+                            anchors.left: parent.left
+                            anchors.topMargin: Style.current.bigPadding
+                            currentIndex: walletTabBar.currentIndex
+
+                            AssetsView {
+                                id: assetsTab
+                                onAssetClicked: {
+                                    stackView.replace(assetDetailView);
+                                }
+                            }
+                            PositionsView {
+                                id: positionsTab
+                            }
+                            CollectiblesView {
+                                id: collectiblesTab
+                            }
+                            ActivityView {
+                                id: activityTab
+                            }
                         }
                     }
+                }
 
-                    StackLayout {
-                        id: stackLayout
-                        anchors.top: walletTabBar.bottom
-                        anchors.right: parent.right
-                        anchors.bottom: parent.bottom
-                        anchors.left: parent.left
-                        anchors.topMargin: Style.current.padding
-                        currentIndex: walletTabBar.currentIndex
-
-                        CollectiblesTab {
-                            id: collectiblesTab
+                Component {
+                    id: assetDetailView
+                    AssetDetailView {
+                        onBackPressed: {
+                            stackView.replace(walletInfoContent);
                         }
 
                         SettingsTab {
