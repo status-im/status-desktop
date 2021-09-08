@@ -29,6 +29,7 @@ SplitView {
         SplitView.minimumWidth: 300
         SplitView.fillWidth: true
         SplitView.fillHeight: true
+        leftPadding: -5
         contentItem: (!!centerPanel) ? centerPanel : null
         background: Rectangle {
             anchors.fill: parent
