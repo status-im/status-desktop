@@ -1,7 +1,7 @@
 import NimQml, chronicles
 import Tables
-import ../../../status/profile/profile
-from ../../../status/ens import nil
+import status/profile/profile
+from status/ens import nil
 
 type
   ContactRoles {.pure.} = enum

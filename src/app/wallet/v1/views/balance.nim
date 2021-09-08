@@ -2,8 +2,8 @@ import atomics, strutils, sequtils, json, tables, chronicles, web3/[ethtypes, co
 import NimQml, json, sequtils, chronicles, strutils, strformat, json
 
 import
-  ../../../../status/[status, wallet, tokens],
-  ../../../../status/tokens as status_tokens
+  status/[status, wallet, tokens],
+  status/tokens as status_tokens
 import ../../../../app_service/[main]
 import ../../../../app_service/tasks/[qt, threadpool]
 

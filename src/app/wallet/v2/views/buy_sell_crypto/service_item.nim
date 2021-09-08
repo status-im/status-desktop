@@ -1,6 +1,6 @@
 import json, strformat, chronicles
 
-include ../../../../../status/utils/[json_utils]
+include status/utils/[json_utils]
 
 logScope:
   topics = "app-wallet2-crypto-service"

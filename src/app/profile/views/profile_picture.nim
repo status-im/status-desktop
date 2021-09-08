@@ -2,8 +2,8 @@ import NimQml
 import chronicles
 import profile_info
 import ../../utils/image_utils
-import ../../../status/profile as status_profile
-import ../../../status/status
+import status/profile as status_profile
+import status/status
 
 
 logScope:

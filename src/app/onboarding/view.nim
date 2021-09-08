@@ -1,8 +1,8 @@
 import NimQml, Tables, json, nimcrypto, strformat, json_serialization, strutils
-import ../../status/accounts as AccountModel
-import ../../status/[status, wallet]
-import ../../status/types/[account, rpc_response]
-import ../../app_service/signals/[base]
+import status/accounts as AccountModel
+import status/[status, wallet]
+import status/types/[account, rpc_response]
+import status/signals/[base]
 import views/account_info
 
 type

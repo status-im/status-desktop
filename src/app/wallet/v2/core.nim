@@ -3,13 +3,13 @@ import NimQml, strformat, strutils, chronicles, sugar, sequtils
 import view
 import views/[account_list, account_item]
 
-import ../../../status/[status, wallet2, settings]
-import ../../../status/wallet2/account as WalletTypes
-import ../../../status/types/[transaction, setting]
+import status/[status, wallet2, settings]
+import status/wallet2/account as WalletTypes
+import status/types/[transaction, setting]
 import ../../../app_service/[main]
-import ../../../app_service/signals/[base]
-import ../../../app_service/signals/wallet as wallet_signal
-import ../../../eventemitter
+import status/signals/[base]
+import status/signals/wallet as wallet_signal
+import eventemitter
 
 logScope:
   topics = "app-wallet2"

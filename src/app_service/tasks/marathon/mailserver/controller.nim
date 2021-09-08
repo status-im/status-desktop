@@ -5,7 +5,7 @@ import # vendor libs
   chronicles, NimQml, json_serialization
 
 import # status-desktop libs
-  ../../../../status/status, ../../common as task_runner_common, ./events
+  status/status, ../../common as task_runner_common, ./events
 
 logScope:
   topics = "mailserver controller"

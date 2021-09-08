@@ -1,7 +1,7 @@
 import json, strformat
 
-import ../../../../status/chat/[chat]
-import ../../../../status/[status]
+import status/chat/[chat]
+import status/[status]
 
 import location_menu_sub_model, location_menu_sub_item
 

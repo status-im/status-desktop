@@ -1,7 +1,7 @@
 import NimQml, std/wrapnils, chronicles
-import ../../../status/status
-import ../../../status/chat/stickers
-import ../../../status/types/[message]
+import status/status
+import status/chat/stickers
+import status/types/[message]
 import message_format
 
 QtObject:

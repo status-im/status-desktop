@@ -1,7 +1,7 @@
 import NimQml, Tables, chronicles
-import ../../../status/chat/chat
-import ../../../status/status
-import ../../../status/accounts
+import status/chat/chat
+import status/status
+import status/accounts
 import strutils
 
 type

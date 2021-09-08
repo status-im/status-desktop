@@ -1,6 +1,6 @@
 import NimQml
 import chronicles
-import ../../../status/profile/profile
+import status/profile/profile
 import std/wrapnils
 
 QtObject:

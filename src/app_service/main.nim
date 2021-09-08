@@ -1,5 +1,5 @@
 import chronicles, task_runner
-import ../status/status
+import status/status
 import 
   ./tasks/marathon,
   ./tasks/marathon/worker,

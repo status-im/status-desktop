@@ -1,4 +1,4 @@
-include ../../../status/utils/json_utils
+include status/utils/json_utils
 
 #################################################
 # Async request for the list of services to buy/sell crypto

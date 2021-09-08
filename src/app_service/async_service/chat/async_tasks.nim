@@ -1,4 +1,4 @@
-include ../../../status/utils/json_utils
+include status/utils/json_utils
 
 type 
   AsyncSearchMessagesTaskArg = ref object of QObjectTaskArg

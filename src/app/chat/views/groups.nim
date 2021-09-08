@@ -1,5 +1,5 @@
 import NimQml, chronicles, sequtils, json
-import ../../../status/status
+import status/status
 import chat_item
 
 logScope:

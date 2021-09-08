@@ -1,7 +1,7 @@
 import NimQml, Tables, strutils, strformat
 
-import ../../../../status/chat/[chat]
-import ../../../../status/[status]
+import status/chat/[chat]
+import status/[status]
 
 import location_menu_sub_item
 

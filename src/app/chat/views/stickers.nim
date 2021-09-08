@@ -5,9 +5,9 @@ import # vendor libs
   chronicles, NimQml
 
 import # status-desktop libs
-  ../../../status/[status, stickers, wallet, utils],
+  status/[status, stickers, wallet, utils],
   sticker_pack_list, sticker_list, chat_item
-import ../../../status/types/[sticker, pending_transaction_type]
+import status/types/[sticker, pending_transaction_type]
 import ../../../app_service/[main]
 import ../../../app_service/tasks/[qt, threadpool]
 import ../../../app_service/tasks/marathon/mailserver/worker

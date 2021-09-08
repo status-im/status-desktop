@@ -5,8 +5,8 @@ import # vendor libs
   NimQml
 
 import # status-desktop libs
-  ../../../../status/[utils, tokens, settings],
-  ../../../../status/status
+  status/[utils, tokens, settings],
+  status/status
 import ../../../../app_service/[main]
 import ../../../../app_service/tasks/[qt, threadpool]
 import ../../../../app_service/tasks/marathon/mailserver/worker

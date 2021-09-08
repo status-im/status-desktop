@@ -1,5 +1,5 @@
 import NimQml, Tables
-from ../../../../status/wallet2 import OpenseaAsset
+from status/wallet2 import OpenseaAsset
 
 type
   AssetRoles {.pure.} = enum

@@ -1,10 +1,10 @@
 import NimQml, json, sequtils, chronicles, strutils, strformat, json
 
 import
-  ../../../../status/[status, settings],
-  ../../../../status/wallet as status_wallet,
-  ../../../../status/types/[rpc_response],
-  ../../../../app_service/signals/[base]
+  status/[status, settings],
+  status/wallet as status_wallet,
+  status/types/[rpc_response],
+  status/signals/[base]
 
 import account_list, account_item
 

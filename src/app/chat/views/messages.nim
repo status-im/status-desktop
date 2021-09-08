@@ -1,12 +1,12 @@
 import NimQml, Tables, json, sequtils, chronicles, times, re, sugar, strutils, os, strformat, algorithm
 
-import ../../../status/[status, contacts, mailservers]
-import ../../../status/ens as status_ens
-import ../../../status/messages as status_messages
-import ../../../status/utils as status_utils
-import ../../../status/chat/[chat]
-import ../../../status/profile/profile
-import ../../../status/types/[message]
+import status/[status, contacts, mailservers]
+import status/ens as status_ens
+import status/messages as status_messages
+import status/utils as status_utils
+import status/chat/[chat]
+import status/profile/profile
+import status/types/[message]
 import ../../../app_service/[main]
 import ../../../app_service/tasks/[qt, threadpool]
 import ../../../app_service/tasks/marathon/mailserver/worker

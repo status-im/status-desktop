@@ -1,8 +1,8 @@
 import sequtils, json, chronicles, web3/[ethtypes, conversions], stint
 import NimQml, json, sequtils, chronicles, strutils, json
 
-import ../../../../status/[status, settings, wallet]
-import ../../../../status/types/[setting]
+import status/[status, settings, wallet]
+import status/types/[setting]
 
 import account_list, account_item, accounts
 

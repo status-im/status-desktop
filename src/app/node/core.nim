@@ -1,8 +1,8 @@
 import NimQml, chronicles
-import ../../status/[status, node, network]
+import status/[status, node, network]
 import ../../app_service/[main]
-import ../../app_service/signals/[base, wallet, discovery_summary, stats]
-import ../../eventemitter
+import status/signals/[base, wallet, discovery_summary, stats]
+import eventemitter
 import view
 
 logScope:

@@ -1,7 +1,7 @@
 import atomics, strformat, strutils, sequtils, json, std/wrapnils, parseUtils, tables
 import NimQml, chronicles, stint
 
-import ../../../status/[status, wallet2]
+import status/[status, wallet2]
 import views/[accounts, account_list, collectibles]
 import views/buy_sell_crypto/[service_controller]
 import ../../../app_service/[main]

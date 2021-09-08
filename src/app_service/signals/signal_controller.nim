@@ -1,8 +1,8 @@
 import NimQml, json, chronicles, strutils, json_serialization
-import base, signal_type, messages, discovery_summary, whisper_filter, envelope, expired, 
-  wallet, mailserver, community, stats
-import ../../status/status
-import ../../eventemitter
+import status/signals/[base, signal_type, messages, discovery_summary, whisper_filter, envelope, expired, 
+  wallet, mailserver, community, stats]
+import status/status
+import eventemitter
 
 logScope:
   topics = "signals"

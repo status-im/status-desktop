@@ -1,6 +1,6 @@
 import NimQml, Tables
-import ../../../status/[chat/chat, ens, status, settings]
-import ../../../status/types/[setting, status_update]
+import status/[chat/chat, ens, status, settings]
+import status/types/[setting, status_update]
 
 type
   CommunityMembersRoles {.pure.} = enum

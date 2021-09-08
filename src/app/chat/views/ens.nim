@@ -1,7 +1,7 @@
 import NimQml, Tables, json, sequtils, chronicles, times, re, sugar, strutils, os, strformat, algorithm
 
-import ../../../status/[status, contacts]
-import ../../../status/ens as status_ens
+import status/[status, contacts]
+import status/ens as status_ens
 import ../../../app_service/[main]
 import ../../../app_service/tasks/[qt, threadpool]
 import ../../../app_service/tasks/marathon/mailserver/worker

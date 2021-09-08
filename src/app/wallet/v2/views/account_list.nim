@@ -1,7 +1,7 @@
 import NimQml, Tables, random, strformat, strutils, json_serialization
 import sequtils as sequtils
 import account_item
-from ../../../../status/wallet2 import WalletAccount, Asset, CollectibleList
+from status/wallet2 import WalletAccount, Asset, CollectibleList
 
 const accountColors* = ["#9B832F", "#D37EF4", "#1D806F", "#FA6565", "#7CDA00", "#887af9", "#8B3131"]
 

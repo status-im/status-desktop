@@ -1,8 +1,8 @@
 import NimQml, strutils
 
 import message_list
-import ../../../status/[status]
-import ../../../status/chat/[message]
+import status/[status]
+import status/chat/[message]
 
 QtObject:
   type

@@ -1,10 +1,10 @@
 import NimQml, chronicles, sequtils, sugar, strutils, json
-import ../../../status/utils as status_utils
-import ../../../status/status
-import ../../../status/chat/chat
+import status/utils as status_utils
+import status/status
+import status/chat/chat
 import contact_list
-import ../../../status/profile/profile
-import ../../../status/ens as status_ens
+import status/profile/profile
+import status/ens as status_ens
 import ../../../app_service/[main]
 import ../../../app_service/tasks/[qt, threadpool]
 

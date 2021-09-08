@@ -1,5 +1,5 @@
 import NimQml, tables
-from ../../../../status/wallet import CollectibleList
+from status/wallet import CollectibleList
 
 type
   CollectiblesRoles {.pure.} = enum

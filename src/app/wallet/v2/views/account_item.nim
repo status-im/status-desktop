@@ -1,5 +1,5 @@
 import NimQml, std/wrapnils, strformat, options
-from ../../../../status/wallet2 import WalletAccount
+from status/wallet2 import WalletAccount
 
 QtObject:
   type AccountItemView* = ref object of QObject

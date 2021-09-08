@@ -1,8 +1,8 @@
 import NimQml, json, chronicles
 
-import ../../../status/[status]
-import ../../../status/notifications/[os_notifications]
-import ../../../status/types/[os_notification]
+import status/[status]
+import status/notifications/[os_notifications]
+import status/types/[os_notification]
 
 logScope:
   topics = "os-notification-service"

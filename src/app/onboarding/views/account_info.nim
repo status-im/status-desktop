@@ -1,5 +1,5 @@
 import NimQml
-import ../../../status/types/[account]
+import status/types/[account]
 import std/wrapnils
 
 QtObject:

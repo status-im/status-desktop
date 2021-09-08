@@ -1,7 +1,7 @@
 import NimQml, std/wrapnils, json, tables
-import ../../../status/[chat/chat, status]
+import status/[chat/chat, status]
 import channels_list
-import ../../../eventemitter
+import eventemitter
 import community_members_list
 import category_list, category_item
 import community_membership_request_list

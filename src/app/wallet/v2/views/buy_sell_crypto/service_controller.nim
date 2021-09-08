@@ -3,7 +3,7 @@ import NimQml, json, strutils, chronicles
 import service_model, service_item
 
 import ../../../../../app_service/[main]
-import ../../../../../status/[status, wallet2]
+import status/[status, wallet2]
 
 logScope:
   topics = "app-wallet2-crypto-service"
