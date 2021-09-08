@@ -209,10 +209,12 @@ QtObject:
     self.accounts = self.accounts.filter(acc => acc.address.toLowerAscii != address.toLowerAscii)
 
   proc getOpenseaCollections*(address: string): string =
-    result = status_wallet.getOpenseaCollections(address)
+    let networkId = status_settings.getCurrentNetworkDetails().config.networkId
+    result = status_wallet.getOpenseaCollections(networkId, address)
 
   proc getOpenseaAssets*(address: string, collectionSlug: string, limit: int): string =
-    result = status_wallet.getOpenseaAssets(address, collectionSlug, limit)
+    let networkId = status_settings.getCurrentNetworkDetails().config.networkId
+    result = status_wallet.getOpenseaAssets(networkId, address, collectionSlug, limit)
 
   proc asyncFetchCryptoServices*(self: StatusWalletController) =
     ## Asynchronous request for the list of services to buy/sell crypto.

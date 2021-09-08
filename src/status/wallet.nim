@@ -399,9 +399,3 @@ proc watchTransaction*(transactionHash: string): string =
 
 proc hex2Token*(self: WalletModel, input: string, decimals: int): string =
   result = status_wallet.hex2Token(input, decimals)
-
-proc getOpenseaCollections*(address: string): string =
-  result = status_wallet.getOpenseaCollections(address)
-
-proc getOpenseaAssets*(address: string, collectionSlug: string, limit: int): string =
-  result = status_wallet.getOpenseaAssets(address, collectionSlug, limit)

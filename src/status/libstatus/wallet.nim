@@ -129,12 +129,12 @@ proc checkRecentHistory*(addresses: seq[string]): string =
   let payload = %* [addresses]
   result = callPrivateRPC("wallet_checkRecentHistory", payload)
 
-proc getOpenseaCollections*(address: string): string =
-  let payload = %* [address]
+proc getOpenseaCollections*(chainId: int, address: string): string =
+  let payload = %* [chainId, address]
   result = callPrivateRPC("wallet_getOpenseaCollectionsByOwner", payload)
 
-proc getOpenseaAssets*(address: string, collectionSlug: string, limit: int): string =
-  let payload = %* [address, collectionSlug, limit]
+proc getOpenseaAssets*(chainId: int, address: string, collectionSlug: string, limit: int): string =
+  let payload = %* [chainId, address, collectionSlug, limit]
   result = callPrivateRPC("wallet_getOpenseaAssetsByOwnerAndCollection", payload)
 
 proc fetchCryptoServices*(success: var bool): string =

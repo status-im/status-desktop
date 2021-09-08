@@ -10,14 +10,6 @@ type CollectibleList* = ref object
 type Collectible* = ref object
     name*, image*, id*, collectibleType*, description*, externalUrl*: string
 
-type OpenseaCollection* = ref object
-    name*, slug*, imageUrl*: string
-    ownedAssetCount*: int
-
-type OpenseaAsset* = ref object
-    id*: int
-    name*, description*, permalink*, imageThumbnailUrl*, imageUrl*, address*: string
-
 type CurrencyArgs* = ref object of Args
     currency*: string
 
@@ -35,28 +27,3 @@ type WalletAccount* = ref object
 
 type AccountArgs* = ref object of Args
     account*: WalletAccount
-
-proc `$`*(self: OpenseaCollection): string =
-  return fmt"OpenseaCollection(name:{self.name}, slug:{self.slug}, owned asset count:{self.ownedAssetCount})"
-
-proc `$`*(self: OpenseaAsset): string =
-  return fmt"OpenseaAsset(id:{self.id}, name:{self.name}, address:{self.address}, imageUrl: {self.imageUrl}, imageThumbnailUrl: {self.imageThumbnailUrl})"
-
-proc toOpenseaCollection*(jsonCollection: JsonNode): OpenseaCollection =
-    return OpenseaCollection(
-        name: jsonCollection{"name"}.getStr,
-        slug: jsonCollection{"slug"}.getStr,
-        imageUrl: jsonCollection{"image_url"}.getStr,
-        ownedAssetCount: jsonCollection{"owned_asset_count"}.getInt
-    )
-
-proc toOpenseaAsset*(jsonAsset: JsonNode): OpenseaAsset =
-    return OpenseaAsset(
-        id: jsonAsset{"id"}.getInt,
-        name: jsonAsset{"name"}.getStr,
-        description: jsonAsset{"description"}.getStr,
-        permalink: jsonAsset{"permalink"}.getStr,
-        imageThumbnailUrl: jsonAsset{"image_thumbnail_url"}.getStr,
-        imageUrl: jsonAsset{"image_url"}.getStr,
-        address: jsonAsset{"asset_contract"}{"address"}.getStr
-    )
