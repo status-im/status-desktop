@@ -88,6 +88,7 @@ StatusAppThreePanelLayout {
         }
         onOpened: {
             searchPopup.resetSearchSelection();
+            searchPopup.forceActiveFocus()
             chatsModel.messageSearchViewController.prepareLocationMenuModel()
 
             const jsonObj = chatsModel.messageSearchViewController.getSearchLocationObject()
