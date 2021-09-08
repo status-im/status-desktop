@@ -6,8 +6,10 @@ import "../../../shared"
 import "../../../shared/status/core"
 import "./components"
 
+import StatusQ.Components 0.1
+
 Item {
-    id: root
+    id: collectiblesTab
 
     Loader {
         id: contentLoader
@@ -52,6 +54,7 @@ Item {
         }
     }
 
+    // To-do remove
     CollectibleModal {
         id: collectibleModalComponent
     }
@@ -65,32 +68,26 @@ Item {
 
             Column {
                 id: collectiblesSection
-                spacing: Style.current.halfPadding
-                width: root.width
+                width: collectiblesTab.width
 
                 Repeater {
                     id: collectionsRepeater
                     model: walletV2Model.collectiblesView.collections
 
-                    CollectibleCollection {
-                        name: model.name
-                        imageUrl: model.imageUrl
-                        ownedAssetCount: model.ownedAssetCount
-                        slug: model.slug
-                        collectibleModal: collectibleModalComponent
-                        anchors.left: parent.left
-                        anchors.leftMargin: Style.current.bigPadding
-                        anchors.right: parent.right
-                        anchors.rightMargin: Style.current.bigPadding
+                    StatusExpandableItem {
+                        width: parent.width - 156
+                        anchors.horizontalCenter: parent.horizontalCenter
+
+                        primaryText: model.name
+                        image.source: model.imageUrl
+                        type: StatusExpandableItem.Type.Secondary
+                        expandableComponent: CollectibleCollection {
+                            slug: model.slug
+                            collectionImageUrl:  model.imageUrl
+                        }
                     }
                 }
             }
         }
     }
 }
-
-/*##^##
-Designer {
-    D{i:0;autoSize:true;formeditorColor:"#ffffff";height:480;width:640}
-}
-##^##*/

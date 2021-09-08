@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.13
 import "../../../imports"
 import "../../../shared"
 import "."
+import "./components"
 
 import StatusQ.Layout 0.1
 
@@ -11,6 +12,10 @@ Item {
     id: walletView
 
     property bool hideSignPhraseModal: false
+
+    function openCollectibleDetailView(options) {
+        collectiblesDetailPage.show(options)
+    }
 
     function showSigningPhrasePopup(){
         if(!hideSignPhraseModal && !appSettings.hideSignPhraseModal){
@@ -51,6 +56,7 @@ Item {
             WalletHeader {
                 id: walletHeader
                 changeSelectedAccount: leftTab.changeSelectedAccount
+                visible: !collectiblesDetailPage.visible
             }
 
             RowLayout {
@@ -63,6 +69,7 @@ Item {
                 anchors.rightMargin: 0
                 anchors.top: walletHeader.bottom
                 anchors.topMargin: 23
+                visible: !collectiblesDetailPage.visible
 
                 Item {
                     id: walletInfoContent
@@ -116,6 +123,11 @@ Item {
             WalletFooter {
                 id: walletFooter
                 anchors.bottom: parent.bottom
+            }
+            
+            CollectibleDetailsPage {
+                id: collectiblesDetailPage
+                anchors.fill: parent
             }
         }
     }
