@@ -1,12 +1,12 @@
 import NimQml, json, sequtils, chronicles, strutils, strformat, tables
-import ../../../status/status
-import ../../../status/chat/chat
+import status/status
+import status/chat/chat
 import ./community_list
 import ./community_item
 import ./community_membership_request_list
 import ../../utils/image_utils
-import ../../../status/types/[activity_center_notification, status_update, rpc_response]
-import ../../../app_service/signals/[base]
+import status/types/[activity_center_notification, status_update, rpc_response]
+import status/signals/[base]
 
 logScope:
   topics = "communities-view"

@@ -1,9 +1,9 @@
 import NimQml, Tables, json, sequtils, chronicles, strutils
 
-import ../../../status/[status, contacts]
-import ../../../status/ens as status_ens
-import ../../../status/chat as status_chat
-import ../../../status/chat/[chat]
+import status/[status, contacts]
+import status/ens as status_ens
+import status/chat as status_chat
+import status/chat/[chat]
 import ../../../app_service/[main]
 
 import communities, chat_item, channels_list, communities, community_list

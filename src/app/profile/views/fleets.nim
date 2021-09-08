@@ -1,6 +1,6 @@
 import NimQml, json
 import chronicles, strutils
-import ../../../status/[status, settings, accounts]
+import status/[status, settings, accounts]
 
 QtObject:
   type Fleets * = ref object of QObject

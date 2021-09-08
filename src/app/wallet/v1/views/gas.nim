@@ -2,8 +2,8 @@ import atomics, strformat, strutils, sequtils, json, std/wrapnils, parseUtils, c
 import NimQml, json, sequtils, chronicles, strutils, strformat, json
 
 import
-  ../../../../status/[status, wallet, utils],
-  ../../../../status/types/[gas_prediction]
+  status/[status, wallet, utils],
+  status/types/[gas_prediction]
 import ../../../../app_service/[main]
 import ../../../../app_service/tasks/[qt, threadpool]
 

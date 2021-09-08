@@ -2,8 +2,8 @@ import algorithm, atomics, sequtils, strformat, strutils, sugar, sequtils, json,
 import NimQml, json, sequtils, chronicles, strutils, strformat, json, stint
 
 import
-  ../../../../status/[status, settings, wallet, tokens, utils],
-  ../../../../status/wallet as status_wallet
+  status/[status, settings, wallet, tokens, utils],
+  status/wallet as status_wallet
 
 import ../../../../app_service/[main]
 import ../../../../app_service/tasks/[qt, threadpool]

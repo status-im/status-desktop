@@ -1,5 +1,5 @@
 import NimQml, Tables,
-  ../../../status/[chat/chat, status, ens]
+  status/[chat/chat, status, ens]
 
 type
   ChatMemberRoles {.pure.} = enum

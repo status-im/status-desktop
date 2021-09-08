@@ -2,7 +2,7 @@ import # vendor libs
   NimQml, json_serialization
 
 import # status-desktop libs
-  ../../../../eventemitter
+  eventemitter
 
 type
   MailserverEvents* = ref object

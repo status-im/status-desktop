@@ -1,5 +1,5 @@
 import NimQml, Tables
-from ../../../../status/wallet2 import OpenseaCollection
+from status/wallet2 import OpenseaCollection
 
 type
   CollectionRoles {.pure.} = enum

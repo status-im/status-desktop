@@ -1,11 +1,11 @@
 import NimQml, os, strformat, strutils, parseUtils, chronicles
 import stint
-import ../../status/[status, wallet, settings, updates]
-import ../../status/stickers
-import ../../status/tokens as status_tokens
-import ../../status/utils as status_utils
-import ../../status/ens as status_ens
-import ../../status/types/[network]
+import status/[status, wallet, settings, updates]
+import status/stickers
+import status/tokens as status_tokens
+import status/utils as status_utils
+import status/ens as status_ens
+import status/types/[network]
 import ../../app_service/[main]
 import ../../app_service/tasks/[qt, threadpool]
 import ../utils/image_utils

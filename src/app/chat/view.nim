@@ -1,20 +1,20 @@
 import NimQml, Tables, json, sequtils, chronicles, strutils, os, strformat
-import ../../status/[status]
-import ../../status/constants
-import ../../status/utils as status_utils
-import ../../status/chat as status_chat
-import ../../status/messages as status_messages
-import ../../status/mailservers
-import ../../status/contacts as status_contacts
-import ../../status/ens as status_ens
-import ../../status/chat/[chat]
-import ../../status/profile/profile
-import ../../status/types/[activity_center_notification, os_notification, rpc_response]
+import status/[status]
+import status/constants
+import status/utils as status_utils
+import status/chat as status_chat
+import status/messages as status_messages
+import status/mailservers
+import status/contacts as status_contacts
+import status/ens as status_ens
+import status/chat/[chat]
+import status/profile/profile
+import status/types/[activity_center_notification, os_notification, rpc_response]
 import ../../app_service/[main]
 import ../../app_service/tasks/[qt, threadpool]
 import ../../app_service/tasks/marathon/mailserver/worker
-import ../../app_service/signals/[base]
-import ../../status/notifications/[os_notifications]
+import status/signals/[base]
+import status/notifications/[os_notifications]
 import ../utils/image_utils
 import web3/[conversions, ethtypes]
 import views/message_search/[view_controller]
@@ -22,7 +22,7 @@ import views/[channels_list, message_list, chat_item, reactions, stickers, group
 
 
 # TODO: remove me
-import ../../status/libstatus/chat as libstatus_chat
+import status/libstatus/chat as libstatus_chat
 
 logScope:
   topics = "chats-view"

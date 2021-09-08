@@ -2,7 +2,7 @@ import # vendor libs
   NimQml
 
 import gif_list
-import ../../../status/gif
+import status/gif
 
 
 QtObject:

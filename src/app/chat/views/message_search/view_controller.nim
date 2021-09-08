@@ -3,10 +3,10 @@ import NimQml, Tables, json, strutils, chronicles, json_serialization
 import result_model, result_item, location_menu_model, location_menu_item, location_menu_sub_item
 import constants as sr_constants
 
-import ../../../../status/[status]
-import ../../../../status/chat/[chat]
-import ../../../../status/types/[message, setting]
-import ../../../../status/libstatus/[settings]
+import status/[status]
+import status/chat/[chat]
+import status/types/[message, setting]
+import status/libstatus/[settings]
 import ../../../../app_service/[main]
 import ../communities
 import ../channel

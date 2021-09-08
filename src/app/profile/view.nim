@@ -2,16 +2,16 @@ import NimQml, sequtils, strutils, sugar, os, json, chronicles
 import views/[mailservers_list, ens_manager, contacts, devices, mailservers, mnemonic, network, fleets, profile_info, device_list, dapp_list, profile_picture, profile_settings, muted_chats]
 import chronicles
 import ../chat/views/channels_list
-import ../../status/libstatus/accounts as status_accounts
-import ../../status/profile/profile
-import ../../status/profile as status_profile
-import ../../status/contacts as status_contacts
-import ../../status/status
-import ../../status/ens as status_ens
-import ../../status/chat/chat
-import ../../status/types/[setting, os_notification]
-import ../../status/constants as accountConstants
-import ../../status/notifications/[os_notifications]
+import status/libstatus/accounts as status_accounts
+import status/profile/profile
+import status/profile as status_profile
+import status/contacts as status_contacts
+import status/status
+import status/ens as status_ens
+import status/chat/chat
+import status/types/[setting, os_notification]
+import status/constants as accountConstants
+import status/notifications/[os_notifications]
 import ../../app_service/[main]
 import qrcode/qrcode
 import ../utils/image_utils

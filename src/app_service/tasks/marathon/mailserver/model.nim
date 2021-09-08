@@ -4,11 +4,11 @@ import
 from times import cpuTime
 
 import
-  ../../../../status/libstatus/settings as status_settings,
-  ../../../../status/libstatus/chat as status_chat,
-  ../../../../status/libstatus/mailservers as status_mailservers,
-  ../../../../status/libstatus/core as status_core,
-  ../../../../status/fleet,
+  status/libstatus/settings as status_settings,
+  status/libstatus/chat as status_chat,
+  status/libstatus/mailservers as status_mailservers,
+  status/libstatus/core as status_core,
+  status/fleet,
   ./events as mailserver_events
 
 logScope:

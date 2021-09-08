@@ -5,8 +5,8 @@ import # vendor libs
   chronicles, json_serialization
 
 import # status-desktop libs
-  ../../../status/chat/chat, ../../../status/status, ../../../status/accounts
-import ../../../status/types/[status_update]
+  status/chat/chat, status/status, status/accounts
+import status/types/[status_update]
 
 type
   CommunityRoles {.pure.} = enum

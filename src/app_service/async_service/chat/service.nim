@@ -2,10 +2,10 @@ import NimQml
 import json, chronicles
 
 import ../../tasks/[qt, threadpool]
-import ../../../status/status
-import ../../../status/libstatus/chat as status_chat
+import status/status
+import status/libstatus/chat as status_chat
 
-include ../../../status/chat/utils
+include status/chat/utils
 include async_tasks
 
 logScope:

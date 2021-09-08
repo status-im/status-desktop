@@ -1,5 +1,5 @@
 import NimQml, std/wrapnils
-import ../../../status/chat/chat
+import status/chat/chat
 
 QtObject:
   type CategoryItemView* = ref object of QObject

@@ -1,6 +1,6 @@
 import NimQml, Tables, json, chronicles
 
-import ../../../../status/[status, wallet2]
+import status/[status, wallet2]
 import ../../../../app_service/[main]
 import ../../../../app_service/tasks/[qt, threadpool]
 

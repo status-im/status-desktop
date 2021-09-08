@@ -1,8 +1,8 @@
 import NimQml, chronicles
-import ../../status/[status, node, network]
+import status/[status, node, network]
 import ../../app_service/[main]
 import view
-import ../../eventemitter
+import eventemitter
 
 logScope:
   topics = "utils"

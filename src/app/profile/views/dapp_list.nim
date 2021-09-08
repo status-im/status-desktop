@@ -1,6 +1,6 @@
 import NimQml
 import Tables
-import ../../../status/status
+import status/status
 import permission_list
 
 type

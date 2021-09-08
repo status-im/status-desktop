@@ -2,7 +2,7 @@ import # std libs
   strutils
 
 import # status-desktop libs
-  ../../status/chat/chat as status_chat,
+  status/chat/chat as status_chat,
   ./views/communities,
   ./views/messages
 import ../../app_service/tasks/[qt, threadpool]

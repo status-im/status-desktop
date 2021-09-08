@@ -2,7 +2,7 @@ import atomics, strformat, strutils, sequtils, json, std/wrapnils, parseUtils, t
 import NimQml, chronicles, stint
 
 import
-  ../../../status/[status, wallet],
+  status/[status, wallet],
   views/[accounts, collectibles, transactions, tokens, gas, ens, dapp_browser, history, balance, utils, asset_list, account_list]
 import ../../../app_service/[main]
 

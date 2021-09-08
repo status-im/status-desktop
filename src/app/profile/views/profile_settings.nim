@@ -1,8 +1,8 @@
 import NimQml, os
 import chronicles
 import profile_info
-import ../../../status/status
-import ../../../status/constants as accountConstants
+import status/status
+import status/constants as accountConstants
 
 logScope:
   topics = "profile-settings-view"

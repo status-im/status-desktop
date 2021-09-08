@@ -2,8 +2,8 @@ import NimQml
 import json, chronicles
 
 import ../../tasks/[qt, threadpool]
-import ../../../status/[status, wallet2]
-import ../../../status/libstatus/wallet as status_wallet
+import status/[status, wallet2]
+import status/libstatus/wallet as status_wallet
 
 include async_tasks
 

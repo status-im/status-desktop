@@ -1,7 +1,7 @@
 import NimQml, Tables, chronicles, json, sequtils, strformat
-import ../../../status/status
-import ../../../status/accounts
-import ../../../status/types/[activity_center_notification]
+import status/status
+import status/accounts
+import status/types/[activity_center_notification]
 import strutils
 import message_item
 

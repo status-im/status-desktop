@@ -1,8 +1,8 @@
 import NimQml, chronicles, strutils, json
-import ../../status/[status, node, settings, accounts]
-import ../../status/types/[setting]
+import status/[status, node, settings, accounts]
+import status/types/[setting]
 import ../../app_service/[main]
-import ../../app_service/signals/[stats]
+import status/signals/[stats]
 import ../../app_service/tasks/[qt, threadpool]
 
 logScope:

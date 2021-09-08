@@ -1,5 +1,5 @@
 import NimQml, tables
-from ../../../../status/wallet import Asset
+from status/wallet import Asset
 
 type
   AssetRoles {.pure.} = enum

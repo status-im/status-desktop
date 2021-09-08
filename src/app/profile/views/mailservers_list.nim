@@ -1,6 +1,6 @@
 import NimQml
 import Tables
-import ../../../status/profile/mailserver
+import status/profile/mailserver
 
 type
   MailServerRoles {.pure.} = enum

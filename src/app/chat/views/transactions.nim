@@ -1,5 +1,5 @@
 import NimQml, chronicles
-import ../../../status/status
+import status/status
 
 logScope:
   topics = "transactions-view"

@@ -1,6 +1,6 @@
 import NimQml, chronicles
-import ../../../status/status
-import ../../../status/network
+import status/status
+import status/network
 import custom_networks
 
 logScope:
