@@ -13,7 +13,6 @@ import status/types/[activity_center_notification, os_notification, rpc_response
 import ../../app_service/[main]
 import ../../app_service/tasks/[qt, threadpool]
 import ../../app_service/tasks/marathon/mailserver/worker
-import status/signals/[base]
 import status/notifications/[os_notifications]
 import ../utils/image_utils
 import web3/[conversions, ethtypes]

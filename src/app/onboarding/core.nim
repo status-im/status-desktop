@@ -1,8 +1,7 @@
 import NimQml, chronicles, std/wrapnils
 import status/accounts as AccountModel
-import status/status
+import status/[signals, status]
 import status/types/[account]
-import status/signals/[base]
 import eventemitter
 import view
 

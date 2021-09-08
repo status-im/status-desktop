@@ -1,7 +1,7 @@
 import NimQml, json, strutils, sugar, sequtils, tables
 import json_serialization
 import status/profile/[profile, mailserver]
-import status/[status, settings]
+import status/[status, signals, settings]
 import status/contacts as status_contacts
 import status/chat as status_chat
 import status/devices as status_devices
@@ -9,7 +9,6 @@ import status/chat/chat
 import status/wallet
 import status/types/[account, transaction, setting]
 import ../../app_service/[main]
-import status/signals/[base, messages]
 import ../../app_service/tasks/marathon/mailserver/events
 import eventemitter
 import view

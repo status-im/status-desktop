@@ -1,7 +1,6 @@
 import
   ../../app_service/tasks/marathon/mailserver/worker,
-  status/signals/messages as signals_messages,
-  status/signals/[community, discovery_summary, envelope, expired]
+  status/signals
 
 proc handleSignals(self: ChatController) =
   self.status.events.on(SignalType.Message.event) do(e:Args):

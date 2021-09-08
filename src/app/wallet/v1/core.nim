@@ -6,9 +6,8 @@ import views/[asset_list, account_list, account_item]
 import status/[status, wallet, settings]
 import status/wallet/account as WalletTypes
 import status/types/[transaction, setting]
+import status/signals
 import ../../../app_service/[main]
-import status/signals/[base]
-import status/signals/wallet as wallet_signal
 import eventemitter
 
 logScope:

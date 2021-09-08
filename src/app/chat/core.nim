@@ -4,7 +4,6 @@ import status/messages as messages_model
 import status/[chat, contacts, status, wallet, stickers, settings]
 import status/types/[message, transaction, os_notification, setting]
 import ../../app_service/[main]
-import status/signals/[base]
 import view, views/channels_list, views/message_list, views/reactions, views/stickers as stickers_view
 import eventemitter
 
