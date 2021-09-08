@@ -50,7 +50,9 @@ ModalPopup {
         placeholderText: qsTrId("confirm-password…")
         textField.echoMode: TextInput.Password
         Keys.onReturnPressed: function(event) {
-            submitBtn.clicked(event)
+            if (submitBtn.enabled) {
+                submitBtn.clicked(event)
+            }
         }
         onTextChanged: {
             [repeatPasswordFieldValid, repeatPasswordValidationError] =
