@@ -1,7 +1,6 @@
 import NimQml, Tables, json, nimcrypto, strformat, json_serialization, chronicles
 import status/accounts as AccountModel
 import status/types/[account, rpc_response]
-import status/signals/[base]
 import ../onboarding/views/account_info
 import status/status
 

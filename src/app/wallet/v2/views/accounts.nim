@@ -3,8 +3,7 @@ import NimQml, json, sequtils, chronicles, strutils, strformat, json
 import
   status/[status, settings],
   status/wallet2 as status_wallet,
-  status/types/[rpc_response],
-  status/signals/[base]
+  status/types/[rpc_response]
 
 import account_list, account_item
 

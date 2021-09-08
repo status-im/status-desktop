@@ -6,7 +6,6 @@ import ./community_item
 import ./community_membership_request_list
 import ../../utils/image_utils
 import status/types/[activity_center_notification, status_update, rpc_response]
-import status/signals/[base]
 
 logScope:
   topics = "communities-view"
