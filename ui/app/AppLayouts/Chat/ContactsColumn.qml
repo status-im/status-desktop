@@ -64,10 +64,9 @@ Item {
 
             StatusBaseInput {
                 id: searchInput
-                height: 36
+                implicitHeight: 36
                 width: parent.width
-                topPadding: 8
-                bottomPadding: 0
+                topPadding: 9
                 //% "Search"
                 placeholderText: qsTrId("search")
                 icon.name: "search"
