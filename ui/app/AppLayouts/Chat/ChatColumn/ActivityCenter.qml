@@ -29,6 +29,9 @@ Popup {
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
     parent: Overlay.overlay
 
+    dim: true
+    Overlay.modeless: MouseArea {}
+
     width: 560
     background: Rectangle {
         color: Style.current.background
