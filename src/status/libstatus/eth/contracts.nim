@@ -62,6 +62,7 @@ type
     decimals*: int
     hasIcon* {.dontSerialize.}: bool
     color*: string
+    chainId*: int
 
   Erc721Contract* = ref object of Contract
     symbol*: string
