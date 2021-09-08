@@ -55,7 +55,6 @@ StatusModal {
             input.icon.name: "search"
             input.height: 36
             input.topPadding: 9
-            input.bottomPadding: 0
         }
 
         StatusModalDivider { topPadding: 8 }
