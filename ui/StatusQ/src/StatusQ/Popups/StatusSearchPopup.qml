@@ -51,10 +51,19 @@ StatusModal {
         setSearchSelection(defaultSearchLocationText, "", "", false, "", "transparent")
     }
 
+    function forceActiveFocus() {
+        contentItem.searchInput.forceActiveFocus()
+    }
+
+    onOpened: {
+        forceActiveFocus();
+    }
+
     contentItem: Item {
         width: parent.width
         height: root.height
         property alias searchText: inputText.text
+        property alias searchInput: inputText
 
         ColumnLayout {
             id: contentItemColumn
