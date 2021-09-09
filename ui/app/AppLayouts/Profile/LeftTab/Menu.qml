@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.13
 
 import StatusQ.Components 0.1
 
+import "../../../../shared"
 import "../../../../imports"
 import "./constants.js" as ProfileConstants
 
@@ -62,11 +63,21 @@ ScrollView {
                 visible: modelData.ifEnabled !== "browser" || appSettings.isBrowserEnabled
                 onClicked: function () {
                     if (modelData.function === "exit") {
-                        return Qt.quit()
+                        return confirmDialog.open()
                     }
                     Config.currentMenuTab = modelData.id
                 }
             }
+        }
+    }
+
+    ConfirmationDialog {
+        id: confirmDialog
+        header.title: qsTr("Sign out")
+        confirmationText: qsTr("Make sure you have your account password and seed phrase stored. Without them you can lock yourself out of your account and lose funds.")
+        confirmButtonLabel: qsTr("Sign out & Quit")
+        onConfirmButtonClicked: {
+            Qt.quit()
         }
     }
 }
