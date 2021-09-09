@@ -217,8 +217,9 @@ QtObject:
           self.newMessagePushed()
 
         let isGroupSelf = msg.fromAuthor == self.pubKey and msg.contentType == ContentType.Group
+        let isMyInvite = msg.fromAuthor == self.pubKey and msg.contentType == ContentType.Community
         let isEdit = msg.editedAt != "0" or msg.contentType == ContentType.Edit
-        if not channel.muted and not isEdit and not isGroupSelf:
+        if not channel.muted and not isEdit and not isGroupSelf and not isMyInvite:
           let isAddedContact = channel.chatType.isOneToOne and self.isAddedContact(channel.id)
           self.messageNotificationPushed(msg.id, channel.communityId, msg.chatId, escape_html(msg.text), msg.contentType.int, channel.chatType.int, msg.timestamp, msg.identicon, msg.userName, msg.hasMention, isAddedContact, channel.name)
 
