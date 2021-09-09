@@ -4,7 +4,7 @@ import
   status/[status, settings],
   status/wallet as status_wallet,
   status/types/[rpc_response]
-
+import ../../../../constants
 import account_list, account_item
 
 logScope:
@@ -40,13 +40,13 @@ QtObject:
 
   proc addAccountsFromSeed*(self: AccountsView, seed: string, password: string, accountName: string, color: string): string {.slot.} =
     try:
-      self.status.wallet.addAccountsFromSeed(seed.strip(), password, accountName, color)
+      self.status.wallet.addAccountsFromSeed(seed.strip(), password, accountName, color, KEYSTOREDIR)
     except StatusGoException as e:
       result = StatusGoError(error: e.msg).toJson
 
   proc addAccountsFromPrivateKey*(self: AccountsView, privateKey: string, password: string, accountName: string, color: string): string {.slot.} =
     try:
-      self.status.wallet.addAccountsFromPrivateKey(privateKey, password, accountName, color)
+      self.status.wallet.addAccountsFromPrivateKey(privateKey, password, accountName, color, KEYSTOREDIR)
     except StatusGoException as e:
       result = StatusGoError(error: e.msg).toJson
 

@@ -11,13 +11,13 @@ import app/onboarding/core as onboarding
 import app/login/core as login
 import app/provider/core as provider
 import status/types/[account]
-import status/constants
 import status_go
 import status/status as statuslib
 import eventemitter
 import app_service/tasks/marathon/mailserver/controller as mailserver_controller
 import app_service/tasks/marathon/mailserver/worker as mailserver_worker
 import app_service/main
+import constants
 
 var signalsQObjPointer: pointer
 
@@ -27,6 +27,8 @@ logScope:
 proc mainProc() =
   if defined(macosx) and defined(production):
     setCurrentDir(getAppDir())
+
+  ensureDirectories(DATADIR, TMPDIR, LOGDIR)
 
   let logFile = fmt"app_{getTime().toUnix}.log"
   discard defaultChroniclesStream.output.open(LOGDIR & logFile, fmAppend)
@@ -48,7 +50,7 @@ proc mainProc() =
   let appService = newAppService(status, mailserverWorker)
   defer: appService.delete()
 
-  status.initNode()
+  status.initNode(STATUSGODIR, KEYSTOREDIR)
 
   let uiScaleFilePath = joinPath(DATADIR, "ui-scale")
   enableHDPI(uiScaleFilePath)
