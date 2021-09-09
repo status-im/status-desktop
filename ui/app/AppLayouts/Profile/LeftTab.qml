@@ -11,7 +11,7 @@ Item {
 
     StatusNavigationPanelHeadline {
         id: title
-        text: qsTr("Profile")
+        text: qsTr("Settings")
         anchors.top: parent.top
         anchors.topMargin: Style.current.padding
         anchors.horizontalCenter: parent.horizontalCenter

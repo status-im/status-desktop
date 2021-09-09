@@ -403,8 +403,8 @@ Item {
 
                 StatusNavBarTabButton {
                     id: profileBtn
-                    //% "Profile"
-                    tooltip.text: qsTrId("profile")
+                    //% "Settings"
+                    tooltip.text: qsTrId("settings")
                     icon.name: "profile"
                     checked: appView.currentIndex == Utils.getAppSectionIndex(Constants.profile)
                     onClicked: appMain.changeAppSection(Constants.profile)
