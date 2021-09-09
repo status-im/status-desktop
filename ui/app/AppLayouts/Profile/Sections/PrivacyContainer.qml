@@ -51,6 +51,13 @@ Item {
 
         ChangePasswordModal {
             id: changePasswordModal
+            anchors.centerIn: parent
+            successPopup: successPopup
+        }
+
+        ChangePasswordSuccessModal {
+            id: successPopup
+            anchors.centerIn: parent
         }
 
         Item {

@@ -10,7 +10,7 @@ import status/status
 import status/ens as status_ens
 import status/chat/chat
 import status/types/[setting, os_notification]
-import status/constants as accountConstants
+import ../../constants
 import status/notifications/[os_notifications]
 import ../../app_service/[main]
 import qrcode/qrcode
@@ -126,9 +126,16 @@ QtObject:
     read = getEnsManager
 
   proc changePassword(self: ProfileView, password: string, newPassword: string): bool {.slot.} =
+    let
+      defaultAccount = status_accounts.getDefaultAccount()
+      isPasswordOk = status_accounts.verifyAccountPassword(defaultAccount, password, KEYSTOREDIR)
+    if not isPasswordOk:
+      return false
+
     if self.status.accounts.changePassword(self.profile.address, password, newPassword):
-      quit(QuitSuccess) # quits the app TODO: change this to logout instead when supported
-    return false
+      return true
+    else:
+      return false
 
   proc getLinkPreviewWhitelist*(self: ProfileView): string {.slot.} =
     result = $(self.status.profile.getLinkPreviewWhitelist())
