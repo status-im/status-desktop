@@ -364,8 +364,9 @@ Item {
                 },
 
                 StatusNavBarTabButton {
-                    icon.name: "wallet"
-                    tooltip.text: qsTr("Wallet v2")
+                    //TODO temporary icon name, switch back to wallet
+                    icon.name: "cancel"
+                    tooltip.text: qsTr("Wallet v2 - do not use, under active development")
                     visible: enabled
                     enabled: isExperimental === "1" || appSettings.isWalletV2Enabled
                     checked: appView.currentIndex == Utils.getAppSectionIndex(Constants.walletv2)

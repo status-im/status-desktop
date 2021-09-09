@@ -86,7 +86,7 @@ ScrollView {
             }
 
             StatusSettingsLineButton {
-                text: qsTr("Wallet v2")
+                text: qsTr("Wallet v2 - do not use, under active development")
                 isSwitch: true
                 switchChecked: appSettings.isWalletV2Enabled
                 onClicked: {
@@ -289,7 +289,8 @@ ScrollView {
             height: 310
             showCancelButton: true
             //% "This feature is experimental and is meant for testing purposes by core contributors and the community. It's not meant for real use and makes no claims of security or integrity of funds or data. Use at your own risk."
-            confirmationText: qsTrId("this-feature-is-experimental-and-is-meant-for-testing-purposes-by-core-contributors-and-the-community--it-s-not-meant-for-real-use-and-makes-no-claims-of-security-or-integrity-of-funds-or-data--use-at-your-own-risk-")
+            confirmationText: (settingsProp === "isWalletV2Enabled" ? qsTr("<b>--DO NOT USE - UNDER ACTIVE DEVELOPMENT--</b>\n") : "") +
+                qsTrId("this-feature-is-experimental-and-is-meant-for-testing-purposes-by-core-contributors-and-the-community--it-s-not-meant-for-real-use-and-makes-no-claims-of-security-or-integrity-of-funds-or-data--use-at-your-own-risk-")
             //% "I understand"
             confirmButtonLabel: qsTrId("i-understand")
             onConfirmButtonClicked: {
