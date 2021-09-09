@@ -1,12 +1,6 @@
-[submodule "vendor/nim-stint"]
-	path = vendor/nim-stint
-	url = https://github.com/status-im/nim-stint.git
 [submodule "vendor/nimbus-build-system"]
 	path = vendor/nimbus-build-system
 	url = https://github.com/status-im/nimbus-build-system.git
-[submodule "vendor/nim-stew"]
-	path = vendor/nim-stew
-	url = https://github.com/status-im/nim-stew.git
 [submodule "vendor/status-go"]
 	path = vendor/status-go
 	url = https://github.com/status-im/status-go.git
@@ -16,45 +10,12 @@
 [submodule "vendor/nimqml"]
 	path = vendor/nimqml
 	url = https://github.com/status-im/nimqml.git
-[submodule "vendor/nim-chronicles"]
-	path = vendor/nim-chronicles
-	url = https://github.com/status-im/nim-chronicles.git
-[submodule "vendor/nim-faststreams"]
-	path = vendor/nim-faststreams
-	url = https://github.com/status-im/nim-faststreams.git
-[submodule "vendor/nim-chronos"]
-	path = vendor/nim-chronos
-	url = https://github.com/status-im/nim-chronos.git
-[submodule "vendor/nim-json-serialization"]
-	path = vendor/nim-json-serialization
-	url = https://github.com/status-im/nim-json-serialization.git
-[submodule "vendor/nim-serialization"]
-	path = vendor/nim-serialization
-	url = https://github.com/status-im/nim-serialization.git
-[submodule "vendor/nimcrypto"]
-	path = vendor/nimcrypto
-	url = https://github.com/cheatfate/nimcrypto.git
 [submodule "vendor/uuids"]
 	path = vendor/uuids
 	url = https://github.com/pragmagic/uuids.git
-[submodule "vendor/isaac"]
-	path = vendor/isaac
-	url = https://github.com/pragmagic/isaac.git
-[submodule "vendor/nim-libp2p"]
-	path = vendor/nim-libp2p
-	url = https://github.com/status-im/nim-libp2p
-[submodule "vendor/nim-metrics"]
-	path = vendor/nim-metrics
-	url = https://github.com/status-im/nim-metrics
 [submodule "vendor/QR-Code-generator"]
 	path = vendor/QR-Code-generator
 	url = https://github.com/status-im/QR-Code-generator
-[submodule "vendor/edn.nim"]
-	path = vendor/edn.nim
-	url = https://github.com/rosado/edn.nim.git
-[submodule "vendor/nim-secp256k1"]
-	path = vendor/nim-secp256k1
-	url = https://github.com/status-im/nim-secp256k1
 [submodule "vendor/chroma"]
 	path = vendor/chroma
 	url = https://github.com/treeform/chroma
@@ -64,39 +25,9 @@
 [submodule "vendor/nimage"]
 	path = vendor/nimage
 	url = https://github.com/Ethosa/nimage/
-[submodule "vendor/nim-web3"]
-	path = vendor/nim-web3
-	url = https://github.com/status-im/nim-web3
-[submodule "vendor/nim-json-rpc"]
-	path = vendor/nim-json-rpc
-	url = https://github.com/status-im/nim-json-rpc
-[submodule "vendor/nim-http-utils"]
-	path = vendor/nim-http-utils
-	url = https://github.com/status-im/nim-http-utils
-[submodule "vendor/news"]
-	path = vendor/news
-	url = https://github.com/Tormund/news
 [submodule "vendor/bearssl"]
 	path = vendor/bearssl
 	url = https://github.com/status-im/nim-bearssl
-[submodule "vendor/nim-eth"]
-	path = vendor/nim-eth
-	url = https://github.com/status-im/nim-eth
-[submodule "vendor/nbaser"]
-	path = vendor/nbaser
-	url = https://github.com/D-Nice/nbaser/
-[submodule "vendor/nim-base32"]
-	path = vendor/nim-base32
-	url = https://github.com/elktree/nim-base32
-[submodule "vendor/nim-status-go"]
-	path = vendor/nim-status-go
-	url = https://github.com/status-im/nim-status-go.git
-[submodule "vendor/nim-task-runner"]
-	path = vendor/nim-task-runner
-	url = https://github.com/status-im/nim-task-runner.git
-[submodule "vendor/edn.nim"]
-	path = vendor/edn.nim
-	url = https://github.com/status-im/edn.nim.git
 [submodule "vendor/nim-confutils"]
 	path = vendor/nim-confutils
 	url = https://github.com/status-im/nim-confutils.git
