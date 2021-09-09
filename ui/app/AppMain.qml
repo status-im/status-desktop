@@ -409,7 +409,7 @@ Item {
                     checked: appView.currentIndex == Utils.getAppSectionIndex(Constants.profile)
                     onClicked: appMain.changeAppSection(Constants.profile)
 
-                    badge.visible: !profileModel.mnemonic.isBackedUp && !checked
+                    badge.visible: !profileModel.mnemonic.isBackedUp
                     badge.anchors.rightMargin: 4
                     badge.anchors.topMargin: 5
                     badge.border.color: hovered ? Theme.palette.statusBadge.hoverBorderColor : Theme.palette.statusAppNavBar.backgroundColor
