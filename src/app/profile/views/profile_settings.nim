@@ -2,7 +2,7 @@ import NimQml, os
 import chronicles
 import profile_info
 import status/status
-import status/constants as accountConstants
+import ../../../constants
 
 logScope:
   topics = "profile-settings-view"
@@ -35,14 +35,14 @@ QtObject:
       else:
         self.profile.pubKey
 
-    return os.joinPath(accountConstants.DATADIR, "qt", pubkey)
+    return os.joinPath(DATADIR, "qt", pubkey)
 
   QtProperty[string] settingsFile:
     read = getSettingsFile
     notify = settingsFileChanged
 
   proc getGlobalSettingsFile(self: ProfileSettingsView): string {.slot.} =
-    return os.joinPath(accountConstants.DATADIR, "qt", "global")
+    return os.joinPath(DATADIR, "qt", "global")
 
   proc globalSettingsFileChanged*(self: ProfileSettingsView) {.signal.}
 
@@ -53,7 +53,7 @@ QtObject:
   proc removeUnknownAccountSettings*(self: ProfileSettingsView) =
     # Remove old 'unknownAccount' settings file if it was created
     self.settingsFileChanged()
-    let unknownSettingsPath = os.joinPath(accountConstants.DATADIR, "qt", UNKNOWN_ACCOUNT)
+    let unknownSettingsPath = os.joinPath(DATADIR, "qt", UNKNOWN_ACCOUNT)
     if (not unknownSettingsPath.tryRemoveFile):
       # Only fails if the file exists and an there was an error removing it
       # More info: https://nim-lang.org/docs/os.html#tryRemoveFile%2Cstring

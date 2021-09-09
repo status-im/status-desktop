@@ -3,6 +3,7 @@ import status/[signals, status]
 import status/types/[account, rpc_response]
 import view
 import eventemitter
+import ../../constants
 
 type LoginController* = ref object
   status*: Status
@@ -33,7 +34,7 @@ proc handleNodeLogin(self: LoginController, response: NodeSignal) =
       self.status.events.emit("login", AccountArgs(account: self.view.currentAccount.account.toAccount))
 
 proc init*(self: LoginController) =
-  let nodeAccounts = self.status.accounts.openAccounts()
+  let nodeAccounts = self.status.accounts.openAccounts(STATUSGODIR)
   self.status.accounts.nodeAccounts = nodeAccounts
   for nodeAccount in nodeAccounts:
     self.view.addAccountToList(nodeAccount)

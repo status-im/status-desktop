@@ -1,6 +1,5 @@
 import NimQml, Tables, json, sequtils, chronicles, strutils, os, strformat
 import status/[status]
-import status/constants
 import status/utils as status_utils
 import status/chat as status_chat
 import status/messages as status_messages
@@ -18,7 +17,7 @@ import ../utils/image_utils
 import web3/[conversions, ethtypes]
 import views/message_search/[view_controller]
 import views/[channels_list, message_list, chat_item, reactions, stickers, groups, transactions, communities, community_list, community_item, format_input, ens, activity_notification_list, channel, messages, message_item, gif]
-
+import ../../constants
 
 # TODO: remove me
 import status/libstatus/chat as libstatus_chat
