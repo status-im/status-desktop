@@ -33,7 +33,12 @@ type StatusDesktopConfig = object
       defaultValue: defaultDataDir()
       desc: "Status Desktop data directory"
       abbr: "d" .}: string
- 
+    uri* {.
+      defaultValue: ""
+      desc: "status-im:// URI to open a chat or other"
+      name: "uri" .}: string
+
+
 # On macOS the first time when a user gets the "App downloaded from the
 # internet" warning, and clicks the Open button, the OS passes a unique process
 # serial number (PSN) as -psn_... command-line argument, which we remove before
@@ -48,6 +53,7 @@ let desktopConfig = StatusDesktopConfig.load(cliParams)
 
 let
   baseDir = absolutePath(expandTilde(desktopConfig.dataDir))
+  OPENURI* = desktopConfig.uri
   DATADIR* = baseDir & sep
   STATUSGODIR* = joinPath(baseDir, "data") & sep
   KEYSTOREDIR* = joinPath(baseDir, "data", "keystore") & sep
