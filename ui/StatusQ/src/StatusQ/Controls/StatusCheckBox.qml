@@ -36,6 +36,7 @@ CheckBox {
         verticalAlignment: Text.AlignVCenter
         wrapMode: Text.WordWrap
         width: parent.width
+        color: Theme.palette.directColor1
         leftPadding: !!statusCheckBox.text ? statusCheckBox.indicator.width + statusCheckBox.spacing
                                            : statusCheckBox.indicator.width
     }
