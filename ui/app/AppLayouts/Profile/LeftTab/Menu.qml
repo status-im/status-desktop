@@ -37,12 +37,15 @@ ScrollView {
         Repeater {
             model: ProfileConstants.settingsMenuButtons
             delegate: StatusNavigationListItem {
+                id: settingsMenuDelegate
                 itemId: modelData.id
                 title: modelData.text
                 icon.name: modelData.icon
                 selected: Config.currentMenuTab === modelData.id
                 onClicked: Config.currentMenuTab = modelData.id
                 visible: modelData.ifEnabled !== "browser" || appSettings.isBrowserEnabled
+                badge.value: (!profileModel.mnemonic.isBackedUp && (settingsMenuDelegate.title ===
+                             ProfileConstants.settingsMenuButtons[0].text)) ? 1 : 0
             }
         }
 
