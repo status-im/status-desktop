@@ -566,10 +566,13 @@ QtObject:
 
   proc handleProtocolUri*(self: ChatsView, uri: string) =
     # for now this only supports links to 1-1 chats, e.g.
-    # status-im://0x04ecb3636368be823f9c62e2871f8ea5b52eb3fac0132bdcf9e57907a9cb1024d81927fb3ce12fea6d9b9a8f1acb24370df756108170ab0e3454ae93aa601f3c33
+    # status-im://p/0x04ecb3636368be823f9c62e2871f8ea5b52eb3fac0132bdcf9e57907a9cb1024d81927fb3ce12fea6d9b9a8f1acb24370df756108170ab0e3454ae93aa601f3c33
     # TODO: support other chat types
-    let pubKey = uri.replace("status-im://", "").replace("/", "")
-    if pubKey.startsWith("0x"):
+    let parts = uri.replace("status-im://", "").split("/")
+    if parts.len == 2 and parts[0] == "p" and parts[1].startsWith("0x"):
+      let pubKey = parts[1]
       self.status.chat.createOneToOneChat(pubKey)
       self.setActiveChannel(pubKey)
+      return
+    echo "Unsupported deep link structure: " & uri
   
