@@ -15,11 +15,13 @@ type ChatController* = ref object
   status*: Status
   variant*: QVariant
   appService: AppService
+  uriToOpen: string
 
-proc newController*(status: Status, appService: AppService): ChatController =
+proc newController*(status: Status, appService: AppService, uriToOpen: string): ChatController =
   result = ChatController()
   result.status = status
   result.appService = appService
+  result.uriToOpen = uriToOpen
   result.view = newChatsView(status, appService)
   result.variant = newQVariant(result.view)
 
@@ -65,6 +67,9 @@ proc init*(self: ChatController) =
   self.status.events.on("network:connected") do(e: Args):
     self.view.stickers.clearStickerPacks()
     self.view.stickers.obtainAvailableStickerPacks()
+    if self.uriToOpen != "":
+      self.view.handleProtocolUri(self.uriToOpen)
+      self.uriToOpen = ""
 
 proc loadInitialMessagesForChannel*(self: ChatController, channelId: string) =
   if (channelId.len == 0):
