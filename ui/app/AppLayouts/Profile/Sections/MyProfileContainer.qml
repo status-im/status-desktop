@@ -5,8 +5,12 @@ import "../../../../imports"
 import "../../../../shared"
 import "../../../../shared/status"
 
+import StatusQ.Core.Theme 0.1
+import StatusQ.Components 0.1
+
 Item {
-    property string ensName: profileModel.ens.preferredUsername || ""
+    property string ensName: profileModel.ens.preferredUsername ||
+        profileModel.ens.firstEnsUsername || ""
     property string username: profileModel.profile.username
     property string pubkey: profileModel.profile.pubKey
 
@@ -132,22 +136,47 @@ Item {
     Column {
         anchors.right: profileImgNameContainer.right
         anchors.left: profileImgNameContainer.left
-        spacing: Style.current.bigPadding
         anchors.top: profileImgNameContainer.bottom
-        anchors.topMargin: Style.current.smallPadding
+        anchors.topMargin: 16
 
-        TextWithLabel {
-            //% "Chat key"
-            label: qsTrId("chat-key")
-            text: pubkey.substring(0, 13) + "..." + pubkey.substring(pubkey.length - 13)
-            textToCopy: pubkey
+        StatusDescriptionListItem {
+            title: qsTr("ENS username")
+            subTitle: ensName
+            tooltip.text: qsTr("Copy to clipboard")
+            icon.name: "copy"
+            visible: !!ensName
+            iconButton.onClicked: {
+                chatsModel.copyToClipboard(ensName)
+                tooltip.visible = !tooltip.visible
+            }
+            width: parent.width
         }
 
-        TextWithLabel {
-            //% "Share Profile URL"
-            label: qsTrId("share-profile-url")
-            text: `${Constants.userLinkPrefix}${ensName !== "" ? ensName : (pubkey.substring(0, 5) + "..." + pubkey.substring(pubkey.length - 5))}`
-            textToCopy: Constants.userLinkPrefix + (ensName !== "" ? ensName : pubkey)
+        StatusDescriptionListItem {
+            title: qsTr("Chat key")
+            subTitle: pubkey
+            subTitleComponent.elide: Text.ElideMiddle
+            subTitleComponent.width: 320
+            subTitleComponent.font.family: Theme.palette.monoFont.name
+            tooltip.text: qsTr("Copy to clipboard")
+            icon.name: "copy"
+            iconButton.onClicked: {
+                chatsModel.copyToClipboard(pubkey)
+                tooltip.visible = !tooltip.visible
+            }
+            width: parent.width
+        }
+
+        StatusDescriptionListItem {
+            title: qsTr("Share Profile URL")
+            subTitle: `${Constants.userLinkPrefix}${ensName !== "" ? ensName : (pubkey.substring(0, 5) + "..." + pubkey.substring(pubkey.length - 5))}`
+            tooltip.text: qsTr("Copy to clipboard")
+            icon.name: "copy"
+            iconButton.onClicked: {
+                chatsModel.copyToClipboard(Constants.userLinkPrefix + (ensName !== "" ? ensName : pubkey))
+                tooltip.visible = !tooltip.visible
+            }
+            width: parent.width
         }
     }
 }

@@ -93,6 +93,17 @@ QtObject:
     result.pendingUsernames = initHashSet[string]()
     result.setup
 
+  proc getFirstEnsUsername(self: EnsManager): string {.slot.} =
+    if self.usernames.len > 0:
+      return self.usernames[0]
+    return ""
+
+  proc firstEnsUsernameChanged(self: EnsManager) {.signal.}
+
+  QtProperty[string] firstEnsUsername:
+    read = getFirstEnsUsername
+    notify = firstEnsUsernameChanged
+  
   proc init*(self: EnsManager) =
     self.usernames = getSetting[seq[string]](self.status.settings, Setting.Usernames, @[])
     
@@ -105,6 +116,8 @@ QtObject:
       if trx["type"].getStr == $PendingTransactionType.RegisterENS or trx["type"].getStr == $PendingTransactionType.SetPubKey:
         self.usernames.add trx["additionalData"].getStr
         self.pendingUsernames.incl trx["additionalData"].getStr
+
+    self.firstEnsUsernameChanged()
 
 
   proc ensWasResolved*(self: EnsManager, ensResult: string) {.signal.}
