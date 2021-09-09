@@ -61,7 +61,7 @@ ModalPopup {
         ConfirmationDialog {
             id: declineAllDialog
             //% "Decline all contacts"
-            title: qsTrId("decline-all-contacts")
+            header.title: qsTrId("decline-all-contacts")
             //% "Are you sure you want to decline all these contact requests"
             confirmationText: qsTrId("are-you-sure-you-want-to-decline-all-these-contact-requests")
             onConfirmButtonClicked: {
@@ -78,7 +78,7 @@ ModalPopup {
         ConfirmationDialog {
             id: acceptAllDialog
             //% "Accept all contacts"
-            title: qsTrId("accept-all-contacts")
+            header.title: qsTrId("accept-all-contacts")
             //% "Are you sure you want to accept all these contact requests"
             confirmationText: qsTrId("are-you-sure-you-want-to-accept-all-these-contact-requests")
             onConfirmButtonClicked: {

@@ -27,7 +27,7 @@ ModalPopup {
             active: Qt.platform.os === Constants.linux
             sourceComponent: ConfirmationDialog {
                 property string newLocale
-                title: qsTr("Change language")
+                header.title: qsTr("Change language")
                 confirmationText: qsTr("Display language has been changed. You must restart the application for changes to take effect.")
                 showCancelButton: true
                 confirmButtonLabel: qsTr("Close the app now")

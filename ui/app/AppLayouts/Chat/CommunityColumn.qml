@@ -298,7 +298,6 @@ Item {
         ConfirmationDialog {
             property string categoryId
             btnType: "warn"
-            height: 216
             showCancelButton: true
             onClosed: {
                 destroy()

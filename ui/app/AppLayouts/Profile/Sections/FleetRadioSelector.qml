@@ -23,7 +23,7 @@ StatusRadioButtonRow {
         id: confirmDialogComponent
         ConfirmationDialog {
             //% "Warning!"
-            title: qsTrId("close-app-title")
+            header.title: qsTrId("close-app-title")
             //% "Change fleet to %1"
             confirmationText: qsTrId("change-fleet-to--1").arg(newFleet)
             onConfirmButtonClicked: profileModel.fleets.setFleet(newFleet)

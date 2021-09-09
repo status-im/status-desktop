@@ -178,7 +178,6 @@ StatusModal {
             id: deleteCategoryConfirmationDialogComponent
             ConfirmationDialog {
                 btnType: "warn"
-                height: 216
                 showCancelButton: true
                 onClosed: {
                     destroy()

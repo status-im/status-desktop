@@ -219,7 +219,7 @@ StatusModal {
 
         ConfirmationDialog {
             id: removeContactConfirmationDialog
-            title: qsTr("Remove contact")
+            header.title: qsTr("Remove contact")
             confirmationText: qsTr("Are you sure you want to remove this contact?")
             onConfirmButtonClicked: {
                 if (profileModel.contacts.isAdded(fromAuthor)) {

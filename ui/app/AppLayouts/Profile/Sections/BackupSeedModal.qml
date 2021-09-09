@@ -199,7 +199,7 @@ ModalPopup {
             ConfirmationDialog {
                 id: confirmPopup
                 //% "Are you sure?"
-                title: qsTrId("are-you-sure?")
+                header.title: qsTrId("are-you-sure?")
                 //% "You will not be able to see the whole seed phrase again"
                 confirmationText: qsTrId("are-you-sure-description")
                 onConfirmButtonClicked: {
