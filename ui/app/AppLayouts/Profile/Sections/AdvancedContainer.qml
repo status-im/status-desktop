@@ -197,7 +197,7 @@ ScrollView {
 
                         id: confirmDialog
                         //% "Warning!"
-                        title: qsTrId("close-app-title")
+                        header.title: qsTrId("close-app-title")
                         //% "The account will be logged out. When you login again, the selected mode will be enabled"
                         confirmationText: qsTrId("the-account-will-be-logged-out--when-you-login-again--the-selected-mode-will-be-enabled")
                         onConfirmButtonClicked: {
@@ -286,7 +286,6 @@ ScrollView {
         ConfirmationDialog {
             id: confirmationPopup
             property string settingsProp: ""
-            height: 310
             showCancelButton: true
             //% "This feature is experimental and is meant for testing purposes by core contributors and the community. It's not meant for real use and makes no claims of security or integrity of funds or data. Use at your own risk."
             confirmationText: qsTrId("this-feature-is-experimental-and-is-meant-for-testing-purposes-by-core-contributors-and-the-community--it-s-not-meant-for-real-use-and-makes-no-claims-of-security-or-integrity-of-funds-or-data--use-at-your-own-risk-")

@@ -69,7 +69,7 @@ ListView {
     ConfirmationDialog {
         id: removeContactConfirmationDialog
         //% "Remove contact"
-        title: qsTrId("remove-contact")
+        header.title: qsTrId("remove-contact")
         //% "Are you sure you want to remove this contact?"
         confirmationText: qsTrId("are-you-sure-you-want-to-remove-this-contact-")
         onConfirmButtonClicked: {
