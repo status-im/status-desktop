@@ -106,6 +106,6 @@
 [submodule "vendor/semver.nim"]
 	path = vendor/semver.nim
 	url = https://github.com/euantorano/semver.nim
-[submodule "vendor/nim-status-lib"]
-	path = vendor/nim-status-lib
-	url = https://github.com/status-im/nim-status-lib.git
+[submodule "vendor/status-lib"]
+	path = vendor/status-lib
+	url = https://github.com/status-im/status-lib
