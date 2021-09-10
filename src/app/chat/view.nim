@@ -19,6 +19,29 @@ import web3/[conversions, ethtypes]
 import views/message_search/[view_controller]
 import views/[channels_list, message_list, chat_item, reactions, stickers, groups, transactions, communities, community_list, community_item, format_input, ens, activity_notification_list, channel, messages, message_item, gif]
 
+const UriFormatBrowseShort = "status-im://b/"
+const UriFormatBrowseLong = "status-im://browse/"
+
+const UriFormatUserProfileShort = "status-im://u/"
+const UriFormatUserProfileLong = "status-im://user/"
+
+const UriFormatPrivateChatShort = "status-im://pm/"
+const UriFormatPrivateChatLong = "status-im://private-message/"
+
+const UriFormatPublicChatShort = "status-im://p/"
+const UriFormatPublicChatLong = "status-im://public/"
+
+const UriFormatGroupChatShort = "status-im://g/"
+const UriFormatGroupChatLong = "status-im://group/"
+
+const UriFormatCommunityRequestsShort = "status-im://cr/"
+const UriFormatCommunityRequestsLong = "status-im://community-requests/"
+
+const UriFormatCommunityShort = "status-im://c/"
+const UriFormatCommunityLong = "status-im://community/"
+
+const UriFormatCommunityChannelShort = "status-im://cc/"
+const UriFormatCommunityChannelLong = "status-im://community-channel/"
 
 # TODO: remove me
 import status/libstatus/chat as libstatus_chat
@@ -564,15 +587,21 @@ QtObject:
     self.appService.osNotificationService.showNotification(title, message, 
     details, useOSNotifications)
 
-  proc handleProtocolUri*(self: ChatsView, uri: string) =
-    # for now this only supports links to 1-1 chats, e.g.
-    # status-im://p/0x04ecb3636368be823f9c62e2871f8ea5b52eb3fac0132bdcf9e57907a9cb1024d81927fb3ce12fea6d9b9a8f1acb24370df756108170ab0e3454ae93aa601f3c33
-    # TODO: support other chat types
-    let parts = uri.replace("status-im://", "").split("/")
-    if parts.len == 2 and parts[0] == "p" and parts[1].startsWith("0x"):
-      let pubKey = parts[1]
-      self.status.chat.createOneToOneChat(pubKey)
-      self.setActiveChannel(pubKey)
+  proc handleProtocolUriPrivateChat(self: ChatsView, data: string) =
+    if(data.len == 0):
       return
-    echo "Unsupported deep link structure: " & uri
-  
+
+    if data.startsWith("0x"):
+        self.communities.activeCommunity.setActive(false) #this ensures chat section to be an active one
+        self.status.chat.createOneToOneChat(data)
+        self.setActiveChannel(data)
+
+  proc handleProtocolUri*(self: ChatsView, uri: string) =
+    if uri.startsWith(UriFormatPrivateChatShort):
+      self.handleProtocolUriPrivateChat(uri.replace(UriFormatPrivateChatShort, ""))
+    elif uri.startsWith(UriFormatPrivateChatLong):
+      self.handleProtocolUriPrivateChat(uri.replace(UriFormatPrivateChatLong, ""))
+    # TODO: we need to handle other constants stated at the top of this file, the
+    # same way we private chat is handled.
+    else:
+      info "Unsupported deep link structure: ", uri

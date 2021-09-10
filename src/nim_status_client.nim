@@ -104,8 +104,10 @@ proc mainProc() =
   defer: dockShowAppEvent.delete()
   let osThemeEvent = newStatusOSThemeEventObject(engine)
   defer: osThemeEvent.delete()
+  let urlSchemeEvent = newStatusUrlSchemeEventObject()
   app.installEventFilter(dockShowAppEvent)
   app.installEventFilter(osThemeEvent)
+  app.installEventFilter(urlSchemeEvent)
 
   let netAccMgr = newQNetworkAccessManager(engine.getNetworkAccessManager())
 
@@ -135,7 +137,7 @@ proc mainProc() =
   defer: wallet2.delete()
   engine.setRootContextProperty("walletV2Model", wallet2.variant)
 
-  var chat = chat.newController(status, appService, OPENURI)
+  var chat = chat.newController(status, appService, urlSchemeEvent, OPENURI)
   defer: chat.delete()
   engine.setRootContextProperty("chatsModel", chat.variant)
 
