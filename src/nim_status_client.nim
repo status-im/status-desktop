@@ -1,4 +1,4 @@
-import NimQml, chronicles, os, strformat, times, md5
+import NimQml, chronicles, os, strformat, times, md5, json
 
 import app/chat/core as chat
 import app/wallet/v1/core as wallet
@@ -66,7 +66,10 @@ proc mainProc() =
       "/../resources.rcc"
   QResource.registerResource(app.applicationDirPath & resources)
 
-  let singleInstance = newSingleInstance($toMD5(DATADIR))
+  var eventStr = ""
+  if OPENURI.len > 0:
+    eventStr = $(%* { "uri": OPENURI })
+  let singleInstance = newSingleInstance($toMD5(DATADIR), eventStr)
   defer: singleInstance.delete()
   if singleInstance.secondInstance():
     info "Terminating the app as the second instance"
