@@ -34,18 +34,30 @@ Item {
     property var errors: ({})
 
     function validate() {
+        statusBaseInput.valid = true
         if (validators.length) {
             for (let idx in validators) {
-                let result = validators[idx].validate(statusBaseInput.text)
+                let validator = validators[idx]
+                let result = validator.validate(statusBaseInput.text)
 
                 if (typeof result === "boolean" && result) {
-                    statusBaseInput.valid = true
+                    statusBaseInput.valid = statusBaseInput.valid && true
+                    delete errors[validator.name]
                 } else {
                     if (!errors) {
                         errors = {}
                     }
-                    errors[validators[idx].name] = result
-                    statusBaseInput.valid = false
+                    result.errorMessage = validator.errorMessage
+                    errors[validator.name] = result
+                    statusBaseInput.valid = statusBaseInput.valid && false
+                }
+            }
+            if (errors){
+                let errs = Object.values(errors)
+                if (errs && errs[0]) {
+                    errorMessage.text = errs[0].errorMessage || root.errorMessage;
+                } else {
+                    errorMessage.text = ""
                 }
             }
         }
@@ -123,11 +135,11 @@ Item {
         anchors.leftMargin: 16
 
         height: visible ? implicitHeight : 0
-        visible: !!root.errorMessage && !statusBaseInput.valid
+        visible: !!text && !statusBaseInput.valid
 
         font.pixelSize: 12
         color: Theme.palette.dangerColor1
-        text: root.errorMessage
+
 
         horizontalAlignment: Text.AlignRight
         wrapMode: Text.WordWrap

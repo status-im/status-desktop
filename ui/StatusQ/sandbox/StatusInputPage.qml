@@ -84,19 +84,22 @@ Column {
     }
 
     StatusInput {
+        id: input
         label: "Label"
         charLimit: 30
         input.placeholderText: "Input with validator"
 
         validators: [
-            StatusMinLengthValidator { minLength: 10 }
-        ]
-
-        onTextChanged: {
-            if (errors && errors.minLength) {
-                errorMessage = `Value can't be shorter than ${errors.minLength.min} but got ${errors.minLength.actual}`
+            StatusMinLengthValidator {
+                minLength: 10
+                errorMessage: {
+                    if (input.errors && input.errors.minLength) {
+                        return `Value can't be shorter than ${input.errors.minLength.min} but got ${input.errors.minLength.actual}`
+                    }
+                    return ""
+                }
             }
-        }
+        ]
     }
 
     StatusInput {

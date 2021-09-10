@@ -6,6 +6,12 @@ StatusValidator {
 
     name: "minLength"
 
+    errorMessage: {
+        minLength === 1 ?
+            "Please enter a value" :
+            `The value must be at least ${minLength} characters.`
+    }
+
     validate: function (value) {
         return value.length >= minLength ? true : {
             min: minLength,
