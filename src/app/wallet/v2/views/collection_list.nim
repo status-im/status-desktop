@@ -60,6 +60,10 @@ QtObject:
     CollectionRoles.ImageUrl.int:"imageUrl",
     CollectionRoles.OwnedAssetCount.int:"ownedAssetCount"}.toTable
 
+  proc getCollectionTraitMaxValue(self: CollectionList, index: int, traitType: string): int {.slot.} =
+    let collection = self.collections[index]
+    return int(collection.trait[traitType].max)
+
   proc setData*(self: CollectionList, collections: seq[OpenseaCollection]) =
     self.beginResetModel()
     self.collections = collections

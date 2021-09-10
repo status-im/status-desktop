@@ -10,21 +10,34 @@ import StatusQ.Controls 0.1
 Item {
     id: collectiblesDetailContainer
 
-    visible: false
+    property var assetProperties
+    property var assetRankings
+    property var assetStats
+    property int collectionIndex: -1
 
     function show(options) {
-        visible = true
-
         collectibleHeader.image.source = options.collectibleImageUrl
         collectibleHeader.primaryText = options.name
         collectibleHeader.secondaryText = options.collectibleId
 
         collectibleimage.image.source = options.imageUrl
         collectibleText.text = options.description
+        collectibleimage.color = options.backgroundColor
+        assetProperties = options.properties
+        assetRankings = options.rankings
+        assetStats = options.stats
+        collectionIndex = options.collectionIndex
     }
 
     function hide() {
-        visible = false
+        active = false
+    }
+
+    function getCollectionMaxValue(traitType, value, maxValue) {
+        if(maxValue !== "")
+            return parseInt(value) + qsTr(" of ") + maxValue
+        else
+            return parseInt(value) + qsTr(" of ") + walletV2Model.collectiblesView.collections.getCollectionTraitMaxValue(collectionIndex, traitType).toString()
     }
 
     CollectibleDetailsHeader {
@@ -51,7 +64,6 @@ Item {
             width: parent.width
             spacing: 24
 
-            // To-do update color of background once design is finalized
             StatusRoundedImage {
                 id: collectibleimage
                 width: 253
@@ -76,54 +88,168 @@ Item {
             }
         }
 
-        Column {
+        ListView {
             anchors.top: collectibleImageDetails.bottom
             anchors.topMargin: 32
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 20
             anchors.horizontalCenter: parent.horizontalCenter
             width: parent.width
-            StatusExpandableItem {
+
+            clip: true
+            boundsBehavior: Flickable.StopAtBounds
+            model: 3
+            delegate: StatusExpandableItem {
                 width: parent.width
+                height: childrenRect.height
                 anchors.horizontalCenter: parent.horizontalCenter
 
-                primaryText: qsTr("Properties")
+                primaryText: index === 0 ? qsTr("Properties") : index === 1 ? qsTr("Levels") : qsTr("Stats")
                 type: StatusExpandableItem.Type.Tertiary
-                expandableComponent: notImplemented
-            }
-            StatusExpandableItem {
-                width: parent.width
-                anchors.horizontalCenter: parent.horizontalCenter
-
-                primaryText: "Data group 2"
-                type: StatusExpandableItem.Type.Tertiary
-                expandableComponent: notImplemented
-            }
-            StatusExpandableItem {
-                width: parent.width
-                anchors.horizontalCenter: parent.horizontalCenter
-
-                primaryText: "Data group 3"
-                type: StatusExpandableItem.Type.Tertiary
-                expandableComponent: notImplemented
+                expandableComponent: index === 0 ? properties : index === 1 ? rankings : stats
+                visible: index === 0 ? (!!assetProperties ? assetProperties.rowCount() !== 0 : false) :
+                         index === 1 ? (!!assetRankings ? assetRankings.rowCount() !== 0 : false) :
+                                       (!!assetStats ? assetStats.rowCount() !== 0 : false)
             }
         }
     }
 
     Component {
-        id: notImplemented
-        Rectangle {
-            anchors.centerIn: parent
+        id: properties
+
+        Flow {
             width: parent.width
-            height: infoText.implicitHeight
-            color: Theme.palette.baseColor5
-            StatusBaseText {
-                id: infoText
-                anchors.centerIn: parent
-                color: Theme.palette.directColor4
-                font.pixelSize: 15
-                lineHeight: 22
-                lineHeightMode: Text.FixedHeight
-                font.weight: Font.Medium
-                text: qsTr("Not Implemented")
+            spacing: 10
+
+            Repeater {
+                model: assetProperties
+                Rectangle {
+                    id: containerRect
+                    height: 52
+                    width: 147
+                    color: "transparent"
+                    border.color: Theme.palette.baseColor2
+                    border.width: 1
+                    radius: 8
+                    Column {
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.top: parent.top
+                        anchors.topMargin: 6
+                        StatusBaseText {
+                            width: containerRect.width - 12
+
+                            color: Theme.palette.baseColor1
+                            font.pixelSize: 13
+                            lineHeight: 18
+                            lineHeightMode: Text.FixedHeight
+                            elide: Text.ElideRight
+                            horizontalAlignment: Text.AlignHCenter
+                            text: model.traitType
+                            font.capitalization: Font.Capitalize
+                        }
+                        StatusBaseText {
+                            width: containerRect.width - 12
+
+                            color: Theme.palette.directColor1
+                            font.pixelSize: 15
+                            lineHeight: 22
+                            lineHeightMode: Text.FixedHeight
+                            horizontalAlignment: Text.AlignHCenter
+                            elide: Text.ElideRight
+                            text: model.value
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // To-do change to progress bar one design is finalized
+    Component {
+        id: rankings
+
+        Column {
+            width: parent.width
+            spacing: 10
+
+            Repeater {
+                model: assetRankings
+                Rectangle {
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    width: parent.width
+                    height: 52
+                    color: Theme.palette.baseColor4
+                    StatusBaseText {
+                        anchors.left: parent.left
+                        anchors.leftMargin: 10
+                        anchors.verticalCenter: parent.verticalCenter
+                        color: Theme.palette.baseColor1
+                        font.pixelSize: 15
+                        lineHeight: 22
+                        lineHeightMode: Text.FixedHeight
+                        elide: Text.ElideRight
+                        horizontalAlignment: Text.AlignLeft
+                        text: model.traitType
+                        font.capitalization: Font.Capitalize
+                    }
+                    StatusBaseText {
+                        anchors.right: parent.right
+                        anchors.rightMargin: 10
+                        anchors.verticalCenter: parent.verticalCenter
+                        color: Theme.palette.directColor1
+                        font.pixelSize: 15
+                        lineHeight: 22
+                        lineHeightMode: Text.FixedHeight
+                        horizontalAlignment: Text.AlignLeft
+                        elide: Text.ElideRight
+                        text: collectiblesDetailContainer.getCollectionMaxValue(model.traitType, model.value, model.maxValue)
+                    }
+                }
+            }
+        }
+    }
+
+    // To-do change to progress bar one design is finalized
+    Component {
+        id: stats
+
+        Column {
+            width: parent.width
+            spacing: 10
+
+            Repeater {
+                model: assetStats
+                Rectangle {
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    width: parent.width
+                    height: 52
+                    color: Theme.palette.baseColor4
+                    StatusBaseText {
+                        anchors.left: parent.left
+                        anchors.leftMargin: 10
+                        anchors.verticalCenter: parent.verticalCenter
+                        color: Theme.palette.baseColor1
+                        font.pixelSize: 15
+                        lineHeight: 22
+                        lineHeightMode: Text.FixedHeight
+                        elide: Text.ElideRight
+                        horizontalAlignment: Text.AlignLeft
+                        text: model.traitType
+                        font.capitalization: Font.Capitalize
+                    }
+                    StatusBaseText {
+                        anchors.right: parent.right
+                        anchors.rightMargin: 10
+                        anchors.verticalCenter: parent.verticalCenter
+                        color: Theme.palette.directColor1
+                        font.pixelSize: 15
+                        lineHeight: 22
+                        lineHeightMode: Text.FixedHeight
+                        horizontalAlignment: Text.AlignLeft
+                        elide: Text.ElideRight
+                        text: collectiblesDetailContainer.getCollectionMaxValue(model.traitType, model.value, model.maxValue)
+                    }
+                }
             }
         }
     }

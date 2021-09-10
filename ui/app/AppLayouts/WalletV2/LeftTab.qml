@@ -18,6 +18,7 @@ Rectangle {
         }
         selectedAccount = newIndex
         walletV2Model.setCurrentAccountByIndex(newIndex)
+        collectiblesDetailPage.active = false
     }
 
     StyledText {

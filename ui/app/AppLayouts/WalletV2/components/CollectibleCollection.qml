@@ -11,6 +11,7 @@ Item {
     property string slug: ""
     property bool assetsLoaded: false
     property string collectionImageUrl: ""
+    property int collectionIndex: -1
 
     signal clicked()
 
@@ -69,6 +70,7 @@ Item {
                     border.color: Theme.palette.baseColor2
                     border.width: 1
                     showLoadingIndicator: true
+                    color: model.backgroundColor
                     MouseArea {
                         anchors.fill: parent
                         onClicked: {
@@ -77,7 +79,12 @@ Item {
                                                           collectibleId: model.id,
                                                           description: model.description,
                                                           permalink: model.permalink,
-                                                          imageUrl: model.imageUrl
+                                                          imageUrl: model.imageUrl,
+                                                          backgroundColor: model.backgroundColor,
+                                                          properties: model.properties,
+                                                          rankings: model.rankings,
+                                                          stats: model.stats,
+                                                          collectionIndex: root.collectionIndex
                                                       })
                         }
                     }
