@@ -14,6 +14,10 @@ QtObject {
         }
         return returnPos;
     }
+    function isValidAddress(inputValue) {
+        return inputValue !== "0x" && /^0x[a-fA-F0-9]{40}$/.test(inputValue)
+    }
+
 }
 
 

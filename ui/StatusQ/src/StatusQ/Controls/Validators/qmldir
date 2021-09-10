@@ -1,5 +1,6 @@
 module StatusQ.Controls.Validators
 
+StatusAddressValidator 0.1 StatusAddressValidator.qml
 StatusValidator 0.1 StatusValidator.qml
 StatusMinLengthValidator 0.1 StatusMinLengthValidator.qml
 StatusMaxLengthValidator 0.1 StatusMaxLengthValidator.qml
