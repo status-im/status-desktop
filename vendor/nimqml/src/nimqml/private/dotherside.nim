@@ -338,7 +338,7 @@ proc dos_qurl_host(host: cstring): cstring {.cdecl, dynlib: dynLibName, importc.
 proc dos_qurl_replaceHostAndAddPath(url: cstring, newScheme: cstring, newHost: cstring, pathPrefix: cstring): cstring {.cdecl, dynlib: dynLibName, importc.}
 
 # SingleInstance
-proc dos_singleinstance_create(uniqueName: cstring): DosQObject {.cdecl, dynlib: dynLibName, importc.}
+proc dos_singleinstance_create(uniqueName: cstring, eventStr: cstring): DosQObject {.cdecl, dynlib: dynLibName, importc.}
 proc dos_singleinstance_isfirst(vptr: DosQObject): bool {.cdecl, dynlib: dynLibName, importc.}
 proc dos_singleinstance_delete(vptr: DosQObject) {.cdecl, dynlib: dynLibName, importc.}
 
