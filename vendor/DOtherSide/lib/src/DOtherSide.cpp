@@ -1333,9 +1333,9 @@ char *dos_qurl_replaceHostAndAddPath(char* url, char* newScheme, char* newHost, 
     return convert_to_cstring(newQurl.toString());
 }
 
-DosSingleInstance *dos_singleinstance_create(const char *uniqueName)
+DosSingleInstance *dos_singleinstance_create(const char *uniqueName, const char *eventStr)
 {
-    return new SingleInstance(QString::fromUtf8(uniqueName));
+    return new SingleInstance(QString::fromUtf8(uniqueName), QString::fromUtf8(eventStr));
 }
 
 void dos_singleinstance_delete(DosSingleInstance *vptr)

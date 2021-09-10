@@ -983,8 +983,9 @@ DOS_API int DOS_CALL dos_qdeclarative_qmlregistersingletontype(const QmlRegister
 
 /// \brief Create a new SingleInstance class
 /// \param uniqueName The UTF-8 string for QLocalServer name
+/// \param eventStr A custom string to be passed to the already running instance if detected
 /// \note The returned SingleInstance should be freed using the dos_singleinstance_delete() function
-DOS_API DosSingleInstance *DOS_CALL dos_singleinstance_create(const char *uniqueName);
+DOS_API DosSingleInstance *DOS_CALL dos_singleinstance_create(const char *uniqueName, const char *eventStr);
 
 /// \brief Returns bool indicating whether this is the first instance or not
 /// \returns true if this is the first instance
