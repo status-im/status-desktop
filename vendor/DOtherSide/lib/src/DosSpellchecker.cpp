@@ -1,6 +1,9 @@
-#include "DosSpellchecker.h"
+#include "../include/DOtherSide/DosSpellchecker.h"
 
-#include "hunspell.hxx"
+#ifdef Q_OS_MACOS
+   #include "hunspell/hunspell.hxx"
+#endif
+
 #include <QTextCodec>
 #include <QFile>
 #include <QDebug>
@@ -13,13 +16,49 @@
 #include <QInputMethod>
 
 SpellChecker::SpellChecker(QObject *parent)
-    : QSyntaxHighlighter(parent)
-{
-    auto language = QLocale::system().bcp47Name();
-
+    : QObject(parent)
 #ifdef Q_OS_MACOS
-    QString dictFile = QApplication::applicationDirPath() + + "/dictionaries/" + language  + "/index.dic";
-    QString affixFile = QApplication::applicationDirPath() + + "/dictionaries/" + language  + "/index.aff";
+    , m_hunspell(nullptr)
+#endif
+    , m_userDict("userDict_")
+{
+
+}
+
+SpellChecker::~SpellChecker()
+{
+#ifdef Q_OS_MACOS
+    delete m_hunspell;
+#endif
+}
+
+bool SpellChecker::spell(const QString &word)
+{
+#ifdef Q_OS_MACOS
+    return m_hunspell->spell(m_codec->fromUnicode(word).toStdString());
+#else
+    return true;
+#endif
+}
+
+bool SpellChecker::isInit() const
+{
+#ifdef Q_OS_MACOS
+    return !m_hunspell;
+#else
+    return true;
+#endif
+}
+
+void SpellChecker::initHunspell()
+{
+#ifdef Q_OS_MACOS
+    if (m_hunspell) {
+        delete m_hunspell;
+    }
+
+    QString dictFile = QApplication::applicationDirPath() + "/dictionaries/" + m_lang  + "/index.dic";
+    QString affixFile = QApplication::applicationDirPath() + "/dictionaries/" + m_lang  + "/index.aff";
     QByteArray dictFilePathBA = dictFile.toLocal8Bit();
     QByteArray affixFilePathBA = affixFile.toLocal8Bit();
     m_hunspell = new Hunspell(affixFilePathBA.constData(),
@@ -49,7 +88,7 @@ SpellChecker::SpellChecker(QObject *parent)
     }
     m_codec = QTextCodec::codecForName(encoding.toLatin1().constData());
 
-    QString userDict = "userDict_" + language + ".txt";
+    QString userDict = m_userDict + m_lang + ".txt";
 
     if (!userDict.isEmpty()) {
       QFile userDictonaryFile(userDict);
@@ -67,22 +106,6 @@ SpellChecker::SpellChecker(QObject *parent)
     } else {
       qDebug() << "User dictionary not set.";
     }
-#endif
-}
-
-SpellChecker::~SpellChecker()
-{
-#ifdef Q_OS_MACOS
-    delete m_hunspell;
-#endif
-}
-
-bool SpellChecker::spell(const QString &word)
-{
-#ifdef Q_OS_MACOS
-    return m_hunspell->spell(m_codec->fromUnicode(word).toStdString());
-#else
-    return true;
 #endif
 }
 
@@ -117,9 +140,7 @@ void SpellChecker::ignoreWord(const QString &word)
 void SpellChecker::addToUserWordlist(const QString &word)
 {
 #ifdef Q_OS_MACOS
-    auto language = QLocale::scriptToString(QLocale::system().script());
-
-    QString userDict = "userDict_" + language + ".txt";
+    QString userDict = m_userDict + m_lang + ".txt";
     if (!userDict.isEmpty()) {
         QFile userDictonaryFile(userDict);
         if (userDictonaryFile.open(QIODevice::Append)) {
@@ -136,67 +157,29 @@ void SpellChecker::addToUserWordlist(const QString &word)
 #endif
 }
 
-void SpellChecker::setText(const QString &text)
+const QString& SpellChecker::lang() const
 {
-    if (m_text != text) {
-        m_text = text;
-        emit textChanged();
-        makeDisplayText(m_text);
+    return m_lang;
+}
+
+void SpellChecker::setLang(const QString& lang)
+{
+    if (m_lang != lang) {
+        m_lang = lang;
+        initHunspell();
+        emit langChanged();
     }
 }
 
-const QString &SpellChecker::text() const
+const QString& SpellChecker::userDict() const
 {
-    return m_text;
+    return m_userDict;
 }
 
-const QString &SpellChecker::displayText() const
+void SpellChecker::setUserDict(const QString& userDict)
 {
-    return m_displayText;
-}
-
-QQuickTextDocument *SpellChecker::textDocument() const
-{
-    return m_document;
-}
-
-void SpellChecker::setTextDocument(QQuickTextDocument *document)
-{
-    if (m_document != document) {
-        m_document = document;
-        setDocument(m_document->textDocument());
-        emit textDocumentChanged();
+    if (m_userDict != userDict) {
+        m_userDict = userDict;
+        emit userDictChanged();
     }
-}
-
-void SpellChecker::highlightBlock(const QString &text)
-{
-    QTextCharFormat format;
-    format.setFontUnderline(true);
-
-    QRegularExpression expression("\\S+");
-    QRegularExpressionMatchIterator i = expression.globalMatch(text);
-    while(i.hasNext()) {
-        QRegularExpressionMatch match = i.next();
-        if (!spell(match.captured())) {
-            setFormat(match.capturedStart(), match.capturedLength(), format);
-        }
-    }
-}
-
-void SpellChecker::makeDisplayText(const QString &text)
-{
-    auto words = text.split(" ");
-    QString gPattern = "<u style=\"color: red;\">%1</u>";
-
-    m_displayText = ""; // todo optimize delta
-    for (const auto& word: qAsConst(words)) {
-        if (!spell(word)) {
-            m_displayText.append(" " + gPattern.arg(word));
-        } else {
-            m_displayText.append(" " + word);
-        }
-    }
-
-    emit displayTextChanged();
 }

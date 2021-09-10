@@ -11,12 +11,12 @@ class Hunspell;
 #endif
 class QTextCodec;
 
-class SpellChecker : public QSyntaxHighlighter
+class SpellChecker : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QString text READ text WRITE setText NOTIFY textChanged)
-    Q_PROPERTY(QString displayText READ displayText NOTIFY displayTextChanged)
-    Q_PROPERTY(QQuickTextDocument* document READ textDocument WRITE setTextDocument NOTIFY textDocumentChanged)
+    Q_PROPERTY(QString lang READ lang WRITE setLang NOTIFY langChanged)
+    Q_PROPERTY(QString userDict READ userDict WRITE setUserDict NOTIFY userDictChanged)
+
 public:
     explicit SpellChecker(QObject *parent = nullptr);
     ~SpellChecker();
@@ -25,30 +25,24 @@ public:
     Q_INVOKABLE QVariantList suggest(const QString &word);
     Q_INVOKABLE void ignoreWord(const QString &word);
     Q_INVOKABLE void addToUserWordlist(const QString &word);
+    Q_INVOKABLE bool isInit() const;
 
-    void setText(const QString& text);
-    const QString& text() const;
+    const QString& lang() const;
+    void setLang(const QString& lang);
 
-    const QString& displayText() const;
-
-    QQuickTextDocument* textDocument() const;
-    void setTextDocument(QQuickTextDocument* document);
+    const QString& userDict() const;
+    void setUserDict(const QString& userDict);
 
 signals:
-    void textChanged();
-    void displayTextChanged();
-    void textDocumentChanged();
-
-protected:
-    void highlightBlock(const QString &text) final;
+    void langChanged();
+    void userDictChanged();
 
 private:
-    void makeDisplayText(const QString& text);
+    void initHunspell();
 
 private:
-    QString m_text;
-    QString m_displayText;
-    QString m_dictionaryPath;
+    QString m_lang;
+    QString m_userDict;
 
     QQuickTextDocument *m_document;
 #ifdef Q_OS_MACOS
