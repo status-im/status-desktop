@@ -10,13 +10,19 @@ class SingleInstance : public QObject
     Q_OBJECT
 
 public:
-    explicit SingleInstance(const QString &uniqueName, QObject *parent = nullptr);
+    // uniqueName - the name of named pipe
+    // eventStr - optional event to send if another instance is detected
+    explicit SingleInstance(const QString &uniqueName, const QString &eventStr, QObject *parent = nullptr);
     ~SingleInstance() override;
 
     bool isFirstInstance() const;
 
 signals:
     void secondInstanceDetected();
+    void eventReceived(const QString &eventStr);
+
+private slots:
+    void handleNewConnection();
 
 private:
     QLocalServer *m_localServer;
