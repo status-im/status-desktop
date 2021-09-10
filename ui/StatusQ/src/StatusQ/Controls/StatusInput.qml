@@ -30,10 +30,18 @@ Item {
     property int charLimit: 0
     property string errorMessage: ""
     property list<StatusValidator> validators
+    property int validationMode: StatusInput.ValidationMode.OnlyWhenDirty
+    enum ValidationMode {
+        OnlyWhenDirty, // validates input only after it has become dirty
+        Always // validates input even before it has become dirty
+    }
 
     property var errors: ({})
 
     function validate() {
+        if (!statusBaseInput.dirty && validationMode === StatusInput.ValidationMode.OnlyWhenDirty) {
+            return
+        }
         statusBaseInput.valid = true
         if (validators.length) {
             for (let idx in validators) {
