@@ -563,7 +563,7 @@ QtObject:
     self.appService.osNotificationService.showNotification(title, message, 
     details, useOSNotifications)
 
-  proc handleProtocolUri*(self: ChatsView, uri: string) =
+  proc handleProtocolUri*(self: ChatsView, uri: string) {.slot.} =
     # for now this only supports links to 1-1 chats, e.g.
     # status-im://p/0x04ecb3636368be823f9c62e2871f8ea5b52eb3fac0132bdcf9e57907a9cb1024d81927fb3ce12fea6d9b9a8f1acb24370df756108170ab0e3454ae93aa601f3c33
     # TODO: support other chat types

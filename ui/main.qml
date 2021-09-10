@@ -131,6 +131,15 @@ StatusWindow {
             applicationWindow.raise()
             applicationWindow.requestActivate()
         }
+
+        onEventReceived: {
+            let event = JSON.parse(eventStr)
+            if (event.hasOwnProperty("uri")) {
+                chatsModel.handleProtocolUri(event.uri)
+            } else {
+                console.warn("Unknown event received: " + eventStr)
+            }
+        }
     }
 
     // The easiest way to get current system theme (is it light or dark) without using
