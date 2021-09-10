@@ -107,7 +107,10 @@ bottles/openssl:
 bottles/pcre: bottles/openssl
 	./scripts/fetch-brew-bottle.sh pcre
 
-bottles: bottles/openssl bottles/pcre
+bottles/hunspell: bottles/hunspell
+	./scripts/fetch-brew-bottle.sh hunspell
+
+bottles: bottles/openssl bottles/pcre bottles/hunspell
 endif
 
 deps: | deps-common bottles
@@ -130,6 +133,10 @@ ifneq ($(detected_OS),Windows)
     # Fix for failures due to 'can't allocate code signature data for'
     NIM_PARAMS += --passL:"-headerpad_max_install_names"
     NIM_PARAMS += --passL:"-F$(QT5_LIBDIR)"
+
+    HUNSPELL := bottles/hunspell/lib/libhunspell-1.7.a
+    NIM_PARAMS += --passL:"$(HUNSPELL)"
+
     export QT5_LIBDIR
    else
     NIM_PARAMS += --passL:"-L$(QT5_LIBDIR)"
