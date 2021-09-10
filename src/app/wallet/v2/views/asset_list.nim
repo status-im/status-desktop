@@ -1,4 +1,5 @@
-import NimQml, Tables
+import NimQml, Tables, strutils
+import trait_list
 from status/wallet2 import OpenseaAsset
 
 type
@@ -8,10 +9,17 @@ type
     Description = UserRole + 3,
     Permalink = UserRole + 4,
     ImageUrl = UserRole + 5,
+    BackgroundColor = UserRole + 6,
+    Properties = UserRole + 7,
+    Rankings = UserRole + 8,
+    Stats = UserRole + 9
 
 QtObject:
   type AssetList* = ref object of QAbstractListModel
     assets*: seq[OpenseaAsset]
+    propertiesList*: TraitsList
+    rankingList*: TraitsList
+    statsList*: TraitsList
 
   proc setup(self: AssetList) = self.QAbstractListModel.setup
 
@@ -22,6 +30,9 @@ QtObject:
   proc newAssetList*(): AssetList =
     new(result, delete)
     result.assets = @[]
+    result.propertiesList = newTraitsList()
+    result.rankingList = newTraitsList()
+    result.statsList = newTraitsList()
     result.setup
 
   proc assetsChanged*(self: AssetList) {.signal.}
@@ -55,13 +66,30 @@ QtObject:
     of AssetRoles.Description: result = newQVariant(asset.description)
     of AssetRoles.Permalink: result = newQVariant(asset.permalink)
     of AssetRoles.ImageUrl: result = newQVariant(asset.imageUrl)
+    of AssetRoles.BackgroundColor: result = newQVariant(if (asset.backgroundColor == ""): "transparent" else: ("#" & asset.backgroundColor))
+    of AssetRoles.Properties:
+        self.propertiesList.traits = @[]
+        self.propertiesList.traits = asset.properties
+        result = newQVariant(self.propertiesList)
+    of AssetRoles.Rankings:
+        self.rankingList.traits = @[]
+        self.rankingList.traits = asset.rankings
+        result = newQVariant(self.rankingList)
+    of AssetRoles.Stats:
+        self.statsList.traits = @[]
+        self.statsList.traits = asset.statistics
+        result = newQVariant(self.statsList)
 
   method roleNames(self: AssetList): Table[int, string] =
     { AssetRoles.Id.int:"id",
     AssetRoles.Name.int:"name",
     AssetRoles.Description.int:"description",
     AssetRoles.Permalink.int:"permalink",
-    AssetRoles.ImageUrl.int:"imageUrl"}.toTable
+    AssetRoles.ImageUrl.int:"imageUrl",
+    AssetRoles.BackgroundColor.int:"backgroundColor",
+    AssetRoles.Properties.int:"properties",
+    AssetRoles.Rankings.int:"rankings",
+    AssetRoles.Stats.int:"stats"}.toTable
 
   proc setData*(self: AssetList, assets: seq[OpenseaAsset]) =
     self.beginResetModel()

@@ -54,11 +54,6 @@ Item {
         }
     }
 
-    // To-do remove
-    CollectibleModal {
-        id: collectibleModalComponent
-    }
-
     Component {
         id: loaded
 
@@ -84,6 +79,7 @@ Item {
                         expandableComponent: CollectibleCollection {
                             slug: model.slug
                             collectionImageUrl:  model.imageUrl
+                            collectionIndex: model.index
                         }
                     }
                 }

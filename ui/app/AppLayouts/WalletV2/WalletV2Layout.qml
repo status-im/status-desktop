@@ -14,7 +14,8 @@ Item {
     property bool hideSignPhraseModal: false
 
     function openCollectibleDetailView(options) {
-        collectiblesDetailPage.show(options)
+        collectiblesDetailPage.active = true
+        collectiblesDetailPage.item.show(options)
     }
 
     function showSigningPhrasePopup(){
@@ -56,7 +57,7 @@ Item {
             WalletHeader {
                 id: walletHeader
                 changeSelectedAccount: leftTab.changeSelectedAccount
-                visible: !collectiblesDetailPage.visible
+                visible: !collectiblesDetailPage.active
             }
 
             RowLayout {
@@ -69,7 +70,7 @@ Item {
                 anchors.rightMargin: 0
                 anchors.top: walletHeader.bottom
                 anchors.topMargin: 23
-                visible: !collectiblesDetailPage.visible
+                visible: !collectiblesDetailPage.active
 
                 Item {
                     id: walletInfoContent
@@ -124,10 +125,17 @@ Item {
                 id: walletFooter
                 anchors.bottom: parent.bottom
             }
-            
-            CollectibleDetailsPage {
+
+            Loader {
                 id: collectiblesDetailPage
-                anchors.fill: parent
+                anchors.bottom: walletFooter.top
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.top: parent.top
+                active: false
+                sourceComponent: CollectibleDetailsPage {
+                    anchors.fill: parent
+                }
             }
         }
     }
