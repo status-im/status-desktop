@@ -124,7 +124,7 @@ proc mainProc() =
 
 
   # We need this global variable in order to be able to access the application
-  # from the non-closure callback passed to `libstatus.setSignalEventCallback`
+  # from the non-closure callback passed to `statusgo_backend.setSignalEventCallback`
   signalsQObjPointer = cast[pointer](appService.signalController.vptr)
   defer:
     signalsQObjPointer = nil
@@ -252,7 +252,7 @@ proc mainProc() =
   engine.load(newQUrl("qrc:///main.qml"))
 
   # Please note that this must use the `cdecl` calling convention because
-  # it will be passed as a regular C function to libstatus. This means that
+  # it will be passed as a regular C function to statusgo_backend. This means that
   # we cannot capture any local variables here (we must rely on globals)
   var callback: SignalCallback = proc(p0: cstring) {.cdecl.} =
     if signalsQObjPointer != nil:

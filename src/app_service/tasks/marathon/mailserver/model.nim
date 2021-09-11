@@ -4,10 +4,10 @@ import
 from times import cpuTime
 
 import
-  status/libstatus/settings as status_settings,
-  status/libstatus/chat as status_chat,
-  status/libstatus/mailservers as status_mailservers,
-  status/libstatus/core as status_core,
+  status/statusgo_backend/settings as status_settings,
+  status/statusgo_backend/chat as status_chat,
+  status/statusgo_backend/mailservers as status_mailservers,
+  status/statusgo_backend/core as status_core,
   status/fleet,
   ./events as mailserver_events
 

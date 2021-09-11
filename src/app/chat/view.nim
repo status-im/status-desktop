@@ -20,7 +20,7 @@ import views/[channels_list, message_list, chat_item, reactions, stickers, group
 import ../../constants
 
 # TODO: remove me
-import status/libstatus/chat as libstatus_chat
+import status/statusgo_backend/chat as statusgo_backend_chat
 
 logScope:
   topics = "chats-view"
@@ -53,7 +53,7 @@ const asyncActivityNotificationLoadTask: Task = proc(argEncoded: string) {.gcsaf
   let arg = decode[AsyncActivityNotificationLoadTaskArg](argEncoded)
   var activityNotifications: JsonNode
   var activityNotificationsCallSuccess: bool
-  let activityNotificationsCallResult = libstatus_chat.rpcActivityCenterNotifications(newJString(""), 20, activityNotificationsCallSuccess)
+  let activityNotificationsCallResult = statusgo_backend_chat.rpcActivityCenterNotifications(newJString(""), 20, activityNotificationsCallSuccess)
   if(activityNotificationsCallSuccess):
     activityNotifications = activityNotificationsCallResult.parseJson()["result"]
 
