@@ -1,6 +1,6 @@
 import NimQml, Tables, sequtils, sugar
 import status/chat/stickers, ./sticker_list
-import status/utils
+import status/utils as status_utils
 import status/types/[sticker]
 
 type
@@ -55,9 +55,9 @@ QtObject:
       of StickerPackRoles.Id: result = newQVariant(stickerPack.id)
       of StickerPackRoles.Name: result = newQVariant(stickerPack.name)
       of StickerPackRoles.Price: result = newQVariant(stickerPack.price.wei2Eth)
-      of StickerPackRoles.Preview: result = newQVariant(decodeContentHash(stickerPack.preview))
+      of StickerPackRoles.Preview: result = newQVariant(status_utils.decodeContentHash(stickerPack.preview))
       of StickerPackRoles.Stickers: result = newQVariant(packInfo.stickers)
-      of StickerPackRoles.Thumbnail: result = newQVariant(decodeContentHash(stickerPack.thumbnail))
+      of StickerPackRoles.Thumbnail: result = newQVariant(status_utils.decodeContentHash(stickerPack.thumbnail))
       of StickerPackRoles.Installed: result = newQVariant(packInfo.installed)
       of StickerPackRoles.Bought: result = newQVariant(packInfo.bought)
       of StickerPackRoles.Pending: result = newQVariant(packInfo.pending)
@@ -75,7 +75,6 @@ QtObject:
       StickerPackRoles.Bought.int: "bought",
       StickerPackRoles.Pending.int: "pending"
     }.toTable
-
 
   proc findIndexById*(self: StickerPackList, packId: int, mustBeInstalled: bool = false): int {.slot.} =
     result = -1
@@ -119,8 +118,6 @@ QtObject:
 
     self.dataChanged(topLeft, bottomRight, @[StickerPackRoles.Installed.int, StickerPackRoles.Pending.int])
 
-
-
   proc getStickers*(self: StickerPackList): QVariant {.slot.} =
     let packInfo = self.packs[self.packIdToRetrieve]
     result = newQVariant(packInfo.stickers)
@@ -135,13 +132,9 @@ QtObject:
       of "author": result = stickerPack.author
       of "name": result = stickerPack.name
       of "price": result = $stickerPack.price.wei2Eth
-      of "preview": result = decodeContentHash(stickerPack.preview)
-      of "thumbnail": result = decodeContentHash(stickerPack.thumbnail)
+      of "preview": result = status_utils.decodeContentHash(stickerPack.preview)
+      of "thumbnail": result = status_utils.decodeContentHash(stickerPack.thumbnail)
       of "installed": result = $packInfo.installed
       of "bought": result = $packInfo.bought
       of "pending": result = $packInfo.pending
       else: result = ""
-
-
-    
-
