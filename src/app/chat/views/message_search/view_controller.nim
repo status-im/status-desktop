@@ -6,7 +6,7 @@ import constants as sr_constants
 import status/[status]
 import status/chat/[chat]
 import status/types/[message, setting]
-import status/libstatus/[settings]
+import status/statusgo_backend/[settings]
 import ../../../../app_service/[main]
 import ../communities
 import ../channel
