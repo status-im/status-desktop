@@ -12,7 +12,8 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         handler.cpp \
         main.cpp \
-        sandboxapp.cpp
+        sandboxapp.cpp \
+        spellchecker.cpp
 
 !macx {
     SOURCES += statuswindow.cpp
@@ -59,7 +60,8 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 HEADERS += \
     handler.h \
     sandboxapp.h \
-    statuswindow.h
+    statuswindow.h \
+    spellchecker.h
 
 OTHER_FILES += $$files($$PWD/../*.qml, true)
 OTHER_FILES += $$files($$PWD/*.qml, true)
