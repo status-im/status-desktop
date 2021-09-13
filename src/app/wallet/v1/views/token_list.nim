@@ -6,6 +6,7 @@ import # vendor libs
 
 import # status-desktop libs
   status/[utils, tokens, settings],
+  status/types/network_type,
   status/status
 import ../../../../app_service/[main]
 import ../../../../app_service/tasks/[qt, threadpool]
@@ -27,7 +28,7 @@ const getTokenDetailsTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[GetTokenDetailsTaskArg](argEncoded)
   try:
     let 
-      tkn = newErc20Contract(getCurrentNetwork(), arg.address.parseAddress)
+      tkn = newErc20Contract(getCurrentNetwork().toChainId(), arg.address.parseAddress)
       decimals = tkn.tokenDecimals()
       output = %* {
         "address": arg.address,
@@ -69,7 +70,7 @@ QtObject:
 
   proc loadDefaultTokens*(self:TokenList) = 
     if self.tokens.len == 0:
-      self.tokens = getErc20Contracts()
+      self.tokens = allErc20ContractsByChainId(getCurrentNetwork().toChainId())
       self.isCustom = false
       self.tokensLoaded(self.tokens.len)
 

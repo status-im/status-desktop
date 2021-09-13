@@ -1,5 +1,5 @@
 import NimQml, chronicles, sequtils, sugar
-from status/wallet2/network import Network, `$`
+from status/types/network import Network, `$`
 
 import ./network_list
 
