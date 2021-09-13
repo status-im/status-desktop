@@ -42,7 +42,7 @@ QtObject:
     self.accountsView.setAccountItems()
 
   proc removeCustomToken*(self: TokensView, tokenAddress: string) {.slot.} =
-    let t = self.status.tokens.getCustomTokens().getErc20ContractByAddress(parseAddress(tokenAddress))
+    let t = self.status.tokens.getCustomTokens().findByAddress(parseAddress(tokenAddress))
     if t == nil: return
     self.status.wallet.hideAsset(t.symbol)
     self.status.tokens.removeCustomToken(tokenAddress)

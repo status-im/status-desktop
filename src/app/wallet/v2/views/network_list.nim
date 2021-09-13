@@ -1,5 +1,5 @@
 import NimQml, Tables, chronicles
-from status/wallet2/network import Network
+from status/types/network import Network
 
 logScope:
   topics = "networks-view"
