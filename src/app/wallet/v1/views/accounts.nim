@@ -1,7 +1,7 @@
 import NimQml, json, sequtils, chronicles, strutils, strformat, json
 
 import
-  status/[status, settings],
+  status/status,
   status/wallet as status_wallet,
   status/types/[rpc_response]
 import ../../../../constants

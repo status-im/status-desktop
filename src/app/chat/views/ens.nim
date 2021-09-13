@@ -1,4 +1,4 @@
-import NimQml, Tables, json, sequtils, chronicles, times, re, sugar, strutils, os, strformat, algorithm
+import NimQml, json, sequtils, chronicles, strutils
 
 import status/[status, contacts]
 import status/ens as status_ens
