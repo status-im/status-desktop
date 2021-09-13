@@ -181,7 +181,7 @@ Rectangle {
 
     Loader {
         id: expandableRegion
-        anchors.top: secondaryText.bottom
+        anchors.top: !!secondaryText.text ? secondaryText.bottom: primaryText.bottom
         anchors.topMargin: 16
         anchors.left: parent.left
         anchors.leftMargin: (statusExpandableItem.type === StatusExpandableItem.Type.Primary) ? 48 : 0
