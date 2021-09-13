@@ -1,8 +1,8 @@
 import NimQml, Tables, json, nimcrypto, strformat, json_serialization, chronicles
 import status/accounts as AccountModel
 import status/types/[account, rpc_response]
+import status/[status]
 import ../onboarding/views/account_info
-import status/status
 
 type
   AccountRoles {.pure.} = enum
@@ -46,6 +46,7 @@ QtObject:
       keyUid: currNodeAcct.keyUid,
       identityImage: currNodeAcct.identityImage
     ))
+    self.status.events.emit("currentAccountUpdated", AccountArgs(account: currNodeAcct))
 
   QtProperty[QVariant] currentAccount:
     read = getCurrentAccount

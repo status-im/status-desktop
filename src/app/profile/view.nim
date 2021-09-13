@@ -1,5 +1,5 @@
 import NimQml, sequtils, strutils, sugar, os, json, chronicles
-import views/[mailservers_list, ens_manager, contacts, devices, mailservers, mnemonic, network, fleets, profile_info, device_list, dapp_list, profile_picture, profile_settings, muted_chats]
+import views/[mailservers_list, ens_manager, contacts, devices, mailservers, mnemonic, network, fleets, profile_info, device_list, dapp_list, profile_picture, muted_chats]
 import chronicles
 import ../chat/views/channels_list
 import status/statusgo_backend/accounts as status_accounts
@@ -23,7 +23,6 @@ QtObject:
   type ProfileView* = ref object of QObject
     profile*: ProfileInfoView
     profilePicture*: ProfilePictureView
-    profileSettings*: ProfileSettingsView
     mutedChats*: MutedChatsView
     contacts*: ContactsView
     devices*: DevicesView
@@ -45,7 +44,6 @@ QtObject:
     if not self.devices.isNil: self.devices.delete
     if not self.ens.isNil: self.ens.delete
     if not self.profilePicture.isNil: self.profilePicture.delete
-    if not self.profileSettings.isNil: self.profileSettings.delete
     if not self.mutedChats.isNil: self.mutedChats.delete
     if not self.profile.isNil: self.profile.delete
     if not self.dappList.isNil: self.dappList.delete
@@ -60,7 +58,6 @@ QtObject:
     result = ProfileView()
     result.profile = newProfileInfoView()
     result.profilePicture = newProfilePictureView(status, result.profile)
-    result.profileSettings = newProfileSettingsView(status, result.profile)
     result.mutedChats = newMutedChatsView(status)
     result.contacts = newContactsView(status, appService)
     result.devices = newDevicesView(status)
@@ -84,7 +81,6 @@ QtObject:
 
   proc setNewProfile*(self: ProfileView, profile: Profile) =
     self.profile.setProfile(profile)
-    self.profileSettings.removeUnknownAccountSettings()
     self.profileChanged()
 
   QtProperty[QVariant] profile:
@@ -186,11 +182,28 @@ QtObject:
   QtProperty[QVariant] picture:
     read = getProfilePicture
 
-  proc getProfileSettings*(self: ProfileView): QVariant {.slot.} =
-    newQVariant(self.profileSettings)
+  proc settingsFileChanged*(self: ProfileView) {.signal.}
+  
+  proc getSettingsFile*(self: ProfileView): string {.slot.} =
+    self.appService.localSettingsService.getSettingsFilePath
+  
+  proc setSettingsFile*(self: ProfileView, username: string) =
+    if(username.len == 0 or
+      self.appService.localSettingsService.getSettingsFilePath.endsWith(username)):
+      return
 
-  QtProperty[QVariant] settings:
-    read = getProfileSettings
+    self.appService.localSettingsService.updateSettingsFilePath(username)
+    self.settingsFileChanged()
+
+  QtProperty[string] settingsFile:
+    read = getSettingsFile
+    notify = settingsFileChanged
+
+  proc getGlobalSettingsFile*(self: ProfileView): string {.slot.} =
+    self.appService.localSettingsService.getGlobalSettingsFilePath
+
+  QtProperty[string] globalSettingsFile:
+    read = getGlobalSettingsFile
 
   proc getMutedChats*(self: ProfileView): QVariant {.slot.} =
     newQVariant(self.mutedChats)

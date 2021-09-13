@@ -186,7 +186,7 @@ proc mainProc() =
   defer: provider.delete()
   engine.setRootContextProperty("web3Provider", provider.variant)
 
-  var login = login.newController(status)
+  var login = login.newController(status, appService)
   defer: login.delete()
   var onboarding = onboarding.newController(status)
   defer: onboarding.delete()
@@ -204,9 +204,17 @@ proc mainProc() =
     onboarding.moveToAppState()
     status.events.emit("loginCompleted", args)
 
+  proc updateProfileSettings(account: Account) =
+    profile.setSettingsFile(account.name)
+
+  status.events.on("currentAccountUpdated") do(a: Args):
+    var args = AccountArgs(a)
+    updateProfileSettings(args.account)
+
   status.events.once("loginCompleted") do(a: Args):
     var args = AccountArgs(a)
     
+    updateProfileSettings(args.account)
     status.startMessenger()
     profile.init(args.account)
     wallet.init()
