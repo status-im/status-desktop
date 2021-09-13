@@ -1,14 +1,18 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
+
 import "../../../../imports"
 import "../../../../shared"
 import "../../../../shared/status"
 
-ModalPopup {
+import StatusQ.Popups 0.1
+import StatusQ.Controls 0.1
+
+StatusModal {
     id: addNetworkPopup
     //% "Add network"
-    title: qsTrId("add-network")
-    height: 650
+    header.title: qsTrId("add-network")
+    height: 644
 
     property string nameValidationError: ""
     property string rpcValidationError: ""
@@ -62,122 +66,135 @@ ModalPopup {
         networkValidationError = "";
     }
 
-    footer: StatusButton {
-        anchors.right: parent.right
-        anchors.rightMargin: Style.current.smallPadding
-        //% "Save"
-        text: qsTrId("save")
-        anchors.bottom: parent.bottom
-        enabled: nameInput.text !== "" && rpcInput.text !== ""
-        onClicked: {
-            if (!addNetworkPopup.validate()) {
-                return;
-            }
+    rightButtons: [
+        StatusButton {
+            //% "Save"
+            text: qsTrId("save")
+            enabled: nameInput.text !== "" && rpcInput.text !== ""
+            onClicked: {
+                if (!addNetworkPopup.validate()) {
+                    return;
+                }
 
-            if (customRadioBtn.checked){
-                addNetworkPopup.networkId = parseInt(networkInput.text, 10);
-            }
+                if (customRadioBtn.checked){
+                    addNetworkPopup.networkId = parseInt(networkInput.text, 10);
+                }
 
-            profileModel.network.add(nameInput.text, rpcInput.text, addNetworkPopup.networkId, addNetworkPopup.networkType)
-            profileModel.network.reloadCustomNetworks();
-            addNetworkPopup.close()
+                profileModel.network.add(nameInput.text, rpcInput.text, addNetworkPopup.networkId, addNetworkPopup.networkType)
+                profileModel.network.reloadCustomNetworks();
+                addNetworkPopup.close()
+            }
         }
-    }
+    ]
 
-    Input {
-        id: nameInput
-        //% "Name"
-        label: qsTrId("name")
-        //% "Specify a name"
-        placeholderText: qsTrId("specify-name")
-        validationError: addNetworkPopup.nameValidationError
-    }
-
-    Input {
-        id: rpcInput
-        //% "RPC URL"
-        label: qsTrId("rpc-url")
-        //% "Specify a RPC URL"
-        placeholderText: qsTrId("specify-rpc-url")
-        validationError: addNetworkPopup.rpcValidationError
-        anchors.top: nameInput.bottom
-        anchors.topMargin: Style.current.bigPadding
-    }
-
-    StatusSectionHeadline {
-        id: networkChainHeadline
-        //% "Network chain"
-        text: qsTrId("network-chain")
-        anchors.top: rpcInput.bottom
-        anchors.topMargin: Style.current.bigPadding
-    }
-
-    Column {
-        spacing: Style.current.padding
-        anchors.top: networkChainHeadline.bottom
-        anchors.topMargin: Style.current.smallPadding
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.rightMargin: Style.current.padding
-        anchors.leftMargin: Style.current.padding
-
-        ButtonGroup {
-            id: networkChainGroup
+    contentItem: Item {
+        anchors.fill: parent
+        anchors {
+            topMargin: (Style.current.padding + addNetworkPopup.topPadding)
+            leftMargin: Style.current.padding
+            rightMargin: Style.current.padding
+            bottomMargin: (Style.current.padding + addNetworkPopup.bottomPadding)
+        }
+        Input {
+            id: nameInput
+            //% "Name"
+            label: qsTrId("name")
+            //% "Specify a name"
+            placeholderText: qsTrId("specify-name")
+            validationError: addNetworkPopup.nameValidationError
         }
 
-        StatusRadioButtonRow {
-            id: mainnetRadioBtn
-            //% "Main network"
-            text: qsTrId("mainnet-network")
-            buttonGroup: networkChainGroup
-            checked: true
-            onRadioCheckedChanged: {
-                if (checked) {
-                    addNetworkPopup.networkId = 1;
-                    addNetworkPopup.networkType = Constants.networkMainnet;
+        Input {
+            id: rpcInput
+            //% "RPC URL"
+            label: qsTrId("rpc-url")
+            //% "Specify a RPC URL"
+            placeholderText: qsTrId("specify-rpc-url")
+            validationError: addNetworkPopup.rpcValidationError
+            anchors.top: nameInput.bottom
+            anchors.topMargin: Style.current.padding
+        }
+
+        StatusSectionHeadline {
+            id: networkChainHeadline
+            //% "Network chain"
+            text: qsTrId("network-chain")
+            anchors.top: rpcInput.bottom
+            anchors.topMargin: Style.current.padding
+        }
+
+        Column {
+            id: radioButtonsColumn
+            anchors.top: networkChainHeadline.bottom
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.rightMargin: Style.current.padding
+            anchors.leftMargin: Style.current.padding
+            spacing: 0
+
+            ButtonGroup {
+                id: networkChainGroup
+            }
+
+            StatusRadioButtonRow {
+                id: mainnetRadioBtn
+                //% "Main network"
+                objectName: "main"
+                text: qsTrId("mainnet-network")
+                buttonGroup: networkChainGroup
+                checked: true
+                onRadioCheckedChanged: {
+                    if (checked) {
+                        addNetworkPopup.networkId = 1;
+                        addNetworkPopup.networkType = Constants.networkMainnet;
+                    }
                 }
             }
-        }
 
-        StatusRadioButtonRow {
-            //% "Ropsten test network"
-            text: qsTrId("ropsten-network")
-            buttonGroup: networkChainGroup
-            onRadioCheckedChanged: {
-                if (checked) {
-                    addNetworkPopup.networkId = 3;
-                    addNetworkPopup.networkType = Constants.networkRopsten;
+            StatusRadioButtonRow {
+                //% "Ropsten test network"
+                text: qsTrId("ropsten-network")
+                buttonGroup: networkChainGroup
+                onRadioCheckedChanged: {
+                    if (checked) {
+                        addNetworkPopup.networkId = 3;
+                        addNetworkPopup.networkType = Constants.networkRopsten;
+                    }
                 }
             }
-        }
 
-        StatusRadioButtonRow {
-            //% "Rinkeby test network"
-            text: qsTrId("rinkeby-network")
-            buttonGroup: networkChainGroup
-            onRadioCheckedChanged: {
-                if (checked) {
-                    addNetworkPopup.networkId = 4;
-                    addNetworkPopup.networkType = Constants.networkRinkeby;
+            StatusRadioButtonRow {
+                //% "Rinkeby test network"
+                text: qsTrId("rinkeby-network")
+                buttonGroup: networkChainGroup
+                onRadioCheckedChanged: {
+                    if (checked) {
+                        addNetworkPopup.networkId = 4;
+                        addNetworkPopup.networkType = Constants.networkRinkeby;
+                    }
                 }
             }
-        }
 
-        StatusRadioButtonRow {
-            id: customRadioBtn
-            //% "Custom"
-            text: qsTrId("custom")
-            buttonGroup: networkChainGroup
-            onRadioCheckedChanged: {
-                if (checked) {
-                    addNetworkPopup.networkType = "";
+            StatusRadioButtonRow {
+                id: customRadioBtn
+                //% "Custom"
+                objectName: "custom"
+                text: qsTrId("custom")
+                buttonGroup: networkChainGroup
+                onRadioCheckedChanged: {
+                    if (checked) {
+                        addNetworkPopup.networkType = "";
+                    }
+                    networkInput.visible = checked;
                 }
             }
         }
 
         Input {
             id: networkInput
-            visible: customRadioBtn.checked
+            anchors.top: radioButtonsColumn.bottom
+            anchors.topMargin: Style.current.halfPadding
+            visible: false
             //% "Network Id"
             label: qsTrId("network-id")
             //% "Specify the network id"
