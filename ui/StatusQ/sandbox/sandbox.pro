@@ -24,6 +24,14 @@ macx {
     CONFIG -= app_bundle
     OBJECTIVE_SOURCES += \
         statuswindow_mac.mm
+
+    hunspellTarget.depends = FORCE
+    hunspellTarget.commands = brew install hunspell
+    QMAKE_EXTRA_TARGETS += hunspellTarget
+
+
+    LIBS += -L"/usr/local/lib" -lhunspell-1.7
+    INCLUDEPATH += /usr/local/include/hunspell
 }
 
 ios {
