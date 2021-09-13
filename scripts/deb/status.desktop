@@ -1,0 +1,10 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=Application
+Name=Status Desktop
+Exec=/usr/bin/nim_status_client
+Icon=status
+Comment=Desktop client for the Status Network
+Terminal=true
+Categories=Network;
+StartupNotify=true

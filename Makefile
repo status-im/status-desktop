@@ -16,6 +16,7 @@ BUILD_SYSTEM_DIR := vendor/nimbus-build-system
 .PHONY: \
 	all \
 	bottles \
+	build-deb \
 	check-pkg-target-linux \
 	check-pkg-target-macos \
 	check-pkg-target-windows \
@@ -139,7 +140,7 @@ ifneq ($(detected_OS),Windows)
  DOTHERSIDE := vendor/DOtherSide/build/lib/libDOtherSideStatic.a
  DOTHERSIDE_CMAKE_PARAMS := -DENABLE_DYNAMIC_LIBS=OFF -DENABLE_STATIC_LIBS=ON
  # order matters here, due to "-Wl,-as-needed"
- NIM_PARAMS += --passL:"$(DOTHERSIDE)" --passL:"$(shell PKG_CONFIG_PATH="$(QT5_PCFILEDIR)" pkg-config --libs Qt5Core Qt5Qml Qt5Gui Qt5Quick Qt5QuickControls2 Qt5Widgets Qt5Svg)"
+ NIM_PARAMS += --passC:"-Wl,--no-undefined" --passL:"$(DOTHERSIDE)" --passL:"$(shell PKG_CONFIG_PATH="$(QT5_PCFILEDIR)" pkg-config --libs Qt5Core Qt5Qml Qt5Gui Qt5Quick Qt5QuickControls2 Qt5Widgets Qt5Svg)"
 else
  DOTHERSIDE := vendor/DOtherSide/build/lib/Release/DOtherSide.dll
  DOTHERSIDE_CMAKE_PARAMS := -T"v141" -A x64 -DENABLE_DYNAMIC_LIBS=ON -DENABLE_STATIC_LIBS=OFF
@@ -306,6 +307,39 @@ $(STATUS_CLIENT_TARBALL): $(STATUS_CLIENT_APPIMAGE)
 ifdef LINUX_GPG_PRIVATE_KEY_FILE
 	scripts/sign-linux-file.sh $(STATUS_CLIENT_TARBALL)
 endif
+
+
+build-deb: override RESOURCES_LAYOUT := -d:production
+build-deb: $(DOTHERSIDE) nim_status_client nim-status.desktop
+	rm -rf pkg/*.deb
+	rm -rf tmp/linux/status-desktop_0.3.0-beta
+	mkdir -p pkg
+
+	mkdir -p tmp/linux/status-desktop_0.3.0-beta/usr/local/bin
+	mkdir -p tmp/linux/status-desktop_0.3.0-beta/usr/lib
+	mkdir -p tmp/linux/status-desktop_0.3.0-beta/DEBIAN
+	mkdir -p tmp/linux/status-desktop_0.3.0-beta/usr/share/doc/applications
+
+	# General Files
+	cp scripts/deb/control tmp/linux/status-desktop_0.3.0-beta/DEBIAN/.
+	cp scripts/deb/compat tmp/linux/status-desktop_0.3.0-beta/DEBIAN/.
+	cp scripts/deb/rules tmp/linux/status-desktop_0.3.0-beta/DEBIAN/.
+	cp bin/nim_status_client tmp/linux/status-desktop_0.3.0-beta/usr/local/bin/status-desktop
+	cp scripts/deb/status.desktop tmp/linux/status-desktop_0.3.0-beta/usr/share/doc/applications/.
+	# cp status.svg tmp/linux/status-desktop_0.3.0-beta/status.svg
+	# cp status.svg tmp/linux/status-desktop_0.3.0-beta/usr/.
+	# cp -R resources.rcc tmp/linux/status-desktop_0.3.0-beta/usr/.
+	# cp -R $(FLEETS) tmp/linux/status-desktop_0.3.0-beta/usr/.
+	# mkdir -p tmp/linux/status-desktop_0.3.0-beta/usr/i18n
+	# cp ui/i18n/* tmp/linux/status-desktop_0.3.0-beta/usr/i18n
+
+	# Libraries
+	cp vendor/status-go/build/bin/libstatus.so tmp/linux/status-desktop_0.3.0-beta/usr/lib/
+
+	dpkg-deb --build tmp/linux/status-desktop_0.3.0-beta
+
+
+
 
 DMG_TOOL := node_modules/.bin/create-dmg
 

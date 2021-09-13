@@ -4,7 +4,7 @@
 
 # Helps avoid permissions problems with `jenkins` user in docker container when
 # making a local packaged build
-git clean -dfx
+#git clean -dfx
 
 docker run -it --rm \
   --cap-add SYS_ADMIN \
@@ -13,5 +13,5 @@ docker run -it --rm \
   -u jenkins:$(getent group $(whoami) | cut -d: -f3) \
   -v "${PWD}:/status-desktop" \
   -w /status-desktop \
-  statusteam/nim-status-client-build:1.1.1 \
-  ./docker-linux-app-image.sh
+  debbuilder \
+  /bin/bash

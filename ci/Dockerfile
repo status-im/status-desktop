@@ -79,9 +79,13 @@ RUN apt update -yq && apt install -yq software-properties-common \
     gstreamer1.0-libav gstreamer1.0-tools gstreamer1.0-alsa libpulse-mainloop-glib0 \
     gstreamer1.0-pulseaudio libxrandr2 libxcursor1 libxi6 libxcb-icccm4 libxcb-image0 \
     libxcb-keysyms1 libxcb-render-util0 libxcb-render0 libxcb-xinerama0 \
+    pbuilder ubuntu-dev-tools apt-file \
+    qtbase5-dev qtdeclarative5-dev qml-module-qt-labs-platform qtquickcontrols2-5-dev libqt5svg5-dev  \
+    libqt5gui5 libqt5core5a libqt5network5 libqt5qml5 libqt5quick5 libqt5svg5 libqt5webengine5 libqt5webenginecore5 libqt5quickcontrols2-5 libqt5widgets5 \
     && apt-get -qq clean
 
 COPY scripts/* /tmp/build/
+RUN chmod a+x /tmp/build/*.sh
 
 # Download and install OpenSSL
 RUN /tmp/build/install-openssl-linux.sh
@@ -105,8 +109,8 @@ ENV HOME /home/user
 
 
 # $QT_PATH/$QT_VERSION/$QT_PLATFORM/bin is already prepended to $PATH
-ENV QTDIR="${QT_PATH}/${QT_VERSION}/${QT_PLATFORM}"
-ENV LD_LIBRARY_PATH="${QTDIR}/lib:${LD_LIBRARY_PATH}"
+#ENV QTDIR="${QT_PATH}/${QT_VERSION}/${QT_PLATFORM}"
+#ENV LD_LIBRARY_PATH="${QTDIR}/lib:${LD_LIBRARY_PATH}"
 # $OPENSSL_PREFIX is provided by the docker image
 ENV LIBRARY_PATH="${OPENSSL_PREFIX}/lib:${LIBRARY_PATH}"
 
