@@ -1,4 +1,4 @@
-import NimQml, json, chronicles, strutils, json_serialization
+import NimQml, json, chronicles, json_serialization
 import status/signals
 import status/status
 import eventemitter

@@ -1,5 +1,5 @@
 import NimQml, Tables, sequtils, sugar
-import status/chat/stickers, ./sticker_list
+import ./sticker_list
 import status/utils as status_utils
 import status/types/[sticker]
 

@@ -1,5 +1,5 @@
-import atomics, strformat, strutils, sequtils, json, std/wrapnils, parseUtils, tables, chronicles, web3/[ethtypes, conversions], stint
-import NimQml, json, sequtils, chronicles, strutils, strformat, json
+import strutils, sequtils, json, web3/[ethtypes, conversions], stint
+import NimQml, sequtils, chronicles
 
 logScope:
   topics = "settings-view"
