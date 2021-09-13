@@ -1,4 +1,35 @@
 <a name=""></a>
+## v0.9.0 (2021-09-13)
+
+
+#### Breaking Changes
+
+* **StatusExpandableItem:**  Refactored the StatusExpandableSettingsItem to support different types ([718171fd](718171fd))
+
+#### Bug Fixes
+
+* **StatusAppThreePanelLayout:**  Fix margin between left and center panels ([29e9557d](29e9557d))
+* **StatusChatListAndCategories:**  rely on correct tooltip settings prop ([2971c607](2971c607))
+* **StatusCheckbox:**  give checkbox label proper theme color ([88fb57dd](88fb57dd))
+* **StatusModal:**  don't reserve header subtitle space ([eabc62f7](eabc62f7), closes [#378](378))
+
+#### Features
+
+* **Status.Core.Theme:**  add RobotoMono font ([aab44c1e](aab44c1e), closes [#342](342))
+* **StatusBaseInput:**  introduce `component` property ([019471c8](019471c8), closes [#380](380))
+* **StatusExpandableItem:**  Refactored the StatusExpandableSettingsItem to support different types ([718171fd](718171fd))
+* **StatusInput:**
+  *  introduce `ValidationMode` ([d73a1584](d73a1584))
+  *  exposed edit component ([73c77c29](73c77c29))
+* **StatusQ.Controls.Validators:**
+  *  introduce `StatusAddressAndEnsValidator` ([a93ef161](a93ef161))
+  *  introduce `StatusAddressValidator` ([77d0e9b8](77d0e9b8))
+* **StatusSearchPopup:**  introduce forceActiveFocus API ([efe31166](efe31166))
+* **StatusValidator:**  allow validators to provide default `errorMessage` ([1a23cc19](1a23cc19))
+
+
+
+<a name=""></a>
 ##  v0.8.0 (2021-09-06)
 
 
