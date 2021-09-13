@@ -328,7 +328,7 @@ ModalPopup {
 
         Connections {
             target: walletModel.transactionsView
-            onTransactionWasSent: {
+            function onTransactionWasSent(txResult) {
                 try {
                     let response = JSON.parse(txResult)
                     if (response.uuid !== stack.uuid)

@@ -143,7 +143,7 @@ Item {
     Connections {
         enabled: !placeholderMessage
         target: profileModel.contacts.list
-        onContactChanged: {
+        function onContactChanged(pubkey) {
             if (pubkey === fromAuthor) {
                 const img = appMain.getProfileImage(userPubKey, isCurrentUser, useLargeImage)
                 if (img) {
@@ -160,7 +160,7 @@ Item {
 
     Connections {
         target: profileModel.contacts
-        onContactBlocked: {
+        function onContactBlocked(publicKey) {
             // This hack is used because removeMessagesByUserId sometimes does not remove the messages
             if(publicKey === fromAuthor){
                 root.visible = 0;
@@ -171,7 +171,7 @@ Item {
 
     Connections {
         target: chatsModel.messageView
-        onHideMessage: {
+        function onHideMessage(mId) {
             // This hack is used because message_list deleteMessage sometimes does not remove the messages (there might be an issue with the delegate model)
             if(mId === messageId){
                 root.visible = 0;

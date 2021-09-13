@@ -502,7 +502,7 @@ Item {
         Connections {
             target: profileModel
 
-            onSettingsFileChanged: {
+            function onSettingsFileChanged(){
                 // Since https://github.com/status-im/status-desktop/commit/93668ff75
                 // we're hiding the setting to change appearance for compact normal mode
                 // of the UI. For now, compact mode is the new default.
@@ -561,7 +561,7 @@ Item {
 
         Connections {
             target: chatsModel
-            onNotificationClicked: {
+            function onNotificationClicked(){
                 applicationWindow.makeStatusAppActive()
 
                 switch(notificationType){
@@ -588,14 +588,14 @@ Item {
             target: profileModel
             ignoreUnknownSignals: true
             enabled: removeMnemonicAfterLogin
-            onInitialized: {
+            function onInitialized() {
                 profileModel.mnemonic.remove()
             }
         }
 
         Connections {
             target: profileModel.contacts
-            onContactRequestAdded: {
+            function onContactRequestAdded(name, address){
                 if (!appSettings.notifyOnNewRequests) {
                     return
                 }

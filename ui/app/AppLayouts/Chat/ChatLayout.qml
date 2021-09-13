@@ -24,7 +24,7 @@ StatusAppThreePanelLayout {
 
     Connections {
         target: chatsModel.stickers
-        onStickerPacksLoaded: {
+        function onStickerPacksLoaded() {
             stickersLoaded = true;
         }
     }
@@ -52,7 +52,7 @@ StatusAppThreePanelLayout {
 
     Connections {
         target: chatsModel.messageSearchViewController.locationMenuModel
-        onModelAboutToBeReset: {
+        function onModelAboutToBeReset() {
             for (var i = 2; i <= searchPopupMenu.count; i++) {
                 //clear menu
                 if (!!searchPopupMenu.takeItem(i)) {

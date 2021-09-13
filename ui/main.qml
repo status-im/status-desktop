@@ -157,7 +157,7 @@ StatusWindow {
     //! Workaround for custom QQuickWindow
     Connections {
         target: applicationWindow
-        onClosing: {
+        function onClosing(){
             if (loader.sourceComponent == login) {
                 applicationWindow.visible = false
                 close.accepted = false
@@ -172,7 +172,7 @@ StatusWindow {
             }
         }
 
-        onActiveChanged: {
+        function onActiveChanged(){
             if (applicationWindow.active && currentlyHasANotification) {
                 currentlyHasANotification = false
                 // QML doesn't have a function to hide notifications, but this does the trick

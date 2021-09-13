@@ -146,7 +146,7 @@ ModalPopup {
             Connections {
                 target: onboardingModel
                 ignoreUnknownSignals: true
-                onLoginResponseChanged: {
+                function onLoginResponseChanged(error) {
                     if (error) {
                         loading = false
                         importLoginError.open()

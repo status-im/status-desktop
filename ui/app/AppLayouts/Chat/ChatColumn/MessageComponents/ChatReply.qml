@@ -94,7 +94,7 @@ Loader {
 
             Connections {
                 target: chatsModel.messageView
-                onMessageEdited: {
+                function onMessageEdited(editedMessageId, editedMessageContent) {
                     if (responseTo === editedMessageId){
                         lblReplyMessage.text = Utils.getReplyMessageStyle(Emoji.parse(Utils.linkifyAndXSS(editedMessageContent + Constants.editLabel), Emoji.size.small), isCurrentUser, appSettings.useCompactMode)
                     }

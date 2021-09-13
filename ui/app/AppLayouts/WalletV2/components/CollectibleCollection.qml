@@ -20,7 +20,7 @@ Item {
 
     Connections {
         target: walletV2Model.collectiblesView.getAssetsList(root.slug)
-        onAssetsChanged: {
+        function onAssetsChanged() {
             root.assetsLoaded = true
         }
     }
