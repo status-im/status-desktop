@@ -51,6 +51,12 @@ RESOURCES += qml.qrc \
 
 DESTDIR = $$PWD/bin
 
+copydata.commands = $(COPY_DIR) $$PWD/dictionaries $$DESTDIR
+first.depends = $(first) copydata
+export(first.depends)
+export(copydata.commands)
+QMAKE_EXTRA_TARGETS += first copydata
+
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
