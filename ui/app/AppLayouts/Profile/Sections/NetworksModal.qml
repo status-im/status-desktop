@@ -62,6 +62,7 @@ ModalPopup {
             Component {
                 id: addNetworkPopupComponent
                 NewCustomNetworkModal {
+                    anchors.centerIn: parent
                     onClosed: {
                         destroy()
                     }
