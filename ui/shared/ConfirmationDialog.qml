@@ -14,11 +14,14 @@ StatusModal {
     property Popup parentPopup
     property var value
     property var executeConfirm
+    property var executeReject
     property var executeCancel
     property string btnType: "warn"
     property string confirmButtonLabel: qsTr("Confirm")
+    property string rejectButtonLabel: qsTr("Reject")
     property string cancelButtonLabel: qsTr("Cancel")
     property string confirmationText: qsTr("Are you sure you want to do this?")
+    property bool showRejectButton: false
     property bool showCancelButton: false
     property alias checkbox: checkbox
 
@@ -27,6 +30,7 @@ StatusModal {
     focus: visible
 
     signal confirmButtonClicked()
+    signal rejectButtonClicked()
     signal cancelButtonClicked()
 
 
@@ -81,6 +85,16 @@ StatusModal {
                     executeCancel()
                 }
                 confirmationDialog.cancelButtonClicked()
+            }
+        },
+        StatusFlatButton {
+            visible: showRejectButton
+            text: confirmationDialog.rejectButtonLabel
+            onClicked: {
+                if (executeReject && typeof executeReject === "function") {
+                    executeReject()
+                }
+                confirmationDialog.rejectButtonClicked()
             }
         },
         StatusButton {

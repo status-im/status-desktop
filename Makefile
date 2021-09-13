@@ -129,7 +129,7 @@ ifneq ($(detected_OS),Windows)
    QT5_LIBDIR := $(QTDIR)/lib
    # some manually installed Qt5 instances have wrong paths in their *.pc files, so we pass the right one to the linker here
    ifeq ($(detected_OS),Darwin)
-    NIM_PARAMS += -L:"-framework Foundation -framework Security -framework IOKit -framework CoreServices"
+    NIM_PARAMS += -L:"-framework Foundation -framework Security -framework IOKit -framework CoreServices -framework LocalAuthentication"
     # Fix for failures due to 'can't allocate code signature data for'
     NIM_PARAMS += --passL:"-headerpad_max_install_names"
     NIM_PARAMS += --passL:"-F$(QT5_LIBDIR)"

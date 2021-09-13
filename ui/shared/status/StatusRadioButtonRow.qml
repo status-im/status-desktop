@@ -7,7 +7,7 @@ import "."
 Rectangle {
     property alias text: textElement.text
     property var buttonGroup
-    property bool checked: false
+    property alias checked: radioButton.checked
     property bool isHovered: false
     signal radioCheckedChanged(checked: bool)
 

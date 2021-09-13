@@ -11,10 +11,13 @@ ModalPopup {
     property bool repeatPasswordFieldValid: false
     property string passwordValidationError: ""
     property string repeatPasswordValidationError: ""
+    property bool storingPasswordModal: false
 
     id: popup
-    //% "Create a password"
-    title: qsTrId("intro-wizard-title-alt4")
+    title: storingPasswordModal?
+               qsTr("Store password") :
+               //% "Create a password"
+               qsTrId("intro-wizard-title-alt4")
     height: 500
 
     onOpened: {
@@ -27,9 +30,11 @@ ModalPopup {
         anchors.rightMargin: 56
         anchors.leftMargin: 56
         anchors.top: parent.top
-        anchors.topMargin: 88
-        //% "New password..."
-        placeholderText: qsTrId("new-password...")
+        anchors.topMargin: storingPasswordModal? Style.current.xlPadding : 88
+        placeholderText: storingPasswordModal?
+                             qsTr("Current password...") :
+                             //% "New password..."
+                             qsTrId("new-password...")
         textField.echoMode: TextInput.Password
         onTextChanged: {
             [firstPasswordFieldValid, passwordValidationError] =
@@ -79,6 +84,7 @@ ModalPopup {
     }
 
     StyledText {
+        visible: !storingPasswordModal
         //% "At least 6 characters. You will use this password to unlock status on this device & sign transactions."
         text: qsTrId("at-least-6-characters-you-will-use-this-password-to-unlock-status-on-this-device-sign-transactions.")
         wrapMode: Text.WordWrap
@@ -103,8 +109,11 @@ ModalPopup {
             anchors.topMargin: Style.current.padding
             anchors.right: parent.right
             state: loading ? "pending" : "default"
-            //% "Create password"
-            text: qsTrId("create-password")
+
+            text: storingPasswordModal?
+                      qsTr("Store password") :
+                      //% "Create password"
+                      qsTrId("create-password")
 
             enabled: firstPasswordFieldValid && repeatPasswordFieldValid && !loading
 
@@ -146,23 +155,29 @@ ModalPopup {
             }
 
             onClicked: {
-                loading = true
-                loginModel.isCurrentFlow = false;
-                onboardingModel.isCurrentFlow = true;
-                const result = onboardingModel.storeDerivedAndLogin(repeatPasswordField.text);
-                const error = JSON.parse(result).error
-                if (error) {
-                    importError.text += error
-                    return importError.open()
+                if (storingPasswordModal)
+                {
+                    appSettings.storeToKeychain = Constants.storeToKeychainValueStore
+                    loginModel.storePassword(profileModel.profile.username, repeatPasswordField.text)
+                    popup.close()
                 }
-                onboardingModel.firstTimeLogin = true
+                else
+                {
+                    loading = true
+                    loginModel.isCurrentFlow = false;
+                    onboardingModel.isCurrentFlow = true;
+                    const result = onboardingModel.storeDerivedAndLogin(repeatPasswordField.text);
+                    const error = JSON.parse(result).error
+                    if (error) {
+                        importError.text += error
+                        return importError.open()
+                    }
+                    onboardingModel.firstTimeLogin = true
+
+                    applicationWindow.checkForStoringPassToKeychain(onboardingModel.currentAccount.username,
+                                                                    repeatPasswordField.text, true)
+                }
             }
         }
     }
 }
-
-/*##^##
-Designer {
-    D{i:0;formeditorColor:"#ffffff";height:500;width:400}
-}
-##^##*/

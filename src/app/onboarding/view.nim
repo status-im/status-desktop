@@ -1,7 +1,8 @@
 import NimQml, Tables, json, nimcrypto, strformat, json_serialization, strutils
 import status/accounts as AccountModel
 import status/[status, wallet]
-import status/types/[account, rpc_response]
+import status/types/[rpc_response]
+import status/types/account as status_account_type
 import views/account_info
 
 type
@@ -99,8 +100,13 @@ QtObject:
     result = self.status.wallet.validateMnemonic(mnemonic.strip())
 
   proc storeDerivedAndLogin(self: OnboardingView, password: string): string {.slot.} =
+    # In this moment we're sure that new account will be logged in, and emit signal.
+    let genAcc = self.currentAccount.account
+    let acc = Account(name: genAcc.name, keyUid: genAcc.keyUid, identicon: genAcc.identicon, identityImage: genAcc.identityImage)
+    self.status.events.emit("currentAccountUpdated", status_account_type.AccountArgs(account: acc))
+
     try:
-      result = self.status.accounts.storeDerivedAndLogin(self.status.fleet.config, self.currentAccount.account, password).toJson
+      result = self.status.accounts.storeDerivedAndLogin(self.status.fleet.config, genAcc, password).toJson
     except StatusGoException as e:
       var msg = e.msg
       if e.msg.contains("account already exists"):
