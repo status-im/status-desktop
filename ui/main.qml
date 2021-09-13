@@ -41,6 +41,7 @@ StatusWindow {
     Settings {
         id: appSettings
         fileName: profileModel.settingsFile
+        property string storeToKeychain: ""
 
         property var chatSplitView
         property var walletSplitView
@@ -274,6 +275,60 @@ StatusWindow {
             if (reason !== SystemTrayIcon.Context) {
                 applicationWindow.makeStatusAppActive()
             }
+        }
+    }
+
+    function checkForStoringPassToKeychain(username, password, clearStoredValue) {
+        if(Qt.platform.os == "osx")
+        {
+            if(clearStoredValue)
+            {
+                appSettings.storeToKeychain = ""
+            }
+
+            if(appSettings.storeToKeychain === "" ||
+               appSettings.storeToKeychain === Constants.storeToKeychainValueNotNow)
+            {
+                storeToKeychainConfirmationPopup.password = password
+                storeToKeychainConfirmationPopup.username = username
+                storeToKeychainConfirmationPopup.open()
+            }
+        }
+    }
+
+    ConfirmationDialog {
+        id: storeToKeychainConfirmationPopup
+        property string password: ""
+        property string username: ""
+        height: 200
+        confirmationText: qsTr("Would you like to store password to the Keychain?")
+        showRejectButton: true
+        showCancelButton: true
+        confirmButtonLabel: qsTr("Store")
+        rejectButtonLabel: qsTr("Not now")
+        cancelButtonLabel: qsTr("Never")
+
+        function finish()
+        {
+            password = ""
+            username = ""
+            storeToKeychainConfirmationPopup.close()
+        }
+
+        onConfirmButtonClicked: {
+            appSettings.storeToKeychain = Constants.storeToKeychainValueStore
+            loginModel.storePassword(username, password)
+            finish()
+        }
+
+        onRejectButtonClicked: {
+            appSettings.storeToKeychain = Constants.storeToKeychainValueNotNow
+            finish()
+        }
+
+        onCancelButtonClicked: {
+            appSettings.storeToKeychain = Constants.storeToKeychainValueNever
+            finish()
         }
     }
 

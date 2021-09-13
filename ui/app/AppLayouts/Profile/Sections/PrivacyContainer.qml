@@ -5,6 +5,7 @@ import QtGraphicalEffects 1.13
 import "../../../../imports"
 import "../../../../shared"
 import "../../../../shared/status"
+import "../../../../onboarding/" as OnboardingComponents
 
 Item {
     id: privacyContainer
@@ -42,6 +43,35 @@ Item {
             text: qsTr("Change password")
             onClicked: {
                 changePasswordModal.open()
+            }
+        }
+
+        StatusSettingsLineButton {
+            text: qsTr("Store pass to Keychain")
+            visible: Qt.platform.os == "osx" // For now, this is available only on MacOS
+            currentValue: {
+                let value = appSettings.storeToKeychain
+                if(value == Constants.storeToKeychainValueStore)
+                    return qsTr("Store")
+
+                if(value == Constants.storeToKeychainValueNever)
+                    return qsTr("Never")
+
+                return qsTr("Not now")
+            }
+            onClicked: openPopup(storeToKeychainSelectionModal)
+
+            Component {
+                id: storePasswordModal
+                OnboardingComponents.CreatePasswordModal {
+                    storingPasswordModal: true
+                    height: 350
+                }
+            }
+
+            Component {
+                id: storeToKeychainSelectionModal
+                StoreToKeychainSelectionModal {}
             }
         }
 

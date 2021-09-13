@@ -1,19 +1,22 @@
 import NimQml, chronicles, options, std/wrapnils
 import status/[signals, status]
 import status/types/[account, rpc_response]
+import ../../app_service/[main]
 import view
 import eventemitter
 import ../../constants
 
 type LoginController* = ref object
   status*: Status
+  appService: AppService
   view*: LoginView
   variant*: QVariant
 
-proc newController*(status: Status): LoginController =
+proc newController*(status: Status, appService: AppService): LoginController =
   result = LoginController()
   result.status = status
-  result.view = newLoginView(status)
+  result.appService = appService
+  result.view = newLoginView(status, appService)
   result.variant = newQVariant(result.view)
 
 proc delete*(self: LoginController) =

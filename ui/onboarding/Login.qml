@@ -21,8 +21,63 @@ Item {
         onboardingModel.isCurrentFlow = !isLogin;
     }
 
+    function doLogin(password) {
+        if (loading || password.length === 0)
+            return
+
+        setCurrentFlow(true);
+        loading = true
+        loginModel.login(password)
+        applicationWindow.checkForStoringPassToKeychain(loginModel.currentAccount.username, password, false)
+        txtPassword.textField.clear()
+    }
+
+    function resetLogin() {
+        if(appSettings.storeToKeychain === Constants.storeToKeychainValueStore)
+        {
+            connection.enabled = true
+            txtPassword.visible = false
+            loginModel.tryToObtainPassword()
+        }
+        else
+        {
+            txtPassword.visible = true
+            txtPassword.forceActiveFocus(Qt.MouseFocusReason)
+        }
+    }
+
     Component.onCompleted: {
-        txtPassword.forceActiveFocus(Qt.MouseFocusReason)
+        resetLogin()
+    }
+
+    Connections{
+        id: connection
+        target: loginModel
+
+        onObtainingPasswordError: {
+            enabled = false
+            obtainingPasswordErrorNotification.confirmationText = errorDescription
+            obtainingPasswordErrorNotification.open()
+        }
+
+        onObtainingPasswordSuccess: {
+            enabled = false
+            doLogin(password)
+        }
+    }
+
+    ConfirmationDialog {
+        id: obtainingPasswordErrorNotification
+        height: 270
+        confirmButtonLabel: qsTr("Ok")
+
+        onConfirmButtonClicked: {
+            close()
+        }
+
+        onClosed: {
+            txtPassword.visible = true
+        }
     }
 
     Item {
@@ -60,6 +115,7 @@ Item {
             id: selectAnotherAccountModal
             onAccountSelect: function (index) {
                 loginModel.setCurrentAccount(index)
+                resetLogin()
             }
             onOpenModalClick: function () {
                 setCurrentFlow(true);
@@ -127,7 +183,7 @@ Item {
             textField.echoMode: TextInput.Password
             textField.focus: true
             Keys.onReturnPressed: {
-                submitBtn.clicked()
+                doLogin(textField.text)
             }
             onTextEdited: {
                 errMsg.visible = false
@@ -143,18 +199,12 @@ Item {
             icon.width: 18
             icon.height: 14
             opacity: (loading || txtPassword.text.length > 0) ? 1 : 0
-            anchors.left: txtPassword.right
+            anchors.left: txtPassword.visible? txtPassword.right : changeAccountBtn.right
             anchors.leftMargin: (loading || txtPassword.text.length > 0) ? Style.current.padding : Style.current.smallPadding
-            anchors.verticalCenter: txtPassword.verticalCenter
+            anchors.verticalCenter: txtPassword.visible? txtPassword.verticalCenter : changeAccountBtn.verticalCenter
             state: loading ? "pending" : "default"
             onClicked: {
-                if (loading) {
-                    return;
-                }
-                setCurrentFlow(true);
-                loading = true
-                loginModel.login(txtPassword.textField.text)
-                txtPassword.textField.clear()
+                doLogin(txtPassword.textField.text)
             }
 
             // https://www.figma.com/file/BTS422M9AkvWjfRrXED3WC/%F0%9F%91%8B-Onboarding%E2%8E%9CDesktop?node-id=6%3A0
@@ -194,7 +244,7 @@ Item {
             id: generateKeysLinkText
             //% "Generate new keys"
             text: qsTrId("generate-new-keys")
-            anchors.top: txtPassword.bottom
+            anchors.top: txtPassword.visible? txtPassword.bottom : changeAccountBtn.bottom
             anchors.topMargin: 16
             anchors.horizontalCenter: parent.horizontalCenter
             font.pixelSize: 13
@@ -219,9 +269,3 @@ Item {
         }
     }
 }
-
-/*##^##
-Designer {
-    D{i:0;autoSize:true;formeditorColor:"#ffffff";formeditorZoom:0.75;height:480;width:640}
-}
-##^##*/
