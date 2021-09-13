@@ -10,12 +10,12 @@ logScope:
 QtObject:
   type OsNotificationService* = ref object of QObject
     status: Status
-    notification: StatusOSNotificationObject
+    notification: StatusOSNotification
 
   proc setup(self: OsNotificationService, status: Status) = 
     self.QObject.setup
     self.status = status
-    self.notification = newStatusOSNotificationObject()
+    self.notification = newStatusOSNotification()
     signalConnect(self.notification, "notificationClicked(QString)", self,
     "onNotificationClicked(QString)", 2)
   
