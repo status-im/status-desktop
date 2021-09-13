@@ -127,5 +127,5 @@ USER jenkins
 ENV HOME="/home/jenkins"
 
 LABEL maintainer="jakub@status.im"
-LABEL source="https://github.com/status-im/nim-status-client"
+LABEL source="https://github.com/status-im/status-desktop"
 LABEL description="Build image for the Status Desktop client written in Nim."
