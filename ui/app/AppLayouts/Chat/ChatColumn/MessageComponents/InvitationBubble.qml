@@ -42,7 +42,7 @@ Item {
 
     Connections {
         target: chatsModel.communities
-        onCommunityChanged: function (communityId) {
+        function onCommunityChanged(communityId) {
             if (communityId === root.communityId) {
                 root.invitedCommunity = getCommunity()
             }
@@ -166,7 +166,7 @@ Item {
 
                 Connections {
                     target: chatsModel.communities
-                    onMembershipRequestChanged: function(communityId, communityName, requestAccepted) {
+                    function onMembershipRequestChanged(communityId, communityName, requestAccepted) {
                         if (communityId === root.communityId) {
                             rectangleBubble.isPendingRequest = false
                         }

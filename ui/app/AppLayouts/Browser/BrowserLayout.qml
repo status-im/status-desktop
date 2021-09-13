@@ -699,7 +699,9 @@ Rectangle {
 
     Connections {
         target: currentWebView
-        onUrlChanged: obtainAddress()
+        function onUrlChanged(){
+            obtainAddress();
+        }
     }
 
     ProgressBar {

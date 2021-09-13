@@ -37,7 +37,7 @@ StatusModal {
                 Connections {
                     enabled: !!item.action
                     target: item.action
-                    onTriggered: {
+                    function onTriggered() {
                         internal.selectedAccount = { address, name, iconColor, fiatBalance }
                         accountPickerPopUp.dismiss()
                     }

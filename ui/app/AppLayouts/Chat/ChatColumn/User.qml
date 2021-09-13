@@ -38,7 +38,7 @@ Item {
         color: wrapper.color
         Connections {
             target: profileModel.contacts.list
-            onContactChanged: {
+            function onContactChanged(pubkey) {
                 if (pubkey === wrapper.publicKey) {
                     wrapper.profileImage = appMain.getProfileImage(wrapper.publicKey)
                 }

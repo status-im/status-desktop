@@ -176,7 +176,7 @@ Item {
 
                 Connections {
                     target: profileModel.contacts
-                    onEnsWasResolved: {
+                    function onEnsWasResolved(resolvedPubKey) {
                         if (resolvedPubKey === "") {
                             searchResults.pubKey = ""
                             searchResults.showProfileNotFoundMessage = true

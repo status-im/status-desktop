@@ -276,7 +276,7 @@ ModalPopup {
 
         Connections {
             target: walletModel.transactionsView
-            onTransactionWasSent: {
+            function onTransactionWasSent(txResult) {
                 try {
                     let response = JSON.parse(txResult)
 
@@ -306,7 +306,7 @@ ModalPopup {
                     console.error('Error parsing the response', e)
                 }
             }
-            onTransactionCompleted: {
+            function onTransactionCompleted(success, txHash, revertReason) {
                 if (success) {
                     //% "Transaction completed"
                     toastMessage.title = qsTrId("transaction-completed")

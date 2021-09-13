@@ -76,10 +76,10 @@ Item {
             id: contentHeightConnection
             enabled: true
             target: chatLogView
-            onContentHeightChanged: {
+            function onContentHeightChanged() {
                 chatLogView.checkHeaderHeight()
             }
-            onHeightChanged: {
+            function onHeightChanged() {
                 chatLogView.checkHeaderHeight()
             }
         }
@@ -167,7 +167,7 @@ Item {
         Connections {
             target: chatsModel
 
-            onAppReady: {
+            function onAppReady() {
                 chatLogView.scrollToBottom(true)
             }
         }
@@ -175,15 +175,15 @@ Item {
         Connections {
             target: chatsModel.messageView
 
-            onSendingMessageSuccess: {
+            function onSendingMessageSuccess() {
                 chatLogView.scrollToBottom(true)
             }
 
-            onSendingMessageFailed: {
+            function onSendingMessageFailed() {
                 sendingMsgFailedPopup.open();
             }
 
-            onNewMessagePushed: {
+            function onNewMessagePushed() {
                 if (!chatLogView.scrollToBottom()) {
                     newMessages++
                 }
@@ -197,7 +197,7 @@ Item {
             // Whole this Connection object (both slots) should be moved to the nim side.
             // Left here only cause we don't have a way to deal with translations on the nim side.
 
-            onMembershipRequestChanged: function (communityId, communityName, accepted) {
+            function onMembershipRequestChanged(communityId, communityName, accepted) {
                 chatColumnLayout.currentNotificationChatId = null
                 chatColumnLayout.currentNotificationCommunityId = communityId
                 chatsModel.showOSNotification("Status",
@@ -213,7 +213,7 @@ Item {
                                               appSettings.useOSNotifications)
             }
 
-            onMembershipRequestPushed: function (communityId, communityName, pubKey) {
+            function onMembershipRequestPushed(communityId, communityName, pubKey) {
                 chatColumnLayout.currentNotificationChatId = null
                 chatColumnLayout.currentNotificationCommunityId = communityId
                 //% "New membership request"

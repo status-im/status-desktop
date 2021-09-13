@@ -118,7 +118,7 @@ Item {
 
             Connections {
                 target: chatsModel.stickers
-                onGasEstimateReturned: {
+                function onGasEstimateReturned(estimate, uuid) {
                     stickerPurchasePopup.setAsyncGasLimitResult(uuid, estimate)
                 }
             }

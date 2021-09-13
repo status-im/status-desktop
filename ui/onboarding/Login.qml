@@ -174,7 +174,7 @@ Item {
         Connections {
             target: loginModel
             ignoreUnknownSignals: true
-            onLoginResponseChanged: {
+            function onLoginResponseChanged(error) {
                 if (error) {
                     // SQLITE_NOTADB: "file is not a database"
                     if (error === "file is not a database") {

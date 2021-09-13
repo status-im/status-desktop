@@ -109,7 +109,7 @@ ScrollView {
 
             Connections {
                 target: chatsModel.messageView
-                onMessagesLoaded: {
+                function onMessagesLoaded() {
                     Qt.callLater(chatLogView.positionViewAtBeginning)
                 }
             }

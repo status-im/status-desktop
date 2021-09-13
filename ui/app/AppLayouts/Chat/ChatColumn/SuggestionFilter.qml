@@ -13,9 +13,15 @@ Item {
     property var property: ([])
 
     Connections {
-        onFilterChanged: invalidateFilter()
-        onPropertyChanged: invalidateFilter()
-        onSourceModelChanged: invalidateFilter()
+        function onFilterChanged(){
+            invalidateFilter()
+        }
+        function onPropertyChanged() {
+            invalidateFilter()
+        }
+        function onSourceModelChanged() {
+            invalidateFilter()
+        }
     }
 
     Component.onCompleted: invalidateFilter()

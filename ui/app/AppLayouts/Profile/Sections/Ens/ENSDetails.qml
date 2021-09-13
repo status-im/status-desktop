@@ -43,7 +43,7 @@ Item {
 
     Connections {
         target: profileModel.ens
-        onDetailsObtained: {
+        function onDetailsObtained(ensName, address, pubkey, isStatus, expirationTime) {
             if(username != ensName) return;
                 walletAddressLbl.text = address;
                 walletAddressLbl.textToCopy = address;
@@ -55,7 +55,7 @@ Item {
                 releaseBtn.enabled = (Date.now() / 1000) > expirationTime && expirationTime > 0 && profileModel.ens.preferredUsername != username
                 expiration = new Date(expirationTime * 1000).getTime()
         }
-        onLoading: {
+        function onLoading(isLoading) {
             loadingImg.active = isLoading
             if(!isLoading) return;
             walletAddressLbl.visible = false;

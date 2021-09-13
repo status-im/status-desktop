@@ -227,7 +227,7 @@ Item {
 
             Connections {
                 target: profileModel.contacts.list
-                onContactChanged: {
+                function onContactChanged(pubkey) {
                     for (var i = 0; i < channelList.chatListItems.count; i++) {
                         let chatItem = channelList.chatListItems.itemAt(i);
                         if (chatItem.chatId === pubkey) {
@@ -344,7 +344,7 @@ Item {
 
     Connections {
         target: chatsModel.communities
-        onImportingCommunityStateChanged: {
+        function onImportingCommunityStateChanged(state, communityImportingProcessId) {
             if (state !== Constants.communityImported &&
                 state !== Constants.communityImportingInProgress &&
                 state !== Constants.communityImportingError)

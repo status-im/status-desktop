@@ -246,7 +246,7 @@ Item {
 
                 Connections {
                     target: chatsModel
-                    onOnlineStatusChanged: {
+                    function onOnlineStatusChanged(connected) {
                         if (connected == isConnected) return;
                         isConnected = connected;
                         if(isConnected){
@@ -311,7 +311,7 @@ Item {
 
             Connections {
                 target: chatsModel.channelView
-                onActiveChannelChanged: {
+                function onActiveChannelChanged() {
                     isBlocked = profileModel.contacts.isContactBlocked(activeChatId);
                     chatInput.suggestions.hide();
                     chatInput.textInput.forceActiveFocus(Qt.MouseFocusReason)
@@ -334,7 +334,7 @@ Item {
 
                 Connections {
                     target: chatsModel.messageView
-                    onLoadingMessagesChanged:
+                    function onLoadingMessagesChanged(value){
                         if(value){
                             loadingMessagesIndicator.active = true
                         } else {
@@ -342,6 +342,7 @@ Item {
                                 loadingMessagesIndicator.active = false;
                             }, 5000);
                         }
+                    }
                 }
 
                 Loader {
@@ -526,17 +527,17 @@ Item {
 
         Connections {
             target: profileModel.contacts
-            onContactListChanged: {
+            function onContactListChanged() {
                 isBlocked = profileModel.contacts.isContactBlocked(activeChatId);
             }
-            onContactBlocked: {
+            function onContactBlocked(publicKey) {
                 chatsModel.messageView.removeMessagesByUserId(publicKey)
             }
         }
 
         Connections {
             target: chatsModel.channelView
-            onActiveChannelChanged: {
+            function onActiveChannelChanged() {
                 chatsModel.messageView.hideLoadingIndicator()
                 SelectedMessage.reset();
                 chatColumn.isReply = false;
@@ -545,7 +546,7 @@ Item {
 
         Connections {
             target: systemTray
-            onMessageClicked: function () {
+            function onMessageClicked() {
                 clickOnNotification()
             }
         }
@@ -561,11 +562,11 @@ Item {
         Connections {
             target: chatsModel.messageView
 
-            onSearchedMessageLoaded: {
+            function onSearchedMessageLoaded(messageId) {
                 positionAtMessage(messageId)
             }
 
-            onMessageNotificationPushed: function(messageId, communityId, chatId, msg, contentType, chatType, timestamp, identicon, username, hasMention, isAddedContact, channelName) {
+            function onMessageNotificationPushed(messageId, communityId, chatId, msg, contentType, chatType, timestamp, identicon, username, hasMention, isAddedContact, channelName) {
                 if (appSettings.notificationSetting == Constants.notifyAllMessages ||
                         (appSettings.notificationSetting == Constants.notifyJustMentions && hasMention)) {
                     if (chatId === chatsModel.channelView.activeChannel.id && applicationWindow.active === true) {
@@ -621,7 +622,7 @@ Item {
 
         Connections {
             target: chatsModel.stickers
-            onTransactionWasSent: {
+            function onTransactionWasSent(txResult) {
                 //% "Transaction pending..."
                 toastMessage.title = qsTr("Transaction pending...")
                 toastMessage.source = "../../../img/loading.svg"
@@ -630,7 +631,7 @@ Item {
                 toastMessage.link = `${walletModel.utilsView.etherscanLink}/${txResult}`
                 toastMessage.open()
             }
-            onTransactionCompleted: {
+            function onTransactionCompleted(success, txHash, revertReason) {
                 toastMessage.title = !success ?
                                      //% "Could not buy Stickerpack"
                                      qsTrId("could-not-buy-stickerpack")
