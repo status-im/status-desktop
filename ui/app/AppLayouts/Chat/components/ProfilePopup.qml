@@ -25,7 +25,7 @@ StatusModal {
     property var alias: ""
 
     readonly property int innerMargin: 20
-    
+
     property bool isEnsVerified: false
     property bool noFooter: false
     property bool isBlocked: false
@@ -90,7 +90,7 @@ StatusModal {
             }
 
             StatusDescriptionListItem {
-                title: qsTr("ENS username")
+                title: ((isCurrentUser && profileModel.ens.preferredUsername) || isEnsVerified) ? qsTr("ENS username") : qsTr("Username")
                 subTitle: isCurrentUser ? profileModel.ens.preferredUsername || userName : userName
                 tooltip.text: qsTr("Copy to clipboard")
                 icon.name: "copy"
