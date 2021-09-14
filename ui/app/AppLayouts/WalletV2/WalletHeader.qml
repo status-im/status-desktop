@@ -5,6 +5,7 @@ import "../../../imports"
 import "../../../shared"
 import "../../../shared/status"
 import "./components"
+import "./components/network"
 
 Item {
     property var currentAccount: walletV2Model.accountsView.currentAccount
@@ -24,7 +25,7 @@ Item {
     Row {
         id: accountRow
         anchors.top: parent.top
-        anchors.topMargin: 56
+        anchors.topMargin: 24
         anchors.left: parent.left
         anchors.leftMargin: 24
 
@@ -54,6 +55,7 @@ Item {
             text: currentAccount.balance.toUpperCase()
             font.pixelSize: 22
         }
+        
     }
 
     MouseArea {
@@ -74,82 +76,12 @@ Item {
         anchors.topMargin: 0
     }
 
-    Item {
-        property int btnMargin: 8
-        property int btnOuterMargin: Style.current.bigPadding
-        id: walletMenu
-        width: sendBtn.width + receiveBtn.width + settingsBtn.width
-               + walletMenu.btnOuterMargin * 2
+    NetworkSelect {
+        id: networkSelect
         anchors.top: parent.top
-        anchors.topMargin: 16
+        anchors.topMargin: 30
         anchors.right: parent.right
-        anchors.rightMargin: 16
-
-        HeaderButton {
-            id: sendBtn
-            imageSource: "../../img/send.svg"
-            //% "Send"
-            text: qsTrId("command-button-send")
-            onClicked: () => console.log("TODO");
-        }
-
-        HeaderButton {
-            id: receiveBtn
-            imageSource: "../../img/send.svg"
-            flipImage: true
-            //% "Receive"
-            text: qsTrId("receive")
-            onClicked: () => console.log("TODO")
-            anchors.left: sendBtn.right
-            anchors.leftMargin: walletMenu.btnOuterMargin
-        }
-
-        HeaderButton {
-            id: settingsBtn
-            imageSource: "../../img/settings.svg"
-            flipImage: true
-            text: ""
-            onClicked: function () {
-                if (newSettingsMenu.opened) {
-                    newSettingsMenu.close()
-                } else {
-                    let x = settingsBtn.x + settingsBtn.width / 2 - newSettingsMenu.width / 2
-                    newSettingsMenu.popup(x, settingsBtn.height)
-                }
-            }
-            anchors.left: receiveBtn.right
-            anchors.leftMargin: walletMenu.btnOuterMargin
-
-            PopupMenu {
-                id: newSettingsMenu
-                closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
-                width: 176
-                Action {
-                    //% "Account Settings"
-                    text: qsTrId("account-settings")
-                    icon.source: "../../img/manage-wallet.svg"
-                    icon.width: 16
-                    icon.height: 16
-                    onTriggered: console.log("TODO")
-                }
-                Action {
-                    //% "Manage Assets"
-                    text: qsTrId("manage-assets")
-                    icon.source: "../../img/add_remove_token.svg"
-                    icon.width: 16
-                    icon.height: 16
-                    onTriggered: console.log("TODO")
-                }
-                Action {
-                    //% "Set Currency"
-                    text: qsTrId("set-currency")
-                    icon.source: "../../img/currency.svg"
-                    icon.width: 16
-                    icon.height: 16
-                    onTriggered: console.log("TODO")
-                }
-            }
-        }
+        anchors.rightMargin: 90
     }
 
     Component {

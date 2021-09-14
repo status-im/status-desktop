@@ -2,7 +2,7 @@ import atomics, strformat, strutils, sequtils, json, std/wrapnils, parseUtils, t
 import NimQml, chronicles, stint
 
 import status/[status, wallet2]
-import views/[accounts, account_list, collectibles, settings]
+import views/[accounts, account_list, collectibles, settings, networks]
 import views/buy_sell_crypto/[service_controller]
 import ../../../app_service/[main]
 
@@ -14,6 +14,7 @@ QtObject:
       accountsView: AccountsView
       collectiblesView: CollectiblesView
       settingsView*: SettingsView
+      networksView*: NetworksView
       cryptoServiceController: CryptoServiceController
 
   proc delete(self: WalletView) =
@@ -22,6 +23,7 @@ QtObject:
     self.cryptoServiceController.delete
     self.QAbstractListModel.delete
     self.settingsView.delete
+    self.networksView.delete
 
   proc setup(self: WalletView) =
     self.QAbstractListModel.setup
@@ -33,24 +35,27 @@ QtObject:
     result.accountsView = newAccountsView(status)
     result.collectiblesView = newCollectiblesView(status, appService)
     result.settingsView = newSettingsView()
+    result.networksView = newNetworksView()
     result.cryptoServiceController = newCryptoServiceController(status, appService)
     result.setup
 
   proc getAccounts(self: WalletView): QVariant {.slot.} = 
     newQVariant(self.accountsView)
-
   QtProperty[QVariant] accountsView:
     read = getAccounts
 
   proc getCollectibles(self: WalletView): QVariant {.slot.} = 
     return newQVariant(self.collectiblesView)
+  QtProperty[QVariant] collectiblesView:
+    read = getCollectibles
 
   proc getSettings(self: WalletView): QVariant {.slot.} = newQVariant(self.settingsView)
   QtProperty[QVariant] settingsView:
     read = getSettings
 
-  QtProperty[QVariant] collectiblesView:
-    read = getCollectibles
+  proc getNetworks(self: WalletView): QVariant {.slot.} = newQVariant(self.networksView)
+  QtProperty[QVariant] networksView:
+    read = getNetworks
 
   proc updateView*(self: WalletView) =
     # TODO:
