@@ -30,9 +30,6 @@ proc mainProc() =
 
   ensureDirectories(DATADIR, TMPDIR, LOGDIR)
 
-  let logFile = fmt"app_{getTime().toUnix}.log"
-  discard defaultChroniclesStream.output.open(LOGDIR & logFile, fmAppend)
-
   var currentLanguageCode: string
 
   let fleets =
@@ -137,6 +134,18 @@ proc mainProc() =
   signalsQObjPointer = cast[pointer](appService.signalController.vptr)
   defer:
     signalsQObjPointer = nil
+
+  when compiles(defaultChroniclesStream.output.writer):
+    defaultChroniclesStream.output.writer =
+      proc (logLevel: LogLevel, msg: LogOutputStr) {.gcsafe, raises: [Defect].} =
+        try:
+          if signalsQObjPointer != nil:
+            signal_handler(signalsQObjPointer, ($(%* {"type": "chronicles-log", "event": msg})).cstring, "receiveSignal")
+        except:
+          logLoggingFailure(cstring(msg), getCurrentException())
+  
+  let logFile = fmt"app_{getTime().toUnix}.log"
+  discard defaultChroniclesStream.outputs[1].open(LOGDIR & logFile, fmAppend)
 
   var wallet = wallet.newController(status, appService)
   defer: wallet.delete()

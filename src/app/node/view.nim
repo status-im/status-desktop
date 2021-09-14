@@ -200,3 +200,5 @@ QtObject:
   QtProperty[int] peerSize:
     read = getPeerSize
     notify = peerSizeChanged
+
+  proc log*(self: NodeView, logContent: string) {.signal.}
