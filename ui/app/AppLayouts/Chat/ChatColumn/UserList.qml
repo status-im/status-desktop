@@ -31,7 +31,7 @@ Item {
         visible: (opacity > 0.1)
         font.pixelSize: Style.current.primaryTextFontSize
         //% "Members"
-        text: qsTrId("members-label")
+        text: qsTr("Last seen")
     }
 
     ListView {
