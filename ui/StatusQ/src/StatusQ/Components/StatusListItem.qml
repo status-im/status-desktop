@@ -51,7 +51,7 @@ Rectangle {
         width: 20
         rotation: 0
         isLetterIdenticon: false
-        color: type === StatusListItem.Type.Danger ? 
+        color: type === StatusListItem.Type.Danger ?
             Theme.palette.dangerColor1 : Theme.palette.primaryColor1
         background: StatusIconBackgroundSettings {
             width: 40
@@ -60,11 +60,11 @@ Rectangle {
                 if (sensor.containsMouse) {
                     return type === StatusListItem.Type.Secondary ||
                            type === StatusListItem.Type.Danger ? "transparent" :
-                           Theme.palette.primaryColor3     
+                           Theme.palette.primaryColor3
                 }
-                return type === StatusListItem.Type.Danger ? 
+                return type === StatusListItem.Type.Danger ?
                     Theme.palette.dangerColor3 : Theme.palette.primaryColor3
-            }        
+            }
         }
     }
     property StatusImageSettings image: StatusImageSettings {
@@ -123,8 +123,8 @@ Rectangle {
                 return !!statusListItem.icon.name ? statusRoundedIcon : statusRoundedImage
             }
 
-            active: statusListItem.icon.isLetterIdenticon || 
-                    !!statusListItem.icon.name || 
+            active: statusListItem.icon.isLetterIdenticon ||
+                    !!statusListItem.icon.name ||
                     !!statusListItem.image.source.toString()
         }
 

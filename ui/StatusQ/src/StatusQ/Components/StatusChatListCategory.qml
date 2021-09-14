@@ -42,14 +42,15 @@ Column {
 
         highlighted: statusChatListCategory.dragged
         sensor.onClicked: {
-            if (mouse.button === Qt.RightButton && showActionButtons && !!statusChatListCategory.popupMenu) {
-                highlighted = true
-                popupMenuSlot.item.popup(mouse.x + 4, mouse.y + 6)
-                return
+            if (sensor.enabled) {
+                if (mouse.button === Qt.RightButton && showActionButtons && !!statusChatListCategory.popupMenu) {
+                    highlighted = true;
+                    popupMenuSlot.item.popup(mouse.x + 4, mouse.y + 6);
+                    return
+                }
+                statusChatListCategory.opened = !opened;
             }
-            statusChatListCategory.opened = !opened
         }
-
         onTitleClicked: statusChatListCategory.opened = !opened
         onToggleButtonClicked: statusChatListCategory.opened = !opened
         onMenuButtonClicked: {
