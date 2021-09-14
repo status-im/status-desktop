@@ -24,8 +24,8 @@ StatusModal {
             addressInput.input.edit.forceActiveFocus(Qt.MouseFocusReason);
     }
 
+    property var store
     property bool loading: false
-    property var onBeforeSave: function() {}
     property bool edit: false
     property bool valid: addressInput.valid && nameInput.valid // TODO: Add network preference and emoji
     property bool dirty: addressInput.input.dirty && nameInput.input.dirty
@@ -34,6 +34,7 @@ StatusModal {
     property int validationMode: edit ?
         StatusInput.ValidationMode.Always :
         StatusInput.ValidationMode.OnlyWhenDirty
+    signal beforeSave()
 
     contentItem: Column {
         anchors.left: parent.left
@@ -125,10 +126,10 @@ StatusModal {
 
             onClicked: {
                 root.loading = true;
-                root.onBeforeSave()
+                root.beforeSave();
                 edit ?
-                    walletV2Model.savedAddressesView.editSavedAddress(name, address) :
-                    walletV2Model.savedAddressesView.addSavedAddress(name, address);
+                    root.store.walletModelV2Inst.savedAddressesView.editSavedAddress(name, address) :
+                    root.store.walletModelV2Inst.savedAddressesView.addSavedAddress(name, address);
                 root.close()
                 root.loading = false;
             }

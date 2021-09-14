@@ -6,11 +6,12 @@ import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core 0.1
 
-import "../../../imports"
-import "../Profile/Sections"
+import "../../../../imports"
+import "../../Profile/Sections"
 
 Item {
     id: root
+    property var store
 
     Column {
         anchors.top:parent.top
@@ -25,15 +26,15 @@ Item {
             anchors.right: parent.right
             anchors.rightMargin: 20
 
-            visible : (walletV2Model.accountsView.currentAccount.walletType !== Constants.seedWalletType) &&
-                      (walletV2Model.accountsView.currentAccount.walletType !== Constants.watchWalletType) &&
-                      (walletV2Model.accountsView.currentAccount.walletType !== Constants.keyWalletType)
+            visible : (root.store.walletModelV2Inst.accountsView.currentAccount.walletType !== Constants.seedWalletType) &&
+                      (root.store.walletModelV2Inst.accountsView.currentAccount.walletType !== Constants.watchWalletType) &&
+                      (root.store.walletModelV2Inst.accountsView.currentAccount.walletType !== Constants.keyWalletType)
             expandable: false
             icon.name: "seed-phrase"
             primaryText: qsTr("Back up seed phrase")
             secondaryText: qsTr("Back up your seed phrase now to secure this account")
             button.text: qsTr("Back up seed phrase")
-            button.enabled: !profileModel.mnemonic.isBackedUp
+            button.enabled: !root.store.profileModelInst.mnemonic.isBackedUp
             button.onClicked: backupSeedModal.open()
         }
 
@@ -43,7 +44,7 @@ Item {
             anchors.right: parent.right
             anchors.rightMargin: 20
 
-            visible : walletV2Model.accountsView.currentAccount.walletType !== Constants.watchWalletType
+            visible : root.store.walletModelV2Inst.accountsView.currentAccount.walletType !== Constants.watchWalletType
             expandable: true
             icon.name: "secret"
             primaryText: qsTr("Account signing phrase")
@@ -57,8 +58,8 @@ Item {
             anchors.right: parent.right
             anchors.rightMargin: 20
 
-            visible : (walletV2Model.accountsView.currentAccount.walletType === Constants.keyWalletType) ||
-                      (walletV2Model.accountsView.currentAccount.walletType === Constants.seedWalletType)
+            visible : (root.store.walletModelV2Inst.accountsView.currentAccount.walletType === Constants.keyWalletType) ||
+                      (root.store.walletModelV2Inst.accountsView.currentAccount.walletType === Constants.seedWalletType)
             expandable: true
             icon.name: "seed-phrase"
             primaryText: qsTr("View private key")
@@ -67,7 +68,7 @@ Item {
             expandableComponent: notImplemented
             button.onClicked: {
                 // To-do open  enter password Modal
-                expanded = !expanded
+                expanded = !expanded;
             }
         }
 
@@ -131,7 +132,7 @@ Item {
                     lineHeightMode: Text.FixedHeight
                     elide: Text.ElideRight
                     wrapMode: Text.Wrap
-                    text: walletV2Model.settingsView.signingPhrase
+                    text: root.store.walletModelV2Inst.settingsView.signingPhrase
                 }
             }
             Rectangle {

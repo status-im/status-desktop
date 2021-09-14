@@ -3,10 +3,14 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import "../../../imports"
 import "../../../shared"
+
+import "stores"
+import "controls"
 import "views"
+import "panels"
+import "popups"
 import "views/assets"
-import "."
-import "./components"
+import "views/collectibles"
 
 import StatusQ.Controls 0.1
 import StatusQ.Layout 0.1
@@ -16,21 +20,10 @@ Item {
     id: walletView
 
     property bool hideSignPhraseModal: false
+    property RootStore store: RootStore { }
 
-    function showSavedAddressesView() {
-        layoutWalletTwoPanel.rightPanel.view.replace(cmpSavedAddresses);
-    }
-
-    function hideSavedAddressesView() {
-        layoutWalletTwoPanel.rightPanel.view.replace(walletInfoContent);
-    }
-
-    function openCollectibleDetailView(options) {
-        collectiblesDetailPage.active = true
-        collectiblesDetailPage.item.show(options)
-    }
-
-    function showSigningPhrasePopup(){
+    function showSigningPhrasePopup() {
+        //TODO improve this to not use dynamic scoping
         if(!hideSignPhraseModal && !appSettings.hideSignPhraseModal){
             signPhrasePopup.open();
         }
@@ -38,12 +31,18 @@ Item {
 
     SignPhraseModal {
         id: signPhrasePopup
+        signingPhraseText: walletView.store.walletModelInst.utilsView.signingPhrase
+        onRemindLaterButtonClicked: {
+            hideSignPhraseModal = true;
+            signPhrasePopup.close();
+        }
     }
-
-    SeedPhraseBackupWarning {
+        
+    SeedPhraseBackupWarningPanel {
         id: seedPhraseWarning
         width: parent.width
         anchors.top: parent.top
+        visible: !walletView.store.profileModelInst.mnemonic.isBackedUp
     }
 
     StatusAppTwoPanelLayout {
@@ -53,15 +52,23 @@ Item {
         width: walletView.width
 
         Component.onCompleted: {
-            if(onboardingModel.firstTimeLogin){
-                onboardingModel.firstTimeLogin = false
-                walletModel.setInitialRange()
+            if (walletView.store.onboardingModelInst.firstTimeLogin) {
+                walletView.store.onboardingModelInst.firstTimeLogin = false;
+                walletView.store.walletModelInst.setInitialRange();
             }
         }
         
-        leftPanel: LeftTab {
+        leftPanel: LeftTabView {
             id: leftTab
             anchors.fill: parent
+            store: walletView.store
+            onSavedAddressesClicked: {
+                if (selected) {
+                    stackView.replace(cmpSavedAddresses);
+                } else {
+                    stackView.replace(walletInfoContent);
+                }
+            }
         }
 
         rightPanel: Item {
@@ -76,7 +83,6 @@ Item {
                 anchors.left: parent.left
                 anchors.leftMargin: 80
                 anchors.right: parent.right
-                visible: !collectiblesDetailPage.active
                 anchors.rightMargin: 80
                 StackBaseView {
                     id: stackView
@@ -84,9 +90,16 @@ Item {
                     Layout.fillHeight: true
                     initialItem: Item {
                         id: walletInfoContent
-                        WalletHeader {
+                        WalletHeaderPanel {
                             id: walletHeader
-                            changeSelectedAccount: leftTab.changeSelectedAccount
+                            accountsModel: walletView.store.walletModelV2Inst.accountsView.accounts
+                            currentAccount: walletView.store.walletModelV2Inst.accountsView.currentAccount
+                            qrCode: walletView.store.profileModelInst.qrCode(walletView.store.selectedAccount.address)
+                            allNetworksModel: walletView.store.walletModelV2Inst.networksView.allNetworks
+                            enabledNetworksModel: walletView.store.walletModelV2Inst.networksView.enabledNetworks
+                            onCopyText: {
+                                walletView.store.copyText(text);
+                            }
                         }
                         TabBar {
                             id: walletTabBar
@@ -96,9 +109,7 @@ Item {
                             anchors.topMargin: Style.current.padding
                             height: childrenRect.height
                             spacing: 24
-                            background: Rectangle {
-                                color: Style.current.transparent
-                            }
+                            background: null
                             StatusTabButton {
                                 id: assetsBtn
                                 btnText: qsTr("Assets")
@@ -115,12 +126,7 @@ Item {
                                 id: activityBtn
                                 btnText: qsTr("Activity")
                             }
-                            StatusTabButton {
-                                id: settingsBtn
-                                btnText: qsTr("Settings")
-                            }
                         }
-
                         StackLayout {
                             id: stackLayout
                             anchors.top: walletTabBar.bottom
@@ -141,6 +147,10 @@ Item {
                             }
                             CollectiblesView {
                                 id: collectiblesTab
+                                store: walletView.store
+                                onCollectibleClicked: {
+                                    stackView.replace(collectibleDetailView);
+                                }
                             }
                             ActivityView {
                                 id: activityTab
@@ -148,40 +158,38 @@ Item {
                         }
                     }
                 }
+            }
 
-                Component {
-                    id: assetDetailView
-                    AssetDetailView {
-                        onBackPressed: {
-                            stackView.replace(walletInfoContent);
-                        }
-
-                        SettingsTab {
-                            id: settingsTab
-                        }
+            Component {
+                id: assetDetailView
+                AssetDetailView {
+                    onBackPressed: {
+                        stackView.replace(walletInfoContent);
                     }
                 }
-                Component {
-                    id: cmpSavedAddresses
-                    SavedAddresses {}
+            }
+
+            Component {
+                id: collectibleDetailView
+                CollectibleDetailView {
+                    store: walletView.store
+                    onBackPressed: {
+                        stackView.replace(walletInfoContent);
+                    }
                 }
             }
 
-            WalletFooter {
+            Component {
+                id: cmpSavedAddresses
+                SavedAddressesView {
+                    store: walletView.store
+                }
+            }
+
+            WalletFooterPanel {
                 id: walletFooter
                 anchors.bottom: parent.bottom
-            }
-
-            Loader {
-                id: collectiblesDetailPage
-                anchors.bottom: walletFooter.top
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.top: parent.top
-                active: false
-                sourceComponent: CollectibleDetailsPage {
-                    anchors.fill: parent
-                }
+                walletV2Model: walletView.store.walletModelV2Inst
             }
         }
     }

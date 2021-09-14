@@ -3,22 +3,27 @@ import QtQuick.Controls 2.14
 import "../../../../imports"
 import "../../../../shared"
 
+import StatusQ.Popups 0.1
 import StatusQ.Components 0.1
 
-ModalPopup {
+import "../controls"
+
+StatusModal {
     id: cryptoServicesPopupRoot
-    title: qsTr("Buy crypto")
     height: 400
+    header.title: qsTr("Buy crypto")
+    property var walletV2Model
 
     onOpened: {
-        loader.active = true
-        walletV2Model.cryptoServiceController.fetchCryptoServices()
+        loader.active = true;
+        cryptoServicesPopupRoot.walletV2Model.cryptoServiceController.fetchCryptoServices();
     }
 
-    Component.onCompleted: {
-        walletV2Model.cryptoServiceController.fetchCryptoServicesFetched.connect(function(){
-            loader.sourceComponent = servicesComponent
-        })
+    Connections {
+        target: cryptoServicesPopupRoot.walletV2Model.cryptoServiceController
+        function onFetchCryptoServicesFetched() {
+            loader.sourceComponent = servicesComponent;
+        }
     }
 
     Loader {
@@ -50,7 +55,7 @@ ModalPopup {
                     anchors.bottom: parent.bottom
                     anchors.topMargin: Style.current.padding
                     width: parent.width
-                    model: walletV2Model.cryptoServiceController.cryptoServiceModel
+                    model: cryptoServicesPopupRoot.walletV2Model.cryptoServiceController.cryptoServiceModel
                     focus: true
                     spacing: Style.current.padding
                     clip: true
@@ -99,8 +104,9 @@ ModalPopup {
                             cursorShape: Qt.PointingHandCursor
 
                             onClicked: {
-                                appMain.openLink(siteUrl)
-                                cryptoServicesPopupRoot.close()
+                                //TOOD improve this to not use dynamic scoping
+                                appMain.openLink(siteUrl);
+                                cryptoServicesPopupRoot.close();
                             }
                         }
                     }

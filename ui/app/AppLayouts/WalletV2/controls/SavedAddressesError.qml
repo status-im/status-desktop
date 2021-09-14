@@ -9,11 +9,10 @@ import StatusQ.Controls 0.1
 
 Item {
     id: addEditError
-
-    property alias text: label.text
-
     anchors.left: parent.left
     anchors.right: parent.right
+
+    property alias text: label.text
 
     StatusIcon {
         id: errorIcon

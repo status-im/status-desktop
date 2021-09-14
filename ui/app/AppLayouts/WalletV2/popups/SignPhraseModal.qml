@@ -1,95 +1,95 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
-import "../../../imports"
-import "../../../shared"
-import "../../../shared/status"
+import "../../../../imports"
+import "../../../../shared"
+import "../../../../shared/status"
 import "."
 
 ModalPopup {
     id: signPhrasePopup
-    //% "Signing phrase"
     title: qsTrId("signing-phrase")
     height: 390
     closePolicy: Popup.NoAutoClose
+
+    property string signingPhraseText: ""
+    signal remindLaterButtonClicked()
 
     Column {
         anchors.left: parent.left
         anchors.right: parent.right
 
         StyledText {
+            height: (Style.current.padding * 3)
             anchors.horizontalCenter: parent.horizontalCenter
-            //% "This is your signing phrase"
-            text: qsTrId("this-is-you-signing")
+            horizontalAlignment: Text.AlignHCenter
             font.pixelSize: 17
             font.weight: Font.Bold
-            horizontalAlignment: Text.AlignHCenter
-            height: Style.current.padding * 3
+            text: qsTrId("this-is-you-signing")
         }
 
         StyledText {
-            anchors.horizontalCenter: parent.horizontalCenter
-            //% "You should see these 3 words before signing each transaction"
-            text: qsTrId("three-words-description")
-            font.pixelSize: 15
             width: 330
-            wrapMode: Text.WordWrap
-            horizontalAlignment: Text.AlignHCenter
             height: Style.current.padding * 4
+            anchors.horizontalCenter: parent.horizontalCenter
+            horizontalAlignment: Text.AlignHCenter
+            font.pixelSize: 15
+            wrapMode: Text.WordWrap
+            text: qsTrId("three-words-description")
         }
 
         Rectangle {
-            color: Style.current.inputBackground
-            height: 44
             width: parent.width
+            height: 44
+            color: Style.current.inputBackground
             StyledText {
                 id: signingPhrase
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter
                 font.pixelSize: 15
-                text: walletModel.utilsView.signingPhrase
+                text: signPhrasePopup.signingPhraseText
             }
         }
 
         Item {
-            height: 30
             width: parent.width
+            height: 30
             SVGImage {
                 width: 13.33
                 height: 13.33
-                sourceSize.height: height * 2
-                sourceSize.width: width * 2
+                sourceSize.height: (height * 2)
+                sourceSize.width: (width * 2)
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.bottom: parent.bottom
                 fillMode: Image.PreserveAspectFit
-                source: "../../img/exclamation_outline.svg"
+                source: "../../../img/exclamation_outline.svg"
             }
         }
 
         StyledText {
-            //% "If you see a different combination, cancel the transaction and sign out"
-            text: qsTrId("three-words-description-2")
+            width: parent.width
+            height: 18
+            anchors.horizontalCenter: parent.horizontalCenter
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignHCenter
-            width: parent.width
             font.pixelSize: 13
-            height: 18
             color: Style.current.danger
-            anchors.horizontalCenter: parent.horizontalCenter
+            //% "If you see a different combination, cancel the transaction and sign out"
+            text: qsTrId("three-words-description-2")
         }
     }
 
     footer: Item {
         width: parent.width
         height: btnRemindLater.height
-        
         StatusButton {
             anchors.right: btnRemindLater.left
             anchors.rightMargin: Style.current.padding
+            type: "secondary"
             //% "Ok, got it"
             text: qsTrId("ens-got-it")
-            type: "secondary"
             onClicked: {
+                //TOOD improve this to not use dynamic scoping
                 appSettings.hideSignPhraseModal = true;
                 close();
             }
@@ -102,8 +102,7 @@ ModalPopup {
             //% "Remind me later"
             text: qsTrId("remind-me-later")
             onClicked: {
-                hideSignPhraseModal = true;
-                close();
+                signPhrasePopup.remindLaterButtonClicked();
             }
         }
     }

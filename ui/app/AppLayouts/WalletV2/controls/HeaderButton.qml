@@ -3,28 +3,30 @@ import QtGraphicalEffects 1.13
 import "../../../../imports"
 import "../../../../shared"
 
+
 Rectangle {
-    id: walletBtnRoot
-    width: btnImage.width + btnImage.anchors.leftMargin + btnImage.anchors.rightMargin +
-           btnText.width + btnText.anchors.leftMargin + btnText.anchors.rightMargin
-    height: btnText.height + Style.current.smallPadding * 2
+    id: headerButton
+    width: buttonImage.width + buttonText.width + Style.current.smallPadding * 2
+           + (text === "" ? 0 : headerButton.btnMargin)
+    height: buttonText.height + Style.current.smallPadding * 2
     border.width: 0
     color: Style.current.transparent
     radius: Style.current.radius
 
+    property int btnMargin
     property string text: ""
     property url imageSource
     property bool flipImage: false
-    property var onClicked: function () {}
+    signal clicked()
 
     SVGImage {
-        id: btnImage
+        id: buttonImage
         height: 18
         anchors.left: parent.left
         anchors.leftMargin: Style.current.smallPadding
         anchors.verticalCenter: parent.verticalCenter
         fillMode: Image.PreserveAspectFit
-        source: imageSource
+        source: headerButton.imageSource
         rotation: flipImage ? 180 : 0
 
         ColorOverlay {
@@ -35,12 +37,11 @@ Rectangle {
     }
 
     StyledText {
-        id: btnText
-        visible: !!walletBtnRoot.text
-        text: walletBtnRoot.text
-        anchors.left: btnImage.right
-        anchors.leftMargin: Style.current.smallPadding
-        anchors.rightMargin: Style.current.smallPadding
+        id: buttonText
+        visible: !!headerButton.text
+        text: headerButton.text
+        anchors.left: buttonImage.right
+        anchors.leftMargin: headerButton.btnMargin
         anchors.verticalCenter: parent.verticalCenter
         font.pixelSize: 13
         font.family: Style.current.fontMedium.name
@@ -51,15 +52,15 @@ Rectangle {
     MouseArea {
         anchors.fill: parent
         hoverEnabled: true
+        cursorShape: Qt.PointingHandCursor
         onEntered: {
-            parent.color = Style.current.secondaryBackground
+            headerButton.color = Style.current.secondaryBackground;
         }
         onExited: {
-            parent.color = Style.current.transparent
+            headerButton.color = Style.current.transparent;
         }
         onClicked: {
-            walletBtnRoot.onClicked()
+            headerButton.clicked();
         }
-        cursorShape: Qt.PointingHandCursor
     }
 }

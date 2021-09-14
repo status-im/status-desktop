@@ -1,6 +1,8 @@
 import QtQuick 2.13
 
 import "../../../../imports"
+import "../panels"
+import "../controls"
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -19,6 +21,7 @@ Item {
             searching = false;
         }
     }
+    property var store
     property var dummyModel: []
 
     Column {
@@ -45,13 +48,16 @@ Item {
         anchors.bottomMargin: 10
         clip: true
         //TODO replace with active accounts model
-        model: walletModel.accountsView.accounts
+        model: root.store.walletModelInst.accountsView.accounts
         delegate: SeedAccountDetailsDelegate {
             deleteButtonVisible: (activeAccountsView.count > 1)
+            onDeleteClicked: {
+                root.store.deleteAccount(address);
+            }
         }
     }
 
-    AccountNotFound {
+    AccountNotFoundPanel {
         id: accountNotFound
         width: parent.width
         anchors.verticalCenter: parent.verticalCenter

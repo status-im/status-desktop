@@ -1,15 +1,17 @@
 import QtQuick 2.13
-import "../../../../../shared"
-import "../../../../../imports"
+import "../../../../shared"
+import "../../../../imports"
 
 Grid {
     id: root
     columns: 2
     spacing: 2
+    visible: (chainRepeater.count > 0)
+    property var model
 
     Repeater {
         id: chainRepeater
-        model: walletV2Model.networksView.enabledNetworks
+        model: root.model
         width: parent.width
         height: parent.height
 

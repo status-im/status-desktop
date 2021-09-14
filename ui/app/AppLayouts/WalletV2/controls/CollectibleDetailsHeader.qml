@@ -9,52 +9,15 @@ import StatusQ.Controls 0.1
 
 Item {
     id: collectiblesDetailHeader
+    height: childrenRect.height
 
     property alias primaryText: collectibleName.text
     property alias secondaryText: collectibleId.text
-
     property StatusImageSettings image: StatusImageSettings {
         width: 40
         height: 40
     }
-
-    height: childrenRect.height
-
-    Layout.fillHeight: true
-    Layout.fillWidth: true
-
-    Row {
-        id: backButtonRow
-        anchors.top: parent.top
-        anchors.topMargin: 19
-        anchors.left: parent.left
-        spacing: 8
-        StatusIcon {
-            id: arrowIcon
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.verticalCenterOffset: -1
-            icon: "chevron-up"
-            rotation: 270
-            color: Theme.palette.primaryColor1
-        }
-        StatusBaseText {
-            anchors.verticalCenter: parent.verticalCenter
-            id: collectiblesText
-            font.weight: Font.Medium
-            font.pixelSize: 15
-            lineHeight: 22
-            lineHeightMode: Text.FixedHeight
-            color: Theme.palette.primaryColor1
-            text: qsTr("Collectibles")
-        }
-    }
-
-    MouseArea {
-        anchors.fill: backButtonRow
-        onClicked: {
-            hide()
-        }
-    }
+    signal hideButtonClicked()
 
     Row {
         id: collectibleRow
@@ -116,6 +79,6 @@ Item {
         anchors.right: parent.right
         icon.name: "send"
         text: qsTr("Send")
-        onClicked: () => console.log("TODO");
+        onClicked: { console.log("TODO"); }
     }
 }

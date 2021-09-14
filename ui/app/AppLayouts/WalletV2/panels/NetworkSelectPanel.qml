@@ -1,11 +1,14 @@
 import QtQuick 2.13
-import "../../../../../shared"
-import "../../../../../imports"
+import "../../../../shared"
+import "../../../../imports"
+import "../popups"
 
 Item {
     id: root
     width: selectRectangle.width
     height: childrenRect.height
+    property var allNetworks
+    property var enabledNetworks
 
     Rectangle {
         id: selectRectangle
@@ -41,23 +44,26 @@ Item {
         cursorShape: Qt.PointingHandCursor
         onClicked: {
             if (selectPopup.opened) {
-                selectPopup.close()
-                return
+                selectPopup.close();
+                return;
             }
-            selectPopup.open()
+            selectPopup.open();
         }
     }
 
-    NetworkFilter {
-        id: networkFilter
+
+    NetworkFilterPanel {
+        id: networkFilterPanel
+        width: root.width
         anchors.topMargin: Style.current.halfPadding
         anchors.top: selectRectangle.bottom
-        width: root.width
+        model: root.enabledNetworks
     }
 
     NetworkSelectPopup {
         id: selectPopup
         x: (parent.width - width)
-        y: (root.height - networkFilter.height)
+        y: (root.height - networkFilterPanel.height)
+        model: root.allNetworks
     }
 }

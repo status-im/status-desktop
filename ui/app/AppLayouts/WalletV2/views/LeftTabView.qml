@@ -5,32 +5,24 @@ import QtGraphicalEffects 1.13
 import StatusQ.Components 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
-import "../../../imports"
-import "../../../shared"
-import "./components"
+import "../../../../imports"
+import "../../../../shared"
 
 Rectangle {
     id: walletInfoContainer
     color: Style.current.secondaryMenuBackground
-    property int selectedAccount: 0
-    property var changeSelectedAccount: function(newIndex) {
-        if (newIndex > walletV2Model.accountsView.accounts) {
-            return
-        }
-        selectedAccount = newIndex
-        walletV2Model.setCurrentAccountByIndex(newIndex)
-        collectiblesDetailPage.active = false
-    }
+
+    property var store
+    signal savedAddressesClicked(bool selected)
 
     StyledText {
         id: title
-        //% "Wallet"
-        text: qsTrId("wallet")
         anchors.top: parent.top
         anchors.topMargin: Style.current.padding
         anchors.horizontalCenter: parent.horizontalCenter
         font.weight: Font.Bold
         font.pixelSize: 17
+        text: qsTrId("wallet")
     }
 
     Item {
@@ -46,19 +38,19 @@ Rectangle {
         StyledTextEdit {
             id: walletAmountValue
             color: Style.current.textColor
-            text: Utils.toLocaleString("0.00", globalSettings.locale, {"currency": true}) + " " + "USD"
             selectByMouse: true
             cursorVisible: true
             readOnly: true
             anchors.left: parent.left
             font.weight: Font.Medium
             font.pixelSize: 30
+            //TOOD improve this to not use dynamic scoping
+            text: Utils.toLocaleString("0.00", globalSettings.locale, {"currency": true}) + " " + "USD"
         }
 
         StyledText {
             id: totalValue
             color: Style.current.secondaryText
-            //% "Total value"
             text: qsTrId("wallet-total-value")
             anchors.left: walletAmountValue.left
             anchors.top: walletAmountValue.bottom
@@ -72,25 +64,18 @@ Rectangle {
         id: walletDelegate
 
         Rectangle {
-            property bool selected: index === selectedAccount
-            property bool hovered
-
             id: rectangle
-            height: 64
-            color: {
-              if (selected) {
-                  return Style.current.menuBackgroundActive
-              }
-              if (hovered) {
-                  return Style.current.backgroundHoverLight
-              }
-              return Style.current.transparent
-            }
-            radius: Style.current.radius
-            anchors.right: parent.right
-            anchors.rightMargin: Style.current.padding
             anchors.left: parent.left
             anchors.leftMargin: Style.current.padding
+            anchors.right: parent.right
+            anchors.rightMargin: Style.current.padding
+            height: 64
+            property bool selected: (index === walletInfoContainer.store.selectedAccount)
+            property bool hovered
+            color: selected ? Style.current.menuBackgroundActive :
+                   hovered ? Style.current.backgroundHoverLight
+                   : Style.current.transparent
+            radius: Style.current.radius
 
             SVGImage {
                 id: walletIcon
@@ -100,7 +85,7 @@ Rectangle {
                 anchors.topMargin: Style.current.smallPadding
                 anchors.left: parent.left
                 anchors.leftMargin: Style.current.padding
-                source: "../../img/walletIcon.svg"
+                source: "../../../img/walletIcon.svg"
             }
             ColorOverlay {
                 anchors.fill: walletIcon
@@ -109,7 +94,6 @@ Rectangle {
             }
             StyledText {
                 id: walletName
-                text: name
                 elide: Text.ElideRight
                 anchors.right: walletBalance.left
                 anchors.rightMargin: Style.current.smallPadding
@@ -121,11 +105,11 @@ Rectangle {
                 font.pixelSize: 15
                 font.weight: Font.Medium
                 color: Style.current.textColor
+                text: name
             }
             StyledText {
                 id: walletAddress
                 font.family: Style.current.fontHexRegular.name
-                text: address
                 anchors.right: parent.right
                 anchors.rightMargin: parent.width/2
                 elide: Text.ElideMiddle
@@ -136,10 +120,10 @@ Rectangle {
                 font.weight: Font.Medium
                 color: Style.current.secondaryText
                 opacity: selected ? 0.7 : 1
+                text: address
             }
             StyledText {
                 id: walletBalance
-                text: isLoading ? "..." : Utils.toLocaleString(fiatBalance, globalSettings.locale, {"currency": true}) + " " + "USD"
                 anchors.top: parent.top
                 anchors.topMargin: Style.current.smallPadding
                 anchors.right: parent.right
@@ -147,19 +131,20 @@ Rectangle {
                 font.pixelSize: 15
                 font.weight: Font.Medium
                 color: Style.current.textColor
+                text: isLoading ? "..." : Utils.toLocaleString(fiatBalance, globalSettings.locale, {"currency": true}) + " " + "USD"
             }
             MouseArea {
                 anchors.fill: parent
                 hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor
                 onEntered: {
-                    rectangle.hovered = true
+                    rectangle.hovered = true;
                 }
                 onExited: {
-                    rectangle.hovered = false
+                    rectangle.hovered = false;
                 }
                 onClicked: {
-                    walletInfoContainer.changeSelectedAccount(index)
+                    walletInfoContainer.store.changeSelectedAccount(index);
                 }
             }
         }
@@ -181,9 +166,8 @@ Rectangle {
             anchors.fill: parent
             spacing: 5
             boundsBehavior: Flickable.StopAtBounds
-
+            model: walletInfoContainer.store.walletModelV2Inst.accountsView.accounts
             delegate: walletDelegate
-
             ListModel {
                 id: exampleWalletModel
                 ListElement {
@@ -263,17 +247,16 @@ Rectangle {
                     iconColor: "#7CDA00"
                 }
             }
-
-            model: walletV2Model.accountsView.accounts
         }
     }
 
-    AddAccount {
+    AddAccountView {
         id: addAccountButton
         anchors.left: parent.left
         anchors.leftMargin: Style.current.padding
         anchors.top: accountsList.bottom
         anchors.topMargin: 31
+        store: walletInfoContainer.store
     }
     StatusNavigationListItem {
         id: btnSavedAddresses
@@ -286,15 +269,7 @@ Rectangle {
 
         onClicked: {
             selected = !selected;
-            selected ?
-                walletView.showSavedAddressesView() :
-                walletView.hideSavedAddressesView();
+            walletInfoContainer.savedAddressesClicked(selected);
         }
     }
 }
-
-/*##^##
-Designer {
-    D{i:0;formeditorColor:"#ffffff";formeditorZoom:0.75;height:770;width:340}
-}
-##^##*/
