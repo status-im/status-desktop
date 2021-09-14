@@ -2,9 +2,8 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 
-import "../../../imports"
-import "../../../shared"
-import "./components"
+import "../../../../imports"
+import "../../../../shared"
 
 import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
@@ -12,14 +11,17 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Popups 0.1
 
+import "../popups"
+import "../controls"
+
 Item {
     id: root
     property bool loading: false
-    property int error: SavedAddresses.Error.None
+    property int error: SavedAddressesView.Error.None
     anchors.leftMargin: 80
     anchors.rightMargin: 80
     anchors.topMargin: 62
-
+    property var store
 
     enum Error {
         CreateSavedAddressError,
@@ -28,20 +30,6 @@ Item {
         ReadSavedAddressesError,
         UpdateSavedAddressError,
         None
-    }
-
-    function getErrorText(error) {
-        switch (error) {
-            case SavedAddresses.Error.CreateSavedAddressError:
-                return qsTr("Error creating new saved address, please try again later.");
-            case SavedAddresses.Error.DeleteSavedAddressError:
-                return qsTr("Error deleting saved address, please try again later.");
-            case SavedAddresses.Error.ReadSavedAddressesError:
-                return qsTr("Error getting saved addresses, please try again later.");
-            case SavedAddresses.Error.UpdateSavedAddressError:
-                return qsTr("Error updating saved address, please try again later.");
-            default: return "";
-        }
     }
 
     Item {
@@ -75,14 +63,15 @@ Item {
         }
         Component {
             id: addEditSavedAddress
-            AddEditSavedAddress {
+            AddEditSavedAddressPopup {
                 id: addEditModal
                 anchors.centerIn: parent
+                store: root.store
                 onClosed: {
-                    destroy()
+                    destroy();
                 }
-                onBeforeSave: function() {
-                    root.loading = true
+                onBeforeSave: {
+                    root.loading = true;
                 }
             }
         }
@@ -95,10 +84,12 @@ Item {
             rightPadding: 11
             visible: !root.loading
             onClicked: {
+                //TODO improve this to not use dynamic scoping
                 appMain.openPopup(addEditSavedAddress)
             }
         }
         StatusLoadingIndicator {
+            anchors.centerIn: parent
             visible: root.loading
             color: Theme.palette.directColor4
         }
@@ -128,6 +119,7 @@ Item {
                 StatusRoundButton {
                     icon.name: "pencil"
                     visible: showButtons
+                    //TODO improve this to not use dynamic scoping
                     onClicked: appMain.openPopup(addEditSavedAddress,
                     {
                         edit: true,
@@ -182,7 +174,7 @@ Item {
                 text: qsTr("Delete")
                 onClicked: {
                     root.loading = true
-                    walletV2Model.savedAddressesView.deleteSavedAddress(
+                    root.store.walletModelV2Inst.savedAddressesView.deleteSavedAddress(
                         deleteAddressConfirm.address)
                     deleteAddressConfirm.close()
                 }
@@ -191,28 +183,28 @@ Item {
 
     }
     Connections {
-        target: walletV2Model.savedAddressesView
+        target: root.store.walletModelV2Inst.savedAddressesView
         onAddEditResultChanged: {
             root.loading = false
-            let resultRaw = walletV2Model.savedAddressesView.addEditResult
+            let resultRaw = root.store.walletModelV2Inst.savedAddressesView.addEditResult
             let result = JSON.parse(resultRaw)
             if (result.o) {
-                root.error = SavedAddresses.Error.None
-                walletV2Model.savedAddressesView.loadSavedAddresses();
+                root.error = SavedAddressesView.Error.None
+                root.store.walletModelV2Inst.savedAddressesView.loadSavedAddresses();
             } else {
                 root.error = parseInt(result.e)
             }
         }
     }
     Connections {
-        target: walletV2Model.savedAddressesView
+        target: root.store.walletModelV2Inst.savedAddressesView
         onDeleteResultChanged: {
             root.loading = false
-            let resultRaw = walletV2Model.savedAddressesView.deleteResult
+            let resultRaw = root.store.walletModelV2Inst.savedAddressesView.deleteResult
             let result = JSON.parse(resultRaw)
             if (result.o) {
-                root.error = SavedAddresses.Error.None
-                walletV2Model.savedAddressesView.loadSavedAddresses();
+                root.error = SavedAddressesView.Error.None
+                root.store.walletModelV2Inst.savedAddressesView.loadSavedAddresses();
                 deleteAddressConfirm.close();
             } else {
                 root.error = parseInt(result.e)
@@ -220,13 +212,13 @@ Item {
         }
     }
     Connections {
-        target: walletV2Model.savedAddressesView
+        target: root.store.walletModelV2Inst.savedAddressesView
         onLoadResultChanged: {
             root.loading = false
-            let resultRaw = walletV2Model.savedAddressesView.loadResult
+            let resultRaw = root.store.walletModelV2Inst.savedAddressesView.loadResult
             let result = JSON.parse(resultRaw)
             if (result.o) {
-                root.error = SavedAddresses.Error.None
+                root.error = SavedAddressesView.Error.None
             } else {
                 root.error = parseInt(result.e)
             }
@@ -237,8 +229,8 @@ Item {
         id: errorMessage
         anchors.top: header.bottom
         anchors.topMargin: Style.current.padding
-        visible: root.error !== SavedAddresses.Error.None
-        text: getErrorText(root.error)
+        visible: root.error !== SavedAddressesView.Error.None
+        text: root.store.getSavedAddressErrorText(SavedAddressesView, root.error)
         height: visible ? 36 : 0
     }
 
@@ -267,80 +259,13 @@ Item {
 
         ListView {
             id: listView
-
+            //model: root.store.exampleWalletModel
+            model: root.store.walletModelV2Inst.savedAddressesView.savedAddresses
             clip: true
             spacing: 5
             anchors.fill: parent
             boundsBehavior: Flickable.StopAtBounds
-
             delegate: delegateSavedAddress
-
-            ListModel {
-                id: exampleWalletModel
-                ListElement {
-                    name: "Status account"
-                    address: "0xcfc9f08bbcbcb80760e8cb9a3c1232d19662fc6f"
-                    isFavorite: false
-                }
-                ListElement {
-                    name: "Test account 1"
-                    address: "0x2Ef1...E0Ba"
-                    isFavorite: false
-                }
-                ListElement {
-                    name: "Status account 2"
-                    address: "0x2Ef1...E0Ba"
-                    isFavorite: true
-                }
-                ListElement {
-                    name: "Status account"
-                    address: "0xcfc9f08bbcbcb80760e8cb9a3c1232d19662fc6f"
-                    isFavorite: false
-                }
-                ListElement {
-                    name: "Test account 1"
-                    address: "0x2Ef1...E0Ba"
-                    isFavorite: false
-                }
-                ListElement {
-                    name: "Status account 2"
-                    address: "0x2Ef1...E0Ba"
-                    isFavorite: true
-                }
-                ListElement {
-                    name: "Status account"
-                    address: "0xcfc9f08bbcbcb80760e8cb9a3c1232d19662fc6f"
-                    isFavorite: false
-                }
-                ListElement {
-                    name: "Test account 1"
-                    address: "0x2Ef1...E0Ba"
-                    isFavorite: false
-                }
-                ListElement {
-                    name: "Status account 2"
-                    address: "0x2Ef1...E0Ba"
-                    isFavorite: true
-                }
-                ListElement {
-                    name: "Status account"
-                    address: "0xcfc9f08bbcbcb80760e8cb9a3c1232d19662fc6f"
-                    isFavorite: false
-                }
-                ListElement {
-                    name: "Test account 1"
-                    address: "0x2Ef1...E0Ba"
-                    isFavorite: false
-                }
-                ListElement {
-                    name: "Status account 2"
-                    address: "0x2Ef1...E0Ba"
-                    isFavorite: true
-                }
-            }
-
-            model: walletV2Model.savedAddressesView.savedAddresses //exampleWalletModel
         }
     }
-
 }

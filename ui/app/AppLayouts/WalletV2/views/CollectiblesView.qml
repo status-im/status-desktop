@@ -4,12 +4,17 @@ import QtGraphicalEffects 1.13
 import "../../../../imports"
 import "../../../../shared"
 import "../../../../shared/status/core"
-import "../components"
+
+import "../popups"
+import "collectibles"
 
 import StatusQ.Components 0.1
 
 Item {
-    id: collectiblesTab
+    id: root
+    width: parent.width
+    property var store
+    signal collectibleClicked()
 
     Loader {
         id: contentLoader
@@ -17,26 +22,24 @@ Item {
         height: parent.height
 
         sourceComponent: {
-            if (walletV2Model.collectiblesView.isLoading) {
-                return loading
+            if (root.store.walletModelV2Inst.collectiblesView.isLoading) {
+                return loading;
             }
-            if (walletV2Model.collectiblesView.collections.rowCount() == 0) {
-                return empty
+            if (root.store.walletModelV2Inst.collectiblesView.collections.rowCount() === 0) {
+                return empty;
             }
-
-            return loaded
+            return loaded;
         }
     }
 
     Component {
         id: loading
-
         Item {
             StatusLoadingIndicator {
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.horizontalCenter: parent.horizontalCenter
                 width: 20
                 height: 20
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.horizontalCenter: parent.horizontalCenter
             }
         }
     }
@@ -63,23 +66,29 @@ Item {
 
             Column {
                 id: collectiblesSection
-                width: collectiblesTab.width
+                width: parent.width
 
                 Repeater {
                     id: collectionsRepeater
-                    model: walletV2Model.collectiblesView.collections
-
-                    StatusExpandableItem {
+                    model: root.store.walletModelV2Inst.collectiblesView.collections
+                    //model: 5
+                    delegate: StatusExpandableItem {
                         width: parent.width - 156
                         anchors.horizontalCenter: parent.horizontalCenter
 
                         primaryText: model.name
                         image.source: model.imageUrl
                         type: StatusExpandableItem.Type.Secondary
-                        expandableComponent: CollectibleCollection {
+                        expandableComponent:  CollectibleCollectionView {
+                            store: root.store
                             slug: model.slug
-                            collectionImageUrl:  model.imageUrl
-                            collectionIndex: model.index
+                            anchors.left: parent.left
+                            anchors.leftMargin: Style.current.bigPadding
+                            anchors.right: parent.right
+                            anchors.rightMargin: Style.current.bigPadding
+                            onCollectibleClicked: {
+                                root.collectibleClicked();
+                            }
                         }
                     }
                 }

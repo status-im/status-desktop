@@ -5,6 +5,8 @@ import "../../../../shared"
 import "../../../../shared/status"
 import "../../../../imports"
 
+import "../popups"
+
 StatusFlatButton {
     id: btnAdd
     width: 138
@@ -14,9 +16,7 @@ StatusFlatButton {
     icon.name: "add"
     icon.width: 14
     icon.height: 14
-    readonly property var onAfterAddAccount: function() {
-        walletInfoContainer.changeSelectedAccount(walletModel.accountsView.accounts.rowCount() - 1);
-    }
+    property var store
 
     onClicked: {
         if (newAccountMenu.opened) {
@@ -31,20 +31,18 @@ StatusFlatButton {
         width: 260
         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
         Action {
-            //% "Generate an account"
-            text: qsTrId("generate-a-new-account")
-            icon.source: "../../../img/generate_account.svg"
             icon.width: 19
             icon.height: 19
-            onTriggered: console.log("TODO")
+            icon.source: "../../../img/generate_account.svg"
+            text: qsTrId("generate-a-new-account")
+            onTriggered: { console.log("TODO"); }
         }
         Action {
-            //% "Add a watch-only address"
-            text: qsTrId("add-a-watch-account")
-            icon.source: "../../../img/eye.svg"
             icon.width: 19
             icon.height: 19
-            onTriggered: console.log("TODO")
+            icon.source: "../../../img/eye.svg"
+            text: qsTrId("add-a-watch-account")
+            onTriggered: { console.log("TODO"); }
         }
         Action {
             text: qsTr("Add with key or seed phrase")
@@ -56,11 +54,11 @@ StatusFlatButton {
             }
         }
         onAboutToShow: {
-            btnAdd.state = "pressed"
+            btnAdd.state = "pressed";
         }
 
         onAboutToHide: {
-            btnAdd.state = "default"
+            btnAdd.state = "default";
         }
     }
 
@@ -70,7 +68,10 @@ StatusFlatButton {
         sourceComponent: AddAccountPopup {
             id: addAccountPopup
             anchors.centerIn: parent
-            onAddAccountClicked: { btnAdd.onAfterAddAccount(); }
+            store: btnAdd.store
+            onAddAccountClicked: {
+                btnAdd.store.afterAddAccount();
+            }
             onClosed: {
                 addAccountPopupLoader.active = false;
             }

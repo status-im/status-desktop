@@ -4,8 +4,8 @@ import QtQuick.Layouts 1.3
 import QtGraphicalEffects 1.0
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
-import "../../../../../imports"
-import "../../../../../shared"
+import "../../../../imports"
+import "../../../../shared"
 
 Popup {
     id: popup
@@ -13,6 +13,7 @@ Popup {
     width: 360
     height: 432
     closePolicy: Popup.CloseOnEscape
+    property var model
 
     background: Rectangle {
         radius: Style.current.radius
@@ -45,7 +46,7 @@ Popup {
 
              Repeater {
                 id: chainRepeater
-                model: walletV2Model.networksView.allNetworks
+                model: popup.model
             
                 Item {
                     width: content.width

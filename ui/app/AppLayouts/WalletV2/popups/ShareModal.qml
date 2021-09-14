@@ -5,28 +5,25 @@ import StatusQ.Popups 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core.Theme 0.1
 
-import "../../../shared"
+import "../../../../shared"
 
 StatusModal {
     id: shareModal
-
-    QtObject {
-        id: internal
-        property var selectedAccount: walletV2Model.accountsView.currentAccount
-    }
-
-    anchors.centerIn: parent
     implicitWidth: 454
     implicitHeight: 568
+    property var selectedAccount
+    property var accountsModel
+    property var qrCode
+    signal copy(string text)
 
     // To-do Icon in header needs to be updated once emoji picker is ready
-    header.title: internal.selectedAccount.name
+    header.title: shareModal.selectedAccount.name
     header.subTitle: qsTr("Basic address")
     header.popupMenu: StatusPopupMenu {
         id: accountPickerPopUp
         Repeater {
-            id: repeaster
-            model: walletV2Model.accountsView.accounts
+            id: repeater
+            model: shareModal.accountsModel
             delegate: Loader {
                 sourceComponent: accountPickerPopUp.delegate
                 onLoaded: {
@@ -35,10 +32,10 @@ StatusModal {
                     item.action.iconSettings.name = "filled-account"
                 }
                 Connections {
-                    enabled: !!item.action
-                    target: item.action
+                    enabled: (!!item && !!item.action)
+                    target: enabled ? item.action : null
                     onTriggered: {
-                        internal.selectedAccount = { address, name, iconColor, fiatBalance }
+                        shareModal.selectedAccount = { address, name, iconColor, fiatBalance }
                         accountPickerPopUp.dismiss()
                     }
                 }
@@ -58,7 +55,7 @@ StatusModal {
         fillMode: Image.PreserveAspectFit
         mipmap: true
         smooth: false
-        source: profileModel.qrCode(internal.selectedAccount.address)
+        source: shareModal.qrCode
         StatusIcon {
             width: 66
             height: 66
@@ -86,7 +83,7 @@ StatusModal {
 
         StyledText {
             anchors.horizontalCenter: parent.horizontalCenter
-            text: internal.selectedAccount.address
+            text: shareModal.selectedAccount.address
             color: Theme.palette.directColor1
             font.pixelSize: 13
             font.weight: Font.Medium
@@ -108,12 +105,11 @@ StatusModal {
                 spacing: 5
                 StatusRoundButton {
                     anchors.horizontalCenter: parent.horizontalCenter
-
                     icon.name: index === 0 ? "copy" : "link"
                     onClicked: {
                         if (index === 0) {
-                            if (internal.selectedAccount.address) {
-                                chatsModel.copyToClipboard(internal.selectedAccount.address)
+                            if (shareModal.selectedAccount.address) {
+                                shareModal.copy(shareModal.selectedAccount.address);
                             }
                             else {
                                 // To-do Get link functionality
@@ -123,7 +119,6 @@ StatusModal {
                 }
                 StyledText {
                     anchors.horizontalCenter: parent.horizontalCenter
-
                     text: index === 0 ? qsTr("Copy") : qsTr("Get link")
                     color: Theme.palette.primaryColor1
                     font.pixelSize: 13

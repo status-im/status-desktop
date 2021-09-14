@@ -18,8 +18,8 @@ Item {
     property string accountName: accountNameInput.text
     property bool nameInputValid: accountNameInput.valid
     property string accountAddress: model.address
-
     property string emoji: "" //TODO implement emoji selection
+    signal deleteClicked()
 
     RowLayout {
         anchors.fill: parent
@@ -82,7 +82,7 @@ Item {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
                     onClicked: {
-                        walletModel.accountsView.deleteAccount(address);
+                        root.deleteClicked();
                     }
                 }
             }

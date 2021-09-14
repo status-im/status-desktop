@@ -7,21 +7,20 @@ import StatusQ.Core.Theme 0.1
 
 Item {
     id: root
+    width: parent.width
+    height: contentLoader.height
 
     property string slug: ""
     property bool assetsLoaded: false
     property string collectionImageUrl: ""
     property int collectionIndex: -1
-
-    signal clicked()
-
-    width: parent.width
-    height: contentLoader.height
+    property var store
+    signal collectibleClicked()
 
     Connections {
-        target: walletV2Model.collectiblesView.getAssetsList(root.slug)
+        target: root.store.walletV2ModelInst.collectiblesView.getAssetsList(root.slug)
         onAssetsChanged: {
-            root.assetsLoaded = true
+            root.assetsLoaded = true;
         }
     }
 
@@ -30,7 +29,6 @@ Item {
         width: parent.width
         anchors.top: parent.top
         anchors.horizontalCenter: parent.horizontalCenter
-
         sourceComponent: root.assetsLoaded ? loaded : loading
     }
 
@@ -43,7 +41,6 @@ Item {
             StatusLoadingIndicator {
                 width: 20
                 height: 20
-
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.horizontalCenter: parent.horizontalCenter
             }
@@ -60,7 +57,7 @@ Item {
             spacing: 24
 
             Repeater {
-                model: walletV2Model.collectiblesView.getAssetsList(root.slug)
+                model: root.store.walletV2ModelInst.collectiblesView.getAssetsList(root.slug)
                 StatusRoundedImage {
                     id: image
                     width: 146
@@ -74,18 +71,18 @@ Item {
                     MouseArea {
                         anchors.fill: parent
                         onClicked: {
-                            openCollectibleDetailView({collectibleImageUrl:collectionImageUrl,
-                                                          name: model.name,
-                                                          collectibleId: model.id,
-                                                          description: model.description,
-                                                          permalink: model.permalink,
-                                                          imageUrl: model.imageUrl,
-                                                          backgroundColor: model.backgroundColor,
-                                                          properties: model.properties,
-                                                          rankings: model.rankings,
-                                                          stats: model.stats,
-                                                          collectionIndex: root.collectionIndex
-                                                      })
+                            root.store.collectiblesStore.collectibleImageUrl = collectionImageUrl;
+                            root.store.collectiblesStore.name =  model.name;
+                            root.store.collectiblesStore.collectibleId = model.id;
+                            root.store.collectiblesStore.description = model.description;
+                            root.store.collectiblesStore.permalink = model.permalink;
+                            root.store.collectiblesStore.imageUrl = model.imageUrl;
+                            root.store.collectiblesStore.backgroundColor = model.backgroundColor;
+                            root.store.collectiblesStore.properties = model.properties;
+                            root.store.collectiblesStore.rankings = model.rankings;
+                            root.store.collectiblesStore.stats = model.stats;
+                            root.store.collectiblesStore.collectionIndex = root.collectionIndex;
+                            root.collectibleClicked();
                         }
                     }
                 }
@@ -94,6 +91,6 @@ Item {
     }
 
     Component.onCompleted: {
-        walletV2Model.collectiblesView.loadAssets(walletV2Model.accountsView.currentAccount.address, root.slug)
+        root.store.walletV2ModelInst.collectiblesView.loadAssets(root.store.walletV2ModelInst.accountsView.currentAccount.address, root.slug);
     }
 }

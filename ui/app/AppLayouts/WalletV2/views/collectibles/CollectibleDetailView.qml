@@ -7,54 +7,32 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
 
-Item {
-    id: collectiblesDetailContainer
+import "../"
+import "../../controls"
 
-    property var assetProperties
-    property var assetRankings
-    property var assetStats
-    property int collectionIndex: -1
+StackDetailBase {
+    id: root
+    backButtonText: "Collectibles"
 
-    function show(options) {
-        collectibleHeader.image.source = options.collectibleImageUrl
-        collectibleHeader.primaryText = options.name
-        collectibleHeader.secondaryText = options.collectibleId
-
-        collectibleimage.image.source = options.imageUrl
-        collectibleText.text = options.description
-        collectibleimage.color = options.backgroundColor
-        assetProperties = options.properties
-        assetRankings = options.rankings
-        assetStats = options.stats
-        collectionIndex = options.collectionIndex
-    }
-
-    function hide() {
-        active = false
-    }
-
-    function getCollectionMaxValue(traitType, value, maxValue) {
-        if(maxValue !== "")
-            return parseInt(value) + qsTr(" of ") + maxValue
-        else
-            return parseInt(value) + qsTr(" of ") + walletV2Model.collectiblesView.collections.getCollectionTraitMaxValue(collectionIndex, traitType).toString()
-    }
+    property var store
+    property var assetStats: root.store.collectiblesStore.stats
+    property var assetRankings: root.store.collectiblesStore.rankings
+    property var assetProperties: root.store.collectiblesStore.properties
+    property int collectionIndex: root.store.collectiblesStore.collectionIndex
 
     CollectibleDetailsHeader {
         id: collectibleHeader
-        anchors.right: parent.right
-        anchors.rightMargin: 79
         anchors.left: parent.left
-        anchors.leftMargin: 79
-        anchors.top: parent.top
+        anchors.right: parent.right
+        image.source: root.store.collectiblesStore.collectibleImageUrl
+        primaryText: root.store.collectiblesStore.name
+        secondaryText: root.store.collectiblesStore.collectibleId
     }
 
     Item {
         anchors.bottom: parent.bottom
         anchors.left: parent.left
-        anchors.leftMargin: 83
         anchors.right: parent.right
-        anchors.rightMargin: 78
         anchors.top: collectibleHeader.bottom
         anchors.topMargin: 46
 
@@ -69,16 +47,17 @@ Item {
                 width: 253
                 height: 253
                 radius: 2
-                color: "transparent"
+                color: root.store.collectiblesStore.backgroundColor
                 border.color: Theme.palette.directColor8
                 border.width: 1
+                image.source: root.store.collectiblesStore.imageUrl
             }
             StatusBaseText {
                 id: collectibleText
                 width: parent.width - collectibleimage.width - 24
                 height: collectibleimage.height
 
-                text: qsTr("Collectibles")
+                text: root.store.collectiblesStore.description
                 color: Theme.palette.directColor1
                 font.pixelSize: 15
                 lineHeight: 22
@@ -202,7 +181,7 @@ Item {
                         lineHeightMode: Text.FixedHeight
                         horizontalAlignment: Text.AlignLeft
                         elide: Text.ElideRight
-                        text: collectiblesDetailContainer.getCollectionMaxValue(model.traitType, model.value, model.maxValue)
+                        text: root.store.getCollectionMaxValue(model.traitType, model.value, model.maxValue, collectionIndex)
                     }
                 }
             }
@@ -247,7 +226,7 @@ Item {
                         lineHeightMode: Text.FixedHeight
                         horizontalAlignment: Text.AlignLeft
                         elide: Text.ElideRight
-                        text: collectiblesDetailContainer.getCollectionMaxValue(model.traitType, model.value, model.maxValue)
+                        text: root.store.getCollectionMaxValue(model.traitType, model.value, model.maxValue, collectionIndex)
                     }
                 }
             }

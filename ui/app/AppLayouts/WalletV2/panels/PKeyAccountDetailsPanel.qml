@@ -25,11 +25,13 @@ Item {
             input.implicitHeight: 56
             input.placeholderText: qsTrId("enter-an-account-name...")
             label: qsTrId("account-name")
-            validators: [StatusMinLengthValidator { minLength: 1 }]
-            onTextChanged: {
-                errorMessage = (accountNameInput.text === "") ?
-                            qsTrId("you-need-to-enter-an-account-name") : ""
-            }
+            validators: [
+                StatusMinLengthValidator {
+                    minLength: 1
+                    errorMessage: (accountNameInput.errors) ?
+                                  qsTrId("you-need-to-enter-an-account-name") : ""
+                }
+            ]
         }
         Item {
             //emoji placeholder
