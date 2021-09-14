@@ -29,6 +29,8 @@ Item {
     property string secondaryLabel: ""
     property int charLimit: 0
     property string errorMessage: ""
+    property real leftPadding: 16
+    property real rightPadding: 16
     property list<StatusValidator> validators
     property int validationMode: StatusInput.ValidationMode.OnlyWhenDirty
     enum ValidationMode {
@@ -85,9 +87,9 @@ Item {
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.topMargin: visible ? 8 : 0
-        anchors.leftMargin: 16
+        anchors.leftMargin: root.leftPadding
         anchors.right: (charLimitLabel.visible ? charLimitLabel.right : parent.right)
-        anchors.rightMargin: 16
+        anchors.rightMargin: root.rightPadding
         height: visible ? 17 : 0
         visible: !!root.label
         spacing: 5
@@ -116,7 +118,7 @@ Item {
         anchors.top: parent.top
         anchors.right: parent.right
         anchors.topMargin: visible ? 11 : 0
-        anchors.rightMargin: 16
+        anchors.rightMargin: root.rightPadding
         visible: root.charLimit > 0
 
         text: "%1 / %2".arg(statusBaseInput.text.length).arg(root.charLimit)
@@ -131,8 +133,8 @@ Item {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.topMargin: charLimitLabel.visible ? 11 : 8
-        anchors.leftMargin: 16
-        anchors.rightMargin: 16
+        anchors.leftMargin: root.leftPadding
+        anchors.rightMargin: root.rightPadding
         maximumLength: root.charLimit
         onTextChanged: root.validate()
 
@@ -145,9 +147,9 @@ Item {
         anchors.top: statusBaseInput.bottom
         anchors.topMargin: 11
         anchors.right: parent.right
-        anchors.rightMargin: 16
+        anchors.rightMargin: root.rightPadding
         anchors.left: parent.left
-        anchors.leftMargin: 16
+        anchors.leftMargin: root.leftPadding
 
         height: visible ? implicitHeight : 0
         visible: !!text && !statusBaseInput.valid
