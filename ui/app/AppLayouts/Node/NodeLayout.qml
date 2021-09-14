@@ -70,6 +70,39 @@ Item {
         }
 
         ColumnLayout {
+            id: logContainer
+            height: 300
+            StyledText {
+                id: logHeaderDesc
+                color: Style.current.lightBlueText
+                text: "Logs:"
+                Layout.rightMargin: Style.current.padding
+                Layout.leftMargin: Style.current.padding
+                Layout.fillWidth: true
+                font.weight: Font.Medium
+                font.pixelSize: 20
+            }
+            StyledTextArea {
+                id: logsTxt
+                text: ""
+                customHeight: 200
+                textField.readOnly: true
+            }
+
+            Connections {
+                target: nodeModel
+                function onLog(logContent) {
+                    let lines = logsTxt.text.split("\n");
+                    if (lines.length > 5){
+                        lines.shift();
+                    }
+                    lines.push(logContent.trim())
+                    logsTxt.text = lines.join("\n")
+                }
+            }
+        }
+
+        ColumnLayout {
             id: messageContainer
             Layout.fillHeight: true
             StyledText {

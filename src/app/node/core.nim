@@ -39,4 +39,7 @@ proc init*(self: NodeController) =
     self.view.setStats(StatsSignal(e).stats)
     self.view.fetchBitsSet()
 
+  self.status.events.on(SignalType.ChroniclesLogs.event) do(e:Args):
+    self.view.log(ChroniclesLogsSignal(e).content)
+
   self.view.init()

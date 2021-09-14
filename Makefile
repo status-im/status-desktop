@@ -238,7 +238,7 @@ DEFAULT_TENOR_API_KEY := DU7DWZ27STB2
 TENOR_API_KEY ?= $(DEFAULT_TENOR_API_KEY)
 NIM_PARAMS += -d:TENOR_API_KEY:"$(TENOR_API_KEY)"
 
-NIM_PARAMS += -d:chronicles_sinks="textlines[stdout],textlines[nocolors,file]"
+NIM_PARAMS += -d:chronicles_sinks=textlines[stdout],textlines[nocolors,dynamic],textlines[file,nocolors] -d:chronicles_runtime_filtering=on -d:chronicles_default_output_device=dynamic
 
 RESOURCES_LAYOUT := -d:development
 
