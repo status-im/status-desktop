@@ -1,7 +1,7 @@
 import NimQml, strformat, strutils, chronicles, sugar, sequtils
 
 import view
-import views/[account_list, account_item]
+import views/[account_list, account_item, networks]
 
 import status/[status, wallet2, settings]
 import status/wallet2/account as WalletTypes
@@ -32,6 +32,10 @@ proc delete*(self: WalletController) =
 
 proc init*(self: WalletController) =
   self.status.wallet2.init()
+  self.view.networksView.updateNetworks(self.status.wallet2.networks)
+  self.view.setSigningPhrase(self.status.settings.getSetting[:string](Setting.SigningPhrase))
+  self.view.setEtherscanLink(self.status.settings.getCurrentNetworkDetails().etherscanLink)
+
   var accounts = self.status.wallet2.getAccounts()
   for account in accounts:
     self.view.addAccountToList(account)
@@ -44,13 +48,11 @@ proc init*(self: WalletController) =
     self.view.addAccountToList(account.account)
     self.view.updateView()
 
-  self.status.events.on(SignalType.Wallet.event) do(e:Args):
-    var data = WalletSignal(e)
-    debug "TODO: handle wallet signal", signalType=data.eventType
-
-  self.view.setSigningPhrase(self.status.settings.getSetting[:string](Setting.SigningPhrase))
-  self.view.setEtherscanLink(self.status.settings.getCurrentNetworkDetails().etherscanLink)
-  
   self.status.events.on("cryptoServicesFetched") do(e: Args):
     var args = CryptoServicesArg(e)
     self.view.onCryptoServicesFetched(args.services)
+
+  self.status.events.on(SignalType.Wallet.event) do(e:Args):
+    var data = WalletSignal(e)
+    debug "TODO: handle wallet signal", signalType=data.eventType
+  
