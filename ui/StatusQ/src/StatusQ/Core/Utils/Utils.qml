@@ -26,6 +26,10 @@ QtObject {
         const isDomain = /(?:(?:(?<thld>[\w\-]*)(?:\.))?(?<sld>[\w\-]*))\.(?<tld>[\w\-]*)/.test(inputValue)
         return isEmail || isDomain || (inputValue.startsWith("@") && inputValue.length > 1)
     }
+
+    function uuid() {
+        return Date.now().toString(36) + Math.random().toString(36).substr(2, 5)
+    }
 }
 
 

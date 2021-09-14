@@ -47,6 +47,7 @@ Item {
     property bool valid: true
     property bool pristine: true
     property bool dirty: false
+    property bool pending: false
     property bool leftIcon: true
 
     property StatusIconSettings icon: StatusIconSettings {

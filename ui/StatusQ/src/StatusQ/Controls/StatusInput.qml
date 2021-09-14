@@ -1,6 +1,7 @@
 import QtQuick 2.14
 
 import StatusQ.Core 0.1
+import StatusQ.Core.Backpressure 1.0
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Controls.Validators 0.1
@@ -24,6 +25,7 @@ Item {
 
     property alias input: statusBaseInput
     property alias valid: statusBaseInput.valid
+    property alias pending: statusBaseInput.pending
     property alias text: statusBaseInput.text
     property string label: ""
     property string secondaryLabel: ""
@@ -32,19 +34,25 @@ Item {
     property real leftPadding: 16
     property real rightPadding: 16
     property list<StatusValidator> validators
+    property list<StatusAsyncValidator> asyncValidators
     property int validationMode: StatusInput.ValidationMode.OnlyWhenDirty
+    property string validatedValue
+
+    property var pendingValidators: []
+
     enum ValidationMode {
         OnlyWhenDirty, // validates input only after it has become dirty
         Always // validates input even before it has become dirty
     }
 
     property var errors: ({})
+    property var asyncErrors: ({})
 
     function reset() {
         statusBaseInput.valid = false
         statusBaseInput.pristine = true
         statusBaseInput.text = ""
-        errorMessage = ""
+        root.errorMessage = ""
     }
 
     function validate() {
@@ -78,6 +86,43 @@ Item {
                 }
             }
         }
+
+        if (asyncValidators.length && !Object.values(errors).length) {
+            for (let idx in asyncValidators) {
+                let asyncValidator = asyncValidators[idx]
+                asyncValidator.validationComplete.connect(function (value, valid) {
+                    updateAsyncValidity(asyncValidator.name, value, valid)
+                })
+                root.pending = true
+                pendingValidators.push(asyncValidator.name)
+                asyncValidator.asyncOperationInternal(statusBaseInput.text)
+            }
+        } else if (!asyncValidators.length && !Object.values(errors).length) {
+            root.validatedValue = root.text
+        }
+    }
+
+    function updateAsyncValidity(validatorName, value, result) {
+        if (!asyncErrors) {
+            asyncErrors = {}
+        }
+
+        if (typeof result === "boolean" && result) {
+            if (asyncErrors[validatorName] !== undefined) {
+                delete asyncErrors[validatorName]
+            }
+            errorMessage.text = ""
+            root.validatedValue = value
+        } else {
+            asyncErrors[validatorName] = result
+            for (let idx in asyncValidators) {
+                errorMessage.text = asyncValidators[idx].errorMessage || root.errorMessage
+                break;
+            }
+        }
+        pendingValidators = pendingValidators.filter(v => v !== validatorName)
+        root.pending = pendingValidators.length > 0
+        root.valid = Object.values(asyncErrors).length == 0
     }
 
     Component.onCompleted: validate()
