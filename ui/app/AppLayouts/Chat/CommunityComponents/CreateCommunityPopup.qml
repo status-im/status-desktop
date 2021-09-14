@@ -23,6 +23,7 @@ StatusModal {
                                                    | Utils.Validate.TextHexColor
 
     id: popup
+    height: 509
 
     onOpened: {
         if (isEdit) {
@@ -65,9 +66,8 @@ StatusModal {
 
         contentHeight: content.height
         bottomPadding: 8
-        height: Math.min(content.height, 432)
         width: popup.width
-        
+
         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
 
         clip: true
@@ -79,14 +79,16 @@ StatusModal {
         Column {
             id: content
             width: popup.width
+            spacing: 8
 
-            Item { 
+            Item {
                 height: 8
                 width: parent.width
             }
 
             StatusInput {
                 id: nameInput
+                label: qsTr("Name your community")
                 charLimit: maxCommunityNameLength
                 input.placeholderText: qsTr("A catchy name")
                 validators: [StatusMinLengthValidator { minLength: 1 }]
@@ -288,8 +290,6 @@ StatusModal {
                 visible: !isEdit
                 //% "Membership requirement"
                 title: qsTrId("membership-title")
-                // TODO: remove 'isEnabled: false' when we no longer need to force "request access" membership
-                enabled: false
                 label: {
                     switch (membershipRequirementSettingPopup.checkedMembership) {
                         //% "Require invite from another member"
@@ -311,8 +311,7 @@ StatusModal {
             }
 
             StatusBaseText {
-                // TODO: remove 'false' when we no longer need to force "request access" membership
-                visible: false && !isEdit
+                visible: !isEdit
                 height: visible ? implicitHeight : 0
                 wrapMode: Text.WordWrap
                 font.pixelSize: 13
@@ -451,9 +450,6 @@ StatusModal {
     MembershipRequirementPopup {
         anchors.centerIn: parent
         id: membershipRequirementSettingPopup
-        // TODO: remove the 'checkedMemership' setting when we no longer need
-        // to force "require approval" membership
-        checkedMembership: Constants.communityChatOnRequestAccess
     }
 }
 
