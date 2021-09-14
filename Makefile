@@ -119,24 +119,7 @@ update: | update-common
 ifneq ($(detected_OS),Windows)
  QT5_PCFILEDIR := $(shell pkg-config --variable=pcfiledir Qt5Core 2>/dev/null)
  QT5_LIBDIR := $(shell pkg-config --variable=libdir Qt5Core 2>/dev/null)
- ifeq ($(QT5_PCFILEDIR),)
-  ifeq ($(QTDIR),)
-   $(error Cannot find your Qt5 installation. Please run "$(MAKE) QTDIR=/path/to/your/Qt5/installation/prefix ...")
-  else
-   QT5_PCFILEDIR := $(QTDIR)/lib/pkgconfig
-   QT5_LIBDIR := $(QTDIR)/lib
-   # some manually installed Qt5 instances have wrong paths in their *.pc files, so we pass the right one to the linker here
-   ifeq ($(detected_OS),Darwin)
-    NIM_PARAMS += -L:"-framework Foundation -framework Security -framework IOKit -framework CoreServices"
-    # Fix for failures due to 'can't allocate code signature data for'
-    NIM_PARAMS += --passL:"-headerpad_max_install_names"
-    NIM_PARAMS += --passL:"-F$(QT5_LIBDIR)"
-    export QT5_LIBDIR
-   else
-    NIM_PARAMS += --passL:"-L$(QT5_LIBDIR)"
-   endif
-  endif
- endif
+ 
  DOTHERSIDE := vendor/DOtherSide/build/lib/libDOtherSideStatic.a
  DOTHERSIDE_CMAKE_PARAMS := -DENABLE_DYNAMIC_LIBS=OFF -DENABLE_STATIC_LIBS=ON
  # order matters here, due to "-Wl,-as-needed"
