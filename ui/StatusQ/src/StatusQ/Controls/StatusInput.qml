@@ -38,6 +38,13 @@ Item {
 
     property var errors: ({})
 
+    function reset() {
+        statusBaseInput.valid = false
+        statusBaseInput.pristine = true
+        statusBaseInput.text = ""
+        errorMessage = ""
+    }
+
     function validate() {
         if (!statusBaseInput.dirty && validationMode === StatusInput.ValidationMode.OnlyWhenDirty) {
             return
