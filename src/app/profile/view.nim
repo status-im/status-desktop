@@ -15,6 +15,7 @@ import status/notifications/[os_notifications]
 import ../../app_service/[main]
 import qrcode/qrcode
 import ../utils/image_utils
+import ../../constants
 
 logScope:
   topics = "profile-view"
@@ -92,7 +93,7 @@ QtObject:
 
   proc changeLocale*(self: ProfileView, locale: string) {.slot.} =
     self.changeLanguage(locale)
-  
+
   proc nodeVersion*(self: ProfileView): string {.slot.} =
     self.status.getNodeVersion()
 
@@ -170,7 +171,7 @@ QtObject:
   QtProperty[QVariant] mnemonic:
     read = getMnemonic
 
-  proc getNetwork*(self: ProfileView): QVariant {.slot.} = 
+  proc getNetwork*(self: ProfileView): QVariant {.slot.} =
     newQVariant(self.network)
 
   QtProperty[QVariant] network:
@@ -217,12 +218,15 @@ QtObject:
     self.profile.setSendUserStatus(sendUserStatus)
     self.status.saveSetting(Setting.SendUserStatus, sendUserStatus)
 
-  proc showOSNotification*(self: ProfileView, title: string, message: string, 
+  proc showOSNotification*(self: ProfileView, title: string, message: string,
     notificationType: int, useOSNotifications: bool) {.slot.} =
 
     let details = OsNotificationDetails(
       notificationType: notificationType.OsNotificationType
     )
 
-    self.appService.osNotificationService.showNotification(title, message, 
+    self.appService.osNotificationService.showNotification(title, message,
     details, useOSNotifications)
+
+  proc logDir*(self: ProfileView): string {.slot.} =
+    url_fromLocalFile(constants.LOGDIR)
