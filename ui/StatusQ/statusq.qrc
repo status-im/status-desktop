@@ -268,5 +268,6 @@
         <file>src/StatusQ/Controls/StatusSwitchTabBar.qml</file>
         <file>src/StatusQ/Components/StatusExpandableItem.qml</file>
         <file>src/assets/img/icons/snt.svg</file>
+        <file>src/StatusQ/Popups/StatusSpellcheckingMenuItems.qml</file>
     </qresource>
 </RCC>

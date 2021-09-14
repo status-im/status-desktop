@@ -63,6 +63,11 @@ Column {
         onClicked: modalWithHeaderPopupMenu.open()
     }
 
+    StatusButton {
+        text: "Spellchecking menu"
+        onClicked: spellMenu.open()
+    }
+
     StatusModal {
         id: simpleModal
         anchors.centerIn: parent
@@ -308,5 +313,11 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
         id: dummyAccountsModel
         ListElement{name: "Account 1"; iconName: "filled-account"}
         ListElement{name: "Account 2"; iconName: "filled-account"}
+    }
+
+    StatusSpellcheckingMenuItems {
+        id: spellMenu
+        anchors.centerIn: parent
+        suggestions: ["suggestion1", "suggestion2", "suggestion3", "suggestion4"]
     }
 }

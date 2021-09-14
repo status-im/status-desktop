@@ -9,3 +9,4 @@ StatusSearchPopup 0.1 StatusSearchPopup.qml
 StatusModalDivider 0.1 StatusModalDivider.qml
 StatusSearchPopupMenuItem 0.1 StatusSearchPopupMenuItem.qml
 StatusSearchLocationMenu 0.1 StatusSearchLocationMenu.qml
+StatusSpellcheckingMenuItems 0.1 StatusSpellcheckingMenuItems.qml
