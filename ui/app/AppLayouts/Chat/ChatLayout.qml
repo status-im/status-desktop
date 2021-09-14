@@ -159,7 +159,8 @@ StatusAppThreePanelLayout {
         chatGroupsListViewCount: contactColumnLoader.item.chatGroupsListViewCount
     }
 
-    showRightPanel: chatColumn.showUsers && (chatsModel.channelView.activeChannel.chatType !== Constants.chatTypeOneToOne)
+    showRightPanel: (appSettings.expandUsersList && (appSettings.showOnlineUsers || chatsModel.communities.activeCommunity.active)
+                    && (chatsModel.channelView.activeChannel.chatType !== Constants.chatTypeOneToOne))
     rightPanel: appSettings.communitiesEnabled && chatsModel.communities.activeCommunity.active ? communityUserListComponent : userListComponent
 
     Component {

@@ -29,7 +29,6 @@ Item {
     property bool isExtendedInput: isReply || isImage
     property bool isConnected: false
     property string contactToRemove: ""
-    property bool showUsers: false
     property string activeChatId: chatsModel.channelView.activeChannel.id
     property bool isBlocked: profileModel.contacts.isContactBlocked(activeChatId)
     property bool isContact: profileModel.contacts.isAdded(activeChatId)
@@ -206,15 +205,16 @@ Item {
                     }
                 }
 
-                membersButton.visible: appSettings.showOnlineUsers && chatsModel.channelView.activeChannel.chatType !== Constants.chatTypeOneToOne
-                membersButton.highlighted: showUsers
+                membersButton.visible: (appSettings.showOnlineUsers || chatsModel.communities.activeCommunity.active)
+                                       && chatsModel.channelView.activeChannel.chatType !== Constants.chatTypeOneToOne
+                membersButton.highlighted: appSettings.expandUsersList
                 notificationButton.visible: appSettings.isActivityCenterEnabled
-                notificationButton.tooltip.offset: showUsers ? 0 : 14
+                notificationButton.tooltip.offset: appSettings.expandUsersList ? 0 : 14
                 notificationCount: chatsModel.activityNotificationList.unreadCount
 
                 onSearchButtonClicked: searchPopup.open()
 
-                onMembersButtonClicked: showUsers = !showUsers
+                onMembersButtonClicked: appSettings.expandUsersList = !appSettings.expandUsersList
                 onNotificationButtonClicked: activityCenter.open()
 
                 popupMenu: ChatContextMenu {
