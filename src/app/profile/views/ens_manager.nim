@@ -156,6 +156,9 @@ QtObject:
   
   proc connect(self: EnsManager, ensUsername: string) =
     var usernames = getSetting[seq[string]](self.status.settings, Setting.Usernames, @[])
+    if usernames.len == 0:
+      self.setPreferredUsername(ensUsername)
+      
     usernames.add ensUsername
     discard self.status.settings.saveSetting(Setting.Usernames, %*usernames)
   
