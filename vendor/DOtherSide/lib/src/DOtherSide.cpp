@@ -128,8 +128,8 @@ char *dos_qcoreapplication_application_dir_path()
 
 void dos_qapplication_enable_hdpi(const char *uiScaleFilePath)
 {
-    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-    QGuiApplication::setHighDpiScaleFactorRoundingPolicy(Qt::HighDpiScaleFactorRoundingPolicy::PassThrough);
+    QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    QApplication::setHighDpiScaleFactorRoundingPolicy(Qt::HighDpiScaleFactorRoundingPolicy::PassThrough);
 
     QFile scaleFile(QString::fromUtf8(uiScaleFilePath));
     if (scaleFile.open(QIODevice::ReadOnly)) {
@@ -140,7 +140,7 @@ void dos_qapplication_enable_hdpi(const char *uiScaleFilePath)
 
 void dos_qapplication_initialize_opengl()
 {
-    QCoreApplication::setAttribute(Qt::AA_ShareOpenGLContexts);
+    QApplication::setAttribute(Qt::AA_ShareOpenGLContexts);
 }
 
 void dos_qguiapplication_create()
