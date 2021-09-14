@@ -23,7 +23,7 @@ StatusModal {
     property alias checkbox: checkbox
 
 
-    header.title: qsTr("Confirm you action")
+    header.title: qsTr("Confirm your action")
     focus: visible
 
     signal confirmButtonClicked()

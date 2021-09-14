@@ -136,16 +136,7 @@ StatusPopupMenu {
 
         type: StatusMenuItem.Type.Danger
         onTriggered: {
-            let label = chatItem && chatItem.chatType === Constants.chatTypeOneToOne ?
-                    //% "Delete chat"
-                    qsTrId("delete-chat") :
-                    //% "Leave chat"
-                    qsTrId("leave-chat")
-            openPopup(deleteChatConfirmationDialogComponent, {
-                          title: label,
-                          confirmButtonLabel: label,
-                          chatId: chatItem.id
-                      })
+            openPopup(deleteChatConfirmationDialogComponent)
         }
 
         enabled: !communityActive || chatsModel.communities.activeCommunity.admin
@@ -166,12 +157,26 @@ StatusPopupMenu {
     Component {
         id: deleteChatConfirmationDialogComponent
         ConfirmationDialog {
-            property string chatId
+            property string chatId: chatItem.id
             btnType: "warn"
-            confirmationText: communityActive ? qsTr("Are you sure you want to delete this channel?") :
+            header.title: communityActive ? qsTr("Delete #%1").arg(chatItem.name) :
+                                            chatItem && chatItem.chatType === Constants.chatTypeOneToOne ?
+                                            //% "Delete chat"
+                                            qsTrId("delete-chat") :
+                                            //% "Leave chat"
+                                            qsTrId("leave-chat")
+            confirmButtonLabel: communityActive ? qsTr("Delete") : header.title
+            confirmationText: communityActive ? qsTr("Are you sure you want to delete #%1 channel?").arg(chatItem.name) :
+                                                chatItem && chatItem.chatType === Constants.chatTypeOneToOne ?
+                                                qsTr("Are you sure you want to delete this chat?"):
                                                 qsTr("Are you sure you want to leave this chat?")
+            showCancelButton: communityActive
+
             onClosed: {
                 destroy()
+            }
+            onCancelButtonClicked: {
+                close()
             }
             onConfirmButtonClicked: {
                 if (communityActive) {

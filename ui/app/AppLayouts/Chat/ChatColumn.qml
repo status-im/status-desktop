@@ -218,7 +218,7 @@ Item {
                 onNotificationButtonClicked: activityCenter.open()
 
                 popupMenu: ChatContextMenu {
-                    openHandler: {
+                    onOpened: {
                         chatItem = chatsModel.channelView.activeChannel
                     }
                 }
