@@ -28,6 +28,8 @@ Item {
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: parent.left
         anchors.leftMargin: 5
+        anchors.right: (implicitWidth > parent.width - 50) ? statusMenuButton.left : undefined
+        anchors.rightMargin: 5
         type: StatusChatInfoButton.Type.OneToOneChat
         onClicked: statusChatInfoToolBar.chatInfoButtonClicked()
     }
@@ -39,7 +41,7 @@ Item {
         anchors.verticalCenter: parent.verticalCenter
 
         visible: popupMenuSlot.active
-        width: 32
+        width: visible ? 32 : 0
         height: 32
 
         type: StatusRoundButton.Type.Secondary
