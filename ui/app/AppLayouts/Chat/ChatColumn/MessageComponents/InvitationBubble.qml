@@ -132,7 +132,9 @@ Item {
                     },
                     State {
                         name: "joined"
-                        when: invitedCommunity.joined && invitedCommunity.isMember
+                        when: (invitedCommunity.joined && invitedCommunity.isMember) ||
+                              (invitedCommunity.access === Constants.communityChatPublicAccess &&
+                                invitedCommunity.joined)
                         PropertyChanges {
                             target: joinBtn
                             //% "View"
@@ -153,8 +155,10 @@ Item {
                     },
                     State {
                         name: "unjoined"
-                        when: invitedCommunity.access === Constants.communityChatOnRequestAccess &&
-                              invitedCommunity.isMember
+                        when: (invitedCommunity.access === Constants.communityChatOnRequestAccess &&
+                                invitedCommunity.isMember) ||
+                              (invitedCommunity.access === Constants.communityChatPublicAccess &&
+                                !invitedCommunity.joined)
                         PropertyChanges {
                             target: joinBtn
                             //% "Join"

@@ -60,24 +60,26 @@ StatusModal {
             anchors.leftMargin: 32
         }
 
-        StatusListItem {
-            anchors.horizontalCenter: parent.horizontalCenter
-            //% "Require invite from another member"
-            title: qsTrId("membership-invite")
-            sensor.onClicked: inviteOnlyRadio.checked = true
-            components: [
-                StatusRadioButton {
-                    id: inviteOnlyRadio
-                    checked: popup.checkedMembership === Constants.communityChatInvitationOnlyAccess
-                    ButtonGroup.group: membershipRequirementGroup
-                    onCheckedChanged: {
-                        if (checked) {
-                            popup.checkedMembership = Constants.communityChatInvitationOnlyAccess
-                        }
-                    }
-                }
-            ]
-        }
+        // TODO: uncomment this when we want to re-enable requiring invite from another member
+        // for community creation
+        // StatusListItem {
+        //     anchors.horizontalCenter: parent.horizontalCenter
+        //     //% "Require invite from another member"
+        //     title: qsTrId("membership-invite")
+        //     sensor.onClicked: inviteOnlyRadio.checked = true
+        //     components: [
+        //         StatusRadioButton {
+        //             id: inviteOnlyRadio
+        //             checked: popup.checkedMembership === Constants.communityChatInvitationOnlyAccess
+        //             ButtonGroup.group: membershipRequirementGroup
+        //             onCheckedChanged: {
+        //                 if (checked) {
+        //                     popup.checkedMembership = Constants.communityChatInvitationOnlyAccess
+        //                 }
+        //             }
+        //         }
+        //     ]
+        // }
 
         StatusBaseText {
             wrapMode: Text.WordWrap
