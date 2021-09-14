@@ -49,6 +49,25 @@ ScrollView {
                 }
             }
 
+            StyledText {
+                //% "Application Logs"
+                text: qsTr("Application Logs")
+                font.pixelSize: 15
+                font.underline: mouseArea.containsMouse
+                color: Style.current.blue
+                topPadding: 23
+
+                MouseArea {
+                    id: mouseArea
+                    anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
+                    hoverEnabled: true
+                    onClicked: {
+                        Qt.openUrlExternally(profileModel.logDir())
+                    }
+                }
+            }
+
             Item {
                 id: spacer1
                 height: Style.current.bigPadding
