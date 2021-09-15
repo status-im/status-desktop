@@ -60,6 +60,7 @@ pipeline {
     stage('Package') {
       steps { script {
         windows.bundle(env.STATUS_CLIENT_EXE)
+        windows.bundle(env.STATUS_CLIENT_7Z)
       } }
     }
 
@@ -70,12 +71,7 @@ pipeline {
             zip_url = s3.uploadArtifact(env.STATUS_CLIENT_7Z)
             exe_url = s3.uploadArtifact(env.STATUS_CLIENT_EXE)            
             env.PKG_URL = exe_url
-
-            urls = [
-              Zip: zip_url,
-              Exe: exe_url,
-            ]
-            jenkins.setBuildDesc(urls)
+            jenkins.setBuildDesc(Zip: zip_url, Exe: exe_url)
           } }
         }
         stage('Archive') {
