@@ -9,7 +9,7 @@ import ../../../app_service/[main]
 import ../../../app_service/tasks/[qt, threadpool]
 import ../../../app_service/tasks/marathon/mailserver/worker
 
-import communities, chat_item, channels_list, communities, message_list, channel, message_item
+import communities, chat_item, channels_list, communities, community_list, user_list, community_members_list, message_list, channel, message_item
 
 logScope:
   topics = "messages-view"
@@ -76,8 +76,22 @@ QtObject:
     let nameMentions = findAll(message, namePattern)
     var updatedMessage = message
 
-    for publicKey in self.messageList[self.channelView.activeChannel.id].userList.users:
-      let user = self.messageList[self.channelView.activeChannel.id].userList.userDetails[publicKey]
+    var userList = self.messageList[self.channelView.activeChannel.id].userList.users
+
+    if self.communities.activeCommunity.active:
+      userList = self.communities.activeCommunity.members.community.members
+
+    for publicKey in userList:
+      
+      var user = if self.communities.activeCommunity.active:
+        self.communities.activeCommunity.members.getUserFromPubKey(publicKey)
+      else:
+        self.messageList[self.channelView.activeChannel.id].userList.userDetails[publicKey]
+
+      let userName = if user.userName.startsWith('@'):
+        user.userName
+      else:
+        "@" & user.userName
 
       for mention in aliasMentions:
         if "@" & user.alias.toLowerAscii != mention.toLowerAscii:
@@ -86,13 +100,13 @@ QtObject:
         updatedMessage = updatedMessage.replaceWord(mention, '@' & publicKey)
 
       for mention in ensMentions:
-        if "@" & user.userName.toLowerAscii != mention.toLowerAscii:
+        if userName.toLowerAscii != mention.toLowerAscii:
           continue
 
         updatedMessage = updatedMessage.replaceWord(mention, '@' & publicKey)
 
       for mention in nameMentions:
-        if "@" & user.userName.split(".")[0].toLowerAscii != mention.toLowerAscii:
+        if userName.split(".")[0].toLowerAscii != mention.toLowerAscii:
           continue
 
         updatedMessage = updatedMessage.replaceWord(mention, '@' & publicKey)

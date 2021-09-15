@@ -17,7 +17,7 @@ type
     LocalName = UserRole + 5
     Identicon = UserRole + 6
 
-  User = object
+  User* = object
     username*: string
     alias*: string
     localName: string
