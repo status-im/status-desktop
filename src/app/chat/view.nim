@@ -574,4 +574,3 @@ QtObject:
       self.setActiveChannel(pubKey)
       return
     echo "Unsupported deep link structure: " & uri
-  

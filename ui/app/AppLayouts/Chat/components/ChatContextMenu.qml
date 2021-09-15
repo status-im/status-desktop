@@ -1,6 +1,7 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
+import Qt.labs.platform 1.1
 import "./"
 import "../../../../shared"
 import "../../../../imports"
@@ -106,6 +107,13 @@ StatusPopupMenu {
         })
     }
 
+    StatusMenuItem {
+        text: qsTr("Download")
+        enabled: appSettings.downloadChannelMessagesEnabled
+        icon.name: "download"
+        onTriggered: downdloadDialog.open()
+    }
+
     StatusMenuSeparator {
         visible: deleteOrLeaveMenuItem.enabled
     }
@@ -141,6 +149,18 @@ StatusPopupMenu {
         }
 
         enabled: !communityActive || chatsModel.communities.activeCommunity.admin
+    }
+
+    FileDialog {
+        id: downdloadDialog
+        acceptLabel: qsTr("Save")
+        fileMode: FileDialog.SaveFile
+        title: qsTr("Download messages")
+        currentFile: StandardPaths.writableLocation(StandardPaths.DocumentsLocation) + "/messages.json"
+        defaultSuffix: "json"
+        onAccepted: {
+            chatsModel.messageView.downloadMessages(downdloadDialog.currentFile)
+        }
     }
 
     Component {

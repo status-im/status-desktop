@@ -478,3 +478,16 @@ QtObject:
       self.searchedMessageLoaded(messageId)
     else:
       self.loadMessagesUntillMessageWithIdIsLoaded(messageId)
+
+  proc downloadMessages*(self: MessageView, filePath: string) {.slot.} =
+    let messages = newJArray()
+    for message in self.messageList[self.channelView.activeChannel.id].messages:
+      if message.id == "":
+        continue
+
+      messages.elems.add(%*{
+        "id": message.id, "text": message.text, "clock": message.clock,
+        "alias": message.alias, "from": message.fromAuthor
+      })
+
+    writeFile(url_toLocalFile(filePath), $messages)

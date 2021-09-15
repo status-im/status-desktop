@@ -186,6 +186,7 @@ Item {
         property bool quitOnClose: false
         property string skinColor: ""
         property bool showDeleteMessageWarning: true
+        property bool downloadChannelMessagesEnabled: false
 
         // Browser settings
         property bool showBrowserSelector: true
