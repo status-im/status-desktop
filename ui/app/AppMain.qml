@@ -28,6 +28,7 @@ Item {
     anchors.fill: parent
 
     property alias appSettings: appSettings
+    property alias appLayout: appLayout
     property var newVersionJSON: JSON.parse(utilsModel.newVersion)
     property bool profilePopupOpened: false
     property bool networkGuarded: profileModel.network.current === Constants.networkMainnet || (profileModel.network.current === Constants.networkRopsten && appSettings.stickersEnsRopsten)
@@ -254,6 +255,8 @@ Item {
     }
 
     StatusAppLayout {
+        id: appLayout
+
         width: parent.width
         anchors.top: parent.top
         anchors.topMargin: (versionWarning.visible || mnemonicBackupWarning.visible) ? 32 : 0

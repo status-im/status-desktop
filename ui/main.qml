@@ -299,12 +299,10 @@ StatusWindow {
         property alias droppedUrls: rptDraggedPreviews.model
         readonly property int chatView: Utils.getAppSectionIndex(Constants.chat)
         readonly property int timelineView: Utils.getAppSectionIndex(Constants.timeline)
-        property bool enabled: containsDrag && 
-                               drag.source.objectName !== "chatItem" &&
-                               drag.source.objectName !== "chatListCategory" && loader.item &&
+        property bool enabled: !drag.source && !!loader.item && !!loader.item.appLayout &&
                                (
                                    // in chat view
-                                   (loader.item.currentView === chatView &&
+                                   (loader.item.appLayout.appView.currentIndex === chatView &&
                                     (
                                         // in a one-to-one chat
                                         chatsModel.channelView.activeChannel.chatType === Constants.chatTypeOneToOne ||
@@ -313,7 +311,7 @@ StatusWindow {
                                         )
                                     ) ||
                                    // in timeline view
-                                   loader.item.currentView === timelineView ||
+                                   loader.item.appLayout.appView.currentIndex === timelineView ||
                                    // In community section
                                    chatsModel.communities.activeCommunity.active
                                    )
@@ -334,7 +332,7 @@ StatusWindow {
                        cleanup()
                    }
         onEntered: {
-            if (!enabled) {
+            if (!enabled || !!drag.source) {
                 drag.accepted = false
                 return
             }
@@ -357,7 +355,7 @@ StatusWindow {
 
             states: [
                 State {
-                    when: dragTarget.enabled
+                    when: dragTarget.enabled && dragTarget.containsDrag
                     PropertyChanges {
                         target: dropRectangle
                         color: Style.current.background
