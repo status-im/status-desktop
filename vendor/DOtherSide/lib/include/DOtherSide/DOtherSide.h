@@ -191,7 +191,7 @@ DOS_API void DOS_CALL dos_qqmlapplicationengine_add_import_path(DosQQmlApplicati
 /// the engine and so it should die with the engine.
 DOS_API DosQQmlContext *DOS_CALL dos_qqmlapplicationengine_context(DosQQmlApplicationEngine *vptr);
 
-/// \brief Calls the QQMLApplicationengine::addImageProvider    
+/// \brief Calls the QQMLApplicationengine::addImageProvider
 /// \param vptr The QQmlApplicationEngine
 /// \param vptr_i A QQuickImageProvider, the QQmlApplicationEngine takes ownership of this pointer
 DOS_API void DOS_CALL dos_qqmlapplicationengine_addImageProvider(DosQQmlApplicationEngine *vptr, const char* name, DosQQuickImageProvider *vptr_i);
@@ -255,7 +255,7 @@ DOS_API void DOS_CALL dos_qquickstyle_set_fallback_style(const char *style);
 /// @}
 
 
-  
+
 /// \defgroup QQuickView QQuickView
 /// \brief Functions related to the QQuickView class
 /// @{
@@ -798,7 +798,7 @@ DOS_API void DOS_CALL dos_qobject_setObjectName(DosQObject *vptr, const char *na
 /// \param vptr The QObject
 DOS_API void DOS_CALL dos_qobject_delete(DosQObject *vptr);
 
-/// \brief Free the memory allocated for the QObject in the next event loop cycle 
+/// \brief Free the memory allocated for the QObject in the next event loop cycle
 /// \param vptr The QObject
 DOS_API void DOS_CALL dos_qobject_deleteLater(DosQObject *vptr);
 
@@ -1005,11 +1005,13 @@ DOS_API void dos_statusevent_delete(DosStatusEventObject* vptr);
 
 /// Status notification object
 DOS_API DosStatusOSNotificationObject* dos_statusosnotification_create();
-DOS_API void dos_statusosnotification_show_notification(DosStatusOSNotificationObject* vptr, 
+DOS_API void dos_statusosnotification_show_notification(DosStatusOSNotificationObject* vptr,
     const char* title, const char* message, const char* identifier);
 DOS_API void dos_statusosnotification_delete(DosStatusOSNotificationObject* vptr);
 
-DOS_API char *dos_to_local_file(const char* filePath);
+DOS_API char *dos_to_local_file(const char* fileUrl);
+
+DOS_API char *dos_from_local_file(const char* filePath);
 
 #ifdef __cplusplus
 }
