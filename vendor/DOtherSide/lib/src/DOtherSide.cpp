@@ -1378,7 +1378,7 @@ void dos_statusevent_delete(DosStatusEventObject* vptr)
     return new StatusOSNotification();
 }
 
-void dos_statusosnotification_show_notification(DosStatusOSNotificationObject* vptr, 
+void dos_statusosnotification_show_notification(DosStatusOSNotificationObject* vptr,
     const char* title, const char* message, const char* identifier)
 {
     auto notificationObj = static_cast<StatusOSNotification*>(vptr);
@@ -1393,7 +1393,12 @@ void dos_statusosnotification_delete(DosStatusOSNotificationObject* vptr)
         qobject->deleteLater();
 }
 
-char* dos_to_local_file(const char* filePath)
+char* dos_to_local_file(const char* fileUrl)
 {
-    return convert_to_cstring(QUrl(QString::fromUtf8(filePath)).toLocalFile());
+    return convert_to_cstring(QUrl(QString::fromUtf8(fileUrl)).toLocalFile());
+}
+
+char* dos_from_local_file(const char* filePath)
+{
+    return convert_to_cstring(QUrl::fromLocalFile(QString::fromUtf8(filePath)).toString());
 }
