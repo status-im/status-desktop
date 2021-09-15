@@ -424,6 +424,9 @@ endif
 ifdef WINDOWS_CODESIGN_PFX_PATH
 	scripts/sign-windows-bin.sh $(INSTALLER_OUTPUT)
 endif
+	echo -e $(BUILD_MSG) "7z"
+	rm $(OUTPUT)/status.iss
+	7z a $(INSTALLER_OUTPUT)/Status.7z ./$(OUTPUT)
 
 pkg: $(PKG_TARGET)
 
