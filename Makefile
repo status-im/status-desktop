@@ -394,6 +394,7 @@ nim_windows_launcher: | deps
 	$(ENV_SCRIPT) nim c -d:debug --outdir:./bin --passL:"-static-libgcc -Wl,-Bstatic,--whole-archive -lwinpthread -Wl,--no-whole-archive" src/nim_windows_launcher.nim
 
 STATUS_CLIENT_EXE ?= pkg/Status.exe
+STATUS_CLIENT_7Z ?= pkg/Status.7z
 
 $(STATUS_CLIENT_EXE): override RESOURCES_LAYOUT := -d:production
 $(STATUS_CLIENT_EXE): OUTPUT := tmp/windows/dist/Status
@@ -433,7 +434,7 @@ ifdef WINDOWS_CODESIGN_PFX_PATH
 endif
 	echo -e $(BUILD_MSG) "7z"
 	rm $(OUTPUT)/status.iss
-	7z a $(INSTALLER_OUTPUT)/Status.7z ./$(OUTPUT)
+	7z a $(INSTALLER_OUTPUT)/$(STATUS_CLIENT_7Z) ./$(OUTPUT)
 
 pkg: $(PKG_TARGET)
 
