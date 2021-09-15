@@ -425,8 +425,10 @@ endif
 ifdef WINDOWS_CODESIGN_PFX_PATH
 	scripts/sign-windows-bin.sh $(INSTALLER_OUTPUT)
 endif
+
+$(STATUS_CLIENT_7Z): OUTPUT := tmp/windows/dist/Status
+$(STATUS_CLIENT_7Z): $(STATUS_CLIENT_EXE)
 	echo -e $(BUILD_MSG) "7z"
-	rm $(OUTPUT)/status.iss
 	7z a $(STATUS_CLIENT_7Z) ./$(OUTPUT)
 
 pkg: $(PKG_TARGET)
@@ -438,6 +440,8 @@ tgz-linux: $(STATUS_CLIENT_TARBALL)
 pkg-macos: check-pkg-target-macos $(STATUS_CLIENT_DMG)
 
 pkg-windows: check-pkg-target-windows $(STATUS_CLIENT_EXE)
+
+zip-windows: check-pkg-target-windows $(STATUS_CLIENT_7Z)
 
 clean: | clean-common
 	rm -rf bin/* node_modules bottles/* pkg/* tmp/* $(STATUSGO)
