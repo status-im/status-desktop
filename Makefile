@@ -427,7 +427,7 @@ ifdef WINDOWS_CODESIGN_PFX_PATH
 endif
 	echo -e $(BUILD_MSG) "7z"
 	rm $(OUTPUT)/status.iss
-	7z a $(INSTALLER_OUTPUT)/$(STATUS_CLIENT_7Z) ./$(OUTPUT)
+	7z a $(STATUS_CLIENT_7Z) ./$(OUTPUT)
 
 pkg: $(PKG_TARGET)
 
