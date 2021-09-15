@@ -68,9 +68,14 @@ pipeline {
         stage('Upload') {
           steps { script {
             zip_url = s3.uploadArtifact(env.STATUS_CLIENT_7Z)
-            jenkins.setBuildDesc(Zip: zip_url)
-            env.PKG_URL = s3.uploadArtifact(env.STATUS_CLIENT_EXE)
-            jenkins.setBuildDesc(Exe: env.PKG_URL)
+            exe_url = s3.uploadArtifact(env.STATUS_CLIENT_EXE)            
+            env.PKG_URL = exe_url
+
+            urls = [
+              Zip: zip_url,
+              Exe: exe_url,
+            ]
+            jenkins.setBuildDesc(urls)
           } }
         }
         stage('Archive') {
