@@ -1,6 +1,7 @@
 import NimQml, Tables
 import status/[chat/chat, ens, status, settings]
 import status/types/[setting, status_update]
+import user_list
 
 type
   CommunityMembersRoles {.pure.} = enum
@@ -99,6 +100,11 @@ QtObject:
       return true
     if self.community.memberStatus.hasKey(pk):
       result = self.community.memberStatus[pk].statusType.int == StatusUpdateType.Online.int
+
+  proc getUserFromPubKey*(self: CommunityMembersView, pk: string): User =
+    let alias = self.alias(pk)
+    let userName = self.userName(pk, alias)
+    result = User(alias: alias, userName: userName)
 
   proc sortKey(self: CommunityMembersView, pk: string): string =
     let name = self.userName(pk, self.alias(pk))
