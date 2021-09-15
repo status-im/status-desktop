@@ -1009,6 +1009,8 @@ DOS_API void dos_statusosnotification_show_notification(DosStatusOSNotificationO
     const char* title, const char* message, const char* identifier);
 DOS_API void dos_statusosnotification_delete(DosStatusOSNotificationObject* vptr);
 
+DOS_API char *dos_to_local_file(const char* filePath);
+
 #ifdef __cplusplus
 }
 #endif
