@@ -243,8 +243,7 @@ Popup {
             StatusButton {
                 id: removeBtn
                 anchors.horizontalCenter: parent.horizontalCenter
-                //% "Remove"
-                text: qsTrId("Enable")
+                text: qsTr("Enable")
                 onClicked: {
                     appSettings.isTenorWarningAccepted = true
                     chatsModel.gif.getTrendings()
@@ -261,6 +260,7 @@ Popup {
             width: parent.width
             
             StyledText {
+                id: emptyText
                 anchors.centerIn: parent
                 text: {
                     if(currentCategory === StatusGifPopup.Category.Favorite) {
@@ -269,10 +269,28 @@ Popup {
                         return qsTr("Recent GIFs will appear here")
                     }
 
-                    return ""
+                    return qsTr("Error while contacting Tenor API, please retry.")
                 }
                 font.pixelSize: 15
                 color: Style.current.secondaryText
+            }
+
+            StatusButton {
+                id: retryBtn
+                anchors.top: emptyText.bottom
+                anchors.topMargin: Style.current.padding
+                anchors.horizontalCenter: parent.horizontalCenter
+                
+                text: qsTr("Retry")
+                visible: currentCategory === StatusGifPopup.Category.Trending || currentCategory === StatusGifPopup.Category.Search
+                onClicked: {
+                    if (searchBox.text === "") {
+                        chatsModel.gif.getTrendings()
+                        return
+                    }
+                    
+                    searchGif(searchBox.text)
+                }
             }
         }
     }
