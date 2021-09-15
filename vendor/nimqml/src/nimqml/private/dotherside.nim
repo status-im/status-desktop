@@ -34,7 +34,7 @@ type
   DosQAbstractListModel = distinct pointer
   DosStatusEventObject = distinct pointer
   DosStatusOSNotificationObject = DosQObject
-  
+
   DosParameterDefinition = object
     name: cstring
     metaType: cint
@@ -348,12 +348,16 @@ proc dos_statusevent_create_osThemeEvent(engine: DosQQmlApplicationEngine): DosS
 proc dos_statusevent_delete(vptr: DosStatusEventObject) {.cdecl, dynlib: dynLibName, importc.}
 
 # DosStatusOSNotificationObject
-proc dos_statusosnotification_create(): DosStatusOSNotificationObject 
+proc dos_statusosnotification_create(): DosStatusOSNotificationObject
   {.cdecl, dynlib: dynLibName, importc.}
 proc dos_statusosnotification_show_notification(vptr: DosStatusOSNotificationObject,
-  title: cstring, messsage: cstring, identifier: cstring) 
+  title: cstring, messsage: cstring, identifier: cstring)
   {.cdecl, dynlib: dynLibName, importc.}
-proc dos_statusosnotification_delete(vptr: DosStatusOSNotificationObject) 
+proc dos_statusosnotification_delete(vptr: DosStatusOSNotificationObject)
   {.cdecl, dynlib: dynLibName, importc.}
 
-proc dos_to_local_file(filpath: cstring): cstring {.cdecl, dynlib: dynLibName, importc.}
+proc dos_to_local_file(fileUrl: cstring): cstring
+  {.cdecl, dynlib: dynLibName, importc.}
+
+proc dos_from_local_file(filePath: cstring): cstring
+  {.cdecl, dynlib: dynLibName, importc.}

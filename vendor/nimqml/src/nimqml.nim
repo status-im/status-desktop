@@ -61,5 +61,8 @@ proc url_host*(host: string): string =
 proc url_replaceHostAndAddPath*(url: string, newHost: string, protocol: string = "", pathPrefix: string = ""): string =
   result = $(dos_qurl_replaceHostAndAddPath(url.cstring, protocol.cstring, newHost.cstring, pathPrefix.cstring))
 
-proc url_toLocalFile*(url: string): string =
-  result = $(dos_to_local_file(url.cstring))
+proc url_toLocalFile*(fileUrl: string): string =
+  result = $(dos_to_local_file(fileUrl.cstring))
+
+proc url_fromLocalFile*(filePath: string): string =
+  result = $(dos_from_local_file(filePath.cstring))
