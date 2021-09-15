@@ -355,3 +355,5 @@ proc dos_statusosnotification_show_notification(vptr: DosStatusOSNotificationObj
   {.cdecl, dynlib: dynLibName, importc.}
 proc dos_statusosnotification_delete(vptr: DosStatusOSNotificationObject) 
   {.cdecl, dynlib: dynLibName, importc.}
+
+proc dos_to_local_file(filpath: cstring): cstring {.cdecl, dynlib: dynLibName, importc.}
