@@ -9,7 +9,7 @@ import ../../../app_service/[main]
 import ../../../app_service/tasks/[qt, threadpool]
 import ../../../app_service/tasks/marathon/mailserver/worker
 
-import communities, chat_item, channels_list, communities, community_list, user_list, community_members_list, message_list, channel, message_item
+import communities, chat_item, channels_list, communities, community_list, user_list, community_members_list, message_list, channel, message_item, message_format
 
 logScope:
   topics = "messages-view"
@@ -110,6 +110,19 @@ QtObject:
           continue
 
         updatedMessage = updatedMessage.replaceWord(mention, '@' & publicKey)
+
+    return updatedMessage
+
+  proc replacePubKeysWithMentions(self: MessageView, message: string): string =
+    let pubKeyPattern = re(r"(@0[xX][0-9a-fA-F]+)", flags = {reStudy, reIgnoreCase})
+    let pubKeyMentions = findAll(message, pubKeyPattern)
+    var updatedMessage = message
+
+    for mention in pubKeyMentions:
+      let pubKey = mention.replace("@","")
+      let userNameAlias = mention(pubKey, self.status.chat.contacts)
+      if userNameAlias != "":
+        updatedMessage = updatedMessage.replace(mention, '@' & userNameAlias)
 
     return updatedMessage
 
@@ -233,7 +246,7 @@ QtObject:
         let isEdit = msg.editedAt != "0" or msg.contentType == ContentType.Edit
         if not channel.muted and not isEdit and not isGroupSelf and not isMyInvite:
           let isAddedContact = channel.chatType.isOneToOne and self.isAddedContact(channel.id)
-          self.messageNotificationPushed(msg.id, channel.communityId, msg.chatId, escape_html(msg.text), msg.contentType.int, channel.chatType.int, msg.timestamp, msg.identicon, msg.userName, msg.hasMention, isAddedContact, channel.name)
+          self.messageNotificationPushed(msg.id, channel.communityId, msg.chatId, self.replacePubKeysWithMentions(msg.text), msg.contentType.int, channel.chatType.int, msg.timestamp, msg.identicon, msg.userName, msg.hasMention, isAddedContact, channel.name)
 
         self.channelOpenTime[msg.chatId] = now().toTime.toUnix * 1000
 
