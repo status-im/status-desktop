@@ -229,7 +229,7 @@ Item {
                 target: profileModel.contacts.list
                 onContactChanged: {
                     for (var i = 0; i < channelList.chatListItems.count; i++) {
-                        let chatItem = channelList.chatListItems.itemAt(i);
+                        let chatItem = channelList.statusChatListItems.model.itemAt(i);
                         if (chatItem.chatId === pubkey) {
                             let profileImage = appMain.getProfileImage(pubkey)
                             if (!!profileImage) {
