@@ -107,10 +107,10 @@ bottles/openssl:
 bottles/pcre: bottles/openssl
 	./scripts/fetch-brew-bottle.sh pcre
 
-bottles/hunspell: bottles/hunspell
+bottles/hunspell: bottles/pcre
 	./scripts/fetch-brew-bottle.sh hunspell
 
-bottles: bottles/openssl bottles/pcre bottles/hunspell
+bottles: bottles/hunspell
 endif
 
 deps: | deps-common bottles
