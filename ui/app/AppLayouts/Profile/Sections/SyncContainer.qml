@@ -14,21 +14,22 @@ Item {
     Connections {
         target: profileModel.mailservers
         onActiveMailserverChanged: (activeMailserver) => {
-            syncContainer.activeMailserver = activeMailserver
+            syncContainer.activeMailserver = profileModel.mailservers.list.getMailserverName(activeMailserver)
         }
     }
 
     Item {
         width: profileContainer.profileContentWidth
+        anchors.top: parent.top
+        anchors.bottom: parent.bottom
         anchors.horizontalCenter: parent.horizontalCenter
-
         Component {
             id: mailserversList
             
             StatusRadioButton {
                 id: rbSetMailsever
                 text: name
-                checked: name === activeMailserver.activeMailserver
+                checked: name === activeMailserver
                 onClicked: {
                     if (checked) {
                         profileModel.mailservers.setMailserver(name);
@@ -166,7 +167,7 @@ Item {
 
         StyledText {
             //% "..."
-            text: profileModel.mailservers.activeMailserver || qsTrId("---")
+            text: qsTr("Active mailserver: %1").arg(activeMailserver) || qsTrId("---")
             anchors.left: parent.left
             anchors.leftMargin: 24
             anchors.top: switchLbl.bottom
@@ -176,16 +177,12 @@ Item {
 
         ListView {
             id: mailServersListView
-            anchors.topMargin: 200
+            anchors.topMargin: 20
             anchors.top: automaticSelectionSwitch.bottom
-            anchors.fill: parent
+            anchors.bottom: parent.bottom
             model: profileModel.mailservers.list
             delegate: mailserversList
             visible: !automaticSelectionSwitch.checked
-
-            Component.onCompleted: {
-                profileModel.mailservers.getActiveMailserver()
-            }
         }
     }
 }

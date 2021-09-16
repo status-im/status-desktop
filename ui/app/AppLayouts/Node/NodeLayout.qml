@@ -69,6 +69,37 @@ Item {
             }
         }
 
+        RowLayout {
+            Layout.fillWidth: true
+            StyledText {
+                color: Style.current.lightBlueText
+                text: qsTr("Active Mailserver")
+                Layout.rightMargin: Style.current.padding
+                Layout.leftMargin: Style.current.padding
+                Layout.fillWidth: true
+                font.weight: Font.Medium
+                font.pixelSize: 20
+            }
+            StyledText {
+                id: activeMailserverTxt
+                color: Style.current.textColor
+                text: "..."
+                Layout.rightMargin: Style.current.padding
+                Layout.leftMargin: Style.current.padding
+                Layout.fillWidth: true
+                wrapMode: Text.Wrap
+                font.weight: Font.Medium
+                font.pixelSize: 14
+            }
+        }
+
+        Connections {
+            target: profileModel.mailservers
+            onActiveMailserverChanged: (activeMailserver) => {
+                activeMailserverTxt.text = profileModel.mailservers.list.getMailserverName(activeMailserver) + "\n" + activeMailserver
+            }
+        }
+
         ColumnLayout {
             id: logContainer
             height: 300

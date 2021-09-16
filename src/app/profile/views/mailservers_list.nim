@@ -25,7 +25,7 @@ QtObject:
   method rowCount(self: MailServersList, index: QModelIndex = nil): int =
     return self.mailservers.len
 
-  proc getMailserverName*(self: MailServersList, enode: string): string =
+  proc getMailserverName*(self: MailServersList, enode: string): string {.slot.} =
     for mailserver in self.mailservers:
       if mailserver.endpoint == enode:
         return mailserver.name
