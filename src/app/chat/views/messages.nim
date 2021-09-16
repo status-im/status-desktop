@@ -1,6 +1,6 @@
 import NimQml, Tables, json, sequtils, chronicles, times, re, sugar, strutils, os, strformat, algorithm
 
-import status/[status, contacts, mailservers]
+import status/[status, contacts, mailservers, accounts]
 import status/ens as status_ens
 import status/messages as status_messages
 import status/utils as status_utils
@@ -98,6 +98,24 @@ QtObject:
           continue
 
         updatedMessage = updatedMessage.replaceWord(mention, '@' & publicKey)
+
+    return updatedMessage
+
+  proc userNameOrAlias*(self: MessageView, pubKey: string): string {.slot.} =
+    if self.status.chat.contacts.hasKey(pubKey):
+      return status_ens.userNameOrAlias(self.status.chat.contacts[pubKey])
+    generateAlias(pubKey)
+
+  proc replacePubKeysWithMentions(self: MessageView, message: string, contacts: Table[string, Profile]): string =
+    let pubKeyPattern = re(r"(@0[xX][0-9a-fA-F]+)", flags = {reStudy, reIgnoreCase})
+    let pubKeyMentions = findAll(message, pubKeyPattern)
+    var updatedMessage = message
+
+    for mention in pubKeyMentions:
+      let pubKey = mention.replace("@","")
+      let userNameAlias = self.userNameOrAlias(pubKey)
+      if userNameAlias != "":
+        updatedMessage = updatedMessage.replace(mention, '@' & userNameAlias)
 
     return updatedMessage
 
@@ -221,7 +239,7 @@ QtObject:
         let isEdit = msg.editedAt != "0" or msg.contentType == ContentType.Edit
         if not channel.muted and not isEdit and not isGroupSelf and not isMyInvite:
           let isAddedContact = channel.chatType.isOneToOne and self.isAddedContact(channel.id)
-          self.messageNotificationPushed(msg.id, channel.communityId, msg.chatId, escape_html(msg.text), msg.contentType.int, channel.chatType.int, msg.timestamp, msg.identicon, msg.userName, msg.hasMention, isAddedContact, channel.name)
+          self.messageNotificationPushed(msg.id, channel.communityId, msg.chatId, self.replacePubKeysWithMentions(msg.text, self.status.chat.contacts), msg.contentType.int, channel.chatType.int, msg.timestamp, msg.identicon, msg.userName, msg.hasMention, isAddedContact, channel.name)
 
         self.channelOpenTime[msg.chatId] = now().toTime.toUnix * 1000
 
