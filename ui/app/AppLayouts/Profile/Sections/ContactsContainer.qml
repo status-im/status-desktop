@@ -130,9 +130,7 @@ Item {
 
             function validate(value) {
                 if (!Utils.isChatKey(value) && !Utils.isValidETHNamePrefix(value)) {
-                    //% "Enter a valid chat key or ENS username"
-                    //% "Enter a valid chat key or ENS username"
-                    addContactModal.validationError = qsTrId("enter-a-valid-chat-key-or-ens-username");
+                    addContactModal.validationError = qsTr("Enter a valid chat key or ENS username");
                 } else if (profileModel.profile.pubKey === value) {
                     //% "You can't add yourself"
                     addContactModal.validationError = qsTrId("you-can-t-add-yourself");
