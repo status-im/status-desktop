@@ -40,3 +40,6 @@
 [submodule "vendor/status-lib"]
 	path = vendor/status-lib
 	url = https://github.com/status-im/status-lib
+[submodule "spellchecking"]
+	path = spellchecking
+	url = https://github.com/status-im/desktop-spellchecking.git
