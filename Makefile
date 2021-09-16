@@ -219,12 +219,27 @@ fleets-remove:
 
 fleets-update: fleets-remove $(FLEETS)
 
-rcc:
+UI_RESOURCES := resources.rcc
+
+# This `UI_SOURCES` file set is small enough that the rcc target completes very
+# quickly if no files in the set have changed. However, if there's a change to
+# a file not in the set (e.g. a PNG file) then it will be necessary to delete
+# resources.rcc (or touch a .qml file, etc.) in order to trigger a fresh build
+# of resources.rcc.
+ifeq ($(detected_OS),Darwin)
+ UI_SOURCES := $(shell find -E ui -type f -iregex '.*(qmldir|qml|qrc)$$' -not -iname 'resources.qrc')
+else
+ UI_SOURCES := $(shell find ui -type f -regextype egrep -iregex '.*(qmldir|qml|qrc)$$' -not -iname 'resources.qrc')
+endif
+
+$(UI_RESOURCES): $(UI_SOURCES)
 	echo -e $(BUILD_MSG) "resources.rcc"
 	rm -f ./resources.rcc
 	rm -f ./ui/resources.qrc
 	go run ui/generate-rcc.go -source=ui -output=ui/resources.qrc
 	rcc -binary $(RCC_PARAMS) ui/resources.qrc -o ./resources.rcc
+
+rcc: $(UI_RESOURCES)
 
 # default token is a free-tier token with limited capabilities and usage
 # limits; our docs should include directions for community contributor to setup
@@ -242,8 +257,15 @@ NIM_PARAMS += -d:chronicles_sinks=textlines[stdout],textlines[nocolors,dynamic],
 
 RESOURCES_LAYOUT := -d:development
 
-nim_status_client: NIM_PARAMS += $(RESOURCES_LAYOUT)
-nim_status_client: | $(DOTHERSIDE) $(STATUSGO) $(QRCODEGEN) $(FLEETS) rcc deps
+NIM_SOURCES := $(shell find src -type f)
+ifeq ($(detected_OS),Windows)
+ NIM_STATUS_CLIENT := bin/nim_status_client.exe
+else
+ NIM_STATUS_CLIENT := bin/nim_status_client
+endif
+
+$(NIM_STATUS_CLIENT): NIM_PARAMS += $(RESOURCES_LAYOUT)
+$(NIM_STATUS_CLIENT): $(NIM_SOURCES) | $(DOTHERSIDE) $(STATUSGO) $(QRCODEGEN) $(FLEETS) rcc deps
 	echo -e $(BUILD_MSG) "$@" && \
 		$(ENV_SCRIPT) nim c $(NIM_PARAMS) --passL:"-L$(STATUSGO_LIBDIR)" --passL:"-lstatus" $(NIM_EXTRA_PARAMS) --passL:"$(QRCODEGEN)" --passL:"-lm" src/nim_status_client.nim && \
 		[[ $$? = 0 ]] && \
@@ -252,6 +274,8 @@ nim_status_client: | $(DOTHERSIDE) $(STATUSGO) $(QRCODEGEN) $(FLEETS) rcc deps
 			libstatus.dylib \
 			@rpath/libstatus.dylib \
 			bin/nim_status_client) || true)
+
+nim_status_client: $(NIM_STATUS_CLIENT)
 
 _APPIMAGE_TOOL := appimagetool-x86_64.AppImage
 APPIMAGE_TOOL := tmp/linux/tools/$(_APPIMAGE_TOOL)
@@ -454,7 +478,7 @@ clean: | clean-common
 	rm -rf bin/* node_modules bottles/* pkg/* tmp/* $(STATUSGO)
 	+ $(MAKE) -C vendor/DOtherSide/build --no-print-directory clean
 
-run: rcc $(RUN_TARGET)
+run: nim_status_client $(RUN_TARGET)
 
 ICON_TOOL := node_modules/.bin/fileicon
 
