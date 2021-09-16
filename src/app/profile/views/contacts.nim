@@ -40,6 +40,7 @@ QtObject:
     addedContacts*: ContactList
     blockedContacts*: ContactList
     contactToAdd*: Profile
+    accountKeyUID*: string
 
   proc setup(self: ContactsView) =
     self.QObject.setup
@@ -198,7 +199,7 @@ QtObject:
   proc contactChanged(self: ContactsView, publicKey: string, isAdded: bool) {.signal.}
 
   proc addContact*(self: ContactsView, publicKey: string): string {.slot.} =
-    result = self.status.contacts.addContact(publicKey)
+    result = self.status.contacts.addContact(publicKey, self.accountKeyUID)
     self.status.chat.join(status_utils.getTimelineChatId(publicKey), ChatType.Profile, "", publicKey)
     self.contactChanged(publicKey, true)
 
@@ -219,7 +220,7 @@ QtObject:
     var nicknameToSet = nickname
     if (nicknameToSet == ""):
       nicknameToSet = DELETE_CONTACT
-    discard self.status.contacts.setNickName(publicKey, nicknameToSet)
+    discard self.status.contacts.setNickName(publicKey, nicknameToSet, self.accountKeyUID)
 
   proc unblockContact*(self: ContactsView, publicKey: string) {.slot.} =
     self.contactListChanged()

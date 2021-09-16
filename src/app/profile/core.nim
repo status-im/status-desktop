@@ -56,7 +56,6 @@ proc init*(self: ProfileController, account: Account) =
   profile.currentUserStatus = currentUserStatus
 
   let identityImage = self.status.profile.getIdentityImage(profile.address)
-
   if (identityImage.thumbnail != ""):
     profile.identityImage = identityImage
 
@@ -76,7 +75,6 @@ proc init*(self: ProfileController, account: Account) =
     self.view.mailservers.add(mailserver)
 
   let contacts = self.status.contacts.getContacts()
-  self.status.chat.updateContacts(contacts)
   self.view.contacts.setContactList(contacts)
 
   self.status.events.on("channelLoaded") do(e: Args):
@@ -129,8 +127,8 @@ proc init*(self: ProfileController, account: Account) =
     let msgData = MessageSignal(e);
     if msgData.contacts.len > 0:
       # TODO: view should react to model changes
-      self.view.contacts.updateContactList(msgData.contacts)
-      self.status.chat.updateContacts(msgData.contacts)
+      let contacts = self.status.contacts.getContacts(false)
+      self.view.contacts.updateContactList(contacts)
     if msgData.installations.len > 0:
       self.view.devices.addDevices(msgData.installations)
 

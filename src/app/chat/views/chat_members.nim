@@ -35,8 +35,8 @@ QtObject:
   method rowCount(self: ChatMembersView, index: QModelIndex = nil): int = self.members.len
 
   proc userName(self: ChatMembersView, id: string, alias: string): string =
-    if self.status.chat.contacts.hasKey(id):
-      result = ens.userNameOrAlias(self.status.chat.contacts[id])
+    if self.status.chat.getContacts().hasKey(id):
+      result = ens.userNameOrAlias(self.status.chat.getContacts()[id])
     else:
       result = alias
 

@@ -97,11 +97,11 @@ QtObject:
       var identicon: string
       var localName: string
 
-      if self.status.chat.contacts.hasKey(pk):
-        userName = ens.userNameOrAlias(self.status.chat.contacts[pk])
-        alias = self.status.chat.contacts[pk].alias
-        identicon = self.status.chat.contacts[pk].identicon
-        localName = self.status.chat.contacts[pk].localNickname
+      if self.status.chat.getContacts().hasKey(pk):
+        userName = ens.userNameOrAlias(self.status.chat.getContacts()[pk])
+        alias = self.status.chat.getContacts()[pk].alias
+        identicon = self.status.chat.getContacts()[pk].identicon
+        localName = self.status.chat.getContacts()[pk].localNickname
       else:
         userName = m.username
         alias = m.username

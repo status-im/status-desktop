@@ -217,8 +217,8 @@ QtObject:
     generateAlias(pubKey)
 
   proc userNameOrAlias*(self: ChatsView, pubKey: string): string {.slot.} =
-    if self.status.chat.contacts.hasKey(pubKey):
-      return status_ens.userNameOrAlias(self.status.chat.contacts[pubKey])
+    if self.status.chat.getContacts().hasKey(pubKey):
+      return status_ens.userNameOrAlias(self.status.chat.getContacts()[pubKey])
     generateAlias(pubKey)
 
   proc activityNotificationsChanged*(self: ChatsView) {.signal.}

@@ -219,7 +219,7 @@ QtObject:
     let isEdited = if self.isEdited.hasKey(message.id): self.isEdited[message.id] else: false
     case chatMessageRole:
       of ChatMessageRoles.UserName: result = newQVariant(message.userName)
-      of ChatMessageRoles.Message: result = newQVariant(renderBlock(message, self.status.chat.contacts))
+      of ChatMessageRoles.Message: result = newQVariant(renderBlock(message, self.status.chat.getContacts()))
       of ChatMessageRoles.PlainText: result = newQVariant(message.text)
       of ChatMessageRoles.Timestamp: result = newQVariant(message.timestamp)
       of ChatMessageRoles.Clock: result = newQVariant($message.clock)
@@ -316,7 +316,7 @@ QtObject:
     of "alias": result = message.alias
     of "localName": result = message.localName
     of "ensName": result = message.ensName
-    of "message": result = (renderBlock(message, self.status.chat.contacts))
+    of "message": result = (renderBlock(message, self.status.chat.getContacts()))
     of "identicon": result = message.identicon
     of "timestamp": result = $(message.timestamp)
     of "image": result = $(message.image)

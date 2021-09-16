@@ -37,7 +37,7 @@ QtObject:
   QtProperty[string] userName:
     read = userName
 
-  proc message*(self: MessageItem): string {.slot.} = result = renderBlock(self.messageItem, self.status.chat.contacts)
+  proc message*(self: MessageItem): string {.slot.} = result = renderBlock(self.messageItem, self.status.chat.getContacts())
   QtProperty[string] message:
     read = message
 
