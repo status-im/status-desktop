@@ -59,8 +59,7 @@ pipeline {
 
     stage('Package') {
       steps { script {
-        windows.bundle(env.STATUS_CLIENT_EXE)
-        windows.bundle(env.STATUS_CLIENT_7Z)
+        windows.bundle("${env.STATUS_CLIENT_EXE} ${env.STATUS_CLIENT_7Z}")
       } }
     }
 
