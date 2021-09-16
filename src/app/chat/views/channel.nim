@@ -110,8 +110,8 @@ QtObject:
         self.chats.clearAllMentionsFromChannelWithId(channel.id)
 
   proc userNameOrAlias(self: ChannelView, pubKey: string): string =
-    if self.status.chat.contacts.hasKey(pubKey):
-      return status_ens.userNameOrAlias(self.status.chat.contacts[pubKey])
+    if self.status.chat.getContacts().hasKey(pubKey):
+      return status_ens.userNameOrAlias(self.status.chat.getContacts()[pubKey])
     generateAlias(pubKey)
 
   proc setActiveChannelByIndexWithForce*(self: ChannelView, index: int, forceUpdate: bool) {.slot.} =

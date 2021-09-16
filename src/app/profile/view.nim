@@ -82,6 +82,7 @@ QtObject:
 
   proc setNewProfile*(self: ProfileView, profile: Profile) =
     self.profile.setProfile(profile)
+    self.contacts.accountKeyUID = profile.address
     self.profileChanged()
 
   QtProperty[QVariant] profile:

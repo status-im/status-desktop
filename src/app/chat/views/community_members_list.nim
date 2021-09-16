@@ -55,29 +55,34 @@ QtObject:
     self.community.members.len
 
   proc userName(self: CommunityMembersView, pk: string, alias: string): string =
-    if self.status.chat.contacts.hasKey(pk):
-      if self.status.chat.contacts[pk].localNickname != "":
-        result = self.status.chat.contacts[pk].localNickname
+    let contacts = self.status.chat.getContacts()
+    if contacts.hasKey(pk):
+      if contacts[pk].localNickname != "":
+        result = contacts[pk].localNickname
       else:
-        result = ens.userNameOrAlias(self.status.chat.contacts[pk])
+        result = ens.userNameOrAlias(contacts[pk])
     else:
       result = alias
 
   proc identicon(self: CommunityMembersView, pk: string): string =
-    if self.status.chat.contacts.hasKey(pk):
-      result = self.status.chat.contacts[pk].identicon
+    let contacts = self.status.chat.getContacts()
+    if contacts.hasKey(pk):
+      result = contacts[pk].identicon
     else:
       result = self.status.accounts.generateIdenticon(pk)
 
   proc alias(self: CommunityMembersView, pk: string): string =
-    if self.status.chat.contacts.hasKey(pk):
-      result = self.status.chat.contacts[pk].alias
+    let contacts = self.status.chat.getContacts()
+    if contacts.hasKey(pk):
+      result = contacts[pk].alias
     else:
       result = self.status.accounts.generateAlias(pk)
 
   proc localNickname(self: CommunityMembersView, pk: string): string =
-    if self.status.chat.contacts.hasKey(pk):
-      result = self.status.chat.contacts[pk].localNickname
+    let contacts = self.status.chat.getContacts()
+
+    if contacts.hasKey(pk):
+      result = contacts[pk].localNickname
 
   proc memberLastSeen(self: CommunityMembersView, pk: string): string =
     if self.community.memberStatus.hasKey(pk):

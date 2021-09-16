@@ -64,14 +64,14 @@ QtObject:
   proc contactsUpdated*(self: ChatItemView) {.signal}
 
   proc userNameOrAlias(self: ChatItemView, pubKey: string): string {.slot.} =
-    if self.status.chat.contacts.hasKey(pubKey):
-      return ens.userNameOrAlias(self.status.chat.contacts[pubKey])
+    if self.status.chat.getContacts().hasKey(pubKey):
+      return ens.userNameOrAlias(self.status.chat.getContacts()[pubKey])
     generateAlias(pubKey)
 
   proc name*(self: ChatItemView): string {.slot.} = 
     if self.chatItem != nil and self.chatItem.chatType.isOneToOne:
-      if self.status.chat.contacts.hasKey(self.chatItem.id) and self.status.chat.contacts[self.chatItem.id].hasNickname():
-        return self.status.chat.contacts[self.chatItem.id].localNickname
+      if self.status.chat.getContacts().hasKey(self.chatItem.id) and self.status.chat.getContacts()[self.chatItem.id].hasNickname():
+        return self.status.chat.getContacts()[self.chatItem.id].localNickname
       let username = self.userNameOrAlias(self.chatItem.id)
       if username != "":
         result = username.userName(true)      
@@ -87,8 +87,8 @@ QtObject:
 
   proc nickname*(self: ChatItemView): string {.slot.} = 
     if self.chatItem != nil and self.chatItem.chatType.isOneToOne:
-      if self.status.chat.contacts.hasKey(self.chatItem.id) and self.status.chat.contacts[self.chatItem.id].hasNickname():
-        return self.status.chat.contacts[self.chatItem.id].localNickname
+      if self.status.chat.getContacts().hasKey(self.chatItem.id) and self.status.chat.getContacts()[self.chatItem.id].hasNickname():
+        return self.status.chat.getContacts()[self.chatItem.id].localNickname
     result = ""
 
   QtProperty[string] nickname:
@@ -98,8 +98,8 @@ QtObject:
   proc ensVerified*(self: ChatItemView): bool {.slot.} = 
     if self.chatItem != nil and
       self.chatItem.chatType.isOneToOne and
-      self.status.chat.contacts.hasKey(self.chatItem.id):
-        return self.status.chat.contacts[self.chatItem.id].ensVerified
+      self.status.chat.getContacts().hasKey(self.chatItem.id):
+        return self.status.chat.getContacts()[self.chatItem.id].ensVerified
     result = false
 
   QtProperty[bool] ensVerified:
@@ -109,8 +109,8 @@ QtObject:
   proc alias*(self: ChatItemView): string {.slot.} = 
     if self.chatItem != nil and
       self.chatItem.chatType.isOneToOne and
-      self.status.chat.contacts.hasKey(self.chatItem.id):
-        return self.status.chat.contacts[self.chatItem.id].alias
+      self.status.chat.getContacts().hasKey(self.chatItem.id):
+        return self.status.chat.getContacts()[self.chatItem.id].alias
     result = ""
 
   QtProperty[string] alias:
