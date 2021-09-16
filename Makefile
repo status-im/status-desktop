@@ -101,16 +101,23 @@ ifneq ($(detected_OS),Windows)
 endif
 
 ifeq ($(detected_OS),Darwin)
-bottles/openssl:
-	./scripts/fetch-brew-bottle.sh openssl
+BOTTLES_DIR := $(shell pwd)/bottles
+BOTTLES := $(addprefix $(BOTTLES_DIR)/,hunspell openssl pcre)
 
-bottles/pcre: bottles/openssl
-	./scripts/fetch-brew-bottle.sh pcre
+$(BOTTLES): | $(BOTTLES_DIR)
+	echo -e "\e[92mFetching:\e[39m $(notdir $@) bottle"
+	./scripts/fetch-brew-bottle.sh $(notdir $@)
 
-bottles/hunspell: bottles/pcre
-	./scripts/fetch-brew-bottle.sh hunspell
+$(BOTTLES_DIR):
+	echo -e "\e[92mUpdating:\e[39m macOS Homebrew"
+	if [[ $$(stat -f %u /usr/local/var/homebrew) -ne "$${UID}" ]]; then \
+		echo "Missing permissions to update Homebrew formulae!" >&2; \
+	else \
+		brew update >/dev/null; \
+		mkdir -p $(BOTTLES_DIR); \
+	fi
 
-bottles: bottles/hunspell
+bottles: $(BOTTLES)
 endif
 
 deps: | deps-common bottles

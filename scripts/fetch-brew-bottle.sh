@@ -43,14 +43,6 @@ else
     BEARER_TOKEN=$(get_gh_pkgs_token)
 fi
 
-# We want the most recent available version of the package.
-if [[ $(stat -f %u /usr/local/var/homebrew) -ne "${UID}" ]]; then
-    echo "Missing permissions to update Homebrew formulae!" >&2
-else
-    echo "${BOTTLE_NAME} - Updating HomeBrew repository"
-    brew update >/dev/null
-fi
-
 echo "${BOTTLE_NAME} - Finding bottle URL"
 BOTTLE_JSON=$(get_bottle_json "${BOTTLE_NAME}")
 BOTTLE_URL=$(echo "${BOTTLE_JSON}" | jq -r .url)
