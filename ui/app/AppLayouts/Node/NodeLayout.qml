@@ -101,6 +101,26 @@ Item {
         }
 
         ColumnLayout {
+            id: mailserverLogsContainer
+            height: 300
+            StyledText {
+                color: Style.current.lightBlueText
+                text: "Mailserver Interactions:"
+                Layout.rightMargin: Style.current.padding
+                Layout.leftMargin: Style.current.padding
+                Layout.fillWidth: true
+                font.weight: Font.Medium
+                font.pixelSize: 20
+            }
+            StyledTextArea {
+                id: mailserverLogTxt
+                text: ""
+                customHeight: 200
+                textField.readOnly: true
+            }
+        }
+
+        ColumnLayout {
             id: logContainer
             height: 300
             StyledText {
@@ -119,10 +139,20 @@ Item {
                 customHeight: 200
                 textField.readOnly: true
             }
+        }
 
-            Connections {
-                target: nodeModel
-                function onLog(logContent) {
+        Connections {
+            target: nodeModel
+            function onLog(logContent) {
+                // TODO: this is ugly, but there's not even a design for this section
+                if(logContent.indexOf("mailserver") > 0){
+                    let lines = mailserverLogTxt.text.split("\n");
+                    if (lines.length > 10){
+                        lines.shift();
+                    }
+                    lines.push(logContent.trim())
+                    mailserverLogTxt.text = lines.join("\n")
+                } else {
                     let lines = logsTxt.text.split("\n");
                     if (lines.length > 5){
                         lines.shift();
