@@ -50,7 +50,6 @@
 #ifdef QT_QUICKCONTROLS2_LIB
 #include <QtQuickControls2/QQuickStyle>
 #endif
-#include <QtWidgets/QApplication>
 
 #include "DOtherSide/DOtherSideTypesCpp.h"
 #include "DOtherSide/DosQMetaObject.h"
@@ -123,15 +122,15 @@ char *convert_to_cstring(const QString &source)
     return convert_to_cstring(source.toUtf8());
 }
 
-char *dos_qcoreapplication_application_dir_path()
+char *dos_qguiapplication_application_dir_path()
 {
-    return convert_to_cstring(QCoreApplication::applicationDirPath());
+    return convert_to_cstring(QGuiApplication::applicationDirPath());
 }
 
-void dos_qapplication_enable_hdpi(const char *uiScaleFilePath)
+void dos_qguiapplication_enable_hdpi(const char *uiScaleFilePath)
 {
-    QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-    QApplication::setHighDpiScaleFactorRoundingPolicy(Qt::HighDpiScaleFactorRoundingPolicy::PassThrough);
+    QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    QGuiApplication::setHighDpiScaleFactorRoundingPolicy(Qt::HighDpiScaleFactorRoundingPolicy::PassThrough);
 
     QFile scaleFile(QString::fromUtf8(uiScaleFilePath));
     if (scaleFile.open(QIODevice::ReadOnly)) {
@@ -140,9 +139,9 @@ void dos_qapplication_enable_hdpi(const char *uiScaleFilePath)
     }
 }
 
-void dos_qapplication_initialize_opengl()
+void dos_qguiapplication_initialize_opengl()
 {
-    QApplication::setAttribute(Qt::AA_ShareOpenGLContexts);
+    QGuiApplication::setAttribute(Qt::AA_ShareOpenGLContexts);
 }
 
 void dos_qguiapplication_create()
@@ -155,21 +154,21 @@ void dos_qguiapplication_create()
     new QGuiApplication(argc, argv);
 }
 
-void dos_qapplication_clipboard_setText(const char* text)
+void dos_qguiapplication_clipboard_setText(const char* text)
 {
-    QApplication::clipboard()->setText(text);
+    QGuiApplication::clipboard()->setText(text);
 }
 
-void dos_qapplication_clipboard_setImage(const char* text)
+void dos_qguiapplication_clipboard_setImage(const char* text)
 {
     QByteArray btArray =  QString(text).split("base64,")[1].toUtf8();
     QImage image;
     image.loadFromData(QByteArray::fromBase64(btArray));
     Q_ASSERT(!image.isNull());
-    QApplication::clipboard()->setImage(image);
+    QGuiApplication::clipboard()->setImage(image);
 }
 
-void dos_qapplication_download_image(const char *imageSource, const char *filePath)
+void dos_qguiapplication_download_image(const char *imageSource, const char *filePath)
 {
     // Extract file path that can be used to save the image
     QString fileL = QString(filePath).replace(QRegExp("^(file:/{2})|(qrc:/{2})|(http:/{2})"), "");
@@ -211,43 +210,6 @@ void dos_qguiapplication_installEventFilter(::DosEvent* vptr)
     qGuiApp->installEventFilter(qobject);
 }
 
-void dos_qapplication_create()
-{
-    static int argc = 1;
-    static char *argv[] = {(char*)"Status"};
-
-    register_meta_types();
-
-    new QApplication(argc, argv);
-}
-
-void dos_qapplication_delete()
-{
-    delete qApp;
-}
-
-void dos_qapplication_exec()
-{
-    qApp->exec();
-}
-
-void dos_qapplication_icon(const char *filename)
-{
-    qApp->setWindowIcon(QIcon(filename));
-}
-
-void dos_qapplication_quit()
-{
-    // This way we will be safe for quitting the app (avoid potential crashes).
-    QMetaObject::invokeMethod(qApp, "quit", Qt::QueuedConnection);
-}
-
-void dos_qapplication_installEventFilter(::DosEvent* vptr)
-{
-    auto qobject = static_cast<QObject*>(vptr);
-    qApp->installEventFilter(qobject);
-}
-
 ::DosQQmlApplicationEngine *dos_qqmlapplicationengine_create()
 {
     return new QQmlApplicationEngine();
@@ -287,7 +249,7 @@ void dos_qqmlapplicationengine_setNetworkAccessManagerFactory(::DosQQmlApplicati
 void dos_qqmlapplicationengine_load(::DosQQmlApplicationEngine *vptr, const char *filename)
 {
     auto engine = static_cast<QQmlApplicationEngine *>(vptr);
-    engine->load(QUrl::fromLocalFile(QCoreApplication::applicationDirPath() + QDir::separator() + QString(filename)));
+    engine->load(QUrl::fromLocalFile(QGuiApplication::applicationDirPath() + QDir::separator() + QString(filename)));
 }
 
 void dos_qqmlapplicationengine_load_url(::DosQQmlApplicationEngine *vptr, ::DosQUrl *url)
@@ -303,13 +265,13 @@ void dos_qqmlapplicationengine_load_data(::DosQQmlApplicationEngine *vptr, const
     engine->loadData(data);
 }
 
-void dos_qapplication_load_translation(::DosQQmlApplicationEngine *vptr, const char* translationPackage, bool shouldRetranslate)
+void dos_qguiapplication_load_translation(::DosQQmlApplicationEngine *vptr, const char* translationPackage, bool shouldRetranslate)
 {
     if (!m_translator->isEmpty()) {
-        QCoreApplication::removeTranslator(m_translator);
+        QGuiApplication::removeTranslator(m_translator);
     }
     if (m_translator->load(translationPackage)) {
-        bool success = QCoreApplication::installTranslator(m_translator);
+        bool success = QGuiApplication::installTranslator(m_translator);
         auto engine = static_cast<QQmlApplicationEngine *>(vptr);
         if (shouldRetranslate) engine->retranslate();
     } else {
@@ -437,7 +399,7 @@ char *dos_qquickview_source(const ::DosQQuickView *vptr)
 void dos_qquickview_set_source(::DosQQuickView *vptr, const char *filename)
 {
     auto view = static_cast<QQuickView *>(vptr);
-    view->setSource(QUrl::fromLocalFile(QCoreApplication::applicationDirPath() + QDir::separator() + QString(filename)));
+    view->setSource(QUrl::fromLocalFile(QGuiApplication::applicationDirPath() + QDir::separator() + QString(filename)));
 }
 
 void dos_qquickview_set_source_url(::DosQQuickView *vptr, ::DosQUrl *url)
@@ -1123,7 +1085,7 @@ void dos_qabstractitemmodel_dataChanged(::DosQAbstractItemModel *vptr,
     auto model = dynamic_cast<DOS::DosIQAbstractItemModelImpl *>(object);
     auto topLeft = static_cast<const QModelIndex *>(topLeftIndex);
     auto bottomRight = static_cast<const QModelIndex *>(bottomRightIndex);
-    auto roles = QVector<int>::fromStdVector(std::vector<int>(rolesArrayPtr, rolesArrayPtr + rolesArrayLength));
+    auto roles = QVector<int>(rolesArrayPtr, rolesArrayPtr + rolesArrayLength);
     model->publicDataChanged(*topLeft, *bottomRight, roles);
 }
 
@@ -1251,14 +1213,14 @@ void dos_qquickstyle_set_fallback_style(const char *style)
 #endif
 }
 
-void dos_qcoreapplication_process_events(DosQEventLoopProcessEventFlag flags)
+void dos_qguiapplication_process_events(DosQEventLoopProcessEventFlag flags)
 {
-    qApp->processEvents(static_cast<QEventLoop::ProcessEventsFlag>(flags));
+    qGuiApp->processEvents(static_cast<QEventLoop::ProcessEventsFlag>(flags));
 }
 
-void dos_qcoreapplication_process_events_timed(DosQEventLoopProcessEventFlag flags, int ms)
+void dos_qguiapplication_process_events_timed(DosQEventLoopProcessEventFlag flags, int ms)
 {
-    qApp->processEvents(static_cast<QEventLoop::ProcessEventsFlag>(flags), ms);
+    qGuiApp->processEvents(static_cast<QEventLoop::ProcessEventsFlag>(flags), ms);
 }
 
 ::DosQNetworkConfigurationManager *dos_qncm_create()

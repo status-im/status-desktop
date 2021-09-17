@@ -7,7 +7,7 @@
 #include <QTest>
 #include <QSignalSpy>
 #include <QTimer>
-#include <QApplication>
+#include <QGuiApplication>
 #include <QQuickWindow>
 #include <QQmlApplicationEngine>
 #include <QQuickItem>
@@ -37,7 +37,7 @@ bool ExecuteTest(int argc, char *argv[])
 template<typename Test>
 bool ExecuteGuiTest(int argc, char *argv[])
 {
-    QApplication app(argc, argv);
+    QGuiApplication app(argc, argv);
     Test test;
     return QTest::qExec(&test, argc, argv) == 0;
 }
@@ -61,28 +61,6 @@ private slots:
         dos_qguiapplication_exec();
         QVERIFY(quit);
         dos_qguiapplication_delete();
-    }
-};
-
-/*
- * Test QApplication
- */
-class TestQApplication : public QObject
-{
-    Q_OBJECT
-
-private slots:
-    void testExecution()
-    {
-        bool quit = false;
-        dos_qapplication_create("test");
-        QTimer::singleShot(100, [&quit]() {
-            quit = true;
-            dos_qapplication_quit();
-        });
-        dos_qapplication_exec();
-        QVERIFY(quit);
-        dos_qapplication_delete();
     }
 };
 
@@ -737,7 +715,6 @@ int main(int argc, char *argv[])
 
     bool success = true;
     success &= ExecuteTest<TestQGuiApplication>(argc, argv);
-    success &= ExecuteTest<TestQApplication>(argc, argv);
     success &= ExecuteTest<TestQVariant>(argc, argv);
     success &= ExecuteTest<TestQUrl>(argc, argv);
     success &= ExecuteTest<TestQModelIndex>(argc, argv);
