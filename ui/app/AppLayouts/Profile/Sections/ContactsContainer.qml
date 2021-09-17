@@ -69,9 +69,9 @@ Item {
             id: blockedContactsButton
             anchors.top: addNewContact.bottom
             anchors.topMargin: Style.current.bigPadding
-            width: blockButton.width + blockButtonLabel.width + Style.current.padding
+            width: parent.width
             visible: profileModel.contacts.blockedContacts.rowCount() > 0
-            height: addButton.height
+            height: 64
 
             StatusRoundButton {
                 id: blockButton
@@ -89,6 +89,16 @@ Item {
                 color: Style.current.blue
                 anchors.left: blockButton.right
                 anchors.leftMargin: Style.current.padding
+                anchors.verticalCenter: blockButton.verticalCenter
+                font.pixelSize: 15
+            }
+
+            StyledText {
+                id: numberOfBlockedContacts
+                text: profileModel.contacts.blockedContacts.rowCount()
+                color: Style.current.darkGrey
+                anchors.right: parent.right
+                anchors.rightMargin: Style.current.padding
                 anchors.verticalCenter: blockButton.verticalCenter
                 font.pixelSize: 15
             }
@@ -213,7 +223,7 @@ Item {
 
         ContactList {
             id: contactListView
-            anchors.top: blockedContactsButton.bottom
+            anchors.top: blockedContactsButton.visible ? blockedContactsButton.bottom : addNewContact.bottom
             anchors.topMargin: Style.current.bigPadding
             anchors.bottom: parent.bottom
             contacts: profileModel.contacts.addedContacts
