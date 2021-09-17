@@ -131,7 +131,7 @@ QVariant DosQObjectImpl::executeSlot(const QString &name, const std::vector<QVar
         argumentsAsVoidPointers.emplace_back((void *)(&args[i]));
 
     // send them to the binding handler
-    m_dObjectCallback(m_dObjectPointer, &slotName, argumentsAsVoidPointers.size(), &argumentsAsVoidPointers[0]);
+    m_dObjectCallback(m_dObjectPointer, &slotName, static_cast<int>(argumentsAsVoidPointers.size()), &argumentsAsVoidPointers[0]);
 
     return result;
 }
