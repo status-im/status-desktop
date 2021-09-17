@@ -1,0 +1,8 @@
+Package: status-desktop
+Version: %VERSION%
+Section: comm
+Priority: optional
+Architecture: amd64
+Maintainer: Status Research & Development GmbH
+Depends: libc6 (>= 2.31), libgcc-s1 (>= 3.4), libpcre3, libqt5core5a (>= 5.15.1), libqt5gui5 (>= 5.14.1) | libqt5gui5-gles (>= 5.14.1), libqt5network5 (>= 5.9.0~beta), libqt5qml5 (>= 5.10.0), libqt5quick5 (>= 5.15.1) | libqt5quick5-gles (>= 5.15.1), libqt5quickcontrols2-5 (>= 5.9.0~rc), libqt5widgets5 (>= 5.0.2), libssl1.1 (>= 1.1.0), libstdc++6 (>= 5.2), qtbase-abi-5-15-2, qml-module-qtqml-statemachine, qml-module-qt-labs-platform, qml-module-qtmultimedia, libqt5multimedia5, libqt5multimediaquick5, qml-module-qt-labs-folderlistmodel, qml-module-qtqml, qml-module-qtquick-dialogs, qml-module-qtquick-privatewidgets, qml-module-qtqml-models2, qml-module-qtquick-controls, libqt5quickshapes5, qml-module-qtquick-shapes, qml-module-qtwebchannel, qml-module-qtwebengine, libqt5multimedia5-plugins, libqt5multimediagsttools5, libqt5multimediawidgets5, qml-module-qtquick-controls2, qml-module-qtquick-templates2, gstreamer1.0-libav
+Description: Desktop client for the Status Network

@@ -14,6 +14,8 @@ import
 logScope:
   topics = "mailserver model"
 
+const fleetConfig = staticRead("../../../../fleets.json")
+
 ################################################################################
 ##                                                                            ##
 ## NOTE: MailserverModel runs on a separate (long-running) thread             ##
@@ -61,12 +63,6 @@ proc newMailserverModel*(vptr: ByteAddress): MailserverModel =
 
 proc init*(self: MailserverModel) =
   trace "MailserverModel::init()"
-  let fleets =
-    if defined(windows) and defined(production):
-      "/../resources/fleets.json"
-    else:
-      "/../fleets.json"
-  let fleetConfig = readFile(joinPath(getAppDir(), fleets))
   self.fleet = newFleetModel(fleetConfig)
   self.mailservers = toSeq(self.fleet.config.getMailservers(status_settings.getFleet()).values)
   for mailserver in status_settings.getMailservers().getElems():

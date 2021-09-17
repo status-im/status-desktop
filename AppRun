@@ -16,4 +16,4 @@ else
   export LANG="${VARIABLE:=$DEFAULT_LANG}"
 fi
 
-exec "${APPDIR}/usr/bin/nim_status_client" "$@"
+exec "${APPDIR}/usr/bin/status-desktop" "$@"

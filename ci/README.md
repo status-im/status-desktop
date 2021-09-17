@@ -9,9 +9,17 @@ https://ci.status.im/job/nim-status-client/
 
 In order to build the Linux version of the application we use a modified `a12e/docker-qt:5.14-gcc_64` Docker image with the addition of Git and Golang.
 
-The image is built with [`Dockerfile`](./Dockerfile) using:
+The image is built with Docker using:
 ```
+# for building the AppImage
+cd AppImage
 docker build -t statusteam/nim-status-client-build:latest .
+cd ..
+
+# for building the .deb
+cd deb
+docker build -t statusteam/status-desktop-deb-build:latest .
+cd ..
 ```
 And pushed to: https://hub.docker.com/r/statusteam/nim-status-client-build
 
