@@ -81,7 +81,7 @@ proc isActiveMailserverAvailable*(self: MailserverModel): bool =
     result = self.nodes[self.activeMailserver] == MailserverStatus.Connected
 
 proc connect(self: MailserverModel, enode: string) =
-  debug "Connecting to mailserver", enode=enode.substr[enode.len-40..enode.len-1]
+  info "Connecting to mailserver", enode=enode.substr[enode.len-40..enode.len-1]
   var connected = false
   # TODO: this should come from settings
   var knownMailservers = initHashSet[string]()
@@ -92,6 +92,7 @@ proc connect(self: MailserverModel, enode: string) =
     return
 
   self.activeMailserver = enode
+  info "Mailserver changed", enode
   self.events.emit("mailserver:changed", MailserverArgs(peer: enode))
 
   # Adding a peer and marking it as connected can't be executed sync, because
@@ -109,6 +110,7 @@ proc connect(self: MailserverModel, enode: string) =
     self.lastConnectionAttempt = cpuTime()
 
   if connected:
+    info "Mailserver available"
     self.events.emit("mailserverAvailable", MailserverArgs())
 
 proc peerSummaryChange*(self: MailserverModel, peers: seq[string]) =
@@ -121,7 +123,7 @@ proc peerSummaryChange*(self: MailserverModel, peers: seq[string]) =
   var mailserverAvailable = false
   for knownPeer in self.nodes.keys:
     if not peers.contains(knownPeer) and self.nodes[knownPeer] != MailserverStatus.Disconnected: 
-      debug "Peer disconnected", peer=knownPeer
+      info "Peer disconnected", peer=knownPeer
       self.nodes[knownPeer] = MailserverStatus.Disconnected
       self.events.emit("peerDisconnected", MailserverArgs(peer: knownPeer))
       if self.activeMailserver == knownPeer:
@@ -130,7 +132,7 @@ proc peerSummaryChange*(self: MailserverModel, peers: seq[string]) =
   
   for peer in peers:
     if self.nodes.hasKey(peer) and (self.nodes[peer] == MailserverStatus.Connected): continue
-    debug "Peer connected", peer
+    info "Peer connected", peer
     self.nodes[peer] = MailserverStatus.Connected
     self.events.emit("peerConnected", MailserverArgs(peer: peer))
 
@@ -140,24 +142,24 @@ proc peerSummaryChange*(self: MailserverModel, peers: seq[string]) =
           mailserverAvailable = true
       
   if mailserverAvailable:
-    debug "Mailserver available"
+    info "Mailserver available"
     self.events.emit("mailserverAvailable", MailserverArgs())
 
 proc requestMessages*(self: MailserverModel) =
-  debug "Requesting messages from", mailserver=self.activeMailserver
+  info "Requesting messages from", mailserver=self.activeMailserver
   discard status_mailservers.requestAllHistoricMessages()
 
 proc requestStoreMessages*(self: MailserverModel, topics: seq[string], fromValue: int64 = 0, toValue: int64 = 0, force: bool = false) =
-  debug "Requesting messages from", mailserver=self.activeMailserver
+  info "Requesting messages from", mailserver=self.activeMailserver
   let generatedSymKey = status_chat.generateSymKeyFromPassword()
   status_mailservers.requestStoreMessages(topics, generatedSymKey, self.activeMailserver, 1000, fromValue, toValue, force)
 
 proc requestMoreMessages*(self: MailserverModel, chatId: string) =
-  debug "Requesting more messages from", mailserver=self.activeMailserver, chatId=chatId
+  info "Requesting more messages from", mailserver=self.activeMailserver, chatId=chatId
   discard status_mailservers.syncChatFromSyncedFrom(chatId)
 
 proc fillGaps*(self: MailserverModel, chatId: string, messageIds: seq[string]) =
-  debug "Requesting fill gaps from", mailserver=self.activeMailserver, chatId=chatId
+  info "Requesting fill gaps from", mailserver=self.activeMailserver, chatId=chatId
   discard status_mailservers.fillGaps(chatId, messageIds)
 
 proc findNewMailserver(self: MailserverModel) =
@@ -172,7 +174,9 @@ proc findNewMailserver(self: MailserverModel) =
   availableMailservers.sort(cmpMailserverReply)
 
   # No mailservers where returned... do nothing.
-  if availableMailservers.len == 0: return
+  if availableMailservers.len == 0: 
+    warn "No mailservers available"
+    return
 
   # Picks a random mailserver amongs the ones with the lowest latency
   # The pool size is 1/4 of the mailservers were pinged successfully
@@ -185,7 +189,7 @@ proc findNewMailserver(self: MailserverModel) =
 proc cycleMailservers(self: MailserverModel) =
   warn "Automatically switching mailserver"
   if self.activeMailserver != "":
-    warn "Disconnecting active mailserver", peer=self.activeMailserver
+    info "Disconnecting active mailserver", peer=self.activeMailserver
     self.nodes[self.activeMailserver] = MailserverStatus.Disconnected
     removePeer(self.activeMailserver)
     self.activeMailserver = ""
@@ -193,7 +197,7 @@ proc cycleMailservers(self: MailserverModel) =
 
 proc checkConnection*(self: MailserverModel) {.async.} =
   while true:
-    debug "Verifying mailserver connection state..."
+    info "Verifying mailserver connection state..."
     let pinnedMailserver = status_settings.getPinnedMailserver()
     if pinnedMailserver != "" and self.activeMailserver != pinnedMailserver:
       # connect to current mailserver from the settings
