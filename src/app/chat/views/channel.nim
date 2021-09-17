@@ -164,7 +164,10 @@ QtObject:
     let selectedChannel = self.getChannelById(channel)
     self.activeChannel.setChatItem(selectedChannel)
 
-    if not self.communities.activeCommunity.active:
+    if (self.communities.activeCommunity.active and self.communities.activeCommunity.communityItem.lastChannelSeen != selectedChannel.id):
+      self.communities.activeCommunity.communityItem.lastChannelSeen = selectedChannel.id
+      self.communities.joinedCommunityList.replaceCommunity(self.communities.activeCommunity.communityItem)
+    elif not self.communities.activeCommunity.active:
       self.previousActiveChannelIndex = self.chats.chats.findIndexById(self.activeChannel.id)
 
     self.appService.chatService.asyncMarkAllChannelMessagesRead(self.activeChannel.id)
