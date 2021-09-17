@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Status Desktop
+Exec=/usr/local/bin/status-desktop
+Icon=/usr/share/status-desktop/status.svg
+Comment=Desktop client for the Status Network
+Terminal=false
+Categories=Network;InstantMessaging;Chat;
+StartupNotify=true

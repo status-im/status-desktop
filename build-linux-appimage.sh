@@ -6,6 +6,7 @@
 # making a local packaged build
 git clean -dfx
 
+# Build .AppImage
 docker run -it --rm \
   --cap-add SYS_ADMIN \
   --security-opt apparmor:unconfined \
@@ -13,5 +14,5 @@ docker run -it --rm \
   -u jenkins:$(getent group $(whoami) | cut -d: -f3) \
   -v "${PWD}:/status-desktop" \
   -w /status-desktop \
-  statusteam/nim-status-client-build:1.1.0 \
-  ./docker-linux-app-image.sh
+  statusteam/nim-status-client-build:latest \
+  ./docker-linux.sh pkg

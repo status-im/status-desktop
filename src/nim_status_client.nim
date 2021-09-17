@@ -19,10 +19,12 @@ import app_service/tasks/marathon/mailserver/worker as mailserver_worker
 import app_service/main
 import constants
 
-var signalsQObjPointer: pointer
-
 logScope:
   topics = "main"
+
+const fleetConfig = staticRead("../fleets.json")
+
+var signalsQObjPointer: pointer
 
 proc mainProc() =
   if defined(macosx) and defined(production):
@@ -31,15 +33,8 @@ proc mainProc() =
   ensureDirectories(DATADIR, TMPDIR, LOGDIR)
 
   var currentLanguageCode: string
-
-  let fleets =
-    if defined(windows) and defined(production):
-      "/../resources/fleets.json"
-    else:
-      "/../fleets.json"
-
+  
   let
-    fleetConfig = readFile(joinPath(getAppDir(), fleets))
     status = statuslib.newStatusInstance(fleetConfig)
     mailserverController = mailserver_controller.newController(status)
     mailserverWorker = mailserver_worker.newMailserverWorker(cast[ByteAddress](mailserverController.vptr))
@@ -60,7 +55,10 @@ proc mainProc() =
     if defined(windows) and defined(production):
       "/../resources/resources.rcc"
     else:
-      "/../resources.rcc"
+      if defined(linux) and defined(production) and defined(deb):
+        "/../share/status-desktop/resources.rcc"
+      else:
+        "/../resources.rcc"
   QResource.registerResource(app.applicationDirPath & resources)
 
   var eventStr = ""
@@ -79,7 +77,10 @@ proc mainProc() =
       elif defined(windows):
         "/../resources/status.svg"
       else:
-        "/../status.svg"
+        if defined(appimage):
+          "/../status.svg"
+        else:
+          "/../share/status-desktop/status.svg"
     else:
       if defined(macosx):
         "" # not used in macOS
@@ -97,7 +98,10 @@ proc mainProc() =
   elif (defined(macosx)):
     i18nPath = joinPath(getAppDir(), "../i18n")
   elif (defined(linux)):
-    i18nPath = joinPath(getAppDir(), "../i18n")
+    if defined(production) and defined(deb):
+      i18nPath = joinPath(getAppDir(), "../share/status-desktop/i18n")
+    else:
+      i18nPath = joinPath(getAppDir(), "../i18n")
 
   let networkAccessFactory = newQNetworkAccessManagerFactory(TMPDIR & "netcache")
 
