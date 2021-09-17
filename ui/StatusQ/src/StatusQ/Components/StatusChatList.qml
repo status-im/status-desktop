@@ -19,6 +19,8 @@ Column {
     property alias chatListItems: delegateModel
     property bool draggableItems: false
 
+    property alias statusChatListItems: statusChatListItems
+
     property Component popupMenu
 
     property var filterFn
