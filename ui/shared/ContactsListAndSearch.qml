@@ -34,8 +34,7 @@ Item {
 
     function validate() {
         if (!Utils.isChatKey(chatKey.text) && !Utils.isValidETHNamePrefix(chatKey.text)) {
-            //% "Enter a valid chat key or ENS username"
-            root.validationError = "enter-a-valid-chat-key-or-ens-username";
+            root.validationError = qsTr("Enter a valid chat key or ENS username");
             pubKey = ""
             ensUsername = "";
         } else if (profileModel.profile.pubKey === chatKey.text) {
