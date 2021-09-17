@@ -4,6 +4,9 @@ import
 
 proc handleSignals(self: ChatController) =
   self.status.events.on(SignalType.Message.event) do(e:Args):
+    if not(e of MessageSignal):
+      echo SignalType.Message.event, " event args is not of MessageSignal"
+      return
     var data = MessageSignal(e)
     self.status.chat.update(data.chats, data.messages, data.emojiReactions, data.communities, data.membershipRequests, data.pinnedMessages, data.activityCenterNotification, data.statusUpdates, data.deletedMessages)
 

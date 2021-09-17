@@ -123,6 +123,9 @@ proc init*(self: ProfileController, account: Account) =
     self.view.mailservers.activeMailserverChanged(mailserverArg.peer)
 
   self.status.events.on(SignalType.Message.event) do(e: Args):
+    if not(e of MessageSignal):
+      echo SignalType.Message.event, " event args is not of MessageSignal"
+      return
     let msgData = MessageSignal(e);
     if msgData.contacts.len > 0:
       # TODO: view should react to model changes
