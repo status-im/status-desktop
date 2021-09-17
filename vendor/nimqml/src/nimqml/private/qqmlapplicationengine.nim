@@ -30,7 +30,7 @@ proc setRootContextProperty*(self: QQmlApplicationEngine, name: string, value: Q
   dos_qqmlcontext_setcontextproperty(context, name.cstring, value.vptr)
 
 proc setTranslationPackage*(self: QQmlApplicationEngine, packagePath: string, shouldRetranslate: bool = true) =
-  dos_qapplication_load_translation(self.vptr, packagePath.cstring, shouldRetranslate)
+  dos_qguiapplication_load_translation(self.vptr, packagePath.cstring, shouldRetranslate)
 
 proc delete*(self: QQmlApplicationEngine) =
   ## Delete the given QQmlApplicationEngine

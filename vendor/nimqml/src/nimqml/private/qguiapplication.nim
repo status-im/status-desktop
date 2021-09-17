@@ -31,3 +31,23 @@ proc exec*(self: QGuiApplication) =
 proc quit*(self: QGuiApplication) =
   ## Quit the Qt event loop
   dos_qguiapplication_quit()
+
+proc setClipboardText*(text: string = "") =
+  dos_qguiapplication_clipboard_setText(text.cstring)
+
+proc setClipboardImage*(text: string = "") =
+  dos_qguiapplication_clipboard_setImage(text.cstring)
+
+proc downloadImage*(imageSource: string = "", filePath = "") =
+  dos_qguiapplication_download_image(imageSource.cstring, filePath.cstring)
+
+proc enableHDPI*(uiScaleFilePath: string) =
+  dos_qguiapplication_enable_hdpi(uiScaleFilePath)
+
+proc initializeOpenGL*() =
+  dos_qguiapplication_initialize_opengl()
+  
+proc applicationDirPath*(app: QGuiApplication): string =
+  let str = dos_qguiapplication_application_dir_path()
+  result = $str
+  dos_chararray_delete(str)

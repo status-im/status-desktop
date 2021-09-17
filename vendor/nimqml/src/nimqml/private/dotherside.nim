@@ -127,29 +127,20 @@ proc isNil(x: DosQModelIndex): bool = x.pointer.isNil
 # CharArray
 proc dos_chararray_delete(str: cstring) {.cdecl, dynlib: dynLibName, importc.}
 
-# QCoreApplication
-proc dos_qcoreapplication_application_dir_path(): cstring {.cdecl, dynlib: dynLibName, importc.}
-proc dos_qapplication_enable_hdpi(uiScaleFilePath: cstring) {.cdecl, dynlib: dynLibName, importc.}
-proc dos_qapplication_initialize_opengl() {.cdecl, dynlib: dynLibName, importc.}
-
-# QApplication
-proc dos_qapplication_create() {.cdecl, dynlib: dynLibName, importc.}
-proc dos_qapplication_exec() {.cdecl, dynlib: dynLibName, importc.}
-proc dos_qapplication_quit() {.cdecl, dynlib: dynLibName, importc.}
-proc dos_qapplication_icon(filename: cstring) {.cdecl, dynlib: dynLibName, importc.}
-proc dos_qapplication_delete() {.cdecl, dynlib: dynLibName, importc.}
-proc dos_qapplication_clipboard_setText(content: cstring) {.cdecl, dynlib: dynLibName, importc.}
-proc dos_qapplication_installEventFilter(engine: DosStatusEvent) {.cdecl, dynlib: dynLibName, importc.}
-proc dos_qapplication_clipboard_setImage(content: cstring) {.cdecl, dynlib: dynLibName, importc.}
-proc dos_qapplication_download_image(imageSource: cstring, filePath: cstring) {.cdecl, dynlib: dynLibName, importc.}
-
 # QGuiApplication
+proc dos_qguiapplication_application_dir_path(): cstring {.cdecl, dynlib: dynLibName, importc.}
+proc dos_qguiapplication_enable_hdpi(uiScaleFilePath: cstring) {.cdecl, dynlib: dynLibName, importc.}
+proc dos_qguiapplication_initialize_opengl() {.cdecl, dynlib: dynLibName, importc.}
 proc dos_qguiapplication_create() {.cdecl, dynlib: dynLibName, importc.}
 proc dos_qguiapplication_exec() {.cdecl, dynlib: dynLibName, importc.}
 proc dos_qguiapplication_quit() {.cdecl, dynlib: dynLibName, importc.}
 proc dos_qguiapplication_icon(filename: cstring) {.cdecl, dynlib: dynLibName, importc.}
 proc dos_qguiapplication_delete() {.cdecl, dynlib: dynLibName, importc.}
+
+proc dos_qguiapplication_clipboard_setText(content: cstring) {.cdecl, dynlib: dynLibName, importc.}
 proc dos_qguiapplication_installEventFilter(engine: DosStatusEvent) {.cdecl, dynlib: dynLibName, importc.}
+proc dos_qguiapplication_clipboard_setImage(content: cstring) {.cdecl, dynlib: dynLibName, importc.}
+proc dos_qguiapplication_download_image(imageSource: cstring, filePath: cstring) {.cdecl, dynlib: dynLibName, importc.}
 
 # QQmlContext
 proc dos_qqmlcontext_setcontextproperty(context: DosQQmlContext, propertyName: cstring, propertyValue: DosQVariant) {.cdecl, dynlib: dynLibName, importc.}
@@ -164,7 +155,7 @@ proc dos_qqmlapplicationengine_load_data(engine: DosQQmlApplicationEngine, data:
 proc dos_qqmlapplicationengine_add_import_path(engine: DosQQmlApplicationEngine, path: cstring) {.cdecl, dynlib: dynLibName, importc.}
 proc dos_qqmlapplicationengine_context(engine: DosQQmlApplicationEngine): DosQQmlContext {.cdecl, dynlib: dynLibName, importc.}
 proc dos_qqmlapplicationengine_delete(engine: DosQQmlApplicationEngine) {.cdecl, dynlib: dynLibName, importc.}
-proc dos_qapplication_load_translation(engine: DosQQmlApplicationEngine, content: cstring, shouldRetranslate: bool) {.cdecl, dynlib: dynLibName, importc.}
+proc dos_qguiapplication_load_translation(engine: DosQQmlApplicationEngine, content: cstring, shouldRetranslate: bool) {.cdecl, dynlib: dynLibName, importc.}
 
 # QVariant
 proc dos_qvariant_create(): DosQVariant {.cdecl, dynlib: dynLibName, importc.}
