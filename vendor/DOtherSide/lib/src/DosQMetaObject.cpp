@@ -30,7 +30,7 @@ QList<QByteArray> createParameterNames(const DOS::SignalDefinition &signal)
 {
     QList<QByteArray> result;
     const auto &parameters = signal.parameters;
-    result.reserve(parameters.size());
+    result.reserve(static_cast<int>(parameters.size()));
     for (size_t i = 0; i < parameters.size(); ++i)
         result << parameters[i].name.toUtf8();
     return result;
