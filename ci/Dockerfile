@@ -87,6 +87,7 @@ RUN apt update -yq && apt install -yq software-properties-common \
     && apt-get -qq clean
 
 COPY scripts/* /tmp/build/
+RUN chmod a+x /tmp/build/*.sh
 
 # Download and install OpenSSL
 RUN /tmp/build/install-openssl-linux.sh
