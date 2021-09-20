@@ -22,8 +22,17 @@ Item {
         id: signPhrasePopup
     }
 
+    SeedPhraseBackupWarning {
+        id: seedPhraseWarning
+        width: parent.width
+        anchors.top: parent.top
+    }
+
+
     StatusAppTwoPanelLayout {
-        anchors.fill: parent
+        anchors.top: seedPhraseWarning.bottom
+        height: walletView.height - seedPhraseWarning.height
+        width: walletView.width
 
         Component.onCompleted: {
             if(onboardingModel.firstTimeLogin){

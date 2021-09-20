@@ -181,25 +181,12 @@ Item {
         }
     }
 
-    ModuleWarning {
-        id: mnemonicBackupWarning
-        width: parent.width
-        visible: appSettings.isWalletEnabled && !profileModel.mnemonic.isBackedUp && appView.currentIndex == Utils.getAppSectionIndex(Constants.wallet)
-        color: Style.current.red
-              //% "Back up your seed phrase"
-        text: qsTrId("back-up-your-seed-phrase")
-        btnText: qsTr("Back up") 
-        onClick: function() {
-            openPopup(backupSeedModalComponent);
-        }
-    }
-
     StatusAppLayout {
         id: appLayout
 
         width: parent.width
         anchors.top: parent.top
-        anchors.topMargin: (versionWarning.visible || mnemonicBackupWarning.visible) ? 32 : 0
+        anchors.topMargin: versionWarning.visible ? 32 : 0
         anchors.bottom: parent.bottom
 
         appNavBar: StatusAppNavBar {
