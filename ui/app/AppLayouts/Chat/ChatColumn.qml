@@ -529,9 +529,6 @@ Item {
             onContactListChanged: {
                 isBlocked = profileModel.contacts.isContactBlocked(activeChatId);
             }
-            onContactBlocked: {
-                chatsModel.messageView.removeMessagesByUserId(publicKey)
-            }
         }
 
         Connections {
