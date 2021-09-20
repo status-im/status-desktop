@@ -44,21 +44,40 @@ Item {
         onLinkActivated: {
             if(link.startsWith("#")) {
                 const channelName = link.substring(1);
-                const chatType = chatsModel.communities.activeCommunity.active ? Constants.chatTypeCommunity : Constants.chatTypePublic;
-                const foundChatType = chatsModel.getChatType(channelName);
+                const foundChannelObj = chatsModel.getChannel(channelName);
 
-                if(foundChatType === -1 || foundChatType !== Constants.chatTypePublic){
-                    chatsModel.channelView.joinPublicChat(channelName);
-                    if(chatsModel.communities.activeCommunity.active) {
-                        chatsModel.communities.activeCommunity.active = false
+                if (!foundChannelObj)
+                {
+                    chatsModel.channelView.joinPublicChat(channelName)
+                    if(chatsModel.communities.activeCommunity.active)
+                    {
+                        chatsModel.channelView.joinPublicChat(channelName)
                         appMain.changeAppSection(Constants.chat)
-                    } 
-                } else {
-                    appMain.changeAppSection(Constants.chat)
+                    }
+                    return
+                }
+
+                let obj = JSON.parse(foundChannelObj)
+
+                if(obj.chatType === -1 || obj.chatType === Constants.chatTypePublic)
+                {
+                    if(chatsModel.communities.activeCommunity.active)
+                    {
+                        chatsModel.channelView.joinPublicChat(channelName)
+                        appMain.changeAppSection(Constants.chat)
+                    }
+
+                    chatsModel.channelView.setActiveChannel(channelName);
+                }
+                else if(obj.communityId === chatsModel.communities.activeCommunity.id &&
+                        obj.chatType === Constants.chatTypeCommunity &&
+                        chatsModel.channelView.activeChannel.id !== obj.id
+                        )
+                {
                     chatsModel.channelView.setActiveChannel(channelName);
                 }
 
-                return;
+                return
             }
 
             if (link.startsWith('//')) {

@@ -125,7 +125,7 @@ QtObject:
 
   proc getChannel*(self: ChannelsList, index: int): Chat = 
     if index < 0 or index >= self.chats.len:
-      return
+      return nil
 
     result = self.chats[index]
 
@@ -145,6 +145,8 @@ QtObject:
     for chat in self.chats:
       if chat.name == name:
         return chat
+
+    return nil
 
   proc upsertChannel(self: ChannelsList, channel: Chat): int =
     let idx = self.chats.findIndexById(channel.id)

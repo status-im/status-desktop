@@ -49,9 +49,8 @@ QtObject:
     let index = self.communities.activeCommunity.chats.chats.findIndexById(channel)
     if (index > -1):
       return self.communities.activeCommunity.chats.getChannel(index)
-    let chan = self.communities.activeCommunity.chats.getChannelByName(channel)
-    if not chan.isNil:
-      return chan
+
+    return self.communities.activeCommunity.chats.getChannelByName(channel)
 
   proc getChannelById*(self: ChannelView, channel: string): Chat =
     if self.communities.activeCommunity.active:
