@@ -68,6 +68,9 @@ Popup {
     }
 
     onClosed: {
+        popup.currentCategory = StatusGifPopup.Category.Trending
+        popup.previousCategory = StatusGifPopup.Category.Trending
+
         if (confirmationPopup.opened) {
             confirmationPopup.close()
         }
@@ -220,7 +223,7 @@ Popup {
                 anchors.horizontalCenter: parent.horizontalCenter
                 source: `./assets/img/gif-${Style.current.name}.svg`
             }
-            
+
             StyledText {
                 id: title
                 anchors.horizontalCenter: parent.horizontalCenter
@@ -281,7 +284,7 @@ Popup {
                 anchors.top: emptyText.bottom
                 anchors.topMargin: Style.current.padding
                 anchors.horizontalCenter: parent.horizontalCenter
-                
+
                 text: qsTr("Retry")
                 visible: currentCategory === StatusGifPopup.Category.Trending || currentCategory === StatusGifPopup.Category.Search
                 onClicked: {
@@ -289,7 +292,7 @@ Popup {
                         chatsModel.gif.getTrendings()
                         return
                     }
-                    
+
                     searchGif(searchBox.text)
                 }
             }
