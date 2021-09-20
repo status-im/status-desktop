@@ -1,7 +1,7 @@
 import QtQuick 2.14
 import QtQuick.Controls 2.14
-import "../../../imports"
-import "./components"
+import "../../../../../imports"
+import "../../components" as WalletComponents
 
 Item {
     id: walletFooterRoot
@@ -22,25 +22,25 @@ Item {
         anchors.centerIn: parent
         spacing: 50
 
-        WalletButton {
+        WalletComponents.Button {
             id: swapBtn
-            imageSource: "../../img/swap-icon.svg"
+            imageSource: "../../../../img/swap-icon.svg"
             text: qsTr("Swap")
             onClicked: function (){
             }
         }
 
-        WalletButton {
+        WalletComponents.Button {
             id: sendBtn
-            imageSource: "../../img/send.svg"
+            imageSource: "../../../../img/send.svg"
             text: qsTr("Send")
             onClicked: function (){
             }
         }
 
-        WalletButton {
+        WalletComponents.Button {
             id: buySellBtn
-            imageSource: "../../img/crypto-icon.svg"
+            imageSource: "../../../../img/crypto-icon.svg"
             text: qsTr("Buy / Sell")
             onClicked: function (){
                 cryptoServicesModal.open()
@@ -48,7 +48,7 @@ Item {
         }
     }
 
-    CryptoServicesModal {
+    WalletComponents.CryptoServicesModal {
         id: cryptoServicesModal
     }
 }

@@ -9,7 +9,7 @@ include status/chat/utils
 include async_tasks
 
 logScope:
-  topics = "chat-async-service"
+  topics = "chat-service"
 
 QtObject:
   type ChatService* = ref object of QObject

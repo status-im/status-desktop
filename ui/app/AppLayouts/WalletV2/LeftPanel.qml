@@ -13,12 +13,12 @@ Rectangle {
     color: Style.current.secondaryMenuBackground
     property int selectedAccount: 0
     property var changeSelectedAccount: function(newIndex) {
-        if (newIndex > walletV2Model.accountsView.accounts) {
+        if (newIndex > walletV2Model.accountsView.accounts.count) {
             return
         }
         selectedAccount = newIndex
         walletV2Model.setCurrentAccountByIndex(newIndex)
-        collectiblesDetailPage.active = false
+        rightPanel.switchTo(rightPanel.rightPanelViewMain)
     }
 
     StyledText {

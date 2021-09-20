@@ -6,8 +6,8 @@ import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core 0.1
 
-import "../../../imports"
-import "../Profile/Sections"
+import "../../../../../imports"
+import "../../../Profile/Sections"
 
 Item {
     id: root

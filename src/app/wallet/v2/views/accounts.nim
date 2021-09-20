@@ -101,19 +101,19 @@ QtObject:
     write = setFocusedAccountByAddress
     notify = focusedAccountChanged
 
-  #TODO: use an Option here
-  proc setCurrentAccountByIndex*(self: AccountsView, index: int): bool =
-    if(self.accounts.rowCount() == 0): return false
-
+  proc setCurrentAccountByIndex*(self: AccountsView, index: int) {.slot.} =
     let selectedAccount = self.accounts.getAccount(index)
-    if self.currentAccount.address == selectedAccount.address: return false
+    if (selectedAccount.isEmpty()):
+      return
+
+    if (self.currentAccount.address == selectedAccount.address): 
+      return
+
     self.currentAccount.setAccountItem(selectedAccount)
     self.currentAccountChanged()
-    return true
 
   QtProperty[QVariant] currentAccount:
     read = getCurrentAccount
-    write = setCurrentAccountByIndex
     notify = currentAccountChanged
 
   proc getAccountList(self: AccountsView): QVariant {.slot.} =

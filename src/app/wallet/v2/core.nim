@@ -56,3 +56,10 @@ proc init*(self: WalletController) =
     var data = WalletSignal(e)
     debug "TODO: handle wallet signal", signalType=data.eventType
   
+  self.status.events.on("cryptoServicesFetched") do(e: Args):
+    var args = CryptoServicesArg(e)
+    self.view.onCryptoServicesFetched(args.services)
+
+  self.status.events.on("walletTransactionsFetched") do(e: Args):
+    var args = WalletTransactionsArg(e)
+    self.view.onWalletTransactionsFetched(args.address, args.transactions)

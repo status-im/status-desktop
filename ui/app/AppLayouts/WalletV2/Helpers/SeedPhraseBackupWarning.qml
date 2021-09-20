@@ -1,10 +1,10 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
-import QtQuick.Layouts 1.13
-import QtGraphicalEffects 1.13
-import "../../../imports"
-import "../../../shared"
-import "../Profile/Sections"
+import QtQuick 2.14
+import QtQuick.Controls 2.14
+import QtQuick.Layouts 1.14
+import QtGraphicalEffects 1.14
+import "../../../../imports"
+import "../../../../shared"
+import "../../Profile/Sections"
 import "."
 
 Rectangle {
@@ -65,7 +65,7 @@ Rectangle {
         anchors.topMargin: 6
         anchors.right: parent.right
         anchors.rightMargin: 18
-        source: "../../img/close-white.svg"
+        source: "../../../img/close-white.svg"
         height: 20
         width: 20
     }

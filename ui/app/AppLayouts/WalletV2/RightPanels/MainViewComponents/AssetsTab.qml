@@ -1,13 +1,12 @@
 import QtQuick 2.13
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.14
-import "../../../../imports"
-import "../../../../shared"
+import "../../../../../imports"
+import "../../../../../shared"
 import StatusQ.Core 0.1
 
 Item {
     id: root
-    signal assetClicked(string name)
 
     Component {
         id: assetViewDelegate
@@ -22,13 +21,13 @@ Item {
                 id: assetInfoImage
                 width: 36
                 height: 36
-                source: symbol ? "../../../img/tokens/" + symbol + ".png" : ""
+                source: symbol ? "../../../../img/tokens/" + symbol + ".png" : ""
                 anchors.left: parent.left
                 anchors.leftMargin: 0
                 anchors.verticalCenter: parent.verticalCenter
                 onStatusChanged: {
                     if (assetInfoImage.status == Image.Error) {
-                        assetInfoImage.source = "../../../img/tokens/DEFAULT-TOKEN@3x.png"
+                        assetInfoImage.source = "../../../../img/tokens/DEFAULT-TOKEN@3x.png"
                     }
                 }
             }
@@ -73,7 +72,7 @@ Item {
                 anchors.fill: parent
                 cursorShape: Qt.PointingHandCursor
                 onClicked: {
-                    root.assetClicked(name);
+                    activityItemView.open()
                 }
             }
         }
@@ -88,7 +87,7 @@ Item {
             symbol: "ETH"
             fullTokenName: "Ethereum"
             fiatBalanceDisplay: "3423 ETH"
-            image: "../../../img/token-icons/eth.svg"
+            image: "../../../../img/token-icons/eth.svg"
         }
     }
 

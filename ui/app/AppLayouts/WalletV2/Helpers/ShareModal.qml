@@ -1,11 +1,13 @@
-import QtQuick 2.13
+import QtQuick 2.14
 
 import StatusQ.Core 0.1
 import StatusQ.Popups 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core.Theme 0.1
 
-import "../../../shared"
+import "../../../../shared"
+import "../../../../shared/status"
+import "../../../../shared/status/core"
 
 StatusModal {
     id: shareModal

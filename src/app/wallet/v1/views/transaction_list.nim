@@ -1,5 +1,5 @@
 import NimQml, tables
-from status/wallet import Transaction
+import status/types/[transaction]
 
 type
   TransactionRoles {.pure.} = enum
@@ -21,7 +21,7 @@ type
 
 QtObject:
   type TransactionList* = ref object of QAbstractListModel
-    transactions*: seq[Transaction]
+    transactions: seq[Transaction]
     hasMore*: bool
 
   proc setup(self: TransactionList) = self.QAbstractListModel.setup
@@ -98,11 +98,6 @@ QtObject:
     TransactionRoles.To.int:"to",
     TransactionRoles.Contract.int:"contract",
     TransactionRoles.Id.int:"id",}.toTable
-
-  proc addTransactionToList*(self: TransactionList, transaction: Transaction) =
-    self.beginInsertRows(newQModelIndex(), self.transactions.len, self.transactions.len)
-    self.transactions.add(transaction)
-    self.endInsertRows()
 
   proc setNewData*(self: TransactionList, transactionList: seq[Transaction]) =
     self.beginResetModel()

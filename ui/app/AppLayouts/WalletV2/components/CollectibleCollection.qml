@@ -74,7 +74,7 @@ Item {
                     MouseArea {
                         anchors.fill: parent
                         onClicked: {
-                            openCollectibleDetailView({collectibleImageUrl:collectionImageUrl,
+                            collectiblesItemView.open({collectibleImageUrl:collectionImageUrl,
                                                           name: model.name,
                                                           collectibleId: model.id,
                                                           description: model.description,

@@ -1,11 +1,13 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
-import "../../../imports"
-import "../../../shared"
-import "../../../shared/status"
-import "./components"
-import "./components/network"
+
+import "../../../../../imports"
+import "../../../../../shared"
+import "../../../../../shared/status"
+import "../../components" as WalletComponents
+import "../../components/network"
+import "../../Helpers"
 
 Item {
     id: walletHeader
@@ -25,7 +27,7 @@ Item {
             anchors.verticalCenter: parent.verticalCenter
             text: currentAccount.name
             font.weight: Font.Medium
-            font.pixelSize: 28
+            font.pixelSize: Style.current.mainTitlePrimaryFontSize
         }
 
         Rectangle {
@@ -42,7 +44,7 @@ Item {
             id: walletBalance
             anchors.verticalCenter: parent.verticalCenter
             text: currentAccount.balance.toUpperCase()
-            font.pixelSize: 22
+            font.pixelSize: Style.current.mainTitleSecondaryFontSize
         }
         
     }
@@ -77,9 +79,3 @@ Item {
         }
     }
 }
-
-/*##^##
-Designer {
-    D{i:0;formeditorColor:"#ffffff"}
-}
-##^##*/

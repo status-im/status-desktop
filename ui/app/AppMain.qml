@@ -8,8 +8,8 @@ import "../shared"
 import "../shared/status"
 import "./AppLayouts"
 import "./AppLayouts/Timeline"
-import "./AppLayouts/Wallet"
-import "./AppLayouts/WalletV2"
+import "./AppLayouts/Wallet" as WalletV1
+import "./AppLayouts/WalletV2" as WalletV2
 import "./AppLayouts/Chat/components"
 import "./AppLayouts/Chat/CommunityComponents"
 import "./AppLayouts/Profile/Sections"
@@ -431,7 +431,7 @@ Item {
                 }
             }
 
-            WalletLayout {
+            WalletV1.WalletLayout {
                 id: walletLayoutContainer
                 Layout.fillWidth: true
                 Layout.alignment: Qt.AlignLeft | Qt.AlignTop
@@ -490,7 +490,7 @@ Item {
                 Layout.fillHeight: true
             }
 
-            WalletV2Layout {
+            WalletV2.MainLayout {
                 id: walletV2LayoutContainer
                 Layout.fillWidth: true
                 Layout.alignment: Qt.AlignLeft | Qt.AlignTop
@@ -701,7 +701,7 @@ Item {
                 // this.sourceComponent = undefined // kill an opened instance
                 this.active = false
             }
-            sourceComponent: SendModal {
+            sourceComponent: WalletV1.SendModal {
                 onOpened: {
                     walletModel.gasView.getGasPrice()
                 }

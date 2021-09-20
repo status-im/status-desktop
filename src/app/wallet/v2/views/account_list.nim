@@ -30,8 +30,25 @@ QtObject:
     new(result, delete)
     result.accounts = @[]
     result.setup
+
+  #################################################
+  # Properties
+  #################################################
   
-  proc getAccount*(self: AccountList, index: int): WalletAccount = self.accounts[index]
+  proc countChanged*(self: AccountList) {.signal.}
+
+  proc count*(self: AccountList): int {.slot.} =
+    self.accounts.len
+
+  QtProperty[int] count:
+    read = count
+    notify = countChanged
+  
+  proc getAccount*(self: AccountList, index: int): WalletAccount = 
+    if (index < 0 or index >= self.accounts.len):
+      return
+    
+    self.accounts[index]
 
   proc rowData(self: AccountList, index: int, column: string): string {.slot.} =
     if (index >= self.accounts.len):
