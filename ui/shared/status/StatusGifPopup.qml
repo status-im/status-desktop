@@ -259,7 +259,8 @@ Popup {
         Rectangle {
             height: parent.height
             width: parent.width
-            
+            color: Style.current.background
+
             StyledText {
                 anchors.centerIn: parent
                 text: {
