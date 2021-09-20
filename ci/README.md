@@ -12,14 +12,10 @@ In order to build the Linux version of the application we use a modified `a12e/d
 The image is built with Docker using:
 ```
 # for building the AppImage
-cd AppImage
-docker build -t statusteam/nim-status-client-build:latest .
-cd ..
+docker build -t statusteam/nim-status-client-build:latest ci/AppImage
 
 # for building the .deb
-cd deb
-docker build -t statusteam/status-desktop-deb-build:latest .
-cd ..
+docker build -t statusteam/status-desktop-deb-build:latest ci/deb
 ```
 And pushed to: https://hub.docker.com/r/statusteam/nim-status-client-build
 

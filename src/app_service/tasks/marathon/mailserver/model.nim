@@ -14,7 +14,7 @@ import
 logScope:
   topics = "mailserver model"
 
-const fleetConfig = staticRead("../../../../fleets.json")
+const fleetConfig = staticRead("../../../../resources/fleets.json")
 
 ################################################################################
 ##                                                                            ##
