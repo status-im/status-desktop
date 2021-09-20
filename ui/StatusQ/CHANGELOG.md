@@ -1,4 +1,30 @@
 <a name=""></a>
+## v0.10.0 (2021-09-20)
+
+
+#### Bug Fixes
+
+* **StatusChatInfoToolBar:**  Right anchored title in StatusChatInfoToolBar ([6e8a36be](6e8a36be))
+* **StatusChatListCategoryItem:**  Disable sensor when chevron clicked ([c83641d2](c83641d2))
+* **StatusQ.Controls.Validators:**  fix bug that addressOrEns validator isn't properly exposed in QML ([1374c193](1374c193))
+
+#### Features
+
+* **Spellchecker:**  Add Spellchecker class ([c65f80d2](c65f80d2))
+* **Spellchecking:**
+  *  Add dictionaries ([1d12d222](1d12d222))
+  *  Add huspell dependency ([f9457ef3](f9457ef3))
+* **StatusChatList:**  expose `statusChatListItems` Repeater ([40c0e48b](40c0e48b))
+* **StatusExpandableItem:**  Correct placement of expandable region in tertiary type ([1f244f62](1f244f62))
+* **StatusInput:**
+  *  add support for asynchronous validators ([8820cd89](8820cd89), closes [#395](395))
+  *  introduce `leftPadding` and `rightPadding` properties ([13dc8ae3](13dc8ae3))
+  *  introduce `reset` API ([a2ad08e4](a2ad08e4))
+* **StatusSpellcheckingMenuItems:**  Add spellchecking menu ([3e24b710](3e24b710))
+
+
+
+<a name=""></a>
 ## v0.9.0 (2021-09-13)
 
 
