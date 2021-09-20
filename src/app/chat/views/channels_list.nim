@@ -200,7 +200,6 @@ QtObject:
 
     let index = self.createIndex(idx, 0, nil)
     self.chats[idx].unviewedMessagesCount = 0
-    self.chats[idx].unviewedMentionsCount = 0
 
     self.dataChanged(index, index, @[ChannelsRoles.UnreadMessages.int])
 

@@ -6,7 +6,7 @@ import status/chat as status_chat
 import status/chat/[chat]
 import ../../../app_service/[main]
 
-import communities, chat_item, channels_list, communities, community_list
+import communities, chat_item, channels_list, communities, community_list, activity_notification_list
 
 logScope:
   topics = "channel-view"
@@ -20,6 +20,7 @@ QtObject:
     activeChannel*: ChatItemView
     previousActiveChannelIndex*: int
     contextChannel*: ChatItemView
+    activityNotificationList*: ActivityNotificationList
 
   proc setup(self: ChannelView) = self.QObject.setup
   proc delete*(self: ChannelView) =
@@ -28,7 +29,7 @@ QtObject:
     self.contextChannel.delete
     self.QObject.delete
 
-  proc newChannelView*(status: Status, appService: AppService, communities: CommunitiesView): ChannelView =
+  proc newChannelView*(status: Status, appService: AppService, communities: CommunitiesView, activityNotificationList: ActivityNotificationList): ChannelView =
     new(result, delete)
     result.status = status
     result.appService = appService
@@ -37,6 +38,7 @@ QtObject:
     result.contextChannel = newChatItemView(status)
     result.communities = communities
     result.previousActiveChannelIndex = -1
+    result.activityNotificationList = activityNotificationList
     result.setup
 
   proc getChannel*(self: ChannelView, index: int): Chat =
@@ -114,7 +116,8 @@ QtObject:
     generateAlias(pubKey)
 
   proc setActiveChannelByIndexWithForce*(self: ChannelView, index: int, forceUpdate: bool) {.slot.} =
-    if((self.communities.activeCommunity.active and self.communities.activeCommunity.chats.chats.len == 0) or (not self.communities.activeCommunity.active and self.chats.chats.len == 0)): return
+    if((self.communities.activeCommunity.active and self.communities.activeCommunity.chats.chats.len == 0) or (not self.communities.activeCommunity.active and self.chats.chats.len == 0)): 
+      return
 
     var selectedChannel = self.getChannel(index)
 
@@ -154,6 +157,10 @@ QtObject:
   proc setActiveChannel*(self: ChannelView, channel: string) {.slot.} =
     if (channel.len == 0):
       return
+
+    let communityId = self.status.chat.getCommunityIdForChat(channel)
+    if communityId != "":
+      self.activityNotificationList.markAllChatMentionsAsRead(communityId, channel)
 
     if (channel == backToFirstChat):
       if (self.activeChannel.id.len == 0):
