@@ -115,12 +115,12 @@ QtObject:
     result.formatInputView = newFormatInputView()
     result.ensView = newEnsView(status, appService)
     result.communities = newCommunitiesView(status)
-    result.channelView = newChannelView(status, appService, result.communities)
+    result.activityNotificationList = newActivityNotificationList(status)
+    result.channelView = newChannelView(status, appService, result.communities, result.activityNotificationList)
     result.messageView = newMessageView(status, appService, result.channelView, result.communities)
     result.messageSearchViewController = newMessageSearchViewController(status,
       appService, result.channelView, result.communities)
     result.connected = false
-    result.activityNotificationList = newActivityNotificationList(status)
     result.reactions = newReactionView(
       status,
       result.messageView.messageList.addr,
@@ -236,6 +236,11 @@ QtObject:
 
   proc addActivityCenterNotification*(self:ChatsView, activityCenterNotifications: seq[ActivityCenterNotification]) =
     for activityCenterNotification in activityCenterNotifications:
+      if self.channelView.activeChannel.id == activityCenterNotification.chatId:
+        activityCenterNotification.read = true
+        let communityId = self.status.chat.getCommunityIdForChat(activityCenterNotification.chatId)
+        if communityId != "":
+          self.communities.joinedCommunityList.decrementMentions(communityId, activityCenterNotification.chatId)
       self.activityNotificationList.addActivityNotificationItemToList(activityCenterNotification)
     self.activityNotificationsChanged()
 

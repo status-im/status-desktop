@@ -159,6 +159,11 @@ QtObject:
         self.dataChanged(index, index, @[NotifRoles.Read.int])
       i.inc
 
+  proc markAllChatMentionsAsRead*(self: ActivityNotificationList, communityId: string, chatId: string) =
+    for motification in self.activityCenterNotifications:
+      if (motification.chatId == chatId and not motification.read):
+        self.markActivityCenterNotificationRead(motification.id, communityId, chatId, ActivityCenterNotificationType.Mention.int)
+
   proc removeNotifications(self: ActivityNotificationList, ids: seq[string]) =
     var i = 0
     var indexesToDelete: seq[int] = @[]
