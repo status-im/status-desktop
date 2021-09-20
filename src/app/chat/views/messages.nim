@@ -1,15 +1,16 @@
-import NimQml, Tables, json, sequtils, chronicles, times, re, strutils
+import NimQml, Tables, json, sequtils, chronicles, times, re, strutils, sugar
 
 import status/[status, contacts]
 import status/messages as status_messages
 import status/utils as status_utils
 import status/chat/[chat]
+import status/profile/[profile]
 import status/types/[message]
 import ../../../app_service/[main]
 import ../../../app_service/tasks/[qt, threadpool]
 import ../../../app_service/tasks/marathon/mailserver/worker
 
-import communities, chat_item, channels_list, communities, community_list, user_list, community_members_list, message_list, channel, message_item, message_format
+import communities, chat_item, channels_list, communities, user_list, community_members_list, message_list, channel, message_item, message_format
 
 logScope:
   topics = "messages-view"
@@ -170,19 +171,29 @@ QtObject:
     self.messageList[id].clear(not channel.isNil and channel.chatType != ChatType.Profile)
     self.messagesCleared()
 
+  proc getBlockedContacts*(self: MessageView): seq[string] =
+    return self.status.contacts.getContacts()
+      .filter(c => c.isBlocked)
+      .map(c => c.id)
+
   proc upsertChannel*(self: MessageView, channel: string) =
     var chat: Chat = nil
     if self.status.chat.channels.hasKey(channel):
       chat = self.status.chat.channels[channel]
     else:
       chat = self.communities.getChannel(channel)
+
+    var blockedContacts: seq[string] = @[]
+    if not self.messageList.hasKey(channel) or not self.pinnedMessagesList.hasKey(channel):
+      blockedContacts = self.getBlockedContacts
+
     if not self.messageList.hasKey(channel):
       self.beginInsertRows(newQModelIndex(), self.messageList.len, self.messageList.len)
-      self.messageList[channel] = newChatMessageList(channel, self.status, not chat.isNil and chat.chatType != ChatType.Profile)
+      self.messageList[channel] = newChatMessageList(channel, self.status, not chat.isNil and chat.chatType != ChatType.Profile, blockedContacts)
       self.channelOpenTime[channel] = now().toTime.toUnix * 1000
       self.endInsertRows();
     if not self.pinnedMessagesList.hasKey(channel):
-      self.pinnedMessagesList[channel] = newChatMessageList(channel, self.status, false)
+      self.pinnedMessagesList[channel] = newChatMessageList(channel, self.status, false, blockedContacts)
 
   proc pushPinnedMessages*(self:MessageView, pinnedMessages: var seq[Message]) =
     for msg in pinnedMessages.mitems:
@@ -199,9 +210,9 @@ QtObject:
   proc isAddedContact*(self: MessageView, id: string): bool {.slot.} =
     result = self.status.contacts.isAdded(id)
 
-  proc messageNotificationPushed*(self: MessageView, messageId: string, 
-    communityId: string, chatId: string, text: string, contentType: int, 
-    chatType: int, timestamp: string, identicon: string, username: string, 
+  proc messageNotificationPushed*(self: MessageView, messageId: string,
+    communityId: string, chatId: string, text: string, contentType: int,
+    chatType: int, timestamp: string, identicon: string, username: string,
     hasMention: bool, isAddedContact: bool, channelName: string) {.signal.}
 
   proc pushMembers*(self:MessageView, chats: seq[Chat]) =
@@ -376,9 +387,13 @@ QtObject:
     if (result):
       self.hideMessage(msgIdToBeDeleted)
 
-  proc removeMessagesByUserId(self: MessageView, publicKey: string) {.slot.} =
+  proc blockContact*(self: MessageView, contactId: string) =
     for k in self.messageList.keys:
-      self.messageList[k].removeMessagesByUserId(publicKey)
+      self.messageList[k].blockContact(contactId)
+
+  proc unblockContact*(self: MessageView, contactId: string) =
+    for k in self.messageList.keys:
+      self.messageList[k].unblockContact(contactId)
 
   proc getMessageListIndex(self: MessageView): int {.slot.} =
     var idx = -1

@@ -10,7 +10,7 @@ Item {
     id: root
     width: parent.width
     anchors.right: !isCurrentUser ? undefined : parent.right
-    height: childrenRect.height
+    height: visible ? childrenRect.height : 0
     z: (typeof chatLogView === "undefined") ? 1 : (chatLogView.count - index)
     property string fromAuthor: "0x0011223344556677889910"
     property string userName: "Jotaro Kujo"
