@@ -159,17 +159,6 @@ Item {
     }
 
     Connections {
-        target: profileModel.contacts
-        onContactBlocked: {
-            // This hack is used because removeMessagesByUserId sometimes does not remove the messages
-            if(publicKey === fromAuthor){
-                root.visible = 0;
-                root.height = 0;
-            }
-        }
-    }
-
-    Connections {
         target: chatsModel.messageView
         onHideMessage: {
             // This hack is used because message_list deleteMessage sometimes does not remove the messages (there might be an issue with the delegate model)
