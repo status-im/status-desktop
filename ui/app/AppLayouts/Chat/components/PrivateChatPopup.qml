@@ -47,7 +47,7 @@ ModalPopup {
         background: Rectangle {
             anchors.fill: parent
             radius: 34
-            color: Style.current.roundedButtonSecondaryHoveredBackgroundColor
+            color: Style.current.blue
         }
         contentItem: Item {
             anchors.fill: parent
