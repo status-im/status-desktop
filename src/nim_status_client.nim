@@ -22,7 +22,7 @@ import constants
 logScope:
   topics = "main"
 
-const fleetConfig = staticRead("../fleets.json")
+const fleetConfig = staticRead("../resources/fleets.json")
 
 var signalsQObjPointer: pointer
 

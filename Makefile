@@ -206,7 +206,7 @@ $(QRCODEGEN): | deps
 	+ cd vendor/QR-Code-generator/c && \
 	  $(MAKE) $(QRCODEGEN_MAKE_PARAMS)
 
-FLEETS := fleets.json
+FLEETS := resources/fleets.json
 $(FLEETS):
 	echo -e $(BUILD_MSG) "Getting latest $(FLEETS)"
 	curl -s https://fleets.status.im/ \
@@ -282,7 +282,7 @@ $(STATUS_CLIENT_APPIMAGE): nim_status_client $(APPIMAGE_TOOL)
 	# General Files
 	cp bin/nim_status_client $(LINUX_DIST)/usr/bin/status-desktop
 	cp -R spellchecking/dictionaries $(LINUX_DIST)/usr/bin/dictionaries
-	cp scripts/AppImage/status.desktop $(LINUX_DIST)/.
+	cp resources/pkg/AppImage/status.desktop $(LINUX_DIST)/.
 	cp status.svg $(LINUX_DIST)/.
 	cp status.svg $(LINUX_DIST)/usr/.
 	cp -R resources.rcc $(LINUX_DIST)/usr/.
@@ -299,7 +299,7 @@ $(STATUS_CLIENT_APPIMAGE): nim_status_client $(APPIMAGE_TOOL)
 	linuxdeployqt $(LINUX_DIST)/status.desktop -no-copy-copyright-files -qmldir=ui -qmlimport=$(QTDIR)/qml -bundle-non-qt-libs
 
 	rm $(LINUX_DIST)/AppRun
-	cp AppRun $(LINUX_DIST)/.
+	cp resources/pkg/AppImage/AppRun $(LINUX_DIST)/.
 
 	$(APPIMAGE_TOOL) $(LINUX_DIST) $(STATUS_CLIENT_APPIMAGE)
 # if LINUX_GPG_PRIVATE_KEY_FILE is not set then we don't generate a signature
@@ -334,7 +334,7 @@ $(STATUS_CLIENT_DEB): $(DOTHERSIDE) nim_status_client
 	cp -R resources.rcc $(LINUX_DIST)/usr/share/status-desktop/.
 	cp ui/i18n/* $(LINUX_DIST)/usr/share/status-desktop/i18n/.
 	cp bin/nim_status_client $(LINUX_DIST)/usr/bin/status-desktop
-	cp scripts/deb/status.desktop $(LINUX_DIST)/usr/share/applications/.
+	cp resources/pkg/deb/status.desktop $(LINUX_DIST)/usr/share/applications/.
 
 	# Libraries
 	cp vendor/status-go/build/bin/libstatus.so.0 $(LINUX_DIST)/usr/lib/.
@@ -346,9 +346,9 @@ $(STATUS_CLIENT_DEB): $(DOTHERSIDE) nim_status_client
 	# .deb specific files
 	mkdir -p $(LINUX_DIST)/DEBIAN
 	mkdir -p $(LINUX_DIST)/debian
-	sed "s/%VERSION%/$(DESKTOP_VERSION)/" scripts/deb/control > $(LINUX_DIST)/DEBIAN/control
-	cp scripts/deb/compat $(LINUX_DIST)/debian/.
-	cp scripts/deb/rules $(LINUX_DIST)/debian/.
+	sed "s/%VERSION%/$(DESKTOP_VERSION)/" resources/pkg/deb/control > $(LINUX_DIST)/DEBIAN/control
+	cp resources/pkg/deb/compat $(LINUX_DIST)/debian/.
+	cp resources/pkg/deb/rules $(LINUX_DIST)/debian/.
 	fakeroot dpkg-deb --build $(LINUX_DIST)
 
 	mv $(LINUX_DIST).deb $(STATUS_CLIENT_DEB)
@@ -493,7 +493,7 @@ pkg-windows: check-pkg-target-windows $(STATUS_CLIENT_EXE)
 
 zip-windows: check-pkg-target-windows $(STATUS_CLIENT_7Z)
 
-deb: check-pkg-target-linux $(STATUS_CLIENT_DEB)
+deb-linux: check-pkg-target-linux $(STATUS_CLIENT_DEB)
 
 clean: | clean-common
 	rm -rf bin/* node_modules bottles/* pkg/* tmp/* $(STATUSGO)
