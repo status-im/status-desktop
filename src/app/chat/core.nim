@@ -71,6 +71,14 @@ proc init*(self: ChatController) =
       self.view.handleProtocolUri(self.uriToOpen)
       self.uriToOpen = ""
 
+  self.status.events.on("contactBlocked") do(e: Args):
+    let contactIdArgs = ContactIdArgs(e)
+    self.view.messageView.blockContact(contactIdArgs.id)
+
+  self.status.events.on("contactUnblocked") do(e: Args):
+    let contactIdArgs = ContactIdArgs(e)
+    self.view.messageView.unblockContact(contactIdArgs.id)
+
 proc loadInitialMessagesForChannel*(self: ChatController, channelId: string) =
   if (channelId.len == 0):
     info "empty channel id set for loading initial messages"

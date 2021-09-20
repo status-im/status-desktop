@@ -303,6 +303,7 @@ Item {
             pinnedBy: model.pinnedBy
             gapFrom: model.gapFrom
             gapTo: model.gapTo
+            visible: !model.hide
             Component.onCompleted: {
                 if ((root.countOnStartUp > 0) && (root.countOnStartUp - 1) < index) {
                     //new message, increment z order

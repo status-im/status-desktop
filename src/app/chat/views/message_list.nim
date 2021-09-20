@@ -46,6 +46,7 @@ type
     GapTo = UserRole + 33
     Replace = UserRole + 34
     IsEdited = UserRole + 35
+    Hide = UserRole + 36
 
 QtObject:
   type
@@ -60,6 +61,7 @@ QtObject:
       userList*: UserListView
       loadingHistoryMessages: bool
       initialMessagesLoaded: bool
+      blockedContacts: seq[string]
 
   proc delete*(self: ChatMessageList) =
     self.messages = @[]
@@ -81,7 +83,7 @@ QtObject:
     self.messages.add(self.fetchMoreMessagesButton())
     self.messages.add(self.chatIdentifier(self.id))
 
-  proc setup*(self: ChatMessageList, chatId: string, status: Status, addFakeMessages: bool) =
+  proc setup*(self: ChatMessageList, chatId: string, status: Status, addFakeMessages: bool, blockedContacts: seq[string]) =
     self.messages = @[]
     self.id = chatId
     self.loadingHistoryMessages = false
@@ -95,12 +97,13 @@ QtObject:
     self.isEdited = initTable[string, bool]()
     self.userList = newUserListView(status)
     self.status = status
+    self.blockedContacts = blockedContacts
 
     self.QAbstractListModel.setup
 
-  proc newChatMessageList*(chatId: string, status: Status, addFakeMessages: bool): ChatMessageList =
+  proc newChatMessageList*(chatId: string, status: Status, addFakeMessages: bool, blockedContacts: seq[string] = @[]): ChatMessageList =
     new(result, delete)
-    result.setup(chatId, status, addFakeMessages)
+    result.setup(chatId, status, addFakeMessages, blockedContacts)
 
   #################################################
   # Properties
@@ -173,6 +176,13 @@ QtObject:
     let messages = self.messages.filter(m => m.chatId == chatId)
     for message in messages:
       discard self.deleteMessage(message.id)
+
+  proc toggleMessage*(self: ChatMessageList, messageId: string, hide: bool) =
+    let msgIdx = self.messageIndex[messageId]
+    let topLeft = self.createIndex(msgIdx, 0, nil)
+    let bottomRight = self.createIndex(msgIdx, 0, nil)
+    self.messages[msgIdx].hide = hide
+    self.dataChanged(topLeft, bottomRight, @[ChatMessageRoles.Hide.int])
 
   proc replaceMessage*(self: ChatMessageList, message: Message) =
     let msgIdx = self.messageIndex[message.id]
@@ -262,6 +272,7 @@ QtObject:
       of ChatMessageRoles.GapTo: result = newQVariant(message.gapTo)
       of ChatMessageRoles.Replace: result = newQVariant(message.replace)
       of ChatMessageRoles.IsEdited: result = newQVariant(isEdited)
+      of ChatMessageRoles.Hide: result = newQVariant(message.hide)
 
   method roleNames(self: ChatMessageList): Table[int, string] =
     {
@@ -298,7 +309,8 @@ QtObject:
       ChatMessageRoles.GapFrom.int:"gapFrom",
       ChatMessageRoles.GapTo.int:"gapTo",
       ChatMessageRoles.Replace.int:"replaces",
-      ChatMessageRoles.IsEdited.int:"isEdited"
+      ChatMessageRoles.IsEdited.int:"isEdited",
+      ChatMessageRoles.Hide.int:"hide"
     }.toTable
 
   proc getMessageIndex*(self: ChatMessageList, messageId: string): int {.slot.} =
@@ -331,8 +343,12 @@ QtObject:
   proc addChatMembers*(self: ChatMessageList, members: seq[ChatMember]) =
     self.userList.add(members)
 
-  proc add*(self: ChatMessageList, message: Message) =
+  proc add*(self: ChatMessageList, message: var Message) =
     if self.messageIndex.hasKey(message.id) and message.editedAt == "0": return # duplicated msg
+
+    # don't show blocked contact messages
+    if self.blockedContacts.contains(message.fromAuthor):
+      message.hide = true
 
     if message.editedAt != "0":
       self.isEdited[message.id] = true
@@ -348,10 +364,12 @@ QtObject:
     self.endInsertRows()
     self.countChanged()
 
-  proc add*(self: ChatMessageList, messages: seq[Message]) =
+  proc add*(self: ChatMessageList, messages: var seq[Message]) =
     self.beginInsertRows(newQModelIndex(), self.messages.len, self.messages.len + messages.len - 1)
-    for message in messages:
+    for message in messages.mitems:
       if self.messageIndex.hasKey(message.id): continue
+      if self.blockedContacts.contains(message.fromAuthor):
+        message.hide = true
       self.messageIndex[message.id] = self.messages.len
       self.messages.add(message)
       self.userList.add(message)
@@ -429,13 +447,20 @@ QtObject:
 
     self.dataChanged(topLeft, bottomRight, @[ChatMessageRoles.Username.int])
 
-  proc removeMessagesByUserId*(self: ChatMessageList, publicKey: string) =
+  proc toggleMessagesFromUser*(self: ChatMessageList, publicKey: string, hide: bool) =
     var msgIdxToDelete: seq[string] = @[]
-    for m in self.messages.items:
-      if m.fromAuthor == publicKey: # Can't delete on a loop
-        msgIdxToDelete.add(m.id)
-    for m in msgIdxToDelete:
-      discard self.deleteMessage(m)
+    for m in self.messages.mitems:
+      if m.fromAuthor == publicKey:
+        m.hide = hide
+        self.toggleMessage(m.id, hide)
+
+  proc blockContact*(self: ChatMessageList, contactId: string) =
+    self.blockedContacts.add contactId
+    self.toggleMessagesFromUser contactId, true
+
+  proc unblockContact*(self: ChatMessageList, contactId: string) =
+    self.blockedContacts.keepItIf(it != contactId)
+    self.toggleMessagesFromUser contactId, false
 
   proc getID*(self: ChatMessageList):string  {.slot.} =
     self.id
