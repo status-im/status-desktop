@@ -2,6 +2,7 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import QtGraphicalEffects 1.13
+import StatusQ.Components 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import "../../../imports"
@@ -152,7 +153,7 @@ Rectangle {
                 hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor
                 onEntered: {
-                    rectangle.hovered = true                    
+                    rectangle.hovered = true
                 }
                 onExited: {
                     rectangle.hovered = false
@@ -168,7 +169,7 @@ Rectangle {
         id: accountsList
         anchors.right: parent.right
         anchors.left: parent.left
-        height: (listView.count <= 8) ? (listView.count * 64) : 530
+        height: (listView.count <= 8) ? ((listView.count * 64) + (Style.current.padding * 2)) : 530
         anchors.top: walletValueTextContainer.bottom
         anchors.topMargin: Style.current.padding
         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
@@ -176,6 +177,7 @@ Rectangle {
 
         ListView {
             id: listView
+            clip: true
             anchors.fill: parent
             spacing: 5
             boundsBehavior: Flickable.StopAtBounds
@@ -203,6 +205,63 @@ Rectangle {
                     balance: "12.00 USD"
                     iconColor: "#7CDA00"
                 }
+                ListElement {
+                    name: "Status account"
+                    address: "0xcfc9f08bbcbcb80760e8cb9a3c1232d19662fc6f"
+                    balance: "12.00 USD"
+                    iconColor: "#7CDA00"
+                }
+
+                ListElement {
+                    name: "Test account 1"
+                    address: "0x2Ef1...E0Ba"
+                    balance: "12.00 USD"
+                    iconColor: "#FA6565"
+                }
+                ListElement {
+                    name: "Status account"
+                    address: "0x2Ef1...E0Ba"
+                    balance: "12.00 USD"
+                    iconColor: "#7CDA00"
+                }
+                ListElement {
+                    name: "Status account"
+                    address: "0xcfc9f08bbcbcb80760e8cb9a3c1232d19662fc6f"
+                    balance: "12.00 USD"
+                    iconColor: "#7CDA00"
+                }
+
+                ListElement {
+                    name: "Test account 1"
+                    address: "0x2Ef1...E0Ba"
+                    balance: "12.00 USD"
+                    iconColor: "#FA6565"
+                }
+                ListElement {
+                    name: "Status account"
+                    address: "0x2Ef1...E0Ba"
+                    balance: "12.00 USD"
+                    iconColor: "#7CDA00"
+                }
+                ListElement {
+                    name: "Status account"
+                    address: "0xcfc9f08bbcbcb80760e8cb9a3c1232d19662fc6f"
+                    balance: "12.00 USD"
+                    iconColor: "#7CDA00"
+                }
+
+                ListElement {
+                    name: "Test account 1"
+                    address: "0x2Ef1...E0Ba"
+                    balance: "12.00 USD"
+                    iconColor: "#FA6565"
+                }
+                ListElement {
+                    name: "Status account 12"
+                    address: "0x2Ef1...E0Ba"
+                    balance: "12.00 USD"
+                    iconColor: "#7CDA00"
+                }
             }
 
             model: walletV2Model.accountsView.accounts
@@ -216,23 +275,20 @@ Rectangle {
         anchors.top: accountsList.bottom
         anchors.topMargin: 31
     }
-
-    RowLayout {
-        id: savedAdressesLabel
-        height: 20
-        anchors.left: parent.left
-        anchors.leftMargin: Style.current.padding
+    StatusNavigationListItem {
+        id: btnSavedAddresses
+        title: qsTr("Saved addresses")
+        icon.name: "address"
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 22
-        StatusIcon {
-            color: Theme.palette.baseColor1
-            Layout.alignment: Qt.AlignVCenter
-            icon: "address"
-        }
-        StatusBaseText {
-            Layout.alignment: Qt.AlignVCenter
-            text: qsTr("Saved addresses")
-            color: Theme.palette.baseColor1
+        anchors.left: parent.left
+        anchors.bottomMargin: Style.current.halfPadding
+        anchors.leftMargin: Style.current.smallPadding
+
+        onClicked: {
+            selected = !selected;
+            selected ?
+                walletView.showSavedAddressesView() :
+                walletView.hideSavedAddressesView();
         }
     }
 }

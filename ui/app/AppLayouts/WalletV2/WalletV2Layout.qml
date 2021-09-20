@@ -8,12 +8,22 @@ import "views/assets"
 import "."
 import "./components"
 
+import StatusQ.Controls 0.1
 import StatusQ.Layout 0.1
+import StatusQ.Popups 0.1
 
 Item {
     id: walletView
 
     property bool hideSignPhraseModal: false
+
+    function showSavedAddressesView() {
+        layoutWalletTwoPanel.rightPanel.view.replace(cmpSavedAddresses);
+    }
+
+    function hideSavedAddressesView() {
+        layoutWalletTwoPanel.rightPanel.view.replace(walletInfoContent);
+    }
 
     function openCollectibleDetailView(options) {
         collectiblesDetailPage.active = true
@@ -37,6 +47,7 @@ Item {
     }
 
     StatusAppTwoPanelLayout {
+        id: layoutWalletTwoPanel
         anchors.top: seedPhraseWarning.bottom
         height: walletView.height - seedPhraseWarning.height
         width: walletView.width
@@ -54,6 +65,7 @@ Item {
         }
 
         rightPanel: Item {
+            property alias view: stackView
             anchors.fill: parent
             RowLayout {
                 id: walletInfoContainer
@@ -148,6 +160,10 @@ Item {
                             id: settingsTab
                         }
                     }
+                }
+                Component {
+                    id: cmpSavedAddresses
+                    SavedAddresses {}
                 }
             }
 

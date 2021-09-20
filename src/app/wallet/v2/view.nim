@@ -1,10 +1,13 @@
-import atomics, strformat, strutils, sequtils, json, std/wrapnils, parseUtils, tables
-import NimQml, chronicles, stint
+import
+  std/[atomics, json, parseutils, sequtils, strformat, strutils, tables, wrapnils]
 
-import status/[status, wallet2]
-import views/[accounts, account_list, collectibles, settings, networks]
-import views/buy_sell_crypto/[service_controller]
-import ../../../app_service/[main]
+import
+  chronicles, nimqml, status/[status, wallet2], stint
+
+import
+  ../../../app_service/[main],
+  ./views/[accounts, account_list, collectibles, networks, saved_addresses, settings],
+  ./views/buy_sell_crypto/[service_controller]
 
 QtObject:
   type
@@ -16,11 +19,13 @@ QtObject:
       settingsView*: SettingsView
       networksView*: NetworksView
       cryptoServiceController: CryptoServiceController
+      savedAddressesView: SavedAddressesView
 
   proc delete(self: WalletView) =
     self.accountsView.delete
     self.collectiblesView.delete
     self.cryptoServiceController.delete
+    self.savedAddressesView.delete
     self.QAbstractListModel.delete
     self.settingsView.delete
     self.networksView.delete
@@ -37,6 +42,7 @@ QtObject:
     result.settingsView = newSettingsView()
     result.networksView = newNetworksView()
     result.cryptoServiceController = newCryptoServiceController(status, appService)
+    result.savedAddressesView = newSavedAddressesView(status, appService)
     result.setup
 
   proc getAccounts(self: WalletView): QVariant {.slot.} = 
@@ -44,7 +50,7 @@ QtObject:
   QtProperty[QVariant] accountsView:
     read = getAccounts
 
-  proc getCollectibles(self: WalletView): QVariant {.slot.} = 
+  proc getCollectibles(self: WalletView): QVariant {.slot.} =
     return newQVariant(self.collectiblesView)
   QtProperty[QVariant] collectiblesView:
     read = getCollectibles
@@ -56,6 +62,10 @@ QtObject:
   proc getNetworks(self: WalletView): QVariant {.slot.} = newQVariant(self.networksView)
   QtProperty[QVariant] networksView:
     read = getNetworks
+
+  proc getSavedAddressesView(self: WalletView): QVariant {.slot.} = newQVariant(self.savedAddressesView)
+  QtProperty[QVariant] savedAddressesView:
+    read = getSavedAddressesView
 
   proc updateView*(self: WalletView) =
     # TODO:

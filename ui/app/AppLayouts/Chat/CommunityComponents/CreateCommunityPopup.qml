@@ -89,8 +89,10 @@ StatusModal {
                 id: nameInput
                 charLimit: maxCommunityNameLength
                 input.placeholderText: qsTr("A catchy name")
-                validators: [StatusMinLengthValidator { minLength: 1 }]
-                onTextChanged: errorMessage = Utils.getErrorMessage(errors, "community name")
+                validators: [StatusMinLengthValidator {
+                    minLength: 1
+                    errorMessage: Utils.getErrorMessage(errors, "community name")
+                }]
             }
 
             StatusInput {
@@ -102,8 +104,10 @@ StatusModal {
                 input.multiline: true
                 input.implicitHeight: 88
 
-                validators: [StatusMinLengthValidator { minLength: 1 }]
-                onTextChanged: errorMessage = Utils.getErrorMessage(errors, "community description")
+                validators: [StatusMinLengthValidator {
+                    minLength: 1
+                    errorMessage: Utils.getErrorMessage(errors, "community description")
+                }]
             }
 
             StatusBaseText {
