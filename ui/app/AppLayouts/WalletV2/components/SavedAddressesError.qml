@@ -1,0 +1,33 @@
+import QtQuick 2.13
+import QtQuick.Controls 2.13
+
+import "../../../../imports"
+
+import StatusQ.Core 0.1
+import StatusQ.Core.Theme 0.1
+import StatusQ.Controls 0.1
+
+Item {
+    id: addEditError
+
+    property alias text: label.text
+
+    anchors.left: parent.left
+    anchors.right: parent.right
+
+    StatusIcon {
+        id: errorIcon
+        icon: "warning"
+        color: Theme.palette.dangerColor1
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.left: parent.left
+    }
+    StatusBaseText {
+        id: label
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.left: errorIcon.right
+        anchors.leftMargin: Style.current.halfPadding
+        font.pixelSize: 13
+        color: Theme.palette.dangerColor1
+    }
+}

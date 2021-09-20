@@ -78,9 +78,11 @@ StatusModal {
                 input.onTextChanged: {
                     input.text = Utils.convertSpacesToDashesAndUpperToLowerCase(input.text);
                     input.cursorPosition = input.text.length
-                    errorMessage = Utils.getErrorMessage(errors, qsTr("channel name"))
                 }
-                validators: [StatusMinLengthValidator { minLength: 1 }]
+                validators: [StatusMinLengthValidator {
+                    minLength: 1
+                    errorMessage: Utils.getErrorMessage(errors, qsTr("channel name"))
+                }]
             }
 
             StatusModalDivider {
@@ -96,8 +98,10 @@ StatusModal {
                 input.placeholderText: qsTr("Describe the channel")
                 input.multiline: true
                 input.implicitHeight: 88
-                input.onTextChanged: errorMessage = Utils.getErrorMessage(errors, qsTr("channel description"))
-                validators: [StatusMinLengthValidator { minLength: 1 }]
+                validators: [StatusMinLengthValidator {
+                    minLength: 1
+                    errorMessage:  Utils.getErrorMessage(errors, qsTr("channel description"))
+                }]
             }
 
             /* TODO: use the code below to enable private channels and message limit */

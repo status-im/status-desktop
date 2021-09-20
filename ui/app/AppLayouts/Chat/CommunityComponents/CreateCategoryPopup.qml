@@ -53,8 +53,10 @@ StatusModal {
             id: nameInput
             charLimit: maxCategoryNameLength
             input.placeholderText: qsTr("Category title")
-            validators: [StatusMinLengthValidator { minLength: 1 }]
-            onTextChanged: errorMessage = Utils.getErrorMessage(errors, "category name")
+            validators: [StatusMinLengthValidator {
+                minLength: 1
+                errorMessage: Utils.getErrorMessage(errors, qsTr("category name"))
+            }]
         }
 
         StatusModalDivider {
