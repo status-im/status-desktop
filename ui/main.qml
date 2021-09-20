@@ -159,18 +159,8 @@ StatusWindow {
     Connections {
         target: applicationWindow
         onClosing: {
-            if (loader.sourceComponent == login) {
-                applicationWindow.visible = false
-                close.accepted = false
-            }
-            else if (loader.sourceComponent == app) {
-                if (appSettings.quitOnClose) {
-                    close.accepted = true
-                } else {
-                    applicationWindow.visible = false
-                    close.accepted = false
-                }
-            }
+            loader.sourceComponent = undefined
+            close.accepted = true
         }
 
         onActiveChanged: {
