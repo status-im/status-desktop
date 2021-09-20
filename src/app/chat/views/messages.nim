@@ -120,7 +120,7 @@ QtObject:
 
     for mention in pubKeyMentions:
       let pubKey = mention.replace("@","")
-      let userNameAlias = mention(pubKey, self.status.chat.contacts)
+      let userNameAlias = mention(pubKey, self.status.chat.getContacts())
       if userNameAlias != "":
         updatedMessage = updatedMessage.replace(mention, '@' & userNameAlias)
 
