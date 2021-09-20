@@ -293,11 +293,12 @@ QtObject:
   proc getLinkPreviewData*(self: ChatsView, link: string, uuid: string) {.slot.} =
     self.getLinkPreviewData("linkPreviewDataReceived", link, uuid)
 
-  proc getChatType*(self: ChatsView, channel: string): int {.slot.} =
+  proc getChannel*(self: ChatsView, channel: string): string {.slot.} =
     let selectedChannel = self.channelView.getChannelById(channel)
     if selectedChannel == nil:
-      return -1
-    selectedChannel.chatType.int
+      return ""
+
+    result = Json.encode(selectedChannel.toJsonNode())
 
   proc asyncActivityNotificationLoad*(self: ChatsView) {.slot.} =
     self.asyncActivityNotificationLoad("asyncActivityNotificationLoaded")
