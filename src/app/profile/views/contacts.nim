@@ -196,12 +196,9 @@ QtObject:
       )
     self.contactToAddChanged()
 
-  proc contactChanged(self: ContactsView, publicKey: string, isAdded: bool) {.signal.}
-
   proc addContact*(self: ContactsView, publicKey: string): string {.slot.} =
     result = self.status.contacts.addContact(publicKey, self.accountKeyUID)
     self.status.chat.join(status_utils.getTimelineChatId(publicKey), ChatType.Profile, "", publicKey)
-    self.contactChanged(publicKey, true)
 
   proc rejectContactRequest*(self: ContactsView, publicKey: string) {.slot.} =
     self.status.contacts.rejectContactRequest(publicKey)
@@ -238,4 +235,3 @@ QtObject:
     let channelId = status_utils.getTimelineChatId(publicKey)
     if self.status.chat.hasChannel(channelId):
       self.status.chat.leave(channelId)
-    self.contactChanged(publicKey, false)
