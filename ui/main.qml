@@ -77,6 +77,7 @@ StatusWindow {
         property string skinColor: ""
         property bool showDeleteMessageWarning: true
         property bool downloadChannelMessagesEnabled: false
+        property bool expandUsersList: false
 
         // Browser settings
         property bool showBrowserSelector: true
