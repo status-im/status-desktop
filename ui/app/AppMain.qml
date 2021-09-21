@@ -280,7 +280,7 @@ Item {
                 badge.border.width: 2
                 onClicked: {
                     if (chatsModel.communities.activeCommunity.active) {
-                        chatLayoutContainer.chatColumn.input.hideExtendedArea();
+                        chatLayoutContainer.chatColumn.hideChatInputExtendedArea();
                         chatsModel.communities.activeCommunity.active = false
                     }
                     appMain.changeAppSection(Constants.chat)

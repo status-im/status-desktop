@@ -35,7 +35,6 @@ Item {
     property bool contactRequestReceived: profileModel.contacts.contactRequestReceived(activeChatId)
     property string currentNotificationChatId
     property string currentNotificationCommunityId
-    property alias input: chatInput
     property string hoveredMessage
     property string activeMessage
     property var currentTime: 0
@@ -43,7 +42,13 @@ Item {
     property Timer timer: Timer { }
     property var userList
     property var onActivated: function () {
-        chatInput.textInput.forceActiveFocus(Qt.MouseFocusReason)
+        if(stackLayoutChatMessages.currentIndex >= 0 && stackLayoutChatMessages.currentIndex < stackLayoutChatMessages.children.length)
+            stackLayoutChatMessages.children[stackLayoutChatMessages.currentIndex].chatInput.textInput.forceActiveFocus(Qt.MouseFocusReason)
+    }
+
+    function hideChatInputExtendedArea () {
+        if(stackLayoutChatMessages.currentIndex >= 0 && stackLayoutChatMessages.currentIndex < stackLayoutChatMessages.children.length)
+            stackLayoutChatMessages.children[stackLayoutChatMessages.currentIndex].chatInput.hideExtendedArea()
     }
 
     function setHovered(messageId, hovered) {
@@ -74,7 +79,8 @@ Item {
         let sticker = chatsModel.messageView.messageList.getMessageData(replyMessageIndex, "sticker")
         let contentType = chatsModel.messageView.messageList.getMessageData(replyMessageIndex, "contentType")
 
-        chatInput.showReplyArea(userName, message, identicon, contentType, image, sticker)
+        if(stackLayoutChatMessages.currentIndex >= 0 && stackLayoutChatMessages.currentIndex < stackLayoutChatMessages.children.length)
+            stackLayoutChatMessages.children[stackLayoutChatMessages.currentIndex].chatInput.showReplyArea(userName, message, identicon, contentType, image, sticker)
     }
 
     function requestAddressForTransaction(address, amount, tokenAddress, tokenDecimals = 18) {
@@ -295,26 +301,128 @@ Item {
                 currentIndex: chatsModel.messageView.getMessageListIndex(chatsModel.channelView.activeChannelIndex)
                 Repeater {
                     model: chatsModel.messageView
-                    Loader {
-                        active: stackLayoutChatMessages.currentIndex === index
-                        sourceComponent: ChatMessages {
-                            id: chatMessages
-                            messageList: messages
-                            messageContextMenuInst: contextmenu
-                            Component.onCompleted: {
-                                chatColumnLayout.userList = chatMessages.messageList.userList;
+                    ColumnLayout {
+                        property alias chatInput: chatInput
+                        Loader {
+                            Layout.alignment: Qt.AlignHCenter | Qt.AlignBottom
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            Layout.preferredWidth: parent.width
+
+                            active: stackLayoutChatMessages.currentIndex === index
+                            sourceComponent: ChatMessages {
+                                id: chatMessages
+                                messageList: messages
+                                messageContextMenuInst: contextmenu
+                                Component.onCompleted: {
+                                    chatColumnLayout.userList = chatMessages.messageList.userList;
+                                }
+                            }
+                        }
+                        Item {
+                            id: inputArea
+                            Layout.alignment: Qt.AlignHCenter | Qt.AlignBottom
+                            Layout.fillWidth: true
+                            Layout.preferredWidth: parent.width
+                            height: chatInput.height
+                            Layout.preferredHeight: height
+
+                            Connections {
+                                target: chatsModel.messageView
+                                onLoadingMessagesChanged:
+                                    if(value){
+                                        loadingMessagesIndicator.active = true
+                                    } else {
+                                        timer.setTimeout(function(){
+                                            loadingMessagesIndicator.active = false;
+                                        }, 5000);
+                                    }
+                            }
+
+                            Loader {
+                                id: loadingMessagesIndicator
+                                active: chatsModel.messageView.loadingMessages
+                                sourceComponent: loadingIndicator
+                                anchors.right: parent.right
+                                anchors.bottom: chatInput.top
+                                anchors.rightMargin: Style.current.padding
+                                anchors.bottomMargin: Style.current.padding
+                            }
+
+                            Component {
+                                id: loadingIndicator
+                                LoadingAnimation { }
+                            }
+
+                            StatusChatInput {
+                                id: chatInput
+                                visible: {
+                                    if (chatsModel.channelView.activeChannel.chatType === Constants.chatTypePrivateGroupChat) {
+                                        return chatsModel.channelView.activeChannel.isMember
+                                    }
+                                    if (chatsModel.channelView.activeChannel.chatType === Constants.chatTypeOneToOne) {
+                                        return isContact
+                                    }
+                                    const community = chatsModel.communities.activeCommunity
+                                    return !community.active ||
+                                            community.access === Constants.communityChatPublicAccess ||
+                                            community.admin ||
+                                            chatsModel.channelView.activeChannel.canPost
+                                }
+                                isContactBlocked: isBlocked
+                                chatInputPlaceholder: isBlocked ?
+                                                          //% "This user has been blocked."
+                                                          qsTrId("this-user-has-been-blocked-") :
+                                                          //% "Type a message."
+                                                          qsTrId("type-a-message-")
+                                anchors.bottom: parent.bottom
+                                recentStickers: chatsModel.stickers.recent
+                                stickerPackList: chatsModel.stickers.stickerPacks
+                                chatType: chatsModel.channelView.activeChannel.chatType
+                                onSendTransactionCommandButtonClicked: {
+                                    if (chatsModel.channelView.activeChannel.ensVerified) {
+                                        txModalLoader.sourceComponent = cmpSendTransactionWithEns
+                                    } else {
+                                        txModalLoader.sourceComponent = cmpSendTransactionNoEns
+                                    }
+                                    txModalLoader.item.open()
+                                }
+                                onReceiveTransactionCommandButtonClicked: {
+                                    txModalLoader.sourceComponent = cmpReceiveTransaction
+                                    txModalLoader.item.open()
+                                }
+                                onStickerSelected: {
+                                    chatsModel.stickers.send(hashId, chatInput.isReply ? SelectedMessage.messageId : "", packId)
+                                }
+                                onSendMessage: {
+                                    if (chatInput.fileUrls.length > 0){
+                                        chatsModel.sendImages(JSON.stringify(fileUrls));
+                                    }
+                                    let msg = chatsModel.plainText(Emoji.deparse(chatInput.textInput.text))
+                                    if (msg.length > 0){
+                                        msg = chatInput.interpretMessage(msg)
+                                        chatsModel.messageView.sendMessage(msg, chatInput.isReply ? SelectedMessage.messageId : "", Utils.isOnlyEmoji(msg) ? Constants.emojiType : Constants.messageType, false);
+                                        if(event) event.accepted = true
+                                        sendMessageSound.stop();
+                                        Qt.callLater(sendMessageSound.play);
+
+                                        chatInput.textInput.clear();
+                                        chatInput.textInput.textFormat = TextEdit.PlainText;
+                                        chatInput.textInput.textFormat = TextEdit.RichText;
+                                    }
+                                }
+                            }
+                        }
+                        Connections {
+                            target: chatsModel.channelView
+                            onActiveChannelChanged: {
+                                isBlocked = profileModel.contacts.isContactBlocked(activeChatId);
+                                chatInput.suggestions.hide();
+                                if(stackLayoutChatMessages.currentIndex >= 0 && stackLayoutChatMessages.currentIndex < stackLayoutChatMessages.children.length)
+                                    stackLayoutChatMessages.children[stackLayoutChatMessages.currentIndex].chatInput.textInput.forceActiveFocus(Qt.MouseFocusReason)
                             }
                         }
                     }
-                }
-            }
-
-            Connections {
-                target: chatsModel.channelView
-                onActiveChannelChanged: {
-                    isBlocked = profileModel.contacts.isContactBlocked(activeChatId);
-                    chatInput.suggestions.hide();
-                    chatInput.textInput.forceActiveFocus(Qt.MouseFocusReason)
                 }
             }
 
@@ -322,102 +430,6 @@ Item {
                 Layout.alignment: Qt.AlignHCenter | Qt.AlignBottom
                 Layout.fillWidth: true
                 Layout.bottomMargin: Style.current.bigPadding
-            }
-
-            Item {
-                id: inputArea
-                Layout.alignment: Qt.AlignHCenter | Qt.AlignBottom
-                Layout.fillWidth: true
-                Layout.preferredWidth: parent.width
-                height: chatInput.height
-                Layout.preferredHeight: height
-
-                Connections {
-                    target: chatsModel.messageView
-                    onLoadingMessagesChanged:
-                        if(value){
-                            loadingMessagesIndicator.active = true
-                        } else {
-                            timer.setTimeout(function(){
-                                loadingMessagesIndicator.active = false;
-                            }, 5000);
-                        }
-                }
-
-                Loader {
-                    id: loadingMessagesIndicator
-                    active: chatsModel.messageView.loadingMessages
-                    sourceComponent: loadingIndicator
-                    anchors.right: parent.right
-                    anchors.bottom: chatInput.top
-                    anchors.rightMargin: Style.current.padding
-                    anchors.bottomMargin: Style.current.padding
-                }
-
-                Component {
-                    id: loadingIndicator
-                    LoadingAnimation { }
-                }
-
-                StatusChatInput {
-                    id: chatInput
-                    visible: {
-                        if (chatsModel.channelView.activeChannel.chatType === Constants.chatTypePrivateGroupChat) {
-                            return chatsModel.channelView.activeChannel.isMember
-                        }
-                        if (chatsModel.channelView.activeChannel.chatType === Constants.chatTypeOneToOne) {
-                            return isContact
-                        }
-                        const community = chatsModel.communities.activeCommunity
-                        return !community.active ||
-                                community.access === Constants.communityChatPublicAccess ||
-                                community.admin ||
-                                chatsModel.channelView.activeChannel.canPost
-                    }
-                    isContactBlocked: isBlocked
-                    chatInputPlaceholder: isBlocked ?
-                                              //% "This user has been blocked."
-                                              qsTrId("this-user-has-been-blocked-") :
-                                              //% "Type a message."
-                                              qsTrId("type-a-message-")
-                    anchors.bottom: parent.bottom
-                    recentStickers: chatsModel.stickers.recent
-                    stickerPackList: chatsModel.stickers.stickerPacks
-                    chatType: chatsModel.channelView.activeChannel.chatType
-                    onSendTransactionCommandButtonClicked: {
-                        if (chatsModel.channelView.activeChannel.ensVerified) {
-                            txModalLoader.sourceComponent = cmpSendTransactionWithEns
-                        } else {
-                            txModalLoader.sourceComponent = cmpSendTransactionNoEns
-                        }
-                        txModalLoader.item.open()
-                    }
-                    onReceiveTransactionCommandButtonClicked: {
-                        txModalLoader.sourceComponent = cmpReceiveTransaction
-                        txModalLoader.item.open()
-                    }
-                    onStickerSelected: {
-                        chatsModel.stickers.send(hashId, chatInput.isReply ? SelectedMessage.messageId : "", packId)
-                    }
-                    onSendMessage: {
-                        if (chatInput.fileUrls.length > 0){
-                            chatsModel.sendImages(JSON.stringify(fileUrls));
-                        }
-                        let msg = chatsModel.plainText(Emoji.deparse(chatInput.textInput.text))
-                        if (msg.length > 0){
-                            msg = chatInput.interpretMessage(msg)
-                            chatsModel.messageView.sendMessage(msg, chatInput.isReply ? SelectedMessage.messageId : "", Utils.isOnlyEmoji(msg) ? Constants.emojiType : Constants.messageType, false);
-                            if(event) event.accepted = true
-                            sendMessageSound.stop();
-                            Qt.callLater(sendMessageSound.play);
-
-                            chatInput.textInput.clear();
-                            chatInput.textInput.textFormat = TextEdit.PlainText;
-                            chatInput.textInput.textFormat = TextEdit.RichText;
-                        }
-                    }
-                }
-
             }
         }
 
@@ -616,7 +628,8 @@ Item {
         }
 
         Component.onCompleted: {
-            chatInput.textInput.forceActiveFocus(Qt.MouseFocusReason)
+            if(stackLayoutChatMessages.currentIndex >= 0 && stackLayoutChatMessages.currentIndex < stackLayoutChatMessages.children.length)
+                stackLayoutChatMessages.children[stackLayoutChatMessages.currentIndex].chatInput.textInput.forceActiveFocus(Qt.MouseFocusReason)
         }
 
         Connections {
