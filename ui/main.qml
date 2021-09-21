@@ -53,6 +53,7 @@ StatusWindow {
         property bool isBrowserEnabled: false
         property bool isActivityCenterEnabled: false
         property bool showOnlineUsers: false
+        property bool expandUsersList: false
         property bool isGifWidgetEnabled: false
         property bool isTenorWarningAccepted: false
         property bool displayChatImages: false
