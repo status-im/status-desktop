@@ -470,9 +470,9 @@ Item {
             id: retry
             anchors.left: chatTime.visible ? chatTime.right : messageContent.left
             anchors.leftMargin: chatTime.visible ? chatHorizontalPadding : 0
-            anchors.top: chatTime.visible ? undefined : messageContent.bottom
+            anchors.top: chatTime.visible ? chatTime.top : messageContent.bottom
             anchors.topMargin: chatTime.visible ? 0 : -4
-            anchors.verticalCenter: chatTime.visible ? chatTime.verticalCenter : undefined
+            anchors.bottom: chatTime.visible ? chatTime.bottom : undefined
         }
     }
 
