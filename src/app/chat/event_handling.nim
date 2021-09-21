@@ -199,6 +199,7 @@ proc handleMailserverEvents(self: ChatController) =
     )
     mailserverWorker.start(task)
   self.status.events.on("mailserverAvailable") do(e:Args):
+    self.view.messageView.setLoadingMessages(true)
     let task = RequestMessagesTaskArg(
       `method`: "requestMessages",
       vptr: cast[ByteAddress](self.view.vptr),
