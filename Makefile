@@ -178,7 +178,6 @@ endif
 
 NIM_PARAMS += --outdir:./bin
 
-
 # App version
 VERSIONFILE=VERSION
 DESKTOP_VERSION=`cat $(VERSIONFILE)`
@@ -226,18 +225,22 @@ fleets-remove:
 
 fleets-update: fleets-remove $(FLEETS)
 
-UI_RESOURCES := resources.rcc
+# When modifying files that are not tracked in UI_SOURCES (see below),
+# e.g. ui/shared/img/*.svg, REBUILD_UI=true can be supplied to `make` to ensure
+# a rebuild of resources.rcc: `make REBUILD_UI=true run`
+REBUILD_UI ?= false
 
-# This `UI_SOURCES` file set is small enough that the rcc target completes very
-# quickly if no files in the set have changed. However, if there's a change to
-# a file not in the set (e.g. a PNG file) then it will be necessary to delete
-# resources.rcc (or touch a .qml file, etc.) in order to trigger a fresh build
-# of resources.rcc.
+ifeq ($(REBUILD_UI),true)
+ $(shell touch ui/main.qml)
+endif
+
 ifeq ($(detected_OS),Darwin)
  UI_SOURCES := $(shell find -E ui -type f -iregex '.*(qmldir|qml|qrc)$$' -not -iname 'resources.qrc')
 else
  UI_SOURCES := $(shell find ui -type f -regextype egrep -iregex '.*(qmldir|qml|qrc)$$' -not -iname 'resources.qrc')
 endif
+
+UI_RESOURCES := resources.rcc
 
 $(UI_RESOURCES): $(UI_SOURCES)
 	echo -e $(BUILD_MSG) "resources.rcc"
@@ -264,7 +267,22 @@ NIM_PARAMS += -d:chronicles_sinks=textlines[stdout],textlines[nocolors,dynamic],
 
 RESOURCES_LAYOUT := -d:development
 
-NIM_SOURCES := $(shell find src -type f)
+# When modifying files that are not tracked in NIM_SOURCES (see below),
+# e.g. vendor/*.nim, REBUILD_NIM=true can be supplied to `make` to ensure a
+# rebuild of bin/nim_status_client: `make REBUILD_NIM=true run`
+# Note: it is not necessary to supply REBUILD_NIM=true after `make update`
+# because that target bumps .update.timestamp
+REBUILD_NIM ?= false
+
+ifeq ($(REBUILD_NIM),true)
+ $(shell touch .update.timestamp)
+endif
+
+.update.timestamp:
+	touch .update.timestamp
+
+NIM_SOURCES := .update.timestamp $(shell find src -type f)
+
 ifeq ($(detected_OS),Windows)
  NIM_STATUS_CLIENT := bin/nim_status_client.exe
 else
@@ -488,7 +506,7 @@ clean: | clean-common
 	rm -rf bin/* node_modules bottles/* pkg/* tmp/* $(STATUSGO)
 	+ $(MAKE) -C vendor/DOtherSide/build --no-print-directory clean
 
-run: nim_status_client $(RUN_TARGET)
+run: $(RUN_TARGET)
 
 ICON_TOOL := node_modules/.bin/fileicon
 
@@ -499,12 +517,12 @@ $(ICON_TOOL):
 # Currently not in use: https://github.com/status-im/status-desktop/pull/1858
 # STATUS_PORT ?= 30306
 
-run-linux:
+run-linux: nim_status_client
 	echo -e "\e[92mRunning:\e[39m bin/nim_status_client"
 	LD_LIBRARY_PATH="$(QT5_LIBDIR)":"$(STATUSGO_LIBDIR)" \
 	./bin/nim_status_client
 
-run-macos: $(ICON_TOOL)
+run-macos: nim_status_client $(ICON_TOOL)
 	mkdir -p bin/StatusDev.app/Contents/{MacOS,Resources}
 	cp Info.dev.plist bin/StatusDev.app/Contents/Info.plist
 	cp status-dev.icns bin/StatusDev.app/Contents/Resources/
@@ -514,7 +532,7 @@ run-macos: $(ICON_TOOL)
 	echo -e "\e[92mRunning:\e[39m bin/StatusDev.app/Contents/MacOS/nim_status_client"
 	./bin/StatusDev.app/Contents/MacOS/nim_status_client
 
-run-windows: $(NIM_WINDOWS_PREBUILT_DLLS)
+run-windows: nim_status_client $(NIM_WINDOWS_PREBUILT_DLLS)
 	echo -e "\e[92mRunning:\e[39m bin/nim_status_client.exe"
 	PATH="$(shell pwd)"/"$(shell dirname "$(DOTHERSIDE)")":"$(STATUSGO_LIBDIR)":"$(shell pwd)"/"$(shell dirname "$(NIM_WINDOWS_PREBUILT_DLLS)")":"$(PATH)" \
 	./bin/nim_status_client.exe
