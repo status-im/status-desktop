@@ -59,6 +59,7 @@ Rectangle {
 
     function hide() {
         shouldHide = true
+        formattedPlainTextFilter = "";
     }
 
     function selectCurrentItem() {
