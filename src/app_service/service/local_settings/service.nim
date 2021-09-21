@@ -40,17 +40,16 @@ QtObject:
   proc getSettingsFilePath*(self: LocalSettingsService): string =
     return self.settingsFilePath
 
-  proc updateSettingsFilePath*(self: LocalSettingsService, username: string) =
-    if (username.len > 0):
-      let unknownSettingsPath = os.joinPath(DATADIR, "qt", UNKNOWN_ACCOUNT)
-      if (not unknownSettingsPath.tryRemoveFile):
-        # Only fails if the file exists and an there was an error removing it
-        # More info: https://nim-lang.org/docs/os.html#tryRemoveFile%2Cstring
-        warn "Failed to remove unused settings file", file=unknownSettingsPath
+  proc updateSettingsFilePath*(self: LocalSettingsService, pubKey: string) =
+    let unknownSettingsPath = os.joinPath(DATADIR, "qt", UNKNOWN_ACCOUNT)
+    if (not unknownSettingsPath.tryRemoveFile):
+      # Only fails if the file exists and an there was an error removing it
+      # More info: https://nim-lang.org/docs/os.html#tryRemoveFile%2Cstring
+      warn "Failed to remove unused settings file", file=unknownSettingsPath
 
-      self.settings.delete
-      self.settingsFilePath = os.joinPath(DATADIR, "qt", username)
-      self.settings = newQSettings(self.settingsFilePath, QSettingsFormat.IniFormat)
+    self.settings.delete
+    self.settingsFilePath = os.joinPath(DATADIR, "qt", pubKey)
+    self.settings = newQSettings(self.settingsFilePath, QSettingsFormat.IniFormat)
 
   proc setValue*(self: LocalSettingsService, key: string, value: QVariant) =
     self.settings.setValue(key, value)

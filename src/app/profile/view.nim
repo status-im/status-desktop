@@ -184,23 +184,6 @@ QtObject:
   QtProperty[QVariant] picture:
     read = getProfilePicture
 
-  proc settingsFileChanged*(self: ProfileView) {.signal.}
-  
-  proc getSettingsFile*(self: ProfileView): string {.slot.} =
-    self.appService.localSettingsService.getSettingsFilePath
-  
-  proc setSettingsFile*(self: ProfileView, username: string) =
-    if(username.len == 0 or
-      self.appService.localSettingsService.getSettingsFilePath.endsWith(username)):
-      return
-
-    self.appService.localSettingsService.updateSettingsFilePath(username)
-    self.settingsFileChanged()
-
-  QtProperty[string] settingsFile:
-    read = getSettingsFile
-    notify = settingsFileChanged
-
   proc getGlobalSettingsFile*(self: ProfileView): string {.slot.} =
     self.appService.localSettingsService.getGlobalSettingsFilePath
 
@@ -212,6 +195,19 @@ QtObject:
 
   QtProperty[QVariant] mutedChats:
     read = getMutedChats
+
+  proc settingsFileChanged*(self: ProfileView) {.signal.}
+  
+  proc getSettingsFile*(self: ProfileView): string {.slot.} =
+    self.appService.localSettingsService.getSettingsFilePath
+  
+  proc setSettingsFile*(self: ProfileView, pubKey: string) =
+    self.appService.localSettingsService.updateSettingsFilePath(pubKey)
+    self.settingsFileChanged()
+
+  QtProperty[string] settingsFile:
+    read = getSettingsFile
+    notify = settingsFileChanged
 
   proc setSendUserStatus*(self: ProfileView, sendUserStatus: bool) {.slot.} =
     if (sendUserStatus == self.profile.sendUserStatus):

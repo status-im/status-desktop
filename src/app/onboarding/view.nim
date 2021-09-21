@@ -100,10 +100,7 @@ QtObject:
     result = self.status.wallet.validateMnemonic(mnemonic.strip())
 
   proc storeDerivedAndLogin(self: OnboardingView, password: string): string {.slot.} =
-    # In this moment we're sure that new account will be logged in, and emit signal.
     let genAcc = self.currentAccount.account
-    let acc = Account(name: genAcc.name, keyUid: genAcc.keyUid, identicon: genAcc.identicon, identityImage: genAcc.identityImage)
-    self.status.events.emit("currentAccountUpdated", status_account_type.AccountArgs(account: acc))
 
     try:
       result = self.status.accounts.storeDerivedAndLogin(self.status.fleet.config, genAcc, password).toJson

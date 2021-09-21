@@ -35,9 +35,6 @@ proc delete*(self: ProfileController) =
   delete self.variant
   delete self.view
 
-proc setSettingsFile*(self: ProfileController, username: string) =
-  self.view.setSettingsFile(username)
-
 proc init*(self: ProfileController, account: Account) =
   let profile = account.toProfileModel()
 
@@ -62,6 +59,7 @@ proc init*(self: ProfileController, account: Account) =
   self.view.devices.addDevices(status_devices.getAllDevices())
   self.view.devices.setDeviceSetup(status_devices.isDeviceSetup())
   self.view.setNewProfile(profile)
+  self.view.setSettingsFile(profile.id)
   self.view.network.setNetwork(network)
   self.view.ens.init()
   self.view.initialized()

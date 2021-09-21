@@ -62,7 +62,6 @@ QtObject:
       keyUid: currNodeAcct.keyUid,
       identityImage: currNodeAcct.identityImage
     ))
-    self.status.events.emit("currentAccountUpdated", AccountArgs(account: currNodeAcct))
 
   QtProperty[QVariant] currentAccount:
     read = getCurrentAccount
