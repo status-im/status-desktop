@@ -31,7 +31,6 @@ Item {
     ListView {
         id: chatLogView
         anchors.fill: parent
-        anchors.bottomMargin: Style.current.bigPadding
         spacing: appSettings.useCompactMode ? 0 : 4
         boundsBehavior: Flickable.StopAtBounds
         clip: true
@@ -245,6 +244,8 @@ Item {
         model: messageListDelegate
         section.property: "sectionIdentifier"
         section.criteria: ViewSection.FullString
+
+        Component.onCompleted: scrollToBottom(true)
     }
 
     MessageDialog {
