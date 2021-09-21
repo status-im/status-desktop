@@ -14,6 +14,8 @@ import "../ChatColumn/MessageComponents"
 import "../ChatColumn/"
 import "../ContactsColumn"
 
+import StatusQ.Core.Theme 0.1
+
 Item {
     id: root
     anchors.fill: parent
@@ -65,7 +67,7 @@ Item {
                     anchors.leftMargin: Style.current.padding
                     verticalAlignment: Text.AlignVCenter
                     font.pixelSize: Style.current.additionalTextSize
-                    color: Style.current.darkGrey
+                    color: Theme.palette.baseColor1
                     text: section === 'true' ? qsTr("Online") : qsTr("Offline")
                 }
             }
