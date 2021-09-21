@@ -62,7 +62,7 @@ StatusWindow {
         property var hiddenCommunityWelcomeBanners: []
         property var hiddenCommunityBackUpBanners: []
         property real volume: 0.2
-        property int notificationSetting: Constants.notifyAllMessages
+        property int notificationSetting: Constants.notifyJustMentions
         property bool notificationSoundsEnabled: true
         property bool useOSNotifications: true
         property int notificationMessagePreviewSetting: Constants.notificationPreviewNameAndMessage
@@ -138,7 +138,7 @@ StatusWindow {
             }
         }
     }
-    
+
     Action {
         shortcut: "Ctrl+W"
         enabled: loader.item ? loader.item.currentView !== Utils.getAppSectionIndex(Constants.browser)
@@ -172,7 +172,7 @@ StatusWindow {
             }
         }
     }
-	
+
 	Connections {
         target: singleInstance
 
@@ -217,7 +217,7 @@ StatusWindow {
     }
 
     signal navigateTo(string path)
-    
+
     property bool currentlyHasANotification: false
 
     function makeStatusAppActive() {
@@ -251,7 +251,7 @@ StatusWindow {
                     applicationWindow.makeStatusAppActive()
                 }
             }
-            
+
             MenuSeparator {
             }
 
