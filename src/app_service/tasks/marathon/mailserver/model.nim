@@ -122,7 +122,7 @@ proc peerSummaryChange*(self: MailserverModel, peers: seq[string]) =
 
   var mailserverAvailable = false
   for knownPeer in self.nodes.keys:
-    if not peers.contains(knownPeer) and self.nodes[knownPeer] != MailserverStatus.Disconnected: 
+    if not peers.contains(knownPeer) and (self.nodes[knownPeer] == MailserverStatus.Connected or (self.nodes[knownPeer] == MailserverStatus.Connecting and (cpuTime() - self.lastConnectionAttempt) > 8)): 
       info "Peer disconnected", peer=knownPeer
       self.nodes[knownPeer] = MailserverStatus.Disconnected
       self.events.emit("peerDisconnected", MailserverArgs(peer: knownPeer))
