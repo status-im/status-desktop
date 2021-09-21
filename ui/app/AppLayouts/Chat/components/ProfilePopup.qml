@@ -38,7 +38,6 @@ StatusModal {
     signal contactUnblocked(publicKey: string)
     signal contactBlocked(publicKey: string)
     signal contactAdded(publicKey: string)
-    signal contactRemoved(publicKey: string)
 
     function openPopup(showFooter, userNameParam, fromAuthorParam, identiconParam, textParam, nicknameParam) {
         userName = userNameParam || ""
@@ -227,8 +226,6 @@ StatusModal {
                 }
                 removeContactConfirmationDialog.close();
                 popup.close();
-
-                popup.contactRemoved(fromAuthor);
             }
         }
 
