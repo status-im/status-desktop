@@ -193,7 +193,6 @@ proc mainProc() =
 
   status.events.once("login") do(a: Args):
     var args = AccountArgs(a)
-
     appService.onLoggedIn()
 
     # Reset login and onboarding to remove any mnemonic that would have been saved in the accounts list
@@ -204,17 +203,9 @@ proc mainProc() =
     onboarding.moveToAppState()
     status.events.emit("loginCompleted", args)
 
-  proc updateProfileSettings(account: Account) =
-    profile.setSettingsFile(account.name)
-
-  status.events.on("currentAccountUpdated") do(a: Args):
-    var args = AccountArgs(a)
-    updateProfileSettings(args.account)
-
   status.events.once("loginCompleted") do(a: Args):
     var args = AccountArgs(a)
     
-    updateProfileSettings(args.account)
     status.startMessenger()
     profile.init(args.account)
     wallet.init()
