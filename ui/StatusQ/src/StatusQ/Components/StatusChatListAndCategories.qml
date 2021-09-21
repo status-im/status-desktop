@@ -28,6 +28,9 @@ Item {
     property alias sensor: sensor
     property bool draggableItems: false
     property bool draggableCategories: false
+    // Keeps track of expanded category state. Should only be modified
+    // internally at runtime.
+    property var openedCategoryState: new Object({})
 
     property Component categoryPopupMenu
     property Component chatListPopupMenu
@@ -147,6 +150,21 @@ Item {
 
                         popupMenu: statusChatListAndCategories.categoryPopupMenu
                         chatListPopupMenu: statusChatListAndCategories.chatListPopupMenu
+
+                        // Used to set the initial value of "opened" when the
+                        // model is bound/changed.
+                        opened: {
+                            let openedState = statusChatListAndCategories.openedCategoryState[model.categoryId]
+                            return openedState !== undefined ? openedState : true // defaults to open
+                        }
+
+                        // Used to track the internal changes of the `opened`
+                        // property. This cannot be brought inside the component
+                        // as the state would be lost each time the model is
+                        // changed.
+                        onOpenedChanged: {
+                            statusChatListAndCategories.openedCategoryState[model.categoryId] = statusChatListCategory.opened
+                        }
                     }
 
                     DropArea {
