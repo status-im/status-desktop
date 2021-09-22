@@ -82,6 +82,40 @@ Item {
         isActivityCenterMessage: activityCenterMessage
     }
 
+    function startMessageFoundAnimation() {
+        messageFoundAnimation.start();
+    }
+
+    SequentialAnimation {
+        id: messageFoundAnimation
+        PauseAnimation {
+            duration: 600
+        }
+         NumberAnimation {
+            target: highlightRect
+            property: "opacity"
+            to: 1.0
+            duration: 1500
+        }
+        PauseAnimation {
+            duration: 1000
+        }
+        NumberAnimation {
+           target: highlightRect
+           property: "opacity"
+            to: 0.0
+            duration: 1500
+        }
+    }
+
+    Rectangle {
+        id: highlightRect
+        anchors.fill: messageContainer
+        opacity: 0
+        visible: (opacity > 0.001)
+        color: Style.current.backgroundHoverLight
+    }
+
     Rectangle {
         property alias chatText: chatText
 
@@ -97,7 +131,6 @@ Item {
                 + (pinnedRectangleLoader.active ? Style.current.smallPadding : 0)
                 + (isEdit ? 25 : 0)
         width: parent.width
-
         color: {
             if (isEdit) {
                 return Style.current.backgroundHoverLight
@@ -116,7 +149,7 @@ Item {
             }
 
             return root.isHovered || isMessageActive ? (hasMention ? Style.current.mentionMessageHoverColor : Style.current.backgroundHoverLight) :
-                                                   (hasMention ? Style.current.mentionMessageColor : Style.current.transparent)
+                                                       (hasMention ? Style.current.mentionMessageColor : Style.current.transparent)
         }
 
         Loader {
