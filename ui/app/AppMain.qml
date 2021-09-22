@@ -336,7 +336,7 @@ Item {
                     id: profileBtn
                     //% "Settings"
                     tooltip.text: qsTrId("settings")
-                    icon.name: "profile"
+                    icon.name: "settings"
                     checked: appView.currentIndex == Utils.getAppSectionIndex(Constants.profile)
                     onClicked: appMain.changeAppSection(Constants.profile)
 
