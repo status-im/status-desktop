@@ -201,6 +201,16 @@ ScrollView {
                 }
             }
 
+            StatusSettingsLineButton {
+                //% "Keycard"
+                text: qsTr("Keycard")
+                isSwitch: true
+                switchChecked: appSettings.isKeycardEnabled
+                onClicked: {
+                    appSettings.isKeycardEnabled = !appSettings.isKeycardEnabled
+                }
+            }
+
             StatusSectionHeadline {
                 visible: !isWakuV2
                 //% "Bloom filter level"
