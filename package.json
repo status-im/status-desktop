@@ -8,6 +8,7 @@
     "fileicon": "0.2.4"
   },
   "engines": {
-    "node": ">=8"
+    "node": ">=10",
+    "npm": ">=7"
   }
 }
