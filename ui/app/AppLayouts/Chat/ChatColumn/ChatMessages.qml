@@ -61,7 +61,10 @@ Item {
             for (let i = 0; i < messageListDelegate.count; i++) {
                 item = messageListDelegate.items.get(i)
                 if (item.model.messageId === messageId) {
-                    chatLogView.positionViewAtIndex(i, ListView.Center)
+                    chatLogView.positionViewAtIndex(i, ListView.Center);
+                    if (appSettings.useCompactMode) {
+                        chatLogView.itemAtIndex(i).startMessageFoundAnimation();
+                    }
                     return
                 }
             }

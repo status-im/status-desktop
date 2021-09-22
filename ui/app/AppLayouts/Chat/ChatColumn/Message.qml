@@ -140,6 +140,10 @@ Item {
         }
     }
 
+    function startMessageFoundAnimation() {
+        messageLoader.item.startMessageFoundAnimation();
+    }
+
     Connections {
         enabled: !placeholderMessage
         target: profileModel.contacts.list
@@ -206,6 +210,7 @@ Item {
     }
 
     Loader {
+        id: messageLoader
         width: parent.width
         sourceComponent: {
             switch(contentType) {
