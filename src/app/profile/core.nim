@@ -123,6 +123,17 @@ proc init*(self: ProfileController, account: Account) =
     let mailserverArg = MailserverArgs(e)
     self.view.mailservers.activeMailserverChanged(mailserverArg.peer)
 
+  self.status.events.on(SignalType.HistoryRequestStarted.event) do(e: Args):
+    info "history request started", topics="mailserver-interaction"
+
+  self.status.events.on(SignalType.HistoryRequestCompleted.event) do(e: Args):
+    info "history request completed", topics="mailserver-interaction"
+
+  self.status.events.on(SignalType.HistoryRequestFailed.event) do(e: Args):
+    let h = HistoryRequestFailedSignal(e)
+    info "history request failed", topics="mailserver-interaction", errorMessage=h.errorMessage
+
+
   self.status.events.on(SignalType.Message.event) do(e: Args):
     let msgData = MessageSignal(e);
     if msgData.contacts.len > 0:
