@@ -39,9 +39,15 @@ StatusWindow {
     }
 
     Settings {
+        id: accountSettings
+        fileName: profileModel.accountSettingsFile
+
+        property string storeToKeychain: ""
+    }
+
+    Settings {
         id: appSettings
         fileName: profileModel.settingsFile
-        property string storeToKeychain: ""
 
         property var chatSplitView
         property var walletSplitView
@@ -284,11 +290,11 @@ StatusWindow {
         {
             if(clearStoredValue)
             {
-                appSettings.storeToKeychain = ""
+                accountSettings.storeToKeychain = ""
             }
 
-            if(appSettings.storeToKeychain === "" ||
-               appSettings.storeToKeychain === Constants.storeToKeychainValueNotNow)
+            if(accountSettings.storeToKeychain === "" ||
+               accountSettings.storeToKeychain === Constants.storeToKeychainValueNotNow)
             {
                 storeToKeychainConfirmationPopup.password = password
                 storeToKeychainConfirmationPopup.username = username
@@ -317,18 +323,18 @@ StatusWindow {
         }
 
         onConfirmButtonClicked: {
-            appSettings.storeToKeychain = Constants.storeToKeychainValueStore
+            accountSettings.storeToKeychain = Constants.storeToKeychainValueStore
             loginModel.storePassword(username, password)
             finish()
         }
 
         onRejectButtonClicked: {
-            appSettings.storeToKeychain = Constants.storeToKeychainValueNotNow
+            accountSettings.storeToKeychain = Constants.storeToKeychainValueNotNow
             finish()
         }
 
         onCancelButtonClicked: {
-            appSettings.storeToKeychain = Constants.storeToKeychainValueNever
+            accountSettings.storeToKeychain = Constants.storeToKeychainValueNever
             finish()
         }
     }

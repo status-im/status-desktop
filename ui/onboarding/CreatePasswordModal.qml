@@ -157,7 +157,7 @@ ModalPopup {
             onClicked: {
                 if (storingPasswordModal)
                 {
-                    appSettings.storeToKeychain = Constants.storeToKeychainValueStore
+                    accountSettings.storeToKeychain = Constants.storeToKeychainValueStore
                     loginModel.storePassword(profileModel.profile.username, repeatPasswordField.text)
                     popup.close()
                 }
