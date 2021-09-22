@@ -34,7 +34,7 @@ Item {
     }
 
     function resetLogin() {
-        if(appSettings.storeToKeychain === Constants.storeToKeychainValueStore)
+        if(accountSettings.storeToKeychain === Constants.storeToKeychainValueStore)
         {
             connection.enabled = true
             txtPassword.visible = false

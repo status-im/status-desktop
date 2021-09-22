@@ -51,7 +51,7 @@ Item {
             text: qsTr("Store pass to Keychain")
             visible: Qt.platform.os == "osx" // For now, this is available only on MacOS
             currentValue: {
-                let value = appSettings.storeToKeychain
+                let value = accountSettings.storeToKeychain
                 if(value == Constants.storeToKeychainValueStore)
                     return qsTr("Store")
 

@@ -7,6 +7,7 @@ import app/node/core as node
 import app/utilsView/core as utilsView
 import app/browser/core as browserView
 import app/profile/core as profile
+import app/profile/view
 import app/onboarding/core as onboarding
 import app/login/core as login
 import app/provider/core as provider
@@ -192,6 +193,13 @@ proc mainProc() =
   var onboarding = onboarding.newController(status)
   defer: onboarding.delete()
 
+  proc onAccountChanged(account: Account) =
+    profile.view.setAccountSettingsFile(account.name)
+
+  status.events.on("accountChanged") do(a: Args):
+    var args = AccountArgs(a)
+    onAccountChanged(args.account)
+
   status.events.once("login") do(a: Args):
     var args = AccountArgs(a)
     appService.onLoggedIn()
@@ -206,7 +214,8 @@ proc mainProc() =
 
   status.events.once("loginCompleted") do(a: Args):
     var args = AccountArgs(a)
-    
+
+    onAccountChanged(args.account)
     status.startMessenger()
     profile.init(args.account)
     wallet.init()

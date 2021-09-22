@@ -209,6 +209,19 @@ QtObject:
     read = getSettingsFile
     notify = settingsFileChanged
 
+  proc accountSettingsFileChanged*(self: ProfileView) {.signal.}
+
+  proc setAccountSettingsFile*(self: ProfileView, alias: string) =
+    self.appService.localSettingsService.updateAccountSettingsFilePath(alias)
+    self.accountSettingsFileChanged()
+
+  proc getAccountSettingsFile*(self: ProfileView): string {.slot.} =
+    self.appService.localSettingsService.getAccountSettingsFilePath
+
+  QtProperty[string] accountSettingsFile:
+    read = getAccountSettingsFile
+    notify = accountSettingsFileChanged
+
   proc setSendUserStatus*(self: ProfileView, sendUserStatus: bool) {.slot.} =
     if (sendUserStatus == self.profile.sendUserStatus):
       return

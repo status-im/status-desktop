@@ -4,6 +4,8 @@ import status/[status, wallet]
 import status/types/[rpc_response]
 import status/types/account as status_account_type
 import views/account_info
+import ../../app_service/[main]
+
 
 type
   AccountRoles {.pure.} = enum
@@ -101,6 +103,8 @@ QtObject:
 
   proc storeDerivedAndLogin(self: OnboardingView, password: string): string {.slot.} =
     let genAcc = self.currentAccount.account
+    let acc = Account(name: genAcc.name, keyUid: genAcc.keyUid, identicon: genAcc.identicon, identityImage: genAcc.identityImage)
+    self.status.events.emit("accountChanged", status_account_type.AccountArgs(account: acc))
 
     try:
       result = self.status.accounts.storeDerivedAndLogin(self.status.fleet.config, genAcc, password).toJson

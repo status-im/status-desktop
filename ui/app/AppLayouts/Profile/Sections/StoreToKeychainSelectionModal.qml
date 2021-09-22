@@ -31,18 +31,18 @@ ModalPopup {
         StatusRadioButtonRow {
             text: qsTr("Store")
             buttonGroup: openLinksWithGroup
-            checked: appSettings.storeToKeychain === Constants.storeToKeychainValueStore
+            checked: accountSettings.storeToKeychain === Constants.storeToKeychainValueStore
             onRadioCheckedChanged: {
-                if (checked && appSettings.storeToKeychain !== Constants.storeToKeychainValueStore) {
+                if (checked && accountSettings.storeToKeychain !== Constants.storeToKeychainValueStore) {
                     var storePassPopup = openPopup(storePasswordModal)
                     if(storePassPopup)
                     {
                         storePassPopup.closed.connect(function(){
-                            if (appSettings.storeToKeychain === Constants.storeToKeychainValueStore)
+                            if (accountSettings.storeToKeychain === Constants.storeToKeychainValueStore)
                                 popup.close()
-                            else if (appSettings.storeToKeychain === Constants.storeToKeychainValueNotNow)
+                            else if (accountSettings.storeToKeychain === Constants.storeToKeychainValueNotNow)
                                 notNowBtn.checked = true
-                            else if (appSettings.storeToKeychain === Constants.storeToKeychainValueNever)
+                            else if (accountSettings.storeToKeychain === Constants.storeToKeychainValueNever)
                                 neverBtn.checked = true
                         })
                     }
@@ -54,11 +54,11 @@ ModalPopup {
             id: notNowBtn
             text: qsTr("Not now")
             buttonGroup: openLinksWithGroup
-            checked: appSettings.storeToKeychain === Constants.storeToKeychainValueNotNow ||
-                     appSettings.storeToKeychain === ""
+            checked: accountSettings.storeToKeychain === Constants.storeToKeychainValueNotNow ||
+                     accountSettings.storeToKeychain === ""
             onRadioCheckedChanged: {
                 if (checked) {
-                    appSettings.storeToKeychain = Constants.storeToKeychainValueNotNow
+                    accountSettings.storeToKeychain = Constants.storeToKeychainValueNotNow
                 }
             }
         }
@@ -67,10 +67,10 @@ ModalPopup {
             id: neverBtn
             text: qsTr("Never")
             buttonGroup: openLinksWithGroup
-            checked: appSettings.storeToKeychain === Constants.storeToKeychainValueNever
+            checked: accountSettings.storeToKeychain === Constants.storeToKeychainValueNever
             onRadioCheckedChanged: {
                 if (checked) {
-                    appSettings.storeToKeychain = Constants.storeToKeychainValueNever
+                    accountSettings.storeToKeychain = Constants.storeToKeychainValueNever
                 }
             }
         }
