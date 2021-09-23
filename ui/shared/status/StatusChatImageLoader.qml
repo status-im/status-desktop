@@ -19,27 +19,6 @@ Item {
     width: loadingImage.visible ? loadingImage.width : imageMessage.width
     height: loadingImage.visible ? loadingImage.height : imageMessage.paintedHeight
 
-    Rectangle {
-        id: loadingImage
-        property bool hasError: false
-        width: hasError ? 200 : imageContainer.imageWidth
-        height: hasError ? 75 : imageContainer.imageWidth
-        border.width: 1
-        border.color: Style.current.border
-        radius: Style.current.radius
-
-        StyledText {
-            //% "Error loading the image"
-            text: loadingImage.hasError ? qsTrId("error-loading-the-image") :
-                //% "Loading image..."
-                qsTrId("loading-image---")
-            color: loadingImage.hasError ? Style.current.red : Style.current.textColor
-            font.pixelSize: 15
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.horizontalCenter: parent.horizontalCenter
-        }
-    }
-
     Connections {
         target: applicationWindow
         onActiveChanged: {
@@ -56,18 +35,7 @@ Item {
         width: sourceSize.width > imageWidth ? imageWidth : sourceSize.width
         fillMode: Image.PreserveAspectFit
         source: imageContainer.source
-        playing: imageContainer.playing
-        onStatusChanged: {
-            if (imageMessage.status === Image.Error) {
-                loadingImage.hasError = true
-                imageMessage.height = 0
-                imageMessage.source = ""
-                imageMessage.visible = false
-            } else if (imageMessage.status === Image.Ready) {
-                loadingImage.visible = false
-                scrollToBottom(true, imageContainer.container)
-            }
-        }
+        playing: isAnimated
 
         layer.enabled: true
         layer.effect: OpacityMask {
@@ -115,6 +83,30 @@ Item {
                 }
                 imageContainer.clicked(imageMessage, mouse)
             }
+        }
+    }
+
+    Rectangle {
+        id: loadingImage
+        visible: imageMessage.status === Image.Loading
+                 || imageMessage.status === Image.Error
+        width: parent.width
+        height: width
+        border.width: 1
+        border.color: Style.current.border
+        radius: Style.current.radius
+
+        StyledText {
+            anchors.centerIn: parent
+            text: imageMessage.status === Image.Error?
+                      //% "Error loading the image"
+                      qsTrId("error-loading-the-image") :
+                      //% "Loading image..."
+                      qsTrId("loading-image---")
+            color: imageMessage.status === Image.Error?
+                       Style.current.red :
+                       Style.current.textColor
+            font.pixelSize: 15
         }
     }
 }
