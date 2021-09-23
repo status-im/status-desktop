@@ -52,7 +52,7 @@ Row {
             anchors.fill: parent
 
             onClicked: {
-                contactContextMenu.popup()
+                contactContextMenu.open()
             }
         }
 
