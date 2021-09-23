@@ -95,7 +95,7 @@ Item {
     ScrollView {
         id: chatGroupsContainer
         anchors.top: membershipRequests.bottom
-        anchors.topMargin: Style.current.padding
+        anchors.topMargin: Style.current.padding - 8
         anchors.bottom: parent.bottom
         anchors.horizontalCenter: parent.horizontalCenter
 

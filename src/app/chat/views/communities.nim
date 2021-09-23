@@ -16,6 +16,19 @@ type
     InProgress,
     Error
 
+proc ensureCorrectChatPositions(community: var Community, chat: Chat) =
+  var i = 0
+  for c in community.chats:
+    if (c.categoryId == chat.categoryId and c.id != chat.id):
+      if (c.position == 0):
+        community.chats[i].position = 1
+
+      if (c.position >= chat.position+1):
+        community.chats[i].position = c.position + 1
+
+    i = i + 1
+      
+
 proc mergeChat(community: var Community, chat: Chat): bool =
   var i = 0
   for c in community.chats:
@@ -90,11 +103,17 @@ QtObject:
 
       result.add(community)
 
-  proc updateCommunityChat*(self: CommunitiesView, newChat: Chat) =
+  proc updateCommunityChat*(self: CommunitiesView, newChat: Chat, ensureCorrectPositions = false) =
     var community = self.joinedCommunityList.getCommunityById(newChat.communityId)
     if (community.id == ""):
       return
 
+    #if ensureCorrectPositions:
+      # This is to visually put the updated chat in the correct (new)
+      # position so we don't get a funny flicker effect once the position
+      # was updated in the backend.
+      #ensureCorrectChatPositions(community, newChat)
+    #else:
     let found = mergeChat(community, newChat)
 
     if (not found):
@@ -228,6 +247,16 @@ QtObject:
   proc addCommunityToList*(self: CommunitiesView, community: var Community) =
     var communities = @[community]
     community = self.populateChats(communities)[0]
+
+    #echo "COMMUNITY CHATS: ", $community.chats
+
+    for cat in community.categories:
+      echo "Category: ", cat.name
+
+      for c in community.chats:
+        if c.categoryId == cat.id:
+          echo "-> ", c.name, ": ", c.position
+
     let communityCheck = self.communityList.getCommunityById(community.id)
     if (communityCheck.id == ""):
       self.communityList.addCommunityItemToList(community)
@@ -352,14 +381,6 @@ QtObject:
     except Exception as e:
       error "Error reorder the category", msg = e.msg
       result = fmt"Error reorder the category: {e.msg}"
-
-  proc reorderCommunityChannel*(self: CommunitiesView, communityId: string, categoryId: string, chatId: string, position: int): string {.slot} =
-    result = ""
-    try:
-      self.status.chat.reorderCommunityChannel(communityId, categoryId, chatId, position)
-    except Exception as e:
-      error "Error reorder the channel", msg = e.msg
-      result = fmt"Error reorder the channel: {e.msg}"
 
        
   proc setObservedCommunity*(self: CommunitiesView, communityId: string) {.slot.} =
@@ -509,6 +530,26 @@ QtObject:
           if community.muted:
             chat.muted = true
           return chat
+
+  proc reorderCommunityChannel*(self: CommunitiesView, communityId: string, categoryId: string, chatId: string, position: int): string {.slot} =
+
+    var chat = self.getChannel(chatId)
+    chat.categoryId = categoryId
+    chat.position = position
+
+    # Update chat object and persist new position in memory until
+    # backend has been updated with new chat position.
+    self.updateCommunityChat(chat, true)
+
+    result = ""
+
+    try:
+      echo "REQUEST REORDER: ", position
+      self.status.chat.reorderCommunityChannel(communityId, categoryId, chatId, position)
+    except Exception as e:
+      error "Error reorder the channel", msg = e.msg
+      result = fmt"Error reorder the channel: {e.msg}"
+
 
   proc deleteCommunityChat*(self: CommunitiesView, communityId: string, channelId: string): string {.slot.} =
     try:

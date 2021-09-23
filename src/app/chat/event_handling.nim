@@ -41,6 +41,10 @@ proc handleChatEvents(self: ChatController) =
   # app to be slower
   self.status.events.on("chatUpdate") do(e: Args):
     var evArgs = ChatUpdateArgs(e)
+
+    echo "CHAT UPDATES: ", $evArgs.chats
+
+
     self.view.hideLoadingIndicator()
     self.view.updateChats(evArgs.chats)
     self.view.pushMessages(evArgs.messages)
@@ -67,6 +71,9 @@ proc handleChatEvents(self: ChatController) =
     self.view.reactions.push(evArgs.emojiReactions)
     if (evArgs.communities.len > 0):
       for community in evArgs.communities.mitems:
+
+        echo "COMMUNITY UPDATE: ", $community
+
         if self.view.communities.isUserMemberOfCommunity(community.id) and not community.admin and not community.isMember:
           discard self.view.communities.leaveCommunity(community.id)
           continue
