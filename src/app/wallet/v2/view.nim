@@ -40,7 +40,7 @@ QtObject:
     result.accountsView = newAccountsView(status)
     result.collectiblesView = newCollectiblesView(status, appService)
     result.settingsView = newSettingsView()
-    result.networksView = newNetworksView()
+    result.networksView = newNetworksView(status)
     result.cryptoServiceController = newCryptoServiceController(status, appService)
     result.savedAddressesView = newSavedAddressesView(status, appService)
     result.setup

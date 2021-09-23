@@ -97,6 +97,9 @@ Item {
                             qrCode: walletView.store.profileModelInst.qrCode(walletView.store.selectedAccount.address)
                             allNetworksModel: walletView.store.walletModelV2Inst.networksView.allNetworks
                             enabledNetworksModel: walletView.store.walletModelV2Inst.networksView.enabledNetworks
+                            onToggleNetwork: {
+                                walletView.store.walletModelV2Inst.networksView.toggleNetwork(chainId)
+                            }
                             onCopyText: {
                                 walletView.store.copyText(text);
                             }

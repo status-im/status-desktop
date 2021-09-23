@@ -21,6 +21,7 @@ Item {
     property var enabledNetworksModel
     property var allNetworksModel
     signal copyText(string text)
+    signal toggleNetwork(int chainId)
 
     Row {
         id: accountRow
@@ -78,6 +79,9 @@ Item {
         anchors.right: parent.right
         allNetworks: walletHeader.allNetworksModel
         enabledNetworks: walletHeader.enabledNetworksModel
+        onToggleNetwork: {
+            walletHeader.toggleNetwork(chainId)
+        }
     }
 
     Component {

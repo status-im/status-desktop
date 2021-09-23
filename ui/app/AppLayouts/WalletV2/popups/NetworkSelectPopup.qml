@@ -14,6 +14,7 @@ Popup {
     height: 432
     closePolicy: Popup.CloseOnEscape
     property var model
+    signal toggleNetwork(int chainId)
 
     background: Rectangle {
         radius: Style.current.radius
@@ -65,7 +66,9 @@ Popup {
                         anchors.verticalCenter: parent.verticalCenter
                         checked: model.enabled
                         onCheckedChanged: {
-                            console.log("TODO: Not yet implemented")
+                            if(checked !== model.enabled){
+                                popup.toggleNetwork(model.chainId)
+                            }
                         }
                     }
                 }
