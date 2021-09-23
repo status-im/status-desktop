@@ -40,15 +40,15 @@ proc init*(self: WalletController) =
   for account in accounts:
     self.view.addAccountToList(account)
 
-  self.status.events.on("accountsUpdated") do(e: Args):
+  self.status.events.on("wallet2_accountsUpdated") do(e: Args):
     self.view.updateView()
 
-  self.status.events.on("newAccountAdded") do(e: Args):
+  self.status.events.on("wallet2_newAccountAdded") do(e: Args):
     var account = WalletTypes.AccountArgs(e)
     self.view.addAccountToList(account.account)
     self.view.updateView()
 
-  self.status.events.on("cryptoServicesFetched") do(e: Args):
+  self.status.events.on("wallet2_cryptoServicesFetched") do(e: Args):
     var args = CryptoServicesArg(e)
     self.view.onCryptoServicesFetched(args.services)
 
