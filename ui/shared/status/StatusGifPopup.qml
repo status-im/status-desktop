@@ -312,15 +312,22 @@ Popup {
             ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
 
             Row {
+                id: gifs
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter
                 spacing: Style.current.halfPadding
+
+                property string lastHoveredId
 
                 StatusGifColumn {
                     gifList.model: chatsModel.gif.columnA
                     gifWidth: (popup.width / 3) - Style.current.padding
                     gifSelected: popup.gifSelected
                     toggleFavorite: popup.toggleFavorite
+                    lastHoveredId: gifs.lastHoveredId
+                    onGifHovered: {
+                        gifs.lastHoveredId = id
+                    }
                 }
 
                 StatusGifColumn {
@@ -328,6 +335,10 @@ Popup {
                     gifWidth: (popup.width / 3) - Style.current.padding
                     gifSelected: popup.gifSelected
                     toggleFavorite: popup.toggleFavorite
+                    lastHoveredId: gifs.lastHoveredId
+                    onGifHovered: {
+                        gifs.lastHoveredId = id
+                    }
                 }
 
                 StatusGifColumn {
@@ -335,6 +346,10 @@ Popup {
                     gifWidth: (popup.width / 3) - Style.current.padding
                     gifSelected: popup.gifSelected
                     toggleFavorite: popup.toggleFavorite
+                    lastHoveredId: gifs.lastHoveredId
+                    onGifHovered: {
+                        gifs.lastHoveredId = id
+                    }
                 }
             }
 
