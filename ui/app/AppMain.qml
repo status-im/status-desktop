@@ -36,6 +36,7 @@ Item {
     signal openContactsPopup()
 
     function changeAppSection(section) {
+        appSettings.lastModeActiveCommunity = ""
         chatsModel.communities.activeCommunity.active = false
         appView.currentIndex = Utils.getAppSectionIndex(section)
     }
@@ -217,6 +218,7 @@ Item {
                 onClicked: {
                     appMain.changeAppSection(Constants.chat)
                     chatsModel.communities.setActiveCommunity(model.id)
+                    appSettings.lastModeActiveCommunity = model.id
                 }
 
                 anchors.horizontalCenter: parent.horizontalCenter
@@ -406,6 +408,7 @@ Item {
                 if(obj === walletV2LayoutContainer){
                     walletV2LayoutContainer.showSigningPhrasePopup();
                 }
+                appSettings.lastModeActiveTab = (currentIndex === Utils.getAppSectionIndex(Constants.timeline)) ? 0 : currentIndex
             }
 
             ChatLayout {
@@ -757,6 +760,12 @@ Item {
                 channelPicker.close()
             }
         }
+    }
+
+    Component.onCompleted: {
+        appView.currentIndex = appSettings.lastModeActiveTab
+        if(!!appSettings.lastModeActiveCommunity)
+            chatsModel.communities.setActiveCommunity(appSettings.lastModeActiveCommunity)
     }
 }
 /*##^##
