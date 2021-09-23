@@ -176,17 +176,7 @@ ModalPopup {
 
     footer: Item {
         width: parent.width
-        height: btnBack.height
-
-        StatusRoundButton {
-            id: btnBack
-            anchors.left: parent.left
-            icon.name: "arrow-right"
-            icon.width: 20
-            icon.height: 16
-            rotation: 180
-            onClicked: popup.close()
-        }
+        height: btnUnpin.height
 
         StatusButton {
             id: btnUnpin
