@@ -5,6 +5,9 @@ import "../../../../shared/status"
 import "../../../../imports"
 import "../components"
 
+import StatusQ.Components 0.1
+import StatusQ.Core.Theme 0.1
+
 Item {
     id: wrapper
     anchors.right: parent.right
@@ -72,17 +75,19 @@ Item {
             anchors.verticalCenter: parent.verticalCenter
         }
 
-        Rectangle {
-            width: 10
-            height: 10
-            radius: (width/2)
+        StatusBadge {
+            id: statusBadge
+            width: 15
+            height: 15
             anchors.left: contactImage.right
             anchors.leftMargin: -Style.current.smallPadding
             anchors.bottom: contactImage.bottom
-            visible: wrapper.isOnline
+            visible: wrapper.isOnline && !((statusType === -1) && (lastSeenMinutesAgo > 7))
+            border.width: 3
+            border.color: Theme.palette.statusAppNavBar.backgroundColor
+            property real lastSeenMinutesAgo: ((currentTime/1000 - parseInt(lastSeen)) / 60);
             color: {
                 if (visible) {
-                    var lastSeenMinutesAgo = ((currentTime/1000 - parseInt(lastSeen)) / 60);
                     if (statusType === Constants.statusType_DoNotDisturb) {
                         return Style.current.red;
                     } else if (isCurrentUser || (lastSeenMinutesAgo < 5.5)) {
