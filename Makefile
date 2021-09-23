@@ -162,6 +162,17 @@ else
 endif
 DOTHERSIDE_BUILD_CMD := cmake --build . --config Release $(HANDLE_OUTPUT)
 
+
+
+ifeq ($(detected_OS),Darwin)
+  ifeq ("$(shell sysctl -nq hw.optional.arm64)","1")
+    # Building on M1 is still not supported, so in the meantime we crosscompile to amd64
+    DOTHERSIDE_CMAKE_PARAMS += -DCMAKE_OSX_ARCHITECTURES=x86_64
+	NIM_PARAMS += --cpu:amd64 --os:MacOSX --passL:"-arch x86_64" --passC:"-arch x86_64"
+  endif
+endif
+
+
 RELEASE ?= false
 ifeq ($(RELEASE),false)
  # We need `-d:debug` to get Nim's default stack traces
