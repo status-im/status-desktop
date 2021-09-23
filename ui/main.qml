@@ -78,6 +78,8 @@ StatusWindow {
         property string skinColor: ""
         property bool showDeleteMessageWarning: true
         property bool downloadChannelMessagesEnabled: false
+        property int lastModeActiveTab: 0
+        property string lastModeActiveCommunity: ""
 
         // Browser settings
         property bool showBrowserSelector: true
