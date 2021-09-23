@@ -9,6 +9,7 @@ Item {
     height: childrenRect.height
     property var allNetworks
     property var enabledNetworks
+    signal toggleNetwork(int chainId)
 
     Rectangle {
         id: selectRectangle
@@ -65,5 +66,8 @@ Item {
         x: (parent.width - width)
         y: (root.height - networkFilterPanel.height)
         model: root.allNetworks
+        onToggleNetwork: {
+            root.toggleNetwork(chainId)
+        }
     }
 }
