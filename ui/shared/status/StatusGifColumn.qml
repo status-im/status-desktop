@@ -2,6 +2,9 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.3
 import QtGraphicalEffects 1.0
+
+import StatusQ.Controls 0.1
+
 import "../../imports"
 
 
@@ -12,15 +15,24 @@ Column {
     property var gifWidth: 0
     property var gifSelected: function () {}
     property var toggleFavorite: function () {}
+    property string lastHoveredId
+    signal gifHovered(string id)
 
     Repeater {
         id: repeater
 
         delegate: Rectangle {
+            id: thumb
+            property alias hovered: mouseArea.containsMouse
+            onHoveredChanged: {
+                if (hovered) {
+                    root.gifHovered(model.id)
+                }
+            }
+
             height: animation.status != Image.Ready ? loader.height : animation.height
             width: root.gifWidth
             color: Style.current.background
-            border.color: Style.current.border
 
             Rectangle {
                 id: loader
@@ -35,35 +47,39 @@ Column {
                 }
             }
 
-            StatusIconButton {
+            StatusBaseButton {
                 id: starButton
-                icon.name: "star-icon"
-                iconColor: {
-                    if (model.isFavorite) {
-                        return Style.current.yellow
-                    }
-                    return Style.current.secondaryText
-                }
-                hoveredIconColor: {
-                    if (iconColor === Style.current.yellow) {
-                        return Style.current.secondaryText
-                    }
-                    return Style.current.yellow
-                }
-                highlightedBackgroundOpacity: 0
+                property bool favorite: model.isFavorite
+
+                type: StatusFlatRoundButton.Type.Secondary
+                textColor: hovered || favorite ? Style.current.yellow : Style.current.secondaryText
+                icon.name: favorite ? "star-icon" : "star-icon-outline"
+                icon.width:  (14/104) * thumb.width
+                icon.height: (13/104) * thumb.width
+                topPadding: (6/104) * thumb.width
+                rightPadding: (6/104) * thumb.width
+                bottomPadding: (6/104) * thumb.width
+                leftPadding: (6/104) * thumb.width
+                color: "transparent"
+                visible: !loader.visible && model.id === root.lastHoveredId
                 anchors.right: parent.right
                 anchors.bottom: parent.bottom
-                width: 24
-                height: 24
                 z: 1
-                padding: 10
                 onClicked: {
                     root.toggleFavorite(model)
-                    if (starButton.iconColor === Style.current.yellow) {
-                        starButton.iconColor = Style.current.secondaryText
-                    } else {
-                        starButton.iconColor = Style.current.yellow
+                    favorite = !favorite
+                }
+                onHoveredChanged: {
+                    if (hovered) {
+                        root.gifHovered(model.id)
                     }
+                }
+                StatusToolTip {
+                    id: statusToolTip
+                    text: starButton.favorite ?
+                        qsTr("Remove from favorites") :
+                        qsTr("Add to favorites")
+                    visible: starButton.hovered
                 }
             }
 
@@ -76,12 +92,11 @@ Column {
                 z: 0
                 layer.enabled: true
                 layer.effect: OpacityMask {
+                    opacity: model.id === root.lastHoveredId ? 0.6 : 1
                     maskSource: Rectangle {
                         width: animation.width
                         height: animation.height
                         radius: Style.current.radius
-                        color: Style.current.background
-                        border.color: Style.current.border
                     }
                 }
             }
