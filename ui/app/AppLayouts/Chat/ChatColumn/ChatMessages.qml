@@ -56,17 +56,30 @@ Item {
             }
         }
 
-        property var scrollToMessage: function (messageId) {
-            let item
-            for (let i = 0; i < messageListDelegate.count; i++) {
-                item = messageListDelegate.items.get(i)
-                if (item.model.messageId === messageId) {
-                    chatLogView.positionViewAtIndex(i, ListView.Center);
-                    if (appSettings.useCompactMode) {
-                        chatLogView.itemAtIndex(i).startMessageFoundAnimation();
+        property var scrollToMessage: function (messageId, isSearch = false) {
+            delayPositioningViewTimer.msgId = messageId;
+            delayPositioningViewTimer.isSearch = isSearch;
+            delayPositioningViewTimer.restart();
+        }
+
+        Timer {
+            id: delayPositioningViewTimer
+            interval: 1000
+            property string msgId
+            property bool isSearch
+            onTriggered: {
+                let item
+                for (let i = 0; i < messages.rowCount(); i++) {
+                    item = messageListDelegate.items.get(i);
+                    if (item.model.messageId === msgId) {
+                        chatLogView.positionViewAtIndex(i, ListView.Beginning);
+                        if (appSettings.useCompactMode && isSearch) {
+                            chatLogView.itemAtIndex(i).startMessageFoundAnimation();
+                        }
                     }
-                    return
                 }
+                msgId = "";
+                isSearch = false;
             }
         }
 
