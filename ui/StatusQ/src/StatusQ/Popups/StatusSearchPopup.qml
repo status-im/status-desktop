@@ -301,7 +301,7 @@ StatusModal {
                         radius: 0
                         statusListItemSubTitle.height: model.content !== "" ? 20 : 0
                         statusListItemSubTitle.elide: Text.ElideRight
-                        statusListItemSubTitle.color: Theme.palette.black
+                        statusListItemSubTitle.color: Theme.palette.directColor1
                         icon.isLetterIdenticon: (model.image === "")
                         icon.background.color: model.color
                         titleAsideText: root.formatTimestampFn(model.time)
