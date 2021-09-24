@@ -238,9 +238,12 @@ Item {
                         index += 8 // "<a href="
                         continue
                     }
-                    let address = message.substring(addrIndex, addrEndIndex)
-                    let linkTag = message.substring(index, endIndex + 5) // "</a>"
-                    mentionsMap.set(address, linkTag)
+                    const address = '@' + message.substring(addrIndex, addrEndIndex)
+                    const linkTag = message.substring(index, endIndex + 5)
+                    const linkText = linkTag.replace(/(<([^>]+)>)/ig,"").trim()
+                    const atSymbol = linkText.startsWith("@") ? '' : '@'
+                    const mentionTag = Constants.mentionSpanTag + atSymbol + linkText + '</span> '
+                    mentionsMap.set(address, mentionTag)
                     index += linkTag.length
                 }
 

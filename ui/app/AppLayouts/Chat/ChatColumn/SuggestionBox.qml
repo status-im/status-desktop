@@ -107,7 +107,6 @@ Rectangle {
         cursorPosition: container.cursorPosition
     }
 
-
     ListView {
         id: listView
         model: mentionsListDelegate
