@@ -8,45 +8,31 @@ Rectangle {
     id: root
     property bool noHover: false
     property bool noMouseArea: false
+    property bool showLoadingIndicator: true
+
     property alias source: image.source
     property alias fillMode: image.fillMode
-    property bool showLoadingIndicator: true
+
     signal loaded
     signal clicked
+
     color: Style.current.backgroundHover
-    state: showLoadingIndicator ? "loading" : "ready"
     radius: width / 2
     states: [
         State {
             name: "loading"
             when: image.status === Image.Loading
             PropertyChanges {
-                target: loading
-                active: true
-            }
-            PropertyChanges {
-                target: reload
-                visible: false
-            }
-            PropertyChanges {
-                target: image
-                visible: false
+                target: loader
+                sourceComponent: loadingIndicator
             }
         },
         State {
             name: "error"
             when: image.status === Image.Error
             PropertyChanges {
-                target: loading
-                active: false
-            }
-            PropertyChanges {
-                target: reload
-                visible: true
-            }
-            PropertyChanges {
-                target: image
-                visible: false
+                target: loader
+                sourceComponent: reload
             }
         },
         State {
@@ -57,18 +43,8 @@ Rectangle {
                 color: Style.current.transparent
             }
             PropertyChanges {
-                target: loading
-                active: false
-            }
-            PropertyChanges {
-                target: reload
-                visible: false
-            }
-            PropertyChanges {
-                target: image
-                visible: true
-                height: root.height
-                width: root.width
+                target: loader
+                sourceComponent: undefined
             }
         }
     ]
@@ -87,8 +63,8 @@ Rectangle {
 
     function reload() {
         // From the documentation (https://doc.qt.io/qt-5/qml-qtquick-image.html#sourceSize-prop)
-        // Note: Changing this property dynamically causes the image source to 
-        // be reloaded, potentially even from the network, if it is not in the 
+        // Note: Changing this property dynamically causes the image source to
+        // be reloaded, potentially even from the network, if it is not in the
         // disk cache.
         const oldSource = image.source
         image.cache = false
@@ -107,49 +83,44 @@ Rectangle {
         }
     }
 
-    Loader {
-        id: loading
-        sourceComponent: loadingIndicator
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.horizontalCenter: parent.horizontalCenter
-        active: false
-    }
-
-    SVGImage {
+    Component {
         id: reload
-        source: "../app/img/reload.svg"
-        width: 15.5
-        height: 19.5
-        fillMode: Image.PreserveAspectFit
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.horizontalCenter: parent.horizontalCenter
-        ColorOverlay {
-            anchors.fill: parent
-            source: parent
-            color: Style.current.textColor
-            antialiasing: true
-        }
-        MouseArea {
-            cursorShape: Qt.PointingHandCursor
-            anchors.fill: parent
-            onClicked: {
-                root.reload()
+        SVGImage {
+            source: "../app/img/reload.svg"
+            mipmap: false
+            width: 15.5
+            height: 19.5
+            fillMode: Image.PreserveAspectFit
+            ColorOverlay {
+                anchors.fill: parent
+                source: parent
+                color: Style.current.textColor
+                antialiasing: true
+            }
+            MouseArea {
+                cursorShape: Qt.PointingHandCursor
+                anchors.fill: parent
+                onClicked: {
+                    root.reload()
+                }
             }
         }
     }
 
+    Loader {
+        id: loader
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.horizontalCenter: parent.horizontalCenter
+    }
+
     Image {
         id: image
-        width: 0
-        height: 0
-        sourceSize.width: root.width  * 2
-        sourceSize.height: root.height * 2
-        source: root.source
+        anchors.fill: parent
         horizontalAlignment: Image.AlignHCenter
         verticalAlignment: Image.AlignVCenter
         cache: true
         onStatusChanged: {
-            if (image.status === Image.Ready) {
+            if (status === Image.Ready) {
                 loaded()
             }
         }
