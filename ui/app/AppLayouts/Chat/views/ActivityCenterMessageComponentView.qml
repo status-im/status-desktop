@@ -3,9 +3,8 @@ import QtQuick 2.13
 
 import utils 1.0
 
-import StatusQ.Controls 0.1 as StatusQ
+import StatusQ.Controls 0.1
 
-import shared 1.0
 import shared.popups 1.0
 
 import "../controls"
@@ -38,7 +37,7 @@ Item {
 
     Component {
         id: markReadBtnComponent
-        StatusQ.StatusFlatRoundButton {
+        StatusFlatRoundButton {
             id: markReadBtn
             width: 32
             height: 32
@@ -47,11 +46,18 @@ Item {
             icon.source: Style.svg("double-check")
             color: "transparent"
             //% "Mark as Read"
-            tooltip.text: qsTrId("mark-as-read")
-            tooltip.orientation: StatusQ.StatusToolTip.Orientation.Left
+            tooltip.text: !model.read ?
+                qsTr("Mark as Read") :
+                qsTr("Mark as Unread")
+            tooltip.orientation: StatusToolTip.Orientation.Left
             tooltip.x: -tooltip.width - Style.current.padding
             tooltip.y: markReadBtn.height / 2 - height / 2 + 4
-            onClicked: root.store.chatsModelInst.activityNotificationList.markActivityCenterNotificationRead(model.id, model.message.communityId, model.message.chatId, model.notificationType)
+            onClicked: {
+                if (!model.read) {
+                    return root.store.chatsModelInst.activityNotificationList.markActivityCenterNotificationRead(model.id, model.message.communityId, model.message.chatId, model.notificationType)
+                }
+                return root.store.chatsModelInst.activityNotificationList.markActivityCenterNotificationUnread(model.id, model.message.communityId, model.message.chatId, model.notificationType)
+            }
         }
     }
 
