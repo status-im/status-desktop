@@ -17,8 +17,8 @@ if defined(macosx):
   switch("passL", "-rpath" & " " & getEnv("QT5_LIBDIR"))
   switch("passL", "-rpath" & " " & getEnv("STATUSGO_LIBDIR"))
   # statically link these libs
-  switch("passL", "bottles/openssl/lib/libcrypto.a")
-  switch("passL", "bottles/openssl/lib/libssl.a")
+  switch("passL", "bottles/openssl@1.1/lib/libcrypto.a")
+  switch("passL", "bottles/openssl@1.1/lib/libssl.a")
   switch("passL", "bottles/pcre/lib/libpcre.a")
   # https://code.videolan.org/videolan/VLCKit/-/issues/232
   switch("passL", "-Wl,-no_compact_unwind")
@@ -44,4 +44,3 @@ switch("warning", "ObservableStores:off")
 
 # Too many false positives for "Warning: method has lock level <unknown>, but another method has 0 [LockLevel]"
 switch("warning", "LockLevel:off")
-

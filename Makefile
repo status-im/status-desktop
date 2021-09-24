@@ -102,7 +102,7 @@ endif
 
 ifeq ($(detected_OS),Darwin)
 BOTTLES_DIR := $(shell pwd)/bottles
-BOTTLES := $(addprefix $(BOTTLES_DIR)/,hunspell openssl pcre)
+BOTTLES := $(addprefix $(BOTTLES_DIR)/,hunspell openssl@1.1 pcre)
 
 $(BOTTLES): | $(BOTTLES_DIR)
 	echo -e "\e[92mFetching:\e[39m $(notdir $@) bottle"
