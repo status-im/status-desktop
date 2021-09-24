@@ -111,8 +111,8 @@ Item {
         applicationWindow.requestActivate()
     }
 
-    function positionAtMessage(messageId) {
-        stackLayoutChatMessages.children[stackLayoutChatMessages.currentIndex].message.scrollToMessage(messageId)
+    function positionAtMessage(messageId, isSearch = false) {
+        stackLayoutChatMessages.children[stackLayoutChatMessages.currentIndex].message.scrollToMessage(messageId, isSearch);
     }
 
     Timer {
@@ -573,7 +573,7 @@ Item {
             target: chatsModel.messageView
 
             onSearchedMessageLoaded: {
-                positionAtMessage(messageId)
+                positionAtMessage(messageId, true);
             }
 
             onMessageNotificationPushed: function(messageId, communityId, chatId, msg, contentType, chatType, timestamp, identicon, username, hasMention, isAddedContact, channelName) {
