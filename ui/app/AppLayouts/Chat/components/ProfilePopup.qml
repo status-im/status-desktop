@@ -27,7 +27,6 @@ StatusModal {
     readonly property int innerMargin: 20
 
     property bool isEnsVerified: false
-    property bool noFooter: false
     property bool isBlocked: false
     property bool isCurrentUser: false
 
@@ -39,7 +38,7 @@ StatusModal {
     signal contactBlocked(publicKey: string)
     signal contactAdded(publicKey: string)
 
-    function openPopup(showFooter, userNameParam, fromAuthorParam, identiconParam, textParam, nicknameParam) {
+    function openPopup(_showFooter, userNameParam, fromAuthorParam, identiconParam, textParam, nicknameParam) {
         userName = userNameParam || ""
         nickname = nicknameParam || ""
         fromAuthor = fromAuthorParam || ""
@@ -49,7 +48,7 @@ StatusModal {
         isBlocked = profileModel.contacts.isContactBlocked(this.fromAuthor);
         alias = chatsModel.alias(this.fromAuthor) || ""
         isCurrentUser = profileModel.profile.pubKey === this.fromAuthor
-        noFooter = !showFooter;
+        showFooter = _showFooter;
         popup.open()
     }
 
@@ -158,11 +157,13 @@ StatusModal {
             }
 
             StatusModalDivider {
+                visible: !isCurrentUser
                 topPadding: 8
                 bottomPadding: 12
             }
 
             StatusDescriptionListItem {
+                visible: !isCurrentUser
                 title: qsTr("Chat settings")
                 subTitle: qsTr("Nickname")
                 value: nickname ? nickname : qsTr("None")
@@ -174,6 +175,7 @@ StatusModal {
             }
 
             Item {
+                visible: !isCurrentUser
                 width: parent.width
                 height: 16
             }
