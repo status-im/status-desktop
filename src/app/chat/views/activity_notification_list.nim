@@ -135,6 +135,28 @@ QtObject:
       self.nbUnreadNotifications = 0
     self.unreadCountChanged()
 
+  proc markActivityCenterNotificationUnread(self: ActivityNotificationList, notificationId: string,
+  communityId: string, channelId: string, nType: int): void {.slot.} =
+    let notificationType = ActivityCenterNotificationType(nType)
+    let markAsUnreadProps = MarkAsUnreadNotificationProperties(communityId: communityId,
+    channelId: channelId, notificationTypes: @[notificationType])
+
+    let error = self.status.chat.markActivityCenterNotificationUnread(notificationId, markAsUnreadProps)
+    if (error != ""):
+      return
+
+    self.nbUnreadNotifications = self.nbUnreadNotifications + 1
+    self.unreadCountChanged()
+
+    var i = 0
+    for acnViewItem in self.activityCenterNotifications:
+      if (acnViewItem.id == notificationId):
+        acnViewItem.read = false
+        let index = self.createIndex(i, 0, nil)
+        self.dataChanged(index, index, @[NotifRoles.Read.int])
+        break
+      i.inc
+
   proc markActivityCenterNotificationRead(self: ActivityNotificationList, notificationId: string,
   communityId: string, channelId: string, nType: int): void {.slot.} =
 
