@@ -19,6 +19,7 @@ import "./emojiList.js" as EmojiJSON
 import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1 as StatusQ
+import StatusQ.Popups 0.1
 
 Rectangle {
     id: control
@@ -924,8 +925,41 @@ Rectangle {
                     lastClick = now
                 }
 
+                MouseArea {
+                    id: rightClick
+                    anchors.fill: parent
+                    cursorShape: Qt.IBeamCursor
+                    acceptedButtons: Qt.RightButton
+                    onClicked: {
+                        messageInputField.cursorPosition = messageInputField.positionAt(mouse.x, mouse.y)
+                        messageInputField.selectWord()
+                        menu.suggestions = highlighter.suggestions(messageInputField.selectedText)
+                        menu.close()
+                        menu.popup(mouse.x, -menu.implicitHeight)
+                    }
+                }
+
+                StatusSpellcheckingMenuItems {
+                    id: menu
+
+                    onMenuItemClicked: {
+                        messageInputField.remove(messageInputField.selectionStart, messageInputField.selectionEnd)
+                        messageInputField.insert(messageInputField.selectionStart, menu.suggestions[menuIndex])
+                        menu.close()
+                    }
+
+                    onAddToUserDict: {
+                        highlighter.addToUserDictionary(messageInputField.selectedText)
+                    }
+
+                    onDisableSpellchecking: {
+                        highlighter.setSpellcheckingEnable(!highlighter.spellcheckingEnable())
+                    }
+                }
+
                 StatusSyntaxHighlighter {
-                   quickTextDocument: messageInputField.textDocument
+                    id: highlighter
+                    quickTextDocument: messageInputField.textDocument
                 }
 
                 StatusTextFormatMenu {
