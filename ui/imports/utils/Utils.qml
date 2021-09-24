@@ -598,6 +598,31 @@ QtObject {
         }
     }
 
+      function validatePINs(item, firstPINField, repeatPINField) {
+        switch (item) {
+            case "first":
+                if (firstPINField.text === "") {
+                    return [false, qsTr("You need to enter a PIN")];
+                } else if (!/^\d+$/.test(firstPINField.text)) {
+                    return [false, qsTr("The PIN must contain only digits")];
+                } else if (firstPINField.text.length != 6) {
+                    return [false, qsTr("The PIN must be exactly 6 digits")];
+                }
+                return [true, ""];
+
+            case "repeat":
+                if (repeatPINField.text === "") {
+                    return [false, qsTr("You need to repeat your PIN")];
+                } else if (repeatPINField.text !== firstPINField.text) {
+                    return [false, qsTr("PIN don't match")];
+                }
+                return [true, ""];
+
+            default:
+                return [false, ""];
+        }
+    }
+
     function getHostname(url) {
         const rgx = /\:\/\/(?:[a-zA-Z0-9\-]*\.{1,}){1,}[a-zA-Z0-9]*/i
         const matches = rgx.exec(url)

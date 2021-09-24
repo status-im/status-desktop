@@ -10,6 +10,7 @@ Page {
     id: page
     property alias btnExistingKey: btnExistingKey
     property alias btnGenKey: btnGenKey
+    property alias btnKeycard: btnKeycard
 
     background: Rectangle {
         color: Style.current.background
@@ -96,6 +97,17 @@ Page {
             anchors.top: btnGenKey.bottom
             anchors.topMargin: Style.current.padding
             anchors.horizontalCenter: parent.horizontalCenter
+            type: "secondary"
+        }
+
+        StatusButton {
+            id: btnKeycard
+            //% "I have a Keycard"
+            text: qsTr("I have a Keycard")
+            anchors.top: btnExistingKey.bottom
+            anchors.topMargin: Style.current.padding
+            anchors.horizontalCenter: parent.horizontalCenter
+            visible: isExperimental === "1" || appSettings.isKeycardEnabled
             type: "secondary"
         }
     }

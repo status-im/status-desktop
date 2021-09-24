@@ -11,6 +11,7 @@ import app/profile/view
 import app/onboarding/core as onboarding
 import app/login/core as login
 import app/provider/core as provider
+import app/keycard/core as keycard
 import status/types/[account]
 import status_go
 import status/status as statuslib
@@ -108,7 +109,7 @@ proc mainProc() =
   engine.addImportPath("qrc:/./imports")
   engine.setNetworkAccessManagerFactory(networkAccessFactory)
   engine.setRootContextProperty("uiScaleFilePath", newQVariant(uiScaleFilePath))
-  
+
   # Register events objects
   let dockShowAppEvent = newStatusDockShowAppEventObject(engine)
   defer: dockShowAppEvent.delete()
@@ -145,7 +146,7 @@ proc mainProc() =
             signal_handler(signalsQObjPointer, ($(%* {"type": "chronicles-log", "event": msg})).cstring, "receiveSignal")
         except:
           logLoggingFailure(cstring(msg), getCurrentException())
-  
+
   let logFile = fmt"app_{getTime().toUnix}.log"
   discard defaultChroniclesStream.outputs[1].open(LOGDIR & logFile, fmAppend)
 
@@ -192,6 +193,8 @@ proc mainProc() =
   defer: login.delete()
   var onboarding = onboarding.newController(status)
   defer: onboarding.delete()
+  var keycard = keycard.newController(status)
+  defer: keycard.delete()
 
   proc onAccountChanged(account: Account) =
     profile.view.setAccountSettingsFile(account.name)
@@ -234,17 +237,19 @@ proc mainProc() =
 
   engine.setRootContextProperty("loginModel", login.variant)
   engine.setRootContextProperty("onboardingModel", onboarding.variant)
+  engine.setRootContextProperty("keycardModel", keycard.variant)
   engine.setRootContextProperty("singleInstance", newQVariant(singleInstance))
 
   let isExperimental = if getEnv("EXPERIMENTAL") == "1": "1" else: "0" # value explicity passed to avoid trusting input
   let experimentalFlag = newQVariant(isExperimental)
   engine.setRootContextProperty("isExperimental", experimentalFlag)
-    
+
   # Initialize only controllers whose init functions
   # do not need a running node
   proc initControllers() =
     login.init()
     onboarding.init()
+    keycard.init()
 
   initControllers()
 
@@ -272,7 +277,7 @@ proc mainProc() =
   var prValue = newQVariant(if defined(production): true else: false)
   engine.setRootContextProperty("production", prValue)
 
-  # We're applying default language before we load qml. Also we're aware that 
+  # We're applying default language before we load qml. Also we're aware that
   # switch language at runtime will have some impact to cpu usage.
   # https://doc.qt.io/archives/qtjambi-4.5.2_01/com/trolltech/qt/qtjambi-linguist-programmers.html
   changeLanguage("en")

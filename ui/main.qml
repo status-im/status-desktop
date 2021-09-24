@@ -374,6 +374,16 @@ StatusWindow {
             }
 
             DSM.State {
+                id: keycardState
+                onEntered: loader.sourceComponent = keycard
+
+                DSM.SignalTransition {
+                    targetState: appState
+                    signal: onboardingModel.moveToAppState
+                }
+            }
+
+            DSM.State {
                 id: stateLogin
                 onEntered: loader.sourceComponent = login
 
@@ -405,6 +415,12 @@ StatusWindow {
                 targetState: keysMainState
                 signal: applicationWindow.navigateTo
                 guard: path === "KeysMain"
+            }
+
+            DSM.SignalTransition {
+                targetState: keycardState
+                signal: applicationWindow.navigateTo
+                guard: path === "Keycard"
             }
 
             DSM.FinalState {
@@ -526,6 +542,7 @@ StatusWindow {
         KeysMain {
             btnGenKey.onClicked: applicationWindow.navigateTo("GenKey")
             btnExistingKey.onClicked: applicationWindow.navigateTo("ExistingKey")
+            btnKeycard.onClicked: applicationWindow.navigateTo("Keycard")
         }
     }
 
@@ -546,6 +563,19 @@ StatusWindow {
     Component {
         id: genKey
         GenKey {
+            onClosed: function () {
+                if (hasAccounts) {
+                    applicationWindow.navigateTo("InitialState")
+                } else {
+                    applicationWindow.navigateTo("KeysMain")
+                }
+            }
+        }
+    }
+
+    Component {
+        id: keycard
+        Keycard {
             onClosed: function () {
                 if (hasAccounts) {
                     applicationWindow.navigateTo("InitialState")
