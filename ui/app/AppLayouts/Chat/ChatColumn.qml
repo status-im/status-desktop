@@ -112,7 +112,7 @@ Item {
     }
 
     function positionAtMessage(messageId) {
-        stackLayoutChatMessages.children[stackLayoutChatMessages.currentIndex].item.scrollToMessage(messageId)
+        stackLayoutChatMessages.children[stackLayoutChatMessages.currentIndex].chatMessagesLoader.item.scrollToMessage(messageId)
     }
 
     Timer {
@@ -303,7 +303,9 @@ Item {
                     model: chatsModel.messageView
                     ColumnLayout {
                         property alias chatInput: chatInput
+                        property alias chatMessagesLoader: chatMessagesLoader
                         Loader {
+                            id: chatMessagesLoader
                             Layout.alignment: Qt.AlignHCenter | Qt.AlignBottom
                             Layout.fillWidth: true
                             Layout.fillHeight: true
