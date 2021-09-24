@@ -145,7 +145,9 @@ Column {
                                 }
                             }
 
-                            popupMenuSlot.item.popup(mouse.x + 4, statusChatListItem.y + mouse.y + 6)
+                            let p = statusChatListItem.mapToItem(statusChatList, mouse.x, mouse.y)
+
+                            popupMenuSlot.item.popup(p.x + 4, p.y + 6)
                             popupMenuSlot.item.openHandler = originalOpenHandler
                             return
                         }
