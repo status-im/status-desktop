@@ -5,10 +5,20 @@ import "../shared/keycard"
 // this will be the entry point. for now it opens all keycard-related dialogs in sequence for test
 Item {
     property var onClosed: function () {}
+    property bool connected: false
+
     id: keycardView
     anchors.fill: parent
     Component.onCompleted: {
         createPinModal.open()
+    }
+
+    Timer {
+        interval: 2000; running: true; repeat: true
+        onTriggered: {
+            connected?  keycardModel.simulateDisconnected() : keycardModel.simulateConnected()
+            connected = !connected
+        }
     }
 
     CreatePINModal {
@@ -28,28 +38,14 @@ Item {
     PINModal {
         id: pinModal
         onClosed: function () {
-            insertCard.open()
+            keycardView.open()
         }
     }
 
     InsertCard {
         id: insertCard
-        onClosed: function() {
+        onCancel: function() {
             keycardView.onClosed()
-        }
-    }
-
-    Connections {
-        id: connection
-        target: keycardModel
-        ignoreUnknownSignals: true
-
-        onCardConnected: {
-            insertCard.close()
-        }
-
-        onCardDisconnected: {
-            insertCard.open()
         }
     }
 }
