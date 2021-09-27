@@ -9,7 +9,7 @@ import "./"
 PopupMenu {
     id: root
     width: profileHeader.width
-    closePolicy: Popup.CloseOnPressOutside | Popup.CloseOnEscape
+    closePolicy: Popup.CloseOnReleaseOutsideParent | Popup.CloseOnEscape
 
     Item {
         id: profileHeader

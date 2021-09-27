@@ -350,6 +350,7 @@ Item {
 
             navBarProfileButton: StatusNavBarTabButton {
                 id: profileButton
+                property bool opened: false
                 icon.source: profileModel.profile.thumbnailImage || ""
                 badge.visible: true
                 badge.anchors.rightMargin: 4
@@ -371,7 +372,11 @@ Item {
                     }*/
                 }
                 badge.border.width: 3
-                onClicked: userStatusContextMenu.open()
+                onClicked: {
+                    userStatusContextMenu.opened ?
+                        userStatusContextMenu.close() :
+                        userStatusContextMenu.open()
+                }
 
                 UserStatusContextMenu {
                     id: userStatusContextMenu
