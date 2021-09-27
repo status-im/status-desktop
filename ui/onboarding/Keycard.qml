@@ -38,4 +38,18 @@ Item {
             keycardView.onClosed()
         }
     }
+
+    Connections {
+        id: connection
+        target: keycardModel
+        ignoreUnknownSignals: true
+
+        onCardConnected: {
+            insertCard.close()
+        }
+
+        onCardDisconnected: {
+            insertCard.open()
+        }
+    }
 }

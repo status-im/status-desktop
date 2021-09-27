@@ -4,6 +4,7 @@ import QtQuick.Dialogs 1.3
 import StatusQ.Controls 0.1
 import "../../imports"
 import "../../shared"
+import "../../shared/keycard"
 
 ModalPopup {
     property bool firstPINFieldValid: false
@@ -27,7 +28,7 @@ ModalPopup {
         anchors.top: parent.top
         anchors.topMargin: 88
         placeholderText:  qsTr("New PIN")
-        textField.echoMode: TextInput.PIN
+        textField.echoMode: TextInput.Password
         onTextChanged: {
             [firstPINFieldValid, pinValidationError] =
                 Utils.validatePINs("first", firstPINField, repeatPINField);
@@ -44,7 +45,7 @@ ModalPopup {
         anchors.top: firstPINField.bottom
         anchors.topMargin: Style.current.xlPadding
         placeholderText: qsTr("Confirm PIN")
-        textField.echoMode: TextInput.PIN
+        textField.echoMode: TextInput.Password
         Keys.onReturnPressed: function(event) {
             if (submitBtn.enabled) {
                 submitBtn.clicked(event)
@@ -101,7 +102,7 @@ ModalPopup {
             enabled: firstPINFieldValid && repeatPINFieldValid
 
             onClicked: {
-
+                keycardModel.simulateDisconnected()
             }
         }
     }
