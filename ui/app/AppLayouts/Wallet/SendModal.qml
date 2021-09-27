@@ -130,7 +130,7 @@ ModalPopup {
             GasSelector {
                 id: gasSelector
                 anchors.top: txtAmount.bottom
-                anchors.topMargin: Style.current.bigPadding * 2
+                anchors.topMargin: Style.current.padding
                 gasPrice: parseFloat(walletModel.gasView.gasPrice)
                 getGasEthValue: walletModel.gasView.getGasEthValue
                 getFiatValue: walletModel.balanceView.getFiatValue
@@ -163,7 +163,6 @@ ModalPopup {
             GasValidator {
                 id: gasValidator
                 anchors.top: gasSelector.bottom
-                anchors.topMargin: 8
                 selectedAccount: selectFromAccount.selectedAccount
                 selectedAmount: parseFloat(txtAmount.selectedAmount)
                 selectedAsset: txtAmount.selectedAsset
