@@ -150,6 +150,12 @@ Item {
                     chatText.setWidths()
                 }
             }
+
+            onLinkActivated: {
+                if (activityCenterMessage) {
+                    clickMessage(false, isSticker, false)
+                }
+            }
         }
 
         Loader {
@@ -207,6 +213,7 @@ Item {
 
         MessageMouseArea {
             anchors.fill: parent
+            enabled: !chatText.linkHovered
         }
 
         RectangleCorner {
