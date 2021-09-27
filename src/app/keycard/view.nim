@@ -1,5 +1,8 @@
-import NimQml
+import NimQml, chronicles
 import status/status
+
+logScope:
+  topics = "keycard-model"
 
 QtObject:
   type KeycardView* = ref object of QObject
@@ -19,3 +22,6 @@ QtObject:
   proc cardConnected*(self: KeycardView) {.signal.}
 
   proc cardDisconnected*(self: KeycardView) {.signal.}
+
+  proc simulateDisconnected*(self: KeycardView) {.slot.} =
+    self.cardDisconnected()
