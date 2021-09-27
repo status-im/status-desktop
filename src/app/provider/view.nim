@@ -3,9 +3,7 @@ import status/[status, ens, chat/stickers, wallet, settings, provider]
 import status/types/[setting]
 import json, json_serialization, sets, strutils
 import chronicles
-import nbaser
 import stew/byteutils
-from base32 import nil
 
 logScope:
   topics = "provider-view"
