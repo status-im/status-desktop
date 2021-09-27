@@ -91,7 +91,11 @@ Item {
             icon.name: "add"
             state: "default"
 
-            onClicked: chatContextMenu.popup(actionButton.width-chatContextMenu.width, actionButton.height + 4)
+            onClicked: {
+                chatContextMenu.opened ?
+                    chatContextMenu.close() :
+                    chatContextMenu.popup(actionButton.width-chatContextMenu.width, actionButton.height + 4)
+            }
             states: [
                 State {
                     name: "default"
@@ -135,6 +139,7 @@ Item {
 
             StatusPopupMenu {
                 id: chatContextMenu
+                closePolicy: Popup.Popup.CloseOnReleaseOutsideParent | Popup.CloseOnEscape
 
                 onOpened: {
                     actionButton.state = "pressed"
