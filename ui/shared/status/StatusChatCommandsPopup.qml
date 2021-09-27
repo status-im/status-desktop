@@ -11,6 +11,7 @@ Popup {
     height: buttonRow.height
     padding: 0
     margins: 0
+    closePolicy: Popup.CloseOnReleaseOutsideParent | Popup.CloseOnEscape
 
     signal sendTransactionCommandButtonClicked()
     signal receiveTransactionCommandButtonClicked()

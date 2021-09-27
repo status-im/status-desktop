@@ -643,6 +643,9 @@ Rectangle {
         onClosed: {
             chatCommandsBtn.highlighted = false
         }
+        onOpened: {
+            chatCommandsBtn.highlighted = true
+        }
     }
 
     StatusGifPopup {
@@ -705,8 +708,9 @@ Rectangle {
         visible: !isEdit && control.chatType === Constants.chatTypeOneToOne && !control.isStatusUpdateInput
         enabled: !control.isContactBlocked
         onClicked: {
-            highlighted = true
-            chatCommandsPopup.open()
+            chatCommandsPopup.opened ?
+                chatCommandsPopup.close() :
+                chatCommandsPopup.open()
         }
     }
 
