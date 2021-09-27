@@ -1,4 +1,20 @@
 <a name=""></a>
+##  v0.11.0 (2021-09-27)
+
+
+#### Bug Fixes
+
+*   track category opened state ([0631d500](0631d500))
+* **StatusChatList:**  ensure right click popup opens in correct position ([a2e3659d](a2e3659d))
+* **StatusSearchPopup:**  use correct theme color for search result text ([654bd9f2](654bd9f2))
+* **StatusSpellcheckingMenuItems:**  Exact  menu items order ([478177f2](478177f2))
+
+#### Features
+
+*   add star icons (#422) ([5c3267f7](5c3267f7))
+
+
+<a name=""></a>
 ## v0.10.0 (2021-09-20)
 
 
