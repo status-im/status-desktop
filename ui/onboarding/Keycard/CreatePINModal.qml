@@ -102,7 +102,6 @@ ModalPopup {
             enabled: firstPINFieldValid && repeatPINFieldValid
 
             onClicked: {
-                keycardModel.simulateDisconnected()
             }
         }
     }

@@ -25,3 +25,6 @@ QtObject:
 
   proc simulateDisconnected*(self: KeycardView) {.slot.} =
     self.cardDisconnected()
+
+  proc simulateConnected*(self: KeycardView) {.slot.} =
+    self.cardConnected()

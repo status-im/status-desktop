@@ -8,6 +8,8 @@ import StatusQ.Controls 0.1
 import StatusQ.Popups 0.1
 
 StatusModal {
+    property var onCancel: function() {}
+
     id: insertCard
     anchors.centerIn: parent
 
@@ -46,7 +48,24 @@ StatusModal {
         StatusButton {
             id: cancelButton
             text: qsTr("Cancel")
-            onClicked: { insertCard.close() }
+            onClicked: {
+              insertCard.close()
+              onCancel()
+            }
         }
     ]
+
+    Connections {
+        id: connection
+        target: keycardModel
+        ignoreUnknownSignals: true
+
+        onCardConnected: {
+            insertCard.close()
+        }
+
+        onCardDisconnected: {
+            insertCard.open()
+        }
+    }
 }
