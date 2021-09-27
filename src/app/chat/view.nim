@@ -1,4 +1,4 @@
-import NimQml, Tables, json, sequtils, chronicles, strutils, os, strformat
+import NimQml, Tables, json, sequtils, chronicles, strutils, os, strformat, math
 import status/[status]
 import status/utils as status_utils
 import status/chat as status_chat
@@ -173,6 +173,15 @@ QtObject:
 
   proc plainText(self: ChatsView, input: string): string {.slot.} =
     result = plain_text(input)
+
+  proc sendAudio*(self: ChatsView, audioBase64: string, durationSec: float, isStatusUpdate: bool = false): string {.slot.} =
+    try:
+      var channelId = self.channelView.activeChannel.id
+      var durationMs = cast[uint64](math.ceil(durationSec * 1000.0).toUint64)
+      self.status.chat.sendAudio(channelId, audioBase64, durationMs)
+    except Exception as e:
+      error "Error sending the audio", msg = e.msg
+      result = fmt"Error sending the audio: {e.msg}"
 
   proc sendImage*(self: ChatsView, imagePath: string, isStatusUpdate: bool = false): string {.slot.} =
     result = ""

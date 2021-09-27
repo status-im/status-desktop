@@ -548,6 +548,7 @@ Item {
         Connections {
             target: chatsModel.channelView
             onActiveChannelChanged: {
+                appMain.stopPlayback()
                 chatsModel.messageView.hideLoadingIndicator()
                 SelectedMessage.reset();
                 chatColumn.isReply = false;
