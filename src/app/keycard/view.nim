@@ -16,3 +16,6 @@ QtObject:
     result.status = status
     result.setup
 
+  proc cardConnected*(self: KeycardView) {.signal.}
+
+  proc cardDisconnected*(self: KeycardView) {.signal.}

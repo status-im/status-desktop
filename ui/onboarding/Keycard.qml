@@ -28,6 +28,13 @@ Item {
     PINModal {
         id: pinModal
         onClosed: function () {
+            insertCard.open()
+        }
+    }
+
+    InsertCard {
+        id: insertCard
+        onClosed: function() {
             keycardView.onClosed()
         }
     }
