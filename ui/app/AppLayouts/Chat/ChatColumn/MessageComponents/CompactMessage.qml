@@ -384,6 +384,12 @@ Item {
                 anchors.leftMargin: -leftPadding
                 textField.leftPadding: leftPadding
                 textField.rightPadding: Style.current.bigPadding
+
+                onLinkActivated: {
+                    if (activityCenterMessage) {
+                        clickMessage(false, isSticker, false)
+                    }
+                }
             }
 
             Loader {
@@ -446,6 +452,7 @@ Item {
 
             MessageMouseArea {
                 id: messageMouseArea
+                enabled: !chatText.linkHovered
                 anchors.fill: stickerLoader.active ? stickerLoader : chatText
                 z: activityCenterMessage ? chatText.z + 1 : chatText.z -1
             }

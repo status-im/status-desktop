@@ -5,13 +5,18 @@ import utils 1.0
 import QtGraphicalEffects 1.0
 
 Item {
+    id: root
+
     property bool longChatText: true
     property bool veryLongChatText: chatsModel.plainText(message).length >
                                     (appSettings.useCompactMode ? Constants.limitLongChatTextCompactMode : Constants.limitLongChatText)
     property bool readMore: false
     property alias textField: chatText
 
-    id: root
+    signal linkActivated(url link)
+
+    property bool linkHovered: chatText.hoveredLink !== ""
+
     z: 51
 
     implicitHeight: visible ? (showMoreLoader.active ? childrenRect.height - 10 : chatText.height) : 0
@@ -43,6 +48,8 @@ Item {
         height: root.veryLongChatText && !root.readMore ? Math.min(implicitHeight, 200) : implicitHeight
         clip: height < implicitHeight
         onLinkActivated: {
+
+            root.linkActivated(link)
             if(link.startsWith("#")) {
                 const channelName = link.substring(1);
                 const foundChannelObj = chatsModel.getChannel(channelName);
