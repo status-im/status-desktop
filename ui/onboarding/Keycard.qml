@@ -10,6 +10,7 @@ Item {
     id: keycardView
     anchors.fill: parent
     Component.onCompleted: {
+        keycardModel.testConnection()
         createPinModal.open()
     }
 

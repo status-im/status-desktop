@@ -34,6 +34,7 @@ BUILD_SYSTEM_DIR := vendor/nimbus-build-system
 	run-macos \
 	run-windows \
 	status-go \
+	keycard-go \
 	update
 
 ifeq ($(NIM_PARAMS),)
@@ -217,6 +218,17 @@ $(STATUSGO): | deps
 	+ cd vendor/status-lib/vendor/status-go && \
 	  $(MAKE) statusgo-shared-library $(HANDLE_OUTPUT)
 
+
+KEYCARDGO := vendor/status-lib/vendor/nim-keycard-go/go/keycard/build/libkeycard/libkeycard.$(LIBKEYCARD_EXT)
+KEYCARDGO_LIBDIR := $(shell pwd)/$(shell dirname "$(KEYCARDGO)")
+export KEYCARDGO_LIBDIR
+
+keycard-go: $(KEYCARDGO)
+$(KEYCARDGO): | deps
+	echo -e $(BUILD_MSG) "keycard-go"
+	+ cd vendor/status-lib/vendor/nim-keycard-go && \
+	  $(MAKE) build-keycard-go $(HANDLE_OUTPUT)
+
 QRCODEGEN := vendor/QR-Code-generator/c/libqrcodegen.a
 
 $(QRCODEGEN): | deps
@@ -301,9 +313,9 @@ else
 endif
 
 $(NIM_STATUS_CLIENT): NIM_PARAMS += $(RESOURCES_LAYOUT)
-$(NIM_STATUS_CLIENT): $(NIM_SOURCES) | $(DOTHERSIDE) $(STATUSGO) $(QRCODEGEN) $(FLEETS) rcc deps
+$(NIM_STATUS_CLIENT): $(NIM_SOURCES) | $(DOTHERSIDE) $(STATUSGO) $(KEYCARDGO) $(QRCODEGEN) $(FLEETS) rcc deps
 	echo -e $(BUILD_MSG) "$@" && \
-		$(ENV_SCRIPT) nim c $(NIM_PARAMS) --passL:"-L$(STATUSGO_LIBDIR)" --passL:"-lstatus" $(NIM_EXTRA_PARAMS) --passL:"$(QRCODEGEN)" --passL:"-lm" src/nim_status_client.nim && \
+		$(ENV_SCRIPT) nim c $(NIM_PARAMS) --passL:"-L$(STATUSGO_LIBDIR)" --passL:"-lstatus" --passL:"-L$(KEYCARDGO_LIBDIR)" --passL:"-lkeycard" $(NIM_EXTRA_PARAMS) --passL:"$(QRCODEGEN)" --passL:"-lm" src/nim_status_client.nim && \
 		[[ $$? = 0 ]] && \
 		(([[ $(detected_OS) = Darwin ]] && \
 		install_name_tool -change \
@@ -474,7 +486,7 @@ $(STATUS_CLIENT_EXE): nim_status_client nim_windows_launcher $(NIM_WINDOWS_PREBU
 	cp bin/nim_windows_launcher.exe $(OUTPUT)/Status.exe
 	rcedit $(OUTPUT)/bin/Status.exe --set-icon $(OUTPUT)/resources/status.ico
 	rcedit $(OUTPUT)/Status.exe --set-icon $(OUTPUT)/resources/status.ico
-	cp $(DOTHERSIDE) $(STATUSGO) tmp/windows/tools/*.dll $(OUTPUT)/bin/
+	cp $(DOTHERSIDE) $(STATUSGO) $(KEYCARDGO) tmp/windows/tools/*.dll $(OUTPUT)/bin/
 	cp "$(shell which libgcc_s_seh-1.dll)" $(OUTPUT)/bin/
 	cp "$(shell which libwinpthread-1.dll)" $(OUTPUT)/bin/
 	echo -e $(BUILD_MSG) "deployable folder"
@@ -515,7 +527,7 @@ pkg-windows: check-pkg-target-windows $(STATUS_CLIENT_EXE)
 zip-windows: check-pkg-target-windows $(STATUS_CLIENT_7Z)
 
 clean: | clean-common
-	rm -rf bin/* node_modules bottles/* pkg/* tmp/* $(STATUSGO)
+	rm -rf bin/* node_modules bottles/* pkg/* tmp/* $(STATUSGO) $(KEYCARDGO)
 	+ $(MAKE) -C vendor/DOtherSide/build --no-print-directory clean
 
 run: $(RUN_TARGET)
@@ -531,7 +543,7 @@ $(ICON_TOOL):
 
 run-linux: nim_status_client
 	echo -e "\e[92mRunning:\e[39m bin/nim_status_client"
-	LD_LIBRARY_PATH="$(QT5_LIBDIR)":"$(STATUSGO_LIBDIR)" \
+	LD_LIBRARY_PATH="$(QT5_LIBDIR)":"$(STATUSGO_LIBDIR)":"$(KEYCARDGO_LIBDIR)" \
 	./bin/nim_status_client
 
 run-macos: nim_status_client $(ICON_TOOL)
@@ -546,7 +558,7 @@ run-macos: nim_status_client $(ICON_TOOL)
 
 run-windows: nim_status_client $(NIM_WINDOWS_PREBUILT_DLLS)
 	echo -e "\e[92mRunning:\e[39m bin/nim_status_client.exe"
-	PATH="$(shell pwd)"/"$(shell dirname "$(DOTHERSIDE)")":"$(STATUSGO_LIBDIR)":"$(shell pwd)"/"$(shell dirname "$(NIM_WINDOWS_PREBUILT_DLLS)")":"$(PATH)" \
+	PATH="$(shell pwd)"/"$(shell dirname "$(DOTHERSIDE)")":"$(STATUSGO_LIBDIR)":"$(KEYCARDGO_LIBDIR)":"$(shell pwd)"/"$(shell dirname "$(NIM_WINDOWS_PREBUILT_DLLS)")":"$(PATH)" \
 	./bin/nim_status_client.exe
 
 endif # "variables.mk" was not included
