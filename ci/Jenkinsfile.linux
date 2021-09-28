@@ -1,4 +1,4 @@
-library 'status-jenkins-lib@v1.3.0'
+library 'status-jenkins-lib@v1.3.3'
 
 pipeline {
   agent {
@@ -39,8 +39,8 @@ pipeline {
     /* Makefile assumes the compiler folder is included */
     QTDIR = "/opt/qt/5.14.0/gcc_64"
     /* Control output the filename */
-    STATUS_CLIENT_APPIMAGE = "pkg/${utils.pkgFilename('AppImage')}"
-    STATUS_CLIENT_TARBALL = "pkg/${utils.pkgFilename('tar.gz')}"
+    STATUS_CLIENT_APPIMAGE = "pkg/${utils.pkgFilename(ext: 'AppImage')}"
+    STATUS_CLIENT_TARBALL = "pkg/${utils.pkgFilename(ext: 'tar.gz')}"
   }
 
   stages {
