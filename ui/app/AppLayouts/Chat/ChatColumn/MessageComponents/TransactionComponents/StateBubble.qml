@@ -1,7 +1,8 @@
 import QtQuick 2.3
 import QtGraphicalEffects 1.13
 import "../../../../../../shared"
-import "../../../../../../imports"
+
+import utils 1.0
 
 Rectangle {
     property int state: Constants.pending
@@ -22,10 +23,10 @@ Rectangle {
             case Constants.pending:
             case Constants.addressReceived:
             case Constants.transactionRequested:
-            case Constants.addressRequested: return "../../../../../img/dotsLoadings.svg"
-            case Constants.confirmed: return "../../../../../img/check.svg"
+            case Constants.addressRequested: return Style.svg("dotsLoadings")
+            case Constants.confirmed: return Style.svg("check")
             case Constants.transactionDeclined:
-            case Constants.declined: return "../../../../../img/exclamation.svg"
+            case Constants.declined: return Style.svg("exclamation")
             default: return ""
             }
         }

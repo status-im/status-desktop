@@ -1,6 +1,7 @@
 import QtQuick 2.13
 import QtGraphicalEffects 1.13
-import "../../../../imports"
+
+import utils 1.0
 import "../../../../shared"
 import "../../../../shared/status"
 
@@ -53,7 +54,7 @@ Item {
                 visible: !hideSecondIcon
                 width: 16
                 height: 16
-                source: "../../../img/communities.svg"
+                source: Style.svg("communities")
                 anchors.left: parent.left
                 anchors.verticalCenter:parent.verticalCenter
 
@@ -126,7 +127,7 @@ Item {
 
             SVGImage {
                 id: caretImage
-                source: "../../../img/show-category.svg"
+                source: Style.svg("show-category")
                 width: 16
                 height: 16
                 anchors.left: communityName.right
@@ -181,7 +182,7 @@ Item {
                 width: 16
                 height: 16
                 fillMode: Image.PreserveAspectFit
-                source: "../../../img/channel-icon-" + (wrapper.realChatType === Constants.chatTypePublic ? "public-chat.svg" : "group.svg")
+                source: Style.svg("channel-icon-" + (wrapper.realChatType === Constants.chatTypePublic ? "public-chat" : "group"))
                 anchors.left: parent.left
                 anchors.verticalCenter:parent.verticalCenter
             }

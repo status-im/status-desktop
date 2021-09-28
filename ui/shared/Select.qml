@@ -2,7 +2,8 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import QtGraphicalEffects 1.13
-import "../imports"
+
+import utils 1.0
 
 Item {
     enum MenuAlignment {
@@ -72,7 +73,7 @@ Item {
             anchors.rightMargin: caretRightMargin
             anchors.verticalCenter: parent.verticalCenter
             fillMode: Image.PreserveAspectFit
-            source: "../app/img/caret.svg"
+            source: Style.svg("caret")
         }
         ColorOverlay {
             anchors.fill: caret

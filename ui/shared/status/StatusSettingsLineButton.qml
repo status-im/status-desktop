@@ -1,6 +1,7 @@
 import QtQuick 2.13
 import QtGraphicalEffects 1.12
-import "../../imports"
+
+import utils 1.0
 import ".."
 
 Rectangle {
@@ -102,7 +103,7 @@ Rectangle {
         anchors.right: parent.right
         anchors.rightMargin: Style.current.padding
         anchors.verticalCenter: textItem.verticalCenter
-        source: "../../app/img/caret.svg"
+        source: Style.svg("caret")
         width: 13
         height: 7
         rotation: -90

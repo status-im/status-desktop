@@ -1,7 +1,8 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
-import "../imports"
+
+import utils 1.0
 import "./status"
 // TODO move Contact into shared to get rid of that import
 import "../app/AppLayouts/Chat/components"
@@ -141,7 +142,7 @@ Item {
 
         SVGImage {
             id: checkIcon
-            source: "../../../../app/img/check-2.svg"
+            source: Style.svg("check-2")
             width: 19
             height: 19
             anchors.right: parent.right

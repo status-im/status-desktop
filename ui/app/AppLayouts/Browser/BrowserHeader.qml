@@ -4,9 +4,9 @@ import QtQuick.Layouts 1.13
 import Qt.labs.settings 1.0
 import QtQuick.Controls.Styles 1.0
 import QtWebEngine 1.10
+import utils 1.0
 import "../../../shared"
 import "../../../shared/status"
-import "../../../imports"
 
 Rectangle {
     property alias addressBar: addressBar
@@ -226,7 +226,7 @@ Rectangle {
             id: connectedBtnComponent
             StatusButton {
                 id: accountBtnConnected
-                icon.source: "../../img/walletIcon.svg"
+                icon.source: Style.svg("walletIcon")
                 icon.width: 18
                 icon.height: 18
                 icon.color: walletModel.dappBrowserView.dappBrowserAccount.iconColor

@@ -1,6 +1,7 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.3
-import "../../../../imports"
+
+import utils 1.0
 import "../../../../shared"
 
 ScrollView {

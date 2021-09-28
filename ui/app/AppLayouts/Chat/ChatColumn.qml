@@ -10,7 +10,8 @@ import StatusQ.Controls 0.1
 
 import "../../../shared"
 import "../../../shared/status"
-import "../../../imports"
+
+import utils 1.0
 import "./components"
 import "./ChatColumn"
 import "./ChatColumn/ChatComponents"
@@ -636,7 +637,7 @@ Item {
             onTransactionWasSent: {
                 //% "Transaction pending..."
                 toastMessage.title = qsTr("Transaction pending...")
-                toastMessage.source = "../../../img/loading.svg"
+                toastMessage.source = Style.svg("loading")
                 toastMessage.iconColor = Style.current.primary
                 toastMessage.iconRotates = true
                 toastMessage.link = `${walletModel.utilsView.etherscanLink}/${txResult}`
@@ -650,10 +651,10 @@ Item {
                                      //% "Stickerpack bought successfully"
                                      qsTrId("stickerpack-bought-successfully");
                 if (success) {
-                    toastMessage.source = "../../../img/check-circle.svg"
+                    toastMessage.source = Style.svg("check-circle")
                     toastMessage.iconColor = Style.current.success
                 } else {
-                    toastMessage.source = "../../../img/block-icon.svg"
+                    toastMessage.source = Style.svg("block-icon")
                     toastMessage.iconColor = Style.current.danger
                 }
 

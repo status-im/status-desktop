@@ -2,7 +2,8 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import QtGraphicalEffects 1.13
-import "../imports"
+
+import utils 1.0
 import "../shared/status"
 
 Item {
@@ -307,10 +308,10 @@ Item {
                     anchors.right: parent.right
                     anchors.verticalCenter: parent.verticalCenter
                     fillMode: Image.PreserveAspectFit
-                    source: "../app/img/tokens/" + ((root.asset && root.asset.symbol) ? root.asset.symbol : "ETH") + ".png"
+                    source: Style.png("tokens/" + ((root.asset && root.asset.symbol) ? root.asset.symbol : "ETH"))
                     onStatusChanged: {
                         if (status == Image.Error) {
-                            source = "../app/img/tokens/DEFAULT-TOKEN@3x.png"
+                            source = Style.png("tokens/DEFAULT-TOKEN@3x")
                         }
                     }
                 }

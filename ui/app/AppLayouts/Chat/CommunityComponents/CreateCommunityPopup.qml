@@ -2,7 +2,8 @@ import QtQuick 2.12
 import QtQuick.Controls 2.3
 import QtGraphicalEffects 1.13
 import QtQuick.Dialogs 1.3
-import "../../../../imports"
+
+import utils 1.0
 import "../../../../shared"
 
 import StatusQ.Core 0.1
@@ -187,7 +188,7 @@ StatusModal {
 
                         SVGImage {
                             id: imageImg
-                            source: "../../../img/images_icon.svg"
+                            source: Style.svg("images_icon")
                             width: 20
                             height: 18
                             anchors.horizontalCenter: parent.horizontalCenter

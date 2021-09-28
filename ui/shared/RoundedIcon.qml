@@ -1,6 +1,7 @@
 import QtQuick 2.13
 import QtGraphicalEffects 1.0
-import "../imports"
+
+import utils 1.0
 
 Rectangle {
     id: root
@@ -31,7 +32,7 @@ Rectangle {
             width: 12
             height: 12
             fillMode: Image.PreserveAspectFit
-            source: "../img/new_chat.svg"
+            source: Style.svg("new_chat")
         }
         ColorOverlay {
             anchors.fill: roundedIconImage

@@ -2,7 +2,8 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import QtQuick.Controls.Universal 2.12
-import "../../../../imports"
+
+import utils 1.0
 import "../../../../shared"
 import "../../../../shared/status"
 import "../../Chat/ChatColumn"
@@ -284,7 +285,7 @@ ScrollView {
 
         //     StatusImageRadioButton {
         //         padding: Style.current.padding
-        //         image.source: "../../../img/appearance-normal-light.svg"
+        //         image.source: Style.svg("appearance-normal-light")
         //         image.height: 186
         //         //% "Normal"
         //         control.text: qsTrId("normal")
@@ -298,7 +299,7 @@ ScrollView {
 
         //     StatusImageRadioButton {
         //         padding: Style.current.padding
-        //         image.source: "../../../img/appearance-compact-light.svg"
+        //         image.source: Style.svg("appearance-compact-light")
         //         image.height: 186
         //         //% "Compact"
         //         control.text: qsTrId("compact")
@@ -335,7 +336,7 @@ ScrollView {
                 padding: Style.current.smallPadding
                 width: 208
                 height: 184
-                image.source: "../../../img/appearance-normal-light.svg"
+                image.source: Style.svg("appearance-normal-light")
                 image.height: 128
                 //% "Light"
                 control.text: qsTrId("light")
@@ -351,7 +352,7 @@ ScrollView {
                 padding: Style.current.smallPadding
                 width: 208
                 height: 184
-                image.source: "../../../img/appearance-normal-dark.svg"
+                image.source: Style.svg("appearance-normal-dark")
                 image.height: 128
                 //% "Dark"
                 control.text: qsTrId("dark")
@@ -367,7 +368,7 @@ ScrollView {
                 padding: Style.current.smallPadding
                 width: 208
                 height: 184
-                image.source: "../../../img/appearance-normal-system.png"
+                image.source: Style.svg("appearance-normal-system")
                 image.height: 128
                 //% "System"
                 control.text: qsTrId("system")

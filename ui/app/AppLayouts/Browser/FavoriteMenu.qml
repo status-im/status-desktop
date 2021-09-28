@@ -3,7 +3,8 @@ import QtQuick.Controls 2.3
 import QtWebEngine 1.9
 import "../../../shared"
 import "../../../shared/status"
-import "../../../imports"
+
+import utils 1.0
 import "../Chat/ChatColumn/ChatComponents"
 import "../Profile/LeftTab/constants.js" as ProfileConstants
 
@@ -18,7 +19,7 @@ PopupMenu {
     Action {
         //% "Open in new Tab"
         text: qsTrId("open-in-new-tab")
-        icon.source: "../../img/generate_account.svg"
+        icon.source: Style.svg("generate_account")
         icon.width: 16
         icon.height: 16
         onTriggered: {
@@ -31,7 +32,7 @@ PopupMenu {
     Action {
         //% "Edit"
         text: qsTrId("edit")
-        icon.source: "../../img/edit.svg"
+        icon.source: Style.svg("edit")
         icon.width: 16
         icon.height: 16
         onTriggered: {
@@ -45,7 +46,7 @@ PopupMenu {
     Action {
         //% "Remove"
         text: qsTrId("remove")
-        icon.source: "../../img/remove.svg"
+        icon.source: Style.svg("remove")
         icon.color: Style.current.danger
         icon.width: 16
         icon.height: 16

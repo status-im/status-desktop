@@ -1,5 +1,6 @@
 import QtQuick 2.13
-import "../imports"
+
+import utils 1.0
 
 TextEdit {
     font.family: Style.current.fontRegular.name

@@ -1,6 +1,7 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
-import "../../imports"
+
+import utils 1.0
 import "../../shared"
 import "../../shared/status"
 
@@ -27,7 +28,7 @@ StatusIconButton {
         color: Style.current.green
         SVGImage {
             id: checkmark
-            source: "../img/checkmark.svg"
+            source: Style.svg("checkmark")
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
             height: 10

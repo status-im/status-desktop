@@ -15,7 +15,7 @@ import "./onboarding"
 import "./app"
 import "./sounds"
 import "./shared"
-import "./imports"
+import utils 1.0
 
 StatusWindow {
     property bool hasAccounts: !!loginModel.rowCount()

@@ -2,7 +2,8 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 
-import "../../../imports"
+
+import utils 1.0
 import "../../../shared"
 import "../../../shared/status"
 import "./components"
@@ -370,7 +371,7 @@ Item {
                 toastMessage.uuid = communityImportingProcessId
                 //% "Importing community is in progress"
                 toastMessage.title = qsTrId("importing-community-is-in-progress")
-                toastMessage.source = "../../img/loading.svg"
+                toastMessage.source = Style.svg("loading")
                 toastMessage.iconRotates = true
                 toastMessage.dissapearInMs = -1
             }

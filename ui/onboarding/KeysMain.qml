@@ -3,7 +3,8 @@ import QtQuick.Controls 2.13
 import QtQuick.Controls.Universal 2.12
 import "../shared"
 import "../shared/status"
-import "../imports"
+
+import utils 1.0
 
 Page {
     id: page
@@ -46,7 +47,7 @@ Page {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: parent.top
             fillMode: Image.PreserveAspectFit
-            source: "img/keys.png"
+            source: Style.png("keys")
             width: 160
             height: 160
             mipmap: true

@@ -1,6 +1,7 @@
 import QtQuick 2.14
 import QtQuick.Controls 2.14
-import "../../../../imports"
+
+import utils 1.0
 import "../controls"
 import "../popups"
 
@@ -23,7 +24,7 @@ Item {
         spacing: 50
 
         WalletButton {
-            imageSource: "../../../img/swap-icon.svg"
+            imageSource: Style.svg("swap-icon")
             text: qsTr("Swap")
             onClicked: {
                 console.log("TODO");
@@ -31,7 +32,7 @@ Item {
         }
 
         WalletButton {
-            imageSource: "../../../img/send.svg"
+            imageSource: Style.svg("send")
             text: qsTr("Send")
             onClicked: {
                 console.log("TODO");
@@ -39,7 +40,7 @@ Item {
         }
 
         WalletButton {
-            imageSource: "../../../img/crypto-icon.svg"
+            imageSource: Style.svg("crypto-icon")
             text: qsTr("Buy / Sell")
             onClicked: {
                 cryptoServicesModal.open();

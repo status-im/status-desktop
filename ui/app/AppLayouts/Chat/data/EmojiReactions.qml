@@ -5,26 +5,26 @@ ListModel {
 
     ListElement {
         emojiId: 1
-        filename: "emojiReactions/heart.svg"
+        filename: "emojiReactions/heart"
     }
     ListElement {
         emojiId: 2
-        filename: "emojiReactions/thumbsUp.svg"
+        filename: "emojiReactions/thumbsUp"
     }
     ListElement {
         emojiId: 3
-        filename: "emojiReactions/thumbsDown.svg"
+        filename: "emojiReactions/thumbsDown"
     }
     ListElement {
         emojiId: 4
-        filename: "emojiReactions/laughing.svg"
+        filename: "emojiReactions/laughing"
     }
     ListElement {
         emojiId: 5
-        filename: "emojiReactions/sad.svg"
+        filename: "emojiReactions/sad"
     }
     ListElement {
         emojiId: 6
-        filename: "emojiReactions/angry.svg"
+        filename: "emojiReactions/angry"
     }
 }

@@ -5,7 +5,8 @@ import StatusQ.Core.Theme 0.1
 
 import "../../../../shared"
 import "../../../../shared/status"
-import "../../../../imports"
+
+import utils 1.0
 
 Item {
     property url webUrl
@@ -23,7 +24,7 @@ Item {
         width: 48
         height: 48
         anchors.horizontalCenter: parent.horizontalCenter
-        source: !!root.source && !!root.source.toString() ? root.source :"../../../img/compassActive.svg"
+        source: !!root.source && !!root.source.toString() ? root.source : Style.svg("compassActive")
         visible: root.source && root.source.toString()
     }
 

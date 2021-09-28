@@ -7,9 +7,9 @@ import QtWebChannel 1.13
 import Qt.labs.settings 1.0
 import QtQuick.Controls.Styles 1.0
 import QtQuick.Dialogs 1.2
+import utils 1.0
 import "../../../shared"
 import "../../../shared/status"
-import "../../../imports"
 import "../Chat/ChatColumn/ChatComponents"
 import "./components"
 
@@ -211,7 +211,7 @@ Rectangle {
 
                         //% "Transaction pending..."
                         toastMessage.title = qsTrId("ens-transaction-pending")
-                        toastMessage.source = "../../img/loading.svg"
+                        toastMessage.source = Style.svg("loading")
                         toastMessage.iconColor = Style.current.primary
                         toastMessage.iconRotates = true
                         toastMessage.link = `${_walletModel.utilsView.etherscanLink}/${responseObj.result.result}`
@@ -665,7 +665,7 @@ Rectangle {
 
                         Image {
                             id: emptyPageImage
-                            source: "../../img/browser/compass.png"
+                            source: Style.png("browser/compass")
                             width: 294
                             height: 294
                             anchors.horizontalCenter: parent.horizontalCenter

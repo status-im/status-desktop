@@ -1,6 +1,7 @@
 import QtQuick 2.13
 import QtQuick.Dialogs 1.3
-import "../../../../imports"
+
+import utils 1.0
 
 QtObject {
     id: root
@@ -203,10 +204,5 @@ QtObject {
             address: "0x2Ef1...E0Ba"
             isFavorite: true
         }
-    }
-
-    property string imgPath: Qt.resolvedUrl("../../../img/")
-    function img(name) {
-        return imgPath + name + ".svg";
     }
 }

@@ -1,9 +1,9 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
+import utils 1.0
 import "../../../shared"
 import "../../../shared/status"
-import "../../../imports"
 
 Popup {
     property var currentTab
@@ -66,13 +66,13 @@ Popup {
 
             SVGImage {
                 id: dots1
-                source: "../../img/dots-icon.svg"
+                source: Style.svg("dots-icon")
                 width: 20
                 height: 4
             }
 
             RoundedIcon {
-                source: "../../img/check.svg"
+                source: Style.svg("check")
                 iconColor: Style.current.primary
                 color: Style.current.secondaryBackground
                 width: 24
@@ -81,13 +81,13 @@ Popup {
 
             SVGImage {
                 id: dots2
-                source: "../../img/dots-icon.svg"
+                source: Style.svg("dots-icon")
                 width: 20
                 height: 4
             }
 
             RoundedIcon {
-                source: "../../img/walletIcon.svg"
+                source: Style.svg("walletIcon")
                 iconHeight: 18
                 iconWidth: 18
                 iconColor: accountSelector.selectedAccount.iconColor || Style.current.primary

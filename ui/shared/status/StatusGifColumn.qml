@@ -5,7 +5,8 @@ import QtGraphicalEffects 1.0
 
 import StatusQ.Controls 0.1
 
-import "../../imports"
+
+import utils 1.0
 
 
 Column {

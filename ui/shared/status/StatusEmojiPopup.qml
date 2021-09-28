@@ -2,7 +2,8 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.3
 import QtGraphicalEffects 1.0
-import "../../imports"
+
+import utils 1.0
 import "../../shared"
 
 import "./emojiList.js" as EmojiJSON
@@ -155,15 +156,15 @@ Popup {
 
             if (appSettings.skinColor !== "") {
                 if (emoji.unicode.includes(appSettings.skinColor)) {
-                    newCategories[categoryNames[emoji.category]].push(Object.assign({}, emoji, {filename: emoji.unicode + '.svg'}));
+                    newCategories[categoryNames[emoji.category]].push(Object.assign({}, emoji, {filename: emoji.unicode}));
                 } else {
                     if (!emojisWithColors.includes(emoji.unicode) && !containsSkinColor(emoji.unicode))  {
-                        newCategories[categoryNames[emoji.category]].push(Object.assign({}, emoji, {filename: emoji.unicode + '.svg'}));
+                        newCategories[categoryNames[emoji.category]].push(Object.assign({}, emoji, {filename: emoji.unicode}));
                     }
                 }
             } else {
                 if (!containsSkinColor(emoji.unicode)) {
-                    newCategories[categoryNames[emoji.category]].push(Object.assign({}, emoji, {filename: emoji.unicode + '.svg'}));
+                    newCategories[categoryNames[emoji.category]].push(Object.assign({}, emoji, {filename: emoji.unicode}));
                 }
             }
         })
@@ -234,7 +235,7 @@ Popup {
                     delegate: SVGImage {
                         width: 22
                         height: 22
-                        source: "../../imports/twemoji/72x72/" + modelData + ".png"
+                        source: Style.emoji("72x72/" + modelData)
                         MouseArea {
                             cursorShape: Qt.PointingHandCursor
                             anchors.fill: parent
@@ -255,7 +256,7 @@ Popup {
                 anchors.right: parent.right
                 anchors.rightMargin: emojiHeader.headerMargin
                 visible: !skinToneEmoji.expandSkinColorOptions
-                source: "../../imports/twemoji/72x72/1f590" + ((appSettings.skinColor !== "" && visible) ? ("-" + appSettings.skinColor) : "") + ".png"
+                source: Style.emoji("72x72/1f590" + ((appSettings.skinColor !== "" && visible) ? ("-" + appSettings.skinColor) : ""))
                 MouseArea {
                     cursorShape: Qt.PointingHandCursor
                     anchors.fill: parent
@@ -337,7 +338,7 @@ Popup {
                 model: EmojiJSON.emojiCategories
 
                 StatusCategoryButton {
-                    source: `../../app/img/emojiCategories/${modelData}.svg`
+                    source: Style.svg(`emojiCategories/${modelData}`)
                     active: index === scrollView.activeCategory
                     changeCategory: function () {
                         scrollView.activeCategory = index

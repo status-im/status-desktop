@@ -2,7 +2,8 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.3
 import QtGraphicalEffects 1.0
-import "../../imports"
+
+import utils 1.0
 import "../../shared"
 import "../../shared/status"
 import "../../app/AppLayouts/Chat/ChatColumn/samples"

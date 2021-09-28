@@ -4,7 +4,8 @@ import QtQuick.Layouts 1.13
 import Qt.labs.platform 1.1
 import "./"
 import "../../../../shared"
-import "../../../../imports"
+
+import utils 1.0
 
 import StatusQ.Popups 0.1
 

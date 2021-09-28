@@ -1,7 +1,8 @@
 import QtQuick 2.3
 import QtGraphicalEffects 1.13
 import "../../shared/"
-import "../../imports"
+
+import utils 1.0
 
 Item {
     property int verticalPadding: 0

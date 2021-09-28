@@ -1,7 +1,8 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtGraphicalEffects 1.13
-import "../imports"
+
+import utils 1.0
 import "../shared/status"
 
 Rectangle {
@@ -19,7 +20,7 @@ Rectangle {
         height: 20
         sourceSize.width: width
         sourceSize.height: height
-        source: "./img/copy-to-clipboard-icon.svg"
+        source: Style.svg("copy-to-clipboard-icon")
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
 

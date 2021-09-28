@@ -1,6 +1,7 @@
 import QtQuick 2.13
 import "../../../../../shared"
-import "../../../../../imports"
+
+import utils 1.0
 import QtGraphicalEffects 1.0
 
 Item {
@@ -153,7 +154,7 @@ Item {
                 width: 256
                 height: 44
                 fillMode: Image.PreserveAspectFit
-                source: "../../../../img/read-more.svg"
+                source: Style.svg("read-more")
                 z: 100
                 rotation: root.readMore ? 180 : 0
                 MouseArea {

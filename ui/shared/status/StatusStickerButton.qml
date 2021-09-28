@@ -2,7 +2,8 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.3
 import QtGraphicalEffects 1.0
-import "../../imports"
+
+import utils 1.0
 import "../../shared"
 
 Item {
@@ -21,7 +22,7 @@ Item {
     property bool hasInsufficientFunds: false
     property bool enabled: true
     property var icon: new Object({
-        path: "../../app/img/status-logo-no-bg",
+        path: Style.svg("status-logo-no-bg"),
         rotation: 0,
         runAnimation: false
     })
@@ -47,7 +48,7 @@ Item {
                 textColor: root.style === StatusStickerButton.StyleType.Default ? Style.current.roundedButtonSecondaryForegroundColor : Style.current.red;
                 bgColor: root.style === StatusStickerButton.StyleType.Default ? Style.current.green : Style.current.lightRed;
                 icon: new Object({
-                    path: "../../app/img/check.svg",
+                    path: Style.svg("check"),
                     rotation: 0,
                     runAnimation: false
                 })
@@ -61,7 +62,7 @@ Item {
                 //% "Install"
                 text: qsTrId("install");
                 icon: new Object({
-                    path: "../../app/img/arrowUp.svg",
+                    path: Style.svg("arrowUp"),
                     rotation: 180,
                     runAnimation: false
                 })
@@ -99,7 +100,7 @@ Item {
                 bgColor: root.style === StatusStickerButton.StyleType.Default ? Style.current.darkGrey : Style.current.grey;
                 enabled: false;
                 icon: new Object({
-                    path: "../../app/img/loading.png",
+                    path: Style.png("loading"),
                     rotation: 0,
                     runAnimation: true
                 })

@@ -1,8 +1,8 @@
 pragma Singleton
 
 import QtQuick 2.13
-import "../shared/xss.js" as XSS
-import "../shared/polyfill.number.toLocaleString.js" as NumberPolyFill
+import "../../shared/xss.js" as XSS
+import "../../shared/polyfill.number.toLocaleString.js" as NumberPolyFill
 
 QtObject {
     function isHex(value) {
@@ -512,7 +512,7 @@ QtObject {
             title: result.title,
             communityId: result.communityId,
             fetching: result.fetching,
-            thumbnailUrl: "../../../../img/status.png",
+            thumbnailUrl: Style.png("status"),
             contentType: "",
             height: 0,
             width: 0,

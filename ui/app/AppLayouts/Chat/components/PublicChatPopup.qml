@@ -1,7 +1,8 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
-import "../../../../imports"
+
+import utils 1.0
 import "../../../../shared"
 import "../../../../shared/status"
 import "../data/channelList.js" as ChannelJSON
@@ -65,7 +66,7 @@ ModalPopup {
         placeholderText: qsTrId("chat-name")
         Keys.onEnterPressed: doJoin()
         Keys.onReturnPressed: doJoin()
-        icon: "../../../img/hash.svg"
+        icon: Style.svg("hash")
         validationError: channelNameValidationError
     }
 

@@ -1,13 +1,14 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtGraphicalEffects 1.13
-import "../../../../../imports"
+
+import utils 1.0
 import "../../../../../shared"
 
 Rectangle {
     property color iconColor
     property string text: "My command"
-    property url iconSource: "../../../../img/send.svg"
+    property url iconSource: Style.svg("send")
     property bool rotatedImage: false
     property var onClicked: function () {}
 
@@ -30,7 +31,7 @@ Rectangle {
 
         SVGImage {
             id: iconImage
-            source: "../../../../img/send.svg"
+            source: Style.svg("send")
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
             width: 16

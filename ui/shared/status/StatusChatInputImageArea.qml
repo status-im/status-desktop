@@ -1,7 +1,8 @@
 import QtQuick 2.13
 import QtGraphicalEffects 1.13
 import QtQuick.Controls 2.13
-import "../../imports"
+
+import utils 1.0
 import "../../shared"
 
 Row {
@@ -75,7 +76,7 @@ Row {
                 hoverEnabled: false
                 opacity: mouseArea.containsMouse || buttonMouseArea.containsMouse ? 1 : 0
                 contentItem: SVGImage {
-                    source: !buttonMouseArea.containsMouse ? "../../app/img/close-filled.svg" : "../../app/img/close-filled-hovered.svg"
+                    source: Style.svg( !buttonMouseArea.containsMouse ? "close-filled" : "close-filled-hovered")
                     width: closeBtn.width
                     height: closeBtn.height
                 }

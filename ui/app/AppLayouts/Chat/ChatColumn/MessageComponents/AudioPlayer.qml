@@ -1,7 +1,8 @@
 import QtQuick 2.3
 import QtMultimedia 5.14
 import "../../../../../shared"
-import "../../../../../imports"
+
+import utils 1.0
 
 Item {
     property string audioSource: ""
@@ -17,7 +18,7 @@ Item {
 
     SVGImage {
         id: playButton
-        source: audioMessage.playbackState == Audio.PlayingState ? "../../../../img/icon-pause.svg" : "../../../../img/icon-play.svg"
+        source: audioMessage.playbackState == Audio.PlayingState ? Style.svg("icon-pause") : Style.svg("icon-play")
         width: 15
         height: 15
         anchors.left: parent.left

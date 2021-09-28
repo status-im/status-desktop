@@ -1,6 +1,7 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
-import "../../../../imports"
+
+import utils 1.0
 import "../../../../shared"
 import "../../../../shared/status"
 
@@ -110,25 +111,25 @@ ModalPopup {
                                 switch (title.toLowerCase()) {
                                 case "youtube":
                                 case "youtube shortener":
-                                    filename = "youtube.svg"; break;
+                                    filename = "youtube"; break;
                                 case "github":
-                                    filename = "github.svg"; break;
+                                    filename = "github"; break;
                                 case "medium":
-                                    filename = "medium.svg"; break;
+                                    filename = "medium"; break;
                                 case "tenor gifs":
-                                    filename = "tenor.svg"; break;
+                                    filename = "tenor"; break;
                                 case "giphy gifs":
                                 case "giphy gifs shortener":
                                 case "giphy gifs subdomain":
-                                    filename = "giphy.svg"; break;
+                                    filename = "giphy"; break;
                                 case "github":
-                                    filename = "github.svg"; break;
+                                    filename = "github"; break;
                                 case "status":
-                                    filename = "status.svg"; break;
+                                    filename = "status"; break;
                                     // TODO get a good default icon
-                                default: filename = "../globe.svg"
+                                default: filename = "../globe"
                                 }
-                                return `../../../img/linkPreviewThumbnails/${filename}`
+                                return Style.svg(`linkPreviewThumbnails/${filename}`)
                             }
 
                             Rectangle {

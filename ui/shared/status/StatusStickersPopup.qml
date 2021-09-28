@@ -2,7 +2,8 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.3
 import QtGraphicalEffects 1.0
-import "../../imports"
+
+import utils 1.0
 import "../../shared"
 import "../../shared/status/core"
 import "../../shared/status"
@@ -94,7 +95,7 @@ Popup {
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.top: parent.top
                     anchors.topMargin: 134
-                    source: "../../app/img/stickers_sad_icon.svg"
+                    source: Style.svg("stickers_sad_icon")
                 }
 
                 Item {
@@ -197,7 +198,7 @@ Popup {
                 height: 24
                 selected: true
                 useIconInsteadOfImage: true
-                source: "../../app/img/history_icon.svg"
+                source: Style.svg("history_icon")
                 anchors.left: btnAddStickerPack.right
                 anchors.leftMargin: Style.current.padding
                 onClicked: {

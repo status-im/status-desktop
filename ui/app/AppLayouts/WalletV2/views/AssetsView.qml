@@ -1,7 +1,8 @@
 import QtQuick 2.13
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.14
-import "../../../../imports"
+
+import utils 1.0
 import "../../../../shared"
 import StatusQ.Core 0.1
 
@@ -22,13 +23,13 @@ Item {
                 id: assetInfoImage
                 width: 36
                 height: 36
-                source: symbol ? "../../../img/tokens/" + symbol + ".png" : ""
+                source: symbol ? Style.png("tokens/" + symbol) : ""
                 anchors.left: parent.left
                 anchors.leftMargin: 0
                 anchors.verticalCenter: parent.verticalCenter
                 onStatusChanged: {
                     if (assetInfoImage.status == Image.Error) {
-                        assetInfoImage.source = "../../../img/tokens/DEFAULT-TOKEN@3x.png"
+                        assetInfoImage.source = Style.png("tokens/DEFAULT-TOKEN@3x")
                     }
                 }
             }
@@ -88,7 +89,7 @@ Item {
             symbol: "ETH"
             fullTokenName: "Ethereum"
             fiatBalanceDisplay: "3423 ETH"
-            image: "../../../img/token-icons/eth.svg"
+            image: "token-icons/eth"
         }
     }
 

@@ -3,7 +3,8 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.3
 import QtGraphicalEffects 1.0
 import StatusQ.Components 0.1
-import "../../imports"
+
+import utils 1.0
 import "../../shared"
 
 Popup {
@@ -165,7 +166,7 @@ Popup {
             spacing: 0
 
             StatusCategoryButton {
-                source: `../../app/img/gifCategories/trending.svg`
+                source: Style.svg("gifCategories/trending")
                 active: StatusGifPopup.Category.Trending === popup.currentCategory
                 changeCategory: function () {
                     toggleCategory(StatusGifPopup.Category.Trending)
@@ -173,7 +174,7 @@ Popup {
                 enabled: appSettings.isTenorWarningAccepted
             }
             StatusCategoryButton {
-                source: `../../app/img/gifCategories/recent.svg`
+                source: Style.svg("gifCategories/recent")
                 active: StatusGifPopup.Category.Recent === popup.currentCategory
                 changeCategory: function () {
                     toggleCategory(StatusGifPopup.Category.Recent)
@@ -181,7 +182,7 @@ Popup {
                 enabled: appSettings.isTenorWarningAccepted
             }
             StatusCategoryButton {
-                source: `../../app/img/gifCategories/favorite.svg`
+                source: Style.svg("gifCategories/favorite")
                 active: StatusGifPopup.Category.Favorite === popup.currentCategory
                 changeCategory: function () {
                     toggleCategory(StatusGifPopup.Category.Favorite)
@@ -221,7 +222,7 @@ Popup {
             SVGImage {
                 id: gifImage
                 anchors.horizontalCenter: parent.horizontalCenter
-                source: `./assets/img/gif-${Style.current.name}.svg`
+                source: Style.svg(`gif-${Style.current.name}`)
             }
 
             StyledText {

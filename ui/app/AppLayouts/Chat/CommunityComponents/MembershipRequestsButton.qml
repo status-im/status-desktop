@@ -3,7 +3,8 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import QtGraphicalEffects 1.13
 import "../../../../shared"
-import "../../../../imports"
+
+import utils 1.0
 import "../components"
 import "./"
 
@@ -44,7 +45,7 @@ Rectangle {
 
     SVGImage {
         id: caret
-        source: "../../../img/caret.svg"
+        source: Style.svg("caret")
         fillMode: Image.PreserveAspectFit
         rotation: -90
         anchors.right: parent.right

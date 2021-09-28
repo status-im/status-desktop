@@ -1,7 +1,8 @@
 import QtQuick 2.13
 import QtGraphicalEffects 1.13
 import QtQuick.Layouts 1.13
-import "../../../../../imports"
+
+import utils 1.0
 import "../../../../../shared"
 import "../../../../../shared/status"
 import "./" as MessageComponents
@@ -298,7 +299,7 @@ Column {
 
             Image {
                 id: unfurlingImage
-                source: "../../../../img/unfurling-image.png"
+                source: Style.png("unfurling-image")
                 width: 132
                 height: 94
                 anchors.horizontalCenter: parent.horizontalCenter

@@ -2,7 +2,8 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import QtQuick.Dialogs 1.3
-import "../../../imports"
+
+import utils 1.0
 import "../../../shared"
 import "../../../shared/status"
 import "./components"
@@ -296,7 +297,7 @@ ModalPopup {
 
                     //% "Transaction pending..."
                     toastMessage.title = qsTrId("ens-transaction-pending")
-                    toastMessage.source = "../../img/loading.svg"
+                    toastMessage.source = Style.svg("loading")
                     toastMessage.iconColor = Style.current.primary
                     toastMessage.iconRotates = true
                     toastMessage.link = `${walletModel.utilsView.etherscanLink}/${response.result}`
@@ -310,12 +311,12 @@ ModalPopup {
                 if (success) {
                     //% "Transaction completed"
                     toastMessage.title = qsTrId("transaction-completed")
-                    toastMessage.source = "../../img/check-circle.svg"
+                    toastMessage.source = Style.svg("check-circle")
                     toastMessage.iconColor = Style.current.success
                 } else {
                     //% "Transaction failed"
                     toastMessage.title = qsTrId("ens-registration-failed-title")
-                    toastMessage.source = "../../img/block-icon.svg"
+                    toastMessage.source = Style.svg("block-icon")
                     toastMessage.iconColor = Style.current.danger
                 }
                 toastMessage.link = `${walletModel.utilsView.etherscanLink}/${txHash}`

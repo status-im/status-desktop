@@ -3,7 +3,8 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import QtGraphicalEffects 1.13
 import QtQml.Models 2.14
-import "../imports"
+
+import utils 1.0
 import "../shared"
 import "../shared/status"
 
@@ -138,7 +139,7 @@ Item {
                 anchors.leftMargin: Style.current.padding
                 anchors.verticalCenter: parent.verticalCenter
                 fillMode: Image.PreserveAspectFit
-                source: "../app/img/walletIcon.svg"
+                source: Style.svg("walletIcon")
             }
             ColorOverlay {
                 id: selectedIconImgOverlay
@@ -210,7 +211,7 @@ Item {
                 sourceSize.height: height
                 sourceSize.width: width
                 fillMode: Image.PreserveAspectFit
-                source: "../app/img/walletIcon.svg"
+                source: Style.svg("walletIcon")
             }
             ColorOverlay {
                 anchors.fill: iconImg

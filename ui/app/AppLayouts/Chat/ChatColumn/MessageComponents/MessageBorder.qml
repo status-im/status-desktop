@@ -2,7 +2,8 @@ import QtQuick 2.13
 import QtGraphicalEffects 1.13
 import QtQuick.Layouts 1.13
 import "./" as MessageComponents
-import "../../../../../imports"
+
+import utils 1.0
 import "../../../../../shared"
 
 Item {

@@ -1,13 +1,14 @@
 import QtQuick 2.13
 import QtGraphicalEffects 1.13
-import "../../../../../imports"
+
+import utils 1.0
 import "../../../../../shared"
 import "../../../../../shared/status"
 
 ModalPopup {
     property string collectibleName: "Furbeard"
     property string collectibleId: "1423"
-    property url collectibleImage: "../../../../img/collectibles/placeholders/kitty.png"
+    property url collectibleImage: Style.png("collectibles/placeholders/kitty")
     property string collectibleDescription: "Avast ye! I'm the dread pirate Furbeard, and I'll most likely sleep"
     property string buttonText: "View in Cryptokitties"
     property string buttonLink: "https://www.cryptokitties.co/"

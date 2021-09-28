@@ -1,12 +1,13 @@
 import QtQuick 2.13
 import QtGraphicalEffects 1.13
-import "../../../../../imports"
+
+import utils 1.0
 import "../../../../../shared"
 import "../../../../../shared/status/core"
 import "../../../../../shared/status"
 
 Rectangle {
-    property url collectibleIconSource: "../../../../img/collectibles/CryptoKitties.png"
+    property url collectibleIconSource: "CryptoKitties"
     property string collectibleName: "CryptoKitties"
     property bool isLoading: true
     property bool hovered: false
@@ -84,7 +85,7 @@ Rectangle {
             SVGImage {
                 id: caretImg
                 anchors.verticalCenter: parent.verticalCenter
-                source: "../../../../img/caret.svg"
+                source: Style.svg("caret")
                 width: 11
                 anchors.left: numberCollectibleText.right
                 anchors.leftMargin: Style.current.padding

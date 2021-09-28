@@ -7,7 +7,8 @@ import QtGraphicalEffects 1.13
 import QtQuick.Dialogs 1.3
 import "../../../../shared"
 import "../../../../shared/status"
-import "../../../../imports"
+
+import utils 1.0
 import "../components"
 import "./samples/"
 import "./MessageComponents"
@@ -129,7 +130,7 @@ Item {
                 height: 24
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.left: nbMessages.right
-                source: "../../../img/leave_chat.svg"
+                source: Style.svg("leave_chat")
                 anchors.leftMargin: nbMessages.visible ? scrollDownButton.buttonPadding : 0
                 rotation: -90
 

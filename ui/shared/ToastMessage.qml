@@ -1,7 +1,8 @@
 import QtQuick 2.13
 import QtGraphicalEffects 1.13
 import QtQuick.Controls 2.13
-import "../imports"
+
+import utils 1.0
 import "."
 
 Popup {
@@ -22,7 +23,7 @@ Popup {
     readonly property string defaultLinkText: qsTrId("view-on-etherscan")
 
     property string uuid: "" // set this if you want to distinct among multiple toasts
-    property url source: "../app/img/check-circle.svg"
+    property url source: Style.svg("check-circle")
     property color iconColor: Style.current.primary
     property bool iconRotates: false
     //% "Transaction pending..."
@@ -43,7 +44,7 @@ Popup {
     }
     onClosed: {
         // Reset props
-        source = "../app/img/check-circle.svg"
+        source = Style.svg("check-circle")
         iconColor = Style.current.primary
         iconRotates = false
         //% "Transaction pending..."
@@ -134,7 +135,7 @@ Popup {
         visible: displayCloseButton
         anchors.right: parent.right
         anchors.top: parent.top
-        source: "../app/img/plusSign.svg"
+        source: Style.svg("plusSign")
         anchors.topMargin: Style.current.padding
         anchors.rightMargin: Style.current.padding
         width: 9

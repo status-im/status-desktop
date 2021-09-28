@@ -1,7 +1,8 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
-import "../../../../imports"
+
+import utils 1.0
 import "../../../../shared"
 import "../../../../shared/status"
 import "./"
@@ -119,7 +120,7 @@ ModalPopup {
 
             SVGImage {
                 id: editGroupImg
-                source: "../../../img/edit-group.svg"
+                source: Style.svg("edit-group")
                 height: 16
                 width: 16
                 anchors.horizontalCenter: parent.horizontalCenter
@@ -229,7 +230,7 @@ ModalPopup {
             anchors.leftMargin: 0
             anchors.rightMargin: 0
             onClicked: openPopup(pinnedMessagesPopupComponent)
-            iconSource: "../../../img/pin.svg"
+            iconSource: Style.svg("pin")
         }
 
         Separator {
@@ -343,7 +344,7 @@ ModalPopup {
                         PopupMenu {
                             id: contextMenu
                             Action {
-                                icon.source: "../../../img/make-admin.svg"
+                                icon.source: Style.svg("make-admin")
                                 icon.width: 16
                                 icon.height: 16
                                 //% "Make Admin"
@@ -351,7 +352,7 @@ ModalPopup {
                                 onTriggered: chatsModel.groups.makeAdmin(popup.channel.id,  model.publicKey)
                             }
                             Action {
-                                icon.source: "../../../img/remove-from-group.svg"
+                                icon.source: Style.svg("remove-from-group")
                                 icon.width: 16
                                 icon.height: 16
                                 icon.color: Style.current.red

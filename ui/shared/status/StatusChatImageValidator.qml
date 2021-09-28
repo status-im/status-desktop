@@ -2,7 +2,8 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import QtGraphicalEffects 1.0
-import "../../imports"
+
+import utils 1.0
 import ".."
 
 Item {
@@ -43,7 +44,7 @@ Item {
             anchors.topMargin: 6
             anchors.leftMargin: 6
             fillMode: Image.PreserveAspectFit
-            source: "../../app/img/exclamation_outline.svg"
+            source: Style.svg("exclamation_outline")
         }
         StyledText {
             id: txtValidationError

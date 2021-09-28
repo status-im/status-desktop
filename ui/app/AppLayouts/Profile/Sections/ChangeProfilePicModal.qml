@@ -1,6 +1,7 @@
 import QtQuick 2.13
 import QtQuick.Dialogs 1.3
-import "../../../../imports"
+
+import utils 1.0
 import "../../../../shared"
 import "../../../../shared/status"
 

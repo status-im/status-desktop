@@ -1,11 +1,12 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtGraphicalEffects 1.13
-import "../../../../../imports"
+
+import utils 1.0
 import "../../../../../shared"
 
 Rectangle {
-    property url source: "../../../../img/emojiBtn.svg"
+    property url source: Style.svg("emojiBtn")
     property bool hovered: false
     property bool opened: false
     property var close: function () {}

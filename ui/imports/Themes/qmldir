@@ -1,4 +1,2 @@
-Theme 1.0 ./Theme.qml
-LightTheme 1.0 ./LightTheme.qml
-DarkTheme 1.0 ./DarkTheme.qml
+Theme 1.0 Theme.qml
 

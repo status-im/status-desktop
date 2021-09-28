@@ -2,7 +2,8 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import "../../../../shared"
-import "../../../../imports"
+
+import utils 1.0
 import "../components"
 
 Item {
@@ -14,7 +15,7 @@ Item {
         id: walkieTalkieImage
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
-        source: "../../../../onboarding/img/chat@2x.png"
+        source: Style.png("onboarding/chat@2x")
     }
 
     Item {

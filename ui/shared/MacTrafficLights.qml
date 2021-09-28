@@ -1,6 +1,7 @@
 import QtQuick 2.13
 
-import "../imports"
+
+import utils 1.0
 
 MouseArea {
     id: statusMacWindowButtons
@@ -38,8 +39,7 @@ MouseArea {
             Image {
                 anchors.centerIn: parent
                 visible: statusMacWindowButtons.containsMouse
-                source: closeSensor.pressed ? "../app/img/traffic_lights/close_pressed.png"
-                                            : "../app/img/traffic_lights/close.png"
+                source: Style.png("traffic_lights/" + (closeSensor.pressed ? "close_pressed" : "close"))
                 scale: 0.25
             }
 
@@ -68,8 +68,7 @@ MouseArea {
                 anchors.centerIn: parent
                 anchors.verticalCenterOffset: -0.25
                 visible: statusMacWindowButtons.containsMouse
-                source: miniSensor.pressed ? "../app/img/traffic_lights/minimise_pressed.png"
-                                           : "../app/img/traffic_lights/minimise.png"
+                source: Style.png("traffic_lights/" + (miniSensor.pressed ? "minimise_pressed" : "minimise"))
                 scale: 0.27
             }
 
@@ -96,8 +95,7 @@ MouseArea {
             Image {
                 anchors.centerIn: parent
                 visible: statusMacWindowButtons.containsMouse
-                source:   maxiSensor.pressed ?"../app/img/traffic_lights/maximize_pressed.png"
-                                             :"../app/img/traffic_lights/maximize.png"
+                source: Style.png("traffic_lights/" + (maxiSensor.pressed ? "maximize_pressed" : "maximize"))
                 scale: 0.25
             }
 

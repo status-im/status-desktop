@@ -2,7 +2,8 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.3
 import QtGraphicalEffects 1.0
-import "../../imports"
+
+import utils 1.0
 import "../../shared"
 import "../../shared/status"
 import "../../app/AppLayouts/Chat/ChatColumn/samples"
@@ -193,7 +194,7 @@ Item {
             iconWidth: 17.5
             iconHeight: 13.5
             iconColor: Style.current.roundedButtonSecondaryForegroundColor
-            source: "../../app/img/arrowUp.svg"
+            source: Style.svg("arrowUp")
             rotation: 270
             onClicked: {
                 root.backClicked()

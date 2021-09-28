@@ -1,6 +1,7 @@
 import QtQuick 2.13
 import "../../../shared"
-import "../../../imports"
+
+import utils 1.0
 
 Image {
     property var currentTab
@@ -10,5 +11,5 @@ Image {
     height: 24
     sourceSize: Qt.size(width, height)
     // TODO find a better default favicon
-    source: faviconImage.currentTab && !!faviconImage.currentTab.icon.toString() ? faviconImage.currentTab.icon : "../../img/compassActive.svg"
+    source: faviconImage.currentTab && !!faviconImage.currentTab.icon.toString() ? faviconImage.currentTab.icon : Style.svg("compassActive")
 }

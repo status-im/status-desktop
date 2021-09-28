@@ -4,7 +4,8 @@ import QtQuick.Controls 2.12
 import StatusQ.Controls 0.1
 import StatusQ.Popups 0.1
 
-import "../../../../imports"
+
+import utils 1.0
 
 StatusModal {
 

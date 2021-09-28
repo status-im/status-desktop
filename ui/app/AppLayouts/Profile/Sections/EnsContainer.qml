@@ -2,7 +2,8 @@ import QtQuick 2.14
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.14
 import QtQml.StateMachine 1.14 as DSM
-import "../../../../imports"
+
+import utils 1.0
 import "../../../../shared"
 import "./Ens"
 
@@ -305,7 +306,7 @@ Item {
         onTransactionWasSent: {
             //% "Transaction pending..."
             toastMessage.title = qsTrId("ens-transaction-pending")
-            toastMessage.source = "../../../img/loading.svg"
+            toastMessage.source = Style.svg("loading")
             toastMessage.iconColor = Style.current.primary
             toastMessage.iconRotates = true
             toastMessage.link = `${walletModel.utilsView.etherscanLink}/${txResult}`
@@ -332,10 +333,10 @@ Item {
             }
 
             if (success) {
-                toastMessage.source = "../../../img/check-circle.svg"
+                toastMessage.source = Style.svg("check-circle")
                 toastMessage.iconColor = Style.current.success
             } else {
-                toastMessage.source = "../../../img/block-icon.svg"
+                toastMessage.source = Style.svg("block-icon")
                 toastMessage.iconColor = Style.current.danger
             }
 

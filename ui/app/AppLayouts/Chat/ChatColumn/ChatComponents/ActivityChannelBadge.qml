@@ -1,6 +1,7 @@
 import QtQuick 2.13
 import QtGraphicalEffects 1.13
-import "../../../../../imports"
+
+import utils 1.0
 import "../../../../../shared"
 import "../../../../../shared/status"
 import ".."
@@ -64,7 +65,7 @@ Rectangle {
                 id: replyIcon
                 width: 16
                 height: 16
-                source: "../../../../img/reply-small-arrow.svg"
+                source: Style.svg("reply-small-arrow")
                 anchors.left: parent.left
                 anchors.verticalCenter:parent.verticalCenter
             }

@@ -1,12 +1,13 @@
 import QtQuick 2.13
 import QtGraphicalEffects 1.0
-import "../../imports"
+
+import utils 1.0
 import "../../shared"
 
 Rectangle {
     property bool active: false
     property var changeCategory: function () {}
-    property url source: "../app/img/emojiCategories/recent.svg"
+    property url source: Style.svg("emojiCategories/recent")
 
     id: categoryButton
     width: 40

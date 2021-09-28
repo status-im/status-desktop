@@ -1,10 +1,10 @@
 import QtQuick 2.1
 import QtQuick.Controls 2.13
 import QtGraphicalEffects 1.13
+import utils 1.0
 import "../../../shared"
 import "../../../shared/status/core"
 import "../../../shared/status"
-import "../../../imports"
 
 
 Rectangle {
@@ -71,7 +71,7 @@ Rectangle {
         Component {
             id: fileImageComponent
             SVGImage {
-                source: "../../img/browser/file.svg"
+                source: Style.svg("browser/file")
                 width: 24
                 height: 24
                 ColorOverlay {
@@ -139,7 +139,7 @@ Rectangle {
 
         Action {
             enabled: downloadComplete
-            icon.source: "../../img/browser/file.svg"
+            icon.source: Style.svg("browser/file")
             icon.width: 16
             icon.height: 16
             //% "Open"
@@ -147,7 +147,7 @@ Rectangle {
             onTriggered: openFile()
         }
         Action {
-            icon.source: "../../img/add_watch_only.svg"
+            icon.source: Style.svg("add_watch_only")
             icon.width: 13
             icon.height: 9
             //% "Show in folder"
@@ -156,7 +156,7 @@ Rectangle {
         }
         Action {
             enabled: !downloadComplete && !!downloadModel.downloads[index] && !downloadModel.downloads[index].isPaused
-            icon.source: "../../img/browser/pause.svg"
+            icon.source: Style.svg("browser/pause")
             icon.width: 16
             icon.height: 16
             //% "Pause"
@@ -167,7 +167,7 @@ Rectangle {
         }
         Action {
             enabled: !downloadComplete && !!downloadModel.downloads[index] && downloadModel.downloads[index].isPaused
-            icon.source: "../../img/browser/play.svg"
+            icon.source: Style.svg("browser/play")
             icon.width: 16
             icon.height: 16
             //% "Resume"
@@ -183,7 +183,7 @@ Rectangle {
 
         Action {
             enabled: !downloadComplete
-            icon.source: "../../img/block-icon.svg"
+            icon.source: Style.svg("block-icon")
             icon.width: 13
             icon.height: 13
             //% "Cancel"

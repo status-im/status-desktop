@@ -1,6 +1,7 @@
 import QtQuick 2.13
 import "../../../../../shared"
-import "../../../../../imports"
+
+import utils 1.0
 
 MouseArea {
     enabled: !placeholderMessage

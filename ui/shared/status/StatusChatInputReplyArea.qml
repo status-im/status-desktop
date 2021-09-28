@@ -1,7 +1,8 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtGraphicalEffects 1.13
-import "../../imports"
+
+import utils 1.0
 import "../../shared"
 
 Rectangle {
@@ -102,7 +103,7 @@ Rectangle {
         anchors.rightMargin: 4
         contentItem: SVGImage {
             id: iconImg
-            source: "../../app/img/close.svg"
+            source: Style.svg("close")
             width: closeBtn.width
             height: closeBtn.height
 

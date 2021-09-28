@@ -8,7 +8,8 @@ import QtGraphicalEffects 1.13
 import QtQuick.Dialogs 1.3
 import "../../../../shared"
 import "../../../../shared/status"
-import "../../../../imports"
+
+import utils 1.0
 import "../components"
 import "../ChatColumn/MessageComponents"
 import "../ChatColumn/"

@@ -7,7 +7,7 @@ var stickers = "stickers"
 var collectiblesData = {
     [cryptokitty] :{
         collectibleName: "CryptoKitties",
-        collectibleIconSource: "CryptoKitties.png",
+        collectibleIconSource: "CryptoKitties",
         buttonText: qsTr("View in Cryptokitties"),
         getLink: function (id) {
             return `https://www.cryptokitties.co/kitty/${id}`
@@ -15,7 +15,7 @@ var collectiblesData = {
     },
     [ethermon] :{
         collectibleName: "Ethermons",
-        collectibleIconSource: "ethermons.png",
+        collectibleIconSource: "ethermons",
         buttonText: qsTr("View in Ethermon"),
         getLink: function (id) {
             // TODO find a more direct URL
@@ -24,7 +24,7 @@ var collectiblesData = {
     },
     [kudo] :{
         collectibleName: "Kudos",
-        collectibleIconSource: "kudos.png",
+        collectibleIconSource: "kudos",
         buttonText: qsTr("View in Gitcoin"),
         getLink: function (id, externalUrl) {
             return externalUrl
@@ -32,7 +32,7 @@ var collectiblesData = {
     },
     [stickers] :{
         collectibleName: qsTr("Purchased Stickers"),
-        collectibleIconSource: "SNT.png",
+        collectibleIconSource: "SNT",
         buttonText: "",
         getLink: function (id, externalUrl) {
             return ""

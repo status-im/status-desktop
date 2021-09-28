@@ -1,7 +1,8 @@
 import QtQuick 2.14
 import "../../../../../shared"
 import "../../../../../shared/status"
-import "../../../../../imports"
+
+import utils 1.0
 
 StyledText {
     id: chatTime

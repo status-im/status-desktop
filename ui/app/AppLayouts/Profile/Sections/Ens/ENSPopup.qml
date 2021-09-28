@@ -2,7 +2,8 @@ import QtQuick 2.12
 import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.3
 import QtQml.Models 2.3
-import "../../../../../imports"
+
+import utils 1.0
 import "../../../../../shared"
 
 ModalPopup {
@@ -100,14 +101,14 @@ ModalPopup {
                     name: "inactive"
                     PropertyChanges {
                         target: btnContinue
-                        source: "../../../../img/arrow-right-btn-inactive.svg"
+                        source: Style.svg("arrow-right-btn-inactive")
                     }
                 },
                 State {
                     name: "active"
                     PropertyChanges {
                         target: btnContinue
-                        source: "../../../../img/arrow-right-btn-active.svg"
+                        source: Style.svg("arrow-right-btn-active")
                     }
                 }
             ]

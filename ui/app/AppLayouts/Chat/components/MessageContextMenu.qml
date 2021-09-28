@@ -6,7 +6,8 @@ import QtQuick.Dialogs 1.0
 
 import StatusQ.Popups 0.1
 
-import "../../../../imports"
+
+import utils 1.0
 import "../../../../shared"
 import "../../../../shared/status"
 import "./"
@@ -91,7 +92,7 @@ StatusPopupMenu {
             Repeater {
                 model: reactionModel
                 delegate: EmojiReaction {
-                    source: "../../../img/" + filename
+                    source: Style.svg(filename)
                     emojiId: model.emojiId
                     reactedByUser: !!messageContextMenu.emojiReactionsReactedByUser[model.emojiId]
                     closeModal: function () {

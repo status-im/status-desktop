@@ -5,7 +5,8 @@ import QtQuick.Layouts 1.13
 import QtMultimedia 5.13
 import QtQuick.Dialogs 1.3
 import DotherSide 0.1
-import "../../imports"
+
+import utils 1.0
 import "../../shared"
 import "../../app/AppLayouts/Chat/ChatColumn/samples"
 import "../../app/AppLayouts/Chat/ChatColumn"
@@ -1067,7 +1068,7 @@ Rectangle {
 
             StatusButton {
                 id: sendBtn
-                icon.source: "../../app/img/send.svg"
+                icon.source: Style.svg("send")
                 icon.width: 16
                 icon.height: 18
                 borderRadius: 16

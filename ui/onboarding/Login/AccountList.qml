@@ -1,7 +1,8 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 import "./samples/"
-import "../../imports"
+
+import utils 1.0
 
 ListView {
     property var accounts: AccountsData {}

@@ -2,7 +2,8 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtGraphicalEffects 1.13
 import QtQml 2.14
-import "../../imports"
+
+import utils 1.0
 import "../../shared"
 import "./core"
 
@@ -127,7 +128,7 @@ RoundButton {
           Style.current.roundedButtonForegroundColor
 
     onIconChanged: {
-      icon.source = icon.name ? "../../app/img/" + icon.name + ".svg" : ""
+      icon.source = icon.name ? Style.svg(icon.name) : ""
     }
 
     background: Rectangle {

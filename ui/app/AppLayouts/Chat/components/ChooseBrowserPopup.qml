@@ -1,6 +1,7 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.3
-import "../../../../imports"
+
+import utils 1.0
 import "../../../../shared"
 import "../../../../shared/status"
 
@@ -19,7 +20,7 @@ ModalPopup {
         spacing: 20
 
         Image {
-            source: "../../../img/chooseBrowserImage.png"
+            source: Style.png("chooseBrowserImage")
             width: 240
             height: 148
             anchors.horizontalCenter: parent.horizontalCenter

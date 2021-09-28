@@ -1,6 +1,7 @@
 import QtQuick 2.13
 import "."
-import "../imports"
+
+import utils 1.0
 
 Item {
     id: root

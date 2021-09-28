@@ -1,6 +1,7 @@
 import QtQuick 2.13
 import "../../../../shared"
-import "../../../../imports"
+
+import utils 1.0
 import "../popups"
 
 Item {
@@ -32,7 +33,7 @@ Item {
             id: caretImg
             width: 10
             height: 6
-            source: "../../../../../app/img/caret.svg"
+            source: Style.svg("caret")
             anchors.right: parent.right
             anchors.rightMargin: Style.current.padding
             anchors.verticalCenter: parent.verticalCenter
