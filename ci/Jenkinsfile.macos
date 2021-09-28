@@ -1,4 +1,4 @@
-library 'status-jenkins-lib@v1.3.0'
+library 'status-jenkins-lib@v1.3.3'
 
 pipeline {
   agent {
@@ -35,7 +35,7 @@ pipeline {
     QTDIR = '/usr/local/qt/clang_64'
     PATH = "${env.QTDIR}/bin:${env.PATH}"
     /* Control output the filename */
-    STATUS_CLIENT_DMG = "pkg/${utils.pkgFilename('dmg')}"
+    STATUS_CLIENT_DMG = "pkg/${utils.pkgFilename(ext: 'dmg')}"
     /* Apple Team ID for Notarization */
     MACOS_NOTARIZE_TEAM_ID = "DTX7Z4U3YA"
   }

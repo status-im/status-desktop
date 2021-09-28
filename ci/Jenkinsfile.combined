@@ -1,4 +1,4 @@
-library 'status-jenkins-lib@v1.3.0'
+library 'status-jenkins-lib@v1.3.3'
 
 pipeline {
   agent { label 'linux' }
@@ -44,7 +44,7 @@ pipeline {
         jenkins.copyArts(linux)
         jenkins.copyArts(windows)
         jenkins.copyArts(macos)
-        sha = "pkg/${utils.pkgFilename('sha256')}"
+        sha = "pkg/${utils.pkgFilename(ext: 'sha256')}"
         dir('pkg') {
           /* generate sha256 checksums for upload */
           sh "sha256sum * | tee ../${sha}"

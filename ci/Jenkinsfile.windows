@@ -1,4 +1,4 @@
-library 'status-jenkins-lib@v1.3.0'
+library 'status-jenkins-lib@v1.3.3'
 
 pipeline {
   agent { label 'windows' }
@@ -30,9 +30,9 @@ pipeline {
     /* Disable colors in Nim compiler logs */
     NIMFLAGS = '--colors:off'
     /* Control output the filename */
-    STATUS_CLIENT_EXE = "pkg/${utils.pkgFilename('exe')}"
+    STATUS_CLIENT_EXE = "pkg/${utils.pkgFilename(ext: 'exe')}"
     /* 7zip archive filename */
-    STATUS_CLIENT_7Z = "pkg/${utils.pkgFilename('7z')}"
+    STATUS_CLIENT_7Z = "pkg/${utils.pkgFilename(ext: '7z')}"
     /* RFC 3161 timestamping URL for DigiCert */
     WINDOWS_CODESIGN_TIMESTAMP_URL = 'http://timestamp.digicert.com'
   }
