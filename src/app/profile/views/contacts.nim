@@ -196,8 +196,8 @@ QtObject:
       )
     self.contactToAddChanged()
 
-  proc addContact*(self: ContactsView, publicKey: string): string {.slot.} =
-    result = self.status.contacts.addContact(publicKey, self.accountKeyUID)
+  proc addContact*(self: ContactsView, publicKey: string) {.slot.} =
+    self.status.contacts.addContact(publicKey, self.accountKeyUID)
     self.status.chat.join(status_utils.getTimelineChatId(publicKey), ChatType.Profile, "", publicKey)
 
   proc rejectContactRequest*(self: ContactsView, publicKey: string) {.slot.} =
@@ -211,24 +211,24 @@ QtObject:
   proc acceptContactRequests*(self: ContactsView, publicKeysJSON: string) {.slot.} =
     let publicKeys = publicKeysJSON.parseJson
     for pubkey in publicKeys:
-      discard self.addContact(pubkey.getStr)
+      self.addContact(pubkey.getStr)
 
   proc changeContactNickname*(self: ContactsView, publicKey: string, nickname: string) {.slot.} =
     var nicknameToSet = nickname
     if (nicknameToSet == ""):
       nicknameToSet = DELETE_CONTACT
-    discard self.status.contacts.setNickName(publicKey, nicknameToSet, self.accountKeyUID)
+    self.status.contacts.setNickName(publicKey, nicknameToSet, self.accountKeyUID)
 
   proc unblockContact*(self: ContactsView, publicKey: string) {.slot.} =
     self.contactListChanged()
-    discard self.status.contacts.unblockContact(publicKey)
+    self.status.contacts.unblockContact(publicKey)
 
   proc contactBlocked*(self: ContactsView, publicKey: string) {.signal.}
 
-  proc blockContact*(self: ContactsView, publicKey: string): string {.slot.} =
+  proc blockContact*(self: ContactsView, publicKey: string) {.slot.} =
     self.contactListChanged()
     self.contactBlocked(publicKey)
-    return self.status.contacts.blockContact(publicKey)
+    self.status.contacts.blockContact(publicKey)
 
   proc removeContact*(self: ContactsView, publicKey: string) {.slot.} =
     self.status.contacts.removeContact(publicKey)
