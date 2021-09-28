@@ -32,5 +32,5 @@ QtObject:
 
   proc testConnection*(self: KeycardView) {.slot.} =
     info "Connecting Keycard ", msg = self.status.keycard.start()
-    info "Selecting applet ", msg = self.status.keycard.select()
+    info "Selecting Keycard", msg = self.status.keycard.select().instanceUID
     info "Disconnecting Keycard ", msg = self.status.keycard.stop()
