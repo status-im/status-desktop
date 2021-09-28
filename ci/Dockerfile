@@ -20,7 +20,8 @@ RUN export DEBIAN_FRONTEND=noninteractive \
       libpcre3-dev libnss3 libxcomposite1 libxtst6 \
       gstreamer1.0-plugins-good gstreamer1.0-plugins-bad \
       gstreamer1.0-plugins-ugly gstreamer1.0-libav \
-      gstreamer1.0-tools gstreamer1.0-alsa gstreamer1.0-pulseaudio
+      gstreamer1.0-tools gstreamer1.0-alsa gstreamer1.0-pulseaudio \
+      libpcsclite-dev
 
 # Installing Golang
 RUN GOLANG_SHA256="aed845e4185a0b2a3c3d5e1d0a35491702c55889192bb9c30e67a3de6849c067" \
