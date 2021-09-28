@@ -22,15 +22,7 @@ QtObject:
     result.setup
 
   proc init*(self: BrowserView) =
-    var bookmarks: seq[Bookmark] = @[]
-    try:
-      let responseResult = self.status.browser.getBookmarks().parseJson["result"]
-      if responseResult.kind != JNull:
-        for bookmark in responseResult:
-          bookmarks.add(Bookmark(url: bookmark["url"].getStr, name: bookmark["name"].getStr, imageUrl: bookmark["imageUrl"].getStr))
-    except:
-      # Bad JSON. Just use the empty array
-      discard
+    let bookmarks = self.status.browser.getBookmarks()
     self.bookmarks.setNewData(bookmarks)
 
   proc bookmarksChanged*(self: BrowserView) {.signal.}
@@ -43,7 +35,7 @@ QtObject:
     notify = bookmarksChanged
 
   proc addBookmark*(self: BrowserView, url: string, name: string) {.slot.} =
-    let bookmark = self.status.browser.storeBookmark(url, name)
+    let bookmark = self.status.browser.storeBookmark(Bookmark(url: url, name: name))
     self.bookmarks.addBookmarkItemToList(bookmark)
     self.bookmarksChanged()
 
@@ -55,12 +47,12 @@ QtObject:
     self.status.browser.deleteBookmark(url)
     self.bookmarksChanged()
 
-  proc modifyBookmark*(self: BrowserView, ogUrl: string, newUrl: string, newName: string) {.slot.} =
-    let index = self.bookmarks.getBookmarkIndexByUrl(ogUrl)
+  proc modifyBookmark*(self: BrowserView, originalUrl: string, newUrl: string, newName: string) {.slot.} =
+    let index = self.bookmarks.getBookmarkIndexByUrl(originalUrl)
     if index == -1:
-      # Somehow we don't know this URL. Let's just add it as a new one
       self.addBookmark(newUrl, newName)
       return
+
     self.bookmarks.modifyBookmarkItemFromList(index, newUrl, newName)
-    self.status.browser.updateBookmark(ogUrl, newUrl, newName)
+    self.status.browser.updateBookmark(originalUrl, Bookmark(url: newUrl, name: newName))
     self.bookmarksChanged()
