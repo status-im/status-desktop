@@ -8,7 +8,6 @@ logScope:
 QtObject:
   type KeycardView* = ref object of QObject
     status*: Status
-    keycard: KeycardModel
 
   proc setup(self: KeycardView) =
     self.QObject.setup
@@ -16,10 +15,9 @@ QtObject:
   proc delete*(self: KeycardView) =
     self.QObject.delete
 
-  proc newKeycardView*(status: Status, keycard: KeycardModel): KeycardView =
+  proc newKeycardView*(status: Status): KeycardView =
     new(result, delete)
     result.status = status
-    result.keycard = keycard
     result.setup
 
   proc cardConnected*(self: KeycardView) {.signal.}
@@ -33,6 +31,6 @@ QtObject:
     self.cardConnected()
 
   proc testConnection*(self: KeycardView) {.slot.} =
-    info "Connecting Keycard ", msg = self.keycard.start()
-    info "Selecting applet ", msg = self.keycard.select()
-    info "Disconnecting Keycard ", msg = self.keycard.stop()
+    info "Connecting Keycard ", msg = self.status.keycard.start()
+    info "Selecting applet ", msg = self.status.keycard.select()
+    info "Disconnecting Keycard ", msg = self.status.keycard.stop()
