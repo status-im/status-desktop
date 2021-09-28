@@ -219,7 +219,7 @@ $(STATUSGO): | deps
 	  $(MAKE) statusgo-shared-library $(HANDLE_OUTPUT)
 
 
-KEYCARDGO := vendor/status-lib/vendor/nim-keycard-go/go/keycard/build/libkeycard/libkeycard.$(LIBKEYCARD_EXT)
+KEYCARDGO := vendor/status-lib/vendor/nim-keycard-go/go/keycard/build/libkeycard/libkeycard.$(LIBSTATUS_EXT)
 KEYCARDGO_LIBDIR := $(shell pwd)/$(shell dirname "$(KEYCARDGO)")
 export KEYCARDGO_LIBDIR
 
