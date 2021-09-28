@@ -3,6 +3,7 @@ import # vendor libs
 
 import gif_list
 import status/gif
+import status/types/gif_item
 
 
 QtObject:
