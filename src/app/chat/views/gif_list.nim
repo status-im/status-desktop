@@ -1,6 +1,7 @@
 import NimQml, Tables, sequtils
 
 import status/gif
+import status/types/gif_item
 
 type
   GifRoles {.pure.} = enum
