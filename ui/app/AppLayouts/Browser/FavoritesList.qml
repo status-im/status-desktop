@@ -35,6 +35,6 @@ GridView {
         if (index !== -1) {
             browserModel.removeBookmark("")
         }
-            browserModel.addBookmark("", qsTr("Add Favorite"))
+        browserModel.addBookmark("", qsTr("Add Favorite"))
     }
 }
