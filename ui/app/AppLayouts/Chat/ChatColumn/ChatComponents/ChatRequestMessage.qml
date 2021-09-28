@@ -1,5 +1,6 @@
 import QtQuick 2.13
-import "../../../../../imports"
+
+import utils 1.0
 import "../../../../../shared"
 import "../../../../../shared/status"
 
@@ -10,7 +11,7 @@ Item {
 
     Image {
         id: waveImg
-        source: "../../../../img/wave.png"
+        source: Style.png("wave")
         width: 80
         height: 80
         anchors.horizontalCenter: parent.horizontalCenter

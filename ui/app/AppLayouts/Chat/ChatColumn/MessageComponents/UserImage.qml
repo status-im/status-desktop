@@ -1,6 +1,7 @@
 import QtQuick 2.3
 import "../../../../../shared"
-import "../../../../../imports"
+
+import utils 1.0
 
 Loader {
     property int imageHeight: 36

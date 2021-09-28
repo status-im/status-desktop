@@ -1,7 +1,8 @@
 import QtQuick 2.14
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.14
-import "../../../../../imports"
+
+import utils 1.0
 import "../../../../../shared"
 import "../../../../../shared/status"
 
@@ -97,7 +98,7 @@ Item {
                 id: imgIcon
                 visible: ensStatus === Constants.ens_taken
                 fillMode: Image.PreserveAspectFit
-                source: "../../../../img/block-icon-white.svg"
+                source: Style.svg("block-icon-white")
                 width: 20
                 height: 20
                 anchors.horizontalCenter: parent.horizontalCenter

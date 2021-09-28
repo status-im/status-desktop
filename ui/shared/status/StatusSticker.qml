@@ -1,6 +1,7 @@
 import QtQuick 2.3
 import "../../shared" as Shared
-import "../../imports"
+
+import utils 1.0
 
 Loader {
     property color color

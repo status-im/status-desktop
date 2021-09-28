@@ -2,7 +2,8 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import QtMultimedia 5.13
-import "../imports"
+
+import utils 1.0
 import "../sounds"
 import "../shared"
 import "../shared/status"

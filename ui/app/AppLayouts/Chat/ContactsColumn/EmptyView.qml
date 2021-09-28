@@ -6,7 +6,8 @@ import "../components"
 import "../data/channelList.js" as ChannelJSON
 import "../../../../shared"
 import "../../../../shared/status"
-import "../../../../imports"
+
+import utils 1.0
 
 Rectangle {
     id: emptyView
@@ -37,7 +38,7 @@ Rectangle {
             anchors.top: parent.top
             anchors.topMargin: -6
             anchors.horizontalCenter: parent.horizontalCenter
-            source: "../../../img/chatEmptyHeader.svg"
+            source: Style.svg("chatEmptyHeader")
             width: 66
             height: 50
         }

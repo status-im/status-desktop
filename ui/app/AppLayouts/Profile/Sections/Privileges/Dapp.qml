@@ -2,7 +2,8 @@ import QtQuick 2.3
 import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.3
 import Qt.labs.platform 1.1
-import "../../../../../imports"
+
+import utils 1.0
 import "../../../../../shared"
 
 Item {
@@ -22,7 +23,7 @@ Item {
         anchors.topMargin: 4
         anchors.left: parent.left
         fillMode: Image.PreserveAspectFit
-        source: "../../../../img/generalDappIcon.svg"
+        source: Style.svg("generalDappIcon")
     }
 
     StyledText {
@@ -47,7 +48,7 @@ Item {
         anchors.right: parent.right
         anchors.rightMargin: Style.current.padding
         fillMode: Image.PreserveAspectFit
-        source: "../../../../img/list-next.svg"
+        source: Style.svg("list-next")
     }
 
     MouseArea {

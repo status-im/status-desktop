@@ -1,7 +1,8 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
-import "../../../../imports"
+
+import utils 1.0
 import "../../../../shared"
 import "../../../../shared/status"
 
@@ -60,7 +61,7 @@ Row {
             id: contactContextMenu
             hasArrow: false
             Action {
-                icon.source: "../../../img/profileActive.svg"
+                icon.source: Style.svg("profileActive")
                 icon.width: menuButton.iconSize
                 icon.height: menuButton.iconSize
                 //% "View Profile"
@@ -70,7 +71,7 @@ Row {
             }
             Separator {}
             Action {
-                icon.source: "../../../img/block-icon.svg"
+                icon.source: Style.svg("block-icon")
                 icon.width: menuButton.iconSize
                 icon.height: menuButton.iconSize
                 icon.color: Style.current.danger

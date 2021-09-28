@@ -1,10 +1,11 @@
 import QtQuick 2.13
-import "../../../../imports"
+
+import utils 1.0
 import "../../../../shared"
 
 SVGImage {
     id: loadingImg
-    source: "../../../../app/img/loading.svg"
+    source: Style.svg("loading")
     width: 25
     height: 25
     fillMode: Image.Stretch

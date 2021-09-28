@@ -1,6 +1,7 @@
 import QtQuick 2.14
 import "../../../../../shared"
-import "../../../../../imports"
+
+import utils 1.0
 
 Column {
     property string authorCurrentMsg: "authorCurrentMsg"

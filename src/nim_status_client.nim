@@ -104,6 +104,7 @@ proc mainProc() =
   let engine = newQQmlApplicationEngine()
   defer: engine.delete()
   engine.addImportPath("qrc:/./StatusQ/src")
+  engine.addImportPath("qrc:/./imports")
   engine.setNetworkAccessManagerFactory(networkAccessFactory)
   engine.setRootContextProperty("uiScaleFilePath", newQVariant(uiScaleFilePath))
   

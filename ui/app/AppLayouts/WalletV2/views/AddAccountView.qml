@@ -3,7 +3,8 @@ import QtQuick.Controls 2.13
 import StatusQ.Controls 0.1
 import "../../../../shared"
 import "../../../../shared/status"
-import "../../../../imports"
+
+import utils 1.0
 
 import "../popups"
 
@@ -33,20 +34,20 @@ StatusFlatButton {
         Action {
             icon.width: 19
             icon.height: 19
-            icon.source: "../../../img/generate_account.svg"
+            icon.source: Style.svg("generate_account")
             text: qsTrId("generate-a-new-account")
             onTriggered: { console.log("TODO"); }
         }
         Action {
             icon.width: 19
             icon.height: 19
-            icon.source: "../../../img/eye.svg"
+            icon.source: Style.svg("eye")
             text: qsTrId("add-a-watch-account")
             onTriggered: { console.log("TODO"); }
         }
         Action {
             text: qsTr("Add with key or seed phrase")
-            icon.source: "../../../img/enter_private_key.svg"
+            icon.source: Style.svg("enter_private_key")
             icon.width: 19
             icon.height: 19
             onTriggered: {

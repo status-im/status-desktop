@@ -1,6 +1,7 @@
 import QtQuick 2.13
 import QtGraphicalEffects 1.13
-import "../../../imports"
+
+import utils 1.0
 import "../../../shared"
 import "./components/collectiblesComponents"
 import "./components/collectiblesComponents/collectiblesData.js" as CollectiblesData
@@ -51,7 +52,7 @@ Item {
                 property var collectibleData: CollectiblesData.collectiblesData[model.collectibleType]
 
                 collectibleName: collectibleData.collectibleName
-                collectibleIconSource: "../../img/collectibles/" + collectibleData.collectibleIconSource
+                collectibleIconSource: Style.png("collectibles/" + collectibleData.collectibleIconSource)
                 collectiblesModal: collectiblesModalComponent
                 buttonText: collectibleData.buttonText
                 getLink: collectibleData.getLink

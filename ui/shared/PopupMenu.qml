@@ -1,7 +1,8 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtGraphicalEffects 1.13
-import "../imports"
+
+import utils 1.0
 import "../shared"
 
 Menu {
@@ -59,7 +60,7 @@ Menu {
         height: visible ? popupMenuItem.implicitHeight : 0
 
         arrow: SVGImage {
-            source: "../app/img/caret.svg"
+            source: Style.svg("caret")
             rotation: -90
             anchors.verticalCenter: parent.verticalCenter
             anchors.right: parent.right

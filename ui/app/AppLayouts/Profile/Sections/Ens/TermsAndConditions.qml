@@ -1,7 +1,8 @@
 import QtQuick 2.14
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.14
-import "../../../../../imports"
+
+import utils 1.0
 import "../../../../../shared"
 import "../../../../../shared/status"
 
@@ -310,7 +311,7 @@ Item {
             id: image1
             height: 50
             width: height
-            source: "../../../../../shared/img/status-logo.svg"
+            source: Style.svg("status-logo")
             sourceSize: Qt.size(width, height)
         }
         

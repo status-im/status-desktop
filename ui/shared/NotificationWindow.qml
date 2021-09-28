@@ -4,7 +4,8 @@ import QtQuick.Window 2.12
 import QtQml 2.13
 import QtGraphicalEffects 1.13
 
-import "../imports"
+
+import utils 1.0
 import "./status"
 import "../app/AppLayouts/Chat/ContactsColumn"
 

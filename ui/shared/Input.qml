@@ -3,7 +3,8 @@ import QtQuick.Controls 2.13
 
 import StatusQ.Popups 0.1
 
-import "../imports"
+
+import utils 1.0
 import "../shared/status"
 import "."
 

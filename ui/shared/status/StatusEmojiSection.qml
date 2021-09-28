@@ -1,6 +1,7 @@
 import QtQuick 2.13
 import QtQuick.Layouts 1.3
-import "../../imports"
+
+import utils 1.0
 import "../../shared"
 
 
@@ -90,6 +91,7 @@ Item {
                 SVGImage {
                     width: emojiSection.imageWidth
                     height: emojiSection.imageWidth
+                    //TODO EMOJI SVG?
                     source: "../../imports/twemoji/svg/" + modelData.filename + "?22x22"
 
                     MouseArea {

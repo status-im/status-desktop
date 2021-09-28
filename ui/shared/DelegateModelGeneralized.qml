@@ -1,6 +1,7 @@
 import QtQuick 2.13
 import QtQml.Models 2.3
-import "../imports"
+
+import utils 1.0
 
 DelegateModel {
     id: delegateModel

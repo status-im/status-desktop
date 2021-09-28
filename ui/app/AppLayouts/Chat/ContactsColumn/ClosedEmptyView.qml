@@ -4,7 +4,8 @@ import QtQuick.Layouts 1.13
 import QtGraphicalEffects 1.13
 import "../components"
 import "../../../../shared"
-import "../../../../imports"
+
+import utils 1.0
 
 Item {
     id: closedEmptyView

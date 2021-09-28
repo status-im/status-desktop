@@ -2,7 +2,8 @@ import QtQuick 2.13
 import QtGraphicalEffects 1.13
 import "../../../../shared"
 import "../../../../shared/status"
-import "../../../../imports"
+
+import utils 1.0
 import "."
 
 Rectangle {
@@ -29,7 +30,7 @@ Rectangle {
         anchors.top: parent.top
         anchors.topMargin: -6
         anchors.horizontalCenter: parent.horizontalCenter
-        source: "../../../img/key.svg"
+        source: Style.svg("key")
         width: 40
         height: 40
         ColorOverlay {

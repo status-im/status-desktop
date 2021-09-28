@@ -5,7 +5,8 @@ import QtWebEngine 1.9
 import QtQuick.Layouts 1.0
 import "../../../shared"
 import "../../../shared/status"
-import "../../../imports"
+
+import utils 1.0
 
 Rectangle {
     id: downloadView

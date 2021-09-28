@@ -1,7 +1,8 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
-import "../../../imports"
+
+import utils 1.0
 import "../../../shared"
 import "../../../shared/status"
 import "./components"
@@ -118,7 +119,7 @@ Item {
 
         HeaderButton {
             id: sendBtn
-            imageSource: "../../img/send.svg"
+            imageSource: Style.svg("send")
             //% "Send"
             text: qsTrId("command-button-send")
             onClicked: function() {
@@ -128,7 +129,7 @@ Item {
 
         HeaderButton {
             id: receiveBtn
-            imageSource: "../../img/send.svg"
+            imageSource: Style.svg("send")
             flipImage: true
             //% "Receive"
             text: qsTrId("receive")
@@ -141,7 +142,7 @@ Item {
 
         HeaderButton {
             id: settingsBtn
-            imageSource: "../../img/settings.svg"
+            imageSource: Style.svg("settings")
             flipImage: true
             text: ""
             onClicked: function () {
@@ -162,7 +163,7 @@ Item {
                 Action {
                     //% "Account Settings"
                     text: qsTrId("account-settings")
-                    icon.source: "../../img/manage-wallet.svg"
+                    icon.source: Style.svg("manage-wallet")
                     icon.width: 16
                     icon.height: 16
                     onTriggered: openPopup(accountSettingsModalComponent)
@@ -170,7 +171,7 @@ Item {
                 Action {
                     //% "Manage Assets"
                     text: qsTrId("manage-assets")
-                    icon.source: "../../img/add_remove_token.svg"
+                    icon.source: Style.svg("add_remove_token")
                     icon.width: 16
                     icon.height: 16
                     onTriggered: {
@@ -181,7 +182,7 @@ Item {
                 Action {
                     //% "Set Currency"
                     text: qsTrId("set-currency")
-                    icon.source: "../../img/currency.svg"
+                    icon.source: Style.svg("currency")
                     icon.width: 16
                     icon.height: 16
                     onTriggered: {

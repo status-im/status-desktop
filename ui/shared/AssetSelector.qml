@@ -2,7 +2,8 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import QtGraphicalEffects 1.13
-import "../imports"
+
+import utils 1.0
 
 Item {
     id: root
@@ -18,7 +19,7 @@ Item {
 
     onSelectedAssetChanged: {
         if (selectedAsset && selectedAsset.symbol) {
-            iconImg.source = "../app/img/tokens/" + selectedAsset.symbol.toUpperCase() + ".png"
+            iconImg.source = Style.png("tokens/" + selectedAsset.symbol.toUpperCase())
             selectedTextField.text = selectedAsset.symbol.toUpperCase()
         }
     }
@@ -92,7 +93,7 @@ Item {
                 sourceSize.height: height
                 sourceSize.width: width
                 fillMode: Image.PreserveAspectFit
-                source: "../app/img/tokens/" + symbol.toUpperCase() + ".png"
+                source: Style.png("tokens/" + symbol.toUpperCase())
             }
             Column {
                 anchors.left: iconImg.right

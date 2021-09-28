@@ -3,7 +3,8 @@ import QtQuick.Controls 2.1
 import QtQuick.Layouts 1.3
 import "./components"
 import "./data"
-import "../../../imports"
+
+import utils 1.0
 import "../../../shared"
 import "../../../shared/status/core"
 import "../../../shared/status"
@@ -130,13 +131,13 @@ Item {
                     id: assetIcon
                     width: 40
                     height: 40
-                    source: "../../img/tokens/"
+                    source: Style.png("tokens/"
                             + (transactionListItem.symbol
-                               != "" ? transactionListItem.symbol : "ETH") + ".png"
+                               != "" ? transactionListItem.symbol : "ETH"))
                     anchors.verticalCenter: parent.verticalCenter
                     onStatusChanged: {
                         if (assetIcon.status == Image.Error) {
-                            assetIcon.source = "../../img/tokens/DEFAULT-TOKEN@3x.png"
+                            assetIcon.source = Style.png("tokens/DEFAULT-TOKEN@3x")
                         }
                     }
 

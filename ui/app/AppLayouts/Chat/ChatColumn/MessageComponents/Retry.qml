@@ -1,7 +1,8 @@
 
 import QtQuick 2.3
 import "../../../../../shared"
-import "../../../../../imports"
+
+import utils 1.0
 
 StyledText {
     id: retryLbl

@@ -2,7 +2,8 @@ import QtQuick 2.13
 import "../../../../shared"
 import "../../../../shared/status"
 import "../../../../shared/status/core"
-import "../../../../imports"
+
+import utils 1.0
 import "./MessageComponents"
 import "../components"
 

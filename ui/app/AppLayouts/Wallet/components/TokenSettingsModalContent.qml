@@ -2,7 +2,8 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 
-import "../../../../imports"
+
+import utils 1.0
 import "../../../../shared"
 import "../../../../shared/status"
 import "../../Chat/ContactsColumn"
@@ -36,7 +37,7 @@ Item {
                 id: assetInfoImage
                 width: 36
                 height: tokenContainer.isVisible !== "" ? 36 : 0
-                source: hasIcon ? "../../../img/tokens/" + symbol + ".png" : "../../../img/tokens/DEFAULT-TOKEN@3x.png"
+                source: Style.png("tokens/" + (hasIcon ? symbol : "DEFAULT-TOKEN@3x"))
                 anchors.left: parent.left
                 anchors.leftMargin: Style.current.smallPadding
                 anchors.verticalCenter: parent.verticalCenter
@@ -90,13 +91,13 @@ Item {
                 PopupMenu {
                     id: contextMenu
                     Action {
-                        icon.source: "../../../img/make-admin.svg"
+                        icon.source: Style.svg("make-admin")
                         //% "Token details"
                         text: qsTrId("token-details")
                         onTriggered: addCustomTokenModal.openWithData(address, name, symbol, decimals)
                     }
                     Action {
-                        icon.source: "../../../img/remove-from-group.svg"
+                        icon.source: Style.svg("remove-from-group")
                         icon.color: Style.current.red
                         enabled: isCustom
                         //% "Remove token"

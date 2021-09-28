@@ -1,10 +1,11 @@
 import QtQuick 2.13
 import QtGraphicalEffects 1.13
-import "../../../../../imports"
+
+import utils 1.0
 import "../../../../../shared"
 
 Item {
-    property url collectibleIconSource: "../../../../img/collectibles/CryptoKitties.png"
+    property url collectibleIconSource: "CryptoKitties"
     property string collectibleName: "CryptoKitties"
     property bool collectiblesOpened: false
     property var collectiblesModal

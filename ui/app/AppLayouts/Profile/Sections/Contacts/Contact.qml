@@ -1,7 +1,8 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
-import "../../../../../imports"
+
+import utils 1.0
 import "../../../../../shared"
 import "../../../../../shared/status"
 
@@ -95,7 +96,7 @@ Rectangle {
                 id: contactContextMenu
                 hasArrow: false
                 Action {
-                    icon.source: "../../../../img/profileActive.svg"
+                    icon.source: Style.svg("profileActive")
                     icon.width: menuButton.iconSize
                     icon.height: menuButton.iconSize
                     //% "View Profile"
@@ -104,7 +105,7 @@ Rectangle {
                     enabled: true
                 }
                 Action {
-                    icon.source: "../../../../img/message.svg"
+                    icon.source: Style.svg("message")
                     icon.width: menuButton.iconSize
                     icon.height: menuButton.iconSize
                     //% "Send message"
@@ -116,7 +117,7 @@ Rectangle {
                     enabled: !container.isBlocked
                 }
                 Action {
-                    icon.source: "../../../../img/block-icon.svg"
+                    icon.source: Style.svg("block-icon")
                     icon.width: menuButton.iconSize
                     icon.height: menuButton.iconSize
                     //% "Block User"
@@ -127,7 +128,7 @@ Rectangle {
                     }
                 }
                 Action {
-                    icon.source: "../../../../img/remove-contact.svg"
+                    icon.source: Style.svg("remove-contact")
                     icon.width: menuButton.iconSize
                     icon.height: menuButton.iconSize
                     icon.color: Style.current.red
@@ -138,7 +139,7 @@ Rectangle {
                     }
                 }
                 Action {
-                    icon.source: "../../../../img/block-icon.svg"
+                    icon.source: Style.svg("block-icon")
                     icon.width: menuButton.iconSize
                     icon.height: menuButton.iconSize
                     icon.color: Style.current.red

@@ -1,7 +1,8 @@
 import QtQuick 2.13
 import QtQuick.Layouts 1.13
 import QtGraphicalEffects 1.13
-import "../../../../imports"
+
+import utils 1.0
 import "../../../../shared"
 import "../../../../shared/status"
 
@@ -51,7 +52,7 @@ Item {
             }
 
             RoundedIcon {
-                source: "../../../img/pencil.svg"
+                source: Style.svg("pencil")
                 anchors.bottom: parent.bottom
                 anchors.bottomMargin: -3
                 anchors.right: parent.right

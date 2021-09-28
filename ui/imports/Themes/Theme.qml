@@ -1,5 +1,5 @@
 import QtQuick 2.13
-import "../"
+import utils 1.0
 
 QtObject {
     property QtObject fontMedium: FontLoader { id: _fontMedium; source: "../../fonts/Inter/Inter-Medium.otf"; }

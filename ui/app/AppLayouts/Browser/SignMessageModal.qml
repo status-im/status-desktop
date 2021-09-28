@@ -3,7 +3,8 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import QtQuick.Dialogs 1.3
 import QtGraphicalEffects 1.13
-import "../../../imports"
+
+import utils 1.0
 import "../../../shared"
 import "../../../shared/status"
 
@@ -113,7 +114,7 @@ ModalPopup {
                         width: undefined
                         anchors.verticalCenter: parent.verticalCenter
                         fillMode: Image.PreserveAspectFit
-                        source: "../../img/walletIcon.svg"
+                        source: Style.svg("walletIcon")
                         ColorOverlay {
                             visible: parent.visible
                             anchors.fill: parent
@@ -174,7 +175,7 @@ ModalPopup {
                         width: 13
                         anchors.verticalCenter: parent.verticalCenter
                         fillMode: Image.PreserveAspectFit
-                        source: "../../img/caret.svg"
+                        source: Style.svg("caret")
                         rotation: 270
                         ColorOverlay {
                             anchors.fill: parent

@@ -1,13 +1,14 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
-import "../../imports"
+
+import utils 1.0
 import "../../shared"
 
 Item {
     id: root
     property bool selected: false
     property bool useIconInsteadOfImage: false
-    property url source: "../../app/img/history_icon.svg"
+    property url source: Style.svg("history_icon")
     signal clicked
     height: 24
     width: 24

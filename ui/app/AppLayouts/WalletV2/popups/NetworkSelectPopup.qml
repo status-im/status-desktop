@@ -4,7 +4,8 @@ import QtQuick.Layouts 1.3
 import QtGraphicalEffects 1.0
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
-import "../../../../imports"
+
+import utils 1.0
 import "../../../../shared"
 
 Popup {

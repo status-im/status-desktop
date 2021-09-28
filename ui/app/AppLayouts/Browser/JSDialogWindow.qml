@@ -4,7 +4,8 @@ import QtQuick.Layouts 1.13
 import QtWebEngine 1.10
 import "../../../shared"
 import "../../../shared/status"
-import "../../../imports"
+
+import utils 1.0
 
 ModalPopup {
     id: root

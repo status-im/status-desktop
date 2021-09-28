@@ -1,7 +1,8 @@
 import QtQuick 2.14
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.14
-import "../../../../../imports"
+
+import utils 1.0
 import "../../../../../shared"
 import "../../../../../shared/status"
 
@@ -30,7 +31,7 @@ Item {
                 anchors.top: parent.top
                 anchors.horizontalCenter: parent.horizontalCenter
                 fillMode: Image.PreserveAspectFit
-                source: `../../../../img/ens-header-${Style.current.name}@2x.png`
+                source: Style.png("ens-header-" + Style.current.name + "@2x")
             }
 
             StyledText {

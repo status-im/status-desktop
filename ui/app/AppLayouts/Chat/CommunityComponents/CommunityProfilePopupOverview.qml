@@ -7,7 +7,8 @@ import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 import StatusQ.Popups 0.1
 
-import "../../../../imports"
+
+import utils 1.0
 
 Column {
     id: root
@@ -156,7 +157,7 @@ Column {
 /* //                    anchors.verticalCenter: parent.verticalCenter */
 /* //                    anchors.right: parent.right */
 /* //                    anchors.rightMargin: Style.current.padding */
-/* //                    source: "../../../img/caret.svg" */
+/* //                    source: Style.svg("caret") */
 /* //                    width: 13 */
 /* //                    height: 7 */
 /* //                    rotation: -90 */

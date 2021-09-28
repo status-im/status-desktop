@@ -5,7 +5,8 @@ import QtQuick.Layouts 1.13
 import StatusQ.Components 0.1
 
 import "../../../../shared"
-import "../../../../imports"
+
+import utils 1.0
 import "./constants.js" as ProfileConstants
 
 ScrollView {

@@ -1,6 +1,7 @@
 import QtQuick 2.14
 import QtQuick.Controls 2.14
-import "../../../../imports"
+
+import utils 1.0
 import "../../../../shared"
 
 import StatusQ.Popups 0.1

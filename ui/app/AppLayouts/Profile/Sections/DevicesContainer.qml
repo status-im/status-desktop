@@ -2,7 +2,8 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import QtGraphicalEffects 1.13
-import "../../../../imports"
+
+import utils 1.0
 import "../../../../shared"
 import "../../../../shared/status"
 
@@ -78,7 +79,7 @@ Item {
                 width: 32
                 anchors.left: parent.left
                 fillMode: Image.PreserveAspectFit
-                source: "/app/img/messageActive.svg"
+                source: Style.svg("messageActive")
                 ColorOverlay {
                     anchors.fill: parent
                     source: parent
@@ -165,7 +166,7 @@ Item {
                 height: childrenRect.height
                 SVGImage {
                     id: enabledIcon
-                    source: "/app/img/" + (devicePairedSwitch.checked ? "messageActive.svg" : "message.svg")
+                    source: Style.svg(devicePairedSwitch.checked ? "messageActive" : "message")
                     height: 24
                     width: 24
                     ColorOverlay {

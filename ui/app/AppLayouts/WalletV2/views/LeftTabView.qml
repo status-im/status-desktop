@@ -5,7 +5,8 @@ import QtGraphicalEffects 1.13
 import StatusQ.Components 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
-import "../../../../imports"
+
+import utils 1.0
 import "../../../../shared"
 
 Rectangle {
@@ -85,7 +86,7 @@ Rectangle {
                 anchors.topMargin: Style.current.smallPadding
                 anchors.left: parent.left
                 anchors.leftMargin: Style.current.padding
-                source: "../../../img/walletIcon.svg"
+                source: Style.svg("walletIcon")
             }
             ColorOverlay {
                 anchors.fill: walletIcon

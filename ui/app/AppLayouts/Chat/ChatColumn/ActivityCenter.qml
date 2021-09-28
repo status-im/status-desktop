@@ -4,7 +4,8 @@ import QtQml.Models 2.13
 import QtGraphicalEffects 1.13
 import "../../../../shared"
 import "../../../../shared/status"
-import "../../../../imports"
+
+import utils 1.0
 import "./ChatComponents"
 import "../components"
 import "./MessageComponents"

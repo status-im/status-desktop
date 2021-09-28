@@ -3,7 +3,8 @@ import QtQuick.Shapes 1.13
 import QtGraphicalEffects 1.13
 import "../../../../../shared"
 import "../../../../../shared/status"
-import "../../../../../imports"
+
+import utils 1.0
 
 Loader {
     property int textFieldWidth: item ? item.textField.width : 0

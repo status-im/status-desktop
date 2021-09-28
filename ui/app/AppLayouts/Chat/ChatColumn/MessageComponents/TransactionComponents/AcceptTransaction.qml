@@ -1,7 +1,8 @@
 import QtQuick 2.3
 import "../../ChatComponents"
 import "../../../../../../shared"
-import "../../../../../../imports"
+
+import utils 1.0
 
 Item {
     property int state: Constants.addressRequested

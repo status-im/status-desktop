@@ -1,6 +1,7 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
-import "../../../../../imports"
+
+import utils 1.0
 import "../../../../../shared"
 import "../../../../../shared/status"
 import ".."
@@ -99,7 +100,7 @@ Item {
                y: moreActionsBtn.height + 4
 
                Action {
-                   icon.source: hideReadNotifications ? "../../../../img/eye.svg" : "../../../../img/eye-barred.svg"
+                   icon.source: hideReadNotifications ? Style.svg("eye") : Style.svg("eye-barred")
                    icon.width: 16
                    icon.height: 16
                    text: hideReadNotifications ?
@@ -110,7 +111,7 @@ Item {
                    onTriggered: hideReadNotifications = !hideReadNotifications
                }
                Action {
-                   icon.source: "../../../../img/bell.svg"
+                   icon.source: Style.svg("bell")
                    icon.width: 16
                    icon.height: 16
                    //% "Notification settings"

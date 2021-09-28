@@ -1,7 +1,8 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
-import "../../../imports"
+
+import utils 1.0
 import "../../../shared"
 import "../../../shared/status"
 import "."
@@ -62,7 +63,7 @@ ModalPopup {
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.bottom: parent.bottom
                 fillMode: Image.PreserveAspectFit
-                source: "../../img/exclamation_outline.svg"
+                source: Style.svg("exclamation_outline")
             }
         }
 

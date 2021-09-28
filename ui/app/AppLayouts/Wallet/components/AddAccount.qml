@@ -2,7 +2,8 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import "../../../../shared"
 import "../../../../shared/status"
-import "../../../../imports"
+
+import utils 1.0
 
 StatusRoundButton {
     id: btnAdd
@@ -49,7 +50,7 @@ StatusRoundButton {
         Action {
             //% "Generate an account"
             text: qsTrId("generate-a-new-account")
-            icon.source: "../../../img/generate_account.svg"
+            icon.source: Style.svg("generate_account")
             icon.width: 19
             icon.height: 19
             onTriggered: {
@@ -59,7 +60,7 @@ StatusRoundButton {
         Action {
             //% "Add a watch-only address"
             text: qsTrId("add-a-watch-account")
-            icon.source: "../../../img/eye.svg"
+            icon.source: Style.svg("eye")
             icon.width: 19
             icon.height: 19
             onTriggered: {
@@ -69,7 +70,7 @@ StatusRoundButton {
         Action {
             //% "Enter a seed phrase"
             text: qsTrId("enter-a-seed-phrase")
-            icon.source: "../../../img/enter_seed_phrase.svg"
+            icon.source: Style.svg("enter_seed_phrase")
             icon.width: 19
             icon.height: 19
             onTriggered: {
@@ -79,7 +80,7 @@ StatusRoundButton {
         Action {
             //% "Enter a private key"
             text: qsTrId("enter-a-private-key")
-            icon.source: "../../../img/enter_private_key.svg"
+            icon.source: Style.svg("enter_private_key")
             icon.width: 19
             icon.height: 19
             onTriggered: {

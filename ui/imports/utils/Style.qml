@@ -2,7 +2,7 @@ pragma Singleton
 
 import QtQuick 2.13
 import QtQuick.Controls.Universal 2.12
-import "./Themes" as Legacy
+import "../Themes" as Legacy
 
 import StatusQ.Core.Theme 0.1
 
@@ -37,5 +37,19 @@ QtObject {
 
     property var changeFontSize: function (fontSize) {
         current.updateFontSize(fontSize)
+    }
+
+    property string assetPath: Qt.resolvedUrl("./../assets/")
+    function svg(name) {
+        return assetPath + "images/" + name + ".svg";
+    }
+    function png(name) {
+        return assetPath + "images/" +name + ".png";
+    }
+    function icon(name) {
+        return assetPath + "icons/" +name + ".svg";
+    }
+    function emoji(name) {
+        return assetPath + "twemoji/" +name + ".png";
     }
 }

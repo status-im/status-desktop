@@ -1,7 +1,8 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
-import "../../../imports"
+
+import utils 1.0
 import "../../../shared"
 import "../../../shared/status"
 
@@ -16,7 +17,7 @@ Rectangle {
         anchors.top: parent.top
         width: 140
         height: 140
-        source: "../../img/think-sticker.png"
+        source: Style.png("think-sticker")
         anchors.horizontalCenter: parent.horizontalCenter
     }
 

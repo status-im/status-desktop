@@ -3,7 +3,8 @@ import QtQuick.Controls 2.13
 import QtGraphicalEffects 1.13
 import "../../../../../shared"
 import "../../../../../shared/status"
-import "../../../../../imports"
+
+import utils 1.0
 
 Item {
     id: root
@@ -131,14 +132,13 @@ Item {
                     height: 15
                     fillMode: Image.PreserveAspectFit
                     source: {
-                        const basePath = "../../../../img/emojiReactions/"
                         switch (modelData.emojiId) {
-                        case 1: return basePath + "heart.svg"
-                        case 2: return basePath + "thumbsUp.svg"
-                        case 3: return basePath + "thumbsDown.svg"
-                        case 4: return basePath + "laughing.svg"
-                        case 5: return basePath + "sad.svg"
-                        case 6: return basePath + "angry.svg"
+                        case 1: return Style.svg("emojiReactions/heart")
+                        case 2: return Style.svg("emojiReactions/thumbsUp")
+                        case 3: return Style.svg("emojiReactions/thumbsDown")
+                        case 4: return Style.svg("emojiReactions/laughing")
+                        case 5: return Style.svg("emojiReactions/sad")
+                        case 6: return Style.svg("emojiReactions/angry")
                         default: return ""
                         }
                     }
@@ -186,7 +186,7 @@ Item {
                 property bool isHovered: false
 
                 id: addEmojiBtn
-                source: "../../../../img/emoji.svg"
+                source: Style.svg("emoji")
                 width: 16.5
                 height: 16.5
                 anchors.left: parent.left

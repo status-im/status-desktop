@@ -2,7 +2,8 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import QtGraphicalEffects 1.13
-import "../../../imports"
+
+import utils 1.0
 import "../../../shared"
 import "./components"
 
@@ -102,7 +103,7 @@ Rectangle {
                 anchors.topMargin: Style.current.smallPadding
                 anchors.left: parent.left
                 anchors.leftMargin: Style.current.padding
-                source: "../../img/walletIcon.svg"
+                source: Style.svg("walletIcon")
             }
             ColorOverlay {
                 anchors.fill: walletIcon
