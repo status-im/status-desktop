@@ -10,7 +10,7 @@ import "controls"
 import "views"
 import "panels"
 import "popups"
-import "views/assets"
+import "views/tokens"
 import "views/collectibles"
 
 import StatusQ.Controls 0.1
@@ -140,10 +140,11 @@ Item {
                             anchors.topMargin: Style.current.bigPadding
                             currentIndex: walletTabBar.currentIndex
 
-                            AssetsView {
-                                id: assetsTab
-                                onAssetClicked: {
-                                    stackView.replace(assetDetailView);
+                            TokensView {
+                                id: tokensTab
+                                tokensModel: walletView.store.walletModelV2Inst.tokens
+                                onTokenClicked: {
+                                    stackView.replace(tokenDetailView);
                                 }
                             }
                             PositionsView {
@@ -165,8 +166,8 @@ Item {
             }
 
             Component {
-                id: assetDetailView
-                AssetDetailView {
+                id: tokenDetailView
+                TokenDetailView {
                     onBackPressed: {
                         stackView.replace(walletInfoContent);
                     }

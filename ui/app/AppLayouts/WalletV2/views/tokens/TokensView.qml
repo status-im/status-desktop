@@ -8,10 +8,11 @@ import StatusQ.Core 0.1
 
 Item {
     id: root
-    signal assetClicked(string name)
+    property var tokensModel
+    signal tokenClicked(string name)
 
     Component {
-        id: assetViewDelegate
+        id: tokenViewDelegate
 
         Item {
             id: element
@@ -20,7 +21,7 @@ Item {
             height: 40
 
             Image {
-                id: assetInfoImage
+                id: tokenInfoImage
                 width: 36
                 height: 36
                 source: symbol ? Style.png("tokens/" + symbol) : ""
@@ -34,26 +35,26 @@ Item {
                 }
             }
             StatusBaseText {
-                id: assetSymbol
+                id: tokenSymbol
                 text: symbol
-                anchors.left: assetInfoImage.right
+                anchors.left: tokenInfoImage.right
                 anchors.leftMargin: Style.current.smallPadding
-                anchors.top: assetInfoImage.top
+                anchors.top: tokenInfoImage.top
                 anchors.topMargin: 0
                 font.pixelSize: 15
             }
             StatusBaseText {
-                id: assetFullTokenName
+                id: tokenFullTokenName
                 text: name
                 anchors.bottom: parent.bottom
                 anchors.bottomMargin: 0
-                anchors.left: assetInfoImage.right
+                anchors.left: tokenInfoImage.right
                 anchors.leftMargin: Style.current.smallPadding
                 color: Style.current.secondaryText
                 font.pixelSize: 15
             }
             StatusBaseText {
-                id: assetValue
+                id: tokenValue
                 text: value.toUpperCase() + " " + symbol
                 anchors.right: parent.right
                 anchors.rightMargin: 0
@@ -61,7 +62,7 @@ Item {
                 font.strikeout: false
             }
             StatusBaseText {
-                id: assetFiatValue
+                id: tokenFiatValue
                 color: Style.current.secondaryText
                 text: Utils.toLocaleString(fiatBalance, globalSettings.locale) + " " + walletModel.balanceView.defaultCurrency.toUpperCase()
                 anchors.right: parent.right
@@ -74,7 +75,7 @@ Item {
                 anchors.fill: parent
                 cursorShape: Qt.PointingHandCursor
                 onClicked: {
-                    root.assetClicked(name);
+                    root.tokenClicked(name);
                 }
             }
         }
@@ -98,15 +99,15 @@ Item {
         Layout.fillWidth: true
         Layout.fillHeight: true
         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-        ScrollBar.vertical.policy: assetListView.contentHeight > assetListView.height ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
+        ScrollBar.vertical.policy: tokenListView.contentHeight > tokenListView.height ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
 
         ListView {
-            id: assetListView
+            id: tokenListView
             spacing: Style.current.padding * 2
             anchors.fill: parent
             //model: exampleModel
-            model: walletModel.tokensView.assets
-            delegate: assetViewDelegate
+            model: root.tokensModel
+            delegate: tokenViewDelegate
             boundsBehavior: Flickable.StopAtBounds
         }
     }

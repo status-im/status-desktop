@@ -6,7 +6,7 @@ import
 
 import
   ../../../app_service/[main],
-  ./views/[accounts, account_list, collectibles, networks, saved_addresses, settings],
+  ./views/[accounts, account_list, collectibles, networks, saved_addresses, settings, tokens],
   ./views/buy_sell_crypto/[service_controller]
 
 QtObject:
@@ -16,6 +16,7 @@ QtObject:
       appService: AppService
       accountsView: AccountsView
       collectiblesView: CollectiblesView
+      tokensView: TokensView
       settingsView*: SettingsView
       networksView*: NetworksView
       cryptoServiceController: CryptoServiceController
@@ -41,6 +42,7 @@ QtObject:
     result.collectiblesView = newCollectiblesView(status, appService)
     result.settingsView = newSettingsView()
     result.networksView = newNetworksView(status)
+    result.tokensView = newTokensView(status)
     result.cryptoServiceController = newCryptoServiceController(status, appService)
     result.savedAddressesView = newSavedAddressesView(status, appService)
     result.setup
@@ -66,6 +68,10 @@ QtObject:
   proc getSavedAddressesView(self: WalletView): QVariant {.slot.} = newQVariant(self.savedAddressesView)
   QtProperty[QVariant] savedAddressesView:
     read = getSavedAddressesView
+
+  proc getTokensView(self: WalletView): QVariant {.slot.} = newQVariant(self.tokensView)
+  QtProperty[QVariant] tokensView:
+    read = getTokensView
 
   proc updateView*(self: WalletView) =
     # TODO:

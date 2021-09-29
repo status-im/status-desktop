@@ -7,6 +7,7 @@ QtObject {
     id: root
 
     property CollectiblesStore collectiblesStore: CollectiblesStore { }
+    // TODO: remove instance of walletModel, only keep v2
     property var walletModelInst: walletModel
     property var walletModelV2Inst: walletV2Model
     property var profileModelInst: profileModel
