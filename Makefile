@@ -354,6 +354,7 @@ $(STATUS_CLIENT_APPIMAGE): nim_status_client $(APPIMAGE_TOOL) nim-status.desktop
 	cp -r /usr/lib/x86_64-linux-gnu/gstreamer-1.0 tmp/linux/dist/usr/lib/
 	cp -r /usr/lib/x86_64-linux-gnu/gstreamer1.0 tmp/linux/dist/usr/lib/
 	cp vendor/status-lib/vendor/status-go/build/bin/libstatus.so tmp/linux/dist/usr/lib/
+	cp vendor/status-lib/vendor/status-go/build/bin/libstatus.so.0 tmp/linux/dist/usr/lib/
 
 	echo -e $(BUILD_MSG) "AppImage"
 	linuxdeployqt tmp/linux/dist/nim-status.desktop -no-copy-copyright-files -qmldir=ui -qmlimport=$(QTDIR)/qml -bundle-non-qt-libs
