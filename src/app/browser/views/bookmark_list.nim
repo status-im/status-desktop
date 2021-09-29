@@ -1,6 +1,6 @@
 import NimQml, Tables, chronicles
 import sequtils as sequtils
-import status/types/[bookmark]
+import types/[bookmark]
 
 type
   BookmarkRoles {.pure.} = enum
