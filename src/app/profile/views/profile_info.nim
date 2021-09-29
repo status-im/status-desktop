@@ -1,7 +1,8 @@
 import NimQml
 import chronicles
-import status/profile/profile
 import std/wrapnils
+
+import status/types/[identity_image, profile]
 
 QtObject:
   type ProfileInfoView* = ref object of QObject
