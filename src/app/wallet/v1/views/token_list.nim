@@ -21,14 +21,16 @@ type
     Address = UserRole + 4,
     Decimals = UserRole + 5
     IsCustom = UserRole + 6
+
   GetTokenDetailsTaskArg = ref object of QObjectTaskArg
+    chainId: int
     address: string
 
 const getTokenDetailsTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[GetTokenDetailsTaskArg](argEncoded)
   try:
     let 
-      tkn = newErc20Contract(getCurrentNetwork().toChainId(), arg.address.parseAddress)
+      tkn = newErc20Contract(arg.chainId, arg.address.parseAddress)
       decimals = tkn.tokenDecimals()
       output = %* {
         "address": arg.address,
@@ -44,11 +46,12 @@ const getTokenDetailsTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
     }
     arg.finish(output)
 
-proc getTokenDetails[T](self: T, slot: string, address: string) =
+proc getTokenDetails[T](self: T, slot: string, chainId: int, address: string) =
   let arg = GetTokenDetailsTaskArg(
     tptr: cast[ByteAddress](getTokenDetailsTask),
     vptr: cast[ByteAddress](self.vptr),
     slot: slot,
+    chainId: chainId,
     address: address)
   self.appService.threadpool.start(arg)
 
@@ -70,7 +73,8 @@ QtObject:
 
   proc loadDefaultTokens*(self:TokenList) = 
     if self.tokens.len == 0:
-      self.tokens = allErc20ContractsByChainId(getCurrentNetwork().toChainId())
+      let chainId = self.status.settings.getCurrentNetwork().toChainId()
+      self.tokens = allErc20ContractsByChainId(chainId)
       self.isCustom = false
       self.tokensLoaded(self.tokens.len)
 
@@ -126,7 +130,8 @@ QtObject:
     TokenRoles.IsCustom.int:"isCustom"}.toTable
 
   proc getTokenDetails*(self: TokenList, address: string) {.slot.} =
-    self.getTokenDetails("tokenDetailsResolved", address)
+    let chainId = self.status.settings.getCurrentNetwork().toChainId()
+    self.getTokenDetails("tokenDetailsResolved", chainId, address)
 
   proc tokenDetailsWereResolved*(self: TokenList, tokenDetails: string) {.signal.}
 
