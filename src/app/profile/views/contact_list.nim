@@ -1,6 +1,7 @@
 import NimQml, chronicles
 import Tables
-import status/profile/profile
+
+import status/types/profile
 from status/ens import nil
 
 type

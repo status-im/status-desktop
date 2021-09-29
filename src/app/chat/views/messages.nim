@@ -4,8 +4,8 @@ import status/[status, contacts]
 import status/messages as status_messages
 import status/utils as status_utils
 import status/chat/[chat]
-import status/profile/[profile]
-import status/types/[message]
+import status/types/[message, profile]
+
 import ../../../app_service/[main]
 import ../../../app_service/tasks/[qt, threadpool]
 import ../../../app_service/tasks/marathon/mailserver/worker

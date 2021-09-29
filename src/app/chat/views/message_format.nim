@@ -1,11 +1,11 @@
 import NimQml, Tables, json, re
+import strformat, strutils, sequtils
+
 import status/status
 import status/accounts
 import status/chat
-import status/profile/profile
 import status/ens
-import status/types/[message]
-import strformat, strutils, sequtils
+import status/types/[message, profile]
 
 let NEW_LINE = re"\n|\r"
 

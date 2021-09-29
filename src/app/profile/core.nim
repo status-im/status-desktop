@@ -1,13 +1,12 @@
 import NimQml, json, strutils, sugar, sequtils, tables
 import json_serialization
-import status/profile/[profile, mailserver]
 import status/[status, signals, settings]
 import status/contacts as status_contacts
 import status/chat as status_chat
 import status/devices as status_devices
 import status/chat/chat
 import status/wallet
-import status/types/[account, transaction, setting]
+import status/types/[account, transaction, setting, profile, mailserver]
 import ../../app_service/[main]
 import ../../app_service/tasks/marathon/mailserver/events
 import eventemitter
@@ -36,7 +35,7 @@ proc delete*(self: ProfileController) =
   delete self.view
 
 proc init*(self: ProfileController, account: Account) =
-  let profile = account.toProfileModel()
+  let profile = account.toProfile()
 
   let pubKey = self.status.settings.getSetting[:string](Setting.PublicKey, "0x0")
   let network = self.status.settings.getSetting[:string](Setting.Networks_CurrentNetwork, DEFAULT_NETWORK_NAME)

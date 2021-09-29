@@ -1,7 +1,8 @@
 import NimQml, chronicles
 import status/[status, settings]
-import status/profile/mailserver
-import mailservers_list
+import status/types/mailserver
+
+import ./mailservers_list
 import ../../../app_service/[main]
 import ../../../app_service/tasks/[qt, threadpool]
 import ../../../app_service/tasks/marathon/mailserver/worker

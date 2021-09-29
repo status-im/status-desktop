@@ -1,12 +1,13 @@
 import NimQml, Tables, sets, json, sugar, chronicles, sequtils
+import strutils
+
 import status/status
 import status/accounts
 import status/chat as status_chat
 import status/chat/[stickers,chat]
-import status/profile/profile
 import status/ens
-import status/types/[message]
-import strutils
+import status/types/[message, profile]
+
 import message_format
 import user_list
 
