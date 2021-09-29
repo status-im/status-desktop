@@ -20,7 +20,7 @@ proc delete*(self: KeycardController) =
 proc reset*(self: KeycardController) =
   discard
 
-proc attemptOpenSecureChannel(self: KeycardController): bool =
+proc attemptOpenSecureChannel(self: KeycardController) : bool =
   return false
 
 proc getCardState(self: KeycardController) =
@@ -33,8 +33,10 @@ proc getCardState(self: KeycardController) =
     self.view.cardState = PreInit
   elif self.attemptOpenSecureChannel():
     self.view.cardState = Paired
-  else:
+  elif appInfo.availableSlots > 0:
     self.view.cardState = Unpaired
+  else:
+    self.view.cardState = NoFreeSlots
 
 proc init*(self: KeycardController) =
   discard """

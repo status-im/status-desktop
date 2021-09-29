@@ -11,10 +11,11 @@ type
     NotKeycard = 1
     PreInit = 2
     Unpaired = 3
-    Paired = 4
-    Frozen = 5
-    Blocked = 6
-    Authenticated = 7
+    NoFreeSlots = 4
+    Paired = 5
+    Frozen = 6
+    Blocked = 7
+    Authenticated = 8
 
 QtObject:
   type KeycardView* = ref object of QObject
