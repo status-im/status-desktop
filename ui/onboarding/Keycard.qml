@@ -10,16 +10,8 @@ Item {
     id: keycardView
     anchors.fill: parent
     Component.onCompleted: {
-        keycardModel.testConnection()
-        createPinModal.open()
-    }
-
-    Timer {
-        interval: 2000; running: true; repeat: true
-        onTriggered: {
-            connected?  keycardModel.simulateDisconnected() : keycardModel.simulateConnected()
-            connected = !connected
-        }
+        insertCard.open()
+        keycardModel.startConnection()
     }
 
     CreatePINModal {
