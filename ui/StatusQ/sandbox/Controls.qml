@@ -12,6 +12,21 @@ GridLayout {
     columnSpacing: 5
     rowSpacing: 5
 
+    StatusSelectableText {
+        color: Theme.palette.baseColor1
+        text: "This is a multiline paragraph that can be selected and copied. A paragraph is a group of words put together to form a group that is usually longer than a sentence. Paragraphs are often made up of several sentences. There are usually between three and eight sentences. Paragraphs can begin with an indentation (about five spaces), or by missing a line out, and then starting again."
+        font.pixelSize: 15
+        width: 300
+        multiline: true
+    }
+
+    StatusSelectableText {
+        color: Theme.palette.baseColor1
+        text: "<p>This is a selectable link in rich text format to test <a href='www.google.com'>www.google.com</a></p>"
+        font.pixelSize: 15
+        width: 200
+    }
+
     StatusIconTabButton {
         icon.name: "chat"
     }

@@ -1,0 +1,101 @@
+import QtQuick 2.14
+
+import QtQuick.Controls 2.14 as QC
+
+import StatusQ.Controls 0.1
+import StatusQ.Core 0.1
+import StatusQ.Core.Theme 0.1
+
+
+Item {
+    id: statusSelectableText
+
+    property bool multiline: false
+    property string text: ""
+    property string hoveredLinkColor: Theme.palette.directColor1
+
+    property alias selectedText: edit.selectedText
+    property alias selectedTextColor: edit.selectedTextColor
+    property alias selectionStart: edit.selectionStart
+    property alias selectionEnd: edit.selectionEnd
+    property alias cursorPosition: edit.cursorPosition
+    property alias hoveredLink: edit.hoveredLink
+    property alias color: edit.color
+    property alias font: edit.font
+    property alias focussed: edit.activeFocus
+    property alias verticalAlignmet: edit.verticalAlignment
+    property alias horizontalAlignment: edit.horizontalAlignment
+
+    implicitWidth: 448
+    implicitHeight: edit.implicitHeight
+
+    clip:true
+
+    MouseArea {
+        id: sensor
+        enabled: !edit.activeFocus
+        hoverEnabled: true
+        anchors.fill: parent
+        cursorShape: Qt.IBeamCursor
+        onClicked: {
+            edit.forceActiveFocus()
+        }
+        onExited: {
+            flick.contentX = 0
+            flick.contentY = 0
+        }
+
+        Flickable {
+            id: flick
+            anchors.top: parent.top
+            anchors.bottom: parent.bottom
+            anchors.left:  parent.left
+            anchors.right: parent.right
+            contentWidth: edit.paintedWidth
+            contentHeight: edit.paintedHeight
+            boundsBehavior: Flickable.StopAtBounds
+            QC.ScrollBar.vertical: QC.ScrollBar { interactive: multiline; enabled: multiline }
+            function ensureVisible(r) {
+                if (width-contentX >= r.x) {
+                    contentX = 0;
+                }
+                else if (contentX+width <= r.x+r.width) {
+                    contentX = r.x+r.width-width;
+                }
+                if (contentY >= r.y)
+                    contentY = r.y;
+                else if (contentY+height <= r.y+r.height)
+                    contentY = r.y+r.height-height;
+            }
+            TextEdit {
+                id: edit
+                width: flick.width
+                height: flick.height
+                verticalAlignment: Text.AlignVCenter
+                readOnly: true
+                selectByMouse: true
+                selectionColor: Theme.palette.primaryColor2
+                selectedTextColor: color
+                focus: true
+                font.pixelSize: 15
+                font.family: Theme.palette.baseFont.name
+                color: Theme.palette.directColor1
+                textFormat: Text.RichText
+                onCursorRectangleChanged: flick.ensureVisible(cursorRectangle)
+                wrapMode: statusSelectableText.multiline ? Text.WrapAtWordBoundaryOrAnywhere : TextEdit.NoWrap
+
+                Keys.forwardTo: [statusSelectableText]
+
+                onFocusChanged: {
+                    if(!focus) {
+                        flick.contentX = 0
+                        flick.contentY = 0
+                    }
+                }
+
+                text: "<style>a:link { color: " + (!!hoveredLink ? statusSelectableText.hoveredLinkColor : Theme.palette.baseColor1) + "; }</style>" + statusSelectableText.text
+            }
+
+        }
+    }
+}

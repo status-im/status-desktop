@@ -206,13 +206,11 @@ Rectangle {
                                                           + divider.width + divider.anchors.leftMargin
                                                         : 0
 
-            StatusBaseText {
+            StatusSelectableText {
                 id: chatType
                 text: statusChatInfoButton.subTitle
                 color: Theme.palette.baseColor1
                 font.pixelSize: 12
-
-                elide: Text.ElideRight
                 width: Math.min(parent.width - (pinIcon.visible ? divider.width + divider.anchors.leftMargin + pinIcon.width + pinIcon.anchors.leftMargin : 0),
                                 implicitWidth)
             }

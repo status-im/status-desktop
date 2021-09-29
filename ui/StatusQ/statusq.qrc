@@ -269,5 +269,6 @@
         <file>src/StatusQ/Components/StatusExpandableItem.qml</file>
         <file>src/assets/img/icons/snt.svg</file>
         <file>src/StatusQ/Popups/StatusSpellcheckingMenuItems.qml</file>
+        <file>src/StatusQ/Controls/StatusSelectableText.qml</file>
     </qresource>
 </RCC>
