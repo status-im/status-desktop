@@ -38,3 +38,6 @@
 	path = spellchecking
 	url = https://github.com/status-im/desktop-spellchecking.git
 
+[submodule "vendor/nim-bearssl"]
+	path = vendor/nim-bearssl
+	url = https://github.com/status-im/nim-bearssl
