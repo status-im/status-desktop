@@ -1,6 +1,6 @@
 import NimQml, chronicles, std/wrapnils
 import status/[signals, status, keycard]
-import view
+import view, pairing
 
 logScope:
   topics = "keycard-model"
@@ -24,6 +24,12 @@ proc reset*(self: KeycardController) =
   discard
 
 proc attemptOpenSecureChannel(self: KeycardController) : bool =
+  let pairing = self.view.pairings.getPairing(self.view.appInfo.instanceUID)
+
+  if pairing == "":
+    return false
+
+  # actually open secure channel
   return false
 
 proc getCardState(self: KeycardController) =
