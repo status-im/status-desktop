@@ -1,18 +1,20 @@
 import QtQuick 2.13
 import QtQuick.Layouts 1.13
-import "../../../shared"
-import "../../../shared/status"
+import "../../../../shared"
+import "../../../../shared/status"
 
 import utils 1.0
 
 RowLayout {
     id: favoritesBar
+
+    property alias bookmarkModel: bookmarkList.model
+
     spacing: 0
-    height: browserModel.bookmarks.rowCount() > 0 ? 38: 0
+    height: bookmarkModel.rowCount() > 0 ? 38: 0
 
     ListView {
         id: bookmarkList
-        model: browserModel.bookmarks
         spacing: Style.current.halfPadding
         orientation : ListView.Horizontal
         height: parent.height
@@ -43,8 +45,11 @@ RowLayout {
                         favoriteMenu.open()
                         return
                     }
-
-                    currentWebView.url = determineRealURL(url)
+                    if (!url.toString()) {
+                        addFavoriteModal.open()
+                    } else {
+                        currentWebView.url = determineRealURL(url)
+                    }
                 }
             }
         }

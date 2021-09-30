@@ -1,17 +1,17 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.3
 import QtWebEngine 1.9
-import "../../../shared"
-import "../../../shared/status"
+import "../../../../shared"
+import "../../../../shared/status"
+import "../stores"
 
 import utils 1.0
-import "../Chat/ChatColumn/ChatComponents"
-import "../Profile/LeftTab/constants.js" as ProfileConstants
+import "../../Chat/ChatColumn/ChatComponents"
 
 PopupMenu {
     property var openInNewTab: function () {}
     property string url
-    property var currentFavorite: getCurrentFavorite(url)
+    property var currentFavorite: BookmarksStore.getCurrentFavorite(url)
 
     id: root
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
@@ -51,7 +51,7 @@ PopupMenu {
         icon.width: 16
         icon.height: 16
         onTriggered: {
-            browserModel.removeBookmark(root.url)
+            BookmarksStore.removeBookmark(root.url)
         }
     }
 }

@@ -3,9 +3,10 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import QtGraphicalEffects 1.13
 import utils 1.0
-import "../../../shared"
-import "../../../shared/status"
-import "../Wallet"
+import "../../../../shared"
+import "../../../../shared/status"
+import "../../Wallet"
+import "../stores"
 
 Popup {
     id: popup
@@ -47,7 +48,7 @@ Popup {
             height: 8
             radius: width / 2
             color: {
-                switch (profileModel.network.current) {
+                switch (RootStore.currentNetwork) {
                 case Constants.networkMainnet: return Style.current.green;
                 case Constants.networkRopsten: return Style.current.turquoise;
                 default: return Style.current.red
@@ -59,7 +60,7 @@ Popup {
         StyledText {
             id: networkText
             text: {
-                switch (profileModel.network.current) {
+                switch (RootStore.currentNetwork) {
                 //% "Mainnet"
                 case Constants.networkMainnet: return qsTrId("mainnet");
                 //% "Ropsten"
@@ -87,7 +88,7 @@ Popup {
                 cursorShape: Qt.PointingHandCursor
                 anchors.fill: parent
                 onClicked: {
-                    _web3Provider.disconnect();
+                    Web3ProviderStore.web3ProviderInst.disconnect();
                     provider.postMessage(`{"type":"web3-disconnect-account"}`);
                     popup.close();
                 }
@@ -109,9 +110,9 @@ Popup {
             anchors.left: parent.left
             anchors.right: copyBtn.left
             anchors.rightMargin: Style.current.padding
-            accounts: walletModel.accountsView.accounts
-            selectedAccount: walletModel.dappBrowserView.dappBrowserAccount
-            currency: walletModel.balanceView.defaultCurrency
+            accounts: WalletStore.accounts
+            selectedAccount: WalletStore.dappBrowserAccount
+            currency: WalletStore.defaultCurrency
             onSelectedAccountChanged: {
                 if (!accountSelectorRow.currentAddress) {
                     // We just set the account for the first time. Nothing to do here
@@ -123,9 +124,9 @@ Popup {
                 }
 
                 accountSelectorRow.currentAddress = selectedAccount.address
-                web3Provider.dappsAddress = selectedAccount.address;
-                walletModel.setDappBrowserAddress()
-                web3Provider.clearPermissions();
+                Web3ProviderStore.web3ProviderInst.dappsAddress = selectedAccount.address;
+                WalletStore.setDappBrowserAddress()
+                Web3ProviderStore.web3ProviderInst.clearPermissions();
                 for (let i = 0; i < tabs.count; ++i){
                     tabs.getTab(i).item.reload();
                 }

@@ -2,10 +2,10 @@ import QtQuick 2.13
 import QtQuick.Controls 2.3
 import QtWebEngine 1.9
 import utils 1.0
-import "../../../shared"
-import "../../../shared/status"
-import "../Chat/ChatColumn/ChatComponents"
-import "../Profile/LeftTab/constants.js" as ProfileConstants
+import "../../../../shared"
+import "../../../../shared/status"
+import "../../Chat/ChatColumn/ChatComponents"
+import "../../Profile/LeftTab/constants.js" as ProfileConstants
 
 PopupMenu {
     property var addNewTab: function () {}

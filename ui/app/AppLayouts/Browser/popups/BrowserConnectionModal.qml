@@ -2,8 +2,10 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import utils 1.0
-import "../../../shared"
-import "../../../shared/status"
+import "../../../../shared"
+import "../../../../shared/status"
+import "../controls"
+import "../stores"
 
 Popup {
     property var currentTab
@@ -29,7 +31,7 @@ Popup {
         interactedWith = true
         request.isAllowed = isAllowed;
         currentTabConnected = isAllowed
-        provider.web3Response(web3Provider.postMessage(JSON.stringify(request)));
+        provider.web3Response(Web3ProviderStore.web3ProviderInst.postMessage(JSON.stringify(request)));
     }
 
     onClosed: {
@@ -58,7 +60,7 @@ Popup {
             height: imgSize
             Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
 
-            FaviconImage {
+                FaviconImage {
                 id: siteImg
                 width: logoHeader.imgSize
                 height: logoHeader.imgSize
@@ -117,9 +119,9 @@ Popup {
             width: 190
             Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
             showAccountDetails: false
-            accounts: walletModel.accountsView.accounts
-            selectedAccount: walletModel.dappBrowserView.dappBrowserAccount
-            currency: walletModel.balanceView.defaultCurrency
+            accounts: WalletStore.accounts
+            selectedAccount: WalletStore.dappBrowserAccount
+            currency: WalletStore.defaultCurrency
             onSelectedAccountChanged: {
                 if (!root.currentAddress) {
                     // We just set the account for the first time. Nothing to do here
@@ -131,11 +133,11 @@ Popup {
                 }
 
                 root.currentAddress = selectedAccount.address
-                web3Provider.dappsAddress = selectedAccount.address;
-                web3Provider.clearPermissions();
+                Web3ProviderStore.web3ProviderInst.dappsAddress = selectedAccount.address;
+                Web3ProviderStore.web3ProviderInst.clearPermissions();
                 if (selectField.menu.currentIndex !== -1) {
-                    web3Provider.dappsAddress = selectedAccount.address;
-                    walletModel.setDappBrowserAddress()
+                    Web3ProviderStore.web3ProviderInst.dappsAddress = selectedAccount.address;
+                    WalletStore.setDappBrowserAddress()
                 }
             }
         }

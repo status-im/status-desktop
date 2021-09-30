@@ -5,15 +5,25 @@ import Qt.labs.settings 1.0
 import QtQuick.Controls.Styles 1.0
 import QtWebEngine 1.10
 import utils 1.0
-import "../../../shared"
-import "../../../shared/status"
+import "../../../../shared"
+import "../../../../shared/status"
+import "../popups"
+import "../controls"
 
 Rectangle {
-    property alias addressBar: addressBar
-    readonly property int innerMargin: 12
-    property var addNewTab: function () {}
+    id: browserHeader
 
-    id: root
+    property alias favoriteComponent: favoritesBarLoader.sourceComponent
+    property alias addressBar: addressBar
+
+    readonly property int innerMargin: 12
+    property var currentFavorite
+    property var addNewTab: function () {}
+    property string dappBrowserAccName: ""
+    property string dappBrowserAccIcon: ""
+
+    signal addNewFavoritelClicked(var xPos)
+
     width: parent.width
     height: barRow.height + favoritesBarLoader.height
     color: Style.current.background
@@ -23,7 +33,7 @@ Rectangle {
         id: barRow
         width: parent.width
         height: 45
-        spacing: root.innerMargin
+        spacing: browserHeader.innerMargin
 
         Menu {
             id: historyMenu
@@ -58,7 +68,7 @@ Rectangle {
             enabled: currentWebView && currentWebView.canGoBack
             width: 24
             height: 24
-            Layout.leftMargin: root.innerMargin
+            Layout.leftMargin: browserHeader.innerMargin
             padding: 6
         }
 
@@ -76,19 +86,10 @@ Rectangle {
             enabled: currentWebView && currentWebView.canGoForward
             width: 24
             height: 24
-            Layout.leftMargin: -root.innerMargin/2
-        }
-
-        Connections {
-            target: browserModel
-            onBookmarksChanged: {
-                addressBar.currentFavorite = Qt.binding(function () {return getCurrentFavorite(currentWebView.url)})
-            }
+            Layout.leftMargin: -browserHeader.innerMargin/2
         }
 
         StyledTextField {
-            property var currentFavorite: currentWebView && getCurrentFavorite(currentWebView.url)
-
             id: addressBar
             height: 40
             Layout.fillWidth: true
@@ -155,26 +156,11 @@ Rectangle {
             StatusIconButton {
                 id: addFavoriteBtn
                 visible: !!currentWebView && !!currentWebView.url
-                icon.name: !!addressBar.currentFavorite ? "browser/favoriteActive" : "browser/favorite"
+                icon.name: !!browserHeader.currentFavorite ? "browser/favoriteActive" : "browser/favorite"
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.right: reloadBtn.left
                 anchors.rightMargin: Style.current.halfPadding
-                onClicked: {
-                    if (!addressBar.currentFavorite) {
-                        // remove "add favorite" button at the end, add new bookmark, add "add favorite" button back
-                        browserModel.removeBookmark("")
-                        browserModel.addBookmark(currentWebView.url, currentWebView.title)
-                        browserModel.addBookmark("", qsTr("Add Favorite"))
-                    }
-
-                    addFavoriteModal.modifiyModal = true
-                    addFavoriteModal.toolbarMode = true
-                    addFavoriteModal.x = addFavoriteBtn.x + addFavoriteBtn.width / 2 - addFavoriteBtn.width / 2
-                    addFavoriteModal.y = root.y + root.height + 4
-                    addFavoriteModal.ogUrl = addressBar.currentFavorite ? addressBar.currentFavorite.url : currentWebView.url
-                    addFavoriteModal.ogName = addressBar.currentFavorite ? addressBar.currentFavorite.name : currentWebView.title
-                    addFavoriteModal.open()
-                }
+                onClicked: addNewFavoritelClicked(addFavoriteBtn.x)
                 width: 24
                 height: 24
             }
@@ -193,7 +179,7 @@ Rectangle {
 
         BrowserWalletMenu {
             id: browserWalletMenu
-            y: root.height + root.anchors.topMargin
+            y: browserHeader.height + browserHeader.anchors.topMargin
             x: parent.width - width - Style.current.halfPadding
         }
 
@@ -229,8 +215,8 @@ Rectangle {
                 icon.source: Style.svg("walletIcon")
                 icon.width: 18
                 icon.height: 18
-                icon.color: walletModel.dappBrowserView.dappBrowserAccount.iconColor
-                text: walletModel.dappBrowserView.dappBrowserAccount.name
+                icon.color: dappBrowserAccIcon
+                text: dappBrowserAccName
                 implicitHeight: 32
                 type: "secondary"
                 onClicked: {
@@ -245,7 +231,7 @@ Rectangle {
 
         BrowserSettingsMenu {
             id: settingsMenu
-            addNewTab: root.addNewTab
+            addNewTab: browserHeader.addNewTab
             x: parent.width - width
             y: parent.height
         }
@@ -262,7 +248,7 @@ Rectangle {
             }
             width: 24
             height: 24
-            Layout.rightMargin: root.innerMargin
+            Layout.rightMargin: browserHeader.innerMargin
             padding: 6
         }
     }
@@ -276,18 +262,5 @@ Rectangle {
         anchors.leftMargin: Style.current.smallPadding
         anchors.right: parent.right
         anchors.rightMargin: Style.current.smallPadding
-
-        sourceComponent: Component {
-            FavoritesBar {}
-        }
     }
 }
-
-
-
-
-/*##^##
-Designer {
-    D{i:0;width:700}
-}
-##^##*/

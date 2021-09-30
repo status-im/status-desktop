@@ -3,8 +3,9 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import QtGraphicalEffects 1.13
 import utils 1.0
-import "../../../shared"
-import "../../../shared/status"
+import "../../../../shared"
+import "../../../../shared/status"
+import "../stores"
 
 ModalPopup {
     property string urlError: ""
@@ -126,7 +127,7 @@ ModalPopup {
             bgColor: Utils.setColorAlpha(Style.current.danger, 0.1)
             bgHoverColor: Utils.setColorAlpha(Style.current.danger, 0.2)
             onClicked: {
-                browserModel.removeBookmark(popup.ogUrl)
+                BookmarksStore.removeBookmark(popup.ogUrl)
                 popup.close()
             }
         }
@@ -148,11 +149,11 @@ ModalPopup {
 
                 if (!popup.modifiyModal) {
                     // remove "add favorite" button at the end, add new bookmark, add "add favorite" button back
-                    browserModel.removeBookmark("")
-                    browserModel.addBookmark(urlInput.text, nameInput.text)
-                    browserModel.addBookmark("", qsTr("Add Favorite"))
+                    BookmarksStore.removeBookmark("")
+                    BookmarksStore.addBookmark(urlInput.text, nameInput.text)
+                    BookmarksStore.addBookmark("", qsTr("Add Favorite"))
                 } else if (popup.ogName !== nameInput.text || popup.ogUrl !== urlInput.text) {
-                    browserModel.modifyBookmark(popup.ogUrl, urlInput.text, nameInput.text)
+                    BookmarksStore.modifyBookmark(popup.ogUrl, urlInput.text, nameInput.text)
                 }
 
                 popup.close()
