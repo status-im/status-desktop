@@ -35,10 +35,15 @@ QtObject:
     result.setup
 
   proc cardConnected*(self: KeycardView) {.signal.}
-
   proc cardDisconnected*(self: KeycardView) {.signal.}
-
-  proc cardStateChanged*(self: KeycardView, cardState: int) {.signal.}
+  proc cardNotKeycard*(self: KeycardView) {.signal.}
+  proc cardPreInit*(self: KeycardView) {.signal.}
+  proc cardUnpaired*(self: KeycardView) {.signal.}
+  proc cardNoFreeSlots*(self: KeycardView) {.signal.}
+  proc cardPaired*(self: KeycardView) {.signal.}
+  proc cardFrozen*(self: KeycardView) {.signal.}
+  proc cardBlocked*(self: KeycardView) {.signal.}
+  proc cardAuthenticated*(self: KeycardView) {.signal.}
 
   proc startConnection*(self: KeycardView) {.slot.} =
     discard self.status.keycard.start()
@@ -47,6 +52,10 @@ QtObject:
     self.cardState = Disconnected
     discard self.status.keycard.stop()
 
-  proc `cardState=`*(self: KeycardView, cardState: CardState) =
-    self.cardState = cardState
-    self.cardStateChanged(int(cardState))
+  proc pair*(self: KeycardView, password: string) {.slot.} =
+    discard """
+    on succesful pairing, save and change card state
+    otherwise throw error
+
+    self.status.keycard.pair(password)
+    """

@@ -2,6 +2,9 @@ import NimQml, chronicles, std/wrapnils
 import status/[signals, status, keycard]
 import view
 
+logScope:
+  topics = "keycard-model"
+
 type KeycardController* = ref object
   view*: KeycardView
   variant*: QVariant
@@ -29,18 +32,22 @@ proc getCardState(self: KeycardController) =
 
   if not appInfo.installed:
     self.view.cardState = NotKeycard
+    self.view.cardNotKeycard()
   elif not appInfo.initialized:
     self.view.cardState = PreInit
+    self.view.cardPreInit()
   elif self.attemptOpenSecureChannel():
+    # here we will also be able to check if the card is Frozen/Blocked
     self.view.cardState = Paired
+    self.view.cardPaired()
   elif appInfo.availableSlots > 0:
     self.view.cardState = Unpaired
+    self.view.cardUnpaired()
   else:
     self.view.cardState = NoFreeSlots
+    self.view.cardNoFreeSlots()
 
 proc init*(self: KeycardController) =
-  discard """
   self.status.events.on(SignalType.KeycardConnected.event) do(e:Args):
-    getCardState()
+    self.getCardState()
     self.view.cardConnected()
-  """

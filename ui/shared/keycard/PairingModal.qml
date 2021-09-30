@@ -7,6 +7,7 @@ import "../../shared"
 
 ModalPopup {
     property bool pairingPasswordFieldValid: false
+    property bool submitted: false
 
     id: popup
     title: qsTr("Insert pairing code")
@@ -57,7 +58,9 @@ ModalPopup {
             enabled: pairingPasswordFieldValid
 
             onClicked: {
-
+                submitted = true
+                keycardModel.pair(pairingPasswordField.text)
+                popup.close()
             }
         }
     }
