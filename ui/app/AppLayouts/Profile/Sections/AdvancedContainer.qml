@@ -303,8 +303,6 @@ ScrollView {
                         property bool mode: false
 
                         id: confirmDialog
-                        //% "Warning!"
-                        title: qsTrId("close-app-title")
                         //% "The account will be logged out. When you login again, the selected mode will be enabled"
                         confirmationText: qsTrId("the-account-will-be-logged-out--when-you-login-again--the-selected-mode-will-be-enabled")
                         onConfirmButtonClicked: {
