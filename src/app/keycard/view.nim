@@ -1,6 +1,7 @@
 import NimQml, chronicles
 import status/[status, keycard]
 import status/types/keycard as keycardtypes
+import pairing
 
 logScope:
   topics = "keycard-model"
@@ -20,6 +21,7 @@ type
 QtObject:
   type KeycardView* = ref object of QObject
     status*: Status
+    pairings*: KeycardPairingController
     cardState*: CardState
     appInfo*: KeycardApplicationInfo
 
@@ -32,6 +34,7 @@ QtObject:
   proc newKeycardView*(status: Status): KeycardView =
     new(result, delete)
     result.status = status
+    result.pairings = newPairingController()
     result.setup
 
   proc cardConnected*(self: KeycardView) {.signal.}
