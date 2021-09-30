@@ -17,21 +17,23 @@ Item {
     CreatePINModal {
         id: createPinModal
         onClosed: function () {
-            pairingModal.open()
+            keycardView.onClosed()
         }
     }
 
     PairingModal {
         id: pairingModal
         onClosed: function () {
-            pinModal.open()
+            if (!pairingModal.submitted) {
+                keycardView.onClosed()
+            }
         }
     }
 
     PINModal {
         id: pinModal
         onClosed: function () {
-            keycardView.open()
+            keycardView.onClosed()
         }
     }
 
@@ -40,5 +42,49 @@ Item {
         onCancel: function() {
             keycardView.onClosed()
         }
+    }
+
+    Connections {
+        id: connection
+        target: keycardModel
+        ignoreUnknownSignals: true
+
+        onCardUnpaired: {
+            pairingModal.open()
+        }
+
+        onCardPaired: {
+
+        }
+
+        //TODO: support the states below
+
+        onCardPreInit: {
+            keycardView.onClosed()
+        }
+
+        onCardFrozen: {
+            keycardView.onClosed()
+
+        }
+
+        onCardBlocked: {
+            keycardView.onClosed()
+        }
+
+        // TODO: handle these by showing an error an prompting for another card
+        // later add factory reset option for the NoFreeSlots case
+
+        onCardNoFreeSlots: {
+            //status-lib currently always returns availableSlots = 0 so we end up here
+            //keycardView.onClosed()
+            pairingModal.open()
+        }
+
+        onCardNotKeycard: {
+            keycardView.onClosed()
+
+        }
+
     }
 }
