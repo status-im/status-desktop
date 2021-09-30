@@ -1,13 +1,17 @@
 import QtQuick 2.13
 import QtQuick.Controls.Styles 1.0
-import "../../../shared"
-import "../../../shared/status"
+import "../../../../../shared"
+import "../../../../../shared/status"
+import "../"
 
 import utils 1.0
 
 TabViewStyle {
+    id: tabViewStyle
+
     property color fillColor: Style.current.background
     property color nonSelectedColor: Qt.darker(Style.current.background, 1.2)
+
     frameOverlap: 1
     tabsMovable: true
 
@@ -24,7 +28,7 @@ TabViewStyle {
             color: styleData.selected ? fillColor : nonSelectedColor
             border.width: 0
             implicitWidth: 240
-            implicitHeight: tabs.tabHeight
+            implicitHeight: control.tabHeight
             radius: Style.current.radius
 
             // This rectangle is to hide the bottom radius
@@ -38,7 +42,7 @@ TabViewStyle {
 
             FaviconImage {
                 id: faviconImage
-                currentTab: tabs.getTab(styleData.index) && tabs.getTab(styleData.index).item
+                currentTab: control.getTab(styleData.index) && control.getTab(styleData.index).item
                 anchors.verticalCenter: parent.verticalCenter;
                 anchors.left: parent.left
                 anchors.leftMargin: Style.current.halfPadding
@@ -61,14 +65,14 @@ TabViewStyle {
             StatusIconButton {
                 id: closeTabBtn
                 //% "Start Page"
-                visible: tabs.count > 1 || styleData.title !== qsTrId("start-page")
+                visible: control.count > 1 || styleData.title !== qsTrId("start-page")
                 enabled: visible
                 icon.name: "browser/close"
                 iconColor: Style.current.textColor
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.right: parent.right
                 anchors.rightMargin: Style.current.halfPadding
-                onClicked: tabs.removeView(styleData.index)
+                onClicked: control.closeButtonClicked(styleData.index)
                 width: 16
                 height: 16
             }
@@ -76,7 +80,7 @@ TabViewStyle {
 
         Loader {
             id: newTabloader
-            active: styleData.index === tabs.count - 1
+            active: styleData.index === control.count - 1
             anchors.verticalCenter: parent.verticalCenter
             anchors.right: parent.right
 
@@ -85,7 +89,7 @@ TabViewStyle {
                     icon.name: "browser/close"
                     iconColor: Style.current.textColor
                     iconRotation: 45
-                    onClicked: addNewTab()
+                    onClicked: control.openNewTabClicked()
                     width: 16
                     height: 16
                 }
