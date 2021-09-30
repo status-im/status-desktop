@@ -77,7 +77,9 @@ proc init*(self: MailserverModel) =
   let fleetConfig = readFile(joinPath(getAppDir(), fleets))
   self.fleet = newFleetModel(fleetConfig)
   self.wakuVersion = status_settings.getWakuVersion()
+
   self.mailservers = toSeq(self.fleet.config.getMailservers(status_settings.getFleet(), self.wakuVersion == 2).values)
+  
   for mailserver in status_settings.getMailservers().getElems():
     self.mailservers.add(mailserver["address"].getStr())
 
@@ -178,7 +180,7 @@ proc fillGaps*(self: MailserverModel, chatId: string, messageIds: seq[string]) =
   discard status_mailservers.fillGaps(chatId, messageIds)
 
 proc findNewMailserver(self: MailserverModel) =
-  warn "Finding a new mailserver..."
+  warn "Finding a new mailserver...", wakuVersion=self.wakuVersion
   
   let mailserversReply = parseJson(status_mailservers.ping(self.mailservers, 500, self.wakuVersion == 2))["result"]
   
