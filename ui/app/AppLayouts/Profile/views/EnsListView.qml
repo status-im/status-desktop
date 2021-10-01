@@ -3,15 +3,18 @@ import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.14
 
 import utils 1.0
-import "../../../../shared"
-import "../../../../shared/panels"
-import "../../../../shared/status"
-import "../../Chat/ChatColumn/MessageComponents"
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 
 import "../popups"
+import "../../../../shared"
+import "../../../../shared/panels"
+import "../../../../shared/status"
+
+//TODO remove these dependencies in imports
+import "../../Chat/views"
+import "../../Chat/controls"
 
 Item {
     id: root
@@ -32,7 +35,9 @@ Item {
     property bool isText: true
     property var clickMessage: function(){}
     property string identicon: store.identicon
+    //property string identicon: profileModel.profile.identicon
     property int timestamp: 1577872140
+    property var messageStore
 
     function shouldDisplayExampleMessage(){
         return store.ens.rowCount() > 0 && store.ensPendingLen() !== store.ens.rowCount() && store.preferredUsername !== ""
@@ -273,6 +278,13 @@ Item {
                 anchors.leftMargin: Style.current.padding
                 anchors.top: parent.top
                 anchors.topMargin: 20
+//                isCurrentUser: root.isCurrentUser
+//                profileImage: root.messageStore.profileImageSource
+//                isMessage: root.messageStore.isMessage
+//                identiconImageSource: root.messageStore.identicon
+                onClickMessage: {
+                    root.parent.clickMessage(isProfileClick, isSticker, isImage, image, emojiOnly, hideEmojiPicker, isReply);
+                }
             }
 
             UsernameLabel {
@@ -283,6 +295,13 @@ Item {
                 anchors.top: parent.top
                 anchors.topMargin: 0
                 anchors.left: chatImage.right
+//                isCurrentUser: root.messageStore.isCurrentUser
+//                userName: root.messageStore.userName
+//                localName: root.messageStore.localName
+//                displayUserName: root.messageStore.displayUserName
+                onClickMessage: {
+                    root.parent.clickMessage(true, false, false, null, false, false, false);
+                }
             }
 
             Rectangle {
@@ -297,7 +316,7 @@ Item {
                 anchors.leftMargin: 8
                 anchors.top: chatImage.top
 
-                ChatText {
+                ChatTextView {
                     id: chatText
                     anchors.top: parent.top
                     anchors.topMargin: chatBox.chatVerticalPadding
@@ -305,18 +324,20 @@ Item {
                     anchors.leftMargin: chatBox.chatHorizontalPadding
                     width: parent.width
                     anchors.right: parent.right
+                    messageStore: root.messageStore
                 }
 
                 RectangleCorner {}
             }
 
-            ChatTime {
+            ChatTimeView {
                 id: chatTime
                 anchors.top: chatBox.bottom
                 anchors.topMargin: 4
                 anchors.bottomMargin: Style.current.padding
                 anchors.right: chatBox.right
                 anchors.rightMargin: Style.current.padding
+                timestamp: root.timestamp
             }
 
             StatusBaseText {

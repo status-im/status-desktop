@@ -7,7 +7,8 @@ import utils 1.0
 import "../../shared"
 import "../../shared/status"
 import "../../shared/popups"
-import "../../app/AppLayouts/Chat/ChatColumn/samples"
+//TODO remove this!
+import "../../app/AppLayouts/Chat/stores"
 
 // TODO: replace with StatusModal
 ModalPopup {

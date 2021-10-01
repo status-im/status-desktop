@@ -12,12 +12,13 @@ import utils 1.0
 import "../../../shared"
 import "../../../shared/controls"
 import "../../../shared/status"
-import "../Chat/ChatColumn/ChatComponents"
+
 import "popups"
 import "controls"
 import "views"
 import "panels"
 import "stores"
+import "../Chat/popups"
 
 // Code based on https://code.qt.io/cgit/qt/qtwebengine.git/tree/examples/webengine/quicknanobrowser/BrowserWindow.qml?h=5.15 
 // Licensed under BSD

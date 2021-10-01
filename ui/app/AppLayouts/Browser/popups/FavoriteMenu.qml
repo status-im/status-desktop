@@ -8,7 +8,8 @@ import "../../../../shared/status"
 import "../stores"
 
 import utils 1.0
-import "../../Chat/ChatColumn/ChatComponents"
+
+import "../../Chat/popups"
 
 // TODO: replace with StatusPopupMenu
 PopupMenu {

@@ -6,7 +6,9 @@ import QtQuick.Controls.Universal 2.12
 import utils 1.0
 import "../../../../shared"
 import "../../../../shared/status"
-import "../../Chat/ChatColumn"
+
+//TODO remove import dependency
+import "../../Chat/views"
 
 import StatusQ.Core 0.1
 
@@ -18,14 +20,14 @@ ScrollView {
     id: root
     contentHeight: appearanceContainer.height
     clip: true
+    property var store
+    property var globalStore
 
     enum Theme {
         Light,
         Dark,
         System
     }
-
-    property var store
 
     function updateTheme(theme) {
         globalSettings.theme = theme
@@ -73,18 +75,29 @@ ScrollView {
             border.color: Style.current.border
             color: Style.current.transparent
 
-            Message {
+            MessageView {
                 id: paceholderMessage
                 anchors.top: parent.top
                 anchors.topMargin: Style.current.padding*2
                 anchors.left: parent.left
                 anchors.leftMargin: Style.current.smallPadding
+                rootStore: root.rootStore
+                messageStore: root.globalStore.messageStore
+                ///////////TODO Remove
                 userName: "@vitalik"
                 identicon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAb0lEQVR4Ae3UQQqAIBRF0Wj9ba9Bq6l5JBQqfn/ngDMH3YS3AAB/tO3H+XRG3b9bR/+gVoREI2RapVXpfd5+X5oXERKNkHS+rk3tOpWkeREh0QiZVu91ql2zNC8iJBoh0yqtSqt1slpCghICANDPBc0ESPh0bHkHAAAAAElFTkSuQmCC"
                 //% "Blockchains will drop search costs, causing a kind of decomposition that allows you to have markets of entities that are horizontally segregated and vertically segregated."
                 message: qsTrId("blockchains-will-drop-search-costs--causing-a-kind-of-decomposition-that-allows-you-to-have-markets-of-entities-that-are-horizontally-segregated-and-vertically-segregated-")
                 contentType: Constants.messageType
                 placeholderMessage: true
+                Component.onCompleted: {
+                    messageStore.userName = "@vitalik";
+                    messageStore.identicon = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAb0lEQVR4Ae3UQQqAIBRF0Wj9ba9Bq6l5JBQqfn/ngDMH3YS3AAB/tO3H+XRG3b9bR/+gVoREI2RapVXpfd5+X5oXERKNkHS+rk3tOpWkeREh0QiZVu91ql2zNC8iJBoh0yqtSqt1slpCghICANDPBc0ESPh0bHkHAAAAAElFTkSuQmCC";
+                    //% "Blockchains will drop search costs, causing a kind of decomposition that allows you to have markets of entities that are horizontally segregated and vertically segregated."
+                    messageStore.message = qsTrId("blockchains-will-drop-search-costs--causing-a-kind-of-decomposition-that-allows-you-to-have-markets-of-entities-that-are-horizontally-segregated-and-vertically-segregated-");
+                    messageStore.contentType = Constants.messageType;
+                    //messageStore.placeholderMessage = true;
+                }
             }
         }
 
