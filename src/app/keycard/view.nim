@@ -1,6 +1,6 @@
 import NimQml, chronicles
 import status/[status, keycard]
-import status/types/keycard as keycardtypes
+import types/keycard as keycardtypes
 import pairing
 
 logScope:
@@ -47,18 +47,47 @@ QtObject:
   proc cardFrozen*(self: KeycardView) {.signal.}
   proc cardBlocked*(self: KeycardView) {.signal.}
   proc cardAuthenticated*(self: KeycardView) {.signal.}
+  proc cardUnhandledError*(self: KeycardView, error: string) {.signal.}
 
   proc startConnection*(self: KeycardView) {.slot.} =
-    discard self.status.keycard.start()
+    try:
+      self.status.keycard.start()
+    except KeycardStartException as ex:
+      self.cardUnhandledError(ex.error)
+
 
   proc stopConnection*(self: KeycardView) {.slot.} =
     self.cardState = Disconnected
-    discard self.status.keycard.stop()
+    try:
+      self.status.keycard.stop()
+    except KeycardStopException as ex:
+      self.cardUnhandledError(ex.error)
 
   proc pair*(self: KeycardView, password: string) {.slot.} =
     discard """
-    on succesful pairing, save and change card state
-    otherwise throw error
+    let pairing = self.status.keycard.pair(password)
 
-    self.status.keycard.pair(password)
+    if pairing == "":
+      error
+
+    self.pairings.addPairing(self.appInfo.instanceUID, pairing)
+    self.cardState = Paired
+    self.cardPaired()
+    """
+
+  proc authenticate*(self: KeycardView, pin: string) {.slot.} =
+    discard """
+    let resp = self.status.keycard.verifyPIN(pin)
+    if resp is error:
+      handle error
+
+    self.cardAuthenticated()
+    """
+
+  proc init*(self: KeycardView, pin: string) {.slot.} =
+    discard """
+    """
+
+  proc recoverAccount*(self: KeycardView) {.slot.} =
+    discard """
     """

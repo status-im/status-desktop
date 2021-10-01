@@ -11,12 +11,14 @@ ModalPopup {
     property bool repeatPINFieldValid: false
     property string pinValidationError: ""
     property string repeatPINValidationError: ""
+    property bool submitted: false
 
     id: popup
     title: qsTr("Create PIN")
     height: 500
 
     onOpened: {
+        submitted = false
         firstPINField.text = "";
         firstPINField.forceActiveFocus(Qt.MouseFocusReason)
     }
@@ -102,6 +104,9 @@ ModalPopup {
             enabled: firstPINFieldValid && repeatPINFieldValid
 
             onClicked: {
+                submitted = true
+                keycardModel.init(firstPINField.text)
+                popup.close()
             }
         }
     }

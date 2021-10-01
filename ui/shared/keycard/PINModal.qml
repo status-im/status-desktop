@@ -7,12 +7,14 @@ import "../../shared"
 
 ModalPopup {
     property bool pinFieldValid: false
+    property bool submitted: false
 
     id: popup
     title: qsTr("Authenticate PIN")
     height: 400
 
     onOpened: {
+        submitted = false
         pinField.text = "";
         pinField.forceActiveFocus(Qt.MouseFocusReason)
     }
@@ -58,7 +60,9 @@ ModalPopup {
             enabled: pinFieldValid
 
             onClicked: {
-
+                submitted = true
+                keycardModel.authenticate(pinField.text)
+                popup.close()
             }
         }
     }
