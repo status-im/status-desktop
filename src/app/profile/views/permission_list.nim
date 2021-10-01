@@ -1,6 +1,7 @@
 import NimQml
 import Tables
 import status/status
+import status/types/permission
 import sets
 import sequtils
 
