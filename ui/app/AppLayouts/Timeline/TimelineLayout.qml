@@ -7,9 +7,11 @@ import QtQuick.Layouts 1.13
 import utils 1.0
 import "../../../shared"
 import "../../../shared/status"
-import "../Chat/ChatColumn"
-import "../Chat/ChatColumn/MessageComponents"
-import "../Chat/components"
+
+import "../Chat/views"
+import "../Chat/panels"
+import "../Chat/popups"
+import "../Chat/stores"
 
 import "stores"
 import "panels"
@@ -25,6 +27,7 @@ ScrollView {
     clip: true
     ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
     
+    property var messageStore
     property var onActivated: function () {
         store.setActiveChannelToTimeline()
         statusUpdateInput.textInput.forceActiveFocus(Qt.MouseFocusReason)
@@ -137,44 +140,45 @@ ScrollView {
             lessThan: [
                 function(left, right) { return left.clock > right.clock }
             ]
-
             model: root.store.chatsModelInst.messageView.messageList
             // TODO: Replace with StatusQ component once it lives there.
-            delegate: Message {
+            delegate: MessageView {
                 id: msgDelegate
-                fromAuthor: model.fromAuthor
-                chatId: model.chatId
-                userName: model.userName
-                alias: model.alias
-                localName: model.localName
-                message: model.message
-                plainText: model.plainText
-                identicon: model.identicon
-                isCurrentUser: model.isCurrentUser
-                timestamp: model.timestamp
-                sticker: model.sticker
-                contentType: model.contentType
-                outgoingStatus: model.outgoingStatus
-                responseTo: model.responseTo
-                authorCurrentMsg: msgDelegate.ListView.section
-                authorPrevMsg: msgDelegate.ListView.previousSection
-                imageClick: imagePopup.openPopup.bind(imagePopup)
-                messageId: model.messageId
-                emojiReactions: model.emojiReactions
-                isStatusUpdate: true
-                statusAgeEpoch: ageUpdateTimer.epoch
-                // This is used in order to have access to the previous message and determine the timestamp
-                // we can't rely on the index because the sequence of messages is not ordered on the nim side
-                prevMessageIndex: {
+                messageStore: root.messageStore
+                Component.onCompleted: {
+                    messageStore.fromAuthor = model.fromAuthor;
+                    messageStore.chatId = model.chatId;
+                    messageStore.userName = model.userName;
+                    messageStore.alias = model.alias;
+                    messageStore.localName = model.localName;
+                    messageStore.message = model.message;
+                    messageStore.plainText = model.plainText;
+                    messageStore.identicon = model.identicon;
+                    messageStore.isCurrentUser = model.isCurrentUser;
+                    messageStore.timestamp = model.timestamp;
+                    messageStore.sticker = model.sticker;
+                    messageStore.contentType = model.contentType;
+                    messageStore.outgoingStatus = model.outgoingStatus;
+                    messageStore.responseTo = model.responseTo;
+                    messageStore.authorCurrentMsg = msgDelegate.ListView.section;
+                    messageStore.authorPrevMsg = msgDelegate.ListView.previousSection;
+                    messageStore.imageClick = imagePopup.openPopup.bind(imagePopup);
+                    messageStore.messageId = model.messageId;
+                    messageStore.emojiReactions = model.emojiReactions;
+                    messageStore.isStatusUpdate = true;
+                    messageStore.statusAgeEpoch = ageUpdateTimer.epoch;
                     // This is used in order to have access to the previous message and determine the timestamp
                     // we can't rely on the index because the sequence of messages is not ordered on the nim side
-                    if(msgDelegate.DelegateModel.itemsIndex > 0){
-                        return messageListDelegate.items.get(msgDelegate.DelegateModel.itemsIndex - 1).model.index
-                    }
-                    return -1;
+                    messageStore.prevMessageIndex =
+                        // This is used in order to have access to the previous message and determine the timestamp
+                        // we can't rely on the index because the sequence of messages is not ordered on the nim side
+                        (msgDelegate.DelegateModel.itemsIndex > 0) ?
+                        messageListDelegate.items.get(msgDelegate.DelegateModel.itemsIndex - 1).model.index : -1;
+                    messageStore.timeout = model.timeout;
+                    messageStore.messageContextMenu = msgCntxtMenu;
                 }
-                timeout: model.timeout
-                messageContextMenu: MessageContextMenu {
+                MessageContextMenuPanel {
+                    id: msgCntxtMenu
                     reactionModel: EmojiReactions { }
                 }
             }

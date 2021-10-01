@@ -6,7 +6,9 @@ import "../../../../shared/status"
 import "../stores"
 
 import utils 1.0
-import "../../Chat/ChatColumn/ChatComponents"
+
+import "../../Chat/popups"
+import "../../Profile/LeftTab/constants.js" as ProfileConstants
 
 PopupMenu {
     property var openInNewTab: function () {}

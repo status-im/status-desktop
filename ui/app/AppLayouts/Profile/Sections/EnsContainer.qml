@@ -16,6 +16,7 @@ Item {
     property bool showSearchScreen: false
     property string addedUsername: ""
     property string selectedUsername: ""
+    property var messageStore
 
     signal next(output: string)
     signal back()
@@ -273,6 +274,7 @@ Item {
     Component {
         id: list
         List {
+            messageStore: ensContainer.messageStore
             onAddBtnClicked: next("search")
             onSelectEns: {
                 profileModel.ens.details(username)

@@ -6,7 +6,8 @@ import QtGraphicalEffects 1.0
 import utils 1.0
 import "../../shared"
 import "../../shared/status"
-import "../../app/AppLayouts/Chat/ChatColumn/samples"
+//TODO improve this!
+import "../../app/AppLayouts/Chat/stores"
 
 Item {
     id: root

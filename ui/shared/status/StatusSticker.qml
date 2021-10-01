@@ -6,7 +6,7 @@ import utils 1.0
 Loader {
     property color color
     property int contentType: -1
-    property string stickerData: sticker
+    property string stickerData: ""
     property int imageHeight: 140
     property int imageWidth: 140
     signal loaded()

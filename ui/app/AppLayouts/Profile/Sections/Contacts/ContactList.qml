@@ -5,7 +5,7 @@ import "./samples/"
 
 import utils 1.0
 import "../../../../../shared"
-import "../../../Chat/components"
+import "../../../Chat/popups"
 import "."
 
 ListView {

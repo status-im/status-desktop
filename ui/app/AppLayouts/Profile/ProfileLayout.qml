@@ -12,6 +12,7 @@ StatusAppTwoPanelLayout {
 
     id: profileView
 
+    property var globalStore
     property int contentMaxWidth: 624
     property int contentMinWidth: 450
     property int topMargin: 46
@@ -43,11 +44,14 @@ StatusAppTwoPanelLayout {
 
         EnsContainer {
             id: ensContainer
+            messageStore: profileView.globalStore.messageStore
         }
 
         PrivacyContainer {}
 
-        AppearanceContainer {}
+        AppearanceContainer {
+            rootStore: profileView.globalStore
+        }
 
         SoundsContainer {}
 

@@ -17,7 +17,7 @@ CheckBox {
         color: (control.down || control.checked) ? Style.current.primary : Style.current.inputBackground
 
         SVGImage {
-            source: "../img/checkmark.svg"
+            source: Style.svg("checkmark")
             width: 16
             height: 16
             anchors.centerIn: parent

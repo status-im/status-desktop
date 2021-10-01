@@ -5,9 +5,13 @@ import QtQuick.Controls 2.14
 import utils 1.0
 import "../../../../../shared"
 import "../../../../../shared/status"
-import "../../../Chat/ChatColumn/MessageComponents"
+
+//TODO remove these dependencies in imports
+import "../../../Chat/views"
+import "../../../Chat/controls"
 
 Item {
+    id: root
     signal addBtnClicked()
     signal selectEns(string username)
 
@@ -21,9 +25,9 @@ Item {
     property string authorCurrentMsg: "0"
     property string authorPrevMsg: "1"
     property bool isText: true
-    property var clickMessage: function(){}
     property string identicon: profileModel.profile.identicon
     property int timestamp: 1577872140
+    property var messageStore
 
     function shouldDisplayExampleMessage(){
         return profileModel.ens.rowCount() > 0 && profileModel.ens.pendingLen() !== profileModel.ens.rowCount() && profileModel.ens.preferredUsername !== ""
@@ -264,6 +268,13 @@ Item {
                 anchors.leftMargin: Style.current.padding
                 anchors.top: parent.top
                 anchors.topMargin: 20
+                isCurrentUser: root.isCurrentUser
+                profileImage: root.messageStore.profileImageSource
+                isMessage: root.messageStore.isMessage
+                identiconImageSource: root.messageStore.identicon
+                onClickMessage: {
+                    root.messageStore.clickMessage(isProfileClick, isSticker, isImage, image, emojiOnly, hideEmojiPicker, isReply);
+                }
             }
 
             UsernameLabel {
@@ -274,6 +285,13 @@ Item {
                 anchors.top: parent.top
                 anchors.topMargin: 0
                 anchors.left: chatImage.right
+                isCurrentUser: root.messageStore.isCurrentUser
+                userName: root.messageStore.userName
+                localName: root.messageStore.localName
+                displayUserName: root.messageStore.displayUserName
+                onClickMessage: {
+                    root.messageStore.clickMessage(true, false, false, null, false, false, false);
+                }
             }
 
             Rectangle {
@@ -288,7 +306,7 @@ Item {
                 anchors.leftMargin: 8
                 anchors.top: chatImage.top
 
-                ChatText {
+                ChatTextView {
                     id: chatText
                     anchors.top: parent.top
                     anchors.topMargin: chatBox.chatVerticalPadding
@@ -296,18 +314,20 @@ Item {
                     anchors.leftMargin: chatBox.chatHorizontalPadding
                     width: parent.width
                     anchors.right: parent.right
+                    messageStore: root.messageStore
                 }
 
                 RectangleCorner {}
             }
 
-            ChatTime {
+            ChatTimeView {
                 id: chatTime
                 anchors.top: chatBox.bottom
                 anchors.topMargin: 4
                 anchors.bottomMargin: Style.current.padding
                 anchors.right: chatBox.right
                 anchors.rightMargin: Style.current.padding
+                timestamp: root.timestamp
             }
 
             StyledText {
