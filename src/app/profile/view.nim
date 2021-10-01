@@ -3,6 +3,8 @@ import views/[mailservers_list, ens_manager, contacts, devices, mailservers, mne
 import chronicles
 import qrcode/qrcode
 
+# TODO: Remove direct access to statusgo backend!
+import status/statusgo_backend/eth as eth
 import status/statusgo_backend/accounts as status_accounts
 import status/profile as status_profile
 import status/contacts as status_contacts
@@ -126,7 +128,7 @@ QtObject:
 
   proc changePassword(self: ProfileView, password: string, newPassword: string): bool {.slot.} =
     let
-      defaultAccount = status_accounts.getDefaultAccount()
+      defaultAccount = eth.getDefaultAccount()
       isPasswordOk = status_accounts.verifyAccountPassword(defaultAccount, password, KEYSTOREDIR)
     if not isPasswordOk:
       return false

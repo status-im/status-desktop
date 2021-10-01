@@ -4,7 +4,8 @@ import NimQml, json, sequtils, chronicles, strutils, strformat, json, math
 import
   status/[status, wallet, utils],
   status/types/[gas_prediction],
-  status/statusgo_backend/wallet as status_wallet
+  # TODO: Remove direct access to backend
+  status/statusgo_backend/eth as eth
 import ../../../../app_service/[main]
 import ../../../../app_service/tasks/[qt, threadpool]
 
@@ -18,7 +19,7 @@ type
 const getGasPredictionsTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let
     arg = decode[GasPredictionsTaskArg](argEncoded)
-    response = status_wallet.getGasPrice().parseJson
+    response = eth.getGasPrice().parseJson
   var output = "0"
   if response.hasKey("result"):
     output = $fromHex(Stuint[256], response["result"].getStr)
