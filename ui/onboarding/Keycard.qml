@@ -2,10 +2,16 @@ import QtQuick 2.13
 import "./Keycard"
 import "../shared/keycard"
 
-// this will be the entry point. for now it opens all keycard-related dialogs in sequence for test
 Item {
+    enum OnboardingFlow {
+        Recover,
+        Generate,
+        ImportMnemonic
+    }
+
     property var onClosed: function () {}
     property bool connected: false
+    property int flow: OnboardingFlow.Recover
 
     id: keycardView
     anchors.fill: parent
@@ -17,7 +23,9 @@ Item {
     CreatePINModal {
         id: createPinModal
         onClosed: function () {
-            keycardView.onClosed()
+            if (!createPinModal.submitted) {
+                keycardView.onClosed()
+            }
         }
     }
 
@@ -33,7 +41,9 @@ Item {
     PINModal {
         id: pinModal
         onClosed: function () {
-            keycardView.onClosed()
+            if (!pinModal.submitted) {
+                keycardView.onClosed()
+            }
         }
     }
 
@@ -54,13 +64,28 @@ Item {
         }
 
         onCardPaired: {
+            pinModal.open()
+        }
 
+        onCardAuthenticated: {
+            switch (flow) {
+                case OnboardingFlow.Recover: {
+                    keycardModel.recoverAccount();
+                    break;
+                }
+                case OnboardingFlow.Generate: {
+                    break;
+                }
+                case OnboardingFlow.ImportMnemonic: {
+                    break;
+                }
+            }
         }
 
         //TODO: support the states below
 
         onCardPreInit: {
-            keycardView.onClosed()
+            createPinModal.open()
         }
 
         onCardFrozen: {
@@ -76,14 +101,11 @@ Item {
         // later add factory reset option for the NoFreeSlots case
 
         onCardNoFreeSlots: {
-            //status-lib currently always returns availableSlots = 0 so we end up here
-            //keycardView.onClosed()
-            pairingModal.open()
+            keycardView.onClosed()
         }
 
         onCardNotKeycard: {
             keycardView.onClosed()
-
         }
 
     }

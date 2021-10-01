@@ -14,6 +14,7 @@ ModalPopup {
     height: 400
 
     onOpened: {
+        submitted = false
         pairingPasswordField.text = "";
         pairingPasswordField.forceActiveFocus(Qt.MouseFocusReason)
     }

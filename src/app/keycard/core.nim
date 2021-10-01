@@ -1,5 +1,6 @@
 import NimQml, chronicles, std/wrapnils
 import status/[signals, status, keycard]
+import types/keycard as keycardtypes
 import view, pairing
 
 logScope:
@@ -29,11 +30,25 @@ proc attemptOpenSecureChannel(self: KeycardController) : bool =
   if pairing == "":
     return false
 
-  # actually open secure channel
+  discard """let err = self.status.keycard.openSecureChannel(pairing)
+
+  if err == Ok:
+    return true
+
+  self.view.pairings.removePairing(self.view.appInfo.instanceUID)
+
+  """"
   return false
 
 proc getCardState(self: KeycardController) =
-  let appInfo = self.status.keycard.select()
+  var appInfo: KeycardApplicationInfo
+
+  try:
+    appInfo = self.status.keycard.select()
+  except KeycardSelectException as ex:
+    self.view.cardUnhandledError(ex.error)
+    return
+
   self.view.appInfo = appInfo
 
   if not appInfo.installed:
@@ -43,7 +58,16 @@ proc getCardState(self: KeycardController) =
     self.view.cardState = PreInit
     self.view.cardPreInit()
   elif self.attemptOpenSecureChannel():
-    # here we will also be able to check if the card is Frozen/Blocked
+    discard """
+    self.view.appStatus = self.status.keycard.getStatusApplication()
+    if self.view.appStatus.pukRetryCounter == 0:
+      self.view.cardState = Blocked
+      self.view.cardBlocked()
+    elif self.view.appStatus.pinRetryCounter == 0:
+      self.view.cardState = Frozen
+      self.view.cardFrozen()
+    else:
+    """
     self.view.cardState = Paired
     self.view.cardPaired()
   elif appInfo.availableSlots > 0:
