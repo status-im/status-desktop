@@ -8,9 +8,11 @@ import utils 1.0
 import "../../../shared"
 import "../../../shared/controls"
 import "../../../shared/status"
-import "../Chat/ChatColumn"
-import "../Chat/ChatColumn/MessageComponents"
-import "../Chat/components"
+
+import "../Chat/views"
+import "../Chat/panels"
+import "../Chat/popups"
+import "../Chat/stores"
 
 import "stores"
 import "panels"
@@ -26,6 +28,8 @@ ScrollView {
     clip: true
     ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
     
+    property var rootStore
+    property var messageStore
     property var onActivated: function () {
         store.setActiveChannelToTimeline()
         statusUpdateInput.textInput.forceActiveFocus(Qt.MouseFocusReason)
@@ -138,11 +142,13 @@ ScrollView {
             lessThan: [
                 function(left, right) { return left.clock > right.clock }
             ]
-
             model: root.store.chatsModelInst.messageView.messageList
             // TODO: Replace with StatusQ component once it lives there.
-            delegate: Message {
+            delegate: MessageView {
                 id: msgDelegate
+                rootStore: root.rootStore
+                messageStore: root.messageStore
+                /////////TODO Remove
                 fromAuthor: model.fromAuthor
                 chatId: model.chatId
                 userName: model.userName
@@ -175,7 +181,41 @@ ScrollView {
                     return -1;
                 }
                 timeout: model.timeout
-                messageContextMenu: MessageContextMenu {
+                messageContextMenu: msgCntxtMenu
+                Component.onCompleted: {
+                    messageStore.fromAuthor = model.fromAuthor;
+                    messageStore.chatId = model.chatId;
+                    messageStore.userName = model.userName;
+                    messageStore.alias = model.alias;
+                    messageStore.localName = model.localName;
+                    messageStore.message = model.message;
+                    messageStore.plainText = model.plainText;
+                    messageStore.identicon = model.identicon;
+                    messageStore.isCurrentUser = model.isCurrentUser;
+                    messageStore.timestamp = model.timestamp;
+                    messageStore.sticker = model.sticker;
+                    messageStore.contentType = model.contentType;
+                    messageStore.outgoingStatus = model.outgoingStatus;
+                    messageStore.responseTo = model.responseTo;
+                    messageStore.authorCurrentMsg = msgDelegate.ListView.section;
+                    messageStore.authorPrevMsg = msgDelegate.ListView.previousSection;
+                    messageStore.imageClick = imagePopup.openPopup.bind(imagePopup);
+                    messageStore.messageId = model.messageId;
+                    messageStore.emojiReactions = model.emojiReactions;
+                    messageStore.isStatusUpdate = true;
+                    messageStore.statusAgeEpoch = ageUpdateTimer.epoch;
+                    // This is used in order to have access to the previous message and determine the timestamp
+                    // we can't rely on the index because the sequence of messages is not ordered on the nim side
+                    messageStore.prevMessageIndex =
+                        // This is used in order to have access to the previous message and determine the timestamp
+                        // we can't rely on the index because the sequence of messages is not ordered on the nim side
+                        (msgDelegate.DelegateModel.itemsIndex > 0) ?
+                        messageListDelegate.items.get(msgDelegate.DelegateModel.itemsIndex - 1).model.index : -1;
+                    messageStore.timeout = model.timeout;
+                    messageStore.messageContextMenu = msgCntxtMenu;
+                }
+                MessageContextMenuPanel {
+                    id: msgCntxtMenu
                     reactionModel: EmojiReactions { }
                 }
             }

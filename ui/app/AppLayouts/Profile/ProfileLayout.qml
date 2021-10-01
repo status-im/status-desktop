@@ -16,7 +16,7 @@ StatusAppTwoPanelLayout {
     id: profileView
 
     property RootStore store: RootStore { }
-
+    property var globalStore
     property int contentMaxWidth: 624
     property int contentMinWidth: 450
     property alias changeProfileSection: leftTab.changeProfileSection
@@ -51,6 +51,7 @@ StatusAppTwoPanelLayout {
         EnsView {
             id: ensContainer
             store: profileView.store
+            messageStore: profileView.globalStore.messageStore
         }
 
         PrivacyView {
@@ -59,6 +60,7 @@ StatusAppTwoPanelLayout {
 
         AppearanceView {
             store: profileView.store
+            globalStore: profileView.globalStore
         }
 
         SoundsView {}

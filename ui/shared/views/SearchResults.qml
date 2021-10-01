@@ -7,9 +7,8 @@ import "../"
 import "../status"
 import "../panels"
 // TODO move Contact into shared to get rid of that import
-import "../../app/AppLayouts/Chat/components"
-import "."
-
+import "../../app/AppLayouts/Chat/controls"
+import "./"
 
 Item {
     id: root

@@ -7,11 +7,14 @@ import "../../../shared"
 import "../../../shared/popups"
 import "../../../shared/panels"
 import "../../../shared/status"
-import "."
-import "./data"
-import "components"
-import "./ChatColumn"
-import "./CommunityComponents"
+
+import "views"
+import "panels"
+import "panels/communities"
+import "popups"
+import "helpers"
+import "controls"
+import "stores"
 
 import StatusQ.Layout 0.1
 import StatusQ.Popups 0.1
@@ -21,6 +24,10 @@ StatusAppThreePanelLayout {
 
     handle: SplitViewHandle { implicitWidth: 5 }
 
+    property var messageStore
+    property RootStore rootStore: RootStore {
+        messageStore: chatView.messageStore
+    }
     property alias chatColumn: chatColumn
     property bool stickersLoaded: false
     signal profileButtonClicked()
@@ -157,8 +164,9 @@ StatusAppThreePanelLayout {
         sourceComponent: appSettings.communitiesEnabled && chatsModel.communities.activeCommunity.active ? communtiyColumnComponent : contactsColumnComponent
     }
 
-    centerPanel: ChatColumn {
+    centerPanel: ChatColumnView {
         id: chatColumn
+        rootStore: chatView.rootStore
         chatGroupsListViewCount: contactColumnLoader.item.chatGroupsListViewCount
     }
 
@@ -168,17 +176,29 @@ StatusAppThreePanelLayout {
 
     Component {
         id: communityUserListComponent
-        CommunityUserList { currentTime: chatColumn.currentTime; messageContextMenu: quickActionMessageOptionsMenu }
+        CommunityUserListPanel {
+            currentTime: chatColumn.currentTime
+            messageContextMenu: quickActionMessageOptionsMenu
+            profilePubKey: profileModel.profile.pubKey
+            contactsList: profileModel.contacts.list
+        }
     }
 
     Component {
         id: userListComponent
-        UserList { currentTime: chatColumn.currentTime; userList: chatColumn.userList; messageContextMenu: quickActionMessageOptionsMenu}
+        UserListPanel {
+            currentTime: chatColumn.currentTime
+            userList: chatColumn.userList
+            messageContextMenu: quickActionMessageOptionsMenu
+            profilePubKey: profileModel.profile.pubKey
+            contactsList: profileModel.contacts.list
+            isOnline: chatsModel.isOnline
+        }
     }
 
     Component {
         id: contactsColumnComponent
-        ContactsColumn {
+        ContactsColumnView {
             onOpenProfileClicked: {
                 chatView.profileButtonClicked();
             }
@@ -187,7 +207,7 @@ StatusAppThreePanelLayout {
 
     Component {
         id: communtiyColumnComponent
-        CommunityColumn {
+        CommunityColumnView {
             pinnedMessagesPopupComponent: chatColumn.pinnedMessagesPopupComponent
         }
     }
@@ -223,9 +243,9 @@ StatusAppThreePanelLayout {
         }
     }
 
-    MessageContextMenu {
+    MessageContextMenuPanel {
         id: quickActionMessageOptionsMenu
-        reactionModel: EmojiReactions { }
+        reactionModel: chatColumn.rootStore.emojiReactionsModel
     }
 }
 

@@ -12,8 +12,10 @@ import "./AppLayouts"
 import "./AppLayouts/Timeline"
 import "./AppLayouts/Wallet"
 import "./AppLayouts/WalletV2"
-import "./AppLayouts/Chat/components"
-import "./AppLayouts/Chat/CommunityComponents"
+import "./AppLayouts/Chat/popups"
+import "./AppLayouts/Chat/popups/community"
+import "./AppLayouts/Profile/Sections"
+import "./AppLayouts/stores"
 
 import Qt.labs.platform 1.1
 import Qt.labs.settings 1.0
@@ -32,7 +34,7 @@ Item {
     property var newVersionJSON: JSON.parse(utilsModel.newVersion)
     property bool profilePopupOpened: false
     property bool networkGuarded: profileModel.network.current === Constants.networkMainnet || (profileModel.network.current === Constants.networkRopsten && appSettings.stickersEnsRopsten)
-
+    property RootStore rootStore: RootStore { }
     signal settingsLoaded()
     signal openContactsPopup()
 
@@ -417,6 +419,7 @@ Item {
                 Layout.fillWidth: true
                 Layout.alignment: Qt.AlignLeft | Qt.AlignTop
                 Layout.fillHeight: true
+                messageStore: appMain.rootStore.messageStore
                 onProfileButtonClicked: {
                     appMain.changeAppSection(Constants.profile);
                 }
@@ -452,7 +455,10 @@ Item {
             Loader {
                 id: timelineLayoutContainer
                 sourceComponent: Component {
-                    TimelineLayout {}
+                    TimelineLayout {
+                        messageStore: appMain.rootStore.messageStore
+                        rootStore: appMain.rootStore
+                    }
                 }
                 onLoaded: timelineLayoutContainer.item.onActivated()
                 active: false
@@ -466,6 +472,7 @@ Item {
                 Layout.fillWidth: true
                 Layout.alignment: Qt.AlignLeft | Qt.AlignTop
                 Layout.fillHeight: true
+                globalStore: appMain.rootStore
             }
 
             NodeLayout {

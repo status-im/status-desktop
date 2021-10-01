@@ -115,6 +115,17 @@ QtObject {
             `</html>`
     }
 
+    function getLinkStyle(link, hoveredLink) {
+        return `<style type="text/css">` +
+                `a {` +
+                `color: ${wrapper.textColor};` +
+                `text-decoration: none;` +
+                `}` +
+                (hoveredLink !== "" ? `a[href="${hoveredLink}"] { text-decoration: underline; }` : "") +
+                `</style>` +
+                `<a href="${link}">${link}</a>`
+    }
+
     function getAppSectionIndex(section) {
         let sectionId = -1
         switch (section) {

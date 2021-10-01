@@ -9,8 +9,7 @@ import DotherSide 0.1
 import utils 1.0
 import "../../shared"
 import "../../shared/panels"
-import "../../app/AppLayouts/Chat/ChatColumn/samples"
-import "../../app/AppLayouts/Chat/ChatColumn"
+import "../../app/AppLayouts/Chat/panels"
 
 import "./emojiList.js" as EmojiJSON
 
@@ -604,7 +603,7 @@ Rectangle {
         id: emojiSuggestions
     }
 
-    SuggestionBox {
+    SuggestionBoxPanel {
         id: suggestionsBox
         model: {
             if (chatsModel.communities.activeCommunity.active) {

@@ -8,7 +8,8 @@ import "../../shared"
 import "../../shared/popups"
 import "../../shared/panels"
 import "../../shared/status"
-import "../../app/AppLayouts/Chat/ChatColumn/samples"
+//TODO improve this!
+import "../../app/AppLayouts/Chat/stores"
 
 Item {
     id: root
