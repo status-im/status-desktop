@@ -82,13 +82,13 @@ QtObject:
           break
 
       self.contactList.updateContact(contact)
-      if contact.systemTags.contains(contactAdded):
+      if contact.added:
         self.addedContacts.updateContact(contact)
 
       if contact.isBlocked():
         self.blockedContacts.updateContact(contact)
 
-      if contact.requestReceived() and not contact.systemTags.contains(contactAdded) and not contact.systemTags.contains(contactBlocked):
+      if contact.requestReceived() and not contact.added and not contact.blocked:
         self.contactRequests.updateContact(contact)
 
       if not requestAlreadyAdded and contact.requestReceived():
@@ -101,9 +101,10 @@ QtObject:
 
   proc setContactList*(self: ContactsView, contactList: seq[Profile]) =
     self.contactList.setNewData(contactList)
-    self.addedContacts.setNewData(contactList.filter(c => c.systemTags.contains(contactAdded)))
-    self.blockedContacts.setNewData(contactList.filter(c => c.systemTags.contains(contactBlocked)))
-    self.contactRequests.setNewData(contactList.filter(c => c.systemTags.contains(contactRequest) and not c.systemTags.contains(contactAdded) and not c.systemTags.contains(contactBlocked)))
+    self.addedContacts.setNewData(contactList.filter(c => c.added))
+    self.blockedContacts.setNewData(contactList.filter(c => c.blocked))
+    self.contactRequests.setNewData(contactList.filter(c => c.hasAddedUs and not c.added and not c.blocked))
+
     self.contactListChanged()
 
   QtProperty[QVariant] list:
