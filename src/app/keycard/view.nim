@@ -55,7 +55,6 @@ QtObject:
     except KeycardStartException as ex:
       self.cardUnhandledError(ex.error)
 
-
   proc stopConnection*(self: KeycardView) {.slot.} =
     self.cardState = Disconnected
     try:
@@ -63,17 +62,42 @@ QtObject:
     except KeycardStopException as ex:
       self.cardUnhandledError(ex.error)
 
-  proc pair*(self: KeycardView, password: string) {.slot.} =
+  proc attemptOpenSecureChannel(self: KeycardView): bool =
+    let pairing = self.pairings.getPairing(self.appInfo.instanceUID)
+
+    if pairing == nil:
+      return false
+
+    try:
+      self.status.keycard.openSecureChannel(int(pairing.index), pairing.key)
+    except KeycardOpenSecureChannelException:
+      self.pairings.removePairing(self.appInfo.instanceUID)
+      return false
+
+    return true
+
+  proc onSecureChannelOpened(self: KeycardView) =
     discard """
-    let pairing = self.status.keycard.pair(password)
-
-    if pairing == "":
-      error
-
-    self.pairings.addPairing(self.appInfo.instanceUID, pairing)
+    self.appStatus = self.status.keycard.getStatusApplication()
+    if self.appStatus.pukRetryCounter == 0:
+      self.cardState = Blocked
+      self.cardBlocked()
+    elif self.appStatus.pinRetryCounter == 0:
+      self.cardState = Frozen
+      self.cardFrozen()
+    else:
+    """
     self.cardState = Paired
     self.cardPaired()
-    """
+
+  proc pair*(self: KeycardView, password: string) {.slot.} =
+    try:
+      let pairing = self.status.keycard.pair(password)
+      self.pairings.addPairing(self.appInfo.instanceUID, pairing)
+      if self.attemptOpenSecureChannel():
+        self.onSecureChannelOpened()
+    except KeycardPairException:
+      discard #display wrong pairing password message
 
   proc authenticate*(self: KeycardView, pin: string) {.slot.} =
     discard """
@@ -91,3 +115,29 @@ QtObject:
   proc recoverAccount*(self: KeycardView) {.slot.} =
     discard """
     """
+
+  proc getCardState*(self: KeycardView) =
+    var appInfo: KeycardApplicationInfo
+
+    try:
+      appInfo = self.status.keycard.select()
+    except KeycardSelectException as ex:
+      self.cardUnhandledError(ex.error)
+      return
+
+    self.appInfo = appInfo
+
+    if not appInfo.installed:
+      self.cardState = NotKeycard
+      self.cardNotKeycard()
+    elif not appInfo.initialized:
+      self.cardState = PreInit
+      self.cardPreInit()
+    elif self.attemptOpenSecureChannel():
+      self.onSecureChannelOpened()
+    elif appInfo.availableSlots > 0:
+      self.cardState = Unpaired
+      self.cardUnpaired()
+    else:
+      self.cardState = NoFreeSlots
+      self.cardNoFreeSlots()
