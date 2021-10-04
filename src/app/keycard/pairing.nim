@@ -1,4 +1,5 @@
-import json, os, std/wrapnils
+import json, os
+import types/keycard
 
 import ../../constants
 
@@ -17,7 +18,7 @@ proc newPairingController*(): KeycardPairingController =
 proc save(self: KeycardPairingController) =
   writeFile(PAIRINGSTORE, $self.store)
 
-proc addPairing*(self: KeycardPairingController, instanceUID: string, pairing: string) =
+proc addPairing*(self: KeycardPairingController, instanceUID: string, pairing: KeycardPairingInfo) =
   self.store[instanceUID] = %* pairing
   self.save()
 
@@ -25,6 +26,7 @@ proc removePairing*(self: KeycardPairingController, instanceUID: string) =
   self.store.delete(instanceUID)
   self.save()
 
-proc getPairing*(self: KeycardPairingController, instanceUID: string): string =
+proc getPairing*(self: KeycardPairingController, instanceUID: string): KeycardPairingInfo =
   let node = self.store{instanceUID}
-  return ?.node.getStr()
+  if node != nil:
+    result = to(node, KeycardPairingInfo)
