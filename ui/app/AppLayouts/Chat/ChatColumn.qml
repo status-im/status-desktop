@@ -179,7 +179,7 @@ Item {
                         //% "1 member"
                         return qsTrId("1-member");
                     case Constants.chatTypeCommunity:
-                        return Utils.linkifyAndXSS(chatsModel.channelView.activeChannel.description)
+                        return Utils.linkifyAndXSS(chatsModel.channelView.activeChannel.description).trim()
                     default:
                         return ""
                     }
