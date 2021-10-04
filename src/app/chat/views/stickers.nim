@@ -118,24 +118,40 @@ QtObject:
     let estimateResult = Json.decode(estimateJson, tuple[estimate: int, uuid: string])
     self.gasEstimateReturned(estimateResult.estimate, estimateResult.uuid)
 
-  proc buy*(self: StickersView, packId: int, address: string, price: string, gas: string, gasPrice: string, maxPriorityFeePerGas: string, maxFeePerGas: string, password: string): string {.slot.} =
+  proc buy*(self: StickersView, packId: int, address: string, price: string,
+    gas: string, gasPrice: string, maxPriorityFeePerGas: string,
+    maxFeePerGas: string, password: string): string {.slot.} =
+
     let eip1559Enabled = self.status.wallet.isEIP1559Enabled()
 
     try:
-      validateTransactionInput(address, address, "", price, gas, gasPrice, "", eip1559Enabled, maxPriorityFeePerGas, maxFeePerGas, "ok")
+      validateTransactionInput(address, address, "", price, gas, gasPrice, "",
+        eip1559Enabled, maxPriorityFeePerGas, maxFeePerGas, "ok")
+
     except Exception as e:
       error "Error buying sticker pack", msg = e.msg
+      # TODO: determine implications of empty string for processing of return
+      # value as JSON by `sendTransaction` in
+      # `ui/shared/status/StatusSNTTransactionModal.qml`
+      # note that the `buy` slot (this proc) is signaled in:
+      # `ui/shared/status/StatusStickerMarket.qml`
+      # `ui/shared/status/StatusStickerPackClickPopup.qml`
       return ""
-    
-    var success: bool
-    let response = self.status.stickers.buyPack(packId, address, price, gas, gasPrice, eip1559Enabled, maxPriorityFeePerGas, maxFeePerGas, password, success)
 
-    # TODO:
-    # check if response["error"] is not null and handle the error
-    result = $(%* { "result": %response, "success": %success })
-    if success:
+    let pendingTx = self.status.stickers.buyPack(packId, address, price, gas,
+      gasPrice, eip1559Enabled, maxPriorityFeePerGas, maxFeePerGas, password)
+
+    if pendingTx.success:
       self.stickerPacks.updateStickerPackInList(packId, false, true)
-      self.transactionWasSent(response)
+      self.transactionWasSent(pendingTx.hash)
+
+    # the logic of `sendTransaction` in
+    # `ui/shared/status/StatusSNTTransactionModal.qml` suggests that when
+    # `pendingTx.success` is false that `"result"` in the JSON may be expected
+    # to contain useful information, but `pendingTx.hash` returned by `buyPack`
+    # in `status-lib/status/stickers.nim` is just a transaction hash string,
+    # possibly (?) an empty string if `pendingTx.success` is false
+    $(%* { "result": %(pendingTx.hash), "success": %(pendingTx.success) })
 
   proc obtainAvailableStickerPacks*(self: StickersView) =
     self.obtainAvailableStickerPacks("setAvailableStickerPacks")

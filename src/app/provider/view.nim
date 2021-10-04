@@ -1,5 +1,5 @@
 import NimQml
-import status/[status, ens, chat/stickers, wallet, settings, provider]
+import status/[status, ens, wallet, settings, provider]
 import status/types/[setting, permission]
 import json, json_serialization, sets, strutils
 import chronicles
