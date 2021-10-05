@@ -121,15 +121,20 @@ proc init*(self: ProfileController, account: Account) =
     self.view.mailservers.activeMailserverChanged(mailserverArg.peer)
 
   self.status.events.on(SignalType.HistoryRequestStarted.event) do(e: Args):
-    info "history request started", topics="mailserver-interaction"
+    let h = HistoryRequestStartedSignal(e)
+    info "history request started", topics="mailserver-interaction", requestId=h.requestId, numBatches=h.numBatches
+
+  self.status.events.on(SignalType.HistoryRequestBatchProcessed.event) do(e: Args):
+    let h = HistoryRequestBatchProcessedSignal(e)
+    info "history batch processed", topics="mailserver-interaction", requestId=h.requestId, batchIndex=h.batchIndex
 
   self.status.events.on(SignalType.HistoryRequestCompleted.event) do(e: Args):
-    info "history request completed", topics="mailserver-interaction"
+    let h = HistoryRequestCompletedSignal(e)
+    info "history request completed", topics="mailserver-interaction", requestId=h.requestId
 
   self.status.events.on(SignalType.HistoryRequestFailed.event) do(e: Args):
     let h = HistoryRequestFailedSignal(e)
-    info "history request failed", topics="mailserver-interaction", errorMessage=h.errorMessage
-
+    info "history request failed", topics="mailserver-interaction", requestId=h.requestId, errorMessage=h.errorMessage
 
   self.status.events.on(SignalType.Message.event) do(e: Args):
     let msgData = MessageSignal(e);
