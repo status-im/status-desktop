@@ -375,7 +375,7 @@ StatusWindow {
 
             DSM.State {
                 id: keycardState
-                onEntered: loader.sourceComponent = keycard
+                onEntered: loader.sourceComponent = keycardFlowSelection
 
                 DSM.SignalTransition {
                     targetState: appState
@@ -420,7 +420,7 @@ StatusWindow {
             DSM.SignalTransition {
                 targetState: keycardState
                 signal: applicationWindow.navigateTo
-                guard: path === "Keycard"
+                guard: path === "KeycardFlowSelection"
             }
 
             DSM.FinalState {
@@ -542,7 +542,7 @@ StatusWindow {
         KeysMain {
             btnGenKey.onClicked: applicationWindow.navigateTo("GenKey")
             btnExistingKey.onClicked: applicationWindow.navigateTo("ExistingKey")
-            btnKeycard.onClicked: applicationWindow.navigateTo("Keycard")
+            btnKeycard.onClicked: applicationWindow.navigateTo("KeycardFlowSelection")
         }
     }
 
@@ -574,8 +574,8 @@ StatusWindow {
     }
 
     Component {
-        id: keycard
-        Keycard {
+        id: keycardFlowSelection
+        KeycardFlowSelection {
             onClosed: function () {
                 if (hasAccounts) {
                     applicationWindow.navigateTo("InitialState")
