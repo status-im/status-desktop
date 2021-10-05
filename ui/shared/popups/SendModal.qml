@@ -4,57 +4,14 @@ import QtQuick.Layouts 1.13
 import QtQuick.Dialogs 1.3
 
 import utils 1.0
-import "../../../../../shared"
-import "../../../../../shared/status"
-import "../../../../../shared/popups"
+import "../"
+import "../status"
 
 ModalPopup {
-    property var selectedAccount
-    property var selectedRecipient
-    property var selectedAsset
-    property var selectedAmount
-    property var selectedFiatAmount
-    property bool outgoing: true
-
-    property string trxData: ""
-
-    property alias transactionSigner: transactionSigner
-
-    property var sendTransaction: function(selectedGasLimit, selectedGasPrice, selectedTipLimit, selectedOveralLimit, enteredPassword) {
-        let success = false
-        if(root.selectedAsset.address == Constants.zeroAddress){
-            success = walletModel.transactionsView.transferEth(
-                                                selectFromAccount.selectedAccount.address,
-                                                 selectRecipient.selectedRecipient.address,
-                                                 root.selectedAmount,
-                                                 selectedGasLimit,
-                                                 gasSelector.eip1599Enabled ? "" : gasSelector.selectedGasPrice,
-                                                 gasSelector.selectedTipLimit,
-                                                 gasSelector.selectedOverallLimit,
-                                                 enteredPassword,
-                                                 stack.uuid)
-        } else {
-            success = walletModel.transactionsView.transferTokens(
-                                                 selectFromAccount.selectedAccount.address,
-                                                 selectRecipient.selectedRecipient.address,
-                                                 root.selectedAsset.address,
-                                                 root.selectedAmount,
-                                                 selectedGasLimit,
-                                                 gasSelector.eip1599Enabled ? "" : gasSelector.selectedGasPrice,
-                                                 gasSelector.selectedTipLimit,
-                                                 gasSelector.selectedOverallLimit,
-                                                 enteredPassword,
-                                                 stack.uuid)
-        }
-
-        if(!success){
-            //% "Invalid transaction parameters"
-            sendingError.text = qsTrId("invalid-transaction-parameters")
-            sendingError.open()
-        }
-    }
-
     id: root
+    property alias selectFromAccount: selectFromAccount
+    property alias selectRecipient: selectRecipient
+    property alias stack: stack
 
     //% "Send"
     title: qsTrId("command-button-send")
@@ -68,8 +25,39 @@ ModalPopup {
         standardButtons: StandardButton.Ok
     }
 
-    onClosed: {
-        stack.pop(groupPreview, StackView.Immediate)
+    function sendTransaction() {
+        stack.currentGroup.isPending = true
+        let success = false
+        if(txtAmount.selectedAsset.address == ""){
+            success = walletModel.transactionsView.transferEth(
+                                                 selectFromAccount.selectedAccount.address,
+                                                 selectRecipient.selectedRecipient.address,
+                                                 txtAmount.selectedAmount,
+                                                 gasSelector.selectedGasLimit,
+                                                 gasSelector.eip1599Enabled ? "" : gasSelector.selectedGasPrice,
+                                                 gasSelector.selectedTipLimit,
+                                                 gasSelector.selectedOverallLimit,
+                                                 transactionSigner.enteredPassword,
+                                                 stack.uuid)
+        } else {
+            success = walletModel.transactionsView.transferTokens(
+                                                 selectFromAccount.selectedAccount.address,
+                                                 selectRecipient.selectedRecipient.address,
+                                                 txtAmount.selectedAsset.address,
+                                                 txtAmount.selectedAmount,
+                                                 gasSelector.selectedGasLimit,
+                                                 gasSelector.eip1599Enabled ? "" : gasSelector.selectedGasPrice,
+                                                 gasSelector.selectedTipLimit,
+                                                 gasSelector.selectedOverallLimit,
+                                                 transactionSigner.enteredPassword,
+                                                 stack.uuid)
+        }
+
+        if(!success){
+            //% "Invalid transaction parameters"
+            sendingError.text = qsTrId("invalid-transaction-parameters")
+            sendingError.open()
+        }
     }
 
     TransactionStackView {
@@ -77,96 +65,96 @@ ModalPopup {
         anchors.fill: parent
         anchors.leftMargin: Style.current.padding
         anchors.rightMargin: Style.current.padding
-        initialItem: groupPreview
-        isLastGroup: stack.currentGroup === groupSignTx
         onGroupActivated: {
             root.title = group.headerText
             btnNext.text = group.footerText
         }
         TransactionFormGroup {
-            id: groupSelectAcct
-            headerText: {
-                if(trxData.startsWith("0x095ea7b3")){
-                    const approveData = JSON.parse(walletModel.tokensView.decodeTokenApproval(selectedRecipient.address, trxData))
-                    if(approveData.symbol)
-                        //% "Authorize %1 %2"
-                        return qsTrId("authorize--1--2").arg(approveData.amount).arg(approveData.symbol)    
-                }
-                return qsTrId("command-button-send");
-            }
+            id: group1
+            //% "Send"
+            headerText: qsTrId("command-button-send")
             //% "Continue"
             footerText: qsTrId("continue")
-            showNextBtn: false
-            onBackClicked: function() {
-                if(validate()) {
-                    stack.pop()
-                }
-            }
+
             AccountSelector {
                 id: selectFromAccount
                 accounts: walletModel.accountsView.accounts
+                selectedAccount: {
+                    const currAcc = walletModel.accountsView.currentAccount
+                    if (currAcc.walletType !== Constants.watchWalletType) {
+                        return currAcc
+                    }
+                    return null
+                }
                 currency: walletModel.balanceView.defaultCurrency
                 width: stack.width
-                selectedAccount: root.selectedAccount
-                //% "Choose account"
-                label: qsTrId("choose-account")
-                showBalanceForAssetSymbol: root.selectedAsset.symbol
-                minRequiredAssetBalance: parseFloat(root.selectedAmount)
+                //% "From account"
+                label: qsTrId("from-account")
                 onSelectedAccountChanged: if (isValid) { gasSelector.estimateGas() }
+            }
+            SeparatorWithIcon {
+                id: separator
+                anchors.top: selectFromAccount.bottom
+                anchors.topMargin: 19
             }
             RecipientSelector {
                 id: selectRecipient
-                visible: false
                 accounts: walletModel.accountsView.accounts
                 contacts: profileModel.contacts.addedContacts
-                selectedRecipient: root.selectedRecipient
-                readOnly: true
+                //% "Recipient"
+                label: qsTrId("recipient")
+                anchors.top: separator.bottom
+                anchors.topMargin: 10
+                width: stack.width
+                onSelectedRecipientChanged: if (isValid) { gasSelector.estimateGas() }
             }
         }
         TransactionFormGroup {
-            id: groupSelectGas
-            //% "Network fee"
-            headerText: qsTrId("network-fee")
+            id: group2
+            //% "Send"
+            headerText: qsTrId("command-button-send")
+            //% "Preview"
             footerText: qsTr("Continue")
-            showNextBtn: false
-            onBackClicked: function() {
-                stack.pop()
+
+            AssetAndAmountInput {
+                id: txtAmount
+                selectedAccount: selectFromAccount.selectedAccount
+                defaultCurrency: walletModel.balanceView.defaultCurrency
+                getFiatValue: walletModel.balanceView.getFiatValue
+                getCryptoValue: walletModel.balanceView.getCryptoValue
+                width: stack.width
+                onSelectedAssetChanged: if (isValid) { gasSelector.estimateGas() }
+                onSelectedAmountChanged: if (isValid) { gasSelector.estimateGas() }
             }
             GasSelector {
                 id: gasSelector
+                anchors.top: txtAmount.bottom
                 anchors.topMargin: Style.current.padding
                 gasPrice: parseFloat(walletModel.gasView.gasPrice)
                 getGasEthValue: walletModel.gasView.getGasEthValue
                 getFiatValue: walletModel.balanceView.getFiatValue
                 defaultCurrency: walletModel.balanceView.defaultCurrency
+                
                 width: stack.width
-    
                 property var estimateGas: Backpressure.debounce(gasSelector, 600, function() {
                     if (!(selectFromAccount.selectedAccount && selectFromAccount.selectedAccount.address &&
                         selectRecipient.selectedRecipient && selectRecipient.selectedRecipient.address &&
-                        root.selectedAsset && root.selectedAsset.address &&
-                        root.selectedAmount)) {
-                        selectedGasLimit = 250000
-                        defaultGasLimit = selectedGasLimit
-                        return
-                    }
+                        txtAmount.selectedAsset && txtAmount.selectedAsset.address &&
+                        txtAmount.selectedAmount)) return
                     
                     let gasEstimate = JSON.parse(walletModel.gasView.estimateGas(
                         selectFromAccount.selectedAccount.address,
                         selectRecipient.selectedRecipient.address,
-                        root.selectedAsset.address,
-                        root.selectedAmount,
-                        trxData))
+                        txtAmount.selectedAsset.address,
+                        txtAmount.selectedAmount,
+                        ""))
 
                     if (!gasEstimate.success) {
                         //% "Error estimating gas: %1"
-                        let message = qsTrId("error-estimating-gas---1").arg(gasEstimate.error.message)
-
-                        //% ". The transaction will probably fail."
-                        gasEstimateErrorPopup.confirmationText = message + qsTrId("--the-transaction-will-probably-fail-")
-                        gasEstimateErrorPopup.open()
+                        console.warn(qsTrId("error-estimating-gas---1").arg(gasEstimate.error.message))
                         return
                     }
+
                     selectedGasLimit = gasEstimate.result
                     defaultGasLimit = selectedGasLimit
                 })
@@ -175,23 +163,17 @@ ModalPopup {
                 id: gasValidator
                 anchors.top: gasSelector.bottom
                 selectedAccount: selectFromAccount.selectedAccount
-                selectedAmount: parseFloat(root.selectedAmount)
-                selectedAsset: root.selectedAsset
+                selectedAmount: parseFloat(txtAmount.selectedAmount)
+                selectedAsset: txtAmount.selectedAsset
                 selectedGasEthValue: gasSelector.selectedGasEthValue
             }
         }
-        
         TransactionFormGroup {
-            id: groupPreview
+            id: group3
             //% "Transaction preview"
             headerText: qsTrId("transaction-preview")
             //% "Sign with password"
             footerText: qsTrId("sign-with-password")
-            showBackBtn: false
-            onNextClicked: function() {
-                stack.push(groupSignTx, StackView.Immediate)
-            }
-            isValid: groupSelectAcct.isValid && groupSelectGas.isValid && pvwTransaction.isValid
 
             TransactionPreview {
                 id: pvwTransaction
@@ -203,45 +185,22 @@ ModalPopup {
                     "fiatValue": gasSelector.selectedGasFiatValue
                 }
                 toAccount: selectRecipient.selectedRecipient
-                asset: root.selectedAsset
-                amount: { "value": root.selectedAmount, "fiatValue": root.selectedFiatAmount }
+                asset: txtAmount.selectedAsset
+                amount: { "value": txtAmount.selectedAmount, "fiatValue": txtAmount.selectedFiatAmount }
                 currency: walletModel.balanceView.defaultCurrency
-                isFromEditable: false
-                trxData: root.trxData
-                isGasEditable: true
-                fromValid: balanceValidator.isValid
-                gasValid: gasValidator.isValid
-                onFromClicked: { stack.push(groupSelectAcct, StackView.Immediate) }
-                onGasClicked: { stack.push(groupSelectGas, StackView.Immediate) }
             }
-            BalanceValidator {
-                id: balanceValidator
+            SendToContractWarning {
+                id: sendToContractWarning
                 anchors.top: pvwTransaction.bottom
-                anchors.horizontalCenter: parent.horizontalCenter
-                account: selectFromAccount.selectedAccount
-                amount: !!root.selectedAmount ? parseFloat(root.selectedAmount) : 0.0
-                asset: root.selectedAsset
-            }
-            GasValidator {
-                id: gasValidator2
-                anchors.top: balanceValidator.visible ? balanceValidator.bottom : pvwTransaction.bottom
-                anchors.topMargin: balanceValidator.visible ? 5 : 0
-                anchors.horizontalCenter: parent.horizontalCenter
-                selectedAccount: selectFromAccount.selectedAccount
-                selectedAmount: parseFloat(root.selectedAmount)
-                selectedAsset: root.selectedAsset
-                selectedGasEthValue: gasSelector.selectedGasEthValue
+                selectedRecipient: selectRecipient.selectedRecipient
             }
         }
         TransactionFormGroup {
-            id: groupSignTx
+            id: group4
             //% "Sign with password"
             headerText: qsTrId("sign-with-password")
             //% "Send %1 %2"
-            footerText: qsTrId("send--1--2").arg(root.selectedAmount).arg(!!root.selectedAsset ? root.selectedAsset.symbol : "")
-            onBackClicked: function() {
-                stack.pop()
-            }
+            footerText: qsTrId("send--1--2").arg(txtAmount.selectedAmount).arg(!!txtAmount.selectedAsset ? txtAmount.selectedAsset.symbol : "")
 
             TransactionSigner {
                 id: transactionSigner
@@ -258,16 +217,12 @@ ModalPopup {
         StatusRoundButton {
             id: btnBack
             anchors.left: parent.left
+            visible: !stack.isFirstGroup
             icon.name: "arrow-right"
             icon.width: 20
             icon.height: 16
             rotation: 180
-            visible: stack.currentGroup.showBackBtn
-            enabled: stack.currentGroup.isValid || stack.isLastGroup
             onClicked: {
-                if (typeof stack.currentGroup.onBackClicked === "function") {
-                    return stack.currentGroup.onBackClicked()
-                }
                 stack.back()
             }
         }
@@ -275,7 +230,7 @@ ModalPopup {
         Component {
             id: transactionSettingsConfirmationPopupComponent
             TransactionSettingsConfirmationPopup {
-
+                
             }
         }
 
@@ -285,26 +240,22 @@ ModalPopup {
             //% "Next"
             text: qsTrId("next")
             enabled: stack.currentGroup.isValid && !stack.currentGroup.isPending
-            visible: stack.currentGroup.showNextBtn
+            state: stack.currentGroup.isPending ? "pending" : "default"
             onClicked: {
                 const validity = stack.currentGroup.validate()
                 if (validity.isValid && !validity.isPending) {
                     if (stack.isLastGroup) {
-                        return root.sendTransaction(gasSelector.selectedGasLimit,
-                                                    gasSelector.eip1599Enabled ? "" : gasSelector.selectedGasPrice,
-                                                    gasSelector.selectedTipLimit,
-                                                    gasSelector.selectedOverallLimit,
-                                                    transactionSigner.enteredPassword)
+                        return root.sendTransaction()
                     }
 
-                    if(gasSelector.eip1599Enabled && stack.currentGroup === groupSelectGas && gasSelector.advancedMode){
+                    if(gasSelector.eip1599Enabled && stack.currentGroup === group2 && gasSelector.advancedMode){
                         if(gasSelector.showPriceLimitWarning || gasSelector.showTipLimitWarning){
                             openPopup(transactionSettingsConfirmationPopupComponent, {
                                 currentBaseFee: gasSelector.latestBaseFeeGwei,
                                 currentMinimumTip: gasSelector.perGasTipLimitFloor,
                                 currentAverageTip: gasSelector.perGasTipLimitAverage,
                                 tipLimit: gasSelector.selectedTipLimit,
-                                suggestedTipLimit: gasSelector.perGasTipLimitFloor, // TODO:
+                                suggestedTipLimit: gasSelector.perGasTipLimitFloor,
                                 priceLimit: gasSelector.selectedOverallLimit,
                                 suggestedPriceLimit: gasSelector.latestBaseFeeGwei + gasSelector.perGasTipLimitFloor,
                                 showPriceLimitWarning: gasSelector.showPriceLimitWarning,
@@ -317,10 +268,6 @@ ModalPopup {
                         }
                     }
 
-
-                    if (typeof stack.currentGroup.onNextClicked === "function") {
-                        return stack.currentGroup.onNextClicked()
-                    }
                     stack.next()
                 }
             }
@@ -331,39 +278,55 @@ ModalPopup {
             onTransactionWasSent: {
                 try {
                     let response = JSON.parse(txResult)
-                    if (response.uuid !== stack.uuid)
-                        return
 
-                    let transactionId = response.result
+                    if (response.uuid !== stack.uuid) return
+                    
+                    stack.currentGroup.isPending = false
 
                     if (!response.success) {
-                        if (Utils.isInvalidPasswordMessage(transactionId)){
+                        if (Utils.isInvalidPasswordMessage(response.result)){
                             //% "Wrong password"
                             transactionSigner.validationError = qsTrId("wrong-password")
                             return
                         }
-                        sendingError.text = transactionId
+                        sendingError.text = response.result
                         return sendingError.open()
                     }
-
-                    chatsModel.transactions.acceptRequestTransaction(transactionId,
-                                                            messageId,
-                                                            profileModel.profile.pubKey + transactionId.substr(2))
 
                     //% "Transaction pending..."
                     toastMessage.title = qsTrId("ens-transaction-pending")
                     toastMessage.source = Style.svg("loading")
                     toastMessage.iconColor = Style.current.primary
                     toastMessage.iconRotates = true
-                    toastMessage.link = `${walletModel.utilsView.etherscanLink}/${transactionId}`
+                    toastMessage.link = `${walletModel.utilsView.etherscanLink}/${response.result}`
                     toastMessage.open()
-
                     root.close()
                 } catch (e) {
                     console.error('Error parsing the response', e)
                 }
             }
+            onTransactionCompleted: {
+                if (success) {
+                    //% "Transaction completed"
+                    toastMessage.title = qsTrId("transaction-completed")
+                    toastMessage.source = Style.svg("check-circle")
+                    toastMessage.iconColor = Style.current.success
+                } else {
+                    //% "Transaction failed"
+                    toastMessage.title = qsTrId("ens-registration-failed-title")
+                    toastMessage.source = Style.svg("block-icon")
+                    toastMessage.iconColor = Style.current.danger
+                }
+                toastMessage.link = `${walletModel.utilsView.etherscanLink}/${txHash}`
+                toastMessage.open()
+            }
         }
     }
 }
+
+/*##^##
+Designer {
+    D{i:0;autoSize:true;height:480;width:640}
+}
+##^##*/
 

@@ -5,7 +5,7 @@ import QtGraphicalEffects 1.13
 import utils 1.0
 import "../../../../shared"
 import "../../../../shared/status"
-import "../../Wallet"
+import "../../Wallet/views"
 import "../stores"
 
 Popup {
@@ -201,10 +201,10 @@ Popup {
             anchors.bottom: parent.bottom
             currentIndex: walletTabBar.currentIndex
 
-            AssetsTab {
+            AssetsView {
                 id: assetsTab
             }
-            HistoryTab {
+            HistoryView {
                 id: historyTab
             }
         }

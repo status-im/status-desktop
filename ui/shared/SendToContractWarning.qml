@@ -45,7 +45,7 @@ Item {
             sourceSize.width: width * 2
             anchors.horizontalCenter: parent.horizontalCenter
             fillMode: Image.PreserveAspectFit
-            source: "../app/img/exclamation_outline.svg"
+            source: Style.svg("exclamation_outline")
         }
         StyledText {
             id: txtValidationError

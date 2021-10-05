@@ -10,13 +10,14 @@ import StatusQ.Controls 0.1
 
 import "../../../shared"
 import "../../../shared/status"
+import "../../../shared/popups"
 
 import utils 1.0
 import "./components"
 import "./ChatColumn"
 import "./ChatColumn/ChatComponents"
 import "./data"
-import "../Wallet"
+
 
 
 Item {

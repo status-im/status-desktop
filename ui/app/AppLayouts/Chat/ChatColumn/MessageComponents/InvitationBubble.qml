@@ -5,7 +5,6 @@ import "../../../../../shared/status"
 
 import utils 1.0
 import "./TransactionComponents"
-import "../../../Wallet/data"
 
 Item {
     property string communityId

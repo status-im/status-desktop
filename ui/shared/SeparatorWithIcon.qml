@@ -26,7 +26,7 @@ Item {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
         fillMode: Image.PreserveAspectFit
-        source: "../app/img/arrow-right.svg"
+        source: Style.svg("arrow-right")
         rotation: 90
 
         ColorOverlay {

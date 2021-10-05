@@ -7,6 +7,7 @@ import utils 1.0
 import "../sounds"
 import "../shared"
 import "../shared/status"
+import "../shared/popups"
 import "./AppLayouts"
 import "./AppLayouts/Timeline"
 import "./AppLayouts/Wallet"

@@ -69,7 +69,7 @@ Item {
                         width: itmFromValue.needsRightPadding() ? (Style.current.halfPadding + sourceSize.width) : undefined // adding width to add addl spacing to image
                         anchors.verticalCenter: parent.verticalCenter
                         fillMode: Image.PreserveAspectFit
-                        source: "../app/img/walletIcon.svg"
+                        source: Style.svg("walletIcon")
                         ColorOverlay {
                             visible: parent.visible
                             anchors.fill: parent
@@ -85,7 +85,7 @@ Item {
                         sourceSize.height: height * 2
                         sourceSize.width: width * 2
                         fillMode: Image.PreserveAspectFit
-                        source: "../app/img/exclamation_outline.svg"
+                        source: Style.svg("exclamation_outline")
                         visible: !root.fromValid
                     }
                     SVGImage {
@@ -95,7 +95,7 @@ Item {
                         visible: root.isFromEditable
                         anchors.verticalCenter: parent.verticalCenter
                         fillMode: Image.PreserveAspectFit
-                        source: "../app/img/caret.svg"
+                        source: Style.svg("caret")
                         rotation: 270
                         ColorOverlay {
                             anchors.fill: parent
@@ -240,7 +240,7 @@ Item {
                 anchors.right: parent.right
                 anchors.verticalCenter: parent.verticalCenter
                 fillMode: Image.PreserveAspectFit
-                source: "../app/img/walletIcon.svg"
+                source: Style.svg("walletIcon")
             }
             ColorOverlay {
                 id: ovlToWallet
@@ -266,7 +266,7 @@ Item {
                 sourceSize.height: height * 2
                 sourceSize.width: width * 2
                 fillMode: Image.PreserveAspectFit
-                source: "../app/img/exclamation_outline.svg"
+                source: Style.svg("exclamation_outline")
                 visible: !root.toValid || root.toWarn
             }
         }
@@ -453,7 +453,7 @@ Item {
                         sourceSize.height: height * 2
                         sourceSize.width: width * 2
                         fillMode: Image.PreserveAspectFit
-                        source: "../app/img/exclamation_outline.svg"
+                        source: Style.svg("exclamation_outline")
                         visible: !root.gasValid
                     }
                     SVGImage {
@@ -463,7 +463,7 @@ Item {
                         visible: root.isGasEditable
                         anchors.verticalCenter: parent.verticalCenter
                         fillMode: Image.PreserveAspectFit
-                        source: "../app/img/caret.svg"
+                        source: Style.svg("caret")
                         rotation: 270
                         ColorOverlay {
                             anchors.fill: parent
@@ -512,7 +512,7 @@ Item {
                         visible: true
                         anchors.verticalCenter: parent.verticalCenter
                         fillMode: Image.PreserveAspectFit
-                        source: "../app/img/caret.svg"
+                        source: Style.svg("caret")
                         rotation: 270
                         ColorOverlay {
                             anchors.fill: parent
