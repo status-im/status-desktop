@@ -1,12 +1,16 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
-import QtQuick.Dialogs 1.3
+import QtQuick.Layouts 1.13
+import StatusQ.Core 0.1
+import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
-import "../../imports"
+import StatusQ.Popups 0.1
+
+import "../../imports/utils" as Imports
 import "../../shared"
 import "../../shared/keycard"
 
-ModalPopup {
+StatusModal {
     property bool firstPINFieldValid: false
     property bool repeatPINFieldValid: false
     property string pinValidationError: ""
@@ -14,7 +18,8 @@ ModalPopup {
     property bool submitted: false
 
     id: popup
-    title: qsTr("Create PIN")
+    header.title: qsTr("Create PIN")
+    anchors.centerIn: parent
     height: 500
 
     onOpened: {
@@ -23,83 +28,75 @@ ModalPopup {
         firstPINField.forceActiveFocus(Qt.MouseFocusReason)
     }
 
-    Input {
-        id: firstPINField
-        anchors.rightMargin: 56
-        anchors.leftMargin: 56
-        anchors.top: parent.top
-        anchors.topMargin: 88
-        placeholderText:  qsTr("New PIN")
-        textField.echoMode: TextInput.Password
-        onTextChanged: {
-            [firstPINFieldValid, pinValidationError] =
-                Utils.validatePINs("first", firstPINField, repeatPINField);
-        }
-    }
-
-    Input {
-        id: repeatPINField
-        enabled: firstPINFieldValid
-        anchors.rightMargin: 0
-        anchors.leftMargin: 0
-        anchors.right: firstPINField.right
-        anchors.left: firstPINField.left
-        anchors.top: firstPINField.bottom
-        anchors.topMargin: Style.current.xlPadding
-        placeholderText: qsTr("Confirm PIN")
-        textField.echoMode: TextInput.Password
-        Keys.onReturnPressed: function(event) {
-            if (submitBtn.enabled) {
-                submitBtn.clicked(event)
+    contentItem: Item {
+        Input {
+            id: firstPINField
+            anchors.rightMargin: 56
+            anchors.leftMargin: 56
+            anchors.top: parent.top
+            anchors.topMargin: 88
+            placeholderText:  qsTr("New PIN")
+            textField.echoMode: TextInput.Password
+            onTextChanged: {
+                [firstPINFieldValid, pinValidationError] =
+                    Imports.Utils.validatePINs("first", firstPINField, repeatPINField);
             }
         }
-        onTextChanged: {
-            [repeatPINFieldValid, repeatPINValidationError] =
-                Utils.validatePINs("repeat", firstPINField, repeatPINField);
+
+        Input {
+            id: repeatPINField
+            enabled: firstPINFieldValid
+            anchors.rightMargin: 0
+            anchors.leftMargin: 0
+            anchors.right: firstPINField.right
+            anchors.left: firstPINField.left
+            anchors.top: firstPINField.bottom
+            anchors.topMargin: 32
+            placeholderText: qsTr("Confirm PIN")
+            textField.echoMode: TextInput.Password
+            Keys.onReturnPressed: function(event) {
+                if (submitBtn.enabled) {
+                    submitBtn.clicked(event)
+                }
+            }
+            onTextChanged: {
+                [repeatPINFieldValid, repeatPINValidationError] =
+                    Imports.Utils.validatePINs("repeat", firstPINField, repeatPINField);
+            }
+        }
+
+        StatusBaseText {
+            id: validationError
+            text: {
+                if (pinValidationError !== "") return pinValidationError;
+                if (repeatPINValidationError !== "") return repeatPINValidationError;
+                return "";
+            }
+            anchors.top: repeatPINField.bottom
+            anchors.topMargin: 20
+            anchors.right: parent.right
+            anchors.left: parent.left
+            horizontalAlignment: Text.AlignHCenter
+            color: Theme.palette.dangerColor1
+            font.pixelSize: 11
+        }
+
+        StatusBaseText {
+            text: qsTr("Create a 6 digit long PIN")
+            wrapMode: Text.WordWrap
+            anchors.right: parent.right
+            anchors.left: parent.left
+            horizontalAlignment: Text.AlignHCenter
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 20
+            color: Theme.palette.directColor1
+            font.pixelSize: 12
         }
     }
 
-    StyledText {
-        id: validationError
-        text: {
-            if (pinValidationError !== "") return pinValidationError;
-            if (repeatPINValidationError !== "") return repeatPINValidationError;
-            return "";
-        }
-        anchors.top: repeatPINField.bottom
-        anchors.topMargin: 20
-        anchors.right: parent.right
-        anchors.rightMargin: Style.current.xlPadding
-        anchors.left: parent.left
-        anchors.leftMargin: Style.current.xlPadding
-        horizontalAlignment: Text.AlignHCenter
-        color: Style.current.danger
-        font.pixelSize: 11
-    }
-
-    StyledText {
-        text: qsTr("Create a 6 digit long PIN")
-        wrapMode: Text.WordWrap
-        anchors.right: parent.right
-        anchors.rightMargin: Style.current.xlPadding
-        anchors.left: parent.left
-        anchors.leftMargin: Style.current.xlPadding
-        horizontalAlignment: Text.AlignHCenter
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: 0
-        color: Style.current.secondaryText
-        font.pixelSize: 12
-    }
-
-    footer: Item {
-        width: parent.width
-        height: submitBtn.height
-
+    rightButtons: [
         StatusButton {
             id: submitBtn
-            anchors.bottom: parent.bottom
-            anchors.topMargin: Style.current.padding
-            anchors.right: parent.right
             text: qsTr("Create PIN")
             enabled: firstPINFieldValid && repeatPINFieldValid
 
@@ -109,5 +106,5 @@ ModalPopup {
                 popup.close()
             }
         }
-    }
+    ]
 }
