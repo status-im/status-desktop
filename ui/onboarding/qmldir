@@ -7,4 +7,4 @@ EnterSeedPhraseModal 1.0 EnterSeedPhraseModal.qml
 CreatePasswordModal 1.0 CreatePasswordModal.qml
 GenKeyModal 1.0 GenKeyModal.qml
 BeforeGetStartedModal 1.0 BeforeGetStartedModal.qml
-Keycard 1.0 Keycard.qml
+KeycardFlowSelection 1.0 KeycardFlowSelection.qml
