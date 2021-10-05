@@ -27,6 +27,7 @@ Rectangle {
     signal clicked(var mouse)
     signal pinnedMessagesCountClicked(var mouse)
     signal unmute()
+    signal linkActivated(string link)
 
     enum Type {
         Unknown0, // 0
@@ -213,6 +214,7 @@ Rectangle {
                 font.pixelSize: 12
                 width: Math.min(parent.width - (pinIcon.visible ? divider.width + divider.anchors.leftMargin + pinIcon.width + pinIcon.anchors.leftMargin : 0),
                                 implicitWidth)
+                onLinkActivated: statusChatInfoButton.linkActivated(link)
             }
 
             Rectangle {

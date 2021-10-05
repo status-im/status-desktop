@@ -26,7 +26,9 @@ Item {
     property alias verticalAlignmet: edit.verticalAlignment
     property alias horizontalAlignment: edit.horizontalAlignment
 
-    implicitWidth: 448
+    signal linkActivated(string link)
+
+    implicitWidth: multiline ? 0 :  edit.implicitWidth
     implicitHeight: edit.implicitHeight
 
     clip:true
@@ -92,6 +94,8 @@ Item {
                         flick.contentY = 0
                     }
                 }
+
+                onLinkActivated: statusSelectableText.linkActivated(link)
 
                 text: "<style>a:link { color: " + (!!hoveredLink ? statusSelectableText.hoveredLinkColor : Theme.palette.baseColor1) + "; }</style>" + statusSelectableText.text
             }
