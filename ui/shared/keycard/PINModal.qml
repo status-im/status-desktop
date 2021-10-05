@@ -1,16 +1,21 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
-import QtQuick.Dialogs 1.3
+import QtQuick.Layouts 1.13
+import StatusQ.Core 0.1
+import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
-import "../../imports"
+import StatusQ.Popups 0.1
+
+import "../../imports/utils" as Imports
 import "../../shared"
 
-ModalPopup {
+StatusModal {
     property bool pinFieldValid: false
     property bool submitted: false
 
     id: popup
-    title: qsTr("Authenticate PIN")
+    header.title: qsTr("Authenticate PIN")
+    anchors.centerIn: parent
     height: 400
 
     onOpened: {
@@ -19,43 +24,37 @@ ModalPopup {
         pinField.forceActiveFocus(Qt.MouseFocusReason)
     }
 
-    Input {
-        id: pinField
-        anchors.rightMargin: 56
-        anchors.leftMargin: 56
-        anchors.top: parent.top
-        anchors.topMargin: 88
-        placeholderText:  qsTr("PIN")
-        textField.echoMode: TextInput.Password
-        onTextChanged: {
-            [pinFieldValid, _] =
-                Utils.validatePINs("first", pinField, pinField);
+    contentItem: Item {
+        Input {
+            id: pinField
+            anchors.rightMargin: 56
+            anchors.leftMargin: 56
+            anchors.top: parent.top
+            anchors.topMargin: 88
+            placeholderText:  qsTr("PIN")
+            textField.echoMode: TextInput.Password
+            onTextChanged: {
+                [pinFieldValid, _] =
+                    Imports.Utils.validatePINs("first", pinField, pinField);
+            }
+        }
+
+        StatusBaseText {
+            text: qsTr("Insert your 6-digit PIN")
+            wrapMode: Text.WordWrap
+            anchors.right: parent.right
+            anchors.left: parent.left
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 20
+            horizontalAlignment: Text.AlignHCenter
+            color: Theme.palette.directColor1
+            font.pixelSize: 12
         }
     }
 
-    StyledText {
-        text: qsTr("Insert your 6-digit PIN")
-        wrapMode: Text.WordWrap
-        anchors.right: parent.right
-        anchors.rightMargin: Style.current.xlPadding
-        anchors.left: parent.left
-        anchors.leftMargin: Style.current.xlPadding
-        horizontalAlignment: Text.AlignHCenter
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: 0
-        color: Style.current.secondaryText
-        font.pixelSize: 12
-    }
-
-    footer: Item {
-        width: parent.width
-        height: submitBtn.height
-
+    rightButtons: [
         StatusButton {
             id: submitBtn
-            anchors.bottom: parent.bottom
-            anchors.topMargin: Style.current.padding
-            anchors.right: parent.right
             text: qsTr("Authenticate")
             enabled: pinFieldValid
 
@@ -65,5 +64,6 @@ ModalPopup {
                 popup.close()
             }
         }
-    }
+    ]
+
 }

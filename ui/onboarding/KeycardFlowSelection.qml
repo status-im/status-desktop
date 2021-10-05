@@ -14,7 +14,6 @@ Item {
     property int flow: OnboardingFlow.Recover
 
     id: keycardView
-    anchors.fill: parent
     Component.onCompleted: {
         insertCard.open()
         keycardModel.startConnection()
