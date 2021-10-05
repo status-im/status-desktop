@@ -1,6 +1,8 @@
 #include "spellchecker.h"
 
+#ifdef Q_OS_MACOS
 #include "hunspell.hxx"
+#endif
 #include <QTextCodec>
 #include <QFile>
 #include <QDebug>
@@ -12,7 +14,9 @@
 
 SpellChecker::SpellChecker(QObject *parent)
     : QObject(parent)
+#ifdef Q_OS_MACOS
     , m_hunspell(nullptr)
+#endif
     , m_userDict("userDict_")
 {
 
@@ -36,7 +40,10 @@ bool SpellChecker::spell(const QString &word)
 
 bool SpellChecker::isInit() const
 {
+#ifdef Q_OS_MACOS
     return !m_hunspell;
+#endif
+
 }
 
 void SpellChecker::initHunspell()
