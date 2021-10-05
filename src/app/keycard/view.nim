@@ -100,13 +100,11 @@ QtObject:
       discard #display wrong pairing password message
 
   proc authenticate*(self: KeycardView, pin: string) {.slot.} =
-    discard """
-    let resp = self.status.keycard.verifyPIN(pin)
-    if resp is error:
-      handle error
-
-    self.cardAuthenticated()
-    """
+    try:
+      self.status.keycard.verifyPin(pin)
+      self.cardAuthenticated()
+    except KeycardVerifyPINException as ex:
+      discard #display wrong PIN message
 
   proc init*(self: KeycardView, pin: string) {.slot.} =
     discard """
