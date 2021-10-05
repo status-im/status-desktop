@@ -3,7 +3,6 @@ import "../../../../../shared"
 
 import utils 1.0
 import "./TransactionComponents"
-import "../../../Wallet/data"
 
 Item {
     property var commandParametersObject: {
