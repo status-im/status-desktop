@@ -321,6 +321,10 @@ $(NIM_STATUS_CLIENT): $(NIM_SOURCES) | $(DOTHERSIDE) $(STATUSGO) $(KEYCARDGO) $(
 		install_name_tool -change \
 			libstatus.dylib \
 			@rpath/libstatus.dylib \
+			bin/nim_status_client && \
+		install_name_tool -change \
+			libkeycard.dylib \
+			@rpath/libkeycard.dylib \
 			bin/nim_status_client) || true)
 
 nim_status_client: $(NIM_STATUS_CLIENT)
