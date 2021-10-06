@@ -2,31 +2,35 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 
+import StatusQ.Core 0.1
+import StatusQ.Core.Theme 0.1
+
 import utils 1.0
 import "../../../shared"
-import "../../../shared/status"
 
+import "stores"
+import "views"
 
 Item {
-    id: nodeView
+    id: root
     Layout.fillHeight: true
     Layout.fillWidth: true
+
+    property var store: RootStore {}
 
     ColumnLayout {
         id: rpcColumn
         spacing: 0
         anchors.fill: parent
 
-        Rate {
-
-        }
+        RateView {}
 
         RowLayout {
             id: peerContainer2
             Layout.fillWidth: true
-            StyledText {
+            StatusBaseText {
                 id: peerDescription
-                color: Style.current.lightBlueText
+                color: Theme.palette.primaryColor1
                 text: "Peers"
                 Layout.rightMargin: Style.current.padding
                 Layout.leftMargin: Style.current.padding
@@ -34,10 +38,10 @@ Item {
                 font.weight: Font.Medium
                 font.pixelSize: 20
             }
-            StyledText {
+            StatusBaseText {
                 id: peerNumber
-                color: Style.current.lightBlueText
-                text: nodeModel.peerSize
+                color: Theme.palette.primaryColor1
+                text: root.store.nodeModelInst.peerSize
                 Layout.rightMargin: Style.current.padding
                 Layout.leftMargin: Style.current.padding
                 Layout.fillWidth: true
@@ -49,8 +53,8 @@ Item {
         RowLayout {
             id: bloomF
             Layout.fillWidth: true
-            StyledText {
-                color: Style.current.lightBlueText
+            StatusBaseText {
+                color: Theme.palette.primaryColor1
                 text: qsTr("Bloom Filter Usage")
                 Layout.rightMargin: Style.current.padding
                 Layout.leftMargin: Style.current.padding
@@ -58,10 +62,10 @@ Item {
                 font.weight: Font.Medium
                 font.pixelSize: 20
             }
-            StyledText {
+            StatusBaseText {
                 id: bloomPerc
-                color: Style.current.lightBlueText
-                text: ((nodeModel.bloomBits / 512) * 100).toFixed(2) + "%"
+                color: Theme.palette.primaryColor1
+                text: ((root.store.nodeModelInst.bloomBits / 512) * 100).toFixed(2) + "%"
                 Layout.rightMargin: Style.current.padding
                 Layout.leftMargin: Style.current.padding
                 Layout.fillWidth: true
@@ -72,8 +76,8 @@ Item {
 
         RowLayout {
             Layout.fillWidth: true
-            StyledText {
-                color: Style.current.lightBlueText
+            StatusBaseText {
+                color: Theme.palette.primaryColor1
                 text: qsTr("Active Mailserver")
                 Layout.rightMargin: Style.current.padding
                 Layout.leftMargin: Style.current.padding
@@ -81,9 +85,9 @@ Item {
                 font.weight: Font.Medium
                 font.pixelSize: 20
             }
-            StyledText {
+            StatusBaseText {
                 id: activeMailserverTxt
-                color: Style.current.textColor
+                color: Theme.palette.directColor1
                 text: "..."
                 Layout.rightMargin: Style.current.padding
                 Layout.leftMargin: Style.current.padding
@@ -95,17 +99,17 @@ Item {
         }
 
         Connections {
-            target: profileModel.mailservers
+            target: root.store.profileModelInst.mailservers
             onActiveMailserverChanged: (activeMailserver) => {
-                activeMailserverTxt.text = profileModel.mailservers.list.getMailserverName(activeMailserver) + "\n" + activeMailserver
+                activeMailserverTxt.text = root.store.getMailserverName(activeMailserver) + "\n" + activeMailserver
             }
         }
 
         ColumnLayout {
             id: mailserverLogsContainer
             height: 300
-            StyledText {
-                color: Style.current.lightBlueText
+            StatusBaseText {
+                color: Theme.palette.primaryColor1
                 text: "Mailserver Interactions:"
                 Layout.rightMargin: Style.current.padding
                 Layout.leftMargin: Style.current.padding
@@ -113,6 +117,7 @@ Item {
                 font.weight: Font.Medium
                 font.pixelSize: 20
             }
+            // TODO: replace with StatusTextArea once it lives in StatusQ.
             StyledTextArea {
                 id: mailserverLogTxt
                 text: ""
@@ -124,9 +129,9 @@ Item {
         ColumnLayout {
             id: logContainer
             height: 300
-            StyledText {
+            StatusBaseText {
                 id: logHeaderDesc
-                color: Style.current.lightBlueText
+                color: Theme.palette.primaryColor1
                 text: "Logs:"
                 Layout.rightMargin: Style.current.padding
                 Layout.leftMargin: Style.current.padding
@@ -134,6 +139,7 @@ Item {
                 font.weight: Font.Medium
                 font.pixelSize: 20
             }
+            // TODO: replace with StatusTextArea once it lives in StatusQ.
             StyledTextArea {
                 id: logsTxt
                 text: ""
@@ -143,7 +149,7 @@ Item {
         }
 
         Connections {
-            target: nodeModel
+            target: root.store.nodeModelInst
             function onLog(logContent) {
                 // TODO: this is ugly, but there's not even a design for this section
                 if(logContent.indexOf("mailserver") > 0){
@@ -167,9 +173,9 @@ Item {
         ColumnLayout {
             id: messageContainer
             Layout.fillHeight: true
-            StyledText {
+            StatusBaseText {
                 id: testDescription
-                color: Style.current.lightBlueText
+                color: Theme.palette.primaryColor1
                 text: "latest block (auto updates):"
                 Layout.rightMargin: Style.current.padding
                 Layout.leftMargin: Style.current.padding
@@ -177,10 +183,10 @@ Item {
                 font.weight: Font.Medium
                 font.pixelSize: 20
             }
-            StyledText {
+            StatusBaseText {
                 id: test
-                color: Style.current.lightBlueText
-                text: nodeModel.lastMessage
+                color: Theme.palette.primaryColor1
+                text: root.store.nodeModelInst.lastMessage
                 Layout.rightMargin: Style.current.padding
                 Layout.leftMargin: Style.current.padding
                 Layout.fillWidth: true
@@ -194,6 +200,7 @@ Item {
             Layout.fillHeight: true
             Layout.rightMargin: Style.current.padding
             Layout.leftMargin: Style.current.padding
+            // TODO: replace with StatusTextArea once it lives in StatusQ.
             TextArea { id: callResult; Layout.fillWidth: true; text: nodeModel.callResult; readOnly: true }
         }
 
@@ -255,11 +262,11 @@ Item {
                         anchors.left: parent.left
                         anchors.leftMargin: 24
                         Keys.onEnterPressed: {
-                            nodeModel.onSend(txtData.text)
+                            root.store.onSend(txtData.text)
                             txtData.text = ""
                         }
                         Keys.onReturnPressed: {
-                            nodeModel.onSend(txtData.text)
+                            root.store.onSend(txtData.text)
                             txtData.text = ""
                         }
                         background: Rectangle {
