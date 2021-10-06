@@ -12,10 +12,10 @@ proc newModule*[T](delegate: T): Module[T] =
   result.delegate = delegate
   result.view = newView()
 
-method delete*(self: Module) =
+method delete*[T](self: Module[T]) =
   echo "--(ChatSectionModule)--delete"
   self.view.delete
 
-method load*(self: Module) =
+method load*[T](self: Module[T]) =
   echo "--(ChatSectionModule)--load"
   self.delegate.didLoad()
