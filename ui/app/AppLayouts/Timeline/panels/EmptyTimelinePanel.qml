@@ -2,9 +2,11 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 
+import StatusQ.Core 0.1
+import StatusQ.Core.Theme 0.1
+
 import utils 1.0
-import "../../../shared"
-import "../../../shared/status"
+import "../../../../shared"
 
 Rectangle {
     id: root
@@ -34,7 +36,7 @@ Rectangle {
         width: 255
         height: shareYourMindText.height + Style.current.padding
 
-        StyledText {
+        StatusBaseText {
             id: shareYourMindText
             horizontalAlignment: Text.AlignHCenter
             anchors.left: parent.left
@@ -45,8 +47,9 @@ Rectangle {
             //% "Share what's on your mind and stay updated with your contacts"
             text: qsTrId("share-what-s-on-your-mind-and-stay-updated-with-your-contacts")
             font.pixelSize: 15
-            color: Style.current.secondaryText
+            color: Theme.palette.directColor7
             wrapMode: Text.WordWrap
         }
     }
 }
+
