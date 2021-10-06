@@ -5,7 +5,6 @@ import utils 1.0
 import "../../../../../shared"
 import "../../../../../shared/status"
 import ".."
-import "../../../Profile/LeftTab/constants.js" as ProfileConstants
 
 Item {
     width: parent.width
@@ -119,7 +118,9 @@ Item {
                    onTriggered: {
                        activityCenter.close()
                        appMain.changeAppSection(Constants.profile)
-                       profileLayoutContainer.changeProfileSection(ProfileConstants.NOTIFICATIONS)
+                        // TODO: replace with shared store constant
+                        // Profile/RootStore.notifications_id
+                       profileLayoutContainer.changeProfileSection(7)
                    }
                }
            }

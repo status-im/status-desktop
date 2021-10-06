@@ -13,7 +13,6 @@ import "./AppLayouts/Wallet"
 import "./AppLayouts/WalletV2"
 import "./AppLayouts/Chat/components"
 import "./AppLayouts/Chat/CommunityComponents"
-import "./AppLayouts/Profile/Sections"
 
 import Qt.labs.platform 1.1
 import Qt.labs.settings 1.0

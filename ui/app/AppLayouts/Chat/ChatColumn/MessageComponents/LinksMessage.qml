@@ -6,7 +6,6 @@ import utils 1.0
 import "../../../../../shared"
 import "../../../../../shared/status"
 import "./" as MessageComponents
-import "../../../Profile/LeftTab/constants.js" as ProfileConstants
 
 Column {
     id: root
@@ -346,7 +345,9 @@ Column {
                 type: "secondary"
                 onClicked: {
                     appMain.changeAppSection(Constants.profile)
-                    profileLayoutContainer.changeProfileSection(ProfileConstants.PRIVACY_AND_SECURITY)
+                    // TODO: replace with shared store constant
+                    // Profile/RootStore.privacy_and_security_id
+                    profileLayoutContainer.changeProfileSection(3)
                 }
                 width: parent.width
                 anchors.top: sep1.bottom

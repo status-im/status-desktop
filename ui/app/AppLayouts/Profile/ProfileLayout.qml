@@ -4,7 +4,10 @@ import QtQuick.Layouts 1.13
 
 import utils 1.0
 import "../../../shared"
-import "./Sections"
+
+import "stores"
+import "popups"
+import "views"
 
 import StatusQ.Layout 0.1
 
@@ -12,14 +15,16 @@ StatusAppTwoPanelLayout {
 
     id: profileView
 
+    property RootStore store: RootStore { }
+
     property int contentMaxWidth: 624
     property int contentMinWidth: 450
-    property int topMargin: 46
     property alias changeProfileSection: leftTab.changeProfileSection
 
-    leftPanel: LeftTab {
+    leftPanel: LeftTabView {
         id: leftTab
-        anchors.fill:parent
+        store: profileView.store
+        anchors.fill: parent
     }
 
     rightPanel: StackLayout {
@@ -27,7 +32,7 @@ StatusAppTwoPanelLayout {
         property int profileContentWidth: Math.max(contentMinWidth, Math.min(profileContainer.width * 0.8, contentMaxWidth))
         anchors.fill: parent
 
-        currentIndex: Config.currentMenuTab
+        currentIndex: profileView.store.selectedMenuItem
 
         onCurrentIndexChanged: {
             if(visibleChildren[0] === ensContainer){
@@ -35,42 +40,64 @@ StatusAppTwoPanelLayout {
             }
         }
 
-        // This list needs to match LeftTab/constants.js
-        // Would be better if we could make them match automatically
-        MyProfileContainer {}
-
-        ContactsContainer {}
-
-        EnsContainer {
-            id: ensContainer
+        MyProfileView {
+            store: profileView.store
         }
 
-        PrivacyContainer {}
+        ContactsView {
+            store: profileView.store
+        }
 
-        AppearanceContainer {}
+        EnsView {
+            id: ensContainer
+            store: profileView.store
+        }
 
-        SoundsContainer {}
+        PrivacyView {
+            store: profileView.store
+        }
 
-        LanguageContainer {}
+        AppearanceView {
+            store: profileView.store
+        }
 
-        NotificationsContainer {}
+        SoundsView {}
 
-        SyncContainer {}
+        LanguageView {
+            store: profileView.store
+        }
 
-        DevicesContainer {}
+        NotificationsView {
+            store: profileView.store
+        }
 
-        BrowserContainer {}
+        SyncView {
+            store: profileView.store
+        }
 
-        AdvancedContainer {}
+        DevicesView {
+            store: profileView.store
+        }
 
-        HelpContainer {}
+        BrowserView {
+            store: profileView.store
+        }
 
-        AboutContainer {}
+        AdvancedView {
+            store: profileView.store
+        }
+
+        HelpView {}
+
+        AboutView {
+            store: profileView.store
+        }
     }
 }
 
-/*##^##
-Designer {
-    D{i:0;autoSize:true;height:480;width:640}
-}
-##^##*/
+
+
+
+
+
+
