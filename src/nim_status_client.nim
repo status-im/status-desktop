@@ -21,6 +21,8 @@ import app_service/tasks/marathon/mailserver/worker as mailserver_worker
 import app_service/main
 import constants
 
+import app/boot/app_controller
+
 var signalsQObjPointer: pointer
 
 logScope:
@@ -48,6 +50,11 @@ proc mainProc() =
 
   let appService = newAppService(status, mailserverWorker)
   defer: appService.delete()
+
+  let appController = newAppController()
+  defer: appController.delete()
+
+  appController.load()
 
   status.initNode(STATUSGODIR, KEYSTOREDIR)
 
