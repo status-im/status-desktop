@@ -7,12 +7,17 @@ import QtQuick.Layouts 1.13
 import utils 1.0
 import "../../../shared"
 import "../../../shared/status"
-import "../Chat/data"
 import "../Chat/ChatColumn"
 import "../Chat/components"
 
+import "stores"
+import "panels"
+
 ScrollView {
     id: root
+
+    property RootStore store: RootStore { }
+
     Layout.fillWidth: true
     Layout.fillHeight: true
     contentHeight: chatLogView.contentHeight + 140
@@ -20,7 +25,7 @@ ScrollView {
     ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
     
     property var onActivated: function () {
-        chatsModel.setActiveChannelToTimeline()
+        store.setActiveChannelToTimeline()
         statusUpdateInput.textInput.forceActiveFocus(Qt.MouseFocusReason)
     }
 
@@ -33,7 +38,7 @@ ScrollView {
         if(parentPopup){
             popup.parentPopup = parentPopup;
         }
-        popup.openPopup(profileModel.profile.pubKey !== fromAuthorParam, userNameParam, fromAuthorParam, identiconParam, textParam, nicknameParam);
+        popup.openPopup(root.store.profileModelInst.profile.pubKey !== fromAuthorParam, userNameParam, fromAuthorParam, identiconParam, textParam, nicknameParam);
     }
 
     StatusImageModal {
@@ -60,6 +65,7 @@ ScrollView {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.bottom
 
+        // TODO: Replace this with StatusQ component once it lives there.
         StatusChatInput {
             id: statusUpdateInput
             anchors.top: parent.top
@@ -70,13 +76,13 @@ ScrollView {
             onSendMessage: {
                 if (statusUpdateInput.fileUrls.length > 0){
                     statusUpdateInput.fileUrls.forEach(url => {
-                        chatsModel.sendImage(url, true);
+                        root.store.sendImage(url);
                     })
                 }
-                var msg = chatsModel.plainText(Emoji.deparse(statusUpdateInput.textInput.text))
+                var msg = root.store.getPlainTextFromRichText(Emoji.deparse(statusUpdateInput.textInput.text))
                 if (msg.length > 0){
                     msg = statusUpdateInput.interpretMessage(msg)
-                    chatsModel.messageView.sendMessage(msg, "", Utils.isOnlyEmoji(msg) ? Constants.emojiType : Constants.messageType, true);
+                    root.store.sendMessage(msg, Utils.isOnlyEmoji(msg) ? Constants.emojiType : Constants.messageType);
                     statusUpdateInput.textInput.text = "";
                     if(event) event.accepted = true
                     sendMessageSound.stop()
@@ -85,7 +91,7 @@ ScrollView {
             }
         }
 
-        EmptyTimeline {
+        EmptyTimelinePanel {
             id: emptyTimeline
             anchors.top: statusUpdateInput.bottom
             anchors.topMargin: 40
@@ -109,7 +115,7 @@ ScrollView {
             section.criteria: ViewSection.FullString
 
             Connections {
-                target: chatsModel.messageView
+                target: root.store.chatsModelInst.messageView
                 onMessagesLoaded: {
                     Qt.callLater(chatLogView.positionViewAtBeginning)
                 }
@@ -131,7 +137,8 @@ ScrollView {
                 function(left, right) { return left.clock > right.clock }
             ]
 
-            model: chatsModel.messageView.messageList
+            model: root.store.chatsModelInst.messageView.messageList
+            // TODO: Replace with StatusQ component once it lives there.
             delegate: Message {
                 id: msgDelegate
                 fromAuthor: model.fromAuthor
@@ -173,7 +180,8 @@ ScrollView {
         }
 
         Loader {
-            active: chatsModel.messageView.loadingMessages
+            active: root.store.chatsModelInst.messageView.loadingMessages
+            // TODO: replace with StatusLoadingIndicator
             sourceComponent: LoadingAnimation {}
             anchors.right: timelineContainer.right
             anchors.top: statusUpdateInput.bottom
