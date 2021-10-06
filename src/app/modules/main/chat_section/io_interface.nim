@@ -8,12 +8,6 @@ method delete*(self: AccessInterface) {.base.} =
 method load*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-# type
-#   ## Abstract class (concept) for any input/interaction with this module.
-#   AccessInterface* = concept c
-#     c.delete()
-#     c.load()
-
 type
   ## Abstract class (concept) which must be implemented by object/s used in this 
   ## module.

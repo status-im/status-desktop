@@ -13,7 +13,7 @@ type
 #################################################
 # Forward declaration section
 
-# Chat Section Module
+# Chat Section Module Delegate Interface
 proc didLoad*(self: Module)
 
 #################################################
