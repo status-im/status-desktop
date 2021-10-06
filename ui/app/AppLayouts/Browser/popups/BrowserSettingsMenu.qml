@@ -5,7 +5,6 @@ import utils 1.0
 import "../../../../shared"
 import "../../../../shared/status"
 import "../../Chat/ChatColumn/ChatComponents"
-import "../../Profile/LeftTab/constants.js" as ProfileConstants
 
 PopupMenu {
     property var addNewTab: function () {}
@@ -114,7 +113,9 @@ PopupMenu {
         shortcut: "Ctrl+,"
         onTriggered: {
             appMain.changeAppSection(Constants.profile)
-            profileLayoutContainer.changeProfileSection(ProfileConstants.BROWSER_SETTINGS)
+            // TODO: replace with shared store constant
+            // Profile/RootStore.browser_settings_id
+            profileLayoutContainer.changeProfileSection(10)
         }
     }
 }
