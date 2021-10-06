@@ -213,7 +213,7 @@ Item {
                 }
             }
 
-            navBarCommunityTabButtons.model: appSettings.communitiesEnabled && chatsModel.communities.joinedCommunities
+            navBarCommunityTabButtons.model: appSettings.communitiesEnabled && mainModule.sectionsModel
             navBarCommunityTabButtons.delegate: StatusNavBarTabButton {
                 onClicked: {
                     appMain.changeAppSection(Constants.chat)
@@ -226,8 +226,9 @@ Item {
                 checked: chatsModel.communities.activeCommunity.active && chatsModel.communities.activeCommunity.id === model.id
                 name: model.name
                 tooltip.text: model.name
-                icon.color: model.communityColor
-                icon.source: model.thumbnailImage
+                icon.color: model.color
+                icon.source: model.image.length > 0? model.image : model.icon
+                icon.name: model.icon
 
                 badge.value: model.unviewedMentionsCount + model.requestsCount
                 badge.visible: badge.value > 0 || (!checked && model.unviewedMessagesCount > 0)
