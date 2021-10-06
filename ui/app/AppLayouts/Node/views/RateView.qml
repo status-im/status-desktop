@@ -2,9 +2,12 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 
+import StatusQ.Core 0.1
+import StatusQ.Core.Theme 0.1
+
 import utils 1.0
-import "../../../shared"
-import "../../../shared/status"
+import "../../../../shared"
+import "../../../../shared/status"
 
 
 Column {
@@ -18,7 +21,7 @@ Column {
     Row {
         width: parent.width
         spacing: 10
-        StyledText {
+        StatusBaseText {
             text: qsTr("Upload")
             width: 250
             anchors.verticalCenter: parent.verticalCenter
@@ -27,6 +30,7 @@ Column {
         Item {
             width: 140
             height: 44
+            // TODO: replace with StatusInput from StatusQ at some point
             Input {
                 id: uploadRate
                 text: Math.round(parseInt(nodeModel.uploadRate, 10) / 1024 * 100) / 100 
@@ -37,8 +41,8 @@ Column {
                 anchors.top: parent.top
             }
 
-            StyledText {
-                color: Style.current.secondaryText
+            StatusBaseText {
+                color: Theme.palette.directColor7
                 text: qsTr("Kb/s")
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.right: uploadRate.right
@@ -47,7 +51,7 @@ Column {
             }
         }
 
-        StyledText {
+        StatusBaseText {
             text: qsTr("Download")
             width: 273
             anchors.verticalCenter: parent.verticalCenter
@@ -56,6 +60,7 @@ Column {
         Item {
             width: 140
             height: 44
+            // TODO: replace with StatusInput from StatusQ at some point
             Input {
                 id: downloadRate
                 text: Math.round(parseInt(nodeModel.downloadRate, 10) / 1024 * 100) / 100 
@@ -66,8 +71,8 @@ Column {
                 anchors.top: parent.top
             }
 
-            StyledText {
-                color: Style.current.secondaryText
+            StatusBaseText {
+                color: Theme.palette.directColor7
                 text: qsTr("Kb/s")
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.right: downloadRate.right
