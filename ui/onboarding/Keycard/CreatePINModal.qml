@@ -8,7 +8,6 @@ import StatusQ.Popups 0.1
 
 import "../../imports/utils" as Imports
 import "../../shared"
-import "../../shared/keycard"
 
 StatusModal {
     property bool firstPINFieldValid: false
@@ -98,7 +97,7 @@ StatusModal {
         StatusButton {
             id: submitBtn
             text: qsTr("Create PIN")
-            enabled: firstPINFieldValid && repeatPINFieldValid
+            enabled: firstPINFieldValid && repeatPINFieldValid && !submitted
 
             onClicked: {
                 submitted = true

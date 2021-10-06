@@ -18,6 +18,7 @@ StatusModal {
 
     onOpened: {
         submitted = false
+        pairingError.text = "";
         pairingPasswordField.text = "";
         pairingPasswordField.forceActiveFocus(Qt.MouseFocusReason)
     }
@@ -38,6 +39,17 @@ StatusModal {
         }
 
         StatusBaseText {
+            id: pairingError
+            anchors.top: pairingPasswordField.bottom
+            anchors.topMargin: 20
+            anchors.right: parent.right
+            anchors.left: parent.left
+            horizontalAlignment: Text.AlignHCenter
+            color: Theme.palette.dangerColor1
+            font.pixelSize: 11
+        }
+
+        StatusBaseText {
             text: qsTr("Insert the Keycard pairing code")
             wrapMode: Text.WordWrap
             anchors.right: parent.right
@@ -54,13 +66,27 @@ StatusModal {
         StatusButton {
             id: submitBtn
             text: qsTr("Pair")
-            enabled: pairingPasswordFieldValid
+            enabled: pairingPasswordFieldValid && !submitted
 
             onClicked: {
                 submitted = true
                 keycardModel.pair(pairingPasswordField.text)
-                popup.close()
             }
         }
     ]
+
+    Connections {
+        id: connection
+        target: keycardModel
+        ignoreUnknownSignals: true
+
+        onCardPairingError: {
+            submitted = false
+            pairingError.text = qsTr("Incorrect pairing password, please try again")
+        }
+
+        onCardPaired: {
+            popup.close()
+        }
+    }
 }

@@ -48,6 +48,8 @@ QtObject:
   proc cardBlocked*(self: KeycardView) {.signal.}
   proc cardAuthenticated*(self: KeycardView) {.signal.}
   proc cardUnhandledError*(self: KeycardView, error: string) {.signal.}
+  proc cardPairingError*(self: KeycardView) {.signal.}
+  proc cardPinError*(self: KeycardView, retries: int) {.signal.}
 
   proc startConnection*(self: KeycardView) {.slot.} =
     try:
@@ -97,14 +99,14 @@ QtObject:
       if self.attemptOpenSecureChannel():
         self.onSecureChannelOpened()
     except KeycardPairException:
-      discard #display wrong pairing password message
+      self.cardPairingError()
 
   proc authenticate*(self: KeycardView, pin: string) {.slot.} =
     try:
       self.status.keycard.verifyPin(pin)
       self.cardAuthenticated()
     except KeycardVerifyPINException as ex:
-      discard #display wrong PIN message
+      self.cardPinError(int(ex.pinRetry))
 
   proc init*(self: KeycardView, pin: string) {.slot.} =
     discard """

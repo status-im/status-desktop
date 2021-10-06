@@ -20,6 +20,7 @@ StatusModal {
 
     onOpened: {
         submitted = false
+        pinError.text = ""
         pinField.text = "";
         pinField.forceActiveFocus(Qt.MouseFocusReason)
     }
@@ -40,6 +41,17 @@ StatusModal {
         }
 
         StatusBaseText {
+            id: pinError
+            anchors.top: pinField.bottom
+            anchors.topMargin: 20
+            anchors.right: parent.right
+            anchors.left: parent.left
+            horizontalAlignment: Text.AlignHCenter
+            color: Theme.palette.dangerColor1
+            font.pixelSize: 11
+        }
+
+        StatusBaseText {
             text: qsTr("Insert your 6-digit PIN")
             wrapMode: Text.WordWrap
             anchors.right: parent.right
@@ -56,14 +68,27 @@ StatusModal {
         StatusButton {
             id: submitBtn
             text: qsTr("Authenticate")
-            enabled: pinFieldValid
+            enabled: pinFieldValid && !submitted
 
             onClicked: {
                 submitted = true
                 keycardModel.authenticate(pinField.text)
-                popup.close()
             }
         }
     ]
 
+    Connections {
+        id: connection
+        target: keycardModel
+        ignoreUnknownSignals: true
+
+        onCardPinError: {
+            submitted = false
+            pinError.text = qsTr("Wrong PIN. %1 retries left.").arg(retries)
+        }
+
+        onCardAuthenticated: {
+            popup.close()
+        }
+    }
 }
