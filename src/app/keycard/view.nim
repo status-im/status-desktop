@@ -24,6 +24,7 @@ QtObject:
     pairings*: KeycardPairingController
     cardState*: CardState
     appInfo*: KeycardApplicationInfo
+    appStatus*: KeycardStatus
 
   proc setup(self: KeycardView) =
     self.QObject.setup
@@ -79,18 +80,16 @@ QtObject:
     return true
 
   proc onSecureChannelOpened(self: KeycardView) =
-    discard """
     self.appStatus = self.status.keycard.getStatusApplication()
-    if self.appStatus.pukRetryCounter == 0:
+    if self.appStatus.pukRetryCount == 0:
       self.cardState = Blocked
       self.cardBlocked()
-    elif self.appStatus.pinRetryCounter == 0:
+    elif self.appStatus.pinRetryCount == 0:
       self.cardState = Frozen
       self.cardFrozen()
     else:
-    """
-    self.cardState = Paired
-    self.cardPaired()
+      self.cardState = Paired
+      self.cardPaired()
 
   proc pair*(self: KeycardView, password: string) {.slot.} =
     try:
