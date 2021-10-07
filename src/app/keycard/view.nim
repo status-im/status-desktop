@@ -1,7 +1,9 @@
-import NimQml, chronicles
+import NimQml, chronicles, strutils
 import status/[status, keycard]
 import types/keycard as keycardtypes
 import pairing
+import status/statusgo_backend/accounts/constants
+import status/types/[account, multi_accounts, derived_account, rpc_response]
 
 logScope:
   topics = "keycard-model"
@@ -18,6 +20,12 @@ type
     Blocked = 7
     Authenticated = 8
 
+type
+  OnboardingFlow* {.pure.} = enum
+    Recover = 0,
+    Generate = 1
+    ImportMnemonic = 2
+
 QtObject:
   type KeycardView* = ref object of QObject
     status*: Status
@@ -25,6 +33,7 @@ QtObject:
     cardState*: CardState
     appInfo*: KeycardApplicationInfo
     appStatus*: KeycardStatus
+    onboardingFlow*: OnboardingFlow
 
   proc setup(self: KeycardView) =
     self.QObject.setup
@@ -36,6 +45,7 @@ QtObject:
     new(result, delete)
     result.status = status
     result.pairings = newPairingController()
+    result.onboardingFlow = Recover
     result.setup
 
   proc cardConnected*(self: KeycardView) {.signal.}
@@ -105,15 +115,45 @@ QtObject:
       self.status.keycard.verifyPin(pin)
       self.cardAuthenticated()
     except KeycardVerifyPINException as ex:
-      self.cardPinError(int(ex.pinRetry))
+      self.appStatus.pinRetryCount = ex.remainingAttempts
+      self.cardPinError(int(ex.remainingAttempts))
 
   proc init*(self: KeycardView, pin: string) {.slot.} =
     discard """
     """
 
-  proc recoverAccount*(self: KeycardView) {.slot.} =
-    discard """
-    """
+  proc recoverAccount(self: KeycardView) =
+    try:
+      let master = self.status.keycard.exportKey(path="m", derive=true, makeCurrent=false, onlyPublic=true)
+      let walletKey = self.status.keycard.exportKey(path=PATH_DEFAULT_WALLET, derive=true, makeCurrent=false, onlyPublic=true)
+      let whisperKey = self.status.keycard.exportKey(path=PATH_WHISPER, derive=true, makeCurrent=false, onlyPublic=false)
+      let encryptionKey = self.status.keycard.exportKey(path=PATH_EIP_1581 & "/1'/0", derive=true, makeCurrent=false, onlyPublic=false)
+
+      var account = GeneratedAccount()
+      account.publicKey = master.pubKey
+      account.address = ""
+      account.derived.whisper.publicKey = whisperKey.pubKey
+      account.derived.defaultWallet.publicKey = walletKey.pubKey
+      account.name = self.status.accounts.generateAlias(whisperKey.pubKey)
+      account.keyUid = self.appInfo.keyUID
+      account.identicon = self.status.accounts.generateIdenticon(whisperKey.pubKey)
+      account.isKeycard = true
+
+      discard self.status.accounts.storeDerivedAndLogin(self.status.fleet.config, account, encryptionKey.privKey, whisperKey.privKey).toJson
+
+    except KeycardExportKeyException as ex:
+      self.cardUnhandledError(ex.error)
+    except StatusGoException as e:
+      info "error = ", error=e.msg
+
+  proc onboarding*(self: KeycardView) {.slot.} =
+    case self.onboardingFlow:
+      of Recover:
+        self.recoverAccount()
+      of Generate:
+        discard
+      of ImportMnemonic:
+        discard
 
   proc getCardState*(self: KeycardView) =
     var appInfo: KeycardApplicationInfo

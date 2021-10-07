@@ -3,15 +3,7 @@ import "./Keycard"
 import "../shared/keycard"
 
 Item {
-    enum OnboardingFlow {
-        Recover,
-        Generate,
-        ImportMnemonic
-    }
-
     property var onClosed: function () {}
-    property bool connected: false
-    property int flow: OnboardingFlow.Recover
 
     id: keycardView
     Component.onCompleted: {
@@ -67,18 +59,7 @@ Item {
         }
 
         onCardAuthenticated: {
-            switch (flow) {
-                case OnboardingFlow.Recover: {
-                    keycardModel.recoverAccount();
-                    break;
-                }
-                case OnboardingFlow.Generate: {
-                    break;
-                }
-                case OnboardingFlow.ImportMnemonic: {
-                    break;
-                }
-            }
+            keycardModel.onboarding()
         }
 
         //TODO: support the states below
