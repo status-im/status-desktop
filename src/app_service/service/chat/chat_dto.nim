@@ -1,0 +1,94 @@
+{.used.}
+
+import json, strformat
+
+include ../../common/json_utils
+
+#import strutils, random, strformat, json
+
+type ChatType* {.pure.}= enum
+  Unknown = 0,
+  OneToOne = 1, 
+  Public = 2,
+  PrivateGroupChat = 3,
+  Profile = 4,
+  Timeline = 5
+  CommunityChat = 6
+
+type ChatDto* = ref object
+  id*: string # ID is the id of the chat, for public chats it is the name e.g. status, 
+  # for one-to-one is the hex encoded public key and for group chats is a random
+  # uuid appended with the hex encoded pk of the creator of the chat
+  name*: string
+  description*: string
+  color*: string
+  emoji*: string # not sure why do we received this at all?
+  active*: bool # indicates whether the chat has been soft deleted
+  chatType*: ChatType
+  timestamp*: int64 # indicates the last time this chat has received/sent a message
+  lastClockValue*: int64 # indicates the last clock value to be used when sending messages
+  deletedAtClockValue*: int64 # indicates the clock value at time of deletion, 
+  # messages with lower clock value of this should be discarded
+  unviewedMessagesCount*: int
+  unviewedMentionsCount*: int
+  #lastMessage*: Message ???? It's a question why do we need it here within this context ????
+  #members*: seq[ChatMember] ???? It's a question why do we need it here within this context ????
+  #membershipUpdateEvents*: seq[ChatMembershipEvent]  ???? It's a question why do we need it here within this context ????
+  #alias*: string ???? It's a question what's this ????
+  identicon*: string
+  muted*: bool
+  communityId*: string #set if chat belongs to a community
+  #profile*: string ???? It's a question why do we need it here within this context ????
+  joined*: int64 # indicates when the user joined the chat last time
+  syncedTo*: int64
+  syncedFrom*: int64
+
+proc `$`*(self: ChatDto): string =
+  result = fmt"""ChatDto(
+    id: {self.id}, 
+    name: {self.name}, 
+    description: {self.description}, 
+    color: {self.color}, 
+    emoji: {self.emoji}, 
+    active: {self.active}, 
+    chatType: {self.chatType}, 
+    timestamp: {self.timestamp}, 
+    lastClockValue: {self.lastClockValue}, 
+    deletedAtClockValue: {self.deletedAtClockValue}, 
+    unviewedMessagesCount: {self.unviewedMessagesCount}, 
+    unviewedMentionsCount: {self.unviewedMentionsCount}, 
+    identicon: {self.identicon}, 
+    muted: {self.muted}, 
+    communityId: {self.communityId}, 
+    joined: {self.joined}, 
+    syncedTo: {self.syncedTo}, 
+    syncedFrom: {self.syncedFrom}
+    )"""
+
+proc toChatDto*(jsonObj: JsonNode): ChatDto =
+
+  var chatType = ChatType.Unknown
+  var chatTypeInt: int
+  if (jsonObj.getProp("chatType", chatTypeInt) and
+    (chatTypeInt >= ord(low(ChatType)) or chatTypeInt <= ord(high(ChatType)))): 
+      chatType = ChatType(chatTypeInt)
+
+  result = ChatDto()
+  discard jsonObj.getProp("id", result.id)
+  discard jsonObj.getProp("name", result.name)
+  discard jsonObj.getProp("description", result.description)
+  discard jsonObj.getProp("color", result.color)
+  discard jsonObj.getProp("emoji", result.emoji)
+  discard jsonObj.getProp("active", result.active)
+  result.chatType = chatType
+  discard jsonObj.getProp("timestamp", result.timestamp)
+  discard jsonObj.getProp("lastClockValue", result.lastClockValue)
+  discard jsonObj.getProp("deletedAtClockValue", result.deletedAtClockValue)
+  discard jsonObj.getProp("unviewedMessagesCount", result.unviewedMessagesCount)
+  discard jsonObj.getProp("unviewedMentionsCount", result.unviewedMentionsCount)
+  discard jsonObj.getProp("identicon", result.identicon)
+  discard jsonObj.getProp("muted", result.muted)
+  discard jsonObj.getProp("communityId", result.communityId)
+  discard jsonObj.getProp("joined", result.joined)
+  discard jsonObj.getProp("syncedTo", result.syncedTo)
+  discard jsonObj.getProp("syncedFrom", result.syncedFrom)

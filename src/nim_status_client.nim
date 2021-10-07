@@ -54,8 +54,6 @@ proc mainProc() =
   let appController = newAppController()
   defer: appController.delete()
 
-  appController.load()
-
   status.initNode(STATUSGODIR, KEYSTOREDIR)
 
   let uiScaleFilePath = joinPath(DATADIR, "ui-scale")
@@ -224,6 +222,13 @@ proc mainProc() =
 
   status.events.once("loginCompleted") do(a: Args):
     var args = AccountArgs(a)
+
+    echo "LOGIN COMPLETED"
+    # This will do the loading of the whole app, login module will be part of 
+    # this process later, but since we're only dealing with the chat part so far
+    # that must be placed here because of status-go calls from the related services 
+    # what requires user to be logged in.
+    appController.load()
 
     onAccountChanged(args.account)
     status.startMessenger()
