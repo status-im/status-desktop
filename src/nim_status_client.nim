@@ -14,6 +14,7 @@ import app/provider/core as provider
 import app/keycard/core as keycard
 import status/types/[account]
 import status_go
+import keycard_go
 import status/status as statuslib
 import eventemitter
 import app_service/tasks/marathon/mailserver/controller as mailserver_controller
@@ -292,6 +293,7 @@ proc mainProc() =
       signal_handler(signalsQObjPointer, p0, "receiveSignal")
 
   status_go.setSignalEventCallback(callback)
+  keycard_go.setSignalEventCallback(callback)
 
   # Qt main event loop is entered here
   # The termination of the loop will be performed when exit() or quit() is called
