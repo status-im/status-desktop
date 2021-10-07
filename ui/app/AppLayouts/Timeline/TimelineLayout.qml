@@ -8,6 +8,7 @@ import utils 1.0
 import "../../../shared"
 import "../../../shared/status"
 import "../Chat/ChatColumn"
+import "../Chat/ChatColumn/MessageComponents"
 import "../Chat/components"
 
 import "stores"
