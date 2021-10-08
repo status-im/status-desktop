@@ -12,6 +12,7 @@ import "../../shared"
 StatusModal {
     property bool pinFieldValid: false
     property bool submitted: false
+    property bool autoClose: false
 
     id: popup
     header.title: qsTr("Authenticate PIN")
@@ -69,13 +70,20 @@ StatusModal {
             id: submitBtn
             text: qsTr("Authenticate")
             enabled: pinFieldValid && !submitted
+            loading: submitted
 
             onClicked: {
                 submitted = true
-                keycardModel.authenticate(pinField.text)
+                actionTimer.start()
             }
         }
     ]
+
+    Timer {
+        id: actionTimer
+        interval: 50
+        onTriggered: { keycardModel.authenticate(pinField.text) }
+    }
 
     Connections {
         id: connection
@@ -88,7 +96,9 @@ StatusModal {
         }
 
         onCardAuthenticated: {
-            popup.close()
+            if (autoClose) {
+                popup.close()
+            }
         }
     }
 }

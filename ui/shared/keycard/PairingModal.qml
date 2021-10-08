@@ -67,13 +67,20 @@ StatusModal {
             id: submitBtn
             text: qsTr("Pair")
             enabled: pairingPasswordFieldValid && !submitted
+            loading: submitted
 
             onClicked: {
                 submitted = true
-                keycardModel.pair(pairingPasswordField.text)
+                actionTimer.start()
             }
         }
     ]
+
+    Timer {
+        id: actionTimer
+        interval: 50
+        onTriggered: { keycardModel.pair(pairingPasswordField.text) }
+    }
 
     Connections {
         id: connection

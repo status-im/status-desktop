@@ -7,6 +7,7 @@ Item {
 
     id: keycardView
     Component.onCompleted: {
+        keycardModel.reset()
         insertCard.open()
         keycardModel.startConnection()
     }

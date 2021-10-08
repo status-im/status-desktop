@@ -22,9 +22,9 @@ type
 
 type
   OnboardingFlow* {.pure.} = enum
-    Recover = 0,
-    Generate = 1
-    ImportMnemonic = 2
+    Recover = 1,
+    Generate = 2
+    ImportMnemonic = 3
 
 QtObject:
   type KeycardView* = ref object of QObject
@@ -34,6 +34,7 @@ QtObject:
     appInfo*: KeycardApplicationInfo
     appStatus*: KeycardStatus
     onboardingFlow*: OnboardingFlow
+    newAccount*: Account
 
   proc setup(self: KeycardView) =
     self.QObject.setup
@@ -41,12 +42,18 @@ QtObject:
   proc delete*(self: KeycardView) =
     self.QObject.delete
 
+  proc reset(self: KeycardView) {.slot.} =
+    self.onboardingFlow = Recover
+    self.appInfo = nil
+    self.appStatus = nil
+    self.newAccount = nil
+
   proc newKeycardView*(status: Status): KeycardView =
     new(result, delete)
     result.status = status
     result.pairings = newPairingController()
-    result.onboardingFlow = Recover
     result.setup
+    result.reset()
 
   proc cardConnected*(self: KeycardView) {.signal.}
   proc cardDisconnected*(self: KeycardView) {.signal.}
@@ -120,31 +127,48 @@ QtObject:
 
   proc init*(self: KeycardView, pin: string) {.slot.} =
     discard """
+    try:
+      let pairingCode = "a fixed pairing code"
+      let puk "a random PUK"
+      self.status.keycard.init(pairingCode, pin, puk)
+      self.status.keycard.pair(pairingCode)
+      self.attemptOpenSecureChannel()
+      self.onSecureChannelOpened()
+    except:
+      self.cardUnhandledError(getCurrentException())
     """
 
   proc recoverAccount(self: KeycardView) =
     try:
-      let master = self.status.keycard.exportKey(path="m", derive=true, makeCurrent=false, onlyPublic=true)
+      # CHANGE THIS: "m" should be used but because of a bug in keycard-go this currently does not work. For testing purpouses we are using m/0 for now
+      let master = self.status.keycard.exportKey(path="m/0", derive=true, makeCurrent=false, onlyPublic=true)
+      let walletRoot = self.status.keycard.exportKey(path=PATH_WALLET_ROOT, derive=true, makeCurrent=false, onlyPublic=true)
       let walletKey = self.status.keycard.exportKey(path=PATH_DEFAULT_WALLET, derive=true, makeCurrent=false, onlyPublic=true)
+      let eip1581 = self.status.keycard.exportKey(path=PATH_EIP_1581, derive=true, makeCurrent=false, onlyPublic=true)
       let whisperKey = self.status.keycard.exportKey(path=PATH_WHISPER, derive=true, makeCurrent=false, onlyPublic=false)
       let encryptionKey = self.status.keycard.exportKey(path=PATH_EIP_1581 & "/1'/0", derive=true, makeCurrent=false, onlyPublic=false)
 
       var account = GeneratedAccount()
-      account.publicKey = master.pubKey
-      account.address = ""
-      account.derived.whisper.publicKey = whisperKey.pubKey
-      account.derived.defaultWallet.publicKey = walletKey.pubKey
-      account.name = self.status.accounts.generateAlias(whisperKey.pubKey)
-      account.keyUid = self.appInfo.keyUID
-      account.identicon = self.status.accounts.generateIdenticon(whisperKey.pubKey)
+      account.publicKey = "0x" & master.pubKey
+      account.address = master.address
+      account.derived.whisper.publicKey = "0x" & whisperKey.pubKey
+      account.derived.whisper.address = whisperKey.address
+      account.derived.defaultWallet.publicKey = "0x" & walletKey.pubKey
+      account.derived.defaultWallet.address =  walletKey.address
+      account.derived.walletRoot.publicKey = "0x" & walletRoot.pubKey
+      account.derived.walletRoot.address = walletRoot.address
+      account.derived.eip1581.publicKey = "0x" & eip1581.pubKey
+      account.derived.eip1581.address = eip1581.address
+      account.name = self.status.accounts.generateAlias("0x" & whisperKey.pubKey)
+      account.keyUid = "0x" & self.appInfo.keyUID
+      account.identicon = self.status.accounts.generateIdenticon("0x" & whisperKey.pubKey)
       account.isKeycard = true
 
-      discard self.status.accounts.storeDerivedAndLogin(self.status.fleet.config, account, encryptionKey.privKey, whisperKey.privKey).toJson
-
+      self.newAccount = self.status.accounts.storeDerivedAndLogin(self.status.fleet.config, account, encryptionKey.privKey, whisperKey.privKey)
     except KeycardExportKeyException as ex:
       self.cardUnhandledError(ex.error)
-    except StatusGoException as e:
-      info "error = ", error=e.msg
+    except StatusGoException as ex:
+      self.cardUnhandledError(ex.msg)
 
   proc onboarding*(self: KeycardView) {.slot.} =
     case self.onboardingFlow:
