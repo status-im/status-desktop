@@ -1,8 +1,7 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.3
 import QtQuick.Dialogs 1.3
-
-import utils 1.0
+import utils 0.1
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -17,6 +16,7 @@ StatusModal {
     property QtObject channel
     property bool isEdit: false
     property string categoryId: ""
+    property var position: null
 
     readonly property int maxChannelNameLength: 30
     readonly property int maxChannelDescLength: 140
@@ -36,6 +36,7 @@ StatusModal {
             contentItem.channelCategoryId = channel.categoryId
             contentItem.channelName.input.text = channel.name
             contentItem.channelDescription.input.text = channel.description
+            position = channel.position
         }
     }
 
@@ -82,7 +83,7 @@ StatusModal {
                 }
                 validators: [StatusMinLengthValidator {
                     minLength: 1
-                    errorMessage: Utils.getErrorMessage(nameInput.errors, qsTr("channel name"))
+                    errorMessage: Utils.getErrorMessage(errors, qsTr("channel name"))
                 }]
             }
 
@@ -101,7 +102,7 @@ StatusModal {
                 input.implicitHeight: 88
                 validators: [StatusMinLengthValidator {
                     minLength: 1
-                    errorMessage:  Utils.getErrorMessage(descriptionTextArea.errors, qsTr("channel description"))
+                    errorMessage:  Utils.getErrorMessage(errors, qsTr("channel description"))
                 }]
             }
 
@@ -215,7 +216,8 @@ StatusModal {
                                                                 popup.contentItem.channelId,
                                                                 Utils.filterXSS(popup.contentItem.channelName.input.text),
                                                                 Utils.filterXSS(popup.contentItem.channelDescription.input.text),
-                                                                popup.contentItem.channelCategoryId)
+                                                                popup.contentItem.channelCategoryId,
+                                                                popup.position)
                                                                 // TODO: pass the private value when private channels
                                                                 // are implemented
                                                                 //privateSwitch.checked)
