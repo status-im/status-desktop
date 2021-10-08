@@ -420,9 +420,9 @@ QtObject:
       error "Error creating channel", msg=e.msg, name, description
       result = StatusGoError(error: e.msg).toJson
 
-  proc editCommunityChannel*(self: ChatsView, communityId: string, channelId: string, name: string, description: string, categoryId: string): string {.slot.} =
+  proc editCommunityChannel*(self: ChatsView, communityId: string, channelId: string, name: string, description: string, categoryId: string, position: int): string {.slot.} =
     try:
-      let chat = self.status.chat.editCommunityChannel(communityId, channelId, name, description, categoryId)
+      let chat = self.status.chat.editCommunityChannel(communityId, channelId, name, description, categoryId, position)
 
       chat.categoryId = categoryId
       self.communities.joinedCommunityList.replaceChannelInCommunity(communityId, chat)
