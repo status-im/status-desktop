@@ -4,8 +4,6 @@ import json, strformat
 
 include ../../common/json_utils
 
-#import strutils, random, strformat, json
-
 type ChatType* {.pure.}= enum
   Unknown = 0,
   OneToOne = 1, 
@@ -22,7 +20,7 @@ type ChatDto* = ref object
   name*: string
   description*: string
   color*: string
-  emoji*: string # not sure why do we received this at all?
+  emoji*: string # not sure why do we receive this at all?
   active*: bool # indicates whether the chat has been soft deleted
   chatType*: ChatType
   timestamp*: int64 # indicates the last time this chat has received/sent a message
@@ -32,13 +30,13 @@ type ChatDto* = ref object
   unviewedMessagesCount*: int
   unviewedMentionsCount*: int
   #lastMessage*: Message ???? It's a question why do we need it here within this context ????
-  #members*: seq[ChatMember] ???? It's a question why do we need it here within this context ????
-  #membershipUpdateEvents*: seq[ChatMembershipEvent]  ???? It's a question why do we need it here within this context ????
-  #alias*: string ???? It's a question what's this ????
+  #members*: seq[ChatMember] ???? It's always null and a question why do we need it here within this context ????
+  #membershipUpdateEvents*: seq[ChatMembershipEvent]  ???? It's always null and a question why do we need it here within this context ????
+  alias*: string
   identicon*: string
   muted*: bool
   communityId*: string #set if chat belongs to a community
-  #profile*: string ???? It's a question why do we need it here within this context ????
+  profile*: string
   joined*: int64 # indicates when the user joined the chat last time
   syncedTo*: int64
   syncedFrom*: int64
@@ -57,22 +55,17 @@ proc `$`*(self: ChatDto): string =
     deletedAtClockValue: {self.deletedAtClockValue}, 
     unviewedMessagesCount: {self.unviewedMessagesCount}, 
     unviewedMentionsCount: {self.unviewedMentionsCount}, 
+    alias: {self.alias}, 
     identicon: {self.identicon}, 
     muted: {self.muted}, 
     communityId: {self.communityId}, 
+    profile: {self.profile}, 
     joined: {self.joined}, 
     syncedTo: {self.syncedTo}, 
     syncedFrom: {self.syncedFrom}
     )"""
 
 proc toChatDto*(jsonObj: JsonNode): ChatDto =
-
-  var chatType = ChatType.Unknown
-  var chatTypeInt: int
-  if (jsonObj.getProp("chatType", chatTypeInt) and
-    (chatTypeInt >= ord(low(ChatType)) or chatTypeInt <= ord(high(ChatType)))): 
-      chatType = ChatType(chatTypeInt)
-
   result = ChatDto()
   discard jsonObj.getProp("id", result.id)
   discard jsonObj.getProp("name", result.name)
@@ -80,15 +73,23 @@ proc toChatDto*(jsonObj: JsonNode): ChatDto =
   discard jsonObj.getProp("color", result.color)
   discard jsonObj.getProp("emoji", result.emoji)
   discard jsonObj.getProp("active", result.active)
-  result.chatType = chatType
+  
+  result.chatType = ChatType.Unknown
+  var chatTypeInt: int
+  if (jsonObj.getProp("chatType", chatTypeInt) and
+    (chatTypeInt >= ord(low(ChatType)) or chatTypeInt <= ord(high(ChatType)))): 
+      result.chatType = ChatType(chatTypeInt)
+
   discard jsonObj.getProp("timestamp", result.timestamp)
   discard jsonObj.getProp("lastClockValue", result.lastClockValue)
   discard jsonObj.getProp("deletedAtClockValue", result.deletedAtClockValue)
   discard jsonObj.getProp("unviewedMessagesCount", result.unviewedMessagesCount)
   discard jsonObj.getProp("unviewedMentionsCount", result.unviewedMentionsCount)
+  discard jsonObj.getProp("alias", result.alias)
   discard jsonObj.getProp("identicon", result.identicon)
   discard jsonObj.getProp("muted", result.muted)
   discard jsonObj.getProp("communityId", result.communityId)
+  discard jsonObj.getProp("profile", result.profile)
   discard jsonObj.getProp("joined", result.joined)
   discard jsonObj.getProp("syncedTo", result.syncedTo)
   discard jsonObj.getProp("syncedFrom", result.syncedFrom)

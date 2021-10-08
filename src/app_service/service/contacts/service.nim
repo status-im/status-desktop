@@ -1,6 +1,6 @@
 import Tables, json, sequtils, strformat, chronicles
 
-import service_interface, contact_dto
+import service_interface, dto
 import status/statusgo_backend_new/contacts as status_go
 
 export service_interface
@@ -24,6 +24,7 @@ method init*(self: Service) =
   echo "ContactServiceInit"
   try:
     let response = status_go.getContacts()
+
     let contacts = map(response.result.getElems(), 
     proc(x: JsonNode): ContactDto = x.toContactDto())
 
@@ -31,5 +32,6 @@ method init*(self: Service) =
       self.contacts[contact.id] = contact
 
   except Exception as e:
-    # handled in core.nim/callPrivateRPC
+    let errDesription = e.msg
+    error "error: ", errDesription
     return

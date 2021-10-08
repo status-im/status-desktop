@@ -1,6 +1,6 @@
 import Tables, json, sequtils, strformat, chronicles
 
-import service_interface, chat_dto
+import service_interface, dto
 import status/statusgo_backend_new/chat as status_go
 
 export service_interface
@@ -18,7 +18,7 @@ method delete*(self: Service) =
 proc newService*(): Service =
   echo "ChatServiceCreate"
   result = Service()
-  #result.contacts = initTable[string, ContactDto]()
+  result.chats = initTable[string, ChatDto]()
 
 method init*(self: Service) =
   echo "ChatServiceInit"
@@ -33,5 +33,6 @@ method init*(self: Service) =
         self.chats[chat.id] = chat
 
   except Exception as e:
-    # handled in core.nim/callPrivateRPC
+    let errDesription = e.msg
+    error "error: ", errDesription
     return

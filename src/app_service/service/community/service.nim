@@ -1,0 +1,37 @@
+import Tables, json, sequtils, strformat, chronicles
+
+import service_interface, dto
+import status/statusgo_backend_new/communities as status_go
+
+export service_interface
+
+logScope:
+  topics = "community-service"
+
+type 
+  Service* = ref object of ServiceInterface
+    communities: Table[string, CommunityDto] # [community_id, CcommunityDto]
+
+method delete*(self: Service) =
+  echo "CommunityServiceDelete"
+
+proc newService*(): Service =
+  echo "CommunityServiceCreate"
+  result = Service()
+  result.communities = initTable[string, CommunityDto]()
+
+method init*(self: Service) =
+  echo "CommunityServiceInit"
+  try:
+    let response = status_go.getJoinedComunities()
+
+    let communities = map(response.result.getElems(), 
+    proc(x: JsonNode): CommunityDto = x.toCommunityDto())
+
+    for community in communities:
+        self.communities[community.id] = community
+
+  except Exception as e:
+    let errDesription = e.msg
+    error "error: ", errDesription
+    return

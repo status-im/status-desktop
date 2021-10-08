@@ -5,7 +5,7 @@ import json, strformat
 include ../../common/json_utils
 
 type
-  IdentityImage* = ref object
+  ImagesDto* = ref object
     thumbnail*: string
     large*: string
 
@@ -16,15 +16,15 @@ type ContactDto* = ref object
   alias: string
   identicon*: string
   lastUpdated*: int64
-  identityImage*: IdentityImage
+  image*: ImagesDto
   added*: bool
   blocked*: bool
   hasAddedUs*: bool
   isSyncing*: bool
   removed: bool
 
-proc `$`*(self: IdentityImage): string =
-  result = fmt"""IdentityImage(
+proc `$`(self: ImagesDto): string =
+  result = fmt"""ImagesDto(
     thumbnail: {self.thumbnail},
     large: {self.large}, 
     ]"""
@@ -37,8 +37,8 @@ proc `$`*(self: ContactDto): string =
     alias: {self.alias}, 
     identicon: {self.identicon}, 
     lastUpdated: {self.lastUpdated}, 
-    identityImage:[
-      {$self.identityImage}
+    image:[
+      {$self.image}
     ],
     added:{self.added}
     blocked:{self.blocked}
@@ -47,8 +47,8 @@ proc `$`*(self: ContactDto): string =
     removed:{self.removed}    
     )"""
 
-proc toIdentityImage*(jsonObj: JsonNode): IdentityImage =
-  result = IdentityImage()
+proc toImagesDto(jsonObj: JsonNode): ImagesDto =
+  result = ImagesDto()
 
   var largeObj: JsonNode
   if(jsonObj.getProp("large", largeObj)):
@@ -66,9 +66,11 @@ proc toContactDto*(jsonObj: JsonNode): ContactDto =
   discard jsonObj.getProp("alias", result.alias)
   discard jsonObj.getProp("identicon", result.identicon)
   discard jsonObj.getProp("lastUpdated", result.lastUpdated)
+  
   var imageObj: JsonNode
   if(jsonObj.getProp("images", imageObj)):
-    result.identityImage = toIdentityImage(imageObj)
+    result.image = toImagesDto(imageObj)
+  
   discard jsonObj.getProp("added", result.added)
   discard jsonObj.getProp("blocked", result.blocked)
   discard jsonObj.getProp("hasAddedUs", result.hasAddedUs)
