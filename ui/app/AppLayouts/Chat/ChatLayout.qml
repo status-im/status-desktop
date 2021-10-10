@@ -23,6 +23,12 @@ StatusAppThreePanelLayout {
     property bool stickersLoaded: false
     signal profileButtonClicked()
 
+    Component.onCompleted: {
+        console.warn("QML-mainModule.test: ", mainModule.test)
+        mainModule.test = 1000001
+        console.warn("QML-after update in mainModule.test: ", mainModule.test)
+    }
+
     Connections {
         target: chatsModel.stickers
         onStickerPacksLoaded: {

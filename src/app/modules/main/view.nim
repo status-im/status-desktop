@@ -19,7 +19,6 @@ QtObject:
     result.delegate = delegate
     result.model = newModel()
     result.test = 1001
-    echo "TEST SET TO: ", result.test
 
   method load*(self: View) =
     self.delegate.viewDidLoad()
@@ -33,11 +32,10 @@ QtObject:
     if(self.test == t):
       return
 
-    echo "Nwq Value....", t
     self.test = t
     self.testChanged()
 
-  QtProperty[QVariant] test:
+  QtProperty[int] test:
     read = getTest
     write = setTest
     notify = testChanged

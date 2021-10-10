@@ -8,8 +8,6 @@ import app/utilsView/core as utilsView
 import app/browser/core as browserView
 import app/profile/core as profile
 import app/profile/view
-import app/onboarding/core as onboarding
-import app/login/core as login
 import app/provider/core as provider
 import app/keycard/core as keycard
 import status/types/[account]
@@ -62,7 +60,7 @@ proc mainProc() =
   let app = newQGuiApplication()
   defer: app.delete()
 
-  let appController = newAppController()
+  let appController = newAppController(status, appService)
   defer: appController.delete()
 
   let resources =
@@ -197,10 +195,6 @@ proc mainProc() =
   defer: provider.delete()
   singletonInstance.engine.setRootContextProperty("web3Provider", provider.variant)
 
-  var login = login.newController(status, appService)
-  defer: login.delete()
-  var onboarding = onboarding.newController(status)
-  defer: onboarding.delete()
   var keycard = keycard.newController(status)
   defer: keycard.delete()
 
@@ -210,24 +204,6 @@ proc mainProc() =
   status.events.on("accountChanged") do(a: Args):
     var args = AccountArgs(a)
     onAccountChanged(args.account)
-
-  status.events.once("login") do(a: Args):
-    var args = AccountArgs(a)
-    appService.onLoggedIn()
-
-    # This will do the loading of the whole app, login module will be part of 
-    # this process later, but since we're only dealing with the chat part so far
-    # that must be placed here because of status-go calls from the related services 
-    # what requires user to be logged in.
-    appController.load()
-
-    # Reset login and onboarding to remove any mnemonic that would have been saved in the accounts list
-    login.reset()
-    onboarding.reset()
-
-    login.moveToAppState()
-    onboarding.moveToAppState()
-    status.events.emit("loginCompleted", args)
 
   status.events.once("loginCompleted") do(a: Args):
     var args = AccountArgs(a)
@@ -250,8 +226,6 @@ proc mainProc() =
     info "Status app is shutting down..."
     singletonInstance.delete()
 
-  singletonInstance.engine.setRootContextProperty("loginModel", login.variant)
-  singletonInstance.engine.setRootContextProperty("onboardingModel", onboarding.variant)
   singletonInstance.engine.setRootContextProperty("keycardModel", keycard.variant)
   singletonInstance.engine.setRootContextProperty("singleInstance", newQVariant(singleInstance))
 
@@ -262,11 +236,11 @@ proc mainProc() =
   # Initialize only controllers whose init functions
   # do not need a running node
   proc initControllers() =
-    login.init()
-    onboarding.init()
     keycard.init()
 
   initControllers()
+
+  appController.start()
 
   # Handle node.stopped signal when user has logged out
   status.events.once("nodeStopped") do(a: Args):
@@ -274,8 +248,6 @@ proc mainProc() =
     status.reset()
 
     # 1. Reset controller data
-    login.reset()
-    onboarding.reset()
     # TODO: implement all controller resets
     # chat.reset()
     # node.reset()
