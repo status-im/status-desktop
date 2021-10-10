@@ -13,15 +13,13 @@ type
     contacts: Table[string, ContactDto] # [contact_id, ContactDto]
 
 method delete*(self: Service) =
-  echo "ContactServiceDelete"
+  discard
 
 proc newService*(): Service =
-  echo "ContactServiceCreate"
   result = Service()
   result.contacts = initTable[string, ContactDto]()
 
 method init*(self: Service) =
-  echo "ContactServiceInit"
   try:
     let response = status_go.getContacts()
 

@@ -13,15 +13,13 @@ type
     communities: Table[string, CommunityDto] # [community_id, CcommunityDto]
 
 method delete*(self: Service) =
-  echo "CommunityServiceDelete"
+  discard
 
 proc newService*(): Service =
-  echo "CommunityServiceCreate"
   result = Service()
   result.communities = initTable[string, CommunityDto]()
 
 method init*(self: Service) =
-  echo "CommunityServiceInit"
   try:
     let response = status_go.getJoinedComunities()
 

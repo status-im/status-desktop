@@ -15,11 +15,9 @@ proc newModule*[T](delegate: T): Module[T] =
   result.moduleLoaded = false
 
 method delete*[T](self: Module[T]) =
-  echo "--(ChatSectionModule)--delete"
   self.view.delete
 
 method load*[T](self: Module[T]) =
-  echo "--(ChatSectionModule)--load"
   self.moduleLoaded = true
   self.delegate.chatSectionDidLoad()
 

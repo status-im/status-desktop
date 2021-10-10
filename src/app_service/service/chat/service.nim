@@ -13,15 +13,13 @@ type
     chats: Table[string, ChatDto] # [chat_id, ChatDto]
 
 method delete*(self: Service) =
-  echo "ChatServiceDelete"
+  discard
 
 proc newService*(): Service =
-  echo "ChatServiceCreate"
   result = Service()
   result.chats = initTable[string, ChatDto]()
 
 method init*(self: Service) =
-  echo "ChatServiceInit"
   try:
     let response = status_go.getChats()
 

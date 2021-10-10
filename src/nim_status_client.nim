@@ -21,7 +21,9 @@ import app_service/tasks/marathon/mailserver/worker as mailserver_worker
 import app_service/main
 import constants
 
+import app/boot/global_singleton
 import app/boot/app_controller
+
 
 var signalsQObjPointer: pointer
 
@@ -51,9 +53,6 @@ proc mainProc() =
   let appService = newAppService(status, mailserverWorker)
   defer: appService.delete()
 
-  let appController = newAppController()
-  defer: appController.delete()
-
   status.initNode(STATUSGODIR, KEYSTOREDIR)
 
   let uiScaleFilePath = joinPath(DATADIR, "ui-scale")
@@ -62,6 +61,9 @@ proc mainProc() =
 
   let app = newQGuiApplication()
   defer: app.delete()
+
+  let appController = newAppController()
+  defer: appController.delete()
 
   let resources =
     if defined(windows) and defined(production):
@@ -108,22 +110,23 @@ proc mainProc() =
 
   let networkAccessFactory = newQNetworkAccessManagerFactory(TMPDIR & "netcache")
 
-  let engine = newQQmlApplicationEngine()
-  defer: engine.delete()
-  engine.addImportPath("qrc:/./StatusQ/src")
-  engine.addImportPath("qrc:/./imports")
-  engine.setNetworkAccessManagerFactory(networkAccessFactory)
-  engine.setRootContextProperty("uiScaleFilePath", newQVariant(uiScaleFilePath))
+
+  #let engine = newQQmlApplicationEngine()
+  #defer: engine.delete()
+  singletonInstance.engine.addImportPath("qrc:/./StatusQ/src")
+  singletonInstance.engine.addImportPath("qrc:/./imports")
+  singletonInstance.engine.setNetworkAccessManagerFactory(networkAccessFactory)
+  singletonInstance.engine.setRootContextProperty("uiScaleFilePath", newQVariant(uiScaleFilePath))
 
   # Register events objects
-  let dockShowAppEvent = newStatusDockShowAppEventObject(engine)
+  let dockShowAppEvent = newStatusDockShowAppEventObject(singletonInstance.engine)
   defer: dockShowAppEvent.delete()
-  let osThemeEvent = newStatusOSThemeEventObject(engine)
+  let osThemeEvent = newStatusOSThemeEventObject(singletonInstance.engine)
   defer: osThemeEvent.delete()
   app.installEventFilter(dockShowAppEvent)
   app.installEventFilter(osThemeEvent)
 
-  let netAccMgr = newQNetworkAccessManager(engine.getNetworkAccessManager())
+  let netAccMgr = newQNetworkAccessManager(singletonInstance.engine.getNetworkAccessManager())
 
   status.events.on("network:connected") do(e: Args):
     # This is a workaround for Qt bug https://bugreports.qt.io/browse/QTBUG-55180
@@ -157,42 +160,42 @@ proc mainProc() =
 
   var wallet = wallet.newController(status, appService)
   defer: wallet.delete()
-  engine.setRootContextProperty("walletModel", wallet.variant)
+  singletonInstance.engine.setRootContextProperty("walletModel", wallet.variant)
 
   var wallet2 = walletV2.newController(status, appService)
   defer: wallet2.delete()
-  engine.setRootContextProperty("walletV2Model", wallet2.variant)
+  singletonInstance.engine.setRootContextProperty("walletV2Model", wallet2.variant)
 
   var chat = chat.newController(status, appService, OPENURI)
   defer: chat.delete()
-  engine.setRootContextProperty("chatsModel", chat.variant)
+  singletonInstance.engine.setRootContextProperty("chatsModel", chat.variant)
 
   var node = node.newController(status, appService, netAccMgr)
   defer: node.delete()
-  engine.setRootContextProperty("nodeModel", node.variant)
+  singletonInstance.engine.setRootContextProperty("nodeModel", node.variant)
 
   var utilsController = utilsView.newController(status, appService)
   defer: utilsController.delete()
-  engine.setRootContextProperty("utilsModel", utilsController.variant)
+  singletonInstance.engine.setRootContextProperty("utilsModel", utilsController.variant)
 
   var browserController = browserView.newController(status)
   defer: browserController.delete()
-  engine.setRootContextProperty("browserModel", browserController.variant)
+  singletonInstance.engine.setRootContextProperty("browserModel", browserController.variant)
 
   proc changeLanguage(locale: string) =
     if (locale == currentLanguageCode):
       return
     currentLanguageCode = locale
     let shouldRetranslate = not defined(linux)
-    engine.setTranslationPackage(joinPath(i18nPath, fmt"qml_{locale}.qm"), shouldRetranslate)
+    singletonInstance.engine.setTranslationPackage(joinPath(i18nPath, fmt"qml_{locale}.qm"), shouldRetranslate)
 
   var profile = profile.newController(status, appService, changeLanguage)
   defer: profile.delete()
-  engine.setRootContextProperty("profileModel", profile.variant)
+  singletonInstance.engine.setRootContextProperty("profileModel", profile.variant)
 
   var provider = provider.newController(status)
   defer: provider.delete()
-  engine.setRootContextProperty("web3Provider", provider.variant)
+  singletonInstance.engine.setRootContextProperty("web3Provider", provider.variant)
 
   var login = login.newController(status, appService)
   defer: login.delete()
@@ -212,6 +215,12 @@ proc mainProc() =
     var args = AccountArgs(a)
     appService.onLoggedIn()
 
+    # This will do the loading of the whole app, login module will be part of 
+    # this process later, but since we're only dealing with the chat part so far
+    # that must be placed here because of status-go calls from the related services 
+    # what requires user to be logged in.
+    appController.load()
+
     # Reset login and onboarding to remove any mnemonic that would have been saved in the accounts list
     login.reset()
     onboarding.reset()
@@ -222,13 +231,6 @@ proc mainProc() =
 
   status.events.once("loginCompleted") do(a: Args):
     var args = AccountArgs(a)
-
-    echo "LOGIN COMPLETED"
-    # This will do the loading of the whole app, login module will be part of 
-    # this process later, but since we're only dealing with the chat part so far
-    # that must be placed here because of status-go calls from the related services 
-    # what requires user to be logged in.
-    appController.load()
 
     onAccountChanged(args.account)
     status.startMessenger()
@@ -246,15 +248,16 @@ proc mainProc() =
   # this should be the last defer in the scope
   defer:
     info "Status app is shutting down..."
+    singletonInstance.delete()
 
-  engine.setRootContextProperty("loginModel", login.variant)
-  engine.setRootContextProperty("onboardingModel", onboarding.variant)
-  engine.setRootContextProperty("keycardModel", keycard.variant)
-  engine.setRootContextProperty("singleInstance", newQVariant(singleInstance))
+  singletonInstance.engine.setRootContextProperty("loginModel", login.variant)
+  singletonInstance.engine.setRootContextProperty("onboardingModel", onboarding.variant)
+  singletonInstance.engine.setRootContextProperty("keycardModel", keycard.variant)
+  singletonInstance.engine.setRootContextProperty("singleInstance", newQVariant(singleInstance))
 
   let isExperimental = if getEnv("EXPERIMENTAL") == "1": "1" else: "0" # value explicity passed to avoid trusting input
   let experimentalFlag = newQVariant(isExperimental)
-  engine.setRootContextProperty("isExperimental", experimentalFlag)
+  singletonInstance.engine.setRootContextProperty("isExperimental", experimentalFlag)
 
   # Initialize only controllers whose init functions
   # do not need a running node
@@ -283,18 +286,18 @@ proc mainProc() =
     # 2. Re-init controllers that don't require a running node
     initControllers()
 
-  engine.setRootContextProperty("signals", appService.signalController.variant)
-  engine.setRootContextProperty("mailserver", mailserverController.variant)
+  singletonInstance.engine.setRootContextProperty("signals", appService.signalController.variant)
+  singletonInstance.engine.setRootContextProperty("mailserver", mailserverController.variant)
 
   var prValue = newQVariant(if defined(production): true else: false)
-  engine.setRootContextProperty("production", prValue)
+  singletonInstance.engine.setRootContextProperty("production", prValue)
 
   # We're applying default language before we load qml. Also we're aware that
   # switch language at runtime will have some impact to cpu usage.
   # https://doc.qt.io/archives/qtjambi-4.5.2_01/com/trolltech/qt/qtjambi-linguist-programmers.html
   changeLanguage("en")
 
-  engine.load(newQUrl("qrc:///main.qml"))
+  singletonInstance.engine.load(newQUrl("qrc:///main.qml"))
 
   # Please note that this must use the `cdecl` calling convention because
   # it will be passed as a regular C function to statusgo_backend. This means that
