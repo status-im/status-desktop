@@ -140,13 +140,12 @@ QtObject:
 
   proc recoverAccount(self: KeycardView) =
     try:
-      # CHANGE THIS: "m" should be used but because of a bug in keycard-go this currently does not work. For testing purpouses we are using m/0 for now
-      let master = self.status.keycard.exportKey(path="m/0", derive=true, makeCurrent=false, onlyPublic=true)
       let walletRoot = self.status.keycard.exportKey(path=PATH_WALLET_ROOT, derive=true, makeCurrent=false, onlyPublic=true)
       let walletKey = self.status.keycard.exportKey(path=PATH_DEFAULT_WALLET, derive=true, makeCurrent=false, onlyPublic=true)
       let eip1581 = self.status.keycard.exportKey(path=PATH_EIP_1581, derive=true, makeCurrent=false, onlyPublic=true)
       let whisperKey = self.status.keycard.exportKey(path=PATH_WHISPER, derive=true, makeCurrent=false, onlyPublic=false)
       let encryptionKey = self.status.keycard.exportKey(path=PATH_EIP_1581 & "/1'/0", derive=true, makeCurrent=false, onlyPublic=false)
+      let master = self.status.keycard.exportKey(path="m", derive=true, makeCurrent=false, onlyPublic=true)
 
       var account = GeneratedAccount()
       account.publicKey = "0x" & master.pubKey
