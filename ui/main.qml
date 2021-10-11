@@ -13,7 +13,6 @@ import DotherSide 0.1
 
 import "./onboarding"
 import "./app"
-import "./sounds"
 import "./shared"
 import utils 1.0
 

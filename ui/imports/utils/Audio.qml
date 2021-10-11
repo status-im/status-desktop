@@ -2,15 +2,12 @@ import QtQuick 2.13
 import QtMultimedia 5.13
 
 Audio {
-    id: errorSound
-    source: "./error.mp3"
+    id: audio
+
+    property string track: "error.mp3"
+    
+    source: Qt.resolvedUrl("./../assets/audio" + track)
     audioRole: Audio.NotificationRole
     volume: appSettings.volume
     muted: !appSettings.notificationSoundsEnabled
 }
-
-/*##^##
-Designer {
-    D{i:0;autoSize:true;height:480;width:640}
-}
-##^##*/
