@@ -13,7 +13,6 @@ import DotherSide 0.1
 
 import "./app/AppLayouts/Onboarding/views"
 import "./app"
-import "./sounds"
 import "./shared"
 import utils 1.0
 

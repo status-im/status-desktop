@@ -4,7 +4,6 @@ import QtQuick.Layouts 1.13
 import QtMultimedia 5.13
 
 import utils 1.0
-import "../sounds"
 import "../shared"
 import "../shared/status"
 import "../shared/popups"
@@ -151,24 +150,19 @@ Item {
         }
     }
 
-    ErrorSound {
+    Audio {
         id: errorSound
+        track: "error.mp3"
     }
 
     Audio {
         id: sendMessageSound
-        audioRole: Audio.NotificationRole
-        source: "../../../../sounds/send_message.wav"
-        volume: appSettings.volume
-        muted: !appSettings.notificationSoundsEnabled
+        track: "send_message.wav"
     }
 
     Audio {
         id: notificationSound
-        audioRole: Audio.NotificationRole
-        source: "../../../../sounds/notification.wav"
-        volume: appSettings.volume
-        muted: !appSettings.notificationSoundsEnabled
+        track: "notification.wav"
     }
 
     ModuleWarning {
