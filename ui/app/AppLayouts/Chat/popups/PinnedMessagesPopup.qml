@@ -118,6 +118,36 @@ ModalPopup {
                     id: messageItem
                     rootStore: popup.rootStore
                     messageStore: popup.messageStore
+                    /////////////TODO Remove
+                    fromAuthor: model.fromAuthor
+                    chatId: model.chatId
+                    userName: model.userName
+                    alias: model.alias
+                    localName: model.localName
+                    message: model.message
+                    plainText: model.plainText
+                    identicon: model.identicon
+                    isCurrentUser: model.isCurrentUser
+                    timestamp: model.timestamp
+                    sticker: model.sticker
+                    contentType: model.contentType
+                    outgoingStatus: model.outgoingStatus
+                    responseTo: model.responseTo
+                    imageClick: imagePopup.openPopup.bind(imagePopup)
+                    messageId: model.messageId
+                    emojiReactions: model.emojiReactions
+                    linkUrls: model.linkUrls
+                    communityId: model.communityId
+                    hasMention: model.hasMention
+                    stickerPackId: model.stickerPackId
+                    timeout: model.timeout
+                    pinnedMessage: true
+                    pinnedBy: model.pinnedBy
+                    forceHoverHandler: !messageToPin
+                    activityCenterMessage: false
+                    isEdited: model.isEdited
+                    showEdit: false
+                    messageContextMenu: msgContextMenu
                     Component.onCompleted: {
                         messageStore.fromAuthor = model.fromAuthor;
                         messageStore.chatId = model.chatId;

@@ -44,7 +44,7 @@ Item {
         isMessage: root.messageStore.isMessage
         identiconImageSource: root.messageStore.identicon
         onClickMessage: {
-            root.messageStore.clickMessage(isProfileClick, isSticker, isImage, image, emojiOnly, hideEmojiPicker, isReply);
+            root.parent.clickMessage(isProfileClick, isSticker, isImage, image, emojiOnly, hideEmojiPicker, isReply);
         }
     }
 
@@ -60,7 +60,7 @@ Item {
         localName: root.messageStore.localName
         displayUserName: root.messageStore.displayUserName
         onClickMessage: {
-            root.messageStore.clickMessage(true, false, false, null, false, false, false);
+            root.parent.clickMessage(true, false, false, null, false, false, false);
         }
     }
 
@@ -154,20 +154,20 @@ Item {
             container: root.container
             chatHorizontalPadding: chatBox.chatHorizontalPadding
             active: root.messageStore.responseTo !== "" && root.messageStore.replyMessageIndex > -1 && !root.messageStore.activityCenterMessage
-            isCurrentUser: root.messageStore.isCurrentUser
-            repliedMessageType: root.messageStore.repliedMessageType
-            repliedMessageImage: root.messageStore.repliedMessageImage
-            repliedMessageUserIdenticon: root.messageStore.repliedMessageUserIdenticon
-            repliedMessageIsEdited: root.messageStore.repliedMessageIsEdited
-            repliedMessageUserImage: root.messageStore.repliedMessageUserImage
-            repliedMessageAuthor: root.messageStore.repliedMessageAuthor
-            repliedMessageContent: root.messageStore.repliedMessageContent
-            responseTo: root.messageStore.responseTo
-            onScrollToBottom: {
-                root.messageStore.scrollToBottom(isit, container);
-            }
+//            isCurrentUser: root.messageStore.isCurrentUser
+//            repliedMessageType: root.messageStore.repliedMessageType
+//            repliedMessageImage: root.messageStore.repliedMessageImage
+//            repliedMessageUserIdenticon: root.messageStore.repliedMessageUserIdenticon
+//            repliedMessageIsEdited: root.messageStore.repliedMessageIsEdited
+//            repliedMessageUserImage: root.messageStore.repliedMessageUserImage
+//            repliedMessageAuthor: root.messageStore.repliedMessageAuthor
+//            repliedMessageContent: root.messageStore.repliedMessageContent
+//            responseTo: root.messageStore.responseTo
+//            onScrollToBottom: {
+//                root.messageStore.scrollToBottom(isit, container);
+//            }
             onClickMessage: {
-                root.messageStore.clickMessage(isProfileClick, isSticker, isImage, image, emojiOnly, hideEmojiPicker, isReply);
+                root.parent.clickMessage(isProfileClick, isSticker, isImage, image, emojiOnly, hideEmojiPicker, isReply);
             }
         }
 
@@ -191,7 +191,7 @@ Item {
 
             onLinkActivated: {
                 if (root.messageStore.activityCenterMessage) {
-                    root.messageStore.clickMessage(false, root.messageStore.isSticker, false)
+                    clickMessage(false, root.messageStore.isSticker, false)
                 }
             }
         }
@@ -255,7 +255,7 @@ Item {
             enabled: !chatText.linkHovered
             isActivityCenterMessage: root.messageStore.activityCenterMessage
             onClickMessage: {
-                root.messageStore.clickMessage(isProfileClick, root.messageStore.isSticker, root.messageStore.isImage)
+                root.parent.clickMessage(isProfileClick, root.messageStore.isSticker, root.messageStore.isImage)
             }
             onSetMessageActive: {
                 root.messageStore.setMessageActive(root.messageStore.messageId, active);
@@ -370,11 +370,11 @@ Item {
     Component {
         id: emojiReactionsComponent
         EmojiReactionsPanel {
-            isMessageActive: root.store.messageStore.isMessageActive
-            emojiReactionsModel: root.store.messageStore.emojiReactionsModel
-            onSetMessageActive: {
-                root.store.messageStore.setMessageActive(messageId, active);;
-            }
+//            isMessageActive: root.store.messageStore.isMessageActive
+//            emojiReactionsModel: root.store.messageStore.emojiReactionsModel
+//            onSetMessageActive: {
+//                root.store.messageStore.setMessageActive(messageId, active);;
+//            }
         }
     }
 }

@@ -273,7 +273,7 @@ Item {
                 isMessage: root.messageStore.isMessage
                 identiconImageSource: root.messageStore.identicon
                 onClickMessage: {
-                    root.messageStore.clickMessage(isProfileClick, isSticker, isImage, image, emojiOnly, hideEmojiPicker, isReply);
+                    root.parent.clickMessage(isProfileClick, isSticker, isImage, image, emojiOnly, hideEmojiPicker, isReply);
                 }
             }
 
@@ -290,7 +290,7 @@ Item {
                 localName: root.messageStore.localName
                 displayUserName: root.messageStore.displayUserName
                 onClickMessage: {
-                    root.messageStore.clickMessage(true, false, false, null, false, false, false);
+                    root.parent.clickMessage(true, false, false, null, false, false, false);
                 }
             }
 

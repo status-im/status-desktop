@@ -13,7 +13,6 @@ Rectangle {
     property var messageContextMenu
     property bool showMoreButton: true
     property bool activityCenterMessage
-    property string messageId
     property string fromAuthor
     property alias editBtnActive: editBtn.active
     signal hoverChanged(bool hovered)

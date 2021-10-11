@@ -100,6 +100,50 @@ Item {
             anchors.right: undefined
             rootStore: root.store
             messageStore: root.store.messageStore
+            //TODO Remove
+            fromAuthor: model.message.fromAuthor
+            chatId: model.message.chatId
+            userName: model.message.userName
+            alias: model.message.alias
+            localName: model.message.localName
+            message: model.message.message
+            plainText: model.message.plainText
+            identicon: model.message.identicon
+            isCurrentUser: model.message.isCurrentUser
+            timestamp: model.message.timestamp
+            sticker: model.message.sticker
+            contentType: model.message.contentType
+            outgoingStatus: model.message.outgoingStatus
+            responseTo: model.message.responseTo
+            imageClick: imagePopup.openPopup.bind(imagePopup)
+            messageId: model.message.messageId
+            linkUrls: model.message.linkUrls
+            communityId: model.message.communityId
+            hasMention: model.message.hasMention
+            stickerPackId: model.message.stickerPackId
+            pinnedBy: model.message.pinnedBy
+            pinnedMessage: model.message.isPinned
+            activityCenterMessage: true
+            read: model.read
+            clickMessage: function (isProfileClick) {
+                if (isProfileClick) {
+                    const pk = model.message.fromAuthor
+                    const userProfileImage = appMain.getProfileImage(pk)
+                    return openProfilePopup(chatsModel.userNameOrAlias(pk), pk, userProfileImage || utilsModel.generateIdenticon(pk))
+                }
+
+                activityCenter.close()
+
+                if (model.message.communityId) {
+                    chatsModel.communities.setActiveCommunity(model.message.communityId)
+                }
+
+                chatsModel.channelView.setActiveChannel(model.message.chatId)
+                positionAtMessage(model.message.messageId)
+            }
+
+            prevMessageIndex: previousNotificationIndex
+            prevMsgTimestamp: previousNotificationTimestamp
             Component.onCompleted: {
                 messageStore.activityCenterMessage = true;
                 messageStore.fromAuthor = model.message.fromAuthor;

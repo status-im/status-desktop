@@ -1,4 +1,4 @@
-import QtQuick 2.13
+﻿import QtQuick 2.13
 import QtGraphicalEffects 1.13
 import "../../../../shared"
 import "../../../../shared/status"
@@ -18,9 +18,9 @@ Item {
     property int contentType: 2
     property var container
     property bool isCurrentUser: root.messageStore.isCurrentUser
-    property bool isHovered: typeof root.messageStore.hoveredMessage !== "undefined" && root.messageStore.hoveredMessage === root.messageStore.messageId
-    property bool isMessageActive: root.messageStore.isMessageActive
-    property bool headerRepeatCondition: (root.messageStore.authorCurrentMsg !== root.messageStore.authorPrevMsg || root.messageStore.shouldRepeatHeader || dateGroupLbl.visible || chatReply.active)
+    property bool isHovered: root.messageStore.hoveredMessage === messageId
+    property bool isMessageActive: root.messageStore.activeMessage === messageId
+    property bool headerRepeatCondition: (authorCurrentMsg !== authorPrevMsg || shouldRepeatHeader || dateGroupLbl.visible || chatReply.active)
     property bool showMoreButton: switch (root.store.chatsModelInst.channelView.activeChannel.chatType) {
                                                case Constants.chatTypeOneToOne: return true
                                                case Constants.chatTypePrivateGroupChat: return root.store.chatsModelInst.channelView.activeChannel.isAdmin(root.store.profileModelInst.profile.pubKey) ? true : isCurrentUser
@@ -46,9 +46,9 @@ Item {
     }
 
     MouseArea {
-        enabled: !root.messageStore.placeholderMessage
+        enabled: !placeholderMessage
         anchors.fill: messageContainer
-        acceptedButtons: root.messageStore.activityCenterMessage ? Qt.LeftButton : Qt.RightButton
+        acceptedButtons: activityCenterMessage ? Qt.LeftButton : Qt.RightButton
         onClicked: {
             messageMouseArea.clicked(mouse)
         }
@@ -56,8 +56,10 @@ Item {
 
     ChatButtonsPanel {
         contentType: root.contentType
-        parentIsHovered: !root.messageStore.isEdit && root.isHovered
-        onHoverChanged: hovered && root.messageStore.setHovered(messageId, hovered)
+        parentIsHovered: !isEdit && root.isHovered
+        onHoverChanged: {
+            hovered && root.messageStore.setHovered(messageId, hovered)
+        }
         anchors.right: parent.right
         anchors.rightMargin: 20
         anchors.top: messageContainer.top
@@ -66,10 +68,9 @@ Item {
         messageContextMenu: root.messageContextMenu
         showMoreButton: root.showMoreButton
         fromAuthor: root.messageStore.fromAuthor
-        messageId: root.messageStore.messageId
         editBtnActive: root.messageStore.isText && !root.messageStore.isEdit && isCurrentUser && showEdit
         onClickMessage: {
-            root.messageStore.clickMessage(isProfileClick, isSticker, isImage, image, emojiOnly);
+            parent.parent.parent.clickMessage(isProfileClick, isSticker, isImage, image, emojiOnly);
         }
     }
 
@@ -79,17 +80,17 @@ Item {
             Connections {
                 enabled: root.isMessageActive
                 target: messageContextMenu
-                onClosed: root.messageStore.setMessageActive(root.messageStore.messageId, false)
+                onClosed: root.messageStore.setMessageActive(messageId, false)
             }
         }
     }
 
     DateGroup {
         id: dateGroupLbl
-        previousMessageIndex: root.messageStore.prevMessageIndex
-        previousMessageTimestamp: root.messageStore.prevMsgTimestamp
-        messageTimestamp: root.messageStore.timestamp
-        isActivityCenterMessage: root.messageStore.activityCenterMessage
+        previousMessageIndex: prevMessageIndex
+        previousMessageTimestamp: prevMsgTimestamp
+        messageTimestamp: timestamp
+        isActivityCenterMessage: activityCenterMessage
     }
 
     function startMessageFoundAnimation() {
@@ -131,7 +132,7 @@ Item {
 
         id: messageContainer
         anchors.top: dateGroupLbl.visible ? dateGroupLbl.bottom : parent.top
-        anchors.topMargin: dateGroupLbl.visible ? (root.messageStore.activityCenterMessage ? 4 : Style.current.padding) : 0
+        anchors.topMargin: dateGroupLbl.visible ? (activityCenterMessage ? 4 : Style.current.padding) : 0
         height: childrenRect.height
                 + (chatName.visible || emojiReactionLoader.active ? Style.current.halfPadding : 0)
                 + (chatName.visible && emojiReactionLoader.active ? Style.current.padding : 0)
@@ -139,32 +140,32 @@ Item {
                 + (emojiReactionLoader.active ? emojiReactionLoader.height: 0)
                 + (retry.visible && !chatTime.visible ? Style.current.smallPadding : 0)
                 + (pinnedRectangleLoader.active ? Style.current.smallPadding : 0)
-                + (root.messageStore.isEdit ? 25 : 0)
+                + (isEdit ? 25 : 0)
         width: parent.width
         color: {
-            if (root.messageStore.isEdit) {
+            if (isEdit) {
                 return Style.current.backgroundHoverLight
             }
 
-            if (root.messageStore.activityCenterMessage) {
+            if (activityCenterMessage) {
                 return read ? Style.current.transparent : Utils.setColorAlpha(Style.current.blue, 0.1)
             }
 
-            if (root.messageStore.placeholderMessage) {
+            if (placeholderMessage) {
                 return Style.current.transparent
             }
 
-            if (root.messageStore.pinnedMessage) {
+            if (pinnedMessage) {
                 return root.isHovered || isMessageActive ? Style.current.pinnedMessageBackgroundHovered : Style.current.pinnedMessageBackground
             }
 
-            return root.isHovered || isMessageActive ? (root.messageStore.hasMention ? Style.current.mentionMessageHoverColor : Style.current.backgroundHoverLight) :
-                                                       (root.messageStore.hasMention ? Style.current.mentionMessageColor : Style.current.transparent)
+            return root.isHovered || isMessageActive ? (hasMention ? Style.current.mentionMessageHoverColor : Style.current.backgroundHoverLight) :
+                                                       (hasMention ? Style.current.mentionMessageColor : Style.current.transparent)
         }
 
         Loader {
             id: pinnedRectangleLoader
-            active: !root.messageStore.isEdit && root.messageStore.pinnedMessage
+            active: !isEdit && pinnedMessage
             anchors.left: chatName.left
             anchors.top: parent.top
             anchors.topMargin: active ? Style.current.halfPadding : 0
@@ -195,7 +196,7 @@ Item {
 
                     StyledText {
                         //% "Pinned by %1"
-                        text: qsTrId("pinned-by--1").arg(root.store.chatsModelInst.alias(root.messageStore.pinnedBy))
+                        text: qsTrId("pinned-by--1").arg(root.store.chatsModelInst.alias(pinnedBy))
                         anchors.left: pinImage.right
                         anchors.verticalCenter: parent.verticalCenter
                         font.pixelSize: 13
@@ -214,28 +215,28 @@ Item {
             chatHorizontalPadding: root.chatHorizontalPadding
             anchors.right: parent.right
             anchors.rightMargin: Style.current.padding
-            active: root.messageStore.responseTo !== "" && root.messageStore.replyMessageIndex > -1 && !root.messageStore.activityCenterMessage
-            isCurrentUser: root.messageStore.isCurrentUser
-            repliedMessageType: root.messageStore.repliedMessageType
-            repliedMessageImage: root.messageStore.repliedMessageImage
-            repliedMessageUserIdenticon: root.messageStore.repliedMessageUserIdenticon
-            repliedMessageIsEdited: root.messageStore.repliedMessageIsEdited
-            repliedMessageUserImage: root.messageStore.repliedMessageUserImage
-            repliedMessageAuthor: root.messageStore.repliedMessageAuthor
-            repliedMessageContent: root.messageStore.repliedMessageContent
-            responseTo: root.messageStore.responseTo
-            onScrollToBottom: {
-                root.messageStore.scrollToBottom(isit, container);
-            }
-            onClickMessage: {
-                root.messageStore.clickMessage(isProfileClick, isSticker, isImage, image, emojiOnly, hideEmojiPicker, isReply);
-            }
+//            active: root.messageStore.responseTo !== "" && root.messageStore.replyMessageIndex > -1 && !root.messageStore.activityCenterMessage
+//            isCurrentUser: root.messageStore.isCurrentUser
+//            repliedMessageType: root.messageStore.repliedMessageType
+//            repliedMessageImage: root.messageStore.repliedMessageImage
+//            repliedMessageUserIdenticon: root.messageStore.repliedMessageUserIdenticon
+//            repliedMessageIsEdited: root.messageStore.repliedMessageIsEdited
+//            repliedMessageUserImage: root.messageStore.repliedMessageUserImage
+//            repliedMessageAuthor: root.messageStore.repliedMessageAuthor
+//            repliedMessageContent: root.messageStore.repliedMessageContent
+//            responseTo: root.messageStore.responseTo
+//            onScrollToBottom: {
+//                root.messageStore.scrollToBottom(isit, container);
+//            }
+//            onClickMessage: {
+//                parent.parent.parent.clickMessage(isProfileClick, isSticker, isImage, image, emojiOnly, hideEmojiPicker, isReply);
+//            }
         }
 
 
         UserImage {
             id: chatImage
-            active: root.messageStore.isMessage && headerRepeatCondition
+            active: isMessage && headerRepeatCondition
             anchors.left: parent.left
             anchors.leftMargin: Style.current.padding
             anchors.top: chatReply.active ? chatReply.bottom :
@@ -247,13 +248,13 @@ Item {
             isMessage: root.messageStore.isMessage
             identiconImageSource: root.messageStore.identicon
             onClickMessage: {
-                root.messageStore.clickMessage(isProfileClick, isSticker, isImage, image, emojiOnly, hideEmojiPicker, isReply);
+                parent.parent.parent.parent.clickMessage(isProfileClick, isSticker, isImage, image, emojiOnly, hideEmojiPicker, isReply);
             }
         }
 
         UsernameLabel {
             id: chatName
-            visible: !root.messageStore.isEdit && root.messageStore.isMessage && headerRepeatCondition
+            visible: !isEdit && isMessage && headerRepeatCondition
             anchors.leftMargin: root.chatHorizontalPadding
             anchors.top: chatImage.top
             anchors.left: chatImage.right
@@ -263,13 +264,13 @@ Item {
             userName: root.messageStore.userName
             displayUserName: root.messageStore.displayUserName
             onClickMessage: {
-                root.messageStore.clickMessage(true, false, false, null, false, false, false);
+                parent.parent.parent.parent.clickMessage(true, false, false, null, false, false, false);
             }
         }
 
         ChatTimeView {
             id: chatTime
-            visible: !root.messageStore.isEdit && headerRepeatCondition
+            visible: !isEdit && headerRepeatCondition
             anchors.verticalCenter: chatName.verticalCenter
             anchors.left: chatName.right
             anchors.leftMargin: 4
@@ -279,7 +280,7 @@ Item {
 
         Loader {
             id: editMessageLoader
-            active: root.messageStore.isEdit
+            active: isEdit
             anchors.top: chatReply.active ? chatReply.bottom : parent.top
             anchors.left: chatImage.right
             anchors.leftMargin: root.chatHorizontalPadding
@@ -296,27 +297,27 @@ Item {
                 let mentionsMap = new Map()
                 let index = 0
                 while (true) {
-                    index = root.messageStore.message.indexOf("<a href=", index)
+                    index = message.indexOf("<a href=", index)
                     if (index < 0) {
                         break
                     }
-                    let endIndex = root.messageStore.message.indexOf("</a>", index)
+                    let endIndex = message.indexOf("</a>", index)
                     if (endIndex < 0) {
                         index += 8 // "<a href="
                         continue
                     }
-                    let addrIndex = root.messageStore.message.indexOf("0x", index + 8)
+                    let addrIndex = rmessage.indexOf("0x", index + 8)
                     if (addrIndex < 0) {
                         index += 8 // "<a href="
                         continue
                     }
-                    let addrEndIndex = root.messageStore.message.indexOf('"', addrIndex)
+                    let addrEndIndex = message.indexOf('"', addrIndex)
                     if (addrEndIndex < 0) {
                         index += 8 // "<a href="
                         continue
                     }
-                    const address = '@' + root.messageStore.message.substring(addrIndex, addrEndIndex)
-                    const linkTag = root.messageStore.message.substring(index, endIndex + 5)
+                    const address = '@' + message.substring(addrIndex, addrEndIndex)
+                    const linkTag = message.substring(index, endIndex + 5)
                     const linkText = linkTag.replace(/(<([^>]+)>)/ig,"").trim()
                     const atSymbol = linkText.startsWith("@") ? '' : '@'
                     const mentionTag = Constants.mentionSpanTag + atSymbol + linkText + '</span> '
@@ -324,7 +325,7 @@ Item {
                     index += linkTag.length
                 }
 
-                sourceText = root.messageStore.plainText
+                sourceText = plainText
                 for (let [key, value] of mentionsMap) {
                     sourceText = sourceText.replace(new RegExp(key, 'g'), value)
                 }
@@ -369,7 +370,7 @@ Item {
                     //% "Cancel"
                     text: qsTrId("browsing-cancel")
                     onClicked: {
-                        root.messageStore.isEdit = false
+                        isEdit = false
                         editTextInput.textInput.text = Emoji.parse(message)
                         ensureMessageFullyVisibleTimer.start()
                     }
@@ -387,7 +388,7 @@ Item {
                         let msg = chatsModel.plainText(Emoji.deparse(editTextInput.textInput.text))
                         if (msg.length > 0){
                             msg = chatInput.interpretMessage(msg)
-                            root.messageStore.isEdit = false
+                            isEdit = false
                             chatsModel.messageView.editMessage(messageId, contentType == Constants.editType ? replaces : messageId, msg);
                         }
                     }
@@ -397,7 +398,7 @@ Item {
 
         Item {
             id: messageContent
-            height: childrenRect.height + (root.messageStore.isEmoji ? 2 : 0)
+            height: childrenRect.height + (isEmoji ? 2 : 0)
             anchors.top: chatName.visible ? chatName.bottom :
                                             chatReply.active ? chatReply.bottom :
                                                 pinnedRectangleLoader.active ? pinnedRectangleLoader.bottom : parent.top
@@ -405,7 +406,7 @@ Item {
             anchors.leftMargin: root.chatHorizontalPadding
             anchors.right: parent.right
             anchors.rightMargin: root.chatHorizontalPadding
-            visible: !root.messageStore.isEdit
+            visible: !isEdit
 
             ChatTextView {
                 id: chatText
@@ -417,11 +418,11 @@ Item {
                         return false
                     }
 
-                    return root.messageStore.isText || root.messageStore.isEmoji
+                    return isText || isEmoji
                 }
 
                 anchors.top: parent.top
-                anchors.topMargin: root.messageStore.isEmoji ? 2 : 0
+                anchors.topMargin: isEmoji ? 2 : 0
                 anchors.left: parent.left
                 anchors.right: parent.right
                 // using a padding instead of a margin let's us select text more easily
@@ -430,21 +431,21 @@ Item {
                 textField.rightPadding: Style.current.bigPadding
 
                 onLinkActivated: {
-                    if (root.messageStore.activityCenterMessage) {
-                        root.messageStore.clickMessage(false, isSticker, false)
+                    if (activityCenterMessage) {
+                        clickMessage(false, isSticker, false)
                     }
                 }
             }
 
             Loader {
                 id: chatImageContent
-                active: root.messageStore.isImage
+                active: isImage
                 anchors.top: parent.top
                 anchors.topMargin: active ? 6 : 0
                 z: 51
                 sourceComponent: Component {
                     StatusChatImage {
-                        imageSource: root.messageStore.profileImageSource
+                        imageSource: profileImageSource
                         imageWidth: 200
                         onClicked: {
                             if (mouse.button === Qt.LeftButton) {
@@ -497,11 +498,11 @@ Item {
             MessageMouseArea {
                 id: messageMouseArea
                 anchors.fill: stickerLoader.active ? stickerLoader : chatText
-                z: root.messageStore.activityCenterMessage ? chatText.z + 1 : chatText.z -1
+                z: activityCenterMessage ? chatText.z + 1 : chatText.z -1
                 messageContextMenu: root.messageContextMenu
-                isActivityCenterMessage: root.messageStore.activityCenterMessage
+                isActivityCenterMessage: activityCenterMessage
                 onClickMessage: {
-                    root.messageStore.clickMessage(isProfileClick, isSticker, isImage);
+                    parent.parent.parent.parent.parent.clickMessage(isProfileClick, isSticker, isImage);
                 }
                 onSetMessageActive: {
                     root.messageStore.setMessageActive(messageId, active);
@@ -525,7 +526,7 @@ Item {
 
             Loader {
                 id: audioPlayerLoader
-                active: root.messageStore.isAudio
+                active: isAudio
                 anchors.top: parent.top
                 anchors.topMargin: active ? Style.current.halfPadding : 0
 
@@ -586,7 +587,7 @@ Item {
     }
 
     Loader {
-        active: !root.messageStore.activityCenterMessage && (root.messageStore.hasMention || root.messageStore.pinnedMessage)
+        active: !activityCenterMessage && (hasMention || pinnedMessage)
         height: messageContainer.height
         anchors.left: messageContainer.left
         anchors.top: messageContainer.top
@@ -594,7 +595,7 @@ Item {
         sourceComponent: Component {
             Rectangle {
                 id: mentionBorder
-                color: root.messageStore.pinnedMessage ? Style.current.pinnedMessageBorder : Style.current.mentionColor
+                color: pinnedMessage ? Style.current.pinnedMessageBorder : Style.current.mentionColor
                 width: 2
                 height: parent.height
             }
@@ -602,14 +603,16 @@ Item {
     }
 
     HoverHandler {
-        enabled: !root.messageStore.activityCenterMessage &&
-                 (root.messageStore.forceHoverHandler || (typeof messageContextMenu !== "undefined" && typeof profilePopupOpened !== "undefined" && !messageContextMenu.opened && !profilePopupOpened && !popupOpened))
-        onHoveredChanged: root.messageStore.setHovered(messageId, hovered)
+        enabled: !activityCenterMessage &&
+                 (forceHoverHandler || (typeof messageContextMenu !== "undefined" && typeof profilePopupOpened !== "undefined" && !messageContextMenu.opened && !profilePopupOpened && !popupOpened))
+        onHoveredChanged: {
+            root.messageStore.setHovered(messageId, hovered);
+        }
     }
 
     Loader {
         id: emojiReactionLoader
-        active: root.messageStore.emojiReactionsModel.length
+        active: emojiReactionsModel.length
         anchors.bottom: messageContainer.bottom
         anchors.bottomMargin: Style.current.halfPadding
         anchors.left: messageContainer.left
@@ -618,9 +621,11 @@ Item {
         sourceComponent: Component {
             EmojiReactionsPanel {
                 id: emojiRect
-                emojiReactionsModel: root.messageStore.emojiReactionsModel
-                onHoverChanged: root.messageStore.setHovered(messageId, hovered)
-                isMessageActive: root.messageStore.isMessageActive
+//                emojiReactionsModel: root.messageStore.emojiReactionsModel
+                onHoverChanged: {
+                    root.messageStore.setHovered(messageId, hovered)
+                }
+//                isMessageActive: root.messageStore.isMessageActive
                 onAddEmojiClicked: {
                     root.addEmoji(false, false, false, null, true, false);
                     // Set parent, X & Y positions for the messageContextMenu
@@ -628,9 +633,9 @@ Item {
                     messageContextMenu.setXPosition = function() { return (messageContextMenu.parent.x + 4)}
                     messageContextMenu.setYPosition = function() { return (-messageContextMenu.height - 4)}
                 }
-                onSetMessageActive: {
-                    root.messageStore.setMessageActive(messageId, active);;
-                }
+//                onSetMessageActive: {
+//                    root.messageStore.setMessageActive(messageId, active);;
+//                }
             }
         }
     }

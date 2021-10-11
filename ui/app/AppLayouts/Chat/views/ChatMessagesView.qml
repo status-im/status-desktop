@@ -293,7 +293,56 @@ Item {
             id: msgDelegate
             rootStore: root.store
             messageStore: root.store.messageStore
+            /////////////TODO Remove
+            fromAuthor: model.fromAuthor
+            chatId: model.chatId
+            userName: model.userName
+            alias: model.alias
+            localName: model.localName
+            message: model.message
+            plainText: model.plainText
+            identicon: model.identicon
+            isCurrentUser: model.isCurrentUser
+            timestamp: model.timestamp
+            sticker: model.sticker
+            contentType: model.contentType
+            replaces: model.replaces
+            isEdited: model.isEdited
+            outgoingStatus: model.outgoingStatus
+            responseTo: model.responseTo
+            authorCurrentMsg: msgDelegate.ListView.section
+            // The previous message is actually the nextSection since we reversed the list order
+            authorPrevMsg: msgDelegate.ListView.nextSection
+            imageClick: imagePopup.openPopup.bind(imagePopup)
+            messageId: model.messageId
+            emojiReactions: model.emojiReactions
+            linkUrls: model.linkUrls
+            communityId: model.communityId
+            hasMention: model.hasMention
+            stickerPackId: model.stickerPackId
+            pinnedMessage: model.isPinned
+            pinnedBy: model.pinnedBy
+            gapFrom: model.gapFrom
+            gapTo: model.gapTo
             visible: !model.hide
+            messageContextMenu: root.messageContextMenuInst
+
+            prevMessageIndex: {
+                // This is used in order to have access to the previous message and determine the timestamp
+                // we can't rely on the index because the sequence of messages is not ordered on the nim side
+                if (msgDelegate.DelegateModel.itemsIndex < messageListDelegate.items.count - 1) {
+                    return messageListDelegate.items.get(msgDelegate.DelegateModel.itemsIndex + 1).model.index
+                }
+                return -1;
+            }
+            nextMessageIndex: {
+                if (msgDelegate.DelegateModel.itemsIndex < 1) {
+                    return -1
+                }
+                return messageListDelegate.items.get(msgDelegate.DelegateModel.itemsIndex - 1).model.index
+            }
+            scrollToBottom: chatLogView.scrollToBottom
+            timeout: model.timeout
             Component.onCompleted: {
                 if ((root.countOnStartUp > 0) && (root.countOnStartUp - 1) < index) {
                     //new message, increment z order

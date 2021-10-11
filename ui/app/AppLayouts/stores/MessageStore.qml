@@ -172,17 +172,17 @@ QtObject {
 
     function setHovered(messageId, hovered) {
         if (hovered) {
-            hoveredMessage = messageId
+            hoveredMessage = messageId;
         } else if (hoveredMessage === messageId) {
-            hoveredMessage = ""
+            hoveredMessage = "";
         }
     }
 
     function setMessageActive(messageId, active) {
         if (active) {
-            activeMessage = messageId
+            activeMessage = messageId;
         } else if (activeMessage === messageId) {
-            activeMessage = ""
+            activeMessage = "";
         }
     }
 }

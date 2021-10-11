@@ -12,12 +12,12 @@ Item {
     width: childrenRect.width
 
     property int imageMargin: 4
-    property bool isCurrentUser
-    property var emojiReactionsModel
-    property bool isMessageActive
+//    property bool isCurrentUser
+//    property var emojiReactionsModel
+//    property bool isMessageActive
     signal addEmojiClicked()
     signal hoverChanged(bool hovered)
-    signal setMessageActive(string messageId, bool active)
+//    signal setMessageActive(string messageId, bool active)
 
     function lastTwoItems(nodes) {
         //% " and "

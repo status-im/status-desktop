@@ -145,6 +145,40 @@ ScrollView {
             delegate: MessageView {
                 id: msgDelegate
                 messageStore: root.messageStore
+                /////////TODO Remove
+                fromAuthor: model.fromAuthor
+                chatId: model.chatId
+                userName: model.userName
+                alias: model.alias
+                localName: model.localName
+                message: model.message
+                plainText: model.plainText
+                identicon: model.identicon
+                isCurrentUser: model.isCurrentUser
+                timestamp: model.timestamp
+                sticker: model.sticker
+                contentType: model.contentType
+                outgoingStatus: model.outgoingStatus
+                responseTo: model.responseTo
+                authorCurrentMsg: msgDelegate.ListView.section
+                authorPrevMsg: msgDelegate.ListView.previousSection
+                imageClick: imagePopup.openPopup.bind(imagePopup)
+                messageId: model.messageId
+                emojiReactions: model.emojiReactions
+                isStatusUpdate: true
+                statusAgeEpoch: ageUpdateTimer.epoch
+                // This is used in order to have access to the previous message and determine the timestamp
+                // we can't rely on the index because the sequence of messages is not ordered on the nim side
+                prevMessageIndex: {
+                    // This is used in order to have access to the previous message and determine the timestamp
+                    // we can't rely on the index because the sequence of messages is not ordered on the nim side
+                    if(msgDelegate.DelegateModel.itemsIndex > 0){
+                        return messageListDelegate.items.get(msgDelegate.DelegateModel.itemsIndex - 1).model.index
+                    }
+                    return -1;
+                }
+                timeout: model.timeout
+                messageContextMenu: msgCntxtMenu
                 Component.onCompleted: {
                     messageStore.fromAuthor = model.fromAuthor;
                     messageStore.chatId = model.chatId;

@@ -174,8 +174,8 @@ MouseArea {
         Component {
             id: emojiReactionsComponent
             EmojiReactionsPanel {
-                isMessageActive: root.isMessageActive
-                emojiReactionsModel: root.emojiReactionsModel
+//                isMessageActive: root.isMessageActive
+//                emojiReactionsModel: root.emojiReactionsModel
                 onAddEmojiClicked: {
                     root.addEmoji(false, false, false, null, true, false);
                     // Set parent, X & Y positions for the messageContextMenu
@@ -183,9 +183,9 @@ MouseArea {
                     messageContextMenu.setXPosition = function() { return (messageContextMenu.parent.x + 4)}
                     messageContextMenu.setYPosition = function() { return (-messageContextMenu.height - 4)}
                 }
-                onSetMessageActive: {
-                    root.setMessageActive(messageId, active);;
-                }
+//                onSetMessageActive: {
+//                    root.setMessageActive(messageId, active);;
+//                }
             }
         }
 

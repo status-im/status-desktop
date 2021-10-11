@@ -9,12 +9,180 @@ import "../controls"
 import "../controls/messages"
 import utils 1.0
 
+//TODO RE-WRITE THIS COMPONENT
 Item {
     id: root
     width: parent.width
     anchors.right: !messageStore.isCurrentUser ? undefined : parent.right
     height: visible ? childrenRect.height : 0
     z: (typeof chatLogView === "undefined") ? 1 : (chatLogView.count - index)
+
+    ////////////////////////////////////////////////
+    //TODO REMOVE
+    property string fromAuthor: "0x0011223344556677889910"
+    property string userName: "Jotaro Kujo"
+    property string alias: ""
+    property string localName: ""
+    property string message: "That's right. We're friends...  Of justice, that is."
+    property string plainText: "That's right. We're friends...  Of justice, that is."
+    property string identicon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAZAAAAGQAQMAAAC6caSPAAAABlBMVEXMzMz////TjRV2AAAAAWJLR0QB/wIt3gAAACpJREFUGBntwYEAAAAAw6D7Uw/gCtUAAAAAAAAAAAAAAAAAAAAAAAAAgBNPsAABAjKCqQAAAABJRU5ErkJggg=="
+    property bool isCurrentUser: false
+    property string timestamp: "1234567"
+    property string sticker: "Qme8vJtyrEHxABcSVGPF95PtozDgUyfr1xGjePmFdZgk9v"
+    property int contentType: 1 // constants don't work in default props
+    property string chatId: "chatId"
+    property string outgoingStatus: ""
+    property string responseTo: ""
+    property string messageId: ""
+    property string emojiReactions: ""
+    property int prevMessageIndex: -1
+    property int nextMessageIndex: -1
+    property bool timeout: false
+    property bool hasMention: false
+    property string linkUrls: ""
+    property bool placeholderMessage: false
+    property bool activityCenterMessage: false
+    property bool pinnedMessage: false
+    property bool read: true
+    property string pinnedBy
+    property bool forceHoverHandler: false // Used to force the HoverHandler to be active (useful for messages in popups)
+    property string communityId: ""
+    property int stickerPackId: -1
+    property int gapFrom: 0
+    property int gapTo: 0
+    property bool isEdit: false
+    property string replaces: ""
+    property bool isEdited: false
+    property bool showEdit: true
+    property var messageContextMenu
+    property string displayUserName: {
+        if (isCurrentUser) {
+            //% "You"
+            return qsTrId("You")
+        }
+
+        if (localName !== "") {
+            return localName
+        }
+
+        if (userName !== "") {
+            return Utils.removeStatusEns(userName)
+        }
+        return Utils.removeStatusEns(alias)
+    }
+
+    property string authorCurrentMsg: "authorCurrentMsg"
+    property string authorPrevMsg: "authorPrevMsg"
+
+    property string prevMsgTimestamp: chatsModel.messageView.messageList.getMessageData(prevMessageIndex, "timestamp")
+    property string nextMsgTimestamp: chatsModel.messageView.messageList.getMessageData(nextMessageIndex, "timestamp")
+
+    property bool shouldRepeatHeader: ((parseInt(timestamp, 10) - parseInt(prevMsgTimestamp, 10)) / 60 / 1000) > Constants.repeatHeaderInterval
+
+    property bool isEmoji: contentType === Constants.emojiType
+    property bool isImage: contentType === Constants.imageType
+    property bool isAudio: contentType === Constants.audioType
+    property bool isStatusMessage: contentType === Constants.systemMessagePrivateGroupType
+    property bool isSticker: contentType === Constants.stickerType
+    property bool isText: contentType === Constants.messageType || contentType === Constants.editType
+    property bool isMessage: isEmoji || isImage || isSticker || isText || isAudio
+                             || contentType === Constants.communityInviteType || contentType === Constants.transactionType
+
+    property bool isExpired: (outgoingStatus === "sending" && (Math.floor(timestamp) + 180000) < Date.now())
+    property bool isStatusUpdate: false
+    property int statusAgeEpoch: 0
+
+    property int replyMessageIndex: chatsModel.messageView.messageList.getMessageIndex(responseTo);
+    property string repliedMessageAuthor: replyMessageIndex > -1 ? chatsModel.messageView.messageList.getMessageData(replyMessageIndex, "userName") : "";
+    property string repliedMessageAuthorPubkey: replyMessageIndex > -1 ? chatsModel.messageView.messageList.getMessageData(replyMessageIndex, "publicKey") : "";
+    property bool repliedMessageAuthorIsCurrentUser: replyMessageIndex > -1 ? repliedMessageAuthorPubkey === profileModel.profile.pubKey : "";
+    property bool repliedMessageIsEdited: replyMessageIndex > -1 ? chatsModel.messageView.messageList.getMessageData(replyMessageIndex, "isEdited") === "true" : false;
+    property string repliedMessageContent: replyMessageIndex > -1 ? chatsModel.messageView.messageList.getMessageData(replyMessageIndex, "message") : "";
+    property int repliedMessageType: replyMessageIndex > -1 ? parseInt(chatsModel.messageView.messageList.getMessageData(replyMessageIndex, "contentType")) : 0;
+    property string repliedMessageImage: replyMessageIndex > -1 ? chatsModel.messageView.messageList.getMessageData(replyMessageIndex, "image") : "";
+    property string repliedMessageUserIdenticon: replyMessageIndex > -1 ? chatsModel.messageView.messageList.getMessageData(replyMessageIndex, "identicon") : "";
+    property string repliedMessageUserImage: replyMessageIndex > -1 ? appMain.getProfileImage(repliedMessageAuthorPubkey, repliedMessageAuthorIsCurrentUser , false) || "" : "";
+
+    property var imageClick: function () {}
+    property var scrollToBottom: function () {}
+    property string userPubKey: {
+        if (contentType === Constants.chatIdentifier) {
+            return chatId
+        }
+        return fromAuthor
+    }
+    property bool useLargeImage: contentType === Constants.chatIdentifier
+
+    property string profileImageSource: !placeholderMessage && appMain.getProfileImage(userPubKey, isCurrentUser, useLargeImage) || ""
+
+    property var emojiReactionsModel: {
+        if (!emojiReactions) {
+            return []
+        }
+
+        try {
+            // group by id
+            var allReactions = Object.values(JSON.parse(emojiReactions))
+            var byEmoji = {}
+            allReactions.forEach(function (reaction) {
+                if (!byEmoji[reaction.emojiId]) {
+                    byEmoji[reaction.emojiId] = {
+                        emojiId: reaction.emojiId,
+                        fromAccounts: [],
+                        count: 0,
+                        currentUserReacted: false
+                    }
+                }
+                byEmoji[reaction.emojiId].count++;
+                byEmoji[reaction.emojiId].fromAccounts.push(chatsModel.userNameOrAlias(reaction.from));
+                if (!byEmoji[reaction.emojiId].currentUserReacted && reaction.from === profileModel.profile.pubKey) {
+                    byEmoji[reaction.emojiId].currentUserReacted = true
+                }
+
+            })
+            return Object.values(byEmoji)
+        } catch (e) {
+            console.error('Error parsing emoji reactions', e)
+            return []
+        }
+    }
+    property var clickMessage: function(isProfileClick, isSticker = false, isImage = false, image = null, emojiOnly = false, hideEmojiPicker = false, isReply = false, isRightClickOnImage = false, imageSource = "") {
+        if (placeholderMessage || activityCenterMessage) {
+            return
+        }
+
+        if (!isProfileClick) {
+            SelectedMessage.set(messageId, fromAuthor);
+        }
+
+        messageContextMenu.messageId = root.messageId
+        messageContextMenu.contentType = root.contentType
+        messageContextMenu.linkUrls = root.linkUrls;
+        messageContextMenu.isProfile = !!isProfileClick;
+        messageContextMenu.isCurrentUser = root.isCurrentUser
+        messageContextMenu.isText = root.isText
+        messageContextMenu.isSticker = isSticker;
+        messageContextMenu.emojiOnly = emojiOnly;
+        messageContextMenu.hideEmojiPicker = hideEmojiPicker;
+        messageContextMenu.pinnedMessage = pinnedMessage;
+        messageContextMenu.isCurrentUser = isCurrentUser;
+        messageContextMenu.isRightClickOnImage = isRightClickOnImage
+        messageContextMenu.imageSource = imageSource
+        messageContextMenu.onClickEdit = function() {root.isEdit = true}
+
+        if (isReply) {
+            let nickname = appMain.getUserNickname(repliedMessageAuthor)
+            messageContextMenu.show(repliedMessageAuthor, repliedMessageAuthorPubkey, repliedMessageUserImage || repliedMessageUserIdenticon, plainText, nickname, emojiReactionsModel);
+        } else {
+            let nickname = appMain.getUserNickname(fromAuthor)
+            messageContextMenu.show(userName, fromAuthor, root.profileImageSource || identicon, plainText, nickname, emojiReactionsModel);
+        }
+
+         messageContextMenu.x = messageContextMenu.setXPosition()
+         messageContextMenu.y = messageContextMenu.setYPosition()
+    }
+    /////////////////////////////////////////////
+
 
     property var rootStore
     property var messageStore
@@ -164,19 +332,19 @@ Item {
             profileImageSource: messageStore.profileImageSource
             userIdenticon: messageStore.identicon
             onAddEmoji: {
-                root.messageStore.clickMessage(isProfileClick, isSticker, isImage , image, emojiOnly, hideEmojiPicker);
+                root.parent.clickMessage(isProfileClick, isSticker, isImage , image, emojiOnly, hideEmojiPicker);
             }
             onChatImageClicked: {
                 messageStore.imageClick(image);
             }
             onUserNameChanged: {
-                root.messageStore.clickMessage(isProfileClick);
+                root.parent.clickMessage(isProfileClick);
             }
             onEmojiBtnClicked: {
-                root.messageStore.clickMessage(isProfileClick, isSticker, isImage, image, emojiOnly);
+                root.parent.clickMessage(isProfileClick, isSticker, isImage, image, emojiOnly);
             }
             onClickMessage: {
-                root.messageStore.clickMessage(isProfileClick, isSticker, isImage, image, emojiOnly, hideEmojiPicker, isReply);
+                root.parent.lickMessage(isProfileClick, isSticker, isImage, image, emojiOnly, hideEmojiPicker, isReply);
             }
             onSetMessageActive: {
                 root.messageStore.setMessageActive(messageId, active);;

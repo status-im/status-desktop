@@ -10,7 +10,7 @@ Item {
     property var store
     property var messageStore
     property bool longChatText: true
-    property bool veryLongChatText: chatsModel.plainText(root.messageStore.message).length >
+    property bool veryLongChatText: chatsModel.plainText(message).length >
                                     (appSettings.useCompactMode ? Constants.limitLongChatTextCompactMode : Constants.limitLongChatText)
     property bool readMore: false
     property alias textField: chatText
@@ -112,11 +112,11 @@ Item {
 
         text: {
             if(contentType === Constants.stickerType) return "";
-            let msg = Utils.linkifyAndXSS(root.messageStore.message);
-            if(root.messageStore.isEmoji) {
+            let msg = Utils.linkifyAndXSS(message);
+            if(isEmoji) {
                 return Emoji.parse(msg, Emoji.size.middle);
             } else {
-                if(root.messageStore.isEdited){
+                if(isEdited){
                     let index = msg.endsWith("code>") ? msg.length : msg.length - 4
                     return Utils.getMessageWithStyle(Emoji.parse(msg.slice(0, index) + Constants.editLabel + msg.slice(index)), appSettings.useCompactMode, isCurrentUser, hoveredLink)
                 }

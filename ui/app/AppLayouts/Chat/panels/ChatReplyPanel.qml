@@ -11,24 +11,24 @@ Loader {
     id: root
 
     property int nameMargin: 6
-    property bool isCurrentUser: false
+//    property bool isCurrentUser: false
     property int textFieldWidth: item ? item.textField.width : 0
     property int textFieldImplicitWidth: 0
     property int authorWidth: item ? item.authorMetrics.width : 0
-    property int repliedMessageType
-    property string repliedMessageImage
-    property string repliedMessageUserIdenticon
-    property bool repliedMessageIsEdited
-    property string repliedMessageUserImage
-    property string repliedMessageAuthor
-    property string repliedMessageContent
+//    property int repliedMessageType
+//    property string repliedMessageImage
+//    property string repliedMessageUserIdenticon
+//    property bool repliedMessageIsEdited
+//    property string repliedMessageUserImage
+//    property string repliedMessageAuthor
+//    property string repliedMessageContent
     property bool longReply: false
     property color elementsColor: isCurrentUser ? Style.current.chatReplyCurrentUser : Style.current.secondaryText
     property var container
     property int chatHorizontalPadding
-    property string responseTo: ""
+//    property string responseTo: ""
 
-    signal scrollToBottom(bool isit, var container)
+//    signal scrollToBottom(bool isit, var container)
     signal clickMessage(bool isProfileClick, bool isSticker, bool isImage, var image, bool emojiOnly, bool hideEmojiPicker, bool isReply)
 
     sourceComponent: Component {
@@ -156,7 +156,7 @@ Loader {
                         stickerData: chatsModel.messageView.messageList.getMessageData(replyMessageIndex, "sticker")
                         contentType: repliedMessageType
                         onLoaded: {
-                            root.scrollToBottom(true, root.container)
+                            scrollToBottom(true, root.container)
                         }
                     }
                 }
