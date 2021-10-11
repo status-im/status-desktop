@@ -183,7 +183,7 @@ StatusWindow {
         }
     }
 
-	Connections {
+    Connections {
         target: singleInstance
 
         onSecondInstanceDetected: {
@@ -280,19 +280,18 @@ StatusWindow {
     }
 
     function checkForStoringPassToKeychain(username, password, clearStoredValue) {
-        if(Qt.platform.os == "osx")
+        if (Qt.platform.os == "osx")
         {
-            if(clearStoredValue)
+            if (clearStoredValue)
             {
                 accountSettings.storeToKeychain = ""
             }
 
-            if(accountSettings.storeToKeychain === "" ||
-               accountSettings.storeToKeychain === Constants.storeToKeychainValueNotNow)
+            if (accountSettings.storeToKeychain === "" ||
+                    accountSettings.storeToKeychain === Constants.storeToKeychainValueNotNow)
             {
                 storeToKeychainConfirmationPopup.password = password
                 storeToKeychainConfirmationPopup.username = username
-                storeToKeychainConfirmationPopup.open()
             }
         }
     }
@@ -430,7 +429,13 @@ StatusWindow {
 
         DSM.State {
             id: appState
-            onEntered: loader.sourceComponent = app
+            onEntered: {
+                if (storeToKeychainConfirmationPopup.password !== "") {
+                    storeToKeychainConfirmationPopup.open()
+                }
+
+                loader.sourceComponent = app
+            }
 
             DSM.SignalTransition {
                 targetState: stateLogin
@@ -603,7 +608,7 @@ StatusWindow {
     }
 
     MacTrafficLights {
-//        parent: Overlay.overlay
+        //        parent: Overlay.overlay
         anchors.left: parent.left
         anchors.top: parent.top
         anchors.margins: 13

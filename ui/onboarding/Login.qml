@@ -29,7 +29,10 @@ Item {
         setCurrentFlow(true);
         loading = true
         loginModel.login(password)
-        applicationWindow.checkForStoringPassToKeychain(loginModel.currentAccount.username, password, false)
+
+        applicationWindow.checkForStoringPassToKeychain(loginModel.currentAccount.username,
+                                                        password,
+                                                        false)
         txtPassword.textField.clear()
     }
 
@@ -176,11 +179,11 @@ Item {
             anchors.top: changeAccountBtn.bottom
             anchors.topMargin: Style.current.padding * 2
             enabled: !loading
-            placeholderText: loading ? 
-                //% "Connecting..."
-                qsTrId("connecting") :
-                //% "Enter password"
-                qsTrId("enter-password")
+            placeholderText: loading ?
+                                 //% "Connecting..."
+                                 qsTrId("connecting") :
+                                 //% "Enter password"
+                                 qsTrId("enter-password")
             textField.echoMode: TextInput.Password
             textField.focus: true
             Keys.onReturnPressed: {
