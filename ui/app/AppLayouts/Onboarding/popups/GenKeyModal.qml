@@ -17,6 +17,7 @@ ModalPopup {
     id: popup
     //% "Choose a chat name"
     title: qsTrId("intro-wizard-title2")
+    height: 504
 
     AccountListPanel {
         id: accountList
