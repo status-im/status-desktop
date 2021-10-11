@@ -1,29 +1,31 @@
 import QtQuick 2.13
-import QtGraphicalEffects 1.13
 
 import utils 1.0
-import "../../../../shared"
-import "../../../../shared/status"
+
+import "../controls/activityCenter" as ActivityCenter
 
 Rectangle {
-    property string chatId: ""
-    property string name: "channelName"
-    property string identicon
-    property string responseTo
-    property string communityId
-    property int notificationType
-    property int chatType: chatsModel.channelView.chats.getChannelType(chatId)
-    property int realChatType: {
-        if (chatType === Constants.chatTypeCommunity) {
-            // TODO add a check for private community chats once it is created
-            return Constants.chatTypePublic
-        }
-        return chatType
-    }
-
-    property string profileImage: realChatType === Constants.chatTypeOneToOne ? appMain.getProfileImage(chatId) || ""  : ""
-
     id: wrapper
+
+    property string name: "channelName"
+    property string identicon: ""
+    property string chatId: ""
+    property int realChatType: -1
+    property string communityId
+    property string channelName: ""
+    property string communityName: ""
+    property string communityColor: ""
+    property string communityThumbnailImage: ""
+    property int replyMessageIndex: -1
+    property string repliedMessageContent: ""
+    property int notificationType
+    property string profileImage: ""
+
+    property color textColor: Style.current.textColor
+
+    signal communityNameClicked()
+    signal channelNameClicked()
+
     height: visible ? 24 : 0
     width: childrenRect.width + 12
     color: Style.current.transparent
@@ -37,63 +39,48 @@ Rectangle {
         anchors.left: parent.left
         anchors.leftMargin: 4
         sourceComponent: {
-            switch (model.notificationType) {
-            case Constants.activityCenterNotificationTypeMention: return communityOrChannelContentComponent
+            switch (wrapper.notificationType) {
+            case Constants.activityCenterNotificationTypeMention: return wrapper.communityId ? communityBadgeComponent : channelBadgeComponent
             case Constants.activityCenterNotificationTypeReply: return replyComponent
-            default: return communityOrChannelContentComponent
+            default: return wrapper.communityId ? communityBadgeComponent : channelBadgeComponent
             }
         }
     }
 
-    Component {
+    ActivityCenter.ReplyComponent {
         id: replyComponent
-
-        Item {
-            property int replyMessageIndex: chatsModel.messageView.getMessageIndex(chatId, responseTo)
-            property string repliedMessageContent: replyMessageIndex > -1 ? chatsModel.messageView.getMessageData(chatId, replyMessageIndex, "message") : "";
-
-
-            onReplyMessageIndexChanged: {
-                wrapper.visible = replyMessageIndex > -1
-            }
-
-            width: childrenRect.width
-            height: parent.height
-            SVGImage {
-                id: replyIcon
-                width: 16
-                height: 16
-                source: Style.svg("reply-small-arrow")
-                anchors.left: parent.left
-                anchors.verticalCenter:parent.verticalCenter
-            }
-
-            StyledTextEdit {
-                text: Utils.getReplyMessageStyle(Emoji.parse(Utils.linkifyAndXSS(repliedMessageContent), Emoji.size.small), false, appSettings.useCompactMode)
-                textFormat: Text.RichText
-                height: 18
-                width: implicitWidth > 300 ? 300 : implicitWidth
-                clip: true
-                anchors.left: replyIcon.right
-                anchors.leftMargin: 4
-                color: Style.current.secondaryText
-                font.weight: Font.Medium
-                font.pixelSize: 13
-                anchors.verticalCenter: parent.verticalCenter
-                selectByMouse: true
-                readOnly: true
-            }
-        }
+        width: childrenRect.width
+        height: parent.height
+        replyMessageIndex: wrapper.replyMessageIndex
+        repliedMessageContent: wrapper.repliedMessageContent
     }
 
-    Component {
-        id: communityOrChannelContentComponent
+    ActivityCenter.CommunityBadge {
+        id: communityBadgeComponent
+        width: childrenRect.width
+        height: parent.height
 
-        BadgeContentPanel {
-            chatId: wrapper.chatId
-            name: wrapper.name
-            identicon: wrapper.identicon
-            communityId: wrapper.communityId
-        }
+        textColor: wrapper.textColor
+        image: wrapper.communityThumbnailImage
+        iconColor: wrapper.communityColor
+        communityName: wrapper.communityName
+        channelName: wrapper.channelName
+        name: wrapper.name
+
+        onCommunityNameClicked: communityNameClicked()
+        onChannelNameClicked: channelNameClicked()
+    }
+
+    ActivityCenter.ChannelBadge {
+        id: channelBadgeComponent
+        width: childrenRect.width
+        height: parent.height
+
+        realChatType: wrapper.realChatType
+        textColor: wrapper.textColor
+        name: wrapper.name
+        chatId: wrapper.chatId
+        profileImage: wrapper.profileImage
+        identicon: wrapper.identicon
     }
 }

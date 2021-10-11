@@ -205,17 +205,29 @@ Item {
             }
         }
 
+
+        Connections {
+            target: chatsModel.messageView
+            onMessageEdited: {
+                if(chatReply.item)
+                    chatReply.item.messageEdited(editedMessageId, editedMessageContent)
+            }
+        }
+
         ChatReplyPanel {
             id: chatReply
             anchors.top: pinnedRectangleLoader.active ? pinnedRectangleLoader.bottom : parent.top
             anchors.topMargin: active ? 4 : 0
             anchors.left: chatImage.left
+            anchors.right: parent.right
+            anchors.rightMargin: Style.current.padding
+
             longReply: active && textFieldImplicitWidth > width
             container: root.container
             chatHorizontalPadding: root.chatHorizontalPadding
-            anchors.right: parent.right
-            anchors.rightMargin: Style.current.padding
-//            active: root.messageStore.responseTo !== "" && root.messageStore.replyMessageIndex > -1 && !root.messageStore.activityCenterMessage
+            stickerData: chatsModel.messageView.messageList.getMessageData(replyMessageIndex, "sticker")
+            active: responseTo !== "" && replyMessageIndex > -1 && !activityCenterMessage
+//            To-Do move to store later?
 //            isCurrentUser: root.messageStore.isCurrentUser
 //            repliedMessageType: root.messageStore.repliedMessageType
 //            repliedMessageImage: root.messageStore.repliedMessageImage
@@ -228,9 +240,9 @@ Item {
 //            onScrollToBottom: {
 //                root.messageStore.scrollToBottom(isit, container);
 //            }
-//            onClickMessage: {
-//                parent.parent.parent.clickMessage(isProfileClick, isSticker, isImage, image, emojiOnly, hideEmojiPicker, isReply);
-//            }
+            onClickMessage: {
+                parent.parent.parent.clickMessage(isProfileClick, isSticker, isImage, image, emojiOnly, hideEmojiPicker, isReply);
+            }
         }
 
 
@@ -633,9 +645,11 @@ Item {
                     messageContextMenu.setXPosition = function() { return (messageContextMenu.parent.x + 4)}
                     messageContextMenu.setYPosition = function() { return (-messageContextMenu.height - 4)}
                 }
-//                onSetMessageActive: {
-//                    root.messageStore.setMessageActive(messageId, active);;
-//                }
+                onToggleReaction: chatsModel.toggleReaction(messageId, emojiID)
+
+                onSetMessageActive: {
+                    root.messageStore.setMessageActive(messageId, active);;
+                }
             }
         }
     }

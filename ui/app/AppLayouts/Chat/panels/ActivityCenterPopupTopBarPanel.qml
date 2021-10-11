@@ -15,10 +15,12 @@ Item {
     property bool mentionsBtnHighlighted: false
     property alias repliesBtnEnabled: repliesbtn.enabled
     property alias mentionsBtnEnabled: mentionsBtn.enabled
+    property alias errorText: errorText.text
     signal allBtnClicked()
     signal repliesBtnClicked()
     signal mentionsBtnClicked()
     signal preferencesClicked()
+    signal markAllReadClicked()
 
     Row {
         id: filterButtons
@@ -92,9 +94,7 @@ Item {
            icon.height: 24
            width: 32
            height: 32
-           onClicked: {
-               errorText.text = chatsModel.activityNotificationList.markAllActivityCenterNotificationsRead()
-           }
+           onClicked: markAllReadClicked()
 
            StatusToolTip {
              visible: markAllReadBtn.hovered

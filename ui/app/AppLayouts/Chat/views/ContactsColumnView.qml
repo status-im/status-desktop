@@ -268,6 +268,7 @@ Item {
             width: parent.width
             anchors.top: channelList.bottom
             anchors.topMargin: Style.current.padding
+            onSuggestedMessageClicked: chatsModel.channelView.joinPublicChat(channel)
         }
     }
 

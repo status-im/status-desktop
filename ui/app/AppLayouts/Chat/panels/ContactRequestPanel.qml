@@ -13,6 +13,8 @@ Rectangle {
     property string localNickname
     property var profileClick: function() {}
     signal blockContactActionTriggered(name: string, address: string)
+    signal acceptClicked()
+    signal declineClicked()
     property bool isHovered: false
     id: container
 
@@ -53,12 +55,9 @@ Rectangle {
         anchors.right: parent.right
         anchors.rightMargin: Style.current.padding
         anchors.verticalCenter: parent.verticalCenter
-        onAcceptClicked: {
-            chatsModel.channelView.joinPrivateChat(container.address, "")
-            profileModel.contacts.addContact(container.address)
-        }
-        onDeclineClicked: profileModel.contacts.rejectContactRequest(container.address)
-        onProfileClicked: profileClick(true, name, address, identicon, "", localNickname)
+        onAcceptClicked: container.acceptClicked()
+        onDeclineClicked: container.declineClicked()
+        onProfileClicked: container.profileClick(true, name, address, identicon, "", localNickname)
         onBlockClicked: container.blockContactActionTriggered(name, address)
     }
 }

@@ -415,10 +415,14 @@ Item {
                 Layout.alignment: Qt.AlignHCenter | Qt.AlignBottom
                 Layout.fillWidth: true
                 Layout.bottomMargin: Style.current.bigPadding
+                visible: chatsModel.channelView.activeChannel.chatType === Constants.chatTypeOneToOne && (!isContact /*|| !contactRequestReceived*/)
+                onAddContactClicked: profileModel.contacts.addContact(activeChatId)
             }
         }
 
-        EmptyChatPanel { }
+        EmptyChatPanel {
+            onShareChatKeyClicked: openProfilePopup(profileModel.profile.username, profileModel.profile.pubKey, profileModel.profile.thumbnailImage);
+        }
 
         Loader {
             id: txModalLoader

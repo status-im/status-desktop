@@ -5,9 +5,10 @@ import "../../../../shared"
 import "../../../../shared/status"
 
 Item {
-    visible: chatsModel.channelView.activeChannel.chatType === Constants.chatTypeOneToOne && (!isContact /*|| !contactRequestReceived*/)
     width: parent.width
     height: childrenRect.height
+
+    signal addContactClicked()
 
     Image {
         id: waveImg
@@ -53,6 +54,6 @@ Item {
         anchors.top: contactText2.bottom
         anchors.topMargin: Style.current.smallPadding
         anchors.horizontalCenter: parent.horizontalCenter
-        onClicked: profileModel.contacts.addContact(activeChatId)
+        onClicked: addContactClicked()
     }
 }

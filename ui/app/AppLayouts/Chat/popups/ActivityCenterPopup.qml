@@ -58,7 +58,7 @@ Popup {
     }
     padding: 0
 
-    ActivityCenterTopBarPanel {
+    ActivityCenterPopupTopBarPanel {
         id: activityCenterTopBar
         repliesBtnEnabled: hasReplies
         mentionsBtnEnabled: hasMentions
@@ -78,6 +78,9 @@ Popup {
             activityCenter.close()
             appMain.changeAppSection(Constants.profile)
             profileLayoutContainer.changeProfileSection(ProfileConstants.NOTIFICATIONS)
+        }
+        onMarkAllReadClicked: {
+            errorText = chatsModel.activityNotificationList.markAllActivityCenterNotificationsRead()
         }
     }
 

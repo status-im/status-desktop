@@ -10,6 +10,9 @@ Item {
     Layout.fillHeight: true
     Layout.fillWidth: true
 
+
+    signal shareChatKeyClicked()
+
     Image {
         id: walkieTalkieImage
         anchors.horizontalCenter: parent.horizontalCenter
@@ -41,9 +44,7 @@ Item {
                 onExited: {
                     parent.font.underline = false
                 }
-                onClicked: {
-                    openProfilePopup(profileModel.profile.username, profileModel.profile.pubKey, profileModel.profile.thumbnailImage);
-                }
+                onClicked: shareChatKeyClicked()
             }
         }
 
@@ -98,8 +99,3 @@ Item {
         id: inviteFriendsPopup
     }
 }
-/*##^##
-Designer {
-    D{i:0;autoSize:true;formeditorColor:"#ffffff";formeditorZoom:2;height:480;width:640}
-}
-##^##*/

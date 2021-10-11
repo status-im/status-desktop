@@ -153,7 +153,9 @@ Item {
             anchors.rightMargin: chatBox.chatHorizontalPadding
             container: root.container
             chatHorizontalPadding: chatBox.chatHorizontalPadding
-            active: root.messageStore.responseTo !== "" && root.messageStore.replyMessageIndex > -1 && !root.messageStore.activityCenterMessage
+            stickerData: chatsModel.messageView.messageList.getMessageData(replyMessageIndex, "sticker")
+            active: responseTo !== "" && replyMessageIndex > -1 && !activityCenterMessage
+//            To-Do move to store later?
 //            isCurrentUser: root.messageStore.isCurrentUser
 //            repliedMessageType: root.messageStore.repliedMessageType
 //            repliedMessageImage: root.messageStore.repliedMessageImage
@@ -168,6 +170,15 @@ Item {
 //            }
             onClickMessage: {
                 root.parent.clickMessage(isProfileClick, isSticker, isImage, image, emojiOnly, hideEmojiPicker, isReply);
+            }
+        }
+
+
+        Connections {
+            target: chatsModel.messageView
+            onMessageEdited: {
+                if(chatReply.item)
+                    chatReply.item.messageEdited(editedMessageId, editedMessageContent)
             }
         }
 
@@ -372,9 +383,10 @@ Item {
         EmojiReactionsPanel {
 //            isMessageActive: root.store.messageStore.isMessageActive
 //            emojiReactionsModel: root.store.messageStore.emojiReactionsModel
-//            onSetMessageActive: {
-//                root.store.messageStore.setMessageActive(messageId, active);;
-//            }
+            onSetMessageActive: {
+                root.store.messageStore.setMessageActive(messageId, active);;
+            }
+            onToggleReaction: chatsModel.toggleReaction(messageId, emojiID)
         }
     }
 }

@@ -1,6 +1,7 @@
 import QtQuick 2.3
 import QtQuick.Controls 2.13
 import QtGraphicalEffects 1.13
+
 import "../../../../shared"
 import "../../../../shared/status"
 
@@ -17,47 +18,8 @@ Item {
 //    property bool isMessageActive
     signal addEmojiClicked()
     signal hoverChanged(bool hovered)
-//    signal setMessageActive(string messageId, bool active)
-
-    function lastTwoItems(nodes) {
-        //% " and "
-        return nodes.join(qsTrId("-and-"));
-    }
-
-    function showReactionAuthors(fromAccounts, emojiId) {
-        let tooltip
-        if (fromAccounts.length === 1) {
-            tooltip = fromAccounts[0]
-        } else if (fromAccounts.length === 2) {
-            tooltip = lastTwoItems(fromAccounts);
-        } else {
-            var leftNode = [];
-            var rightNode = [];
-            const maxReactions = 12
-            let maximum = Math.min(maxReactions, fromAccounts.length)
-
-            if (fromAccounts.length > maxReactions) {
-                leftNode = fromAccounts.slice(0, maxReactions);
-                rightNode = fromAccounts.slice(maxReactions, fromAccounts.length);
-                return (rightNode.length === 1) ?
-                            lastTwoItems([leftNode.join(", "), rightNode[0]]) :
-                            //% "%1 more"
-                            lastTwoItems([leftNode.join(", "), qsTrId("-1-more").arg(rightNode.length)]);
-            }
-
-            leftNode = fromAccounts.slice(0, maximum - 1);
-            rightNode = fromAccounts.slice(maximum - 1, fromAccounts.length);
-            tooltip = lastTwoItems([leftNode.join(", "), rightNode[0]])
-        }
-
-        //% " reacted with "
-        tooltip += qsTrId("-reacted-with-");
-        let emojiHtml = Emoji.getEmojiFromId(emojiId);
-        if (emojiHtml) {
-            tooltip += emojiHtml;
-        }
-        return tooltip
-    }
+    signal toggleReaction(int emojiID)
+    signal setMessageActive(string messageId, bool active)
 
     Row {
         spacing: root.imageMargin
@@ -175,8 +137,7 @@ Item {
                         emojiContainer.isHovered = false
                     }
                     onClicked: {
-                        chatsModel.toggleReaction(messageId, modelData.emojiId)
-
+                        toggleReaction(modelData.emojiId)
                     }
                 }
             }

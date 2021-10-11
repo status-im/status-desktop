@@ -13,6 +13,8 @@ Rectangle {
     Layout.fillHeight: true
     Layout.fillWidth: true
 
+    signal suggestedMessageClicked(string channel)
+
     height: suggestionContainer.height + inviteFriendsContainer.height + Style.current.padding * 2
     border.color: Style.current.secondaryMenuBorder
     radius: 16
@@ -137,16 +139,8 @@ Rectangle {
 
             SuggestedChannelsPanel {
                 id: sectionRepeater
-                onSuggestedMessageClicked: {
-                    chatsModel.channelView.joinPublicChat(channel);
-                }
+                onSuggestedMessageClicked: emptyView.suggestedMessageClicked(channel)
             }
         }
     }
 }
-
-/*##^##
-Designer {
-    D{i:0;autoSize:true;formeditorColor:"#ffffff";formeditorZoom:1.25;height:500;width:300}
-}
-##^##*/

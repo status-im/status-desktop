@@ -11,15 +11,17 @@ import "../panels"
 Item {
     id: root
 
+    property int communityIndex: chatsModel.communities.joinedCommunities.getCommunityIndex(model.message.communityId)
+
     visible: {
         if (hideReadNotifications && model.read) {
             return false
         }
 
-        return activityCenter.currentFilter === ActivityCenter.Filter.All ||
-                (model.notificationType === Constants.activityCenterNotificationTypeMention && activityCenter.currentFilter === ActivityCenter.Filter.Mentions) ||
-                (model.notificationType === Constants.activityCenterNotificationTypeOneToOne && activityCenter.currentFilter === ActivityCenter.Filter.ContactRequests) ||
-                (model.notificationType === Constants.activityCenterNotificationTypeReply && activityCenter.currentFilter === ActivityCenter.Filter.Replies)
+        return activityCenter.currentFilter === ActivityCenterPopup.Filter.All ||
+                (model.notificationType === Constants.activityCenterNotificationTypeMention && activityCenter.currentFilter === ActivityCenterPopup.Filter.Mentions) ||
+                (model.notificationType === Constants.activityCenterNotificationTypeOneToOne && activityCenter.currentFilter === ActivityCenterPopup.Filter.ContactRequests) ||
+                (model.notificationType === Constants.activityCenterNotificationTypeReply && activityCenter.currentFilter === ActivityCenterPopup.Filter.Replies)
     }
     width: parent.width
     // Setting a height of 0 breaks the layout for when it comes back visible
@@ -218,15 +220,48 @@ Item {
 
         ActivityChannelBadgePanel {
             id: badge
-            visible: model.notificationType !== Constants.activityCenterNotificationTypeOneToOne
-            name: model.name
-            chatId: model.chatId
-            notificationType: model.notificationType
-            responseTo: model.message.responseTo
-            communityId: model.message.communityId
             anchors.top: notificationMessage.bottom
             anchors.left: parent.left
             anchors.leftMargin: 61 // TODO find a way to align with the text of the message
+            visible: model.notificationType !== Constants.activityCenterNotificationTypeOneToOne
+
+            name: model.name
+            chatId: model.chatId
+            notificationType: model.notificationType
+            communityId: model.message.communityId
+            replyMessageIndex: chatsModel.messageView.getMessageIndex(chatId, responseTo)
+            repliedMessageContent: replyMessageIndex > -1 ? chatsModel.messageView.getMessageData(chatId, replyMessageIndex, "message") : ""
+            realChatType: {
+                var chatType = chatsModel.channelView.chats.getChannelType(model.chatId)
+                if (chatType === Constants.chatTypeCommunity) {
+                    // TODO add a check for private community chats once it is created
+                    return Constants.chatTypePublic
+                }
+                return chatType
+            }
+            profileImage: realChatType === Constants.chatTypeOneToOne ? appMain.getProfileImage(chatId) || ""  : ""
+            channelName: chatsModel.getChannelNameById(badge.chatId)
+            communityName: root.communityIndex > -1 ? chatsModel.communities.joinedCommunities.rowData(root.communityIndex, "name") : ""
+            communityThumbnailImage: root.communityIndex > -1 ? chatsModel.communities.joinedCommunities.rowData(root.communityIndex, "thumbnailImage") : ""
+            communityColor: !image && root.communityIndex > -1 ? chatsModel.communities.joinedCommunities.rowData(root.communityIndex, "communityColor"): ""
+
+            onCommunityNameClicked: {
+                chatsModel.communities.setActiveCommunity(badge.communityId)
+            }
+            onChannelNameClicked: {
+                chatsModel.communities.setActiveCommunity(badge.communityId)
+                chatsModel.setActiveChannel(badge.chatId)
+            }
+
+            Connections {
+                enabled: badge.realChatType === Constants.chatTypeOneToOne
+                target: profileModel.contacts.list
+                onContactChanged: {
+                    if (pubkey === badge.chatId) {
+                        badge.profileImage = appMain.getProfileImage(badge.chatId)
+                    }
+                }
+            }
         }
     }
 }

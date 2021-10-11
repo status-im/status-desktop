@@ -27,6 +27,7 @@ ScrollView {
     clip: true
     ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
     
+    property var rootStore
     property var messageStore
     property var onActivated: function () {
         store.setActiveChannelToTimeline()
@@ -144,6 +145,7 @@ ScrollView {
             // TODO: Replace with StatusQ component once it lives there.
             delegate: MessageView {
                 id: msgDelegate
+                rootStore: root.rootStore
                 messageStore: root.messageStore
                 /////////TODO Remove
                 fromAuthor: model.fromAuthor

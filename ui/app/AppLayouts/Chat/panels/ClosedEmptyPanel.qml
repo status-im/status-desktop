@@ -26,9 +26,3 @@ Item {
         color: Style.current.darkGrey
     }
 }
-
-/*##^##
-Designer {
-    D{i:0;autoSize:true;formeditorColor:"#ffffff";formeditorZoom:1.25;height:500;width:300}
-}
-##^##*/

@@ -1,10 +1,11 @@
 import QtQuick 2.14
 import QtQuick.Shapes 1.13
 import QtGraphicalEffects 1.13
+
 import "../../../../shared"
 import "../../../../shared/status"
-
 import "../controls"
+
 import utils 1.0
 
 Loader {
@@ -27,6 +28,7 @@ Loader {
     property var container
     property int chatHorizontalPadding
 //    property string responseTo: ""
+    property var stickerData
 
 //    signal scrollToBottom(bool isit, var container)
     signal clickMessage(bool isProfileClick, bool isSticker, bool isImage, var image, bool emojiOnly, bool hideEmojiPicker, bool isReply)
@@ -35,6 +37,11 @@ Loader {
         Item {
             property alias textField: lblReplyMessage
             property alias authorMetrics: txtAuthorMetrics
+            property var messageEdited: function(id, content) {
+                if (responseTo === id){
+                    lblReplyMessage.text = Utils.getReplyMessageStyle(Emoji.parse(Utils.linkifyAndXSS(content + Constants.editLabel), Emoji.size.small), isCurrentUser, appSettings.useCompactMode)
+                }
+            }
 
             id: chatReply
             // childrenRect.height shows a binding loop for some reason, so we use heights instead
@@ -107,15 +114,6 @@ Loader {
                 }
             }
 
-            Connections {
-                target: chatsModel.messageView
-                onMessageEdited: {
-                    if (responseTo === editedMessageId){
-                        lblReplyMessage.text = Utils.getReplyMessageStyle(Emoji.parse(Utils.linkifyAndXSS(editedMessageContent + Constants.editLabel), Emoji.size.small), isCurrentUser, appSettings.useCompactMode)
-                    }
-                }
-            }
-
             StyledTextEdit {
                 id: lblReplyAuthor
                 text: repliedMessageAuthor
@@ -153,7 +151,7 @@ Loader {
                         id: stickerId
                         imageHeight: 56
                         imageWidth: 56
-                        stickerData: chatsModel.messageView.messageList.getMessageData(replyMessageIndex, "sticker")
+                        stickerData: root.stickerData
                         contentType: repliedMessageType
                         onLoaded: {
                             scrollToBottom(true, root.container)

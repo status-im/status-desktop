@@ -181,6 +181,11 @@ Item {
          messageContextMenu.x = messageContextMenu.setXPosition()
          messageContextMenu.y = messageContextMenu.setYPosition()
     }
+
+    function showReactionAuthors(fromAccounts, emojiId) {
+        return store.showReactionAuthors(fromAccounts, emojiId)
+    }
+
     /////////////////////////////////////////////
 
 
@@ -337,14 +342,14 @@ Item {
             onChatImageClicked: {
                 messageStore.imageClick(image);
             }
-            onUserNameChanged: {
+            onUserNameClicked: {
                 root.parent.clickMessage(isProfileClick);
             }
             onEmojiBtnClicked: {
                 root.parent.clickMessage(isProfileClick, isSticker, isImage, image, emojiOnly);
             }
             onClickMessage: {
-                root.parent.lickMessage(isProfileClick, isSticker, isImage, image, emojiOnly, hideEmojiPicker, isReply);
+                root.parent.clickMessage(isProfileClick, isSticker, isImage, image, emojiOnly, hideEmojiPicker, isReply);
             }
             onSetMessageActive: {
                 root.messageStore.setMessageActive(messageId, active);;

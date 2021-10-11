@@ -45,6 +45,13 @@ ModalPopup {
                 blockContactConfirmationDialog.contactAddress = address
                 blockContactConfirmationDialog.open()
             }
+            onAcceptClicked: {
+                chatsModel.channelView.joinPrivateChat(model.address, "")
+                profileModel.contacts.addContact(model.address)
+            }
+            onDeclineClicked: {
+                profileModel.contacts.rejectContactRequest(model.address)
+            }
         }
     }
 

@@ -461,6 +461,7 @@ Item {
                 sourceComponent: Component {
                     TimelineLayout {
                         messageStore: appMain.rootStore.messageStore
+                        rootStore: appMain.rootStore
                     }
                 }
                 onLoaded: timelineLayoutContainer.item.onActivated()
