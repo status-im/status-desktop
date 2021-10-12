@@ -1,5 +1,5 @@
 import chronicles, task_runner
-import status/status
+import status/status as status_lib_status
 import 
   ./tasks/marathon,
   ./tasks/marathon/worker,
@@ -11,6 +11,7 @@ import service/os_notification/service as os_notification_service
 import async_service/chat/service as chat_async_service
 import async_service/wallet/service as wallet_async_service
 
+export status_lib_status
 export marathon, task_runner, signal_controller
 export local_settings_service, os_notification_service
 export chat_async_service, wallet_async_service
@@ -19,6 +20,7 @@ logScope:
   topics = "app-services"
 
 type AppService* = ref object
+  status*: Status # in one point of time this should be completely removed
   # foundation
   threadpool*: ThreadPool
   marathon*: Marathon
@@ -32,6 +34,7 @@ type AppService* = ref object
 
 proc newAppService*(status: Status, worker: MarathonWorker): AppService =
   result = AppService()
+  result.status = status
   result.threadpool = newThreadPool()
   result.marathon = newMarathon(worker)
   result.signalController = newSignalsController(status)

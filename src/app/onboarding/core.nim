@@ -35,9 +35,12 @@ proc handleNodeLogin(self: OnboardingController, response: NodeSignal) =
 
 proc init*(self: OnboardingController) =
   let accounts = self.status.accounts.generateAddresses()
+  echo "--OLD-OnboardingController- accounts: "#, repr(accounts)
   for account in accounts:
+    echo "--OLD-OnboardingController- accounts: ", repr(account)
     self.view.addAccountToList(account)
 
   self.status.events.on(SignalType.NodeLogin.event) do(e:Args):
+    echo "--OLD-OnboardingController- OnNodeLoginEvent: ", repr(e)
     self.handleNodeLogin(NodeSignal(e))
   
