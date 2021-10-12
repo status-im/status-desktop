@@ -19,7 +19,7 @@ import "./shared/popups"
 import utils 1.0
 
 StatusWindow {
-    property bool hasAccounts: !!loginModel.rowCount()
+    property bool hasAccounts: startupModule.startWithOnboardingScreen
     property bool removeMnemonicAfterLogin: false
     property alias dragAndDrop: dragTarget
     property bool popupOpened: false

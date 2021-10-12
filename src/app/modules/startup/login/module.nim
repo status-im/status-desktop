@@ -1,7 +1,9 @@
 import NimQml
 import io_interface, view, controller
+import ../../../../app/boot/global_singleton
 
-#import ../../../../app_service/service/community/service as community_service
+import ../../../../app_service/[main]
+import ../../../../app_service/service/accounts/service_interface as accounts_service
 
 export io_interface
 
@@ -13,14 +15,19 @@ type
     controller: controller.AccessInterface
     moduleLoaded: bool
 
-proc newModule*[T](delegate: T): 
+proc newModule*[T](delegate: T,
+  appService: AppService,
+  accountsService: accounts_service.ServiceInterface): 
   Module[T] =
   result = Module[T]()
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController[Module[T]](result)
+  result.controller = controller.newController[Module[T]](result, appService,
+  accountsService)
   result.moduleLoaded = false
+
+  singletonInstance.engine.setRootContextProperty("loginModule", result.viewVariant)
 
 method delete*[T](self: Module[T]) =
   self.view.delete

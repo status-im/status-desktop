@@ -20,6 +20,7 @@ QtObject:
   proc accountChanged*(self: AccountInfoView) {.signal.}
 
   proc setAccount*(self: AccountInfoView, account: GeneratedAccount) =
+    echo "ONBOARD: ", repr(account)
     self.account = account
     self.accountChanged()
 

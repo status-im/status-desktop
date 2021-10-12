@@ -17,7 +17,7 @@ Rectangle {
     property var onAccountSelect: function() {}
     property var isSelected: function() {}
     property bool selected: {
-        return isSelected(index, keyUid)
+        return isSelected(accountId, keyUid)
     }
     property bool isHovered: false
 
@@ -81,7 +81,7 @@ Rectangle {
         anchors.fill: parent
         cursorShape: Qt.PointingHandCursor
         onClicked: {
-            onAccountSelect(index)
+            onAccountSelect(accountId)
         }
         onEntered: {
             accountViewDelegate.isHovered = true
