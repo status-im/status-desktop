@@ -15,7 +15,7 @@ Item {
     readonly property var validateAsync: Backpressure.debounce(inpAddress, debounceDelay, function (inputValue) {
         root.isPending = true
         var name = inputValue.startsWith("@") ? inputValue.substring(1) : inputValue
-        walletModel.ensView.resolveENS(name, uuid)
+        chatsModel.ensView.resolveENSWithUUID(name, uuid)
     });
     signal resolved(string resolvedAddress)
 
@@ -42,7 +42,7 @@ Item {
     }
 
     Connections {
-        target: walletModel.ensView
+        target: chatsModel.ensView
         onEnsWasResolved: {
             if (uuid !== root.uuid) {
                 return
