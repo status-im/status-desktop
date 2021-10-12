@@ -3,7 +3,7 @@ import NimQml, chronicles, stint
 
 import
   status/[status, wallet],
-  views/[accounts, collectibles, transactions, tokens, gas, ens, dapp_browser, history, balance, utils, asset_list, account_list]
+  views/[accounts, collectibles, transactions, tokens, gas, dapp_browser, history, balance, utils, asset_list, account_list]
 import ../../../app_service/[main]
 
 QtObject:
@@ -17,7 +17,6 @@ QtObject:
       tokensView*: TokensView
       dappBrowserView*: DappBrowserView
       gasView*: GasView
-      ensView*: EnsView
       historyView*: HistoryView
       balanceView*: BalanceView
       utilsView*: UtilsView
@@ -30,7 +29,6 @@ QtObject:
     self.tokensView.delete
     self.dappBrowserView.delete
     self.gasView.delete
-    self.ensView.delete
     self.historyView.delete
     self.balanceView.delete
     self.utilsView.delete
@@ -49,7 +47,6 @@ QtObject:
     result.transactionsView = newTransactionsView(status, appService, result.accountsView)
     result.tokensView = newTokensView(status, appService, result.accountsView)
     result.gasView = newGasView(status, appService)
-    result.ensView = newEnsView(status, appService)
     result.dappBrowserView = newDappBrowserView(status, result.accountsView)
     result.historyView = newHistoryView(status, appService, result.accountsView, result.transactionsView)
     result.balanceView = newBalanceView(status, appService, result.accountsView, result.transactionsView, result.historyView)
@@ -77,10 +74,6 @@ QtObject:
   proc getTokens(self: WalletView): QVariant {.slot.} = newQVariant(self.tokensView)
   QtProperty[QVariant] tokensView:
     read = getTokens
-
-  proc getEns(self: WalletView): QVariant {.slot.} = newQVariant(self.ensView)
-  QtProperty[QVariant] ensView:
-    read = getEns
 
   proc getHistory(self: WalletView): QVariant {.slot.} = newQVariant(self.historyView)
   QtProperty[QVariant] historyView:
