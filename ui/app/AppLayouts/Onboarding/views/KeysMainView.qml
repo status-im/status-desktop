@@ -1,8 +1,10 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Controls.Universal 2.12
-import "../shared"
-import "../shared/status"
+
+import "../../../../shared"
+import "../../../../shared/status"
+import "../popups"
 
 import utils 1.0
 
@@ -80,7 +82,6 @@ Page {
             font.pixelSize: 15
         }
 
-
         StatusButton {
             id: btnGenKey
             anchors.top: txtDesc1.bottom
@@ -112,9 +113,3 @@ Page {
         }
     }
 }
-
-/*##^##
-Designer {
-    D{i:0;autoSize:true;formeditorColor:"#ffffff";formeditorZoom:0.8999999761581421;height:760;width:1080}
-}
-##^##*/

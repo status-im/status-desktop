@@ -19,9 +19,6 @@ SOURCES = *.qml \
           imports/*.qml \
           shared/status/*.qml \
           shared/keycard/*.qml \
-          onboarding/*.qml \
-          onboarding/Login/*.qml \
-          onboarding/Keycard/*.qml \
           app/AppLayouts/*.qml \
           app/AppLayouts/Browser/*.qml \
           app/AppLayouts/Chat/*.qml \

@@ -3,6 +3,10 @@ import QtQuick.Controls 2.13
 
 import utils 1.0
 
+import "../popups"
+import "../stores"
+import "../shared"
+
 Item {
     property var onClosed: function () {}
     id: existingKeyView
@@ -18,7 +22,7 @@ Item {
         onConfirmSeedClick: function (mnemonic) {
             wentNext = true
             enterSeedPhraseModal.close()
-            onboardingModel.importMnemonic(mnemonic)
+            OnboardingStore.importMnemonic(mnemonic)
             removeMnemonicAfterLogin = true
             recoverySuccessModal.open()
         }
@@ -51,9 +55,3 @@ Item {
         }
     }
 }
-
-/*##^##
-Designer {
-    D{i:0;autoSize:true;height:480;width:640}
-}
-##^##*/

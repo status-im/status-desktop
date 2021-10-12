@@ -1,6 +1,8 @@
 import QtQuick 2.13
-import "./Keycard"
-import "../shared/keycard"
+
+import "../../../../shared/keycard"
+import "../popups"
+import "../stores"
 
 Item {
     enum OnboardingFlow {
@@ -16,11 +18,12 @@ Item {
     id: keycardView
     Component.onCompleted: {
         insertCard.open()
-        keycardModel.startConnection()
+        KeycardStore.startConnection()
     }
 
-    CreatePINModal {
+    KeycardCreatePINModal {
         id: createPinModal
+        onSubmitBtnClicked: KeycardStore.init(pin)
         onClosed: function () {
             if (!createPinModal.submitted) {
                 keycardView.onClosed()
@@ -55,7 +58,7 @@ Item {
 
     Connections {
         id: connection
-        target: keycardModel
+        target: OnboardingStore.keycardModelInst
         ignoreUnknownSignals: true
 
         onCardUnpaired: {
@@ -69,7 +72,7 @@ Item {
         onCardAuthenticated: {
             switch (flow) {
                 case OnboardingFlow.Recover: {
-                    keycardModel.recoverAccount();
+                    KeycardStore.recoverAccount();
                     break;
                 }
                 case OnboardingFlow.Generate: {

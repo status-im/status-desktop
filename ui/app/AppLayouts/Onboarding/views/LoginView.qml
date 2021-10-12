@@ -3,11 +3,13 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import QtQuick.Dialogs 1.3
 import QtGraphicalEffects 1.13
-import "../shared"
-import "../shared/status"
+
+import "../../../../shared"
+import "../../../../shared/status"
+import "../popups"
+import "../stores"
 
 import utils 1.0
-import "./Login"
 
 Item {
     property var onGenKeyClicked: function () {}
@@ -18,8 +20,8 @@ Item {
     anchors.fill: parent
 
     function setCurrentFlow(isLogin) {
-        loginModel.isCurrentFlow = isLogin;
-        onboardingModel.isCurrentFlow = !isLogin;
+        LoginStore.loginModelInst.isCurrentFlow = isLogin;
+        OnboardingStore.onBoardingModel.isCurrentFlow = !isLogin;
     }
 
     function doLogin(password) {
@@ -28,8 +30,8 @@ Item {
 
         setCurrentFlow(true);
         loading = true
-        loginModel.login(password)
-        applicationWindow.checkForStoringPassToKeychain(loginModel.currentAccount.username, password, false)
+        LoginStore.login(password)
+        applicationWindow.checkForStoringPassToKeychain(LoginStore.currentAccount.username, password, false)
         txtPassword.textField.clear()
     }
 
@@ -38,7 +40,7 @@ Item {
         {
             connection.enabled = true
             txtPassword.visible = false
-            loginModel.tryToObtainPassword()
+            LoginStore.tryToObtainPassword()
         }
         else
         {
@@ -53,7 +55,7 @@ Item {
 
     Connections{
         id: connection
-        target: loginModel
+        target: LoginStore.loginModelInst
 
         onObtainingPasswordError: {
             enabled = false
@@ -91,12 +93,12 @@ Item {
         StatusImageIdenticon {
             id: userImage
             anchors.horizontalCenter: parent.horizontalCenter
-            source: loginModel.currentAccount.thumbnailImage
+            source: LoginStore.currentAccount.thumbnailImage
         }
 
         StyledText {
             id: usernameText
-            text: loginModel.currentAccount.username
+            text: LoginStore.currentAccount.username
             font.weight: Font.Bold
             font.pixelSize: 17
             anchors.top: userImage.bottom
@@ -115,7 +117,7 @@ Item {
         SelectAnotherAccountModal {
             id: selectAnotherAccountModal
             onAccountSelect: function (index) {
-                loginModel.setCurrentAccount(index)
+                LoginStore.setCurrentAccount(index)
                 resetLogin()
             }
             onOpenModalClick: function () {
@@ -162,7 +164,7 @@ Item {
                     changeAccountBtn.isHovered = false
                 }
                 onClicked: {
-                    if (loginModel.rowCount() > 1) {
+                    if (LoginStore.rowCount() > 1) {
                         selectAnotherAccountModal.open()
                     } else {
                         confirmAddExstingKeyModal.open()
@@ -223,7 +225,7 @@ Item {
         }
 
         Connections {
-            target: loginModel
+            target: LoginStore.loginModelInst
             ignoreUnknownSignals: true
             onLoginResponseChanged: {
                 if (error) {

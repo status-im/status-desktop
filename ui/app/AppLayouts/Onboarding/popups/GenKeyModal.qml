@@ -1,11 +1,14 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtGraphicalEffects 1.13
+
 import StatusQ.Controls 0.1
 
 import utils 1.0
-import "../shared"
-import "./Login"
+
+import "../../../../shared"
+import "../panels"
+import "../stores"
 
 ModalPopup {
     property int selectedIndex: 0
@@ -15,12 +18,12 @@ ModalPopup {
     //% "Choose a chat name"
     title: qsTrId("intro-wizard-title2")
 
-    AccountList {
+    AccountListPanel {
         id: accountList
         anchors.fill: parent
         interactive: false
 
-        accounts: onboardingModel
+        model: OnboardingStore.onBoardingModel
         isSelected: function (index) {
             return index === selectedIndex
         }
@@ -42,9 +45,3 @@ ModalPopup {
         }
     }
 }
-
-/*##^##
-Designer {
-    D{i:0;formeditorColor:"#ffffff";height:500;width:400}
-}
-##^##*/
