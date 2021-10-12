@@ -14,6 +14,7 @@ StatusSwitch 0.1 StatusSwitch.qml
 StatusRadioButton 0.1 StatusRadioButton.qml
 StatusCheckBox 0.1 StatusCheckBox.qml
 StatusSlider 0.1 StatusSlider.qml
+StatusSelect 0.1 StatusSelect.qml
 StatusBaseInput 0.1 StatusBaseInput.qml
 StatusInput 0.1 StatusInput.qml
 StatusPickerButton 0.1 StatusPickerButton.qml

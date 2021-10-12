@@ -203,5 +203,10 @@ ThemePalette {
     property QtObject statusSwitchTab: QtObject {
         property color backgroundColor: white
     }
+
+    property QtObject statusSelect: QtObject {
+        property color menuItemBackgroundColor: white
+        property color menuItemHoverBackgroundColor: baseColor2
+    }
 }
 

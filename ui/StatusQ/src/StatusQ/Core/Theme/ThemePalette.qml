@@ -150,6 +150,11 @@ QtObject {
         property color backgroundColor
     }
 
+    property QtObject statusSelect: QtObject {
+        property color menuItemBackgroundColor
+        property color menuItemHoeverBackgroundColor
+    }
+
     function alphaColor(color, alpha) {
         let actualColor = Qt.darker(color, 1)
         actualColor.a = alpha

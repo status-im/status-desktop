@@ -51,6 +51,7 @@
         <file>src/StatusQ/Controls/StatusSwitch.qml</file>
         <file>src/StatusQ/Controls/StatusCheckBox.qml</file>
         <file>src/StatusQ/Controls/StatusButton.qml</file>
+        <file>src/StatusQ/Controls/StatusSelect.qml</file>
         <file>src/StatusQ/Controls/StatusToolTip.qml</file>
         <file>src/StatusQ/Controls/Validators/StatusValidator.qml</file>
         <file>src/StatusQ/Controls/Validators/StatusMinLengthValidator.qml</file>
