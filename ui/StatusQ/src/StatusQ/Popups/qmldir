@@ -3,6 +3,7 @@ module StatusQ.Popups
 StatusMenuSeparator 0.1 StatusMenuSeparator.qml
 StatusPopupMenu 0.1 StatusPopupMenu.qml
 StatusMenuItem 0.1 StatusMenuItem.qml
+StatusMenuItemDelegate 0.1 StatusMenuItemDelegate.qml
 StatusMenuHeadline 0.1 StatusMenuHeadline.qml
 StatusModal 0.1 StatusModal.qml
 StatusSearchPopup 0.1 StatusSearchPopup.qml
