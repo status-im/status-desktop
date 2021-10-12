@@ -6,7 +6,8 @@ import ../../../app/boot/global_singleton
 import onboarding/module as onboarding_module
 import login/module as login_module
 
-#import ../../../app_service/service/community/service as community_service
+import ../../../app_service/[main]
+import ../../../app_service/service/accounts/service_interface as accounts_service
 
 export io_interface
 
@@ -33,17 +34,21 @@ proc loginDidLoad*[T](self: Module[T])
 
 #################################################
 
-proc newModule*[T](delegate: T): 
+proc newModule*[T](delegate: T,
+  appService: AppService,
+  accountsService: accounts_service.ServiceInterface): 
   Module[T] =
   result = Module[T]()
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController[Module[T]](result)
+  result.controller = controller.newController[Module[T]](result, accountsService)
 
   # Submodules
-  result.onboardingModule = onboarding_module.newModule[Module[T]](result)
-  result.loginModule = login_module.newModule[Module[T]](result)
+  result.onboardingModule = onboarding_module.newModule[Module[T]](result, 
+  appService, accountsService)
+  result.loginModule = login_module.newModule[Module[T]](result, appService,
+  accountsService)
   
 method delete*[T](self: Module[T]) =
   self.onboardingModule.delete
@@ -56,6 +61,10 @@ method load*[T](self: Module[T]) =
   singletonInstance.engine.setRootContextProperty("startupModule", self.viewVariant)
   self.controller.init()
   self.view.load()
+  self.view.setStartWithOnboardingScreen(self.controller.shouldStartWithOnboardingScreen())
+  
+  self.onboardingModule.load()
+  self.loginModule.load()
 
 method viewDidLoad*[T](self: Module[T]) =
   discard

@@ -1,21 +1,31 @@
-import NimQml
+import json
 
-QtObject:
-  type
-    Item* = ref object of QObject
-      
-  proc setup(self: Item) = 
-    self.QObject.setup
+type 
+  Item* = object
+    id: string
+    alias: string
+    identicon: string
+    address: string
+    keyUid: string
 
-  proc delete*(self: Item) =
-    self.QObject.delete
+proc initItem*(id, alias, identicon, address, keyUid: string): Item =
+  result.id = id
+  result.alias = alias
+  result.identicon = identicon
+  result.address = address
+  result.keyUid = keyUid
 
-  proc newItem*(): Item =
-    new(result, delete)
-    result.setup()
+proc getId*(self: Item): string = 
+  return self.id
 
-  proc id*(self: Item): string {.slot.} = 
-    self.id
+proc getAlias*(self: Item): string = 
+  return self.alias
 
-  QtProperty[string] id:
-    read = id
+proc getIdenticon*(self: Item): string = 
+  return self.identicon
+
+proc getAddress*(self: Item): string = 
+  return self.address
+
+proc getKeyUid*(self: Item): string = 
+  return self.keyUid
