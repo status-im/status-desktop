@@ -38,17 +38,21 @@ proc handleNodeLogin(self: LoginController, response: NodeSignal) =
 
 proc init*(self: LoginController) =
   let nodeAccounts = self.status.accounts.openAccounts(STATUSGODIR)
+  echo "--OLD-LoginController-  statusgodir: ", STATUSGODIR#, "accounts: ", repr(nodeAccounts)
   self.status.accounts.nodeAccounts = nodeAccounts
   for nodeAccount in nodeAccounts:
     self.view.addAccountToList(nodeAccount)
 
   self.status.events.on(SignalType.NodeStopped.event) do(e:Args):
+    echo "--OLD-LoginController- NodeStopped: ", repr(e)
     self.status.events.emit("nodeStopped", Args())
     self.view.onLoggedOut()
 
   self.status.events.on(SignalType.NodeReady.event) do(e:Args):
+    echo "--OLD-LoginController- NodeReady: ", repr(e)
     self.status.events.emit("nodeReady", Args())
 
   self.status.events.on(SignalType.NodeLogin.event) do(e:Args):
+    echo "--OLD-LoginController- NodeLogin: ", repr(e)
     self.handleNodeLogin(NodeSignal(e))
   
