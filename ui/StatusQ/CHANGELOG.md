@@ -1,4 +1,15 @@
 <a name=""></a>
+##  Version 0.11.1(2021-10-12)
+
+
+#### Bug Fixes
+
+*   Sandbox doesn't build on Linux machines ([dce45c2f](dce45c2f))
+* **StatusChatInfoButton:**  StatusChatInfoButton takes up entire available width ([c276a90e](c276a90e))
+
+
+
+<a name=""></a>
 ##  v0.11.0 (2021-09-27)
 
 
