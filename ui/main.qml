@@ -11,7 +11,7 @@ import QtQuick.Controls.Universal 2.12
 
 import DotherSide 0.1
 
-import "./onboarding"
+import "./app/AppLayouts/Onboarding/views"
 import "./app"
 import "./sounds"
 import "./shared"
@@ -539,7 +539,7 @@ StatusWindow {
 
     Component {
         id: keysMain
-        KeysMain {
+        KeysMainView {
             btnGenKey.onClicked: applicationWindow.navigateTo("GenKey")
             btnExistingKey.onClicked: applicationWindow.navigateTo("ExistingKey")
             btnKeycard.onClicked: applicationWindow.navigateTo("KeycardFlowSelection")
@@ -548,7 +548,7 @@ StatusWindow {
 
     Component {
         id: existingKey
-        ExistingKey {
+        ExistingKeyView {
             onClosed: function () {
                 removeMnemonicAfterLogin = false
                 if (hasAccounts) {
@@ -562,7 +562,7 @@ StatusWindow {
 
     Component {
         id: genKey
-        GenKey {
+        GenKeyView {
             onClosed: function () {
                 if (hasAccounts) {
                     applicationWindow.navigateTo("InitialState")
@@ -575,7 +575,7 @@ StatusWindow {
 
     Component {
         id: keycardFlowSelection
-        KeycardFlowSelection {
+        KeycardFlowSelectionView {
             onClosed: function () {
                 if (hasAccounts) {
                     applicationWindow.navigateTo("InitialState")
@@ -588,7 +588,7 @@ StatusWindow {
 
     Component {
         id: login
-        Login {
+        LoginView {
             onGenKeyClicked: function () {
                 applicationWindow.navigateTo("GenKey")
             }

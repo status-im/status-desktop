@@ -2,8 +2,11 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 
 import utils 1.0
-import "../../shared"
-import "../../shared/status"
+import "../../../../shared"
+import "../../../../shared/status"
+
+import "../panels"
+import "../stores"
 
 ModalPopup {
     property var onAccountSelect: function () {}
@@ -12,13 +15,13 @@ ModalPopup {
     //% "Your keys"
     title: qsTrId("your-keys")
 
-    AccountList {
+    AccountListPanel {
         id: accountList
         anchors.fill: parent
 
-        accounts: loginModel
+        model: LoginStore.loginModelInst
         isSelected: function (index, keyUid) {
-            return loginModel.currentAccount.keyUid === keyUid
+            return LoginStore.loginModelInst.currentAccount.keyUid === keyUid
         }
 
         onAccountSelect: function(index) {
@@ -40,9 +43,3 @@ ModalPopup {
         }
     }
 }
-
-/*##^##
-Designer {
-    D{i:0;formeditorColor:"#ffffff";height:500;width:400}
-}
-##^##*/

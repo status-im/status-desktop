@@ -2,8 +2,9 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 
 import utils 1.0
-import "../../shared"
-import "../../shared/status"
+
+import "../../../../shared"
+import "../../../../shared/status"
 
 ModalPopup {
     property var onOpenModalClick: function () {}
@@ -31,9 +32,3 @@ ModalPopup {
         }
     }
 }
-
-/*##^##
-Designer {
-    D{i:0;formeditorColor:"#ffffff";height:500;width:400}
-}
-##^##*/

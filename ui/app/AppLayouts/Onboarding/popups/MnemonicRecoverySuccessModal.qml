@@ -3,8 +3,9 @@ import QtQuick.Controls 2.13
 import QtQuick.Dialogs 1.3
 
 import utils 1.0
-import "../shared"
-import "../shared/status"
+import "../../../../shared"
+import "../../../../shared/status"
+import "../stores"
 
 ModalPopup {
     id: popup
@@ -32,7 +33,7 @@ ModalPopup {
 
     StatusImageIdenticon {
         id: identicon
-        source: onboardingModel.currentAccount.identicon
+        source: OnboardingStore.currentAccount.identicon
         anchors.top: info.bottom
         anchors.topMargin: Style.current.bigPadding
         anchors.horizontalCenter: parent.horizontalCenter
@@ -45,7 +46,7 @@ ModalPopup {
         anchors.top: identicon.bottom
         anchors.topMargin: Style.current.padding
         anchors.horizontalCenter: identicon.horizontalCenter
-        text: onboardingModel.currentAccount.username
+        text: OnboardingStore.currentAccount.username
         font.weight: Font.Bold
         font.pixelSize: 15
     }
@@ -54,7 +55,7 @@ ModalPopup {
         anchors.top: username.bottom
         anchors.topMargin: Style.current.halfPadding
         anchors.horizontalCenter: username.horizontalCenter
-        text: onboardingModel.currentAccount.address
+        text: OnboardingStore.currentAccount.address
         width: 120
     }
 

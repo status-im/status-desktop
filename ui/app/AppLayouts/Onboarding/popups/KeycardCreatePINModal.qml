@@ -1,14 +1,16 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
+
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Popups 0.1
 
-import "../../imports/utils" as Imports
-import "../../shared"
-import "../../shared/keycard"
+import utils 1.0 as Imports
+
+import "../../../../shared"
+import "../../../../shared/keycard"
 
 StatusModal {
     property bool firstPINFieldValid: false
@@ -16,6 +18,8 @@ StatusModal {
     property string pinValidationError: ""
     property string repeatPINValidationError: ""
     property bool submitted: false
+
+    signal submitBtnClicked(string pin)
 
     id: popup
     header.title: qsTr("Create PIN")
@@ -102,7 +106,7 @@ StatusModal {
 
             onClicked: {
                 submitted = true
-                keycardModel.init(firstPINField.text)
+                submitBtnClicked()
                 popup.close()
             }
         }

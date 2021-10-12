@@ -2,10 +2,13 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 
 import utils 1.0
-import "../../shared"
-import "../../shared/status"
 
-Rectangle {
+import "../../../../shared"
+import "../../../../shared/status"
+
+Rectangle {    
+    id: accountViewDelegate
+
     property string username: "Jotaro Kujo"
     property string keyUid: "0x123345677890987654321123456"
     property string address: ""
@@ -17,7 +20,6 @@ Rectangle {
     }
     property bool isHovered: false
 
-    id: root
     height: 64
     anchors.right: parent.right
     anchors.left: parent.left
@@ -69,8 +71,8 @@ Rectangle {
         anchors.right: parent.right
         anchors.rightMargin: Style.current.padding
         anchors.verticalCenter: parent.verticalCenter
-        checked: root.selected
-        isHovered: root.isHovered
+        checked: accountViewDelegate.selected
+        isHovered: accountViewDelegate.isHovered
     }
 
     MouseArea {
@@ -81,16 +83,10 @@ Rectangle {
             onAccountSelect(index)
         }
         onEntered: {
-            root.isHovered = true
+            accountViewDelegate.isHovered = true
         }
         onExited: {
-            root.isHovered = false
+            accountViewDelegate.isHovered = false
         }
     }
 }
-
-/*##^##
-Designer {
-    D{i:0;formeditorColor:"#ffffff";height:64;width:450}
-}
-##^##*/

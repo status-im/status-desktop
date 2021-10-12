@@ -6,7 +6,7 @@ import QtGraphicalEffects 1.13
 import utils 1.0
 import "../../../../shared"
 import "../../../../shared/status"
-import "../../../../onboarding/" as OnboardingComponents
+import "../../Onboarding/shared" as OnboardingComponents
 
 Item {
     id: privacyContainer
