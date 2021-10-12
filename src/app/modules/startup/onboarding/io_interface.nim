@@ -17,6 +17,13 @@ method isLoaded*(self: AccessInterface): bool {.base.} =
 method viewDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method setSelectedAccountId*(self: AccessInterface, id: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method storeSelectedAccountAndLogin*(self: AccessInterface, password: string) 
+  {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 type
   ## Abstract class (concept) which must be implemented by object/s used in this 
   ## module.

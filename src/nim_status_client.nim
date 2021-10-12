@@ -60,7 +60,7 @@ proc mainProc() =
   let app = newQGuiApplication()
   defer: app.delete()
 
-  let appController = newAppController(status, appService)
+  let appController = newAppController(appService)
   defer: appController.delete()
 
   let resources =
@@ -168,7 +168,7 @@ proc mainProc() =
   defer: chat.delete()
   singletonInstance.engine.setRootContextProperty("chatsModel", chat.variant)
 
-  var node = node.newController(status, appService, netAccMgr)
+  var node = node.newController(appService, netAccMgr)
   defer: node.delete()
   singletonInstance.engine.setRootContextProperty("nodeModel", node.variant)
 

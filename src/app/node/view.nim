@@ -1,5 +1,5 @@
 import NimQml, chronicles, strutils, json
-import status/[status, node, settings, accounts]
+import status/[node, settings, accounts]
 import status/types/[setting]
 import ../../app_service/[main]
 import status/signals/[stats]
@@ -29,7 +29,6 @@ proc bloomFiltersBitsSet[T](self: T, slot: string) =
 
 QtObject:
   type NodeView* = ref object of QObject
-    status*: Status
     appService: AppService
     callResult: string
     lastMessage*: string
@@ -43,9 +42,8 @@ QtObject:
   proc setup(self: NodeView) =
     self.QObject.setup
 
-  proc newNodeView*(status: Status, appService: AppService): NodeView =
+  proc newNodeView*(appService: AppService): NodeView =
     new(result)
-    result.status = status
     result.appService = appService
     result.callResult = "Use this tool to call JSONRPC methods"
     result.lastMessage = ""
@@ -75,7 +73,7 @@ QtObject:
     notify = callResultChanged
 
   proc onSend*(self: NodeView, inputJSON: string) {.slot.} =
-    self.setCallResult(self.status.node.sendRPCMessageRaw(inputJSON))
+    self.setCallResult(self.appService.status.node.sendRPCMessageRaw(inputJSON))
     echo "Done!: ", self.callResult
 
   proc onMessage*(self: NodeView, message: string) {.slot.} =
@@ -117,20 +115,20 @@ QtObject:
     notify = initialized
 
   proc setWakuBloomFilterMode*(self: NodeView, bloomFilterMode: bool) {.slot.} =
-    let statusGoResult = self.status.settings.setBloomFilterMode(bloomFilterMode)
+    let statusGoResult = self.appService.status.settings.setBloomFilterMode(bloomFilterMode)
     if statusGoResult.error != "":
       error "Error saving updated node config", msg=statusGoResult.error
     quit(QuitSuccess) # quits the app TODO: change this to logout instead when supported
 
   proc init*(self: NodeView) {.slot.} =
-    let nodeConfig = self.status.settings.getNodeConfig()
-    self.wakuBloomFilterMode = self.status.settings.getSetting[:bool](Setting.WakuBloomFilterMode)
+    let nodeConfig = self.appService.status.settings.getNodeConfig()
+    self.wakuBloomFilterMode = self.appService.status.settings.getSetting[:bool](Setting.WakuBloomFilterMode)
     self.fullNode = nodeConfig["WakuConfig"]["FullNode"].getBool()
     self.wakuV2LightClient = nodeConfig["WakuV2Config"]{"LightClient"}.getBool()
     self.initialized()
 
   proc wakuVersion*(self: NodeView): int {.slot.} =
-    var fleetStr = self.status.settings.getSetting[:string](Setting.Fleet)
+    var fleetStr = self.appService.status.settings.getSetting[:string](Setting.Fleet)
     let fleet = parseEnum[Fleet](fleetStr)
     let isWakuV2 = if fleet == WakuV2Prod or fleet == WakuV2Test: true else: false
     if isWakuV2: return 2
@@ -150,7 +148,7 @@ QtObject:
       BloomFilterMode = true
       FullNode = false
 
-    let statusGoResult = self.status.settings.setBloomLevel(BloomFilterMode, FullNode)
+    let statusGoResult = self.appService.status.settings.setBloomLevel(BloomFilterMode, FullNode)
     if statusGoResult.error != "":
       error "Error saving updated node config", msg=statusGoResult.error
     quit(QuitSuccess) # quits the app TODO: change this to logout instead when supported
@@ -213,7 +211,7 @@ QtObject:
     notify = initialized
 
   proc setWakuV2LightClient*(self: NodeView, enabled: bool) {.slot.} =
-    let statusGoResult = self.status.settings.setV2LightMode(enabled)
+    let statusGoResult = self.appService.status.settings.setV2LightMode(enabled)
     if statusGoResult.error != "":
       error "Error saving updated node config", msg=statusGoResult.error
     else:

@@ -1,9 +1,5 @@
 import QtQuick 2.13
 
-import "../popups"
-import "../stores"
-import "../shared"
-
 Item {
     property var onClosed: function () {}
     id: genKeyView
@@ -16,9 +12,9 @@ Item {
     GenKeyModal {
         property bool wentNext: false
         id: genKeyModal
-        onNextClick: function (selectedIndex) {
+        onNextClick: function (accId) {
             wentNext = true
-            OnboardingStore.setCurrentAccount(selectedIndex)
+            onboardingModule.setSelectedAccountId(accId)
             createPasswordModal.open()
         }
         onClosed: function () {
@@ -35,3 +31,9 @@ Item {
         }
     }
 }
+
+/*##^##
+Designer {
+    D{i:0;autoSize:true;formeditorColor:"#ffffff";height:480;width:640}
+}
+##^##*/
