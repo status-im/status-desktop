@@ -52,3 +52,6 @@ method login*(self: ServiceInterface, account: AccountDto, password: string):
 
 method clear*(self: ServiceInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method generateAlias*(self: ServiceInterface, publicKey: string): string {.base.} =
+  raise newException(ValueError, "No implementation available")

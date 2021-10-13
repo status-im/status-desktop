@@ -6,9 +6,10 @@ import ../../core/global_singleton
 import chat_section/module as chat_section_module
 import wallet_section/module as wallet_section_module
 import browser_section/module as browser_section_module
+import profile_section/module as profile_section_module
 
 import ../../../app_service/service/keychain/service as keychain_service
-import ../../../app_service/service/accounts/service_interface as accounts_service
+# import ../../../app_service/service/accounts/service_interface as accounts_service
 import ../../../app_service/service/chat/service as chat_service
 import ../../../app_service/service/community/service as community_service
 import ../../../app_service/service/token/service as token_service
@@ -19,6 +20,11 @@ import ../../../app_service/service/setting/service as setting_service
 import ../../../app_service/service/bookmarks/service as bookmark_service
 
 import eventemitter
+import ../../../app_service/service/profile/service as profile_service
+import ../../../app_service/service/accounts/service as accounts_service
+import ../../../app_service/service/settings/service as settings_service
+import ../../../app_service/service/contacts/service as contacts_service
+import ../../../app_service/service/about/service as about_service
 
 export io_interface
 
@@ -42,6 +48,7 @@ type
     communitySectionsModule: OrderedTable[string, chat_section_module.AccessInterface]
     walletSectionModule: wallet_section_module.AccessInterface
     browserSectionModule: browser_section_module.AccessInterface
+    profileSectionModule: profile_section_module.AccessInterface
     moduleLoaded: bool
 
 proc newModule*[T](
@@ -56,7 +63,11 @@ proc newModule*[T](
   collectibleService: collectible_service.Service,
   walletAccountService: wallet_account_service.Service,
   bookmarkService: bookmark_service.Service, 
-  settingService: setting_service.Service
+  settingService: setting_service.Service,
+  profileService: profile_service.ServiceInterface,
+  settingsService: settings_service.ServiceInterface,
+  contactsService: contacts_service.ServiceInterface,
+  aboutService: about_service.ServiceInterface
 ): Module[T] =
   result = Module[T]()
   result.delegate = delegate
@@ -87,9 +98,11 @@ proc newModule*[T](
   )
 
   result.browserSectionModule = browser_section_module.newModule(result, bookmarkService)
+  result.profileSectionModule = profile_section_module.newModule(result, accountsService, settingsService, profileService, contactsService, aboutService)
 
 method delete*[T](self: Module[T]) =
   self.chatSectionModule.delete
+  self.profileSectionModule.delete
   for cModule in self.communitySectionsModule.values:
     cModule.delete
   self.communitySectionsModule.clear
@@ -107,13 +120,15 @@ method load*[T](self: Module[T]) =
   let chatSectionItem = initItem("chat", SectionType.Chat.int, "Chat", "", 
   "chat", "", 0, 0)
   self.view.addItem(chatSectionItem)
-  
+
+  echo "=> communitiesSection"
   let communities = self.controller.getCommunities()
   for c in communities:
     self.view.addItem(initItem(c.id, SectionType.Community.int, c.name, 
     if not c.images.isNil: c.images.thumbnail else: "",
     "", c.color, 0, 0))
 
+  echo "=> chatSection"
   self.chatSectionModule.load()
   for cModule in self.communitySectionsModule.values:
     cModule.load()
@@ -128,6 +143,7 @@ method load*[T](self: Module[T]) =
   let browserSectionItem = initItem("browser", SectionType.Browser.int, "Browser")
   self.view.addItem(browserSectionItem)
 
+  self.profileSectionModule.load()
 
 proc checkIfModuleDidLoad [T](self: Module[T]) =
   if self.moduleLoaded:
@@ -146,6 +162,9 @@ proc checkIfModuleDidLoad [T](self: Module[T]) =
   if(not self.browserSectionModule.isLoaded()):
     return
 
+  if(not self.profileSectionModule.isLoaded()):
+    return
+
   self.moduleLoaded = true
   self.delegate.mainDidLoad()
 
@@ -159,6 +178,9 @@ proc walletSectionDidLoad*[T](self: Module[T]) =
   self.checkIfModuleDidLoad()
 
 method browserSectionDidLoad*[T](self: Module[T]) =
+  self.checkIfModuleDidLoad()
+
+proc profileSectionDidLoad*[T](self: Module[T]) =
   self.checkIfModuleDidLoad()
 
 method viewDidLoad*[T](self: Module[T]) =
