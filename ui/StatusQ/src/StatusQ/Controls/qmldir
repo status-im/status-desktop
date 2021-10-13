@@ -1,5 +1,6 @@
 module StatusQ.Controls
 
+StatusAccountSelector 0.1 StatusAccountSelector.qml
 StatusChatInfoButton 0.1 StatusChatInfoButton.qml
 StatusChatListCategoryItemButton 0.1 StatusChatListCategoryItemButton.qml
 StatusIconTabButton 0.1 StatusIconTabButton.qml

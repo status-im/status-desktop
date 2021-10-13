@@ -144,6 +144,17 @@ ThemePalette {
     miscColor10: getColor('brown')
     miscColor11: getColor('brown2')
 
+    accountColors: [
+        getColor('blue'),
+        getColor('brown2'),
+        getColor('violet'),
+        "#1D806F",
+        getColor('red2'),
+        getColor('green2'),
+        getColor('purple'),
+        getColor('brown')
+    ]
+
     property QtObject statusAppLayout: QtObject {
         property color backgroundColor: white
         property color rightPanelBackgroundColor: white

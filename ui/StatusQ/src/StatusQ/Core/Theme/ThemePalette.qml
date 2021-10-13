@@ -89,6 +89,8 @@ QtObject {
     property color miscColor10
     property color miscColor11
 
+    property var accountColors: []
+
     property QtObject statusAppLayout: QtObject {
         property color backgroundColor
         property color rightPanelBackgroundColor

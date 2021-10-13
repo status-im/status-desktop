@@ -30,6 +30,43 @@ QtObject {
     function uuid() {
         return Date.now().toString(36) + Math.random().toString(36).substr(2, 5)
     }
+
+    function getThemeAccountColor(c, accountColors) {
+        const upperCaseColor = c.toUpperCase()
+        let colorIndex = accountColors.indexOf(upperCaseColor)
+
+        if (colorIndex > -1) {
+            return upperCaseColor
+        }
+        return false
+    }
+
+    function findAssetBySymbol(assets, symbolToFind) {
+        for(var i=0; i<assets.rowCount(); i++) {
+            const symbol = assets.rowData(i, "symbol")
+            if (symbol.toLowerCase() === symbolToFind.toLowerCase()) {
+                return {
+                    name: assets.rowData(i, "name"),
+                    symbol,
+                    value: assets.rowData(i, "value"),
+                    fiatBalanceDisplay: assets.rowData(i, "fiatBalanceDisplay"),
+                    address: assets.rowData(i, "address"),
+                    fiatBalance: assets.rowData(i, "fiatBalance")
+                }
+            }
+        }
+    }
+
+    function stripTrailingZeros(strNumber) {
+        if (!(typeof strNumber === "string")) {
+            try {
+                strNumber = strNumber.toString()
+            } catch(e) {
+                throw "[Utils.stripTrailingZeros] input parameter must be a string"
+            }
+        }
+        return strNumber.replace(/(\.[0-9]*[1-9])0+$|\.0*$/,'$1')
+    }
 }
 
 
