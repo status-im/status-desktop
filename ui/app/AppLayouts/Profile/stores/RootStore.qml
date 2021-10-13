@@ -5,6 +5,11 @@ QtObject {
     id: root
 
     property var profileModelInst: profileModel
+    property var profileModuleInst: profileSectionModule
+    property var profile: profileModule
+    property var contactsModuleInst: contactsModule
+    property var aboutModuleInst: aboutModule
+
     property var chatsModelInst: chatsModel
     property var utilsModelInst: utilsModel
     property var walletModelInst: walletModel
@@ -15,32 +20,32 @@ QtObject {
     property var permissionList: profileModelInst.dappList.permissionList
     property var mailservers: profileModelInst.mailservers
     property var mailserversList: profileModelInst.mailservers.list
-    property var contacts: profileModelInst.contacts
-    property var blockedContacts: profileModelInst.contacts.blockedContacts
-    property var addedContacts: profileModelInst.contacts.addedContacts
+    property var contacts: profileModelInst.contacts.model.list
+    property var blockedContacts: profileModelInst.contacts.model.blockedContacts
+    property var addedContacts: profileModelInst.contacts.model.addedContacts
     property var mutedChatsContacts: profileModelInst.mutedChats.contacts
     property var mutedChats: profileModelInst.mutedChats.chats
     property var devicesList: profileModelInst.devices.list
 
     property string ensRegisterAddress: utilsModelInst.ensRegisterAddress
     property string etherscanLink: walletModelInst.utilsView.etherscanLink
-    property string pubKey: profileModelInst.profile.pubKey
+    property string pubKey: profile.pubKey
     property string fleet: profileModelInst.fleets.fleet
     property string bloomLevel: nodeModelInst.bloomLevel
     property string currentNetwork: profileModelInst.network.current
     property string preferredUsername: profileModelInst.ens.preferredUsername
     property string firstEnsUsername: profileModelInst.ens.firstEnsUsername
-    property string username: profileModelInst.profile.username
-    property string identicon: profileModelInst.profile.identicon
-    property string profileLargeImage: profileModelInst.profile.largeImage
-    property string profileThumbnailImage: profileModelInst.profile.thumbnailImage
+    property string username: profile.username
+    property string identicon: profile.identicon
+    property string profileLargeImage: profile.largeImage
+    property string profileThumbnailImage: profile.thumbnailImage
 
-    property bool profileHasIdentityImage: profileModelInst.profile.hasIdentityImage
+    property bool profileHasIdentityImage: profile.hasIdentityImage
     property bool automaticMailserverSelection: profileModelInst.mailservers.automaticSelection
     property bool isWakuV2LightClient: nodeModelInst.WakuV2LightClient
     property bool devicesSetup: profileModelInst.devices.isSetup
     property bool mnemonicBackedUp: profileModelInst.mnemonic.isBackedUp
-    property bool messagesFromContactsOnly: profileModelInst.profile.messagesFromContactsOnly
+    property bool messagesFromContactsOnly: profile.messagesFromContactsOnly
 
     property int profile_id: 0
     property int contacts_id: 1
@@ -188,11 +193,12 @@ QtObject {
     }
 
     function lookupContact(value) {
-        profileModelInst.contacts.lookupContact(value)
+        console.log('lookup ples', value, profileModelInst)
+        contactsModuleInst.lookupContact(value)
     }
 
     function addContact(pubKey) {
-        profileModelInst.contacts.addContact(pubKey)
+        contactsModuleInst.addContact(pubKey)
     }
 
     function generateAlias(pubKey) {
@@ -208,19 +214,19 @@ QtObject {
     }
 
     function unblockContact(address) {
-        profileModelInst.contacts.unblockContact(address)
+        contactsModuleInst.unblockContact(address)
     }
 
     function blockContact(address) {
-        profileModelInst.contacts.blockContact(address)
+        contactsModuleInst.blockContact(address)
     }
 
     function isContactAdded(address) {
-        return profileModelInst.contacts.isAdded(address)
+        return contactsModuleInst.model.isAdded(address)
     }
 
     function removeContact(address) {
-        profileModelInst.contacts.removeContact(address)
+        contactsModuleInst.removeContact(address)
     }
 
     function ensDetails(username) {
@@ -234,11 +240,11 @@ QtObject {
     function validateEns(ensName, isStatus) {
         profileModelInst.ens.validate(ensName, isStatus)
     }
-    
+
     function registerEnsGasEstimate(username, address) {
         return profileModelInst.ens.registerENSGasEstimate(username, address)
     }
-    
+
     function registerEns(username, address, gasLimit, tipLimit, overallLimit, gasPrice, password) {
         return profileModelInst.ens.registerENS(username,
             address, gasLimit, tipLimit, overallLimit, gasPrice, password)
@@ -317,11 +323,11 @@ QtObject {
     }
 
     function getCurrentVersion() {
-        return utilsModelInst.getCurrentVersion()
+        return aboutModuleInst.getCurrentVersion()
     }
 
     function nodeVersion() {
-        return profileModelInst.nodeVersion()
+        return aboutModuleInst.nodeVersion()
     }
 
     function checkForUpdates() {

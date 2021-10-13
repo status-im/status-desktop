@@ -4,6 +4,8 @@ import json, strformat
 
 include ../../../common/json_utils
 
+# const DELETE_CONTACT* = "delete_contact"
+
 type
   Images* = ref object
     thumbnail*: string
@@ -13,7 +15,7 @@ type ContactsDto* = ref object
   id*: string
   name*: string
   ensVerified*: bool
-  alias: string
+  alias*: string
   identicon*: string
   lastUpdated*: int64
   image*: Images
@@ -21,7 +23,7 @@ type ContactsDto* = ref object
   blocked*: bool
   hasAddedUs*: bool
   isSyncing*: bool
-  removed: bool
+  removed*: bool
 
 proc `$`(self: Images): string =
   result = fmt"""Images(
@@ -32,8 +34,8 @@ proc `$`(self: Images): string =
 proc `$`*(self: ContactsDto): string =
   result = fmt"""ContactDto(
     id: {self.id}, 
-    name: {self.name}, 
-    ensVerified: {self.ensVerified}, 
+    name: {self.name},
+    ensVerified: {self.ensVerified},
     alias: {self.alias}, 
     identicon: {self.identicon}, 
     lastUpdated: {self.lastUpdated}, 
