@@ -14,6 +14,10 @@ import ../../app_service/service/setting/service as setting_service
 import ../../app_service/service/bookmarks/service as bookmark_service
 
 import ../core/local_account_settings
+import ../../app_service/service/profile/service as profile_service
+import ../../app_service/service/settings/service as settings_service
+import ../../app_service/service/contacts/service as contacts_service
+import ../../app_service/service/about/service as about_service
 import ../modules/startup/module as startup_module
 import ../modules/main/module as main_module
 
@@ -73,8 +77,13 @@ type
     # Core
     localAccountSettings: LocalAccountSettings
     localAccountSettingsVariant: QVariant
-    mainModule: main_module.AccessInterface
+    profileService: profile_service.Service
+    settingsService: settings_service.Service
+    contactsService: contacts_service.Service
+    aboutService: about_service.Service
+    # Modules
     startupModule: startup_module.AccessInterface
+    mainModule: main_module.AccessInterface
 
     #################################################
     # At the end of refactoring this will be moved to 
@@ -130,7 +139,10 @@ proc newAppController*(appService: AppService): AppController =
   )
   result.transactionService = transaction_service.newService(result.walletAccountService)
   result.bookmarkService = bookmark_service.newService()
-
+  result.profileService = profile_service.newService()
+  result.settingsService = settings_service.newService()
+  result.contactsService = contacts_service.newService()
+  result.aboutService = about_service.newService()
 
   # Core
   result.localAccountSettingsVariant = newQVariant(
@@ -155,7 +167,11 @@ proc newAppController*(appService: AppService): AppController =
     result.collectibleService,
     result.walletAccountService,
     result.bookmarkService,
-    result.settingService
+    result.settingService,
+    result.profileService,
+    result.settingsService,
+    result.contactService,
+    result.aboutService,
   )
 
   #################################################
@@ -165,6 +181,18 @@ proc newAppController*(appService: AppService): AppController =
   result.localSettingsService, changeLanguage)
   result.connect()
   #################################################
+
+  # Adding status and appService here now is just because of having a controll 
+  # over order of execution while we integrating this refactoring architecture 
+  # into the current app state.
+  # Once we complete refactoring process we will get rid of "status" part/lib.
+  #
+  # This to will be adapted to appropriate modules later:
+  # result.login = login.newController(appService.status, appService)
+  # result.onboarding = onboarding.newController(appService.status)
+  # singletonInstance.engine.setRootContextProperty("loginModel", result.login.variant)
+  # singletonInstance.engine.setRootContextProperty("onboardingModel", result.onboarding.variant)
+  #result.connect()
 
 proc delete*(self: AppController) =
   self.contactService.delete
@@ -192,6 +220,7 @@ proc delete*(self: AppController) =
   self.collectibleService.delete
   self.settingService.delete
   self.walletAccountService.delete
+  self.aboutService.delete
 
 proc startupDidLoad*(self: AppController) =
   #################################################
