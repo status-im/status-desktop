@@ -11,7 +11,7 @@ type
 proc newModule*[T](delegate: T): Module[T] =
   result = Module[T]()
   result.delegate = delegate
-  result.view = newView()
+  result.view = newView(result)
   result.moduleLoaded = false
 
 method delete*[T](self: Module[T]) =
