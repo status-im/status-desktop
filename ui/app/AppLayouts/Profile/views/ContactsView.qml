@@ -164,6 +164,7 @@ Item {
             }
 
             property var lookupContact: Backpressure.debounce(addContactSearchInput, 400, function (value) {
+                console.log('Lookup', value)
                 root.isPending = true
                 searchResults.showProfileNotFoundMessage = false
                 root.store.lookupContact(value)
@@ -196,8 +197,8 @@ Item {
 
 
                 Connections {
-                    target: root.store.contacts
-                    onEnsWasResolved: {
+                    target: root.store.contactsModuleInst
+                    onEnsWasResolved: function (resolvedPubKey) {
                         if (resolvedPubKey === "") {
                             searchResults.pubKey = ""
                             searchResults.showProfileNotFoundMessage = true
