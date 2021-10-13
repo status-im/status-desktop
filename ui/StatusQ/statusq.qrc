@@ -39,6 +39,7 @@
         <file>src/StatusQ/Components/StatusLoadingIndicator.qml</file>
         <file>src/StatusQ/Platform/qmldir</file>
         <file>src/StatusQ/Platform/StatusMacTrafficLights.qml</file>
+        <file>src/StatusQ/Controls/StatusAssetSelector.qml</file>
         <file>src/StatusQ/Controls/StatusIconTabButton.qml</file>
         <file>src/StatusQ/Controls/StatusChatInfoButton.qml</file>
         <file>src/StatusQ/Controls/qmldir</file>
