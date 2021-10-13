@@ -20,6 +20,7 @@ QC.Popup {
     property bool showFooter: true
 
     signal editButtonClicked()
+    signal headerImageClicked()
 
     parent: QC.Overlay.overlay
 
@@ -54,8 +55,10 @@ QC.Popup {
             image: header.image
             icon: header.icon
             popupMenu: header.popupMenu
+            headerImageEditable: header.headerImageEditable
 
             onEditButtonClicked: statusModal.editButtonClicked()
+            onHeaderImageClicked: statusModal.headerImageClicked()
             onClose: statusModal.close()
         }
 

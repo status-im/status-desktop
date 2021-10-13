@@ -12,8 +12,10 @@ Row {
     property int titleElide: Text.ElideRight
     property int subTitleElide: Text.ElideRight
     property bool editable: false
+    property bool headerImageEditable: false
 
     signal editButtonClicked
+    signal headerImageClicked
 
     property StatusImageSettings image: StatusImageSettings {
         width: 40
@@ -39,7 +41,7 @@ Row {
             }
             return statusRoundedImageCmp
         }
-        active: statusImageWithTitle.icon.isLetterIdenticon || 
+        active: statusImageWithTitle.icon.isLetterIdenticon ||
                 !!statusImageWithTitle.image.source.toString()
     }
 
@@ -64,12 +66,51 @@ Row {
                 width: statusImageWithTitle.image.width
                 height: statusImageWithTitle.image.height
                 color: statusImageWithTitle.image.isIdenticon ?
-                    Theme.palette.statusRoundedImage.backgroundColor :
-                    "transparent"
+                           Theme.palette.statusRoundedImage.backgroundColor :
+                           "transparent"
                 border.width: statusImageWithTitle.image.isIdenticon ? 1 : 0
                 border.color: Theme.palette.directColor7
                 showLoadingIndicator: true
             }
+
+            Rectangle {
+                id: editAvatarIcon
+
+                objectName: "editAvatarImage"
+                anchors.right: parent.right
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: -3
+                anchors.rightMargin: -2
+                width: 18
+                height: 18
+                radius: width / 2
+
+                visible: statusImageWithTitle.headerImageEditable
+
+                color: Theme.palette.primaryColor1;
+                border.color: Theme.palette.indirectColor1
+                border.width: Theme.palette.name === "light" ? 1 : 0
+
+                StatusIcon {
+                    anchors.centerIn: parent
+                    width: 11
+                    color: Theme.palette.indirectColor1
+                    icon: "tiny/edit"
+                }
+            }
+
+            MouseArea {
+                anchors.fill: parent
+
+                cursorShape: enabled ? Qt.PointingHandCursor
+                                     : Qt.ArrowCursor
+                enabled: statusImageWithTitle.headerImageEditable
+
+                onClicked: {
+                    statusImageWithTitle.headerImageClicked()
+                }
+            }
+
             Loader {
                 sourceComponent: statusLetterIdenticon
                 active: statusRoundedImage.image.status === Image.Error
@@ -80,7 +121,7 @@ Row {
     Column {
         id: textLayout
         width: !iconOrImage.active ? parent.width :
-              parent.width - iconOrImage.width - parent.spacing
+                                     parent.width - iconOrImage.width - parent.spacing
         Row {
             id: headerTitleRow
             width: parent.width
@@ -92,11 +133,12 @@ Row {
                 font.bold: true
                 elide: statusImageWithTitle.titleElide
                 color: Theme.palette.directColor1
-                width: !editButton.visible ? parent.width : 
-                      parent.width - editButton.width - parent.spacing
+                width: !editButton.visible ? parent.width :
+                                             parent.width - editButton.width - parent.spacing
             }
             StatusFlatRoundButton {
                 id: editButton
+                objectName: "editAvatarbButton"
                 visible: statusImageWithTitle.editable
                 anchors.bottom: headerTitle.bottom
                 anchors.bottomMargin: -1

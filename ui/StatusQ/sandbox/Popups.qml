@@ -54,6 +54,11 @@ Column {
     }
 
     StatusButton {
+        text: "Modal with editable identicon"
+        onClicked: modalWithEditableIdenticon.open()
+    }
+
+    StatusButton {
         text: "Modal with long titles"
         onClicked: modalWithLongTitles.open()
     }
@@ -238,6 +243,33 @@ Column {
         anchors.centerIn: parent
         header.title: "Header"
         header.subTitle: "SubTitle"
+        header.image.source: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAlklEQVR4nOzW0QmDQBAG4SSkl7SUQlJGCrElq9F3QdjjVhh/5nv3cFhY9vUIYQiNITSG0Bh
+CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2ImYgiNITTlTdG1nUZ5a92VITQxITFiJmIIjSE0htAYQrMHAAD//+wwFVpz+yqXAAAAAElFTkSuQmCC"
+        header.image.isIdenticon: true
+
+        contentItem: StatusBaseText {
+            anchors.centerIn: parent
+            text: "Some text content"
+            font.pixelSize: 15
+            color: Theme.palette.directColor1
+        }
+
+        rightButtons: [
+            StatusButton {
+                text: "Change text"
+                onClicked: {
+                    modalWithIdenticon.contentItem.text = "Changed!"
+                }
+            }
+        ]
+    }
+
+    StatusModal {
+        id: modalWithEditableIdenticon
+        anchors.centerIn: parent
+        header.title: "Header"
+        header.subTitle: "SubTitle"
+        header.headerImageEditable: true
         header.image.source: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAlklEQVR4nOzW0QmDQBAG4SSkl7SUQlJGCrElq9F3QdjjVhh/5nv3cFhY9vUIYQiNITSG0Bh
 CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2ImYgiNITTlTdG1nUZ5a92VITQxITFiJmIIjSE0htAYQrMHAAD//+wwFVpz+yqXAAAAAElFTkSuQmCC"
         header.image.isIdenticon: true

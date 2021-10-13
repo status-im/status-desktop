@@ -18,9 +18,11 @@ Rectangle {
     property alias image: imageWithTitle.image
     property alias icon: imageWithTitle.icon
     property bool editable: false
+    property alias headerImageEditable: imageWithTitle.headerImageEditable
     property Component popupMenu
 
     signal editButtonClicked
+    signal headerImageClicked
     signal close
 
     implicitHeight: visible? Math.max(closeButton.height, imageWithTitle.implicitHeight) + 32 : 0
@@ -36,6 +38,18 @@ Rectangle {
         }
     }
 
+    Rectangle {
+        anchors.bottom: parent.bottom
+        width: parent.width
+        height: parent.radius
+        color: parent.color
+
+        StatusModalDivider {
+            anchors.bottom: parent.bottom
+            width: parent.width
+        }
+    }
+
     StatusImageWithTitle {
         id: imageWithTitle
         anchors.verticalCenter: parent.verticalCenter
@@ -46,7 +60,7 @@ Rectangle {
         editable: statusModalHeader.editable
         titleElide: statusModalHeader.titleElide
         subTitleElide: statusModalHeader.subTitleElide
-        onEditButtonClicked: statusModalHeader.editButtonClicked()
+        onHeaderImageClicked: statusModalHeader.headerImageClicked()
     }
 
     MouseArea {
@@ -81,18 +95,6 @@ Rectangle {
         icon.height: 20
 
         onClicked: statusModalHeader.close()
-    }
-
-    Rectangle {
-        anchors.bottom: parent.bottom
-        width: parent.width
-        height: parent.radius
-        color: parent.color
-
-        StatusModalDivider {
-            anchors.bottom: parent.bottom
-            width: parent.width
-        }
     }
 
     Loader {

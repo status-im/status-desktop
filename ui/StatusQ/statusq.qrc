@@ -270,5 +270,44 @@
         <file>src/assets/img/icons/snt.svg</file>
         <file>src/StatusQ/Popups/StatusSpellcheckingMenuItems.qml</file>
         <file>src/StatusQ/Controls/StatusSelectableText.qml</file>
+        <file>src/assets/img/icons/tiny/add.svg</file>
+        <file>src/assets/img/icons/tiny/arrow-down.svg</file>
+        <file>src/assets/img/icons/tiny/channel-white.svg</file>
+        <file>src/assets/img/icons/tiny/channel.svg</file>
+        <file>src/assets/img/icons/tiny/chat.svg</file>
+        <file>src/assets/img/icons/tiny/chatbot.svg</file>
+        <file>src/assets/img/icons/tiny/checkmark.svg</file>
+        <file>src/assets/img/icons/tiny/chevron-down.svg</file>
+        <file>src/assets/img/icons/tiny/chevron-left.svg</file>
+        <file>src/assets/img/icons/tiny/chevron-right.svg</file>
+        <file>src/assets/img/icons/tiny/chevron-up.svg</file>
+        <file>src/assets/img/icons/tiny/clear.svg</file>
+        <file>src/assets/img/icons/tiny/community-1.svg</file>
+        <file>src/assets/img/icons/tiny/community.svg</file>
+        <file>src/assets/img/icons/tiny/contact.svg</file>
+        <file>src/assets/img/icons/tiny/double-checkmark.svg</file>
+        <file>src/assets/img/icons/tiny/edit.svg</file>
+        <file>src/assets/img/icons/tiny/external.svg</file>
+        <file>src/assets/img/icons/tiny/group-white.svg</file>
+        <file>src/assets/img/icons/tiny/group.svg</file>
+        <file>src/assets/img/icons/tiny/more.svg</file>
+        <file>src/assets/img/icons/tiny/message/delivered.svg</file>
+        <file>src/assets/img/icons/tiny/message/pending.svg</file>
+        <file>src/assets/img/icons/tiny/message/sent.svg</file>
+        <file>src/assets/img/icons/tiny/message/warning.svg</file>
+        <file>src/assets/img/icons/tiny/muted-white.svg</file>
+        <file>src/assets/img/icons/tiny/muted.svg</file>
+        <file>src/assets/img/icons/tiny/not-secure.svg</file>
+        <file>src/assets/img/icons/tiny/pending.svg</file>
+        <file>src/assets/img/icons/tiny/pin.svg</file>
+        <file>src/assets/img/icons/tiny/public-chat-white.svg</file>
+        <file>src/assets/img/icons/tiny/public-chat.svg</file>
+        <file>src/assets/img/icons/tiny/reply.svg</file>
+        <file>src/assets/img/icons/tiny/secure.svg</file>
+        <file>src/assets/img/icons/tiny/settings.svg</file>
+        <file>src/assets/img/icons/tiny/SNT.svg</file>
+        <file>src/assets/img/icons/tiny/time.svg</file>
+        <file>src/assets/img/icons/tiny/tribute-to-talk.svg</file>
+        <file>src/assets/img/icons/tiny/warning.svg</file>
     </qresource>
 </RCC>
