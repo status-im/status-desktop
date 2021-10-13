@@ -5,6 +5,9 @@ QtObject {
     id: root
 
     property var profileModelInst: profileModel
+    property var profileModuleInst: profileSectionModule
+    property var profile: profileModule
+
     property var chatsModelInst: chatsModel
     property var utilsModelInst: utilsModel
     property var walletModelInst: walletModel
@@ -24,23 +27,23 @@ QtObject {
 
     property string ensRegisterAddress: utilsModelInst.ensRegisterAddress
     property string etherscanLink: walletModelInst.utilsView.etherscanLink
-    property string pubKey: profileModelInst.profile.pubKey
+    property string pubKey: profile.pubKey
     property string fleet: profileModelInst.fleets.fleet
     property string bloomLevel: nodeModelInst.bloomLevel
     property string currentNetwork: profileModelInst.network.current
     property string preferredUsername: profileModelInst.ens.preferredUsername
     property string firstEnsUsername: profileModelInst.ens.firstEnsUsername
-    property string username: profileModelInst.profile.username
-    property string identicon: profileModelInst.profile.identicon
-    property string profileLargeImage: profileModelInst.profile.largeImage
-    property string profileThumbnailImage: profileModelInst.profile.thumbnailImage
+    property string username: profile.username
+    property string identicon: profile.identicon
+    property string profileLargeImage: profile.largeImage
+    property string profileThumbnailImage: profile.thumbnailImage
 
-    property bool profileHasIdentityImage: profileModelInst.profile.hasIdentityImage
+    property bool profileHasIdentityImage: profile.hasIdentityImage
     property bool automaticMailserverSelection: profileModelInst.mailservers.automaticSelection
     property bool isWakuV2LightClient: nodeModelInst.WakuV2LightClient
     property bool devicesSetup: profileModelInst.devices.isSetup
     property bool mnemonicBackedUp: profileModelInst.mnemonic.isBackedUp
-    property bool messagesFromContactsOnly: profileModelInst.profile.messagesFromContactsOnly
+    property bool messagesFromContactsOnly: profile.messagesFromContactsOnly
 
     property int profile_id: 0
     property int contacts_id: 1
