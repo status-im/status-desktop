@@ -4,6 +4,7 @@ import io_interface, view, controller, item
 import ../../core/global_singleton
 
 import chat_section/module as chat_section_module
+import wallet_section/module as wallet_section_module
 
 import ../../../app_service/service/keychain/service as keychain_service
 import ../../../app_service/service/accounts/service_interface as accounts_service
@@ -32,6 +33,7 @@ type
     controller: controller.AccessInterface
     chatSectionModule: chat_section_module.AccessInterface
     communitySectionsModule: OrderedTable[string, chat_section_module.AccessInterface]
+    walletSectionModule: wallet_section_module.AccessInterface
 
 proc newModule*[T](delegate: T,
   events: EventEmitter,
@@ -53,14 +55,19 @@ proc newModule*[T](delegate: T,
   result.communitySectionsModule = initOrderedTable[string, chat_section_module.AccessInterface]()
   let communities = result.controller.getCommunities()
   for c in communities:
-    result.communitySectionsModule[c.id] = chat_section_module.newModule(result, 
-    c.id, true, chatService, communityService)
+    result.communitySectionsModule[c.id] = chat_section_module.newModule(
+      result, c.id, true, chatService, communityService
+    )
+
+  result.walletSectionModule = wallet_section_module.newModule[Module[T]](result)
+
   
 method delete*[T](self: Module[T]) =
   self.chatSectionModule.delete
   for cModule in self.communitySectionsModule.values:
     cModule.delete
   self.communitySectionsModule.clear
+  self.walletSectionModule.delete
   self.view.delete
   self.viewVariant.delete
   self.controller.delete
@@ -84,6 +91,9 @@ method load*[T](self: Module[T]) =
   for cModule in self.communitySectionsModule.values:
     cModule.load()
 
+  self.walletSectionModule.load()
+
+
 proc checkIfModuleDidLoad [T](self: Module[T]) =
   if(not self.chatSectionModule.isLoaded()):
     return
@@ -92,12 +102,19 @@ proc checkIfModuleDidLoad [T](self: Module[T]) =
     if(not cModule.isLoaded()):
       return
 
+
+  if (not self.walletSectionModule.isLoaded()):
+    return
+
   self.delegate.mainDidLoad()
 
 method chatSectionDidLoad*[T](self: Module[T]) =
   self.checkIfModuleDidLoad()
 
 method communitySectionDidLoad*[T](self: Module[T]) =
+  self.checkIfModuleDidLoad()
+
+proc walletSectionDidLoad*[T](self: Module[T]) =
   self.checkIfModuleDidLoad()
 
 method viewDidLoad*[T](self: Module[T]) =
