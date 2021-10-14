@@ -6,6 +6,7 @@ import QtGraphicalEffects 1.0
 import utils 1.0
 import "../../shared"
 import "../../shared/panels"
+import "../../shared/controls"
 
 import "./emojiList.js" as EmojiJSON
 

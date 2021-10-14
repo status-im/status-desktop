@@ -7,6 +7,7 @@ import "../../../../shared"
 import "../../../../shared/views"
 import "../../../../shared/popups"
 import "../../../../shared/panels"
+import "../../../../shared/controls"
 import "../../../../shared/status"
 import "./"
 
