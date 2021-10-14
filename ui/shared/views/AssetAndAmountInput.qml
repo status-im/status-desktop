@@ -5,6 +5,8 @@ import QtGraphicalEffects 1.13
 
 import utils 1.0
 
+import "../"
+
 Item {
     //% "Insufficient balance"
     property string balanceErrorMessage: qsTrId("insufficient-balance")
