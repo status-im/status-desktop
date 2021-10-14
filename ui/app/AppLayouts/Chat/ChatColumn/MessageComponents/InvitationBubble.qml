@@ -2,6 +2,7 @@ import QtQuick 2.3
 import QtQuick.Dialogs 1.3
 import "../../../../../shared"
 import "../../../../../shared/popups"
+import "../../../../../shared/panels"
 import "../../../../../shared/status"
 
 import utils 1.0
