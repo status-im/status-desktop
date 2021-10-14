@@ -4,8 +4,8 @@ import QtQuick.Layouts 1.13
 import QtGraphicalEffects 1.13
 
 import utils 1.0
-import "./status/core"
-import "./status"
+import "../status/core"
+import "../status"
 
 Item {
     id: root

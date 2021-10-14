@@ -4,6 +4,7 @@ import QtGraphicalEffects 1.13
 
 import utils 1.0
 import "../"
+import "../views"
 import "../status"
 
 Item {
