@@ -40,6 +40,7 @@ ModalPopup {
 
     StatusSmartIdenticon {
         id: identicon
+        source: OnboardingStore.onBoardingModul.importedAccountIdenticon
         anchors.top: info.bottom
         anchors.topMargin: Style.current.bigPadding
         anchors.horizontalCenter: parent.horizontalCenter
@@ -53,7 +54,7 @@ ModalPopup {
         anchors.top: identicon.bottom
         anchors.topMargin: Style.current.padding
         anchors.horizontalCenter: identicon.horizontalCenter
-        text: OnboardingStore.currentAccount.username
+        text: OnboardingStore.onBoardingModul.importedAccountAlias
         font.weight: Font.Bold
         font.pixelSize: 15
     }
@@ -62,7 +63,7 @@ ModalPopup {
         anchors.top: username.bottom
         anchors.topMargin: Style.current.halfPadding
         anchors.horizontalCenter: username.horizontalCenter
-        text: OnboardingStore.currentAccount.address
+        text: OnboardingStore.onBoardingModul.importedAccountAddress
         width: 120
     }
 

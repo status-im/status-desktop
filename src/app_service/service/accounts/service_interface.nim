@@ -26,6 +26,22 @@ method generatedAccounts*(self: ServiceInterface):
   raise newException(ValueError, "No implementation available")
 
 method setupAccount*(self: ServiceInterface, fleetConfig: FleetConfig, 
-  accountId, password: string): 
-  AccountDto {.base.} =
+  accountId, password: string): bool {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getLoggedInAccount*(self: ServiceInterface): AccountDto {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getImportedAccount*(self: ServiceInterface): GeneratedAccountDto 
+  {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method isFirstTimeAccountLogin*(self: ServiceInterface): bool {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method validateMnemonic*(self: ServiceInterface, mnemonic: string): 
+  string {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method importMnemonic*(self: ServiceInterface, mnemonic: string): bool {.base.} =
   raise newException(ValueError, "No implementation available")

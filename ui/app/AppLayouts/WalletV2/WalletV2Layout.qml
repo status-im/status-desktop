@@ -54,10 +54,11 @@ Item {
         width: walletView.width
 
         Component.onCompleted: {
-            if (walletView.store.onboardingModelInst.firstTimeLogin) {
-                walletView.store.onboardingModelInst.firstTimeLogin = false;
-                walletView.store.walletModelInst.setInitialRange();
-            }
+            // Read in RootStore
+//            if (walletView.store.onboardingModelInst.firstTimeLogin) {
+//                walletView.store.onboardingModelInst.firstTimeLogin = false;
+//                walletView.store.walletModelInst.setInitialRange();
+//            }
         }
         
         leftPanel: LeftTabView {

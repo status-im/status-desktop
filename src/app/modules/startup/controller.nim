@@ -1,29 +1,29 @@
 import Tables
 
 import controller_interface
+import io_interface
 
 import ../../../app_service/service/accounts/service_interface as accounts_service
 
 export controller_interface
 
 type 
-  Controller*[T: controller_interface.DelegateInterface] = 
-    ref object of controller_interface.AccessInterface
-    delegate: T
+  Controller* = ref object of controller_interface.AccessInterface
+    delegate: io_interface.AccessInterface
     accountsService: accounts_service.ServiceInterface
 
-proc newController*[T](delegate: T,
+proc newController*(delegate: io_interface.AccessInterface,
   accountsService: accounts_service.ServiceInterface): 
-  Controller[T] =
-  result = Controller[T]()
+  Controller =
+  result = Controller()
   result.delegate = delegate
   result.accountsService = accountsService
   
-method delete*[T](self: Controller[T]) =
+method delete*(self: Controller) =
   discard
 
-method init*[T](self: Controller[T]) = 
+method init*(self: Controller) = 
   discard
 
-method shouldStartWithOnboardingScreen*[T](self: Controller[T]): bool =
-  return self.accountsService.openedAccounts().len > 0
+method shouldStartWithOnboardingScreen*(self: Controller): bool =
+  return self.accountsService.openedAccounts().len == 0

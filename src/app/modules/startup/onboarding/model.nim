@@ -32,7 +32,7 @@ QtObject:
   method roleNames(self: Model): Table[int, string] =
     {
       ModelRole.Id.int:"accountId",
-      ModelRole.Alias.int:"alias",
+      ModelRole.Alias.int:"username",
       ModelRole.Identicon.int:"identicon",
       ModelRole.Address.int:"address",
       ModelRole.KeyUid.int:"keyUid"

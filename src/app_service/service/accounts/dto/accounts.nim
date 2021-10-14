@@ -5,7 +5,7 @@ import json
 include ../../../common/json_utils
 
 type
-  Image* = ref object
+  Image* = object
     keyUid*: string
     imgType*: string
     uri*: string
@@ -14,13 +14,16 @@ type
     fileSize: int
     resizeTarget: int
 
-type AccountDto* = ref object
+type AccountDto* = object
   name*: string 
   timestamp*: int64
   identicon*: string
   keycardPairing*: string
   keyUid*: string
   images*: seq[Image]
+
+proc isValid*(self: AccountDto): bool =
+  result = self.name.len > 0 and self.keyUid.len > 0
 
 proc toImage(jsonObj: JsonNode): Image =
   result = Image()

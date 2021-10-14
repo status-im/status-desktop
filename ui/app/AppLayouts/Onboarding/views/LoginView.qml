@@ -25,16 +25,10 @@ Item {
     id: loginView
     anchors.fill: parent
 
-    function setCurrentFlow(isLogin) {
-        LoginStore.loginModelInst.isCurrentFlow = isLogin;
-        OnboardingStore.onBoardingModel.isCurrentFlow = !isLogin;
-    }
-
     function doLogin(password) {
         if (loading || password.length === 0)
             return
 
-        setCurrentFlow(true);
         loading = true
         LoginStore.login(password)
         applicationWindow.checkForStoringPassToKeychain(LoginStore.currentAccount.username, password, false)
@@ -116,7 +110,6 @@ Item {
         ConfirmAddExistingKeyModal {
             id: confirmAddExstingKeyModal
             onOpenModalClick: function () {
-                setCurrentFlow(false);
                 onExistingKeyClicked()
             }
         }
@@ -128,7 +121,6 @@ Item {
                 resetLogin()
             }
             onOpenModalClick: function () {
-                setCurrentFlow(true);
                 onExistingKeyClicked()
             }
         }
@@ -185,7 +177,7 @@ Item {
             anchors.top: changeAccountBtn.bottom
             anchors.topMargin: Style.current.padding * 2
             enabled: !loading
-            placeholderText: loading ? 
+            placeholderText: loading ?
                 //% "Connecting..."
                 qsTrId("connecting") :
                 //% "Enter password"
@@ -259,7 +251,6 @@ Item {
             anchors.topMargin: 16
             anchors.horizontalCenter: parent.horizontalCenter
             onClicked: {
-                setCurrentFlow(false);
                 onGenKeyClicked()
             }
         }

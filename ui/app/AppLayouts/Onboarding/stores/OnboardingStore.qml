@@ -3,15 +3,14 @@ pragma Singleton
 import QtQuick 2.13
 
 QtObject {
-    property var onBoardingModel: onboardingModel
-    property var currentAccount: onboardingModel.currentAccount
+    property var onBoardingModul: onboardingModule
 
     function importMnemonic(mnemonic) {
-        onboardingModel.importMnemonic(mnemonic)
+        onBoardingModul.importMnemonic(mnemonic)
     }
 
     function setCurrentAccount(selectedAccountIdx) {
-        onboardingModel.setCurrentAccount(selectedAccountIdx)
+        onBoardingModul.setSelectedAccountByIndex(selectedAccountIdx)
     }
 
     property ListModel accountsSampleData: ListModel {
