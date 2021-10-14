@@ -6,6 +6,7 @@ import QtMultimedia 5.13
 import utils 1.0
 import "../shared"
 import "../shared/status"
+import "../shared/panels"
 import "../shared/popups"
 import "./AppLayouts"
 import "./AppLayouts/Timeline"
