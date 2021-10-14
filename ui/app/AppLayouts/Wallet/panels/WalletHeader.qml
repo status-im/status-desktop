@@ -5,6 +5,7 @@ import QtQuick.Layouts 1.13
 import utils 1.0
 
 import "../../../../shared"
+import "../../../../shared/popups"
 import "../../../../shared/status"
 import "../popups"
 import "../controls"
@@ -156,6 +157,7 @@ Item {
             anchors.left: receiveBtn.right
             anchors.leftMargin: walletMenu.btnOuterMargin
 
+            // TODO: replace with StatusPopupMenu
             PopupMenu {
                 id: newSettingsMenu
                 closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent

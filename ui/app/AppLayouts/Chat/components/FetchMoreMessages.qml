@@ -2,10 +2,12 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import "../../../../shared"
+import "../../../../shared/popups"
 import "../../../../shared/status"
 
 import utils 1.0
 
+// TODO: replace with StatusPopupmenu
 PopupMenu {
     //% "Fetch Messages"
     title: qsTrId("fetch-messages")

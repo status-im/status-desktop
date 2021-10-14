@@ -6,7 +6,9 @@ import QtQml.Models 2.3
 import utils 1.0
 import "status"
 import "./"
+import "./popups"
 
+// TODO: replace with StatusPopupMenu
 PopupMenu {
     id: root
     width: profileHeader.width

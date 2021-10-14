@@ -9,6 +9,7 @@ import StatusQ.Popups 0.1
 
 import utils 1.0
 import "../../../../shared"
+import "../../../../shared/popups"
 import "../../../../shared/status"
 import "./"
 
@@ -168,6 +169,7 @@ StatusPopupMenu {
         enabled: false
     }
 
+    // TODO: replace with StatusPopupMenu
     PopupMenu {
         id: copyLinkMenu
         //% "Copy link"

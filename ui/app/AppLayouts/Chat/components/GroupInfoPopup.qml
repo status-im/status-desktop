@@ -344,6 +344,7 @@ ModalPopup {
                             contextMenu.popup(-contextMenu.width / 2 + moreActionsBtn.width / 2, moreActionsBtn.height + 10)
                         }
                         cursorShape: Qt.PointingHandCursor
+                        // TODO: replace with StatusPopupMenu
                         PopupMenu {
                             id: contextMenu
                             Action {
