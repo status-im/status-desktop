@@ -77,5 +77,8 @@ QtObject:
     of ModelRole.IsCustom: 
       result = newQVariant(item.getIsCustom())
 
-  proc setData*(self: Model, item: seq[Item]) =
+  proc setItems*(self: Model, items: seq[Item]) =
+    self.beginResetModel()
+    self.items = items
+    self.endResetModel()
     self.countChanged()
