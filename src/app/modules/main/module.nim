@@ -19,20 +19,6 @@ type
     chatSectionModule: chat_section_module.AccessInterface
     communitySectionsModule: OrderedTable[string, community_section_module.AccessInterface]
 
-#################################################
-# Forward declaration section
-
-# Controller Delegate Interface
-
-
-# Chat Section Module Delegate Interface
-proc chatSectionDidLoad*[T](self: Module[T])
-
-# Community Section Module Delegate Interface
-proc communitySectionDidLoad*[T](self: Module[T])
-
-#################################################
-
 proc newModule*[T](delegate: T, 
   communityService: community_service.Service): 
   Module[T] =
@@ -40,16 +26,16 @@ proc newModule*[T](delegate: T,
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController[Module[T]](result, communityService)
+  result.controller = controller.newController(result, communityService)
 
   singletonInstance.engine.setRootContextProperty("mainModule", result.viewVariant)
 
   # Submodules
-  result.chatSectionModule = chat_section_module.newModule[Module[T]](result)
+  result.chatSectionModule = chat_section_module.newModule(result)
   result.communitySectionsModule = initOrderedTable[string, community_section_module.AccessInterface]()
   let communities = result.controller.getCommunities()
   for c in communities:
-    result.communitySectionsModule[c.id] = community_section_module.newModule[Module[T]](result, 
+    result.communitySectionsModule[c.id] = community_section_module.newModule(result, 
     c.id, communityService)
   
 method delete*[T](self: Module[T]) =
@@ -87,11 +73,11 @@ proc checkIfModuleDidLoad [T](self: Module[T]) =
 
   self.delegate.mainDidLoad()
 
-proc chatSectionDidLoad*[T](self: Module[T]) =
+method chatSectionDidLoad*[T](self: Module[T]) =
   self.checkIfModuleDidLoad()
 
-proc communitySectionDidLoad*[T](self: Module[T]) =
+method communitySectionDidLoad*[T](self: Module[T]) =
   self.checkIfModuleDidLoad()
 
 method viewDidLoad*[T](self: Module[T]) =
-  discard
+  self.checkIfModuleDidLoad()
