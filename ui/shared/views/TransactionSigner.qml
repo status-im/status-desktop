@@ -2,7 +2,9 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 
+import StatusQ.Controls 0.1 as StatusQ
 import utils 1.0
+
 import "../status"
 import "../panels"
 import "../controls"
@@ -60,7 +62,7 @@ Item {
             icon.width: width
             icon.height: height
             icon.name: "info"
-            StatusToolTip {
+            StatusQ.StatusToolTip {
               visible: infoButton.hovered
               //% "Signing phrase is a 3 word combination that displayed when you entered the wallet on this device for the first time."
               text: qsTrId("signing-phrase-is-a-3-word-combination-that-displayed-when-you-entered-the-wallet-on-this-device-for-the-first-time-")
@@ -88,7 +90,7 @@ Item {
         icon.width: width
         icon.height: height
         icon.name: "info"
-        StatusToolTip {
+        StatusQ.StatusToolTip {
           visible: passwordInfoButton.hovered
           //% "Enter the password you use to unlock this device"
           text: qsTrId("enter-the-password-you-use-to-unlock-this-device")

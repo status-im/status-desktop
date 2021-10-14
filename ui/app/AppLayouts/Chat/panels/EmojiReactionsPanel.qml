@@ -4,7 +4,8 @@ import QtGraphicalEffects 1.13
 
 import "../../../../shared"
 import "../../../../shared/panels"
-import "../../../../shared/status"
+
+import StatusQ.Controls 0.1 as StatusQ
 import utils 1.0
 
 Item {
@@ -40,7 +41,7 @@ Item {
                            (isHovered ? Style.current.emojiReactionActiveBackgroundHovered : Style.current.secondaryBackground) :
                            (isHovered ? Style.current.emojiReactionBackgroundHovered : Style.current.emojiReactionBackground)
 
-                StatusToolTip {
+                StatusQ.StatusToolTip {
                     visible: mouseArea.containsMouse
                     maxWidth: 400
                     text: showReactionAuthors(modelData.fromAccounts, modelData.emojiId)
@@ -180,7 +181,7 @@ Item {
                 }
             }
 
-            StatusToolTip {
+            StatusQ.StatusToolTip {
               visible: addEmojiBtn.isHovered
               //% "Add reaction"
               text: qsTrId("add-reaction")

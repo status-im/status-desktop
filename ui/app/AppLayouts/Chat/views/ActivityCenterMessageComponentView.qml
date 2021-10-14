@@ -1,6 +1,10 @@
 import QtQuick 2.13
 
+
 import utils 1.0
+
+import StatusQ.Controls 0.1 as StatusQ
+
 import "../../../../shared"
 import "../../../../shared/status"
 import "../../../../shared/popups"
@@ -48,11 +52,11 @@ Item {
 
             onClicked: chatsModel.activityNotificationList.markActivityCenterNotificationRead(model.id, model.message.communityId, model.message.chatId, model.notificationType)
 
-            StatusToolTip {
+            StatusQ.StatusToolTip {
                 visible: markReadBtn.hovered
                 //% "Mark as Read"
                 text: qsTrId("mark-as-read")
-                orientation: "left"
+                orientation: StatusQ.StatusToolTip.Orientation.Left// "left"
                 x: - width - Style.current.padding
                 y: markReadBtn.height / 2 - height / 2 + 4
             }
