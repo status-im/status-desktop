@@ -35,7 +35,7 @@ proc newModule*[T](delegate: T, tokenService: token_service.Service): Module[T] 
   
   result.accountTokensModule = account_tokens_module.newModule(result)
   result.accountsModule = accounts_module.newModule(result)
-  result.allTokensModule = all_tokens_module.newModule(result)
+  result.allTokensModule = all_tokens_module.newModule(result, tokenService)
   result.collectiblesModule = collectibles_module.newModule(result)
   result.mainAccountModule = main_account_module.newModule(result)
   result.transactionsModule = transactions_module.newModule(result)
