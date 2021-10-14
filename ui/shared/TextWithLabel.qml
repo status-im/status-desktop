@@ -5,6 +5,7 @@ import QtQuick.Layouts 1.13
 import utils 1.0
 
 import "./controls"
+import "./panels"
 
 // TODO: replace with StatusQ components
 Item {

@@ -8,6 +8,7 @@ import DotherSide 0.1
 
 import utils 1.0
 import "../../shared"
+import "../../shared/panels"
 import "../../app/AppLayouts/Chat/ChatColumn/samples"
 import "../../app/AppLayouts/Chat/ChatColumn"
 

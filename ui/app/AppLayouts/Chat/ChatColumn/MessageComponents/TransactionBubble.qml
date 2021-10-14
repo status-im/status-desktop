@@ -1,5 +1,6 @@
 import QtQuick 2.3
 import "../../../../../shared"
+import "../../../../../shared/panels"
 
 import utils 1.0
 import "./TransactionComponents"

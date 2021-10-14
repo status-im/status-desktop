@@ -4,6 +4,7 @@ import QtQml 2.14
 
 import utils 1.0
 import "../"
+import "../panels"
 
 Button {
     property string label: "My button"

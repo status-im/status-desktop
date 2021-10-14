@@ -1,7 +1,7 @@
 import QtQuick 2.13
 
 import utils 1.0
-import "../"
+import "./"
 
 // TODO: replace with StatusBaseText
 StyledText {

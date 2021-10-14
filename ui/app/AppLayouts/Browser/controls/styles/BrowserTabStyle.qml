@@ -1,6 +1,7 @@
 import QtQuick 2.13
 import QtQuick.Controls.Styles 1.0
 import "../../../../../shared"
+import "../../../../../shared/panels"
 import "../../../../../shared/status"
 import "../"
 

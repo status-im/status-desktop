@@ -3,6 +3,7 @@ import QtQuick.Controls 2.14
 
 import utils 1.0
 import "../../../../shared"
+import "../../../../shared/panels"
 
 import StatusQ.Popups 0.1
 import StatusQ.Components 0.1
