@@ -8,6 +8,7 @@ import utils 1.0
 import "../status"
 import "../"
 import "../panels"
+import "../controls"
 
 Item {
     property alias textField: inputValue

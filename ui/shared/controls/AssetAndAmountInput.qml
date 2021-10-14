@@ -7,6 +7,7 @@ import utils 1.0
 
 import "../"
 import "../panels"
+import "../controls"
 import "."
 
 Item {
