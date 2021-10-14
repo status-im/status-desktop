@@ -269,7 +269,7 @@ proc mainProc() =
   # https://doc.qt.io/archives/qtjambi-4.5.2_01/com/trolltech/qt/qtjambi-linguist-programmers.html
   changeLanguage("en")
 
-  singletonInstance.engine.load(newQUrl("qrc:///main.qml"))
+  #singletonInstance.engine.load(newQUrl("qrc:///main.qml"))
 
   # Please note that this must use the `cdecl` calling convention because
   # it will be passed as a regular C function to statusgo_backend. This means that

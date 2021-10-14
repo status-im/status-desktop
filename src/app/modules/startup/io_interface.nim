@@ -1,22 +1,19 @@
-type 
-  AccessInterface* {.pure inheritable.} = ref object of RootObj
-  ## Abstract class for any input/interaction with this module.
+# Defines how parent module accesses this module
+include ./private_interfaces/module_base_interface
+include ./private_interfaces/module_access_interface
 
-method delete*(self: AccessInterface) {.base.} =
-  raise newException(ValueError, "No implementation available")
+# Defines how this module view communicates with this module
+include ./private_interfaces/module_view_delegate_interface
 
-method load*(self: AccessInterface) {.base.} =
-  raise newException(ValueError, "No implementation available")
+# Defines how this controller communicates with this module
+include ./private_interfaces/module_controller_delegate_interface
 
-# View Delegate Interface
-# Delegate for the view must be declared here due to use of QtObject and multi 
-# inheritance, which is not well supported in Nim.
-method viewDidLoad*(self: AccessInterface) {.base.} =
-  raise newException(ValueError, "No implementation available")
+# Defines how submodules of this module communicate with this module
+include ./private_interfaces/module_onboarding_delegate_interface
+include ./private_interfaces/module_login_delegate_interface
 
-
+# This way (using concepts) is used only for the modules managed by AppController
 type
-  ## Abstract class (concept) which must be implemented by object/s used in this 
-  ## module.
   DelegateInterface* = concept c
     c.startupDidLoad()
+    c.accountCreated()

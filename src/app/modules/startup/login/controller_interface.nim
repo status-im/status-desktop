@@ -1,4 +1,4 @@
-#import ../../../../app_service/service/community/service_interface as community_service
+import ../../../../app_service/service/accounts/service_interface
 
 type 
   AccessInterface* {.pure inheritable.} = ref object of RootObj
@@ -9,10 +9,6 @@ method delete*(self: AccessInterface) {.base.} =
 
 method init*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
-
-
-type
-  ## Abstract class (concept) which must be implemented by object/s used in this 
-  ## module.
-  DelegateInterface* = concept c
     
+method getOpenedAccounts*(self: AccessInterface): seq[AccountDto] {.base.} =
+  raise newException(ValueError, "No implementation available")

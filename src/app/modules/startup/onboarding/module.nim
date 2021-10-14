@@ -1,5 +1,7 @@
 import NimQml
-import io_interface, view, controller, item
+import io_interface
+import ../io_interface as delegate_interface
+import view, controller, item
 import ../../../../app/boot/global_singleton
 
 import ../../../../app_service/[main]
@@ -8,33 +10,32 @@ import ../../../../app_service/service/accounts/service_interface as accounts_se
 export io_interface
 
 type 
-  Module* [T: io_interface.DelegateInterface] = ref object of io_interface.AccessInterface
-    delegate: T
+  Module* = ref object of io_interface.AccessInterface
+    delegate: delegate_interface.AccessInterface
     view: View
     viewVariant: QVariant
     controller: controller.AccessInterface
     moduleLoaded: bool
 
-proc newModule*[T](delegate: T,
+proc newModule*(delegate: delegate_interface.AccessInterface,
   appService: AppService,
   accountsService: accounts_service.ServiceInterface): 
-  Module[T] =
-  result = Module[T]()
+  Module =
+  result = Module()
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController[Module[T]](result, appService,
-  accountsService)
+  result.controller = controller.newController(result, appService, accountsService)
   result.moduleLoaded = false
 
   singletonInstance.engine.setRootContextProperty("onboardingModule", result.viewVariant)
 
-method delete*[T](self: Module[T]) =
+method delete*(self: Module) =
   self.view.delete
   self.viewVariant.delete
   self.controller.delete
 
-method load*[T](self: Module[T]) =
+method load*(self: Module) =
   singletonInstance.engine.setRootContextProperty("onboardingModule", self.viewVariant)
   self.controller.init()
   self.view.load()
@@ -44,19 +45,38 @@ method load*[T](self: Module[T]) =
   for acc in generatedAccounts:
     accounts.add(initItem(acc.id, acc.alias, acc.identicon, acc.address, acc.keyUid))
 
-  self.view.setAccountList(accounts)
+  self.view.setAccountList(accounts)  
 
-  self.moduleLoaded = true
-  self.delegate.onboardingDidLoad()
-
-method isLoaded*[T](self: Module[T]): bool =
+method isLoaded*(self: Module): bool =
   return self.moduleLoaded
 
 method viewDidLoad*(self: Module) =
-  discard
+  self.moduleLoaded = true
+  self.delegate.onboardingDidLoad()
 
-method setSelectedAccountId*[T](self: Module[T], id: string) =
-  self.controller.setSelectedAccountId(id)
+method setSelectedAccountByIndex*(self: Module, index: int) =
+  self.controller.setSelectedAccountByIndex(index)
 
-method storeSelectedAccountAndLogin*[T](self: Module[T], password: string) =
+method storeSelectedAccountAndLogin*(self: Module, password: string) =
   self.controller.storeSelectedAccountAndLogin(password)
+
+method accountCreated*(self: Module) =
+  self.delegate.accountCreated()
+
+method setupAccountError*(self: Module) =
+  self.view.setupAccountError()
+
+method getImportedAccount*(self: Module): GeneratedAccountDto =
+  return self.controller.getImportedAccount()
+
+method validateMnemonic*(self: Module, mnemonic: string): string =
+  return self.controller.validateMnemonic(mnemonic)
+
+method importMnemonic*(self: Module, mnemonic: string) =
+  self.controller.importMnemonic(mnemonic)
+
+method importAccountError*(self: Module) =
+  self.view.importAccountError()
+
+method importAccountSuccess*(self: Module) =
+  self.view.importAccountSuccess()
