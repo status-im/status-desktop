@@ -8,6 +8,7 @@ import "../../../../../shared"
 import "../../../../../shared/panels"
 import "../../../../../shared/controls"
 import "../../../../../shared/popups"
+import "../../../../../shared/views"
 import "../../../../../shared/status"
 
 // TODO: replace with StatusModal
