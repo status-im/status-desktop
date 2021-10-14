@@ -5,6 +5,7 @@ import ../../core/global_singleton
 
 import chat_section/module as chat_section_module
 import wallet_section/module as wallet_section_module
+import browser_section/module as browser_section_module
 
 import ../../../app_service/service/keychain/service as keychain_service
 import ../../../app_service/service/accounts/service_interface as accounts_service
@@ -15,13 +16,14 @@ import ../../../app_service/service/transaction/service as transaction_service
 import ../../../app_service/service/collectible/service as collectible_service
 import ../../../app_service/service/wallet_account/service as wallet_account_service
 import ../../../app_service/service/setting/service as setting_service
+import ../../../app_service/service/bookmarks/service as bookmark_service
 
 import eventemitter
 
 export io_interface
 
 type
-  ChatSectionType* {.pure.} = enum
+  SectionType* {.pure.} = enum
     Chat = 0
     Community,
     Wallet,
@@ -39,6 +41,8 @@ type
     chatSectionModule: chat_section_module.AccessInterface
     communitySectionsModule: OrderedTable[string, chat_section_module.AccessInterface]
     walletSectionModule: wallet_section_module.AccessInterface
+    browserSectionModule: browser_section_module.AccessInterface
+    moduleLoaded: bool
 
 proc newModule*[T](
   delegate: T,
@@ -51,6 +55,7 @@ proc newModule*[T](
   transactionService: transaction_service.Service,
   collectibleService: collectible_service.Service,
   walletAccountService: wallet_account_service.Service,
+  bookmarkService: bookmark_service.Service, 
   settingService: setting_service.Service
 ): Module[T] =
   result = Module[T]()
@@ -59,6 +64,7 @@ proc newModule*[T](
   result.viewVariant = newQVariant(result.view)
   result.controller = controller.newController(result, events, keychainService, 
   accountsService, communityService)
+  result.moduleLoaded = false
 
   # Submodules
   result.chatSectionModule = chat_section_module.newModule(result, "chat", 
@@ -79,13 +85,16 @@ proc newModule*[T](
     walletAccountService,
     settingService
   )
-  
+
+  result.browserSectionModule = browser_section_module.newModule(result, bookmarkService)
+
 method delete*[T](self: Module[T]) =
   self.chatSectionModule.delete
   for cModule in self.communitySectionsModule.values:
     cModule.delete
   self.communitySectionsModule.clear
   self.walletSectionModule.delete
+  self.browserSectionModule.delete
   self.view.delete
   self.viewVariant.delete
   self.controller.delete
@@ -95,13 +104,13 @@ method load*[T](self: Module[T]) =
   self.controller.init()
   self.view.load()
 
-  let chatSectionItem = initItem("chat", ChatSectionType.Chat.int, "Chat", "", 
+  let chatSectionItem = initItem("chat", SectionType.Chat.int, "Chat", "", 
   "chat", "", 0, 0)
   self.view.addItem(chatSectionItem)
   
   let communities = self.controller.getCommunities()
   for c in communities:
-    self.view.addItem(initItem(c.id, ChatSectionType.Community.int, c.name, 
+    self.view.addItem(initItem(c.id, SectionType.Community.int, c.name, 
     if not c.images.isNil: c.images.thumbnail else: "",
     "", c.color, 0, 0))
 
@@ -109,13 +118,21 @@ method load*[T](self: Module[T]) =
   for cModule in self.communitySectionsModule.values:
     cModule.load()
 
-  let walletSectionItem = initItem("wallet", ChatSectionType.Wallet.int, "Wallet", "", 
+  let walletSectionItem = initItem("wallet", SectionType.Wallet.int, "Wallet", "", 
   "wallet", "", 0, 0)
   self.view.addItem(chatSectionItem)
   self.walletSectionModule.load()
 
+  self.browserSectionModule.load()
+  
+  let browserSectionItem = initItem("browser", SectionType.Browser.int, "Browser")
+  self.view.addItem(browserSectionItem)
+
 
 proc checkIfModuleDidLoad [T](self: Module[T]) =
+  if self.moduleLoaded:
+    return
+
   if(not self.chatSectionModule.isLoaded()):
     return
 
@@ -123,10 +140,13 @@ proc checkIfModuleDidLoad [T](self: Module[T]) =
     if(not cModule.isLoaded()):
       return
 
-
   if (not self.walletSectionModule.isLoaded()):
     return
 
+  if(not self.browserSectionModule.isLoaded()):
+    return
+
+  self.moduleLoaded = true
   self.delegate.mainDidLoad()
 
 method chatSectionDidLoad*[T](self: Module[T]) =
@@ -136,6 +156,9 @@ method communitySectionDidLoad*[T](self: Module[T]) =
   self.checkIfModuleDidLoad()
 
 proc walletSectionDidLoad*[T](self: Module[T]) =
+  self.checkIfModuleDidLoad()
+
+method browserSectionDidLoad*[T](self: Module[T]) =
   self.checkIfModuleDidLoad()
 
 method viewDidLoad*[T](self: Module[T]) =
