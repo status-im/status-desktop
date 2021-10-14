@@ -3,9 +3,10 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 
 import utils 1.0
-import "../shared/status"
-import "./"
+import "../status"
+import "../"
 
+// TODO: replace with StatusModal
 ModalPopup {
     id: popup
 
@@ -27,7 +28,7 @@ ModalPopup {
         sourceSize.width: width * 2
         anchors.horizontalCenter: parent.horizontalCenter
         fillMode: Image.PreserveAspectFit
-        source: "../app/img/exclamation_outline.svg"
+        source: Style.svg("exclamation_outline")
     }
 
 
