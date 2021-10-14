@@ -1,5 +1,6 @@
 import QtQuick 2.3
 import "../../../../../../shared"
+import "../../../../../../shared/controls"
 
 import utils 1.0
 import "../../ChatComponents"

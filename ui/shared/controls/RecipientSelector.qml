@@ -5,8 +5,8 @@ import QtGraphicalEffects 1.13
 
 import utils 1.0
 
-import "./controls"
-import "./panels"
+import "."
+import "../panels"
 
 Item {
     id: root
