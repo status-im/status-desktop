@@ -13,8 +13,8 @@ ModalPopup {
     displayCloseButton: false
     //% "Before you get started..."
     title: qsTrId("before-you-get-started---")
-    width: 430
-    height: 300
+    width: 480
+    height: 318
 
     ColumnLayout {
         anchors.centerIn: parent
@@ -97,7 +97,7 @@ ModalPopup {
             id: getStartedButton
             anchors.right: parent.right
             enabled: acknowledge.checked && termsOfUse.checked
-            width: 146
+            width: 130
             height: 44
             //% "Get Started"
             text: qsTrId("get-started")
