@@ -5,8 +5,10 @@ import QtGraphicalEffects 1.13
 import utils 1.0
 
 import "../../../../shared"
+import "../../../../shared/popups"
 import "../../../../shared/status"
 
+// TODO: replace with StatusModal
 ModalPopup {
     property var onConfirmSeedClick: function () {}
     id: popup

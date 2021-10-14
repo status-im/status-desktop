@@ -7,8 +7,10 @@ import utils 1.0
 import "../../../../../shared"
 import "../../../../../shared/panels"
 import "../../../../../shared/controls"
+import "../../../../../shared/popups"
 import "../../../../../shared/status"
 
+// TODO: replace with StatusModal
 ModalPopup {
     property string commandTitle: "Send"
     property string finalButtonLabel: "Request address"

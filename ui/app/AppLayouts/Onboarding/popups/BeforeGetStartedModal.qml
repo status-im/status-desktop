@@ -5,8 +5,10 @@ import QtQuick.Layouts 1.14
 import utils 1.0
 
 import "../../../../shared"
+import "../../../../shared/popups"
 import "../../../../shared/status"
 
+// TODO: replace with StatusModal
 ModalPopup {
     id: popup
 

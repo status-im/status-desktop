@@ -4,9 +4,11 @@ import QtQuick.Controls 2.13
 import utils 1.0
 import "../../../../shared"
 import "../../../../shared/status"
+import "../../../../shared/popups"
 import "../panels"
 import "../stores"
 
+// TODO: replace with StatusModal
 ModalPopup {
     id: popup
     width: 480

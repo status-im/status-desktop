@@ -8,7 +8,9 @@ import "../"
 import "../panels"
 import "../controls"
 import "../status"
+import "."
 
+// TODO: replace with StatusModal
 ModalPopup {
     id: root
     property alias selectFromAccount: selectFromAccount

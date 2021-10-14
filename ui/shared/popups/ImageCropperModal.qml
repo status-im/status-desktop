@@ -6,6 +6,7 @@ import utils 1.0
 import "../"
 import "../status"
 import "../controls"
+import "."
 
 // TODO: replace with StatusModal
 ModalPopup {

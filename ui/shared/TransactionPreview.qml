@@ -6,6 +6,7 @@ import QtGraphicalEffects 1.13
 import utils 1.0
 import "../shared/status"
 import "../shared/panels"
+import "../shared/popups"
 
 Item {
     id: root
@@ -524,6 +525,7 @@ Item {
                     }
                 }
 
+                // TODO: replace with StatusModal
                 ModalPopup {
                     id: dataPopup
                     //% "Data field"

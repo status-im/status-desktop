@@ -9,6 +9,7 @@ import "../../shared/status"
 import "../../shared/controls"
 import "../../shared/popups"
 
+// TODO: replace with StatusModal
 ModalPopup {
     id: root
     readonly property var asset: {"name": "Ethereum", "symbol": "ETH"}

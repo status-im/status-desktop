@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.13
 import QtGraphicalEffects 1.13
 
 import utils 1.0
+import "../"
 
 Popup {
     property string title
@@ -86,7 +87,7 @@ Popup {
 
             SVGImage {
                 id: closeModalImg
-                source: "./img/close.svg"
+                source: Style.svg("close")
                 width: 11
                 height: 11
                 anchors.horizontalCenter: parent.horizontalCenter
