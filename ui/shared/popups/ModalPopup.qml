@@ -88,7 +88,7 @@ Popup {
 
             SVGImage {
                 id: closeModalImg
-                source: Style.svg("close")
+                source: "../img/close.svg"
                 width: 11
                 height: 11
                 anchors.horizontalCenter: parent.horizontalCenter
