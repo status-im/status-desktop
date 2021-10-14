@@ -6,7 +6,7 @@ import QtQuick.Dialogs 1.3
 import utils 1.0
 import "../"
 import "../panels"
-import "../views"
+import "../controls"
 import "../status"
 
 ModalPopup {
