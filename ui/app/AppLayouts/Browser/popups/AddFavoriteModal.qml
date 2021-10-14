@@ -131,7 +131,7 @@ ModalPopup {
             anchors.bottom: parent.bottom
             type: StatusBaseButton.Type.Danger
             onClicked: {
-                BookmarksStore.removeBookmark(popup.ogUrl)
+                BookmarksStore.deleteBookmark(popup.ogUrl)
                 popup.close()
             }
         }
@@ -153,11 +153,11 @@ ModalPopup {
 
                 if (!popup.modifiyModal) {
                     // remove "add favorite" button at the end, add new bookmark, add "add favorite" button back
-                    BookmarksStore.removeBookmark("")
+                    BookmarksStore.deleteBookmark("")
                     BookmarksStore.addBookmark(urlInput.text, nameInput.text)
                     BookmarksStore.addBookmark("", qsTr("Add Favorite"))
                 } else if (popup.ogName !== nameInput.text || popup.ogUrl !== urlInput.text) {
-                    BookmarksStore.modifyBookmark(popup.ogUrl, urlInput.text, nameInput.text)
+                    BookmarksStore.updateBookmark(popup.ogUrl, urlInput.text, nameInput.text)
                 }
 
                 popup.close()

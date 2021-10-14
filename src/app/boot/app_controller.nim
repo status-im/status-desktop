@@ -11,6 +11,7 @@ import ../../app_service/service/transaction/service as transaction_service
 import ../../app_service/service/collectible/service as collectible_service
 import ../../app_service/service/wallet_account/service as wallet_account_service
 import ../../app_service/service/setting/service as setting_service
+import ../../app_service/service/bookmarks/service as bookmark_service
 
 import ../core/local_account_settings
 import ../modules/startup/module as startup_module
@@ -67,6 +68,7 @@ type
     collectibleService: collectible_service.Service
     walletAccountService: wallet_account_service.Service
     settingService: setting_service.Service
+    bookmarkService: bookmark_service.Service
 
     # Core
     localAccountSettings: LocalAccountSettings
@@ -127,6 +129,7 @@ proc newAppController*(appService: AppService): AppController =
     result.settingService, result.tokenService
   )
   result.transactionService = transaction_service.newService(result.walletAccountService)
+  result.bookmarkService = bookmark_service.newService()
 
 
   # Core
@@ -151,6 +154,7 @@ proc newAppController*(appService: AppService): AppController =
     result.transactionService,
     result.collectibleService,
     result.walletAccountService,
+    result.bookmarkService,
     result.settingService
   )
 
@@ -163,6 +167,10 @@ proc newAppController*(appService: AppService): AppController =
   #################################################
 
 proc delete*(self: AppController) =
+  self.contactService.delete
+  self.chatService.delete
+  self.communityService.delete
+  self.bookmarkService.delete
   self.startupModule.delete
   self.mainModule.delete
   
@@ -217,6 +225,7 @@ proc load*(self: AppController) =
   self.contactService.init()
   self.chatService.init()
   self.communityService.init()
+  self.bookmarkService.init()
   self.tokenService.init()
   self.walletAccountService.init()
   self.transactionService.init()

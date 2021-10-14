@@ -40,3 +40,6 @@
 [submodule "spellchecking"]
 	path = spellchecking
 	url = https://github.com/status-im/desktop-spellchecking.git
+[submodule "vendor/nim-result"]
+	path = vendor/nim-result
+	url = https://github.com/arnetheduck/nim-result

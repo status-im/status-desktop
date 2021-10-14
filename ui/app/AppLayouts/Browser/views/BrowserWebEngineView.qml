@@ -184,7 +184,7 @@ WebEngineView {
                 Component.onCompleted: {
                     // Add fav button at the end of the grid
                     var index = BookmarksStore.getBookmarkIndexByUrl("")
-                    if (index !== -1) { BookmarksStore.removeBookmark("") }
+                    if (index !== -1) { BookmarksStore.deleteBookmark("") }
                     BookmarksStore.addBookmark("", qsTr("Add Favorite"))
                 }
             }

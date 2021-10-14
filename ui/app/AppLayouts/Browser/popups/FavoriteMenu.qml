@@ -55,7 +55,7 @@ PopupMenu {
         icon.width: 16
         icon.height: 16
         onTriggered: {
-            BookmarksStore.removeBookmark(root.url)
+            BookmarksStore.deleteBookmark(root.url)
         }
     }
 }
