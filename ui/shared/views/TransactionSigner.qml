@@ -3,9 +3,9 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 
 import utils 1.0
-import "../shared/status"
-import "../shared/panels"
-import "./controls"
+import "../status"
+import "../panels"
+import "../controls"
 
 Item {
     id: root
