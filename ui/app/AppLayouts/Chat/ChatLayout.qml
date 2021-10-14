@@ -4,6 +4,7 @@ import Qt.labs.settings 1.0
 
 import utils 1.0
 import "../../../shared"
+import "../../../shared/popups"
 import "../../../shared/status"
 import "."
 import "./data"

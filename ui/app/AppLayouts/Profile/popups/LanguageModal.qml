@@ -3,6 +3,7 @@ import QtQuick.Controls 2.13
 
 import utils 1.0
 import "../../../../shared"
+import "../../../../shared/popups"
 import "../../../../shared/status"
 import "../locales.js" as Locales_JSON
 

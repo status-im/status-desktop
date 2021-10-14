@@ -1,6 +1,7 @@
 import QtQuick 2.3
 import "../../ChatComponents"
 import "../../../../../../shared"
+import "../../../../../../shared/popups"
 
 import utils 1.0
 

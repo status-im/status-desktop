@@ -4,6 +4,7 @@ import QtQuick.Controls 2.14
 
 import utils 1.0
 import "../../../../shared"
+import "../../../../shared/popups"
 import "../../../../shared/status"
 
 import StatusQ.Core 0.1
