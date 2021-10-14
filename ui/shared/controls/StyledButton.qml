@@ -3,6 +3,7 @@ import QtQuick.Controls 2.13
 import QtQml 2.14
 
 import utils 1.0
+import "../"
 
 Button {
     property string label: "My button"
