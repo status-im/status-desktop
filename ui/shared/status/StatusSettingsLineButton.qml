@@ -3,6 +3,7 @@ import QtGraphicalEffects 1.12
 
 import utils 1.0
 import ".."
+import "../panels"
 
 Rectangle {
     property string text
