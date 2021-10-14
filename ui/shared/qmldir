@@ -1,5 +1,4 @@
 StyledButton 1.0 StyledButton.qml
-StatusTabButton 1.0 StatusTabButton.qml
 TextWithLabel 1.0 TextWithLabel.qml
 Input 1.0 Input.qml
 Select 1.0 Select.qml
@@ -8,7 +7,6 @@ StyledText 1.0 StyledText.qml
 StyledTextField 1.0 StyledTextField.qml
 StyledTextEdit 1.0 StyledTextEdit.qml
 Identicon 1.0 Identicon.qml
-SplitViewHandle 1.0 SplitViewHandle.qml
 BlockContactConfirmationDialog 1.0 BlockContactConfirmationDialog.qml
 ConfirmationDialog 1.0 ConfirmationDialog.qml
 Timer 1.0 Timer.qml
