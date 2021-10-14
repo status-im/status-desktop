@@ -6,6 +6,7 @@ import "../components"
 import "../data/channelList.js" as ChannelJSON
 import "../../../../shared"
 import "../../../../shared/popups"
+import "../../../../shared/panels"
 import "../../../../shared/status"
 
 import utils 1.0

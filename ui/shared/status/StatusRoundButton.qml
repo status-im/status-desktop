@@ -5,6 +5,7 @@ import QtQml 2.14
 
 import utils 1.0
 import "../../shared"
+import "../../shared/panels"
 import "./core"
 
 RoundButton {

@@ -3,6 +3,8 @@ import QtGraphicalEffects 1.13
 
 import utils 1.0
 
+import "./panels"
+
 Item {
     property int iconMargin: Style.current.padding
     property alias icon: icon

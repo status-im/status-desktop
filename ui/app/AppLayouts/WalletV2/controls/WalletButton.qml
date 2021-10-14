@@ -3,6 +3,7 @@ import QtGraphicalEffects 1.13
 
 import utils 1.0
 import "../../../../shared"
+import "../../../../shared/panels"
 
 Rectangle {
     id: walletBtnRoot

@@ -3,6 +3,7 @@ import QtGraphicalEffects 1.0
 
 import utils 1.0
 import "../"
+import "./"
 
 Rectangle {
     id: root

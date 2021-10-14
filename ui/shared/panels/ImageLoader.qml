@@ -5,6 +5,7 @@ import utils 1.0
 import "../status/core"
 import "../status"
 import "../"
+import "./"
 
 Rectangle {
     id: root

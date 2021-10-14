@@ -5,6 +5,7 @@ import QtGraphicalEffects 1.0
 
 import utils 1.0
 import ".."
+import "../panels"
 
 Item {
     id: root
