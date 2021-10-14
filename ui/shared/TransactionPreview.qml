@@ -5,6 +5,7 @@ import QtGraphicalEffects 1.13
 
 import utils 1.0
 import "../shared/status"
+import "../shared/panels"
 
 Item {
     id: root
