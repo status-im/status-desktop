@@ -10,6 +10,7 @@ import ../../../app_service/service/keychain/service as keychain_service
 import ../../../app_service/service/accounts/service_interface as accounts_service
 import ../../../app_service/service/chat/service as chat_service
 import ../../../app_service/service/community/service as community_service
+import ../../../app_service/service/token/service as token_service
 
 import eventemitter
 
@@ -35,13 +36,15 @@ type
     communitySectionsModule: OrderedTable[string, chat_section_module.AccessInterface]
     walletSectionModule: wallet_section_module.AccessInterface
 
-proc newModule*[T](delegate: T,
+proc newModule*[T](
+  delegate: T,
   events: EventEmitter,
   keychainService: keychain_service.Service,
   accountsService: accounts_service.ServiceInterface,
   chatService: chat_service.Service,
-  communityService: community_service.Service): 
-  Module[T] =
+  communityService: community_service.Service
+  tokenService: token_service.Service
+): Module[T] =
   result = Module[T]()
   result.delegate = delegate
   result.view = view.newView(result)
@@ -59,7 +62,9 @@ proc newModule*[T](delegate: T,
       result, c.id, true, chatService, communityService
     )
 
-  result.walletSectionModule = wallet_section_module.newModule[Module[T]](result)
+  result.walletSectionModule = wallet_section_module.newModule[Module[T]](
+    result, tokenService
+  )
 
   
 method delete*[T](self: Module[T]) =
