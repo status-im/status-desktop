@@ -1,4 +1,4 @@
-import json, sequtils, strformat, chronicles
+import json, sequtils, chronicles
 import status/statusgo_backend_new/custom_tokens as custom_tokens
 
 import ./service_interface, ./dto, ./static_token
@@ -33,5 +33,5 @@ method init*(self: Service) =
     error "error: ", errDesription
     return
 
-method getTokens*(self: Service): seq[Dto] =
-  return self.tokens
+method getTokens*(self: Service, chainId: int): seq[Dto] =
+  return self.tokens.filter(proc(x: Dto): bool = x.chainId == chainId)
