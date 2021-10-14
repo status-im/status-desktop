@@ -3,6 +3,7 @@ import QtQuick.Controls 2.13
 
 import utils 1.0
 import "../../../../shared"
+import "../../../../shared/controls"
 import "../../../../shared/status"
 
 // TODO: replace with StatusModal

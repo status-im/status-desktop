@@ -7,6 +7,7 @@ import "../../../../shared"
 import "../../../../shared/controls"
 import "../stores"
 
+// TODO: replace with StatusModal
 ModalPopup {
     property alias selectedAccount: accountSelector.selectedAccount
     id: popup

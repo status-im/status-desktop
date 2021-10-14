@@ -5,8 +5,8 @@ import StatusQ.Popups 0.1
 
 
 import utils 1.0
-import "../shared/status"
-import "."
+import "../status"
+import "../"
 
 Item {
     property alias textField: inputValue

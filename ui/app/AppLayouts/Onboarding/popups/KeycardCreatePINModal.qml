@@ -10,6 +10,7 @@ import StatusQ.Popups 0.1
 import utils 1.0 as Imports
 
 import "../../../../shared"
+import "../../../../shared/controls"
 import "../../../../shared/keycard"
 
 StatusModal {
