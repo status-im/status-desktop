@@ -42,6 +42,7 @@ proc load*(self: AppController)
 
 # Startup Module Delegate Interface
 proc startupDidLoad*(self: AppController)
+proc accountCreated*(self: AppController)
 
 # Main Module Delegate Interface
 proc mainDidLoad*(self: AppController)
@@ -95,12 +96,14 @@ proc delete*(self: AppController) =
 
 proc startupDidLoad*(self: AppController) =
   echo "StartupDidLoad"
+  singletonInstance.engine.load(newQUrl("qrc:///main.qml"))
   # self.login.init()
   # self.onboarding.init()
 
 proc mainDidLoad*(self: AppController) =
   # This to will be adapted to appropriate modules later:
   self.appService.onLoggedIn()
+  self.startupModule.moveToAppState()
 
   # Reset login and onboarding to remove any mnemonic that would have been saved in the accounts list
   # self.login.reset()
@@ -122,3 +125,7 @@ proc load*(self: AppController) =
   self.communityService.init()
   
   self.mainModule.load()
+
+proc accountCreated*(self: AppController) =
+  echo "AppController account created"
+  self.load()

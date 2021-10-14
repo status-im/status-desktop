@@ -17,7 +17,7 @@ type DerivedAccounts* = object
   defaultWallet*: DerivedAccountDetails
   eip1581*: DerivedAccountDetails
 
-type GeneratedAccountDto* = ref object
+type GeneratedAccountDto* = object
   id*: string 
   publicKey*: string
   address*: string
@@ -27,6 +27,10 @@ type GeneratedAccountDto* = ref object
   # The following two are set additionally.
   alias*: string
   identicon*: string
+
+proc isValid*(self: GeneratedAccountDto): bool =
+  result = self.id.len > 0 and self.publicKey.len > 0 and
+    self.address.len > 0 and self.keyUid.len > 0
 
 proc toDerivedAccountDetails(jsonObj: JsonNode, derivationPath: string): 
   DerivedAccountDetails =

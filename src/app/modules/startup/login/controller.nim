@@ -1,6 +1,7 @@
 import Tables
 
 import controller_interface
+import io_interface
 
 import status/[signals]
 import ../../../../app_service/[main]
@@ -9,25 +10,27 @@ import ../../../../app_service/service/accounts/service_interface as accounts_se
 export controller_interface
 
 type 
-  Controller*[T: controller_interface.DelegateInterface] = 
-    ref object of controller_interface.AccessInterface
-    delegate: T
+  Controller* = ref object of controller_interface.AccessInterface
+    delegate: io_interface.AccessInterface
     appService: AppService
     accountsService: accounts_service.ServiceInterface
 
-proc newController*[T](delegate: T,
+proc newController*(delegate: io_interface.AccessInterface,
   appService: AppService,
   accountsService: accounts_service.ServiceInterface): 
-  Controller[T] =
-  result = Controller[T]()
+  Controller =
+  result = Controller()
   result.delegate = delegate
   result.appService = appService
   result.accountsService = accountsService
   
-method delete*[T](self: Controller[T]) =
+method delete*(self: Controller) =
   discard
 
-method init*[T](self: Controller[T]) = 
+method getOpenedAccounts*(self: Controller): seq[AccountDto] =
+  return self.accountsService.openedAccounts()
+
+method init*(self: Controller) = 
   self.appService.status.events.on(SignalType.NodeStopped.event) do(e:Args):
     echo "-NEW-LOGIN-- NodeStopped: ", repr(e)
     #self.status.events.emit("nodeStopped", Args())
