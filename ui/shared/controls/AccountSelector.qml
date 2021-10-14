@@ -7,6 +7,7 @@ import QtQml.Models 2.14
 import utils 1.0
 import "../../shared"
 import "../status"
+import "."
 
 Item {
     id: root
