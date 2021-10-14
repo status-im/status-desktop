@@ -14,6 +14,7 @@ import DotherSide 0.1
 import "./app/AppLayouts/Onboarding/views"
 import "./app"
 import "./shared"
+import "./shared/panels"
 import "./shared/popups"
 import utils 1.0
 

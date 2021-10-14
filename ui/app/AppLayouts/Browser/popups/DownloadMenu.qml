@@ -2,10 +2,12 @@ import QtQuick 2.13
 import QtQuick.Controls 2.3
 
 import "../../../../shared"
+import "../../../../shared/popups"
 import "../stores"
 
 import utils 1.0
 
+// TODO: replace with StatusPopupMenu
 PopupMenu {
     id: downloadMenu
 

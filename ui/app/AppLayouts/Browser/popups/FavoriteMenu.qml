@@ -2,12 +2,14 @@ import QtQuick 2.13
 import QtQuick.Controls 2.3
 import QtWebEngine 1.9
 import "../../../../shared"
+import "../../../../shared/popups"
 import "../../../../shared/status"
 import "../stores"
 
 import utils 1.0
 import "../../Chat/ChatColumn/ChatComponents"
 
+// TODO: replace with StatusPopupMenu
 PopupMenu {
     property var openInNewTab: function () {}
     property string url

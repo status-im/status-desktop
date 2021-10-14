@@ -3,9 +3,11 @@ import QtQuick.Controls 2.3
 import QtWebEngine 1.9
 import utils 1.0
 import "../../../../shared"
+import "../../../../shared/popups"
 import "../../../../shared/status"
 import "../../Chat/ChatColumn/ChatComponents"
 
+// TODO: replace with StatusPopupMenu
 PopupMenu {
     property var addNewTab: function () {}
 
