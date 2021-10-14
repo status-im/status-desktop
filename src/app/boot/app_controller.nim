@@ -6,6 +6,8 @@ import ../../app_service/service/accounts/service as accounts_service
 import ../../app_service/service/contacts/service as contact_service
 import ../../app_service/service/chat/service as chat_service
 import ../../app_service/service/community/service as community_service
+import ../../app_service/service/token/service as token_service
+
 import ../core/local_account_settings
 import ../modules/startup/module as startup_module
 import ../modules/main/module as main_module
@@ -56,6 +58,8 @@ type
     contactService: contact_service.Service
     chatService: chat_service.Service
     communityService: community_service.Service
+    tokenService: token_service.Service
+
     # Core
     localAccountSettings: LocalAccountSettings
     localAccountSettingsVariant: QVariant
@@ -109,6 +113,8 @@ proc newAppController*(appService: AppService): AppController =
   result.contactService = contact_service.newService()
   result.chatService = chat_service.newService()
   result.communityService = community_service.newService(result.chatService)
+  result.tokenService = token_service.newService()
+
   # Core
   result.localAccountSettingsVariant = newQVariant(
     singletonInstance.localAccountSettings)
@@ -177,6 +183,7 @@ proc load*(self: AppController) =
   self.contactService.init()
   self.chatService.init()
   self.communityService.init()
+  self.tokenService.init()
   
   self.mainModule.load()
 
