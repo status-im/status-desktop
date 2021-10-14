@@ -3,9 +3,11 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 
 import utils 1.0
-import "./status"
-import "./controls"
+import "../"
+import "../status"
+import "../controls"
 
+// TODO: replace with StatusModal
 ModalPopup {
     property string selectedImage
     property string ratio: "1:1"
