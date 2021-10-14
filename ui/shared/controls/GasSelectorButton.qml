@@ -3,10 +3,10 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 
 import utils 1.0
-import "./status"
-import "./"
+import "../status"
+import "../"
 
-
+// TODO: use StatusQ components
 Rectangle {
     property var buttonGroup
     //% "Low"
