@@ -161,7 +161,7 @@ Rectangle {
         onAddNewFavoritelClicked: {
             if (!browserHeader.currentFavorite) {
                 // remove "add favorite" button at the end, add new bookmark, add "add favorite" button back
-                BookmarksStore.removeBookmark("")
+                BookmarksStore.deleteBookmark("")
                 BookmarksStore.addBookmark(currentWebView.url, currentWebView.title)
                 BookmarksStore.addBookmark("", qsTr("Add Favorite"))
             }
@@ -345,8 +345,8 @@ Rectangle {
     }
 
     Connections {
-        target: BookmarksStore.browserModelInst
-        onBookmarksChanged: {
+        target: BookmarksStore.bookmarksModel
+        onModelChanged: {
             browserHeader.currentFavorite = Qt.binding(function () {return BookmarksStore.getCurrentFavorite(currentWebView.url)})
         }
     }

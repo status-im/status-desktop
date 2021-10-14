@@ -1,2 +1,2 @@
-method chatSectionDidLoad*(self: AccessInterface) {.base.} =
+method bookmarkDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
