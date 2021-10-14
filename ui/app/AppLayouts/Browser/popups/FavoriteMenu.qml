@@ -3,6 +3,7 @@ import QtQuick.Controls 2.3
 import QtWebEngine 1.9
 import "../../../../shared"
 import "../../../../shared/popups"
+import "../../../../shared/panels"
 import "../../../../shared/status"
 import "../stores"
 
