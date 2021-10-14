@@ -1,7 +1,6 @@
 import QtQuick 2.13
 
-import "."
-import "./panels"
+import "../panels"
 
 import utils 1.0
 
