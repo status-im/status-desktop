@@ -5,6 +5,8 @@ import QtGraphicalEffects 1.13
 
 import utils 1.0
 
+import "./panels"
+
 Item {
     id: root
     property var accounts
