@@ -4,7 +4,7 @@ import QtQuick.Layouts 1.3
 import QtGraphicalEffects 1.12
 
 import utils 1.0
-import "./panels"
+import "../panels"
 
 Item {
     property alias textField: textArea
