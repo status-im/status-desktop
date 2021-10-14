@@ -164,12 +164,6 @@ Item {
                 StatusSwitch {
                     id: switch1
                     checked: !appSettings.onlyShowContactsProfilePics
-                },
-                StatusIcon {
-                    icon: "chevron-down"
-                    rotation: 270
-                    color: Theme.palette.baseColor1
-                    anchors.verticalCenter: parent.verticalCenter
                 }
             ]
             sensor.onClicked: {
@@ -189,12 +183,6 @@ Item {
                 StatusSwitch {
                     id: switch2               
                     checked: appSettings.displayChatImages
-                },
-                StatusIcon {
-                    icon: "chevron-down"
-                    rotation: 270
-                    color: Theme.palette.baseColor1
-                    anchors.verticalCenter: parent.verticalCenter
                 }
             ]
             sensor.onClicked: {
@@ -272,12 +260,7 @@ Item {
             components: [
                 StatusSwitch {
                     id: switch3
-                    checked: !root.store.messagesFromContactsOnly                },
-                StatusIcon {
-                    icon: "chevron-down"
-                    rotation: 270
-                    color: Theme.palette.baseColor1
-                    anchors.verticalCenter: parent.verticalCenter
+                    checked: !root.store.messagesFromContactsOnly
                 }
             ]
             sensor.onClicked: {
