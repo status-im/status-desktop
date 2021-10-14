@@ -5,6 +5,7 @@ import QtGraphicalEffects 1.13
 import "../components"
 import "../data/channelList.js" as ChannelJSON
 import "../../../../shared"
+import "../../../../shared/popups"
 import "../../../../shared/status"
 
 import utils 1.0
