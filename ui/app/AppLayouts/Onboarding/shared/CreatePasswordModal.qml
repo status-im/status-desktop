@@ -149,16 +149,12 @@ ModalPopup {
                 }
             }
 
-//            Connections {
-//                target: onboardingModel
-//                ignoreUnknownSignals: true
-//                onLoginResponseChanged: {
-//                    if (error) {
-//                        loading = false
-//                        importLoginError.open()
-//                    }
-//                }
-//            }
+            Connections {
+                target: onboardingModule
+                onAccountSetupError: {
+                    importLoginError.open()
+                }
+            }
 
             onClicked: {
                 if (storingPasswordModal)
@@ -170,18 +166,16 @@ ModalPopup {
                 else
                 {
                     loading = true
-//                    loginModel.isCurrentFlow = false;
-//                    onboardingModel.isCurrentFlow = true;
                     const result = onboardingModule.storeSelectedAccountAndLogin(repeatPasswordField.text);
                     const error = JSON.parse(result).error
                     if (error) {
                         importError.text += error
                         return importError.open()
                     }
-                    onboardingModel.firstTimeLogin = true
 
-                    applicationWindow.checkForStoringPassToKeychain(onboardingModel.currentAccount.username,
-                                                                    repeatPasswordField.text, true)
+                    // NEED TO HANDLE IT
+//                    applicationWindow.checkForStoringPassToKeychain(onboardingModel.currentAccount.username,
+//                                                                    repeatPasswordField.text, true)
                 }
             }
         }

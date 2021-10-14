@@ -7,7 +7,7 @@ import "../../../../shared"
 import "../../../../shared/panels"
 import "../../../../shared/status"
 
-Rectangle {    
+Rectangle {
     id: accountViewDelegate
 
     property string username: "Jotaro Kujo"
@@ -17,7 +17,7 @@ Rectangle {
     property var onAccountSelect: function() {}
     property var isSelected: function() {}
     property bool selected: {
-        return isSelected(accountId, keyUid)
+        return isSelected(index, keyUid)
     }
     property bool isHovered: false
 
@@ -81,7 +81,7 @@ Rectangle {
         anchors.fill: parent
         cursorShape: Qt.PointingHandCursor
         onClicked: {
-            onAccountSelect(accountId)
+            onAccountSelect(index)
         }
         onEntered: {
             accountViewDelegate.isHovered = true

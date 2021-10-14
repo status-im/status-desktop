@@ -24,20 +24,63 @@ QtObject:
   proc load*(self: View) =
     self.delegate.viewDidLoad()
 
-  proc setAccountList*(self: View, accounts: seq[Item]) =
-    self.model.setItems(accounts)
-
   proc modelChanged*(self: View) {.signal.}
 
   proc getModel(self: View): QVariant {.slot.} =
     return self.modelVariant
 
+  proc setAccountList*(self: View, accounts: seq[Item]) =
+    self.model.setItems(accounts)
+    self.modelChanged()
+
   QtProperty[QVariant] accountsModel:
     read = getModel
     notify = modelChanged
 
-  proc setSelectedAccountId*(self: View, id: string) {.slot.} =
-    self.delegate.setSelectedAccountId(id)
+  proc importedAccountChanged*(self: View) {.signal.}
+
+  proc getImportedAccountIdenticon*(self: View): string {.slot.} =
+    return self.delegate.getImportedAccount().identicon
+
+  QtProperty[string] importedAccountIdenticon:
+    read = getImportedAccountIdenticon
+    notify = importedAccountChanged
+
+  proc getImportedAccountAlias*(self: View): string {.slot.} =
+    return self.delegate.getImportedAccount().alias
+
+  QtProperty[string] importedAccountAlias:
+    read = getImportedAccountAlias
+    notify = importedAccountChanged
+
+  proc getImportedAccountAddress*(self: View): string {.slot.} =
+    return self.delegate.getImportedAccount().address
+
+  QtProperty[string] importedAccountAddress:
+    read = getImportedAccountAddress
+    notify = importedAccountChanged
+
+  proc setSelectedAccountByIndex*(self: View, index: int) {.slot.} =
+    self.delegate.setSelectedAccountByIndex(index)
 
   proc storeSelectedAccountAndLogin*(self: View, password: string) {.slot.} =
     self.delegate.storeSelectedAccountAndLogin(password)
+
+  proc accountSetupError*(self: View) {.signal.}
+
+  proc setupAccountError*(self: View) =
+    self.accountSetupError()
+
+  proc validateMnemonic*(self: View, mnemonic: string): string {.slot.} =
+    return self.delegate.validateMnemonic(mnemonic)
+
+  proc importMnemonic*(self: View, mnemonic: string) {.slot.} =
+    self.delegate.importMnemonic(mnemonic)
+
+  proc accountImportError*(self: View) {.signal.}
+
+  proc importAccountError*(self: View) =
+    self.accountImportError() # In QML we can connect to this signal and notify a user
+
+  proc importAccountSuccess*(self: View) =
+    self.importedAccountChanged()

@@ -43,10 +43,11 @@ Item {
         width: walletView.width
 
         Component.onCompleted: {
-            if(RootStore.firstTimeLogin){
-                RootStore.firstTimeLogin = false
-                RootStore.setInitialRange()
-            }
+            // Read in RootStore
+//            if(RootStore.firstTimeLogin){
+//                RootStore.firstTimeLogin = false
+//                RootStore.setInitialRange()
+//            }
         }
 
         Timer {

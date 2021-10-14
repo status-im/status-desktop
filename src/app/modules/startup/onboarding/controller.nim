@@ -1,6 +1,7 @@
-import Tables
+import Tables, chronicles
 
 import controller_interface
+import io_interface
 
 import status/[signals]
 import ../../../../app_service/[main]
@@ -8,39 +9,62 @@ import ../../../../app_service/service/accounts/service_interface as accounts_se
 
 export controller_interface
 
+logScope:
+  topics = "onboarding-controller"
+
 type 
-  Controller*[T: controller_interface.DelegateInterface] = 
+  Controller* = 
     ref object of controller_interface.AccessInterface
-    delegate: T
+    delegate: io_interface.AccessInterface
     appService: AppService
     accountsService: accounts_service.ServiceInterface
     selectedAccountId: string
 
-proc newController*[T](delegate: T,
+proc newController*(delegate: io_interface.AccessInterface,
   appService: AppService,
   accountsService: accounts_service.ServiceInterface): 
-  Controller[T] =
-  result = Controller[T]()
+  Controller =
+  result = Controller()
   result.delegate = delegate
   result.appService = appService
   result.accountsService = accountsService
   
-method delete*[T](self: Controller[T]) =
+method delete*(self: Controller) =
   discard
 
-method init*[T](self: Controller[T]) = 
+method init*(self: Controller) = 
   self.appService.status.events.on(SignalType.NodeLogin.event) do(e:Args):
-    echo "-NEW-ONBOARDING-- OnNodeLoginEvent: ", repr(e)
-    #self.handleNodeLogin(NodeSignal(e))
+    let signal = NodeSignal(e)
+    echo "-NEW-ONBOARDING-- OnNodeLoginEvent: ", repr(signal)
+    if signal.event.error == "":
+      echo "-NEW-ONBOARDING-- OnNodeLoginEventA: ", repr(signal.event.error)
+      self.delegate.accountCreated()
+    else:
+      error "error: ", methodName="init", errDesription = "onboarding login error " & signal.event.error
 
-method getGeneratedAccounts*[T](self: Controller[T]): seq[GeneratedAccountDto] =
+method getGeneratedAccounts*(self: Controller): seq[GeneratedAccountDto] =
   return self.accountsService.generatedAccounts()
 
-method setSelectedAccountId*[T](self: Controller[T], id: string) =
-  self.selectedAccountId = id
+method getImportedAccount*(self: Controller): GeneratedAccountDto =
+  return self.accountsService.getImportedAccount()
 
-method storeSelectedAccountAndLogin*[T](self: Controller[T], password: string) =
-  let account = self.accountsService.setupAccount(self.appService.status.fleet.config, 
-  self.selectedAccountId, password)
+method setSelectedAccountByIndex*(self: Controller, index: int) =
+  let accounts = self.getGeneratedAccounts()
+  self.selectedAccountId = accounts[index].id
 
-  echo "RECEIVED ACCOUNT: ", repr(account)
+method storeSelectedAccountAndLogin*(self: Controller, password: string) =
+  if(not self.accountsService.setupAccount(self.appService.status.fleet.config, 
+  self.selectedAccountId, password)):
+    self.delegate.setupAccountError()
+
+method validateMnemonic*(self: Controller, mnemonic: string): string =
+  return self.accountsService.validateMnemonic(mnemonic)
+
+method importMnemonic*(self: Controller, mnemonic: string) =
+  if(self.accountsService.importMnemonic(mnemonic)):
+    self.selectedAccountId = self.getImportedAccount().id
+    self.delegate.importAccountSuccess()
+  else:
+    self.delegate.importAccountError()
+  
+  

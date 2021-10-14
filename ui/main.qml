@@ -19,7 +19,7 @@ import "./shared/popups"
 import utils 1.0
 
 StatusWindow {
-    property bool hasAccounts: startupModule.startWithOnboardingScreen
+    property bool hasAccounts: startupModule.appState !== Constants.onboardingAppState
     property bool removeMnemonicAfterLogin: false
     property alias dragAndDrop: dragTarget
     property bool popupOpened: false
@@ -360,7 +360,8 @@ StatusWindow {
 
                 DSM.SignalTransition {
                     targetState: appState
-                    signal: onboardingModel.moveToAppState
+                    signal: startupModule.appStateChanged
+                    guard: state == Constants.mainAppState
                 }
             }
 
@@ -370,7 +371,8 @@ StatusWindow {
 
                 DSM.SignalTransition {
                     targetState: appState
-                    signal: onboardingModel.moveToAppState
+                    signal: startupModule.appStateChanged
+                    guard: state == Constants.mainAppState
                 }
             }
 
@@ -380,7 +382,8 @@ StatusWindow {
 
                 DSM.SignalTransition {
                     targetState: appState
-                    signal: onboardingModel.moveToAppState
+                    signal: startupModule.appStateChanged
+                    guard: state == Constants.mainAppState
                 }
             }
 
@@ -390,7 +393,8 @@ StatusWindow {
 
                 DSM.SignalTransition {
                     targetState: appState
-                    signal: loginModel.moveToAppState
+                    signal: startupModule.appStateChanged
+                    guard: state == Constants.mainAppState
                 }
 
                 DSM.SignalTransition {
