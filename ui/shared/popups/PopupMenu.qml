@@ -4,6 +4,7 @@ import QtGraphicalEffects 1.13
 
 import utils 1.0
 import "../"
+import "../panels"
 
 Menu {
     // This is to add icons to submenu items. QML doesn't have a way to add icons to those sadly so this is a workaround

@@ -7,6 +7,7 @@ import StatusQ.Popups 0.1
 import utils 1.0
 import "../status"
 import "../"
+import "../panels"
 
 Item {
     property alias textField: inputValue

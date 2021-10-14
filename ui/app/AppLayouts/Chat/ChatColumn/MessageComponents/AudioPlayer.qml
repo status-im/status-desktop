@@ -1,6 +1,7 @@
 import QtQuick 2.3
 import QtMultimedia 5.14
 import "../../../../../shared"
+import "../../../../../shared/panels"
 
 import utils 1.0
 

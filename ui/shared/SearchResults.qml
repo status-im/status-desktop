@@ -5,6 +5,7 @@ import QtQuick.Layouts 1.13
 import utils 1.0
 import "./status"
 import "./views"
+import "./panels"
 // TODO move Contact into shared to get rid of that import
 import "../app/AppLayouts/Chat/components"
 import "./"

@@ -5,6 +5,7 @@ import utils 1.0
 import "../../../../../shared"
 import "../../../../../shared/status"
 import "../../../../../shared/popups"
+import "../../../../../shared/panels"
 import "../MessageComponents"
 import "../../components"
 import ".."

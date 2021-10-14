@@ -4,6 +4,7 @@ import StatusQ.Components 0.1 as StatusQ
 import StatusQ.Core.Theme 0.1
 
 import "../../../../shared"
+import "../../../../shared/panels"
 import "../../../../shared/status"
 
 import utils 1.0
