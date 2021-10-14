@@ -2,6 +2,7 @@ import QtQuick 2.13
 import QtGraphicalEffects 1.13
 import "../../../../../shared"
 import "../../../../../shared/panels"
+import "../../../../../shared/controls"
 import "../../../../../shared/status"
 
 import utils 1.0

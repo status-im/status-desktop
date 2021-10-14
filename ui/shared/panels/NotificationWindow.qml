@@ -7,6 +7,7 @@ import QtGraphicalEffects 1.13
 
 import utils 1.0
 import "../status"
+import "../controls"
 import "../"
 import "../../app/AppLayouts/Chat/ContactsColumn"
 

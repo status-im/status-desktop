@@ -7,6 +7,7 @@ import QtGraphicalEffects 1.13
 import QtQuick.Dialogs 1.3
 import "../../../../shared"
 import "../../../../shared/panels"
+import "../../../../shared/controls"
 import "../../../../shared/status"
 
 import utils 1.0
