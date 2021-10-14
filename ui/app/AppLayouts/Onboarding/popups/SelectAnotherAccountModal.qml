@@ -3,11 +3,13 @@ import QtQuick.Controls 2.13
 
 import utils 1.0
 import "../../../../shared"
+import "../../../../shared/popups"
 import "../../../../shared/status"
 
 import "../panels"
 import "../stores"
 
+// TODO: replace with StatusModal
 ModalPopup {
     property var onAccountSelect: function () {}
     property var onOpenModalClick: function () {}

@@ -10,6 +10,7 @@ import "../../../../../shared/panels"
 import "../../../../../shared/controls"
 import "../../../../../shared/popups"
 
+// TODO: replace with StatusModal
 ModalPopup {
     property var selectedAccount
     property var selectedRecipient

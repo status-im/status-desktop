@@ -6,8 +6,10 @@ import QtGraphicalEffects 1.0
 import utils 1.0
 import "../../shared"
 import "../../shared/status"
+import "../../shared/popups"
 import "../../app/AppLayouts/Chat/ChatColumn/samples"
 
+// TODO: replace with StatusModal
 ModalPopup {
     id: stickerPackDetailsPopup
 

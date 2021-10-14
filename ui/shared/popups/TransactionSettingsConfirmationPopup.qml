@@ -5,7 +5,9 @@ import QtQuick.Layouts 1.13
 import utils 1.0
 import "../status"
 import "../"
+import "."
 
+// TODO: replace with StatusModal
 ModalPopup {
     id: popup
 

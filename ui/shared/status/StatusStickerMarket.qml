@@ -53,6 +53,7 @@ Item {
                 }
             }
 
+            // TODO: replace with StatusModal
             ModalPopup {
                 id: stickerPackDetailsPopup
                 height: 540

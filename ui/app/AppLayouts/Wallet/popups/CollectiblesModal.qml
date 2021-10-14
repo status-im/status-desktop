@@ -3,9 +3,11 @@ import QtGraphicalEffects 1.13
 
 import utils 1.0
 import "../../../../shared"
+import "../../../../shared/popups"
 import "../../../../shared/status"
 import "../panels"
 
+// TODO: Replace with StatusModal
 ModalPopup {
     property string collectibleName: "Furbeard"
     property string collectibleId: "1423"

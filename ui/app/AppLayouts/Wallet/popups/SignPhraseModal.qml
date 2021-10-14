@@ -4,9 +4,11 @@ import QtQuick.Layouts 1.13
 
 import utils 1.0
 import "../../../../shared"
+import "../../../../shared/popups"
 import "../../../../shared/status"
 import "../stores"
 
+// TODO: replace with StatusModal
 ModalPopup {
     id: signPhrasePopup
 

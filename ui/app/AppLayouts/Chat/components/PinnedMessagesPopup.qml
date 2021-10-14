@@ -3,10 +3,12 @@ import QtQuick.Controls 2.3
 
 import utils 1.0
 import "../../../../shared"
+import "../../../../shared/popups"
 import "../../../../shared/status"
 import "../data"
 import "../ChatColumn"
 
+// TODO: replace with StatusMOdal
 ModalPopup {
     property bool userCanPin: {
         switch (chatsModel.channelView.activeChannel.chatType) {

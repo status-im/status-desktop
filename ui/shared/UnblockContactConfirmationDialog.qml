@@ -4,8 +4,10 @@ import QtQuick.Layouts 1.13
 
 import utils 1.0
 import "../shared/status"
+import "./popups"
 import "./"
 
+// TODO: replace with StatusModal
 ModalPopup {
     id: unblockContactConfirmationDialog
     height: 237

@@ -183,6 +183,7 @@ StatusModal {
             }
         }
 
+        // TODO: replace with StatusModal
         ModalPopup {
             id: qrCodePopup
             width: 320
