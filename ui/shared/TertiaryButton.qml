@@ -3,6 +3,8 @@ import QtQuick.Controls 2.13
 
 import utils 1.0
 
+import "./panels"
+
 Button {
     id: root
     property alias label: txtBtnLabel.text

@@ -4,6 +4,7 @@ import utils 1.0
 import "../"
 import "../status"
 import "../popups"
+import "../panels"
 
 Item {
     id: noContactsRect

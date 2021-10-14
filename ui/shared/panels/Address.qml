@@ -1,7 +1,7 @@
 import QtQuick 2.13
 import utils 1.0
 
-import "../"
+import "."
 
 StyledText {
     property bool expanded: false

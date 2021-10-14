@@ -3,6 +3,7 @@ import QtQuick.Controls 2.13
 
 import utils 1.0
 import "../"
+import "../panels"
 
 Item {
     property bool correctWordCount: Utils.seedPhraseValidWordCount(mnemonicTextField.text)

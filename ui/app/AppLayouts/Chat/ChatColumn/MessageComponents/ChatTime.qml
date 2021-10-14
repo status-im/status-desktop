@@ -1,5 +1,6 @@
 import QtQuick 2.14
 import "../../../../../shared"
+import "../../../../../shared/panels"
 import "../../../../../shared/status"
 
 import utils 1.0

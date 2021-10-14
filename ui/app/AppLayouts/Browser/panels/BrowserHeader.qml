@@ -6,6 +6,7 @@ import QtQuick.Controls.Styles 1.0
 import QtWebEngine 1.10
 import utils 1.0
 import "../../../../shared"
+import "../../../../shared/panels"
 import "../../../../shared/status"
 import "../popups"
 import "../controls"

@@ -6,6 +6,7 @@ import StatusQ.Controls 0.1
 
 import utils 1.0
 import "../../../../shared"
+import "../../../../shared/panels"
 import "../../../../shared/controls"
 import "../../../../shared/popups"
 
