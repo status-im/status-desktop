@@ -1,37 +1,31 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
-import "./samples/"
+
+import "../controls"
 
 import utils 1.0
 
 ListView {
-    property var accounts: AccountsData {}
+    id: accountsView
+
     property var isSelected: function () {}
     property var onAccountSelect: function () {}
 
-    id: accountsView
     anchors.fill: parent
-    model: accounts
     focus: true
     spacing: Style.current.smallPadding
     clip: true
 
-    delegate: AccountView {
-        username: model.alias
+    delegate: AccountViewDelegate {
+        username: model.username
         identicon: model.thumbnailImage || model.identicon
         keyUid: model.keyUid
         address: model.address || ''
-        isSelected: function (accountId, keyUid) {
-            return accountsView.isSelected(accountId, keyUid)
+        isSelected: function (index, keyUid) {
+            return accountsView.isSelected(index, keyUid)
         }
-        onAccountSelect: function (accountId) {
-            accountsView.onAccountSelect(accountId)
+        onAccountSelect: function (index) {
+            accountsView.onAccountSelect(index)
         }
     }
 }
-
-/*##^##
-Designer {
-    D{i:0;autoSize:true;height:480;width:640}
-}
-##^##*/

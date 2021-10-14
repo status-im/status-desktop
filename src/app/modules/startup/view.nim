@@ -1,11 +1,17 @@
 import NimQml
 import io_interface
 
+type
+  AppState* {.pure.} = enum
+    OnboardingState = 0
+    LoginState
+    MainAppState
+
 QtObject:
   type
     View* = ref object of QObject
       delegate: io_interface.AccessInterface
-      startWithOnboardingScreen: bool
+      appState: AppState
       
   proc delete*(self: View) =
     self.QObject.delete
@@ -14,24 +20,24 @@ QtObject:
     new(result, delete)
     result.QObject.setup
     result.delegate = delegate
-    result.startWithOnboardingScreen = true
+    result.appState = AppState.OnboardingState
 
   proc load*(self: View) =
     # In some point, here, we will setup some exposed main module related things.
     self.delegate.viewDidLoad()
 
-  proc startWithOnboardingScreenChanged*(self: View) {.signal.}
+  proc appStateChanged*(self: View, state: int) {.signal.}
 
-  proc getStartWithOnboardingScreen(self: View): bool {.slot.} =
-    return self.startWithOnboardingScreen
+  proc getAppState(self: View): int {.slot.} =
+    return self.appState.int
 
-  proc setStartWithOnboardingScreen*(self: View, value: bool) {.slot.} =
-    if(self.startWithOnboardingScreen == value):
+  proc setAppState*(self: View, state: AppState) =
+    if(self.appState == state):
       return
 
-    self.startWithOnboardingScreen = value
-    self.startWithOnboardingScreenChanged()
+    self.appState = state
+    self.appStateChanged(self.appState.int)
 
-  QtProperty[bool] startWithOnboardingScreen:
-    read = getStartWithOnboardingScreen
-    notify = startWithOnboardingScreenChanged
+  QtProperty[int] appState:
+    read = getAppState
+    notify = appStateChanged
