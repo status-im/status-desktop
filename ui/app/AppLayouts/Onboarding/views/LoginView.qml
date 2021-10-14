@@ -5,6 +5,7 @@ import QtQuick.Dialogs 1.3
 import QtGraphicalEffects 1.13
 
 import "../../../../shared"
+import "../../../../shared/popups"
 import "../../../../shared/status"
 import "../popups"
 import "../stores"
