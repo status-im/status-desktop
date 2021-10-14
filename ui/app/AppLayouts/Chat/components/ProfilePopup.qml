@@ -6,6 +6,7 @@ import QtGraphicalEffects 1.13
 
 import utils 1.0
 import "../../../../shared"
+import "../../../../shared/popups"
 
 import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
