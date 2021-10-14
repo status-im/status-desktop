@@ -6,6 +6,7 @@ import QtGraphicalEffects 1.13
 
 import "../../../../shared"
 import "../../../../shared/popups"
+import "../../../../shared/controls"
 import "../../../../shared/status"
 import "../popups"
 import "../stores"

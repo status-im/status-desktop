@@ -6,6 +6,7 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Popups 0.1
 import "../../shared"
+import "../../shared/controls"
 
 StatusModal {
     property bool pairingPasswordFieldValid: false

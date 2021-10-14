@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.13
 
 import utils 1.0
 import "../../../../shared"
+import "../../../../shared/controls"
 import "../../../../shared/status"
 import "../data/channelList.js" as ChannelJSON
 import "./"

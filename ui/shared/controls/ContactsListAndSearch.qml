@@ -6,6 +6,7 @@ import utils 1.0
 import "../"
 import "../views"
 import "../status"
+import "."
 
 Item {
     property string validationError: ""

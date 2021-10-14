@@ -3,10 +3,12 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import QtWebEngine 1.10
 import "../../../../shared"
+import "../../../../shared/controls"
 import "../../../../shared/status"
 
 import utils 1.0
 
+// TODO: replace with StatusModal
 ModalPopup {
     id: root
     property QtObject request

@@ -8,6 +8,7 @@ import StatusQ.Popups 0.1
 
 import "../../imports/utils" as Imports
 import "../../shared"
+import "../../shared/controls"
 
 StatusModal {
     property bool pinFieldValid: false

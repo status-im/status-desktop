@@ -5,9 +5,11 @@ import QtQuick.Dialogs 1.3
 import utils 1.0
 
 import "../../../../shared"
+import "../../../../shared/controls"
 import "../../../../shared/status"
 import "../stores"
 
+// TODO: replace with StatusModal
 ModalPopup {
     id: popup
     //% "Generate an account"

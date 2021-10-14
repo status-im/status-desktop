@@ -5,6 +5,7 @@ import QtQuick.Layouts 1.12
 
 import utils 1.0
 import "../../../../shared"
+import "../../../../shared/controls"
 
 import StatusQ.Popups 0.1
 import StatusQ.Controls 0.1
