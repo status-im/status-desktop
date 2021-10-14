@@ -168,6 +168,11 @@ StatusWindow {
                             selected: page.sourceComponent == statusAssetSelectorPageComponent
                             onClicked: page.sourceComponent = statusAssetSelectorPageComponent
                         }
+                        StatusNavigationListItem { 
+                            title: "StatusColorSelector" 
+                            selected: page.sourceComponent == statusColorSelectorPageComponent
+                            onClicked: page.sourceComponent = statusColorSelectorPageComponent
+                        }
                         StatusListSectionHeadline { text: "StatusQ.Components" }
                         StatusNavigationListItem { 
                             title: "StatusAddress"
@@ -289,6 +294,11 @@ StatusWindow {
     Component {
         id: statusAssetSelectorPageComponent
         StatusAssetSelectorPage {}
+    }
+
+    Component {
+        id: statusColorSelectorPageComponent
+        StatusColorSelectorPage {}
     }
 
     Component {

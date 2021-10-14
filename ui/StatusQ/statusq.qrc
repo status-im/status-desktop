@@ -42,6 +42,7 @@
         <file>src/StatusQ/Controls/StatusAssetSelector.qml</file>
         <file>src/StatusQ/Controls/StatusIconTabButton.qml</file>
         <file>src/StatusQ/Controls/StatusChatInfoButton.qml</file>
+        <file>src/StatusQ/Controls/StatusColorSelector.qml</file>
         <file>src/StatusQ/Controls/qmldir</file>
         <file>src/StatusQ/Controls/StatusAccountSelector.qml</file>
         <file>src/StatusQ/Controls/StatusSlider.qml</file>
