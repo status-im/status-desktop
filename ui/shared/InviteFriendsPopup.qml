@@ -2,8 +2,10 @@ import QtQuick 2.12
 import QtQuick.Controls 2.3
 
 import utils 1.0
+import "./controls"
 import "."
 
+// TODO: replace with StatusModal
 ModalPopup {
     id: popup
     //% "Get Status at https://status.im"

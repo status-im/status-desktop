@@ -4,6 +4,9 @@ import QtQuick.Layouts 1.13
 
 import utils 1.0
 
+import "./controls"
+
+// TODO: replace with StatusQ components
 Item {
     property string text: "My Text"
     property string label: "My Label"
