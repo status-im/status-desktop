@@ -3,8 +3,10 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 
 import utils 1.0
-import "./status"
+import "../status"
+import "../"
 
+// TODO: use StatusQ components here
 Column {
     id: root
     anchors.horizontalCenter: parent.horizontalCenter
