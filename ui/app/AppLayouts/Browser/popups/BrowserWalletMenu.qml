@@ -9,6 +9,7 @@ import "../../../../shared/controls"
 import "../../Wallet/views"
 import "../stores"
 
+// TODO: replace with StatusPopupMenu
 Popup {
     id: popup
     modal: false

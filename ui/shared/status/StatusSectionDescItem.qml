@@ -4,8 +4,10 @@ import QtQuick.Layouts 1.13
 import QtGraphicalEffects 1.13
 
 import utils 1.0
-import "../../shared"
+import "../"
+import "../controls"
 
+// TODO: replace with StatusQ component
 Item {
     property string name
     property string description

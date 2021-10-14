@@ -3,8 +3,10 @@ import QtQuick.Controls 2.13
 import QtGraphicalEffects 1.13
 
 import utils 1.0
-import "../shared/status"
+import "../"
+import "../status"
 
+// TODO: Replace with StatusQ components
 Rectangle {
     id: copyToClipboardButton
     height: 32
