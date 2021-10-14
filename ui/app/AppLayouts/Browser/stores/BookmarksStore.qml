@@ -5,44 +5,42 @@ import QtQuick 2.13
 QtObject {
     id: root
 
-    property var browserModelInst: browserModel
-
     // Seems like this vould be a BookMarks Store which has everything related to bookmarks
-    property var bookmarksModel: browserModel.bookmarks
+    property var bookmarksModel: bookmarkModule.model
 
     function addBookmark(url, name)
     {
-        browserModel.addBookmark(url, name)
+        bookmarkModule.addBookmark(url, name)
     }
 
-    function removeBookmark(url)
+    function deleteBookmark(url)
     {
-        browserModel.removeBookmark(url)
+        bookmarkModule.deleteBookmark(url)
     }
 
-    function modifyBookmark(originalUrl, newUrl, newName)
+    function updateBookmark(originalUrl, newUrl, newName)
     {
-        browserModel.modifyBookmark(originalUrl, newUrl, newName)
+        bookmarkModule.updateBookmark(originalUrl, newUrl, newName)
     }
 
     function getBookmarkIndexByUrl(url)
     {
-        return browserModel.bookmarks.getBookmarkIndexByUrl(url)
+        return bookmarkModule.model.getBookmarkIndexByUrl(url)
     }
 
     function getCurrentFavorite(url) {
         if (!url) {
             return null
         }
-        const index = browserModel.bookmarks.getBookmarkIndexByUrl(url)
+        const index = bookmarkModule.model.getBookmarkIndexByUrl(url)
         if (index === -1) {
             return null
         }
 
         return {
             url: url,
-            name: browserModel.bookmarks.rowData(index, 'name'),
-            image: browserModel.bookmarks.rowData(index, 'imageUrl')
+            name: bookmarkModule.model.rowData(index, 'name'),
+            image: bookmarkModule.model.rowData(index, 'imageUrl')
         }
     }
     // END >> Seems like this vould be a BookMarks Store which has everything related to bookmarks

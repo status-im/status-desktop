@@ -11,8 +11,8 @@ type
     mentionsCount: int
     unviewedMessagesCount: int
 
-proc initItem*(id: string, sectionType: int, name, image, icon, color: string,
-  mentionsCount, unviewedMessagesCount: int): Item =
+proc initItem*(id: string, sectionType: int, name, image = "", icon = "", color = "",
+  mentionsCount:int = 0, unviewedMessagesCount: int = 0): Item =
   result.id = id
   result.sectionType = sectionType
   result.name = name
