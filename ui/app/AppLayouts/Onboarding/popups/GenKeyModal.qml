@@ -1,31 +1,37 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtGraphicalEffects 1.13
+
 import StatusQ.Controls 0.1
 
 import utils 1.0
-import "../shared"
-import "./Login"
 
+import "../../../../shared"
+import "../../../../shared/popups"
+import "../panels"
+import "../stores"
+
+// TODO: replace with StatusModal
 ModalPopup {
-    property string selectedId: ""
+    property int selectedIndex: 0
     property var onClosed: function () {}
     property var onNextClick: function () {}
     id: popup
     //% "Choose a chat name"
     title: qsTrId("intro-wizard-title2")
+    height: 504
 
-    AccountList {
+    AccountListPanel {
         id: accountList
         anchors.fill: parent
         interactive: false
 
-        accounts: onboardingModule.accountsModel
-        isSelected: function (accId) {
-            return accId === selectedId
+        model: OnboardingStore.onBoardingModul.accountsModel
+        isSelected: function (index) {
+            return index === selectedIndex
         }
-        onAccountSelect: function(accId) {
-            selectedId = accId
+        onAccountSelect: function(index) {
+            selectedIndex = index
         }
     }
     footer: StatusRoundButton {
@@ -38,14 +44,8 @@ ModalPopup {
         icon.width: 20
         icon.height: 16
         onClicked : {
-            onNextClick(selectedId);
+            onNextClick(selectedIndex);
             popup.close()
         }
     }
 }
-
-/*##^##
-Designer {
-    D{i:0;formeditorColor:"#ffffff";height:500;width:400}
-}
-##^##*/

@@ -4,6 +4,7 @@ import service_interface
 import ./dto/accounts
 import ./dto/generated_accounts
 import status/statusgo_backend_new/accounts as status_go
+import status/statusgo_backend_new/general as status_go_general
 
 import ../../common/[account_constants, utils, string_utils]
 import ../../../constants as main_constants
@@ -17,12 +18,25 @@ const PATHS = @[PATH_WALLET_ROOT, PATH_EIP_1581, PATH_WHISPER, PATH_DEFAULT_WALL
 type 
   Service* = ref object of ServiceInterface
     generatedAccounts: seq[GeneratedAccountDto]
+    loggedInAccount: AccountDto
+    importedAccount: GeneratedAccountDto
+    isFirstTimeAccountLogin: bool
 
 method delete*(self: Service) =
   discard
 
 proc newService*(): Service =
   result = Service()
+  result.isFirstTimeAccountLogin = false
+
+method getLoggedInAccount*(self: Service): AccountDto =
+  return self.loggedInAccount
+
+method getImportedAccount*(self: Service): GeneratedAccountDto =
+  return self.importedAccount
+
+method isFirstTimeAccountLogin*(self: Service): bool =
+  return self.isFirstTimeAccountLogin
 
 method init*(self: Service) =
   try:
@@ -42,6 +56,20 @@ method init*(self: Service) =
   
   except Exception as e:
     error "error: ", methodName="init", errName = e.name, errDesription = e.msg
+
+method validateMnemonic*(self: Service, mnemonic: string): string =
+  try:
+    let response = status_go_general.validateMnemonic(mnemonic)
+    
+    var error = "response doesn't contain \"error\""
+    if(response.result.contains("error")):
+      error = response.result["error"].getStr
+
+    # An empty error means that mnemonic is valid.
+    return error
+
+  except Exception as e:
+    error "error: ", methodName="validateMnemonic", errName = e.name, errDesription = e.msg
 
 method generatedAccounts*(self: Service): seq[GeneratedAccountDto] =
   if(self.generatedAccounts.len == 0):
@@ -82,6 +110,7 @@ proc saveAccountAndLogin(self: Service, hashedPassword: string, account,
       error = response.result["error"].getStr
       if error == "":
         debug "Account saved succesfully"
+        self.isFirstTimeAccountLogin = true
         result = toAccountDto(account)
         return
 
@@ -91,70 +120,93 @@ proc saveAccountAndLogin(self: Service, hashedPassword: string, account,
   except Exception as e:
     error "error: ", methodName="saveAccountAndLogin", errName = e.name, errDesription = e.msg
 
+proc prepareAccountJsonObject(self: Service, account: GeneratedAccountDto): JsonNode =
+  result = %* {
+    "name": account.alias,
+    "address": account.address,
+    "identicon": account.identicon,
+    "key-uid": account.keyUid,
+    "keycard-pairing": nil
+  }
+
 proc getAccountDataForAccountId(self: Service, accountId: string): JsonNode =
   for acc in self.generatedAccounts:
     if(acc.id == accountId):
-      result = %* {
-        "name": acc.alias,
-        "address": acc.address,
-        "identicon": acc.identicon,
-        "key-uid": acc.keyUid,
-        "keycard-pairing": nil
-      }
+      return self.prepareAccountJsonObject(acc)
+
+  if(self.importedAccount.isValid()):
+    if(self.importedAccount.id == accountId):
+      return self.prepareAccountJsonObject(self.importedAccount)
+
+proc prepareSubaccountJsonObject(self: Service, account: GeneratedAccountDto):
+  JsonNode =
+  result = %* [
+    {
+      "public-key": account.derivedAccounts.defaultWallet.publicKey,
+      "address": account.derivedAccounts.defaultWallet.address,
+      "color": "#4360df",
+      "wallet": true,
+      "path": PATH_DEFAULT_WALLET,
+      "name": "Status account"
+    },
+    {
+      "public-key": account.derivedAccounts.whisper.publicKey,
+      "address": account.derivedAccounts.whisper.address,
+      "name": account.alias,
+      "identicon": account.identicon,
+      "path": PATH_WHISPER,
+      "chat": true
+    }
+  ]
 
 proc getSubaccountDataForAccountId(self: Service, accountId: string): JsonNode =
   for acc in self.generatedAccounts:
     if(acc.id == accountId):
-      result = %* [
-        {
-          "public-key": acc.derivedAccounts.defaultWallet.publicKey,
-          "address": acc.derivedAccounts.defaultWallet.address,
-          "color": "#4360df",
-          "wallet": true,
-          "path": PATH_DEFAULT_WALLET,
-          "name": "Status account"
-        },
-        {
-          "public-key": acc.derivedAccounts.whisper.publicKey,
-          "address": acc.derivedAccounts.whisper.address,
-          "name": acc.alias,
-          "identicon": acc.identicon,
-          "path": PATH_WHISPER,
-          "chat": true
-        }
-      ]
+      return self.prepareSubaccountJsonObject(acc)
+
+  if(self.importedAccount.isValid()):
+    if(self.importedAccount.id == accountId):
+      return self.prepareSubaccountJsonObject(self.importedAccount)
   
+proc prepareAccountSettingsJsonObject(self: Service, account: GeneratedAccountDto,
+  installationId: string): JsonNode =
+  result = %* {
+    "key-uid": account.keyUid,
+    "mnemonic": account.mnemonic,
+    "public-key": account.derivedAccounts.whisper.publicKey,
+    "name": account.alias,
+    "address": account.address,
+    "eip1581-address": account.derivedAccounts.eip1581.address,
+    "dapps-address": account.derivedAccounts.defaultWallet.address,
+    "wallet-root-address": account.derivedAccounts.walletRoot.address,
+    "preview-privacy?": true,
+    "signing-phrase": generateSigningPhrase(3),
+    "log-level": "INFO",
+    "latest-derived-path": 0,
+    "networks/networks": DEFAULT_NETWORKS,
+    "currency": "usd",
+    "identicon": account.identicon,
+    "waku-enabled": true,
+    "wallet/visible-tokens": {
+      "mainnet": ["SNT"]
+    },
+    "appearance": 0,
+    "networks/current-network": DEFAULT_NETWORK_NAME,
+    "installation-id": installationId
+  }
+
 proc getAccountSettings(self: Service, accountId: string, 
   installationId: string): JsonNode =
   for acc in self.generatedAccounts:
     if(acc.id == accountId):
-      result = %* {
-        "key-uid": acc.keyUid,
-        "mnemonic": acc.mnemonic,
-        "public-key": acc.derivedAccounts.whisper.publicKey,
-        "name": acc.alias,
-        "address": acc.address,
-        "eip1581-address": acc.derivedAccounts.eip1581.address,
-        "dapps-address": acc.derivedAccounts.defaultWallet.address,
-        "wallet-root-address": acc.derivedAccounts.walletRoot.address,
-        "preview-privacy?": true,
-        "signing-phrase": generateSigningPhrase(3),
-        "log-level": "INFO",
-        "latest-derived-path": 0,
-        "networks/networks": DEFAULT_NETWORKS,
-        "currency": "usd",
-        "identicon": acc.identicon,
-        "waku-enabled": true,
-        "wallet/visible-tokens": {
-          "mainnet": ["SNT"]
-        },
-        "appearance": 0,
-        "networks/current-network": DEFAULT_NETWORK_NAME,
-        "installation-id": installationId
-      }
+      return self.prepareAccountSettingsJsonObject(acc, installationId)
 
-proc getDefaultNodeConfig*(self: Service, fleetConfig: FleetConfig, installationId: string):
-  JsonNode =
+  if(self.importedAccount.isValid()):
+    if(self.importedAccount.id == accountId):
+      return self.prepareAccountSettingsJsonObject(self.importedAccount, installationId)
+
+proc getDefaultNodeConfig*(self: Service, fleetConfig: FleetConfig, 
+  installationId: string): JsonNode =
   let networkConfig = getNetworkConfig(DEFAULT_NETWORK_NAME)
   let upstreamUrl = networkConfig["config"]["UpstreamConfig"]["URL"]
   let fleet = Fleet.PROD
@@ -184,18 +236,50 @@ proc getDefaultNodeConfig*(self: Service, fleetConfig: FleetConfig, installation
   # result["ListenAddr"] = if existsEnv("STATUS_PORT"): newJString("0.0.0.0:" & $getEnv("STATUS_PORT")) else: newJString("0.0.0.0:30305")
 
 method setupAccount*(self: Service, fleetConfig: FleetConfig, accountId, 
-  password: string): AccountDto =
+  password: string): bool =
   try:
     let installationId = $genUUID()
     let accountDataJson = self.getAccountDataForAccountId(accountId)
     let subaccountDataJson = self.getSubaccountDataForAccountId(accountId)
-    let settingsJSON = self.getAccountSettings(accountId, installationId)
-    let nodeConfig = self.getDefaultNodeConfig(fleetConfig, installationId)
+    let settingsJson = self.getAccountSettings(accountId, installationId)
+    let nodeConfigJson = self.getDefaultNodeConfig(fleetConfig, installationId)
+
+    if(accountDataJson.isNil or subaccountDataJson.isNil or settingsJson.isNil or 
+      nodeConfigJson.isNil):
+      let description = "at least one json object is not prepared well"
+      error "error: ", methodName="setupAccount", errDesription = description
+      return false
 
     let hashedPassword = hashString(password)
     discard self.storeDerivedAccounts(accountId, hashedPassword, PATHS)
-    return self.saveAccountAndLogin(hashedPassword, accountDataJson, 
-    subaccountDataJson, settingsJSON, nodeConfig)
+    
+    self.loggedInAccount = self.saveAccountAndLogin(hashedPassword, 
+    accountDataJson, subaccountDataJson, settingsJson, nodeConfigJson)
+
+    return self.getLoggedInAccount.isValid()
 
   except Exception as e:
     error "error: ", methodName="setupAccount", errName = e.name, errDesription = e.msg
+    return false
+
+method importMnemonic*(self: Service, mnemonic: string): bool =
+  try:
+    let response = status_go.multiAccountImportMnemonic(mnemonic)
+    self.importedAccount = toGeneratedAccountDto(response.result)
+    
+    let responseDerived = status_go.deriveAccounts(self.importedAccount.id, PATHS)
+    self.importedAccount.derivedAccounts = toDerivedAccounts(responseDerived.result)
+
+    let responseAlias = status_go.generateAlias(
+      self.importedAccount.derivedAccounts.whisper.publicKey)
+    self.importedAccount.alias = responseAlias.result.getStr
+    
+    let responseIdenticon = status_go.generateIdenticon(
+      self.importedAccount.derivedAccounts.whisper.publicKey)
+    self.importedAccount.identicon = responseIdenticon.result.getStr
+
+    return self.importedAccount.isValid()
+  
+  except Exception as e:
+    error "error: ", methodName="importMnemonic", errName = e.name, errDesription = e.msg
+    return false

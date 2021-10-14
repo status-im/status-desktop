@@ -1,6 +1,7 @@
 import NimQml
 
-import io_interface, view, controller
+import io_interface
+import view, controller
 import ../../../app/boot/global_singleton
 
 import onboarding/module as onboarding_module
@@ -20,20 +21,6 @@ type
     onboardingModule: onboarding_module.AccessInterface
     loginModule: login_module.AccessInterface
 
-#################################################
-# Forward declaration section
-
-# Controller Delegate Interface
-
-
-# Onboarding Module Delegate Interface
-proc onboardingDidLoad*[T](self: Module[T])
-
-# Login Module Delegate Interface
-proc loginDidLoad*[T](self: Module[T])
-
-#################################################
-
 proc newModule*[T](delegate: T,
   appService: AppService,
   accountsService: accounts_service.ServiceInterface): 
@@ -42,13 +29,11 @@ proc newModule*[T](delegate: T,
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController[Module[T]](result, accountsService)
+  result.controller = controller.newController(result, accountsService)
 
   # Submodules
-  result.onboardingModule = onboarding_module.newModule[Module[T]](result, 
-  appService, accountsService)
-  result.loginModule = login_module.newModule[Module[T]](result, appService,
-  accountsService)
+  result.onboardingModule = onboarding_module.newModule(result, appService, accountsService)
+  result.loginModule = login_module.newModule(result, appService, accountsService)
   
 method delete*[T](self: Module[T]) =
   self.onboardingModule.delete
@@ -61,13 +46,14 @@ method load*[T](self: Module[T]) =
   singletonInstance.engine.setRootContextProperty("startupModule", self.viewVariant)
   self.controller.init()
   self.view.load()
-  self.view.setStartWithOnboardingScreen(self.controller.shouldStartWithOnboardingScreen())
+  
+  var initialAppState = AppState.OnboardingState
+  if(not self.controller.shouldStartWithOnboardingScreen()):
+    initialAppState = AppState.LoginState
+  self.view.setAppState(initialAppState)
   
   self.onboardingModule.load()
   self.loginModule.load()
-
-method viewDidLoad*[T](self: Module[T]) =
-  discard
 
 proc checkIfModuleDidLoad[T](self: Module[T]) =
   if(not self.onboardingModule.isLoaded()):
@@ -78,8 +64,17 @@ proc checkIfModuleDidLoad[T](self: Module[T]) =
 
   self.delegate.startupDidLoad()
 
-proc onboardingDidLoad*[T](self: Module[T]) =
+method viewDidLoad*[T](self: Module[T]) =
   self.checkIfModuleDidLoad()
 
-proc loginDidLoad*[T](self: Module[T]) =
+method onboardingDidLoad*[T](self: Module[T]) =
   self.checkIfModuleDidLoad()
+
+method loginDidLoad*[T](self: Module[T]) =
+  self.checkIfModuleDidLoad()
+
+method accountCreated*[T](self: Module[T]) =
+  self.delegate.accountCreated()
+
+method moveToAppState*[T](self: Module[T]) =
+  self.view.setAppState(AppState.MainAppState)
