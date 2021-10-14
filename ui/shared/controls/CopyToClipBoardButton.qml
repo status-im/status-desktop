@@ -2,10 +2,11 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtGraphicalEffects 1.13
 
+import StatusQ.Controls 0.1 as StatusQ
 import utils 1.0
+
 import "./"
 import "../"
-import "../status"
 
 // TODO: Replace with StatusQ components
 Rectangle {
@@ -62,11 +63,11 @@ Rectangle {
         }
     }
 
-    StatusToolTip {
+    StatusQ.StatusToolTip {
         id: toolTip
         //% "Copied!"
         text: qsTrId("copied-")
-        orientation: tooltipUnder ? "bottom" : "top"
+        orientation: tooltipUnder ? StatusQ.StatusToolTip.Orientation.Bottom: StatusQ.StatusToolTip.Orientation.Top
     }
 
     Timer {

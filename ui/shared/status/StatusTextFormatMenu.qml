@@ -4,8 +4,8 @@ import QtGraphicalEffects 1.13
 import QtQuick.Layouts 1.13
 import QtQuick.Dialogs 1.3
 
+import StatusQ.Controls 0.1 as StatusQ
 import utils 1.0
-import "./"
 
 Menu {
     id: root
@@ -67,7 +67,7 @@ Menu {
                 icon.height: menuItem.action.icon.height
                 onClicked: menuItem.action.actionTriggered()
                 highlighted: menuItem.action.checked
-                StatusToolTip {
+                StatusQ.StatusToolTip {
                     visible: parent.hovered
                     text: menuItem.action.text
                 }

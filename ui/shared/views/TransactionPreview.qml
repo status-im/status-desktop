@@ -3,7 +3,9 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import QtGraphicalEffects 1.13
 
+import StatusQ.Controls 0.1 as StatusQ
 import utils 1.0
+
 import "../status"
 import "../panels"
 import "../controls"
@@ -405,7 +407,7 @@ Item {
                         verticalAlignment: Text.AlignVCenter
                         elide: Text.ElideRight
 
-                        StatusToolTip {
+                        StatusQ.StatusToolTip {
                             enabled: networkFeeText.truncated
                             id: networkFeeTooltip
                             text: networkFeeText.text

@@ -1,7 +1,8 @@
 import QtQuick 2.14
 import "../../../../shared"
 import "../../../../shared/panels"
-import "../../../../shared/status"
+
+import StatusQ.Controls 0.1 as StatusQ
 import utils 1.0
 
 StyledText {
@@ -12,7 +13,7 @@ StyledText {
     text: Utils.formatTime(timestamp)
     font.pixelSize: Style.current.asideTextFontSize
     
-    StatusToolTip {
+    StatusQ.StatusToolTip {
         visible: hhandler.hovered
         text: new Date(parseInt(timestamp, 10)).toLocaleString(Qt.locale(globalSettings.locale))
         maxWidth: 350

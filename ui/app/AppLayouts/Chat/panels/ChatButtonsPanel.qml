@@ -1,8 +1,9 @@
 import QtQuick 2.13
 import QtGraphicalEffects 1.13
-import "../../../../shared"
+
 import "../../../../shared/status"
 
+import StatusQ.Controls 0.1 as StatusQ
 import utils 1.0
 
 Rectangle {
@@ -80,7 +81,7 @@ Rectangle {
                 buttonsContainer.hoverChanged(this.hovered)
             }
 
-            StatusToolTip {
+            StatusQ.StatusToolTip {
               visible: emojiBtn.hovered
               //% "Add reaction"
               text: qsTrId("add-reaction")
@@ -103,7 +104,7 @@ Rectangle {
                 buttonsContainer.hoverChanged(this.hovered)
             }
 
-            StatusToolTip {
+            StatusQ.StatusToolTip {
               visible: replyBtn.hovered
               //% "Reply"
               text: qsTrId("message-reply")
@@ -124,7 +125,7 @@ Rectangle {
                     buttonsContainer.hoverChanged(btn.hovered)
                 }
 
-                StatusToolTip {
+                StatusQ.StatusToolTip {
                     visible: btn.hovered
                     //% "Edit"
                     text: qsTrId("edit")
@@ -151,7 +152,7 @@ Rectangle {
             onHoveredChanged: {
                 buttonsContainer.hoverChanged(this.hovered)
             }
-            StatusToolTip {
+            StatusQ.StatusToolTip {
                 visible: otherBtn.hovered
                 //% "More"
                 text: qsTrId("more")

@@ -5,9 +5,10 @@ import QtGraphicalEffects 1.13
 import QtQml.Models 2.14
 
 import utils 1.0
+import StatusQ.Controls 0.1 as StatusQ
+
 import "../../shared"
 import "../../shared/panels"
-import "../status"
 import "."
 
 Item {
@@ -93,7 +94,7 @@ Item {
         horizontalAlignment: Text.AlignRight
         height: 18
 
-        StatusToolTip {
+        StatusQ.StatusToolTip {
             enabled: txtAssetBalance.truncated
             id: assetTooltip
             text: txtAssetBalance.text
