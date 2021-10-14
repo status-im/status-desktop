@@ -1,8 +1,9 @@
 import QtQuick 2.13
 
 import utils 1.0
-import "../shared"
+import "../"
 
+// TODO: replace with StatusBaseText
 StyledText {
     id: glossaryLetterA
     font.pixelSize: 17
