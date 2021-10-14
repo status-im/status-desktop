@@ -5,6 +5,7 @@ import StatusQ.Popups 0.1
 
 
 import utils 1.0
+import "./"
 import "../status"
 import "../"
 import "../panels"

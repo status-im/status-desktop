@@ -1,6 +1,7 @@
 import QtQuick 2.13
 import QtWebEngine 1.10
 
+import "../../../../shared/controls"
 import "../panels"
 import "../stores"
 

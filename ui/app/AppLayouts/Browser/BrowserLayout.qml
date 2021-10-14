@@ -10,6 +10,7 @@ import QtQuick.Dialogs 1.2
 import utils 1.0
 
 import "../../../shared"
+import "../../../shared/controls"
 import "../../../shared/status"
 import "../Chat/ChatColumn/ChatComponents"
 import "popups"
