@@ -4,10 +4,10 @@ import QtQuick.Layouts 1.13
 import QtGraphicalEffects 1.13
 
 import utils 1.0
-import "../shared/status"
-import "../shared/panels"
-import "../shared/controls"
-import "../shared/popups"
+import "../status"
+import "../panels"
+import "../controls"
+import "../popups"
 
 Item {
     id: root

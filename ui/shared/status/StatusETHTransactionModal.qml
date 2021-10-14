@@ -7,6 +7,7 @@ import utils 1.0
 import "../../shared"
 import "../../shared/status"
 import "../../shared/controls"
+import "../../shared/views"
 import "../../shared/popups"
 
 // TODO: replace with StatusModal
