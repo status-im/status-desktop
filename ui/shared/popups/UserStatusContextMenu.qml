@@ -4,10 +4,9 @@ import QtQuick.Layouts 1.3
 import QtQml.Models 2.3
 
 import utils 1.0
-import "status"
-import "./"
-import "./panels"
-import "./popups"
+import "../status"
+import "../panels"
+import "."
 
 // TODO: replace with StatusPopupMenu
 PopupMenu {
