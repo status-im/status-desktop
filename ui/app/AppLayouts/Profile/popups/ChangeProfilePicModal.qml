@@ -3,8 +3,10 @@ import QtQuick.Dialogs 1.3
 
 import utils 1.0
 import "../../../../shared"
+import "../../../../shared/popups"
 import "../../../../shared/status"
 
+// TODO: replace with StatusModal
 ModalPopup {
     property string selectedImage // selectedImage is for us to be able to analyze it before setting it as current
     property string uploadError
