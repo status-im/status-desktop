@@ -157,24 +157,14 @@ StatusAppThreePanelLayout {
         sourceComponent: appSettings.communitiesEnabled && chatsModel.communities.activeCommunity.active ? communtiyColumnComponent : contactsColumnComponent
     }
 
-//    centerPanel: ChatColumn {
-//        id: chatColumn
-//        chatGroupsListViewCount: contactColumnLoader.item.chatGroupsListViewCount
-//    }
-
-    centerPanel: Rectangle {
+    centerPanel: ChatColumn {
         id: chatColumn
-        anchors.fill: parent
-        color: "green"
+        chatGroupsListViewCount: contactColumnLoader.item.chatGroupsListViewCount
     }
 
     showRightPanel: (appSettings.expandUsersList && (appSettings.showOnlineUsers || chatsModel.communities.activeCommunity.active)
                     && (chatsModel.channelView.activeChannel.chatType !== Constants.chatTypeOneToOne))
-    //rightPanel: appSettings.communitiesEnabled && chatsModel.communities.activeCommunity.active ? communityUserListComponent : userListComponent
-    rightPanel: Rectangle {
-        anchors.fill: parent
-        color: "blue"
-    }
+    rightPanel: appSettings.communitiesEnabled && chatsModel.communities.activeCommunity.active ? communityUserListComponent : userListComponent
 
     Component {
         id: communityUserListComponent

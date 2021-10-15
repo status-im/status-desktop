@@ -59,3 +59,11 @@ QtObject:
   QtProperty[QVariant] accountsModel:
     read = getModel
     notify = modelChanged
+
+  proc login*(self: View, password: string) {.slot.} =
+    self.delegate.login(password)
+
+  proc accountLoginError*(self: View, error: string) {.signal.}
+
+  proc loginAccountError*(self: View, error: string) =
+    self.accountLoginError(error)
