@@ -8,6 +8,8 @@ import ../../app_service/service/chat/service as chat_service
 import ../../app_service/service/community/service as community_service
 import ../../app_service/service/token/service as token_service
 import ../../app_service/service/transaction/service as transaction_service
+import ../../app_service/service/collectible/service as collectible_service
+
 
 import ../core/local_account_settings
 import ../modules/startup/module as startup_module
@@ -61,11 +63,11 @@ type
     communityService: community_service.Service
     tokenService: token_service.Service
     transactionService: transaction_service.Service
+    collectibleService: collectible_service.Service
 
     # Core
     localAccountSettings: LocalAccountSettings
     localAccountSettingsVariant: QVariant
-    startupModule: startup_module.AccessInterface
     mainModule: main_module.AccessInterface
 
     #################################################
@@ -116,6 +118,7 @@ proc newAppController*(appService: AppService): AppController =
   result.communityService = community_service.newService(result.chatService)
   result.tokenService = token_service.newService()
   result.transactionService = transaction_service.newService()
+  result.collectibleService = collectible_service.newService()
 
   # Core
   result.localAccountSettingsVariant = newQVariant(
@@ -132,7 +135,8 @@ proc newAppController*(appService: AppService): AppController =
     result.chatService,
     result.communityService,
     result.tokenService,
-    result.transactionService
+    result.transactionService,
+    result.collectibleService
   )
 
   #################################################
