@@ -10,6 +10,7 @@ import ./transactions/module as transactions_module
 
 
 import ../../../../app_service/service/token/service as token_service
+import ../../../../app_service/service/transaction/service as transaction_service
 
 import io_interface
 export io_interface
@@ -27,7 +28,11 @@ type
     mainAccountModule: main_account_module.AccessInterface
     transactionsModule: transactions_module.AccessInterface
 
-proc newModule*[T](delegate: T, tokenService: token_service.Service): Module[T] =
+proc newModule*[T](
+  delegate: T,
+  tokenService: token_service.Service,
+  transactionService: transaction_service.Service,
+): Module[T] =
   result = Module[T]()
   result.delegate = delegate
   result.view = newView()
@@ -38,7 +43,7 @@ proc newModule*[T](delegate: T, tokenService: token_service.Service): Module[T] 
   result.allTokensModule = all_tokens_module.newModule(result, tokenService)
   result.collectiblesModule = collectibles_module.newModule(result)
   result.mainAccountModule = main_account_module.newModule(result)
-  result.transactionsModule = transactions_module.newModule(result)
+  result.transactionsModule = transactions_module.newModule(result, transactionService)
 
 method delete*[T](self: Module[T]) =
   self.accountTokensModule.delete
