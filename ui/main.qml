@@ -320,7 +320,8 @@ StatusWindow {
 
         onConfirmButtonClicked: {
             accountSettings.storeToKeychain = Constants.storeToKeychainValueStore
-            loginModel.storePassword(username, password)
+            // This is need to be handled using KeyChain service via LoginModule
+//            loginModel.storePassword(username, password)
             finish()
         }
 
