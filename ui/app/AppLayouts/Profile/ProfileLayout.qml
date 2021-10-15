@@ -15,7 +15,7 @@ StatusAppTwoPanelLayout {
 
     id: profileView
 
-    property RootStore store: RootStore { }
+    property RootStore store
     property var globalStore
     property int contentMaxWidth: 624
     property int contentMinWidth: 450

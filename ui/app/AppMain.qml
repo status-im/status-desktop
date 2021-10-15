@@ -140,6 +140,7 @@ Item {
     property Component profilePopupComponent: ProfilePopup {
         id: profilePopup
         store: rootStore
+        profileStore: appMain.profileStore
         onClosed: {
             if(profilePopup.parentPopup){
                 profilePopup.parentPopup.close();
@@ -455,6 +456,7 @@ Item {
                 Layout.alignment: Qt.AlignLeft | Qt.AlignTop
                 Layout.fillHeight: true
                 globalStore: appMain.rootStore
+                store: appMain.rootStore.profileStore
             }
 
             NodeLayout {

@@ -8,6 +8,8 @@ import utils 1.0
 import shared 1.0
 import shared.popups 1.0
 
+import "../../Profile/popups"
+
 import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
@@ -24,6 +26,7 @@ StatusModal {
 //TODO ---------------------------------------
 //use one PofilePopup instance and pass the store there
     property var store
+    property var profileStore
     property var identicon: ""
     property var userName: ""
     property string nickname: ""
@@ -63,6 +66,7 @@ StatusModal {
     header.subTitle: isEnsVerified ? alias : fromAuthor
     header.subTitleElide: Text.ElideMiddle
     header.image.source: identicon
+    header.headerImageEditable: isCurrentUser
 
     headerActionButton: StatusFlatRoundButton {
         type: StatusFlatRoundButton.Type.Secondary
@@ -73,6 +77,27 @@ StatusModal {
         icon.height: 20
         icon.name: "qr"
         onClicked: contentItem.qrCodePopup.open()
+    }
+
+    property var popupLink: null
+
+    onHeaderImageClicked: {
+        popupLink = changeProfileModalComponent.createObject(applicationWindow);
+        popupLink.open()
+    }
+
+    Component {
+        id: changeProfileModalComponent
+        ChangeProfilePicModal {
+            largeImage: profileStore.profileLargeImage
+            hasIdentityImage: profileStore.profileHasIdentityImage
+            onCropFinished: {
+                uploadError = profileStore.uploadImage(selectedImage, aX, aY, bX, bY)
+            }
+            onRemoveImageButtonClicked: {
+                uploadError = profileStore.removeImage()
+            }
+        }
     }
 
     contentItem: Item {
