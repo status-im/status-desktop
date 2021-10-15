@@ -1,7 +1,7 @@
 import NimQml
 import io_interface
 import ../io_interface as delegate_interface
-import view, controller, account_item
+import view, controller, item
 import ../../../../app/boot/global_singleton
 
 import ../../../../app_service/[main]
@@ -48,24 +48,18 @@ method load*(self: Module) =
 
   let openedAccounts = self.controller.getOpenedAccounts()
   if(openedAccounts.len > 0):
-    var accounts: seq[AccountItem]
+    var items: seq[Item]
     for acc in openedAccounts:
       var thumbnailImage: string
       var largeImage: string
       self.extractImages(acc, thumbnailImage, largeImage)
-      accounts.add(newAccountItem(acc.name, acc.identicon, acc.keyUid, 
-      thumbnailImage, largeImage))
+      items.add(initItem(acc.name, acc.identicon, thumbnailImage, largeImage,
+      acc.keyUid))
 
-    self.view.setAccountsList(accounts)
+    self.view.setModelItems(items)
 
-    # set the first account as a slected one
-    let selected = openedAccounts[0]
-    var thumbnailImage: string
-    var largeImage: string
-    self.extractImages(selected, thumbnailImage, largeImage)
-  
-    self.view.setSelectedAccount(selected.name, selected.identicon, selected.keyUid, 
-    thumbnailImage, largeImage)
+    # set the first account as slected one
+    self.setSelectedAccount(items[0])
 
 method isLoaded*(self: Module): bool =
   return self.moduleLoaded
@@ -73,3 +67,7 @@ method isLoaded*(self: Module): bool =
 method viewDidLoad*(self: Module) =
   self.moduleLoaded = true
   self.delegate.loginDidLoad()
+
+method setSelectedAccount*(self: Module, item: Item) =
+  self.controller.setSelectedAccountKeyUid(item.getKeyUid())
+  self.view.setSelectedAccount(item)

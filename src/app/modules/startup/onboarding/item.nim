@@ -1,5 +1,3 @@
-import json
-
 type 
   Item* = object
     id: string

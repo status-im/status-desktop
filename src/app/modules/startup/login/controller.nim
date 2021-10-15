@@ -14,6 +14,7 @@ type
     delegate: io_interface.AccessInterface
     appService: AppService
     accountsService: accounts_service.ServiceInterface
+    selectedAccountKeyUid: string
 
 proc newController*(delegate: io_interface.AccessInterface,
   appService: AppService,
@@ -26,9 +27,6 @@ proc newController*(delegate: io_interface.AccessInterface,
   
 method delete*(self: Controller) =
   discard
-
-method getOpenedAccounts*(self: Controller): seq[AccountDto] =
-  return self.accountsService.openedAccounts()
 
 method init*(self: Controller) = 
   self.appService.status.events.on(SignalType.NodeStopped.event) do(e:Args):
@@ -43,3 +41,9 @@ method init*(self: Controller) =
   self.appService.status.events.on(SignalType.NodeLogin.event) do(e:Args):
     echo "-NEW-LOGIN-- NodeLogin: ", repr(e)
     #self.handleNodeLogin(NodeSignal(e))
+
+method getOpenedAccounts*(self: Controller): seq[AccountDto] =
+  return self.accountsService.openedAccounts()
+
+method setSelectedAccountKeyUid*(self: Controller, keyUid: string) =
+  self.selectedAccountKeyUid = keyUid
