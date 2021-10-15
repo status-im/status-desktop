@@ -31,7 +31,8 @@ Item {
 
         loading = true
         LoginStore.login(password)
-        applicationWindow.checkForStoringPassToKeychain(LoginStore.currentAccount.username, password, false)
+        // NEED TO HANDLE IT
+        //applicationWindow.checkForStoringPassToKeychain(LoginStore.currentAccount.username, password, false)
         txtPassword.textField.clear()
     }
 
@@ -53,21 +54,22 @@ Item {
         resetLogin()
     }
 
-    Connections{
-        id: connection
-        target: LoginStore.loginModelInst
+    // NEED TO HANDLE IT
+//    Connections{
+//        id: connection
+//        target: LoginStore.loginModelInst
 
-        onObtainingPasswordError: {
-            enabled = false
-            obtainingPasswordErrorNotification.confirmationText = errorDescription
-            obtainingPasswordErrorNotification.open()
-        }
+//        onObtainingPasswordError: {
+//            enabled = false
+//            obtainingPasswordErrorNotification.confirmationText = errorDescription
+//            obtainingPasswordErrorNotification.open()
+//        }
 
-        onObtainingPasswordSuccess: {
-            enabled = false
-            doLogin(password)
-        }
-    }
+//        onObtainingPasswordSuccess: {
+//            enabled = false
+//            doLogin(password)
+//        }
+//    }
 
     ConfirmationDialog {
         id: obtainingPasswordErrorNotification
@@ -93,7 +95,8 @@ Item {
         StatusSmartIdenticon {
             id: userImage
             anchors.horizontalCenter: parent.horizontalCenter
-            image.source : LoginStore.currentAccount.thumbnailImage
+            image.source: LoginStore.currentAccount.thumbnailImage ||
+                          LoginStore.currentAccount.identicon
             image.isIdenticon: true
         }
 
@@ -224,24 +227,25 @@ Item {
             }
         }
 
-        Connections {
-            target: LoginStore.loginModelInst
-            ignoreUnknownSignals: true
-            onLoginResponseChanged: {
-                if (error) {
-                    // SQLITE_NOTADB: "file is not a database"
-                    if (error === "file is not a database") {
-                        errMsg.text = errMsg.incorrectPasswordMsg
-                    } else {
-                        //% "Login failed: %1"
-                        errMsg.text = qsTrId("login-failed---1").arg(error.toUpperCase())
-                    }
-                    errMsg.visible = true
-                    loading = false
-                    txtPassword.textField.forceActiveFocus()
-                }
-            }
-        }
+        // NEED TO HANDLE IT
+//        Connections {
+//            target: LoginStore.loginModelInst
+//            ignoreUnknownSignals: true
+//            onLoginResponseChanged: {
+//                if (error) {
+//                    // SQLITE_NOTADB: "file is not a database"
+//                    if (error === "file is not a database") {
+//                        errMsg.text = errMsg.incorrectPasswordMsg
+//                    } else {
+//                        //% "Login failed: %1"
+//                        errMsg.text = qsTrId("login-failed---1").arg(error.toUpperCase())
+//                    }
+//                    errMsg.visible = true
+//                    loading = false
+//                    txtPassword.textField.forceActiveFocus()
+//                }
+//            }
+//        }
 
         StatusQControls.StatusFlatButton {
             id: generateKeysLinkText
