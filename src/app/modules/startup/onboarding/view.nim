@@ -80,7 +80,9 @@ QtObject:
   proc accountImportError*(self: View) {.signal.}
 
   proc importAccountError*(self: View) =
-    self.accountImportError() # In QML we can connect to this signal and notify a user
+    # In QML we can connect to this signal and notify a user
+    # before refactoring we didn't have this signal
+    self.accountImportError()
 
   proc importAccountSuccess*(self: View) =
     self.importedAccountChanged()

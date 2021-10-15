@@ -29,21 +29,25 @@ method delete*(self: Controller) =
   discard
 
 method init*(self: Controller) = 
-  self.appService.status.events.on(SignalType.NodeStopped.event) do(e:Args):
-    echo "-NEW-LOGIN-- NodeStopped: ", repr(e)
-    #self.status.events.emit("nodeStopped", Args())
-    #self.view.onLoggedOut()
-
-  self.appService.status.events.on(SignalType.NodeReady.event) do(e:Args):
-    echo "-NEW-LOGIN-- NodeReady: ", repr(e)
-    #self.status.events.emit("nodeReady", Args())
-
   self.appService.status.events.on(SignalType.NodeLogin.event) do(e:Args):
-    echo "-NEW-LOGIN-- NodeLogin: ", repr(e)
-    #self.handleNodeLogin(NodeSignal(e))
+    let signal = NodeSignal(e)
+    if signal.event.error != "":
+      self.delegate.loginAccountError(signal.event.error)
 
 method getOpenedAccounts*(self: Controller): seq[AccountDto] =
   return self.accountsService.openedAccounts()
 
 method setSelectedAccountKeyUid*(self: Controller, keyUid: string) =
   self.selectedAccountKeyUid = keyUid
+
+method login*(self: Controller, password: string) =
+  let openedAccounts = self.getOpenedAccounts()
+  var selectedAccount: AccountDto
+  for acc in openedAccounts:
+    if(acc.keyUid == self.selectedAccountKeyUid):
+      selectedAccount = acc
+      break
+
+  let error = self.accountsService.login(selectedAccount, password)
+  if(error.len > 0):
+    self.delegate.loginAccountError(error)

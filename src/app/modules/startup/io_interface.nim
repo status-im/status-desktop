@@ -16,4 +16,4 @@ include ./private_interfaces/module_login_delegate_interface
 type
   DelegateInterface* = concept c
     c.startupDidLoad()
-    c.accountCreated()
+    c.userLoggedIn()
