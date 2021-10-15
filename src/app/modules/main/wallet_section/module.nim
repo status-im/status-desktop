@@ -11,6 +11,7 @@ import ./transactions/module as transactions_module
 
 import ../../../../app_service/service/token/service as token_service
 import ../../../../app_service/service/transaction/service as transaction_service
+import ../../../../app_service/service/collectible/service as collectible_service
 
 import io_interface
 export io_interface
@@ -32,6 +33,7 @@ proc newModule*[T](
   delegate: T,
   tokenService: token_service.Service,
   transactionService: transaction_service.Service,
+  collectibleService: collectible_service.Service
 ): Module[T] =
   result = Module[T]()
   result.delegate = delegate
@@ -41,7 +43,7 @@ proc newModule*[T](
   result.accountTokensModule = account_tokens_module.newModule(result)
   result.accountsModule = accounts_module.newModule(result)
   result.allTokensModule = all_tokens_module.newModule(result, tokenService)
-  result.collectiblesModule = collectibles_module.newModule(result)
+  result.collectiblesModule = collectibles_module.newModule(result, collectibleService)
   result.mainAccountModule = main_account_module.newModule(result)
   result.transactionsModule = transactions_module.newModule(result, transactionService)
 
