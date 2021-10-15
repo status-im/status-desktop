@@ -18,14 +18,19 @@ Rectangle {
                 return Theme.palette.directColor1;
             case StatusFlatRoundButton.Type.Primary:
                 return Theme.palette.primaryColor1;
+            case StatusFlatRoundButton.Type.Tertiary:
+                return hovered ? Theme.palette.primaryColor1: Theme.palette.baseColor1;
+            case StatusFlatRoundButton.Type.Quaternary:
+                return hovered ? Theme.palette.primaryColor1: Theme.palette.directColor1;
             }
         }
 
-        property color disabledColor: {
+        disabledColor: {
             switch(statusFlatRoundButton.type) {
             case StatusFlatRoundButton.Type.Secondary:
-                return Theme.palette.baseColor1;
             case StatusFlatRoundButton.Type.Primary:
+            case StatusFlatRoundButton.Type.Tertiary:
+            case StatusFlatRoundButton.Type.Quaternary:
                 return Theme.palette.baseColor1;
             }
         }
@@ -35,6 +40,7 @@ Rectangle {
 
     property alias hovered: sensor.containsMouse
     property alias tooltip: statusToolTip
+    property alias backgroundHoverColor: backgroundSettings.hoverColor
 
     property bool highlighted: false
 
@@ -47,7 +53,9 @@ Rectangle {
 
     enum Type {
         Primary,
-        Secondary
+        Secondary,
+        Tertiary,
+        Quaternary
     }
 
     /// Implementation
@@ -59,6 +67,8 @@ Rectangle {
             switch(statusFlatRoundButton.type) {
             case StatusFlatRoundButton.Type.Primary:
             case StatusFlatRoundButton.Type.Secondary:
+            case StatusFlatRoundButton.Type.Tertiary:
+            case StatusFlatRoundButton.Type.Quaternary:
                 return "transparent";
             }
         }
@@ -68,6 +78,8 @@ Rectangle {
             case StatusFlatRoundButton.Type.Primary:
                 return Theme.palette.primaryColor3;
             case StatusFlatRoundButton.Type.Secondary:
+            case StatusFlatRoundButton.Type.Tertiary:
+            case StatusFlatRoundButton.Type.Quaternary:
                 return Theme.palette.baseColor2;
             }
         }
@@ -76,6 +88,8 @@ Rectangle {
             switch(statusFlatRoundButton.type) {
             case StatusFlatRoundButton.Type.Primary:
             case StatusFlatRoundButton.Type.Secondary:
+            case StatusFlatRoundButton.Type.Tertiary:
+            case StatusFlatRoundButton.Type.Quaternary:
                 return "transparent";
             }
         }
@@ -85,6 +99,8 @@ Rectangle {
             case StatusFlatRoundButton.Type.Primary:
                 return Theme.palette.primaryColor3;
             case StatusFlatRoundButton.Type.Secondary:
+            case StatusFlatRoundButton.Type.Tertiary:
+            case StatusFlatRoundButton.Type.Quaternary:
                 return Theme.palette.baseColor4;
             }
         }
@@ -120,6 +136,7 @@ Rectangle {
             visible: !loading
 
             icon: statusFlatRoundButton.icon.name
+            source: statusFlatRoundButton.icon.source
             rotation: statusFlatRoundButton.icon.rotation
 
             width: statusFlatRoundButton.icon.width

@@ -8,6 +8,7 @@ QtObject {
     property real width
     property real height
     property color color
+    property color disabledColor
     property url source
     property int rotation
     property bool isLetterIdenticon

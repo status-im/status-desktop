@@ -240,6 +240,63 @@ Column {
             loading: true
             size: StatusBaseButton.Size.Small
         }
+
+        // Tertiary
+        StatusFlatRoundButton {
+            type: StatusFlatRoundButton.Type.Tertiary
+            icon.name: "gif"
+        }
+
+        StatusFlatRoundButton {
+            type: StatusFlatRoundButton.Type.Tertiary
+            icon.name: "gif"
+            enabled: false
+        }
+
+        StatusFlatRoundButton {
+            type: StatusFlatRoundButton.Type.Tertiary
+            icon.name: "gif"
+            loading: true
+        }
+
+        // No background Tertiary
+        StatusFlatRoundButton {
+            type: StatusFlatRoundButton.Type.Tertiary
+            color: "transparent"
+            icon.name: "gif"
+        }
+
+        StatusFlatRoundButton {
+            type: StatusFlatRoundButton.Type.Tertiary
+            icon.name: "gif"
+            color: "transparent"
+            enabled: false
+        }
+
+        StatusFlatRoundButton {
+            type: StatusFlatRoundButton.Type.Tertiary
+            icon.name: "gif"
+            color: "transparent"
+            loading: true
+        }
+
+        // Quartenery
+        StatusFlatRoundButton {
+            type: StatusFlatRoundButton.Type.Quaternary
+            icon.name: "gif"
+        }
+
+        StatusFlatRoundButton {
+            type: StatusFlatRoundButton.Type.Quaternary
+            icon.name: "gif"
+            enabled: false
+        }
+
+        StatusFlatRoundButton {
+            type: StatusFlatRoundButton.Type.Quaternary
+            icon.name: "gif"
+            loading: true
+        }
     }
 
     StatusPickerButton {

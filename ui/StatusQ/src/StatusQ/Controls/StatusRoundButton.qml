@@ -21,7 +21,7 @@ Rectangle {
             }
         }
 
-        property color disabledColor: {
+        disabledColor: {
             switch(statusRoundButton.type) {
             case StatusRoundButton.Type.Primary:
                 return Theme.palette.baseColor1;
