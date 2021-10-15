@@ -1,5 +1,3 @@
-import NimQml, Tables
-
 import controller_interface
 import io_interface
 import ../../core/global_singleton
