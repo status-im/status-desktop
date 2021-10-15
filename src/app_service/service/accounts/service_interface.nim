@@ -45,3 +45,7 @@ method validateMnemonic*(self: ServiceInterface, mnemonic: string):
 
 method importMnemonic*(self: ServiceInterface, mnemonic: string): bool {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method login*(self: ServiceInterface, account: AccountDto, password: string): 
+  string {.base.} =
+  raise newException(ValueError, "No implementation available")
