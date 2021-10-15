@@ -1,6 +1,8 @@
 QT += quick svg
 
-CONFIG += c++11 warn_on
+CONFIG += c++11 warn_on qtquickcompiler
+
+QML_IMPORT_PATH= $$PWD/../src
 
 DEFINES += QT_DEPRECATED_WARNINGS
 
