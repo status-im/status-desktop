@@ -44,5 +44,6 @@ proc toAccountDto*(jsonObj: JsonNode): AccountDto =
   discard jsonObj.getProp("key-uid", result.keyUid)
   
   var imagesObj: JsonNode
-  if(jsonObj.getProp("images", imagesObj)):
-    result.images.add(toImage(imagesObj))
+  if(jsonObj.getProp("images", imagesObj) and imagesObj.kind == JArray):
+    for imgObj in imagesObj:
+      result.images.add(toImage(imgObj))

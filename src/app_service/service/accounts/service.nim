@@ -1,4 +1,5 @@
-import Tables, json, sequtils, strutils, strformat, uuids, chronicles
+import Tables, json, sequtils, strutils, strformat, uuids
+import json_serialization, chronicles
 
 import service_interface
 import ./dto/accounts
@@ -283,3 +284,30 @@ method importMnemonic*(self: Service, mnemonic: string): bool =
   except Exception as e:
     error "error: ", methodName="importMnemonic", errName = e.name, errDesription = e.msg
     return false
+
+method login*(self: Service, account: AccountDto, password: string): string =
+  try:
+    let hashedPassword = hashString(password)
+    var thumbnailImage: string
+    var largeImage: string
+    for img in account.images:
+      if(img.imgType == "thumbnail"):
+        thumbnailImage = img.uri
+      elif(img.imgType == "large"):
+        largeImage = img.uri
+
+    let response = status_go.login(account.name, account.keyUid, hashedPassword,
+    account.identicon, thumbnailImage, largeImage)
+
+    var error = "response doesn't contain \"error\""
+    if(response.result.contains("error")):
+      error = response.result["error"].getStr
+      if error == "":
+        debug "Account logged in"
+        self.loggedInAccount = account
+
+    return error
+
+  except Exception as e:
+    error "error: ", methodName="setupAccount", errName = e.name, errDesription = e.msg
+    return e.msg

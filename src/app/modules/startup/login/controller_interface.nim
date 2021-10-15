@@ -15,3 +15,6 @@ method getOpenedAccounts*(self: AccessInterface): seq[AccountDto] {.base.} =
 
 method setSelectedAccountKeyUid*(self: AccessInterface, keyUid: string) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method login*(self: AccessInterface, password: string) {.base.} =
+  raise newException(ValueError, "No implementation available")

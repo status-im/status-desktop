@@ -29,7 +29,7 @@ proc newModule*[T](delegate: T,
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, accountsService)
+  result.controller = controller.newController(result, appService, accountsService)
 
   singletonInstance.engine.setRootContextProperty("startupModule", result.viewVariant)
 
@@ -45,6 +45,7 @@ method delete*[T](self: Module[T]) =
   self.controller.delete
 
 method load*[T](self: Module[T]) =
+  self.controller.init()
   self.view.load()
   
   var initialAppState = AppState.OnboardingState
@@ -73,8 +74,8 @@ method onboardingDidLoad*[T](self: Module[T]) =
 method loginDidLoad*[T](self: Module[T]) =
   self.checkIfModuleDidLoad()
 
-method accountCreated*[T](self: Module[T]) =
-  self.delegate.accountCreated()
+method userLoggedIn*[T](self: Module[T]) =
+  self.delegate.userLoggedIn()
 
 method moveToAppState*[T](self: Module[T]) =
   self.view.setAppState(AppState.MainAppState)

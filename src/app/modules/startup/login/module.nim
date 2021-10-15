@@ -44,6 +44,7 @@ proc extractImages(self: Module, account: AccountDto, thumbnailImage: var string
       largeImage = img.uri
 
 method load*(self: Module) =
+  self.controller.init()
   self.view.load()
 
   let openedAccounts = self.controller.getOpenedAccounts()
@@ -71,3 +72,9 @@ method viewDidLoad*(self: Module) =
 method setSelectedAccount*(self: Module, item: Item) =
   self.controller.setSelectedAccountKeyUid(item.getKeyUid())
   self.view.setSelectedAccount(item)
+
+method login*(self: Module, password: string) =
+  self.controller.login(password)
+
+method loginAccountError*(self: Module, error: string) =
+  self.view.loginAccountError(error)

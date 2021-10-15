@@ -59,9 +59,6 @@ method setSelectedAccountByIndex*(self: Module, index: int) =
 method storeSelectedAccountAndLogin*(self: Module, password: string) =
   self.controller.storeSelectedAccountAndLogin(password)
 
-method accountCreated*(self: Module) =
-  self.delegate.accountCreated()
-
 method setupAccountError*(self: Module) =
   self.view.setupAccountError()
 

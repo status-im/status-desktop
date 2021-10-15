@@ -42,7 +42,7 @@ proc load*(self: AppController)
 
 # Startup Module Delegate Interface
 proc startupDidLoad*(self: AppController)
-proc accountCreated*(self: AppController)
+proc userLoggedIn*(self: AppController)
 
 # Main Module Delegate Interface
 proc mainDidLoad*(self: AppController)
@@ -113,7 +113,6 @@ proc mainDidLoad*(self: AppController) =
   # self.appService.status.events.emit("loginCompleted", self.accountArgs)
 
 proc start*(self: AppController) =
-  echo "AppStart"
   self.accountsService.init()
   
   self.startupModule.load()
@@ -125,6 +124,5 @@ proc load*(self: AppController) =
   
   self.mainModule.load()
 
-proc accountCreated*(self: AppController) =
-  echo "AppController account created"
+proc userLoggedIn*(self: AppController) =
   self.load()
