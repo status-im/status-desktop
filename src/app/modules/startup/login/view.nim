@@ -1,12 +1,12 @@
 import NimQml
-import account_item, model
+import model, item, selected_account
 import io_interface
 
 QtObject:
   type
     View* = ref object of QObject
       delegate: io_interface.AccessInterface
-      selectedAccount: AccountItem
+      selectedAccount: SelectedAccount
       selectedAccountVariant: QVariant
       model: Model
       modelVariant: QVariant
@@ -22,7 +22,7 @@ QtObject:
     new(result, delete)
     result.QObject.setup
     result.delegate = delegate
-    result.selectedAccount = newAccountItem()
+    result.selectedAccount = newSelectedAccount()
     result.selectedAccountVariant = newQVariant(result.selectedAccount)
     result.model = newModel()
     result.modelVariant = newQVariant(result.model)
@@ -35,11 +35,13 @@ QtObject:
   proc getSelectedAccount(self: View): QVariant {.slot.} =
     return self.selectedAccountVariant
 
-  proc setSelectedAccount*(self: View, name, identicon, keyUid, thumbnailImage, 
-    largeImage: string) =
-    self.selectedAccount.setAccountItemData(name, identicon, keyUid, thumbnailImage, 
-    largeImage)
+  proc setSelectedAccount*(self: View, item: Item) =
+    self.selectedAccount.setSelectedAccountData(item)
     self.selectedAccountChanged()
+
+  proc setSelectedAccountByIndex*(self: View, index: int) {.slot.} =
+    let item = self.model.getItemAtIndex(index)
+    self.delegate.setSelectedAccount(item)
 
   QtProperty[QVariant] selectedAccount:
     read = getSelectedAccount
@@ -50,7 +52,7 @@ QtObject:
   proc getModel(self: View): QVariant {.slot.} =
     return self.modelVariant
 
-  proc setAccountsList*(self: View, accounts: seq[AccountItem]) =
+  proc setModelItems*(self: View, accounts: seq[Item]) =
     self.model.setItems(accounts)
     self.modelChanged()
 
