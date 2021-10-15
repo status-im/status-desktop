@@ -95,7 +95,6 @@ proc delete*(self: AppController) =
   self.communityService.delete
 
 proc startupDidLoad*(self: AppController) =
-  echo "StartupDidLoad"
   singletonInstance.engine.load(newQUrl("qrc:///main.qml"))
   # self.login.init()
   # self.onboarding.init()

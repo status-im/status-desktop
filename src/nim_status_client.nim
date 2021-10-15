@@ -240,8 +240,6 @@ proc mainProc() =
 
   initControllers()
 
-  appController.start()
-
   # Handle node.stopped signal when user has logged out
   status.events.once("nodeStopped") do(a: Args):
     # TODO: remove this once accounts are not tracked in the AccountsModel
@@ -269,7 +267,7 @@ proc mainProc() =
   # https://doc.qt.io/archives/qtjambi-4.5.2_01/com/trolltech/qt/qtjambi-linguist-programmers.html
   changeLanguage("en")
 
-  #singletonInstance.engine.load(newQUrl("qrc:///main.qml"))
+  appController.start()
 
   # Please note that this must use the `cdecl` calling convention because
   # it will be passed as a regular C function to statusgo_backend. This means that
