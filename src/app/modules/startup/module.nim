@@ -29,7 +29,7 @@ proc newModule*[T](delegate: T,
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, accountsService)
+  result.controller = controller.newController(result, appService, accountsService)
 
   # Submodules
   result.onboardingModule = onboarding_module.newModule(result, appService, accountsService)
@@ -73,8 +73,8 @@ method onboardingDidLoad*[T](self: Module[T]) =
 method loginDidLoad*[T](self: Module[T]) =
   self.checkIfModuleDidLoad()
 
-method accountCreated*[T](self: Module[T]) =
-  self.delegate.accountCreated()
+method userLoggedIn*[T](self: Module[T]) =
+  self.delegate.userLoggedIn()
 
 method moveToAppState*[T](self: Module[T]) =
   self.view.setAppState(AppState.MainAppState)

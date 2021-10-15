@@ -160,7 +160,9 @@ ModalPopup {
                 if (storingPasswordModal)
                 {
                     accountSettings.storeToKeychain = Constants.storeToKeychainValueStore
-                    loginModel.storePassword(profileModel.profile.username, repeatPasswordField.text)
+                    // NEED TO HANDLE IT
+                    // This part should be done via PrivacyAndSecurity submodule section of ProfileSection module
+//                    loginModel.storePassword(profileModel.profile.username, repeatPasswordField.text)
                     popup.close()
                 }
                 else

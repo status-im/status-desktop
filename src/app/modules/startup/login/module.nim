@@ -73,3 +73,9 @@ method viewDidLoad*(self: Module) =
 method setSelectedAccount*(self: Module, item: Item) =
   self.controller.setSelectedAccountKeyUid(item.getKeyUid())
   self.view.setSelectedAccount(item)
+
+method login*(self: Module, password: string) =
+  self.controller.login(password)
+
+method loginAccountError*(self: Module, error: string) =
+  self.view.loginAccountError(error)

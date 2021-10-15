@@ -35,12 +35,8 @@ method delete*(self: Controller) =
 method init*(self: Controller) = 
   self.appService.status.events.on(SignalType.NodeLogin.event) do(e:Args):
     let signal = NodeSignal(e)
-    echo "-NEW-ONBOARDING-- OnNodeLoginEvent: ", repr(signal)
-    if signal.event.error == "":
-      echo "-NEW-ONBOARDING-- OnNodeLoginEventA: ", repr(signal.event.error)
-      self.delegate.accountCreated()
-    else:
-      error "error: ", methodName="init", errDesription = "onboarding login error " & signal.event.error
+    if signal.event.error != "":
+      self.delegate.setupAccountError()
 
 method getGeneratedAccounts*(self: Controller): seq[GeneratedAccountDto] =
   return self.accountsService.generatedAccounts()

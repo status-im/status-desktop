@@ -227,25 +227,23 @@ Item {
             }
         }
 
-        // NEED TO HANDLE IT
-//        Connections {
-//            target: LoginStore.loginModelInst
-//            ignoreUnknownSignals: true
-//            onLoginResponseChanged: {
-//                if (error) {
-//                    // SQLITE_NOTADB: "file is not a database"
-//                    if (error === "file is not a database") {
-//                        errMsg.text = errMsg.incorrectPasswordMsg
-//                    } else {
-//                        //% "Login failed: %1"
-//                        errMsg.text = qsTrId("login-failed---1").arg(error.toUpperCase())
-//                    }
-//                    errMsg.visible = true
-//                    loading = false
-//                    txtPassword.textField.forceActiveFocus()
-//                }
-//            }
-//        }
+        Connections {
+            target: LoginStore.loginModul
+            onAccountLoginError: {
+                if (error) {
+                    // SQLITE_NOTADB: "file is not a database"
+                    if (error === "file is not a database") {
+                        errMsg.text = errMsg.incorrectPasswordMsg
+                    } else {
+                        //% "Login failed: %1"
+                        errMsg.text = qsTrId("login-failed---1").arg(error.toUpperCase())
+                    }
+                    errMsg.visible = true
+                    loading = false
+                    txtPassword.textField.forceActiveFocus()
+                }
+            }
+        }
 
         StatusQControls.StatusFlatButton {
             id: generateKeysLinkText
