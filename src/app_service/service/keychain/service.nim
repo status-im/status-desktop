@@ -1,6 +1,4 @@
 import NimQml, chronicles
-#Tables, json, sequtils, strutils, strformat, uuids
-#import json_serialization, 
 
 import ../local_settings/service as local_settings_service
 
@@ -8,13 +6,6 @@ import eventemitter
 
 logScope:
   topics = "keychain-service"
-
-# Local Account Settings keys:
-const LS_KEY_STORE_TO_KEYCHAIN* = "storeToKeychain"
-# Local Account Settings values:
-const LS_VALUE_STORE* = "store"
-const LS_VALUE_NOTNOW* = "notNow"
-const LS_VALUE_NEVER* = "never"
 
 const ERROR_TYPE_AUTHENTICATION = "authentication"
 const ERROR_TYPE_KEYCHAIN = "keychain"
