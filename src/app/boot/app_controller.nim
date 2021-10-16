@@ -6,10 +6,11 @@ import ../../app_service/service/accounts/service as accounts_service
 import ../../app_service/service/contacts/service as contact_service
 import ../../app_service/service/chat/service as chat_service
 import ../../app_service/service/community/service as community_service
+import ../core/local_account_settings
 import ../modules/startup/module as startup_module
 import ../modules/main/module as main_module
 
-import global_singleton
+import ../core/global_singleton
 
 # This will be removed later once we move to c++ and handle there async things
 # and improved some services, like EventsService which should implement 
@@ -44,8 +45,8 @@ proc changeLanguage(locale: string) =
     return
   currentLanguageCode = locale
   let shouldRetranslate = not defined(linux)
-  singletonInstance.engine.setTranslationPackage(joinPath(i18nPath, fmt"qml_{locale}.qm"), shouldRetranslate)
-
+  singletonInstance.engine.setTranslationPackage(
+    joinPath(i18nPath, fmt"qml_{locale}.qm"), shouldRetranslate)
 
 type 
   AppController* = ref object of RootObj 
@@ -57,6 +58,9 @@ type
     contactService: contact_service.Service
     chatService: chat_service.Service
     communityService: community_service.Service
+    # Core
+    localAccountSettings: LocalAccountSettings
+    localAccountSettingsVariant: QVariant
     # Modules
     startupModule: startup_module.AccessInterface
     mainModule: main_module.AccessInterface
@@ -104,11 +108,15 @@ proc newAppController*(appService: AppService): AppController =
   result.appService = appService
   # Services
   result.localSettingsService = local_settings_service.newService()
-  result.keychainService = keychain_service.newService(result.localSettingsService, appService.status.events)
+  result.keychainService = keychain_service.newService(result.localSettingsService, 
+  appService.status.events)
   result.accountsService = accounts_service.newService()
   result.contactService = contact_service.newService()
   result.chatService = chat_service.newService()
   result.communityService = community_service.newService(result.chatService)
+  # Core
+  result.localAccountSettings = newLocalAccountSettings(result.localSettingsService)
+  result.localAccountSettingsVariant = newQVariant(result.localSettingsService)
   # Modules
   result.startupModule = startup_module.newModule[AppController](result,
   appService.status.events, appService.status.fleet, result.localSettingsService,
@@ -120,7 +128,8 @@ proc newAppController*(appService: AppService): AppController =
   #################################################
   # At the end of refactoring this will be moved to 
   # appropriate place or removed:
-  result.profile = profile.newController(appService.status, appService, result.localSettingsService, changeLanguage)
+  result.profile = profile.newController(appService.status, appService, 
+  result.localSettingsService, changeLanguage)
   # result.login = login.newController(appService.status, appService)
   # result.onboarding = onboarding.newController(appService.status)
   # singletonInstance.engine.setRootContextProperty("loginModel", result.login.variant)
@@ -139,6 +148,9 @@ proc delete*(self: AppController) =
   # self.onboarding.delete
   self.profile.delete
   #################################################
+
+  self.localSettingsService.delete
+  self.localAccountSettingsVariant.delete
 
   self.localSettingsService.delete
   self.accountsService.delete
@@ -160,6 +172,8 @@ proc startupDidLoad*(self: AppController) =
   # https://doc.qt.io/archives/qtjambi-4.5.2_01/com/trolltech/qt/qtjambi-linguist-programmers.html
   changeLanguage("en")
 
+  singletonInstance.engine.setRootContextProperty("localAccountSettings", 
+  self.localAccountSettingsVariant)
   singletonInstance.engine.load(newQUrl("qrc:///main.qml"))
 
   #self.startupModule.offerToLoginUsingKeychain()

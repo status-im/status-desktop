@@ -1,11 +1,18 @@
 import NimQml, os, chronicles
 import ../../../constants
 
+logScope:
+  topics = "local-settings"
+
 const UNKNOWN_ACCOUNT = "unknownAccount"
 const UNKNOWN_PROFILE = "unknownProfile"
 
-logScope:
-  topics = "local-settings"
+# Local Account Settings keys:
+const LS_KEY_STORE_TO_KEYCHAIN* = "storeToKeychain"
+# Local Account Settings values:
+const LS_VALUE_STORE* = "store"
+const LS_VALUE_NOTNOW* = "notNow"
+const LS_VALUE_NEVER* = "never"
 
 QtObject:
   type Service* = ref object of QObject
