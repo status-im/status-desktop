@@ -1,11 +1,6 @@
 import NimQml, os, chronicles
 import ../../../constants
 
-# Local Account Settings keys:
-const LS_KEY_STORE_TO_KEYCHAIN* = "storeToKeychain"
-# Local Account Settings values:
-const LS_VALUE_STORE* = "store"
-
 const UNKNOWN_ACCOUNT = "unknownAccount"
 const UNKNOWN_PROFILE = "unknownProfile"
 

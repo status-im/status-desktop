@@ -3,9 +3,10 @@ import Tables, chronicles
 import controller_interface
 import io_interface
 
-import status/[signals]
-import ../../../../app_service/[main]
 import ../../../../app_service/service/accounts/service_interface as accounts_service
+
+import eventemitter
+import status/[signals, fleet]
 
 export controller_interface
 
@@ -16,24 +17,27 @@ type
   Controller* = 
     ref object of controller_interface.AccessInterface
     delegate: io_interface.AccessInterface
-    appService: AppService
+    events: EventEmitter
+    fleet: FleetModel
     accountsService: accounts_service.ServiceInterface
     selectedAccountId: string
 
 proc newController*(delegate: io_interface.AccessInterface,
-  appService: AppService,
+  events: EventEmitter,
+  fleet: FleetModel,
   accountsService: accounts_service.ServiceInterface): 
   Controller =
   result = Controller()
   result.delegate = delegate
-  result.appService = appService
+  result.events = events
+  result.fleet = fleet
   result.accountsService = accountsService
   
 method delete*(self: Controller) =
   discard
 
 method init*(self: Controller) = 
-  self.appService.status.events.on(SignalType.NodeLogin.event) do(e:Args):
+  self.events.on(SignalType.NodeLogin.event) do(e:Args):
     let signal = NodeSignal(e)
     if signal.event.error != "":
       self.delegate.setupAccountError()
@@ -49,7 +53,7 @@ method setSelectedAccountByIndex*(self: Controller, index: int) =
   self.selectedAccountId = accounts[index].id
 
 method storeSelectedAccountAndLogin*(self: Controller, password: string) =
-  if(not self.accountsService.setupAccount(self.appService.status.fleet.config, 
+  if(not self.accountsService.setupAccount(self.fleet.config, 
   self.selectedAccountId, password)):
     self.delegate.setupAccountError()
 
