@@ -17,6 +17,7 @@ import status/notifications/[os_notifications]
 import ../chat/views/channels_list
 import ../../constants
 import ../../app_service/[main]
+import ../../app_service/service/local_settings/service as local_settings_service
 import ../utils/image_utils
 import ../../constants
 
@@ -37,6 +38,7 @@ QtObject:
     network*: NetworkView
     status*: Status
     appService: AppService
+    localSettingsService: local_settings_service.Service
     changeLanguage*: proc(locale: string)
     ens*: EnsManager
 
@@ -57,7 +59,9 @@ QtObject:
     if not self.mailservers.isNil: self.mailservers.delete
     self.QObject.delete
 
-  proc newProfileView*(status: Status, appService: AppService, changeLanguage: proc(locale: string)): ProfileView =
+  proc newProfileView*(status: Status, appService: AppService, 
+    localSettingsService: local_settings_service.Service,
+    changeLanguage: proc(locale: string)): ProfileView =
     new(result, delete)
     result = ProfileView()
     result.profile = newProfileInfoView()
@@ -74,6 +78,7 @@ QtObject:
     result.changeLanguage = changeLanguage
     result.status = status
     result.appService = appService
+    result.localSettingsService = localSettingsService
     result.setup
 
   proc initialized*(self: ProfileView) {.signal.}
@@ -188,7 +193,7 @@ QtObject:
     read = getProfilePicture
 
   proc getGlobalSettingsFile*(self: ProfileView): string {.slot.} =
-    self.appService.localSettingsService.getGlobalSettingsFilePath
+    self.localSettingsService.getGlobalSettingsFilePath
 
   QtProperty[string] globalSettingsFile:
     read = getGlobalSettingsFile
@@ -202,10 +207,10 @@ QtObject:
   proc settingsFileChanged*(self: ProfileView) {.signal.}
   
   proc getSettingsFile*(self: ProfileView): string {.slot.} =
-    self.appService.localSettingsService.getSettingsFilePath
+    self.localSettingsService.getSettingsFilePath
   
   proc setSettingsFile*(self: ProfileView, pubKey: string) =
-    self.appService.localSettingsService.updateSettingsFilePath(pubKey)
+    self.localSettingsService.updateSettingsFilePath(pubKey)
     self.settingsFileChanged()
 
   QtProperty[string] settingsFile:
@@ -215,11 +220,11 @@ QtObject:
   proc accountSettingsFileChanged*(self: ProfileView) {.signal.}
 
   proc setAccountSettingsFile*(self: ProfileView, alias: string) =
-    self.appService.localSettingsService.updateAccountSettingsFilePath(alias)
+    self.localSettingsService.updateAccountSettingsFilePath(alias)
     self.accountSettingsFileChanged()
 
   proc getAccountSettingsFile*(self: ProfileView): string {.slot.} =
-    self.appService.localSettingsService.getAccountSettingsFilePath
+    self.localSettingsService.getAccountSettingsFilePath
 
   QtProperty[string] accountSettingsFile:
     read = getAccountSettingsFile
