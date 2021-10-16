@@ -13,7 +13,7 @@ logScope:
   topics = "local-settings"
 
 QtObject:
-  type LocalSettingsService* = ref object of QObject
+  type Service* = ref object of QObject
     settingsFilePath: string
     settings: QSettings
     accountSettingsFilePath: string
@@ -21,7 +21,7 @@ QtObject:
     globalSettingsFilePath: string
     globalSettings: QSettings
     
-  proc setup(self: LocalSettingsService) =
+  proc setup(self: Service) =
     self.settingsFilePath = os.joinPath(DATADIR, "qt", UNKNOWN_PROFILE)
     self.settings = newQSettings(self.settingsFilePath, QSettingsFormat.IniFormat)
     self.accountSettingsFilePath = os.joinPath(DATADIR, "qt", UNKNOWN_ACCOUNT)
@@ -30,25 +30,25 @@ QtObject:
     self.globalSettings = newQSettings(self.globalSettingsFilePath, QSettingsFormat.IniFormat)
     self.QObject.setup
 
-  proc delete*(self: LocalSettingsService) =
+  proc delete*(self: Service) =
     self.settings.delete
     self.globalSettings.delete
     self.QObject.delete
 
-  proc newLocalSettingsService*(): LocalSettingsService =
+  proc newService*(): Service =
     new(result, delete)
     result.setup
 
-  proc getGlobalSettingsFilePath*(self: LocalSettingsService): string =
+  proc getGlobalSettingsFilePath*(self: Service): string =
     return self.globalSettingsFilePath
 
-  proc getAccountSettingsFilePath*(self: LocalSettingsService): string =
+  proc getAccountSettingsFilePath*(self: Service): string =
     return self.accountSettingsFilePath
 
-  proc getSettingsFilePath*(self: LocalSettingsService): string =
+  proc getSettingsFilePath*(self: Service): string =
     return self.settingsFilePath
 
-  proc updateSettingsFilePath*(self: LocalSettingsService, pubKey: string) =
+  proc updateSettingsFilePath*(self: Service, pubKey: string) =
     let unknownSettingsPath = os.joinPath(DATADIR, "qt", UNKNOWN_PROFILE)
     if (not unknownSettingsPath.tryRemoveFile):
       # Only fails if the file exists and an there was an error removing it
@@ -59,7 +59,7 @@ QtObject:
     self.settingsFilePath = os.joinPath(DATADIR, "qt", pubKey)
     self.settings = newQSettings(self.settingsFilePath, QSettingsFormat.IniFormat)
 
-  proc updateAccountSettingsFilePath*(self: LocalSettingsService, alias: string) =
+  proc updateAccountSettingsFilePath*(self: Service, alias: string) =
     let unknownAccountSettingsPath = os.joinPath(DATADIR, "qt", UNKNOWN_ACCOUNT)
     if (not unknownAccountSettingsPath.tryRemoveFile):
       # Only fails if the file exists and an there was an error removing it
@@ -70,32 +70,32 @@ QtObject:
     self.accountSettingsFilePath = os.joinPath(DATADIR, "qt", alias)
     self.accountSettings = newQSettings(self.accountSettingsFilePath, QSettingsFormat.IniFormat)
 
-  proc setAccountValue*(self: LocalSettingsService, key: string, value: QVariant) =
+  proc setAccountValue*(self: Service, key: string, value: QVariant) =
     self.accountSettings.setValue(key, value)
 
-  proc getAccountValue*(self: LocalSettingsService, key: string, 
+  proc getAccountValue*(self: Service, key: string, 
     defaultValue: QVariant = newQVariant()): QVariant =
     self.accountSettings.value(key, defaultValue)
 
-  proc removeAccountValue*(self: LocalSettingsService, key: string) =
+  proc removeAccountValue*(self: Service, key: string) =
     self.accountSettings.remove(key)
 
-  proc setValue*(self: LocalSettingsService, key: string, value: QVariant) =
+  proc setValue*(self: Service, key: string, value: QVariant) =
     self.settings.setValue(key, value)
 
-  proc getValue*(self: LocalSettingsService, key: string, 
+  proc getValue*(self: Service, key: string, 
     defaultValue: QVariant = newQVariant()): QVariant =
     self.settings.value(key, defaultValue)
   
-  proc removeValue*(self: LocalSettingsService, key: string) =
+  proc removeValue*(self: Service, key: string) =
     self.settings.remove(key)
 
-  proc setGlobalValue*(self: LocalSettingsService, key: string, value: QVariant) =
+  proc setGlobalValue*(self: Service, key: string, value: QVariant) =
     self.globalSettings.setValue(key, value)
 
-  proc getGlobalValue*(self: LocalSettingsService, key: string, 
+  proc getGlobalValue*(self: Service, key: string, 
     defaultValue: QVariant = newQVariant()): QVariant =
     self.globalSettings.value(key, defaultValue)
   
-  proc removeGlobalValue*(self: LocalSettingsService, key: string) =
+  proc removeGlobalValue*(self: Service, key: string) =
     self.globalSettings.remove(key)

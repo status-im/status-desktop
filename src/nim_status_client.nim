@@ -6,8 +6,6 @@ import app/wallet/v2/core as walletV2
 import app/node/core as node
 import app/utilsView/core as utilsView
 import app/browser/core as browserView
-import app/profile/core as profile
-import app/profile/view
 import app/provider/core as provider
 import app/keycard/core as keycard
 import status/types/[account]
@@ -34,7 +32,7 @@ proc mainProc() =
 
   ensureDirectories(DATADIR, TMPDIR, LOGDIR)
 
-  var currentLanguageCode: string
+  # var currentLanguageCode: string
 
   let fleets =
     if defined(windows) and defined(production):
@@ -96,15 +94,15 @@ proc mainProc() =
   if not defined(macosx):
     app.icon(app.applicationDirPath & statusAppIcon)
 
-  var i18nPath = ""
-  if defined(development):
-    i18nPath = joinPath(getAppDir(), "../ui/i18n")
-  elif (defined(windows)):
-    i18nPath = joinPath(getAppDir(), "../resources/i18n")
-  elif (defined(macosx)):
-    i18nPath = joinPath(getAppDir(), "../i18n")
-  elif (defined(linux)):
-    i18nPath = joinPath(getAppDir(), "../i18n")
+  # var i18nPath = ""
+  # if defined(development):
+  #   i18nPath = joinPath(getAppDir(), "../ui/i18n")
+  # elif (defined(windows)):
+  #   i18nPath = joinPath(getAppDir(), "../resources/i18n")
+  # elif (defined(macosx)):
+  #   i18nPath = joinPath(getAppDir(), "../i18n")
+  # elif (defined(linux)):
+  #   i18nPath = joinPath(getAppDir(), "../i18n")
 
   let networkAccessFactory = newQNetworkAccessManagerFactory(TMPDIR & "netcache")
 
@@ -180,16 +178,12 @@ proc mainProc() =
   defer: browserController.delete()
   singletonInstance.engine.setRootContextProperty("browserModel", browserController.variant)
 
-  proc changeLanguage(locale: string) =
-    if (locale == currentLanguageCode):
-      return
-    currentLanguageCode = locale
-    let shouldRetranslate = not defined(linux)
-    singletonInstance.engine.setTranslationPackage(joinPath(i18nPath, fmt"qml_{locale}.qm"), shouldRetranslate)
-
-  var profile = profile.newController(status, appService, changeLanguage)
-  defer: profile.delete()
-  singletonInstance.engine.setRootContextProperty("profileModel", profile.variant)
+  # proc changeLanguage(locale: string) =
+  #   if (locale == currentLanguageCode):
+  #     return
+  #   currentLanguageCode = locale
+  #   let shouldRetranslate = not defined(linux)
+  #   singletonInstance.engine.setTranslationPackage(joinPath(i18nPath, fmt"qml_{locale}.qm"), shouldRetranslate)
 
   var provider = provider.newController(status)
   defer: provider.delete()
@@ -198,19 +192,19 @@ proc mainProc() =
   var keycard = keycard.newController(status)
   defer: keycard.delete()
 
-  proc onAccountChanged(account: Account) =
-    profile.view.setAccountSettingsFile(account.name)
+  # proc onAccountChanged(account: Account) =
+  #   profile.view.setAccountSettingsFile(account.name)
 
-  status.events.on("accountChanged") do(a: Args):
-    var args = AccountArgs(a)
-    onAccountChanged(args.account)
+  # status.events.on("accountChanged") do(a: Args):
+  #   var args = AccountArgs(a)
+  #   onAccountChanged(args.account)
 
   status.events.once("loginCompleted") do(a: Args):
     var args = AccountArgs(a)
 
-    onAccountChanged(args.account)
+    # onAccountChanged(args.account)
     status.startMessenger()
-    profile.init(args.account)
+    # profile.init(args.account)
     wallet.init()
     wallet2.init()
     provider.init()
@@ -262,10 +256,10 @@ proc mainProc() =
   var prValue = newQVariant(if defined(production): true else: false)
   singletonInstance.engine.setRootContextProperty("production", prValue)
 
-  # We're applying default language before we load qml. Also we're aware that
-  # switch language at runtime will have some impact to cpu usage.
-  # https://doc.qt.io/archives/qtjambi-4.5.2_01/com/trolltech/qt/qtjambi-linguist-programmers.html
-  changeLanguage("en")
+  # # We're applying default language before we load qml. Also we're aware that
+  # # switch language at runtime will have some impact to cpu usage.
+  # # https://doc.qt.io/archives/qtjambi-4.5.2_01/com/trolltech/qt/qtjambi-linguist-programmers.html
+  # changeLanguage("en")
 
   appController.start()
 

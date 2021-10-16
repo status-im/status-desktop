@@ -63,7 +63,7 @@ QtObject:
       identityImage: currNodeAcct.identityImage
     ))
 
-    self.status.events.emit("accountChanged", AccountArgs(account: currNodeAcct))
+    # self.status.events.emit("accountChanged", AccountArgs(account: currNodeAcct))
 
   QtProperty[QVariant] currentAccount:
     read = getCurrentAccount
@@ -174,10 +174,11 @@ QtObject:
       self.keychainManager.storeDataAsync(username, password)
 
   proc tryToObtainPassword*(self: LoginView) {.slot.} =
-    let value = self.appService.localSettingsService.getAccountValue(
-      LS_KEY_STORE_TO_KEYCHAIN).stringVal
-    if (value == LS_VALUE_STORE):
-      self.keychainManager.readDataAsync(self.currentAccount.username)
+    discard
+    # let value = self.appService.localSettingsService.getAccountValue(
+    #   LS_KEY_STORE_TO_KEYCHAIN).stringVal
+    # if (value == LS_VALUE_STORE):
+    #   self.keychainManager.readDataAsync(self.currentAccount.username)
 
   proc obtainingPasswordError*(self:LoginView, errorDescription: string) {.signal.}
   proc obtainingPasswordSuccess*(self:LoginView, password: string) {.signal.}
