@@ -11,7 +11,11 @@ QtObject {
     property var walletModelV2Inst: walletV2Model
     property var profileModelInst: profileModel
     property var chatsModelInst: chatsModel
-    property var onboardingModelInst: onboardingModel
+    // This should be exposed to the UI via "walletModule", WalletModule should use
+    // Accounts Service which keeps the info about that. Then in the View of WalletModule
+    // we may have either QtProperty or Q_INVOKABLE function (proc marked as slot)
+    // depends on logic/need.
+    // property var onboardingModelInst: onboardingModel
     property int selectedAccount: 0
 
     function getSavedAddressErrorText(savedAddresses, error) {
@@ -57,9 +61,12 @@ QtObject {
     property bool loadingAccounts: false
 
     function seedPhraseNotFound(text) {
-        var seedValidationError = root.onboardingModelInst.validateMnemonic(text);
-        var regex = new RegExp('word [a-z]+ not found in the dictionary', 'i');
-        return regex.test(seedValidationError);
+        // Read in above
+//        var seedValidationError = root.onboardingModelInst.validateMnemonic(text);
+//        var regex = new RegExp('word [a-z]+ not found in the dictionary', 'i');
+//        return regex.test(seedValidationError);
+
+        return ""
     }
 
     function validateAddAccountPopup(text, model, keyOrSeedValid, accountNameValid) {

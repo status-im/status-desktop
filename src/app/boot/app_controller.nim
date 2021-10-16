@@ -1,6 +1,7 @@
 import NimQml, os, strformat
 
 import ../../app_service/service/local_settings/service as local_settings_service
+import ../../app_service/service/keychain/service as keychain_service
 import ../../app_service/service/accounts/service as accounts_service
 import ../../app_service/service/contacts/service as contact_service
 import ../../app_service/service/chat/service as chat_service
@@ -14,6 +15,8 @@ import global_singleton
 # and improved some services, like EventsService which should implement 
 # provider/subscriber principe:
 import ../../app_service/[main]
+import eventemitter
+import status/[fleet]
 
 #################################################
 # At the end of refactoring this will be moved to 
@@ -49,6 +52,7 @@ type
     appService: AppService
     # Services
     localSettingsService: local_settings_service.Service
+    keychainService: keychain_service.Service
     accountsService: accounts_service.Service
     contactService: contact_service.Service
     chatService: chat_service.Service
@@ -100,13 +104,15 @@ proc newAppController*(appService: AppService): AppController =
   result.appService = appService
   # Services
   result.localSettingsService = local_settings_service.newService()
+  result.keychainService = keychain_service.newService(result.localSettingsService, appService.status.events)
   result.accountsService = accounts_service.newService()
   result.contactService = contact_service.newService()
   result.chatService = chat_service.newService()
   result.communityService = community_service.newService(result.chatService)
   # Modules
-  result.startupModule = startup_module.newModule[AppController](result, appService,
-  result.accountsService)
+  result.startupModule = startup_module.newModule[AppController](result,
+  appService.status.events, appService.status.fleet, result.localSettingsService,
+  result.keychainService, result.accountsService)
   result.mainModule = main_module.newModule[AppController](result, result.chatService,
   result.communityService)
 
