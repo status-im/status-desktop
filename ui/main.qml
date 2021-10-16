@@ -40,12 +40,31 @@ StatusWindow {
         }
     }
 
-    Settings {
-        id: accountSettings
-        fileName: profileModel.accountSettingsFile
+//    Settings {
+//        id: accountSettings
+//        //fileName: loginModule.accountSettingsFile
 
-        property string storeToKeychain: ""
-    }
+//        property string storeToKeychain: ""
+
+////        onFileNameChanged: {
+////            console.warn("OnFileNameChanged: path: ", accountSettings.fileName, "  kcValue: ", accountSettings.storeToKeychain)
+////        }
+
+//        onStoreToKeychainChanged: {
+//            console.warn("onStoreToKeychainChanged: path: ", accountSettings.fileName, "  kcValue: ", accountSettings.storeToKeychain)
+//        }
+//    }
+
+//    Connections {
+//        target: loginModule
+//        onAccountSettingsFileChanged: {
+//            console.warn("OnFileNameChanged1111: path: ", accountSettings.fileName, "  kcValue: ", accountSettings.storeToKeychain)
+//            accountSettings.fileName = ""
+//            console.warn("OnFileNameChanged2222: path: ", accountSettings.fileName, "  kcValue: ", accountSettings.storeToKeychain)
+//            accountSettings.fileName = loginModule.accountSettingsFile
+//            console.warn("OnFileNameChanged3333: path: ", accountSettings.fileName, "  kcValue: ", accountSettings.storeToKeychain)
+//        }
+//    }
 
     Settings {
         id: appSettings
@@ -167,6 +186,13 @@ StatusWindow {
         }
     }
 
+    Connections {
+        target: mainModule
+        onOpenStoreToKeychainPopup: {
+            storeToKeychainConfirmationPopup.open()
+        }
+    }
+
     //! Workaround for custom QQuickWindow
     Connections {
         target: applicationWindow
@@ -281,28 +307,34 @@ StatusWindow {
         }
     }
 
-    function checkForStoringPassToKeychain(username, password, clearStoredValue) {
+//    function checkForStoringPassToKeychain(username, password, clearStoredValue) {
+//        if(Qt.platform.os == "osx")
+//        {
+//            if(clearStoredValue)
+//            {
+//                accountSettings.storeToKeychain = ""
+//            }
+
+//            if(accountSettings.storeToKeychain === "" ||
+//               accountSettings.storeToKeychain === Constants.storeToKeychainValueNotNow)
+//            {
+//                storeToKeychainConfirmationPopup.password = password
+//                storeToKeychainConfirmationPopup.username = username
+//                storeToKeychainConfirmationPopup.open()
+//            }
+//        }
+//    }
+
+    function prepareForStoring(password) {
         if(Qt.platform.os == "osx")
         {
-            if(clearStoredValue)
-            {
-                accountSettings.storeToKeychain = ""
-            }
-
-            if(accountSettings.storeToKeychain === "" ||
-               accountSettings.storeToKeychain === Constants.storeToKeychainValueNotNow)
-            {
-                storeToKeychainConfirmationPopup.password = password
-                storeToKeychainConfirmationPopup.username = username
-                storeToKeychainConfirmationPopup.open()
-            }
+            storeToKeychainConfirmationPopup.password = password
         }
     }
 
     ConfirmationDialog {
         id: storeToKeychainConfirmationPopup
         property string password: ""
-        property string username: ""
         height: 200
         confirmationText: qsTr("Would you like to store password to the Keychain?")
         showRejectButton: true
@@ -314,24 +346,22 @@ StatusWindow {
         function finish()
         {
             password = ""
-            username = ""
             storeToKeychainConfirmationPopup.close()
         }
 
         onConfirmButtonClicked: {
-            accountSettings.storeToKeychain = Constants.storeToKeychainValueStore
-            // This is need to be handled using KeyChain service via LoginModule
-//            loginModel.storePassword(username, password)
+            console.warn("STOREEEEEE....pass: ", password)
+            mainModule.storePassword(password)
             finish()
         }
 
         onRejectButtonClicked: {
-            accountSettings.storeToKeychain = Constants.storeToKeychainValueNotNow
+            mainModule.updateUserPreferenceForStoreToKeychain(Constants.storeToKeychainValueNotNow)
             finish()
         }
 
         onCancelButtonClicked: {
-            accountSettings.storeToKeychain = Constants.storeToKeychainValueNever
+            mainModule.updateUserPreferenceForStoreToKeychain(Constants.storeToKeychainValueNever)
             finish()
         }
     }
