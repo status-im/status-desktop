@@ -7,8 +7,12 @@ import ../../../app/boot/global_singleton
 import onboarding/module as onboarding_module
 import login/module as login_module
 
-import ../../../app_service/[main]
+import ../../../app_service/service/local_settings/service as local_settings_service
+import ../../../app_service/service/keychain/service as keychain_service
 import ../../../app_service/service/accounts/service_interface as accounts_service
+
+import eventemitter
+import status/[fleet]
 
 export io_interface
 
@@ -22,18 +26,22 @@ type
     loginModule: login_module.AccessInterface
 
 proc newModule*[T](delegate: T,
-  appService: AppService,
+  events: EventEmitter,
+  fleet: FleetModel,
+  localSettingsService: local_settings_service.Service,
+  keychainService: keychain_service.Service,
   accountsService: accounts_service.ServiceInterface): 
   Module[T] =
   result = Module[T]()
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, appService, accountsService)
+  result.controller = controller.newController(result, events, localSettingsService,
+  keychainService, accountsService)
 
   # Submodules
-  result.onboardingModule = onboarding_module.newModule(result, appService, accountsService)
-  result.loginModule = login_module.newModule(result, appService, accountsService)
+  result.onboardingModule = onboarding_module.newModule(result, events, fleet, accountsService)
+  result.loginModule = login_module.newModule(result, events, accountsService)
   
 method delete*[T](self: Module[T]) =
   self.onboardingModule.delete
