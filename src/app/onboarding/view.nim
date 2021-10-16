@@ -103,8 +103,8 @@ QtObject:
 
   proc storeDerivedAndLogin(self: OnboardingView, password: string): string {.slot.} =
     let genAcc = self.currentAccount.account
-    let acc = Account(name: genAcc.name, keyUid: genAcc.keyUid, identicon: genAcc.identicon, identityImage: genAcc.identityImage)
-    self.status.events.emit("accountChanged", status_account_type.AccountArgs(account: acc))
+    # let acc = Account(name: genAcc.name, keyUid: genAcc.keyUid, identicon: genAcc.identicon, identityImage: genAcc.identityImage)
+    # self.status.events.emit("accountChanged", status_account_type.AccountArgs(account: acc))
 
     try:
       result = self.status.accounts.storeDerivedAndLogin(self.status.fleet.config, genAcc, password).toJson

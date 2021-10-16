@@ -9,6 +9,7 @@ import status/wallet
 import status/types/[account, transaction, setting, profile, mailserver]
 import ../../app_service/[main]
 import ../../app_service/tasks/marathon/mailserver/events
+import ../../app_service/service/local_settings/service as local_settings_service
 import eventemitter
 import view
 import views/[ens_manager, devices, network, mailservers, contacts, muted_chats]
@@ -22,12 +23,15 @@ type ProfileController* = ref object
   variant*: QVariant
   status: Status
   appService: AppService
+  localSettingsService: local_settings_service.Service
 
-proc newController*(status: Status, appService: AppService, changeLanguage: proc(locale: string)): ProfileController =
+proc newController*(status: Status, appService: AppService,
+  localSettingsService: local_settings_service.Service,
+  changeLanguage: proc(locale: string)): ProfileController =
   result = ProfileController()
   result.status = status
   result.appService = appService
-  result.view = newProfileView(status, appService, changeLanguage)
+  result.view = newProfileView(status, appService, localSettingsService, changeLanguage)
   result.variant = newQVariant(result.view)
 
 proc delete*(self: ProfileController) =

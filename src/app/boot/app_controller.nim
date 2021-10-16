@@ -1,5 +1,6 @@
-import NimQml
+import NimQml, os, strformat
 
+import ../../app_service/service/local_settings/service as local_settings_service
 import ../../app_service/service/accounts/service as accounts_service
 import ../../app_service/service/contacts/service as contact_service
 import ../../app_service/service/chat/service as chat_service
@@ -14,15 +15,40 @@ import global_singleton
 # provider/subscriber principe:
 import ../../app_service/[main]
 
-# This to will be adapted to appropriate modules later:
+#################################################
+# At the end of refactoring this will be moved to 
+# appropriate place or removed:
+import ../profile/core as profile
 # import ../onboarding/core as onboarding
 # import ../login/core as login
-# import status/types/[account]
+import status/types/[account]
+#################################################
+
+
+var i18nPath = ""
+if defined(development):
+  i18nPath = joinPath(getAppDir(), "../ui/i18n")
+elif (defined(windows)):
+  i18nPath = joinPath(getAppDir(), "../resources/i18n")
+elif (defined(macosx)):
+  i18nPath = joinPath(getAppDir(), "../i18n")
+elif (defined(linux)):
+  i18nPath = joinPath(getAppDir(), "../i18n")
+
+var currentLanguageCode: string
+proc changeLanguage(locale: string) =
+  if (locale == currentLanguageCode):
+    return
+  currentLanguageCode = locale
+  let shouldRetranslate = not defined(linux)
+  singletonInstance.engine.setTranslationPackage(joinPath(i18nPath, fmt"qml_{locale}.qm"), shouldRetranslate)
+
 
 type 
   AppController* = ref object of RootObj 
     appService: AppService
     # Services
+    localSettingsService: local_settings_service.Service
     accountsService: accounts_service.Service
     contactService: contact_service.Service
     chatService: chat_service.Service
@@ -31,10 +57,14 @@ type
     startupModule: startup_module.AccessInterface
     mainModule: main_module.AccessInterface
 
-    # This to will be adapted to appropriate modules later:
+    #################################################
+    # At the end of refactoring this will be moved to 
+    # appropriate place or removed:
+    profile: ProfileController
     # login: LoginController
     # onboarding: OnboardingController
     # accountArgs: AccountArgs
+    #################################################
 
 #################################################
 # Forward declaration section
@@ -48,19 +78,28 @@ proc userLoggedIn*(self: AppController)
 proc mainDidLoad*(self: AppController)
 #################################################
 
-# proc connect(self: AppController) =
-  # self.appService.status.events.once("login") do(a: Args):
-  #   self.accountArgs = AccountArgs(a)
-  #   self.load()
-  
-  # self.appService.status.events.once("nodeStopped") do(a: Args):
-  #   self.login.reset()
-  #   self.onboarding.reset()
+#################################################
+# At the end of refactoring this will be moved to 
+# appropriate place or removed:
+proc connect(self: AppController) =
+  self.appService.status.events.once("loginCompleted") do(a: Args):
+    var args = AccountArgs(a)
+    self.profile.init(args.account)
+
+# self.appService.status.events.once("login") do(a: Args):
+#   self.accountArgs = AccountArgs(a)
+#   self.load()
+
+# self.appService.status.events.once("nodeStopped") do(a: Args):
+#   self.login.reset()
+#   self.onboarding.reset()
+#################################################
 
 proc newAppController*(appService: AppService): AppController =
   result = AppController()
   result.appService = appService
   # Services
+  result.localSettingsService = local_settings_service.newService()
   result.accountsService = accounts_service.newService()
   result.contactService = contact_service.newService()
   result.chatService = chat_service.newService()
@@ -71,39 +110,58 @@ proc newAppController*(appService: AppService): AppController =
   result.mainModule = main_module.newModule[AppController](result, result.chatService,
   result.communityService)
 
-  # Adding status and appService here now is just because of having a controll 
-  # over order of execution while we integrating this refactoring architecture 
-  # into the current app state.
-  # Once we complete refactoring process we will get rid of "status" part/lib.
-  #
-  # This to will be adapted to appropriate modules later:
+  #################################################
+  # At the end of refactoring this will be moved to 
+  # appropriate place or removed:
+  result.profile = profile.newController(appService.status, appService, result.localSettingsService, changeLanguage)
   # result.login = login.newController(appService.status, appService)
   # result.onboarding = onboarding.newController(appService.status)
   # singletonInstance.engine.setRootContextProperty("loginModel", result.login.variant)
   # singletonInstance.engine.setRootContextProperty("onboardingModel", result.onboarding.variant)
-  #result.connect()
+  result.connect()
+  #################################################
 
 proc delete*(self: AppController) =
   self.startupModule.delete
   self.mainModule.delete
+  
+  #################################################
+  # At the end of refactoring this will be moved to 
+  # appropriate place or removed:
   # self.login.delete
   # self.onboarding.delete
+  self.profile.delete
+  #################################################
 
+  self.localSettingsService.delete
   self.accountsService.delete
   self.contactService.delete
   self.chatService.delete
   self.communityService.delete
 
 proc startupDidLoad*(self: AppController) =
-  singletonInstance.engine.load(newQUrl("qrc:///main.qml"))
+  #################################################
+  # At the end of refactoring this will be moved to 
+  # appropriate place or removed:
+  singletonInstance.engine.setRootContextProperty("profileModel", self.profile.variant)
   # self.login.init()
   # self.onboarding.init()
+  #################################################
+
+  # We're applying default language before we load qml. Also we're aware that
+  # switch language at runtime will have some impact to cpu usage.
+  # https://doc.qt.io/archives/qtjambi-4.5.2_01/com/trolltech/qt/qtjambi-linguist-programmers.html
+  changeLanguage("en")
+
+  singletonInstance.engine.load(newQUrl("qrc:///main.qml"))
 
 proc mainDidLoad*(self: AppController) =
-  # This to will be adapted to appropriate modules later:
   self.appService.onLoggedIn()
   self.startupModule.moveToAppState()
 
+  #################################################
+  # At the end of refactoring this will be moved to 
+  # appropriate place or removed:
   # Reset login and onboarding to remove any mnemonic that would have been saved in the accounts list
   # self.login.reset()
   # self.onboarding.reset()
@@ -111,6 +169,7 @@ proc mainDidLoad*(self: AppController) =
   # self.login.moveToAppState()
   # self.onboarding.moveToAppState()
   # self.appService.status.events.emit("loginCompleted", self.accountArgs)
+  #################################################
 
 proc start*(self: AppController) =
   self.accountsService.init()
