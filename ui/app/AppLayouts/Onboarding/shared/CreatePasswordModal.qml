@@ -160,9 +160,7 @@ ModalPopup {
                 if (storingPasswordModal)
                 {
                     accountSettings.storeToKeychain = Constants.storeToKeychainValueStore
-                    // NEED TO HANDLE IT
-                    // This part should be done via PrivacyAndSecurity submodule section of ProfileSection module
-//                    loginModel.storePassword(profileModel.profile.username, repeatPasswordField.text)
+                    applicationWindow.prepareForStoring(repeatPasswordField.text)
                     popup.close()
                 }
                 else
@@ -175,9 +173,7 @@ ModalPopup {
                         return importError.open()
                     }
 
-                    // NEED TO HANDLE IT
-//                    applicationWindow.checkForStoringPassToKeychain(onboardingModel.currentAccount.username,
-//                                                                    repeatPasswordField.text, true)
+                    applicationWindow.prepareForStoring(repeatPasswordField.text)
                 }
             }
         }

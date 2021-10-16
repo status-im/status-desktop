@@ -40,8 +40,10 @@ proc newModule*[T](delegate: T,
   keychainService, accountsService)
 
   # Submodules
-  result.onboardingModule = onboarding_module.newModule(result, events, fleet, accountsService)
-  result.loginModule = login_module.newModule(result, events, accountsService)
+  result.onboardingModule = onboarding_module.newModule(result, events, fleet, 
+  accountsService)
+  result.loginModule = login_module.newModule(result, events, localSettingsService,
+  keychainService, accountsService)
   
 method delete*[T](self: Module[T]) =
   self.onboardingModule.delete
