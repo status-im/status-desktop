@@ -54,7 +54,7 @@ QtObject:
     self.settingsFilePath = os.joinPath(DATADIR, "qt", pubKey)
     self.settings = newQSettings(self.settingsFilePath, QSettingsFormat.IniFormat)
 
-  proc updateAccountSettingsFilePath*(self: Service, alias: string) =
+  proc updateAccountSettingsFilePath*(self: Service, filePath: string) =
     let unknownAccountSettingsPath = os.joinPath(DATADIR, "qt", UNKNOWN_ACCOUNT)
     if (not unknownAccountSettingsPath.tryRemoveFile):
       # Only fails if the file exists and an there was an error removing it
@@ -62,7 +62,7 @@ QtObject:
       warn "Failed to remove unused settings file", file=unknownAccountSettingsPath
 
     self.accountSettings.delete
-    self.accountSettingsFilePath = os.joinPath(DATADIR, "qt", alias)
+    self.accountSettingsFilePath = os.joinPath(DATADIR, "qt", filePath)
     self.accountSettings = newQSettings(self.accountSettingsFilePath, QSettingsFormat.IniFormat)
 
   proc setAccountValue*(self: Service, key: string, value: QVariant) =

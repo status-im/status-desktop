@@ -5,8 +5,13 @@ import ../../../app/boot/global_singleton
 
 import chat_section/module as chat_section_module
 
+import ../../../app_service/service/local_settings/service as local_settings_service
+import ../../../app_service/service/keychain/service as keychain_service
+import ../../../app_service/service/accounts/service_interface as accounts_service
 import ../../../app_service/service/chat/service as chat_service
 import ../../../app_service/service/community/service as community_service
+
+import eventemitter
 
 export io_interface
 
@@ -29,7 +34,11 @@ type
     chatSectionModule: chat_section_module.AccessInterface
     communitySectionsModule: OrderedTable[string, chat_section_module.AccessInterface]
 
-proc newModule*[T](delegate: T, 
+proc newModule*[T](delegate: T,
+  events: EventEmitter,
+  localSettingsService: local_settings_service.Service,
+  keychainService: keychain_service.Service,
+  accountsService: accounts_service.ServiceInterface,
   chatService: chat_service.Service,
   communityService: community_service.Service): 
   Module[T] =
@@ -37,7 +46,8 @@ proc newModule*[T](delegate: T,
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, communityService)
+  result.controller = controller.newController(result, events, localSettingsService,
+  keychainService, accountsService, communityService)
 
   # Submodules
   result.chatSectionModule = chat_section_module.newModule(result, "chat", 
@@ -94,3 +104,16 @@ method communitySectionDidLoad*[T](self: Module[T]) =
 
 method viewDidLoad*[T](self: Module[T]) =
   self.checkIfModuleDidLoad()
+
+method checkForStoringPassword*[T](self: Module[T]) =
+  self.controller.checkForStoringPassword()
+  
+method offerToStorePassword*[T](self: Module[T]) =
+  self.view.offerToStorePassword()
+  
+method storePassword*[T](self: Module[T], password: string) =
+  self.controller.storePassword(password)
+
+method updateUserPreferenceForStoreToKeychain*[T](self: Module[T], 
+  selection: string) =
+  self.controller.updateUserPreferenceForStoreToKeychain(selection)
