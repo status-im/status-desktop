@@ -2,7 +2,7 @@ import NimQml
 import io_interface
 import ../io_interface as delegate_interface
 import view, controller, item
-import ../../../../app/boot/global_singleton
+import ../../../../app/core/global_singleton
 
 import ../../../../app_service/service/local_settings/service as local_settings_service
 import ../../../../app_service/service/keychain/service as keychain_service
