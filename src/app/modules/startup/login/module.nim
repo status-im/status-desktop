@@ -4,8 +4,9 @@ import ../io_interface as delegate_interface
 import view, controller, item
 import ../../../../app/boot/global_singleton
 
-import ../../../../app_service/[main]
 import ../../../../app_service/service/accounts/service_interface as accounts_service
+
+import eventemitter
 
 export io_interface
 
@@ -18,14 +19,14 @@ type
     moduleLoaded: bool
 
 proc newModule*(delegate: delegate_interface.AccessInterface,
-  appService: AppService,
+  events: EventEmitter,
   accountsService: accounts_service.ServiceInterface): 
   Module =
   result = Module()
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, appService, accountsService)
+  result.controller = controller.newController(result, events, accountsService)
   result.moduleLoaded = false
 
   singletonInstance.engine.setRootContextProperty("loginModule", result.viewVariant)

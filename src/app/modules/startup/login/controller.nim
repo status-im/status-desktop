@@ -3,33 +3,34 @@ import Tables
 import controller_interface
 import io_interface
 
-import status/[signals]
-import ../../../../app_service/[main]
 import ../../../../app_service/service/accounts/service_interface as accounts_service
+
+import eventemitter
+import status/[signals]
 
 export controller_interface
 
 type 
   Controller* = ref object of controller_interface.AccessInterface
     delegate: io_interface.AccessInterface
-    appService: AppService
+    events: EventEmitter
     accountsService: accounts_service.ServiceInterface
     selectedAccountKeyUid: string
 
 proc newController*(delegate: io_interface.AccessInterface,
-  appService: AppService,
+  events: EventEmitter,
   accountsService: accounts_service.ServiceInterface): 
   Controller =
   result = Controller()
   result.delegate = delegate
-  result.appService = appService
+  result.events = events
   result.accountsService = accountsService
   
 method delete*(self: Controller) =
   discard
 
 method init*(self: Controller) = 
-  self.appService.status.events.on(SignalType.NodeLogin.event) do(e:Args):
+  self.events.on(SignalType.NodeLogin.event) do(e:Args):
     let signal = NodeSignal(e)
     if signal.event.error != "":
       self.delegate.loginAccountError(signal.event.error)
