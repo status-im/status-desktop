@@ -113,8 +113,9 @@ proc newAppController*(appService: AppService): AppController =
   result.startupModule = startup_module.newModule[AppController](result,
   appService.status.events, appService.status.fleet, result.localSettingsService,
   result.keychainService, result.accountsService)
-  result.mainModule = main_module.newModule[AppController](result, result.chatService,
-  result.communityService)
+  result.mainModule = main_module.newModule[AppController](result, 
+  appService.status.events, result.localSettingsService, result.keychainService, 
+  result.accountsService, result.chatService, result.communityService)
 
   #################################################
   # At the end of refactoring this will be moved to 
@@ -161,9 +162,13 @@ proc startupDidLoad*(self: AppController) =
 
   singletonInstance.engine.load(newQUrl("qrc:///main.qml"))
 
+  #self.startupModule.offerToLoginUsingKeychain()
+
 proc mainDidLoad*(self: AppController) =
   self.appService.onLoggedIn()
   self.startupModule.moveToAppState()
+
+  self.mainModule.checkForStoringPassword()
 
   #################################################
   # At the end of refactoring this will be moved to 
