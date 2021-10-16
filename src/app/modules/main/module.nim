@@ -1,7 +1,7 @@
 import NimQml, Tables
 
 import io_interface, view, controller, item
-import ../../../app/boot/global_singleton
+import ../../../app/core/global_singleton
 
 import chat_section/module as chat_section_module
 
