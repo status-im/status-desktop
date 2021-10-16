@@ -28,8 +28,7 @@ Item {
 
         loading = true
         LoginStore.login(password)
-        // NEED TO HANDLE IT
-        //applicationWindow.checkForStoringPassToKeychain(LoginStore.currentAccount.username, password, false)
+        applicationWindow.prepareForStoring(password)
         txtPassword.textField.clear()
     }
 
@@ -38,7 +37,7 @@ Item {
         {
             connection.enabled = true
             txtPassword.visible = false
-            LoginStore.tryToObtainPassword()
+//            LoginStore.tryToObtainPassword()
         }
         else
         {

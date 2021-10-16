@@ -10,9 +10,9 @@ QtObject {
         loginModul.login(password)
     }
 
-    function tryToObtainPassword() {
-        loginModel.tryToObtainPassword()
-    }
+//    function tryToObtainPassword() {
+//        loginModel.tryToObtainPassword()
+//    }
 
     function setCurrentAccount(index) {
         loginModul.setSelectedAccountByIndex(index)
