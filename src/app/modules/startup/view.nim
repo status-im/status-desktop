@@ -41,3 +41,8 @@ QtObject:
   QtProperty[int] appState:
     read = getAppState
     notify = appStateChanged
+
+  proc logOut*(self: View) {.signal.}
+
+  proc emitLogOut*(self: View) =
+    self.logOut()
