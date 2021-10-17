@@ -42,11 +42,15 @@ QtObject:
   proc offerToStorePassword*(self: View) =
     self.openStoreToKeychainPopup()
 
-  proc storePassword(self: View, password: string) {.slot.} =
+  proc storePassword*(self: View, password: string) {.slot.} =
     self.delegate.storePassword(password)
+  
+  proc storingPasswordError*(self:View, errorDescription: string) {.signal.}
 
-  proc updateUserPreferenceForStoreToKeychain(self: View, selection: string) 
-    {.slot.} =
-    self.delegate.updateUserPreferenceForStoreToKeychain(selection)
+  proc emitStoringPasswordError*(self: View, errorDescription: string) =
+    self.storingPasswordError(errorDescription)
+  
+  proc storingPasswordSuccess*(self:View) {.signal.}
 
-    
+  proc emitStoringPasswordSuccess*(self: View) =
+    self.storingPasswordSuccess()

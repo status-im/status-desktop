@@ -114,6 +114,10 @@ method offerToStorePassword*[T](self: Module[T]) =
 method storePassword*[T](self: Module[T], password: string) =
   self.controller.storePassword(password)
 
-method updateUserPreferenceForStoreToKeychain*[T](self: Module[T], 
-  selection: string) =
-  self.controller.updateUserPreferenceForStoreToKeychain(selection)
+method emitStoringPasswordError*[T](self: Module[T], errorDescription: string) =
+  echo "Notify VIEW about error: ", errorDescription
+  self.view.emitStoringPasswordError(errorDescription)
+
+method emitStoringPasswordSuccess*[T](self: Module[T]) =
+  echo "Notify VIEW about success: "
+  self.view.emitStoringPasswordSuccess()

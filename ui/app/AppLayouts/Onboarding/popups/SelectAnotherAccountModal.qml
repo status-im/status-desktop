@@ -22,7 +22,7 @@ ModalPopup {
         id: accountList
         anchors.fill: parent
 
-        model: LoginStore.loginModul.accountsModel
+        model: LoginStore.loginModuleInst.accountsModel
         isSelected: function (index, keyUid) {
             return LoginStore.currentAccount.keyUid === keyUid
         }

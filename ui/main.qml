@@ -325,10 +325,13 @@ StatusWindow {
 //        }
 //    }
 
-    function prepareForStoring(password) {
+    function prepareForStoring(password, runStoreToKeychainPopup) {
         if(Qt.platform.os == "osx")
         {
             storeToKeychainConfirmationPopup.password = password
+
+            if(runStoreToKeychainPopup)
+                storeToKeychainConfirmationPopup.open()
         }
     }
 
@@ -350,18 +353,18 @@ StatusWindow {
         }
 
         onConfirmButtonClicked: {
-            console.warn("STOREEEEEE....pass: ", password)
+            localAccountSettings.storeToKeychainValue = Constants.storeToKeychainValueStore
             mainModule.storePassword(password)
             finish()
         }
 
         onRejectButtonClicked: {
-            mainModule.updateUserPreferenceForStoreToKeychain(Constants.storeToKeychainValueNotNow)
+            localAccountSettings.storeToKeychainValue = Constants.storeToKeychainValueNotNow
             finish()
         }
 
         onCancelButtonClicked: {
-            mainModule.updateUserPreferenceForStoreToKeychain(Constants.storeToKeychainValueNever)
+            localAccountSettings.storeToKeychainValue = Constants.storeToKeychainValueNever
             finish()
         }
     }
