@@ -36,7 +36,6 @@ Item {
     }
 
     function resetLogin() {
-        console.warn("----ResetLogin: ", localAccountSettings.storeToKeychainValue)
         if(localAccountSettings.storeToKeychainValue === Constants.storeToKeychainValueStore)
         {
             connection.enabled = true
@@ -58,14 +57,12 @@ Item {
         target: LoginStore.loginModuleInst
 
         onObtainingPasswordError: {
-            console.warn("ERR QML: ", errorDescription)
             enabled = false
             obtainingPasswordErrorNotification.confirmationText = errorDescription
             obtainingPasswordErrorNotification.open()
         }
 
         onObtainingPasswordSuccess: {
-            console.warn("SUCC QML: ", password)
             enabled = false
             doLogin(password)
         }
