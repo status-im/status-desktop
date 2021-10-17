@@ -59,7 +59,6 @@ QtObject:
     if (value != LS_VALUE_STORE):
       return
     
-    echo "READ DATA FOR USER: ", username
     self.keychainManager.readDataAsync(username)
 
   proc onKeychainManagerError*(self: Service, errorType: string, errorCode: int, 
@@ -75,5 +74,4 @@ QtObject:
   proc onKeychainManagerSuccess*(self: Service, data: string) {.slot.} =
     ## This slot is called in case a password is successfully retrieved from the
     ## Keychain. In this case @data contains required password.
-    echo "USER PASSWORD RECEIVED: ", data
     self.events.emit("keychainServiceSuccess", KeyChainServiceArg(data: data))

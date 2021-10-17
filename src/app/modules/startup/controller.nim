@@ -46,13 +46,11 @@ method init*(self: Controller) =
       error "error: ", methodName="init", errDesription = "login error " & signal.event.error
 
   self.events.on(SignalType.NodeStopped.event) do(e:Args):
-    echo "-NEW-EVENT-- NodeStopped: ", repr(e)
     self.events.emit("nodeStopped", Args())
     self.accountsService.clear()
     self.delegate.emitLogOut()
 
   self.events.on(SignalType.NodeReady.event) do(e:Args):
-    echo "-NEW-EVENT-- NodeReady: ", repr(e)
     self.events.emit("nodeReady", Args())
 
 method shouldStartWithOnboardingScreen*(self: Controller): bool =
