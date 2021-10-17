@@ -83,11 +83,13 @@ method setSelectedAccount*(self: Module, item: Item) =
 method login*(self: Module, password: string) =
   self.controller.login(password)
 
-method loginAccountError*(self: Module, error: string) =
-  self.view.loginAccountError(error)
+method emitAccountLoginError*(self: Module, error: string) =
+  self.view.emitAccountLoginError(error)
 
-method emitStoreToKeychainValueChanged*(self: Module) =
-  self.view.emitStoreToKeychainValueChanged()
+method emitObtainingPasswordError*(self: Module, errorDescription: string) =
+  echo "Notify VIEW about error: ", errorDescription
+  self.view.emitObtainingPasswordError(errorDescription)
 
-method getStoreToKeychainValue*(self: Module): string =
-  return self.controller.getStoreToKeychainValue()
+method emitObtainingPasswordSuccess*(self: Module, password: string) =
+  echo "Notify VIEW about success: ", password
+  self.view.emitObtainingPasswordSuccess(password)
