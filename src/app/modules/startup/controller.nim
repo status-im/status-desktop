@@ -48,6 +48,7 @@ method init*(self: Controller) =
   self.events.on(SignalType.NodeStopped.event) do(e:Args):
     echo "-NEW-EVENT-- NodeStopped: ", repr(e)
     self.events.emit("nodeStopped", Args())
+    self.accountsService.clear()
     self.delegate.emitLogOut()
 
   self.events.on(SignalType.NodeReady.event) do(e:Args):
