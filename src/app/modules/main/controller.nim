@@ -41,19 +41,16 @@ method delete*(self: Controller) =
   discard
 
 method init*(self: Controller) = 
-  echo "INIT MAIN CONTROLLER"
   if(defined(macosx)): 
     let account = self.accountsService.getLoggedInAccount()
     self.localSettingsService.updateAccountSettingsFilePath(account.name)
 
   self.events.on("keychainServiceSuccess") do(e:Args):
     let args = KeyChainServiceArg(e)
-    echo "Received keychainServiceSuccess ", repr(args)
     self.delegate.emitStoringPasswordSuccess()
 
   self.events.on("keychainServiceError") do(e:Args):
     let args = KeyChainServiceArg(e)
-    echo "Received keychainServiceError ", repr(args)
     self.localSettingsService.setAccountValue(LS_KEY_STORE_TO_KEYCHAIN, 
     newQVariant(LS_VALUE_NOTNOW))
     self.delegate.emitStoringPasswordError(args.errDescription)
