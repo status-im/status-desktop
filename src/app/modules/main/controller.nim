@@ -41,7 +41,22 @@ method delete*(self: Controller) =
   discard
 
 method init*(self: Controller) = 
-  discard
+  echo "INIT MAIN CONTROLLER"
+  if(defined(macosx)): 
+    let account = self.accountsService.getLoggedInAccount()
+    self.localSettingsService.updateAccountSettingsFilePath(account.name)
+
+  self.events.on("keychainServiceSuccess") do(e:Args):
+    let args = KeyChainServiceArg(e)
+    echo "Received keychainServiceSuccess ", repr(args)
+    self.delegate.emitStoringPasswordSuccess()
+
+  self.events.on("keychainServiceError") do(e:Args):
+    let args = KeyChainServiceArg(e)
+    echo "Received keychainServiceError ", repr(args)
+    self.localSettingsService.setAccountValue(LS_KEY_STORE_TO_KEYCHAIN, 
+    newQVariant(LS_VALUE_NOTNOW))
+    self.delegate.emitStoringPasswordError(args.errDescription)
 
 method getCommunities*(self: Controller): seq[community_service.CommunityDto] =
   return self.communityService.getCommunities()
@@ -54,8 +69,6 @@ method checkForStoringPassword*(self: Controller) =
   if(not defined(macosx)): 
     return
 
-  let account = self.accountsService.getLoggedInAccount()
-  self.localSettingsService.updateAccountSettingsFilePath(account.name)
   let value = self.localSettingsService.getAccountValue(
       LS_KEY_STORE_TO_KEYCHAIN).stringVal
     
@@ -69,8 +82,3 @@ method checkForStoringPassword*(self: Controller) =
 method storePassword*(self: Controller, password: string) =
   let account = self.accountsService.getLoggedInAccount()
   self.keychainService.storePassword(account.name, password)
-  
-method updateUserPreferenceForStoreToKeychain*(self: Controller, 
-  selection: string) =
-  self.localSettingsService.setAccountValue(LS_KEY_STORE_TO_KEYCHAIN, 
-  newQVariant(selection))

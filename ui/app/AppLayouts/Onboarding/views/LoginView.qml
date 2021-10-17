@@ -28,16 +28,16 @@ Item {
 
         loading = true
         LoginStore.login(password)
-        applicationWindow.prepareForStoring(password)
+        applicationWindow.prepareForStoring(password, false)
         txtPassword.textField.clear()
     }
 
     function resetLogin() {
-        if(accountSettings.storeToKeychain === Constants.storeToKeychainValueStore)
+        console.warn("----ResetLogin: ", localAccountSettings.storeToKeychainValue)
+        if(localAccountSettings.storeToKeychainValue === Constants.storeToKeychainValueStore)
         {
             connection.enabled = true
             txtPassword.visible = false
-//            LoginStore.tryToObtainPassword()
         }
         else
         {
@@ -50,22 +50,23 @@ Item {
         resetLogin()
     }
 
-    // NEED TO HANDLE IT
-//    Connections{
-//        id: connection
-//        target: LoginStore.loginModelInst
+    Connections{
+        id: connection
+        target: LoginStore.loginModuleInst
 
-//        onObtainingPasswordError: {
-//            enabled = false
-//            obtainingPasswordErrorNotification.confirmationText = errorDescription
-//            obtainingPasswordErrorNotification.open()
-//        }
+        onObtainingPasswordError: {
+            console.warn("ERR QML: ", errorDescription)
+            enabled = false
+            obtainingPasswordErrorNotification.confirmationText = errorDescription
+            obtainingPasswordErrorNotification.open()
+        }
 
-//        onObtainingPasswordSuccess: {
-//            enabled = false
-//            doLogin(password)
-//        }
-//    }
+        onObtainingPasswordSuccess: {
+            console.warn("SUCC QML: ", password)
+            enabled = false
+            doLogin(password)
+        }
+    }
 
     ConfirmationDialog {
         id: obtainingPasswordErrorNotification
@@ -222,7 +223,7 @@ Item {
         }
 
         Connections {
-            target: LoginStore.loginModul
+            target: LoginStore.loginModuleInst
             onAccountLoginError: {
                 if (error) {
                     // SQLITE_NOTADB: "file is not a database"

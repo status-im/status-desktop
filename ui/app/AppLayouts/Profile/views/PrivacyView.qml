@@ -88,7 +88,7 @@ Item {
             implicitHeight: 52
             visible: Qt.platform.os == "osx" // For now, this is available only on MacOS
             label: {
-                let value = accountSettings.storeToKeychain
+                let value = localAccountSettings.storeToKeychainValue
                 if(value == Constants.storeToKeychainValueStore)
                     return qsTr("Store")
 

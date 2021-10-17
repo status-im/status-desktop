@@ -65,17 +65,15 @@ QtObject:
 
   proc accountLoginError*(self: View, error: string) {.signal.}
 
-  proc loginAccountError*(self: View, error: string) =
+  proc emitAccountLoginError*(self: View, error: string) =
     self.accountLoginError(error)
 
-  proc storeToKeychainValueChanged*(self: View) {.signal.}
+  proc obtainingPasswordError*(self:View, errorDescription: string) {.signal.}
 
-  proc emitStoreToKeychainValueChanged*(self: View) =
-    self.storeToKeychainValueChanged()
+  proc emitObtainingPasswordError*(self: View, errorDescription: string) =
+    self.obtainingPasswordError(errorDescription)
+  
+  proc obtainingPasswordSuccess*(self:View, password: string) {.signal.}
 
-  proc getStoreToKeychainValue(self: View): string {.slot.} =
-    return self.delegate.getStoreToKeychainValue()
-
-  QtProperty[string] storeToKeychainValue:
-    read = getStoreToKeychainValue
-    notify = storeToKeychainValueChanged
+  proc emitObtainingPasswordSuccess*(self: View, password: string) =
+    self.obtainingPasswordSuccess(password)

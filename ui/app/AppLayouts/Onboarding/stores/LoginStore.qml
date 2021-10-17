@@ -3,22 +3,18 @@ pragma Singleton
 import QtQuick 2.13
 
 QtObject {
-    property var loginModul: loginModule
-    property var currentAccount: loginModule.selectedAccount
+    property var loginModuleInst: loginModule
+    property var currentAccount: loginModuleInst.selectedAccount
 
     function login(password) {
-        loginModul.login(password)
+        loginModuleInst.login(password)
     }
 
-//    function tryToObtainPassword() {
-//        loginModel.tryToObtainPassword()
-//    }
-
     function setCurrentAccount(index) {
-        loginModul.setSelectedAccountByIndex(index)
+        loginModuleInst.setSelectedAccountByIndex(index)
     }
 
     function rowCount() {
-        return loginModul.accountsModel.rowCount()
+        return loginModuleInst.accountsModel.rowCount()
     }
 }

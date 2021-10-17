@@ -159,21 +159,14 @@ ModalPopup {
             onClicked: {
                 if (storingPasswordModal)
                 {
-                    accountSettings.storeToKeychain = Constants.storeToKeychainValueStore
-                    applicationWindow.prepareForStoring(repeatPasswordField.text)
+                    applicationWindow.prepareForStoring(repeatPasswordField.text, true)
                     popup.close()
                 }
                 else
                 {
                     loading = true
-                    const result = onboardingModule.storeSelectedAccountAndLogin(repeatPasswordField.text);
-                    const error = JSON.parse(result).error
-                    if (error) {
-                        importError.text += error
-                        return importError.open()
-                    }
-
-                    applicationWindow.prepareForStoring(repeatPasswordField.text)
+                    onboardingModule.storeSelectedAccountAndLogin(repeatPasswordField.text);
+                    applicationWindow.prepareForStoring(repeatPasswordField.text, false)
                 }
             }
         }
