@@ -116,7 +116,7 @@ proc newAppController*(appService: AppService): AppController =
   result.communityService = community_service.newService(result.chatService)
   # Core
   result.localAccountSettings = newLocalAccountSettings(result.localSettingsService)
-  result.localAccountSettingsVariant = newQVariant(result.localSettingsService)
+  result.localAccountSettingsVariant = newQVariant(result.localAccountSettings)
   # Modules
   result.startupModule = startup_module.newModule[AppController](result,
   appService.status.events, appService.status.fleet, result.localSettingsService,

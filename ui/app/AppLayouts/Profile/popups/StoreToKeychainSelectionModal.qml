@@ -16,6 +16,16 @@ ModalPopup {
         destroy()
     }
 
+    function updateListState() {
+        if (localAccountSettings.storeToKeychainValue === Constants.storeToKeychainValueStore)
+            storeBtn.checked = true
+        else if (localAccountSettings.storeToKeychainValue === Constants.storeToKeychainValueNotNow ||
+                 localAccountSettings.storeToKeychainValue === "")
+            notNowBtn.checked = true
+        else if (localAccountSettings.storeToKeychainValue === Constants.storeToKeychainValueNever)
+            neverBtn.checked = true
+    }
+
     Column {
         anchors.top: parent.top
         anchors.bottom: parent.bottom
@@ -26,26 +36,36 @@ ModalPopup {
 
         spacing: 0
 
+        Connections {
+            target: localAccountSettings
+            onStoreToKeychainValueChanged: {
+                updateListState()
+            }
+        }
+
+        Connections {
+            target: mainModule
+            onStoringPasswordError: {
+                updateListState()
+            }
+        }
+
         ButtonGroup {
             id: openLinksWithGroup
         }
 
         StatusRadioButtonRow {
+            id: storeBtn
             text: qsTr("Store")
             buttonGroup: openLinksWithGroup
-            checked: accountSettings.storeToKeychain === Constants.storeToKeychainValueStore
+            checked: localAccountSettings.storeToKeychainValue === Constants.storeToKeychainValueStore
             onRadioCheckedChanged: {
-                if (checked && accountSettings.storeToKeychain !== Constants.storeToKeychainValueStore) {
+                if (checked && localAccountSettings.storeToKeychainValue !== Constants.storeToKeychainValueStore) {
                     var storePassPopup = openPopup(storePasswordModal)
                     if(storePassPopup)
                     {
                         storePassPopup.closed.connect(function(){
-                            if (accountSettings.storeToKeychain === Constants.storeToKeychainValueStore)
-                                popup.close()
-                            else if (accountSettings.storeToKeychain === Constants.storeToKeychainValueNotNow)
-                                notNowBtn.checked = true
-                            else if (accountSettings.storeToKeychain === Constants.storeToKeychainValueNever)
-                                neverBtn.checked = true
+                            updateListState()
                         })
                     }
                 }
@@ -56,11 +76,11 @@ ModalPopup {
             id: notNowBtn
             text: qsTr("Not now")
             buttonGroup: openLinksWithGroup
-            checked: accountSettings.storeToKeychain === Constants.storeToKeychainValueNotNow ||
-                     accountSettings.storeToKeychain === ""
+            checked: localAccountSettings.storeToKeychainValue === Constants.storeToKeychainValueNotNow ||
+                     localAccountSettings.storeToKeychainValue === ""
             onRadioCheckedChanged: {
                 if (checked) {
-                    accountSettings.storeToKeychain = Constants.storeToKeychainValueNotNow
+                    localAccountSettings.storeToKeychainValue = Constants.storeToKeychainValueNotNow
                 }
             }
         }
@@ -69,10 +89,10 @@ ModalPopup {
             id: neverBtn
             text: qsTr("Never")
             buttonGroup: openLinksWithGroup
-            checked: accountSettings.storeToKeychain === Constants.storeToKeychainValueNever
+            checked: localAccountSettings.storeToKeychainValue === Constants.storeToKeychainValueNever
             onRadioCheckedChanged: {
                 if (checked) {
-                    accountSettings.storeToKeychain = Constants.storeToKeychainValueNever
+                    localAccountSettings.storeToKeychainValue = Constants.storeToKeychainValueNever
                 }
             }
         }
