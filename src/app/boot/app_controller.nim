@@ -23,8 +23,6 @@ import status/[fleet]
 # At the end of refactoring this will be moved to 
 # appropriate place or removed:
 import ../profile/core as profile
-# import ../onboarding/core as onboarding
-# import ../login/core as login
 import status/types/[account]
 #################################################
 
@@ -69,9 +67,6 @@ type
     # At the end of refactoring this will be moved to 
     # appropriate place or removed:
     profile: ProfileController
-    # login: LoginController
-    # onboarding: OnboardingController
-    # accountArgs: AccountArgs
     #################################################
 
 #################################################
@@ -93,14 +88,6 @@ proc connect(self: AppController) =
   self.appService.status.events.once("loginCompleted") do(a: Args):
     var args = AccountArgs(a)
     self.profile.init(args.account)
-
-# self.appService.status.events.once("login") do(a: Args):
-#   self.accountArgs = AccountArgs(a)
-#   self.load()
-
-# self.appService.status.events.once("nodeStopped") do(a: Args):
-#   self.login.reset()
-#   self.onboarding.reset()
 #################################################
 
 proc newAppController*(appService: AppService): AppController =
@@ -130,10 +117,6 @@ proc newAppController*(appService: AppService): AppController =
   # appropriate place or removed:
   result.profile = profile.newController(appService.status, appService, 
   result.localSettingsService, changeLanguage)
-  # result.login = login.newController(appService.status, appService)
-  # result.onboarding = onboarding.newController(appService.status)
-  # singletonInstance.engine.setRootContextProperty("loginModel", result.login.variant)
-  # singletonInstance.engine.setRootContextProperty("onboardingModel", result.onboarding.variant)
   result.connect()
   #################################################
 
@@ -144,8 +127,6 @@ proc delete*(self: AppController) =
   #################################################
   # At the end of refactoring this will be moved to 
   # appropriate place or removed:
-  # self.login.delete
-  # self.onboarding.delete
   self.profile.delete
   #################################################
 
@@ -163,8 +144,6 @@ proc startupDidLoad*(self: AppController) =
   # At the end of refactoring this will be moved to 
   # appropriate place or removed:
   singletonInstance.engine.setRootContextProperty("profileModel", self.profile.variant)
-  # self.login.init()
-  # self.onboarding.init()
   #################################################
 
   # We're applying default language before we load qml. Also we're aware that
@@ -176,25 +155,11 @@ proc startupDidLoad*(self: AppController) =
   self.localAccountSettingsVariant)
   singletonInstance.engine.load(newQUrl("qrc:///main.qml"))
 
-  #self.startupModule.offerToLoginUsingKeychain()
-
 proc mainDidLoad*(self: AppController) =
   self.appService.onLoggedIn()
   self.startupModule.moveToAppState()
 
   self.mainModule.checkForStoringPassword()
-
-  #################################################
-  # At the end of refactoring this will be moved to 
-  # appropriate place or removed:
-  # Reset login and onboarding to remove any mnemonic that would have been saved in the accounts list
-  # self.login.reset()
-  # self.onboarding.reset()
-
-  # self.login.moveToAppState()
-  # self.onboarding.moveToAppState()
-  # self.appService.status.events.emit("loginCompleted", self.accountArgs)
-  #################################################
 
 proc start*(self: AppController) =
   self.accountsService.init()
