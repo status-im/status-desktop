@@ -41,17 +41,14 @@ method init*(self: Controller) =
   self.events.on(SignalType.NodeLogin.event) do(e:Args):
     let signal = NodeSignal(e)
     if signal.event.error != "":
-      echo "(LOGIN)  ERRORRRRR ", repr(signal.event.error)
       self.delegate.emitAccountLoginError(signal.event.error)
 
   self.events.on("keychainServiceSuccess") do(e:Args):
     let args = KeyChainServiceArg(e)
-    echo "(LOGIN)  Received keychainServiceSuccess ", repr(args)
     self.delegate.emitObtainingPasswordSuccess(args.data)
 
   self.events.on("keychainServiceError") do(e:Args):
     let args = KeyChainServiceArg(e)
-    echo "(LOGIN)  Received keychainServiceError ", repr(args)
     # We are notifying user only about keychain errors.
     if (args.errType == ERROR_TYPE_AUTHENTICATION):
       return

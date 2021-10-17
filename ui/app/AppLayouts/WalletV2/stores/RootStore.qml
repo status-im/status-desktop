@@ -11,10 +11,14 @@ QtObject {
     property var walletModelV2Inst: walletV2Model
     property var profileModelInst: profileModel
     property var chatsModelInst: chatsModel
+
     // This should be exposed to the UI via "walletModule", WalletModule should use
-    // Accounts Service which keeps the info about that. Then in the View of WalletModule
-    // we may have either QtProperty or Q_INVOKABLE function (proc marked as slot)
-    // depends on logic/need.
+    // Accounts Service which keeps the info about that (isFirstTimeAccountLogin).
+    // Then in the View of WalletModule we may have either QtProperty or
+    // Q_INVOKABLE function (proc marked as slot) depends on logic/need.
+    // The only need for onboardingModel here is actually to check if an account
+    // has been just created or an old one.
+
     // property var onboardingModelInst: onboardingModel
     property int selectedAccount: 0
 
@@ -61,7 +65,10 @@ QtObject {
     property bool loadingAccounts: false
 
     function seedPhraseNotFound(text) {
-        // Read in above
+        // Read above, same story, `validateMnemonic` is method of AccountService
+        // in wallet section we need to deal with it via walletModule, not anything
+        // related to onboarding.
+
 //        var seedValidationError = root.onboardingModelInst.validateMnemonic(text);
 //        var regex = new RegExp('word [a-z]+ not found in the dictionary', 'i');
 //        return regex.test(seedValidationError);

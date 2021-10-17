@@ -39,32 +39,6 @@ StatusWindow {
         }
     }
 
-//    Settings {
-//        id: accountSettings
-//        //fileName: loginModule.accountSettingsFile
-
-//        property string storeToKeychain: ""
-
-////        onFileNameChanged: {
-////            console.warn("OnFileNameChanged: path: ", accountSettings.fileName, "  kcValue: ", accountSettings.storeToKeychain)
-////        }
-
-//        onStoreToKeychainChanged: {
-//            console.warn("onStoreToKeychainChanged: path: ", accountSettings.fileName, "  kcValue: ", accountSettings.storeToKeychain)
-//        }
-//    }
-
-//    Connections {
-//        target: loginModule
-//        onAccountSettingsFileChanged: {
-//            console.warn("OnFileNameChanged1111: path: ", accountSettings.fileName, "  kcValue: ", accountSettings.storeToKeychain)
-//            accountSettings.fileName = ""
-//            console.warn("OnFileNameChanged2222: path: ", accountSettings.fileName, "  kcValue: ", accountSettings.storeToKeychain)
-//            accountSettings.fileName = loginModule.accountSettingsFile
-//            console.warn("OnFileNameChanged3333: path: ", accountSettings.fileName, "  kcValue: ", accountSettings.storeToKeychain)
-//        }
-//    }
-
     Settings {
         id: appSettings
         fileName: profileModel.settingsFile
@@ -305,24 +279,6 @@ StatusWindow {
             }
         }
     }
-
-//    function checkForStoringPassToKeychain(username, password, clearStoredValue) {
-//        if(Qt.platform.os == "osx")
-//        {
-//            if(clearStoredValue)
-//            {
-//                accountSettings.storeToKeychain = ""
-//            }
-
-//            if(accountSettings.storeToKeychain === "" ||
-//               accountSettings.storeToKeychain === Constants.storeToKeychainValueNotNow)
-//            {
-//                storeToKeychainConfirmationPopup.password = password
-//                storeToKeychainConfirmationPopup.username = username
-//                storeToKeychainConfirmationPopup.open()
-//            }
-//        }
-//    }
 
     function prepareForStoring(password, runStoreToKeychainPopup) {
         if(Qt.platform.os == "osx")

@@ -32,8 +32,6 @@ proc mainProc() =
 
   ensureDirectories(DATADIR, TMPDIR, LOGDIR)
 
-  # var currentLanguageCode: string
-
   let fleets =
     if defined(windows) and defined(production):
       "/../resources/fleets.json"
@@ -94,21 +92,8 @@ proc mainProc() =
   if not defined(macosx):
     app.icon(app.applicationDirPath & statusAppIcon)
 
-  # var i18nPath = ""
-  # if defined(development):
-  #   i18nPath = joinPath(getAppDir(), "../ui/i18n")
-  # elif (defined(windows)):
-  #   i18nPath = joinPath(getAppDir(), "../resources/i18n")
-  # elif (defined(macosx)):
-  #   i18nPath = joinPath(getAppDir(), "../i18n")
-  # elif (defined(linux)):
-  #   i18nPath = joinPath(getAppDir(), "../i18n")
-
   let networkAccessFactory = newQNetworkAccessManagerFactory(TMPDIR & "netcache")
 
-
-  #let engine = newQQmlApplicationEngine()
-  #defer: engine.delete()
   singletonInstance.engine.addImportPath("qrc:/./StatusQ/src")
   singletonInstance.engine.addImportPath("qrc:/./imports")
   singletonInstance.engine.setNetworkAccessManagerFactory(networkAccessFactory)
@@ -178,13 +163,6 @@ proc mainProc() =
   defer: browserController.delete()
   singletonInstance.engine.setRootContextProperty("browserModel", browserController.variant)
 
-  # proc changeLanguage(locale: string) =
-  #   if (locale == currentLanguageCode):
-  #     return
-  #   currentLanguageCode = locale
-  #   let shouldRetranslate = not defined(linux)
-  #   singletonInstance.engine.setTranslationPackage(joinPath(i18nPath, fmt"qml_{locale}.qm"), shouldRetranslate)
-
   var provider = provider.newController(status)
   defer: provider.delete()
   singletonInstance.engine.setRootContextProperty("web3Provider", provider.variant)
@@ -192,19 +170,11 @@ proc mainProc() =
   var keycard = keycard.newController(status)
   defer: keycard.delete()
 
-  # proc onAccountChanged(account: Account) =
-  #   profile.view.setAccountSettingsFile(account.name)
-
-  # status.events.on("accountChanged") do(a: Args):
-  #   var args = AccountArgs(a)
-  #   onAccountChanged(args.account)
-
   status.events.once("loginCompleted") do(a: Args):
     var args = AccountArgs(a)
 
-    # onAccountChanged(args.account)
+    # At the end of refactoring all this will be in the AppController class.
     status.startMessenger()
-    # profile.init(args.account)
     wallet.init()
     wallet2.init()
     provider.init()

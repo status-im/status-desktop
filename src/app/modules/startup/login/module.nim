@@ -87,9 +87,7 @@ method emitAccountLoginError*(self: Module, error: string) =
   self.view.emitAccountLoginError(error)
 
 method emitObtainingPasswordError*(self: Module, errorDescription: string) =
-  echo "Notify VIEW about error: ", errorDescription
   self.view.emitObtainingPasswordError(errorDescription)
 
 method emitObtainingPasswordSuccess*(self: Module, password: string) =
-  echo "Notify VIEW about success: ", password
   self.view.emitObtainingPasswordSuccess(password)
