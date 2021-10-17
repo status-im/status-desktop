@@ -58,6 +58,12 @@ method init*(self: Service) =
   except Exception as e:
     error "error: ", methodName="init", errName = e.name, errDesription = e.msg
 
+method clear*(self: Service) =
+  self.generatedAccounts = @[]
+  self.loggedInAccount = AccountDto()
+  self.importedAccount = GeneratedAccountDto()
+  self.isFirstTimeAccountLogin = false
+
 method validateMnemonic*(self: Service, mnemonic: string): string =
   try:
     let response = status_go_general.validateMnemonic(mnemonic)
