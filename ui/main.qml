@@ -474,7 +474,7 @@ StatusWindow {
 
             DSM.SignalTransition {
                 targetState: stateLogin
-                signal: loginModel.onLoggedOut
+                signal: startupModule.logOut
             }
         }
     }
