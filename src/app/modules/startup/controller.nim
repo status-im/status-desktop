@@ -47,12 +47,12 @@ method init*(self: Controller) =
 
   self.events.on(SignalType.NodeStopped.event) do(e:Args):
     echo "-NEW-EVENT-- NodeStopped: ", repr(e)
-    #self.status.events.emit("nodeStopped", Args())
+    self.events.emit("nodeStopped", Args())
     #self.view.onLoggedOut()
 
   self.events.on(SignalType.NodeReady.event) do(e:Args):
     echo "-NEW-EVENT-- NodeReady: ", repr(e)
-    #self.status.events.emit("nodeReady", Args())
+    self.events.emit("nodeReady", Args())
 
 method shouldStartWithOnboardingScreen*(self: Controller): bool =
   return self.accountsService.openedAccounts().len == 0

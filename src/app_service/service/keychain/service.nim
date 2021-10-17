@@ -7,15 +7,15 @@ import eventemitter
 logScope:
   topics = "keychain-service"
 
-const ERROR_TYPE_AUTHENTICATION = "authentication"
-const ERROR_TYPE_KEYCHAIN = "keychain"
+const ERROR_TYPE_AUTHENTICATION* = "authentication"
+const ERROR_TYPE_KEYCHAIN* = "keychain"
 
 type
   KeyChainServiceArg* = ref object of Args
     data*: string
-    errCode: int
-    errType: string
-    errDescription: string
+    errCode*: int
+    errType*: string
+    errDescription*: string
 
 QtObject:
   type Service* = ref object of QObject
@@ -67,17 +67,13 @@ QtObject:
     ## This slot is called in case an error occured while we're dealing with
     ## KeychainManager. So far we're just logging the error.
     info "KeychainManager stopped: ", msg = errorCode, errorDescription
-    if (errorType == ERROR_TYPE_AUTHENTICATION):
-      return
-
-    # We are notifying user only about keychain errors.
-    self.localSettingsService.removeAccountValue(LS_KEY_STORE_TO_KEYCHAIN)
+    
     let arg = KeyChainServiceArg(errCode: errorCode, errType: errorType, 
     errDescription: errorDescription)
-    self.events.emit("obtainingPasswordError", arg)
+    self.events.emit("keychainServiceError", arg)
 
   proc onKeychainManagerSuccess*(self: Service, data: string) {.slot.} =
     ## This slot is called in case a password is successfully retrieved from the
     ## Keychain. In this case @data contains required password.
     echo "USER PASSWORD RECEIVED: ", data
-    self.events.emit("obtainingPasswordSuccess", KeyChainServiceArg(data: data))
+    self.events.emit("keychainServiceSuccess", KeyChainServiceArg(data: data))

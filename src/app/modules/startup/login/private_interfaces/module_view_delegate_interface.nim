@@ -8,6 +8,3 @@ method setSelectedAccount*(self: AccessInterface, item: Item) {.base.} =
 
 method login*(self: AccessInterface, password: string) {.base.} =
   raise newException(ValueError, "No implementation available")
-
-method getStoreToKeychainValue*(self: AccessInterface): string {.base.} =
-  raise newException(ValueError, "No implementation available")
