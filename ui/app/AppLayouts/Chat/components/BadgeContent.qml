@@ -7,6 +7,8 @@ import "../../../../shared/panels"
 import "../../../../shared/controls"
 import "../../../../shared/status"
 
+import StatusQ.Components 0.1 as StatusQ
+
 Item {
     id: wrapper
 
@@ -89,11 +91,11 @@ Item {
 
             Component {
                 id: letterIdenticon
-                StatusLetterIdenticon {
+                StatusQ.StatusLetterIdenticon {
                     width: 16
                     height: 16
                     letterSize: 12
-                    chatName: communityBadge.communityName
+                    name: communityBadge.communityName
                     color: communityBadge.iconColor
                 }
             }

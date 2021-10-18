@@ -3,6 +3,9 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 
 import utils 1.0
+
+import StatusQ.Components 0.1 as StatusQ
+
 import "../../../../shared"
 import "../../../../shared/views"
 import "../../../../shared/popups"
@@ -67,14 +70,13 @@ ModalPopup {
       width: parent.width
 
 
-      StatusLetterIdenticon {
+      StatusQ.StatusLetterIdenticon {
           id: letterIdenticon
           width: 36
           height: 36
           anchors.top: parent.top
           color: popup.channel.color
-          chatId: popup.channel.id
-          chatName: popup.channel.name
+          name: popup.channel.name
       }
     
       StyledTextEdit {
