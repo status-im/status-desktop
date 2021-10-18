@@ -452,7 +452,7 @@ Item {
                 isRequested: false
                 //% "Send"
                 commandTitle: qsTrId("command-button-send")
-                title: commandTitle
+                header.title: commandTitle
                 //% "Request Address"
                 finalButtonLabel: qsTrId("request-address")
                 selectRecipient.selectedRecipient: {
@@ -480,7 +480,7 @@ Item {
                 isRequested: true
                 //% "Request"
                 commandTitle: qsTrId("wallet-request")
-                title: commandTitle
+                header.title: commandTitle
                 //% "Request"
                 finalButtonLabel: qsTrId("wallet-request")
                 selectRecipient.selectedRecipient: {
