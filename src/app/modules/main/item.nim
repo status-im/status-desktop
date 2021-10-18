@@ -2,6 +2,7 @@ import json, strformat
 
 type 
   Item* = object
+    sectionType: int
     id: string
     name: string
     image: string
@@ -10,9 +11,10 @@ type
     mentionsCount: int
     unviewedMessagesCount: int
 
-proc initItem*(id, name, image, icon, color: string,
+proc initItem*(id: string, sectionType: int, name, image, icon, color: string,
   mentionsCount, unviewedMessagesCount: int): Item =
   result.id = id
+  result.sectionType = sectionType
   result.name = name
   result.image = image
   result.icon = icon
@@ -23,6 +25,7 @@ proc initItem*(id, name, image, icon, color: string,
 proc `$`*(self: Item): string =
   result = fmt"""MainModuleItem(
     id: {self.id}, 
+    sectionType: {self.sectionType},
     name: {self.name}, 
     image: {self.image},
     icon: {self.icon},
@@ -33,6 +36,9 @@ proc `$`*(self: Item): string =
 
 proc getId*(self: Item): string = 
   return self.id
+
+proc getSectionType*(self: Item): int = 
+  return self.sectionType
 
 proc getName*(self: Item): string = 
   return self.name
