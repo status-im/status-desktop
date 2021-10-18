@@ -3,9 +3,9 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 
 import utils 1.0
-import "./"
-import "../"
-import "../status"
+
+import StatusQ.Core 0.1
+import StatusQ.Core.Theme 0.1
 
 Column {
     id: root
@@ -19,17 +19,15 @@ Column {
     property alias errorMessage: txtValidationError.text
     property string address: ""
 
-    SVGImage {
-        id: imgExclamation
+    StatusIcon {
         width: 13.33
         height: 13.33
-        sourceSize.height: height * 2
-        sourceSize.width: width * 2
         anchors.horizontalCenter: parent.horizontalCenter
-        fillMode: Image.PreserveAspectFit
-        source: "../app/img/exclamation_outline.svg"
+        icon: "warning"
+        color: Theme.palette.dangerColor1
     }
-    StyledText {
+
+    StatusBaseText {
         id: txtValidationError
         //% "You need to request the recipient’s address first.\nAssets won’t be sent yet."
         text: qsTrId("you-need-to-request-the-recipient-s-address-first--nassets-won-t-be-sent-yet-")
@@ -38,6 +36,6 @@ Column {
         wrapMode: Text.WordWrap
         font.pixelSize: 13
         height: 18
-        color: Style.current.danger
+        color: Theme.palette.dangerColor1
     }
 }
