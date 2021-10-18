@@ -44,6 +44,7 @@ Popup {
 
         Item {
             id: headerContent
+            objectName: "headerContent"
             height: {
                 const count = children.length
                 let h = 0
@@ -63,6 +64,7 @@ Popup {
 
             StyledText {
                 text: title
+                objectName: "titleText"
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.left: parent.left
                 font.bold: true
@@ -75,6 +77,7 @@ Popup {
 
         Rectangle {
             id: closeButton
+            objectName: "closeButtonRectangle"
             property bool hovered: false
             visible: displayCloseButton
             height: 32
@@ -88,6 +91,7 @@ Popup {
 
             SVGImage {
                 id: closeModalImg
+                objectName: "closeImage"
                 source: "../img/close.svg"
                 width: 11
                 height: 11
@@ -102,6 +106,7 @@ Popup {
 
             MouseArea {
                 id: closeModalMouseArea
+                objectName: "closeSensor"
                 cursorShape: Qt.PointingHandCursor
                 anchors.fill: parent
                 hoverEnabled: true
@@ -126,6 +131,7 @@ Popup {
 
         Item {
             id: popupContent
+            objectName: "contentParent"
             anchors.top: separator.bottom
             anchors.topMargin: Style.current.padding
             anchors.bottom: separator2.top
@@ -145,6 +151,7 @@ Popup {
 
         Item {
             id: footerContent
+            objectName: "footerParent"
             visible: children.length > 0
             height: visible ? children[0] && children[0].height : 0
             width: parent.width
