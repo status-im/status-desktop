@@ -74,6 +74,7 @@ Rectangle {
 
     Loader {
         id: actionButtonLoader
+        objectName: "actionButtonloader"
         anchors.right: closeButton.left
         anchors.rightMargin: 8
         anchors.top: parent.top
@@ -82,6 +83,7 @@ Rectangle {
 
     StatusFlatRoundButton {
         id: closeButton
+        objectName: "headerClosebutton"
         anchors.right: parent.right
         anchors.rightMargin: 20
         anchors.top: parent.top

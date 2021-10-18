@@ -62,6 +62,7 @@ Row {
             height: statusImageWithTitle.image.height
             StatusRoundedImage {
                 id: statusRoundedImage
+                objectName: "headerImage"
                 image.source:  statusImageWithTitle.image.source
                 width: statusImageWithTitle.image.width
                 height: statusImageWithTitle.image.height
@@ -128,6 +129,7 @@ Row {
             spacing: 4
             StatusBaseText {
                 id: headerTitle
+                objectName: "headerTitle"
                 font.family: Theme.palette.baseFont.name
                 font.pixelSize: 17
                 font.bold: true
@@ -156,6 +158,7 @@ Row {
 
         StatusBaseText {
             id: headerSubTitle
+            objectName: "headerSubTitle"
             font.family: Theme.palette.baseFont.name
             font.pixelSize: 15
             color:Theme.palette.baseColor1
