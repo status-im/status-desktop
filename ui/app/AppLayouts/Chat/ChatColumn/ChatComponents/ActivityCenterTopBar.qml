@@ -2,10 +2,12 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 
 import utils 1.0
-import "../../../../../shared"
-import "../../../../../shared/popups"
-import "../../../../../shared/panels"
-import "../../../../../shared/status"
+
+import StatusQ.Core 0.1
+import StatusQ.Core.Theme 0.1
+import StatusQ.Controls 0.1
+import StatusQ.Popups 0.1
+
 import ".."
 
 Item {
@@ -20,45 +22,41 @@ Item {
         height: allBtn.height
         spacing: Style.current.padding
 
-       StatusButton {
+       StatusFlatButton {
            id: allBtn
            //% "All"
            text: qsTrId("all")
-           type: "secondary"
-           size: "small"
+           size: StatusBaseButton.Size.Small
            highlighted: activityCenter.currentFilter === ActivityCenter.Filter.All
            onClicked: activityCenter.currentFilter = ActivityCenter.Filter.All
        }
 
-       StatusButton {
+       StatusFlatButton {
            id: mentionsBtn
            //% "Mentions"
            text: qsTrId("mentions")
-           type: "secondary"
            enabled: hasMentions
-           size: "small"
+           size: StatusBaseButton.Size.Small
            highlighted: activityCenter.currentFilter === ActivityCenter.Filter.Mentions
            onClicked: activityCenter.currentFilter = ActivityCenter.Filter.Mentions
        }
 
-       StatusButton {
+       StatusFlatButton {
            id: repliesbtn
            //% "Replies"
            text: qsTrId("replies")
            enabled: hasReplies
-           type: "secondary"
-           size: "small"
+           size: StatusBaseButton.Size.Small
            highlighted: activityCenter.currentFilter === ActivityCenter.Filter.Replies
            onClicked: activityCenter.currentFilter = ActivityCenter.Filter.Replies
        }
 
-//       StatusButton {
+//       StatusFlatButton {
 //           id: contactRequestsBtn
 //           //% "Contact requests"
 //           text: qsTrId("contact-requests")
 //           enabled: hasContactRequests
-//           type: "secondary"
-//           size: "small"
+//           size: StatusBaseButton.Size.Small
 //           highlighted: activityCenter.currentFilter === ActivityCenter.Filter.ContactRequests
 //           onClicked: activityCenter.currentFilter = ActivityCenter.Filter.ContactRequests
 //       }
@@ -72,69 +70,67 @@ Item {
         height: markAllReadBtn.height
         spacing: Style.current.padding
 
-       StatusIconButton {
-           id: markAllReadBtn
-           icon.name: "double-check"
-           iconColor: Style.current.primary
-           icon.width: 24
-           icon.height: 24
-           width: 32
-           height: 32
-           onClicked: {
-               errorText.text = chatsModel.activityNotificationList.markAllActivityCenterNotificationsRead()
-           }
+        StatusFlatRoundButton {
+            id: markAllReadBtn
+            icon.name: "double-checkmark"
+            width: 32
+            height: 32
+            onClicked: {
+                errorText.text = chatsModel.activityNotificationList.markAllActivityCenterNotificationsRead()
+            }
 
-           StatusToolTip {
-             visible: markAllReadBtn.hovered
-             //% "Mark all as Read"
-             text: qsTrId("mark-all-as-read")
-           }
-       }
+            StatusToolTip {
+              visible: markAllReadBtn.hovered
+              //% "Mark all as Read"
+              text: qsTrId("mark-all-as-read")
+            }
+        }
 
-       StatusContextMenuButton {
-           id: moreActionsBtn
-           onClicked: moreActionsMenu.open()
+        StatusFlatRoundButton {
+            id: moreActionsBtn
+            icon.name: "more"
+            width: 32
+            height: 32
+            type: StatusFlatRoundButton.Type.Secondary
+            onClicked: {
+                let p = moreActionsBtn.mapToItem(otherButtons, moreActionsBtn.x, moreActionsMenu.y)
+                moreActionsMenu.popup(moreActionsBtn.width - moreActionsMenu.width, p.y + moreActionsBtn.height + 4)
+            }
 
-           // TODO: replace with StatusPopupMenu
-           PopupMenu {
-               id: moreActionsMenu
-               x: moreActionsBtn.width - moreActionsMenu.width
-               y: moreActionsBtn.height + 4
+            StatusPopupMenu {
+                id: moreActionsMenu
 
-               Action {
-                   icon.source: hideReadNotifications ? Style.svg("eye") : Style.svg("eye-barred")
-                   icon.width: 16
-                   icon.height: 16
-                   text: hideReadNotifications ?
-                             //% "Show read notifications"
-                             qsTrId("show-read-notifications") :
-                             //% "Hide read notifications"
-                             qsTrId("hide-read-notifications")
-                   onTriggered: hideReadNotifications = !hideReadNotifications
-               }
-               Action {
-                   icon.source: Style.svg("bell")
-                   icon.width: 16
-                   icon.height: 16
-                   //% "Notification settings"
-                   text: qsTrId("chat-notification-preferences")
-                   onTriggered: {
-                       activityCenter.close()
-                       appMain.changeAppSection(Constants.profile)
+                StatusMenuItem {
+                    icon.name: "hide"
+                    text: hideReadNotifications ?
+                              //% "Show read notifications"
+                              qsTrId("show-read-notifications") :
+                              //% "Hide read notifications"
+                              qsTrId("hide-read-notifications")
+                    onTriggered: hideReadNotifications = !hideReadNotifications
+                }
+
+                StatusMenuItem {
+                    icon.name: "notification"
+                    //% "Notification settings"
+                    text: qsTrId("chat-notification-preferences")
+                    onTriggered: {
+                        activityCenter.close()
+                        appMain.changeAppSection(Constants.profile)
                         // TODO: replace with shared store constant
                         // Profile/RootStore.notifications_id
-                       profileLayoutContainer.changeProfileSection(7)
-                   }
-               }
-           }
-       }
+                        profileLayoutContainer.changeProfileSection(7)
+                    }
+                }
+            }
+        }
     }
 
-    StyledText {
+    StatusBaseText {
         id: errorText
         visible: !!text
         anchors.top: filterButtons.bottom
         anchors.topMargin: Style.current.smallPadding
-        color: Style.current.danger
+        color: Theme.palette.dangerColor1
     }
 }
