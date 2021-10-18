@@ -41,8 +41,6 @@ proc newModule*[T](delegate: T):
   result.viewVariant = newQVariant(result.view)
   result.controller = controller.newController[Module[T]](result)
 
-  singletonInstance.engine.setRootContextProperty("startupModule", result.viewVariant)
-
   # Submodules
   result.onboardingModule = onboarding_module.newModule[Module[T]](result)
   result.loginModule = login_module.newModule[Module[T]](result)
@@ -55,6 +53,8 @@ method delete*[T](self: Module[T]) =
   self.controller.delete
 
 method load*[T](self: Module[T]) =
+  singletonInstance.engine.setRootContextProperty("startupModule", self.viewVariant)
+  self.controller.init()
   self.view.load()
 
 method viewDidLoad*[T](self: Module[T]) =
