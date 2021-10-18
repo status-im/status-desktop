@@ -1,6 +1,6 @@
-import dto
+import ./dto/chat as chat_dto
 
-export dto
+export chat_dto
 
 type 
   ServiceInterface* {.pure inheritable.} = ref object of RootObj

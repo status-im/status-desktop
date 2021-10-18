@@ -10,5 +10,6 @@ method delete*(self: AccessInterface) {.base.} =
 method init*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getCommunities*(self: AccessInterface): seq[community_service.Dto] {.base.} =
+method getCommunities*(self: AccessInterface): 
+  seq[community_service.CommunityDto] {.base.} =
   raise newException(ValueError, "No implementation available")

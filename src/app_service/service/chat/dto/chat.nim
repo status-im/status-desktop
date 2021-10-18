@@ -2,7 +2,7 @@
 
 import json, strformat
 
-include ../../common/json_utils
+include ../../../common/json_utils
 
 type ChatType* {.pure.}= enum
   Unknown = 0,
@@ -13,7 +13,7 @@ type ChatType* {.pure.}= enum
   Timeline = 5
   CommunityChat = 6
 
-type Dto* = ref object
+type ChatDto* = ref object
   id*: string # ID is the id of the chat, for public chats it is the name e.g. status, 
   # for one-to-one is the hex encoded public key and for group chats is a random
   # uuid appended with the hex encoded pk of the creator of the chat
@@ -41,7 +41,7 @@ type Dto* = ref object
   syncedTo*: int64
   syncedFrom*: int64
 
-proc `$`*(self: Dto): string =
+proc `$`*(self: ChatDto): string =
   result = fmt"""ChatDto(
     id: {self.id}, 
     name: {self.name}, 
@@ -65,8 +65,8 @@ proc `$`*(self: Dto): string =
     syncedFrom: {self.syncedFrom}
     )"""
 
-proc toDto*(jsonObj: JsonNode): Dto =
-  result = Dto()
+proc toChatDto*(jsonObj: JsonNode): ChatDto =
+  result = ChatDto()
   discard jsonObj.getProp("id", result.id)
   discard jsonObj.getProp("name", result.name)
   discard jsonObj.getProp("description", result.description)

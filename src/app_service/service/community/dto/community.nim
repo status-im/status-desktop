@@ -1,8 +1,8 @@
 {.used.}
 
-import json, strformat
+import json
 
-include ../../common/json_utils
+include ../../../common/json_utils
 
 type
   Permission* = ref object
@@ -34,7 +34,7 @@ type Member* = ref object
   id*: string
   roles*: seq[int]
 
-type Dto* = ref object
+type CommunityDto* = ref object
   id*: string
   admin*: bool
   verified*: bool
@@ -100,8 +100,8 @@ proc toMember(jsonObj: JsonNode, memberId: string): Member =
     for roleObj in rolesObj:
       result.roles.add(roleObj.getInt)
 
-proc toDto*(jsonObj: JsonNode): Dto =
-  result = Dto()
+proc toCommunityDto*(jsonObj: JsonNode): CommunityDto =
+  result = CommunityDto()
   discard jsonObj.getProp("id", result.id)
   discard jsonObj.getProp("admin", result.admin)
   discard jsonObj.getProp("verified", result.verified)

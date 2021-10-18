@@ -11,15 +11,17 @@ type
   Controller* = ref object of controller_interface.AccessInterface
     delegate: io_interface.AccessInterface
     id: string
+    isCommunityModule: bool
     communityService: community_service.ServiceInterface
 
 proc newController*(delegate: io_interface.AccessInterface,
-  id: string,
+  id: string, isCommunity: bool,
   communityService: community_service.ServiceInterface): 
   Controller =
   result = Controller()
   result.delegate = delegate
   result.id = id
+  result.isCommunityModule = isCommunity
   result.communityService = communityService
   
 method delete*(self: Controller) =
@@ -31,5 +33,8 @@ method init*(self: Controller) =
 method getId*(self: Controller): string =
   return self.id
 
-method getCommunities*(self: Controller): seq[community_service.Dto] =
+method isCommunity*(self: Controller): bool =
+  return self.isCommunityModule
+
+method getCommunities*(self: Controller): seq[community_service.CommunityDto] =
   return self.communityService.getCommunities()
