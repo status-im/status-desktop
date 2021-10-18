@@ -187,7 +187,7 @@ Item {
                 }
             ]
             sensor.onClicked: {
-                switch2.checked = appSettings.onlyShowContactsProfilePics = !switch2.checked
+                switch2.checked = appSettings.displayChatImages = !switch2.checked
             }
         }
 
