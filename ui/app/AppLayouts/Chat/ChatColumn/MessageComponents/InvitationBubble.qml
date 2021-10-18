@@ -1,11 +1,14 @@
 import QtQuick 2.3
 import QtQuick.Dialogs 1.3
-import "../../../../../shared"
-import "../../../../../shared/popups"
-import "../../../../../shared/panels"
-import "../../../../../shared/status"
 
 import utils 1.0
+
+import StatusQ.Core 0.1
+import StatusQ.Core.Theme 0.1
+import StatusQ.Controls 0.1
+
+import "../../../../../shared/panels"
+import "../../../../../shared/popups"
 import "./TransactionComponents"
 
 Item {
@@ -179,9 +182,9 @@ Item {
                 }
 
                 // TODO add check if verified
-                StyledText {
+                StatusBaseText {
                     id: title
-                    color: invitedCommunity.verifed ? Style.current.primary : Style.current.secondaryText
+                    color: invitedCommunity.verifed ? Theme.palette.primaryColor1 : Theme.palette.baseColor1
                     text: invitedCommunity.verifed ?
                               //% "Verified community invitation"
                               qsTrId("verified-community-invitation") :
@@ -195,7 +198,7 @@ Item {
                     font.pixelSize: 13
                 }
 
-                StyledText {
+                StatusBaseText {
                     id: invitedYou
                     text: {
                         if (chatsModel.channelView.activeChannel.chatType === Constants.chatTypeOneToOne) {
@@ -220,6 +223,7 @@ Item {
                     anchors.rightMargin: root.innerMargin
                     wrapMode: Text.WordWrap
                     font.pixelSize: 15
+                    color: Theme.palette.directColor1
                 }
 
                 Separator {
@@ -229,7 +233,7 @@ Item {
                 }
 
                 // TODO add image when it's supported
-                StyledText {
+                StatusBaseText {
                     id: communityName
                     text: invitedCommunity.name
                     anchors.top: sep1.bottom
@@ -241,9 +245,10 @@ Item {
                     font.weight: Font.Bold
                     wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                     font.pixelSize: 17
+                    color: Theme.palette.directColor1
                 }
 
-                StyledText {
+                StatusBaseText {
                     id: communityDesc
                     text: invitedCommunity.description
                     anchors.top: communityName.bottom
@@ -254,9 +259,10 @@ Item {
                     anchors.rightMargin: root.innerMargin
                     wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                     font.pixelSize: 15
+                    color: Theme.palette.directColor1
                 }
 
-                StyledText {
+                StatusBaseText {
                     id: communityNbMembers
                     // TODO add the plural support
                     //% "%1 members"
@@ -267,7 +273,7 @@ Item {
                     anchors.leftMargin: root.innerMargin
                     font.pixelSize: 13
                     font.weight: Font.Medium
-                    color: Style.current.secondaryText
+                    color: Theme.palette.baseColor1
                 }
 
                 Separator {
@@ -281,12 +287,11 @@ Item {
                     height: 44
                     anchors.bottom: parent.bottom
                     clip: true
-                    StatusButton {
+                    StatusFlatButton {
                         id: joinBtn
-                        type: "secondary"
                         anchors.top: parent.top
                         anchors.topMargin: -Style.current.smallPadding
-                        borderRadius: 16
+                        radius: 16
                         width: parent.width
                         height: 54
                         enabled: true
