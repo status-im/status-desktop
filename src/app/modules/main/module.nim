@@ -39,8 +39,6 @@ proc newModule*[T](delegate: T,
   result.viewVariant = newQVariant(result.view)
   result.controller = controller.newController(result, communityService)
 
-  singletonInstance.engine.setRootContextProperty("mainModule", result.viewVariant)
-
   # Submodules
   result.chatSectionModule = chat_section_module.newModule(result, "chat", 
   false, chatService, communityService)
@@ -60,6 +58,8 @@ method delete*[T](self: Module[T]) =
   self.controller.delete
 
 method load*[T](self: Module[T]) =
+  singletonInstance.engine.setRootContextProperty("mainModule", self.viewVariant)
+  self.controller.init()
   self.view.load()
 
   let chatSectionItem = initItem("chat", ChatSectionType.Chat.int, "Chat", "", 
