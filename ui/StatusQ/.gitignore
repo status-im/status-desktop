@@ -12,3 +12,4 @@ Makefile
 .qmake.stash
 *_qml.cpp
 *_qmlcache.qrc
+sandbox/qmlcache_loader.cpp
