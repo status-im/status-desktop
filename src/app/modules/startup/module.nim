@@ -7,7 +7,6 @@ import ../../../app/core/global_singleton
 import onboarding/module as onboarding_module
 import login/module as login_module
 
-import ../../../app_service/service/local_settings/service as local_settings_service
 import ../../../app_service/service/keychain/service as keychain_service
 import ../../../app_service/service/accounts/service_interface as accounts_service
 
@@ -28,7 +27,6 @@ type
 proc newModule*[T](delegate: T,
   events: EventEmitter,
   fleet: FleetModel,
-  localSettingsService: local_settings_service.Service,
   keychainService: keychain_service.Service,
   accountsService: accounts_service.ServiceInterface): 
   Module[T] =
@@ -36,14 +34,13 @@ proc newModule*[T](delegate: T,
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, events, localSettingsService,
-  keychainService, accountsService)
+  result.controller = controller.newController(result, events, accountsService)
 
   # Submodules
   result.onboardingModule = onboarding_module.newModule(result, events, fleet, 
   accountsService)
-  result.loginModule = login_module.newModule(result, events, localSettingsService,
-  keychainService, accountsService)
+  result.loginModule = login_module.newModule(result, events, keychainService, 
+  accountsService)
   
 method delete*[T](self: Module[T]) =
   self.onboardingModule.delete

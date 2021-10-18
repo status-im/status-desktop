@@ -1,7 +1,5 @@
 import NimQml, chronicles
 
-import ../local_settings/service as local_settings_service
-
 import eventemitter
 
 logScope:
@@ -19,7 +17,6 @@ type
 
 QtObject:
   type Service* = ref object of QObject
-    localSettingsService: local_settings_service.Service
     events: EventEmitter
     keychainManager: StatusKeychainManager
 
@@ -35,30 +32,15 @@ QtObject:
     self.keychainManager.delete
     self.QObject.delete
 
-  proc newService*(localSettingsService: local_settings_service.Service,
-    events: EventEmitter): 
-    Service =
+  proc newService*(events: EventEmitter): Service =
     new(result, delete)
     result.setup()
-    result.localSettingsService = localSettingsService
     result.events = events
 
   proc storePassword*(self: Service, username: string, password: string) =
-    let value = self.localSettingsService.getAccountValue(
-      LS_KEY_STORE_TO_KEYCHAIN).stringVal
-    
-    if (value != LS_VALUE_STORE or username.len == 0):
-      return
-
     self.keychainManager.storeDataAsync(username, password)
 
   proc tryToObtainPassword*(self: Service, username: string) =
-    let value = self.localSettingsService.getAccountValue(
-      LS_KEY_STORE_TO_KEYCHAIN).stringVal
-    
-    if (value != LS_VALUE_STORE):
-      return
-    
     self.keychainManager.readDataAsync(username)
 
   proc onKeychainManagerError*(self: Service, errorType: string, errorCode: int, 

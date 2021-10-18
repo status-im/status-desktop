@@ -1,11 +1,10 @@
 import NimQml, Tables
 
 import io_interface, view, controller, item
-import ../../../app/core/global_singleton
+import ../../core/global_singleton
 
 import chat_section/module as chat_section_module
 
-import ../../../app_service/service/local_settings/service as local_settings_service
 import ../../../app_service/service/keychain/service as keychain_service
 import ../../../app_service/service/accounts/service_interface as accounts_service
 import ../../../app_service/service/chat/service as chat_service
@@ -36,7 +35,6 @@ type
 
 proc newModule*[T](delegate: T,
   events: EventEmitter,
-  localSettingsService: local_settings_service.Service,
   keychainService: keychain_service.Service,
   accountsService: accounts_service.ServiceInterface,
   chatService: chat_service.Service,
@@ -46,8 +44,8 @@ proc newModule*[T](delegate: T,
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, events, localSettingsService,
-  keychainService, accountsService, communityService)
+  result.controller = controller.newController(result, events, keychainService, 
+  accountsService, communityService)
 
   # Submodules
   result.chatSectionModule = chat_section_module.newModule(result, "chat", 
