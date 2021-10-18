@@ -2,9 +2,8 @@ import NimQml
 import io_interface
 import ../io_interface as delegate_interface
 import view, controller, item
-import ../../../../app/core/global_singleton
+import ../../../core/global_singleton
 
-import ../../../../app_service/service/local_settings/service as local_settings_service
 import ../../../../app_service/service/keychain/service as keychain_service
 import ../../../../app_service/service/accounts/service_interface as accounts_service
 
@@ -22,7 +21,6 @@ type
 
 proc newModule*(delegate: delegate_interface.AccessInterface,
   events: EventEmitter,
-  localSettingsService: local_settings_service.Service,
   keychainService: keychain_service.Service,
   accountsService: accounts_service.ServiceInterface): 
   Module =
@@ -30,8 +28,8 @@ proc newModule*(delegate: delegate_interface.AccessInterface,
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, events, localSettingsService,
-  keychainService, accountsService)
+  result.controller = controller.newController(result, events, keychainService, 
+  accountsService)
   result.moduleLoaded = false
 
   singletonInstance.engine.setRootContextProperty("loginModule", result.viewVariant)
