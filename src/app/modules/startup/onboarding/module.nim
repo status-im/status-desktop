@@ -2,7 +2,7 @@ import NimQml
 import io_interface
 import ../io_interface as delegate_interface
 import view, controller, item
-import ../../../../app/core/global_singleton
+import ../../../core/global_singleton
 
 import ../../../../app_service/service/accounts/service_interface as accounts_service
 
@@ -31,8 +31,6 @@ proc newModule*(delegate: delegate_interface.AccessInterface,
   result.controller = controller.newController(result, events, fleet, 
   accountsService)
   result.moduleLoaded = false
-
-  singletonInstance.engine.setRootContextProperty("onboardingModule", result.viewVariant)
 
 method delete*(self: Module) =
   self.view.delete

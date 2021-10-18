@@ -32,8 +32,6 @@ proc newModule*(delegate: delegate_interface.AccessInterface,
   accountsService)
   result.moduleLoaded = false
 
-  singletonInstance.engine.setRootContextProperty("loginModule", result.viewVariant)
-
 method delete*(self: Module) =
   self.view.delete
   self.viewVariant.delete
