@@ -2,8 +2,8 @@ import NimQml, Tables
 
 import controller_interface
 import io_interface
+import ../../core/global_singleton
 
-import ../../../app_service/service/local_settings/service as local_settings_service
 import ../../../app_service/service/keychain/service as keychain_service
 import ../../../app_service/service/accounts/service_interface as accounts_service
 import ../../../app_service/service/community/service as community_service
@@ -17,14 +17,12 @@ type
   Controller* = ref object of controller_interface.AccessInterface
     delegate: io_interface.AccessInterface
     events: EventEmitter
-    localSettingsService: local_settings_service.Service
     keychainService: keychain_service.Service
     accountsService: accounts_service.ServiceInterface
     communityService: community_service.ServiceInterface
 
 proc newController*(delegate: io_interface.AccessInterface, 
   events: EventEmitter,
-  localSettingsService: local_settings_service.Service,
   keychainService: keychain_service.Service,
   accountsService: accounts_service.ServiceInterface,
   communityService: community_service.ServiceInterface): 
@@ -32,7 +30,6 @@ proc newController*(delegate: io_interface.AccessInterface,
   result = Controller()
   result.delegate = delegate
   result.events = events
-  result.localSettingsService = localSettingsService
   result.keychainService = keychainService
   result.accountsService = accountsService
   result.communityService = communityService
@@ -43,7 +40,7 @@ method delete*(self: Controller) =
 method init*(self: Controller) = 
   if(defined(macosx)): 
     let account = self.accountsService.getLoggedInAccount()
-    self.localSettingsService.updateAccountSettingsFilePath(account.name)
+    singletonInstance.localAccountSettings.setFileName(account.name)
 
   self.events.on("keychainServiceSuccess") do(e:Args):
     let args = KeyChainServiceArg(e)
@@ -51,8 +48,7 @@ method init*(self: Controller) =
 
   self.events.on("keychainServiceError") do(e:Args):
     let args = KeyChainServiceArg(e)
-    self.localSettingsService.setAccountValue(LS_KEY_STORE_TO_KEYCHAIN, 
-    newQVariant(LS_VALUE_NOTNOW))
+    singletonInstance.localAccountSettings.removeKey(LS_KEY_STORE_TO_KEYCHAIN)
     self.delegate.emitStoringPasswordError(args.errDescription)
 
 method getCommunities*(self: Controller): seq[community_service.CommunityDto] =
@@ -66,9 +62,7 @@ method checkForStoringPassword*(self: Controller) =
   if(not defined(macosx)): 
     return
 
-  let value = self.localSettingsService.getAccountValue(
-      LS_KEY_STORE_TO_KEYCHAIN).stringVal
-    
+  let value = singletonInstance.localAccountSettings.getStoreToKeychainValue()
   if (value == LS_VALUE_STORE or value == LS_VALUE_NEVER):
     return
 
@@ -78,4 +72,9 @@ method checkForStoringPassword*(self: Controller) =
 
 method storePassword*(self: Controller, password: string) =
   let account = self.accountsService.getLoggedInAccount()
+
+  let value = singletonInstance.localAccountSettings.getStoreToKeychainValue()
+  if (value != LS_VALUE_STORE or account.name.len == 0):
+    return
+
   self.keychainService.storePassword(account.name, password)

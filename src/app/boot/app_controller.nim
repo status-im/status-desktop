@@ -94,23 +94,31 @@ proc newAppController*(appService: AppService): AppController =
   result = AppController()
   result.appService = appService
   # Services
+  
+  #################################################
+  # Since localSettingsService is a product of old architecture, and used only to 
+  # manage `Settings` component (global and profile) in qml, this should be removed
+  # at the end of refactroing process and moved to the same approach we use for
+  # LocalAccountSettings, and that will be maintained only on the Nim side. There
+  # should not be two instances maintain the same settings.
   result.localSettingsService = local_settings_service.newService()
-  result.keychainService = keychain_service.newService(result.localSettingsService, 
-  appService.status.events)
+  #################################################
+
+  result.keychainService = keychain_service.newService(appService.status.events)
   result.accountsService = accounts_service.newService()
   result.contactService = contact_service.newService()
   result.chatService = chat_service.newService()
   result.communityService = community_service.newService(result.chatService)
   # Core
-  result.localAccountSettings = newLocalAccountSettings(result.localSettingsService)
-  result.localAccountSettingsVariant = newQVariant(result.localAccountSettings)
+  result.localAccountSettingsVariant = newQVariant(
+    singletonInstance.localAccountSettings)
   # Modules
   result.startupModule = startup_module.newModule[AppController](result,
-  appService.status.events, appService.status.fleet, result.localSettingsService,
-  result.keychainService, result.accountsService)
+  appService.status.events, appService.status.fleet, result.keychainService, 
+  result.accountsService)
   result.mainModule = main_module.newModule[AppController](result, 
-  appService.status.events, result.localSettingsService, result.keychainService, 
-  result.accountsService, result.chatService, result.communityService)
+  appService.status.events, result.keychainService, result.accountsService, 
+  result.chatService, result.communityService)
 
   #################################################
   # At the end of refactoring this will be moved to 
@@ -130,7 +138,6 @@ proc delete*(self: AppController) =
   self.profile.delete
   #################################################
 
-  self.localSettingsService.delete
   self.localAccountSettingsVariant.delete
 
   self.localSettingsService.delete
