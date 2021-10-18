@@ -3,6 +3,11 @@ import QtGraphicalEffects 1.13
 import QtQuick.Layouts 1.13
 
 import utils 1.0
+
+import StatusQ.Core 0.1
+import StatusQ.Core.Theme 0.1
+import StatusQ.Controls 0.1
+
 import "../../../../../shared"
 import "../../../../../shared/panels"
 import "../../../../../shared/status"
@@ -229,7 +234,7 @@ Column {
                 anchors.top: parent.top
                 anchors.topMargin: 1
             }
-            StyledText {
+            StatusBaseText {
                 id: linkTitle
                 text: linkData.title
                 font.pixelSize: 13
@@ -241,14 +246,15 @@ Column {
                 anchors.rightMargin: Style.current.smallPadding
                 anchors.leftMargin: Style.current.smallPadding
                 anchors.topMargin: Style.current.smallPadding
+                color: Theme.palette.directColor1
             }
 
-            StyledText {
+            StatusBaseText {
                 id: linkSite
                 text: linkData.site
                 font.pixelSize: 12
                 font.weight: Font.Thin
-                color: Style.current.secondaryText
+                color: Theme.palette.baseColor1
                 anchors.top: linkTitle.bottom
                 anchors.topMargin: 2
                 anchors.left: linkTitle.left
@@ -307,7 +313,7 @@ Column {
                 anchors.topMargin: Style.current.smallPadding
             }
 
-            StyledText {
+            StatusBaseText {
                 id: enableText
                 //% "Enable automatic image unfurling"
                 text: isImageLink ? qsTrId("enable-automatic-image-unfurling") :
@@ -319,9 +325,10 @@ Column {
                 anchors.top: unfurlingImage.bottom
                 anchors.topMargin: Style.current.halfPadding
                 font.pixelSize: 15
+                color: Theme.palette.directColor1
             }
 
-            StyledText {
+            StatusBaseText {
                 id: infoText
                 //% "Once enabled, links posted in the chat may share your metadata with their owners"
                 text: qsTrId("once-enabled--links-posted-in-the-chat-may-share-your-metadata-with-their-owners")
@@ -330,7 +337,7 @@ Column {
                 wrapMode: Text.WordWrap
                 anchors.top: enableText.bottom
                 font.pixelSize: 13
-                color: Style.current.secondaryText
+                color: Theme.palette.baseColor1
             }
 
             Separator {
@@ -339,11 +346,10 @@ Column {
                 anchors.topMargin: Style.current.smallPadding
             }
 
-            StatusButton {
+            StatusFlatButton {
                 id: enableBtn
                 //% "Enable in Settings"
                 text: qsTrId("enable-in-settings")
-                type: "secondary"
                 onClicked: {
                     appMain.changeAppSection(Constants.profile)
                     // TODO: replace with shared store constant
@@ -360,10 +366,9 @@ Column {
                 anchors.topMargin: 0
             }
 
-            StatusButton {
+            StatusFlatButton {
                 //% "Don't ask me again"
                 text: qsTrId("dont-ask")
-                type: "secondary"
                 onClicked: {
                     appSettings.neverAskAboutUnfurlingAgain = true
                 }
