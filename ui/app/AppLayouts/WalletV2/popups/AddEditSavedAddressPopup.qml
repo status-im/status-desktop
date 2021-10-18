@@ -2,11 +2,8 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Dialogs 1.3
 
-
 import utils 1.0
-import "../../../../shared"
-import "../../../../shared/panels"
-import "../../../../shared/status"
+import "../../../../shared/controls"
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -93,12 +90,12 @@ StatusModal {
                 height: parent.height
                 anchors.top: parent.top
                 anchors.topMargin: 11
-                StyledText {
+                StatusBaseText {
                     id: inputLabel
                     text: "Emoji"
                     font.weight: Font.Medium
                     font.pixelSize: 13
-                    color: Style.current.textColor
+                    color: Theme.palette.directColor1
                 }
                 Rectangle {
                     width: parent.width

@@ -2,18 +2,16 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Dialogs 1.3
 
-
 import utils 1.0
-import "../../../../shared"
-import "../../../../shared/status"
-import "../views"
-import "../panels"
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Controls.Validators 0.1
 import StatusQ.Popups 0.1
+
+import "../views"
+import "../panels"
 
 StatusModal {
     id: root
