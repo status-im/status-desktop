@@ -1,9 +1,11 @@
 import QtQuick 2.13
 
 import utils 1.0
-import "../../../../../shared"
+
+import StatusQ.Core 0.1
+import StatusQ.Controls 0.1
+
 import "../../../../../shared/panels"
-import "../../../../../shared/status"
 
 Item {
     visible: chatsModel.channelView.activeChannel.chatType === Constants.chatTypeOneToOne && (!isContact /*|| !contactRequestReceived*/)
@@ -18,7 +20,7 @@ Item {
         anchors.horizontalCenter: parent.horizontalCenter
     }
 
-    StyledText {
+    StatusBaseText {
         id: contactText1
         //% "You need to be mutual contacts with this person for them to receive your messages"
         text: qsTrId("you-need-to-be-mutual-contacts-with-this-person-for-them-to-receive-your-messages")
@@ -32,9 +34,10 @@ Item {
         anchors.topMargin: Style.current.padding
         anchors.horizontalCenter: parent.horizontalCenter
         width: parent.width / 1.3
+        color: Theme.palette.directColor1
     }
 
-    StyledText {
+    StatusBaseText {
         id: contactText2
         visible: !isContact
         //% "Just click this button to add them as contact. They will receive a notification. Once they accept the request, you'll be able to chat"
@@ -45,6 +48,7 @@ Item {
         anchors.topMargin: 2
         anchors.horizontalCenter: parent.horizontalCenter
         width: parent.width / 1.3
+        color: Theme.palette.directColor1
     }
 
     StatusButton {
