@@ -5,6 +5,9 @@ import ./item
 type
   ModelRole {.pure.} = enum
     Name = UserRole + 1,
+    Slug
+    ImageUrl
+    OwnedAssetCount
 
 QtObject:
   type
@@ -40,7 +43,10 @@ QtObject:
 
   method roleNames(self: Model): Table[int, string] =
     {
-      ModelRole.Name.int:"name"
+      ModelRole.Name.int:"name",
+      ModelRole.Slug.int:"slug",
+      ModelRole.ImageUrl.int:"imageurl",
+      ModelRole.OwnedAssetCount.int:"ownedAssetCount"
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -56,6 +62,12 @@ QtObject:
     case enumRole:
     of ModelRole.Name: 
       result = newQVariant(item.getName())
+    of ModelRole.Slug: 
+      result = newQVariant(item.getSlug())
+    of ModelRole.ImageUrl: 
+      result = newQVariant(item.getImageUrl())
+    of ModelRole.OwnedAssetCount: 
+      result = newQVariant(item.getOwnedAssetCount())
 
   proc setItems*(self: Model, items: seq[Item]) =
     self.beginResetModel()

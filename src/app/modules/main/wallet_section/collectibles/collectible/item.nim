@@ -8,8 +8,8 @@ proc initItem*(name: string): Item =
   result.name = name
 
 proc `$`*(self: Item): string =
-  result = fmt"""AllTokensItem(
-    name: {self.name},
+  result = fmt"""Collectible(
+    name: {self.name}
     ]"""
 
 proc getName*(self: Item): string = 
