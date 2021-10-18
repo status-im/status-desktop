@@ -1,4 +1,26 @@
 <a name=""></a>
+##  Version 0.12.0 (2021-10-18)
+
+
+#### Features
+
+*   Resolve StatusQ modules highlighting and add qml compiler for detecting coompile time errors ([e1b0f2dc](e1b0f2dc))
+* **StatusModal:**  Add edit avatar button ([5043b0b6](5043b0b6))
+* **StatusQ.Components:**  introduce `StatusAddress` component ([6789446d](6789446d), closes [#430](430))
+* **StatusQ.Controls:**
+  *  introduce StatusColorSelector component ([bdd69955](bdd69955), closes [#444](444))
+  *  introduce `StatusAssetSelector` component ([9fdc9aea](9fdc9aea), closes [#442](442))
+  *  introduce `StatusAccountSelector` component ([5e15cc49](5e15cc49), closes [#435](435))
+  *  introduce `StatusSelect` ([6e10959e](6e10959e), closes [#436](436))
+* **StatusQ.Popups:**  introduce `StatusMenuItemDelegate` ([0764e25a](0764e25a))
+
+#### Breaking Changes
+
+* **StatusQ.Popups:**  introduce `StatusMenuItemDelegate` ([0764e25a](0764e25a))
+
+
+
+<a name=""></a>
 ##  Version 0.11.1(2021-10-12)
 
 
