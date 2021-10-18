@@ -43,13 +43,6 @@ ModalPopup {
             }
         }
 
-        Connections {
-            target: mainModule
-            onStoringPasswordError: {
-                updateListState()
-            }
-        }
-
         ButtonGroup {
             id: openLinksWithGroup
         }

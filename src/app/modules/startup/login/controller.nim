@@ -2,8 +2,8 @@ import NimQml, Tables
 
 import controller_interface
 import io_interface
+import ../../../core/global_singleton
 
-import ../../../../app_service/service/local_settings/service as local_settings_service
 import ../../../../app_service/service/keychain/service as keychain_service
 import ../../../../app_service/service/accounts/service_interface as accounts_service
 
@@ -16,21 +16,18 @@ type
   Controller* = ref object of controller_interface.AccessInterface
     delegate: io_interface.AccessInterface
     events: EventEmitter
-    localSettingsService: local_settings_service.Service
     keychainService: keychain_service.Service
     accountsService: accounts_service.ServiceInterface
     selectedAccountKeyUid: string
 
 proc newController*(delegate: io_interface.AccessInterface,
   events: EventEmitter,
-  localSettingsService: local_settings_service.Service,
   keychainService: keychain_service.Service,
   accountsService: accounts_service.ServiceInterface): 
   Controller =
   result = Controller()
   result.delegate = delegate
   result.events = events
-  result.localSettingsService = localSettingsService
   result.keychainService = keychainService
   result.accountsService = accountsService
   
@@ -53,7 +50,7 @@ method init*(self: Controller) =
     if (args.errType == ERROR_TYPE_AUTHENTICATION):
       return
     
-    self.localSettingsService.removeAccountValue(LS_KEY_STORE_TO_KEYCHAIN)
+    singletonInstance.localAccountSettings.removeKey(LS_KEY_STORE_TO_KEYCHAIN)
     self.delegate.emitObtainingPasswordError(args.errDescription)
 
 method getOpenedAccounts*(self: Controller): seq[AccountDto] =
@@ -73,7 +70,11 @@ method setSelectedAccountKeyUid*(self: Controller, keyUid: string) =
     return
 
   let selectedAccount = self.getSelectedAccount()
-  self.localSettingsService.updateAccountSettingsFilePath(selectedAccount.name)
+  singletonInstance.localAccountSettings.setFileName(selectedAccount.name)
+
+  let value = singletonInstance.localAccountSettings.getStoreToKeychainValue()
+  if (value != LS_VALUE_STORE):
+    return
 
   self.keychainService.tryToObtainPassword(selectedAccount.name)
 
