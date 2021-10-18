@@ -62,38 +62,42 @@ Rectangle {
             }
         }
 
-        StatusIconButton {
+        StatusQControls.StatusFlatRoundButton {
             id: backButton
-            icon.name: "leave_chat"
-            disabledColor: Style.current.lightGrey
+            width: 32
+            height: 32
+            icon.height: 20
+            icon.width: 20
+            icon.name: "left"
+            icon.disabledColor: Style.current.lightGrey
+            type: StatusQControls.StatusFlatRoundButton.Type.Tertiary
+            enabled: currentWebView && currentWebView.canGoBack
+            Layout.leftMargin: browserHeader.innerMargin
             onClicked: currentWebView.goBack()
             onPressAndHold: {
                 if (currentWebView && (currentWebView.canGoBack || currentWebView.canGoForward)){
                     historyMenu.popup(backButton.x, backButton.y + backButton.height)
                 }
             }
-            enabled: currentWebView && currentWebView.canGoBack
-            width: 24
-            height: 24
-            Layout.leftMargin: browserHeader.innerMargin
-            padding: 6
         }
 
-        StatusIconButton {
+        StatusQControls.StatusFlatRoundButton {
             id: forwardButton
-            icon.name: "leave_chat"
-            iconRotation: 180
-            disabledColor: Style.current.lightGrey
+            width: 32
+            height: 32
+            icon.width: 20
+            icon.height: 20
+            icon.name: "right"
+            icon.disabledColor: Style.current.lightGrey
+            type: StatusQControls.StatusFlatRoundButton.Type.Tertiary
+            enabled: currentWebView && currentWebView.canGoForward
+            Layout.leftMargin: -browserHeader.innerMargin/2
             onClicked: currentWebView.goForward()
             onPressAndHold: {
                 if (currentWebView && (currentWebView.canGoBack || currentWebView.canGoForward)){
                     historyMenu.popup(forwardButton.x, forwardButton.y + forwardButton.height)
                 }
             }
-            enabled: currentWebView && currentWebView.canGoForward
-            width: 24
-            height: 24
-            Layout.leftMargin: -browserHeader.innerMargin/2
         }
 
         StyledTextField {
@@ -160,27 +164,31 @@ Rectangle {
                 }
             }
 
-            StatusIconButton {
+            StatusQControls.StatusFlatRoundButton {
                 id: addFavoriteBtn
-                visible: !!currentWebView && !!currentWebView.url
-                icon.name: !!browserHeader.currentFavorite ? "browser/favoriteActive" : "browser/favorite"
+                width: 24
+                height: 24
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.right: reloadBtn.left
                 anchors.rightMargin: Style.current.halfPadding
+                visible: !!currentWebView && !!currentWebView.url
+                icon.source: !!browserHeader.currentFavorite ? Style.svg("browser/favoriteActive") : Style.svg("browser/favorite")
+                color: "transparent"
+                type: StatusQControls.StatusFlatRoundButton.Type.Tertiary
                 onClicked: addNewFavoritelClicked(addFavoriteBtn.x)
-                width: 24
-                height: 24
             }
 
-            StatusIconButton {
+            StatusQControls.StatusFlatRoundButton {
                 id: reloadBtn
-                icon.name: currentWebView && currentWebView.loading ? "close" : "browser/refresh"
+                width: 24
+                height: 24
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.right: parent.right
                 anchors.rightMargin: Style.current.halfPadding
+                icon.name: currentWebView && currentWebView.loading ? "close-circle" : "refresh"
+                color: "transparent"
+                type: StatusQControls.StatusFlatRoundButton.Type.Tertiary
                 onClicked: currentWebView && currentWebView.loading ? currentWebView.stop() : currentWebView.reload()
-                width: 24
-                height: 24
             }
         }
 
@@ -197,9 +205,14 @@ Rectangle {
 
         Component {
             id: notConnectedBtnCompoent
-            StatusIconButton {
+            StatusQControls.StatusFlatRoundButton {
                 id: accountBtn
-                icon.name: "walletIcon"
+                width: 24
+                height: 24
+                icon.width: 24
+                icon.height: 24
+                icon.name: "filled-account"
+                type: StatusQControls.StatusFlatRoundButton.Type.Tertiary
                 onClicked: {
                     if (browserWalletMenu.opened) {
                         browserWalletMenu.close()
@@ -207,13 +220,8 @@ Rectangle {
                         browserWalletMenu.open()
                     }
                 }
-                width: 24
-                height: 24
-                padding: 6
             }
         }
-
-
 
         Component {
             id: connectedBtnComponent
@@ -241,9 +249,15 @@ Rectangle {
             y: parent.height
         }
 
-        StatusIconButton {
+        StatusQControls.StatusFlatRoundButton {
             id: settingsMenuButton
-            icon.name: "dots-icon"
+            implicitHeight: 32
+            implicitWidth: 32
+            icon.width: 24
+            icon.height: 24
+            icon.name: "more"
+            type: StatusQControls.StatusFlatRoundButton.Type.Tertiary
+            Layout.rightMargin: browserHeader.innerMargin
             onClicked: {
                 if (settingsMenu.opened) {
                     settingsMenu.close()
@@ -251,10 +265,6 @@ Rectangle {
                     settingsMenu.open()
                 }
             }
-            width: 24
-            height: 24
-            Layout.rightMargin: browserHeader.innerMargin
-            padding: 6
         }
     }
 

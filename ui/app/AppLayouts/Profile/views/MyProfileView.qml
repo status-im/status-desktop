@@ -6,13 +6,13 @@ import utils 1.0
 import "../../../../shared"
 import "../../../../shared/panels"
 import "../../../../shared/popups"
-import "../../../../shared/status"
 
 import "../popups"
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
+import StatusQ.Controls 0.1
 
 Item {
     id: root
@@ -111,18 +111,15 @@ Item {
             font.pixelSize: 15
         }
 
-        StatusIconButton {
+        StatusFlatRoundButton {
             id: qrCodeButton
-            anchors.right: parent.right
-            height: 32
             width: 32
-            radius: 8
+            height: 32
+            anchors.right: parent.right
             anchors.verticalCenter: profileImgContainer.verticalCenter
-            icon.name: "qr-code-icon"
-            iconColor: Style.current.textColor
-            onClicked: {
-                qrCodePopup.open()
-            }
+            icon.name: "qr"
+            type: StatusFlatRoundButton.Type.Quaternary
+            onClicked: qrCodePopup.open()
         }
 
         Separator {

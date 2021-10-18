@@ -1,7 +1,11 @@
 import QtQuick 2.1
 import QtQuick.Controls 2.13
 import QtGraphicalEffects 1.13
+
 import utils 1.0
+
+import StatusQ.Controls 0.1
+
 import "../../../../shared"
 import "../../../../shared/panels"
 import "../../../../shared/status/core"
@@ -101,15 +105,16 @@ Rectangle {
         anchors.bottomMargin: 2
     }
 
-    StatusIconButton {
+    StatusFlatRoundButton {
+        width: 32
+        height: 32
         id: optionsBtn
         anchors.verticalCenter: parent.verticalCenter
         anchors.right: parent.right
         anchors.rightMargin: Style.current.smallPadding
-        icon.name: "dots-icon"
-        onClicked: {
-            optionsButtonClicked(optionsBtn.x)
-        }
+        icon.name: "more"
+        type: StatusFlatRoundButton.Type.Tertiary
+        onClicked: optionsButtonClicked(optionsBtn.x)
     }
 }
 

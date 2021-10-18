@@ -7,7 +7,6 @@ StatusEmojiPopup 1.0 StatusEmojiPopup.qml
 StatusEmojiSection 1.0 StatusEmojiSection.qml
 StatusGifPopup 1.0 StatusGifPopup.qml
 StatusGifColumn 1.0 StatusGifColumn.qml
-StatusIconButton 1.0 StatusIconButton.qml
 StatusImageIdenticon 1.0 StatusImageIdenticon.qml
 StatusRadioButton 1.0 StatusRadioButton.qml
 StatusRoundButton 1.0 StatusRoundButton.qml

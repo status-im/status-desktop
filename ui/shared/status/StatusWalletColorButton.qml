@@ -2,20 +2,25 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 
 import utils 1.0
-import "../../shared"
-import "../../shared/panels"
-import "../../shared/status"
 
-StatusIconButton {
+import StatusQ.Controls 0.1
+
+import "../../shared/panels"
+
+StatusFlatRoundButton {
     id: control
     property bool selected: false
-    icon.name: "walletIcon"
+    icon.source: Style.svg("walletIcon")
     icon.width: 24
     icon.height: 24
-    highlightedBackgroundColor: control.icon.color
-    highlightedBackgroundOpacity: 0.1
-    implicitWidth: 44
-    implicitHeight: 44
+    color: "transparent"
+
+    Rectangle {
+        anchors.fill: parent
+        color: control.hovered ? control.icon.color : "transparent"
+        opacity: 0.1
+        radius: 8
+    }
 
     Rectangle {
         width: 16
@@ -36,5 +41,4 @@ StatusIconButton {
             fillMode: Image.PreserveAspectFit
         }
     }
-
 }

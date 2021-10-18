@@ -10,6 +10,8 @@ import "../controls"
 //TODO remove this or make view
 import "../views"
 
+import StatusQ.Controls 0.1
+
 MouseArea {
     id: root
 
@@ -131,19 +133,20 @@ MouseArea {
             }
         }
 
-        StatusIconButton {
+        StatusFlatRoundButton  {
             id: emojiBtn
-            visible: root.hovered
-            highlighted: visible
+            width: 32
+            height: 32
             anchors.top: rootRect.top
             anchors.topMargin: -height / 4
             anchors.right: rootRect.right
             anchors.rightMargin: Style.current.halfPadding
-            highlightedIconColor: Style.current.secondaryText
-            highlightedBackgroundColor: Style.current.background
-            icon.name: "emoji"
+            visible: root.hovered
+            icon.name: "reaction-b"
             icon.width: 20
             icon.height: 20
+            type: StatusFlatRoundButton.Type.Tertiary
+            backgroundHoverColor: Style.current.background
             onClicked: {
                 // Set parent, X & Y positions for the messageContextMenu
                 messageContextMenu.parent = emojiBtn

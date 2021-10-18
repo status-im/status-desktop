@@ -1,11 +1,14 @@
 import QtQuick 2.13
 import QtQuick.Controls.Styles 1.0
+
 import "../../../../../shared"
 import "../../../../../shared/panels"
 import "../../../../../shared/status"
 import "../"
 
 import utils 1.0
+
+import StatusQ.Controls 0.1
 
 TabViewStyle {
     id: tabViewStyle
@@ -63,19 +66,19 @@ TabViewStyle {
             }
 
 
-            StatusIconButton {
+            StatusFlatRoundButton {
                 id: closeTabBtn
-                //% "Start Page"
-                visible: control.count > 1 || styleData.title !== qsTrId("start-page")
-                enabled: visible
-                icon.name: "browser/close"
-                iconColor: Style.current.textColor
+                width: 16
+                height: 16
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.right: parent.right
                 anchors.rightMargin: Style.current.halfPadding
+                icon.name: "close"
+                type: StatusFlatRoundButton.Type.Quaternary
+                //% "Start Page"
+                visible: control.count > 1 || styleData.title !== qsTrId("start-page")
+                enabled: visible
                 onClicked: control.closeButtonClicked(styleData.index)
-                width: 16
-                height: 16
             }
         }
 
@@ -86,13 +89,15 @@ TabViewStyle {
             anchors.right: parent.right
 
             sourceComponent: Component {
-                StatusIconButton {
-                    icon.name: "browser/close"
-                    iconColor: Style.current.textColor
-                    iconRotation: 45
-                    onClicked: control.openNewTabClicked()
+                StatusFlatRoundButton {
+                    id: addButton
                     width: 16
                     height: 16
+                    icon.name: "close"
+                    icon.rotation: 45
+                    color: "transparent"
+                    type: StatusFlatRoundButton.Type.Quaternary
+                    onClicked: control.openNewTabClicked()
                 }
             }
         }

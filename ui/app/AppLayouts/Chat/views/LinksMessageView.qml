@@ -289,14 +289,14 @@ Column {
             border.color: Style.current.border
             color:Style.current.background
 
-            StatusIconButton {
-                icon.name: "close"
-                icon.width: 20
-                icon.height: 20
+            StatusFlatRoundButton {
                 anchors.top: parent.top
                 anchors.topMargin: Style.current.smallPadding
                 anchors.right: parent.right
                 anchors.rightMargin: Style.current.smallPadding
+                icon.width: 20
+                icon.height: 20
+                icon.name: "close-circle"
                 onClicked: {
                     enableLinkRoot.height = 0
                     enableLinkRoot.visible = false
