@@ -54,6 +54,7 @@ Rectangle {
     signal clicked(var mouse)
     signal pressAndHold(var mouse)
 
+    property bool highlighted: false
 
 
     /// Implementation
@@ -65,7 +66,7 @@ Rectangle {
 
     color: {
         if (statusBaseButton.enabled) {
-            return sensor.containsMouse ? hoverColor
+            return sensor.containsMouse || highlighted ? hoverColor
                                         : normalColor
         } else {
             return disaledColor
