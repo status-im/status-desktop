@@ -20,7 +20,7 @@ type
 proc newDto*(
   name: string, chainId: int, address: Address, symbol: string, decimals: int, hasIcon: bool, isCustom: bool = false
 ): Dto =
-  Dto(
+  return Dto(
     name: name, chainId: chainId, address: address, symbol: symbol, decimals: decimals, hasIcon: hasIcon, isCustom: isCustom
   )
 
