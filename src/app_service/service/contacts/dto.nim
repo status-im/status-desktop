@@ -13,7 +13,7 @@ type Dto* = ref object
   id*: string
   name*: string
   ensVerified*: bool
-  alias: string
+  alias*: string
   identicon*: string
   lastUpdated*: int64
   image*: Images
@@ -21,7 +21,7 @@ type Dto* = ref object
   blocked*: bool
   hasAddedUs*: bool
   isSyncing*: bool
-  removed: bool
+  removed*: bool
 
 proc `$`(self: Images): string =
   result = fmt"""Images(
