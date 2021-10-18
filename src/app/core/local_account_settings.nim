@@ -1,31 +1,63 @@
-import NimQml
+import NimQml, os
 
-import ../../app_service/service/local_settings/service as local_settings_service
+import ../../constants
+
+# Local Account Settings keys:
+const LS_KEY_STORE_TO_KEYCHAIN* = "storeToKeychain"
+# Local Account Settings values:
+const LS_VALUE_STORE* = "store"
+const LS_VALUE_NOTNOW* = "notNow"
+const LS_VALUE_NEVER* = "never"
 
 QtObject:
   type LocalAccountSettings* = ref object of QObject
-    localSettingsService: local_settings_service.Service
+    settingsFileDir: string
+    settings: QSettings
     
   proc setup(self: LocalAccountSettings) =
     self.QObject.setup
+    self.settingsFileDir = os.joinPath(DATADIR, "qt")
 
   proc delete*(self: LocalAccountSettings) =
+    if(not self.settings.isNil):
+      self.settings.delete
+
     self.QObject.delete
 
-  proc newLocalAccountSettings*(localSettingsService: local_settings_service.Service): 
+  proc newLocalAccountSettings*(): 
     LocalAccountSettings =
     new(result, delete)
     result.setup
-    result.localSettingsService = localSettingsService
+
+  proc setFileName*(self: LocalAccountSettings, fileName: string) =
+    if(not self.settings.isNil):
+      self.settings.delete
+
+    let filePath = os.joinPath(self.settingsFileDir, fileName)
+    self.settings = newQSettings(filePath, QSettingsFormat.IniFormat)
 
   proc storeToKeychainValueChanged*(self: LocalAccountSettings) {.signal.}
 
-  proc getStoreToKeychainValue(self: LocalAccountSettings): string {.slot.} =
-    self.localSettingsService.getAccountValue(LS_KEY_STORE_TO_KEYCHAIN).stringVal
+  proc removeKey*(self: LocalAccountSettings, key: string) =
+    if(self.settings.isNil):
+      return
+    
+    self.settings.remove(key)
 
-  proc setStoreToKeychainValue(self: LocalAccountSettings, value: string) {.slot.} =
-    self.localSettingsService.setAccountValue(LS_KEY_STORE_TO_KEYCHAIN, 
-    newQVariant(value))
+    if(key == LS_KEY_STORE_TO_KEYCHAIN):
+      self.storeToKeychainValueChanged()
+
+  proc getStoreToKeychainValue*(self: LocalAccountSettings): string {.slot.} =
+    if(self.settings.isNil):
+      return ""
+
+    self.settings.value(LS_KEY_STORE_TO_KEYCHAIN).stringVal
+
+  proc setStoreToKeychainValue*(self: LocalAccountSettings, value: string) {.slot.} =
+    if(self.settings.isNil):
+      return
+
+    self.settings.setValue(LS_KEY_STORE_TO_KEYCHAIN, newQVariant(value))
     self.storeToKeychainValueChanged()
 
   QtProperty[string] storeToKeychainValue:

@@ -3,7 +3,6 @@ import Tables, chronicles
 import controller_interface
 import io_interface
 
-import ../../../app_service/service/local_settings/service as local_settings_service
 import ../../../app_service/service/keychain/service as keychain_service
 import ../../../app_service/service/accounts/service_interface as accounts_service
 
@@ -19,14 +18,10 @@ type
   Controller* = ref object of controller_interface.AccessInterface
     delegate: io_interface.AccessInterface
     events: EventEmitter
-    localSettingsService: local_settings_service.Service
-    keychainService: keychain_service.Service
     accountsService: accounts_service.ServiceInterface
 
 proc newController*(delegate: io_interface.AccessInterface,
   events: EventEmitter,
-  localSettingsService: local_settings_service.Service,
-  keychainService: keychain_service.Service,
   accountsService: accounts_service.ServiceInterface): 
   Controller =
   result = Controller()
