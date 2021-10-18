@@ -1,5 +1,5 @@
 import ./controller_interface
-import ../../../../../app_service/service/collectible/service as collectible_service
+import ../../../../../../app_service/service/collectible/service as collectible_service
 
 export controller_interface
 
