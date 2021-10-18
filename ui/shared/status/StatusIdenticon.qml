@@ -1,8 +1,10 @@
 import QtQuick 2.13
 
 import utils 1.0
+
+import StatusQ.Components 0.1
+
 import "../../shared"
-import "../../shared/status"
 
 Item {
     id: root
@@ -25,8 +27,7 @@ Item {
         id: letterIdenticon
 
         StatusLetterIdenticon {
-            chatId: root.chatId
-            chatName: root.chatName
+            name: root.chatName
             width: parent.width
             height: parent.height
             letterSize: root.letterSize
