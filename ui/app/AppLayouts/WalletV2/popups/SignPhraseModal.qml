@@ -3,93 +3,92 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 
 import utils 1.0
-import "../../../../shared"
-import "../../../../shared/popups"
-import "../../../../shared/panels"
-import "../../../../shared/status"
-import "."
 
-// TODO: replace with StatusModal
-ModalPopup {
+import StatusQ.Core 0.1
+import StatusQ.Core.Theme 0.1
+import StatusQ.Popups 0.1
+import StatusQ.Controls 0.1
+
+StatusModal {
     id: signPhrasePopup
-    title: qsTrId("signing-phrase")
+    anchors.centerIn: parent
     height: 390
     closePolicy: Popup.NoAutoClose
 
+    header.title: qsTrId("signing-phrase")
     property string signingPhraseText: ""
     signal remindLaterButtonClicked()
 
-    Column {
-        anchors.left: parent.left
-        anchors.right: parent.right
-
-        StyledText {
-            height: (Style.current.padding * 3)
+    contentItem: Item {
+        width: signPhrasePopup.width
+        height: childrenRect.height
+        Column {
+            anchors.top: parent.top
+            anchors.topMargin: 16
+            width: parent.width - 32
             anchors.horizontalCenter: parent.horizontalCenter
-            horizontalAlignment: Text.AlignHCenter
-            font.pixelSize: 17
-            font.weight: Font.Bold
-            text: qsTrId("this-is-you-signing")
-        }
 
-        StyledText {
-            width: 330
-            height: Style.current.padding * 4
-            anchors.horizontalCenter: parent.horizontalCenter
-            horizontalAlignment: Text.AlignHCenter
-            font.pixelSize: 15
-            wrapMode: Text.WordWrap
-            text: qsTrId("three-words-description")
-        }
-
-        Rectangle {
-            width: parent.width
-            height: 44
-            color: Style.current.inputBackground
-            StyledText {
-                id: signingPhrase
+            StatusBaseText {
+                height: (Style.current.padding * 3)
                 anchors.horizontalCenter: parent.horizontalCenter
-                anchors.verticalCenter: parent.verticalCenter
+                horizontalAlignment: Text.AlignHCenter
+                font.pixelSize: 17
+                font.weight: Font.Bold
+                text: qsTrId("this-is-you-signing")
+            }
+
+            StatusBaseText {
+                width: 330
+                height: Style.current.padding * 4
+                anchors.horizontalCenter: parent.horizontalCenter
+                horizontalAlignment: Text.AlignHCenter
                 font.pixelSize: 15
-                text: signPhrasePopup.signingPhraseText
+                wrapMode: Text.WordWrap
+                text: qsTrId("three-words-description")
             }
-        }
 
-        Item {
-            width: parent.width
-            height: 30
-            SVGImage {
-                width: 13.33
-                height: 13.33
-                sourceSize.height: (height * 2)
-                sourceSize.width: (width * 2)
+            Rectangle {
+                width: parent.width
+                height: 44
+                color: Theme.palette.baseColor2
+                StatusBaseText {
+                    id: signingPhrase
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.verticalCenter: parent.verticalCenter
+                    font.pixelSize: 15
+                    text: signPhrasePopup.signingPhraseText
+                }
+            }
+
+            Item {
+                width: parent.width
+                height: 30
+                StatusIcon {
+                    icon: "warning"
+                    width: 13.33
+                    height: 13.33
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.bottom: parent.bottom
+                    color: Theme.palette.dangerColor1
+                }
+            }
+
+            StatusBaseText {
+                width: parent.width
+                height: 18
                 anchors.horizontalCenter: parent.horizontalCenter
-                anchors.bottom: parent.bottom
-                fillMode: Image.PreserveAspectFit
-                source: Style.svg("exclamation_outline")
+                verticalAlignment: Text.AlignVCenter
+                horizontalAlignment: Text.AlignHCenter
+                font.pixelSize: 13
+                color: Theme.palette.dangerColor1
+                //% "If you see a different combination, cancel the transaction and sign out"
+                text: qsTrId("three-words-description-2")
             }
-        }
-
-        StyledText {
-            width: parent.width
-            height: 18
-            anchors.horizontalCenter: parent.horizontalCenter
-            verticalAlignment: Text.AlignVCenter
-            horizontalAlignment: Text.AlignHCenter
-            font.pixelSize: 13
-            color: Style.current.danger
-            //% "If you see a different combination, cancel the transaction and sign out"
-            text: qsTrId("three-words-description-2")
         }
     }
 
-    footer: Item {
-        width: parent.width
-        height: btnRemindLater.height
-        StatusButton {
-            anchors.right: btnRemindLater.left
-            anchors.rightMargin: Style.current.padding
-            type: "secondary"
+    rightButtons: [
+        StatusFlatButton {
             //% "Ok, got it"
             text: qsTrId("ens-got-it")
             onClicked: {
@@ -97,17 +96,13 @@ ModalPopup {
                 appSettings.hideSignPhraseModal = true;
                 close();
             }
-        }
-
-
+        },
         StatusButton {
-            id: btnRemindLater
-            anchors.right: parent.right
             //% "Remind me later"
             text: qsTrId("remind-me-later")
             onClicked: {
                 signPhrasePopup.remindLaterButtonClicked();
             }
         }
-    }
+    ]
 }
