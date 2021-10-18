@@ -2,7 +2,7 @@ import NimQml
 import io_interface
 import ../io_interface as delegate_interface
 import view, controller
-import ../../../../app/boot/global_singleton
+import ../../../core/global_singleton
 
 import ../../../../app_service/service/chat/service as chat_service
 import ../../../../app_service/service/community/service as community_service
