@@ -4,15 +4,17 @@ import QtQuick.Layouts 1.13
 import QtQuick.Dialogs 1.3
 
 import utils 1.0
-import "../../../../../shared"
-import "../../../../../shared/status"
+
+import StatusQ.Popups 0.1
+import StatusQ.Controls 0.1
+
 import "../../../../../shared/panels"
 import "../../../../../shared/controls"
 import "../../../../../shared/views"
 import "../../../../../shared/popups"
 
-// TODO: replace with StatusModal
-ModalPopup {
+
+StatusModal {
     property var selectedAccount
     property var selectedRecipient
     property var selectedAsset
@@ -61,7 +63,7 @@ ModalPopup {
     id: root
 
     //% "Send"
-    title: qsTrId("command-button-send")
+    header.title: qsTrId("command-button-send")
     height: 540
 
     property MessageDialog sendingError: MessageDialog {
@@ -76,196 +78,195 @@ ModalPopup {
         stack.pop(groupPreview, StackView.Immediate)
     }
 
-    TransactionStackView {
-        id: stack
-        anchors.fill: parent
-        anchors.leftMargin: Style.current.padding
-        anchors.rightMargin: Style.current.padding
-        initialItem: groupPreview
-        isLastGroup: stack.currentGroup === groupSignTx
-        onGroupActivated: {
-            root.title = group.headerText
-            btnNext.text = group.footerText
-        }
-        TransactionFormGroup {
-            id: groupSelectAcct
-            headerText: {
-                if(trxData.startsWith("0x095ea7b3")){
-                    const approveData = JSON.parse(walletModel.tokensView.decodeTokenApproval(selectedRecipient.address, trxData))
-                    if(approveData.symbol)
-                        //% "Authorize %1 %2"
-                        return qsTrId("authorize--1--2").arg(approveData.amount).arg(approveData.symbol)    
-                }
-                return qsTrId("command-button-send");
+    contentItem: Item {
+        width: root.width
+        height: childrenRect.height
+        TransactionStackView {
+            id: stack
+            anchors.leftMargin: Style.current.padding
+            anchors.rightMargin: Style.current.padding
+            initialItem: groupPreview
+            isLastGroup: stack.currentGroup === groupSignTx
+            onGroupActivated: {
+                root.title = group.headerText
+                btnNext.text = group.footerText
             }
-            //% "Continue"
-            footerText: qsTrId("continue")
-            showNextBtn: false
-            onBackClicked: function() {
-                if(validate()) {
+            TransactionFormGroup {
+                id: groupSelectAcct
+                headerText: {
+                    if(trxData.startsWith("0x095ea7b3")){
+                        const approveData = JSON.parse(walletModel.tokensView.decodeTokenApproval(selectedRecipient.address, trxData))
+                        if(approveData.symbol)
+                            //% "Authorize %1 %2"
+                            return qsTrId("authorize--1--2").arg(approveData.amount).arg(approveData.symbol)    
+                    }
+                    return qsTrId("command-button-send");
+                }
+                //% "Continue"
+                footerText: qsTrId("continue")
+                showNextBtn: false
+                onBackClicked: function() {
+                    if(validate()) {
+                        stack.pop()
+                    }
+                }
+                StatusAccountSelector {
+                    id: selectFromAccount
+                    accounts: walletModel.accountsView.accounts
+                    currency: walletModel.balanceView.defaultCurrency
+                    width: stack.width
+                    selectedAccount: root.selectedAccount
+                    //% "Choose account"
+                    label: qsTrId("choose-account")
+                    showBalanceForAssetSymbol: root.selectedAsset.symbol
+                    minRequiredAssetBalance: parseFloat(root.selectedAmount)
+                    onSelectedAccountChanged: if (isValid) { gasSelector.estimateGas() }
+                }
+                RecipientSelector {
+                    id: selectRecipient
+                    visible: false
+                    accounts: walletModel.accountsView.accounts
+                    contacts: profileModel.contacts.addedContacts
+                    selectedRecipient: root.selectedRecipient
+                    readOnly: true
+                }
+            }
+            TransactionFormGroup {
+                id: groupSelectGas
+                //% "Network fee"
+                headerText: qsTrId("network-fee")
+                footerText: qsTr("Continue")
+                showNextBtn: false
+                onBackClicked: function() {
                     stack.pop()
                 }
-            }
-            AccountSelector {
-                id: selectFromAccount
-                accounts: walletModel.accountsView.accounts
-                currency: walletModel.balanceView.defaultCurrency
-                width: stack.width
-                selectedAccount: root.selectedAccount
-                //% "Choose account"
-                label: qsTrId("choose-account")
-                showBalanceForAssetSymbol: root.selectedAsset.symbol
-                minRequiredAssetBalance: parseFloat(root.selectedAmount)
-                onSelectedAccountChanged: if (isValid) { gasSelector.estimateGas() }
-            }
-            RecipientSelector {
-                id: selectRecipient
-                visible: false
-                accounts: walletModel.accountsView.accounts
-                contacts: profileModel.contacts.addedContacts
-                selectedRecipient: root.selectedRecipient
-                readOnly: true
-            }
-        }
-        TransactionFormGroup {
-            id: groupSelectGas
-            //% "Network fee"
-            headerText: qsTrId("network-fee")
-            footerText: qsTr("Continue")
-            showNextBtn: false
-            onBackClicked: function() {
-                stack.pop()
-            }
-            GasSelector {
-                id: gasSelector
-                anchors.topMargin: Style.current.padding
-                gasPrice: parseFloat(walletModel.gasView.gasPrice)
-                getGasEthValue: walletModel.gasView.getGasEthValue
-                getFiatValue: walletModel.balanceView.getFiatValue
-                defaultCurrency: walletModel.balanceView.defaultCurrency
-                width: stack.width
-    
-                property var estimateGas: Backpressure.debounce(gasSelector, 600, function() {
-                    if (!(selectFromAccount.selectedAccount && selectFromAccount.selectedAccount.address &&
-                        selectRecipient.selectedRecipient && selectRecipient.selectedRecipient.address &&
-                        root.selectedAsset && root.selectedAsset.address &&
-                        root.selectedAmount)) {
-                        selectedGasLimit = 250000
-                        defaultGasLimit = selectedGasLimit
-                        return
-                    }
-                    
-                    let gasEstimate = JSON.parse(walletModel.gasView.estimateGas(
-                        selectFromAccount.selectedAccount.address,
-                        selectRecipient.selectedRecipient.address,
-                        root.selectedAsset.address,
-                        root.selectedAmount,
-                        trxData))
-
-                    if (!gasEstimate.success) {
-                        //% "Error estimating gas: %1"
-                        let message = qsTrId("error-estimating-gas---1").arg(gasEstimate.error.message)
-
-                        //% ". The transaction will probably fail."
-                        gasEstimateErrorPopup.confirmationText = message + qsTrId("--the-transaction-will-probably-fail-")
-                        gasEstimateErrorPopup.open()
-                        return
-                    }
-                    selectedGasLimit = gasEstimate.result
-                    defaultGasLimit = selectedGasLimit
-                })
-            }
-            GasValidator {
-                id: gasValidator
-                anchors.top: gasSelector.bottom
-                selectedAccount: selectFromAccount.selectedAccount
-                selectedAmount: parseFloat(root.selectedAmount)
-                selectedAsset: root.selectedAsset
-                selectedGasEthValue: gasSelector.selectedGasEthValue
-            }
-        }
+                GasSelector {
+                    id: gasSelector
+                    anchors.topMargin: Style.current.padding
+                    gasPrice: parseFloat(walletModel.gasView.gasPrice)
+                    getGasEthValue: walletModel.gasView.getGasEthValue
+                    getFiatValue: walletModel.balanceView.getFiatValue
+                    defaultCurrency: walletModel.balanceView.defaultCurrency
+                    width: stack.width
         
-        TransactionFormGroup {
-            id: groupPreview
-            //% "Transaction preview"
-            headerText: qsTrId("transaction-preview")
-            //% "Sign with password"
-            footerText: qsTrId("sign-with-password")
-            showBackBtn: false
-            onNextClicked: function() {
-                stack.push(groupSignTx, StackView.Immediate)
-            }
-            isValid: groupSelectAcct.isValid && groupSelectGas.isValid && pvwTransaction.isValid
+                    property var estimateGas: Backpressure.debounce(gasSelector, 600, function() {
+                        if (!(selectFromAccount.selectedAccount && selectFromAccount.selectedAccount.address &&
+                            selectRecipient.selectedRecipient && selectRecipient.selectedRecipient.address &&
+                            root.selectedAsset && root.selectedAsset.address &&
+                            root.selectedAmount)) {
+                            selectedGasLimit = 250000
+                            defaultGasLimit = selectedGasLimit
+                            return
+                        }
+                        
+                        let gasEstimate = JSON.parse(walletModel.gasView.estimateGas(
+                            selectFromAccount.selectedAccount.address,
+                            selectRecipient.selectedRecipient.address,
+                            root.selectedAsset.address,
+                            root.selectedAmount,
+                            trxData))
 
-            TransactionPreview {
-                id: pvwTransaction
-                width: stack.width
-                fromAccount: selectFromAccount.selectedAccount
-                gas: {
-                    "value": gasSelector.selectedGasEthValue,
-                    "symbol": "ETH",
-                    "fiatValue": gasSelector.selectedGasFiatValue
+                        if (!gasEstimate.success) {
+                            //% "Error estimating gas: %1"
+                            let message = qsTrId("error-estimating-gas---1").arg(gasEstimate.error.message)
+
+                            //% ". The transaction will probably fail."
+                            gasEstimateErrorPopup.confirmationText = message + qsTrId("--the-transaction-will-probably-fail-")
+                            gasEstimateErrorPopup.open()
+                            return
+                        }
+                        selectedGasLimit = gasEstimate.result
+                        defaultGasLimit = selectedGasLimit
+                    })
                 }
-                toAccount: selectRecipient.selectedRecipient
-                asset: root.selectedAsset
-                amount: { "value": root.selectedAmount, "fiatValue": root.selectedFiatAmount }
-                currency: walletModel.balanceView.defaultCurrency
-                isFromEditable: false
-                trxData: root.trxData
-                isGasEditable: true
-                fromValid: balanceValidator.isValid
-                gasValid: gasValidator.isValid
-                onFromClicked: { stack.push(groupSelectAcct, StackView.Immediate) }
-                onGasClicked: { stack.push(groupSelectGas, StackView.Immediate) }
+                GasValidator {
+                    id: gasValidator
+                    anchors.top: gasSelector.bottom
+                    selectedAccount: selectFromAccount.selectedAccount
+                    selectedAmount: parseFloat(root.selectedAmount)
+                    selectedAsset: root.selectedAsset
+                    selectedGasEthValue: gasSelector.selectedGasEthValue
+                }
             }
-            BalanceValidator {
-                id: balanceValidator
-                anchors.top: pvwTransaction.bottom
-                anchors.horizontalCenter: parent.horizontalCenter
-                account: selectFromAccount.selectedAccount
-                amount: !!root.selectedAmount ? parseFloat(root.selectedAmount) : 0.0
-                asset: root.selectedAsset
-            }
-            GasValidator {
-                id: gasValidator2
-                anchors.top: balanceValidator.visible ? balanceValidator.bottom : pvwTransaction.bottom
-                anchors.topMargin: balanceValidator.visible ? 5 : 0
-                anchors.horizontalCenter: parent.horizontalCenter
-                selectedAccount: selectFromAccount.selectedAccount
-                selectedAmount: parseFloat(root.selectedAmount)
-                selectedAsset: root.selectedAsset
-                selectedGasEthValue: gasSelector.selectedGasEthValue
-            }
-        }
-        TransactionFormGroup {
-            id: groupSignTx
-            //% "Sign with password"
-            headerText: qsTrId("sign-with-password")
-            //% "Send %1 %2"
-            footerText: qsTrId("send--1--2").arg(root.selectedAmount).arg(!!root.selectedAsset ? root.selectedAsset.symbol : "")
-            onBackClicked: function() {
-                stack.pop()
-            }
+            
+            TransactionFormGroup {
+                id: groupPreview
+                //% "Transaction preview"
+                headerText: qsTrId("transaction-preview")
+                //% "Sign with password"
+                footerText: qsTrId("sign-with-password")
+                showBackBtn: false
+                onNextClicked: function() {
+                    stack.push(groupSignTx, StackView.Immediate)
+                }
+                isValid: groupSelectAcct.isValid && groupSelectGas.isValid && pvwTransaction.isValid
 
-            TransactionSigner {
-                id: transactionSigner
-                width: stack.width
-                signingPhrase: walletModel.utilsView.signingPhrase
+                TransactionPreview {
+                    id: pvwTransaction
+                    width: stack.width
+                    fromAccount: selectFromAccount.selectedAccount
+                    gas: {
+                        "value": gasSelector.selectedGasEthValue,
+                        "symbol": "ETH",
+                        "fiatValue": gasSelector.selectedGasFiatValue
+                    }
+                    toAccount: selectRecipient.selectedRecipient
+                    asset: root.selectedAsset
+                    amount: { "value": root.selectedAmount, "fiatValue": root.selectedFiatAmount }
+                    currency: walletModel.balanceView.defaultCurrency
+                    isFromEditable: false
+                    trxData: root.trxData
+                    isGasEditable: true
+                    fromValid: balanceValidator.isValid
+                    gasValid: gasValidator.isValid
+                    onFromClicked: { stack.push(groupSelectAcct, StackView.Immediate) }
+                    onGasClicked: { stack.push(groupSelectGas, StackView.Immediate) }
+                }
+                BalanceValidator {
+                    id: balanceValidator
+                    anchors.top: pvwTransaction.bottom
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    account: selectFromAccount.selectedAccount
+                    amount: !!root.selectedAmount ? parseFloat(root.selectedAmount) : 0.0
+                    asset: root.selectedAsset
+                }
+                GasValidator {
+                    id: gasValidator2
+                    anchors.top: balanceValidator.visible ? balanceValidator.bottom : pvwTransaction.bottom
+                    anchors.topMargin: balanceValidator.visible ? 5 : 0
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    selectedAccount: selectFromAccount.selectedAccount
+                    selectedAmount: parseFloat(root.selectedAmount)
+                    selectedAsset: root.selectedAsset
+                    selectedGasEthValue: gasSelector.selectedGasEthValue
+                }
+            }
+            TransactionFormGroup {
+                id: groupSignTx
+                //% "Sign with password"
+                headerText: qsTrId("sign-with-password")
+                //% "Send %1 %2"
+                footerText: qsTrId("send--1--2").arg(root.selectedAmount).arg(!!root.selectedAsset ? root.selectedAsset.symbol : "")
+                onBackClicked: function() {
+                    stack.pop()
+                }
+
+                TransactionSigner {
+                    id: transactionSigner
+                    width: stack.width
+                    signingPhrase: walletModel.utilsView.signingPhrase
+                }
             }
         }
     }
 
-    footer: Item {
-        width: parent.width
-        height: btnNext.height
-
+    leftButtons: [
         StatusRoundButton {
             id: btnBack
-            anchors.left: parent.left
             icon.name: "arrow-right"
             icon.width: 20
             icon.height: 16
-            rotation: 180
+            icon.rotation: 180
             visible: stack.currentGroup.showBackBtn
             enabled: stack.currentGroup.isValid || stack.isLastGroup
             onClicked: {
@@ -275,14 +276,9 @@ ModalPopup {
                 stack.back()
             }
         }
+    ]
 
-        Component {
-            id: transactionSettingsConfirmationPopupComponent
-            TransactionSettingsConfirmationPopup {
-
-            }
-        }
-
+    rightButtons: [
         StatusButton {
             id: btnNext
             anchors.right: parent.right
@@ -329,43 +325,50 @@ ModalPopup {
                 }
             }
         }
+    ]
 
-        Connections {
-            target: walletModel.transactionsView
-            onTransactionWasSent: {
-                try {
-                    let response = JSON.parse(txResult)
-                    if (response.uuid !== stack.uuid)
+    Component {
+        id: transactionSettingsConfirmationPopupComponent
+        TransactionSettingsConfirmationPopup {
+
+        }
+    }
+
+    Connections {
+        target: walletModel.transactionsView
+        onTransactionWasSent: {
+            try {
+                let response = JSON.parse(txResult)
+                if (response.uuid !== stack.uuid)
+                    return
+
+                let transactionId = response.result
+
+                if (!response.success) {
+                    if (Utils.isInvalidPasswordMessage(transactionId)){
+                        //% "Wrong password"
+                        transactionSigner.validationError = qsTrId("wrong-password")
                         return
-
-                    let transactionId = response.result
-
-                    if (!response.success) {
-                        if (Utils.isInvalidPasswordMessage(transactionId)){
-                            //% "Wrong password"
-                            transactionSigner.validationError = qsTrId("wrong-password")
-                            return
-                        }
-                        sendingError.text = transactionId
-                        return sendingError.open()
                     }
-
-                    chatsModel.transactions.acceptRequestTransaction(transactionId,
-                                                            messageId,
-                                                            profileModel.profile.pubKey + transactionId.substr(2))
-
-                    //% "Transaction pending..."
-                    toastMessage.title = qsTrId("ens-transaction-pending")
-                    toastMessage.source = Style.svg("loading")
-                    toastMessage.iconColor = Style.current.primary
-                    toastMessage.iconRotates = true
-                    toastMessage.link = `${walletModel.utilsView.etherscanLink}/${transactionId}`
-                    toastMessage.open()
-
-                    root.close()
-                } catch (e) {
-                    console.error('Error parsing the response', e)
+                    sendingError.text = transactionId
+                    return sendingError.open()
                 }
+
+                chatsModel.transactions.acceptRequestTransaction(transactionId,
+                                                        messageId,
+                                                        profileModel.profile.pubKey + transactionId.substr(2))
+
+                //% "Transaction pending..."
+                toastMessage.title = qsTrId("ens-transaction-pending")
+                toastMessage.source = Style.svg("loading")
+                toastMessage.iconColor = Style.current.primary
+                toastMessage.iconRotates = true
+                toastMessage.link = `${walletModel.utilsView.etherscanLink}/${transactionId}`
+                toastMessage.open()
+
+                root.close()
+            } catch (e) {
+                console.error('Error parsing the response', e)
             }
         }
     }
