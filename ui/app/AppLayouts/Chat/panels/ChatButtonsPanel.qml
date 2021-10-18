@@ -1,9 +1,8 @@
 import QtQuick 2.13
 import QtGraphicalEffects 1.13
 
-import "../../../../shared/status"
+import StatusQ.Controls 0.1
 
-import StatusQ.Controls 0.1 as StatusQ
 import utils 1.0
 
 Rectangle {
@@ -64,11 +63,14 @@ Rectangle {
         anchors.verticalCenter: buttonsContainer.verticalCenter
         height: parent.height - 2 * buttonsContainer.containerMargin
 
-        StatusIconButton {
+        StatusFlatRoundButton {
             id: emojiBtn
-            icon.name: "emoji"
             width: 32
             height: 32
+            icon.name: "reaction-b"
+            type: StatusFlatRoundButton.Type.Tertiary
+            //% "Add reaction"
+            tooltip.text: qsTrId("add-reaction")
             onClicked: {
                 setMessageActive(messageId, true)
                 // Set parent, X & Y positions for the messageContextMenu
@@ -77,22 +79,17 @@ Rectangle {
                 buttonsContainer.messageContextMenu.setYPosition = function() { return (-buttonsContainer.messageContextMenu.height - 4)}
                 clickMessage(false, false, false, null, true)
             }
-            onHoveredChanged: {
-                buttonsContainer.hoverChanged(this.hovered)
-            }
-
-            StatusQ.StatusToolTip {
-              visible: emojiBtn.hovered
-              //% "Add reaction"
-              text: qsTrId("add-reaction")
-            }
+            onHoveredChanged: buttonsContainer.hoverChanged(this.hovered)
         }
 
-        StatusIconButton {
+        StatusFlatRoundButton {
             id: replyBtn
-            icon.name: "reply"
             width: 32
             height: 32
+            icon.name: "reply"
+            type: StatusFlatRoundButton.Type.Tertiary
+            //% "Reply"
+            tooltip.text: qsTrId("message-reply")
             onClicked: {
                 SelectedMessage.set(messageId, fromAuthor);
                 showReplyArea()
@@ -100,45 +97,34 @@ Rectangle {
                     messageContextMenu.closeParentPopup()
                 }
             }
-            onHoveredChanged: {
-                buttonsContainer.hoverChanged(this.hovered)
-            }
-
-            StatusQ.StatusToolTip {
-              visible: replyBtn.hovered
-              //% "Reply"
-              text: qsTrId("message-reply")
-            }
+            onHoveredChanged: buttonsContainer.hoverChanged(this.hovered)
         }
 
         Loader {
             id: editBtn
-            sourceComponent: StatusIconButton {
+            active: isText && !isEdit && isCurrentUser && showEdit
+            sourceComponent: StatusFlatRoundButton {
                 id: btn
-                icon.name: "edit-message"
                 width: 32
                 height: 32
-                onClicked: {
-                    isEdit = true
-                }
-                onHoveredChanged: {
-                    buttonsContainer.hoverChanged(btn.hovered)
-                }
-
-                StatusQ.StatusToolTip {
-                    visible: btn.hovered
-                    //% "Edit"
-                    text: qsTrId("edit")
-                }
+                icon.source: Style.svg("edit-message")
+                type: StatusFlatRoundButton.Type.Tertiary
+                //% "Edit"
+                tooltip.text: qsTrId("edit")
+                onClicked: isEdit = true
+                onHoveredChanged: buttonsContainer.hoverChanged(btn.hovered)
             }
         }
 
-        StatusIconButton {
+        StatusFlatRoundButton {
             id: otherBtn
-            visible: showMoreButton
-            icon.name: "dots-icon"
             width: 32
             height: 32
+            visible: showMoreButton
+            icon.name: "more"
+            type: StatusFlatRoundButton.Type.Tertiary
+            //% "More"
+            tooltip.text: qsTrId("more")
             onClicked: {
                 if (typeof isMessageActive !== "undefined") {
                     setMessageActive(messageId, true)
@@ -149,14 +135,7 @@ Rectangle {
                 buttonsContainer.messageContextMenu.setYPosition = function() { return (-buttonsContainer.messageContextMenu.height - 4)}
                 clickMessage(false, isSticker, false, null, false, true);
             }
-            onHoveredChanged: {
-                buttonsContainer.hoverChanged(this.hovered)
-            }
-            StatusQ.StatusToolTip {
-                visible: otherBtn.hovered
-                //% "More"
-                text: qsTrId("more")
-            }
+            onHoveredChanged: buttonsContainer.hoverChanged(this.hovered)
         }
     }
 }

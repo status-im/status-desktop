@@ -14,6 +14,7 @@ import "../../app/AppLayouts/Chat/panels"
 import "./emojiList.js" as EmojiJSON
 
 import StatusQ.Core.Theme 0.1
+import StatusQ.Controls 0.1 as StatusQ
 
 Rectangle {
     id: control
@@ -698,13 +699,16 @@ Rectangle {
         }
     }
 
-    StatusIconButton {
+    StatusQ.StatusFlatRoundButton {
         id: chatCommandsBtn
-        icon.name: "chat-commands"
+        width: 32
+        height: 32
         anchors.left: parent.left
         anchors.leftMargin: 4
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 16
+        icon.name: "chat-commands"
+        type: StatusQ.StatusFlatRoundButton.Type.Tertiary
         visible: !isEdit && control.chatType === Constants.chatTypeOneToOne && !control.isStatusUpdateInput
         enabled: !control.isContactBlocked
         onClicked: {
@@ -714,18 +718,18 @@ Rectangle {
         }
     }
 
-    StatusIconButton {
+    StatusQ.StatusFlatRoundButton {
         id: imageBtn
-        icon.name: "images_icon"
-        icon.height: 18
-        icon.width: 20
+        width: 32
+        height: 32
         anchors.left: chatCommandsBtn.visible ? chatCommandsBtn.right : parent.left
         anchors.leftMargin: chatCommandsBtn.visible ? 2 : 4
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 16
+        icon.name: "image"
+        type: StatusQ.StatusFlatRoundButton.Type.Tertiary
         visible: !isEdit && control.chatType !== Constants.chatTypePublic && !control.isStatusUpdateInput
         enabled: !control.isContactBlocked
-
         onClicked: {
             highlighted = true
             imageDialog.open()
@@ -954,28 +958,26 @@ Rectangle {
                     }
                     StatusChatInputTextFormationAction {
                         wrapper: "**"
-                        icon.name: "format-text-bold"
+                        icon.name: "bold"
                         //% "Bold"
                         text: qsTrId("bold")
                     }
                     StatusChatInputTextFormationAction {
                         wrapper: "*"
-                        icon.name: "format-text-italic"
+                        icon.name: "italic"
                         //% "Italic"
                         text: qsTrId("italic")
                         checked: (textFormatMenu.surroundedBy("*") && !textFormatMenu.surroundedBy("**")) || textFormatMenu.surroundedBy("***")
                     }
                     StatusChatInputTextFormationAction {
                         wrapper: "~~"
-                        icon.name: "format-text-strike-through"
-                        icon.width: 45
+                        icon.name: "strikethrough"
                         //% "Strikethrough"
                         text: qsTrId("strikethrough")
                     }
                     StatusChatInputTextFormationAction {
                         wrapper: "`"
-                        icon.name: "format-text-code"
-                        icon.width: 45
+                        icon.name: "code"
                         //% "Code"
                         text: qsTrId("code")
                     }
@@ -1054,14 +1056,15 @@ Rectangle {
             anchors.rightMargin: Style.current.radius
             height: emojiBtn.height
 
-            StatusIconButton {
+            StatusQ.StatusFlatRoundButton {
                 id: imageBtn2
-                icon.name: "images_icon"
-                icon.height: 18
-                icon.width: 20
+                implicitHeight: 32
+                implicitWidth: 32
                 anchors.right: sendBtn.left
                 anchors.rightMargin: 2
                 anchors.bottom: parent.bottom
+                icon.name: "image"
+                type: StatusQ.StatusFlatRoundButton.Type.Tertiary
                 visible: control.isStatusUpdateInput
 
                 onClicked: {
@@ -1094,36 +1097,45 @@ Rectangle {
                 }
             }
 
-            StatusIconButton {
+            StatusQ.StatusFlatRoundButton {
                 id: emojiBtn
-                visible: !imageBtn2.visible
+                implicitHeight: 32
+                implicitWidth: 32
                 anchors.left: parent.left
                 anchors.bottom: parent.bottom
-                icon.name: "emojiBtn"
-                type: "secondary"
+                visible: !imageBtn2.visible
+                icon.name: "emojis"
+                type: StatusQ.StatusFlatRoundButton.Type.Tertiary
+                color: "transparent"
                 onClicked: togglePopup(emojiPopup, emojiBtn)
             }
 
-            StatusIconButton {
+            StatusQ.StatusFlatRoundButton {
                 id: gifBtn
-                visible: !isEdit && appSettings.isGifWidgetEnabled
+                implicitHeight: 32
+                implicitWidth: 32
                 anchors.right: emojiBtn.left
                 anchors.rightMargin: 2
                 anchors.bottom: parent.bottom
-                icon.name: "gif-icon"
-                type: "secondary"
+                visible: !isEdit && appSettings.isGifWidgetEnabled
+                icon.name: "gif"
+                type: StatusQ.StatusFlatRoundButton.Type.Tertiary
+                color: "transparent"
                 onClicked: togglePopup(gifPopup, gifBtn)
             }
 
-            StatusIconButton {
+            StatusQ.StatusFlatRoundButton {
                 id: stickersBtn
+                implicitHeight: 32
+                implicitWidth: 32
+                width: visible ? 32 : 0
                 anchors.left: emojiBtn.right
                 anchors.leftMargin: 2
                 anchors.bottom: parent.bottom
-                icon.name: "stickers_icon"
+                icon.name: "stickers"
+                type: StatusQ.StatusFlatRoundButton.Type.Tertiary
                 visible: !isEdit && networkGuarded && emojiBtn.visible
-                width: visible ? 32 : 0
-                type: "secondary"
+                color: "transparent"
                 onClicked: togglePopup(stickersPopup, stickersBtn)
             }
         }

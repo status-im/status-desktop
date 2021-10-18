@@ -4,7 +4,7 @@ import QtGraphicalEffects 1.13
 import QtQuick.Layouts 1.13
 import QtQuick.Dialogs 1.3
 
-import StatusQ.Controls 0.1 as StatusQ
+import StatusQ.Controls 0.1
 import utils 1.0
 
 Menu {
@@ -61,16 +61,16 @@ Menu {
         topPadding: 0
         action: Action {}
         contentItem: Item {
-            StatusIconButton {
+            StatusFlatRoundButton {
+                width: 32
+                height: 32
+                icon.width: 24
+                icon.height: 24
                 icon.name: menuItem.action.icon.name
-                icon.width: menuItem.action.icon.width
-                icon.height: menuItem.action.icon.height
-                onClicked: menuItem.action.actionTriggered()
                 highlighted: menuItem.action.checked
-                StatusQ.StatusToolTip {
-                    visible: parent.hovered
-                    text: menuItem.action.text
-                }
+                tooltip.text: menuItem.action.text
+                type: StatusFlatRoundButton.Type.Tertiary
+                onClicked: menuItem.action.actionTriggered()
             }
         }
         background: Rectangle {

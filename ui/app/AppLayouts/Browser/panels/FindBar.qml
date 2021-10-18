@@ -52,12 +52,14 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtGraphicalEffects 1.13
 import QtQuick.Layouts 1.0
+
 import "../../../../shared"
 import "../../../../shared/panels"
 import "../../../../shared/controls"
-import "../../../../shared/status"
 
 import utils 1.0
+
+import StatusQ.Controls 0.1
 
 Rectangle {
     id: root
@@ -149,28 +151,33 @@ Rectangle {
             anchors.bottomMargin: 5
         }
 
-        StatusIconButton {
-            icon.name: "caret"
+        StatusFlatRoundButton {
+            id: prevBtn
+            implicitWidth: 32
+            implicitHeight: 32
+            icon.name: "previous"
             enabled: numberOfMatches > 0
-            iconRotation: 90
+            type: StatusFlatRoundButton.Type.Tertiary
             onClicked: root.findPrevious()
-            icon.width: 14
         }
 
-        StatusIconButton {
-            icon.name: "caret"
+        StatusFlatRoundButton {
+            id: nextBtn
+            implicitWidth: 32
+            implicitHeight: 32
+            icon.name: "next"
             enabled: numberOfMatches > 0
-            iconRotation: -90
+            type: StatusFlatRoundButton.Type.Tertiary
             onClicked: root.findNext()
-            icon.width: 14
         }
 
-        StatusIconButton {
-            icon.name: "close"
+        StatusFlatRoundButton {
+            id: closeBtn
+            implicitWidth: 32
+            implicitHeight: 32
+            icon.name: "close-circle"
+            type: StatusFlatRoundButton.Type.Tertiary
             onClicked:  root.visible = false
-            icon.width: 20
         }
-
-
     }
 }

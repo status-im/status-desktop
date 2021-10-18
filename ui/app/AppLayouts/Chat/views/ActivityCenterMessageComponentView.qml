@@ -6,7 +6,6 @@ import utils 1.0
 import StatusQ.Controls 0.1 as StatusQ
 
 import "../../../../shared"
-import "../../../../shared/status"
 import "../../../../shared/popups"
 
 import "../controls"
@@ -41,25 +40,20 @@ Item {
 
     Component {
         id: markReadBtnComponent
-        StatusIconButton {
+        StatusQ.StatusFlatRoundButton {
             id: markReadBtn
-            icon.name: "double-check"
-            iconColor: Style.current.primary
-            icon.width: 24
-            icon.height: 24
             width: 32
             height: 32
-
+            icon.width: 24
+            icon.height: 24
+            icon.source: Style.svg("double-check")
+            color: "transparent"
+            //% "Mark as Read"
+            tooltip.text: qsTrId("mark-as-read")
+            tooltip.orientation: StatusQ.StatusToolTip.Orientation.Left
+            tooltip.x: -tooltip.width - Style.current.padding
+            tooltip.y: markReadBtn.height / 2 - height / 2 + 4
             onClicked: chatsModel.activityNotificationList.markActivityCenterNotificationRead(model.id, model.message.communityId, model.message.chatId, model.notificationType)
-
-            StatusQ.StatusToolTip {
-                visible: markReadBtn.hovered
-                //% "Mark as Read"
-                text: qsTrId("mark-as-read")
-                orientation: StatusQ.StatusToolTip.Orientation.Left// "left"
-                x: - width - Style.current.padding
-                y: markReadBtn.height / 2 - height / 2 + 4
-            }
         }
     }
 

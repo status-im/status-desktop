@@ -2,10 +2,13 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import QtGraphicalEffects 1.13
+
 import utils 1.0
+
+import StatusQ.Controls 0.1
+
 import "../../../../shared"
 import "../../../../shared/panels"
-import "../../../../shared/status"
 import "../../../../shared/controls"
 import "../../Wallet/views"
 import "../stores"
@@ -147,15 +150,14 @@ Popup {
             textToCopy: accountSelector.selectedAccount.address
         }
 
-        StatusIconButton {
+        StatusFlatRoundButton {
             id: sendBtn
-            icon.name: "send"
-            width: 20
-            height: 20
+            width: 40
+            height: 40
             anchors.right: parent.right
             anchors.top: parent.top
-            anchors.topMargin: Style.current.padding
-            iconColor: Style.current.primary
+            anchors.topMargin: Style.current.halfPadding
+            icon.name: "send"
             onClicked: {
                 sendModal.selectFromAccount.selectedAccount = accountSelector.selectedAccount
                 sendModal.open()

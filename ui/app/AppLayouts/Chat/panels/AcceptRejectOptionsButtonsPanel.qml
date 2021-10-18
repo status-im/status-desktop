@@ -3,6 +3,9 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 
 import utils 1.0
+
+import StatusQ.Controls 0.1
+
 import "../../../../shared"
 import "../../../../shared/popups"
 import "../../../../shared/panels"
@@ -18,30 +21,26 @@ Row {
     height: acceptBtn.height
     spacing: Style.current.halfPadding
 
-    StatusIconButton {
+    StatusFlatRoundButton  {
         id: acceptBtn
-        icon.name: "check-circle"
-        onClicked: root.acceptClicked()
         width: 32
         height: 32
-        padding: 6
-        iconColor: Style.current.success
-        hoveredIconColor: Style.current.success
-        highlightedBackgroundColor: Utils.setColorAlpha(Style.current.success, 0.1)
         anchors.verticalCenter: parent.verticalCenter
+        icon.name: "checkmark-circle"
+        icon.color: Style.current.success
+        backgroundHoverColor: Utils.setColorAlpha(Style.current.success, 0.1)
+        onClicked: root.acceptClicked()
     }
 
-    StatusIconButton {
+    StatusFlatRoundButton {
         id: declineBtn
-        icon.name: "close"
-        onClicked: root.declineClicked()
         width: 32
         height: 32
-        padding: 6
-        iconColor: Style.current.danger
-        hoveredIconColor: Style.current.danger
-        highlightedBackgroundColor: Utils.setColorAlpha(Style.current.danger, 0.1)
         anchors.verticalCenter: parent.verticalCenter
+        icon.name: "close-circle"
+        icon.color: Style.current.danger
+        backgroundHoverColor: Utils.setColorAlpha(Style.current.danger, 0.1)
+        onClicked: root.declineClicked()
     }
 
     StatusContextMenuButton {

@@ -51,19 +51,21 @@ Rectangle {
             height: 50
         }
 
-        StatusIconButton {
-            icon.name: "close"
+
+        StatusQControls.StatusFlatRoundButton {
             id: closeImg
+            implicitWidth: 32
+            implicitHeight: 32
             anchors.top: parent.top
             anchors.topMargin: 10
             anchors.right: parent.right
             anchors.rightMargin: 10
             icon.height: 20
             icon.width: 20
-            iconColor: Style.current.midGrey
-            onClicked: {
-                appSettings.hideChannelSuggestions = true
-            }
+            icon.name: "close-circle"
+            type: StatusQControls.StatusFlatRoundButton.Type.Tertiary
+            onClicked: appSettings.hideChannelSuggestions = true
+
         }
 
         StatusBaseText {

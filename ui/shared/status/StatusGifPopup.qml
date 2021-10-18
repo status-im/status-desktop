@@ -5,6 +5,9 @@ import QtGraphicalEffects 1.0
 import StatusQ.Components 0.1
 
 import utils 1.0
+
+import StatusQ.Controls 0.1
+
 import "../../shared"
 import "../../shared/panels"
 import "../../shared/controls"
@@ -113,18 +116,19 @@ Popup {
                 }
             }
 
-            StatusIconButton {
+            StatusFlatRoundButton {
                 id: clearBtn
-                icon.name: "close-icon"
-                type: "secondary"
-                visible: searchBox.text !== ""
-                icon.width: 14
-                icon.height: 14
-                width: 14
-                height: 14
+                implicitWidth: 14
+                implicitHeight: 14
                 anchors.right: searchBox.right
                 anchors.rightMargin: Style.current.padding
                 anchors.verticalCenter: searchBox.verticalCenter
+                icon.name: "clear"
+                visible: searchBox.text !== ""
+                icon.width: 14
+                icon.height: 14
+                type: StatusFlatRoundButton.Type.Tertiary
+                color: "transparent"
                 onClicked: toggleCategory(previousCategory)
             }
         }

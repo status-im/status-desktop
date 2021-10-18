@@ -3,6 +3,9 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 
 import utils 1.0
+
+import StatusQ.Controls 0.1
+
 import "../"
 import "../status"
 import "../panels"
@@ -111,34 +114,23 @@ Item {
             }
         }
 
-        StatusIconButton {
+        StatusFlatRoundButton {
             id: addContactBtn
-            icon.name: "add-contact"
-            highlightedBackgroundColor: Utils.setColorAlpha(Style.current.buttonHoveredBackgroundColor, 0.2)
-            iconColor: Style.current.primary
-            icon.width: 24
-            icon.height: 24
             width: 32
             height: 32
             anchors.right: parent.right
             anchors.rightMargin: Style.current.padding
             anchors.verticalCenter: parent.verticalCenter
+            icon.width: 24
+            icon.height: 24
+            icon.name: "add-contact"
+            backgroundHoverColor: Utils.setColorAlpha(Style.current.buttonHoveredBackgroundColor, 0.2)
             visible: addContactEnabled && !isAddedContact && !checkIcon.visible
-            MouseArea {
-                anchors.fill: parent
-                hoverEnabled: true
-                cursorShape: Qt.PointingHandCursor
-                onEntered: {
-                    foundContact.hovered = true
-                }
-                onExited: {
-                    foundContact.hovered = false
-                }
-                onClicked: {
-                    root.addToContactsButtonClicked(root.pubKey)
-                    mouse.accepted = false
-                }
+            onClicked: {
+                root.addToContactsButtonClicked(root.pubKey)
+                mouse.accepted = false
             }
+            onHoveredChanged: foundContact.hovered = addContactBtn.hovered
         }
 
         SVGImage {

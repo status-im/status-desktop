@@ -3,6 +3,9 @@ import QtQuick.Controls 2.13
 import QtGraphicalEffects 1.13
 
 import utils 1.0
+import StatusQ.Core.Theme 0.1
+import StatusQ.Controls 0.1
+
 import "../"
 import "../views"
 import "../panels"
@@ -116,18 +119,19 @@ Item {
             }
         }
 
-        StatusIconButton {
+        StatusFlatRoundButton {
             id: clearBtn
-            icon.name: "close-icon"
-            type: "secondary"
-            visible: chatKey.text !== ""
-            icon.width: 14
-            icon.height: 14
-            width: 14
-            height: 14
+            width: 20
+            height: 20
             anchors.right: parent.right
             anchors.rightMargin: Style.current.padding
             anchors.verticalCenter: parent.verticalCenter
+            icon.name: "clear"
+            visible: chatKey.text !== ""
+            icon.width: 20
+            icon.height: 20
+            type: StatusFlatRoundButton.Type.Tertiary
+            color: "transparent"
             onClicked: {
                 chatKey.text = "";
                 chatKey.forceActiveFocus(Qt.MouseFocusReason);

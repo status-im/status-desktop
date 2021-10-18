@@ -1,8 +1,12 @@
 import QtQuick 2.1
 import QtGraphicalEffects 1.13
+
 import utils 1.0
 
 import StatusQ.Controls 0.1
+
+import "../../../../shared"
+import "../../../../shared/status"
 
 import "../controls"
 
@@ -106,15 +110,13 @@ Rectangle {
 
     StatusFlatRoundButton {
         id: closeBtn
+        width: 32
+        height: 32
         anchors.verticalCenter: parent.verticalCenter
         anchors.right: parent.right
-        anchors.rightMargin: Style.current.padding
-
-        type: StatusFlatRoundButton.Type.Secondary
-
+        anchors.rightMargin: Style.current.smallPadding
         icon.name: "close"
-        onClicked: {
-            downloadBar.isVisible = false
-        }
+        type: StatusFlatRoundButton.Type.Quaternary
+        onClicked:  downloadBar.isVisible = false
     }
 }
