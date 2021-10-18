@@ -57,10 +57,11 @@ proc newAppController*(status: Status, appService: AppService): AppController =
   # Services
   result.contactService = contact_service.newService()
   result.chatService = chat_service.newService()
-  result.communityService = community_service.newService()
+  result.communityService = community_service.newService(result.chatService)
   # Modules
   result.startupModule = startup_module.newModule[AppController](result)
-  result.mainModule = main_module.newModule[AppController](result, result.communityService)
+  result.mainModule = main_module.newModule[AppController](result, result.chatService,
+  result.communityService)
 
   # Adding status and appService here now is just because of having a controll 
   # over order of execution while we integrating this refactoring architecture 

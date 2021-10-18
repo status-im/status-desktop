@@ -1,6 +1,6 @@
-import dto
+import ./dto/community as community_dto
 
-export dto
+export community_dto
 
 type 
   ServiceInterface* {.pure inheritable.} = ref object of RootObj
@@ -12,5 +12,5 @@ method delete*(self: ServiceInterface) {.base.} =
 method init*(self: ServiceInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getCommunities*(self: ServiceInterface): seq[Dto] {.base.} =
+method getCommunities*(self: ServiceInterface): seq[CommunityDto] {.base.} =
   raise newException(ValueError, "No implementation available")

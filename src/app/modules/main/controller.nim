@@ -25,5 +25,5 @@ method delete*(self: Controller) =
 method init*(self: Controller) = 
   discard
 
-method getCommunities*(self: Controller): seq[community_service.Dto] =
+method getCommunities*(self: Controller): seq[community_service.CommunityDto] =
   return self.communityService.getCommunities()

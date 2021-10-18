@@ -2,14 +2,14 @@
 
 import json, strformat
 
-include ../../common/json_utils
+include ../../../common/json_utils
 
 type
   Images* = ref object
     thumbnail*: string
     large*: string
 
-type Dto* = ref object
+type ContactsDto* = ref object
   id*: string
   name*: string
   ensVerified*: bool
@@ -29,7 +29,7 @@ proc `$`(self: Images): string =
     large: {self.large}, 
     ]"""
 
-proc `$`*(self: Dto): string =
+proc `$`*(self: ContactsDto): string =
   result = fmt"""ContactDto(
     id: {self.id}, 
     name: {self.name}, 
@@ -58,8 +58,8 @@ proc toImages(jsonObj: JsonNode): Images =
   if(jsonObj.getProp("thumbnail", thumbnailObj)):
     discard jsonObj.getProp("uri", result.thumbnail)
 
-proc toDto*(jsonObj: JsonNode): Dto =
-  result = Dto()
+proc toContactsDto*(jsonObj: JsonNode): ContactsDto =
+  result = ContactsDto()
   discard jsonObj.getProp("id", result.id)
   discard jsonObj.getProp("name", result.name)
   discard jsonObj.getProp("ensVerified", result.ensVerified)
