@@ -1,7 +1,6 @@
 import NimQml
 import io_interface, view, controller
-
-#import ../../../../app_service/service/community/service as community_service
+import ../../../../app/boot/global_singleton
 
 export io_interface
 
@@ -28,6 +27,10 @@ method delete*[T](self: Module[T]) =
   self.controller.delete
 
 method load*[T](self: Module[T]) =
+  singletonInstance.engine.setRootContextProperty("onboardingModule", self.viewVariant)
+  self.controller.init()
+  self.view.load()
+
   self.moduleLoaded = true
   self.delegate.onboardingDidLoad()
 

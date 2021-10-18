@@ -2,6 +2,7 @@ import NimQml
 import io_interface
 import ../io_interface as delegate_interface
 import view, controller
+import ../../../../app/boot/global_singleton
 
 import ../../../../app_service/service/chat/service as chat_service
 import ../../../../app_service/service/community/service as community_service
@@ -34,6 +35,14 @@ method delete*(self: Module) =
   self.controller.delete
 
 method load*(self: Module) =
+  if(self.controller.isCommunity()):
+    singletonInstance.engine.setRootContextProperty("communitySectionModule", 
+    self.viewVariant)
+  else:
+    singletonInstance.engine.setRootContextProperty("chatSectionModule", 
+    self.viewVariant)
+  
+  self.controller.init()
   self.view.load()
 
 method isLoaded*(self: Module): bool =
