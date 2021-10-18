@@ -31,7 +31,7 @@ Item {
         id: changeProfileModalComponent
         ChangeProfilePicModal {
             largeImage: store.profileLargeImage
-            hasIdentityImage: store.hasIdentityImage
+            hasIdentityImage: store.profileHasIdentityImage
             onCropFinished: {
                 uploadError = store.uploadImage(selectedImage, aX, aY, bX, bY)
             }
