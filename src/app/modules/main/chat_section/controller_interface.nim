@@ -13,6 +13,10 @@ method init*(self: AccessInterface) {.base.} =
 method getId*(self: AccessInterface): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getCommunities*(self: AccessInterface): seq[community_service.Dto] {.base.} =
+method isCommunity*(self: AccessInterface): bool {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getCommunities*(self: AccessInterface): 
+  seq[community_service.CommunityDto] {.base.} =
   raise newException(ValueError, "No implementation available")
     
