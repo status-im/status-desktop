@@ -10,7 +10,7 @@ import ../../app_service/service/token/service as token_service
 import ../../app_service/service/transaction/service as transaction_service
 import ../../app_service/service/collectible/service as collectible_service
 import ../../app_service/service/wallet_account/service as wallet_account_service
-
+import ../../app_service/service/setting/service as setting_service
 
 import ../core/local_account_settings
 import ../modules/startup/module as startup_module
@@ -66,6 +66,7 @@ type
     transactionService: transaction_service.Service
     collectibleService: collectible_service.Service
     walletAccountService: wallet_account_service.Service
+    settingService: setting_service.Service
 
     # Core
     localAccountSettings: LocalAccountSettings
@@ -123,7 +124,7 @@ proc newAppController*(appService: AppService): AppController =
   result.transactionService = transaction_service.newService()
   result.collectibleService = collectible_service.newService()
   result.walletAccountService = wallet_account_service.newService()
-
+  result.settingService = setting_service.newService()
 
   # Core
   result.localAccountSettingsVariant = newQVariant(
@@ -146,7 +147,8 @@ proc newAppController*(appService: AppService): AppController =
     result.tokenService,
     result.transactionService,
     result.collectibleService,
-    result.walletAccountService
+    result.walletAccountService,
+    result.settingService
   )
 
   #################################################
@@ -212,7 +214,8 @@ proc load*(self: AppController) =
   self.communityService.init()
   self.tokenService.init()
   self.walletAccountService.init()
-  
+  self.settingService.init()
+
   self.mainModule.load()
 
 proc userLoggedIn*(self: AppController) =
