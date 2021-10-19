@@ -32,16 +32,6 @@ import ../../../app_service/service/privacy/service as privacy_service
 
 export io_interface
 
-type
-  SectionType* {.pure.} = enum
-    Chat = 0
-    Community,
-    Wallet,
-    Browser,
-    Timeline,
-    NodeManagement,
-    ProfileSettings
-
 type 
   Module*[T: io_interface.DelegateInterface] = ref object of io_interface.AccessInterface
     delegate: T
@@ -125,31 +115,79 @@ method load*[T](self: Module[T]) =
   self.controller.init()
   self.view.load()
 
-  let chatSectionItem = initItem("chat", SectionType.Chat.int, "Chat", "", 
-  "chat", "", 0, 0)
-  self.view.addItem(chatSectionItem)
+  var activeSection: Item
+  var activeSectionId = singletonInstance.localAccountSensitiveSettings.getActiveSection()
 
-  echo "=> communitiesSection"
+  # Chat Section
+  let chatSectionItem = initItem("chat", SectionType.Chat, "Chat", "", "chat", "", false, 0, true)
+  self.view.addItem(chatSectionItem)
+  if(activeSectionId == chatSectionItem.id):
+    activeSection = chatSectionItem
+
+  # Community Section
   let communities = self.controller.getCommunities()
   for c in communities:
-    self.view.addItem(initItem(c.id, SectionType.Community.int, c.name, c.images.thumbnail, "", c.color, 0, 0))
+    let communitySectionItem = initItem(c.id, SectionType.Community, c.name, c.images.thumbnail, "", c.color, false, 0, 
+    false, singletonInstance.localAccountSensitiveSettings.getCommunitiesEnabled())
+    self.view.addItem(communitySectionItem)
+    if(activeSectionId == communitySectionItem.id):
+      activeSection = communitySectionItem
 
-  echo "=> chatSection"
+  # Wallet Section
+  let walletSectionItem = initItem("wallet", SectionType.Wallet, "Wallet", "", "wallet", "", false, 0, false,
+  singletonInstance.localAccountSensitiveSettings.getIsWalletEnabled())
+  self.view.addItem(walletSectionItem)
+  if(activeSectionId == walletSectionItem.id):
+    activeSection = walletSectionItem
+
+  # WalletV2 Section
+  let walletV2SectionItem = initItem("walletV2", SectionType.WalletV2, "WalletV2", "", "cancel", "", false, 0, false, 
+  singletonInstance.localAccountSensitiveSettings.getIsWalletV2Enabled())
+  self.view.addItem(walletV2SectionItem)
+  if(activeSectionId == walletV2SectionItem.id):
+    activeSection = walletV2SectionItem
+
+  # Browser Section
+  let browserSectionItem = initItem("browser", SectionType.Browser, "Browser", "", "browser", "", false, 0, false,
+  singletonInstance.localAccountSensitiveSettings.getIsBrowserEnabled())
+  self.view.addItem(browserSectionItem)
+  if(activeSectionId == browserSectionItem.id):
+    activeSection = browserSectionItem
+
+  # Timeline Section
+  let timelineSectionItem = initItem("timeline", SectionType.Timeline, "Timeline", "", "status-update", "", false, 0, 
+  false, singletonInstance.localAccountSensitiveSettings.getTimelineEnabled())
+  self.view.addItem(timelineSectionItem)
+  if(activeSectionId == timelineSectionItem.id):
+    activeSection = timelineSectionItem
+
+  # Node Management Section
+  let nodeManagementSectionItem = initItem("nodeManagement", SectionType.NodeManagement, "Node Management", "", "node", 
+  "", false, 0, false, singletonInstance.localAccountSensitiveSettings.getNodeManagementEnabled())
+  self.view.addItem(nodeManagementSectionItem)
+  if(activeSectionId == nodeManagementSectionItem.id):
+    activeSection = nodeManagementSectionItem
+
+  # Profile Section
+  let profileSettingsSectionItem = initItem("profileSettings", SectionType.ProfileSettings, "Settings", "", 
+  "status-update", "", false, 0, false, true)
+  self.view.addItem(profileSettingsSectionItem)
+  if(activeSectionId == profileSettingsSectionItem.id):
+    activeSection = profileSettingsSectionItem
+
+  # Load all sections
   self.chatSectionModule.load()
   for cModule in self.communitySectionsModule.values:
     cModule.load()
-
-  let walletSectionItem = initItem("wallet", SectionType.Wallet.int, "Wallet", "", 
-  "wallet", "", 0, 0)
-  self.view.addItem(chatSectionItem)
   self.walletSectionModule.load()
-
+  # self.walletV2SectionModule.load()
   self.browserSectionModule.load()
-  
-  let browserSectionItem = initItem("browser", SectionType.Browser.int, "Browser")
-  self.view.addItem(browserSectionItem)
-
+  # self.timelineSectionModule.load()
+  # self.nodeManagementSectionModule.load()
   self.profileSectionModule.load()
+
+  # Set active section on app start
+  self.setActiveSection(activeSection)
 
 proc checkIfModuleDidLoad [T](self: Module[T]) =
   if self.moduleLoaded:
@@ -206,3 +244,19 @@ method emitStoringPasswordError*[T](self: Module[T], errorDescription: string) =
 
 method emitStoringPasswordSuccess*[T](self: Module[T]) =
   self.view.emitStoringPasswordSuccess()
+
+method setActiveSection*[T](self: Module[T], item: Item) =
+  if(item.isEmpty()):
+    echo "section is empty and cannot be made an active one"
+    return
+
+  self.controller.setActiveSection(item.id, item.sectionType)
+
+method activeSectionSet*[T](self: Module[T], sectionId: string) =
+  self.view.activeSectionSet(sectionId)
+
+method enableSection*[T](self: Module[T], sectionType: SectionType) =
+  self.view.enableSection(sectionType)
+
+method disableSection*[T](self: Module[T], sectionType: SectionType) =
+  self.view.disableSection(sectionType)

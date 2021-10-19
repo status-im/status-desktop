@@ -353,7 +353,7 @@ Column {
                 //% "Enable in Settings"
                 text: qsTrId("enable-in-settings")
                 onClicked: {
-                    appMain.changeAppSection(Constants.profile)
+                    appMain.changeAppSectionBySectionType(Constants.appSection.profile)
                     // TODO: replace with shared store constant
                     // Profile/RootStore.privacy_and_security_id
                     profileLayoutContainer.changeProfileSection(3)
