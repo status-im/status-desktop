@@ -162,6 +162,7 @@ Rectangle {
             }
 
             StatusIcon {
+                objectName: "mutedIcon"
                 id: mutedIcon
                 anchors.left: chatName.right
                 anchors.leftMargin: 4
