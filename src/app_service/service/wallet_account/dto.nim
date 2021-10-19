@@ -5,14 +5,14 @@ include  ../../common/json_utils
 type 
   WalletTokenDto* = ref object of RootObj
     name*: string
-    address*: Address
+    address*: string
     symbol*: string
     decimals*: int
     hasIcon*: bool
     color*: string
     isCustom*: bool
-    balance*: float64
-    currencyBalance*: float64
+    balance*: string
+    currencyBalance*: string
 
 type
   WalletAccountDto* = ref object of RootObj
@@ -24,8 +24,7 @@ type
     walletType*: string
     isWallet*: bool
     isChat*: bool
-    balance*: float64
-    tokens: WalletTokenDto
+    tokens*: seq[WalletTokenDto]
 
 proc newDto*(
   name: string,
