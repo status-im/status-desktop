@@ -181,4 +181,10 @@ proc load*(self: AppController) =
   self.mainModule.load()
 
 proc userLoggedIn*(self: AppController) =
+  #################################################
+  # At the end of refactoring this will be removed:
+  let loggedInUser = self.accountsService.getLoggedInAccount()
+  let account = Account(name: loggedInUser.name, keyUid: loggedInUser.keyUid)
+  self.appService.status.events.emit("loginCompleted", AccountArgs(account: account))
+  #################################################
   self.load()
