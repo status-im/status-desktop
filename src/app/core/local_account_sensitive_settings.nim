@@ -66,10 +66,8 @@ const LSS_KEY_SHOW_DELETE_MESSAGE_WARNING* = "showDeleteMessageWarning"
 const DEFAULT_SHOW_DELETE_MESSAGE_WARNING = true
 const LSS_KEY_DOWNLOAD_CHANNEL_MESSAGES_ENABLED* = "downloadChannelMessagesEnabled"
 const DEFAULT_DOWNLOAD_CHANNEL_MESSAGES_ENABLED = false
-const LSS_KEY_LAST_MODE_ACTIVE_TAB* = "lastModeActiveTab"
-const DEFAULT_LAST_MODE_ACTIVE_TAB = 0
-const LSS_KEY_LAST_MODE_ACTIVE_COMMUNITY* = "lastModeActiveCommunity"
-const DEFAULT_LAST_MODE_ACTIVE_COMMUNITY = ""
+const LSS_KEY_ACTIVE_SECTION* = "activeSection"
+const DEFAULT_ACTIVE_SECTION = "chat"
 const LSS_KEY_SHOW_BROWSER_SELECTOR* = "showBrowserSelector"
 const DEFAULT_SHOW_BROWSER_SELECTOR = true
 const LSS_KEY_OPEN_LINKS_IN_STATUS* = "openLinksInStatus"
@@ -616,29 +614,18 @@ QtObject:
     write = setDownloadChannelMessagesEnabled
     notify = downloadChannelMessagesEnabledChanged
 
-  proc lastModeActiveTabChanged*(self: LocalAccountSensitiveSettings) {.signal.}
-  proc getLastModeActiveTab*(self: LocalAccountSensitiveSettings): int {.slot.} =
-    getSettingsProp[int](self, LSS_KEY_LAST_MODE_ACTIVE_TAB, newQVariant(DEFAULT_LAST_MODE_ACTIVE_TAB))
-  proc setLastModeActiveTab*(self: LocalAccountSensitiveSettings, value: int) {.slot.} =
-    setSettingsProp(self, LSS_KEY_LAST_MODE_ACTIVE_TAB, newQVariant(value)):
-      self.lastModeActiveTabChanged()
 
-  QtProperty[int] lastModeActiveTab:
-    read = getLastModeActiveTab
-    write = setLastModeActiveTab
-    notify = lastModeActiveTabChanged
+  proc activeSectionChanged*(self: LocalAccountSensitiveSettings) {.signal.}
+  proc getActiveSection*(self: LocalAccountSensitiveSettings): string {.slot.} =
+    getSettingsProp[string](self, LSS_KEY_ACTIVE_SECTION, newQVariant(DEFAULT_ACTIVE_SECTION))
+  proc setActiveSection*(self: LocalAccountSensitiveSettings, value: string) {.slot.} =
+    setSettingsProp(self, LSS_KEY_ACTIVE_SECTION, newQVariant(value)):
+      self.activeSectionChanged()
 
-  proc lastModeActiveCommunityChanged*(self: LocalAccountSensitiveSettings) {.signal.}
-  proc getLastModeActiveCommunity*(self: LocalAccountSensitiveSettings): string {.slot.} =
-    getSettingsProp[string](self, LSS_KEY_LAST_MODE_ACTIVE_COMMUNITY, newQVariant(DEFAULT_LAST_MODE_ACTIVE_COMMUNITY))
-  proc setLastModeActiveCommunity*(self: LocalAccountSensitiveSettings, value: string) {.slot.} =
-    setSettingsProp(self, LSS_KEY_LAST_MODE_ACTIVE_COMMUNITY, newQVariant(value)):
-      self.lastModeActiveCommunityChanged()
-
-  QtProperty[string] lastModeActiveCommunity:
-    read = getLastModeActiveCommunity
-    write = setLastModeActiveCommunity
-    notify = lastModeActiveCommunityChanged  
+  QtProperty[string] activeSection:
+    read = getActiveSection
+    write = setActiveSection
+    notify = activeSectionChanged  
 
 
   proc showBrowserSelectorChanged*(self: LocalAccountSensitiveSettings) {.signal.}
@@ -904,8 +891,7 @@ QtObject:
       of LSS_KEY_SKIN_COLOR: self.skinColorChanged()
       of LSS_KEY_SHOW_DELETE_MESSAGE_WARNING: self.showDeleteMessageWarningChanged()
       of LSS_KEY_DOWNLOAD_CHANNEL_MESSAGES_ENABLED: self.downloadChannelMessagesEnabledChanged()
-      of LSS_KEY_LAST_MODE_ACTIVE_TAB: self.lastModeActiveTabChanged()
-      of LSS_KEY_LAST_MODE_ACTIVE_COMMUNITY: self.lastModeActiveCommunityChanged()
+      of LSS_KEY_ACTIVE_SECTION: self.activeSectionChanged()
       of LSS_KEY_SHOW_BROWSER_SELECTOR: self.showBrowserSelectorChanged()
       of LSS_KEY_OPEN_LINKS_IN_STATUS: self.openLinksInStatusChanged()
       of LSS_KEY_SHOULD_SHOW_FAVORITES_BAR: self.shouldShowFavoritesBarChanged()

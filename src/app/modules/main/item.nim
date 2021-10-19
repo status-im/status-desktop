@@ -1,59 +1,97 @@
 import json, strformat
 
+type
+  SectionType* {.pure.} = enum
+    Chat = 0
+    Community,
+    Wallet,
+    WalletV2,
+    Browser,
+    Timeline,
+    ProfileSettings,
+    NodeManagement
+
 type 
   Item* = object
-    sectionType: int
+    sectionType: SectionType
     id: string
     name: string
     image: string
     icon: string
     color: string
-    mentionsCount: int
-    unviewedMessagesCount: int
+    hasNotification: bool
+    notificationsCount: int
+    active: bool
+    enabled: bool
 
-proc initItem*(id: string, sectionType: int, name, image = "", icon = "", color = "",
-  mentionsCount:int = 0, unviewedMessagesCount: int = 0): Item =
+proc initItem*(id: string, sectionType: SectionType, name, image = "", icon = "", color = "", hasNotification = false, 
+  notificationsCount: int = 0, active = false, enabled = true): Item =
   result.id = id
   result.sectionType = sectionType
   result.name = name
   result.image = image
   result.icon = icon
   result.color = color
-  result.mentionsCount = mentionsCount
-  result.unviewedMessagesCount = unviewedMessagesCount
+  result.hasNotification = hasNotification
+  result.notificationsCount = notificationsCount
+  result.active = active
+  result.enabled = enabled
+
+proc isEmpty*(self: Item): bool =
+  return self.id.len == 0
 
 proc `$`*(self: Item): string =
   result = fmt"""MainModuleItem(
     id: {self.id}, 
-    sectionType: {self.sectionType},
+    sectionType: {self.sectionType.int},
     name: {self.name}, 
     image: {self.image},
     icon: {self.icon},
     color: {self.color}, 
-    mentionsCount: {self.mentionsCount}, 
-    unviewedMessagesCount:{self.unviewedMessagesCount}
+    hasNotification: {self.hasNotification}, 
+    notificationsCount:{self.notificationsCount},
+    active:{self.active},
+    enabled:{self.enabled}
     ]"""
 
-proc getId*(self: Item): string = 
-  return self.id
+proc id*(self: Item): string {.inline.} = 
+  self.id
 
-proc getSectionType*(self: Item): int = 
-  return self.sectionType
+proc sectionType*(self: Item): SectionType {.inline.} = 
+  self.sectionType
 
-proc getName*(self: Item): string = 
-  return self.name
+proc name*(self: Item): string {.inline.} = 
+  self.name
 
-proc getImage*(self: Item): string = 
-  return self.image
+proc image*(self: Item): string {.inline.} = 
+  self.image
 
-proc getIcon*(self: Item): string = 
-  return self.icon
+proc icon*(self: Item): string {.inline.} = 
+  self.icon
 
-proc getColor*(self: Item): string = 
-  return self.color
+proc color*(self: Item): string {.inline.} = 
+  self.color
 
-proc getMentionsCount*(self: Item): int = 
-  return self.mentionsCount
+proc hasNotification*(self: Item): bool {.inline.} = 
+  self.hasNotification
 
-proc getUnviewedMessagesCount*(self: Item): int = 
-  return self.unviewedMessagesCount
+proc `hasNotification=`*(self: var Item, value: bool) {.inline.} = 
+  self.hasNotification = value
+
+proc notificationsCount*(self: Item): int {.inline.} = 
+  self.notificationsCount
+
+proc `notificationsCount=`*(self: var Item, value: int) {.inline.} = 
+  self.notificationsCount = value
+
+proc active*(self: Item): bool {.inline.} = 
+  self.active
+
+proc `active=`*(self: var Item, value: bool) {.inline.} = 
+  self.active = value
+
+proc enabled*(self: Item): bool {.inline.} = 
+  self.enabled
+
+proc `enabled=`*(self: var Item, value: bool) {.inline.} = 
+  self.enabled = value

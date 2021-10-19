@@ -37,7 +37,7 @@ StatusModal {
                 if (rememberChoiceCheckBox.checked) {
                     localAccountSensitiveSettings.openLinksInStatus = true
                 }
-                changeAppSection(Constants.browser)
+                changeAppSectionBySectionType(Constants.appSection.browser)
                 browserLayoutContainer.item.openUrlInNewTab(popup.link)
                 popup.close()
             }
