@@ -40,10 +40,12 @@ Item {
     signal settingsLoaded()
     signal openContactsPopup()
 
-    function changeAppSection(section) {
-        localAccountSensitiveSettings.lastModeActiveCommunity = ""
-        chatsModel.communities.activeCommunity.active = false
-        appView.currentIndex = Utils.getAppSectionIndex(section)
+    function changeAppSectionBySectionType(sectionType) {
+        mainModule.setActiveSectionBySectionType(sectionType)
+    }
+
+    function changeAppSectionBySectionId(sectionId) {
+        mainModule.setActiveSectionById(sectionId)
     }
 
     function getProfileImage(pubkey, isCurrentUser, useLargeImage) {
@@ -117,7 +119,7 @@ Item {
             appMain.openPopup(chooseBrowserPopupComponent, {link: link})
         } else {
             if (localAccountSensitiveSettings.openLinksInStatus) {
-                appMain.changeAppSection(Constants.browser)
+                appMain.changeAppSectionBySectionType(Constants.appSection.browser)
                 browserLayoutContainer.item.openUrlInNewTab(link)
             } else {
                 Qt.openUrlExternally(link)
@@ -194,48 +196,63 @@ Item {
         appNavBar: StatusAppNavBar {
             height: appMain.height
 
-            navBarChatButton: StatusNavBarTabButton {
-                icon.name: "chat"
-                checked: !chatsModel.communities.activeCommunity.active  && appView.currentIndex === Utils.getAppSectionIndex(Constants.chat)
-                //% "Chat"
-                tooltip.text: qsTrId("chat")
-                badge.value: chatsModel.messageView.unreadDirectMessagesAndMentionsCount + profileModel.contacts.contactRequests.count
-                badge.visible: badge.value > 0 || (chatsModel.messageView.unreadMessagesCount > 0 && !checked)
-                badge.anchors.rightMargin: badge.value > 0 ? 0 : 4
-                badge.anchors.topMargin: badge.value > 0 ? 4 : 5
-                badge.border.color: hovered ? Theme.palette.statusBadge.hoverBorderColor : Theme.palette.statusAppNavBar.backgroundColor
+            communityTypeRole: "sectionType"
+            communityTypeValue: Constants.appSection.community
+            sectionModel: mainModule.sectionsModel
+
+            property bool communityAdded: false
+
+            onAboutToUpdateFilteredRegularModel: {
+                communityAdded = false
+            }
+
+            filterRegularItem: function(item) {
+                if(!item.enabled)
+                    return false
+
+                if(item.sectionType === Constants.appSection.community)
+                    if(communityAdded)
+                        return false
+                    else
+                        communityAdded = true
+
+                return true
+            }
+
+            filterCommunityItem: function(item) {
+                return item.sectionType === Constants.appSection.community
+            }
+
+            regularNavBarButton: StatusNavBarTabButton {
+                anchors.horizontalCenter: parent.horizontalCenter
+                name: model.icon.length > 0? "" : model.name
+                icon.name: model.icon
+                icon.source: model.image
+                tooltip.text: model.name
+                checked: model.active
+                badge.value: model.notificationsCount
+                badge.visible: model.hasNotification
+                badge.border.color: hovered ? Theme.palette.statusBadge.hoverBorderColor : Theme.palette.statusBadge.borderColor
                 badge.border.width: 2
                 onClicked: {
-                    if (chatsModel.communities.activeCommunity.active) {
-                        chatLayoutContainer.chatColumn.hideChatInputExtendedArea();
-                        chatsModel.communities.activeCommunity.active = false
-                    }
-                    appMain.changeAppSection(Constants.chat)
+                    changeAppSectionBySectionId(model.id)
                 }
             }
 
-            navBarCommunityTabButtons.model: localAccountSensitiveSettings.communitiesEnabled && chatsModel.communities.joinedCommunities
-            navBarCommunityTabButtons.delegate: StatusNavBarTabButton {
-                onClicked: {
-                    appMain.changeAppSection(Constants.chat)
-                    chatsModel.communities.setActiveCommunity(model.id)
-                    localAccountSensitiveSettings.lastModeActiveCommunity = model.id
-                }
-
+            communityNavBarButton: StatusNavBarTabButton {
                 anchors.horizontalCenter: parent.horizontalCenter
-
-                checked: chatsModel.communities.activeCommunity.active && chatsModel.communities.activeCommunity.id === model.id
-                name: model.name
+                name: model.icon.length > 0? "" : model.name
+                icon.name: model.icon
+                icon.source: model.image
                 tooltip.text: model.name
-                icon.color: model.communityColor
-                icon.source: model.thumbnailImage
-
-                badge.value: model.unviewedMentionsCount + model.requestsCount
-                badge.visible: badge.value > 0 || (!checked && model.unviewedMessagesCount > 0)
+                checked: model.active
+                badge.value: model.notificationsCount
+                badge.visible: model.hasNotification
                 badge.border.color: hovered ? Theme.palette.statusBadge.hoverBorderColor : Theme.palette.statusBadge.borderColor
                 badge.border.width: 2
-                badge.anchors.rightMargin: 4
-                badge.anchors.topMargin: 5
+                onClicked: {
+                    changeAppSectionBySectionId(model.id)
+                }
 
                 popupMenu: StatusPopupMenu {
                     id: communityContextMenu
@@ -250,8 +267,8 @@ Item {
                         icon.name: "share-ios"
                         enabled: chatsModel.communities.observedCommunity.canManageUsers
                         onTriggered: openPopup(inviteFriendsToCommunityPopup, {
-                            community: chatsModel.communities.observedCommunity
-                        })
+                                                   community: chatsModel.communities.observedCommunity
+                                               })
                     }
 
                     StatusMenuItem {
@@ -286,76 +303,11 @@ Item {
                 }
             }
 
-            navBarTabButtons: [
-                StatusNavBarTabButton {
-                    icon.name: "wallet"
-                    //% "Wallet"
-                    tooltip.text: qsTrId("wallet")
-                    visible: enabled
-                    enabled: isExperimental === "1" || localAccountSensitiveSettings.isWalletEnabled
-                    checked: appView.currentIndex == Utils.getAppSectionIndex(Constants.wallet)
-                    onClicked: appMain.changeAppSection(Constants.wallet)
-                },
-
-                StatusNavBarTabButton {
-                    //TODO temporary icon name, switch back to wallet
-                    icon.name: "cancel"
-                    tooltip.text: qsTr("Wallet v2 - do not use, under active development")
-                    visible: enabled
-                    enabled: isExperimental === "1" || localAccountSensitiveSettings.isWalletV2Enabled
-                    checked: appView.currentIndex == Utils.getAppSectionIndex(Constants.walletv2)
-                    onClicked: appMain.changeAppSection(Constants.walletv2)
-                },
-
-                StatusNavBarTabButton {
-                    enabled: isExperimental === "1" || localAccountSensitiveSettings.isBrowserEnabled
-                    visible: enabled
-                    //% "Browser"
-                    tooltip.text: qsTrId("browser")
-                    icon.name: "browser"
-                    checked: appView.currentIndex == Utils.getAppSectionIndex(Constants.browser)
-                    onClicked: appMain.changeAppSection(Constants.browser)
-                },
-
-                StatusNavBarTabButton {
-                    enabled: isExperimental === "1" || localAccountSensitiveSettings.timelineEnabled
-                    visible: enabled
-                    //% "Timeline"
-                    tooltip.text: qsTrId("timeline")
-                    icon.name: "status-update"
-                    checked: appView.currentIndex == Utils.getAppSectionIndex(Constants.timeline)
-                    onClicked: appMain.changeAppSection(Constants.timeline)
-                },
-
-                StatusNavBarTabButton {
-                    enabled: isExperimental === "1" || localAccountSensitiveSettings.nodeManagementEnabled
-                    visible: enabled
-                    tooltip.text: qsTr("Node Management")
-                    icon.name: "node"
-                    checked: appView.currentIndex == Utils.getAppSectionIndex(Constants.node)
-                    onClicked: appMain.changeAppSection(Constants.node)
-                },
-
-                StatusNavBarTabButton {
-                    id: profileBtn
-                    //% "Settings"
-                    tooltip.text: qsTrId("settings")
-                    icon.name: "settings"
-                    checked: appView.currentIndex == Utils.getAppSectionIndex(Constants.profile)
-                    onClicked: appMain.changeAppSection(Constants.profile)
-
-                    badge.visible: !mnemonicModule.isBackedUp
-                    badge.anchors.rightMargin: 4
-                    badge.anchors.topMargin: 5
-                    badge.border.color: hovered ? Theme.palette.statusBadge.hoverBorderColor : Theme.palette.statusAppNavBar.backgroundColor
-                    badge.border.width: 2
-                }
-            ]
-
             navBarProfileButton: StatusNavBarTabButton {
                 id: profileButton
                 property bool opened: false
-                icon.source: userProfile.thumbnailImage
+
+                icon.source: profileModule.thumbnailImage || ""
                 badge.visible: true
                 badge.anchors.rightMargin: 4
                 badge.anchors.topMargin: 25
@@ -393,7 +345,51 @@ Item {
         appView: StackLayout {
             id: appView
             anchors.fill: parent
-            currentIndex: 0
+            currentIndex: {
+                if(mainModule.activeSection.sectionType === Constants.appSection.chat) {
+
+                    /*************************************/
+                    // This will be refactored later
+                    if (chatsModel.communities.activeCommunity.active) {
+                        chatLayoutContainer.chatColumn.hideChatInputExtendedArea();
+                        chatsModel.communities.activeCommunity.active = false
+                    }
+                    /*************************************/
+
+                    return 0
+                }
+                else if(mainModule.activeSection.sectionType === Constants.appSection.community) {
+
+                    /*************************************/
+                    // This will be refactored later
+                    chatsModel.communities.setActiveCommunity(mainModule.activeSection.id)
+                    /*************************************/
+
+                    return 99 //Don't know why, but that's how it was in Utils::getAppSectionIndex function.
+                }
+                else if(mainModule.activeSection.sectionType === Constants.appSection.wallet) {
+                    return 1
+                }
+                else if(mainModule.activeSection.sectionType === Constants.appSection.walletv2) {
+                    return 7
+                }
+                else if(mainModule.activeSection.sectionType === Constants.appSection.browser) {
+                    return 2
+                }
+                else if(mainModule.activeSection.sectionType === Constants.appSection.timeline) {
+                    return 3
+                }
+                else if(mainModule.activeSection.sectionType === Constants.appSection.profile) {
+                    return 4
+                }
+                else if(mainModule.activeSection.sectionType === Constants.appSection.node) {
+                    return 7
+                }
+
+                // We should never end up here
+                console.error("Unknown section type")
+            }
+
             onCurrentIndexChanged: {
                 var obj = this.children[currentIndex];
                 if(!obj)
@@ -416,7 +412,6 @@ Item {
                 if(obj === walletV2LayoutContainer){
                     walletV2LayoutContainer.showSigningPhrasePopup();
                 }
-                localAccountSensitiveSettings.lastModeActiveTab = (currentIndex === Utils.getAppSectionIndex(Constants.timeline)) ? 0 : currentIndex
             }
 
             ChatLayout {
@@ -426,7 +421,7 @@ Item {
                 Layout.fillHeight: true
                 messageStore: appMain.rootStore.messageStore
                 onProfileButtonClicked: {
-                    appMain.changeAppSection(Constants.profile);
+                    appMain.changeAppSectionBySectionType(Constants.appSection.profile);
                 }
             }
 
@@ -667,19 +662,19 @@ Item {
 
         Action {
             shortcut: "Ctrl+1"
-            onTriggered: changeAppSection(Constants.chat)
+            onTriggered: changeAppSectionBySectionType(Constants.appSection.chat)
         }
         Action {
             shortcut: "Ctrl+2"
-            onTriggered: changeAppSection(Constants.browser)
+            onTriggered: changeAppSectionBySectionType(Constants.appSection.browser)
         }
         Action {
             shortcut: "Ctrl+3"
-            onTriggered: changeAppSection(Constants.wallet)
+            onTriggered: changeAppSectionBySectionType(Constants.appSection.wallet)
         }
         Action {
             shortcut: "Ctrl+4, Ctrl+,"
-            onTriggered: changeAppSection(Constants.profile)
+            onTriggered: changeAppSectionBySectionType(Constants.appSection.profile)
         }
         Action {
             shortcut: "Ctrl+K"
@@ -730,7 +725,7 @@ Item {
                                                             });
             }
             onClicked: function (index) {
-                appMain.changeAppSection(Constants.chat)
+                appMain.changeAppSectionBySectionType(Constants.appSection.chat)
                 chatsModel.channelView.setActiveChannelByIndex(index)
                 channelPicker.close()
             }
@@ -738,10 +733,6 @@ Item {
     }
 
     Component.onCompleted: {
-        appView.currentIndex = localAccountSensitiveSettings.lastModeActiveTab
-        if(!!localAccountSensitiveSettings.lastModeActiveCommunity) {
-            chatsModel.communities.setActiveCommunity(localAccountSensitiveSettings.lastModeActiveCommunity)
-        }
         // Since https://github.com/status-im/status-desktop/commit/93668ff75
         // we're hiding the setting to change appearance for compact normal mode
         // of the UI. For now, compact mode is the new default.
@@ -801,8 +792,3 @@ Item {
         appMain.settingsLoaded()
     }
 }
-/*##^##
-Designer {
-    D{i:0;formeditorZoom:1.75;height:770;width:1232}
-}
-##^##*/
