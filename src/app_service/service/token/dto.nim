@@ -7,7 +7,7 @@ import
 from web3/conversions import `$`
 
 type
-  Dto* = ref object of RootObj
+  TokenDto* = ref object of RootObj
     name*: string
     chainId*: int
     address*: Address
@@ -20,13 +20,13 @@ type
 
 proc newDto*(
   name: string, chainId: int, address: Address, symbol: string, decimals: int, hasIcon: bool, isCustom: bool = false
-): Dto =
-  return Dto(
+): TokenDto =
+  return TokenDto(
     name: name, chainId: chainId, address: address, symbol: symbol, decimals: decimals, hasIcon: hasIcon, isCustom: isCustom
   )
 
-proc toTokenDto*(jsonObj: JsonNode, activeTokenSymbols: seq[string]): Dto =
-  result = Dto()
+proc toTokenDto*(jsonObj: JsonNode, activeTokenSymbols: seq[string]): TokenDto =
+  result = TokenDto()
   result.isCustom = true
   result.visible = false
   discard jsonObj.getProp("name", result.name)
@@ -41,5 +41,5 @@ proc toTokenDto*(jsonObj: JsonNode, activeTokenSymbols: seq[string]): Dto =
 
 
   
-proc addressAsString*(self: Dto): string =
+proc addressAsString*(self: TokenDto): string =
   return $self.address

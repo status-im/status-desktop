@@ -12,5 +12,5 @@ method delete*(self: ServiceInterface) {.base.} =
 method init*(self: ServiceInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getTokens*(self: ServiceInterface): seq[Dto] {.base.} =
+method getTokens*(self: ServiceInterface): seq[TokenDto] {.base.} =
   raise newException(ValueError, "No implementation available")

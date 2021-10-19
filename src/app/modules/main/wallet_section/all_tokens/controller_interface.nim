@@ -10,7 +10,7 @@ method delete*(self: AccessInterface) {.base.} =
 method init*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getTokens*(self: AccessInterface): seq[token_service.Dto] {.base.} =
+method getTokens*(self: AccessInterface): seq[token_service.TokenDto] {.base.} =
   raise newException(ValueError, "No implementation available")
 
 type
