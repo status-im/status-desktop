@@ -48,7 +48,7 @@ proc newModule*[T](
   result.moduleLoaded = false
   
   result.accountTokensModule = account_tokens_module.newModule(result, events)
-  result.accountsModule = accounts_module.newModule(result, events)
+  result.accountsModule = accounts_module.newModule(result, events, walletAccountService)
   result.allTokensModule = all_tokens_module.newModule(result, events, tokenService)
   result.collectiblesModule = collectibles_module.newModule(result, events, collectibleService)
   result.mainAccountModule = main_account_module.newModule(result, events)
