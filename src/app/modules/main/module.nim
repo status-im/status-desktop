@@ -79,7 +79,6 @@ proc newModule*[T](
     walletAccountService,
     settingService
   )
-
   
 method delete*[T](self: Module[T]) =
   self.chatSectionModule.delete
@@ -114,7 +113,6 @@ method load*[T](self: Module[T]) =
   "wallet", "", 0, 0)
   self.view.addItem(chatSectionItem)
   self.walletSectionModule.load()
-
 
 
 proc checkIfModuleDidLoad [T](self: Module[T]) =
