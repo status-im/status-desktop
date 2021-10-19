@@ -3,11 +3,12 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 
 import utils 1.0
-import "../../../../shared"
+
+import StatusQ.Controls 0.1
+
 import "../../../../shared/controls"
 import "../../../../shared/popups"
 import "../../../../shared/panels"
-import "../../../../shared/status"
 import "../helpers/channelList.js" as ChannelJSON
 import "../panels"
 
