@@ -1,7 +1,11 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtGraphicalEffects 1.13
-import "../../../../shared"
+
+import StatusQ.Core 0.1
+import StatusQ.Core.Theme 0.1
+import StatusQ.Controls 0.1 as StatusQControls
+
 import "../../../../shared/panels"
 import "../../../../shared/status"
 
@@ -56,7 +60,7 @@ Rectangle {
         }
     }
 
-    StyledText {
+    StatusBaseText {
         id: welcomeText
         //% "Welcome to your community!"
         text: qsTrId("welcome-to-your-community-")
@@ -64,6 +68,7 @@ Rectangle {
         anchors.topMargin: 60
         horizontalAlignment: Text.AlignHCenter
         font.pixelSize: 15
+        color: Theme.palette.directColor1
         wrapMode: Text.WordWrap
         anchors.right: parent.right
         anchors.rightMargin: Style.current.xlPadding
@@ -71,7 +76,7 @@ Rectangle {
         anchors.leftMargin: Style.current.xlPadding
     }
 
-    StatusButton {
+    StatusQControls.StatusButton {
         id: addMembersBtn
         //% "Add members"
         text: qsTrId("add-members")
@@ -83,11 +88,10 @@ Rectangle {
         })
     }
 
-    StatusButton {
+    StatusQControls.StatusFlatButton {
         id: manageBtn
         //% "Manage community"
         text: qsTrId("manage-community")
-        type: "secondary"
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.bottom
         anchors.bottomMargin: Style.current.padding
