@@ -26,7 +26,6 @@ method init*(self: Service) =
 
     for account in accounts:
       self.accounts[account.address] = account
-      echo account.address
   except Exception as e:
     let errDesription = e.msg
     error "error: ", errDesription

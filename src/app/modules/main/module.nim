@@ -14,6 +14,7 @@ import ../../../app_service/service/token/service as token_service
 import ../../../app_service/service/transaction/service as transaction_service
 import ../../../app_service/service/collectible/service as collectible_service
 import ../../../app_service/service/wallet_account/service as wallet_account_service
+import ../../../app_service/service/setting/service as setting_service
 
 import eventemitter
 
@@ -49,7 +50,8 @@ proc newModule*[T](
   tokenService: token_service.Service,
   transactionService: transaction_service.Service,
   collectibleService: collectible_service.Service,
-  walletAccountService: wallet_account_service.Service
+  walletAccountService: wallet_account_service.Service,
+  settingService: setting_service.Service
 ): Module[T] =
   result = Module[T]()
   result.delegate = delegate
@@ -74,7 +76,8 @@ proc newModule*[T](
     tokenService,
     transactionService,
     collectible_service,
-    walletAccountService
+    walletAccountService,
+    settingService
   )
 
   
