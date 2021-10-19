@@ -254,6 +254,7 @@ Rectangle {
                 color: pinCountSensor.containsMouse ? Theme.palette.directColor1 : Theme.palette.baseColor1
 
                 MouseArea {
+                    objectName: "pinMessagesCounterSensor"
                     id: pinCountSensor
                     anchors.fill: parent
                     hoverEnabled: true
