@@ -14,7 +14,11 @@ type
     controller: controller.AccessInterface
     moduleLoaded: bool
 
-proc newModule*[T](delegate: T, events: EventEmitter, tokenService: token_service.ServiceInterface): Module[T] =
+proc newModule*[T](
+  delegate: T,
+  events: EventEmitter,
+  tokenService: token_service.ServiceInterface
+): Module[T] =
   result = Module[T]()
   result.delegate = delegate
   result.view = newView(result)
