@@ -11,8 +11,8 @@ type
     hasIcon*: bool
     color*: string
     isCustom*: bool
-    balance*: string
-    currencyBalance*: string
+    balance*: float64
+    currencyBalance*: float64
 
 type
   WalletAccountDto* = ref object of RootObj
