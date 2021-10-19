@@ -1,5 +1,7 @@
 import sequtils, sugar
 
+import eventemitter
+
 import ./io_interface, ./view, ./controller, ./item
 import ../../../../../app_service/service/token/service as token_service
 
@@ -12,7 +14,7 @@ type
     controller: controller.AccessInterface
     moduleLoaded: bool
 
-proc newModule*[T](delegate: T, tokenService: token_service.ServiceInterface): Module[T] =
+proc newModule*[T](delegate: T, events: EventEmitter, tokenService: token_service.ServiceInterface): Module[T] =
   result = Module[T]()
   result.delegate = delegate
   result.view = newView(result)
