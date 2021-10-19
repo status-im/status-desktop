@@ -39,6 +39,9 @@ method getImportedAccount*(self: Service): GeneratedAccountDto =
 method isFirstTimeAccountLogin*(self: Service): bool =
   return self.isFirstTimeAccountLogin
 
+method generateAlias*(self: Service, publicKey: string): string =
+  return status_go.generateAlias(publicKey).result.getStr
+
 method init*(self: Service) =
   try:
     let response = status_go.generateAddresses(PATHS)
@@ -47,9 +50,7 @@ method init*(self: Service) =
     proc(x: JsonNode): GeneratedAccountDto = toGeneratedAccountDto(x))
 
     for account in self.generatedAccounts.mitems:
-      let responseAlias = status_go.generateAlias(
-        account.derivedAccounts.whisper.publicKey)
-      account.alias = responseAlias.result.getStr
+      account.alias = self.generateAlias(account.derivedAccounts.whisper.publicKey)
       
       let responseIdenticon = status_go.generateIdenticon(
         account.derivedAccounts.whisper.publicKey)
@@ -271,9 +272,7 @@ method importMnemonic*(self: Service, mnemonic: string): bool =
     let responseDerived = status_go.deriveAccounts(self.importedAccount.id, PATHS)
     self.importedAccount.derivedAccounts = toDerivedAccounts(responseDerived.result)
 
-    let responseAlias = status_go.generateAlias(
-      self.importedAccount.derivedAccounts.whisper.publicKey)
-    self.importedAccount.alias = responseAlias.result.getStr
+    self.importedAccount.alias= self.generateAlias(self.importedAccount.derivedAccounts.whisper.publicKey)
     
     let responseIdenticon = status_go.generateIdenticon(
       self.importedAccount.derivedAccounts.whisper.publicKey)

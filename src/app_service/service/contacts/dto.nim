@@ -4,6 +4,8 @@ import json, strformat
 
 include ../../common/json_utils
 
+# const DELETE_CONTACT* = "delete_contact"
+
 type
   Images* = ref object
     thumbnail*: string
@@ -32,8 +34,8 @@ proc `$`(self: Images): string =
 proc `$`*(self: Dto): string =
   result = fmt"""ContactDto(
     id: {self.id}, 
-    name: {self.name}, 
-    ensVerified: {self.ensVerified}, 
+    name: {self.name},
+    ensVerified: {self.ensVerified},
     alias: {self.alias}, 
     identicon: {self.identicon}, 
     lastUpdated: {self.lastUpdated}, 

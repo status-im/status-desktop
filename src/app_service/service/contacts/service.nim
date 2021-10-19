@@ -102,8 +102,6 @@ method addContact*(self: Service, accountKeyUID: string, publicKey: string) =
     )
     # self.events.emit("contactUpdate", ContactUpdateArgs(contacts: @[profile]))
 
-  # self.status.chat.join(status_utils.getTimelineChatId(publicKey), ChatType.Profile, "", publicKey)
-
 method rejectContactRequest*(self: Service, publicKey: string) =
   let contact = status_contacts.getContactByID(publicKey).result.toDto()
   contact.hasAddedUs = false

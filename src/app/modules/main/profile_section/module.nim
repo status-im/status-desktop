@@ -21,6 +21,7 @@ type
     moduleLoaded: bool
 
     profileModule: profile_module.AccessInterface
+    contactsModule: contacts_module.AccessInterface
 
 proc newModule*[T](delegate: T, accountsService: accounts_service.ServiceInterface, settingsService: settings_service.ServiceInterface, profileService: profile_service.ServiceInterface, contactsService: contacts_service.ServiceInterface): Module[T] =
   result = Module[T]()
@@ -31,7 +32,7 @@ proc newModule*[T](delegate: T, accountsService: accounts_service.ServiceInterfa
   result.moduleLoaded = false
 
   result.profileModule = profile_module.newModule(result, accountsService, settingsService, profileService)
-  result.contactsModule = contacts_module.newModule(result, contactsService)
+  result.contactsModule = contacts_module.newModule(result, contactsService, accountsService)
 
   singletonInstance.engine.setRootContextProperty("profileSectionModule", result.viewVariant)
 

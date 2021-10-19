@@ -7,6 +7,7 @@ QtObject {
     property var profileModelInst: profileModel
     property var profileModuleInst: profileSectionModule
     property var profile: profileModule
+    property var contactsModuleInst: contactsModule
 
     property var chatsModelInst: chatsModel
     property var utilsModelInst: utilsModel
@@ -18,9 +19,9 @@ QtObject {
     property var permissionList: profileModelInst.dappList.permissionList
     property var mailservers: profileModelInst.mailservers
     property var mailserversList: profileModelInst.mailservers.list
-    property var contacts: profileModelInst.contacts
-    property var blockedContacts: profileModelInst.contacts.blockedContacts
-    property var addedContacts: profileModelInst.contacts.addedContacts
+    property var contacts: profileModelInst.contacts.model.list
+    property var blockedContacts: profileModelInst.contacts.model.blockedContacts
+    property var addedContacts: profileModelInst.contacts.model.addedContacts
     property var mutedChatsContacts: profileModelInst.mutedChats.contacts
     property var mutedChats: profileModelInst.mutedChats.chats
     property var devicesList: profileModelInst.devices.list
@@ -191,11 +192,12 @@ QtObject {
     }
 
     function lookupContact(value) {
-        profileModelInst.contacts.lookupContact(value)
+        console.log('lookup ples', value, profileModelInst)
+        contactsModuleInst.lookupContact(value)
     }
 
     function addContact(pubKey) {
-        profileModelInst.contacts.addContact(pubKey)
+        contactsModuleInst.addContact(pubKey)
     }
 
     function generateAlias(pubKey) {
@@ -211,19 +213,19 @@ QtObject {
     }
 
     function unblockContact(address) {
-        profileModelInst.contacts.unblockContact(address)
+        contactsModuleInst.unblockContact(address)
     }
 
     function blockContact(address) {
-        profileModelInst.contacts.blockContact(address)
+        contactsModuleInst.blockContact(address)
     }
 
     function isContactAdded(address) {
-        return profileModelInst.contacts.isAdded(address)
+        return contactsModuleInst.model.isAdded(address)
     }
 
     function removeContact(address) {
-        profileModelInst.contacts.removeContact(address)
+        contactsModuleInst.removeContact(address)
     }
 
     function ensDetails(username) {

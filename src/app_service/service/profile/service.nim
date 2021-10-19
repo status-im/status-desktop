@@ -35,3 +35,4 @@ method getProfile*(self: Service): Dto =
         hasIdentityImage: false,
         messagesFromContactsOnly: false
     )
+  
