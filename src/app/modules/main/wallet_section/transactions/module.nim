@@ -1,3 +1,5 @@
+import eventemitter
+
 import ./io_interface, ./view, ./controller
 import ../../../../../app_service/service/transaction/service as transaction_service
 
@@ -10,7 +12,11 @@ type
     controller: controller.AccessInterface
     moduleLoaded: bool
 
-proc newModule*[T](delegate: T, transactionService: transaction_service.ServiceInterface): Module[T] =
+proc newModule*[T](
+  delegate: T,
+  events: EventEmitter,
+  transactionService: transaction_service.ServiceInterface
+): Module[T] =
   result = Module[T]()
   result.delegate = delegate
   result.view = newView(result)

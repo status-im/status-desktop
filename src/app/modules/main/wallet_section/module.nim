@@ -1,3 +1,5 @@
+import eventemitter
+
 import ./io_interface as io_ingerface
 import ./view
 
@@ -32,6 +34,7 @@ type
 
 proc newModule*[T](
   delegate: T,
+  events: EventEmitter,
   tokenService: token_service.Service,
   transactionService: transaction_service.Service,
   collectibleService: collectible_service.Service,
@@ -42,12 +45,12 @@ proc newModule*[T](
   result.view = newView()
   result.moduleLoaded = false
   
-  result.accountTokensModule = account_tokens_module.newModule(result)
-  result.accountsModule = accounts_module.newModule(result)
-  result.allTokensModule = all_tokens_module.newModule(result, tokenService)
-  result.collectiblesModule = collectibles_module.newModule(result, collectibleService)
-  result.mainAccountModule = main_account_module.newModule(result)
-  result.transactionsModule = transactions_module.newModule(result, transactionService)
+  result.accountTokensModule = account_tokens_module.newModule(result, events)
+  result.accountsModule = accounts_module.newModule(result, events)
+  result.allTokensModule = all_tokens_module.newModule(result, events, tokenService)
+  result.collectiblesModule = collectibles_module.newModule(result, events, collectibleService)
+  result.mainAccountModule = main_account_module.newModule(result, events)
+  result.transactionsModule = transactions_module.newModule(result, events, transactionService)
 
 method delete*[T](self: Module[T]) =
   self.accountTokensModule.delete

@@ -69,7 +69,12 @@ proc newModule*[T](
     )
 
   result.walletSectionModule = wallet_section_module.newModule[Module[T]](
-    result, tokenService, transactionService, collectible_service, walletAccountService
+    result,
+    events,
+    tokenService,
+    transactionService,
+    collectible_service,
+    walletAccountService
   )
 
   
@@ -102,10 +107,11 @@ method load*[T](self: Module[T]) =
   for cModule in self.communitySectionsModule.values:
     cModule.load()
 
-  self.walletSectionModule.load()
   let walletSectionItem = initItem("wallet", ChatSectionType.Wallet.int, "Wallet", "", 
   "wallet", "", 0, 0)
   self.view.addItem(chatSectionItem)
+  self.walletSectionModule.load()
+
 
 
 proc checkIfModuleDidLoad [T](self: Module[T]) =
