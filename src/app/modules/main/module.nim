@@ -103,6 +103,9 @@ method load*[T](self: Module[T]) =
     cModule.load()
 
   self.walletSectionModule.load()
+  let walletSectionItem = initItem("wallet", ChatSectionType.Wallet.int, "Wallet", "", 
+  "wallet", "", 0, 0)
+  self.view.addItem(chatSectionItem)
 
 
 proc checkIfModuleDidLoad [T](self: Module[T]) =
