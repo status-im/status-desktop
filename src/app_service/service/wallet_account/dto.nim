@@ -1,4 +1,4 @@
-import json
+import json, sequtils, sugar
 
 include  ../../common/json_utils
 
@@ -57,3 +57,6 @@ proc toWalletAccountDto*(jsonObj: JsonNode): WalletAccountDto =
   discard jsonObj.getProp("chat", result.isChat)
   discard jsonObj.getProp("public-key", result.publicKey)
   discard jsonObj.getProp("type", result.walletType)
+
+proc getCurrencyBalance*(self: WalletAccountDto): float64 =
+  return self.tokens.map(t => t.currencyBalance).foldl(a + b, 0.0)
