@@ -2,6 +2,11 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import QtGraphicalEffects 1.13
+
+import StatusQ.Core 0.1
+import StatusQ.Core.Theme 0.1
+import StatusQ.Controls 0.1 as StatusQControls
+
 import "../components"
 import "../data/channelList.js" as ChannelJSON
 import "../../../../shared"
@@ -60,7 +65,7 @@ Rectangle {
             }
         }
 
-        StyledText {
+        StatusBaseText {
             id: chatAndTransactText
             //% "Chat and transact privately with your friends"
             text: qsTrId("chat-and-transact-privately-with-your-friends")
@@ -73,9 +78,10 @@ Rectangle {
             anchors.rightMargin: Style.current.xlPadding
             anchors.left: parent.left
             anchors.leftMargin: Style.current.xlPadding
+            color: Theme.palette.directColor1
         }
 
-        StatusButton {
+        StatusQControls.StatusButton {
             //% "Invite friends"
             text: qsTrId("invite-friends")
             anchors.horizontalCenter: parent.horizontalCenter
@@ -114,7 +120,7 @@ Rectangle {
             return suggestionsText.height + totalHeight + Style.current.smallPadding
         }
 
-        StyledText {
+        StatusBaseText {
             id: suggestionsText
             width: parent.width
             //% "Follow your interests in one of the many Public Chats."
@@ -131,6 +137,7 @@ Rectangle {
             anchors.rightMargin: Style.current.xlPadding
             anchors.left: parent.left
             anchors.leftMargin: Style.current.xlPadding
+            color: Theme.palette.directColor1
         }
 
         Item {
