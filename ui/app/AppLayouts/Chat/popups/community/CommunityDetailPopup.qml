@@ -10,7 +10,6 @@ import StatusQ.Popups 0.1
 
 
 import utils 1.0
-import "../../../../../shared"
 
 StatusModal {
     property QtObject community: chatsModel.communities.observedCommunity
