@@ -24,8 +24,8 @@ RUN export DEBIAN_FRONTEND=noninteractive \
       libpcsclite-dev
 
 # Installing Golang
-RUN GOLANG_SHA256="aed845e4185a0b2a3c3d5e1d0a35491702c55889192bb9c30e67a3de6849c067" \
- && GOLANG_TARBALL="go1.14.4.linux-amd64.tar.gz" \
+RUN GOLANG_SHA256="d2c095c95f63c2a3ef961000e0ecb9d81d5c68b6ece176e2a8a2db82dc02931c" \
+ && GOLANG_TARBALL="go1.16.9.linux-amd64.tar.gz" \
  && wget -q "https://dl.google.com/go/${GOLANG_TARBALL}" \
  && echo "${GOLANG_SHA256} ${GOLANG_TARBALL}" | sha256sum -c \
  && sudo tar -C /usr/local -xzf "${GOLANG_TARBALL}" \
