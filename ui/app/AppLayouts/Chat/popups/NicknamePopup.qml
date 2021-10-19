@@ -4,127 +4,104 @@ import QtQuick.Layouts 1.13
 import QtGraphicalEffects 1.13
 
 import utils 1.0
-import "../../../../shared"
-import "../../../../shared/controls"
-import "../../../../shared/popups"
-import "../../../../shared/panels"
-import "../../../../shared/status"
-import "./"
 
-// TODO: replace with StatusModal
-ModalPopup {
+import StatusQ.Core 0.1
+import StatusQ.Core.Theme 0.1
+import StatusQ.Controls 0.1
+import StatusQ.Popups 0.1
+
+import "../../../../shared/controls"
+
+StatusModal {
     property int nicknameLength: nicknameInput.textField.text.length
     readonly property int maxNicknameLength: 32
     property bool nicknameTooLong: nicknameLength > maxNicknameLength
     property var changeUsername: function () {}
     property var changeNickname: function () {}
+    anchors.centerIn: parent
 
     id: popup
     width: 400
     height: 390
 
-    noTopMargin: true
-
     onOpened: {
         nicknameInput.forceActiveFocus(Qt.MouseFocusReason)
     }
 
-    header: Item {
-        height: 78
-        width: parent.width
+    header.title: qsTr("Nickname")
+    header.subTitle: isEnsVerified ? alias : fromAuthor
+    header.subTitleElide: !isEnsVerified ? Text.ElideMiddle : Text.ElideNone
 
-        StyledText {
-            id: nicknameTitle
-            //% "Nickname"
-            text:  qsTrId("nickname")
+    contentItem: Item {
+        width: popup.width
+        height: childrenRect.height
+
+        Column {
             anchors.top: parent.top
-            anchors.topMargin: Style.current.padding
-            anchors.left: parent.left
-            anchors.leftMargin: Style.current.padding
-            font.bold: true
-            font.pixelSize: 17
-        }
+            anchors.topMargin: 16
+            anchors.horizontalCenter: parent.horizontalCenter
+            width: parent.width - 32
+            spacing: 16
 
-        StyledText {
-            text: isEnsVerified ? alias : fromAuthor
-            width: 160
-            elide: !isEnsVerified ? Text.ElideMiddle : Text.ElideNone
-            anchors.left: nicknameTitle.left
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: Style.current.padding
-            font.pixelSize: 15
-            color: Style.current.secondaryText
-        }
+            StatusBaseText {
+                id: descriptionText
+                //% "Nicknames help you identify others in Status. Only you can see the nicknames you’ve added"
+                text: qsTrId("nicknames-help-you-identify-others-in-status--only-you-can-see-the-nicknames-you-ve-added")
+                font.pixelSize: 15
+                wrapMode: Text.WordWrap
+                color: Theme.palette.baseColor1
+                width: parent.width
+            }
 
-        Separator {
-            anchors.bottom: parent.bottom
-            anchors.left: parent.left
-            anchors.leftMargin: -Style.current.padding
-            anchors.right: parent.right
-            anchors.rightMargin: -Style.current.padding
-        }
-    }
+            Input {
+                id: nicknameInput
+                //% "Nickname"
+                placeholderText: qsTrId("nickname")
+                text: nickname
+                //% "Your nickname is too long"
+                validationError: popup.nicknameTooLong ? qsTrId("your-nickname-is-too-long") : ""
+                Keys.onReleased: {
+                    if (event.key === Qt.Key_Return) {
+                        doneBtn.onClicked();
+                    }
+                }
 
-    StyledText {
-        id: descriptionText
-        //% "Nicknames help you identify others in Status. Only you can see the nicknames you’ve added"
-        text: qsTrId("nicknames-help-you-identify-others-in-status--only-you-can-see-the-nicknames-you-ve-added")
-        font.pixelSize: 15
-        wrapMode: Text.WordWrap
-        color: Style.current.secondaryText
-        width: parent.width
-    }
-
-    Input {
-        id: nicknameInput
-        //% "Nickname"
-        placeholderText: qsTrId("nickname")
-        text: nickname
-        anchors.top: descriptionText.bottom
-        anchors.topMargin: Style.current.padding
-        //% "Your nickname is too long"
-        validationError: popup.nicknameTooLong ? qsTrId("your-nickname-is-too-long") : ""
-        Keys.onReleased: {
-            if (event.key === Qt.Key_Return) {
-                doneBtn.onClicked();
+                StatusBaseText {
+                    id: lengthLimitText
+                    text: popup.nicknameLength + "/" + popup.maxNicknameLength
+                    font.pixelSize: 15
+                    anchors.top: parent.bottom
+                    anchors.topMargin: 12
+                    anchors.right: parent.right
+                    color: popup.nicknameTooLong ? Theme.palette.dangerColro1 : Theme.palette.baseColor1
+                }
             }
         }
     }
 
-    StyledText {
-        id: lengthLimitText
-        text: popup.nicknameLength + "/" + popup.maxNicknameLength
-        font.pixelSize: 15
-        anchors.top: nicknameInput.bottom
-        anchors.topMargin: 12
-        anchors.right: parent.right
-        color: popup.nicknameTooLong ? Style.current.danger : Style.current.secondaryText
-    }
-
-    footer: StatusButton {
-        id: doneBtn
-        anchors.right: parent.right
-        anchors.rightMargin: Style.current.smallPadding
-        //% "Done"
-        text: qsTrId("done")
-        anchors.bottom: parent.bottom
-        enabled: !popup.nicknameTooLong
-        onClicked: {
-            if (!isEnsVerified) {
-                // Change username title only if it was not an ENS name
-                 if (nicknameInput.textField.text === "") {
-                     // If we removed the nickname, go back to showing the alias
-                     popup.changeUsername(alias)
-                 } else {
-                     popup.changeUsername(nicknameInput.textField.text)
-                 }
-            }
-            popup.changeNickname(nicknameInput.textField.text)
-            profileModel.contacts.changeContactNickname(fromAuthor, nicknameInput.textField.text)
-            popup.close()
-            if (!!chatsModel.communities.activeCommunity) {
-                chatsModel.communities.activeCommunity.triggerMembersUpdate()
+    rightButtons: [
+        StatusButton {
+            id: doneBtn
+            //% "Done"
+            text: qsTrId("done")
+            enabled: !popup.nicknameTooLong
+            onClicked: {
+                if (!isEnsVerified) {
+                    // Change username title only if it was not an ENS name
+                    if (nicknameInput.textField.text === "") {
+                        // If we removed the nickname, go back to showing the alias
+                        popup.changeUsername(alias)
+                    } else {
+                        popup.changeUsername(nicknameInput.textField.text)
+                    }
+                }
+                popup.changeNickname(nicknameInput.textField.text)
+                profileModel.contacts.changeContactNickname(fromAuthor, nicknameInput.textField.text)
+                popup.close()
+                if (!!chatsModel.communities.activeCommunity) {
+                    chatsModel.communities.activeCommunity.triggerMembersUpdate()
+                }
             }
         }
-    }
+    ]
 }
