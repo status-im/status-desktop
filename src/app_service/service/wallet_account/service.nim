@@ -117,8 +117,8 @@ method init*(self: Service) =
     error "error: ", errDesription
     return
 
-method getAccounts*(self: Service): seq[WalletAccountDto] =
+method getWalletAccounts*(self: Service): seq[WalletAccountDto] =
   return toSeq(self.accounts.values).filter(a => a.isChat)
 
 method getCurrencyBalance*(self: Service): float64 =
-  return 0.0
+  return self.getWalletAccounts().map(a => a.getCurrencyBalance()).foldl(a + b, 0.0)

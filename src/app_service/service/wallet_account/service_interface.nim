@@ -12,5 +12,5 @@ method delete*(self: ServiceInterface) {.base.} =
 method init*(self: ServiceInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getAccounts*(self: ServiceInterface): seq[WalletAccountDto] {.base.} =
+method getWalletAccounts*(self: ServiceInterface): seq[WalletAccountDto] {.base.} =
   raise newException(ValueError, "No implementation available")
