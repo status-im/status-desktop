@@ -117,7 +117,7 @@ PopupMenu {
         text: qsTrId("settings")
         shortcut: "Ctrl+,"
         onTriggered: {
-            appMain.changeAppSection(Constants.profile)
+            appMain.changeAppSectionBySectionType(Constants.appSection.profile)
             // TODO: replace with shared store constant
             // Profile/RootStore.browser_settings_id
             profileLayoutContainer.changeProfileSection(10)

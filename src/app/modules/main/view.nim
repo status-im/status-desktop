@@ -1,5 +1,5 @@
 import NimQml
-import model, item
+import model, item, active_section
 import io_interface
 
 QtObject:
@@ -8,10 +8,14 @@ QtObject:
       delegate: io_interface.AccessInterface
       model: Model
       modelVariant: QVariant
+      activeSection: ActiveSection
+      activeSectionVariant: QVariant
       
   proc delete*(self: View) =
     self.model.delete
     self.modelVariant.delete
+    self.activeSection.delete
+    self.activeSectionVariant.delete
     self.QObject.delete
 
   proc newView*(delegate: io_interface.AccessInterface): View =
@@ -20,6 +24,8 @@ QtObject:
     result.delegate = delegate
     result.model = newModel()
     result.modelVariant = newQVariant(result.model)
+    result.activeSection = newActiveSection()
+    result.activeSectionVariant = newQVariant(result.activeSection)
 
   proc load*(self: View) =
     # In some point, here, we will setup some exposed main module related things.
@@ -54,3 +60,42 @@ QtObject:
 
   proc emitStoringPasswordSuccess*(self: View) =
     self.storingPasswordSuccess()
+
+  proc activeSectionChanged*(self:View) {.signal.}
+
+  proc getActiveSection(self: View): QVariant {.slot.} =
+    return self.activeSectionVariant
+
+  QtProperty[QVariant] activeSection:
+    read = getActiveSection
+    notify = activeSectionChanged
+
+  proc activeSectionSet*(self: View, sectionId: string) =
+    self.model.setActiveSection(sectionId)
+    
+    let item = self.model.getItemById(sectionId)
+    self.activeSection.setActiveSectionData(item)
+
+    self.activeSectionChanged()
+
+  proc setActiveSectionById*(self: View, sectionId: string) {.slot.} =
+    let item = self.model.getItemById(sectionId)
+    self.delegate.setActiveSection(item)
+
+  proc setActiveSectionBySectionType*(self: View, sectionType: int) {.slot.} =
+    ## This will try to set a section with passed sectionType to active one, in case of communities the first community
+    ## will be set as active one.
+    let item = self.model.getItemBySectionType(sectionType.SectionType)
+    self.delegate.setActiveSection(item)
+
+  proc enableSection*(self: View, sectionType: SectionType) =
+    # Since enable/disable section is possible only from the `Profile` tab, there is no need for setting
+    # `activeSection` in this moment, as it will be in any case set to `ProfileSettings` type.
+    self.model.enableSection(sectionType)
+
+  proc disableSection*(self: View, sectionType: SectionType) =
+    # Since enable/disable section is possible only from the `Profile` tab, there is no need for setting
+    # `activeSection` in this moment, as it will be in any case set to `ProfileSettings` type.
+    self.model.disableSection(sectionType)
+
+  
