@@ -7,6 +7,7 @@ import ../../app_service/service/community/service as community_service
 import ../../app_service/service/profile/service as profile_service
 import ../../app_service/service/settings/service as settings_service
 import ../../app_service/service/contacts/service as contacts_service
+import ../../app_service/service/about/service as about_service
 import ../modules/startup/module as startup_module
 import ../modules/main/module as main_module
 
@@ -33,6 +34,7 @@ type
     profileService: profile_service.Service
     settingsService: settings_service.Service
     contactsService: contacts_service.Service
+    aboutService: about_service.Service
     # Modules
     startupModule: startup_module.AccessInterface
     mainModule: main_module.AccessInterface
@@ -74,9 +76,10 @@ proc newAppController*(appService: AppService): AppController =
   result.profileService = profile_service.newService()
   result.settingsService = settings_service.newService()
   result.contactsService = contacts_service.newService()
+  result.aboutService = about_service.newService()
   # Modules
   result.startupModule = startup_module.newModule[AppController](result, appService, result.accountsService)
-  result.mainModule = main_module.newModule[AppController](result, result.communityService, result.accountsService, result.settingsService, result.profileService, result.contactService)
+  result.mainModule = main_module.newModule[AppController](result, result.communityService, result.accountsService, result.settingsService, result.profileService, result.contactService, result.aboutService)
 
   # Adding status and appService here now is just because of having a controll 
   # over order of execution while we integrating this refactoring architecture 
@@ -100,6 +103,7 @@ proc delete*(self: AppController) =
   self.contactService.delete
   self.chatService.delete
   self.communityService.delete
+  self.aboutService.delete
 
 proc startupDidLoad*(self: AppController) =
   singletonInstance.engine.load(newQUrl("qrc:///main.qml"))

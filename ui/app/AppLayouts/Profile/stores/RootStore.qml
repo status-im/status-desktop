@@ -8,6 +8,7 @@ QtObject {
     property var profileModuleInst: profileSectionModule
     property var profile: profileModule
     property var contactsModuleInst: contactsModule
+    property var aboutModuleInst: aboutModule
 
     property var chatsModelInst: chatsModel
     property var utilsModelInst: utilsModel
@@ -322,11 +323,11 @@ QtObject {
     }
 
     function getCurrentVersion() {
-        return utilsModelInst.getCurrentVersion()
+        return aboutModuleInst.getCurrentVersion()
     }
 
     function nodeVersion() {
-        return profileModelInst.nodeVersion()
+        return aboutModuleInst.nodeVersion()
     }
 
     function checkForUpdates() {
