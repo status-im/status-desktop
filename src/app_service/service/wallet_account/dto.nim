@@ -2,6 +2,18 @@ import json
 
 include  ../../common/json_utils
 
+type 
+  WalletTokenDto* = ref object of RootObj
+    name*: string
+    address*: Address
+    symbol*: string
+    decimals*: int
+    hasIcon*: bool
+    color*: string
+    isCustom*: bool
+    balance*: float64
+    currencyBalance*: float64
+
 type
   WalletAccountDto* = ref object of RootObj
     name*: string
@@ -12,6 +24,8 @@ type
     walletType*: string
     isWallet*: bool
     isChat*: bool
+    balance*: float64
+    tokens: WalletTokenDto
 
 proc newDto*(
   name: string,
@@ -34,7 +48,7 @@ proc newDto*(
     isChat: isChat
   )
 
-proc toDto*(jsonObj: JsonNode): WalletAccountDto =
+proc toWalletAccountDto*(jsonObj: JsonNode): WalletAccountDto =
   result = WalletAccountDto()
   discard jsonObj.getProp("name", result.name)
   discard jsonObj.getProp("address", result.address)
