@@ -30,7 +30,7 @@ TabButton {
         }
 
         chatsModel.communities.activeCommunity.active = false
-        appMain.changeAppSection(section)
+        appMain.changeAppSectionBySectionType(section)
     }
 
     checked: sLayout.currentIndex === sectionIndex
