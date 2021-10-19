@@ -71,6 +71,7 @@ type
     localAccountSettings: LocalAccountSettings
     localAccountSettingsVariant: QVariant
     mainModule: main_module.AccessInterface
+    startupModule: startup_module.AccessInterface
 
     #################################################
     # At the end of refactoring this will be moved to 
@@ -128,9 +129,13 @@ proc newAppController*(appService: AppService): AppController =
   result.localAccountSettingsVariant = newQVariant(
     singletonInstance.localAccountSettings)
   # Modules
-  result.startupModule = startup_module.newModule[AppController](result,
-  appService.status.events, appService.status.fleet, result.keychainService, 
-  result.accountsService)
+  result.startupModule = startup_module.newModule[AppController](
+    result,
+    appService.status.events,
+    appService.status.fleet,
+    result.keychainService, 
+    result.accountsService
+  )
   result.mainModule = main_module.newModule[AppController](
     result, 
     appService.status.events,
@@ -169,6 +174,10 @@ proc delete*(self: AppController) =
   self.contactService.delete
   self.chatService.delete
   self.communityService.delete
+  self.tokenService.delete
+  self.transactionService.delete
+  self.collectibleService.delete
+  self.walletAccountService.delete
 
 proc startupDidLoad*(self: AppController) =
   #################################################
