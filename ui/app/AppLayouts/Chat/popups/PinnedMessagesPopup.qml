@@ -12,6 +12,8 @@ import "../panels"
 //TODO remove or make view?
 import "../views"
 
+import StatusQ.Controls 0.1 as StatusQControls
+
 // TODO: replace with StatusMOdal
 ModalPopup {
     property var rootStore
@@ -224,13 +226,13 @@ ModalPopup {
         width: parent.width
         height: btnUnpin.height
 
-        StatusButton {
+        StatusQControls.StatusButton {
             id: btnUnpin
             visible: !!messageToPin
             enabled: !!messageToUnpin
             //% "Unpin"
             text: qsTrId("unpin")
-            type: "warn"
+            type: StatusBaseButton.Type.Danger
             anchors.right: parent.right
             onClicked: {
                 const chatId = chatsModel.channelView.activeChannel.id
