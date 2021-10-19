@@ -11,6 +11,7 @@ import ../../../app_service/service/community/service as community_service
 import ../../../app_service/service/profile/service as profile_service
 import ../../../app_service/service/accounts/service as accounts_service
 import ../../../app_service/service/settings/service as settings_service
+import ../../../app_service/service/contacts/service as contacts_service
 
 export io_interface
 
@@ -24,7 +25,7 @@ type
     communitySectionsModule: OrderedTable[string, community_section_module.AccessInterface]
     profileSectionModule: profile_section_module.AccessInterface
 
-proc newModule*[T](delegate: T, communityService: community_service.Service, accountsService: accounts_service.Service, settingsService: settings_service.ServiceInterface, profileService: profile_service.Service): 
+proc newModule*[T](delegate: T, communityService: community_service.Service, accountsService: accounts_service.Service, settingsService: settings_service.ServiceInterface, profileService: profile_service.ServiceInterface, contactsService: contacts_service.ServiceInterface): 
   Module[T] =
   result = Module[T]()
   result.delegate = delegate
@@ -41,7 +42,7 @@ proc newModule*[T](delegate: T, communityService: community_service.Service, acc
   for c in communities:
     result.communitySectionsModule[c.id] = community_section_module.newModule(result, 
     c.id, communityService)
-  result.profileSectionModule = profile_section_module.newModule(result, accountsService, settingsService, profileService)
+  result.profileSectionModule = profile_section_module.newModule(result, accountsService, settingsService, profileService, contactsService)
 
 method delete*[T](self: Module[T]) =
   self.chatSectionModule.delete

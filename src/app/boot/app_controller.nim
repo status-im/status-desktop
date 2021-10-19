@@ -6,6 +6,7 @@ import ../../app_service/service/chat/service as chat_service
 import ../../app_service/service/community/service as community_service
 import ../../app_service/service/profile/service as profile_service
 import ../../app_service/service/settings/service as settings_service
+import ../../app_service/service/contacts/service as contacts_service
 import ../modules/startup/module as startup_module
 import ../modules/main/module as main_module
 
@@ -31,6 +32,7 @@ type
     communityService: community_service.Service
     profileService: profile_service.Service
     settingsService: settings_service.Service
+    contactsService: contacts_service.Service
     # Modules
     startupModule: startup_module.AccessInterface
     mainModule: main_module.AccessInterface
@@ -71,9 +73,10 @@ proc newAppController*(appService: AppService): AppController =
   result.communityService = community_service.newService()
   result.profileService = profile_service.newService()
   result.settingsService = settings_service.newService()
+  result.contactsService = contacts_service.newService()
   # Modules
   result.startupModule = startup_module.newModule[AppController](result, appService, result.accountsService)
-  result.mainModule = main_module.newModule[AppController](result, result.communityService, result.accountsService, result.settingsService, result.profileService)
+  result.mainModule = main_module.newModule[AppController](result, result.communityService, result.accountsService, result.settingsService, result.profileService, result.contactService)
 
   # Adding status and appService here now is just because of having a controll 
   # over order of execution while we integrating this refactoring architecture 
