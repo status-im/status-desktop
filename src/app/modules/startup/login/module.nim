@@ -63,6 +63,7 @@ method load*(self: Module) =
     self.view.setModelItems(items)
 
     # set the first account as slected one
+    self.controller.setSelectedAccountKeyUid(items[0].getKeyUid())
     self.setSelectedAccount(items[0])
 
 method isLoaded*(self: Module): bool =
