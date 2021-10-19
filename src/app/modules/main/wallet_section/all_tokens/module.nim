@@ -26,8 +26,7 @@ method delete*[T](self: Module[T]) =
   self.controller.delete
 
 method load*[T](self: Module[T]) =
-  # TODO: replace chainID 1 with chain ID coming from settings
-  let tokens = self.controller.getTokens(1)
+  let tokens = self.controller.getTokens()
   self.view.setItems(
     tokens.map(t => initItem(
       t.name,

@@ -116,15 +116,17 @@ proc newAppController*(appService: AppService): AppController =
   #################################################
 
   result.keychainService = keychain_service.newService(appService.status.events)
+  result.settingService = setting_service.newService()
   result.accountsService = accounts_service.newService()
   result.contactService = contact_service.newService()
   result.chatService = chat_service.newService()
   result.communityService = community_service.newService(result.chatService)
-  result.tokenService = token_service.newService()
+  result.tokenService = token_service.newService(result.settingService)
   result.transactionService = transaction_service.newService()
   result.collectibleService = collectible_service.newService()
-  result.walletAccountService = wallet_account_service.newService()
-  result.settingService = setting_service.newService()
+  result.walletAccountService = wallet_account_service.newService(
+    result.settingService, result.tokenService
+  )
 
   # Core
   result.localAccountSettingsVariant = newQVariant(
@@ -179,6 +181,7 @@ proc delete*(self: AppController) =
   self.tokenService.delete
   self.transactionService.delete
   self.collectibleService.delete
+  self.settingService.delete
   self.walletAccountService.delete
 
 proc startupDidLoad*(self: AppController) =
@@ -209,14 +212,14 @@ proc start*(self: AppController) =
   self.startupModule.load()
 
 proc load*(self: AppController) =
+  self.settingService.init()
   self.contactService.init()
   self.chatService.init()
   self.communityService.init()
   self.tokenService.init()
   self.walletAccountService.init()
-  self.settingService.init()
-
   self.mainModule.load()
+
 
 proc userLoggedIn*(self: AppController) =
   self.load()
