@@ -1,3 +1,4 @@
+import eventemitter
 import ./io_interface, ./view
 
 export io_interface
@@ -8,7 +9,7 @@ type
     view: View
     moduleLoaded: bool
 
-proc newModule*[T](delegate: T): Module[T] =
+proc newModule*[T](delegate: T, events: EventEmitter): Module[T] =
   result = Module[T]()
   result.delegate = delegate
   result.view = newView(result)

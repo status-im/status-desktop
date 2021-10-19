@@ -1,9 +1,11 @@
+import eventemitter
+
 import ./io_interface, ./view
 import ../../../../../app_service/service/collectible/service as collectible_service
 
-import collectible/module as collectible_module
-import collections/module as collections_module
-import collectibles/module as collectibles_module
+import ./collectible/module as collectible_module
+import ./collections/module as collections_module
+import ./collectibles/module as collectibles_module
 
 export io_interface
 
@@ -19,6 +21,7 @@ type
 
 proc newModule*[T](
   delegate: T,
+  events: EventEmitter,
   collectibleService: collectible_service.ServiceInterface
 ): Module[T] =
   result = Module[T]()
