@@ -1,4 +1,19 @@
 <a name=""></a>
+##  Version 0.13.0 (2021-10-19)
+
+
+#### Bug Fixes
+
+*   use proper double checkmark icon ([8aba017c](8aba017c))
+* **StatusBaseButton:**  introduce missing `highlighted` property ([a3748920](a3748920))
+
+#### Features
+
+* **StatusFlatRoundButton:**  Update the StatusFlatRoundButton to take over button behaviour from StatusIconButton under ui/shared/status ([71fbdef1](71fbdef1))
+
+
+
+<a name=""></a>
 ##  Version 0.12.0 (2021-10-18)
 
 
