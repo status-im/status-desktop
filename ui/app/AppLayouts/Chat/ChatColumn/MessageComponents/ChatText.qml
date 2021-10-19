@@ -62,7 +62,7 @@ Item {
                     if(chatsModel.communities.activeCommunity.active)
                     {
                         chatsModel.channelView.joinPublicChat(channelName)
-                        appMain.changeAppSection(Constants.chat)
+                        appMain.changeAppSectionBySectionType(Constants.appSection.chat)
                     }
                     return
                 }
@@ -74,7 +74,7 @@ Item {
                     if(chatsModel.communities.activeCommunity.active)
                     {
                         chatsModel.channelView.joinPublicChat(channelName)
-                        appMain.changeAppSection(Constants.chat)
+                        appMain.changeAppSectionBySectionType(Constants.appSection.chat)
                     }
 
                     chatsModel.channelView.setActiveChannel(channelName);

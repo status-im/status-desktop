@@ -3,10 +3,30 @@ pragma Singleton
 import QtQuick 2.13
 
 QtObject {
-    property QtObject appState: QtObject {
+    readonly property QtObject appState: QtObject {
         readonly property int onboarding: 0
         readonly property int login: 1
         readonly property int main: 2
+    }
+
+    readonly property QtObject appSection: QtObject {
+        readonly property int chat: 0
+        readonly property int community: 1
+        readonly property int wallet: 2
+        readonly property int walletv2: 3
+        readonly property int browser: 4
+        readonly property int timeline: 5
+        readonly property int profile: 6
+        readonly property int node: 7
+    }
+
+    readonly property QtObject osNotificationType: QtObject{
+        readonly property int newContactRequest: 1
+        readonly property int acceptedContactRequest: 2
+        readonly property int joinCommunityRequest: 3
+        readonly property int acceptedIntoCommunity: 4
+        readonly property int rejectedByCommunity: 5
+        readonly property int newMessage: 6
     }
 
     readonly property int communityImported: 0
@@ -44,16 +64,6 @@ QtObject {
 
     readonly property string lightThemeName: "light"
     readonly property string darkThemeName: "dark"
-
-    readonly property string chat: "chat"
-    readonly property string wallet: "wallet"
-    readonly property string walletv2: "walletV2"
-    readonly property string timeline: "timeline"
-    readonly property string browser: "browser"
-    readonly property string profile: "profile"
-    readonly property string node: "node"
-    readonly property string ui: "ui"
-    readonly property string community: "community"
 
     readonly property int fontSizeXS: 0
     readonly property int fontSizeS: 1
@@ -191,14 +201,5 @@ QtObject {
         "connected": qsTrId("this-user-name-is-owned-by-you-and-connected-with-your-chat-key--continue-to-set--show-my-ens-username-in-chats--"),
         //% "Continuing will require a transaction to connect the username with your current chat key."
         "connected-different-key": qsTrId("ens-username-connected-with-different-key"),
-    }
-
-    readonly property QtObject osNotificationType: QtObject{
-        readonly property int newContactRequest: 1
-        readonly property int acceptedContactRequest: 2
-        readonly property int joinCommunityRequest: 3
-        readonly property int acceptedIntoCommunity: 4
-        readonly property int rejectedByCommunity: 5
-        readonly property int newMessage: 6
     }
 }
