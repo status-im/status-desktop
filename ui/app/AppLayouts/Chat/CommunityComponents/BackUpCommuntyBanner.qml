@@ -1,10 +1,13 @@
 import QtQuick 2.13
 import QtGraphicalEffects 1.13
-import "../../../../shared"
-import "../../../../shared/panels"
-import "../../../../shared/status"
+
+import StatusQ.Core 0.1
+import StatusQ.Core.Theme 0.1
+import StatusQ.Controls 0.1
+import StatusQ.Components 0.1
 
 import utils 1.0
+
 import "."
 
 Rectangle {
@@ -27,21 +30,16 @@ Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
     }
 
-    SVGImage {
+    StatusRoundIcon {
         anchors.top: parent.top
         anchors.topMargin: -6
         anchors.horizontalCenter: parent.horizontalCenter
-        source: Style.svg("key")
         width: 40
         height: 40
-        ColorOverlay {
-            anchors.fill: parent
-            source: parent
-            color: Style.current.blue
-        }
+        icon.name: "objects"
     }
 
-    StyledText {
+    StatusBaseText {
         id: backUpText
         //% "Back up community key"
         text: qsTrId("back-up-community-key")
@@ -54,6 +52,7 @@ Rectangle {
         anchors.rightMargin: Style.current.xlPadding
         anchors.left: parent.left
         anchors.leftMargin: Style.current.xlPadding
+        color: Theme.palette.directColor1
     }
 
     StatusButton {
