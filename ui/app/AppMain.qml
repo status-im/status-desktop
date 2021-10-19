@@ -224,10 +224,10 @@ Item {
                 anchors.horizontalCenter: parent.horizontalCenter
 
                 checked: chatsModel.communities.activeCommunity.active && chatsModel.communities.activeCommunity.id === model.id
-                name: model.name
+                name: model.icon.length > 0? "" : model.name
                 tooltip.text: model.name
-                icon.color: model.color
-                icon.source: model.image.length > 0? model.image : model.icon
+                icon.color: model.color.length > 0? model.color : Theme.palette.baseColor1
+                icon.source: model.image
                 icon.name: model.icon
 
                 badge.value: model.unviewedMentionsCount + model.requestsCount
