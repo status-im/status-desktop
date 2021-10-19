@@ -1,5 +1,4 @@
-import controller_interface
-import io_interface
+import item, controller_interface, io_interface
 import ../../core/global_singleton
 
 import ../../../app_service/service/settings/service_interface as settings_service
@@ -20,6 +19,7 @@ type
     keychainService: keychain_service.Service
     accountsService: accounts_service.ServiceInterface
     communityService: community_service.ServiceInterface
+    activeSectionId: string
 
 proc newController*(delegate: io_interface.AccessInterface, 
   events: EventEmitter,
@@ -53,6 +53,18 @@ method init*(self: Controller) =
     singletonInstance.localAccountSettings.removeKey(LS_KEY_STORE_TO_KEYCHAIN)
     self.delegate.emitStoringPasswordError(args.errDescription)
 
+  self.events.on("sectionAvailabilityChanged") do(e:Args):
+    ## We will receive here a signal with two fields:
+    ## sectionType: int
+    ## enabled: bool
+    ## 
+    ## Then we only need to do something like:
+    ## if(enabled):
+    ##   self.delegate.enableSection(sectionType)
+    ## else:
+    ##   self.delegate.disableSection(sectionType)
+    discard    
+
 method getCommunities*(self: Controller): seq[community_service.CommunityDto] =
   return self.communityService.getCommunities()
 
@@ -81,6 +93,19 @@ method storePassword*(self: Controller, password: string) =
 
   self.keychainService.storePassword(account.name, password)
 
+method setActiveSection*(self: Controller, sectionId: string, sectionType: SectionType) =
+  self.activeSectionId = sectionId
+
+  if(sectionType == SectionType.Chat or sectionType != SectionType.Community):
+    # We need to take other actions here, in case of Chat or Community sections like
+    # notify status go that unviewed mentions count is updated and so...
+    # and then in case all is good, notify the view about the chage so it can update the UI
+    echo "deal with appropriate service..."
+
+  singletonInstance.localAccountSensitiveSettings.setActiveSection(self.activeSectionId)
+
+  self.delegate.activeSectionSet(self.activeSectionId)
+  
 method setUserStatus*(self: Controller, status: bool) =
   self.settingsService.setSendUserStatus(status)
   singletonInstance.userProfile.setUserStatus(status)

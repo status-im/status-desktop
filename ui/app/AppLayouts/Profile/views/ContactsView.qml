@@ -254,12 +254,12 @@ Item {
             searchString: searchBox.text
 
             onContactClicked: {
-                root.store.changeAppSection(Constants.chat)
+                root.store.changeAppSectionBySectionType(Constants.appSection.chat)
                 root.store.joinPrivateChat(contact.address)
             }
 
             onSendMessageActionTriggered: {
-                root.store.changeAppSection(Constants.chat)
+                root.store.changeAppSectionBySectionType(Constants.appSection.chat)
                 root.store.joinPrivateChat(contact.address)
             }
 
