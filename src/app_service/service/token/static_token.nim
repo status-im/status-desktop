@@ -3,7 +3,7 @@ import web3/ethtypes
 import ../network/types
 import ./dto
 
-proc all*(): seq[Dto] =
+proc all*(): seq[TokenDto] =
   return @[
     newDto("Status Network Token", Mainnet, fromHex(Address, "0x744d70fdbe2ba4cf95131626614a1763df805b9e"), "SNT", 18, true),
     newDto("Dai Stablecoin", Mainnet, fromHex(Address, "0x6b175474e89094c44da98b954eedeac495271d0f"), "DAI", 18, true),

@@ -22,5 +22,5 @@ method delete*[T](self: Controller[T]) =
 method init*[T](self: Controller[T]) = 
   discard
 
-method getTokens*[T](self: Controller[T]): seq[token_service.Dto] =
+method getTokens*[T](self: Controller[T]): seq[token_service.TokenDto] =
   return self.tokenService.getTokens()

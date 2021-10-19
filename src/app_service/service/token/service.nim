@@ -9,10 +9,12 @@ export service_interface
 logScope:
   topics = "token-service"
 
+const DEFAULT_VISIBLE_SYMBOLS = @["SNT"]
+
 type 
   Service* = ref object of service_interface.ServiceInterface
     settingService: setting_service.ServiceInterface
-    tokens: seq[Dto]
+    tokens: seq[TokenDto]
 
 method delete*(self: Service) =
   discard
@@ -24,19 +26,22 @@ proc newService*(settingService: setting_service.Service): Service =
 
 method init*(self: Service) =
   try:
-    let response = custom_tokens.getCustomTokens()
-    let activeTokenSymbols = self.settingService.getSetting().activeTokenSymbols
+    var activeTokenSymbols = self.settingService.getSetting().activeTokenSymbols
+    if activeTokenSymbols.len == 0:
+      activeTokenSymbols = DEFAULT_VISIBLE_SYMBOLS
+
     let static_tokens = static_token.all().map(
-      proc(x: Dto): Dto = 
+      proc(x: TokenDto): TokenDto = 
         x.visible = activeTokenSymbols.contains(x.symbol)
         return x
     )
 
+    let response = custom_tokens.getCustomTokens()
     self.tokens = concat(
       static_tokens,
-      map(response.result.getElems(), proc(x: JsonNode): Dto = x.toTokenDto(activeTokenSymbols))
+      map(response.result.getElems(), proc(x: JsonNode): TokenDto = x.toTokenDto(activeTokenSymbols))
     ).filter(
-      proc(x: Dto): bool = x.chainId == self.settingService.getSetting().currentNetwork.id
+      proc(x: TokenDto): bool = x.chainId == self.settingService.getSetting().currentNetwork.id
     )
     
   except Exception as e:
@@ -44,5 +49,5 @@ method init*(self: Service) =
     error "error: ", errDesription
     return
 
-method getTokens*(self: Service): seq[Dto] =
+method getTokens*(self: Service): seq[TokenDto] =
   return self.tokens
