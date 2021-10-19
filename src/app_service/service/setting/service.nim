@@ -21,8 +21,7 @@ proc newService*(): Service =
 method init*(self: Service) =
   try:
     let response = status_go.getSettings()
-    self.setting = response.result.toDto()
-    echo self.setting.currentNetwork.etherscanLink
+    self.setting = response.result.toSettingDto()
   except Exception as e:
     let errDesription = e.msg
     error "error: ", errDesription
