@@ -4,8 +4,9 @@ import QtQuick.Layouts 1.13
 import QtGraphicalEffects 1.13
 
 import utils 1.0
-import "../../../../shared"
-import "../../../../shared/status"
+
+import StatusQ.Controls 0.1
+
 import "../../../../shared/popups"
 
 // TODO: Replace with StatusModal
@@ -100,7 +101,7 @@ ModalPopup {
             anchors.right: addToContactsButton.left
             anchors.rightMargin: Style.current.padding
             anchors.bottom: parent.bottom
-            type: "warn"
+            type: StatusBaseButton.Type.Danger
             //% "Decline all"
             text: qsTrId("decline-all")
             onClicked: declineAllDialog.open()
