@@ -70,7 +70,7 @@ Item {
         horizontalAlignment: Text.AlignHCenter
         color: Style.current.secondaryText
         //% "before %1"
-        text: qsTrId("before--1").arg((nextMessageIndex > -1 ? new Date(nextMsgTimestamp * 1) : new Date()).toLocaleString(Qt.locale(globalSettings.locale)))
+        text: qsTrId("before--1").arg((nextMessageIndex > -1 ? new Date(nextMsgTimestamp * 1) : new Date()).toLocaleString(Qt.locale(localAppSettings.locale)))
     }
     Separator {
         anchors.top: fetchDate.bottom

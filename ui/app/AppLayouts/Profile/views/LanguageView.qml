@@ -36,7 +36,7 @@ Item {
             StatusListItem {
                 //% "Language"
                 title: qsTrId("language")
-                label: globalSettings.locale === "" ? qsTrId("default") : globalSettings.locale
+                label: localAppSettings.locale === "" ? qsTrId("default") : localAppSettings.locale
                 components: [
                     StatusIcon {
                         icon: "chevron-down"

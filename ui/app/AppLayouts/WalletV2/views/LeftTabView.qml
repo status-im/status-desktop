@@ -48,7 +48,7 @@ Rectangle {
             font.weight: Font.Medium
             font.pixelSize: 30
             //TOOD improve this to not use dynamic scoping
-            text: Utils.toLocaleString("0.00", globalSettings.locale, {"currency": true}) + " " + "USD"
+            text: Utils.toLocaleString("0.00", localAppSettings.locale, {"currency": true}) + " " + "USD"
         }
 
         StyledText {
@@ -134,7 +134,7 @@ Rectangle {
                 font.pixelSize: 15
                 font.weight: Font.Medium
                 color: Style.current.textColor
-                text: isLoading ? "..." : Utils.toLocaleString(fiatBalance, globalSettings.locale, {"currency": true}) + " " + "USD"
+                text: isLoading ? "..." : Utils.toLocaleString(fiatBalance, localAppSettings.locale, {"currency": true}) + " " + "USD"
             }
             MouseArea {
                 anchors.fill: parent

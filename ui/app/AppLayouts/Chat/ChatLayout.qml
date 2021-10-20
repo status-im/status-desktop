@@ -82,7 +82,7 @@ StatusAppThreePanelLayout {
         searchResults: root.rootStore.chatsModelInst.messageSearchViewController.resultModel
 
         formatTimestampFn: function (ts) {
-            return new Date(parseInt(ts, 10)).toLocaleString(Qt.locale(globalSettings.locale))
+            return new Date(parseInt(ts, 10)).toLocaleString(Qt.locale(localAppSettings.locale))
         }
 
         onSearchTextChanged: {
