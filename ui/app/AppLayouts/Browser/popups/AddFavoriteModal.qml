@@ -2,11 +2,14 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import QtGraphicalEffects 1.13
+
 import utils 1.0
+
+import StatusQ.Controls 0.1
+
 import "../../../../shared"
 import "../../../../shared/controls"
 import "../../../../shared/popups"
-import "../../../../shared/status"
 import "../stores"
 
 // TODO: replace with StatusModal
@@ -126,9 +129,7 @@ ModalPopup {
             //% "Remove"
             text: qsTrId("remove")
             anchors.bottom: parent.bottom
-            color: Style.current.danger
-            bgColor: Utils.setColorAlpha(Style.current.danger, 0.1)
-            bgHoverColor: Utils.setColorAlpha(Style.current.danger, 0.2)
+            type: StatusBaseButton.Type.Danger
             onClicked: {
                 BookmarksStore.removeBookmark(popup.ogUrl)
                 popup.close()

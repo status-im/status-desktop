@@ -2,10 +2,11 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import QtWebEngine 1.10
-import "../../../../shared"
+
+import StatusQ.Controls 0.1
+
 import "../../../../shared/controls"
 import "../../../../shared/popups"
-import "../../../../shared/status"
 
 import utils 1.0
 
@@ -71,9 +72,8 @@ ModalPopup {
             }
         }
 
-        StatusButton {
+        StatusFlatButton {
             id: cancelButton
-            type: "secondary"
             anchors.right: okButton.left
             anchors.rightMargin: Style.current.smallPadding
             //% "Cancel"

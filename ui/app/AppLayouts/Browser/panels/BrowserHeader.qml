@@ -4,11 +4,16 @@ import QtQuick.Layouts 1.13
 import Qt.labs.settings 1.0
 import QtQuick.Controls.Styles 1.0
 import QtWebEngine 1.10
+
 import utils 1.0
+
+import StatusQ.Controls 0.1 as StatusQControls
+
 import "../../../../shared"
 import "../../../../shared/panels"
 import "../../../../shared/controls"
 import "../../../../shared/status"
+
 import "../popups"
 import "../controls"
 
@@ -212,15 +217,13 @@ Rectangle {
 
         Component {
             id: connectedBtnComponent
-            StatusButton {
+            StatusQControls.StatusFlatButton {
                 id: accountBtnConnected
-                icon.source: Style.svg("walletIcon")
+                icon.name: "wallet"
                 icon.width: 18
                 icon.height: 18
                 icon.color: dappBrowserAccIcon
                 text: dappBrowserAccName
-                implicitHeight: 32
-                type: "secondary"
                 onClicked: {
                     if (browserWalletMenu.opened) {
                         browserWalletMenu.close()

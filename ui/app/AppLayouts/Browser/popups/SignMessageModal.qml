@@ -5,15 +5,17 @@ import QtQuick.Dialogs 1.3
 import QtGraphicalEffects 1.13
 
 import utils 1.0
+
+import StatusQ.Controls 0.1
+import StatusQ.Popups 0.1
+
 import "../../../../shared"
 import "../../../../shared/panels"
 import "../../../../shared/popups"
 import "../../../../shared/views"
-import "../../../../shared/status"
 import "../stores"
 
-// TODO: replace with StatusModal
-ModalPopup {
+StatusModal {
     property var request
     property var selectedAccount
 
@@ -29,10 +31,11 @@ ModalPopup {
     property var web3Response
 
 
+    anchors.centerIn: parent
     id: root
 
     //% "Signature request"
-    title: qsTrId("signature-request")
+    header.title: qsTrId("signature-request")
     height: 504
 
     onClosed: {
@@ -75,150 +78,149 @@ ModalPopup {
         }
     }
 
-    TransactionSigner {
-        id: transactionSigner
-        width: parent.width
-        signingPhrase: WalletStore.signingPhrase
-        visible: showSigningPhrase
-    }
+    contentItem: Item {
+        width: root.width
+        height: childrenRect.height
 
-    Column {
-        id: content
-        anchors.left: parent.left
-        anchors.right: parent.right
-        visible: !showSigningPhrase
-
-        LabelValueRow {
-            //% "From"
-            label: qsTrId("from")
-            value: Item {
-                id: itmFromValue
-                anchors.fill: parent
-                anchors.verticalCenter: parent.verticalCenter
-                Row {
-                    spacing: Style.current.halfPadding
-                    rightPadding: 0
-                    anchors.right: parent.right
-                    anchors.verticalCenter: parent.verticalCenter
-
-                    StyledText {
-                        font.pixelSize: 15
-                        height: 22
-                        text: selectedAccount.name
-                        elide: Text.ElideRight
-                        anchors.verticalCenter: parent.verticalCenter
-                        horizontalAlignment: Text.AlignRight
-                        verticalAlignment: Text.AlignVCenter
-                    }
-                    SVGImage {
-                        id: imgFromWallet
-                        sourceSize.height: 18
-                        sourceSize.width: 18
-                        visible: true
-                        horizontalAlignment: Image.AlignLeft
-                        width: undefined
-                        anchors.verticalCenter: parent.verticalCenter
-                        fillMode: Image.PreserveAspectFit
-                        source: Style.svg("walletIcon")
-                        ColorOverlay {
-                            visible: parent.visible
-                            anchors.fill: parent
-                            source: parent
-                            color: selectedAccount.iconColor
-                        }
-                    }
-                }
-            }
+        TransactionSigner {
+            id: transactionSigner
+            width: parent.width
+            signingPhrase: WalletStore.signingPhrase
+            visible: showSigningPhrase
         }
 
-        LabelValueRow {
-            //% "Data"
-            label: qsTrId("data")
-            value: Item {
-                anchors.fill: parent
-                anchors.verticalCenter: parent.verticalCenter
+        Column {
+            id: content
+            anchors.left: parent.left
+            anchors.right: parent.right
+            visible: !showSigningPhrase
 
-                // TODO; replace with StatusModal
-                ModalPopup {
-                    id: messagePopup
-                    //% "Message"
-                    title: qsTrId("message")
-                    height: 286
-                    width: 400
-                    Item {
-                        anchors.fill: parent
-                        anchors.leftMargin: Style.current.padding
-                        anchors.rightMargin: Style.current.padding
-                        ScrollView {
-                            width: parent.width
-                            height: 150
-                            TextArea {
-                                wrapMode: TextEdit.Wrap
-                                readOnly: true
-                                text: messageToSign()
+            LabelValueRow {
+                //% "From"
+                label: qsTrId("from")
+                value: Item {
+                    id: itmFromValue
+                    anchors.fill: parent
+                    anchors.verticalCenter: parent.verticalCenter
+                    Row {
+                        spacing: Style.current.halfPadding
+                        rightPadding: 0
+                        anchors.right: parent.right
+                        anchors.verticalCenter: parent.verticalCenter
+
+                        StyledText {
+                            font.pixelSize: 15
+                            height: 22
+                            text: selectedAccount.name
+                            elide: Text.ElideRight
+                            anchors.verticalCenter: parent.verticalCenter
+                            horizontalAlignment: Text.AlignRight
+                            verticalAlignment: Text.AlignVCenter
+                        }
+                        SVGImage {
+                            id: imgFromWallet
+                            sourceSize.height: 18
+                            sourceSize.width: 18
+                            visible: true
+                            horizontalAlignment: Image.AlignLeft
+                            width: undefined
+                            anchors.verticalCenter: parent.verticalCenter
+                            fillMode: Image.PreserveAspectFit
+                            source: Style.svg("walletIcon")
+                            ColorOverlay {
+                                visible: parent.visible
+                                anchors.fill: parent
+                                source: parent
+                                color: selectedAccount.iconColor
                             }
                         }
                     }
                 }
+            }
 
-                Row {
-                    spacing: Style.current.halfPadding
-                    rightPadding: 0
-                    anchors.right: parent.right
+            LabelValueRow {
+                //% "Data"
+                label: qsTrId("data")
+                value: Item {
+                    anchors.fill: parent
                     anchors.verticalCenter: parent.verticalCenter
-                    StyledText {
-                        width: 250
-                        font.pixelSize: 15
-                        height: 22
-                        text: messageToSign()
-                        anchors.verticalCenter: parent.verticalCenter
-                        horizontalAlignment: Text.AlignRight
-                        verticalAlignment: Text.AlignVCenter
-                        elide: Text.ElideRight
-                        color: Style.current.secondaryText
-                    }
-                    SVGImage {
-                        width: 13
-                        anchors.verticalCenter: parent.verticalCenter
-                        fillMode: Image.PreserveAspectFit
-                        source: Style.svg("caret")
-                        rotation: 270
-                        ColorOverlay {
+
+                    // TODO; replace with StatusModal
+                    ModalPopup {
+                        id: messagePopup
+                        //% "Message"
+                        title: qsTrId("message")
+                        height: 286
+                        width: 400
+                        Item {
                             anchors.fill: parent
-                            source: parent
-                            color: Style.current.secondaryText
+                            anchors.leftMargin: Style.current.padding
+                            anchors.rightMargin: Style.current.padding
+                            ScrollView {
+                                width: parent.width
+                                height: 150
+                                TextArea {
+                                    wrapMode: TextEdit.Wrap
+                                    readOnly: true
+                                    text: messageToSign()
+                                }
+                            }
                         }
                     }
-                }
-                MouseArea {
-                    anchors.fill: parent
-                    visible: true
-                    cursorShape: Qt.PointingHandCursor
-                    onClicked: messagePopup.open()
+
+                    Row {
+                        spacing: Style.current.halfPadding
+                        rightPadding: 0
+                        anchors.right: parent.right
+                        anchors.verticalCenter: parent.verticalCenter
+                        StyledText {
+                            width: 250
+                            font.pixelSize: 15
+                            height: 22
+                            text: messageToSign()
+                            anchors.verticalCenter: parent.verticalCenter
+                            horizontalAlignment: Text.AlignRight
+                            verticalAlignment: Text.AlignVCenter
+                            elide: Text.ElideRight
+                            color: Style.current.secondaryText
+                        }
+                        SVGImage {
+                            width: 13
+                            anchors.verticalCenter: parent.verticalCenter
+                            fillMode: Image.PreserveAspectFit
+                            source: Style.svg("caret")
+                            rotation: 270
+                            ColorOverlay {
+                                anchors.fill: parent
+                                source: parent
+                                color: Style.current.secondaryText
+                            }
+                        }
+                    }
+                    MouseArea {
+                        anchors.fill: parent
+                        visible: true
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: messagePopup.open()
+                    }
                 }
             }
         }
+
     }
 
+    rightButtons: [
 
-    footer: Item {
-        width: parent.width
-        height: btnReject.height
-
-        StatusButton {
+        StatusFlatButton {
             id: btnReject
-            anchors.right:btnNext.left
-            anchors.rightMargin: Style.current.padding
             //% "Reject"
             text: qsTrId("reject")
             color: Style.current.danger
-            type: "secondary"
             onClicked: close()
-        }
+        },
 
         StatusButton {
             id: btnNext
-            anchors.right: parent.right
             text: showSigningPhrase ? 
                     //% "Sign"
                     qsTrId("transactions-sign") : 
@@ -233,7 +235,7 @@ ModalPopup {
                 }
             }
         }
-    }
+    ]
 }
 
 /*##^##
