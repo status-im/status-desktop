@@ -63,7 +63,7 @@ Item {
             StatusBaseText {
                 id: assetFiatValue
                 color: Style.current.secondaryText
-                text: Utils.toLocaleString(fiatBalance, globalSettings.locale) + " " + walletModel.balanceView.defaultCurrency.toUpperCase()
+                text: Utils.toLocaleString(fiatBalance, localAppSettings.locale) + " " + walletModel.balanceView.defaultCurrency.toUpperCase()
                 anchors.right: parent.right
                 anchors.rightMargin: 0
                 anchors.bottom: parent.bottom

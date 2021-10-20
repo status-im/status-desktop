@@ -74,10 +74,9 @@ ModalPopup {
                         anchors.leftMargin: 0
                         title: modelData.name
                         buttonGroup: languageGroup
-                        checked: globalSettings.locale === modelData.locale
+                        checked: localAppSettings.locale === modelData.locale
                         onCheckedChanged: {
-                            if (checked && globalSettings.locale !== modelData.locale) {
-                                globalSettings.locale = modelData.locale
+                            if (checked && localAppSettings.locale !== modelData.locale) {
                                 if (Qt.platform.os === Constants.linux) {
                                     languageChangeConfirmationDialog.item.newLocale = modelData.locale
                                     languageChangeConfirmationDialog.item.open()
