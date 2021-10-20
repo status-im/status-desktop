@@ -3,14 +3,13 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 
 import utils 1.0
-import "../../../../shared"
-import "../../../../shared/controls"
-import "../../../../shared/popups"
-import "../../../../shared/status"
-import "./"
 
-// TODO: replace with StatusModal
-ModalPopup {
+import StatusQ.Controls 0.1
+import StatusQ.Popups 0.1
+
+import "../../../../shared/controls"
+
+StatusModal {
     function doRename(){
         chatsModel.groups.rename(groupName.text)
         popup.close();
@@ -18,33 +17,40 @@ ModalPopup {
 
     id: popup
     height: 210
+    anchors.centerIn: parent
 
     //% "Group name"
-    title: qsTrId("group-name")
+    header.title: qsTrId("group-name")
 
     onOpened: {
         groupName.forceActiveFocus(Qt.MouseFocusReason)
         groupName.text = chatsModel.channelView.activeChannel.name
     }
 
-    Input {
-        id: groupName
-        anchors.left: parent.left
-        anchors.leftMargin: Style.current.padding
-        anchors.right: parent.right
-        anchors.rightMargin: Style.current.padding
-        //% "Group name"
-        placeholderText: qsTrId("group-name")
-        Keys.onEnterPressed: doRename()
-        Keys.onReturnPressed: doRename()
+    contentItem: Item {
+        width: popup.width 
+        implicitHeight: childrenRect.height
+        Input {
+            id: groupName
+            anchors.left: parent.left
+            anchors.leftMargin: Style.current.padding
+            anchors.right: parent.right
+            anchors.rightMargin: Style.current.padding
+            anchors.top: parent.top
+            anchors.topMargin: Style.current.padding
+            //% "Group name"
+            placeholderText: qsTrId("group-name")
+            Keys.onEnterPressed: doRename()
+            Keys.onReturnPressed: doRename()
+        }
     }
 
-    footer: StatusButton {
-        id: saveBtn
-        anchors.bottom: parent.bottom
-        anchors.right: parent.right
-        //% "Save"
-        text: qsTrId("save")
-        onClicked : doRename()
-    }
+    rightButtons: [
+        StatusButton {
+            id: saveBtn
+            //% "Save"
+            text: qsTrId("save")
+            onClicked : doRename()
+        }
+    ]
 }
