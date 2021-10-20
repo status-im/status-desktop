@@ -32,9 +32,9 @@ StatusModal {
             text: qsTrId("browsing-open-in-status")
             anchors.horizontalCenter: parent.horizontalCenter
             onClicked: {
-                appSettings.showBrowserSelector = !rememberChoiceCheckBox.checked
+                localAccountSensitiveSettings.showBrowserSelector = !rememberChoiceCheckBox.checked
                 if (rememberChoiceCheckBox.checked) {
-                    appSettings.openLinksInStatus = true
+                    localAccountSensitiveSettings.openLinksInStatus = true
                 }
                 changeAppSection(Constants.browser)
                 browserLayoutContainer.item.openUrlInNewTab(popup.link)
@@ -47,9 +47,9 @@ StatusModal {
             text: qsTrId("open-in-my-default-browser")
             anchors.horizontalCenter: parent.horizontalCenter
             onClicked: {
-                appSettings.showBrowserSelector = !rememberChoiceCheckBox.checked
+                localAccountSensitiveSettings.showBrowserSelector = !rememberChoiceCheckBox.checked
                 if (rememberChoiceCheckBox.checked) {
-                    appSettings.openLinksInStatus = false
+                    localAccountSensitiveSettings.openLinksInStatus = false
                 }
                 Qt.openUrlExternally(popup.link)
                 popup.close()

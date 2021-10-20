@@ -37,10 +37,10 @@ Item {
             anchors.leftMargin: 24
             from: 0.0
             to: 1.0
-            value: appSettings.volume
+            value: localAccountSensitiveSettings.volume
             stepSize: 0.1
             onValueChanged: {
-                appSettings.volume = volume.value
+                localAccountSensitiveSettings.volume = volume.value
             }
         }
     }

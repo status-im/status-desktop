@@ -353,7 +353,7 @@ Item {
                     sourceText = sourceText.replace(new RegExp(key, 'g'), value)
                 }
                 sourceText = sourceText.replace(/\n/g, "<br />")
-                sourceText = Utils.getMessageWithStyle(sourceText, appSettings.useCompactMode, isCurrentUser)
+                sourceText = Utils.getMessageWithStyle(sourceText, localAccountSensitiveSettings.useCompactMode, isCurrentUser)
             }
 
             sourceComponent: Item {
@@ -437,7 +437,7 @@ Item {
                 readonly property int leftPadding: chatImage.anchors.leftMargin + chatImage.width + root.chatHorizontalPadding
                 visible: {
                     const urls = root.linkUrls.split(" ")
-                    if (urls.length === 1 && Utils.hasImageExtension(urls[0]) && appSettings.displayChatImages) {
+                    if (urls.length === 1 && Utils.hasImageExtension(urls[0]) && localAccountSensitiveSettings.displayChatImages) {
                         return false
                     }
 

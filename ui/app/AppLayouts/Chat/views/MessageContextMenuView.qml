@@ -332,7 +332,7 @@ StatusPopupMenu {
         //% "Delete message"
         text: qsTrId("delete-message")
         onTriggered: {
-            if (!appSettings.showDeleteMessageWarning) {
+            if (!localAccountSensitiveSettings.showDeleteMessageWarning) {
                 return root.store.chatsModelInst.messageView.deleteMessage(messageId)
             }
 
@@ -345,7 +345,7 @@ StatusPopupMenu {
                                                    "checkbox.visible": true,
                                                    executeConfirm: function () {
                                                        if (confirmationDialog.checkbox.checked) {
-                                                           appSettings.showDeleteMessageWarning = false
+                                                           localAccountSensitiveSettings.showDeleteMessageWarning = false
                                                        }
 
                                                        confirmationDialog.close()

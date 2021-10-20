@@ -8,6 +8,6 @@ Audio {
     
     source: Qt.resolvedUrl("./../assets/audio" + track)
     audioRole: Audio.NotificationRole
-    volume: appSettings.volume
-    muted: !appSettings.notificationSoundsEnabled
+    volume: localAccountSensitiveSettings.volume
+    muted: !localAccountSensitiveSettings.notificationSoundsEnabled
 }
