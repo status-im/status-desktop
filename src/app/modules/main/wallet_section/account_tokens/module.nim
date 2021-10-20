@@ -1,6 +1,6 @@
-import NimQml
+import NimQml, sequtils, sugar
 import eventemitter
-import ./io_interface, ./view, ./controller
+import ./io_interface, ./view, ./controller, ./item
 import ../../../../core/global_singleton
 import ../../../../../app_service/service/wallet_account/service as wallet_account_service
 
@@ -28,10 +28,21 @@ method delete*[T](self: Module[T]) =
   self.view.delete
 
 method load*[T](self: Module[T]) =
+  singletonInstance.engine.setRootContextProperty("walletSectionAccountTokens", newQVariant(self.view))
   self.moduleLoaded = true
 
 method isLoaded*[T](self: Module[T]): bool =
   return self.moduleLoaded
 
 method switchAccount*[T](self: Module[T], accountIndex: int) =
-  discard
+  let walletAccount = self.controller.getWalletAccount(accountIndex)
+  self.view.setItems(
+    walletAccount.tokens.map(t => initItem(
+      t.name,
+      t.symbol,
+      t.balance,
+      t.address,
+      t.currencyBalance,
+      $t.currencyBalance,
+    ))
+  )

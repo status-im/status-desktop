@@ -1,6 +1,6 @@
 import NimQml
 
-import ./model
+import ./model, ./item
 import ./io_interface
 
 QtObject:
@@ -30,3 +30,6 @@ QtObject:
   QtProperty[QVariant] model:
     read = getModel
     notify = modelChanged
+
+  proc setItems*(self: View, items: seq[Item]) =
+    self.model.setItems(items)
