@@ -64,7 +64,7 @@ Popup {
     onOpened: {
         searchBox.text = ""
         searchBox.forceActiveFocus(Qt.MouseFocusReason)
-        if (appSettings.isTenorWarningAccepted) {
+        if (localAccountSensitiveSettings.isTenorWarningAccepted) {
             chatsModel.gif.getTrendings()
         } else {
             confirmationPopup.open()
@@ -94,7 +94,7 @@ Popup {
             SearchBox {
                 id: searchBox
                 placeholderText: qsTr("Search Tenor")
-                enabled: appSettings.isTenorWarningAccepted
+                enabled: localAccountSensitiveSettings.isTenorWarningAccepted
                 anchors.right: parent.right
                 anchors.rightMargin: gifHeader.headerMargin
                 anchors.top: parent.top
@@ -176,7 +176,7 @@ Popup {
                 onClicked: {
                     toggleCategory(StatusGifPopup.Category.Trending)
                 }
-                enabled: appSettings.isTenorWarningAccepted
+                enabled: localAccountSensitiveSettings.isTenorWarningAccepted
             }
 
             StatusTabBarIconButton {
@@ -185,7 +185,7 @@ Popup {
                 onClicked: {
                     toggleCategory(StatusGifPopup.Category.Recent)
                 }
-                enabled: appSettings.isTenorWarningAccepted
+                enabled: localAccountSensitiveSettings.isTenorWarningAccepted
             }
 
             StatusTabBarIconButton {
@@ -194,7 +194,7 @@ Popup {
                 onClicked: {
                     toggleCategory(StatusGifPopup.Category.Favorite)
                 }
-                enabled: appSettings.isTenorWarningAccepted
+                enabled: localAccountSensitiveSettings.isTenorWarningAccepted
             }
         }
     }
@@ -256,7 +256,7 @@ Popup {
                 anchors.horizontalCenter: parent.horizontalCenter
                 text: qsTr("Enable")
                 onClicked: {
-                    appSettings.isTenorWarningAccepted = true
+                    localAccountSensitiveSettings.isTenorWarningAccepted = true
                     chatsModel.gif.getTrendings()
                     confirmationPopup.close()
                 }

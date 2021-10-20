@@ -32,10 +32,10 @@ ModalPopup {
             //% "None"
             title: qsTrId("none")
             buttonGroup: searchEnginGroup
-            checked: appSettings.shouldShowBrowserSearchEngine === Constants.browserSearchEngineNone
+            checked: localAccountSensitiveSettings.shouldShowBrowserSearchEngine === Constants.browserSearchEngineNone
             onCheckedChanged: {
                 if (checked) {
-                    appSettings.shouldShowBrowserSearchEngine = Constants.browserSearchEngineNone
+                    localAccountSensitiveSettings.shouldShowBrowserSearchEngine = Constants.browserSearchEngineNone
                 }
             }
         }
@@ -43,10 +43,10 @@ ModalPopup {
         RadioButtonSelector {
             title: "Google"
             buttonGroup: searchEnginGroup
-            checked: appSettings.shouldShowBrowserSearchEngine === Constants.browserSearchEngineGoogle
+            checked: localAccountSensitiveSettings.shouldShowBrowserSearchEngine === Constants.browserSearchEngineGoogle
             onCheckedChanged: {
                 if (checked) {
-                    appSettings.shouldShowBrowserSearchEngine = Constants.browserSearchEngineGoogle
+                    localAccountSensitiveSettings.shouldShowBrowserSearchEngine = Constants.browserSearchEngineGoogle
                 }
             }
         }
@@ -54,10 +54,10 @@ ModalPopup {
         RadioButtonSelector {
             title: "Yahoo!"
             buttonGroup: searchEnginGroup
-            checked: appSettings.shouldShowBrowserSearchEngine === Constants.browserSearchEngineYahoo
+            checked: localAccountSensitiveSettings.shouldShowBrowserSearchEngine === Constants.browserSearchEngineYahoo
             onCheckedChanged: {
                 if (checked) {
-                    appSettings.shouldShowBrowserSearchEngine = Constants.browserSearchEngineYahoo
+                    localAccountSensitiveSettings.shouldShowBrowserSearchEngine = Constants.browserSearchEngineYahoo
                 }
             }
         }
@@ -65,10 +65,10 @@ ModalPopup {
         RadioButtonSelector {
             title: "DuckDuckGo"
             buttonGroup: searchEnginGroup
-            checked: appSettings.shouldShowBrowserSearchEngine === Constants.browserSearchEngineDuckDuckGo
+            checked: localAccountSensitiveSettings.shouldShowBrowserSearchEngine === Constants.browserSearchEngineDuckDuckGo
             onCheckedChanged: {
                 if (checked) {
-                    appSettings.shouldShowBrowserSearchEngine = Constants.browserSearchEngineDuckDuckGo
+                    localAccountSensitiveSettings.shouldShowBrowserSearchEngine = Constants.browserSearchEngineDuckDuckGo
                 }
             }
         }

@@ -71,9 +71,9 @@ Rectangle {
         TransferOwnershipPopup {
             anchors.centerIn: parent
             onClosed: {
-                let hiddenBannerIds = appSettings.hiddenCommunityBackUpBanners
+                let hiddenBannerIds = localAccountSensitiveSettings.hiddenCommunityBackUpBanners
                 hiddenBannerIds.push(chatsModel.communities.activeCommunity.id)
-                appSettings.hiddenCommunityBackUpBanners = hiddenBannerIds
+                localAccountSensitiveSettings.hiddenCommunityBackUpBanners = hiddenBannerIds
                 destroy()
             }
         }

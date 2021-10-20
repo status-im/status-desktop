@@ -34,10 +34,10 @@ ModalPopup {
         RadioButtonSelector {
             title: "Status"
             buttonGroup: openLinksWithGroup
-            checked: appSettings.openLinksInStatus
+            checked: localAccountSensitiveSettings.openLinksInStatus
             onCheckedChanged: {
                 if (checked) {
-                    appSettings.openLinksInStatus = true
+                    localAccountSensitiveSettings.openLinksInStatus = true
                 }
             }
         }
@@ -45,10 +45,10 @@ ModalPopup {
             //% "My default browser"
             title: qsTrId("my-default-browser")
             buttonGroup: openLinksWithGroup
-            checked: !appSettings.openLinksInStatus
+            checked: !localAccountSensitiveSettings.openLinksInStatus
             onCheckedChanged: {
                 if (checked) {
-                    appSettings.openLinksInStatus = false
+                    localAccountSensitiveSettings.openLinksInStatus = false
                 }
             }
         }

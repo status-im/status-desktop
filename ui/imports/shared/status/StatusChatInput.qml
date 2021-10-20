@@ -1112,7 +1112,7 @@ Rectangle {
                 anchors.right: emojiBtn.left
                 anchors.rightMargin: 2
                 anchors.bottom: parent.bottom
-                visible: !isEdit && appSettings.isGifWidgetEnabled
+                visible: !isEdit && localAccountSensitiveSettings.isGifWidgetEnabled
                 icon.name: "gif"
                 type: StatusQ.StatusFlatRoundButton.Type.Tertiary
                 color: "transparent"

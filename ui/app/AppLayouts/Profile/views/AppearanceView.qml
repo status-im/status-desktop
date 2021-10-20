@@ -130,9 +130,9 @@ ScrollView {
             from: 0
             to: 5
             stepSize: 1
-            value: appSettings.fontSize
+            value: localAccountSensitiveSettings.fontSize
             onValueChanged: {
-                appSettings.fontSize = value
+                localAccountSensitiveSettings.fontSize = value
                 root.updateFontSize(value)
             }
         }

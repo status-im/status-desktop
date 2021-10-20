@@ -35,10 +35,10 @@ ModalPopup {
             //% "Default"
             title: qsTrId("default")
             buttonGroup: homepageGroup
-            checked: appSettings.browserHomepage === ""
+            checked: localAccountSensitiveSettings.browserHomepage === ""
             onCheckedChanged: {
                 if (checked) {
-                    appSettings.browserHomepage = ""
+                    localAccountSensitiveSettings.browserHomepage = ""
                     customUrl.visible = false
                 }
             }
@@ -48,7 +48,7 @@ ModalPopup {
             //% "Custom..."
             title: qsTrId("custom---")
             buttonGroup: homepageGroup
-            checked: appSettings.browserHomepage !== "" || customUrl.visible
+            checked: localAccountSensitiveSettings.browserHomepage !== "" || customUrl.visible
             onCheckedChanged: {
                 if (checked) {
                     customUrl.visible = true
@@ -58,13 +58,13 @@ ModalPopup {
 
         Input {
             id: customUrl
-            visible: appSettings.browserHomepage !== ""
+            visible: localAccountSensitiveSettings.browserHomepage !== ""
             //% "Paste URL"
             placeholderText: qsTrId("paste-url")
-            text: appSettings.browserHomepage
+            text: localAccountSensitiveSettings.browserHomepage
             pasteFromClipboard: true
             textField.onTextChanged: {
-                appSettings.browserHomepage = customUrl.text
+                localAccountSensitiveSettings.browserHomepage = customUrl.text
             }
             anchors.leftMargin: 0
             anchors.rightMargin: 0

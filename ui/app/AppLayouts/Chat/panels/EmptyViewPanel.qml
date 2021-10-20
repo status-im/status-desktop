@@ -64,8 +64,9 @@ Rectangle {
             icon.width: 20
             icon.name: "close-circle"
             type: StatusQControls.StatusFlatRoundButton.Type.Tertiary
-            onClicked: appSettings.hideChannelSuggestions = true
-
+            onClicked: {
+                localAccountSensitiveSettings.hideChannelSuggestions = true
+            }
         }
 
         StatusBaseText {

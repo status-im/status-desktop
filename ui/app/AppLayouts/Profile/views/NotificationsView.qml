@@ -66,10 +66,10 @@ ScrollView {
                 //% "All messages"
                 title: qsTrId("all-messages")
                 buttonGroup: notificationSetting
-                checked: appSettings.notificationSetting === Constants.notifyAllMessages
+                checked: localAccountSensitiveSettings.notificationSetting === Constants.notifyAllMessages
                 onCheckedChanged: {
                     if (checked) {
-                        appSettings.notificationSetting = Constants.notifyAllMessages
+                        localAccountSensitiveSettings.notificationSetting = Constants.notifyAllMessages
                     }
                 }
             }
@@ -78,10 +78,10 @@ ScrollView {
                 //% "Just @mentions"
                 title: qsTrId("just--mentions")
                 buttonGroup: notificationSetting
-                checked:  appSettings.notificationSetting === Constants.notifyJustMentions
+                checked:  localAccountSensitiveSettings.notificationSetting === Constants.notifyJustMentions
                 onCheckedChanged: {
                     if (checked) {
-                        appSettings.notificationSetting = Constants.notifyJustMentions
+                        localAccountSensitiveSettings.notificationSetting = Constants.notifyJustMentions
                     }
                 }
             }
@@ -90,10 +90,10 @@ ScrollView {
                 //% "Nothing"
                 title: qsTrId("nothing")
                 buttonGroup: notificationSetting
-                checked:  appSettings.notificationSetting === Constants.notifyNone
+                checked:  localAccountSensitiveSettings.notificationSetting === Constants.notifyNone
                 onCheckedChanged: {
                     if (checked) {
-                        appSettings.notificationSetting = Constants.notifyNone
+                        localAccountSensitiveSettings.notificationSetting = Constants.notifyNone
                     }
                 }
             }
@@ -131,9 +131,9 @@ ScrollView {
                 //% "Play a sound when receiving a notification"
                 text: qsTrId("play-a-sound-when-receiving-a-notification")
                 isSwitch: true
-                switchChecked: appSettings.notificationSoundsEnabled
+                switchChecked: localAccountSensitiveSettings.notificationSoundsEnabled
                 onClicked: {
-                    appSettings.notificationSoundsEnabled = checked
+                    localAccountSensitiveSettings.notificationSoundsEnabled = checked
                 }
             }
 
@@ -142,9 +142,9 @@ ScrollView {
                 //% "Use your operating system's notifications"
                 text: qsTrId("use-your-operating-system-s-notifications")
                 isSwitch: true
-                switchChecked: appSettings.useOSNotifications
+                switchChecked: localAccountSensitiveSettings.useOSNotifications
                 onClicked: {
-                    appSettings.useOSNotifications = checked
+                    localAccountSensitiveSettings.useOSNotifications = checked
                 }
 
                 StatusBaseText {
@@ -192,10 +192,10 @@ ScrollView {
                     //% "You have a new message"
                     notificationMessage: qsTrId("you-have-a-new-message")
                     buttonGroup: messageSetting
-                    checked: appSettings.notificationMessagePreviewSetting === Constants.notificationPreviewAnonymous
+                    checked: localAccountSensitiveSettings.notificationMessagePreviewSetting === Constants.notificationPreviewAnonymous
                     onRadioCheckedChanged: {
                         if (checked) {
-                            appSettings.notificationMessagePreviewSetting = Constants.notificationPreviewAnonymous
+                            localAccountSensitiveSettings.notificationMessagePreviewSetting = Constants.notificationPreviewAnonymous
                         }
                     }
                 }
@@ -207,10 +207,10 @@ ScrollView {
                     //% "You have a new message"
                     notificationMessage: qsTrId("you-have-a-new-message")
                     buttonGroup: messageSetting
-                    checked: appSettings.notificationMessagePreviewSetting === Constants.notificationPreviewNameOnly
+                    checked: localAccountSensitiveSettings.notificationMessagePreviewSetting === Constants.notificationPreviewNameOnly
                     onRadioCheckedChanged: {
                         if (checked) {
-                            appSettings.notificationMessagePreviewSetting = Constants.notificationPreviewNameOnly
+                            localAccountSensitiveSettings.notificationMessagePreviewSetting = Constants.notificationPreviewNameOnly
                         }
                     }
                 }
@@ -222,10 +222,10 @@ ScrollView {
                     //% "Hi there! Yes, no problem, let me know if I can help."
                     notificationMessage: qsTrId("hi-there--yes--no-problem--let-me-know-if-i-can-help-")
                     buttonGroup: messageSetting
-                    checked: appSettings.notificationMessagePreviewSetting === Constants.notificationPreviewNameAndMessage
+                    checked: localAccountSensitiveSettings.notificationMessagePreviewSetting === Constants.notificationPreviewNameAndMessage
                     onRadioCheckedChanged: {
                         if (checked) {
-                            appSettings.notificationMessagePreviewSetting = Constants.notificationPreviewNameAndMessage
+                            localAccountSensitiveSettings.notificationMessagePreviewSetting = Constants.notificationPreviewNameAndMessage
                         }
                     }
                 }
@@ -271,9 +271,9 @@ ScrollView {
                 //% "Notify on new requests"
                 text: qsTrId("notify-on-new-requests")
                 isSwitch: true
-                switchChecked: appSettings.notifyOnNewRequests
+                switchChecked: localAccountSensitiveSettings.notifyOnNewRequests
                 onClicked: {
-                    appSettings.notifyOnNewRequests = checked
+                    localAccountSensitiveSettings.notifyOnNewRequests = checked
                 }
             }
 
@@ -364,10 +364,10 @@ ScrollView {
                         parent.font.underline = false
                     }
                     onClicked: {
-                        appSettings.notificationSetting = Constants.notifyAllMessages
-                        appSettings.notificationSoundsEnabled = true
-                        appSettings.notificationMessagePreviewSetting = Constants.notificationPreviewNameAndMessage
-                        appSettings.allowNotificationsFromNonContacts = false
+                        localAccountSensitiveSettings.notificationSetting = Constants.notifyAllMessages
+                        localAccountSensitiveSettings.notificationSoundsEnabled = true
+                        localAccountSensitiveSettings.notificationMessagePreviewSetting = Constants.notificationPreviewNameAndMessage
+                        localAccountSensitiveSettings.allowNotificationsFromNonContacts = false
                     }
                 }
             }

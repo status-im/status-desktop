@@ -198,16 +198,16 @@ Item {
                     }
                 }
 
-                membersButton.visible: (appSettings.showOnlineUsers || root.rootStore.chatsModelInst.communities.activeCommunity.active)
+                membersButton.visible: (localAccountSensitiveSettings.showOnlineUsers || root.rootStore.chatsModelInst.communities.activeCommunity.active)
                                        && root.rootStore.chatsModelInst.channelView.activeChannel.chatType !== Constants.chatTypeOneToOne
-                membersButton.highlighted: appSettings.expandUsersList
-                notificationButton.visible: appSettings.isActivityCenterEnabled
-                notificationButton.tooltip.offset: appSettings.expandUsersList ? 0 : 14
+                membersButton.highlighted: localAccountSensitiveSettings.expandUsersList
+                notificationButton.visible: localAccountSensitiveSettings.isActivityCenterEnabled
+                notificationButton.tooltip.offset: localAccountSensitiveSettings.expandUsersList ? 0 : 14
                 notificationCount: root.rootStore.chatsModelInst.activityNotificationList.unreadCount
 
                 onSearchButtonClicked: searchPopup.open()
 
-                onMembersButtonClicked: appSettings.expandUsersList = !appSettings.expandUsersList
+                onMembersButtonClicked: localAccountSensitiveSettings.expandUsersList = !localAccountSensitiveSettings.expandUsersList
                 onNotificationButtonClicked: activityCenter.open()
 
                 popupMenu: ChatContextMenuView {
@@ -575,8 +575,8 @@ Item {
             }
 
             onMessageNotificationPushed: function(messageId, communityId, chatId, msg, contentType, chatType, timestamp, identicon, username, hasMention, isAddedContact, channelName) {
-                if (appSettings.notificationSetting == Constants.notifyAllMessages ||
-                        (appSettings.notificationSetting == Constants.notifyJustMentions && hasMention)) {
+                if (localAccountSensitiveSettings.notificationSetting == Constants.notifyAllMessages ||
+                        (localAccountSensitiveSettings.notificationSetting == Constants.notifyJustMentions && hasMention)) {
                     if (chatId === root.rootStore.chatsModelInst.channelView.activeChannel.id && applicationWindow.active === true) {
                         // Do not show the notif if we are in the channel already and the window is active and focused
                         return
@@ -586,7 +586,7 @@ Item {
                     root.currentNotificationCommunityId = null
 
                     let name;
-                    if (appSettings.notificationMessagePreviewSetting === Constants.notificationPreviewAnonymous) {
+                    if (localAccountSensitiveSettings.notificationMessagePreviewSetting === Constants.notificationPreviewAnonymous) {
                         name = "Status"
                     } else if (chatType === Constants.chatTypePublic) {
                         name = chatId
@@ -595,7 +595,7 @@ Item {
                     }
 
                     let message;
-                    if (appSettings.notificationMessagePreviewSetting > Constants.notificationPreviewNameOnly) {
+                    if (localAccountSensitiveSettings.notificationMessagePreviewSetting > Constants.notificationPreviewNameOnly) {
                         switch(contentType){
                             //% "Image"
                         case Constants.imageType: message = qsTrId("image"); break
@@ -619,7 +619,7 @@ Item {
                                                   communityId,
                                                   chatId,
                                                   messageId,
-                                                  appSettings.useOSNotifications)
+                                                  localAccountSensitiveSettings.useOSNotifications)
                 }
             }
         }
