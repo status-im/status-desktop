@@ -161,9 +161,11 @@ StatusWindow {
     }
 
     Connections {
-        target: mainModule
-        onOpenStoreToKeychainPopup: {
-            storeToKeychainConfirmationPopup.open()
+        target: startupModule
+        onAppStateChanged: {
+            mainModule.openStoreToKeychainPopup.connect(function(){
+                storeToKeychainConfirmationPopup.open()
+            })
         }
     }
 
