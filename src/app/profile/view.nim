@@ -17,7 +17,6 @@ import status/notifications/[os_notifications]
 import ../chat/views/channels_list
 import ../../constants
 import ../../app_service/[main]
-import ../../app_service/service/local_settings/service as local_settings_service
 import ../utils/image_utils
 import ../../constants
 
@@ -38,7 +37,6 @@ QtObject:
     network*: NetworkView
     status*: Status
     appService: AppService
-    localSettingsService: local_settings_service.Service
     changeLanguage*: proc(locale: string)
     ens*: EnsManager
 
@@ -60,7 +58,6 @@ QtObject:
     self.QObject.delete
 
   proc newProfileView*(status: Status, appService: AppService, 
-    localSettingsService: local_settings_service.Service,
     changeLanguage: proc(locale: string)): ProfileView =
     new(result, delete)
     result = ProfileView()
@@ -78,7 +75,6 @@ QtObject:
     result.changeLanguage = changeLanguage
     result.status = status
     result.appService = appService
-    result.localSettingsService = localSettingsService
     result.setup
 
   proc initialized*(self: ProfileView) {.signal.}
@@ -192,30 +188,11 @@ QtObject:
   QtProperty[QVariant] picture:
     read = getProfilePicture
 
-  proc getGlobalSettingsFile*(self: ProfileView): string {.slot.} =
-    self.localSettingsService.getGlobalSettingsFilePath
-
-  QtProperty[string] globalSettingsFile:
-    read = getGlobalSettingsFile
-
   proc getMutedChats*(self: ProfileView): QVariant {.slot.} =
     newQVariant(self.mutedChats)
 
   QtProperty[QVariant] mutedChats:
     read = getMutedChats
-
-  proc settingsFileChanged*(self: ProfileView) {.signal.}
-  
-  proc getSettingsFile*(self: ProfileView): string {.slot.} =
-    self.localSettingsService.getSettingsFilePath
-  
-  proc setSettingsFile*(self: ProfileView, pubKey: string) =
-    self.localSettingsService.updateSettingsFilePath(pubKey)
-    self.settingsFileChanged()
-
-  QtProperty[string] settingsFile:
-    read = getSettingsFile
-    notify = settingsFileChanged
 
   proc setSendUserStatus*(self: ProfileView, sendUserStatus: bool) {.slot.} =
     if (sendUserStatus == self.profile.sendUserStatus):
