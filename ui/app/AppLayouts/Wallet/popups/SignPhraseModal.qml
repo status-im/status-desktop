@@ -3,10 +3,11 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 
 import utils 1.0
-import "../../../../shared"
+
+import StatusQ.Controls 0.1
+
 import "../../../../shared/popups"
 import "../../../../shared/panels"
-import "../../../../shared/status"
 import "../stores"
 
 // TODO: replace with StatusModal
@@ -91,12 +92,11 @@ ModalPopup {
         width: parent.width
         height: btnRemindLater.height
         
-        StatusButton {
+        StatusFlatButton {
             anchors.right: btnRemindLater.left
             anchors.rightMargin: Style.current.padding
             //% "Ok, got it"
             text: qsTrId("ens-got-it")
-            type: "secondary"
             onClicked: {
                 acceptClicked()
                 close()
