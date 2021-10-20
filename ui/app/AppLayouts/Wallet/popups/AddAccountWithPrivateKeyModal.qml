@@ -4,7 +4,8 @@ import QtQuick.Dialogs 1.3
 
 import utils 1.0
 
-import "../../../../shared"
+import StatusQ.Controls 0.1 as StatusQControls
+
 import "../../../../shared/controls"
 import "../../../../shared/popups"
 import "../../../../shared/panels"
@@ -110,7 +111,7 @@ ModalPopup {
         anchors.right: parent.right
     }
 
-    footer: StatusButton {
+    footer: StatusQControls.StatusButton {
         anchors.top: parent.top
         anchors.right: parent.right
         text: loading ?
