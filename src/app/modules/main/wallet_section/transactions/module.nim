@@ -2,6 +2,7 @@ import eventemitter
 
 import ./io_interface, ./view, ./controller
 import ../../../../../app_service/service/transaction/service as transaction_service
+import ../../../../../app_service/service/wallet_account/service as wallet_account_service
 
 export io_interface
 
@@ -15,12 +16,13 @@ type
 proc newModule*[T](
   delegate: T,
   events: EventEmitter,
-  transactionService: transaction_service.ServiceInterface
+  transactionService: transaction_service.ServiceInterface,
+  walletAccountService: wallet_account_service.ServiceInterface
 ): Module[T] =
   result = Module[T]()
   result.delegate = delegate
   result.view = newView(result)
-  result.controller = controller.newController[Module[T]](result, transactionService)
+  result.controller = controller.newController[Module[T]](result, transactionService, walletAccountService)
   result.moduleLoaded = false
 
 method delete*[T](self: Module[T]) =
@@ -34,3 +36,6 @@ method load*[T](self: Module[T]) =
 
 method isLoaded*[T](self: Module[T]): bool =
   return self.moduleLoaded
+
+method switchAccount*[T](self: Module[T], accountIndex: int) =
+  discard
