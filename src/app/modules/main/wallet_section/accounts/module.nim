@@ -1,7 +1,8 @@
-import sequtils, sugar
+import NimQml, sequtils, sugar
 import eventemitter
 
 import ./io_interface, ./view, ./item, ./controller
+import ../../../../core/global_singleton
 import ../../../../../app_service/service/wallet_account/service as wallet_account_service
 
 export io_interface
@@ -29,6 +30,8 @@ method delete*[T](self: Module[T]) =
   self.controller.delete
 
 method load*[T](self: Module[T]) =
+  singletonInstance.engine.setRootContextProperty("walletSectionAccounts", newQVariant(self.view))
+
   let walletAccounts = self.controller.getWalletAccounts()
 
   self.view.setItems(
