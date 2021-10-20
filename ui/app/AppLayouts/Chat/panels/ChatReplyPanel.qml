@@ -42,7 +42,7 @@ Loader {
             property alias authorMetrics: txtAuthorMetrics
             property var messageEdited: function(id, content) {
                 if (responseTo === id){
-                    lblReplyMessage.text = Utils.getReplyMessageStyle(Emoji.parse(Utils.linkifyAndXSS(content + Constants.editLabel), Emoji.size.small), isCurrentUser, appSettings.useCompactMode)
+                    lblReplyMessage.text = Utils.getReplyMessageStyle(Emoji.parse(Utils.linkifyAndXSS(content + Constants.editLabel), Emoji.size.small), isCurrentUser, localAccountSensitiveSettings.useCompactMode)
                 }
             }
 
@@ -172,9 +172,9 @@ Loader {
                 text: {
                     if (repliedMessageIsEdited){
                         let index = repliedMessageContent.length - 4
-                        return Utils.getReplyMessageStyle(Emoji.parse(Utils.linkifyAndXSS(repliedMessageContent.slice(0, index) + Constants.editLabel + repliedMessageContent.slice(index)), Emoji.size.small), isCurrentUser, appSettings.useCompactMode)
+                        return Utils.getReplyMessageStyle(Emoji.parse(Utils.linkifyAndXSS(repliedMessageContent.slice(0, index) + Constants.editLabel + repliedMessageContent.slice(index)), Emoji.size.small), isCurrentUser, localAccountSensitiveSettings.useCompactMode)
                     } else {
-                        return Utils.getReplyMessageStyle(Emoji.parse(Utils.linkifyAndXSS(repliedMessageContent), Emoji.size.small), isCurrentUser, appSettings.useCompactMode)
+                        return Utils.getReplyMessageStyle(Emoji.parse(Utils.linkifyAndXSS(repliedMessageContent), Emoji.size.small), isCurrentUser, localAccountSensitiveSettings.useCompactMode)
                     }
                 }
                 textFormat: Text.RichText

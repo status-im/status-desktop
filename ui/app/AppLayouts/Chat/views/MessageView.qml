@@ -243,7 +243,7 @@ Column {
                     return gapComponent
                 default:
                     return isStatusUpdate ? statusUpdateComponent :
-                                            (appSettings.useCompactMode ? compactMessageComponent : messageComponent)
+                                            (localAccountSensitiveSettings.useCompactMode ? compactMessageComponent : messageComponent)
 
             }
         }

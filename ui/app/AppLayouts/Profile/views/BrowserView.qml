@@ -52,7 +52,7 @@ Item {
                 //% "Homepage"
                 text: qsTrId("homepage")
                 //% "Default"
-                currentValue: appSettings.browserHomepage === "" ? qsTrId("default") : appSettings.browserHomepage
+                currentValue: localAccountSensitiveSettings.browserHomepage === "" ? qsTrId("default") : localAccountSensitiveSettings.browserHomepage
                 onClicked: homePagePopup.createObject(root).open()
             }
 
@@ -61,9 +61,9 @@ Item {
                 //% "Show favorites bar"
                 text: qsTrId("show-favorites-bar")
                 isSwitch: true
-                switchChecked: appSettings.shouldShowFavoritesBar
+                switchChecked: localAccountSensitiveSettings.shouldShowFavoritesBar
                 onClicked: function (checked) {
-                    appSettings.shouldShowFavoritesBar = checked
+                    localAccountSensitiveSettings.shouldShowFavoritesBar = checked
                 }
             }
 
@@ -72,7 +72,7 @@ Item {
                 //% "Search engine used in the address bar"
                 text: qsTrId("search-engine-used-in-the-address-bar")
                 currentValue: {
-                    switch (appSettings.shouldShowBrowserSearchEngine) {
+                    switch (localAccountSensitiveSettings.shouldShowBrowserSearchEngine) {
                     case Constants.browserSearchEngineGoogle: return "Google"
                     case Constants.browserSearchEngineYahoo: return "Yahoo!"
                     case Constants.browserSearchEngineDuckDuckGo: return "DuckDuckGo"
@@ -90,7 +90,7 @@ Item {
                 //% "Ethereum explorer used in the address bar"
                 text: qsTrId("ethereum-explorer-used-in-the-address-bar")
                 currentValue: {
-                    switch (appSettings.useBrowserEthereumExplorer) {
+                    switch (localAccountSensitiveSettings.useBrowserEthereumExplorer) {
                     case Constants.browserEthereumExplorerEtherscan: return "etherscan.io"
                     case Constants.browserEthereumExplorerEthplorer: return "ethplorer.io"
                     case Constants.browserEthereumExplorerBlockchair: return "blockchair.com"

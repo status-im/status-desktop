@@ -57,9 +57,9 @@ ScrollView {
                 //% "Minimize on close"
                 text: qsTrId("minimize-on-close")
                 isSwitch: true
-                switchChecked: !appSettings.quitOnClose
+                switchChecked: !localAccountSensitiveSettings.quitOnClose
                 onClicked: function (checked) {
-                    appSettings.quitOnClose = !checked
+                    localAccountSensitiveSettings.quitOnClose = !checked
                 }
             }
 
@@ -109,13 +109,13 @@ ScrollView {
                 //% "Wallet"
                 text: qsTrId("wallet")
                 isSwitch: true
-                switchChecked: appSettings.isWalletEnabled
+                switchChecked: localAccountSensitiveSettings.isWalletEnabled
                 onClicked: {
-                    if (!appSettings.isWalletEnabled) {
+                    if (!localAccountSensitiveSettings.isWalletEnabled) {
                         confirmationPopup.settingsProp = "isWalletEnabled"
                         confirmationPopup.open()
                     } else {
-                        appSettings.isWalletEnabled = false
+                        localAccountSensitiveSettings.isWalletEnabled = false
                     }
                 }
             }
@@ -124,13 +124,13 @@ ScrollView {
             StatusSettingsLineButton {
                 text: qsTr("Wallet v2 - do not use, under active development")
                 isSwitch: true
-                switchChecked: appSettings.isWalletV2Enabled
+                switchChecked: localAccountSensitiveSettings.isWalletV2Enabled
                 onClicked: {
-                    if (!appSettings.isWalletV2Enabled) {
+                    if (!localAccountSensitiveSettings.isWalletV2Enabled) {
                         confirmationPopup.settingsProp = "isWalletV2Enabled"
                         confirmationPopup.open()
                     } else {
-                        appSettings.isWalletV2Enabled = false
+                        localAccountSensitiveSettings.isWalletV2Enabled = false
                     }
                 }
             }
@@ -140,13 +140,13 @@ ScrollView {
                 //% "Dapp Browser"
                 text: qsTrId("dapp-browser")
                 isSwitch: true
-                switchChecked: appSettings.isBrowserEnabled
+                switchChecked: localAccountSensitiveSettings.isBrowserEnabled
                 onClicked: {
-                    if (!appSettings.isBrowserEnabled) {
+                    if (!localAccountSensitiveSettings.isBrowserEnabled) {
                         confirmationPopup.settingsProp = "isBrowserEnabled"
                         confirmationPopup.open()
                     } else {
-                        appSettings.isBrowserEnabled = false
+                        localAccountSensitiveSettings.isBrowserEnabled = false
                     }
                 }
             }
@@ -156,13 +156,13 @@ ScrollView {
                 //% "Communities"
                 text: qsTrId("communities")
                 isSwitch: true
-                switchChecked: appSettings.communitiesEnabled
+                switchChecked: localAccountSensitiveSettings.communitiesEnabled
                 onClicked: {
-                    if (!appSettings.communitiesEnabled) {
+                    if (!localAccountSensitiveSettings.communitiesEnabled) {
                         confirmationPopup.settingsProp = "communitiesEnabled"
                         confirmationPopup.open()
                     } else {
-                        appSettings.communitiesEnabled = false
+                        localAccountSensitiveSettings.communitiesEnabled = false
                     }
                 }
             }
@@ -172,13 +172,13 @@ ScrollView {
                 //% "Activity Center"
                 text: qsTrId("activity-center")
                 isSwitch: true
-                switchChecked: appSettings.isActivityCenterEnabled
+                switchChecked: localAccountSensitiveSettings.isActivityCenterEnabled
                 onClicked: {
-                    if (!appSettings.isActivityCenterEnabled) {
+                    if (!localAccountSensitiveSettings.isActivityCenterEnabled) {
                         confirmationPopup.settingsProp = "isActivityCenterEnabled"
                         confirmationPopup.open()
                     } else {
-                        appSettings.isActivityCenterEnabled = false
+                        localAccountSensitiveSettings.isActivityCenterEnabled = false
                     }
                 }
             }
@@ -188,13 +188,13 @@ ScrollView {
                 //% "Node Management"
                 text: qsTrId("node-management")
                 isSwitch: true
-                switchChecked: appSettings.nodeManagementEnabled
+                switchChecked: localAccountSensitiveSettings.nodeManagementEnabled
                 onClicked: {
-                    if (!appSettings.nodeManagementEnabled) {
+                    if (!localAccountSensitiveSettings.nodeManagementEnabled) {
                         confirmationPopup.settingsProp = "nodeManagementEnabled"
                         confirmationPopup.open()
                     } else {
-                        appSettings.nodeManagementEnabled = false
+                        localAccountSensitiveSettings.nodeManagementEnabled = false
                     }
                 }
             }
@@ -205,9 +205,9 @@ ScrollView {
                 //% "Online users"
                 text: qsTrId("online-users")
                 isSwitch: true
-                switchChecked: appSettings.showOnlineUsers
+                switchChecked: localAccountSensitiveSettings.showOnlineUsers
                 onClicked: {
-                    appSettings.showOnlineUsers = !appSettings.showOnlineUsers
+                    localAccountSensitiveSettings.showOnlineUsers = !localAccountSensitiveSettings.showOnlineUsers
                 }
             }
 
@@ -216,9 +216,9 @@ ScrollView {
                 //% "GIF Widget"
                 text: qsTrId("gif-widget")
                 isSwitch: true
-                switchChecked: appSettings.isGifWidgetEnabled
+                switchChecked: localAccountSensitiveSettings.isGifWidgetEnabled
                 onClicked: {
-                    appSettings.isGifWidgetEnabled = !appSettings.isGifWidgetEnabled
+                    localAccountSensitiveSettings.isGifWidgetEnabled = !localAccountSensitiveSettings.isGifWidgetEnabled
                 }
             }
 
@@ -227,9 +227,9 @@ ScrollView {
                 //% "Keycard"
                 text: qsTr("Keycard")
                 isSwitch: true
-                switchChecked: appSettings.isKeycardEnabled
+                switchChecked: localAccountSensitiveSettings.isKeycardEnabled
                 onClicked: {
-                    appSettings.isKeycardEnabled = !appSettings.isKeycardEnabled
+                    localAccountSensitiveSettings.isKeycardEnabled = !localAccountSensitiveSettings.isKeycardEnabled
                 }
             }
 
@@ -390,9 +390,9 @@ ScrollView {
             StatusSettingsLineButton {
                 text: qsTr("Download messages")
                 isSwitch: true
-                switchChecked: appSettings.downloadChannelMessagesEnabled
+                switchChecked: localAccountSensitiveSettings.downloadChannelMessagesEnabled
                 onClicked: {
-                    appSettings.downloadChannelMessagesEnabled = !appSettings.downloadChannelMessagesEnabled
+                    localAccountSensitiveSettings.downloadChannelMessagesEnabled = !localAccountSensitiveSettings.downloadChannelMessagesEnabled
                 }
             }
 
@@ -401,9 +401,9 @@ ScrollView {
                 text: qsTr("Stickers/ENS on ropsten")
                 visible: root.store.currentNetwork === Constants.networkRopsten
                 isSwitch: true
-                switchChecked: appSettings.stickersEnsRopsten
+                switchChecked: localAccountSensitiveSettings.stickersEnsRopsten
                 onClicked: {
-                    appSettings.stickersEnsRopsten = !appSettings.stickersEnsRopsten
+                    localAccountSensitiveSettings.stickersEnsRopsten = !localAccountSensitiveSettings.stickersEnsRopsten
                 }
             }
         }
@@ -426,7 +426,7 @@ ScrollView {
             //% "I understand"
             confirmButtonLabel: qsTrId("i-understand")
             onConfirmButtonClicked: {
-                appSettings[settingsProp] = true
+                localAccountSensitiveSettings[settingsProp] = true
                 settingsProp = ""
                 close()
             }

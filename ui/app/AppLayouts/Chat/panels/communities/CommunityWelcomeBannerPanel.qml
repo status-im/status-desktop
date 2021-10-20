@@ -55,9 +55,9 @@ Rectangle {
         icon.name: "close-circle"
         type: StatusQControls.StatusFlatRoundButton.Type.Tertiary
         onClicked: {
-            let hiddenBannerIds = appSettings.hiddenCommunityWelcomeBanners
+            let hiddenBannerIds = localAccountSensitiveSettings.hiddenCommunityWelcomeBanners
             hiddenBannerIds.push(root.activeCommunity.id)
-            appSettings.hiddenCommunityWelcomeBanners = hiddenBannerIds
+            localAccountSensitiveSettings.hiddenCommunityWelcomeBanners = hiddenBannerIds
             root.visible = false
         }
     }

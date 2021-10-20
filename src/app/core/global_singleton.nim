@@ -1,8 +1,10 @@
 import NimQml
 
-import local_account_settings as local_acc_settings
+import local_account_settings
+import local_account_sensitive_settings
 
-export local_acc_settings
+export local_account_settings
+export local_account_sensitive_settings
 
 type 
   GlobalSingleton = object 
@@ -25,6 +27,14 @@ proc localAccountSettings*(self: GlobalSingleton): LocalAccountSettings =
 
   return localAccountSettings
 
+proc localAccountSensitiveSettings*(self: GlobalSingleton): LocalAccountSensitiveSettings =
+  var localAccountSensitiveSettings {.global.}: LocalAccountSensitiveSettings
+  if (localAccountSensitiveSettings.isNil):
+    localAccountSensitiveSettings = newLocalAccountSensitiveSettings()
+
+  return localAccountSensitiveSettings
+
 proc delete*(self: GlobalSingleton) =
   self.engine.delete()
   self.localAccountSettings.delete()
+  self.localAccountSensitiveSettings.delete()

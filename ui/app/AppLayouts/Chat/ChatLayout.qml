@@ -161,7 +161,7 @@ StatusAppThreePanelLayout {
 
     leftPanel: Loader {
         id: contactColumnLoader
-        sourceComponent: appSettings.communitiesEnabled && root.rootStore.chatsModelInst.communities.activeCommunity.active ? communtiyColumnComponent : contactsColumnComponent
+        sourceComponent: localAccountSensitiveSettings.communitiesEnabled && root.rootStore.chatsModelInst.communities.activeCommunity.active ? communtiyColumnComponent : contactsColumnComponent
     }
 
     centerPanel: ChatColumn {
@@ -169,9 +169,9 @@ StatusAppThreePanelLayout {
         chatGroupsListViewCount: contactColumnLoader.item.chatGroupsListViewCount
     }
 
-    showRightPanel: (appSettings.expandUsersList && (appSettings.showOnlineUsers || chatsModel.communities.activeCommunity.active)
+    showRightPanel: (localAccountSensitiveSettings.expandUsersList && (localAccountSensitiveSettings.showOnlineUsers || chatsModel.communities.activeCommunity.active)
                     && (chatsModel.channelView.activeChannel.chatType !== Constants.chatTypeOneToOne))
-    rightPanel: appSettings.communitiesEnabled && chatsModel.communities.activeCommunity.active ? communityUserListComponent : userListComponent
+    rightPanel: localAccountSensitiveSettings.communitiesEnabled && chatsModel.communities.activeCommunity.active ? communityUserListComponent : userListComponent
 
     Component {
         id: communityUserListComponent

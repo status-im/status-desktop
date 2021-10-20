@@ -23,18 +23,15 @@ import ../modules/main/module as main_module
 
 import ../core/global_singleton
 
+#################################################
 # This will be removed later once we move to c++ and handle there async things
 # and improved some services, like EventsService which should implement 
-# provider/subscriber principe:
+# provider/subscriber principe, similar we should have SettingsService.
 import ../../app_service/[main]
 import eventemitter
-import status/[fleet]
-
-#################################################
-# At the end of refactoring this will be moved to 
-# appropriate place or removed:
+import status/[fleet, settings]
 import ../profile/core as profile
-import status/types/[account]
+import status/types/[account, setting]
 #################################################
 
 
@@ -73,14 +70,15 @@ type
     walletAccountService: wallet_account_service.Service
     settingService: setting_service.Service
     bookmarkService: bookmark_service.Service
-
-    # Core
-    localAccountSettings: LocalAccountSettings
-    localAccountSettingsVariant: QVariant
     profileService: profile_service.Service
     settingsService: settings_service.Service
     contactsService: contacts_service.Service
     aboutService: about_service.Service
+
+    # Core
+    localAccountSettingsVariant: QVariant
+    localAccountSensitiveSettingsVariant: QVariant
+
     # Modules
     startupModule: startup_module.AccessInterface
     mainModule: main_module.AccessInterface
@@ -145,8 +143,8 @@ proc newAppController*(appService: AppService): AppController =
   result.aboutService = about_service.newService()
 
   # Core
-  result.localAccountSettingsVariant = newQVariant(
-    singletonInstance.localAccountSettings)
+  result.localAccountSettingsVariant = newQVariant(singletonInstance.localAccountSettings)
+  result.localAccountSensitiveSettingsVariant = newQVariant(singletonInstance.localAccountSensitiveSettings)
   # Modules
   result.startupModule = startup_module.newModule[AppController](
     result,
@@ -209,6 +207,7 @@ proc delete*(self: AppController) =
   #################################################
 
   self.localAccountSettingsVariant.delete
+  self.localAccountSensitiveSettingsVariant.delete
 
   self.localSettingsService.delete
   self.accountsService.delete
@@ -234,8 +233,7 @@ proc startupDidLoad*(self: AppController) =
   # https://doc.qt.io/archives/qtjambi-4.5.2_01/com/trolltech/qt/qtjambi-linguist-programmers.html
   changeLanguage("en")
 
-  singletonInstance.engine.setRootContextProperty("localAccountSettings", 
-  self.localAccountSettingsVariant)
+  singletonInstance.engine.setRootContextProperty("localAccountSettings", self.localAccountSettingsVariant)
   singletonInstance.engine.load(newQUrl("qrc:///main.qml"))
 
 proc mainDidLoad*(self: AppController) =
@@ -250,6 +248,13 @@ proc start*(self: AppController) =
   self.startupModule.load()
 
 proc load*(self: AppController) =
+  #################################################
+  # Once SettingService gets added, `pubKey` should be fetched from there, instead the following line:
+  let pubKey = self.appService.status.settings.getSetting[:string](Setting.PublicKey, "0x0")
+  singletonInstance.localAccountSensitiveSettings.setFileName(pubKey)
+  singletonInstance.engine.setRootContextProperty("localAccountSensitiveSettings", self.localAccountSensitiveSettingsVariant)
+  #################################################
+
   self.settingService.init()
   self.contactService.init()
   self.chatService.init()
@@ -259,7 +264,6 @@ proc load*(self: AppController) =
   self.walletAccountService.init()
   self.transactionService.init()
   self.mainModule.load()
-
 
 proc userLoggedIn*(self: AppController) =
   #################################################
