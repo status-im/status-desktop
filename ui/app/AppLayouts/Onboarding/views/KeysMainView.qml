@@ -2,9 +2,10 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Controls.Universal 2.12
 
+import StatusQ.Controls 0.1
+
 import "../../../../shared"
 import "../../../../shared/panels"
-import "../../../../shared/status"
 import "../popups"
 
 import utils 1.0
@@ -92,17 +93,16 @@ Page {
             text: qsTrId("im-new,-generate-keys")
         }
 
-        StatusButton {
+        StatusFlatButton {
             id: btnExistingKey
             //% "Access existing key"
             text: qsTrId("access-existing-key")
             anchors.top: btnGenKey.bottom
             anchors.topMargin: Style.current.padding
             anchors.horizontalCenter: parent.horizontalCenter
-            type: "secondary"
         }
 
-        StatusButton {
+        StatusFlatButton {
             id: btnKeycard
             //% "I have a Keycard"
             text: qsTr("I have a Keycard")
@@ -110,7 +110,6 @@ Page {
             anchors.topMargin: Style.current.padding
             anchors.horizontalCenter: parent.horizontalCenter
             visible: isExperimental === "1" || appSettings.isKeycardEnabled
-            type: "secondary"
         }
     }
 }
