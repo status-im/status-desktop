@@ -4,9 +4,10 @@ import QtQuick.Layouts 1.3
 import QtQml.Models 2.3
 
 import utils 1.0
-import "../status"
 import "../panels"
 import "."
+
+import StatusQ.Components 0.1
 
 // TODO: replace with StatusPopupMenu
 PopupMenu {
@@ -23,14 +24,14 @@ PopupMenu {
             visible: mouseArea.containsMouse
             color: Style.current.backgroundHover
         }
-        StatusImageIdenticon {
+        StatusSmartIdenticon {
             id: profileImage
-            source: profileModel.profile.thumbnailImage || ""
             anchors.top: parent.top
             anchors.topMargin: 4
             anchors.horizontalCenter: parent.horizontalCenter
+            image.source: profileModel.profile.thumbnailImage || ""
+            image.isIdenticon: true
         }
-
         StyledText {
             id: username
             text: Utils.removeStatusEns(profileModel.ens.preferredUsername || profileModel.profile.username)

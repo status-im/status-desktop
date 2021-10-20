@@ -289,10 +289,11 @@ ModalPopup {
 
                 property string nickname: appMain.getUserNickname(model.publicKey)
 
-                StatusImageIdenticon {
+                StatusQ.StatusSmartIdenticon {
                     id: identicon
                     anchors.left: parent.left
-                    source: appMain.getProfileImage(model.publicKey) || model.identicon
+                    image.source: appMain.getProfileImage(model.publicKey)|| model.identicon
+                    image.isIdenticon: true
                 }
 
                 StyledText {

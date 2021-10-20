@@ -5,7 +5,7 @@ import QtQml.Models 2.3
 import QtQuick.Dialogs 1.0
 
 import StatusQ.Popups 0.1
-
+import StatusQ.Components 0.1
 
 import utils 1.0
 import "../../../../shared"
@@ -116,12 +116,14 @@ StatusPopupMenu {
             visible: mouseArea.containsMouse
             color: Style.current.backgroundHover
         }
-        StatusImageIdenticon {
+
+        StatusSmartIdenticon {
             id: profileImage
-            source: identicon
             anchors.top: parent.top
             anchors.topMargin: 4
             anchors.horizontalCenter: parent.horizontalCenter
+            image.source: identicon
+            image.isIdenticon: true
         }
 
         StyledText {

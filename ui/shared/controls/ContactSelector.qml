@@ -7,8 +7,9 @@ import utils 1.0
 import "../"
 import "../views"
 import "../panels"
-import "../status"
 import "."
+
+import StatusQ.Components 0.1
 
 Item {
     id: root
@@ -91,17 +92,17 @@ Item {
         menuAlignment: Select.MenuAlignment.Left
         selectedItemView: Item {
             anchors.fill: parent
-            StatusImageIdenticon {
+            StatusSmartIdenticon {
                 id: iconImg
                 anchors.left: parent.left
                 anchors.leftMargin: 14
                 anchors.verticalCenter: parent.verticalCenter
-                height: 32
-                width: (!!selectedContact && !!selectedContact.identicon) ? 32 : 0
-                visible: !!selectedContact && !!selectedContact.identicon
-                source: (!!selectedContact && !!selectedContact.identicon) ? selectedContact.identicon : ""
+                image.width: (!!selectedContact && !!selectedContact.identicon) ? 32 : 0
+                image.height: 32
+                image.source: (!!selectedContact && !!selectedContact.identicon) ? selectedContact.identicon : ""
+                image.isIdenticon: true
+                active: !!selectedContact && !!selectedContact.identicon
             }
-
             StyledText {
                 id: selectedTextField
                 text: !!selectedContact ? selectedContact.name : ""
@@ -159,12 +160,13 @@ Item {
 
             width: parent.width
             height: visible ? 72 : 0
-            StatusImageIdenticon {
+            StatusSmartIdenticon {
                 id: iconImg
                 anchors.left: parent.left
                 anchors.leftMargin: Style.current.padding
                 anchors.verticalCenter: parent.verticalCenter
-                source: identicon
+                image.source: identicon
+                image.isIdenticon: true
             }
             Column {
                 anchors.left: iconImg.right

@@ -15,6 +15,7 @@ import "../../app/AppLayouts/Chat/panels"
 import "./emojiList.js" as EmojiJSON
 
 import StatusQ.Core.Theme 0.1
+import StatusQ.Components 0.1
 import StatusQ.Controls 0.1 as StatusQ
 
 Rectangle {
@@ -851,13 +852,14 @@ Rectangle {
             }
         }
 
-        StatusImageIdenticon {
+        StatusSmartIdenticon {
             id: profileImage
-            source: profileModel.profile.thumbnailImage || profileModel.profile.identicon
             anchors.left: parent.left
             anchors.leftMargin: Style.current.smallPadding
             anchors.top: parent.top
             anchors.topMargin: Style.current.halfPadding
+            image.source: profileModel.profile.thumbnailImage || profileModel.profile.identicon
+            image.isIdenticon: true
             visible: control.isStatusUpdateInput
         }
 

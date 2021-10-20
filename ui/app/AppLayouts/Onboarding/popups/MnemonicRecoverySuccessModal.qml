@@ -11,6 +11,8 @@ import "../../../../shared/panels"
 import "../../../../shared/popups"
 import "../stores"
 
+import StatusQ.Components 0.1
+
 // TODO: replace with StatusModal
 ModalPopup {
     id: popup
@@ -36,14 +38,14 @@ ModalPopup {
         horizontalAlignment: Text.AlignHCenter
     }
 
-    StatusImageIdenticon {
+    StatusSmartIdenticon {
         id: identicon
-        source: OnboardingStore.currentAccount.identicon
         anchors.top: info.bottom
         anchors.topMargin: Style.current.bigPadding
         anchors.horizontalCenter: parent.horizontalCenter
-        width: 60
-        height: 60
+        image.source: OnboardingStore.currentAccount.identicon
+        image.width: 60
+        image.height: 60
     }
 
     StyledText {

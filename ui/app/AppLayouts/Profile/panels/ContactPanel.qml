@@ -8,6 +8,8 @@ import "../../../../shared/popups"
 import "../../../../shared/panels"
 import "../../../../shared/status"
 
+import StatusQ.Components 0.1
+
 Rectangle {
     property string name: "Jotaro Kujo"
     property string address: "0x04d8c07dd137bd1b73a6f51df148b4f77ddaa11209d36e43d8344c0a7d6db1cad6085f27cfb75dd3ae21d86ceffebe4cf8a35b9ce8d26baa19dc264efe6d8f221b"
@@ -35,12 +37,13 @@ Rectangle {
     radius: Style.current.radius
     color: isHovered ? Style.current.backgroundHover : Style.current.transparent
 
-    StatusImageIdenticon {
+    StatusSmartIdenticon {
         id: accountImage
         anchors.left: parent.left
         anchors.leftMargin: Style.current.padding
         anchors.verticalCenter: parent.verticalCenter
-        source: identicon
+        image.source: identicon
+        image.isIdenticon: true
     }
 
     StyledText {

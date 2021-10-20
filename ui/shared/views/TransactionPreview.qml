@@ -11,6 +11,8 @@ import "../panels"
 import "../controls"
 import "../popups"
 
+import StatusQ.Components 0.1
+
 Item {
     id: root
     property var fromAccount
@@ -253,14 +255,14 @@ Item {
                 visible: false
                 source: imgToWallet
             }
-            StatusImageIdenticon {
+            StatusSmartIdenticon {
                 id: idtToContact
                 visible: false
                 anchors.right: toInvalid.visible ? toInvalid.left : parent.right
                 anchors.rightMargin: toInvalid.visible ? Style.current.halfPadding : 0
                 anchors.verticalCenter: parent.verticalCenter
-                width: 32
-                height: 32
+                image.width: 32
+                image.height: 32
             }
             SVGImage {
                 id: toInvalid
