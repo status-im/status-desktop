@@ -10,17 +10,18 @@ type NetworkDto* = ref object of RootObj
   slug*: string
   etherscanLink*: string
   name*: string
-         
+
 type
   SettingDto* = ref object of RootObj
     currentNetwork*: NetworkDto
     activeTokenSymbols*: seq[string]
     signingPhrase*: string
     currency*: string
-    
+
 proc toSettingDto*(jsonObj: JsonNode): SettingDto =
   result = SettingDto()
-  discard jsonObj.getProp("signing-phrase", result.signingPhrase)  
+
+  discard jsonObj.getProp("signing-phrase", result.signingPhrase)
   if not jsonObj.getProp("currency", result.currency):
     result.currency = DEFAULT_CURRENCY
 
@@ -29,11 +30,11 @@ proc toSettingDto*(jsonObj: JsonNode): SettingDto =
     currentNetworkSlug = DEFAULT_NETWORK_SLUG
 
   var networks: JsonNode
-  discard jsonObj.getProp("networks/networks", networks) 
+  discard jsonObj.getProp("networks/networks", networks)
   for networkJson in networks.getElems():
     if networkJson{"id"}.getStr != currentNetworkSlug:
       continue
-    
+
     var networkDto = NetworkDto()
     discard networkJson{"config"}.getProp("NetworkId", networkDto.id)
     discard networkJson.getProp("id", networkDto.slug)
@@ -41,10 +42,10 @@ proc toSettingDto*(jsonObj: JsonNode): SettingDto =
     discard networkJson.getProp("etherscan-link", networkDto.etherscanLink)
     result.currentNetwork = networkDto
     break
-  
+
   result.activeTokenSymbols = @[]
-  let symbols =  parseJson(jsonObj{"wallet/visible-tokens"}.getStr)
-  for symbol in symbols{$result.currentNetwork.id}.getElems():
-    result.activeTokenSymbols.add(symbol.getStr)
-  
+  if jsonObj.hasKey("wallet/visible-tokens"):
+    let symbols =  parseJson(jsonObj{"wallet/visible-tokens"}.getStr)
+    for symbol in symbols{$result.currentNetwork.id}.getElems():
+      result.activeTokenSymbols.add(symbol.getStr)
 
