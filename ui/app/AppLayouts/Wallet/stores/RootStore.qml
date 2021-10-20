@@ -17,7 +17,7 @@ QtObject {
     property var customTokenList: walletSectionAllTokens.custom
     property var tokens: walletSectionAllTokens.all
 
-    property var assets: walletModel.tokensView.assets
+    property var assets: walletSectionAccountTokens.model
 
     property string signingPhrase: walletModel.utilsView.signingPhrase
 
