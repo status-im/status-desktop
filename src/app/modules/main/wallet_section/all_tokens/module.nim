@@ -1,8 +1,9 @@
-import sequtils, sugar
+import NimQml, sequtils, sugar
 
 import eventemitter
 
 import ./io_interface, ./view, ./controller, ./item
+import ../../../../core/global_singleton
 import ../../../../../app_service/service/token/service as token_service
 
 export io_interface
@@ -30,6 +31,8 @@ method delete*[T](self: Module[T]) =
   self.controller.delete
 
 method load*[T](self: Module[T]) =
+  singletonInstance.engine.setRootContextProperty("walletSectionAllTokens", newQVariant(self.view))
+
   let tokens = self.controller.getTokens()
   self.view.setItems(
     tokens.map(t => initItem(
@@ -38,7 +41,8 @@ method load*[T](self: Module[T]) =
       t.hasIcon,
       t.addressAsString(),
       t.decimals,
-      t.isCustom
+      t.isCustom,
+      t.isVisible
     ))
   )
 

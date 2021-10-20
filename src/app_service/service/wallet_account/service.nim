@@ -103,7 +103,7 @@ method init*(self: Service) =
       proc(x: JsonNode): WalletAccountDto = x.toWalletAccountDto()
     )
     let currency = self.settingService.getSetting().currency
-    let tokens = self.tokenService.getTokens().filter(t => t.visible)
+    let tokens = self.tokenService.getTokens().filter(t => t.isVisible)
     var prices = {"ETH": parsefloat(getPrice("ETH", currency))}.toTable
     for token in tokens:
       prices[token.symbol] = parsefloat(getPrice(token.symbol, currency))

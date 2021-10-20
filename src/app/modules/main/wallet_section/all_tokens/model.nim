@@ -10,6 +10,7 @@ type
     Address
     Decimals
     IsCustom
+    IsVisible
 
 QtObject:
   type
@@ -50,7 +51,8 @@ QtObject:
       ModelRole.HasIcon.int:"hasIcon",
       ModelRole.Address.int:"address",
       ModelRole.Decimals.int:"decimals",
-      ModelRole.IsCustom.int:"isCustom"
+      ModelRole.IsCustom.int:"isCustom",
+      ModelRole.IsVisible.int:"isVisible"
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -76,6 +78,8 @@ QtObject:
       result = newQVariant(item.getDecimals())
     of ModelRole.IsCustom: 
       result = newQVariant(item.getIsCustom())
+    of ModelRole.IsVisible: 
+      result = newQVariant(item.getIsVisible())
 
   proc setItems*(self: Model, items: seq[Item]) =
     self.beginResetModel()
