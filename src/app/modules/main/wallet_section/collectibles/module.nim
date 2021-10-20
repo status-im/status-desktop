@@ -2,6 +2,7 @@ import eventemitter
 
 import ./io_interface, ./view
 import ../../../../../app_service/service/collectible/service as collectible_service
+import ../../../../../app_service/service/wallet_account/service as wallet_account_service
 
 import ./collectible/module as collectible_module
 import ./collections/module as collections_module
@@ -22,7 +23,8 @@ type
 proc newModule*[T](
   delegate: T,
   events: EventEmitter,
-  collectibleService: collectible_service.ServiceInterface
+  collectibleService: collectible_service.ServiceInterface,
+  walletAccountService: wallet_account_service.ServiceInterface
 ): Module[T] =
   result = Module[T]()
   result.delegate = delegate
@@ -54,3 +56,6 @@ method load*[T](self: Module[T]) =
 
 method isLoaded*[T](self: Module[T]): bool =
   return self.moduleLoaded
+
+method switchAccount*[T](self: Module[T], accountIndex: int) =
+  discard
