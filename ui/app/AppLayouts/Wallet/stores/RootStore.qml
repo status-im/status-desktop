@@ -6,7 +6,7 @@ QtObject {
     id: root
 
     property var currentAccount: walletModel.accountsView.currentAccount
-    property var accounts: walletModel.accountsView.accounts
+    property var accounts: walletSectionAccounts.model
 
     property string defaultCurrency: walletModel.balanceView.defaultCurrency
     property string totalFiatBalance: walletModel.balanceView.totalFiatBalance
