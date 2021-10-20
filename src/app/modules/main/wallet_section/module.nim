@@ -1,7 +1,6 @@
 import eventemitter
 
 import ./io_interface as io_ingerface
-import ./view
 
 import ./account_tokens/module as account_tokens_module
 import ./accounts/module as accountsModule
@@ -23,7 +22,6 @@ export io_interface
 type 
   Module* [T: io_ingerface.DelegateInterface] = ref object of io_ingerface.AccessInterface
     delegate: T
-    view: View
     moduleLoaded: bool
 
     accountTokensModule: account_tokens_module.AccessInterface
@@ -44,7 +42,6 @@ proc newModule*[T](
 ): Module[T] =
   result = Module[T]()
   result.delegate = delegate
-  result.view = newView()
   result.moduleLoaded = false
   
   result.accountTokensModule = account_tokens_module.newModule(result, events)
@@ -61,7 +58,6 @@ method delete*[T](self: Module[T]) =
   self.collectiblesModule.delete
   self.mainAccountModule.delete
   self.transactionsModule.delete
-  self.view.delete
 
 method load*[T](self: Module[T]) =
   self.accountTokensModule.load()

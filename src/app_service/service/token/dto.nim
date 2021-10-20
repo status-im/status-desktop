@@ -16,7 +16,7 @@ type
     hasIcon* {.dontSerialize.}: bool
     color*: string
     isCustom* {.dontSerialize.}: bool
-    visible* {.dontSerialize.}: bool
+    isVisible* {.dontSerialize.}: bool
 
 proc newDto*(
   name: string, chainId: int, address: Address, symbol: string, decimals: int, hasIcon: bool, isCustom: bool = false
@@ -28,7 +28,7 @@ proc newDto*(
 proc toTokenDto*(jsonObj: JsonNode, activeTokenSymbols: seq[string]): TokenDto =
   result = TokenDto()
   result.isCustom = true
-  result.visible = false
+  result.isVisible = false
   discard jsonObj.getProp("name", result.name)
   discard jsonObj.getProp("chainId", result.chainId)
   discard jsonObj.getProp("address", result.address)
@@ -37,7 +37,7 @@ proc toTokenDto*(jsonObj: JsonNode, activeTokenSymbols: seq[string]): TokenDto =
   discard jsonObj.getProp("color", result.color)
 
   if activeTokenSymbols.contains(result.symbol):
-    result.visible = true
+    result.isVisible = true
 
 
   
