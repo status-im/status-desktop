@@ -77,5 +77,8 @@ QtObject:
     of ModelRole.FiatBalance: 
       result = newQVariant(item.getFiatBalance())
 
-  proc setData*(self: Model, item: seq[Item]) =
+  proc setItems*(self: Model, items: seq[Item]) =
+    self.beginResetModel()
+    self.items = items
+    self.endResetModel()
     self.countChanged()
