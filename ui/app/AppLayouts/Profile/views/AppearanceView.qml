@@ -28,7 +28,7 @@ ScrollView {
     property var store
 
     function updateTheme(theme) {
-        globalSettings.theme = theme
+        localAppSettings.theme = theme
         Style.changeTheme(theme, systemPalette.isCurrentSystemThemeDark())
     }
 
@@ -298,7 +298,7 @@ ScrollView {
                 image.height: 128
                 //% "Light"
                 control.text: qsTrId("light")
-                control.checked: globalSettings.theme === Universal.Light
+                control.checked: localAppSettings.theme === Universal.Light
                 onRadioCheckedChanged: {
                     if (checked) {
                         root.updateTheme(Universal.Light)
@@ -314,7 +314,7 @@ ScrollView {
                 image.height: 128
                 //% "Dark"
                 control.text: qsTrId("dark")
-                control.checked: globalSettings.theme === Universal.Dark
+                control.checked: localAppSettings.theme === Universal.Dark
                 onRadioCheckedChanged: {
                     if (checked) {
                         root.updateTheme(Universal.Dark)
@@ -330,7 +330,7 @@ ScrollView {
                 image.height: 128
                 //% "System"
                 control.text: qsTrId("system")
-                control.checked: globalSettings.theme === Universal.System
+                control.checked: localAppSettings.theme === Universal.System
                 onRadioCheckedChanged: {
                     if (checked) {
                         root.updateTheme(Universal.System)

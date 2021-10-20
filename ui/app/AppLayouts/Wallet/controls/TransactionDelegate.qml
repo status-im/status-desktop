@@ -142,7 +142,7 @@ Rectangle {
         }
         StyledText {
             id: timeValue
-            text: new Date(timestamp).toLocaleString(globalSettings.locale)
+            text: new Date(timestamp).toLocaleString(localAppSettings.locale)
             font.pixelSize: Style.current.primaryTextFontSize
             anchors.rightMargin: Style.current.smallPadding
         }

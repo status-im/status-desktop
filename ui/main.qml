@@ -27,18 +27,6 @@ StatusWindow {
 
     Universal.theme: Universal.System
 
-    Settings {
-        id: globalSettings
-        category: "global"
-        fileName: profileModel.globalSettingsFile
-        property string locale: "en"
-        property int theme: 2
-
-        Component.onCompleted: {
-            profileModel.changeLocale(locale)
-        }
-    }
-
     id: applicationWindow
     objectName: "mainWindow"
     minimumWidth: 900
@@ -153,11 +141,11 @@ StatusWindow {
     }
 
     function changeThemeFromOutside() {
-        Style.changeTheme(globalSettings.theme, systemPalette.isCurrentSystemThemeDark())
+        Style.changeTheme(localAppSettings.theme, systemPalette.isCurrentSystemThemeDark())
     }
 
     Component.onCompleted: {
-        Style.changeTheme(globalSettings.theme, systemPalette.isCurrentSystemThemeDark())
+        Style.changeTheme(localAppSettings.theme, systemPalette.isCurrentSystemThemeDark())
         setX(Qt.application.screens[0].width / 2 - width / 2);
         setY(Qt.application.screens[0].height / 2 - height / 2);
 

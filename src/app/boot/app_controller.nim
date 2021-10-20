@@ -45,14 +45,17 @@ elif (defined(macosx)):
 elif (defined(linux)):
   i18nPath = joinPath(getAppDir(), "../i18n")
 
-var currentLanguageCode: string
+proc setLanguage(locale: string) =
+  let shouldRetranslate = not defined(linux)
+  singletonInstance.engine.setTranslationPackage(joinPath(i18nPath, fmt"qml_{locale}.qm"), shouldRetranslate)
+
 proc changeLanguage(locale: string) =
+  let currentLanguageCode = singletonInstance.localAppSettings.getLocale()
   if (locale == currentLanguageCode):
     return
-  currentLanguageCode = locale
-  let shouldRetranslate = not defined(linux)
-  singletonInstance.engine.setTranslationPackage(
-    joinPath(i18nPath, fmt"qml_{locale}.qm"), shouldRetranslate)
+
+  singletonInstance.localAppSettings.setLocale(locale)
+  setLanguage(locale)
 
 type 
   AppController* = ref object of RootObj 
@@ -76,6 +79,7 @@ type
     aboutService: about_service.Service
 
     # Core
+    localAppSettingsVariant: QVariant
     localAccountSettingsVariant: QVariant
     localAccountSensitiveSettingsVariant: QVariant
 
@@ -143,6 +147,7 @@ proc newAppController*(appService: AppService): AppController =
   result.aboutService = about_service.newService()
 
   # Core
+  result.localAppSettingsVariant = newQVariant(singletonInstance.localAppSettings)
   result.localAccountSettingsVariant = newQVariant(singletonInstance.localAccountSettings)
   result.localAccountSensitiveSettingsVariant = newQVariant(singletonInstance.localAccountSensitiveSettings)
   # Modules
@@ -206,6 +211,7 @@ proc delete*(self: AppController) =
   self.profile.delete
   #################################################
 
+  self.localAppSettingsVariant.delete
   self.localAccountSettingsVariant.delete
   self.localAccountSensitiveSettingsVariant.delete
 
@@ -228,13 +234,13 @@ proc startupDidLoad*(self: AppController) =
   singletonInstance.engine.setRootContextProperty("profileModel", self.profile.variant)
   #################################################
 
-  # We're applying default language before we load qml. Also we're aware that
-  # switch language at runtime will have some impact to cpu usage.
-  # https://doc.qt.io/archives/qtjambi-4.5.2_01/com/trolltech/qt/qtjambi-linguist-programmers.html
-  changeLanguage("en")
-
+  singletonInstance.engine.setRootContextProperty("localAppSettings", self.localAppSettingsVariant)
   singletonInstance.engine.setRootContextProperty("localAccountSettings", self.localAccountSettingsVariant)
   singletonInstance.engine.load(newQUrl("qrc:///main.qml"))
+
+  # We need to set a language once qml is loaded
+  let locale = singletonInstance.localAppSettings.getLocale()
+  setLanguage(locale)
 
 proc mainDidLoad*(self: AppController) =
   self.appService.onLoggedIn()
