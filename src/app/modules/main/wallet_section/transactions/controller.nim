@@ -10,7 +10,7 @@ type
 
 proc newController*[T](
   delegate: T, 
-  transactionService: transaction_service.ServiceInterface
+  transactionService: transaction_service.ServiceInterface,
 ): Controller[T] =
   result = Controller[T]()
   result.delegate = delegate
@@ -21,3 +21,6 @@ method delete*[T](self: Controller[T]) =
 
 method init*[T](self: Controller[T]) = 
   discard
+
+method checkRecentHistory*[T](self: Controller[T]) =
+  self.transactionService.checkRecentHistory()

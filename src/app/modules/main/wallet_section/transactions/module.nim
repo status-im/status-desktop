@@ -28,6 +28,8 @@ method delete*[T](self: Module[T]) =
   self.controller.delete
 
 method load*[T](self: Module[T]) =
+  self.controller.checkRecentHistory()
+
   self.moduleLoaded = true
 
 method isLoaded*[T](self: Module[T]): bool =
