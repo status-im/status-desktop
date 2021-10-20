@@ -14,3 +14,6 @@ method init*(self: ServiceInterface) {.base.} =
 
 method getWalletAccounts*(self: ServiceInterface): seq[WalletAccountDto] {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method getWalletAccount*(self: ServiceInterface, accountIndex: int): WalletAccountDto {.base.} =
+  raise newException(ValueError, "No implementation available")

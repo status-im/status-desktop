@@ -34,22 +34,22 @@ type
 proc newModule*[T](
   delegate: T,
   events: EventEmitter,
-  tokenService: token_service.Service,
-  transactionService: transaction_service.Service,
-  collectibleService: collectible_service.Service,
-  walletAccountService: wallet_account_service.Service,
-  settingService: setting_service.Service
+  tokenService: token_service.ServiceInterface,
+  transactionService: transaction_service.ServiceInterface,
+  collectibleService: collectible_service.ServiceInterface,
+  walletAccountService: wallet_account_service.ServiceInterface,
+  settingService: setting_service.ServiceInterface
 ): Module[T] =
   result = Module[T]()
   result.delegate = delegate
   result.moduleLoaded = false
   
-  result.accountTokensModule = account_tokens_module.newModule(result, events)
+  result.accountTokensModule = account_tokens_module.newModule(result, events, walletAccountService)
   result.accountsModule = accounts_module.newModule(result, events, walletAccountService)
   result.allTokensModule = all_tokens_module.newModule(result, events, tokenService)
-  result.collectiblesModule = collectibles_module.newModule(result, events, collectibleService)
+  result.collectiblesModule = collectibles_module.newModule(result, events, collectibleService, walletAccountService)
   result.mainAccountModule = main_account_module.newModule(result, events)
-  result.transactionsModule = transactions_module.newModule(result, events, transactionService)
+  result.transactionsModule = transactions_module.newModule(result, events, transactionService, walletAccountService)
 
 method delete*[T](self: Module[T]) =
   self.accountTokensModule.delete
@@ -59,6 +59,11 @@ method delete*[T](self: Module[T]) =
   self.mainAccountModule.delete
   self.transactionsModule.delete
 
+method switchAccount*[T](self: Module[T], accountIndex: int) =
+  self.collectiblesModule.switchAccount(accountIndex)
+  self.accountTokensModule.switchAccount(accountIndex)
+  self.transactionsModule.switchAccount(accountIndex)
+
 method load*[T](self: Module[T]) =
   self.accountTokensModule.load()
   self.accountsModule.load()
@@ -67,6 +72,7 @@ method load*[T](self: Module[T]) =
   self.mainAccountModule.load()
   self.transactionsModule.load()
 
+  self.switchAccount(0)
   self.moduleLoaded = true
   self.delegate.walletSectionDidLoad()
 
