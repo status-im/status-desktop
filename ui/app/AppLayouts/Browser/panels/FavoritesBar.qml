@@ -1,9 +1,9 @@
 import QtQuick 2.13
 import QtQuick.Layouts 1.13
-import "../../../../shared"
-import "../../../../shared/status"
 
 import utils 1.0
+
+import StatusQ.Controls 0.1
 
 RowLayout {
     id: favoritesBar
@@ -22,16 +22,13 @@ RowLayout {
         Layout.alignment: Qt.AlignLeft | Qt.AlignTop
         width: parent.width
         boundsBehavior: Flickable.StopAtBounds
-        delegate: StatusButton {
+        delegate: StatusFlatButton {
             id: favoriteBtn
             height: 32
             icon.source: imageUrl
-            disableColorOverlay: true
             icon.width: 24
             icon.height: 24
             text: name
-            implicitHeight: 32
-            type: "secondary"
 
             MouseArea {
                 anchors.fill: parent
