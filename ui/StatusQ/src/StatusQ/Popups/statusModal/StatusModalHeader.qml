@@ -61,6 +61,7 @@ Rectangle {
         titleElide: statusModalHeader.titleElide
         subTitleElide: statusModalHeader.subTitleElide
         onHeaderImageClicked: statusModalHeader.headerImageClicked()
+        onEditButtonClicked: statusModalHeader.editButtonClicked()
     }
 
     MouseArea {
