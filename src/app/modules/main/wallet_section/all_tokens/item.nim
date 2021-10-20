@@ -8,14 +8,16 @@ type
     address: string
     decimals: int
     isCustom: bool
+    isVisible: bool
 
-proc initItem*(name, symbol: string, hasIcon: bool, address: string, decimals: int, isCustom: bool): Item =
+proc initItem*(name, symbol: string, hasIcon: bool, address: string, decimals: int, isCustom: bool, isVisible: bool): Item =
   result.name = name
   result.symbol = symbol
   result.hasIcon = hasIcon
   result.address = address
   result.decimals = decimals
   result.isCustom = isCustom
+  result.isVisible = isVisible
 
 proc `$`*(self: Item): string =
   result = fmt"""AllTokensItem(
@@ -23,8 +25,9 @@ proc `$`*(self: Item): string =
     symbol: {self.symbol},
     hasIcon: {self.hasIcon},
     address: {self.address}, 
-    decimals: {self.decimals}, 
-    isCustom:{self.isCustom}
+    decimals: {self.decimals},
+    isCustom:{self.isCustom},
+    isVisible:{self.isVisible}
     ]"""
 
 proc getName*(self: Item): string = 
@@ -44,3 +47,6 @@ proc getDecimals*(self: Item): int =
 
 proc getIsCustom*(self: Item): bool = 
   return self.isCustom
+
+proc getIsVisible*(self: Item): bool = 
+  return self.isVisible

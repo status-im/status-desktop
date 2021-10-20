@@ -15,7 +15,6 @@ Item {
 
     property var defaultTokenList
     property var customTokenList
-    property var hasAsset: function(symbol) {}
     signal toggleAssetClicked(string symbol)
     signal removeCustomTokenTriggered(string address)
 
@@ -70,7 +69,7 @@ Item {
             }
             StatusCheckBox  {
                 id: assetCheck
-                checked:modalBody.hasAsset(symbol)
+                checked: model.isVisible
                 anchors.right: parent.right
                 anchors.rightMargin: Style.current.smallPadding
                 onClicked: toggleAssetClicked(symbol)
@@ -139,6 +138,7 @@ Item {
             Column {
                 id: customTokens
                 spacing: Style.current.halfPadding
+                visible: { modalBody.customTokenList.count > 0 }
 
                 StyledText {
                     id: customLbl
@@ -155,13 +155,6 @@ Item {
                     delegate: tokenComponent
                     anchors.top: customLbl.bottom
                     anchors.topMargin: Style.current.smallPadding
-                }
-
-                Connections {
-                    target: modalBody.customTokenList
-                    onTokensLoaded: {
-                        customLbl.visible = cnt > 0
-                    }
                 }
             }
 
