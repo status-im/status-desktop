@@ -5,7 +5,8 @@ import QtQuick.Layouts 1.13
 import utils 1.0
 import "../../../../shared"
 import "../../../../shared/panels"
-import "../../../../shared/status"
+
+import StatusQ.Components 0.1
 
 Rectangle {
     property string name
@@ -26,12 +27,13 @@ Rectangle {
     radius: Style.current.radius
     color: isHovered ? Style.current.backgroundHover : Style.current.transparent
 
-    StatusImageIdenticon {
+    StatusSmartIdenticon {
         id: accountImage
         anchors.left: parent.left
         anchors.leftMargin: Style.current.padding
         anchors.verticalCenter: parent.verticalCenter
-        source: identicon
+        image.source: identicon
+        image.isIdenticon: true
     }
 
     StyledText {

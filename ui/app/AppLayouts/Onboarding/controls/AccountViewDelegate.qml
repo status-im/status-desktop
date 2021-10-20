@@ -8,6 +8,7 @@ import "../../../../shared/panels"
 import "../../../../shared/status"
 
 import StatusQ.Controls 0.1 as StatusQControls
+import StatusQ.Components 0.1
 
 Rectangle {    
     id: accountViewDelegate
@@ -36,13 +37,15 @@ Rectangle {
         return Style.current.transparent
     }
 
-    StatusImageIdenticon {
+    StatusSmartIdenticon {
         id: accountImage
         anchors.left: parent.left
         anchors.leftMargin: Style.current.padding
         anchors.verticalCenter: parent.verticalCenter
-        source: identicon
+        image.source : identicon
+        image.isIdenticon: true
     }
+
     StyledText {
         id: usernameText
         text: username

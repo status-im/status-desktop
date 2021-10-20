@@ -6,6 +6,8 @@ import Qt.labs.platform 1.1
 import utils 1.0
 
 import StatusQ.Controls 0.1 as StatusQControls
+import StatusQ.Components 0.1
+
 import "../../../../shared/panels"
 import "../../../../shared/status"
 
@@ -36,12 +38,13 @@ Rectangle {
     radius: Style.current.radius
     color: isHovered ? Style.current.backgroundHover : Style.current.transparent
 
-    StatusImageIdenticon {
+    StatusSmartIdenticon {
         id: accountImage
         anchors.left: parent.left
         anchors.verticalCenter: parent.verticalCenter
-        source: identicon
         anchors.leftMargin: Style.current.padding
+        image.source: identicon
+        image.isIdenticon: true
     }
     
     StyledText {

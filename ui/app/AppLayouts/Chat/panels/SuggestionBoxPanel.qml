@@ -23,10 +23,12 @@ import QtGraphicalEffects 1.13
 import QtQml.Models 2.13
 
 import utils 1.0
+
+import StatusQ.Components 0.1
+
 import "../../../../shared"
 import "../../../../shared/panels"
 import "../../../../shared/controls"
-import "../../../../shared/status"
 
 Rectangle {
     id: container
@@ -184,14 +186,15 @@ Rectangle {
                 height: 42
                 radius: Style.current.radius
 
-                StatusImageIdenticon {
+                StatusSmartIdenticon {
                     id: accountImage
-                    width: 32
-                    height: 32
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.left: parent.left
                     anchors.leftMargin: Style.current.smallPadding
-                    source: model.identicon
+                    image.width: 32
+                    image.height: 32
+                    image.source: model.identicon
+                    image.isIdenticon: true
                 }
 
                 StyledText {

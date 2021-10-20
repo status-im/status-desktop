@@ -13,6 +13,8 @@ import "../../../../shared/status"
 import "../popups"
 import "../stores"
 
+import StatusQ.Components 0.1
+
 import utils 1.0
 
 Item {
@@ -94,10 +96,11 @@ Item {
         anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter
 
-        StatusImageIdenticon {
+        StatusSmartIdenticon {
             id: userImage
             anchors.horizontalCenter: parent.horizontalCenter
-            source: LoginStore.currentAccount.thumbnailImage
+            image.source : LoginStore.currentAccount.thumbnailImage
+            image.isIdenticon: true
         }
 
         StyledText {

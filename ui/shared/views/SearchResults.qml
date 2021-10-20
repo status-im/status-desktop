@@ -13,6 +13,8 @@ import "../panels"
 import "../../app/AppLayouts/Chat/controls"
 import "./"
 
+import StatusQ.Components 0.1
+
 Item {
     id: root
     height: 64
@@ -73,12 +75,13 @@ Item {
         height: 64
         visible: root.pubKey !== "" && !root.loading
 
-        StatusImageIdenticon {
+        StatusSmartIdenticon {
             id: contactIdenticon
             anchors.verticalCenter: parent.verticalCenter
             anchors.left: parent.left
             anchors.leftMargin: Style.current.padding
-            source: utilsModel.generateIdenticon(root.pubKey)
+            image.source: utilsModel.generateIdenticon(root.pubKey)
+            image.isIdenticon: true
         }
 
         StyledText {
