@@ -2,22 +2,21 @@ import QtQuick 2.12
 import QtQuick.Controls 2.3
 
 import utils 1.0
-import "../../../../shared"
-import "../../../../shared/popups"
-import "../../../../shared/status"
 
-// TODO: replace with StatusModal
-ModalPopup {
+import StatusQ.Controls 0.1
+import StatusQ.Popups 0.1
+
+StatusModal {
     property string link
 
     id: popup
 
     //% "Choose browser"
-    title: qsTrId("choose-browser")
+    header.title: qsTrId("choose-browser")
     width: 440
     height: 425
 
-    Column {
+    contentItem: Column {
         anchors.fill: parent
         spacing: 20
 
@@ -43,10 +42,9 @@ ModalPopup {
             }
         }
 
-        StatusButton {
+        StatusFlatButton {
             //% "Open in my default browser"
             text: qsTrId("open-in-my-default-browser")
-            type: "secondary"
             anchors.horizontalCenter: parent.horizontalCenter
             onClicked: {
                 appSettings.showBrowserSelector = !rememberChoiceCheckBox.checked
