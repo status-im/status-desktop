@@ -13,10 +13,6 @@ ModalPopup {
     id: popup
     //% "Manage Assets"
     title: qsTrId("manage-assets")
-
-    onOpened: {
-        RootStore.loadCustomTokens()
-    }
     
     TokenSettingsModalContent {
         id: settingsModalContent
@@ -28,7 +24,6 @@ ModalPopup {
         anchors.rightMargin: Style.current.padding
         defaultTokenList: RootStore.defaultTokenList
         customTokenList: RootStore.customTokenList
-        hasAsset: function(symbol) { return RootStore.hasAsset(symbol) }
 
         onToggleAssetClicked: {
             RootStore.toggleAsset(symbol)

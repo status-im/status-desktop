@@ -13,8 +13,10 @@ QtObject {
 
     property var transactions: walletModel.transactionsView.transactions
 
-    property var defaultTokenList: walletModel.tokensView.defaultTokenList
-    property var customTokenList: walletModel.tokensView.customTokenList
+    property var defaultTokenList: walletSectionAllTokens.default
+    property var customTokenList: walletSectionAllTokens.custom
+    property var tokens: walletSectionAllTokens.all
+
     property var assets: walletModel.tokensView.assets
 
     property string signingPhrase: walletModel.utilsView.signingPhrase
@@ -33,25 +35,6 @@ QtObject {
     // has been just created or an old one.
 
     //property bool firstTimeLogin: onboardingModel.isFirstTimeLogin
-
-    property var tokens: {
-        let count = walletModel.tokensView.defaultTokenList.rowCount()
-        const toks = []
-        for (let i = 0; i < count; i++) {
-            toks.push({
-                          "address": walletModel.tokensView.defaultTokenList.rowData(i, 'address'),
-                          "symbol": walletModel.tokensView.defaultTokenList.rowData(i, 'symbol')
-                      })
-        }
-        count = walletModel.tokensView.customTokenList.rowCount()
-        for (let j = 0; j < count; j++) {
-            toks.push({
-                          "address": walletModel.tokensView.customTokenList.rowData(j, 'address'),
-                          "symbol": walletModel.tokensView.customTokenList.rowData(j, 'symbol')
-                      })
-        }
-        return toks
-    }
 
     // example wallet model
     property ListModel exampleWalletModel: ListModel {
@@ -134,20 +117,12 @@ QtObject {
         return walletModel.tokensView.addCustomToken(address, name, symbol, decimals)
     }
 
-    function loadCustomTokens() {
-        walletModel.tokensView.loadCustomTokens()
-    }
-
     function toggleAsset(symbol) {
         walletModel.tokensView.toggleAsset(symbol)
     }
 
     function removeCustomToken(address) {
         walletModel.tokensView.removeCustomToken(address)
-    }
-
-    function hasAsset(symbol) {
-        return walletModel.tokensView.hasAsset(symbol)
     }
 
     function getQrCode(address) {

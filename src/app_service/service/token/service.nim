@@ -32,7 +32,7 @@ method init*(self: Service) =
 
     let static_tokens = static_token.all().map(
       proc(x: TokenDto): TokenDto = 
-        x.visible = activeTokenSymbols.contains(x.symbol)
+        x.isVisible = activeTokenSymbols.contains(x.symbol)
         return x
     )
 
