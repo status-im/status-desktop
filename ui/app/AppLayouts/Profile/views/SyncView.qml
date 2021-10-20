@@ -7,10 +7,9 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 
 import utils 1.0
-import "../../../../shared"
+
 import "../../../../shared/controls"
 import "../../../../shared/popups"
-import "../../../../shared/status"
 
 Item {
     id: root
@@ -56,12 +55,9 @@ Item {
             anchors.left: parent.left
             anchors.leftMargin: 24
 
-            // TODO: Replace with StatusQ component
-            StatusRoundButton {
+            StatusFlatRoundButton {
                 id: addButton
-                icon.name: "plusSign"
-                size: "medium"
-                type: "secondary"
+                icon.name: "add"
                 anchors.verticalCenter: parent.verticalCenter
             }
 
@@ -116,7 +112,6 @@ Item {
                     enodeValidationError = "";
                 }
 
-                // TODO: Replace with StatusQ component
                 footer: StatusButton {
                     anchors.right: parent.right
                     anchors.rightMargin: Style.current.smallPadding
@@ -166,7 +161,6 @@ Item {
             anchors.topMargin: 24
         }
 
-        // TODO: Replace with StatusQ component
         StatusSwitch {
             id: automaticSelectionSwitch
             checked: root.store.automaticMailserverSelection
@@ -175,7 +169,6 @@ Item {
             anchors.topMargin: Style.current.padding
             anchors.left: switchLbl.right
             anchors.leftMargin: Style.current.padding
-
         }
 
         StatusBaseText {

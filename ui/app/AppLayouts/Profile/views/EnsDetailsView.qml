@@ -7,8 +7,6 @@ import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 
 import utils 1.0
-import "../../../../shared"
-import "../../../../shared/status/core"
 import "../../../../shared/status"
 
 Item {
@@ -35,7 +33,6 @@ Item {
 
     Component {
         id: loadingImageComponent
-        // TODO: replace with StatusQ loading indicator
         StatusLoadingIndicator {}
     }
 

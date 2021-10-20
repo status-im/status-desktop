@@ -9,7 +9,6 @@ import StatusQ.Controls 0.1
 import utils 1.0
 import "../../../../shared"
 import "../../../../shared/popups"
-import "../../../../shared/status"
 
 import "./"
 import "../panels"
@@ -63,10 +62,9 @@ ModalPopup {
         }
     }
     
-    // TODO: replace with StatusQ component
     footer: StatusButton {
         anchors.horizontalCenter: parent.horizontalCenter
-        type: "warn"
+        type: StatusBaseButton.type.Danger
         //% "Revoke all access"
         text: qsTrId("revoke-all-access")
         onClicked: {

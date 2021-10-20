@@ -2,6 +2,9 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 
 import utils 1.0
+
+import StatusQ.Controls 0.1 as StatusQControls
+
 import "../../../../shared"
 import "../../../../shared/popups"
 import "../../../../shared/panels"
@@ -39,13 +42,11 @@ ModalPopup {
             text: qsTrId("websites")
             width: parent.width
 
-            StatusButton {
+            StatusQControls.StatusFlatButton {
                 //% "Enable all"
                 text: qsTrId("enable-all")
-                type: "secondary"
                 anchors.right: parent.right
                 anchors.verticalCenter: parent.verticalCenter
-                flat: true
                 onClicked: {
                     const count = sitesListView.count
                     for (let i = 0; i < count; i++) {
@@ -164,7 +165,7 @@ ModalPopup {
                             anchors.left: siteTitle.left
                         }
 
-                        StatusSwitch {
+                        StatusQControls.StatusSwitch {
                             id: settingSwitch
                             checked: !!isWhitelisted
                             anchors.verticalCenter: parent.verticalCenter
