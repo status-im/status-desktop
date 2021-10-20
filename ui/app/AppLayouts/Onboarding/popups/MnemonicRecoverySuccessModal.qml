@@ -3,7 +3,9 @@ import QtQuick.Controls 2.13
 import QtQuick.Dialogs 1.3
 
 import utils 1.0
-import "../../../../shared"
+
+import StatusQ.Controls 0.1 as StatusQControls
+
 import "../../../../shared/status"
 import "../../../../shared/panels"
 import "../../../../shared/popups"
@@ -66,7 +68,7 @@ ModalPopup {
         width: parent.width
         height: reencryptBtn.height
 
-        StatusButton {
+        StatusQControls.StatusButton {
             id: reencryptBtn
             anchors.bottom: parent.bottom
             anchors.topMargin: Style.current.padding
