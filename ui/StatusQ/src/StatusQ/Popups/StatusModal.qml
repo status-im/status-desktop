@@ -56,6 +56,7 @@ QC.Popup {
             icon: header.icon
             popupMenu: header.popupMenu
             headerImageEditable: header.headerImageEditable
+            editable: header.editable
 
             onEditButtonClicked: statusModal.editButtonClicked()
             onHeaderImageClicked: statusModal.headerImageClicked()

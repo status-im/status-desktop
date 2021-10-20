@@ -6,6 +6,7 @@ QtObject {
     property int titleElide: Text.ElideRight
     property int subTitleElide: Text.ElideRight
     property bool headerImageEditable: false
+    property bool editable: false
     property Component popupMenu
     property StatusImageSettings image: StatusImageSettings {
         width: 40
