@@ -47,11 +47,12 @@ Rectangle {
     property real rightPadding: 16
     property bool enabled: true
     property StatusIconSettings icon: StatusIconSettings {
-        height: 20
-        width: 20
+        height: isLetterIdenticon ? 40 : 20
+        width: isLetterIdenticon ? 40 : 20
         rotation: 0
         isLetterIdenticon: false
-        color: type === StatusListItem.Type.Danger ?
+        letterSize: 21
+        color: isLetterIdenticon ? background.color : type === StatusListItem.Type.Danger ?
             Theme.palette.dangerColor1 : Theme.palette.primaryColor1
         background: StatusIconBackgroundSettings {
             width: 40
@@ -110,60 +111,18 @@ Rectangle {
             statusListItem.clicked(statusListItem.itemId)
         }
 
-        Loader {
+        StatusSmartIdenticon {
             id: iconOrImage
             anchors.left: parent.left
             anchors.leftMargin: statusListItem.leftPadding
             anchors.top: parent.top
             anchors.topMargin: 12
-            sourceComponent: {
-                if (statusListItem.icon.isLetterIdenticon) {
-                    return statusLetterIdenticon
-                }
-                return !!statusListItem.icon.name ? statusRoundedIcon : statusRoundedImage
-            }
-
+            image: statusListItem.image
+            icon: statusListItem.icon
+            name: statusListItem.title
             active: statusListItem.icon.isLetterIdenticon ||
                     !!statusListItem.icon.name ||
                     !!statusListItem.image.source.toString()
-        }
-
-        Component {
-            id: statusRoundedIcon
-            StatusRoundIcon {
-                icon.width: statusListItem.icon.width
-                icon.height: statusListItem.icon.height
-                icon.name: statusListItem.icon.name
-                icon.rotation: statusListItem.icon.rotation
-                icon.color: statusListItem.icon.color
-                color: statusListItem.icon.background.color
-                width: statusListItem.icon.background.width
-                height: statusListItem.icon.background.height
-            }
-        }
-
-        Component {
-            id: statusRoundedImage
-            StatusRoundedImage {
-                image.source: statusListItem.image.source
-                image.height: statusListItem.image.height
-                image.width: statusListItem.image.width
-                color: statusListItem.image.isIdenticon ?
-                    Theme.palette.statusRoundedImage.backgroundColor :
-                    "transparent"
-                border.width: statusListItem.image.isIdenticon ? 1 : 0
-                border.color: Theme.palette.directColor7
-            }
-        }
-
-        Component {
-            id: statusLetterIdenticon
-            StatusLetterIdenticon {
-                width: statusListItem.icon.background.width
-                height: statusListItem.icon.background.height
-                color: statusListItem.icon.background.color
-                name: statusListItem.title
-            }
         }
 
         Item {

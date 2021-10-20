@@ -113,11 +113,16 @@ StatusModal {
                     property string primaryText: ""
                     property string secondaryText: ""
                     property StatusIconSettings iconSettings: StatusIconSettings {
+                        width: 16
+                        height: 16
                         name: ""
                         isLetterIdenticon: false
+                        letterSize: 11
                     }
 
                     property StatusImageSettings image: StatusImageSettings {
+                        width: 16
+                        height: 16
                         source: ""
                         isIdenticon: false
                     }
@@ -155,67 +160,17 @@ StatusModal {
                                     font.weight: Font.Medium
                                 }
 
-                                Loader {
+                                StatusSmartIdenticon {
+                                    id: identicon
                                     Layout.preferredWidth: active ? 16 : 0
                                     Layout.preferredHeight: 16
+                                    image: searchOptionsMenuButton.image
+                                    icon: searchOptionsMenuButton.iconSettings
+                                    name: searchOptionsMenuButton.primaryText
                                     active: searchOptionsMenuButton.primaryText !== defaultSearchLocationText &&
                                         (searchOptionsMenuButton.iconSettings.name ||
                                         searchOptionsMenuButton.iconSettings.isLetterIdenticon ||
                                         !!searchOptionsMenuButton.image.source.toString())
-
-                                    sourceComponent: {
-                                        if (!!searchOptionsMenuButton.image.source.toString()) {
-                                            return statusRoundedImageCmp
-                                        }
-                                        if (!!searchOptionsMenuButton.iconSettings.isLetterIdenticon || !searchOptionsMenuButton.iconSettings.name) {
-                                            return statusLetterIdenticonCmp
-                                        }
-                                        return statusIconCmp
-                                    }
-                                }
-
-                                Component {
-                                    id: statusIconCmp
-                                    StatusIcon {
-                                        width: 16
-                                        icon: searchOptionsMenuButton.iconSettings.name
-                                        color: searchOptionsMenuButton.iconSettings.color
-                                    }
-                                }
-
-                                Component {
-                                    id: statusRoundedImageCmp
-                                    Item {
-                                        width: 16
-                                        height: 16
-                                        StatusRoundedImage {
-                                            id: statusRoundedImage
-                                            implicitWidth: parent.width
-                                            implicitHeight: parent.height
-                                            image.source: searchOptionsMenuButton.image.source
-                                            color: searchOptionsMenuButton.image.isIdenticon ?
-                                                Theme.palette.statusRoundedImage.backgroundColor :
-                                                "transparent"
-                                            border.width: searchOptionsMenuButton.image.isIdenticon ? 1 : 0
-                                            border.color: Theme.palette.directColor7
-                                        }
-
-                                        Loader {
-                                            sourceComponent: statusLetterIdenticonCmp
-                                            active: statusRoundedImage.image.status === Image.Error
-                                        }
-                                    }
-                                }
-
-                                Component {
-                                    id: statusLetterIdenticonCmp
-                                    StatusLetterIdenticon {
-                                        implicitWidth: 16
-                                        implicitHeight: 16
-                                        letterSize: 11
-                                        color: searchOptionsMenuButton.iconSettings.color
-                                        name: searchOptionsMenuButton.primaryText
-                                    }
                                 }
 
                                 StatusBaseText {

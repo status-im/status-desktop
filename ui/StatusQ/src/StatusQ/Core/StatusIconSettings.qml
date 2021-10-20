@@ -12,5 +12,6 @@ QtObject {
     property url source
     property int rotation
     property bool isLetterIdenticon
+    property int letterSize
     property StatusIconBackgroundSettings background: StatusIconBackgroundSettings {}
 }

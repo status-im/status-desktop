@@ -20,9 +20,15 @@ Rectangle {
     property bool hasUnreadMessages: false
     property bool hasMention: false
     property bool muted: false
-    property StatusImageSettings image: StatusImageSettings {}
+    property StatusImageSettings image: StatusImageSettings {
+        width: 24
+        height: 24
+    }
     property StatusIconSettings icon: StatusIconSettings {
+        width: 24
+        height: 24
         color: Theme.palette.miscColor5
+        letterSize: 15
     }
     property int type: StatusChatListItem.Type.PublicChat
     property bool highlighted: false
@@ -67,50 +73,14 @@ Rectangle {
 
         onClicked: statusChatListItem.clicked(mouse)
 
-        Loader {
+        StatusSmartIdenticon {
             id: identicon
             anchors.left: parent.left
             anchors.leftMargin: 8
             anchors.verticalCenter: parent.verticalCenter
-
-            sourceComponent: !!statusChatListItem.image.source.toString() ?
-                                 statusRoundedImageCmp : statusLetterIdenticonCmp
-        }
-
-        Component {
-            id: statusLetterIdenticonCmp
-            StatusLetterIdenticon {
-                height: 24
-                width: 24
-                name: statusChatListItem.name
-                letterSize: 15
-                color: statusChatListItem.icon.color
-            }
-        }
-
-        Component {
-            id: statusRoundedImageCmp
-            Item {
-                height: 24
-                width: 24
-                StatusRoundedImage {
-                    id: statusRoundedImage
-                    width: parent.width
-                    height: parent.height
-                    image.source: statusChatListItem.image.source
-                    showLoadingIndicator: true
-                    color: statusChatListItem.image.isIdenticon ?
-                               Theme.palette.statusRoundedImage.backgroundColor :
-                               "transparent"
-                    border.width: statusChatListItem.image.isIdenticon ? 1 : 0
-                    border.color: Theme.palette.directColor7
-                }
-
-                Loader {
-                    sourceComponent: statusLetterIdenticonCmp
-                    active: statusRoundedImage.image.status === Image.Error
-                }
-            }
+            image: statusChatListItem.image
+            icon: statusChatListItem.icon
+            name: statusChatListItem.name
         }
 
         StatusIcon {

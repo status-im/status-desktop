@@ -20,56 +20,20 @@ TabButton {
 
     contentItem: Item {
         anchors.fill: parent
-
-        Loader {
-            active: true
+        StatusSmartIdenticon {
+            id: identicon
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
-            sourceComponent: statusIconTabButton.name !== "" && !icon.source.toString() ? letterIdenticon :
-              !!icon.source.toString() ? imageIcon : defaultIcon
-        }
-
-        Component {
-            id: defaultIcon
-            StatusIcon {
-                icon: statusIconTabButton.icon.name
-                height: statusIconTabButton.icon.height
-                width: statusIconTabButton.icon.width
-                color: (statusIconTabButton.hovered || highlighted || statusIconTabButton.checked) ? Theme.palette.primaryColor1 : statusIconTabButton.icon.color
-            }
-        }
-
-        Component {
-            id: imageIcon
-            Item {
-                width: 28
-                height: 28
-                StatusRoundedImage {
-                    id: statusRoundImage
-                    showLoadingIndicator: true
-                    width: parent.width
-                    height: parent.height
-                    image.source: icon.source
-                }
-                Loader {
-                    sourceComponent:letterIdenticon
-
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    active: statusRoundImage.image.status === Image.Error
-                }
-            }
-        }
-
-        Component {
-            id: letterIdenticon
-            StatusLetterIdenticon {
-                width: 26
-                height: 26
-                letterSize: 15
-                name: statusIconTabButton.name
-                color: (statusIconTabButton.hovered || highlighted || statusIconTabButton.checked) ? Theme.palette.primaryColor1 : statusIconTabButton.icon.color
-            }
+            image.source: statusIconTabButton.icon.source
+            image.width: 28
+            image.height: 28
+            icon.height: statusIconTabButton.icon.height
+            icon.width: statusIconTabButton.icon.width
+            icon.name: statusIconTabButton.icon.name
+            icon.color: (statusIconTabButton.hovered || highlighted || statusIconTabButton.checked) ? Theme.palette.primaryColor1 : statusIconTabButton.icon.color
+            icon.isLetterIdenticon: statusIconTabButton.name !== "" && !statusIconTabButton.icon.source.toString()
+            icon.letterSize: 15
+            name: statusIconTabButton.name
         }
     }
 

@@ -18,6 +18,8 @@ Rectangle {
     property bool expanded: false
 
     property StatusIconSettings icon: StatusIconSettings {
+        width: !!statusExpandableItem.icon.name.toString() ? 24 : 40
+        height: !!statusExpandableItem.icon.name.toString() ? 24 : 40
         color: Theme.palette.directColor1
         background: StatusIconBackgroundSettings {
             width: 32
@@ -55,44 +57,17 @@ Rectangle {
         visible: (statusExpandableItem.type === StatusExpandableItem.Type.Tertiary)
     }
 
-    Loader {
+
+    StatusSmartIdenticon {
         id: identicon
         anchors.top: parent.top
         anchors.topMargin: 25
         anchors.left: parent.left
         anchors.leftMargin: (statusExpandableItem.type === StatusExpandableItem.Type.Secondary) ? 0 : 11
+        image: statusExpandableItem.image
+        icon: statusExpandableItem.icon
+        name: primaryText.text
         active: (statusExpandableItem.type !== StatusExpandableItem.Type.Tertiary)
-        sourceComponent: !!statusExpandableItem.image.source.toString() ? roundedImage :
-                         !!statusExpandableItem.icon.name.toString() ? roundedIcon : letterIdenticon
-    }
-
-    Component {
-        id: roundedImage
-        StatusRoundedImage {
-            image.source: statusExpandableItem.image.source
-        }
-    }
-
-    Component {
-        id: roundedIcon
-        StatusRoundIcon {
-            icon.background.width: statusExpandableItem.icon.background.width
-            icon.background.height: statusExpandableItem.icon.background.height
-            icon.background.color: statusExpandableItem.icon.background.color
-            icon.color: statusExpandableItem.icon.color
-            icon.name: statusExpandableItem.icon.name
-        }
-    }
-
-    Component {
-        id: letterIdenticon
-        StatusLetterIdenticon {
-            height: 40
-            width: 40
-            name: primaryText.text
-            letterSize: 20
-            color: Theme.palette.miscColor5
-        }
     }
 
     StatusBaseText {

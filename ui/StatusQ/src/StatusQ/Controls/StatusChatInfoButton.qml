@@ -18,8 +18,15 @@ Rectangle {
     property string subTitle: ""
     property bool muted: false
     property int pinnedMessagesCount: 0
-    property StatusImageSettings image: StatusImageSettings {}
-    property StatusIconSettings icon: StatusIconSettings {}
+    property StatusImageSettings image: StatusImageSettings {
+        width: 36
+        height: 36
+    }
+    property StatusIconSettings icon: StatusIconSettings {
+        width: 36
+        height: 36
+        letterSize: 20
+    }
     property int type: StatusChatInfoButton.Type.PublicChat
     property alias tooltip: statusToolTip
     property alias sensor: sensor
@@ -50,51 +57,14 @@ Rectangle {
 
         onClicked: statusChatInfoButton.clicked(mouse)
 
-        Loader {
+        StatusSmartIdenticon {
             id: identicon
-
             anchors.left: parent.left
             anchors.leftMargin: 4
             anchors.verticalCenter: parent.verticalCenter
-
-            sourceComponent: !!statusChatInfoButton.image.source.toString() ?
-                                 statusRoundImageComponent :
-                                 statusLetterIdenticonComponent
-        }
-
-        Component {
-            id: statusRoundImageComponent
-
-            Item {
-                width: 36
-                height: 36
-                StatusRoundedImage {
-                    id: statusRoundImage
-                    width: parent.width
-                    height: parent.height
-                    image.source: statusChatInfoButton.image.source
-                    showLoadingIndicator: true
-                    border.width: statusChatInfoButton.image.isIdenticon ? 1 : 0
-                    border.color: Theme.palette.directColor7
-                }
-                Loader {
-                    sourceComponent: statusLetterIdenticonComponent
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    active: statusRoundImage.image.status === Image.Error
-                }
-            }
-        }
-
-        Component {
-            id: statusLetterIdenticonComponent
-
-            StatusLetterIdenticon {
-                width: 36
-                height: 36
-                name: statusChatInfoButton.title
-                color: statusChatInfoButton.icon.color
-            }
+            image: statusChatInfoButton.image
+            icon: statusChatInfoButton.icon
+            name: statusChatInfoButton.title
         }
 
         Item {

@@ -22,7 +22,8 @@ MenuItem {
         isLetterIdenticon: (root.image.source.toString() === ""
                             && root.iconSettings.name.toString() === "")
         background: StatusIconBackgroundSettings {}
-        color: "transparent"
+        color: (name === "channel") ? Theme.palette.directColor1 : "transparent"
+        letterSize: 11
     }
 
     background: Rectangle {
@@ -32,30 +33,17 @@ MenuItem {
     contentItem: RowLayout {
         anchors.left: parent.left
         anchors.leftMargin: 12
-        StatusIcon {
-            Layout.preferredWidth: visible ? root.iconSettings.width : 0
-            Layout.preferredHeight: visible ? root.iconSettings.height : 0
+        Item {
+            Layout.preferredWidth: root.iconSettings.width
+            Layout.preferredHeight: root.iconSettings.height
             Layout.alignment: Qt.AlignVCenter
-            visible: !!root.iconSettings.name && !root.image.source.toString()
-            icon:  root.iconSettings.name
-            color: (icon === "channel")? Theme.palette.directColor1 : root.iconSettings.color
-        }
-        StatusRoundedImage {
-            Layout.preferredWidth: visible ? root.image.width : 0
-            Layout.preferredHeight: visible ? root.image.height : 0
-            Layout.alignment: Qt.AlignVCenter
-            visible: root.image.source.toString() !== ""
-            image.source: root.image.source
-            border.width: root.image.isIdenticon ? 1 : 0
-            border.color: Theme.palette.directColor7
-        }
-        StatusLetterIdenticon {
-            Layout.preferredWidth: visible ? root.iconSettings.width : 0
-            Layout.preferredHeight: visible ? root.iconSettings.height : 0
-            visible: root.iconSettings.isLetterIdenticon && !root.iconSettings.name && !root.image.source.toString()
-            color: root.iconSettings.color
-            name: root.text
-            letterSize: 11
+            StatusSmartIdenticon {
+                id: identicon
+                anchors.centerIn: parent
+                image: root.image
+                icon: root.iconSettings
+                name: root.text
+            }
         }
         StatusBaseText {
             Layout.fillWidth: true

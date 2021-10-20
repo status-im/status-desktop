@@ -286,7 +286,7 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
     StatusListItem {
         title: "Title"
         icon.isLetterIdenticon: true
-        icon.background.color: "orange"
+        icon.color: "orange"
     }
 
     StatusListItem {
