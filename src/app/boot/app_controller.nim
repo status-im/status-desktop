@@ -1,6 +1,5 @@
 import NimQml, os, strformat
 
-import ../../app_service/service/local_settings/service as local_settings_service
 import ../../app_service/service/keychain/service as keychain_service
 import ../../app_service/service/accounts/service as accounts_service
 import ../../app_service/service/contacts/service as contact_service
@@ -61,7 +60,6 @@ type
   AppController* = ref object of RootObj 
     appService: AppService
     # Services
-    localSettingsService: local_settings_service.Service
     keychainService: keychain_service.Service
     accountsService: accounts_service.Service
     contactService: contact_service.Service
@@ -118,16 +116,6 @@ proc newAppController*(appService: AppService): AppController =
   result = AppController()
   result.appService = appService
   # Services
-  
-  #################################################
-  # Since localSettingsService is a product of old architecture, and used only to 
-  # manage `Settings` component (global and profile) in qml, this should be removed
-  # at the end of refactroing process and moved to the same approach we use for
-  # LocalAccountSettings, and that will be maintained only on the Nim side. There
-  # should not be two instances maintain the same settings.
-  result.localSettingsService = local_settings_service.newService()
-  #################################################
-
   result.keychainService = keychain_service.newService(appService.status.events)
   result.settingService = setting_service.newService()
   result.accountsService = accounts_service.newService()
@@ -180,8 +168,7 @@ proc newAppController*(appService: AppService): AppController =
   #################################################
   # At the end of refactoring this will be moved to 
   # appropriate place or removed:
-  result.profile = profile.newController(appService.status, appService, 
-  result.localSettingsService, changeLanguage)
+  result.profile = profile.newController(appService.status, appService, changeLanguage)
   result.connect()
   #################################################
 
@@ -215,7 +202,6 @@ proc delete*(self: AppController) =
   self.localAccountSettingsVariant.delete
   self.localAccountSensitiveSettingsVariant.delete
 
-  self.localSettingsService.delete
   self.accountsService.delete
   self.contactService.delete
   self.chatService.delete
