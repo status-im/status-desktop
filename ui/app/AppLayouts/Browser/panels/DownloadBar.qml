@@ -1,8 +1,9 @@
 import QtQuick 2.1
 import QtGraphicalEffects 1.13
 import utils 1.0
-import "../../../../shared"
-import "../../../../shared/status"
+
+import StatusQ.Controls 0.1
+
 import "../controls"
 
 Rectangle {
@@ -92,7 +93,7 @@ Rectangle {
 
     StatusButton {
         id: showAllBtn
-        size: "small"
+        size: StatusBaseButton.Size.Small
         //% "Show All"
         text: qsTrId("show-all")
         anchors.verticalCenter: parent.verticalCenter
@@ -103,13 +104,15 @@ Rectangle {
         }
     }
 
-    StatusIconButton {
+    StatusFlatRoundButton {
         id: closeBtn
         anchors.verticalCenter: parent.verticalCenter
         anchors.right: parent.right
         anchors.rightMargin: Style.current.padding
-        icon.name: "browser/close"
-        iconColor: Style.current.textColor
+
+        type: StatusFlatRoundButton.Type.Secondary
+
+        icon.name: "close"
         onClicked: {
             downloadBar.isVisible = false
         }

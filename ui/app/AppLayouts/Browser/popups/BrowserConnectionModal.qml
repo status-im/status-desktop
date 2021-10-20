@@ -2,13 +2,16 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import utils 1.0
+
+import StatusQ.Controls 0.1
+
 import "../../../../shared"
-import "../../../../shared/status"
 import "../../../../shared/panels"
 import "../../../../shared/controls"
 import "../controls"
 import "../stores"
 
+// TODO: replace StatusModal
 Popup {
     property var currentTab
     property var request: ({"hostname": "", "title": "", "permission": ""})
@@ -62,7 +65,7 @@ Popup {
             height: imgSize
             Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
 
-                FaviconImage {
+            FaviconImage {
                 id: siteImg
                 width: logoHeader.imgSize
                 height: logoHeader.imgSize
@@ -115,7 +118,7 @@ Popup {
             horizontalAlignment: Text.AlignHCenter
         }
 
-        AccountSelector {
+        StatusAccountSelector {
             id: accountSelector
             label: ""
             width: 190
@@ -170,7 +173,7 @@ Popup {
             Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
 
             StatusButton {
-                type: "warn"
+                type: StatusBaseButton.Type.Danger
                 width: 155
                 //% "Deny"
                 text: qsTrId("deny")
