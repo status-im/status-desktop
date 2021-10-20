@@ -239,11 +239,11 @@ QtObject {
     function validateEns(ensName, isStatus) {
         profileModelInst.ens.validate(ensName, isStatus)
     }
-    
+
     function registerEnsGasEstimate(username, address) {
         return profileModelInst.ens.registerENSGasEstimate(username, address)
     }
-    
+
     function registerEns(username, address, gasLimit, tipLimit, overallLimit, gasPrice, password) {
         return profileModelInst.ens.registerENS(username,
             address, gasLimit, tipLimit, overallLimit, gasPrice, password)

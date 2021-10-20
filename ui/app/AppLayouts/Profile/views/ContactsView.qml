@@ -194,9 +194,8 @@ Item {
 
 
                 Connections {
-                    target: root.store.contacts
-                    onEnsWasResolved: {
-                        console.log('Resolved', resolvedPubKey)
+                    target: root.store.contactsModuleInst
+                    onEnsWasResolved: function (resolvedPubKey) {
                         if (resolvedPubKey === "") {
                             searchResults.pubKey = ""
                             searchResults.showProfileNotFoundMessage = true

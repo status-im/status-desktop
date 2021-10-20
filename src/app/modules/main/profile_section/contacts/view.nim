@@ -80,8 +80,7 @@ QtObject:
 
   proc ensResolved(self: View, id: string) {.slot.} =
     echo "Resolved", id
-    # FIXME
-    # self.ensWasResolved(id)
+    self.ensWasResolved(id)
     # if id == "":
     #   self.contactToAddChanged()
     #   return
@@ -117,7 +116,7 @@ QtObject:
 
 
   proc addContact*(self: View, publicKey: string) {.slot.} =
-    self.delegate.addContact(self.accountKeyUID, publicKey)
+    self.delegate.addContact(publicKey)
     # TODO add back joining of timeline
     # self.status.chat.join(status_utils.getTimelineChatId(publicKey), ChatType.Profile, "", publicKey)
 

@@ -7,29 +7,6 @@ import status/ens as status_ens
 
 import ./models/contact_list
 
-# import ../../../app_service/[main]
-# import ../../../app_service/tasks/[qt, threadpool]
-
-# type
-#   LookupContactTaskArg = ref object of QObjectTaskArg
-#     value: string
-
-# const lookupContactTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
-#   let arg = decode[LookupContactTaskArg](argEncoded)
-#   var id = arg.value
-#   if not id.startsWith("0x"):
-#     id = status_ens.pubkey(id)
-#   arg.finish(id)
-
-# proc lookupContact[T](self: T, slot: string, value: string) =
-#   let arg = LookupContactTaskArg(
-#     tptr: cast[ByteAddress](lookupContactTask),
-#     vptr: cast[ByteAddress](self.vptr),
-#     slot: slot,
-#     value: value
-#   )
-#   self.appService.threadpool.start(arg)
-
 QtObject:
   type Model* = ref object of QObject
     contactList*: ContactList

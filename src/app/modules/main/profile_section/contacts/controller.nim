@@ -25,28 +25,29 @@ method delete*[T](self: Controller[T]) =
 method init*[T](self: Controller[T]) = 
   discard
 
-method getContact*(self: Controller, id: string): Dto =
+method getContact*[T](self: Controller[T], id: string): Dto =
   return self.contactsService.getContact(id)
 
-method generateAlias*(self: Controller, publicKey: string): string =
+method generateAlias*[T](self: Controller[T], publicKey: string): string =
   return self.accountsService.generateAlias(publicKey)
 
-method addContact*(self: Controller, publicKey: string): void =
+method addContact*[T](self: Controller[T], publicKey: string): void =
+  echo "Adding this from controller ", publicKey
   self.contactsService.addContact(publicKey)
 
-method rejectContactRequest*(self: Controller, publicKey: string): void =
+method rejectContactRequest*[T](self: Controller[T], publicKey: string): void =
   self.contactsService.rejectContactRequest(publicKey)
 
-method unblockContact*(self: Controller, publicKey: string): void =
+method unblockContact*[T](self: Controller[T], publicKey: string): void =
   self.contactsService.unblockContact(publicKey)
 
-method blockContact*(self: Controller, publicKey: string): void =
+method blockContact*[T](self: Controller[T], publicKey: string): void =
   self.contactsService.unblockContact(publicKey)
 
-method removeContact*(self: Controller, publicKey: string): void =
+method removeContact*[T](self: Controller[T], publicKey: string): void =
   self.contactsService.removeContact(publicKey)
 
-method changeContactNickname*(self: Controller, accountKeyUID: string, publicKey: string, nicknameToSet: string): void =
+method changeContactNickname*[T](self: Controller[T], accountKeyUID: string, publicKey: string, nicknameToSet: string): void =
   self.contactsService.changeContactNickname(accountKeyUID, publicKey, nicknameToSet)
 
 # method getProfile*[T](self: Controller[T]): item.Item =

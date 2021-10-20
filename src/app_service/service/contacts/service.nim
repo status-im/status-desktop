@@ -71,8 +71,8 @@ proc saveContact(self: Service, contact: Dto) =
   # status_contacts.saveContact(contact.id, contact.ensVerified, contact.ensName, contact.alias, contact.identicon, thumbnail, largeImage, contact.added, contact.blocked, contact.hasAddedUs, contact.localNickname)
   status_contacts.saveContact(contact.id, contact.ensVerified, "", contact.alias, contact.identicon, thumbnail, largeImage, contact.added, contact.blocked, contact.hasAddedUs, "")
 
-method addContact*(self: Service, accountKeyUID: string, publicKey: string) =
-  var contact = self.getOrCreateContact(accountKeyUID)
+method addContact*(self: Service, publicKey: string) =
+  var contact = self.getOrCreateContact(publicKey)
 
   let updating = contact.added
 
@@ -82,7 +82,12 @@ method addContact*(self: Service, accountKeyUID: string, publicKey: string) =
   else:
     contact.blocked = false
 
-  self.saveContact(contact)
+  # FIXME Save contact fails
+  try:
+    self.saveContact(contact)
+  except Exception as e:
+    echo "ERROROR ", e.msg
+  
   # self.events.emit("contactAdded", Args())
   # sendContactUpdate(contact.id, accountKeyUID)
 

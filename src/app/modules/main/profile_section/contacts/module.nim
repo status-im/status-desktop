@@ -47,8 +47,8 @@ method getContact*[T](self: Module[T], id: string): Dto =
 method generateAlias*[T](self: Module[T], publicKey: string): string =
   self.controller.generateAlias(publicKey)
 
-method addContact*[T](self: Module[T], accountKeyUID: string, publicKey: string): void =
-  self.controller.addContact(accountKeyUID, publicKey)
+method addContact*[T](self: Module[T], publicKey: string): void =
+  self.controller.addContact(publicKey)
 
 method rejectContactRequest*[T](self: Module[T], publicKey: string): void =
   self.controller.rejectContactRequest(publicKey)

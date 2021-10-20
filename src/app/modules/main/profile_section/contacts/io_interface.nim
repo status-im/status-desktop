@@ -19,7 +19,7 @@ method getContact*(self: AccessInterface, id: string): Dto {.base.} =
 method generateAlias*(self: AccessInterface, publicKey: string): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method addContact*(self: AccessInterface, accountKeyUID: string, publicKey: string): void {.base.} =
+method addContact*(self: AccessInterface, publicKey: string): void {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method rejectContactRequest*(self: AccessInterface, publicKey: string): void {.base.} =
