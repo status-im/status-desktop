@@ -120,5 +120,8 @@ method init*(self: Service) =
 method getWalletAccounts*(self: Service): seq[WalletAccountDto] =
   return toSeq(self.accounts.values).filter(a => a.isChat)
 
+method getWalletAccount*(self: Service, accountIndex: int): WalletAccountDto =
+  return self.getWalletAccounts()[accountIndex]
+
 method getCurrencyBalance*(self: Service): float64 =
   return self.getWalletAccounts().map(a => a.getCurrencyBalance()).foldl(a + b, 0.0)
