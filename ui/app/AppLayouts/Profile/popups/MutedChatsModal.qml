@@ -4,6 +4,9 @@ import QtGraphicalEffects 1.13
 import QtQuick.Layouts 1.13
 
 import utils 1.0
+
+import StatusQ.Controls 0.1
+
 import "../../../../shared"
 import "../../../../shared/popups"
 import "../../../../shared/panels"
@@ -70,9 +73,8 @@ ModalPopup {
                 onExited: channelItem.isHovered = false
             }
 
-            StatusButton {
+            StatusFlatButton {
                 id: unmuteButton
-                type: "secondary"
                 anchors.right: parent.right
                 anchors.rightMargin: Style.current.smallPadding
                 anchors.verticalCenter: parent.verticalCenter
