@@ -4,7 +4,8 @@ import QtQuick.Layouts 1.13
 import QtQuick.Dialogs 1.3
 import QtGraphicalEffects 1.13
 
-import "../../../../shared"
+import StatusQ.Controls 0.1 as StatusQControls
+
 import "../../../../shared/popups"
 import "../../../../shared/panels"
 import "../../../../shared/controls"
@@ -246,15 +247,13 @@ Item {
             }
         }
 
-        StatusButton {
+        StatusQControls.StatusFlatButton {
             id: generateKeysLinkText
             //% "Generate new keys"
             text: qsTrId("generate-new-keys")
             anchors.top: txtPassword.visible? txtPassword.bottom : changeAccountBtn.bottom
             anchors.topMargin: 16
             anchors.horizontalCenter: parent.horizontalCenter
-            font.pixelSize: 13
-            type: "secondary"
             onClicked: {
                 setCurrentFlow(false);
                 onGenKeyClicked()
