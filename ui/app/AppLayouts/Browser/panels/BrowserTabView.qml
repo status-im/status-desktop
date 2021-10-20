@@ -33,8 +33,8 @@ QQC1.TabView {
         }
 
         tab.item.profile = profile;
-        if (appSettings.browserHomepage !== "") {
-            tab.item.url = appSettings.browserHomepage
+        if (localAccountSensitiveSettings.browserHomepage !== "") {
+            tab.item.url = localAccountSensitiveSettings.browserHomepage
         }
         return tab;
     }

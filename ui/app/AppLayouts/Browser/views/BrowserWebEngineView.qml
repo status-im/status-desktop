@@ -30,14 +30,14 @@ WebEngineView {
         zoomFactor = newFactor
     }
 
-    settings.autoLoadImages: appSettings.autoLoadImages
-    settings.javascriptEnabled: appSettings.javaScriptEnabled
-    settings.errorPageEnabled: appSettings.errorPageEnabled
-    settings.pluginsEnabled: appSettings.pluginsEnabled
-    settings.autoLoadIconsForPage: appSettings.autoLoadIconsForPage
-    settings.touchIconsEnabled: appSettings.touchIconsEnabled
-    settings.webRTCPublicInterfacesOnly: appSettings.webRTCPublicInterfacesOnly
-    settings.pdfViewerEnabled: appSettings.pdfViewerEnabled
+    settings.autoLoadImages: localAccountSensitiveSettings.autoLoadImages
+    settings.javascriptEnabled: localAccountSensitiveSettings.javaScriptEnabled
+    settings.errorPageEnabled: localAccountSensitiveSettings.errorPageEnabled
+    settings.pluginsEnabled: localAccountSensitiveSettings.pluginsEnabled
+    settings.autoLoadIconsForPage: localAccountSensitiveSettings.autoLoadIconsForPage
+    settings.touchIconsEnabled: localAccountSensitiveSettings.touchIconsEnabled
+    settings.webRTCPublicInterfacesOnly: localAccountSensitiveSettings.webRTCPublicInterfacesOnly
+    settings.pdfViewerEnabled: localAccountSensitiveSettings.pdfViewerEnabled
     settings.focusOnNavigationEnabled: true
 
     onCertificateError: function(error) {

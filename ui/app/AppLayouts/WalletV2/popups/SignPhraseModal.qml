@@ -94,7 +94,7 @@ ModalPopup {
             text: qsTrId("ens-got-it")
             onClicked: {
                 //TOOD improve this to not use dynamic scoping
-                appSettings.hideSignPhraseModal = true;
+                localAccountSensitiveSettings.hideSignPhraseModal = true;
                 close();
             }
         }

@@ -99,7 +99,7 @@ Loader {
                 target: chatsModel.messageView
                 onMessageEdited: {
                     if (responseTo === editedMessageId){
-                        lblReplyMessage.text = Utils.getReplyMessageStyle(Emoji.parse(Utils.linkifyAndXSS(editedMessageContent + Constants.editLabel), Emoji.size.small), isCurrentUser, appSettings.useCompactMode)
+                        lblReplyMessage.text = Utils.getReplyMessageStyle(Emoji.parse(Utils.linkifyAndXSS(editedMessageContent + Constants.editLabel), Emoji.size.small), isCurrentUser, localAccountSensitiveSettings.useCompactMode)
                     }
                 }
             }
@@ -159,9 +159,9 @@ Loader {
                 text: {
                     if (repliedMessageIsEdited){
                         let index = repliedMessageContent.length - 4
-                        return Utils.getReplyMessageStyle(Emoji.parse(Utils.linkifyAndXSS(repliedMessageContent.slice(0, index) + Constants.editLabel + repliedMessageContent.slice(index)), Emoji.size.small), isCurrentUser, appSettings.useCompactMode)
+                        return Utils.getReplyMessageStyle(Emoji.parse(Utils.linkifyAndXSS(repliedMessageContent.slice(0, index) + Constants.editLabel + repliedMessageContent.slice(index)), Emoji.size.small), isCurrentUser, localAccountSensitiveSettings.useCompactMode)
                     } else {
-                        return Utils.getReplyMessageStyle(Emoji.parse(Utils.linkifyAndXSS(repliedMessageContent), Emoji.size.small), isCurrentUser, appSettings.useCompactMode)
+                        return Utils.getReplyMessageStyle(Emoji.parse(Utils.linkifyAndXSS(repliedMessageContent), Emoji.size.small), isCurrentUser, localAccountSensitiveSettings.useCompactMode)
                     }
                 }
                 textFormat: Text.RichText

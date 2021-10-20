@@ -175,7 +175,7 @@ Item {
                     text: qsTrId("communities")
                     icon.name: "communities"
                     onTriggered: openPopup(communitiesPopupComponent)
-                    enabled: appSettings.communitiesEnabled
+                    enabled: localAccountSensitiveSettings.communitiesEnabled
                 }
             }
         }
@@ -263,7 +263,7 @@ Item {
 
         EmptyView {
             id: emptyViewAndSuggestions
-            visible: !appSettings.hideChannelSuggestions
+            visible: !localAccountSensitiveSettings.hideChannelSuggestions
             width: parent.width
             anchors.top: channelList.bottom
             anchors.topMargin: Style.current.padding

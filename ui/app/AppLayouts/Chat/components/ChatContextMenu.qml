@@ -111,7 +111,7 @@ StatusPopupMenu {
 
     StatusMenuItem {
         text: qsTr("Download")
-        enabled: appSettings.downloadChannelMessagesEnabled
+        enabled: localAccountSensitiveSettings.downloadChannelMessagesEnabled
         icon.name: "download"
         onTriggered: downdloadDialog.open()
     }

@@ -152,7 +152,7 @@ Item {
                     onCancelClicked: root.cancelClicked(packId)
                     onUpdateClicked: root.updateClicked(packId)
                     onBuyClicked: {
-                        if (!appSettings.isWalletEnabled) {
+                        if (!localAccountSensitiveSettings.isWalletEnabled) {
                             confirmationPopup.open()
                             return
                         }
@@ -168,7 +168,7 @@ Item {
                 confirmationText: qsTr("This feature is experimental and is meant for testing purposes by core contributors and the community. It's not meant for real use and makes no claims of security or integrity of funds or data. Use at your own risk.")
                 confirmButtonLabel: qsTr("I understand")
                 onConfirmButtonClicked: {
-                    appSettings.isWalletEnabled = true
+                    localAccountSensitiveSettings.isWalletEnabled = true
                     close()
                     root.stickerPurchasePopup = openPopup(stickerPackPurchaseModal)
                     root.buyClicked(packId)

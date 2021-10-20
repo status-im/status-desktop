@@ -59,7 +59,7 @@ Rectangle {
 
         StyledText {
             id: replyText
-            text: Utils.getMessageWithStyle(Utils.linkifyAndXSS(Emoji.parse(message)), appSettings.useCompactMode, false)
+            text: Utils.getMessageWithStyle(Utils.linkifyAndXSS(Emoji.parse(message)), localAccountSensitiveSettings.useCompactMode, false)
             anchors.fill: parent
             elide: Text.ElideRight
             font.pixelSize: 13

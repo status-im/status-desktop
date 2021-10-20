@@ -109,7 +109,7 @@ Page {
             anchors.top: btnExistingKey.bottom
             anchors.topMargin: Style.current.padding
             anchors.horizontalCenter: parent.horizontalCenter
-            visible: isExperimental === "1" || appSettings.isKeycardEnabled
+            visible: isExperimental === "1" || localAccountSensitiveSettings.isKeycardEnabled
             type: "secondary"
         }
     }

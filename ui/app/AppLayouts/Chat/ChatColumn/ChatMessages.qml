@@ -34,7 +34,7 @@ Item {
     ListView {
         id: chatLogView
         anchors.fill: parent
-        spacing: appSettings.useCompactMode ? 0 : 4
+        spacing: localAccountSensitiveSettings.useCompactMode ? 0 : 4
         boundsBehavior: Flickable.StopAtBounds
         clip: true
         verticalLayoutDirection: ListView.BottomToTop
@@ -76,7 +76,7 @@ Item {
                     item = messageListDelegate.items.get(i);
                     if (item.model.messageId === msgId) {
                         chatLogView.positionViewAtIndex(i, ListView.Beginning);
-                        if (appSettings.useCompactMode && isSearch) {
+                        if (localAccountSensitiveSettings.useCompactMode && isSearch) {
                             chatLogView.itemAtIndex(i).startMessageFoundAnimation();
                         }
                     }
@@ -228,7 +228,7 @@ Item {
                                               communityId,
                                               "",
                                               "",
-                                              appSettings.useOSNotifications)
+                                              localAccountSensitiveSettings.useOSNotifications)
             }
 
             onMembershipRequestPushed: function (communityId, communityName, pubKey) {
@@ -242,7 +242,7 @@ Item {
                                               communityId,
                                               "",
                                               "",
-                                              appSettings.useOSNotifications)
+                                              localAccountSensitiveSettings.useOSNotifications)
             }
         }
 

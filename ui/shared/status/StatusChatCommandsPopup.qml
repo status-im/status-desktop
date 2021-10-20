@@ -48,7 +48,7 @@ Popup {
             icon.name: "send"
             icon.width: 16
             icon.height: 18
-            onClicked: appSettings.isWalletEnabled ? root.sendTransactionCommandButtonClicked() : confirmationPopup.open()
+            onClicked: localAccountSensitiveSettings.isWalletEnabled ? root.sendTransactionCommandButtonClicked() : confirmationPopup.open()
         }
 
 
@@ -60,7 +60,7 @@ Popup {
             icon.width: 16
             icon.height: 18
             iconRotation: 180
-            onClicked: appSettings.isWalletEnabled ? root.receiveTransactionCommandButtonClicked() : confirmationPopup.open()
+            onClicked: localAccountSensitiveSettings.isWalletEnabled ? root.receiveTransactionCommandButtonClicked() : confirmationPopup.open()
         }
 
         ConfirmationDialog {
@@ -69,7 +69,7 @@ Popup {
             confirmationText: qsTr("This feature is experimental and is meant for testing purposes by core contributors and the community. It's not meant for real use and makes no claims of security or integrity of funds or data. Use at your own risk.")
             confirmButtonLabel: qsTr("I understand")
             onConfirmButtonClicked: {
-                appSettings.isWalletEnabled = true
+                localAccountSensitiveSettings.isWalletEnabled = true
                 close()
                 root.sendTransactionCommandButtonClicked()
             }

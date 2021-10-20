@@ -58,7 +58,7 @@ Popup {
         const encodedIcon = String.fromCodePoint(...codePointParts);
 
         // Add at the  start of the list
-        let recentEmojis = appSettings.recentEmojis
+        let recentEmojis = localAccountSensitiveSettings.recentEmojis
         recentEmojis.unshift(emoji)
         // Remove duplicates
         recentEmojis = recentEmojis.filter(function (e, index) {
@@ -71,7 +71,7 @@ Popup {
             recentEmojis.splice(MAX_EMOJI_NUMBER - 1)
         }
         emojiSectionsRepeater.itemAt(0).allEmojis = recentEmojis
-        appSettings.recentEmojis = recentEmojis
+        localAccountSensitiveSettings.recentEmojis = recentEmojis
 
         popup.emojiSelected(Emoji.parse(encodedIcon) + ' ', true) // Adding a space because otherwise, some emojis would fuse since emoji is just a string
         popup.close()
@@ -156,8 +156,8 @@ Popup {
                     ]
 
 
-            if (appSettings.skinColor !== "") {
-                if (emoji.unicode.includes(appSettings.skinColor)) {
+            if (localAccountSensitiveSettings.skinColor !== "") {
+                if (emoji.unicode.includes(localAccountSensitiveSettings.skinColor)) {
                     newCategories[categoryNames[emoji.category]].push(Object.assign({}, emoji, {filename: emoji.unicode}));
                 } else {
                     if (!emojisWithColors.includes(emoji.unicode) && !containsSkinColor(emoji.unicode))  {
@@ -184,11 +184,11 @@ Popup {
         onSettingsLoaded: {
             connectionSettings.enabled = false
             // Add recent
-            if (!appSettings.recentEmojis || !appSettings.recentEmojis.length) {
+            if (!localAccountSensitiveSettings.recentEmojis || !localAccountSensitiveSettings.recentEmojis.length) {
                 return
             }
-            categories[0] = appSettings.recentEmojis
-            emojiSectionsRepeater.itemAt(0).allEmojis = appSettings.recentEmojis
+            categories[0] = localAccountSensitiveSettings.recentEmojis
+            emojiSectionsRepeater.itemAt(0).allEmojis = localAccountSensitiveSettings.recentEmojis
         }
     }
 
@@ -242,7 +242,7 @@ Popup {
                             cursorShape: Qt.PointingHandCursor
                             anchors.fill: parent
                             onClicked: {
-                                appSettings.skinColor = (index === 5) ? "" : modelData.split("-")[1];
+                                localAccountSensitiveSettings.skinColor = (index === 5) ? "" : modelData.split("-")[1];
                                 popup.populateCategories();
                                 skinToneEmoji.expandSkinColorOptions = false;
                             }
@@ -258,7 +258,7 @@ Popup {
                 anchors.right: parent.right
                 anchors.rightMargin: emojiHeader.headerMargin
                 visible: !skinToneEmoji.expandSkinColorOptions
-                source: Style.emoji("72x72/1f590" + ((appSettings.skinColor !== "" && visible) ? ("-" + appSettings.skinColor) : ""))
+                source: Style.emoji("72x72/1f590" + ((localAccountSensitiveSettings.skinColor !== "" && visible) ? ("-" + localAccountSensitiveSettings.skinColor) : ""))
                 MouseArea {
                     cursorShape: Qt.PointingHandCursor
                     anchors.fill: parent

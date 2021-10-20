@@ -33,10 +33,10 @@ ModalPopup {
             //% "None"
             text: qsTrId("none")
             buttonGroup: searchEnginGroup
-            checked: appSettings.shouldShowBrowserSearchEngine === Constants.browserSearchEngineNone
+            checked: localAccountSensitiveSettings.shouldShowBrowserSearchEngine === Constants.browserSearchEngineNone
             onRadioCheckedChanged: {
                 if (checked) {
-                    appSettings.shouldShowBrowserSearchEngine = Constants.browserSearchEngineNone
+                    localAccountSensitiveSettings.shouldShowBrowserSearchEngine = Constants.browserSearchEngineNone
                 }
             }
         }
@@ -44,10 +44,10 @@ ModalPopup {
         StatusRadioButtonRow {
             text: "Google"
             buttonGroup: searchEnginGroup
-            checked: appSettings.shouldShowBrowserSearchEngine === Constants.browserSearchEngineGoogle
+            checked: localAccountSensitiveSettings.shouldShowBrowserSearchEngine === Constants.browserSearchEngineGoogle
             onRadioCheckedChanged: {
                 if (checked) {
-                    appSettings.shouldShowBrowserSearchEngine = Constants.browserSearchEngineGoogle
+                    localAccountSensitiveSettings.shouldShowBrowserSearchEngine = Constants.browserSearchEngineGoogle
                 }
             }
         }
@@ -55,10 +55,10 @@ ModalPopup {
         StatusRadioButtonRow {
             text: "Yahoo!"
             buttonGroup: searchEnginGroup
-            checked: appSettings.shouldShowBrowserSearchEngine === Constants.browserSearchEngineYahoo
+            checked: localAccountSensitiveSettings.shouldShowBrowserSearchEngine === Constants.browserSearchEngineYahoo
             onRadioCheckedChanged: {
                 if (checked) {
-                    appSettings.shouldShowBrowserSearchEngine = Constants.browserSearchEngineYahoo
+                    localAccountSensitiveSettings.shouldShowBrowserSearchEngine = Constants.browserSearchEngineYahoo
                 }
             }
         }
@@ -66,10 +66,10 @@ ModalPopup {
         StatusRadioButtonRow {
             text: "DuckDuckGo"
             buttonGroup: searchEnginGroup
-            checked: appSettings.shouldShowBrowserSearchEngine === Constants.browserSearchEngineDuckDuckGo
+            checked: localAccountSensitiveSettings.shouldShowBrowserSearchEngine === Constants.browserSearchEngineDuckDuckGo
             onRadioCheckedChanged: {
                 if (checked) {
-                    appSettings.shouldShowBrowserSearchEngine = Constants.browserSearchEngineDuckDuckGo
+                    localAccountSensitiveSettings.shouldShowBrowserSearchEngine = Constants.browserSearchEngineDuckDuckGo
                 }
             }
         }

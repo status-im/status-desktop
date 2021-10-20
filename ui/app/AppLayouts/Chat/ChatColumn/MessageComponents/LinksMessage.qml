@@ -42,7 +42,7 @@ Column {
             active: true
             
             Connections {
-                target: appSettings
+                target: localAccountSensitiveSettings
                 onWhitelistedUnfurlingSitesChanged: {
                     fetched = false
                     linkMessageLoader.sourceComponent = undefined
@@ -119,7 +119,7 @@ Column {
                 // for more information
                 this.height = undefined
                 if (Utils.hasImageExtension(link)) {
-                    if (appSettings.displayChatImages) {
+                    if (localAccountSensitiveSettings.displayChatImages) {
                         linkData = {
                             thumbnailUrl: link
                         }
@@ -136,14 +136,14 @@ Column {
 
                 let linkWhiteListed = false
                 const linkHostname = Utils.getHostname(link)
-                const linkExists = Object.keys(appSettings.whitelistedUnfurlingSites).some(function(whitelistedHostname) {
+                const linkExists = Object.keys(localAccountSensitiveSettings.whitelistedUnfurlingSites).some(function(whitelistedHostname) {
                     const exists = linkHostname.endsWith(whitelistedHostname)
                     if (exists) {
-                        linkWhiteListed = appSettings.whitelistedUnfurlingSites[whitelistedHostname] === true
+                        linkWhiteListed = localAccountSensitiveSettings.whitelistedUnfurlingSites[whitelistedHostname] === true
                     }
                     return exists
                 })
-                if (!linkWhiteListed && linkExists && !appSettings.neverAskAboutUnfurlingAgain) {
+                if (!linkWhiteListed && linkExists && !localAccountSensitiveSettings.neverAskAboutUnfurlingAgain) {
                     return enableLinkComponent
                 }
                 if (linkWhiteListed) {
@@ -170,7 +170,7 @@ Column {
                     return chatsModel.getLinkPreviewData(link, root.uuid)
                 }
                 // setting the height to 0 allows the "enable link" dialog to
-                // disappear correctly when appSettings.neverAskAboutUnfurlingAgain
+                // disappear correctly when localAccountSensitiveSettings.neverAskAboutUnfurlingAgain
                 // is true. The height is reset at the top of this method.
                 this.height = 0
                 return undefined
@@ -365,7 +365,7 @@ Column {
                 text: qsTrId("dont-ask")
                 type: "secondary"
                 onClicked: {
-                    appSettings.neverAskAboutUnfurlingAgain = true
+                    localAccountSensitiveSettings.neverAskAboutUnfurlingAgain = true
                 }
                 width: parent.width
                 anchors.top: sep2.bottom

@@ -39,71 +39,6 @@ StatusWindow {
         }
     }
 
-    Settings {
-        id: appSettings
-        fileName: profileModel.settingsFile
-
-        property var chatSplitView
-        property var walletSplitView
-        property var profileSplitView
-        property bool communitiesEnabled: false
-        property bool isWalletEnabled: false
-        property bool isWalletV2Enabled: false
-        property bool nodeManagementEnabled: false
-        property bool isBrowserEnabled: false
-        property bool isActivityCenterEnabled: false
-        property bool showOnlineUsers: false
-        property bool expandUsersList: false
-        property bool isGifWidgetEnabled: false
-        property bool isKeycardEnabled: false
-        property bool isTenorWarningAccepted: false
-        property bool displayChatImages: false
-        property bool useCompactMode: true
-        property bool timelineEnabled: true
-        property var recentEmojis: []
-        property var hiddenCommunityWelcomeBanners: []
-        property var hiddenCommunityBackUpBanners: []
-        property real volume: 0.2
-        property int notificationSetting: Constants.notifyJustMentions
-        property bool notificationSoundsEnabled: true
-        property bool useOSNotifications: true
-        property int notificationMessagePreviewSetting: Constants.notificationPreviewNameAndMessage
-        property bool notifyOnNewRequests: true
-        property var whitelistedUnfurlingSites: ({})
-        property bool neverAskAboutUnfurlingAgain: false
-        property bool hideChannelSuggestions: false
-        property int fontSize: Constants.fontSizeM
-        property bool hideSignPhraseModal: false
-        property bool onlyShowContactsProfilePics: true
-        property bool quitOnClose: false
-        property string skinColor: ""
-        property bool showDeleteMessageWarning: true
-        property bool downloadChannelMessagesEnabled: false
-        property int lastModeActiveTab: 0
-        property string lastModeActiveCommunity: ""
-
-        // Browser settings
-        property bool showBrowserSelector: true
-        property bool openLinksInStatus: true
-        property bool shouldShowFavoritesBar: true
-        property string browserHomepage: ""
-        property int shouldShowBrowserSearchEngine: Constants.browserSearchEngineDuckDuckGo
-        property int useBrowserEthereumExplorer: Constants.browserEthereumExplorerEtherscan
-        property bool autoLoadImages: true
-        property bool javaScriptEnabled: true
-        property bool errorPageEnabled: true
-        property bool pluginsEnabled: true
-        property bool autoLoadIconsForPage: true
-        property bool touchIconsEnabled: true
-        property bool webRTCPublicInterfacesOnly: false
-        property bool devToolsEnabled: false
-        property bool pdfViewerEnabled: true
-        property bool compatibilityMode: true
-
-        // Ropsten settings
-        property bool stickersEnsRopsten: false
-    }
-
     id: applicationWindow
     objectName: "mainWindow"
     minimumWidth: 900
@@ -612,7 +547,7 @@ StatusWindow {
                 Qt.quit();
             }
             else if (loader.sourceComponent == app) {
-                if (appSettings.quitOnClose) {
+                if (localAccountSensitiveSettings.quitOnClose) {
                     Qt.quit();
                 } else {
                     applicationWindow.visible = false;

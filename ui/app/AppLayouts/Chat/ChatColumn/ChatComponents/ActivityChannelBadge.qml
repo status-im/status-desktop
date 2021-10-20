@@ -73,7 +73,7 @@ Rectangle {
             }
 
             StyledTextEdit {
-                text: Utils.getReplyMessageStyle(Emoji.parse(Utils.linkifyAndXSS(repliedMessageContent), Emoji.size.small), false, appSettings.useCompactMode)
+                text: Utils.getReplyMessageStyle(Emoji.parse(Utils.linkifyAndXSS(repliedMessageContent), Emoji.size.small), false, localAccountSensitiveSettings.useCompactMode)
                 textFormat: Text.RichText
                 height: 18
                 width: implicitWidth > 300 ? 300 : implicitWidth

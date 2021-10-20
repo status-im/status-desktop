@@ -90,7 +90,7 @@ PopupMenu {
                 tabs.getTab(i).item.stop(); // Stop all loading tabs
             }
 
-            appSettings.compatibilityMode = checked;
+            localAccountSensitiveSettings.compatibilityMode = checked;
 
             for (let i = 0; i < tabs.count; ++i){
                 tabs.getTab(i).item.reload(); // Reload them with new user agent
@@ -104,7 +104,7 @@ PopupMenu {
         text: qsTrId("developer-tools")
         shortcut: "F12"
         onTriggered: {
-            appSettings.devToolsEnabled = !appSettings.devToolsEnabled
+            localAccountSensitiveSettings.devToolsEnabled = !localAccountSensitiveSettings.devToolsEnabled
         }
     }
 

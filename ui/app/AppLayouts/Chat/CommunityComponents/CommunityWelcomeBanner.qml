@@ -49,9 +49,9 @@ Rectangle {
         icon.width: 20
         iconColor: Style.current.darkGrey
         onClicked: {
-            let hiddenBannerIds = appSettings.hiddenCommunityWelcomeBanners
+            let hiddenBannerIds = localAccountSensitiveSettings.hiddenCommunityWelcomeBanners
             hiddenBannerIds.push(chatsModel.communities.activeCommunity.id)
-            appSettings.hiddenCommunityWelcomeBanners = hiddenBannerIds
+            localAccountSensitiveSettings.hiddenCommunityWelcomeBanners = hiddenBannerIds
             root.visible = false
         }
     }

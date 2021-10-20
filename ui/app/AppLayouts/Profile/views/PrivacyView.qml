@@ -164,11 +164,11 @@ Item {
             components: [
                 StatusSwitch {
                     id: switch1
-                    checked: !appSettings.onlyShowContactsProfilePics
+                    checked: !localAccountSensitiveSettings.onlyShowContactsProfilePics
                 }
             ]
             sensor.onClicked: {
-                switch1.checked = appSettings.onlyShowContactsProfilePics = !switch1.checked
+                switch1.checked = localAccountSensitiveSettings.onlyShowContactsProfilePics = !switch1.checked
             }
         }
 
@@ -183,11 +183,11 @@ Item {
             components: [
                 StatusSwitch {
                     id: switch2               
-                    checked: appSettings.displayChatImages
+                    checked: localAccountSensitiveSettings.displayChatImages
                 }
             ]
             sensor.onClicked: {
-                switch2.checked = appSettings.onlyShowContactsProfilePics = !switch2.checked
+                switch2.checked = localAccountSensitiveSettings.onlyShowContactsProfilePics = !switch2.checked
             }
         }
 
@@ -239,7 +239,7 @@ Item {
             title: qsTrId("open-links-with---")
             implicitHeight: 52
             //% "My default browser"
-            label: appSettings.openLinksInStatus ? "Status" : qsTrId("my-default-browser")
+            label: localAccountSensitiveSettings.openLinksInStatus ? "Status" : qsTrId("my-default-browser")
             components: [
                 StatusIcon {
                     icon: "chevron-down"

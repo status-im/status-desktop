@@ -19,7 +19,7 @@ Item {
     property bool hideSignPhraseModal: false
 
     function showSigningPhrasePopup(){
-        if(!hideSignPhraseModal && !appSettings.hideSignPhraseModal){
+        if(!hideSignPhraseModal && !localAccountSensitiveSettings.hideSignPhraseModal){
             signPhrasePopup.open();
         }
     }
@@ -27,7 +27,7 @@ Item {
     SignPhraseModal {
         id: signPhrasePopup
         onRemindLaterClicked: hideSignPhraseModal = true
-        onAcceptClicked: appSettings.hideSignPhraseModal = true
+        onAcceptClicked: localAccountSensitiveSettings.hideSignPhraseModal = true
     }
 
     SeedPhraseBackupWarning {

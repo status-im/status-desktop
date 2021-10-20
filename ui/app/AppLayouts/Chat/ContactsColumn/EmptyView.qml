@@ -56,7 +56,7 @@ Rectangle {
             icon.width: 20
             iconColor: Style.current.midGrey
             onClicked: {
-                appSettings.hideChannelSuggestions = true
+                localAccountSensitiveSettings.hideChannelSuggestions = true
             }
         }
 

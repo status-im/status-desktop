@@ -33,10 +33,10 @@ ModalPopup {
             //% "None"
             text: qsTrId("none")
             buttonGroup: searchEnginGroup
-            checked: appSettings.useBrowserEthereumExplorer === Constants.browserEthereumExplorerNone
+            checked: localAccountSensitiveSettings.useBrowserEthereumExplorer === Constants.browserEthereumExplorerNone
             onRadioCheckedChanged: {
                 if (checked) {
-                    appSettings.useBrowserEthereumExplorer = Constants.browserEthereumExplorerNone
+                    localAccountSensitiveSettings.useBrowserEthereumExplorer = Constants.browserEthereumExplorerNone
                 }
             }
         }
@@ -44,10 +44,10 @@ ModalPopup {
         StatusRadioButtonRow {
             text: "etherscan.io"
             buttonGroup: searchEnginGroup
-            checked: appSettings.useBrowserEthereumExplorer === Constants.browserEthereumExplorerEtherscan
+            checked: localAccountSensitiveSettings.useBrowserEthereumExplorer === Constants.browserEthereumExplorerEtherscan
             onRadioCheckedChanged: {
                 if (checked) {
-                    appSettings.useBrowserEthereumExplorer = Constants.browserEthereumExplorerEtherscan
+                    localAccountSensitiveSettings.useBrowserEthereumExplorer = Constants.browserEthereumExplorerEtherscan
                 }
             }
         }
@@ -55,10 +55,10 @@ ModalPopup {
         StatusRadioButtonRow {
             text: "ethplorer.io"
             buttonGroup: searchEnginGroup
-            checked: appSettings.useBrowserEthereumExplorer === Constants.browserEthereumExplorerEthplorer
+            checked: localAccountSensitiveSettings.useBrowserEthereumExplorer === Constants.browserEthereumExplorerEthplorer
             onRadioCheckedChanged: {
                 if (checked) {
-                    appSettings.useBrowserEthereumExplorer = Constants.browserEthereumExplorerEthplorer
+                    localAccountSensitiveSettings.useBrowserEthereumExplorer = Constants.browserEthereumExplorerEthplorer
                 }
             }
         }
@@ -66,10 +66,10 @@ ModalPopup {
         StatusRadioButtonRow {
             text: "blockchair.com"
             buttonGroup: searchEnginGroup
-            checked: appSettings.useBrowserEthereumExplorer === Constants.browserEthereumExplorerBlockchair
+            checked: localAccountSensitiveSettings.useBrowserEthereumExplorer === Constants.browserEthereumExplorerBlockchair
             onRadioCheckedChanged: {
                 if (checked) {
-                    appSettings.useBrowserEthereumExplorer = Constants.browserEthereumExplorerBlockchair
+                    localAccountSensitiveSettings.useBrowserEthereumExplorer = Constants.browserEthereumExplorerBlockchair
                 }
             }
         }

@@ -66,7 +66,7 @@ Rectangle {
         storageName: "Profile"
         offTheRecord: false
         httpUserAgent: {
-            if (appSettings.compatibilityMode) {
+            if (localAccountSensitiveSettings.compatibilityMode) {
                 // Google doesn't let you connect if the user agent is Chrome-ish and doesn't satisfy some sort of hidden requirement
                 return "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:81.0) Gecko/20100101 Firefox/81.0"
             }
@@ -199,7 +199,7 @@ Rectangle {
 
     WebEngineView {
         id: devToolsView
-        visible: appSettings.devToolsEnabled
+        visible: localAccountSensitiveSettings.devToolsEnabled
         height: visible ? 400 : 0
         inspectedView: visible && tabs.currentIndex < tabs.count ? tabs.getTab(tabs.currentIndex).item : null
         anchors.left: parent.left

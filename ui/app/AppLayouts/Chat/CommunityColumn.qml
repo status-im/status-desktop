@@ -235,7 +235,7 @@ Item {
 
         Loader {
             id: emptyViewAndSuggestionsLoader
-            active: chatsModel.communities.activeCommunity.admin && !appSettings.hiddenCommunityWelcomeBanners.includes(chatsModel.communities.activeCommunity.id)
+            active: chatsModel.communities.activeCommunity.admin && !localAccountSensitiveSettings.hiddenCommunityWelcomeBanners.includes(chatsModel.communities.activeCommunity.id)
             width: parent.width
             height: active ? item.height : 0
             anchors.top: communityChatListAndCategories.bottom
@@ -247,7 +247,7 @@ Item {
 
         Loader {
             id: backUpBannerLoader
-            active: chatsModel.communities.activeCommunity.admin && !appSettings.hiddenCommunityBackUpBanners.includes(chatsModel.communities.activeCommunity.id)
+            active: chatsModel.communities.activeCommunity.admin && !localAccountSensitiveSettings.hiddenCommunityBackUpBanners.includes(chatsModel.communities.activeCommunity.id)
             width: parent.width
             height: active ? item.height : 0
             anchors.top: emptyViewAndSuggestionsLoader.bottom

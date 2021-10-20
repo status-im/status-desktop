@@ -87,9 +87,9 @@ Item {
                     width: 10
                     height: 10
                     anchors.top: parent.top
-                    anchors.left: !isCurrentUser || appSettings.useCompactMode ? parent.left : undefined
+                    anchors.left: !isCurrentUser || localAccountSensitiveSettings.useCompactMode ? parent.left : undefined
                     anchors.leftMargin: 0
-                    anchors.right: !isCurrentUser || appSettings.useCompactMode ? undefined : parent.right
+                    anchors.right: !isCurrentUser || localAccountSensitiveSettings.useCompactMode ? undefined : parent.right
                     anchors.rightMargin: 0
                     radius: 2
                     z: -1
@@ -116,9 +116,9 @@ Item {
                                 width: 10
                                 height: 10
                                 anchors.top: parent.top
-                                anchors.left: !isCurrentUser || appSettings.useCompactMode ? parent.left : undefined
+                                anchors.left: !isCurrentUser || localAccountSensitiveSettings.useCompactMode ? parent.left : undefined
                                 anchors.leftMargin: 0
-                                anchors.right: !isCurrentUser || appSettings.useCompactMode ? undefined : parent.right
+                                anchors.right: !isCurrentUser || localAccountSensitiveSettings.useCompactMode ? undefined : parent.right
                                 anchors.rightMargin: 0
                                 radius: 2
                                 z: -1

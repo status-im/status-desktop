@@ -62,7 +62,7 @@ Item {
             //% "I understand"
             confirmButtonLabel: qsTrId("i-understand")
             onConfirmButtonClicked: {
-                appSettings.communitiesEnabled = true
+                localAccountSensitiveSettings.communitiesEnabled = true
                 onConfirmed()
                 close()
             }
@@ -316,7 +316,7 @@ Item {
                                 }
                             }
 
-                            if (appSettings.communitiesEnabled) {
+                            if (localAccountSensitiveSettings.communitiesEnabled) {
                                 onBtnClick();
                             } else {
                                 openPopup(confirmationPopupComponent, { onConfirmed: onBtnClick });

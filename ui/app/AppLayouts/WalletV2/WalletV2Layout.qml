@@ -26,7 +26,7 @@ Item {
 
     function showSigningPhrasePopup() {
         //TODO improve this to not use dynamic scoping
-        if(!hideSignPhraseModal && !appSettings.hideSignPhraseModal){
+        if(!hideSignPhraseModal && !localAccountSensitiveSettings.hideSignPhraseModal){
             signPhrasePopup.open();
         }
     }

@@ -31,13 +31,13 @@ Item {
     property alias appLayout: appLayout
     property var newVersionJSON: JSON.parse(utilsModel.newVersion)
     property bool profilePopupOpened: false
-    property bool networkGuarded: profileModel.network.current === Constants.networkMainnet || (profileModel.network.current === Constants.networkRopsten && appSettings.stickersEnsRopsten)
+    property bool networkGuarded: profileModel.network.current === Constants.networkMainnet || (profileModel.network.current === Constants.networkRopsten && localAccountSensitiveSettings.stickersEnsRopsten)
 
     signal settingsLoaded()
     signal openContactsPopup()
 
     function changeAppSection(section) {
-        appSettings.lastModeActiveCommunity = ""
+        localAccountSensitiveSettings.lastModeActiveCommunity = ""
         chatsModel.communities.activeCommunity.active = false
         appView.currentIndex = Utils.getAppSectionIndex(section)
     }
@@ -52,7 +52,7 @@ Item {
             return
         }
 
-        if (appSettings.onlyShowContactsProfilePics) {
+        if (localAccountSensitiveSettings.onlyShowContactsProfilePics) {
             const isContact = profileModel.contacts.list.rowData(index, "isContact")
             if (isContact === "false") {
                 return
@@ -109,10 +109,10 @@ Item {
     }
 
     function openLink(link) {
-        if (appSettings.showBrowserSelector) {
+        if (localAccountSensitiveSettings.showBrowserSelector) {
             appMain.openPopup(chooseBrowserPopupComponent, {link: link})
         } else {
-            if (appSettings.openLinksInStatus) {
+            if (localAccountSensitiveSettings.openLinksInStatus) {
                 appMain.changeAppSection(Constants.browser)
                 browserLayoutContainer.item.openUrlInNewTab(link)
             } else {
@@ -209,12 +209,12 @@ Item {
                 }
             }
 
-            navBarCommunityTabButtons.model: appSettings.communitiesEnabled && mainModule.sectionsModel
+            navBarCommunityTabButtons.model: localAccountSensitiveSettings.communitiesEnabled && mainModule.sectionsModel
             navBarCommunityTabButtons.delegate: StatusNavBarTabButton {
                 onClicked: {
                     appMain.changeAppSection(Constants.chat)
                     chatsModel.communities.setActiveCommunity(model.id)
-                    appSettings.lastModeActiveCommunity = model.id
+                    localAccountSensitiveSettings.lastModeActiveCommunity = model.id
                 }
 
                 anchors.horizontalCenter: parent.horizontalCenter
@@ -287,7 +287,7 @@ Item {
                     //% "Wallet"
                     tooltip.text: qsTrId("wallet")
                     visible: enabled
-                    enabled: isExperimental === "1" || appSettings.isWalletEnabled
+                    enabled: isExperimental === "1" || localAccountSensitiveSettings.isWalletEnabled
                     checked: appView.currentIndex == Utils.getAppSectionIndex(Constants.wallet)
                     onClicked: appMain.changeAppSection(Constants.wallet)
                 },
@@ -297,13 +297,13 @@ Item {
                     icon.name: "cancel"
                     tooltip.text: qsTr("Wallet v2 - do not use, under active development")
                     visible: enabled
-                    enabled: isExperimental === "1" || appSettings.isWalletV2Enabled
+                    enabled: isExperimental === "1" || localAccountSensitiveSettings.isWalletV2Enabled
                     checked: appView.currentIndex == Utils.getAppSectionIndex(Constants.walletv2)
                     onClicked: appMain.changeAppSection(Constants.walletv2)
                 },
 
                 StatusNavBarTabButton {
-                    enabled: isExperimental === "1" || appSettings.isBrowserEnabled
+                    enabled: isExperimental === "1" || localAccountSensitiveSettings.isBrowserEnabled
                     visible: enabled
                     //% "Browser"
                     tooltip.text: qsTrId("browser")
@@ -313,7 +313,7 @@ Item {
                 },
 
                 StatusNavBarTabButton {
-                    enabled: isExperimental === "1" || appSettings.timelineEnabled
+                    enabled: isExperimental === "1" || localAccountSensitiveSettings.timelineEnabled
                     visible: enabled
                     //% "Timeline"
                     tooltip.text: qsTrId("timeline")
@@ -323,7 +323,7 @@ Item {
                 },
 
                 StatusNavBarTabButton {
-                    enabled: isExperimental === "1" || appSettings.nodeManagementEnabled
+                    enabled: isExperimental === "1" || localAccountSensitiveSettings.nodeManagementEnabled
                     visible: enabled
                     tooltip.text: qsTr("Node Management")
                     icon.name: "node"
@@ -410,7 +410,7 @@ Item {
                 if(obj === walletV2LayoutContainer){
                     walletV2LayoutContainer.showSigningPhrasePopup();
                 }
-                appSettings.lastModeActiveTab = (currentIndex === Utils.getAppSectionIndex(Constants.timeline)) ? 0 : currentIndex
+                localAccountSensitiveSettings.lastModeActiveTab = (currentIndex === Utils.getAppSectionIndex(Constants.timeline)) ? 0 : currentIndex
             }
 
             ChatLayout {
@@ -502,8 +502,8 @@ Item {
                 // Prior to this change, most likely many users are still using the
                 // normal mode configuration, so we have to enforce compact mode for
                 // those.
-                if (!appSettings.useCompactMode) {
-                    appSettings.useCompactMode = true
+                if (!localAccountSensitiveSettings.useCompactMode) {
+                    localAccountSensitiveSettings.useCompactMode = true
                 }
 
                 const whitelist = profileModel.getLinkPreviewWhitelist()
@@ -514,7 +514,7 @@ Item {
                     // Add Status links to whitelist
                     whiteListedSites.push({title: "Status", address: Constants.deepLinkPrefix, imageSite: false})
                     whiteListedSites.push({title: "Status", address: Constants.joinStatusLink, imageSite: false})
-                    const settings = appSettings.whitelistedUnfurlingSites
+                    const settings = localAccountSensitiveSettings.whitelistedUnfurlingSites
 
                     // Set Status links as true. We intercept thoseURLs so it is privacy-safe
                     if (!settings[Constants.deepLinkPrefix] || !settings[Constants.joinStatusLink]) {
@@ -542,7 +542,7 @@ Item {
                         }
                     })
                     if (settingsUpdated) {
-                        appSettings.whitelistedUnfurlingSites = settings
+                        localAccountSensitiveSettings.whitelistedUnfurlingSites = settings
                     }
                 } catch (e) {
                     console.error('Could not parse the whitelist for sites', e)
@@ -588,7 +588,7 @@ Item {
         Connections {
             target: profileModel.contacts
             onContactRequestAdded: {
-                if (!appSettings.notifyOnNewRequests) {
+                if (!localAccountSensitiveSettings.notifyOnNewRequests) {
                     return
                 }
 
@@ -608,7 +608,7 @@ Item {
                                                             qsTrId("-1-requests-to-become-contacts").arg(Utils.removeStatusEns(name)),
                                                 isContact? Constants.osNotificationType.acceptedContactRequest :
                                                            Constants.osNotificationType.newContactRequest,
-                                                appSettings.useOSNotifications)
+                                                localAccountSensitiveSettings.useOSNotifications)
             }
         }
 
@@ -765,9 +765,9 @@ Item {
     }
 
     Component.onCompleted: {
-        appView.currentIndex = appSettings.lastModeActiveTab
-        if(!!appSettings.lastModeActiveCommunity)
-            chatsModel.communities.setActiveCommunity(appSettings.lastModeActiveCommunity)
+        appView.currentIndex = localAccountSensitiveSettings.lastModeActiveTab
+        if(!!localAccountSensitiveSettings.lastModeActiveCommunity)
+            chatsModel.communities.setActiveCommunity(localAccountSensitiveSettings.lastModeActiveCommunity)
     }
 }
 /*##^##
