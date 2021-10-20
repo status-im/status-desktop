@@ -4,12 +4,14 @@ import QtQuick.Layouts 1.13
 import QtQuick.Dialogs 1.3
 
 import utils 1.0
-import "../../../../shared"
+
 import "../../../../shared/controls"
 import "../../../../shared/popups"
 import "../../../../shared/panels"
 import "../../../../shared/status"
 import "../stores"
+
+import StatusQ.Controls 0.1
 
 // TODO: replace with StatusModal
 ModalPopup {
@@ -123,11 +125,7 @@ ModalPopup {
             anchors.rightMargin: Style.current.padding
             //% "Delete account"
             text: qsTrId("delete-account")
-            bgColor: "transparent"
-            showBorder: true
-            borderColor: Style.current.border
-            hoveredBorderColor: Style.current.transparent
-            type: "warn"
+            type: StatusBaseButton.Type.Danger
 
             MessageDialog {
                 id: deleteError
