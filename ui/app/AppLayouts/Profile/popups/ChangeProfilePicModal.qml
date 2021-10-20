@@ -2,10 +2,12 @@ import QtQuick 2.13
 import QtQuick.Dialogs 1.3
 
 import utils 1.0
+
+import StatusQ.Controls 0.1
+
 import "../../../../shared"
 import "../../../../shared/popups"
 import "../../../../shared/panels"
-import "../../../../shared/status"
 
 // TODO: replace with StatusModal
 ModalPopup {
@@ -77,11 +79,9 @@ ModalPopup {
         width: parent.width
         height: uploadBtn.height
 
-        StatusButton {
+        StatusFlatButton {
             visible: popup.hasIdentityImage
-            type: "secondary"
-            flat: true
-            color: Style.current.danger
+            type: StatusBaseButton.Type.Danger
             //% "Remove"
             text: qsTrId("remove")
             anchors.right: uploadBtn.left

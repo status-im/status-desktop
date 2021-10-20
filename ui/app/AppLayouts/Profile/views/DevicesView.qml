@@ -8,10 +8,9 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 
 import utils 1.0
-import "../../../../shared"
+
 import "../../../../shared/controls"
 import "../../../../shared/panels"
-import "../../../../shared/status"
 
 Item {
     id: root
@@ -213,7 +212,6 @@ Item {
         }
     }
 
-    // TODO: replace with StatusQ component
     StatusButton {
         id: syncAllBtn
         anchors.bottom: root.bottom

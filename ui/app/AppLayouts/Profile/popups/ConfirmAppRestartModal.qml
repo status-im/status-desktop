@@ -3,10 +3,12 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 
 import utils 1.0
+
+import StatusQ.Controls 0.1
+
 import "../../../../shared"
 import "../../../../shared/popups"
 import "../../../../shared/panels"
-import "../../../../shared/status"
 
 // TODO: replace with StatusModal
 ModalPopup {
@@ -33,7 +35,7 @@ ModalPopup {
         StatusButton {
             anchors.right: parent.right
             anchors.rightMargin: Style.current.smallPadding
-            type: "warn"
+            type: StatusBaseButton.Type.Warn
             text: qsTr("Restart")
             anchors.bottom: parent.bottom
             onClicked: Qt.quit()
