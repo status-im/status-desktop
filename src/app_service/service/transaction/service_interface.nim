@@ -12,5 +12,5 @@ method delete*(self: ServiceInterface) {.base.} =
 method init*(self: ServiceInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method checkRecentHistory*(self: ServiceInterface, addresses: seq[string]) {.base.} =
+method checkRecentHistory*(self: ServiceInterface) {.base.} =
   raise newException(ValueError, "No implementation available")

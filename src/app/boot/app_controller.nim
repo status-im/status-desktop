@@ -122,11 +122,12 @@ proc newAppController*(appService: AppService): AppController =
   result.chatService = chat_service.newService()
   result.communityService = community_service.newService(result.chatService)
   result.tokenService = token_service.newService(result.settingService)
-  result.transactionService = transaction_service.newService()
   result.collectibleService = collectible_service.newService()
   result.walletAccountService = wallet_account_service.newService(
     result.settingService, result.tokenService
   )
+  result.transactionService = transaction_service.newService(result.walletAccountService)
+
 
   # Core
   result.localAccountSettingsVariant = newQVariant(
@@ -218,6 +219,7 @@ proc load*(self: AppController) =
   self.communityService.init()
   self.tokenService.init()
   self.walletAccountService.init()
+  self.transactionService.init()
   self.mainModule.load()
 
 
