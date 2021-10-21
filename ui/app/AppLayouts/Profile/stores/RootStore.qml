@@ -9,6 +9,7 @@ QtObject {
     property var profile: profileModule
     property var contactsModuleInst: contactsModule
     property var aboutModuleInst: aboutModule
+    property var languageModuleInst: languageModule
 
     property var chatsModelInst: chatsModel
     property var utilsModelInst: utilsModel
@@ -279,7 +280,7 @@ QtObject {
     }
 
     function changeLocale(l) {
-        profileModelInst.changeLocale(l)
+        languageModuleInst.changeLocale(l)
     }
 
     function getMailserverName(mailserver) {
