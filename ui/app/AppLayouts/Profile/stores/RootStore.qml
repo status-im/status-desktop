@@ -10,6 +10,7 @@ QtObject {
     property var contactsModuleInst: contactsModule
     property var aboutModuleInst: aboutModule
     property var languageModuleInst: languageModule
+    property var mnemonicModuleInst: mnemonicModule
 
     property var chatsModelInst: chatsModel
     property var utilsModelInst: utilsModel
@@ -45,7 +46,7 @@ QtObject {
     property bool automaticMailserverSelection: profileModelInst.mailservers.automaticSelection
     property bool isWakuV2LightClient: nodeModelInst.WakuV2LightClient
     property bool devicesSetup: profileModelInst.devices.isSetup
-    property bool mnemonicBackedUp: profileModelInst.mnemonic.isBackedUp
+    property bool mnemonicBackedUp: mnemonicModuleInst.isBackedUp
     property bool messagesFromContactsOnly: profile.messagesFromContactsOnly
 
     property int profile_id: 0

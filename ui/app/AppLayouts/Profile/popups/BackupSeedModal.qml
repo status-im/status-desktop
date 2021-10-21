@@ -74,7 +74,7 @@ ModalPopup {
 
                     Repeater {
                         id: mnemonicRepeater
-                        model: profileModel.mnemonic.get.split(" ")
+                        model: mnemonicModule.get.split(" ")
                         Rectangle {
                             id: word
                             height: 40
@@ -208,7 +208,7 @@ ModalPopup {
                 //% "You will not be able to see the whole seed phrase again"
                 confirmationText: qsTrId("are-you-sure-description")
                 onConfirmButtonClicked: {
-                    profileModel.mnemonic.remove()
+                    mnemonicModule.remove()
                     popup.close();
                     confirmPopup.close();
                 }
@@ -261,7 +261,7 @@ ModalPopup {
                     seedWord1Idx = Math.floor(Math.random() * 12);
                 } else {
                     if(seedWord2Idx == -1){
-                        if(profileModel.mnemonic.getWord(seedWord1Idx) !== txtFieldWord.text){
+                        if(mnemonicModule.getWord(seedWord1Idx) !== txtFieldWord.text){
                             //% "Wrong word"
                             validationError = qsTrId("wrong-word");
                             return;
@@ -274,7 +274,7 @@ ModalPopup {
                             seedWord2Idx = Math.floor(Math.random() * 12);
                         } while(seedWord2Idx == seedWord1Idx);
                     } else {
-                        if(profileModel.mnemonic.getWord(seedWord2Idx) !== txtFieldWord.text){
+                        if(mnemonicModule.getWord(seedWord2Idx) !== txtFieldWord.text){
                             //% "Wrong word"
                             validationError = qsTrId("wrong-word");
                             return;

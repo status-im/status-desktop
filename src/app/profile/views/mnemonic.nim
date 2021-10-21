@@ -50,5 +50,3 @@ QtObject:
   proc getWord*(self: MnemonicView, idx: int): string {.slot.} =
     let mnemonics = self.status.settings.getSetting[:string](Setting.Mnemonic, "").split(" ")
     return mnemonics[idx]
-
-
