@@ -32,9 +32,12 @@ macx {
     hunspellTarget.commands = brew install hunspell
     QMAKE_EXTRA_TARGETS += hunspellTarget
 
-
-    LIBS += -L"/usr/local/lib" -lhunspell-1.7
-    INCLUDEPATH += /usr/local/include/hunspell
+    exists (/usr/local/lib/libhunspell-1.7.a) {
+        LIBS += -L"/usr/local/lib" -lhunspell-1.7
+        INCLUDEPATH += /usr/local/include/hunspell
+        DEFINES += USE_HUNSPELL
+        message("hunspell exists in /usr/local/lib")
+    }
 }
 
 ios {

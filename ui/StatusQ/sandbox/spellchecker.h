@@ -6,7 +6,7 @@
 #include <QQuickTextDocument>
 #include <QSyntaxHighlighter>
 
-#ifdef Q_OS_MACOS
+#ifdef USE_HUNSPELL
 class Hunspell;
 #endif
 class QTextCodec;
@@ -45,7 +45,7 @@ private:
     QString m_userDict;
 
     QQuickTextDocument *m_document;
-#ifdef Q_OS_MACOS
+#ifdef USE_HUNSPELL
     Hunspell *m_hunspell;
 #endif
     QTextCodec *m_codec;

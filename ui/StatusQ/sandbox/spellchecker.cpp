@@ -1,6 +1,6 @@
 #include "spellchecker.h"
 
-#ifdef Q_OS_MACOS
+#ifdef USE_HUNSPELL
 #include "hunspell.hxx"
 #endif
 #include <QTextCodec>
@@ -14,24 +14,24 @@
 
 SpellChecker::SpellChecker(QObject *parent)
     : QObject(parent)
-#ifdef Q_OS_MACOS
+    , m_userDict("userDict_")
+#ifdef USE_HUNSPELL
     , m_hunspell(nullptr)
 #endif
-    , m_userDict("userDict_")
 {
 
 }
 
 SpellChecker::~SpellChecker()
 {
-#ifdef Q_OS_MACOS
+#ifdef USE_HUNSPELL
     delete m_hunspell;
 #endif
 }
 
 bool SpellChecker::spell(const QString &word)
 {
-#ifdef Q_OS_MACOS
+#ifdef USE_HUNSPELL
     return m_hunspell->spell(m_codec->fromUnicode(word).toStdString());
 #else
     return true;
@@ -40,15 +40,15 @@ bool SpellChecker::spell(const QString &word)
 
 bool SpellChecker::isInit() const
 {
-#ifdef Q_OS_MACOS
+#ifdef USE_HUNSPELL
     return !m_hunspell;
-#endif
-
+#endif  
+    return false;
 }
 
 void SpellChecker::initHunspell()
 {
-#ifdef Q_OS_MACOS
+#ifdef USE_HUNSPELL
     if (m_hunspell) {
         delete m_hunspell;
     }
@@ -109,7 +109,7 @@ QVariantList SpellChecker::suggest(const QString &word)
 {
     int numSuggestions = 0;
     QVariantList suggestions;
-#ifdef Q_OS_MACOS
+#ifdef USE_HUNSPELL
     std::vector<std::string> wordlist;
     wordlist = m_hunspell->suggest(m_codec->fromUnicode(word).toStdString());
 
@@ -128,14 +128,14 @@ QVariantList SpellChecker::suggest(const QString &word)
 
 void SpellChecker::ignoreWord(const QString &word)
 {
-#ifdef Q_OS_MACOS
+#ifdef USE_HUNSPELL
     m_hunspell->add(m_codec->fromUnicode(word).constData());
 #endif
 }
 
 void SpellChecker::addToUserWordlist(const QString &word)
 {
-#ifdef Q_OS_MACOS
+#ifdef USE_HUNSPELL
     QString userDict = m_userDict + m_lang + ".txt";
     if (!userDict.isEmpty()) {
         QFile userDictonaryFile(userDict);
