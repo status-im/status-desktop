@@ -73,7 +73,7 @@ Item {
 
     StyledTextEdit {
         id: communityName
-        text: Utils.getLinkStyle(communityBadge.communityName, hoveredLink)
+        text: Utils.getLinkStyle(communityBadge.communityName, hoveredLink, textColor)
         height: 18
         readOnly: true
         textFormat: Text.RichText
@@ -104,7 +104,7 @@ Item {
 
     StyledTextEdit {
         id: channelName
-        text: Utils.getLinkStyle(communityBadge.channelName || name, hoveredLink)
+        text: Utils.getLinkStyle(communityBadge.channelName || name, hoveredLink, textColor)
         height: 18
         readOnly: true
         textFormat: Text.RichText
