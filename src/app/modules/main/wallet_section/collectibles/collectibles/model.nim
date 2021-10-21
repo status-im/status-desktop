@@ -1,12 +1,18 @@
 import NimQml, Tables, strutils, strformat
 
-import ./item
+import ./item, ./trait_model
 
 type
   ModelRole {.pure.} = enum
     Id = UserRole + 1, 
     Name
-    ImageThumbnailUrl
+    ImageUrl
+    BackgroundColor
+    Description
+    Permalink
+    Properties
+    Rankings
+    Stats
     
 QtObject:
   type
@@ -44,7 +50,13 @@ QtObject:
     {
       ModelRole.Id.int:"id",
       ModelRole.Name.int:"name",
-      ModelRole.ImageThumbnailUrl.int:"imageThumbnailUrl",
+      ModelRole.ImageUrl.int:"imageUrl",
+      ModelRole.BackgroundColor.int:"backgroundColor",
+      ModelRole.Description.int:"description",
+      ModelRole.Permalink.int:"permalink",
+      ModelRole.Properties.int:"properties",
+      ModelRole.Rankings.int:"rankings",
+      ModelRole.Stats.int:"stats",
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -62,8 +74,26 @@ QtObject:
       result = newQVariant(item.getId())
     of ModelRole.Name: 
       result = newQVariant(item.getName())
-    of ModelRole.ImageThumbnailUrl: 
-      result = newQVariant(item.getImageThumbnailUrl())
+    of ModelRole.ImageUrl: 
+      result = newQVariant(item.getImageUrl())
+    of ModelRole.BackgroundColor: 
+      result = newQVariant(item.getBackgroundColor())
+    of ModelRole.Description:
+      result = newQVariant(item.getDescription())
+    of ModelRole.Permalink:
+      result = newQVariant(item.getPermalink())
+    of ModelRole.Properties:
+      let traits = newTraitModel()
+      traits.setItems(item.getProperties())
+      result = newQVariant(traits)
+    of ModelRole.Rankings:
+      let traits = newTraitModel()
+      traits.setItems(item.getRankings())
+      result = newQVariant(traits)
+    of ModelRole.Stats:
+      let traits = newTraitModel()
+      traits.setItems(item.getStats())
+      result = newQVariant(traits)
 
   proc setItems*(self: Model, items: seq[Item]) =
     self.beginResetModel()

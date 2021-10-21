@@ -1,4 +1,6 @@
-type 
+import ../../../../../../app_service/service/collectible/service as collectible_service
+
+type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
   ## Abstract class for any input/interaction with this module.
 
@@ -6,6 +8,9 @@ method delete*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method init*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getCollections*(self: AccessInterface, address: string): seq[collectible_service.CollectionDto]  {.base.} =
   raise newException(ValueError, "No implementation available")
 
 type

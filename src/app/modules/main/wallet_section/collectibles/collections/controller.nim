@@ -21,3 +21,6 @@ method delete*[T](self: Controller[T]) =
 
 method init*[T](self: Controller[T]) = 
   discard
+
+method getCollections*[T](self: Controller[T], address: string): seq[collectible_service.CollectionDto] =
+  return self.collectibleService.getCollections(address)

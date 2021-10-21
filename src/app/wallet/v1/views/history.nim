@@ -1,6 +1,6 @@
 import algorithm, atomics, strutils, sequtils, json, tables, chronicles, web3/[ethtypes, conversions], stint, sugar
 from sugar import `=>`, `->`
-import NimQml, json, sequtils, chronicles, strutils, json
+import NimQml, json, sequtils, chronicles, strutils
 
 import
   status/[status, wallet, utils],

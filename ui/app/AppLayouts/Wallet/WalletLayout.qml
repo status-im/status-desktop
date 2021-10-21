@@ -65,7 +65,7 @@ Item {
                     return
                 }
                 selectedAccountIndex = newIndex
-                RootStore.setCurrentAccountByIndex(newIndex)
+                RootStore.switchAccount(newIndex)
                 walletContainer.currentTabIndex = 0;
             }
         }

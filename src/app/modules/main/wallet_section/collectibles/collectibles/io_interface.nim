@@ -11,6 +11,12 @@ method load*(self: AccessInterface) {.base.} =
 method isLoaded*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method fetch*(self: AccessInterface, collectionSlug: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method setCurrentAddress*(self: AccessInterface, address: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 type
   ## Abstract class (concept) which must be implemented by object/s used in this 
   ## module.

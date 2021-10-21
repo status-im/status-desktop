@@ -40,7 +40,7 @@ Item {
     }
 
     Connections {
-        target: RootStore.historyView
+        target: RootStore.history
         onLoadingTrxHistoryChanged: {
             if (RootStore.currentAccount.address.toLowerCase() === address.toLowerCase()) {
                 loadingImg.active = isLoading
@@ -78,7 +78,7 @@ Item {
         width: parent.width
         clip: true
         boundsBehavior: Flickable.StopAtBounds
-        model: RootStore.transactions
+        model: RootStore.historyTransactions
         delegate: TransactionDelegate {
             tokens: RootStore.tokens
             currentAccountAddress: RootStore.currentAccount.address
@@ -105,7 +105,7 @@ Item {
         text: qsTrId("load-more")
         // TODO: handle case when requested limit === transaction count -- there
         // is currently no way to know that there are no more results
-        enabled: !loadingImg.active && RootStore.transactions.hasMore
+        enabled: !loadingImg.active && RootStore.historyTransactions.hasMore
         anchors.right: parent.right
         anchors.bottom: parent.bottom
         anchors.bottomMargin: Style.current.padding

@@ -34,3 +34,18 @@ QtObject:
 
   proc setItems*(self: View, items: seq[Item]) =
     self.model.setItems(items)
+
+  proc generateNewAccount*(self: View, password: string, accountName: string, color: string) {.slot.} =
+    self.delegate.generateNewAccount(password, accountName, color)
+
+  proc addAccountsFromPrivateKey*(self: View, privateKey: string, password: string, accountName: string, color: string) {.slot.} =
+    self.delegate.addAccountsFromPrivateKey(privateKey, password, accountName, color)
+
+  proc addAccountsFromSeed*(self: View, seedPhrase: string, password: string, accountName: string, color: string) {.slot.} =
+    self.delegate.addAccountsFromSeed(seedPhrase, password, accountName, color)
+
+  proc addWatchOnlyAccount*(self: View, address: string, accountName: string, color: string) {.slot.} =
+    self.delegate.addWatchOnlyAccount(address, accountName, color)
+
+  proc deleteAccount*(self: View, address: string) {.slot.} =
+    self.delegate.deleteAccount(address)

@@ -8,7 +8,7 @@ import shared.panels 1.0
 Rectangle {
     id: walletDelegate
 
-    property string defaultCurrency: ""
+    property string currency: ""
     property int selectedAccountIndex
     property bool selected: index === selectedAccountIndex
     property bool hovered
@@ -44,7 +44,9 @@ Rectangle {
     ColorOverlay {
         anchors.fill: walletIcon
         source: walletIcon
-        color: Utils.getCurrentThemeAccountColor(iconColor) || Style.current.accountColors[0]
+        color: {
+            Utils.getCurrentThemeAccountColor(model.color) || Style.current.accountColors[0]
+        }
     }
     StyledText {
         id: walletName
@@ -78,7 +80,9 @@ Rectangle {
     }
     StyledText {
         id: walletBalance
-        text: isLoading ? "..." : Utils.toLocaleString(fiatBalance, localAppSettings.locale, {"currency": true}) + " " + walletDelegate.defaultCurrency.toUpperCase()
+        text: {
+            Utils.toLocaleString(currencyBalance.toFixed(2), localAppSettings.locale, {"currency": true}) + " " + walletDelegate.currency.toUpperCase()
+        }
         anchors.top: parent.top
         anchors.topMargin: Style.current.smallPadding
         anchors.right: parent.right

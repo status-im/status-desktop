@@ -1,4 +1,4 @@
-import NimQml, sequtils, sugar
+import NimQml, sequtils, sugar, strutils
 
 import ./model
 import ./item
@@ -13,7 +13,6 @@ QtObject:
       all: Model
 
   proc delete*(self: View) =
-    self.default.delete
     self.default.delete
     self.custom.delete
     self.all.delete
@@ -58,3 +57,12 @@ QtObject:
     self.all.setItems(items)
     self.custom.setItems(items.filter(i => i.getIsCustom()))
     self.default.setItems(items.filter(i => not i.getIsCustom()))
+
+  proc addCustomToken(self: View, address: string, name: string, symbol: string, decimals: string) {.slot.} =
+    self.delegate.addCustomToken(address, name, symbol, parseInt(decimals))
+        
+  proc toggleVisible(self: View, symbol: string) {.slot.} =
+    self.delegate.toggleVisible(symbol)
+
+  proc removeCustomToken(self: View, address: string) {.slot.} =
+    self.delegate.removeCustomToken(address)

@@ -167,8 +167,6 @@ ModalPopup {
                     changeError.open()
                     return
                 }
-
-                RootStore.loadCustomTokens()
                 popup.close();
             }
         }
