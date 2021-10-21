@@ -1,11 +1,13 @@
 ﻿import QtQuick 2.13
 import QtGraphicalEffects 1.13
-import "../../../../shared"
+
+import utils 1.0
+
+import StatusQ.Controls 0.1 as StatusQControls
+
 import "../../../../shared/panels"
 import "../../../../shared/controls"
 import "../../../../shared/status"
-import utils 1.0
-
 import "../panels"
 import "../controls"
 
@@ -381,12 +383,11 @@ Item {
                     }
                 }
 
-                StatusButton {
+                StatusQControls.StatusFlatButton {
                     id: cancelBtn
                     anchors.left: parent.left
                     anchors.leftMargin: Style.current.halfPadding
                     anchors.top: editTextInput.bottom
-                    bgColor: Style.current.transparent
                     //% "Cancel"
                     text: qsTrId("browsing-cancel")
                     onClicked: {
@@ -396,7 +397,7 @@ Item {
                     }
                 }
 
-                StatusButton {
+                StatusQControls.StatusButton {
                     id: saveBtn
                     anchors.left: cancelBtn.right
                     anchors.leftMargin: Style.current.halfPadding

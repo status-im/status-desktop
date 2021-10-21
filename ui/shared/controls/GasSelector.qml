@@ -3,8 +3,9 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 
 import utils 1.0
-import "../status"
-import "../"
+
+import StatusQ.Controls 0.1
+
 import "../panels"
 import "."
 
@@ -210,7 +211,7 @@ Item {
         color: Style.current.secondaryText
     }
 
-    StatusButton {
+    StatusFlatButton {
         visible: false // Change to TRUE once EIP1559 suggestions are revised
         id: buttonAdvanced
         anchors.verticalCenter: prioritytext.verticalCenter
@@ -220,7 +221,6 @@ Item {
             qsTrId("use-suggestions") :
             //% "Use custom"
             qsTrId("use-custom")
-        flat: true
         font.pixelSize: 13
         onClicked: advancedMode = !advancedMode
     }

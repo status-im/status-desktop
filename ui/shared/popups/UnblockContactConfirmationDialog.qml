@@ -3,7 +3,9 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 
 import utils 1.0
-import "../status"
+
+import StatusQ.Controls 0.1
+
 import "../panels"
 import "./"
 
@@ -40,7 +42,7 @@ ModalPopup {
         StatusButton {
             anchors.right: parent.right
             anchors.rightMargin: Style.current.smallPadding
-            type: "warn"
+            type: StatusBaseButton.Type.Danger
             //% "Unblock User"
             text: qsTrId("unblock-user")
             anchors.bottom: parent.bottom

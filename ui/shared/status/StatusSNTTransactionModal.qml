@@ -4,8 +4,9 @@ import QtQuick.Layouts 1.13
 import QtQuick.Dialogs 1.3
 
 import utils 1.0
-import "../../shared"
-import "../../shared/status"
+
+import StatusQ.Controls 0.1 as StatusQControls
+
 import "../../shared/views"
 import "../../shared/controls"
 import "../../shared/popups"
@@ -183,13 +184,13 @@ ModalPopup {
         width: parent.width
         height: btnNext.height
 
-        StatusRoundButton {
+        StatusQControls.StatusRoundButton {
             id: btnBack
             anchors.left: parent.left
             icon.name: "arrow-right"
             icon.width: 20
             icon.height: 16
-            rotation: 180
+            icon.rotation: 180
             visible: stack.currentGroup.showBackBtn
             enabled: stack.currentGroup.isValid || stack.isLastGroup
             onClicked: {
@@ -207,13 +208,13 @@ ModalPopup {
             }
         }
 
-        StatusButton {
+        StatusQControls.StatusButton {
             id: btnNext
             anchors.right: parent.right
             //% "Next"
             text: qsTrId("next")
             enabled: stack.currentGroup.isValid && !stack.currentGroup.isPending
-            state: stack.currentGroup.isPending ? "pending" : "default"
+            loading: stack.currentGroup.isPending
             onClicked: {
                 const validity = stack.currentGroup.validate() 
                 if (validity.isValid && !validity.isPending) { 

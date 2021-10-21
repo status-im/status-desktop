@@ -3,7 +3,7 @@ import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.14
 
 import StatusQ.Core 0.1
-import StatusQ.Controls 0.1
+import StatusQ.Controls 0.1 as StatusQControls
 import StatusQ.Components 0.1
 
 import utils 1.0
@@ -125,7 +125,7 @@ Item {
         }
     }
 
-    StatusButton {
+    StatusQControls.StatusButton {
         id: releaseBtn
         visible: false
         enabled: false
@@ -150,7 +150,7 @@ Item {
     }
 
 
-    StatusButton {
+    StatusQControls.StatusButton {
         anchors.bottom: parent.bottom
         anchors.bottomMargin: Style.current.padding
         anchors.horizontalCenter: parent.horizontalCenter
