@@ -3,13 +3,15 @@ import QtGraphicalEffects 1.13
 
 import utils 1.0
 import "../../../../shared"
-import "../../../../shared/status"
 import "../../../../shared/popups"
 import "../../../../shared/controls"
 import "../../../../shared/panels"
 
 import "../controls"
 import "../panels"
+
+import StatusQ.Components 0.1
+import StatusQ.Core.Theme 0.1
 
 Item {
     id: root
@@ -42,17 +44,13 @@ Item {
         anchors.topMargin: dateGroupLbl.visible ? 4 : 0
         color: model.read ? Style.current.transparent : Utils.setColorAlpha(Style.current.blue, 0.1)
 
-        StatusIdenticon {
+        StatusSmartIdenticon {
             id: channelIdenticon
-            height: 40
-            width: 40
-            chatId: model.chatId
-            chatName: model.name
-            chatType: Constants.chatTypePrivateGroupChat
-            identicon: ""
             anchors.left: parent.left
             anchors.leftMargin: Style.current.padding
             anchors.verticalCenter: parent.verticalCenter
+            name: model.name
+            icon.color: Theme.palette.miscColor5
         }
 
         Item {

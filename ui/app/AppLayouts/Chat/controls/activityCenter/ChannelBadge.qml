@@ -6,7 +6,9 @@ import Qt.labs.platform 1.1
 import utils 1.0
 import "../../../../../shared"
 import "../../../../../shared/panels"
-import "../../../../../shared/status"
+
+import StatusQ.Components 0.1
+import StatusQ.Core 0.1
 
 Item {
     id: channelBadge
@@ -28,18 +30,23 @@ Item {
         anchors.verticalCenter:parent.verticalCenter
     }
 
-    StatusIdenticon {
+    StatusSmartIdenticon {
         id: contactImage
-        height: 16
-        width: 16
-        chatId: chatId
-        chatName: name
-        chatType: realChatType
-        identicon: profileImage || identicon
         anchors.left: channelIcon.right
         anchors.leftMargin: 4
         anchors.verticalCenter: parent.verticalCenter
-        letterSize: 11
+        image: StatusImageSettings {
+            width: 16
+            height: 16
+            source: profileImage || identicon
+            isIdenticon: true
+        }
+        icon: StatusIconSettings {
+            width: 16
+            height: 16
+            letterSize: 11
+        }
+        name: channelBadge.name
     }
 
     StyledText {
