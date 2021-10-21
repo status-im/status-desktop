@@ -7,6 +7,7 @@ import QtQuick.Dialogs 1.3
 import DotherSide 0.1
 
 import utils 1.0
+
 import "../../shared"
 import "../../shared/panels"
 import "../../app/AppLayouts/Chat/panels"
@@ -1073,24 +1074,16 @@ Rectangle {
                 }
             }
 
-            StatusButton {
+            StatusQ.StatusFlatButton {
                 id: sendBtn
-                icon.source: Style.svg("send")
-                icon.width: 16
-                icon.height: 18
-                borderRadius: 16
-                //% "Send"
-                text: qsTrId("command-button-send")
-                type: "secondary"
-                flat: true
-                showBorder: true
-                forceBgColorOnHover: true
+                icon.name: "send"
+                text: qsTr("Send")
+                size: StatusQ.StatusBaseButton.Size.Small
                 anchors.right: parent.right
                 anchors.rightMargin: Style.current.halfPadding
-                anchors.bottom: parent.bottom
+                anchors.verticalCenter: parent.verticalCenter
                 visible: imageBtn2.visible
-                highlighted: chatsModel.plainText(Emoji.deparse(messageInputField.text)).length > 0 || isImage
-                enabled: highlighted && messageInputField.length < messageLimit
+                enabled: (chatsModel.plainText(Emoji.deparse(messageInputField.text)).length > 0 || isImage) && messageInputField.length < messageLimit
                 onClicked: function (event) {
                     control.sendMessage(event)
                     control.hideExtendedArea();
@@ -1141,7 +1134,7 @@ Rectangle {
         }
     }
 
-    StatusButton {
+    StatusQ.StatusButton {
         id: unblockBtn
         visible: control.isContactBlocked
         height: messageInput.height - Style.current.halfPadding
@@ -1149,9 +1142,8 @@ Rectangle {
         anchors.rightMargin: Style.current.halfPadding
         anchors.bottom: parent.bottom
         anchors.bottomMargin: Style.current.padding
-        borderRadius: Style.current.radius
         text: qsTr("Unblock")
-        type: "warn"
+        type: StatusQ.StatusBaseButton.Type.Danger
         onClicked: function (event) {
             profileModel.contacts.unblockContact(chatsModel.channelView.activeChannel.id)
         }

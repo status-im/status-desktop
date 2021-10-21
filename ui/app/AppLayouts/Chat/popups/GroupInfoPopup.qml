@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.13
 
 import utils 1.0
 
+import StatusQ.Controls 0.1 as StatusQControls
 import StatusQ.Components 0.1 as StatusQ
 
 import "../../../../shared"
@@ -379,7 +380,7 @@ ModalPopup {
         visible: popup.isAdmin
         width: parent.width
         height: children[0].height
-        StatusButton {
+        StatusQControls.StatusButton {
           visible: !addMembers
           anchors.right: parent.right
           //% "Add members"
@@ -390,7 +391,7 @@ ModalPopup {
           }
         }
 
-        StatusRoundButton {
+        StatusQControls.StatusRoundButton {
             id: btnBack
             visible: addMembers
             anchors.bottom: parent.bottom
@@ -398,14 +399,14 @@ ModalPopup {
             icon.name: "arrow-right"
             icon.width: 20
             icon.height: 16
-            rotation: 180
+            icon.rotation: 180
             onClicked : {
                 addMembers = false;
                 resetSelectedMembers();
             }
         }
 
-        StatusButton {
+        StatusQControls.StatusButton {
           id: btnSelectMembers
           visible: addMembers
           enabled: memberCount >= currMemberCount

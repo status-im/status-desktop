@@ -3,8 +3,9 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 
 import utils 1.0
-import "../"
-import "../status"
+
+import StatusQ.Controls 0.1
+
 import "../controls"
 import "."
 

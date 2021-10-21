@@ -1,13 +1,11 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 
+import StatusQ.Controls 0.1
 import StatusQ.Popups 0.1
 
-
 import utils 1.0
-import "./"
-import "../status"
-import "../"
+
 import "../panels"
 import "../controls"
 
@@ -172,8 +170,7 @@ Item {
                         }
                         height: 28
                         font.pixelSize: 12
-                        borderColor: Style.current.blue
-                        showBorder: true
+                        size: StatusBaseButton.Size.Small
                         onClicked: {
                             if (inputBox.copyToClipboard) {
                                 chatsModel.copyToClipboard(inputBox.textToCopy ? inputBox.textToCopy : inputValue.text)

@@ -4,11 +4,12 @@ import QtQuick.Layouts 1.13
 import QtQuick.Dialogs 1.3
 
 import utils 1.0
-import "../"
+
+import StatusQ.Controls 0.1
+
 import "../panels"
 import "../controls"
 import "../views"
-import "../status"
 import "."
 
 // TODO: replace with StatusModal
@@ -226,7 +227,7 @@ ModalPopup {
             icon.name: "arrow-right"
             icon.width: 20
             icon.height: 16
-            rotation: 180
+            icon.rotation: 180
             onClicked: {
                 stack.back()
             }
@@ -245,7 +246,7 @@ ModalPopup {
             //% "Next"
             text: qsTrId("next")
             enabled: stack.currentGroup.isValid && !stack.currentGroup.isPending
-            state: stack.currentGroup.isPending ? "pending" : "default"
+            loading: stack.currentGroup.isPending
             onClicked: {
                 const validity = stack.currentGroup.validate()
                 if (validity.isValid && !validity.isPending) {

@@ -2,13 +2,12 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.3
 import QtGraphicalEffects 1.0
+
 import StatusQ.Components 0.1
+import StatusQ.Controls 0.1 as StatusQControls
 
 import utils 1.0
 
-import StatusQ.Controls 0.1
-
-import "../../shared"
 import "../../shared/panels"
 import "../../shared/controls"
 
@@ -116,7 +115,7 @@ Popup {
                 }
             }
 
-            StatusFlatRoundButton {
+            StatusQControls.StatusFlatRoundButton {
                 id: clearBtn
                 implicitWidth: 14
                 implicitHeight: 14
@@ -127,7 +126,7 @@ Popup {
                 visible: searchBox.text !== ""
                 icon.width: 14
                 icon.height: 14
-                type: StatusFlatRoundButton.Type.Tertiary
+                type: StatusQControls.StatusFlatRoundButton.Type.Tertiary
                 color: "transparent"
                 onClicked: toggleCategory(previousCategory)
             }
@@ -250,7 +249,7 @@ Popup {
                 color: Style.current.secondaryText
             }
 
-            StatusButton {
+            StatusQControls.StatusButton {
                 id: removeBtn
                 anchors.horizontalCenter: parent.horizontalCenter
                 text: qsTr("Enable")
@@ -286,7 +285,7 @@ Popup {
                 color: Style.current.secondaryText
             }
 
-            StatusButton {
+            StatusQControls.StatusButton {
                 id: retryBtn
                 anchors.top: emptyText.bottom
                 anchors.topMargin: Style.current.padding

@@ -4,8 +4,9 @@ import QtQuick.Layouts 1.13
 import QtQuick.Dialogs 1.3
 
 import utils 1.0
-import "../../shared"
-import "../../shared/status"
+
+import StatusQ.Controls 0.1 as StatusQControls
+
 import "../../shared/controls"
 import "../../shared/views"
 import "../../shared/popups"
@@ -175,7 +176,7 @@ ModalPopup {
         width: parent.width
         height: btnNext.height
 
-         StatusRoundButton {
+         StatusQControls.StatusRoundButton {
             id: btnBack
             anchors.left: parent.left
             icon.name: "arrow-right"
@@ -199,7 +200,7 @@ ModalPopup {
             }
         }
         
-        StatusButton {
+        StatusQControls.StatusButton {
             id: btnNext
             anchors.right: parent.right
             //% "Next"

@@ -4,7 +4,9 @@ import QtQuick.Layouts 1.3
 import QtGraphicalEffects 1.0
 
 import utils 1.0
-import "../../shared"
+
+import StatusQ.Controls 0.1 as StatusQControls
+
 import "../../shared/panels"
 import "../../shared/status/core"
 import "../../shared/status"
@@ -130,7 +132,7 @@ Popup {
                     }
                 }
 
-                StatusButton {
+                StatusQControls.StatusButton {
                     visible: lblNoStickersYet.visible
                     //% "Get Stickers"
                     text: qsTrId("get-stickers")
@@ -180,11 +182,9 @@ Popup {
             Layout.bottomMargin: 8
             Layout.alignment: Qt.AlignTop | Qt.AlignLeft
 
-            StatusRoundButton {
+            StatusQControls.StatusFlatRoundButton {
                 id: btnAddStickerPack
-                size: "medium"
-                type: "secondary"
-                icon.name: "plusSign"
+                icon.name: "add"
                 implicitWidth: 24
                 implicitHeight: 24
                 state: root.stickerPacksLoaded ? "default" : "pending"
