@@ -3,6 +3,7 @@ import NimQml, os, strformat
 import ../../app_service/service/keychain/service as keychain_service
 import ../../app_service/service/accounts/service as accounts_service
 import ../../app_service/service/contacts/service as contacts_service
+import ../../app_service/service/language/service as language_service
 import ../../app_service/service/chat/service as chat_service
 import ../../app_service/service/community/service as community_service
 import ../../app_service/service/token/service as token_service
@@ -75,6 +76,7 @@ type
     profileService: profile_service.Service
     settingsService: settings_service.Service
     aboutService: about_service.Service
+    languageService: language_service.Service
 
     # Core
     localAppSettingsVariant: QVariant
@@ -133,6 +135,7 @@ proc newAppController*(appService: AppService): AppController =
   result.settingsService = settings_service.newService()
   result.aboutService = about_service.newService()
   result.dappPermissionsService = dapp_permissions_service.newService()
+  result.languageService = language_service.newService()
 
   # Core
   result.localAppSettingsVariant = newQVariant(singletonInstance.localAppSettings)
@@ -164,6 +167,7 @@ proc newAppController*(appService: AppService): AppController =
     result.contactsService,
     result.aboutService,
     result.dappPermissionsService,
+    result.languageService
   )
 
   #################################################
