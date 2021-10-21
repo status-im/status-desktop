@@ -14,19 +14,18 @@ StackDetailBase {
     id: root
     backButtonText: "Collectibles"
 
-    property var store
-    property var assetStats: root.store.collectiblesStore.stats
-    property var assetRankings: root.store.collectiblesStore.rankings
-    property var assetProperties: root.store.collectiblesStore.properties
-    property int collectionIndex: root.store.collectiblesStore.collectionIndex
+    property var assetStats: RootStore.collectiblesStore.stats
+    property var assetRankings: RootStore.collectiblesStore.rankings
+    property var assetProperties: RootStore.collectiblesStore.properties
+    property int collectionIndex: RootStore.collectiblesStore.collectionIndex
 
     CollectibleDetailsHeader {
         id: collectibleHeader
         anchors.left: parent.left
         anchors.right: parent.right
-        image.source: root.store.collectiblesStore.collectibleImageUrl
-        primaryText: root.store.collectiblesStore.name
-        secondaryText: root.store.collectiblesStore.collectibleId
+        image.source: RootStore.collectiblesStore.collectibleImageUrl
+        primaryText: RootStore.collectiblesStore.name
+        secondaryText: RootStore.collectiblesStore.collectibleId
     }
 
     Item {
@@ -47,17 +46,17 @@ StackDetailBase {
                 width: 253
                 height: 253
                 radius: 2
-                color: root.store.collectiblesStore.backgroundColor
+                color: RootStore.collectiblesStore.backgroundColor
                 border.color: Theme.palette.directColor8
                 border.width: 1
-                image.source: root.store.collectiblesStore.imageUrl
+                image.source: RootStore.collectiblesStore.imageUrl
             }
             StatusBaseText {
                 id: collectibleText
                 width: parent.width - collectibleimage.width - 24
                 height: collectibleimage.height
 
-                text: root.store.collectiblesStore.description
+                text: RootStore.collectiblesStore.description
                 color: Theme.palette.directColor1
                 font.pixelSize: 15
                 lineHeight: 22
@@ -181,7 +180,7 @@ StackDetailBase {
                         lineHeightMode: Text.FixedHeight
                         horizontalAlignment: Text.AlignLeft
                         elide: Text.ElideRight
-                        text: root.store.getCollectionMaxValue(model.traitType, model.value, model.maxValue, collectionIndex)
+                        text: RootStore.getCollectionMaxValue(model.traitType, model.value, model.maxValue, collectionIndex)
                     }
                 }
             }
@@ -226,7 +225,7 @@ StackDetailBase {
                         lineHeightMode: Text.FixedHeight
                         horizontalAlignment: Text.AlignLeft
                         elide: Text.ElideRight
-                        text: root.store.getCollectionMaxValue(model.traitType, model.value, model.maxValue, collectionIndex)
+                        text: RootStore.getCollectionMaxValue(model.traitType, model.value, model.maxValue, collectionIndex)
                     }
                 }
             }

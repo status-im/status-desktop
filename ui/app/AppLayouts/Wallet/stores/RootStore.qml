@@ -5,8 +5,6 @@ import QtQuick 2.13
 QtObject {
     id: root
 
-    property CollectiblesStore collectiblesStore: CollectiblesStore { }
-
     property var currentAccount: walletSectionCurrent
     property var accounts: walletSectionAccounts.model
 
@@ -20,6 +18,9 @@ QtObject {
     property var tokens: walletSectionAllTokens.all
 
     property var assets: walletSectionAccountTokens.model
+
+    property CollectiblesStore collectiblesStore: CollectiblesStore { }
+    property var collectionList: walletSectionCollectiblesCollections.model
 
     property var transactions: walletModel.transactionsView.transactions
     property var historyView: walletModel.historyView
@@ -86,14 +87,6 @@ QtObject {
         return walletModel.accountsView.generateNewAccount(password, accountName, color)
     }
 
-    function changeAccountSettings(address, accountName, color) {
-        return walletModel.accountsView.changeAccountSettings(address, accountName, color)
-    }
-
-    function deleteAccount(address) {
-        return walletModel.accountsView.deleteAccount(address)
-    }
-
     function addAccountsFromPrivateKey(privateKey, password, accountName, color) {
         return walletModel.accountsView.addAccountsFromPrivateKey(privateKey, password, accountName, color)
     }
@@ -104,6 +97,14 @@ QtObject {
 
     function addWatchOnlyAccount(address, accountName, color) {
         return walletModel.accountsView.addWatchOnlyAccount(address, accountName, color)
+    }
+
+    function changeAccountSettings(address, accountName, color) {
+        return walletModel.accountsView.changeAccountSettings(address, accountName, color)
+    }
+
+    function deleteAccount(address) {
+        return walletModel.accountsView.deleteAccount(address)
     }
 
     function setDefaultCurrency(key) {

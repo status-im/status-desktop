@@ -1,5 +1,6 @@
-import sequtils, sugar
+import NimQml, sequtils, sugar
 
+import ../../../../../core/global_singleton
 import ./io_interface, ./view, ./controller, ./item
 import ../../../../../../app_service/service/collectible/service as collectible_service
 
@@ -24,7 +25,21 @@ method delete*[T](self: Module[T]) =
   self.controller.delete
 
 method load*[T](self: Module[T]) =
+  singletonInstance.engine.setRootContextProperty(
+    "walletSectionCollectiblesCollections", newQVariant(self.view)
+  )
   self.moduleLoaded = true
 
 method isLoaded*[T](self: Module[T]): bool =
   return self.moduleLoaded
+
+method loadCollections*[T](self: Module[T], address: string) =
+  let collections = self.controller.getCollections(address)
+  self.view.setItems(
+    collections.map(c => initItem(
+      c.name,
+      c.slug,
+      c.imageUrl,
+      c.ownedAssetCount,
+    ))
+  )

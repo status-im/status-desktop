@@ -5,22 +5,23 @@ import QtGraphicalEffects 1.13
 import StatusQ.Components 0.1
 import StatusQ.Core.Theme 0.1
 
+import "../../stores"
+
 Item {
     id: root
     width: parent.width
     height: contentLoader.height
 
     property string slug: ""
-    property bool assetsLoaded: false
+    property bool collectiblesLoaded: false
     property string collectionImageUrl: ""
     property int collectionIndex: -1
-    property var store
     signal collectibleClicked()
 
     Connections {
-        target: root.store.walletV2ModelInst.collectiblesView.getAssetsList(root.slug)
-        onAssetsChanged: {
-            root.assetsLoaded = true;
+        target: RootStore.getCollectionCollectiblesList(root.slug)
+        onCollectionCollectiblesChanged: {
+            root.collectiblesLoaded = true;
         }
     }
 
@@ -29,7 +30,7 @@ Item {
         width: parent.width
         anchors.top: parent.top
         anchors.horizontalCenter: parent.horizontalCenter
-        sourceComponent: root.assetsLoaded ? loaded : loading
+        sourceComponent: root.collectiblesLoaded ? loaded : loading
     }
 
     Component {
@@ -57,7 +58,7 @@ Item {
             spacing: 24
 
             Repeater {
-                model: root.store.walletV2ModelInst.collectiblesView.getAssetsList(root.slug)
+                model: RootStore.getCollectionCollectiblesList(root.slug)
                 StatusRoundedImage {
                     id: image
                     width: 146
@@ -71,17 +72,17 @@ Item {
                     MouseArea {
                         anchors.fill: parent
                         onClicked: {
-                            root.store.collectiblesStore.collectibleImageUrl = collectionImageUrl;
-                            root.store.collectiblesStore.name =  model.name;
-                            root.store.collectiblesStore.collectibleId = model.id;
-                            root.store.collectiblesStore.description = model.description;
-                            root.store.collectiblesStore.permalink = model.permalink;
-                            root.store.collectiblesStore.imageUrl = model.imageUrl;
-                            root.store.collectiblesStore.backgroundColor = model.backgroundColor;
-                            root.store.collectiblesStore.properties = model.properties;
-                            root.store.collectiblesStore.rankings = model.rankings;
-                            root.store.collectiblesStore.stats = model.stats;
-                            root.store.collectiblesStore.collectionIndex = root.collectionIndex;
+                            RootStore.collectiblesStore.collectibleImageUrl = collectionImageUrl;
+                            RootStore.collectiblesStore.name =  model.name;
+                            RootStore.collectiblesStore.collectibleId = model.id;
+                            RootStore.collectiblesStore.description = model.description;
+                            RootStore.collectiblesStore.permalink = model.permalink;
+                            RootStore.collectiblesStore.imageUrl = model.imageUrl;
+                            RootStore.collectiblesStore.backgroundColor = model.backgroundColor;
+                            RootStore.collectiblesStore.properties = model.properties;
+                            RootStore.collectiblesStore.rankings = model.rankings;
+                            RootStore.collectiblesStore.stats = model.stats;
+                            RootStore.collectiblesStore.collectionIndex = root.collectionIndex;
                             root.collectibleClicked();
                         }
                     }
@@ -91,6 +92,6 @@ Item {
     }
 
     Component.onCompleted: {
-        root.store.walletV2ModelInst.collectiblesView.loadAssets(root.store.walletV2ModelInst.accountsView.currentAccount.address, root.slug);
+        RootStore.getCollectionCollectiblesList(root.slug)
     }
 }

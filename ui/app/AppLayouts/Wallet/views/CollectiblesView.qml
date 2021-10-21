@@ -7,6 +7,7 @@ import "../../../../shared"
 import "../../../../shared/panels"
 import "../../../../shared/status/core"
 
+import "../stores"
 import "../popups"
 import "collectibles"
 
@@ -15,7 +16,6 @@ import StatusQ.Components 0.1
 Item {
     id: root
     width: parent.width
-    property var store
     signal collectibleClicked()
 
     Loader {
@@ -24,25 +24,11 @@ Item {
         height: parent.height
 
         sourceComponent: {
-            if (root.store.walletModelV2Inst.collectiblesView.isLoading) {
-                return loading;
-            }
-            if (root.store.walletModelV2Inst.collectiblesView.collections.rowCount() === 0) {
+            console.log(RootStore.collectionList.count)
+            if (RootStore.collectionList.count === 0) {
                 return empty;
             }
             return loaded;
-        }
-    }
-
-    Component {
-        id: loading
-        Item {
-            StatusLoadingIndicator {
-                width: 20
-                height: 20
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.horizontalCenter: parent.horizontalCenter
-            }
         }
     }
 
@@ -72,7 +58,7 @@ Item {
 
                 Repeater {
                     id: collectionsRepeater
-                    model: root.store.walletModelV2Inst.collectiblesView.collections
+                    model: RootStore.collectionList
                     //model: 5
                     delegate: StatusExpandableItem {
                         width: parent.width - 156
@@ -82,7 +68,6 @@ Item {
                         image.source: model.imageUrl
                         type: StatusExpandableItem.Type.Secondary
                         expandableComponent:  CollectibleCollectionView {
-                            store: root.store
                             slug: model.slug
                             anchors.left: parent.left
                             anchors.leftMargin: Style.current.bigPadding
