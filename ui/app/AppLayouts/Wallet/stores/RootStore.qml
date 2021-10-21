@@ -21,7 +21,7 @@ QtObject {
 
     property string signingPhrase: walletModel.utilsView.signingPhrase
 
-    property bool mnemonicBackedUp: profileModel.mnemonic.isBackedUp
+    property bool mnemonicBackedUp: mnemonicModule.isBackedUp
 
     property var collectiblesList: walletModel.collectiblesView.collectiblesLists
 

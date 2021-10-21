@@ -44,7 +44,7 @@ Item {
         id: seedPhraseWarning
         width: parent.width
         anchors.top: parent.top
-        visible: !walletView.store.profileModelInst.mnemonic.isBackedUp
+        visible: !mnemonicModule.isBackedUp
     }
 
     StatusAppTwoPanelLayout {
