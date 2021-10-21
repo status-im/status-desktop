@@ -9,8 +9,8 @@ QtObject:
       totalCurrencyBalance: float64
       signingPhrase: string
       isMnemonicBackedUp: bool
-      
-  proc setup(self: View) = 
+
+  proc setup(self: View) =
     self.QObject.setup
 
   proc delete*(self: View) =
@@ -25,5 +25,29 @@ QtObject:
     self.signingPhrase = setting.signingPhrase
     self.isMnemonicBackedUp = setting.isMnemonicBackedUp
 
-  proc setTotalCurrencyBalance*(self: View, totalCurrencyBalance: float64) = 
+  proc setTotalCurrencyBalance*(self: View, totalCurrencyBalance: float64) =
     self.totalCurrencyBalance = totalCurrencyBalance
+
+  proc getDefaultCurrency(self: View): QVariant {.slot.} =
+    return newQVariant(self.defaultCurrency)
+
+  QtProperty[QVariant] defaultCurrency:
+    read = getDefaultCurrency
+
+  proc getTotalCurrencyBalance(self: View): QVariant {.slot.} =
+    return newQVariant(self.totalCurrencyBalance)
+
+  QtProperty[QVariant] totalCurrencyBalance:
+    read = getTotalCurrencyBalance
+
+  proc getSigningPhrase(self: View): QVariant {.slot.} =
+    return newQVariant(self.signingPhrase)
+
+  QtProperty[QVariant] signingPhrase:
+    read = getSigningPhrase
+
+  proc getIsMnemonicBackedUp(self: View): QVariant {.slot.} =
+    return newQVariant(self.isMnemonicBackedUp)
+
+  QtProperty[QVariant] isMnemonicBackedUp:
+    read = getIsMnemonicBackedUp

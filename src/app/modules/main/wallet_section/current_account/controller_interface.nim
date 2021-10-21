@@ -1,3 +1,5 @@
+import ../../../../../app_service/service/wallet_account/service_interface as wallet_account_service
+
 type 
   AccessInterface* {.pure inheritable.} = ref object of RootObj
   ## Abstract class for any input/interaction with this module.
@@ -5,16 +7,14 @@ type
 method delete*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method load*(self: AccessInterface) {.base.} =
+method init*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method isLoaded*(self: AccessInterface): bool {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method switchAccount*(self: AccessInterface, accountIndex: int) {.base.} =
+method getWalletAccount*(self: AccessInterface, accountIndex: int): wallet_account_service.WalletAccountDto {.base.} =
   raise newException(ValueError, "No implementation available")
 
 type
   ## Abstract class (concept) which must be implemented by object/s used in this 
   ## module.
   DelegateInterface* = concept c
+    

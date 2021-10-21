@@ -7,14 +7,13 @@ QtObject {
 
     property CollectiblesStore collectiblesStore: CollectiblesStore { }
 
-    property var currentAccount: walletSectionCurrent.model
+    property var currentAccount: walletSectionCurrent
     property var accounts: walletSectionAccounts.model
 
-    property string defaultCurrency: walletSection.model.defaultCurrency
-    property string totalFiatBalance: walletSection.model.totalCurrencyBalance
-    property string signingPhrase: walletSection.model.signingPhrase
-    property string mnemonicBackedUp: walletSection.model.isMnemonicBackedUp
-
+    property string defaultCurrency: walletSection.defaultCurrency
+    property string totalFiatBalance: walletSection.totalCurrencyBalance
+    property string signingPhrase: walletSection.signingPhrase
+    property string mnemonicBackedUp: walletSection.isMnemonicBackedUp
 
     property var defaultTokenList: walletSectionAllTokens.default
     property var customTokenList: walletSectionAllTokens.custom

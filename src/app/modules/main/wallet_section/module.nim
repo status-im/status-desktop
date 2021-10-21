@@ -1,7 +1,9 @@
+import NimQml
 import eventemitter
 
 import ./controller, ./view
 import ./io_interface as io_ingerface
+import ../../../core/global_singleton
 
 import ./account_tokens/module as account_tokens_module
 import ./accounts/module as accountsModule
@@ -53,7 +55,7 @@ proc newModule*[T](
   result.accountsModule = accounts_module.newModule(result, events, walletAccountService)
   result.allTokensModule = all_tokens_module.newModule(result, events, tokenService)
   result.collectiblesModule = collectibles_module.newModule(result, events, collectibleService, walletAccountService)
-  result.currentAccountModule = current_account_module.newModule(result, events)
+  result.currentAccountModule = current_account_module.newModule(result, events, walletAccountService)
   result.transactionsModule = transactions_module.newModule(result, events, transactionService, walletAccountService)
 
 method delete*[T](self: Module[T]) =
@@ -67,11 +69,14 @@ method delete*[T](self: Module[T]) =
   self.view.delete
 
 method switchAccount*[T](self: Module[T], accountIndex: int) =
+  self.currentAccountModule.switchAccount(accountIndex)
   self.collectiblesModule.switchAccount(accountIndex)
   self.accountTokensModule.switchAccount(accountIndex)
   self.transactionsModule.switchAccount(accountIndex)
 
 method load*[T](self: Module[T]) =
+  singletonInstance.engine.setRootContextProperty("walletSection", newQVariant(self.view))
+
   self.accountTokensModule.load()
   self.accountsModule.load()
   self.allTokensModule.load()
