@@ -35,7 +35,7 @@ ModalPopup {
         StatusButton {
             anchors.right: parent.right
             anchors.rightMargin: Style.current.smallPadding
-            type: StatusBaseButton.Type.Warn
+            type: StatusBaseButton.Type.Danger
             text: qsTr("Restart")
             anchors.bottom: parent.bottom
             onClicked: Qt.quit()
