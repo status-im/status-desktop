@@ -1,4 +1,5 @@
 import ./dto/contacts as contacts_dto
+import status/statusgo_backend_new/accounts as status_accounts
 
 export contacts_dto
 
@@ -13,6 +14,9 @@ method init*(self: ServiceInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getContact*(self: ServiceInterface, id: string): contacts_dto.ContactsDto {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getContacts*(self: ServiceInterface): seq[contacts_dto.ContactsDto] {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getOrCreateContact*(self: ServiceInterface, id: string): contacts_dto.ContactsDto {.base.} =

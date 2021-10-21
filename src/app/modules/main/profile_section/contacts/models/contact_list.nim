@@ -1,8 +1,7 @@
 import NimQml, chronicles
 import Tables
 
-import status/types/profile
-from status/ens import nil
+import ../../../../../../app_service/service/contacts/dto/contacts
 
 type
   ContactRoles {.pure.} = enum
@@ -21,7 +20,7 @@ type
 
 QtObject:
   type ContactList* = ref object of QAbstractListModel
-    contacts*: seq[Profile]
+    contacts*: seq[ContactsDto]
 
   proc setup(self: ContactList) = self.QAbstractListModel.setup
 
@@ -31,7 +30,7 @@ QtObject:
 
   proc newContactList*(): ContactList =
     new(result, delete)
-    # TODO: (rramos) contacts should be a table[string, Profile] instead, with the key being the public key
+    # TODO: (rramos) contacts should be a table[string, ContactsDto] instead, with the key being the public key
     # This is to optimize determining if a contact is part of the contact list or not
     # (including those that do not have a system tag)
     result.contacts = @[]
@@ -52,7 +51,7 @@ QtObject:
   proc userName*(self: ContactList, pubKey: string, defaultValue: string = ""): string {.slot.} =
     for contact in self.contacts:
       if(contact.id != pubKey): continue
-      return ens.userNameOrAlias(contact)
+      return userNameOrAlias(contact)
     return defaultValue
 
   proc getContactIndexByPubkey(self: ContactList, pubkey: string): int {.slot.} =
@@ -66,17 +65,18 @@ QtObject:
   proc rowData(self: ContactList, index: int, column: string): string {.slot.} =
     let contact = self.contacts[index]
     case column:
-      of "name": result = ens.userNameOrAlias(contact)
-      of "address": result = contact.address
+      of "name": result = userNameOrAlias(contact)
+      of "address": result = contact.id
       of "identicon": result = contact.identicon
       of "pubKey": result = contact.id
       of "isContact": result = $contact.isContact()
       of "isBlocked": result = $contact.isBlocked()
       of "alias": result = contact.alias
       of "ensVerified": result = $contact.ensVerified
-      of "localNickname": result = $contact.localNickname
-      of "thumbnailImage": result = $contact.identityImage.thumbnail
-      of "largeImage": result = $contact.identityImage.large
+      # TODO check if localNickname exists in the contact ContactsDto
+      of "localNickname": result = ""#$contact.localNickname
+      of "thumbnailImage": result = $contact.image.thumbnail
+      of "largeImage": result = $contact.image.large
       of "requestReceived": result = $contact.requestReceived()
 
   method data(self: ContactList, index: QModelIndex, role: int): QVariant =
@@ -86,17 +86,17 @@ QtObject:
       return
     let contact = self.contacts[index.row]
     case role.ContactRoles:
-      of ContactRoles.Name: result = newQVariant(ens.userNameOrAlias(contact))
-      of ContactRoles.Address: result = newQVariant(contact.address)
+      of ContactRoles.Name: result = newQVariant(userNameOrAlias(contact))
+      of ContactRoles.Address: result = newQVariant(contact.id)
       of ContactRoles.Identicon: result = newQVariant(contact.identicon)
       of ContactRoles.PubKey: result = newQVariant(contact.id)
       of ContactRoles.IsContact: result = newQVariant(contact.isContact())
       of ContactRoles.IsBlocked: result = newQVariant(contact.isBlocked())
       of ContactRoles.Alias: result = newQVariant(contact.alias)
       of ContactRoles.EnsVerified: result = newQVariant(contact.ensVerified)
-      of ContactRoles.LocalNickname: result = newQVariant(contact.localNickname)
-      of ContactRoles.ThumbnailImage: result = newQVariant(contact.identityImage.thumbnail)
-      of ContactRoles.LargeImage: result = newQVariant(contact.identityImage.large)
+      of ContactRoles.LocalNickname: result = newQVariant("")#newQVariant(contact.localNickname)
+      of ContactRoles.ThumbnailImage: result = newQVariant(contact.image.thumbnail)
+      of ContactRoles.LargeImage: result = newQVariant(contact.image.large)
       of ContactRoles.RequestReceived: result = newQVariant(contact.requestReceived())
 
   method roleNames(self: ContactList): Table[int, string] =
@@ -115,7 +115,7 @@ QtObject:
       ContactRoles.RequestReceived.int:"requestReceived"
     }.toTable
 
-  proc addContactToList*(self: ContactList, contact: Profile) =
+  proc addContactToList*(self: ContactList, contact: ContactsDto) =
     self.beginInsertRows(newQModelIndex(), self.contacts.len, self.contacts.len)
     self.contacts.add(contact)
     self.endInsertRows()
@@ -128,16 +128,15 @@ QtObject:
 
   proc contactChanged*(self: ContactList, pubkey: string) {.signal.}
 
-  proc updateContact*(self: ContactList, contact: Profile) =
+  proc updateContact*(self: ContactList, contact: ContactsDto) =
     var found = false
     let topLeft = self.createIndex(0, 0, nil)
     let bottomRight = self.createIndex(self.contacts.len, 0, nil)
     for c in self.contacts:
       if(c.id != contact.id): continue
       found = true
-      c.ensName = contact.ensName
       c.ensVerified = contact.ensVerified
-      c.identityImage = contact.identityImage
+      c.image = contact.image
       c.added = contact.added
       c.blocked = contact.blocked
 
@@ -147,7 +146,7 @@ QtObject:
       self.dataChanged(topLeft, bottomRight, @[ContactRoles.Name.int])
     self.contactChanged(contact.id)
 
-  proc setNewData*(self: ContactList, contactList: seq[Profile]) =
+  proc setNewData*(self: ContactList, contactList: seq[ContactsDto]) =
     self.beginResetModel()
     self.contacts = contactList
     self.endResetModel()

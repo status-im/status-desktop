@@ -1,10 +1,10 @@
 {.used.}
 
-import json, strformat
+import json, strformat, strutils
 
 include ../../../common/json_utils
 
-# const DELETE_CONTACT* = "delete_contact"
+const domain* = ".stateofus.eth"
 
 type
   Images* = ref object
@@ -78,3 +78,29 @@ proc toContactsDto*(jsonObj: JsonNode): ContactsDto =
   discard jsonObj.getProp("hasAddedUs", result.hasAddedUs)
   discard jsonObj.getProp("IsSyncing", result.isSyncing)
   discard jsonObj.getProp("Removed", result.removed)
+
+proc userName*(ensName: string, removeSuffix: bool = false): string =
+  if ensName != "" and ensName.endsWith(domain):
+    if removeSuffix:
+      result = ensName.split(".")[0]
+    else:
+      result = ensName
+  else:
+    if ensName.endsWith(".eth") and removeSuffix:
+      return ensName.split(".")[0]
+    result = ensName
+
+proc userNameOrAlias*(contact: ContactsDto, removeSuffix: bool = false): string =
+  if(contact.name != "" and contact.ensVerified):
+    result = "@" & userName(contact.name, removeSuffix)
+  else:
+    result = contact.alias
+
+proc isContact*(self: ContactsDto): bool =
+  result = self.added
+
+proc isBlocked*(self: ContactsDto): bool =
+  result = self.blocked
+
+proc requestReceived*(self: ContactsDto): bool =
+  result = self.hasAddedUs
