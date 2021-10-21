@@ -6,7 +6,7 @@ import ../../../core/global_singleton
 import provider/module as provider_module
 import bookmark/module as bookmark_module
 import ../../../../app_service/service/bookmarks/service as bookmark_service
-
+import ../../../../app_service/service/settings/service as settings_service
 export io_interface
 
 type 
@@ -18,13 +18,13 @@ type
     providerModule: provider_module.AccessInterface
     bookmarkModule: bookmark_module.AccessInterface
 
-proc newModule*(delegate: delegate_interface.AccessInterface, bookmarkService: bookmark_service.Service): Module =
+proc newModule*(delegate: delegate_interface.AccessInterface, bookmarkService: bookmark_service.ServiceInterface, settingsService: settings_service.ServiceInterface): Module =
   result = Module()
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
   result.moduleLoaded = false
-  result.providerModule = provider_module.newModule(result)
+  result.providerModule = provider_module.newModule(result, settingsService)
   result.bookmarkModule = bookmark_module.newModule(result, bookmarkService)
 
 method delete*(self: Module) =

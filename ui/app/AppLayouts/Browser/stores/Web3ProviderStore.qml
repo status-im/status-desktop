@@ -5,12 +5,12 @@ import QtQuick 2.13
 QtObject {
     id: root
 
-    property var web3ProviderInst: web3Provider
+    property var web3ProviderInst: providerModule
     property var urlENSDictionary: ({})
 
     function determineRealURL(text){
         var url = RootStore.getUrlFromUserInput(text);
-        var host = web3Provider.getHost(url);
+        var host = providerModule.getHost(url);
         if(host.endsWith(".eth")){
             var ensResource = web3Provider.ensResourceURL(host, url);
 
@@ -18,7 +18,7 @@ QtObject {
                 // TODO: populate urlENSDictionary for prettier url instead of swarm-gateway big URL
                 return ensResource;
             } else {
-                urlENSDictionary[web3Provider.getHost(ensResource)] = host;
+                urlENSDictionary[providerModule.getHost(ensResource)] = host;
             }
             url = ensResource;
         }
@@ -26,7 +26,7 @@ QtObject {
     }
 
     function obtainAddress(url) {
-        var ensAddr = urlENSDictionary[web3Provider.getHost(url)];
-        return ensAddr ? web3Provider.replaceHostByENS( url, ensAddr) : url;
+        var ensAddr = urlENSDictionary[providerModule.getHost(url)];
+        return ensAddr ? providerModule.replaceHostByENS( url, ensAddr) : url;
     }
 }
