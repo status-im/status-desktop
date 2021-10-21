@@ -1,14 +1,19 @@
-import NimQml
+import NimQml, tables, stint, json, strformat, sequtils
 
+import ./item
 import ./model
 import ./io_interface
+
+import ../../../../../app_service/service/wallet_account/dto
 
 QtObject:
   type
     View* = ref object of QObject
       delegate: io_interface.AccessInterface
+      models: Table[string, Model]
       model: Model
       modelVariant: QVariant
+      fetchingHistoryState: Table[string, bool]
 
   proc delete*(self: View) =
     self.model.delete
@@ -30,3 +35,53 @@ QtObject:
   QtProperty[QVariant] model:
     read = getModel
     notify = modelChanged
+
+  proc setItems*(self: View, items: seq[Item]) =
+    self.model.setItems(items)
+
+  proc historyWasFetched*(self: View) {.signal.}
+
+  proc loadingTrxHistoryChanged*(self: View, isLoading: bool, address: string) {.signal.}
+
+  proc setHistoryFetchState*(self: View, address: string, isFetching: bool) =
+    self.fetchingHistoryState[address] = isFetching
+    self.loadingTrxHistoryChanged(isFetching, address)
+
+  proc setHistoryFetchState*(self: View, accounts: seq[string], isFetching: bool) =
+    for acc in accounts:
+      self.fetchingHistoryState[acc] = isFetching
+      self.loadingTrxHistoryChanged(isFetching, acc)
+
+  proc isFetchingHistory*(self: View, address: string): bool {.slot.} =
+    if self.fetchingHistoryState.hasKey(address):
+      return self.fetchingHistoryState[address]
+    return true
+
+  proc isHistoryFetched*(self: View, address: string): bool {.slot.} =
+    return self.model.getCount() > 0
+
+  proc loadTransactionsForAccount*(self: View, address: string, toBlock: string = "0x0", limit: int = 20, loadMore: bool = false) {.slot.} =
+    self.setHistoryFetchState(address, true)
+    self.delegate.loadTransactions(address, toBlock, limit, loadMore)
+
+  proc checkRecentHistory*(self: View) {.slot.} =
+    self.delegate.checkRecentHistory()
+
+  proc setTrxHistoryResult*(self: View, transactions: seq[TransactionDto], address: string, wasFetchMore: bool) =
+    if not self.models.hasKey(address):
+      self.models[address] = newModel()
+    
+    self.models[address].addNewTransactions(transactions, wasFetchMore)
+    
+    self.setHistoryFetchState(address, false)
+
+  proc setHistoryFetchStateForAccounts*(self: View, addresses: seq[string], isFetching: bool) =
+    for address in addresses:
+      self.setHistoryFetchState(address, isFetching)
+
+  proc switchAccount*(self: View, walletAccount: WalletAccountDto) =
+    if not self.models.hasKey(walletAccount.address):
+      self.models[walletAccount.address] = newModel()
+    self.model = self.models[walletAccount.address]
+    self.modelVariant = newQVariant(self.model)
+    self.modelChanged()

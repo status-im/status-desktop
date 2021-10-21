@@ -53,7 +53,7 @@ ModalPopup {
 
     StatusWalletColorSelect {
         id: accountColorInput
-        selectedColor: currentAccount.iconColor.toUpperCase()
+        selectedColor: currentAccount.color.toUpperCase()
         anchors.top: accountNameInput.bottom
         anchors.topMargin: marginBetweenInputs
         anchors.left: parent.left
@@ -186,7 +186,7 @@ ModalPopup {
                     return
                 }
 
-                const error = RootStore.changeAccountSettings(currentAccount.address, accountNameInput.text, accountColorInput.selectedColor);
+                const error = RootStore.updateCurrentAccount(currentAccount.address, accountNameInput.text, accountColorInput.selectedColor);
 
                 if (error) {
                     errorSound.play()

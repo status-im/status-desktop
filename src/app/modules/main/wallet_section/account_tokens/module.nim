@@ -9,9 +9,11 @@ export io_interface
 type 
   Module* [T: io_interface.DelegateInterface] = ref object of io_interface.AccessInterface
     delegate: T
+    events: EventEmitter
     view: View
     moduleLoaded: bool
     controller: controller.AccessInterface
+    currentAccountIndex: int
 
 proc newModule*[T](
   delegate: T,
@@ -20,6 +22,7 @@ proc newModule*[T](
 ): Module[T] =
   result = Module[T]()
   result.delegate = delegate
+  result.events = events
   result.view = newView(result)
   result.controller = newController(result, walletAccountService)
   result.moduleLoaded = false
@@ -27,14 +30,8 @@ proc newModule*[T](
 method delete*[T](self: Module[T]) =
   self.view.delete
 
-method load*[T](self: Module[T]) =
-  singletonInstance.engine.setRootContextProperty("walletSectionAccountTokens", newQVariant(self.view))
-  self.moduleLoaded = true
-
-method isLoaded*[T](self: Module[T]): bool =
-  return self.moduleLoaded
-
 method switchAccount*[T](self: Module[T], accountIndex: int) =
+  self.currentAccountIndex = accountIndex
   let walletAccount = self.controller.getWalletAccount(accountIndex)
   self.view.setItems(
     walletAccount.tokens.map(t => initItem(
@@ -43,6 +40,18 @@ method switchAccount*[T](self: Module[T], accountIndex: int) =
       t.balance,
       t.address,
       t.currencyBalance,
-      $t.currencyBalance,
     ))
   )
+
+method load*[T](self: Module[T]) =
+  singletonInstance.engine.setRootContextProperty("walletSectionAccountTokens", newQVariant(self.view))
+  self.events.on("walletAccount/currencyUpdated") do(e:Args):
+    self.switchAccount(self.currentAccountIndex)
+
+  self.events.on("walletAccount/tokenVisibilityToggled") do(e:Args):
+    self.switchAccount(self.currentAccountIndex)
+
+  self.moduleLoaded = true
+
+method isLoaded*[T](self: Module[T]): bool =
+  return self.moduleLoaded

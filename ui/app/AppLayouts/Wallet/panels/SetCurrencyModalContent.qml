@@ -13,8 +13,6 @@ Item {
     property string currency: "USD"
     property alias tokenListModel: tokenListView.model
 
-    signal setDefaultCurrency(string key)
-
     anchors.fill: parent
 
     ButtonGroup {
@@ -66,7 +64,6 @@ Item {
                     anchors.rightMargin: Style.current.padding
                     anchors.verticalCenter: parent.verticalCenter
                     ButtonGroup.group: currencyGroup
-                    onClicked: setDefaultCurrency(key)
                 }
 
                 MouseArea {
@@ -82,7 +79,6 @@ Item {
                     onClicked: {
                         currencyRadioBtn.checked = !currencyRadioBtn.checked
                         modalBody.currency = key
-                        setDefaultCurrency(key)
                     }
                 }
             }

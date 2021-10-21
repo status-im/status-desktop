@@ -25,8 +25,8 @@ ModalPopup {
         defaultTokenList: RootStore.defaultTokenList
         customTokenList: RootStore.customTokenList
 
-        onToggleAssetClicked: {
-            RootStore.toggleAsset(symbol)
+        onToggleVisibleClicked: {
+            RootStore.toggleVisible(symbol)
         }
         onRemoveCustomTokenTriggered: {
             RootStore.removeCustomToken(address)

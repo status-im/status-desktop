@@ -108,7 +108,7 @@ Rectangle {
 
         Address {
             id: addressValue
-            text: isIncoming ? fromAddress : to
+            text: isIncoming ? from : to
             maxWidth: 120
             width: 120
             horizontalAlignment: Text.AlignRight
@@ -142,7 +142,7 @@ Rectangle {
         }
         StyledText {
             id: timeValue
-            text: new Date(timestamp).toLocaleString(localAppSettings.locale)
+            text: new Date(parseInt(timestamp)).toLocaleString(globalSettings.locale)
             font.pixelSize: Style.current.primaryTextFontSize
             anchors.rightMargin: Style.current.smallPadding
         }
