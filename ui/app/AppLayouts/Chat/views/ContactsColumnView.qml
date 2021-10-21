@@ -17,10 +17,11 @@ import StatusQ.Components 0.1
 import StatusQ.Popups 0.1
 
 Item {
-    id: contactsColumn
+    id: root
     width: 304
     height: parent.height
 
+    property var store
     property int chatGroupsListViewCount: channelList.chatListItems.count
     signal openProfileClicked()
 
@@ -184,7 +185,7 @@ Item {
     StatusContactRequestsIndicatorListItem {
         id: contactRequests
 
-        property int nbRequests: profileModel.contacts.contactRequests.count
+        property int nbRequests: root.store.profileModelInst.contacts.contactRequests.count
 
         anchors.top: searchInputWrapper.bottom
         anchors.topMargin: visible ? Style.current.padding : 0
@@ -207,7 +208,7 @@ Item {
         height: (contentHeight < (parent.height - contactRequests.height - Style.current.padding)) ? contentHeight : (parent.height - contactRequests.height - Style.current.padding)
         anchors.top: contactRequests.bottom
         anchors.topMargin: Style.current.padding
-        anchors.bottom: contactsColumn.bottom
+        anchors.bottom: root.bottom
         contentHeight: channelList.childrenRect.height + emptyViewAndSuggestions.childrenRect.height
         anchors.horizontalCenter: parent.horizontalCenter
 
@@ -232,12 +233,12 @@ Item {
             }
 
             Connections {
-                target: profileModel.contacts.list
+                target: root.store.profileModelInst.contacts.list
                 onContactChanged: {
                     for (var i = 0; i < channelList.chatListItems.count; i++) {
-                        let chatItem = !!channelList.statusChatListItems.model.itemAt(i) ?
-                                channelList.statusChatListItems.model.itemAt(i) : null
-                        if (!!chatItem) {
+                        if (!!channelList.statusChatListItems) {
+                            let chatItem = !!channelList.statusChatListItems.model ?
+                                    channelList.statusChatListItems.model.itemAt(i) : null
                             if (chatItem.chatId === pubkey) {
                                 let profileImage = appMain.getProfileImage(pubkey)
                                 if (!!profileImage) {
@@ -251,15 +252,16 @@ Item {
                 }
             }
 
-            chatListItems.model: chatsModel.channelView.chats
-            selectedChatId: chatsModel.channelView.activeChannel.id
+            chatListItems.model: root.store.chatsModelInst.channelView.chats
+            selectedChatId: root.store.chatsModelInst.channelView.activeChannel.id
 
-            onChatItemSelected: chatsModel.channelView.setActiveChannel(id)
-            onChatItemUnmuted: chatsModel.channelView.unmuteChatItem(id)
+            onChatItemSelected: root.store.chatsModelInst.channelView.setActiveChannel(id)
+            onChatItemUnmuted: root.store.chatsModelInst.channelView.unmuteChatItem(id)
 
             popupMenu: ChatContextMenuView {
+                store: root.store
                 openHandler: function (id) {
-                    chatItem = chatsModel.channelView.getChatItemById(id)
+                    chatItem = root.store.chatsModelInst.channelView.getChatItemById(id)
                 }
             }
         }
@@ -270,7 +272,7 @@ Item {
             width: parent.width
             anchors.top: channelList.bottom
             anchors.topMargin: Style.current.padding
-            onSuggestedMessageClicked: chatsModel.channelView.joinPublicChat(channel)
+            onSuggestedMessageClicked: root.store.chatsModelInst.channelView.joinPublicChat(channel)
         }
     }
 
@@ -299,7 +301,7 @@ Item {
                 destroy()
             }
             onProfileClicked: {
-                contactsColumn.openProfileClicked();
+                root.openProfileClicked();
             }
         }
     }
@@ -353,7 +355,7 @@ Item {
     }
 
     Connections {
-        target: chatsModel.communities
+        target: root.store.chatsModelInst.communities
         onImportingCommunityStateChanged: {
             if (state !== Constants.communityImported &&
                 state !== Constants.communityImportingInProgress &&

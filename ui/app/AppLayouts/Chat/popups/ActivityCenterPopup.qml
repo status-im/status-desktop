@@ -214,7 +214,7 @@ Popup {
                         id: groupRequestNotificationComponent
 
                         ActivityCenterGroupRequest {
-                            timestamp: activityCenter.store.messageStore.timestamp
+                            store: activityCenter.store
                         }
                     }
                 }

@@ -7,11 +7,10 @@ import utils 1.0
 
 StyledText {
     id: chatTime
-    //property string timestamp
-    visible: chatTime.messageStore.isMessage
     color: Style.current.secondaryText
     text: Utils.formatTime(timestamp)
     font.pixelSize: Style.current.asideTextFontSize
+    //property string timestamp
     
     StatusQ.StatusToolTip {
         visible: hhandler.hovered

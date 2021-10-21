@@ -4,10 +4,12 @@ import utils 1.0
 
 QtObject {
     id: root
+    objectName: "hello!"
     property var messageStore
     property EmojiReactions emojiReactionsModel: EmojiReactions { }
 
     property var chatsModelInst: chatsModel
+    property var utilsModelInst: utilsModel
     property var walletModelInst: walletModel
     property var profileModelInst: profileModel
 

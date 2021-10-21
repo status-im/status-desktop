@@ -14,28 +14,26 @@ import "../popups"
 
 Item {
     id: root
-
-    property int communityIndex: chatsModel.communities.joinedCommunities.getCommunityIndex(model.message.communityId)
-
+    width: parent.width
+    // Setting a height of 0 breaks the layout for when it comes back visible
+    // The Item never goes back to actually have a height or width
+    height: visible ? messageNotificationContent.height : 0.01
     visible: {
         if (hideReadNotifications && model.read) {
             return false
         }
-
         return activityCenter.currentFilter === ActivityCenterPopup.Filter.All ||
                 (model.notificationType === Constants.activityCenterNotificationTypeMention && activityCenter.currentFilter === ActivityCenterPopup.Filter.Mentions) ||
                 (model.notificationType === Constants.activityCenterNotificationTypeOneToOne && activityCenter.currentFilter === ActivityCenterPopup.Filter.ContactRequests) ||
                 (model.notificationType === Constants.activityCenterNotificationTypeReply && activityCenter.currentFilter === ActivityCenterPopup.Filter.Replies)
     }
-    width: parent.width
-    // Setting a height of 0 breaks the layout for when it comes back visible
-    // The Item never goes back to actually have a height or width
-    height: visible ? messageNotificationContent.height : 0.01
+
     property var store
+    property int communityIndex: root.store.chatsModelInst.communities.joinedCommunities.getCommunityIndex(model.message.communityId)
     function openProfile() {
         const pk = model.author
         const userProfileImage = appMain.getProfileImage(pk)
-        openProfilePopup(chatsModel.userNameOrAlias(pk), pk, userProfileImage || utilsModel.generateIdenticon(pk))
+        openProfilePopup(root.store.chatsModelInst.userNameOrAlias(pk), pk, userProfileImage || utilsModel.generateIdenticon(pk))
     }
 
     Component {
@@ -53,7 +51,7 @@ Item {
             tooltip.orientation: StatusQ.StatusToolTip.Orientation.Left
             tooltip.x: -tooltip.width - Style.current.padding
             tooltip.y: markReadBtn.height / 2 - height / 2 + 4
-            onClicked: chatsModel.activityNotificationList.markActivityCenterNotificationRead(model.id, model.message.communityId, model.message.chatId, model.notificationType)
+            onClicked: root.store.chatsModelInst.activityNotificationList.markActivityCenterNotificationRead(model.id, model.message.communityId, model.message.chatId, model.notificationType)
         }
     }
 
@@ -63,15 +61,15 @@ Item {
         AcceptRejectOptionsButtonsPanel {
             id: buttons
             onAcceptClicked: {
-                const setActiveChannel = chatsModel.channelView.setActiveChannel
+                const setActiveChannel = root.store.chatsModelInst.channelView.setActiveChannel
                 const chatId = model.message.chatId
                 const messageId = model.message.messageId
-                profileModel.contacts.addContact(model.author)
-                chatsModel.activityNotificationList.acceptActivityCenterNotification(model.id)
+                root.store.profileModelInst.contacts.addContact(model.author)
+                root.store.chatsModelInst.activityNotificationList.acceptActivityCenterNotification(model.id)
                 setActiveChannel(chatId)
                 positionAtMessage(messageId)
             }
-            onDeclineClicked: chatsModel.activityNotificationList.dismissActivityCenterNotification(model.id)
+            onDeclineClicked: root.store.chatsModelInst.activityNotificationList.dismissActivityCenterNotification(model.id)
             onProfileClicked: root.openProfile()
             onBlockClicked: {
                 const pk = model.author
@@ -83,8 +81,8 @@ Item {
             BlockContactConfirmationDialog {
                 id: blockContactConfirmationDialog
                 onBlockButtonClicked: {
-                    profileModel.contacts.blockContact(blockContactConfirmationDialog.contactAddress)
-                    chatsModel.activityNotificationList.dismissActivityCenterNotification(model.id)
+                    root.store.profileModelInst.contacts.blockContact(blockContactConfirmationDialog.contactAddress)
+                    root.store.chatsModelInst.activityNotificationList.dismissActivityCenterNotification(model.id)
                     blockContactConfirmationDialog.close()
                 }
             }
@@ -130,16 +128,16 @@ Item {
                 if (isProfileClick) {
                     const pk = model.message.fromAuthor
                     const userProfileImage = appMain.getProfileImage(pk)
-                    return openProfilePopup(chatsModel.userNameOrAlias(pk), pk, userProfileImage || utilsModel.generateIdenticon(pk))
+                    return openProfilePopup(root.store.chatsModelInst.userNameOrAlias(pk), pk, userProfileImage || root.store.utilsModelInst.generateIdenticon(pk))
                 }
 
                 activityCenter.close()
 
                 if (model.message.communityId) {
-                    chatsModel.communities.setActiveCommunity(model.message.communityId)
+                    root.store.chatsModelInst.communities.setActiveCommunity(model.message.communityId)
                 }
 
-                chatsModel.channelView.setActiveChannel(model.message.chatId)
+                root.store.chatsModelInst.channelView.setActiveChannel(model.message.chatId)
                 positionAtMessage(model.message.messageId)
             }
 
@@ -176,16 +174,16 @@ Item {
                     if (isProfileClick) {
                         const pk = model.message.fromAuthor
                         const userProfileImage = appMain.getProfileImage(pk)
-                        return openProfilePopup(chatsModel.userNameOrAlias(pk), pk, userProfileImage || utilsModel.generateIdenticon(pk))
+                        return openProfilePopup(root.store.chatsModelInst.userNameOrAlias(pk), pk, userProfileImage || root.store.utilsModelInst.generateIdenticon(pk))
                     }
 
                     activityCenter.close()
 
                     if (model.message.communityId) {
-                        chatsModel.communities.setActiveCommunity(model.message.communityId)
+                        root.store.chatsModelInst.communities.setActiveCommunity(model.message.communityId)
                     }
 
-                    chatsModel.channelView.setActiveChannel(model.message.chatId)
+                    root.store.chatsModelInst.channelView.setActiveChannel(model.message.chatId)
                     positionAtMessage(model.message.messageId)
                 }
             }
@@ -228,10 +226,10 @@ Item {
             chatId: model.chatId
             notificationType: model.notificationType
             communityId: model.message.communityId
-            replyMessageIndex: chatsModel.messageView.getMessageIndex(model.chatId, model.responseTo)
-            repliedMessageContent: replyMessageIndex > -1 ? chatsModel.messageView.getMessageData(chatId, replyMessageIndex, "message") : ""
+            replyMessageIndex: root.store.chatsModelInst.messageView.getMessageIndex(model.chatId, model.responseTo)
+            repliedMessageContent: replyMessageIndex > -1 ? root.store.chatsModelInst.messageView.getMessageData(chatId, replyMessageIndex, "message") : ""
             realChatType: {
-                var chatType = chatsModel.channelView.chats.getChannelType(model.chatId)
+                var chatType = root.store.chatsModelInst.channelView.chats.getChannelType(model.chatId)
                 if (chatType === Constants.chatTypeCommunity) {
                     // TODO add a check for private community chats once it is created
                     return Constants.chatTypePublic
@@ -239,22 +237,22 @@ Item {
                 return chatType
             }
             profileImage: realChatType === Constants.chatTypeOneToOne ? appMain.getProfileImage(chatId) || ""  : ""
-            channelName: chatsModel.getChannelNameById(badge.chatId)
-            communityName: root.communityIndex > -1 ? chatsModel.communities.joinedCommunities.rowData(root.communityIndex, "name") : ""
-            communityThumbnailImage: root.communityIndex > -1 ? chatsModel.communities.joinedCommunities.rowData(root.communityIndex, "thumbnailImage") : ""
-            communityColor: !model.image && root.communityIndex > -1 ? chatsModel.communities.joinedCommunities.rowData(root.communityIndex, "communityColor"): ""
+            channelName: root.store.chatsModelInst.getChannelNameById(badge.chatId)
+            communityName: root.communityIndex > -1 ? root.store.chatsModelInst.communities.joinedCommunities.rowData(root.communityIndex, "name") : ""
+            communityThumbnailImage: root.communityIndex > -1 ? root.store.chatsModelInst.communities.joinedCommunities.rowData(root.communityIndex, "thumbnailImage") : ""
+            communityColor: !model.image && root.communityIndex > -1 ? root.store.chatsModelInst.communities.joinedCommunities.rowData(root.communityIndex, "communityColor"): ""
 
             onCommunityNameClicked: {
-                chatsModel.communities.setActiveCommunity(badge.communityId)
+                root.store.chatsModelInst.communities.setActiveCommunity(badge.communityId)
             }
             onChannelNameClicked: {
-                chatsModel.communities.setActiveCommunity(badge.communityId)
-                chatsModel.setActiveChannel(badge.chatId)
+                root.store.chatsModelInst.communities.setActiveCommunity(badge.communityId)
+                root.store.chatsModelInst.setActiveChannel(badge.chatId)
             }
 
             Connections {
                 enabled: badge.realChatType === Constants.chatTypeOneToOne
-                target: profileModel.contacts.list
+                target: root.store.profileModelInst.contacts.list
                 onContactChanged: {
                     if (pubkey === badge.chatId) {
                         badge.profileImage = appMain.getProfileImage(badge.chatId)

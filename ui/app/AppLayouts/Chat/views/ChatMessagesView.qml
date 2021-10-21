@@ -21,6 +21,7 @@ Item {
     anchors.fill: parent
 
     property var store
+
     property alias chatLogView: chatLogView
     property alias scrollToMessage: chatLogView.scrollToMessage
 
@@ -183,7 +184,7 @@ Item {
         }
 
         Connections {
-            target: chatsModel
+            target: root.store.chatsModelInst
 
             onAppReady: {
                 chatLogView.scrollToBottom(true)
@@ -191,7 +192,7 @@ Item {
         }
 
         Connections {
-            target: chatsModel.messageView
+            target: root.store.chatsModelInst.messageView
 
             onSendingMessageSuccess: {
                 chatLogView.scrollToBottom(true)
@@ -209,7 +210,7 @@ Item {
         }
 
         Connections {
-            target: chatsModel.communities
+            target: root.store.chatsModelInst.communities
 
             // Note:
             // Whole this Connection object (both slots) should be moved to the nim side.
@@ -218,7 +219,7 @@ Item {
             onMembershipRequestChanged: function (communityId, communityName, accepted) {
                 chatColumnLayout.currentNotificationChatId = null
                 chatColumnLayout.currentNotificationCommunityId = communityId
-                chatsModel.showOSNotification("Status",
+                root.store.chatsModelInst.showOSNotification("Status",
                                               //% "You have been accepted into the ‘%1’ community"
                                               accepted ? qsTrId("you-have-been-accepted-into-the---1--community").arg(communityName) :
                                                          //% "Your request to join the ‘%1’ community was declined"
@@ -235,7 +236,7 @@ Item {
                 chatColumnLayout.currentNotificationChatId = null
                 chatColumnLayout.currentNotificationCommunityId = communityId
                 //% "New membership request"
-                chatsModel.showOSNotification(qsTrId("new-membership-request"),
+                root.store.chatsModelInst.showOSNotification(qsTrId("new-membership-request"),
                                               //% "%1 asks to join ‘%2’"
                                               qsTrId("-1-asks-to-join---2-").arg(Utils.getDisplayName(pubKey)).arg(communityName),
                                               Constants.osNotificationType.joinCommunityRequest,
@@ -250,7 +251,7 @@ Item {
             if(!messages.initialMessagesLoaded || messages.loadingHistoryMessages)
                 return
 
-            chatsModel.messageView.loadMoreMessages(chatId);
+            root.store.chatsModelInst.messageView.loadMoreMessages(chatId);
         });
 
         onContentYChanged: {

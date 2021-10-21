@@ -17,7 +17,7 @@ Item {
     id: root
     width: parent.width
     height: childrenRect.height + dateGroupLbl.anchors.topMargin
-    property string timestamp: ""
+    property var store
     DateGroup {
         id: dateGroupLbl
         previousMessageIndex: previousNotificationIndex
@@ -90,7 +90,7 @@ Item {
                 font.weight: Font.Medium
             }
 
-            ChatTimeView {
+            ChatTimePanel {
                 anchors.verticalCenter: chatName.verticalCenter
                 anchors.left: chatName.right
                 anchors.leftMargin: 4
@@ -104,7 +104,7 @@ Item {
         function openProfile() {
             const pk = model.author
             const userProfileImage = appMain.getProfileImage(pk)
-            openProfilePopup(chatsModel.userNameOrAlias(pk), pk, userProfileImage || utilsModel.generateIdenticon(pk))
+            openProfilePopup(root.store.chatsModelInst.userNameOrAlias(pk), pk, userProfileImage || utilsModel.generateIdenticon(pk))
         }
 
         StyledTextEdit {
@@ -115,7 +115,7 @@ Item {
                     return ""
                 }
 
-                let name = chatsModel.userNameOrAlias(model.author)
+                let name = root.store.chatsModelInst.userNameOrAlias(model.author)
                 if (name.length > 20) {
                     name = name.substring(0, 9) + "..." + name.substring(name.length - 10)
                 }
@@ -152,12 +152,12 @@ Item {
             anchors.right: parent.right
             anchors.rightMargin: Style.current.halfPadding
             anchors.verticalCenter: parent.verticalCenter
-            onAcceptClicked: chatsModel.activityNotificationList.acceptActivityCenterNotification(model.id)
-            onDeclineClicked: chatsModel.activityNotificationList.dismissActivityCenterNotification(model.id)
+            onAcceptClicked: root.store.chatsModelInst.activityNotificationList.acceptActivityCenterNotification(model.id)
+            onDeclineClicked: root.store.chatsModelInst.activityNotificationList.dismissActivityCenterNotification(model.id)
             onProfileClicked: groupRequestContent.openProfile()
             onBlockClicked: {
                 const pk = model.author
-                blockContactConfirmationDialog.contactName = chatsModel.userNameOrAlias(pk)
+                blockContactConfirmationDialog.contactName = root.store.chatsModelInst.userNameOrAlias(pk)
                 blockContactConfirmationDialog.contactAddress = pk
                 blockContactConfirmationDialog.open()
             }
@@ -165,8 +165,8 @@ Item {
             BlockContactConfirmationDialog {
                 id: blockContactConfirmationDialog
                 onBlockButtonClicked: {
-                    profileModel.contacts.blockContact(blockContactConfirmationDialog.contactAddress)
-                    chatsModel.activityNotificationList.dismissActivityCenterNotification(model.id)
+                    root.store.profileModelInst.contacts.blockContact(blockContactConfirmationDialog.contactAddress)
+                    root.store.chatsModelInst.activityNotificationList.dismissActivityCenterNotification(model.id)
                     blockContactConfirmationDialog.close()
                 }
             }

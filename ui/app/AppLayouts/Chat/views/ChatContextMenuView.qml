@@ -10,9 +10,10 @@ import "../../../../shared/popups"
 import "../popups"
 
 StatusPopupMenu {
-
+    id: root
     property var chatItem
-    property bool communityActive: chatsModel.communities.activeCommunity.active
+    property var store
+    property bool communityActive: root.store.chatsModelInst.communities.activeCommunity.active
 
     StatusMenuItem {
         id: viewProfileMenuItem
@@ -59,10 +60,10 @@ StatusPopupMenu {
 
 
     Action {
-        enabled: profileModel.fleets.fleet == Constants.waku_prod || profileModel.fleets.fleet === Constants.waku_test
+        enabled: root.store.profileModelInst.fleets.fleet == Constants.waku_prod || root.store.profileModelInst.fleets.fleet === Constants.waku_test
         //% "Test WakuV2 - requestAllHistoricMessages"
         text: qsTrId("test-wakuv2---requestallhistoricmessages")
-        onTriggered: chatsModel.requestAllHistoricMessages()
+        onTriggered: root.store.chatsModelInst.requestAllHistoricMessages()
     }
 
     StatusMenuItem {
@@ -75,9 +76,9 @@ StatusPopupMenu {
         enabled: chatItem && chatItem.chatType !== Constants.chatTypePrivateGroupChat
         onTriggered: {
             if (chatItem && chatItem.muted) {
-                return chatsModel.channelView.unmuteChatItem(chatItem.id)
+                return root.store.chatsModelInst.channelView.unmuteChatItem(chatItem.id)
             }
-            chatsModel.channelView.muteChatItem(chatItem.id)
+            root.store.chatsModelInst.channelView.muteChatItem(chatItem.id)
         }
     }
 
@@ -86,14 +87,14 @@ StatusPopupMenu {
         text: qsTrId("mark-as-read")
         icon.name: "checkmark-circle"
         enabled: chatItem && chatItem.chatType !== Constants.chatTypePrivateGroupChat
-        onTriggered: chatsModel.channelView.markChatItemAsRead(chatItem.id)
+        onTriggered: root.store.chatsModelInst.channelView.markChatItemAsRead(chatItem.id)
     }
 
     StatusMenuItem {
         //% "Clear history"
         text: qsTrId("clear-history")
         icon.name: "close-circle"
-        onTriggered: chatsModel.channelView.clearChatHistory(chatItem.id)
+        onTriggered: root.store.chatsModelInst.channelView.clearChatHistory(chatItem.id)
     }
 
     StatusMenuItem {
@@ -101,9 +102,9 @@ StatusPopupMenu {
         text: qsTrId("edit-channel")
         icon.name: "edit"
         enabled: communityActive &&
-            chatsModel.communities.activeCommunity.admin
+            root.store.chatsModelInst.communities.activeCommunity.admin
         onTriggered: openPopup(editChannelPopup, {
-            communityId: chatsModel.communities.activeCommunity.id,
+            communityId: root.store.chatsModelInst.communities.activeCommunity.id,
             channel: chatItem
         })
     }
@@ -140,7 +141,7 @@ StatusPopupMenu {
             openPopup(deleteChatConfirmationDialogComponent)
         }
 
-        enabled: !communityActive || chatsModel.communities.activeCommunity.admin
+        enabled: !communityActive || root.store.chatsModelInst.communities.activeCommunity.admin
     }
 
     FileDialog {
@@ -151,7 +152,7 @@ StatusPopupMenu {
         currentFile: StandardPaths.writableLocation(StandardPaths.DocumentsLocation) + "/messages.json"
         defaultSuffix: "json"
         onAccepted: {
-            chatsModel.messageView.downloadMessages(downdloadDialog.currentFile)
+            root.store.chatsModelInst.messageView.downloadMessages(downdloadDialog.currentFile)
         }
     }
 
@@ -181,9 +182,9 @@ StatusPopupMenu {
             }
             onConfirmButtonClicked: {
                 if (communityActive) {
-                    chatsModel.communities.deleteCommunityChat(chatsModel.communities.activeCommunity.id, chatId)
+                    root.store.chatsModelInst.communities.deleteCommunityChat(root.store.chatsModelInst.communities.activeCommunity.id, chatId)
                 } else {
-                    chatsModel.channelView.leaveChat(chatId)
+                    root.store.chatsModelInst.channelView.leaveChat(chatId)
                 }
                 close();
             }

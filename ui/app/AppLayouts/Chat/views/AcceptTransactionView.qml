@@ -13,6 +13,7 @@ Item {
 
     width: parent.width
     height: childrenRect.height
+    property var store
 
     Separator {
         id: separator1

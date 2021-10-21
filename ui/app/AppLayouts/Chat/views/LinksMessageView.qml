@@ -15,11 +15,11 @@ import "../panels"
 
 Column {
     id: root
-    property string linkUrls: ""
+    property var store
     property var container
+    property string linkUrls: ""
     property bool isCurrentUser: false
     property bool isImageLink: false
-    property var rootStore
     readonly property string uuid: Utils.uuid()
     spacing: Style.current.halfPadding
 
@@ -66,7 +66,7 @@ Column {
             Connections {
                 id: linkFetchConnections
                 enabled: false
-                target: chatsModel
+                target: root.store.chatsModelInst
                 onLinkPreviewDataWasReceived: {
                     let response
                     try {
@@ -102,7 +102,7 @@ Column {
             Connections {
                 id: linkCommunityFetchConnections
                 enabled: false
-                target: chatsModel.communities
+                target: root.store.chatsModelInst.communities
                 onCommunityAdded: {
                     if (communityId !== linkData.communityId) {
                         return
@@ -173,7 +173,7 @@ Column {
                     }
 
                     linkFetchConnections.enabled = true
-                    return chatsModel.getLinkPreviewData(link, root.uuid)
+                    return root.store.chatsModelInst.getLinkPreviewData(link, root.uuid)
                 }
                 // setting the height to 0 allows the "enable link" dialog to
                 // disappear correctly when appSettings.neverAskAboutUnfurlingAgain
@@ -212,7 +212,7 @@ Column {
     Component {
         id: invitationBubble
         InvitationBubbleView {
-            store: root.rootStore
+            store: root.store
             communityId: linkData.communityId
             isLink: true
             anchors.left: parent.left
