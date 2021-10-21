@@ -11,6 +11,7 @@ import ../../app_service/service/collectible/service as collectible_service
 import ../../app_service/service/wallet_account/service as wallet_account_service
 import ../../app_service/service/setting/service as setting_service
 import ../../app_service/service/bookmarks/service as bookmark_service
+import ../../app_service/service/dapp_permissions/service as dapp_permissions_service
 
 import ../core/local_account_settings
 import ../../app_service/service/profile/service as profile_service
@@ -70,6 +71,7 @@ type
     walletAccountService: wallet_account_service.Service
     settingService: setting_service.Service
     bookmarkService: bookmark_service.Service
+    dappPermissionsService: dapp_permissions_service.Service
     profileService: profile_service.Service
     settingsService: settings_service.Service
     aboutService: about_service.Service
@@ -130,6 +132,7 @@ proc newAppController*(appService: AppService): AppController =
   result.profileService = profile_service.newService()
   result.settingsService = settings_service.newService()
   result.aboutService = about_service.newService()
+  result.dappPermissionsService = dapp_permissions_service.newService()
 
   # Core
   result.localAppSettingsVariant = newQVariant(singletonInstance.localAppSettings)
@@ -160,6 +163,7 @@ proc newAppController*(appService: AppService): AppController =
     result.settingsService,
     result.contactsService,
     result.aboutService,
+    result.dappPermissionsService,
   )
 
   #################################################
@@ -208,6 +212,7 @@ proc delete*(self: AppController) =
   self.settingService.delete
   self.walletAccountService.delete
   self.aboutService.delete
+  self.dappPermissionsService.delete
 
 proc startupDidLoad*(self: AppController) =
   #################################################
@@ -249,6 +254,7 @@ proc load*(self: AppController) =
   self.communityService.init()
   self.bookmarkService.init()
   self.tokenService.init()
+  self.dappPermissionsService.init()
   self.walletAccountService.init()
   self.transactionService.init()
   self.mainModule.load()
