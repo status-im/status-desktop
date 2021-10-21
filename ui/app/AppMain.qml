@@ -27,7 +27,6 @@ import StatusQ.Layout 0.1
 import StatusQ.Popups 0.1
 import StatusQ.Core 0.1
 
-
 Item {
     id: appMain
     anchors.fill: parent
@@ -593,7 +592,7 @@ Item {
             ignoreUnknownSignals: true
             enabled: removeMnemonicAfterLogin
             onInitialized: {
-                profileModel.mnemonic.remove()
+                mnemonicModule.remove()
             }
         }
 
