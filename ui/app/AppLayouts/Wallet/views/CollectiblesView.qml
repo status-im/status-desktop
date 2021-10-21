@@ -1,79 +1,100 @@
 import QtQuick 2.13
+import QtQuick.Controls 2.13
 import QtGraphicalEffects 1.13
 
 import utils 1.0
-
 import "../../../../shared"
 import "../../../../shared/panels"
-import "../helpers/collectiblesData.js" as CollectiblesData
+import "../../../../shared/status/core"
+
 import "../popups"
-import "../panels"
-import "../stores"
+import "collectibles"
+
+import StatusQ.Components 0.1
 
 Item {
     id: root
+    width: parent.width
+    property var store
+    signal collectibleClicked()
 
-    StyledText {
-        id: noCollectiblesText
-        color: Style.current.secondaryText
-        //% "Collectibles will appear here"
-        text: qsTrId("collectibles-will-appear-here")
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.verticalCenter: parent.verticalCenter
-        font.pixelSize: 15
-    }
+    Loader {
+        id: contentLoader
+        width: parent.width
+        height: parent.height
 
-    CollectiblesModal {
-        id: collectiblesModalComponent
-    }
-
-    function checkCollectiblesVisibility() {
-        // Show the collectibles section only if at least one of the sub-items is visible
-        // Sub-items are visible only if they are loading or have more than zero collectible
-        let showCollectibles = false
-        let currentItem
-        for (let i = 0; i < collectiblesRepeater.count; i++) {
-            currentItem = collectiblesRepeater.itemAt(i)
-            if (currentItem && currentItem.active) {
-                showCollectibles = true
-                break
+        sourceComponent: {
+            if (root.store.walletModelV2Inst.collectiblesView.isLoading) {
+                return loading;
             }
+            if (root.store.walletModelV2Inst.collectiblesView.collections.rowCount() === 0) {
+                return empty;
+            }
+            return loaded;
         }
-        noCollectiblesText.visible = !showCollectibles
-        collectiblesSection.visible = showCollectibles
     }
 
-    Column {
-        id: collectiblesSection
-        spacing: Style.current.halfPadding
-        anchors.fill: parent
-
-        Repeater {
-            id: collectiblesRepeater
-            model: RootStore.collectiblesList
-
-            CollectiblesContainer {
-                property var collectibleData: CollectiblesData.collectiblesData[model.collectibleType]
-
-                collectibleName: collectibleData.collectibleName
-                collectibleIconSource: Style.png("collectibles/" + collectibleData.collectibleIconSource)
-                collectiblesModal: collectiblesModalComponent
-                buttonText: collectibleData.buttonText
-                getLink: collectibleData.getLink
-                onActiveChanged: {
-                    checkCollectiblesVisibility()
-                }
-                onReloadCollectibles: {
-                    RootStore.reloadCollectible(collectibleType)
-                }
+    Component {
+        id: loading
+        Item {
+            StatusLoadingIndicator {
+                width: 20
+                height: 20
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.horizontalCenter: parent.horizontalCenter
             }
         }
     }
 
-    Connections {
-        target: RootStore.collectiblesList
-        onDataChanged: {
-            checkCollectiblesVisibility()
+    Component {
+        id: empty
+        Item {
+            StyledText {
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.horizontalCenter: parent.horizontalCenter
+                color: Style.current.secondaryText
+                text: qsTr("Collectibles will appear here")
+                font.pixelSize: 15
+            }
+        }
+    }
+
+    Component {
+        id: loaded
+
+        ScrollView {
+            id: scrollView
+            clip: true
+
+            Column {
+                id: collectiblesSection
+                width: parent.width
+
+                Repeater {
+                    id: collectionsRepeater
+                    model: root.store.walletModelV2Inst.collectiblesView.collections
+                    //model: 5
+                    delegate: StatusExpandableItem {
+                        width: parent.width - 156
+                        anchors.horizontalCenter: parent.horizontalCenter
+
+                        primaryText: model.name
+                        image.source: model.imageUrl
+                        type: StatusExpandableItem.Type.Secondary
+                        expandableComponent:  CollectibleCollectionView {
+                            store: root.store
+                            slug: model.slug
+                            anchors.left: parent.left
+                            anchors.leftMargin: Style.current.bigPadding
+                            anchors.right: parent.right
+                            anchors.rightMargin: Style.current.bigPadding
+                            onCollectibleClicked: {
+                                root.collectibleClicked();
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }

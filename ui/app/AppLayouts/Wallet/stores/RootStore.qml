@@ -5,13 +5,16 @@ import QtQuick 2.13
 QtObject {
     id: root
 
-    property var currentAccount: walletModel.accountsView.currentAccount
+    property CollectiblesStore collectiblesStore: CollectiblesStore { }
+
+    property var currentAccount: walletSectionCurrent.model
     property var accounts: walletSectionAccounts.model
 
-    property string defaultCurrency: walletModel.balanceView.defaultCurrency
-    property string totalFiatBalance: walletModel.balanceView.totalFiatBalance
+    property string defaultCurrency: walletSection.model.defaultCurrency
+    property string totalFiatBalance: walletSection.model.totalCurrencyBalance
+    property string signingPhrase: walletSection.model.signingPhrase
+    property string mnemonicBackedUp: walletSection.model.isMnemonicBackedUp
 
-    property var transactions: walletModel.transactionsView.transactions
 
     property var defaultTokenList: walletSectionAllTokens.default
     property var customTokenList: walletSectionAllTokens.custom
@@ -19,12 +22,7 @@ QtObject {
 
     property var assets: walletSectionAccountTokens.model
 
-    property string signingPhrase: walletModel.utilsView.signingPhrase
-
-    property bool mnemonicBackedUp: profileModel.mnemonic.isBackedUp
-
-    property var collectiblesList: walletModel.collectiblesView.collectiblesLists
-
+    property var transactions: walletModel.transactionsView.transactions
     property var historyView: walletModel.historyView
 
     // This should be exposed to the UI via "walletModule", WalletModule should use
@@ -137,10 +135,6 @@ QtObject {
         return utilsModel.hex2Eth(value)
     }
 
-    function reloadCollectible(collectibleType) {
-        walletModel.collectiblesView.reloadCollectible(collectibleType)
-    }
-
     function checkRecentHistory() {
         walletModel.transactionsView.checkRecentHistory()
     }
@@ -153,5 +147,13 @@ QtObject {
         walletModel.historyView.loadTransactionsForAccount(walletModel.accountsView.currentAccount.address,
                                                            walletModel.transactionsView.transactions.getLastTxBlockNumber(),
                                                            pageSize, true)
+    }
+
+    function getCollectionMaxValue(traitType, value, maxValue, collectionIndex) {
+        if(maxValue !== "")
+            return parseInt(value) + qsTr(" of ") + maxValue;
+        else
+            return parseInt(value) + qsTr(" of ") +
+            walletModelV2Inst.collectiblesView.collections.getCollectionTraitMaxValue(collectionIndex, traitType).toString();
     }
 }

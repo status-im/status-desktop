@@ -1,4 +1,4 @@
-import json
+import json, options
 
 include  ../../common/json_utils
 
@@ -17,11 +17,14 @@ type
     activeTokenSymbols*: seq[string]
     signingPhrase*: string
     currency*: string
+    mnemonic*: string
 
 proc toSettingDto*(jsonObj: JsonNode): SettingDto =
   result = SettingDto()
 
   discard jsonObj.getProp("signing-phrase", result.signingPhrase)
+  discard jsonObj.getProp("mnemonic", result.mnemonic)
+
   if not jsonObj.getProp("currency", result.currency):
     result.currency = DEFAULT_CURRENCY
 
@@ -49,3 +52,5 @@ proc toSettingDto*(jsonObj: JsonNode): SettingDto =
     for symbol in symbols{$result.currentNetwork.id}.getElems():
       result.activeTokenSymbols.add(symbol.getStr)
 
+proc isMnemonicBackedUp*(self: SettingDto): bool =
+  return self.mnemonic == ""

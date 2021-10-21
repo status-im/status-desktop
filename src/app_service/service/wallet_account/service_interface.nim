@@ -17,3 +17,6 @@ method getWalletAccounts*(self: ServiceInterface): seq[WalletAccountDto] {.base.
 
 method getWalletAccount*(self: ServiceInterface, accountIndex: int): WalletAccountDto {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method getCurrencyBalance*(self: ServiceInterface): float64 {.base.} =
+  raise newException(ValueError, "No implementation available")
