@@ -1,10 +1,13 @@
 import Tables, json, sequtils, strformat, chronicles
 
+import eventemitter
+
 import service_interface, ./dto/contacts
 import status/statusgo_backend_new/contacts as status_contacts
 import status/statusgo_backend_new/accounts as status_accounts
 import status/statusgo_backend_new/chat as status_chat
 import status/statusgo_backend_new/utils as status_utils
+import status/contacts as old_status_contacts
 
 export service_interface
 
@@ -14,38 +17,30 @@ logScope:
 type 
   Service* = ref object of ServiceInterface
     contacts: Table[string, ContactsDto] # [contact_id, ContactsDto]
+    events: EventEmitter
 
 method delete*(self: Service) =
   discard
 
-proc newService*(): Service =
+proc newService*(events: EventEmitter): Service =
   result = Service()
+  result.events = events
   result.contacts = initTable[string, ContactsDto]()
 
 method init*(self: Service) =
-  try:
-    let response = status_contacts.getContacts()
+  discard
 
-    let contacts = map(response.result.getElems(), 
-    proc(x: JsonNode): ContactsDto = x.toContactsDto())
-
-    for contact in contacts:
-      self.contacts[contact.id] = contact
-
-  except Exception as e:
-    let errDesription = e.msg
-    error "error: ", errDesription
-    return
-
-# method getContacts*(self: Service): seq[Profile] =
-  # return status_contacts.getContacts(false)
+method getContacts*(self: Service): seq[ContactsDto] =
+  let profiles = status_contacts.getContacts()
+  for profile in profiles.result:
+    result.add(profile.toContactsDto)
 
 method getContact*(self: Service, id: string): ContactsDto =
   return status_contacts.getContactByID(id).result.toContactsDto()
 
 method getOrCreateContact*(self: Service, id: string): ContactsDto =
   result = status_contacts.getContactByID(id).result.toContactsDto()
-  if result == nil:
+  if result == nil or  result.id == "":
     let alias = $status_accounts.generateAlias(id)
     result = ContactsDto(
       id: id,
@@ -73,7 +68,6 @@ proc saveContact(self: Service, contact: ContactsDto) =
 
 method addContact*(self: Service, publicKey: string) =
   var contact = self.getOrCreateContact(publicKey)
-
   let updating = contact.added
 
   if not updating:
@@ -82,15 +76,10 @@ method addContact*(self: Service, publicKey: string) =
   else:
     contact.blocked = false
 
-  # FIXME Save contact fails
-  try:
-    self.saveContact(contact)
-  except Exception as e:
-    echo "ERROROR ", e.msg
+  self.saveContact(contact)
   
-  # self.events.emit("contactAdded", Args())
+  self.events.emit("contactAdded", Args())
   # sendContactUpdate(contact.id, accountKeyUID)
-
   if updating:
     let profile = ContactsDto(
       id: contact.id,
@@ -105,6 +94,7 @@ method addContact*(self: Service, publicKey: string) =
       hasAddedUs: contact.hasAddedUs,
       # localNickname: contact.localNickname
     )
+    # TODO fix this to use ContactsDto
     # self.events.emit("contactUpdate", ContactUpdateArgs(contacts: @[profile]))
 
 method rejectContactRequest*(self: Service, publicKey: string) =
@@ -112,7 +102,7 @@ method rejectContactRequest*(self: Service, publicKey: string) =
   contact.hasAddedUs = false
 
   self.saveContact(contact)
-  # self.events.emit("contactRemoved", Args())
+  self.events.emit("contactRemoved", Args())
   # status_contacts.rejectContactRequest(publicKey)
 
 method changeContactNickname*(self: Service, accountKeyUID: string, publicKey: string, nicknameToSet: string) =
@@ -128,7 +118,7 @@ method changeContactNickname*(self: Service, accountKeyUID: string, publicKey: s
 
   # contact.localNickname = nickname
   self.saveContact(contact)
-  # self.events.emit("contactAdded", Args())
+  self.events.emit("contactAdded", Args())
   # sendContactUpdate(contact.id, accountKeyUID)
 
 method unblockContact*(self: Service, publicKey: string) =
@@ -136,14 +126,13 @@ method unblockContact*(self: Service, publicKey: string) =
   var contact = status_contacts.getContactByID(publicKey).result.toContactsDto()
   contact.blocked = false
   self.saveContact(contact)
-  # self.events.emit("contactUnblocked", ContactIdArgs(id: publicKey))
+  self.events.emit("contactUnblocked", old_status_contacts.ContactIdArgs(id: publicKey))
 
 method blockContact*(self: Service, publicKey: string) =
-  # status_contacts.blockContact(publicKey)
   var contact = status_contacts.getContactByID(publicKey).result.toContactsDto()
   contact.blocked = true
   self.saveContact(contact)
-  # self.events.emit("contactBlocked", ContactIdArgs(id: publicKey))
+  self.events.emit("contactBlocked", old_status_contacts.ContactIdArgs(id: publicKey))
 
 method removeContact*(self: Service, publicKey: string) =
   #   status_contacts.removeContact(publicKey)
@@ -152,7 +141,7 @@ method removeContact*(self: Service, publicKey: string) =
   contact.hasAddedUs = false
 
   self.saveContact(contact)
-  # self.events.emit("contactRemoved", Args())
+  self.events.emit("contactRemoved", Args())
 #   let channelId = status_utils.getTimelineChatId(publicKey)
 #   if status_chat.hasChannel(channelId):
 #     status_chat.leave(channelId)

@@ -98,7 +98,7 @@ proc newModule*[T](
   )
 
   result.browserSectionModule = browser_section_module.newModule(result, bookmarkService)
-  result.profileSectionModule = profile_section_module.newModule(result, accountsService, settingsService, profileService, contactsService, aboutService)
+  result.profileSectionModule = profile_section_module.newModule(result, events, accountsService, settingsService, profileService, contactsService, aboutService)
 
 method delete*[T](self: Module[T]) =
   self.chatSectionModule.delete

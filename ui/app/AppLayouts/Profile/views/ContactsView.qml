@@ -131,6 +131,15 @@ Item {
                 anchors.top: parent.top
                 anchors.bottom: parent.bottom
                 contacts: root.store.blockedContacts
+
+                onRemoveContactActionTriggered: {
+                    removeContactConfirmationDialog.value = contact.address
+                    removeContactConfirmationDialog.open()
+                }
+
+                onUnblockContactActionTriggered: {
+                    root.store.unblockContact(contact.address)
+                }
             }
         }
 
@@ -261,6 +270,7 @@ Item {
                 removeContactConfirmationDialog.value = contact.address
                 removeContactConfirmationDialog.open()
             }
+
             onUnblockContactActionTriggered: {
                 root.store.unblockContact(contact.address)
             }
