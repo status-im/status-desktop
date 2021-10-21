@@ -42,7 +42,7 @@ Column {
             selected: root.selectedMenuItem === model.menu_id
             onClicked: root.menuItemClicked(model)
             visible: model.ifEnabled !== "browser" || root.browserMenuItemEnabled
-            badge.value: (!profileModel.mnemonic.isBackedUp && (settingsMenuDelegate.title ===
+            badge.value: (!mnemonicModule.isBackedUp && (settingsMenuDelegate.title ===
                         settingsMenuItems.itemAt(0).text)) ? 1 : 0
         }
     }
