@@ -100,20 +100,9 @@ Item {
                 }
             }
 
-            function getLinkStyle(link, hoveredLink) {
-                return `<style type="text/css">` +
-                        `a {` +
-                        `color: ${wrapper.textColor};` +
-                        `text-decoration: none;` +
-                        `}` +
-                        (hoveredLink !== "" ? `a[href="${hoveredLink}"] { text-decoration: underline; }` : "") +
-                        `</style>` +
-                        `<a href="${link}">${link}</a>`
-            }
-
             StyledTextEdit {
                 id: communityName
-                text: communityBadge.getLinkStyle(communityBadge.communityName, hoveredLink)
+                text: Utils.getLinkStyle(communityBadge.communityName, hoveredLink, wrapper.textColor)
                 height: 18
                 readOnly: true
                 textFormat: Text.RichText
@@ -146,7 +135,7 @@ Item {
 
             StyledTextEdit {
                 id: channelName
-                text: communityBadge.getLinkStyle(communityBadge.channelName || wrapper.name, hoveredLink)
+                text: communityBadge.getLinkStyle(communityBadge.channelName || wrapper.name, hoveredLink, wrapper.textColor)
                 height: 18
                 readOnly: true
                 textFormat: Text.RichText
