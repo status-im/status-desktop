@@ -45,6 +45,9 @@ QtObject:
     result.modelVariant = newQVariant(result.model)
     result.contactToAdd = ContactsDto()
 
+  proc setContactList*(self: View, contacts: seq[ContactsDto]) =
+    self.model.setContactList(contacts)
+
   proc modelChanged*(self: View) {.signal.}
 
   proc getModel*(self: View): QVariant {.slot.} =
@@ -140,13 +143,11 @@ QtObject:
     self.delegate.changeContactNickname(publicKey, nicknameToSet, self.accountKeyUID)
 
   proc unblockContact*(self: View, publicKey: string) {.slot.} =
-    self.model.contactListChanged()
     self.delegate.unblockContact(publicKey)
 
   proc contactBlocked*(self: View, publicKey: string) {.signal.}
 
   proc blockContact*(self: View, publicKey: string) {.slot.} =
-    self.model.contactListChanged()
     self.contactBlocked(publicKey)
     self.delegate.blockContact(publicKey)
 

@@ -1,5 +1,6 @@
 import NimQml, chronicles, sequtils, sugar, strutils, json
 
+import ../../../../../app_service/service/contacts/dto/contacts
 import status/utils as status_utils
 import status/chat/chat
 import status/types/profile
@@ -35,11 +36,11 @@ QtObject:
   proc contactListChanged*(self: Model) {.signal.}
   proc contactRequestAdded*(self: Model, name: string, address: string) {.signal.}
 
-  proc updateContactList*(self: Model, contacts: seq[Profile]) =
+  proc updateContactList*(self: Model, contacts: seq[ContactsDto]) =
     for contact in contacts:
       var requestAlreadyAdded = false
       for existingContact in self.contactList.contacts:
-        if existingContact.address == contact.address and existingContact.requestReceived():
+        if existingContact.id == contact.id and existingContact.requestReceived():
           requestAlreadyAdded = true
           break
 
@@ -55,7 +56,7 @@ QtObject:
 
       if not requestAlreadyAdded and contact.requestReceived():
         # TODO add back userNameOrAlias call
-        self.contactRequestAdded(contact.username, contact.address)
+        self.contactRequestAdded(contact.name, contact.id)
         # self.contactRequestAdded(status_ens.userNameOrAlias(contact), contact.address)
 
     self.contactListChanged()
@@ -63,7 +64,7 @@ QtObject:
   proc getContactList(self: Model): QVariant {.slot.} =
     return newQVariant(self.contactList)
 
-  proc setContactList*(self: Model, contactList: seq[Profile]) =
+  proc setContactList*(self: Model, contactList: seq[ContactsDto]) =
     self.contactList.setNewData(contactList)
     self.addedContacts.setNewData(contactList.filter(c => c.added))
     self.blockedContacts.setNewData(contactList.filter(c => c.blocked))

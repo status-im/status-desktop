@@ -12,6 +12,8 @@ import ./profile/module as profile_module
 import ./contacts/module as contacts_module
 import ./about/module as about_module
 
+import eventemitter
+
 export io_interface
 
 type 
@@ -26,7 +28,14 @@ type
     contactsModule: contacts_module.AccessInterface
     aboutModule: about_module.AccessInterface
 
-proc newModule*[T](delegate: T, accountsService: accounts_service.ServiceInterface, settingsService: settings_service.ServiceInterface, profileService: profile_service.ServiceInterface, contactsService: contacts_service.ServiceInterface, aboutService: about_service.ServiceInterface): Module[T] =
+proc newModule*[T](delegate: T,
+  events: EventEmitter,
+  accountsService: accounts_service.ServiceInterface,
+  settingsService: settings_service.ServiceInterface,
+  profileService: profile_service.ServiceInterface,
+  contactsService: contacts_service.ServiceInterface,
+  aboutService: about_service.ServiceInterface):
+  Module[T] =
   result = Module[T]()
   result.delegate = delegate
   result.view = view.newView()
@@ -35,7 +44,7 @@ proc newModule*[T](delegate: T, accountsService: accounts_service.ServiceInterfa
   result.moduleLoaded = false
 
   result.profileModule = profile_module.newModule(result, accountsService, settingsService, profileService)
-  result.contactsModule = contacts_module.newModule(result, contactsService, accountsService)
+  result.contactsModule = contacts_module.newModule(result, events, contactsService, accountsService)
   result.aboutModule = about_module.newModule(result, aboutService)
 
   singletonInstance.engine.setRootContextProperty("profileSectionModule", result.viewVariant)
