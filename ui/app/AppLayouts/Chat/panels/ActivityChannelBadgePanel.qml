@@ -51,40 +51,46 @@ Rectangle {
         }
     }
 
-    ActivityCenter.ReplyComponent {
+    Component {
         id: replyComponent
-        width: childrenRect.width
-        height: parent.height
-        replyMessageIndex: wrapper.replyMessageIndex
-        repliedMessageContent: wrapper.repliedMessageContent
+        ActivityCenter.ReplyComponent {
+            width: childrenRect.width
+            height: parent.height
+            replyMessageIndex: wrapper.replyMessageIndex
+            repliedMessageContent: wrapper.repliedMessageContent
+        }
     }
 
-    ActivityCenter.CommunityBadge {
+    Component {
         id: communityBadgeComponent
-        width: childrenRect.width
-        height: parent.height
+        ActivityCenter.CommunityBadge {
+            width: childrenRect.width
+            height: parent.height
 
-        textColor: wrapper.textColor
-        image: wrapper.communityThumbnailImage
-        iconColor: wrapper.communityColor
-        communityName: wrapper.communityName
-        channelName: wrapper.channelName
-        name: wrapper.name
+            textColor: wrapper.textColor
+            image: wrapper.communityThumbnailImage
+            iconColor: wrapper.communityColor
+            communityName: wrapper.communityName
+            channelName: wrapper.channelName
+            name: wrapper.name
 
-        onCommunityNameClicked: communityNameClicked()
-        onChannelNameClicked: channelNameClicked()
+            onCommunityNameClicked: communityNameClicked()
+            onChannelNameClicked: channelNameClicked()
+        }
     }
 
-    ActivityCenter.ChannelBadge {
+    Component {
         id: channelBadgeComponent
-        width: childrenRect.width
-        height: parent.height
+        ActivityCenter.ChannelBadge {
+            width: childrenRect.width
+            height: parent.height
 
-        realChatType: wrapper.realChatType
-        textColor: wrapper.textColor
-        name: wrapper.name
-        chatId: wrapper.chatId
-        profileImage: wrapper.profileImage
-        identicon: wrapper.identicon
+            realChatType: wrapper.realChatType
+            textColor: wrapper.textColor
+            name: wrapper.name
+            chatId: wrapper.chatId
+            profileImage: wrapper.profileImage
+            identicon: wrapper.identicon
+        }
     }
 }
