@@ -12,6 +12,7 @@ Item {
     width: rectangleBubble.width
     height: rectangleBubble.height
 
+    property var store
     property var commandParametersObject: {
         try {
             return JSON.parse(commandParameters)
@@ -31,12 +32,7 @@ Item {
             }
         }
     }
-    property var focusedAccount
-    property string activeChannelName
-    property string activeChannelIdenticon
-    property var balanceView
-    signal getGasPrice()
-    signal sendTransactionClicked(string fromAddress)
+
     property var token: JSON.parse(commandParametersObject.contract) // TODO: handle {}
     property string tokenAmount: commandParametersObject.value
     property string tokenSymbol: token.symbol || ""
@@ -44,8 +40,8 @@ Item {
         if (!tokenAmount || !token.symbol) {
             return "0"
         }
-        var defaultFiatSymbol = root.balanceView.defaultCurrency
-        return root.balanceView.getFiatValue(tokenAmount, token.symbol, defaultFiatSymbol) + " " + defaultFiatSymbol.toUpperCase()
+        var defaultFiatSymbol = root.store.walletModelInst.balanceView.defaultCurrency
+        return root.store.walletModelInst.balanceView.getFiatValue(tokenAmount, token.symbol, defaultFiatSymbol) + " " + defaultFiatSymbol.toUpperCase()
     }
     property int state: commandParametersObject.commandState
 
@@ -185,6 +181,7 @@ Item {
 
             AcceptTransactionView {
                 state: root.state
+                store: root.store
             }
         }
 
@@ -193,7 +190,7 @@ Item {
 
             SendTransactionButton {
                 // outgoing: root.outgoing
-                acc: root.focusedAccount
+                acc: root.store.walletModelInst.accountsView.focusedAccount
                 selectedAsset: token
                 selectedAmount: tokenAmount
                 selectedFiatAmount: fiatValue
@@ -201,16 +198,16 @@ Item {
                 selectedRecipient: {
                     return {
                         address: commandParametersObject.address,
-                        identicon: root.activeChannelIdenticon,
-                        name: root.activeChannelName,
+                        identicon: root.store.chatsModelInst.channelView.activeChannel.identicon,
+                        name: root.store.chatsModelInst.channelView.activeChannel.name,
                         type: RecipientSelector.Type.Contact
                     }
                 }
                 onSignModalOpened: {
-                    root.getGasPrice();
+                    root.store.walletModelInst.gasView.getGasPrice();
                 }
                 onSendTransaction: {
-                    root.sendTransactionClicked(address);
+                    root.store.walletModelInst.accountsView.setFocusedAccountByAddress(fromAddress);
                 }
             }
         }

@@ -11,8 +11,8 @@ Item {
     property var store
     property var messageStore
     property bool longChatText: true
-    property bool veryLongChatText: chatsModel.plainText(message).length >
-                                    (appSettings.useCompactMode ? Constants.limitLongChatTextCompactMode : Constants.limitLongChatText)
+    property bool veryLongChatText: !!root.store ? root.store.chatsModelInst.plainText(message).length >
+                                    (appSettings.useCompactMode ? Constants.limitLongChatTextCompactMode : Constants.limitLongChatText) : false
     property bool readMore: false
     property alias textField: chatText
 
@@ -55,14 +55,14 @@ Item {
             root.linkActivated(link)
             if(link.startsWith("#")) {
                 const channelName = link.substring(1);
-                const foundChannelObj = chatsModel.getChannel(channelName);
+                const foundChannelObj = root.store.chatsModelInst.getChannel(channelName);
 
                 if (!foundChannelObj)
                 {
-                    chatsModel.channelView.joinPublicChat(channelName)
-                    if(chatsModel.communities.activeCommunity.active)
+                    root.store.chatsModelInst.channelView.joinPublicChat(channelName)
+                    if(root.store.chatsModelInst.communities.activeCommunity.active)
                     {
-                        chatsModel.channelView.joinPublicChat(channelName)
+                        root.store.chatsModelInst.channelView.joinPublicChat(channelName)
                         appMain.changeAppSection(Constants.chat)
                     }
                     return
@@ -72,20 +72,18 @@ Item {
 
                 if(obj.chatType === -1 || obj.chatType === Constants.chatTypePublic)
                 {
-                    if(chatsModel.communities.activeCommunity.active)
-                    {
-                        chatsModel.channelView.joinPublicChat(channelName)
+                    if(root.store.chatsModelInst.communities.activeCommunity.active) {
+                        root.store.chatsModelInst.channelView.joinPublicChat(channelName)
                         appMain.changeAppSection(Constants.chat)
                     }
-
-                    chatsModel.channelView.setActiveChannel(channelName);
+                    root.store.chatsModelInst.channelView.setActiveChannel(channelName);
                 }
-                else if(obj.communityId === chatsModel.communities.activeCommunity.id &&
+                else if(obj.communityId === root.store.chatsModelInst.communities.activeCommunity.id &&
                         obj.chatType === Constants.chatTypeCommunity &&
-                        chatsModel.channelView.activeChannel.id !== obj.id
+                        root.store.chatsModelInst.channelView.activeChannel.id !== obj.id
                         )
                 {
-                    chatsModel.channelView.setActiveChannel(channelName);
+                    root.store.chatsModelInst.channelView.setActiveChannel(channelName);
                 }
 
                 return
@@ -94,7 +92,7 @@ Item {
             if (link.startsWith('//')) {
                 let pk = link.replace("//", "");
                 const userProfileImage = appMain.getProfileImage(pk)
-                openProfilePopup(chatsModel.userNameOrAlias(pk), pk, userProfileImage || utilsModel.generateIdenticon(pk))
+                openProfilePopup(root.store.chatsModelInst.userNameOrAlias(pk), pk, userProfileImage || root.store.utilsModelInst.generateIdenticon(pk))
                 return;
             }
 

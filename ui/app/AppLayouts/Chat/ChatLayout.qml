@@ -20,48 +20,48 @@ import StatusQ.Layout 0.1
 import StatusQ.Popups 0.1
 
 StatusAppThreePanelLayout {
-    id: chatView
+    id: root
 
     handle: SplitViewHandle { implicitWidth: 5 }
 
     property var messageStore
     property RootStore rootStore: RootStore {
-        messageStore: chatView.messageStore
+        messageStore: root.messageStore
     }
     property alias chatColumn: chatColumn
     property bool stickersLoaded: false
     signal profileButtonClicked()
 
     Connections {
-        target: chatsModel.stickers
+        target: root.rootStore.chatsModelInst.stickers
         onStickerPacksLoaded: {
             stickersLoaded = true;
         }
     }
 
     property var onActivated: function () {
-        chatsModel.channelView.restorePreviousActiveChannel()
-        chatColumn.onActivated()
+        root.rootStore.chatsModelInst.channelView.restorePreviousActiveChannel();
+        chatColumn.onActivated();
     }
 
     StatusSearchLocationMenu {
         id: searchPopupMenu
         searchPopup: searchPopup
-        locationModel: chatsModel.messageSearchViewController.locationMenuModel
+        locationModel: root.rootStore.chatsModelInst.messageSearchViewController.locationMenuModel
 
         onItemClicked: {
-            chatsModel.messageSearchViewController.setSearchLocation(firstLevelItemValue, secondLevelItemValue)
+            root.rootStore.chatsModelInst.messageSearchViewController.setSearchLocation(firstLevelItemValue, secondLevelItemValue)
             if(searchPopup.searchText !== "")
                 searchMessages(searchPopup.searchText)
         }
     }
 
     property var searchMessages: Backpressure.debounce(searchPopup, 400, function (value) {
-        chatsModel.messageSearchViewController.searchMessages(value)
+        root.rootStore.chatsModelInst.messageSearchViewController.searchMessages(value)
     })
 
     Connections {
-        target: chatsModel.messageSearchViewController.locationMenuModel
+        target: root.rootStore.chatsModelInst.messageSearchViewController.locationMenuModel
         onModelAboutToBeReset: {
             for (var i = 2; i <= searchPopupMenu.count; i++) {
                 //clear menu
@@ -79,7 +79,7 @@ StatusAppThreePanelLayout {
         defaultSearchLocationText: qsTr("Anywhere")
 
         searchOptionsPopupMenu: searchPopupMenu
-        searchResults: chatsModel.messageSearchViewController.resultModel
+        searchResults: root.rootStore.chatsModelInst.messageSearchViewController.resultModel
 
         formatTimestampFn: function (ts) {
             return new Date(parseInt(ts, 10)).toLocaleString(Qt.locale(globalSettings.locale))
@@ -99,9 +99,9 @@ StatusAppThreePanelLayout {
         onOpened: {
             searchPopup.resetSearchSelection();
             searchPopup.forceActiveFocus()
-            chatsModel.messageSearchViewController.prepareLocationMenuModel()
+            root.rootStore.chatsModelInst.messageSearchViewController.prepareLocationMenuModel()
 
-            const jsonObj = chatsModel.messageSearchViewController.getSearchLocationObject()
+            const jsonObj = root.rootStore.chatsModelInst.messageSearchViewController.getSearchLocationObject()
 
             if (!jsonObj) {
                 return
@@ -110,7 +110,7 @@ StatusAppThreePanelLayout {
             let obj = JSON.parse(jsonObj)
             if (obj.location === "") {
                 if(obj.subLocation === "") {
-                    chatsModel.messageSearchViewController.setSearchLocation("", "")
+                    root.rootStore.chatsModelInst.messageSearchViewController.setSearchLocation("", "")
                 }
                 else {
                     searchPopup.setSearchSelection(obj.subLocation.text,
@@ -120,7 +120,7 @@ StatusAppThreePanelLayout {
                                        obj.subLocation.iconName,
                                        obj.subLocation.identiconColor)
 
-                    chatsModel.messageSearchViewController.setSearchLocation("", obj.subLocation.value)
+                    root.rootStore.chatsModelInst.messageSearchViewController.setSearchLocation("", obj.subLocation.value)
                 }
             }
             else {
@@ -132,7 +132,7 @@ StatusAppThreePanelLayout {
                                        obj.subLocation.iconName,
                                        obj.subLocation.identiconColor)
 
-                    chatsModel.messageSearchViewController.setSearchLocation(obj.location.value, obj.subLocation.value)
+                    root.rootStore.chatsModelInst.messageSearchViewController.setSearchLocation(obj.location.value, obj.subLocation.value)
                 }
                 else {
                     searchPopup.setSearchSelection(obj.location.title,
@@ -142,46 +142,46 @@ StatusAppThreePanelLayout {
                                        obj.location.iconName,
                                        obj.location.identiconColor)
 
-                    chatsModel.messageSearchViewController.setSearchLocation(obj.location.value, obj.subLocation.value)
+                    root.rootStore.chatsModelInst.messageSearchViewController.setSearchLocation(obj.location.value, obj.subLocation.value)
                 }
             }
         }
         onResultItemClicked: {
             searchPopup.close()
 
-            chatsModel.switchToSearchedItem(itemId)
+            root.rootStore.chatsModelInst.switchToSearchedItem(itemId)
         }
 
         onResultItemTitleClicked: {
             const pk = titleId
             const userProfileImage = appMain.getProfileImage(pk)
-            return openProfilePopup(chatsModel.userNameOrAlias(pk), pk, userProfileImage || utilsModel.generateIdenticon(pk))
+            return openProfilePopup(root.rootStore.chatsModelInst.userNameOrAlias(pk), pk, userProfileImage || root.rootStore.utilsModelInst.generateIdenticon(pk))
         }
     }
 
     leftPanel: Loader {
         id: contactColumnLoader
-        sourceComponent: appSettings.communitiesEnabled && chatsModel.communities.activeCommunity.active ? communtiyColumnComponent : contactsColumnComponent
+        sourceComponent: appSettings.communitiesEnabled && root.rootStore.chatsModelInst.communities.activeCommunity.active ? communtiyColumnComponent : contactsColumnComponent
     }
 
     centerPanel: ChatColumnView {
         id: chatColumn
-        rootStore: chatView.rootStore
+        rootStore: root.rootStore
         chatGroupsListViewCount: contactColumnLoader.item.chatGroupsListViewCount
     }
 
-    showRightPanel: (appSettings.expandUsersList && (appSettings.showOnlineUsers || chatsModel.communities.activeCommunity.active)
-                    && (chatsModel.channelView.activeChannel.chatType !== Constants.chatTypeOneToOne))
-    rightPanel: appSettings.communitiesEnabled && chatsModel.communities.activeCommunity.active ? communityUserListComponent : userListComponent
+    showRightPanel: (appSettings.expandUsersList && (appSettings.showOnlineUsers || root.rootStore.chatsModelInst.communities.activeCommunity.active)
+                    && (root.rootStore.chatsModelInst.channelView.activeChannel.chatType !== Constants.chatTypeOneToOne))
+    rightPanel: appSettings.communitiesEnabled && root.rootStore.chatsModelInst.communities.activeCommunity.active ? communityUserListComponent : userListComponent
 
     Component {
         id: communityUserListComponent
         CommunityUserListPanel {
             currentTime: chatColumn.currentTime
             messageContextMenu: quickActionMessageOptionsMenu
-            profilePubKey: profileModel.profile.pubKey
-            contactsList: profileModel.contacts.list
-            community: chatsModel.communities.activeCommunity
+            profilePubKey: root.rootStore.profileModelInst.profile.pubKey
+            contactsList: root.rootStore.profileModelInst.contacts.list
+            community: root.rootStore.chatsModelInst.communities.activeCommunity
         }
     }
 
@@ -191,17 +191,18 @@ StatusAppThreePanelLayout {
             currentTime: chatColumn.currentTime
             userList: chatColumn.userList
             messageContextMenu: quickActionMessageOptionsMenu
-            profilePubKey: profileModel.profile.pubKey
-            contactsList: profileModel.contacts.list
-            isOnline: chatsModel.isOnline
+            profilePubKey: root.rootStore.profileModelInst.profile.pubKey
+            contactsList: root.rootStore.profileModelInst.contacts.list
+            isOnline: root.rootStore.chatsModelInst.isOnline
         }
     }
 
     Component {
         id: contactsColumnComponent
         ContactsColumnView {
+            store: root.rootStore
             onOpenProfileClicked: {
-                chatView.profileButtonClicked();
+                root.profileButtonClicked();
             }
         }
     }
@@ -209,7 +210,7 @@ StatusAppThreePanelLayout {
     Component {
         id: communtiyColumnComponent
         CommunityColumnView {
-            rootStore: chatColumn.rootStore
+            store: root.rootStore
             pinnedMessagesPopupComponent: chatColumn.pinnedMessagesPopupComponent
         }
     }
@@ -237,8 +238,8 @@ StatusAppThreePanelLayout {
         //% "Are you sure you want to remove this contact?"
         confirmationText: qsTrId("are-you-sure-you-want-to-remove-this-contact-")
         onConfirmButtonClicked: {
-            if (profileModel.contacts.isAdded(chatColumn.contactToRemove)) {
-                profileModel.contacts.removeContact(chatColumn.contactToRemove)
+            if (root.rootStore.profileModelInst.contacts.isAdded(chatColumn.contactToRemove)) {
+                root.rootStore.profileModelInst.contacts.removeContact(chatColumn.contactToRemove)
             }
             removeContactConfirmationDialog.parentPopup.close();
             removeContactConfirmationDialog.close();
@@ -247,8 +248,8 @@ StatusAppThreePanelLayout {
 
     MessageContextMenuView {
         id: quickActionMessageOptionsMenu
-        store: chatColumn.rootStore
-        reactionModel: chatColumn.rootStore.emojiReactionsModel
+        store: root.rootStore
+        reactionModel: root.rootStore.emojiReactionsModel
     }
 }
 

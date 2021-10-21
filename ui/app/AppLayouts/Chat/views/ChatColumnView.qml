@@ -22,7 +22,7 @@ import "../panels"
 import "../../Wallet"
 
 Item {
-    id: chatColumnLayout
+    id: root
     anchors.fill: parent
     property var rootStore
     property alias pinnedMessagesPopupComponent: pinnedMessagesPopupComponent
@@ -32,10 +32,10 @@ Item {
     property bool isExtendedInput: isReply || isImage
     property bool isConnected: false
     property string contactToRemove: ""
-    property string activeChatId: chatsModel.channelView.activeChannel.id
-    property bool isBlocked: profileModel.contacts.isContactBlocked(activeChatId)
-    property bool isContact: profileModel.contacts.isAdded(activeChatId)
-    property bool contactRequestReceived: profileModel.contacts.contactRequestReceived(activeChatId)
+    property string activeChatId: root.rootStore.chatsModelInst.channelView.activeChannel.id
+    property bool isBlocked: root.rootStore.profileModelInst.contacts.isContactBlocked(activeChatId)
+    property bool isContact: root.rootStore.profileModelInst.contacts.isAdded(activeChatId)
+    property bool contactRequestReceived: root.rootStore.profileModelInst.contacts.contactRequestReceived(activeChatId)
     property string currentNotificationChatId
     property string currentNotificationCommunityId
     property var currentTime: 0
@@ -55,30 +55,30 @@ Item {
     function showReplyArea() {
         isReply = true;
         isImage = false;
-        let replyMessageIndex = chatsModel.messageView.messageList.getMessageIndex(SelectedMessage.messageId);
+        let replyMessageIndex = root.rootStore.chatsModelInst.messageView.messageList.getMessageIndex(SelectedMessage.messageId);
         if (replyMessageIndex === -1) return;
-        let userName = chatsModel.messageView.messageList.getMessageData(replyMessageIndex, "userName")
-        let message = chatsModel.messageView.messageList.getMessageData(replyMessageIndex, "message")
-        let identicon = chatsModel.messageView.messageList.getMessageData(replyMessageIndex, "identicon")
-        let image = chatsModel.messageView.messageList.getMessageData(replyMessageIndex, "image")
-        let sticker = chatsModel.messageView.messageList.getMessageData(replyMessageIndex, "sticker")
-        let contentType = chatsModel.messageView.messageList.getMessageData(replyMessageIndex, "contentType")
+        let userName = root.rootStore.chatsModelInst.messageView.messageList.getMessageData(replyMessageIndex, "userName")
+        let message = root.rootStore.chatsModelInst.messageView.messageList.getMessageData(replyMessageIndex, "message")
+        let identicon = root.rootStore.chatsModelInst.messageView.messageList.getMessageData(replyMessageIndex, "identicon")
+        let image = root.rootStore.chatsModelInst.messageView.messageList.getMessageData(replyMessageIndex, "image")
+        let sticker = root.rootStore.chatsModelInst.messageView.messageList.getMessageData(replyMessageIndex, "sticker")
+        let contentType = root.rootStore.chatsModelInst.messageView.messageList.getMessageData(replyMessageIndex, "contentType")
 
         if(stackLayoutChatMessages.currentIndex >= 0 && stackLayoutChatMessages.currentIndex < stackLayoutChatMessages.children.length)
             stackLayoutChatMessages.children[stackLayoutChatMessages.currentIndex].chatInput.showReplyArea(userName, message, identicon, contentType, image, sticker)
     }
 
     function requestAddressForTransaction(address, amount, tokenAddress, tokenDecimals = 18) {
-        amount =  utilsModel.eth2Wei(amount.toString(), tokenDecimals)
-        chatsModel.transactions.requestAddress(activeChatId,
+        amount =  root.rootStore.utilsModelInst.eth2Wei(amount.toString(), tokenDecimals)
+        root.rootStore.chatsModelInst.transactions.requestAddress(activeChatId,
                                                address,
                                                amount,
                                                tokenAddress)
         txModalLoader.close()
     }
     function requestTransaction(address, amount, tokenAddress, tokenDecimals = 18) {
-        amount =  utilsModel.eth2Wei(amount.toString(), tokenDecimals)
-        chatsModel.transactions.request(activeChatId,
+        amount =  root.rootStore.utilsModelInst.eth2Wei(amount.toString(), tokenDecimals)
+        root.rootStore.chatsModelInst.transactions.request(activeChatId,
                                         address,
                                         amount,
                                         tokenAddress)
@@ -106,19 +106,20 @@ Item {
         repeat: true
         triggeredOnStart: true
         onTriggered: {
-            chatColumnLayout.currentTime = Date.now()
+            root.currentTime = Date.now()
         }
     }
 
     MessageContextMenuView {
         id: contextmenu
-        store: chatColumnLayout.rootStore
-        reactionModel: chatColumnLayout.rootStore.emojiReactionsModel
+        store: root.rootStore
+        reactionModel: root.rootStore.emojiReactionsModel
     }
 
     StackLayout {
         anchors.fill: parent
-        currentIndex:  chatsModel.channelView.activeChannelIndex > -1 && chatGroupsListViewCount > 0 ? 0 : 1
+        currentIndex:  root.rootStore.chatsModelInst.channelView.activeChannelIndex > -1
+                       && chatGroupsListViewCount > 0 ? 0 : 1
 
         StatusImageModal {
             id: imagePopup
@@ -142,14 +143,14 @@ Item {
                 id: topBar
                 Layout.fillWidth: true
 
-                property string chatId: chatsModel.channelView.activeChannel.id
+                property string chatId: root.rootStore.chatsModelInst.channelView.activeChannel.id
                 property string profileImage: appMain.getProfileImage(chatId) || ""
 
-                chatInfoButton.title: Utils.removeStatusEns(chatsModel.channelView.activeChannel.name)
+                chatInfoButton.title: Utils.removeStatusEns(root.rootStore.chatsModelInst.channelView.activeChannel.name)
                 chatInfoButton.subTitle: {
-                    switch (chatsModel.channelView.activeChannel.chatType) {
+                    switch (root.rootStore.chatsModelInst.channelView.activeChannel.chatType) {
                     case Constants.chatTypeOneToOne:
-                        return (profileModel.contacts.isAdded(topBar.chatId) ?
+                        return (root.rootStore.profileModelInst.contacts.isAdded(topBar.chatId) ?
                                     //% "Contact"
                                     qsTrId("chat-is-a-contact") :
                                     //% "Not a contact"
@@ -158,51 +159,52 @@ Item {
                         //% "Public chat"
                         return qsTrId("public-chat")
                     case Constants.chatTypePrivateGroupChat:
-                        let cnt = chatsModel.channelView.activeChannel.members.rowCount();
+                        let cnt = root.rootStore.chatsModelInst.channelView.activeChannel.members.rowCount();
                         //% "%1 members"
                         if(cnt > 1) return qsTrId("-1-members").arg(cnt);
                         //% "1 member"
                         return qsTrId("1-member");
                     case Constants.chatTypeCommunity:
-                        return Utils.linkifyAndXSS(chatsModel.channelView.activeChannel.description).trim()
+                        return Utils.linkifyAndXSS(root.rootStore.chatsModelInst.channelView.activeChannel.description).trim()
                     default:
                         return ""
                     }
                 }
-                chatInfoButton.image.source: profileImage || chatsModel.channelView.activeChannel.identicon
-                chatInfoButton.image.isIdenticon: !!!profileImage && chatsModel.channelView.activeChannel.identicon
-                chatInfoButton.icon.color: chatsModel.channelView.activeChannel.color
-                chatInfoButton.type: chatsModel.channelView.activeChannel.chatType
-                chatInfoButton.pinnedMessagesCount: chatsModel.messageView.pinnedMessagesList.count
-                chatInfoButton.muted: chatsModel.channelView.activeChannel.muted
+                chatInfoButton.image.source: profileImage || root.rootStore.chatsModelInst.channelView.activeChannel.identicon
+                chatInfoButton.image.isIdenticon: !!!profileImage && root.rootStore.chatsModelInst.channelView.activeChannel.identicon
+                chatInfoButton.icon.color: root.rootStore.chatsModelInst.channelView.activeChannel.color
+                chatInfoButton.type: root.rootStore.chatsModelInst.channelView.activeChannel.chatType
+                chatInfoButton.pinnedMessagesCount: root.rootStore.chatsModelInst.messageView.pinnedMessagesList.count
+                chatInfoButton.muted: root.rootStore.chatsModelInst.channelView.activeChannel.muted
 
                 chatInfoButton.onPinnedMessagesCountClicked: openPopup(pinnedMessagesPopupComponent)
-                chatInfoButton.onUnmute: chatsModel.channelView.unmuteChatItem(chatsModel.channelView.activeChannel.id)
+                chatInfoButton.onUnmute: root.rootStore.chatsModelInst.channelView.unmuteChatItem(chatsModel.channelView.activeChannel.id)
 
-                chatInfoButton.sensor.enabled: chatsModel.channelView.activeChannel.chatType !== Constants.chatTypePublic &&
-                                               chatsModel.channelView.activeChannel.chatType !== Constants.chatTypeCommunity
+                chatInfoButton.sensor.enabled: root.rootStore.chatsModelInst.channelView.activeChannel.chatType !== Constants.chatTypePublic &&
+                                               root.rootStore.chatsModelInst.channelView.activeChannel.chatType !== Constants.chatTypeCommunity
                 chatInfoButton.onClicked: {
-                    switch (chatsModel.channelView.activeChannel.chatType) {
+                    switch (root.rootStore.chatsModelInst.channelView.activeChannel.chatType) {
                     case Constants.chatTypePrivateGroupChat:
                         openPopup(groupInfoPopupComponent, {
                             channelType: GroupInfoPopup.ChannelType.ActiveChannel,
-                            channel: chatsModel.channelView.activeChannel
+                            channel: root.rootStore.chatsModelInst.channelView.activeChannel
                         })
                         break;
                     case Constants.chatTypeOneToOne:
-                        openProfilePopup(chatsModel.userNameOrAlias(chatsModel.channelView.activeChannel.id),
-                                         chatsModel.channelView.activeChannel.id, profileImage || chatsModel.channelView.activeChannel.identicon,
-                                         "", chatsModel.channelView.activeChannel.nickname)
+                        openProfilePopup(root.rootStore.chatsModelInst.userNameOrAlias(chatsModel.channelView.activeChannel.id),
+                                         root.rootStore.chatsModelInst.channelView.activeChannel.id, profileImage
+                                         || root.rootStore.chatsModelInst.channelView.activeChannel.identicon,
+                                         "", root.rootStore.chatsModelInst.channelView.activeChannel.nickname)
                         break;
                     }
                 }
 
-                membersButton.visible: (appSettings.showOnlineUsers || chatsModel.communities.activeCommunity.active)
-                                       && chatsModel.channelView.activeChannel.chatType !== Constants.chatTypeOneToOne
+                membersButton.visible: (appSettings.showOnlineUsers || root.rootStore.chatsModelInst.communities.activeCommunity.active)
+                                       && root.rootStore.chatsModelInst.channelView.activeChannel.chatType !== Constants.chatTypeOneToOne
                 membersButton.highlighted: appSettings.expandUsersList
                 notificationButton.visible: appSettings.isActivityCenterEnabled
                 notificationButton.tooltip.offset: appSettings.expandUsersList ? 0 : 14
-                notificationCount: chatsModel.activityNotificationList.unreadCount
+                notificationCount: root.rootStore.chatsModelInst.activityNotificationList.unreadCount
 
                 onSearchButtonClicked: searchPopup.open()
 
@@ -210,8 +212,9 @@ Item {
                 onNotificationButtonClicked: activityCenter.open()
 
                 popupMenu: ChatContextMenuView {
+                    store: root.rootStore
                     onOpened: {
-                        chatItem = chatsModel.channelView.activeChannel
+                        chatItem = root.rootStore.chatsModelInst.channelView.activeChannel
                     }
                 }
             }
@@ -237,7 +240,7 @@ Item {
                 }
 
                 Connections {
-                    target: chatsModel
+                    target: root.rootStore.chatsModelInst
                     onOnlineStatusChanged: {
                         if (connected == isConnected) return;
                         isConnected = connected;
@@ -251,7 +254,7 @@ Item {
                     }
                 }
                 Component.onCompleted: {
-                    isConnected = chatsModel.isOnline
+                    isConnected = root.rootStore.chatsModelInst.isOnline
                     if(!isConnected){
                         connectedStatusRect.visible = true
                     }
@@ -284,9 +287,9 @@ Item {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 clip: true
-                currentIndex: chatsModel.messageView.getMessageListIndex(chatsModel.channelView.activeChannelIndex)
+                currentIndex: root.rootStore.chatsModelInst.messageView.getMessageListIndex(root.rootStore.chatsModelInst.channelView.activeChannelIndex)
                 Repeater {
-                    model: chatsModel.messageView
+                    model: root.rootStore.chatsModelInst.messageView
                     ColumnLayout {
                         property alias chatInput: chatInput
                         property alias message: messageLoader.item
@@ -300,11 +303,11 @@ Item {
                             active: stackLayoutChatMessages.currentIndex === index
                             sourceComponent: ChatMessagesView {
                                 id: chatMessages
-                                store: chatColumnLayout.rootStore
+                                store: root.rootStore
                                 messageList: messages
                                 messageContextMenuInst: contextmenu
                                 Component.onCompleted: {
-                                    chatColumnLayout.userList = chatMessages.messageList.userList;
+                                    root.userList = chatMessages.messageList.userList;
                                 }
                             }
                         }
@@ -317,7 +320,7 @@ Item {
                             Layout.preferredHeight: height
 
                             Connections {
-                                target: chatsModel.messageView
+                                target: root.rootStore.chatsModelInst.messageView
                                 onLoadingMessagesChanged:
                                     if(value){
                                         loadingMessagesIndicator.active = true
@@ -330,7 +333,7 @@ Item {
 
                             Loader {
                                 id: loadingMessagesIndicator
-                                active: chatsModel.messageView.loadingMessages
+                                active: root.rootStore.chatsModelInst.messageView.loadingMessages
                                 sourceComponent: loadingIndicator
                                 anchors.right: parent.right
                                 anchors.bottom: chatInput.top
@@ -346,17 +349,17 @@ Item {
                             StatusChatInput {
                                 id: chatInput
                                 visible: {
-                                    if (chatsModel.channelView.activeChannel.chatType === Constants.chatTypePrivateGroupChat) {
-                                        return chatsModel.channelView.activeChannel.isMember
+                                    if (root.rootStore.chatsModelInst.channelView.activeChannel.chatType === Constants.chatTypePrivateGroupChat) {
+                                        return root.rootStore.chatsModelInst.channelView.activeChannel.isMember
                                     }
-                                    if (chatsModel.channelView.activeChannel.chatType === Constants.chatTypeOneToOne) {
+                                    if (root.rootStore.chatsModelInst.channelView.activeChannel.chatType === Constants.chatTypeOneToOne) {
                                         return isContact
                                     }
-                                    const community = chatsModel.communities.activeCommunity
+                                    const community = root.rootStore.chatsModelInst.communities.activeCommunity
                                     return !community.active ||
                                             community.access === Constants.communityChatPublicAccess ||
                                             community.admin ||
-                                            chatsModel.channelView.activeChannel.canPost
+                                            root.rootStore.chatsModelInst.channelView.activeChannel.canPost
                                 }
                                 isContactBlocked: isBlocked
                                 chatInputPlaceholder: isBlocked ?
@@ -365,11 +368,11 @@ Item {
                                                           //% "Type a message."
                                                           qsTrId("type-a-message-")
                                 anchors.bottom: parent.bottom
-                                recentStickers: chatsModel.stickers.recent
-                                stickerPackList: chatsModel.stickers.stickerPacks
-                                chatType: chatsModel.channelView.activeChannel.chatType
+                                recentStickers: root.rootStore.chatsModelInst.stickers.recent
+                                stickerPackList: root.rootStore.chatsModelInst.stickers.stickerPacks
+                                chatType: root.rootStore.chatsModelInst.channelView.activeChannel.chatType
                                 onSendTransactionCommandButtonClicked: {
-                                    if (chatsModel.channelView.activeChannel.ensVerified) {
+                                    if (root.rootStore.chatsModelInst.channelView.activeChannel.ensVerified) {
                                         txModalLoader.sourceComponent = cmpSendTransactionWithEns
                                     } else {
                                         txModalLoader.sourceComponent = cmpSendTransactionNoEns
@@ -381,16 +384,16 @@ Item {
                                     txModalLoader.item.open()
                                 }
                                 onStickerSelected: {
-                                    chatsModel.stickers.send(hashId, chatInput.isReply ? SelectedMessage.messageId : "", packId)
+                                    root.rootStore.chatsModelInst.stickers.send(hashId, chatInput.isReply ? SelectedMessage.messageId : "", packId)
                                 }
                                 onSendMessage: {
                                     if (chatInput.fileUrls.length > 0){
-                                        chatsModel.sendImages(JSON.stringify(fileUrls));
+                                        root.rootStore.chatsModelInst.sendImages(JSON.stringify(fileUrls));
                                     }
-                                    let msg = chatsModel.plainText(Emoji.deparse(chatInput.textInput.text))
+                                    let msg = root.rootStore.chatsModelInst.plainText(Emoji.deparse(chatInput.textInput.text))
                                     if (msg.length > 0){
                                         msg = chatInput.interpretMessage(msg)
-                                        chatsModel.messageView.sendMessage(msg, chatInput.isReply ? SelectedMessage.messageId : "", Utils.isOnlyEmoji(msg) ? Constants.emojiType : Constants.messageType, false);
+                                        root.rootStore.chatsModelInst.messageView.sendMessage(msg, chatInput.isReply ? SelectedMessage.messageId : "", Utils.isOnlyEmoji(msg) ? Constants.emojiType : Constants.messageType, false);
                                         if(event) event.accepted = true
                                         sendMessageSound.stop();
                                         Qt.callLater(sendMessageSound.play);
@@ -403,9 +406,9 @@ Item {
                             }
                         }
                         Connections {
-                            target: chatsModel.channelView
+                            target: root.rootStore.chatsModelInst.channelView
                             onActiveChannelChanged: {
-                                isBlocked = profileModel.contacts.isContactBlocked(activeChatId);
+                                isBlocked = root.rootStore.profileModelInst.contacts.isContactBlocked(activeChatId);
                                 chatInput.suggestions.hide();
                                 if(stackLayoutChatMessages.currentIndex >= 0 && stackLayoutChatMessages.currentIndex < stackLayoutChatMessages.children.length)
                                     stackLayoutChatMessages.children[stackLayoutChatMessages.currentIndex].chatInput.textInput.forceActiveFocus(Qt.MouseFocusReason)
@@ -419,13 +422,13 @@ Item {
                 Layout.alignment: Qt.AlignHCenter | Qt.AlignBottom
                 Layout.fillWidth: true
                 Layout.bottomMargin: Style.current.bigPadding
-                visible: chatsModel.channelView.activeChannel.chatType === Constants.chatTypeOneToOne && (!isContact /*|| !contactRequestReceived*/)
-                onAddContactClicked: profileModel.contacts.addContact(activeChatId)
+                visible: root.rootStore.chatsModelInst.channelView.activeChannel.chatType === Constants.chatTypeOneToOne && (!isContact /*|| !contactRequestReceived*/)
+                onAddContactClicked: root.rootStore.profileModelInst.contacts.addContact(activeChatId)
             }
         }
 
         EmptyChatPanel {
-            onShareChatKeyClicked: openProfilePopup(profileModel.profile.username, profileModel.profile.pubKey, profileModel.profile.thumbnailImage);
+            onShareChatKeyClicked: openProfilePopup(root.rootStore.profileModelInst.profile.username, root.rootStore.profileModelInst.profile.pubKey, root.rootStore.profileModelInst.profile.thumbnailImage);
         }
 
         Loader {
@@ -449,7 +452,7 @@ Item {
                 onClosed: {
                     txModalLoader.closed()
                 }
-                sendChatCommand: chatColumnLayout.requestAddressForTransaction
+                sendChatCommand: root.requestAddressForTransaction
                 isRequested: false
                 //% "Send"
                 commandTitle: qsTrId("command-button-send")
@@ -459,9 +462,9 @@ Item {
                 selectRecipient.selectedRecipient: {
                     return {
                         address: Constants.zeroAddress, // Setting as zero address since we don't have the address yet
-                        alias: chatsModel.channelView.activeChannel.alias,
-                        identicon: chatsModel.channelView.activeChannel.identicon,
-                        name: chatsModel.channelView.activeChannel.name,
+                        alias: root.rootStore.chatsModelInst.channelView.activeChannel.alias,
+                        identicon: root.rootStore.chatsModelInst.channelView.activeChannel.identicon,
+                        name: root.rootStore.chatsModelInst.channelView.activeChannel.name,
                         type: RecipientSelector.Type.Contact
                     }
                 }
@@ -477,7 +480,7 @@ Item {
                 onClosed: {
                     txModalLoader.closed()
                 }
-                sendChatCommand: chatColumnLayout.requestTransaction
+                sendChatCommand: root.requestTransaction
                 isRequested: true
                 //% "Request"
                 commandTitle: qsTrId("wallet-request")
@@ -487,9 +490,9 @@ Item {
                 selectRecipient.selectedRecipient: {
                     return {
                         address: Constants.zeroAddress, // Setting as zero address since we don't have the address yet
-                        alias: chatsModel.channelView.activeChannel.alias,
-                        identicon: chatsModel.channelView.activeChannel.identicon,
-                        name: chatsModel.channelView.activeChannel.name,
+                        alias: root.rootStore.chatsModelInst.channelView.activeChannel.alias,
+                        identicon: root.rootStore.chatsModelInst.channelView.activeChannel.identicon,
+                        name: root.rootStore.chatsModelInst.channelView.activeChannel.name,
                         type: RecipientSelector.Type.Contact
                     }
                 }
@@ -503,7 +506,7 @@ Item {
             SendModal {
                 id: sendTransactionWithEns
                 onOpened: {
-                    walletModel.gasView.getGasPrice()
+                    root.rootStore.walletModelInst.gasView.getGasPrice()
                 }
                 onClosed: {
                     txModalLoader.closed()
@@ -512,9 +515,9 @@ Item {
                 selectRecipient.selectedRecipient: {
                     return {
                         address: "",
-                        alias: chatsModel.channelView.activeChannel.alias,
-                        identicon: chatsModel.channelView.activeChannel.identicon,
-                        name: chatsModel.channelView.activeChannel.name,
+                        alias: root.rootStore.chatsModelInst.channelView.activeChannel.alias,
+                        identicon: root.rootStore.chatsModelInst.channelView.activeChannel.identicon,
+                        name: root.rootStore.chatsModelInst.channelView.activeChannel.name,
                         type: RecipientSelector.Type.Contact,
                         ensVerified: true
                     }
@@ -525,22 +528,22 @@ Item {
 
         ActivityCenterPopup {
             id: activityCenter
-            height: chatColumnLayout.height - (topBar.height * 2) // TODO get screen size
+            height: root.height - (topBar.height * 2) // TODO get screen size
             y: topBar.height
-            store: chatColumnLayout.rootStore
+            store: root.rootStore
         }
 
         Connections {
-            target: profileModel.contacts
+            target: root.rootStore.profileModelInst.contacts
             onContactListChanged: {
-                isBlocked = profileModel.contacts.isContactBlocked(activeChatId);
+                isBlocked = root.rootStore.profileModelInst.contacts.isContactBlocked(activeChatId);
             }
         }
 
         Connections {
-            target: chatsModel.channelView
+            target: root.rootStore.chatsModelInst.channelView
             onActiveChannelChanged: {
-                chatsModel.messageView.hideLoadingIndicator()
+                root.rootStore.chatsModelInst.messageView.hideLoadingIndicator()
                 SelectedMessage.reset();
                 chatColumn.isReply = false;
             }
@@ -557,14 +560,14 @@ Item {
             id: pinnedMessagesPopupComponent
             PinnedMessagesPopup {
                 id: pinnedMessagesPopup
-                rootStore: chatColumnLayout.rootStore
-                messageStore: chatColumnLayout.rootStore.messageStore
+                rootStore: root.rootStore
+                messageStore: root.rootStore.messageStore
                 onClosed: destroy()
             }
         }
 
         Connections {
-            target: chatsModel.messageView
+            target: root.rootStore.chatsModelInst.messageView
 
             onSearchedMessageLoaded: {
                 positionAtMessage(messageId, true);
@@ -573,13 +576,13 @@ Item {
             onMessageNotificationPushed: function(messageId, communityId, chatId, msg, contentType, chatType, timestamp, identicon, username, hasMention, isAddedContact, channelName) {
                 if (appSettings.notificationSetting == Constants.notifyAllMessages ||
                         (appSettings.notificationSetting == Constants.notifyJustMentions && hasMention)) {
-                    if (chatId === chatsModel.channelView.activeChannel.id && applicationWindow.active === true) {
+                    if (chatId === root.rootStore.chatsModelInst.channelView.activeChannel.id && applicationWindow.active === true) {
                         // Do not show the notif if we are in the channel already and the window is active and focused
                         return
                     }
 
-                    chatColumnLayout.currentNotificationChatId = chatId
-                    chatColumnLayout.currentNotificationCommunityId = null
+                    root.currentNotificationChatId = chatId
+                    root.currentNotificationCommunityId = null
 
                     let name;
                     if (appSettings.notificationMessagePreviewSetting === Constants.notificationPreviewAnonymous) {
@@ -609,7 +612,7 @@ Item {
                     // Note:
                     // Show notification should be moved to the nim side.
                     // Left here only cause we don't have a way to deal with translations on the nim side.
-                    chatsModel.showOSNotification(name,
+                    root.rootStore.chatsModelInst.showOSNotification(name,
                                                   message,
                                                   Constants.osNotificationType.newMessage,
                                                   communityId,
@@ -626,7 +629,7 @@ Item {
         }
 
         Connections {
-            target: chatsModel.stickers
+            target: root.rootStore.chatsModelInst.stickers
             onTransactionWasSent: {
                 //% "Transaction pending..."
                 toastMessage.title = qsTr("Transaction pending...")

@@ -20,27 +20,27 @@ Item {
     width: 304
     height: parent.height
 
+    property var store
     // TODO unhardcode
     property int chatGroupsListViewCount: communityChatListAndCategories.chatList.count
     property Component pinnedMessagesPopupComponent
-    property var rootStore
 
     StatusChatInfoToolBar {
         id: communityHeader
         anchors.top: parent.top
         anchors.horizontalCenter: parent.horizontalCenter
 
-        chatInfoButton.title: chatsModel.communities.activeCommunity.name
-        chatInfoButton.subTitle: chatsModel.communities.activeCommunity.nbMembers === 1 ? 
+        chatInfoButton.title: root.store.chatsModelInst.communities.activeCommunity.name
+        chatInfoButton.subTitle: root.store.chatsModelInst.communities.activeCommunity.nbMembers === 1 ?
             //% "1 Member"
             qsTrId("1-member") : 
             //% "%1 Members"
-            qsTrId("-1-members").arg(chatsModel.communities.activeCommunity.nbMembers)
-        chatInfoButton.image.source: chatsModel.communities.activeCommunity.thumbnailImage
-        chatInfoButton.icon.color: chatsModel.communities.activeCommunity.communityColor
-        menuButton.visible: chatsModel.communities.activeCommunity.admin && chatsModel.communities.activeCommunity.canManageUsers
+            qsTrId("-1-members").arg(root.store.chatsModelInst.communities.activeCommunity.nbMembers)
+        chatInfoButton.image.source: root.store.chatsModelInst.communities.activeCommunity.thumbnailImage
+        chatInfoButton.icon.color: root.store.chatsModelInst.communities.activeCommunity.communityColor
+        menuButton.visible: root.store.chatsModelInst.communities.activeCommunity.admin && root.store.chatsModelInst.communities.activeCommunity.canManageUsers
         chatInfoButton.onClicked: openPopup(communityProfilePopup, {
-            community: chatsModel.communities.activeCommunity
+            community: root.store.chatsModelInst.communities.activeCommunity
         })
 
         popupMenu: StatusPopupMenu {
@@ -48,7 +48,7 @@ Item {
                 //% "Create channel"
                 text: qsTrId("create-channel")
                 icon.name: "channel"
-                enabled: chatsModel.communities.activeCommunity.admin
+                enabled: root.store.chatsModelInst.communities.activeCommunity.admin
                 onTriggered: openPopup(createChannelPopup, {communityId: chatsModel.communities.activeCommunity.id})
             }
 
@@ -56,7 +56,7 @@ Item {
                 //% "Create category"
                 text: qsTrId("create-category")
                 icon.name: "channel-category"
-                enabled: chatsModel.communities.activeCommunity.admin
+                enabled: root.store.chatsModelInst.communities.activeCommunity.admin
                 onTriggered: openPopup(createCategoryPopup, {communityId: chatsModel.communities.activeCommunity.id})
             }
 
@@ -66,9 +66,9 @@ Item {
                 //% "Invite people"
                 text: qsTrId("invite-people")
                 icon.name: "share-ios"
-                enabled: chatsModel.communities.activeCommunity.canManageUsers
+                enabled: root.store.chatsModelInst.communities.activeCommunity.canManageUsers
                 onTriggered: openPopup(inviteFriendsToCommunityPopup, {
-                    community: chatsModel.communities.activeCommunity
+                    community: root.store.chatsModelInst.communities.activeCommunity
                 })
             }
         }
@@ -76,13 +76,13 @@ Item {
     Loader {
         id: membershipRequests
 
-        property int nbRequests: chatsModel.communities.activeCommunity.communityMembershipRequests.nbRequests
+        property int nbRequests: root.store.chatsModelInst.communities.activeCommunity.communityMembershipRequests.nbRequests
 
         anchors.top: communityHeader.bottom
         anchors.topMargin: active ? 8 : 0
         anchors.horizontalCenter: parent.horizontalCenter
 
-        active: chatsModel.communities.activeCommunity.admin && nbRequests > 0
+        active: root.store.chatsModelInst.communities.activeCommunity.admin && nbRequests > 0
         height: nbRequests > 0 ? 64 : 0
         sourceComponent: Component {
             StatusContactRequestsIndicatorListItem {
@@ -126,27 +126,27 @@ Item {
                 return implicitHeight
             }
               
-            draggableItems: chatsModel.communities.activeCommunity.admin
-            draggableCategories: chatsModel.communities.activeCommunity.admin
-            chatList.model: chatsModel.communities.activeCommunity.chats
+            draggableItems: root.store.chatsModelInst.communities.activeCommunity.admin
+            draggableCategories: root.store.chatsModelInst.communities.activeCommunity.admin
+            chatList.model: root.store.chatsModelInst.communities.activeCommunity.chats
 
-            categoryList.model: chatsModel.communities.activeCommunity.categories
+            categoryList.model: root.store.chatsModelInst.communities.activeCommunity.categories
 
-            showCategoryActionButtons: chatsModel.communities.activeCommunity.admin
-            showPopupMenu: chatsModel.communities.activeCommunity.admin && chatsModel.communities.activeCommunity.canManageUsers
-            selectedChatId: chatsModel.channelView.activeChannel.id
+            showCategoryActionButtons: root.store.chatsModelInst.communities.activeCommunity.admin
+            showPopupMenu: root.store.chatsModelInst.communities.activeCommunity.admin && chatsModel.communities.activeCommunity.canManageUsers
+            selectedChatId: root.store.chatsModelInst.channelView.activeChannel.id
 
-            onChatItemSelected: chatsModel.channelView.setActiveChannel(id)
-            onChatItemUnmuted: chatsModel.channelView.unmuteChatItem(id)
+            onChatItemSelected: root.store.chatsModelInst.channelView.setActiveChannel(id)
+            onChatItemUnmuted: root.store.chatsModelInst.channelView.unmuteChatItem(id)
             onChatItemReordered: function (categoryId, id, from, to) {
-                chatsModel.communities.reorderCommunityChannel(chatsModel.communities.activeCommunity.id, categoryId, id, to);
+                root.store.chatsModelInst.communities.reorderCommunityChannel(chatsModel.communities.activeCommunity.id, categoryId, id, to);
             }
             onChatListCategoryReordered: function (categoryId, from, to) {
-                chatsModel.communities.reorderCommunityCategories(chatsModel.communities.activeCommunity.id, categoryId, to);
+                root.store.chatsModelInst.communities.reorderCommunityCategories(chatsModel.communities.activeCommunity.id, categoryId, to);
             }
 
             onCategoryAddButtonClicked: openPopup(createChannelPopup, {
-                communityId: chatsModel.communities.activeCommunity.id,
+                communityId: root.store.chatsModelInst.communities.activeCommunity.id,
                 categoryId: id
             })
 
@@ -156,15 +156,15 @@ Item {
                     text: qsTrId("create-channel")
                     icon.name: "channel"
                     enabled: chatsModel.communities.activeCommunity.admin
-                    onTriggered: openPopup(createChannelPopup, {communityId: chatsModel.communities.activeCommunity.id})
+                    onTriggered: openPopup(createChannelPopup, {communityId: root.store.chatsModelInst.communities.activeCommunity.id})
                 }
 
                 StatusMenuItem {
                     //% "Create category"
                     text: qsTrId("create-category")
                     icon.name: "channel-category"
-                    enabled: chatsModel.communities.activeCommunity.admin
-                    onTriggered: openPopup(createCategoryPopup, {communityId: chatsModel.communities.activeCommunity.id})
+                    enabled: root.store.chatsModelInst.communities.activeCommunity.admin
+                    onTriggered: openPopup(createCategoryPopup, {communityId: root.store.chatsModelInst.communities.activeCommunity.id})
                 }
 
                 StatusMenuSeparator {}
@@ -173,9 +173,9 @@ Item {
                     //% "Invite people"
                     text: qsTrId("invite-people")
                     icon.name: "share-ios"
-                    enabled: chatsModel.communities.activeCommunity.canManageUsers
+                    enabled: root.store.chatsModelInst.communities.activeCommunity.canManageUsers
                     onTriggered: openPopup(inviteFriendsToCommunityPopup, {
-                        community: chatsModel.communities.activeCommunity
+                        community: root.store.chatsModelInst.communities.activeCommunity
                     })
                 }
             }
@@ -185,17 +185,17 @@ Item {
                 property var categoryItem
 
                 openHandler: function (id) {
-                    categoryItem = chatsModel.communities.activeCommunity.getCommunityCategoryItemById(id)
+                    categoryItem = root.store.chatsModelInst.communities.activeCommunity.getCommunityCategoryItemById(id)
                 }
 
                 StatusMenuItem { 
-                    enabled: chatsModel.communities.activeCommunity.admin
+                    enabled: root.store.chatsModelInst.communities.activeCommunity.admin
                     //% "Edit Category"
                     text: qsTrId("edit-category")
                     icon.name: "edit"
                     onTriggered: {
                         openPopup(createCategoryPopup, {
-                            communityId: chatsModel.communities.activeCommunity.id,
+                            communityId: root.store.chatsModelInst.communities.activeCommunity.id,
                             isEdit: true,
                             categoryId: categoryItem.id,
                             categoryName: categoryItem.name
@@ -204,11 +204,11 @@ Item {
                 }
 
                 StatusMenuSeparator {
-                    visible: chatsModel.communities.activeCommunity.admin
+                    visible: root.store.chatsModelInst.communities.activeCommunity.admin
                 }
 
                 StatusMenuItem {
-                    enabled: chatsModel.communities.activeCommunity.admin
+                    enabled: root.store.chatsModelInst.communities.activeCommunity.admin
                     //% "Delete Category"
                     text: qsTrId("delete-category")
                     icon.name: "delete"
@@ -227,29 +227,30 @@ Item {
             }
 
             chatListPopupMenu: ChatContextMenuView {
+                store: root.store
                 openHandler: function (id) {
-                    chatItem = chatsModel.channelView.getChatItemById(id)
+                    chatItem = root.store.chatsModelInst.channelView.getChatItemById(id)
                 }
             }
         }
 
         Loader {
             id: emptyViewAndSuggestionsLoader
-            active: chatsModel.communities.activeCommunity.admin && !appSettings.hiddenCommunityWelcomeBanners.includes(chatsModel.communities.activeCommunity.id)
+            active: root.store.chatsModelInst.communities.activeCommunity.admin && !appSettings.hiddenCommunityWelcomeBanners.includes(root.store.chatsModelInst.communities.activeCommunity.id)
             width: parent.width
             height: active ? item.height : 0
             anchors.top: communityChatListAndCategories.bottom
             anchors.topMargin: active ? Style.current.padding : 0
             sourceComponent: Component {
                 CommunityWelcomeBannerPanel {
-                    activeCommunity: rootStore.activeCommunity
+                    activeCommunity: store.activeCommunity
                 }
             }
         }
 
         Loader {
             id: backUpBannerLoader
-            active: chatsModel.communities.activeCommunity.admin && !appSettings.hiddenCommunityBackUpBanners.includes(chatsModel.communities.activeCommunity.id)
+            active: root.store.chatsModelInst.communities.activeCommunity.admin && !appSettings.hiddenCommunityBackUpBanners.includes(root.store.chatsModelInst.communities.activeCommunity.id)
             width: parent.width
             height: active ? item.height : 0
             anchors.top: emptyViewAndSuggestionsLoader.bottom
@@ -310,7 +311,7 @@ Item {
                 close();
             }
             onConfirmButtonClicked: function(){
-                const error = chatsModel.communities.deleteCommunityCategory(chatsModel.communities.activeCommunity.id, categoryId)
+                const error = root.store.chatsModelInst.communities.deleteCommunityCategory(root.store.chatsModelInst.communities.activeCommunity.id, categoryId)
                 if (error) {
                     creatingError.text = error
                     return creatingError.open()

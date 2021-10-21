@@ -14,6 +14,7 @@ import "../../../../shared/panels"
 
 //TODO remove these dependencies in imports
 import "../../Chat/views"
+import "../../Chat/panels"
 import "../../Chat/controls"
 
 Item {
@@ -325,13 +326,14 @@ Item {
                     anchors.leftMargin: chatBox.chatHorizontalPadding
                     width: parent.width
                     anchors.right: parent.right
+                    store: root.store
                     messageStore: root.messageStore
                 }
 
                 RectangleCorner {}
             }
 
-            ChatTimeView {
+            ChatTimePanel {
                 id: chatTime
                 anchors.top: chatBox.bottom
                 anchors.topMargin: 4
@@ -339,6 +341,7 @@ Item {
                 anchors.right: chatBox.right
                 anchors.rightMargin: Style.current.padding
                 //timestamp: root.timestamp
+                visible: root.messageStore.isMessage
             }
 
             StatusBaseText {

@@ -11,11 +11,16 @@ import "../panels"
 import "../views"
 import "../controls"
 
+//TODO RE-WRITE THIS COMPONENT
 Column {
     id: root
     width: parent.width
     anchors.right: !isCurrentUser ? undefined : parent.right
     z: (typeof chatLogView === "undefined") ? 1 : (chatLogView.count - index)
+
+    property var rootStore
+    property var messageStore
+    property var chatsModel: !!root.rootStore ? root.rootStore.chatsModelInst : null
 
     //////////////////////////////////////
     //TODO REMOVE
@@ -74,8 +79,8 @@ Column {
     property string authorCurrentMsg: "authorCurrentMsg"
     property string authorPrevMsg: "authorPrevMsg"
 
-    property string prevMsgTimestamp: chatsModel.messageView.messageList.getMessageData(prevMessageIndex, "timestamp")
-    property string nextMsgTimestamp: chatsModel.messageView.messageList.getMessageData(nextMessageIndex, "timestamp")
+    property string prevMsgTimestamp: !!root.chatsModel ? root.chatsModel.messageView.messageList.getMessageData(prevMessageIndex, "timestamp") : ""
+    property string nextMsgTimestamp: !!root.chatsModel ? root.chatsModel.messageView.messageList.getMessageData(nextMessageIndex, "timestamp"): ""
 
     property bool shouldRepeatHeader: ((parseInt(timestamp, 10) - parseInt(prevMsgTimestamp, 10)) / 60 / 1000) > Constants.repeatHeaderInterval
 
@@ -92,15 +97,15 @@ Column {
     property bool isStatusUpdate: false
     property int statusAgeEpoch: 0
 
-    property int replyMessageIndex: chatsModel.messageView.messageList.getMessageIndex(responseTo);
-    property string repliedMessageAuthor: replyMessageIndex > -1 ? chatsModel.messageView.messageList.getMessageData(replyMessageIndex, "userName") : "";
-    property string repliedMessageAuthorPubkey: replyMessageIndex > -1 ? chatsModel.messageView.messageList.getMessageData(replyMessageIndex, "publicKey") : "";
+    property int replyMessageIndex: !!root.chatsModel ? root.chatsModel.messageView.messageList.getMessageIndex(responseTo) : -1
+    property string repliedMessageAuthor: replyMessageIndex > -1 ? !!root.chatsModel ? root.chatsModel.messageView.messageList.getMessageData(replyMessageIndex, "userName") : "" : "";
+    property string repliedMessageAuthorPubkey: replyMessageIndex > -1 ? root.chatsModel.messageView.messageList.getMessageData(replyMessageIndex, "publicKey") : "";
     property bool repliedMessageAuthorIsCurrentUser: replyMessageIndex > -1 ? repliedMessageAuthorPubkey === profileModel.profile.pubKey : "";
-    property bool repliedMessageIsEdited: replyMessageIndex > -1 ? chatsModel.messageView.messageList.getMessageData(replyMessageIndex, "isEdited") === "true" : false;
-    property string repliedMessageContent: replyMessageIndex > -1 ? chatsModel.messageView.messageList.getMessageData(replyMessageIndex, "message") : "";
-    property int repliedMessageType: replyMessageIndex > -1 ? parseInt(chatsModel.messageView.messageList.getMessageData(replyMessageIndex, "contentType")) : 0;
-    property string repliedMessageImage: replyMessageIndex > -1 ? chatsModel.messageView.messageList.getMessageData(replyMessageIndex, "image") : "";
-    property string repliedMessageUserIdenticon: replyMessageIndex > -1 ? chatsModel.messageView.messageList.getMessageData(replyMessageIndex, "identicon") : "";
+    property bool repliedMessageIsEdited: replyMessageIndex > -1 ? !!root.chatsModel ? root.chatsModel.messageView.messageList.getMessageData(replyMessageIndex, "isEdited") === "true" : false : false;
+    property string repliedMessageContent: replyMessageIndex > -1 ? !!root.chatsModel ? root.chatsModel.messageView.messageList.getMessageData(replyMessageIndex, "message") : "" : "";
+    property int repliedMessageType: replyMessageIndex > -1 ? !!root.chatsModel ? parseInt(root.chatsModel.messageView.messageList.getMessageData(replyMessageIndex, "contentType")) : 0 : 0;
+    property string repliedMessageImage: replyMessageIndex > -1 ? !!root.chatsModel ? root.chatsModel.messageView.messageList.getMessageData(replyMessageIndex, "image") : "" : "";
+    property string repliedMessageUserIdenticon: replyMessageIndex > -1 ? !!root.chatsModel ? root.chatsModel.messageView.messageList.getMessageData(replyMessageIndex, "identicon") : "" : "";
     property string repliedMessageUserImage: replyMessageIndex > -1 ? appMain.getProfileImage(repliedMessageAuthorPubkey, repliedMessageAuthorIsCurrentUser , false) || "" : "";
 
     property var imageClick: function () {}
@@ -134,8 +139,8 @@ Column {
                     }
                 }
                 byEmoji[reaction.emojiId].count++;
-                byEmoji[reaction.emojiId].fromAccounts.push(chatsModel.userNameOrAlias(reaction.from));
-                if (!byEmoji[reaction.emojiId].currentUserReacted && reaction.from === profileModel.profile.pubKey) {
+                byEmoji[reaction.emojiId].fromAccounts.push(root.chatsModel.userNameOrAlias(reaction.from));
+                if (!byEmoji[reaction.emojiId].currentUserReacted && reaction.from === root.rootStore.profileModelInst.profile.pubKey) {
                     byEmoji[reaction.emojiId].currentUserReacted = true
                 }
 
@@ -193,10 +198,6 @@ Column {
     }
     /////////////////////////////////////////////
 
-
-    property var rootStore
-    property var messageStore
-
     Connections {
         enabled: (!placeholderMessage && !!root.rootStore)
         target: !!root.rootStore ? root.rootStore.profileModelInst.contacts.list : null
@@ -217,7 +218,7 @@ Column {
 
     Connections {
         enabled: !!root.rootStore
-        target: !!root.rootStore ? root.rootStore.chatsModelInst.messageView : null
+        target: !!root.rootStore ? root.chatsModel.messageView : null
         onHideMessage: {
             // This hack is used because message_list deleteMessage sometimes does not remove the messages (there might be an issue with the delegate model)
             if(mId === messageId){
@@ -252,7 +253,7 @@ Column {
         id: gapComponent
         GapComponent {
             onClicked: {
-                rootStore.chatsModelInst.messageView.fillGaps(messageStore.messageId);
+                root.chatsModel.messageView.fillGaps(messageStore.messageId);
                 root.visible = false;
                 root.height = 0;
             }
@@ -265,10 +266,10 @@ Column {
 //            nextMessageIndex: root.messageStore.nextMessageIndex
 //            nextMsgTimestamp: root.messageStore.nextMsgTimestamp
             onClicked: {
-                rootStore.chatsModelInst.messageView.hideLoadingIndicator();
+                root.chatsModel.messageView.hideLoadingIndicator();
             }
             onTimerTriggered: {
-                rootStore.chatsModelInst.requestMoreMessages(Constants.fetchRangeLast24Hours);
+                root.chatsModel.requestMoreMessages(Constants.fetchRangeLast24Hours);
             }
         }
     }
@@ -276,8 +277,9 @@ Column {
     Component {
         id: channelIdentifierComponent
         ChannelIdentifierView {
-            authorCurrentMsg: root.authorCurrentMsg
+            store: root.rootStore
             profileImage: profileImageSource
+            authorCurrentMsg: root.authorCurrentMsg
         }
     }
 
@@ -319,14 +321,17 @@ Column {
             isCurrentUser: root.isCurrentUser
             contentType: root.contentType
             container: root
+            store: root.rootStore
+            messageStore: root.messageStore
         }
     }
 
     Component {
         id: statusUpdateComponent
-        StatusUpdatePanel {
+        StatusUpdateView {
             statusAgeEpoch: root.statusAgeEpoch
             container: root
+            store: root.rootStore
             messageContextMenu: root.messageContextMenu
             onAddEmoji: {
                 root.clickMessage(isProfileClick, isSticker, isImage , image, emojiOnly, hideEmojiPicker);
@@ -358,6 +363,7 @@ Column {
             showEdit: root.showEdit
             container: root
             messageContextMenu: root.messageContextMenu
+            store: root.rootStore
             messageStore: root.messageStore
             onAddEmoji: {
                 root.clickMessage(isProfileClick, isSticker, isImage , image, emojiOnly, hideEmojiPicker);

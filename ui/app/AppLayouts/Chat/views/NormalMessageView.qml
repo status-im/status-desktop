@@ -153,7 +153,7 @@ Item {
             anchors.rightMargin: chatBox.chatHorizontalPadding
             container: root.container
             chatHorizontalPadding: chatBox.chatHorizontalPadding
-            stickerData: chatsModel.messageView.messageList.getMessageData(replyMessageIndex, "sticker")
+            stickerData: root.store.chatsModelInst.messageView.messageList.getMessageData(replyMessageIndex, "sticker")
             active: responseTo !== "" && replyMessageIndex > -1 && !activityCenterMessage
 //            To-Do move to store later?
 //            isCurrentUser: root.messageStore.isCurrentUser
@@ -175,7 +175,7 @@ Item {
 
 
         Connections {
-            target: chatsModel.messageView
+            target: root.store.chatsModelInst.messageView
             onMessageEdited: {
                 if(chatReply.item)
                     chatReply.item.messageEdited(editedMessageId, editedMessageContent)
@@ -191,6 +191,7 @@ Item {
             anchors.leftMargin: chatBox.chatHorizontalPadding
             anchors.right: chatBox.longChatText ? parent.right : undefined
             anchors.rightMargin: chatBox.longChatText ? chatBox.chatHorizontalPadding : 0
+            store: root.store
             messageStore: root.store.messageStore
             textField.color: !root.isCurrentUser ? Style.current.textColor : Style.current.currentUserTextColor
             Connections {
@@ -288,17 +289,8 @@ Item {
         anchors.right: isCurrentUser ? parent.right : undefined
         anchors.rightMargin: Style.current.padding
         sourceComponent: Component {
-            TransactionBubblePanel {
-                balanceView: root.store.walletModelInst.balanceView
-                focusedAccount: root.store.walletModelInst.accountsView.focusedAccount
-                activeChannelName: root.store.chatsModelInst.channelView.activeChannel.name
-                activeChannelIdenticon: root.store.chatsModelInst.channelView.activeChannel.identicon
-                onGetGasPrice: {
-                    root.store.walletModelInst.gasView.getGasPrice();
-                }
-                onSendTransactionClicked: {
-                    root.store.walletModelInst.accountsView.setFocusedAccountByAddress(fromAddress);
-                }
+            TransactionBubbleView {
+                store: root.store
             }
         }
     }
@@ -317,7 +309,7 @@ Item {
         anchors.rightMargin: 6
     }
 
-    ChatTimeView {
+    ChatTimePanel {
         id: chatTime
         visible: root.messageStore.isMessage && !emojiReactionLoader.active
         anchors.top: isImage ? undefined : (linksLoader.active ? linksLoader.bottom : chatBox.bottom)
@@ -361,6 +353,7 @@ Item {
 
         sourceComponent: Component {
             LinksMessageView {
+                store: root.store
                 linkUrls: root.linkUrls
                 container: root.container
                 isCurrentUser: root.isCurrentUser
@@ -387,7 +380,7 @@ Item {
             onSetMessageActive: {
                 root.store.messageStore.setMessageActive(messageId, active);;
             }
-            onToggleReaction: chatsModel.toggleReaction(messageId, emojiID)
+            onToggleReaction: root.store.chatsModelInst.toggleReaction(messageId, emojiID)
         }
     }
 }

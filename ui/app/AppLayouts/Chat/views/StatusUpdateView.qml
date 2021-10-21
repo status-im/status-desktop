@@ -6,15 +6,14 @@ import "../../../../shared/status"
 
 import utils 1.0
 
+import "../panels"
 import "../controls"
-//TODO remove this or make view
-import "../views"
 
 import StatusQ.Controls 0.1
 
 MouseArea {
     id: root
-
+    property var store
     property bool hovered: containsMouse
     property var container
     property int statusAgeEpoch: 0
@@ -93,7 +92,7 @@ MouseArea {
             }
         }
 
-        ChatTimeView {
+        ChatTimePanel {
             id: chatTime
             // statusAgeEpoch is used to trigger Qt property update
             // since the returned string will be the same in 99% cases, this should not trigger ChatTime re-rendering
@@ -113,6 +112,7 @@ MouseArea {
             anchors.leftMargin: Style.current.halfPadding
             anchors.right: parent.right
             anchors.rightMargin: Style.current.padding
+            store: root.store
         }
 
         Loader {

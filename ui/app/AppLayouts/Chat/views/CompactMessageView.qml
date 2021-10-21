@@ -217,7 +217,8 @@ Item {
 
 
         Connections {
-            target: chatsModel.messageView
+            enabled: !!root.store
+            target: enabled ? root.store.chatsModelInst.messageView : null
             onMessageEdited: {
                 if(chatReply.item)
                     chatReply.item.messageEdited(editedMessageId, editedMessageContent)
@@ -235,7 +236,7 @@ Item {
             longReply: active && textFieldImplicitWidth > width
             container: root.container
             chatHorizontalPadding: root.chatHorizontalPadding
-            stickerData: chatsModel.messageView.messageList.getMessageData(replyMessageIndex, "sticker")
+            stickerData: !!root.store ? root.store.chatsModelInst.messageView.messageList.getMessageData(replyMessageIndex, "sticker") : null
             active: responseTo !== "" && replyMessageIndex > -1 && !activityCenterMessage
 //            To-Do move to store later?
 //            isCurrentUser: root.messageStore.isCurrentUser
@@ -290,7 +291,7 @@ Item {
             }
         }
 
-        ChatTimeView {
+        ChatTimePanel {
             id: chatTime
             visible: !isEdit && headerRepeatCondition
             anchors.verticalCenter: chatName.verticalCenter
@@ -370,7 +371,7 @@ Item {
                 StatusChatInput {
                     id: editTextInput
                     chatInputPlaceholder: qsTrId("type-a-message-")
-                    chatType: chatsModel.channelView.activeChannel.chatType
+                    chatType: root.store.chatsModelInst.channelView.activeChannel.chatType
                     isEdit: true
                     textInput.text: editMessageLoader.sourceText
                     onSendMessage: {
@@ -406,11 +407,11 @@ Item {
                     text: qsTrId("save")
                     enabled: editTextInput.textInput.text.trim().length > 0
                     onClicked: {
-                        let msg = chatsModel.plainText(Emoji.deparse(editTextInput.textInput.text))
+                        let msg = root.store.chatsModelInst.plainText(Emoji.deparse(editTextInput.textInput.text))
                         if (msg.length > 0){
                             msg = chatInput.interpretMessage(msg)
                             isEdit = false
-                            chatsModel.messageView.editMessage(messageId, contentType == Constants.editType ? replaces : messageId, msg);
+                            root.store.chatsModelInst.messageView.editMessage(messageId, contentType == Constants.editType ? replaces : messageId, msg);
                         }
                     }
                 }
@@ -431,6 +432,7 @@ Item {
 
             ChatTextView {
                 id: chatText
+                store: root.store
                 messageStore: root.messageStore
                 readonly property int leftPadding: chatImage.anchors.leftMargin + chatImage.width + root.chatHorizontalPadding
                 visible: {
@@ -538,6 +540,7 @@ Item {
 
                 sourceComponent: Component {
                     LinksMessageView {
+                        store: root.store
                         linkUrls: root.linkUrls
                         container: root.container
                         isCurrentUser: root.isCurrentUser
@@ -564,17 +567,8 @@ Item {
                 anchors.top: parent.top
                 anchors.topMargin: active ? (chatName.visible ? 4 : 6) : 0
                 sourceComponent: Component {
-                    TransactionBubblePanel {
-                        balanceView: root.store.walletModelInst.balanceView
-                        focusedAccount: root.store.walletModelInst.accountsView.focusedAccount
-                        activeChannelName: root.store.chatsModelInst.channelView.activeChannel.name
-                        activeChannelIdenticon: root.store.chatsModelInst.channelView.activeChannel.identicon
-                        onGetGasPrice: {
-                            root.store.walletModelInst.gasView.getGasPrice();
-                        }
-                        onSendTransactionClicked: {
-                            root.store.walletModelInst.accountsView.setFocusedAccountByAddress(fromAddress);
-                        }
+                    TransactionBubbleView {
+                        store: root.store
                     }
                 }
             }
@@ -656,7 +650,7 @@ Item {
                     messageContextMenu.setXPosition = function() { return (messageContextMenu.parent.x + 4)}
                     messageContextMenu.setYPosition = function() { return (-messageContextMenu.height - 4)}
                 }
-                onToggleReaction: chatsModel.toggleReaction(messageId, emojiID)
+                onToggleReaction: root.store.chatsModelInst.toggleReaction(messageId, emojiID)
 
                 onSetMessageActive: {
                     root.messageStore.setMessageActive(messageId, active);;
