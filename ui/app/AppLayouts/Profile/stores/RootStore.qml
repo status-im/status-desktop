@@ -20,9 +20,9 @@ QtObject {
     property var permissionList: profileModelInst.dappList.permissionList
     property var mailservers: profileModelInst.mailservers
     property var mailserversList: profileModelInst.mailservers.list
-    property var contacts: profileModelInst.contacts.model.list
-    property var blockedContacts: profileModelInst.contacts.model.blockedContacts
-    property var addedContacts: profileModelInst.contacts.model.addedContacts
+    property var contacts: contactsModuleInst.model.list
+    property var blockedContacts: contactsModuleInst.model.blockedContacts
+    property var addedContacts: contactsModuleInst.model.addedContacts
     property var mutedChatsContacts: profileModelInst.mutedChats.contacts
     property var mutedChats: profileModelInst.mutedChats.chats
     property var devicesList: profileModelInst.devices.list

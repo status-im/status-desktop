@@ -7,6 +7,8 @@ import ../../../../../app_service/service/contacts/service as contacts_service
 import ../../../../../app_service/service/contacts/dto/contacts
 import ../../../../../app_service/service/accounts/service as accounts_service
 
+import eventemitter
+
 export io_interface
 
 type 
@@ -17,24 +19,30 @@ type
     viewVariant: QVariant
     moduleLoaded: bool
 
-proc newModule*[T](delegate: T, contactsService: contacts_service.ServiceInterface, accountsService: accounts_service.ServiceInterface): Module[T] =
+proc newModule*[T](delegate: T,
+  events: EventEmitter,
+  contactsService: contacts_service.ServiceInterface,
+  accountsService: accounts_service.ServiceInterface):
+  Module[T] =
   result = Module[T]()
   result.delegate = delegate
   result.view = newView(result)
   result.viewVariant = newQVariant(result.view)
-  echo "Module loaded"
-  result.controller = controller.newController[Module[T]](result, contactsService, accountsService)
+  result.controller = controller.newController[Module[T]](result, events, contactsService, accountsService)
   result.moduleLoaded = false
 
-  echo "Module set as root prop"
   singletonInstance.engine.setRootContextProperty("contactsModule", result.viewVariant)
 
 method delete*[T](self: Module[T]) =
   self.view.delete
 
+method setContactList*[T](self: Module[T], contacts: seq[ContactsDto]) =
+  self.view.setContactList(contacts)
+
 method load*[T](self: Module[T]) =
-#   let profile = self.controller.getProfile()
-#   self.view.setProfile(profile)
+  self.controller.init()
+  let contacts =  self.controller.getContacts()
+  self.setContactList(contacts)
   self.moduleLoaded = true
 
 method isLoaded*[T](self: Module[T]): bool =
