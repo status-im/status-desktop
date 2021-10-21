@@ -235,14 +235,17 @@ Item {
                 target: profileModel.contacts.list
                 onContactChanged: {
                     for (var i = 0; i < channelList.chatListItems.count; i++) {
-                        let chatItem = channelList.statusChatListItems.model.itemAt(i);
-                        if (chatItem.chatId === pubkey) {
-                            let profileImage = appMain.getProfileImage(pubkey)
-                            if (!!profileImage) {
-                                chatItem.image.isIdenticon = false
-                                chatItem.image.source = profileImage
+                        let chatItem = !!channelList.statusChatListItems.model.itemAt(i) ?
+                                channelList.statusChatListItems.model.itemAt(i) : null
+                        if (!!chatItem) {
+                            if (chatItem.chatId === pubkey) {
+                                let profileImage = appMain.getProfileImage(pubkey)
+                                if (!!profileImage) {
+                                    chatItem.image.isIdenticon = false
+                                    chatItem.image.source = profileImage
+                                }
+                                break;
                             }
-                            break;
                         }
                     }
                 }

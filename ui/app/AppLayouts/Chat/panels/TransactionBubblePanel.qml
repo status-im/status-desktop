@@ -8,6 +8,10 @@ import "../controls"
 import "../views"
 
 Item {
+    id: root
+    width: rectangleBubble.width
+    height: rectangleBubble.height
+
     property var commandParametersObject: {
         try {
             return JSON.parse(commandParameters)
@@ -30,6 +34,7 @@ Item {
     property var focusedAccount
     property string activeChannelName
     property string activeChannelIdenticon
+    property var balanceView
     signal getGasPrice()
     signal sendTransactionClicked(string fromAddress)
     property var token: JSON.parse(commandParametersObject.contract) // TODO: handle {}
@@ -39,8 +44,8 @@ Item {
         if (!tokenAmount || !token.symbol) {
             return "0"
         }
-        var defaultFiatSymbol = walletModel.balanceView.defaultCurrency
-        return walletModel.balanceView.getFiatValue(tokenAmount, token.symbol, defaultFiatSymbol) + " " + defaultFiatSymbol.toUpperCase()
+        var defaultFiatSymbol = root.balanceView.defaultCurrency
+        return root.balanceView.getFiatValue(tokenAmount, token.symbol, defaultFiatSymbol) + " " + defaultFiatSymbol.toUpperCase()
     }
     property int state: commandParametersObject.commandState
 
@@ -54,10 +59,6 @@ Item {
             tokenImage.source = `../../../../img/tokens/${root.tokenSymbol}.png`
         }
     }
-
-    id: root
-    width: rectangleBubble.width
-    height: rectangleBubble.height
 
     Rectangle {
         id: rectangleBubble

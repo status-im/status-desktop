@@ -24,7 +24,7 @@ Item {
     property var contactsList
     property string profilePubKey
     property var messageContextMenu
-    property QtObject community: chatsModel.communities.activeCommunity
+    property var community
 
     StyledText {
         id: titleText

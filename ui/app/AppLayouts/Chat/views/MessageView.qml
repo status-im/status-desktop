@@ -11,11 +11,10 @@ import "../panels"
 import "../views"
 import "../controls"
 
-Item {
+Column {
     id: root
     width: parent.width
     anchors.right: !isCurrentUser ? undefined : parent.right
-    height: visible ? childrenRect.height : 0
     z: (typeof chatLogView === "undefined") ? 1 : (chatLogView.count - index)
 
     //////////////////////////////////////
@@ -249,123 +248,27 @@ Item {
         }
     }
 
-    Timer {
-        id: timer
-    }
-
     Component {
         id: gapComponent
-        Item {
-            id: wrapper
-            height: childrenRect.height + Style.current.smallPadding * 2
-            anchors.left: parent.left
-            anchors.right: parent.right
-            Separator {
-                id: sep1
-            }
-            StyledText {
-                id: fetchMoreButton
-                font.weight: Font.Medium
-                font.pixelSize: Style.current.primaryTextFontSize
-                color: Style.current.blue
-                //% "↓ "
-                //% "Fetch messages"
-                text: qsTrId("fetch-messages")
-                horizontalAlignment: Text.AlignHCenter
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.top: sep1.bottom
-                anchors.topMargin: Style.current.smallPadding
-                MouseArea {
-                    cursorShape: Qt.PointingHandCursor
-                    anchors.fill: parent
-                    onClicked: {
-                        chatsModel.messageView.fillGaps(messageId)
-                        root.visible = false;
-                        root.height = 0;
-                    }
-                }
-            }
-            StyledText {
-                id: fetchDate
-                anchors.top: fetchMoreButton.bottom
-                anchors.topMargin: 3
-                anchors.horizontalCenter: parent.horizontalCenter
-                horizontalAlignment: Text.AlignHCenter
-                color: Style.current.secondaryText
-                //% "before %1"
-                //% "Between %1 and %2"
-                text: qsTrId("between--1-and--2").arg(new Date(root.gapFrom*1000)).arg(new Date(root.gapTo*1000))
-            }
-            Separator {
-                anchors.top: fetchDate.bottom
-                anchors.topMargin: Style.current.smallPadding
+        GapComponent {
+            onClicked: {
+                rootStore.chatsModelInst.messageView.fillGaps(messageStore.messageId);
+                root.visible = false;
+                root.height = 0;
             }
         }
     }
 
     Component {
         id: fetchMoreMessagesButtonComponent
-        Item {
-            id: wrapper
-            height: childrenRect.height + Style.current.smallPadding * 2
-            anchors.left: parent.left
-            anchors.right: parent.right
-            Separator {
-                id: sep1
+        FetchMoreMessagesButton {
+//            nextMessageIndex: root.messageStore.nextMessageIndex
+//            nextMsgTimestamp: root.messageStore.nextMsgTimestamp
+            onClicked: {
+                rootStore.chatsModelInst.messageView.hideLoadingIndicator();
             }
-            Loader {
-                id: fetchLoaderIndicator
-                anchors.top: sep1.bottom
-                anchors.topMargin: Style.current.padding
-                anchors.left: parent.left
-                anchors.right: parent.right
-                active: false
-                sourceComponent: StatusLoadingIndicator {
-                    width: 12
-                    height: 12
-                }
-            }
-            StyledText {
-                id: fetchMoreButton
-                font.weight: Font.Medium
-                font.pixelSize: Style.current.primaryTextFontSize
-                color: Style.current.blue
-                //% "↓ Fetch more messages"
-                text: qsTrId("load-more-messages")
-                horizontalAlignment: Text.AlignHCenter
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.top: sep1.bottom
-                anchors.topMargin: Style.current.smallPadding
-                MouseArea {
-                    cursorShape: Qt.PointingHandCursor
-                    anchors.fill: parent
-                    onClicked: {
-                        chatsModel.requestMoreMessages(Constants.fetchRangeLast24Hours);
-                        fetchLoaderIndicator.active = true;
-                        fetchMoreButton.visible = false;
-                        fetchDate.visible = false;
-                        timer.setTimeout(function(){
-                            chatsModel.messageView.hideLoadingIndicator();
-                            fetchLoaderIndicator.active = false;
-                            fetchMoreButton.visible = true;
-                            fetchDate.visible = true;
-                        }, 3000);
-                    }
-                }
-            }
-            StyledText {
-                id: fetchDate
-                anchors.top: fetchMoreButton.bottom
-                anchors.topMargin: 3
-                anchors.horizontalCenter: parent.horizontalCenter
-                horizontalAlignment: Text.AlignHCenter
-                color: Style.current.secondaryText
-                //% "before %1"
-                text: qsTrId("before--1").arg((nextMessageIndex > -1 ? new Date(nextMsgTimestamp * 1) : new Date()).toLocaleString(Qt.locale(globalSettings.locale)))
-            }
-            Separator {
-                anchors.top: fetchDate.bottom
-                anchors.topMargin: Style.current.smallPadding
+            onTimerTriggered: {
+                rootStore.chatsModelInst.requestMoreMessages(Constants.fetchRangeLast24Hours);
             }
         }
     }

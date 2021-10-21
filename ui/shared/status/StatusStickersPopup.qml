@@ -185,7 +185,7 @@ Popup {
                 id: btnAddStickerPack
                 implicitWidth: 24
                 implicitHeight: 24
-                type: StatusRoundButton.Type.Secondary
+                type: StatusQControls.StatusRoundButton.Type.Secondary
                 icon.name: "add"
                 state: root.stickerPacksLoaded ? "default" : "pending"
                 onClicked: {

@@ -181,6 +181,7 @@ StatusAppThreePanelLayout {
             messageContextMenu: quickActionMessageOptionsMenu
             profilePubKey: profileModel.profile.pubKey
             contactsList: profileModel.contacts.list
+            community: chatsModel.communities.activeCommunity
         }
     }
 
@@ -208,6 +209,7 @@ StatusAppThreePanelLayout {
     Component {
         id: communtiyColumnComponent
         CommunityColumnView {
+            rootStore: chatColumn.rootStore
             pinnedMessagesPopupComponent: chatColumn.pinnedMessagesPopupComponent
         }
     }
@@ -243,8 +245,9 @@ StatusAppThreePanelLayout {
         }
     }
 
-    MessageContextMenuPanel {
+    MessageContextMenuView {
         id: quickActionMessageOptionsMenu
+        store: chatColumn.rootStore
         reactionModel: chatColumn.rootStore.emojiReactionsModel
     }
 }

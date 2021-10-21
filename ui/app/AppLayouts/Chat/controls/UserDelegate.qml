@@ -48,7 +48,8 @@ Item {
             target: wrapper.contactsList
             onContactChanged: {
                 if (pubkey === wrapper.publicKey) {
-                    wrapper.profileImage = appMain.getProfileImage(wrapper.publicKey)
+                    wrapper.profileImage = !!appMain.getProfileImage(wrapper.publicKey) ?
+                                appMain.getProfileImage(wrapper.publicKey) : ""
                 }
             }
         }

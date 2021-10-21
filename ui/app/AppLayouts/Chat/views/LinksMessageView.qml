@@ -19,6 +19,7 @@ Column {
     property var container
     property bool isCurrentUser: false
     property bool isImageLink: false
+    property var rootStore
     readonly property string uuid: Utils.uuid()
     spacing: Style.current.halfPadding
 
@@ -210,7 +211,8 @@ Column {
 
     Component {
         id: invitationBubble
-        InvitationBubblePanel {
+        InvitationBubbleView {
+            store: root.rootStore
             communityId: linkData.communityId
             isLink: true
             anchors.left: parent.left

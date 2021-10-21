@@ -21,6 +21,7 @@ Rectangle {
     border.color: Style.current.border
     radius: 16
     color: Style.current.transparent
+    property var activeCommunity
 
     MouseArea {
         anchors.fill: parent
@@ -55,7 +56,7 @@ Rectangle {
         type: StatusQControls.StatusFlatRoundButton.Type.Tertiary
         onClicked: {
             let hiddenBannerIds = appSettings.hiddenCommunityWelcomeBanners
-            hiddenBannerIds.push(chatsModel.communities.activeCommunity.id)
+            hiddenBannerIds.push(root.activeCommunity.id)
             appSettings.hiddenCommunityWelcomeBanners = hiddenBannerIds
             root.visible = false
         }
@@ -85,7 +86,7 @@ Rectangle {
         anchors.bottom: manageBtn.top
         anchors.bottomMargin: Style.current.halfPadding
         onClicked: openPopup(inviteFriendsToCommunityPopup, {
-            community: chatsModel.communities.activeCommunity
+            community: root.activeCommunity
         })
     }
 
@@ -97,7 +98,7 @@ Rectangle {
         anchors.bottom: parent.bottom
         anchors.bottomMargin: Style.current.padding
         onClicked: openPopup(communityProfilePopup, {
-            community: chatsModel.communities.activeCommunity
+            community: root.activeCommunity
         })
     }
 }

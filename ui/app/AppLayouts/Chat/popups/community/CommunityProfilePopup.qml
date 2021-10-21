@@ -71,6 +71,11 @@ StatusModal {
                     chatsModel.communities.leaveCommunity(popup.community.id)
                     popup.close()
                 }
+                onCopyToClipboard: {
+                    //TODO
+                    //root.store.copyToClipboard(link);
+                    chatsModel.copyToClipboard(link);
+                }
             }
         }
 

@@ -15,9 +15,10 @@ import "../../../../shared/status"
 import "../controls"
 
 StatusPopupMenu {
-    id: messageContextMenu
+    id: root
     width: emojiContainer.visible ? emojiContainer.width : 176
 
+    property var store
     property string messageId
     property int contentType
     property bool isProfile: false
@@ -43,16 +44,16 @@ StatusPopupMenu {
     property var setXPosition: function() {return 0}
     property var setYPosition: function() {return 0}
     property bool canPin: {
-        const nbPinnedMessages = chatsModel.messageView.pinnedMessagesList.count
+        const nbPinnedMessages = root.store.chatsModelInst.messageView.pinnedMessagesList.count
         return nbPinnedMessages < Constants.maxNumberOfPins
     }
 
     onHeightChanged: {
-        messageContextMenu.y = setYPosition()
+        root.y = setYPosition()
     }
 
     onWidthChanged: {
-        messageContextMenu.x = setXPosition()
+        root.x = setXPosition()
     }
 
     signal shouldCloseParentPopup
@@ -72,9 +73,9 @@ StatusPopupMenu {
         emojiReactionsReactedByUser = newEmojiReactions;
 
         /* // copy link feature not ready yet
-        const numLinkUrls = messageContextMenu.linkUrls.split(" ").length
+        const numLinkUrls = root.linkUrls.split(" ").length
         copyLinkMenu.enabled = numLinkUrls > 1
-        copyLinkAction.enabled = !!messageContextMenu.linkUrls && numLinkUrls === 1 && !emojiOnly && !messageContextMenu.isProfile
+        copyLinkAction.enabled = !!root.linkUrls && numLinkUrls === 1 && !emojiOnly && !root.isProfile
         */
         popup()
     }
@@ -83,23 +84,23 @@ StatusPopupMenu {
         id: emojiContainer
         width: emojiRow.width
         height: visible ? emojiRow.height : 0
-        visible: !hideEmojiPicker && (messageContextMenu.emojiOnly || !messageContextMenu.isProfile)
+        visible: !hideEmojiPicker && (root.emojiOnly || !root.isProfile)
         Row {
             id: emojiRow
             spacing: Style.current.halfPadding
             leftPadding: Style.current.halfPadding
             rightPadding: Style.current.halfPadding
-            bottomPadding: messageContextMenu.emojiOnly ? 0 : Style.current.padding
+            bottomPadding: root.emojiOnly ? 0 : Style.current.padding
 
             Repeater {
-                model: messageContextMenu.reactionModel
+                model: root.reactionModel
                 delegate: EmojiReaction {
                     source: Style.svg(filename)
                     emojiId: model.emojiId
-                    reactedByUser: !!messageContextMenu.emojiReactionsReactedByUser[model.emojiId]
+                    reactedByUser: !!root.emojiReactionsReactedByUser[model.emojiId]
                     onCloseModal: {
                         chatsModel.toggleReaction(SelectedMessage.messageId, emojiId)
-                        messageContextMenu.close()
+                        root.close()
                     }
                 }
             }
@@ -108,7 +109,7 @@ StatusPopupMenu {
 
     Item {
         id: profileHeader
-        visible: messageContextMenu.isProfile
+        visible: root.isProfile
         width: parent.width
         height: visible ? profileImage.height + username.height + Style.current.padding : 0
         Rectangle {
@@ -128,7 +129,7 @@ StatusPopupMenu {
 
         StyledText {
             id: username
-            text: Utils.removeStatusEns(isCurrentUser ? profileModel.ens.preferredUsername || userName : userName)
+            text: Utils.removeStatusEns(isCurrentUser ? root.store.profileModelInst.ens.preferredUsername || userName : userName)
             elide: Text.ElideRight
             maximumLineCount: 3
             horizontalAlignment: Text.AlignHCenter
@@ -150,14 +151,14 @@ StatusPopupMenu {
             cursorShape: Qt.PointingHandCursor
             onClicked: {
                 openProfilePopup(userName, fromAuthor, identicon);
-                messageContextMenu.close()
+                root.close()
             }
         }
     }
 
     Separator {
         anchors.bottom: viewProfileAction.top
-        visible: !messageContextMenu.emojiOnly && !messageContextMenu.hideEmojiPicker
+        visible: !root.emojiOnly && !root.hideEmojiPicker
     }
 
     /*  // copy link feature not ready yet
@@ -166,8 +167,8 @@ StatusPopupMenu {
         //% "Copy link"
         text: qsTrId("copy-link")
         onTriggered: {
-            chatsModel.copyToClipboard(linkUrls.split(" ")[0])
-            messageContextMenu.close()
+            root.store.chatsModelInst.copyToClipboard(linkUrls.split(" ")[0])
+            root.close()
         }
         icon.name: "link"
         enabled: false
@@ -181,13 +182,13 @@ StatusPopupMenu {
 
         Repeater {
             id: linksRepeater
-            model: messageContextMenu.linkUrls.split(" ")
+            model: root.linkUrls.split(" ")
             delegate: MenuItem {
                 id: popupMenuItem
                 text: modelData
                 onTriggered: {
-                    chatsModel.copyToClipboard(modelData)
-                    messageContextMenu.close()
+                    root.store.chatsModelInst.copyToClipboard(modelData)
+                    root.close()
                 }
                 contentItem: StyledText {
                     text: popupMenuItem.text
@@ -211,8 +212,8 @@ StatusPopupMenu {
         id: copyImageAction
         text: qsTr("Copy image")
         onTriggered: {
-            chatsModel.copyImageToClipboard(imageSource ? imageSource : "")
-            messageContextMenu.close()
+            root.store.chatsModelInst.copyImageToClipboard(imageSource ? imageSource : "")
+            root.close()
         }
         icon.name: "copy"
         enabled: isRightClickOnImage
@@ -223,7 +224,7 @@ StatusPopupMenu {
         text: qsTr("Download image")
         onTriggered: {
             fileDialog.open()
-            messageContextMenu.close()
+            root.close()
         }
         icon.name: "download"
         enabled: isRightClickOnImage
@@ -235,7 +236,7 @@ StatusPopupMenu {
         text: qsTrId("view-profile")
         onTriggered: {
             openProfilePopup(userName, fromAuthor, identicon, "", nickname);
-            messageContextMenu.close()
+            root.close()
         }
         icon.name: "profile"
         enabled: isProfile
@@ -243,19 +244,19 @@ StatusPopupMenu {
 
     StatusMenuItem {
         id: sendMessageOrReplyTo
-        text: messageContextMenu.isProfile ?
+        text: root.isProfile ?
                   //% "Send message"
                   qsTrId("send-message") :
                   //% "Reply to"
                   qsTrId("reply-to")
         onTriggered: {
-            if (messageContextMenu.isProfile) {
+            if (root.isProfile) {
                 appMain.changeAppSection(Constants.chat)
-                chatsModel.channelView.joinPrivateChat(fromAuthor, "")
+                root.store.chatsModelInst.channelView.joinPrivateChat(fromAuthor, "")
             } else {
                 showReplyArea()
             }
-            messageContextMenu.close()
+            root.close()
         }
         icon.name: "chat"
         enabled: isProfile || (!hideEmojiPicker && !emojiOnly && !isProfile && !isRightClickOnImage)
@@ -285,7 +286,7 @@ StatusPopupMenu {
         }
         onTriggered: {
             if (pinnedMessage) {
-                chatsModel.messageView.unPinMessage(messageId, chatsModel.channelView.activeChannel.id)
+                root.store.chatsModelInst.messageView.unPinMessage(messageId, root.store.chatsModelInst.channelView.activeChannel.id)
                 return
             }
 
@@ -295,20 +296,20 @@ StatusPopupMenu {
                 return
             }
 
-            chatsModel.messageView.pinMessage(messageId, chatsModel.channelView.activeChannel.id)
-            messageContextMenu.close()
+            root.store.chatsModelInst.messageView.pinMessage(messageId, root.store.chatsModelInst.channelView.activeChannel.id)
+            root.close()
         }
         icon.name: "pin"
         enabled: {
             if(isProfile || emojiOnly || isRightClickOnImage)
                 return false
 
-            switch (chatsModel.channelView.activeChannel.chatType) {
+            switch (root.store.chatsModelInst.channelView.activeChannel.chatType) {
             case Constants.chatTypePublic: return false
             case Constants.chatTypeStatusUpdate: return false
             case Constants.chatTypeOneToOne: return true
-            case Constants.chatTypePrivateGroupChat: return chatsModel.channelView.activeChannel.isAdmin(profileModel.profile.pubKey)
-            case Constants.chatTypeCommunity: return chatsModel.communities.activeCommunity.admin
+            case Constants.chatTypePrivateGroupChat: return root.store.chatsModelInst.channelView.activeChannel.isAdmin(root.store.profileModelInst.profile.pubKey)
+            case Constants.chatTypeCommunity: return root.store.chatsModelInst.communities.activeCommunity.admin
             }
 
             return false
@@ -332,7 +333,7 @@ StatusPopupMenu {
         text: qsTrId("delete-message")
         onTriggered: {
             if (!appSettings.showDeleteMessageWarning) {
-                return chatsModel.messageView.deleteMessage(messageId)
+                return root.store.chatsModelInst.messageView.deleteMessage(messageId)
             }
 
             let confirmationDialog = openPopup(genericConfirmationDialog, {
@@ -348,7 +349,7 @@ StatusPopupMenu {
                                                        }
 
                                                        confirmationDialog.close()
-                                                       chatsModel.messageView.deleteMessage(messageId)
+                                                       root.store.chatsModelInst.messageView.deleteMessage(messageId)
                                                    }
                                                })
         }
@@ -357,12 +358,12 @@ StatusPopupMenu {
     }
 
     StatusMenuItem {
-        enabled: messageContextMenu.pinnedPopup
+        enabled: root.pinnedPopup
         text: qsTr("Jump to")
         onTriggered: {
-            positionAtMessage(messageContextMenu.messageId)
-            messageContextMenu.close()
-            messageContextMenu.shouldCloseParentPopup()
+            positionAtMessage(root.messageId)
+            root.close()
+            root.shouldCloseParentPopup()
         }
         icon.name: "up"
     }
@@ -373,7 +374,7 @@ StatusPopupMenu {
         selectFolder: true
         modality: Qt.NonModal
         onAccepted: {
-            chatsModel.downloadImage(imageSource ? imageSource : "", fileDialog.fileUrls)
+            root.store.chatsModelInst.downloadImage(imageSource ? imageSource : "", fileDialog.fileUrls)
             fileDialog.close()
         }
         onRejected: {

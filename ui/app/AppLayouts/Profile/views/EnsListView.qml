@@ -338,7 +338,7 @@ Item {
                 anchors.bottomMargin: Style.current.padding
                 anchors.right: chatBox.right
                 anchors.rightMargin: Style.current.padding
-                timestamp: root.timestamp
+                //timestamp: root.timestamp
             }
 
             StatusBaseText {
@@ -350,8 +350,6 @@ Item {
                 font.pixelSize: 14
                 color: Theme.palette.baseColor1
             }
-
-
         }
 
 

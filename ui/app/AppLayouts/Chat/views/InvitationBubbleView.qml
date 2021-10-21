@@ -11,19 +11,20 @@ import "../../../../shared/panels"
 import "../../../../shared/popups"
 
 Item {
-    property string communityId
-    property var invitedCommunity
-    property int innerMargin: 12
-    property bool isLink: false
-
     id: root
     anchors.left: parent.left
     height: rectangleBubbleLoader.height
     width: rectangleBubbleLoader.width
 
+    property string communityId
+    property var invitedCommunity
+    property int innerMargin: 12
+    property bool isLink: false
+    property var store
+
     function getCommunity() {
         try {
-            const communityJson = chatsModel.communities.list.getCommunityByIdJson(communityId)
+            const communityJson = root.store.chatsModelInst.communities.list.getCommunityByIdJson(communityId)
             if (!communityJson) {
                 return null
             }
@@ -45,7 +46,7 @@ Item {
     }
 
     Connections {
-        target: chatsModel.communities
+        target: root.store.chatsModelInst.communities
         onCommunityChanged: function (communityId) {
             if (communityId === root.communityId) {
                 root.invitedCommunity = getCommunity()
@@ -87,7 +88,7 @@ Item {
             Rectangle {
                 id: rectangleBubble
                 property alias button: joinBtn
-                property bool isPendingRequest: chatsModel.communities.isCommunityRequestPending(communityId)
+                property bool isPendingRequest: root.store.chatsModelInst.communities.isCommunityRequestPending(communityId)
                 width: 270
                 height: title.height + title.anchors.topMargin +
                         invitedYou.height + invitedYou.anchors.topMargin +
@@ -105,7 +106,7 @@ Item {
                 states: [
                     State {
                         name: "requiresEns"
-                        when: invitedCommunity.ensOnly && !profileModel.profile.ensVerified
+                        when: invitedCommunity.ensOnly && !root.store.profileModelInst.profile.ensVerified
                         PropertyChanges {
                             target: joinBtn
                             //% "Membership requires an ENS username"
@@ -172,7 +173,7 @@ Item {
                 ]
 
                 Connections {
-                    target: chatsModel.communities
+                    target: root.store.chatsModelInst.communities
                     onMembershipRequestChanged: function(communityId, communityName, requestAccepted) {
                         if (communityId === root.communityId) {
                             rectangleBubble.isPendingRequest = false
@@ -200,10 +201,10 @@ Item {
                 StatusBaseText {
                     id: invitedYou
                     text: {
-                        if (chatsModel.channelView.activeChannel.chatType === Constants.chatTypeOneToOne) {
+                        if (root.store.chatsModelInst.channelView.activeChannel.chatType === Constants.chatTypeOneToOne) {
                             return isCurrentUser ?
                                         //% "You invited %1 to join a community"
-                                        qsTrId("you-invited--1-to-join-a-community").arg(chatsModel.userNameOrAlias(chatsModel.channelView.activeChannel.id))
+                                        qsTrId("you-invited--1-to-join-a-community").arg(root.store.chatsModelInst.userNameOrAlias(root.store.chatsModelInst.channelView.activeChannel.id))
                                         //% "%1 invited you to join a community"
                                       : qsTrId("-1-invited-you-to-join-a-community").arg(displayUserName)
                         } else {
@@ -301,16 +302,16 @@ Item {
                                 let error
 
                                 if (rectangleBubble.state === "joined") {
-                                    chatsModel.communities.setActiveCommunity(communityId);
+                                    root.store.chatsModelInst.communities.setActiveCommunity(communityId);
                                     return
                                 } else if (rectangleBubble.state === "unjoined") {
-                                    error = chatsModel.communities.joinCommunity(communityId, true)
+                                    error = root.store.chatsModelInst.communities.joinCommunity(communityId, true)
                                 }
                                 else if (rectangleBubble.state === "requestToJoin") {
-                                    error = chatsModel.communities.requestToJoinCommunity(communityId,
-                                                                                          profileModel.profile.ensVerified ? profileModel.profile.username : "")
+                                    error = root.store.chatsModelInst.communities.requestToJoinCommunity(communityId,
+                                                                                          root.store.profileModelInst.profile.ensVerified ? root.store.profileModelInst.profile.username : "")
                                     if (!error) {
-                                        rectangleBubble.isPendingRequest = chatsModel.communities.isCommunityRequestPending(communityId)
+                                        rectangleBubble.isPendingRequest = root.store.chatsModelInst.communities.isCommunityRequestPending(communityId)
                                     }
                                 }
 

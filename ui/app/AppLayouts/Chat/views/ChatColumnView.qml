@@ -110,8 +110,9 @@ Item {
         }
     }
 
-    MessageContextMenuPanel {
+    MessageContextMenuView {
         id: contextmenu
+        store: chatColumnLayout.rootStore
         reactionModel: chatColumnLayout.rootStore.emojiReactionsModel
     }
 
