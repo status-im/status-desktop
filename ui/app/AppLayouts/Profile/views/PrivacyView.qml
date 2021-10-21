@@ -46,7 +46,7 @@ Item {
             anchors.rightMargin: -Style.current.padding
             //% "Backup Seed Phrase"
             title: qsTrId("backup-seed-phrase")
-            enabled: !root.store.profileModelInst.mnemonic.isBackedUp
+            enabled: !root.store.mnemonicBackedUp
             implicitHeight: 52
             components: [
                 StatusBadge {

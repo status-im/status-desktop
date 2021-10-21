@@ -35,7 +35,7 @@ Item {
             primaryText: qsTr("Back up seed phrase")
             secondaryText: qsTr("Back up your seed phrase now to secure this account")
             button.text: qsTr("Back up seed phrase")
-            button.enabled: !root.store.profileModelInst.mnemonic.isBackedUp
+            button.enabled: !mnemonicModule.isBackedUp
             button.onClicked: backupSeedModal.open()
         }
 
