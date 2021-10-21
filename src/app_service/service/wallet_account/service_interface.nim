@@ -20,3 +20,18 @@ method getWalletAccount*(self: ServiceInterface, accountIndex: int): WalletAccou
 
 method getCurrencyBalance*(self: ServiceInterface): float64 {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method generateNewAccount*(self: ServiceInterface, password: string, accountName: string, color: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method addAccountsFromPrivateKey*(self: ServiceInterface, privateKey: string, password: string, accountName: string, color: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method addAccountsFromSeed*(self: ServiceInterface, seedPhrase: string, password: string, accountName: string, color: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method addWatchOnlyAccount*(self: ServiceInterface, address: string, accountName: string, color: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method deleteAccount*(self: ServiceInterface, address: string) {.base.} =
+  raise newException(ValueError, "No implementation available")

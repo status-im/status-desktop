@@ -125,3 +125,18 @@ method getWalletAccount*(self: Service, accountIndex: int): WalletAccountDto =
 
 method getCurrencyBalance*(self: Service): float64 =
   return self.getWalletAccounts().map(a => a.getCurrencyBalance()).foldl(a + b, 0.0)
+
+method generateNewAccount*(self: Service, password: string, accountName: string, color: string) =
+  discard
+
+method addAccountsFromPrivateKey*(self: Service, privateKey: string, password: string, accountName: string, color: string) =
+  discard
+
+method addAccountsFromSeed*(self: Service, seedPhrase: string, password: string, accountName: string, color: string) =
+  discard
+
+method addWatchOnlyAccount*(self: Service, address: string, accountName: string, color: string) =
+  discard
+
+method deleteAccount*(self: Service, address: string) =
+  discard

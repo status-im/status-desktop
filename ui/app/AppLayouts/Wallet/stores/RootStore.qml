@@ -83,28 +83,28 @@ QtObject {
         walletModel.setInitialRange()
     }
 
-    function generateNewAccount(password , accountName, color) {
-        return walletModel.accountsView.generateNewAccount(password, accountName, color)
+    function generateNewAccount(password, accountName, color) {
+        return walletSectionAccounts.generateNewAccount(password, accountName, color)
     }
 
     function addAccountsFromPrivateKey(privateKey, password, accountName, color) {
-        return walletModel.accountsView.addAccountsFromPrivateKey(privateKey, password, accountName, color)
+        return walletSectionAccounts.addAccountsFromPrivateKey(privateKey, password, accountName, color)
     }
 
     function addAccountsFromSeed(seedPhrase, password, accountName, color) {
-        return walletModel.accountsView.addAccountsFromSeed(seedPhrase, password, accountName, color)
+        return walletSectionAccounts.addAccountsFromSeed(seedPhrase, password, accountName, color)
     }
 
     function addWatchOnlyAccount(address, accountName, color) {
-        return walletModel.accountsView.addWatchOnlyAccount(address, accountName, color)
+        return walletSectionAccounts.addWatchOnlyAccount(address, accountName, color)
+    }
+
+    function deleteAccount(address) {
+        return walletSectionAccounts.deleteAccount(address)
     }
 
     function changeAccountSettings(address, accountName, color) {
         return walletModel.accountsView.changeAccountSettings(address, accountName, color)
-    }
-
-    function deleteAccount(address) {
-        return walletModel.accountsView.deleteAccount(address)
     }
 
     function setDefaultCurrency(key) {
