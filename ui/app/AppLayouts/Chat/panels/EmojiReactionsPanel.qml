@@ -14,13 +14,15 @@ Item {
     width: childrenRect.width
 
     property int imageMargin: 4
-//    property bool isCurrentUser
-//    property var emojiReactionsModel
-//    property bool isMessageActive
     signal addEmojiClicked()
     signal hoverChanged(bool hovered)
     signal toggleReaction(int emojiID)
     signal setMessageActive(string messageId, bool active)
+
+//    TODO bring those back and remove dynamic scoping
+//    property bool isCurrentUser
+//    property var emojiReactionsModel
+//    property bool isMessageActive
 
     Row {
         spacing: root.imageMargin

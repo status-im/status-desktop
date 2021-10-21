@@ -297,7 +297,7 @@ Item {
             anchors.left: chatName.right
             anchors.leftMargin: 4
             color: Style.current.secondaryText
-            timestamp: timestamp
+            //timestamp: timestamp
         }
 
         Loader {
@@ -565,6 +565,7 @@ Item {
                 anchors.topMargin: active ? (chatName.visible ? 4 : 6) : 0
                 sourceComponent: Component {
                     TransactionBubblePanel {
+                        balanceView: root.store.walletModelInst.balanceView
                         focusedAccount: root.store.walletModelInst.accountsView.focusedAccount
                         activeChannelName: root.store.chatsModelInst.channelView.activeChannel.name
                         activeChannelIdenticon: root.store.chatsModelInst.channelView.activeChannel.identicon
@@ -585,7 +586,8 @@ Item {
                 anchors.topMargin: active ? 8 : 0
                 sourceComponent: Component {
                     id: invitationBubble
-                    InvitationBubblePanel {
+                    InvitationBubbleView {
+                        store: root.store
                         communityId: container.communityId
                     }
                 }

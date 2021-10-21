@@ -7,7 +7,7 @@ import utils 1.0
 
 StyledText {
     id: chatTime
-    property string timestamp
+    //property string timestamp
     visible: chatTime.messageStore.isMessage
     color: Style.current.secondaryText
     text: Utils.formatTime(timestamp)

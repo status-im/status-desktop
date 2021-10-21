@@ -10,7 +10,6 @@ import "../../../shared/controls"
 import "../../../shared/status"
 
 import "../Chat/views"
-import "../Chat/panels"
 import "../Chat/popups"
 import "../Chat/stores"
 
@@ -214,8 +213,9 @@ ScrollView {
                     messageStore.timeout = model.timeout;
                     messageStore.messageContextMenu = msgCntxtMenu;
                 }
-                MessageContextMenuPanel {
+                MessageContextMenuView {
                     id: msgCntxtMenu
+                    store: root.store
                     reactionModel: EmojiReactions { }
                 }
             }

@@ -14,10 +14,18 @@ Loader {
     id: root
 
     property int nameMargin: 6
-//    property bool isCurrentUser: false
     property int textFieldWidth: item ? item.textField.width : 0
     property int textFieldImplicitWidth: 0
     property int authorWidth: item ? item.authorMetrics.width : 0
+    property bool longReply: false
+    property color elementsColor: isCurrentUser ? Style.current.chatReplyCurrentUser : Style.current.secondaryText
+    property var container
+    property int chatHorizontalPadding
+    property var stickerData
+    signal clickMessage(bool isProfileClick, bool isSticker, bool isImage, var image, bool emojiOnly, bool hideEmojiPicker, bool isReply)
+
+//    TODO bring those back and remove dynamic scoping
+//    property bool isCurrentUser: false
 //    property int repliedMessageType
 //    property string repliedMessageImage
 //    property string repliedMessageUserIdenticon
@@ -25,15 +33,8 @@ Loader {
 //    property string repliedMessageUserImage
 //    property string repliedMessageAuthor
 //    property string repliedMessageContent
-    property bool longReply: false
-    property color elementsColor: isCurrentUser ? Style.current.chatReplyCurrentUser : Style.current.secondaryText
-    property var container
-    property int chatHorizontalPadding
 //    property string responseTo: ""
-    property var stickerData
-
 //    signal scrollToBottom(bool isit, var container)
-    signal clickMessage(bool isProfileClick, bool isSticker, bool isImage, var image, bool emojiOnly, bool hideEmojiPicker, bool isReply)
 
     sourceComponent: Component {
         Item {

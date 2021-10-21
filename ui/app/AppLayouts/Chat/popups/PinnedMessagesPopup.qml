@@ -183,10 +183,11 @@ ModalPopup {
                         messageStore.showEdit = false;
                         messageStore.messageContextMenu = msgContextMenu;
                     }
-                    MessageContextMenuPanel {
+                    MessageContextMenuView {
                         id: msgContextMenu
                         pinnedPopup: true
                         pinnedMessage: true
+                        store: popup.rootStore
                         reactionModel: popup.rootStore.emojiReactionsModel
                         onShouldCloseParentPopup: {
                             messageDelegate.listView.closePopup();

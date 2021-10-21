@@ -289,6 +289,7 @@ Item {
         anchors.rightMargin: Style.current.padding
         sourceComponent: Component {
             TransactionBubblePanel {
+                balanceView: root.store.walletModelInst.balanceView
                 focusedAccount: root.store.walletModelInst.accountsView.focusedAccount
                 activeChannelName: root.store.chatsModelInst.channelView.activeChannel.name
                 activeChannelIdenticon: root.store.chatsModelInst.channelView.activeChannel.identicon
@@ -324,7 +325,7 @@ Item {
         anchors.verticalCenter: isImage ? dateTimeBackground.verticalCenter : undefined
         anchors.right: isImage ? dateTimeBackground.right : (linksLoader.active ? linksLoader.right : chatBox.right)
         anchors.rightMargin: isImage ? 6 : (root.isCurrentUser ? 5 : Style.current.padding)
-        timestamp: root.messageStore.timestamp
+        //timestamp: root.messageStore.timestamp
     }
 
     SentMessage {

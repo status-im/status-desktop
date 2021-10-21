@@ -11,6 +11,16 @@ QtObject {
     property var walletModelInst: walletModel
     property var profileModelInst: profileModel
 
+    property var activeCommunity: chatsModelInst.communities.activeCommunity
+
+    function copyToClipboard(text) {
+        chatsModelInst.copyToClipboard(text);
+    }
+
+    function deleteMessage(messageId) {
+        chatsModelInst.messageView.deleteMessage(messageId);
+    }
+
     function lastTwoItems(nodes) {
         //% " and "
         return nodes.join(qsTrId("-and-"));
@@ -49,5 +59,24 @@ QtObject {
             tooltip += emojiHtml;
         }
         return tooltip
+    }
+
+    function getCommunity(communityId) {
+        try {
+            const communityJson = chatsModelInst.communities.list.getCommunityByIdJson(communityId);
+            if (!communityJson) {
+                return null;
+            }
+
+            let community = JSON.parse(communityJson);
+            if (community) {
+                community.nbMembers = community.members.length;
+            }
+            return community
+        } catch (e) {
+            console.error("Error parsing community", e);
+        }
+
+       return null;
     }
 }

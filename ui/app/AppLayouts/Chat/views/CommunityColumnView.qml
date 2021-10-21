@@ -23,6 +23,7 @@ Item {
     // TODO unhardcode
     property int chatGroupsListViewCount: communityChatListAndCategories.chatList.count
     property Component pinnedMessagesPopupComponent
+    property var rootStore
 
     StatusChatInfoToolBar {
         id: communityHeader
@@ -240,7 +241,9 @@ Item {
             anchors.top: communityChatListAndCategories.bottom
             anchors.topMargin: active ? Style.current.padding : 0
             sourceComponent: Component {
-                CommunityWelcomeBannerPanel {}
+                CommunityWelcomeBannerPanel {
+                    activeCommunity: rootStore.activeCommunity
+                }
             }
         }
 

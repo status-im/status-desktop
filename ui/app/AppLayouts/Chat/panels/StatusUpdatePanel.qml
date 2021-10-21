@@ -20,6 +20,12 @@ MouseArea {
     property int statusAgeEpoch: 0
     property var messageContextMenu
 
+    signal userNameClicked(bool isProfileClick)
+    signal setMessageActive(string messageId, bool active)
+    signal emojiBtnClicked(bool isProfileClick, bool isSticker, bool isImage, var image, bool emojiOnly)
+    signal clickMessage(bool isProfileClick, bool isSticker, bool isImage, var image, bool emojiOnly, bool hideEmojiPicker, bool isReply)
+
+//    TODO bring those back and remove dynamic scoping
 //    property var emojiReactionsModel
 //    property string timestamp: ""
 //    property bool isCurrentUser: false
@@ -31,10 +37,6 @@ MouseArea {
 //    property bool isMessage: false
 //    property string profileImageSource: ""
 //    property string userIdenticon: ""
-    signal userNameClicked(bool isProfileClick)
-    signal setMessageActive(string messageId, bool active)
-    signal emojiBtnClicked(bool isProfileClick, bool isSticker, bool isImage, var image, bool emojiOnly)
-    signal clickMessage(bool isProfileClick, bool isSticker, bool isImage, var image, bool emojiOnly, bool hideEmojiPicker, bool isReply)
 
     anchors.top: parent.top
     anchors.topMargin: 0
@@ -100,7 +102,7 @@ MouseArea {
             anchors.verticalCenter: chatName.verticalCenter
             anchors.left: chatName.right
             anchors.leftMargin: Style.current.halfPadding
-            timestamp: root.timestamp
+            //timestamp: timestamp
         }
 
         ChatTextView {

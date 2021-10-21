@@ -23,6 +23,7 @@ Column {
     signal editButtonClicked()
     signal transferOwnershipButtonClicked()
     signal leaveButtonClicked()
+    signal copyToClipboard(string link)
 
     Item {
         height: Math.max(46, communityDescription.height + 16)
@@ -54,7 +55,8 @@ Column {
         icon.name: "copy"
         iconButton.onClicked: {
             let link = `${Constants.communityLinkPrefix}${root.community.id}`
-            chatsModel.copyToClipboard(link)
+            //chatsModel.copyToClipboard(link)
+            root.copyToClipboard(link);
             tooltip.visible = !tooltip.visible
         }
         width: parent.width

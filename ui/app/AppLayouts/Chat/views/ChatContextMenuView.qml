@@ -158,7 +158,7 @@ StatusPopupMenu {
     Component {
         id: deleteChatConfirmationDialogComponent
         ConfirmationDialog {
-            property string chatId: chatItem.id
+            property string chatId: !!chatItem ? chatItem.id : ""
             btnType: "warn"
             header.title: communityActive ? qsTr("Delete #%1").arg(chatItem.name) :
                                             chatItem && chatItem.chatType === Constants.chatTypeOneToOne ?
