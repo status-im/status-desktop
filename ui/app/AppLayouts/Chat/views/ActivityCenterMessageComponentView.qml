@@ -7,6 +7,7 @@ import "../../../../shared/popups"
 
 import "../controls"
 import "../panels"
+import "../popups"
 
 Item {
     id: root
@@ -229,7 +230,7 @@ Item {
             chatId: model.chatId
             notificationType: model.notificationType
             communityId: model.message.communityId
-            replyMessageIndex: chatsModel.messageView.getMessageIndex(chatId, responseTo)
+            replyMessageIndex: chatsModel.messageView.getMessageIndex(model.chatId, model.responseTo)
             repliedMessageContent: replyMessageIndex > -1 ? chatsModel.messageView.getMessageData(chatId, replyMessageIndex, "message") : ""
             realChatType: {
                 var chatType = chatsModel.channelView.chats.getChannelType(model.chatId)
@@ -243,7 +244,7 @@ Item {
             channelName: chatsModel.getChannelNameById(badge.chatId)
             communityName: root.communityIndex > -1 ? chatsModel.communities.joinedCommunities.rowData(root.communityIndex, "name") : ""
             communityThumbnailImage: root.communityIndex > -1 ? chatsModel.communities.joinedCommunities.rowData(root.communityIndex, "thumbnailImage") : ""
-            communityColor: !image && root.communityIndex > -1 ? chatsModel.communities.joinedCommunities.rowData(root.communityIndex, "communityColor"): ""
+            communityColor: !model.image && root.communityIndex > -1 ? chatsModel.communities.joinedCommunities.rowData(root.communityIndex, "communityColor"): ""
 
             onCommunityNameClicked: {
                 chatsModel.communities.setActiveCommunity(badge.communityId)
