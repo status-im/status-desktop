@@ -6,6 +6,10 @@ import utils 1.0
 import "../../shared"
 import "../../shared/panels"
 
+import StatusQ.Components 0.1
+import StatusQ.Core.Theme 0.1
+import StatusQ.Core 0.1
+
 Rectangle {
     id: root
     property string chatId: ""
@@ -33,12 +37,24 @@ Rectangle {
 
     Component {
         id: userOrChannelIdenticon
-        StatusIdenticon {
-            height: 40
-            width: 40
-            chatName: root.name
-            chatType: root.chatType
-            identicon: root.identicon
+        StatusSmartIdenticon {
+            id: contactImage
+            anchors.left: parent.left
+            anchors.leftMargin: Style.current.smallPadding
+            anchors.verticalCenter: parent.verticalCenter
+            image: StatusImageSettings {
+                width: 40
+                height: 40
+                source: root.identicon
+                isIdenticon: true
+            }
+            icon: StatusIconSettings {
+                width: 40
+                height: 40
+                letterSize: 15
+                color: Theme.palette.miscColor5
+            }
+            name: root.name
         }
     }
 

@@ -6,11 +6,13 @@ import QtQuick.Layouts 1.13
 import utils 1.0
 
 import StatusQ.Controls 0.1
+import StatusQ.Components 0.1
+import StatusQ.Core.Theme 0.1
+import StatusQ.Core 0.1
 
 import "../../../../shared"
 import "../../../../shared/popups"
 import "../../../../shared/panels"
-import "../../../../shared/status"
 
 // TODO: replace with StatusModal
 ModalPopup {
@@ -39,16 +41,24 @@ ModalPopup {
             radius: Style.current.radius
             color: isHovered ? Style.current.backgroundHover : Style.current.transparent
 
-            StatusIdenticon {
+            StatusSmartIdenticon {
                 id: contactImage
-                height: 40
-                width: 40
-                chatName: model.name
-                chatType: model.chatType
-                identicon: model.identicon
                 anchors.left: parent.left
                 anchors.leftMargin: Style.current.smallPadding
                 anchors.verticalCenter: parent.verticalCenter
+                image: StatusImageSettings {
+                    width: 40
+                    height: 40
+                    source: model.identicon
+                    isIdenticon: true
+                }
+                icon: StatusIconSettings {
+                    width: 40
+                    height: 40
+                    letterSize: 15
+                    color: Theme.palette.miscColor5
+                }
+                name: model.name
             }
 
             StyledText {

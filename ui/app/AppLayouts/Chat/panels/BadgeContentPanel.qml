@@ -5,9 +5,9 @@ import utils 1.0
 import "../../../../shared"
 import "../../../../shared/panels"
 import "../../../../shared/controls"
-import "../../../../shared/status"
 
 import StatusQ.Components 0.1 as StatusQ
+import StatusQ.Core 0.1
 
 Item {
     id: wrapper
@@ -180,18 +180,23 @@ Item {
                 anchors.verticalCenter:parent.verticalCenter
             }
 
-            StatusIdenticon {
+            StatusQ.StatusSmartIdenticon {
                 id: contactImage
-                height: 16
-                width: 16
-                chatId: wrapper.chatId
-                chatName: wrapper.name
-                chatType: wrapper.realChatType
-                identicon: wrapper.profileImage || wrapper.identicon
                 anchors.left: channelIcon.right
                 anchors.leftMargin: 4
                 anchors.verticalCenter: parent.verticalCenter
-                letterSize: 11
+                image: StatusImageSettings {
+                    width: 16
+                    height: 16
+                    source: wrapper.profileImage || wrapper.identicon
+                    isIdenticon: true
+                }
+                icon: StatusIconSettings {
+                    width: 16
+                    height: 16
+                    letterSize: 11
+                }
+                name: wrapper.name
             }
 
             StyledText {

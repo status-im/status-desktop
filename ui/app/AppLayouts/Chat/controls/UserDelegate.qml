@@ -2,12 +2,12 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import "../../../../shared"
 import "../../../../shared/panels"
-import "../../../../shared/status"
 
 import utils 1.0
 
 import StatusQ.Components 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ.Core 0.1
 
 Item {
     id: wrapper
@@ -53,17 +53,23 @@ Item {
             }
         }
 
-        StatusIdenticon {
+        StatusSmartIdenticon {
             id: contactImage
-            height: 28
-            width: 28
-            chatId: wrapper.publicKey
-            chatName: wrapper.name
-            chatType: Constants.chatTypeOneToOne
-            identicon: wrapper.profileImage || wrapper.identicon
             anchors.left: parent.left
             anchors.leftMargin: Style.current.padding
             anchors.verticalCenter: parent.verticalCenter
+            image: StatusImageSettings {
+                width: 28
+                height: 28
+                source: wrapper.profileImage || wrapper.identicon
+                isIdenticon: true
+            }
+            icon: StatusIconSettings {
+                width: 28
+                height: 28
+                letterSize: 15
+            }
+            name: wrapper.name
         }
 
         StyledText {

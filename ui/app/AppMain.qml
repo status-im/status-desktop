@@ -21,9 +21,11 @@ import Qt.labs.platform 1.1
 import Qt.labs.settings 1.0
 
 import StatusQ.Core.Theme 0.1
+import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Layout 0.1
 import StatusQ.Popups 0.1
+import StatusQ.Core 0.1
 
 
 Item {
@@ -737,8 +739,22 @@ Item {
         }
 
         Component {
-            id: statusIdenticonComponent
-            StatusIdenticon {}
+            id: statusSmartIdenticonComponent
+            StatusSmartIdenticon {
+                property  string imageSource: ""
+                image: StatusImageSettings {
+                    width: channelPicker.imageWidth
+                    height: channelPicker.imageHeight
+                    source: imageSource
+                    isIdenticon: true
+                }
+                icon: StatusIconSettings {
+                    width: channelPicker.imageWidth
+                    height: channelPicker.imageHeight
+                    letterSize: 15
+                    color: Theme.palette.miscColor5
+                }
+            }
         }
 
         StatusInputListPopup {
@@ -754,12 +770,9 @@ Item {
                 return modelData.name
             }
             getImageComponent: function (parent, modelData) {
-                return statusIdenticonComponent.createObject(parent, {
-                                                                width: channelPicker.imageWidth,
-                                                                height: channelPicker.imageHeight,
-                                                                chatName: modelData.name,
-                                                                chatType: modelData.chatType,
-                                                                identicon: modelData.identicon
+                return statusSmartIdenticonComponent.createObject(parent, {
+                                                                     imageSource: modelData.identicon,
+                                                                     name: modelData.name
                                                             });
             }
             onClicked: function (index) {
