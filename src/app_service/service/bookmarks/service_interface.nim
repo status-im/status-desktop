@@ -1,4 +1,5 @@
 import ./dto/bookmark as bookmark_dto
+import results
 
 export bookmark_dto
 
@@ -11,8 +12,6 @@ method delete*(self: ServiceInterface) {.base.} =
 
 method init*(self: ServiceInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
-
-import results
 
 type R = Result[BookmarkDto, string]
 

@@ -18,6 +18,7 @@ import ../../../app_service/service/collectible/service as collectible_service
 import ../../../app_service/service/wallet_account/service as wallet_account_service
 import ../../../app_service/service/setting/service as setting_service
 import ../../../app_service/service/bookmarks/service as bookmark_service
+import ../../../app_service/service/dapp_permissions/service as dapp_permissions_service
 
 import eventemitter
 import ../../../app_service/service/profile/service as profile_service
@@ -62,12 +63,13 @@ proc newModule*[T](
   transactionService: transaction_service.Service,
   collectibleService: collectible_service.Service,
   walletAccountService: wallet_account_service.Service,
-  bookmarkService: bookmark_service.Service, 
+  bookmarkService: bookmark_service.ServiceInterface, 
   settingService: setting_service.Service,
   profileService: profile_service.ServiceInterface,
   settingsService: settings_service.ServiceInterface,
   contactsService: contacts_service.ServiceInterface,
-  aboutService: about_service.ServiceInterface
+  aboutService: about_service.ServiceInterface,
+  dappPermissionsService: dapp_permissions_service.ServiceInterface,
 ): Module[T] =
   result = Module[T]()
   result.delegate = delegate
@@ -97,7 +99,7 @@ proc newModule*[T](
     settingService
   )
 
-  result.browserSectionModule = browser_section_module.newModule(result, bookmarkService)
+  result.browserSectionModule = browser_section_module.newModule(result, bookmarkService, settingsService)
   result.profileSectionModule = profile_section_module.newModule(result, events, accountsService, settingsService, profileService, contactsService, aboutService)
 
 method delete*[T](self: Module[T]) =
