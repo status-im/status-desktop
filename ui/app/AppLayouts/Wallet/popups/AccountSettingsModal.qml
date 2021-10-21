@@ -187,7 +187,7 @@ ModalPopup {
                     return
                 }
 
-                const error = RootStore.changeAccountSettings(currentAccount.address, accountNameInput.text, accountColorInput.selectedColor);
+                const error = RootStore.updateCurrentAccount(currentAccount.address, accountNameInput.text, accountColorInput.selectedColor);
 
                 if (error) {
                     errorSound.play()

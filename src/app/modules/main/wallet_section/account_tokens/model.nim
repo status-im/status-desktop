@@ -6,10 +6,9 @@ type
   ModelRole {.pure.} = enum
     Name = UserRole + 1,
     Symbol
-    Value
+    Balance
     Address
-    FiatBalanceDisplay
-    FiatBalance
+    CurrencyBalance
 
 QtObject:
   type
@@ -47,10 +46,9 @@ QtObject:
     {
       ModelRole.Name.int:"name",
       ModelRole.Symbol.int:"symbol",
-      ModelRole.Value.int:"value",
+      ModelRole.Balance.int:"balance",
       ModelRole.Address.int:"address",
-      ModelRole.FiatBalanceDisplay.int:"fiatBalanceDisplay",
-      ModelRole.FiatBalance.int:"fiatBalance"
+      ModelRole.CurrencyBalance.int:"currencyBalance",
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -68,14 +66,12 @@ QtObject:
       result = newQVariant(item.getName())
     of ModelRole.Symbol: 
       result = newQVariant(item.getSymbol())
-    of ModelRole.Value: 
-      result = newQVariant(item.getValue())
+    of ModelRole.Balance: 
+      result = newQVariant(item.getBalance())
     of ModelRole.Address: 
       result = newQVariant(item.getAddress())
-    of ModelRole.FiatBalanceDisplay: 
-      result = newQVariant(item.getFiatBalanceDisplay())
-    of ModelRole.FiatBalance: 
-      result = newQVariant(item.getFiatBalance())
+    of ModelRole.CurrencyBalance: 
+      result = newQVariant(item.getCurrencyBalance())
 
   proc setItems*(self: Model, items: seq[Item]) =
     self.beginResetModel()

@@ -1,6 +1,8 @@
-import NimQml, Tables, strutils, strformat
+import NimQml, Tables, strutils, strformat, sequtils, tables, sugar, algorithm
 
+import status/utils
 import ./item
+import ../../../../../app_service/service/transaction/dto
 
 type
   ModelRole {.pure.} = enum
@@ -24,6 +26,7 @@ QtObject:
   type
     Model* = ref object of QAbstractListModel
       items: seq[Item]
+      hasMore: bool
 
   proc delete(self: Model) =
     self.items = @[]
@@ -35,6 +38,7 @@ QtObject:
   proc newModel*(): Model =
     new(result, delete)
     result.setup
+    result.hasMore = true
 
   proc `$`*(self: Model): string =
     for i in 0 ..< self.items.len:
@@ -42,7 +46,7 @@ QtObject:
 
   proc countChanged(self: Model) {.signal.}
 
-  proc getCount(self: Model): int {.slot.} =
+  proc getCount*(self: Model): int {.slot.} =
     self.items.len
 
   QtProperty[int] count:
@@ -113,5 +117,66 @@ QtObject:
     of ModelRole.Contract:
       result = newQVariant(item.getContract())
 
-  proc setData*(self: Model, item: seq[Item]) =
+  proc setItems*(self: Model, items: seq[Item]) =
+    self.beginResetModel()
+    self.items = items
+    self.endResetModel()
     self.countChanged()
+
+  proc getLastTxBlockNumber*(self: Model): string {.slot.} =
+    if (self.items.len == 0):
+      return "0x0"
+    return self.items[^1].getBlockNumber()
+
+  proc hasMoreChanged*(self: Model) {.signal.}
+
+  proc getHasMore*(self: Model): bool {.slot.} =
+    return self.hasMore
+
+  proc setHasMore*(self: Model, hasMore: bool) {.slot.} =
+    self.hasMore = hasMore
+    self.hasMoreChanged()
+
+  QtProperty[bool] hasMore:
+    read = getHasMore
+    write = setHasMore
+    notify = currentTransactionsChanged
+
+  proc cmpTransactions*(x, y: Item): int =
+    # Sort proc to compare transactions from a single account.
+    # Compares first by block number, then by nonce
+    result = cmp(x.getBlockNumber().parseHexInt, y.getBlockNumber().parseHexInt)
+    if result == 0:
+      result = cmp(x.getNonce(), y.getNonce())
+
+  proc addNewTransactions*(self: Model, transactions: seq[TransactionDto], wasFetchMore: bool) =
+    let existingTxIds = self.items.map(tx => tx.getId())
+    let hasNewTxs = transactions.len > 0 and transactions.any(tx => not existingTxIds.contains(tx.id))
+  
+    if hasNewTxs or not wasFetchMore:
+      let newTxItems = transactions.map(t => initItem(
+        t.id,
+        t.typeValue,
+        t.address,
+        t.blockNumber,
+        t.blockHash,
+        t.timestamp,
+        t.gasPrice,
+        t.gasLimit,
+        t.gasUsed,
+        t.nonce,
+        t.txStatus,
+        t.value,
+        t.fromAddress,
+        t.to,
+        t.contract
+      ))
+
+      var allTxs = self.items.concat(newTxItems)
+      allTxs.sort(cmpTransactions, SortOrder.Descending)
+      allTxs.deduplicate(tx => tx.getId())
+      
+      self.setItems(allTxs)
+      self.setHasMore(true)
+    else:
+      self.setHasMore(false)

@@ -1,4 +1,4 @@
-import NimQml
+import NimQml, Tables
 
 import ./model
 import ./item
@@ -8,29 +8,28 @@ QtObject:
   type
     View* = ref object of QObject
       delegate: io_interface.AccessInterface
-      model: Model
-      modelVariant: QVariant
+      models: Table[string, Model]
 
   proc delete*(self: View) =
-    self.model.delete
-    self.modelVariant.delete
     self.QObject.delete
 
   proc newView*(delegate: io_interface.AccessInterface): View =
     new(result, delete)
     result.QObject.setup
     result.delegate = delegate
-    result.model = newModel()
-    result.modelVariant = newQVariant(result.model)
+    result.models = initTable[string, Model]()
+    
+  proc setItems*(self: View, collectionSlug: string, items: seq[Item]) =
+    if not self.models.hasKey(collectionSlug):
+      self.models[collectionSlug] = newModel()
 
-  proc modelChanged*(self: View) {.signal.}
+    self.models[collectionSlug].setItems(items)
 
-  proc getModel(self: View): QVariant {.slot.} =
-    return self.modelVariant
+  proc fetch*(self: View, collectionSlug: string) {.slot.} =
+    self.delegate.fetch(collectionSlug)
 
-  QtProperty[QVariant] model:
-    read = getModel
-    notify = modelChanged
+  proc getModelForCollection*(self: View, collectionSlug: string): QObject {.slot.} =
+    if not self.models.hasKey(collectionSlug):
+      self.models[collectionSlug] = newModel()
 
-  proc setItems*(self: View, items: seq[Item]) =
-    self.model.setItems(items)
+    return self.models[collectionSlug]

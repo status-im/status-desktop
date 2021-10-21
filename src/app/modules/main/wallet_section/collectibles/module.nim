@@ -1,6 +1,6 @@
 import eventemitter
 
-import ./io_interface, ./view
+import ./io_interface, ./controller
 import ../../../../../app_service/service/collectible/service as collectible_service
 import ../../../../../app_service/service/wallet_account/service as wallet_account_service
 
@@ -13,8 +13,8 @@ export io_interface
 type 
   Module* [T: io_interface.DelegateInterface] = ref object of io_interface.AccessInterface
     delegate: T
-    view: View
     moduleLoaded: bool
+    controller: controller.AccessInterface
 
     collectiblesModule: collectibles_module.AccessInterface
     collectionsModule: collections_module.AccessInterface
@@ -28,7 +28,7 @@ proc newModule*[T](
 ): Module[T] =
   result = Module[T]()
   result.delegate = delegate
-  result.view = newView(result)
+  result.controller = newController(result, walletAccountService)
   result.moduleLoaded = false
 
   result.collectiblesModule = collectibles_module.newModule[Module[T]](
@@ -42,7 +42,6 @@ proc newModule*[T](
   )
 
 method delete*[T](self: Module[T]) =
-  self.view.delete
   self.collectiblesModule.delete
   self.collectionsModule.delete
   self.collectibleModule.delete
@@ -58,4 +57,6 @@ method isLoaded*[T](self: Module[T]): bool =
   return self.moduleLoaded
 
 method switchAccount*[T](self: Module[T], accountIndex: int) =
-  discard
+  let account = self.controller.getWalletAccount(accountIndex)
+  self.collectionsModule.loadCollections(account.address)
+  self.collectiblesModule.setCurrentAddress(account.address)
