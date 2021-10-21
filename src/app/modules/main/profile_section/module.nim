@@ -7,9 +7,11 @@ import ../../../../app_service/service/accounts/service as accounts_service
 import ../../../../app_service/service/settings/service as settings_service
 import ../../../../app_service/service/contacts/service as contacts_service
 import ../../../../app_service/service/about/service as about_service
+import ../../../../app_service/service/language/service as language_service
 
 import ./profile/module as profile_module
 import ./contacts/module as contacts_module
+import ./language/module as language_module
 import ./about/module as about_module
 
 import eventemitter
@@ -25,6 +27,7 @@ type
     moduleLoaded: bool
 
     profileModule: profile_module.AccessInterface
+    languageModule: language_module.AccessInterface
     contactsModule: contacts_module.AccessInterface
     aboutModule: about_module.AccessInterface
 
@@ -34,17 +37,21 @@ proc newModule*[T](delegate: T,
   settingsService: settings_service.ServiceInterface,
   profileService: profile_service.ServiceInterface,
   contactsService: contacts_service.ServiceInterface,
-  aboutService: about_service.ServiceInterface):
+  aboutService: about_service.ServiceInterface,
+  languageService: language_service.ServiceInterface
+  ):
   Module[T] =
   result = Module[T]()
   result.delegate = delegate
   result.view = view.newView()
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController[Module[T]](result, accountsService, settingsService, profileService)
+  result.controller = controller.newController[Module[T]](result, accountsService, settingsService, profileService, languageService)
   result.moduleLoaded = false
 
   result.profileModule = profile_module.newModule(result, accountsService, settingsService, profileService)
   result.contactsModule = contacts_module.newModule(result, events, contactsService, accountsService)
+  result.languageModule = language_module.newModule(result, languageService)
+
   result.aboutModule = about_module.newModule(result, aboutService)
 
   singletonInstance.engine.setRootContextProperty("profileSectionModule", result.viewVariant)
@@ -52,6 +59,7 @@ proc newModule*[T](delegate: T,
 method delete*[T](self: Module[T]) =
   self.profileModule.delete
   self.contactsModule.delete
+  self.languageModule.delete
   self.aboutModule.delete
 
   self.view.delete
@@ -61,6 +69,7 @@ method delete*[T](self: Module[T]) =
 method load*[T](self: Module[T]) =
   self.profileModule.load()
   self.contactsModule.load()
+  self.languageModule.load()
   self.aboutModule.load()
 
   self.moduleLoaded = true

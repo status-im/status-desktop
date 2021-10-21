@@ -26,6 +26,7 @@ import ../../../app_service/service/accounts/service as accounts_service
 import ../../../app_service/service/settings/service as settings_service
 import ../../../app_service/service/contacts/service as contacts_service
 import ../../../app_service/service/about/service as about_service
+import ../../../app_service/service/language/service as language_service
 
 export io_interface
 
@@ -70,6 +71,7 @@ proc newModule*[T](
   contactsService: contacts_service.ServiceInterface,
   aboutService: about_service.ServiceInterface,
   dappPermissionsService: dapp_permissions_service.ServiceInterface,
+  languageService: language_service.ServiceInterface
 ): Module[T] =
   result = Module[T]()
   result.delegate = delegate
@@ -100,7 +102,7 @@ proc newModule*[T](
   )
 
   result.browserSectionModule = browser_section_module.newModule(result, bookmarkService, settingsService, dappPermissionsService)
-  result.profileSectionModule = profile_section_module.newModule(result, events, accountsService, settingsService, profileService, contactsService, aboutService)
+  result.profileSectionModule = profile_section_module.newModule(result, events, accountsService, settingsService, profileService, contactsService, aboutService, languageService)
 
 method delete*[T](self: Module[T]) =
   self.chatSectionModule.delete
