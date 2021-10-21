@@ -4,27 +4,24 @@ type
   Item* = object
     name: string
     symbol: string
-    value: float
+    balance: float
     address: string
-    fiatBalance: float
-    fiatBalanceDisplay: string
+    currencyBalance: float
 
-proc initItem*(name, symbol: string, value: float, address: string, fiatBalance: float, fiatBalanceDisplay: string): Item =
+proc initItem*(name, symbol: string, balance: float, address: string, currencyBalance: float): Item =
   result.name = name
   result.symbol = symbol
-  result.value = value
+  result.balance = balance
   result.address = address
-  result.fiatBalance = fiatBalance
-  result.fiatBalanceDisplay = fiatBalanceDisplay
+  result.currencyBalance = currencyBalance
 
 proc `$`*(self: Item): string =
   result = fmt"""AllTokensItem(
     name: {self.name}, 
     symbol: {self.symbol},
-    value: {self.value},
+    balance: {self.balance},
     address: {self.address}, 
-    fiatBalance: {self.fiatBalance}, 
-    fiatBalanceDisplay: {self.fiatBalanceDisplay}
+    currencyBalance: {self.currencyBalance}, 
     ]"""
 
 proc getName*(self: Item): string = 
@@ -33,14 +30,11 @@ proc getName*(self: Item): string =
 proc getSymbol*(self: Item): string = 
   return self.symbol
 
-proc getValue*(self: Item): float = 
-  return self.value
+proc getBalance*(self: Item): float = 
+  return self.balance
 
 proc getAddress*(self: Item): string = 
   return self.address
 
-proc getFiatBalance*(self: Item): float = 
-  return self.fiatBalance
-
-proc getFiatBalanceDisplay*(self: Item): string = 
-  return self.fiatBalanceDisplay
+proc getCurrencyBalance*(self: Item): float = 
+  return self.currencyBalance

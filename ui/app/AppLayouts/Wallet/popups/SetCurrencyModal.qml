@@ -15,10 +15,10 @@ ModalPopup {
     width: 480
     height: 510
 
-    property string defaultCurrency: RootStore.defaultCurrency
+    property string currentCurrency: RootStore.currentCurrency
 
-    onDefaultCurrencyChanged: {
-        setCurrencyModalContent.currency = defaultCurrency
+    onCurrentCurrencyChanged: {
+        setCurrencyModalContent.currency = currentCurrency
     }
 
     //% "Set Currency"
@@ -27,9 +27,6 @@ ModalPopup {
     SetCurrencyModalContent {
         id: setCurrencyModalContent
         tokenListModel: CurrenciesStore {}
-        onSetDefaultCurrency: {
-            RootStore.setDefaultCurrency(key)
-        }
     }
 
     footer: StatusButton {
@@ -37,7 +34,7 @@ ModalPopup {
         //% "Save"
         text: qsTrId("save")
         onClicked: {
-            console.log("TODO: apply all accounts")
+            RootStore.updateCurrency(setCurrencyModalContent.currency)
             popup.close()
         }
     }

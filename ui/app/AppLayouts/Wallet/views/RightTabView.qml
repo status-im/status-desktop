@@ -22,6 +22,7 @@ Item {
         id: walletHeader
         changeSelectedAccount: leftTab.changeSelectedAccount
         currentAccount: RootStore.currentAccount
+        currency: RootStore.currentCurrency
     }
 
     RowLayout {

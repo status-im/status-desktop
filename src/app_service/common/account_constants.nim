@@ -23,7 +23,6 @@ const INFURA_TOKEN {.strdefine.} = ""
 # allow runtime override via environment variable; core contributors can set a
 # release token in this way for local development
 let INFURA_TOKEN_ENV = $getEnv("INFURA_TOKEN")
-
 let INFURA_TOKEN_RESOLVED =
   if INFURA_TOKEN_ENV != "":
     INFURA_TOKEN_ENV

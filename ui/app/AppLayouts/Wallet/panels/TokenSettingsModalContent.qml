@@ -15,7 +15,7 @@ Item {
 
     property var defaultTokenList
     property var customTokenList
-    signal toggleAssetClicked(string symbol)
+    signal toggleVisibleClicked(string symbol)
     signal removeCustomTokenTriggered(string address)
 
     SearchBox {
@@ -72,7 +72,7 @@ Item {
                 checked: model.isVisible
                 anchors.right: parent.right
                 anchors.rightMargin: Style.current.smallPadding
-                onClicked: toggleAssetClicked(symbol)
+                onClicked: toggleVisibleClicked(symbol)
                 anchors.verticalCenter: parent.verticalCenter
             }
 
@@ -86,7 +86,7 @@ Item {
                         return contextMenu.popup(assetSymbol.x - 100, assetSymbol.y + 25)
                     }
                     assetCheck.checked = !assetCheck.checked
-                    toggleAssetClicked(symbol)
+                    toggleVisibleClicked(symbol)
                 }
                 onEntered: {
                     tokenContainer.hovered = true
