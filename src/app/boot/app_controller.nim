@@ -3,7 +3,7 @@ import NimQml, os, strformat
 import ../../app_service/service/local_settings/service as local_settings_service
 import ../../app_service/service/keychain/service as keychain_service
 import ../../app_service/service/accounts/service as accounts_service
-import ../../app_service/service/contacts/service as contact_service
+import ../../app_service/service/contacts/service as contacts_service
 import ../../app_service/service/chat/service as chat_service
 import ../../app_service/service/community/service as community_service
 import ../../app_service/service/token/service as token_service
@@ -16,7 +16,6 @@ import ../../app_service/service/bookmarks/service as bookmark_service
 import ../core/local_account_settings
 import ../../app_service/service/profile/service as profile_service
 import ../../app_service/service/settings/service as settings_service
-import ../../app_service/service/contacts/service as contacts_service
 import ../../app_service/service/about/service as about_service
 import ../modules/startup/module as startup_module
 import ../modules/main/module as main_module
@@ -64,7 +63,7 @@ type
     localSettingsService: local_settings_service.Service
     keychainService: keychain_service.Service
     accountsService: accounts_service.Service
-    contactService: contact_service.Service
+    contactsService: contacts_service.Service
     chatService: chat_service.Service
     communityService: community_service.Service
     tokenService: token_service.Service
@@ -79,7 +78,6 @@ type
     localAccountSettingsVariant: QVariant
     profileService: profile_service.Service
     settingsService: settings_service.Service
-    contactsService: contacts_service.Service
     aboutService: about_service.Service
     # Modules
     startupModule: startup_module.AccessInterface
@@ -129,7 +127,7 @@ proc newAppController*(appService: AppService): AppController =
   result.keychainService = keychain_service.newService(appService.status.events)
   result.settingService = setting_service.newService()
   result.accountsService = accounts_service.newService()
-  result.contactService = contact_service.newService()
+  result.contactsService = contacts_service.newService(appService.status.events)
   result.chatService = chat_service.newService()
   result.communityService = community_service.newService(result.chatService)
   result.tokenService = token_service.newService(result.settingService)
@@ -141,7 +139,6 @@ proc newAppController*(appService: AppService): AppController =
   result.bookmarkService = bookmark_service.newService()
   result.profileService = profile_service.newService()
   result.settingsService = settings_service.newService()
-  result.contactsService = contacts_service.newService()
   result.aboutService = about_service.newService()
 
   # Core
@@ -170,7 +167,7 @@ proc newAppController*(appService: AppService): AppController =
     result.settingService,
     result.profileService,
     result.settingsService,
-    result.contactService,
+    result.contactsService,
     result.aboutService,
   )
 
@@ -195,7 +192,7 @@ proc newAppController*(appService: AppService): AppController =
   #result.connect()
 
 proc delete*(self: AppController) =
-  self.contactService.delete
+  self.contactsService.delete
   self.chatService.delete
   self.communityService.delete
   self.bookmarkService.delete
@@ -212,7 +209,6 @@ proc delete*(self: AppController) =
 
   self.localSettingsService.delete
   self.accountsService.delete
-  self.contactService.delete
   self.chatService.delete
   self.communityService.delete
   self.tokenService.delete
@@ -251,7 +247,7 @@ proc start*(self: AppController) =
 
 proc load*(self: AppController) =
   self.settingService.init()
-  self.contactService.init()
+  self.contactsService.init()
   self.chatService.init()
   self.communityService.init()
   self.bookmarkService.init()

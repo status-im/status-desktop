@@ -280,7 +280,8 @@ StatusModal {
             text: qsTr("Add to contacts")
             visible: !isBlocked && !isAdded
             onClicked: {
-                profileModel.contacts.addContact(fromAuthor);
+                // TODO make a store for this
+                contactsModule.addContact(fromAuthor)
                 popup.contactAdded(fromAuthor);
                 popup.close();
             }
