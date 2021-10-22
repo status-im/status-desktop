@@ -254,6 +254,7 @@ proc load*(self: AppController) =
   self.communityService.init()
   self.bookmarkService.init()
   self.tokenService.init()
+  self.settingsService.init()
   self.dappPermissionsService.init()
   self.walletAccountService.init()
   self.transactionService.init()
