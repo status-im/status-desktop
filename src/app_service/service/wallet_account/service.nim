@@ -109,7 +109,7 @@ method init*(self: Service) =
     var prices = {"ETH": parsefloat(getPrice("ETH", currency))}.toTable
     for token in tokens:
       prices[token.symbol] = parsefloat(getPrice(token.symbol, currency))
-
+    
     for account in accounts:
       account.tokens = self.buildTokens(account, tokens, prices)
       self.accounts[account.address] = account
@@ -120,7 +120,7 @@ method init*(self: Service) =
     return
 
 method getWalletAccounts*(self: Service): seq[WalletAccountDto] =
-  return toSeq(self.accounts.values).filter(a => a.isChat)
+  return toSeq(self.accounts.values)
 
 method getWalletAccount*(self: Service, accountIndex: int): WalletAccountDto =
   return self.getWalletAccounts()[accountIndex]
@@ -162,11 +162,11 @@ method generateNewAccount*(self: Service, password: string, accountName: string,
     walletIndex = setting.latestDerivedPath + 1
 
   let accountResponse = status_go_accounts.loadAccount(walletRootAddress, password)
-  let accountId = accountResponse.result{"accountId"}.getStr
-  let deriveResponse = status_go_accounts.deriveAccounts(accountId, @["m/" & $walletIndex])
-
+  let accountId = accountResponse.result{"id"}.getStr
+  let path = "m/" & $walletIndex
+  let deriveResponse = status_go_accounts.deriveAccounts(accountId, @[path])
   self.saveAccount(
-    deriveResponse.result{"address"}.getStr,
+    deriveResponse.result[path]{"address"}.getStr,
     accountName,
     password,
     color,
@@ -174,8 +174,10 @@ method generateNewAccount*(self: Service, password: string, accountName: string,
     true,
     walletIndex,
     accountId,
-    deriveResponse.result{"publicKey"}.getStr
+    deriveResponse.result[path]{"publicKey"}.getStr
   )
+
+  discard self.settingService.saveSetting("latest-derived-path", walletIndex)
 
 method addAccountsFromPrivateKey*(self: Service, privateKey: string, password: string, accountName: string, color: string) =
   let
@@ -202,7 +204,7 @@ method addAccountsFromSeed*(self: Service, seedPhrase: string, password: string,
   let mnemonic = replace(seedPhrase, ',', ' ')
   let paths = @[PATH_WALLET_ROOT, PATH_EIP_1581, PATH_WHISPER, PATH_DEFAULT_WALLET]
   let accountResponse = status_go_accounts.multiAccountImportMnemonic(mnemonic)
-  let accountId = accountResponse.result{"accountId"}.getStr
+  let accountId = accountResponse.result{"id"}.getStr
   let deriveResponse = status_go_accounts.deriveAccounts(accountId, paths)
  
   let
@@ -213,15 +215,15 @@ method addAccountsFromSeed*(self: Service, seedPhrase: string, password: string,
     return
 
   self.saveAccount(
-    deriveResponse.result{"address"}.getStr,
+    deriveResponse.result[PATH_DEFAULT_WALLET]{"address"}.getStr,
     accountName,
     password,
     color,
     status_go_accounts.SEED,
-    false,
+    true,
     0,
     accountId,
-    deriveResponse.result{"publicKey"}.getStr
+    deriveResponse.result[PATH_DEFAULT_WALLET]{"publicKey"}.getStr
   )
 
 method addWatchOnlyAccount*(self: Service, address: string, accountName: string, color: string) =
