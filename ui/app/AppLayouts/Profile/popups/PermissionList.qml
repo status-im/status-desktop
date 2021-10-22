@@ -27,7 +27,6 @@ ModalPopup {
     property var store
 
     Component.onCompleted: store.initPermissionList(dapp)
-    Component.onDestruction: store.clearPermissionList()
 
     signal accessRevoked(string dapp)
 
@@ -51,7 +50,7 @@ ModalPopup {
                 delegate: Permission {
                   name: model.name
                   onRemoveBtnClicked: {
-                      root.store.revokePermission(model.name);
+                      root.store.revokePermission(dapp, model.name);
                       if(permissionListView.count === 1){
                             accessRevoked(dapp);
                             close();
@@ -70,7 +69,7 @@ ModalPopup {
         //% "Revoke all access"
         text: qsTrId("revoke-all-access")
         onClicked: {
-            root.store.revokeAllPermissionAccess()
+            root.store.clearPermissions(dapp)
             accessRevoked(dapp);
             close();
         }
