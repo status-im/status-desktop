@@ -1,10 +1,12 @@
 import NimQml
 
 import ../../../../app_service/service/setting/service as setting_service
+import ./io_interface
 
 QtObject:
   type
     View* = ref object of QObject
+      delegate: io_interface.AccessInterface
       defaultCurrency: string
       totalCurrencyBalance: float64
       signingPhrase: string
@@ -16,8 +18,9 @@ QtObject:
   proc delete*(self: View) =
     self.QObject.delete
 
-  proc newView*(): View =
+  proc newView*(delegate: io_interface.AccessInterface): View =
     new(result, delete)
+    result.delegate = delegate
     result.setup()
 
   proc updateFromSetting*(self: View, setting: setting_service.SettingDto) =
@@ -51,3 +54,6 @@ QtObject:
 
   QtProperty[QVariant] isMnemonicBackedUp:
     read = getIsMnemonicBackedUp
+
+  proc switchAccount(self: View, accountIndex: int) {.slot.} =
+    self.delegate.switchAccount(accountIndex)

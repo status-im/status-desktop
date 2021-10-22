@@ -2,7 +2,7 @@ import NimQml
 import eventemitter
 
 import ./controller, ./view
-import ./io_interface as io_ingerface
+import ./io_interface as io_interface
 import ../../../core/global_singleton
 
 import ./account_tokens/module as account_tokens_module
@@ -23,7 +23,7 @@ import io_interface
 export io_interface
 
 type 
-  Module* [T: io_ingerface.DelegateInterface] = ref object of io_ingerface.AccessInterface
+  Module* [T: io_interface.DelegateInterface] = ref object of io_interface.AccessInterface
     delegate: T
     moduleLoaded: bool
     controller: controller.AccessInterface
@@ -49,14 +49,14 @@ proc newModule*[T](
   result.delegate = delegate
   result.moduleLoaded = false
   result.controller = newController(result, settingService, walletAccountService)
-  result.view = newView()
+  result.view = newView(result)
   
-  result.accountTokensModule = account_tokens_module.newModule(result, events, walletAccountService)
-  result.accountsModule = accounts_module.newModule(result, events, walletAccountService)
-  result.allTokensModule = all_tokens_module.newModule(result, events, tokenService)
-  result.collectiblesModule = collectibles_module.newModule(result, events, collectibleService, walletAccountService)
-  result.currentAccountModule = current_account_module.newModule(result, events, walletAccountService)
-  result.transactionsModule = transactions_module.newModule(result, events, transactionService, walletAccountService)
+  result.accountTokensModule = account_tokens_module.newModule[Module[T]](result, events, walletAccountService)
+  result.accountsModule = accounts_module.newModule[io_interface.AccessInterface](result, events, walletAccountService)
+  result.allTokensModule = all_tokens_module.newModule[Module[T]](result, events, tokenService)
+  result.collectiblesModule = collectibles_module.newModule[Module[T]](result, events, collectibleService, walletAccountService)
+  result.currentAccountModule = current_account_module.newModule[Module[T]](result, events, walletAccountService)
+  result.transactionsModule = transactions_module.newModule[Module[T]](result, events, transactionService, walletAccountService)
 
 method delete*[T](self: Module[T]) =
   self.accountTokensModule.delete

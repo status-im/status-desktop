@@ -68,6 +68,7 @@ QtObject {
     }
 
     function getLatestBlockNumber() {
+        // TODO: Move to transaction root module and not wallet
         return walletModel.getLatestBlockNumber()
     }
 
@@ -75,12 +76,12 @@ QtObject {
         return walletModel.isNonArchivalNode
     }
 
-    function setCurrentAccountByIndex(newIndex) {
-        walletModel.setCurrentAccountByIndex(newIndex)
-    }
-
     function setInitialRange() {
         walletModel.setInitialRange()
+    }
+
+    function switchAccount(newIndex) {
+        walletSection.switchAccount(newIndex)
     }
 
     function generateNewAccount(password, accountName, color) {
@@ -124,14 +125,17 @@ QtObject {
     }
 
     function getQrCode(address) {
+        // TODO: Move to transaction root module and not wallet
         return profileModel.qrCode(address)
     }
 
     function hex2Dec(value) {
+        // TODO: Move to transaction root module and not wallet
         return utilsModel.hex2Dec(value)
     }
 
     function hex2Eth(value) {
+        // TODO: Move to transaction module
         return utilsModel.hex2Eth(value)
     }
 
