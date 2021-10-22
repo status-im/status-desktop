@@ -1,5 +1,5 @@
 import NimQml, sequtils, strutils, sugar, os, json, chronicles
-import views/[mailservers_list, ens_manager, contacts, devices, mailservers, mnemonic, network, fleets, profile_info, device_list, dapp_list, profile_picture, muted_chats]
+import views/[mailservers_list, ens_manager, contacts, devices, mailservers, mnemonic, network, fleets, profile_info, device_list, profile_picture, muted_chats]
 import chronicles
 import qrcode/qrcode
 
@@ -32,7 +32,6 @@ QtObject:
     devices*: DevicesView
     mailservers*: MailserversView
     mnemonic*: MnemonicView
-    dappList*: DappList
     fleets*: Fleets
     network*: NetworkView
     status*: Status
@@ -50,7 +49,6 @@ QtObject:
     if not self.profilePicture.isNil: self.profilePicture.delete
     if not self.mutedChats.isNil: self.mutedChats.delete
     if not self.profile.isNil: self.profile.delete
-    if not self.dappList.isNil: self.dappList.delete
     if not self.fleets.isNil: self.fleets.delete
     if not self.network.isNil: self.network.delete
     if not self.mnemonic.isNil: self.mnemonic.delete
@@ -69,7 +67,6 @@ QtObject:
     result.network = newNetworkView(status)
     result.mnemonic = newMnemonicView(status)
     result.mailservers = newMailserversView(status, appService)
-    result.dappList = newDappList(status)
     result.ens = newEnsManager(status, appService)
     result.fleets = newFleets(status)
     result.changeLanguage = changeLanguage
@@ -108,12 +105,6 @@ QtObject:
   proc changeTheme*(self: ProfileView, theme: int) {.slot.} =
     self.profile.setAppearance(theme)
     self.status.saveSetting(Setting.Appearance, $theme)
-
-  proc getDappList(self: ProfileView): QVariant {.slot.} =
-    return newQVariant(self.dappList)
-
-  QtProperty[QVariant] dappList:
-    read = getDappList
 
   proc getFleets(self: ProfileView): QVariant {.slot.} =
     return newQVariant(self.fleets)
