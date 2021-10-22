@@ -7,6 +7,7 @@ import ../../../../app_service/service/accounts/service as accounts_service
 import ../../../../app_service/service/settings/service as settings_service
 import ../../../../app_service/service/language/service as language_service
 import ../../../../app_service/service/mnemonic/service as mnemonic_service
+import ../../../../app_service/service/privacy/service as privacy_service
 
 export controller_interface
 
@@ -19,8 +20,9 @@ type
     accountsService: accounts_service.ServiceInterface
     languageService: language_service.ServiceInterface
     mnemonicService: mnemonic_service.ServiceInterface
+    privacyService: privacy_service.ServiceInterface
 
-proc newController*[T](delegate: T, accountsService: accounts_service.ServiceInterface, settingsService: settings_service.ServiceInterface, profileService: profile_service.ServiceInterface, languageService: language_service.ServiceInterface, mnemonicService: mnemonic_service.ServiceInterface): Controller[T] =
+proc newController*[T](delegate: T, accountsService: accounts_service.ServiceInterface, settingsService: settings_service.ServiceInterface, profileService: profile_service.ServiceInterface, languageService: language_service.ServiceInterface, mnemonicService: mnemonic_service.ServiceInterface, privacyService: privacy_service.ServiceInterface): Controller[T] =
   result = Controller[T]()
   result.delegate = delegate
   result.profileService = profileService
@@ -28,6 +30,7 @@ proc newController*[T](delegate: T, accountsService: accounts_service.ServiceInt
   result.accountsService = accountsService
   result.languageService = languageService
   result.mnemonicService = mnemonicService
+  result.privacyService = privacyService
 
 method delete*[T](self: Controller[T]) =
   discard

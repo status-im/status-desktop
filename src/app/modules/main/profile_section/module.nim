@@ -9,11 +9,13 @@ import ../../../../app_service/service/contacts/service as contacts_service
 import ../../../../app_service/service/about/service as about_service
 import ../../../../app_service/service/language/service as language_service
 import ../../../../app_service/service/mnemonic/service as mnemonic_service
+import ../../../../app_service/service/privacy/service as privacy_service
 
 import ./profile/module as profile_module
 import ./contacts/module as contacts_module
 import ./language/module as language_module
 import ./mnemonic/module as mnemonic_module
+import ./privacy/module as privacy_module
 import ./about/module as about_module
 
 import eventemitter
@@ -32,6 +34,7 @@ type
     languageModule: language_module.AccessInterface
     contactsModule: contacts_module.AccessInterface
     mnemonicModule: mnemonic_module.AccessInterface
+    privacyModule: privacy_module.AccessInterface
     aboutModule: about_module.AccessInterface
 
 proc newModule*[T](delegate: T,
@@ -42,20 +45,22 @@ proc newModule*[T](delegate: T,
   contactsService: contacts_service.ServiceInterface,
   aboutService: about_service.ServiceInterface,
   languageService: language_service.ServiceInterface,
-  mnemonicService: mnemonic_service.ServiceInterface
+  mnemonicService: mnemonic_service.ServiceInterface,
+  privacyService: privacy_service.ServiceInterface
   ):
   Module[T] =
   result = Module[T]()
   result.delegate = delegate
   result.view = view.newView()
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController[Module[T]](result, accountsService, settingsService, profileService, languageService, mnemonicService)
+  result.controller = controller.newController[Module[T]](result, accountsService, settingsService, profileService, languageService, mnemonicService, privacyService)
   result.moduleLoaded = false
 
   result.profileModule = profile_module.newModule(result, accountsService, settingsService, profileService)
   result.contactsModule = contacts_module.newModule(result, events, contactsService, accountsService)
   result.languageModule = language_module.newModule(result, languageService)
   result.mnemonicModule = mnemonic_module.newModule(result, mnemonicService)
+  result.privacyModule = privacy_module.newModule(result, privacyService, accountsService)
   result.aboutModule = about_module.newModule(result, aboutService)
 
   singletonInstance.engine.setRootContextProperty("profileSectionModule", result.viewVariant)
@@ -65,6 +70,7 @@ method delete*[T](self: Module[T]) =
   self.contactsModule.delete
   self.languageModule.delete
   self.mnemonicModule.delete
+  self.privacyModule.delete
   self.aboutModule.delete
 
   self.view.delete
@@ -76,6 +82,7 @@ method load*[T](self: Module[T]) =
   self.contactsModule.load()
   self.languageModule.load()
   self.mnemonicModule.load()
+  self.privacyModule.load()
   self.aboutModule.load()
 
   self.moduleLoaded = true
