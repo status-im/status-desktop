@@ -33,27 +33,26 @@ MenuItem {
             StatusIcon {
                 anchors.centerIn: parent
                 width: {
-                    let width = statusPopupMenuItem.action.icon.width ||
-                        statusPopupMenuItem.action.iconSettings.width
-
+                    let width = statusPopupMenuItem.action && statusPopupMenuItem.action.icon.width ||
+                        statusPopupMenuItem.action.iconSettings && statusPopupMenuItem.action.iconSettings.width
                     return !!width ? width : 18
                 }
-                rotation: statusPopupMenuItem.action.iconRotation
+                rotation: !!statusPopupMenuItem.action.iconRotation ? statusPopupMenuItem.action.iconRotation : 0
                 icon: {
                     if (statusPopupMenuItem.subMenu && !!statusPopupMenu.subMenuItemIcons[statusPopupMenuItem.subMenuIndex] &&
                         statusPopupMenu.subMenuItemIcons[statusPopupMenuItem.subMenuIndex].icon.toString() !== "") {
                         return statusPopupMenu.subMenuItemIcons[statusPopupMenuItem.subMenuIndex].icon;
                     } else if (!!statusPopupMenuItem.action && statusPopupMenuItem.action.icon.name !== "") {
                         return statusPopupMenuItem.action.icon.name;
-                    } else if (statusPopupMenuItem.action.iconSettings.name !== "") {
+                    } else if (!!statusPopupMenuItem.action.iconSettings && statusPopupMenuItem.action.iconSettings.name !== "") {
                         return statusPopupMenuItem.action.iconSettings.name;
                     } else {
                         return "";
                     }
                 }
                 color: {
-                    let c = statusPopupMenuItem.action.iconSettings.color ||
-                        statusPopupMenuItem.action.icon.color
+                    let c = !!statusPopupMenuItem.action.iconSettings && statusPopupMenuItem.action.iconSettings.color ||
+                            !!statusPopupMenuItem.action && statusPopupMenuItem.action.icon.color
                       
                     if (!Qt.colorEqual(c, "transparent")) {
                         return c
