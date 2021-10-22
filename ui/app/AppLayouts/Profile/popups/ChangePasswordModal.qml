@@ -132,7 +132,7 @@ StatusModal {
             }
 
             function changePasswordBegin() {
-                if (profileModel.changePassword(currentPasswordInput.text, passwordInput.text)) {
+                if (privacyModule.changePassword(currentPasswordInput.text, passwordInput.text)) {
                     popup.successPopup.open();
                     submitBtn.enabled = false;
                 } else {

@@ -14,6 +14,7 @@ import ../../app_service/service/setting/service as setting_service
 import ../../app_service/service/bookmarks/service as bookmark_service
 import ../../app_service/service/dapp_permissions/service as dapp_permissions_service
 import ../../app_service/service/mnemonic/service as mnemonic_service
+import ../../app_service/service/privacy/service as privacy_service
 
 import ../core/local_account_settings
 import ../../app_service/service/profile/service as profile_service
@@ -79,6 +80,7 @@ type
     aboutService: about_service.Service
     languageService: language_service.Service
     mnemonicService: mnemonic_service.Service
+    privacyService: privacy_service.Service
 
     # Core
     localAppSettingsVariant: QVariant
@@ -139,6 +141,7 @@ proc newAppController*(appService: AppService): AppController =
   result.dappPermissionsService = dapp_permissions_service.newService()
   result.languageService = language_service.newService()
   result.mnemonicService = mnemonic_service.newService()
+  result.privacyService = privacy_service.newService()
 
   # Core
   result.localAppSettingsVariant = newQVariant(singletonInstance.localAppSettings)
@@ -171,7 +174,8 @@ proc newAppController*(appService: AppService): AppController =
     result.aboutService,
     result.dappPermissionsService,
     result.languageService,
-    result.mnemonicService
+    result.mnemonicService,
+    result.privacyService
   )
 
   #################################################
