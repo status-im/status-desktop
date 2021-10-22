@@ -33,8 +33,6 @@ method load*(self: Module) =
   self.view.load()
   self.view.dappsAddress = self.controller.getDappsAddress()
   self.view.networkId = self.controller.getCurrentNetworkDetails().config.networkId
-  self.moduleLoaded = true
-  self.delegate.providerDidLoad()
 
 method isLoaded*(self: Module): bool =
   return self.moduleLoaded
@@ -44,3 +42,10 @@ method setDappsAddress*(self: Module, value: string) =
 
 method onDappAddressChanged*(self: Module, value: string) =
   self.view.dappsAddress = value
+
+proc checkIfModuleDidLoad(self: Module) =
+  self.moduleLoaded = true
+  self.delegate.providerDidLoad()
+
+method viewDidLoad*(self: Module) =
+  self.checkIfModuleDidLoad()
