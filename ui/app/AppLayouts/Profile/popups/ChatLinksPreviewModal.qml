@@ -19,7 +19,7 @@ ModalPopup {
     }
 
     function populatePreviewableSites() {
-        let whitelist = JSON.parse(profileModel.getLinkPreviewWhitelist())
+        let whitelist = JSON.parse(privacyModule.getLinkPreviewWhitelist())
         whitelist.forEach(entry => {
             entry.isWhitelisted = localAccountSensitiveSettings.whitelistedUnfurlingSites[entry.address] || false
             previewableSites.append(entry)
