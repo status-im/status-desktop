@@ -25,6 +25,7 @@ ModalPopup {
 
         StatusCheckBox {
             id: acknowledge
+            objectName: "acknowledgeCheckBox"
             Layout.preferredWidth: parent.width
             //% "I acknowledge that Status Desktop is in Beta and by using it, I take the full responsibility for all risks concerning my data and funds."
             text: qsTrId("i-acknowledge-that-status-desktop-is-in-beta-and-by-using-it--i-take-the-full-responsibility-for-all-risks-concerning-my-data-and-funds-")
@@ -32,6 +33,7 @@ ModalPopup {
 
         StatusCheckBox {
             id: termsOfUse
+            objectName: "termsOfUseCheckBox"
             Layout.preferredWidth: parent.width
 
             contentItem: Row {
