@@ -10,7 +10,6 @@ StatusGifColumn 1.0 StatusGifColumn.qml
 StatusImageIdenticon 1.0 StatusImageIdenticon.qml
 StatusRoundButton 1.0 StatusRoundButton.qml
 StatusSectionHeadline 1.0 StatusSectionHeadline.qml
-StatusSlider 1.0 StatusSlider.qml
 StatusStickerButton 1.0 StatusStickerButton.qml
 StatusStickerList 1.0 StatusStickerList.qml
 StatusStickerMarket 1.0 StatusStickerMarket.qml

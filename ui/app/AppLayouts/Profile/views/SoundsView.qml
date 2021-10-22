@@ -3,9 +3,9 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 
 import utils 1.0
-import "../../../../shared/status"
 
 import StatusQ.Core 0.1
+import StatusQ.Controls 0.1
 
 Item {
     id: soundsContainer
@@ -35,8 +35,8 @@ Item {
             anchors.topMargin: Style.current.padding
             anchors.left: parent.left
             anchors.leftMargin: 24
-            minimumValue: 0.0
-            maximumValue: 1.0
+            from: 0.0
+            to: 1.0
             value: appSettings.volume
             stepSize: 0.1
             onValueChanged: {
@@ -45,9 +45,3 @@ Item {
         }
     }
 }
-
-/*##^##
-Designer {
-    D{i:0;autoSize:true;height:480;width:640}
-}
-##^##*/
