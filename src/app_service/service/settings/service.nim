@@ -64,13 +64,13 @@ method getIdentityImage*(self: Service, address: string): IdentityImage =
   return identityImage
 
 method getDappsAddress*(self: Service): string =
-   return status_go_settings.getSetting[string](Setting.DappsAddress)
+  return status_go_settings.getSetting[string](Setting.DappsAddress)
 
 method setDappsAddress*(self: Service, address: string): bool =
   let r = status_go_settings.saveSetting(Setting.DappsAddress, address)
   return r.error == ""
 
-method getCurrentNetworkDetails*(self: ServiceInterface): NetworkDetails =
+method getCurrentNetworkDetails*(self: Service): NetworkDetails =
   let currNetwork = getSetting[string](Setting.Networks_CurrentNetwork, DEFAULT_NETWORK_NAME)
   let networks = getSetting[seq[NetworkDetails]](Setting.Networks_Networks)
   for n in networks:
