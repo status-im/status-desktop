@@ -13,7 +13,7 @@ import "../../../../../shared"
 
 StatusModal {
     id: popup
-
+    property var store
     onOpened: {
         contentItem.errorText.text = ""
     }
@@ -53,15 +53,15 @@ StatusModal {
             ListView {
                 id: membershipRequestList
                 anchors.fill: parent
-                model: chatsModel.communities.activeCommunity.communityMembershipRequests
+                model: popup.store.chatsModelInst.communities.activeCommunity.communityMembershipRequests
                 clip: true
 
                 delegate: StatusListItem {
                     anchors.horizontalCenter: parent.horizontalCenter
 
-                    property int contactIndex: profileModel.contacts.list.getContactIndexByPubkey(model.publicKey)
+                    property int contactIndex: popup.store.profileModelInst.contacts.list.getContactIndexByPubkey(model.publicKey)
                     property string nickname: appMain.getUserNickname(model.publicKey)
-                    property string profileImage: contactIndex === -1 ? "" : profileModel.contacts.list.rowData(contactIndex, 'thumbnailImage') 
+                    property string profileImage: contactIndex === -1 ? "" : popup.store.profileModelInst.contacts.list.rowData(contactIndex, 'thumbnailImage')
                     property string displayName: Utils.getDisplayName(publicKey, contactIndex)
 
                     image.isIdenticon: !profileImage && model.identicon
@@ -83,7 +83,7 @@ StatusModal {
                                 cursorShape: Qt.PointingHandCursor
                                 onClicked: {
                                     errorText.text = ""
-                                    const error = chatsModel.communities.acceptRequestToJoinCommunity(id)
+                                    const error = popup.store.acceptRequestToJoinCommunity(id);
                                     if (error) {
                                         errorText.text = error
                                     }
@@ -103,7 +103,7 @@ StatusModal {
                                 cursorShape: Qt.PointingHandCursor
                                 onClicked: {
                                     errorText.text = ""
-                                    const error = chatsModel.communities.declineRequestToJoinCommunity(id)
+                                    const error = popup.store.declineRequestToJoinCommunity(id);
                                     if (error) {
                                         errorText.text = error
                                     }

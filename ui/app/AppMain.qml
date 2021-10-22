@@ -436,7 +436,9 @@ Item {
 
             Component {
                 id: browserLayoutComponent
-                BrowserLayout { }
+                BrowserLayout {
+                    globalStore: appMain.rootStore
+                }
             }
 
             Loader {
@@ -633,6 +635,7 @@ Item {
             id: inviteFriendsToCommunityPopup
             InviteFriendsToCommunityPopup {
                 anchors.centerIn: parent
+                hasAddedContacts: appMain.rootStore.profileModelInst.contacts.list.hasAddedContacts()
                 onClosed: {
                     destroy()
                 }

@@ -19,6 +19,11 @@ StatusModal {
 
     property Popup parentPopup
 
+//ProfilePopup is either instantiated in some files
+//and called to open via the openProfilePopup in others
+//TODO ---------------------------------------
+//use one PofilePopup instance and pass the store there
+    property var store
     property var identicon: ""
     property var userName: ""
     property string nickname: ""
@@ -236,11 +241,17 @@ StatusModal {
 
         NicknamePopup {
             id: nicknamePopup
-            changeUsername: function (newUsername) {
-                popup.userName = newUsername
-            }
-            changeNickname: function (newNickname) {
-                popup.nickname = newNickname
+            onDoneClicked: {
+                // Change username title only if it was not an ENS name
+                if (isEnsVerified) {
+                    popup.userName = newUsername;
+                }
+                popup.nickname = newNickname;
+                profileModel.contacts.changeContactNickname(fromAuthor, newNickname);
+                popup.close()
+                if (!!chatsModel.communities.activeCommunity) {
+                    chatsModel.communities.activeCommunity.triggerMembersUpdate();
+                }
             }
         }
     }

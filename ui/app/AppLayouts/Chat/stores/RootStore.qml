@@ -81,4 +81,60 @@ QtObject {
 
        return null;
     }
+
+    property var activeCommunityChatsModel: chatsModelInst.communities.activeCommunity.chats
+
+    function createCommunity(communityName, communityDescription, checkedMembership, ensOnlySwitchChecked, communityColor, communityImage, imageCropperModalaX, imageCropperModalaY, imageCropperModalbX, imageCropperModalbY) {
+        chatsModelInst.communities.createCommunity(communityName, communityDescription, checkedMembership, ensOnlySwitchChecked, communityColor, communityImage, imageCropperModalaX, imageCropperModalaY, imageCropperModalbX, imageCropperModalbY);
+    }
+
+    function editCommunity(communityName, communityDescription, checkedMembership, ensOnlySwitchChecked, communityColor, communityImage, imageCropperModalaX, imageCropperModalaY, imageCropperModalbX, imageCropperModalbY) {
+        chatsModelInst.communities.editCommunity(communityName, communityDescription, checkedMembership, ensOnlySwitchChecked, communityColor, communityImage, imageCropperModalaX, imageCropperModalaY, imageCropperModalbX, imageCropperModalbY);
+    }
+
+    function createCommunityCategory(communityId, categoryName, channels) {
+        chatsModelInst.communities.createCommunityCategory(communityId, categoryName, channels);
+    }
+
+    function editCommunityCategory(communityId, categoryId, categoryName, channels) {
+        chatsModelInst.communities.editCommunityCategory(communityId, categoryId, categoryName, channels);
+    }
+
+    function deleteCommunityCategory(categoryId) {
+        chatsModelInst.communities.deleteCommunityCategory(chatsModelInst.communities.activeCommunity.id, categoryId);
+    }
+
+    function leaveCommunity(communityId) {
+        chatsModelInst.communities.leaveCommunity(communityId);
+    }
+
+    function setCommunityMuted(communityId, checked) {
+        chatsModelInst.communities.setCommunityMuted(communityId, checked);
+    }
+
+    function exportCommunity() {
+        chatsModelInst.communities.exportCommunity();
+    }
+
+    function createCommunityChannel(communityId, channelName, channelDescription, categoryId) {
+        // TODO: pass the private value when private channels
+        // are implemented
+        //privateSwitch.checked)
+        chatsModelInst.createCommunityChannel(communityId, channelName, channelDescription, categoryId);
+    }
+
+    function editCommunityChannel(communityId, channelId, channelName, channelDescription, channelCategoryId, popupPosition) {
+        // TODO: pass the private value when private channels
+        // are implemented
+        //privateSwitch.checked)
+        chatsModelInst.editCommunityChannel(communityId, channelId, channelName, channelDescription, channelCategoryId, popupPosition);
+    }
+
+    function acceptRequestToJoinCommunity(id) {
+        chatsModelInst.communities.acceptRequestToJoinCommunity(id);
+    }
+
+    function declineRequestToJoinCommunity(id) {
+        chatsModelInst.communities.declineRequestToJoinCommunity(id);
+    }
 }

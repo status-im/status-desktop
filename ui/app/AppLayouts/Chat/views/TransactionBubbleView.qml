@@ -3,9 +3,9 @@ import utils 1.0
 import "../../../../shared"
 import "../../../../shared/panels"
 
-import "../controls"
-//TODO remove or make view
 import "../views"
+import "../popups"
+import "../controls"
 
 Item {
     id: root
@@ -203,11 +203,32 @@ Item {
                         type: RecipientSelector.Type.Contact
                     }
                 }
-                onSignModalOpened: {
-                    root.store.walletModelInst.gasView.getGasPrice();
-                }
                 onSendTransaction: {
                     root.store.walletModelInst.accountsView.setFocusedAccountByAddress(fromAddress);
+                    //TODO remove dynamic scoping
+                    openPopup(signTxComponent, {selectedAccount: {
+                                      name: acc.name,
+                                      address: fromAddress,
+                                      iconColor: acc.iconColor,
+                                      assets: acc.assets
+                                  }})
+                }
+            }
+        }
+
+        Component {
+            id: signTxComponent
+            SignTransactionModal {
+                store: root.store
+                selectedAsset: root.selectedAsset
+                selectedAmount: root.selectedAmount
+                selectedRecipient: root.selectedRecipient
+                selectedFiatAmount: root.selectedFiatAmount
+                onOpened: {
+                    root.store.walletModelInst.gasView.getGasPrice();
+                }
+                onClosed: {
+                    destroy();
                 }
             }
         }

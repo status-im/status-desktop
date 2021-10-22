@@ -218,6 +218,7 @@ StatusAppThreePanelLayout {
     Component {
         id: groupInfoPopupComponent
         GroupInfoPopup {
+            store: root.rootStore
             pinnedMessagesPopupComponent: chatColumn.pinnedMessagesPopupComponent
         }
     }

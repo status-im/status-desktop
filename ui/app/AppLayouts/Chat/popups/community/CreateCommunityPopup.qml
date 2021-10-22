@@ -14,18 +14,17 @@ import StatusQ.Controls 0.1
 import StatusQ.Controls.Validators 0.1
 import StatusQ.Popups 0.1
 
-StatusModal {
-    property QtObject community: chatsModel.communities.activeCommunity
+StatusModal {    
+    id: popup
+    height: 509
 
+    property var store
     property bool isEdit: false
-
+    property QtObject community: popup.store.chatsModelInst.communities.activeCommunity
     readonly property int maxCommunityNameLength: 30
     readonly property int maxCommunityDescLength: 140
     readonly property var communityColorValidator: Utils.Validate.NoEmpty
                                                    | Utils.Validate.TextHexColor
-
-    id: popup
-    height: 509
 
     onOpened: {
         if (isEdit) {
@@ -405,7 +404,7 @@ StatusModal {
 
                 let error = false;
                 if(isEdit) {
-                    error = chatsModel.communities.editCommunity(
+                    error = popup.store.editCommunity(
                         community.id,
                         Utils.filterXSS(popup.contentItem.communityName.input.text),
                         Utils.filterXSS(popup.contentItem.communityDescription.input.text),
@@ -421,7 +420,7 @@ StatusModal {
                         popup.contentItem.imageCropperModal.bY
                   )
                 } else {
-                    error = chatsModel.communities.createCommunity(
+                    error = popup.store.createCommunity(
                         Utils.filterXSS(popup.contentItem.communityName.input.text),
                         Utils.filterXSS(popup.contentItem.communityDescription.input.text),
                         membershipRequirementSettingPopup.checkedMembership,

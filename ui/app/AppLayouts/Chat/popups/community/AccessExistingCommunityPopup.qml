@@ -13,33 +13,33 @@ import StatusQ.Controls 0.1 as StatusQControls
 import "../../../../../shared/controls"
 
 StatusModal {
-    id: popup
+    id: root
     width: 400
     height: 400
-    anchors.centerIn: parent
 
+    property string error: ""
     property string keyValidationError: ""
-    
+
     function validate() {
-        keyValidationError = ""
+        keyValidationError = "";
 
         if (keyInput.text.trim() === "") {
             //% "You need to enter a key"
-            keyValidationError = qsTrId("you-need-to-enter-a-key")
+            keyValidationError = qsTrId("you-need-to-enter-a-key");
         }
 
-        return !keyValidationError
+        return !keyValidationError;
     }
 
     //% "Access existing community"
     header.title: qsTrId("access-existing-community")
 
     onClosed: {
-        popup.destroy();
+        root.destroy();
     }
 
     contentItem: Item {
-        width: popup.width - 32
+        width: root.width - 32
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.leftMargin: 16
@@ -73,22 +73,20 @@ StatusModal {
             text: qsTrId("import")
             onClicked: {
                 if (!validate()) {
-                    return
+                    return;
                 }
 
-                let communityKey = keyInput.text.trim()
+                let communityKey = keyInput.text.trim();
                 if (!communityKey.startsWith("0x")) {
-                    communityKey = "0x" + communityKey
+                    communityKey = "0x" + communityKey;
                 }
 
-                const error = chatsModel.communities.importCommunity(communityKey, Utils.uuid())
-
-                if (error) {
-                    creatingError.text = error
-                    return creatingError.open()
+                if (!!root.error) {
+                    creatingError.text = error;
+                    return creatingError.open();
                 }
 
-                popup.close()
+                root.close();
             }
 
             MessageDialog {

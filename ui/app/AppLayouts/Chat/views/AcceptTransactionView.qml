@@ -8,12 +8,14 @@ import "../popups"
 
 import utils 1.0
 
+//TODO remove dynamic scoping
 Item {
-    property int state: Constants.addressRequested
-
+    id: root
     width: parent.width
     height: childrenRect.height
+
     property var store
+    property int state: Constants.addressRequested
 
     Separator {
         id: separator1
@@ -74,9 +76,9 @@ Item {
             cursorShape: Qt.PointingHandCursor
             onClicked: {
                 if (root.state === Constants.addressRequested) {
-                    chatsModel.transactions.declineAddressRequest(messageId)
+                    root.store.chatsModelInst.transactions.declineAddressRequest(messageId)
                 } else if (root.state === Constants.transactionRequested) {
-                    chatsModel.transactions.declineRequest(messageId)
+                    root.store.chatsModelInst.transactions.declineRequest(messageId)
                 }
 
             }
@@ -94,8 +96,9 @@ Item {
     Component {
         id: signTxComponent
         SignTransactionModal {
+            store: root.store
             onOpened: {
-                walletModel.gasView.getGasPrice()
+                root.store.walletModelInst.gasView.getGasPrice()
             }
             onClosed: {
                 destroy();
@@ -104,8 +107,8 @@ Item {
             selectedRecipient: {
                 return {
                     address: commandParametersObject.address,
-                    identicon: chatsModel.channelView.activeChannel.identicon,
-                    name: chatsModel.channelView.activeChannel.name,
+                    identicon: root.store.chatsModelInst.channelView.activeChannel.identicon,
+                    name: root.store.chatsModelInst.channelView.activeChannel.name,
                     type: RecipientSelector.Type.Contact
                 }
             }
@@ -117,8 +120,10 @@ Item {
 
     SelectAccountModal {
         id: selectAccountModal
+        accounts: root.store.walletModelInst.accountsView.accounts
+        currency: root.store.walletModelInst.balanceView.defaultCurrency
         onSelectAndShareAddressButtonClicked: {
-            chatsModel.transactions.acceptAddressRequest(messageId, accountSelector.selectedAccount.address)
+            root.store.chatsModelInst.transactions.acceptAddressRequest(messageId, accountSelector.selectedAccount.address)
             selectAccountModal.close()
         }
     }

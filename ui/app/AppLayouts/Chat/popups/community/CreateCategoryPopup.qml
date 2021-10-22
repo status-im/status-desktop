@@ -13,6 +13,9 @@ import utils 1.0
 import "../../../../../shared/popups"
 
 StatusModal {
+    id: root
+
+    property var store
     property string communityId
     property string categoryId
     property string categoryName: ""
@@ -24,14 +27,12 @@ StatusModal {
     readonly property var categoryNameValidator: Utils.Validate.NoEmpty
                                                  | Utils.Validate.TextLength
 
-    id: popup
-
     onOpened: {
         if(isEdit){
-            popup.contentItem.categoryName.input.text = categoryName
-            channels = JSON.parse(chatsModel.communities.activeCommunity.getChatIdsByCategory(categoryId))
+            root.contentItem.categoryName.input.text = categoryName
+            channels = JSON.parse(root.store.chatsModelInst.communities.activeCommunity.getChatIdsByCategory(categoryId))
         }
-        popup.contentItem.categoryName.input.forceActiveFocus(Qt.MouseFocusReason)
+        root.contentItem.categoryName.input.forceActiveFocus(Qt.MouseFocusReason)
     }
     onClosed: destroy()
 
@@ -47,7 +48,7 @@ StatusModal {
 
     contentItem: Column {
                 
-        width: popup.width
+        width: root.width
         property alias categoryName: nameInput
 
         StatusInput {
@@ -68,7 +69,7 @@ StatusModal {
         ScrollView {
             id: scrollView
 
-            width: popup.width
+            width: root.width
             height: Math.min(content.height, 300)
             anchors.horizontalCenter: parent.horizontalCenter
 
@@ -108,14 +109,14 @@ StatusModal {
                     anchors.top: channelsLabel.bottom
                     height: childrenRect.height
                     width: parent.width
-                    model: chatsModel.communities.activeCommunity.chats
+                    model: root.store.activeCommunityChatsModel
                     interactive: false
                     clip: true
 
                     delegate: StatusListItem {
                         anchors.horizontalCenter: parent.horizontalCenter
-                        visible: popup.isEdit ? 
-                            model.categoryId === popup.categoryId || model.categoryId === "" : 
+                        visible: root.isEdit ?
+                            model.categoryId === root.categoryId || model.categoryId === "" :
                             model.categoryId === ""
                         height: visible ? implicitHeight : 0
                         title: "#" + model.name
@@ -126,16 +127,16 @@ StatusModal {
                         components: [
                             StatusCheckBox {
                                 id: channelItemCheckbox
-                                checked: popup.isEdit ? popup.channels.indexOf(model.id) > - 1 : false
+                                checked: root.isEdit ? root.channels.indexOf(model.id) > - 1 : false
                                 onCheckedChanged: {
-                                    var idx = popup.channels.indexOf(model.id)
+                                    var idx = root.channels.indexOf(model.id)
                                     if(checked){
                                         if(idx === -1){
-                                            popup.channels.push(model.id)
+                                            root.channels.push(model.id)
                                         }
                                     } else {
                                         if(idx > -1){
-                                            popup.channels.splice(idx, 1);
+                                            root.channels.splice(idx, 1);
                                         }
                                     }
                                 }
@@ -162,11 +163,11 @@ StatusModal {
             icon.name: "delete"
             type: StatusListItem.Type.Danger
             sensor.onClicked: {
-                openPopup(deleteCategoryConfirmationDialogComponent, {
+                openroot(deleteCategoryConfirmationDialogComponent, {
                     //% "Delete %1 category"
-                    title: qsTrId("delete--1-category").arg(popup.contentItem.categoryName.input.text),
+                    title: qsTrId("delete--1-category").arg(root.contentItem.categoryName.input.text),
                     //% "Are you sure you want to delete %1 category? Channels inside the category won’t be deleted."
-                    confirmationText: qsTrId("are-you-sure-you-want-to-delete--1-category--channels-inside-the-category-won-t-be-deleted-").arg(popup.contentItem.categoryName.input.text)
+                    confirmationText: qsTrId("are-you-sure-you-want-to-delete--1-category--channels-inside-the-category-won-t-be-deleted-").arg(root.contentItem.categoryName.input.text)
                     
                 })
             }
@@ -189,13 +190,13 @@ StatusModal {
                     close();
                 }
                 onConfirmButtonClicked: function(){
-                    const error = chatsModel.communities.deleteCommunityCategory(chatsModel.communities.activeCommunity.id, popup.categoryId)
+                    const error = root.store.deleteCommunityCategory(root.categoryId);
                     if (error) {
                         creatingError.text = error
                         return creatingError.open()
                     }
                     close();
-                    popup.close()
+                    root.close()
                 }
             }
         }
@@ -218,9 +219,9 @@ StatusModal {
                 let error = ""
 
                 if (isEdit) {
-                    error = chatsModel.communities.editCommunityCategory(communityId, categoryId, Utils.filterXSS(popup.contentItem.categoryName.input.text), JSON.stringify(channels))
+                    error = root.store.editCommunityCategory(communityId, categoryId, Utils.filterXSS(root.contentItem.categoryName.input.text), JSON.stringify(channels));
                 } else {
-                    error = chatsModel.communities.createCommunityCategory(communityId, Utils.filterXSS(popup.contentItem.categoryName.input.text), JSON.stringify(channels))
+                    error = root.store.createCommunityCategory(communityId, Utils.filterXSS(root.contentItem.categoryName.input.text), JSON.stringify(channels));
                 }
 
                 if (error) {
@@ -228,7 +229,7 @@ StatusModal {
                     return categoryError.open()
                 }
 
-                popup.close()
+                root.close()
             }
         }
     ]

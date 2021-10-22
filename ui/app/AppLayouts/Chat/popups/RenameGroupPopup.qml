@@ -10,10 +10,6 @@ import StatusQ.Popups 0.1
 import "../../../../shared/controls"
 
 StatusModal {
-    function doRename(){
-        chatsModel.groups.rename(groupName.text)
-        popup.close();
-    }
 
     id: popup
     height: 210
@@ -22,9 +18,12 @@ StatusModal {
     //% "Group name"
     header.title: qsTrId("group-name")
 
+    property string activeChannelName
+    signal doRename(string groupName)
+
     onOpened: {
         groupName.forceActiveFocus(Qt.MouseFocusReason)
-        groupName.text = chatsModel.channelView.activeChannel.name
+        groupName.text = popup.activeChannelName;
     }
 
     contentItem: Item {
@@ -50,7 +49,7 @@ StatusModal {
             id: saveBtn
             //% "Save"
             text: qsTrId("save")
-            onClicked : doRename()
+            onClicked : { doRename(groupName.text); }
         }
     ]
 }

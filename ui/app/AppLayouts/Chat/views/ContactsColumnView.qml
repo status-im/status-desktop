@@ -279,6 +279,13 @@ Item {
     Component {
         id: publicChatPopupComponent
         PublicChatPopup {
+            onJoinPublicChat: {
+                root.store.chatsModelInst.channelView.joinPublicChat(name);
+            }
+            onSuggestedMessageClicked: {
+                root.store.chatsModelInst.channelView.joinPublicChat(channel);
+            }
+
             onClosed: {
                 destroy()
             }
@@ -297,6 +304,7 @@ Item {
     Component {
         id: privateChatPopupComponent
         PrivateChatPopup {
+            store: root.store
             onClosed: {
                 destroy()
             }
@@ -310,6 +318,13 @@ Item {
         id: communitiesPopupComponent
         CommunitiesPopup {
             anchors.centerIn: parent
+            communitiesList: root.store.chatsModelInst.communities.list
+            onSetActiveCommunity: {
+                root.store.chatsModelInst.communities.setActiveCommunity(id)
+            }
+            onSetObservedCommunity: {
+                root.store.chatsModelInst.communities.setObservedCommunity(id)
+            }
             onClosed: {
                 destroy()
             }
@@ -320,6 +335,7 @@ Item {
         id: createCommunitiesPopupComponent
         CreateCommunityPopup {
             anchors.centerIn: parent
+            store: root.store
             onClosed: {
                 destroy()
             }
@@ -329,6 +345,8 @@ Item {
     Component {
         id: importCommunitiesPopupComponent
         AccessExistingCommunityPopup {
+            anchors.centerIn: parent
+            error: root.store.chatsModelInst.communities.importCommunity(communityKey, Utils.uuid())
             onClosed: {
                 destroy()
             }
@@ -339,6 +357,7 @@ Item {
         id: communityDetailPopup
         CommunityDetailPopup {
             anchors.centerIn: parent
+            store: root.store
             onClosed: {
                 destroy()
             }
@@ -348,6 +367,7 @@ Item {
     Component {
         id: contactRequestsPopup
         ContactRequestsPopup {
+            store: root.store
             onClosed: {
                 destroy()
             }

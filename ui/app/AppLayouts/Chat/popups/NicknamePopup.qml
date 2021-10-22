@@ -13,24 +13,23 @@ import StatusQ.Popups 0.1
 import "../../../../shared/controls"
 
 StatusModal {
-    property int nicknameLength: nicknameInput.textField.text.length
-    readonly property int maxNicknameLength: 32
-    property bool nicknameTooLong: nicknameLength > maxNicknameLength
-    property var changeUsername: function () {}
-    property var changeNickname: function () {}
     anchors.centerIn: parent
 
     id: popup
     width: 400
     height: 390
-
-    onOpened: {
-        nicknameInput.forceActiveFocus(Qt.MouseFocusReason)
-    }
-
     header.title: qsTr("Nickname")
     header.subTitle: isEnsVerified ? alias : fromAuthor
     header.subTitleElide: !isEnsVerified ? Text.ElideMiddle : Text.ElideNone
+
+    property int nicknameLength: nicknameInput.textField.text.length
+    readonly property int maxNicknameLength: 32
+    property bool nicknameTooLong: nicknameLength > maxNicknameLength
+    signal doneClicked(string newUsername, string newNickname)
+
+    onOpened: {
+        nicknameInput.forceActiveFocus(Qt.MouseFocusReason);
+    }
 
     contentItem: Item {
         width: popup.width
@@ -86,21 +85,8 @@ StatusModal {
             text: qsTrId("done")
             enabled: !popup.nicknameTooLong
             onClicked: {
-                if (!isEnsVerified) {
-                    // Change username title only if it was not an ENS name
-                    if (nicknameInput.textField.text === "") {
-                        // If we removed the nickname, go back to showing the alias
-                        popup.changeUsername(alias)
-                    } else {
-                        popup.changeUsername(nicknameInput.textField.text)
-                    }
-                }
-                popup.changeNickname(nicknameInput.textField.text)
-                profileModel.contacts.changeContactNickname(fromAuthor, nicknameInput.textField.text)
-                popup.close()
-                if (!!chatsModel.communities.activeCommunity) {
-                    chatsModel.communities.activeCommunity.triggerMembersUpdate()
-                }
+                // If we removed the nickname, go back to showing the alias
+                doneClicked(nicknameInput.textField.text === "" ? alias : nicknameInput.textField.text, nicknameInput.textField.text);
             }
         }
     ]

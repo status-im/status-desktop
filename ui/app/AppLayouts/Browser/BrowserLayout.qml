@@ -26,6 +26,7 @@ import "../Chat/popups"
 Rectangle {
     id: browserWindow
 
+    property var globalStore
     property Item currentWebView: tabs.currentIndex < tabs.count ? tabs.getTab(tabs.currentIndex).item : null
 
     property Component browserDialogComponent: BrowserDialog {
@@ -43,7 +44,9 @@ Rectangle {
     }
 
     // TODO we'll need a new dialog at one point because this one is not using the same call, but it's good for now
-    property Component sendTransactionModalComponent: SignTransactionModal {}
+    property Component sendTransactionModalComponent: SignTransactionModal {
+        store: browserWindow.globalStore
+    }
 
     property Component signMessageModalComponent: SignMessageModal {}
 

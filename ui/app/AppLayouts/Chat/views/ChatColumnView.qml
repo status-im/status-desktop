@@ -449,6 +449,7 @@ Item {
             id: cmpSendTransactionNoEns
             ChatCommandModal {
                 id: sendTransactionNoEns
+                store: root.rootStore
                 onClosed: {
                     txModalLoader.closed()
                 }
@@ -477,6 +478,7 @@ Item {
             id: cmpReceiveTransaction
             ChatCommandModal {
                 id: receiveTransaction
+                store: root.rootStore
                 onClosed: {
                     txModalLoader.closed()
                 }

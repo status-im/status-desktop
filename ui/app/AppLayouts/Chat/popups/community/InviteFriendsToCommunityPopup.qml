@@ -16,17 +16,18 @@ StatusModal {
     id: popup
 
     property var community
+    property bool hasAddedContacts
 
     onOpened: {
-        contentItem.community = community
+        contentItem.community = community;
 
-        contentItem.contactListSearch.chatKey.text = ""
-        contentItem.contactListSearch.pubKey = ""
-        contentItem.contactListSearch.pubKeys = []
-        contentItem.contactListSearch.ensUsername = ""
-        contentItem.contactListSearch.chatKey.forceActiveFocus(Qt.MouseFocusReason)
-        contentItem.contactListSearch.existingContacts.visible = profileModel.contacts.list.hasAddedContacts()
-        contentItem.contactListSearch.noContactsRect.visible = !contentItem.contactListSearch.existingContacts.visible
+        contentItem.contactListSearch.chatKey.text = "";
+        contentItem.contactListSearch.pubKey = "";
+        contentItem.contactListSearch.pubKeys = [];
+        contentItem.contactListSearch.ensUsername = "";
+        contentItem.contactListSearch.chatKey.forceActiveFocus(Qt.MouseFocusReason);
+        contentItem.contactListSearch.existingContacts.visible = hasAddedContacts;
+        contentItem.contactListSearch.noContactsRect.visible = !contentItem.contactListSearch.existingContacts.visible;
     }
 
     //% "Invite friends"

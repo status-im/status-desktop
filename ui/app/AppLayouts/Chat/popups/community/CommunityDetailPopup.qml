@@ -12,7 +12,10 @@ import StatusQ.Popups 0.1
 import utils 1.0
 
 StatusModal {
-    property QtObject community: chatsModel.communities.observedCommunity
+    id: root
+
+    property var store
+    property QtObject community: root.store.chatsModelInst.communities.observedCommunity
     property string communityId: community.id
     property string name: community.name
     property string description: community.description
@@ -24,8 +27,6 @@ StatusModal {
     property bool canRequestAccess: community.canRequestAccess
     property bool isMember: community.isMember
     property string communityColor: community.communityColor || Style.current.blue
-
-    id: popup
 
     header.title: name
     header.subTitle: {
@@ -55,7 +56,7 @@ StatusModal {
     }
 
     contentItem: Column {
-        width: popup.width
+        width: root.width
 
         Item {
             height: childrenRect.height + 8
@@ -66,7 +67,7 @@ StatusModal {
                 id: description
                 anchors.top: parent.top
                 anchors.topMargin: 16
-                text: popup.description
+                text: root.description
                 font.pixelSize: 15
                 color: Theme.palette.directColor1
                 wrapMode: Text.WordWrap
@@ -115,7 +116,7 @@ StatusModal {
         }
 
         ScrollView {
-            width: popup.width
+            width: root.width
             height: 300
             ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
             clip: true
@@ -130,7 +131,7 @@ StatusModal {
                     title: "#" + model.name
                     subTitle: model.description
                     icon.isLetterIdenticon: true
-                    icon.background.color: popup.communityColor
+                    icon.background.color: root.communityColor
                 }
             }
         }
@@ -145,8 +146,8 @@ StatusModal {
             icon.width: 20
             rotation: 180
             onClicked: {
-                openPopup(communitiesPopupComponent)
-                popup.close()
+                openroot(communitiesrootComponent)
+                root.close()
             }
         }
     ]
@@ -157,37 +158,37 @@ StatusModal {
                 if (access !== Constants.communityChatOnRequestAccess) {
                     return false
                 }
-                return chatsModel.communities.isCommunityRequestPending(popup.communityId)
+                return root.store.chatsModelInst.communities.isCommunityRequestPending(root.communityId)
             }
             text: {
-                if (popup.ensOnly && !profileModel.profile.ensVerified) {
+                if (root.ensOnly && !root.store.profileModelInst.profile.ensVerified) {
                     //% "Membership requires an ENS username"
                     return qsTrId("membership-requires-an-ens-username")
                 }
-                if (popup.canJoin) {
+                if (root.canJoin) {
                     //% "Join ‘%1’"
-                    return qsTrId("join---1-").arg(popup.name);
+                    return qsTrId("join---1-").arg(root.name);
                 }
                 if (isPendingRequest) {
                      //% "Pending"
                      return qsTrId("invite-chat-pending")
                 }
-                switch(popup.access) {
+                switch(root.access) {
                     //% "Join ‘%1’"
-                    case Constants.communityChatPublicAccess: return qsTrId("join---1-").arg(popup.name);
+                    case Constants.communityChatPublicAccess: return qsTrId("join---1-").arg(root.name);
                     //% "You need to be invited"
                     case Constants.communityChatInvitationOnlyAccess: return qsTrId("you-need-to-be-invited");
                     //% "Request to join ‘%1’"
-                    case Constants.communityChatOnRequestAccess: return qsTrId("request-to-join---1-").arg(popup.name);
+                    case Constants.communityChatOnRequestAccess: return qsTrId("request-to-join---1-").arg(root.name);
                     //% "Unknown community"
                     default: return qsTrId("unknown-community");
                 }
             }
             enabled: {
-                if (popup.ensOnly && !profileModel.profile.ensVerified) {
+                if (root.ensOnly && !root.store.profileModelInst.profile.ensVerified) {
                     return false
                 }
-                if (popup.access === Constants.communityChatInvitationOnlyAccess || isPendingRequest) {
+                if (root.access === Constants.communityChatInvitationOnlyAccess || isPendingRequest) {
                     return false
                 }
                 if (canJoin) {
@@ -197,16 +198,16 @@ StatusModal {
             }
             onClicked: {
                 let error
-                if (access === Constants.communityChatOnRequestAccess && !popup.isMember) {
-                    error = chatsModel.communities.requestToJoinCommunity(popup.communityId,
-                                                              profileModel.profile.ensVerified ? profileModel.profile.username : "")
+                if (access === Constants.communityChatOnRequestAccess && !root.isMember) {
+                    error = root.store.chatsModelInst.communities.requestToJoinCommunity(root.communityId,
+                            root.store.profileModelInst.profile.ensVerified ? root.store.profileModelInst.profile.username : "")
                     if (!error) {
                         enabled = false
                         //% "Pending"
                         text = qsTrId("invite-chat-pending")
                     }
                 } else {
-                    error = chatsModel.communities.joinCommunity(popup.communityId, true)
+                    error = root.store.chatsModelInst.communities.joinCommunity(root.communityId, true)
                 }
 
                 if (error) {
@@ -214,7 +215,7 @@ StatusModal {
                     return joiningError.open()
                 }
 
-                popup.close()
+                root.close()
             }
         }
     ]

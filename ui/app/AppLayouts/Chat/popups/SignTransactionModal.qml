@@ -14,7 +14,14 @@ import "../../../../shared/views"
 import "../../../../shared/popups"
 import "../../Wallet/"
 
+//TODO remove dynamic scoping
 StatusModal {
+    id: root
+    //% "Send"
+    header.title: qsTrId("command-button-send")
+    height: 540
+
+    property var store
     property var selectedAccount
     property var selectedRecipient
     property var selectedAsset
@@ -29,7 +36,7 @@ StatusModal {
     property var sendTransaction: function(selectedGasLimit, selectedGasPrice, selectedTipLimit, selectedOveralLimit, enteredPassword) {
         let success = false
         if(root.selectedAsset.address == Constants.zeroAddress){
-            success = walletModel.transactionsView.transferEth(
+            success = root.store.walletModelInst.transactionsView.transferEth(
                                                 selectFromAccount.selectedAccount.address,
                                                  selectRecipient.selectedRecipient.address,
                                                  root.selectedAmount,
@@ -40,7 +47,7 @@ StatusModal {
                                                  enteredPassword,
                                                  stack.uuid)
         } else {
-            success = walletModel.transactionsView.transferTokens(
+            success = root.store.walletModelInst.transactionsView.transferTokens(
                                                  selectFromAccount.selectedAccount.address,
                                                  selectRecipient.selectedRecipient.address,
                                                  root.selectedAsset.address,
@@ -59,12 +66,6 @@ StatusModal {
             sendingError.open()
         }
     }
-
-    id: root
-
-    //% "Send"
-    header.title: qsTrId("command-button-send")
-    height: 540
 
     property MessageDialog sendingError: MessageDialog {
         id: sendingError
@@ -95,7 +96,7 @@ StatusModal {
                 id: groupSelectAcct
                 headerText: {
                     if(trxData.startsWith("0x095ea7b3")){
-                        const approveData = JSON.parse(walletModel.tokensView.decodeTokenApproval(selectedRecipient.address, trxData))
+                        const approveData = JSON.parse(root.store.walletModelInst.tokensView.decodeTokenApproval(selectedRecipient.address, trxData))
                         if(approveData.symbol)
                             //% "Authorize %1 %2"
                             return qsTrId("authorize--1--2").arg(approveData.amount).arg(approveData.symbol)    
@@ -112,8 +113,8 @@ StatusModal {
                 }
                 StatusAccountSelector {
                     id: selectFromAccount
-                    accounts: walletModel.accountsView.accounts
-                    currency: walletModel.balanceView.defaultCurrency
+                    accounts: root.store.walletModelInst.accountsView.accounts
+                    currency: root.store.walletModelInst.balanceView.defaultCurrency
                     width: stack.width
                     selectedAccount: root.selectedAccount
                     //% "Choose account"
@@ -125,8 +126,8 @@ StatusModal {
                 RecipientSelector {
                     id: selectRecipient
                     visible: false
-                    accounts: walletModel.accountsView.accounts
-                    contacts: profileModel.contacts.addedContacts
+                    accounts: root.store.walletModelInst.accountsView.accounts
+                    contacts: root.store.profileModelInst.contacts.addedContacts
                     selectedRecipient: root.selectedRecipient
                     readOnly: true
                 }
@@ -143,10 +144,10 @@ StatusModal {
                 GasSelector {
                     id: gasSelector
                     anchors.topMargin: Style.current.padding
-                    gasPrice: parseFloat(walletModel.gasView.gasPrice)
-                    getGasEthValue: walletModel.gasView.getGasEthValue
-                    getFiatValue: walletModel.balanceView.getFiatValue
-                    defaultCurrency: walletModel.balanceView.defaultCurrency
+                    gasPrice: parseFloat(root.store.walletModelInst.gasView.gasPrice)
+                    getGasEthValue: root.store.walletModelInst.gasView.getGasEthValue
+                    getFiatValue: root.store.walletModelInst.balanceView.getFiatValue
+                    defaultCurrency: root.store.walletModelInst.balanceView.defaultCurrency
                     width: stack.width
         
                     property var estimateGas: Backpressure.debounce(gasSelector, 600, function() {
@@ -159,7 +160,7 @@ StatusModal {
                             return
                         }
                         
-                        let gasEstimate = JSON.parse(walletModel.gasView.estimateGas(
+                        let gasEstimate = JSON.parse(root.store.walletModelInst.gasView.estimateGas(
                             selectFromAccount.selectedAccount.address,
                             selectRecipient.selectedRecipient.address,
                             root.selectedAsset.address,
@@ -213,7 +214,7 @@ StatusModal {
                     toAccount: selectRecipient.selectedRecipient
                     asset: root.selectedAsset
                     amount: { "value": root.selectedAmount, "fiatValue": root.selectedFiatAmount }
-                    currency: walletModel.balanceView.defaultCurrency
+                    currency: root.store.walletModelInst.balanceView.defaultCurrency
                     isFromEditable: false
                     trxData: root.trxData
                     isGasEditable: true
@@ -254,7 +255,7 @@ StatusModal {
                 TransactionSigner {
                     id: transactionSigner
                     width: stack.width
-                    signingPhrase: walletModel.utilsView.signingPhrase
+                    signingPhrase: root.store.walletModelInst.utilsView.signingPhrase
                 }
             }
         }
@@ -335,7 +336,7 @@ StatusModal {
     }
 
     Connections {
-        target: walletModel.transactionsView
+        target: root.store.walletModelInst.transactionsView
         onTransactionWasSent: {
             try {
                 let response = JSON.parse(txResult)
@@ -356,14 +357,14 @@ StatusModal {
 
                 chatsModel.transactions.acceptRequestTransaction(transactionId,
                                                         messageId,
-                                                        profileModel.profile.pubKey + transactionId.substr(2))
+                                                        root.store.profileModelInst.profile.pubKey + transactionId.substr(2))
 
                 //% "Transaction pending..."
                 toastMessage.title = qsTrId("ens-transaction-pending")
                 toastMessage.source = Style.svg("loading")
                 toastMessage.iconColor = Style.current.primary
                 toastMessage.iconRotates = true
-                toastMessage.link = `${walletModel.utilsView.etherscanLink}/${transactionId}`
+                toastMessage.link = `${root.store.walletModelInst.utilsView.etherscanLink}/${transactionId}`
                 toastMessage.open()
 
                 root.close()

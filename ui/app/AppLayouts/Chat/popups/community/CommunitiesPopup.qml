@@ -15,6 +15,10 @@ import "../../../../../shared"
 StatusModal {
     id: popup
 
+    property var communitiesList
+    signal setActiveCommunity(string id)
+    signal setObservedCommunity(string id)
+
     onOpened: {
         contentItem.searchBox.input.text = "";
         contentItem.searchBox.input.forceActiveFocus(Qt.MouseFocusReason)
@@ -102,7 +106,7 @@ StatusModal {
                     }
                 ]
 
-                model: chatsModel.communities.list
+                model: popup.communitiesList
                 delegate: StatusListItem {
                     visible: {
                         if (!searchBox.input.text) {
@@ -125,9 +129,9 @@ StatusModal {
 
                     sensor.onClicked: {
                         if (joined && isMember) {
-                            chatsModel.communities.setActiveCommunity(id)
+                            popup.setActiveCommunity(id);
                         } else {
-                            chatsModel.communities.setObservedCommunity(id)
+                            popup.setObservedCommunity(id);
                             openPopup(communityDetailPopup)
                         }
                         popup.close()

@@ -15,10 +15,11 @@ ModalPopup {
     id: popup
     //% "New chat"
     title: qsTrId("new-chat")
+    property var store
 
     signal profileClicked()
     function doJoin(pk, ensName) {
-        chatsModel.channelView.joinPrivateChat(pk, Utils.isChatKey(pk) ? "" : ensName);
+        popup.store.chatsModelInst.channelView.joinPrivateChat(pk, Utils.isChatKey(pk) ? "" : ensName);
         popup.close();
     }
 
@@ -27,7 +28,7 @@ ModalPopup {
         contactFieldAndList.pubKey = ""
         contactFieldAndList.ensUsername = ""
         contactFieldAndList.chatKey.forceActiveFocus(Qt.MouseFocusReason)
-        contactFieldAndList.existingContacts.visible = profileModel.contacts.list.hasAddedContacts()
+        contactFieldAndList.existingContacts.visible = popup.store.profileModelInst.contacts.list.hasAddedContacts()
         contactFieldAndList.noContactsRect.visible = !contactFieldAndList.existingContacts.visible
     }
 
@@ -38,7 +39,7 @@ ModalPopup {
         width: parent.width
         addContactEnabled: false
         onUserClicked: function (isContact, pubKey, ensName) {
-            chatsModel.channelView.joinPrivateChat(pubKey, Utils.isChatKey(pubKey) ? "" : ensName);
+            popup.store.chatsModelInst.channelView.joinPrivateChat(pubKey, Utils.isChatKey(pubKey) ? "" : ensName);
             popup.close();
         }
     }
@@ -63,7 +64,7 @@ ModalPopup {
                 anchors.left: parent.left
                 anchors.leftMargin: 2
                 anchors.verticalCenter: parent.verticalCenter
-                source: appMain.getProfileImage(profileModel.profile.pubKey)
+                source: appMain.getProfileImage(popup.store.profileModelInst.profile.pubKey)
             }
 
             StyledText {

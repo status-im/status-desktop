@@ -15,6 +15,9 @@ StatusModal {
     //% "Select account"
     header.title: qsTrId("select-account")
     height: 284
+
+    property var accounts
+    property string currency
     property alias accountSelector: selectFromAccount
     signal selectAndShareAddressButtonClicked()
 
@@ -28,8 +31,8 @@ StatusModal {
           anchors.rightMargin: Style.current.padding
           StatusAccountSelector {
               id: selectFromAccount
-              accounts: walletModel.accountsView.accounts
-              currency: walletModel.balanceView.defaultCurrency
+              accounts: root.accounts
+              currency: root.currency
               width: parent.width
               //% "Choose account"
               //% "Select account to share and receive assets"
