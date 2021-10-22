@@ -18,11 +18,15 @@ type
     signingPhrase*: string
     currency*: string
     mnemonic*: string
+    walletRootAddress*: string
+    latestDerivedPath*: int
 
 proc toSettingDto*(jsonObj: JsonNode): SettingDto =
   result = SettingDto()
 
   discard jsonObj.getProp("signing-phrase", result.signingPhrase)
+  discard jsonObj.getProp("wallet-root-address", result.walletRootAddress)
+  discard jsonObj.getProp("latest-derived-path", result.latestDerivedPath)
   discard jsonObj.getProp("mnemonic", result.mnemonic)
 
   if not jsonObj.getProp("currency", result.currency):

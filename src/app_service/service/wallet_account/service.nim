@@ -3,6 +3,8 @@ import web3/[ethtypes, conversions]
 
 import ../setting/service as setting_service
 import ../token/service as token_service
+import ../../common/account_constants
+import ../../../constants
 
 import ./service_interface, ./dto
 import status/statusgo_backend_new/accounts as status_go_accounts
@@ -126,6 +128,9 @@ method getWalletAccount*(self: Service, accountIndex: int): WalletAccountDto =
 method getCurrencyBalance*(self: Service): float64 =
   return self.getWalletAccounts().map(a => a.getCurrencyBalance()).foldl(a + b, 0.0)
 
+method getDefaultAccount(self: Service): string =
+  return status_go_eth.getAccounts().result[0].getStr
+
 method saveAccount(
   self: Service,
   address: string,
@@ -151,13 +156,73 @@ method saveAccount(
   )
 
 method generateNewAccount*(self: Service, password: string, accountName: string, color: string) =
-  discard
+  let
+    setting = self.settingService.getSetting()
+    walletRootAddress = setting.walletRootAddress
+    walletIndex = setting.latestDerivedPath + 1
+
+  let accountResponse = status_go_accounts.loadAccount(walletRootAddress, password)
+  let accountId = accountResponse.result{"accountId"}.getStr
+  let deriveResponse = status_go_accounts.deriveAccounts(accountId, @["m/" & $walletIndex])
+
+  self.saveAccount(
+    deriveResponse.result{"address"}.getStr,
+    accountName,
+    password,
+    color,
+    status_go_accounts.GENERATED,
+    true,
+    walletIndex,
+    accountId,
+    deriveResponse.result{"publicKey"}.getStr
+  )
 
 method addAccountsFromPrivateKey*(self: Service, privateKey: string, password: string, accountName: string, color: string) =
-  discard
+  let
+    accountResponse = status_go_accounts.multiAccountImportPrivateKey(privateKey)
+    defaultAccount = self.getDefaultAccount()
+    isPasswordOk = status_go_accounts.verifyAccountPassword(defaultAccount, password, KEYSTOREDIR)
+
+  if not isPasswordOk:
+    return
+
+  self.saveAccount(
+    accountResponse.result{"address"}.getStr,
+    accountName,
+    password,
+    color,
+    status_go_accounts.KEY,
+    false,
+    0,
+    accountResponse.result{"accountId"}.getStr,
+    accountResponse.result{"publicKey"}.getStr,
+  )
 
 method addAccountsFromSeed*(self: Service, seedPhrase: string, password: string, accountName: string, color: string) =
-  discard
+  let mnemonic = replace(seedPhrase, ',', ' ')
+  let paths = @[PATH_WALLET_ROOT, PATH_EIP_1581, PATH_WHISPER, PATH_DEFAULT_WALLET]
+  let accountResponse = status_go_accounts.multiAccountImportMnemonic(mnemonic)
+  let accountId = accountResponse.result{"accountId"}.getStr
+  let deriveResponse = status_go_accounts.deriveAccounts(accountId, paths)
+ 
+  let
+    defaultAccount = self.getDefaultAccount()
+    isPasswordOk = status_go_accounts.verifyAccountPassword(defaultAccount, password, KEYSTOREDIR)
+
+  if not isPasswordOk:
+    return
+
+  self.saveAccount(
+    deriveResponse.result{"address"}.getStr,
+    accountName,
+    password,
+    color,
+    status_go_accounts.SEED,
+    false,
+    0,
+    accountId,
+    deriveResponse.result{"publicKey"}.getStr
+  )
 
 method addWatchOnlyAccount*(self: Service, address: string, accountName: string, color: string) =
   self.saveAccount(address, accountName, "", color, status_go_accounts.WATCH, false)
@@ -165,63 +230,3 @@ method addWatchOnlyAccount*(self: Service, address: string, accountName: string,
 method deleteAccount*(self: Service, address: string) =
   discard status_go_accounts.deleteAccount(address)
   self.accounts.del(address)
-
-
-#   proc addNewGeneratedAccount(self: WalletModel, generatedAccount: GeneratedAccount, password: string, accountName: string, color: string, accountType: string, isADerivedAccount = true, walletIndex: int = 0) =
-#   try:
-#     generatedAccount.name = accountName
-#     var derivedAccount: DerivedAccount = status_accounts.saveAccount(generatedAccount, password, color, accountType, isADerivedAccount, walletIndex)
-#     var account = self.newAccount(accountType, derivedAccount.derivationPath, accountName, derivedAccount.address, color, fmt"0.00 {self.defaultCurrency}", derivedAccount.publicKey)
-#     self.accounts.add(account)
-#     # wallet_checkRecentHistory is required to be called when a new account is
-#     # added before wallet_getTransfersByAddress can be called. This is because
-#     # wallet_checkRecentHistory populates the status-go db that
-#     # wallet_getTransfersByAddress reads from
-#     discard status_wallet.checkRecentHistory(self.accounts.map(account => account.address))
-#     self.events.emit("newAccountAdded", wallet_account.AccountArgs(account: account))
-#   except Exception as e:
-#     raise newException(StatusGoException, fmt"Error adding new account: {e.msg}")
-
-# proc generateNewAccount*(self: WalletModel, password: string, accountName: string, color: string) =
-#   let
-#     walletRootAddress = status_settings.getSetting[string](Setting.WalletRootAddress, "")
-#     walletIndex = status_settings.getSetting[int](Setting.LatestDerivedPath) + 1
-#     loadedAccount = status_accounts.loadAccount(walletRootAddress, password)
-#     derivedAccount = status_accounts.deriveWallet(loadedAccount.id, walletIndex)
-#     generatedAccount = GeneratedAccount(
-#       id: loadedAccount.id,
-#       publicKey: derivedAccount.publicKey,
-#       address: derivedAccount.address
-#     )
-
-#   # if we've gotten here, the password is ok (loadAccount requires a valid password)
-#   # so no need to check for a valid password
-#   self.addNewGeneratedAccount(generatedAccount, password, accountName, color, constants.GENERATED, true, walletIndex)
-  
-#   let statusGoResult = status_settings.saveSetting(Setting.LatestDerivedPath, $walletIndex)
-#   if statusGoResult.error != "":
-#     error "Error storing the latest wallet index", msg=statusGoResult.error
-
-# proc addAccountsFromSeed*(self: WalletModel, seed: string, password: string, accountName: string, color: string, keystoreDir: string) =
-#   let mnemonic = replace(seed, ',', ' ')
-#   var generatedAccount = status_accounts.multiAccountImportMnemonic(mnemonic)
-#   generatedAccount.derived = status_accounts.deriveAccounts(generatedAccount.id)
- 
-#   let
-#     defaultAccount = eth.getDefaultAccount()
-#     isPasswordOk = status_accounts.verifyAccountPassword(defaultAccount, password, keystoreDir)
-#   if not isPasswordOk:
-#     raise newException(StatusGoException, "Error generating new account: invalid password")
-
-#   self.addNewGeneratedAccount(generatedAccount, password, accountName, color, constants.SEED)
-
-# proc addAccountsFromPrivateKey*(self: WalletModel, privateKey: string, password: string, accountName: string, color: string, keystoreDir: string) =
-#   let
-#     generatedAccount = status_accounts.MultiAccountImportPrivateKey(privateKey)
-#     defaultAccount = eth.getDefaultAccount()
-#     isPasswordOk = status_accounts.verifyAccountPassword(defaultAccount, password, keystoreDir)
-
-#   if not isPasswordOk:
-#     raise newException(StatusGoException, "Error generating new account: invalid password")
-
-#   self.addNewGeneratedAccount(generatedAccount, password, accountName, color, constants.KEY, false)
