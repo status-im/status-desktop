@@ -11,6 +11,7 @@ import "../../../../shared/status"
 import "../../Chat/views"
 
 import StatusQ.Core 0.1
+import StatusQ.Controls 0.1 as StatusQ
 
 import "../popups"
 
@@ -121,13 +122,13 @@ ScrollView {
             text: qsTrId("change-font-size")
         }
 
-        StatusSlider {
+        StatusQ.StatusSlider {
             id: fontSizeSlider
             anchors.top: labelFontSize.bottom
             anchors.topMargin: Style.current.padding
             width: parent.width
-            minimumValue: 0
-            maximumValue: 5
+            from: 0
+            to: 5
             stepSize: 1
             value: appSettings.fontSize
             onValueChanged: {
@@ -201,7 +202,7 @@ ScrollView {
             text: qsTr("Change Zoom (requires restart)")
         }
 
-        StatusSlider {
+        StatusQ.StatusSlider {
             id: zoomSlider
             readonly property int initialValue: {
                 let scaleFactorStr = root.store.readTextFile(uiScaleFilePath)
@@ -217,8 +218,8 @@ ScrollView {
             anchors.top: labelZoom.bottom
             anchors.topMargin: Style.current.padding
             width: parent.width
-            minimumValue: 50
-            maximumValue: 200
+            from: 50
+            to: 200
             stepSize: 50
             value: initialValue
             onValueChanged: {
