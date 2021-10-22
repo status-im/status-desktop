@@ -21,6 +21,7 @@ Rectangle {
     property int communityTypeValue: -1
     property int navBarButtonSpacing: 12
 
+    property StatusNavBarTabButton navBarProfileButton
     property Component regularNavBarButton
     property Component communityNavBarButton
 
@@ -29,6 +30,12 @@ Rectangle {
 
     signal aboutToUpdateFilteredRegularModel()
     signal aboutToUpdateFilteredCommunityModel()
+
+    onNavBarProfileButtonChanged: {
+        if (!!navBarProfileButton) {
+            navBarProfileButton.parent = navBarProfileButtonSlot
+        }
+    }
 
     StatusAppNavBarFilterModel {
         id: navBarModel
@@ -143,9 +150,21 @@ Rectangle {
         anchors.right: parent.right
         anchors.top: parent.top
         anchors.topMargin: 48
-        anchors.bottom: parent.bottom
+        anchors.bottom: navBarProfileButtonSlot.top
+        anchors.bottomMargin: navBarButtonSpacing
+
         spacing: navBarButtonSpacing
 
         model: navBarModel
+    }
+
+    Item {
+        id: navBarProfileButtonSlot
+        anchors.horizontalCenter: parent.horizontalCenter
+        height: visible? statusAppNavBar.navBarProfileButton.height : 0
+        width: visible? statusAppNavBar.navBarProfileButton.width : 0
+        visible: !!statusAppNavBar.navBarProfileButton
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: visible ? 32 : 0
     }
 }
