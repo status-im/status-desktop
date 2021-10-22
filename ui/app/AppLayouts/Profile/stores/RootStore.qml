@@ -16,8 +16,8 @@ QtObject {
     property var nodeModelInst: nodeModel
 
     property var ens: profileModelInst.ens
-    property var dappList: profileModelInst.dappList
-    property var permissionList: profileModelInst.dappList.permissionList
+    property var dappList: dappPermissionsModule.dapps
+    property var permissionList: dappPermissionsModule.permissions
     property var mailservers: profileModelInst.mailservers
     property var mailserversList: profileModelInst.mailservers.list
     property var contacts: profileModelInst.contacts.model.list
@@ -153,27 +153,19 @@ QtObject {
     }
 
     function initPermissionList(name) {
-        profileModelInst.dappList.permissionList.init(name)
+        dappPermissionsModule.fetchPermissions(name)
     }
 
-    function clearPermissionList() {
-        profileModelInst.dappList.permissionList.clearData()
+    function revokePermission(dapp, name) {
+        dappPermissionsModule.revokePermission(dapp, name)
     }
 
-    function revokePermission(name) {
-        profileModelInst.dappList.permissionList.revokePermission(name)
-    }
-
-    function revokeAllPermissionAccess() {
-        profileModelInst.dappList.permissionList.revokeAccess()
+    function clearPermissions(dapp) {
+        dappPermissionsModule.clearPermissions(dapp)
     }
 
     function initDappList() {
-        profileModelInst.dappList.init()
-    }
-
-    function clearDappList() {
-        profileModelInst.dappList.clearData()
+        dappPermissionsModule.fetchDapps()
     }
 
     function getQrCodeSource(publicKey) {

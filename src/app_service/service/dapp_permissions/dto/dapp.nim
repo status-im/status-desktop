@@ -10,6 +10,6 @@ type Dapp* = object
 proc toDapp*(jsonObj: JsonNode): Dapp =
   result = Dapp()
   result.permissions = initHashSet[Permission]()
-  discard jsonObj.getProp("name", result.name)
+  discard jsonObj.getProp("dapp", result.name)
   for permission in jsonObj["permissions"].getElems():
     result.permissions.incl(permission.getStr().toPermission())
