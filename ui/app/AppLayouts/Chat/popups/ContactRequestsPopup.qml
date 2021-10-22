@@ -16,7 +16,7 @@ import "../panels"
 ModalPopup {
     id: popup
 
-
+    property var store
     //% "Contact requests"
     title: qsTrId("contact-requests")
 
@@ -32,7 +32,7 @@ ModalPopup {
         anchors.leftMargin: -Style.current.halfPadding
         anchors.rightMargin: -Style.current.halfPadding
 
-        model: profileModel.contacts.contactRequests
+        model: popup.store.profileModelInst.contacts.contactRequests
         clip: true
 
         delegate: ContactRequestPanel {
@@ -50,11 +50,11 @@ ModalPopup {
                 blockContactConfirmationDialog.open()
             }
             onAcceptClicked: {
-                chatsModel.channelView.joinPrivateChat(model.address, "")
-                profileModel.contacts.addContact(model.address)
+                popup.store.chatsModelInst.channelView.joinPrivateChat(model.address, "")
+                popup.store.profileModelInst.contacts.addContact(model.address)
             }
             onDeclineClicked: {
-                profileModel.contacts.rejectContactRequest(model.address)
+                popup.store.profileModelInst.contacts.rejectContactRequest(model.address)
             }
         }
     }
@@ -66,7 +66,7 @@ ModalPopup {
         BlockContactConfirmationDialog {
             id: blockContactConfirmationDialog
             onBlockButtonClicked: {
-                profileModel.contacts.blockContact(blockContactConfirmationDialog.contactAddress)
+                popup.store.profileModelInst.contacts.blockContact(blockContactConfirmationDialog.contactAddress)
                 blockContactConfirmationDialog.close()
             }
         }
@@ -78,12 +78,12 @@ ModalPopup {
             //% "Are you sure you want to decline all these contact requests"
             confirmationText: qsTrId("are-you-sure-you-want-to-decline-all-these-contact-requests")
             onConfirmButtonClicked: {
-                const requests = profileModel.contacts.contactRequests
+                const requests = popup.store.profileModelInst.contacts.contactRequests
                 const pubkeys = []
                 for (let i = 0; i < requests.count; i++) {
                     pubkeys.push(requests.rowData(i, "address"))
                 }
-                profileModel.contacts.rejectContactRequests(JSON.stringify(pubkeys))
+                popup.store.profileModelInst.contacts.rejectContactRequests(JSON.stringify(pubkeys))
                 declineAllDialog.close()
             }
         }
@@ -95,12 +95,12 @@ ModalPopup {
             //% "Are you sure you want to accept all these contact requests"
             confirmationText: qsTrId("are-you-sure-you-want-to-accept-all-these-contact-requests")
             onConfirmButtonClicked: {
-                const requests = profileModel.contacts.contactRequests
+                const requests = popup.store.profileModelInst.contacts.contactRequests
                 const pubkeys = []
                 for (let i = 0; i < requests.count; i++) {
                     pubkeys.push(requests.rowData(i, "address"))
                 }
-                profileModel.contacts.acceptContactRequests(JSON.stringify(pubkeys))
+                popup.store.profileModelInst.contacts.acceptContactRequests(JSON.stringify(pubkeys))
                 acceptAllDialog.close()
             }
         }

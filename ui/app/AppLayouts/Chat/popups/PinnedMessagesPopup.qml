@@ -18,12 +18,12 @@ ModalPopup {
     property var rootStore
     property var messageStore
     property bool userCanPin: {
-        switch (chatsModel.channelView.activeChannel.chatType) {
+        switch (popup.rootStore.chatsModelInst.channelView.activeChannel.chatType) {
         case Constants.chatTypePublic: return false
         case Constants.chatTypeStatusUpdate: return false
         case Constants.chatTypeOneToOne: return true
-        case Constants.chatTypePrivateGroupChat: return chatsModel.channelView.activeChannel.isAdmin(profileModel.profile.pubKey)
-        case Constants.chatTypeCommunity: return chatsModel.communities.activeCommunity.admin
+        case Constants.chatTypePrivateGroupChat: return popup.rootStore.chatsModelInst.channelView.activeChannel.isAdmin(profileModel.profile.pubKey)
+        case Constants.chatTypeCommunity: return popup.rootStore.chatsModelInst.communities.activeCommunity.admin
         default: return false
         }
     }
@@ -97,7 +97,7 @@ ModalPopup {
 
         ListView {
             id: pinnedMessageListView
-            model: chatsModel.messageView.pinnedMessagesList
+            model: popup.rootStore.chatsModelInst.messageView.pinnedMessagesList
             height: parent.height
             anchors.left: parent.left
             anchors.leftMargin: -Style.current.padding
@@ -235,9 +235,9 @@ ModalPopup {
             type: StatusQControls.StatusBaseButton.Type.Danger
             anchors.right: parent.right
             onClicked: {
-                const chatId = chatsModel.channelView.activeChannel.id
-                chatsModel.messageView.unPinMessage(messageToUnpin, chatId)
-                chatsModel.messageView.pinMessage(messageToPin, chatId)
+                const chatId = popup.rootStore.chatsModelInst.channelView.activeChannel.id
+                popup.rootStore.chatsModelInst.messageView.unPinMessage(messageToUnpin, chatId)
+                popup.rootStore.chatsModelInst.messageView.pinMessage(messageToPin, chatId)
                 messageToUnpin = messageToPin = ""
                 popup.close()
             }

@@ -12,6 +12,7 @@ import StatusQ.Popups 0.1
 
 StatusModal {
     id: popup
+    property var store
     property string communityId
     property QtObject channel
     property bool isEdit: false
@@ -170,7 +171,7 @@ StatusModal {
                 //% "Pinned messages"
                 title: qsTrId("pinned-messages")
                 icon.name: "pin"
-                label: chatsModel.messageView.pinnedMessagesList.count
+                label: popup.store.chatsModelInst.messageView.pinnedMessagesList.count
                 components: [
                     StatusIcon {
                         icon: "chevron-down"
@@ -204,15 +205,12 @@ StatusModal {
                 }
                 let error = "";
                 if (!isEdit) {
-                    error = chatsModel.createCommunityChannel(communityId,
+                    error = popup.store.createCommunityChannel(communityId,
                                                                 Utils.filterXSS(popup.contentItem.channelName.input.text),
                                                                 Utils.filterXSS(popup.contentItem.channelDescription.input.text),
                                                                 categoryId)
-                                                                // TODO: pass the private value when private channels
-                                                                // are implemented
-                                                                //privateSwitch.checked)
                 } else {
-                    error = chatsModel.editCommunityChannel(communityId,
+                    error = popup.store.editCommunityChannel(communityId,
                                                                 popup.contentItem.channelId,
                                                                 Utils.filterXSS(popup.contentItem.channelName.input.text),
                                                                 Utils.filterXSS(popup.contentItem.channelDescription.input.text),

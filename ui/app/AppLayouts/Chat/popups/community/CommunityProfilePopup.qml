@@ -10,10 +10,10 @@ import utils 1.0
 import "../../panels/communities"
 
 StatusModal {
+    id: root
 
+    property var store
     property var community
-
-    id: popup
 
     onClosed: {
         while (contentItem.depth > 1) {
@@ -24,13 +24,13 @@ StatusModal {
     header.title: contentItem.currentItem.headerTitle
     header.subTitle: contentItem.currentItem.headerSubtitle || ""
     header.image.source: contentItem.currentItem.headerImageSource || ""
-    header.icon.isLetterIdenticon: contentItem.currentItem.headerTitle == popup.community.name && !contentItem.currentItem.headerImageSource
-    header.icon.background.color: popup.community.communityColor
+    header.icon.isLetterIdenticon: contentItem.currentItem.headerTitle == root.community.name && !contentItem.currentItem.headerImageSource
+    header.icon.background.color: root.community.communityColor
 
     contentItem: StackView {
         id: stack
         initialItem: profileOverview
-        width: popup.width
+        width: root.width
         implicitHeight: currentItem.implicitHeight || currentItem.height
 
         pushEnter: Transition { enabled: false }
@@ -43,9 +43,9 @@ StatusModal {
             CommunityProfilePopupOverviewPanel {
                 width: stack.width
 
-                headerTitle: popup.community.name
+                headerTitle: root.community.name
                 headerSubtitle: {
-                    switch(popup.community.access) {
+                    switch(root.community.access) {
                         //% "Public community"
                         case Constants.communityChatPublicAccess: return qsTrId("public-community");
                         //% "Invitation only community"
@@ -56,31 +56,29 @@ StatusModal {
                         default: return qsTrId("unknown-community");
                     }
                 }
-                headerImageSource: popup.community.thumbnailImage
-                community: popup.community
+                headerImageSource: root.community.thumbnailImage
+                community: root.community
 
-                onMembersListButtonClicked: popup.contentItem.push(membersList)
+                onMembersListButtonClicked: root.contentItem.push(membersList)
                 onNotificationsButtonClicked: {
-                    chatsModel.communities.setCommunityMuted(popup.community.id, checked)
+                    root.store.setCommunityMuted(root.community.id, checked);
                 }
-                onEditButtonClicked: openPopup(editCommunityPopup, {
-                    community: popup.community
+                onEditButtonClicked: openroot(editCommunityroot, {
+                    community: root.community
                 })
-                onTransferOwnershipButtonClicked: openPopup(transferOwnershipPopup, {privateKey: chatsModel.communities.exportCommunity()})
+                onTransferOwnershipButtonClicked: openroot(transferOwnershiproot, {privateKey: root.store.exportCommunity()})
                 onLeaveButtonClicked: {
-                    chatsModel.communities.leaveCommunity(popup.community.id)
-                    popup.close()
+                    root.store.leaveCommunity(root.community.id);
+                    root.close();
                 }
                 onCopyToClipboard: {
-                    //TODO
-                    //root.store.copyToClipboard(link);
-                    chatsModel.copyToClipboard(link);
+                    root.store.copyToClipboard(link);
                 }
             }
         }
 
         Component {
-            id: transferOwnershipPopup
+            id: transferOwnershiproot
             TransferOwnershipPopup {
                 anchors.centerIn: parent
                 onClosed: {
@@ -95,9 +93,9 @@ StatusModal {
                 width: stack.width
                 //% "Members"
                 headerTitle: qsTrId("members-label")
-                headerSubtitle: popup.community.nbMembers.toString()
-                community: popup.community
-                onInviteButtonClicked: popup.contentItem.push(inviteFriendsView)
+                headerSubtitle: root.community.nbMembers.toString()
+                community: root.community
+                onInviteButtonClicked: root.contentItem.push(inviteFriendsView)
             }
         }
 
@@ -107,13 +105,13 @@ StatusModal {
                 width: stack.width
                 //% "Invite friends"
                 headerTitle: qsTrId("invite-friends")
-                community: popup.community
+                community: root.community
 
                 contactListSearch.chatKey.text: ""
                 contactListSearch.pubKey: ""
                 contactListSearch.pubKeys: []
                 contactListSearch.ensUsername: ""
-                contactListSearch.existingContacts.visible: profileModel.contacts.list.hasAddedContacts()
+                contactListSearch.existingContacts.visible: root.store.profileModelInst.contacts.list.hasAddedContacts()
                 contactListSearch.noContactsRect.visible: !contactListSearch.existingContacts.visible
             }
         }
@@ -138,12 +136,12 @@ StatusModal {
         StatusButton {
             //% "Invite"
             text: qsTrId("community-invite-title")
-            visible: popup.contentItem.depth > 2
+            visible: root.contentItem.depth > 2
             height: !visible ? 0 : implicitHeight
-            enabled: popup.contentItem.currentItem.contactListSearch !== undefined && popup.contentItem.currentItem.contactListSearch.pubKeys.length > 0
+            enabled: root.contentItem.currentItem.contactListSearch !== undefined && root.contentItem.currentItem.contactListSearch.pubKeys.length > 0
             onClicked: {
-                popup.contentItem.currentItem.sendInvites(popup.contentItem.currentItem.contactListSearch.pubKeys)
-                popup.contentItem.pop()
+                root.contentItem.currentItem.sendInvites(root.contentItem.currentItem.contactListSearch.pubKeys)
+                root.contentItem.pop()
             }
         }
     ]

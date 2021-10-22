@@ -22,6 +22,7 @@ ModalPopup {
         ActiveChannel,
         ContextChannel
     }
+    property var store
     property bool addMembers: false
     property int currMemberCount: 1
     property int memberCount: 1
@@ -55,7 +56,7 @@ ModalPopup {
 
     onOpened: {
         addMembers = false;
-        popup.isAdmin = popup.channel.isAdmin(profileModel.profile.pubKey)
+        popup.isAdmin = popup.channel.isAdmin(popup.store.profileModelInst.profile.pubKey)
         btnSelectMembers.enabled = false;
         resetSelectedMembers();
     }
@@ -152,6 +153,11 @@ ModalPopup {
 
         RenameGroupPopup {
             id: renameGroupPopup
+            activeChannelName: popup.store.chatsModelInst.channelView.activeChannel.name
+            onDoRename: {
+                popup.store.chatsModelInst.groups.rename(groupName);
+                close();
+            }
         }
     }
 
@@ -225,7 +231,7 @@ ModalPopup {
         }
 
         StatusSettingsLineButton {
-            property int pinnedCount: chatsModel.messageView.pinnedMessagesList.count
+            property int pinnedCount: popup.store.chatsModelInst.messageView.pinnedMessagesList.count
 
             id: pinnedMessagesBtn
             visible: pinnedCount > 0
@@ -253,16 +259,16 @@ ModalPopup {
         }
 
         Connections {
-            target: chatsModel.channelView
+            target: popup.store.chatsModelInst.channelView
             onActiveChannelChanged: {
                 if (popup.channelType === GroupInfoPopup.ChannelType.ActiveChannel) {
-                    popup.channel = chatsModel.channelView.activeChannel
+                    popup.channel = popup.store.chatsModelInst.channelView.activeChannel
                     resetSelectedMembers()
                 }
             }
             onContextChannelChanged: {
                 if (popup.channelType === GroupInfoPopup.ChannelType.ContextChannel) {
-                    popup.channel = chatsModel.channelView.contextChannel
+                    popup.channel = popup.store.chatsModelInst.channelView.contextChannel
                     resetSelectedMembers()
                 }
             }
@@ -359,7 +365,7 @@ ModalPopup {
                                 icon.height: 16
                                 //% "Make Admin"
                                 text: qsTrId("make-admin")
-                                onTriggered: chatsModel.groups.makeAdmin(popup.channel.id,  model.publicKey)
+                                onTriggered: popup.store.chatsModelInst.groups.makeAdmin(popup.channel.id,  model.publicKey)
                             }
                             Action {
                                 icon.source: Style.svg("remove-from-group")
@@ -368,7 +374,7 @@ ModalPopup {
                                 icon.color: Style.current.red
                                 //% "Remove From Group"
                                 text: qsTrId("remove-from-group")
-                                onTriggered: chatsModel.groups.kickMember(popup.channel.id,  model.publicKey)
+                                onTriggered: popup.store.chatsModelInst.groups.kickMember(popup.channel.id,  model.publicKey)
                             }
                         }
                     }

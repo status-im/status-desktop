@@ -15,7 +15,8 @@ import "../panels"
 // TODO: replace with StatusModal
 ModalPopup {
     property string channelNameValidationError: ""
-
+    signal joinPublicChat(string name)
+    signal suggestedMessageClicked(string channel)
     function validate() {
         if (channelName.text === "") {
             //% "You need to enter a channel name"
@@ -34,7 +35,7 @@ ModalPopup {
         if (!validate()) {
             return
         }
-        chatsModel.channelView.joinPublicChat(channelName.text);
+        popup.joinPublicChat(channelName.text);
         popup.close();
     }
 
@@ -101,7 +102,7 @@ ModalPopup {
             id: sectionRepeater
             width: parent.width
             onSuggestedMessageClicked: {
-                chatsModel.channelView.joinPublicChat(channel);
+                popup.suggestedMessageClicked(channel);
             }
         }
     }

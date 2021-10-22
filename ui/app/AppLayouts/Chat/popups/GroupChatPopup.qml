@@ -18,6 +18,7 @@ import "../controls"
 ModalPopup {
     id: popup
 
+    property var store
     property var pubKeys: []
     property bool selectChatMembers: true
     property int memberCount: 1
@@ -37,14 +38,14 @@ ModalPopup {
 
         contactList.membersData.append({
             //% "(You)"
-            name: profileModel.profile.username + " " + qsTrId("(you)"),
-            pubKey: profileModel.profile.pubKey,
+            name: popup.store.profileModelInst.profile.username + " " + qsTrId("(you)"),
+            pubKey: popup.store.profileModelInst.profile.pubKey,
             address: "",
-            identicon: profileModel.profile.identicon,
-            thumbnailImage: profileModel.profile.thumbnailImage,
+            identicon: popup.store.profileModelInst.profile.identicon,
+            thumbnailImage: popup.store.profileModelInst.profile.thumbnailImage,
             isUser: true
         });
-        noContactsRect.visible = !profileModel.contacts.list.hasAddedContacts();
+        noContactsRect.visible = !popup.store.profileModelInst.contacts.list.hasAddedContacts();
         contactList.visible = !noContactsRect.visible;
         if (!contactList.visible) {
             memberCount = 0;
@@ -72,7 +73,7 @@ ModalPopup {
         if (pubKeys.length === 0) {
             return;
         }
-        chatsModel.groups.create(Utils.filterXSS(groupName.text), JSON.stringify(pubKeys));
+        popup.store.chatsModelInst.groups.create(Utils.filterXSS(groupName.text), JSON.stringify(pubKeys));
         popup.close();
     }
 

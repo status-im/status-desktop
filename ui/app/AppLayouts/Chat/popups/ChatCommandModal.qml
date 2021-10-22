@@ -15,6 +15,7 @@ import "../../../../shared/controls"
 import "../../../../shared/views"
 
 StatusModal {
+    property var store
     property string commandTitle: "Send"
     property string finalButtonLabel: "Request address"
     property var sendChatCommand: function () {}
@@ -49,15 +50,15 @@ StatusModal {
 
                 StatusQControls.StatusAccountSelector {
                     id: selectFromAccount
-                    accounts: walletModel.accountsView.accounts
+                    accounts: root.store.walletModelInst.accountsView.accounts
                     selectedAccount: {
-                        const currAcc = walletModel.accountsView.currentAccount
+                        const currAcc = root.store.walletModelInst.accountsView.currentAccount
                         if (currAcc.walletType !== Constants.watchWalletType) {
                             return currAcc
                         }
                         return null
                     }
-                    currency: walletModel.balanceView.defaultCurrency
+                    currency: root.store.walletModelInst.balanceView.defaultCurrency
                     width: stack.width
                     label: {
                         return root.isRequested ? 
@@ -87,8 +88,8 @@ StatusModal {
 
                 RecipientSelector {
                     id: selectRecipient
-                    accounts: walletModel.accountsView.accounts
-                    contacts: profileModel.contacts.addedContacts
+                    accounts: root.store.walletModelInst.accountsView.accounts
+                    contacts: root.store.profileModelInst.contacts.addedContacts
                     label: root.isRequested ?
                       //% "From"
                       qsTrId("from") :
@@ -111,9 +112,9 @@ StatusModal {
                 AssetAndAmountInput {
                     id: txtAmount
                     selectedAccount: selectFromAccount.selectedAccount
-                    defaultCurrency: walletModel.balanceView.defaultCurrency
-                    getFiatValue: walletModel.balanceView.getFiatValue
-                    getCryptoValue: walletModel.balanceView.getCryptoValue
+                    defaultCurrency: root.store.walletModelInst.balanceView.defaultCurrency
+                    getFiatValue: root.store.walletModelInst.balanceView.getFiatValue
+                    getCryptoValue: root.store.walletModelInst.balanceView.getCryptoValue
                     validateBalance: !root.isRequested
                     width: stack.width
                 }

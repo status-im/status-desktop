@@ -3,7 +3,6 @@ import QtQuick 2.3
 import utils 1.0
 import "../../../../shared"
 import "../../../../shared/panels"
-import "../popups"
 
 Item {
     id: root
@@ -17,8 +16,7 @@ Item {
     property string selectedAmount
     property string selectedFiatAmount
 
-    signal signModalOpened()
-    signal sendTransaction(string address)
+    signal sendTransaction()
 
     Separator {
         id: separator
@@ -42,30 +40,7 @@ Item {
             anchors.fill: parent
             cursorShape: Qt.PointingHandCursor
             onClicked: {
-                root.clicked(root.fromAddress);
-                //TODO remove dynamic scoping
-                openPopup(signTxComponent, {selectedAccount: {
-                                  name: root.acc.name,
-                                  address: root.fromAddress,
-                                  iconColor: root.acc.iconColor,
-                                  assets: root.acc.assets
-                              }})
-            }
-        }
-    }
-
-    Component {
-        id: signTxComponent
-        SignTransactionModal {
-            selectedAsset: root.selectedAsset
-            selectedAmount: root.selectedAmount
-            selectedRecipient: root.selectedRecipient
-            selectedFiatAmount: root.selectedFiatAmount
-            onOpened: {
-                root.signModalOpened();
-            }
-            onClosed: {
-                destroy();
+                root.sendTransaction();
             }
         }
     }

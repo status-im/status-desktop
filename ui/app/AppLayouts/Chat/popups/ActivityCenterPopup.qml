@@ -81,7 +81,7 @@ Popup {
             profileLayoutContainer.changeProfileSection(7)
         }
         onMarkAllReadClicked: {
-            errorText = chatsModel.activityNotificationList.markAllActivityCenterNotificationsRead()
+            errorText = activityCenter.store.chatsModelInst.activityNotificationList.markAllActivityCenterNotificationsRead()
         }
     }
 
@@ -109,7 +109,7 @@ Popup {
             // TODO remove this once it is handled by the activity center
 //            Repeater {
 //                id: contactList
-//                model: profileModel.contacts.contactRequests
+//                model: activityCenter.store.profileModelInst.contacts.contactRequests
 
 //                delegate: ContactRequest {
 //                    visible: !hideReadNotifications &&
@@ -144,7 +144,7 @@ Popup {
                     function(left, right) { return left.timestamp > right.timestamp }
                 ]
 
-                model: chatsModel.activityNotificationList
+                model: activityCenter.store.chatsModelInst.activityNotificationList
 
                 delegate: Item {
                     id: notificationDelegate
@@ -221,7 +221,7 @@ Popup {
             }
 
             Item {
-                visible: chatsModel.activityNotificationList.hasMoreToShow
+                visible: activityCenter.store.chatsModelInst.activityNotificationList.hasMoreToShow
                 width: parent.width
                 height: visible ? showMoreBtn.height + showMoreBtn.anchors.topMargin : 0
                 StatusButton {
@@ -231,7 +231,7 @@ Popup {
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.top: parent.top
                     anchors.topMargin: Style.current.smallPadding
-                    onClicked: chatsModel.activityNotificationList.loadMoreNotifications()
+                    onClicked: activityCenter.store.chatsModelInst.activityNotificationList.loadMoreNotifications()
                 }
             }
         }
