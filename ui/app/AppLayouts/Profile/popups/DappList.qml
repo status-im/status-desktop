@@ -18,7 +18,6 @@ ModalPopup {
     property var store
 
     Component.onCompleted: store.initDappList()
-    Component.onDestruction: store.clearDappList()
 
     property Component permissionListPopup: PermissionList {
         onClosed: destroy()
@@ -45,7 +44,7 @@ ModalPopup {
                 model: root.store.dappList
                 delegate: Dapp {
                   name: model.name
-                  onDappClicked: permissionListPopup.createObject(privacyContainer, {dapp: dapp}).open()
+                  onDappClicked: permissionListPopup.createObject(appMain, {dapp: dapp}).open()
                 }
             }
         }

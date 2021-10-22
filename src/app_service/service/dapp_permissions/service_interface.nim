@@ -23,13 +23,19 @@ method getDapps*(self: ServiceInterface): seq[Dapp] {.base.} =
 method getDapp*(self: ServiceInterface, dapp: string): Option[Dapp] {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method clearPermissions*(self: ServiceInterface, dapp: string): R {.base.} =
+method hasPermission*(self: ServiceInterface, dapp: string, permission: Permission): bool {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method clearPermissions*(self: ServiceInterface, dapp: string): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method revoke*(self: ServiceInterface, permission: Permission): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method revoke*(self: ServiceInterface, dapp: string, permission: Permission): R {.base.} =
+method revoke*(self: ServiceInterface, dapp: string, permission: Permission): bool {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method revokeAllPermisions*(self: ServiceInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method addPermission*(self: ServiceInterface, dapp: string, permission: Permission): R {.base.}  =
