@@ -7,8 +7,8 @@ import QtQuick.Dialogs 1.3
 import DotherSide 0.1
 
 import utils 1.0
-import "../../shared"
 import "../../shared/panels"
+import "../../shared/popups"
 import "../../app/AppLayouts/Chat/panels"
 
 import "./emojiList.js" as EmojiJSON
@@ -628,7 +628,7 @@ Rectangle {
         }
     }
 
-    StatusChatCommandsPopup {
+    ChatCommandsPopup {
         id: chatCommandsPopup
         x: 8
         y: -height

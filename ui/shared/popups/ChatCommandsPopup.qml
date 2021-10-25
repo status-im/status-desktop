@@ -6,7 +6,7 @@ import utils 1.0
 
 import StatusQ.Controls 0.1
 
-import "../../shared/popups"
+import "./"
 
 Popup {
     id: root
