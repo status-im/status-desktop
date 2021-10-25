@@ -1,5 +1,6 @@
 import Tables, json, sequtils, sugar, chronicles, strformat, stint, httpclient, net, strutils
 import web3/[ethtypes, conversions]
+import eventemitter
 
 import ../setting/service as setting_service
 import ../token/service as token_service
@@ -30,7 +31,7 @@ proc hex2Balance*(input: string, decimals: int): string =
   if(r > 0): result = fmt"{result}.{d}"
 
 
-proc getPrice(crypto: string, fiat: string): string =
+proc fetchPrice(crypto: string, fiat: string): string =
   let secureSSLContext = newContext()
   let client = newHttpClient(sslContext = secureSSLContext)
   try:
@@ -45,8 +46,26 @@ proc getPrice(crypto: string, fiat: string): string =
   finally:
     client.close()
 
+proc fetchAccounts(): seq[WalletAccountDto] =
+  let response = status_go_accounts.getAccounts()
+  return response.result.getElems().map(
+    x => x.toWalletAccountDto()
+  ).filter(a => not a.isChat)
+
+type AccountSaved = ref object of Args
+  account: WalletAccountDto
+
+type AccountDeleted = ref object of Args
+  account: WalletAccountDto
+
+type CurrencyUpdated = ref object of Args
+
+type WalletAccountUpdated = ref object of Args
+  account: WalletAccountDto
+
 type
   Service* = ref object of service_interface.ServiceInterface
+    events: EventEmitter
     settingService: setting_service.Service
     tokenService: token_service.Service
     accounts: Table[string, WalletAccountDto]
@@ -54,16 +73,21 @@ type
 method delete*(self: Service) =
   discard
 
-proc newService*(settingService: setting_service.Service, tokenService: token_service.Service): Service =
+proc newService*(
+  events: EventEmitter, settingService: setting_service.Service, tokenService: token_service.Service
+): Service =
   result = Service()
+  result.events = events
   result.settingService = settingService
   result.tokenService = tokenService
   result.accounts = initTable[string, WalletAccountDto]()
 
+method getVisibleTokens(self: Service): seq[TokenDto] =
+  return self.tokenService.getTokens().filter(t => t.isVisible)
+
 method buildTokens(
   self: Service,
   account: WalletAccountDto,
-  tokens: seq[TokenDto],
   prices: Table[string, float64]
 ): seq[WalletTokenDto] =
   let ethBalanceResponse = status_go_eth.getEthBalance(account.address)
@@ -80,7 +104,7 @@ method buildTokens(
     currencyBalance: balance * prices["ETH"]
   )]
 
-  for token in tokens:
+  for token in self.getVisibleTokens():
     let tokenBalanceResponse = status_go_eth.getTokenBalance($token.address, account.address)
     let balance = parsefloat(hex2Balance(tokenBalanceResponse.result.getStr, token.decimals))
     result.add(
@@ -97,21 +121,21 @@ method buildTokens(
       )
     )
 
+method fetchPrices(self: Service): Table[string, float64] =
+  let currency = self.settingService.getSetting().currency
+  var prices = {"ETH": parsefloat(fetchPrice("ETH", currency))}.toTable
+  for token in self.getVisibleTokens():
+    prices[token.symbol] = parsefloat(fetchPrice(token.symbol, currency))
+
+  return prices
+
 method init*(self: Service) =
   try:
-    let response = status_go_accounts.getAccounts()
-    let accounts = response.result.getElems().map(
-      x => x.toWalletAccountDto()
-    ).filter(a => not a.isChat)
-
-    let currency = self.settingService.getSetting().currency
-    let tokens = self.tokenService.getTokens().filter(t => t.isVisible)
-    var prices = {"ETH": parsefloat(getPrice("ETH", currency))}.toTable
-    for token in tokens:
-      prices[token.symbol] = parsefloat(getPrice(token.symbol, currency))
+    let accounts = fetchAccounts()
+    let prices = self.fetchPrices()
 
     for account in accounts:
-      account.tokens = self.buildTokens(account, tokens, prices)
+      account.tokens = self.buildTokens(account, prices)
       self.accounts[account.address] = account
 
   except Exception as e:
@@ -154,6 +178,19 @@ method saveAccount(
     id,
     publicKey,
   )
+  # LOAD Account and build token
+  let accounts = fetchAccounts()
+  let prices = self.fetchPrices()
+
+  var newAccount = accounts[0]
+  for account in accounts:
+    if account.address == address:
+      newAccount = account
+      break
+
+  newAccount.tokens = self.buildTokens(newAccount, prices)
+  self.accounts[newAccount.address] = newAccount
+  self.events.emit("walletAccount/accountSaved", AccountSaved(account: newAccount))
 
 method generateNewAccount*(self: Service, password: string, accountName: string, color: string) =
   let
@@ -231,10 +268,15 @@ method addWatchOnlyAccount*(self: Service, address: string, accountName: string,
 
 method deleteAccount*(self: Service, address: string) =
   discard status_go_accounts.deleteAccount(address)
+  let accountDeleted = self.accounts[address]
   self.accounts.del(address)
+
+  self.events.emit("walletAccount/accountDeleted", AccountDeleted(account: accountDeleted))
 
 method updateCurrency*(self: Service, newCurrency: string) =
   discard self.settingService.saveSetting("currency", newCurrency)
+
+  self.events.emit("walletAccount/currencyUpdated", CurrencyUpdated())
 
 method updateWalletAccount*(self: Service, address: string, accountName: string, color: string) =
   let account = self.accounts[address]
@@ -247,3 +289,5 @@ method updateWalletAccount*(self: Service, address: string, accountName: string,
   )
   account.name = accountName
   account.color = color
+
+  self.events.emit("walletAccount/walletAccountUpdated", WalletAccountUpdated(account: account))

@@ -132,10 +132,10 @@ proc newAppController*(appService: AppService): AppController =
   result.contactService = contact_service.newService()
   result.chatService = chat_service.newService()
   result.communityService = community_service.newService(result.chatService)
-  result.tokenService = token_service.newService(result.settingService)
+  result.tokenService = token_service.newService(appService.status.events, result.settingService)
   result.collectibleService = collectible_service.newService(result.settingService)
   result.walletAccountService = wallet_account_service.newService(
-    result.settingService, result.tokenService
+    appService.status.events, result.settingService, result.tokenService
   )
   result.transactionService = transaction_service.newService(result.walletAccountService)
   result.bookmarkService = bookmark_service.newService()
