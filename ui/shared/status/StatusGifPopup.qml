@@ -4,7 +4,7 @@ import QtQuick.Layouts 1.3
 import QtGraphicalEffects 1.0
 
 import StatusQ.Components 0.1
-import StatusQ.Controls 0.1 as StatusQControls
+import StatusQ.Controls 0.1
 
 import utils 1.0
 
@@ -115,7 +115,7 @@ Popup {
                 }
             }
 
-            StatusQControls.StatusFlatRoundButton {
+            StatusFlatRoundButton {
                 id: clearBtn
                 implicitWidth: 14
                 implicitHeight: 14
@@ -126,7 +126,7 @@ Popup {
                 visible: searchBox.text !== ""
                 icon.width: 14
                 icon.height: 14
-                type: StatusQControls.StatusFlatRoundButton.Type.Tertiary
+                type: StatusFlatRoundButton.Type.Tertiary
                 color: "transparent"
                 onClicked: toggleCategory(previousCategory)
             }
@@ -170,26 +170,29 @@ Popup {
             rightPadding: Style.current.smallPadding / 2
             spacing: 0
 
-            StatusCategoryButton {
-                source: Style.svg("gifCategories/trending")
-                active: StatusGifPopup.Category.Trending === popup.currentCategory
-                changeCategory: function () {
+
+            StatusTabBarIconButton {
+                icon.name: "flash"
+                highlighted: StatusGifPopup.Category.Trending === popup.currentCategory
+                onClicked: {
                     toggleCategory(StatusGifPopup.Category.Trending)
                 }
                 enabled: appSettings.isTenorWarningAccepted
             }
-            StatusCategoryButton {
-                source: Style.svg("gifCategories/recent")
-                active: StatusGifPopup.Category.Recent === popup.currentCategory
-                changeCategory: function () {
+
+            StatusTabBarIconButton {
+                icon.name: "time"
+                highlighted: StatusGifPopup.Category.Recent === popup.currentCategory
+                onClicked: {
                     toggleCategory(StatusGifPopup.Category.Recent)
                 }
                 enabled: appSettings.isTenorWarningAccepted
             }
-            StatusCategoryButton {
-                source: Style.svg("gifCategories/favorite")
-                active: StatusGifPopup.Category.Favorite === popup.currentCategory
-                changeCategory: function () {
+
+            StatusTabBarIconButton {
+                icon.name: "favourite"
+                highlighted: StatusGifPopup.Category.Favorite === popup.currentCategory
+                onClicked: {
                     toggleCategory(StatusGifPopup.Category.Favorite)
                 }
                 enabled: appSettings.isTenorWarningAccepted
@@ -249,7 +252,7 @@ Popup {
                 color: Style.current.secondaryText
             }
 
-            StatusQControls.StatusButton {
+            StatusButton {
                 id: removeBtn
                 anchors.horizontalCenter: parent.horizontalCenter
                 text: qsTr("Enable")
@@ -285,7 +288,7 @@ Popup {
                 color: Style.current.secondaryText
             }
 
-            StatusQControls.StatusButton {
+            StatusButton {
                 id: retryBtn
                 anchors.top: emptyText.bottom
                 anchors.topMargin: Style.current.padding
