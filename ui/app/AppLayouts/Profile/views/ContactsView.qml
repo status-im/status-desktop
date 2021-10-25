@@ -3,13 +3,15 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 
 import StatusQ.Components 0.1
+import StatusQ.Controls 0.1
+import StatusQ.Core.Theme 0.1
+
 import utils 1.0
 
 import "../../../../shared/popups"
 import "../../../../shared/panels"
 import "../../../../shared/controls"
 import "../../../../shared/views"
-import "../../../../shared/status"
 
 import "../panels"
 import "../popups"
@@ -49,9 +51,10 @@ Item {
 
             StatusRoundButton {
                 id: addButton
-                icon.name: "plusSign"
-                size: "medium"
-                type: "secondary"
+                width: 40
+                height: 40
+                icon.name: "add"
+                type: StatusRoundButton.Type.Secondary
                 anchors.verticalCenter: parent.verticalCenter
             }
 
@@ -85,11 +88,11 @@ Item {
 
             StatusRoundButton {
                 id: blockButton
-                anchors.verticalCenter: parent.verticalCenter
-                icon.name: "block-icon"
-                icon.color: Style.current.lightBlue
                 width: 40
                 height: 40
+                anchors.verticalCenter: parent.verticalCenter
+                icon.name: "cancel"
+                icon.color: Theme.palette.primaryColor1
             }
 
             StyledText {

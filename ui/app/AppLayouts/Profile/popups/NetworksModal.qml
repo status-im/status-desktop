@@ -11,6 +11,8 @@ import "../../../../shared/status"
 import "../controls"
 import "../panels"
 
+import StatusQ.Controls 0.1 as StatusQControls
+
 // TODO: replace with StatusQ component
 ModalPopup {
     id: popup
@@ -40,11 +42,12 @@ ModalPopup {
                 width: parent.width
                 height: addButton.height
 
-                StatusRoundButton {
+                StatusQControls.StatusRoundButton {
                     id: addButton
-                    icon.name: "plusSign"
-                    size: "medium"
-                    type: "secondary"
+                    width: 40
+                    height: 40
+                    icon.name: "add"
+                    type: StatusQControls.StatusRoundButton.Type.Secondary
                     anchors.verticalCenter: parent.verticalCenter
                 }
 

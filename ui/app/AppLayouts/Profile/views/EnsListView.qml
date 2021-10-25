@@ -6,11 +6,11 @@ import utils 1.0
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ.Controls 0.1
 
 import "../popups"
 import "../../../../shared"
 import "../../../../shared/panels"
-import "../../../../shared/status"
 
 //TODO remove these dependencies in imports
 import "../../Chat/views"
@@ -152,10 +152,11 @@ Item {
 
             StatusRoundButton {
                 id: addButton
-                icon.name: "plusSign"
-                size: "medium"
-                type: "secondary"
+                width: 40
+                height: 40
                 anchors.verticalCenter: parent.verticalCenter
+                icon.name: "add"
+                type: StatusRoundButton.Type.Secondary
             }
 
             StatusBaseText {

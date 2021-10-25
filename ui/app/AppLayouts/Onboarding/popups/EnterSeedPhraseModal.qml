@@ -8,7 +8,8 @@ import "../../../../shared"
 import "../../../../shared/popups"
 import "../../../../shared/panels"
 import "../../../../shared/controls"
-import "../../../../shared/status"
+
+import StatusQ.Controls 0.1
 
 // TODO: replace with StatusModal
 ModalPopup {
