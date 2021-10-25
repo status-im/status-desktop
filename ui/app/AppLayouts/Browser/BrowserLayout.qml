@@ -77,7 +77,7 @@ Rectangle {
         userScripts: [
             WebEngineScript {
                 injectionPoint: WebEngineScript.DocumentCreation
-                sourceUrl:  Qt.resolvedUrl("/helpers/provider.js")
+                sourceUrl:  Qt.resolvedUrl("./helpers/provider.js")
                 worldId: WebEngineScript.MainWorld // TODO: check https://doc.qt.io/qt-5/qml-qtwebengine-webenginescript.html#worldId-prop
             }
         ]
@@ -90,7 +90,7 @@ Rectangle {
         userScripts: [
             WebEngineScript {
                 injectionPoint: WebEngineScript.DocumentCreation
-                sourceUrl:  Qt.resolvedUrl("/helpers/provider.js")
+                sourceUrl:  Qt.resolvedUrl("./helpers/provider.js")
                 worldId: WebEngineScript.MainWorld // TODO: check https://doc.qt.io/qt-5/qml-qtwebengine-webenginescript.html#worldId-prop
             }
         ]
