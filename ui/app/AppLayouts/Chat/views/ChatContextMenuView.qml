@@ -2,12 +2,12 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import Qt.labs.platform 1.1
-import "../../../../shared"
-import "../../../../shared/popups"
 
 import utils 1.0
-
 import StatusQ.Popups 0.1
+
+import "../../../../shared/popups"
+import "../popups"
 
 StatusPopupMenu {
 
