@@ -7,6 +7,8 @@ import "../../shared"
 import "../../shared/panels"
 import "./"
 
+import StatusQ.Controls 0.1 as StatusQControls
+
 Rectangle {
     id: root
     
@@ -33,7 +35,7 @@ Rectangle {
         anchors.rightMargin: root.padding
     }
 
-    StatusRadioButton {
+    StatusQControls.StatusRadioButton {
         id: radioControl
         anchors.top: img.bottom
         anchors.topMargin: root.padding

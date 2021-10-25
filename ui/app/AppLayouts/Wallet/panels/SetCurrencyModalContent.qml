@@ -5,7 +5,8 @@ import utils 1.0
 
 import "../../../../shared"
 import "../../../../shared/panels"
-import "../../../../shared/status"
+
+import StatusQ.Controls 0.1 as StatusQControls
 
 Item {
     id: modalBody
@@ -58,10 +59,9 @@ Item {
                     anchors.leftMargin: Style.current.padding
                 }
 
-                StatusRadioButton {
+                StatusQControls.StatusRadioButton {
                     id: currencyRadioBtn
                     checked: currency === key
-                    isHovered: wrapper.hovered
                     anchors.right: parent.right
                     anchors.rightMargin: Style.current.padding
                     anchors.verticalCenter: parent.verticalCenter

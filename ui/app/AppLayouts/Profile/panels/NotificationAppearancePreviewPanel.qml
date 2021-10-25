@@ -4,7 +4,8 @@ import "./"
 
 import utils 1.0
 import "../../../../shared"
-import "../../../../shared/status"
+
+import StatusQ.Controls 0.1
 
 Item {
     property bool checked: false
