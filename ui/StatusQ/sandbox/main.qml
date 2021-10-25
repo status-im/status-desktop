@@ -144,6 +144,11 @@ StatusWindow {
                             onClicked: page.sourceComponent = statusTabSwitchesComponent
                         }
                         StatusNavigationListItem { 
+                            title: "StatusChatCommandButton" 
+                            selected: page.sourceComponent == statusChatCommandButtonPageComponent
+                            onClicked: page.sourceComponent = statusChatCommandButtonPageComponent
+                        }
+                        StatusNavigationListItem { 
                             title: "Controls" 
                             selected: page.sourceComponent == controlsComponent
                             onClicked: page.sourceComponent = controlsComponent
@@ -334,6 +339,11 @@ StatusWindow {
     Component {
         id: buttonsComponent
         Buttons {}
+    }
+
+    Component {
+        id: statusChatCommandButtonPageComponent
+        StatusChatCommandButtonPage {}
     }
 
     Component {
