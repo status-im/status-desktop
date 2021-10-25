@@ -4,6 +4,7 @@ import QtQuick.Controls 2.14
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ.Controls 0.1 as StatusQControls
 
 import utils 1.0
 import "../../../../shared"
@@ -169,16 +170,14 @@ Item {
             }
         }
 
-        // TODO: replace with StatusQ component
-        StatusRoundButton {
+        StatusQControls.StatusRoundButton {
             id: btnContinue
-            width: 44
-            height: 44
+            width: 40
+            height: 40
             anchors.top: circleAt.bottom
             anchors.topMargin: Style.current.bigPadding
             anchors.right: parent.right
-            size: "medium"
-            type: "secondary"
+            type: StatusQControls.StatusRoundButton.Type.Secondary
             icon.name: "arrow-right"
             icon.width: 18
             icon.height: 14

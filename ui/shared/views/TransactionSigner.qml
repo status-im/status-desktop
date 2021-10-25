@@ -9,6 +9,8 @@ import "../status"
 import "../panels"
 import "../controls"
 
+import StatusQ.Controls 0.1 as StatusQControls
+
 Item {
     id: root
     height: signingPhraseItem.height + signingPhrase.height + txtPassword.height + Style.current.smallPadding + Style.current.bigPadding
@@ -52,7 +54,7 @@ Item {
             text: qsTrId("signing-phrase")
         }
 
-        StatusRoundButton {
+        StatusQControls.StatusRoundButton {
             id: infoButton
             anchors.left: labelSigningPhrase.right
             anchors.leftMargin: 7
@@ -79,7 +81,7 @@ Item {
         text: root.signingPhrase
     }
 
-    StatusRoundButton {
+    StatusQControls.StatusRoundButton {
         id: passwordInfoButton
         anchors.left: parent.left
         anchors.leftMargin: 67

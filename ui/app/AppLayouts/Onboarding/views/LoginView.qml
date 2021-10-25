@@ -198,10 +198,11 @@ Item {
             }
         }
 
-        StatusRoundButton {
+        StatusQControls.StatusRoundButton {
             id: submitBtn
-            size: "medium"
-            type: "secondary"
+            width: 40
+            height: 40
+            type: StatusQControls.StatusRoundButton.Type.Secondary
             icon.name: "arrow-right"
             icon.width: 18
             icon.height: 14

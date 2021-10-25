@@ -12,6 +12,8 @@ import "../controls"
 import "../views"
 import "."
 
+import StatusQ.Controls 0.1 as StatusQControls
+
 // TODO: replace with StatusModal
 ModalPopup {
     id: root
@@ -220,7 +222,7 @@ ModalPopup {
         width: parent.width
         height: btnNext.height
 
-        StatusRoundButton {
+        StatusQControls.StatusRoundButton {
             id: btnBack
             anchors.left: parent.left
             visible: !stack.isFirstGroup
