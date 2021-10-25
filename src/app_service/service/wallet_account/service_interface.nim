@@ -38,3 +38,6 @@ method deleteAccount*(self: ServiceInterface, address: string) {.base.} =
 
 method updateCurrency*(self: ServiceInterface, newCurrency: string) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method updateWalletAccount*(self: ServiceInterface, address: string, accountName: string, color: string) {.base.} =
+  raise newException(ValueError, "No implementation available")

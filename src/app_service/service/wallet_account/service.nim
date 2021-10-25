@@ -235,3 +235,15 @@ method deleteAccount*(self: Service, address: string) =
 
 method updateCurrency*(self: Service, newCurrency: string) =
   discard self.settingService.saveSetting("currency", newCurrency)
+
+method updateWalletAccount*(self: Service, address: string, accountName: string, color: string) =
+  let account = self.accounts[address]
+  status_go_accounts.updateAccount(
+    accountName,
+    account.address, 
+    account.publicKey,
+    account.walletType,
+    color
+  )
+  account.name = accountName
+  account.color = color

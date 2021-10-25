@@ -104,8 +104,8 @@ QtObject {
         return walletSectionAccounts.deleteAccount(address)
     }
 
-    function changeAccountSettings(address, accountName, color) {
-        return walletModel.accountsView.changeAccountSettings(address, accountName, color)
+    function updateCurrentAccount(address, accountName, color) {
+        return walletSectionCurrent.update(address, accountName, color)
     }
 
     function updateCurrency(newCurrency) {

@@ -1,10 +1,12 @@
 import NimQml
 
 import ../../../../../app_service/service/wallet_account/service as wallet_account_service
+import ./io_interface
 
 QtObject:
   type
     View* = ref object of QObject
+      delegate: io_interface.AccessInterface
       name: string
       address: string
       path: string
@@ -21,8 +23,9 @@ QtObject:
   proc delete*(self: View) =
     self.QObject.delete
 
-  proc newView*(): View =
+  proc newView*(delegate: io_interface.AccessInterface): View =
     new(result, delete)
+    result.delegate = delegate
     result.setup()
 
   proc setData*(self: View, dto: wallet_account_service.WalletAccountDto) =
@@ -88,3 +91,6 @@ QtObject:
 
   QtProperty[QVariant] currencyBalance:
     read = getCurrencyBalance
+
+  proc update(self: View, address: string, accountName: string, color: string) {.slot.} =
+    self.delegate.update(address, accountName, color)

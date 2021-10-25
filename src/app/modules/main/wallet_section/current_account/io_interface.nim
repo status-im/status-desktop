@@ -14,6 +14,9 @@ method isLoaded*(self: AccessInterface): bool {.base.} =
 method switchAccount*(self: AccessInterface, accountIndex: int) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method update*(self: AccessInterface, address: string, accountName: string, color: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 type
   ## Abstract class (concept) which must be implemented by object/s used in this 
   ## module.

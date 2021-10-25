@@ -21,7 +21,7 @@ proc newModule*[T](
 ): Module[T] =
   result = Module[T]()
   result.delegate = delegate
-  result.view = newView()
+  result.view = newView(result)
   result.controller = newController(result, walletAccountService)
   result.moduleLoaded = false
 
@@ -38,3 +38,6 @@ method isLoaded*[T](self: Module[T]): bool =
 method switchAccount*[T](self: Module[T], accountIndex: int) =
   let walletAccount = self.controller.getWalletAccount(accountIndex)
   self.view.setData(walletAccount)
+
+method update*[T](self: Module[T], address: string, accountName: string, color: string) =
+    self.controller.update(address, accountName, color)
