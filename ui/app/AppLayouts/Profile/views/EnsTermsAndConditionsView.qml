@@ -3,7 +3,7 @@ import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.14
 
 import utils 1.0
-import "../../../../shared"
+
 import "../../../../shared/popups"
 import "../../../../shared/status"
 
