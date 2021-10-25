@@ -16,6 +16,9 @@ method getSetting*(self: AccessInterface): setting_service.SettingDto {.base.} =
 method getCurrencyBalance*(self: AccessInterface): float64 {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method updateCurrency*(self: AccessInterface, currency: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 
 type
   ## Abstract class (concept) which must be implemented by object/s used in this 

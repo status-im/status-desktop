@@ -232,3 +232,6 @@ method addWatchOnlyAccount*(self: Service, address: string, accountName: string,
 method deleteAccount*(self: Service, address: string) =
   discard status_go_accounts.deleteAccount(address)
   self.accounts.del(address)
+
+method updateCurrency*(self: Service, newCurrency: string) =
+  discard self.settingService.saveSetting("currency", newCurrency)

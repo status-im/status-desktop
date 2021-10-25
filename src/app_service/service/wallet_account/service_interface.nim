@@ -35,3 +35,6 @@ method addWatchOnlyAccount*(self: ServiceInterface, address: string, accountName
 
 method deleteAccount*(self: ServiceInterface, address: string) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method updateCurrency*(self: ServiceInterface, newCurrency: string) {.base.} =
+  raise newException(ValueError, "No implementation available")

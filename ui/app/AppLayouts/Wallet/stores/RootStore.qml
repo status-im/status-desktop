@@ -8,7 +8,7 @@ QtObject {
     property var currentAccount: walletSectionCurrent
     property var accounts: walletSectionAccounts.model
 
-    property string defaultCurrency: walletSection.defaultCurrency
+    property string currentCurrency: walletSection.currentCurrency
     property string totalFiatBalance: walletSection.totalCurrencyBalance
     property string signingPhrase: walletSection.signingPhrase
     property string mnemonicBackedUp: walletSection.isMnemonicBackedUp
@@ -108,8 +108,8 @@ QtObject {
         return walletModel.accountsView.changeAccountSettings(address, accountName, color)
     }
 
-    function setDefaultCurrency(key) {
-        walletModel.balanceView.setDefaultCurrency(key)
+    function updateCurrency(newCurrency) {
+        walletSection.updateCurrency(newCurrency)
     }
 
     function addCustomToken(address, name, symbol, decimals) {

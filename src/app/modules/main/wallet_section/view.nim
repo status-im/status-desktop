@@ -7,7 +7,7 @@ QtObject:
   type
     View* = ref object of QObject
       delegate: io_interface.AccessInterface
-      defaultCurrency: string
+      currentCurrency: string
       totalCurrencyBalance: float64
       signingPhrase: string
       isMnemonicBackedUp: bool
@@ -24,18 +24,25 @@ QtObject:
     result.setup()
 
   proc updateFromSetting*(self: View, setting: setting_service.SettingDto) =
-    self.defaultCurrency = setting.currency
+    self.currentCurrency = setting.currency
     self.signingPhrase = setting.signingPhrase
     self.isMnemonicBackedUp = setting.isMnemonicBackedUp
 
   proc setTotalCurrencyBalance*(self: View, totalCurrencyBalance: float64) =
     self.totalCurrencyBalance = totalCurrencyBalance
 
-  proc getDefaultCurrency(self: View): QVariant {.slot.} =
-    return newQVariant(self.defaultCurrency)
+  proc currentCurrencyChanged*(self: View) {.signal.}
 
-  QtProperty[QVariant] defaultCurrency:
-    read = getDefaultCurrency
+  proc updateCurrency*(self: View, currency: string) {.slot.} =
+    self.delegate.updateCurrency(currency)
+    self.currentCurrency = currency
+
+  proc getCurrentCurrency(self: View): QVariant {.slot.} =
+    return newQVariant(self.currentCurrency)
+
+  QtProperty[QVariant] currentCurrency:
+    read = getCurrentCurrency
+    notify = currentCurrencyChanged
 
   proc getTotalCurrencyBalance(self: View): QVariant {.slot.} =
     return newQVariant(self.totalCurrencyBalance)

@@ -31,7 +31,10 @@ method saveSetting*(self: Service, attribute: string, value: string | JsonNode |
   status_go.saveSettings(attribute, value)
   case attribute:
     of "latest-derived-path":
-      self.setting.latestDerivedPath = value
+      self.setting.latestDerivedPath = cast[int](value)
+    of "currency":
+      self.setting.currency = cast[string](value)
+
 
   return self.setting
 

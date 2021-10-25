@@ -68,6 +68,9 @@ method delete*[T](self: Module[T]) =
   self.controller.delete
   self.view.delete
 
+method updateCurrency*[T](self: Module[T], currency: string) =
+  self.controller.updateCurrency(currency)
+
 method switchAccount*[T](self: Module[T], accountIndex: int) =
   self.currentAccountModule.switchAccount(accountIndex)
   self.collectiblesModule.switchAccount(accountIndex)
@@ -93,3 +96,4 @@ method load*[T](self: Module[T]) =
 
 method isLoaded*[T](self: Module[T]): bool =
   return self.moduleLoaded
+

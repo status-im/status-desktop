@@ -31,3 +31,6 @@ method getSetting*[T](self: Controller[T]): setting_service.SettingDto =
 
 method getCurrencyBalance*[T](self: Controller[T]): float64 =
   return self.walletAccountService.getCurrencyBalance()
+
+method updateCurrency*[T](self: Controller[T], currency: string) =
+  self.walletAccountService.updateCurrency(currency)
