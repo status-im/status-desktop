@@ -28,7 +28,7 @@ ModalPopup {
       id: confirmationsCount
       text: {
           if(transaction !== undefined)
-              return RootStore.getLatestBlockNumber() - RootStore.hex2Dec(transaction.blockNumber) + qsTrId(" confirmation(s)")
+              return RootStore.getLatestBlockNumber() - RootStore.hex2Dec(transaction.blockNumber) + qsTr(" confirmation(s)")
           else
               return ""
       }
@@ -42,7 +42,7 @@ ModalPopup {
       wrapMode: Text.WordWrap
       font.pixelSize: 14
       font.weight: Font.Medium
-      color: Style.current.darkGrey
+      color: Style.current.secondaryText
       anchors.top: confirmationsCount.bottom
       anchors.topMargin: Style.current.smallPadding
       width: parent.width
@@ -73,7 +73,7 @@ ModalPopup {
       text: qsTrId("block")
       font.pixelSize: 14
       font.weight: Font.Medium
-      color: Style.current.darkGrey
+      color: Style.current.secondaryText
     }
 
     StyledText {
@@ -101,7 +101,7 @@ ModalPopup {
       text: qsTrId("hash")
       font.pixelSize: 14
       font.weight: Font.Medium
-      color: Style.current.darkGrey
+      color: Style.current.secondaryText
     }
 
     Address {
@@ -130,12 +130,12 @@ ModalPopup {
       text: qsTrId("from")
       font.pixelSize: 14
       font.weight: Font.Medium
-      color: Style.current.darkGrey
+      color: Style.current.secondaryText
     }
 
     Address {
       id: valueFrom
-      text: transaction !== undefined ? transaction.fromAddress: ""
+      text: transaction !== undefined ? transaction.from: ""
       color: Style.current.textColor
       width: 160
       font.pixelSize: 14
@@ -158,7 +158,7 @@ ModalPopup {
       text: qsTrId("to")
       font.pixelSize: 14
       font.weight: Font.Medium
-      color: Style.current.darkGrey
+      color: Style.current.secondaryText
     }
 
     Address {
@@ -186,7 +186,7 @@ ModalPopup {
       text: qsTrId("gas-limit")
       font.pixelSize: 14
       font.weight: Font.Medium
-      color: Style.current.darkGrey
+      color: Style.current.secondaryText
     }
 
     StyledText {
@@ -212,7 +212,7 @@ ModalPopup {
       text: qsTrId("gas-price")
       font.pixelSize: 14
       font.weight: Font.Medium
-      color: Style.current.darkGrey
+      color: Style.current.secondaryText
     }
 
     StyledText {
@@ -238,7 +238,7 @@ ModalPopup {
       text: qsTrId("gas-used")
       font.pixelSize: 14
       font.weight: Font.Medium
-      color: Style.current.darkGrey
+      color: Style.current.secondaryText
     }
 
     StyledText {
@@ -264,7 +264,7 @@ ModalPopup {
       text: qsTrId("nonce")
       font.pixelSize: 14
       font.weight: Font.Medium
-      color: Style.current.darkGrey
+      color: Style.current.secondaryText
     }
 
     StyledText {

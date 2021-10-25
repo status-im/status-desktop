@@ -75,7 +75,6 @@ QtObject:
       status: Status
       appService: AppService
       accountsView*: AccountsView
-      transactionsView*: TransactionsView
       currentTransactions*: TransactionList
 
   proc setup(self: TransactionsView) = self.QObject.setup

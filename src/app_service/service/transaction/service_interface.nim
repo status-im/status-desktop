@@ -1,4 +1,4 @@
-import dto
+import dto, stint
 
 export dto
 
@@ -13,4 +13,10 @@ method init*(self: ServiceInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method checkRecentHistory*(self: ServiceInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getTransfersByAddress*(self: ServiceInterface, address: string, toBlock: Uint256, limit: int, loadMore: bool = false): seq[TransactionDto] {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getTransfersByAddressTemp*(self: ServiceInterface, address: string, toBlock: Uint256, limit: int, loadMore: bool = false): string {.base.} =
   raise newException(ValueError, "No implementation available")
