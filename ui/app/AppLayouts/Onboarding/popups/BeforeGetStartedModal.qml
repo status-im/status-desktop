@@ -49,6 +49,7 @@ ModalPopup {
                     //% "Terms of Use"
                     text: qsTrId("terms-of-service")
                     color: Style.current.blue
+                    objectName: "termsOfUseLink"
 
                     MouseArea {
                         anchors.fill: parent
@@ -77,6 +78,7 @@ ModalPopup {
         StyledText {
             id: ppText
             //% "Privacy Policy"
+            objectName: "privacyPolicyLink"
             text: qsTrId("privacy-policy")
             color: Style.current.blue
             anchors.verticalCenter: parent.verticalCenter
@@ -100,6 +102,7 @@ ModalPopup {
 
         StatusButton {
             id: getStartedButton
+            objectName: "getStartedStatusButton"
             anchors.right: parent.right
             enabled: acknowledge.checked && termsOfUse.checked
             width: 130
