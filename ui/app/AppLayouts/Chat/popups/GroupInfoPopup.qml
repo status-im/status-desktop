@@ -291,7 +291,7 @@ ModalPopup {
                 StatusImageIdenticon {
                     id: identicon
                     anchors.left: parent.left
-                    source: appMain.getProfileImage(model.publicKey)|| model.identicon
+                    source: appMain.getProfileImage(model.publicKey) || model.identicon
                 }
 
                 StyledText {
