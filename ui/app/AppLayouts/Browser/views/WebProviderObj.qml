@@ -12,6 +12,8 @@ QtObject {
 
     signal web3Response(string data);
 
+    property int networkId: (Web3ProviderStore && Web3ProviderStore.networkId) || -1
+
     function signValue(input){
         if(Utils.isHex(input) && Utils.startsWith0x(input)){
             return input
