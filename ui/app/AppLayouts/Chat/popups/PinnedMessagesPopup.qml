@@ -5,7 +5,6 @@ import utils 1.0
 import "../../../../shared"
 import "../../../../shared/popups"
 import "../../../../shared/panels"
-import "../../../../shared/status"
 
 import "../controls"
 import "../panels"
@@ -203,7 +202,7 @@ ModalPopup {
                     onClicked: radio.toggle()
                 }
 
-                StatusRadioButton {
+                StatusQControls.StatusRadioButton {
                     id: radio
                     visible: !!messageToPin
                     anchors.right: parent.right
@@ -232,7 +231,7 @@ ModalPopup {
             enabled: !!messageToUnpin
             //% "Unpin"
             text: qsTrId("unpin")
-            type: StatusBaseButton.Type.Danger
+            type: StatusQControls.StatusBaseButton.Type.Danger
             anchors.right: parent.right
             onClicked: {
                 const chatId = chatsModel.channelView.activeChannel.id

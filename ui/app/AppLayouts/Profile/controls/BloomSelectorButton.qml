@@ -5,8 +5,8 @@ import QtQuick.Layouts 1.13
 import utils 1.0
 import "../../../../shared"
 import "../../../../shared/panels"
-import "../../../../shared/status"
 
+import StatusQ.Controls 0.1
 
 Rectangle {
     property var buttonGroup

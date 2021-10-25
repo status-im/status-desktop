@@ -6,6 +6,8 @@ import ".."
 import "../panels"
 import "."
 
+import StatusQ.Controls 0.1
+
 Rectangle {
     property alias text: textElement.text
     property var buttonGroup

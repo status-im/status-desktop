@@ -7,6 +7,8 @@ import "../../../../shared"
 import "../../../../shared/panels"
 import "../../../../shared/status"
 
+import StatusQ.Controls 0.1 as StatusQControls
+
 Rectangle {    
     id: accountViewDelegate
 
@@ -67,13 +69,12 @@ Rectangle {
         color: Style.current.secondaryText
     }
 
-    StatusRadioButton {
+    StatusQControls.StatusRadioButton {
         id: radio
         anchors.right: parent.right
         anchors.rightMargin: Style.current.padding
         anchors.verticalCenter: parent.verticalCenter
         checked: accountViewDelegate.selected
-        isHovered: accountViewDelegate.isHovered
     }
 
     MouseArea {
