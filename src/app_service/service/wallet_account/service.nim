@@ -143,6 +143,9 @@ method init*(self: Service) =
     error "error: ", errDesription
     return
 
+method getAccountByAddress*(self: Service, address: string): WalletAccountDto =
+  return self.accounts[address]
+
 method getWalletAccounts*(self: Service): seq[WalletAccountDto] =
   return toSeq(self.accounts.values)
 
