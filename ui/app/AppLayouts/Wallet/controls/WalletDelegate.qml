@@ -80,7 +80,7 @@ Rectangle {
     StyledText {
         id: walletBalance
         text: {
-            Utils.toLocaleString(fiatBalance, globalSettings.locale, {"currency": true}) + " " + walletDelegate.currency.toUpperCase()
+            Utils.toLocaleString(currencyBalance, globalSettings.locale, {"currency": true}) + " " + walletDelegate.currency.toUpperCase()
         }
         anchors.top: parent.top
         anchors.topMargin: Style.current.smallPadding

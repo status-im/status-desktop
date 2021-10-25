@@ -43,6 +43,5 @@ method switchAccount*[T](self: Module[T], accountIndex: int) =
       t.balance,
       t.address,
       t.currencyBalance,
-      $t.currencyBalance,
     ))
   )

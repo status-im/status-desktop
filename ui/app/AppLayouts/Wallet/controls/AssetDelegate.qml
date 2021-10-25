@@ -49,17 +49,17 @@ Item {
         font.pixelSize: 15
     }
     StyledText {
-        id: assetValue
-        text: value.toUpperCase() + " " + symbol
+        id: assetBalance
+        text: Utils.toLocaleString(balance, globalSettings.locale) + " " + symbol.toUpperCase()
         anchors.right: parent.right
         anchors.rightMargin: 0
         font.pixelSize: 15
         font.strikeout: false
     }
     StyledText {
-        id: assetFiatValue
+        id: assetCurrencyBalance
         color: Style.current.secondaryText
-        text: Utils.toLocaleString(fiatBalance, globalSettings.locale) + " " + assetDelegate.currency.toUpperCase()
+        text: Utils.toLocaleString(currencyBalance, globalSettings.locale) + " " + assetDelegate.currency.toUpperCase()
         anchors.right: parent.right
         anchors.rightMargin: 0
         anchors.bottom: parent.bottom

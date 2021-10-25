@@ -14,6 +14,7 @@ import "../controls"
 Item {
     id: walletHeader
 
+    property string currency: ""
     property var currentAccount
     property var changeSelectedAccount
 
@@ -52,7 +53,9 @@ Item {
 
     StyledText {
         id: walletBalance
-        text: currentAccount.balance.toUpperCase()
+        text: {
+            Utils.toLocaleString(currentAccount.currencyBalance, globalSettings.locale, {"currency": true}) + " " + walletHeader.currency.toUpperCase()
+        }
         anchors.left: separatorDot.right
         anchors.leftMargin: 8
         anchors.verticalCenter: title.verticalCenter
