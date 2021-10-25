@@ -2,12 +2,13 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.3
 import QtGraphicalEffects 1.0
+
+import StatusQ.Core 0.1
+import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 
 import utils 1.0
-import "../../../../shared"
-import "../../../../shared/panels"
 
 // TODO: replace with StatusModal
 Popup {
@@ -55,12 +56,13 @@ Popup {
                 Item {
                     width: content.width
                     height: 40
-                    StyledText {
+                    StatusBaseText {
                         anchors.left: parent.left
                         anchors.leftMargin: Style.current.bigPadding
                         anchors.verticalCenter: parent.verticalCenter
                         font.pixelSize: Style.current.primaryTextFontSize
                         text: model.chainName
+                        color: Theme.palette.directColor1
                     }
 
                     StatusCheckBox {

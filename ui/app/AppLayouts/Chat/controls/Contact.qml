@@ -4,7 +4,8 @@ import QtQuick.Layouts 1.3
 import Qt.labs.platform 1.1
 
 import utils 1.0
-import "../../../../shared"
+
+import StatusQ.Controls 0.1 as StatusQControls
 import "../../../../shared/panels"
 import "../../../../shared/status"
 
@@ -56,7 +57,7 @@ Rectangle {
         anchors.leftMargin: Style.current.padding
     }
 
-    StatusCheckBox  {
+    StatusQControls.StatusCheckBox  {
         id: assetCheck
         visible: showCheckbox && !isUser
         anchors.top: accountImage.top

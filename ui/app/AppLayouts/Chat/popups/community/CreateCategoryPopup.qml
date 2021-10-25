@@ -2,15 +2,15 @@ import QtQuick 2.12
 import QtQuick.Controls 2.3
 import QtQuick.Dialogs 1.3
 
-import utils 1.0
-import "../../../../../shared/popups"
-
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Controls.Validators 0.1
 import StatusQ.Popups 0.1
+
+import utils 1.0
+import "../../../../../shared/popups"
 
 StatusModal {
     property string communityId
