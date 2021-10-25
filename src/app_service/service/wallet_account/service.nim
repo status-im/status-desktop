@@ -20,7 +20,7 @@ proc hex2Balance*(input: string, decimals: int): string =
 
   if decimals == 0:
     return fmt"{value}"
-  
+
   var p = u256(10).pow(decimals)
   var i = value.div(p)
   var r = value.mod(p)
@@ -100,16 +100,16 @@ method buildTokens(
 method init*(self: Service) =
   try:
     let response = status_go_accounts.getAccounts()
-    let accounts = map(
-      response.result.getElems(),
-      proc(x: JsonNode): WalletAccountDto = x.toWalletAccountDto()
-    )
+    let accounts = response.result.getElems().map(
+      x => x.toWalletAccountDto()
+    ).filter(a => not a.isChat)
+
     let currency = self.settingService.getSetting().currency
     let tokens = self.tokenService.getTokens().filter(t => t.isVisible)
     var prices = {"ETH": parsefloat(getPrice("ETH", currency))}.toTable
     for token in tokens:
       prices[token.symbol] = parsefloat(getPrice(token.symbol, currency))
-    
+
     for account in accounts:
       account.tokens = self.buildTokens(account, tokens, prices)
       self.accounts[account.address] = account
@@ -206,7 +206,7 @@ method addAccountsFromSeed*(self: Service, seedPhrase: string, password: string,
   let accountResponse = status_go_accounts.multiAccountImportMnemonic(mnemonic)
   let accountId = accountResponse.result{"id"}.getStr
   let deriveResponse = status_go_accounts.deriveAccounts(accountId, paths)
- 
+
   let
     defaultAccount = self.getDefaultAccount()
     isPasswordOk = status_go_accounts.verifyAccountPassword(defaultAccount, password, KEYSTOREDIR)
@@ -240,7 +240,7 @@ method updateWalletAccount*(self: Service, address: string, accountName: string,
   let account = self.accounts[address]
   status_go_accounts.updateAccount(
     accountName,
-    account.address, 
+    account.address,
     account.publicKey,
     account.walletType,
     color
