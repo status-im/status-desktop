@@ -1,4 +1,21 @@
 <a name=""></a>
+##  Version 0.14.0 (2021-10-25)
+
+
+#### Bug Fixes
+
+* **Spellchecking:**  Add check for hunspell existence ([ab9ab249](ab9ab249))
+* **StatusModal:**
+  *  ensure `onEditButtonClicked` signal is emitted ([074dc22b](074dc22b), closes [#454](454))
+  *  expose `header.editable` property ([9c5f79a6](9c5f79a6), closes [#452](452))
+
+#### Features
+
+* **StatusSmartIdenticon:**  Created a new StatusQ componnent to accomodate: ([14527483](14527483))
+
+
+
+<a name=""></a>
 ##  Version 0.13.0 (2021-10-19)
 
 
