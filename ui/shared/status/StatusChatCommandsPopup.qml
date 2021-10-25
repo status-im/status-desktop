@@ -3,7 +3,9 @@ import QtQuick.Controls 2.13
 import QtGraphicalEffects 1.13
 
 import utils 1.0
-import "../../shared"
+
+import StatusQ.Controls 0.1
+
 import "../../shared/popups"
 
 Popup {
@@ -46,8 +48,6 @@ Popup {
             text: qsTrId("send-transaction")
             icon.color: Style.current.purple
             icon.name: "send"
-            icon.width: 16
-            icon.height: 18
             onClicked: appSettings.isWalletEnabled ? root.sendTransactionCommandButtonClicked() : confirmationPopup.open()
         }
 
@@ -57,9 +57,7 @@ Popup {
             text: qsTrId("request-transaction")
             icon.color: Style.current.orange
             icon.name: "send"
-            icon.width: 16
-            icon.height: 18
-            iconRotation: 180
+            icon.rotation: 180
             onClicked: appSettings.isWalletEnabled ? root.receiveTransactionCommandButtonClicked() : confirmationPopup.open()
         }
 
