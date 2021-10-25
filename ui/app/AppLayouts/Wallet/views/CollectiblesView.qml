@@ -24,7 +24,6 @@ Item {
         height: parent.height
 
         sourceComponent: {
-            console.log(RootStore.collectionList.count)
             if (RootStore.collectionList.count === 0) {
                 return empty;
             }
@@ -59,7 +58,6 @@ Item {
                 Repeater {
                     id: collectionsRepeater
                     model: RootStore.collectionList
-                    //model: 5
                     delegate: StatusExpandableItem {
                         width: parent.width - 156
                         anchors.horizontalCenter: parent.horizontalCenter

@@ -23,19 +23,12 @@ QtObject:
     result.delegate = delegate
     result.setup()
 
-  proc updateFromSetting*(self: View, setting: setting_service.SettingDto) =
-    self.currentCurrency = setting.currency
-    self.signingPhrase = setting.signingPhrase
-    self.isMnemonicBackedUp = setting.isMnemonicBackedUp
-
-  proc setTotalCurrencyBalance*(self: View, totalCurrencyBalance: float64) =
-    self.totalCurrencyBalance = totalCurrencyBalance
-
   proc currentCurrencyChanged*(self: View) {.signal.}
 
   proc updateCurrency*(self: View, currency: string) {.slot.} =
     self.delegate.updateCurrency(currency)
     self.currentCurrency = currency
+    self.currentCurrencyChanged()
 
   proc getCurrentCurrency(self: View): QVariant {.slot.} =
     return newQVariant(self.currentCurrency)
@@ -44,11 +37,14 @@ QtObject:
     read = getCurrentCurrency
     notify = currentCurrencyChanged
 
+  proc totalCurrencyBalanceChanged*(self: View) {.signal.}
+
   proc getTotalCurrencyBalance(self: View): QVariant {.slot.} =
     return newQVariant(self.totalCurrencyBalance)
 
   QtProperty[QVariant] totalCurrencyBalance:
     read = getTotalCurrencyBalance
+    notify = totalCurrencyBalanceChanged
 
   proc getSigningPhrase(self: View): QVariant {.slot.} =
     return newQVariant(self.signingPhrase)
@@ -64,3 +60,13 @@ QtObject:
 
   proc switchAccount(self: View, accountIndex: int) {.slot.} =
     self.delegate.switchAccount(accountIndex)
+
+  proc setTotalCurrencyBalance*(self: View, totalCurrencyBalance: float64) =
+    self.totalCurrencyBalance = totalCurrencyBalance
+    self.totalCurrencyBalanceChanged()
+
+  proc updateFromSetting*(self: View, setting: setting_service.SettingDto) =
+    self.currentCurrency = setting.currency
+    self.currentCurrencyChanged()
+    self.signingPhrase = setting.signingPhrase
+    self.isMnemonicBackedUp = setting.isMnemonicBackedUp

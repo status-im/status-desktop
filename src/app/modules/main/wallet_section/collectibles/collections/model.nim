@@ -45,7 +45,7 @@ QtObject:
     {
       ModelRole.Name.int:"name",
       ModelRole.Slug.int:"slug",
-      ModelRole.ImageUrl.int:"imageurl",
+      ModelRole.ImageUrl.int:"imageUrl",
       ModelRole.OwnedAssetCount.int:"ownedAssetCount"
     }.toTable
 
