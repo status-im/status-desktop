@@ -15,6 +15,7 @@ type
   SettingDto* = ref object of RootObj
     currentNetwork*: NetworkDto
     activeTokenSymbols*: seq[string]
+    rawActiveTokenSymbols*: JsonNode
     signingPhrase*: string
     currency*: string
     mnemonic*: string
@@ -50,9 +51,12 @@ proc toSettingDto*(jsonObj: JsonNode): SettingDto =
     result.currentNetwork = networkDto
     break
 
+  result.rawActiveTokenSymbols = newJObject()
   result.activeTokenSymbols = @[]
   if jsonObj.hasKey("wallet/visible-tokens"):
-    let symbols =  parseJson(jsonObj{"wallet/visible-tokens"}.getStr)
+    result.rawActiveTokenSymbols = jsonObj{"wallet/visible-tokens"}
+    
+    let symbols =  parseJson(result.rawActiveTokenSymbols.getStr)
     for symbol in symbols{$result.currentNetwork.id}.getElems():
       result.activeTokenSymbols.add(symbol.getStr)
 

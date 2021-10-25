@@ -1,4 +1,4 @@
-import json, sequtils, chronicles
+import json, sequtils, chronicles, sugar
 import status/statusgo_backend_new/custom_tokens as custom_tokens
 import ../setting/service as setting_service
 
@@ -13,7 +13,7 @@ const DEFAULT_VISIBLE_SYMBOLS = @["SNT"]
 
 type 
   Service* = ref object of service_interface.ServiceInterface
-    settingService: setting_service.ServiceInterface
+    settingService: setting_service.Service
     tokens: seq[TokenDto]
 
 method delete*(self: Service) =
@@ -51,3 +51,18 @@ method init*(self: Service) =
 
 method getTokens*(self: Service): seq[TokenDto] =
   return self.tokens
+
+method addCustomToken*(self: Service, address: string, name: string, symbol: string, decimals: int) =
+  custom_tokens.addCustomToken(address, name, symbol, decimals, "")
+        
+method toggleVisible*(self: Service, symbol: string) =
+  for token in self.tokens:
+    if token.symbol == symbol:
+      token.isVisible = not token.isVisible
+      break
+
+  let visibleSymbols = self.tokens.filter(t => t.isVisible).map(t => t.symbol)
+  discard self.settingService.saveSetting("wallet/visible-tokens", visibleSymbols)
+
+method removeCustomToken*(self: Service, address: string) =
+  custom_tokens.removeCustomToken(address)

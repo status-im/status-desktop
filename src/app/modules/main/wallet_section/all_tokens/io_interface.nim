@@ -11,6 +11,15 @@ method load*(self: AccessInterface) {.base.} =
 method isLoaded*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method addCustomToken*(self: AccessInterface, address: string, name: string, symbol: string, decimals: int) =
+  raise newException(ValueError, "No implementation available")
+        
+method toggleVisible*(self: AccessInterface, symbol: string) =
+  raise newException(ValueError, "No implementation available")
+
+method removeCustomToken*(self: AccessInterface, address: string) =
+  raise newException(ValueError, "No implementation available")
+
 type
   ## Abstract class (concept) which must be implemented by object/s used in this 
   ## module.

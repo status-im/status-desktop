@@ -27,14 +27,22 @@ method init*(self: Service) =
     error "error: ", errDesription
     return
 
-method saveSetting*(self: Service, attribute: string, value: string | JsonNode | bool | int): SettingDto =
-  status_go.saveSettings(attribute, value)
+method saveSetting*(
+  self: Service, attribute: string, value: string | JsonNode | bool | int | seq[string]
+): SettingDto =
   case attribute:
     of "latest-derived-path":
       self.setting.latestDerivedPath = cast[int](value)
+      status_go.saveSettings(attribute, self.setting.latestDerivedPath)
     of "currency":
       self.setting.currency = cast[string](value)
-
+      status_go.saveSettings(attribute, self.setting.currency)
+    of "wallet/visible-tokens":
+      let newValue = cast[seq[string]](value)
+      self.setting.activeTokenSymbols = newValue
+      self.setting.rawActiveTokenSymbols[$self.setting.currentNetwork.id] = newJArray()
+      self.setting.rawActiveTokenSymbols[$self.setting.currentNetwork.id] = %* newValue
+      status_go.saveSettings(attribute, $self.setting.rawActiveTokenSymbols)
 
   return self.setting
 

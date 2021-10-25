@@ -24,3 +24,12 @@ method init*[T](self: Controller[T]) =
 
 method getTokens*[T](self: Controller[T]): seq[token_service.TokenDto] =
   return self.tokenService.getTokens()
+
+method addCustomToken*[T](self: Controller[T], address: string, name: string, symbol: string, decimals: int) =
+  self.tokenService.addCustomToken(address, name, symbol, decimals)
+        
+method toggleVisible*[T](self: Controller[T], symbol: string) =
+  self.tokenService.toggleVisible(symbol)
+
+method removeCustomToken*[T](self: Controller[T], address: string) =
+  self.tokenService.removeCustomToken(address)

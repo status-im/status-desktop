@@ -113,15 +113,15 @@ QtObject {
     }
 
     function addCustomToken(address, name, symbol, decimals) {
-        return walletModel.tokensView.addCustomToken(address, name, symbol, decimals)
+        return walletSectionAllTokens.addCustomToken(address, name, symbol, decimals)
     }
 
-    function toggleAsset(symbol) {
-        walletModel.tokensView.toggleAsset(symbol)
+    function toggleVisible(symbol) {
+        walletSectionAllTokens.toggleVisible(symbol)
     }
 
     function removeCustomToken(address) {
-        walletModel.tokensView.removeCustomToken(address)
+        walletSectionAllTokens.removeCustomToken(address)
     }
 
     function getQrCode(address) {

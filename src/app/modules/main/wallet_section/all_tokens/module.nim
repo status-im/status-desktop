@@ -50,3 +50,12 @@ method load*[T](self: Module[T]) =
 
 method isLoaded*[T](self: Module[T]): bool =
   return self.moduleLoaded
+
+method addCustomToken*[T](self: Module[T], address: string, name: string, symbol: string, decimals: int) =
+  self.controller.addCustomToken(address, name, symbol, decimals)
+        
+method toggleVisible*[T](self: Module[T], symbol: string) =
+  self.controller.toggleVisible(symbol)
+
+method removeCustomToken*[T](self: Module[T], address: string) =
+  self.controller.removeCustomToken(address)
