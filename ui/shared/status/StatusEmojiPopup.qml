@@ -3,8 +3,10 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.3
 import QtGraphicalEffects 1.0
 
+import StatusQ.Controls 0.1
+
 import utils 1.0
-import "../../shared"
+
 import "../../shared/panels"
 import "../../shared/controls"
 
@@ -339,10 +341,10 @@ Popup {
             Repeater {
                 model: EmojiJSON.emojiCategories
 
-                StatusCategoryButton {
-                    source: Style.svg(`emojiCategories/${modelData}`)
-                    active: index === scrollView.activeCategory
-                    changeCategory: function () {
+                StatusTabBarIconButton {
+                    icon.name: modelData
+                    highlighted: index === scrollView.activeCategory
+                    onClicked: {
                         scrollView.activeCategory = index
                         scrollView.scrollToCategory(index)
                     }
