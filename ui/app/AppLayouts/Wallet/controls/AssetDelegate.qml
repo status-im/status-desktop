@@ -9,7 +9,7 @@ import "../../../../shared/panels"
 Item {
     id: assetDelegate
 
-    property string defaultCurrency: ""
+    property string currency: ""
 
     anchors.right: parent.right
     anchors.left: parent.left
@@ -59,7 +59,7 @@ Item {
     StyledText {
         id: assetFiatValue
         color: Style.current.secondaryText
-        text: Utils.toLocaleString(fiatBalance, globalSettings.locale) + " " + assetDelegate.defaultCurrency.toUpperCase()
+        text: Utils.toLocaleString(fiatBalance, globalSettings.locale) + " " + assetDelegate.currency.toUpperCase()
         anchors.right: parent.right
         anchors.rightMargin: 0
         anchors.bottom: parent.bottom

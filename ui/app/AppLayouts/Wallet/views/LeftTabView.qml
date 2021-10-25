@@ -47,7 +47,7 @@ Rectangle {
         StyledTextEdit {
             id: walletAmountValue
             color: Style.current.textColor
-            text: Utils.toLocaleString(RootStore.totalFiatBalance, globalSettings.locale, {"currency": true}) + " " + RootStore.defaultCurrency.toUpperCase()
+            text: Utils.toLocaleString(RootStore.totalFiatBalance, globalSettings.locale, {"currency": true}) + " " + RootStore.currentCurrency.toUpperCase()
             selectByMouse: true
             cursorVisible: true
             readOnly: true
@@ -127,7 +127,7 @@ Rectangle {
             boundsBehavior: Flickable.StopAtBounds
 
             delegate: WalletDelegate {
-                defaultCurrency: RootStore.defaultCurrency
+                currency: RootStore.currentCurrency
                 selectedAccountIndex: walletInfoContainer.selectedAccountIndex
                 onClicked: {
                     changeSelectedAccount(index)

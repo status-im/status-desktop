@@ -25,7 +25,7 @@ Item {
             // model: RootStore.exampleAssetModel
             model: RootStore.assets
             delegate: AssetDelegate {
-                defaultCurrency: RootStore.defaultCurrency
+                currency: RootStore.currentCurrency
             }
             boundsBehavior: Flickable.StopAtBounds
         }
