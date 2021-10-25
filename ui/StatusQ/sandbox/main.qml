@@ -149,6 +149,11 @@ StatusWindow {
                             onClicked: page.sourceComponent = controlsComponent
                         }
                         StatusNavigationListItem { 
+                            title: "StatusTabBarIconButton" 
+                            selected: page.sourceComponent == statusTabBarIconButtonPageComponent
+                            onClicked: page.sourceComponent = statusTabBarIconButtonPageComponent
+                        }
+                        StatusNavigationListItem { 
                             title: "StatusInput" 
                             selected: page.sourceComponent == statusInputPageComponent
                             onClicked: page.sourceComponent = statusInputPageComponent
@@ -299,6 +304,11 @@ StatusWindow {
     Component {
         id: statusColorSelectorPageComponent
         StatusColorSelectorPage {}
+    }
+
+    Component {
+        id: statusTabBarIconButtonPageComponent
+        StatusTabBarIconButtonPage {}
     }
 
     Component {
