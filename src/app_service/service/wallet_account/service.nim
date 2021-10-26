@@ -68,7 +68,7 @@ type
     events: EventEmitter
     settingService: setting_service.Service
     tokenService: token_service.Service
-    accounts: Table[string, WalletAccountDto]
+    accounts: OrderedTable[string, WalletAccountDto]
 
 method delete*(self: Service) =
   discard
@@ -80,7 +80,7 @@ proc newService*(
   result.events = events
   result.settingService = settingService
   result.tokenService = tokenService
-  result.accounts = initTable[string, WalletAccountDto]()
+  result.accounts = initOrderedTable[string, WalletAccountDto]()
 
 method getVisibleTokens(self: Service): seq[TokenDto] =
   return self.tokenService.getTokens().filter(t => t.isVisible)

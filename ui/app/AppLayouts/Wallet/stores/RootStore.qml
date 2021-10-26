@@ -40,20 +40,20 @@ QtObject {
             name: "Status account"
             address: "0xcfc9f08bbcbcb80760e8cb9a3c1232d19662fc6f"
             balance: "12.00 USD"
-            iconColor: "#7CDA00"
+            color: "#7CDA00"
         }
 
         ListElement {
             name: "Test account 1"
             address: "0x2Ef1...E0Ba"
             balance: "12.00 USD"
-            iconColor: "#FA6565"
+            color: "#FA6565"
         }
         ListElement {
             name: "Status account"
             address: "0x2Ef1...E0Ba"
             balance: "12.00 USD"
-            iconColor: "#7CDA00"
+            color: "#7CDA00"
         }
     }
 
@@ -151,6 +151,14 @@ QtObject {
         walletModel.historyView.loadTransactionsForAccount(walletModel.accountsView.currentAccount.address,
                                                            walletModel.transactionsView.transactions.getLastTxBlockNumber(),
                                                            pageSize, true)
+    }
+
+    function fetchCollectionCollectiblesList(slug) {
+        walletSectionCollectiblesCollectibles.fetch(slug)
+    }
+
+    function getCollectionCollectiblesList(slug) {
+        return walletSectionCollectiblesCollectibles.getModelForCollection(slug)
     }
 
     function getCollectionMaxValue(traitType, value, maxValue, collectionIndex) {

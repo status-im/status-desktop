@@ -20,7 +20,7 @@ Item {
 
     Connections {
         target: RootStore.getCollectionCollectiblesList(root.slug)
-        onCollectionCollectiblesChanged: {
+        onCountChanged: {
             root.collectiblesLoaded = true;
         }
     }
@@ -92,6 +92,6 @@ Item {
     }
 
     Component.onCompleted: {
-        RootStore.getCollectionCollectiblesList(root.slug)
+        RootStore.fetchCollectionCollectiblesList(root.slug)
     }
 }

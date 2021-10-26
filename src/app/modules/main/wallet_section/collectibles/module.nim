@@ -59,3 +59,4 @@ method isLoaded*[T](self: Module[T]): bool =
 method switchAccount*[T](self: Module[T], accountIndex: int) =
   let account = self.controller.getWalletAccount(accountIndex)
   self.collectionsModule.loadCollections(account.address)
+  self.collectiblesModule.setCurrentAddress(account.address)

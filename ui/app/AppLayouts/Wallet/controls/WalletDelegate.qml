@@ -45,7 +45,9 @@ Rectangle {
     ColorOverlay {
         anchors.fill: walletIcon
         source: walletIcon
-        color: Utils.getCurrentThemeAccountColor(color) || Style.current.accountColors[0]
+        color: {
+            Utils.getCurrentThemeAccountColor(model.color) || Style.current.accountColors[0]
+        }
     }
     StyledText {
         id: walletName
