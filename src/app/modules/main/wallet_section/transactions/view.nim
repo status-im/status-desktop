@@ -4,10 +4,13 @@ import ./item
 import ./model
 import ./io_interface
 
+import ../../../../../app_service/service/wallet_account/dto
+
 QtObject:
   type
     View* = ref object of QObject
       delegate: io_interface.AccessInterface
+      models: Table[string, Model]
       model: Model
       modelVariant: QVariant
       fetchingHistoryState: Table[string, bool]
@@ -65,10 +68,20 @@ QtObject:
     self.delegate.checkRecentHistory()
 
   proc setTrxHistoryResult*(self: View, transactions: seq[TransactionDto], address: string, wasFetchMore: bool) =
-    self.model.addNewTransactions(transactions, wasFetchMore)
+    if not self.models.hasKey(address):
+      self.models[address] = newModel()
+    
+    self.models[address].addNewTransactions(transactions, wasFetchMore)
     
     self.setHistoryFetchState(address, false)
 
   proc setHistoryFetchStateForAccounts*(self: View, addresses: seq[string], isFetching: bool) =
     for address in addresses:
       self.setHistoryFetchState(address, isFetching)
+
+  proc switchAccount*(self: View, walletAccount: WalletAccountDto) =
+    if not self.models.hasKey(walletAccount.address):
+      self.models[walletAccount.address] = newModel()
+    self.model = self.models[walletAccount.address]
+    self.modelVariant = newQVariant(self.model)
+    self.modelChanged()

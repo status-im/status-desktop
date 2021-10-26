@@ -68,6 +68,9 @@ method checkRecentHistory*[T](self: Controller[T]) =
 method getWalletAccounts*[T](self: Controller[T]): seq[WalletAccountDto] =
   self.walletAccountService.getWalletAccounts()
 
+method getWalletAccount*[T](self: Controller[T], accountIndex: int): WalletAccountDto =
+  return self.walletAccountService.getWalletAccount(accountIndex)
+
 method getAccountByAddress*[T](self: Controller[T], address: string): WalletAccountDto =
   self.walletAccountService.getAccountByAddress(address)
 

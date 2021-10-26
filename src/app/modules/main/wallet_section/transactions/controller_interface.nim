@@ -17,6 +17,9 @@ method checkRecentHistory*(self: AccessInterface) {.base.} =
 method getWalletAccounts*(self: AccessInterface): seq[WalletAccountDto] {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method getWalletAccount*(self: AccessInterface, accountIndex: int): WalletAccountDto {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method getAccountByAddress*(self: AccessInterface, address: string): WalletAccountDto {.base.} =
   raise newException(ValueError, "No implementation available")
 

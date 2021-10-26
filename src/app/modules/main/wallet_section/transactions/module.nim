@@ -50,7 +50,8 @@ method isLoaded*[T](self: Module[T]): bool =
   return self.moduleLoaded
 
 method switchAccount*[T](self: Module[T], accountIndex: int) =
-  discard
+  let walletAccount = self.controller.getWalletAccount(accountIndex)
+  self.view.switchAccount(walletAccount)
 
 method checkRecentHistory*[T](self: Module[T]) =
   self.controller.checkRecentHistory()
