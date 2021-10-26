@@ -28,7 +28,7 @@ proc newModule*[T](
   result = Module[T]()
   result.delegate = delegate
   result.view = newView(result)
-  result.controller = controller.newController[Module[T]](result, transactionService, walletAccountService)
+  result.controller = controller.newController[Module[T]](result, events, transactionService, walletAccountService)
   result.moduleLoaded = false
 
 method delete*[T](self: Module[T]) =
@@ -42,8 +42,7 @@ method load*[T](self: Module[T]) =
 
   let accounts = self.getWalletAccounts()
 
-  # TODO load more than the first
-  self.loadTransactions(accounts[0].address)
+  self.controller.init()
 
   self.moduleLoaded = true
 
@@ -73,3 +72,6 @@ method loadTransactions*[T](self: Module[T], address: string, toBlock: string = 
 
 method setTrxHistoryResult*[T](self: Module[T], transactions: seq[TransactionDto], address: string, wasFetchMore: bool) =
   self.view.setTrxHistoryResult(transactions, address, wasFetchMore)
+
+method setHistoryFetchState*[T](self: Module[T], addresses: seq[string], isFetching: bool) =
+  self.view.setHistoryFetchStateForAccounts(addresses, isFetching)

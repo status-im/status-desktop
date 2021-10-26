@@ -69,4 +69,6 @@ QtObject:
     
     self.setHistoryFetchState(address, false)
 
-   
+  proc setHistoryFetchStateForAccounts*(self: View, addresses: seq[string], isFetching: bool) =
+    for address in addresses:
+      self.setHistoryFetchState(address, isFetching)
