@@ -34,6 +34,9 @@ method loadTransactions*(self: AccessInterface, address: string, toBlock: string
 method setTrxHistoryResult*(self: AccessInterface, transactions: seq[TransactionDto], address: string, wasFetchMore: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method setHistoryFetchState*(self: AccessInterface, addresses: seq[string], isFetching: bool) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 type
   ## Abstract class (concept) which must be implemented by object/s used in this 
   ## module.
