@@ -54,10 +54,9 @@ proc toSettingDto*(jsonObj: JsonNode): SettingDto =
   result.rawActiveTokenSymbols = newJObject()
   result.activeTokenSymbols = @[]
   if jsonObj.hasKey("wallet/visible-tokens"):
-    result.rawActiveTokenSymbols = jsonObj{"wallet/visible-tokens"}
+    result.rawActiveTokenSymbols = parseJson(jsonObj{"wallet/visible-tokens"}.getStr)
     
-    let symbols =  parseJson(result.rawActiveTokenSymbols.getStr)
-    for symbol in symbols{$result.currentNetwork.id}.getElems():
+    for symbol in result.rawActiveTokenSymbols{$result.currentNetwork.id}.getElems():
       result.activeTokenSymbols.add(symbol.getStr)
 
 proc isMnemonicBackedUp*(self: SettingDto): bool =

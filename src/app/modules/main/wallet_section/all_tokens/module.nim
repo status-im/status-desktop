@@ -11,6 +11,7 @@ export io_interface
 type
   Module* [T: io_interface.DelegateInterface] = ref object of io_interface.AccessInterface
     delegate: T
+    events: EventEmitter
     view: View
     controller: controller.AccessInterface
     moduleLoaded: bool
@@ -22,6 +23,7 @@ proc newModule*[T](
 ): Module[T] =
   result = Module[T]()
   result.delegate = delegate
+  result.events = events
   result.view = newView(result)
   result.controller = controller.newController[Module[T]](result, tokenService)
   result.moduleLoaded = false
@@ -30,9 +32,7 @@ method delete*[T](self: Module[T]) =
   self.view.delete
   self.controller.delete
 
-method load*[T](self: Module[T]) =
-  singletonInstance.engine.setRootContextProperty("walletSectionAllTokens", newQVariant(self.view))
-
+method refreshTokens*[T](self: Module[T]) =
   let tokens = self.controller.getTokens()
   self.view.setItems(
     tokens.map(t => initItem(
@@ -45,6 +45,19 @@ method load*[T](self: Module[T]) =
       t.isVisible
     ))
   )
+
+method load*[T](self: Module[T]) =
+  singletonInstance.engine.setRootContextProperty("walletSectionAllTokens", newQVariant(self.view))
+  self.refreshTokens()
+
+  self.events.on("token/customTokenAdded") do(e:Args):
+    self.refreshTokens()
+
+  self.events.on("token/visibilityToggled") do(e:Args):
+    self.refreshTokens()
+
+  self.events.on("token/customTokenRemoved") do(e:Args):
+    self.refreshTokens()
 
   self.moduleLoaded = true
 

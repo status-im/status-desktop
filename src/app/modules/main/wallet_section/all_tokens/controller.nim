@@ -9,7 +9,7 @@ type
     tokenService: token_service.ServiceInterface
 
 proc newController*[T](
-  delegate: T, 
+  delegate: T,
   tokenService: token_service.ServiceInterface
 ): Controller[T] =
   result = Controller[T]()

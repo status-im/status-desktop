@@ -42,6 +42,7 @@ method saveSetting*(
       self.setting.activeTokenSymbols = newValue
       self.setting.rawActiveTokenSymbols[$self.setting.currentNetwork.id] = newJArray()
       self.setting.rawActiveTokenSymbols[$self.setting.currentNetwork.id] = %* newValue
+
       status_go.saveSettings(attribute, $self.setting.rawActiveTokenSymbols)
 
   return self.setting
