@@ -5,7 +5,6 @@ import app/wallet/v1/core as wallet
 import app/wallet/v2/core as walletV2
 import app/node/core as node
 import app/utilsView/core as utilsView
-import app/provider/core as provider
 import app/keycard/core as keycard
 import status/types/[account]
 import status_go
@@ -158,10 +157,6 @@ proc mainProc() =
   defer: utilsController.delete()
   singletonInstance.engine.setRootContextProperty("utilsModel", utilsController.variant)
 
-  var provider = provider.newController(status)
-  defer: provider.delete()
-  singletonInstance.engine.setRootContextProperty("web3Provider", provider.variant)
-
   var keycard = keycard.newController(status)
   defer: keycard.delete()
 
@@ -172,7 +167,6 @@ proc mainProc() =
     status.startMessenger()
     wallet.init()
     wallet2.init()
-    provider.init()
     chat.init()
     utilsController.init()
     node.init()

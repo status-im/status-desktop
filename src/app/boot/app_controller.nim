@@ -15,6 +15,8 @@ import ../../app_service/service/bookmarks/service as bookmark_service
 import ../../app_service/service/dapp_permissions/service as dapp_permissions_service
 import ../../app_service/service/mnemonic/service as mnemonic_service
 import ../../app_service/service/privacy/service as privacy_service
+import ../../app_service/service/provider/service as provider_service
+import ../../app_service/service/ens/service as ens_service
 
 import ../core/local_account_settings
 import ../../app_service/service/profile/service as profile_service
@@ -75,6 +77,8 @@ type
     settingService: setting_service.Service
     bookmarkService: bookmark_service.Service
     dappPermissionsService: dapp_permissions_service.Service
+    ensService: ens_service.Service
+    providerService: provider_service.Service
     profileService: profile_service.Service
     settingsService: settings_service.Service
     aboutService: about_service.Service
@@ -142,6 +146,8 @@ proc newAppController*(appService: AppService): AppController =
   result.languageService = language_service.newService()
   result.mnemonicService = mnemonic_service.newService()
   result.privacyService = privacy_service.newService()
+  result.ensService = ens_service.newService()
+  result.providerService = provider_service.newService(result.dappPermissionsService, result.settingsService, result.ensService)
 
   # Core
   result.localAppSettingsVariant = newQVariant(singletonInstance.localAppSettings)
@@ -175,7 +181,8 @@ proc newAppController*(appService: AppService): AppController =
     result.dappPermissionsService,
     result.languageService,
     result.mnemonicService,
-    result.privacyService
+    result.privacyService,
+    result.providerService,
   )
 
   #################################################
@@ -225,6 +232,8 @@ proc delete*(self: AppController) =
   self.walletAccountService.delete
   self.aboutService.delete
   self.dappPermissionsService.delete
+  self.providerService.delete
+  self.ensService.delete
 
 proc startupDidLoad*(self: AppController) =
   #################################################
@@ -269,6 +278,8 @@ proc load*(self: AppController) =
   self.tokenService.init()
   self.settingsService.init()
   self.dappPermissionsService.init()
+  self.ensService.init()
+  self.providerService.init()
   self.walletAccountService.init()
   self.transactionService.init()
   self.mainModule.load()

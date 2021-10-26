@@ -4,6 +4,8 @@ import view
 import controller
 import ../io_interface as delegate_interface
 import ../../../../../app_service/service/settings/service as settings_service
+import ../../../../../app_service/service/dapp_permissions/service as dapp_permissions_service
+import ../../../../../app_service/service/provider/service as provider_service
 import ../../../../core/global_singleton
 export io_interface
 
@@ -15,13 +17,16 @@ type
     moduleLoaded: bool
     controller: controller.AccessInterface
 
-proc newModule*(delegate: delegate_interface.AccessInterface, settingsService: settings_service.ServiceInterface): Module =
+proc newModule*(delegate: delegate_interface.AccessInterface,
+  settingsService: settings_service.ServiceInterface,
+  dappPermissionsService: dapp_permissions_service.ServiceInterface,
+  providerService: provider_service.ServiceInterface): Module =
   result = Module()
   result.delegate = delegate
   result.view = newView(result)
   result.viewVariant = newQVariant(result.view)
   result.moduleLoaded = false
-  result.controller = controller.newController(result, settingsService)
+  result.controller = controller.newController(result, settingsService, dappPermissionsService, providerService)
 
 method delete*(self: Module) =
   self.controller.delete
@@ -49,3 +54,15 @@ proc checkIfModuleDidLoad(self: Module) =
 
 method viewDidLoad*(self: Module) =
   self.checkIfModuleDidLoad()
+
+method disconnect*(self: Module) =
+  self.controller.disconnect()
+
+method postMessage*(self: Module, message: string): string =
+  return self.controller.postMessage(message)
+
+method hasPermission*(self: Module, hostname: string, permission: string): bool =
+  return self.controller.hasPermission(hostname, permission)
+
+method ensResourceURL*(self: Module, ens: string, url: string): (string, string, string, string, bool) =
+  return self.controller.ensResourceURL(ens, url)

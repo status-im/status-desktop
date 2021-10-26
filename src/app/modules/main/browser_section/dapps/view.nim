@@ -68,11 +68,6 @@ QtObject:
   proc revokeAllPermissions(self: View) {.slot.} =
     self.delegate.revokeAllPermissions()
 
-  proc ensResourceURL*(self: View, ens: string, url: string): string {.slot.} =
-    discard # TODO:
-    #let (url, base, http_scheme, path_prefix, hasContentHash) = self.status.provider.ensResourceURL(ens, url)
-    #result = url_replaceHostAndAddPath(url, (if hasContentHash: base else: url_host(base)), http_scheme, path_prefix)
-
   proc clearDapps*(self: View) =
     self.dappsModel.clear()
 
