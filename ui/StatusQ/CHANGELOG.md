@@ -1,4 +1,16 @@
 <a name=""></a>
+##  Version 0.15.0 (2021-10-26)
+
+
+#### Features
+
+* **StatusQ.Controls:**
+  *  introduce StatusChatCommandButton ([4cc0d2bb](4cc0d2bb), closes [#429](429))
+  *  introduce `StatusTabBarIconButton` component ([4bcd89b3](4bcd89b3), closes [#428](428))
+
+
+
+<a name=""></a>
 ##  Version 0.14.0 (2021-10-25)
 
 
