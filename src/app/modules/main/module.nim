@@ -19,6 +19,7 @@ import ../../../app_service/service/wallet_account/service as wallet_account_ser
 import ../../../app_service/service/setting/service as setting_service
 import ../../../app_service/service/bookmarks/service as bookmark_service
 import ../../../app_service/service/dapp_permissions/service as dapp_permissions_service
+import ../../../app_service/service/provider/service as provider_service
 
 import eventemitter
 import ../../../app_service/service/profile/service as profile_service
@@ -75,7 +76,8 @@ proc newModule*[T](
   dappPermissionsService: dapp_permissions_service.ServiceInterface,
   languageService: language_service.ServiceInterface,
   mnemonicService: mnemonic_service.ServiceInterface,
-  privacyService: privacy_service.ServiceInterface
+  privacyService: privacy_service.ServiceInterface,
+  providerService: provider_service.ServiceInterface
 ): Module[T] =
   result = Module[T]()
   result.delegate = delegate
@@ -105,8 +107,8 @@ proc newModule*[T](
     settingService
   )
 
-  result.browserSectionModule = browser_section_module.newModule(result, bookmarkService, settingsService, dappPermissionsService)
-  result.profileSectionModule = profile_section_module.newModule(result,events, accountsService, settingsService, profileService, contactsService, aboutService, languageService, mnemonicService, privacyService)
+  result.browserSectionModule = browser_section_module.newModule(result, bookmarkService, settingsService, dappPermissionsService, providerService)
+  result.profileSectionModule = profile_section_module.newModule(result, events, accountsService, settingsService, profileService, contactsService, aboutService, languageService, mnemonicService, privacyService)
 
 method delete*[T](self: Module[T]) =
   self.chatSectionModule.delete

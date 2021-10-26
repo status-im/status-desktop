@@ -9,6 +9,7 @@ import dapps/module as dapps_module
 import ../../../../app_service/service/bookmarks/service as bookmark_service
 import ../../../../app_service/service/settings/service as settings_service
 import ../../../../app_service/service/dapp_permissions/service as dapp_permissions_service
+import ../../../../app_service/service/provider/service as provider_service
 export io_interface
 
 type 
@@ -21,13 +22,17 @@ type
     bookmarkModule: bookmark_module.AccessInterface
     dappsModule: dapps_module.AccessInterface
 
-proc newModule*(delegate: delegate_interface.AccessInterface, bookmarkService: bookmark_service.ServiceInterface, settingsService: settings_service.ServiceInterface, dappPermissionsService: dapp_permissions_service.ServiceInterface): Module =
+proc newModule*(delegate: delegate_interface.AccessInterface,
+    bookmarkService: bookmark_service.ServiceInterface,
+    settingsService: settings_service.ServiceInterface,
+    dappPermissionsService: dapp_permissions_service.ServiceInterface,
+    providerService: provider_service.ServiceInterface): Module =
   result = Module()
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
   result.moduleLoaded = false
-  result.providerModule = provider_module.newModule(result, settingsService)
+  result.providerModule = provider_module.newModule(result, settingsService, dappPermissionsService, providerService)
   result.bookmarkModule = bookmark_module.newModule(result, bookmarkService)
   result.dappsModule = dapps_module.newModule(result, dappPermissionsService)
 
@@ -72,4 +77,3 @@ method dappsDidLoad*(self: Module) =
 
 method viewDidLoad*(self: Module) =
   self.checkIfModuleDidLoad()
-

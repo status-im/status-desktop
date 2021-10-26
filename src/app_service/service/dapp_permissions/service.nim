@@ -88,8 +88,10 @@ method revoke*(self: Service, dapp: string, permission: Permission): bool =
 method addPermission*(self: Service, dapp: string, permission: Permission): R =
   try:
     if not self.dapps.hasKey(dapp):
-      result.err "not found"
-      return
+      self.dapps[dapp] = Dapp(
+        name: dapp,
+        permissions: initHashSet[Permission]()
+      )
 
     self.dapps[dapp].permissions.incl(permission)
     discard status_go.addDappPermissions(dapp, self.dapps[dapp].permissions.toSeq().mapIt($it))

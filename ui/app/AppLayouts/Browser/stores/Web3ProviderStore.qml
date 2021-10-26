@@ -12,7 +12,7 @@ QtObject {
         var url = RootStore.getUrlFromUserInput(text);
         var host = providerModule.getHost(url);
         if(host.endsWith(".eth")){
-            var ensResource = web3Provider.ensResourceURL(host, url);
+            var ensResource = providerModule.ensResourceURL(host, url);
 
             if(/^https\:\/\/swarm\-gateways\.net\/bzz:\/([0-9a-fA-F]{64}|.+\.eth)(\/?)/.test(ensResource)){
                 // TODO: populate urlENSDictionary for prettier url instead of swarm-gateway big URL
