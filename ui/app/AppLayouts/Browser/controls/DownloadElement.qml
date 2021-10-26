@@ -2,14 +2,12 @@ import QtQuick 2.1
 import QtQuick.Controls 2.13
 import QtGraphicalEffects 1.13
 
+import StatusQ.Controls 0.1
+import StatusQ.Components 0.1
+
 import utils 1.0
 
-import StatusQ.Controls 0.1
-
-import "../../../../shared"
 import "../../../../shared/panels"
-import "../../../../shared/status/core"
-import "../../../../shared/status"
 
 Rectangle {
     property bool downloadComplete: false

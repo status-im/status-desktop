@@ -2,14 +2,12 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.12
 
-
-import utils 1.0
-import "../../../../shared"
-
 import StatusQ.Core 0.1
 import StatusQ.Popups 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core.Theme 0.1
+
+import utils 1.0
 
 StatusModal {
     id: root

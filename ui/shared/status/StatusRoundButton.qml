@@ -3,10 +3,10 @@ import QtQuick.Controls 2.13
 import QtGraphicalEffects 1.13
 import QtQml 2.14
 
+import StatusQ.Components 0.1
 import utils 1.0
-import "../../shared"
+
 import "../../shared/panels"
-import "./core"
 
 RoundButton {
     property string type: "primary"

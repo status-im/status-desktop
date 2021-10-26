@@ -1,10 +1,9 @@
 import QtQuick 2.3
 import QtGraphicalEffects 1.13
 
+import StatusQ.Components 0.1
+
 import utils 1.0
-import "../status/core"
-import "../status"
-import "../"
 import "./"
 
 Rectangle {

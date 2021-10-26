@@ -3,12 +3,13 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.3
 import QtGraphicalEffects 1.0
 
+import StatusQ.Components 0.1
+
 import utils 1.0
 
 import StatusQ.Controls 0.1 as StatusQControls
 
 import "../../shared/panels"
-import "../../shared/status/core"
 import "../../shared/status"
 //TODO improve this!
 import "../../app/AppLayouts/Chat/stores"

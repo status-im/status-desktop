@@ -2,13 +2,13 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 
+import StatusQ.Components 0.1
 import utils 1.0
-import "../../../../shared"
+
 import "../../../../shared/popups"
 import "../../../../shared/panels"
 import "../../../../shared/controls"
 import "../../../../shared/views"
-import "../../../../shared/status/core"
 import "../../../../shared/status"
 
 import "../panels"
