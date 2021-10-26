@@ -12,6 +12,7 @@ import "../../Onboarding/shared" as OnboardingComponents
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
+import StatusQ.Controls 0.1 as StatusQControls
 
 import "../popups"
 
@@ -162,7 +163,7 @@ Item {
             title: qsTrId("display-all-profile-pictures--not-only-contacts-")
             implicitHeight: 52
             components: [
-                StatusSwitch {
+                StatusQControls.StatusSwitch {
                     id: switch1
                     checked: !appSettings.onlyShowContactsProfilePics
                 }
@@ -181,7 +182,7 @@ Item {
             title: qsTrId("display-images-in-chat-automatically")
             implicitHeight: 52
             components: [
-                StatusSwitch {
+                StatusQControls.StatusSwitch {
                     id: switch2               
                     checked: appSettings.displayChatImages
                 }
@@ -259,7 +260,7 @@ Item {
             title: qsTrId("allow-new-contact-requests")
             implicitHeight: 52
             components: [
-                StatusSwitch {
+                StatusQControls.StatusSwitch {
                     id: switch3
                     checked: !root.store.messagesFromContactsOnly
                 }

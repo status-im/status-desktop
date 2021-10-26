@@ -5,6 +5,8 @@ import utils 1.0
 import ".."
 import "../panels"
 
+import StatusQ.Controls 0.1 as StatusQControls
+
 Rectangle {
     property string text
     property bool isSwitch: false
@@ -70,7 +72,7 @@ Rectangle {
 
     }
 
-    StatusSwitch {
+    StatusQControls.StatusSwitch {
         id: switchItem
         enabled: root.isEnabled
         visible: root.isSwitch
