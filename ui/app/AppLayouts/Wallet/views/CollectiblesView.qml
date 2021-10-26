@@ -53,7 +53,7 @@ Item {
 
             Column {
                 id: collectiblesSection
-                width: parent.width
+                width: root.width
 
                 Repeater {
                     id: collectionsRepeater
