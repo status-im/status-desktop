@@ -5,7 +5,6 @@ import StatusQ.Popups 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core.Theme 0.1
 
-import "../../../../shared"
 import "../../../../shared/panels"
 
 StatusModal {

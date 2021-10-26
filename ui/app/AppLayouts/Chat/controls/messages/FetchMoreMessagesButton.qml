@@ -1,7 +1,8 @@
 import QtQuick 2.13
-import "../../../../../shared"
+
+import StatusQ.Components 0.1
+
 import "../../../../../shared/panels"
-import "../../../../../shared/status/core"
 
 import utils 1.0
 
