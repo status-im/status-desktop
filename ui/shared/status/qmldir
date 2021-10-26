@@ -12,7 +12,6 @@ StatusImageIdenticon 1.0 StatusImageIdenticon.qml
 StatusRadioButton 1.0 StatusRadioButton.qml
 StatusRoundButton 1.0 StatusRoundButton.qml
 StatusSectionHeadline 1.0 StatusSectionHeadline.qml
-StatusSectionMenuItem 1.0 StatusSectionMenuItem.qml
 StatusSlider 1.0 StatusSlider.qml
 StatusStickerButton 1.0 StatusStickerButton.qml
 StatusStickerList 1.0 StatusStickerList.qml
