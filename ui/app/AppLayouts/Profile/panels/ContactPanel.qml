@@ -2,15 +2,13 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 
-import utils 1.0
-import "../../../../shared"
-import "../../../../shared/popups"
-import "../../../../shared/panels"
-import "../../../../shared/status"
-
 import StatusQ.Components 0.1
+import StatusQ.Controls 0.1
+import StatusQ.Popups 0.1
 
-Rectangle {
+import utils 1.0
+
+StatusListItem {
     property string name: "Jotaro Kujo"
     property string address: "0x04d8c07dd137bd1b73a6f51df148b4f77ddaa11209d36e43d8344c0a7d6db1cad6085f27cfb75dd3ae21d86ceffebe4cf8a35b9ce8d26baa19dc264efe6d8f221b"
     property string identicon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII="
@@ -19,145 +17,97 @@ Rectangle {
     property bool isContact: true
     property bool isBlocked: false
     property string searchStr: ""
-    signal clicked()
     signal sendMessageActionTriggered()
     signal unblockContactActionTriggered()
     signal blockContactActionTriggered(name: string, address: string)
     signal removeContactActionTriggered(address: string)
-    property bool isHovered: false
+
     id: container
 
     visible: isContact && (searchStr == "" || name.includes(searchStr))
-    height: visible ? 64 : 0
+    height: visible ? implicitHeight : 0
+
     anchors.right: parent.right
     anchors.left: parent.left
     anchors.leftMargin: -Style.current.padding
     anchors.rightMargin: -Style.current.padding
-    border.width: 0
-    radius: Style.current.radius
-    color: isHovered ? Style.current.backgroundHover : Style.current.transparent
 
-    StatusSmartIdenticon {
-        id: accountImage
-        anchors.left: parent.left
-        anchors.leftMargin: Style.current.padding
-        anchors.verticalCenter: parent.verticalCenter
-        image.source: identicon
-        image.isIdenticon: true
-    }
+    title: name
+    image.source: identicon
 
-    StyledText {
-        id: usernameText
-        text: name
-        elide: Text.ElideRight
-        anchors.right: parent.right
-        anchors.rightMargin: Style.current.padding
-        font.pixelSize: 17
-        anchors.top: accountImage.top
-        anchors.topMargin: Style.current.smallPadding
-        anchors.left: accountImage.right
-        anchors.leftMargin: Style.current.padding
-    }
-
-    MouseArea {
-        cursorShape: Qt.PointingHandCursor
-        anchors.fill: parent
-        hoverEnabled: true
-        onEntered: container.isHovered = true
-        onExited: container.isHovered = false
-        acceptedButtons: Qt.LeftButton | Qt.RightButton
-        onClicked: {
-            if (mouse.button === Qt.RightButton) {
-                contactContextMenu.popup()
-                return
-            }
-            container.clicked();
-        }
-    }
-
-    StatusContextMenuButton {
-        property int iconSize: 14
-        id: menuButton
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.right: parent.right
-        anchors.rightMargin: Style.current.padding
-
-        MouseArea {
-            id: mouseArea
-            cursorShape: Qt.PointingHandCursor
-            anchors.fill: parent
-            hoverEnabled: true
-            onExited: {
-                container.isHovered = false
-                menuButton.highlighted = false
-            }
-            onEntered: {
-                container.isHovered = true
-                menuButton.highlighted = true
-            }
+    components: [
+        StatusFlatRoundButton {
+            id: menuButton
+            width: 32
+            height: 32
+            icon.name: "more"
+            type: StatusFlatRoundButton.Type.Secondary
             onClicked: {
-              contactContextMenu.popup()
+                highlighted = true
+                contactContextMenu.popup(-contactContextMenu.width+menuButton.width, menuButton.height + 4)
             }
 
-            // TODO: replace with StatusPopupMenu
-            PopupMenu {
+            StatusPopupMenu {
                 id: contactContextMenu
-                hasArrow: false
-                Action {
-                    icon.source: Style.svg("profileActive")
-                    icon.width: menuButton.iconSize
-                    icon.height: menuButton.iconSize
-                    //% "View Profile"
-                    text: qsTrId("view-profile")
-                    onTriggered: profileClick(true, name, address, identicon, "", localNickname)
-                    enabled: true
+
+                onClosed: {
+                    menuButton.highlighted = false
                 }
-                Action {
-                    icon.source: Style.svg("message")
-                    icon.width: menuButton.iconSize
-                    icon.height: menuButton.iconSize
-                    //% "Send message"
-                    text: qsTrId("send-message")
-                    onTriggered: container.sendMessageActionTriggered()
-                    enabled: !container.isBlocked
-                }
-                Action {
-                    icon.source: Style.svg("block-icon")
-                    icon.width: menuButton.iconSize
-                    icon.height: menuButton.iconSize
-                    //% "Block User"
-                    text: qsTrId("block-user")
-                    enabled: !container.isBlocked
+
+                StatusMenuItem {
+                    text: qsTr("View Profile")
+                    icon.name: "profile"
                     onTriggered: {
-                      container.blockContactActionTriggered(name, address)
+                        container.profileClick(true, name, address, identicon, "", localNickname)
+                        menuButton.highlighted = false
                     }
                 }
-                Action {
-                    icon.source: Style.svg("remove-contact")
-                    icon.width: menuButton.iconSize
-                    icon.height: menuButton.iconSize
-                    icon.color: Style.current.red
-                    text: qsTrId("remove-contact")
+
+                StatusMenuItem {
+                    text: qsTr("Send message")
+                    icon.name: "chat"
+                    onTriggered: {
+                        container.sendMessageActionTriggered()
+                        menuButton.highlighted = false
+                    }
+                    enabled: !container.isBlocked
+                }
+
+                StatusMenuItem {
+                    text: qsTr("Block User")
+                    icon.name: "cancel"
+                    enabled: !container.isBlocked
+                    type: StatusMenuItem.Type.Danger
+                    onTriggered: {
+                        container.blockContactActionTriggered(name, address)
+                        menuButton.highlighted = false
+                    }
+                }
+
+                StatusMenuItem {
+                    text: qsTr("Remove contact")
+                    icon.name: "remove-contact"
                     enabled: container.isContact
+                    type: StatusMenuItem.Type.Danger
                     onTriggered: {
-                      container.removeContactActionTriggered(address)
+                        container.removeContactActionTriggered(address)
+                        menuButton.highlighted = false
                     }
                 }
-                Action {
-                    icon.source: Style.svg("block-icon")
-                    icon.width: menuButton.iconSize
-                    icon.height: menuButton.iconSize
-                    icon.color: Style.current.red
-                    //% "Unblock User"
-                    text: qsTrId("unblock-user")
+
+                StatusMenuItem {
+                    text: qsTr("Unblock user")
+                    icon.name: "cancel"
                     enabled: container.isBlocked
+                    type: StatusMenuItem.Type.Danger
                     onTriggered: {
-                      container.unblockContactActionTriggered()
-                      contactContextMenu.close()
+                        container.unblockContactActionTriggered()
+                        menuButton.highlighted = false
+                        contactContextMenu.close()
                     }
                 }
             }
         }
-    }
+    ]
 }
 

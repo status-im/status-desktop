@@ -2,14 +2,10 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 
-import utils 1.0
-
 import StatusQ.Controls 0.1
+import StatusQ.Popups 0.1
 
-import "../../../../shared"
-import "../../../../shared/popups"
-import "../../../../shared/panels"
-import "../../../../shared/status"
+import utils 1.0
 
 Row {
     signal acceptClicked()
@@ -43,42 +39,38 @@ Row {
         onClicked: root.declineClicked()
     }
 
-    StatusContextMenuButton {
-        property int iconSize: 14
+
+    StatusFlatRoundButton {
         id: menuButton
         anchors.verticalCenter: parent.verticalCenter
-
-        MouseArea {
-            id: mouseArea
-            cursorShape: Qt.PointingHandCursor
-            anchors.fill: parent
-
-            onClicked: {
-                contactContextMenu.open()
-            }
+        width: 32
+        height: 32
+        icon.name: "more"
+        type: StatusFlatRoundButton.Type.Secondary
+        onClicked: {
+            highlighted = true
+            contactContextMenu.popup(-contactContextMenu.width+menuButton.width, menuButton.height + 4)
         }
 
-        // TODO: replace with StatusPopupMenu
-        PopupMenu {
+        StatusPopupMenu {
             id: contactContextMenu
-            hasArrow: false
-            Action {
-                icon.source: Style.svg("profileActive")
-                icon.width: menuButton.iconSize
-                icon.height: menuButton.iconSize
-                //% "View Profile"
-                text: qsTrId("view-profile")
-                onTriggered: root.profileClicked()
-                enabled: true
+
+            onClosed: {
+                menuButton.highlighted = false
             }
-            Separator {}
-            Action {
-                icon.source: Style.svg("block-icon")
-                icon.width: menuButton.iconSize
-                icon.height: menuButton.iconSize
-                icon.color: Style.current.danger
-                //% "Decline and block"
-                text: qsTrId("decline-and-block")
+
+            StatusMenuItem {
+                text: qsTr("View Profile")
+                icon.name: "profile"
+                onTriggered: root.profileClicked()
+            }
+
+            StatusMenuSeparator {}
+
+            StatusMenuItem {
+                text: qsTr("Decline and block")
+                icon.name: "cancel"
+                type: StatusMenuItem.Type.Danger
                 onTriggered: root.blockClicked()
             }
         }
