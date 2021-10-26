@@ -9,7 +9,7 @@ QtObject {
     property var accounts: walletSectionAccounts.model
 
     property string currentCurrency: walletSection.currentCurrency
-    property string totalFiatBalance: walletSection.totalCurrencyBalance
+    property string totalCurrencyBalance: walletSection.totalCurrencyBalance
     property string signingPhrase: walletSection.signingPhrase
     property string mnemonicBackedUp: walletSection.isMnemonicBackedUp
 

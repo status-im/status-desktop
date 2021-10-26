@@ -26,6 +26,9 @@ method addWatchOnlyAccount*(self: AccessInterface, address: string, accountName:
 method deleteAccount*(self: AccessInterface, address: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method refreshWalletAccounts*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 type
   ## Abstract class (concept) which must be implemented by object/s used in this 
   ## module.

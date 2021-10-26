@@ -54,7 +54,7 @@ Item {
     StyledText {
         id: walletBalance
         text: {
-            Utils.toLocaleString(currentAccount.currencyBalance, globalSettings.locale, {"currency": true}) + " " + walletHeader.currency.toUpperCase()
+            Utils.toLocaleString(currentAccount.currencyBalance.toFixed(2), globalSettings.locale, {"currency": true}) + " " + walletHeader.currency.toUpperCase()
         }
         anchors.left: separatorDot.right
         anchors.leftMargin: 8

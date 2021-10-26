@@ -47,7 +47,9 @@ Rectangle {
         StyledTextEdit {
             id: walletAmountValue
             color: Style.current.textColor
-            text: Utils.toLocaleString(RootStore.totalFiatBalance, globalSettings.locale, {"currency": true}) + " " + RootStore.currentCurrency.toUpperCase()
+            text: {
+                Utils.toLocaleString(parseFloat(RootStore.totalCurrencyBalance).toFixed(2), globalSettings.locale, {"currency": true}) + " " + RootStore.currentCurrency.toUpperCase()
+            }
             selectByMouse: true
             cursorVisible: true
             readOnly: true

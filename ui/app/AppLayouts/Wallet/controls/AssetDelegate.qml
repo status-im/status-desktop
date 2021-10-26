@@ -59,7 +59,7 @@ Item {
     StyledText {
         id: assetCurrencyBalance
         color: Style.current.secondaryText
-        text: Utils.toLocaleString(currencyBalance, globalSettings.locale) + " " + assetDelegate.currency.toUpperCase()
+        text: Utils.toLocaleString(currencyBalance.toFixed(2), globalSettings.locale) + " " + assetDelegate.currency.toUpperCase()
         anchors.right: parent.right
         anchors.rightMargin: 0
         anchors.bottom: parent.bottom
