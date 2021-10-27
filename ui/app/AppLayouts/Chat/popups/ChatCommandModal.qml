@@ -8,7 +8,7 @@ import utils 1.0
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Popups 0.1
-import StatusQ.Controls 0.1 as StatusQControls
+import StatusQ.Controls 0.1
 
 import "../../../../shared/panels"
 import "../../../../shared/controls"
@@ -48,7 +48,7 @@ StatusModal {
                 //% "Continue"
                 footerText: qsTrId("continue")
 
-                StatusQControls.StatusAccountSelector {
+                StatusAccountSelector {
                     id: selectFromAccount
                     accounts: root.store.walletModelInst.accountsView.accounts
                     selectedAccount: {
@@ -149,7 +149,7 @@ StatusModal {
     }
 
     leftButtons: [
-        StatusQControls.StatusRoundButton {
+        StatusRoundButton {
             visible: !stack.isFirstGroup
             icon.name: "arrow-right"
             icon.width: 20
@@ -162,7 +162,7 @@ StatusModal {
     ]
 
     rightButtons: [
-        StatusQControls.StatusButton {
+        StatusButton {
             id: btnNext
             //% "Next"
             text: qsTrId("next")

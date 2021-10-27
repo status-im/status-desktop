@@ -12,8 +12,6 @@ import "../controls"
 import "../views"
 import "."
 
-import StatusQ.Controls 0.1 as StatusQControls
-
 // TODO: replace with StatusModal
 ModalPopup {
     id: root
@@ -84,7 +82,7 @@ ModalPopup {
             //% "Continue"
             footerText: qsTrId("continue")
 
-            AccountSelector {
+            StatusAccountSelector {
                 id: selectFromAccount
                 accounts: walletModel.accountsView.accounts
                 selectedAccount: {
@@ -222,7 +220,7 @@ ModalPopup {
         width: parent.width
         height: btnNext.height
 
-        StatusQControls.StatusRoundButton {
+        StatusRoundButton {
             id: btnBack
             anchors.left: parent.left
             visible: !stack.isFirstGroup

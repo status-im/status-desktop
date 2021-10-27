@@ -5,7 +5,7 @@ import QtQuick.Dialogs 1.3
 
 import utils 1.0
 
-import StatusQ.Controls 0.1 as StatusQControls
+import StatusQ.Controls 0.1
 
 import "../../shared/views"
 import "../../shared/controls"
@@ -88,7 +88,7 @@ ModalPopup {
             //% "Continue"
             footerText: qsTrId("continue")
             showBackBtn: false
-            AccountSelector {
+            StatusAccountSelector {
                 id: selectFromAccount
                 accounts: walletModel.accountsView.accounts
                 selectedAccount: {
@@ -184,7 +184,7 @@ ModalPopup {
         width: parent.width
         height: btnNext.height
 
-        StatusQControls.StatusRoundButton {
+        StatusRoundButton {
             id: btnBack
             anchors.left: parent.left
             icon.name: "arrow-right"
@@ -208,7 +208,7 @@ ModalPopup {
             }
         }
 
-        StatusQControls.StatusButton {
+        StatusButton {
             id: btnNext
             anchors.right: parent.right
             //% "Next"
