@@ -3,6 +3,8 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import QtGraphicalEffects 1.13
 
+import StatusQ.Controls 0.1
+
 import utils 1.0
 
 import "."
@@ -182,7 +184,7 @@ Item {
             onIsValidChanged: root.validate()
         }
 
-        AccountSelector {
+        StatusAccountSelector {
             id: selAccount
             accounts: root.accounts
             visible: false
