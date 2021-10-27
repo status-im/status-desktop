@@ -1,3 +1,4 @@
+import ../../../../app_service/service/chat/service_interface as chat_service
 import ../../../../app_service/service/community/service_interface as community_service
 
 type 
@@ -16,7 +17,20 @@ method getId*(self: AccessInterface): string {.base.} =
 method isCommunity*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getCommunities*(self: AccessInterface): 
-  seq[community_service.CommunityDto] {.base.} =
+method getCommunityIds*(self: AccessInterface): seq[string] {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getCategories*(self: AccessInterface, communityId: string): seq[Category] {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getChats*(self: AccessInterface, communityId: string, categoryId: string): seq[Chat] {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getChatDetails*(self: AccessInterface, communityId, chatId: string): ChatDto {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getChatDetailsForChatTypes*(self: AccessInterface, types: seq[ChatType]): seq[ChatDto] {.base.} =
   raise newException(ValueError, "No implementation available")
     
+method setActiveItemSubItem*(self: AccessInterface, itemId: string, subItemId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
