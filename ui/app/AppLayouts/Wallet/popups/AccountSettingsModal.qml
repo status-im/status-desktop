@@ -3,15 +3,17 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import QtQuick.Dialogs 1.3
 
+import StatusQ.Core 0.1
+import StatusQ.Core.Theme 0.1
+import StatusQ.Controls 0.1
+
 import utils 1.0
 
 import shared.panels 1.0
 import shared.popups 1.0
-import shared.status 1.0
 import shared.controls 1.0
-import "../stores"
 
-import StatusQ.Controls 0.1
+import "../stores"
 
 // TODO: replace with StatusModal
 ModalPopup {
@@ -56,6 +58,7 @@ ModalPopup {
     StatusWalletColorSelect {
         id: accountColorInput
         selectedColor: currentAccount.iconColor.toUpperCase()
+        model: Theme.palette.accountColors
         anchors.top: accountNameInput.bottom
         anchors.topMargin: marginBetweenInputs
         anchors.left: parent.left
