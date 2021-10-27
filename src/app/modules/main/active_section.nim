@@ -57,7 +57,7 @@ QtObject:
   proc getHasNotification(self: ActiveSection): bool {.slot.} = 
     return self.item.hasNotification
 
-  QtProperty[int] hasNotification:
+  QtProperty[bool] hasNotification:
     read = getHasNotification
 
   proc getNotificationCount(self: ActiveSection): int {.slot.} = 
@@ -65,11 +65,5 @@ QtObject:
 
   QtProperty[int] notificationCount:
     read = getNotificationCount
-
-  proc getActive(self: ActiveSection): bool {.slot.} = 
-    return self.item.active
-
-  QtProperty[int] active:
-    read = getActive
 
   

@@ -4,6 +4,7 @@ import ../../core/global_singleton
 import ../../../app_service/service/settings/service_interface as settings_service
 import ../../../app_service/service/keychain/service as keychain_service
 import ../../../app_service/service/accounts/service_interface as accounts_service
+import ../../../app_service/service/chat/service as chat_service
 import ../../../app_service/service/community/service as community_service
 
 import eventemitter
@@ -18,6 +19,7 @@ type
     settingsService: settings_service.ServiceInterface
     keychainService: keychain_service.Service
     accountsService: accounts_service.ServiceInterface
+    chatService: chat_service.ServiceInterface
     communityService: community_service.ServiceInterface
     activeSectionId: string
 
@@ -26,6 +28,7 @@ proc newController*(delegate: io_interface.AccessInterface,
   settingsService: settings_service.ServiceInterface,
   keychainService: keychain_service.Service,
   accountsService: accounts_service.ServiceInterface,
+  chatService: chat_service.ServiceInterface,
   communityService: community_service.ServiceInterface): 
   Controller =
   result = Controller()
@@ -34,6 +37,7 @@ proc newController*(delegate: io_interface.AccessInterface,
   result.settingsService = settingsService
   result.keychainService = keychainService
   result.accountsService = accountsService
+  result.chatService = chatService
   result.communityService = communityService
   
 method delete*(self: Controller) =
@@ -65,7 +69,7 @@ method init*(self: Controller) =
     ##   self.delegate.disableSection(sectionType)
     discard    
 
-method getCommunities*(self: Controller): seq[community_service.CommunityDto] =
+method getCommunities*(self: Controller): seq[CommunityDto] =
   return self.communityService.getCommunities()
 
 method checkForStoringPassword*(self: Controller) =
@@ -105,7 +109,29 @@ method setActiveSection*(self: Controller, sectionId: string, sectionType: Secti
   singletonInstance.localAccountSensitiveSettings.setActiveSection(self.activeSectionId)
 
   self.delegate.activeSectionSet(self.activeSectionId)
-  
+
+method getNumOfNotificaitonsForChat*(self: Controller): tuple[unviewed:int, mentions:int] =
+  result.unviewed = 0
+  result.mentions = 0
+  let chats = self.chatService.getAllChats()
+  for chat in chats:
+    if(chat.chatType == ChatType.Timeline or chat.chatType == ChatType.CommunityChat):
+      continue
+
+    result.unviewed += chat.unviewedMessagesCount
+    result.mentions += chat.unviewedMentionsCount
+
+method getNumOfNotificaitonsForCommunity*(self: Controller, communityId: string): tuple[unviewed:int, mentions:int] =
+  result.unviewed = 0
+  result.mentions = 0
+  let chats = self.chatService.getAllChats()
+  for chat in chats:
+    if(chat.communityId != communityId):
+      continue
+
+    result.unviewed += chat.unviewedMessagesCount
+    result.mentions += chat.unviewedMentionsCount
+
 method setUserStatus*(self: Controller, status: bool) =
   self.settingsService.setSendUserStatus(status)
   singletonInstance.userProfile.setUserStatus(status)
