@@ -3,23 +3,23 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 
 import utils 1.0
-import "../../../../shared"
-import "../../../../shared/popups"
-import "../../../../shared/status"
 
-// TODO: replace with StatusQ component
-StatusRadioButtonRow {
+import "../../../../shared/controls"
+import "../../../../shared/popups"
+
+RadioButtonSelector {
+    id: root
+
     property string network: ""
     property string networkName: ""
     property string newNetwork: ""
-    id: radioProd
-    text: networkName == "" ? Utils.getNetworkName(network) : networkName
-    buttonGroup: networkSettings
-    checked: profileModel.network.current  === network
-    onRadioCheckedChanged: {
+
+    title: networkName == "" ? Utils.getNetworkName(network) : networkName
+
+    onCheckedChanged: {
         if (checked) {
-            if (profileModel.network.current === network) return;
-            newNetwork = network;
+            if (profileModel.network.current === root.network) return;
+            root.newNetwork = root.network;
             openPopup(confirmDialogComponent)
         }
     }
@@ -33,7 +33,7 @@ StatusRadioButtonRow {
             //% "The account will be logged out. When you unlock it again, the selected network will be used"
             confirmationText: qsTrId("logout-app-content")
             onConfirmButtonClicked: {
-                profileModel.network.current = newNetwork;
+                profileModel.network.current = root.newNetwork;
             }
             onClosed: {
                 profileModel.network.triggerNetworkChange()

@@ -2,18 +2,19 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtGraphicalEffects 1.13
 import QtQuick.Layouts 1.13
-import "./"
-
-import utils 1.0
-import "../../../../shared"
-import "../../../../shared/panels"
-import "../../../../shared/status"
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 
+import utils 1.0
+
+import "../../../../shared/controls"
+import "../../../../shared/panels"
+import "../../../../shared/status"
+
 import "../popups"
 import "../panels"
+import "./"
 
 ScrollView {
     id: root
@@ -61,39 +62,36 @@ ScrollView {
             anchors.left: parent.left
             anchors.right: parent.right
 
-            // TODO: replace with StatusListItem
-            StatusRadioButtonRow {
+            RadioButtonSelector {
                 //% "All messages"
-                text: qsTrId("all-messages")
+                title: qsTrId("all-messages")
                 buttonGroup: notificationSetting
                 checked: appSettings.notificationSetting === Constants.notifyAllMessages
-                onRadioCheckedChanged: {
+                onCheckedChanged: {
                     if (checked) {
                         appSettings.notificationSetting = Constants.notifyAllMessages
                     }
                 }
             }
 
-            // TODO: replace with StatusListItem
-            StatusRadioButtonRow {
+            RadioButtonSelector {
                 //% "Just @mentions"
-                text: qsTrId("just--mentions")
+                title: qsTrId("just--mentions")
                 buttonGroup: notificationSetting
                 checked:  appSettings.notificationSetting === Constants.notifyJustMentions
-                onRadioCheckedChanged: {
+                onCheckedChanged: {
                     if (checked) {
                         appSettings.notificationSetting = Constants.notifyJustMentions
                     }
                 }
             }
 
-            // TODO: replace with StatusListItem
-            StatusRadioButtonRow {
+            RadioButtonSelector {
                 //% "Nothing"
-                text: qsTrId("nothing")
+                title: qsTrId("nothing")
                 buttonGroup: notificationSetting
                 checked:  appSettings.notificationSetting === Constants.notifyNone
-                onRadioCheckedChanged: {
+                onCheckedChanged: {
                     if (checked) {
                         appSettings.notificationSetting = Constants.notifyNone
                     }

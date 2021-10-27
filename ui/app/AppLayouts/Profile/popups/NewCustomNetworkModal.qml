@@ -1,9 +1,7 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 
-
 import utils 1.0
-import "../../../../shared"
 import "../../../../shared/controls"
 import "../../../../shared/status"
 
@@ -138,14 +136,14 @@ StatusModal {
                 id: networkChainGroup
             }
 
-            StatusRadioButtonRow {
+            RadioButtonSelector {
                 id: mainnetRadioBtn
                 //% "Main network"
                 objectName: "main"
-                text: qsTrId("mainnet-network")
+                title: qsTrId("mainnet-network")
                 buttonGroup: networkChainGroup
                 checked: true
-                onRadioCheckedChanged: {
+                onCheckedChanged: {
                     if (checked) {
                         addNetworkPopup.networkId = 1;
                         addNetworkPopup.networkType = Constants.networkMainnet;
@@ -153,11 +151,11 @@ StatusModal {
                 }
             }
 
-            StatusRadioButtonRow {
+            RadioButtonSelector {
                 //% "Ropsten test network"
-                text: qsTrId("ropsten-network")
+                title: qsTrId("ropsten-network")
                 buttonGroup: networkChainGroup
-                onRadioCheckedChanged: {
+                onCheckedChanged: {
                     if (checked) {
                         addNetworkPopup.networkId = 3;
                         addNetworkPopup.networkType = Constants.networkRopsten;
@@ -165,11 +163,11 @@ StatusModal {
                 }
             }
 
-            StatusRadioButtonRow {
+            RadioButtonSelector {
                 //% "Rinkeby test network"
-                text: qsTrId("rinkeby-network")
+                title: qsTrId("rinkeby-network")
                 buttonGroup: networkChainGroup
-                onRadioCheckedChanged: {
+                onCheckedChanged: {
                     if (checked) {
                         addNetworkPopup.networkId = 4;
                         addNetworkPopup.networkType = Constants.networkRinkeby;
@@ -177,13 +175,13 @@ StatusModal {
                 }
             }
 
-            StatusRadioButtonRow {
+            RadioButtonSelector {
                 id: customRadioBtn
                 //% "Custom"
                 objectName: "custom"
-                text: qsTrId("custom")
+                title: qsTrId("custom")
                 buttonGroup: networkChainGroup
-                onRadioCheckedChanged: {
+                onCheckedChanged: {
                     if (checked) {
                         addNetworkPopup.networkType = "";
                     }

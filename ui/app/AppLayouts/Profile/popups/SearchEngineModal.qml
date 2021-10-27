@@ -2,9 +2,8 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 
 import utils 1.0
-import "../../../../shared"
+import "../../../../shared/controls"
 import "../../../../shared/popups"
-import "../../../../shared/status"
 
 // TODO: replace with StatusModal
 ModalPopup {
@@ -29,45 +28,45 @@ ModalPopup {
             id: searchEnginGroup
         }
 
-        StatusRadioButtonRow {
+        RadioButtonSelector {
             //% "None"
-            text: qsTrId("none")
+            title: qsTrId("none")
             buttonGroup: searchEnginGroup
             checked: appSettings.shouldShowBrowserSearchEngine === Constants.browserSearchEngineNone
-            onRadioCheckedChanged: {
+            onCheckedChanged: {
                 if (checked) {
                     appSettings.shouldShowBrowserSearchEngine = Constants.browserSearchEngineNone
                 }
             }
         }
 
-        StatusRadioButtonRow {
-            text: "Google"
+        RadioButtonSelector {
+            title: "Google"
             buttonGroup: searchEnginGroup
             checked: appSettings.shouldShowBrowserSearchEngine === Constants.browserSearchEngineGoogle
-            onRadioCheckedChanged: {
+            onCheckedChanged: {
                 if (checked) {
                     appSettings.shouldShowBrowserSearchEngine = Constants.browserSearchEngineGoogle
                 }
             }
         }
 
-        StatusRadioButtonRow {
-            text: "Yahoo!"
+        RadioButtonSelector {
+            title: "Yahoo!"
             buttonGroup: searchEnginGroup
             checked: appSettings.shouldShowBrowserSearchEngine === Constants.browserSearchEngineYahoo
-            onRadioCheckedChanged: {
+            onCheckedChanged: {
                 if (checked) {
                     appSettings.shouldShowBrowserSearchEngine = Constants.browserSearchEngineYahoo
                 }
             }
         }
 
-        StatusRadioButtonRow {
-            text: "DuckDuckGo"
+        RadioButtonSelector {
+            title: "DuckDuckGo"
             buttonGroup: searchEnginGroup
             checked: appSettings.shouldShowBrowserSearchEngine === Constants.browserSearchEngineDuckDuckGo
-            onRadioCheckedChanged: {
+            onCheckedChanged: {
                 if (checked) {
                     appSettings.shouldShowBrowserSearchEngine = Constants.browserSearchEngineDuckDuckGo
                 }

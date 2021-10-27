@@ -2,9 +2,8 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 
 import utils 1.0
-import "../../../../shared"
+import "../../../../shared/controls"
 import "../../../../shared/popups"
-import "../../../../shared/status"
 import "../locales.js" as Locales_JSON
 
 // TODO: replace with StatusQ StatusModal
@@ -69,13 +68,14 @@ ModalPopup {
                 spacing: 0
 
                 delegate: Component {
-                    StatusRadioButtonRow {
+                    RadioButtonSelector {
                         height: 64
                         anchors.rightMargin: 0
-                        text: modelData.name
+                        anchors.leftMargin: 0
+                        title: modelData.name
                         buttonGroup: languageGroup
                         checked: globalSettings.locale === modelData.locale
-                        onRadioCheckedChanged: {
+                        onCheckedChanged: {
                             if (checked && globalSettings.locale !== modelData.locale) {
                                 globalSettings.locale = modelData.locale
                                 if (Qt.platform.os === Constants.linux) {
