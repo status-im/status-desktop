@@ -11,3 +11,7 @@ method delete*(self: ServiceInterface) {.base.} =
 
 method init*(self: ServiceInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method getAllChats*(self: ServiceInterface): seq[ChatDto] {.base.} =
+  raise newException(ValueError, "No implementation available")
+

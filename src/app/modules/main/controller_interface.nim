@@ -22,3 +22,10 @@ method storePassword*(self: AccessInterface, password: string) {.base.} =
 
 method setActiveSection*(self: AccessInterface, sectionId: string, sectionType: SectionType) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method getNumOfNotificaitonsForChat*(self: AccessInterface): tuple[unviewed:int, mentions:int] {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getNumOfNotificaitonsForCommunity*(self: AccessInterface, communityId: string): tuple[unviewed:int, mentions:int] 
+  {.base.} =
+  raise newException(ValueError, "No implementation available")
