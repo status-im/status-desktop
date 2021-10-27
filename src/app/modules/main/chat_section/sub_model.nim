@@ -1,6 +1,6 @@
-import NimQml, Tables, strutils, strformat
+import NimQml, Tables, strformat
 
-import item, base_item
+import sub_item
 
 type
   ModelRole {.pure.} = enum
@@ -9,66 +9,62 @@ type
     Icon
     Color
     Description
-    Type
     HasNotification
     NotificationsCount
     Muted
     Active
-    SubItems
 
 QtObject:
   type
-    Model* = ref object of QAbstractListModel
-      items: seq[Item]
+    SubModel* = ref object of QAbstractListModel
+      items: seq[SubItem]
 
-  proc delete*(self: Model) =
+  proc delete*(self: SubModel) =
     for i in 0 ..< self.items.len:
       self.items[i].delete
 
     self.items = @[]
     self.QAbstractListModel.delete
 
-  proc setup(self: Model) =
+  proc setup(self: SubModel) =
     self.QAbstractListModel.setup
 
-  proc newModel*(): Model =
+  proc newSubModel*(): SubModel =
     new(result, delete)
     result.setup
 
-  proc `$`*(self: Model): string =
+  proc `$`*(self: SubModel): string =
     for i in 0 ..< self.items.len:
       result &= fmt"""
       [{i}]:({$self.items[i]})
       """
 
-  proc countChanged(self: Model) {.signal.}
+  proc countChanged(self: SubModel) {.signal.}
 
-  proc getCount(self: Model): int {.slot.} =
+  proc getCount(self: SubModel): int {.slot.} =
     self.items.len
 
   QtProperty[int] count:
     read = getCount
     notify = countChanged
 
-  method rowCount(self: Model, index: QModelIndex = nil): int =
+  method rowCount(self: SubModel, index: QModelIndex = nil): int =
     return self.items.len
 
-  method roleNames(self: Model): Table[int, string] =
+  method roleNames(self: SubModel): Table[int, string] =
     {
       ModelRole.Id.int:"id",
       ModelRole.Name.int:"name",
       ModelRole.Icon.int:"icon",
       ModelRole.Color.int:"color",
       ModelRole.Description.int:"description",
-      ModelRole.Type.int:"type",
       ModelRole.HasNotification.int:"hasNotification",
       ModelRole.NotificationsCount.int:"notificationsCount",
       ModelRole.Muted.int:"muted",
-      ModelRole.Active.int:"active",
-      ModelRole.SubItems.int:"subItems",
+      ModelRole.Active.int:"active"
     }.toTable
 
-  method data(self: Model, index: QModelIndex, role: int): QVariant =
+  method data(self: SubModel, index: QModelIndex, role: int): QVariant =
     if (not index.isValid):
       return
 
@@ -89,8 +85,6 @@ QtObject:
       result = newQVariant(item.color)
     of ModelRole.Description: 
       result = newQVariant(item.description)
-    of ModelRole.Type: 
-      result = newQVariant(item.`type`)
     of ModelRole.HasNotification: 
       result = newQVariant(item.hasNotification)
     of ModelRole.NotificationsCount: 
@@ -99,10 +93,20 @@ QtObject:
       result = newQVariant(item.muted)
     of ModelRole.Active: 
       result = newQVariant(item.active)
-    of ModelRole.SubItems: 
-      result = newQVariant(item.subItems)
 
-  proc appendItem*(self: Model, item: Item) =
+  proc appendItems*(self: SubModel, items: seq[SubItem]) =
+    let parentModelIndex = newQModelIndex()
+    defer: parentModelIndex.delete
+
+    let first = self.items.len
+    let last = first + items.len - 1
+    self.beginInsertRows(parentModelIndex, first, last)
+    self.items.add(items)
+    self.endInsertRows()
+
+    self.countChanged()
+
+  proc appendItem*(self: SubModel, item: SubItem) =
     let parentModelIndex = newQModelIndex()
     defer: parentModelIndex.delete
 
@@ -112,7 +116,19 @@ QtObject:
 
     self.countChanged()
 
-  proc prependItem*(self: Model, item: Item) =
+  proc prependItems*(self: SubModel, items: seq[SubItem]) =
+    let parentModelIndex = newQModelIndex()
+    defer: parentModelIndex.delete
+
+    let first = 0
+    let last = items.len - 1
+    self.beginInsertRows(parentModelIndex, first, last)
+    self.items = items & self.items
+    self.endInsertRows()
+
+    self.countChanged()
+
+  proc prependItem*(self: SubModel, item: SubItem) =
     let parentModelIndex = newQModelIndex()
     defer: parentModelIndex.delete
 
@@ -122,21 +138,19 @@ QtObject:
 
     self.countChanged()
 
-  proc getItemById*(self: Model, id: string): Item =
+  proc getItemById*(self: SubModel, id: string): SubItem =
     for it in self.items:
       if(it.id == id):
         return it
 
-  proc setActiveItemSubItem*(self: Model, id: string, subItemId: string) =
+  proc setActiveItem*(self: SubModel, id: string) =
     for i in 0 ..< self.items.len:
-      self.items[i].setActiveSubItem(subItemId)
-
-      if(self.items[i].active):
+      if(self.items[i].active):        
         let index = self.createIndex(i, 0, nil)
         self.items[i].BaseItem.active = false
         self.dataChanged(index, index, @[ModelRole.Active.int])
 
       if(self.items[i].id == id):        
         let index = self.createIndex(i, 0, nil)
-        self.items[i].BaseItem.active = true
+        self.items[i].BaseItem.active= true
         self.dataChanged(index, index, @[ModelRole.Active.int])

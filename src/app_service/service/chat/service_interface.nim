@@ -15,3 +15,8 @@ method init*(self: ServiceInterface) {.base.} =
 method getAllChats*(self: ServiceInterface): seq[ChatDto] {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method getChatsOfChatTypes*(self: ServiceInterface, types: seq[ChatType]): seq[ChatDto] {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getChatById*(self: ServiceInterface, chatId: string): ChatDto {.base.} =
+  raise newException(ValueError, "No implementation available")
