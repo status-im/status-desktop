@@ -295,6 +295,7 @@ Item {
     Component {
         id: groupChatPopupComponent
         GroupChatPopup {
+            store: root.store
             onClosed: {
                 destroy()
             }
