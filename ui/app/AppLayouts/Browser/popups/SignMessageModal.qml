@@ -9,10 +9,10 @@ import utils 1.0
 import StatusQ.Controls 0.1
 import StatusQ.Popups 0.1
 
-import "../../../../shared"
-import "../../../../shared/panels"
-import "../../../../shared/popups"
-import "../../../../shared/views"
+import shared 1.0
+import shared.views 1.0
+import shared.panels 1.0
+import shared.popups 1.0
 import "../stores"
 
 StatusModal {

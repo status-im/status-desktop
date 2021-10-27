@@ -5,9 +5,9 @@ import QtQml.Models 2.13
 import QtQuick.Layouts 1.13
 
 import utils 1.0
-import "../../../shared"
-import "../../../shared/controls"
-import "../../../shared/status"
+import shared 1.0
+import shared.status 1.0
+import shared.controls 1.0
 
 import "../Chat/views"
 import "../Chat/popups"

@@ -8,8 +8,8 @@ import utils 1.0
 import StatusQ.Controls 0.1 as StatusQControls
 import StatusQ.Components 0.1
 
-import "../../../../shared/panels"
-import "../../../../shared/status"
+import shared.panels 1.0
+import shared.status 1.0
 
 Rectangle {
     property string pubKey: "0x123456"

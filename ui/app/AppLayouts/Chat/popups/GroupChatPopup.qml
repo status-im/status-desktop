@@ -4,13 +4,13 @@ import QtQuick.Layouts 1.3
 import QtQml.Models 2.3
 
 import utils 1.0
+import shared.controls 1.0
 
 import StatusQ.Controls 0.1
 
-import "../../../../shared/controls"
-import "../../../../shared/popups"
-import "../../../../shared/panels"
-import "../../../../shared/views"
+import shared.views 1.0
+import shared.panels 1.0
+import shared.popups 1.0
 import "../panels"
 import "../controls"
 

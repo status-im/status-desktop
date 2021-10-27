@@ -15,10 +15,14 @@ DEFINES += QT_DEPRECATED_WARNINGS
 lupdate_only{
 SOURCES = *.qml \
           app/*.qml \
-          shared/*.qml \
           imports/*.qml \
-          shared/status/*.qml \
-          shared/keycard/*.qml \
+          imports/shared/*.qml \
+          imports/shared/controls/*.qml \
+          imports/shared/keycard/*.qml \
+          imports/shared/panels/*.qml \
+          imports/shared/popups/*.qml \
+          imports/shared/status/*.qml \
+          imports/shared/views/*.qml \
           app/AppLayouts/*.qml \
           app/AppLayouts/Browser/*.qml \
           app/AppLayouts/Chat/*.qml \

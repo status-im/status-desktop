@@ -6,9 +6,9 @@ import QtQuick.Layouts 1.13
 import QtQml.Models 2.13
 import QtGraphicalEffects 1.13
 import QtQuick.Dialogs 1.3
-import "../../../../../shared"
-import "../../../../../shared/panels"
-import "../../../../../shared/status"
+import shared 1.0
+import shared.panels 1.0
+import shared.status 1.0
 
 import utils 1.0
 

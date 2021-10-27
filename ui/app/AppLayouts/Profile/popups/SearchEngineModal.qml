@@ -2,8 +2,8 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 
 import utils 1.0
-import "../../../../shared/controls"
-import "../../../../shared/popups"
+import shared.popups 1.0
+import shared.controls 1.0
 
 // TODO: replace with StatusModal
 ModalPopup {

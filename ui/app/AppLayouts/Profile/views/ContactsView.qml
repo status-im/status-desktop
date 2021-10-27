@@ -8,10 +8,10 @@ import StatusQ.Core.Theme 0.1
 
 import utils 1.0
 
-import "../../../../shared/popups"
-import "../../../../shared/panels"
-import "../../../../shared/controls"
-import "../../../../shared/views"
+import shared.views 1.0
+import shared.panels 1.0
+import shared.popups 1.0
+import shared.controls 1.0
 
 import "../panels"
 import "../popups"

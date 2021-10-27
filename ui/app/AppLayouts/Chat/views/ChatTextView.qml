@@ -1,9 +1,10 @@
 import QtQuick 2.13
-import "../../../../shared"
-import "../../../../shared/panels"
-import "../../../../shared/controls"
-import utils 1.0
 import QtGraphicalEffects 1.0
+
+import shared 1.0
+import shared.panels 1.0
+import shared.controls 1.0
+import utils 1.0
 
 Item {
     id: root

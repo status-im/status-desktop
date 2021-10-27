@@ -1,6 +1,6 @@
 import QtQuick 2.13
 
-import "../../../../shared/keycard"
+import shared.keycard 1.0
 import "../popups"
 import "../stores"
 

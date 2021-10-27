@@ -2,11 +2,10 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import utils 1.0
-
+import shared.controls 1.0
+import shared.panels 1.0
 import StatusQ.Controls 0.1
 
-import "../../../../shared/panels"
-import "../../../../shared/controls"
 import "../controls"
 import "../stores"
 

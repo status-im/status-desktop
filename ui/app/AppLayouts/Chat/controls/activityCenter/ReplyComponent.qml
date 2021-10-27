@@ -4,9 +4,8 @@ import QtQuick.Layouts 1.3
 import Qt.labs.platform 1.1
 
 import utils 1.0
-
-import "../../../../../shared/panels"
-import "../../../../../shared/controls"
+import shared.controls 1.0
+import shared.panels 1.0
 
 Item {
     id: replyComponent

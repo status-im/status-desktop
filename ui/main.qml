@@ -11,12 +11,13 @@ import QtQuick.Controls.Universal 2.12
 
 import DotherSide 0.1
 
+import utils 1.0
+import shared 1.0
+import shared.panels 1.0
+import shared.popups 1.0
+
 import "./app/AppLayouts/Onboarding/views"
 import "./app"
-import "./shared"
-import "./shared/panels"
-import "./shared/popups"
-import utils 1.0
 
 StatusWindow {
     property bool hasAccounts: !!loginModel.rowCount()
@@ -243,14 +244,14 @@ StatusWindow {
         icon.source: {
             if (production) {
                 if (Qt.platform.os == "osx")
-                    return "shared/img/status-logo-round-rect.svg"
+                    return "imports/shared/img/status-logo-round-rect.svg"
                 else
-                    return "shared/img/status-logo-circle.svg"
+                    return "imports/shared/img/status-logo-circle.svg"
             } else {
                 if (Qt.platform.os == "osx")
-                    return "shared/img/status-logo-dev-round-rect.svg"
+                    return "imports/shared/img/status-logo-dev-round-rect.svg"
                 else
-                    return "shared/img/status-logo-dev-circle.svg"
+                    return "imports/shared/img/status-logo-dev-circle.svg"
             }
         }
 

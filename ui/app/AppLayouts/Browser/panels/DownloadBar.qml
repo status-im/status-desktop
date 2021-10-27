@@ -5,8 +5,8 @@ import utils 1.0
 
 import StatusQ.Controls 0.1
 
-import "../../../../shared"
-import "../../../../shared/status"
+import shared 1.0
+import shared.status 1.0
 
 import "../controls"
 

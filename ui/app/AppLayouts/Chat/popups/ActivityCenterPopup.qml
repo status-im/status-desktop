@@ -2,7 +2,7 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQml.Models 2.13
 import QtGraphicalEffects 1.13
-import "../../../../shared"
+import shared 1.0
 
 import StatusQ.Controls 0.1
 import "../views"

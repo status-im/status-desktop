@@ -1,8 +1,7 @@
 pragma Singleton
 
 import QtQuick 2.13
-import "../../shared/xss.js" as XSS
-import "../../shared/polyfill.number.toLocaleString.js" as NumberPolyFill
+import shared 1.0
 
 QtObject {
     function isHex(value) {

@@ -2,9 +2,9 @@ import QtQuick 2.13
 import QtQuick.Controls 2.3
 
 import utils 1.0
-import "../../../../shared"
-import "../../../../shared/popups"
-import "../../../../shared/panels"
+import shared 1.0
+import shared.panels 1.0
+import shared.popups 1.0
 
 import "../controls"
 import "../panels"

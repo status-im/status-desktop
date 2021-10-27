@@ -6,7 +6,7 @@ import Qt.labs.platform 1.1
 import utils 1.0
 import StatusQ.Popups 0.1
 
-import "../../../../shared/popups"
+import shared.popups 1.0
 import "../popups"
 
 StatusPopupMenu {

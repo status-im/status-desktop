@@ -4,8 +4,8 @@ import QtQuick.Controls.Styles 1.0
 import QtWebEngine 1.9
 import QtQuick.Layouts 1.0
 
-import "../../../../shared"
-import "../../../../shared/status"
+import shared 1.0
+import shared.status 1.0
 import "../controls"
 
 import utils 1.0

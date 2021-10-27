@@ -3,7 +3,7 @@ import QtQuick.Controls 2.13
 import "./"
 
 import utils 1.0
-import "../../../../shared"
+import shared 1.0
 
 import StatusQ.Controls 0.1
 

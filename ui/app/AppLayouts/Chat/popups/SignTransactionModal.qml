@@ -4,14 +4,14 @@ import QtQuick.Layouts 1.13
 import QtQuick.Dialogs 1.3
 
 import utils 1.0
+import shared.controls 1.0
 
 import StatusQ.Popups 0.1
 import StatusQ.Controls 0.1
 
-import "../../../../shared/panels"
-import "../../../../shared/controls"
-import "../../../../shared/views"
-import "../../../../shared/popups"
+import shared.views 1.0
+import shared.panels 1.0
+import shared.popups 1.0
 import "../../Wallet/"
 
 //TODO remove dynamic scoping

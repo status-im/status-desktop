@@ -3,10 +3,10 @@ import QtQuick.Controls 2.3
 import QtWebEngine 1.9
 import utils 1.0
 
-import "../../../../shared"
-import "../../../../shared/popups"
-import "../../../../shared/panels"
-import "../../../../shared/status"
+import shared 1.0
+import shared.panels 1.0
+import shared.status 1.0
+import shared.popups 1.0
 
 import "../../Chat/popups"
 

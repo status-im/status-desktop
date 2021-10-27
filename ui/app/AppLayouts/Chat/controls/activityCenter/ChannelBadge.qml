@@ -4,8 +4,8 @@ import QtQuick.Layouts 1.3
 import Qt.labs.platform 1.1
 
 import utils 1.0
-import "../../../../../shared"
-import "../../../../../shared/panels"
+import shared 1.0
+import shared.panels 1.0
 
 import StatusQ.Components 0.1
 import StatusQ.Core 0.1

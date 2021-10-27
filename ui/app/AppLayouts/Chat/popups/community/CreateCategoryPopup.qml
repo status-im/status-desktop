@@ -10,7 +10,7 @@ import StatusQ.Controls.Validators 0.1
 import StatusQ.Popups 0.1
 
 import utils 1.0
-import "../../../../../shared/popups"
+import shared.popups 1.0
 
 StatusModal {
     id: root
