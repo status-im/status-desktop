@@ -23,8 +23,7 @@ method init*(self: Service) =
   try:
     let response = status_go.getChats()
 
-    let chats = map(response.result.getElems(), 
-    proc(x: JsonNode): ChatDto = x.toChatDto())
+    let chats = map(response.result.getElems(), proc(x: JsonNode): ChatDto = x.toChatDto())
 
     for chat in chats:
       if chat.active and chat.chatType != ChatType.Unknown:
@@ -34,3 +33,7 @@ method init*(self: Service) =
     let errDesription = e.msg
     error "error: ", errDesription
     return
+
+method getAllChats*(self: Service): seq[ChatDto] =
+  return toSeq(self.chats.values)
+

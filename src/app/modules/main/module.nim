@@ -1,6 +1,6 @@
 import NimQml, Tables
 
-import io_interface, view, controller, item
+import io_interface, view, controller, item, model
 import ../../core/global_singleton
 
 import chat_section/module as chat_section_module
@@ -9,7 +9,6 @@ import browser_section/module as browser_section_module
 import profile_section/module as profile_section_module
 
 import ../../../app_service/service/keychain/service as keychain_service
-# import ../../../app_service/service/accounts/service_interface as accounts_service
 import ../../../app_service/service/chat/service as chat_service
 import ../../../app_service/service/community/service as community_service
 import ../../../app_service/service/token/service as token_service
@@ -71,32 +70,19 @@ proc newModule*[T](
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, events, keychainService, 
-  accountsService, communityService)
+  result.controller = controller.newController(result, events, keychainService, accountsService, chatService, 
+  communityService)
   result.moduleLoaded = false
 
   # Submodules
-  result.chatSectionModule = chat_section_module.newModule(result, "chat", 
-  false, chatService, communityService)
+  result.chatSectionModule = chat_section_module.newModule(result, "chat", false, chatService, communityService)
   result.communitySectionsModule = initOrderedTable[string, chat_section_module.AccessInterface]()
-  let communities = result.controller.getCommunities()
-  for c in communities:
-    result.communitySectionsModule[c.id] = chat_section_module.newModule(
-      result, c.id, true, chatService, communityService
-    )
-
-  result.walletSectionModule = wallet_section_module.newModule[Module[T]](
-    result,
-    events,
-    tokenService,
-    transactionService,
-    collectible_service,
-    walletAccountService,
-    settingService
-  )
-
-  result.browserSectionModule = browser_section_module.newModule(result, bookmarkService, settingsService, dappPermissionsService)
-  result.profileSectionModule = profile_section_module.newModule(result,events, accountsService, settingsService, profileService, contactsService, aboutService, languageService, mnemonicService, privacyService)
+  result.walletSectionModule = wallet_section_module.newModule[Module[T]](result, events, tokenService, 
+    transactionService, collectible_service, walletAccountService, settingService)
+  result.browserSectionModule = browser_section_module.newModule(result, bookmarkService, settingsService, 
+  dappPermissionsService)
+  result.profileSectionModule = profile_section_module.newModule(result, events, accountsService, settingsService, 
+  profileService, contactsService, aboutService, languageService, mnemonicService, privacyService)
 
 method delete*[T](self: Module[T]) =
   self.chatSectionModule.delete
@@ -110,25 +96,37 @@ method delete*[T](self: Module[T]) =
   self.viewVariant.delete
   self.controller.delete
 
-method load*[T](self: Module[T]) =
+method load*[T](self: Module[T], chatService: chat_service.Service,
+  communityService: community_service.Service) =
   singletonInstance.engine.setRootContextProperty("mainModule", self.viewVariant)
   self.controller.init()
   self.view.load()
+
+  # Create community modules here, since we don't know earlier how many communities we have.
+  let communities = self.controller.getCommunities()
+  for c in communities:
+    self.communitySectionsModule[c.id] = chat_section_module.newModule(self, c.id, true, chatService, communityService)
 
   var activeSection: Item
   var activeSectionId = singletonInstance.localAccountSensitiveSettings.getActiveSection()
 
   # Chat Section
-  let chatSectionItem = initItem("chat", SectionType.Chat, "Chat", "", "chat", "", false, 0, true)
+  let (unviewedCount, mentionsCount) = self.controller.getNumOfNotificaitonsForChat()
+  let hasNotification = unviewedCount > 0 or mentionsCount > 0
+  let notificationsCount = mentionsCount
+  let chatSectionItem = initItem("chat", SectionType.Chat, "Chat", "", "chat", "", hasNotification, notificationsCount, 
+  false, true)
   self.view.addItem(chatSectionItem)
   if(activeSectionId == chatSectionItem.id):
     activeSection = chatSectionItem
 
   # Community Section
-  let communities = self.controller.getCommunities()
   for c in communities:
-    let communitySectionItem = initItem(c.id, SectionType.Community, c.name, c.images.thumbnail, "", c.color, false, 0, 
-    false, singletonInstance.localAccountSensitiveSettings.getCommunitiesEnabled())
+    let (unviewedCount, mentionsCount) = self.controller.getNumOfNotificaitonsForCommunity(c.id)
+    let hasNotification = unviewedCount > 0 or mentionsCount > 0
+    let notificationsCount = mentionsCount # we need to add here number of requests
+    let communitySectionItem = initItem(c.id, SectionType.Community, c.name, c.images.thumbnail, "", c.color, 
+    hasNotification, notificationsCount, false, singletonInstance.localAccountSensitiveSettings.getCommunitiesEnabled())
     self.view.addItem(communitySectionItem)
     if(activeSectionId == communitySectionItem.id):
       activeSection = communitySectionItem
@@ -247,16 +245,23 @@ method emitStoringPasswordSuccess*[T](self: Module[T]) =
 
 method setActiveSection*[T](self: Module[T], item: Item) =
   if(item.isEmpty()):
-    echo "section is empty and cannot be made an active one"
+    echo "section is empty and cannot be made as active one"
     return
 
   self.controller.setActiveSection(item.id, item.sectionType)
 
 method activeSectionSet*[T](self: Module[T], sectionId: string) =
-  self.view.activeSectionSet(sectionId)
+  let item = self.view.model().getItemById(sectionId)
+  if(item.isEmpty()):
+    # should never be here
+    echo "main-module, incorrect section id: ", sectionId
+    return
+
+  self.view.model().setActiveSection(sectionId)
+  self.view.activeSectionSet(item)
 
 method enableSection*[T](self: Module[T], sectionType: SectionType) =
-  self.view.enableSection(sectionType)
+  self.view.model().enableSection(sectionType)
 
 method disableSection*[T](self: Module[T], sectionType: SectionType) =
-  self.view.disableSection(sectionType)
+  self.view.model().disableSection(sectionType)
