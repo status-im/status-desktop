@@ -34,6 +34,9 @@ QtObject:
   proc addItem*(self: View, item: Item) =
     self.model.addItem(item)
 
+  proc model*(self: View): Model =
+    return self.model
+
   proc modelChanged*(self: View) {.signal.}
 
   proc getModel(self: View): QVariant {.slot.} =
@@ -70,12 +73,8 @@ QtObject:
     read = getActiveSection
     notify = activeSectionChanged
 
-  proc activeSectionSet*(self: View, sectionId: string) =
-    self.model.setActiveSection(sectionId)
-    
-    let item = self.model.getItemById(sectionId)
+  proc activeSectionSet*(self: View, item: Item) =
     self.activeSection.setActiveSectionData(item)
-
     self.activeSectionChanged()
 
   proc setActiveSectionById*(self: View, sectionId: string) {.slot.} =
@@ -87,15 +86,5 @@ QtObject:
     ## will be set as active one.
     let item = self.model.getItemBySectionType(sectionType.SectionType)
     self.delegate.setActiveSection(item)
-
-  proc enableSection*(self: View, sectionType: SectionType) =
-    # Since enable/disable section is possible only from the `Profile` tab, there is no need for setting
-    # `activeSection` in this moment, as it will be in any case set to `ProfileSettings` type.
-    self.model.enableSection(sectionType)
-
-  proc disableSection*(self: View, sectionType: SectionType) =
-    # Since enable/disable section is possible only from the `Profile` tab, there is no need for setting
-    # `activeSection` in this moment, as it will be in any case set to `ProfileSettings` type.
-    self.model.disableSection(sectionType)
 
   

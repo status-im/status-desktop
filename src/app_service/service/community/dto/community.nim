@@ -19,7 +19,7 @@ type Chat* = ref object
   color*: string
   emoji*: string
   description*: string
-  #members*: seq[ChatMember] ???? It's always null and a question why do we need it here within this context ????
+  #members*: seq[ChatMember] ???? It's always null and a question is why do we need it here within this context ????
   permissions*: Permission
   canPost*: bool
   position*: int
@@ -82,7 +82,7 @@ proc toChat(jsonObj: JsonNode): Chat =
     result.permissions = toPermission(permissionObj)
   discard jsonObj.getProp("canPost", result.canPost)
   discard jsonObj.getProp("position", result.position)
-  discard jsonObj.getProp("categoryId", result.categoryId)
+  discard jsonObj.getProp("categoryID", result.categoryId)
 
 proc toCategory(jsonObj: JsonNode): Category =
   result = Category()

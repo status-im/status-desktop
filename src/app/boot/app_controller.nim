@@ -270,7 +270,7 @@ proc load*(self: AppController) =
   self.dappPermissionsService.init()
   self.walletAccountService.init()
   self.transactionService.init()
-  self.mainModule.load()
+  self.mainModule.load(self.chatService, self.communityService)
 
 proc userLoggedIn*(self: AppController) =
   #################################################
