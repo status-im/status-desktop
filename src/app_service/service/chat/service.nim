@@ -37,3 +37,12 @@ method init*(self: Service) =
 method getAllChats*(self: Service): seq[ChatDto] =
   return toSeq(self.chats.values)
 
+method getChatsOfChatTypes*(self: Service, types: seq[ChatType]): seq[ChatDto] =
+  return self.getAllChats().filterIt(it.chatType in types)
+
+method getChatById*(self: Service, chatId: string): ChatDto =
+  if(not self.chats.contains(chatId)):
+    error "trying to get chat data for an unexisting chat id"
+    return
+
+  return self.chats[chatId]

@@ -1,4 +1,4 @@
-import Tables, json, sequtils, strformat, chronicles
+import Tables, json, sequtils, std/algorithm, strformat, chronicles
 
 import service_interface, ./dto/community
 
@@ -41,3 +41,49 @@ method init*(self: Service) =
 
 method getCommunities*(self: Service): seq[CommunityDto] =
   return toSeq(self.communities.values)
+
+method getCommunityIds*(self: Service): seq[string] =
+  return toSeq(self.communities.keys)
+
+proc sortAsc[T](t1, t2: T): int =
+  if(t1.position > t2.position):
+    return 1
+  elif (t1.position < t2.position):
+    return -1
+  else:
+    return 0
+
+proc sortDesc[T](t1, t2: T): int =
+  if(t1.position < t2.position):
+    return 1
+  elif (t1.position > t2.position):
+    return -1
+  else:
+    return 0
+
+method getCategories*(self: Service, communityId: string, order: SortOrder = SortOrder.Ascending): seq[Category] =
+  if(not self.communities.contains(communityId)):
+    error "trying to get community for an unexisting community id"
+    return
+
+  result = self.communities[communityId].categories
+  if(order == SortOrder.Ascending):
+    result.sort(sortAsc[Category])
+  else:
+    result.sort(sortDesc[Category])
+
+method getChats*(self: Service, communityId: string, categoryId = "", order = SortOrder.Ascending): seq[Chat] =
+  if(not self.communities.contains(communityId)):
+    error "trying to get community for an unexisting community id"
+    return
+
+  for chat in self.communities[communityId].chats:
+    if(chat.categoryId != categoryId):
+      continue
+
+    result.add(chat)
+
+  if(order == SortOrder.Ascending):
+    result.sort(sortAsc[Chat])
+  else:
+    result.sort(sortDesc[Chat])

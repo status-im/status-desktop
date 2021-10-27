@@ -9,6 +9,4 @@ include ./private_interfaces/module_view_delegate_interface
 include ./private_interfaces/module_controller_delegate_interface
 
 # Defines how submodules of this module communicate with this module
-include ./private_interfaces/module_input_area_delegate_interface
-include ./private_interfaces/module_messages_delegate_interface
-include ./private_interfaces/module_users_delegate_interface
+# will be added if needed
