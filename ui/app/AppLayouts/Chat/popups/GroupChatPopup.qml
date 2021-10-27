@@ -127,6 +127,7 @@ ModalPopup {
 
     NoFriendsRectangle {
         id: noContactsRect
+        visible: false
         anchors.top: groupName.bottom
         anchors.topMargin: Style.current.xlPadding
         anchors.horizontalCenter: parent.horizontalCenter
@@ -158,13 +159,12 @@ ModalPopup {
         width: parent.width
         height: btnSelectMembers.height
 
-        StatusFlatRoundButton {
+        StatusRoundButton {
             id: btnSelectMembers
             visible: selectChatMembers
             anchors.bottom: parent.bottom
             anchors.right: parent.right
             icon.name: "arrow-right"
-            type: StatusFlatRoundButton.Type.Secondary
             icon.width: 20
             icon.height: 16
             enabled: !!pubKeys.length
