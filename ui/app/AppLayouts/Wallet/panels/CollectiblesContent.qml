@@ -4,10 +4,9 @@ import QtGraphicalEffects 1.13
 import QtQml.Models 2.13
 
 import utils 1.0
+import shared.panels 1.0
 
 import StatusQ.Controls 0.1
-
-import "../../../../shared/panels"
 
 ScrollView {
     id: collectiblesContent

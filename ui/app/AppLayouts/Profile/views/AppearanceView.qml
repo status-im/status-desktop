@@ -4,8 +4,8 @@ import QtQuick.Layouts 1.13
 import QtQuick.Controls.Universal 2.12
 
 import utils 1.0
-import "../../../../shared"
-import "../../../../shared/status"
+import shared 1.0
+import shared.status 1.0
 
 //TODO remove import dependency
 import "../../Chat/views"

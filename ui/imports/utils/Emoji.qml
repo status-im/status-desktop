@@ -1,8 +1,9 @@
 pragma Singleton
 
 import QtQuick 2.13
+
+import shared.status 1.0
 import "../assets/twemoji/twemoji.js" as Twemoji
-import "../../shared/status/emojiList.js" as EmojiJSON
 
 QtObject {
     readonly property var size: {

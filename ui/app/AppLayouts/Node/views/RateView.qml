@@ -6,10 +6,9 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 
 import utils 1.0
-import "../../../../shared"
-import "../../../../shared/controls"
-import "../../../../shared/status"
-
+import shared 1.0
+import shared.status 1.0
+import shared.controls 1.0
 
 Column {
     spacing: 0

@@ -3,11 +3,11 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 
 import utils 1.0
-import "../../../../shared"
-import "../../../../shared/controls"
-import "../../../../shared/popups"
-import "../../../../shared/panels"
-import "../../../../shared/status"
+import shared.controls 1.0
+import shared 1.0
+import shared.panels 1.0
+import shared.popups 1.0
+import shared.status 1.0
 import "./"
 
 // TODO: replace with StatusModal

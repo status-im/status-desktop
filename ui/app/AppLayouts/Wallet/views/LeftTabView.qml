@@ -4,9 +4,10 @@ import QtQuick.Layouts 1.13
 import QtGraphicalEffects 1.13
 
 import utils 1.0
-import "../../../../shared"
-import "../../../../shared/panels"
-import "../../../../shared/controls"
+import shared 1.0
+import shared.panels 1.0
+import shared.controls 1.0
+
 import "../controls"
 import "../popups"
 import "../stores"

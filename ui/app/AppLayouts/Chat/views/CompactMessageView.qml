@@ -2,12 +2,12 @@
 import QtGraphicalEffects 1.13
 
 import utils 1.0
+import shared.panels 1.0
+import shared.status 1.0
+import shared.controls 1.0
 
 import StatusQ.Controls 0.1 as StatusQControls
 
-import "../../../../shared/panels"
-import "../../../../shared/controls"
-import "../../../../shared/status"
 import "../panels"
 import "../controls"
 

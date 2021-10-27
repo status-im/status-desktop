@@ -1,6 +1,6 @@
 import QtQuick 2.13
-import "../../../../shared"
-import "../../../../shared/status"
+import shared 1.0
+import shared.status 1.0
 
 import utils 1.0
 

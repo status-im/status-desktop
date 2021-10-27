@@ -3,10 +3,10 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import QtWebEngine 1.10
 
+import shared.controls 1.0
 import StatusQ.Controls 0.1
 
-import "../../../../shared/controls"
-import "../../../../shared/popups"
+import shared.popups 1.0
 
 import utils 1.0
 

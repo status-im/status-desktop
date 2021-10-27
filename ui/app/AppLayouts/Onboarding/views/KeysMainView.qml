@@ -4,8 +4,8 @@ import QtQuick.Controls.Universal 2.12
 
 import StatusQ.Controls 0.1
 
-import "../../../../shared"
-import "../../../../shared/panels"
+import shared 1.0
+import shared.panels 1.0
 import "../popups"
 
 import utils 1.0
@@ -52,7 +52,7 @@ Page {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: parent.top
             fillMode: Image.PreserveAspectFit
-            source: Style.png("keys")
+            source: Style.svg("key")
             width: 160
             height: 160
             mipmap: true

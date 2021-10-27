@@ -1,8 +1,8 @@
 import QtQuick 2.13
 
 import utils 1.0
-import "../../../../shared"
-import "../../../../shared/panels"
+import shared 1.0
+import shared.panels 1.0
 
 Rectangle {
     id: root

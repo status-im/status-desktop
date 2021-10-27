@@ -2,7 +2,7 @@ import QtQuick 2.13
 import QtQuick.Layouts 1.13
 import StatusQ.Components 0.1
 
-import "../../../../shared"
+import shared 1.0
 
 import utils 1.0
 

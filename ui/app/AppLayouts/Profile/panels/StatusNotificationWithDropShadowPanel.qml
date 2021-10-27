@@ -2,8 +2,8 @@ import QtQuick 2.13
 import QtGraphicalEffects 1.13
 
 import utils 1.0
-import "../../../../shared"
-import "../../../../shared/status"
+import shared 1.0
+import shared.status 1.0
 
 Item {
     property string name

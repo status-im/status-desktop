@@ -1,7 +1,7 @@
 import QtQuick 2.13
-import "../../../../shared"
 
 import utils 1.0
+import shared 1.0
 
 MouseArea {
     z: 50

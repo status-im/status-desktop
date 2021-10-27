@@ -6,7 +6,7 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 
-import "../../../../shared/panels"
+import shared.panels 1.0
 
 Item {
     width: parent.width

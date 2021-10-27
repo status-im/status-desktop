@@ -8,10 +8,10 @@ import StatusQ.Popups 0.1
 import StatusQ.Components 0.1
 
 import utils 1.0
-import "../../../../shared"
-import "../../../../shared/popups"
-import "../../../../shared/panels"
-import "../../../../shared/status"
+import shared 1.0
+import shared.panels 1.0
+import shared.popups 1.0
+import shared.status 1.0
 import "../controls"
 
 StatusPopupMenu {

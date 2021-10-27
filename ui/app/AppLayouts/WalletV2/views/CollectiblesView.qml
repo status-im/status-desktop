@@ -5,7 +5,7 @@ import QtGraphicalEffects 1.13
 import StatusQ.Components 0.1
 
 import utils 1.0
-import "../../../../shared/panels"
+import shared.panels 1.0
 
 import "../popups"
 import "collectibles"

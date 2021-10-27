@@ -4,7 +4,7 @@ import QtQuick.Layouts 1.13
 import "./samples/"
 
 import utils 1.0
-import "../../../../../shared"
+import shared 1.0
 import "../../../Chat/popups"
 import "."
 

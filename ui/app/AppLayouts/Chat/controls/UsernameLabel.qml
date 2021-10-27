@@ -1,7 +1,7 @@
 import QtQuick 2.3
-import "../../../../shared"
-import "../../../../shared/controls"
-import "../../../../shared/panels"
+import shared.controls 1.0
+import shared 1.0
+import shared.panels 1.0
 
 import utils 1.0
 

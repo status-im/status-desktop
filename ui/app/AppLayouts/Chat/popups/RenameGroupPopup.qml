@@ -3,11 +3,10 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 
 import utils 1.0
+import shared.controls 1.0
 
 import StatusQ.Controls 0.1
 import StatusQ.Popups 0.1
-
-import "../../../../shared/controls"
 
 StatusModal {
 

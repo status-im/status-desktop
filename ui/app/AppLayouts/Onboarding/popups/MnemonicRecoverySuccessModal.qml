@@ -6,9 +6,9 @@ import utils 1.0
 
 import StatusQ.Controls 0.1 as StatusQControls
 
-import "../../../../shared/status"
-import "../../../../shared/panels"
-import "../../../../shared/popups"
+import shared.panels 1.0
+import shared.popups 1.0
+import shared.status 1.0
 import "../stores"
 
 import StatusQ.Components 0.1

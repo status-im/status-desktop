@@ -9,8 +9,8 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 
 import "../popups"
-import "../../../../shared"
-import "../../../../shared/panels"
+import shared 1.0
+import shared.panels 1.0
 
 //TODO remove these dependencies in imports
 import "../../Chat/views"

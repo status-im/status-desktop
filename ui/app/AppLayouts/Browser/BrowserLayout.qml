@@ -8,10 +8,10 @@ import QtQuick.Controls.Styles 1.0
 import QtQuick.Dialogs 1.2
 
 import utils 1.0
+import shared.controls 1.0
 
-import "../../../shared"
-import "../../../shared/controls"
-import "../../../shared/status"
+import shared 1.0
+import shared.status 1.0
 
 import "popups"
 import "controls"
