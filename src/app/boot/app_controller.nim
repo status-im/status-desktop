@@ -288,7 +288,7 @@ proc load(self: AppController) =
   self.buildAndRegisterUserProfile()
 
   # load main module
-  self.mainModule.load()
+  self.mainModule.load(self.chatService, self.communityService)
 
 proc userLoggedIn*(self: AppController) =
   #################################################
