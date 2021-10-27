@@ -1,5 +1,5 @@
 import NimQml
-import model
+import model, item, sub_item, active_item
 import io_interface
 
 QtObject:
@@ -7,9 +7,15 @@ QtObject:
     View* = ref object of QObject
       delegate: io_interface.AccessInterface
       model: Model
+      modelVariant: QVariant
+      activeItem: ActiveItem
+      activeItemVariant: QVariant
       
   proc delete*(self: View) =
     self.model.delete
+    self.modelVariant.delete
+    self.activeItem.delete
+    self.activeItemVariant.delete
     self.QObject.delete
 
   proc newView*(delegate: io_interface.AccessInterface): View =
@@ -17,6 +23,43 @@ QtObject:
     result.QObject.setup
     result.delegate = delegate
     result.model = newModel()
+    result.modelVariant = newQVariant(result.model)
+    result.activeItem = newActiveItem()
+    result.activeItemVariant = newQVariant(result.activeItem)
 
   proc load*(self: View) =
     self.delegate.viewDidLoad()
+
+  proc model*(self: View): Model =
+    return self.model
+
+  proc modelChanged*(self: View) {.signal.}
+
+  proc getModel(self: View): QVariant {.slot.} =
+    return self.modelVariant
+
+  QtProperty[QVariant] model:
+    read = getModel
+    notify = modelChanged
+
+  proc appendItem*(self: View, item: Item) =
+    self.model.appendItem(item)
+
+  proc prependItem*(self: View, item: Item) =
+    self.model.prependItem(item)
+
+  proc activeItemChanged*(self:View) {.signal.}
+
+  proc getActiveItem(self: View): QVariant {.slot.} =
+    return self.activeItemVariant
+
+  QtProperty[QVariant] activeItem:
+    read = getActiveItem
+    notify = activeItemChanged
+
+  method activeItemSubItemSet*(self: View, item: Item, subItem: SubItem) =
+    self.activeItem.setActiveItemData(item, subItem)
+    self.activeItemChanged()
+
+  proc setActiveItem*(self: View, itemId: string, subItemId: string = "") {.slot.} =
+    self.delegate.setActiveItemSubItem(itemId, subItemId)
