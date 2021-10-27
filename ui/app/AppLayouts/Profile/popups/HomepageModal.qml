@@ -2,10 +2,9 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 
 import utils 1.0
-import "../../../../shared"
+
 import "../../../../shared/controls"
 import "../../../../shared/popups"
-import "../../../../shared/status"
 
 // TODO: replace with StatusModal
 ModalPopup {
@@ -32,12 +31,12 @@ ModalPopup {
             id: homepageGroup
         }
 
-        StatusRadioButtonRow {
+        RadioButtonSelector {
             //% "Default"
-            text: qsTrId("default")
+            title: qsTrId("default")
             buttonGroup: homepageGroup
             checked: appSettings.browserHomepage === ""
-            onRadioCheckedChanged: {
+            onCheckedChanged: {
                 if (checked) {
                     appSettings.browserHomepage = ""
                     customUrl.visible = false
@@ -45,12 +44,12 @@ ModalPopup {
             }
         }
 
-        StatusRadioButtonRow {
+        RadioButtonSelector {
             //% "Custom..."
-            text: qsTrId("custom---")
+            title: qsTrId("custom---")
             buttonGroup: homepageGroup
             checked: appSettings.browserHomepage !== "" || customUrl.visible
-            onRadioCheckedChanged: {
+            onCheckedChanged: {
                 if (checked) {
                     customUrl.visible = true
                 }

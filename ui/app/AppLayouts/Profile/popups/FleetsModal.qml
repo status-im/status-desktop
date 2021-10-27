@@ -32,22 +32,27 @@ ModalPopup {
 
         FleetRadioSelector {
             fleetName: Constants.eth_prod
+            buttonGroup: fleetSettings
         }
 
         FleetRadioSelector {
             fleetName: Constants.eth_staging
+            buttonGroup: fleetSettings
         }
 
         FleetRadioSelector {
             fleetName: Constants.eth_test
+            buttonGroup: fleetSettings
         }
 
         FleetRadioSelector {
             fleetName: Constants.waku_prod
+            buttonGroup: fleetSettings
         }
 
         FleetRadioSelector {
             fleetName: Constants.waku_test
+            buttonGroup: fleetSettings
         }
     }
 }

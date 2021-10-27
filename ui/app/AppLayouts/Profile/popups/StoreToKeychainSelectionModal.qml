@@ -2,9 +2,9 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 
 import utils 1.0
-import "../../../../shared"
+
+import "../../../../shared/controls"
 import "../../../../shared/popups"
-import "../../../../shared/status"
 
 // TODO: replace with StatusModal
 ModalPopup {
@@ -30,11 +30,11 @@ ModalPopup {
             id: openLinksWithGroup
         }
 
-        StatusRadioButtonRow {
-            text: qsTr("Store")
+        RadioButtonSelector {
+            title: qsTr("Store")
             buttonGroup: openLinksWithGroup
             checked: accountSettings.storeToKeychain === Constants.storeToKeychainValueStore
-            onRadioCheckedChanged: {
+            onCheckedChanged: {
                 if (checked && accountSettings.storeToKeychain !== Constants.storeToKeychainValueStore) {
                     var storePassPopup = openPopup(storePasswordModal)
                     if(storePassPopup)
@@ -52,25 +52,25 @@ ModalPopup {
             }
         }
 
-        StatusRadioButtonRow {
+        RadioButtonSelector {
             id: notNowBtn
-            text: qsTr("Not now")
+            title: qsTr("Not now")
             buttonGroup: openLinksWithGroup
             checked: accountSettings.storeToKeychain === Constants.storeToKeychainValueNotNow ||
                      accountSettings.storeToKeychain === ""
-            onRadioCheckedChanged: {
+            onCheckedChanged: {
                 if (checked) {
                     accountSettings.storeToKeychain = Constants.storeToKeychainValueNotNow
                 }
             }
         }
 
-        StatusRadioButtonRow {
+        RadioButtonSelector {
             id: neverBtn
-            text: qsTr("Never")
+            title: qsTr("Never")
             buttonGroup: openLinksWithGroup
             checked: accountSettings.storeToKeychain === Constants.storeToKeychainValueNever
-            onRadioCheckedChanged: {
+            onCheckedChanged: {
                 if (checked) {
                     accountSettings.storeToKeychain = Constants.storeToKeychainValueNever
                 }

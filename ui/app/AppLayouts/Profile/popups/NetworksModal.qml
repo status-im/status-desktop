@@ -88,6 +88,10 @@ ModalPopup {
                 anchors.leftMargin: Style.current.padding
                 anchors.rightMargin: Style.current.padding
 
+                ButtonGroup {
+                    id: radioGroup
+                }
+
 
                 StatusSectionHeadline {
                     //% "Main networks"
@@ -97,14 +101,17 @@ ModalPopup {
 
                 NetworkRadioSelector {
                     network: Constants.networkMainnet
+                    buttonGroup: radioGroup
                 }
 
                 NetworkRadioSelector {
                     network: Constants.networkPOA
+                    buttonGroup: radioGroup
                 }
 
                 NetworkRadioSelector {
                     network: Constants.networkXDai
+                    buttonGroup: radioGroup
                 }
 
                 StatusSectionHeadline {
@@ -116,14 +123,17 @@ ModalPopup {
 
                 NetworkRadioSelector {
                     network: Constants.networkGoerli
+                    buttonGroup: radioGroup
                 }
 
                 NetworkRadioSelector {
                     network: Constants.networkRinkeby
+                    buttonGroup: radioGroup
                 }
 
                 NetworkRadioSelector {
                     network: Constants.networkRopsten
+                    buttonGroup: radioGroup
                 }
 
                 StatusSectionHeadline {
@@ -138,6 +148,7 @@ ModalPopup {
                     delegate: NetworkRadioSelector {
                         networkName: name
                         network: customNetworkId
+                        buttonGroup: radioGroup
                     }
                 }
             }

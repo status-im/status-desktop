@@ -2,9 +2,9 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 
 import utils 1.0
-import "../../../../shared"
+
+import "../../../../shared/controls"
 import "../../../../shared/popups"
-import "../../../../shared/status"
 
 // TODO: replace with StatusModal
 ModalPopup {
@@ -29,45 +29,45 @@ ModalPopup {
             id: searchEnginGroup
         }
 
-        StatusRadioButtonRow {
+        RadioButtonSelector {
             //% "None"
-            text: qsTrId("none")
+            title: qsTrId("none")
             buttonGroup: searchEnginGroup
             checked: appSettings.useBrowserEthereumExplorer === Constants.browserEthereumExplorerNone
-            onRadioCheckedChanged: {
+            onCheckedChanged: {
                 if (checked) {
                     appSettings.useBrowserEthereumExplorer = Constants.browserEthereumExplorerNone
                 }
             }
         }
 
-        StatusRadioButtonRow {
-            text: "etherscan.io"
+        RadioButtonSelector {
+            title: "etherscan.io"
             buttonGroup: searchEnginGroup
             checked: appSettings.useBrowserEthereumExplorer === Constants.browserEthereumExplorerEtherscan
-            onRadioCheckedChanged: {
+            onCheckedChanged: {
                 if (checked) {
                     appSettings.useBrowserEthereumExplorer = Constants.browserEthereumExplorerEtherscan
                 }
             }
         }
 
-        StatusRadioButtonRow {
-            text: "ethplorer.io"
+        RadioButtonSelector {
+            title: "ethplorer.io"
             buttonGroup: searchEnginGroup
             checked: appSettings.useBrowserEthereumExplorer === Constants.browserEthereumExplorerEthplorer
-            onRadioCheckedChanged: {
+            onCheckedChanged: {
                 if (checked) {
                     appSettings.useBrowserEthereumExplorer = Constants.browserEthereumExplorerEthplorer
                 }
             }
         }
 
-        StatusRadioButtonRow {
-            text: "blockchair.com"
+        RadioButtonSelector {
+            title: "blockchair.com"
             buttonGroup: searchEnginGroup
             checked: appSettings.useBrowserEthereumExplorer === Constants.browserEthereumExplorerBlockchair
-            onRadioCheckedChanged: {
+            onCheckedChanged: {
                 if (checked) {
                     appSettings.useBrowserEthereumExplorer = Constants.browserEthereumExplorerBlockchair
                 }

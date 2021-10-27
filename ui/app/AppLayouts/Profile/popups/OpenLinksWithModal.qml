@@ -2,9 +2,9 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 
 import utils 1.0
-import "../../../../shared"
+
+import "../../../../shared/controls"
 import "../../../../shared/popups"
-import "../../../../shared/status"
 
 // TODO: replace with StatusModal
 ModalPopup {
@@ -31,22 +31,22 @@ ModalPopup {
             id: openLinksWithGroup
         }
 
-        StatusRadioButtonRow {
-            text: "Status"
+        RadioButtonSelector {
+            title: "Status"
             buttonGroup: openLinksWithGroup
             checked: appSettings.openLinksInStatus
-            onRadioCheckedChanged: {
+            onCheckedChanged: {
                 if (checked) {
                     appSettings.openLinksInStatus = true
                 }
             }
         }
-        StatusRadioButtonRow {
+        RadioButtonSelector {
             //% "My default browser"
-            text: qsTrId("my-default-browser")
+            title: qsTrId("my-default-browser")
             buttonGroup: openLinksWithGroup
             checked: !appSettings.openLinksInStatus
-            onRadioCheckedChanged: {
+            onCheckedChanged: {
                 if (checked) {
                     appSettings.openLinksInStatus = false
                 }
