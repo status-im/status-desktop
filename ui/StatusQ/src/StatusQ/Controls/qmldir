@@ -26,3 +26,4 @@ StatusPickerButton 0.1 StatusPickerButton.qml
 StatusSwitchTabButton 0.1 StatusSwitchTabButton.qml
 StatusSwitchTabBar 0.1 StatusSwitchTabBar.qml
 StatusSelectableText 0.1 StatusSelectableText.qml
+StatusWalletColorButton 0.1 StatusWalletColorButton.qml

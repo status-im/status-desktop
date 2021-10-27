@@ -183,6 +183,11 @@ StatusWindow {
                             selected: page.sourceComponent == statusColorSelectorPageComponent
                             onClicked: page.sourceComponent = statusColorSelectorPageComponent
                         }
+                        StatusNavigationListItem { 
+                            title: "StatusWalletColorButton" 
+                            selected: page.sourceComponent == statusWalletColorButtonPageComponent
+                            onClicked: page.sourceComponent = statusWalletColorButtonPageComponent
+                        }
                         StatusListSectionHeadline { text: "StatusQ.Components" }
                         StatusNavigationListItem { 
                             title: "StatusAddress"
@@ -314,6 +319,11 @@ StatusWindow {
     Component {
         id: statusTabBarIconButtonPageComponent
         StatusTabBarIconButtonPage {}
+    }
+
+    Component {
+        id: statusWalletColorButtonPageComponent
+        StatusWalletColorButtonPage {}
     }
 
     Component {
