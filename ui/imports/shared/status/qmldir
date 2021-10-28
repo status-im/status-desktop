@@ -35,5 +35,3 @@ StatusStickerPackDetails 1.0 StatusStickerPackDetails.qml
 StatusStickerPackIconWithIndicator 1.0 StatusStickerPackIconWithIndicator.qml
 StatusStickersPopup 1.0 StatusStickersPopup.qml
 StatusTextFormatMenu 1.0 StatusTextFormatMenu.qml
-StatusWalletColorButton 1.0 StatusWalletColorButton.qml
-StatusWalletColorSelect 1.0 StatusWalletColorSelect.qml
