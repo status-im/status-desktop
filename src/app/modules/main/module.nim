@@ -132,9 +132,7 @@ method load*[T](self: Module[T]) =
   echo "=> communitiesSection"
   let communities = self.controller.getCommunities()
   for c in communities:
-    self.view.addItem(initItem(c.id, SectionType.Community.int, c.name, 
-    if not c.images.isNil: c.images.thumbnail else: "",
-    "", c.color, 0, 0))
+    self.view.addItem(initItem(c.id, SectionType.Community.int, c.name, c.images.thumbnail, "", c.color, 0, 0))
 
   echo "=> chatSection"
   self.chatSectionModule.load()

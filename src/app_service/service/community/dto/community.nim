@@ -5,15 +5,15 @@ import json
 include ../../../common/json_utils
 
 type
-  Permission* = ref object
+  Permission* = object
     access*: int
 
 type
-  Images* = ref object
+  Images* = object
     thumbnail*: string
     large*: string
 
-type Chat* = ref object
+type Chat* = object
   id*: string
   name*: string
   color*: string
@@ -25,16 +25,16 @@ type Chat* = ref object
   position*: int
   categoryId*: string
 
-type Category* = ref object
+type Category* = object
   id*: string
   name*: string
   position*: int
 
-type Member* = ref object
+type Member* = object
   id*: string
   roles*: seq[int]
 
-type CommunityDto* = ref object
+type CommunityDto* = object
   id*: string
   admin*: bool
   verified*: bool

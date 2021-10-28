@@ -13,7 +13,7 @@ type ChatType* {.pure.}= enum
   Timeline = 5
   CommunityChat = 6
 
-type ChatDto* = ref object
+type ChatDto* = object
   id*: string # ID is the id of the chat, for public chats it is the name e.g. status, 
   # for one-to-one is the hex encoded public key and for group chats is a random
   # uuid appended with the hex encoded pk of the creator of the chat
