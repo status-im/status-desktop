@@ -72,7 +72,7 @@ proc newModule*[T](delegate: T,
   result.contactsModule = contacts_module.newModule(result, events, contactsService, accountsService)
   result.languageModule = language_module.newModule(result, languageService)
   result.mnemonicModule = mnemonic_module.newModule(result, mnemonicService)
-  result.privacyModule = privacy_module.newModule(result, privacyService, accountsService)
+  result.privacyModule = privacy_module.newModule(result, privacyService, accountsService, settingsService)
   result.aboutModule = about_module.newModule(result, aboutService)
   result.appearanceModule = appearance_module.newModule(result, appearanceService)
   result.storesyncModule = storesync_module.newModule(result, syncnodeService)

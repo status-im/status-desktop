@@ -28,7 +28,6 @@ QtObject {
     property var addedContacts: contactsModuleInst.model.addedContacts
     property var mutedChatsContacts: profileModelInst.mutedChats.contacts
     property var mutedChats: profileModelInst.mutedChats.chats
-//    property var devicesList: profileModelInst.devices.list
     property var devicesList: deviceSyncModule.list
 
     property string ensRegisterAddress: utilsModelInst.ensRegisterAddress
@@ -48,9 +47,8 @@ QtObject {
     property bool automaticMailserverSelection: profileModelInst.mailservers.automaticSelection
     property bool isWakuV2LightClient: nodeModelInst.WakuV2LightClient
     property bool devicesSetup: deviceSyncModule.isSetup
-//    property bool devicesSetup: profileModelInst.devices.isSetup
     property bool mnemonicBackedUp: mnemonicModuleInst.isBackedUp
-    property bool messagesFromContactsOnly: profile.messagesFromContactsOnly
+    property bool messagesFromContactsOnly: privacyModule.messagesFromContactsOnly
 
     property int profile_id: 0
     property int contacts_id: 1
@@ -364,6 +362,6 @@ QtObject {
     }
 
     function setMessagesFromContactsOnly(checked) {
-        profileModelInst.setMessagesFromContactsOnly(checked)
+        privacyModule.changeMessagesFromContactsOnly(checked)
     }
 }

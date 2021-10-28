@@ -30,6 +30,9 @@ method getAppearance*(self: ServiceInterface): int {.base.} =
 method getMessagesFromContactsOnly*(self: ServiceInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method setMessagesFromContactsOnly*(self: ServiceInterface, contactsOnly: bool): bool {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method getSendUserStatus*(self: ServiceInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
