@@ -10,12 +10,18 @@ import ../../../../app_service/service/about/service as about_service
 import ../../../../app_service/service/language/service as language_service
 import ../../../../app_service/service/mnemonic/service as mnemonic_service
 import ../../../../app_service/service/privacy/service as privacy_service
+import ../../../../app_service/service/appearance/service as appearance_service
+import ../../../../app_service/service/syncnode/service as syncnode_service
+import ../../../../app_service/service/devicesync/service as devicesync_service
 
 import ./profile/module as profile_module
 import ./contacts/module as contacts_module
 import ./language/module as language_module
 import ./mnemonic/module as mnemonic_module
 import ./privacy/module as privacy_module
+import ./appearance/module as appearance_module
+import ./storesync/module as storesync_module
+import ./devicesync/module as devicesync_module
 import ./about/module as about_module
 
 import eventemitter
@@ -35,7 +41,10 @@ type
     contactsModule: contacts_module.AccessInterface
     mnemonicModule: mnemonic_module.AccessInterface
     privacyModule: privacy_module.AccessInterface
+    appearanceModule: appearance_module.AccessInterface
+    storesyncModule: storesync_module.AccessInterface
     aboutModule: about_module.AccessInterface
+    deviceSyncModule: devicesync_module.AccessInterface
 
 proc newModule*[T](delegate: T,
   events: EventEmitter,
@@ -46,14 +55,17 @@ proc newModule*[T](delegate: T,
   aboutService: about_service.ServiceInterface,
   languageService: language_service.ServiceInterface,
   mnemonicService: mnemonic_service.ServiceInterface,
-  privacyService: privacy_service.ServiceInterface
+  privacyService: privacy_service.ServiceInterface,
+  appearanceService: appearance_service.ServiceInterface,
+  syncnodeService: syncnode_service.ServiceInterface,
+  deviceSyncService: devicesync_service.ServiceInterface
   ):
   Module[T] =
   result = Module[T]()
   result.delegate = delegate
   result.view = view.newView()
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController[Module[T]](result, accountsService, settingsService, profileService, languageService, mnemonicService, privacyService)
+  result.controller = controller.newController[Module[T]](result, accountsService, settingsService, profileService, languageService, mnemonicService, privacyService, syncnodeService, deviceSyncService)
   result.moduleLoaded = false
 
   result.profileModule = profile_module.newModule(result, accountsService, settingsService, profileService)
@@ -62,8 +74,11 @@ proc newModule*[T](delegate: T,
   result.mnemonicModule = mnemonic_module.newModule(result, mnemonicService)
   result.privacyModule = privacy_module.newModule(result, privacyService, accountsService)
   result.aboutModule = about_module.newModule(result, aboutService)
+  result.appearanceModule = appearance_module.newModule(result, appearanceService)
+  result.storesyncModule = storesync_module.newModule(result, syncnodeService)
+  result.deviceSyncModule = devicesync_module.newModule(result, events, deviceSyncService)
 
-  singletonInstance.engine.setRootContextProperty("profileSectionModule", result.viewVariant)
+  singletonInstance.engine.setRootContextProperty("deviceSyncModule", result.viewVariant)
 
 method delete*[T](self: Module[T]) =
   self.profileModule.delete
@@ -72,6 +87,9 @@ method delete*[T](self: Module[T]) =
   self.mnemonicModule.delete
   self.privacyModule.delete
   self.aboutModule.delete
+  self.appearanceModule.delete
+  self.storesyncModule.delete
+  self.deviceSyncModule.delete
 
   self.view.delete
   self.viewVariant.delete
@@ -84,6 +102,9 @@ method load*[T](self: Module[T]) =
   self.mnemonicModule.load()
   self.privacyModule.load()
   self.aboutModule.load()
+  self.appearanceModule.load()
+  self.storesyncModule.load()
+  self.deviceSyncModule.load()
 
   self.moduleLoaded = true
   self.delegate.profileSectionDidLoad()

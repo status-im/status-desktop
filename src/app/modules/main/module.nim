@@ -29,6 +29,9 @@ import ../../../app_service/service/about/service as about_service
 import ../../../app_service/service/language/service as language_service
 import ../../../app_service/service/mnemonic/service as mnemonic_service
 import ../../../app_service/service/privacy/service as privacy_service
+import ../../../app_service/service/appearance/service as appearance_service
+import ../../../app_service/service/syncnode/service as syncnode_service
+import ../../../app_service/service/devicesync/service as devicesync_service
 
 export io_interface
 
@@ -75,7 +78,10 @@ proc newModule*[T](
   dappPermissionsService: dapp_permissions_service.ServiceInterface,
   languageService: language_service.ServiceInterface,
   mnemonicService: mnemonic_service.ServiceInterface,
-  privacyService: privacy_service.ServiceInterface
+  privacyService: privacy_service.ServiceInterface,
+  appearanceService: appearance_service.ServiceInterface,
+  syncnodeService: syncnode_service.ServiceInterface,
+  deviceSyncService: devicesync_service.ServiceInterface
 ): Module[T] =
   result = Module[T]()
   result.delegate = delegate
@@ -106,7 +112,7 @@ proc newModule*[T](
   )
 
   result.browserSectionModule = browser_section_module.newModule(result, bookmarkService, settingsService, dappPermissionsService)
-  result.profileSectionModule = profile_section_module.newModule(result, events, accountsService, settingsService, profileService, contactsService, aboutService, languageService, mnemonicService, privacyService)
+  result.profileSectionModule = profile_section_module.newModule(result, events, accountsService, settingsService, profileService, contactsService, aboutService, languageService, mnemonicService, privacyService, appearanceService, syncnodeService, deviceSyncService)
 
 method delete*[T](self: Module[T]) =
   self.chatSectionModule.delete

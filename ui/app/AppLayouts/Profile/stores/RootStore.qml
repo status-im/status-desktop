@@ -11,6 +11,7 @@ QtObject {
     property var aboutModuleInst: aboutModule
     property var languageModuleInst: languageModule
     property var mnemonicModuleInst: mnemonicModule
+    property var appearanceModuleInst: appearanceModule
 
     property var chatsModelInst: chatsModel
     property var utilsModelInst: utilsModel
@@ -27,7 +28,8 @@ QtObject {
     property var addedContacts: contactsModuleInst.model.addedContacts
     property var mutedChatsContacts: profileModelInst.mutedChats.contacts
     property var mutedChats: profileModelInst.mutedChats.chats
-    property var devicesList: profileModelInst.devices.list
+//    property var devicesList: profileModelInst.devices.list
+    property var devicesList: deviceSyncModule.list
 
     property string ensRegisterAddress: utilsModelInst.ensRegisterAddress
     property string etherscanLink: walletModelInst.utilsView.etherscanLink
@@ -45,7 +47,8 @@ QtObject {
     property bool profileHasIdentityImage: profile.hasIdentityImage
     property bool automaticMailserverSelection: profileModelInst.mailservers.automaticSelection
     property bool isWakuV2LightClient: nodeModelInst.WakuV2LightClient
-    property bool devicesSetup: profileModelInst.devices.isSetup
+    property bool devicesSetup: deviceSyncModule.isSetup
+//    property bool devicesSetup: profileModelInst.devices.isSetup
     property bool mnemonicBackedUp: mnemonicModuleInst.isBackedUp
     property bool messagesFromContactsOnly: profile.messagesFromContactsOnly
 
@@ -337,27 +340,27 @@ QtObject {
     }
 
     function setDeviceName(name) {
-        profileModelInst.devices.setName(name)
+        deviceSyncModule.setName(name)
     }
 
     function advertiseDevice() {
-        profileModelInst.devices.advertise()
+        deviceSyncModule.advertise()
     }
 
     function enableDeviceInstallation(id, pairedSwitch) {
-        profileModelInst.devices.enableInstallation(id, pairedSwitch)
+        deviceSyncModule.enableInstallation(id, pairedSwitch)
     }
 
     function syncAllDevices() {
-        profileModelInst.devices.syncAll()
+        deviceSyncModule.syncAll()
     }
 
     function readTextFile(path) {
-        return utilsModelInst.readTextFile(path)
+        return appearanceModuleInst.readTextFile(path)
     }
 
     function writeTextFile(path, value) {
-        utilsModelInst.writeTextFile(path, value)
+        appearanceModuleInst.writeTextFile(path, value)
     }
 
     function setMessagesFromContactsOnly(checked) {
