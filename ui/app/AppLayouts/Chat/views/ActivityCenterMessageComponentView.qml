@@ -5,7 +5,10 @@ import utils 1.0
 
 import StatusQ.Controls 0.1
 
+import shared 1.0
+import shared.views 1.0
 import shared.popups 1.0
+import shared.views.chat 1.0
 
 import "../controls"
 import "../panels"

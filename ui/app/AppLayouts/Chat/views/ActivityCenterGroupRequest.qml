@@ -6,6 +6,7 @@ import shared.controls 1.0
 import shared 1.0
 import shared.panels 1.0
 import shared.popups 1.0
+import shared.controls.chat 1.0
 
 import "../controls"
 import "../panels"

@@ -5,10 +5,9 @@ import QtQuick.Controls.Universal 2.12
 
 import utils 1.0
 import shared 1.0
+import shared.views 1.0
 import shared.status 1.0
-
-//TODO remove import dependency
-import "../../Chat/views"
+import shared.views.chat 1.0
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1

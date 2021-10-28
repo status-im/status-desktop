@@ -12,7 +12,7 @@ import shared 1.0
 import shared.panels 1.0
 import shared.popups 1.0
 import shared.status 1.0
-import "../controls"
+import shared.controls.chat 1.0
 
 StatusPopupMenu {
     id: root

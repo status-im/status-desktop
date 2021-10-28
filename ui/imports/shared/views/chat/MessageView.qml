@@ -2,16 +2,14 @@ import QtQuick 2.13
 
 import StatusQ.Components 0.1
 
+import utils 1.0
 import shared.panels 1.0
 import shared.status 1.0
 import shared.controls 1.0
+import shared.panels.chat 1.0
+import shared.views.chat 1.0
+import shared.controls.chat 1.0
 
-import utils 1.0
-import "../panels"
-import "../views"
-import "../controls"
-
-//TODO RE-WRITE THIS COMPONENT
 Column {
     id: root
     width: parent.width

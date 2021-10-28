@@ -13,6 +13,7 @@ import shared 1.0
 import shared.popups 1.0
 import shared.status 1.0
 import shared.controls 1.0
+import shared.views.chat 1.0
 
 import "../helpers"
 import "../controls"

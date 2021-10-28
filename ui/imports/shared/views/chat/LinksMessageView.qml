@@ -8,10 +8,10 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 
-import shared.panels 1.0
 import shared.status 1.0
-import "../controls"
-import "../panels"
+import shared.panels 1.0
+import shared.panels.chat 1.0
+import shared.controls.chat 1.0
 
 Column {
     id: root

@@ -10,6 +10,7 @@ Item {
     id: root
 
     property var store
+    //TODO remove when dynamic scoping is cleaned up
     property var messageStore
     property bool longChatText: true
     property bool veryLongChatText: !!root.store ? root.store.chatsModelInst.plainText(message).length >
@@ -28,7 +29,7 @@ Item {
     // This function is to avoid the binding loop warning
     function setWidths() {
         if (longChatText) {
-            root.width = undefined
+            root.width = 0;
             chatText.width = Qt.binding(function () {return root.width})
         } else {
             chatText.width = Qt.binding(function () {return chatText.implicitWidth})
@@ -64,7 +65,7 @@ Item {
                     if(root.store.chatsModelInst.communities.activeCommunity.active)
                     {
                         root.store.chatsModelInst.channelView.joinPublicChat(channelName)
-                        appMain.changeAppSection(Constants.chat)
+                        appMain.changeAppSectionBySectionType(Constants.appSection.chat)
                     }
                     return
                 }
@@ -75,7 +76,7 @@ Item {
                 {
                     if(root.store.chatsModelInst.communities.activeCommunity.active) {
                         root.store.chatsModelInst.channelView.joinPublicChat(channelName)
-                        appMain.changeAppSection(Constants.chat)
+                        appMain.changeAppSectionBySectionType(Constants.appSection.chat)
                     }
                     root.store.chatsModelInst.channelView.setActiveChannel(channelName);
                 }
@@ -93,7 +94,7 @@ Item {
             if (link.startsWith('//')) {
                 let pk = link.replace("//", "");
                 const userProfileImage = appMain.getProfileImage(pk)
-                openProfilePopup(root.store.userNameOrAlias(pk), pk, userProfileImage || root.store.generateIdenticon(pk))
+                openProfilePopup(root.store.chatsModelInst.userNameOrAlias(pk), pk, userProfileImage || root.store.utilsModelInst.generateIdenticon(pk))
                 return;
             }
 
@@ -167,7 +168,6 @@ Item {
                 z: 100
                 rotation: root.readMore ? 180 : 0
                 MouseArea {
-                    z: 101
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
                     onClicked: {
