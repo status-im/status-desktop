@@ -10,6 +10,7 @@ import utils 1.0
 
 import shared 1.0
 import shared.panels 1.0
+import shared.popups 1.0
 
 //TODO remove this dependency
 import "../../../app/AppLayouts/Chat/panels"
@@ -632,7 +633,7 @@ Rectangle {
         }
     }
 
-    StatusChatCommandsPopup {
+    ChatCommandsPopup {
         id: chatCommandsPopup
         x: 8
         y: -height
