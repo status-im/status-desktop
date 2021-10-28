@@ -8,6 +8,8 @@ import ../../../../app_service/service/settings/service as settings_service
 import ../../../../app_service/service/language/service as language_service
 import ../../../../app_service/service/mnemonic/service as mnemonic_service
 import ../../../../app_service/service/privacy/service as privacy_service
+import ../../../../app_service/service/syncnode/service as syncnode_service
+import ../../../../app_service/service/devicesync/service as devicesync_service
 
 export controller_interface
 
@@ -21,8 +23,10 @@ type
     languageService: language_service.ServiceInterface
     mnemonicService: mnemonic_service.ServiceInterface
     privacyService: privacy_service.ServiceInterface
+    syncnodeService: syncnode_service.ServiceInterface
+    deviceSyncService: devicesync_service.ServiceInterface
 
-proc newController*[T](delegate: T, accountsService: accounts_service.ServiceInterface, settingsService: settings_service.ServiceInterface, profileService: profile_service.ServiceInterface, languageService: language_service.ServiceInterface, mnemonicService: mnemonic_service.ServiceInterface, privacyService: privacy_service.ServiceInterface): Controller[T] =
+proc newController*[T](delegate: T, accountsService: accounts_service.ServiceInterface, settingsService: settings_service.ServiceInterface, profileService: profile_service.ServiceInterface, languageService: language_service.ServiceInterface, mnemonicService: mnemonic_service.ServiceInterface, privacyService: privacy_service.ServiceInterface, syncnodeService: syncnode_service.ServiceInterface, deviceSyncService: devicesync_service.ServiceInterface): Controller[T] =
   result = Controller[T]()
   result.delegate = delegate
   result.profileService = profileService
@@ -31,6 +35,8 @@ proc newController*[T](delegate: T, accountsService: accounts_service.ServiceInt
   result.languageService = languageService
   result.mnemonicService = mnemonicService
   result.privacyService = privacyService
+  result.syncnodeService = syncnodeService
+  result.deviceSyncService = deviceSyncService
 
 method delete*[T](self: Controller[T]) =
   discard

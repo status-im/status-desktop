@@ -10,13 +10,22 @@ import ../../../../app_service/service/about/service as about_service
 import ../../../../app_service/service/language/service as language_service
 import ../../../../app_service/service/mnemonic/service as mnemonic_service
 import ../../../../app_service/service/privacy/service as privacy_service
+import ../../../../app_service/service/appearance/service as appearance_service
+import ../../../../app_service/service/syncnode/service as syncnode_service
+import ../../../../app_service/service/devicesync/service as devicesync_service
+import ../../../../app_service/service/network/service as network_service
 
 import ./profile/module as profile_module
 import ./contacts/module as contacts_module
 import ./language/module as language_module
 import ./mnemonic/module as mnemonic_module
 import ./privacy/module as privacy_module
+import ./appearance/module as appearance_module
+import ./storesync/module as storesync_module
+import ./devicesync/module as devicesync_module
 import ./about/module as about_module
+import ./network/module as network_module
+import ./fleets/module as fleet_module
 
 import eventemitter
 
@@ -29,13 +38,17 @@ type
     viewVariant: QVariant
     controller: controller.AccessInterface
     moduleLoaded: bool
-
     profileModule: profile_module.AccessInterface
     languageModule: language_module.AccessInterface
     contactsModule: contacts_module.AccessInterface
     mnemonicModule: mnemonic_module.AccessInterface
     privacyModule: privacy_module.AccessInterface
+    appearanceModule: appearance_module.AccessInterface
+    storesyncModule: storesync_module.AccessInterface
     aboutModule: about_module.AccessInterface
+    deviceSyncModule: devicesync_module.AccessInterface
+    networkModule: network_module.AccessInterface
+    fleetModule: fleet_module.AccessInterface
 
 proc newModule*[T](delegate: T,
   events: EventEmitter,
@@ -46,24 +59,31 @@ proc newModule*[T](delegate: T,
   aboutService: about_service.ServiceInterface,
   languageService: language_service.ServiceInterface,
   mnemonicService: mnemonic_service.ServiceInterface,
-  privacyService: privacy_service.ServiceInterface
+  privacyService: privacy_service.ServiceInterface,
+  appearanceService: appearance_service.ServiceInterface,
+  syncnodeService: syncnode_service.ServiceInterface,
+  deviceSyncService: devicesync_service.ServiceInterface,
+  networkService: network_service.ServiceInterface
   ):
   Module[T] =
   result = Module[T]()
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController[Module[T]](result, accountsService, settingsService, profileService, languageService, mnemonicService, privacyService)
+  result.controller = controller.newController[Module[T]](result, accountsService, settingsService, profileService, languageService, mnemonicService, privacyService, syncnodeService, deviceSyncService)
   result.moduleLoaded = false
 
   result.profileModule = profile_module.newModule(result, accountsService, settingsService, profileService)
   result.contactsModule = contacts_module.newModule(result, events, contactsService, accountsService)
   result.languageModule = language_module.newModule(result, languageService)
   result.mnemonicModule = mnemonic_module.newModule(result, mnemonicService)
-  result.privacyModule = privacy_module.newModule(result, privacyService, accountsService)
+  result.privacyModule = privacy_module.newModule(result, privacyService, accountsService, settingsService)
   result.aboutModule = about_module.newModule(result, aboutService)
-
-  singletonInstance.engine.setRootContextProperty("profileSectionModule", result.viewVariant)
+  result.appearanceModule = appearance_module.newModule(result, appearanceService)
+  result.storesyncModule = storesync_module.newModule(result, syncnodeService)
+  result.deviceSyncModule = devicesync_module.newModule(result, events, deviceSyncService)
+  result.networkModule = network_module.newModule(result, settingsService, networkService)
+  result.fleetModule = fleet_module.newModule(result, settingsService)
 
 method delete*[T](self: Module[T]) =
   self.profileModule.delete
@@ -72,9 +92,11 @@ method delete*[T](self: Module[T]) =
   self.mnemonicModule.delete
   self.privacyModule.delete
   self.aboutModule.delete
+  self.appearanceModule.delete
+  self.storesyncModule.delete
+  self.deviceSyncModule.delete
+  self.networkModule.delete
 
-  self.view.delete
-  self.viewVariant.delete
   self.controller.delete
 
 method load*[T](self: Module[T]) =
@@ -84,6 +106,11 @@ method load*[T](self: Module[T]) =
   self.mnemonicModule.load()
   self.privacyModule.load()
   self.aboutModule.load()
+  self.appearanceModule.load()
+  self.storesyncModule.load()
+  self.deviceSyncModule.load()
+  self.networkModule.load()
+  self.fleetModule.load()
 
   self.view.setIsTelemetryEnabled(self.controller.isTelemetryEnabled())
   self.view.setIsDebugEnabled(self.controller.isDebugEnabled())

@@ -90,10 +90,10 @@ Item {
             visible: Qt.platform.os == "osx" // For now, this is available only on MacOS
             label: {
                 let value = localAccountSettings.storeToKeychainValue
-                if(value == Constants.storeToKeychainValueStore)
+                if(value === Constants.storeToKeychainValueStore)
                     return qsTr("Store")
 
-                if(value == Constants.storeToKeychainValueNever)
+                if(value === Constants.storeToKeychainValueNever)
                     return qsTr("Never")
 
                 return qsTr("Not now")
@@ -262,11 +262,11 @@ Item {
             components: [
                 StatusQControls.StatusSwitch {
                     id: switch3
-                    checked: !root.store.messagesFromContactsOnly
+                    checked: root.store.messagesFromContactsOnly
                 }
             ]
             sensor.onClicked: {
-                switch3.checked = root.store.setMessagesFromContactsOnly(!switch3.checked)
+                root.store.setMessagesFromContactsOnly(!switch3.checked)
             }
         }
     }

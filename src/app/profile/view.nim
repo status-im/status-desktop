@@ -17,7 +17,6 @@ import ../chat/views/channels_list
 import ../../constants
 import ../../app_service/[main]
 import ../utils/image_utils
-import ../../constants
 
 logScope:
   topics = "profile-view"

@@ -65,5 +65,3 @@ QtObject:
       status_devices.enable(installationId)
     else:
       status_devices.disable(installationId)
-
-

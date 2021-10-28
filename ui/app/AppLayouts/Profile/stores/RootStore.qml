@@ -11,6 +11,8 @@ QtObject {
     property var aboutModuleInst: aboutModule
     property var languageModuleInst: languageModule
     property var mnemonicModuleInst: mnemonicModule
+    property var appearanceModuleInst: appearanceModule
+    property var networkModuleInst: networkModule
 
     property var chatsModelInst: chatsModel
     property var utilsModelInst: utilsModel
@@ -27,14 +29,15 @@ QtObject {
     property var addedContacts: contactsModuleInst.model.addedContacts
     property var mutedChatsContacts: profileModelInst.mutedChats.contacts
     property var mutedChats: profileModelInst.mutedChats.chats
-    property var devicesList: profileModelInst.devices.list
+    property var devicesList: deviceSyncModule.list
 
     property string ensRegisterAddress: utilsModelInst.ensRegisterAddress
     property string etherscanLink: walletModelInst.utilsView.etherscanLink
     property string pubKey: profile.pubKey
-    property string fleet: profileModelInst.fleets.fleet
+    property string fleet: fleetsModule.fleet
     property string bloomLevel: nodeModelInst.bloomLevel
-    property string currentNetwork: profileModelInst.network.current
+    property string currentNetwork: networkModuleInst.current
+    property var customNetworkList: networkModuleInst.customNetworkList
     property string preferredUsername: profileModelInst.ens.preferredUsername
     property string firstEnsUsername: profileModelInst.ens.firstEnsUsername
     property string username: profile.username
@@ -45,9 +48,9 @@ QtObject {
     property bool profileHasIdentityImage: profile.hasIdentityImage
     property bool automaticMailserverSelection: profileModelInst.mailservers.automaticSelection
     property bool isWakuV2LightClient: nodeModelInst.WakuV2LightClient
-    property bool devicesSetup: profileModelInst.devices.isSetup
+    property bool devicesSetup: deviceSyncModule.isSetup
     property bool mnemonicBackedUp: mnemonicModuleInst.isBackedUp
-    property bool messagesFromContactsOnly: profile.messagesFromContactsOnly
+    property bool messagesFromContactsOnly: privacyModule.messagesFromContactsOnly
 
     property int profile_id: 0
     property int contacts_id: 1
@@ -300,11 +303,23 @@ QtObject {
     }
 
     function getNetworkName() {
-        return utilsModelInst.getNetworkName()
+        return networkModule.networkName
+    }
+
+    function changeNetwork(network) {
+        networkModuleInst.setNetworkAndPersist(network)
+    }
+
+    function addNetwork(name, endpoint, networkId, networkType) {
+        networkModuleInst.add(name, endpoint, networkId, networkType)
+    }
+
+    function reloadCustomNetworks() {
+        networkModuleInst.reloadCustomNetworks()
     }
 
     function logDir() {
-        return profileModelInst.logDir()
+        return aboutModuleInst.logDir()
     }
 
     function setBloomLevel(mode) {
@@ -336,31 +351,35 @@ QtObject {
     }
 
     function setDeviceName(name) {
-        profileModelInst.devices.setName(name)
+        deviceSyncModule.setName(name)
     }
 
     function advertiseDevice() {
-        profileModelInst.devices.advertise()
+        deviceSyncModule.advertise()
     }
 
     function enableDeviceInstallation(id, pairedSwitch) {
-        profileModelInst.devices.enableInstallation(id, pairedSwitch)
+        deviceSyncModule.enableInstallation(id, pairedSwitch)
     }
 
     function syncAllDevices() {
-        profileModelInst.devices.syncAll()
+        deviceSyncModule.syncAll()
     }
 
     function readTextFile(path) {
-        return utilsModelInst.readTextFile(path)
+        return appearanceModuleInst.readTextFile(path)
     }
 
     function writeTextFile(path, value) {
-        utilsModelInst.writeTextFile(path, value)
+        appearanceModuleInst.writeTextFile(path, value)
     }
 
     function setMessagesFromContactsOnly(checked) {
-        profileModelInst.setMessagesFromContactsOnly(checked)
+        privacyModule.changeMessagesFromContactsOnly(checked)
+    }
+
+    function setFleet(fleet) {
+        fleetsModule.changeFleet(fleet)
     }
 
     function userNameOrAlias(pk) {

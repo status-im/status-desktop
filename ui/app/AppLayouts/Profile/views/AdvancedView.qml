@@ -19,7 +19,7 @@ ScrollView {
     width: parent.width
     contentHeight: advancedContainer.height + 100
     clip: true
-    property bool isWakuV2: store.fleet == Constants.waku_prod || store.fleet === Constants.waku_test
+    property bool isWakuV2: store.fleet === Constants.waku_prod || store.fleet === Constants.waku_test
 
     property var store
 
@@ -475,10 +475,12 @@ ScrollView {
 
         NetworksModal {
             id: networksModal
+            store: root.store
         }
 
         FleetsModal {
             id: fleetModal
+            store: root.store
         }
 
         Component {

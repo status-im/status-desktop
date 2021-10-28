@@ -11,13 +11,14 @@ RadioButtonSelector {
 
     property string fleetName: ""
     property string newFleet: ""
+    property var store
 
     title: fleetName
-    checked: profileModel.fleets.fleet === root.fleetName
+    checked: store.fleet === root.fleetName
 
     onCheckedChanged: {
         if (checked) {
-            if (profileModel.fleets.fleet === root.fleetName) return;
+            if (store.fleet === root.fleetName) return;
             root.newFleet = root.fleetName;
             openPopup(confirmDialogComponent)
         }
@@ -30,9 +31,8 @@ RadioButtonSelector {
             header.title: qsTrId("close-app-title")
             //% "Change fleet to %1"
             confirmationText: qsTrId("change-fleet-to--1").arg(root.newFleet)
-            onConfirmButtonClicked: profileModel.fleets.setFleet(root.newFleet)
+            onConfirmButtonClicked: store.setFleet(root.newFleet)
             onClosed: {
-                profileModel.fleets.triggerFleetChange()
                 destroy();
             }
         }
