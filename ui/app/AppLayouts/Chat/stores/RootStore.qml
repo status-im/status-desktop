@@ -144,4 +144,12 @@ QtObject {
     function declineRequestToJoinCommunity(id) {
         chatsModelInst.communities.declineRequestToJoinCommunity(id);
     }
+
+    function userNameOrAlias(pk) {
+        return chatsModelInst.userNameOrAlias(pk);
+    }
+
+    function generateIdenticon(pk) {
+        return utilsModelInst.generateIdenticon(pk);
+    }
 }

@@ -1,13 +1,11 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
+import StatusQ.Controls 0.1
 
 import utils 1.0
-
-import "../"
-import "../panels"
-
-import StatusQ.Controls 0.1
+import shared.panels 1.0
+import shared.controls 1.0
 
 // TODO: use StatusQ components
 Rectangle {

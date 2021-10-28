@@ -17,8 +17,6 @@ Item {
         font.weight: Font.Medium
         font.pixelSize: Style.current.primaryTextFontSize
         color: Style.current.blue
-        //% "↓ "
-        //% "Fetch messages"
         text: qsTrId("fetch-messages")
         horizontalAlignment: Text.AlignHCenter
         anchors.horizontalCenter: parent.horizontalCenter
@@ -39,9 +37,7 @@ Item {
         anchors.horizontalCenter: parent.horizontalCenter
         horizontalAlignment: Text.AlignHCenter
         color: Style.current.secondaryText
-        //% "before %1"
-        //% "Between %1 and %2"
-        text: qsTrId("between--1-and--2").arg(new Date(root.gapFrom*1000)).arg(new Date(root.gapTo*1000))
+        text: qsTrId("between--1-and--2").arg(new Date(root.gapFrom * 1000)).arg(new Date(root.gapTo * 1000))
     }
     Separator {
         anchors.top: fetchDate.bottom

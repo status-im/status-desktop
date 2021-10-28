@@ -1,0 +1,14 @@
+FetchMoreMessagesButton 1.0 FetchMoreMessagesButton.qml
+GapComponent 1.0 GapComponent.qml
+UsernameLabel 1.0 UsernameLabel.qml
+DateGroup 1.0 DateGroup.qml
+UserImage 1.0 UserImage.qml
+MessageMouseArea 1.0 MessageMouseArea.qml
+RectangleCorner 1.0 RectangleCorner.qml
+SentMessage 1.0 SentMessage.qml
+Retry 1.0 Retry.qml
+SendTransactionButton 1.0 SendTransactionButton.qml
+StateBubble 1.0 StateBubble.qml
+GasSelectorButton 1.0 GasSelectorButton.qml
+MessageBorder 1.0 MessageBorder.qml
+EmojiReaction 1.0 EmojiReaction.qml

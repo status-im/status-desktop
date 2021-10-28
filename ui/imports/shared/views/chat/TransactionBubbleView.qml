@@ -2,10 +2,9 @@ import QtQuick 2.3
 import utils 1.0
 import shared 1.0
 import shared.panels 1.0
-
-import "../views"
-import "../popups"
-import "../controls"
+import shared.popups 1.0
+import shared.views.chat 1.0
+import shared.controls.chat 1.0
 
 Item {
     id: root

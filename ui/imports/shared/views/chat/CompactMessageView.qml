@@ -5,11 +5,10 @@ import utils 1.0
 import shared.panels 1.0
 import shared.status 1.0
 import shared.controls 1.0
+import shared.panels.chat 1.0
+import shared.controls.chat 1.0
 
 import StatusQ.Controls 0.1 as StatusQControls
-
-import "../panels"
-import "../controls"
 
 Item {
     id: root

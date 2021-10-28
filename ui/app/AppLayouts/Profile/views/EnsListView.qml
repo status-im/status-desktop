@@ -11,11 +11,9 @@ import StatusQ.Controls 0.1
 import "../popups"
 import shared 1.0
 import shared.panels 1.0
-
-//TODO remove these dependencies in imports
-import "../../Chat/views"
-import "../../Chat/panels"
-import "../../Chat/controls"
+import shared.views.chat 1.0
+import shared.panels.chat 1.0
+import shared.controls.chat 1.0
 
 Item {
     id: root
