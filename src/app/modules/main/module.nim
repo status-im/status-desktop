@@ -127,8 +127,8 @@ method load*[T](self: Module[T]) =
   # Community Section
   let communities = self.controller.getCommunities()
   for c in communities:
-    let communitySectionItem = initItem(c.id, SectionType.Community, c.name, if not c.images.isNil: c.images.thumbnail else: "",
-    "", c.color, false, 0, false, singletonInstance.localAccountSensitiveSettings.getCommunitiesEnabled())
+    let communitySectionItem = initItem(c.id, SectionType.Community, c.name, c.images.thumbnail, "", c.color, false, 0, 
+    false, singletonInstance.localAccountSensitiveSettings.getCommunitiesEnabled())
     self.view.addItem(communitySectionItem)
     if(activeSectionId == communitySectionItem.id):
       activeSection = communitySectionItem
