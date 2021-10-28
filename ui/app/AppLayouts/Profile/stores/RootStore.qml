@@ -12,6 +12,7 @@ QtObject {
     property var languageModuleInst: languageModule
     property var mnemonicModuleInst: mnemonicModule
     property var appearanceModuleInst: appearanceModule
+    property var networkModuleInst: networkModule
 
     property var chatsModelInst: chatsModel
     property var utilsModelInst: utilsModel
@@ -35,7 +36,8 @@ QtObject {
     property string pubKey: profile.pubKey
     property string fleet: profileModelInst.fleets.fleet
     property string bloomLevel: nodeModelInst.bloomLevel
-    property string currentNetwork: profileModelInst.network.current
+    property string currentNetwork: networkModuleInst.current
+    property var customNetworkList: networkModuleInst.customNetworkList
     property string preferredUsername: profileModelInst.ens.preferredUsername
     property string firstEnsUsername: profileModelInst.ens.firstEnsUsername
     property string username: profile.username
@@ -302,7 +304,19 @@ QtObject {
     }
 
     function getNetworkName() {
-        return utilsModelInst.getNetworkName()
+        return networkModule.networkName
+    }
+
+    function changeNetwork(network) {
+        networkModuleInst.setNetworkAndPersist(network)
+    }
+
+    function addNetwork(name, endpoint, networkId, networkType) {
+        networkModuleInst.add(name, endpoint, networkId, networkType)
+    }
+
+    function reloadCustomNetworks() {
+        networkModuleInst.reloadCustomNetworks()
     }
 
     function logDir() {

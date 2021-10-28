@@ -20,6 +20,7 @@ ModalPopup {
     title: qsTrId("network")
 
     property string newNetwork: "";
+    property var store
  
     ScrollView {
         id: svNetworks
@@ -73,13 +74,12 @@ ModalPopup {
                 id: addNetworkPopupComponent
                 NewCustomNetworkModal {
                     anchors.centerIn: parent
+                    store: popup.store
                     onClosed: {
                         destroy()
                     }
                 }
             }
-
-
 
             Column {
                 spacing: Style.current.smallPadding
@@ -102,16 +102,19 @@ ModalPopup {
                 NetworkRadioSelector {
                     network: Constants.networkMainnet
                     buttonGroup: radioGroup
+                    store: popup.store
                 }
 
                 NetworkRadioSelector {
                     network: Constants.networkPOA
                     buttonGroup: radioGroup
+                    store: popup.store
                 }
 
                 NetworkRadioSelector {
                     network: Constants.networkXDai
                     buttonGroup: radioGroup
+                    store: popup.store
                 }
 
                 StatusSectionHeadline {
@@ -124,16 +127,19 @@ ModalPopup {
                 NetworkRadioSelector {
                     network: Constants.networkGoerli
                     buttonGroup: radioGroup
+                    store: popup.store
                 }
 
                 NetworkRadioSelector {
                     network: Constants.networkRinkeby
                     buttonGroup: radioGroup
+                    store: popup.store
                 }
 
                 NetworkRadioSelector {
                     network: Constants.networkRopsten
                     buttonGroup: radioGroup
+                    store: popup.store
                 }
 
                 StatusSectionHeadline {
@@ -144,11 +150,12 @@ ModalPopup {
                 }
 
                 Repeater {
-                    model: profileModel.network.customNetworkList
+                    model: popup.store.customNetworkList
                     delegate: NetworkRadioSelector {
                         networkName: name
                         network: customNetworkId
                         buttonGroup: radioGroup
+                        store: popup.store
                     }
                 }
             }

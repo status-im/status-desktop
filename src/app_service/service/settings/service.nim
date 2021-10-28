@@ -80,3 +80,6 @@ method getCurrentNetworkDetails*(self: Service): NetworkDetails =
   for n in networks:
     if n.id == currNetwork:
       return n
+
+method getNetworks*(self: Service): seq[NetworkDetails] =
+  getSetting[seq[NetworkDetails]](Setting.Networks_Networks)

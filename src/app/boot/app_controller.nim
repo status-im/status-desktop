@@ -18,6 +18,7 @@ import ../../app_service/service/privacy/service as privacy_service
 import ../../app_service/service/appearance/service as appearance_service
 import ../../app_service/service/syncnode/service as syncnode_service
 import ../../app_service/service/devicesync/service as devicesync_service
+import ../../app_service/service/network/service as network_service
 
 import ../core/local_account_settings
 import ../../app_service/service/profile/service as profile_service
@@ -86,6 +87,7 @@ type
     appearanceService: appearance_service.Service
     syncnodeService: syncnode_service.Service
     deviceSyncService: devicesync_service.Service
+    networkService: network_service.Service
 
     # Core
     localAppSettingsVariant: QVariant
@@ -150,6 +152,7 @@ proc newAppController*(appService: AppService): AppController =
   result.appearanceService = appearance_service.newService()
   result.syncnodeService = syncnode_service.newService()
   result.deviceSyncService = devicesync_service.newService()
+  result.networkService = network_service.newService()
 
   # Core
   result.localAppSettingsVariant = newQVariant(singletonInstance.localAppSettings)
@@ -186,7 +189,8 @@ proc newAppController*(appService: AppService): AppController =
     result.privacyService,
     result.appearanceService,
     result.syncnodeService,
-    result.deviceSyncService
+    result.deviceSyncService,
+    result.networkService
   )
 
   #################################################
@@ -238,6 +242,7 @@ proc delete*(self: AppController) =
   self.dappPermissionsService.delete
   self.syncnodeService.delete
   self.deviceSyncService.delete
+  self.networkService.delete
 
 proc startupDidLoad*(self: AppController) =
   #################################################

@@ -410,6 +410,7 @@ ScrollView {
 
         NetworksModal {
             id: networksModal
+            store: root.store
         }
 
         FleetsModal {
