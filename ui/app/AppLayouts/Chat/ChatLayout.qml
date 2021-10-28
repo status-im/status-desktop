@@ -7,6 +7,10 @@ import shared 1.0
 import shared.panels 1.0
 import shared.popups 1.0
 import shared.status 1.0
+import shared.views.chat 1.0
+
+import StatusQ.Layout 0.1
+import StatusQ.Popups 0.1
 
 import "views"
 import "panels"
@@ -15,9 +19,6 @@ import "popups"
 import "helpers"
 import "controls"
 import "stores"
-
-import StatusQ.Layout 0.1
-import StatusQ.Popups 0.1
 
 StatusAppThreePanelLayout {
     id: root

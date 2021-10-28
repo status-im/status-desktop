@@ -1,13 +1,12 @@
 import QtQuick 2.3
 import QtGraphicalEffects 1.13
+
+import utils 1.0
 import shared 1.0
 import shared.panels 1.0
 import shared.status 1.0
-
-import utils 1.0
-
-import "../panels"
-import "../controls"
+import shared.panels.chat 1.0
+import shared.controls.chat 1.0
 
 import StatusQ.Controls 0.1
 

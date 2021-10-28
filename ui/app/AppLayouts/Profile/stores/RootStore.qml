@@ -362,4 +362,12 @@ QtObject {
     function setMessagesFromContactsOnly(checked) {
         profileModelInst.setMessagesFromContactsOnly(checked)
     }
+
+    function userNameOrAlias(pk) {
+        return chatsModelInst.userNameOrAlias(pk);
+    }
+
+    function generateIdenticon(pk) {
+        return utilsModelInst.generateIdenticon(pk);
+    }
 }
