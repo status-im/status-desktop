@@ -3,11 +3,12 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import QtGraphicalEffects 1.13
 
-import utils 1.0
+import StatusQ.Core 0.1
+import StatusQ.Core.Theme 0.1
+import StatusQ.Controls 0.1
+import StatusQ.Components 0.1
 
-import "../"
-import "../panels"
-import "."
+import utils 1.0
 
 Item {
     id: root
@@ -23,7 +24,7 @@ Item {
 
     onSelectedAssetChanged: {
         if (selectedAsset && selectedAsset.symbol) {
-            iconImg.source = Style.png("tokens/" + selectedAsset.symbol.toUpperCase())
+            iconImg.image.source = Style.png("tokens/" + selectedAsset.symbol.toUpperCase())
             selectedTextField.text = selectedAsset.symbol.toUpperCase()
         }
     }
@@ -43,29 +44,27 @@ Item {
         }
     }
 
-    Select {
+    StatusSelect {
         id: select
         width: parent.width
         bgColor: Style.current.transparent
         bgColorHover: Style.current.secondaryHover
         model: root.assets
-        caretRightMargin: 7
+        caretRightMargin: 0
         select.radius: 6
         select.height: root.height
-        menu.width: 343
-        selectedItemView: Item {
+        selectMenu.width: 342
+        selectedItemComponent: Item {
             anchors.fill: parent
-            SVGImage {
+            StatusRoundedImage {
                 id: iconImg
                 anchors.left: parent.left
                 anchors.leftMargin: 4
-                sourceSize.height: 24
-                sourceSize.width: 24
+                width: 24
+                height: 24
                 anchors.verticalCenter: parent.verticalCenter
-                fillMode: Image.PreserveAspectFit
             }
-
-            StyledText {
+            StatusBaseText {
                 id: selectedTextField
                 anchors.left: iconImg.right
                 anchors.leftMargin: 4
@@ -73,10 +72,10 @@ Item {
                 font.pixelSize: 15
                 height: 22
                 verticalAlignment: Text.AlignVCenter
+                color: Theme.palette.directColor1
             }
         }
-
-        menu.delegate: menuItem
+        selectMenu.delegate: menuItem
     }
 
     Component {
@@ -88,83 +87,56 @@ Item {
 
             width: parent.width
             height: 72
-            SVGImage {
+            StatusRoundedImage {
                 id: iconImg
                 anchors.left: parent.left
-                anchors.leftMargin: Style.current.padding
+                anchors.leftMargin: 16
                 anchors.verticalCenter: parent.verticalCenter
-                width: 40
-                height: 40
-                sourceSize.height: height
-                sourceSize.width: width
-                fillMode: Image.PreserveAspectFit
-                source: Style.png("tokens/" + symbol.toUpperCase())
+                image.source: Style.png("tokens/" + symbol.toUpperCase())
             }
             Column {
                 anchors.left: iconImg.right
                 anchors.leftMargin: 12
                 anchors.verticalCenter: parent.verticalCenter
 
-                StyledText {
+                StatusBaseText {
                     text: symbol.toUpperCase()
                     font.pixelSize: 15
-                    height: 22
+                    color: Theme.palette.directColor1
                 }
 
-                StyledText {
+                StatusBaseText {
                     text: name
-                    color: Style.current.secondaryText
+                    color: Theme.palette.baseColor1
                     font.pixelSize: 15
-                    height: 22
                 }
             }
             Column {
                 anchors.right: parent.right
-                anchors.rightMargin: Style.current.padding
+                anchors.rightMargin: 16
                 anchors.verticalCenter: parent.verticalCenter
-                StyledText {
+                StatusBaseText {
                     font.pixelSize: 15
-                    height: 22
                     text: parseFloat(balance).toFixed(4) + " " + symbol
+                    color: Theme.palette.directColor1
                 }
-                StyledText {
+                StatusBaseText {
                     font.pixelSize: 15
                     anchors.right: parent.right
                     height: 22
                     text: currencyBalance.toString().toUpperCase()
-                    color: Style.current.secondaryText
+                    color: Theme.palette.baseColor1
                 }
             }
             background: Rectangle {
-                color: itemContainer.highlighted ? Style.current.backgroundHover : Style.current.background
-                radius: Style.current.radius
-
-                // cover bottom left/right corners with square corners
-                Rectangle {
-                    visible: !isLastItem
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.bottom: parent.bottom
-                    height: parent.radius
-                    color: parent.color
-                }
-
-                // cover top left/right corners with square corners
-                Rectangle {
-                    visible: !isFirstItem
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.top: parent.top
-                    height: parent.radius
-                    color: parent.color
-                }
+                color: itemContainer.highlighted ? Theme.palette.statusSelect.menuItemHoverBackgroundColor : Theme.palette.statusSelect.menuItemBackgroundColor
             }
             MouseArea {
                 cursorShape: Qt.PointingHandCursor
                 anchors.fill: itemContainer
                 onClicked: {
                     root.selectedAsset = { address, name, balance, symbol, currencyBalance, fiatBalanceDisplay: "" }
-                    select.menu.close()
+                    select.selectMenu.close()
                 }
             }
         }
