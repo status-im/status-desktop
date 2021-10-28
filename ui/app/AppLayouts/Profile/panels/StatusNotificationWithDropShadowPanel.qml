@@ -1,9 +1,9 @@
 import QtQuick 2.13
 import QtGraphicalEffects 1.13
 
+import StatusQ.Platform 0.1
+
 import utils 1.0
-import shared 1.0
-import shared.status 1.0
 
 Item {
     property string name
@@ -13,13 +13,12 @@ Item {
     height: statusNotification.height
     width: 416
 
-    StatusNotification {
+    StatusMacNotification {
         id: statusNotification
         anchors.left: parent.left
         anchors.leftMargin: Style.current.padding
         width: parent.width
         name: parent.name
-        chatType: parent.chatType
         message: parent.message
     }
     DropShadow {
