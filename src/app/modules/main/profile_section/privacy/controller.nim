@@ -1,6 +1,7 @@
 import ./controller_interface
 import ../../../../../app_service/service/accounts/service as accounts_service
 import ../../../../../app_service/service/privacy/service as privacy_service
+import ../../../../../app_service/service/settings/service as settings_service
 
 export controller_interface
 
@@ -9,12 +10,18 @@ type
     delegate: T
     accountsService: accounts_service.ServiceInterface
     privacyService: privacy_service.ServiceInterface
+    settingsService: settings_service.ServiceInterface
 
-proc newController*[T](delegate: T, privacyService: privacy_service.ServiceInterface, accountsService: accounts_service.ServiceInterface): Controller[T] =
+proc newController*[T](delegate: T,
+  privacyService: privacy_service.ServiceInterface,
+  accountsService: accounts_service.ServiceInterface,
+  settingsService: settings_service.ServiceInterface
+  ): Controller[T] =
   result = Controller[T]()
   result.delegate = delegate
   result.accountsService = accountsService
   result.privacyService = privacyService
+  result.settingsService = settingsService
 
 method delete*[T](self: Controller[T]) =
   discard
@@ -28,3 +35,9 @@ method getLinkPreviewWhitelist*[T](self: Controller[T]): string =
 method changePassword*[T](self: Controller[T], password: string, newPassword: string): bool =
   let loggedInAccount = self.accountsService.getLoggedInAccount()
   return self.privacyService.changePassword(loggedInAccount.keyUid, password, newPassword)
+
+method getMessageFromContactsOnlySetting*[T](self: Controller[T]): bool =
+  self.settingsService.getMessagesFromContactsOnly()
+
+method setMessageFromContactsOnlySetting*[T](self: Controller[T], contactsOnly: bool): bool =
+  self.settingsService.setMessagesFromContactsOnly(contactsOnly)

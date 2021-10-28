@@ -17,6 +17,9 @@ method getLinkPreviewWhitelist*(self: AccessInterface): string {.base.} =
 method changePassword*(self: AccessInterface, password: string, newPassword: string): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method setMessageFromContactsOnlySetting*(self: AccessInterface, contactsOnly: bool): bool {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 type
   ## Abstract class (concept) which must be implemented by object/s used in this 
   ## module.

@@ -51,6 +51,10 @@ method getAppearance*(self: Service): int =
 method getMessagesFromContactsOnly*(self: Service): bool =
   return status_go_settings.getSetting[bool](Setting.MessagesFromContactsOnly)
 
+method setMessagesFromContactsOnly*(self: Service, contactsOnly: bool): bool =
+  let r = status_go_settings.saveSetting(Setting.MessagesFromContactsOnly, contactsOnly)
+  return r.error == ""
+
 method getSendUserStatus*(self: Service): bool =
   return status_go_settings.getSetting[bool](Setting.SendUserStatus)
 
