@@ -164,7 +164,7 @@ StatusAppThreePanelLayout {
         sourceComponent: localAccountSensitiveSettings.communitiesEnabled && root.rootStore.chatsModelInst.communities.activeCommunity.active ? communtiyColumnComponent : contactsColumnComponent
     }
 
-    centerPanel: ChatColumn {
+    centerPanel: ChatColumnView {
         id: chatColumn
         chatGroupsListViewCount: contactColumnLoader.item.chatGroupsListViewCount
     }
