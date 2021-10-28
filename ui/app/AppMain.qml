@@ -213,7 +213,7 @@ Item {
                 }
             }
 
-            navBarCommunityTabButtons.model: localAccountSensitiveSettings.communitiesEnabled && mainModule.sectionsModel
+            navBarCommunityTabButtons.model: localAccountSensitiveSettings.communitiesEnabled && chatsModel.communities.joinedCommunities
             navBarCommunityTabButtons.delegate: StatusNavBarTabButton {
                 onClicked: {
                     appMain.changeAppSection(Constants.chat)
@@ -224,11 +224,10 @@ Item {
                 anchors.horizontalCenter: parent.horizontalCenter
 
                 checked: chatsModel.communities.activeCommunity.active && chatsModel.communities.activeCommunity.id === model.id
-                name: model.icon.length > 0? "" : model.name
+                name: model.name
                 tooltip.text: model.name
-                icon.color: model.color.length > 0? model.color : Theme.palette.baseColor1
-                icon.source: model.image
-                icon.name: model.icon
+                icon.color: model.communityColor
+                icon.source: model.thumbnailImage
 
                 badge.value: model.unviewedMentionsCount + model.requestsCount
                 badge.visible: badge.value > 0 || (!checked && model.unviewedMessagesCount > 0)
@@ -567,24 +566,23 @@ Item {
             onNotificationClicked: {
                 applicationWindow.makeStatusAppActive()
 
-                // This is not handled yet.
-//                switch(notificationType){
-//                case Constants.osNotificationType.newContactRequest:
-//                    appView.currentIndex = Utils.getAppSectionIndex(Constants.chat)
-//                    appMain.openContactsPopup()
-//                    break
-//                case Constants.osNotificationType.acceptedContactRequest:
-//                    appView.currentIndex = Utils.getAppSectionIndex(Constants.chat)
-//                    break
-//                case Constants.osNotificationType.joinCommunityRequest:
-//                case Constants.osNotificationType.acceptedIntoCommunity:
-//                case Constants.osNotificationType.rejectedByCommunity:
-//                    appView.currentIndex = Utils.getAppSectionIndex(Constants.community)
-//                    break
-//                case Constants.osNotificationType.newMessage:
-//                    appView.currentIndex = Utils.getAppSectionIndex(Constants.chat)
-//                    break
-//                }
+                switch(notificationType){
+                case Constants.osNotificationType.newContactRequest:
+                    appView.currentIndex = Utils.getAppSectionIndex(Constants.chat)
+                    appMain.openContactsPopup()
+                    break
+                case Constants.osNotificationType.acceptedContactRequest:
+                    appView.currentIndex = Utils.getAppSectionIndex(Constants.chat)
+                    break
+                case Constants.osNotificationType.joinCommunityRequest:
+                case Constants.osNotificationType.acceptedIntoCommunity:
+                case Constants.osNotificationType.rejectedByCommunity:
+                    appView.currentIndex = Utils.getAppSectionIndex(Constants.community)
+                    break
+                case Constants.osNotificationType.newMessage:
+                    appView.currentIndex = Utils.getAppSectionIndex(Constants.chat)
+                    break
+                }
             }
         }
 
