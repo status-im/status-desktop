@@ -3,13 +3,16 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import QtGraphicalEffects 1.13
 
+import StatusQ.Core 0.1
+import StatusQ.Core.Theme 0.1
+import StatusQ.Controls 0.1
+import StatusQ.Components 0.1
+
 import utils 1.0
-import "../"
+
 import "../views"
 import "../panels"
-import "."
-
-import StatusQ.Components 0.1
+import "./"
 
 Item {
     id: root
@@ -83,14 +86,14 @@ Item {
         customHeight: 56
     }
 
-    Select {
+    StatusSelect {
         id: select
         label: ""
         model: root.contacts
         width: parent.width
         visible: !root.readOnly
-        menuAlignment: Select.MenuAlignment.Left
-        selectedItemView: Item {
+        menuAlignment: StatusSelect.MenuAlignment.Left
+        selectedItemComponent: Item {
             anchors.fill: parent
             StatusSmartIdenticon {
                 id: iconImg
@@ -103,7 +106,7 @@ Item {
                 image.isIdenticon: true
                 active: !!selectedContact && !!selectedContact.identicon
             }
-            StyledText {
+            StatusBaseText {
                 id: selectedTextField
                 text: !!selectedContact ? selectedContact.name : ""
                 anchors.left: iconImg.right
@@ -112,11 +115,12 @@ Item {
                 font.pixelSize: 15
                 height: 22
                 verticalAlignment: Text.AlignVCenter
+                color: Theme.palette.directColor1
             }
         }
         zeroItemsView: Item {
             height: 186
-            StyledText {
+            StatusBaseText {
                 anchors.fill: parent
                 //% "You don’t have any contacts yet"
                 text: qsTrId("you-don-t-have-any-contacts-yet")
@@ -124,12 +128,12 @@ Item {
                 horizontalAlignment: Text.AlignHCenter
                 font.pixelSize: 13
                 height: 18
-                color: Style.current.secondaryText
+                color: Theme.palette.baseColor1
             }
         }
 
-        menu.delegate: menuItem
-        menu.width: dropdownWidth
+        selectMenu.delegate: menuItem
+        selectMenu.width: dropdownWidth
     }
 
     EnsResolver {
@@ -173,56 +177,33 @@ Item {
                 anchors.leftMargin: 12
                 anchors.verticalCenter: parent.verticalCenter
 
-                Text {
+                StatusBaseText {
                     text: name
                     font.pixelSize: 15
-                    font.family: Style.current.fontRegular.name
-                    font.weight: Font.Medium
-                    color: Style.current.textColor
+                    color: Theme.palette.directColor1
                     height: 22
                 }
 
                 Row {
-                    StyledText {
+                    StatusBaseText {
                       text: alias + " • "
                       visible: ensVerified
-                      color: Style.current.secondaryText
+                      color: Theme.palette.baseColor1
                       font.pixelSize: 12
                       height: 16
                     }
-                    StyledText {
+                    StatusBaseText {
                         text: address
                         width: 85
                         elide: Text.ElideMiddle
-                        color: Style.current.secondaryText
+                        color: Theme.palette.baseColor1
                         font.pixelSize: 12
                         height: 16
                     }
                 }
             }
             background: Rectangle {
-                color: itemContainer.highlighted ? Style.current.backgroundHover : Style.current.background
-                radius: Style.current.radius
-
-                // cover bottom left/right corners with square corners
-                Rectangle {
-                    visible: !isLastItem
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.bottom: parent.bottom
-                    height: parent.radius
-                    color: parent.color
-                }
-
-                // cover top left/right corners with square corners
-                Rectangle {
-                    visible: !isFirstItem
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.top: parent.top
-                    height: parent.radius
-                    color: parent.color
-                }
+                color: itemContainer.highlighted ? Theme.palette.statusSelect.menuItemHoverBackgroundColor : Theme.palette.statusSelect.menuItemBackgroundColor
             }
             MouseArea {
                 cursorShape: Qt.PointingHandCursor
@@ -230,7 +211,7 @@ Item {
                 onClicked: {
                     root.selectedContact = { address, name, alias, isContact, identicon, ensVerified }
                     resolveEns()
-                    select.menu.close()
+                    select.selectMenu.close()
                 }
             }
         }

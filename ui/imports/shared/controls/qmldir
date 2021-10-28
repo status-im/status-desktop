@@ -15,7 +15,6 @@ RadioButtonSelector 1.0 RadioButtonSelector.qml
 RecipientSelector 1.0 RecipientSelector.qml
 SearchBox 1.0 SearchBox.qml
 SeedPhraseTextArea 1.0 SeedPhraseTextArea.qml
-Select 1.0 Select.qml
 SendToContractWarning 1.0 SendToContractWarning.qml
 StatusTabButton 1.0 StatusTabButton.qml
 StyledButton 1.0 StyledButton.qml
