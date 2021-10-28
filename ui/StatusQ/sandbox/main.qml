@@ -231,6 +231,12 @@ StatusWindow {
                             selected: page.sourceComponent == statusModalComponent
                             onClicked: page.sourceComponent = statusModalComponent
                         }
+                        StatusListSectionHeadline { text: "StatusQ.Platform" }
+                        StatusNavigationListItem {
+                            title: "StatusMacNotification"
+                            selected: page.sourceComponent == notificationComponent
+                            onClicked: page.sourceComponent = notificationComponent
+                        }
                     }
                 }
             }
@@ -389,6 +395,11 @@ StatusWindow {
     Component {
         id: settingsComponent
         StatusExpandableSettingsItemPage{}
+    }
+
+    Component {
+        id: notificationComponent
+        StatusMacNotificationPage  {}
     }
 
     Component {
