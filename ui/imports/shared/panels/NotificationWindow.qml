@@ -4,6 +4,7 @@ import QtQuick.Window 2.12
 import QtQml 2.13
 import QtGraphicalEffects 1.13
 
+import StatusQ.Platform 0.1
 
 import utils 1.0
 import "../status"
@@ -51,13 +52,12 @@ Item {
             visible: true
             color: Style.current.transparent
 
-            StatusNotification {
+            StatusMacNotification {
                 id: channelNotif
                 chatId: root.chatId
                 name: root.name
                 message: root.message
-                chatType: root.chatType
-                identicon: root.identicon
+                identicon: appSettings.notificationMessagePreviewSetting === Constants.notificationPreviewAnonymous ? "" : root.identicon
 
                 MouseArea {
                     cursorShape: Qt.PointingHandCursor

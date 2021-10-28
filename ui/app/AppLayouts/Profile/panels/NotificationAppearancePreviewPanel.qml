@@ -2,10 +2,10 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import "./"
 
-import utils 1.0
-import shared 1.0
-
 import StatusQ.Controls 0.1
+import StatusQ.Platform 0.1
+
+import utils 1.0
 
 Item {
     property bool checked: false
@@ -40,14 +40,12 @@ Item {
             anchors.leftMargin: Style.current.padding
         }
 
-        // TODO: move to StatusQ
         StatusNotificationWithDropShadowPanel {
             id: notificationPreview
             anchors.top: radioButton.bottom
             anchors.topMargin: Style.current.halfPadding
             anchors.left: parent.left
             name: root.notificationTitle
-            chatType: Constants.chatTypePublic
             message: root.notificationMessage
         }
 
