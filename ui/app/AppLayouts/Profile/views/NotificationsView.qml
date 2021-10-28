@@ -5,12 +5,13 @@ import QtQuick.Layouts 1.13
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ.Components 0.1
+import StatusQ.Controls 0.1
 
 import utils 1.0
-
-import shared.panels 1.0
 import shared.status 1.0
 import shared.controls 1.0
+import shared.panels 1.0
 
 import "../popups"
 import "../panels"
@@ -126,40 +127,56 @@ ScrollView {
             anchors.right: parent.right
             width: parent.width
 
-            // TODO: replace with StatusListItem
-            StatusSettingsLineButton {
+            StatusListItem {
+                height: 52
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.leftMargin: -Style.current.padding
+                anchors.rightMargin: -Style.current.padding
                 //% "Play a sound when receiving a notification"
-                text: qsTrId("play-a-sound-when-receiving-a-notification")
-                isSwitch: true
-                switchChecked: localAccountSensitiveSettings.notificationSoundsEnabled
-                onClicked: {
-                    localAccountSensitiveSettings.notificationSoundsEnabled = checked
-                }
+                title: qsTrId("play-a-sound-when-receiving-a-notification")
+
+                onClicked: notifSoundsEnabledSwitch.checked = !notifSoundsEnabledSwitch.checked
+                components: [
+                    StatusSwitch {
+                        id: notifSoundsEnabledSwitch
+                        checked: localAccountSensitiveSettings.notificationSoundsEnabled
+                        onClicked: {
+                            localAccountSensitiveSettings.notificationSoundsEnabled = checked
+                        }
+                    }
+                ]
             }
 
-            // TODO: replace with StatusListItem
-            StatusSettingsLineButton {
+            StatusListItem {
+                height: 52
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.leftMargin: -Style.current.padding
+                anchors.rightMargin: -Style.current.padding
                 //% "Use your operating system's notifications"
-                text: qsTrId("use-your-operating-system-s-notifications")
-                isSwitch: true
-                switchChecked: localAccountSensitiveSettings.useOSNotifications
-                onClicked: {
-                    localAccountSensitiveSettings.useOSNotifications = checked
-                }
+                title: qsTrId("use-your-operating-system-s-notifications")
 
-                StatusBaseText {
-                    id: detailText
-                    //% "Setting this to false will instead use Status' notification style as seen below"
-                    text: qsTrId("setting-this-to-false-will-instead-use-status--notification-style-as-seen-below")
-                    color: Theme.palette.baseColor1
-                    width: parent.width
-                    font.pixelSize: 12
-                    wrapMode: Text.WordWrap
-                    anchors.left: parent.left
-                    anchors.leftMargin: Style.current.padding
-                    anchors.bottom: parent.bottom
-                    anchors.topMargin: 2
-                }
+                onClicked: osNotifsSwitch.checked = !osNotifsSwitch.checked
+                components: [
+                    StatusSwitch {
+                        id: osNotifsSwitch
+                        checked: localAccountSensitiveSettings.useOSNotifications
+                        onClicked: {
+                            localAccountSensitiveSettings.useOSNotifications = checked
+                        }
+                    }
+                ]
+            }
+            StatusBaseText {
+                id: detailText
+                //% "Setting this to false will instead use Status' notification style as seen below"
+                text: qsTrId("setting-this-to-false-will-instead-use-status--notification-style-as-seen-below")
+                color: Theme.palette.baseColor1
+                width: parent.width
+                font.pixelSize: 13
+                wrapMode: Text.WordWrap
+                anchors.left: parent.left
             }
         }
 
@@ -268,24 +285,38 @@ ScrollView {
             anchors.right: parent.right
             width: parent.width
 
-            // TODO: replace with StatusListItem
-            StatusSettingsLineButton {
+            StatusListItem {
+                height: 52
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.leftMargin: -Style.current.padding
+                anchors.rightMargin: -Style.current.padding
+
                 //% "Notify on new requests"
-                text: qsTrId("notify-on-new-requests")
-                isSwitch: true
-                switchChecked: localAccountSensitiveSettings.notifyOnNewRequests
-                onClicked: {
-                    localAccountSensitiveSettings.notifyOnNewRequests = checked
-                }
+                title: qsTrId("notify-on-new-requests")
+
+                onClicked: notifyOnRequestsSwitch.checked = !notifyOnRequestsSwitch.checked
+                components: [
+                    StatusSwitch {
+                        id: notifyOnRequestsSwitch
+                        checked: localAccountSensitiveSettings.notifyOnNewRequests
+                        onClicked: {
+                            localAccountSensitiveSettings.notifyOnNewRequests = !checked
+                        }
+                    }
+                ]
             }
 
-            // TODO: replace with StatusListItem
-            StatusSettingsLineButton {
+            StatusListItem {
+                height: 52
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.leftMargin: -Style.current.padding
+                anchors.rightMargin: -Style.current.padding
+
                 //% "Muted users"
-                text: qsTrId("muted-users")
-                //% "None"
-                currentValue: root.store.mutedChatsContacts.rowCount() > 0 ? root.store.mutedChatsContacts.rowCount() : qsTrId("none")
-                isSwitch: false
+                title: qsTrId("muted-users")
+                label: root.store.mutedChatsContacts.rowCount() > 0 ? root.store.mutedChatsContacts.rowCount() : qsTrId("none")
                 onClicked: {
                     const mutedChatsModal = notificationsContainer.mutedChatsModalComponent.createObject(notificationsContainer, {
                         showMutedContacts: true
@@ -296,15 +327,25 @@ ScrollView {
                     mutedChatsModal.noContentText = qsTrId("muted-contacts-will-appear-here");
                     mutedChatsModal.open();
                 }
+                components: [
+                    StatusIcon {
+                        icon: "chevron-down"
+                        rotation: 270
+                        color: Theme.palette.baseColor1
+                    }
+                ]
             }
 
-            // TODO: replace with StatusListItem
-            StatusSettingsLineButton {
+            StatusListItem {
+                height: 52
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.leftMargin: -Style.current.padding
+                anchors.rightMargin: -Style.current.padding
+
                 //% "Muted chats"
-                text: qsTrId("muted-chats")
-                //% "None"
-                currentValue: root.store.mutedChats.rowCount() > 0 ? root.store.mutedChats.rowCount() : qsTrId("none")
-                isSwitch: false
+                title: qsTrId("muted-chats")
+                label: root.store.mutedChats.rowCount() > 0 ? root.store.mutedChats.rowCount() : qsTr("None")
                 onClicked: {
                     const mutedChatsModal = notificationsContainer.mutedChatsModalComponent.createObject(notificationsContainer, {
                         showMutedContacts: false
@@ -315,19 +356,22 @@ ScrollView {
                     mutedChatsModal.noContentText = qsTrId("muted-chats-will-appear-here");
                     mutedChatsModal.open();
                 }
-
-                StatusBaseText {
-                    //% "You can limit what gets shown in notifications"
-                    text: qsTrId("you-can-limit-what-gets-shown-in-notifications")
-                    color: Theme.palette.baseColor1
-                    width: parent.width
-                    font.pixelSize: 12
-                    wrapMode: Text.WordWrap
-                    anchors.left: parent.left
-                    anchors.leftMargin: Style.current.padding
-                    anchors.bottom: parent.bottom
-                    anchors.topMargin: 2
-                }
+                components: [
+                    StatusIcon {
+                        icon: "chevron-down"
+                        rotation: 270
+                        color: Theme.palette.baseColor1
+                    }
+                ]
+            }
+            StatusBaseText {
+                //% "You can limit what gets shown in notifications"
+                text: qsTrId("you-can-limit-what-gets-shown-in-notifications")
+                color: Theme.palette.baseColor1
+                width: parent.width
+                font.pixelSize: 13
+                wrapMode: Text.WordWrap
+                anchors.left: parent.left
             }
         }
 

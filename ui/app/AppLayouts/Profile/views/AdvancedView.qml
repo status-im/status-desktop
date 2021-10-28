@@ -3,8 +3,12 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import QtGraphicalEffects 1.13
 
+import StatusQ.Core 0.1
+import StatusQ.Core.Theme 0.1
+import StatusQ.Components 0.1
+import StatusQ.Controls 0.1
+
 import utils 1.0
-import shared 1.0
 import shared.panels 1.0
 import shared.popups 1.0
 import shared.status 1.0
@@ -36,31 +40,63 @@ ScrollView {
             anchors.left: parent.left
             anchors.right: parent.right
 
-            // TODO: replace with StatusQ component
-            StatusSettingsLineButton {
-                //% "Network"
-                text: qsTrId("network")
-                currentValue: root.store.getNetworkName()
+            StatusListItem {
+                height: 52
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.leftMargin: -Style.current.padding
+                anchors.rightMargin: -Style.current.padding
+
+                title: qsTr("Network")
+                label: root.store.getNetworkName()
                 onClicked: networksModal.open()
+                components: [
+                    StatusIcon {
+                        icon: "chevron-down"
+                        rotation: 270
+                        color: Theme.palette.baseColor1
+                    }
+                ]
             }
 
-            // TODO: replace with StatusQ component
-            StatusSettingsLineButton {
-                //% "Fleet"
-                text: qsTrId("fleet")
-                currentValue: root.store.fleet
+            StatusListItem {
+                height: 52
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.leftMargin: -Style.current.padding
+                anchors.rightMargin: -Style.current.padding
+
+                title: qsTr("Fleet")
+                label: root.store.fleet
                 onClicked: fleetModal.open()
+                components: [
+                    StatusIcon {
+                        icon: "chevron-down"
+                        rotation: 270
+                        color: Theme.palette.baseColor1
+                    }
+                ]
             }
 
-            // TODO: replace with StatusQ component
-            StatusSettingsLineButton {
-                //% "Minimize on close"
-                text: qsTrId("minimize-on-close")
-                isSwitch: true
-                switchChecked: !localAccountSensitiveSettings.quitOnClose
-                onClicked: function (checked) {
-                    localAccountSensitiveSettings.quitOnClose = !checked
-                }
+            StatusListItem {
+                height: 52
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.leftMargin: -Style.current.padding
+                anchors.rightMargin: -Style.current.padding
+
+                title: qsTr("Minimize on close")
+
+                onClicked: quitOnCloseSwitch.checked = !quitOnCloseSwitch.checked
+                components: [
+                    StatusSwitch {
+                        id: quitOnCloseSwitch
+                        checked: !localAccountSensitiveSettings.quitOnClose
+                        onClicked: {
+                            localAccountSensitiveSettings.quitOnClose = !checked
+                        }
+                    }
+                ]
             }
 
             // TODO: replace with StatusQ component
@@ -104,133 +140,226 @@ ScrollView {
                 bottomPadding: Style.current.padding
             }
 
-            // TODO: replace with StatusQ component
-            StatusSettingsLineButton {
-                //% "Wallet"
-                text: qsTrId("wallet")
-                isSwitch: true
-                switchChecked: localAccountSensitiveSettings.isWalletEnabled
-                onClicked: {
-                    if (!localAccountSensitiveSettings.isWalletEnabled) {
-                        confirmationPopup.settingsProp = "isWalletEnabled"
-                        confirmationPopup.open()
-                    } else {
-                        localAccountSensitiveSettings.isWalletEnabled = false
+            StatusListItem {
+                height: 52
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.leftMargin: -Style.current.padding
+                anchors.rightMargin: -Style.current.padding
+
+                title: qsTr("Wallet")
+
+                onClicked: walletEnabledSwitch.clicked()
+                components: [
+                    StatusSwitch {
+                        id: walletEnabledSwitch
+                        checked: localAccountSensitiveSettings.isWalletEnabled
+                        onClicked: {
+                            if (!localAccountSensitiveSettings.isWalletEnabled) {
+                                confirmationPopup.settingsProp = "isWalletEnabled"
+                                confirmationPopup.open()
+                            } else {
+                                localAccountSensitiveSettings.isWalletEnabled = false
+                            }
+                        }
                     }
-                }
+                ]
             }
 
-            // TODO: replace with StatusQ component
-            StatusSettingsLineButton {
-                text: qsTr("Wallet v2 - do not use, under active development")
-                isSwitch: true
-                switchChecked: localAccountSensitiveSettings.isWalletV2Enabled
-                onClicked: {
-                    if (!localAccountSensitiveSettings.isWalletV2Enabled) {
-                        confirmationPopup.settingsProp = "isWalletV2Enabled"
-                        confirmationPopup.open()
-                    } else {
-                        localAccountSensitiveSettings.isWalletV2Enabled = false
+            StatusListItem {
+                height: 52
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.leftMargin: -Style.current.padding
+                anchors.rightMargin: -Style.current.padding
+
+                title: qsTr("Wallet v2 - do not use, under active development")
+
+                onClicked: walletV2EnabledSwitch.clicked()
+                components: [
+                    StatusSwitch {
+                        id: walletV2EnabledSwitch
+                        checked: localAccountSensitiveSettings.isWalletV2Enabled
+                        onClicked: {
+                            if (!localAccountSensitiveSettings.isWalletV2Enabled) {
+                                confirmationPopup.settingsProp = "isWalletV2Enabled"
+                                confirmationPopup.open()
+                            } else {
+                                localAccountSensitiveSettings.isWalletV2Enabled = false
+                            }
+                        }
                     }
-                }
+                ]
             }
 
-            // TODO: replace with StatusQ component
-            StatusSettingsLineButton {
-                //% "Dapp Browser"
-                text: qsTrId("dapp-browser")
-                isSwitch: true
-                switchChecked: localAccountSensitiveSettings.isBrowserEnabled
-                onClicked: {
-                    if (!localAccountSensitiveSettings.isBrowserEnabled) {
-                        confirmationPopup.settingsProp = "isBrowserEnabled"
-                        confirmationPopup.open()
-                    } else {
-                        localAccountSensitiveSettings.isBrowserEnabled = false
+            StatusListItem {
+                height: 52
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.leftMargin: -Style.current.padding
+                anchors.rightMargin: -Style.current.padding
+
+                title: qsTrId("DApp Browser")
+
+                onClicked: browserEnabledSwitch.clicked()
+                components: [
+                    StatusSwitch {
+                        id: browserEnabledSwitch
+                        checked: localAccountSensitiveSettings.isBrowserEnabled
+                        onClicked: {
+                            if (!localAccountSensitiveSettings.isBrowserEnabled) {
+                                confirmationPopup.settingsProp = "isBrowserEnabled"
+                                confirmationPopup.open()
+                            } else {
+                                localAccountSensitiveSettings.isBrowserEnabled = false
+                            }
+                        }
                     }
-                }
+                ]
             }
 
-            // TODO: replace with StatusQ component
-            StatusSettingsLineButton {
-                //% "Communities"
-                text: qsTrId("communities")
-                isSwitch: true
-                switchChecked: localAccountSensitiveSettings.communitiesEnabled
-                onClicked: {
-                    if (!localAccountSensitiveSettings.communitiesEnabled) {
-                        confirmationPopup.settingsProp = "communitiesEnabled"
-                        confirmationPopup.open()
-                    } else {
-                        localAccountSensitiveSettings.communitiesEnabled = false
+            StatusListItem {
+                height: 52
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.leftMargin: -Style.current.padding
+                anchors.rightMargin: -Style.current.padding
+
+                title: qsTrId("Communities")
+
+                onClicked: communitiesEnabledSwitch.clicked()
+                components: [
+                    StatusSwitch {
+                        id: communitiesEnabledSwitch
+                        checked: localAccountSensitiveSettings.communitiesEnabled
+                        onClicked: {
+                            if (!localAccountSensitiveSettings.communitiesEnabled) {
+                                confirmationPopup.settingsProp = "communitiesEnabled"
+                                confirmationPopup.open()
+                            } else {
+                                localAccountSensitiveSettings.communitiesEnabled = false
+                            }
+                        }
                     }
-                }
+                ]
             }
 
-            // TODO: replace with StatusQ component
-            StatusSettingsLineButton {
-                //% "Activity Center"
-                text: qsTrId("activity-center")
-                isSwitch: true
-                switchChecked: localAccountSensitiveSettings.isActivityCenterEnabled
-                onClicked: {
-                    if (!localAccountSensitiveSettings.isActivityCenterEnabled) {
-                        confirmationPopup.settingsProp = "isActivityCenterEnabled"
-                        confirmationPopup.open()
-                    } else {
-                        localAccountSensitiveSettings.isActivityCenterEnabled = false
+            StatusListItem {
+                height: 52
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.leftMargin: -Style.current.padding
+                anchors.rightMargin: -Style.current.padding
+
+                title: qsTrId("Activity Center")
+
+                onClicked: activityCenterEnabledSwitch.clicked()
+                components: [
+                    StatusSwitch {
+                        id: activityCenterEnabledSwitch
+                        checked: localAccountSensitiveSettings.isActivityCenterEnabled
+                        onClicked: {
+                            if (!localAccountSensitiveSettings.isActivityCenterEnabled) {
+                                confirmationPopup.settingsProp = "isActivityCenterEnabled"
+                                confirmationPopup.open()
+                            } else {
+                                localAccountSensitiveSettings.isActivityCenterEnabled = false
+                            }
+                        }
                     }
-                }
+                ]
             }
 
-            // TODO: replace with StatusQ component
-            StatusSettingsLineButton {
-                //% "Node Management"
-                text: qsTrId("node-management")
-                isSwitch: true
-                switchChecked: localAccountSensitiveSettings.nodeManagementEnabled
-                onClicked: {
-                    if (!localAccountSensitiveSettings.nodeManagementEnabled) {
-                        confirmationPopup.settingsProp = "nodeManagementEnabled"
-                        confirmationPopup.open()
-                    } else {
-                        localAccountSensitiveSettings.nodeManagementEnabled = false
+            StatusListItem {
+                height: 52
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.leftMargin: -Style.current.padding
+                anchors.rightMargin: -Style.current.padding
+
+                title: qsTrId("Node Management")
+
+                onClicked: nodeManagementSwitch.clicked()
+                components: [
+                    StatusSwitch {
+                        id: nodeManagementSwitch
+                        checked: localAccountSensitiveSettings.nodeManagementEnabled
+                        onClicked: {
+                            if (!localAccountSensitiveSettings.nodeManagementEnabled) {
+                                confirmationPopup.settingsProp = "nodeManagementEnabled"
+                                confirmationPopup.open()
+                            } else {
+                                localAccountSensitiveSettings.nodeManagementEnabled = false
+                            }
+                        }
                     }
-                }
+                ]
             }
 
-            // TODO: replace with StatusQ component
-            StatusSettingsLineButton {
-                id: onlineUsers
-                //% "Online users"
-                text: qsTrId("online-users")
-                isSwitch: true
-                switchChecked: localAccountSensitiveSettings.showOnlineUsers
+            StatusListItem {
+                height: 52
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.leftMargin: -Style.current.padding
+                anchors.rightMargin: -Style.current.padding
+
+                title: qsTrId("Online users")
+
                 onClicked: {
                     localAccountSensitiveSettings.showOnlineUsers = !localAccountSensitiveSettings.showOnlineUsers
                 }
+                components: [
+                    StatusSwitch {
+                        checked: localAccountSensitiveSettings.showOnlineUsers
+                        onCheckedChanged: {
+                            localAccountSensitiveSettings.showOnlineUsers = checked
+                        }
+                    }
+                ]
             }
 
-            // TODO: replace with StatusQ component
-            StatusSettingsLineButton {
-                //% "GIF Widget"
-                text: qsTrId("gif-widget")
-                isSwitch: true
-                switchChecked: localAccountSensitiveSettings.isGifWidgetEnabled
+            StatusListItem {
+                height: 52
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.leftMargin: -Style.current.padding
+                anchors.rightMargin: -Style.current.padding
+
+                title: qsTrId("GIF Widget")
+
                 onClicked: {
                     localAccountSensitiveSettings.isGifWidgetEnabled = !localAccountSensitiveSettings.isGifWidgetEnabled
                 }
+                components: [
+                    StatusSwitch {
+                        checked: localAccountSensitiveSettings.isGifWidgetEnabled
+                        onCheckedChanged: {
+                            localAccountSensitiveSettings.isGifWidgetEnabled = checked
+                        }
+                    }
+                ]
             }
 
-            // TODO: replace with StatusQ component
-            StatusSettingsLineButton {
-                //% "Keycard"
-                text: qsTr("Keycard")
-                isSwitch: true
-                switchChecked: localAccountSettings.isKeycardEnabled
+            StatusListItem {
+                height: 52
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.leftMargin: -Style.current.padding
+                anchors.rightMargin: -Style.current.padding
+
+                title: qsTrId("Keycard")
+
                 onClicked: {
                     localAccountSettings.isKeycardEnabled = !localAccountSettings.isKeycardEnabled
                 }
+                components: [
+                    StatusSwitch {
+                        checked: localAccountSettings.isKeycardEnabled
+                        onCheckedChanged: {
+                            localAccountSettings.isKeycardEnabled = checked
+                        }
+                    }
+                ]
             }
 
             StatusSectionHeadline {
@@ -386,35 +515,68 @@ ScrollView {
                 }
             }
 
-            // TODO: replace with StatusQ component
-            StatusSettingsLineButton {
-                text: qsTr("Download messages")
-                isSwitch: true
-                switchChecked: localAccountSensitiveSettings.downloadChannelMessagesEnabled
+            StatusListItem {
+                height: 52
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.leftMargin: -Style.current.padding
+                anchors.rightMargin: -Style.current.padding
+
+                title: qsTrId("Download messages")
+
                 onClicked: {
                     localAccountSensitiveSettings.downloadChannelMessagesEnabled = !localAccountSensitiveSettings.downloadChannelMessagesEnabled
                 }
+                components: [
+                    StatusSwitch {
+                        checked: localAccountSensitiveSettings.downloadChannelMessagesEnabled
+                        onCheckedChanged: {
+                            localAccountSensitiveSettings.downloadChannelMessagesEnabled = checked
+                        }
+                    }
+                ]
             }
 
-            // TODO: replace with StatusQ component
-            StatusSettingsLineButton {
-                text: qsTr("Stickers/ENS on ropsten")
-                visible: root.store.currentNetwork === Constants.networkRopsten
-                isSwitch: true
-                switchChecked: localAccountSensitiveSettings.stickersEnsRopsten
+            StatusListItem {
+                height: 52
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.leftMargin: -Style.current.padding
+                anchors.rightMargin: -Style.current.padding
+
+                title: qsTrId("Stickers/ENS on ropsten")
+
                 onClicked: {
                     localAccountSensitiveSettings.stickersEnsRopsten = !localAccountSensitiveSettings.stickersEnsRopsten
                 }
+                components: [
+                    StatusSwitch {
+                        checked: localAccountSensitiveSettings.stickersEnsRopsten
+                        onCheckedChanged: {
+                            localAccountSensitiveSettings.stickersEnsRopsten = checked
+                        }
+                    }
+                ]
             }
 
-            // TODO: replace with StatusQ component
-            StatusSettingsLineButton {
-                text: qsTr("Enable Telemetry")
-                isSwitch: true
-                switchChecked: root.store.profileModuleInst.isTelemetryEnabled
+            StatusListItem {
+                height: 52
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.leftMargin: -Style.current.padding
+                anchors.rightMargin: -Style.current.padding
+
+                title: qsTrId("Enable Telemetry")
+
                 onClicked: {
                     openPopup(enableTelemetryConfirmationDialogComponent, {light: false})
                 }
+                components: [
+                    StatusSwitch {
+                        id: telemetrySwitch
+                        checked: root.store.profileModuleInst.isTelemetryEnabled
+                    }
+                ]
             }
         }
 

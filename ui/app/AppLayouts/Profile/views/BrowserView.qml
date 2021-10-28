@@ -7,7 +7,6 @@ import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 
 import utils 1.0
-import shared 1.0
 import shared.panels 1.0
 import shared.status 1.0
 
@@ -47,59 +46,100 @@ Item {
                 bottomPadding: Style.current.bigPadding
             }
 
-            // TODO: Replace with StatusQ StatusListItem component
-            StatusSettingsLineButton {
-                //% "Homepage"
-                text: qsTrId("homepage")
-                //% "Default"
-                currentValue: localAccountSensitiveSettings.browserHomepage === "" ? qsTrId("default") : localAccountSensitiveSettings.browserHomepage
+            StatusListItem {
+                height: 52
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.leftMargin: -Style.current.padding
+                anchors.rightMargin: -Style.current.padding
+
+                title: qsTr("Homepage")
+                label: localAccountSensitiveSettings.browserHomepage === "" ? qsTrId("default") : localAccountSensitiveSettings.browserHomepage
                 onClicked: homePagePopup.createObject(root).open()
+                components: [
+                    StatusIcon {
+                        icon: "chevron-down"
+                        rotation: 270
+                        color: Theme.palette.baseColor1
+                    }
+                ]
             }
 
-            // TODO: Replace with StatusQ StatusListItem component
-            StatusSettingsLineButton {
-                //% "Show favorites bar"
-                text: qsTrId("show-favorites-bar")
-                isSwitch: true
-                switchChecked: localAccountSensitiveSettings.shouldShowFavoritesBar
-                onClicked: function (checked) {
-                    localAccountSensitiveSettings.shouldShowFavoritesBar = checked
-                }
+            StatusListItem {
+                height: 52
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.leftMargin: -Style.current.padding
+                anchors.rightMargin: -Style.current.padding
+
+                title: qsTr("Show favorites bar")
+
+                onClicked: favoritesBarSwitch.checked = !favoritesBarSwitch.checked
+                components: [
+                    StatusSwitch {
+                        id: favoritesBarSwitch
+                        checked: !localAccountSensitiveSettings.shouldShowFavoritesBar
+                        onClicked: {
+                            localAccountSensitiveSettings.shouldShowFavoritesBar = checked
+                        }
+                    }
+                ]
             }
 
-            // TODO: Replace with StatusQ StatusListItem component
-            StatusSettingsLineButton {
+            StatusListItem {
+                height: 52
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.leftMargin: -Style.current.padding
+                anchors.rightMargin: -Style.current.padding
                 //% "Search engine used in the address bar"
-                text: qsTrId("search-engine-used-in-the-address-bar")
-                currentValue: {
+                title: qsTrId("search-engine-used-in-the-address-bar")
+                label: {
                     switch (localAccountSensitiveSettings.shouldShowBrowserSearchEngine) {
-                    case Constants.browserSearchEngineGoogle: return "Google"
-                    case Constants.browserSearchEngineYahoo: return "Yahoo!"
-                    case Constants.browserSearchEngineDuckDuckGo: return "DuckDuckGo"
-                    case Constants.browserSearchEngineNone:
-                    //% "None"
-                    default: return qsTrId("none")
+                        case Constants.browserSearchEngineGoogle: return "Google"
+                        case Constants.browserSearchEngineYahoo: return "Yahoo!"
+                        case Constants.browserSearchEngineDuckDuckGo: return "DuckDuckGo"
+                        case Constants.browserSearchEngineNone:
+                        //% "None"
+                        default: return qsTrId("none")
                     }
                 }
                 onClicked: searchEngineModal.createObject(root).open()
+                components: [
+                    StatusIcon {
+                        icon: "chevron-down"
+                        rotation: 270
+                        color: Theme.palette.baseColor1
+                    }
+                ]
             }
 
-            // TODO: Replace with StatusQ StatusListItem component
-            StatusSettingsLineButton {
-                id: ethereumExplorerBtn
+            StatusListItem {
+                height: 52
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.leftMargin: -Style.current.padding
+                anchors.rightMargin: -Style.current.padding
                 //% "Ethereum explorer used in the address bar"
-                text: qsTrId("ethereum-explorer-used-in-the-address-bar")
-                currentValue: {
+                title: qsTrId("ethereum-explorer-used-in-the-address-bar")
+                label: {
                     switch (localAccountSensitiveSettings.useBrowserEthereumExplorer) {
-                    case Constants.browserEthereumExplorerEtherscan: return "etherscan.io"
-                    case Constants.browserEthereumExplorerEthplorer: return "ethplorer.io"
-                    case Constants.browserEthereumExplorerBlockchair: return "blockchair.com"
-                    case Constants.browserSearchEngineNone:
-                    //% "None"
-                    default: return qsTrId("none")
+                        case Constants.browserEthereumExplorerEtherscan: return "etherscan.io"
+                        case Constants.browserEthereumExplorerEthplorer: return "ethplorer.io"
+                        case Constants.browserEthereumExplorerBlockchair: return "blockchair.com"
+                        case Constants.browserSearchEngineNone:
+                        //% "None"
+                        default: return qsTrId("none")
                     }
                 }
                 onClicked: ethereumExplorerModal.createObject(root).open()
+                components: [
+                    StatusIcon {
+                        icon: "chevron-down"
+                        rotation: 270
+                        color: Theme.palette.baseColor1
+                    }
+                ]
             }
             StatusBaseText {
                 //% "Open an ethereum explorer after a transaction hash or an address is entered"
@@ -127,14 +167,22 @@ Item {
                 bottomPadding: Style.current.padding
             }
 
-            // TODO: Replace with StatusQ StatusListItem component
-            StatusSettingsLineButton {
+            StatusListItem {
+                height: 52
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.leftMargin: -Style.current.padding
+                anchors.rightMargin: -Style.current.padding
                 //% "Set DApp access permissions"
-                text: qsTrId("set-dapp-access-permissions")
-                isSwitch: false
-                onClicked: {
-                    dappListPopup.createObject(root).open()
-                }
+                title: qsTrId("set-dapp-access-permissions")
+                onClicked: dappListPopup.createObject(root).open()
+                components: [
+                    StatusIcon {
+                        icon: "chevron-down"
+                        rotation: 270
+                        color: Theme.palette.baseColor1
+                    }
+                ]
             }
         }
     }

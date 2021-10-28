@@ -329,6 +329,7 @@ StatusModal {
             }
 
             // Feature commented temporarily
+            // TODO: Replace with StatusListItem
             /*
             StatusSettingsLineButton {
                 id: ensOnlySwitch

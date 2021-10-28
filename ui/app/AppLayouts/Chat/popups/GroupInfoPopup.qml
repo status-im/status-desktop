@@ -2,16 +2,16 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 
+import StatusQ.Core 0.1
+import StatusQ.Core.Theme 0.1
+import StatusQ.Controls 0.1
+import StatusQ.Components 0.1
+
 import utils 1.0
-import shared 1.0
 import shared.views 1.0
 import shared.panels 1.0
 import shared.popups 1.0
-import shared.status 1.0
 import shared.controls 1.0
-
-import StatusQ.Controls 0.1 as StatusQControls
-import StatusQ.Components 0.1 as StatusQ
 
 import "../panels"
 
@@ -79,7 +79,7 @@ ModalPopup {
         width: parent.width
 
 
-        StatusQ.StatusLetterIdenticon {
+        StatusLetterIdenticon {
             id: letterIdenticon
             width: 36
             height: 36
@@ -239,21 +239,24 @@ ModalPopup {
             anchors.rightMargin: -Style.current.padding
         }
 
-        StatusSettingsLineButton {
-            property int pinnedCount: popup.store.chatsModelInst.messageView.pinnedMessagesList.count
-
+        StatusListItem {
             id: pinnedMessagesBtn
-            visible: pinnedCount > 0
-            height: visible ? implicitHeight : 0
-            //% "Pinned messages"
-            text: qsTrId("pinned-messages")
-            currentValue: pinnedCount
+            property int pinnedCount: popup.store.chatsModelInst.messageView.pinnedMessagesList.count
             anchors.top: separator.bottom
             anchors.topMargin: visible ? Style.current.halfPadding : 0
-            anchors.leftMargin: 0
-            anchors.rightMargin: 0
+            visible: pinnedCount > 0
+            height: visible ? implicitHeight : 0
+            title: qsTr("Pinned messages")
+            icon.name: "pin"
+            label: pinnedCount
             onClicked: openPopup(pinnedMessagesPopupComponent)
-            iconSource: Style.svg("pin")
+            components: [
+                StatusIcon {
+                    icon: "chevron-down"
+                    rotation: 270
+                    color: Theme.palette.baseColor1
+                }
+            ]
         }
 
         Separator {
@@ -304,7 +307,7 @@ ModalPopup {
 
                 property string nickname: appMain.getUserNickname(model.publicKey)
 
-                StatusQ.StatusSmartIdenticon {
+                StatusSmartIdenticon {
                     id: identicon
                     anchors.left: parent.left
                     image.source: appMain.getProfileImage(model.publicKey)|| model.identicon
@@ -396,18 +399,18 @@ ModalPopup {
         visible: popup.isAdmin
         width: parent.width
         height: children[0].height
-        StatusQControls.StatusButton {
+        StatusButton {
             visible: !addMembers
             anchors.right: parent.right
             //% "Add members"
             text: qsTrId("add-members")
             anchors.bottom: parent.bottom
             onClicked: {
-                addMembers = true;
+              addMembers = true;
             }
         }
 
-        StatusQControls.StatusRoundButton {
+        StatusRoundButton {
             id: btnBack
             visible: addMembers
             anchors.bottom: parent.bottom
@@ -422,7 +425,7 @@ ModalPopup {
             }
         }
 
-        StatusQControls.StatusButton {
+        StatusButton {
             id: btnSelectMembers
             visible: addMembers
             enabled: memberCount >= currMemberCount
