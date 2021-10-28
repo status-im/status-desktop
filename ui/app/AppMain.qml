@@ -560,23 +560,24 @@ Item {
             onNotificationClicked: {
                 applicationWindow.makeStatusAppActive()
 
-                switch(notificationType){
-                case Constants.osNotificationType.newContactRequest:
-                    appView.currentIndex = Utils.getAppSectionIndex(Constants.chat)
-                    appMain.openContactsPopup()
-                    break
-                case Constants.osNotificationType.acceptedContactRequest:
-                    appView.currentIndex = Utils.getAppSectionIndex(Constants.chat)
-                    break
-                case Constants.osNotificationType.joinCommunityRequest:
-                case Constants.osNotificationType.acceptedIntoCommunity:
-                case Constants.osNotificationType.rejectedByCommunity:
-                    appView.currentIndex = Utils.getAppSectionIndex(Constants.community)
-                    break
-                case Constants.osNotificationType.newMessage:
-                    appView.currentIndex = Utils.getAppSectionIndex(Constants.chat)
-                    break
-                }
+                // This is not handled yet.
+//                switch(notificationType){
+//                case Constants.osNotificationType.newContactRequest:
+//                    appView.currentIndex = Utils.getAppSectionIndex(Constants.chat)
+//                    appMain.openContactsPopup()
+//                    break
+//                case Constants.osNotificationType.acceptedContactRequest:
+//                    appView.currentIndex = Utils.getAppSectionIndex(Constants.chat)
+//                    break
+//                case Constants.osNotificationType.joinCommunityRequest:
+//                case Constants.osNotificationType.acceptedIntoCommunity:
+//                case Constants.osNotificationType.rejectedByCommunity:
+//                    appView.currentIndex = Utils.getAppSectionIndex(Constants.community)
+//                    break
+//                case Constants.osNotificationType.newMessage:
+//                    appView.currentIndex = Utils.getAppSectionIndex(Constants.chat)
+//                    break
+//                }
             }
         }
 
