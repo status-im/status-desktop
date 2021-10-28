@@ -13,12 +13,15 @@ RadioButtonSelector {
     property string network: ""
     property string networkName: ""
     property string newNetwork: ""
+    property var store
 
-    title: networkName == "" ? Utils.getNetworkName(network) : networkName
+    title: networkName === "" ? Utils.getNetworkName(network) : networkName
+
+    checked: root.store.currentNetwork === root.network
 
     onCheckedChanged: {
         if (checked) {
-            if (profileModel.network.current === root.network) return;
+            if (root.store.currentNetwork === root.network) return;
             root.newNetwork = root.network;
             openPopup(confirmDialogComponent)
         }
@@ -32,11 +35,9 @@ RadioButtonSelector {
             header.title: qsTrId("close-app-title")
             //% "The account will be logged out. When you unlock it again, the selected network will be used"
             confirmationText: qsTrId("logout-app-content")
-            onConfirmButtonClicked: {
-                profileModel.network.current = root.newNetwork;
-            }
+            onConfirmButtonClicked: root.store.changeNetwork(root.newNetwork)
             onClosed: {
-                profileModel.network.triggerNetworkChange()
+                root.store.networkModuleInst.triggerNetworkChange()
                 destroy()
             }
         }

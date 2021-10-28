@@ -14,6 +14,7 @@ StatusModal {
     header.title: qsTrId("add-network")
     height: 644
 
+    property var store
     property string nameValidationError: ""
     property string rpcValidationError: ""
     property string networkValidationError: ""
@@ -64,6 +65,8 @@ StatusModal {
         nameValidationError = "";
         rpcValidationError = "";
         networkValidationError = "";
+
+        nameInput.forceActiveFocus();
     }
 
     rightButtons: [
@@ -80,8 +83,7 @@ StatusModal {
                     addNetworkPopup.networkId = parseInt(networkInput.text, 10);
                 }
 
-                profileModel.network.add(nameInput.text, rpcInput.text, addNetworkPopup.networkId, addNetworkPopup.networkType)
-                profileModel.network.reloadCustomNetworks();
+                addNetworkPopup.store.addNetwork(nameInput.text, rpcInput.text, addNetworkPopup.networkId, addNetworkPopup.networkType)
                 addNetworkPopup.close()
             }
         }

@@ -75,6 +75,7 @@ QtObject:
     read = getStickerMarketAddress
 
   proc getEnsRegisterAddress(self: UtilsView): QVariant {.slot.} =
+    # TODO figure out why this line makes the app crash when using a custom network
     newQVariant($statusRegistrarAddress())
 
   QtProperty[QVariant] ensRegisterAddress:

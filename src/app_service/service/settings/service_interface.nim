@@ -50,3 +50,6 @@ method setDappsAddress*(self: ServiceInterface, address: string): bool {.base.} 
 
 method getCurrentNetworkDetails*(self: ServiceInterface): NetworkDetails {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method getNetworks*(self: ServiceInterface): seq[NetworkDetails] {.base.} =
+  raise newException(ValueError, "No implementation available")
