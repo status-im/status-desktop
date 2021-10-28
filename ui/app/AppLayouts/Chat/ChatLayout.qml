@@ -166,6 +166,7 @@ StatusAppThreePanelLayout {
 
     centerPanel: ChatColumnView {
         id: chatColumn
+        rootStore: root.rootStore
         chatGroupsListViewCount: contactColumnLoader.item.chatGroupsListViewCount
     }
 
