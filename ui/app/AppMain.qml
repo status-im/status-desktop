@@ -130,7 +130,7 @@ Item {
         if(parentPopup){
             popup.parentPopup = parentPopup;
         }
-        popup.openPopup(profileModel.profile.pubKey !== fromAuthorParam, userNameParam, fromAuthorParam, identiconParam, textParam, nicknameParam);
+        popup.openPopup(profileModule.pubKey !== fromAuthorParam, userNameParam, fromAuthorParam, identiconParam, textParam, nicknameParam);
         profilePopupOpened = true
     }
 
@@ -353,7 +353,7 @@ Item {
             navBarProfileButton: StatusNavBarTabButton {
                 id: profileButton
                 property bool opened: false
-                icon.source: profileModel.profile.thumbnailImage || ""
+                icon.source: profileModule.thumbnailImage || ""
                 badge.visible: true
                 badge.anchors.rightMargin: 4
                 badge.anchors.topMargin: 25
