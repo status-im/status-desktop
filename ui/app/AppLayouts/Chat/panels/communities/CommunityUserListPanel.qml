@@ -25,6 +25,8 @@ Item {
     property string profilePubKey
     property var messageContextMenu
     property var community
+    property string currentUserName: ""
+    property bool currentUserOnline: true
 
     StyledText {
         id: titleText
@@ -91,7 +93,8 @@ Item {
             lastSeen: model.lastSeen
             statusType: model.statusType
             currentTime: root.currentTime
-            isOnline: model.online
+            isOnline: (model.userName === root.currentUserName) ?
+                      root.currentUserOnline : model.online
             contactsList: root.contactsList
             profilePubKey: root.profilePubKey
             messageContextMenu: root.messageContextMenu
