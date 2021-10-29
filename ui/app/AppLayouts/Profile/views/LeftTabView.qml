@@ -40,7 +40,6 @@ Item {
             mainMenuItems: store.mainMenuItems
             settingsMenuItems: store.settingsMenuItems
             extraMenuItems: store.extraMenuItems
-            selectedMenuItem: store.selectedMenuItem
             browserMenuItemEnabled: store.browserMenuItemEnabled
 
 
@@ -48,7 +47,7 @@ Item {
                 if (!!menu_item.function_name && menu_item.function_name === "exit") {
                     return confirmDialog.open()
                 }
-                store.selectedMenuItem = menu_item.menu_id
+                Config.currentMenuTab = menu_item.menu_id
             }
         }
     }
