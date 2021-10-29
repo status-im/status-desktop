@@ -356,7 +356,7 @@ StatusModal {
 
                 chatsModel.transactions.acceptRequestTransaction(transactionId,
                                                         messageId,
-                                                        root.store.profileModelInst.profile.pubKey + transactionId.substr(2))
+                                                        userProfile.pubKey + transactionId.substr(2))
 
                 //% "Transaction pending..."
                 toastMessage.title = qsTrId("ens-transaction-pending")

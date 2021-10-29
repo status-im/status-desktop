@@ -35,7 +35,7 @@ Loader {
                         return profileImageSource
                     }
                     identiconImage.showLoadingIndicator = false
-                    return !isCurrentUser || isReplyImage ? identicon : profileModel.profile.identicon
+                    return !isCurrentUser || isReplyImage ? identicon : userProfile.thumbnailImage
                 }
                 smooth: false
                 antialiasing: true

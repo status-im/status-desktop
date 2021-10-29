@@ -100,7 +100,7 @@ Column {
     property int replyMessageIndex: !!root.chatsModel ? root.chatsModel.messageView.messageList.getMessageIndex(responseTo) : -1
     property string repliedMessageAuthor: replyMessageIndex > -1 ? !!root.chatsModel ? root.chatsModel.messageView.messageList.getMessageData(replyMessageIndex, "userName") : "" : "";
     property string repliedMessageAuthorPubkey: replyMessageIndex > -1 ? root.chatsModel.messageView.messageList.getMessageData(replyMessageIndex, "publicKey") : "";
-    property bool repliedMessageAuthorIsCurrentUser: replyMessageIndex > -1 ? repliedMessageAuthorPubkey === profileModel.profile.pubKey : "";
+    property bool repliedMessageAuthorIsCurrentUser: replyMessageIndex > -1 ? repliedMessageAuthorPubkey === userProfile.pubKey : "";
     property bool repliedMessageIsEdited: replyMessageIndex > -1 ? !!root.chatsModel ? root.chatsModel.messageView.messageList.getMessageData(replyMessageIndex, "isEdited") === "true" : false : false;
     property string repliedMessageContent: replyMessageIndex > -1 ? !!root.chatsModel ? root.chatsModel.messageView.messageList.getMessageData(replyMessageIndex, "message") : "" : "";
     property int repliedMessageType: replyMessageIndex > -1 ? !!root.chatsModel ? parseInt(root.chatsModel.messageView.messageList.getMessageData(replyMessageIndex, "contentType")) : 0 : 0;
@@ -140,7 +140,7 @@ Column {
                 }
                 byEmoji[reaction.emojiId].count++;
                 byEmoji[reaction.emojiId].fromAccounts.push(root.chatsModel.userNameOrAlias(reaction.from));
-                if (!byEmoji[reaction.emojiId].currentUserReacted && reaction.from === root.rootStore.profileModelInst.profile.pubKey) {
+                if (!byEmoji[reaction.emojiId].currentUserReacted && reaction.from === userProfile.pubKey) {
                     byEmoji[reaction.emojiId].currentUserReacted = true
                 }
 
