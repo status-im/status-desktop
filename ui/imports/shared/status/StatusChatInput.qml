@@ -13,6 +13,7 @@ import shared.panels 1.0
 
 //TODO remove this dependency
 import "../../../app/AppLayouts/Chat/panels"
+import "./emojiList.js" as EmojiJSON
 
 import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
