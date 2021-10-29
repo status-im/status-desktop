@@ -82,7 +82,7 @@ ModalPopup {
       }
     
       StyledTextEdit {
-          id: groupName
+          id: groupNameTxt
           //% "Add members"
           text: addMembers ? qsTrId("add-members") : popup.channel.name
           anchors.top: parent.top
@@ -111,7 +111,7 @@ ModalPopup {
           width: 160
           anchors.left: letterIdenticon.right
           anchors.leftMargin: Style.current.smallPadding
-          anchors.top: groupName.bottom
+          anchors.top: groupNameTxt.bottom
           anchors.topMargin: 2
           font.pixelSize: 14
           color: Style.current.secondaryText
@@ -122,9 +122,9 @@ ModalPopup {
             visible: !addMembers && popup.isAdmin
             height: 24
             width: 24
-            anchors.verticalCenter: groupName.verticalCenter
+            anchors.verticalCenter: groupNameTxt.verticalCenter
             anchors.leftMargin: Style.current.halfPadding
-            anchors.left: groupName.right
+            anchors.left: groupNameTxt.right
             radius: 8
 
             SVGImage {
@@ -156,6 +156,7 @@ ModalPopup {
             activeChannelName: popup.store.chatsModelInst.channelView.activeChannel.name
             onDoRename: {
                 popup.store.chatsModelInst.groups.rename(groupName);
+                groupNameTxt.text = groupName
                 close();
             }
         }
