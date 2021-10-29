@@ -427,7 +427,8 @@ Item {
         }
 
         EmptyChatPanel {
-            onShareChatKeyClicked: openProfilePopup(root.rootStore.profileModelInst.profile.username, root.rootStore.profileModelInst.profile.pubKey, root.rootStore.profileModelInst.profile.thumbnailImage);
+            //TODO move profileModule to store
+            onShareChatKeyClicked: openProfilePopup(root.rootStore.profileModelInst.profile.username, root.rootStore.profileModelInst.profile.pubKey, profileModule.model.thumbnailImage);
         }
 
         Loader {

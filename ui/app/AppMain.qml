@@ -48,7 +48,8 @@ Item {
 
     function getProfileImage(pubkey, isCurrentUser, useLargeImage) {
         if (isCurrentUser || (isCurrentUser === undefined && pubkey === profileModel.profile.pubKey)) {
-            return profileModel.profile.thumbnailImage
+            //TODO move profileModule to store
+            return profileModule.model.thumbnailImage
         }
 
         const index = profileModel.contacts.list.getContactIndexByPubkey(pubkey)
@@ -354,7 +355,8 @@ Item {
             navBarProfileButton: StatusNavBarTabButton {
                 id: profileButton
                 property bool opened: false
-                icon.source: profileModule.thumbnailImage || ""
+                //TODO move profileModule to store
+                icon.source: profileModule.model.thumbnailImage || ""
                 badge.visible: true
                 badge.anchors.rightMargin: 4
                 badge.anchors.topMargin: 25
@@ -362,7 +364,7 @@ Item {
                 badge.implicitWidth: 15
                 badge.border.color: hovered ? Theme.palette.statusBadge.hoverBorderColor : Theme.palette.statusAppNavBar.backgroundColor
                 badge.color: {
-                    return profileModel.profile.sendUserStatus ? Style.current.green : Style.current.midGrey
+                    return profileModule.model.sendUserStatus ? Style.current.green : Style.current.midGrey
                     /*
                     // Use this code once support for custom user status is added
                     switch(profileModel.profile.currentUserStatus){

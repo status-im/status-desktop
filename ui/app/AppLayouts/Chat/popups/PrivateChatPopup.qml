@@ -64,7 +64,7 @@ ModalPopup {
                 anchors.left: parent.left
                 anchors.leftMargin: 2
                 anchors.verticalCenter: parent.verticalCenter
-                source: appMain.getProfileImage(popup.store.profileModelInst.profile.pubKey)
+                source: appMain.getProfileImage(popup.store.profileModuleInst.model.pubKey)
             }
 
             StyledText {

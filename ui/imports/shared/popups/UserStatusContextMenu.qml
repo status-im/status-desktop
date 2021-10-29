@@ -29,12 +29,12 @@ PopupMenu {
             anchors.top: parent.top
             anchors.topMargin: 4
             anchors.horizontalCenter: parent.horizontalCenter
-            image.source: profileModule.thumbnailImage || ""
+            image.source: profileModule.model.thumbnailImage || ""
             image.isIdenticon: true
         }
         StyledText {
             id: username
-            text: Utils.removeStatusEns(profileModel.ens.preferredUsername || profileModel.profile.username)
+            text: Utils.removeStatusEns(profileModel.ens.preferredUsername || profileModule.model.username)
             elide: Text.ElideRight
             maximumLineCount: 3
             horizontalAlignment: Text.AlignHCenter
@@ -70,7 +70,8 @@ PopupMenu {
             hoverEnabled: true
             cursorShape: Qt.PointingHandCursor
             onClicked: {
-                openProfilePopup(profileModule.username, profileModule.pubKey, profileModule.thumbnailImage || "");
+                //TODO move profileModule to store
+                openProfilePopup(profileModule.model.username, profileModule.model.pubKey, profileModule.model.thumbnailImage || "");
                 root.close()
             }
         }

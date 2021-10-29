@@ -42,7 +42,8 @@ ModalPopup {
             pubKey: popup.store.profileModelInst.profile.pubKey,
             address: "",
             identicon: popup.store.profileModelInst.profile.identicon,
-            thumbnailImage: popup.store.profileModelInst.profile.thumbnailImage,
+            //TODO move to store
+            thumbnailImage: profileModule.model.thumbnailImage,
             isUser: true
         });
         noContactsRect.visible = !popup.store.profileModelInst.contacts.list.hasAddedContacts();
