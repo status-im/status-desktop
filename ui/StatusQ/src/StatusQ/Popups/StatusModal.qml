@@ -67,7 +67,7 @@ QC.Popup {
             id: footerImpl
             anchors.bottom: parent.bottom
             width: visible ? parent.width : 0
-            visible: statusModal.showFooter
+            showFooter: statusModal.showFooter
         }
     }
 }

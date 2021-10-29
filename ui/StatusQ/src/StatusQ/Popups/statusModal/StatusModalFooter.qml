@@ -13,6 +13,7 @@ Rectangle {
 
     property list<Item> leftButtons
     property list<StatusBaseButton> rightButtons
+    property bool showFooter: true
 
     radius: 8
 
@@ -30,7 +31,7 @@ Rectangle {
         }
     }
 
-    implicitHeight: visible ? rootLayout.implicitHeight + 30 : 0
+    implicitHeight: rootLayout.implicitHeight + 30
 
     RowLayout {
         id: rootLayout
@@ -43,6 +44,7 @@ Rectangle {
         Row {
             id: leftButtonsLayout
             Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
+            visible: statusModalFooter.showFooter
 
             spacing: 16
         }
@@ -55,9 +57,9 @@ Rectangle {
         Row {
             id: rightButtonsLayout
             Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
+            visible: statusModalFooter.showFooter
 
             spacing: 16
-
         }
     }
 
