@@ -1,4 +1,6 @@
 import ./controller_interface
+
+import ../../../../core/global_singleton
 import ../../../../../app_service/service/profile/service as profile_service
 import ../../../../../app_service/service/accounts/service as accounts_service
 import ../../../../../app_service/service/settings/service as settings_service
@@ -29,29 +31,26 @@ method init*[T](self: Controller[T]) =
   discard
 
 method getProfile*[T](self: Controller[T]): item.Item =
-  let loggedInAccount = self.accountsService.getLoggedInAccount()
-
-  var pubKey = self.settingsService.getPubKey()
+  
   var network = self.settingsService.getNetwork()
   var appearance = self.settingsService.getAppearance()
   var messagesFromContactsOnly = self.settingsService.getMessagesFromContactsOnly()
-  var sendUserStatus = self.settingsService.getSendUserStatus()
-  var currentUserStatus = self.settingsService.getCurrentUserStatus()
-  var obj = self.settingsService.getIdentityImage(loggedInAccount.keyUid)
-  var identityImage = item.IdentityImage(thumbnail: obj.thumbnail, large: obj.large)
+
+  var identityImage = item.IdentityImage(thumbnail: singletonInstance.userProfile.getThumbnailImage(), 
+  large: singletonInstance.userProfile.getLargeImage())
 
   var item = item.Item(
-    id: pubkey,
+    id: singletonInstance.userProfile.getPubKey(),
     alias: "",
-    username: loggedInAccount.name,
-    identicon: loggedInAccount.identicon,
-    address: loggedInAccount.keyUid,
-    ensName: "",
+    username: singletonInstance.userProfile.getUsername(),
+    identicon: singletonInstance.userProfile.getThumbnailImage(), 
+    address: singletonInstance.userProfile.getAddress(),
+    ensName: singletonInstance.userProfile.getEnsName(),
     ensVerified: false,
     localNickname: "",
     messagesFromContactsOnly: messagesFromContactsOnly,
-    sendUserStatus: sendUserStatus,
-    currentUserStatus: currentUserStatus,
+    sendUserStatus: singletonInstance.userProfile.getSendUserStatus(),
+    currentUserStatus: singletonInstance.userProfile.getCurrentUserStatus(),
     identityImage: identityImage,
     appearance: appearance,
     added: false,
