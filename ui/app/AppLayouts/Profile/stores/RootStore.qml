@@ -66,7 +66,6 @@ QtObject {
     property int signout_id: 14
 
     property bool browserMenuItemEnabled: localAccountSensitiveSettings.isBrowserEnabled
-    property int selectedMenuItem: 0
 
     property ListModel mainMenuItems: ListModel {
         ListElement {
