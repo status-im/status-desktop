@@ -47,7 +47,7 @@ Popup {
             text: qsTrId("send-transaction")
             icon.color: Style.current.purple
             icon.name: "send"
-            onClicked: localAccountSensitiveSettings.isWalletEnabled ? root.sendTransactionCommandButtonClicked() : confirmationPopup.open()
+            onClicked: localAccountSensitiveSettings.isWalletEnabled ? root.sendTransactionCommandButtonClicked() : sendConfirmationPopup.open()
         }
 
 
@@ -57,11 +57,11 @@ Popup {
             icon.color: Style.current.orange
             icon.name: "send"
             icon.rotation: 180
-            onClicked: localAccountSensitiveSettings.isWalletEnabled ? root.receiveTransactionCommandButtonClicked() : confirmationPopup.open()
+            onClicked: localAccountSensitiveSettings.isWalletEnabled ? root.receiveTransactionCommandButtonClicked() : receiveConfirmationPopup.open()
         }
 
         ConfirmationDialog {
-            id: confirmationPopup
+            id: sendConfirmationPopup
             showCancelButton: true
             confirmationText: qsTr("This feature is experimental and is meant for testing purposes by core contributors and the community. It's not meant for real use and makes no claims of security or integrity of funds or data. Use at your own risk.")
             confirmButtonLabel: qsTr("I understand")
@@ -69,6 +69,22 @@ Popup {
                 localAccountSensitiveSettings.isWalletEnabled = true
                 close()
                 root.sendTransactionCommandButtonClicked()
+            }
+
+            onCancelButtonClicked: {
+                close()
+            }
+        }
+
+        ConfirmationDialog {
+            id: receiveConfirmationPopup
+            showCancelButton: true
+            confirmationText: qsTr("This feature is experimental and is meant for testing purposes by core contributors and the community. It's not meant for real use and makes no claims of security or integrity of funds or data. Use at your own risk.")
+            confirmButtonLabel: qsTr("I understand")
+            onConfirmButtonClicked: {
+                localAccountSensitiveSettings.isWalletEnabled = true
+                close()
+                root.receiveTransactionCommandButtonClicked()
             }
 
             onCancelButtonClicked: {
