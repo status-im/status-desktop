@@ -5,6 +5,7 @@ import io_interface
 
 import ../../../../app_service/service/chat/service as chat_service
 import ../../../../app_service/service/community/service as community_service
+import ../../../../app_service/service/message/service as message_service
 
 export controller_interface
 
@@ -17,16 +18,19 @@ type
     activeSubItemId: string
     chatService: chat_service.ServiceInterface
     communityService: community_service.ServiceInterface
+    messageService: message_service.Service
 
 proc newController*(delegate: io_interface.AccessInterface, id: string, isCommunity: bool, 
   chatService: chat_service.ServiceInterface,
-  communityService: community_service.ServiceInterface): Controller =
+  communityService: community_service.ServiceInterface,
+  messageService: message_service.Service): Controller =
   result = Controller()
   result.delegate = delegate
   result.id = id
   result.isCommunityModule = isCommunity
   result.chatService = chatService
   result.communityService = communityService
+  result.messageService = messageService
   
 method delete*(self: Controller) =
   discard
@@ -59,6 +63,11 @@ method getChatDetailsForChatTypes*(self: Controller, types: seq[ChatType]): seq[
 method setActiveItemSubItem*(self: Controller, itemId: string, subItemId: string) =
   self.activeItemId = itemId
   self.activeSubItemId = subItemId
+
+  if(self.activeSubItemId.len > 0):
+    self.messageService.loadInitialMessagesForChat(self.activeSubItemId)
+  else:
+    self.messageService.loadInitialMessagesForChat(self.activeItemId)
 
   # We need to take other actions here like notify status go that unviewed mentions count is updated and so...
 
