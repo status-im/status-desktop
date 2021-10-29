@@ -33,7 +33,7 @@ import ../core/global_singleton
 # provider/subscriber principe, similar we should have SettingsService.
 import ../../app_service/[main]
 import eventemitter
-import status/[fleet, settings]
+import status/[fleet]
 import ../profile/core as profile
 import status/types/[account, setting]
 #################################################
@@ -90,6 +90,7 @@ type
     localAppSettingsVariant: QVariant
     localAccountSettingsVariant: QVariant
     localAccountSensitiveSettingsVariant: QVariant
+    userProfileVariant: QVariant
 
     # Modules
     startupModule: startup_module.AccessInterface
@@ -103,7 +104,9 @@ type
 
 #################################################
 # Forward declaration section
-proc load*(self: AppController)
+proc load(self: AppController)
+proc buildAndRegisterLocalAccountSensitiveSettings(self: AppController)
+proc buildAndRegisterUserProfile(self: AppController)
 
 # Startup Module Delegate Interface
 proc startupDidLoad*(self: AppController)
@@ -153,6 +156,8 @@ proc newAppController*(appService: AppService): AppController =
   result.localAppSettingsVariant = newQVariant(singletonInstance.localAppSettings)
   result.localAccountSettingsVariant = newQVariant(singletonInstance.localAccountSettings)
   result.localAccountSensitiveSettingsVariant = newQVariant(singletonInstance.localAccountSensitiveSettings)
+  result.userProfileVariant = newQVariant(singletonInstance.userProfile)
+
   # Modules
   result.startupModule = startup_module.newModule[AppController](
     result,
@@ -221,6 +226,7 @@ proc delete*(self: AppController) =
   self.localAppSettingsVariant.delete
   self.localAccountSettingsVariant.delete
   self.localAccountSensitiveSettingsVariant.delete
+  self.userProfileVariant.delete
 
   self.accountsService.delete
   self.chatService.delete
@@ -261,15 +267,8 @@ proc start*(self: AppController) =
   
   self.startupModule.load()
 
-proc load*(self: AppController) =
-  #################################################
-  # Once SettingService gets added, `pubKey` should be fetched from there, instead the following line:
-  let pubKey = self.appService.status.settings.getSetting[:string](Setting.PublicKey, "0x0")
-  singletonInstance.localAccountSensitiveSettings.setFileName(pubKey)
-  singletonInstance.engine.setRootContextProperty("localAccountSensitiveSettings", self.localAccountSensitiveSettingsVariant)
-  #################################################
-
-  self.languageService.init()
+proc load(self: AppController) =
+  # init services which are available only if a user is logged in
   self.settingService.init()
   self.contactsService.init()
   self.chatService.init()
@@ -282,6 +281,12 @@ proc load*(self: AppController) =
   self.providerService.init()
   self.walletAccountService.init()
   self.transactionService.init()
+
+  # other global instances
+  self.buildAndRegisterLocalAccountSensitiveSettings()  
+  self.buildAndRegisterUserProfile()
+
+  # load main module
   self.mainModule.load()
 
 proc userLoggedIn*(self: AppController) =
@@ -292,3 +297,26 @@ proc userLoggedIn*(self: AppController) =
   self.appService.status.events.emit("loginCompleted", AccountArgs(account: account))
   #################################################
   self.load()
+
+proc buildAndRegisterLocalAccountSensitiveSettings(self: AppController) = 
+  var pubKey = self.settingsService.getPubKey()
+  singletonInstance.localAccountSensitiveSettings.setFileName(pubKey)
+  singletonInstance.engine.setRootContextProperty("localAccountSensitiveSettings", self.localAccountSensitiveSettingsVariant)
+
+proc buildAndRegisterUserProfile(self: AppController) = 
+  let loggedInAccount = self.accountsService.getLoggedInAccount()
+
+  let pubKey = self.settingsService.getPubKey()
+  let sendUserStatus = self.settingsService.getSendUserStatus()
+  let currentUserStatus = self.settingsService.getCurrentUserStatus()
+  let obj = self.settingsService.getIdentityImage(loggedInAccount.keyUid)
+
+  singletonInstance.userProfile.setFixedData(loggedInAccount.name, loggedInAccount.keyUid, loggedInAccount.identicon, 
+  pubKey)
+  singletonInstance.userProfile.setEnsName("") # in this moment we don't know ens name
+  singletonInstance.userProfile.setThumbnailImage(obj.thumbnail)
+  singletonInstance.userProfile.setLargeImage(obj.large)
+  singletonInstance.userProfile.setSendUserStatus(sendUserStatus)
+  singletonInstance.userProfile.setCurrentUserStatus(currentUserStatus)
+
+  singletonInstance.engine.setRootContextProperty("userProfile", self.userProfileVariant)
