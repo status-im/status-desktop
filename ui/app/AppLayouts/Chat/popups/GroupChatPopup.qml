@@ -41,7 +41,7 @@ ModalPopup {
             name: userProfile.username + " " + qsTrId("(you)"),
             pubKey: userProfile.pubKey,
             address: "",
-            identicon: "",
+            identicon: userProfile.identicon,
             thumbnailImage: userProfile.thumbnailImage,
             isUser: true
         });
