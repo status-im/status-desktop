@@ -45,7 +45,7 @@ Item {
             root.validationError = qsTr("Enter a valid chat key or ENS username");
             pubKey = ""
             ensUsername = "";
-        } else if (profileModel.profile.pubKey === chatKey.text) {
+        } else if (userProfile.pubKey === chatKey.text) {
             //% "Can't chat with yourself"
             root.validationError = qsTrId("can-t-chat-with-yourself");
         } else {
@@ -101,7 +101,7 @@ Item {
                     searchResults.address = "";
                     searchResults.showProfileNotFoundMessage = true
                 } else {
-                    if (profileModel.profile.pubKey === resolvedPubKey) {
+                    if (userProfile.pubKey === resolvedPubKey) {
                         //% "Can't chat with yourself"
                         root.validationError = qsTrId("can-t-chat-with-yourself");
                     } else {

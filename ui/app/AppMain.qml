@@ -47,9 +47,8 @@ Item {
     }
 
     function getProfileImage(pubkey, isCurrentUser, useLargeImage) {
-        if (isCurrentUser || (isCurrentUser === undefined && pubkey === profileModel.profile.pubKey)) {
-            //TODO move profileModule to store
-            return profileModule.model.thumbnailImage
+        if (isCurrentUser || (isCurrentUser === undefined && pubkey === userProfile.pubKey)) {
+            return userProfile.thumbnailImage
         }
 
         const index = profileModel.contacts.list.getContactIndexByPubkey(pubkey)
@@ -131,7 +130,7 @@ Item {
         if(parentPopup){
             popup.parentPopup = parentPopup;
         }
-        popup.openPopup(profileModule.pubKey !== fromAuthorParam, userNameParam, fromAuthorParam, identiconParam, textParam, nicknameParam);
+        popup.openPopup(userProfile.pubKey !== fromAuthorParam, userNameParam, fromAuthorParam, identiconParam, textParam, nicknameParam);
         profilePopupOpened = true
     }
 
@@ -355,19 +354,18 @@ Item {
             navBarProfileButton: StatusNavBarTabButton {
                 id: profileButton
                 property bool opened: false
-                //TODO move profileModule to store
-                icon.source: profileModule.model.thumbnailImage || ""
+                icon.source: userProfile.thumbnailImage
                 badge.visible: true
                 badge.anchors.rightMargin: 4
                 badge.anchors.topMargin: 25
                 badge.implicitHeight: 15
                 badge.implicitWidth: 15
                 badge.border.color: hovered ? Theme.palette.statusBadge.hoverBorderColor : Theme.palette.statusAppNavBar.backgroundColor
-                //badge.color:  profileModule.model.sendUserStatus ? Style.current.green : Style.current.midGrey
-                badge.color: appMain.rootStore.profileModelInst.profile.sendUserStatus ? Style.current.green : Style.current.midGrey
+                badge.color: {
+                    return userProfile.sendUserStatus ? Style.current.green : Style.current.midGrey
                     /*
                     // Use this code once support for custom user status is added
-                    switch(profileModel.profile.currentUserStatus){
+                    switch(userProfile.currentUserStatus){
                         case Constants.statusType_Online:
                             return Style.current.green;
                         case Constants.statusType_DoNotDisturb:
@@ -375,6 +373,7 @@ Item {
                         default:
                             return Style.current.midGrey;
                     }*/
+                }
                 badge.border.width: 3
                 onClicked: {
                     userStatusContextMenu.opened ?
