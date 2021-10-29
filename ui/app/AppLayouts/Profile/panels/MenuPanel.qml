@@ -13,8 +13,6 @@ Column {
     property alias mainMenuItems: mainMenuItems.model
     property alias settingsMenuItems: settingsMenuItems.model
     property alias extraMenuItems: extraMenuItems.model
-
-    property int selectedMenuItem
     property bool browserMenuItemEnabled: false
 
     signal menuItemClicked(var menu_item)
@@ -25,7 +23,7 @@ Column {
             itemId: model.menu_id
             title: model.text
             icon.name: model.icon
-            selected: root.selectedMenuItem === model.menu_id
+            selected: Config.currentMenuTab === model.menu_id
             onClicked: root.menuItemClicked(model)
         }
     }
@@ -39,7 +37,7 @@ Column {
             itemId: model.menu_id
             title: model.text
             icon.name: model.icon
-            selected: root.selectedMenuItem === model.menu_id
+            selected: Config.currentMenuTab === model.menu_id
             onClicked: root.menuItemClicked(model)
             visible: model.ifEnabled !== "browser" || root.browserMenuItemEnabled
             badge.value: (!mnemonicModule.isBackedUp && (settingsMenuDelegate.title ===
@@ -59,7 +57,7 @@ Column {
             itemId: model.menu_id
             title: model.text
             icon.name: model.icon
-            selected: root.selectedMenuItem === model.menu_id
+            selected: Config.currentMenuTab === model.menu_id
             visible: model.ifEnabled !== "browser" || root.browserMenuItemEnabled
             onClicked: root.menuItemClicked(model)
         }
