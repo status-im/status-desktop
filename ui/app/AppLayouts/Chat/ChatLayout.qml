@@ -198,7 +198,7 @@ StatusAppThreePanelLayout {
             userList: chatColumn.userList
             messageContextMenu: quickActionMessageOptionsMenu
             profilePubKey: userProfile.pubKey
-            contactsList: root.rootStore.allContacts
+            contactsList: root.rootStore.profileModelInst.contacts.list
             isOnline: root.rootStore.chatsModelInst.isOnline
         }
     }
