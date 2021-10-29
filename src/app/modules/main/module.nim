@@ -11,6 +11,7 @@ import profile_section/module as profile_section_module
 import ../../../app_service/service/keychain/service as keychain_service
 import ../../../app_service/service/chat/service as chat_service
 import ../../../app_service/service/community/service as community_service
+import ../../../app_service/service/message/service as message_service
 import ../../../app_service/service/token/service as token_service
 import ../../../app_service/service/transaction/service as transaction_service
 import ../../../app_service/service/collectible/service as collectible_service
@@ -18,8 +19,6 @@ import ../../../app_service/service/wallet_account/service as wallet_account_ser
 import ../../../app_service/service/setting/service as setting_service
 import ../../../app_service/service/bookmarks/service as bookmark_service
 import ../../../app_service/service/dapp_permissions/service as dapp_permissions_service
-
-import eventemitter
 import ../../../app_service/service/profile/service as profile_service
 import ../../../app_service/service/accounts/service as accounts_service
 import ../../../app_service/service/settings/service as settings_service
@@ -28,6 +27,8 @@ import ../../../app_service/service/about/service as about_service
 import ../../../app_service/service/language/service as language_service
 import ../../../app_service/service/mnemonic/service as mnemonic_service
 import ../../../app_service/service/privacy/service as privacy_service
+
+import eventemitter
 
 export io_interface
 
@@ -51,6 +52,7 @@ proc newModule*[T](
   accountsService: accounts_service.ServiceInterface,
   chatService: chat_service.Service,
   communityService: community_service.Service,
+  messageService: message_service.Service,
   tokenService: token_service.Service,
   transactionService: transaction_service.Service,
   collectibleService: collectible_service.Service,
@@ -75,7 +77,8 @@ proc newModule*[T](
   result.moduleLoaded = false
 
   # Submodules
-  result.chatSectionModule = chat_section_module.newModule(result, "chat", false, chatService, communityService)
+  result.chatSectionModule = chat_section_module.newModule(result, events, "chat", false, chatService, communityService, 
+  messageService)
   result.communitySectionsModule = initOrderedTable[string, chat_section_module.AccessInterface]()
   result.walletSectionModule = wallet_section_module.newModule[Module[T]](result, events, tokenService, 
     transactionService, collectible_service, walletAccountService, settingService)
@@ -96,8 +99,8 @@ method delete*[T](self: Module[T]) =
   self.viewVariant.delete
   self.controller.delete
 
-method load*[T](self: Module[T], chatService: chat_service.Service,
-  communityService: community_service.Service) =
+method load*[T](self: Module[T], events: EventEmitter, chatService: chat_service.Service,
+  communityService: community_service.Service, messageService: message_service.Service) =
   singletonInstance.engine.setRootContextProperty("mainModule", self.viewVariant)
   self.controller.init()
   self.view.load()
@@ -105,7 +108,8 @@ method load*[T](self: Module[T], chatService: chat_service.Service,
   # Create community modules here, since we don't know earlier how many communities we have.
   let communities = self.controller.getCommunities()
   for c in communities:
-    self.communitySectionsModule[c.id] = chat_section_module.newModule(self, c.id, true, chatService, communityService)
+    self.communitySectionsModule[c.id] = chat_section_module.newModule(self, events, c.id, true, chatService, 
+    communityService, messageService)
 
   var activeSection: Item
   var activeSectionId = singletonInstance.localAccountSensitiveSettings.getActiveSection()

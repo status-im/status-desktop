@@ -40,6 +40,13 @@ method delete*(self: Controller) =
   discard
 
 method init*(self: Controller) = 
+  self.events.on("mailserverAvailable") do(e:Args):
+    echo "MAILSERVER AVAILABLE: ", repr(e)
+    # We need to take some actions here. This is the only pace where "mailserverAvailable" signal should be handled.
+    # Do the following, if we really need that.
+    # requestAllHistoricMessagesResult
+    # requestMissingCommunityInfos
+
   if(defined(macosx)): 
     let account = self.accountsService.getLoggedInAccount()
     singletonInstance.localAccountSettings.setFileName(account.name)

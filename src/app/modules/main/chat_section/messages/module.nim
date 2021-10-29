@@ -6,6 +6,9 @@ import ../../../../core/global_singleton
 
 import ../../../../../app_service/service/chat/service as chat_service
 import ../../../../../app_service/service/community/service as community_service
+import ../../../../../app_service/service/message/service as message_service
+
+import eventemitter
 
 export io_interface
 
@@ -17,14 +20,14 @@ type
     controller: controller.AccessInterface
     moduleLoaded: bool
 
-proc newModule*(delegate: delegate_interface.AccessInterface, id: string, isCommunity: bool, 
-  chatService: chat_service.Service, communityService: community_service.Service): 
+proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitter, id: string, isCommunity: bool, 
+  chatService: chat_service.Service, communityService: community_service.Service, messageService: message_service.Service): 
   Module =
   result = Module()
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, id, isCommunity, communityService)
+  result.controller = controller.newController(result, events, id, isCommunity, communityService, messageService)
   result.moduleLoaded = false
 
 method delete*(self: Module) =
