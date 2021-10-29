@@ -12,6 +12,7 @@ QtObject {
     property var utilsModelInst: utilsModel
     property var walletModelInst: walletModel
     property var profileModelInst: profileModel
+    property var profileModuleInst: profileModule
 
     property var activeCommunity: chatsModelInst.communities.activeCommunity
 

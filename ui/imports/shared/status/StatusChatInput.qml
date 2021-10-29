@@ -859,7 +859,8 @@ Rectangle {
             anchors.leftMargin: Style.current.smallPadding
             anchors.top: parent.top
             anchors.topMargin: Style.current.halfPadding
-            image.source: profileModel.profile.thumbnailImage || profileModel.profile.identicon
+            //TODO move thumbnail image to store
+            image.source: profileModule.model.thumbnailImage || profileModule.model.identicon
             image.isIdenticon: true
             visible: control.isStatusUpdateInput
         }
