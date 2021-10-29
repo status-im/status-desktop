@@ -43,7 +43,7 @@ ScrollView {
         if(parentPopup){
             popup.parentPopup = parentPopup;
         }
-        popup.openPopup(root.store.profileModelInst.profile.pubKey !== fromAuthorParam, userNameParam, fromAuthorParam, identiconParam, textParam, nicknameParam);
+        popup.openPopup(userProfile.pubKey !== fromAuthorParam, userNameParam, fromAuthorParam, identiconParam, textParam, nicknameParam);
     }
 
     StatusImageModal {

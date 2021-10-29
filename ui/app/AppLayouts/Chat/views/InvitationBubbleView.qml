@@ -309,7 +309,7 @@ Item {
                                 }
                                 else if (rectangleBubble.state === "requestToJoin") {
                                     error = root.store.chatsModelInst.communities.requestToJoinCommunity(communityId,
-                                                                                          root.store.profileModelInst.profile.ensVerified ? root.store.profileModelInst.profile.username : "")
+                                                                                          root.store.profileModelInst.profile.ensVerified ? userProfile.username : "")
                                     if (!error) {
                                         rectangleBubble.isPendingRequest = root.store.chatsModelInst.communities.isCommunityRequestPending(communityId)
                                     }

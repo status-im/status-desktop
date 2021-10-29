@@ -150,7 +150,7 @@ Item {
                             id: menuButton
                             width: 32
                             height: 32
-                            visible: model.pubKey.toLowerCase() !== profileModel.profile.pubKey.toLowerCase()
+                            visible: model.pubKey.toLowerCase() !== userProfile.pubKey.toLowerCase()
                             icon.name: "more"
                             type: StatusFlatRoundButton.Type.Secondary
                             onClicked: {
@@ -171,7 +171,7 @@ Item {
                                     text: qsTrId("view-profile")
                                     icon.name: "channel"
                                     onTriggered: openPopup(profilePopup, {
-                                       noFooter: profileModel.profile.pubKey !== model.pubKey,
+                                       noFooter: userProfile.pubKey !== model.pubKey,
                                        userName: model.userName,
                                        fromAuthor: model.pubKey, 
                                        identicon: memberItem.image.source,

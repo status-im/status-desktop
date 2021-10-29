@@ -36,7 +36,7 @@ Item {
     property bool isText: true
     property var clickMessage: function(){}
     property string identicon: store.identicon
-    //property string identicon: profileModel.profile.identicon
+    //property string identicon: userProfile.thumbnailImage
     property int timestamp: 1577872140
     property var messageStore
 

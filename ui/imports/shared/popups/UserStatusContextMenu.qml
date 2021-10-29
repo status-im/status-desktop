@@ -30,12 +30,12 @@ PopupMenu {
             anchors.top: parent.top
             anchors.topMargin: 4
             anchors.horizontalCenter: parent.horizontalCenter
-            image.source: profileModule.model.thumbnailImage || ""
+            image.source: userProfile.thumbnailImage || ""
             image.isIdenticon: true
         }
         StyledText {
             id: username
-            text: Utils.removeStatusEns(root.store.profileModelInst.ens.preferredUsername || profileModule.model.username)
+            text: Utils.removeStatusEns(profileModel.ens.preferredUsername || userProfile.username)
             elide: Text.ElideRight
             maximumLineCount: 3
             horizontalAlignment: Text.AlignHCenter
@@ -71,8 +71,7 @@ PopupMenu {
             hoverEnabled: true
             cursorShape: Qt.PointingHandCursor
             onClicked: {
-                //TODO move profileModule to store
-                openProfilePopup(profileModule.model.username, profileModule.model.pubKey, profileModule.model.thumbnailImage || "");
+                openProfilePopup(userProfile.username, userProfile.pubKey, userProfile.thumbnailImage);
                 root.close()
             }
         }
@@ -87,7 +86,7 @@ PopupMenu {
     Action {
         text: qsTr("Online")
         onTriggered: {
-            if (root.store.profileModelInst.profile.sendUserStatus != true) {
+            if (userProfile.sendUserStatus != true) {
                 root.store.profileModelInst.profile.setSendUserStatus(true)
             }
             root.close()
@@ -101,7 +100,7 @@ PopupMenu {
     Action {
         text: qsTr("Offline")
         onTriggered: {
-            if (root.store.profileModelInst.profile.sendUserStatus != false) {
+            if (userProfile.sendUserStatus != false) {
                 root.store.profileModelInst.profile.setSendUserStatus(false)
             }
             root.close()
