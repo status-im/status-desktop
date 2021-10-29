@@ -10,6 +10,9 @@ import users/module as users_module
 
 import ../../../../app_service/service/chat/service as chat_service
 import ../../../../app_service/service/community/service as community_service
+import ../../../../app_service/service/message/service as message_service
+
+import eventemitter
 
 export io_interface
 
@@ -27,18 +30,20 @@ type
     usersModule: users_module.AccessInterface
     moduleLoaded: bool
 
-proc newModule*(delegate: delegate_interface.AccessInterface, id: string, isCommunity: bool, 
-  chatService: chat_service.Service, communityService: community_service.Service): 
+proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitter, id: string, isCommunity: bool, 
+  chatService: chat_service.Service, communityService: community_service.Service, 
+  messageService: message_service.Service): 
   Module =
   result = Module()
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, id, isCommunity, chatService, communityService)
+  result.controller = controller.newController(result, id, isCommunity, chatService, communityService, messageService)
   result.moduleLoaded = false
 
   result.inputAreaModule = input_area_module.newModule(result, id, isCommunity, chatService, communityService)
-  result.messagesModule = messages_module.newModule(result, id, isCommunity, chatService, communityService)
+  result.messagesModule = messages_module.newModule(result, events, id, isCommunity, chatService, communityService, 
+  messageService)
   result.usersModule = users_module.newModule(result, id, isCommunity, chatService, communityService)
 
 method delete*(self: Module) =
@@ -62,7 +67,7 @@ proc buildChatUI(self: Module) =
     if(selectedItemId.len == 0):
       selectedItemId = item.id
 
-  self.controller.setActiveItemSubItem(selectedItemId, "")
+  self.setActiveItemSubItem(selectedItemId, "")
 
 proc buildCommunityUI(self: Module) =
   var selectedItemId = ""
