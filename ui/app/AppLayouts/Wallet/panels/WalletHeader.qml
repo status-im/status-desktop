@@ -78,7 +78,7 @@ Item {
             onClosed: {
                 destroy();
             }
-            selectedAccount: currentAccount
+            selectedAccount: RootStore.leggacyCurrentAccount
         }
     }
 

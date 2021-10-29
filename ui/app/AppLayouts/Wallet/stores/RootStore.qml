@@ -5,6 +5,10 @@ import QtQuick 2.13
 QtObject {
     id: root
 
+    // TODO: Received modal is not yet migrated
+    property var leggacyAccounts: walletModel.accountsView.accounts
+    property var leggacyCurrentAccount: walletModel.accountsView.currentAccount
+
     property var currentAccount: walletSectionCurrent
     property var accounts: walletSectionAccounts.model
 
