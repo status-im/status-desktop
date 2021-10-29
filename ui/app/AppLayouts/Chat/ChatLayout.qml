@@ -178,7 +178,7 @@ StatusAppThreePanelLayout {
         CommunityUserListPanel {
             currentTime: chatColumn.currentTime
             messageContextMenu: quickActionMessageOptionsMenu
-            profilePubKey: root.rootStore.profileModelInst.profile.pubKey
+            profilePubKey: userProfile.pubKey
             contactsList: root.rootStore.profileModelInst.contacts.list
             community: root.rootStore.chatsModelInst.communities.activeCommunity
         }
@@ -190,7 +190,7 @@ StatusAppThreePanelLayout {
             currentTime: chatColumn.currentTime
             userList: chatColumn.userList
             messageContextMenu: quickActionMessageOptionsMenu
-            profilePubKey: root.rootStore.profileModelInst.profile.pubKey
+            profilePubKey: userProfile.pubKey
             contactsList: root.rootStore.profileModelInst.contacts.list
             isOnline: root.rootStore.chatsModelInst.isOnline
         }

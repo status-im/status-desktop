@@ -54,7 +54,7 @@ StatusModal {
         isEnsVerified = chatsModel.ensView.isEnsVerified(this.fromAuthor)
         isBlocked = profileModel.contacts.isContactBlocked(this.fromAuthor);
         alias = chatsModel.alias(this.fromAuthor) || ""
-        isCurrentUser = profileModel.profile.pubKey === this.fromAuthor
+        isCurrentUser = userProfile.pubKey === this.fromAuthor
         showFooter = _showFooter;
         popup.open()
     }

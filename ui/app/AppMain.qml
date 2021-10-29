@@ -47,8 +47,8 @@ Item {
     }
 
     function getProfileImage(pubkey, isCurrentUser, useLargeImage) {
-        if (isCurrentUser || (isCurrentUser === undefined && pubkey === profileModel.profile.pubKey)) {
-            return profileModel.profile.thumbnailImage
+        if (isCurrentUser || (isCurrentUser === undefined && pubkey === userProfile.pubKey)) {
+            return userProfile.thumbnailImage
         }
 
         const index = profileModel.contacts.list.getContactIndexByPubkey(pubkey)
@@ -130,7 +130,7 @@ Item {
         if(parentPopup){
             popup.parentPopup = parentPopup;
         }
-        popup.openPopup(profileModel.profile.pubKey !== fromAuthorParam, userNameParam, fromAuthorParam, identiconParam, textParam, nicknameParam);
+        popup.openPopup(userProfile.pubKey !== fromAuthorParam, userNameParam, fromAuthorParam, identiconParam, textParam, nicknameParam);
         profilePopupOpened = true
     }
 
@@ -353,7 +353,7 @@ Item {
             navBarProfileButton: StatusNavBarTabButton {
                 id: profileButton
                 property bool opened: false
-                icon.source: profileModel.profile.thumbnailImage || ""
+                icon.source: userProfile.thumbnailImage
                 badge.visible: true
                 badge.anchors.rightMargin: 4
                 badge.anchors.topMargin: 25
@@ -361,10 +361,10 @@ Item {
                 badge.implicitWidth: 15
                 badge.border.color: hovered ? Theme.palette.statusBadge.hoverBorderColor : Theme.palette.statusAppNavBar.backgroundColor
                 badge.color: {
-                    return profileModel.profile.sendUserStatus ? Style.current.green : Style.current.midGrey
+                    return userProfile.sendUserStatus ? Style.current.green : Style.current.midGrey
                     /*
                     // Use this code once support for custom user status is added
-                    switch(profileModel.profile.currentUserStatus){
+                    switch(userProfile.currentUserStatus){
                         case Constants.statusType_Online:
                             return Style.current.green;
                         case Constants.statusType_DoNotDisturb:

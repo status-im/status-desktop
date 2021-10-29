@@ -56,7 +56,7 @@ ModalPopup {
 
     onOpened: {
         addMembers = false;
-        popup.isAdmin = popup.channel.isAdmin(popup.store.profileModelInst.profile.pubKey)
+        popup.isAdmin = popup.channel.isAdmin(userProfile.pubKey)
         btnSelectMembers.enabled = false;
         resetSelectedMembers();
     }
@@ -311,7 +311,7 @@ ModalPopup {
                     font.pixelSize: 17
 
                     StyledText {
-                        visible: model.publicKey === profileModel.profile.pubKey
+                        visible: model.publicKey === userProfile.pubKey
                         anchors.left: parent.right
                         anchors.leftMargin: 5
                         //% "(You)"
