@@ -30,7 +30,7 @@ Item {
         if (!!root.store) {
             switch (root.store.chatsModelInst.channelView.activeChannel.chatType) {
             case Constants.chatTypeOneToOne: return true
-            case Constants.chatTypePrivateGroupChat: return root.store.chatsModelInst.channelView.activeChannel.isAdmin(root.store.profileModelInst.profile.pubKey) ? true : isCurrentUser
+            case Constants.chatTypePrivateGroupChat: return root.store.chatsModelInst.channelView.activeChannel.isAdmin(userProfile.pubKey) ? true : isCurrentUser
             case Constants.chatTypePublic: return isCurrentUser
             case Constants.chatTypeCommunity: return root.store.chatsModelInst.communities.activeCommunity.admin ? true : isCurrentUser
             case Constants.chatTypeStatusUpdate: return false

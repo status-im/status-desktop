@@ -319,7 +319,7 @@ StatusPopupMenu {
             case Constants.chatTypePublic: return false
             case Constants.chatTypeStatusUpdate: return false
             case Constants.chatTypeOneToOne: return true
-            case Constants.chatTypePrivateGroupChat: return root.store.chatsModelInst.channelView.activeChannel.isAdmin(root.store.profileModelInst.profile.pubKey)
+            case Constants.chatTypePrivateGroupChat: return root.store.chatsModelInst.channelView.activeChannel.isAdmin(userProfile.pubKey)
             case Constants.chatTypeCommunity: return root.store.chatsModelInst.communities.activeCommunity.admin
             }
 
