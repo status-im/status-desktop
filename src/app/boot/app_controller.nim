@@ -6,6 +6,7 @@ import ../../app_service/service/contacts/service as contacts_service
 import ../../app_service/service/language/service as language_service
 import ../../app_service/service/chat/service as chat_service
 import ../../app_service/service/community/service as community_service
+import ../../app_service/service/message/service as message_service
 import ../../app_service/service/token/service as token_service
 import ../../app_service/service/transaction/service as transaction_service
 import ../../app_service/service/collectible/service as collectible_service
@@ -22,9 +23,11 @@ import ../core/local_account_settings
 import ../../app_service/service/profile/service as profile_service
 import ../../app_service/service/settings/service as settings_service
 import ../../app_service/service/about/service as about_service
+
 import ../modules/startup/module as startup_module
 import ../modules/main/module as main_module
 
+import ../core/local_account_settings
 import ../core/global_singleton
 
 #################################################
@@ -70,6 +73,7 @@ type
     contactsService: contacts_service.Service
     chatService: chat_service.Service
     communityService: community_service.Service
+    messageService: message_service.Service
     tokenService: token_service.Service
     transactionService: transaction_service.Service
     collectibleService: collectible_service.Service
@@ -136,12 +140,14 @@ proc newAppController*(appService: AppService): AppController =
   result.contactsService = contacts_service.newService(appService.status.events, appService.threadpool)
   result.chatService = chat_service.newService()
   result.communityService = community_service.newService(result.chatService)
-  result.tokenService = token_service.newService(appService.status.events, appService.threadpool, result.settingService, result.settingsService)
+  result.messageService = message_service.newService(appService.status.events, appService.threadpool)
+  result.tokenService = token_service.newService(appService.status.events, appService.threadpool, result.settingService, 
+  result.settingsService)
   result.collectibleService = collectible_service.newService(result.settingService)
-  result.walletAccountService = wallet_account_service.newService(
-    appService.status.events, result.settingService, result.tokenService
-  )
-  result.transactionService = transaction_service.newService(appService.status.events, appService.threadpool, result.walletAccountService)
+  result.walletAccountService = wallet_account_service.newService(appService.status.events, result.settingService, 
+  result.tokenService)
+  result.transactionService = transaction_service.newService(appService.status.events, appService.threadpool, 
+  result.walletAccountService)
   result.bookmarkService = bookmark_service.newService()
   result.profileService = profile_service.newService()
   result.aboutService = about_service.newService()
@@ -173,6 +179,7 @@ proc newAppController*(appService: AppService): AppController =
     result.accountsService, 
     result.chatService,
     result.communityService,
+    result.messageService,
     result.tokenService,
     result.transactionService,
     result.collectibleService,
@@ -288,7 +295,7 @@ proc load(self: AppController) =
   self.buildAndRegisterUserProfile()
 
   # load main module
-  self.mainModule.load(self.chatService, self.communityService)
+  self.mainModule.load(self.appService.status.events, self.chatService, self.communityService, self.messageService)
 
 proc userLoggedIn*(self: AppController) =
   #################################################
