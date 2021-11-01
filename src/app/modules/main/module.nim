@@ -269,3 +269,13 @@ method enableSection*[T](self: Module[T], sectionType: SectionType) =
 
 method disableSection*[T](self: Module[T], sectionType: SectionType) =
   self.view.model().disableSection(sectionType)
+
+method getChatSection*[T](self: Module[T]): QVariant =
+  return self.chatSectionModule.getChatSection()
+
+method getCommunitySection*[T](self: Module[T], communityId: string): QVariant =
+  if(not self.communitySectionsModule.contains(communityId)):
+    echo "main-module, unexisting community key: ", communityId
+    return
+
+  return self.communitySectionsModule[communityId].getChatSection()
