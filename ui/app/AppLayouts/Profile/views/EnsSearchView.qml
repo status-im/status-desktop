@@ -268,6 +268,7 @@ Item {
             anchors.top: ensTypeRect.bottom
             wrapMode: Text.WordWrap
             anchors.topMargin: Style.current.bigPadding
+            color: Theme.palette.directColor1
         }
     }
 }

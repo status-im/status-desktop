@@ -3,6 +3,7 @@ import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.14
 
 import StatusQ.Core 0.1
+import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 
 import utils 1.0
@@ -50,6 +51,7 @@ Item {
                 anchors.right: parent.right
                 horizontalAlignment: Text.AlignHCenter
                 wrapMode: Text.WordWrap
+                color: Theme.palette.directColor1
             }
 
             StatusBaseText {
@@ -63,6 +65,7 @@ Item {
                 anchors.right: parent.right
                 horizontalAlignment: Text.AlignHCenter
                 wrapMode: Text.WordWrap
+                color: Theme.palette.directColor1
             }
 
             StatusBaseText {
@@ -74,6 +77,7 @@ Item {
                 anchors.topMargin: 24
                 font.weight: Font.Bold
                 font.pixelSize: 14
+                color: Theme.palette.directColor1
             }
 
             StatusBaseText {
@@ -88,6 +92,7 @@ Item {
                 wrapMode: Text.WordWrap
                 font.weight: Font.Bold
                 font.pixelSize: 14
+                color: Theme.palette.directColor1
             }
 
             StatusBaseText {
@@ -101,6 +106,7 @@ Item {
                 anchors.right: parent.right
                 wrapMode: Text.WordWrap
                 font.pixelSize: 14
+                color: Theme.palette.directColor1
             }
 
             StatusBaseText {
@@ -112,6 +118,7 @@ Item {
                 anchors.topMargin: 24
                 font.weight: Font.Bold
                 font.pixelSize: 14
+                color: Theme.palette.directColor1
             }
 
             StatusBaseText {
@@ -126,6 +133,7 @@ Item {
                 wrapMode: Text.WordWrap
                 font.weight: Font.Bold
                 font.pixelSize: 14
+                color: Theme.palette.directColor1
             }
 
             StatusBaseText {
@@ -139,6 +147,7 @@ Item {
                 anchors.right: parent.right
                 wrapMode: Text.WordWrap
                 font.pixelSize: 14
+                color: Theme.palette.directColor1
             }
 
             StatusBaseText {
@@ -150,6 +159,7 @@ Item {
                 anchors.topMargin: 24
                 font.weight: Font.Bold
                 font.pixelSize: 14
+                color: Theme.palette.directColor1
             }
 
             StatusBaseText {
@@ -164,6 +174,7 @@ Item {
                 wrapMode: Text.WordWrap
                 font.weight: Font.Bold
                 font.pixelSize: 14
+                color: Theme.palette.directColor1
             }
 
             StatusBaseText {
@@ -177,6 +188,7 @@ Item {
                 wrapMode: Text.WordWrap
                 anchors.topMargin: 24
                 font.pixelSize: 14
+                color: Theme.palette.directColor1
             }
 
             StatusBaseText {
@@ -188,6 +200,7 @@ Item {
                 anchors.topMargin: 24
                 font.weight: Font.Bold
                 font.pixelSize: 14
+                color: Theme.palette.directColor1
             }
 
             StatusBaseText {
@@ -202,6 +215,7 @@ Item {
                 wrapMode: Text.WordWrap
                 font.weight: Font.Bold
                 font.pixelSize: 14
+                color: Theme.palette.directColor1
             }
 
             StatusBaseText {
@@ -215,6 +229,7 @@ Item {
                 anchors.right: parent.right
                 wrapMode: Text.WordWrap
                 font.pixelSize: 14
+                color: Theme.palette.directColor1
             }
 
 
@@ -227,6 +242,7 @@ Item {
                 anchors.topMargin: 24
                 font.weight: Font.Bold
                 font.pixelSize: 14
+                color: Theme.palette.directColor1
             }
 
             StatusBaseText {
@@ -241,6 +257,7 @@ Item {
                 wrapMode: Text.WordWrap
                 font.weight: Font.Bold
                 font.pixelSize: 14
+                color: Theme.palette.directColor1
             }
 
             StatusBaseText {
@@ -254,6 +271,7 @@ Item {
                 anchors.right: parent.right
                 wrapMode: Text.WordWrap
                 font.pixelSize: 14
+                color: Theme.palette.directColor1
             }
 
             StatusBaseText {
@@ -267,6 +285,7 @@ Item {
                 anchors.right: parent.right
                 wrapMode: Text.WordWrap
                 font.pixelSize: 11
+                color: Theme.palette.directColor1
             }
         }
     }
