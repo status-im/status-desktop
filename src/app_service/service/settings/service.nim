@@ -1,10 +1,11 @@
-import json, json_serialization, sugar, sequtils, chronicles
-# import status/statusgo_backend_new/custom_tokens as custom_tokens
-import json, tables, sugar, sequtils, strutils, atomics, os
+import json, json_serialization, chronicles
+
+import status/types/[rpc_response]
 
 import status/statusgo_backend/settings as status_go_settings
 import status/statusgo_backend/accounts as status_accounts
 from status/types/setting import Setting
+import status/[fleet]
 
 import ./service_interface, ./dto
 
@@ -21,13 +22,14 @@ const DEFAULT_NETWORK_NAME = "mainnet_rpc"
 
 type 
   Service* = ref object of ServiceInterface
-    # profile: Dto
+    fleet: FleetModel
 
 method delete*(self: Service) =
   discard
 
-proc newService*(): Service =
+proc newService*(fleet: FleetModel): Service =
   result = Service()
+  result.fleet = fleet
 
 method init*(self: Service) =
   try:
@@ -83,3 +85,12 @@ method getCurrentNetworkDetails*(self: Service): NetworkDetails =
 
 method getNetworks*(self: Service): seq[NetworkDetails] =
   getSetting[seq[NetworkDetails]](Setting.Networks_Networks)
+
+method getFleet*(self: Service): string =
+  $status_go_settings.getFleet()
+
+method setFleet*(self: Service, fleet: Fleet): StatusGoError =
+  status_go_settings.setFleet(self.fleet.config, fleet)
+
+method setWakuVersion*(self: Service, version: int) =
+  status_go_settings.setWakuVersion(version)

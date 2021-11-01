@@ -25,6 +25,7 @@ import ./storesync/module as storesync_module
 import ./devicesync/module as devicesync_module
 import ./about/module as about_module
 import ./network/module as network_module
+import ./fleets/module as fleet_module
 
 import eventemitter
 
@@ -48,6 +49,7 @@ type
     aboutModule: about_module.AccessInterface
     deviceSyncModule: devicesync_module.AccessInterface
     networkModule: network_module.AccessInterface
+    fleetModule: fleet_module.AccessInterface
 
 proc newModule*[T](delegate: T,
   events: EventEmitter,
@@ -82,6 +84,7 @@ proc newModule*[T](delegate: T,
   result.storesyncModule = storesync_module.newModule(result, syncnodeService)
   result.deviceSyncModule = devicesync_module.newModule(result, events, deviceSyncService)
   result.networkModule = network_module.newModule(result, settingsService, networkService)
+  result.fleetModule = fleet_module.newModule(result, settingsService)
 
   singletonInstance.engine.setRootContextProperty("deviceSyncModule", result.viewVariant)
 
@@ -112,6 +115,7 @@ method load*[T](self: Module[T]) =
   self.storesyncModule.load()
   self.deviceSyncModule.load()
   self.networkModule.load()
+  self.fleetModule.load()
 
   self.moduleLoaded = true
   self.delegate.profileSectionDidLoad()

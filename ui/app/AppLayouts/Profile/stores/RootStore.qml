@@ -34,7 +34,7 @@ QtObject {
     property string ensRegisterAddress: utilsModelInst.ensRegisterAddress
     property string etherscanLink: walletModelInst.utilsView.etherscanLink
     property string pubKey: profile.pubKey
-    property string fleet: profileModelInst.fleets.fleet
+    property string fleet: fleetsModule.fleet
     property string bloomLevel: nodeModelInst.bloomLevel
     property string currentNetwork: networkModuleInst.current
     property var customNetworkList: networkModuleInst.customNetworkList
@@ -377,5 +377,9 @@ QtObject {
 
     function setMessagesFromContactsOnly(checked) {
         privacyModule.changeMessagesFromContactsOnly(checked)
+    }
+
+    function setFleet(fleet) {
+        fleetsModule.changeFleet(fleet)
     }
 }

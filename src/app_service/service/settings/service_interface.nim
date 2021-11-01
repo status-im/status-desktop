@@ -7,6 +7,8 @@ export dto
 export network_details
 export node_config
 export upstream_config
+import status/types/[fleet]
+import status/types/[rpc_response]
 
 type 
   ServiceInterface* {.pure inheritable.} = ref object of RootObj
@@ -52,4 +54,13 @@ method getCurrentNetworkDetails*(self: ServiceInterface): NetworkDetails {.base.
   raise newException(ValueError, "No implementation available")
 
 method getNetworks*(self: ServiceInterface): seq[NetworkDetails] {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getFleet*(self: ServiceInterface): string {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method setFleet*(self: ServiceInterface, newFleet: Fleet): StatusGoError {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method setWakuVersion*(self: ServiceInterface, version: int) {.base.} =
   raise newException(ValueError, "No implementation available")
