@@ -2,6 +2,7 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import QtMultimedia 5.13
+import Qt.labs.qmlmodels 1.0
 
 import utils 1.0
 import shared 1.0
@@ -358,12 +359,21 @@ Item {
                 }
                 else if(mainModule.activeSection.sectionType === Constants.appSection.community) {
 
-                    /*************************************/
-                    // This will be refactored later
-                    chatsModel.communities.setActiveCommunity(mainModule.activeSection.id)
-                    /*************************************/
+                    for(let i = this.children.length - 1; i >=0; i--)
+                    {
+                        var obj = this.children[i];
+                        if(obj && obj.sectionId == mainModule.activeSection.id)
+                        {
+                            /*************************************/
+                            // This will be refactored/removed later
+                            chatsModel.communities.setActiveCommunity(mainModule.activeSection.id)
+                            /*************************************/
 
-                    return 99 //Don't know why, but that's how it was in Utils::getAppSectionIndex function.
+                            return i
+                        }
+                    }
+
+                    return 0
                 }
                 else if(mainModule.activeSection.sectionType === Constants.appSection.wallet) {
                     return 1
@@ -420,6 +430,10 @@ Item {
                 messageStore: appMain.rootStore.messageStore
                 onProfileButtonClicked: {
                     appMain.changeAppSectionBySectionType(Constants.appSection.profile);
+                }
+
+                Component.onCompleted: {
+                    chatSectionModule = mainModule.getChatSection()
                 }
             }
 
@@ -493,6 +507,33 @@ Item {
                 Layout.fillWidth: true
                 Layout.alignment: Qt.AlignLeft | Qt.AlignTop
                 Layout.fillHeight: true
+            }
+
+            Repeater{
+                model: mainModule.sectionsModel
+
+                delegate: DelegateChooser {
+                    id: delegateChooser
+                    role: "sectionType"
+                    DelegateChoice {
+                        roleValue: Constants.appSection.community
+                        delegate: ChatLayout {
+                            property string sectionId: model.id
+                            Layout.fillWidth: true
+                            Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+                            Layout.fillHeight: true
+
+                            onProfileButtonClicked: {
+                                appMain.changeAppSectionBySectionType(Constants.appSection.profile);
+                            }
+
+                            Component.onCompleted: {
+                                mainModule.setCommunitySection(model.id)
+                                chatSectionModule = mainModule.getCommunitySection()
+                            }
+                        }
+                    }
+                }
             }
         }
 
