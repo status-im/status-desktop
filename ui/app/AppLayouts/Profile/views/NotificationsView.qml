@@ -177,6 +177,7 @@ ScrollView {
                 font.pixelSize: 15
                 anchors.left: parent.left
                 anchors.right: parent.right
+                color: Theme.palette.directColor1
             }
 
             Column {
@@ -236,6 +237,7 @@ ScrollView {
                 text: qsTrId("no-preview-or-advanced--go-to-notification-center")
                 font.pixelSize: 15
                 anchors.left: parent.left
+                color: Theme.palette.directColor1
             }
         }
 
