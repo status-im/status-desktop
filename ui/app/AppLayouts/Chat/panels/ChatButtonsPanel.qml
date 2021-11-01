@@ -19,7 +19,7 @@ Rectangle {
     signal setMessageActive(string messageId, bool active)
     signal clickMessage(bool isProfileClick, bool isSticker, bool isImage, var image, bool emojiOnly)
 
-    visible: !activityCenterMessage &&
+    visible: !placeholderMessage && !activityCenterMessage &&
              (buttonsContainer.parentIsHovered || isMessageActive)
              && contentType !== Constants.transactionType
     width: buttonRow.width + buttonsContainer.containerMargin * 2
