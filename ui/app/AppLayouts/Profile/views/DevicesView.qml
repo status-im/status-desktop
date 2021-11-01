@@ -39,6 +39,7 @@ Item {
             //% "Please set a name for your device."
             text: qsTrId("pairing-please-set-a-name")
             font.pixelSize: 14
+            color: Theme.palette.directColor1
         }
 
         Input {
@@ -114,6 +115,7 @@ Item {
                 anchors.topMargin: 6
                 anchors.left: advertiseImg.right
                 anchors.leftMargin: Style.current.padding
+                color: Theme.palette.directColor1
             }
 
             MouseArea {
@@ -159,6 +161,7 @@ Item {
             text: qsTrId("paired-devices")
             font.pixelSize: 16
             font.weight: Font.Bold
+            color: Theme.palette.directColor1
         }
 
         ListView {
@@ -197,6 +200,7 @@ Item {
                     font.pixelSize: 14
                     anchors.left: enabledIcon.right
                     anchors.leftMargin: Style.current.padding
+                    color: Theme.palette.directColor1
                 }
                 StatusSwitch { 
                     id: devicePairedSwitch
