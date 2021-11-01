@@ -40,6 +40,12 @@ method removeContact*(self: AccessInterface, publicKey: string): void {.base.} =
 method changeContactNickname*(self: AccessInterface, accountKeyUID: string, publicKey: string, nicknameToSet: string): void {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method lookupContact*(self: AccessInterface, value: string): void {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method contactLookedUp*(self: AccessInterface, id: string): void {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 type
   ## Abstract class (concept) which must be implemented by object/s used in this 
   ## module.
