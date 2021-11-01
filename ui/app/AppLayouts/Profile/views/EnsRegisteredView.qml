@@ -22,6 +22,7 @@ Item {
         anchors.topMargin: Style.current.bigPadding
         font.weight: Font.Bold
         font.pixelSize: 20
+        color: Theme.palette.directColor1
     }
 
 
@@ -59,6 +60,7 @@ Item {
         anchors.right: parent.right
         horizontalAlignment: Text.AlignHCenter
         wrapMode: Text.WordWrap
+        color: Theme.palette.directColor1
     }
     
     StatusBaseText {
@@ -72,6 +74,7 @@ Item {
         anchors.right: parent.right
         horizontalAlignment: Text.AlignHCenter
         wrapMode: Text.WordWrap
+        color: Theme.palette.directColor1
     }
 
     StatusBaseText {
@@ -85,7 +88,7 @@ Item {
         anchors.right: parent.right
         horizontalAlignment: Text.AlignHCenter
         wrapMode: Text.WordWrap
-        color: Theme.palette.directColor7
+        color: Theme.palette.baseColor1
 
     }
 

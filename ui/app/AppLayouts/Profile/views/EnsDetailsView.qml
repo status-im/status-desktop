@@ -3,6 +3,7 @@ import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.14
 
 import StatusQ.Core 0.1
+import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1 as StatusQControls
 import StatusQ.Components 0.1
 
@@ -29,6 +30,7 @@ Item {
         anchors.topMargin: 24
         font.weight: Font.Bold
         font.pixelSize: 20
+        color: Theme.palette.directColor1
     }
 
     Component {
