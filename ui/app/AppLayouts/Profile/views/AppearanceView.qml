@@ -11,6 +11,7 @@ import shared.status 1.0
 import "../../Chat/views"
 
 import StatusQ.Core 0.1
+import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1 as StatusQ
 
 import "../popups"
@@ -120,6 +121,7 @@ ScrollView {
             font.pixelSize: 15
             //% "Change font size"
             text: qsTrId("change-font-size")
+            color: Theme.palette.directColor1
         }
 
         StatusQ.StatusSlider {
@@ -150,6 +152,7 @@ ScrollView {
                 //% "XS"
                 text: qsTrId("xs")
                 Layout.preferredWidth: fontSizeSlider.width/6
+                color: Theme.palette.directColor1
             }
 
             StatusBaseText {
@@ -158,6 +161,7 @@ ScrollView {
                 text: qsTrId("s")
                 Layout.preferredWidth: fontSizeSlider.width/6
                 Layout.leftMargin: 2
+                color: Theme.palette.directColor1
             }
 
             StatusBaseText {
@@ -166,6 +170,7 @@ ScrollView {
                 text: qsTrId("m")
                 Layout.preferredWidth: fontSizeSlider.width/6
                 Layout.leftMargin: 2
+                color: Theme.palette.directColor1
             }
 
             StatusBaseText {
@@ -174,6 +179,7 @@ ScrollView {
                 text: qsTrId("l")
                 Layout.preferredWidth: fontSizeSlider.width/6
                 Layout.leftMargin: 2
+                color: Theme.palette.directColor1
             }
 
             StatusBaseText {
@@ -182,6 +188,7 @@ ScrollView {
                 text: qsTrId("xl")
                 Layout.preferredWidth: fontSizeSlider.width/6
                 Layout.leftMargin: 0
+                color: Theme.palette.directColor1
             }
 
             StatusBaseText {
@@ -190,6 +197,7 @@ ScrollView {
                 text: qsTrId("xxl")
                 Layout.alignment: Qt.AlignRight
                 Layout.leftMargin: -Style.current.smallPadding
+                color: Theme.palette.directColor1
             }
         }
 
@@ -200,6 +208,7 @@ ScrollView {
             anchors.left: parent.left
             font.pixelSize: 15
             text: qsTr("Change Zoom (requires restart)")
+            color: Theme.palette.directColor1
         }
 
         StatusQ.StatusSlider {
@@ -252,6 +261,7 @@ ScrollView {
             StatusBaseText {
                 font.pixelSize: 15
                 text: "50%"
+                color: Theme.palette.directColor1
             }
 
             Item {
@@ -262,6 +272,7 @@ ScrollView {
                 font.pixelSize: 15
                 Layout.leftMargin: width / 2
                 text: "100%"
+                color: Theme.palette.directColor1
             }
 
             Item {
@@ -272,6 +283,7 @@ ScrollView {
                 font.pixelSize: 15
                 Layout.leftMargin: width / 2
                 text: "150%"
+                color: Theme.palette.directColor1
             }
 
             Item {
@@ -281,6 +293,7 @@ ScrollView {
             StatusBaseText {
                 font.pixelSize: 15
                 text: "200%"
+                color: Theme.palette.directColor1
             }
         }
 
