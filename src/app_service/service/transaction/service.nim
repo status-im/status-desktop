@@ -1,5 +1,8 @@
-import chronicles, sequtils, sugar, stint, json
+import NimQml, chronicles, sequtils, sugar, stint, json
 import status/statusgo_backend_new/transactions as transactions
+
+import eventemitter
+import ../../tasks/[qt, threadpool]
 
 import ../wallet_account/service as wallet_account_service
 import ./service_interface, ./dto
@@ -12,68 +15,81 @@ logScope:
 import ../../../app_service/[main]
 import ../../../app_service/tasks/[qt, threadpool]
 
+include async_tasks
+
+# Signals which may be emitted by this service:
+const SIGNAL_TRANSACTIONS_LOADED* = "SIGNAL_TRANSACTIONS_LOADED"
+
 type
-  LoadTransactionsTaskArg* = ref object of QObjectTaskArg
-    address: string
-    toBlock: Uint256
-    limit: int
-    loadMore: bool
+  TransactionsLoadedArgs* = ref object of Args
+    transactions*: seq[TransactionDto]
+    address*: string
+    wasFetchMore*: bool
 
-const loadTransactionsTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
-  let
-    arg = decode[LoadTransactionsTaskArg](argEncoded)
-    output = %*{
-      "address": arg.address,
-      "history": transactions.getTransfersByAddress(arg.address, arg.toBlock, arg.limit, arg.loadMore),
-      "loadMore": arg.loadMore
-    }
-  arg.finish(output)
-
-type 
-  Service* = ref object of service_interface.ServiceInterface
+QtObject:
+  type Service* = ref object of QObject
+    events: EventEmitter
+    threadpool: ThreadPool
     walletAccountService: wallet_account_service.ServiceInterface
 
-method delete*(self: Service) =
-  discard
+  proc delete*(self: Service) =
+    self.QObject.delete
 
-proc newService*(walletAccountService: wallet_account_service.ServiceInterface): Service =
-  result = Service()
-  result.walletAccountService = walletAccountService
+  proc newService*(events: EventEmitter, threadpool: ThreadPool, walletAccountService: wallet_account_service.ServiceInterface): Service =
+    new(result, delete)
+    result.QObject.setup
+    result.events = events
+    result.threadpool = threadpool
+    result.walletAccountService = walletAccountService
 
-method init*(self: Service) =
-  discard
+  proc init*(self: Service) =
+    discard
 
-method checkRecentHistory*(self: Service) =
-  try:
-    let addresses = self.walletAccountService.getWalletAccounts().map(a => a.address)
-    transactions.checkRecentHistory(addresses)
-  except Exception as e:
-    let errDesription = e.msg
-    error "error: ", errDesription
-    return
+  proc checkRecentHistory*(self: Service) =
+    try:
+      let addresses = self.walletAccountService.getWalletAccounts().map(a => a.address)
+      transactions.checkRecentHistory(addresses)
+    except Exception as e:
+      let errDesription = e.msg
+      error "error: ", errDesription
+      return
 
-method getTransfersByAddress*(self: Service, address: string, toBlock: Uint256, limit: int, loadMore: bool = false): seq[TransactionDto] =
-  try:
-    let response = transactions.getTransfersByAddress(address, toBlock, limit, loadMore)
+  proc getTransfersByAddress*(self: Service, address: string, toBlock: Uint256, limit: int, loadMore: bool = false): seq[TransactionDto] =
+    try:
+      let response = transactions.getTransfersByAddress(address, toBlock, limit, loadMore)
 
-    result = map(
-      response.result.getElems(),
-      proc(x: JsonNode): TransactionDto = x.toTransactionDto()
+      result = map(
+        response.result.getElems(),
+        proc(x: JsonNode): TransactionDto = x.toTransactionDto()
+      )
+    except Exception as e:
+      let errDesription = e.msg
+      error "error: ", errDesription
+      return
+
+  proc setTrxHistoryResult*(self: Service, historyJSON: string) {.slot.} =
+    let historyData = parseJson(historyJSON)
+    let address = historyData["address"].getStr
+    let wasFetchMore = historyData["loadMore"].getBool
+    var transactions: seq[TransactionDto] = @[]
+    for tx in historyData["history"]["result"].getElems():
+      transactions.add(tx.toTransactionDto())
+
+    # emit event
+    self.events.emit(SIGNAL_TRANSACTIONS_LOADED, TransactionsLoadedArgs(
+      transactions: transactions,
+      address: address,
+      wasFetchMore: wasFetchMore
+    ))
+
+  proc loadTransactions*(self: Service, address: string, toBlock: Uint256, limit: int = 20, loadMore: bool = false) =
+    let arg = LoadTransactionsTaskArg(
+      address: address,
+      tptr: cast[ByteAddress](loadTransactionsTask),
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "setTrxHistoryResult",
+      toBlock: toBlock,
+      limit: limit,
+      loadMore: loadMore
     )
-  except Exception as e:
-    let errDesription = e.msg
-    error "error: ", errDesription
-    return
-
-method getTransfersByAddressTemp*(self: Service, address: string, toBlock: Uint256, limit: int, loadMore: bool = false): string =
-  try:
-    let resp = transactions.getTransfersByAddress(address, toBlock, limit, loadMore)
-    return $(%*{
-      "address": address,
-      "history": resp,
-      "loadMore": loadMore
-    })
-  except Exception as e:
-    let errDesription = e.msg
-    error "error: ", errDesription
-    return
+    self.threadpool.start(arg)

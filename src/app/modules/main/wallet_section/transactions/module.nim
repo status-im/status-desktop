@@ -22,7 +22,7 @@ method loadTransactions*[T](self: Module[T], address: string, toBlock: string = 
 proc newModule*[T](
   delegate: T,
   events: EventEmitter,
-  transactionService: transaction_service.ServiceInterface,
+  transactionService: transaction_service.Service,
   walletAccountService: wallet_account_service.ServiceInterface
 ): Module[T] =
   result = Module[T]()
