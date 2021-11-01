@@ -19,7 +19,7 @@ type
   Controller*[T: controller_interface.DelegateInterface] = ref object of controller_interface.AccessInterface
     delegate: io_interface.AccessInterface
     events: EventEmitter
-    transactionService: transaction_service.ServiceInterface
+    transactionService: transaction_service.Service
     walletAccountService: wallet_account_service.ServiceInterface
 
 # Forward declaration
@@ -29,7 +29,7 @@ method getWalletAccounts*[T](self: Controller[T]): seq[WalletAccountDto]
 proc newController*[T](
   delegate: io_interface.AccessInterface, 
   events: EventEmitter,
-  transactionService: transaction_service.ServiceInterface,
+  transactionService: transaction_service.Service,
   walletAccountService: wallet_account_service.ServiceInterface
 ): Controller[T] =
   result = Controller[T]()
@@ -61,6 +61,10 @@ method init*[T](self: Controller[T]) =
         self.delegate.setHistoryFetchState(addresses, false)
       else:
         echo "Unhandled wallet signal: ", data.eventType
+  
+  self.events.on(SIGNAL_TRANSACTIONS_LOADED) do(e:Args):
+    let args = TransactionsLoadedArgs(e)
+    self.delegate.setTrxHistoryResult(args.transactions, args.address, args.wasFetchMore)
 
 method checkRecentHistory*[T](self: Controller[T]) =
   self.transactionService.checkRecentHistory()
@@ -75,26 +79,4 @@ method getAccountByAddress*[T](self: Controller[T], address: string): WalletAcco
   self.walletAccountService.getAccountByAddress(address)
 
 method loadTransactions*[T](self: Controller[T], address: string, toBlock: Uint256, limit: int = 20, loadMore: bool = false) =
-  let transactions = self.transactionService.getTransfersByAddressTemp(address, toBlock, limit, loadMore)
-  self.setTrxHistoryResult(transactions)
-  # TODO reimplement thread task
-  # let arg = LoadTransactionsTaskArg(
-  #   address: address,
-  #   tptr: cast[ByteAddress](loadTransactionsTask),
-  #   vptr: cast[ByteAddress](self.vptr),
-  #   slot: "setTrxHistoryResult",
-  #   toBlock: toBlock,
-  #   limit: limit,
-  #   loadMore: loadMore
-  # )
-  # self.appService.threadpool.start(arg)
-
-method setTrxHistoryResult*[T](self: Controller[T], historyJSON: string) {.slot.} =
-  let historyData = parseJson(historyJSON)
-  let address = historyData["address"].getStr
-  let wasFetchMore = historyData["loadMore"].getBool
-  var transactions: seq[TransactionDto] = @[]
-  for tx in historyData["history"]["result"].getElems():
-    transactions.add(tx.toTransactionDto())
-
-  self.delegate.setTrxHistoryResult(transactions, address, wasFetchMore)
+  self.transactionService.loadTransactions(address, toBlock, limit, loadMore)
