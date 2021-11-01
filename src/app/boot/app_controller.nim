@@ -133,7 +133,7 @@ proc newAppController*(appService: AppService): AppController =
   result.walletAccountService = wallet_account_service.newService(
     appService.status.events, result.settingService, result.tokenService
   )
-  result.transactionService = transaction_service.newService(result.walletAccountService)
+  result.transactionService = transaction_service.newService(appService.status.events, appService.threadpool, result.walletAccountService)
   result.bookmarkService = bookmark_service.newService()
   result.profileService = profile_service.newService()
   result.settingsService = settings_service.newService()
