@@ -130,10 +130,8 @@ method load*(self: Module) =
   self.view.load()
   
   if(self.controller.isCommunity()):
-    singletonInstance.engine.setRootContextProperty("communitySectionModule", self.viewVariant)
     self.buildCommunityUI()
   else:
-    singletonInstance.engine.setRootContextProperty("chatSectionModule", self.viewVariant)
     self.buildChatUI()
 
   self.inputAreaModule.load()
@@ -190,3 +188,6 @@ method activeItemSubItemSet*(self: Module, itemId: string, subItemId: string) =
   
   self.view.model().setActiveItemSubItem(itemId, subItemId)
   self.view.activeItemSubItemSet(item, subItem)
+
+method getChatSection*(self: Module): QVariant =
+  return self.viewVariant

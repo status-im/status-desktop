@@ -10,6 +10,7 @@ QtObject:
       modelVariant: QVariant
       activeSection: ActiveSection
       activeSectionVariant: QVariant
+      tmpCommunityId: string # shouldn't be used anywhere except in setCommunitySection/getCommunitySection procs
       
   proc delete*(self: View) =
     self.model.delete
@@ -87,4 +88,20 @@ QtObject:
     let item = self.model.getItemBySectionType(sectionType.SectionType)
     self.delegate.setActiveSection(item)
 
-  
+  # Since we cannot return QVariant from the proc which has arguments, so cannot have proc like this:
+  # getCommunitySection(self: View, communityId: string): QVariant {.slot.}
+  # we're using combinaiton of 
+  # setCommunitySection/getCommunitySection procs
+  proc setCommunitySection*(self: View, communityId: string) {.slot.} =
+    self.tmpCommunityId = communityId
+
+  proc getCommunitySection*(self: View): QVariant {.slot.} =
+    var communityVariant = self.delegate.getCommunitySection(self.tmpCommunityId)
+    self.tmpCommunityId = ""
+    if(communityVariant.isNil):
+      return newQVariant()
+    
+    return communityVariant
+
+  proc getChatSection*(self: View): QVariant {.slot.} =
+    return self.delegate.getChatSection()
