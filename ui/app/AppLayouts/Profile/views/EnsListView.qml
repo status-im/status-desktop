@@ -65,7 +65,7 @@ Item {
                     anchors.top: usernameTxt.bottom
                     anchors.topMargin: 2
                     text: username.substr(username.indexOf("."))
-                    color: Style.current.darkGrey
+                    color: Theme.palette.baseColor1
                 }
             }
         }
@@ -78,7 +78,7 @@ Item {
                     //% "(pending)"
                     text: username  + " " + (isPending ? qsTrId("-pending-") : "")
                     font.pixelSize: 16
-                    color: Style.current.textColor
+                    color: Theme.palette.directColor1
                     anchors.top: parent.top
                     anchors.topMargin: 5
                 }
@@ -142,6 +142,7 @@ Item {
             anchors.topMargin: 24
             font.weight: Font.Bold
             font.pixelSize: 20
+            color: Theme.palette.directColor1
         }
 
         Item {
@@ -187,6 +188,7 @@ Item {
             anchors.top: addUsername.bottom
             anchors.topMargin: 24
             font.pixelSize: 16
+            color: Theme.palette.directColor1
         }
 
         Item {
@@ -231,6 +233,7 @@ Item {
             anchors.top: ensList.bottom
             anchors.topMargin: 24
             font.pixelSize: 16
+            color: Theme.palette.directColor1
         }
 
         Item {
@@ -249,6 +252,7 @@ Item {
                 text: qsTrId("primary-username")
                 font.pixelSize: 14
                 font.weight: Font.Bold
+                color: Theme.palette.directColor1
             }
 
             StatusBaseText {
@@ -259,6 +263,7 @@ Item {
                 anchors.left: usernameLabel.right
                 anchors.leftMargin: Style.current.padding
                 font.pixelSize: 14
+                color: Theme.palette.directColor1
             }
 
             MouseArea {

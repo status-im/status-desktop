@@ -30,6 +30,7 @@ Item {
         anchors.topMargin: 24
         font.weight: Font.Bold
         font.pixelSize: 20
+        color: Theme.palette.directColor1
     }
 
     Loader {
@@ -91,6 +92,7 @@ Item {
                     wrapMode: Text.WordWrap
                     anchors.left: parent.left
                     anchors.right: parent.right
+                    color: Theme.palette.directColor1
                 }
 
                 StatusBaseText {
@@ -99,6 +101,7 @@ Item {
                     wrapMode: Text.WordWrap
                     anchors.left: parent.left
                     anchors.right: parent.right
+                    color: Theme.palette.directColor1
                 }
 
                 StatusBaseText {
@@ -107,6 +110,7 @@ Item {
                     wrapMode: Text.WordWrap
                     anchors.left: parent.left
                     anchors.right: parent.right
+                    color: Theme.palette.directColor1
                 }
 
                 StatusBaseText {
@@ -115,6 +119,7 @@ Item {
                     wrapMode: Text.WordWrap
                     anchors.left: parent.left
                     anchors.right: parent.right
+                    color: Theme.palette.directColor1
                 }
 
                 StatusBaseText {
@@ -123,6 +128,7 @@ Item {
                     wrapMode: Text.WordWrap
                     anchors.left: parent.left
                     anchors.right: parent.right
+                    color: Theme.palette.directColor1
                 }
 
                 StatusBaseText {
@@ -131,6 +137,7 @@ Item {
                     wrapMode: Text.WordWrap
                     anchors.left: parent.left
                     anchors.right: parent.right
+                    color: Theme.palette.directColor1
                 }
 
                 StatusBaseText {
@@ -139,6 +146,7 @@ Item {
                     wrapMode: Text.WordWrap
                     anchors.left: parent.left
                     anchors.right: parent.right
+                    color: Theme.palette.directColor1
                 }
 
                 StatusBaseText {
@@ -148,6 +156,7 @@ Item {
                     anchors.left: parent.left
                     anchors.right: parent.right
                     font.weight: Font.Bold
+                    color: Theme.palette.directColor1
                 }
 
                 StatusBaseText {
@@ -157,6 +166,7 @@ Item {
                     anchors.left: parent.left
                     anchors.right: parent.right
                     font.family: Style.current.fontHexRegular.name
+                    color: Theme.palette.directColor1
                 }
 
                 StatusBaseText {
@@ -165,6 +175,7 @@ Item {
                     anchors.left: parent.left
                     anchors.right: parent.right
                     onLinkActivated: appMain.openLink(link)
+                    color: Theme.palette.directColor1
                     MouseArea {
                         anchors.fill: parent
                         acceptedButtons: Qt.NoButton // we don't want to eat clicks on the Text
@@ -179,6 +190,7 @@ Item {
                     anchors.left: parent.left
                     anchors.right: parent.right
                     font.family: Style.current.fontHexRegular.name
+                    color: Theme.palette.directColor1
                 }
 
                 StatusBaseText {
@@ -187,6 +199,7 @@ Item {
                     anchors.left: parent.left
                     anchors.right: parent.right
                     onLinkActivated: appMain.openLink(link)
+                    color: Theme.palette.directColor1
                     MouseArea {
                         anchors.fill: parent
                         acceptedButtons: Qt.NoButton // we don't want to eat clicks on the Text
@@ -246,6 +259,7 @@ Item {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 horizontalAlignment: Text.AlignHCenter
+                color: Theme.palette.directColor1
             }
 
             StatusDescriptionListItem {
@@ -297,6 +311,7 @@ Item {
                 wrapMode: Text.WordWrap
                 anchors.top: termsAndConditionsCheckbox.top
                 onLinkActivated: popup.open()
+                color: Theme.palette.directColor1
                 MouseArea {
                     anchors.fill: parent
                     acceptedButtons: Qt.NoButton // we don't want to eat clicks on the Text
@@ -348,7 +363,7 @@ Item {
             anchors.leftMargin: 5
             anchors.topMargin: 5
             anchors.top: ensPriceLbl.bottom
-            color: Theme.palette.directColor7
+            color: Theme.palette.baseColor1
             font.pixelSize: 14
         }
     }
