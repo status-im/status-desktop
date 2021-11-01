@@ -111,7 +111,7 @@ ModalPopup {
         anchors.topMargin: marginBetweenInputs
         anchors.left: parent.left
         anchors.right: parent.right
-        model: Theme.current.accountColors
+        model: Theme.palette.accountColors
     }
 
     footer: StatusButton {
