@@ -70,7 +70,7 @@ ModalPopup {
         passwordValidationError = "";
         seedValidationError = "";
         accountNameValidationError = "";
-        accountColorInput.selectedColor = Style.current.accountColors[Math.floor(Math.random() * Style.current.accountColors.length)]
+        accountColorInput.selectedColor = Theme.palette.accountColors[Math.floor(Math.random() * Theme.palette.accountColors.length)]
         passwordInput.forceActiveFocus(Qt.MouseFocusReason)
     }
 
@@ -111,7 +111,7 @@ ModalPopup {
         anchors.topMargin: marginBetweenInputs
         anchors.left: parent.left
         anchors.right: parent.right
-        model: Theme.current.accountColors
+        model: Theme.palette.accountColors
     }
 
     footer: StatusButton {
