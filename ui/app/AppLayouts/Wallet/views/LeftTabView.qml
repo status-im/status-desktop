@@ -88,7 +88,10 @@ Rectangle {
     AddNewAccountMenu {
         id: newAccountMenu
         onAboutToShow: addAccountButton.state = "pressed"
-        onAboutToHide: addAccountButton.state = "default"
+        onAboutToHide: {
+            addAccountButton.state = "default";
+            addAccountButton.checked = false;
+        }
     }
 
     GenerateAccountModal {
