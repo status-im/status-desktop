@@ -1,4 +1,22 @@
 <a name=""></a>
+##  Version 0.16.0 (2021-11-01)
+
+
+#### Bug Fixes
+
+* **StatusModal:**  render footer correctly based on `showFooter` flag ([da9dc2f4](da9dc2f4))
+* **StatusRoundButton:**  ensure disabled state uses correct background color ([eb4aae40](eb4aae40))
+
+#### Features
+
+* **StatusQ.Controls:**
+  *  introduce `StatusWalletColorSelect` control ([ea9a5602](ea9a5602), closes [#467](467))
+  *  introduce `StatusWalletColorButton` component ([597ae192](597ae192), closes [#466](466))
+* **StatusQ.Platform:**  introduce StatusMacNotification component ([d301b94c](d301b94c))
+
+
+
+<a name=""></a>
 ##  Version 0.15.0 (2021-10-26)
 
 
