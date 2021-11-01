@@ -21,7 +21,7 @@ type
 
 proc newModule*[T](delegate: T,
   events: EventEmitter,
-  contactsService: contacts_service.ServiceInterface,
+  contactsService: contacts_service.Service,
   accountsService: accounts_service.ServiceInterface):
   Module[T] =
   result = Module[T]()
@@ -71,3 +71,9 @@ method removeContact*[T](self: Module[T], publicKey: string): void =
 
 method changeContactNickname*[T](self: Module[T], accountKeyUID: string, publicKey: string, nicknameToSet: string): void =
   self.controller.changeContactNickname(accountKeyUID, publicKey, nicknameToSet)
+
+method lookupContact*[T](self: Module[T], value: string): void =
+  self.controller.lookupContact(value)
+
+method contactLookedUp*[T](self: Module[T], id: string): void =
+  self.view.contactLookedUp(id)
