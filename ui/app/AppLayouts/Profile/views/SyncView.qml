@@ -159,6 +159,7 @@ Item {
             anchors.leftMargin: 24
             anchors.top: addMailserver.bottom
             anchors.topMargin: 24
+            color: Theme.palette.directColor1
         }
 
         StatusSwitch {
@@ -179,6 +180,7 @@ Item {
             anchors.top: switchLbl.bottom
             anchors.topMargin: 24
             visible: automaticSelectionSwitch.checked
+            color: Theme.palette.directColor1
         }
 
         ListView {
