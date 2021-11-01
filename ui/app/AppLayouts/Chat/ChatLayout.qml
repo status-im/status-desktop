@@ -25,6 +25,8 @@ StatusAppThreePanelLayout {
 
     handle: SplitViewHandle { implicitWidth: 5 }
 
+    property var chatSectionModule // Everything here, within this component need to be set based on this property.
+
     property var messageStore
 
     property alias chatColumn: chatColumn
