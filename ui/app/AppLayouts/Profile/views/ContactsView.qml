@@ -173,7 +173,6 @@ Item {
             }
 
             property var lookupContact: Backpressure.debounce(addContactSearchInput, 400, function (value) {
-                console.log('Lookup', value)
                 root.isPending = true
                 searchResults.showProfileNotFoundMessage = false
                 root.store.lookupContact(value)
@@ -182,6 +181,7 @@ Item {
             onOpened: {
                 addContactSearchInput.text = ""
                 searchResults.reset()
+                addContactSearchInput.forceActiveFocus()
             }
 
             Input {

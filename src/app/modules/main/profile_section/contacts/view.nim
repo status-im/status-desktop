@@ -12,17 +12,6 @@ import ./io_interface
 import ../../../../../app_service/[main]
 import ../../../../../app_service/tasks/[qt, threadpool]
 
-type
-  LookupContactTaskArg = ref object of QObjectTaskArg
-    value: string
-
-# const lookupContactTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
-#   let arg = decode[LookupContactTaskArg](argEncoded)
-#   var id = arg.value
-#   if not id.startsWith("0x"):
-#     id = status_ens.pubkey(id)
-#   arg.finish(id)
-
 QtObject:
   type
     View* = ref object of QObject
@@ -81,42 +70,31 @@ QtObject:
 
   proc ensWasResolved*(self: View, resolvedPubKey: string) {.signal.}
 
-  proc ensResolved(self: View, id: string) {.slot.} =
-    echo "Resolved", id
+  proc contactLookedUp*(self: View, id: string) {.slot.} =
     self.ensWasResolved(id)
-    # if id == "":
-    #   self.contactToAddChanged()
-    #   return
 
-    # let contact = self.delegate.getContact(id)
+    if id == "":
+      self.contactToAddChanged()
+      return
 
-    # if contact != nil:
-    #   self.contactToAdd = contact
-    # else:
-    #   self.contactToAdd = ContactsDto(
-    #     id: id,
-    #     alias: self.delegate.generateAlias(id),
-    #     ensVerified: false
-    #   )
-    # self.contactToAddChanged()
+    let contact = self.delegate.getContact(id)
 
-  proc lookupContact(self: View, slot: string, value: string) =
-    # TODO reimplement the ENS search with the threadpool
-    self.ensResolved(value)
-    # let arg = LookupContactTaskArg(
-    #   tptr: cast[ByteAddress](lookupContactTask),
-    #   vptr: cast[ByteAddress](self.vptr),
-    #   slot: slot,
-    #   value: value
-    # )
-    # self.appService.threadpool.start(arg)
+    if contact != nil and contact.id != "":
+      self.contactToAdd = contact
+    else:
+      self.contactToAdd = ContactsDto(
+        id: id,
+        alias: self.delegate.generateAlias(id),
+        ensVerified: false
+      )
+
+    self.contactToAddChanged()
 
   proc lookupContact*(self: View, value: string) {.slot.} =
     if value == "":
       return
 
-    self.lookupContact("ensResolved", value)
-
+    self.delegate.lookupContact(value)
 
   proc addContact*(self: View, publicKey: string) {.slot.} =
     self.delegate.addContact(publicKey)

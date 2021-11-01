@@ -13,7 +13,7 @@ type
   Controller*[T: controller_interface.DelegateInterface] = ref object of controller_interface.AccessInterface
     delegate: io_interface.AccessInterface
     events: EventEmitter
-    contactsService: contacts_service.ServiceInterface
+    contactsService: contacts_service.Service
     accountsService: accounts_service.ServiceInterface
 
 # forward declaration:
@@ -21,7 +21,7 @@ method getContacts*[T](self: Controller[T]): seq[ContactsDto]
 
 proc newController*[T](delegate: io_interface.AccessInterface, 
   events: EventEmitter,
-  contactsService: contacts_service.ServiceInterface,
+  contactsService: contacts_service.Service,
   accountsService: accounts_service.ServiceInterface): Controller[T] =
   result = Controller[T]()
   result.delegate = delegate
@@ -49,6 +49,9 @@ method init*[T](self: Controller[T]) =
     let contacts = self.getContacts()
     self.delegate.setContactList(contacts)
 
+  self.events.on(SIGNAL_CONTACT_LOOKED_UP) do(e: Args):
+    let args = LookupResolvedArgs(e)
+    self.delegate.contactLookedUp(args.id)
 
 method getContacts*[T](self: Controller[T]): seq[ContactsDto] =
   return self.contactsService.getContacts()
@@ -77,35 +80,5 @@ method removeContact*[T](self: Controller[T], publicKey: string): void =
 method changeContactNickname*[T](self: Controller[T], accountKeyUID: string, publicKey: string, nicknameToSet: string): void =
   self.contactsService.changeContactNickname(accountKeyUID, publicKey, nicknameToSet)
 
-# method getProfile*[T](self: Controller[T]): item.Item =
-#   let loggedInAccount = self.accountsService.getLoggedInAccount()
-
-#   var pubKey = self.settingsService.getPubKey()
-#   var network = self.settingsService.getNetwork()
-#   var appearance = self.settingsService.getAppearance()
-#   var messagesFromContactsOnly = self.settingsService.getMessagesFromContactsOnly()
-#   var sendUserStatus = self.settingsService.getSendUserStatus()
-#   var currentUserStatus = self.settingsService.getCurrentUserStatus()
-#   var obj = self.settingsService.getIdentityImage(loggedInAccount.keyUid)
-#   var identityImage = item.IdentityImage(thumbnail: obj.thumbnail, large: obj.large)
-
-#   var item = item.Item(
-#     id: pubkey,
-#     alias: "",
-#     username: loggedInAccount.name,
-#     identicon: loggedInAccount.identicon,
-#     address: loggedInAccount.keyUid,
-#     ensName: "",
-#     ensVerified: false,
-#     localNickname: "",
-#     messagesFromContactsOnly: messagesFromContactsOnly,
-#     sendUserStatus: sendUserStatus,
-#     currentUserStatus: currentUserStatus,
-#     identityImage: identityImage,
-#     appearance: appearance,
-#     added: false,
-#     blocked: false,
-#     hasAddedUs: false
-#   )
-
-#   return item
+method lookupContact*[T](self: Controller[T], value: string): void =
+  self.contactsService.lookupContact(value)

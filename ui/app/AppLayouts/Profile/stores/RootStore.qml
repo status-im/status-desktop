@@ -187,7 +187,6 @@ QtObject {
     }
 
     function lookupContact(value) {
-        console.log('lookup ples', value, profileModelInst)
         contactsModuleInst.lookupContact(value)
     }
 

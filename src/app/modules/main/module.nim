@@ -70,7 +70,7 @@ proc newModule*[T](
   settingService: setting_service.Service,
   profileService: profile_service.ServiceInterface,
   settingsService: settings_service.ServiceInterface,
-  contactsService: contacts_service.ServiceInterface,
+  contactsService: contacts_service.Service,
   aboutService: about_service.ServiceInterface,
   dappPermissionsService: dapp_permissions_service.ServiceInterface,
   languageService: language_service.ServiceInterface,
@@ -106,7 +106,7 @@ proc newModule*[T](
   )
 
   result.browserSectionModule = browser_section_module.newModule(result, bookmarkService, settingsService, dappPermissionsService)
-  result.profileSectionModule = profile_section_module.newModule(result, events, accountsService, settingsService, profileService, contactsService, aboutService, languageService, mnemonicService, privacyService)
+  result.profileSectionModule = profile_section_module.newModule(result,events, accountsService, settingsService, profileService, contactsService, aboutService, languageService, mnemonicService, privacyService)
 
 method delete*[T](self: Module[T]) =
   self.chatSectionModule.delete
