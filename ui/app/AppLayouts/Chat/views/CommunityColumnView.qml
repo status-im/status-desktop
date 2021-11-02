@@ -40,6 +40,7 @@ Item {
         chatInfoButton.icon.color: root.store.chatsModelInst.communities.activeCommunity.communityColor
         menuButton.visible: root.store.chatsModelInst.communities.activeCommunity.admin && root.store.chatsModelInst.communities.activeCommunity.canManageUsers
         chatInfoButton.onClicked: openPopup(communityProfilePopup, {
+            store: root.store,
             community: root.store.chatsModelInst.communities.activeCommunity
         })
 
