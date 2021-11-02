@@ -647,7 +647,6 @@ Item {
             id: communityProfilePopup
 
             CommunityProfilePopup {
-                id: communityProfilePopup
                 anchors.centerIn: parent
 
                 onClosed: {

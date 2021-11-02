@@ -10,6 +10,8 @@ import utils 1.0
 import "../../popups/community"
 
 Rectangle {
+    property var activeCommunity
+
     id: root
     height: childrenRect.height + Style.current.padding
     anchors.left: parent.left
@@ -71,10 +73,12 @@ Rectangle {
         TransferOwnershipPopup {
             anchors.centerIn: parent
             onClosed: {
-                let hiddenBannerIds = localAccountSensitiveSettings.hiddenCommunityBackUpBanners
-                hiddenBannerIds.push(chatsModel.communities.activeCommunity.id)
+                let hiddenBannerIds = localAccountSensitiveSettings.hiddenCommunityBackUpBanners || []
+                if (hiddenBannerIds.includes(root.activeCommunity.id)) {
+                    return
+                }
+                hiddenBannerIds.push(root.activeCommunity.id)
                 localAccountSensitiveSettings.hiddenCommunityBackUpBanners = hiddenBannerIds
-                destroy()
             }
         }
     }

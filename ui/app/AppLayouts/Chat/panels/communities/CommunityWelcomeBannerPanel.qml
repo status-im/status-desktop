@@ -22,6 +22,7 @@ Rectangle {
     radius: 16
     color: Style.current.transparent
     property var activeCommunity
+    property var store
 
     MouseArea {
         anchors.fill: parent
@@ -55,10 +56,12 @@ Rectangle {
         icon.name: "close-circle"
         type: StatusQControls.StatusFlatRoundButton.Type.Tertiary
         onClicked: {
-            let hiddenBannerIds = localAccountSensitiveSettings.hiddenCommunityWelcomeBanners
+            let hiddenBannerIds = localAccountSensitiveSettings.hiddenCommunityWelcomeBanners || []
+            if (hiddenBannerIds.includes(root.activeCommunity.id)) {
+                return
+            }
             hiddenBannerIds.push(root.activeCommunity.id)
             localAccountSensitiveSettings.hiddenCommunityWelcomeBanners = hiddenBannerIds
-            root.visible = false
         }
     }
 

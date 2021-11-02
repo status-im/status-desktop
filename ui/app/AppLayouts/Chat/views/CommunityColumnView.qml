@@ -237,7 +237,9 @@ Item {
 
         Loader {
             id: emptyViewAndSuggestionsLoader
-            active: root.store.chatsModelInst.communities.activeCommunity.admin && !localAccountSensitiveSettings.hiddenCommunityWelcomeBanners.includes(root.store.chatsModelInst.communities.activeCommunity.id)
+            active: root.store.chatsModelInst.communities.activeCommunity.admin &&
+                     (!localAccountSensitiveSettings.hiddenCommunityWelcomeBanners ||
+                      !localAccountSensitiveSettings.hiddenCommunityWelcomeBanners.includes(root.store.chatsModelInst.communities.activeCommunity.id))
             width: parent.width
             height: active ? item.height : 0
             anchors.top: communityChatListAndCategories.bottom
@@ -245,13 +247,16 @@ Item {
             sourceComponent: Component {
                 CommunityWelcomeBannerPanel {
                     activeCommunity: store.activeCommunity
+                    store: root.store
                 }
             }
         }
 
         Loader {
             id: backUpBannerLoader
-            active: root.store.chatsModelInst.communities.activeCommunity.admin && !localAccountSensitiveSettings.hiddenCommunityBackUpBanners.includes(root.store.chatsModelInst.communities.activeCommunity.id)
+            active: root.store.chatsModelInst.communities.activeCommunity.admin &&
+                        (!localAccountSensitiveSettings.hiddenCommunityBackUpBanners ||
+                         !localAccountSensitiveSettings.hiddenCommunityBackUpBanners.includes(root.store.chatsModelInst.communities.activeCommunity.id))
             width: parent.width
             height: active ? item.height : 0
             anchors.top: emptyViewAndSuggestionsLoader.bottom
@@ -263,6 +268,7 @@ Item {
 
                     BackUpCommuntyBannerPanel {
                         id: backupBanner
+                        activeCommunity: store.activeCommunity
                     }
                     MouseArea {
                         anchors.fill: backupBanner
