@@ -27,6 +27,10 @@ QtObject {
         return isEmail || isDomain || (inputValue.startsWith("@") && inputValue.length > 1)
     }
 
+    function isURL(text) {
+        return (/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}(\.[a-zA-Z0-9()]{1,6})?\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/.test(text))
+    }
+
     function uuid() {
         return Date.now().toString(36) + Math.random().toString(36).substr(2, 5)
     }

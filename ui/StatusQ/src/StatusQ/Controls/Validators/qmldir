@@ -6,4 +6,5 @@ StatusAsyncValidator 0.1 StatusAsyncValidator.qml
 StatusAsyncEnsValidator 0.1 StatusAsyncEnsValidator.qml
 StatusMinLengthValidator 0.1 StatusMinLengthValidator.qml
 StatusMaxLengthValidator 0.1 StatusMaxLengthValidator.qml
+StatusUrlValidator 0.1 StatusUrlValidator.qml
 StatusValidator 0.1 StatusValidator.qml
