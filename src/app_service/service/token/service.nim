@@ -13,7 +13,6 @@ export service_interface
 logScope:
   topics = "token-service"
 
-const DEFAULT_VISIBLE_SYMBOLS = @["SNT"]
 
 type 
   CustomTokenAdded* = ref object of Args
@@ -42,11 +41,23 @@ proc newService*(events: EventEmitter, settingService: setting_service.Service):
   result.settingService = settingService
   result.tokens = @[]
 
+method getDefaultVisibleSymbols(self: Service): seq[string] =
+  let networkSlug = self.settingService.getSetting().currentNetwork.slug
+  
+  if networkSlug == "mainnet_rpc":
+    return @["SNT"]
+
+  if networkSlug == "testnet_rpc" or networkSlug == "rinkeby_rpc":
+    return @["STT"]
+
+  return @[]
+
+
 method init*(self: Service) =
   try:
     var activeTokenSymbols = self.settingService.getSetting().activeTokenSymbols
     if activeTokenSymbols.len == 0:
-      activeTokenSymbols = DEFAULT_VISIBLE_SYMBOLS
+      activeTokenSymbols = self.getDefaultVisibleSymbols()
 
     let static_tokens = static_token.all().map(
       proc(x: TokenDto): TokenDto =
