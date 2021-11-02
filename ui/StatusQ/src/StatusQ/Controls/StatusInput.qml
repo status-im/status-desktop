@@ -72,6 +72,11 @@ Item {
                     if (!errors) {
                         errors = {}
                     }
+                    if (typeof result === "boolean") {
+                        result = {
+                            valid: result
+                        }
+                    }
                     result.errorMessage = validator.errorMessage
                     errors[validator.name] = result
                     statusBaseInput.valid = statusBaseInput.valid && false
