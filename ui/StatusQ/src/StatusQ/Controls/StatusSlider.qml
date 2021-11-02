@@ -15,8 +15,10 @@ Slider {
     leftPadding: 0
 
     background: Rectangle {
-        implicitHeight: 4
+        id: bgRect
         implicitWidth: 100
+        implicitHeight: 4
+        height: implicitHeight
         color: {
             if (statusSlider.value === statusSlider.to) {
                 return Theme.palette.primaryColor1
@@ -40,7 +42,7 @@ Slider {
 
     handle: Rectangle {
         x: statusSlider.leftPadding + statusSlider.visualPosition * (statusSlider.availableWidth - width / 2)
-        anchors.verticalCenter: parent.verticalCenter
+        anchors.verticalCenter: bgRect.verticalCenter
         color: Theme.palette.white
         implicitWidth: 28
         implicitHeight: 28
