@@ -279,6 +279,7 @@ QtObject {
     }
 
     function changeLocale(l) {
+        localAppSettings.locale = l
         languageModuleInst.changeLocale(l)
     }
 

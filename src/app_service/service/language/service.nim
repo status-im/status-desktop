@@ -21,8 +21,6 @@ proc newService*(): Service =
 
 method init*(self: Service) =
   try:
-    echo "init"
-
     self.i18nPath = ""
     if defined(development):
       self.i18nPath = joinPath(getAppDir(), "../ui/i18n")
@@ -39,8 +37,6 @@ method init*(self: Service) =
     return
 
 method setLanguage*(self: Service, locale: string) =
-  echo "---------------"
-  echo "--- setting language"
   if (locale == self.currentLanguageCode):
     return
   self.currentLanguageCode = locale
