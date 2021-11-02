@@ -13,8 +13,7 @@ ListView {
 
     anchors.fill: parent
     focus: true
-    spacing: Style.current.smallPadding
-    clip: true
+    spacing: Style.current.halfPadding
 
     delegate: AccountViewDelegate {
         username: model.username
