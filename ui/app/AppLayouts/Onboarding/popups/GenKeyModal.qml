@@ -35,6 +35,7 @@ ModalPopup {
         }
     }
     footer: StatusRoundButton {
+        objectName: "submitButton"
         id: submitBtn
         anchors.bottom: parent.bottom
         anchors.topMargin: Style.current.padding
