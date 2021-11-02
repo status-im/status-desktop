@@ -6,4 +6,28 @@ QtObject {
     property var walletModelInst: walletModel
     property var profileModelInst: profileModel
     property MessageStore messageStore: MessageStore { }
+
+    function setCommunityMuted(communityId, checked) {
+        chatsModelInst.communities.setCommunityMuted(communityId, checked);
+    }
+
+    function exportCommunity() {
+        chatsModelInst.communities.exportCommunity();
+    }
+
+    function leaveCommunity(communityId) {
+        chatsModelInst.communities.leaveCommunity(communityId);
+    }
+
+    function createCommunity(communityName, communityDescription, checkedMembership, ensOnlySwitchChecked, communityColor, communityImage, imageCropperModalaX, imageCropperModalaY, imageCropperModalbX, imageCropperModalbY) {
+        chatsModelInst.communities.createCommunity(communityName, communityDescription, checkedMembership, ensOnlySwitchChecked, communityColor, communityImage, imageCropperModalaX, imageCropperModalaY, imageCropperModalbX, imageCropperModalbY);
+    }
+
+    function editCommunity(communityId, communityName, communityDescription, checkedMembership, ensOnlySwitchChecked, communityColor, communityImage, imageCropperModalaX, imageCropperModalaY, imageCropperModalbX, imageCropperModalbY) {
+        chatsModelInst.communities.editCommunity(communityId, communityName, communityDescription, checkedMembership, ensOnlySwitchChecked, communityColor, communityImage, imageCropperModalaX, imageCropperModalaY, imageCropperModalbX, imageCropperModalbY);
+    }
+
+    function copyToClipboard(text) {
+        chatsModelInst.copyToClipboard(text);
+    }
 }
