@@ -24,8 +24,6 @@ const LSS_KEY_EXPAND_USERS_LIST* = "expandUsersList"
 const DEFAULT_EXPAND_USERS_LIST = false
 const LSS_KEY_IS_GIF_WIDGET_ENABLED* = "isGifWidgetEnabled"
 const DEFAULT_IS_GIF_WIDGET_ENABLED = false
-const LSS_KEY_IS_KEYCARD_ENABLED* = "isKeycardEnabled"
-const DEFAULT_IS_KEYCARD_ENABLED = false
 const LSS_KEY_IS_TENOR_WARNING_ACCEPTED* = "isTenorWarningAccepted"
 const DEFAULT_IS_TENOR_WARNING_ACCEPTED = false
 const LSS_KEY_DISPLAY_CHAT_IMAGES* = "displayChatImages"
@@ -318,19 +316,6 @@ QtObject:
     read = getIsGifWidgetEnabled
     write = setIsGifWidgetEnabled
     notify = isGifWidgetEnabledChanged
-
-
-  proc isKeycardEnabledChanged*(self: LocalAccountSensitiveSettings) {.signal.}
-  proc getIsKeycardEnabled*(self: LocalAccountSensitiveSettings): bool {.slot.} =
-    getSettingsProp[bool](self, LSS_KEY_IS_KEYCARD_ENABLED, newQVariant(DEFAULT_IS_KEYCARD_ENABLED))
-  proc setIsKeycardEnabled*(self: LocalAccountSensitiveSettings, value: bool) {.slot.} =
-    setSettingsProp(self, LSS_KEY_IS_KEYCARD_ENABLED, newQVariant(value)):
-      self.isKeycardEnabledChanged()
-
-  QtProperty[bool] isKeycardEnabled:
-    read = getIsKeycardEnabled
-    write = setIsKeycardEnabled
-    notify = isKeycardEnabledChanged
 
 
   proc isTenorWarningAcceptedChanged*(self: LocalAccountSensitiveSettings) {.signal.}
@@ -896,7 +881,6 @@ QtObject:
       of LSS_KEY_SHOW_ONLINE_USERS: self.showOnlineUsersChanged()
       of LSS_KEY_EXPAND_USERS_LIST: self.expandUsersListChanged()
       of LSS_KEY_IS_GIF_WIDGET_ENABLED: self.isGifWidgetEnabledChanged()
-      of LSS_KEY_IS_KEYCARD_ENABLED: self.isKeycardEnabledChanged()
       of LSS_KEY_IS_TENOR_WARNING_ACCEPTED: self.isTenorWarningAcceptedChanged()
       of LSS_KEY_DISPLAY_CHAT_IMAGES: self.displayChatImagesChanged()
       of LSS_KEY_USE_COMPACT_MODE: self.useCompactModeChanged()

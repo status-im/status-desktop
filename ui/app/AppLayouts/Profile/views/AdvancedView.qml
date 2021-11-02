@@ -227,9 +227,9 @@ ScrollView {
                 //% "Keycard"
                 text: qsTr("Keycard")
                 isSwitch: true
-                switchChecked: localAccountSensitiveSettings.isKeycardEnabled
+                switchChecked: localAccountSettings.isKeycardEnabled
                 onClicked: {
-                    localAccountSensitiveSettings.isKeycardEnabled = !localAccountSensitiveSettings.isKeycardEnabled
+                    localAccountSettings.isKeycardEnabled = !localAccountSettings.isKeycardEnabled
                 }
             }
 
