@@ -107,10 +107,6 @@ ModalPopup {
             anchors.top: parent.top
             anchors.topMargin: -Style.current.halfPadding
             clip: true
-
-            function closePopup() {
-                popup.close()
-            }
             
             delegate: Item {
                 id: messageDelegate
@@ -183,16 +179,6 @@ ModalPopup {
                         messageStore.showEdit = false;
                         messageStore.messageContextMenu = msgContextMenu;
                     }
-                    MessageContextMenuView {
-                        id: msgContextMenu
-                        pinnedPopup: true
-                        pinnedMessage: true
-                        store: popup.rootStore
-                        reactionModel: popup.rootStore.emojiReactionsModel
-                        onShouldCloseParentPopup: {
-                            messageDelegate.listView.closePopup();
-                        }
-                    }
                 }
 
                 MouseArea {
@@ -217,6 +203,16 @@ ModalPopup {
                         }
                     }
                 }
+            }
+        }        
+        MessageContextMenuView {
+            id: msgContextMenu
+            pinnedPopup: true
+            pinnedMessage: true
+            store: popup.rootStore
+            reactionModel: popup.rootStore.emojiReactionsModel
+            onShouldCloseParentPopup: {
+                popup.close()
             }
         }
     }

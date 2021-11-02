@@ -80,7 +80,7 @@ Item {
         fromAuthor: fromAuthor
         editBtnActive: isText && !isEdit && isCurrentUser && showEdit
         onClickMessage: {
-            parent.parent.parent.clickMessage(isProfileClick, isSticker, isImage, image, emojiOnly);
+            parent.parent.parent.clickMessage(isProfileClick, isSticker, isImage, image, emojiOnly, hideEmojiPicker);
         }
     }
 
