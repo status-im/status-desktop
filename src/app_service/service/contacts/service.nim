@@ -40,13 +40,25 @@ QtObject:
     result.threadpool = threadpool
     result.contacts = initTable[string, ContactsDto]()
 
+  proc fetchContacts(self: Service) =
+    try:
+      let response = status_contacts.getContacts()
+
+      let contacts = map(response.result.getElems(), proc(x: JsonNode): ContactsDto = x.toContactsDto())
+
+      for contact in contacts:
+        self.contacts[contact.id] = contact
+
+    except Exception as e:
+      let errDesription = e.msg
+      error "error: ", errDesription
+      return
+
   proc init*(self: Service) =
-    discard
+    self.fetchContacts()
 
   proc getContacts*(self: Service): seq[ContactsDto] =
-    let profiles = status_contacts.getContacts()
-    for profile in profiles.result:
-      result.add(profile.toContactsDto)
+    return toSeq(self.contacts.values)
 
   proc getContact*(self: Service, id: string): ContactsDto =
     return status_contacts.getContactByID(id).result.toContactsDto()
