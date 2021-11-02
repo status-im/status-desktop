@@ -1,5 +1,6 @@
 import ../../../../../app_service/service/profile/service as profile_service
 import ./item
+import status/types/identity_image
 
 type 
   AccessInterface* {.pure inheritable.} = ref object of RootObj
@@ -12,6 +13,12 @@ method init*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getProfile*(self: AccessInterface): Item {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method storeIdentityImage*(self: AccessInterface, address: string, image: string, aX: int, aY: int, bX: int, bY: int): identity_image.IdentityImage {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method deleteIdentityImage*(self: AccessInterface, address: string): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
 type

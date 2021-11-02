@@ -1,3 +1,5 @@
+import status/types/identity_image
+
 type 
   AccessInterface* {.pure inheritable.} = ref object of RootObj
   ## Abstract class for any input/interaction with this module.
@@ -9,6 +11,12 @@ method load*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method isLoaded*(self: AccessInterface): bool {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method storeIdentityImage*(self: AccessInterface, address: string, image: string, aX: int, aY: int, bX: int, bY: int): identity_image.IdentityImage {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method deleteIdentityImage*(self: AccessInterface, address: string): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
 type

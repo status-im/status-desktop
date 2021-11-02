@@ -136,7 +136,6 @@ QtObject:
 
   proc hasIdentityImage*(self: Model): bool {.slot.} =
     result = (?.self.identityImage.thumbnail != "")
-    result = false
 
   QtProperty[bool] hasIdentityImage:
     read = hasIdentityImage

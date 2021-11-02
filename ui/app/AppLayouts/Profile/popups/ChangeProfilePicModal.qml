@@ -19,7 +19,7 @@ ModalPopup {
     property url largeImage: ""
     property bool hasIdentityImage: false
 
-    signal cropFinished(var aX, var aY, var bX, var bY)
+    signal cropFinished(string selectedImage, var aX, var aY, var bX, var bY)
     signal removeImageButtonClicked()
 
     //% "Profile picture"
