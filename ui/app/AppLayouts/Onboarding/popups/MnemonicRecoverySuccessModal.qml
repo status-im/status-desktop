@@ -40,11 +40,10 @@ ModalPopup {
 
     StatusSmartIdenticon {
         id: identicon
-        source: OnboardingStore.onBoardingModul.importedAccountIdenticon
         anchors.top: info.bottom
         anchors.topMargin: Style.current.bigPadding
         anchors.horizontalCenter: parent.horizontalCenter
-        image.source: OnboardingStore.currentAccount.identicon
+        image.source: OnboardingStore.onBoardingModul.importedAccountIdenticon
         image.width: 60
         image.height: 60
     }
