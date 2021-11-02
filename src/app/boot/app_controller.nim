@@ -260,6 +260,7 @@ proc load*(self: AppController) =
   singletonInstance.engine.setRootContextProperty("localAccountSensitiveSettings", self.localAccountSensitiveSettingsVariant)
   #################################################
 
+  self.languageService.init()
   self.settingService.init()
   self.contactsService.init()
   self.chatService.init()
