@@ -129,6 +129,7 @@ ScrollView {
             anchors.top: labelFontSize.bottom
             anchors.topMargin: Style.current.padding
             width: parent.width
+            height: 40
             from: 0
             to: 5
             stepSize: 1
@@ -137,73 +138,73 @@ ScrollView {
                 localAccountSensitiveSettings.fontSize = value
                 root.updateFontSize(value)
             }
-        }
 
-        RowLayout {
-            id: fontSizeSliderLegend
-            anchors.top: fontSizeSlider.bottom
-            anchors.topMargin: Style.current.padding
-            anchors.left: parent.left
-            anchors.right: parent.right
-            spacing: Style.current.smallPadding
+            RowLayout {
+                id: fontSizeSliderLegend
+                anchors.bottom: parent.bottom
+                anchors.topMargin: Style.current.padding
+                anchors.left: parent.left
+                anchors.right: parent.right
+                spacing: Style.current.smallPadding
 
-            StatusBaseText {
-                font.pixelSize: 15
-                //% "XS"
-                text: qsTrId("xs")
-                Layout.preferredWidth: fontSizeSlider.width/6
-                color: Theme.palette.directColor1
-            }
+                StatusBaseText {
+                    font.pixelSize: 15
+                    //% "XS"
+                    text: qsTrId("xs")
+                    Layout.preferredWidth: fontSizeSlider.width/6
+                    color: Theme.palette.directColor1
+                }
 
-            StatusBaseText {
-                font.pixelSize: 15
-                //% "S"
-                text: qsTrId("s")
-                Layout.preferredWidth: fontSizeSlider.width/6
-                Layout.leftMargin: 2
-                color: Theme.palette.directColor1
-            }
+                StatusBaseText {
+                    font.pixelSize: 15
+                    //% "S"
+                    text: qsTrId("s")
+                    Layout.preferredWidth: fontSizeSlider.width/6
+                    Layout.leftMargin: 2
+                    color: Theme.palette.directColor1
+                }
 
-            StatusBaseText {
-                font.pixelSize: 15
-                //% "M"
-                text: qsTrId("m")
-                Layout.preferredWidth: fontSizeSlider.width/6
-                Layout.leftMargin: 2
-                color: Theme.palette.directColor1
-            }
+                StatusBaseText {
+                    font.pixelSize: 15
+                    //% "M"
+                    text: qsTrId("m")
+                    Layout.preferredWidth: fontSizeSlider.width/6
+                    Layout.leftMargin: 2
+                    color: Theme.palette.directColor1
+                }
 
-            StatusBaseText {
-                font.pixelSize: 15
-                //% "L"
-                text: qsTrId("l")
-                Layout.preferredWidth: fontSizeSlider.width/6
-                Layout.leftMargin: 2
-                color: Theme.palette.directColor1
-            }
+                StatusBaseText {
+                    font.pixelSize: 15
+                    //% "L"
+                    text: qsTrId("l")
+                    Layout.preferredWidth: fontSizeSlider.width/6
+                    Layout.leftMargin: 2
+                    color: Theme.palette.directColor1
+                }
 
-            StatusBaseText {
-                font.pixelSize: 15
-                //% "XL"
-                text: qsTrId("xl")
-                Layout.preferredWidth: fontSizeSlider.width/6
-                Layout.leftMargin: 0
-                color: Theme.palette.directColor1
-            }
+                StatusBaseText {
+                    font.pixelSize: 15
+                    //% "XL"
+                    text: qsTrId("xl")
+                    Layout.preferredWidth: fontSizeSlider.width/6
+                    Layout.leftMargin: 0
+                    color: Theme.palette.directColor1
+                }
 
-            StatusBaseText {
-                font.pixelSize: 15
-                //% "XXL"
-                text: qsTrId("xxl")
-                Layout.alignment: Qt.AlignRight
-                Layout.leftMargin: -Style.current.smallPadding
-                color: Theme.palette.directColor1
+                StatusBaseText {
+                    font.pixelSize: 15
+                    //% "XXL"
+                    text: qsTrId("xxl")
+                    Layout.alignment: Qt.AlignRight
+                    Layout.leftMargin: -Style.current.smallPadding
+                    color: Theme.palette.directColor1
+                }
             }
         }
 
         StatusBaseText {
             id: labelZoom
-            anchors.top: fontSizeSliderLegend.bottom
+            anchors.top: fontSizeSlider.bottom
             anchors.topMargin: Style.current.xlPadding
             anchors.left: parent.left
             font.pixelSize: 15
@@ -227,6 +228,7 @@ ScrollView {
             anchors.top: labelZoom.bottom
             anchors.topMargin: Style.current.padding
             width: parent.width
+            height: 40
             from: 50
             to: 200
             stepSize: 50
@@ -248,52 +250,51 @@ ScrollView {
                     zoomSlider.value = zoomSlider.initialValue
                 }
             }
-        }
 
-        RowLayout {
-            id: zoomSliderLegend
-            anchors.top: zoomSlider.bottom
-            anchors.topMargin: Style.current.padding
-            anchors.left: parent.left
-            anchors.right: parent.right
-            spacing: 0
 
-            StatusBaseText {
-                font.pixelSize: 15
-                text: "50%"
-                color: Theme.palette.directColor1
-            }
+            RowLayout {
+                id: zoomSliderLegend
+                anchors.bottom: parent.bottom
+                anchors.topMargin: Style.current.padding
+                anchors.left: parent.left
+                anchors.right: parent.right
+                spacing: 0
+                StatusBaseText {
+                    font.pixelSize: 15
+                    text: "50%"
+                    color: Theme.palette.directColor1
+                }
 
-            Item {
-                Layout.fillWidth: true
-            }
+                Item {
+                    Layout.fillWidth: true
+                }
 
-            StatusBaseText {
-                font.pixelSize: 15
-                Layout.leftMargin: width / 2
-                text: "100%"
-                color: Theme.palette.directColor1
-            }
+                StatusBaseText {
+                    font.pixelSize: 15
+                    Layout.leftMargin: width / 2
+                    text: "100%"
+                    color: Theme.palette.directColor1
+                }
 
-            Item {
-                Layout.fillWidth: true
-            }
+                Item {
+                    Layout.fillWidth: true
+                }
+                StatusBaseText {
+                    font.pixelSize: 15
+                    Layout.leftMargin: width / 2
+                    text: "150%"
+                    color: Theme.palette.directColor1
+                }
 
-            StatusBaseText {
-                font.pixelSize: 15
-                Layout.leftMargin: width / 2
-                text: "150%"
-                color: Theme.palette.directColor1
-            }
+                Item {
+                    Layout.fillWidth: true
+                }
 
-            Item {
-                Layout.fillWidth: true
-            }
-
-            StatusBaseText {
-                font.pixelSize: 15
-                text: "200%"
-                color: Theme.palette.directColor1
+                StatusBaseText {
+                    font.pixelSize: 15
+                    text: "200%"
+                    color: Theme.palette.directColor1
+                }
             }
         }
 
@@ -302,7 +303,7 @@ ScrollView {
             //% "Appearance"
             text: qsTrId("appearance")
             // anchors.top: chatModeSection.bottom
-            anchors.top: zoomSliderLegend.bottom
+            anchors.top: zoomSlider.bottom
             anchors.topMargin: Style.current.padding*3
             anchors.left: parent.left
             anchors.right: parent.right
