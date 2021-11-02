@@ -58,18 +58,15 @@ Item {
                     id: collectionsRepeater
                     model: RootStore.collectionList
                     delegate: StatusExpandableItem {
-                        width: parent.width - 156
-                        anchors.horizontalCenter: parent.horizontalCenter
-
+                        anchors.left: parent.left
+                        anchors.right: parent.right
                         primaryText: model.name
                         image.source: model.imageUrl
                         type: StatusExpandableItem.Type.Secondary
                         expandableComponent:  CollectibleCollectionView {
                             slug: model.slug
                             anchors.left: parent.left
-                            anchors.leftMargin: Style.current.bigPadding
                             anchors.right: parent.right
-                            anchors.rightMargin: Style.current.bigPadding
                             onCollectibleClicked: {
                                 root.collectibleClicked();
                             }

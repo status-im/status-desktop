@@ -29,6 +29,7 @@ Item {
         id: contentLoader
         width: parent.width
         anchors.top: parent.top
+        anchors.topMargin: 16
         anchors.horizontalCenter: parent.horizontalCenter
         sourceComponent: root.collectiblesLoaded ? loaded : loading
     }
