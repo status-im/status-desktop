@@ -190,7 +190,7 @@ Column {
 
 
     function showReactionAuthors(fromAccounts, emojiId) {
-        return store.showReactionAuthors(fromAccounts, emojiId)
+        return root.rootStore.showReactionAuthors(fromAccounts, emojiId)
     }
 
     function startMessageFoundAnimation() {

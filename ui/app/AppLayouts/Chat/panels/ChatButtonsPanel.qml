@@ -17,7 +17,7 @@ Rectangle {
     property alias editBtnActive: editBtn.active
     signal hoverChanged(bool hovered)
     signal setMessageActive(string messageId, bool active)
-    signal clickMessage(bool isProfileClick, bool isSticker, bool isImage, var image, bool emojiOnly)
+    signal clickMessage(bool isProfileClick, bool isSticker, bool isImage, var image, bool emojiOnly, bool hideEmojiPicker)
 
     visible: !placeholderMessage && !activityCenterMessage &&
              (buttonsContainer.parentIsHovered || isMessageActive)
@@ -77,7 +77,7 @@ Rectangle {
                 buttonsContainer.messageContextMenu.parent = buttonsContainer
                 buttonsContainer.messageContextMenu.setXPosition = function() { return (-Math.abs(buttonsContainer.width - buttonsContainer.messageContextMenu.emojiContainer.width))}
                 buttonsContainer.messageContextMenu.setYPosition = function() { return (-buttonsContainer.messageContextMenu.height - 4)}
-                clickMessage(false, false, false, null, true)
+                clickMessage(false, false, false, null, true, false)
             }
             onHoveredChanged: buttonsContainer.hoverChanged(this.hovered)
         }
