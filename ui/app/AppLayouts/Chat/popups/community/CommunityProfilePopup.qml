@@ -24,7 +24,7 @@ StatusModal {
     header.title: contentItem.currentItem.headerTitle
     header.subTitle: contentItem.currentItem.headerSubtitle || ""
     header.image.source: contentItem.currentItem.headerImageSource || ""
-    header.icon.isLetterIdenticon: contentItem.currentItem.headerTitle == root.community.name && !contentItem.currentItem.headerImageSource
+    header.icon.isLetterIdenticon: contentItem.currentItem.headerTitle === root.community.name && !contentItem.currentItem.headerImageSource
     header.icon.background.color: root.community.communityColor
 
     contentItem: StackView {
@@ -82,6 +82,18 @@ StatusModal {
             id: transferOwnershiproot
             TransferOwnershipPopup {
                 anchors.centerIn: parent
+                onClosed: {
+                    destroy()
+                }
+            }
+        }
+
+        Component {
+            id: editCommunityroot
+            CreateCommunityPopup {
+                anchors.centerIn: parent
+                store: root.store
+                isEdit: true
                 onClosed: {
                     destroy()
                 }

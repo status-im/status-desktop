@@ -94,7 +94,7 @@ StatusModal {
                 input.placeholderText: qsTr("A catchy name")
                 validators: [StatusMinLengthValidator {
                     minLength: 1
-                    errorMessage: Utils.getErrorMessage(errors, "community name")
+                    errorMessage: Utils.getErrorMessage(nameInput.errors, "community name")
                 }]
             }
 
@@ -109,7 +109,7 @@ StatusModal {
 
                 validators: [StatusMinLengthValidator {
                     minLength: 1
-                    errorMessage: Utils.getErrorMessage(errors, "community description")
+                    errorMessage: Utils.getErrorMessage(descriptionTextArea.errors, "community description")
                 }]
             }
 
