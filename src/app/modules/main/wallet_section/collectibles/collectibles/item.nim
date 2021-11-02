@@ -48,7 +48,7 @@ proc initItem*(
   result.id = id
   result.name = name
   result.imageUrl = imageUrl
-  result.backgroundColor = backgroundColor
+  result.backgroundColor = if (backgroundColor == ""): "transparent" else: ("#" & backgroundColor)
   result.permalink = permalink
   result.properties = properties
   result.rankings = rankings
