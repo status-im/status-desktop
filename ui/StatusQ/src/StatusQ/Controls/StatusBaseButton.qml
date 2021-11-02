@@ -7,6 +7,7 @@ Rectangle {
     id: statusBaseButton
 
     enum Size {
+        Tiny,
         Small,
         Large
     }
@@ -33,8 +34,32 @@ Rectangle {
 
     property real defaultLeftPadding: size === StatusBaseButton.Size.Large ? 24 : 12
     property real defaultRightPadding: size === StatusBaseButton.Size.Large ? 24 : 12
-    property real defaultTopPadding: size === StatusBaseButton.Size.Large ? 11 : 10
-    property real defaultBottomPadding: size === StatusBaseButton.Size.Large ? 11 : 10
+    property real defaultTopPadding: {
+        switch (size) {
+            case StatusBaseButton.Size.Tiny:
+              return 5
+            case StatusBaseButton.Size.Small:
+              return 10
+              break;
+            case StatusBaseButton.Size.Large:
+            default:
+              return 11
+              break;
+        }
+    }
+    property real defaultBottomPadding: {
+        switch (size) {
+            case StatusBaseButton.Size.Tiny:
+              return 5
+            case StatusBaseButton.Size.Small:
+              return 10
+              break;
+            case StatusBaseButton.Size.Large:
+            default:
+              return 11
+              break;
+        }
+    }
 
 
     property real leftPadding: defaultLeftPadding
@@ -62,7 +87,7 @@ Rectangle {
     implicitWidth: sensor.width
     implicitHeight: sensor.height
 
-    radius: 8
+    radius: size !== StatusBaseButton.Size.Tiny ? 8 : 6
 
     color: {
         if (statusBaseButton.enabled) {
