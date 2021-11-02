@@ -7,6 +7,8 @@ import ../../../../../app_service/service/profile/service as profile_service
 import ../../../../../app_service/service/accounts/service as accounts_service
 import ../../../../../app_service/service/settings/service as settings_service
 
+import status/types/identity_image
+
 export io_interface
 
 type 
@@ -21,7 +23,7 @@ proc newModule*[T](delegate: T, accountsService: accounts_service.ServiceInterfa
   result = Module[T]()
   result.delegate = delegate
   result.view = newView(result)
-  result.viewVariant = result.view.getModel
+  result.viewVariant = newQVariant(result.view)
   result.controller = controller.newController[Module[T]](result, accountsService, settingsService, profileService)
   result.moduleLoaded = false
 
@@ -37,3 +39,9 @@ method load*[T](self: Module[T]) =
 
 method isLoaded*[T](self: Module[T]): bool =
   return self.moduleLoaded
+
+method storeIdentityImage*[T](self: Module[T], address: string, image: string, aX: int, aY: int, bX: int, bY: int): identity_image.IdentityImage =
+  self.controller.storeIdentityImage(address, image, aX, aY, bX, bY)
+
+method deleteIdentityImage*[T](self: Module[T], address: string): string =
+  self.controller.deleteIdentityImage(address)

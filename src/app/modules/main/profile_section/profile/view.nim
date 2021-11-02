@@ -3,6 +3,9 @@ import NimQml
 import ./item
 import ./model
 import ./io_interface
+import status/profile as status_profile
+import status/status
+import ../../../../utils/image_utils
 
 import status/types/[identity_image, profile]
 
@@ -37,3 +40,29 @@ QtObject:
   proc setProfile*(self: View, profile: Item) =
     self.model.setProfile(profile)
     self.modelChanged()
+
+  proc upload*(self: View, imageUrl: string, aX: int, aY: int, bX: int, bY: int): string {.slot.} =
+    var image = image_utils.formatImagePath(imageUrl)
+    # FIXME the function to get the file size is messed up
+    # var size = image_getFileSize(image)
+    # TODO find a way to i18n this (maybe send just a code and then QML sets the right string)
+    # return "Max file size is 20MB"
+
+    try:
+      # TODO add crop tool for the image
+      let identityImage = self.delegate.storeIdentityImage(self.model.address, image, aX, aY, bX, bY)
+      # TODO use only one type
+      let identityImageConverted = item.IdentityImage(
+        thumbnail: identityImage.thumbnail,
+        large: identityImage.thumbnail
+      )
+      self.model.setIdentityImage(identityImageConverted)
+      result = ""
+    except Exception as e:
+      echo "Error storing identity image", e.msg
+      result = "Error storing identity image: " & e.msg
+
+  proc remove*(self: View): string {.slot.} =
+    result = self.delegate.deleteIdentityImage(self.model.address)
+    if (result == ""):
+      self.model.removeIdentityImage()

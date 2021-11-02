@@ -4,6 +4,7 @@ import ../../../../../app_service/service/accounts/service as accounts_service
 import ../../../../../app_service/service/settings/service as settings_service
 
 import ./item as item
+import status/types/identity_image
 
 export controller_interface
 
@@ -59,3 +60,9 @@ method getProfile*[T](self: Controller[T]): item.Item =
   )
 
   return item
+
+method storeIdentityImage*[T](self: Controller[T], address: string, image: string, aX: int, aY: int, bX: int, bY: int): identity_image.IdentityImage =
+  self.profileService.storeIdentityImage(address, image, aX, aY, bX, bY)
+
+method deleteIdentityImage*[T](self: Controller[T], address: string): string =
+  self.profileService.deleteIdentityImage(address)

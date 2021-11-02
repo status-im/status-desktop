@@ -6,7 +6,7 @@ QtObject {
 
     property var profileModelInst: profileModel
     property var profileModuleInst: profileSectionModule
-    property var profile: profileModule
+    property var profile: profileModule.model
     property var contactsModuleInst: contactsModule
     property var aboutModuleInst: aboutModule
     property var languageModuleInst: languageModule
@@ -179,11 +179,11 @@ QtObject {
     }
 
     function uploadImage(source, aX, aY, bX, bY) {
-        return profileModelInst.picture.upload(source, aX, aY, bX, bY)
+        return profileModule.upload(source, aX, aY, bX, bY)
     }
 
     function removeImage() {
-        return profileModelInst.picture.remove()
+        return profileModule.remove()
     }
 
     function lookupContact(value) {
