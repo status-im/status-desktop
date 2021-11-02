@@ -258,6 +258,7 @@ Item {
                         text: qsTrId("view-community")
                         icon.name: "group-chat"
                         onTriggered: openPopup(communityProfilePopup, {
+                            store: appMain.rootStore,
                             community: chatsModel.communities.observedCommunity
                         })
                     }
@@ -267,7 +268,7 @@ Item {
                         //% "Edit Community"
                         text: qsTrId("edit-community")
                         icon.name: "edit"
-                        onTriggered: openPopup(editCommunityPopup, {community: chatsModel.communities.observedCommunity})
+                        onTriggered: openPopup(editCommunityPopup, {store: appMain.rootStore, community: chatsModel.communities.observedCommunity})
                     }
 
                     StatusMenuSeparator {}

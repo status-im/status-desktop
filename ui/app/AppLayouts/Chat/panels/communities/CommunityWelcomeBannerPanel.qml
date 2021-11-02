@@ -98,6 +98,7 @@ Rectangle {
         anchors.bottom: parent.bottom
         anchors.bottomMargin: Style.current.padding
         onClicked: openPopup(communityProfilePopup, {
+            store: rootStore,
             community: root.activeCommunity
         })
     }
