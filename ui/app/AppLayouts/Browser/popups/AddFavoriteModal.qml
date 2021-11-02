@@ -6,7 +6,9 @@ import QtGraphicalEffects 1.13
 import utils 1.0
 import shared.controls 1.0
 
+import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
+import StatusQ.Controls.Validators 0.1
 
 import shared 1.0
 import shared.popups 1.0
@@ -14,8 +16,6 @@ import "../stores"
 
 // TODO: replace with StatusModal
 ModalPopup {
-    property string urlError: ""
-    property string nameError: ""
     property string ogUrl
     property string ogName
     property bool modifiyModal: false
@@ -23,7 +23,7 @@ ModalPopup {
 
     id: popup
     width: toolbarMode ? 345 : 480
-    height: toolbarMode ? 345 : 480
+    height: toolbarMode ? 400 : 480
 
     modal: !toolbarMode
 
@@ -48,34 +48,18 @@ ModalPopup {
     }
 
     onOpened: {
-        urlInput.forceActiveFocus(Qt.MouseFocusReason)
+        urlInput.input.forceActiveFocus(Qt.MouseFocusReason)
     }
 
     onClosed: {
         reset()
     }
 
-    function validate() {
-        urlError = ""
-        if (!urlInput.text) {
-            //% "Please enter a URL"
-            urlError = qsTrId("please-enter-a-url")
-        } else if (!Utils.isURL(urlInput.text)) {
-            //% "This fields needs to be a valid URL"
-            urlError = qsTrId("this-fields-needs-to-be-a-valid-url")
-        }
-
-        //% "Please enter a Name"
-        nameError = !nameInput.text ? qsTrId("please-enter-a-name") : ""
-
-        return !urlError && !nameError
-    }
-
     function reset() {
         modifiyModal = false
         toolbarMode = false
-        urlError = ""
-        nameError = ""
+        urlInput.reset()
+        nameInput.reset()
         ogUrl = ""
         ogName = ""
         x = Math.round(((parent ? parent.width : 0) - width) / 2)
@@ -95,25 +79,48 @@ ModalPopup {
         width: parent.width
         spacing: Style.current.padding
 
-        Input {
+        StatusInput {
             id: urlInput
-            //% "URL"
-            label: qsTrId("url")
-            //% "Paste URL"
-            placeholderText: qsTrId("paste-url")
-            pasteFromClipboard: true
-            validationError: popup.urlError
-            text: popup.ogUrl
+            anchors.left: parent.left
+            anchors.right: parent.right
+            leftPadding: 0
+            rightPadding: 0
+            label: qsTr("URL")
+            input.text: popup.ogurl
+            input.placeholderText: qsTr("Paste URL")
+            input.component: StatusButton {
+                anchors.verticalCenter: parent.verticalCenter
+                border.width: 1
+                border.color: Theme.palette.primaryColor1
+                size: StatusBaseButton.Size.Tiny
+                text: qsTr("Paste")
+                onClicked: {
+                    text = qsTr("Pasted")
+                    urlInput.input.edit.paste()
+                }
+            }
+            validators: [
+                StatusUrlValidator {
+                    errorMessage: qsTr("Please enter a valid URL")
+                }
+            ]
         }
 
-        Input {
+        StatusInput {
             id: nameInput
-            //% "Name"
-            label: qsTrId("name")
-            //% "Name the website"
-            placeholderText: qsTrId("name-the-website")
-            validationError: popup.nameError
-            text: popup.ogName
+            anchors.left: parent.left
+            anchors.right: parent.right
+            leftPadding: 0
+            rightPadding: 0
+            label: qsTr("Name")
+            input.text: popup.ogurl
+            input.placeholderText: qsTr("Name of the website")
+            validators: [
+                StatusMinLengthValidator {
+                    errorMessage: qsTr("Please enter a name")
+                    minLength: 1
+                }
+            ]
         }
     }
 
@@ -146,18 +153,15 @@ ModalPopup {
                       //% "Add"
                       qsTrId("add")
             anchors.bottom: parent.bottom
+            enabled: nameInput.valid && urlInput.valid
             onClicked: {
-                if (!validate()) {
-                    return
-                }
-
                 if (!popup.modifiyModal) {
                     // remove "add favorite" button at the end, add new bookmark, add "add favorite" button back
                     BookmarksStore.deleteBookmark("")
-                    BookmarksStore.addBookmark(urlInput.text, nameInput.text)
+                    BookmarksStore.addBookmark(urlInput.input.text, nameInput.input.text)
                     BookmarksStore.addBookmark("", qsTr("Add Favorite"))
-                } else if (popup.ogName !== nameInput.text || popup.ogUrl !== urlInput.text) {
-                    BookmarksStore.updateBookmark(popup.ogUrl, urlInput.text, nameInput.text)
+                } else if (popup.ogName !== nameInput.input.text || popup.ogUrl !== urlInput.input.text) {
+                    BookmarksStore.updateBookmark(popup.ogUrl, urlInput.input.text, nameInput.input.text)
                 }
 
                 popup.close()
