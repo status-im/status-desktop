@@ -10,15 +10,16 @@ StatusModal {
     property string link
 
     id: popup
+    anchors.centerIn: parent
 
     //% "Choose browser"
     header.title: qsTrId("choose-browser")
     width: 440
-    height: 425
 
     contentItem: Column {
-        anchors.fill: parent
+        width: popup.width - 32
         spacing: 20
+        anchors.horizontalCenter: popup.horizontalCenter
 
         Image {
             source: Style.png("chooseBrowserImage")
