@@ -104,6 +104,7 @@ StatusPopupMenu {
         enabled: communityActive &&
             root.store.chatsModelInst.communities.activeCommunity.admin
         onTriggered: openPopup(editChannelPopup, {
+            store: root.store,
             communityId: root.store.chatsModelInst.communities.activeCommunity.id,
             channel: chatItem
         })
