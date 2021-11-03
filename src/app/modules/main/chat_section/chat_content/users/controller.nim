@@ -1,23 +1,23 @@
 import controller_interface
 import io_interface
 
-import ../../../../../app_service/service/community/service as community_service
+import ../../../../../../app_service/service/community/service as community_service
 
 export controller_interface
 
 type 
   Controller* = ref object of controller_interface.AccessInterface
     delegate: io_interface.AccessInterface
-    id: string
-    isCommunityModule: bool
+    chatId: string
+    belongsToCommunity: bool
     communityService: community_service.ServiceInterface
 
-proc newController*(delegate: io_interface.AccessInterface, id: string, isCommunity: bool, 
+proc newController*(delegate: io_interface.AccessInterface, chatId: string, belongsToCommunity: bool, 
   communityService: community_service.ServiceInterface): Controller =
   result = Controller()
   result.delegate = delegate
-  result.id = id
-  result.isCommunityModule = isCommunity
+  result.chatId = chatId
+  result.belongsToCommunity = belongsToCommunity
   result.communityService = communityService
   
 method delete*(self: Controller) =
@@ -26,8 +26,8 @@ method delete*(self: Controller) =
 method init*(self: Controller) = 
   discard
 
-method getId*(self: Controller): string =
-  return self.id
+method getChatId*(self: Controller): string =
+  return self.chatId
 
-method isCommunity*(self: Controller): bool =
-  return self.isCommunityModule
+method belongsToCommunity*(self: Controller): bool =
+  return self.belongsToCommunity

@@ -10,7 +10,7 @@ QtObject:
       modelVariant: QVariant
       activeSection: ActiveSection
       activeSectionVariant: QVariant
-      tmpCommunityId: string # shouldn't be used anywhere except in setCommunitySection/getCommunitySection procs
+      tmpCommunityId: string # shouldn't be used anywhere except in prepareCommunitySectionModuleForCommunityId/getCommunitySectionModule procs
       
   proc delete*(self: View) =
     self.model.delete
@@ -102,19 +102,19 @@ QtObject:
     self.delegate.setUserStatus(status)
 
   # Since we cannot return QVariant from the proc which has arguments, so cannot have proc like this:
-  # getCommunitySection(self: View, communityId: string): QVariant {.slot.}
+  # prepareCommunitySectionModuleForCommunityId(self: View, communityId: string): QVariant {.slot.}
   # we're using combinaiton of 
-  # setCommunitySection/getCommunitySection procs
-  proc setCommunitySection*(self: View, communityId: string) {.slot.} =
+  # prepareCommunitySectionModuleForCommunityId/getCommunitySectionModule procs
+  proc prepareCommunitySectionModuleForCommunityId*(self: View, communityId: string) {.slot.} =
     self.tmpCommunityId = communityId
 
-  proc getCommunitySection*(self: View): QVariant {.slot.} =
-    var communityVariant = self.delegate.getCommunitySection(self.tmpCommunityId)
+  proc getCommunitySectionModule*(self: View): QVariant {.slot.} =
+    var communityVariant = self.delegate.getCommunitySectionModule(self.tmpCommunityId)
     self.tmpCommunityId = ""
     if(communityVariant.isNil):
       return newQVariant()
     
     return communityVariant
 
-  proc getChatSection*(self: View): QVariant {.slot.} =
-    return self.delegate.getChatSection()
+  proc getChatSectionModule*(self: View): QVariant {.slot.} =
+    return self.delegate.getChatSectionModule()
