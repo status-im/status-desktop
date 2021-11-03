@@ -1,12 +1,10 @@
-import NimQml, chronicles
+import NimQml, Tables, chronicles
 import io_interface
 import ../io_interface as delegate_interface
 import view, controller, item, sub_item, model, sub_model
 import ../../../core/global_singleton
 
-import input_area/module as input_area_module
-import messages/module as messages_module
-import users/module as users_module
+import chat_content/module as chat_content_module
 
 import ../../../../app_service/service/chat/service as chat_service
 import ../../../../app_service/service/community/service as community_service
@@ -25,9 +23,7 @@ type
     view: View
     viewVariant: QVariant
     controller: controller.AccessInterface
-    inputAreaModule: input_area_module.AccessInterface
-    messagesModule: messages_module.AccessInterface
-    usersModule: users_module.AccessInterface
+    chatContentModule: OrderedTable[string, chat_content_module.AccessInterface]
     moduleLoaded: bool
 
 proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitter, id: string, isCommunity: bool, 
@@ -40,18 +36,25 @@ proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitt
   result.viewVariant = newQVariant(result.view)
   result.controller = controller.newController(result, id, isCommunity, chatService, communityService, messageService)
   result.moduleLoaded = false
-
-  result.inputAreaModule = input_area_module.newModule(result, id, isCommunity, chatService, communityService)
-  result.messagesModule = messages_module.newModule(result, events, id, isCommunity, chatService, communityService, 
-  messageService)
-  result.usersModule = users_module.newModule(result, id, isCommunity, chatService, communityService)
+  
+  result.chatContentModule = initOrderedTable[string, chat_content_module.AccessInterface]()
 
 method delete*(self: Module) =
+  for cModule in self.chatContentModule.values:
+    cModule.delete
+  self.chatContentModule.clear
   self.view.delete
   self.viewVariant.delete
   self.controller.delete
 
-proc buildChatUI(self: Module) =
+proc addSubmodule(self: Module, chatId: string, belongToCommunity: bool, events: EventEmitter, 
+  chatService: chat_service.Service, communityService: community_service.Service, 
+  messageService: message_service.Service) =
+  self.chatContentModule[chatId] = chat_content_module.newModule(self, events, chatId, belongToCommunity, chatService, 
+      communityService, messageService)
+
+proc buildChatUI(self: Module, events: EventEmitter, chatService: chat_service.Service, 
+  communityService: community_service.Service, messageService: message_service.Service) =
   let types = @[ChatType.OneToOne, ChatType.Public, ChatType.PrivateGroupChat, ChatType.Profile]
   let chats = self.controller.getChatDetailsForChatTypes(types)
 
@@ -62,6 +65,7 @@ proc buildChatUI(self: Module) =
     let item = initItem(c.id, if c.alias.len > 0: c.alias else: c.name, c.identicon, c.color, c.description, 
     c.chatType.int, hasNotification, notificationsCount, c.muted, false)
     self.view.appendItem(item)
+    self.addSubmodule(c.id, false, events, chatService, communityService, messageService)
     
     # make the first chat active when load the app
     if(selectedItemId.len == 0):
@@ -69,7 +73,8 @@ proc buildChatUI(self: Module) =
 
   self.setActiveItemSubItem(selectedItemId, "")
 
-proc buildCommunityUI(self: Module) =
+proc buildCommunityUI(self: Module, events: EventEmitter, chatService: chat_service.Service, 
+  communityService: community_service.Service, messageService: message_service.Service) =
   var selectedItemId = ""
   var selectedSubItemId = ""
   let communityIds = self.controller.getCommunityIds()
@@ -85,6 +90,7 @@ proc buildCommunityUI(self: Module) =
       chatDto.identicon, chatDto.color, chatDto.description, chatDto.chatType.int, hasNotification, notificationsCount, 
       chatDto.muted, false)
       self.view.appendItem(channelItem)
+      self.addSubmodule(chatDto.id, true, events, chatService, communityService, messageService)
 
       # make the first channel which doesn't belong to any category active when load the app
       if(selectedItemId.len == 0):
@@ -111,6 +117,7 @@ proc buildCommunityUI(self: Module) =
         chatDto.identicon, chatDto.color, chatDto.description, hasNotification, notificationsCount, chatDto.muted, 
         false)
         categoryChannels.add(channelItem)
+        self.addSubmodule(chatDto.id, true, events, chatService, communityService, messageService)
 
         # in case there is no channels beyond categories, 
         # make the first channel of the first category active when load the app
@@ -125,31 +132,26 @@ proc buildCommunityUI(self: Module) =
 
   self.setActiveItemSubItem(selectedItemId, selectedSubItemId)
 
-method load*(self: Module) =
+method load*(self: Module, events: EventEmitter, chatService: chat_service.Service, 
+  communityService: community_service.Service, messageService: message_service.Service) =
   self.controller.init()
   self.view.load()
   
   if(self.controller.isCommunity()):
-    self.buildCommunityUI()
+    self.buildCommunityUI(events, chatService, communityService, messageService)
   else:
-    self.buildChatUI()
+    self.buildChatUI(events, chatService, communityService, messageService)
 
-  self.inputAreaModule.load()
-  self.messagesModule.load()
-  self.usersModule.load()
+  for cModule in self.chatContentModule.values:
+    cModule.load()
 
 proc checkIfModuleDidLoad(self: Module) =
   if self.moduleLoaded:
     return
 
-  if(not self.inputAreaModule.isLoaded()):
-    return
-
-  if (not self.messagesModule.isLoaded()):
-    return
-
-  if (not self.usersModule.isLoaded()):
-    return
+  for cModule in self.chatContentModule.values:
+    if(not cModule.isLoaded()):
+      return
 
   self.moduleLoaded = true
   if(self.controller.isCommunity()):
@@ -163,13 +165,7 @@ method isLoaded*(self: Module): bool =
 method viewDidLoad*(self: Module) =
   self.checkIfModuleDidLoad()
 
-method inputAreaDidLoad*(self: Module) =
-  self.checkIfModuleDidLoad()
-
-method messagesDidLoad*(self: Module) =
-  self.checkIfModuleDidLoad()
-
-method usersDidLoad*(self: Module) =
+method chatContentDidLoad*(self: Module) =
   self.checkIfModuleDidLoad()
 
 method setActiveItemSubItem*(self: Module, itemId: string, subItemId: string) =
@@ -189,5 +185,12 @@ method activeItemSubItemSet*(self: Module, itemId: string, subItemId: string) =
   self.view.model().setActiveItemSubItem(itemId, subItemId)
   self.view.activeItemSubItemSet(item, subItem)
 
-method getChatSection*(self: Module): QVariant =
+method getModuleAsVariant*(self: Module): QVariant =
   return self.viewVariant
+
+method getChatContentModule*(self: Module, chatId: string): QVariant =
+  if(not self.chatContentModule.contains(chatId)):
+    error "unexisting chat key: ", chatId
+    return
+
+  return self.chatContentModule[chatId].getModuleAsVariant()
