@@ -23,6 +23,7 @@ proc mergeChat(community: var Community, chat: Chat): bool =
       chat.canPost = community.chats[i].canPost
       chat.categoryId = community.chats[i].categoryId
       chat.position = community.chats[i].position
+      chat.color = community.communityColor
       community.chats[i] = chat
       return true
 
