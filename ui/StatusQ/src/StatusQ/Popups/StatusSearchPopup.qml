@@ -93,11 +93,15 @@ StatusModal {
                     font.pixelSize: 28
                     font.family: Theme.palette.baseFont.name
                     color: Theme.palette.directColor1
+                    Keys.onPressed: {
+                        if (event.key === Qt.Key_Enter || event.key === Qt.Key_Return)
+                            event.accepted = true
+                    }
                 }
             }
-            StatusMenuSeparator { 
+            StatusMenuSeparator {
                 topPadding: 0
-                Layout.fillWidth: true 
+                Layout.fillWidth: true
             }
             Item {
                 Layout.preferredWidth: parent.width
@@ -147,7 +151,7 @@ StatusModal {
                             id: sensor
                             anchors.fill: parent
                             hoverEnabled: true
-                            cursorShape: Qt.PointingHandCursor 
+                            cursorShape: Qt.PointingHandCursor
                             onClicked: root.searchOptionsPopupMenu.popup();
 
                             RowLayout {
@@ -168,9 +172,9 @@ StatusModal {
                                     icon: searchOptionsMenuButton.iconSettings
                                     name: searchOptionsMenuButton.primaryText
                                     active: searchOptionsMenuButton.primaryText !== defaultSearchLocationText &&
-                                        (searchOptionsMenuButton.iconSettings.name ||
-                                        searchOptionsMenuButton.iconSettings.isLetterIdenticon ||
-                                        !!searchOptionsMenuButton.image.source.toString())
+                                            (searchOptionsMenuButton.iconSettings.name ||
+                                             searchOptionsMenuButton.iconSettings.isLetterIdenticon ||
+                                             !!searchOptionsMenuButton.image.source.toString())
                                 }
 
                                 StatusBaseText {
