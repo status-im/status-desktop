@@ -84,7 +84,7 @@ StatusModal {
                 }
                 validators: [StatusMinLengthValidator {
                     minLength: 1
-                    errorMessage: Utils.getErrorMessage(errors, qsTr("channel name"))
+                    errorMessage: Utils.getErrorMessage(nameInput.errors, qsTr("channel name"))
                 }]
             }
 
@@ -103,7 +103,7 @@ StatusModal {
                 input.implicitHeight: 88
                 validators: [StatusMinLengthValidator {
                     minLength: 1
-                    errorMessage:  Utils.getErrorMessage(errors, qsTr("channel description"))
+                    errorMessage:  Utils.getErrorMessage(descriptionTextArea.errors, qsTr("channel description"))
                 }]
             }
 
