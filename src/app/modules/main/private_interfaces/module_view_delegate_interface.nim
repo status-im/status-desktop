@@ -10,8 +10,8 @@ method storePassword*(self: AccessInterface, password: string) {.base.} =
 method setActiveSection*(self: AccessInterface, item: Item) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getChatSection*(self: AccessInterface): QVariant {.base.} =
+method getChatSectionModule*(self: AccessInterface): QVariant {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getCommunitySection*(self: AccessInterface, communityId: string): QVariant {.base.} =
+method getCommunitySectionModule*(self: AccessInterface, communityId: string): QVariant {.base.} =
   raise newException(ValueError, "No implementation available")

@@ -10,6 +10,7 @@ QtObject:
       modelVariant: QVariant
       activeItem: ActiveItem
       activeItemVariant: QVariant
+      tmpChatId: string # shouldn't be used anywhere except in prepareChatContentModuleForChatId/getChatContentModule procs
       
   proc delete*(self: View) =
     self.model.delete
@@ -63,3 +64,18 @@ QtObject:
 
   proc setActiveItem*(self: View, itemId: string, subItemId: string = "") {.slot.} =
     self.delegate.setActiveItemSubItem(itemId, subItemId)
+
+  # Since we cannot return QVariant from the proc which has arguments, so cannot have proc like this:
+  # prepareChatContentModuleForChatId(self: View, chatId: string): QVariant {.slot.}
+  # we're using combinaiton of 
+  # prepareChatContentModuleForChatId/getChatContentModule procs
+  proc prepareChatContentModuleForChatId*(self: View, chatId: string) {.slot.} =
+    self.tmpChatId = chatId
+
+  proc getChatContentModule*(self: View): QVariant {.slot.} =
+    var chatContentVariant = self.delegate.getChatContentModule(self.tmpChatId)
+    self.tmpChatId = ""
+    if(chatContentVariant.isNil):
+      return newQVariant()
+    
+    return chatContentVariant
