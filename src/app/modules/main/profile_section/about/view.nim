@@ -1,6 +1,6 @@
 import NimQml
+import ../../../../../constants
 
-# import ./controller_interface
 import ./io_interface
 
 QtObject:
@@ -21,3 +21,6 @@ QtObject:
 
   proc nodeVersion*(self: View): string {.slot.} =
     return self.delegate.getNodeVersion()
+
+  proc logDir*(self: View): string {.slot.} =
+    url_fromLocalFile(constants.LOGDIR)

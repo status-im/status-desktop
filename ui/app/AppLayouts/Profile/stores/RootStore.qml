@@ -320,7 +320,7 @@ QtObject {
     }
 
     function logDir() {
-        return profileModelInst.logDir()
+        return aboutModuleInst.logDir()
     }
 
     function setBloomLevel(mode) {
