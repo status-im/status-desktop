@@ -1,5 +1,5 @@
 import NimQml
-import io_interface, view, controller
+import io_interface, controller
 import ../../../core/global_singleton
 
 import ../../../../app_service/service/profile/service as profile_service
@@ -34,8 +34,6 @@ export io_interface
 type 
   Module* [T: io_interface.DelegateInterface] = ref object of io_interface.AccessInterface
     delegate: T
-    view: View
-    viewVariant: QVariant
     controller: controller.AccessInterface
     moduleLoaded: bool
 
@@ -69,8 +67,6 @@ proc newModule*[T](delegate: T,
   Module[T] =
   result = Module[T]()
   result.delegate = delegate
-  result.view = view.newView()
-  result.viewVariant = newQVariant(result.view)
   result.controller = controller.newController[Module[T]](result, accountsService, settingsService, profileService, languageService, mnemonicService, privacyService, syncnodeService, deviceSyncService)
   result.moduleLoaded = false
 
@@ -86,8 +82,6 @@ proc newModule*[T](delegate: T,
   result.networkModule = network_module.newModule(result, settingsService, networkService)
   result.fleetModule = fleet_module.newModule(result, settingsService)
 
-  singletonInstance.engine.setRootContextProperty("deviceSyncModule", result.viewVariant)
-
 method delete*[T](self: Module[T]) =
   self.profileModule.delete
   self.contactsModule.delete
@@ -100,8 +94,6 @@ method delete*[T](self: Module[T]) =
   self.deviceSyncModule.delete
   self.networkModule.delete
 
-  self.view.delete
-  self.viewVariant.delete
   self.controller.delete
 
 method load*[T](self: Module[T]) =
