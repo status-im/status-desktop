@@ -468,7 +468,7 @@ Item {
                 z: 51
                 sourceComponent: Component {
                     StatusChatImage {
-                        imageSource: profileImageSource
+                        imageSource: image
                         imageWidth: 200
                         onClicked: {
                             if (mouse.button === Qt.LeftButton) {
