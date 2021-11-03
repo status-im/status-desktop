@@ -35,19 +35,22 @@ ModalPopup {
 
     function resetSelectedMembers(){
         pubKeys = [];
-        memberCount = channel.members.rowCount();
+
+        memberCount = channel ? channel.members.rowCount() : 0;
         currMemberCount = memberCount;
         contactList.membersData.clear();
 
         const contacts = getContactListObject()
 
-        contacts.forEach(function (contact) {
-            if(popup.channel.contains(contact.publicKey) ||
-                    !contact.isContact) {
-                return;
-            }
-            contactList.membersData.append(contact)
-        })
+        if (channel) {
+            contacts.forEach(function (contact) {
+                if(popup.channel.contains(contact.publicKey) ||
+                        !contact.isContact) {
+                    return;
+                }
+                contactList.membersData.append(contact)
+            })
+        }
     }
 
     onClosed: {
@@ -56,68 +59,73 @@ ModalPopup {
 
     onOpened: {
         addMembers = false;
-        popup.isAdmin = popup.channel.isAdmin(popup.store.profileModelInst.profile.pubKey)
+        if (popup.channel) {
+            popup.isAdmin = popup.channel.isAdmin(popup.store.profileModelInst.profile.pubKey)
+        }
         btnSelectMembers.enabled = false;
         resetSelectedMembers();
     }
 
     function doAddMembers(){
         if(pubKeys.length === 0) return;
-        chatsModel.groups.addMembers(popup.channel.id, JSON.stringify(pubKeys));
+        if (popup.channel) {
+            chatsModel.groups.addMembers(popup.channel.id, JSON.stringify(pubKeys));
+        }
         popup.close();
     }
 
     header: Item {
-      height: children[0].height
-      width: parent.width
+        height: children[0].height
+        width: parent.width
 
 
-      StatusQ.StatusLetterIdenticon {
-          id: letterIdenticon
-          width: 36
-          height: 36
-          anchors.top: parent.top
-          color: popup.channel.color
-          name: popup.channel.name
-      }
-    
-      StyledTextEdit {
-          id: groupNameTxt
-          //% "Add members"
-          text: addMembers ? qsTrId("add-members") : popup.channel.name
-          anchors.top: parent.top
-          anchors.topMargin: 2
-          anchors.left: letterIdenticon.right
-          anchors.leftMargin: Style.current.smallPadding
-          font.bold: true
-          font.pixelSize: 14
-          readOnly: true
-          wrapMode: Text.WordWrap
-      }
+        StatusQ.StatusLetterIdenticon {
+            id: letterIdenticon
+            width: 36
+            height: 36
+            anchors.top: parent.top
+            color: popup.channel ? popup.channel.color : "transparent"
+            name: popup.channel ? popup.channel.name : ""
+        }
 
-      StyledText {
-          text: {
-            let cnt = memberCount;
-            if(addMembers){
-                //% "%1 / 10 members"
-                return qsTrId("%1-/-10-members").arg(cnt)
-            } else {
-                //% "%1 members"
-                if(cnt > 1) return qsTrId("%1-members").arg(cnt);
-                //% "1 member"
-                return qsTrId("1-member");
+        StyledTextEdit {
+            id: groupNameTxt
+            //% "Add members"
+            text: addMembers ? qsTrId("add-members")
+                             : (popup.channel ? popup.channel.name : "")
+            anchors.top: parent.top
+            anchors.topMargin: 2
+            anchors.left: letterIdenticon.right
+            anchors.leftMargin: Style.current.smallPadding
+            font.bold: true
+            font.pixelSize: 14
+            readOnly: true
+            wrapMode: Text.WordWrap
+        }
+
+        StyledText {
+            text: {
+                let cnt = memberCount;
+                if(addMembers){
+                    //% "%1 / 10 members"
+                    return qsTrId("%1-/-10-members").arg(cnt)
+                } else {
+                    //% "%1 members"
+                    if(cnt > 1) return qsTrId("%1-members").arg(cnt);
+                    //% "1 member"
+                    return qsTrId("1-member");
+                }
             }
-          }
-          width: 160
-          anchors.left: letterIdenticon.right
-          anchors.leftMargin: Style.current.smallPadding
-          anchors.top: groupNameTxt.bottom
-          anchors.topMargin: 2
-          font.pixelSize: 14
-          color: Style.current.secondaryText
-      }
+            width: 160
+            anchors.left: letterIdenticon.right
+            anchors.leftMargin: Style.current.smallPadding
+            anchors.top: groupNameTxt.bottom
+            anchors.topMargin: 2
+            font.pixelSize: 14
+            color: Style.current.secondaryText
+        }
 
-      Rectangle {
+        Rectangle {
             id: editGroupNameBtn
             visible: !addMembers && popup.isAdmin
             height: 24
@@ -288,7 +296,7 @@ ModalPopup {
             spacing: Style.current.padding
             Layout.fillWidth: true
             Layout.fillHeight: true
-            model: popup.channel.members
+            model: popup.channel? popup.channel.members : []
             delegate: Item {
                 id: contactRow
                 width: parent.width
@@ -389,14 +397,14 @@ ModalPopup {
         width: parent.width
         height: children[0].height
         StatusQControls.StatusButton {
-          visible: !addMembers
-          anchors.right: parent.right
-          //% "Add members"
-          text: qsTrId("add-members")
-          anchors.bottom: parent.bottom
-          onClicked: {
-            addMembers = true;
-          }
+            visible: !addMembers
+            anchors.right: parent.right
+            //% "Add members"
+            text: qsTrId("add-members")
+            anchors.bottom: parent.bottom
+            onClicked: {
+                addMembers = true;
+            }
         }
 
         StatusQControls.StatusRoundButton {
@@ -415,14 +423,14 @@ ModalPopup {
         }
 
         StatusQControls.StatusButton {
-          id: btnSelectMembers
-          visible: addMembers
-          enabled: memberCount >= currMemberCount
-          anchors.right: parent.right
-          //% "Add selected"
-          text: qsTrId("add-selected")
-          anchors.bottom: parent.bottom
-          onClicked: doAddMembers()
+            id: btnSelectMembers
+            visible: addMembers
+            enabled: memberCount >= currMemberCount
+            anchors.right: parent.right
+            //% "Add selected"
+            text: qsTrId("add-selected")
+            anchors.bottom: parent.bottom
+            onClicked: doAddMembers()
         }
     }
 
