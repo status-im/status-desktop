@@ -433,7 +433,7 @@ Item {
                 }
 
                 Component.onCompleted: {
-                    chatSectionModule = mainModule.getChatSection()
+                    chatSectionModule = mainModule.getChatSectionModule()
                 }
             }
 
@@ -528,8 +528,10 @@ Item {
                             }
 
                             Component.onCompleted: {
-                                mainModule.setCommunitySection(model.id)
-                                chatSectionModule = mainModule.getCommunitySection()
+                                // we cannot return QVariant if we pass another parameter in a function call
+                                // that's why we're using it this way
+                                mainModule.prepareCommunitySectionModuleForCommunityId(model.id)
+                                chatSectionModule = mainModule.getCommunitySectionModule()
                             }
                         }
                     }
