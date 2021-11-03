@@ -429,7 +429,6 @@ Item {
             anchors.right: parent.right
             anchors.rightMargin: root.chatHorizontalPadding
             visible: !isEdit
-
             ChatTextView {
                 id: chatText
                 store: root.store
@@ -509,7 +508,7 @@ Item {
                             anchors.left: parent.left
                             anchors.leftMargin: root.chatVerticalPadding
                             contentType: root.contentType
-                            stickerData: root.messageStore.sticker
+                            stickerData: sticker
                             onLoaded: {
                                 root.messageStore.scrollToBottom(true, root.container)
                             }
