@@ -178,9 +178,9 @@ method load*[T](self: Module[T], events: EventEmitter, chatService: chat_service
     activeSection = profileSettingsSectionItem
 
   # Load all sections
-  self.chatSectionModule.load()
+  self.chatSectionModule.load(events, chatService, communityService, messageService)
   for cModule in self.communitySectionsModule.values:
-    cModule.load()
+    cModule.load(events, chatService, communityService, messageService)
   self.walletSectionModule.load()
   # self.walletV2SectionModule.load()
   self.browserSectionModule.load()
@@ -270,12 +270,12 @@ method enableSection*[T](self: Module[T], sectionType: SectionType) =
 method disableSection*[T](self: Module[T], sectionType: SectionType) =
   self.view.model().disableSection(sectionType)
 
-method getChatSection*[T](self: Module[T]): QVariant =
-  return self.chatSectionModule.getChatSection()
+method getChatSectionModule*[T](self: Module[T]): QVariant =
+  return self.chatSectionModule.getModuleAsVariant()
 
-method getCommunitySection*[T](self: Module[T], communityId: string): QVariant =
+method getCommunitySectionModule*[T](self: Module[T], communityId: string): QVariant =
   if(not self.communitySectionsModule.contains(communityId)):
     echo "main-module, unexisting community key: ", communityId
     return
 
-  return self.communitySectionsModule[communityId].getChatSection()
+  return self.communitySectionsModule[communityId].getModuleAsVariant()
