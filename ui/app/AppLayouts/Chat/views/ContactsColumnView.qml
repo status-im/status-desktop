@@ -259,9 +259,11 @@ Item {
             onChatItemUnmuted: root.store.chatsModelInst.channelView.unmuteChatItem(id)
 
             popupMenu: ChatContextMenuView {
+                id: chatContextMenuView
                 store: root.store
                 openHandler: function (id) {
-                    chatItem = root.store.chatsModelInst.channelView.getChatItemById(id)
+                    root.store.chatsModelInst.channelView.setContextChannel(id)
+                    chatContextMenuView.chatItem = root.store.chatsModelInst.channelView.contextChannel
                 }
             }
         }
