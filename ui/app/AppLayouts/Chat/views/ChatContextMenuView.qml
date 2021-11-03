@@ -161,14 +161,14 @@ StatusPopupMenu {
         ConfirmationDialog {
             property string chatId: !!chatItem ? chatItem.id : ""
             btnType: "warn"
-            header.title: communityActive ? qsTr("Delete #%1").arg(chatItem.name) :
+            header.title: communityActive && chatItem ? qsTr("Delete #%1").arg(chatItem.name) :
                                             chatItem && chatItem.chatType === Constants.chatTypeOneToOne ?
                                             //% "Delete chat"
                                             qsTrId("delete-chat") :
                                             //% "Leave chat"
                                             qsTrId("leave-chat")
             confirmButtonLabel: communityActive ? qsTr("Delete") : header.title
-            confirmationText: communityActive ? qsTr("Are you sure you want to delete #%1 channel?").arg(chatItem.name) :
+            confirmationText: communityActive && chatItem ? qsTr("Are you sure you want to delete #%1 channel?").arg(chatItem.name) :
                                                 chatItem && chatItem.chatType === Constants.chatTypeOneToOne ?
                                                 qsTr("Are you sure you want to delete this chat?"):
                                                 qsTr("Are you sure you want to leave this chat?")
