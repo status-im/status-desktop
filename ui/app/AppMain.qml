@@ -705,6 +705,7 @@ Item {
                 this.active = false
             }
             sourceComponent: SendModal {
+                store: appMain.rootStore
                 onOpened: {
                     walletModel.gasView.getGasPrice()
                 }

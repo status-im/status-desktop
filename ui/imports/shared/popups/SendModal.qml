@@ -18,6 +18,7 @@ ModalPopup {
     property alias selectFromAccount: selectFromAccount
     property alias selectRecipient: selectRecipient
     property alias stack: stack
+    property var store
 
     //% "Send"
     title: qsTrId("command-button-send")
@@ -34,7 +35,7 @@ ModalPopup {
     function sendTransaction() {
         stack.currentGroup.isPending = true
         let success = false
-        if(txtAmount.selectedAsset.address == ""){
+        if(txtAmount.selectedAsset.address === ""){
             success = walletModel.transactionsView.transferEth(
                                                  selectFromAccount.selectedAccount.address,
                                                  selectRecipient.selectedRecipient.address,
@@ -84,9 +85,9 @@ ModalPopup {
 
             StatusAccountSelector {
                 id: selectFromAccount
-                accounts: walletModel.accountsView.accounts
+                accounts: root.store.accounts
                 selectedAccount: {
-                    const currAcc = walletModel.accountsView.currentAccount
+                    const currAcc = root.store.currentAccount
                     if (currAcc.walletType !== Constants.watchWalletType) {
                         return currAcc
                     }
@@ -105,7 +106,7 @@ ModalPopup {
             }
             RecipientSelector {
                 id: selectRecipient
-                accounts: walletModel.accountsView.accounts
+                accounts: root.store.accounts
                 contacts: profileModel.contacts.addedContacts
                 //% "Recipient"
                 label: qsTrId("recipient")

@@ -32,7 +32,7 @@ QtObject:
 
   proc countChanged(self: Model) {.signal.}
 
-  proc getCount(self: Model): int {.slot.} =
+  proc getCount*(self: Model): int {.slot.} =
     self.items.len
 
   QtProperty[int] count:
@@ -72,6 +72,17 @@ QtObject:
       result = newQVariant(item.getAddress())
     of ModelRole.CurrencyBalance: 
       result = newQVariant(item.getCurrencyBalance())
+
+  proc rowData(self: Model, index: int, column: string): string {.slot.} =
+    if (index >= self.items.len):
+      return
+    let item = self.items[index]
+    case column:
+      of "name": result = $item.getName()
+      of "symbol": result = $item.getSymbol()
+      of "balance": result = $item.getBalance()
+      of "address": result = $item.getAddress()
+      of "currencyBalance": result = $item.getCurrencyBalance()
 
   proc setItems*(self: Model, items: seq[Item]) =
     self.beginResetModel()

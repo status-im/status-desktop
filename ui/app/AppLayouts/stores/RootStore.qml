@@ -4,7 +4,11 @@ QtObject {
     id: root
     property var chatsModelInst: chatsModel
     property var walletModelInst: walletModel
+
+    property var accounts: walletSectionAccounts.model
+    property var currentAccount: walletSectionCurrent
     property var profileModelInst: profileModel
+    property var assets: walletSectionAccountTokens.model
     property MessageStore messageStore: MessageStore { }
 
     function setCommunityMuted(communityId, checked) {

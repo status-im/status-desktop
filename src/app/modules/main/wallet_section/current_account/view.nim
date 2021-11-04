@@ -1,7 +1,9 @@
-import NimQml
+import NimQml, sequtils, sugar
 
 import ../../../../../app_service/service/wallet_account/service as wallet_account_service
 import ./io_interface
+import ../account_tokens/model as account_tokens
+import ../account_tokens/item as account_tokens_item
 
 QtObject:
   type
@@ -15,6 +17,7 @@ QtObject:
       walletType: string
       isChat: bool
       currencyBalance: float64
+      assets: account_tokens.Model
 
   proc setup(self: View) =
     self.QObject.setup
@@ -98,6 +101,15 @@ QtObject:
   QtProperty[QVariant] currencyBalance:
     read = getCurrencyBalance
     notify = currencyBalanceChanged
+  
+  proc getAssets(self: View): QVariant {.slot.} =
+    return newQVariant(self.assets)
+
+  proc assetsChanged(self: View) {.signal.}
+
+  QtProperty[QVariant] assets:
+    read = getAssets
+    notify = assetsChanged
 
   proc update(self: View, address: string, accountName: string, color: string) {.slot.} =
     self.delegate.update(address, accountName, color)
@@ -119,3 +131,17 @@ proc setData*(self: View, dto: wallet_account_service.WalletAccountDto) =
     self.isChatChanged()
     self.currencyBalance = dto.getCurrencyBalance()
     self.currencyBalanceChanged()
+
+    let assets = account_tokens.newModel()
+  
+    assets.setItems(
+      dto.tokens.map(t => account_tokens_item.initItem(
+          t.name,
+          t.symbol,
+          t.balance,
+          t.address,
+          t.currencyBalance,
+        ))
+    )
+    self.assets = assets
+    self.assetsChanged()

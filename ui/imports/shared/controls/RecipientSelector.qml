@@ -198,8 +198,8 @@ Item {
                 if (!selectedAccount || !selAddressSource.selectedSource || (selAddressSource.selectedSource && selAddressSource.selectedSource.value !== RecipientSelector.Type.Account)) {
                     return
                 }
-                const { address, name, iconColor, assets, fiatBalance } = selectedAccount
-                root.selectedRecipient = { address, name, iconColor, assets, fiatBalance, type: RecipientSelector.Type.Account }
+                const { address, name, color, assets, fiatBalance } = selectedAccount
+                root.selectedRecipient = { address, name, color, assets, fiatBalance, type: RecipientSelector.Type.Account }
             }
             onIsValidChanged: root.validate()
         }
@@ -240,10 +240,10 @@ Item {
                         selAccount.visible = true
                         inpAddress.visible = selContact.visible = false
                         root.height = Qt.binding(function() { return selAccount.height + txtLabel.height })
-                        const { iconColor, assets, fiatBalance } = selAccount.selectedAccount
+                        const { color, assets, fiatBalance } = selAccount.selectedAccount
                         address = selAccount.selectedAccount.address
                         name = selAccount.selectedAccount.name
-                        root.selectedRecipient = { address, name, iconColor, assets, fiatBalance, type: RecipientSelector.Type.Account }
+                        root.selectedRecipient = { address, name, color, assets, fiatBalance, type: RecipientSelector.Type.Account }
                         if (root.selectedType !== RecipientSelector.Type.Account) root.selectedType = RecipientSelector.Type.Account
                         root.isValid = selAccount.isValid
                         break;
