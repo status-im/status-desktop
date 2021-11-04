@@ -1,6 +1,6 @@
-import NimQml, Tables, json, strutils, strformat
+import NimQml, Tables, json, strutils
 
-import item
+import message_item
 
 type
   ModelRole {.pure.} = enum
@@ -19,6 +19,7 @@ type
     # Image
     # GapFrom
     # GapTo
+    Pinned
     CountsForReactions
 
 QtObject:
@@ -57,6 +58,7 @@ QtObject:
       # ModelRole.Image.int:"image",
       # ModelRole.GapFrom.int:"gapFrom",
       # ModelRole.GapTo.int:"gapTo",
+      ModelRole.Pinned.int:"pinned",
       ModelRole.CountsForReactions.int:"countsForReactions",
     }.toTable
 
@@ -101,8 +103,17 @@ QtObject:
     #   result = newQVariant(item.gapFrom)
     # of ModelRole.GapTo: 
     #   result = newQVariant(item.gapTo)
+    of ModelRole.Pinned: 
+      result = newQVariant(item.pinned)
     of ModelRole.CountsForReactions: 
       result = newQVariant($(%* item.getCountsForReactions))
+
+  proc findIndexForMessageId(self: Model, messageId: string): int = 
+    for i in 0 ..< self.items.len:
+      if(self.items[i].id == messageId):
+        return i
+
+    return -1
 
   proc prependItems*(self: Model, items: seq[Item]) =
     let parentModelIndex = newQModelIndex()
@@ -114,12 +125,25 @@ QtObject:
     self.items = items & self.items
     self.endInsertRows()
 
-  proc findIndexForMessageId(self: Model, messageId: string): int = 
-    for i in 0 ..< self.items.len:
-      if(self.items[i].id == messageId):
-        return i
+  proc appendItem*(self: Model, item: Item) =
+    let parentModelIndex = newQModelIndex()
+    defer: parentModelIndex.delete
 
-    return -1
+    self.beginInsertRows(parentModelIndex, self.items.len, self.items.len)
+    self.items.add(item)
+    self.endInsertRows()
+
+  proc removeItem*(self: Model, messageId: string) =
+    let ind = self.findIndexForMessageId(messageId)
+    if(ind == -1):
+      return
+
+    let parentModelIndex = newQModelIndex()
+    defer: parentModelIndex.delete
+
+    self.beginRemoveRows(parentModelIndex, ind, ind)
+    self.items.delete(ind)
+    self.endRemoveRows()
 
   proc getItemWithMessageId*(self: Model, messageId: string): Item = 
     let ind = self.findIndexForMessageId(messageId)
@@ -152,3 +176,13 @@ QtObject:
     for i in 0 ..< self.items.len:
       if(self.items[i].id == messageId):
         return self.items[i].getNamesForReactions(emojiId)
+
+  proc pinUnpinMessage*(self: Model, messageId: string, pin: bool) = 
+    let ind = self.findIndexForMessageId(messageId)
+    if(ind == -1):
+      return
+
+    self.items[ind].pinned = pin
+    
+    let index = self.createIndex(ind, 0, nil)
+    self.dataChanged(index, index, @[ModelRole.Pinned.int])
