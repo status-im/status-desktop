@@ -67,8 +67,8 @@ proc buildChatUI(self: Module, events: EventEmitter, chatService: chat_service.S
     self.view.appendItem(item)
     self.addSubmodule(c.id, false, events, chatService, communityService, messageService)
     
-    # make the first chat active when load the app
-    if(selectedItemId.len == 0):
+    # make the first Public chat active when load the app
+    if(selectedItemId.len == 0 and c.chatType == ChatType.Public):
       selectedItemId = item.id
 
   self.setActiveItemSubItem(selectedItemId, "")

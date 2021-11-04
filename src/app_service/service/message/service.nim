@@ -131,3 +131,36 @@ QtObject:
     self.loadMoreMessagesForChat(chatId)
 
   
+  proc addReaction*(self: Service, chatId: string, messageId: string, emojiId: int): 
+    tuple[result: string, error: string] =
+    try:
+      let response = status_go.addReaction(chatId, messageId, emojiId)
+      
+      result.error = "response doesn't contain \"error\""
+      if(response.result.contains("error")):
+        result.error = response.result["error"].getStr
+        return
+
+      var reactionsArr: JsonNode
+      var reactions: seq[ReactionDto]
+      if(response.result.getProp("emojiReactions", reactionsArr)):
+        reactions = map(reactionsArr.getElems(), proc(x: JsonNode): ReactionDto = x.toReactionDto())
+
+      if(reactions.len > 0):
+        result.result = reactions[0].id
+
+    except Exception as e:
+      error "error: ", methodName="addReaction", errName = e.name, errDesription = e.msg
+
+  proc removeReaction*(self: Service, reactionId: string):
+    tuple[result: string, error: string] =
+    try:
+      let response = status_go.removeReaction(reactionId)
+      
+      result.error = "response doesn't contain \"error\""
+      if(response.result.contains("error")):
+        result.error = response.result["error"].getStr
+        return
+
+    except Exception as e:
+      error "error: ", methodName="removeReaction", errName = e.name, errDesription = e.msg

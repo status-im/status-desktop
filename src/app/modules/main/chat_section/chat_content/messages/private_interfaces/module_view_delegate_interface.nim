@@ -1,2 +1,5 @@
 method viewDidLoad*(self: AccessInterface) {.base.} =
-  raise newException(ValueError, "No implementation available") 
+  raise newException(ValueError, "No implementation available")
+
+method toggleReaction*(self: AccessInterface, messageId: string, emojiId: int) {.base.} =
+  raise newException(ValueError, "No implementation available")
