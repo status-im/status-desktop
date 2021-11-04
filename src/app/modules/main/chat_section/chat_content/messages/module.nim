@@ -1,7 +1,9 @@
 import NimQml
 import io_interface
 import ../io_interface as delegate_interface
-import view, controller, model, item
+import view, controller
+import ../../../../shared_models/message_model
+import ../../../../shared_models/message_item
 import ../../../../../core/global_singleton
 
 import ../../../../../../app_service/service/chat/service as chat_service
@@ -53,7 +55,8 @@ method viewDidLoad*(self: Module) =
 method getModuleAsVariant*(self: Module): QVariant =
   return self.viewVariant
 
-method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: seq[ReactionDto]) = 
+method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: seq[ReactionDto], 
+  pinnedMessages: seq[PinnedMessageDto]) = 
   var viewItems: seq[Item] 
   for m in messages:
     var item = initItem(m.id, m.`from`, m.alias, m.identicon, m.outgoingStatus, m.text, m.seen, m.timestamp, 
@@ -63,6 +66,10 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
       if(r.messageId == m.id):
         # m.`from` should be replaced by appropriate ens/alias when we have that part refactored
         item.addReaction(r.emojiId, m.`from`, r.id)
+
+    for p in pinnedMessages:
+      if(p.message.id == m.id):
+        item.pinned = true
 
     # messages are sorted from the most recent to the least recent one
     viewItems = item & viewItems
@@ -84,3 +91,9 @@ method onReactionAdded*(self: Module, messageId: string, emojiId: int, reactionI
 
 method onReactionRemoved*(self: Module, messageId: string, reactionId: string) =
   self.view.model.removeReaction(messageId, reactionId)
+
+method pinUnpinMessage*(self: Module, messageId: string, pin: bool) =
+  self.controller.pinUnpinMessage(messageId, pin)
+
+method onPinUnpinMessage*(self: Module, messageId: string, pin: bool) =
+  self.view.model.pinUnpinMessage(messageId, pin)

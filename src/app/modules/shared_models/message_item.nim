@@ -36,6 +36,7 @@ type
     messageType: int
     reactions: OrderedTable[int, seq[tuple[name: string, reactionId: string]]] # [emojiId, list of [names reacted with the emojiId, reaction id]]
     reactionIds: seq[string]
+    pinned: bool
 
 proc initItem*(id, `from`, alias, identicon, outgoingStatus, text: string, seen: bool, timestamp: int64, 
   contentType: ContentType, messageType: int): Item =
@@ -50,6 +51,7 @@ proc initItem*(id, `from`, alias, identicon, outgoingStatus, text: string, seen:
   result.timestamp = timestamp
   result.contentType = contentType
   result.messageType = messageType
+  result.pinned = false
 
 proc id*(self: Item): string {.inline.} = 
   self.id
@@ -80,6 +82,12 @@ proc contentType*(self: Item): ContentType {.inline.} =
 
 proc messageType*(self: Item): int {.inline.} = 
   self.messageType
+
+proc pinned*(self: Item): bool {.inline.} = 
+  self.pinned
+
+proc `pinned=`*(self: Item, value: bool) {.inline.} = 
+  self.pinned = value
 
 proc shouldAddReaction*(self: Item, emojiId: int, name: string): bool = 
   for k, values in self.reactions:

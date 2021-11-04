@@ -1,7 +1,9 @@
 import NimQml, chronicles
 import io_interface
 import ../io_interface as delegate_interface
-import view, controller, item, model
+import view, controller
+import ../../../shared_models/message_model as pinned_msg_model
+import ../../../shared_models/message_item as pinned_msg_item
 import ../../../../core/global_singleton
 
 import input_area/module as input_area_module
@@ -105,3 +107,44 @@ method getMessagesModule*(self: Module): QVariant =
 
 method getUsersModule*(self: Module): QVariant =
   return self.usersModule.getModuleAsVariant()
+
+proc buildPinnedMessageItem(self: Module, messageId: string, item: var pinned_msg_item.Item): bool = 
+  let (m, reactions, err) = self.controller.getMessageDetails(messageId)
+  if(err.len > 0):
+    return false
+
+  item = initItem(m.id, m.`from`, m.alias, m.identicon, m.outgoingStatus, m.text, m.seen, m.timestamp, 
+  m.contentType.ContentType, m.messageType)
+  item.pinned = true
+
+  for r in reactions:
+    if(r.messageId == m.id):
+      # m.`from` should be replaced by appropriate ens/alias when we have that part refactored
+      item.addReaction(r.emojiId, m.`from`, r.id)
+
+  return true
+
+method newPinnedMessagesLoaded*(self: Module, pinnedMessages: seq[PinnedMessageDto]) = 
+  var viewItems: seq[Item] 
+  for p in pinnedMessages:
+    var item: pinned_msg_item.Item
+    if(not self.buildPinnedMessageItem(p.message.id, item)):
+      continue
+
+    viewItems = item & viewItems # messages are sorted from the most recent to the least recent one
+
+  self.view.model.prependItems(viewItems)
+
+method unpinMessage*(self: Module, messageId: string) =
+  self.controller.unpinMessage(messageId)
+
+method onUnpinMessage*(self: Module, messageId: string) =
+  self.view.model.removeItem(messageId)
+
+method onPinMessage*(self: Module, messageId: string) =
+  var item: pinned_msg_item.Item
+  if(not self.buildPinnedMessageItem(messageId, item)):
+    return
+
+  self.view.model.appendItem(item)
+  
