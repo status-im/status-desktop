@@ -229,9 +229,6 @@ Item {
 
             chatListPopupMenu: ChatContextMenuView {
                 store: root.store
-                openHandler: function (id) {
-                    chatItem = root.store.chatsModelInst.channelView.getChatItemById(id)
-                }
             }
         }
 

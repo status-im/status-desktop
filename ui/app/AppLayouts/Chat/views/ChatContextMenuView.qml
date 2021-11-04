@@ -11,8 +11,8 @@ import "../popups"
 
 StatusPopupMenu {
     id: root
-    property var chatItem
     property var store
+    property var chatItem: root.store.chatsModelInst.channelView.activeChannel
     property bool communityActive: root.store.chatsModelInst.communities.activeCommunity.active
 
     StatusMenuItem {
@@ -57,7 +57,6 @@ StatusPopupMenu {
     StatusMenuSeparator {
         visible: viewProfileMenuItem.enabled
     }
-
 
     Action {
         enabled: root.store.profileModelInst.fleets.fleet == Constants.waku_prod || root.store.profileModelInst.fleets.fleet === Constants.waku_test

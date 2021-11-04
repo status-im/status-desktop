@@ -212,9 +212,6 @@ Item {
 
                 popupMenu: ChatContextMenuView {
                     store: root.rootStore
-                    onOpened: {
-                        chatItem = root.rootStore.chatsModelInst.channelView.activeChannel
-                    }
                 }
             }
 
