@@ -1,3 +1,4 @@
+import chronicles
 import controller_interface
 import io_interface
 
@@ -8,6 +9,9 @@ import eventemitter
 import status/[signals]
 
 export controller_interface
+
+logScope:
+  topics = "messages-controller"
 
 type 
   Controller* = ref object of controller_interface.AccessInterface
@@ -34,10 +38,29 @@ method delete*(self: Controller) =
 method init*(self: Controller) = 
   self.events.on(SIGNAL_MESSAGES_LOADED) do(e:Args):
     let args = MessagesLoadedArgs(e)
-    echo "RECEIVED MESSAGES ASYNC: ", repr(args)
+    if(self.chatId != args.chatId):
+      return
+
+    self.delegate.newMessagesLoaded(args.messages, args.reactions)
 
 method getChatId*(self: Controller): string =
   return self.chatId
 
 method belongsToCommunity*(self: Controller): bool =
   return self.belongsToCommunity
+
+method addReaction*(self: Controller, messageId: string, emojiId: int) =
+  let (res, err) = self.messageService.addReaction(self.chatId, messageId, emojiId)
+  if(err.len != 0):
+    error "an error has occurred while saving reaction: ", err
+    return
+
+  self.delegate.onReactionAdded(messageId, emojiId, res)
+
+method removeReaction*(self: Controller, messageId: string, reactionId: string) =
+  let (res, err) = self.messageService.removeReaction(reactionId)
+  if(err.len != 0):
+    error "an error has occurred while removing reaction: ", err
+    return
+
+  self.delegate.onReactionRemoved(messageId, reactionId)

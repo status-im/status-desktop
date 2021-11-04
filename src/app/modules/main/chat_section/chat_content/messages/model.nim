@@ -1,4 +1,4 @@
-import NimQml, Tables, strutils, strformat
+import NimQml, Tables, json, strutils, strformat
 
 import item
 
@@ -19,6 +19,7 @@ type
     # Image
     # GapFrom
     # GapTo
+    CountsForReactions
 
 QtObject:
   type
@@ -55,7 +56,8 @@ QtObject:
       # ModelRole.StickerPack.int:"stickerPack",
       # ModelRole.Image.int:"image",
       # ModelRole.GapFrom.int:"gapFrom",
-      # ModelRole.GapTo.int:"gapTo"
+      # ModelRole.GapTo.int:"gapTo",
+      ModelRole.CountsForReactions.int:"countsForReactions",
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -99,3 +101,54 @@ QtObject:
     #   result = newQVariant(item.gapFrom)
     # of ModelRole.GapTo: 
     #   result = newQVariant(item.gapTo)
+    of ModelRole.CountsForReactions: 
+      result = newQVariant($(%* item.getCountsForReactions))
+
+  proc prependItems*(self: Model, items: seq[Item]) =
+    let parentModelIndex = newQModelIndex()
+    defer: parentModelIndex.delete
+
+    let first = 0
+    let last = items.len - 1
+    self.beginInsertRows(parentModelIndex, first, last)
+    self.items = items & self.items
+    self.endInsertRows()
+
+  proc findIndexForMessageId(self: Model, messageId: string): int = 
+    for i in 0 ..< self.items.len:
+      if(self.items[i].id == messageId):
+        return i
+
+    return -1
+
+  proc getItemWithMessageId*(self: Model, messageId: string): Item = 
+    let ind = self.findIndexForMessageId(messageId)
+    if(ind == -1):
+      return
+
+    return self.items[ind]
+
+  proc addReaction*(self: Model, messageId: string, emojiId: int, name: string, reactionId: string) = 
+    let ind = self.findIndexForMessageId(messageId)
+    if(ind == -1):
+      return
+
+    self.items[ind].addReaction(emojiId, name, reactionId)
+    
+    let index = self.createIndex(ind, 0, nil)
+    self.dataChanged(index, index, @[ModelRole.CountsForReactions.int])
+
+  proc removeReaction*(self: Model, messageId: string, reactionId: string) = 
+    let ind = self.findIndexForMessageId(messageId)
+    if(ind == -1):
+      return
+
+    self.items[ind].removeReaction(reactionId)
+    
+    let index = self.createIndex(ind, 0, nil)
+    self.dataChanged(index, index, @[ModelRole.CountsForReactions.int])
+
+  proc getNamesForReaction*(self: Model, messageId: string, emojiId: int): seq[string] = 
+    for i in 0 ..< self.items.len:
+      if(self.items[i].id == messageId):
+        return self.items[i].getNamesForReactions(emojiId)

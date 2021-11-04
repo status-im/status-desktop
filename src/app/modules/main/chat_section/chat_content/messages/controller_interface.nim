@@ -16,4 +16,8 @@ method getChatId*(self: AccessInterface): string {.base.} =
 method belongsToCommunity*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
-    
+method addReaction*(self: AccessInterface, messageId: string, emojiId: int) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method removeReaction*(self: AccessInterface, messageId: string, reactionId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
