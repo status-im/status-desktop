@@ -42,12 +42,29 @@ method init*(self: Controller) =
     let args = MessagesLoadedArgs(e)
     if(self.chatId != args.chatId):
       return
-    
-    # We should handle only pinned messages within this module.
-    echo "ChatContent...RECEIVED MESSAGES: ", repr(args)
+    self.delegate.newPinnedMessagesLoaded(args.pinnedMessages)
+
+  self.events.on(SIGNAL_MESSAGE_PINNED) do(e:Args):
+    let args = MessagePinUnpinArgs(e)
+    if(self.chatId != args.chatId):
+      return
+    self.delegate.onPinMessage(args.messageId)
+
+  self.events.on(SIGNAL_MESSAGE_UNPINNED) do(e:Args):
+    let args = MessagePinUnpinArgs(e)
+    if(self.chatId != args.chatId):
+      return
+    self.delegate.onUnpinMessage(args.messageId)
 
 method getChatId*(self: Controller): string =
   return self.chatId
 
 method belongsToCommunity*(self: Controller): bool =
   return self.belongsToCommunity
+
+method unpinMessage*(self: Controller, messageId: string) =
+  self.messageService.pinUnpinMessage(self.chatId, messageId, false)
+
+method getMessageDetails*(self: Controller, messageId: string): 
+  tuple[message: MessageDto, reactions: seq[ReactionDto], error: string] =
+  return self.messageService.getDetailsForMessage(self.chatId, messageId)

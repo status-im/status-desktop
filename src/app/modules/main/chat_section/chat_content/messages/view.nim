@@ -1,5 +1,5 @@
 import NimQml, json
-import model
+import ../../../../shared_models/message_model
 import io_interface
 
 QtObject:
@@ -29,10 +29,15 @@ QtObject:
 
   QtProperty[QVariant] model:
     read = getModel
-    notify = modelChanged
 
   proc toggleReaction*(self: View, messageId: string, emojiId: int) {.slot.} = 
     self.delegate.toggleReaction(messageId, emojiId)
 
   proc getNamesForReaction*(self: View, messageId: string, emojiId: int): string {.slot.} = 
     return $(%* self.model.getNamesForReaction(messageId, emojiId))
+
+  proc pinMessage*(self: View, messageId: string) {.slot.} = 
+    self.delegate.pinUnpinMessage(messageId, true)
+
+  proc unpinMessage*(self: View, messageId: string) {.slot.} = 
+    self.delegate.pinUnpinMessage(messageId, false)

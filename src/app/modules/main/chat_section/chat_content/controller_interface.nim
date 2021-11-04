@@ -1,5 +1,4 @@
-import ../../../../../app_service/service/chat/service_interface as chat_service
-import ../../../../../app_service/service/community/service_interface as community_service
+import ../../../../../app_service/service/message/dto/[message, reaction]
 
 type 
   AccessInterface* {.pure inheritable.} = ref object of RootObj
@@ -15,4 +14,11 @@ method getChatId*(self: AccessInterface): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method belongsToCommunity*(self: AccessInterface): bool {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method unpinMessage*(self: AccessInterface, messageId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getMessageDetails*(self: AccessInterface, messageId: string): 
+  tuple[message: MessageDto, reactions: seq[ReactionDto], error: string] {.base.} =
   raise newException(ValueError, "No implementation available")
