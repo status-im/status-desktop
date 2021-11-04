@@ -406,6 +406,16 @@ ScrollView {
                     localAccountSensitiveSettings.stickersEnsRopsten = !localAccountSensitiveSettings.stickersEnsRopsten
                 }
             }
+
+            // TODO: replace with StatusQ component
+            StatusSettingsLineButton {
+                text: qsTr("Enable Telemetry")
+                isSwitch: true
+                switchChecked: root.store.profileModuleInst.isTelemetryEnabled
+                onClicked: {
+                    openPopup(enableTelemetryConfirmationDialogComponent, {light: false})
+                }
+            }
         }
 
         NetworksModal {
@@ -414,6 +424,24 @@ ScrollView {
 
         FleetsModal {
             id: fleetModal
+        }
+
+        Component {
+            id: enableTelemetryConfirmationDialogComponent
+            ConfirmationDialog {
+                property bool mode: false
+
+                id: confirmDialog
+                showCancelButton: true
+                confirmationText: qsTr("Are you sure you want to enable telemetry? This will reduce your privacy level while using Status. You need to restart the app for this change to take effect.")
+                onConfirmButtonClicked: {
+                    root.store.profileModuleInst.toggleTelemetry()
+                    close()
+                }
+                onCancelButtonClicked: {
+                    close()
+                }
+            }
         }
 
         ConfirmationDialog {

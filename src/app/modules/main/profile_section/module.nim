@@ -51,7 +51,7 @@ proc newModule*[T](delegate: T,
   Module[T] =
   result = Module[T]()
   result.delegate = delegate
-  result.view = view.newView()
+  result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
   result.controller = controller.newController[Module[T]](result, accountsService, settingsService, profileService, languageService, mnemonicService, privacyService)
   result.moduleLoaded = false
@@ -85,6 +85,8 @@ method load*[T](self: Module[T]) =
   self.privacyModule.load()
   self.aboutModule.load()
 
+  self.view.setIsTelemetryEnabled(self.controller.isTelemetryEnabled())
+
   self.moduleLoaded = true
   self.delegate.profileSectionDidLoad()
 
@@ -93,3 +95,6 @@ method isLoaded*[T](self: Module[T]): bool =
 
 method viewDidLoad*(self: Module) =
   discard
+
+method toggleTelemetry*[T](self: Module[T]) = 
+  self.controller.toggleTelemetry()
