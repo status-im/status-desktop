@@ -76,3 +76,15 @@ method getCurrentNetworkDetails*(self: Service): NetworkDetails =
   for n in networks:
     if n.id == currNetwork:
       return n
+
+method toggleTelemetry*(self: Service) =
+  let telemetryServerUrl = status_go_settings.getSetting[string](Setting.TelemetryServerUrl)
+  var newValue = ""
+  if telemetryServerUrl == "":
+    newValue = "https://telemetry.status.im"
+
+  discard status_go_settings.saveSetting(Setting.TelemetryServerUrl, newValue)
+
+method isTelemetryEnabled*(self: Service): bool =
+  let telemetryServerUrl = status_go_settings.getSetting[string](Setting.TelemetryServerUrl)
+  return telemetryServerUrl != ""

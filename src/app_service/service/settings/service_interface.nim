@@ -47,3 +47,9 @@ method setDappsAddress*(self: ServiceInterface, address: string): bool {.base.} 
 
 method getCurrentNetworkDetails*(self: ServiceInterface): NetworkDetails {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method toggleTelemetry*(self: ServiceInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method isTelemetryEnabled*(self: ServiceInterface): bool {.base.} =
+  raise newException(ValueError, "No implementation available")
