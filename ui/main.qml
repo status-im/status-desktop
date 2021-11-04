@@ -131,6 +131,15 @@ StatusWindow {
         }
     }
 
+    Connections {
+        target: profileModel
+        ignoreUnknownSignals: true
+        enabled: removeMnemonicAfterLogin
+        onInitialized: {
+            mnemonicModule.remove()
+        }
+    }
+
     // The easiest way to get current system theme (is it light or dark) without using
     // OS native methods is to check lightness (0 - 1.0) of the window color.
     // If it's too high (0.85+) means light theme is an active.

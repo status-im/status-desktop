@@ -40,8 +40,7 @@ Column {
             selected: Config.currentMenuTab === model.menu_id
             onClicked: root.menuItemClicked(model)
             visible: model.ifEnabled !== "browser" || root.browserMenuItemEnabled
-            badge.value: (!mnemonicModule.isBackedUp && (settingsMenuDelegate.title ===
-                        settingsMenuItems.itemAt(0).text)) ? 1 : 0
+            badge.value: !mnemonicModule.isBackedUp && settingsMenuDelegate.title === qsTr("Privacy and security")
         }
     }
 
