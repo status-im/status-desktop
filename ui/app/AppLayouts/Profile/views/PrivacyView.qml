@@ -50,6 +50,7 @@ Item {
             implicitHeight: 52
             components: [
                 StatusBadge {
+                    value: !root.store.mnemonicBackedUp
                     visible: !root.store.mnemonicBackedUp
                     anchors.verticalCenter: parent.verticalCenter
                 },

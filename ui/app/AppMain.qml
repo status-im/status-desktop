@@ -344,7 +344,7 @@ Item {
                     checked: appView.currentIndex == Utils.getAppSectionIndex(Constants.profile)
                     onClicked: appMain.changeAppSection(Constants.profile)
 
-                    badge.visible: !profileModel.mnemonic.isBackedUp
+                    badge.visible: !mnemonicModule.isBackedUp
                     badge.anchors.rightMargin: 4
                     badge.anchors.topMargin: 5
                     badge.border.color: hovered ? Theme.palette.statusBadge.hoverBorderColor : Theme.palette.statusAppNavBar.backgroundColor
@@ -590,15 +590,6 @@ Item {
                     appView.currentIndex = Utils.getAppSectionIndex(Constants.chat)
                     break
                 }
-            }
-        }
-
-        Connections {
-            target: profileModel
-            ignoreUnknownSignals: true
-            enabled: removeMnemonicAfterLogin
-            onInitialized: {
-                mnemonicModule.remove()
             }
         }
 
