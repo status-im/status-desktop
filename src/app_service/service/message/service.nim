@@ -6,7 +6,7 @@ import ../../tasks/[qt, threadpool]
 import status/statusgo_backend_new/messages as status_go
 
 import ./dto/message as message_dto
-import ./dto/pinnedMessage as pinned_msg_dto
+import ./dto/pinned_message as pinned_msg_dto
 import ./dto/reaction as reaction_dto
 
 export message_dto
@@ -21,7 +21,9 @@ logScope:
 const MESSAGES_PER_PAGE = 20
 
 # Signals which may be emitted by this service:
-const SIGNAL_MESSAGES_LOADED* = "new-messagesLoaded" #Once we are done with refactoring we should remove "new-" from this signal name
+const SIGNAL_MESSAGES_LOADED* = "new-messagesLoaded" #Once we are done with refactoring we should remove "new-" from all signals
+const SIGNAL_MESSAGE_PINNED* = "new-messagePinned"
+const SIGNAL_MESSAGE_UNPINNED* = "new-messageUnpinned"
 
 type
   MessagesLoadedArgs* = ref object of Args
@@ -29,6 +31,10 @@ type
     messages*: seq[MessageDto]
     pinnedMessages*: seq[PinnedMessageDto]
     reactions*: seq[ReactionDto]
+
+  MessagePinUnpinArgs* = ref object of Args
+    chatId*: string
+    messageId*: string
 
 QtObject:
   type Service* = ref object of QObject
@@ -150,10 +156,10 @@ QtObject:
         result.result = reactions[0].id
 
     except Exception as e:
+      result.error = e.msg
       error "error: ", methodName="addReaction", errName = e.name, errDesription = e.msg
 
-  proc removeReaction*(self: Service, reactionId: string):
-    tuple[result: string, error: string] =
+  proc removeReaction*(self: Service, reactionId: string): tuple[result: string, error: string] =
     try:
       let response = status_go.removeReaction(reactionId)
       
@@ -163,4 +169,42 @@ QtObject:
         return
 
     except Exception as e:
+      result.error = e.msg
       error "error: ", methodName="removeReaction", errName = e.name, errDesription = e.msg
+
+  proc pinUnpinMessage*(self: Service, chatId: string, messageId: string, pin: bool) =
+    try:
+      let response = status_go.pinUnpinMessage(messageId, chatId, pin)
+      
+      var pinMessagesObj: JsonNode
+      if(response.result.getProp("pinMessages", pinMessagesObj)):
+        let data = MessagePinUnpinArgs(chatId: chatId, messageId: messageId)
+        var pinned = false
+        if(pinMessagesObj.getProp("pinned", pinned)):
+          if(pinned and pin):
+            self.events.emit(SIGNAL_MESSAGE_PINNED, data)
+        else:
+          if(not pinned and not pin):
+            self.events.emit(SIGNAL_MESSAGE_UNPINNED, data)
+
+    except Exception as e:
+      error "error: ", methodName="pinUnpinMessage", errName = e.name, errDesription = e.msg
+
+  proc getDetailsForMessage*(self: Service, chatId: string, messageId: string): 
+    tuple[message: MessageDto, reactions: seq[ReactionDto], error: string] =
+    try:
+      let msgResponse = status_go.fetchMessageByMessageId(messageId)
+      if(msgResponse.error.isNil):
+        result.message = msgResponse.result.toMessageDto()
+
+      if(result.message.id.len == 0):
+        result.error = "message with id: " & messageId & " doesn't exist"
+        return
+
+      let reactionsResponse = status_go.fetchReactionsForMessageWithId(chatId, messageId)
+      if(reactionsResponse.error.isNil):
+        result.reactions = map(reactionsResponse.result.getElems(), proc(x: JsonNode): ReactionDto = x.toReactionDto())
+
+    except Exception as e:
+      result.error = e.msg
+      error "error: ", methodName="getDetailsForMessage", errName = e.name, errDesription = e.msg

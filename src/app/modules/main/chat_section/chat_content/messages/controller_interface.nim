@@ -21,3 +21,6 @@ method addReaction*(self: AccessInterface, messageId: string, emojiId: int) {.ba
 
 method removeReaction*(self: AccessInterface, messageId: string, reactionId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method pinUnpinMessage*(self: AccessInterface, messageId: string, pin: bool) {.base.} =
+  raise newException(ValueError, "No implementation available")

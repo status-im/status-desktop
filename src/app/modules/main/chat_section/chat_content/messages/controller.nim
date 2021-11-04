@@ -40,8 +40,19 @@ method init*(self: Controller) =
     let args = MessagesLoadedArgs(e)
     if(self.chatId != args.chatId):
       return
+    self.delegate.newMessagesLoaded(args.messages, args.reactions, args.pinnedMessages)
 
-    self.delegate.newMessagesLoaded(args.messages, args.reactions)
+  self.events.on(SIGNAL_MESSAGE_PINNED) do(e:Args):
+    let args = MessagePinUnpinArgs(e)
+    if(self.chatId != args.chatId):
+      return
+    self.delegate.onPinUnpinMessage(args.messageId, true)
+
+  self.events.on(SIGNAL_MESSAGE_UNPINNED) do(e:Args):
+    let args = MessagePinUnpinArgs(e)
+    if(self.chatId != args.chatId):
+      return
+    self.delegate.onPinUnpinMessage(args.messageId, false)
 
 method getChatId*(self: Controller): string =
   return self.chatId
@@ -64,3 +75,6 @@ method removeReaction*(self: Controller, messageId: string, reactionId: string) 
     return
 
   self.delegate.onReactionRemoved(messageId, reactionId)
+
+method pinUnpinMessage*(self: Controller, messageId: string, pin: bool) =
+  self.messageService.pinUnpinMessage(self.chatId, messageId, pin)
