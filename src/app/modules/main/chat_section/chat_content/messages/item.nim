@@ -1,3 +1,5 @@
+import Tables, json
+
 type
   ContentType* {.pure.} = enum
     FetchMoreMessagesButton = -2
@@ -16,7 +18,7 @@ type
     Edit = 11
 
 type 
-  Item* = object
+  Item* = ref object
     id: string
     `from`: string
     alias: string
@@ -32,9 +34,12 @@ type
     timestamp: int64
     contentType: ContentType
     messageType: int
+    reactions: OrderedTable[int, seq[tuple[name: string, reactionId: string]]] # [emojiId, list of [names reacted with the emojiId, reaction id]]
+    reactionIds: seq[string]
 
 proc initItem*(id, `from`, alias, identicon, outgoingStatus, text: string, seen: bool, timestamp: int64, 
   contentType: ContentType, messageType: int): Item =
+  result = Item()
   result.id = id
   result.`from` = `from`
   result.alias = alias
@@ -75,3 +80,61 @@ proc contentType*(self: Item): ContentType {.inline.} =
 
 proc messageType*(self: Item): int {.inline.} = 
   self.messageType
+
+proc shouldAddReaction*(self: Item, emojiId: int, name: string): bool = 
+  for k, values in self.reactions:
+    if(k != emojiId):
+      continue
+
+    for t in values:
+      if(t.name == name):
+        return false
+
+  return true
+
+proc getReactionId*(self: Item, emojiId: int, name: string): string = 
+  for k, values in self.reactions:
+    if(k != emojiId):
+      continue
+
+    for t in values:
+      if(t.name == name):
+        return t.reactionId
+
+  # we should never be here, since this is a controlled call
+  return ""
+
+proc addReaction*(self: Item, emojiId: int, name: string, reactionId: string) = 
+  if(not self.reactions.contains(emojiId)):
+    self.reactions[emojiId] = @[]
+    
+  self.reactions[emojiId].add((name, reactionId))
+
+proc removeReaction*(self: Item, reactionId: string) = 
+  var key: int
+  var index: int
+  for k, values in self.reactions:
+    var i = -1
+    for t in values:
+      i += 1
+      if(t.reactionId == reactionId):
+        key = k
+        index = i
+
+  self.reactions[key].del(index)
+  if(self.reactions[key].len == 0):
+    self.reactions.del(key)
+
+proc getNamesForReactions*(self: Item, emojiId: int): seq[string] = 
+  if(not self.reactions.contains(emojiId)):
+    return
+
+  for v in self.reactions[emojiId]:
+    result.add(v.name)
+
+proc getCountsForReactions*(self: Item): seq[JsonNode] = 
+  for k, v in self.reactions:
+    if(self.reactions[k].len == 0):
+      continue
+
+    result.add(%* {"emojiId": k, "counts": v.len})
