@@ -387,10 +387,10 @@ QtObject {
                 return {
                     name: assets.rowData(i, "name"),
                     symbol,
-                    value: assets.rowData(i, "value"),
-                    fiatBalanceDisplay: assets.rowData(i, "fiatBalanceDisplay"),
+                    value: assets.rowData(i, "balance"),
+                    fiatBalanceDisplay: assets.rowData(i, "currencyBalance"),
                     address: assets.rowData(i, "address"),
-                    fiatBalance: assets.rowData(i, "fiatBalance")
+                    fiatBalance: assets.rowData(i, "currencyBalance")
                 }
             }
         }
