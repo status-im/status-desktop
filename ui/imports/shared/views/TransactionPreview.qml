@@ -81,7 +81,7 @@ Item {
                             visible: parent.visible
                             anchors.fill: parent
                             source: parent
-                            color: root.fromAccount && root.fromAccount.iconColor ? root.fromAccount.iconColor : Style.current.blue
+                            color: root.fromAccount && root.fromAccount.color ? root.fromAccount.color : Style.current.blue
                         }
                     }
                     SVGImage {
@@ -190,7 +190,7 @@ Item {
                     PropertyChanges {
                         target: ovlToWallet
                         visible: true
-                        color: root.toAccount.iconColor
+                        color: root.toAccount.color
                     }
                     PropertyChanges {
                         target: txtToPrimary

@@ -32,13 +32,14 @@ Item {
         if (!assets) {
             return
         }
+
         selectedAsset = {
             name: assets.rowData(0, "name"),
             symbol: assets.rowData(0, "symbol"),
-            value: assets.rowData(0, "value"),
-            fiatBalanceDisplay: assets.rowData(0, "fiatBalanceDisplay"),
+            value: assets.rowData(0, "balance"),
+            fiatBalanceDisplay: assets.rowData(0, "currencyBalance"),
             address: assets.rowData(0, "address"),
-            fiatBalance: assets.rowData(0, "fiatBalance")
+            fiatBalance: assets.rowData(0, "currencyBalance")
         }
     }
 
@@ -83,7 +84,7 @@ Item {
         MenuItem {
             id: itemContainer
             property bool isFirstItem: index === 0
-            property bool isLastItem: index === assets.rowCount() - 1
+            property bool isLastItem: index === assets.count - 1
 
             width: parent.width
             height: 72
@@ -124,13 +125,13 @@ Item {
                 StyledText {
                     font.pixelSize: 15
                     height: 22
-                    text: parseFloat(value).toFixed(4) + " " + symbol
+                    text: parseFloat(balance).toFixed(4) + " " + symbol
                 }
                 StyledText {
                     font.pixelSize: 15
                     anchors.right: parent.right
                     height: 22
-                    text: fiatBalanceDisplay.toUpperCase()
+                    text: currencyBalance.toString().toUpperCase()
                     color: Style.current.secondaryText
                 }
             }
@@ -162,7 +163,7 @@ Item {
                 cursorShape: Qt.PointingHandCursor
                 anchors.fill: itemContainer
                 onClicked: {
-                    root.selectedAsset = { address, name, value, symbol, fiatBalance, fiatBalanceDisplay }
+                    root.selectedAsset = { address, name, balance, symbol, currencyBalance, fiatBalanceDisplay: "" }
                     select.menu.close()
                 }
             }

@@ -1,4 +1,5 @@
 import strformat
+import ../account_tokens/model as account_tokens
 
 type 
   Item* = object
@@ -11,6 +12,7 @@ type
     isWallet: bool
     isChat: bool
     currencyBalance: float64
+    assets: account_tokens.Model
 
 proc initItem*(
   name: string,
@@ -21,7 +23,8 @@ proc initItem*(
   walletType: string,
   isWallet: bool,
   isChat: bool,
-  currencyBalance: float64
+  currencyBalance: float64,
+  assets: account_tokens.Model
 ): Item =
   result.name = name
   result.address = address
@@ -32,6 +35,7 @@ proc initItem*(
   result.isWallet = isWallet
   result.isChat = isChat
   result.currencyBalance = currencyBalance
+  result.assets = assets
 
 proc `$`*(self: Item): string =
   result = fmt"""AllTokensItem(
@@ -45,6 +49,7 @@ proc `$`*(self: Item): string =
     isWallet: {self.isWallet},
     isChat: {self.isChat},
     currencyBalance: {self.currencyBalance},
+    assets.len: {self.assets.getCount()},
     ]"""
 
 proc getName*(self: Item): string = 
@@ -73,3 +78,6 @@ proc getIsChat*(self: Item): bool =
 
 proc getCurrencyBalance*(self: Item): float64 = 
   return self.currencyBalance
+
+proc getAssets*(self: Item): account_tokens.Model = 
+  return self.assets

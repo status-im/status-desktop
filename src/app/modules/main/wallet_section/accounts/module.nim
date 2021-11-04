@@ -4,6 +4,8 @@ import eventemitter
 import ./io_interface, ./view, ./item, ./controller
 import ../../../../core/global_singleton
 import ../../../../../app_service/service/wallet_account/service as wallet_account_service
+import ../account_tokens/model as account_tokens
+import ../account_tokens/item as account_tokens_item
 
 export io_interface
 
@@ -33,8 +35,23 @@ method delete*[T](self: Module[T]) =
 
 method refreshWalletAccounts*[T](self: Module[T]) = 
   let walletAccounts = self.controller.getWalletAccounts()
-  self.view.setItems(
-    walletAccounts.map(w => initItem(
+
+
+  let items = walletAccounts.map(proc (w: WalletAccountDto): Item =
+    let assets = account_tokens.newModel()
+
+  
+    assets.setItems(
+      w.tokens.map(t => account_tokens_item.initItem(
+          t.name,
+          t.symbol,
+          t.balance,
+          t.address,
+          t.currencyBalance,
+        ))
+    )
+
+    result = initItem(
       w.name,
       w.address,
       w.path,
@@ -43,9 +60,11 @@ method refreshWalletAccounts*[T](self: Module[T]) =
       w.walletType,
       w.isWallet,
       w.isChat,
-      w.getCurrencyBalance()
+      w.getCurrencyBalance(),
+      assets
     ))
-  )
+
+  self.view.setItems(items)
 
 method load*[T](self: Module[T]) =
   singletonInstance.engine.setRootContextProperty("walletSectionAccounts", newQVariant(self.view))

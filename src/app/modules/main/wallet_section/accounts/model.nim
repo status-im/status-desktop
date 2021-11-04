@@ -12,7 +12,8 @@ type
     WalletType,
     IsWallet,
     IsChat,
-    CurrencyBalance
+    CurrencyBalance,
+    Assets
 
 QtObject:
   type
@@ -56,6 +57,7 @@ QtObject:
       ModelRole.WalletType.int:"walletType",
       ModelRole.IsWallet.int:"isWallet",
       ModelRole.IsChat.int:"isChat",
+      ModelRole.Assets.int:"assets",
       ModelRole.CurrencyBalance.int:"currencyBalance"
     }.toTable
 
@@ -88,6 +90,8 @@ QtObject:
       result = newQVariant(item.getIsChat())
     of ModelRole.CurrencyBalance:
       result = newQVariant(item.getCurrencyBalance())
+    of ModelRole.Assets:
+      result = newQVariant(item.getAssets())
 
   proc setItems*(self: Model, items: seq[Item]) =
     self.beginResetModel()
