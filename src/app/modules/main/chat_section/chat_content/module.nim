@@ -38,7 +38,7 @@ proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitt
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, chatId, belongsToCommunity, chatService, communityService, 
+  result.controller = controller.newController(result, events, chatId, belongsToCommunity, chatService, communityService, 
   messageService)
   result.moduleLoaded = false
 

@@ -1,7 +1,7 @@
 import NimQml
 import io_interface
 import ../io_interface as delegate_interface
-import view, controller
+import view, controller, model, item
 import ../../../../../core/global_singleton
 
 import ../../../../../../app_service/service/chat/service as chat_service
@@ -52,3 +52,35 @@ method viewDidLoad*(self: Module) =
 
 method getModuleAsVariant*(self: Module): QVariant =
   return self.viewVariant
+
+method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: seq[ReactionDto]) = 
+  var viewItems: seq[Item] 
+  for m in messages:
+    var item = initItem(m.id, m.`from`, m.alias, m.identicon, m.outgoingStatus, m.text, m.seen, m.timestamp, 
+    m.contentType.ContentType, m.messageType)
+
+    for r in reactions:
+      if(r.messageId == m.id):
+        # m.`from` should be replaced by appropriate ens/alias when we have that part refactored
+        item.addReaction(r.emojiId, m.`from`, r.id)
+
+    # messages are sorted from the most recent to the least recent one
+    viewItems = item & viewItems
+
+  self.view.model.prependItems(viewItems)
+
+method toggleReaction*(self: Module, messageId: string, emojiId: int) =
+  let item = self.view.model.getItemWithMessageId(messageId)
+  let myName = "MY_NAME" #once we have "userProfile" merged, we will request alias/ens name from there
+  if(item.shouldAddReaction(emojiId, myName)):
+    self.controller.addReaction(messageId, emojiId)
+  else:
+    let reactionId = item.getReactionId(emojiId, myName)
+    self.controller.removeReaction(messageId, reactionId)
+
+method onReactionAdded*(self: Module, messageId: string, emojiId: int, reactionId: string) =
+  let myName = "MY_NAME" #once we have "userProfile" merged, we will request alias/ens name from there
+  self.view.model.addReaction(messageId, emojiId, myName, reactionId)
+
+method onReactionRemoved*(self: Module, messageId: string, reactionId: string) =
+  self.view.model.removeReaction(messageId, reactionId)
