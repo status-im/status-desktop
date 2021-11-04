@@ -124,7 +124,7 @@ method buildTokens(
   let balance = fetchEthBalance(account.address)
   result = @[WalletTokenDto(
     name:"Ethereum",
-    address: account.address,
+    address: "0x0000000000000000000000000000000000000000",
     symbol: "ETH",
     decimals: 18,
     hasIcon: true,
