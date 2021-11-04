@@ -12,6 +12,7 @@ import StatusQ.Components 0.1
 // TODO: replace with StatusPopupMenu
 PopupMenu {
     id: root
+    property var store
     width: profileHeader.width
     closePolicy: Popup.CloseOnReleaseOutsideParent | Popup.CloseOnEscape
 
@@ -34,7 +35,7 @@ PopupMenu {
         }
         StyledText {
             id: username
-            text: Utils.removeStatusEns(profileModel.ens.preferredUsername || profileModule.model.username)
+            text: Utils.removeStatusEns(root.store.profileModelInst.ens.preferredUsername || profileModule.model.username)
             elide: Text.ElideRight
             maximumLineCount: 3
             horizontalAlignment: Text.AlignHCenter
@@ -86,8 +87,8 @@ PopupMenu {
     Action {
         text: qsTr("Online")
         onTriggered: {
-            if (profileModule.sendUserStatus != true) {
-                profileModule.setSendUserStatus(true)
+            if (root.store.profileModelInst.profile.sendUserStatus != true) {
+                root.store.profileModelInst.profile.setSendUserStatus(true)
             }
             root.close()
         }
@@ -100,8 +101,8 @@ PopupMenu {
     Action {
         text: qsTr("Offline")
         onTriggered: {
-            if (profileModule.sendUserStatus != false) {
-                profileModule.setSendUserStatus(false)
+            if (root.store.profileModelInst.profile.sendUserStatus != false) {
+                root.store.profileModelInst.profile.setSendUserStatus(false)
             }
             root.close()
         }

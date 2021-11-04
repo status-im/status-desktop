@@ -363,8 +363,8 @@ Item {
                 badge.implicitHeight: 15
                 badge.implicitWidth: 15
                 badge.border.color: hovered ? Theme.palette.statusBadge.hoverBorderColor : Theme.palette.statusAppNavBar.backgroundColor
-                badge.color: {
-                    return profileModule.model.sendUserStatus ? Style.current.green : Style.current.midGrey
+                //badge.color:  profileModule.model.sendUserStatus ? Style.current.green : Style.current.midGrey
+                badge.color: appMain.rootStore.profileModelInst.profile.sendUserStatus ? Style.current.green : Style.current.midGrey
                     /*
                     // Use this code once support for custom user status is added
                     switch(profileModel.profile.currentUserStatus){
@@ -375,7 +375,6 @@ Item {
                         default:
                             return Style.current.midGrey;
                     }*/
-                }
                 badge.border.width: 3
                 onClicked: {
                     userStatusContextMenu.opened ?
@@ -386,6 +385,7 @@ Item {
                 UserStatusContextMenu {
                     id: userStatusContextMenu
                     y: profileButton.y - userStatusContextMenu.height
+                    store: appMain.rootStore
                 }
             }
         }
