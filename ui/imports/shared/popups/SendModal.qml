@@ -35,7 +35,7 @@ ModalPopup {
     function sendTransaction() {
         stack.currentGroup.isPending = true
         let success = false
-        if(txtAmount.selectedAsset.address === ""){
+        if(txtAmount.selectedAsset.address === "" || txtAmount.selectedAsset.address === Constants.zeroAddress){
             success = walletModel.transactionsView.transferEth(
                                                  selectFromAccount.selectedAccount.address,
                                                  selectRecipient.selectedRecipient.address,
