@@ -67,9 +67,13 @@ proc fetchTokenBalance(tokenAddress, accountAddress: string, decimals: int): flo
   if balanceCache.hasKey(key):
     return balanceCache[key]
 
-  let tokenBalanceResponse = status_go_eth.getTokenBalance(tokenAddress, accountAddress)
-  result = parsefloat(hex2Balance(tokenBalanceResponse.result.getStr, decimals))
-  balanceCache[key] = result
+  try:
+    let tokenBalanceResponse = status_go_eth.getTokenBalance(tokenAddress, accountAddress)
+    result = parsefloat(hex2Balance(tokenBalanceResponse.result.getStr, decimals))
+    balanceCache[key] = result
+  except Exception as e:
+    error "Error getting token balance", msg = e.msg
+  
 
 proc fetchEthBalance(accountAddress: string): float64 =
   let key = "0x0" & accountAddress
@@ -158,7 +162,7 @@ method fetchPrices(self: Service): Table[string, float64] =
 
   return prices
 
-method refreshBalances(self: Service) = 
+method refreshBalances(self: Service) =
   let prices = self.fetchPrices()
 
   for account in toSeq(self.accounts.values):
