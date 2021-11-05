@@ -54,8 +54,8 @@ Item {
         if (!selectedAccount) {
             return
         }
-        if (selectedAccount.iconColor) {
-            selectedIconImg.color = Utils.getThemeAccountColor(selectedAccount.iconColor, Theme.palette.accountColors) || Theme.palette.accountColors[0]
+        if (selectedAccount.color) {
+            selectedIconImg.color = Utils.getThemeAccountColor(selectedAccount.color, Theme.palette.accountColors) || Theme.palette.accountColors[0]
         }
         if (selectedAccount.name) {
             selectedTextField.text = selectedAccount.name
@@ -63,8 +63,8 @@ Item {
         if (selectedAccount.address) {
             textSelectedAddress.text = selectedAccount.address  + " •"
         }
-        if (selectedAccount.fiatBalance) {
-            textSelectedAddressFiatBalance.text = selectedAccount.fiatBalance + " " + currency.toUpperCase()
+        if (selectedAccount.currencyBalance) {
+            textSelectedAddressFiatBalance.text = selectedAccount.currencyBalance + " " + currency.toUpperCase()
         }
         if (selectedAccount.assets && showBalanceForAssetSymbol) {
             assetFound = Utils.findAssetBySymbol(selectedAccount.assets, showBalanceForAssetSymbol)
@@ -90,11 +90,11 @@ Item {
         id: txtAssetBalance
         visible: root.assetFound !== undefined
         anchors.bottom: select.top
-        anchors.bottomMargin: -18 
+        anchors.bottomMargin: -18
         anchors.right: txtAssetSymbol.left
         anchors.left: select.left
         anchors.leftMargin: select.width / 2.5
-        
+
         color: !root.isValid ? Theme.palette.dangerColor1 : Theme.palette.baseColor1
         elide: Text.ElideRight
         font.pixelSize: 13
@@ -194,7 +194,7 @@ Item {
 
             Component.onCompleted: {
                 if (!root.selectedAccount && isFirstItem) {
-                    root.selectedAccount = { address, name, iconColor, assets, fiatBalance }
+                    root.selectedAccount = { address, name, color: model.color, assets, currencyBalance }
                 }
             }
 
@@ -208,7 +208,7 @@ Item {
                 width: 20
                 height: 20
                 icon: "filled-account"
-                color: Utils.getThemeAccountColor(iconColor, Theme.palette.accountColors) || Theme.palette.accountColors[0]
+                color: Utils.getThemeAccountColor(model.color, Theme.palette.accountColors) || Theme.palette.accountColors[0]
             }
 
             Column {
@@ -247,7 +247,7 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
                 font.pixelSize: 15
                 height: 22
-                text: fiatBalance
+                text: currencyBalance
                 color: Theme.palette.directColor1
             }
             StatusBaseText {
@@ -267,7 +267,7 @@ Item {
                 cursorShape: Qt.PointingHandCursor
                 anchors.fill: itemContainer
                 onClicked: {
-                    root.selectedAccount = { address, name, iconColor, assets, fiatBalance }
+                    root.selectedAccount = { address, name, color: model.color, assets, currencyBalance }
                     select.selectMenu.close()
                 }
             }
