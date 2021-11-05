@@ -183,9 +183,9 @@ WebEngineView {
                 model: BookmarksStore.bookmarksModel
                 Component.onCompleted: {
                     // Add fav button at the end of the grid
-                    var index = BookmarksStore.getBookmarkIndexByUrl("")
-                    if (index !== -1) { BookmarksStore.deleteBookmark("") }
-                    BookmarksStore.addBookmark("", qsTr("Add Favorite"))
+                    var index = BookmarksStore.getBookmarkIndexByUrl(" ")
+                    if (index !== -1) { BookmarksStore.deleteBookmark(" ") }
+                    BookmarksStore.addBookmark(" ", qsTr("Add Favorite"))
                 }
             }
         }

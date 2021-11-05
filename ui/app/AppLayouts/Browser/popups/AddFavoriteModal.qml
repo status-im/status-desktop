@@ -48,6 +48,8 @@ ModalPopup {
     }
 
     onOpened: {
+        urlInput.input.text = ogUrl
+        nameInput.input.text = ogName
         urlInput.input.forceActiveFocus(Qt.MouseFocusReason)
     }
 
@@ -86,7 +88,7 @@ ModalPopup {
             leftPadding: 0
             rightPadding: 0
             label: qsTr("URL")
-            input.text: popup.ogurl
+            input.text: ogUrl
             input.placeholderText: qsTr("Paste URL")
             input.component: StatusButton {
                 anchors.verticalCenter: parent.verticalCenter
@@ -113,7 +115,7 @@ ModalPopup {
             leftPadding: 0
             rightPadding: 0
             label: qsTr("Name")
-            input.text: popup.ogurl
+            input.text: ogName
             input.placeholderText: qsTr("Name of the website")
             validators: [
                 StatusMinLengthValidator {
@@ -157,9 +159,9 @@ ModalPopup {
             onClicked: {
                 if (!popup.modifiyModal) {
                     // remove "add favorite" button at the end, add new bookmark, add "add favorite" button back
-                    BookmarksStore.deleteBookmark("")
+                    BookmarksStore.deleteBookmark(" ")
                     BookmarksStore.addBookmark(urlInput.input.text, nameInput.input.text)
-                    BookmarksStore.addBookmark("", qsTr("Add Favorite"))
+                    BookmarksStore.addBookmark(" ", qsTr("Add Favorite"))
                 } else if (popup.ogName !== nameInput.input.text || popup.ogUrl !== urlInput.input.text) {
                     BookmarksStore.updateBookmark(popup.ogUrl, urlInput.input.text, nameInput.input.text)
                 }
