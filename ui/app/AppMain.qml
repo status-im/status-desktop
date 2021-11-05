@@ -525,7 +525,11 @@ Item {
                     // Add Status links to whitelist
                     whiteListedSites.push({title: "Status", address: Constants.deepLinkPrefix, imageSite: false})
                     whiteListedSites.push({title: "Status", address: Constants.joinStatusLink, imageSite: false})
-                    const settings = localAccountSensitiveSettings.whitelistedUnfurlingSites
+                    let settings = localAccountSensitiveSettings.whitelistedUnfurlingSites
+
+                    if (!settings) {
+                        settings = {}
+                    }
 
                     // Set Status links as true. We intercept thoseURLs so it is privacy-safe
                     if (!settings[Constants.deepLinkPrefix] || !settings[Constants.joinStatusLink]) {

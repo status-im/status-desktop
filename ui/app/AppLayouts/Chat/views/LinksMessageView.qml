@@ -142,6 +142,9 @@ Column {
 
                 let linkWhiteListed = false
                 const linkHostname = Utils.getHostname(link)
+                if (!localAccountSensitiveSettings.whitelistedUnfurlingSites) {
+                    localAccountSensitiveSettings.whitelistedUnfurlingSites = {}
+                }
                 const linkExists = Object.keys(localAccountSensitiveSettings.whitelistedUnfurlingSites).some(function(whitelistedHostname) {
                     const exists = linkHostname.endsWith(whitelistedHostname)
                     if (exists) {
