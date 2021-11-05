@@ -159,14 +159,7 @@ Rectangle {
         dappBrowserAccName: WalletStore.dappBrowserAccount.name
         dappBrowserAccIcon: WalletStore.dappBrowserAccount.iconColor
         onAddNewFavoritelClicked: {
-            if (!browserHeader.currentFavorite) {
-                // remove "add favorite" button at the end, add new bookmark, add "add favorite" button back
-                BookmarksStore.deleteBookmark("")
-                BookmarksStore.addBookmark(currentWebView.url, currentWebView.title)
-                BookmarksStore.addBookmark("", qsTr("Add Favorite"))
-            }
-
-            addFavoriteModal.modifiyModal = true
+            addFavoriteModal.modifiyModal = browserHeader.currentFavorite
             addFavoriteModal.toolbarMode = true
             addFavoriteModal.x = xPos - 30
             addFavoriteModal.y = browserHeader.y + browserHeader.height + 4
