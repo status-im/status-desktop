@@ -23,6 +23,9 @@ ModalPopup {
 
     function populatePreviewableSites() {
         let whitelist = JSON.parse(privacyModule.getLinkPreviewWhitelist())
+        if (!localAccountSensitiveSettings.whitelistedUnfurlingSites) {
+            localAccountSensitiveSettings.whitelistedUnfurlingSites = {}
+        }
         whitelist.forEach(entry => {
             entry.isWhitelisted = localAccountSensitiveSettings.whitelistedUnfurlingSites[entry.address] || false
             previewableSites.append(entry)
@@ -172,11 +175,16 @@ ModalPopup {
                             anchors.right: parent.right
                             anchors.rightMargin: Style.current.padding
                             onCheckedChanged: function () {
-                                if (localAccountSensitiveSettings.whitelistedUnfurlingSites[address] === this.checked) {
+                                let settings = localAccountSensitiveSettings.whitelistedUnfurlingSites
+
+                                if (!settings) {
+                                    settings = {}
+                                }
+
+                                if (settings[address] === this.checked) {
                                     return
                                 }
 
-                                const settings = localAccountSensitiveSettings.whitelistedUnfurlingSites
                                 settings[address] = this.checked
                                 localAccountSensitiveSettings.whitelistedUnfurlingSites = settings
                             }
