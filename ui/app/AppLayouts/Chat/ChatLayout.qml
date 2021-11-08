@@ -182,7 +182,7 @@ StatusAppThreePanelLayout {
             currentTime: chatColumn.currentTime
             messageContextMenu: quickActionMessageOptionsMenu
             profilePubKey: root.rootStore.profileModelInst.profile.pubKey
-            contactsList: root.rootStore.profileModelInst.contacts.list
+            contactsList: root.rootStore.allContacts
             community: root.rootStore.chatsModelInst.communities.activeCommunity
             currentUserName: Utils.removeStatusEns(root.rootStore.profileModelInst.ens.preferredUsername
                                                   || root.rootStore.profileModelInst.profile.username)
@@ -197,7 +197,7 @@ StatusAppThreePanelLayout {
             userList: chatColumn.userList
             messageContextMenu: quickActionMessageOptionsMenu
             profilePubKey: root.rootStore.profileModelInst.profile.pubKey
-            contactsList: root.rootStore.profileModelInst.contacts.list
+            contactsList: root.rootStore.allContacts
             isOnline: root.rootStore.chatsModelInst.isOnline
         }
     }
@@ -244,8 +244,8 @@ StatusAppThreePanelLayout {
         //% "Are you sure you want to remove this contact?"
         confirmationText: qsTrId("are-you-sure-you-want-to-remove-this-contact-")
         onConfirmButtonClicked: {
-            if (root.rootStore.profileModelInst.contacts.isAdded(chatColumn.contactToRemove)) {
-                root.rootStore.profileModelInst.contacts.removeContact(chatColumn.contactToRemove)
+            if (root.rootStore.contactsModuleInst.model.isAdded(chatColumn.contactToRemove)) {
+                root.rootStore.contactsModuleInst.model.removeContact(chatColumn.contactToRemove)
             }
             removeContactConfirmationDialog.parentPopup.close();
             removeContactConfirmationDialog.close();

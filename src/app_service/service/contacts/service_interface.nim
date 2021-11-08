@@ -16,7 +16,7 @@ method init*(self: ServiceInterface) {.base.} =
 method getContact*(self: ServiceInterface, id: string): contacts_dto.ContactsDto {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getContacts*(self: ServiceInterface): seq[contacts_dto.ContactsDto] {.base.} =
+method getContacts*(self: ServiceInterface, useCache: bool = true): seq[contacts_dto.ContactsDto] {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getOrCreateContact*(self: ServiceInterface, id: string): contacts_dto.ContactsDto {.base.} =

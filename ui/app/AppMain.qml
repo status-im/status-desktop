@@ -680,7 +680,7 @@ Item {
             id: inviteFriendsToCommunityPopup
             InviteFriendsToCommunityPopup {
                 anchors.centerIn: parent
-                hasAddedContacts: appMain.rootStore.profileModelInst.contacts.list.hasAddedContacts()
+                hasAddedContacts: appMain.rootStore.allContacts.hasAddedContacts()
                 onClosed: {
                     destroy()
                 }
