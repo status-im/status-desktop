@@ -106,6 +106,7 @@ Rectangle {
         cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
         acceptedButtons: Qt.LeftButton | Qt.RightButton
         hoverEnabled: true
+        preventStealing: true
 
         onClicked: {
             statusListItem.clicked(statusListItem.itemId)
