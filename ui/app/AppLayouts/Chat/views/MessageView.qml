@@ -200,7 +200,7 @@ Column {
 
     Connections {
         enabled: (!placeholderMessage && !!root.rootStore)
-        target: !!root.rootStore ? root.rootStore.profileModelInst.contacts.list : null
+        target: !!root.rootStore ? root.rootStore.allContacts : null
         onContactChanged: {
             if (pubkey === fromAuthor) {
                 const img = appMain.getProfileImage(userPubKey, isCurrentUser, useLargeImage)

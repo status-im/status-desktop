@@ -124,7 +124,7 @@ StatusModal {
                 contactListSearch.pubKey: ""
                 contactListSearch.pubKeys: []
                 contactListSearch.ensUsername: ""
-                contactListSearch.existingContacts.visible: root.store.profileModelInst.contacts.list.hasAddedContacts()
+                contactListSearch.existingContacts.visible: root.store.allContacts.hasAddedContacts()
                 contactListSearch.noContactsRect.visible: !contactListSearch.existingContacts.visible
             }
         }

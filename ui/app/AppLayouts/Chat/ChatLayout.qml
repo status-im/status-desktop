@@ -77,10 +77,10 @@ StatusAppThreePanelLayout {
         CommunityUserListPanel {
             currentTime: chatColumn.currentTime
             messageContextMenu: quickActionMessageOptionsMenu
+            contactsList: root.rootStore.allContacts
 
             // Not Refactored
 //            profilePubKey: root.rootStore.profileModelInst.profile.pubKey
-//            contactsList: root.rootStore.profileModelInst.contacts.list
 //            community: root.rootStore.chatsModelInst.communities.activeCommunity
 //            currentUserName: Utils.removeStatusEns(root.rootStore.profileModelInst.ens.preferredUsername
 //                                                  || root.rootStore.profileModelInst.profile.username)
@@ -94,9 +94,9 @@ StatusAppThreePanelLayout {
             currentTime: chatColumn.currentTime
             userList: chatColumn.userList
             messageContextMenu: quickActionMessageOptionsMenu
+            contactsList: root.rootStore.allContacts
             // Not Refactored
 //            profilePubKey: root.rootStore.profileModelInst.profile.pubKey
-//            contactsList: root.rootStore.profileModelInst.contacts.list
 //            isOnline: root.rootStore.chatsModelInst.isOnline
         }
     }
@@ -149,10 +149,9 @@ StatusAppThreePanelLayout {
         //% "Are you sure you want to remove this contact?"
         confirmationText: qsTrId("are-you-sure-you-want-to-remove-this-contact-")
         onConfirmButtonClicked: {
-            // Not Refactored
-//            if (root.rootStore.profileModelInst.contacts.isAdded(chatColumn.contactToRemove)) {
-//                root.rootStore.profileModelInst.contacts.removeContact(chatColumn.contactToRemove)
-//            }
+            if (root.rootStore.contactsModuleInst.model.isAdded(chatColumn.contactToRemove)) {
+                root.rootStore.contactsModuleInst.model.removeContact(chatColumn.contactToRemove)
+            }
             removeContactConfirmationDialog.parentPopup.close();
             removeContactConfirmationDialog.close();
         }

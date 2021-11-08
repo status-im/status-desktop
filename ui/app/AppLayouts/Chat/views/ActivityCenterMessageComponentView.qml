@@ -64,7 +64,7 @@ Item {
                 const setActiveChannel = root.store.chatsModelInst.channelView.setActiveChannel
                 const chatId = model.message.chatId
                 const messageId = model.message.messageId
-                root.store.profileModelInst.contacts.addContact(model.author)
+                root.store.profileModuleInst.addContact(model.author)
                 root.store.chatsModelInst.activityNotificationList.acceptActivityCenterNotification(model.id)
                 setActiveChannel(chatId)
                 positionAtMessage(messageId)
@@ -81,7 +81,7 @@ Item {
             BlockContactConfirmationDialog {
                 id: blockContactConfirmationDialog
                 onBlockButtonClicked: {
-                    root.store.profileModelInst.contacts.blockContact(blockContactConfirmationDialog.contactAddress)
+                    root.store.profileModuleInst.blockContact(blockContactConfirmationDialog.contactAddress)
                     root.store.chatsModelInst.activityNotificationList.dismissActivityCenterNotification(model.id)
                     blockContactConfirmationDialog.close()
                 }
@@ -252,7 +252,7 @@ Item {
 
             Connections {
                 enabled: badge.realChatType === Constants.chatTypeOneToOne
-                target: root.store.profileModelInst.contacts.list
+                target: root.store.allContacts
                 onContactChanged: {
                     if (pubkey === badge.chatId) {
                         badge.profileImage = appMain.getProfileImage(badge.chatId)

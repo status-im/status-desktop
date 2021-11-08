@@ -13,6 +13,9 @@ method load*(self: AccessInterface) {.base.} =
 method setContactList*(self: AccessInterface, contacts: seq[ContactsDto]) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method updateContactList*(self: AccessInterface, contacts: seq[ContactsDto]) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method isLoaded*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -23,6 +26,18 @@ method generateAlias*(self: AccessInterface, publicKey: string): string {.base.}
   raise newException(ValueError, "No implementation available")
 
 method addContact*(self: AccessInterface, publicKey: string): void {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method contactAdded*(self: AccessInterface, contact: ContactsDto): void {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method contactBlocked*(self: AccessInterface, contact: ContactsDto): void {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method contactUnblocked*(self: AccessInterface, contact: ContactsDto): void {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method contactRemoved*(self: AccessInterface, contact: ContactsDto): void {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method rejectContactRequest*(self: AccessInterface, publicKey: string): void {.base.} =

@@ -127,7 +127,7 @@ StatusModal {
                     id: selectRecipient
                     visible: false
                     accounts: root.store.walletModelInst.accountsView.accounts
-                    contacts: root.store.profileModelInst.contacts.addedContacts
+                    contacts: root.store.addedContacts
                     selectedRecipient: root.selectedRecipient
                     readOnly: true
                 }
