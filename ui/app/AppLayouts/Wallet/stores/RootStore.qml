@@ -17,6 +17,7 @@ QtObject {
     property string signingPhrase: walletSection.signingPhrase
     property string mnemonicBackedUp: walletSection.isMnemonicBackedUp
 
+    property var walletTokensModule: walletSectionAllTokens
     property var defaultTokenList: walletSectionAllTokens.default
     property var customTokenList: walletSectionAllTokens.custom
     property var tokens: walletSectionAllTokens.all

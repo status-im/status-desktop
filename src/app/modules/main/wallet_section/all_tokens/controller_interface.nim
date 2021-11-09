@@ -1,4 +1,4 @@
-import ../../../../../app_service/service/token/service_interface as token_service
+import ../../../../../app_service/service/token/service as token_service
 
 type 
   AccessInterface* {.pure inheritable.} = ref object of RootObj
@@ -20,6 +20,9 @@ method toggleVisible*(self: AccessInterface, symbol: string) =
   raise newException(ValueError, "No implementation available")
 
 method removeCustomToken*(self: AccessInterface, address: string) =
+  raise newException(ValueError, "No implementation available")
+
+method getTokenDetails*(self: AccessInterface, address: string) =
   raise newException(ValueError, "No implementation available")
 
 type

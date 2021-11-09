@@ -20,14 +20,14 @@ type
 proc newModule*[T](
   delegate: T,
   events: EventEmitter,
-  tokenService: token_service.ServiceInterface,
+  tokenService: token_service.Service,
   walletAccountService: wallet_account_service.ServiceInterface,
 ): Module[T] =
   result = Module[T]()
   result.delegate = delegate
   result.events = events
   result.view = newView(result)
-  result.controller = controller.newController[Module[T]](result, tokenService, walletAccountService)
+  result.controller = controller.newController[Module[T]](result, events, tokenService, walletAccountService)
   result.moduleLoaded = false
 
 method delete*[T](self: Module[T]) =
@@ -49,6 +49,7 @@ method refreshTokens*[T](self: Module[T]) =
   )
 
 method load*[T](self: Module[T]) =
+  self.controller.init()
   singletonInstance.engine.setRootContextProperty("walletSectionAllTokens", newQVariant(self.view))
   self.refreshTokens()
 
@@ -74,3 +75,9 @@ method toggleVisible*[T](self: Module[T], symbol: string) =
 
 method removeCustomToken*[T](self: Module[T], address: string) =
   self.controller.removeCustomToken(address)
+
+method getTokenDetails*[T](self: Module[T], address: string) =
+  self.controller.getTokenDetails(address)
+
+method tokenDetailsWereResolved*[T](self: Module[T], tokenDetails: string) =
+  self.view.tokenDetailsWereResolved(tokenDetails)

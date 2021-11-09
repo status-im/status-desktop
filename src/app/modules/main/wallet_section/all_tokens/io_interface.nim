@@ -23,6 +23,12 @@ method removeCustomToken*(self: AccessInterface, address: string) {.base.} =
 method refreshTokens*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method getTokenDetails*(self: AccessInterface, address: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method tokenDetailsWereResolved*(self: AccessInterface, tokenDetails: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 type
   ## Abstract class (concept) which must be implemented by object/s used in this 
   ## module.

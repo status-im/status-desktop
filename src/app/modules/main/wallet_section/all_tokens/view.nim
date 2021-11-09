@@ -66,3 +66,8 @@ QtObject:
 
   proc removeCustomToken(self: View, address: string) {.slot.} =
     self.delegate.removeCustomToken(address)
+
+  proc tokenDetailsWereResolved*(self: View, tokenDetails: string) {.signal.}
+
+  proc getTokenDetails*(self: View, address: string) {.slot.} =
+    self.delegate.getTokenDetails(address)

@@ -124,11 +124,12 @@ proc newAppController*(appService: AppService): AppController =
   # Services
   result.keychainService = keychain_service.newService(appService.status.events)
   result.settingService = setting_service.newService()
+  result.settingsService = settings_service.newService()
   result.accountsService = accounts_service.newService()
   result.contactsService = contacts_service.newService(appService.status.events, appService.threadpool)
   result.chatService = chat_service.newService()
   result.communityService = community_service.newService(result.chatService)
-  result.tokenService = token_service.newService(appService.status.events, result.settingService)
+  result.tokenService = token_service.newService(appService.status.events, appService.threadpool, result.settingService, result.settingsService)
   result.collectibleService = collectible_service.newService(result.settingService)
   result.walletAccountService = wallet_account_service.newService(
     appService.status.events, result.settingService, result.tokenService
@@ -136,7 +137,6 @@ proc newAppController*(appService: AppService): AppController =
   result.transactionService = transaction_service.newService(appService.status.events, appService.threadpool, result.walletAccountService)
   result.bookmarkService = bookmark_service.newService()
   result.profileService = profile_service.newService()
-  result.settingsService = settings_service.newService()
   result.aboutService = about_service.newService()
   result.dappPermissionsService = dapp_permissions_service.newService()
   result.languageService = language_service.newService()
