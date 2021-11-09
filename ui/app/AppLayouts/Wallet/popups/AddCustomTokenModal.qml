@@ -57,7 +57,7 @@ ModalPopup {
     }
 
     property var getTokenDetails: Backpressure.debounce(popup, 500, function (tokenAddress){
-        RootStore.customTokenList.getTokenDetails(tokenAddress)
+        RootStore.walletTokensModule.getTokenDetails(tokenAddress)
     });
 
     function onKeyReleased(){
@@ -70,7 +70,7 @@ ModalPopup {
 
     Item {
         Connections {
-            target: RootStore.customTokenList
+            target: RootStore.walletTokensModule
             onTokenDetailsWereResolved: {
                 const jsonObj = JSON.parse(tokenDetails)
                 if (jsonObj.error) {

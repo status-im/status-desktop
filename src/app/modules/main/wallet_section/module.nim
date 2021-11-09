@@ -40,7 +40,7 @@ type
 proc newModule*[T](
   delegate: T,
   events: EventEmitter,
-  tokenService: token_service.ServiceInterface,
+  tokenService: token_service.Service,
   transactionService: transaction_service.Service,
   collectibleService: collectible_service.ServiceInterface,
   walletAccountService: wallet_account_service.ServiceInterface,
