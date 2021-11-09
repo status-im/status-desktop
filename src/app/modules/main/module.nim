@@ -8,6 +8,7 @@ import chat_section/module as chat_section_module
 import wallet_section/module as wallet_section_module
 import browser_section/module as browser_section_module
 import profile_section/module as profile_section_module
+import app_search/module as app_search_module
 
 import ../../../app_service/service/keychain/service as keychain_service
 import ../../../app_service/service/chat/service as chat_service
@@ -44,6 +45,7 @@ type
     walletSectionModule: wallet_section_module.AccessInterface
     browserSectionModule: browser_section_module.AccessInterface
     profileSectionModule: profile_section_module.AccessInterface
+    appSearchModule: app_search_module.AccessInterface
     moduleLoaded: bool
 
 proc newModule*[T](
@@ -87,6 +89,7 @@ proc newModule*[T](
   dappPermissionsService)
   result.profileSectionModule = profile_section_module.newModule(result, events, accountsService, settingsService, 
   profileService, contactsService, aboutService, languageService, mnemonicService, privacyService)
+  result.appSearchModule = app_search_module.newModule(result, events, chatService, communityService, messageService)
 
 method delete*[T](self: Module[T]) =
   self.chatSectionModule.delete
@@ -96,6 +99,7 @@ method delete*[T](self: Module[T]) =
   self.communitySectionsModule.clear
   self.walletSectionModule.delete
   self.browserSectionModule.delete
+  self.appSearchModule.delete
   self.view.delete
   self.viewVariant.delete
   self.controller.delete
@@ -194,6 +198,7 @@ method load*[T](self: Module[T], events: EventEmitter, chatService: chat_service
   # self.timelineSectionModule.load()
   # self.nodeManagementSectionModule.load()
   self.profileSectionModule.load()
+  self.appSearchModule.load()
 
   # Set active section on app start
   self.setActiveSection(activeSection)
@@ -298,4 +303,7 @@ method getCommunitySectionModule*[T](self: Module[T], communityId: string): QVar
   return self.communitySectionsModule[communityId].getModuleAsVariant()
 
 method onActiveChatChange*[T](self: Module[T], sectionId: string, chatId: string) =
-  discard
+  self.appSearchModule.onActiveChatChange(sectionId, chatId)
+
+method getAppSearchModule*[T](self: Module[T]): QVariant =
+  self.appSearchModule.getModuleAsVariant()
