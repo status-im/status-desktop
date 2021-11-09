@@ -16,6 +16,9 @@ method init*(self: ServiceInterface) {.base.} =
 method getCommunities*(self: ServiceInterface): seq[CommunityDto] {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method getCommunityById*(self: ServiceInterface, communityId: string): CommunityDto {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method getCommunityIds*(self: ServiceInterface): seq[string] {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -25,4 +28,7 @@ method getCategories*(self: ServiceInterface, communityId: string, order: SortOr
 
 method getChats*(self: ServiceInterface, communityId: string, categoryId = "", order = SortOrder.Ascending): seq[Chat] 
   {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getAllChats*(self: ServiceInterface, communityId: string, order = SortOrder.Ascending): seq[Chat] {.base.} =
   raise newException(ValueError, "No implementation available")

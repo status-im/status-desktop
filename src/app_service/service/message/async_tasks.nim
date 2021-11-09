@@ -44,3 +44,51 @@ const asyncFetchChatMessagesTask: Task = proc(argEncoded: string) {.gcsafe, nimc
   }
 
   arg.finish(responseJson)
+
+#################################################
+# Async search messages
+#################################################
+
+type 
+  AsyncSearchMessagesTaskArg = ref object of QObjectTaskArg
+    searchTerm: string
+    caseSensitive: bool
+
+#################################################
+# Async search messages in chat with chatId by term
+#################################################
+type
+  AsyncSearchMessagesInChatTaskArg = ref object of AsyncSearchMessagesTaskArg
+    chatId: string
+
+const asyncSearchMessagesInChatTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[AsyncSearchMessagesInChatTaskArg](argEncoded)
+  
+  let response = status_go.fetchAllMessagesFromChatWhichMatchTerm(arg.chatId, arg.searchTerm, arg.caseSensitive)
+
+  let responseJson = %*{
+    "chatId": arg.chatId,
+    "messages": response.result
+  }
+  arg.finish(responseJson)
+
+#################################################
+# Async search messages in chats/channels and communities by term
+#################################################
+type
+  AsyncSearchMessagesInChatsAndCommunitiesTaskArg = ref object of AsyncSearchMessagesTaskArg
+    communityIds: seq[string]
+    chatIds: seq[string]
+
+const asyncSearchMessagesInChatsAndCommunitiesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[AsyncSearchMessagesInChatsAndCommunitiesTaskArg](argEncoded)
+
+  let response = status_go.fetchAllMessagesFromChatsAndCommunitiesWhichMatchTerm(arg.communityIds, arg.chatIds, 
+  arg.searchTerm, arg.caseSensitive)
+
+  let responseJson = %*{
+    "communityIds": arg.communityIds,
+    "chatIds": arg.chatIds,
+    "messages": response.result
+  }
+  arg.finish(responseJson)

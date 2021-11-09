@@ -118,3 +118,9 @@ QtObject:
 
   proc getChatSectionModule*(self: View): QVariant {.slot.} =
     return self.delegate.getChatSectionModule()
+
+  proc getAppSearchModule(self: View): QVariant {.slot.} =
+    return self.delegate.getAppSearchModule()
+
+  QtProperty[QVariant] appSearchModule:
+    read = getAppSearchModule

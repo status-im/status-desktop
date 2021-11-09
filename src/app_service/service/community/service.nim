@@ -32,7 +32,7 @@ method init*(self: Service) =
     proc(x: JsonNode): CommunityDto = x.toCommunityDto())
 
     for community in communities:
-        self.communities[community.id] = community
+      self.communities[community.id] = community
 
   except Exception as e:
     let errDesription = e.msg
@@ -41,6 +41,13 @@ method init*(self: Service) =
 
 method getCommunities*(self: Service): seq[CommunityDto] =
   return toSeq(self.communities.values)
+
+method getCommunityById*(self: Service, communityId: string): CommunityDto =
+  if(not self.communities.hasKey(communityId)):
+    error "error: requested community doesn't exists"
+    return
+
+  return self.communities[communityId]
 
 method getCommunityIds*(self: Service): seq[string] =
   return toSeq(self.communities.keys)
@@ -63,7 +70,7 @@ proc sortDesc[T](t1, t2: T): int =
 
 method getCategories*(self: Service, communityId: string, order: SortOrder = SortOrder.Ascending): seq[Category] =
   if(not self.communities.contains(communityId)):
-    error "trying to get community for an unexisting community id"
+    error "trying to get community categories for an unexisting community id"
     return
 
   result = self.communities[communityId].categories
@@ -73,8 +80,11 @@ method getCategories*(self: Service, communityId: string, order: SortOrder = Sor
     result.sort(sortDesc[Category])
 
 method getChats*(self: Service, communityId: string, categoryId = "", order = SortOrder.Ascending): seq[Chat] =
+  ## By default returns chats which don't belong to any category, for passed `communityId`.
+  ## If `categoryId` is set then only chats belonging to that category for passed `communityId` will be returned.
+  ## Returned chats are sorted by position following set `order` parameter.
   if(not self.communities.contains(communityId)):
-    error "trying to get community for an unexisting community id"
+    error "trying to get community chats for an unexisting community id"
     return
 
   for chat in self.communities[communityId].chats:
@@ -82,6 +92,20 @@ method getChats*(self: Service, communityId: string, categoryId = "", order = So
       continue
 
     result.add(chat)
+
+  if(order == SortOrder.Ascending):
+    result.sort(sortAsc[Chat])
+  else:
+    result.sort(sortDesc[Chat])
+
+method getAllChats*(self: Service, communityId: string, order = SortOrder.Ascending): seq[Chat] =
+  ## Returns all chats belonging to the community with passed `communityId`, sorted by position.
+  ## Returned chats are sorted by position following set `order` parameter.
+  if(not self.communities.contains(communityId)):
+    error "trying to get all community chats for an unexisting community id"
+    return
+
+  result = self.communities[communityId].chats
 
   if(order == SortOrder.Ascending):
     result.sort(sortAsc[Chat])
