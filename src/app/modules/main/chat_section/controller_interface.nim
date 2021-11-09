@@ -11,7 +11,10 @@ method delete*(self: AccessInterface) {.base.} =
 method init*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getId*(self: AccessInterface): string {.base.} =
+method getMySectionId*(self: AccessInterface): string {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getActiveChatId*(self: AccessInterface): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method isCommunity*(self: AccessInterface): bool {.base.} =
