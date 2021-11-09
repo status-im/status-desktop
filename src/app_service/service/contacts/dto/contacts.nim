@@ -3,8 +3,7 @@
 import json, strformat, strutils
 
 include ../../../common/json_utils
-
-const domain* = ".stateofus.eth"
+include ../../../common/utils
 
 type
   Images* = ref object
@@ -79,20 +78,9 @@ proc toContactsDto*(jsonObj: JsonNode): ContactsDto =
   discard jsonObj.getProp("IsSyncing", result.isSyncing)
   discard jsonObj.getProp("Removed", result.removed)
 
-proc userName*(ensName: string, removeSuffix: bool = false): string =
-  if ensName != "" and ensName.endsWith(domain):
-    if removeSuffix:
-      result = ensName.split(".")[0]
-    else:
-      result = ensName
-  else:
-    if ensName.endsWith(".eth") and removeSuffix:
-      return ensName.split(".")[0]
-    result = ensName
-
-proc userNameOrAlias*(contact: ContactsDto, removeSuffix: bool = false): string =
+proc userNameOrAlias*(contact: ContactsDto): string =
   if(contact.name != "" and contact.ensVerified):
-    result = "@" & userName(contact.name, removeSuffix)
+    result = prettyEnsName(contact.name)
   else:
     result = contact.alias
 
