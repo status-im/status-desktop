@@ -20,3 +20,6 @@ method getChatsOfChatTypes*(self: ServiceInterface, types: seq[ChatType]): seq[C
 
 method getChatById*(self: ServiceInterface, chatId: string): ChatDto {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method prettyChatName*(self: ServiceInterface, chatId: string): string {.base.} =
+  raise newException(ValueError, "No implementation available")
