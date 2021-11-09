@@ -63,8 +63,11 @@ proc buildChatUI(self: Module, events: EventEmitter, chatService: chat_service.S
   for c in chats:
     let hasNotification = c.unviewedMessagesCount > 0 or c.unviewedMentionsCount > 0
     let notificationsCount = c.unviewedMentionsCount
-    let item = initItem(c.id, if c.alias.len > 0: c.alias else: c.name, c.identicon, c.color, c.description, 
-    c.chatType.int, hasNotification, notificationsCount, c.muted, false)
+    var chatName = c.name
+    if(c.chatType == ChatType.OneToOne):
+      chatName = self.controller.getPrettyChatName(c.id)
+    let item = initItem(c.id, chatName, c.identicon, c.color, c.description, c.chatType.int, hasNotification, 
+    notificationsCount, c.muted, false)
     self.view.appendItem(item)
     self.addSubmodule(c.id, false, events, chatService, communityService, messageService)
     
@@ -87,9 +90,8 @@ proc buildCommunityUI(self: Module, events: EventEmitter, chatService: chat_serv
 
       let hasNotification = chatDto.unviewedMessagesCount > 0 or chatDto.unviewedMentionsCount > 0
       let notificationsCount = chatDto.unviewedMentionsCount
-      let channelItem = initItem(chatDto.id, if chatDto.alias.len > 0: chatDto.alias else: chatDto.name, 
-      chatDto.identicon, chatDto.color, chatDto.description, chatDto.chatType.int, hasNotification, notificationsCount, 
-      chatDto.muted, false)
+      let channelItem = initItem(chatDto.id, chatDto.name, chatDto.identicon, chatDto.color, chatDto.description, 
+      chatDto.chatType.int, hasNotification, notificationsCount, chatDto.muted, false)
       self.view.appendItem(channelItem)
       self.addSubmodule(chatDto.id, true, events, chatService, communityService, messageService)
 
@@ -114,9 +116,8 @@ proc buildCommunityUI(self: Module, events: EventEmitter, chatService: chat_serv
         hasNotificationPerCategory = hasNotificationPerCategory or hasNotification
         notificationsCountPerCategory += notificationsCount
 
-        let channelItem = initSubItem(chatDto.id, if chatDto.alias.len > 0: chatDto.alias else: chatDto.name, 
-        chatDto.identicon, chatDto.color, chatDto.description, hasNotification, notificationsCount, chatDto.muted, 
-        false)
+        let channelItem = initSubItem(chatDto.id, chatDto.name, chatDto.identicon, chatDto.color, chatDto.description, 
+        hasNotification, notificationsCount, chatDto.muted, false)
         categoryChannels.add(channelItem)
         self.addSubmodule(chatDto.id, true, events, chatService, communityService, messageService)
 

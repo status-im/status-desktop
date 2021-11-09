@@ -75,3 +75,6 @@ method setActiveItemSubItem*(self: Controller, itemId: string, subItemId: string
   # We need to take other actions here like notify status go that unviewed mentions count is updated and so...
 
   self.delegate.activeItemSubItemSet(self.activeItemId, self.activeSubItemId)
+
+method getPrettyChatName*(self: Controller, chatId: string): string =
+  return self.chatService.prettyChatName(chatId)

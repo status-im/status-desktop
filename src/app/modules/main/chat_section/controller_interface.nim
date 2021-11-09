@@ -37,3 +37,6 @@ method getChatDetailsForChatTypes*(self: AccessInterface, types: seq[ChatType]):
     
 method setActiveItemSubItem*(self: AccessInterface, itemId: string, subItemId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method getPrettyChatName*(self: AccessInterface, chatId: string): string {.base.} =
+  raise newException(ValueError, "No implementation available")

@@ -1,6 +1,7 @@
 import Tables, json, sequtils, strformat, chronicles
 
 import service_interface, ./dto/chat
+import ../contacts/service as contact_service
 import status/statusgo_backend_new/chat as status_go
 
 export service_interface
@@ -9,14 +10,16 @@ logScope:
   topics = "chat-service"
 
 type 
-  Service* = ref object of ServiceInterface
+  Service* = ref object of service_interface.ServiceInterface
     chats: Table[string, ChatDto] # [chat_id, ChatDto]
+    contactService: contact_service.Service
 
 method delete*(self: Service) =
   discard
 
-proc newService*(): Service =
+proc newService*(contactService: contact_service.Service): Service =
   result = Service()
+  result.contactService = contactService
   result.chats = initTable[string, ChatDto]()
 
 method init*(self: Service) =
@@ -46,3 +49,10 @@ method getChatById*(self: Service, chatId: string): ChatDto =
     return
 
   return self.chats[chatId]
+
+method prettyChatName*(self: Service, chatId: string): string =
+  let contact = self.contactService.getContactById(chatId)
+  if(contact.isNil):
+    return
+
+  return contact.userNameOrAlias()
