@@ -11,6 +11,7 @@ import "."
 ListView {
     id: contactList
     property var contacts
+    property var store
     property string searchStr: ""
     property string searchString: ""
     property string lowerCaseSearchString: searchString.toLowerCase()
@@ -19,6 +20,7 @@ ListView {
 
     property Component profilePopupComponent: ProfilePopup {
         id: profilePopup
+        store: contactList.store
         onClosed: destroy()
     }
 
