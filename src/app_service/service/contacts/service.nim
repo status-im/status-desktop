@@ -60,6 +60,12 @@ QtObject:
   proc getContacts*(self: Service): seq[ContactsDto] =
     return toSeq(self.contacts.values)
 
+  proc getContactById*(self: Service, id: string): ContactsDto =
+    if(not self.contacts.hasKey(id)):
+      return
+
+    return self.contacts[id]
+
   proc getContact*(self: Service, id: string): ContactsDto =
     return status_contacts.getContactByID(id).result.toContactsDto()
 
