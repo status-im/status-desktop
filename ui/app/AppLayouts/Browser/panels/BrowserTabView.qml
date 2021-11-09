@@ -34,7 +34,7 @@ QQC1.TabView {
 
         tab.item.profile = profile;
         if (localAccountSensitiveSettings.browserHomepage !== "") {
-            tab.item.url = localAccountSensitiveSettings.browserHomepage
+            tab.item.url = determineRealURL(localAccountSensitiveSettings.browserHomepage)
         }
         return tab;
     }
