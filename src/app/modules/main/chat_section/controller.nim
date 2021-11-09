@@ -12,7 +12,7 @@ export controller_interface
 type 
   Controller* = ref object of controller_interface.AccessInterface
     delegate: io_interface.AccessInterface
-    id: string
+    sectionId: string
     isCommunityModule: bool
     activeItemId: string
     activeSubItemId: string
@@ -20,13 +20,13 @@ type
     communityService: community_service.ServiceInterface
     messageService: message_service.Service
 
-proc newController*(delegate: io_interface.AccessInterface, id: string, isCommunity: bool, 
+proc newController*(delegate: io_interface.AccessInterface, sectionId: string, isCommunity: bool, 
   chatService: chat_service.ServiceInterface,
   communityService: community_service.ServiceInterface,
   messageService: message_service.Service): Controller =
   result = Controller()
   result.delegate = delegate
-  result.id = id
+  result.sectionId = sectionId
   result.isCommunityModule = isCommunity
   result.chatService = chatService
   result.communityService = communityService
@@ -38,8 +38,14 @@ method delete*(self: Controller) =
 method init*(self: Controller) = 
   discard
 
-method getId*(self: Controller): string =
-  return self.id
+method getMySectionId*(self: Controller): string =
+  return self.sectionId
+
+method getActiveChatId*(self: Controller): string =
+  if(self.activeSubItemId.len > 0):
+    return self.activeSubItemId
+  else:
+    return self.activeItemId
 
 method isCommunity*(self: Controller): bool =
   return self.isCommunityModule
@@ -64,10 +70,7 @@ method setActiveItemSubItem*(self: Controller, itemId: string, subItemId: string
   self.activeItemId = itemId
   self.activeSubItemId = subItemId
 
-  if(self.activeSubItemId.len > 0):
-    self.messageService.loadInitialMessagesForChat(self.activeSubItemId)
-  else:
-    self.messageService.loadInitialMessagesForChat(self.activeItemId)
+  self.messageService.asyncLoadInitialMessagesForChat(self.getActiveChatId())
 
   # We need to take other actions here like notify status go that unviewed mentions count is updated and so...
 

@@ -26,7 +26,7 @@ type
     chatContentModule: OrderedTable[string, chat_content_module.AccessInterface]
     moduleLoaded: bool
 
-proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitter, id: string, isCommunity: bool, 
+proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitter, sectionId: string, isCommunity: bool, 
   chatService: chat_service.Service, communityService: community_service.Service, 
   messageService: message_service.Service): 
   Module =
@@ -34,7 +34,8 @@ proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitt
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, id, isCommunity, chatService, communityService, messageService)
+  result.controller = controller.newController(result, sectionId, isCommunity, chatService, communityService, 
+  messageService)
   result.moduleLoaded = false
   
   result.chatContentModule = initOrderedTable[string, chat_content_module.AccessInterface]()
@@ -185,6 +186,8 @@ method activeItemSubItemSet*(self: Module, itemId: string, subItemId: string) =
   self.view.model().setActiveItemSubItem(itemId, subItemId)
   self.view.activeItemSubItemSet(item, subItem)
 
+  self.delegate.onActiveChatChange(self.controller.getMySectionId(), self.controller.getActiveChatId())
+  
 method getModuleAsVariant*(self: Module): QVariant =
   return self.viewVariant
 
@@ -194,3 +197,9 @@ method getChatContentModule*(self: Module, chatId: string): QVariant =
     return
 
   return self.chatContentModule[chatId].getModuleAsVariant()
+
+method onActiveSectionChange*(self: Module, sectionId: string) =
+  if(sectionId != self.controller.getMySectionId()):
+    return
+  
+  self.delegate.onActiveChatChange(self.controller.getMySectionId(), self.controller.getActiveChatId())
