@@ -56,7 +56,7 @@ proc addSubmodule(self: Module, chatId: string, belongToCommunity: bool, events:
 
 proc buildChatUI(self: Module, events: EventEmitter, chatService: chat_service.Service, 
   communityService: community_service.Service, messageService: message_service.Service) =
-  let types = @[ChatType.OneToOne, ChatType.Public, ChatType.PrivateGroupChat, ChatType.Profile]
+  let types = @[ChatType.OneToOne, ChatType.Public, ChatType.PrivateGroupChat]
   let chats = self.controller.getChatDetailsForChatTypes(types)
 
   var selectedItemId = ""
