@@ -20,7 +20,7 @@ Rectangle {
     property string message : ""
     property string identicon: ""
     property string image: ""
-    property string sticker: ""
+    property string stickerData: ""
     property int contentType: -1
 
     signal closeButtonClicked()
@@ -88,6 +88,7 @@ Rectangle {
         anchors.topMargin: 2
         imageWidth: 64
         imageHeight: 64
+        stickerData: root.stickerData
         color: Style.current.transparent
         contentType: root.contentType
     }

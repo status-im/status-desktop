@@ -554,7 +554,7 @@ Rectangle {
         replyArea.identicon = identicon
         replyArea.contentType = contentType
         replyArea.image = image
-        replyArea.sticker = sticker
+        replyArea.stickerData = sticker
         messageInputField.forceActiveFocus();
     }
 
@@ -848,6 +848,7 @@ Rectangle {
                 anchors.rightMargin: 2
                 anchors.top: parent.top
                 anchors.topMargin: 2
+                stickerData: sticker
                 onCloseButtonClicked: {
                     isReply = false
                 }
