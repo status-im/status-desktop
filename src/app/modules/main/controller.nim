@@ -106,7 +106,6 @@ method setActiveSection*(self: Controller, sectionId: string, sectionType: Secti
   if(sectionType == SectionType.Chat or sectionType != SectionType.Community):
     # We need to take other actions here, in case of Chat or Community sections like
     # notify status go that unviewed mentions count is updated and so...
-    # and then in case all is good, notify the view about the chage so it can update the UI
     echo "deal with appropriate service..."
 
   singletonInstance.localAccountSensitiveSettings.setActiveSection(self.activeSectionId)

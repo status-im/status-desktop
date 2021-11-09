@@ -1,6 +1,7 @@
 import NimQml, Tables
 
 import io_interface, view, controller, item, model
+import ../../boot/app_sections_config as conf
 import ../../core/global_singleton
 
 import chat_section/module as chat_section_module
@@ -67,7 +68,7 @@ proc newModule*[T](
   languageService: language_service.ServiceInterface,
   mnemonicService: mnemonic_service.ServiceInterface,
   privacyService: privacy_service.ServiceInterface
-): Module[T] =
+  ): Module[T] =
   result = Module[T]()
   result.delegate = delegate
   result.view = view.newView(result)
@@ -77,8 +78,8 @@ proc newModule*[T](
   result.moduleLoaded = false
 
   # Submodules
-  result.chatSectionModule = chat_section_module.newModule(result, events, "chat", false, chatService, communityService, 
-  messageService)
+  result.chatSectionModule = chat_section_module.newModule(result, events, conf.CHAT_SECTION_ID, false, chatService, 
+  communityService, messageService)
   result.communitySectionsModule = initOrderedTable[string, chat_section_module.AccessInterface]()
   result.walletSectionModule = wallet_section_module.newModule[Module[T]](result, events, tokenService, 
     transactionService, collectible_service, walletAccountService, settingService)
@@ -118,7 +119,8 @@ method load*[T](self: Module[T], events: EventEmitter, chatService: chat_service
   let (unviewedCount, mentionsCount) = self.controller.getNumOfNotificaitonsForChat()
   let hasNotification = unviewedCount > 0 or mentionsCount > 0
   let notificationsCount = mentionsCount
-  let chatSectionItem = initItem("chat", SectionType.Chat, "Chat", "", "chat", "", hasNotification, notificationsCount, 
+  let chatSectionItem = initItem(conf.CHAT_SECTION_ID, SectionType.Chat, conf.CHAT_SECTION_NAME, "", 
+  conf.CHAT_SECTION_ICON, "", hasNotification, notificationsCount, 
   false, true)
   self.view.addItem(chatSectionItem)
   if(activeSectionId == chatSectionItem.id):
@@ -136,43 +138,48 @@ method load*[T](self: Module[T], events: EventEmitter, chatService: chat_service
       activeSection = communitySectionItem
 
   # Wallet Section
-  let walletSectionItem = initItem("wallet", SectionType.Wallet, "Wallet", "", "wallet", "", false, 0, false,
+  let walletSectionItem = initItem(conf.WALLET_SECTION_ID, SectionType.Wallet, conf.WALLET_SECTION_NAME, "", 
+  conf.WALLET_SECTION_ICON, "", false, 0, false,
   singletonInstance.localAccountSensitiveSettings.getIsWalletEnabled())
   self.view.addItem(walletSectionItem)
   if(activeSectionId == walletSectionItem.id):
     activeSection = walletSectionItem
 
   # WalletV2 Section
-  let walletV2SectionItem = initItem("walletV2", SectionType.WalletV2, "WalletV2", "", "cancel", "", false, 0, false, 
+  let walletV2SectionItem = initItem(conf.WALLETV2_SECTION_ID, SectionType.WalletV2, conf.WALLETV2_SECTION_NAME, "", 
+  conf.WALLETV2_SECTION_ICON, "", false, 0, false, 
   singletonInstance.localAccountSensitiveSettings.getIsWalletV2Enabled())
   self.view.addItem(walletV2SectionItem)
   if(activeSectionId == walletV2SectionItem.id):
     activeSection = walletV2SectionItem
 
   # Browser Section
-  let browserSectionItem = initItem("browser", SectionType.Browser, "Browser", "", "browser", "", false, 0, false,
+  let browserSectionItem = initItem(conf.BROWSER_SECTION_ID, SectionType.Browser, conf.BROWSER_SECTION_NAME, "", 
+  conf.BROWSER_SECTION_ICON, "", false, 0, false,
   singletonInstance.localAccountSensitiveSettings.getIsBrowserEnabled())
   self.view.addItem(browserSectionItem)
   if(activeSectionId == browserSectionItem.id):
     activeSection = browserSectionItem
 
   # Timeline Section
-  let timelineSectionItem = initItem("timeline", SectionType.Timeline, "Timeline", "", "status-update", "", false, 0, 
+  let timelineSectionItem = initItem(conf.TIMELINE_SECTION_ID, SectionType.Timeline, conf.TIMELINE_SECTION_NAME, "", 
+  conf.TIMELINE_SECTION_ICON, "", false, 0, 
   false, singletonInstance.localAccountSensitiveSettings.getTimelineEnabled())
   self.view.addItem(timelineSectionItem)
   if(activeSectionId == timelineSectionItem.id):
     activeSection = timelineSectionItem
 
   # Node Management Section
-  let nodeManagementSectionItem = initItem("nodeManagement", SectionType.NodeManagement, "Node Management", "", "node", 
-  "", false, 0, false, singletonInstance.localAccountSensitiveSettings.getNodeManagementEnabled())
+  let nodeManagementSectionItem = initItem(conf.NODEMANAGEMENT_SECTION_ID, SectionType.NodeManagement, 
+  conf.NODEMANAGEMENT_SECTION_NAME, "", conf.NODEMANAGEMENT_SECTION_ICON, "", false, 0, false, 
+  singletonInstance.localAccountSensitiveSettings.getNodeManagementEnabled())
   self.view.addItem(nodeManagementSectionItem)
   if(activeSectionId == nodeManagementSectionItem.id):
     activeSection = nodeManagementSectionItem
 
   # Profile Section
-  let profileSettingsSectionItem = initItem("profileSettings", SectionType.ProfileSettings, "Settings", "", 
-  "status-update", "", false, 0, false, true)
+  let profileSettingsSectionItem = initItem(conf.SETTINGS_SECTION_ID, SectionType.ProfileSettings, 
+  conf.SETTINGS_SECTION_NAME, "", conf.SETTINGS_SECTION_ICON, "", false, 0, false, true)
   self.view.addItem(profileSettingsSectionItem)
   if(activeSectionId == profileSettingsSectionItem.id):
     activeSection = profileSettingsSectionItem
@@ -254,6 +261,14 @@ method setActiveSection*[T](self: Module[T], item: Item) =
 
   self.controller.setActiveSection(item.id, item.sectionType)
 
+proc notifySubModulesAboutChange[T](self: Module[T], sectionId: string) =
+  self.chatSectionModule.onActiveSectionChange(sectionId)
+
+  for cModule in self.communitySectionsModule.values:
+    cModule.onActiveSectionChange(sectionId)
+
+  # If there is a need other section may be notified the same way from here...
+
 method activeSectionSet*[T](self: Module[T], sectionId: string) =
   let item = self.view.model().getItemById(sectionId)
   if(item.isEmpty()):
@@ -263,6 +278,8 @@ method activeSectionSet*[T](self: Module[T], sectionId: string) =
 
   self.view.model().setActiveSection(sectionId)
   self.view.activeSectionSet(item)
+
+  self.notifySubModulesAboutChange(sectionId)
 
 method enableSection*[T](self: Module[T], sectionType: SectionType) =
   self.view.model().enableSection(sectionType)
@@ -279,3 +296,6 @@ method getCommunitySectionModule*[T](self: Module[T], communityId: string): QVar
     return
 
   return self.communitySectionsModule[communityId].getModuleAsVariant()
+
+method onActiveChatChange*[T](self: Module[T], sectionId: string, chatId: string) =
+  discard
