@@ -24,8 +24,12 @@ const MESSAGES_PER_PAGE = 20
 const SIGNAL_MESSAGES_LOADED* = "new-messagesLoaded" #Once we are done with refactoring we should remove "new-" from all signals
 const SIGNAL_MESSAGE_PINNED* = "new-messagePinned"
 const SIGNAL_MESSAGE_UNPINNED* = "new-messageUnpinned"
+const SIGNAL_SEARCH_MESSAGES_LOADED* = "new-searchMessagesLoaded"
 
 type
+  SearchMessagesLoadedArgs* = ref object of Args
+    messages*: seq[MessageDto]
+
   MessagesLoadedArgs* = ref object of Args
     chatId*: string
     messages*: seq[MessageDto]
@@ -66,7 +70,7 @@ QtObject:
 
     return self.pinnedMsgCursor[chatId]
 
-  proc onLoadMoreMessagesForChat*(self: Service, response: string) {.slot.} =
+  proc onAsyncLoadMoreMessagesForChat*(self: Service, response: string) {.slot.} =
     let responseObj = response.parseJson
     if (responseObj.kind != JObject):
       info "load more messages response is not a json object"
@@ -112,15 +116,15 @@ QtObject:
     self.events.emit(SIGNAL_MESSAGES_LOADED, data)
 
 
-  proc loadMoreMessagesForChat*(self: Service, chatId: string) =
+  proc asyncLoadMoreMessagesForChat*(self: Service, chatId: string) =
     if (chatId.len == 0):
-      error "empty chat id", methodName="loadMoreMessagesForChat"
+      error "empty chat id", methodName="asyncLoadMoreMessagesForChat"
       return
 
     let arg = AsyncFetchChatMessagesTaskArg(
       tptr: cast[ByteAddress](asyncFetchChatMessagesTask),
       vptr: cast[ByteAddress](self.vptr),
-      slot: "onLoadMoreMessagesForChat",
+      slot: "onAsyncLoadMoreMessagesForChat",
       chatId: chatId,
       msgCursor: self.getCurrentMessageCursor(chatId),
       pinnedMsgCursor: self.getCurrentPinnedMessageCursor(chatId),
@@ -129,12 +133,12 @@ QtObject:
 
     self.threadpool.start(arg)
 
-  proc loadInitialMessagesForChat*(self: Service, chatId: string) =
+  proc asyncLoadInitialMessagesForChat*(self: Service, chatId: string) =
     if(self.getCurrentMessageCursor(chatId).len > 0):
       return
 
     # we're here if initial messages are not loaded yet
-    self.loadMoreMessagesForChat(chatId)
+    self.asyncLoadMoreMessagesForChat(chatId)
 
   
   proc addReaction*(self: Service, chatId: string, messageId: string, emojiId: int): 
@@ -208,3 +212,74 @@ QtObject:
     except Exception as e:
       result.error = e.msg
       error "error: ", methodName="getDetailsForMessage", errName = e.name, errDesription = e.msg
+
+  proc finishAsyncSearchMessagesWithError*(self: Service, errorMessage: string) =
+    error "error: ", methodName="onAsyncSearchMessages", errDescription = errorMessage
+    self.events.emit(SIGNAL_SEARCH_MESSAGES_LOADED, SearchMessagesLoadedArgs())
+
+  proc onAsyncSearchMessages*(self: Service, response: string) {.slot.} =
+    let responseObj = response.parseJson
+    if (responseObj.kind != JObject):
+      self.finishAsyncSearchMessagesWithError("search messages response is not an json object")
+      return
+
+    var messagesObj: JsonNode
+    if (not responseObj.getProp("messages", messagesObj)):
+      self.finishAsyncSearchMessagesWithError("search messages response doesn't contain messages property")
+      return
+
+    var messagesArray: JsonNode
+    if (not messagesObj.getProp("messages", messagesArray)):
+      self.finishAsyncSearchMessagesWithError("search messages response doesn't contain messages array")
+      return
+
+    if (messagesArray.kind != JArray):
+      self.finishAsyncSearchMessagesWithError("expected messages json array is not of JArray type")
+      return
+
+    var messages = map(messagesArray.getElems(), proc(x: JsonNode): MessageDto = x.toMessageDto())
+
+    let data = SearchMessagesLoadedArgs(messages: messages)
+    self.events.emit(SIGNAL_SEARCH_MESSAGES_LOADED, data)
+
+  proc asyncSearchMessages*(self: Service, chatId: string, searchTerm: string, caseSensitive: bool) =
+    ## Asynchronous search for messages which contain the searchTerm and belong to the chat with chatId.
+    if (chatId.len == 0):
+      error "error: empty channel id set for fetching more messages", methodName="asyncSearchMessages"
+      return
+
+    if (searchTerm.len == 0):
+      return
+
+    let arg = AsyncSearchMessagesInChatTaskArg(
+      tptr: cast[ByteAddress](asyncSearchMessagesInChatTask),
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "onAsyncSearchMessages",
+      chatId: chatId,
+      searchTerm: searchTerm,
+      caseSensitive: caseSensitive
+    )
+    self.threadpool.start(arg)
+
+  proc asyncSearchMessages*(self: Service, communityIds: seq[string], chatIds: seq[string], searchTerm: string, 
+    caseSensitive: bool) =
+    ## Asynchronous search for messages which contain the searchTerm and belong to any chat/channel from chatIds array 
+    ## or any channel of community from communityIds array.
+
+    if (communityIds.len == 0 and chatIds.len == 0):
+      error "either community ids or chat ids or both must be set", methodName="asyncSearchMessages"
+      return
+
+    if (searchTerm.len == 0):
+      return
+
+    let arg = AsyncSearchMessagesInChatsAndCommunitiesTaskArg(
+      tptr: cast[ByteAddress](asyncSearchMessagesInChatsAndCommunitiesTask),
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "onAsyncSearchMessages",
+      communityIds: communityIds,
+      chatIds: chatIds, 
+      searchTerm: searchTerm,
+      caseSensitive: caseSensitive
+    )
+    self.threadpool.start(arg)

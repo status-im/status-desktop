@@ -18,3 +18,6 @@ method getChatSectionModule*(self: AccessInterface): QVariant {.base.} =
 
 method getCommunitySectionModule*(self: AccessInterface, communityId: string): QVariant {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method getAppSearchModule*(self: AccessInterface): QVariant {.base.} =
+  raise newException(ValueError, "No implementation available")

@@ -52,21 +52,21 @@ StatusAppThreePanelLayout {
     StatusSearchLocationMenu {
         id: searchPopupMenu
         searchPopup: searchPopup
-        locationModel: root.rootStore.chatsModelInst.messageSearchViewController.locationMenuModel
+        locationModel: mainModule.appSearchModule.locationMenuModel
 
         onItemClicked: {
-            root.rootStore.chatsModelInst.messageSearchViewController.setSearchLocation(firstLevelItemValue, secondLevelItemValue)
+            mainModule.appSearchModule.setSearchLocation(firstLevelItemValue, secondLevelItemValue)
             if(searchPopup.searchText !== "")
                 searchMessages(searchPopup.searchText)
         }
     }
 
     property var searchMessages: Backpressure.debounce(searchPopup, 400, function (value) {
-        root.rootStore.chatsModelInst.messageSearchViewController.searchMessages(value)
+        mainModule.appSearchModule.searchMessages(value)
     })
 
     Connections {
-        target: root.rootStore.chatsModelInst.messageSearchViewController.locationMenuModel
+        target: mainModule.appSearchModule.locationMenuModel
         onModelAboutToBeReset: {
             for (var i = 2; i <= searchPopupMenu.count; i++) {
                 //clear menu
@@ -84,7 +84,7 @@ StatusAppThreePanelLayout {
         defaultSearchLocationText: qsTr("Anywhere")
 
         searchOptionsPopupMenu: searchPopupMenu
-        searchResults: root.rootStore.chatsModelInst.messageSearchViewController.resultModel
+        searchResults: mainModule.appSearchModule.resultModel
 
         formatTimestampFn: function (ts) {
             return new Date(parseInt(ts, 10)).toLocaleString(Qt.locale(localAppSettings.locale))
@@ -104,9 +104,9 @@ StatusAppThreePanelLayout {
         onOpened: {
             searchPopup.resetSearchSelection();
             searchPopup.forceActiveFocus()
-            root.rootStore.chatsModelInst.messageSearchViewController.prepareLocationMenuModel()
+            mainModule.appSearchModule.prepareLocationMenuModel()
 
-            const jsonObj = root.rootStore.chatsModelInst.messageSearchViewController.getSearchLocationObject()
+            const jsonObj = mainModule.appSearchModule.getSearchLocationObject()
 
             if (!jsonObj) {
                 return
@@ -115,7 +115,7 @@ StatusAppThreePanelLayout {
             let obj = JSON.parse(jsonObj)
             if (obj.location === "") {
                 if(obj.subLocation === "") {
-                    root.rootStore.chatsModelInst.messageSearchViewController.setSearchLocation("", "")
+                    mainModule.appSearchModule.setSearchLocation("", "")
                 }
                 else {
                     searchPopup.setSearchSelection(obj.subLocation.text,
@@ -125,7 +125,7 @@ StatusAppThreePanelLayout {
                                        obj.subLocation.iconName,
                                        obj.subLocation.identiconColor)
 
-                    root.rootStore.chatsModelInst.messageSearchViewController.setSearchLocation("", obj.subLocation.value)
+                    mainModule.appSearchModule.setSearchLocation("", obj.subLocation.value)
                 }
             }
             else {
@@ -137,7 +137,7 @@ StatusAppThreePanelLayout {
                                        obj.subLocation.iconName,
                                        obj.subLocation.identiconColor)
 
-                    root.rootStore.chatsModelInst.messageSearchViewController.setSearchLocation(obj.location.value, obj.subLocation.value)
+                    mainModule.appSearchModule.setSearchLocation(obj.location.value, obj.subLocation.value)
                 }
                 else {
                     searchPopup.setSearchSelection(obj.location.title,
@@ -147,7 +147,7 @@ StatusAppThreePanelLayout {
                                        obj.location.iconName,
                                        obj.location.identiconColor)
 
-                    root.rootStore.chatsModelInst.messageSearchViewController.setSearchLocation(obj.location.value, obj.subLocation.value)
+                    mainModule.appSearchModule.setSearchLocation(obj.location.value, obj.subLocation.value)
                 }
             }
         }
