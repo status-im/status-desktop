@@ -41,10 +41,10 @@ Item {
     property var idMap: ({})
     property Timer timer: Timer { }
     property var userList
-    property var onActivated: function () {
-        if(stackLayoutChatMessages.currentIndex >= 0 && stackLayoutChatMessages.currentIndex < stackLayoutChatMessages.children.length)
-            stackLayoutChatMessages.children[stackLayoutChatMessages.currentIndex].chatInput.textInput.forceActiveFocus(Qt.MouseFocusReason)
-    }
+//    property var onActivated: function () {
+//        if(stackLayoutChatMessages.currentIndex >= 0 && stackLayoutChatMessages.currentIndex < stackLayoutChatMessages.children.length)
+//            stackLayoutChatMessages.children[stackLayoutChatMessages.currentIndex].chatInput.textInput.forceActiveFocus(Qt.MouseFocusReason)
+//    }
 
     signal openAppSearch()
 

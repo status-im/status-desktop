@@ -24,37 +24,43 @@ StatusAppThreePanelLayout {
 
     handle: SplitViewHandle { implicitWidth: 5 }
 
-    property var chatSectionModule // Everything here, within this component need to be set based on this property.
+    property var store
 
-    property var messageStore
-    property RootStore rootStore: RootStore {
-        messageStore: root.messageStore
-    }
-    property alias chatColumn: chatColumn
+    // Not Refactored
+//    property var messageStore
+
+    // Not Refactored
+//    property RootStore rootStore: RootStore {
+//        messageStore: root.messageStore
+//    }
+
+    // Not Refactored
+//    property alias chatColumn: chatColumn
     property bool stickersLoaded: false
     signal profileButtonClicked()
     signal openAppSearch()
 
-    Connections {
-        target: root.rootStore.chatsModelInst.stickers
-        onStickerPacksLoaded: {
-            stickersLoaded = true;
-        }
-    }
+    // Not Refactored
+//    Connections {
+//        target: root.rootStore.chatsModelInst.stickers
+//        onStickerPacksLoaded: {
+//            stickersLoaded = true;
+//        }
+//    }
 
-    property var onActivated: function () {
-        root.rootStore.chatsModelInst.channelView.restorePreviousActiveChannel();
-        chatColumn.onActivated();
-    }
+//    property var onActivated: function () {
+//        root.rootStore.chatsModelInst.channelView.restorePreviousActiveChannel();
+//        chatColumn.onActivated();
+//    }
 
     leftPanel: Loader {
         id: contactColumnLoader
-        sourceComponent: localAccountSensitiveSettings.communitiesEnabled && root.rootStore.chatsModelInst.communities.activeCommunity.active ? communtiyColumnComponent : contactsColumnComponent
+        sourceComponent: store.isCommunity()? communtiyColumnComponent : contactsColumnComponent
     }
 
     centerPanel: ChatColumnView {
         id: chatColumn
-        rootStore: root.rootStore
+        //rootStore: root.rootStore
         chatGroupsListViewCount: contactColumnLoader.item.chatGroupsListViewCount
 
         onOpenAppSearch: {
@@ -95,7 +101,8 @@ StatusAppThreePanelLayout {
     Component {
         id: contactsColumnComponent
         ContactsColumnView {
-            store: root.rootStore
+            // Not Refactored
+            //store: root.rootStore
             onOpenProfileClicked: {
                 root.profileButtonClicked();
             }
@@ -109,7 +116,7 @@ StatusAppThreePanelLayout {
     Component {
         id: communtiyColumnComponent
         CommunityColumnView {
-            store: root.rootStore
+            store: root.store
             pinnedMessagesPopupComponent: chatColumn.pinnedMessagesPopupComponent
         }
     }
@@ -117,7 +124,8 @@ StatusAppThreePanelLayout {
     Component {
         id: groupInfoPopupComponent
         GroupInfoPopup {
-            store: root.rootStore
+            // Not Refactored
+            //store: root.rootStore
             pinnedMessagesPopupComponent: chatColumn.pinnedMessagesPopupComponent
         }
     }
@@ -138,9 +146,10 @@ StatusAppThreePanelLayout {
         //% "Are you sure you want to remove this contact?"
         confirmationText: qsTrId("are-you-sure-you-want-to-remove-this-contact-")
         onConfirmButtonClicked: {
-            if (root.rootStore.profileModelInst.contacts.isAdded(chatColumn.contactToRemove)) {
-                root.rootStore.profileModelInst.contacts.removeContact(chatColumn.contactToRemove)
-            }
+            // Not Refactored
+//            if (root.rootStore.profileModelInst.contacts.isAdded(chatColumn.contactToRemove)) {
+//                root.rootStore.profileModelInst.contacts.removeContact(chatColumn.contactToRemove)
+//            }
             removeContactConfirmationDialog.parentPopup.close();
             removeContactConfirmationDialog.close();
         }
@@ -148,8 +157,9 @@ StatusAppThreePanelLayout {
 
     MessageContextMenuView {
         id: quickActionMessageOptionsMenu
-        store: root.rootStore
-        reactionModel: root.rootStore.emojiReactionsModel
+        // Not Refactored
+//        store: root.rootStore
+//        reactionModel: root.rootStore.emojiReactionsModel
     }
 }
 

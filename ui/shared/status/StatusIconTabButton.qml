@@ -18,7 +18,6 @@ TabButton {
     property int iconRotation: 0
     property string iconSource
     property string section
-    property int sectionIndex: Utils.getAppSectionIndex(section)
     property bool doNotHandleClick: false
     property bool borderOnChecked: false
     property bool useLetterIdenticon: false
@@ -32,8 +31,6 @@ TabButton {
         chatsModel.communities.activeCommunity.active = false
         appMain.changeAppSectionBySectionType(section)
     }
-
-    checked: sLayout.currentIndex === sectionIndex
 
     icon.height: 24
     icon.width: 24

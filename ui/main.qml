@@ -69,7 +69,7 @@ StatusWindow {
 
     Action {
         shortcut: "Ctrl+W"
-        enabled: loader.item ? loader.item.currentView !== Utils.getAppSectionIndex(Constants.browser)
+        enabled: loader.item && !!loader.item.appLayout? loader.item.appLayout.appView.currentIndex === Constants.appViewStackIndex.browser
                              : true
         onTriggered: {
             applicationWindow.visible = false;
@@ -392,12 +392,10 @@ StatusWindow {
 
         signal droppedOnValidScreen(var drop)
         property alias droppedUrls: rptDraggedPreviews.model
-        readonly property int chatView: Utils.getAppSectionIndex(Constants.chat)
-        readonly property int timelineView: Utils.getAppSectionIndex(Constants.timeline)
         property bool enabled: !drag.source && !!loader.item && !!loader.item.appLayout &&
                                (
                                    // in chat view
-                                   (loader.item.appLayout.appView.currentIndex === chatView &&
+                                   (loader.item.appLayout.appView.currentIndex === Constants.appViewStackIndex.chat &&
                                     (
                                         // in a one-to-one chat
                                         chatsModel.channelView.activeChannel.chatType === Constants.chatTypeOneToOne ||
@@ -406,7 +404,7 @@ StatusWindow {
                                         )
                                     ) ||
                                    // in timeline view
-                                   loader.item.appLayout.appView.currentIndex === timelineView ||
+                                   loader.item.appLayout.appView.currentIndex === Constants.appViewStackIndex.timeline ||
                                    // In community section
                                    chatsModel.communities.activeCommunity.active
                                    )

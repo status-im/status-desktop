@@ -351,16 +351,7 @@ Item {
             anchors.fill: parent
             currentIndex: {
                 if(mainModule.activeSection.sectionType === Constants.appSection.chat) {
-
-                    /*************************************/
-                    // This will be refactored later
-                    if (chatsModel.communities.activeCommunity.active) {
-                        chatLayoutContainer.chatColumn.hideChatInputExtendedArea();
-                        chatsModel.communities.activeCommunity.active = false
-                    }
-                    /*************************************/
-
-                    return 0
+                    return Constants.appViewStackIndex.chat
                 }
                 else if(mainModule.activeSection.sectionType === Constants.appSection.community) {
 
@@ -369,34 +360,32 @@ Item {
                         var obj = this.children[i];
                         if(obj && obj.sectionId == mainModule.activeSection.id)
                         {
-                            /*************************************/
-                            // This will be refactored/removed later
-                            chatsModel.communities.setActiveCommunity(mainModule.activeSection.id)
-                            /*************************************/
-
                             return i
                         }
                     }
 
-                    return 0
+                    // Should never be here, correct index must be returned from the for loop above
+                    console.error("Wrong section type: ", mainModule.activeSection.sectionType,
+                                  " or section id: ", mainModule.activeSection.id)
+                    return Constants.appViewStackIndex.community
                 }
                 else if(mainModule.activeSection.sectionType === Constants.appSection.wallet) {
-                    return 1
+                    return Constants.appViewStackIndex.wallet
                 }
                 else if(mainModule.activeSection.sectionType === Constants.appSection.walletv2) {
-                    return 7
+                    return Constants.appViewStackIndex.walletv2
                 }
                 else if(mainModule.activeSection.sectionType === Constants.appSection.browser) {
-                    return 2
+                    return Constants.appViewStackIndex.browser
                 }
                 else if(mainModule.activeSection.sectionType === Constants.appSection.timeline) {
-                    return 3
+                    return Constants.appViewStackIndex.timeline
                 }
                 else if(mainModule.activeSection.sectionType === Constants.appSection.profile) {
-                    return 4
+                    return Constants.appViewStackIndex.profile
                 }
                 else if(mainModule.activeSection.sectionType === Constants.appSection.node) {
-                    return 7
+                    return Constants.appViewStackIndex.node
                 }
 
                 // We should never end up here
@@ -427,12 +416,15 @@ Item {
                 }
             }
 
+            // NOTE:
+            // If we ever change stack layout component order we need to updade
+            // Constants.appViewStackIndex accordingly
+
             ChatLayout {
                 id: chatLayoutContainer
                 Layout.fillWidth: true
                 Layout.alignment: Qt.AlignLeft | Qt.AlignTop
                 Layout.fillHeight: true
-                messageStore: appMain.rootStore.messageStore
                 onProfileButtonClicked: {
                     appMain.changeAppSectionBySectionType(Constants.appSection.profile);
                 }
@@ -442,7 +434,7 @@ Item {
                 }
 
                 Component.onCompleted: {
-                    chatSectionModule = mainModule.getChatSectionModule()
+                    store = mainModule.getChatSectionModule()
                 }
             }
 
@@ -505,12 +497,6 @@ Item {
                 Layout.fillHeight: true
             }
 
-            UIComponents {
-                Layout.fillWidth: true
-                Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                Layout.fillHeight: true
-            }
-
             WalletV2Layout {
                 id: walletV2LayoutContainer
                 Layout.fillWidth: true
@@ -544,7 +530,7 @@ Item {
                                 // we cannot return QVariant if we pass another parameter in a function call
                                 // that's why we're using it this way
                                 mainModule.prepareCommunitySectionModuleForCommunityId(model.id)
-                                chatSectionModule = mainModule.getCommunitySectionModule()
+                                store = mainModule.getCommunitySectionModule()
                             }
                         }
                     }
@@ -624,19 +610,20 @@ Item {
 
                 switch(notificationType){
                 case Constants.osNotificationType.newContactRequest:
-                    appView.currentIndex = Utils.getAppSectionIndex(Constants.chat)
+                    appView.currentIndex = Constants.appViewStackIndex.chat
                     appMain.openContactsPopup()
                     break
                 case Constants.osNotificationType.acceptedContactRequest:
-                    appView.currentIndex = Utils.getAppSectionIndex(Constants.chat)
+                    appView.currentIndex = Constants.appViewStackIndex.chat
                     break
                 case Constants.osNotificationType.joinCommunityRequest:
                 case Constants.osNotificationType.acceptedIntoCommunity:
                 case Constants.osNotificationType.rejectedByCommunity:
-                    appView.currentIndex = Utils.getAppSectionIndex(Constants.community)
+                    // Not Refactored - Need to check what community exactly we need to switch to.
+//                    appView.currentIndex = Utils.getAppSectionIndex(Constants.community)
                     break
                 case Constants.osNotificationType.newMessage:
-                    appView.currentIndex = Utils.getAppSectionIndex(Constants.chat)
+                    appView.currentIndex = Constants.appViewStackIndex.chat
                     break
                 }
             }
@@ -717,7 +704,8 @@ Item {
             CreateChannelPopup {
                 anchors.centerIn: parent
                 isEdit: true
-                pinnedMessagesPopupComponent: chatLayoutContainer.chatColumn.pinnedMessagesPopupComponent
+                // Not Refactored
+//                pinnedMessagesPopupComponent: chatLayoutContainer.chatColumn.pinnedMessagesPopupComponent
                 onClosed: {
                     destroy()
                 }
