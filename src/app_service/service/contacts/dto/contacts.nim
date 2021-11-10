@@ -6,11 +6,11 @@ include ../../../common/json_utils
 include ../../../common/utils
 
 type
-  Images* = ref object
+  Images* = object
     thumbnail*: string
     large*: string
 
-type ContactsDto* = ref object
+type ContactsDto* = object
   id*: string
   name*: string
   ensVerified*: bool

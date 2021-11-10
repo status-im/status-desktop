@@ -52,7 +52,4 @@ method getChatById*(self: Service, chatId: string): ChatDto =
 
 method prettyChatName*(self: Service, chatId: string): string =
   let contact = self.contactService.getContactById(chatId)
-  if(contact.isNil):
-    return
-
   return contact.userNameOrAlias()

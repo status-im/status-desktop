@@ -132,7 +132,7 @@ QtObject:
     var found = false
     let topLeft = self.createIndex(0, 0, nil)
     let bottomRight = self.createIndex(self.contacts.len, 0, nil)
-    for c in self.contacts:
+    for c in self.contacts.mitems:
       if(c.id != contact.id): continue
       found = true
       c.ensVerified = contact.ensVerified

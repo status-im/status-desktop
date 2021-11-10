@@ -57,7 +57,7 @@ method getContacts*[T](self: Controller[T]): seq[ContactsDto] =
   return self.contactsService.getContacts()
 
 method getContact*[T](self: Controller[T], id: string): ContactsDto =
-  return self.contactsService.getContact(id)
+  return self.contactsService.getContactById(id)
 
 method generateAlias*[T](self: Controller[T], publicKey: string): string =
   return self.accountsService.generateAlias(publicKey)
