@@ -18,6 +18,7 @@ StatusModal {
 
     property string error: ""
     property string keyValidationError: ""
+    property string communityKey: ""
 
     function validate() {
         keyValidationError = "";
@@ -75,7 +76,7 @@ StatusModal {
                     return;
                 }
 
-                let communityKey = keyInput.text.trim();
+                communityKey = keyInput.text.trim();
                 if (!communityKey.startsWith("0x")) {
                     communityKey = "0x" + communityKey;
                 }
