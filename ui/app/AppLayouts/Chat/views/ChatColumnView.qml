@@ -47,6 +47,8 @@ Item {
             stackLayoutChatMessages.children[stackLayoutChatMessages.currentIndex].chatInput.textInput.forceActiveFocus(Qt.MouseFocusReason)
     }
 
+    signal openAppSearch()
+
     function hideChatInputExtendedArea () {
         if(stackLayoutChatMessages.currentIndex >= 0 && stackLayoutChatMessages.currentIndex < stackLayoutChatMessages.children.length)
             stackLayoutChatMessages.children[stackLayoutChatMessages.currentIndex].chatInput.hideExtendedArea()
@@ -206,7 +208,7 @@ Item {
                 notificationButton.tooltip.offset: localAccountSensitiveSettings.expandUsersList ? 0 : 14
                 notificationCount: root.rootStore.chatsModelInst.activityNotificationList.unreadCount
 
-                onSearchButtonClicked: searchPopup.open()
+                onSearchButtonClicked: root.openAppSearch()
 
                 onMembersButtonClicked: localAccountSensitiveSettings.expandUsersList = !localAccountSensitiveSettings.expandUsersList
                 onNotificationButtonClicked: activityCenter.open()
