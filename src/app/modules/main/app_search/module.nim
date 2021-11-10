@@ -9,6 +9,7 @@ import result_model, result_item
 import ../../shared_models/message_item
 
 import ../../../boot/app_sections_config as conf
+import ../../../../app_service/service/contacts/service as contact_service
 import ../../../../app_service/service/chat/service as chat_service
 import ../../../../app_service/service/community/service as community_service
 import ../../../../app_service/service/message/service as message_service
@@ -35,14 +36,15 @@ type
     controller: controller.AccessInterface
     moduleLoaded: bool
 
-proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitter, chatService: chat_service.Service, 
-  communityService: community_service.Service, messageService: message_service.Service): 
+proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitter, contactsService: contact_service.Service, 
+  chatService: chat_service.Service, communityService: community_service.Service, messageService: message_service.Service): 
   Module =
   result = Module()
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, events, chatService, communityService, messageService)
+  result.controller = controller.newController(result, events, contactsService, chatService, communityService, 
+  messageService)
   result.moduleLoaded = false
   
 method delete*(self: Module) =
@@ -63,6 +65,13 @@ method viewDidLoad*(self: Module) =
 method getModuleAsVariant*(self: Module): QVariant =
   return self.viewVariant
 
+proc getContactNameAndImage(self: Module, id: string): tuple[name: string, image: string] =
+  let contactDto = self.controller.getContactById(id)
+  result.name = contactDto.userNameOrAlias()
+  result.image = contactDto.identicon
+  if(contactDto.image.thumbnail.len > 0): 
+    result.image = contactDto.image.thumbnail
+
 proc buildLocationMenuForChat(self: Module): location_menu_item.Item =
   var item = location_menu_item.initItem(conf.CHAT_SECTION_ID, SEARCH_MENU_LOCATION_CHAT_SECTION_NAME, "", "chat", "", 
   false)
@@ -72,8 +81,12 @@ proc buildLocationMenuForChat(self: Module): location_menu_item.Item =
 
   var subItems: seq[location_menu_sub_item.SubItem]
   for c in displayedChats:
-    var text = if(c.name.endsWith(".stateofus.eth")): c.name[0 .. ^15] else: c.name
-    let subItem = location_menu_sub_item.initSubItem(c.id, text, c.identicon, "", c.color, c.identicon.len == 0)
+    var chatName = c.name
+    var chatImage = c.identicon
+    if(c.chatType == ChatType.OneToOne):
+      (chatName, chatImage) = self.getContactNameAndImage(c.id)
+
+    let subItem = location_menu_sub_item.initSubItem(c.id, chatName, chatImage, "", c.color, chatImage.len == 0)
     subItems.add(subItem)
     
   item.setSubItems(subItems)
@@ -155,7 +168,7 @@ method onSearchMessagesDone*(self: Module, messages: seq[MessageDto]) =
 
     # Add channels
     if(self.controller.searchSubLocation().len == 0 and self.controller.searchLocation().len == 0 or
-      self.controller.searchLocation() == co.name):
+      self.controller.searchLocation() == co.id):
       for c in co.chats:
         let chatDto = self.controller.getChatDetails(co.id, c.id)
         if(c.name.toLower.startsWith(self.controller.searchTerm().toLower)):
@@ -166,14 +179,24 @@ method onSearchMessagesDone*(self: Module, messages: seq[MessageDto]) =
           channels.add(item)
 
   # Add chats
-  if(self.controller.searchLocation().len == 0 or self.controller.searchLocation() == conf.CHAT_SECTION_ID):
+  if(self.controller.searchLocation().len == 0 or self.controller.searchLocation() == conf.CHAT_SECTION_ID and
+    self.controller.searchSubLocation().len == 0):
     let types = @[ChatType.OneToOne, ChatType.Public, ChatType.PrivateGroupChat]
     let displayedChats = self.controller.getChatDetailsForChatTypes(types)
 
     for c in displayedChats:
-      if(c.name.toLower.startsWith(self.controller.searchTerm().toLower)):
-        let item = result_item.initItem(c.id, "", "", c.id, c.name, SEARCH_RESULT_CHATS_SECTION_NAME, c.identicon, 
-        c.color, "", "", c.identicon, c.color, c.identicon.len > 0)
+      var chatName = c.name
+      var chatImage = c.identicon
+      if(c.chatType == ChatType.OneToOne):
+        (chatName, chatImage) = self.getContactNameAndImage(c.id)
+
+      var rawChatName = chatName
+      if(chatName.startsWith("@")):
+        rawChatName = chatName[1 ..^ 1]
+
+      if(rawChatName.toLower.startsWith(self.controller.searchTerm().toLower)):
+        let item = result_item.initItem(c.id, "", "", c.id, chatName, SEARCH_RESULT_CHATS_SECTION_NAME, chatImage, 
+        c.color, "", "", chatImage, c.color, chatImage.len > 0)
 
         items.add(item)
 
@@ -186,18 +209,23 @@ method onSearchMessagesDone*(self: Module, messages: seq[MessageDto]) =
       continue
 
     let chatDto = self.controller.getChatDetails("", m.chatId)
-    let image = if(m.image.len > 0): m.image else: m.identicon
-
+    let (senderName, senderImage) = self.getContactNameAndImage(m.`from`)
     if(chatDto.communityId.len == 0):
-      let item = result_item.initItem(m.id, m.text, $m.timestamp, m.`from`, m.`from`, 
-      SEARCH_RESULT_MESSAGES_SECTION_NAME, image, "", chatDto.name, "", chatDto.identicon, chatDto.color, 
-      chatDto.identicon.len == 0)
+      var chatName = chatDto.name
+      var chatImage = chatDto.identicon
+      if(chatDto.chatType == ChatType.OneToOne):
+        (chatName, chatImage) = self.getContactNameAndImage(chatDto.id)
+
+      let item = result_item.initItem(m.id, m.text, $m.timestamp, m.`from`, senderName, 
+      SEARCH_RESULT_MESSAGES_SECTION_NAME, senderImage, "", chatName, "", chatImage, chatDto.color, chatImage.len == 0)
 
       items.add(item)
     else:
       let community = self.controller.getCommunityById(chatDto.communityId)
-      let item = result_item.initItem(m.id, m.text, $m.timestamp, m.`from`, m.`from`, 
-      SEARCH_RESULT_MESSAGES_SECTION_NAME, image, "", community.name, chatDto.name, community.images.thumbnail, 
+      let channelName = "#" & chatDto.name
+
+      let item = result_item.initItem(m.id, m.text, $m.timestamp, m.`from`, senderName, 
+      SEARCH_RESULT_MESSAGES_SECTION_NAME, senderImage, "", community.name, channelName, community.images.thumbnail, 
       community.color, community.images.thumbnail.len == 0)
 
       items.add(item)
