@@ -79,7 +79,7 @@ QtObject:
 
     let contact = self.delegate.getContact(id)
 
-    if contact != nil and contact.id != "":
+    if contact.id != "":
       self.contactToAdd = contact
     else:
       self.contactToAdd = ContactsDto(

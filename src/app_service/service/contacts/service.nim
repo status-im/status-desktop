@@ -60,18 +60,27 @@ QtObject:
   proc getContacts*(self: Service): seq[ContactsDto] =
     return toSeq(self.contacts.values)
 
+  proc fetchContact(self: Service, id: string): ContactsDto =
+    try:
+      let response = status_contacts.getContactByID(id)
+
+      result = response.result.toContactsDto()
+      self.contacts[result.id] = result
+
+    except Exception as e:
+      let errDesription = e.msg
+      error "error: ", errDesription
+      return
+
   proc getContactById*(self: Service, id: string): ContactsDto =
     if(not self.contacts.hasKey(id)):
-      return
+      return self.fetchContact(id)
 
     return self.contacts[id]
 
-  proc getContact*(self: Service, id: string): ContactsDto =
-    return status_contacts.getContactByID(id).result.toContactsDto()
-
   proc getOrCreateContact*(self: Service, id: string): ContactsDto =
-    result = self.getContact(id)
-    if result == nil or  result.id == "":
+    result = self.getContactById(id)
+    if result.id == "":
       let alias = $status_accounts.generateAlias(id)
       result = ContactsDto(
         id: id,
@@ -129,7 +138,7 @@ QtObject:
       # self.events.emit("contactUpdate", ContactUpdateArgs(contacts: @[profile]))
 
   proc rejectContactRequest*(self: Service, publicKey: string) =
-    let contact = self.getContact(publicKey)
+    var contact = self.getContactById(publicKey)
     contact.hasAddedUs = false
 
     self.saveContact(contact)
@@ -154,20 +163,20 @@ QtObject:
 
   proc unblockContact*(self: Service, publicKey: string) =
     # status_contacts.unblockContact(publicKey)
-    var contact = self.getContact(publicKey)
+    var contact = self.getContactById(publicKey)
     contact.blocked = false
     self.saveContact(contact)
     self.events.emit("contactUnblocked", old_status_contacts.ContactIdArgs(id: publicKey))
 
   proc blockContact*(self: Service, publicKey: string) =
-    var contact = self.getContact(publicKey)
+    var contact = self.getContactById(publicKey)
     contact.blocked = true
     self.saveContact(contact)
     self.events.emit("contactBlocked", old_status_contacts.ContactIdArgs(id: publicKey))
 
   proc removeContact*(self: Service, publicKey: string) =
     #   status_contacts.removeContact(publicKey)
-    var contact = self.getContact(publicKey)
+    var contact = self.getContactById(publicKey)
     contact.added = false
     contact.hasAddedUs = false
 
