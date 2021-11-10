@@ -80,7 +80,7 @@ StatusWindow {
 
     Action {
         shortcut: "Ctrl+W"
-        enabled: loader.item ? loader.item.currentView !== Utils.getAppSectionIndex(Constants.browser)
+        enabled: loader.item && !!loader.item.appLayout? loader.item.appLayout.appView.currentIndex === Constants.appViewStackIndex.browser
                              : true
         onTriggered: {
             applicationWindow.visible = false;
@@ -192,15 +192,14 @@ StatusWindow {
 
     Component.onCompleted: {
         Style.changeTheme(localAppSettings.theme, systemPalette.isCurrentSystemThemeDark())
-        if (!localAppSettings.appSizeInitialized) {
-            width = Math.min(Screen.desktopAvailableWidth - 125, 1400)
-            height = Math.min(Screen.desktopAvailableHeight - 125, 840)
-            localAppSettings.appSizeInitialized = true
-        }
-
         setX(Qt.application.screens[0].width / 2 - width / 2);
         setY(Qt.application.screens[0].height / 2 - height / 2);
 
+        if (!localAppSettings.appSizeInitialized) {
+            width = Screen.desktopAvailableWidth - 125
+            height = Screen.desktopAvailableHeight - 125
+            localAppSettings.appSizeInitialized = true
+        }
         applicationWindow.updatePosition();
     }
 
@@ -421,11 +420,10 @@ StatusWindow {
 
         signal droppedOnValidScreen(var drop)
         property alias droppedUrls: rptDraggedPreviews.model
-        readonly property int chatView: Utils.getAppSectionIndex(Constants.chat)
         property bool enabled: !drag.source && !!loader.item && !!loader.item.appLayout &&
                                (
                                    // in chat view
-                                   (loader.item.appLayout.appView.currentIndex === chatView &&
+                                   (loader.item.appLayout.appView.currentIndex === Constants.appViewStackIndex.chat &&
                                     (
                                         // in a one-to-one chat
                                         chatsModel.channelView.activeChannel.chatType === Constants.chatTypeOneToOne ||
@@ -433,8 +431,10 @@ StatusWindow {
                                         chatsModel.channelView.activeChannel.chatType === Constants.chatTypePrivateGroupChat
                                         )
                                     ) ||
+                                   // in timeline view
+                                   loader.item.appLayout.appView.currentIndex === Constants.appViewStackIndex.timeline ||
                                    // In community section
-                                   loader.item.appLayout.appView.currentIndex === chatsModel.communities.activeCommunity.active
+                                   chatsModel.communities.activeCommunity.active
                                    )
 
         width: applicationWindow.width
