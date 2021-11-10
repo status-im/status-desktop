@@ -3,14 +3,14 @@ import NimQml, Tables, json, sequtils, strformat, chronicles, strutils
 import eventemitter
 import ../../tasks/[qt, threadpool]
 
-import service_interface, ./dto/contacts
+import ./dto/contacts as contacts_dto
 import status/statusgo_backend_new/contacts as status_contacts
 import status/statusgo_backend_new/accounts as status_accounts
 import status/statusgo_backend_new/chat as status_chat
 import status/statusgo_backend_new/utils as status_utils
 import status/contacts as old_status_contacts
 
-export service_interface
+export contacts_dto
 
 include async_tasks
 
