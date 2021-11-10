@@ -33,6 +33,7 @@ StatusAppThreePanelLayout {
     property alias chatColumn: chatColumn
     property bool stickersLoaded: false
     signal profileButtonClicked()
+    signal openAppSearch()
 
     Connections {
         target: root.rootStore.chatsModelInst.stickers
@@ -46,121 +47,6 @@ StatusAppThreePanelLayout {
         chatColumn.onActivated();
     }
 
-    StatusSearchLocationMenu {
-        id: searchPopupMenu
-        searchPopup: searchPopup
-        locationModel: mainModule.appSearchModule.locationMenuModel
-
-        onItemClicked: {
-            mainModule.appSearchModule.setSearchLocation(firstLevelItemValue, secondLevelItemValue)
-            if(searchPopup.searchText !== "")
-                searchMessages(searchPopup.searchText)
-        }
-    }
-
-    property var searchMessages: Backpressure.debounce(searchPopup, 400, function (value) {
-        mainModule.appSearchModule.searchMessages(value)
-    })
-
-    Connections {
-        target: mainModule.appSearchModule.locationMenuModel
-        onModelAboutToBeReset: {
-            for (var i = 2; i <= searchPopupMenu.count; i++) {
-                //clear menu
-                if (!!searchPopupMenu.takeItem(i)) {
-                    searchPopupMenu.removeItem(searchPopupMenu.takeItem(i));
-                }
-            }
-        }
-    }
-
-    StatusSearchPopup {
-        id: searchPopup
-
-        noResultsLabel: qsTr("No results")
-        defaultSearchLocationText: qsTr("Anywhere")
-
-        searchOptionsPopupMenu: searchPopupMenu
-        searchResults: mainModule.appSearchModule.resultModel
-
-        formatTimestampFn: function (ts) {
-            return new Date(parseInt(ts, 10)).toLocaleString(Qt.locale(localAppSettings.locale))
-        }
-
-        onSearchTextChanged: {
-            searchMessages(searchPopup.searchText);
-        }
-        onAboutToHide: {
-            if (searchPopupMenu.visible) {
-                searchPopupMenu.close();
-            }
-        }
-        onClosed: {
-            searchPopupMenu.dismiss();
-        }
-        onOpened: {
-            searchPopup.resetSearchSelection();
-            searchPopup.forceActiveFocus()
-            mainModule.appSearchModule.prepareLocationMenuModel()
-
-            const jsonObj = mainModule.appSearchModule.getSearchLocationObject()
-
-            if (!jsonObj) {
-                return
-            }
-
-            let obj = JSON.parse(jsonObj)
-            if (obj.location === "") {
-                if(obj.subLocation === "") {
-                    mainModule.appSearchModule.setSearchLocation("", "")
-                }
-                else {
-                    searchPopup.setSearchSelection(obj.subLocation.text,
-                                       "",
-                                       obj.subLocation.imageSource,
-                                       obj.subLocation.isIdenticon,
-                                       obj.subLocation.iconName,
-                                       obj.subLocation.identiconColor)
-
-                    mainModule.appSearchModule.setSearchLocation("", obj.subLocation.value)
-                }
-            }
-            else {
-                if (obj.location.title === "Chat") {
-                    searchPopup.setSearchSelection(obj.subLocation.text,
-                                       "",
-                                       obj.subLocation.imageSource,
-                                       obj.subLocation.isIdenticon,
-                                       obj.subLocation.iconName,
-                                       obj.subLocation.identiconColor)
-
-                    mainModule.appSearchModule.setSearchLocation(obj.location.value, obj.subLocation.value)
-                }
-                else {
-                    searchPopup.setSearchSelection(obj.location.title,
-                                       obj.subLocation.text,
-                                       obj.location.imageSource,
-                                       obj.location.isIdenticon,
-                                       obj.location.iconName,
-                                       obj.location.identiconColor)
-
-                    mainModule.appSearchModule.setSearchLocation(obj.location.value, obj.subLocation.value)
-                }
-            }
-        }
-        onResultItemClicked: {
-            searchPopup.close()
-
-            root.rootStore.chatsModelInst.switchToSearchedItem(itemId)
-        }
-
-        onResultItemTitleClicked: {
-            const pk = titleId
-            const userProfileImage = appMain.getProfileImage(pk)
-            return openProfilePopup(root.rootStore.chatsModelInst.userNameOrAlias(pk), pk, userProfileImage || root.rootStore.utilsModelInst.generateIdenticon(pk))
-        }
-    }
-
     leftPanel: Loader {
         id: contactColumnLoader
         sourceComponent: localAccountSensitiveSettings.communitiesEnabled && root.rootStore.chatsModelInst.communities.activeCommunity.active ? communtiyColumnComponent : contactsColumnComponent
@@ -170,6 +56,10 @@ StatusAppThreePanelLayout {
         id: chatColumn
         rootStore: root.rootStore
         chatGroupsListViewCount: contactColumnLoader.item.chatGroupsListViewCount
+
+        onOpenAppSearch: {
+            root.openAppSearch()
+        }
     }
 
     showRightPanel: (localAccountSensitiveSettings.expandUsersList && (localAccountSensitiveSettings.showOnlineUsers || chatsModel.communities.activeCommunity.active)
@@ -208,6 +98,10 @@ StatusAppThreePanelLayout {
             store: root.rootStore
             onOpenProfileClicked: {
                 root.profileButtonClicked();
+            }
+
+            onOpenAppSearch: {
+                root.openAppSearch()
             }
         }
     }

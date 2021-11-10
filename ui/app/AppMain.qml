@@ -185,6 +185,11 @@ Item {
         }
     }
 
+    AppSearch{
+        id: appSearch
+        store: mainModule.appSearchModule
+    }
+
     StatusAppLayout {
         id: appLayout
 
@@ -432,6 +437,10 @@ Item {
                     appMain.changeAppSectionBySectionType(Constants.appSection.profile);
                 }
 
+                onOpenAppSearch: {
+                    appSearch.openSearchPopup()
+                }
+
                 Component.onCompleted: {
                     chatSectionModule = mainModule.getChatSectionModule()
                 }
@@ -525,6 +534,10 @@ Item {
 
                             onProfileButtonClicked: {
                                 appMain.changeAppSectionBySectionType(Constants.appSection.profile);
+                            }
+
+                            onOpenAppSearch: {
+                                appSearch.openSearchPopup()
                             }
 
                             Component.onCompleted: {
