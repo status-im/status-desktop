@@ -242,6 +242,9 @@ Item {
                 badge.border.width: 2
                 onClicked: {
                     changeAppSectionBySectionId(model.id)
+                    if (rootStore.appViewIndex === Constants.appSection.chat) {
+                        chatLoader.active = true;
+                    }
                 }
             }
 
@@ -258,6 +261,10 @@ Item {
                 badge.border.width: 2
                 onClicked: {
                     changeAppSectionBySectionId(model.id)
+                    communityLoader.active = false;
+                    appMain.rootStore.chatsModelInst.communities.setActiveCommunity(model.id);
+                    appMain.rootStore.mainModuleInst.prepareCommunitySectionModuleForCommunityId(model.id);
+                    communityLoader.active = true;
                 }
 
                 popupMenu: StatusPopupMenu {
@@ -307,6 +314,16 @@ Item {
                         onTriggered: chatsModel.communities.leaveCommunity(model.id)
                     }
                 }
+
+                Component.onCompleted: {
+                    if (appView.currentIndex === Constants.appSection.community) {
+                        appMain.rootStore.chatsModelInst.communities.setActiveCommunity(model.id);
+                        appMain.rootStore.mainModuleInst.prepareCommunitySectionModuleForCommunityId(model.id);
+                        commLoader.active = true;
+                    } else if (appView.currentIndex === Constants.appSection.chat) {
+                        chatLoader.active = true;
+                    }
+                }
             }
 
             navBarProfileButton: StatusNavBarTabButton {
@@ -350,92 +367,85 @@ Item {
         appView: StackLayout {
             id: appView
             anchors.fill: parent
-            currentIndex: {
-                if(mainModule.activeSection.sectionType === Constants.appSection.chat) {
-                    return Constants.appViewStackIndex.chat
-                }
-                else if(mainModule.activeSection.sectionType === Constants.appSection.community) {
+            currentIndex: appMain.rootStore.appViewIndex
+            onCurrentIndexChanged: {
+                if (currentIndex === Constants.appSection.chat) {
+                    /*************************************/
+                    // This will be refactored later
+                    if (appMain.rootStore.chatsModelInst.communities.activeCommunity.active) {
+                        chatLoader.item.chatColumn.hideChatInputExtendedArea();
+                        appMain.rootStore.chatsModelInst.communities.activeCommunity.active = false
+                    }
+                    /*************************************/
+                } else {
+                    chatLoader.active = false;
+                    var obj = this.children[currentIndex];
+                    if(!obj)
+                        return
 
-                    for(let i = this.children.length - 1; i >=0; i--)
-                    {
-                        var obj = this.children[i];
-                        if(obj && obj.sectionId == mainModule.activeSection.id)
-                        {
-                            return i
-                        }
+                    if (obj.onActivated && typeof obj.onActivated === "function") {
+                        this.children[currentIndex].onActivated()
                     }
 
-                    // Should never be here, correct index must be returned from the for loop above
-                    console.error("Wrong section type: ", mainModule.activeSection.sectionType,
-                                  " or section id: ", mainModule.activeSection.id)
-                    return Constants.appViewStackIndex.community
-                }
-                else if(mainModule.activeSection.sectionType === Constants.appSection.wallet) {
-                    return Constants.appViewStackIndex.wallet
-                }
-                else if(mainModule.activeSection.sectionType === Constants.appSection.walletv2) {
-                    return Constants.appViewStackIndex.walletv2
-                }
-                else if(mainModule.activeSection.sectionType === Constants.appSection.browser) {
-                    return Constants.appViewStackIndex.browser
-                }
-                else if(mainModule.activeSection.sectionType === Constants.appSection.timeline) {
-                    return Constants.appViewStackIndex.timeline
-                }
-                else if(mainModule.activeSection.sectionType === Constants.appSection.profile) {
-                    return Constants.appViewStackIndex.profile
-                }
-                else if(mainModule.activeSection.sectionType === Constants.appSection.node) {
-                    return Constants.appViewStackIndex.node
-                }
+                    if(obj === browserLayoutContainer && browserLayoutContainer.active == false){
+                        browserLayoutContainer.active = true;
+                    }
 
-                // We should never end up here
-                console.error("Unknown section type")
-            }
+                    timelineLayoutContainer.active = obj === timelineLayoutContainer
 
-            onCurrentIndexChanged: {
-                var obj = this.children[currentIndex];
-                if(!obj)
-                    return
+                    if(obj === walletLayoutContainer){
+                        walletLayoutContainer.showSigningPhrasePopup();
+                    }
 
-                if (obj.onActivated && typeof obj.onActivated === "function") {
-                    this.children[currentIndex].onActivated()
-                }
-
-                if(obj === browserLayoutContainer && browserLayoutContainer.active == false){
-                    browserLayoutContainer.active = true;
-                }
-
-                timelineLayoutContainer.active = obj === timelineLayoutContainer
-
-                if(obj === walletLayoutContainer){
-                    walletLayoutContainer.showSigningPhrasePopup();
-                }
-
-                if(obj === walletV2LayoutContainer){
-                    walletV2LayoutContainer.showSigningPhrasePopup();
+                    if(obj === walletV2LayoutContainer){
+                        walletV2LayoutContainer.showSigningPhrasePopup();
+                    }
                 }
             }
 
             // NOTE:
             // If we ever change stack layout component order we need to updade
-            // Constants.appViewStackIndex accordingly
+            // Constants.appSection accordingly
 
-            ChatLayout {
-                id: chatLayoutContainer
+
+            Loader {
+                id: chatLoader
                 Layout.fillWidth: true
                 Layout.alignment: Qt.AlignLeft | Qt.AlignTop
                 Layout.fillHeight: true
-                onProfileButtonClicked: {
-                    appMain.changeAppSectionBySectionType(Constants.appSection.profile);
-                }
+                active: false
+                sourceComponent: ChatLayout {
+                    id: chatLayoutContainer
+                    onProfileButtonClicked: {
+                        appMain.changeAppSectionBySectionType(Constants.appSection.profile);
+                    }
+                    onOpenAppSearch: {
+                        appSearch.openSearchPopup()
+                    }
 
-                onOpenAppSearch: {
-                    appSearch.openSearchPopup()
+                    Component.onCompleted: {
+                        store = mainModule.getChatSectionModule()
+                    }
                 }
+            }
 
-                Component.onCompleted: {
-                    store = mainModule.getChatSectionModule()
+            Loader {
+                id: communityLoader
+                Layout.fillWidth: true
+                Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+                Layout.fillHeight: true
+                active: false
+                sourceComponent: ChatLayout {
+                    onProfileButtonClicked: {
+                        appMain.changeAppSectionBySectionType(Constants.appSection.profile);
+                    }
+                }
+                onLoaded: {
+                    if (status === Loader.Ready) {
+                        // we cannot return QVariant if we pass another parameter in a function call
+                        // that's why we're using it this way
+                        item.store = mainModule.getCommunitySectionModule();
+                    }
                 }
             }
 
@@ -446,16 +456,20 @@ Item {
                 Layout.fillHeight: true
             }
 
-            Component {
-                id: browserLayoutComponent
-                BrowserLayout {
-                    globalStore: appMain.rootStore
-                }
+            WalletV2Layout {
+                id: walletV2LayoutContainer
+                Layout.fillWidth: true
+                Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+                Layout.fillHeight: true
             }
 
             Loader {
                 id: browserLayoutContainer
-                sourceComponent: browserLayoutComponent
+                sourceComponent: Component {
+                    BrowserLayout {
+                        globalStore: appMain.rootStore
+                    }
+                }
                 active: false
                 Layout.fillWidth: true
                 Layout.alignment: Qt.AlignLeft | Qt.AlignTop
@@ -498,44 +512,10 @@ Item {
                 Layout.fillHeight: true
             }
 
-            WalletV2Layout {
-                id: walletV2LayoutContainer
+            UIComponents {
                 Layout.fillWidth: true
                 Layout.alignment: Qt.AlignLeft | Qt.AlignTop
                 Layout.fillHeight: true
-            }
-
-            Repeater{
-                model: mainModule.sectionsModel
-
-                delegate: DelegateChooser {
-                    id: delegateChooser
-                    role: "sectionType"
-                    DelegateChoice {
-                        roleValue: Constants.appSection.community
-                        delegate: ChatLayout {
-                            property string sectionId: model.id
-                            Layout.fillWidth: true
-                            Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                            Layout.fillHeight: true
-
-                            onProfileButtonClicked: {
-                                appMain.changeAppSectionBySectionType(Constants.appSection.profile);
-                            }
-
-                            onOpenAppSearch: {
-                                appSearch.openSearchPopup()
-                            }
-
-                            Component.onCompleted: {
-                                // we cannot return QVariant if we pass another parameter in a function call
-                                // that's why we're using it this way
-                                mainModule.prepareCommunitySectionModuleForCommunityId(model.id)
-                                store = mainModule.getCommunitySectionModule()
-                            }
-                        }
-                    }
-                }
             }
         }
 
@@ -611,11 +591,11 @@ Item {
 
                 switch(notificationType){
                 case Constants.osNotificationType.newContactRequest:
-                    appView.currentIndex = Constants.appViewStackIndex.chat
+                    appView.currentIndex = Constants.appSection.chat
                     appMain.openContactsPopup()
                     break
                 case Constants.osNotificationType.acceptedContactRequest:
-                    appView.currentIndex = Constants.appViewStackIndex.chat
+                    appView.currentIndex = Constants.appSection.chat
                     break
                 case Constants.osNotificationType.joinCommunityRequest:
                 case Constants.osNotificationType.acceptedIntoCommunity:
@@ -624,7 +604,7 @@ Item {
 //                    appView.currentIndex = Utils.getAppSectionIndex(Constants.community)
                     break
                 case Constants.osNotificationType.newMessage:
-                    appView.currentIndex = Constants.appViewStackIndex.chat
+                    appView.currentIndex = Constants.appSection.chat
                     break
                 }
             }

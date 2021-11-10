@@ -19,6 +19,8 @@ QtObject {
     property var contactsModuleInst: contactsModule
     property var addedContacts: contactsModuleInst.model.addedContacts
 
+    property int appViewIndex: mainModuleInst.activeSection.sectionType
+
 
     function setCommunityMuted(communityId, checked) {
         chatsModelInst.communities.setCommunityMuted(communityId, checked);

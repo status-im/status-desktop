@@ -29,7 +29,6 @@ Item {
         id: communityHeader
         anchors.top: parent.top
         anchors.horizontalCenter: parent.horizontalCenter
-
         chatInfoButton.title: root.store.chatsModelInst.communities.activeCommunity.name
         chatInfoButton.subTitle: root.store.chatsModelInst.communities.activeCommunity.nbMembers === 1 ?
             //% "1 Member"
@@ -129,10 +128,7 @@ Item {
               
             draggableItems: root.store.chatsModelInst.communities.activeCommunity.admin
             draggableCategories: root.store.chatsModelInst.communities.activeCommunity.admin
-            chatList.model: root.store.chatsModelInst.communities.activeCommunity.chats
-
-            categoryList.model: root.store.chatsModelInst.communities.activeCommunity.categories
-
+            categoryList.model: store.model
             showCategoryActionButtons: root.store.chatsModelInst.communities.activeCommunity.admin
             showPopupMenu: root.store.chatsModelInst.communities.activeCommunity.admin && chatsModel.communities.activeCommunity.canManageUsers
             selectedChatId: root.store.chatsModelInst.channelView.activeChannel.id

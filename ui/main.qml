@@ -69,7 +69,7 @@ StatusWindow {
 
     Action {
         shortcut: "Ctrl+W"
-        enabled: loader.item && !!loader.item.appLayout? loader.item.appLayout.appView.currentIndex === Constants.appViewStackIndex.browser
+        enabled: loader.item && !!loader.item.appLayout? loader.item.appLayout.appView.currentIndex === Constants.appSection.browser
                              : true
         onTriggered: {
             applicationWindow.visible = false;
@@ -395,7 +395,7 @@ StatusWindow {
         property bool enabled: !drag.source && !!loader.item && !!loader.item.appLayout &&
                                (
                                    // in chat view
-                                   (loader.item.appLayout.appView.currentIndex === Constants.appViewStackIndex.chat &&
+                                   (loader.item.appLayout.appView.currentIndex === Constants.appSection.chat &&
                                     (
                                         // in a one-to-one chat
                                         chatsModel.channelView.activeChannel.chatType === Constants.chatTypeOneToOne ||
@@ -404,7 +404,7 @@ StatusWindow {
                                         )
                                     ) ||
                                    // in timeline view
-                                   loader.item.appLayout.appView.currentIndex === Constants.appViewStackIndex.timeline ||
+                                   loader.item.appLayout.appView.currentIndex === Constants.appSection.timeline ||
                                    // In community section
                                    chatsModel.communities.activeCommunity.active
                                    )
