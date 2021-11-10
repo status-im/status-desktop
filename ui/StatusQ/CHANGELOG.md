@@ -1,4 +1,24 @@
 <a name=""></a>
+##  Version 0.17.0 (2021-11-10)
+
+
+#### Features
+
+* **StatusBaseButton:**  introduce `Tiny` size ([dee9f437](dee9f437))
+* **StatusQ.Controls.Validators:**  introduce `StatusUrlValidator` ([a9155865](a9155865))
+
+#### Bug Fixes
+
+* **StatusAccountSelector:**  adapt AccountSelector to new model (#482) ([ce8d3231](ce8d3231))
+* **StatusExpandibleItem:**  add missing hover indicator in `Secondary` type ([e23dc533](e23dc533), closes [#478](478))
+* **StatusInput:**  ensure validator messages are rendered when validators return boolean values ([f82cd7f5](f82cd7f5))
+* **StatusListItem:**  This solves the issue of channel list overlpaing when a category is collapsed. ([0c715b17](0c715b17))
+* **StatusSearchPopup:**  disable enter and return keys to avoid UI breakage ([fecfb2a7](fecfb2a7))
+* **StatusSlider:**  slider background and handle should not depend on root's height ([31cfc883](31cfc883))
+
+
+
+<a name=""></a>
 ##  Version 0.16.0 (2021-11-01)
 
 
