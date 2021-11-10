@@ -24,6 +24,7 @@ Item {
     property var store
     property int chatGroupsListViewCount: channelList.chatListItems.count
     signal openProfileClicked()
+    signal openAppSearch()
 
     Component.onCompleted: {
         appMain.openContactsPopup.connect(function(){
@@ -76,7 +77,7 @@ Item {
 
             MouseArea {
                 anchors.fill: parent
-                onClicked: searchPopup.open()
+                onClicked: root.openAppSearch()
             }
         }
 
