@@ -48,6 +48,9 @@ method delete*(self: Module) =
   self.viewVariant.delete
   self.controller.delete
 
+method isCommunity*(self: Module): bool =
+  return self.controller.isCommunity()
+
 proc addSubmodule(self: Module, chatId: string, belongToCommunity: bool, events: EventEmitter, 
   chatService: chat_service.Service, communityService: community_service.Service, 
   messageService: message_service.Service) =
@@ -67,7 +70,7 @@ proc buildChatUI(self: Module, events: EventEmitter, chatService: chat_service.S
     if(c.chatType == ChatType.OneToOne):
       chatName = self.controller.getPrettyChatName(c.id)
     let item = initItem(c.id, chatName, c.identicon, c.color, c.description, c.chatType.int, hasNotification, 
-    notificationsCount, c.muted, false)
+    notificationsCount, c.muted, false, 0)
     self.view.appendItem(item)
     self.addSubmodule(c.id, false, events, chatService, communityService, messageService)
     
@@ -91,7 +94,7 @@ proc buildCommunityUI(self: Module, events: EventEmitter, chatService: chat_serv
       let hasNotification = chatDto.unviewedMessagesCount > 0 or chatDto.unviewedMentionsCount > 0
       let notificationsCount = chatDto.unviewedMentionsCount
       let channelItem = initItem(chatDto.id, chatDto.name, chatDto.identicon, chatDto.color, chatDto.description, 
-      chatDto.chatType.int, hasNotification, notificationsCount, chatDto.muted, false)
+      chatDto.chatType.int, hasNotification, notificationsCount, chatDto.muted, false, c.position)
       self.view.appendItem(channelItem)
       self.addSubmodule(chatDto.id, true, events, chatService, communityService, messageService)
 
@@ -117,7 +120,7 @@ proc buildCommunityUI(self: Module, events: EventEmitter, chatService: chat_serv
         notificationsCountPerCategory += notificationsCount
 
         let channelItem = initSubItem(chatDto.id, chatDto.name, chatDto.identicon, chatDto.color, chatDto.description, 
-        hasNotification, notificationsCount, chatDto.muted, false)
+        hasNotification, notificationsCount, chatDto.muted, false, c.position)
         categoryChannels.add(channelItem)
         self.addSubmodule(chatDto.id, true, events, chatService, communityService, messageService)
 
@@ -128,7 +131,7 @@ proc buildCommunityUI(self: Module, events: EventEmitter, chatService: chat_serv
           selectedSubItemId = channelItem.id
 
       var categoryItem = initItem(cat.id, cat.name, "", "", "", ChatType.Unknown.int, hasNotificationPerCategory, 
-      notificationsCountPerCategory, false, false)
+      notificationsCountPerCategory, false, false, cat.position)
       categoryItem.prependSubItems(categoryChannels)
       self.view.appendItem(categoryItem)
 

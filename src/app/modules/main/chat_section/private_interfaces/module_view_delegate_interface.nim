@@ -8,3 +8,6 @@ method setActiveItemSubItem*(self: AccessInterface, itemId: string, subItemId: s
 
 method getChatContentModule*(self: AccessInterface, chatId: string): QVariant {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method isCommunity*(self: AccessInterface): bool {.base.} =
+  raise newException(ValueError, "No implementation available")
