@@ -1,3 +1,4 @@
+import ../../../../app_service/service/contacts/dto/contacts
 import ../../../../app_service/service/chat/dto/chat
 import ../../../../app_service/service/community/dto/community
 
@@ -48,4 +49,10 @@ method getChatDetails*(self: AccessInterface, communityId, chatId: string): Chat
   raise newException(ValueError, "No implementation available")
 
 method searchMessages*(self: AccessInterface, searchTerm: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getPrettyChatName*(self: AccessInterface, chatId: string): string {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getContactById*(self: AccessInterface, contactId: string): ContactsDto {.base.} =
   raise newException(ValueError, "No implementation available")

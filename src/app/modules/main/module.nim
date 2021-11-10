@@ -89,7 +89,8 @@ proc newModule*[T](
   dappPermissionsService)
   result.profileSectionModule = profile_section_module.newModule(result, events, accountsService, settingsService, 
   profileService, contactsService, aboutService, languageService, mnemonicService, privacyService)
-  result.appSearchModule = app_search_module.newModule(result, events, chatService, communityService, messageService)
+  result.appSearchModule = app_search_module.newModule(result, events, contactsService, chatService, communityService, 
+  messageService)
 
 method delete*[T](self: Module[T]) =
   self.chatSectionModule.delete
