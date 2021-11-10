@@ -7,9 +7,9 @@ type
   SubItem* = ref object of BaseItem
 
 proc initSubItem*(id, name, icon, color, description: string, hasNotification: bool, notificationsCount: int, 
-  muted, active: bool): SubItem =
+  muted, active: bool, position: int): SubItem =
   result = SubItem()
-  result.setup(id, name, icon, color, description, hasNotification, notificationsCount, muted, active)
+  result.setup(id, name, icon, color, description, hasNotification, notificationsCount, muted, active, position)
 
 proc delete*(self: SubItem) = 
   self.BaseItem.delete
@@ -24,5 +24,6 @@ proc `$`*(self: SubItem): string =
     hasNotification: {self.hasNotification}, 
     notificationsCount: {self.notificationsCount},
     muted: {self.muted},
-    active: {self.active}
+    active: {self.active},
+    position: {self.position},
     ]"""

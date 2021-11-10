@@ -7,9 +7,9 @@ type
     subItems: SubModel
 
 proc initItem*(id, name, icon, color, description: string, `type`: int, hasNotification: bool, notificationsCount: int, 
-  muted, active: bool): Item =
+  muted, active: bool, position: int): Item =
   result = Item()
-  result.setup(id, name, icon, color, description, hasNotification, notificationsCount, muted, active)
+  result.setup(id, name, icon, color, description, hasNotification, notificationsCount, muted, active, position)
   result.`type` = `type`
   result.subItems = newSubModel()
 
@@ -35,6 +35,7 @@ proc `$`*(self: Item): string =
     notificationsCount: {self.notificationsCount},
     muted: {self.muted},
     active: {self.active},
+    position: {self.position},
     subItems:[
       {$self.subItems}
     ]"""

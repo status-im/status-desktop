@@ -9,9 +9,10 @@ type
     notificationsCount: int
     muted: bool
     active: bool
+    position: int
 
 proc setup*(self: BaseItem, id, name, icon, color, description: string, hasNotification: bool, notificationsCount: int, 
-  muted, active: bool) =
+  muted, active: bool, position: int) =
   self.id = id
   self.name = name
   self.icon = icon
@@ -21,11 +22,12 @@ proc setup*(self: BaseItem, id, name, icon, color, description: string, hasNotif
   self.notificationsCount = notificationsCount
   self.muted = muted
   self.active = active
+  self.position = position
 
 proc initBaseItem*(id, name, icon, color, description: string, hasNotification: bool, notificationsCount: int, 
-  muted, active: bool): BaseItem =
+  muted, active: bool, position: int): BaseItem =
   result = BaseItem()
-  result.setup(id, name, icon, color, description, hasNotification, notificationsCount, muted, active)
+  result.setup(id, name, icon, color, description, hasNotification, notificationsCount, muted, active, position)
 
 proc delete*(self: BaseItem) = 
   discard
@@ -68,3 +70,9 @@ method active*(self: BaseItem): bool {.inline base.} =
 
 method `active=`*(self: var BaseItem, value: bool) {.inline base.} = 
   self.active = value
+
+method position*(self: BaseItem): int {.inline base.} = 
+  self.position
+
+method `position=`*(self: var BaseItem, value: int) {.inline base.} = 
+  self.position = value
