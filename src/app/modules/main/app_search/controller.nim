@@ -2,6 +2,7 @@ import controller_interface
 import io_interface
 
 import ../../../boot/app_sections_config as conf
+import ../../../../app_service/service/contacts/service as contact_service
 import ../../../../app_service/service/chat/service as chat_service
 import ../../../../app_service/service/community/service as community_service
 import ../../../../app_service/service/message/service as message_service
@@ -15,6 +16,7 @@ type
   Controller* = ref object of controller_interface.AccessInterface
     delegate: io_interface.AccessInterface
     events: EventEmitter
+    contactsService: contact_service.Service
     chatService: chat_service.ServiceInterface
     communityService: community_service.ServiceInterface
     messageService: message_service.Service
@@ -24,12 +26,13 @@ type
     searchSubLocation: string
     searchTerm: string
 
-proc newController*(delegate: io_interface.AccessInterface, events: EventEmitter, 
+proc newController*(delegate: io_interface.AccessInterface, events: EventEmitter, contactsService: contact_service.Service,
   chatService: chat_service.ServiceInterface, communityService: community_service.ServiceInterface, 
   messageService: message_service.Service): Controller =
   result = Controller()
   result.delegate = delegate
   result.events = events
+  result.contactsService = contactsService
   result.chatService = chatService
   result.communityService = communityService
   result.messageService = messageService
@@ -112,3 +115,9 @@ method searchMessages*(self: Controller, searchTerm: string) =
       communities.add(cId)
 
   self.messageService.asyncSearchMessages(communities, chats, self.searchTerm, false)
+
+method getPrettyChatName*(self: Controller, chatId: string): string =
+  return self.chatService.prettyChatName(chatId)
+
+method getContactById*(self: Controller, contactId: string): ContactsDto =
+  return self.contactsService.getContactById(contactId)
