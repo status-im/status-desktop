@@ -107,7 +107,7 @@ method storePassword*(self: Controller, password: string) =
 method setActiveSection*(self: Controller, sectionId: string, sectionType: SectionType) =
   self.activeSectionId = sectionId
 
-  if(sectionType == SectionType.Chat or sectionType != SectionType.Community):
+  if(sectionType == SectionType.Chat or sectionType == SectionType.Community):
     # We need to take other actions here, in case of Chat or Community sections like
     # notify status go that unviewed mentions count is updated and so...
     echo "deal with appropriate service..."

@@ -14,6 +14,7 @@ type
     NotificationsCount
     Muted
     Active
+    Position
     SubItems
 
 QtObject:
@@ -65,6 +66,7 @@ QtObject:
       ModelRole.NotificationsCount.int:"notificationsCount",
       ModelRole.Muted.int:"muted",
       ModelRole.Active.int:"active",
+      ModelRole.Position.int:"position",
       ModelRole.SubItems.int:"subItems",
     }.toTable
 
@@ -99,6 +101,8 @@ QtObject:
       result = newQVariant(item.muted)
     of ModelRole.Active: 
       result = newQVariant(item.active)
+    of ModelRole.Position: 
+      result = newQVariant(item.position)
     of ModelRole.SubItems: 
       result = newQVariant(item.subItems)
 
