@@ -13,6 +13,7 @@ type
     NotificationsCount
     Muted
     Active
+    Position
 
 QtObject:
   type
@@ -61,7 +62,8 @@ QtObject:
       ModelRole.HasNotification.int:"hasNotification",
       ModelRole.NotificationsCount.int:"notificationsCount",
       ModelRole.Muted.int:"muted",
-      ModelRole.Active.int:"active"
+      ModelRole.Active.int:"active",
+      ModelRole.Position.int:"position",
     }.toTable
 
   method data(self: SubModel, index: QModelIndex, role: int): QVariant =
@@ -93,6 +95,8 @@ QtObject:
       result = newQVariant(item.muted)
     of ModelRole.Active: 
       result = newQVariant(item.active)
+    of ModelRole.Position: 
+      result = newQVariant(item.position)
 
   proc appendItems*(self: SubModel, items: seq[SubItem]) =
     let parentModelIndex = newQModelIndex()

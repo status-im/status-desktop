@@ -31,6 +31,9 @@ QtObject:
   proc load*(self: View) =
     self.delegate.viewDidLoad()
 
+  proc isCommunity(self: View): bool {.slot.} =
+    return self.delegate.isCommunity()
+
   proc model*(self: View): Model =
     return self.model
 

@@ -86,6 +86,12 @@ QtObject:
   QtProperty[bool] muted:
     read = getMuted
 
+  proc getPosition(self: ActiveItem): int {.slot.} = 
+    return self.item.position
+
+  QtProperty[int] position:
+    read = getPosition
+
   proc getActiveSubItem(self: ActiveItem): QVariant {.slot.} = 
     return self.activeSubItemVariant
 
