@@ -28,7 +28,7 @@ Item {
     property bool resultClickable: true
     property bool addContactEnabled: true
 
-    property bool isAddedContact: pubKey != "" ? chatsModel.messageView.isAddedContact(pubKey) : false
+    property bool isAddedContact: isContactAdded()
 
     signal resultClicked(string pubKey)
     signal addToContactsButtonClicked(string pubKey)
@@ -39,6 +39,10 @@ Item {
         username = ""
         userAlias = ""
         pubKey = ""
+    }
+
+    function isContactAdded() {
+        return pubKey != "" ? chatsModel.messageView.isAddedContact(pubKey) : false
     }
 
     width: parent.width
