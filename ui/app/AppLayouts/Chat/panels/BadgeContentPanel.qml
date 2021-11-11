@@ -162,7 +162,7 @@ Item {
 
             Connections {
                 enabled: realChatType === Constants.chatTypeOneToOne
-                target: profileModel.contacts.list
+                target: contactsModule.model.list
                 onContactChanged: {
                     if (pubkey === wrapper.chatId) {
                         wrapper.profileImage = appMain.getProfileImage(wrapper.chatId)

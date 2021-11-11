@@ -95,8 +95,14 @@ QtObject:
       of ContactRoles.Alias: result = newQVariant(contact.alias)
       of ContactRoles.EnsVerified: result = newQVariant(contact.ensVerified)
       of ContactRoles.LocalNickname: result = newQVariant("")#newQVariant(contact.localNickname)
-      of ContactRoles.ThumbnailImage: result = newQVariant(contact.image.thumbnail)
-      of ContactRoles.LargeImage: result = newQVariant(contact.image.large)
+      of ContactRoles.ThumbnailImage:
+        if (contact.image.isNil):
+          return newQVariant("")
+        result = newQVariant(contact.image.thumbnail)
+      of ContactRoles.LargeImage:
+        if (contact.image.isNil):
+          return newQVariant("")
+        result = newQVariant(contact.image.large)
       of ContactRoles.RequestReceived: result = newQVariant(contact.requestReceived())
 
   method roleNames(self: ContactList): Table[int, string] =
@@ -133,7 +139,7 @@ QtObject:
     self.endRemoveRows()
     self.countChanged()
 
-  proc hasAddedContacts(self: ContactList): bool {.slot.} = 
+  proc hasAddedContacts(self: ContactList): bool {.slot.} =
     for c in self.contacts:
       if(c.isContact()): return true
     return false

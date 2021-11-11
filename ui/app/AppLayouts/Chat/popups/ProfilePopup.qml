@@ -52,7 +52,7 @@ StatusModal {
         identicon = identiconParam || ""
         text = textParam || ""
         isEnsVerified = chatsModel.ensView.isEnsVerified(this.fromAuthor)
-        isBlocked = profileModel.contacts.isContactBlocked(this.fromAuthor);
+        isBlocked = popup.store.contactsModuleInst.model.isContactBlocked(this.fromAuthor);
         alias = chatsModel.alias(this.fromAuthor) || ""
         isCurrentUser = profileModel.profile.pubKey === this.fromAuthor
         showFooter = _showFooter;
@@ -208,7 +208,7 @@ StatusModal {
         UnblockContactConfirmationDialog {
             id: unblockContactConfirmationDialog
             onUnblockButtonClicked: {
-                profileModel.contacts.unblockContact(fromAuthor)
+                popup.store.contactsModuleInst.unblockContact(fromAuthor)
                 unblockContactConfirmationDialog.close();
                 popup.close()
                 popup.contactUnblocked(fromAuthor)
@@ -218,7 +218,7 @@ StatusModal {
         BlockContactConfirmationDialog {
             id: blockContactConfirmationDialog
             onBlockButtonClicked: {
-                profileModel.contacts.blockContact(fromAuthor)
+                popup.store.contactsModuleInst.blockContact(fromAuthor)
                 blockContactConfirmationDialog.close();
                 popup.close()
 
@@ -231,8 +231,8 @@ StatusModal {
             header.title: qsTr("Remove contact")
             confirmationText: qsTr("Are you sure you want to remove this contact?")
             onConfirmButtonClicked: {
-                if (profileModel.contacts.isAdded(fromAuthor)) {
-                    profileModel.contacts.removeContact(fromAuthor);
+                if (popup.store.contactsModuleInst.model.isAdded(fromAuthor)) {
+                    popup.store.contactsModuleInst.removeContact(fromAuthor);
                 }
                 removeContactConfirmationDialog.close();
                 popup.close();
@@ -247,7 +247,7 @@ StatusModal {
                     popup.userName = newUsername;
                 }
                 popup.nickname = newNickname;
-                profileModel.contacts.changeContactNickname(fromAuthor, newNickname);
+                popup.store.contactsModuleInst.changeContactNickname(fromAuthor, newNickname);
                 popup.close()
                 if (!!chatsModel.communities.activeCommunity) {
                     chatsModel.communities.activeCommunity.triggerMembersUpdate();
@@ -276,7 +276,7 @@ StatusModal {
         },
 
         StatusFlatButton {
-            property bool isAdded:  profileModel.contacts.isAdded(fromAuthor)
+            property bool isAdded: popup.store.contactsModuleInst.model.isAdded(fromAuthor)
             visible: !isBlocked && isAdded
             type: StatusBaseButton.Type.Danger
             text: qsTr('Remove Contact')
@@ -287,7 +287,7 @@ StatusModal {
         },
 
         StatusButton {
-            property bool isAdded:  profileModel.contacts.isAdded(fromAuthor)
+            property bool isAdded: popup.store.contactsModuleInst.model.isAdded(fromAuthor)
             text: qsTr("Add to contacts")
             visible: !isBlocked && !isAdded
             onClicked: {

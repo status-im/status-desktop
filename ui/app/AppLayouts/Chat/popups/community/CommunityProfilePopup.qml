@@ -103,6 +103,7 @@ StatusModal {
         Component {
             id: membersList
             CommunityProfilePopupMembersListPanel {
+                store: root.store
                 width: stack.width
                 //% "Members"
                 headerTitle: qsTrId("members-label")

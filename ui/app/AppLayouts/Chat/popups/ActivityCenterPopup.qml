@@ -103,6 +103,7 @@ Popup {
 
             property Component profilePopupComponent: ProfilePopup {
                 id: profilePopup
+                store: activityCenter.store
                 onClosed: destroy()
             }
 

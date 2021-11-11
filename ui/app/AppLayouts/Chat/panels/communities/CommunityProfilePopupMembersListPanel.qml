@@ -24,6 +24,7 @@ Item {
     property string headerImageSource: ""
     property alias members: memberList.model
     property var community
+    property var store
 
     signal inviteButtonClicked()
 
@@ -223,6 +224,7 @@ Item {
     Component {
         id: profilePopup
         ProfilePopup {
+            store: root.store
             onClosed: {
                 destroy()
             }
