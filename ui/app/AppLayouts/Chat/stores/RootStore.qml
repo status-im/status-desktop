@@ -14,6 +14,8 @@ QtObject {
     property var profileModelInst: profileModel
     property var profileModuleInst: profileModule
 
+    property bool isDebugEnabled: profileSectionModule.isDebugEnabled
+
     property var activeCommunity: chatsModelInst.communities.activeCommunity
 
     function copyToClipboard(text) {

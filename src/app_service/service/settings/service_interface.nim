@@ -53,3 +53,9 @@ method toggleTelemetry*(self: ServiceInterface) {.base.} =
 
 method isTelemetryEnabled*(self: ServiceInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method toggleDebug*(self: ServiceInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method isDebugEnabled*(self: ServiceInterface): bool {.base.} =
+  raise newException(ValueError, "No implementation available")

@@ -416,6 +416,15 @@ ScrollView {
                     openPopup(enableTelemetryConfirmationDialogComponent, {light: false})
                 }
             }
+
+            StatusSettingsLineButton {
+                text: qsTr("Debug")
+                isSwitch: true
+                switchChecked: root.store.profileModuleInst.isDebugEnabled
+                onClicked: {
+                    openPopup(enableDebugComponent)
+                }
+            }
         }
 
         NetworksModal {
@@ -436,6 +445,26 @@ ScrollView {
                 confirmationText: qsTr("Are you sure you want to enable telemetry? This will reduce your privacy level while using Status. You need to restart the app for this change to take effect.")
                 onConfirmButtonClicked: {
                     root.store.profileModuleInst.toggleTelemetry()
+                    close()
+                }
+                onCancelButtonClicked: {
+                    close()
+                }
+            }
+        }
+
+        Component {
+            id: enableDebugComponent
+            ConfirmationDialog {
+                property bool mode: false
+
+                id: confirmDialog
+                showCancelButton: true
+                confirmationText: qsTr("Are you sure you want to %1 debug mode? The app will be restarted for this change to take effect.").arg(root.store.profileModuleInst.isDebugEnabled ? 
+                    qsTr("disable") : 
+                    qsTr("enable"))
+                onConfirmButtonClicked: {
+                    root.store.profileModuleInst.toggleDebug()
                     close()
                 }
                 onCancelButtonClicked: {
