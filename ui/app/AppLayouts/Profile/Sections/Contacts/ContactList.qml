@@ -61,7 +61,6 @@ ListView {
     BlockContactConfirmationDialog {
         id: blockContactConfirmationDialog
         onBlockButtonClicked: {
-            // TODO use a store once it is available
             contactsModule.blockContact(blockContactConfirmationDialog.contactAddress)
             blockContactConfirmationDialog.close()
         }
@@ -75,7 +74,6 @@ ListView {
         //% "Are you sure you want to remove this contact?"
         confirmationText: qsTrId("are-you-sure-you-want-to-remove-this-contact-")
         onConfirmButtonClicked: {
-            // TODO use a store once it is available
             if (contactsModule.model.isAdded(removeContactConfirmationDialog.value)) {
               contactsModule.removeContact(removeContactConfirmationDialog.value);
             }

@@ -20,6 +20,7 @@ ListView {
 
     property Component profilePopupComponent: ProfilePopup {
         id: profilePopup
+        store: contactList.store
         onClosed: destroy()
     }
 

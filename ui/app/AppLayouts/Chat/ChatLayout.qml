@@ -27,7 +27,13 @@ StatusAppThreePanelLayout {
 
     property var store
 
-    property var messageStore
+    // Not Refactored
+//    property var messageStore
+
+    // Not Refactored
+   property RootStore rootStore: RootStore {
+       messageStore: root.messageStore
+   }
 
     property alias chatColumn: chatColumn
     property bool stickersLoaded: false
@@ -58,7 +64,7 @@ StatusAppThreePanelLayout {
 
     centerPanel: ChatColumnView {
         id: chatColumn
-        //rootStore: root.rootStore
+        rootStore: root.rootStore
         chatGroupsListViewCount: contactColumnLoader.item.chatGroupsListViewCount
 
         onOpenAppSearch: {
@@ -100,7 +106,7 @@ StatusAppThreePanelLayout {
         id: contactsColumnComponent
         ContactsColumnView {
             // Not Refactored
-            //store: root.rootStore
+            store: root.rootStore
             onOpenProfileClicked: {
                 root.profileButtonClicked();
             }
@@ -123,7 +129,7 @@ StatusAppThreePanelLayout {
         id: groupInfoPopupComponent
         GroupInfoPopup {
             // Not Refactored
-            //store: root.rootStore
+            store: root.rootStore
             pinnedMessagesPopupComponent: chatColumn.pinnedMessagesPopupComponent
         }
     }
@@ -155,7 +161,7 @@ StatusAppThreePanelLayout {
     MessageContextMenuView {
         id: quickActionMessageOptionsMenu
         // Not Refactored
-//        store: root.rootStore
+       store: root.rootStore
 //        reactionModel: root.rootStore.emojiReactionsModel
     }
 }

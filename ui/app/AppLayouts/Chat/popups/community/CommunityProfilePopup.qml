@@ -107,7 +107,6 @@ StatusModal {
         Component {
             id: membersList
             CommunityProfilePopupMembersListPanel {
-                // TODO assign the store on open
                 store: root.store
                 width: stack.width
                 //% "Members"
