@@ -162,7 +162,6 @@ Item {
 
             Connections {
                 enabled: realChatType === Constants.chatTypeOneToOne
-                // TODO use a store once it is available
                 target: contactsModule.model.list
                 onContactChanged: {
                     if (pubkey === wrapper.chatId) {
