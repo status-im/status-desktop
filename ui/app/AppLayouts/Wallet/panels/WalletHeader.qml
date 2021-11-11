@@ -10,6 +10,7 @@ import shared.popups 1.0
 import shared.status 1.0
 import "../popups"
 import "../controls"
+import "../stores"
 
 Item {
     id: walletHeader
@@ -78,7 +79,7 @@ Item {
             onClosed: {
                 destroy();
             }
-            selectedAccount: RootStore.leggacyCurrentAccount
+            selectedAccount: RootStore.currentAccount
         }
     }
 

@@ -47,7 +47,7 @@ ModalPopup {
         id: accountSelector
         label: ""
         showAccountDetails: false
-        accounts: RootStore.leggacyAccounts
+        accounts: RootStore.accounts
         currency: RootStore.currentCurrency
         anchors.top: qrCodeBox.bottom
         anchors.topMargin: Style.current.padding
