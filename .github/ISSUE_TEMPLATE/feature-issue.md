@@ -5,7 +5,7 @@ labels: feature
 ---
 
 <!-- Note -->
-<!-- Generally feature requests should go to https://github.com/status-im/specs -->
+<!-- Generally feature requests should go to https://github.com/status-im/feature-specs -->
 <!-- Note -->
 
 ### Description
