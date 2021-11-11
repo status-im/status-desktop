@@ -255,6 +255,9 @@ Item {
             hideBlocked: true
             searchString: searchBox.text
 
+            // To show the correct status (added/not added)in the addContactModal.
+            onCountChanged: searchResults.isAddedContact = searchResults.isContactAdded()
+
             onContactClicked: {
                 root.store.changeAppSectionBySectionType(Constants.appSection.chat)
                 root.store.joinPrivateChat(contact.address)
