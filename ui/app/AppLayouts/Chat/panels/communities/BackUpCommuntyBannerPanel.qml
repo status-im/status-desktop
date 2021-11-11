@@ -7,10 +7,10 @@ import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 
 import utils 1.0
-import "../../popups/community"
 
 Rectangle {
     property var activeCommunity
+    signal backupButtonClicked(var mouse)
 
     id: root
     height: childrenRect.height + Style.current.padding
@@ -20,7 +20,7 @@ Rectangle {
     anchors.rightMargin: Style.current.padding
     border.color: Style.current.border
     radius: 16
-    color: Style.current.transparent
+    color: "transparent"
 
     Rectangle {
         width: 66
@@ -63,24 +63,7 @@ Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: backUpText.bottom
         anchors.topMargin: Style.current.padding
-        onClicked: {
-            openPopup(transferOwnershipPopup, {privateKey: chatsModel.communities.exportCommunity()})
-        }
-    }
-
-    Component {
-        id: transferOwnershipPopup
-        TransferOwnershipPopup {
-            anchors.centerIn: parent
-            onClosed: {
-                let hiddenBannerIds = localAccountSensitiveSettings.hiddenCommunityBackUpBanners || []
-                if (hiddenBannerIds.includes(root.activeCommunity.id)) {
-                    return
-                }
-                hiddenBannerIds.push(root.activeCommunity.id)
-                localAccountSensitiveSettings.hiddenCommunityBackUpBanners = hiddenBannerIds
-            }
-        }
+        onClicked: root.backupButtonClicked(mouse)
     }
 }
 

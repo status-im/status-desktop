@@ -114,7 +114,7 @@ QtObject {
     }
 
     function exportCommunity() {
-        chatsModelInst.communities.exportCommunity();
+        return chatsModelInst.communities.exportCommunity();
     }
 
     function createCommunityChannel(communityId, channelName, channelDescription, categoryId) {
