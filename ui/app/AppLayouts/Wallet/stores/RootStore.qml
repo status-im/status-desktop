@@ -99,7 +99,8 @@ QtObject {
     }
 
     function addAccountsFromSeed(seedPhrase, password, accountName, color) {
-        return walletSectionAccounts.addAccountsFromSeed(seedPhrase, password, accountName, color)
+        //return walletSectionAccounts.addAccountsFromSeed(seedPhrase, password, accountName, color)
+        return walletModel.accountsView.addAccountsFromSeed(seedPhrase, password, accountName, color)
     }
 
     function addWatchOnlyAccount(address, accountName, color) {
