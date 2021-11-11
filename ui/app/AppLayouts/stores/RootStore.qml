@@ -16,6 +16,10 @@ QtObject {
     property var assets: walletSectionAccountTokens.model
     property MessageStore messageStore: MessageStore { }
 
+    property var contactsModuleInst: contactsModule
+    property var addedContacts: contactsModuleInst.model.addedContacts
+
+
     function setCommunityMuted(communityId, checked) {
         chatsModelInst.communities.setCommunityMuted(communityId, checked);
     }

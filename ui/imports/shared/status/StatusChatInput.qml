@@ -1150,7 +1150,7 @@ Rectangle {
         text: qsTr("Unblock")
         type: StatusQ.StatusBaseButton.Type.Danger
         onClicked: function (event) {
-            profileModel.contacts.unblockContact(chatsModel.channelView.activeChannel.id)
+            contactsModule.unblockContact(chatsModel.channelView.activeChannel.id)
         }
     }
 }

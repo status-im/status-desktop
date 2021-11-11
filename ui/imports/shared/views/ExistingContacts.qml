@@ -36,7 +36,7 @@ Item {
             spacing: 0
             clip: true
             id: contactListView
-            model: profileModel.contacts.list
+            model: contactsModule.model.list
             delegate: Contact {
                 showCheckbox: root.showCheckbox
                 isChecked: root.pubKeys.indexOf(model.pubKey) > -1

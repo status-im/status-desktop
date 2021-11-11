@@ -25,6 +25,7 @@ ModalPopup {
 
         property Component profilePopupComponent: ProfilePopup {
             id: profilePopup
+            store: popup.store
             onClosed: destroy()
         }
 

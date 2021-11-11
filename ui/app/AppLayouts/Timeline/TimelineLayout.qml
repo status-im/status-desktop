@@ -55,6 +55,7 @@ ScrollView {
 
     property Component profilePopupComponent: ProfilePopup {
         id: profilePopup
+        store: root.store
         onClosed: {
             if(profilePopup.parentPopup){
                 profilePopup.parentPopup.close();
