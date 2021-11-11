@@ -88,3 +88,16 @@ method toggleTelemetry*(self: Service) =
 method isTelemetryEnabled*(self: Service): bool =
   let telemetryServerUrl = status_go_settings.getSetting[string](Setting.TelemetryServerUrl)
   return telemetryServerUrl != ""
+
+method toggleDebug*(self: Service) =
+  var nodeConfig = status_go_settings.getNodeConfig()
+  if nodeConfig["LogLevel"].getStr() == $LogLevel.INFO:
+    nodeConfig["LogLevel"] = newJString($LogLevel.DEBUG)
+  else:
+    nodeConfig["LogLevel"] = newJString($LogLevel.INFO)
+  discard status_go_settings.saveSetting(Setting.NodeConfig, nodeConfig)
+  quit(QuitSuccess) # quits the app TODO: change this to logout instead when supported
+
+method isDebugEnabled*(self: Service): bool =
+  let nodeConfig = status_go_settings.getNodeConfig()
+  return nodeConfig["LogLevel"].getStr() != $LogLevel.INFO

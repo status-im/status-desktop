@@ -189,7 +189,7 @@ proc prepareAccountSettingsJsonObject(self: Service, account: GeneratedAccountDt
     "wallet-root-address": account.derivedAccounts.walletRoot.address,
     "preview-privacy?": true,
     "signing-phrase": generateSigningPhrase(3),
-    "log-level": "INFO",
+    "log-level": $LogLevel.INFO,
     "latest-derived-path": 0,
     "networks/networks": DEFAULT_NETWORKS,
     "currency": "usd",

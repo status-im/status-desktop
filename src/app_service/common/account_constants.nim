@@ -2,6 +2,7 @@ import # std libs
   json, os
 
 import utils
+import chronicles
 
 const GENERATED* = "generated"
 const SEED* = "seed"
@@ -122,7 +123,7 @@ var NODE_CONFIG* = %* {
   #"ListenAddr": ":30304",
   "LogEnabled": true,
   "LogFile": "geth.log",
-  "LogLevel": "INFO",
+  "LogLevel": $LogLevel.INFO,
   "MailserversConfig": {
     "Enabled": true
   },

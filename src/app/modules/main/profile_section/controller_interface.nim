@@ -15,6 +15,12 @@ method toggleTelemetry*(self: AccessInterface) {.base.} =
 method isTelemetryEnabled*(self: AccessInterface): bool {.base.} = 
   raise newException(ValueError, "No implementation available")
 
+method toggleDebug*(self: AccessInterface) {.base.} = 
+  raise newException(ValueError, "No implementation available")
+
+method isDebugEnabled*(self: AccessInterface): bool {.base.} = 
+  raise newException(ValueError, "No implementation available")
+
 type
   ## Abstract class (concept) which must be implemented by object/s used in this 
   ## module.

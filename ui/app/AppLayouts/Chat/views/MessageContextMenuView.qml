@@ -274,6 +274,17 @@ StatusPopupMenu {
     }
 
     StatusMenuItem {
+        id: copyMessageIdAction
+        text: qsTr("Copy Message Id")
+        icon.name: "chat"
+        enabled: store.isDebugEnabled
+        onTriggered: {
+            root.store.chatsModelInst.copyToClipboard(SelectedMessage.messageId)
+            close()
+        }
+    }
+
+    StatusMenuItem {
         id: pinAction
         text: {
             if (pinnedMessage) {

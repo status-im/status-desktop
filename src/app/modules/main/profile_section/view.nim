@@ -8,6 +8,7 @@ QtObject:
       delegate: io_interface.AccessInterface
       # TODO: move to the correct module once all have been merged
       isTelemetryEnabled: bool
+      isDebugEnabled: bool
 
   proc setup(self: View) = 
     self.QObject.setup
@@ -36,3 +37,20 @@ QtObject:
   proc toggleTelemetry*(self: View) {.slot.} = 
     self.delegate.toggleTelemetry()
     self.setIsTelemetryEnabled(not self.isTelemetryEnabled)
+
+  proc isDebugEnabledChanged*(self: View) {.signal.}
+
+  proc setIsDebugEnabled*(self: View, isDebugEnabled: bool) =
+    self.isDebugEnabled = isDebugEnabled
+    self.isDebugEnabledChanged()
+
+  proc getIsDebugEnabled*(self: View): QVariant {.slot.} =
+    return newQVariant(self.isDebugEnabled)
+
+  QtProperty[QVariant] isDebugEnabled:
+    read = getIsDebugEnabled
+    notify = isDebugEnabledChanged
+
+  proc toggleDebug*(self: View) {.slot.} = 
+    self.delegate.toggleDebug()
+    self.setIsDebugEnabled(not self.isDebugEnabled)

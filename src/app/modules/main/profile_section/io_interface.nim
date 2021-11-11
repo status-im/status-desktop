@@ -14,6 +14,9 @@ method isLoaded*(self: AccessInterface): bool {.base.} =
 method toggleTelemetry*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method toggleDebug*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 # View Delegate Interface
 # Delegate for the view must be declared here due to use of QtObject and multi 
 # inheritance, which is not well supported in Nim.
