@@ -67,7 +67,10 @@ StatusModal {
                     store: root.store,
                     community: root.community
                 })
-                onTransferOwnershipButtonClicked: openPopup(transferOwnershiproot, {privateKey: root.store.exportCommunity()})
+                onTransferOwnershipButtonClicked: openPopup(transferOwnershiproot, {
+                    privateKey: root.store.exportCommunity(),
+                    store: root.store
+                })
                 onLeaveButtonClicked: {
                     root.store.leaveCommunity(root.community.id);
                     root.close();

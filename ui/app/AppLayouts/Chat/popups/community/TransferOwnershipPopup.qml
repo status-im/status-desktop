@@ -15,6 +15,7 @@ StatusModal {
     id: popup
 
     property string privateKey
+    property var store
 
     //% "Transfer ownership"
     header.title: qsTrId("transfer-ownership")
@@ -25,7 +26,7 @@ StatusModal {
 
     contentItem: Item {
         width: popup.width
-        height: Math.max(300, content.height + 32)
+        implicitHeight: Math.max(300, content.height + 32)
         Column {
             id: content
             anchors.top: parent.top
@@ -35,26 +36,32 @@ StatusModal {
             width: popup.width - 32
             spacing: 16
 
-            Input {
+            StatusInput {
                 property string elidedPkey: popup.privateKey.substring(0, 15) + "..." + popup.privateKey.substring(popup.privateKey.length - 16)
 
                 id: pKeyInput
-                width: parent.width
-
-                //% "Community private key"
-                label: qsTrId("community-key")
-                text: elidedPkey
-                textField.onFocusChanged: {
-                    if (textField.focus) {
-                      pKeyInput.text =  popup.privateKey
-                    } else {
-                        pKeyInput.text =  elidedPkey
+                anchors.left: parent.left
+                anchors.right: parent.right
+                leftPadding: 0
+                rightPadding: 0
+                label: qsTr("Community private key")
+                input.text: elidedPkey
+                input.edit.onActiveFocusChanged: {
+                    pKeyInput.input.text =  pKeyInput.input.edit.focus ? popup.privateKey : elidedPkey
+                }
+                input.component: StatusButton {
+                    anchors.verticalCenter: parent.verticalCenter
+                    border.width: 1
+                    border.color: Theme.palette.primaryColor1
+                    size: StatusBaseButton.Size.Tiny
+                    text: qsTr("Copy")
+                    onClicked: {
+                        text = qsTr("Copied")
+                        popup.store.copyToClipboard(popup.privateKey)
                     }
                 }
-
-                copyToClipboard: true
-                textToCopy: popup.privateKey
             }
+
 
             StatusBaseText {
                 id: infoText1

@@ -272,6 +272,12 @@ Item {
                     BackUpCommuntyBannerPanel {
                         id: backupBanner
                         activeCommunity: store.activeCommunity
+                        onBackupButtonClicked: {
+                            openPopup(transferOwnershipPopup, { 
+                                privateKey: root.store.exportCommunity(),
+                                store: root.store
+                            })
+                        }
                     }
                     MouseArea {
                         anchors.fill: backupBanner
@@ -352,6 +358,20 @@ Item {
         }
     }
 
+    Component {
+        id: transferOwnershipPopup
+        TransferOwnershipPopup {
+            anchors.centerIn: parent
+            onClosed: {
+                let hiddenBannerIds = localAccountSensitiveSettings.hiddenCommunityBackUpBanners || []
+                if (hiddenBannerIds.includes(root.store.activeCommunity.id)) {
+                    return
+                }
+                hiddenBannerIds.push(root.store.activeCommunity.id)
+                localAccountSensitiveSettings.hiddenCommunityBackUpBanners = hiddenBannerIds
+            }
+        }
+    }
 }
 
 /*##^##
