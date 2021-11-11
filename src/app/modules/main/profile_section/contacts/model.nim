@@ -37,23 +37,23 @@ QtObject:
   proc contactRequestAdded*(self: Model, name: string, address: string) {.signal.}
 
   proc contactAdded*(self: Model, contact: ContactsDto) =
-    self.contactList.addContactToList(contact)
+    self.contactList.updateContact(contact)
     self.addedContacts.addContactToList(contact)
     self.blockedContacts.removeContactFromList(contact.id)
     self.contactRequests.removeContactFromList(contact.id)
 
   proc contactBlocked*(self: Model, contact: ContactsDto) =
-    self.contactList.addContactToList(contact)
+    self.contactList.updateContact(contact)
     self.addedContacts.removeContactFromList(contact.id)
     self.blockedContacts.addContactToList(contact)
     self.contactRequests.removeContactFromList(contact.id)
 
   proc contactUnblocked*(self: Model, contact: ContactsDto) =
-    self.contactList.addContactToList(contact)
+    self.contactList.updateContact(contact)
     self.blockedContacts.removeContactFromList(contact.id)
 
   proc contactRemoved*(self: Model, contact: ContactsDto) =
-    self.contactList.addContactToList(contact)
+    self.contactList.updateContact(contact)
     self.addedContacts.removeContactFromList(contact.id)
     self.contactRequests.removeContactFromList(contact.id)
 

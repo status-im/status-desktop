@@ -131,6 +131,7 @@ Item {
             title: qsTrId("blocked-contacts")
 
             ContactsListPanel {
+                store: root.store
                 anchors.top: parent.top
                 anchors.bottom: parent.bottom
                 contacts: root.store.blockedContacts
@@ -246,6 +247,7 @@ Item {
 
         ContactsListPanel {
             id: contactListView
+            store: root.store
             anchors.top: blockedContactsButton.visible ? blockedContactsButton.bottom : addNewContact.bottom
             anchors.topMargin: Style.current.bigPadding
             anchors.bottom: parent.bottom

@@ -73,7 +73,7 @@ Item {
 
                 if (Utils.isChatKey(chatKey.text)) {
                     pubKey = chatKey.text;
-                    if (!profileModel.contacts.isAdded(pubKey)) {
+                    if (!contactsModule.model.isAdded(pubKey)) {
                         searchResults.username = utilsModel.generateAlias(pubKey);
                         searchResults.userAlias = Utils.compactAddress(pubKey, 4);
                         searchResults.pubKey = pubKey
@@ -115,7 +115,7 @@ Item {
                     searchResults.showProfileNotFoundMessage = false
                 }
                 searchResults.loading = false;
-                noContactsRect.visible = pubKey === ""  && ensUsername.text === "" && !profileModel.contacts.list.hasAddedContacts() && !profileNotFoundMessage.visible
+                noContactsRect.visible = pubKey === ""  && ensUsername.text === "" && !contactsModule.model.list.hasAddedContacts() && !profileNotFoundMessage.visible
             }
         }
 
@@ -184,7 +184,7 @@ Item {
             }
             root.pubKeys = pubKeysCopy
 
-            userClicked(true, contact.pubKey, profileModel.contacts.addedContacts.userName(contact.pubKey, contact.name), contact.address)
+            userClicked(true, contact.pubKey, contactsModule.model.addedContacts.userName(contact.pubKey, contact.name), contact.address)
         }
         expanded: !searchResults.loading && pubKey === "" && !searchResults.showProfileNotFoundMessage
     }
@@ -204,7 +204,7 @@ Item {
             }
             userClicked(false, pubKey, chatKey.text, searchResults.address)
         }
-        onAddToContactsButtonClicked: profileModel.contacts.addContact(pubKey)
+        onAddToContactsButtonClicked: contactsModule.addContact(pubKey)
     }
 
     NoFriendsRectangle {

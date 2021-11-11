@@ -127,20 +127,20 @@ QtObject {
 
     function getDisplayName(publicKey, contactIndex) {
         if (contactIndex === undefined) {
-            contactIndex = profileModel.contacts.list.getContactIndexByPubkey(publicKey)
+            contactIndex = contactsModule.model.list.getContactIndexByPubkey(publicKey)
         }
 
         if (contactIndex === -1) {
             return utilsModel.generateAlias(publicKey)
         }
-        const ensVerified = profileModel.contacts.list.rowData(contactIndex, 'ensVerified')
+        const ensVerified = contactsModule.model.list.rowData(contactIndex, 'ensVerified')
         if (!ensVerified) {
-            const nickname = profileModel.contacts.list.rowData(contactIndex, 'localNickname')
+            const nickname = contactsModule.model.list.rowData(contactIndex, 'localNickname')
             if (nickname) {
                 return nickname
             }
         }
-        return profileModel.contacts.list.rowData(contactIndex, 'name')
+        return contactsModule.model.list.rowData(contactIndex, 'name')
     }
 
     function isMnemonic(value) {
