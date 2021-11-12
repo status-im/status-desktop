@@ -4,12 +4,29 @@ import status/[status, contacts]
 import status/ens as status_ens
 import status/chat as status_chat
 import status/chat/[chat]
+
+import status/statusgo_backend/chat as status_backend_chat
 import ../../../app_service/[main]
+import ../../../app_service/tasks/[qt, threadpool]
 
 import communities, chat_item, channels_list, communities, community_list, activity_notification_list
 
 logScope:
   topics = "channel-view"
+
+#################################################
+  ## This async job is moved temporary here, it is not refactored yet
+type
+  AsyncMarkAllReadTaskArg = ref object of QObjectTaskArg
+    chatId: string
+
+const asyncMarkAllReadTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[AsyncMarkAllReadTaskArg](argEncoded)
+  arg.finish(%*{
+    "response": status_backend_chat.markAllRead(arg.chatId),
+    "chatId": arg.chatId,
+  })
+#################################################
 
 QtObject:
   type ChannelView* = ref object of QObject
@@ -88,6 +105,22 @@ QtObject:
 
   proc contextChannelChanged*(self: ChannelView) {.signal.}
 
+  #################################################
+  ## This async job is moved temporary here, it is not refactored yet
+  proc onAsyncMarkMessagesRead(self: ChannelView, response: string) {.slot.} =
+    self.status.chat.onAsyncMarkMessagesRead(response)
+
+  proc asyncMarkAllChannelMessagesRead*(self: ChannelView, chatId: string) =
+    let arg = AsyncMarkAllReadTaskArg(
+      tptr: cast[ByteAddress](asyncMarkAllReadTask),
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "onAsyncMarkMessagesRead",
+      chatId: chatId,
+    )
+    self.appService.threadpool.start(arg)
+
+  #################################################
+
   # TODO(pascal): replace with `markChatItemAsRead`, which is id based
   # instead of index based, when refactoring/removing `ChannelContextMenu` 
   # (they still make use of this)
@@ -95,13 +128,13 @@ QtObject:
     if (self.chats.chats.len == 0): return
     let selectedChannel = self.getChannel(channelIndex)
     if (selectedChannel == nil): return
-    self.appService.chatService.asyncMarkAllChannelMessagesRead(selectedChannel.id)
+    self.asyncMarkAllChannelMessagesRead(selectedChannel.id)
 
   proc markChatItemAsRead*(self: ChannelView, id: string) {.slot.} =
     if (self.chats.chats.len == 0): return
     let selectedChannel = self.getChannelById(id)
     if (selectedChannel == nil): return
-    self.appService.chatService.asyncMarkAllChannelMessagesRead(selectedChannel.id)
+    self.asyncMarkAllChannelMessagesRead(selectedChannel.id)
 
   proc clearUnreadIfNeeded*(self: ChannelView, channel: var Chat) =
     if (not channel.isNil and (channel.unviewedMessagesCount > 0 or channel.mentionsCount > 0)):
@@ -176,7 +209,7 @@ QtObject:
     elif not self.communities.activeCommunity.active:
       self.previousActiveChannelIndex = self.chats.chats.findIndexById(self.activeChannel.id)
 
-    self.appService.chatService.asyncMarkAllChannelMessagesRead(self.activeChannel.id)
+    self.asyncMarkAllChannelMessagesRead(self.activeChannel.id)
 
     self.activeChannelChanged()
 

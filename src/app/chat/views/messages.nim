@@ -299,8 +299,10 @@ QtObject:
   proc messagesLoaded*(self: MessageView) {.signal.}
 
   proc loadMoreMessages*(self: MessageView, channelId: string) {.slot.} =
-    self.setLoadingHistoryMessages(channelId, true)
-    self.appService.chatService.loadMoreMessagesForChannel(channelId)
+    discard
+    # Not refactored yet, will be once we have corresponding qml part done.
+    # self.setLoadingHistoryMessages(channelId, true)
+    # self.appService.chatService.loadMoreMessagesForChannel(channelId)
 
   proc onMessagesLoaded*(self: MessageView, chatId: string, messages: var seq[Message]) =
     self.pushMessages(messages)

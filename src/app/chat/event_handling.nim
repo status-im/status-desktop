@@ -22,8 +22,6 @@ proc handleChatEvents(self: ChatController) =
   # Display already pinned messages
   self.status.events.on("pinnedMessagesLoaded") do(e:Args):
     self.view.pushPinnedMessages(MsgsLoadedArgs(e).messages)
-  self.status.events.on("searchMessagesLoaded") do(e:Args):
-    self.view.onSearchMessagesLoaded(MsgsLoadedArgs(e).messages)
 
   self.status.events.on("activityCenterNotificationsLoaded") do(e:Args):
     let notifications = ActivityCenterNotificationsArgs(e).activityCenterNotifications
@@ -114,7 +112,6 @@ proc handleChatEvents(self: ChatController) =
 
     if channel.chat.chatType == status_chat.ChatType.CommunityChat:
       self.view.communities.updateCommunityChat(channel.chat)
-    self.loadInitialMessagesForChannel(channel.chat.id)
   
   self.status.events.on("chatsLoaded") do(e:Args):
     self.view.calculateUnreadMessages()
@@ -139,7 +136,6 @@ proc handleChatEvents(self: ChatController) =
       discard self.view.channelView.chats.addChatItemToList(channel.chat)
       self.view.setActiveChannel(channel.chat.id)
 
-    self.loadInitialMessagesForChannel(channel.chat.id)
     self.status.chat.statusUpdates()
 
   self.status.events.on("channelLeft") do(e: Args):
