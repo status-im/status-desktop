@@ -92,3 +92,50 @@ const asyncSearchMessagesInChatsAndCommunitiesTask: Task = proc(argEncoded: stri
     "messages": response.result
   }
   arg.finish(responseJson)
+
+#################################################
+# Async mark all messages read
+#################################################
+type
+  AsyncMarkAllMessagesReadTaskArg = ref object of QObjectTaskArg
+    chatId: string
+
+const asyncMarkAllMessagesReadTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[AsyncMarkAllMessagesReadTaskArg](argEncoded)
+
+  discard status_go.markAllMessagesFromChatWithIdAsRead(arg.chatId)
+  
+  let responseJson = %*{
+    "chatId": arg.chatId,
+    "error": ""
+  }
+  arg.finish(responseJson)
+#################################################
+
+#################################################
+# Async mark certain messages read
+#################################################
+type
+  AsyncMarkCertainMessagesReadTaskArg = ref object of QObjectTaskArg
+    chatId: string
+    messagesIds: seq[string]
+
+const asyncMarkCertainMessagesReadTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[AsyncMarkCertainMessagesReadTaskArg](argEncoded)
+
+  let response = status_go.markCertainMessagesFromChatWithIdAsRead(arg.chatId, arg.messagesIds)
+
+  var numberOfAffectedMessages: int
+  discard response.result.getProp("count", numberOfAffectedMessages)
+
+  var error = ""
+  if(numberOfAffectedMessages == 0):
+    error = "no message has updated"
+
+  let responseJson = %*{
+    "chatId": arg.chatId,
+    "messagesIds": arg.messagesIds,
+    "error": error
+  }  
+  arg.finish(responseJson)
+#################################################
