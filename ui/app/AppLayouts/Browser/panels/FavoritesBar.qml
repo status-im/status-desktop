@@ -35,6 +35,11 @@ RowLayout {
                 acceptedButtons: Qt.LeftButton | Qt.RightButton
                 z: 51
                 onClicked: function (mouse) {
+                    const isAddBookmarkButton = url === Constants.newBookmark
+                    if (mouse.button === Qt.RightButton && isAddBookmarkButton) {
+                        return
+                    }
+
                     if (mouse.button === Qt.RightButton) {
                         favoriteMenu.url = url
                         favoriteMenu.x = favoriteBtn.x + mouse.x
@@ -42,11 +47,16 @@ RowLayout {
                         favoriteMenu.open()
                         return
                     }
-                    if (!url.toString()) {
+
+                    if (isAddBookmarkButton) {
+                        addFavoriteModal.toolbarMode = true
+                        addFavoriteModal.ogUrl = browserHeader.currentFavorite ? browserHeader.currentFavorite.url : currentWebView.url
+                        addFavoriteModal.ogName = browserHeader.currentFavorite ? browserHeader.currentFavorite.name : currentWebView.title
                         addFavoriteModal.open()
-                    } else {
-                        currentWebView.url = determineRealURL(url)
+                        return
                     }
+
+                    currentWebView.url = determineRealURL(url)
                 }
             }
         }
