@@ -41,6 +41,7 @@ QtObject:
     myCommunityRequests*: seq[CommunityMembershipRequest]
     importingCommunityState: CommunityImportState
     communityImportingProcessId: string
+    pubKey*: string
 
   proc setup(self: CommunitiesView) =
     self.QObject.setup
@@ -60,6 +61,7 @@ QtObject:
     result.observedCommunity = newCommunityItemView(status)
     result.communityList = newCommunityList(status)
     result.joinedCommunityList = newCommunityList(status)
+    result.pubKey = ""
     result.setup
 
   proc importingCommunityStateChanged*(self: CommunitiesView, state: int, communityImportingProcessId: string) {.signal.}
@@ -390,6 +392,8 @@ QtObject:
       self.joinedCommunitiesChanged()
       var updatedCommunity = self.communityList.getCommunityById(communityId)
       updatedCommunity.joined = false
+      let i = updatedCommunity.members.find(self.pubKey)
+      updatedCommunity.members.delete(i)
       self.communityList.replaceCommunity(updatedCommunity)
       self.communitiesChanged()
       self.communityChanged(communityId)

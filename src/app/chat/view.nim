@@ -136,6 +136,7 @@ QtObject:
   proc setPubKey*(self: ChatsView, pubKey: string) =
     self.pubKey = pubKey
     self.messageView.pubKey = pubKey
+    self.communities.pubKey = pubKey
 
   proc getFormatInput(self: ChatsView): QVariant {.slot.} = newQVariant(self.formatInputView)
   QtProperty[QVariant] formatInputView:
