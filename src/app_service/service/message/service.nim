@@ -25,6 +25,7 @@ const SIGNAL_MESSAGES_LOADED* = "new-messagesLoaded" #Once we are done with refa
 const SIGNAL_MESSAGE_PINNED* = "new-messagePinned"
 const SIGNAL_MESSAGE_UNPINNED* = "new-messageUnpinned"
 const SIGNAL_SEARCH_MESSAGES_LOADED* = "new-searchMessagesLoaded"
+const SIGNAL_MESSAGES_MARKED_AS_READ* = "new-messagesMarkedAsRead"
 
 type
   SearchMessagesLoadedArgs* = ref object of Args
@@ -39,6 +40,11 @@ type
   MessagePinUnpinArgs* = ref object of Args
     chatId*: string
     messageId*: string
+
+  MessagesMarkedAsReadArgs = ref object of Args
+    chatId*: string
+    allMessagesMarked*: bool
+    messagesIds*: seq[string] 
 
 QtObject:
   type Service* = ref object of QObject
@@ -282,4 +288,69 @@ QtObject:
       searchTerm: searchTerm,
       caseSensitive: caseSensitive
     )
+    self.threadpool.start(arg)
+
+  proc onMarkAllMessagesRead*(self: Service, response: string) {.slot.} =
+    let responseObj = response.parseJson
+    
+    var error: string
+    discard responseObj.getProp("error", error)
+    if(error.len > 0):
+      error "error: ", methodName="onMarkCertainMessagesRead", errDescription=error
+      return
+
+    var chatId: string
+    discard responseObj.getProp("chatId", chatId)
+
+    let data = MessagesMarkedAsReadArgs(chatId: chatId, allMessagesMarked: true)
+    self.events.emit(SIGNAL_MESSAGES_MARKED_AS_READ, data)
+
+  proc markAllMessagesRead*(self: Service, chatId: string) =
+    if (chatId.len == 0):
+      error "empty chat id", methodName="markAllMessagesRead"
+      return
+
+    let arg = AsyncMarkAllMessagesReadTaskArg(
+      tptr: cast[ByteAddress](asyncMarkAllMessagesReadTask),
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "onMarkAllMessagesRead",
+      chatId: chatId
+    )
+
+    self.threadpool.start(arg)
+
+  proc onMarkCertainMessagesRead*(self: Service, response: string) {.slot.} =
+    let responseObj = response.parseJson
+    
+    var error: string
+    discard responseObj.getProp("error", error)
+    if(error.len > 0):
+      error "error: ", methodName="onMarkCertainMessagesRead", errDescription=error
+      return
+
+    var chatId: string
+    discard responseObj.getProp("chatId", chatId)
+
+    var messagesIdsArr: JsonNode
+    var messagesIds: seq[string]
+    if(responseObj.getProp("messagesIds", messagesIdsArr)):
+      for id in messagesIdsArr:
+        messagesIds.add(id.getStr)
+
+    let data = MessagesMarkedAsReadArgs(chatId: chatId, allMessagesMarked: false, messagesIds: messagesIds)
+    self.events.emit(SIGNAL_MESSAGES_MARKED_AS_READ, data)
+
+  proc markCertainMessagesRead*(self: Service, chatId: string, messagesIds: seq[string]) =
+    if (chatId.len == 0):
+      error "empty chat id", methodName="markCertainMessagesRead"
+      return
+
+    let arg = AsyncMarkCertainMessagesReadTaskArg(
+      tptr: cast[ByteAddress](asyncMarkCertainMessagesReadTask),
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "onMarkCertainMessagesRead",
+      chatId: chatId,
+      messagesIds: messagesIds
+    )
+
     self.threadpool.start(arg)
