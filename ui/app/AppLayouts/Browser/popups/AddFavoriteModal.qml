@@ -159,9 +159,9 @@ ModalPopup {
             onClicked: {
                 if (!popup.modifiyModal) {
                     // remove "add favorite" button at the end, add new bookmark, add "add favorite" button back
-                    BookmarksStore.deleteBookmark(" ")
+                    BookmarksStore.deleteBookmark(Constants.newBookmark)
                     BookmarksStore.addBookmark(urlInput.input.text, nameInput.input.text)
-                    BookmarksStore.addBookmark(" ", qsTr("Add Favorite"))
+                    BookmarksStore.addBookmark(Constants.newBookmark, qsTr("Add Favorite"))
                 } else if (popup.ogName !== nameInput.input.text || popup.ogUrl !== urlInput.input.text) {
                     BookmarksStore.updateBookmark(popup.ogUrl, urlInput.input.text, nameInput.input.text)
                 }

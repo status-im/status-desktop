@@ -176,6 +176,8 @@ QtObject {
     //% "(edited)"
     readonly property string editLabel: ` <span class="isEdited">` + qsTrId("-edited-") + `</span>`
 
+    readonly property string newBookmark: " "
+
     readonly property var ensState: {
         //% "Username already taken :("
         "taken": qsTrId("ens-username-taken"),
