@@ -112,16 +112,16 @@ ModalPopup {
                 return loading = false
             }
 
-            const result = RootStore.generateNewAccount(passwordInput.text, accountNameInput.text, accountColorInput.selectedColor)
+            const errMessage = RootStore.generateNewAccount(passwordInput.text, accountNameInput.text, accountColorInput.selectedColor)
+            console.log(errMessage)
             loading = false
-            if (result) {
-                let resultJson = JSON.parse(result);
+            if (errMessage) {
                 errorSound.play();
-                if (Utils.isInvalidPasswordMessage(resultJson.error)) {
+                if (Utils.isInvalidPasswordMessage(errMessage)) {
                     //% "Wrong password"
                     popup.passwordValidationError = qsTrId("wrong-password")
                 } else {
-                    accountError.text = resultJson.error;
+                    accountError.text = errMessage;
                     accountError.open();
                 }
                 return

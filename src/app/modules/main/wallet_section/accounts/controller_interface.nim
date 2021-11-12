@@ -13,16 +13,16 @@ method init*(self: AccessInterface) {.base.} =
 method getWalletAccounts*(self: AccessInterface): seq[wallet_account_service.WalletAccountDto] {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method generateNewAccount*(self: AccessInterface, password: string, accountName: string, color: string) {.base.} =
+method generateNewAccount*(self: AccessInterface, password: string, accountName: string, color: string): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method addAccountsFromPrivateKey*(self: AccessInterface, privateKey: string, password: string, accountName: string, color: string) {.base.} =
+method addAccountsFromPrivateKey*(self: AccessInterface, privateKey: string, password: string, accountName: string, color: string): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method addAccountsFromSeed*(self: AccessInterface, seedPhrase: string, password: string, accountName: string, color: string) {.base.} =
+method addAccountsFromSeed*(self: AccessInterface, seedPhrase: string, password: string, accountName: string, color: string): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method addWatchOnlyAccount*(self: AccessInterface, address: string, accountName: string, color: string) {.base.} =
+method addWatchOnlyAccount*(self: AccessInterface, address: string, accountName: string, color: string): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method deleteAccount*(self: AccessInterface, address: string) {.base.} =

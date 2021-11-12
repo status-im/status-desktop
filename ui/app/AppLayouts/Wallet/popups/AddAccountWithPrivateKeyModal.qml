@@ -139,17 +139,16 @@ ModalPopup {
                 return loading = false
             }
 
-            const result = RootStore.addAccountsFromPrivateKey(accountPKeyInput.text, passwordInput.text, accountNameInput.text, accountColorInput.selectedColor)
+            const errMessage = RootStore.addAccountsFromPrivateKey(accountPKeyInput.text, passwordInput.text, accountNameInput.text, accountColorInput.selectedColor)
             
             loading = false
-            if (result) {
-                let resultJson = JSON.parse(result);
+            if (errMessage) {
                 errorSound.play();
-                if (Utils.isInvalidPasswordMessage(resultJson.error)) {
+                if (Utils.isInvalidPasswordMessage(errMessage)) {
                     //% "Wrong password"
                     popup.passwordValidationError = qsTrId("wrong-password")
                 } else {
-                    accountError.text = resultJson.error
+                    accountError.text = errMessage
                     accountError.open()
                 }
                 return

@@ -89,17 +89,17 @@ method load*[T](self: Module[T]) =
 method isLoaded*[T](self: Module[T]): bool =
   return self.moduleLoaded
 
-method generateNewAccount*[T](self: Module[T], password: string, accountName: string, color: string) =
-  self.controller.generateNewAccount(password, accountName, color)
+method generateNewAccount*[T](self: Module[T], password: string, accountName: string, color: string): string =
+  return self.controller.generateNewAccount(password, accountName, color)
 
-method addAccountsFromPrivateKey*[T](self: Module[T], privateKey: string, password: string, accountName: string, color: string) =
-  self.controller.addAccountsFromPrivateKey(privateKey, password, accountName, color)
+method addAccountsFromPrivateKey*[T](self: Module[T], privateKey: string, password: string, accountName: string, color: string): string =
+  return self.controller.addAccountsFromPrivateKey(privateKey, password, accountName, color)
 
-method addAccountsFromSeed*[T](self: Module[T], seedPhrase: string, password: string, accountName: string, color: string) =
-  self.controller.addAccountsFromSeed(seedPhrase, password, accountName, color)
+method addAccountsFromSeed*[T](self: Module[T], seedPhrase: string, password: string, accountName: string, color: string): string =
+  return self.controller.addAccountsFromSeed(seedPhrase, password, accountName, color)
 
-method addWatchOnlyAccount*[T](self: Module[T], address: string, accountName: string, color: string) =
-  self.controller.addWatchOnlyAccount(address, accountName, color)
+method addWatchOnlyAccount*[T](self: Module[T], address: string, accountName: string, color: string): string =
+  return self.controller.addWatchOnlyAccount(address, accountName, color)
 
 method deleteAccount*[T](self: Module[T], address: string) =
   self.controller.deleteAccount(address)

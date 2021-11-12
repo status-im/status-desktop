@@ -207,42 +207,50 @@ method saveAccount(
   walletIndex: int = 0,
   id: string = "",
   publicKey: string = "",
-) =
-  status_go_accounts.saveAccount(
-    address,
-    name,
-    password,
-    color,
-    accountType,
-    isADerivedAccount = true,
-    walletIndex,
-    id,
-    publicKey,
-  )
-  let accounts = fetchAccounts()
-  let prices = self.fetchPrices()
+): string =
+  try:
+    status_go_accounts.saveAccount(
+      address,
+      name,
+      password,
+      color,
+      accountType,
+      isADerivedAccount = true,
+      walletIndex,
+      id,
+      publicKey,
+    )
+    let accounts = fetchAccounts()
+    let prices = self.fetchPrices()
 
-  var newAccount = accounts[0]
-  for account in accounts:
-    if not self.accounts.haskey(account.address):
-      newAccount = account
-      break
+    var newAccount = accounts[0]
+    for account in accounts:
+      if not self.accounts.haskey(account.address):
+        newAccount = account
+        break
 
-  newAccount.tokens = self.buildTokens(newAccount, prices)
-  self.accounts[newAccount.address] = newAccount
-  self.events.emit("walletAccount/accountSaved", AccountSaved(account: newAccount))
+    newAccount.tokens = self.buildTokens(newAccount, prices)
+    self.accounts[newAccount.address] = newAccount
+    self.events.emit("walletAccount/accountSaved", AccountSaved(account: newAccount))
+  except Exception as e:
+    return fmt"Error adding new account: {e.msg}"
 
-method generateNewAccount*(self: Service, password: string, accountName: string, color: string) =
+method generateNewAccount*(self: Service, password: string, accountName: string, color: string): string =
   let
     setting = self.settingService.getSetting()
     walletRootAddress = setting.walletRootAddress
     walletIndex = setting.latestDerivedPath + 1
+    defaultAccount = self.getDefaultAccount()
+    isPasswordOk = status_go_accounts.verifyAccountPassword(defaultAccount, password, KEYSTOREDIR)
+
+  if not isPasswordOk:
+    return "Error generating new account: invalid password"
 
   let accountResponse = status_go_accounts.loadAccount(walletRootAddress, password)
   let accountId = accountResponse.result{"id"}.getStr
   let path = "m/" & $walletIndex
   let deriveResponse = status_go_accounts.deriveAccounts(accountId, @[path])
-  self.saveAccount(
+  let errMsg = self.saveAccount(
     deriveResponse.result[path]{"address"}.getStr,
     accountName,
     password,
@@ -253,19 +261,22 @@ method generateNewAccount*(self: Service, password: string, accountName: string,
     accountId,
     deriveResponse.result[path]{"publicKey"}.getStr
   )
+  if errMsg != "":
+    return errMsg
 
   discard self.settingService.saveSetting("latest-derived-path", walletIndex)
+  return ""
 
-method addAccountsFromPrivateKey*(self: Service, privateKey: string, password: string, accountName: string, color: string) =
+method addAccountsFromPrivateKey*(self: Service, privateKey: string, password: string, accountName: string, color: string): string =
   let
     accountResponse = status_go_accounts.multiAccountImportPrivateKey(privateKey)
     defaultAccount = self.getDefaultAccount()
     isPasswordOk = status_go_accounts.verifyAccountPassword(defaultAccount, password, KEYSTOREDIR)
 
   if not isPasswordOk:
-    return
+    return "Error generating new account: invalid password"
 
-  self.saveAccount(
+  return self.saveAccount(
     accountResponse.result{"address"}.getStr,
     accountName,
     password,
@@ -277,7 +288,7 @@ method addAccountsFromPrivateKey*(self: Service, privateKey: string, password: s
     accountResponse.result{"publicKey"}.getStr,
   )
 
-method addAccountsFromSeed*(self: Service, seedPhrase: string, password: string, accountName: string, color: string) =
+method addAccountsFromSeed*(self: Service, seedPhrase: string, password: string, accountName: string, color: string): string =
   let mnemonic = replace(seedPhrase, ',', ' ')
   let paths = @[PATH_WALLET_ROOT, PATH_EIP_1581, PATH_WHISPER, PATH_DEFAULT_WALLET]
   let accountResponse = status_go_accounts.multiAccountImportMnemonic(mnemonic)
@@ -289,9 +300,9 @@ method addAccountsFromSeed*(self: Service, seedPhrase: string, password: string,
     isPasswordOk = status_go_accounts.verifyAccountPassword(defaultAccount, password, KEYSTOREDIR)
 
   if not isPasswordOk:
-    return
+    return "Error generating new account: invalid password"
 
-  self.saveAccount(
+  return self.saveAccount(
     deriveResponse.result[PATH_DEFAULT_WALLET]{"address"}.getStr,
     accountName,
     password,
@@ -303,8 +314,8 @@ method addAccountsFromSeed*(self: Service, seedPhrase: string, password: string,
     deriveResponse.result[PATH_DEFAULT_WALLET]{"publicKey"}.getStr
   )
 
-method addWatchOnlyAccount*(self: Service, address: string, accountName: string, color: string) =
-  self.saveAccount(address, accountName, "", color, status_go_accounts.WATCH, false)
+method addWatchOnlyAccount*(self: Service, address: string, accountName: string, color: string): string =
+  return self.saveAccount(address, accountName, "", color, status_go_accounts.WATCH, false)
 
 method deleteAccount*(self: Service, address: string) =
   discard status_go_accounts.deleteAccount(address)
