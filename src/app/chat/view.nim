@@ -13,7 +13,6 @@ import ../../app_service/tasks/marathon/mailserver/worker
 import status/notifications/[os_notifications]
 import ../utils/image_utils
 import web3/[conversions, ethtypes]
-import views/message_search/[view_controller]
 import views/[channels_list, message_list, chat_item, reactions, stickers, groups, transactions, communities, community_list, community_item, format_input, ens, activity_notification_list, channel, messages, message_item, gif]
 import ../../constants
 
@@ -77,7 +76,6 @@ QtObject:
       ensView: EnsView
       channelView*: ChannelView
       messageView*: MessageView
-      messageSearchViewController: MessageSearchViewController
       activityNotificationList*: ActivityNotificationList
       callResult: string
       reactions*: ReactionView
@@ -102,7 +100,6 @@ QtObject:
     self.groups.delete
     self.transactions.delete
     self.communities.delete
-    self.messageSearchViewController.delete
     self.QAbstractListModel.delete
 
   proc newChatsView*(status: Status, appService: AppService): ChatsView =
@@ -115,8 +112,6 @@ QtObject:
     result.activityNotificationList = newActivityNotificationList(status)
     result.channelView = newChannelView(status, appService, result.communities, result.activityNotificationList)
     result.messageView = newMessageView(status, appService, result.channelView, result.communities)
-    result.messageSearchViewController = newMessageSearchViewController(status,
-      appService, result.channelView, result.communities)
     result.connected = false
     result.reactions = newReactionView(
       status,
@@ -162,12 +157,6 @@ QtObject:
   proc getMessageView*(self: ChatsView): QVariant {.slot.} = newQVariant(self.messageView)
   QtProperty[QVariant] messageView:
     read = getMessageView
-
-  proc getMessageSearchViewController*(self: ChatsView): QVariant {.slot.} =
-    newQVariant(self.messageSearchViewController)
-
-  QtProperty[QVariant] messageSearchViewController:
-    read = getMessageSearchViewController
 
   proc plainText(self: ChatsView, input: string): string {.slot.} =
     result = plain_text(input)
@@ -439,9 +428,6 @@ QtObject:
   proc onMessagesLoaded*(self: ChatsView, chatId: string, messages: var seq[Message]) =
     self.messageView.onMessagesLoaded(chatId, messages)
 
-  proc onSearchMessagesLoaded*(self: ChatsView, messages: seq[Message]) =
-    self.messageSearchViewController.onSearchMessagesLoaded(messages)
-
   proc pushMessages*(self: ChatsView, messages: var seq[Message]) =
     self.messageView.pushMessages(messages)
 
@@ -503,11 +489,13 @@ QtObject:
           self.messageView.switchToMessage(messageId)
 
   proc switchToSearchedItem*(self: ChatsView, itemId: string) {.slot.} =
-    let info = self.messageSearchViewController.getItemInfo(itemId)
-    if(info.isEmpty()):
-      return
+    discard
+    # Not refactored yet, will be once we have corresponding qml part done.
+    # let info = self.messageSearchViewController.getItemInfo(itemId)
+    # if(info.isEmpty()):
+    #   return
 
-    self.switchTo(info.communityId, info.channelId, info.messageId)
+    # self.switchTo(info.communityId, info.channelId, info.messageId)
 
   proc notificationClicked*(self:ChatsView, notificationType: int) {.signal.}
 

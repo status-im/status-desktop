@@ -29,8 +29,6 @@ proc delete*(self: ChatController) =
   delete self.variant
   delete self.view
 
-proc loadInitialMessagesForChannel*(self: ChatController, channelId: string)
-
 include event_handling
 include signal_handling
 
@@ -77,19 +75,3 @@ proc init*(self: ChatController) =
   self.status.events.on("contactUnblocked") do(e: Args):
     let contactIdArgs = ContactIdArgs(e)
     self.view.messageView.unblockContact(contactIdArgs.id)
-
-proc loadInitialMessagesForChannel*(self: ChatController, channelId: string) =
-  if (channelId.len == 0):
-    info "empty channel id set for loading initial messages"
-    return
-
-  if(self.status.chat.isMessageCursorSet(channelId)):
-    return
-
-  if(self.status.chat.isEmojiCursorSet(channelId)):
-    return
-
-  if(self.status.chat.isPinnedMessageCursorSet(channelId)):
-    return
-
-  self.appService.chatService.loadMoreMessagesForChannel(channelId)
