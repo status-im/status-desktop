@@ -25,17 +25,17 @@ method init*[T](self: Controller[T]) =
 method getWalletAccounts*[T](self: Controller[T]): seq[wallet_account_service.WalletAccountDto] =
   return self.walletAccountService.getWalletAccounts()
 
-method generateNewAccount*[T](self: Controller[T], password: string, accountName: string, color: string) =
-  self.walletAccountService.generateNewAccount(password, accountName, color)
+method generateNewAccount*[T](self: Controller[T], password: string, accountName: string, color: string): string =
+  return self.walletAccountService.generateNewAccount(password, accountName, color)
 
-method addAccountsFromPrivateKey*[T](self: Controller[T], privateKey: string, password: string, accountName: string, color: string) =
-  self.walletAccountService.addAccountsFromPrivateKey(privateKey, password, accountName, color)
+method addAccountsFromPrivateKey*[T](self: Controller[T], privateKey: string, password: string, accountName: string, color: string): string =
+  return self.walletAccountService.addAccountsFromPrivateKey(privateKey, password, accountName, color)
 
-method addAccountsFromSeed*[T](self: Controller[T], seedPhrase: string, password: string, accountName: string, color: string) =
-  self.walletAccountService.addAccountsFromSeed(seedPhrase, password, accountName, color)
+method addAccountsFromSeed*[T](self: Controller[T], seedPhrase: string, password: string, accountName: string, color: string): string =
+  return self.walletAccountService.addAccountsFromSeed(seedPhrase, password, accountName, color)
 
-method addWatchOnlyAccount*[T](self: Controller[T], address: string, accountName: string, color: string) =
-  self.walletAccountService.addWatchOnlyAccount(address, accountName, color)
+method addWatchOnlyAccount*[T](self: Controller[T], address: string, accountName: string, color: string): string =
+  return self.walletAccountService.addWatchOnlyAccount(address, accountName, color)
 
 method deleteAccount*[T](self: Controller[T], address: string) =
   self.walletAccountService.deleteAccount(address)
