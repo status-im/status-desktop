@@ -50,41 +50,41 @@ proc `$`*(self: Item): string =
   result &= fmt"badgeIsLetterIdenticon:{self.badgeIsLetterIdenticon}"
   result &= ")"
 
-method itemId*(self: Item): string {.inline.} =
+proc itemId*(self: Item): string =
   return self.itemId
 
-method content*(self: Item): string {.inline.} =
+proc content*(self: Item): string =
   return self.content
 
-method time*(self: Item): string {.inline.} =
+proc time*(self: Item): string =
   return self.time
 
-method titleId*(self: Item): string {.inline.} =
+proc titleId*(self: Item): string =
   return self.titleId
 
-method title*(self: Item): string {.inline.} =
+proc title*(self: Item): string =
   return self.title
 
-method sectionName*(self: Item): string {.inline.} =
+proc sectionName*(self: Item): string =
   return self.sectionName
 
-method image*(self: Item): string {.inline.} =
+proc image*(self: Item): string =
   return self.image
 
-method color*(self: Item): string {.inline.} =
+proc color*(self: Item): string =
   return self.color
 
-method badgePrimaryText*(self: Item): string {.inline.} =
+proc badgePrimaryText*(self: Item): string =
   return self.badgePrimaryText
 
-method badgeSecondaryText*(self: Item): string {.inline.} =
+proc badgeSecondaryText*(self: Item): string =
   return self.badgeSecondaryText
 
-method badgeImage*(self: Item): string {.inline.} =
+proc badgeImage*(self: Item): string =
   return self.badgeImage
 
-method badgeIconColor*(self: Item): string {.inline.} =
+proc badgeIconColor*(self: Item): string =
   return self.badgeIconColor
 
-method badgeIsLetterIdenticon*(self: Item): bool {.inline.} =
+proc badgeIsLetterIdenticon*(self: Item): bool =
   return self.badgeIsLetterIdenticon
