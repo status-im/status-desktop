@@ -54,11 +54,11 @@ proc toImages(jsonObj: JsonNode): Images =
 
   var largeObj: JsonNode
   if(jsonObj.getProp("large", largeObj)):
-    discard jsonObj.getProp("uri", result.large)
+    discard largeObj.getProp("uri", result.large)
 
   var thumbnailObj: JsonNode
   if(jsonObj.getProp("thumbnail", thumbnailObj)):
-    discard jsonObj.getProp("uri", result.thumbnail)
+    discard thumbnailObj.getProp("uri", result.thumbnail)
 
 proc toContactsDto*(jsonObj: JsonNode): ContactsDto =
   result = ContactsDto()
