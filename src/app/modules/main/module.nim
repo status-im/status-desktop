@@ -14,6 +14,7 @@ import app_search/module as app_search_module
 import stickers/module as stickers_module
 import activity_center/module as activity_center_module
 import communities/module as communities_module
+import node_section/module as node_section_module
 
 import ../../../app_service/service/keychain/service as keychain_service
 import ../../../app_service/service/chat/service as chat_service
@@ -36,6 +37,7 @@ import ../../../app_service/service/privacy/service as privacy_service
 import ../../../app_service/service/stickers/service as stickers_service
 import ../../../app_service/service/activity_center/service as activity_center_service
 import ../../../app_service/service/saved_address/service as saved_address_service
+import ../../../app_service/service/node/service as node_service
 import ../../../app_service/service/node_configuration/service_interface as node_configuration_service
 import ../../../app_service/service/devices/service as devices_service
 import ../../../app_service/service/mailservers/service as mailservers_service
@@ -59,6 +61,7 @@ type
     activityCenterModule: activity_center_module.AccessInterface
     communitiesModule: communities_module.AccessInterface
     appSearchModule: app_search_module.AccessInterface
+    nodeSectionModule: node_section_module.AccessInterface
     moduleLoaded: bool
 
 proc newModule*[T](
@@ -87,7 +90,8 @@ proc newModule*[T](
   savedAddressService: saved_address_service.ServiceInterface,
   nodeConfigurationService: node_configuration_service.ServiceInterface,
   devicesService: devices_service.Service,
-  mailserversService: mailservers_service.Service
+  mailserversService: mailservers_service.Service,
+  nodeService: node_service.Service
   ): Module[T] =
   result = Module[T]()
   result.delegate = delegate
@@ -125,6 +129,7 @@ proc newModule*[T](
   result.communitiesModule = communities_module.newModule(result, events, communityService)
   result.appSearchModule = app_search_module.newModule(result, events, contactsService, chatService, communityService, 
   messageService)
+  result.nodeSectionModule = node_section_module.newModule(result, events, settingsService, nodeService, nodeConfigurationService)
 
 method delete*[T](self: Module[T]) =
   self.chatSectionModule.delete
@@ -138,6 +143,7 @@ method delete*[T](self: Module[T]) =
   self.walletSectionModule.delete
   self.browserSectionModule.delete
   self.appSearchModule.delete
+  self.nodeSectionModule.delete
   self.view.delete
   self.viewVariant.delete
   self.controller.delete
@@ -316,6 +322,7 @@ method load*[T](
   self.activityCenterModule.load()
   self.communitiesModule.load()
   self.appSearchModule.load()
+  self.nodeSectionModule.load()
 
   # Set active section on app start
   self.setActiveSection(activeSection)
@@ -335,6 +342,9 @@ proc checkIfModuleDidLoad [T](self: Module[T]) =
     return
 
   if(not self.browserSectionModule.isLoaded()):
+    return
+
+  if(not self.nodeSectionModule.isLoaded()):
     return
 
   if(not self.profileSectionModule.isLoaded()):
@@ -380,6 +390,9 @@ method browserSectionDidLoad*[T](self: Module[T]) =
   self.checkIfModuleDidLoad()
 
 proc profileSectionDidLoad*[T](self: Module[T]) =
+  self.checkIfModuleDidLoad()
+
+method nodeSectionDidLoad*[T](self: Module[T]) =
   self.checkIfModuleDidLoad()
 
 method viewDidLoad*[T](self: Module[T]) =

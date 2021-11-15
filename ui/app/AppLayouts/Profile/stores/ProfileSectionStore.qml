@@ -265,13 +265,11 @@ QtObject {
     }
 
     function setBloomLevel(mode) {
-        // Not Refactored Yet
-//        nodeModelInst.setBloomLevel(mode)
+        nodeModelInst.setBloomLevel(mode)
     }
 
     function setWakuV2LightClient(mode) {
-        // Not Refactored Yet
-//        nodeModelInst.setWakuV2LightClient(mode)
+        nodeModelInst.setWakuV2LightClient(mode)
     }
 
     function getCurrentVersion() {

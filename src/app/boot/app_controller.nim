@@ -17,6 +17,7 @@ import ../../app_service/service/bookmarks/service as bookmark_service
 import ../../app_service/service/dapp_permissions/service as dapp_permissions_service
 import ../../app_service/service/privacy/service as privacy_service
 import ../../app_service/service/provider/service as provider_service
+import ../../app_service/service/node/service as node_service
 import ../../app_service/service/profile/service as profile_service
 import ../../app_service/service/settings/service as settings_service
 import ../../app_service/service/stickers/service as stickers_service
@@ -39,6 +40,7 @@ import ../core/[main]
 type 
   AppController* = ref object of RootObj 
     statusFoundation: StatusFoundation
+    
     # Global
     localAppSettingsVariant: QVariant
     localAccountSettingsVariant: QVariant
@@ -75,6 +77,7 @@ type
     savedAddressService: saved_address_service.Service
     devicesService: devices_service.Service
     mailserversService: mailservers_service.Service
+    nodeService: node_service.Service
 
     # Modules
     startupModule: startup_module.AccessInterface
@@ -156,6 +159,8 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result.devicesService = devices_service.newService(statusFoundation.status.events, result.settingsService)
   result.mailserversService = mailservers_service.newService(statusFoundation.status.events, statusFoundation.marathon,
   result.settingsService, result.nodeConfigurationService, statusFoundation.fleetConfiguration)
+  result.nodeService = node_service.newService(statusFoundation.status.events, statusFoundation.threadpool, 
+  result.settingsService)
 
   # Modules
   result.startupModule = startup_module.newModule[AppController](
@@ -191,7 +196,8 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
     result.savedAddressService,
     result.nodeConfigurationService,
     result.devicesService,
-    result.mailserversService
+    result.mailserversService,
+    result.nodeService
   )
 
   # Do connections
@@ -226,6 +232,7 @@ proc delete*(self: AppController) =
   self.dappPermissionsService.delete
   self.providerService.delete
   self.nodeConfigurationService.delete
+  self.nodeService.delete
   self.settingsService.delete
   self.stickersService.delete
   self.savedAddressService.delete

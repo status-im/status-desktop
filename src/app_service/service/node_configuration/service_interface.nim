@@ -52,3 +52,9 @@ method getDebugLevel*(self: ServiceInterface): string {.base.} =
 
 method setDebugLevel*(self: ServiceInterface, logLevel: LogLevel): bool {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method isV2LightMode*(self: ServiceInterface): bool {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method isFullNode*(self: ServiceInterface): bool {.base.} =
+  raise newException(ValueError, "No implementation available")
