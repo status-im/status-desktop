@@ -363,7 +363,7 @@ ScrollView {
                     btnText: qsTrId("light-node")
                     onToggled: {
                         if (!root.store.isWakuV2LightClient) {
-                            openPopup(wakuV2ModeConfirmationDialogComponent, {light: true})
+                            openPopup(wakuV2ModeConfirmationDialogComponent, {mode: true})
                         } else {
                             btnWakuV2Light.click()
                         }
@@ -378,7 +378,7 @@ ScrollView {
                     btnText: qsTrId("full-node")
                     onToggled: {
                         if (root.store.isWakuV2LightClient) {
-                            openPopup(wakuV2ModeConfirmationDialogComponent, {light: false})
+                            openPopup(wakuV2ModeConfirmationDialogComponent, {mode: false})
                         } else {
                             btnWakuV2Full.click()
                         }
