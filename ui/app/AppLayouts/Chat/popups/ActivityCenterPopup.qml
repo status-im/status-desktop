@@ -109,7 +109,7 @@ Popup {
             // TODO remove this once it is handled by the activity center
 //            Repeater {
 //                id: contactList
-//                model: activityCenter.store.profileModelInst.contacts.contactRequests
+//                model: activityCenter.store.contactRequests
 
 //                delegate: ContactRequest {
 //                    visible: !hideReadNotifications &&

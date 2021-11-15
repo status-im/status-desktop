@@ -83,7 +83,7 @@ Item {
             anchors.top: addNewContact.bottom
             anchors.topMargin: Style.current.bigPadding
             width: parent.width
-            visible: root.store.blockedContacts.rowCount() > 0
+            visible: root.store.blockedContacts.count > 0
             height: 64
 
             StatusRoundButton {
@@ -108,7 +108,7 @@ Item {
 
             StyledText {
                 id: numberOfBlockedContacts
-                text: root.store.blockedContacts.rowCount()
+                text: root.store.blockedContacts.count
                 color: Style.current.darkGrey
                 anchors.right: parent.right
                 anchors.rightMargin: Style.current.padding
@@ -281,7 +281,7 @@ Item {
 
         NoFriendsRectangle {
             id: element
-            visible: root.store.addedContacts.rowCount() === 0
+            visible: root.store.addedContacts.count === 0
             //% "You don’t have any contacts yet"
             text: qsTrId("you-don-t-have-any-contacts-yet")
             width: parent.width

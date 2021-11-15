@@ -13,15 +13,22 @@ QtObject {
     property var walletModelInst: walletModel
     property var profileModelInst: profileModel
     property var profileModuleInst: profileModule
+
     property var userProfileInst: userProfile
 
     property bool isDebugEnabled: profileSectionModule.isDebugEnabled
 
-    property var activeCommunity: chatsModelInst.communities.activeCommunity
-
     property var accounts: walletSectionAccounts.model
     property var currentAccount: walletSectionCurrent
     property var currentCurrency: walletSection.currentCurrency
+
+    property var contactsModuleInst: contactsModule
+
+    property var activeCommunity: chatsModelInst.communities.activeCommunity
+
+    property var contactRequests: contactsModuleInst.model.contactRequests
+    property var addedContacts: contactsModuleInst.model.addedContacts
+    property var allContacts: contactsModuleInst.model.list
 
     function copyToClipboard(text) {
         chatsModelInst.copyToClipboard(text);

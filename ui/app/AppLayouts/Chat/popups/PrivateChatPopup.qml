@@ -28,7 +28,7 @@ ModalPopup {
         contactFieldAndList.pubKey = ""
         contactFieldAndList.ensUsername = ""
         contactFieldAndList.chatKey.forceActiveFocus(Qt.MouseFocusReason)
-        contactFieldAndList.existingContacts.visible = popup.store.profileModelInst.contacts.list.hasAddedContacts()
+        contactFieldAndList.existingContacts.visible = popup.store.allContacts.hasAddedContacts()
         contactFieldAndList.noContactsRect.visible = !contactFieldAndList.existingContacts.visible
     }
 

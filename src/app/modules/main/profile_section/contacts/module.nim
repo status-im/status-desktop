@@ -39,6 +39,9 @@ method delete*[T](self: Module[T]) =
 method setContactList*[T](self: Module[T], contacts: seq[ContactsDto]) =
   self.view.setContactList(contacts)
 
+method updateContactList*[T](self: Module[T], contacts: seq[ContactsDto]) =
+  self.view.updateContactList(contacts)
+
 method load*[T](self: Module[T]) =
   self.controller.init()
   let contacts =  self.controller.getContacts()
@@ -54,25 +57,37 @@ method getContact*[T](self: Module[T], id: string): ContactsDto =
 method generateAlias*[T](self: Module[T], publicKey: string): string =
   self.controller.generateAlias(publicKey)
 
-method addContact*[T](self: Module[T], publicKey: string): void =
+method addContact*[T](self: Module[T], publicKey: string) =
   self.controller.addContact(publicKey)
 
-method rejectContactRequest*[T](self: Module[T], publicKey: string): void =
+method contactAdded*[T](self: Module[T], contact: ContactsDto) =
+  self.view.contactAdded(contact)
+
+method contactBlocked*[T](self: Module[T], contact: ContactsDto) =
+  self.view.contactBlocked(contact)
+
+method contactUnblocked*[T](self: Module[T], contact: ContactsDto) =
+  self.view.contactUnblocked(contact)
+
+method contactRemoved*[T](self: Module[T], contact: ContactsDto) =
+  self.view.contactRemoved(contact)
+
+method rejectContactRequest*[T](self: Module[T], publicKey: string) =
   self.controller.rejectContactRequest(publicKey)
 
-method unblockContact*[T](self: Module[T], publicKey: string): void =
+method unblockContact*[T](self: Module[T], publicKey: string) =
   self.controller.unblockContact(publicKey)
 
-method blockContact*[T](self: Module[T], publicKey: string): void =
+method blockContact*[T](self: Module[T], publicKey: string) =
   self.controller.blockContact(publicKey)
 
-method removeContact*[T](self: Module[T], publicKey: string): void =
+method removeContact*[T](self: Module[T], publicKey: string) =
   self.controller.removeContact(publicKey)
 
 method changeContactNickname*[T](self: Module[T], publicKey: string, nickname: string) =
   self.controller.changeContactNickname(publicKey, nickname)
 
-method lookupContact*[T](self: Module[T], value: string): void =
+method lookupContact*[T](self: Module[T], value: string) =
   self.controller.lookupContact(value)
 
 method contactLookedUp*[T](self: Module[T], id: string): void =
