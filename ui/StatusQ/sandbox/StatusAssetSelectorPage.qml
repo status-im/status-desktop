@@ -13,22 +13,26 @@ Column {
     spacing: 8
 
     StatusAssetSelector {
+        getCurrencyBalanceString: function (currencyBalance) {
+            return currencyBalance.toFixed(2) + " USD"
+        }
+        tokenAssetSourceFn: function (symbol) {
+            return "../../assets/img/icons/snt.svg"
+        }
         assets: ListModel {
             ListElement {
                 address: "0x1234"
                 name: "Status Network Token"
-                value: "20"
+                balance: "20"
                 symbol: "SNT"
-                fiatBalance: "9992.01"
-                fiatBalanceDisplay: "9992.01"
+                currencyBalance: 9992.01
             }
             ListElement {
                 address: "0x1234"
                 name: "DAI Token"
-                value: "20"
+                balance: "15"
                 symbol: "DAI"
-                fiatBalance: "20"
-                fiatBalanceDisplay: "20"
+                currencyBalance: 20.00001
             }
         }
     }

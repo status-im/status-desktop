@@ -12,17 +12,12 @@ Item {
     id: root
     property var assets
     property var selectedAsset
+    property string defaultToken: ""
     property var tokenAssetSourceFn: function (symbol) {
         return ""
     }
-    property var assetGetterFn: function (index, field) {
-        // This is merely to make the component work with nim model data
-        // as well as static QML ListModel data
-        if (typeof assets.get === "function") {
-            return assets.get(index)[field]
-        }
-        return assets.rowData(index, field)
-    }
+    // Define this in the usage to get balance in currency selected by user
+    property var getCurrencyBalanceString: function (currencyBalance) { return "" }
     implicitWidth: 86
     implicitHeight: 32
 
@@ -35,20 +30,6 @@ Item {
         if (selectedAsset && selectedAsset.symbol) {
             iconImg.image.source = tokenAssetSourceFn(selectedAsset.symbol.toUpperCase())
             selectedTextField.text = selectedAsset.symbol.toUpperCase()
-        }
-    }
-
-    onAssetsChanged: {
-        if (!assets) {
-            return
-        }
-        selectedAsset = {
-            name: assetGetterFn(0, "name"),
-            symbol: assetGetterFn(0, "symbol"),
-            value: assetGetterFn(0, "value"),
-            fiatBalanceDisplay: assetGetterFn(0, "fiatBalanceDisplay"),
-            address: assetGetterFn(0, "address"),
-            fiatBalance: assetGetterFn(0, "fiatBalance")
         }
     }
 
@@ -71,6 +52,11 @@ Item {
                 width: 24
                 height: 24
                 anchors.verticalCenter: parent.verticalCenter
+                image.onStatusChanged: {
+                    if (iconImg.image.status === Image.Error) {
+                        iconImg.image.source = defaultToken
+                    }
+                }
             }
             StatusBaseText {
                 id: selectedTextField
@@ -101,6 +87,11 @@ Item {
                 anchors.leftMargin: 16
                 anchors.verticalCenter: parent.verticalCenter
                 image.source: root.tokenAssetSourceFn(symbol.toUpperCase())
+                image.onStatusChanged: {
+                    if (iconImg.image.status === Image.Error) {
+                        iconImg.image.source = defaultToken
+                    }
+                }
             }
             Column {
                 anchors.left: iconImg.right
@@ -125,23 +116,28 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
                 StatusBaseText {
                     font.pixelSize: 15
-                    text: parseFloat(value).toFixed(4) + " " + symbol
+                    text: parseFloat(balance).toFixed(4) + " " + symbol
                 }
                 StatusBaseText {
                     font.pixelSize: 15
                     anchors.right: parent.right
-                    text: fiatBalanceDisplay.toUpperCase()
+                    text: getCurrencyBalanceString(currencyBalance)
                     color: Theme.palette.baseColor1
                 }
             }
             background: Rectangle {
                 color: itemContainer.highlighted ? Theme.palette.statusSelect.menuItemHoverBackgroundColor : Theme.palette.statusSelect.menuItemBackgroundColor
             }
+            Component.onCompleted: {
+                if(index === 0 ) {
+                    selectedAsset = { name: name, symbol: symbol, address: address, balance: balance, currencyBalance: currencyBalance}
+                }
+            }
             MouseArea {
                 cursorShape: Qt.PointingHandCursor
                 anchors.fill: itemContainer
                 onClicked: {
-                    root.selectedAsset = { address, name, value, symbol, fiatBalance, fiatBalanceDisplay }
+                    selectedAsset = {name: name, symbol: symbol, address: address, balance: balance, currencyBalance: currencyBalance}
                     select.selectMenu.close()
                 }
             }
