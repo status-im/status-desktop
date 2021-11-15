@@ -13,6 +13,8 @@ include ./private_interfaces/module_chat_section_delegate_interface
 include ./private_interfaces/module_app_search_delegate_interface
 include ./private_interfaces/module_browser_section_delegate_interface
 include ./private_interfaces/module_communities_section_delegate_interface
+include ./private_interfaces/module_node_section_delegate_interface
+
 
 # This way (using concepts) is used only for the modules managed by AppController
 type

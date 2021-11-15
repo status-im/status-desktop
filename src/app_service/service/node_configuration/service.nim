@@ -153,7 +153,7 @@ method setBloomLevel*(self: Service, bloomLevel: string): bool =
 method setFleet*(self: Service, fleet: string): bool =
   if(not self.settingsService.saveFleet(fleet)):
     error "error saving fleet ", methodName="setFleet"
-    return
+    return false
 
   let fleetType = parseEnum[Fleet](fleet)
   var newConfiguration = self.configuration
@@ -186,3 +186,9 @@ method setDebugLevel*(self: Service, logLevel: LogLevel): bool =
   var newConfiguration = self.configuration
   newConfiguration.LogLevel = $logLevel
   return self.saveConfiguration(newConfiguration)
+
+method isV2LightMode*(self: Service): bool =
+   return self.configuration.WakuV2Config.LightClient
+
+method isFullNode*(self: Service): bool =
+   return self.configuration.WakuConfig.FullNode

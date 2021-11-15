@@ -10,7 +10,11 @@ import shared 1.0
 import shared.status 1.0
 import shared.controls 1.0
 
+import "../stores"
+
 Column {
+    property RootStore store
+
     spacing: 0
     StatusSectionHeadline {
         text: qsTr("Bandwidth")
@@ -33,8 +37,7 @@ Column {
             // TODO: replace with StatusInput from StatusQ at some point
             Input {
                 id: uploadRate
-                // Not Refactored Yet
-//                text: Math.round(parseInt(nodeModel.uploadRate, 10) / 1024 * 100) / 100
+                text: Math.round(parseInt(store.nodeModelInst.uploadRate, 10) / 1024 * 100) / 100
                 width: parent.width
                 readOnly: true
                 customHeight: 44
@@ -64,8 +67,7 @@ Column {
             // TODO: replace with StatusInput from StatusQ at some point
             Input {
                 id: downloadRate
-                // Not Refactored Yet
-//                text: Math.round(parseInt(nodeModel.downloadRate, 10) / 1024 * 100) / 100
+                text: Math.round(parseInt(store.nodeModelInst.downloadRate, 10) / 1024 * 100) / 100
                 width: parent.width
                 readOnly: true
                 customHeight: 44

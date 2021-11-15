@@ -5,7 +5,7 @@ import utils 1.0
 QtObject {
     id: root
 
-//    property var nodeModelInst: nodeModel
+    property var nodeModelInst: nodeModel
 //    property var profileModelInst: profileModel
 
     function getMailserverName(activeMailServer) {
@@ -15,8 +15,7 @@ QtObject {
     }
 
     function onSend(text) {
-        // Not Refactored Yet
-//        nodeModelInst.onSend(text)
+        nodeModelInst.onSend(text)
     }
 }
 
