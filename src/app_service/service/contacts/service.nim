@@ -21,8 +21,12 @@ type
   LookupResolvedArgs* = ref object of Args
     id*: string
 
+  ContactUpdatedArgs* = ref object of Args
+    id*: string
+
 # Signals which may be emitted by this service:
 const SIGNAL_CONTACT_LOOKED_UP* = "SIGNAL_CONTACT_LOOKED_UP" 
+const SIGNAL_CONTACT_UPDATED* = "new-contactUpdated" #Once we are done with refactoring we should remove "new-" from all signals
 
 QtObject:
   type Service* = ref object of QObject
@@ -78,33 +82,30 @@ QtObject:
 
     return self.contacts[id]
 
+  proc generateAlias*(self: Service, publicKey: string): string =
+    return status_accounts.generateAlias(publicKey).result.getStr
+
+  method generateIdenticon*(self: Service, publicKey: string): string =
+    return status_accounts.generateIdenticon(publicKey).result.getStr
+
   proc getOrCreateContact*(self: Service, id: string): ContactsDto =
     result = self.getContactById(id)
     if result.id == "":
-      let alias = $status_accounts.generateAlias(id)
+      let alias = self.generateAlias(id)
+      let identicon = self.generateIdenticon(id)
       result = ContactsDto(
         id: id,
-        # username: alias,
-        # localNickname: "",
-        identicon: $status_accounts.generateIdenticon(id),
+        identicon: identicon,
         alias: alias,
-        # ensName: "",
         ensVerified: false,
-        # appearance: 0,
         added: false,
         blocked: false,
         hasAddedUs: false
       )
 
   proc saveContact(self: Service, contact: ContactsDto) = 
-    var thumbnail = ""
-    var largeImage = ""
-    # if contact.identityImage != nil:
-      # thumbnail = contact.identityImage.thumbnail
-      # largeImage = contact.identityImage.large    
-
-    # status_contacts.saveContact(contact.id, contact.ensVerified, contact.ensName, contact.alias, contact.identicon, thumbnail, largeImage, contact.added, contact.blocked, contact.hasAddedUs, contact.localNickname)
-    status_contacts.saveContact(contact.id, contact.ensVerified, "", contact.alias, contact.identicon, thumbnail, largeImage, contact.added, contact.blocked, contact.hasAddedUs, "")
+    status_contacts.saveContact(contact.id, contact.ensVerified, contact.name, contact.alias, contact.identicon, 
+    contact.image.thumbnail, contact.image.large, contact.added, contact.blocked, contact.hasAddedUs, contact.localNickname)
 
   proc addContact*(self: Service, publicKey: string) =
     var contact = self.getOrCreateContact(publicKey)
@@ -145,21 +146,12 @@ QtObject:
     self.events.emit("contactRemoved", Args())
     # status_contacts.rejectContactRequest(publicKey)
 
-  proc changeContactNickname*(self: Service, accountKeyUID: string, publicKey: string, nicknameToSet: string) =
-    # status_contacts.setNickName(publicKey, nicknameToSet, accountKeyUID)
+  proc changeContactNickname*(self: Service, publicKey: string, nickname: string) =
     var contact = self.getOrCreateContact(publicKey)
-    # let nickname =
-    #   if (nicknameToSet == ""):
-    #     contact.localNickname
-    #   elif (nicknameToSet == DELETE_CONTACT):
-    #     ""
-    #   else:
-    #     nicknameToSet
-
-    # contact.localNickname = nickname
+    contact.localNickname = nickname
     self.saveContact(contact)
-    self.events.emit("contactAdded", Args())
-    # sendContactUpdate(contact.id, accountKeyUID)
+    let data = ContactUpdatedArgs(id: contact.id)
+    self.events.emit(SIGNAL_CONTACT_UPDATED, data)
 
   proc unblockContact*(self: Service, publicKey: string) =
     # status_contacts.unblockContact(publicKey)

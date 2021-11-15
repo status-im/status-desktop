@@ -19,7 +19,6 @@ QtObject:
       model: Model
       modelVariant: QVariant
       contactToAdd*: ContactsDto
-      accountKeyUID*: string
 
   proc delete*(self: View) =
     self.model.delete
@@ -115,10 +114,7 @@ QtObject:
       self.addContact(pubkey.getStr)
 
   proc changeContactNickname*(self: View, publicKey: string, nickname: string) {.slot.} =
-    var nicknameToSet = nickname
-    if (nicknameToSet == ""):
-      nicknameToSet = DELETE_CONTACT
-    self.delegate.changeContactNickname(publicKey, nicknameToSet, self.accountKeyUID)
+    self.delegate.changeContactNickname(publicKey, nickname)
 
   proc unblockContact*(self: View, publicKey: string) {.slot.} =
     self.delegate.unblockContact(publicKey)

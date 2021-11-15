@@ -53,6 +53,18 @@ method init*[T](self: Controller[T]) =
     let args = LookupResolvedArgs(e)
     self.delegate.contactLookedUp(args.id)
 
+  self.events.on(SIGNAL_CONTACT_UPDATED) do(e: Args):
+    # I left this as part it was.
+    let contacts = self.getContacts()
+    self.delegate.setContactList(contacts)
+
+    # Since we have the exact contact which has been updated, then we need to improve the way of updating the view
+    # and instead setting the whole list for every change we should update only the appropriate item in the view.
+    # Example:
+    # let args = ContactUpdatedArgs(e)
+    # let contactDto = self.contactsService.getContactById(args.id)
+    # self.delegate.onContactUpdated(contactDto)
+
 method getContacts*[T](self: Controller[T]): seq[ContactsDto] =
   return self.contactsService.getContacts()
 
@@ -77,8 +89,8 @@ method blockContact*[T](self: Controller[T], publicKey: string): void =
 method removeContact*[T](self: Controller[T], publicKey: string): void =
   self.contactsService.removeContact(publicKey)
 
-method changeContactNickname*[T](self: Controller[T], accountKeyUID: string, publicKey: string, nicknameToSet: string): void =
-  self.contactsService.changeContactNickname(accountKeyUID, publicKey, nicknameToSet)
+method changeContactNickname*[T](self: Controller[T], publicKey: string, nickname: string) =
+  self.contactsService.changeContactNickname(publicKey, nickname)
 
 method lookupContact*[T](self: Controller[T], value: string): void =
   self.contactsService.lookupContact(value)
