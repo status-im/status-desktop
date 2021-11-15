@@ -446,3 +446,6 @@ method saveAutoMessageEnabled*(self: Service, value: bool): bool =
 
 method autoMessageEnabled*(self: Service): bool =
   return self.settings.autoMessageEnabled
+
+method getWakuBloomFilterMode*(self: Service): bool =
+  return self.settings.wakuBloomFilterMode

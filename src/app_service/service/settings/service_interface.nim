@@ -256,3 +256,6 @@ method saveAutoMessageEnabled*(self: ServiceInterface, value: bool): bool {.base
 
 method autoMessageEnabled*(self: ServiceInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
+  
+method getWakuBloomFilterMode*(self: ServiceInterface): bool {.base.} =
+  raise newException(ValueError, "No implementation available")

@@ -18,14 +18,16 @@ Item {
     Layout.fillHeight: true
     Layout.fillWidth: true
 
-    property var store: RootStore {}
+    property RootStore store: RootStore {}
 
     ColumnLayout {
         id: rpcColumn
         spacing: 0
         anchors.fill: parent
 
-        RateView {}
+        RateView {
+            store: root.store
+        }
 
         RowLayout {
             id: peerContainer2
@@ -44,7 +46,7 @@ Item {
                 id: peerNumber
                 color: Theme.palette.primaryColor1
                 // Not Refactored Yet
-//                text: root.store.nodeModelInst.peerSize
+                text: root.store.nodeModelInst.peerSize
                 Layout.rightMargin: Style.current.padding
                 Layout.leftMargin: Style.current.padding
                 Layout.fillWidth: true
@@ -68,8 +70,7 @@ Item {
             StatusBaseText {
                 id: bloomPerc
                 color: Theme.palette.primaryColor1
-                // Not Refactored Yet
-//                text: ((root.store.nodeModelInst.bloomBits / 512) * 100).toFixed(2) + "%"
+                text: ((root.store.nodeModelInst.bloomBits / 512) * 100).toFixed(2) + "%"
                 Layout.rightMargin: Style.current.padding
                 Layout.leftMargin: Style.current.padding
                 Layout.fillWidth: true
@@ -122,27 +123,27 @@ Item {
         }
 
         // Not Refactored Yet
-//        Connections {
-//            target: root.store.nodeModelInst
-//            function onLog(logContent) {
-//                // TODO: this is ugly, but there's not even a design for this section
-//                if(logContent.indexOf("mailserver") > 0){
-//                    let lines = mailserverLogTxt.text.split("\n");
-//                    if (lines.length > 10){
-//                        lines.shift();
-//                    }
-//                    lines.push(logContent.trim())
-//                    mailserverLogTxt.text = lines.join("\n")
-//                } else {
-//                    let lines = logsTxt.text.split("\n");
-//                    if (lines.length > 5){
-//                        lines.shift();
-//                    }
-//                    lines.push(logContent.trim())
-//                    logsTxt.text = lines.join("\n")
-//                }
-//            }
-//        }
+        Connections {
+            target: root.store.nodeModelInst
+            function onLog(logContent) {
+                // TODO: this is ugly, but there's not even a design for this section
+                if(logContent.indexOf("mailserver") > 0){
+                    let lines = mailserverLogTxt.text.split("\n");
+                    if (lines.length > 10){
+                        lines.shift();
+                    }
+                    lines.push(logContent.trim())
+                    mailserverLogTxt.text = lines.join("\n")
+                } else {
+                    let lines = logsTxt.text.split("\n");
+                    if (lines.length > 5){
+                        lines.shift();
+                    }
+                    lines.push(logContent.trim())
+                    logsTxt.text = lines.join("\n")
+                }
+            }
+        }
 
         ColumnLayout {
             id: messageContainer
@@ -161,7 +162,7 @@ Item {
                 id: test
                 color: Theme.palette.primaryColor1
                 // Not Refactored Yet
-//                text: root.store.nodeModelInst.lastMessage
+                text: root.store.nodeModelInst.lastMessage
                 Layout.rightMargin: Style.current.padding
                 Layout.leftMargin: Style.current.padding
                 Layout.fillWidth: true
@@ -177,7 +178,7 @@ Item {
             Layout.leftMargin: Style.current.padding
             // TODO: replace with StatusTextArea once it lives in StatusQ.
             // Not Refactored Yet
-//            TextArea { id: callResult; Layout.fillWidth: true; text: nodeModel.callResult; readOnly: true }
+            TextArea { id: callResult; Layout.fillWidth: true; text: root.store.nodeModelInst.callResult; readOnly: true }
         }
 
         RowLayout {
@@ -213,8 +214,7 @@ Item {
                         anchors.right: parent.right
                         anchors.rightMargin: 16
                         onClicked: {
-                            // Not Refactored Yet
-//                            nodeModel.onSend(txtData.text)
+                            root.store.onSend(txtData.text)
                             txtData.text = ""
                         }
                         enabled: txtData.text !== ""
