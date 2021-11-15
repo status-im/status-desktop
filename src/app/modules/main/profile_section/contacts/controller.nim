@@ -79,6 +79,18 @@ method init*[T](self: Controller[T]) =
     var args = ContactNicknameUpdatedArgs(e)
     self.delegate.contactNicknameChanged(args.contactId, args.nickname)
 
+  self.events.on(SIGNAL_CONTACT_UPDATED) do(e: Args):
+    # I left this as part it was.
+    let contacts = self.getContacts()
+    self.delegate.setContactList(contacts)
+
+    # Since we have the exact contact which has been updated, then we need to improve the way of updating the view
+    # and instead setting the whole list for every change we should update only the appropriate item in the view.
+    # Example:
+    # let args = ContactUpdatedArgs(e)
+    # let contactDto = self.contactsService.getContactById(args.id)
+    # self.delegate.onContactUpdated(contactDto)
+
 method getContacts*[T](self: Controller[T]): seq[ContactsDto] =
   return self.contactsService.getContacts()
 
