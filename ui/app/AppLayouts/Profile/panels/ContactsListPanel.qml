@@ -11,6 +11,7 @@ import "."
 ListView {
     id: contactList
     property var contacts
+    property var store
     property string searchStr: ""
     property string searchString: ""
     property string lowerCaseSearchString: searchString.toLowerCase()
@@ -40,7 +41,7 @@ ListView {
         isContact: model.isContact
         isBlocked: model.isBlocked
         profileClick: function (showFooter, userName, fromAuthor, identicon, textParam, nickName) {
-            var popup = profilePopupComponent.createObject(contactList);
+            var popup = profilePopupComponent.createObject(contactList, {store: contactList.store});
             popup.openPopup(showFooter, userName, fromAuthor, identicon, textParam, nickName);
         }
         onClicked: contactList.contactClicked(model)

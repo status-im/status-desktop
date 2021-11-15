@@ -103,13 +103,14 @@ Popup {
 
             property Component profilePopupComponent: ProfilePopup {
                 id: profilePopup
+                store: activityCenter.store
                 onClosed: destroy()
             }
 
             // TODO remove this once it is handled by the activity center
 //            Repeater {
 //                id: contactList
-//                model: activityCenter.store.profileModelInst.contacts.contactRequests
+//                model: activityCenter.store.contactRequests
 
 //                delegate: ContactRequest {
 //                    visible: !hideReadNotifications &&

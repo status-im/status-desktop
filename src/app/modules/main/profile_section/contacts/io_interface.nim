@@ -13,6 +13,9 @@ method load*(self: AccessInterface) {.base.} =
 method setContactList*(self: AccessInterface, contacts: seq[ContactsDto]) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method updateContactList*(self: AccessInterface, contacts: seq[ContactsDto]) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method isLoaded*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -22,28 +25,43 @@ method getContact*(self: AccessInterface, id: string): ContactsDto {.base.} =
 method generateAlias*(self: AccessInterface, publicKey: string): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method addContact*(self: AccessInterface, publicKey: string): void {.base.} =
+method addContact*(self: AccessInterface, publicKey: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method rejectContactRequest*(self: AccessInterface, publicKey: string): void {.base.} =
+method contactAdded*(self: AccessInterface, contact: ContactsDto) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method unblockContact*(self: AccessInterface, publicKey: string): void {.base.} =
+method contactBlocked*(self: AccessInterface, publicKey: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method blockContact*(self: AccessInterface, publicKey: string): void {.base.} =
+method contactUnblocked*(self: AccessInterface, publicKey: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method removeContact*(self: AccessInterface, publicKey: string): void {.base.} =
+method contactRemoved*(self: AccessInterface, publicKey: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method changeContactNickname*(self: AccessInterface, accountKeyUID: string, publicKey: string, nicknameToSet: string): void {.base.} =
+method contactNicknameChanged*(self: AccessInterface, publicKey: string, nickname: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method lookupContact*(self: AccessInterface, value: string): void {.base.} =
+method rejectContactRequest*(self: AccessInterface, publicKey: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method contactLookedUp*(self: AccessInterface, id: string): void {.base.} =
+method unblockContact*(self: AccessInterface, publicKey: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method blockContact*(self: AccessInterface, publicKey: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method removeContact*(self: AccessInterface, publicKey: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method changeContactNickname*(self: AccessInterface, publicKey: string, nickname: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method lookupContact*(self: AccessInterface, value: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method contactLookedUp*(self: AccessInterface, id: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 type

@@ -1,5 +1,5 @@
 import NimQml, sequtils, strutils, sugar, os, json, chronicles
-import views/[mailservers_list, ens_manager, contacts, devices, mailservers, mnemonic, network, fleets, profile_info, device_list, profile_picture, muted_chats]
+import views/[mailservers_list, ens_manager, devices, mailservers, mnemonic, network, fleets, profile_info, device_list, profile_picture, muted_chats]
 import chronicles
 import qrcode/qrcode
 
@@ -7,7 +7,6 @@ import qrcode/qrcode
 import status/statusgo_backend/eth as eth
 import status/statusgo_backend/accounts as status_accounts
 import status/profile as status_profile
-import status/contacts as status_contacts
 import status/status
 import status/ens as status_ens
 import status/chat/chat
@@ -28,7 +27,6 @@ QtObject:
     profile*: ProfileInfoView
     profilePicture*: ProfilePictureView
     mutedChats*: MutedChatsView
-    contacts*: ContactsView
     devices*: DevicesView
     mailservers*: MailserversView
     mnemonic*: MnemonicView
@@ -43,7 +41,6 @@ QtObject:
     self.QObject.setup
 
   proc delete*(self: ProfileView) =
-    if not self.contacts.isNil: self.contacts.delete
     if not self.devices.isNil: self.devices.delete
     if not self.ens.isNil: self.ens.delete
     if not self.profilePicture.isNil: self.profilePicture.delete
@@ -62,7 +59,6 @@ QtObject:
     result.profile = newProfileInfoView()
     result.profilePicture = newProfilePictureView(status, result.profile)
     result.mutedChats = newMutedChatsView(status)
-    result.contacts = newContactsView(status, appService)
     result.devices = newDevicesView(status)
     result.network = newNetworkView(status)
     result.mnemonic = newMnemonicView(status)
@@ -83,7 +79,6 @@ QtObject:
 
   proc setNewProfile*(self: ProfileView, profile: Profile) =
     self.profile.setProfile(profile)
-    self.contacts.accountKeyUID = profile.address
     self.profileChanged()
 
   QtProperty[QVariant] profile:
@@ -141,13 +136,6 @@ QtObject:
     # TODO cleanup chats after activating this
 
   proc contactsChanged*(self: ProfileView) {.signal.}
-
-  proc getContacts*(self: ProfileView): QVariant {.slot.} =
-    newQVariant(self.contacts)
-
-  QtProperty[QVariant] contacts:
-    read = getContacts
-    notify = contactsChanged
 
   proc getDevices*(self: ProfileView): QVariant {.slot.} =
     newQVariant(self.devices)

@@ -51,19 +51,19 @@ Item {
             return userProfile.thumbnailImage
         }
 
-        const index = profileModel.contacts.list.getContactIndexByPubkey(pubkey)
+        const index = appMain.rootStore.contactsModuleInst.model.list.getContactIndexByPubkey(pubkey)
         if (index === -1) {
             return
         }
 
         if (localAccountSensitiveSettings.onlyShowContactsProfilePics) {
-            const isContact = profileModel.contacts.list.rowData(index, "isContact")
+            const isContact = appMain.rootStore.contactsModuleInst.model.list.rowData(index, "isContact")
             if (isContact === "false") {
                 return
             }
         }
 
-        return profileModel.contacts.list.rowData(index, useLargeImage ? "largeImage" : "thumbnailImage")
+        return appMain.rootStore.contactsModuleInst.model.list.rowData(index, useLargeImage ? "largeImage" : "thumbnailImage")
     }
 
     function openPopup(popupComponent, params = {}) {
@@ -73,23 +73,23 @@ Item {
     }
 
     function getContactListObject(dataModel) {
-        const nbContacts = profileModel.contacts.list.rowCount()
+        const nbContacts = appMain.rootStore.contactsModuleInst.model.list.rowCount()
         const contacts = []
         let contact
         for (let i = 0; i < nbContacts; i++) {
-            if (profileModel.contacts.list.rowData(i, "isBlocked") === "true") {
+            if (appMain.rootStore.contactsModuleInst.model.list.rowData(i, "isBlocked") === "true") {
                 continue
             }
 
             contact = {
-                name: profileModel.contacts.list.rowData(i, "name"),
-                localNickname: profileModel.contacts.list.rowData(i, "localNickname"),
-                pubKey: profileModel.contacts.list.rowData(i, "pubKey"),
-                address: profileModel.contacts.list.rowData(i, "address"),
-                identicon: profileModel.contacts.list.rowData(i, "identicon"),
-                thumbnailImage: profileModel.contacts.list.rowData(i, "thumbnailImage"),
+                name: appMain.rootStore.contactsModuleInst.model.list.rowData(i, "name"),
+                localNickname: appMain.rootStore.contactsModuleInst.model.list.rowData(i, "localNickname"),
+                pubKey: appMain.rootStore.contactsModuleInst.model.list.rowData(i, "pubKey"),
+                address: appMain.rootStore.contactsModuleInst.model.list.rowData(i, "address"),
+                identicon: appMain.rootStore.contactsModuleInst.model.list.rowData(i, "identicon"),
+                thumbnailImage: appMain.rootStore.contactsModuleInst.model.list.rowData(i, "thumbnailImage"),
                 isUser: false,
-                isContact: profileModel.contacts.list.rowData(i, "isContact") !== "false"
+                isContact: appMain.rootStore.contactsModuleInst.model.list.rowData(i, "isContact") !== "false"
             }
 
             contacts.push(contact)
@@ -102,7 +102,7 @@ Item {
 
     function getUserNickname(pubKey) {
         // Get contact nickname
-        const contactList = profileModel.contacts.list
+        const contactList = appMain.rootStore.contactsModuleInst.model.list
         const contactCount = contactList.rowCount()
         for (let i = 0; i < contactCount; i++) {
             if (contactList.rowData(i, 'pubKey') === pubKey) {
@@ -136,6 +136,7 @@ Item {
 
     property Component profilePopupComponent: ProfilePopup {
         id: profilePopup
+        store: rootStore
         onClosed: {
             if(profilePopup.parentPopup){
                 profilePopup.parentPopup.close();
@@ -527,13 +528,22 @@ Item {
         }
 
         Connections {
-            target: profileModel.contacts
+            target: profileModel
+            ignoreUnknownSignals: true
+            enabled: removeMnemonicAfterLogin
+            onInitialized: {
+                mnemonicModule.remove()
+            }
+        }
+
+        Connections {
+            target: appMain.rootStore.contactsModuleInst.model
             onContactRequestAdded: {
                 if (!localAccountSensitiveSettings.notifyOnNewRequests) {
                     return
                 }
 
-                const isContact = profileModel.contacts.isAdded(address)
+                const isContact = appMain.rootStore.contactsModuleInst.model.isAdded(address)
 
                 // Note:
                 // Whole this Connection object should be moved to the nim side.
@@ -575,7 +585,7 @@ Item {
             id: inviteFriendsToCommunityPopup
             InviteFriendsToCommunityPopup {
                 anchors.centerIn: parent
-                hasAddedContacts: appMain.rootStore.profileModelInst.contacts.list.hasAddedContacts()
+                hasAddedContacts: appMain.rootStore.allContacts.hasAddedContacts()
                 onClosed: {
                     destroy()
                 }

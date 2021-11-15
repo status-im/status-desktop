@@ -162,7 +162,8 @@ Item {
 
             Connections {
                 enabled: realChatType === Constants.chatTypeOneToOne
-                target: profileModel.contacts.list
+                // TODO use a store once it is available
+                target: contactsModule.model.list
                 onContactChanged: {
                     if (pubkey === wrapper.chatId) {
                         wrapper.profileImage = appMain.getProfileImage(wrapper.chatId)
