@@ -106,6 +106,8 @@ StatusModal {
         Component {
             id: membersList
             CommunityProfilePopupMembersListPanel {
+                // TODO assign the store on open
+                store: root.store
                 width: stack.width
                 //% "Members"
                 headerTitle: qsTrId("members-label")
@@ -127,7 +129,7 @@ StatusModal {
                 contactListSearch.pubKey: ""
                 contactListSearch.pubKeys: []
                 contactListSearch.ensUsername: ""
-                contactListSearch.existingContacts.visible: root.store.profileModelInst.contacts.list.hasAddedContacts()
+                contactListSearch.existingContacts.visible: root.store.allContacts.hasAddedContacts()
                 contactListSearch.noContactsRect.visible: !contactListSearch.existingContacts.visible
             }
         }

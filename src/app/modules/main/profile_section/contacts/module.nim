@@ -1,7 +1,9 @@
 import NimQml, Tables
 
-import ./io_interface, ./view, ./controller
+#import ./io_interface, ./view, ./controller
+import io_interface, view, controller, model
 import ../../../../core/global_singleton
+#import ../../../../global/global_singleton
 
 import ../../../../../app_service/service/contacts/service as contacts_service
 import ../../../../../app_service/service/contacts/dto/contacts
@@ -37,7 +39,10 @@ method delete*[T](self: Module[T]) =
   self.view.delete
 
 method setContactList*[T](self: Module[T], contacts: seq[ContactsDto]) =
-  self.view.setContactList(contacts)
+  self.view.model().setContactList(contacts)
+
+method updateContactList*[T](self: Module[T], contacts: seq[ContactsDto]) =
+  self.view.model().updateContactList(contacts)
 
 method load*[T](self: Module[T]) =
   self.controller.init()
@@ -54,26 +59,47 @@ method getContact*[T](self: Module[T], id: string): ContactsDto =
 method generateAlias*[T](self: Module[T], publicKey: string): string =
   self.controller.generateAlias(publicKey)
 
-method addContact*[T](self: Module[T], publicKey: string): void =
+method addContact*[T](self: Module[T], publicKey: string) =
   self.controller.addContact(publicKey)
 
-method rejectContactRequest*[T](self: Module[T], publicKey: string): void =
+method contactAdded*[T](self: Module[T], contact: ContactsDto) =
+  self.view.model().contactAdded(contact)
+
+method contactBlocked*[T](self: Module[T], publicKey: string) =
+  # once we refactore a model, we should pass only pk from here (like we have for nickname change)
+  let contact = self.controller.getContact(publicKey)
+  self.view.model().contactBlocked(contact)
+
+method contactUnblocked*[T](self: Module[T], publicKey: string) =
+  # once we refactore a model, we should pass only pk from here (like we have for nickname change)
+  let contact = self.controller.getContact(publicKey)
+  self.view.model().contactUnblocked(contact)
+
+method contactRemoved*[T](self: Module[T], publicKey: string) =
+  # once we refactore a model, we should pass only pk from here (like we have for nickname change)
+  let contact = self.controller.getContact(publicKey)
+  self.view.model().contactRemoved(contact)
+
+method contactNicknameChanged*[T](self: Module[T], publicKey: string, nickname: string) =
+  self.view.model().changeNicknameForContactWithId(publicKey, nickname)
+
+method rejectContactRequest*[T](self: Module[T], publicKey: string) =
   self.controller.rejectContactRequest(publicKey)
 
-method unblockContact*[T](self: Module[T], publicKey: string): void =
+method unblockContact*[T](self: Module[T], publicKey: string) =
   self.controller.unblockContact(publicKey)
 
-method blockContact*[T](self: Module[T], publicKey: string): void =
+method blockContact*[T](self: Module[T], publicKey: string) =
   self.controller.blockContact(publicKey)
 
-method removeContact*[T](self: Module[T], publicKey: string): void =
+method removeContact*[T](self: Module[T], publicKey: string) =
   self.controller.removeContact(publicKey)
 
 method changeContactNickname*[T](self: Module[T], accountKeyUID: string, publicKey: string, nicknameToSet: string): void =
   self.controller.changeContactNickname(accountKeyUID, publicKey, nicknameToSet)
 
-method lookupContact*[T](self: Module[T], value: string): void =
+method lookupContact*[T](self: Module[T], value: string) =
   self.controller.lookupContact(value)
 
-method contactLookedUp*[T](self: Module[T], id: string): void =
+method contactLookedUp*[T](self: Module[T], id: string) =
   self.view.contactLookedUp(id)

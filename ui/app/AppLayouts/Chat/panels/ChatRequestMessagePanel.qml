@@ -12,6 +12,7 @@ Item {
     width: parent.width
     height: childrenRect.height
 
+    property bool isContact
     signal addContactClicked()
 
     Image {

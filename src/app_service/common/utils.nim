@@ -20,3 +20,7 @@ proc first*(jArray: JsonNode, fieldName, id: string): JsonNode =
   for child in jArray.getElems:
     if child{fieldName}.getStr.toLower == id.toLower:
       return child
+
+proc prettyEnsName*(ensName: string): string =
+  if ensName.endsWith(".eth"):
+    return "@" & ensName.split(".")[0]

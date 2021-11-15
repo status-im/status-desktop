@@ -26,9 +26,7 @@ StatusAppThreePanelLayout {
     handle: SplitViewHandle { implicitWidth: 5 }
 
     property var messageStore
-    property RootStore rootStore: RootStore {
-        messageStore: root.messageStore
-    }
+
     property alias chatColumn: chatColumn
     property bool stickersLoaded: false
     signal profileButtonClicked()
@@ -44,6 +42,10 @@ StatusAppThreePanelLayout {
         root.rootStore.chatsModelInst.channelView.restorePreviousActiveChannel();
         chatColumn.onActivated();
     }
+    // Not Refactored
+   property RootStore rootStore: RootStore {
+       messageStore: root.messageStore
+   }
 
     StatusSearchLocationMenu {
         id: searchPopupMenu
@@ -181,11 +183,11 @@ StatusAppThreePanelLayout {
             currentTime: chatColumn.currentTime
             messageContextMenu: quickActionMessageOptionsMenu
             profilePubKey: userProfile.pubKey
-            contactsList: root.rootStore.profileModelInst.contacts.list
             community: root.rootStore.chatsModelInst.communities.activeCommunity
             currentUserName: Utils.removeStatusEns(root.rootStore.profileModelInst.ens.preferredUsername
                                                   || root.rootStore.profileModelInst.profile.username)
             currentUserOnline: root.store.userProfileInst.userStatus
+            contactsList: root.rootStore.allContacts
         }
     }
 
@@ -196,7 +198,7 @@ StatusAppThreePanelLayout {
             userList: chatColumn.userList
             messageContextMenu: quickActionMessageOptionsMenu
             profilePubKey: userProfile.pubKey
-            contactsList: root.rootStore.profileModelInst.contacts.list
+            contactsList: root.rootStore.allContacts
             isOnline: root.rootStore.chatsModelInst.isOnline
         }
     }
@@ -204,6 +206,7 @@ StatusAppThreePanelLayout {
     Component {
         id: contactsColumnComponent
         ContactsColumnView {
+            // Not Refactored
             store: root.rootStore
             onOpenProfileClicked: {
                 root.profileButtonClicked();
@@ -222,6 +225,7 @@ StatusAppThreePanelLayout {
     Component {
         id: groupInfoPopupComponent
         GroupInfoPopup {
+            // Not Refactored
             store: root.rootStore
             pinnedMessagesPopupComponent: chatColumn.pinnedMessagesPopupComponent
         }
@@ -243,8 +247,9 @@ StatusAppThreePanelLayout {
         //% "Are you sure you want to remove this contact?"
         confirmationText: qsTrId("are-you-sure-you-want-to-remove-this-contact-")
         onConfirmButtonClicked: {
-            if (root.rootStore.profileModelInst.contacts.isAdded(chatColumn.contactToRemove)) {
-                root.rootStore.profileModelInst.contacts.removeContact(chatColumn.contactToRemove)
+            if (root.rootStore.contactsModuleInst.model.isAdded(chatColumn.contactToRemove)) {
+                root.rootStore.contactsModuleInst.model.removeContact(chatColumn.contactToRemove)
+
             }
             removeContactConfirmationDialog.parentPopup.close();
             removeContactConfirmationDialog.close();
@@ -253,8 +258,9 @@ StatusAppThreePanelLayout {
 
     MessageContextMenuView {
         id: quickActionMessageOptionsMenu
-        store: root.rootStore
-        reactionModel: root.rootStore.emojiReactionsModel
+        // Not Refactored
+       store: root.rootStore
+//        reactionModel: root.rootStore.emojiReactionsModel
     }
 }
 

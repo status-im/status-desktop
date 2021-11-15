@@ -1,8 +1,11 @@
 import ./controller_interface
 import io_interface
+#import ../../../../core/signals/types
 import ../../../../../app_service/service/contacts/service as contacts_service
 import ../../../../../app_service/service/contacts/dto/contacts
 import ../../../../../app_service/service/accounts/service as accounts_service
+
+import status/signals
 
 # import ./item as item
 import eventemitter
@@ -15,9 +18,6 @@ type
     events: EventEmitter
     contactsService: contacts_service.Service
     accountsService: accounts_service.ServiceInterface
-
-# forward declaration:
-method getContacts*[T](self: Controller[T]): seq[ContactsDto]
 
 proc newController*[T](delegate: io_interface.AccessInterface, 
   events: EventEmitter,
@@ -32,57 +32,79 @@ proc newController*[T](delegate: io_interface.AccessInterface,
 method delete*[T](self: Controller[T]) =
   discard
 
-method init*[T](self: Controller[T]) = 
-  self.events.on("contactAdded") do(e: Args):
-    self.contactsService.fetchContacts()
-    let contacts = self.getContacts()
-    self.delegate.setContactList(contacts)
-
-  self.events.on("contactBlocked") do(e: Args):
-    self.contactsService.fetchContacts()
-    let contacts = self.getContacts()
-    self.delegate.setContactList(contacts)
-
-  self.events.on("contactUnblocked") do(e: Args):
-    self.contactsService.fetchContacts()
-    let contacts = self.getContacts()
-    self.delegate.setContactList(contacts)
-
-  self.events.on("contactRemoved") do(e: Args):
-    self.contactsService.fetchContacts()
-    let contacts = self.getContacts()
-    self.delegate.setContactList(contacts)
+method init*[T](self: Controller[T]) =
+  # TODO change this event when chat is refactored
+  #   The goal would be to send the event with COntactsDto instead of Profile
+  self.events.on(SignalType.Message.event) do(e: Args):
+    let msgData = MessageSignal(e);
+    if msgData.contacts.len > 0:
+      var contacts: seq[ContactsDto] = @[]
+      for contact in msgData.contacts:
+        contacts.add(ContactsDto(
+          id: contact.id,
+          name: contact.username,
+          ensVerified: contact.ensVerified,
+          alias: contact.alias,
+          identicon: contact.identicon,
+          localNickname: contact.localNickname,
+          # image: contact.identityImage,
+          added: contact.added,
+          blocked: contact.blocked,
+          hasAddedUs: contact.hasAddedUs
+        ))
+        
+      self.delegate.updateContactList(contacts)
 
   self.events.on(SIGNAL_CONTACT_LOOKED_UP) do(e: Args):
-    let args = LookupResolvedArgs(e)
-    self.delegate.contactLookedUp(args.id)
+    var args = ContactArgs(e)
+    self.delegate.contactLookedUp(args.contactId)
+
+  self.events.on(SIGNAL_CONTACT_ADDED) do(e: Args):
+    var args = ContactAddedArgs(e)
+    self.delegate.contactAdded(args.contact)
+
+  self.events.on(SIGNAL_CONTACT_BLOCKED) do(e: Args):
+    var args = ContactArgs(e)
+    self.delegate.contactBlocked(args.contactId)
+
+  self.events.on(SIGNAL_CONTACT_UNBLOCKED) do(e: Args):
+    var args = ContactArgs(e)
+    self.delegate.contactUnblocked(args.contactId)
+
+  self.events.on(SIGNAL_CONTACT_REMOVED) do(e: Args):
+    var args = ContactArgs(e)
+    self.delegate.contactRemoved(args.contactId)
+
+  self.events.on(SIGNAL_CONTACT_NICKNAME_CHANGED) do(e: Args):
+    var args = ContactNicknameUpdatedArgs(e)
+    self.delegate.contactNicknameChanged(args.contactId, args.nickname)
 
 method getContacts*[T](self: Controller[T]): seq[ContactsDto] =
   return self.contactsService.getContacts()
 
 method getContact*[T](self: Controller[T], id: string): ContactsDto =
-  return self.contactsService.getContact(id)
+  return self.contactsService.getContactById(id)
 
 method generateAlias*[T](self: Controller[T], publicKey: string): string =
   return self.accountsService.generateAlias(publicKey)
 
-method addContact*[T](self: Controller[T], publicKey: string): void =
+method addContact*[T](self: Controller[T], publicKey: string) =
   self.contactsService.addContact(publicKey)
 
-method rejectContactRequest*[T](self: Controller[T], publicKey: string): void =
+method rejectContactRequest*[T](self: Controller[T], publicKey: string) =
   self.contactsService.rejectContactRequest(publicKey)
 
-method unblockContact*[T](self: Controller[T], publicKey: string): void =
+method unblockContact*[T](self: Controller[T], publicKey: string) =
   self.contactsService.unblockContact(publicKey)
 
-method blockContact*[T](self: Controller[T], publicKey: string): void =
+method blockContact*[T](self: Controller[T], publicKey: string) =
   self.contactsService.blockContact(publicKey)
 
-method removeContact*[T](self: Controller[T], publicKey: string): void =
+method removeContact*[T](self: Controller[T], publicKey: string) =
   self.contactsService.removeContact(publicKey)
 
-method changeContactNickname*[T](self: Controller[T], accountKeyUID: string, publicKey: string, nicknameToSet: string): void =
-  self.contactsService.changeContactNickname(accountKeyUID, publicKey, nicknameToSet)
+method changeContactNickname*[T](self: Controller[T], publicKey: string, nickname: string) =
+  self.contactsService.changeContactNickname(publicKey, nickname)
 
-method lookupContact*[T](self: Controller[T], value: string): void =
+method lookupContact*[T](self: Controller[T], value: string) =
   self.contactsService.lookupContact(value)

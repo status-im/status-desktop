@@ -103,8 +103,8 @@ ModalPopup {
             RecipientSelector {
                 id: selectRecipient
                 visible: false
-                accounts: walletSectionAccounts.model
-                contacts: profileModel.contacts.addedContacts
+                accounts: walletModel.accountsView.accounts
+                contacts: contactsModule.model.addedContacts
                 selectedRecipient: { "address": utilsModel.ensRegisterAddress, "type": RecipientSelector.Type.Address }
                 readOnly: true
                 onSelectedRecipientChanged: if (isValid) { gasSelector.estimateGas() }

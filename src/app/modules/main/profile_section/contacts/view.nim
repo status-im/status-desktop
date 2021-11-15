@@ -19,7 +19,6 @@ QtObject:
       model: Model
       modelVariant: QVariant
       contactToAdd*: ContactsDto
-      accountKeyUID*: string
 
   proc delete*(self: View) =
     self.model.delete
@@ -34,8 +33,8 @@ QtObject:
     result.modelVariant = newQVariant(result.model)
     result.contactToAdd = ContactsDto()
 
-  proc setContactList*(self: View, contacts: seq[ContactsDto]) =
-    self.model.setContactList(contacts)
+  proc model*(self: View): Model =
+    return self.model
 
   proc modelChanged*(self: View) {.signal.}
 
@@ -79,7 +78,7 @@ QtObject:
 
     let contact = self.delegate.getContact(id)
 
-    if contact != nil and contact.id != "":
+    if contact.id != "":
       self.contactToAdd = contact
     else:
       self.contactToAdd = ContactsDto(
@@ -98,8 +97,6 @@ QtObject:
 
   proc addContact*(self: View, publicKey: string) {.slot.} =
     self.delegate.addContact(publicKey)
-    # TODO add back joining of timeline
-    # self.status.chat.join(status_utils.getTimelineChatId(publicKey), ChatType.Profile, "", publicKey)
 
   proc rejectContactRequest*(self: View, publicKey: string) {.slot.} =
     self.delegate.rejectContactRequest(publicKey)
@@ -115,10 +112,7 @@ QtObject:
       self.addContact(pubkey.getStr)
 
   proc changeContactNickname*(self: View, publicKey: string, nickname: string) {.slot.} =
-    var nicknameToSet = nickname
-    if (nicknameToSet == ""):
-      nicknameToSet = DELETE_CONTACT
-    self.delegate.changeContactNickname(publicKey, nicknameToSet, self.accountKeyUID)
+    self.delegate.changeContactNickname(publicKey, nickname)
 
   proc unblockContact*(self: View, publicKey: string) {.slot.} =
     self.delegate.unblockContact(publicKey)
@@ -131,7 +125,3 @@ QtObject:
 
   proc removeContact*(self: View, publicKey: string) {.slot.} =
     self.delegate.removeContact(publicKey)
-    # TODO add back leaving timeline
-    # let channelId = status_utils.getTimelineChatId(publicKey)
-    # if self.status.chat.hasChannel(channelId):
-    #   self.status.chat.leave(channelId)

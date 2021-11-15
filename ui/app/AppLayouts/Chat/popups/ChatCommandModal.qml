@@ -89,7 +89,7 @@ StatusModal {
                 RecipientSelector {
                     id: selectRecipient
                     accounts: root.store.walletModelInst.accountsView.accounts
-                    contacts: root.store.profileModelInst.contacts.addedContacts
+                    contacts: root.store.addedContacts
                     label: root.isRequested ?
                       //% "From"
                       qsTrId("from") :
