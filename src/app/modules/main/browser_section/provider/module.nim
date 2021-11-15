@@ -35,9 +35,9 @@ method delete*(self: Module) =
 
 method load*(self: Module) =
   singletonInstance.engine.setRootContextProperty("providerModule", self.viewVariant)
-  self.view.load()
   self.view.dappsAddress = self.controller.getDappsAddress()
   self.view.networkId = self.controller.getCurrentNetworkDetails().config.networkId
+  self.view.load()
 
 method isLoaded*(self: Module): bool =
   return self.moduleLoaded
