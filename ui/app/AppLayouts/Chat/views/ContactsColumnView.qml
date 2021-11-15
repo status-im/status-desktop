@@ -238,9 +238,9 @@ Item {
                 onContactChanged: {
                     for (var i = 0; i < channelList.chatListItems.count; i++) {
                         if (!!channelList.statusChatListItems) {
-                            let chatItem = !!channelList.statusChatListItems.model ?
-                                    channelList.statusChatListItems.model.itemAt(i) : null
-                            if (chatItem.chatId === pubkey) {
+                            let chatItem = !!channelList.statusChatListItems.model.items ?
+                                    channelList.statusChatListItems.model.items.get(i) : null
+                            if (chatItem && chatItem.chatId === pubkey) {
                                 let profileImage = appMain.getProfileImage(pubkey)
                                 if (!!profileImage) {
                                     chatItem.image.isIdenticon = false
