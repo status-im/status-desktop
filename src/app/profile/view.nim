@@ -1,5 +1,5 @@
 import NimQml, sequtils, strutils, sugar, os, json, chronicles
-import views/[mailservers_list, ens_manager, contacts, devices, mailservers, mnemonic, network, fleets, profile_info, device_list, profile_picture, muted_chats]
+import views/[mailservers_list, ens_manager, devices, mailservers, mnemonic, network, fleets, profile_info, device_list, profile_picture, muted_chats]
 import chronicles
 import qrcode/qrcode
 
@@ -27,7 +27,6 @@ QtObject:
     profile*: ProfileInfoView
     profilePicture*: ProfilePictureView
     mutedChats*: MutedChatsView
-    contacts*: ContactsView
     devices*: DevicesView
     mailservers*: MailserversView
     mnemonic*: MnemonicView
@@ -42,7 +41,6 @@ QtObject:
     self.QObject.setup
 
   proc delete*(self: ProfileView) =
-    if not self.contacts.isNil: self.contacts.delete
     if not self.devices.isNil: self.devices.delete
     if not self.ens.isNil: self.ens.delete
     if not self.profilePicture.isNil: self.profilePicture.delete
@@ -82,7 +80,6 @@ QtObject:
 
   proc setNewProfile*(self: ProfileView, profile: Profile) =
     self.profile.setProfile(profile)
-    self.contacts.accountKeyUID = profile.address
     self.profileChanged()
 
   QtProperty[QVariant] profile:
@@ -140,13 +137,6 @@ QtObject:
     # TODO cleanup chats after activating this
 
   proc contactsChanged*(self: ProfileView) {.signal.}
-
-  proc getContacts*(self: ProfileView): QVariant {.slot.} =
-    newQVariant(self.contacts)
-
-  QtProperty[QVariant] contacts:
-    read = getContacts
-    notify = contactsChanged
 
   proc getDevices*(self: ProfileView): QVariant {.slot.} =
     newQVariant(self.devices)

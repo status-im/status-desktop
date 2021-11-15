@@ -11,7 +11,7 @@ import ../core/[main]
 import ../core/tasks/marathon/mailserver/events
 import eventemitter
 import view
-import views/[ens_manager, devices, network, mailservers, contacts, muted_chats]
+import views/[ens_manager, devices, network, mailservers, muted_chats]
 import ../chat/views/channels_list
 import chronicles
 
@@ -71,9 +71,6 @@ proc init*(self: ProfileController, account: Account) =
     let mailserver = MailServer(name: mailserver["name"].getStr(), endpoint: mailserver["address"].getStr())
     self.view.mailservers.add(mailserver)
 
-  let contacts = self.status.contacts.getContacts()
-  self.view.contacts.setContactList(contacts)
-
   self.status.events.on("channelLoaded") do(e: Args):
     var channel = ChannelArgs(e)
     if channel.chat.muted:
@@ -98,24 +95,6 @@ proc init*(self: ProfileController, account: Account) =
     var evArgs = ChatUpdateArgs(e)
     self.view.mutedChats.updateChats(evArgs.chats)
 
-  self.status.events.on("contactAdded") do(e: Args):
-    let contacts = self.status.contacts.getContacts()
-    self.view.contacts.setContactList(contacts)
-    self.view.contactsChanged()
-
-  self.status.events.on("contactBlocked") do(e: Args):
-    let contacts = self.status.contacts.getContacts()
-    self.view.contacts.setContactList(contacts)
-
-  self.status.events.on("contactUnblocked") do(e: Args):
-    let contacts = self.status.contacts.getContacts()
-    self.view.contacts.setContactList(contacts)
-
-  self.status.events.on("contactRemoved") do(e: Args):
-    let contacts = self.status.contacts.getContacts()
-    self.view.contacts.setContactList(contacts)
-    self.view.contactsChanged()
-
   self.status.events.on("mailserver:changed") do(e: Args):
     let mailserverArg = MailserverArgs(e)
     self.view.mailservers.activeMailserverChanged(mailserverArg.peer)
@@ -133,10 +112,6 @@ proc init*(self: ProfileController, account: Account) =
 
   self.status.events.on(SignalType.Message.event) do(e: Args):
     let msgData = MessageSignal(e);
-    if msgData.contacts.len > 0:
-      # TODO: view should react to model changes
-      let contacts = self.status.contacts.getContacts(false)
-      self.view.contacts.updateContactList(contacts)
     if msgData.installations.len > 0:
       self.view.devices.addDevices(msgData.installations)
 
