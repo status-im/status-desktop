@@ -100,8 +100,8 @@ Rectangle {
     }
 
     function openUrlInNewTab(url) {
-        browserWindow.addNewTab()
-        determineRealURL(url)
+        var tab = browserWindow.addNewTab()
+        tab.item.url = determineRealURL(url)
     }
 
     function addNewDownloadTab() {
@@ -110,10 +110,12 @@ Rectangle {
     }
 
     function addNewTab() {
-        tabs.createEmptyTab(tabs.count !== 0 ? currentWebView.profile : defaultProfile);
+        var tab = tabs.createEmptyTab(tabs.count !== 0 ? currentWebView.profile : defaultProfile);
         tabs.currentIndex = tabs.count - 1;
         browserHeader.addressBar.forceActiveFocus();
         browserHeader.addressBar.selectAll();
+
+        return tab;
     }
 
     function onDownloadRequested(download) {
