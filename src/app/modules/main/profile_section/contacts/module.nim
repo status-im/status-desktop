@@ -42,6 +42,9 @@ method setContactList*[T](self: Module[T], contacts: seq[ContactsDto]) =
 method updateContactList*[T](self: Module[T], contacts: seq[ContactsDto]) =
   self.view.model().updateContactList(contacts)
 
+method updateContactList*[T](self: Module[T], contacts: seq[ContactsDto]) =
+  self.view.updateContactList(contacts)
+
 method load*[T](self: Module[T]) =
   self.controller.init()
   let contacts =  self.controller.getContacts()
