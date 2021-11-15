@@ -13,8 +13,13 @@ QtObject {
     property var walletModelInst: walletModel
     property var profileModelInst: profileModel
     property var profileModuleInst: profileModule
+    property var contactsModuleInst: contactsModule
 
     property var activeCommunity: chatsModelInst.communities.activeCommunity
+
+    property var contactRequests: contactsModuleInst.model.contactRequests
+    property var addedContacts: contactsModuleInst.model.addedContacts
+    property var allContacts: contactsModuleInst.model.list
 
     function copyToClipboard(text) {
         chatsModelInst.copyToClipboard(text);

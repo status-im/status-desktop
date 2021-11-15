@@ -1,5 +1,6 @@
 import ./controller_interface
 import io_interface
+import status/[signals]
 import ../../../../../app_service/service/contacts/service as contacts_service
 import ../../../../../app_service/service/contacts/dto/contacts
 import ../../../../../app_service/service/accounts/service as accounts_service
@@ -17,7 +18,7 @@ type
     accountsService: accounts_service.ServiceInterface
 
 # forward declaration:
-method getContacts*[T](self: Controller[T]): seq[ContactsDto]
+method getContacts*[T](self: Controller[T], useCache: bool = true): seq[ContactsDto]
 
 proc newController*[T](delegate: io_interface.AccessInterface, 
   events: EventEmitter,
@@ -32,22 +33,27 @@ proc newController*[T](delegate: io_interface.AccessInterface,
 method delete*[T](self: Controller[T]) =
   discard
 
-method init*[T](self: Controller[T]) = 
-  self.events.on("contactAdded") do(e: Args):
-    let contacts = self.getContacts()
-    self.delegate.setContactList(contacts)
+method init*[T](self: Controller[T]) =
+  self.events.on(SignalType.Message.event) do(e: Args):
+    let msgData = MessageSignal(e);
+    if msgData.contacts.len > 0:
+      let contacts = self.getContacts(false)
+      self.delegate.updateContactList(contacts)
+  self.events.on(SIGNAL_CONTACT_ADDED) do(e: Args):
+    var evArgs = ContactArgs(e)
+    self.delegate.contactAdded(evArgs.contact)
 
-  self.events.on("contactBlocked") do(e: Args):
-    let contacts = self.getContacts()
-    self.delegate.setContactList(contacts)
+  self.events.on(SIGNAL_CONTACT_BLOCKED) do(e: Args):
+    var evArgs = ContactArgs(e)
+    self.delegate.contactBlocked(evArgs.contact)
 
-  self.events.on("contactUnblocked") do(e: Args):
-    let contacts = self.getContacts()
-    self.delegate.setContactList(contacts)
+  self.events.on(SIGNAL_CONTACT_UNBLOCKED) do(e: Args):
+    var evArgs = ContactArgs(e)
+    self.delegate.contactUnblocked(evArgs.contact)
 
-  self.events.on("contactRemoved") do(e: Args):
-    let contacts = self.getContacts()
-    self.delegate.setContactList(contacts)
+  self.events.on(SIGNAL_CONTACT_REMOVED) do(e: Args):
+    var evArgs = ContactArgs(e)
+    self.delegate.contactRemoved(evArgs.contact)
 
   self.events.on(SIGNAL_CONTACT_LOOKED_UP) do(e: Args):
     let args = LookupResolvedArgs(e)
@@ -65,8 +71,8 @@ method init*[T](self: Controller[T]) =
     # let contactDto = self.contactsService.getContactById(args.id)
     # self.delegate.onContactUpdated(contactDto)
 
-method getContacts*[T](self: Controller[T]): seq[ContactsDto] =
-  return self.contactsService.getContacts()
+method getContacts*[T](self: Controller[T], useCache: bool = true): seq[ContactsDto] =
+  return self.contactsService.getContacts(useCache)
 
 method getContact*[T](self: Controller[T], id: string): ContactsDto =
   return self.contactsService.getContactById(id)

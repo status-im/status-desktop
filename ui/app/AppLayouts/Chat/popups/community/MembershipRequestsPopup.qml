@@ -59,9 +59,9 @@ StatusModal {
                 delegate: StatusListItem {
                     anchors.horizontalCenter: parent.horizontalCenter
 
-                    property int contactIndex: popup.store.profileModelInst.contacts.list.getContactIndexByPubkey(model.publicKey)
+                    property int contactIndex: popup.store.allContacts.getContactIndexByPubkey(model.publicKey)
                     property string nickname: appMain.getUserNickname(model.publicKey)
-                    property string profileImage: contactIndex === -1 ? "" : popup.store.profileModelInst.contacts.list.rowData(contactIndex, 'thumbnailImage')
+                    property string profileImage: contactIndex === -1 ? "" : popup.store.allContacts.rowData(contactIndex, 'thumbnailImage')
                     property string displayName: Utils.getDisplayName(publicKey, contactIndex)
 
                     image.isIdenticon: !profileImage && model.identicon

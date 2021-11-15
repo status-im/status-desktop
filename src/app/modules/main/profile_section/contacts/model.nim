@@ -36,6 +36,27 @@ QtObject:
   proc contactListChanged*(self: Model) {.signal.}
   proc contactRequestAdded*(self: Model, name: string, address: string) {.signal.}
 
+  proc contactAdded*(self: Model, contact: ContactsDto) =
+    self.contactList.addContactToList(contact)
+    self.addedContacts.addContactToList(contact)
+    self.blockedContacts.removeContactFromList(contact.id)
+    self.contactRequests.removeContactFromList(contact.id)
+
+  proc contactBlocked*(self: Model, contact: ContactsDto) =
+    self.contactList.addContactToList(contact)
+    self.addedContacts.removeContactFromList(contact.id)
+    self.blockedContacts.addContactToList(contact)
+    self.contactRequests.removeContactFromList(contact.id)
+
+  proc contactUnblocked*(self: Model, contact: ContactsDto) =
+    self.contactList.addContactToList(contact)
+    self.blockedContacts.removeContactFromList(contact.id)
+
+  proc contactRemoved*(self: Model, contact: ContactsDto) =
+    self.contactList.addContactToList(contact)
+    self.addedContacts.removeContactFromList(contact.id)
+    self.contactRequests.removeContactFromList(contact.id)
+
   proc updateContactList*(self: Model, contacts: seq[ContactsDto]) =
     for contact in contacts:
       var requestAlreadyAdded = false
@@ -115,5 +136,3 @@ proc contactRequestReceived*(self: Model, pubkey: string): bool {.slot.} =
       if contact.id == pubkey:
         return true
     return false
-
-

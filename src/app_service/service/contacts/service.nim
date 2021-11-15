@@ -21,11 +21,20 @@ type
   LookupResolvedArgs* = ref object of Args
     id*: string
 
+type
+  ContactArgs* = ref object of Args
+    contact*: ContactsDto
+
   ContactUpdatedArgs* = ref object of Args
     id*: string
 
 # Signals which may be emitted by this service:
-const SIGNAL_CONTACT_LOOKED_UP* = "SIGNAL_CONTACT_LOOKED_UP" 
+const SIGNAL_CONTACT_LOOKED_UP* = "SIGNAL_CONTACT_LOOKED_UP"
+# Remove new when old code is removed
+const SIGNAL_CONTACT_ADDED* = "new-contactAdded"
+const SIGNAL_CONTACT_BLOCKED* = "new-contactBlocked" 
+const SIGNAL_CONTACT_UNBLOCKED* = "new-contactUnblocked"
+const SIGNAL_CONTACT_REMOVED* = "new-contactRemoved"
 const SIGNAL_CONTACT_UPDATED* = "new-contactUpdated" #Once we are done with refactoring we should remove "new-" from all signals
 
 QtObject:
@@ -61,7 +70,9 @@ QtObject:
   proc init*(self: Service) =
     self.fetchContacts()
 
-  proc getContacts*(self: Service): seq[ContactsDto] =
+  proc getContacts*(self: Service, useCache: bool = true): seq[ContactsDto] =
+    if (not useCache):
+      self.fetchContacts()
     return toSeq(self.contacts.values)
 
   proc fetchContact(self: Service, id: string): ContactsDto =
@@ -119,22 +130,9 @@ QtObject:
 
     self.saveContact(contact)
     
-    self.events.emit("contactAdded", Args())
+    self.events.emit(SIGNAL_CONTACT_ADDED, ContactArgs(contact: contact))
     # sendContactUpdate(contact.id, accountKeyUID)
-    if updating:
-      let profile = ContactsDto(
-        id: contact.id,
-        # username: contact.alias,
-        identicon: contact.identicon,
-        alias: contact.alias,
-        # ensName: contact.ensName,
-        ensVerified: contact.ensVerified,
-        # appearance: 0,
-        added: contact.added,
-        blocked: contact.blocked,
-        hasAddedUs: contact.hasAddedUs,
-        # localNickname: contact.localNickname
-      )
+    # if updating:
       # TODO fix this to use ContactsDto
       # self.events.emit("contactUpdate", ContactUpdateArgs(contacts: @[profile]))
 
@@ -143,7 +141,7 @@ QtObject:
     contact.hasAddedUs = false
 
     self.saveContact(contact)
-    self.events.emit("contactRemoved", Args())
+    self.events.emit(SIGNAL_CONTACT_REMOVED, ContactArgs(contact: contact))
     # status_contacts.rejectContactRequest(publicKey)
 
   proc changeContactNickname*(self: Service, publicKey: string, nickname: string) =
@@ -152,19 +150,20 @@ QtObject:
     self.saveContact(contact)
     let data = ContactUpdatedArgs(id: contact.id)
     self.events.emit(SIGNAL_CONTACT_UPDATED, data)
+    self.events.emit(SIGNAL_CONTACT_ADDED, ContactArgs(contact: contact))
 
   proc unblockContact*(self: Service, publicKey: string) =
     # status_contacts.unblockContact(publicKey)
     var contact = self.getContactById(publicKey)
     contact.blocked = false
     self.saveContact(contact)
-    self.events.emit("contactUnblocked", old_status_contacts.ContactIdArgs(id: publicKey))
+    self.events.emit(SIGNAL_CONTACT_UNBLOCKED, ContactArgs(contact: contact))
 
   proc blockContact*(self: Service, publicKey: string) =
     var contact = self.getContactById(publicKey)
     contact.blocked = true
     self.saveContact(contact)
-    self.events.emit("contactBlocked", old_status_contacts.ContactIdArgs(id: publicKey))
+    self.events.emit(SIGNAL_CONTACT_BLOCKED, ContactArgs(contact: contact))
 
   proc removeContact*(self: Service, publicKey: string) =
     #   status_contacts.removeContact(publicKey)
@@ -173,7 +172,7 @@ QtObject:
     contact.hasAddedUs = false
 
     self.saveContact(contact)
-    self.events.emit("contactRemoved", Args())
+    self.events.emit(SIGNAL_CONTACT_REMOVED, ContactArgs(contact: contact))
   #   let channelId = status_utils.getTimelineChatId(publicKey)
   #   if status_chat.hasChannel(channelId):
   #     status_chat.leave(channelId)

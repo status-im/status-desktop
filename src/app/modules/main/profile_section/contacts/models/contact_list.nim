@@ -116,9 +116,21 @@ QtObject:
     }.toTable
 
   proc addContactToList*(self: ContactList, contact: ContactsDto) =
+    let index = self.getContactIndexByPubkey(contact.id)
+    if index > -1:
+      return
     self.beginInsertRows(newQModelIndex(), self.contacts.len, self.contacts.len)
     self.contacts.add(contact)
     self.endInsertRows()
+    self.countChanged()
+
+  proc removeContactFromList*(self: ContactList, pubkey: string) =
+    let index = self.getContactIndexByPubkey(pubkey)
+    if index == -1:
+      return
+    self.beginRemoveRows(newQModelIndex(), index, index)
+    self.contacts.delete(index)
+    self.endRemoveRows()
     self.countChanged()
 
   proc hasAddedContacts(self: ContactList): bool {.slot.} = 

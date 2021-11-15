@@ -36,6 +36,9 @@ QtObject:
   proc setContactList*(self: View, contacts: seq[ContactsDto]) =
     self.model.setContactList(contacts)
 
+  proc updateContactList*(self: View, contacts: seq[ContactsDto]) =
+    self.model.updateContactList(contacts)
+
   proc modelChanged*(self: View) {.signal.}
 
   proc getModel*(self: View): QVariant {.slot.} =
@@ -97,8 +100,18 @@ QtObject:
 
   proc addContact*(self: View, publicKey: string) {.slot.} =
     self.delegate.addContact(publicKey)
-    # TODO add back joining of timeline
-    # self.status.chat.join(status_utils.getTimelineChatId(publicKey), ChatType.Profile, "", publicKey)
+
+  proc contactAdded*(self: View, contact: ContactsDto) =
+    self.model.contactAdded(contact)
+
+  proc contactBlocked*(self: View, contact: ContactsDto) =
+    self.model.contactBlocked(contact)
+
+  proc contactUnblocked*(self: View, contact: ContactsDto) =
+    self.model.contactUnblocked(contact)
+
+  proc contactRemoved*(self: View, contact: ContactsDto) =
+    self.model.contactRemoved(contact)
 
   proc rejectContactRequest*(self: View, publicKey: string) {.slot.} =
     self.delegate.rejectContactRequest(publicKey)
@@ -127,7 +140,3 @@ QtObject:
 
   proc removeContact*(self: View, publicKey: string) {.slot.} =
     self.delegate.removeContact(publicKey)
-    # TODO add back leaving timeline
-    # let channelId = status_utils.getTimelineChatId(publicKey)
-    # if self.status.chat.hasChannel(channelId):
-    #   self.status.chat.leave(channelId)

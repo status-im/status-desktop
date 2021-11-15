@@ -186,7 +186,7 @@ Item {
     StatusContactRequestsIndicatorListItem {
         id: contactRequests
 
-        property int nbRequests: root.store.profileModelInst.contacts.contactRequests.count
+        property int nbRequests: root.store.contactRequests.count
 
         anchors.top: searchInputWrapper.bottom
         anchors.topMargin: visible ? Style.current.padding : 0
@@ -234,7 +234,7 @@ Item {
             }
 
             Connections {
-                target: root.store.profileModelInst.contacts.list
+                target: root.store.allContacts
                 onContactChanged: {
                     for (var i = 0; i < channelList.chatListItems.count; i++) {
                         if (!!channelList.statusChatListItems) {

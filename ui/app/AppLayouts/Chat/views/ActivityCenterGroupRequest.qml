@@ -165,7 +165,7 @@ Item {
             BlockContactConfirmationDialog {
                 id: blockContactConfirmationDialog
                 onBlockButtonClicked: {
-                    root.store.profileModelInst.contacts.blockContact(blockContactConfirmationDialog.contactAddress)
+                    root.store.profileModuleInst.blockContact(blockContactConfirmationDialog.contactAddress)
                     root.store.chatsModelInst.activityNotificationList.dismissActivityCenterNotification(model.id)
                     blockContactConfirmationDialog.close()
                 }
