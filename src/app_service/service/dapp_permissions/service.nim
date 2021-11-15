@@ -55,6 +55,7 @@ method clearPermissions*(self: Service, dapp: string): bool =
 
 method revoke*(self: Service, permission: Permission): bool =
   try:
+    var dappsToDelete: seq[string] = @[]
     for dapp in self.dapps.mvalues:
       if dapp.permissions.contains(permission):
         dapp.permissions.excl(permission)
@@ -62,7 +63,9 @@ method revoke*(self: Service, permission: Permission): bool =
           discard status_go.addDappPermissions(dapp.name, dapp.permissions.toSeq().mapIt($it))
         else:
           discard status_go.deleteDappPermissions(dapp.name)
-          self.dapps.del(dapp.name)
+          dappsToDelete.add(dapp.name)
+    for dappName in dappsToDelete:
+      self.dapps.del(dappName)
     return true
   except Exception as e:
     let errDescription = e.msg

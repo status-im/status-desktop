@@ -46,7 +46,7 @@ QtObject:
   proc networkId*(self: View): int {.slot.} =
     result = self.networkId
 
-  QtProperty[string] networkId:
+  QtProperty[int] networkId:
     read = networkId
     notify = networkIdChanged
 

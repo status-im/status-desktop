@@ -8,6 +8,8 @@ QtObject {
     property var web3ProviderInst: providerModule
     property var urlENSDictionary: ({})
 
+    property int networkId: providerModule.networkId
+
     function determineRealURL(text){
         var url = RootStore.getUrlFromUserInput(text);
         var host = providerModule.getHost(url);
