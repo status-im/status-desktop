@@ -127,6 +127,7 @@ ModalPopup {
                 id: txtAmount
                 selectedAccount: selectFromAccount.selectedAccount
                 defaultCurrency: walletModel.balanceView.defaultCurrency
+                currentCurrency: walletSection.currentCurrency
                 getFiatValue: walletModel.balanceView.getFiatValue
                 getCryptoValue: walletModel.balanceView.getCryptoValue
                 width: stack.width

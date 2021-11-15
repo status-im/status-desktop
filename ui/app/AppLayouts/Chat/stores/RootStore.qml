@@ -18,6 +18,10 @@ QtObject {
 
     property var activeCommunity: chatsModelInst.communities.activeCommunity
 
+    property var accounts: walletSectionAccounts.model
+    property var currentAccount: walletSectionCurrent
+    property var currentCurrency: walletSection.currentCurrency
+
     function copyToClipboard(text) {
         chatsModelInst.copyToClipboard(text);
     }

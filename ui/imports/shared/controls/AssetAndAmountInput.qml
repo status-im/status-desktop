@@ -5,9 +5,10 @@ import QtGraphicalEffects 1.13
 
 import utils 1.0
 
+import StatusQ.Controls 0.1
+
 import "../"
 import "../panels"
-import "../controls"
 import "."
 
 Item {
@@ -20,6 +21,7 @@ Item {
     //% "Please enter an amount"
     property string noInputErrorMessage: qsTrId("please-enter-an-amount")
     property string defaultCurrency: "USD"
+    property string currentCurrency: ""
     property alias selectedFiatAmount: txtFiatBalance.text
     property alias selectedAmount: inputAmount.text
     property var selectedAccount
@@ -165,22 +167,29 @@ Item {
         }
     }
 
-    AssetSelector {
-        id: selectAsset
-        width: 86
-        height: 28
-        anchors.top: inputAmount.top
-        anchors.topMargin: Style.current.bigPadding + 14
-        anchors.right: parent.right
-        anchors.rightMargin: Style.current.smallPadding
-        onSelectedAssetChanged: {
-            if (!selectAsset.selectedAsset) {
-                return
-            }
-            txtBalance.text = Utils.stripTrailingZeros(selectAsset.selectedAsset.value)
-            if (inputAmount.text === "" || isNaN(inputAmount.text)) {
-                return
-            }
+    StatusAssetSelector {
+         id: selectAsset
+         width: 86
+         height: 28
+         anchors.top: inputAmount.top
+         anchors.topMargin: Style.current.bigPadding + 14
+         anchors.right: parent.right
+         anchors.rightMargin: Style.current.smallPadding
+         defaultToken: Style.png("tokens/DEFAULT-TOKEN@3x")
+         getCurrencyBalanceString: function (currencyBalance) {
+             return Utils.toLocaleString(currencyBalance.toFixed(2), localAppSettings.locale, {"currency": true}) + " " + root.currentCurrency.toUpperCase()
+         }
+         tokenAssetSourceFn: function (symbol) {
+             return symbol ? Style.png("tokens/" + symbol) : defaultToken
+         }
+         onSelectedAssetChanged: {
+             if (!selectAsset.selectedAsset) {
+                 return
+             }
+             txtBalance.text = Utils.stripTrailingZeros(parseFloat(selectAsset.selectedAsset.balance).toFixed(4))
+             if (inputAmount.text === "" || isNaN(inputAmount.text)) {
+                 return
+             }
             txtFiatBalance.text = root.getFiatValue(inputAmount.text, selectAsset.selectedAsset.symbol, root.defaultCurrency)
             root.validate(true)
         }

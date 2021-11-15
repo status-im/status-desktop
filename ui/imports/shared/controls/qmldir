@@ -1,7 +1,6 @@
 AddressInput 1.0 AddressInput.qml
 AddressSourceSelector 1.0 AddressSourceSelector.qml
 AssetAndAmountInput 1.0 AssetAndAmountInput.qml
-AssetSelector 1.0 AssetSelector.qml
 ContactSelector 1.0 ContactSelector.qml
 ContactsListAndSearch 1.0 ContactsListAndSearch.qml
 CopyToClipBoardButton 1.0 CopyToClipBoardButton.qml

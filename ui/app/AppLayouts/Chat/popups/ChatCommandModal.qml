@@ -50,9 +50,9 @@ StatusModal {
 
                 StatusAccountSelector {
                     id: selectFromAccount
-                    accounts: root.store.walletModelInst.accountsView.accounts
+                    accounts: root.store.accounts
                     selectedAccount: {
-                        const currAcc = root.store.walletModelInst.accountsView.currentAccount
+                        const currAcc = root.store.currentAccount
                         if (currAcc.walletType !== Constants.watchWalletType) {
                             return currAcc
                         }
@@ -113,6 +113,7 @@ StatusModal {
                     id: txtAmount
                     selectedAccount: selectFromAccount.selectedAccount
                     defaultCurrency: root.store.walletModelInst.balanceView.defaultCurrency
+                    currentCurrency: root.store.currentCurrency
                     getFiatValue: root.store.walletModelInst.balanceView.getFiatValue
                     getCryptoValue: root.store.walletModelInst.balanceView.getCryptoValue
                     validateBalance: !root.isRequested
