@@ -1,6 +1,7 @@
 import ./controller_interface
 import io_interface
-#import ../../../../core/signals/types
+
+import ../../../../core/signals/types
 import ../../../../../app_service/service/contacts/service as contacts_service
 import ../../../../../app_service/service/contacts/dto/contacts
 import ../../../../../app_service/service/accounts/service as accounts_service
@@ -18,6 +19,9 @@ type
     events: EventEmitter
     contactsService: contacts_service.Service
     accountsService: accounts_service.ServiceInterface
+
+# forward declaration:
+method getContacts*[T](self: Controller[T], useCache: bool = true): seq[ContactsDto]
 
 proc newController*[T](delegate: io_interface.AccessInterface, 
   events: EventEmitter,
@@ -91,8 +95,8 @@ method init*[T](self: Controller[T]) =
     # let contactDto = self.contactsService.getContactById(args.id)
     # self.delegate.onContactUpdated(contactDto)
 
-method getContacts*[T](self: Controller[T]): seq[ContactsDto] =
-  return self.contactsService.getContacts()
+method getContacts*[T](self: Controller[T], useCache: bool = true): seq[ContactsDto] =
+  return self.contactsService.getContacts(useCache)
 
 method getContact*[T](self: Controller[T], id: string): ContactsDto =
   return self.contactsService.getContactById(id)

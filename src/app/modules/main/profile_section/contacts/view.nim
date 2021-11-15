@@ -36,6 +36,9 @@ QtObject:
   proc model*(self: View): Model =
     return self.model
 
+  proc updateContactList*(self: View, contacts: seq[ContactsDto]) =
+    self.model.updateContactList(contacts)
+
   proc modelChanged*(self: View) {.signal.}
 
   proc getModel*(self: View): QVariant {.slot.} =

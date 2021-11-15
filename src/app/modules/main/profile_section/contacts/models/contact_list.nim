@@ -132,7 +132,7 @@ QtObject:
     self.endRemoveRows()
     self.countChanged()
 
-  proc hasAddedContacts(self: ContactList): bool {.slot.} =
+  proc hasAddedContacts(self: ContactList): bool {.slot.} = 
     for c in self.contacts:
       if(c.isContact()): return true
     return false

@@ -91,7 +91,7 @@ StatusAppThreePanelLayout {
             userList: chatColumn.userList
             messageContextMenu: quickActionMessageOptionsMenu
             profilePubKey: userProfile.pubKey
-            contactsList: root.rootStore.profileModelInst.contacts.list
+            contactsList: root.rootStore.allContacts
             isOnline: root.rootStore.chatsModelInst.isOnline
         }
     }
@@ -144,10 +144,9 @@ StatusAppThreePanelLayout {
         //% "Are you sure you want to remove this contact?"
         confirmationText: qsTrId("are-you-sure-you-want-to-remove-this-contact-")
         onConfirmButtonClicked: {
-            // Not Refactored
-//            if (root.rootStore.profileModelInst.contacts.isAdded(chatColumn.contactToRemove)) {
-//                root.rootStore.profileModelInst.contacts.removeContact(chatColumn.contactToRemove)
-//            }
+            if (root.rootStore.contactsModuleInst.model.isAdded(chatColumn.contactToRemove)) {
+                root.rootStore.contactsModuleInst.model.removeContact(chatColumn.contactToRemove)
+            }
             removeContactConfirmationDialog.parentPopup.close();
             removeContactConfirmationDialog.close();
         }

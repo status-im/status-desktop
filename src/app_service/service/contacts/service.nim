@@ -26,6 +26,10 @@ type
   ContactAddedArgs* = ref object of Args
     contact*: ContactsDto
 
+type
+  ContactArgs* = ref object of Args
+    contact*: ContactsDto
+
   ContactUpdatedArgs* = ref object of Args
     id*: string
 
@@ -37,6 +41,7 @@ const SIGNAL_CONTACT_BLOCKED* = "new-contactBlocked"
 const SIGNAL_CONTACT_UNBLOCKED* = "new-contactUnblocked"
 const SIGNAL_CONTACT_REMOVED* = "new-contactRemoved"
 const SIGNAL_CONTACT_NICKNAME_CHANGED* = "new-contactNicknameChanged"
+
 
 QtObject:
   type Service* = ref object of QObject
@@ -71,7 +76,9 @@ QtObject:
   proc init*(self: Service) =
     self.fetchContacts()
 
-  proc getContacts*(self: Service): seq[ContactsDto] =
+  proc getContacts*(self: Service, useCache: bool = true): seq[ContactsDto] =
+    if (not useCache):
+      self.fetchContacts()
     return toSeq(self.contacts.values)
 
   proc fetchContact(self: Service, id: string): ContactsDto =
