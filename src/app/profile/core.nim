@@ -7,7 +7,8 @@ import status/devices as status_devices
 import status/chat/chat
 import status/wallet
 import status/types/[account, transaction, setting, profile, mailserver]
-import ../../app_service/[main]
+import ../core/[main]
+import ../core/tasks/marathon/mailserver/events
 import eventemitter
 import view
 import views/[ens_manager, devices, network, mailservers, muted_chats]
@@ -94,10 +95,9 @@ proc init*(self: ProfileController, account: Account) =
     var evArgs = ChatUpdateArgs(e)
     self.view.mutedChats.updateChats(evArgs.chats)
 
-  self.status.events.on(SignalType.MailserverChanged.event) do(e: Args):
-    let m = MailserverChangedSignal(e)
-    info "active mailserver changed", node=m.address, topics="mailserver-interaction"
-    self.view.mailservers.setActiveMailserver(m.address)
+  self.status.events.on("mailserver:changed") do(e: Args):
+    let mailserverArg = MailserverArgs(e)
+    self.view.mailservers.activeMailserverChanged(mailserverArg.peer)
 
   self.status.events.on(SignalType.HistoryRequestStarted.event) do(e: Args):
     let h = HistoryRequestStartedSignal(e)

@@ -6,8 +6,8 @@ import
   status/[status, wallet, utils],
   status/wallet as status_wallet,
   status/types/[transaction]
-import ../../../../app_service/[main]
-import ../../../../app_service/tasks/[qt, threadpool]
+import ../../../core/[main]
+import ../../../core/tasks/[qt, threadpool]
 import account_list, account_item, transaction_list, accounts, transactions
 
 logScope:

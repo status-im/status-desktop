@@ -1,7 +1,7 @@
 import status/ens as status_ens
 
 include ../../common/json_utils
-include ../../tasks/common
+include ../../../app/core/tasks/common
 
 #################################################
 # Async lookup ENS contact

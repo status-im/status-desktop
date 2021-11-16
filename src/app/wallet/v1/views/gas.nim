@@ -6,8 +6,8 @@ import
   status/types/[gas_prediction],
   # TODO: Remove direct access to backend
   status/statusgo_backend/eth as eth
-import ../../../../app_service/[main]
-import ../../../../app_service/tasks/[qt, threadpool]
+import ../../../core/[main]
+import ../../../core/tasks/[qt, threadpool]
 
 import account_item
 

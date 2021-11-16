@@ -6,7 +6,7 @@ import views/[account_list, account_item, networks]
 import status/[status, wallet2, settings]
 import status/wallet2/account as WalletTypes
 import status/types/[transaction, setting]
-import ../../../app_service/[main]
+import ../../core/[main]
 import status/signals
 import eventemitter
 

@@ -6,7 +6,7 @@ import
   ./tasks/threadpool,
   ./signals/signal_controller
 
-import service/os_notification/service as os_notification_service
+import ../../app_service/service/os_notification/service as os_notification_service
 
 export status_lib_status
 export marathon, task_runner, signal_controller

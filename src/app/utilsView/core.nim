@@ -1,6 +1,6 @@
 import NimQml, chronicles
 import status/[status, node, network]
-import ../../app_service/[main]
+import ../core/[main]
 import view
 import eventemitter
 

@@ -5,9 +5,9 @@ import
   status/[status, settings, wallet, tokens, utils],
   status/wallet as status_wallet
 
-import ../../../../app_service/[main]
-import ../../../../app_service/tasks/[qt, threadpool]
-import ../../../../app_service/tasks/marathon/mailserver/worker
+import ../../../core/[main]
+import ../../../core/tasks/[qt, threadpool]
+import ../../../core/tasks/marathon/mailserver/worker
 
 import account_list, account_item, transaction_list, accounts
 

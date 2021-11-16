@@ -9,8 +9,8 @@ import ./io_interface
 
 # import status/types/[identity_image, profile]
 
-import ../../../../../app_service/[main]
-import ../../../../../app_service/tasks/[qt, threadpool]
+import ../../../../core/[main]
+import ../../../../core/tasks/[qt, threadpool]
 
 QtObject:
   type
