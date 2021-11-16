@@ -11,9 +11,9 @@ import status/types/[account]
 import status_go
 import status/status as statuslib
 import eventemitter
-import app_service/tasks/marathon/mailserver/controller as mailserver_controller
-import app_service/tasks/marathon/mailserver/worker as mailserver_worker
-import app_service/main
+import app/core/tasks/marathon/mailserver/controller as mailserver_controller
+import app/core/tasks/marathon/mailserver/worker as mailserver_worker
+import app/core/main
 import constants
 
 import app/global/global_singleton

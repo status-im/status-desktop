@@ -1,5 +1,5 @@
 import
-  ../../app_service/tasks/marathon/mailserver/worker,
+  ../core/tasks/marathon/mailserver/worker,
   status/signals
 
 proc handleSignals(self: ChatController) =

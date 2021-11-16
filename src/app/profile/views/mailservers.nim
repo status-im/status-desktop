@@ -3,9 +3,9 @@ import status/[status, settings]
 import status/types/mailserver
 
 import ./mailservers_list
-import ../../../app_service/[main]
-import ../../../app_service/tasks/[qt, threadpool]
-import ../../../app_service/tasks/marathon/mailserver/worker
+import ../../core/[main]
+import ../../core/tasks/[qt, threadpool]
+import ../../core/tasks/marathon/mailserver/worker
 
 logScope:
   topics = "mailservers-view"

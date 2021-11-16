@@ -30,7 +30,7 @@ import ../global/global_singleton
 # This will be removed later once we move to c++ and handle there async things
 # and improved some services, like EventsService which should implement 
 # provider/subscriber principe, similar we should have SettingsService.
-import ../../app_service/[main]
+import ../core/[main]
 import eventemitter
 import status/[fleet, settings]
 import ../profile/core as profile

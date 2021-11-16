@@ -8,9 +8,9 @@ import # status-desktop libs
   status/[utils, tokens, settings],
   status/types/network_type,
   status/status
-import ../../../../app_service/[main]
-import ../../../../app_service/tasks/[qt, threadpool]
-import ../../../../app_service/tasks/marathon/mailserver/worker
+import ../../../core/[main]
+import ../../../core/tasks/[qt, threadpool]
+import ../../../core/tasks/marathon/mailserver/worker
 from web3/conversions import `$`
 
 type
