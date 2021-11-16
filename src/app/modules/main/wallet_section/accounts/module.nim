@@ -2,7 +2,7 @@ import NimQml, sequtils, sugar
 import eventemitter
 
 import ./io_interface, ./view, ./item, ./controller
-import ../../../../core/global_singleton
+import ../../../../global/global_singleton
 import ../../../../../app_service/service/wallet_account/service as wallet_account_service
 import ../account_tokens/model as account_tokens
 import ../account_tokens/item as account_tokens_item

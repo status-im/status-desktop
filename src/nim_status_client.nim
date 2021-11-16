@@ -15,7 +15,7 @@ import app_service/tasks/marathon/mailserver/worker as mailserver_worker
 import app_service/main
 import constants
 
-import app/core/global_singleton
+import app/global/global_singleton
 import app/boot/app_controller
 
 

@@ -1,7 +1,7 @@
 import NimQml, sequtils, sugar
 import eventemitter
 import ./io_interface, ./view, ./controller, ./item
-import ../../../../core/global_singleton
+import ../../../../global/global_singleton
 import ../../../../../app_service/service/wallet_account/service as wallet_account_service
 
 export io_interface

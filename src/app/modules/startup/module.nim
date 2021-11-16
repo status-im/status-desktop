@@ -2,7 +2,7 @@ import NimQml
 
 import io_interface
 import view, controller
-import ../../core/global_singleton
+import ../../global/global_singleton
 
 import onboarding/module as onboarding_module
 import login/module as login_module

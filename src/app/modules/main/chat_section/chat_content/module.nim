@@ -4,7 +4,7 @@ import ../io_interface as delegate_interface
 import view, controller
 import ../../../shared_models/message_model as pinned_msg_model
 import ../../../shared_models/message_item as pinned_msg_item
-import ../../../../core/global_singleton
+import ../../../../global/global_singleton
 
 import input_area/module as input_area_module
 import messages/module as messages_module
