@@ -2,7 +2,7 @@ import NimQml, Tables
 
 import controller_interface
 import io_interface
-import ../../../core/global_singleton
+import ../../../global/global_singleton
 
 import ../../../../app_service/service/keychain/service as keychain_service
 import ../../../../app_service/service/accounts/service_interface as accounts_service

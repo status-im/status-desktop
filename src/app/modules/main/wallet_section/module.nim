@@ -3,7 +3,7 @@ import eventemitter
 
 import ./controller, ./view
 import ./io_interface as io_interface
-import ../../../core/global_singleton
+import ../../../global/global_singleton
 
 import ./account_tokens/module as account_tokens_module
 import ./accounts/module as accountsModule

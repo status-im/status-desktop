@@ -4,7 +4,7 @@ import view
 import controller
 import ../io_interface as delegate_interface
 import ../../../../../app_service/service/settings/service as settings_service
-import ../../../../core/global_singleton
+import ../../../../global/global_singleton
 export io_interface
 
 type 

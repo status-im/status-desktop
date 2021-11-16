@@ -1,8 +1,8 @@
 import NimQml, Tables
 
 import io_interface, view, controller, item, model
-import ../../boot/app_sections_config as conf
-import ../../core/global_singleton
+import ../../global/app_sections_config as conf
+import ../../global/global_singleton
 
 import chat_section/module as chat_section_module
 import wallet_section/module as wallet_section_module

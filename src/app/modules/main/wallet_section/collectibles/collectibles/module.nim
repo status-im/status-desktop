@@ -1,6 +1,6 @@
 import sequtils, sugar, NimQml
 
-import ../../../../../core/global_singleton
+import ../../../../../global/global_singleton
 import ./io_interface, ./view, ./controller, ./item
 import ../../../../../../app_service/service/collectible/service as collectible_service
 

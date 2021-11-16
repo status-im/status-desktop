@@ -23,8 +23,8 @@ import ../../app_service/service/about/service as about_service
 import ../modules/startup/module as startup_module
 import ../modules/main/module as main_module
 
-import ../core/local_account_settings
-import ../core/global_singleton
+import ../global/local_account_settings
+import ../global/global_singleton
 
 #################################################
 # This will be removed later once we move to c++ and handle there async things

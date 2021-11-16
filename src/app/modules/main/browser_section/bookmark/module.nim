@@ -4,7 +4,7 @@ import ../io_interface as delegate_interface
 import item
 import view
 import controller
-import ../../../../core/global_singleton
+import ../../../../global/global_singleton
 import ../../../../../app_service/service/bookmarks/service as bookmark_service
 
 export io_interface

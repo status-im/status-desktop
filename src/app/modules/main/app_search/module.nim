@@ -8,7 +8,7 @@ import location_menu_sub_model, location_menu_sub_item
 import result_model, result_item
 import ../../shared_models/message_item
 
-import ../../../boot/app_sections_config as conf
+import ../../../global/app_sections_config as conf
 import ../../../../app_service/service/contacts/service as contact_service
 import ../../../../app_service/service/chat/service as chat_service
 import ../../../../app_service/service/community/service as community_service

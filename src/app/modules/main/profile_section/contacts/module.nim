@@ -1,7 +1,7 @@
 import NimQml, Tables
 
 import ./io_interface, ./view, ./controller
-import ../../../../core/global_singleton
+import ../../../../global/global_singleton
 
 import ../../../../../app_service/service/contacts/service as contacts_service
 import ../../../../../app_service/service/contacts/dto/contacts

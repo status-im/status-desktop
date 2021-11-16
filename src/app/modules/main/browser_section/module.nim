@@ -2,7 +2,7 @@ import NimQml
 import io_interface
 import ../io_interface as delegate_interface
 import view
-import ../../../core/global_singleton
+import ../../../global/global_singleton
 import provider/module as provider_module
 import bookmark/module as bookmark_module
 import dapps/module as dapps_module
