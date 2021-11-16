@@ -43,7 +43,7 @@ method getProfile*[T](self: Controller[T]): item.Item =
     id: singletonInstance.userProfile.getPubKey(),
     alias: "",
     username: singletonInstance.userProfile.getUsername(),
-    identicon: singletonInstance.userProfile.getThumbnailImage(), 
+    identicon: singletonInstance.userProfile.getIdenticon(),
     address: singletonInstance.userProfile.getAddress(),
     ensName: singletonInstance.userProfile.getEnsName(),
     ensVerified: false,
@@ -61,7 +61,11 @@ method getProfile*[T](self: Controller[T]): item.Item =
   return item
 
 method storeIdentityImage*[T](self: Controller[T], address: string, image: string, aX: int, aY: int, bX: int, bY: int): identity_image.IdentityImage =
-  self.profileService.storeIdentityImage(address, image, aX, aY, bX, bY)
+  result = self.profileService.storeIdentityImage(address, image, aX, aY, bX, bY)
+  singletonInstance.userProfile.setThumbnailImage(result.thumbnail)
+  singletonInstance.userProfile.setLargeImage(result.large)
 
 method deleteIdentityImage*[T](self: Controller[T], address: string): string =
-  self.profileService.deleteIdentityImage(address)
+  result = self.profileService.deleteIdentityImage(address)
+  singletonInstance.userProfile.setThumbnailImage("")
+  singletonInstance.userProfile.setLargeImage("")
