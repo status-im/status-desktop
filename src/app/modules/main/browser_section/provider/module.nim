@@ -6,7 +6,7 @@ import ../io_interface as delegate_interface
 import ../../../../../app_service/service/settings/service as settings_service
 import ../../../../../app_service/service/dapp_permissions/service as dapp_permissions_service
 import ../../../../../app_service/service/provider/service as provider_service
-import ../../../../core/global_singleton
+import ../../../../global/global_singleton
 export io_interface
 
 type 
