@@ -1,21 +1,39 @@
-import NimQml
+type
+  OnlineStatus* {.pure.} = enum
+    Online = 0
+    Idle
+    DoNotDisturb
+    Invisible
+    Offline
 
-QtObject:
-  type
-    Item* = ref object of QObject
-      
-  proc setup(self: Item) = 
-    self.QObject.setup
+type 
+  Item* = ref object
+    id: string
+    name: string
+    onlineStatus: OnlineStatus
+    identicon: string
 
-  proc delete*(self: Item) =
-    self.QObject.delete
+proc initItem*(id: string, name: string, onlineStatus: OnlineStatus, identicon: string): Item =
+  result = Item()
+  result.id = id
+  result.name = name
+  result.onlineStatus = onlineStatus
+  result.identicon = identicon
 
-  proc newItem*(): Item =
-    new(result, delete)
-    result.setup()
+proc id*(self: Item): string {.inline.} = 
+  self.id
 
-  proc id*(self: Item): string {.slot.} = 
-    self.id
+proc name*(self: Item): string {.inline.} = 
+  self.name
 
-  QtProperty[string] id:
-    read = id
+proc `name=`*(self: Item, value: string) {.inline.} = 
+  self.name = value
+
+proc onlineStatus*(self: Item): OnlineStatus {.inline.} = 
+  self.onlineStatus
+
+proc `onlineStatus=`*(self: Item, value: OnlineStatus) {.inline.} = 
+  self.onlineStatus = value
+
+proc identicon*(self: Item): string {.inline.} = 
+  self.identicon
