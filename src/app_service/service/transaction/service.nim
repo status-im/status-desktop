@@ -2,8 +2,9 @@ import NimQml, chronicles, sequtils, sugar, stint, json
 import status/statusgo_backend_new/transactions as transactions
 
 import eventemitter
-import ../../tasks/[qt, threadpool]
 
+import ../../../app/core/[main]
+import ../../../app/core/tasks/[qt, threadpool]
 import ../wallet_account/service as wallet_account_service
 import ./service_interface, ./dto
 
@@ -11,9 +12,6 @@ export service_interface
 
 logScope:
   topics = "transaction-service"
-
-import ../../../app_service/[main]
-import ../../../app_service/tasks/[qt, threadpool]
 
 include async_tasks
 

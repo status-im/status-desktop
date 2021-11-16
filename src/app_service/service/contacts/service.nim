@@ -1,7 +1,7 @@
 import NimQml, Tables, json, sequtils, strformat, chronicles, strutils
 
 import eventemitter
-import ../../tasks/[qt, threadpool]
+import ../../../app/core/tasks/[qt, threadpool]
 
 import ./dto/contacts as contacts_dto
 import status/statusgo_backend_new/contacts as status_contacts

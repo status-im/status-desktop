@@ -6,8 +6,8 @@ import status/chat as status_chat
 import status/chat/[chat]
 
 import status/statusgo_backend/chat as status_backend_chat
-import ../../../app_service/[main]
-import ../../../app_service/tasks/[qt, threadpool]
+import ../../core/[main]
+import ../../core/tasks/[qt, threadpool]
 
 import communities, chat_item, channels_list, communities, community_list, activity_notification_list
 

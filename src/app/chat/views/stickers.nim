@@ -8,9 +8,9 @@ import # status-desktop libs
   status/[status, stickers, wallet, utils],
   sticker_pack_list, sticker_list, chat_item
 import status/types/[sticker, pending_transaction_type]
-import ../../../app_service/[main]
-import ../../../app_service/tasks/[qt, threadpool]
-import ../../../app_service/tasks/marathon/mailserver/worker
+import ../../core/[main]
+import ../../core/tasks/[qt, threadpool]
+import ../../core/tasks/marathon/mailserver/worker
 
 logScope:
   topics = "stickers-view"

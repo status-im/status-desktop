@@ -8,8 +8,8 @@ import status/ens as status_ens
 
 import contact_list
 
-import ../../../app_service/[main]
-import ../../../app_service/tasks/[qt, threadpool]
+import ../../core/[main]
+import ../../core/tasks/[qt, threadpool]
 
 logScope:
   topics = "contacts-view"

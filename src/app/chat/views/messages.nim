@@ -6,9 +6,9 @@ import status/utils as status_utils
 import status/chat/[chat]
 import status/types/[message, profile]
 
-import ../../../app_service/[main]
-import ../../../app_service/tasks/[qt, threadpool]
-import ../../../app_service/tasks/marathon/mailserver/worker
+import ../../core/[main]
+import ../../core/tasks/[qt, threadpool]
+import ../../core/tasks/marathon/mailserver/worker
 
 import communities, chat_item, channels_list, communities, user_list, community_members_list, message_list, channel, message_item, message_format
 

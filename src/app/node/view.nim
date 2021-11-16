@@ -1,9 +1,9 @@
 import NimQml, chronicles, strutils, json
 import status/[node, settings, accounts]
 import status/types/[setting]
-import ../../app_service/[main]
+import ../core/[main]
 import status/signals/[stats]
-import ../../app_service/tasks/[qt, threadpool]
+import ../core/tasks/[qt, threadpool]
 
 logScope:
   topics = "node-view"

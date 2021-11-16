@@ -2,8 +2,8 @@ import NimQml, json, strutils, chronicles
 
 import service_model, service_item
 
-import ../../../../../app_service/[main]
-import ../../../../../app_service/tasks/[qt, threadpool]
+import ../../../../core/[main]
+import ../../../../core/tasks/[qt, threadpool]
 import status/[status, wallet2]
 import status/statusgo_backend/wallet as status_wallet
 

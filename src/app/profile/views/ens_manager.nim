@@ -8,8 +8,8 @@ import status/utils as status_utils
 import status/[status, settings, wallet]
 import status/wallet
 import status/types/[setting, transaction, rpc_response]
-import ../../../app_service/[main]
-import ../../../app_service/tasks/[qt, threadpool]
+import ../../core/[main]
+import ../../core/tasks/[qt, threadpool]
 import sets
 import web3/ethtypes
 import chronicles

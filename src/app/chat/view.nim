@@ -8,9 +8,9 @@ import status/contacts as status_contacts
 import status/ens as status_ens
 import status/chat/[chat]
 import status/types/[activity_center_notification, os_notification, rpc_response, profile]
-import ../../app_service/[main]
-import ../../app_service/tasks/[qt, threadpool]
-import ../../app_service/tasks/marathon/mailserver/worker
+import ../core/[main]
+import ../core/tasks/[qt, threadpool]
+import ../core/tasks/marathon/mailserver/worker
 import status/notifications/[os_notifications]
 import ../utils/image_utils
 import web3/[conversions, ethtypes]

@@ -12,8 +12,8 @@ export controller_interface
 
 import status/types/transaction
 
-import ../../../../../app_service/[main]
-import ../../../../../app_service/tasks/[qt, threadpool]
+import ../../../../core/[main]
+import ../../../../core/tasks/[qt, threadpool]
 
 type 
   Controller*[T: controller_interface.DelegateInterface] = ref object of controller_interface.AccessInterface

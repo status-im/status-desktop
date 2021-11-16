@@ -4,8 +4,8 @@ import NimQml, json, sequtils, chronicles, strutils, strformat, json
 import
   status/[status, wallet, tokens],
   status/tokens as status_tokens
-import ../../../../app_service/[main]
-import ../../../../app_service/tasks/[qt, threadpool]
+import ../../../core/[main]
+import ../../../core/tasks/[qt, threadpool]
 
 import account_item, accounts, transactions, history
 

@@ -2,9 +2,9 @@ import NimQml, json, sequtils, chronicles, strutils
 
 import status/[status, contacts]
 import status/ens as status_ens
-import ../../../app_service/[main]
-import ../../../app_service/tasks/[qt, threadpool]
-import ../../../app_service/tasks/marathon/mailserver/worker
+import ../../core/[main]
+import ../../core/tasks/[qt, threadpool]
+import ../../core/tasks/marathon/mailserver/worker
 
 logScope:
   topics = "ens-view"

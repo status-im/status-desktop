@@ -5,8 +5,8 @@ import # status-desktop libs
   status/chat/chat as status_chat,
   ./views/communities,
   ./views/messages
-import ../../app_service/tasks/[qt, threadpool]
-import ../../app_service/tasks/marathon/mailserver/worker
+import ../core/tasks/[qt, threadpool]
+import ../core/tasks/marathon/mailserver/worker
 
 proc handleChatEvents(self: ChatController) =
   # Display already saved messages
