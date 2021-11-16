@@ -4,8 +4,8 @@ import NimQml, json, sequtils, chronicles, strutils, json
 import
   status/[status, wallet],
   status/wallet/collectibles as status_collectibles
-import ../../../../app_service/[main]
-import ../../../../app_service/tasks/[qt, threadpool]
+import ../../../core/[main]
+import ../../../core/tasks/[qt, threadpool]
 
 import collectibles_list, accounts, account_list, account_item
 

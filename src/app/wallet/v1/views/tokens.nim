@@ -2,7 +2,7 @@ import strutils, sequtils, json, chronicles, web3/[ethtypes, conversions], stint
 import NimQml, json, sequtils, chronicles, strutils, json
 
 import status/[status, wallet, tokens, utils]
-import ../../../../app_service/[main]
+import ../../../core/[main]
 import account_item, accounts, asset_list, token_list
 
 logScope:

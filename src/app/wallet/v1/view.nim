@@ -4,7 +4,7 @@ import NimQml, chronicles, stint
 import
   status/[status, wallet],
   views/[accounts, collectibles, transactions, tokens, gas, dapp_browser, history, balance, utils, asset_list, account_list]
-import ../../../app_service/[main]
+import ../../core/[main]
 
 QtObject:
   type

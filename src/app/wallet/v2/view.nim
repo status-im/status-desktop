@@ -5,7 +5,7 @@ import
   chronicles, nimqml, status/[status, wallet2], stint
 
 import
-  ../../../app_service/[main],
+  ../../core/[main],
   ./views/[accounts, account_list, collectibles, networks, saved_addresses, settings],
   ./views/buy_sell_crypto/[service_controller]
 

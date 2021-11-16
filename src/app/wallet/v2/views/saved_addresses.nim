@@ -7,7 +7,7 @@ import # vendor libs
   stew/results
 
 import # status-desktop modules
-  ../../../../app_service/main, ../../../../app_service/tasks/[qt, threadpool],
+  ../../../core/main, ../../../core/tasks/[qt, threadpool],
   ./saved_addresses_list
 
 logScope:

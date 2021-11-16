@@ -7,8 +7,8 @@ import status/devices as status_devices
 import status/chat/chat
 import status/wallet
 import status/types/[account, transaction, setting, profile, mailserver]
-import ../../app_service/[main]
-import ../../app_service/tasks/marathon/mailserver/events
+import ../core/[main]
+import ../core/tasks/marathon/mailserver/events
 import eventemitter
 import view
 import views/[ens_manager, devices, network, mailservers, muted_chats]

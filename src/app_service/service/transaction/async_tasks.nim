@@ -1,5 +1,5 @@
 include ../../common/json_utils
-include ../../tasks/common
+include ../../../app/core/tasks/common
 
 #################################################
 # Async load transactions
