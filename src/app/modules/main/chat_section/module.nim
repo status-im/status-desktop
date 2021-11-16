@@ -2,7 +2,7 @@ import NimQml, Tables, chronicles
 import io_interface
 import ../io_interface as delegate_interface
 import view, controller, item, sub_item, model, sub_model
-import ../../../core/global_singleton
+import ../../../global/global_singleton
 
 import chat_content/module as chat_content_module
 

@@ -4,7 +4,7 @@ import ../io_interface as delegate_interface
 import view, controller
 import ../../../../shared_models/message_model
 import ../../../../shared_models/message_item
-import ../../../../../core/global_singleton
+import ../../../../../global/global_singleton
 
 import ../../../../../../app_service/service/chat/service as chat_service
 import ../../../../../../app_service/service/community/service as community_service

@@ -1,5 +1,5 @@
 import item, controller_interface, io_interface
-import ../../core/global_singleton
+import ../../global/global_singleton
 
 import ../../../app_service/service/settings/service_interface as settings_service
 import ../../../app_service/service/keychain/service as keychain_service

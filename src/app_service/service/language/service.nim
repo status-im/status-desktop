@@ -1,7 +1,7 @@
 import NimQml
 import json, json_serialization, sequtils, chronicles, os, strformat
 import ./service_interface, ./dto
-import ../../../app/core/global_singleton
+import ../../../app/global/global_singleton
 
 export service_interface
 

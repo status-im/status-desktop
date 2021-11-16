@@ -4,7 +4,7 @@ import ../io_interface as delegate_interface
 import view
 import sets
 import controller
-import ../../../../core/global_singleton
+import ../../../../global/global_singleton
 import ../../../../../app_service/service/dapp_permissions/service as dapp_permissions_service
 import options
 export io_interface
