@@ -29,6 +29,9 @@ QtObject:
     self.address = address
     self.identicon = identicon
     self.pubKey = pubKey
+
+  proc getIdenticon*(self: UserProfile): string {.slot.} =
+    self.identicon
   
   proc getUsername*(self: UserProfile): string {.slot.} = 
     self.username
