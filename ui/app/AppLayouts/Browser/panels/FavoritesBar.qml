@@ -11,7 +11,7 @@ RowLayout {
     property alias bookmarkModel: bookmarkList.model
 
     spacing: 0
-    height: bookmarkModel.rowCount() > 0 ? 38: 0
+    height: 38
 
     ListView {
         id: bookmarkList
