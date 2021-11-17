@@ -7,7 +7,6 @@ import status/[status, wallet2, settings]
 import status/wallet2/account as WalletTypes
 import status/types/[transaction, setting]
 import ../../core/[main]
-import status/signals
 import eventemitter
 
 logScope:

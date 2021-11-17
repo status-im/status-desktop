@@ -6,7 +6,6 @@ import ../../../../../app_service/service/wallet_account/service as wallet_accou
 
 import
   status/[status, wallet]
-import status/signals
 
 export controller_interface
 

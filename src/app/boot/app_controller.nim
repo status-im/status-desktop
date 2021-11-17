@@ -64,6 +64,11 @@ proc changeLanguage(locale: string) =
 type 
   AppController* = ref object of RootObj 
     appService: AppService
+    # Global
+    localAppSettingsVariant: QVariant
+    localAccountSettingsVariant: QVariant
+    localAccountSensitiveSettingsVariant: QVariant
+
     # Services
     osNotificationService: os_notification_service.Service
     keychainService: keychain_service.Service
@@ -85,11 +90,6 @@ type
     languageService: language_service.Service
     mnemonicService: mnemonic_service.Service
     privacyService: privacy_service.Service
-
-    # Core
-    localAppSettingsVariant: QVariant
-    localAccountSettingsVariant: QVariant
-    localAccountSensitiveSettingsVariant: QVariant
 
     # Modules
     startupModule: startup_module.AccessInterface
@@ -125,6 +125,12 @@ proc connect(self: AppController) =
 proc newAppController*(appService: AppService): AppController =
   result = AppController()
   result.appService = appService
+
+  # Global
+  result.localAppSettingsVariant = newQVariant(singletonInstance.localAppSettings)
+  result.localAccountSettingsVariant = newQVariant(singletonInstance.localAccountSettings)
+  result.localAccountSensitiveSettingsVariant = newQVariant(singletonInstance.localAccountSensitiveSettings)
+
   # Services
   result.osNotificationService = os_notification_service.newService(appService.status.events)
   result.keychainService = keychain_service.newService(appService.status.events)
@@ -149,10 +155,6 @@ proc newAppController*(appService: AppService): AppController =
   result.mnemonicService = mnemonic_service.newService()
   result.privacyService = privacy_service.newService()
 
-  # Core
-  result.localAppSettingsVariant = newQVariant(singletonInstance.localAppSettings)
-  result.localAccountSettingsVariant = newQVariant(singletonInstance.localAccountSettings)
-  result.localAccountSensitiveSettingsVariant = newQVariant(singletonInstance.localAccountSensitiveSettings)
   # Modules
   result.startupModule = startup_module.newModule[AppController](
     result,

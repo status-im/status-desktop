@@ -301,8 +301,8 @@ method login*(self: Service, account: AccountDto, password: string): string =
       elif(img.imgType == "large"):
         largeImage = img.uri
 
-    let response = status_go.login(account.name, account.keyUid, hashedPassword,
-    account.identicon, thumbnailImage, largeImage)
+    let response = status_go.login(account.name, account.keyUid, hashedPassword, account.identicon, thumbnailImage, 
+    largeImage)
 
     var error = "response doesn't contain \"error\""
     if(response.result.contains("error")):

@@ -17,20 +17,17 @@ logScope:
 ################################################################################
 QtObject:
   type MailserverController* = ref object of QObject
-    variant*: QVariant
     status*: Status
 
-  proc newController*(status: Status): MailserverController =
+  proc newMailserverController*(status: Status): MailserverController =
     new(result)
     result.status = status
     result.setup()
-    result.variant = newQVariant(result)
 
   proc setup(self: MailserverController) =
     self.QObject.setup
 
   proc delete*(self: MailserverController) =
-    self.variant.delete
     self.QObject.delete
 
   proc receiveEvent(self: MailserverController, eventTuple: string) {.slot.} =
