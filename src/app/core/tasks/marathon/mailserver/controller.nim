@@ -4,8 +4,10 @@ import # std libs
 import # vendor libs
   chronicles, NimQml, json_serialization
 
-import # status-desktop libs
-  status/status, ../../common as task_runner_common, ./events
+import events
+import ../../common as task_runner_common
+
+import eventemitter
 
 logScope:
   topics = "mailserver controller"
@@ -17,11 +19,11 @@ logScope:
 ################################################################################
 QtObject:
   type MailserverController* = ref object of QObject
-    status*: Status
+    events: EventEmitter
 
-  proc newMailserverController*(status: Status): MailserverController =
+  proc newMailserverController*(events: EventEmitter): MailserverController =
     new(result)
-    result.status = status
+    result.events = events
     result.setup()
 
   proc setup(self: MailserverController) =
@@ -33,4 +35,4 @@ QtObject:
   proc receiveEvent(self: MailserverController, eventTuple: string) {.slot.} =
     let event = Json.decode(eventTuple, tuple[name: string, arg: MailserverArgs])
     trace "forwarding event from long-running mailserver task to the main thread", event=eventTuple
-    self.status.events.emit(event.name, event.arg)
+    self.events.emit(event.name, event.arg)

@@ -35,10 +35,18 @@ import ../global/global_singleton
 # This will be removed later once we move to c++ and handle there async things
 # and improved some services, like EventsService which should implement 
 # provider/subscriber principe, similar we should have SettingsService.
+import ../../constants
 import ../core/[main]
 import eventemitter
 import status/[fleet]
 import ../profile/core as profile
+import ../chat/core as chat
+import ../wallet/v1/core as wallet
+import ../wallet/v2/core as walletV2
+import ../node/core as node
+import ../utilsView/core as utilsView
+import ../provider/core as provider
+import ../keycard/core as keycard
 import status/types/[account, setting]
 #################################################
 
@@ -103,9 +111,15 @@ type
     mainModule: main_module.AccessInterface
 
     #################################################
-    # At the end of refactoring this will be moved to 
-    # appropriate place or removed:
+    # At the end of refactoring this will be moved to appropriate place or removed:
     profile: ProfileController
+    wallet: wallet.WalletController
+    wallet2: walletV2.WalletController
+    chat: ChatController
+    node: NodeController
+    utilsController: UtilsController
+    provider: Web3ProviderController
+    keycard: KeycardController
     #################################################
 
 #################################################
@@ -123,12 +137,25 @@ proc mainDidLoad*(self: AppController)
 #################################################
 
 #################################################
-# At the end of refactoring this will be moved to 
-# appropriate place or removed:
+# At the end of refactoring this will be moved to appropriate place or removed:
 proc connect(self: AppController) =
   self.statusFoundation.status.events.once("loginCompleted") do(a: Args):
     var args = AccountArgs(a)
+    self.statusFoundation.status.startMessenger()
     self.profile.init(args.account)
+    self.wallet.init()
+    self.wallet2.init()
+    self.provider.init()
+    self.chat.init()
+    self.utilsController.init()
+    self.node.init()
+    self.wallet.onLogin()
+
+  self.statusFoundation.status.events.once("nodeStopped") do(a: Args):
+    # TODO: remove this once accounts are not tracked in the AccountsModel
+    self.statusFoundation.status.reset()
+    # 2. Re-init controllers that don't require a running node
+    self.keycard.init()
 #################################################
 
 proc newAppController*(statusFoundation: StatusFoundation): AppController =
@@ -202,9 +229,15 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   )
 
   #################################################
-  # At the end of refactoring this will be moved to 
-  # appropriate place or removed:
+  # At the end of refactoring this will be moved to appropriate place or removed:
   result.profile = profile.newController(statusFoundation.status, statusFoundation, changeLanguage)
+  result.wallet = wallet.newController(statusFoundation.status, statusFoundation)
+  result.wallet2 = walletV2.newController(statusFoundation.status, statusFoundation)
+  result.chat = chat.newController(statusFoundation.status, statusFoundation, OPENURI)
+  result.node = node.newController(statusFoundation)
+  result.utilsController = utilsView.newController(statusFoundation.status, statusFoundation)
+  result.provider = provider.newController(statusFoundation.status)
+  result.keycard = keycard.newController(statusFoundation.status)
   result.connect()
   #################################################
 
@@ -230,9 +263,15 @@ proc delete*(self: AppController) =
   self.mainModule.delete
   
   #################################################
-  # At the end of refactoring this will be moved to 
-  # appropriate place or removed:
+  # At the end of refactoring this will be moved to appropriate place or removed:
   self.profile.delete
+  self.wallet.delete
+  self.wallet2.delete
+  self.chat.delete
+  self.node.delete
+  self.utilsController.delete
+  self.provider.delete
+  self.keycard.delete
   #################################################
 
   self.localAppSettingsVariant.delete
@@ -255,9 +294,15 @@ proc delete*(self: AppController) =
 
 proc startupDidLoad*(self: AppController) =
   #################################################
-  # At the end of refactoring this will be moved to 
-  # appropriate place or removed:
+  # At the end of refactoring this will be moved to appropriate place or removed:
   singletonInstance.engine.setRootContextProperty("profileModel", self.profile.variant)
+  singletonInstance.engine.setRootContextProperty("walletModel", self.wallet.variant)
+  singletonInstance.engine.setRootContextProperty("walletV2Model", self.wallet2.variant)
+  singletonInstance.engine.setRootContextProperty("chatsModel", self.chat.variant)
+  singletonInstance.engine.setRootContextProperty("nodeModel", self.node.variant)
+  singletonInstance.engine.setRootContextProperty("utilsModel", self.utilsController.variant)
+  singletonInstance.engine.setRootContextProperty("web3Provider", self.provider.variant)
+  singletonInstance.engine.setRootContextProperty("keycardModel", self.keycard.variant)
   #################################################
 
   singletonInstance.engine.setRootContextProperty("localAppSettings", self.localAppSettingsVariant)
@@ -275,6 +320,11 @@ proc mainDidLoad*(self: AppController) =
   self.mainModule.checkForStoringPassword()
 
 proc start*(self: AppController) =
+  #################################################
+  # At the end of refactoring this will be moved to appropriate place or removed:
+  self.keycard.init()
+  #################################################
+
   self.accountsService.init()
   
   self.startupModule.load()
