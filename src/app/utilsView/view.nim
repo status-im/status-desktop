@@ -21,7 +21,7 @@ type CheckForNewVersionTaskArg = ref object of QObjectTaskArg
 QtObject:
   type UtilsView* = ref object of QObject
     status*: Status
-    appService: AppService
+    statusFoundation: StatusFoundation
     newVersion*: string
 
   proc setup(self: UtilsView) =
@@ -35,11 +35,11 @@ QtObject:
   proc delete*(self: UtilsView) =
     self.QObject.delete
 
-  proc newUtilsView*(status: Status, appService: AppService): UtilsView =
+  proc newUtilsView*(status: Status, statusFoundation: StatusFoundation): UtilsView =
     new(result, delete)
     result = UtilsView()
     result.status = status
-    result.appService = appService
+    result.statusFoundation = statusFoundation
     result.setup
 
   proc getOs*(self: UtilsView): string {.slot.} =
@@ -168,7 +168,7 @@ QtObject:
       vptr: cast[ByteAddress](self.vptr),
       slot: slot
     )
-    self.appService.threadpool.start(arg)
+    self.statusFoundation.threadpool.start(arg)
 
   proc latestVersionSuccess*(self: UtilsView, latestVersionJSON: string) {.slot.} =
     let latestVersionObj = parseJSON(latestVersionJSON)

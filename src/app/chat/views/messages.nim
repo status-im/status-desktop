@@ -23,7 +23,7 @@ type
 QtObject:
   type MessageView* = ref object of QAbstractListModel
     status: Status
-    appService: AppService
+    statusFoundation: StatusFoundation
     messageList*: OrderedTable[string, ChatMessageList]
     pinnedMessagesList*: OrderedTable[string, ChatMessageList]
     channelView*: ChannelView
@@ -46,10 +46,10 @@ QtObject:
     self.channelOpenTime = initTable[string, int64]()
     self.QAbstractListModel.delete
 
-  proc newMessageView*(status: Status, appService: AppService, channelView: ChannelView, communitiesView: CommunitiesView): MessageView =
+  proc newMessageView*(status: Status, statusFoundation: StatusFoundation, channelView: ChannelView, communitiesView: CommunitiesView): MessageView =
     new(result, delete)
     result.status = status
-    result.appService = appService
+    result.statusFoundation = statusFoundation
     result.channelView = channelView
     result.communities = communitiesView
     result.messageList = initOrderedTable[string, ChatMessageList]()
@@ -293,7 +293,7 @@ QtObject:
     discard
     # Not refactored yet, will be once we have corresponding qml part done.
     # self.setLoadingHistoryMessages(channelId, true)
-    # self.appService.chatService.loadMoreMessagesForChannel(channelId)
+    # self.statusFoundation.chatService.loadMoreMessagesForChannel(channelId)
 
   proc onMessagesLoaded*(self: MessageView, chatId: string, messages: var seq[Message]) =
     self.pushMessages(messages)
@@ -323,7 +323,7 @@ QtObject:
 
   proc fillGaps*(self: MessageView, messageId: string) {.slot.} =
     self.setLoadingMessages(true)
-    let mailserverWorker = self.appService.marathon[MailserverWorker().name]
+    let mailserverWorker = self.statusFoundation.marathon[MailserverWorker().name]
     let task = FillGapsTaskArg( `method`: "fillGaps", chatId: self.channelView.activeChannel.id, messageIds: @[messageId])
     mailserverWorker.start(task)
 

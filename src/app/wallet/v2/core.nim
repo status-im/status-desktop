@@ -14,15 +14,15 @@ logScope:
 
 type WalletController* = ref object
   status: Status
-  appService: AppService
+  statusFoundation: StatusFoundation
   view*: WalletView
   variant*: QVariant
 
-proc newController*(status: Status, appService: AppService): WalletController =
+proc newController*(status: Status, statusFoundation: StatusFoundation): WalletController =
   result = WalletController()
   result.status = status
-  result.appService = appService
-  result.view = newWalletView(status, appService)
+  result.statusFoundation = statusFoundation
+  result.view = newWalletView(status, statusFoundation)
   result.variant = newQVariant(result.view)
 
 proc delete*(self: WalletController) =

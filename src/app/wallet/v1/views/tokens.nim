@@ -11,7 +11,7 @@ logScope:
 QtObject:
   type TokensView* = ref object of QObject
       status: Status
-      appService: AppService
+      statusFoundation: StatusFoundation
       accountsView: AccountsView
       currentAssetList*: AssetList
       defaultTokenList: TokenList
@@ -24,14 +24,14 @@ QtObject:
     self.customTokenList.delete
     self.QObject.delete
 
-  proc newTokensView*(status: Status, appService: AppService, accountsView: AccountsView): TokensView =
+  proc newTokensView*(status: Status, statusFoundation: StatusFoundation, accountsView: AccountsView): TokensView =
     new(result, delete)
     result.status = status
-    result.appService = appService
+    result.statusFoundation = statusFoundation
     result.accountsView = accountsView
     result.currentAssetList = newAssetList()
-    result.defaultTokenList = newTokenList(status, appService)
-    result.customTokenList = newTokenList(status, appService)
+    result.defaultTokenList = newTokenList(status, statusFoundation)
+    result.customTokenList = newTokenList(status, statusFoundation)
     result.setup
 
   proc hasAsset*(self: TokensView, symbol: string): bool {.slot.} =

@@ -39,7 +39,7 @@ proc validate[T](self: T, slot: string, ens: string, isStatus: bool, usernames: 
     isStatus: isStatus,
     usernames: usernames
   )
-  self.appService.threadpool.start(arg)
+  self.statusFoundation.threadpool.start(arg)
 
 const detailsTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let
@@ -70,14 +70,14 @@ proc details[T](self: T, slot: string, username: string) =
     slot: slot,
     username: username
   )
-  self.appService.threadpool.start(arg)
+  self.statusFoundation.threadpool.start(arg)
 
 QtObject:
   type EnsManager* = ref object of QAbstractListModel
     usernames*: seq[string]
     pendingUsernames*: HashSet[string]
     status: Status
-    appService: AppService
+    statusFoundation: StatusFoundation
 
   proc setup(self: EnsManager) = self.QAbstractListModel.setup
 
@@ -85,11 +85,11 @@ QtObject:
     self.usernames = @[]
     self.QAbstractListModel.delete
 
-  proc newEnsManager*(status: Status, appService: AppService): EnsManager =
+  proc newEnsManager*(status: Status, statusFoundation: StatusFoundation): EnsManager =
     new(result, delete)
     result.usernames = @[]
     result.status = status
-    result.appService = appService
+    result.statusFoundation = statusFoundation
     result.pendingUsernames = initHashSet[string]()
     result.setup
 

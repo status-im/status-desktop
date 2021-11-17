@@ -13,7 +13,7 @@ QtObject:
   type
     WalletView* = ref object of QAbstractListModel
       status: Status
-      appService: AppService
+      statusFoundation: StatusFoundation
       accountsView: AccountsView
       collectiblesView: CollectiblesView
       settingsView*: SettingsView
@@ -33,16 +33,16 @@ QtObject:
   proc setup(self: WalletView) =
     self.QAbstractListModel.setup
 
-  proc newWalletView*(status: Status, appService: AppService): WalletView =
+  proc newWalletView*(status: Status, statusFoundation: StatusFoundation): WalletView =
     new(result, delete)
     result.status = status
-    result.appService = appService
+    result.statusFoundation = statusFoundation
     result.accountsView = newAccountsView(status)
-    result.collectiblesView = newCollectiblesView(status, appService)
+    result.collectiblesView = newCollectiblesView(status, statusFoundation)
     result.settingsView = newSettingsView()
     result.networksView = newNetworksView(status)
-    result.cryptoServiceController = newCryptoServiceController(status, appService)
-    result.savedAddressesView = newSavedAddressesView(status, appService)
+    result.cryptoServiceController = newCryptoServiceController(status, statusFoundation)
+    result.savedAddressesView = newSavedAddressesView(status, statusFoundation)
     result.setup
 
   proc getAccounts(self: WalletView): QVariant {.slot.} = 

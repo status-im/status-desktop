@@ -3,6 +3,7 @@ import status/[status]
 import status/utils as status_utils
 import status/chat as status_chat
 import status/messages as status_messages
+import status/mailservers
 import status/contacts as status_contacts
 import status/ens as status_ens
 import status/chat/[chat]
@@ -43,7 +44,7 @@ proc getLinkPreviewData[T](self: T, slot: string, link: string, uuid: string) =
     link: link,
     uuid: uuid
   )
-  self.appService.threadpool.start(arg)
+  self.statusFoundation.threadpool.start(arg)
 
 const asyncActivityNotificationLoadTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncActivityNotificationLoadTaskArg](argEncoded)
@@ -64,13 +65,13 @@ proc asyncActivityNotificationLoad[T](self: T, slot: string) =
     vptr: cast[ByteAddress](self.vptr),
     slot: slot
   )
-  self.appService.threadpool.start(arg)
+  self.statusFoundation.threadpool.start(arg)
 
 QtObject:
   type
     ChatsView* = ref object of QAbstractListModel
       status: Status
-      appService: AppService
+      statusFoundation: StatusFoundation
       formatInputView: FormatInputView
       ensView: EnsView
       channelView*: ChannelView
@@ -85,6 +86,7 @@ QtObject:
       communities*: CommunitiesView
       replyTo: string
       connected: bool
+      timelineChat: Chat
       pubKey*: string
 
   proc setup(self: ChatsView) = self.QAbstractListModel.setup
@@ -101,16 +103,16 @@ QtObject:
     self.communities.delete
     self.QAbstractListModel.delete
 
-  proc newChatsView*(status: Status, appService: AppService): ChatsView =
+  proc newChatsView*(status: Status, statusFoundation: StatusFoundation): ChatsView =
     new(result, delete)
     result.status = status
-    result.appService = appService
+    result.statusFoundation = statusFoundation
     result.formatInputView = newFormatInputView()
-    result.ensView = newEnsView(status, appService)
+    result.ensView = newEnsView(status, statusFoundation)
     result.communities = newCommunitiesView(status)
     result.activityNotificationList = newActivityNotificationList(status)
-    result.channelView = newChannelView(status, appService, result.communities, result.activityNotificationList)
-    result.messageView = newMessageView(status, appService, result.channelView, result.communities)
+    result.channelView = newChannelView(status, statusFoundation, result.communities, result.activityNotificationList)
+    result.messageView = newMessageView(status, statusFoundation, result.channelView, result.communities)
     result.connected = false
     result.reactions = newReactionView(
       status,
@@ -118,7 +120,7 @@ QtObject:
       result.messageView.pinnedMessagesList.addr,
       result.channelView.activeChannel
     )
-    result.stickers = newStickersView(status, appService, result.channelView.activeChannel)
+    result.stickers = newStickersView(status, statusFoundation, result.channelView.activeChannel)
     result.gif = newGifView()
     result.groups = newGroupsView(status,result.channelView.activeChannel)
     result.transactions = newTransactionsView(status)
@@ -207,18 +209,6 @@ QtObject:
       return status_ens.userNameOrAlias(self.status.chat.getContacts()[pubKey])
     generateAlias(pubKey)
 
-  proc getProfileThumbnail*(self: ChatsView, pubKey: string): string {.slot.} =
-    if self.status.chat.getContacts().hasKey(pubKey):
-      return self.status.chat.getContacts()[pubKey].identityImage.thumbnail
-    else:
-      return ""
-  
-  proc getProfileImageLarge*(self: ChatsView, pubKey: string): string {.slot.} =
-    if self.status.chat.getContacts().hasKey(pubKey):
-      return self.status.chat.getContacts()[pubKey].identityImage.large
-    else:
-      return ""
-
   proc activityNotificationsChanged*(self: ChatsView) {.signal.}
 
   proc getActivityNotificationList(self: ChatsView): QVariant {.slot.} =
@@ -241,6 +231,12 @@ QtObject:
           self.communities.joinedCommunityList.decrementMentions(communityId, activityCenterNotification.chatId)
       self.activityNotificationList.addActivityNotificationItemToList(activityCenterNotification)
     self.activityNotificationsChanged()
+
+  proc setActiveChannelToTimeline*(self: ChatsView) {.slot.} =
+    if not self.channelView.activeChannel.chatItem.isNil:
+      self.channelView.previousActiveChannelIndex = self.channelView.chats.chats.findIndexById(self.channelView.activeChannel.id)
+    self.channelView.activeChannel.setChatItem(self.timelineChat)
+    self.activeChannelChanged()
 
   proc updateUsernames*(self:ChatsView, contacts: seq[Profile]) =
     if contacts.len > 0:
@@ -269,6 +265,9 @@ QtObject:
   proc pushChatItem*(self: ChatsView, chatItem: Chat) =
     discard self.channelView.chats.addChatItemToList(chatItem)
     self.messageView.messagePushed(self.messageView.messageList[chatItem.id].count - 1)
+
+  proc setTimelineChat*(self: ChatsView, chatItem: Chat) =
+    self.timelineChat = chatItem
 
   proc copyToClipboard*(self: ChatsView, content: string) {.slot.} =
     setClipBoardText(content)
@@ -309,7 +308,15 @@ QtObject:
     self.messageView.removeChat(chatId)
 
   proc toggleReaction*(self: ChatsView, messageId: string, emojiId: int) {.slot.} =
+    if self.channelView.activeChannel.id == status_utils.getTimelineChatId():
+      let message = self.messageView.messageList[status_utils.getTimelineChatId()].getMessageById(messageId)
+      self.reactions.toggle(messageId, message.chatId, emojiId)
+    else:
       self.reactions.toggle(messageId, self.channelView.activeChannel.id, emojiId)
+
+  proc removeMessagesFromTimeline*(self: ChatsView, chatId: string) =
+    self.messageView.messageList[status_utils.getTimelineChatId()].deleteMessagesByChatId(chatId)
+    self.channelView.activeChannelChanged()
 
   proc updateChats*(self: ChatsView, chats: seq[Chat]) =
     for chat in chats:
@@ -376,6 +383,17 @@ QtObject:
   QtProperty[QVariant] transactions:
     read = getTransactions
 
+  proc isActiveMailserverResult(self: ChatsView, resultEncoded: string) {.slot.} =
+    let isActiveMailserverAvailable = decode[bool](resultEncoded)
+    if isActiveMailserverAvailable:
+      self.messageView.setLoadingMessages(true)
+      let
+        mailserverWorker = self.statusFoundation.marathon[MailserverWorker().name]
+        task = RequestMessagesTaskArg(`method`: "requestMessages")
+      mailserverWorker.start(task)
+
+  proc requestAllHistoricMessagesResult(self: ChatsView, resultEncoded: string) {.slot.} =
+    self.messageView.setLoadingMessages(true)
 
   proc createCommunityChannel*(self: ChatsView, communityId: string, name: string, description: string, categoryId: string): string {.slot.} =
     try:
@@ -420,7 +438,7 @@ QtObject:
   proc requestMoreMessages*(self: ChatsView, fetchRange: int) {.slot.} =
     self.messageView.loadingMessages = true
     self.messageView.loadingMessagesChanged(true)
-    let mailserverWorker = self.appService.marathon[MailserverWorker().name]
+    let mailserverWorker = self.statusFoundation.marathon[MailserverWorker().name]
     let task = RequestMessagesTaskArg( `method`: "requestMoreMessages", chatId: self.channelView.activeChannel.id)
     mailserverWorker.start(task)
 
@@ -436,6 +454,8 @@ QtObject:
   proc pushPinnedMessages*(self: ChatsView, pinnedMessages: var seq[Message]) =
     self.messageView.pushPinnedMessages(pinnedMessages)
 
+  proc hideLoadingIndicator*(self: ChatsView) {.slot.} =
+    self.messageView.hideLoadingIndicator()
 
   proc deleteMessage*(self: ChatsView, channelId: string, messageId: string): bool =
     result = self.messageView.deleteMessage(channelId, messageId)
@@ -467,6 +487,15 @@ QtObject:
 
   proc markMessageAsSent*(self: ChatsView, chat: string, messageId: string) =
     self.messageView.markMessageAsSent(chat, messageId)
+
+  # TODO: this method was created just to test the store functionality.
+  # It should be removed, once peer management is added to status-go
+  proc requestAllHistoricMessages(self: ChatsView) {.slot.} =
+    debug "Requesting messages"
+    # TODO: the mailservers must change depending on whether we are using wakuV1 or wakuV2
+    # in the meantime I'm hardcoding a specific mailserver
+    echo self.status.mailservers.setMailserver("16Uiu2HAm4v86W3bmT1BiH6oSPzcsSr24iDQpSN5Qa992BCjjwgrD")
+    echo self.status.mailservers.requestAllHistoricMessages()
 
   proc switchTo*(self: ChatsView, communityId: string, channelId: string, 
     messageId: string) =
@@ -531,7 +560,7 @@ QtObject:
     
     # Once this part gets refactored os notification service from the services will be used
     # instead fetching that service from the "core/main"
-    #self.appService.osNotificationService.showNotification(title, message, details, useOSNotifications)
+    #self.statusFoundation.osNotificationService.showNotification(title, message, details, useOSNotifications)
   ## 
   ##
   #################################################

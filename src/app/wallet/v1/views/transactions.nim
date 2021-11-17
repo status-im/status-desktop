@@ -53,7 +53,7 @@ proc sendTransaction[T](self: T, slot: string, from_addr: string, to: string, as
     gasPrice: gasPrice, password: password, uuid: uuid,
     isEIP1559Enabled: isEIP1559Enabled, maxPriorityFeePerGas: maxPriorityFeePerGas, maxFeePerGas: maxFeePerGas
   )
-  self.appService.threadpool.start(arg)
+  self.statusFoundation.threadpool.start(arg)
 
 const watchTransactionTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let
@@ -68,12 +68,12 @@ proc watchTransaction[T](self: T, slot: string, transactionHash: string) =
     vptr: cast[ByteAddress](self.vptr),
     slot: slot, transactionHash: transactionHash
   )
-  self.appService.threadpool.start(arg)
+  self.statusFoundation.threadpool.start(arg)
 
 QtObject:
   type TransactionsView* = ref object of QObject
       status: Status
-      appService: AppService
+      statusFoundation: StatusFoundation
       accountsView*: AccountsView
       currentTransactions*: TransactionList
 
@@ -82,10 +82,10 @@ QtObject:
     self.currentTransactions.delete
     self.QObject.delete
 
-  proc newTransactionsView*(status: Status, appService: AppService, accountsView: AccountsView): TransactionsView =
+  proc newTransactionsView*(status: Status, statusFoundation: StatusFoundation, accountsView: AccountsView): TransactionsView =
     new(result, delete)
     result.status = status
-    result.appService = appService
+    result.statusFoundation = statusFoundation
     result.accountsView = accountsView # TODO: not ideal but a solution for now
     result.currentTransactions = newTransactionList()
     result.setup

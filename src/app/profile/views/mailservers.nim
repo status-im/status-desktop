@@ -13,9 +13,8 @@ logScope:
 QtObject:
   type MailserversView* = ref object of QObject
     status: Status
-    appService: AppService
+    statusFoundation: StatusFoundation
     mailserversList*: MailServersList
-    activeMailserver: string
 
   proc setup(self: MailserversView) =
     self.QObject.setup
@@ -24,10 +23,10 @@ QtObject:
     self.mailserversList.delete
     self.QObject.delete
 
-  proc newMailserversView*(status: Status, appService: AppService): MailserversView =
+  proc newMailserversView*(status: Status, statusFoundation: StatusFoundation): MailserversView =
     new(result, delete)
     result.status = status
-    result.appService = appService
+    result.statusFoundation = statusFoundation
     result.mailserversList = newMailServersList()
     result.setup
 
@@ -40,15 +39,20 @@ QtObject:
   QtProperty[QVariant] list:
     read = getMailserversList
 
-  proc activeMailserverChanged*(self: MailserversView, activeMailserver: string) {.signal.}
+  proc activeMailserverChanged*(self: MailserversView, activeMailserverName: string) {.signal.}
 
-  proc setActiveMailserver*(self: MailserversView, activeMailserver: string) =
-    self.activeMailserver = activeMailserver
+  proc getActiveMailserver(self: MailserversView): string {.slot.} =
+    let
+      mailserverWorker = self.statusFoundation.marathon[MailserverWorker().name]
+      task = GetActiveMailserverTaskArg(
+        `method`: "getActiveMailserver",
+        vptr: cast[ByteAddress](self.vptr),
+        slot: "getActiveMailserverResult"
+      )
+    mailserverWorker.start(task)
+
+  proc getActiveMailserverResult*(self: MailserversView, activeMailserver: string) {.slot.} =
     self.activeMailserverChanged(activeMailserver)
-
-  QtProperty[string] activeMailserver:
-    read = activeMailserver
-    notify = activeMailserverChanged
 
   proc getAutomaticSelection(self: MailserversView): bool {.slot.} =
     self.status.settings.getPinnedMailserver() == ""
@@ -62,10 +66,19 @@ QtObject:
 
   proc enableAutomaticSelection(self: MailserversView, value: bool) {.slot.} =
     if value:
-      self.activeMailserverChanged(self.activeMailserver)
       self.status.settings.pinMailserver()
     else:
-      self.activeMailserverChanged("")
+      let
+        mailserverWorker = self.statusFoundation.marathon[MailserverWorker().name]
+        task = GetActiveMailserverTaskArg(
+          `method`: "getActiveMailserver",
+          vptr: cast[ByteAddress](self.vptr),
+          slot: "getActiveMailserverResult2"
+        )
+      mailserverWorker.start(task)
+
+  proc getActiveMailserverResult2(self: MailserversView, activeMailserver: string) {.slot.} =
+    self.status.settings.pinMailserver(activeMailserver)
 
   proc save(self: MailserversView, name: string, address: string) {.slot.} =
     self.status.settings.saveMailserver(name, address)

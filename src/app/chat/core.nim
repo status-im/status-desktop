@@ -14,15 +14,15 @@ type ChatController* = ref object
   view*: ChatsView
   status*: Status
   variant*: QVariant
-  appService: AppService
+  statusFoundation: StatusFoundation
   uriToOpen: string
 
-proc newController*(status: Status, appService: AppService, uriToOpen: string): ChatController =
+proc newController*(status: Status, statusFoundation: StatusFoundation, uriToOpen: string): ChatController =
   result = ChatController()
   result.status = status
-  result.appService = appService
+  result.statusFoundation = statusFoundation
   result.uriToOpen = uriToOpen
-  result.view = newChatsView(status, appService)
+  result.view = newChatsView(status, statusFoundation)
   result.variant = newQVariant(result.view)
 
 proc delete*(self: ChatController) =
