@@ -20,7 +20,6 @@ ListView {
 
     property Component profilePopupComponent: ProfilePopup {
         id: profilePopup
-        store: contactList.store
         onClosed: destroy()
     }
 
@@ -42,7 +41,7 @@ ListView {
         isContact: model.isContact
         isBlocked: model.isBlocked
         profileClick: function (showFooter, userName, fromAuthor, identicon, textParam, nickName) {
-            var popup = profilePopupComponent.createObject(contactList);
+            var popup = profilePopupComponent.createObject(contactList, {store: contactList.store});
             popup.openPopup(showFooter, userName, fromAuthor, identicon, textParam, nickName);
         }
         onClicked: contactList.contactClicked(model)

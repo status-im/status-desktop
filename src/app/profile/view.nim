@@ -7,7 +7,6 @@ import qrcode/qrcode
 import status/statusgo_backend/eth as eth
 import status/statusgo_backend/accounts as status_accounts
 import status/profile as status_profile
-import status/contacts as status_contacts
 import status/status
 import status/ens as status_ens
 import status/chat/chat
@@ -59,7 +58,6 @@ QtObject:
     result.profile = newProfileInfoView()
     result.profilePicture = newProfilePictureView(status, result.profile)
     result.mutedChats = newMutedChatsView(status)
-    result.contacts = newContactsView(status, statusFoundation)
     result.devices = newDevicesView(status)
     result.network = newNetworkView(status)
     result.mnemonic = newMnemonicView(status)

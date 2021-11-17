@@ -55,19 +55,19 @@ Item {
             return profileModule.model.thumbnailImage
         }
 
-        const index = contactsModule.model.list.getContactIndexByPubkey(pubkey)
+        const index = appMain.rootStore.contactsModuleInst.model.list.getContactIndexByPubkey(pubkey)
         if (index === -1) {
             return
         }
 
         if (localAccountSensitiveSettings.onlyShowContactsProfilePics) {
-            const isContact = contactsModule.model.list.rowData(index, "isContact")
+            const isContact = appMain.rootStore.contactsModuleInst.model.list.rowData(index, "isContact")
             if (isContact === "false") {
                 return
             }
         }
 
-        return contactsModule.model.list.rowData(index, useLargeImage ? "largeImage" : "thumbnailImage")
+        return appMain.rootStore.contactsModuleInst.model.list.rowData(index, useLargeImage ? "largeImage" : "thumbnailImage")
     }
 
     function openPopup(popupComponent, params = {}) {
@@ -77,23 +77,23 @@ Item {
     }
 
     function getContactListObject(dataModel) {
-        const nbContacts = contactsModule.model.list.rowCount()
+        const nbContacts = appMain.rootStore.contactsModuleInst.model.list.rowCount()
         const contacts = []
         let contact
         for (let i = 0; i < nbContacts; i++) {
-            if (contactsModule.model.list.rowData(i, "isBlocked") === "true") {
+            if (appMain.rootStore.contactsModuleInst.model.list.rowData(i, "isBlocked") === "true") {
                 continue
             }
 
             contact = {
-                name: contactsModule.model.list.rowData(i, "name"),
-                localNickname: contactsModule.model.list.rowData(i, "localNickname"),
-                pubKey: contactsModule.model.list.rowData(i, "pubKey"),
-                address: contactsModule.model.list.rowData(i, "address"),
-                identicon: contactsModule.model.list.rowData(i, "identicon"),
-                thumbnailImage: contactsModule.model.list.rowData(i, "thumbnailImage"),
+                name: appMain.rootStore.contactsModuleInst.model.list.rowData(i, "name"),
+                localNickname: appMain.rootStore.contactsModuleInst.model.list.rowData(i, "localNickname"),
+                pubKey: appMain.rootStore.contactsModuleInst.model.list.rowData(i, "pubKey"),
+                address: appMain.rootStore.contactsModuleInst.model.list.rowData(i, "address"),
+                identicon: appMain.rootStore.contactsModuleInst.model.list.rowData(i, "identicon"),
+                thumbnailImage: appMain.rootStore.contactsModuleInst.model.list.rowData(i, "thumbnailImage"),
                 isUser: false,
-                isContact: contactsModule.model.list.rowData(i, "isContact") !== "false"
+                isContact: appMain.rootStore.contactsModuleInst.model.list.rowData(i, "isContact") !== "false"
             }
 
             contacts.push(contact)
@@ -106,7 +106,7 @@ Item {
 
     function getUserNickname(pubKey) {
         // Get contact nickname
-        const contactList = contactsModule.model.list
+        const contactList = appMain.rootStore.contactsModuleInst.model.list
         const contactCount = contactList.rowCount()
         for (let i = 0; i < contactCount; i++) {
             if (contactList.rowData(i, 'pubKey') === pubKey) {
@@ -642,13 +642,13 @@ Item {
         }
 
         Connections {
-            target: contactsModule.model
+            target: appMain.rootStore.contactsModuleInst.model
             onContactRequestAdded: {
                 if (!localAccountSensitiveSettings.notifyOnNewRequests) {
                     return
                 }
 
-                const isContact = contactsModule.model.isAdded(address)
+                const isContact = appMain.rootStore.contactsModuleInst.model.isAdded(address)
 
                 // Note:
                 // Whole this Connection object should be moved to the nim side.
