@@ -31,7 +31,7 @@ Rectangle {
     signal addNewFavoritelClicked(var xPos)
 
     width: parent.width
-    height: barRow.height + favoritesBarLoader.height
+    height: barRow.height + (favoritesBarLoader.active ? favoritesBarLoader.height : 0)
     color: Style.current.background
     border.width: 0
 
@@ -270,7 +270,6 @@ Rectangle {
     Loader {
         id: favoritesBarLoader
         active: localAccountSensitiveSettings.shouldShowFavoritesBar
-        height: active ? item.height : 0
         anchors.top: barRow.bottom
         anchors.left: parent.left
         anchors.leftMargin: Style.current.smallPadding
