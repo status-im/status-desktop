@@ -1,7 +1,8 @@
 import NimQml, chronicles, std/wrapnils
-import status/[signals, status, keycard]
+import status/[status, keycard]
 import types/keycard as keycardtypes
 import view, pairing
+import ../core/signals/types
 
 logScope:
   topics = "keycard-model"

@@ -2,7 +2,6 @@ import NimQml, chronicles, strutils, json
 import status/[node, settings, accounts]
 import status/types/[setting]
 import ../core/[main]
-import status/signals/[stats]
 import ../core/tasks/[qt, threadpool]
 
 logScope:

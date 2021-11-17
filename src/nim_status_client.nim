@@ -10,8 +10,6 @@ import status/types/[account]
 import status_go
 import status/status as statuslib
 import eventemitter
-import app/core/tasks/marathon/mailserver/controller as mailserver_controller
-import app/core/tasks/marathon/mailserver/worker as mailserver_worker
 import app/core/main
 import constants
 
@@ -19,7 +17,7 @@ import app/global/global_singleton
 import app/boot/app_controller
 
 
-var signalsQObjPointer: pointer
+var signalsManagerQObjPointer: pointer
 
 logScope:
   topics = "main"
@@ -39,10 +37,8 @@ proc mainProc() =
   let
     fleetConfig = readFile(joinPath(getAppDir(), fleets))
     status = statuslib.newStatusInstance(fleetConfig)
-    mailserverController = mailserver_controller.newController(status)
-    mailserverWorker = mailserver_worker.newMailserverWorker(cast[ByteAddress](mailserverController.vptr))
 
-  let appService = newAppService(status, mailserverWorker)
+  let appService = newAppService(status)
   defer: appService.delete()
 
   status.initNode(STATUSGODIR, KEYSTOREDIR)
@@ -121,16 +117,16 @@ proc mainProc() =
 
   # We need this global variable in order to be able to access the application
   # from the non-closure callback passed to `statusgo_backend.setSignalEventCallback`
-  signalsQObjPointer = cast[pointer](appService.signalController.vptr)
+  signalsManagerQObjPointer = cast[pointer](appService.signalsManager.vptr)
   defer:
-    signalsQObjPointer = nil
+    signalsManagerQObjPointer = nil
 
   when compiles(defaultChroniclesStream.output.writer):
     defaultChroniclesStream.output.writer =
       proc (logLevel: LogLevel, msg: LogOutputStr) {.gcsafe, raises: [Defect].} =
         try:
-          if signalsQObjPointer != nil:
-            signal_handler(signalsQObjPointer, ($(%* {"type": "chronicles-log", "event": msg})).cstring, "receiveSignal")
+          if signalsManagerQObjPointer != nil:
+            signal_handler(signalsManagerQObjPointer, ($(%* {"type": "chronicles-log", "event": msg})).cstring, "receiveSignal")
         except:
           logLoggingFailure(cstring(msg), getCurrentException())
 
@@ -208,8 +204,13 @@ proc mainProc() =
     # 2. Re-init controllers that don't require a running node
     initControllers()
 
-  singletonInstance.engine.setRootContextProperty("signals", appService.signalController.variant)
-  singletonInstance.engine.setRootContextProperty("mailserver", mailserverController.variant)
+  var signalsManagerQVariant = newQVariant(appService.signalsManager)
+  defer: signalsManagerQVariant.delete()
+  var mailserverControllerQVariant = newQVariant(appService.mailserverController)
+  defer: mailserverControllerQVariant.delete()
+
+  singletonInstance.engine.setRootContextProperty("signals", signalsManagerQVariant)
+  singletonInstance.engine.setRootContextProperty("mailserver", mailserverControllerQVariant)
 
   var prValue = newQVariant(if defined(production): true else: false)
   singletonInstance.engine.setRootContextProperty("production", prValue)
@@ -225,8 +226,8 @@ proc mainProc() =
   # it will be passed as a regular C function to statusgo_backend. This means that
   # we cannot capture any local variables here (we must rely on globals)
   var callback: SignalCallback = proc(p0: cstring) {.cdecl.} =
-    if signalsQObjPointer != nil:
-      signal_handler(signalsQObjPointer, p0, "receiveSignal")
+    if signalsManagerQObjPointer != nil:
+      signal_handler(signalsManagerQObjPointer, p0, "receiveSignal")
 
   status_go.setSignalEventCallback(callback)
 

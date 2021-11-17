@@ -1,6 +1,6 @@
 import NimQml, json, strutils, sugar, sequtils, tables
 import json_serialization
-import status/[status, signals, settings]
+import status/[status, settings]
 import status/contacts as status_contacts
 import status/chat as status_chat
 import status/devices as status_devices

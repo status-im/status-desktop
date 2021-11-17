@@ -7,8 +7,8 @@ import ../../../global/global_singleton
 import ../../../../app_service/service/keychain/service as keychain_service
 import ../../../../app_service/service/accounts/service_interface as accounts_service
 
+import ../../../core/signals/types
 import eventemitter
-import status/[signals]
 
 export controller_interface
 
