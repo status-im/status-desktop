@@ -31,7 +31,7 @@ proc getGasPredictions[T](self: T, slot: string) =
     vptr: cast[ByteAddress](self.vptr),
     slot: slot
   )
-  self.appService.threadpool.start(arg)
+  self.statusFoundation.threadpool.start(arg)
 
 logScope:
   topics = "gas-view"
@@ -39,17 +39,17 @@ logScope:
 QtObject:
   type GasView* = ref object of QObject
       status: Status
-      appService: AppService
+      statusFoundation: StatusFoundation
       gasPrice: string
       defaultGasLimit: string
 
   proc setup(self: GasView) = self.QObject.setup
   proc delete(self: GasView) = self.QObject.delete
 
-  proc newGasView*(status: Status, appService: AppService): GasView =
+  proc newGasView*(status: Status, statusFoundation: StatusFoundation): GasView =
     new(result, delete)
     result.status = status
-    result.appService = appService
+    result.statusFoundation = statusFoundation
     result.gasPrice = "0"
     result.defaultGasLimit = "21000"
     result.setup

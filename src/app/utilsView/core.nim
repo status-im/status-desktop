@@ -9,15 +9,15 @@ logScope:
 
 type UtilsController* = ref object
   status*: Status
-  appService: AppService
+  statusFoundation: StatusFoundation
   view*: UtilsView
   variant*: QVariant
 
-proc newController*(status: Status, appService: AppService): UtilsController =
+proc newController*(status: Status, statusFoundation: StatusFoundation): UtilsController =
   result = UtilsController()
   result.status = status
-  result.appService = appService
-  result.view = newUtilsView(status, appService)
+  result.statusFoundation = statusFoundation
+  result.view = newUtilsView(status, statusFoundation)
   result.variant = newQVariant(result.view)
 
 proc delete*(self: UtilsController) =

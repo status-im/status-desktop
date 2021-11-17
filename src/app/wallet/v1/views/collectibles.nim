@@ -44,14 +44,14 @@ proc loadCollectibles[T](self: T, slot: string, address: string, collectiblesTyp
     tptr: cast[ByteAddress](loadCollectiblesTask),
     vptr: cast[ByteAddress](self.vptr),
     slot: slot, address: address, collectiblesType: collectiblesType,
-    running: cast[ByteAddress](addr self.appService.threadpool.running)
+    running: cast[ByteAddress](addr self.statusFoundation.threadpool.running)
   )
-  self.appService.threadpool.start(arg)
+  self.statusFoundation.threadpool.start(arg)
 
 QtObject:
   type CollectiblesView* = ref object of QObject
       status: Status
-      appService: AppService
+      statusFoundation: StatusFoundation
       accountsView*: AccountsView
       currentCollectiblesLists*: CollectiblesList
 
@@ -60,10 +60,10 @@ QtObject:
     self.currentCollectiblesLists.delete
     self.QObject.delete
 
-  proc newCollectiblesView*(status: Status, appService: AppService, accountsView: AccountsView): CollectiblesView =
+  proc newCollectiblesView*(status: Status, statusFoundation: StatusFoundation, accountsView: AccountsView): CollectiblesView =
     new(result, delete)
     result.status = status
-    result.appService = appService
+    result.statusFoundation = statusFoundation
     result.currentCollectiblesLists = newCollectiblesList()
     result.accountsView = accountsView # TODO: not ideal but a solution for now
     result.setup

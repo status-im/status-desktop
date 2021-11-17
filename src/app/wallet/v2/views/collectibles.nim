@@ -24,7 +24,7 @@ proc loadCollections[T](self: T, slot: string, address: string) =
     vptr: cast[ByteAddress](self.vptr),
     slot: slot, address: address,
   )
-  self.appService.threadpool.start(arg)
+  self.statusFoundation.threadpool.start(arg)
 
 type
   LoadAssetsTaskArg = ref object of QObjectTaskArg
@@ -46,12 +46,12 @@ proc loadAssets[T](self: T, slot: string, address: string, collectionSlug: strin
     vptr: cast[ByteAddress](self.vptr),
     slot: slot, address: address, collectionSlug: collectionSlug, limit: 200
   )
-  self.appService.threadpool.start(arg)
+  self.statusFoundation.threadpool.start(arg)
 
 QtObject:
   type CollectiblesView* = ref object of QObject
       status: Status
-      appService: AppService
+      statusFoundation: StatusFoundation
       collections: CollectionList
       isLoading: bool
       assets: Table[string, AssetList]
@@ -64,10 +64,10 @@ QtObject:
       list.delete
     self.QObject.delete
 
-  proc newCollectiblesView*(status: Status, appService: AppService): CollectiblesView =
+  proc newCollectiblesView*(status: Status, statusFoundation: StatusFoundation): CollectiblesView =
     new(result, delete)
     result.status = status
-    result.appService = appService
+    result.statusFoundation = statusFoundation
     result.collections = newCollectionList()
     result.assets = initTable[string, AssetList]()
     result.isLoading = false

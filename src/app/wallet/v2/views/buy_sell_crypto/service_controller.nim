@@ -28,7 +28,7 @@ const asyncGetCryptoServicesTask: Task = proc(argEncoded: string) {.gcsafe, nimc
 QtObject:
   type CryptoServiceController* = ref object of QObject
     status: Status
-    appService: AppService
+    statusFoundation: StatusFoundation
     cryptoServiceModel: CryptoServiceModel 
     servicesFetched: bool
 
@@ -39,11 +39,11 @@ QtObject:
     self.cryptoServiceModel.delete
     self.QObject.delete    
 
-  proc newCryptoServiceController*(status: Status, appService: AppService): 
+  proc newCryptoServiceController*(status: Status, statusFoundation: StatusFoundation): 
     CryptoServiceController =
     new(result, delete)
     result.status = status
-    result.appService = appService
+    result.statusFoundation = statusFoundation
     result.cryptoServiceModel = newCryptoServiceModel()
     result.servicesFetched = false
     result.setup
@@ -68,7 +68,7 @@ QtObject:
       vptr: cast[ByteAddress](self.vptr),
       slot: "onAsyncFetchCryptoServices"
     )
-    self.appService.threadpool.start(arg)
+    self.statusFoundation.threadpool.start(arg)
   #################################################
 
   proc fetchCryptoServicesFetched*(self:CryptoServiceController) {.signal.}
