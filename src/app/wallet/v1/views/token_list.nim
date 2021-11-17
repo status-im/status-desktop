@@ -53,12 +53,12 @@ proc getTokenDetails[T](self: T, slot: string, chainId: int, address: string) =
     slot: slot,
     chainId: chainId,
     address: address)
-  self.appService.threadpool.start(arg)
+  self.statusFoundation.threadpool.start(arg)
 
 QtObject:
   type TokenList* = ref object of QAbstractListModel
     status: Status
-    appService: AppService
+    statusFoundation: StatusFoundation
     tokens*: seq[Erc20Contract]
     isCustom*: bool
 
@@ -85,11 +85,11 @@ QtObject:
     self.isCustom = true
     self.endResetModel()
 
-  proc newTokenList*(status: Status, appService: AppService): TokenList =
+  proc newTokenList*(status: Status, statusFoundation: StatusFoundation): TokenList =
     new(result, delete)
     result.tokens = @[]
     result.status = status
-    result.appService = appService
+    result.statusFoundation = statusFoundation
     result.setup
 
   proc rowData(self: TokenList, index: int, column: string): string {.slot.} =

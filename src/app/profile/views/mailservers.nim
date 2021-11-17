@@ -13,7 +13,7 @@ logScope:
 QtObject:
   type MailserversView* = ref object of QObject
     status: Status
-    appService: AppService
+    statusFoundation: StatusFoundation
     mailserversList*: MailServersList
 
   proc setup(self: MailserversView) =
@@ -23,10 +23,10 @@ QtObject:
     self.mailserversList.delete
     self.QObject.delete
 
-  proc newMailserversView*(status: Status, appService: AppService): MailserversView =
+  proc newMailserversView*(status: Status, statusFoundation: StatusFoundation): MailserversView =
     new(result, delete)
     result.status = status
-    result.appService = appService
+    result.statusFoundation = statusFoundation
     result.mailserversList = newMailServersList()
     result.setup
 
@@ -43,7 +43,7 @@ QtObject:
 
   proc getActiveMailserver(self: MailserversView): string {.slot.} =
     let
-      mailserverWorker = self.appService.marathon[MailserverWorker().name]
+      mailserverWorker = self.statusFoundation.marathon[MailserverWorker().name]
       task = GetActiveMailserverTaskArg(
         `method`: "getActiveMailserver",
         vptr: cast[ByteAddress](self.vptr),
@@ -69,7 +69,7 @@ QtObject:
       self.status.settings.pinMailserver()
     else:
       let
-        mailserverWorker = self.appService.marathon[MailserverWorker().name]
+        mailserverWorker = self.statusFoundation.marathon[MailserverWorker().name]
         task = GetActiveMailserverTaskArg(
           `method`: "getActiveMailserver",
           vptr: cast[ByteAddress](self.vptr),

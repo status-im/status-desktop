@@ -31,7 +31,7 @@ const asyncMarkAllReadTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} 
 QtObject:
   type ChannelView* = ref object of QObject
     status: Status
-    appService: AppService
+    statusFoundation: StatusFoundation
     communities*: CommunitiesView
     chats*: ChannelsList
     activeChannel*: ChatItemView
@@ -46,10 +46,10 @@ QtObject:
     self.contextChannel.delete
     self.QObject.delete
 
-  proc newChannelView*(status: Status, appService: AppService, communities: CommunitiesView, activityNotificationList: ActivityNotificationList): ChannelView =
+  proc newChannelView*(status: Status, statusFoundation: StatusFoundation, communities: CommunitiesView, activityNotificationList: ActivityNotificationList): ChannelView =
     new(result, delete)
     result.status = status
-    result.appService = appService
+    result.statusFoundation = statusFoundation
     result.chats = newChannelsList(status)
     result.activeChannel = newChatItemView(status)
     result.contextChannel = newChatItemView(status)
@@ -117,7 +117,7 @@ QtObject:
       slot: "onAsyncMarkMessagesRead",
       chatId: chatId,
     )
-    self.appService.threadpool.start(arg)
+    self.statusFoundation.threadpool.start(arg)
 
   #################################################
 

@@ -37,7 +37,7 @@ proc loadSavedAddresses[T](self: T, slot: string) =
     vptr: cast[ByteAddress](self.vptr),
     slot: slot
   )
-  self.appService.threadpool.start(arg)
+  self.statusFoundation.threadpool.start(arg)
 
 const addSavedAddressTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let
@@ -57,7 +57,7 @@ proc addSavedAddress[T](self: T, slot, name, address: string) =
   except:
     raise newException(ValueError, "Error parsing address")
   arg.savedAddress = SavedAddress(name: name, address: addressParsed)
-  self.appService.threadpool.start(arg)
+  self.statusFoundation.threadpool.start(arg)
 
 const deleteSavedAddressTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let
@@ -77,7 +77,7 @@ proc deleteSavedAddress[T](self: T, slot, address: string) =
   except:
     raise newException(ValueError, "Error parsing address")
   arg.address = addressParsed
-  self.appService.threadpool.start(arg)
+  self.statusFoundation.threadpool.start(arg)
 
 const editSavedAddressTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let
@@ -97,14 +97,14 @@ proc editSavedAddress[T](self: T, slot, name, address: string) =
   except:
     raise newException(ValueError, "Error parsing address")
   arg.savedAddress = SavedAddress(name: name, address: addressParsed)
-  self.appService.threadpool.start(arg)
+  self.statusFoundation.threadpool.start(arg)
 
 QtObject:
   type
     SavedAddressesView* = ref object of QObject
       # no need to store the seq[SavedAddress] value in `loadResult`, as it is
       # set in self.savedAddresses
-      appService: AppService
+      statusFoundation: StatusFoundation
       addEditResult: SavedAddressResult[void]
       deleteResult: SavedAddressResult[void]
       loadResult: SavedAddressResult[void]
@@ -117,10 +117,10 @@ QtObject:
     self.savedAddresses.delete
     self.QObject.delete
 
-  proc newSavedAddressesView*(status: Status, appService: AppService): SavedAddressesView =
+  proc newSavedAddressesView*(status: Status, statusFoundation: StatusFoundation): SavedAddressesView =
     new(result, delete)
     result.addEditResult = SavedAddressResult[void].ok()
-    result.appService = appService
+    result.statusFoundation = statusFoundation
     result.deleteResult = SavedAddressResult[void].ok()
     result.savedAddresses = newSavedAddressesList()
     result.setup

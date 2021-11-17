@@ -63,7 +63,7 @@ proc changeLanguage(locale: string) =
 
 type 
   AppController* = ref object of RootObj 
-    appService: AppService
+    statusFoundation: StatusFoundation
     # Global
     localAppSettingsVariant: QVariant
     localAccountSettingsVariant: QVariant
@@ -117,14 +117,14 @@ proc mainDidLoad*(self: AppController)
 # At the end of refactoring this will be moved to 
 # appropriate place or removed:
 proc connect(self: AppController) =
-  self.appService.status.events.once("loginCompleted") do(a: Args):
+  self.statusFoundation.status.events.once("loginCompleted") do(a: Args):
     var args = AccountArgs(a)
     self.profile.init(args.account)
 #################################################
 
-proc newAppController*(appService: AppService): AppController =
+proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result = AppController()
-  result.appService = appService
+  result.statusFoundation = statusFoundation
 
   # Global
   result.localAppSettingsVariant = newQVariant(singletonInstance.localAppSettings)
@@ -132,19 +132,19 @@ proc newAppController*(appService: AppService): AppController =
   result.localAccountSensitiveSettingsVariant = newQVariant(singletonInstance.localAccountSensitiveSettings)
 
   # Services
-  result.osNotificationService = os_notification_service.newService(appService.status.events)
-  result.keychainService = keychain_service.newService(appService.status.events)
+  result.osNotificationService = os_notification_service.newService(statusFoundation.status.events)
+  result.keychainService = keychain_service.newService(statusFoundation.status.events)
   result.settingService = setting_service.newService()
   result.accountsService = accounts_service.newService()
-  result.contactsService = contacts_service.newService(appService.status.events, appService.threadpool)
+  result.contactsService = contacts_service.newService(statusFoundation.status.events, statusFoundation.threadpool)
   result.chatService = chat_service.newService(result.contactsService)
   result.communityService = community_service.newService(result.chatService)
-  result.messageService = message_service.newService(appService.status.events, appService.threadpool)
-  result.tokenService = token_service.newService(appService.status.events, result.settingService)
+  result.messageService = message_service.newService(statusFoundation.status.events, statusFoundation.threadpool)
+  result.tokenService = token_service.newService(statusFoundation.status.events, result.settingService)
   result.collectibleService = collectible_service.newService(result.settingService)
-  result.walletAccountService = wallet_account_service.newService(appService.status.events, result.settingService, 
+  result.walletAccountService = wallet_account_service.newService(statusFoundation.status.events, result.settingService, 
   result.tokenService)
-  result.transactionService = transaction_service.newService(appService.status.events, appService.threadpool, 
+  result.transactionService = transaction_service.newService(statusFoundation.status.events, statusFoundation.threadpool, 
   result.walletAccountService)
   result.bookmarkService = bookmark_service.newService()
   result.profileService = profile_service.newService()
@@ -158,14 +158,14 @@ proc newAppController*(appService: AppService): AppController =
   # Modules
   result.startupModule = startup_module.newModule[AppController](
     result,
-    appService.status.events,
-    appService.status.fleet,
+    statusFoundation.status.events,
+    statusFoundation.status.fleet,
     result.keychainService, 
     result.accountsService
   )
   result.mainModule = main_module.newModule[AppController](
     result, 
-    appService.status.events,
+    statusFoundation.status.events,
     result.keychainService,
     result.accountsService, 
     result.chatService,
@@ -190,18 +190,18 @@ proc newAppController*(appService: AppService): AppController =
   #################################################
   # At the end of refactoring this will be moved to 
   # appropriate place or removed:
-  result.profile = profile.newController(appService.status, appService, changeLanguage)
+  result.profile = profile.newController(statusFoundation.status, statusFoundation, changeLanguage)
   result.connect()
   #################################################
 
-  # Adding status and appService here now is just because of having a controll 
+  # Adding status and statusFoundation here now is just because of having a controll 
   # over order of execution while we integrating this refactoring architecture 
   # into the current app state.
   # Once we complete refactoring process we will get rid of "status" part/lib.
   #
   # This to will be adapted to appropriate modules later:
-  # result.login = login.newController(appService.status, appService)
-  # result.onboarding = onboarding.newController(appService.status)
+  # result.login = login.newController(statusFoundation.status, statusFoundation)
+  # result.onboarding = onboarding.newController(statusFoundation.status)
   # singletonInstance.engine.setRootContextProperty("loginModel", result.login.variant)
   # singletonInstance.engine.setRootContextProperty("onboardingModel", result.onboarding.variant)
   #result.connect()
@@ -252,7 +252,7 @@ proc startupDidLoad*(self: AppController) =
   setLanguage(locale)
 
 proc mainDidLoad*(self: AppController) =
-  self.appService.onLoggedIn()
+  self.statusFoundation.onLoggedIn()
   self.startupModule.moveToAppState()
 
   self.mainModule.checkForStoringPassword()
@@ -265,7 +265,7 @@ proc start*(self: AppController) =
 proc load*(self: AppController) =
   #################################################
   # Once SettingService gets added, `pubKey` should be fetched from there, instead the following line:
-  let pubKey = self.appService.status.settings.getSetting[:string](Setting.PublicKey, "0x0")
+  let pubKey = self.statusFoundation.status.settings.getSetting[:string](Setting.PublicKey, "0x0")
   singletonInstance.localAccountSensitiveSettings.setFileName(pubKey)
   singletonInstance.engine.setRootContextProperty("localAccountSensitiveSettings", self.localAccountSensitiveSettingsVariant)
   #################################################
@@ -281,13 +281,13 @@ proc load*(self: AppController) =
   self.dappPermissionsService.init()
   self.walletAccountService.init()
   self.transactionService.init()
-  self.mainModule.load(self.appService.status.events, self.chatService, self.communityService, self.messageService)
+  self.mainModule.load(self.statusFoundation.status.events, self.chatService, self.communityService, self.messageService)
 
 proc userLoggedIn*(self: AppController) =
   #################################################
   # At the end of refactoring this will be removed:
   let loggedInUser = self.accountsService.getLoggedInAccount()
   let account = Account(name: loggedInUser.name, keyUid: loggedInUser.keyUid)
-  self.appService.status.events.emit("loginCompleted", AccountArgs(account: account))
+  self.statusFoundation.status.events.emit("loginCompleted", AccountArgs(account: account))
   #################################################
   self.load()

@@ -44,7 +44,7 @@ proc getLinkPreviewData[T](self: T, slot: string, link: string, uuid: string) =
     link: link,
     uuid: uuid
   )
-  self.appService.threadpool.start(arg)
+  self.statusFoundation.threadpool.start(arg)
 
 const asyncActivityNotificationLoadTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncActivityNotificationLoadTaskArg](argEncoded)
@@ -65,13 +65,13 @@ proc asyncActivityNotificationLoad[T](self: T, slot: string) =
     vptr: cast[ByteAddress](self.vptr),
     slot: slot
   )
-  self.appService.threadpool.start(arg)
+  self.statusFoundation.threadpool.start(arg)
 
 QtObject:
   type
     ChatsView* = ref object of QAbstractListModel
       status: Status
-      appService: AppService
+      statusFoundation: StatusFoundation
       formatInputView: FormatInputView
       ensView: EnsView
       channelView*: ChannelView
@@ -103,16 +103,16 @@ QtObject:
     self.communities.delete
     self.QAbstractListModel.delete
 
-  proc newChatsView*(status: Status, appService: AppService): ChatsView =
+  proc newChatsView*(status: Status, statusFoundation: StatusFoundation): ChatsView =
     new(result, delete)
     result.status = status
-    result.appService = appService
+    result.statusFoundation = statusFoundation
     result.formatInputView = newFormatInputView()
-    result.ensView = newEnsView(status, appService)
+    result.ensView = newEnsView(status, statusFoundation)
     result.communities = newCommunitiesView(status)
     result.activityNotificationList = newActivityNotificationList(status)
-    result.channelView = newChannelView(status, appService, result.communities, result.activityNotificationList)
-    result.messageView = newMessageView(status, appService, result.channelView, result.communities)
+    result.channelView = newChannelView(status, statusFoundation, result.communities, result.activityNotificationList)
+    result.messageView = newMessageView(status, statusFoundation, result.channelView, result.communities)
     result.connected = false
     result.reactions = newReactionView(
       status,
@@ -120,7 +120,7 @@ QtObject:
       result.messageView.pinnedMessagesList.addr,
       result.channelView.activeChannel
     )
-    result.stickers = newStickersView(status, appService, result.channelView.activeChannel)
+    result.stickers = newStickersView(status, statusFoundation, result.channelView.activeChannel)
     result.gif = newGifView()
     result.groups = newGroupsView(status,result.channelView.activeChannel)
     result.transactions = newTransactionsView(status)
@@ -387,7 +387,7 @@ QtObject:
     if isActiveMailserverAvailable:
       self.messageView.setLoadingMessages(true)
       let
-        mailserverWorker = self.appService.marathon[MailserverWorker().name]
+        mailserverWorker = self.statusFoundation.marathon[MailserverWorker().name]
         task = RequestMessagesTaskArg(`method`: "requestMessages")
       mailserverWorker.start(task)
 
@@ -437,7 +437,7 @@ QtObject:
   proc requestMoreMessages*(self: ChatsView, fetchRange: int) {.slot.} =
     self.messageView.loadingMessages = true
     self.messageView.loadingMessagesChanged(true)
-    let mailserverWorker = self.appService.marathon[MailserverWorker().name]
+    let mailserverWorker = self.statusFoundation.marathon[MailserverWorker().name]
     let task = RequestMessagesTaskArg( `method`: "requestMoreMessages", chatId: self.channelView.activeChannel.id)
     mailserverWorker.start(task)
 
@@ -559,7 +559,7 @@ QtObject:
     
     # Once this part gets refactored os notification service from the services will be used
     # instead fetching that service from the "core/main"
-    #self.appService.osNotificationService.showNotification(title, message, details, useOSNotifications)
+    #self.statusFoundation.osNotificationService.showNotification(title, message, details, useOSNotifications)
   ## 
   ##
   #################################################

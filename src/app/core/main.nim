@@ -10,17 +10,16 @@ import
 export status_lib_status
 export marathon, task_runner, signals_manager
 
-type AppService* = ref object # AppService should be renamed to "Foundation"
+type StatusFoundation* = ref object
   status*: Status # in one point of time this should be completely removed
-  # foundation
   threadpool*: ThreadPool
   marathon*: Marathon
   signalsManager*: SignalsManager
   mailserverController*: MailserverController
   mailserverWorker*: MailserverWorker
 
-proc newAppService*(status: Status): AppService =
-  result = AppService()
+proc newStatusFoundation*(status: Status): StatusFoundation =
+  result = StatusFoundation()
   result.status = status
   result.mailserverController = newMailserverController(status)
   result.mailserverWorker = newMailserverWorker(cast[ByteAddress](result.mailserverController.vptr))
@@ -28,10 +27,10 @@ proc newAppService*(status: Status): AppService =
   result.marathon = newMarathon(result.mailserverWorker)
   result.signalsManager = newSignalsManager(status.events)
 
-proc delete*(self: AppService) =
+proc delete*(self: StatusFoundation) =
   self.threadpool.teardown()
   self.marathon.teardown()
   self.signalsManager.delete()
 
-proc onLoggedIn*(self: AppService) =
+proc onLoggedIn*(self: StatusFoundation) =
   self.marathon.onLoggedIn()

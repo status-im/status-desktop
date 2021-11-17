@@ -10,7 +10,7 @@ proc handleSignals(self: ChatController) =
     ## Handle mailserver peers being added and removed
     var data = DiscoverySummarySignal(e)
     let
-      mailserverWorker = self.appService.marathon[MailserverWorker().name]
+      mailserverWorker = self.statusFoundation.marathon[MailserverWorker().name]
       task = PeerSummaryChangeTaskArg(
         `method`: "peerSummaryChange",
         peers: data.enodes
@@ -20,7 +20,7 @@ proc handleSignals(self: ChatController) =
   self.status.events.on(SignalType.PeerStats.event) do(e:Args):
     var data = PeerStatsSignal(e)
     let
-      mailserverWorker = self.appService.marathon[MailserverWorker().name]
+      mailserverWorker = self.statusFoundation.marathon[MailserverWorker().name]
       task = PeerSummaryChangeTaskArg(
         `method`: "peerSummaryChange",
         peers: data.peers

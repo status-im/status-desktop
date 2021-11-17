@@ -39,8 +39,8 @@ proc mainProc() =
     fleetConfig = readFile(joinPath(getAppDir(), fleets))
     status = statuslib.newStatusInstance(fleetConfig)
 
-  let appService = newAppService(status)
-  defer: appService.delete()
+  let statusFoundation = newStatusFoundation(status)
+  defer: statusFoundation.delete()
 
   status.initNode(STATUSGODIR, KEYSTOREDIR)
 
@@ -51,7 +51,7 @@ proc mainProc() =
   let app = newQGuiApplication()
   defer: app.delete()
 
-  let appController = newAppController(appService)
+  let appController = newAppController(statusFoundation)
   defer: appController.delete()
 
   let resources =
@@ -118,7 +118,7 @@ proc mainProc() =
 
   # We need this global variable in order to be able to access the application
   # from the non-closure callback passed to `statusgo_backend.setSignalEventCallback`
-  signalsManagerQObjPointer = cast[pointer](appService.signalsManager.vptr)
+  signalsManagerQObjPointer = cast[pointer](statusFoundation.signalsManager.vptr)
   defer:
     signalsManagerQObjPointer = nil
 
@@ -134,23 +134,23 @@ proc mainProc() =
   let logFile = fmt"app_{getTime().toUnix}.log"
   discard defaultChroniclesStream.outputs[1].open(LOGDIR & logFile, fmAppend)
 
-  var wallet = wallet.newController(status, appService)
+  var wallet = wallet.newController(status, statusFoundation)
   defer: wallet.delete()
   singletonInstance.engine.setRootContextProperty("walletModel", wallet.variant)
 
-  var wallet2 = walletV2.newController(status, appService)
+  var wallet2 = walletV2.newController(status, statusFoundation)
   defer: wallet2.delete()
   singletonInstance.engine.setRootContextProperty("walletV2Model", wallet2.variant)
 
-  var chat = chat.newController(status, appService, OPENURI)
+  var chat = chat.newController(status, statusFoundation, OPENURI)
   defer: chat.delete()
   singletonInstance.engine.setRootContextProperty("chatsModel", chat.variant)
 
-  var node = node.newController(appService, netAccMgr)
+  var node = node.newController(statusFoundation, netAccMgr)
   defer: node.delete()
   singletonInstance.engine.setRootContextProperty("nodeModel", node.variant)
 
-  var utilsController = utilsView.newController(status, appService)
+  var utilsController = utilsView.newController(status, statusFoundation)
   defer: utilsController.delete()
   singletonInstance.engine.setRootContextProperty("utilsModel", utilsController.variant)
 
@@ -210,9 +210,9 @@ proc mainProc() =
     # 2. Re-init controllers that don't require a running node
     initControllers()
 
-  var signalsManagerQVariant = newQVariant(appService.signalsManager)
+  var signalsManagerQVariant = newQVariant(statusFoundation.signalsManager)
   defer: signalsManagerQVariant.delete()
-  var mailserverControllerQVariant = newQVariant(appService.mailserverController)
+  var mailserverControllerQVariant = newQVariant(statusFoundation.mailserverController)
   defer: mailserverControllerQVariant.delete()
 
   singletonInstance.engine.setRootContextProperty("signals", signalsManagerQVariant)

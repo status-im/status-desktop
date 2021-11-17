@@ -32,12 +32,12 @@ proc lookupContact[T](self: T, slot: string, value: string) =
     slot: slot,
     value: value
   )
-  self.appService.threadpool.start(arg)
+  self.statusFoundation.threadpool.start(arg)
 
 QtObject:
   type ContactsView* = ref object of QObject
     status: Status
-    appService: AppService
+    statusFoundation: StatusFoundation
     contactList*: ContactList
     contactRequests*: ContactList
     addedContacts*: ContactList
@@ -55,10 +55,10 @@ QtObject:
     self.blockedContacts.delete
     self.QObject.delete
 
-  proc newContactsView*(status: Status, appService: AppService): ContactsView =
+  proc newContactsView*(status: Status, statusFoundation: StatusFoundation): ContactsView =
     new(result, delete)
     result.status = status
-    result.appService = appService
+    result.statusFoundation = statusFoundation
     result.contactList = newContactList()
     result.contactRequests = newContactList()
     result.addedContacts = newContactList()
