@@ -96,8 +96,21 @@ StatusWindow {
     Connections {
         target: applicationWindow
         onClosing: {
-            loader.sourceComponent = undefined
-            close.accepted = true
+            if (Qt.platform.os === "osx") {
+                loader.sourceComponent = undefined
+                close.accepted = true
+            } else {
+                if (loader.sourceComponent == login) {
+                    Qt.quit();
+                }
+                else if (loader.sourceComponent == app) {
+                    if (localAccountSensitiveSettings.quitOnClose) {
+                        Qt.quit();
+                    } else {
+                        applicationWindow.visible = false;
+                    }
+                }
+            }
         }
 
         onActiveChanged: {
