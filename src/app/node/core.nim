@@ -11,15 +11,13 @@ type NodeController* = ref object
   statusFoundation: StatusFoundation
   view*: NodeView
   variant*: QVariant
-  networkAccessMananger*: QNetworkAccessManager
   isWakuV2: bool
 
-proc newController*(statusFoundation: StatusFoundation, nam: QNetworkAccessManager): NodeController =
+proc newController*(statusFoundation: StatusFoundation): NodeController =
   result = NodeController()
   result.statusFoundation = statusFoundation
   result.view = newNodeView(statusFoundation)
   result.variant = newQVariant(result.view)
-  result.networkAccessMananger = nam
 
 proc delete*(self: NodeController) =
   delete self.variant

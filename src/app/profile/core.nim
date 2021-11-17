@@ -1,4 +1,4 @@
-import NimQml, json, strutils, sugar, sequtils, tables
+import NimQml, json, tables
 import json_serialization
 import status/[status, settings]
 import status/contacts as status_contacts
