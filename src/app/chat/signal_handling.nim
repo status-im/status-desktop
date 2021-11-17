@@ -1,6 +1,5 @@
 import
-  ../core/tasks/marathon/mailserver/worker,
-  status/signals
+  ../core/tasks/marathon/mailserver/worker
 
 proc handleSignals(self: ChatController) =
   self.status.events.on(SignalType.Message.event) do(e:Args):

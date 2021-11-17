@@ -68,6 +68,12 @@ proc changeLanguage(locale: string) =
 type 
   AppController* = ref object of RootObj 
     appService: AppService
+    # Global
+    localAppSettingsVariant: QVariant
+    localAccountSettingsVariant: QVariant
+    localAccountSensitiveSettingsVariant: QVariant
+    userProfileVariant: QVariant
+
     # Services
     osNotificationService: os_notification_service.Service
     keychainService: keychain_service.Service
@@ -91,12 +97,6 @@ type
     languageService: language_service.Service
     mnemonicService: mnemonic_service.Service
     privacyService: privacy_service.Service
-
-    # Core
-    localAppSettingsVariant: QVariant
-    localAccountSettingsVariant: QVariant
-    localAccountSensitiveSettingsVariant: QVariant
-    userProfileVariant: QVariant
 
     # Modules
     startupModule: startup_module.AccessInterface
@@ -134,6 +134,13 @@ proc connect(self: AppController) =
 proc newAppController*(appService: AppService): AppController =
   result = AppController()
   result.appService = appService
+
+  # Global
+  result.localAppSettingsVariant = newQVariant(singletonInstance.localAppSettings)
+  result.localAccountSettingsVariant = newQVariant(singletonInstance.localAccountSettings)
+  result.localAccountSensitiveSettingsVariant = newQVariant(singletonInstance.localAccountSensitiveSettings)
+  result.userProfileVariant = newQVariant(singletonInstance.userProfile)
+
   # Services
   result.osNotificationService = os_notification_service.newService(appService.status.events)
   result.keychainService = keychain_service.newService(appService.status.events)
@@ -160,12 +167,6 @@ proc newAppController*(appService: AppService): AppController =
   result.privacyService = privacy_service.newService()
   result.ensService = ens_service.newService()
   result.providerService = provider_service.newService(result.dappPermissionsService, result.settingsService, result.ensService)
-
-  # Core
-  result.localAppSettingsVariant = newQVariant(singletonInstance.localAppSettings)
-  result.localAccountSettingsVariant = newQVariant(singletonInstance.localAccountSettings)
-  result.localAccountSensitiveSettingsVariant = newQVariant(singletonInstance.localAccountSensitiveSettings)
-  result.userProfileVariant = newQVariant(singletonInstance.userProfile)
 
   # Modules
   result.startupModule = startup_module.newModule[AppController](
