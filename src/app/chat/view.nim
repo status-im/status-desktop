@@ -7,11 +7,10 @@ import status/mailservers
 import status/contacts as status_contacts
 import status/ens as status_ens
 import status/chat/[chat]
-import status/types/[activity_center_notification, os_notification, rpc_response, profile]
+import status/types/[activity_center_notification, rpc_response, profile]
 import ../core/[main]
 import ../core/tasks/[qt, threadpool]
 import ../core/tasks/marathon/mailserver/worker
-import status/notifications/[os_notifications]
 import ../utils/image_utils
 import web3/[conversions, ethtypes]
 import views/[channels_list, message_list, chat_item, reactions, stickers, groups, transactions, communities, community_list, community_item, format_input, ens, activity_notification_list, channel, messages, message_item, gif]
@@ -526,36 +525,45 @@ QtObject:
 
     # self.switchTo(info.communityId, info.channelId, info.messageId)
 
+  #################################################
+  ## Don't delete this part, it's not refactored yet, just commented
+  ## OsNotificationService is ready, but not not put in a play.
+  ## 
+  ## 
   proc notificationClicked*(self:ChatsView, notificationType: int) {.signal.}
 
-  proc onOsNotificationClicked*(self: ChatsView, details: OsNotificationDetails) =
-    # A logic what should be done depends on details.notificationType and should be
-    # defined here in this method.
-    # So far if notificationType is:
-    # - NewContactRequest or AcceptedContactRequest we are switching to Chat section
-    # - JoinCommunityRequest or AcceptedIntoCommunity we are switching to that Community
-    # - RejectedByCommunity we are switching to Chat section
-    # - NewMessage we are switching to appropriate chat/channel and a message inside it
+  # proc onOsNotificationClicked*(self: ChatsView, details: OsNotificationDetails) =
+  #   # A logic what should be done depends on details.notificationType and should be
+  #   # defined here in this method.
+  #   # So far if notificationType is:
+  #   # - NewContactRequest or AcceptedContactRequest we are switching to Chat section
+  #   # - JoinCommunityRequest or AcceptedIntoCommunity we are switching to that Community
+  #   # - RejectedByCommunity we are switching to Chat section
+  #   # - NewMessage we are switching to appropriate chat/channel and a message inside it
     
-    self.switchTo(details.communityId, details.channelId, details.messageId)
+  #   self.switchTo(details.communityId, details.channelId, details.messageId)
     
-    # Notify qml about the changes, cause changing section cannot be performed 
-    # completely from the nim side.
-    self.notificationClicked(details.notificationType.int)
+  #   # Notify qml about the changes, cause changing section cannot be performed 
+  #   # completely from the nim side.
+  #   self.notificationClicked(details.notificationType.int)
 
-  proc showOSNotification*(self: ChatsView, title: string, message: string, 
-    notificationType: int, communityId: string, channelId: string, 
-    messageId: string, useOSNotifications: bool) {.slot.} =
-
-    let details = OsNotificationDetails(
-      notificationType: notificationType.OsNotificationType,
-      communityId: communityId,
-      channelId: channelId,
-      messageId: messageId
-    )
+  proc showOSNotification*(self: ChatsView, title: string, message: string, notificationType: int, communityId: string, 
+    channelId: string, messageId: string, useOSNotifications: bool) {.slot.} =
+    discard
+    # Not refactored yet
+    # let details = OsNotificationDetails(
+    #   notificationType: notificationType.OsNotificationType,
+    #   communityId: communityId,
+    #   channelId: channelId,
+    #   messageId: messageId
+    # )
     
-    self.appService.osNotificationService.showNotification(title, message, 
-    details, useOSNotifications)
+    # Once this part gets refactored os notification service from the services will be used
+    # instead fetching that service from the "core/main"
+    #self.appService.osNotificationService.showNotification(title, message, details, useOSNotifications)
+  ## 
+  ##
+  #################################################
 
   proc handleProtocolUri*(self: ChatsView, uri: string) {.slot.} =
     # for now this only supports links to 1-1 chats, e.g.
