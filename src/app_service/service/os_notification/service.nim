@@ -1,33 +1,38 @@
 import NimQml, json, chronicles
-
-import status/[status]
-import status/notifications/[os_notifications]
-import status/types/[os_notification]
+import details
+import eventemitter
 
 logScope:
   topics = "os-notification-service"
 
-QtObject:
-  type OsNotificationService* = ref object of QObject
-    status: Status
-    notification: StatusOSNotification
-    notificationSetUp: bool
+# Signals which may be emitted by this service:
+const SIGNAL_OS_NOTIFICATION_CLICKED* = "new-osNotificationClicked" #Once we are done with refactoring we should remove "new-" from all signals
 
-  proc setup(self: OsNotificationService, status: Status) = 
+type 
+  OsNotificationsArgs* = ref object of Args
+    details*: OsNotificationDetails
+    
+QtObject:
+  type Service* = ref object of QObject
+    events: EventEmitter
+    notification: StatusOSNotification
+
+  proc setup(self: Service, events: EventEmitter) = 
     self.QObject.setup
-    self.status = status
+    self.events = events
+    self.notification = newStatusOSNotification()
+    signalConnect(self.notification, "notificationClicked(QString)", self, "onNotificationClicked(QString)", 2)
   
-  proc delete*(self: OsNotificationService) =
-    if self.notificationSetUp:
-      self.notification.delete
+  proc delete*(self: Service) =
+    self.notification.delete
     self.QObject.delete
 
-  proc newOsNotificationService*(status: Status): OsNotificationService =
+  proc newService*(events: EventEmitter): Service =
     new(result, delete)
-    result.setup(status)
+    result.setup(events)
 
-  proc showNotification*(self: OsNotificationService, title: string, 
-    message: string, details: OsNotificationDetails, useOSNotifications: bool) =
+  proc showNotification*(self: Service, title: string, message: string, details: OsNotificationDetails, 
+    useOSNotifications: bool) =
     ## This method will add new notification to the Notification center. Param
     ## "details" is used to uniquely define a notification bubble.
      
@@ -41,12 +46,8 @@ QtObject:
     let identifier = $(details.toJsonNode())
     self.notification.showNotification(title, message, identifier)
 
-  proc onNotificationClicked*(self: OsNotificationService, identifier: string) {.slot.} =
+  proc onNotificationClicked*(self: Service, identifier: string) {.slot.} =
     ## This slot is called once user clicks a notificaiton bubble, "identifier"
     ## contains data which uniquely define that notification.
-    self.status.osnotifications.onNotificationClicked(identifier)
-
-  proc onLoggedIn*(self: OsNotificationService) =
-    self.notification = newStatusOSNotification()
-    self.notificationSetUp = true
-    signalConnect(self.notification, "notificationClicked(QString)", self, "onNotificationClicked(QString)", 2)
+    let details = toOsNotificationDetails(parseJson(identifier))
+    self.events.emit(SIGNAL_OS_NOTIFICATION_CLICKED, OsNotificationsArgs(details: details))

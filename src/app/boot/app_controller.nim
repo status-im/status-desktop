@@ -1,5 +1,6 @@
 import NimQml, os, strformat
 
+import ../../app_service/service/os_notification/service as os_notification_service
 import ../../app_service/service/keychain/service as keychain_service
 import ../../app_service/service/accounts/service as accounts_service
 import ../../app_service/service/contacts/service as contacts_service
@@ -68,6 +69,7 @@ type
   AppController* = ref object of RootObj 
     appService: AppService
     # Services
+    osNotificationService: os_notification_service.Service
     keychainService: keychain_service.Service
     accountsService: accounts_service.Service
     contactsService: contacts_service.Service
@@ -133,6 +135,7 @@ proc newAppController*(appService: AppService): AppController =
   result = AppController()
   result.appService = appService
   # Services
+  result.osNotificationService = os_notification_service.newService(appService.status.events)
   result.keychainService = keychain_service.newService(appService.status.events)
   result.settingService = setting_service.newService()
   result.settingsService = settings_service.newService()
@@ -217,6 +220,7 @@ proc newAppController*(appService: AppService): AppController =
   #result.connect()
 
 proc delete*(self: AppController) =
+  self.osNotificationService.delete
   self.contactsService.delete
   self.chatService.delete
   self.communityService.delete

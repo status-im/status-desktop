@@ -195,6 +195,8 @@ proc handleMailserverEvents(self: ChatController) =
     mailserverWorker.start(task)
 
 proc handleSystemEvents(self: ChatController) =
-  self.status.events.on("osNotificationClicked") do(e:Args):
-    let arg = OsNotificationsArgs(e)
-    self.view.onOsNotificationClicked(arg.details)
+  discard
+  # Not refactored yet - don't delete
+  # self.status.events.on("osNotificationClicked") do(e:Args):
+  #   let arg = OsNotificationsArgs(e)
+  #   self.view.onOsNotificationClicked(arg.details)
