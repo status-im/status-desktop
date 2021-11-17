@@ -1,4 +1,5 @@
 import NimQml, chronicles, task_runner
+import ../../constants
 import status/status as status_lib_status
 import 
   ./tasks/marathon,
@@ -18,19 +19,23 @@ type StatusFoundation* = ref object
   mailserverController*: MailserverController
   mailserverWorker*: MailserverWorker
 
-proc newStatusFoundation*(status: Status): StatusFoundation =
+proc newStatusFoundation*(fleetConfig: string): StatusFoundation =
   result = StatusFoundation()
-  result.status = status
-  result.mailserverController = newMailserverController(status)
+  
+  result.status = newStatusInstance(fleetConfig)
+  result.status.initNode(STATUSGODIR, KEYSTOREDIR)
+
+  result.mailserverController = newMailserverController(result.status.events)
   result.mailserverWorker = newMailserverWorker(cast[ByteAddress](result.mailserverController.vptr))
   result.threadpool = newThreadPool()
   result.marathon = newMarathon(result.mailserverWorker)
-  result.signalsManager = newSignalsManager(status.events)
+  result.signalsManager = newSignalsManager(result.status.events)
 
 proc delete*(self: StatusFoundation) =
   self.threadpool.teardown()
   self.marathon.teardown()
   self.signalsManager.delete()
+  self.status.reset()
 
 proc onLoggedIn*(self: StatusFoundation) =
   self.marathon.onLoggedIn()
