@@ -5,8 +5,8 @@ import io_interface
 
 import ../../../../app_service/service/accounts/service_interface as accounts_service
 
+import ../../../core/signals/types
 import eventemitter
-import status/[signals, fleet]
 
 export controller_interface
 

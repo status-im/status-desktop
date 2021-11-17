@@ -7,8 +7,8 @@ import ../../../../app_service/service/chat/service as chat_service
 import ../../../../app_service/service/community/service as community_service
 import ../../../../app_service/service/message/service as message_service
 
+import ../../../core/signals/types
 import eventemitter
-import status/[signals]
 
 export controller_interface
 
