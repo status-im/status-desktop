@@ -40,12 +40,12 @@ proc loadTransactions*[T](self: T, slot: string, address: string, toBlock: Uint2
     limit: limit,
     loadMore: loadMore
   )
-  self.appService.threadpool.start(arg)
+  self.statusFoundation.threadpool.start(arg)
 
 QtObject:
   type HistoryView* = ref object of QObject
       status: Status
-      appService: AppService
+      statusFoundation: StatusFoundation
       accountsView: AccountsView
       transactionsView*: TransactionsView
       fetchingHistoryState: Table[string, bool]
@@ -53,11 +53,11 @@ QtObject:
   proc setup(self: HistoryView) = self.QObject.setup
   proc delete(self: HistoryView) = self.QObject.delete
 
-  proc newHistoryView*(status: Status, appService: AppService, 
+  proc newHistoryView*(status: Status, statusFoundation: StatusFoundation, 
     accountsView: AccountsView, transactionsView: TransactionsView): HistoryView =
     new(result, delete)
     result.status = status
-    result.appService = appService
+    result.statusFoundation = statusFoundation
     result.fetchingHistoryState = initTable[string, bool]()
     result.accountsView = accountsView
     result.transactionsView = transactionsView

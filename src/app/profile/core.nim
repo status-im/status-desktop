@@ -21,14 +21,14 @@ type ProfileController* = ref object
   view*: ProfileView
   variant*: QVariant
   status: Status
-  appService: AppService
+  statusFoundation: StatusFoundation
 
-proc newController*(status: Status, appService: AppService,
+proc newController*(status: Status, statusFoundation: StatusFoundation,
   changeLanguage: proc(locale: string)): ProfileController =
   result = ProfileController()
   result.status = status
-  result.appService = appService
-  result.view = newProfileView(status, appService, changeLanguage)
+  result.statusFoundation = statusFoundation
+  result.view = newProfileView(status, statusFoundation, changeLanguage)
   result.variant = newQVariant(result.view)
 
 proc delete*(self: ProfileController) =

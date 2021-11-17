@@ -34,7 +34,7 @@ QtObject:
     fleets*: Fleets
     network*: NetworkView
     status*: Status
-    appService: AppService
+    statusFoundation: StatusFoundation
     changeLanguage*: proc(locale: string)
     ens*: EnsManager
 
@@ -54,23 +54,23 @@ QtObject:
     if not self.mailservers.isNil: self.mailservers.delete
     self.QObject.delete
 
-  proc newProfileView*(status: Status, appService: AppService, 
+  proc newProfileView*(status: Status, statusFoundation: StatusFoundation, 
     changeLanguage: proc(locale: string)): ProfileView =
     new(result, delete)
     result = ProfileView()
     result.profile = newProfileInfoView()
     result.profilePicture = newProfilePictureView(status, result.profile)
     result.mutedChats = newMutedChatsView(status)
-    result.contacts = newContactsView(status, appService)
+    result.contacts = newContactsView(status, statusFoundation)
     result.devices = newDevicesView(status)
     result.network = newNetworkView(status)
     result.mnemonic = newMnemonicView(status)
-    result.mailservers = newMailserversView(status, appService)
-    result.ens = newEnsManager(status, appService)
+    result.mailservers = newMailserversView(status, statusFoundation)
+    result.ens = newEnsManager(status, statusFoundation)
     result.fleets = newFleets(status)
     result.changeLanguage = changeLanguage
     result.status = status
-    result.appService = appService
+    result.statusFoundation = statusFoundation
     result.setup
 
   proc initialized*(self: ProfileView) {.signal.}
@@ -200,7 +200,7 @@ QtObject:
 
     # Once this part gets refactored os notification service from the services will be used
     # instead fetching that service from the "core/main"
-    #self.appService.osNotificationService.showNotification(title, message, details, useOSNotifications)
+    #self.statusFoundation.osNotificationService.showNotification(title, message, details, useOSNotifications)
 
   proc logDir*(self: ProfileView): string {.slot.} =
     url_fromLocalFile(constants.LOGDIR)

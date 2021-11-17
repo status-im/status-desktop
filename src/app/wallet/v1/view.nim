@@ -10,7 +10,7 @@ QtObject:
   type
     WalletView* = ref object of QAbstractListModel
       status: Status
-      appService: AppService
+      statusFoundation: StatusFoundation
       accountsView: AccountsView
       collectiblesView: CollectiblesView
       transactionsView*: TransactionsView
@@ -37,19 +37,19 @@ QtObject:
   proc setup(self: WalletView) =
     self.QAbstractListModel.setup
 
-  proc newWalletView*(status: Status, appService: AppService): WalletView =
+  proc newWalletView*(status: Status, statusFoundation: StatusFoundation): WalletView =
     new(result, delete)
     result.status = status
-    result.appService = appService
+    result.statusFoundation = statusFoundation
 
     result.accountsView = newAccountsView(status)
-    result.collectiblesView = newCollectiblesView(status, appService, result.accountsView)
-    result.transactionsView = newTransactionsView(status, appService, result.accountsView)
-    result.tokensView = newTokensView(status, appService, result.accountsView)
-    result.gasView = newGasView(status, appService)
+    result.collectiblesView = newCollectiblesView(status, statusFoundation, result.accountsView)
+    result.transactionsView = newTransactionsView(status, statusFoundation, result.accountsView)
+    result.tokensView = newTokensView(status, statusFoundation, result.accountsView)
+    result.gasView = newGasView(status, statusFoundation)
     result.dappBrowserView = newDappBrowserView(status, result.accountsView)
-    result.historyView = newHistoryView(status, appService, result.accountsView, result.transactionsView)
-    result.balanceView = newBalanceView(status, appService, result.accountsView, result.transactionsView, result.historyView)
+    result.historyView = newHistoryView(status, statusFoundation, result.accountsView, result.transactionsView)
+    result.balanceView = newBalanceView(status, statusFoundation, result.accountsView, result.transactionsView, result.historyView)
     result.utilsView = newUtilsView()
     result.isNonArchivalNode = false
 

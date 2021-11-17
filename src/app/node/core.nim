@@ -8,16 +8,16 @@ logScope:
   topics = "node"
 
 type NodeController* = ref object
-  appService: AppService
+  statusFoundation: StatusFoundation
   view*: NodeView
   variant*: QVariant
   networkAccessMananger*: QNetworkAccessManager
   isWakuV2: bool
 
-proc newController*(appService: AppService, nam: QNetworkAccessManager): NodeController =
+proc newController*(statusFoundation: StatusFoundation, nam: QNetworkAccessManager): NodeController =
   result = NodeController()
-  result.appService = appService
-  result.view = newNodeView(appService)
+  result.statusFoundation = statusFoundation
+  result.view = newNodeView(statusFoundation)
   result.variant = newQVariant(result.view)
   result.networkAccessMananger = nam
 
@@ -26,30 +26,30 @@ proc delete*(self: NodeController) =
   delete self.view
 
 proc setPeers(self: NodeController, peers: seq[string]) =
-  self.appService.status.network.peerSummaryChange(peers)
+  self.statusFoundation.status.network.peerSummaryChange(peers)
   self.view.setPeerSize(peers.len)
 
 proc init*(self: NodeController) =
-  self.isWakuV2 = self.appService.status.settings.getWakuVersion() == 2
+  self.isWakuV2 = self.statusFoundation.status.settings.getWakuVersion() == 2
   
-  self.appService.status.events.on(SignalType.Wallet.event) do(e:Args):
+  self.statusFoundation.status.events.on(SignalType.Wallet.event) do(e:Args):
     self.view.setLastMessage($WalletSignal(e).blockNumber)
 
-  self.appService.status.events.on(SignalType.DiscoverySummary.event) do(e:Args):
+  self.statusFoundation.status.events.on(SignalType.DiscoverySummary.event) do(e:Args):
     var data = DiscoverySummarySignal(e)
     self.setPeers(data.enodes)
 
-  self.appService.status.events.on(SignalType.PeerStats.event) do(e:Args):
+  self.statusFoundation.status.events.on(SignalType.PeerStats.event) do(e:Args):
     var data = PeerStatsSignal(e)
     self.setPeers(data.peers)
 
-  self.appService.status.events.on(SignalType.Stats.event) do (e:Args):
+  self.statusFoundation.status.events.on(SignalType.Stats.event) do (e:Args):
     self.view.setStats(StatsSignal(e).stats)
     if not self.isWakuV2: self.view.fetchBitsSet()
 
-  self.appService.status.events.on(SignalType.ChroniclesLogs.event) do(e:Args):
+  self.statusFoundation.status.events.on(SignalType.ChroniclesLogs.event) do(e:Args):
     self.view.log(ChroniclesLogsSignal(e).content)
 
   self.view.init()
 
-  self.setPeers(self.appService.status.network.fetchPeers())
+  self.setPeers(self.statusFoundation.status.network.fetchPeers())

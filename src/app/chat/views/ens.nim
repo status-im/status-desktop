@@ -30,20 +30,20 @@ proc resolveEns[T](self: T, slot: string, ens: string, uuid: string) =
     vptr: cast[ByteAddress](self.vptr),
     slot: slot, ens: ens, uuid: uuid
   )
-  self.appService.threadpool.start(arg)
+  self.statusFoundation.threadpool.start(arg)
 
 QtObject:
   type EnsView* = ref object of QObject
     status: Status
-    appService: AppService
+    statusFoundation: StatusFoundation
 
   proc setup(self: EnsView) = self.QObject.setup
   proc delete*(self: EnsView) = self.QObject.delete
 
-  proc newEnsView*(status: Status, appService: AppService): EnsView =
+  proc newEnsView*(status: Status, statusFoundation: StatusFoundation): EnsView =
     new(result, delete)
     result.status = status
-    result.appService = appService
+    result.statusFoundation = statusFoundation
     result.setup
 
   proc isEnsVerified*(self: EnsView, id: string): bool {.slot.} =

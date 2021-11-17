@@ -35,12 +35,12 @@ proc initBalances[T](self: T, slot: string, address: string, tokenList: seq[stri
     vptr: cast[ByteAddress](self.vptr),
     slot: slot, address: address, tokenList: tokenList
   )
-  self.appService.threadpool.start(arg)
+  self.statusFoundation.threadpool.start(arg)
 
 QtObject:
   type BalanceView* = ref object of QObject
       status: Status
-      appService: AppService
+      statusFoundation: StatusFoundation
       totalFiatBalance: string
       accountsView: AccountsView
       transactionsView*: TransactionsView
@@ -49,10 +49,10 @@ QtObject:
   proc setup(self: BalanceView) = self.QObject.setup
   proc delete(self: BalanceView) = self.QObject.delete
 
-  proc newBalanceView*(status: Status, appService: AppService, accountsView: AccountsView, transactionsView: TransactionsView, historyView: HistoryView): BalanceView =
+  proc newBalanceView*(status: Status, statusFoundation: StatusFoundation, accountsView: AccountsView, transactionsView: TransactionsView, historyView: HistoryView): BalanceView =
     new(result, delete)
     result.status = status
-    result.appService = appService
+    result.statusFoundation = statusFoundation
     result.totalFiatBalance = ""
     result.accountsView = accountsView
     result.transactionsView = transactionsView
