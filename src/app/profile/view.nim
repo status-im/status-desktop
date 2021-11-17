@@ -11,8 +11,7 @@ import status/contacts as status_contacts
 import status/status
 import status/ens as status_ens
 import status/chat/chat
-import status/types/[setting, os_notification, profile]
-import status/notifications/[os_notifications]
+import status/types/[setting, profile]
 
 import ../chat/views/channels_list
 import ../../constants
@@ -191,15 +190,18 @@ QtObject:
     self.profile.setSendUserStatus(sendUserStatus)
     self.status.saveSetting(Setting.SendUserStatus, sendUserStatus)
 
-  proc showOSNotification*(self: ProfileView, title: string, message: string,
-    notificationType: int, useOSNotifications: bool) {.slot.} =
+  proc showOSNotification*(self: ProfileView, title: string, message: string, notificationType: int, 
+    useOSNotifications: bool) {.slot.} =
+    discard
 
-    let details = OsNotificationDetails(
-      notificationType: notificationType.OsNotificationType
-    )
+    # Not refactored yet - don't delete
+    # let details = OsNotificationDetails(
+    #   notificationType: notificationType.OsNotificationType
+    # )
 
-    self.appService.osNotificationService.showNotification(title, message,
-    details, useOSNotifications)
+    # Once this part gets refactored os notification service from the services will be used
+    # instead fetching that service from the "core/main"
+    #self.appService.osNotificationService.showNotification(title, message, details, useOSNotifications)
 
   proc logDir*(self: ProfileView): string {.slot.} =
     url_fromLocalFile(constants.LOGDIR)
