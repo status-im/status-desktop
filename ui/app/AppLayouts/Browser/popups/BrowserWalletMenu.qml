@@ -131,7 +131,7 @@ Popup {
                 accountSelectorRow.currentAddress = selectedAccount.address
                 Web3ProviderStore.web3ProviderInst.dappsAddress = selectedAccount.address;
                 WalletStore.setDappBrowserAddress()
-                Web3ProviderStore.web3ProviderInst.clearPermissions();
+                Web3ProviderStore.revokeAllPermissions();
                 for (let i = 0; i < tabs.count; ++i){
                     tabs.getTab(i).item.reload();
                 }

@@ -45,11 +45,11 @@ QtObject:
     case column:
       of "name": result = account.name
       of "address": result = account.address
-      of "iconColor": result = account.iconColor
+      of "color": result = account.iconColor
       of "balance": result = if account.balance.isSome(): account.balance.get() else: "..."
       of "path": result = account.path
       of "walletType": result = account.walletType
-      of "fiatBalance": result = if account.realFiatBalance.isSome(): fmt"{account.realFiatBalance.get():>.2f}" else: "..." 
+      of "currencyBalance": result = if account.realFiatBalance.isSome(): fmt"{account.realFiatBalance.get():>.2f}" else: "..." 
 
   proc getAccountindexByAddress*(self: AccountList, address: string): int =
     var i = 0
@@ -102,9 +102,9 @@ QtObject:
   method roleNames(self: AccountList): Table[int, string] =
     { AccountRoles.Name.int:"name",
     AccountRoles.Address.int:"address",
-    AccountRoles.Color.int:"iconColor",
+    AccountRoles.Color.int:"color",
     AccountRoles.Balance.int:"balance",
-    AccountRoles.FiatBalance.int:"fiatBalance",
+    AccountRoles.FiatBalance.int:"currencyBalance",
     AccountRoles.Assets.int:"assets",
     AccountRoles.Wallet.int:"isWallet",
     AccountRoles.WalletType.int:"walletType",

@@ -10,6 +10,10 @@ QtObject {
 
     property int networkId: providerModule.networkId
 
+    function revokeAllPermissions(){
+        dappPermissionsModule.revokeAllPermissions()
+    }
+
     function determineRealURL(text){
         var url = RootStore.getUrlFromUserInput(text);
         var host = providerModule.getHost(url);
