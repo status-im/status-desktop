@@ -281,6 +281,7 @@ proc load(self: AppController) =
   self.providerService.init()
   self.walletAccountService.init()
   self.transactionService.init()
+  self.languageService.init()
 
   # other global instances
   self.buildAndRegisterLocalAccountSensitiveSettings()  
