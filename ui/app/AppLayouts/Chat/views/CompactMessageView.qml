@@ -21,6 +21,8 @@ Item {
     property int contentType: 2
     property var container
     property bool isCurrentUser: false
+    property bool isExpired: false
+    property bool timeout: false
     property bool isHovered: typeof root.messageStore.hoveredMessage !== "undefined" && root.messageStore.hoveredMessage === messageId
     property bool isMessageActive: typeof root.messageStore.activeMessage !== "undefined" && root.messageStore.activeMessage === messageId
     property bool headerRepeatCondition: (authorCurrentMsg !== authorPrevMsg || shouldRepeatHeader || dateGroupLbl.visible || chatReply.active)
@@ -596,6 +598,8 @@ Item {
             anchors.topMargin: chatTime.visible ? 0 : -4
             anchors.bottom: chatTime.visible ? chatTime.bottom : undefined
             isCurrentUser: root.isCurrentUser
+            isExpired: root.isExpired
+            timeout: root.timeout
             onClicked: {
                 root.store.chatsModelInst.messageView.resendMessage(chatId, messageId)
             }
