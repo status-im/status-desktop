@@ -8,7 +8,6 @@ import status/statusgo_backend_new/contacts as status_contacts
 import status/statusgo_backend_new/accounts as status_accounts
 import status/statusgo_backend_new/chat as status_chat
 import status/statusgo_backend_new/utils as status_utils
-import status/contacts as old_status_contacts
 
 export contacts_dto
 
@@ -18,15 +17,14 @@ logScope:
   topics = "contacts-service"
 
 type
-  LookupResolvedArgs* = ref object of Args
-    id*: string
-
-type
   ContactArgs* = ref object of Args
-    contact*: ContactsDto
+    contactId*: string
 
-  ContactUpdatedArgs* = ref object of Args
-    id*: string
+  ContactNicknameUpdatedArgs* = ref object of ContactArgs
+    nickname*: string
+
+  ContactAddedArgs* = ref object of Args
+    contact*: ContactsDto
 
 # Signals which may be emitted by this service:
 const SIGNAL_CONTACT_LOOKED_UP* = "SIGNAL_CONTACT_LOOKED_UP"
@@ -35,7 +33,7 @@ const SIGNAL_CONTACT_ADDED* = "new-contactAdded"
 const SIGNAL_CONTACT_BLOCKED* = "new-contactBlocked" 
 const SIGNAL_CONTACT_UNBLOCKED* = "new-contactUnblocked"
 const SIGNAL_CONTACT_REMOVED* = "new-contactRemoved"
-const SIGNAL_CONTACT_UPDATED* = "new-contactUpdated" #Once we are done with refactoring we should remove "new-" from all signals
+const SIGNAL_CONTACT_NICKNAME_CHANGED* = "new-contactNicknameChanged"
 
 QtObject:
   type Service* = ref object of QObject
@@ -70,9 +68,7 @@ QtObject:
   proc init*(self: Service) =
     self.fetchContacts()
 
-  proc getContacts*(self: Service, useCache: bool = true): seq[ContactsDto] =
-    if (not useCache):
-      self.fetchContacts()
+  proc getContacts*(self: Service): seq[ContactsDto] =
     return toSeq(self.contacts.values)
 
   proc fetchContact(self: Service, id: string): ContactsDto =
@@ -87,21 +83,20 @@ QtObject:
       error "error: ", errDesription
       return
 
-  proc getContactById*(self: Service, id: string): ContactsDto =
-    if(not self.contacts.hasKey(id)):
-      return self.fetchContact(id)
-
-    return self.contacts[id]
-
   proc generateAlias*(self: Service, publicKey: string): string =
     return status_accounts.generateAlias(publicKey).result.getStr
 
-  method generateIdenticon*(self: Service, publicKey: string): string =
+  proc generateIdenticon*(self: Service, publicKey: string): string =
     return status_accounts.generateIdenticon(publicKey).result.getStr
 
-  proc getOrCreateContact*(self: Service, id: string): ContactsDto =
-    result = self.getContactById(id)
-    if result.id == "":
+  proc getContactById*(self: Service, id: string): ContactsDto =
+    ## Returns contact details based on passed id (public key)
+    ## If we don't have stored contact localy or in the db then we create it based on public key.
+    if(self.contacts.hasKey(id)):
+      return self.contacts[id]
+
+    result = self.fetchContact(id)
+    if result.id.len == 0:
       let alias = self.generateAlias(id)
       let identicon = self.generateIdenticon(id)
       result = ContactsDto(
@@ -117,78 +112,58 @@ QtObject:
   proc saveContact(self: Service, contact: ContactsDto) = 
     status_contacts.saveContact(contact.id, contact.ensVerified, contact.name, contact.alias, contact.identicon, 
     contact.image.thumbnail, contact.image.large, contact.added, contact.blocked, contact.hasAddedUs, contact.localNickname)
+    # we must keep local contacts updated
+    self.contacts[contact.id] = contact
 
   proc addContact*(self: Service, publicKey: string) =
-    var contact = self.getOrCreateContact(publicKey)
-    let updating = contact.added
-
-    if not updating:
+    var contact = self.getContactById(publicKey)
+    if not contact.added:
       contact.added = true
-      # discard status_chat.createProfileChat(contact.id)
     else:
       contact.blocked = false
 
     self.saveContact(contact)
-    
-    self.events.emit(SIGNAL_CONTACT_ADDED, ContactArgs(contact: contact))
-    # sendContactUpdate(contact.id, accountKeyUID)
-    # if updating:
-      # TODO fix this to use ContactsDto
-      # self.events.emit("contactUpdate", ContactUpdateArgs(contacts: @[profile]))
+    self.events.emit(SIGNAL_CONTACT_ADDED, ContactAddedArgs(contact: contact))
 
   proc rejectContactRequest*(self: Service, publicKey: string) =
     var contact = self.getContactById(publicKey)
     contact.hasAddedUs = false
 
     self.saveContact(contact)
-    self.events.emit(SIGNAL_CONTACT_REMOVED, ContactArgs(contact: contact))
-    # status_contacts.rejectContactRequest(publicKey)
+    self.events.emit(SIGNAL_CONTACT_REMOVED, ContactArgs(contactId: contact.id))
 
   proc changeContactNickname*(self: Service, publicKey: string, nickname: string) =
-    var contact = self.getOrCreateContact(publicKey)
+    var contact = self.getContactById(publicKey)
     contact.localNickname = nickname
+    
     self.saveContact(contact)
-    let data = ContactUpdatedArgs(id: contact.id)
-    self.events.emit(SIGNAL_CONTACT_UPDATED, data)
-    self.events.emit(SIGNAL_CONTACT_ADDED, ContactArgs(contact: contact))
+    let data = ContactNicknameUpdatedArgs(contactId: contact.id, nickname: nickname)
+    self.events.emit(SIGNAL_CONTACT_NICKNAME_CHANGED, data)
 
   proc unblockContact*(self: Service, publicKey: string) =
-    # status_contacts.unblockContact(publicKey)
     var contact = self.getContactById(publicKey)
     contact.blocked = false
+
     self.saveContact(contact)
-    self.events.emit(SIGNAL_CONTACT_UNBLOCKED, ContactArgs(contact: contact))
+    self.events.emit(SIGNAL_CONTACT_UNBLOCKED, ContactArgs(contactId: contact.id))
 
   proc blockContact*(self: Service, publicKey: string) =
     var contact = self.getContactById(publicKey)
     contact.blocked = true
+
     self.saveContact(contact)
-    self.events.emit(SIGNAL_CONTACT_BLOCKED, ContactArgs(contact: contact))
+    self.events.emit(SIGNAL_CONTACT_BLOCKED, ContactArgs(contactId: contact.id))
 
   proc removeContact*(self: Service, publicKey: string) =
-    #   status_contacts.removeContact(publicKey)
     var contact = self.getContactById(publicKey)
     contact.added = false
     contact.hasAddedUs = false
 
     self.saveContact(contact)
-    self.events.emit(SIGNAL_CONTACT_REMOVED, ContactArgs(contact: contact))
-  #   let channelId = status_utils.getTimelineChatId(publicKey)
-  #   if status_chat.hasChannel(channelId):
-  #     status_chat.leave(channelId)
+    self.events.emit(SIGNAL_CONTACT_REMOVED, ContactArgs(contactId: contact.id))
 
   proc ensResolved*(self: Service, id: string) {.slot.} =
-    # var contact = self.getContact(id)
-
-    # if contact == nil or contact.id == "":
-    #   contact = ContactsDto(
-    #     id: id,
-    #     alias: $status_accounts.generateAlias(id),
-    #     ensVerified: false
-    #   )
-
-    let data = LookupResolvedArgs(id: id)
-
+    let data = ContactArgs(contactId: id)
     self.events.emit(SIGNAL_CONTACT_LOOKED_UP, data)
 
   proc lookupContact*(self: Service, value: string) =

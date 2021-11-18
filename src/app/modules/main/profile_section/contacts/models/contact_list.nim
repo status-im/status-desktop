@@ -73,8 +73,7 @@ QtObject:
       of "isBlocked": result = $contact.isBlocked()
       of "alias": result = contact.alias
       of "ensVerified": result = $contact.ensVerified
-      # TODO check if localNickname exists in the contact ContactsDto
-      of "localNickname": result = ""#$contact.localNickname
+      of "localNickname": result = $contact.localNickname
       of "thumbnailImage": result = $contact.image.thumbnail
       of "largeImage": result = $contact.image.large
       of "requestReceived": result = $contact.requestReceived()
@@ -94,7 +93,7 @@ QtObject:
       of ContactRoles.IsBlocked: result = newQVariant(contact.isBlocked())
       of ContactRoles.Alias: result = newQVariant(contact.alias)
       of ContactRoles.EnsVerified: result = newQVariant(contact.ensVerified)
-      of ContactRoles.LocalNickname: result = newQVariant("")#newQVariant(contact.localNickname)
+      of ContactRoles.LocalNickname: result = newQVariant(contact.localNickname)
       of ContactRoles.ThumbnailImage: result = newQVariant(contact.image.thumbnail)
       of ContactRoles.LargeImage: result = newQVariant(contact.image.large)
       of ContactRoles.RequestReceived: result = newQVariant(contact.requestReceived())
@@ -138,6 +137,9 @@ QtObject:
       if(c.isContact()): return true
     return false
 
+  # There are much better ways of notifying qml about this change than sending this signal. 
+  # It also may has an impact to the app performances since it's handled on multiple places on the qml side.
+  # Would be good to get rid of it durign refactor phase.
   proc contactChanged*(self: ContactList, pubkey: string) {.signal.}
 
   proc updateContact*(self: ContactList, contact: ContactsDto) =
@@ -163,3 +165,16 @@ QtObject:
     self.contacts = contactList
     self.endResetModel()
     self.countChanged()
+
+  proc changeNicknameForContactWithId*(self: ContactList, id: string, nickname: string) =
+    for i in 0 ..< self.contacts.len:
+      if(self.contacts[i].id != id):
+        continue
+      
+      let index = self.createIndex(i, 0, nil)
+      self.contacts[i].localNickname = nickname
+      self.dataChanged(index, index, @[ContactRoles.LocalNickname.int])
+  
+      # Wrote about it where this signal is defined, it's emitted from here just because of the qml part.
+      self.contactChanged(self.contacts[i].id)
+      return
