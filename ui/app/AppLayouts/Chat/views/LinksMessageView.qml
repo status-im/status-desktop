@@ -131,7 +131,7 @@ Column {
                         }
                         return unfurledImageComponent
                     } else {
-                        if (isImageLink && index > 0) {
+                        if (localAccountSensitiveSettings.neverAskAboutUnfurlingAgain || (isImageLink && index > 0)) {
                             return
                         }
 
@@ -157,7 +157,11 @@ Column {
                 }
                 if (linkWhiteListed) {
                     if (fetched) {
-                        return
+                        if (linkData.communityId) {
+                            return invitationBubble
+                        }
+
+                        return unfurledLinkComponent
                     }
                     fetched = true
 
@@ -292,7 +296,7 @@ Column {
             radius: 16
             border.width: 1
             border.color: Style.current.border
-            color:Style.current.background
+            color: Style.current.background
 
             StatusFlatRoundButton {
                 anchors.top: parent.top
