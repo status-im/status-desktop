@@ -32,27 +32,27 @@ QtObject:
   QtProperty[string] address:
     read = address
 
-  proc iconColor*(self: AccountItemView): string {.slot.} = result = ?.self.account.iconColor
-  QtProperty[string] iconColor:
-    read = iconColor
+  proc color*(self: AccountItemView): string {.slot.} = result = ?.self.account.iconColor
+  QtProperty[string] color:
+    read = color
 
-  proc balance*(self: AccountItemView): string {.slot.} = 
+  proc currentBalance*(self: AccountItemView): string {.slot.} = 
     if ?.self.account.balance.isSome:
       result = ?.self.account.balance.get()
     else:
       result = ""
   
-  QtProperty[string] balance:
-    read = balance
+  QtProperty[string] currentBalance:
+    read = currentBalance
   
-  proc fiatBalance*(self: AccountItemView): string {.slot.} = 
+  proc currencyBalance*(self: AccountItemView): string {.slot.} = 
     if ?.self.account.realFiatBalance.isSome:
       result = fmt"{?.self.account.realFiatBalance.get():>.2f}"
     else:
       result = ""
 
-  QtProperty[string] fiatBalance:
-    read = fiatBalance
+  QtProperty[string] currencyBalance:
+    read = currencyBalance
 
   proc path*(self: AccountItemView): string {.slot.} = result = ?.self.account.path
   QtProperty[string] path:

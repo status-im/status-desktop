@@ -89,7 +89,7 @@ StatusModal {
             initialItem: groupPreview
             isLastGroup: stack.currentGroup === groupSignTx
             onGroupActivated: {
-                root.title = group.headerText
+                header.title = group.headerText
                 btnNext.text = group.footerText
             }
             TransactionFormGroup {
@@ -282,7 +282,6 @@ StatusModal {
     rightButtons: [
         StatusButton {
             id: btnNext
-            anchors.right: parent.right
             //% "Next"
             text: qsTrId("next")
             enabled: stack.currentGroup.isValid && !stack.currentGroup.isPending

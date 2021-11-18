@@ -159,7 +159,7 @@ Rectangle {
         favoriteComponent: favoritesBar
         currentFavorite: currentWebView && BookmarksStore.getCurrentFavorite(currentWebView.url)
         dappBrowserAccName: WalletStore.dappBrowserAccount.name
-        dappBrowserAccIcon: WalletStore.dappBrowserAccount.iconColor
+        dappBrowserAccIcon: WalletStore.dappBrowserAccount.color
         onAddNewFavoritelClicked: {
             addFavoriteModal.modifiyModal = browserHeader.currentFavorite
             addFavoriteModal.toolbarMode = true

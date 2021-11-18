@@ -46,14 +46,13 @@ Popup {
     }
 
     ColumnLayout {
-        anchors.left: parent.left
-        anchors.leftMargin: Style.current.smallPadding
-        anchors.right: parent.right
-        anchors.rightMargin: Style.current.smallPadding
         spacing: Style.current.bigPadding
-        anchors.top: parent.top
+        anchors.left: root.left
+        anchors.leftMargin: Style.current.padding
+        anchors.right: root.right
+        anchors.rightMargin: Style.current.padding
+        anchors.top: root.top
         anchors.topMargin: 90
-
         RowLayout {
             property int imgSize: 40
 
@@ -137,8 +136,9 @@ Popup {
 
                 root.currentAddress = selectedAccount.address
                 Web3ProviderStore.web3ProviderInst.dappsAddress = selectedAccount.address;
-                Web3ProviderStore.web3ProviderInst.clearPermissions();
-                if (selectField.menu.currentIndex !== -1) {
+                Web3ProviderStore.revokeAllPermissions()
+
+                if (selectedAccount.address) {
                     Web3ProviderStore.web3ProviderInst.dappsAddress = selectedAccount.address;
                     WalletStore.setDappBrowserAddress()
                 }

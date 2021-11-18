@@ -80,7 +80,6 @@ StatusModal {
 
     contentItem: Item {
         width: root.width
-        height: childrenRect.height
 
         TransactionSigner {
             id: transactionSigner
@@ -91,9 +90,10 @@ StatusModal {
 
         Column {
             id: content
-            anchors.left: parent.left
-            anchors.right: parent.right
             visible: !showSigningPhrase
+            width: root.width - Style.current.padding * 2
+            anchors.left: parent.left
+            anchors.leftMargin: Style.current.padding
 
             LabelValueRow {
                 //% "From"
@@ -209,16 +209,17 @@ StatusModal {
 
     }
 
-    rightButtons: [
-
+    leftButtons: [
         StatusFlatButton {
             id: btnReject
             //% "Reject"
             text: qsTrId("reject")
-            color: Style.current.danger
+            type: StatusBaseButton.Type.Danger
             onClicked: close()
-        },
+        }
+    ]
 
+    rightButtons: [
         StatusButton {
             id: btnNext
             text: showSigningPhrase ? 
