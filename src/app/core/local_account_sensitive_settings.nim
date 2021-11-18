@@ -33,8 +33,11 @@ const DEFAULT_USE_COMPACT_MODE = true
 const LSS_KEY_TIMELINE_ENABLED* = "timelineEnabled"
 const DEFAULT_TIMELINE_ENABLED = true
 const LSS_KEY_RECENT_EMOJIS* = "recentEmojis"
+const DEFAULT_RECENT_EMOJIS = ""
 const LSS_KEY_HIDDEN_COMMUNITY_WELCOME_BANNERS* = "hiddenCommunityWelcomeBanners"
+const DEFAULT_HIDDEN_COMMUNITY_WELCOME_BANNERS = ""
 const LSS_KEY_HIDDEN_COMMUNITY_BACKUP_BANNERS* = "hiddenCommunityBackUpBanners"
+const DEFAULT_HIDDEN_COMMUNITY_BACKUP_BANNERS = ""
 const LSS_KEY_VOLUME* = "volume"
 const DEFAULT_VOLUME: float = 0.2
 const LSS_KEY_NOTIFICATION_SETTING* = "notificationSetting"
@@ -48,6 +51,7 @@ const DEFAULT_NOTIFICATION_MESSAGE_PREVIEW_SETTING = 2 #notificationPreviewNameA
 const LSS_KEY_NOTIFY_ON_NEW_REQUESTS* = "notifyOnNewRequests"
 const DEFAULT_NOTIFY_ON_NEW_REQUESTS = true
 const LSS_KEY_WITHLISTED_UNFURLING_SITES* = "whitelistedUnfurlingSites"
+const DEFAULT_WITHLISTED_UNFURLING_SITES = ""
 const LSS_KEY_NEVER_ASK_ABOUT_UNFURLING_AGAIN* = "neverAskAboutUnfurlingAgain"
 const DEFAULT_NEVER_ASK_ABOUT_UNFURLING_AGAIN = false
 const LSS_KEY_HIDE_CHANNEL_SUGGESTIONS* = "hideChannelSuggestions"
@@ -372,7 +376,7 @@ QtObject:
 
   proc recentEmojisChanged*(self: LocalAccountSensitiveSettings) {.signal.}
   proc getRecentEmojis*(self: LocalAccountSensitiveSettings): QVariant {.slot.} =
-    getSettingsPropQVariant(self, LSS_KEY_RECENT_EMOJIS, newQVariant())
+    getSettingsPropQVariant(self, LSS_KEY_RECENT_EMOJIS, newQVariant(DEFAULT_RECENT_EMOJIS))
   proc setRecentEmojis*(self: LocalAccountSensitiveSettings, value: QVariant) {.slot.} =
     setSettingsProp(self, LSS_KEY_RECENT_EMOJIS, value):
       self.recentEmojisChanged()
@@ -385,7 +389,7 @@ QtObject:
   
   proc hiddenCommunityWelcomeBannersChanged*(self: LocalAccountSensitiveSettings) {.signal.}
   proc getHiddenCommunityWelcomeBanners*(self: LocalAccountSensitiveSettings): QVariant {.slot.} =
-    getSettingsPropQVariant(self, LSS_KEY_HIDDEN_COMMUNITY_WELCOME_BANNERS, newQVariant())
+    getSettingsPropQVariant(self, LSS_KEY_HIDDEN_COMMUNITY_WELCOME_BANNERS, newQVariant(DEFAULT_HIDDEN_COMMUNITY_WELCOME_BANNERS))
   proc setHiddenCommunityWelcomeBanners*(self: LocalAccountSensitiveSettings, value: QVariant) {.slot.} =
     setSettingsProp(self, LSS_KEY_HIDDEN_COMMUNITY_WELCOME_BANNERS, value):
       self.hiddenCommunityWelcomeBannersChanged()
@@ -398,7 +402,7 @@ QtObject:
 
   proc hiddenCommunityBackUpBannersChanged*(self: LocalAccountSensitiveSettings) {.signal.}
   proc getHiddenCommunityBackUpBanners*(self: LocalAccountSensitiveSettings): QVariant {.slot.} =
-    getSettingsPropQVariant(self, LSS_KEY_HIDDEN_COMMUNITY_BACKUP_BANNERS, newQVariant())
+    getSettingsPropQVariant(self, LSS_KEY_HIDDEN_COMMUNITY_BACKUP_BANNERS, newQVariant(DEFAULT_HIDDEN_COMMUNITY_BACKUP_BANNERS))
   proc setHiddenCommunityBackUpBanners*(self: LocalAccountSensitiveSettings, value: QVariant) {.slot.} =
     setSettingsProp(self, LSS_KEY_HIDDEN_COMMUNITY_BACKUP_BANNERS, value):
       self.hiddenCommunityBackUpBannersChanged()
@@ -489,7 +493,7 @@ QtObject:
   
   proc whitelistedUnfurlingSitesChanged*(self: LocalAccountSensitiveSettings) {.signal.}
   proc getWhitelistedUnfurlingSites*(self: LocalAccountSensitiveSettings): QVariant {.slot.} =
-    getSettingsPropQVariant(self, LSS_KEY_WITHLISTED_UNFURLING_SITES, newQVariant())
+    getSettingsPropQVariant(self, LSS_KEY_WITHLISTED_UNFURLING_SITES, newQVariant(DEFAULT_WITHLISTED_UNFURLING_SITES))
   proc setWhitelistedUnfurlingSites*(self: LocalAccountSensitiveSettings, value: QVariant) {.slot.} =
     setSettingsProp(self, LSS_KEY_WITHLISTED_UNFURLING_SITES, value):
       self.whitelistedUnfurlingSitesChanged()
