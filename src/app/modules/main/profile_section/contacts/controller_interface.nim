@@ -12,7 +12,7 @@ method delete*(self: AccessInterface) {.base.} =
 method init*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getContacts*(self: AccessInterface, useCache: bool = true): seq[ContactDto.ContactsDto] {.base.} =
+method getContacts*(self: AccessInterface): seq[ContactDto.ContactsDto] {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getContact*(self: AccessInterface, id: string): ContactDto.ContactsDto {.base.} =
