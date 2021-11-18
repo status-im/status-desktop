@@ -1,6 +1,6 @@
 import NimQml, Tables
 
-import ./io_interface, ./view, ./controller
+import io_interface, view, controller, model
 import ../../../../global/global_singleton
 
 import ../../../../../app_service/service/contacts/service as contacts_service
@@ -41,9 +41,6 @@ method setContactList*[T](self: Module[T], contacts: seq[ContactsDto]) =
 
 method updateContactList*[T](self: Module[T], contacts: seq[ContactsDto]) =
   self.view.model().updateContactList(contacts)
-
-method updateContactList*[T](self: Module[T], contacts: seq[ContactsDto]) =
-  self.view.updateContactList(contacts)
 
 method load*[T](self: Module[T]) =
   self.controller.init()

@@ -26,13 +26,6 @@ type
   ContactAddedArgs* = ref object of Args
     contact*: ContactsDto
 
-type
-  ContactArgs* = ref object of Args
-    contact*: ContactsDto
-
-  ContactUpdatedArgs* = ref object of Args
-    id*: string
-
 # Signals which may be emitted by this service:
 const SIGNAL_CONTACT_LOOKED_UP* = "SIGNAL_CONTACT_LOOKED_UP"
 # Remove new when old code is removed
@@ -76,9 +69,7 @@ QtObject:
   proc init*(self: Service) =
     self.fetchContacts()
 
-  proc getContacts*(self: Service, useCache: bool = true): seq[ContactsDto] =
-    if (not useCache):
-      self.fetchContacts()
+  proc getContacts*(self: Service): seq[ContactsDto] =
     return toSeq(self.contacts.values)
 
   proc fetchContact(self: Service, id: string): ContactsDto =
