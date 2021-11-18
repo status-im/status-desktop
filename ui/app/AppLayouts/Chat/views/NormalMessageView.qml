@@ -19,6 +19,8 @@ Item {
     property var messageStore
     property string linkUrls: ""
     property bool isCurrentUser: false
+    property bool isExpired: false
+    property bool timeout: false
     property int contentType: 2
     property var container
     property bool headerRepeatCondition: (authorCurrentMsg !== authorPrevMsg
@@ -335,6 +337,8 @@ Item {
         anchors.right: chatTime.left
         anchors.rightMargin: 5
         isCurrentUser: root.isCurrentUser
+        isExpired: root.isExpired
+        timeout: root.timeout
         onClicked: {
             root.store.chatsModelInst.messageView.resendMessage(chatId, messageId)
         }

@@ -319,6 +319,8 @@ Column {
         NormalMessageView {
             linkUrls: root.linkUrls
             isCurrentUser: root.isCurrentUser
+            isExpired: root.isExpired
+            timeout: root.timeout
             contentType: root.contentType
             container: root
             store: root.rootStore
@@ -359,6 +361,8 @@ Column {
         CompactMessageView {
             linkUrls: root.linkUrls
             isCurrentUser: root.isCurrentUser
+            isExpired: root.isExpired
+            timeout: root.timeout
             contentType: root.contentType
             showEdit: root.showEdit
             container: root
