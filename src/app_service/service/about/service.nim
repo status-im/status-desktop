@@ -10,6 +10,7 @@ export service_interface
 logScope:
   topics = "settings-service"
 
+# This is changed during compilation by reading the VERSION file
 const DESKTOP_VERSION {.strdefine.} = "0.0.0"
 
 type 
