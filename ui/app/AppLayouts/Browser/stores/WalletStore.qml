@@ -5,10 +5,10 @@ import QtQuick 2.13
 QtObject {
     id: root
 
-    property var dappBrowserAccount: walletModel.dappBrowserView.dappBrowserAccount
-    property var accounts: walletModel.accountsView.accounts
-    property string defaultCurrency: walletModel.balanceView.defaultCurrency
-    property string signingPhrase: walletModel.utilsView.signingPhrase
+    property var dappBrowserAccount: walletSectionAccounts.current
+    property var accounts: walletSectionAccounts.model
+    property string defaultCurrency: walletSection.currentCurrency
+    property string signingPhrase: walletSection.signingPhrase
     property string etherscanString: walletModel.utilsView.etherscanLink
 
     function setDappBrowserAddress() {
