@@ -75,7 +75,7 @@ ModalPopup {
         anchors.leftMargin: Style.current.padding
         anchors.rightMargin: Style.current.padding
         initialItem: group1
-        isLastGroup: stack.currentGroup === group4
+        isLastGroup: stack.currentGroup === group3
         onGroupActivated: {
             root.title = group.headerText
             btnNext.text = group.footerText
@@ -89,15 +89,15 @@ ModalPopup {
             showBackBtn: false
             StatusAccountSelector {
                 id: selectFromAccount
-                accounts: walletModel.accountsView.accounts
+                accounts: walletSectionAccounts.model
                 selectedAccount: {
-                    const currAcc = walletModel.accountsView.currentAccount
+                    const currAcc = walletSectionCurrent
                     if (currAcc.walletType !== Constants.watchWalletType) {
                         return currAcc
                     }
                     return null
                 }
-                currency: walletModel.balanceView.defaultCurrency
+                currency: walletSection.currentCurrency
                 width: stack.width
                 //% "Choose account"
                 label: qsTrId("choose-account")
@@ -108,7 +108,7 @@ ModalPopup {
             RecipientSelector {
                 id: selectRecipient
                 visible: false
-                accounts: walletModel.accountsView.accounts
+                accounts: walletSectionAccounts.model
                 contacts: profileModel.contacts.addedContacts
                 selectedRecipient: { "address": contractAddress, "type": RecipientSelector.Type.Address }
                 readOnly: true
@@ -121,7 +121,7 @@ ModalPopup {
                 gasPrice: parseFloat(walletModel.gasView.gasPrice)
                 getGasEthValue: walletModel.gasView.getGasEthValue
                 getFiatValue: walletModel.balanceView.getFiatValue
-                defaultCurrency: walletModel.balanceView.defaultCurrency
+                defaultCurrency: walletSection.currentCurrency
                 width: stack.width
                 
                 property var estimateGas: Backpressure.debounce(gasSelector, 600, function() {
@@ -140,7 +140,7 @@ ModalPopup {
             }
         }
         TransactionFormGroup {
-            id: group3
+            id: group2
             //% "Authorize %1 %2"
             headerText: qsTrId("authorize--1--2").arg(Utils.stripTrailingZeros(root.assetPrice)).arg(root.asset.symbol)
             //% "Sign with password"
@@ -157,7 +157,7 @@ ModalPopup {
                 }
                 toAccount: selectRecipient.selectedRecipient
                 asset: root.asset
-                currency: walletModel.balanceView.defaultCurrency
+                currency: walletSection.currentCurrency
                 amount: {
                     const fiatValue = walletModel.balanceView.getFiatValue(root.assetPrice || 0, root.asset.symbol, currency)
                     return { "value": root.assetPrice, "fiatValue": fiatValue }
@@ -165,7 +165,7 @@ ModalPopup {
             }
         }
         TransactionFormGroup {
-            id: group4
+            id: group3
             //% "Send %1 %2"
             headerText: qsTrId("send--1--2").arg(Utils.stripTrailingZeros(root.assetPrice)).arg(root.asset.symbol)
             //% "Sign with password"
@@ -191,7 +191,9 @@ ModalPopup {
             icon.height: 16
             icon.rotation: 180
             visible: stack.currentGroup.showBackBtn
-            enabled: stack.currentGroup.isValid || stack.isLastGroup
+            enabled: {
+                stack.currentGroup.isValid || stack.isLastGroup
+            }
             onClicked: {
                 if (typeof stack.currentGroup.onBackClicked === "function") {
                     return stack.currentGroup.onBackClicked()
@@ -215,7 +217,7 @@ ModalPopup {
             enabled: stack.currentGroup.isValid && !stack.currentGroup.isPending
             loading: stack.currentGroup.isPending
             onClicked: {
-                const validity = stack.currentGroup.validate() 
+                const validity = stack.currentGroup.validate()
                 if (validity.isValid && !validity.isPending) { 
                     if (stack.isLastGroup) {
                         return root.sendTransaction()

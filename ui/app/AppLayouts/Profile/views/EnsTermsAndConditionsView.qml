@@ -50,13 +50,15 @@ Item {
                 return root.store.registerEnsGasEstimate(username, selectedAccount.address)
             }
             onSendTransaction: function(selectedAddress, gasLimit, gasPrice, tipLimit, overallLimit, password) {
-                return root.store.registerEns(username,
-                                                    selectedAddress,
-                                                    gasLimit,
-                                                    tipLimit,
-                                                    overallLimit,
-                                                    gasPrice,
-                                                    password)
+                return root.store.registerEns(
+                    username,
+                    selectedAddress,
+                    gasLimit,
+                    tipLimit,
+                    overallLimit,
+                    gasPrice,
+                    password
+                )
             }
             onSuccess: function(){
                 usernameRegistered(username);
