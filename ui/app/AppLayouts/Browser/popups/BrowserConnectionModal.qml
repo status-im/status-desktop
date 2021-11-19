@@ -22,13 +22,13 @@ Popup {
         color: "#60000000"
     }
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
-    width: 360
-    height: 480
+    width: 470
+    height: 400
     background: Rectangle {
         color: Style.current.background
         radius: 8
     }
-    padding: 0
+    padding: Style.current.padding
 
     function postMessage(isAllowed){
         interactedWith = true
@@ -52,7 +52,8 @@ Popup {
         anchors.right: root.right
         anchors.rightMargin: Style.current.padding
         anchors.top: root.top
-        anchors.topMargin: 90
+        anchors.topMargin: Style.current.padding
+
         RowLayout {
             property int imgSize: 40
 
@@ -118,7 +119,8 @@ Popup {
         StatusAccountSelector {
             id: accountSelector
             label: ""
-            width: 190
+            width: 300
+            implicitWidth: width
             Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
             showAccountDetails: false
             accounts: WalletStore.accounts
