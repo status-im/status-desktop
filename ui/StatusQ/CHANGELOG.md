@@ -1,4 +1,15 @@
 <a name=""></a>
+##  (2021-11-19)
+
+
+#### Bug Fixes
+
+* **StatusAccountSelector:**  Adapt ui to data model changed ([db024436](db024436))
+* **StatusAssetSelector:**  Fixed error of crypto balance not updated correctly ([2040d0f8](2040d0f8))
+
+
+
+<a name=""></a>
 ##  Version 0.17.0 (2021-11-10)
 
 
