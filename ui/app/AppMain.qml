@@ -131,7 +131,7 @@ Item {
         if(parentPopup){
             popup.parentPopup = parentPopup;
         }
-        popup.openPopup(profileModule.pubKey !== fromAuthorParam, userNameParam, fromAuthorParam, identiconParam, textParam, nicknameParam);
+        popup.openPopup(profileModule.model.pubKey !== fromAuthorParam, userNameParam, fromAuthorParam, identiconParam, textParam, nicknameParam);
         profilePopupOpened = true
     }
 
