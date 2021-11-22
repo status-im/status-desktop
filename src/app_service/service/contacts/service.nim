@@ -123,49 +123,23 @@ QtObject:
       # self.events.emit("contactUpdate", ContactUpdateArgs(contacts: @[profile]))
 
   proc rejectContactRequest*(self: Service, publicKey: string) =
-    let contact = self.getContact(publicKey)
-    contact.hasAddedUs = false
-
-    self.saveContact(contact)
+    status_contacts.rejectContactRequest(publicKey)
     self.events.emit("contactRemoved", Args())
-    # status_contacts.rejectContactRequest(publicKey)
 
   proc changeContactNickname*(self: Service, accountKeyUID: string, publicKey: string, nicknameToSet: string) =
-    # status_contacts.setNickName(publicKey, nicknameToSet, accountKeyUID)
-    var contact = self.getOrCreateContact(publicKey)
-    # let nickname =
-    #   if (nicknameToSet == ""):
-    #     contact.localNickname
-    #   elif (nicknameToSet == DELETE_CONTACT):
-    #     ""
-    #   else:
-    #     nicknameToSet
-
-    # contact.localNickname = nickname
-    self.saveContact(contact)
+    status_contacts.setContactLocalNickname(publicKey, nicknameToSet)
     self.events.emit("contactAdded", Args())
-    # sendContactUpdate(contact.id, accountKeyUID)
 
   proc unblockContact*(self: Service, publicKey: string) =
-    # status_contacts.unblockContact(publicKey)
-    var contact = self.getContact(publicKey)
-    contact.blocked = false
-    self.saveContact(contact)
+    status_contacts.unblockContact(publicKey)
     self.events.emit("contactUnblocked", old_status_contacts.ContactIdArgs(id: publicKey))
 
   proc blockContact*(self: Service, publicKey: string) =
-    var contact = self.getContact(publicKey)
-    contact.blocked = true
-    self.saveContact(contact)
+    status_contacts.blockContact(publicKey)
     self.events.emit("contactBlocked", old_status_contacts.ContactIdArgs(id: publicKey))
 
   proc removeContact*(self: Service, publicKey: string) =
-    #   status_contacts.removeContact(publicKey)
-    var contact = self.getContact(publicKey)
-    contact.added = false
-    contact.hasAddedUs = false
-
-    self.saveContact(contact)
+    status_contacts.removeContact(publicKey)
     self.events.emit("contactRemoved", Args())
   #   let channelId = status_utils.getTimelineChatId(publicKey)
   #   if status_chat.hasChannel(channelId):
