@@ -1,34 +1,33 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
+
 import utils 1.0
 import shared.controls 1.0
 import shared.panels 1.0
+
 import StatusQ.Controls 0.1
+import StatusQ.Popups 0.1
+import StatusQ.Core 0.1
 
 import "../controls"
 import "../stores"
 
-// TODO: replace StatusModal
-Popup {
+StatusModal {
+
     property var currentTab
     property var request: ({"hostname": "", "title": "", "permission": ""})
     property string currentAddress: ""
     property bool interactedWith: false
 
-    id: root
-    modal: true
-    Overlay.modal: Rectangle {
-        color: "#60000000"
-    }
+    id: browserConnectionModal
+
+    width: 360
+    height: 480
+    showHeader: false
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
-    width: 470
-    height: 400
-    background: Rectangle {
-        color: Style.current.background
-        radius: 8
-    }
-    padding: Style.current.padding
+    topPadding: 0
+    bottomPadding: 0
 
     function postMessage(isAllowed){
         interactedWith = true
@@ -42,164 +41,145 @@ Popup {
             currentTabConnected = false
             postMessage(false);
         }
-        root.destroy();
     }
 
-    ColumnLayout {
-        spacing: Style.current.bigPadding
-        anchors.left: root.left
-        anchors.leftMargin: Style.current.padding
-        anchors.right: root.right
-        anchors.rightMargin: Style.current.padding
-        anchors.top: root.top
-        anchors.topMargin: Style.current.padding
+    contentItem: Item {
+        width: parent.width
+        height: parent.height
 
-        RowLayout {
-            property int imgSize: 40
+        ColumnLayout {
+            spacing: Style.current.bigPadding
+            anchors.centerIn: parent
 
-            id: logoHeader
-            spacing: Style.current.halfPadding
-            width: 176
-            height: imgSize
-            Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
+            RowLayout {
+                property int imgSize: 40
 
-            FaviconImage {
-                id: siteImg
-                width: logoHeader.imgSize
-                height: logoHeader.imgSize
-            }
+                id: logoHeader
+                spacing: Style.current.halfPadding
+                Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
 
-            SVGImage {
-                id: dots1
-                source: Style.svg("dots-icon")
-                width: 20
-                height: 4
-            }
-
-            RoundedIcon {
-                source: Style.svg("check")
-                iconColor: Style.current.primary
-                color: Style.current.secondaryBackground
-                width: 24
-                height: 24
-            }
-
-            SVGImage {
-                id: dots2
-                source: Style.svg("dots-icon")
-                width: 20
-                height: 4
-            }
-
-            RoundedIcon {
-                source: Style.svg("walletIcon")
-                iconHeight: 18
-                iconWidth: 18
-                iconColor: accountSelector.selectedAccount.iconColor || Style.current.primary
-                color: Style.current.background
-                width: logoHeader.imgSize
-                height: logoHeader.imgSize
-                border.width: 1
-                border.color: Style.current.border
-            }
-        }
-
-        StyledText {
-            id: titleText
-            //% "'%1' would like to connect to"
-            text: qsTrId("--1--would-like-to-connect-to").arg(request.title)
-            Layout.fillWidth: true
-            Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
-            wrapMode: Text.WordWrap
-            font.weight: Font.Bold
-            font.pixelSize: 17
-            horizontalAlignment: Text.AlignHCenter
-        }
-
-        StatusAccountSelector {
-            id: accountSelector
-            label: ""
-            width: 300
-            implicitWidth: width
-            Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
-            showAccountDetails: false
-            accounts: WalletStore.accounts
-            selectedAccount: WalletStore.dappBrowserAccount
-            currency: WalletStore.defaultCurrency
-            onSelectedAccountChanged: {
-                if (!root.currentAddress) {
-                    // We just set the account for the first time. Nothing to do here
-                    root.currentAddress = selectedAccount.address
-                    return
-                }
-                if (root.currentAddress === selectedAccount.address) {
-                    return
+                FaviconImage {
+                    id: siteImg
                 }
 
-                root.currentAddress = selectedAccount.address
-                Web3ProviderStore.web3ProviderInst.dappsAddress = selectedAccount.address;
-                Web3ProviderStore.revokeAllPermissions()
+                SVGImage {
+                    id: dots1
+                    source: Style.svg("dots-icon")
+                }
 
-                if (selectedAccount.address) {
+                RoundedIcon {
+                    source: Style.svg("check")
+                    iconColor: Style.current.primary
+                    color: Style.current.secondaryBackground
+                }
+
+                SVGImage {
+                    id: dots2
+                    source: Style.svg("dots-icon")
+                }
+
+                RoundedIcon {
+                    source: Style.svg("walletIcon")
+                    iconHeight: 18
+                    iconWidth: 18
+                    iconColor: accountSelector.selectedAccount.iconColor || Style.current.primary
+                    color: Style.current.background
+                    border.width: 1
+                    border.color: Style.current.border
+                }
+            }
+
+            StatusBaseText {
+                id: titleText
+                //% "'%1' would like to connect to"
+                text: qsTrId("--1--would-like-to-connect-to").arg(request.title)
+                wrapMode: Text.WordWrap
+                font.weight: Font.Bold
+                font.pixelSize: 17
+                horizontalAlignment: Text.AlignHCenter
+                elide: Text.ElideRight
+                Layout.maximumWidth: browserConnectionModal.width - Style.current.padding
+                Layout.fillWidth: true
+                Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
+            }
+
+            StatusAccountSelector {
+                id: accountSelector
+                label: ""
+                implicitWidth: 300
+                Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
+                showAccountDetails: false
+                accounts: WalletStore.accounts
+                selectedAccount: WalletStore.dappBrowserAccount
+                currency: WalletStore.defaultCurrency
+                onSelectedAccountChanged: {
+                    if (!browserConnectionModal.currentAddress) {
+                        // We just set the account for the first time. Nothing to do here
+                        browserConnectionModal.currentAddress = selectedAccount.address
+                        return
+                    }
+                    if (browserConnectionModal.currentAddress === selectedAccount.address) {
+                        return
+                    }
+
+                    browserConnectionModal.currentAddress = selectedAccount.address
                     Web3ProviderStore.web3ProviderInst.dappsAddress = selectedAccount.address;
-                    WalletStore.setDappBrowserAddress()
-                }
-            }
-        }
+                    Web3ProviderStore.revokeAllPermissions()
 
-
-        StyledText {
-            id: infoText
-            text: {
-                switch(request.permission){
-                //% "Allowing authorizes this DApp to retrieve your wallet address and enable Web3"
-                case Constants.permission_web3: return qsTrId("allowing-authorizes-this-dapp");
-                //% "Granting access authorizes this DApp to retrieve your chat key"
-                case Constants.permission_contactCode: return qsTrId("your-contact-code");
-                default: return qsTr("Unknown permission: " + request.permission);
-                }
-            }
-            Layout.fillWidth: true
-            wrapMode: Text.WordWrap
-            Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
-            font.pixelSize: 15
-            horizontalAlignment: Text.AlignHCenter
-            color: Style.current.secondaryText
-        }
-
-        Row {
-            width: childrenRect.width
-            spacing: Style.current.padding
-            Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
-
-            StatusButton {
-                type: StatusBaseButton.Type.Danger
-                width: 155
-                //% "Deny"
-                text: qsTrId("deny")
-                onClicked: {
-                    postMessage(false);
-                    root.close();
+                    if (selectedAccount.address) {
+                        Web3ProviderStore.web3ProviderInst.dappsAddress = selectedAccount.address;
+                        WalletStore.setDappBrowserAddress()
+                    }
                 }
             }
 
-            StyledButton {
-                btnColor: Utils.setColorAlpha(Style.current.success, 0.1)
-                textColor: Style.current.success
-                width: 155
-                //% "Allow"
-                label: qsTrId("allow")
-                onClicked: {
-                    postMessage(true);
-                    root.close();
+            StatusBaseText {
+                id: infoText
+                text: {
+                    switch(request.permission){
+                        //% "Allowing authorizes this DApp to retrieve your wallet address and enable Web3"
+                    case Constants.permission_web3: return qsTrId("allowing-authorizes-this-dapp");
+                        //% "Granting access authorizes this DApp to retrieve your chat key"
+                    case Constants.permission_contactCode: return qsTrId("your-contact-code");
+                    default: return qsTr("Unknown permission: " + request.permission);
+                    }
+                }
+                wrapMode: Text.WordWrap
+                font.pixelSize: 15
+                horizontalAlignment: Text.AlignHCenter
+                color: Style.current.secondaryText
+                Layout.maximumWidth: browserConnectionModal.width - Style.current.padding
+                Layout.fillWidth: true
+                Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
+            }
+
+            Row {
+                spacing: Style.current.padding
+                Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
+
+                StatusButton {
+                    type: StatusBaseButton.Type.Danger
+                    width: 151
+                    //% "Deny"
+                    text: qsTrId("deny")
+                    onClicked: {
+                        postMessage(false);
+                        browserConnectionModal.close();
+                    }
+                }
+
+                StatusButton {
+                    normalColor: Utils.setColorAlpha(Style.current.success, 0.1)
+                    textColor: Style.current.success
+                    width: 151
+                    //% "Allow"
+                    text: qsTrId("allow")
+                    onClicked: {
+                        postMessage(true);
+                        browserConnectionModal.close();
+                    }
                 }
             }
         }
     }
 }
-
-/*##^##
-Designer {
-    D{i:0;formeditorColor:"#ffffff"}
-}
-##^##*/
