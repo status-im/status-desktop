@@ -140,27 +140,3 @@ QtObject:
   QtProperty[bool] hasIdentityImage:
     read = hasIdentityImage
     notify = identityImageChanged
-
-  proc sendUserStatus*(self: Model): bool {.slot.} = result = self.sendUserStatus
-  proc setSendUserStatus*(self: Model, sendUserStatus: bool) {.slot.} =
-    if self.sendUserStatus == sendUserStatus:
-      return
-    self.sendUserStatus = sendUserStatus
-    self.sendUserStatusChanged()
-
-  QtProperty[bool] sendUserStatus:
-    read = sendUserStatus
-    write = setSendUserStatus
-    notify = sendUserStatusChanged
-
-  proc currentUserStatus*(self: Model): int {.slot.} = result = self.currentUserStatus
-  proc setCurrentUserStatus*(self: Model, currentUserStatus: int) {.slot.} =
-    if self.currentUserStatus == currentUserStatus:
-      return
-    self.currentUserStatus = currentUserStatus
-    self.currentUserStatusChanged()
-
-  QtProperty[int] currentUserStatus:
-    read = currentUserStatus
-    write = setCurrentUserStatus
-    notify = currentUserStatusChanged
