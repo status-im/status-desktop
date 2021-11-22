@@ -13,6 +13,7 @@ QtObject {
     property var walletModelInst: walletModel
     property var profileModelInst: profileModel
     property var profileModuleInst: profileModule
+    property var userProfileInst: userProfile
 
     property bool isDebugEnabled: profileSectionModule.isDebugEnabled
 

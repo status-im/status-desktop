@@ -83,8 +83,8 @@ proc newModule*[T](
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, events, keychainService, 
-  accountsService, communityService)
+  result.controller = controller.newController(result, events, settingsService, keychainService, accountsService, 
+  communityService)
   result.moduleLoaded = false
 
   # Submodules
@@ -208,3 +208,6 @@ method emitStoringPasswordError*[T](self: Module[T], errorDescription: string) =
 
 method emitStoringPasswordSuccess*[T](self: Module[T]) =
   self.view.emitStoringPasswordSuccess()
+
+method setUserStatus*[T](self: Module[T], status: bool) =
+  self.controller.setUserStatus(status)

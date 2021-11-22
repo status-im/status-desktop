@@ -33,6 +33,9 @@ method getMessagesFromContactsOnly*(self: ServiceInterface): bool {.base.} =
 method getSendUserStatus*(self: ServiceInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method setSendUserStatus*(self: ServiceInterface, value: bool) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method getCurrentUserStatus*(self: ServiceInterface): int {.base.} =
   raise newException(ValueError, "No implementation available")
 

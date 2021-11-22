@@ -33,12 +33,9 @@ QtObject:
     result.identityImage = IdentityImage()
     result.ensVerified = false
     result.messagesFromContactsOnly = false
-    result.sendUserStatus = false
-    result.currentUserStatus = 0
     result.setup
 
   proc identityImageChanged*(self: ProfileInfoView) {.signal.}
-  proc sendUserStatusChanged*(self: ProfileInfoView) {.signal.}
   proc currentUserStatusChanged*(self: ProfileInfoView) {.signal.}
   proc appearanceChanged*(self: ProfileInfoView) {.signal.}
   proc messagesFromContactsOnlyChanged*(self: ProfileInfoView) {.signal.}
@@ -52,8 +49,6 @@ QtObject:
     self.ensVerified = profile.ensVerified
     self.identityImage = profile.identityImage
     self.messagesFromContactsOnly = profile.messagesFromContactsOnly
-    self.sendUserStatus = profile.sendUserStatus
-    self.currentUserStatus = profile.currentUserStatus
 
   proc username*(self: ProfileInfoView): string {.slot.} = result = self.username
   
@@ -139,26 +134,3 @@ QtObject:
     read = hasIdentityImage
     notify = identityImageChanged
 
-  proc sendUserStatus*(self: ProfileInfoView): bool {.slot.} = result = self.sendUserStatus
-  proc setSendUserStatus*(self: ProfileInfoView, sendUserStatus: bool) {.slot.} =
-    if self.sendUserStatus == sendUserStatus:
-      return
-    self.sendUserStatus = sendUserStatus
-    self.sendUserStatusChanged()
-
-  QtProperty[bool] sendUserStatus:
-    read = sendUserStatus
-    write = setSendUserStatus
-    notify = sendUserStatusChanged
-
-  proc currentUserStatus*(self: ProfileInfoView): int {.slot.} = result = self.currentUserStatus
-  proc setCurrentUserStatus*(self: ProfileInfoView, currentUserStatus: int) {.slot.} =
-    if self.currentUserStatus == currentUserStatus:
-      return
-    self.currentUserStatus = currentUserStatus
-    self.currentUserStatusChanged()
-
-  QtProperty[int] currentUserStatus:
-    read = currentUserStatus
-    write = setCurrentUserStatus
-    notify = currentUserStatusChanged

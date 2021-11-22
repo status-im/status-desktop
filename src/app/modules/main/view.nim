@@ -54,3 +54,6 @@ QtObject:
 
   proc emitStoringPasswordSuccess*(self: View) =
     self.storingPasswordSuccess()
+
+  proc setUserStatus*(self: View, status: bool) {.slot.} =
+    self.delegate.setUserStatus(status)

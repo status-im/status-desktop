@@ -309,7 +309,8 @@ proc buildAndRegisterUserProfile(self: AppController) =
 
   let pubKey = self.settingsService.getPubKey()
   let sendUserStatus = self.settingsService.getSendUserStatus()
-  let currentUserStatus = self.settingsService.getCurrentUserStatus()
+  ## This is still not in use. Read a comment in UserProfile.
+  ## let currentUserStatus = self.settingsService.getCurrentUserStatus()
   let obj = self.settingsService.getIdentityImage(loggedInAccount.keyUid)
 
   singletonInstance.userProfile.setFixedData(loggedInAccount.name, loggedInAccount.keyUid, loggedInAccount.identicon, 
@@ -317,7 +318,6 @@ proc buildAndRegisterUserProfile(self: AppController) =
   singletonInstance.userProfile.setEnsName("") # in this moment we don't know ens name
   singletonInstance.userProfile.setThumbnailImage(obj.thumbnail)
   singletonInstance.userProfile.setLargeImage(obj.large)
-  singletonInstance.userProfile.setSendUserStatus(sendUserStatus)
-  singletonInstance.userProfile.setCurrentUserStatus(currentUserStatus)
+  singletonInstance.userProfile.setUserStatus(sendUserStatus)
 
   singletonInstance.engine.setRootContextProperty("userProfile", self.userProfileVariant)
