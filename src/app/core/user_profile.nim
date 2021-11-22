@@ -11,7 +11,7 @@ QtObject:
     ensName: string
     thumbnailImage: string
     largeImage: string
-    sendUserStatus: bool
+    userStatus: bool
     currentUserStatus: int
     
   proc setup(self: UserProfile) =
@@ -112,35 +112,49 @@ QtObject:
     notify = largeImageChanged
 
 
-  proc sendUserStatusChanged*(self: UserProfile) {.signal.}
+  proc userStatusChanged*(self: UserProfile) {.signal.}
   
-  proc getSendUserStatus*(self: UserProfile): bool {.slot.} = 
-    self.sendUserStatus
+  proc getUserStatus*(self: UserProfile): bool {.slot.} = 
+    self.userStatus
 
   # this is not a slot
-  proc setSendUserStatus*(self: UserProfile, status: bool) =
-    if(self.sendUserStatus == status):
+  proc setUserStatus*(self: UserProfile, status: bool) =
+    if(self.userStatus == status):
       return
-    self.sendUserStatus = status
-    self.sendUserStatusChanged()
+    self.userStatus = status
+    self.userStatusChanged()
 
-  QtProperty[bool] sendUserStatus:
-    read = getSendUserStatus
-    notify = sendUserStatusChanged
+  QtProperty[bool] userStatus:
+    read = getUserStatus
+    notify = userStatusChanged
 
 
-  proc currentUserStatusChanged*(self: UserProfile) {.signal.}
+  ## This is still not in use.
+  ## Once we decide to differ more than Online/Offline statuses we shouldn't use this code below, 
+  ## but update current `userStatus` which is a bool to something like the code bellow (`currentUserStatus`).
+  ## 
+  ## Proposal - some statuses we may have:
+  ## type
+  ##   OnlineStatus* {.pure.} = enum
+  ##     Online = 0
+  ##     Idle
+  ##     DoNotDisturb
+  ##     Invisible
+  ##     Offline
+  ## 
+  ## 
+  ## proc currentUserStatusChanged*(self: UserProfile) {.signal.}
 
-  proc getCurrentUserStatus*(self: UserProfile): int {.slot.} =
-    self.currentUserStatus
+  ## proc getCurrentUserStatus*(self: UserProfile): int {.slot.} =
+  ##   self.currentUserStatus
 
-  # this is not a slot
-  proc setCurrentUserStatus*(self: UserProfile, status: int) =
-    if(self.currentUserStatus == status):
-      return
-    self.currentUserStatus = status
-    self.currentUserStatusChanged()
+  ## # this is not a slot
+  ## proc setCurrentUserStatus*(self: UserProfile, status: int) =
+  ##   if(self.currentUserStatus == status):
+  ##     return
+  ##   self.currentUserStatus = status
+  ##   self.currentUserStatusChanged()
 
-  QtProperty[int] currentUserStatus:
-    read = getCurrentUserStatus
-    notify = currentUserStatusChanged
+  ## QtProperty[int] currentUserStatus:
+  ##   read = getCurrentUserStatus
+  ##   notify = currentUserStatusChanged

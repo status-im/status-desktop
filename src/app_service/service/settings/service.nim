@@ -54,6 +54,10 @@ method getMessagesFromContactsOnly*(self: Service): bool =
 method getSendUserStatus*(self: Service): bool =
   return status_go_settings.getSetting[bool](Setting.SendUserStatus)
 
+method setSendUserStatus*(self: Service, value: bool) =
+  # this will be done in a proper way in `base_bc`, so far this is just a fix
+  discard status_go_settings.saveSetting(Setting.SendUserStatus, value)
+
 method getCurrentUserStatus*(self: Service): int =
    let userStatus = status_go_settings.getSetting[JsonNode](Setting.CurrentUserStatus)
    return userStatus{"statusType"}.getInt()

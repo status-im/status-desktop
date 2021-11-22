@@ -2,6 +2,7 @@ import controller_interface
 import io_interface
 import ../../core/global_singleton
 
+import ../../../app_service/service/settings/service_interface as settings_service
 import ../../../app_service/service/keychain/service as keychain_service
 import ../../../app_service/service/accounts/service_interface as accounts_service
 import ../../../app_service/service/community/service as community_service
@@ -15,12 +16,14 @@ type
   Controller* = ref object of controller_interface.AccessInterface
     delegate: io_interface.AccessInterface
     events: EventEmitter
+    settingsService: settings_service.ServiceInterface
     keychainService: keychain_service.Service
     accountsService: accounts_service.ServiceInterface
     communityService: community_service.ServiceInterface
 
 proc newController*(delegate: io_interface.AccessInterface, 
   events: EventEmitter,
+  settingsService: settings_service.ServiceInterface,
   keychainService: keychain_service.Service,
   accountsService: accounts_service.ServiceInterface,
   communityService: community_service.ServiceInterface): 
@@ -28,6 +31,7 @@ proc newController*(delegate: io_interface.AccessInterface,
   result = Controller()
   result.delegate = delegate
   result.events = events
+  result.settingsService = settingsService
   result.keychainService = keychainService
   result.accountsService = accountsService
   result.communityService = communityService
@@ -76,3 +80,7 @@ method storePassword*(self: Controller, password: string) =
     return
 
   self.keychainService.storePassword(account.name, password)
+
+method setUserStatus*(self: Controller, status: bool) =
+  self.settingsService.setSendUserStatus(status)
+  singletonInstance.userProfile.setUserStatus(status)

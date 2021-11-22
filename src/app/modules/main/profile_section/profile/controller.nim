@@ -49,8 +49,8 @@ method getProfile*[T](self: Controller[T]): item.Item =
     ensVerified: false,
     localNickname: "",
     messagesFromContactsOnly: messagesFromContactsOnly,
-    sendUserStatus: singletonInstance.userProfile.getSendUserStatus(),
-    currentUserStatus: singletonInstance.userProfile.getCurrentUserStatus(),
+    sendUserStatus: singletonInstance.userProfile.getUserStatus(),
+    currentUserStatus: 1,   # This is still not in use. Read a comment in UserProfile.
     identityImage: identityImage,
     appearance: appearance,
     added: false,
