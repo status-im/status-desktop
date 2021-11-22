@@ -20,7 +20,6 @@ import ../../app_service/service/privacy/service as privacy_service
 import ../../app_service/service/provider/service as provider_service
 import ../../app_service/service/ens/service as ens_service
 
-import ../core/local_account_settings
 import ../../app_service/service/profile/service as profile_service
 import ../../app_service/service/settings/service as settings_service
 import ../../app_service/service/about/service as about_service
@@ -45,7 +44,6 @@ import ../wallet/v1/core as wallet
 import ../wallet/v2/core as walletV2
 import ../node/core as node
 import ../utilsView/core as utilsView
-import ../provider/core as provider
 import ../keycard/core as keycard
 import status/types/[account, setting]
 #################################################
@@ -118,7 +116,6 @@ type
     chat: ChatController
     node: NodeController
     utilsController: UtilsController
-    provider: Web3ProviderController
     keycard: KeycardController
     #################################################
 
@@ -145,7 +142,6 @@ proc connect(self: AppController) =
     self.profile.init(args.account)
     self.wallet.init()
     self.wallet2.init()
-    self.provider.init()
     self.chat.init()
     self.utilsController.init()
     self.node.init()
@@ -236,7 +232,6 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result.chat = chat.newController(statusFoundation.status, statusFoundation, OPENURI)
   result.node = node.newController(statusFoundation)
   result.utilsController = utilsView.newController(statusFoundation.status, statusFoundation)
-  result.provider = provider.newController(statusFoundation.status)
   result.keycard = keycard.newController(statusFoundation.status)
   result.connect()
   #################################################
@@ -270,7 +265,6 @@ proc delete*(self: AppController) =
   self.chat.delete
   self.node.delete
   self.utilsController.delete
-  self.provider.delete
   self.keycard.delete
   #################################################
 
@@ -301,7 +295,6 @@ proc startupDidLoad*(self: AppController) =
   singletonInstance.engine.setRootContextProperty("chatsModel", self.chat.variant)
   singletonInstance.engine.setRootContextProperty("nodeModel", self.node.variant)
   singletonInstance.engine.setRootContextProperty("utilsModel", self.utilsController.variant)
-  singletonInstance.engine.setRootContextProperty("web3Provider", self.provider.variant)
   singletonInstance.engine.setRootContextProperty("keycardModel", self.keycard.variant)
   #################################################
 
@@ -329,14 +322,7 @@ proc start*(self: AppController) =
   
   self.startupModule.load()
 
-proc load*(self: AppController) =
-  #################################################
-  # Once SettingService gets added, `pubKey` should be fetched from there, instead the following line:
-  let pubKey = self.statusFoundation.status.settings.getSetting[:string](Setting.PublicKey, "0x0")
-  singletonInstance.localAccountSensitiveSettings.setFileName(pubKey)
-  singletonInstance.engine.setRootContextProperty("localAccountSensitiveSettings", self.localAccountSensitiveSettingsVariant)
-  #################################################
-
+proc load(self: AppController) =
   self.settingService.init()
   self.contactsService.init()
   self.chatService.init()
@@ -350,6 +336,13 @@ proc load*(self: AppController) =
   self.walletAccountService.init()
   self.transactionService.init()
   self.languageService.init()
+
+  #################################################
+  # Once SettingService gets added, `pubKey` should be fetched from there, instead the following line:
+  let pubKey = self.settingsService.getPubKey()
+  singletonInstance.localAccountSensitiveSettings.setFileName(pubKey)
+  singletonInstance.engine.setRootContextProperty("localAccountSensitiveSettings", self.localAccountSensitiveSettingsVariant)
+  #################################################
 
   # other global instances
   self.buildAndRegisterLocalAccountSensitiveSettings()  

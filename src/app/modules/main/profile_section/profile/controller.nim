@@ -1,6 +1,6 @@
 import ./controller_interface
 
-import ../../../../core/global_singleton
+import ../../../../global/global_singleton
 import ../../../../../app_service/service/profile/service as profile_service
 import ../../../../../app_service/service/accounts/service as accounts_service
 import ../../../../../app_service/service/settings/service as settings_service
