@@ -196,7 +196,7 @@ proc prepareAccountSettingsJsonObject(self: Service, account: GeneratedAccountDt
     "identicon": account.identicon,
     "waku-enabled": true,
     "wallet/visible-tokens": {
-      "mainnet": ["SNT"]
+      DEFAULT_NETWORK_NAME: ["SNT"]
     },
     "appearance": 0,
     "networks/current-network": DEFAULT_NETWORK_NAME,
