@@ -3,19 +3,16 @@ import eventemitter
 from sugar import `=>`
 import web3/ethtypes
 from web3/conversions import `$`
-import status/statusgo_backend_new/tokens as token_backend
+import status/statusgo_backend_new/custom_tokens as custom_tokens
 import ../setting/service as setting_service
 import ../settings/service as settings_service
-
-import ./dto
+import ../../../app/core/tasks/[qt, threadpool]
+import ./dto, ./static_token
 
 export dto
 
 logScope:
   topics = "token-service"
-
-import ../../../app_service/[main]
-import ../../../app_service/tasks/[qt, threadpool]
 
 include async_tasks
 
@@ -77,21 +74,20 @@ QtObject:
 
   proc init*(self: Service) =
     try:
-      let settings = self.settingService.getSetting()
-      var activeTokenSymbols = settings.activeTokenSymbols
+      var activeTokenSymbols = self.settingService.getSetting().activeTokenSymbols
       if activeTokenSymbols.len == 0:
         activeTokenSymbols = self.getDefaultVisibleSymbols()
 
-      let response = token_backend.getTokens(settings.currentNetwork.id)
-      let default_tokens = map(
-        response.result.getElems(), 
-        proc(x: JsonNode): TokenDto = x.toTokenDto(activeTokenSymbols, hasIcon=true, isCustom=false)
+      let static_tokens = static_token.all().map(
+        proc(x: TokenDto): TokenDto =
+          x.isVisible = activeTokenSymbols.contains(x.symbol)
+          return x
       )
 
-      let customResponse = token_backend.getCustomTokens()
+      let response = custom_tokens.getCustomTokens()
       self.tokens = concat(
-        default_tokens,
-        map(customResponse.result.getElems(), proc(x: JsonNode): TokenDto = x.toTokenDto(activeTokenSymbols))
+        static_tokens,
+        map(response.result.getElems(), proc(x: JsonNode): TokenDto = x.toTokenDto(activeTokenSymbols))
       ).filter(
         proc(x: TokenDto): bool = x.chainId == self.settingService.getSetting().currentNetwork.id
       )
@@ -105,7 +101,7 @@ QtObject:
     return self.tokens
 
   proc addCustomToken*(self: Service, address: string, name: string, symbol: string, decimals: int) =
-    token_backend.addCustomToken(address, name, symbol, decimals, "")
+    custom_tokens.addCustomToken(address, name, symbol, decimals, "")
     let token = newDto(
       name,
       self.settingService.getSetting().currentNetwork.id,
@@ -131,7 +127,7 @@ QtObject:
     self.events.emit("token/visibilityToggled", VisibilityToggled(token: tokenChanged))
 
   proc removeCustomToken*(self: Service, address: string) =
-    token_backend.removeCustomToken(address)
+    custom_tokens.removeCustomToken(address)
     var index = -1
 
     for idx, token in self.tokens.pairs():
