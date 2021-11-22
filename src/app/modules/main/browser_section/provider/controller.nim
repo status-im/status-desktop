@@ -35,11 +35,11 @@ method getDappsAddress*(self: Controller): string =
   return self.settingsService.getDappsAddress()
 
 method setDappsAddress*(self: Controller, address: string) =
-  if self.settingsService.setDappsAddress(address):
+  if self.settingsService.saveDappsAddress(address):
     self.delegate.onDappAddressChanged(address)
 
-method getCurrentNetworkDetails*(self: Controller): NetworkDetails =
-  return self.settingsService.getCurrentNetworkDetails()
+method getCurrentNetworkId*(self: Controller): int =
+  return self.settingsService.getCurrentNetworkId()
 
 method disconnect*(self: Controller) =
   discard self.dappPermissionsService.revoke("web3".toPermission())

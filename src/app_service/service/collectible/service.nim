@@ -1,7 +1,7 @@
 import chronicles, sequtils, json
 
 import ./service_interface, ./dto
-import ../setting/service as setting_service
+import ../settings/service_interface as settings_service
 
 import status/statusgo_backend_new/collectibles as collectibles
 
@@ -14,21 +14,21 @@ logScope:
 
 type 
   Service* = ref object of service_interface.ServiceInterface
-    settingService: setting_service.ServiceInterface
+    settingsService: settings_service.ServiceInterface
 
 method delete*(self: Service) =
   discard
 
-proc newService*(settingService: setting_service.ServiceInterface): Service =
+proc newService*(settingsService: settings_service.ServiceInterface): Service =
   result = Service()
-  result.settingService = settingService
+  result.settingsService = settingsService
 
 method init*(self: Service) =
   discard
 
 method getCollections(self: Service, address: string): seq[CollectionDto] =
   try:
-    let networkId = self.settingService.getSetting().currentNetwork.id
+    let networkId = self.settingsService.getCurrentNetworkId()
     let response = collectibles.getOpenseaCollections(networkId, address)
     return map(response.result.getElems(), proc(x: JsonNode): CollectionDto = x.toCollectionDto())
   except Exception as e:
@@ -38,7 +38,7 @@ method getCollections(self: Service, address: string): seq[CollectionDto] =
 
 method getCollectibles(self: Service, address: string, collectionSlug: string): seq[CollectibleDto] =
   try:
-    let networkId = self.settingService.getSetting().currentNetwork.id
+    let networkId = self.settingsService.getCurrentNetworkId()
     let response = collectibles.getOpenseaAssets(networkId, address, collectionSlug, limit)
     return map(response.result.getElems(), proc(x: JsonNode): CollectibleDto = x.toCollectibleDto())
   except Exception as e:

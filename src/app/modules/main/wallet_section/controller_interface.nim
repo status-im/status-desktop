@@ -1,5 +1,3 @@
-import ../../../../app_service/service/setting/service_interface as setting_service
-
 type 
   AccessInterface* {.pure inheritable.} = ref object of RootObj
   ## Abstract class for any input/interaction with this module.
@@ -10,7 +8,13 @@ method delete*(self: AccessInterface) {.base.} =
 method init*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getSetting*(self: AccessInterface): setting_service.SettingDto {.base.} =
+method getCurrency*(self: AccessInterface): string {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getSigningPhrase*(self: AccessInterface): string {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method isMnemonicBackedUp*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getCurrencyBalance*(self: AccessInterface): float64 {.base.} =

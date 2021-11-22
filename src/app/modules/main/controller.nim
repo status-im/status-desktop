@@ -1,4 +1,4 @@
-import item, controller_interface, io_interface
+import item, controller_interface, io_interface, chronicles
 import ../../global/global_singleton
 
 import ../../../app_service/service/settings/service_interface as settings_service
@@ -11,6 +11,9 @@ import ../../core/signals/types
 import eventemitter
 
 export controller_interface
+
+logScope:
+  topics = "main-module-controller"
 
 type 
   Controller* = ref object of controller_interface.AccessInterface
@@ -139,5 +142,7 @@ method getNumOfNotificaitonsForCommunity*(self: Controller, communityId: string)
     result.mentions += chat.unviewedMentionsCount
 
 method setUserStatus*(self: Controller, status: bool) =
-  self.settingsService.setSendUserStatus(status)
-  singletonInstance.userProfile.setUserStatus(status)
+  if(self.settingsService.saveSendStatusUpdates(status)):
+    singletonInstance.userProfile.setUserStatus(status)
+  else:
+    error "error updating user status"

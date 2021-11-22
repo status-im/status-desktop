@@ -2,7 +2,7 @@ import Tables, json, sequtils, sugar, chronicles, strformat, stint, httpclient, 
 import web3/[ethtypes, conversions]
 import eventemitter
 
-import ../setting/service as setting_service
+import ../settings/service_interface as settings_service
 import ../token/service as token_service
 import ../../common/account_constants
 import ../../../constants
@@ -101,7 +101,7 @@ type WalletAccountUpdated = ref object of Args
 type
   Service* = ref object of service_interface.ServiceInterface
     events: EventEmitter
-    settingService: setting_service.Service
+    settingsService: settings_service.ServiceInterface
     tokenService: token_service.Service
     accounts: OrderedTable[string, WalletAccountDto]
 
@@ -109,11 +109,11 @@ method delete*(self: Service) =
   discard
 
 proc newService*(
-  events: EventEmitter, settingService: setting_service.Service, tokenService: token_service.Service
-): Service =
+  events: EventEmitter, settingsService: settings_service.ServiceInterface, tokenService: token_service.Service): 
+  Service =
   result = Service()
   result.events = events
-  result.settingService = settingService
+  result.settingsService = settingsService
   result.tokenService = tokenService
   result.accounts = initOrderedTable[string, WalletAccountDto]()
 
@@ -155,7 +155,7 @@ method buildTokens(
     )
 
 method fetchPrices(self: Service): Table[string, float64] =
-  let currency = self.settingService.getSetting().currency
+  let currency = self.settingsService.getCurrency()
   var prices = {"ETH": fetchPrice("ETH", currency)}.toTable
   for token in self.getVisibleTokens():
     prices[token.symbol] = fetchPrice(token.symbol, currency)
@@ -237,9 +237,8 @@ method saveAccount(
 
 method generateNewAccount*(self: Service, password: string, accountName: string, color: string): string =
   let
-    setting = self.settingService.getSetting()
-    walletRootAddress = setting.walletRootAddress
-    walletIndex = setting.latestDerivedPath + 1
+    walletRootAddress = self.settingsService.getWalletRootAddress()
+    walletIndex = self.settingsService.getLatestDerivedPath() + 1
     defaultAccount = self.getDefaultAccount()
     isPasswordOk = status_go_accounts.verifyAccountPassword(defaultAccount, password, KEYSTOREDIR)
 
@@ -264,7 +263,7 @@ method generateNewAccount*(self: Service, password: string, accountName: string,
   if errMsg != "":
     return errMsg
 
-  discard self.settingService.saveSetting("latest-derived-path", walletIndex)
+  discard self.settingsService.saveLatestDerivedPath(walletIndex)
   return ""
 
 method addAccountsFromPrivateKey*(self: Service, privateKey: string, password: string, accountName: string, color: string): string =
@@ -325,7 +324,7 @@ method deleteAccount*(self: Service, address: string) =
   self.events.emit("walletAccount/accountDeleted", AccountDeleted(account: accountDeleted))
 
 method updateCurrency*(self: Service, newCurrency: string) =
-  discard self.settingService.saveSetting("currency", newCurrency)
+  discard self.settingsService.saveCurrency(newCurrency)
   self.refreshBalances()
   self.events.emit("walletAccount/currencyUpdated", CurrencyUpdated())
 

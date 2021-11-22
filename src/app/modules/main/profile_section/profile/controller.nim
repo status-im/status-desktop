@@ -3,7 +3,7 @@ import ./controller_interface
 import ../../../../global/global_singleton
 import ../../../../../app_service/service/profile/service as profile_service
 import ../../../../../app_service/service/accounts/service as accounts_service
-import ../../../../../app_service/service/settings/service as settings_service
+import ../../../../../app_service/service/settings/service_interface as settings_service
 
 import ./item as item
 import status/types/identity_image
@@ -17,7 +17,8 @@ type
     settingsService: settings_service.ServiceInterface
     accountsService: accounts_service.ServiceInterface
 
-proc newController*[T](delegate: T, accountsService: accounts_service.ServiceInterface, settingsService: settings_service.ServiceInterface, profileService: profile_service.ServiceInterface): Controller[T] =
+proc newController*[T](delegate: T, accountsService: accounts_service.ServiceInterface, 
+  settingsService: settings_service.ServiceInterface, profileService: profile_service.ServiceInterface): Controller[T] =
   result = Controller[T]()
   result.delegate = delegate
   result.profileService = profileService
@@ -32,7 +33,6 @@ method init*[T](self: Controller[T]) =
 
 method getProfile*[T](self: Controller[T]): item.Item =
   
-  var network = self.settingsService.getNetwork()
   var appearance = self.settingsService.getAppearance()
   var messagesFromContactsOnly = self.settingsService.getMessagesFromContactsOnly()
 
