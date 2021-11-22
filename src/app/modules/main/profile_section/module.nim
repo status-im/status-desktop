@@ -4,7 +4,7 @@ import ../../../global/global_singleton
 
 import ../../../../app_service/service/profile/service as profile_service
 import ../../../../app_service/service/accounts/service as accounts_service
-import ../../../../app_service/service/settings/service as settings_service
+import ../../../../app_service/service/settings/service_interface as settings_service
 import ../../../../app_service/service/contacts/service as contacts_service
 import ../../../../app_service/service/about/service as about_service
 import ../../../../app_service/service/language/service as language_service

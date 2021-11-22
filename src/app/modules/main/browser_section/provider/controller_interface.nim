@@ -1,5 +1,3 @@
-import ../../../../../app_service/service/settings/service as settings_service
-
 type 
   AccessInterface* {.pure inheritable.} = ref object of RootObj
   ## Abstract class for any input/interaction with this module.
@@ -16,7 +14,7 @@ method getDappsAddress*(self: AccessInterface): string {.base.} =
 method setDappsAddress*(self: AccessInterface, address: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getCurrentNetworkDetails*(self: AccessInterface): NetworkDetails {.base.} =
+method getCurrentNetworkId*(self: AccessInterface): int {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method disconnect*(self: AccessInterface) {.base.} =

@@ -4,8 +4,7 @@ from sugar import `=>`
 import web3/ethtypes
 from web3/conversions import `$`
 import status/statusgo_backend_new/custom_tokens as custom_tokens
-import ../setting/service as setting_service
-import ../settings/service as settings_service
+import ../settings/service_interface as settings_service
 import ../../../app/core/tasks/[qt, threadpool]
 import ./dto, ./static_token
 
@@ -39,8 +38,7 @@ QtObject:
   type Service* = ref object of QObject
     events: EventEmitter
     threadpool: ThreadPool
-    settingService: setting_service.Service
-    settingsService: settings_service.Service
+    settingsService: settings_service.ServiceInterface
     tokens: seq[TokenDto]
 
   proc delete*(self: Service) =
@@ -49,21 +47,19 @@ QtObject:
   proc newService*(
     events: EventEmitter,
     threadpool: ThreadPool,
-    settingService: setting_service.Service,
-    settingsService: settings_service.Service
+    settingsService: settings_service.ServiceInterface
     ): Service =
     new(result, delete)
     result.QObject.setup
     result.events = events
     result.threadpool = threadpool
-    result.settingService = settingService
     result.settingsService = settingsService
     result.tokens = @[]
 
   proc getDefaultVisibleSymbols(self: Service): seq[string] =
-    let networkSlug = self.settingService.getSetting().currentNetwork.slug
+    let networkSlug = self.settingsService.getCurrentNetwork()
     
-    if networkSlug == "mainnet_rpc":
+    if networkSlug == DEFAULT_CURRENT_NETWORK:
       return @["SNT"]
 
     if networkSlug == "testnet_rpc" or networkSlug == "rinkeby_rpc":
@@ -74,7 +70,7 @@ QtObject:
 
   proc init*(self: Service) =
     try:
-      var activeTokenSymbols = self.settingService.getSetting().activeTokenSymbols
+      var activeTokenSymbols = self.settingsService.getWalletVisibleTokens()
       if activeTokenSymbols.len == 0:
         activeTokenSymbols = self.getDefaultVisibleSymbols()
 
@@ -89,7 +85,7 @@ QtObject:
         static_tokens,
         map(response.result.getElems(), proc(x: JsonNode): TokenDto = x.toTokenDto(activeTokenSymbols))
       ).filter(
-        proc(x: TokenDto): bool = x.chainId == self.settingService.getSetting().currentNetwork.id
+        proc(x: TokenDto): bool = x.chainId == self.settingsService.getCurrentNetworkId()
       )
 
     except Exception as e:
@@ -104,7 +100,7 @@ QtObject:
     custom_tokens.addCustomToken(address, name, symbol, decimals, "")
     let token = newDto(
       name,
-      self.settingService.getSetting().currentNetwork.id,
+      self.settingsService.getCurrentNetworkId(),
       fromHex(Address, address),
       symbol,
       decimals,
@@ -123,7 +119,7 @@ QtObject:
         break
 
     let visibleSymbols = self.tokens.filter(t => t.isVisible).map(t => t.symbol)
-    discard self.settingService.saveSetting("wallet/visible-tokens", visibleSymbols)
+    discard self.settingsService.saveWalletVisibleTokens(visibleSymbols)
     self.events.emit("token/visibilityToggled", VisibilityToggled(token: tokenChanged))
 
   proc removeCustomToken*(self: Service, address: string) =
@@ -145,7 +141,7 @@ QtObject:
     ))
     
   proc getTokenDetails*(self: Service, address: string) =
-    let chainId = self.settingsService.getCurrentNetworkDetails().config.networkId
+    let chainId = self.settingsService.getCurrentNetworkId()
     let arg = GetTokenDetailsTaskArg(
       tptr: cast[ByteAddress](getTokenDetailsTask),
       vptr: cast[ByteAddress](self.vptr),

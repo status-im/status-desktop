@@ -1,6 +1,5 @@
 import NimQml
 
-import ../../../../app_service/service/setting/service as setting_service
 import ./io_interface
 
 QtObject:
@@ -65,8 +64,8 @@ QtObject:
     self.totalCurrencyBalance = totalCurrencyBalance
     self.totalCurrencyBalanceChanged()
 
-  proc updateFromSetting*(self: View, setting: setting_service.SettingDto) =
-    self.currentCurrency = setting.currency
+  proc setData*(self: View, currency, signingPhrase: string, mnemonicBackedUp: bool) =
+    self.currentCurrency = currency
+    self.signingPhrase = signingPhrase
+    self.isMnemonicBackedUp = mnemonicBackedUp
     self.currentCurrencyChanged()
-    self.signingPhrase = setting.signingPhrase
-    self.isMnemonicBackedUp = setting.isMnemonicBackedUp

@@ -4,7 +4,7 @@ import options
 import strutils
 include ../../common/json_utils
 import ../dapp_permissions/service as dapp_permissions_service
-import ../settings/service as settings_service
+import ../settings/service_interface as settings_service
 import ../ens/service as ens_service
 import service_interface
 import status/statusgo_backend_new/permissions as status_go_permissions
@@ -273,7 +273,7 @@ proc process(self: Service, data: Web3SendAsyncReadOnly): string =
 proc process(self: Service, data: APIRequest): string =
   var value:JsonNode = case data.permission
   of Permission.Web3: %* [self.settingsService.getDappsAddress()]
-  of Permission.ContactCode: %* self.settingsService.getPubKey()
+  of Permission.ContactCode: %* self.settingsService.getPublicKey()
   of Permission.Unknown: newJNull()
 
   let isAllowed = data.isAllowed and data.permission != Permission.Unknown
