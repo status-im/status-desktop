@@ -22,6 +22,10 @@ RUN export DEBIAN_FRONTEND=noninteractive \
       gstreamer1.0-plugins-ugly gstreamer1.0-libav \
       gstreamer1.0-tools gstreamer1.0-alsa gstreamer1.0-pulseaudio
 
+# Fix LetsEncrypt X3 root certificate expliration
+RUN sudo sed -i 's#\(mozilla/DST_Root_CA_X3.crt\)#!\1#' /etc/ca-certificates.conf \
+ && sudo dpkg-reconfigure -fnoninteractive ca-certificates
+
 # Installing Golang
 RUN GOLANG_SHA256="d2c095c95f63c2a3ef961000e0ecb9d81d5c68b6ece176e2a8a2db82dc02931c" \
  && GOLANG_TARBALL="go1.16.9.linux-amd64.tar.gz" \
