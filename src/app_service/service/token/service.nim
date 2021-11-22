@@ -6,16 +6,13 @@ from web3/conversions import `$`
 import status/statusgo_backend_new/custom_tokens as custom_tokens
 import ../setting/service as setting_service
 import ../settings/service as settings_service
-
+import ../../../app/core/tasks/[qt, threadpool]
 import ./dto, ./static_token
 
 export dto
 
 logScope:
   topics = "token-service"
-
-import ../../../app_service/[main]
-import ../../../app_service/tasks/[qt, threadpool]
 
 include async_tasks
 

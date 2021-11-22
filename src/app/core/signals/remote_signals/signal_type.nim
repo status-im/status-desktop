@@ -25,6 +25,7 @@ type SignalType* {.pure.} = enum
   HistoryRequestStarted = "history.request.started"
   HistoryRequestCompleted = "history.request.completed"
   HistoryRequestFailed = "history.request.failed"
+  HistoryRequestBatchProcessed = "history.request.batch.processed"
   KeycardConnected = "keycard.connected"
   Unknown
 
