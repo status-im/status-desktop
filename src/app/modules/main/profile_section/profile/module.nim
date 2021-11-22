@@ -5,7 +5,7 @@ import ../../../../global/global_singleton
 
 import ../../../../../app_service/service/profile/service as profile_service
 import ../../../../../app_service/service/accounts/service as accounts_service
-import ../../../../../app_service/service/settings/service as settings_service
+import ../../../../../app_service/service/settings/service_interface as settings_service
 
 import status/types/identity_image
 
@@ -19,7 +19,8 @@ type
     viewVariant: QVariant
     moduleLoaded: bool
 
-proc newModule*[T](delegate: T, accountsService: accounts_service.ServiceInterface, settingsService: settings_service.ServiceInterface, profileService: profile_service.ServiceInterface): Module[T] =
+proc newModule*[T](delegate: T, accountsService: accounts_service.ServiceInterface, 
+  settingsService: settings_service.ServiceInterface, profileService: profile_service.ServiceInterface): Module[T] =
   result = Module[T]()
   result.delegate = delegate
   result.view = newView(result)

@@ -2,14 +2,13 @@ import Tables, json, sequtils, sugar, chronicles, strformat, stint, httpclient, 
 import web3/[ethtypes, conversions]
 import eventemitter
 
-import ../setting/service as setting_service
+import ../settings/service_interface as settings_service
 import ../token/service as token_service
 import ../../common/account_constants
 import ../../../constants
 
 import ./service_interface, ./dto
 import status/statusgo_backend_new/accounts as status_go_accounts
-import status/statusgo_backend_new/tokens as status_go_tokens
 import status/statusgo_backend_new/eth as status_go_eth
 
 export service_interface
@@ -61,7 +60,21 @@ proc fetchAccounts(): seq[WalletAccountDto] =
   return response.result.getElems().map(
     x => x.toWalletAccountDto()
   ).filter(a => not a.isChat)
+
+
+proc fetchTokenBalance(tokenAddress, accountAddress: string, decimals: int): float64 =
+  let key = tokenAddress & accountAddress
+  if balanceCache.hasKey(key):
+    return balanceCache[key]
+
+  try:
+    let tokenBalanceResponse = status_go_eth.getTokenBalance(tokenAddress, accountAddress)
+    result = parsefloat(hex2Balance(tokenBalanceResponse.result.getStr, decimals))
+    balanceCache[key] = result
+  except Exception as e:
+    error "Error getting token balance", msg = e.msg
   
+
 proc fetchEthBalance(accountAddress: string): float64 =
   let key = "0x0" & accountAddress
   if balanceCache.hasKey(key):
@@ -88,7 +101,7 @@ type WalletAccountUpdated = ref object of Args
 type
   Service* = ref object of service_interface.ServiceInterface
     events: EventEmitter
-    settingService: setting_service.Service
+    settingsService: settings_service.ServiceInterface
     tokenService: token_service.Service
     accounts: OrderedTable[string, WalletAccountDto]
 
@@ -96,11 +109,11 @@ method delete*(self: Service) =
   discard
 
 proc newService*(
-  events: EventEmitter, settingService: setting_service.Service, tokenService: token_service.Service
-): Service =
+  events: EventEmitter, settingsService: settings_service.ServiceInterface, tokenService: token_service.Service): 
+  Service =
   result = Service()
   result.events = events
-  result.settingService = settingService
+  result.settingsService = settingsService
   result.tokenService = tokenService
   result.accounts = initOrderedTable[string, WalletAccountDto]()
 
@@ -110,8 +123,7 @@ method getVisibleTokens(self: Service): seq[TokenDto] =
 method buildTokens(
   self: Service,
   account: WalletAccountDto,
-  prices: Table[string, float64],
-  balances: JsonNode,
+  prices: Table[string, float64]
 ): seq[WalletTokenDto] =
   let balance = fetchEthBalance(account.address)
   result = @[WalletTokenDto(
@@ -127,7 +139,7 @@ method buildTokens(
   )]
 
   for token in self.getVisibleTokens():
-    let balance = parsefloat(hex2Balance(balances{token.addressAsString()}.getStr, token.decimals))
+    let balance = fetchTokenBalance($token.address, account.address, token.decimals)
     result.add(
       WalletTokenDto(
         name: token.name,
@@ -143,26 +155,18 @@ method buildTokens(
     )
 
 method fetchPrices(self: Service): Table[string, float64] =
-  let currency = self.settingService.getSetting().currency
+  let currency = self.settingsService.getCurrency()
   var prices = {"ETH": fetchPrice("ETH", currency)}.toTable
   for token in self.getVisibleTokens():
     prices[token.symbol] = fetchPrice(token.symbol, currency)
 
   return prices
 
-method fetchBalances(self: Service, accounts: seq[string]): JsonNode =
-  let network = self.settingService.getSetting().currentNetwork
-  let tokens = self.getVisibleTokens().map(t => t.addressAsString())
-
-  return status_go_tokens.getBalances(network.id, accounts, tokens).result
-
 method refreshBalances(self: Service) =
   let prices = self.fetchPrices()
-  let accounts = toSeq(self.accounts.keys)
-  let balances = self.fetchBalances(accounts)
-  
+
   for account in toSeq(self.accounts.values):
-    account.tokens = self.buildTokens(account, prices, balances{account.address})
+    account.tokens = self.buildTokens(account, prices)
 
 method init*(self: Service) =
   try:
@@ -189,74 +193,128 @@ method getWalletAccount*(self: Service, accountIndex: int): WalletAccountDto =
 method getCurrencyBalance*(self: Service): float64 =
   return self.getWalletAccounts().map(a => a.getCurrencyBalance()).foldl(a + b, 0.0)
 
-method addNewAccountToLocalStore(self: Service) =
-  let accounts = fetchAccounts()
-  let prices = self.fetchPrices()
+method getDefaultAccount(self: Service): string =
+  return status_go_eth.getAccounts().result[0].getStr
 
-  var newAccount = accounts[0]
-  for account in accounts:
-    if not self.accounts.haskey(account.address):
-      newAccount = account
-      break
+method saveAccount(
+  self: Service,
+  address: string,
+  name: string,
+  password: string,
+  color: string,
+  accountType: string,
+  isADerivedAccount = true,
+  walletIndex: int = 0,
+  id: string = "",
+  publicKey: string = "",
+): string =
+  try:
+    status_go_accounts.saveAccount(
+      address,
+      name,
+      password,
+      color,
+      accountType,
+      isADerivedAccount = true,
+      walletIndex,
+      id,
+      publicKey,
+    )
+    let accounts = fetchAccounts()
+    let prices = self.fetchPrices()
 
-  let balances = self.fetchBalances(@[newAccount.address])
-  newAccount.tokens = self.buildTokens(newAccount, prices, balances{newAccount.address})
-  self.accounts[newAccount.address] = newAccount
-  self.events.emit("walletAccount/accountSaved", AccountSaved(account: newAccount))
+    var newAccount = accounts[0]
+    for account in accounts:
+      if not self.accounts.haskey(account.address):
+        newAccount = account
+        break
+
+    newAccount.tokens = self.buildTokens(newAccount, prices)
+    self.accounts[newAccount.address] = newAccount
+    self.events.emit("walletAccount/accountSaved", AccountSaved(account: newAccount))
+  except Exception as e:
+    return fmt"Error adding new account: {e.msg}"
 
 method generateNewAccount*(self: Service, password: string, accountName: string, color: string): string =
-  try:
-    discard status_go_accounts.generateAccount(
-      password,
-      accountName,
-      color,
-    )
-  except Exception as e:
-    return fmt"Error generating new account: {e.msg}"
+  let
+    walletRootAddress = self.settingsService.getWalletRootAddress()
+    walletIndex = self.settingsService.getLatestDerivedPath() + 1
+    defaultAccount = self.getDefaultAccount()
+    isPasswordOk = status_go_accounts.verifyAccountPassword(defaultAccount, password, KEYSTOREDIR)
 
-  self.addNewAccountToLocalStore()
+  if not isPasswordOk:
+    return "Error generating new account: invalid password"
+
+  let accountResponse = status_go_accounts.loadAccount(walletRootAddress, password)
+  let accountId = accountResponse.result{"id"}.getStr
+  let path = "m/" & $walletIndex
+  let deriveResponse = status_go_accounts.deriveAccounts(accountId, @[path])
+  let errMsg = self.saveAccount(
+    deriveResponse.result[path]{"address"}.getStr,
+    accountName,
+    password,
+    color,
+    status_go_accounts.GENERATED,
+    true,
+    walletIndex,
+    accountId,
+    deriveResponse.result[path]{"publicKey"}.getStr
+  )
+  if errMsg != "":
+    return errMsg
+
+  discard self.settingsService.saveLatestDerivedPath(walletIndex)
   return ""
 
 method addAccountsFromPrivateKey*(self: Service, privateKey: string, password: string, accountName: string, color: string): string =
-  try:
-    discard status_go_accounts.addAccountWithPrivateKey(
-      privateKey,
-      password,
-      accountName,
-      color,
-    )
-  except Exception as e:
-    return fmt"Error adding account with private key: {e.msg}"
+  let
+    accountResponse = status_go_accounts.multiAccountImportPrivateKey(privateKey)
+    defaultAccount = self.getDefaultAccount()
+    isPasswordOk = status_go_accounts.verifyAccountPassword(defaultAccount, password, KEYSTOREDIR)
 
-  self.addNewAccountToLocalStore()
-  return ""
+  if not isPasswordOk:
+    return "Error generating new account: invalid password"
 
-method addAccountsFromSeed*(self: Service, mnemonic: string, password: string, accountName: string, color: string): string =
-  try:
-    discard status_go_accounts.addAccountWithMnemonic(
-      mnemonic,
-      password,
-      accountName,
-      color,
-    )
-  except Exception as e:
-    return fmt"Error adding account with mnemonic: {e.msg}"
+  return self.saveAccount(
+    accountResponse.result{"address"}.getStr,
+    accountName,
+    password,
+    color,
+    status_go_accounts.KEY,
+    false,
+    0,
+    accountResponse.result{"accountId"}.getStr,
+    accountResponse.result{"publicKey"}.getStr,
+  )
 
-  self.addNewAccountToLocalStore()
-  return ""
+method addAccountsFromSeed*(self: Service, seedPhrase: string, password: string, accountName: string, color: string): string =
+  let mnemonic = replace(seedPhrase, ',', ' ')
+  let paths = @[PATH_WALLET_ROOT, PATH_EIP_1581, PATH_WHISPER, PATH_DEFAULT_WALLET]
+  let accountResponse = status_go_accounts.multiAccountImportMnemonic(mnemonic)
+  let accountId = accountResponse.result{"id"}.getStr
+  let deriveResponse = status_go_accounts.deriveAccounts(accountId, paths)
+
+  let
+    defaultAccount = self.getDefaultAccount()
+    isPasswordOk = status_go_accounts.verifyAccountPassword(defaultAccount, password, KEYSTOREDIR)
+
+  if not isPasswordOk:
+    return "Error generating new account: invalid password"
+
+  return self.saveAccount(
+    deriveResponse.result[PATH_DEFAULT_WALLET]{"address"}.getStr,
+    accountName,
+    password,
+    color,
+    status_go_accounts.SEED,
+    true,
+    0,
+    accountId,
+    deriveResponse.result[PATH_DEFAULT_WALLET]{"publicKey"}.getStr
+  )
 
 method addWatchOnlyAccount*(self: Service, address: string, accountName: string, color: string): string =
-  try:
-    discard status_go_accounts.addAccountWatch(
-      address,
-      accountName,
-      color,
-    )
-  except Exception as e:
-    return fmt"Error adding account with mnemonic: {e.msg}"
-
-  self.addNewAccountToLocalStore()
-  return ""
+  return self.saveAccount(address, accountName, "", color, status_go_accounts.WATCH, false)
 
 method deleteAccount*(self: Service, address: string) =
   discard status_go_accounts.deleteAccount(address)
@@ -266,7 +324,7 @@ method deleteAccount*(self: Service, address: string) =
   self.events.emit("walletAccount/accountDeleted", AccountDeleted(account: accountDeleted))
 
 method updateCurrency*(self: Service, newCurrency: string) =
-  discard self.settingService.saveSetting("currency", newCurrency)
+  discard self.settingsService.saveCurrency(newCurrency)
   self.refreshBalances()
   self.events.emit("walletAccount/currencyUpdated", CurrencyUpdated())
 

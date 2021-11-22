@@ -12,7 +12,7 @@ QtObject:
     thumbnailImage: string
     largeImage: string
     userStatus: bool
-    currentUserStatus: int
+    #currentUserStatus: int
     
   proc setup(self: UserProfile) =
     self.QObject.setup

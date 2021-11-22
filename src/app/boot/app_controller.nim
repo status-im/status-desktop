@@ -12,14 +12,12 @@ import ../../app_service/service/token/service as token_service
 import ../../app_service/service/transaction/service as transaction_service
 import ../../app_service/service/collectible/service as collectible_service
 import ../../app_service/service/wallet_account/service as wallet_account_service
-import ../../app_service/service/setting/service as setting_service
 import ../../app_service/service/bookmarks/service as bookmark_service
 import ../../app_service/service/dapp_permissions/service as dapp_permissions_service
 import ../../app_service/service/mnemonic/service as mnemonic_service
 import ../../app_service/service/privacy/service as privacy_service
 import ../../app_service/service/provider/service as provider_service
 import ../../app_service/service/ens/service as ens_service
-
 import ../../app_service/service/profile/service as profile_service
 import ../../app_service/service/settings/service as settings_service
 import ../../app_service/service/about/service as about_service
@@ -92,7 +90,6 @@ type
     transactionService: transaction_service.Service
     collectibleService: collectible_service.Service
     walletAccountService: wallet_account_service.Service
-    settingService: setting_service.Service
     bookmarkService: bookmark_service.Service
     dappPermissionsService: dapp_permissions_service.Service
     ensService: ens_service.Service
@@ -167,7 +164,6 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   # Services
   result.osNotificationService = os_notification_service.newService(statusFoundation.status.events)
   result.keychainService = keychain_service.newService(statusFoundation.status.events)
-  result.settingService = setting_service.newService()
   result.settingsService = settings_service.newService()
   result.accountsService = accounts_service.newService()
   result.contactsService = contacts_service.newService(statusFoundation.status.events, statusFoundation.threadpool)
@@ -175,9 +171,9 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result.communityService = community_service.newService(result.chatService)
   result.messageService = message_service.newService(statusFoundation.status.events, statusFoundation.threadpool)
   result.tokenService = token_service.newService(statusFoundation.status.events, statusFoundation.threadpool, 
-  result.settingService, result.settingsService)
-  result.collectibleService = collectible_service.newService(result.settingService)
-  result.walletAccountService = wallet_account_service.newService(statusFoundation.status.events, result.settingService, 
+  result.settingsService)
+  result.collectibleService = collectible_service.newService(result.settingsService)
+  result.walletAccountService = wallet_account_service.newService(statusFoundation.status.events, result.settingsService, 
   result.tokenService)
   result.transactionService = transaction_service.newService(statusFoundation.status.events, statusFoundation.threadpool, 
   result.walletAccountService)
@@ -212,7 +208,6 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
     result.collectibleService,
     result.walletAccountService,
     result.bookmarkService,
-    result.settingService,
     result.profileService,
     result.settingsService,
     result.contactsService,
@@ -235,18 +230,6 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result.keycard = keycard.newController(statusFoundation.status)
   result.connect()
   #################################################
-
-  # Adding status and statusFoundation here now is just because of having a controll 
-  # over order of execution while we integrating this refactoring architecture 
-  # into the current app state.
-  # Once we complete refactoring process we will get rid of "status" part/lib.
-  #
-  # This to will be adapted to appropriate modules later:
-  # result.login = login.newController(statusFoundation.status, statusFoundation)
-  # result.onboarding = onboarding.newController(statusFoundation.status)
-  # singletonInstance.engine.setRootContextProperty("loginModel", result.login.variant)
-  # singletonInstance.engine.setRootContextProperty("onboardingModel", result.onboarding.variant)
-  #result.connect()
 
 proc delete*(self: AppController) =
   self.osNotificationService.delete
@@ -279,7 +262,7 @@ proc delete*(self: AppController) =
   self.tokenService.delete
   self.transactionService.delete
   self.collectibleService.delete
-  self.settingService.delete
+  self.settingsService.delete
   self.walletAccountService.delete
   self.aboutService.delete
   self.dappPermissionsService.delete
@@ -323,13 +306,12 @@ proc start*(self: AppController) =
   self.startupModule.load()
 
 proc load(self: AppController) =
-  self.settingService.init()
+  self.settingsService.init()
   self.contactsService.init()
   self.chatService.init()
   self.communityService.init()
   self.bookmarkService.init()
   self.tokenService.init()
-  self.settingsService.init()
   self.dappPermissionsService.init()
   self.ensService.init()
   self.providerService.init()
@@ -337,12 +319,9 @@ proc load(self: AppController) =
   self.transactionService.init()
   self.languageService.init()
 
-  #################################################
-  # Once SettingService gets added, `pubKey` should be fetched from there, instead the following line:
-  let pubKey = self.settingsService.getPubKey()
+  let pubKey = self.settingsService.getPublicKey()
   singletonInstance.localAccountSensitiveSettings.setFileName(pubKey)
   singletonInstance.engine.setRootContextProperty("localAccountSensitiveSettings", self.localAccountSensitiveSettingsVariant)
-  #################################################
 
   # other global instances
   self.buildAndRegisterLocalAccountSensitiveSettings()  
@@ -361,24 +340,34 @@ proc userLoggedIn*(self: AppController) =
   self.load()
 
 proc buildAndRegisterLocalAccountSensitiveSettings(self: AppController) = 
-  var pubKey = self.settingsService.getPubKey()
+  var pubKey = self.settingsService.getPublicKey()
   singletonInstance.localAccountSensitiveSettings.setFileName(pubKey)
   singletonInstance.engine.setRootContextProperty("localAccountSensitiveSettings", self.localAccountSensitiveSettingsVariant)
 
 proc buildAndRegisterUserProfile(self: AppController) = 
-  let loggedInAccount = self.accountsService.getLoggedInAccount()
-
-  let pubKey = self.settingsService.getPubKey()
-  let sendUserStatus = self.settingsService.getSendUserStatus()
+  let pubKey = self.settingsService.getPublicKey()
+  let sendUserStatus = self.settingsService.getSendStatusUpdates()
   ## This is still not in use. Read a comment in UserProfile.
   ## let currentUserStatus = self.settingsService.getCurrentUserStatus()
-  let obj = self.settingsService.getIdentityImage(loggedInAccount.keyUid)
+
+  let loggedInAccount = self.accountsService.getLoggedInAccount()
+  var thumbnail, large: string
+  for img in loggedInAccount.images:
+    if(img.imgType == "large"):
+      large = img.uri
+    elif(img.imgType == "thumbnail"):
+      thumbnail = img.uri
+
+  let meAsContact = self.contactsService.getContactById(pubKey)
+  var ensName: string
+  if(meAsContact.ensVerified):
+    ensName = prettyEnsName(meAsContact.name)
 
   singletonInstance.userProfile.setFixedData(loggedInAccount.name, loggedInAccount.keyUid, loggedInAccount.identicon, 
   pubKey)
-  singletonInstance.userProfile.setEnsName("") # in this moment we don't know ens name
-  singletonInstance.userProfile.setThumbnailImage(obj.thumbnail)
-  singletonInstance.userProfile.setLargeImage(obj.large)
+  singletonInstance.userProfile.setEnsName(ensName)
+  singletonInstance.userProfile.setThumbnailImage(thumbnail)
+  singletonInstance.userProfile.setLargeImage(large)
   singletonInstance.userProfile.setUserStatus(sendUserStatus)
 
   singletonInstance.engine.setRootContextProperty("userProfile", self.userProfileVariant)
