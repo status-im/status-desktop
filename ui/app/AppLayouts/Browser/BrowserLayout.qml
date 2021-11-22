@@ -39,8 +39,8 @@ Rectangle {
 
     property Component accessDialogComponent: BrowserConnectionModal {
         currentTab: tabs.getTab(tabs.currentIndex) && tabs.getTab(tabs.currentIndex).item
-        x: browserWindow.width - width - Style.current.halfPadding
-        y: browserHeader.y + browserHeader.height + Style.current.halfPadding
+        x: appLayout.width - width - Style.current.halfPadding
+        y: browserWindow.y + browserHeader.height + Style.current.halfPadding
     }
 
     // TODO we'll need a new dialog at one point because this one is not using the same call, but it's good for now
