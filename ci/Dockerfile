@@ -16,12 +16,11 @@ RUN export DEBIAN_FRONTEND=noninteractive \
  && sudo apt update -yq \
  && sudo apt purge -yq gnupg \
  && sudo apt install -yq --fix-missing \
-      build-essential cmake jq git s3cmd gnupg2 \
-      libpcre3-dev libnss3 libxcomposite1 libxtst6 \
+      build-essential cmake jq git s3cmd gnupg2 ca-certificates \
+      libpcre3-dev libnss3 libxcomposite1 libxtst6 libpcsclite-dev \
       gstreamer1.0-plugins-good gstreamer1.0-plugins-bad \
       gstreamer1.0-plugins-ugly gstreamer1.0-libav \
-      gstreamer1.0-tools gstreamer1.0-alsa gstreamer1.0-pulseaudio \
-      libpcsclite-dev
+      gstreamer1.0-tools gstreamer1.0-alsa gstreamer1.0-pulseaudio
 
 # Installing Golang
 RUN GOLANG_SHA256="d2c095c95f63c2a3ef961000e0ecb9d81d5c68b6ece176e2a8a2db82dc02931c" \
