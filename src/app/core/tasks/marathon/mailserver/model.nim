@@ -38,6 +38,11 @@ type
     nodes*: Table[string, MailserverStatus]
     activeMailserver*: string
     lastConnectionAttempt*: float
+    ## At this moment we cannot remove FleetModel from `status-lib` easily since the following error occurs:
+    ## /desktop-app/src/app/core/tasks/marathon/mailserver/worker.nim(120, 37) template/generic instantiation of `async` from here
+    ## /desktop-app/vendor/status-lib/vendor/nim-task-runner/vendor/nim-chronos/chronos/asyncmacro2.nim(210, 31) Error: 'worker' is not GC-safe as it calls 'init'
+    ## 
+    ## But at some point in future we will spend more time and figure out what's the issue.
     fleet*: FleetModel
     wakuVersion*: int
 
@@ -78,7 +83,8 @@ proc init*(self: MailserverModel) =
   self.fleet = newFleetModel(fleetConfig)
   self.wakuVersion = status_settings.getWakuVersion()
 
-  self.mailservers = toSeq(self.fleet.config.getMailservers(status_settings.getFleet(), self.wakuVersion == 2).values)
+  let fleet = parseEnum[Fleet](status_settings.getFleet())
+  self.mailservers = toSeq(self.fleet.config.getMailservers(fleet, self.wakuVersion == 2).values)
   
   for mailserver in status_settings.getMailservers().getElems():
     self.mailservers.add(mailserver["address"].getStr())
