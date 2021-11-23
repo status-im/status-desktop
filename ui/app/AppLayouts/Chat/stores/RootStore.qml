@@ -153,4 +153,12 @@ QtObject {
     function declineRequestToJoinCommunity(id) {
         chatsModelInst.communities.declineRequestToJoinCommunity(id);
     }
+
+    function addContact(pubKey) {
+        contactsModuleInst.addContact(pubKey);
+    }
+
+    function isContactAdded(address) {
+        return contactsModuleInst.model.isAdded(address);
+    }
 }

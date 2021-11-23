@@ -33,7 +33,7 @@ Item {
     property string contactToRemove: ""
     property string activeChatId: root.rootStore.chatsModelInst.channelView.activeChannel.id
     property bool isBlocked: root.rootStore.contactsModuleInst.model.isContactBlocked(activeChatId)
-    property bool isContact: root.rootStore.contactsModuleInst.model.isAdded(activeChatId)
+    property bool isContact: root.rootStore.isContactAdded(activeChatId)
 //    property bool contactRequestReceived: root.rootStore.contactsModuleInst.model.contactRequestReceived(activeChatId)
     property string currentNotificationChatId
     property string currentNotificationCommunityId
@@ -426,9 +426,12 @@ Item {
                 Layout.alignment: Qt.AlignHCenter | Qt.AlignBottom
                 Layout.fillWidth: true
                 Layout.bottomMargin: Style.current.bigPadding
+                isContact: root.isContact
                 visible: root.rootStore.chatsModelInst.channelView.activeChannel.chatType === Constants.chatTypeOneToOne
-                    && (!isContact /*|| !contactRequestReceived*/)
-                onAddContactClicked: root.rootStore.contactsModuleInst.addContact(activeChatId)
+                    && (!root.isContact /*|| !contactRequestReceived*/)
+                onAddContactClicked: {
+                    root.rootStore.addContact(activeChatId);
+                }
             }
         }
 
