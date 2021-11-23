@@ -72,6 +72,13 @@ Popup {
                 footerContent.visible = true
                 stickersContainer.visible = true
             }
+
+            Loader {
+                id: marketLoader
+                active: !root.stickerPacksLoaded
+                sourceComponent: loadingImageComponent
+                anchors.centerIn: parent
+            }
         }
 
         Item {
@@ -87,7 +94,7 @@ Popup {
             Item {
                 id: noStickerPacks
                 anchors.fill: parent
-                visible: false
+                visible: installedPacksCount == 0
 
                 Image {
                     id: imgNoStickers
