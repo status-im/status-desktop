@@ -34,18 +34,22 @@ method delete*[T](self: Controller[T]) =
 
 method init*[T](self: Controller[T]) = 
   self.events.on("contactAdded") do(e: Args):
+    self.contactsService.fetchContacts()
     let contacts = self.getContacts()
     self.delegate.setContactList(contacts)
 
   self.events.on("contactBlocked") do(e: Args):
+    self.contactsService.fetchContacts()
     let contacts = self.getContacts()
     self.delegate.setContactList(contacts)
 
   self.events.on("contactUnblocked") do(e: Args):
+    self.contactsService.fetchContacts()
     let contacts = self.getContacts()
     self.delegate.setContactList(contacts)
 
   self.events.on("contactRemoved") do(e: Args):
+    self.contactsService.fetchContacts()
     let contacts = self.getContacts()
     self.delegate.setContactList(contacts)
 
