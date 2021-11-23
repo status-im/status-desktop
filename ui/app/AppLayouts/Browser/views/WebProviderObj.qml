@@ -98,7 +98,7 @@ QtObject {
                     toastMessage.source = Style.svg("loading")
                     toastMessage.iconColor = Style.current.primary
                     toastMessage.iconRotates = true
-                    toastMessage.link = `${_WalletStore.etherscanLink}/${responseObj.result.result}`
+                    toastMessage.link = `${WalletStore.etherscanLink}/${responseObj.result.result}`
                     toastMessage.open()
                 } catch (e) {
                     if (Utils.isInvalidPasswordMessage(e.message)){
