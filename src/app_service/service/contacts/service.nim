@@ -40,7 +40,7 @@ QtObject:
     result.threadpool = threadpool
     result.contacts = initTable[string, ContactsDto]()
 
-  proc fetchContacts(self: Service) =
+  proc fetchContacts*(self: Service) =
     try:
       let response = status_contacts.getContacts()
 
