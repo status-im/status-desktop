@@ -28,14 +28,14 @@ import ../modules/main/module as main_module
 import ../global/local_account_settings
 import ../global/global_singleton
 
+import ../core/[main]
+
 #################################################
 # This will be removed later once we move to c++ and handle there async things
 # and improved some services, like EventsService which should implement 
 # provider/subscriber principe, similar we should have SettingsService.
 import ../../constants
-import ../core/[main]
 import eventemitter
-import status/[fleet]
 import ../profile/core as profile
 import ../chat/core as chat
 import ../wallet/v1/core as wallet
@@ -165,7 +165,7 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result.osNotificationService = os_notification_service.newService(statusFoundation.status.events)
   result.keychainService = keychain_service.newService(statusFoundation.status.events)
   result.settingsService = settings_service.newService()
-  result.accountsService = accounts_service.newService()
+  result.accountsService = accounts_service.newService(statusFoundation.fleetConfiguration)
   result.contactsService = contacts_service.newService(statusFoundation.status.events, statusFoundation.threadpool)
   result.chatService = chat_service.newService(result.contactsService)
   result.communityService = community_service.newService(result.chatService)
@@ -191,7 +191,6 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result.startupModule = startup_module.newModule[AppController](
     result,
     statusFoundation.status.events,
-    statusFoundation.status.fleet,
     result.keychainService, 
     result.accountsService
   )

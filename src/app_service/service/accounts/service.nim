@@ -4,9 +4,10 @@ import json_serialization, chronicles
 import service_interface
 import ./dto/accounts
 import ./dto/generated_accounts
-import status/statusgo_backend_new/accounts as status_go
-import status/statusgo_backend_new/general as status_go_general
+import status/statusgo_backend_new/accounts as status_account
+import status/statusgo_backend_new/general as status_general
 
+import ../../../app/core/fleets/fleet_configuration
 import ../../common/[account_constants, utils, string_utils]
 import ../../../constants as main_constants
 export service_interface
@@ -18,6 +19,7 @@ const PATHS = @[PATH_WALLET_ROOT, PATH_EIP_1581, PATH_WHISPER, PATH_DEFAULT_WALL
 
 type 
   Service* = ref object of ServiceInterface
+    fleetConfiguration: FleetConfiguration
     generatedAccounts: seq[GeneratedAccountDto]
     loggedInAccount: AccountDto
     importedAccount: GeneratedAccountDto
@@ -26,8 +28,9 @@ type
 method delete*(self: Service) =
   discard
 
-proc newService*(): Service =
+proc newService*(fleetConfiguration: FleetConfiguration): Service =
   result = Service()
+  result.fleetConfiguration = fleetConfiguration
   result.isFirstTimeAccountLogin = false
 
 method getLoggedInAccount*(self: Service): AccountDto =
@@ -40,11 +43,11 @@ method isFirstTimeAccountLogin*(self: Service): bool =
   return self.isFirstTimeAccountLogin
 
 method generateAlias*(self: Service, publicKey: string): string =
-  return status_go.generateAlias(publicKey).result.getStr
+  return status_account.generateAlias(publicKey).result.getStr
 
 method init*(self: Service) =
   try:
-    let response = status_go.generateAddresses(PATHS)
+    let response = status_account.generateAddresses(PATHS)
 
     self.generatedAccounts = map(response.result.getElems(), 
     proc(x: JsonNode): GeneratedAccountDto = toGeneratedAccountDto(x))
@@ -52,8 +55,7 @@ method init*(self: Service) =
     for account in self.generatedAccounts.mitems:
       account.alias = self.generateAlias(account.derivedAccounts.whisper.publicKey)
       
-      let responseIdenticon = status_go.generateIdenticon(
-        account.derivedAccounts.whisper.publicKey)
+      let responseIdenticon = status_account.generateIdenticon(account.derivedAccounts.whisper.publicKey)
       account.identicon = responseIdenticon.result.getStr
   
   except Exception as e:
@@ -67,7 +69,7 @@ method clear*(self: Service) =
 
 method validateMnemonic*(self: Service, mnemonic: string): string =
   try:
-    let response = status_go_general.validateMnemonic(mnemonic)
+    let response = status_general.validateMnemonic(mnemonic)
     
     var error = "response doesn't contain \"error\""
     if(response.result.contains("error")):
@@ -88,10 +90,9 @@ method generatedAccounts*(self: Service): seq[GeneratedAccountDto] =
 
 method openedAccounts*(self: Service): seq[AccountDto] =
   try:
-    let response = status_go.openedAccounts(main_constants.STATUSGODIR)
+    let response = status_account.openedAccounts(main_constants.STATUSGODIR)
 
-    let accounts = map(response.result.getElems(), 
-    proc(x: JsonNode): AccountDto = toAccountDto(x))
+    let accounts = map(response.result.getElems(), proc(x: JsonNode): AccountDto = toAccountDto(x))
 
     return accounts
 
@@ -101,7 +102,7 @@ method openedAccounts*(self: Service): seq[AccountDto] =
 proc storeDerivedAccounts(self: Service, accountId, hashedPassword: string, 
   paths: seq[string]): DerivedAccounts =
   try:
-    let response = status_go.storeDerivedAccounts(accountId, hashedPassword, paths)
+    let response = status_account.storeDerivedAccounts(accountId, hashedPassword, paths)
     result = toDerivedAccounts(response.result)
 
   except Exception as e:
@@ -110,8 +111,7 @@ proc storeDerivedAccounts(self: Service, accountId, hashedPassword: string,
 proc saveAccountAndLogin(self: Service, hashedPassword: string, account, 
   subaccounts, settings, config: JsonNode): AccountDto =
   try:
-    let response = status_go.saveAccountAndLogin(hashedPassword, account, 
-    subaccounts, settings, config)
+    let response = status_account.saveAccountAndLogin(hashedPassword, account, subaccounts, settings, config)
 
     var error = "response doesn't contain \"error\""
     if(response.result.contains("error")):
@@ -213,8 +213,7 @@ proc getAccountSettings(self: Service, accountId: string,
     if(self.importedAccount.id == accountId):
       return self.prepareAccountSettingsJsonObject(self.importedAccount, installationId)
 
-proc getDefaultNodeConfig*(self: Service, fleetConfig: FleetConfig, 
-  installationId: string): JsonNode =
+proc getDefaultNodeConfig*(self: Service, installationId: string): JsonNode =
   let networkConfig = getNetworkConfig(DEFAULT_NETWORK_NAME)
   let upstreamUrl = networkConfig["config"]["UpstreamConfig"]["URL"]
   let fleet = Fleet.PROD
@@ -223,10 +222,10 @@ proc getDefaultNodeConfig*(self: Service, fleetConfig: FleetConfig,
   newDataDir.removeSuffix("_rpc")
   result = NODE_CONFIG.copy()
   result["ClusterConfig"]["Fleet"] = newJString($fleet)
-  result["ClusterConfig"]["BootNodes"] = %* fleetConfig.getNodes(fleet, FleetNodes.Bootnodes)
-  result["ClusterConfig"]["TrustedMailServers"] = %* fleetConfig.getNodes(fleet, FleetNodes.Mailservers)
-  result["ClusterConfig"]["StaticNodes"] = %* fleetConfig.getNodes(fleet, FleetNodes.Whisper)
-  result["ClusterConfig"]["RendezvousNodes"] = %* fleetConfig.getNodes(fleet, FleetNodes.Rendezvous)
+  result["ClusterConfig"]["BootNodes"] = %* self.fleetConfiguration.getNodes(fleet, FleetNodes.Bootnodes)
+  result["ClusterConfig"]["TrustedMailServers"] = %* self.fleetConfiguration.getNodes(fleet, FleetNodes.Mailservers)
+  result["ClusterConfig"]["StaticNodes"] = %* self.fleetConfiguration.getNodes(fleet, FleetNodes.Whisper)
+  result["ClusterConfig"]["RendezvousNodes"] = %* self.fleetConfiguration.getNodes(fleet, FleetNodes.Rendezvous)
   result["NetworkId"] = networkConfig["config"]["NetworkId"]
   result["DataDir"] = newDataDir.newJString()
   result["UpstreamConfig"]["Enabled"] = networkConfig["config"]["UpstreamConfig"]["Enabled"]
@@ -235,22 +234,21 @@ proc getDefaultNodeConfig*(self: Service, fleetConfig: FleetConfig,
 
   # TODO: fleet.status.im should have different sections depending on the node type
   #       or maybe it's not necessary because a node has the identify protocol
-  result["ClusterConfig"]["RelayNodes"] =  %* fleetConfig.getNodes(fleet, FleetNodes.Waku)
-  result["ClusterConfig"]["StoreNodes"] =  %* fleetConfig.getNodes(fleet, FleetNodes.Waku)
-  result["ClusterConfig"]["FilterNodes"] =  %* fleetConfig.getNodes(fleet, FleetNodes.Waku)
-  result["ClusterConfig"]["LightpushNodes"] =  %* fleetConfig.getNodes(fleet, FleetNodes.Waku)
+  result["ClusterConfig"]["RelayNodes"] =  %* self.fleetConfiguration.getNodes(fleet, FleetNodes.Waku)
+  result["ClusterConfig"]["StoreNodes"] =  %* self.fleetConfiguration.getNodes(fleet, FleetNodes.Waku)
+  result["ClusterConfig"]["FilterNodes"] =  %* self.fleetConfiguration.getNodes(fleet, FleetNodes.Waku)
+  result["ClusterConfig"]["LightpushNodes"] =  %* self.fleetConfiguration.getNodes(fleet, FleetNodes.Waku)
 
   # TODO: commented since it's not necessary (we do the connections thru C bindings). Enable it thru an option once status-nodes are able to be configured in desktop
   # result["ListenAddr"] = if existsEnv("STATUS_PORT"): newJString("0.0.0.0:" & $getEnv("STATUS_PORT")) else: newJString("0.0.0.0:30305")
 
-method setupAccount*(self: Service, fleetConfig: FleetConfig, accountId, 
-  password: string): bool =
+method setupAccount*(self: Service, accountId, password: string): bool =
   try:
     let installationId = $genUUID()
     let accountDataJson = self.getAccountDataForAccountId(accountId)
     let subaccountDataJson = self.getSubaccountDataForAccountId(accountId)
     let settingsJson = self.getAccountSettings(accountId, installationId)
-    let nodeConfigJson = self.getDefaultNodeConfig(fleetConfig, installationId)
+    let nodeConfigJson = self.getDefaultNodeConfig(installationId)
 
     if(accountDataJson.isNil or subaccountDataJson.isNil or settingsJson.isNil or 
       nodeConfigJson.isNil):
@@ -261,8 +259,8 @@ method setupAccount*(self: Service, fleetConfig: FleetConfig, accountId,
     let hashedPassword = hashString(password)
     discard self.storeDerivedAccounts(accountId, hashedPassword, PATHS)
     
-    self.loggedInAccount = self.saveAccountAndLogin(hashedPassword, 
-    accountDataJson, subaccountDataJson, settingsJson, nodeConfigJson)
+    self.loggedInAccount = self.saveAccountAndLogin(hashedPassword, accountDataJson, subaccountDataJson, settingsJson, 
+    nodeConfigJson)
 
     return self.getLoggedInAccount.isValid()
 
@@ -272,16 +270,15 @@ method setupAccount*(self: Service, fleetConfig: FleetConfig, accountId,
 
 method importMnemonic*(self: Service, mnemonic: string): bool =
   try:
-    let response = status_go.multiAccountImportMnemonic(mnemonic)
+    let response = status_account.multiAccountImportMnemonic(mnemonic)
     self.importedAccount = toGeneratedAccountDto(response.result)
     
-    let responseDerived = status_go.deriveAccounts(self.importedAccount.id, PATHS)
+    let responseDerived = status_account.deriveAccounts(self.importedAccount.id, PATHS)
     self.importedAccount.derivedAccounts = toDerivedAccounts(responseDerived.result)
 
     self.importedAccount.alias= self.generateAlias(self.importedAccount.derivedAccounts.whisper.publicKey)
     
-    let responseIdenticon = status_go.generateIdenticon(
-      self.importedAccount.derivedAccounts.whisper.publicKey)
+    let responseIdenticon = status_account.generateIdenticon(self.importedAccount.derivedAccounts.whisper.publicKey)
     self.importedAccount.identicon = responseIdenticon.result.getStr
 
     return self.importedAccount.isValid()
@@ -301,7 +298,7 @@ method login*(self: Service, account: AccountDto, password: string): string =
       elif(img.imgType == "large"):
         largeImage = img.uri
 
-    let response = status_go.login(account.name, account.keyUid, hashedPassword, account.identicon, thumbnailImage, 
+    let response = status_account.login(account.name, account.keyUid, hashedPassword, account.identicon, thumbnailImage, 
     largeImage)
 
     var error = "response doesn't contain \"error\""

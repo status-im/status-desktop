@@ -18,19 +18,16 @@ type
     ref object of controller_interface.AccessInterface
     delegate: io_interface.AccessInterface
     events: EventEmitter
-    fleet: FleetModel
     accountsService: accounts_service.ServiceInterface
     selectedAccountId: string
 
 proc newController*(delegate: io_interface.AccessInterface,
   events: EventEmitter,
-  fleet: FleetModel,
   accountsService: accounts_service.ServiceInterface): 
   Controller =
   result = Controller()
   result.delegate = delegate
   result.events = events
-  result.fleet = fleet
   result.accountsService = accountsService
   
 method delete*(self: Controller) =
@@ -53,8 +50,7 @@ method setSelectedAccountByIndex*(self: Controller, index: int) =
   self.selectedAccountId = accounts[index].id
 
 method storeSelectedAccountAndLogin*(self: Controller, password: string) =
-  if(not self.accountsService.setupAccount(self.fleet.config, 
-  self.selectedAccountId, password)):
+  if(not self.accountsService.setupAccount(self.selectedAccountId, password)):
     self.delegate.setupAccountError()
 
 method validateMnemonic*(self: Controller, mnemonic: string): string =

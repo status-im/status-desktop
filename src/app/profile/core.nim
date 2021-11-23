@@ -1,4 +1,4 @@
-import NimQml, json, tables
+import NimQml, json
 import json_serialization
 import status/[status, settings]
 import status/contacts as status_contacts
@@ -63,9 +63,11 @@ proc init*(self: ProfileController, account: Account) =
   self.view.ens.init()
   self.view.initialized()
 
-  for name, endpoint in self.status.fleet.config.getMailservers(self.status.settings.getFleet(), self.status.settings.getWakuVersion() == 2).pairs():
-    let mailserver = MailServer(name: name, endpoint: endpoint)
-    self.view.mailservers.add(mailserver)
+  # Delete this once it's refactored.
+  #
+  # for name, endpoint in self.status.fleet.config.getMailservers(self.status.settings.getFleet(), self.status.settings.getWakuVersion() == 2).pairs():
+  #   let mailserver = MailServer(name: name, endpoint: endpoint)
+  #   self.view.mailservers.add(mailserver)
 
   for mailserver in self.status.settings.getMailservers().getElems():
     let mailserver = MailServer(name: mailserver["name"].getStr(), endpoint: mailserver["address"].getStr())

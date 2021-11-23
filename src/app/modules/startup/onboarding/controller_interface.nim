@@ -10,22 +10,19 @@ method delete*(self: AccessInterface) {.base.} =
 method init*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getGeneratedAccounts*(self: AccessInterface): 
-  seq[GeneratedAccountDto] {.base.} =
+method getGeneratedAccounts*(self: AccessInterface): seq[GeneratedAccountDto] {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method setSelectedAccountByIndex*(self: AccessInterface, index: int) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method storeSelectedAccountAndLogin*(self: AccessInterface, password: string) 
-  {.base.} =
+method storeSelectedAccountAndLogin*(self: AccessInterface, password: string) {.base.} =
   raise newException(ValueError, "No implementation available")
     
 method getImportedAccount*(self: AccessInterface): GeneratedAccountDto {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method validateMnemonic*(self: AccessInterface, mnemonic: string): 
-  string {.base.} =
+method validateMnemonic*(self: AccessInterface, mnemonic: string): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method importMnemonic*(self: AccessInterface, mnemonic: string) {.base.} =

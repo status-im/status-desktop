@@ -40,7 +40,7 @@ QtObject:
   proc setNetworkAndPersist*(self: NetworkView, network: string) {.slot.} =
     self.network = network
     self.networkChanged()
-    self.status.accounts.changeNetwork(self.status.fleet.config, network) ############################### 
+    self.status.accounts.changeNetwork(network) ############################### 
     quit(QuitSuccess) # quits the app TODO: change this to logout instead when supported
 
   QtProperty[QVariant] current:

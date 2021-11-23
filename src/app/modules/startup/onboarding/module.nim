@@ -7,7 +7,6 @@ import ../../../global/global_singleton
 import ../../../../app_service/service/accounts/service_interface as accounts_service
 
 import eventemitter
-import status/[fleet]
 
 export io_interface
 
@@ -19,17 +18,14 @@ type
     controller: controller.AccessInterface
     moduleLoaded: bool
 
-proc newModule*(delegate: delegate_interface.AccessInterface,
-  events: EventEmitter,
-  fleet: FleetModel,
+proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitter,
   accountsService: accounts_service.ServiceInterface): 
   Module =
   result = Module()
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, events, fleet, 
-  accountsService)
+  result.controller = controller.newController(result, events, accountsService)
   result.moduleLoaded = false
 
 method delete*(self: Module) =
