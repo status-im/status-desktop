@@ -5,7 +5,7 @@ import QtQuick 2.13
 QtObject {
     id: root
 
-    property var dappBrowserAccount: walletSectionAccounts.current
+    property var dappBrowserAccount: walletSectionCurrent
     property var accounts: walletSectionAccounts.model
     property string defaultCurrency: walletSection.currentCurrency
     property string signingPhrase: walletSection.signingPhrase
