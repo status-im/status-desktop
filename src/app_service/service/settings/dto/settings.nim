@@ -60,6 +60,8 @@ type
     fleet*: string
     currentUserStatus*: CurrentUserStatus
     walletVisibleTokens*: WalletVisibleTokens
+    nodeConfig*: JsonNode
+    wakuBloomFilterMode*: bool
 
 proc toUpstreamConfig*(jsonObj: JsonNode): UpstreamConfig =
   discard jsonObj.getProp("Enabled", result.enabled)
@@ -145,3 +147,6 @@ proc toSettingsDto*(jsonObj: JsonNode): SettingsDto =
   var walletVisibleTokensObj: JsonNode
   if(jsonObj.getProp("wallet/visible-tokens", walletVisibleTokensObj)):
     result.walletVisibleTokens = toWalletVisibleTokens(walletVisibleTokensObj, result.currentNetwork)
+
+  discard jsonObj.getProp("node-config", result.nodeConfig)
+  discard jsonObj.getProp("waku-bloom-filter-mode", result.wakuBloomFilterMode)
