@@ -27,7 +27,7 @@ StatusAppThreePanelLayout {
     property var store
 
     // Not Refactored
-//    property var messageStore
+   property var messageStore
 
     // Not Refactored
    property RootStore rootStore: RootStore {

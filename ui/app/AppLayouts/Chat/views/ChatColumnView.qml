@@ -369,8 +369,8 @@ Item {
                                                           //% "Type a message."
                                                           qsTrId("type-a-message-")
                                 anchors.bottom: parent.bottom
-                                recentStickers: root.rootStore.chatsModelInst.stickers.recent
-                                stickerPackList: root.rootStore.chatsModelInst.stickers.stickerPacks
+                                recentStickers: root.rootStore.stickersModuleInst.recent
+                                stickerPackList: root.rootStore.stickersModuleInst.stickerPacks
                                 chatType: root.rootStore.chatsModelInst.channelView.activeChannel.chatType
                                 onSendTransactionCommandButtonClicked: {
                                     if (root.rootStore.chatsModelInst.channelView.activeChannel.ensVerified) {
@@ -385,7 +385,10 @@ Item {
                                     txModalLoader.item.open()
                                 }
                                 onStickerSelected: {
-                                    root.rootStore.chatsModelInst.stickers.send(hashId, chatInput.isReply ? SelectedMessage.messageId : "", packId)
+                                    root.rootStore.stickersModuleInst.send(root.rootStore.chatsModelInst.channelView.activeChannel.id,
+                                                                           hashId,
+                                                                           chatInput.isReply ? SelectedMessage.messageId : "",
+                                                                           packId)
                                 }
                                 onSendMessage: {
                                     if (chatInput.fileUrls.length > 0){
