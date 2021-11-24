@@ -89,6 +89,18 @@ StatusWindow {
             mainModule.openStoreToKeychainPopup.connect(function(){
                 storeToKeychainConfirmationPopup.open()
             })
+            if(localAccountSensitiveSettings.recentEmojis === "") {
+                 localAccountSensitiveSettings.recentEmojis = [];
+             }
+            if (localAccountSensitiveSettings.whitelistedUnfurlingSites === "") {
+                localAccountSensitiveSettings.whitelistedUnfurlingSites = {};
+            }
+            if (localAccountSensitiveSettings.hiddenCommunityWelcomeBanners === "") {
+                localAccountSensitiveSettings.hiddenCommunityWelcomeBanners = [];
+            }
+            if (localAccountSensitiveSettings.hiddenCommunityBackUpBanners === "") {
+                localAccountSensitiveSettings.hiddenCommunityBackUpBanners = [];
+            }
         }
     }
 
