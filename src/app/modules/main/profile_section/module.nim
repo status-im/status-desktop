@@ -87,6 +87,7 @@ method load*[T](self: Module[T]) =
 
   self.view.setIsTelemetryEnabled(self.controller.isTelemetryEnabled())
   self.view.setIsDebugEnabled(self.controller.isDebugEnabled())
+  self.view.setIsAutoMessageEnabled(self.controller.isAutoMessageEnabled())
 
   self.moduleLoaded = true
   self.delegate.profileSectionDidLoad()
@@ -99,6 +100,9 @@ method viewDidLoad*(self: Module) =
 
 method toggleTelemetry*[T](self: Module[T]) = 
   self.controller.toggleTelemetry()
+
+method toggleAutoMessage*[T](self: Module[T]) = 
+  self.controller.toggleAutoMessage()
 
 method toggleDebug*[T](self: Module[T]) =
   self.controller.toggleDebug()
