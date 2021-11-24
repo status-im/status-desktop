@@ -21,6 +21,7 @@ import ../../app_service/service/ens/service as ens_service
 import ../../app_service/service/profile/service as profile_service
 import ../../app_service/service/settings/service as settings_service
 import ../../app_service/service/about/service as about_service
+import ../../app_service/service/node_configuration/service as node_configuration_service
 
 import ../modules/startup/module as startup_module
 import ../modules/main/module as main_module
@@ -100,6 +101,7 @@ type
     languageService: language_service.Service
     mnemonicService: mnemonic_service.Service
     privacyService: privacy_service.Service
+    nodeConfigurationService: node_configuration_service.Service
 
     # Modules
     startupModule: startup_module.AccessInterface
@@ -162,9 +164,11 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result.userProfileVariant = newQVariant(singletonInstance.userProfile)
 
   # Services
+  result.settingsService = settings_service.newService()
+  result.nodeConfigurationService = node_configuration_service.newService(statusFoundation.fleetConfiguration, 
+  result.settingsService)
   result.osNotificationService = os_notification_service.newService(statusFoundation.status.events)
   result.keychainService = keychain_service.newService(statusFoundation.status.events)
-  result.settingsService = settings_service.newService()
   result.accountsService = accounts_service.newService(statusFoundation.fleetConfiguration)
   result.contactsService = contacts_service.newService(statusFoundation.status.events, statusFoundation.threadpool)
   result.chatService = chat_service.newService(result.contactsService)
@@ -261,12 +265,13 @@ proc delete*(self: AppController) =
   self.tokenService.delete
   self.transactionService.delete
   self.collectibleService.delete
-  self.settingsService.delete
   self.walletAccountService.delete
   self.aboutService.delete
   self.dappPermissionsService.delete
   self.providerService.delete
   self.ensService.delete
+  self.nodeConfigurationService.delete
+  self.settingsService.delete  
 
 proc startupDidLoad*(self: AppController) =
   #################################################
@@ -306,6 +311,7 @@ proc start*(self: AppController) =
 
 proc load(self: AppController) =
   self.settingsService.init()
+  self.nodeConfigurationService.init()
   self.contactsService.init()
   self.chatService.init()
   self.communityService.init()
