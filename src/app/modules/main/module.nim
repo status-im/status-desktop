@@ -9,6 +9,7 @@ import wallet_section/module as wallet_section_module
 import browser_section/module as browser_section_module
 import profile_section/module as profile_section_module
 import app_search/module as app_search_module
+import stickers/module as stickers_module
 
 import ../../../app_service/service/keychain/service as keychain_service
 import ../../../app_service/service/chat/service as chat_service
@@ -29,6 +30,7 @@ import ../../../app_service/service/about/service as about_service
 import ../../../app_service/service/language/service as language_service
 import ../../../app_service/service/mnemonic/service as mnemonic_service
 import ../../../app_service/service/privacy/service as privacy_service
+import ../../../app_service/service/stickers/service as stickers_service
 
 import eventemitter
 
@@ -45,6 +47,7 @@ type
     walletSectionModule: wallet_section_module.AccessInterface
     browserSectionModule: browser_section_module.AccessInterface
     profileSectionModule: profile_section_module.AccessInterface
+    stickersModule: stickers_module.AccessInterface
     appSearchModule: app_search_module.AccessInterface
     moduleLoaded: bool
 
@@ -69,7 +72,8 @@ proc newModule*[T](
   languageService: language_service.ServiceInterface,
   mnemonicService: mnemonic_service.ServiceInterface,
   privacyService: privacy_service.ServiceInterface,
-  providerService: provider_service.ServiceInterface
+  providerService: provider_service.ServiceInterface,
+  stickersService: stickers_service.Service
   ): Module[T] =
   result = Module[T]()
   result.delegate = delegate
@@ -89,12 +93,14 @@ proc newModule*[T](
   dappPermissionsService, providerService)
   result.profileSectionModule = profile_section_module.newModule(result, events, accountsService, settingsService, 
   profileService, contactsService, aboutService, languageService, mnemonicService, privacyService)
+  result.stickersModule = stickers_module.newModule(result, events, stickersService)
   result.appSearchModule = app_search_module.newModule(result, events, contactsService, chatService, communityService, 
   messageService)
 
 method delete*[T](self: Module[T]) =
   self.chatSectionModule.delete
   self.profileSectionModule.delete
+  self.stickersModule.delete
   for cModule in self.communitySectionsModule.values:
     cModule.delete
   self.communitySectionsModule.clear
@@ -105,17 +111,30 @@ method delete*[T](self: Module[T]) =
   self.viewVariant.delete
   self.controller.delete
 
-method load*[T](self: Module[T], events: EventEmitter, chatService: chat_service.Service,
-  communityService: community_service.Service, messageService: message_service.Service) =
+method load*[T](
+    self: Module[T],
+    events: EventEmitter,
+    chatService: chat_service.Service,
+    communityService: community_service.Service,
+    messageService: message_service.Service
+  ) =
   singletonInstance.engine.setRootContextProperty("mainModule", self.viewVariant)
   self.controller.init()
   self.view.load()
 
   # Create community modules here, since we don't know earlier how many communities we have.
   let communities = self.controller.getCommunities()
+
   for c in communities:
-    self.communitySectionsModule[c.id] = chat_section_module.newModule(self, events, c.id, true, chatService, 
-    communityService, messageService)
+    self.communitySectionsModule[c.id] = chat_section_module.newModule(
+      self,
+      events,
+      c.id,
+      true,
+      chatService, 
+      communityService,
+      messageService
+    )
 
   var activeSection: Item
   var activeSectionId = singletonInstance.localAccountSensitiveSettings.getActiveSection()
@@ -199,6 +218,7 @@ method load*[T](self: Module[T], events: EventEmitter, chatService: chat_service
   # self.timelineSectionModule.load()
   # self.nodeManagementSectionModule.load()
   self.profileSectionModule.load()
+  self.stickersModule.load()
   self.appSearchModule.load()
 
   # Set active section on app start
@@ -222,6 +242,9 @@ proc checkIfModuleDidLoad [T](self: Module[T]) =
     return
 
   if(not self.profileSectionModule.isLoaded()):
+    return
+
+  if(not self.stickersModule.isLoaded()):
     return
 
   self.moduleLoaded = true

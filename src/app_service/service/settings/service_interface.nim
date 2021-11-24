@@ -1,7 +1,10 @@
 import json
+import tables
 import ./dto/settings as settings_dto
+import ../stickers/dto/stickers as stickers_dto
 
 export settings_dto
+export stickers_dto
 
 # Default values:
 const DEFAULT_CURRENT_NETWORK* = "mainnet_rpc"
@@ -194,6 +197,25 @@ method getWalletVisibleTokens*(self: ServiceInterface): seq[string] {.base.} =
 
 method saveWalletVisibleTokens*(self: ServiceInterface, tokens: seq[string]): bool {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method isEIP1559Enabled*(self: ServiceInterface, blockNumber: int): bool {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method isEIP1559Enabled*(self: ServiceInterface): bool {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getRecentStickers*(self: ServiceInterface): seq[StickerDto] {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method saveRecentStickers*(self: ServiceInterface, recentStickers: seq[StickerDto]): bool {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getInstalledStickerPacks*(self: ServiceInterface): Table[int, StickerPackDto] {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method saveRecentStickers*(self: ServiceInterface, installedStickerPacks: Table[int, StickerPackDto]): bool {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 
 method saveNodeConfiguration*(self: ServiceInterface, value: JsonNode): bool {.base.} =
   raise newException(ValueError, "No implementation available")

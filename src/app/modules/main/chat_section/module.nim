@@ -2,7 +2,6 @@ import NimQml, Tables, chronicles
 import io_interface
 import ../io_interface as delegate_interface
 import view, controller, item, sub_item, model, sub_model
-import ../../../global/global_singleton
 
 import chat_content/module as chat_content_module
 
@@ -26,10 +25,16 @@ type
     chatContentModule: OrderedTable[string, chat_content_module.AccessInterface]
     moduleLoaded: bool
 
-proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitter, sectionId: string, isCommunity: bool, 
-  chatService: chat_service.Service, communityService: community_service.Service, 
-  messageService: message_service.Service): 
-  Module =
+
+proc newModule*(
+    delegate: delegate_interface.AccessInterface,
+    events: EventEmitter,
+    sectionId: string,
+    isCommunity: bool, 
+    chatService: chat_service.Service,
+    communityService: community_service.Service, 
+    messageService: message_service.Service
+  ): Module =
   result = Module()
   result.delegate = delegate
   result.view = view.newView(result)
