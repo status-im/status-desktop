@@ -1,3 +1,4 @@
+import json
 import ./dto/settings as settings_dto
 
 export settings_dto
@@ -201,4 +202,10 @@ method getWalletVisibleTokens*(self: ServiceInterface): seq[string] {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method saveWalletVisibleTokens*(self: ServiceInterface, tokens: seq[string]): bool {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method saveNodeConfiguration*(self: ServiceInterface, value: JsonNode): bool {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method saveWakuBloomFilterMode*(self: ServiceInterface, value: bool): bool {.base.} =
   raise newException(ValueError, "No implementation available")

@@ -36,6 +36,8 @@ const KEY_SEND_STATUS_UPDATES = "send-status-updates?"
 const KEY_TELEMETRY_SERVER_URL = "telemetry-server-url"
 const KEY_FLEET = "fleet"
 const KEY_WALLET_VISIBLE_TOKENS = "wallet/visible-tokens"
+const KEY_NODE_CONFIG = "node-config"
+const KEY_WAKU_BLOOM_FILTER_MODE = "waku-bloom-filter-mode"
 
 type
   Service* = ref object of service_interface.ServiceInterface
@@ -364,5 +366,17 @@ method saveWalletVisibleTokens*(self: Service, tokens: seq[string]): bool =
   obj[self.getCurrentNetwork()] = %* tokens
   if(self.saveSetting(KEY_WALLET_VISIBLE_TOKENS, obj)):
     self.settings.walletVisibleTokens.tokens = tokens
+    return true
+  return false
+
+method saveNodeConfiguration*(self: Service, value: JsonNode): bool =
+  if(self.saveSetting(KEY_NODE_CONFIG, value)):
+    self.settings.nodeConfig = value
+    return true
+  return false
+
+method saveWakuBloomFilterMode*(self: Service, value: bool): bool =
+  if(self.saveSetting(KEY_WAKU_BLOOM_FILTER_MODE, value)):
+    self.settings.wakuBloomFilterMode = value
     return true
   return false
