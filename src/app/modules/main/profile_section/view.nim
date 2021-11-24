@@ -9,6 +9,7 @@ QtObject:
       # TODO: move to the correct module once all have been merged
       isTelemetryEnabled: bool
       isDebugEnabled: bool
+      isAutoMessageEnabled: bool
 
   proc setup(self: View) = 
     self.QObject.setup
@@ -54,3 +55,20 @@ QtObject:
   proc toggleDebug*(self: View) {.slot.} = 
     self.delegate.toggleDebug()
     self.setIsDebugEnabled(not self.isDebugEnabled)
+
+  proc isAutoMessageEnabledChanged*(self: View) {.signal.}
+
+  proc setIsAutoMessageEnabled*(self: View, isAutoMessageEnabled: bool) =
+    self.isAutoMessageEnabled = isAutoMessageEnabled
+    self.isAutoMessageEnabledChanged()
+
+  proc getIsAutoMessageEnabled*(self: View): QVariant {.slot.} =
+    return newQVariant(self.isAutoMessageEnabled)
+
+  QtProperty[QVariant] isAutoMessageEnabled:
+    read = getIsAutoMessageEnabled
+    notify = isAutoMessageEnabledChanged
+
+  proc toggleAutoMessage*(self: View) {.slot.} = 
+    self.delegate.toggleAutoMessage()
+    self.setIsAutoMessageEnabled(not self.isAutoMessageEnabled)

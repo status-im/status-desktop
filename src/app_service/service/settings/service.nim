@@ -89,6 +89,13 @@ method isTelemetryEnabled*(self: Service): bool =
   let telemetryServerUrl = status_go_settings.getSetting[string](Setting.TelemetryServerUrl)
   return telemetryServerUrl != ""
 
+method toggleAutoMessage*(self: Service) =
+  let enabled = status_go_settings.getSetting[bool](Setting.AutoMessageEnabled)
+  discard status_go_settings.saveSetting(Setting.AutoMessageEnabled, not enabled)
+
+method isAutoMessageEnabled*(self: Service): bool =
+  return status_go_settings.getSetting[bool](Setting.AutoMessageEnabled)
+
 method toggleDebug*(self: Service) =
   var nodeConfig = status_go_settings.getNodeConfig()
   if nodeConfig["LogLevel"].getStr() == $LogLevel.INFO:

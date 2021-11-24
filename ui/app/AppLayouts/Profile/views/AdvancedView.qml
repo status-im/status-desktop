@@ -417,12 +417,23 @@ ScrollView {
                 }
             }
 
+            // TODO: replace with StatusQ component
             StatusSettingsLineButton {
                 text: qsTr("Debug")
                 isSwitch: true
                 switchChecked: root.store.profileModuleInst.isDebugEnabled
                 onClicked: {
                     openPopup(enableDebugComponent)
+                }
+            }
+
+            // TODO: replace with StatusQ component
+            StatusSettingsLineButton {
+                text: qsTr("Enable Auto message")
+                isSwitch: true
+                switchChecked: root.store.profileModuleInst.isAutoMessageEnabled
+                onClicked: {
+                    openPopup(enableAutoMessageConfirmationDialogComponent, {light: false})
                 }
             }
         }
@@ -445,6 +456,24 @@ ScrollView {
                 confirmationText: qsTr("Are you sure you want to enable telemetry? This will reduce your privacy level while using Status. You need to restart the app for this change to take effect.")
                 onConfirmButtonClicked: {
                     root.store.profileModuleInst.toggleTelemetry()
+                    close()
+                }
+                onCancelButtonClicked: {
+                    close()
+                }
+            }
+        }
+
+        Component {
+            id: enableAutoMessageConfirmationDialogComponent
+            ConfirmationDialog {
+                property bool mode: false
+
+                id: confirmDialog
+                showCancelButton: true
+                confirmationText: qsTr("Are you sure you want to enable auto message? You need to restart the app for this change to take effect.")
+                onConfirmButtonClicked: {
+                    root.store.profileModuleInst.toggleAutoMessage()
                     close()
                 }
                 onCancelButtonClicked: {

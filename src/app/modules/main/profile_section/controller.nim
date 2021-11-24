@@ -44,6 +44,12 @@ method toggleTelemetry*[T](self: Controller[T]) =
 method isTelemetryEnabled*[T](self: Controller[T]): bool = 
   return self.settingsService.isTelemetryEnabled()
 
+method toggleAutoMessage*[T](self: Controller[T]) = 
+  self.settingsService.toggleAutoMessage()
+
+method isAutoMessageEnabled*[T](self: Controller[T]): bool = 
+  return self.settingsService.isAutoMessageEnabled()
+
 method toggleDebug*[T](self: Controller[T]) = 
   self.settingsService.toggleDebug()
 
