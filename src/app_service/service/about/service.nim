@@ -33,7 +33,7 @@ method init*(self: Service) =
     return
 
 method getAppVersion*(self: Service): string =
-  return DESKTOP_VERSION
+  return "0.0.0" #DESKTOP_VERSION
 
 method getNodeVersion*(self: Service): string =
-  return status_go_settings.getWeb3ClientVersion()
+  return "0.0.1" # status_go_settings.getWeb3ClientVersion()
