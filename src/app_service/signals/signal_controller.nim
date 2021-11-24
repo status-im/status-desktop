@@ -32,6 +32,8 @@ QtObject:
       error "Invalid signal received", data = statusSignal
       return
 
+    echo statusSignal
+
     trace "Raw signal data", data = $jsonSignal
     
     var signal:Signal
