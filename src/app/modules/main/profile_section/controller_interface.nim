@@ -15,6 +15,12 @@ method toggleTelemetry*(self: AccessInterface) {.base.} =
 method isTelemetryEnabled*(self: AccessInterface): bool {.base.} = 
   raise newException(ValueError, "No implementation available")
 
+method toggleAutoMessage*(self: AccessInterface) {.base.} = 
+  raise newException(ValueError, "No implementation available")
+
+method isAutoMessageEnabled*(self: AccessInterface): bool {.base.} = 
+  raise newException(ValueError, "No implementation available")
+
 method toggleDebug*(self: AccessInterface) {.base.} = 
   raise newException(ValueError, "No implementation available")
 
