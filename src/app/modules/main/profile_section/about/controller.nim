@@ -22,7 +22,7 @@ method init*[T](self: Controller[T]) =
   discard
 
 method getAppVersion*[T](self: Controller[T]): string =
-  return self.aboutService.getAppVersion()
+  return "0" #self.aboutService.getAppVersion()
 
 method getNodeVersion*[T](self: Controller[T]): string =
-  return self.aboutService.getNodeVersion()
+  return "0" #self.aboutService.getNodeVersion()
