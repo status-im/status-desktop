@@ -1,6 +1,5 @@
 import NimQml, chronicles, sequtils, sugar, stint, json
 import status/statusgo_backend_new/transactions as transactions
-import status/statusgo_backend/wallet
 
 import eventemitter
 
@@ -52,9 +51,6 @@ QtObject:
       let errDesription = e.msg
       error "error: ", errDesription
       return
-
-  proc getPendingTransactions*(self: Service): string =
-    wallet.getPendingTransactions()
 
   proc getTransfersByAddress*(self: Service, address: string, toBlock: Uint256, limit: int, loadMore: bool = false): seq[TransactionDto] =
     try:

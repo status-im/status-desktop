@@ -16,7 +16,7 @@ Popup {
     property var recentStickers: StickerData {}
     property var stickerPackList: StickerPackData {}
     signal stickerSelected(string hashId, string packId)
-    property int installedPacksCount: stickersModule.numInstalledStickerPacks
+    property int installedPacksCount: chatsModel.stickers.numInstalledStickerPacks
     property bool stickerPacksLoaded: false
     width: 360
     height: 440
@@ -58,12 +58,12 @@ Popup {
             Layout.fillHeight: true
             stickerPacks: stickerPackList
             onInstallClicked: {
-                stickersModule.install(packId)
+                chatsModel.stickers.install(packId)
                 stickerGrid.model = stickers
                 stickerPackListView.itemAt(index).clicked()
             }
             onUninstallClicked: {
-                stickersModule.uninstall(packId)
+                chatsModel.stickers.uninstall(packId)
                 stickerGrid.model = recentStickers
                 btnHistory.clicked()
             }
@@ -120,7 +120,7 @@ Popup {
 
                     StyledText {
                         id: lblNoRecentStickers
-                        visible: stickerPackListView.selectedPackId === -1 && stickersModule.recent.rowCount() === 0 && !lblNoStickersYet.visible
+                        visible: stickerPackListView.selectedPackId === -1 && chatsModel.stickers.recent.rowCount() === 0 && !lblNoStickersYet.visible
                         anchors.fill: parent
                         font.pixelSize: 15
                         //% "Recently used stickers will appear here"
@@ -164,7 +164,7 @@ Popup {
 
             Loader {
                 id: loadingGrid
-                active: stickersModule.recent.rowCount() === 0
+                active: chatsModel.stickers.recent.rowCount() === 0
                 sourceComponent: loadingImageComponent
                 anchors.centerIn: parent
             }
@@ -261,13 +261,13 @@ Popup {
         }
     }
     Connections {
-        target: stickersModule
+        target: chatsModel.stickers
         onStickerPacksLoaded: {
             root.stickerPacksLoaded = true
             stickerPackListView.visible = true
             loadingGrid.active = false
             loadingStickerPackListView.model = []
-            noStickerPacks.visible = installedPacksCount === 0 || stickersModule.recent.rowCount() === 0
+            noStickerPacks.visible = installedPacksCount === 0 || chatsModel.stickers.recent.rowCount() === 0
         }
     }
 }
