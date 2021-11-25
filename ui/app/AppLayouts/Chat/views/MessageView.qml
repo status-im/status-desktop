@@ -230,6 +230,7 @@ Column {
 
     Loader {
         id: messageLoader
+        active: root.visible
         width: parent.width
         sourceComponent: {
             switch(contentType) {
