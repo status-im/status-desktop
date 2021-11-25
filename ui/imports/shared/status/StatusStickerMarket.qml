@@ -101,10 +101,10 @@ Item {
                     assetPrice: price
                     estimateGasFunction: function(selectedAccount, uuid) {
                         if (packId < 0  || !selectedAccount || !price) return 325000
-                        return stickersModule.estimate(packId, selectedAccount.address, price, uuid)
+                        return chatsModel.stickers.estimate(packId, selectedAccount.address, price, uuid)
                     }
                     onSendTransaction: function(selectedAddress, gasLimit, gasPrice, tipLimit, overallLimit, password) {
-                        return stickersModule.buy(packId,
+                        return chatsModel.stickers.buy(packId,
                                                        selectedAddress,
                                                        price,
                                                        gasLimit,
@@ -122,7 +122,7 @@ Item {
             }
 
             Connections {
-                target: stickersModule
+                target: chatsModel.stickers
                 onGasEstimateReturned: {
                     stickerPurchasePopup.setAsyncGasLimitResult(uuid, estimate)
                 }

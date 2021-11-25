@@ -1,9 +1,6 @@
 import NimQml, os, strformat
 
-import ../../app_service/common/utils
-
 import ../../app_service/service/os_notification/service as os_notification_service
-import ../../app_service/service/eth/service as eth_service
 import ../../app_service/service/keychain/service as keychain_service
 import ../../app_service/service/accounts/service as accounts_service
 import ../../app_service/service/contacts/service as contacts_service
@@ -23,10 +20,8 @@ import ../../app_service/service/provider/service as provider_service
 import ../../app_service/service/ens/service as ens_service
 import ../../app_service/service/profile/service as profile_service
 import ../../app_service/service/settings/service as settings_service
-import ../../app_service/service/stickers/service as stickers_service
 import ../../app_service/service/about/service as about_service
 import ../../app_service/service/node_configuration/service as node_configuration_service
-import ../../app_service/service/network/service as network_service
 
 import ../modules/startup/module as startup_module
 import ../modules/main/module as main_module
@@ -87,7 +82,6 @@ type
     # Services
     osNotificationService: os_notification_service.Service
     keychainService: keychain_service.Service
-    ethService: eth_service.Service
     accountsService: accounts_service.Service
     contactsService: contacts_service.Service
     chatService: chat_service.Service
@@ -103,9 +97,7 @@ type
     providerService: provider_service.Service
     profileService: profile_service.Service
     settingsService: settings_service.Service
-    stickersService: stickers_service.Service
     aboutService: about_service.Service
-    networkService: network_service.Service
     languageService: language_service.Service
     mnemonicService: mnemonic_service.Service
     privacyService: privacy_service.Service
@@ -177,9 +169,7 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result.settingsService)
   result.osNotificationService = os_notification_service.newService(statusFoundation.status.events)
   result.keychainService = keychain_service.newService(statusFoundation.status.events)
-  result.ethService = eth_service.newService()
   result.accountsService = accounts_service.newService(statusFoundation.fleetConfiguration)
-  result.networkService = network_service.newService()
   result.contactsService = contacts_service.newService(statusFoundation.status.events, statusFoundation.threadpool)
   result.chatService = chat_service.newService(result.contactsService)
   result.communityService = community_service.newService(result.chatService)
@@ -193,7 +183,6 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result.walletAccountService)
   result.bookmarkService = bookmark_service.newService()
   result.profileService = profile_service.newService()
-  result.stickersService = stickers_service.newService(statusFoundation.status.events, statusFoundation.threadpool, result.ethService, result.settingsService, result.walletAccountService, result.transactionService, result.networkService, result.chatService)
   result.aboutService = about_service.newService()
   result.dappPermissionsService = dapp_permissions_service.newService()
   result.languageService = language_service.newService()
@@ -231,7 +220,6 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
     result.mnemonicService,
     result.privacyService,
     result.providerService,
-    result.stickersService
   )
 
   #################################################
@@ -254,7 +242,6 @@ proc delete*(self: AppController) =
   self.bookmarkService.delete
   self.startupModule.delete
   self.mainModule.delete
-  self.ethService.delete
   
   #################################################
   # At the end of refactoring this will be moved to appropriate place or removed:
@@ -280,7 +267,6 @@ proc delete*(self: AppController) =
   self.collectibleService.delete
   self.walletAccountService.delete
   self.aboutService.delete
-  self.networkService.delete
   self.dappPermissionsService.delete
   self.providerService.delete
   self.ensService.delete
@@ -319,7 +305,6 @@ proc start*(self: AppController) =
   self.keycard.init()
   #################################################
 
-  self.ethService.init()
   self.accountsService.init()
   
   self.startupModule.load()
@@ -338,8 +323,6 @@ proc load(self: AppController) =
   self.walletAccountService.init()
   self.transactionService.init()
   self.languageService.init()
-  self.stickersService.init()
-  self.networkService.init()
 
   let pubKey = self.settingsService.getPublicKey()
   singletonInstance.localAccountSensitiveSettings.setFileName(pubKey)
@@ -350,12 +333,7 @@ proc load(self: AppController) =
   self.buildAndRegisterUserProfile()
 
   # load main module
-  self.mainModule.load(
-    self.statusFoundation.status.events,
-    self.chatService,
-    self.communityService,
-    self.messageService
-  )
+  self.mainModule.load(self.statusFoundation.status.events, self.chatService, self.communityService, self.messageService)
 
 proc userLoggedIn*(self: AppController) =
   #################################################
@@ -388,7 +366,7 @@ proc buildAndRegisterUserProfile(self: AppController) =
   let meAsContact = self.contactsService.getContactById(pubKey)
   var ensName: string
   if(meAsContact.ensVerified):
-    ensName = utils.prettyEnsName(meAsContact.name)
+    ensName = prettyEnsName(meAsContact.name)
 
   singletonInstance.userProfile.setFixedData(loggedInAccount.name, loggedInAccount.keyUid, loggedInAccount.identicon, 
   pubKey)
