@@ -38,7 +38,6 @@ QtObject {
         }
     }
     property var contactsModuleInst: contactsModule
-    property var stickersModuleInst: stickersModule
 
     property var activeCommunity: chatsModelInst.communities.activeCommunity
 
