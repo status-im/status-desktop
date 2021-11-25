@@ -21,6 +21,9 @@ QtObject:
     result.delegate = delegate
     result.setup()
 
+  proc load*(self: View) =
+    self.delegate.viewDidLoad()
+
   proc isTelemetryEnabledChanged*(self: View) {.signal.}
 
   proc setIsTelemetryEnabled*(self: View, isTelemetryEnabled: bool) =
