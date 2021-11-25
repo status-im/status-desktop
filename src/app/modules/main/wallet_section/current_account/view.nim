@@ -30,6 +30,9 @@ QtObject:
     result.delegate = delegate
     result.setup()
 
+  proc load*(self: View) =
+    self.delegate.viewDidLoad()
+
   proc getName(self: View): QVariant {.slot.} =
     return newQVariant(self.name)
 

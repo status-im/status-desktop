@@ -16,6 +16,9 @@ QtObject:
     result.QObject.setup
     result.delegate = delegate
 
+  proc load*(self: View) =
+    self.delegate.viewDidLoad()
+
   proc getCurrentVersion*(self: View): string {.slot.} =
     return self.delegate.getAppVersion()
 
