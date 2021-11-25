@@ -78,6 +78,7 @@ method delete*[T](self: Module[T]) =
   self.controller.delete
 
 method load*[T](self: Module[T]) =
+  self.view.load()
   self.profileModule.load()
   self.contactsModule.load()
   self.languageModule.load()
@@ -85,17 +86,53 @@ method load*[T](self: Module[T]) =
   self.privacyModule.load()
   self.aboutModule.load()
 
-  self.view.setIsTelemetryEnabled(self.controller.isTelemetryEnabled())
-  self.view.setIsDebugEnabled(self.controller.isDebugEnabled())
+method isLoaded*[T](self: Module[T]): bool =
+  return self.moduleLoaded
+
+proc checkIfModuleDidLoad[T](self: Module[T]) =
+  if(not self.profileModule.isLoaded()):
+    return
+
+  if(not self.contactsModule.isLoaded()):
+    return
+
+  if(not self.languageModule.isLoaded()):
+    return
+
+  if(not self.mnemonicModule.isLoaded()):
+    return
+
+  if(not self.privacyModule.isLoaded()):
+    return
+
+  if(not self.aboutModule.isLoaded()):
+    return
 
   self.moduleLoaded = true
   self.delegate.profileSectionDidLoad()
 
-method isLoaded*[T](self: Module[T]): bool =
-  return self.moduleLoaded
+method viewDidLoad*[T](self: Module[T]) =
+  self.view.setIsTelemetryEnabled(self.controller.isTelemetryEnabled())
+  self.view.setIsDebugEnabled(self.controller.isDebugEnabled())
+  self.checkIfModuleDidLoad()
 
-method viewDidLoad*(self: Module) =
-  discard
+method profileModuleDidLoad*[T](self: Module[T]) =
+  self.checkIfModuleDidLoad()
+
+method contactsModuleDidLoad*[T](self: Module[T]) =
+  self.checkIfModuleDidLoad()
+
+method languageModuleDidLoad*[T](self: Module[T]) =
+  self.checkIfModuleDidLoad()
+
+method mnemonicModuleDidLoad*[T](self: Module[T]) =
+  self.checkIfModuleDidLoad()
+
+method privacyModuleDidLoad*[T](self: Module[T]) =
+  self.checkIfModuleDidLoad()
+
+method aboutModuleDidLoad*[T](self: Module[T]) =
+  self.checkIfModuleDidLoad()
 
 method toggleTelemetry*[T](self: Module[T]) = 
   self.controller.toggleTelemetry()

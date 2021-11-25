@@ -4,24 +4,25 @@ import ../../../../global/global_singleton
 import ../../../../../app_service/service/wallet_account/service as wallet_account_service
 
 import ./io_interface, ./view, ./controller
+import ../io_interface as delegate_interface
 
 export io_interface
 
 type
-  Module* [T: io_interface.DelegateInterface] = ref object of io_interface.AccessInterface
-    delegate: T
+  Module* = ref object of io_interface.AccessInterface
+    delegate: delegate_interface.AccessInterface
     events: EventEmitter
     view: View
     controller: controller.AccessInterface
     moduleLoaded: bool
     currentAccountIndex: int
 
-proc newModule*[T](
-  delegate: T,
+proc newModule*(
+  delegate: delegate_interface.AccessInterface,
   events: EventEmitter,
   walletAccountService: wallet_account_service.ServiceInterface,
-): Module[T] =
-  result = Module[T]()
+): Module =
+  result = Module()
   result.delegate = delegate
   result.events = events
   result.currentAccountIndex = 0
@@ -29,12 +30,13 @@ proc newModule*[T](
   result.controller = newController(result, walletAccountService)
   result.moduleLoaded = false
 
-method delete*[T](self: Module[T]) =
+method delete*(self: Module) =
   self.view.delete
 
-method load*[T](self: Module[T]) =
+method load*(self: Module) =
   singletonInstance.engine.setRootContextProperty("walletSectionCurrent", newQVariant(self.view))
 
+  # these connections should be part of the controller's init method
   self.events.on("walletAccount/walletAccountUpdated") do(e:Args):
     self.switchAccount(self.currentAccountIndex)
 
@@ -44,16 +46,20 @@ method load*[T](self: Module[T]) =
   self.events.on("walletAccount/tokenVisibilityToggled") do(e:Args):
     self.switchAccount(self.currentAccountIndex)
 
+  self.controller.init()
+  self.view.load()
 
-  self.moduleLoaded = true
-
-method isLoaded*[T](self: Module[T]): bool =
+method isLoaded*(self: Module): bool =
   return self.moduleLoaded
 
-method switchAccount*[T](self: Module[T], accountIndex: int) =
+method viewDidLoad*(self: Module) =
+  self.moduleLoaded = true
+  self.delegate.currentAccountModuleDidLoad()
+
+method switchAccount*(self: Module, accountIndex: int) =
   self.currentAccountIndex = accountIndex
   let walletAccount = self.controller.getWalletAccount(accountIndex)
   self.view.setData(walletAccount)
 
-method update*[T](self: Module[T], address: string, accountName: string, color: string) =
+method update*(self: Module, address: string, accountName: string, color: string) =
     self.controller.update(address, accountName, color)

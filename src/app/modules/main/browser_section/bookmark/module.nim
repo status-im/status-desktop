@@ -33,22 +33,17 @@ method delete*(self: Module) =
 method load*(self: Module) =
   singletonInstance.engine.setRootContextProperty("bookmarkModule", self.viewVariant)
   self.view.load()
-  let bookmarks = self.controller.getBookmarks()
-  for b in bookmarks:
-    self.view.addItem(initItem(b.name, b.url, b.imageUrl))
 
 method isLoaded*(self: Module): bool =
   return self.moduleLoaded
 
-proc checkIfModuleDidLoad(self: Module) =
+method viewDidLoad*(self: Module) =
+  let bookmarks = self.controller.getBookmarks()
+  for b in bookmarks:
+    self.view.addItem(initItem(b.name, b.url, b.imageUrl))
+    
   self.moduleLoaded = true
   self.delegate.bookmarkDidLoad()
-
-method providerDidLoad*(self: Module) =
-  self.checkIfModuleDidLoad()
-
-method viewDidLoad*(self: Module) =
-  self.checkIfModuleDidLoad()
 
 method storeBookmark*(self: Module, url: string, name: string) =
   if url == "":

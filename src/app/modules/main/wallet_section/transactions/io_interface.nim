@@ -37,7 +37,8 @@ method setTrxHistoryResult*(self: AccessInterface, transactions: seq[Transaction
 method setHistoryFetchState*(self: AccessInterface, addresses: seq[string], isFetching: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-type
-  ## Abstract class (concept) which must be implemented by object/s used in this 
-  ## module.
-  DelegateInterface* = concept c
+# View Delegate Interface
+# Delegate for the view must be declared here due to use of QtObject and multi 
+# inheritance, which is not well supported in Nim.
+method viewDidLoad*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")

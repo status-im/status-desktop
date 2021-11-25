@@ -46,20 +46,14 @@ method fetchPermissions(self: Module, dapp: string) =
 method load*(self: Module) =
   singletonInstance.engine.setRootContextProperty("dappPermissionsModule", self.viewVariant)
   self.view.load()
-  self.fetchDapps()
 
 method isLoaded*(self: Module): bool =
   return self.moduleLoaded
 
-proc checkIfModuleDidLoad(self: Module) =
+method viewDidLoad*(self: Module) =
+  self.fetchDapps()
   self.moduleLoaded = true
   self.delegate.dappsDidLoad()
-
-method dappsDidLoad*(self: Module) =
-  self.checkIfModuleDidLoad()
-
-method viewDidLoad*(self: Module) =
-  self.checkIfModuleDidLoad()
 
 method hasPermission*(self: Module, hostname: string, permission: string): bool =
   self.controller.hasPermission(hostname, permission.toPermission())
