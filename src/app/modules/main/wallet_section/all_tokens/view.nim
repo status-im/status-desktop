@@ -26,6 +26,9 @@ QtObject:
     result.custom = newModel()
     result.all = newModel()
 
+  proc load*(self: View) =
+    self.delegate.viewDidLoad()
+    
   proc allChanged*(self: View) {.signal.}
 
   proc getAll(self: View): QVariant {.slot.} =
