@@ -1,36 +1,37 @@
 import NimQml, sequtils, sugar
 import eventemitter
 import ./io_interface, ./view, ./controller, ./item
+import ../io_interface as delegate_interface
 import ../../../../global/global_singleton
 import ../../../../../app_service/service/wallet_account/service as wallet_account_service
 
 export io_interface
 
 type 
-  Module* [T: io_interface.DelegateInterface] = ref object of io_interface.AccessInterface
-    delegate: T
+  Module* = ref object of io_interface.AccessInterface
+    delegate: delegate_interface.AccessInterface
     events: EventEmitter
     view: View
     moduleLoaded: bool
     controller: controller.AccessInterface
     currentAccountIndex: int
 
-proc newModule*[T](
-  delegate: T,
+proc newModule*(
+  delegate: delegate_interface.AccessInterface,
   events: EventEmitter,
   walletAccountService: wallet_account_service.ServiceInterface
-): Module[T] =
-  result = Module[T]()
+): Module =
+  result = Module()
   result.delegate = delegate
   result.events = events
   result.view = newView(result)
   result.controller = newController(result, walletAccountService)
   result.moduleLoaded = false
 
-method delete*[T](self: Module[T]) =
+method delete*(self: Module) =
   self.view.delete
 
-method switchAccount*[T](self: Module[T], accountIndex: int) =
+method switchAccount*(self: Module, accountIndex: int) =
   self.currentAccountIndex = accountIndex
   let walletAccount = self.controller.getWalletAccount(accountIndex)
   self.view.setItems(
@@ -43,15 +44,22 @@ method switchAccount*[T](self: Module[T], accountIndex: int) =
     ))
   )
 
-method load*[T](self: Module[T]) =
+method load*(self: Module) =
   singletonInstance.engine.setRootContextProperty("walletSectionAccountTokens", newQVariant(self.view))
+
+  # these connections should be part of the controller's init method
   self.events.on("walletAccount/currencyUpdated") do(e:Args):
     self.switchAccount(self.currentAccountIndex)
 
   self.events.on("walletAccount/tokenVisibilityToggled") do(e:Args):
     self.switchAccount(self.currentAccountIndex)
 
-  self.moduleLoaded = true
+  self.controller.init()
+  self.view.load()
 
-method isLoaded*[T](self: Module[T]): bool =
+method isLoaded*(self: Module): bool =
   return self.moduleLoaded
+
+method viewDidLoad*(self: Module) =
+  self.moduleLoaded = true
+  self.delegate.accountTokensModuleDidLoad()

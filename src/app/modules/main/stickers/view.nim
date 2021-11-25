@@ -21,6 +21,9 @@ QtObject:
     result.stickerPacks = newStickerPackList(result.delegate)
     result.recentStickers = newStickerList(result.delegate)
 
+  proc load*(self: View) =
+    self.delegate.viewDidLoad()
+
   proc addStickerPackToList*(self: View, stickerPack: StickerPackDto, isInstalled, isBought, isPending: bool) =
     self.stickerPacks.addStickerPackToList(
       stickerPack,

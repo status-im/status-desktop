@@ -1,4 +1,5 @@
 import ./controller_interface
+import io_interface
 import ../../../../../app_service/service/about/service as about_service
 
 # import ./item as item
@@ -6,23 +7,23 @@ import ../../../../../app_service/service/about/service as about_service
 export controller_interface
 
 type 
-  Controller*[T: controller_interface.DelegateInterface] = ref object of controller_interface.AccessInterface
-    delegate: T
+  Controller* = ref object of controller_interface.AccessInterface
+    delegate: io_interface.AccessInterface
     aboutService: about_service.ServiceInterface
 
-proc newController*[T](delegate: T, aboutService: about_service.ServiceInterface): Controller[T] =
-  result = Controller[T]()
+proc newController*(delegate: io_interface.AccessInterface, aboutService: about_service.ServiceInterface): Controller =
+  result = Controller()
   result.delegate = delegate
   result.aboutService = aboutService
 
-method delete*[T](self: Controller[T]) =
+method delete*(self: Controller) =
   discard
 
-method init*[T](self: Controller[T]) = 
+method init*(self: Controller) = 
   discard
 
-method getAppVersion*[T](self: Controller[T]): string =
+method getAppVersion*(self: Controller): string =
   return self.aboutService.getAppVersion()
 
-method getNodeVersion*[T](self: Controller[T]): string =
+method getNodeVersion*(self: Controller): string =
   return self.aboutService.getNodeVersion()
