@@ -26,16 +26,16 @@ ModalPopup {
     property var stickers;
 
     Component.onCompleted: {
-        const idx = chatsModel.stickers.stickerPacks.findIndexById(packId, false);
+        const idx = stickersModule.stickerPacks.findIndexById(packId, false);
         if(idx === -1) close();
-        name = chatsModel.stickers.stickerPacks.rowData(idx, "name")
-        author = chatsModel.stickers.stickerPacks.rowData(idx, "author")
-        thumbnail = chatsModel.stickers.stickerPacks.rowData(idx, "thumbnail")
-        price = chatsModel.stickers.stickerPacks.rowData(idx, "price")
-        stickers = chatsModel.stickers.stickerPacks.getStickers()
-        installed = chatsModel.stickers.stickerPacks.rowData(idx, "installed") === "true"
-        bought = chatsModel.stickers.stickerPacks.rowData(idx, "bought") === "true"
-        pending = chatsModel.stickers.stickerPacks.rowData(idx, "pending") === "true"
+        name = stickersModule.stickerPacks.rowData(idx, "name")
+        author = stickersModule.stickerPacks.rowData(idx, "author")
+        thumbnail = stickersModule.stickerPacks.rowData(idx, "thumbnail")
+        price = stickersModule.stickerPacks.rowData(idx, "price")
+        stickers = stickersModule.stickerPacks.getStickers()
+        installed = stickersModule.stickerPacks.rowData(idx, "installed") === "true"
+        bought = stickersModule.stickerPacks.rowData(idx, "bought") === "true"
+        pending = stickersModule.stickerPacks.rowData(idx, "pending") === "true"
     }
 
     height: 472
@@ -62,10 +62,10 @@ ModalPopup {
                 assetPrice: price
                 estimateGasFunction: function(selectedAccount, uuid) {
                     if (packId < 0  || !selectedAccount || !price) return 325000
-                    return chatsModel.stickers.estimate(packId, selectedAccount.address, price, uuid)
+                    return stickersModule.estimate(packId, selectedAccount.address, price, uuid)
                 }
                 onSendTransaction: function(selectedAddress, gasLimit, gasPrice, tipLimit, overallLimit, password) {
-                    return chatsModel.stickers.buy(packId,
+                    return stickersModule.buy(packId,
                                                    selectedAddress,
                                                    price,
                                                    gasLimit,
@@ -92,11 +92,11 @@ ModalPopup {
         isBought: bought
         isPending: pending
         onInstallClicked: {
-            chatsModel.stickers.install(packId);
+            stickersModule.install(packId);
             stickerPackDetailsPopup.close();
         }
         onUninstallClicked: {
-            chatsModel.stickers.uninstall(packId);
+            stickersModule.uninstall(packId);
             stickerPackDetailsPopup.close();
         }
         onCancelClicked: function(){}

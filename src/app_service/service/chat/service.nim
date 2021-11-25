@@ -1,8 +1,11 @@
 import Tables, json, sequtils, strformat, chronicles
 
-import service_interface, ./dto/chat
+import service_interface
+import ./dto/chat as chat_dto
 import ../contacts/service as contact_service
 import status/statusgo_backend_new/chat as status_go
+import status/types/[message]
+import status/types/chat as chat_type
 
 export service_interface
 
@@ -29,7 +32,7 @@ method init*(self: Service) =
     let chats = map(response.result.getElems(), proc(x: JsonNode): ChatDto = x.toChatDto())
 
     for chat in chats:
-      if chat.active and chat.chatType != ChatType.Unknown:
+      if chat.active and chat.chatType != chat_dto.ChatType.Unknown:
         self.chats[chat.id] = chat
 
   except Exception as e:
@@ -40,7 +43,7 @@ method init*(self: Service) =
 method getAllChats*(self: Service): seq[ChatDto] =
   return toSeq(self.chats.values)
 
-method getChatsOfChatTypes*(self: Service, types: seq[ChatType]): seq[ChatDto] =
+method getChatsOfChatTypes*(self: Service, types: seq[chat_dto.ChatType]): seq[ChatDto] =
   return self.getAllChats().filterIt(it.chatType in types)
 
 method getChatById*(self: Service, chatId: string): ChatDto =
@@ -53,3 +56,19 @@ method getChatById*(self: Service, chatId: string): ChatDto =
 method prettyChatName*(self: Service, chatId: string): string =
   let contact = self.contactService.getContactById(chatId)
   return contact.userNameOrAlias()
+
+# TODO refactor this to new object types
+proc parseChatResponse*(self: Service, response: string): (seq[Chat], seq[Message]) =
+  var parsedResponse = parseJson(response)
+  var chats: seq[Chat] = @[]
+  var messages: seq[Message] = @[]
+  if parsedResponse{"result"}{"messages"} != nil:
+    for jsonMsg in parsedResponse["result"]["messages"]:
+      messages.add(jsonMsg.toMessage())
+  if parsedResponse{"result"}{"chats"} != nil:
+    for jsonChat in parsedResponse["result"]["chats"]:
+      let chat = jsonChat.toChat
+      # TODO add the channel back to `chat` when it is refactored
+      # self.channels[chat.id] = chat
+      chats.add(chat) 
+  result = (chats, messages)
