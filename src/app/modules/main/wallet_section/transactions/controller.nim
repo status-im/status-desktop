@@ -15,32 +15,32 @@ import ../../../../core/[main]
 import ../../../../core/tasks/[qt, threadpool]
 
 type 
-  Controller* = ref object of controller_interface.AccessInterface
+  Controller*[T: controller_interface.DelegateInterface] = ref object of controller_interface.AccessInterface
     delegate: io_interface.AccessInterface
     events: EventEmitter
     transactionService: transaction_service.Service
     walletAccountService: wallet_account_service.ServiceInterface
 
 # Forward declaration
-method loadTransactions*(self: Controller, address: string, toBlock: Uint256, limit: int = 20, loadMore: bool = false)
-method getWalletAccounts*(self: Controller): seq[WalletAccountDto]
+method loadTransactions*[T](self: Controller[T], address: string, toBlock: Uint256, limit: int = 20, loadMore: bool = false)
+method getWalletAccounts*[T](self: Controller[T]): seq[WalletAccountDto]
 
-proc newController*(
+proc newController*[T](
   delegate: io_interface.AccessInterface, 
   events: EventEmitter,
   transactionService: transaction_service.Service,
   walletAccountService: wallet_account_service.ServiceInterface
-): Controller =
-  result = Controller()
+): Controller[T] =
+  result = Controller[T]()
   result.events = events
   result.delegate = delegate
   result.transactionService = transactionService
   result.walletAccountService = walletAccountService
   
-method delete*(self: Controller) =
+method delete*[T](self: Controller[T]) =
   discard
 
-method init*(self: Controller) = 
+method init*[T](self: Controller[T]) = 
   self.events.on(SignalType.Wallet.event) do(e:Args):
     var data = WalletSignal(e)
     case data.eventType:
@@ -65,17 +65,17 @@ method init*(self: Controller) =
     let args = TransactionsLoadedArgs(e)
     self.delegate.setTrxHistoryResult(args.transactions, args.address, args.wasFetchMore)
 
-method checkRecentHistory*(self: Controller) =
+method checkRecentHistory*[T](self: Controller[T]) =
   self.transactionService.checkRecentHistory()
 
-method getWalletAccounts*(self: Controller): seq[WalletAccountDto] =
+method getWalletAccounts*[T](self: Controller[T]): seq[WalletAccountDto] =
   self.walletAccountService.getWalletAccounts()
 
-method getWalletAccount*(self: Controller, accountIndex: int): WalletAccountDto =
+method getWalletAccount*[T](self: Controller[T], accountIndex: int): WalletAccountDto =
   return self.walletAccountService.getWalletAccount(accountIndex)
 
-method getAccountByAddress*(self: Controller, address: string): WalletAccountDto =
+method getAccountByAddress*[T](self: Controller[T], address: string): WalletAccountDto =
   self.walletAccountService.getAccountByAddress(address)
 
-method loadTransactions*(self: Controller, address: string, toBlock: Uint256, limit: int = 20, loadMore: bool = false) =
+method loadTransactions*[T](self: Controller[T], address: string, toBlock: Uint256, limit: int = 20, loadMore: bool = false) =
   self.transactionService.loadTransactions(address, toBlock, limit, loadMore)

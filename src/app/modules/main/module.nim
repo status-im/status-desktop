@@ -247,9 +247,6 @@ proc checkIfModuleDidLoad [T](self: Module[T]) =
   if(not self.stickersModule.isLoaded()):
     return
 
-  if(not self.appSearchModule.isLoaded()):
-    return
-
   self.moduleLoaded = true
   self.delegate.mainDidLoad()
 
@@ -257,12 +254,6 @@ method chatSectionDidLoad*[T](self: Module[T]) =
   self.checkIfModuleDidLoad()
 
 method communitySectionDidLoad*[T](self: Module[T]) =
-  self.checkIfModuleDidLoad()
-
-method appSearchDidLoad*[T](self: Module[T]) =
-  self.checkIfModuleDidLoad()
-
-proc stickersDidLoad*[T](self: Module[T]) =
   self.checkIfModuleDidLoad()
 
 proc walletSectionDidLoad*[T](self: Module[T]) =

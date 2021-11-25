@@ -33,9 +33,6 @@ QtObject:
     result.modelVariant = newQVariant(result.model)
     result.contactToAdd = ContactsDto()
 
-  proc load*(self: View) =
-    self.delegate.viewDidLoad()
-    
   proc model*(self: View): Model =
     return self.model
 

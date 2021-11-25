@@ -60,8 +60,7 @@ method isLoaded*(self: Module): bool =
   return self.moduleLoaded
 
 method viewDidLoad*(self: Module) =
-  self.moduleLoaded = true
-  self.delegate.appSearchDidLoad()
+  self.delegate.chatSectionDidLoad()
 
 method getModuleAsVariant*(self: Module): QVariant =
   return self.viewVariant

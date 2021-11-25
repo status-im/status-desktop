@@ -16,9 +16,6 @@ QtObject:
     result.QObject.setup
     result.delegate = delegate
 
-  proc load*(self: View) =
-    self.delegate.viewDidLoad()
-
   proc getLinkPreviewWhitelist*(self: View): string {.slot.} =
     return self.delegate.getLinkPreviewWhitelist()
 

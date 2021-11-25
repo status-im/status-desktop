@@ -11,26 +11,26 @@ import eventemitter
 export controller_interface
 
 type 
-  Controller* = ref object of controller_interface.AccessInterface
+  Controller*[T: controller_interface.DelegateInterface] = ref object of controller_interface.AccessInterface
     delegate: io_interface.AccessInterface
     events: EventEmitter
     contactsService: contacts_service.Service
     accountsService: accounts_service.ServiceInterface
 
-proc newController*(delegate: io_interface.AccessInterface, 
+proc newController*[T](delegate: io_interface.AccessInterface, 
   events: EventEmitter,
   contactsService: contacts_service.Service,
-  accountsService: accounts_service.ServiceInterface): Controller =
-  result = Controller()
+  accountsService: accounts_service.ServiceInterface): Controller[T] =
+  result = Controller[T]()
   result.delegate = delegate
   result.events = events
   result.contactsService = contactsService
   result.accountsService = accountsService
 
-method delete*(self: Controller) =
+method delete*[T](self: Controller[T]) =
   discard
 
-method init*(self: Controller) =
+method init*[T](self: Controller[T]) =
   self.events.on(SIGNAL_CONTACT_LOOKED_UP) do(e: Args):
     var args = ContactArgs(e)
     self.delegate.contactLookedUp(args.contactId)
@@ -55,32 +55,32 @@ method init*(self: Controller) =
     var args = ContactNicknameUpdatedArgs(e)
     self.delegate.contactNicknameChanged(args.contactId, args.nickname)
 
-method getContacts*(self: Controller): seq[ContactsDto] =
+method getContacts*[T](self: Controller[T]): seq[ContactsDto] =
   return self.contactsService.getContacts()
 
-method getContact*(self: Controller, id: string): ContactsDto =
+method getContact*[T](self: Controller[T], id: string): ContactsDto =
   return self.contactsService.getContactById(id)
 
-method generateAlias*(self: Controller, publicKey: string): string =
+method generateAlias*[T](self: Controller[T], publicKey: string): string =
   return self.accountsService.generateAlias(publicKey)
 
-method addContact*(self: Controller, publicKey: string) =
+method addContact*[T](self: Controller[T], publicKey: string) =
   self.contactsService.addContact(publicKey)
 
-method rejectContactRequest*(self: Controller, publicKey: string) =
+method rejectContactRequest*[T](self: Controller[T], publicKey: string) =
   self.contactsService.rejectContactRequest(publicKey)
 
-method unblockContact*(self: Controller, publicKey: string) =
+method unblockContact*[T](self: Controller[T], publicKey: string) =
   self.contactsService.unblockContact(publicKey)
 
-method blockContact*(self: Controller, publicKey: string) =
+method blockContact*[T](self: Controller[T], publicKey: string) =
   self.contactsService.blockContact(publicKey)
 
-method removeContact*(self: Controller, publicKey: string) =
+method removeContact*[T](self: Controller[T], publicKey: string) =
   self.contactsService.removeContact(publicKey)
 
-method changeContactNickname*(self: Controller, publicKey: string, nickname: string) =
+method changeContactNickname*[T](self: Controller[T], publicKey: string, nickname: string) =
   self.contactsService.changeContactNickname(publicKey, nickname)
 
-method lookupContact*(self: Controller, value: string) =
+method lookupContact*[T](self: Controller[T], value: string) =
   self.contactsService.lookupContact(value)

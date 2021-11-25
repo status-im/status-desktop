@@ -1,30 +1,29 @@
 import ./controller_interface
-import io_interface
 import ../../../../../app_service/service/wallet_account/service as wallet_account_service
 
 export controller_interface
 
 type 
-  Controller* = ref object of controller_interface.AccessInterface
-    delegate: io_interface.AccessInterface
+  Controller*[T: controller_interface.DelegateInterface] = ref object of controller_interface.AccessInterface
+    delegate: T
     walletAccountService: wallet_account_service.ServiceInterface
 
-proc newController*(
-  delegate: io_interface.AccessInterface, 
+proc newController*[T](
+  delegate: T, 
   walletAccountService: wallet_account_service.ServiceInterface
-): Controller =
-  result = Controller()
+): Controller[T] =
+  result = Controller[T]()
   result.delegate = delegate
   result.walletAccountService = walletAccountService
   
-method delete*(self: Controller) =
+method delete*[T](self: Controller[T]) =
   discard
 
-method init*(self: Controller) = 
+method init*[T](self: Controller[T]) = 
   discard
 
-method getWalletAccount*(self: Controller, accountIndex: int): wallet_account_service.WalletAccountDto =
+method getWalletAccount*[T](self: Controller[T], accountIndex: int): wallet_account_service.WalletAccountDto =
   return self.walletAccountService.getWalletAccount(accountIndex)
 
-method update*(self: Controller, address: string, accountName: string, color: string) =
+method update*[T](self: Controller[T], address: string, accountName: string, color: string) =
   self.walletAccountService.updateWalletAccount(address, accountName, color)

@@ -19,32 +19,6 @@ method updateCurrency*(self: AccessInterface, currency: string) {.base.} =
 
 method setTotalCurrencyBalance*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
-
-# View Delegate Interface
-# Delegate for the view must be declared here due to use of QtObject and multi 
-# inheritance, which is not well supported in Nim.
-method viewDidLoad*(self: AccessInterface) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-# Methods called by submodules of this module
-method accountTokensModuleDidLoad*(self: AccessInterface) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method accountsModuleDidLoad*(self: AccessInterface) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method allTokensModuleDidLoad*(self: AccessInterface) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method collectiblesModuleDidLoad*(self: AccessInterface) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method currentAccountModuleDidLoad*(self: AccessInterface) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method transactionsModuleDidLoad*(self: AccessInterface) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 type
   ## Abstract class (concept) which must be implemented by object/s used in this 
   ## module.

@@ -16,8 +16,5 @@ QtObject:
     result.QObject.setup
     result.delegate = delegate
 
-  proc load*(self: View) =
-    self.delegate.viewDidLoad()
-
   proc changeLocale*(self: View, locale: string) {.slot.} =
     self.delegate.changeLanguage(locale)

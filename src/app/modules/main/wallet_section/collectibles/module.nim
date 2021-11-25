@@ -1,7 +1,6 @@
 import eventemitter
 
 import ./io_interface, ./controller
-import ../io_interface as delegate_interface
 import ../../../../../app_service/service/collectible/service as collectible_service
 import ../../../../../app_service/service/wallet_account/service as wallet_account_service
 
@@ -12,8 +11,8 @@ import ./collectibles/module as collectibles_module
 export io_interface
 
 type 
-  Module* = ref object of io_interface.AccessInterface
-    delegate: delegate_interface.AccessInterface
+  Module* [T: io_interface.DelegateInterface] = ref object of io_interface.AccessInterface
+    delegate: T
     moduleLoaded: bool
     controller: controller.AccessInterface
 
@@ -21,58 +20,43 @@ type
     collectionsModule: collections_module.AccessInterface
     collectibleModule: collectible_module.AccessInterface
 
-proc newModule*(
-  delegate: delegate_interface.AccessInterface,
+proc newModule*[T](
+  delegate: T,
   events: EventEmitter,
   collectibleService: collectible_service.ServiceInterface,
   walletAccountService: wallet_account_service.ServiceInterface
-): Module =
-  result = Module()
+): Module[T] =
+  result = Module[T]()
   result.delegate = delegate
   result.controller = newController(result, walletAccountService)
   result.moduleLoaded = false
 
-  result.collectiblesModule = collectibles_module.newModule(result, collectibleService)
-  result.collectionsModule = collectionsModule.newModule(result, collectibleService)
-  result.collectibleModule = collectibleModule.newModule(result, collectibleService)
+  result.collectiblesModule = collectibles_module.newModule[Module[T]](
+    result, collectibleService
+  )
+  result.collectionsModule = collectionsModule.newModule[Module[T]](
+    result, collectibleService
+  )
+  result.collectibleModule = collectibleModule.newModule[Module[T]](
+    result, collectibleService
+  )
 
-method delete*(self: Module) =
+method delete*[T](self: Module[T]) =
   self.collectiblesModule.delete
   self.collectionsModule.delete
   self.collectibleModule.delete
 
-method load*(self: Module) =
-  self.controller.init
+method load*[T](self: Module[T]) =
   self.collectiblesModule.load
   self.collectionsModule.load
   self.collectibleModule.load
 
-method isLoaded*(self: Module): bool =
+  self.moduleLoaded = true
+
+method isLoaded*[T](self: Module[T]): bool =
   return self.moduleLoaded
 
-proc checkIfModuleDidLoad(self: Module) =
-  if(not self.collectiblesModule.isLoaded()):
-    return
-
-  if(not self.collectionsModule.isLoaded()):
-    return
-
-  if(not self.collectibleModule.isLoaded()):
-    return
-
-  self.moduleLoaded = true
-  self.delegate.collectiblesModuleDidLoad()
-
-method collectibleModuleDidLoad*(self: Module) =
-  self.checkIfModuleDidLoad()
-
-method collectiblesModuleDidLoad*(self: Module) =
-  self.checkIfModuleDidLoad()
-
-method collectionsModuleDidLoad*(self: Module) =
-  self.checkIfModuleDidLoad()
-
-method switchAccount*(self: Module, accountIndex: int) =
+method switchAccount*[T](self: Module[T], accountIndex: int) =
   let account = self.controller.getWalletAccount(accountIndex)
   self.collectionsModule.loadCollections(account.address)
   self.collectiblesModule.setCurrentAddress(account.address)
