@@ -28,6 +28,7 @@ Item {
     Separator {
         id: sep1
     }
+
     Loader {
         id: fetchLoaderIndicator
         anchors.top: sep1.bottom
@@ -59,6 +60,7 @@ Item {
                 fetchLoaderIndicator.active = true;
                 fetchMoreButton.visible = false;
                 fetchDate.visible = false;
+                timer.start();
             }
         }
     }
