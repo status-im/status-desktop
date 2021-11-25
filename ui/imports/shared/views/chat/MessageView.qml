@@ -265,6 +265,7 @@ Column {
 //            nextMsgTimestamp: root.messageStore.nextMsgTimestamp
             onClicked: {
                 root.chatsModel.messageView.hideLoadingIndicator();
+                root.chatsModel.requestMoreMessages(Constants.fetchRangeLast24Hours);
             }
             onTimerTriggered: {
                 root.chatsModel.requestMoreMessages(Constants.fetchRangeLast24Hours);
