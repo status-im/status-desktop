@@ -1,42 +1,41 @@
 import ./controller_interface
-import io_interface
 import ../../../../../app_service/service/wallet_account/service as wallet_account_service
 
 export controller_interface
 
 type 
-  Controller* = ref object of controller_interface.AccessInterface
-    delegate: io_interface.AccessInterface
+  Controller*[T: controller_interface.DelegateInterface] = ref object of controller_interface.AccessInterface
+    delegate: T
     walletAccountService: wallet_account_service.ServiceInterface
 
-proc newController*(
-  delegate: io_interface.AccessInterface, 
+proc newController*[T](
+  delegate: T, 
   walletAccountService: wallet_account_service.ServiceInterface
-): Controller =
-  result = Controller()
+): Controller[T] =
+  result = Controller[T]()
   result.delegate = delegate
   result.walletAccountService = walletAccountService
   
-method delete*(self: Controller) =
+method delete*[T](self: Controller[T]) =
   discard
 
-method init*(self: Controller) = 
+method init*[T](self: Controller[T]) = 
   discard
 
-method getWalletAccounts*(self: Controller): seq[wallet_account_service.WalletAccountDto] =
+method getWalletAccounts*[T](self: Controller[T]): seq[wallet_account_service.WalletAccountDto] =
   return self.walletAccountService.getWalletAccounts()
 
-method generateNewAccount*(self: Controller, password: string, accountName: string, color: string): string =
+method generateNewAccount*[T](self: Controller[T], password: string, accountName: string, color: string): string =
   return self.walletAccountService.generateNewAccount(password, accountName, color)
 
-method addAccountsFromPrivateKey*(self: Controller, privateKey: string, password: string, accountName: string, color: string): string =
+method addAccountsFromPrivateKey*[T](self: Controller[T], privateKey: string, password: string, accountName: string, color: string): string =
   return self.walletAccountService.addAccountsFromPrivateKey(privateKey, password, accountName, color)
 
-method addAccountsFromSeed*(self: Controller, seedPhrase: string, password: string, accountName: string, color: string): string =
+method addAccountsFromSeed*[T](self: Controller[T], seedPhrase: string, password: string, accountName: string, color: string): string =
   return self.walletAccountService.addAccountsFromSeed(seedPhrase, password, accountName, color)
 
-method addWatchOnlyAccount*(self: Controller, address: string, accountName: string, color: string): string =
+method addWatchOnlyAccount*[T](self: Controller[T], address: string, accountName: string, color: string): string =
   return self.walletAccountService.addWatchOnlyAccount(address, accountName, color)
 
-method deleteAccount*(self: Controller, address: string) =
+method deleteAccount*[T](self: Controller[T], address: string) =
   self.walletAccountService.deleteAccount(address)

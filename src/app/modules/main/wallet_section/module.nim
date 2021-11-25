@@ -53,12 +53,12 @@ proc newModule*[T](
   result.controller = newController(result, settingsService, walletAccountService)
   result.view = newView(result)
   
-  result.accountTokensModule = account_tokens_module.newModule(result, events, walletAccountService)
-  result.accountsModule = accounts_module.newModule(result, events, walletAccountService)
-  result.allTokensModule = all_tokens_module.newModule(result, events, tokenService, walletAccountService)
-  result.collectiblesModule = collectibles_module.newModule(result, events, collectibleService, walletAccountService)
-  result.currentAccountModule = current_account_module.newModule(result, events, walletAccountService)
-  result.transactionsModule = transactions_module.newModule(result, events, transactionService, walletAccountService)
+  result.accountTokensModule = account_tokens_module.newModule[Module[T]](result, events, walletAccountService)
+  result.accountsModule = accounts_module.newModule[io_interface.AccessInterface](result, events, walletAccountService)
+  result.allTokensModule = all_tokens_module.newModule[Module[T]](result, events, tokenService, walletAccountService)
+  result.collectiblesModule = collectibles_module.newModule[Module[T]](result, events, collectibleService, walletAccountService)
+  result.currentAccountModule = current_account_module.newModule[Module[T]](result, events, walletAccountService)
+  result.transactionsModule = transactions_module.newModule[Module[T]](result, events, transactionService, walletAccountService)
 
 method delete*[T](self: Module[T]) =
   self.accountTokensModule.delete
@@ -94,8 +94,6 @@ method load*[T](self: Module[T]) =
   self.events.on("walletAccount/tokenVisibilityToggled") do(e:Args):
     self.setTotalCurrencyBalance()
 
-  self.controller.init()
-  self.view.load()
   self.accountTokensModule.load()
   self.accountsModule.load()
   self.allTokensModule.load()
@@ -103,55 +101,15 @@ method load*[T](self: Module[T]) =
   self.currentAccountModule.load()
   self.transactionsModule.load()
 
-method isLoaded*[T](self: Module[T]): bool =
-  return self.moduleLoaded
-
-proc checkIfModuleDidLoad[T](self: Module[T]) =
-  if(not self.accountTokensModule.isLoaded()):
-    return
-
-  if(not self.accountsModule.isLoaded()):
-    return
-
-  if(not self.allTokensModule.isLoaded()):
-    return
-
-  if(not self.collectiblesModule.isLoaded()):
-    return
-
-  if(not self.currentAccountModule.isLoaded()):
-    return
-
-  if(not self.transactionsModule.isLoaded()):
-    return
-
   self.switchAccount(0)
   let currency = self.controller.getCurrency()
   let signingPhrase = self.controller.getSigningPhrase()
   let mnemonicBackedUp = self.controller.isMnemonicBackedUp()
   self.view.setData(currency, signingPhrase, mnemonicBackedUp)
   self.setTotalCurrencyBalance()
-
   self.moduleLoaded = true
   self.delegate.walletSectionDidLoad()
 
-method viewDidLoad*[T](self: Module[T]) =
-  self.checkIfModuleDidLoad()
+method isLoaded*[T](self: Module[T]): bool =
+  return self.moduleLoaded
 
-method accountTokensModuleDidLoad*[T](self: Module[T]) =
-  self.checkIfModuleDidLoad()
-
-method accountsModuleDidLoad*[T](self: Module[T]) =
-  self.checkIfModuleDidLoad()
-
-method allTokensModuleDidLoad*[T](self: Module[T]) =
-  self.checkIfModuleDidLoad()
-
-method collectiblesModuleDidLoad*[T](self: Module[T]) =
-  self.checkIfModuleDidLoad()
-
-method currentAccountModuleDidLoad*[T](self: Module[T]) =
-  self.checkIfModuleDidLoad()
-
-method transactionsModuleDidLoad*[T](self: Module[T]) =
-  self.checkIfModuleDidLoad()

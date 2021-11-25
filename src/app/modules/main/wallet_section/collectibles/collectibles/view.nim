@@ -18,9 +18,6 @@ QtObject:
     result.QObject.setup
     result.delegate = delegate
     result.models = initTable[string, Model]()
-
-  proc load*(self: View) =
-    self.delegate.viewDidLoad()
     
   proc setItems*(self: View, collectionSlug: string, items: seq[Item]) =
     if not self.models.hasKey(collectionSlug):

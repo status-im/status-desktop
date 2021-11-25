@@ -7,43 +7,43 @@ import ../../../../../app_service/service/wallet_account/service as wallet_accou
 export controller_interface
 
 type 
-  Controller* = ref object of controller_interface.AccessInterface
+  Controller*[T: controller_interface.DelegateInterface] = ref object of controller_interface.AccessInterface
     delegate: io_interface.AccessInterface
     events: EventEmitter
     tokenService: token_service.Service
     walletAccountService: wallet_account_service.ServiceInterface
 
-proc newController*(
+proc newController*[T](
   delegate: io_interface.AccessInterface,
   events: EventEmitter,
   tokenService: token_service.Service,
   walletAccountService: wallet_account_service.ServiceInterface,
-): Controller =
-  result = Controller()
+): Controller[T] =
+  result = Controller[T]()
   result.events = events
   result.delegate = delegate
   result.tokenService = tokenService
   result.walletAccountService = walletAccountService
   
-method delete*(self: Controller) =
+method delete*[T](self: Controller[T]) =
   discard
 
-method init*(self: Controller) = 
+method init*[T](self: Controller[T]) = 
   self.events.on(SIGNAL_TOKEN_DETAILS_LOADED) do(e:Args):
     let args = TokenDetailsLoadedArgs(e)
     self.delegate.tokenDetailsWereResolved(args.tokenDetails)
 
-method getTokens*(self: Controller): seq[token_service.TokenDto] =
+method getTokens*[T](self: Controller[T]): seq[token_service.TokenDto] =
   return self.tokenService.getTokens()
 
-method addCustomToken*(self: Controller, address: string, name: string, symbol: string, decimals: int) =
+method addCustomToken*[T](self: Controller[T], address: string, name: string, symbol: string, decimals: int) =
   self.tokenService.addCustomToken(address, name, symbol, decimals)
         
-method toggleVisible*(self: Controller, symbol: string) =
+method toggleVisible*[T](self: Controller[T], symbol: string) =
   self.walletAccountService.toggleTokenVisible(symbol)
 
-method removeCustomToken*(self: Controller, address: string) =
+method removeCustomToken*[T](self: Controller[T], address: string) =
   self.tokenService.removeCustomToken(address)
 
-method getTokenDetails*(self: Controller, address: string) =
+method getTokenDetails*[T](self: Controller[T], address: string) =
   self.tokenService.getTokenDetails(address)

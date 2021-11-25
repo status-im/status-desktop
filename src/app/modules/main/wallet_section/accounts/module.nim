@@ -2,7 +2,6 @@ import NimQml, sequtils, sugar
 import eventemitter
 
 import ./io_interface, ./view, ./item, ./controller
-import ../io_interface as delegate_interface
 import ../../../../global/global_singleton
 import ../../../../../app_service/service/wallet_account/service as wallet_account_service
 import ../account_tokens/model as account_tokens
@@ -11,34 +10,34 @@ import ../account_tokens/item as account_tokens_item
 export io_interface
 
 type 
-  Module* = ref object of io_interface.AccessInterface
-    delegate: delegate_interface.AccessInterface
+  Module* [T: io_interface.DelegateInterface] = ref object of io_interface.AccessInterface
+    delegate: T
     events: EventEmitter
     view: View
     controller: controller.AccessInterface
     moduleLoaded: bool
 
-proc newModule*(
-  delegate: delegate_interface.AccessInterface,
+proc newModule*[T](
+  delegate: T,
   events: EventEmitter,
   walletAccountService: wallet_account_service.ServiceInterface,
-): Module =
-  result = Module()
+): Module[T] =
+  result = Module[T]()
   result.delegate = delegate
   result.events = events
   result.view = newView(result)
-  result.controller = controller.newController(result, walletAccountService)
+  result.controller = controller.newController[Module[T]](result, walletAccountService)
   result.moduleLoaded = false
 
-method delete*(self: Module) =
+method delete*[T](self: Module[T]) =
   self.view.delete
   self.controller.delete
 
-method refreshWalletAccounts*(self: Module) = 
+method refreshWalletAccounts*[T](self: Module[T]) = 
   let walletAccounts = self.controller.getWalletAccounts()
 
 
-  let items = walletAccounts.map(proc (w: WalletAccountDto): item.Item =
+  let items = walletAccounts.map(proc (w: WalletAccountDto): Item =
     let assets = account_tokens.newModel()
 
   
@@ -67,10 +66,8 @@ method refreshWalletAccounts*(self: Module) =
 
   self.view.setItems(items)
 
-method load*(self: Module) =
+method load*[T](self: Module[T]) =
   singletonInstance.engine.setRootContextProperty("walletSectionAccounts", newQVariant(self.view))
-
-  # these connections should be part of the controller's init method
   self.events.on("walletAccount/accountSaved") do(e:Args):
     self.refreshWalletAccounts()
 
@@ -85,29 +82,24 @@ method load*(self: Module) =
 
   self.events.on("walletAccount/tokenVisibilityToggled") do(e:Args):
     self.refreshWalletAccounts()
-
-  self.controller.init()
-  self.view.load()
   
-method isLoaded*(self: Module): bool =
-  return self.moduleLoaded
-
-method viewDidLoad*(self: Module) =
   self.refreshWalletAccounts()
   self.moduleLoaded = true
-  self.delegate.accountsModuleDidLoad()
 
-method generateNewAccount*(self: Module, password: string, accountName: string, color: string): string =
+method isLoaded*[T](self: Module[T]): bool =
+  return self.moduleLoaded
+
+method generateNewAccount*[T](self: Module[T], password: string, accountName: string, color: string): string =
   return self.controller.generateNewAccount(password, accountName, color)
 
-method addAccountsFromPrivateKey*(self: Module, privateKey: string, password: string, accountName: string, color: string): string =
+method addAccountsFromPrivateKey*[T](self: Module[T], privateKey: string, password: string, accountName: string, color: string): string =
   return self.controller.addAccountsFromPrivateKey(privateKey, password, accountName, color)
 
-method addAccountsFromSeed*(self: Module, seedPhrase: string, password: string, accountName: string, color: string): string =
+method addAccountsFromSeed*[T](self: Module[T], seedPhrase: string, password: string, accountName: string, color: string): string =
   return self.controller.addAccountsFromSeed(seedPhrase, password, accountName, color)
 
-method addWatchOnlyAccount*(self: Module, address: string, accountName: string, color: string): string =
+method addWatchOnlyAccount*[T](self: Module[T], address: string, accountName: string, color: string): string =
   return self.controller.addWatchOnlyAccount(address, accountName, color)
 
-method deleteAccount*(self: Module, address: string) =
+method deleteAccount*[T](self: Module[T], address: string) =
   self.controller.deleteAccount(address)
