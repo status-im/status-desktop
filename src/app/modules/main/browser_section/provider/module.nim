@@ -48,9 +48,12 @@ method setDappsAddress*(self: Module, value: string) =
 method onDappAddressChanged*(self: Module, value: string) =
   self.view.dappsAddress = value
 
-method viewDidLoad*(self: Module) =
+proc checkIfModuleDidLoad(self: Module) =
   self.moduleLoaded = true
   self.delegate.providerDidLoad()
+
+method viewDidLoad*(self: Module) =
+  self.checkIfModuleDidLoad()
 
 method disconnect*(self: Module) =
   self.controller.disconnect()

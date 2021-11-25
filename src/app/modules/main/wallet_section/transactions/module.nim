@@ -1,7 +1,6 @@
 import NimQml, eventemitter, stint
 
 import ./io_interface, ./view, ./controller
-import ../io_interface as delegate_interface
 import ../../../../global/global_singleton
 import ../../../../../app_service/service/transaction/service as transaction_service
 import ../../../../../app_service/service/wallet_account/service as wallet_account_service
@@ -9,62 +8,61 @@ import ../../../../../app_service/service/wallet_account/service as wallet_accou
 export io_interface
 
 type 
-  Module* = ref object of io_interface.AccessInterface
-    delegate: delegate_interface.AccessInterface
+  Module* [T: io_interface.DelegateInterface] = ref object of io_interface.AccessInterface
+    delegate: T
     view: View
     controller: controller.AccessInterface
     moduleLoaded: bool
 
 # Forward declarations
-method checkRecentHistory*(self: Module)
-method getWalletAccounts*(self: Module): seq[WalletAccountDto]
-method loadTransactions*(self: Module, address: string, toBlock: string = "0x0", limit: int = 20, loadMore: bool = false)
+method checkRecentHistory*[T](self: Module[T])
+method getWalletAccounts*[T](self: Module[T]): seq[WalletAccountDto]
+method loadTransactions*[T](self: Module[T], address: string, toBlock: string = "0x0", limit: int = 20, loadMore: bool = false)
 
-proc newModule*(
-  delegate: delegate_interface.AccessInterface,
+proc newModule*[T](
+  delegate: T,
   events: EventEmitter,
   transactionService: transaction_service.Service,
   walletAccountService: wallet_account_service.ServiceInterface
-): Module =
-  result = Module()
+): Module[T] =
+  result = Module[T]()
   result.delegate = delegate
   result.view = newView(result)
-  result.controller = controller.newController(result, events, transactionService, walletAccountService)
+  result.controller = controller.newController[Module[T]](result, events, transactionService, walletAccountService)
   result.moduleLoaded = false
 
-method delete*(self: Module) =
+method delete*[T](self: Module[T]) =
   self.view.delete
   self.controller.delete
 
-method load*(self: Module) =
+method load*[T](self: Module[T]) =
   singletonInstance.engine.setRootContextProperty("walletSectionTransactions", newQVariant(self.view))
-  self.controller.init()
-  self.view.load()
-  
-method isLoaded*(self: Module): bool =
-  return self.moduleLoaded
 
-method viewDidLoad*(self: Module) =
   self.checkRecentHistory()
+
   let accounts = self.getWalletAccounts()
 
-  self.moduleLoaded = true
-  self.delegate.transactionsModuleDidLoad()
+  self.controller.init()
 
-method switchAccount*(self: Module, accountIndex: int) =
+  self.moduleLoaded = true
+
+method isLoaded*[T](self: Module[T]): bool =
+  return self.moduleLoaded
+
+method switchAccount*[T](self: Module[T], accountIndex: int) =
   let walletAccount = self.controller.getWalletAccount(accountIndex)
   self.view.switchAccount(walletAccount)
 
-method checkRecentHistory*(self: Module) =
+method checkRecentHistory*[T](self: Module[T]) =
   self.controller.checkRecentHistory()
 
-method getWalletAccounts*(self: Module): seq[WalletAccountDto] =
+method getWalletAccounts*[T](self: Module[T]): seq[WalletAccountDto] =
   self.controller.getWalletAccounts()
 
-method getAccountByAddress*(self: Module, address: string): WalletAccountDto =
+method getAccountByAddress*[T](self: Module[T], address: string): WalletAccountDto =
   self.controller.getAccountByAddress(address)
 
-method loadTransactions*(self: Module, address: string, toBlock: string = "0x0", limit: int = 20, loadMore: bool = false) =
+method loadTransactions*[T](self: Module[T], address: string, toBlock: string = "0x0", limit: int = 20, loadMore: bool = false) =
   let toBlockParsed = stint.fromHex(Uint256, toBlock)
   let txLimit = if toBlock == "0x0":
       limit
@@ -73,8 +71,8 @@ method loadTransactions*(self: Module, address: string, toBlock: string = "0x0",
     
   self.controller.loadTransactions(address, toBlockParsed, txLimit, loadMore)
 
-method setTrxHistoryResult*(self: Module, transactions: seq[TransactionDto], address: string, wasFetchMore: bool) =
+method setTrxHistoryResult*[T](self: Module[T], transactions: seq[TransactionDto], address: string, wasFetchMore: bool) =
   self.view.setTrxHistoryResult(transactions, address, wasFetchMore)
 
-method setHistoryFetchState*(self: Module, addresses: seq[string], isFetching: bool) =
+method setHistoryFetchState*[T](self: Module[T], addresses: seq[string], isFetching: bool) =
   self.view.setHistoryFetchStateForAccounts(addresses, isFetching)
