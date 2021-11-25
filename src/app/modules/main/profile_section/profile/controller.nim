@@ -1,5 +1,5 @@
 import ./controller_interface
-
+import io_interface
 import ../../../../global/global_singleton
 import ../../../../../app_service/service/profile/service as profile_service
 import ../../../../../app_service/service/accounts/service as accounts_service
@@ -11,27 +11,27 @@ import status/types/identity_image
 export controller_interface
 
 type 
-  Controller*[T: controller_interface.DelegateInterface] = ref object of controller_interface.AccessInterface
-    delegate: T
+  Controller* = ref object of controller_interface.AccessInterface
+    delegate: io_interface.AccessInterface
     profileService: profile_service.ServiceInterface
     settingsService: settings_service.ServiceInterface
     accountsService: accounts_service.ServiceInterface
 
-proc newController*[T](delegate: T, accountsService: accounts_service.ServiceInterface, 
-  settingsService: settings_service.ServiceInterface, profileService: profile_service.ServiceInterface): Controller[T] =
-  result = Controller[T]()
+proc newController*(delegate: io_interface.AccessInterface, accountsService: accounts_service.ServiceInterface, 
+  settingsService: settings_service.ServiceInterface, profileService: profile_service.ServiceInterface): Controller =
+  result = Controller()
   result.delegate = delegate
   result.profileService = profileService
   result.settingsService = settingsService
   result.accountsService = accountsService
 
-method delete*[T](self: Controller[T]) =
+method delete*(self: Controller) =
   discard
 
-method init*[T](self: Controller[T]) = 
+method init*(self: Controller) = 
   discard
 
-method getProfile*[T](self: Controller[T]): item.Item =
+method getProfile*(self: Controller): item.Item =
   
   var appearance = self.settingsService.getAppearance()
   var messagesFromContactsOnly = self.settingsService.getMessagesFromContactsOnly()
@@ -60,12 +60,12 @@ method getProfile*[T](self: Controller[T]): item.Item =
 
   return item
 
-method storeIdentityImage*[T](self: Controller[T], address: string, image: string, aX: int, aY: int, bX: int, bY: int): identity_image.IdentityImage =
+method storeIdentityImage*(self: Controller, address: string, image: string, aX: int, aY: int, bX: int, bY: int): identity_image.IdentityImage =
   result = self.profileService.storeIdentityImage(address, image, aX, aY, bX, bY)
   singletonInstance.userProfile.setThumbnailImage(result.thumbnail)
   singletonInstance.userProfile.setLargeImage(result.large)
 
-method deleteIdentityImage*[T](self: Controller[T], address: string): string =
+method deleteIdentityImage*(self: Controller, address: string): string =
   result = self.profileService.deleteIdentityImage(address)
   singletonInstance.userProfile.setThumbnailImage("")
   singletonInstance.userProfile.setLargeImage("")
