@@ -1,4 +1,6 @@
 import ./dto/chat as chat_dto
+import status/types/[message]
+import status/types/chat as chat_type
 
 export chat_dto
 
@@ -15,11 +17,14 @@ method init*(self: ServiceInterface) {.base.} =
 method getAllChats*(self: ServiceInterface): seq[ChatDto] {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getChatsOfChatTypes*(self: ServiceInterface, types: seq[ChatType]): seq[ChatDto] {.base.} =
+method getChatsOfChatTypes*(self: ServiceInterface, types: seq[chat_dto.ChatType]): seq[ChatDto] {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getChatById*(self: ServiceInterface, chatId: string): ChatDto {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method prettyChatName*(self: ServiceInterface, chatId: string): string {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method parseChatResponse*(self: ServiceInterface, response: string): (seq[Chat], seq[Message]) {.base.} =
   raise newException(ValueError, "No implementation available")

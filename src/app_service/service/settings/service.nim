@@ -1,4 +1,4 @@
-import chronicles, json
+import chronicles, json, sequtils, tables
 
 import service_interface, ./dto/settings
 import status/statusgo_backend_new/settings as status_go
@@ -8,46 +8,17 @@ export service_interface
 logScope:
   topics = "settings-service"
 
-# Setting keys:
-const KEY_ADDRESS = "address"
-const KEY_CURRENCY = "currency"
-const KEY_NETWORKS_CURRENT_NETWORK = "networks/current-network"
-const KEY_DAPPS_ADDRESS = "dapps-address"
-const KEY_EIP1581_ADDRESS = "eip1581-address"
-const KEY_INSTALLATION_ID = "installation-id"
-const KEY_KEY_UID = "key-uid"
-const KEY_LATEST_DERIVED_PATH = "latest-derived-path"
-const KEY_LINK_PREVIEW_REQUEST_ENABLED = "link-preview-request-enabled"
-const KEY_MESSAGES_FROM_CONTACTS_ONLY = "messages-from-contacts-only"
-const KEY_MNEMONIC = "mnemonic"
-const KEY_NAME = "name"
-const KEY_PHOTO_PATH = "photo-path"
-const KEY_PREVIEW_PRIVACY = "preview-privacy?"
-const KEY_PUBLIC_KEY = "public-key"
-const KEY_SIGNING_PHRASE = "signing-phrase"
-const KEY_DEFAULT_SYNC_PERIOD = "default-sync-period"
-const KEY_SEND_PUSH_NOTIFICATIONS = "send-push-notifications?"
-const KEY_APPEARANCE = "appearance"
-const KEY_PROFILE_PICTURES_SHOW_TO = "profile-pictures-show-to"
-const KEY_PROFILE_PICTURES_VISIBILITY = "profile-pictures-visibility"
-const KEY_USE_MAILSERVERS = "use-mailservers?"
-const KEY_WALLET_ROOT_ADDRESS = "wallet-root-address"
-const KEY_SEND_STATUS_UPDATES = "send-status-updates?"
-const KEY_TELEMETRY_SERVER_URL = "telemetry-server-url"
-const KEY_FLEET = "fleet"
-const KEY_WALLET_VISIBLE_TOKENS = "wallet/visible-tokens"
-const KEY_NODE_CONFIG = "node-config"
-const KEY_WAKU_BLOOM_FILTER_MODE = "waku-bloom-filter-mode"
-
 type
   Service* = ref object of service_interface.ServiceInterface
     settings: SettingsDto
+    eip1559Enabled*: bool
 
 method delete*(self: Service) =
   discard
 
 proc newService*(): Service =
   result = Service()
+  result.eip1559Enabled = false
 
 method init*(self: Service) =
   try:
@@ -368,6 +339,46 @@ method saveWalletVisibleTokens*(self: Service, tokens: seq[string]): bool =
     self.settings.walletVisibleTokens.tokens = tokens
     return true
   return false
+
+method isEIP1559Enabled*(self: Service, blockNumber: int): bool =
+  let networkId = self.getCurrentNetworkDetails().config.networkId
+  let activationBlock = case networkId:
+    of 3: 10499401 # Ropsten
+    of 4: 8897988 # Rinkeby
+    of 5: 5062605 # Goerli
+    of 1: 12965000 # Mainnet
+    else: -1
+  if activationBlock > -1 and blockNumber >= activationBlock:
+    result = true
+  else:
+    result = false
+  self.eip1559Enabled = result
+
+method isEIP1559Enabled*(self: Service): bool =
+  result = self.eip1559Enabled 
+
+method getRecentStickers*(self: Service): seq[StickerDto] =
+  result = self.settings.recentStickers
+
+method saveRecentStickers*(self: Service, recentStickers: seq[StickerDto]): bool =
+  if(self.saveSetting(KEY_RECENT_STICKERS, %(recentStickers.mapIt($it.hash)))):
+    self.settings.recentStickers = recentStickers
+    return true
+  return false
+
+method getInstalledStickerPacks*(self: Service): Table[int, StickerPackDto] =
+  result = self.settings.installedStickerPacks
+
+method saveRecentStickers*(self: Service, installedStickerPacks: Table[int, StickerPackDto]): bool =
+  let json = %* {}
+  for packId, pack in installedStickerPacks.pairs:
+    json[$packId] = %(pack)
+
+  if(self.saveSetting(KEY_INSTALLED_STICKER_PACKS, $json)):
+    self.settings.installedStickerPacks = installedStickerPacks
+    return true
+  return false
+
 
 method saveNodeConfiguration*(self: Service, value: JsonNode): bool =
   if(self.saveSetting(KEY_NODE_CONFIG, value)):
