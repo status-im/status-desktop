@@ -1,4 +1,5 @@
 import ./controller_interface
+import io_interface
 import ../../../../../app_service/service/language/service as language_service
 
 # import ./item as item
@@ -6,17 +7,21 @@ import ../../../../../app_service/service/language/service as language_service
 export controller_interface
 
 type 
-  Controller*[T: controller_interface.DelegateInterface] = ref object of controller_interface.AccessInterface
-    delegate: T
+  Controller* = ref object of controller_interface.AccessInterface
+    delegate: io_interface.AccessInterface
     languageService: language_service.ServiceInterface
 
-proc newController*[T](delegate: T, languageService: language_service.ServiceInterface): Controller[T] =
-  result = Controller[T]()
+method init*(self: Controller) =
+  discard
+
+proc newController*(delegate: io_interface.AccessInterface, languageService: language_service.ServiceInterface): 
+  Controller =
+  result = Controller()
   result.delegate = delegate
   result.languageService = languageService
 
-method delete*[T](self: Controller[T]) =
+method delete*(self: Controller) =
   discard
 
-method changeLanguage*[T](self: Controller[T], locale: string) =
+method changeLanguage*(self: Controller, locale: string) =
   self.languageService.setLanguage(locale)

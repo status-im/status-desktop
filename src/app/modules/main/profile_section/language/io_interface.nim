@@ -14,7 +14,8 @@ method isLoaded*(self: AccessInterface): bool {.base.} =
 method changeLanguage*(self: AccessInterface, locale: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-type
-  ## Abstract class (concept) which must be implemented by object/s used in this 
-  ## module.
-  DelegateInterface* = concept c
+# View Delegate Interface
+# Delegate for the view must be declared here due to use of QtObject and multi 
+# inheritance, which is not well supported in Nim.
+method viewDidLoad*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
