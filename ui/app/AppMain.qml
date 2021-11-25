@@ -313,7 +313,7 @@ Item {
                 id: profileButton
                 property bool opened: false
 
-                icon.source: profileModule.thumbnailImage || ""
+                icon.source: userProfile.thumbnailImage
                 badge.visible: true
                 badge.anchors.rightMargin: 4
                 badge.anchors.topMargin: 25
