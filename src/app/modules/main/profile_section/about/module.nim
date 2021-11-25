@@ -1,6 +1,7 @@
 import NimQml, Tables
 
 import ./io_interface, ./view, ./controller
+import ../io_interface as delegate_interface
 import ../../../../global/global_singleton
 
 import ../../../../../app_service/service/about/service as about_service
@@ -8,34 +9,38 @@ import ../../../../../app_service/service/about/service as about_service
 export io_interface
 
 type 
-  Module* [T: io_interface.DelegateInterface] = ref object of io_interface.AccessInterface
-    delegate: T
+  Module* = ref object of io_interface.AccessInterface
+    delegate: delegate_interface.AccessInterface
     controller: controller.AccessInterface
     view: View
     viewVariant: QVariant
     moduleLoaded: bool
 
-proc newModule*[T](delegate: T, aboutService: about_service.ServiceInterface): Module[T] =
-  result = Module[T]()
+proc newModule*(delegate: delegate_interface.AccessInterface, aboutService: about_service.ServiceInterface): Module =
+  result = Module()
   result.delegate = delegate
   result.view = newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController[Module[T]](result, aboutService)
+  result.controller = controller.newController(result, aboutService)
   result.moduleLoaded = false
 
   singletonInstance.engine.setRootContextProperty("aboutModule", result.viewVariant)
 
-method delete*[T](self: Module[T]) =
+method delete*(self: Module) =
   self.view.delete
 
-method load*[T](self: Module[T]) =
-  self.moduleLoaded = true
+method load*(self: Module) =
+  self.view.load()
 
-method isLoaded*[T](self: Module[T]): bool =
+method isLoaded*(self: Module): bool =
   return self.moduleLoaded
 
-method getAppVersion*[T](self: Module[T]): string =
+method viewDidLoad*(self: Module) =
+  self.moduleLoaded = true
+  self.delegate.aboutModuleDidLoad()
+
+method getAppVersion*(self: Module): string =
   return self.controller.getAppVersion()
 
-method getNodeVersion*[T](self: Module[T]): string =
+method getNodeVersion*(self: Module): string =
   return self.controller.getNodeVersion()

@@ -22,6 +22,9 @@ QtObject:
     result.delegate = delegate
     result.setup()
 
+  proc load*(self: View) =
+    self.delegate.viewDidLoad()
+
   proc currentCurrencyChanged*(self: View) {.signal.}
 
   proc updateCurrency*(self: View, currency: string) {.slot.} =

@@ -1,26 +1,27 @@
 import ./controller_interface
+import io_interface
 import ../../../../../../app_service/service/collectible/service as collectible_service
 
 export controller_interface
 
 type 
-  Controller*[T: controller_interface.DelegateInterface] = ref object of controller_interface.AccessInterface
-    delegate: T
+  Controller* = ref object of controller_interface.AccessInterface
+    delegate: io_interface.AccessInterface
     collectibleService: collectible_service.ServiceInterface
 
-proc newController*[T](
-  delegate: T, 
+proc newController*(
+  delegate: io_interface.AccessInterface, 
   collectibleService: collectible_service.ServiceInterface
-): Controller[T] =
-  result = Controller[T]()
+): Controller =
+  result = Controller()
   result.delegate = delegate
   result.collectibleService = collectibleService
   
-method delete*[T](self: Controller[T]) =
+method delete*(self: Controller) =
   discard
 
-method init*[T](self: Controller[T]) = 
+method init*(self: Controller) = 
   discard
 
-method getCollections*[T](self: Controller[T], address: string): seq[collectible_service.CollectionDto] =
+method getCollections*(self: Controller, address: string): seq[collectible_service.CollectionDto] =
   return self.collectibleService.getCollections(address)

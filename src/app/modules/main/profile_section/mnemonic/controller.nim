@@ -1,32 +1,34 @@
 import ./controller_interface
+import io_interface
 import ../../../../../app_service/service/mnemonic/service as mnemonic_service
 
 export controller_interface
 
 type 
-  Controller*[T: controller_interface.DelegateInterface] = ref object of controller_interface.AccessInterface
-    delegate: T
+  Controller* = ref object of controller_interface.AccessInterface
+    delegate: io_interface.AccessInterface
     mnemonicService: mnemonic_service.ServiceInterface
 
-proc newController*[T](delegate: T, mnemonicService: mnemonic_service.ServiceInterface): Controller[T] =
-  result = Controller[T]()
+proc newController*(delegate: io_interface.AccessInterface, mnemonicService: mnemonic_service.ServiceInterface): 
+  Controller =
+  result = Controller()
   result.delegate = delegate
   result.mnemonicService = mnemonicService
 
-method delete*[T](self: Controller[T]) =
+method delete*(self: Controller) =
   discard
 
-method init*[T](self: Controller[T]) = 
+method init*(self: Controller) = 
   discard
 
-method isBackedUp*[T](self: Controller[T]): bool =
+method isBackedUp*(self: Controller): bool =
   return self.mnemonicService.isBackedUp()
 
-method getMnemonic*[T](self: Controller[T]): string =
+method getMnemonic*(self: Controller): string =
   return self.mnemonicService.getMnemonic()
 
-method remove*[T](self: Controller[T]) =
+method remove*(self: Controller) =
   self.mnemonicService.remove()
 
-method getWord*[T](self: Controller[T], index: int): string =
+method getWord*(self: Controller, index: int): string =
   return self.mnemonicService.getWord(index)
