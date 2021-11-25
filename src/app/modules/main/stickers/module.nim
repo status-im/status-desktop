@@ -34,14 +34,10 @@ method delete*[T](self: Module[T]) =
 
 method load*[T](self: Module[T]) =
   self.controller.init()
-  self.view.load()
+  self.moduleLoaded = true
 
 method isLoaded*[T](self: Module[T]): bool =
   return self.moduleLoaded
-
-method viewDidLoad*[T](self: Module[T]) =
-  self.moduleLoaded = true
-  self.delegate.stickersDidLoad()
 
 method buy*[T](self: Module[T], packId: int, address: string, price: string, gas: string, gasPrice: string, maxPriorityFeePerGas: string, maxFeePerGas: string, password: string): tuple[response: string, success: bool] =
   return self.controller.buy(packId, address, price, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, password)

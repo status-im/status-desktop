@@ -15,9 +15,6 @@ QtObject:
     result.QObject.setup
     result.delegate = delegate
 
-  proc load*(self: View) =
-    self.delegate.viewDidLoad()
-
   proc isBackedUp*(self: View): bool {.slot.} =
     return self.delegate.isBackedup()
 

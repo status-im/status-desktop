@@ -1,7 +1,6 @@
 import NimQml, Tables
 
 import ./io_interface, ./view, ./controller
-import ../io_interface as delegate_interface
 import ../../../../global/global_singleton
 
 import ../../../../../app_service/service/mnemonic/service as mnemonic_service
@@ -9,45 +8,40 @@ import ../../../../../app_service/service/mnemonic/service as mnemonic_service
 export io_interface
 
 type 
-  Module* = ref object of io_interface.AccessInterface
-    delegate: delegate_interface.AccessInterface
+  Module*[T: io_interface.DelegateInterface] = ref object of io_interface.AccessInterface
+    delegate: T
     controller: controller.AccessInterface
     view: View
     viewVariant: QVariant
     moduleLoaded: bool
 
-proc newModule*(delegate: delegate_interface.AccessInterface, mnemonicService: mnemonic_service.ServiceInterface): Module =
-  result = Module()
+proc newModule*[T](delegate: T, mnemonicService: mnemonic_service.ServiceInterface): Module[T] =
+  result = Module[T]()
   result.delegate = delegate
   result.view = newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, mnemonicService)
+  result.controller = controller.newController[Module[T]](result, mnemonicService)
   result.moduleLoaded = false
 
   singletonInstance.engine.setRootContextProperty("mnemonicModule", result.viewVariant)
 
-method delete*(self: Module) =
+method delete*[T](self: Module[T]) =
   self.view.delete
 
-method load*(self: Module) =
-  self.controller.init()
-  self.view.load()
+method load*[T](self: Module[T]) =
+  self.moduleLoaded = true
 
-method isLoaded*(self: Module): bool =
+method isLoaded*[T](self: Module[T]): bool =
   return self.moduleLoaded
 
-method viewDidLoad*(self: Module) =
-  self.moduleLoaded = true
-  self.delegate.mnemonicModuleDidLoad()
-
-method isBackedUp*(self: Module): bool =
+method isBackedUp*[T](self: Module[T]): bool =
   return self.controller.isBackedup()
 
-method getMnemonic*(self: Module): string =
+method getMnemonic*[T](self: Module[T]): string =
   return self.controller.getMnemonic()
 
-method remove*(self: Module) =
+method remove*[T](self: Module[T]) =
   self.controller.remove()
 
-method getWord*(self: Module, index: int): string =
+method getWord*[T](self: Module[T], index: int): string =
   return self.controller.getWord(index)
