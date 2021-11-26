@@ -40,6 +40,9 @@ Item {
             return false;
         }
     }
+    property string repliedMessageUserIdenticon
+    property string repliedMessageUserImage
+
     property bool showEdit: true
     property var messageContextMenu
     signal addEmoji(bool isProfileClick, bool isSticker, bool isImage , var image, bool emojiOnly, bool hideEmojiPicker)
@@ -243,9 +246,9 @@ Item {
 //            isCurrentUser: root.messageStore.isCurrentUser
 //            repliedMessageType: root.messageStore.repliedMessageType
 //            repliedMessageImage: root.messageStore.repliedMessageImage
-//            repliedMessageUserIdenticon: root.messageStore.repliedMessageUserIdenticon
+            repliedMessageUserIdenticon: root.repliedMessageUserIdenticon
 //            repliedMessageIsEdited: root.messageStore.repliedMessageIsEdited
-//            repliedMessageUserImage: root.messageStore.repliedMessageUserImage
+            repliedMessageUserImage: root.repliedMessageUserImage
 //            repliedMessageAuthor: root.messageStore.repliedMessageAuthor
 //            repliedMessageContent: root.messageStore.repliedMessageContent
 //            responseTo: root.messageStore.responseTo

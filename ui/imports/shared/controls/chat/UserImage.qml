@@ -10,8 +10,8 @@ Loader {
     height: active ? item.height : 0
     property int imageHeight: 36
     property int imageWidth: 36
-//    property string profileImage: ""
-//    property string identiconImageSource: ""
+    property string profileImage: ""
+    property string identiconImageSource: ""
     property bool isReplyImage: false
 //    property var messageContextMenu
 //    property bool isCurrentUser: false
@@ -31,6 +31,14 @@ Loader {
                 border.width: 1
                 border.color: Style.current.border
                 source: {
+                    if (root.isReplyImage) {
+                        if (root.profileImage) {
+                            return root.profileImage
+                        }
+                        if (root.identiconImageSource) {
+                            return root.identiconImageSource
+                        }
+                    }
                     if (profileImageSource) {
                         return profileImageSource
                     }

@@ -27,9 +27,9 @@ Loader {
 //    property bool isCurrentUser: false
 //    property int repliedMessageType
 //    property string repliedMessageImage
-//    property string repliedMessageUserIdenticon
+    property string repliedMessageUserIdenticon: ""
 //    property bool repliedMessageIsEdited
-//    property string repliedMessageUserImage
+    property string repliedMessageUserImage: ""
 //    property string repliedMessageAuthor
 //    property string repliedMessageContent
 //    property string responseTo: ""
@@ -107,9 +107,9 @@ Loader {
                 active: true
                 anchors.left: replyCorner.right
                 anchors.leftMargin: Style.current.halfPadding
-//                identiconImageSource: repliedMessageUserIdenticon
+                identiconImageSource: repliedMessageUserIdenticon
                 isReplyImage: true
-//                profileImage: repliedMessageUserImage
+                profileImage: repliedMessageUserImage
 //                isCurrentUser: isCurrentUser
                 onClickMessage: {
                     root.clickMessage(true, false, false, null, false, false, isReplyImage)
