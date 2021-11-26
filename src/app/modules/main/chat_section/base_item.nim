@@ -3,31 +3,34 @@ type
     id: string
     name: string
     icon: string
+    isIdenticon: bool
     color: string
     description: string
-    hasNotification: bool
+    hasUnreadMessages: bool
     notificationsCount: int
     muted: bool
     active: bool
     position: int
 
-proc setup*(self: BaseItem, id, name, icon, color, description: string, hasNotification: bool, notificationsCount: int, 
-  muted, active: bool, position: int) =
+proc setup*(self: BaseItem, id, name, icon: string, isIdenticon: bool, color, description: string, hasUnreadMessages: bool, 
+  notificationsCount: int, muted, active: bool, position: int) =
   self.id = id
   self.name = name
   self.icon = icon
+  self.isIdenticon = isIdenticon
   self.color = color
   self.description = description
-  self.hasNotification = hasNotification
+  self.hasUnreadMessages = hasUnreadMessages
   self.notificationsCount = notificationsCount
   self.muted = muted
   self.active = active
   self.position = position
 
-proc initBaseItem*(id, name, icon, color, description: string, hasNotification: bool, notificationsCount: int, 
-  muted, active: bool, position: int): BaseItem =
+proc initBaseItem*(id, name, icon: string, isIdenticon: bool, color, description: string, hasUnreadMessages: bool, 
+  notificationsCount: int, muted, active: bool, position: int): BaseItem =
   result = BaseItem()
-  result.setup(id, name, icon, color, description, hasNotification, notificationsCount, muted, active, position)
+  result.setup(id, name, icon, isIdenticon, color, description, hasUnreadMessages, notificationsCount, muted, active, 
+  position)
 
 proc delete*(self: BaseItem) = 
   discard
@@ -41,17 +44,20 @@ method name*(self: BaseItem): string {.inline base.} =
 method icon*(self: BaseItem): string {.inline base.} = 
   self.icon
 
+method isIdenticon*(self: BaseItem): bool {.inline base.} = 
+  self.isIdenticon
+
 method color*(self: BaseItem): string {.inline base.} = 
   self.color
 
 method description*(self: BaseItem): string {.inline base.} = 
   self.description
 
-method hasNotification*(self: BaseItem): bool {.inline base.} = 
-  self.hasNotification
+method hasUnreadMessages*(self: BaseItem): bool {.inline base.} = 
+  self.hasUnreadMessages
 
-method `hasNotification=`*(self: var BaseItem, value: bool) {.inline base.} = 
-  self.hasNotification = value
+method `hasUnreadMessages=`*(self: var BaseItem, value: bool) {.inline base.} = 
+  self.hasUnreadMessages = value
 
 method notificationsCount*(self: BaseItem): int {.inline base.} = 
   self.notificationsCount

@@ -25,7 +25,8 @@ Item {
     anchors.fill: parent
     property var rootStore
     property alias pinnedMessagesPopupComponent: pinnedMessagesPopupComponent
-    property int chatGroupsListViewCount: 0
+    // Not Refactored Yet
+    //property int chatGroupsListViewCount: 0
     property bool isReply: false
     property bool isImage: false
     property bool isExtendedInput: isReply || isImage
@@ -119,8 +120,9 @@ Item {
 
     StackLayout {
         anchors.fill: parent
-        currentIndex:  root.rootStore.chatsModelInst.channelView.activeChannelIndex > -1
-                       && chatGroupsListViewCount > 0 ? 0 : 1
+        // Not Refactored Yet
+//        currentIndex:  root.rootStore.chatsModelInst.channelView.activeChannelIndex > -1
+//                       && chatGroupsListViewCount > 0 ? 0 : 1
 
         StatusImageModal {
             id: imagePopup

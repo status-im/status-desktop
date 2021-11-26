@@ -5,11 +5,13 @@ import sub_item
 type
   ModelRole {.pure.} = enum
     Id = UserRole + 1
+    ParentId
     Name
     Icon
+    IsIdenticon
     Color
     Description
-    HasNotification
+    HasUnreadMessages
     NotificationsCount
     Muted
     Active
@@ -54,12 +56,14 @@ QtObject:
 
   method roleNames(self: SubModel): Table[int, string] =
     {
-      ModelRole.Id.int:"id",
+      ModelRole.Id.int:"itemId",
+      ModelRole.ParentId.int:"parentItemId",
       ModelRole.Name.int:"name",
       ModelRole.Icon.int:"icon",
+      ModelRole.IsIdenticon.int:"isIdenticon",
       ModelRole.Color.int:"color",
       ModelRole.Description.int:"description",
-      ModelRole.HasNotification.int:"hasNotification",
+      ModelRole.HasUnreadMessages.int:"hasUnreadMessages",
       ModelRole.NotificationsCount.int:"notificationsCount",
       ModelRole.Muted.int:"muted",
       ModelRole.Active.int:"active",
@@ -79,16 +83,20 @@ QtObject:
     case enumRole:
     of ModelRole.Id: 
       result = newQVariant(item.id)
+    of ModelRole.ParentId: 
+      result = newQVariant(item.parentId)
     of ModelRole.Name: 
       result = newQVariant(item.name)
     of ModelRole.Icon: 
       result = newQVariant(item.icon)
+    of ModelRole.IsIdenticon:
+      result = newQVariant(item.isIdenticon)
     of ModelRole.Color: 
       result = newQVariant(item.color)
     of ModelRole.Description: 
       result = newQVariant(item.description)
-    of ModelRole.HasNotification: 
-      result = newQVariant(item.hasNotification)
+    of ModelRole.HasUnreadMessages: 
+      result = newQVariant(item.hasUnreadMessages)
     of ModelRole.NotificationsCount: 
       result = newQVariant(item.notificationsCount)
     of ModelRole.Muted: 

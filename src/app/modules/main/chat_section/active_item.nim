@@ -38,6 +38,15 @@ QtObject:
   QtProperty[string] id:
     read = getId
 
+  proc getIsSubItemActive(self: ActiveItem): bool {.slot.} = 
+    if(self.activeSubItem.getId().len > 0):
+      return true
+
+    return false
+
+  QtProperty[bool] isSubItemActive:
+    read = getIsSubItemActive
+
   proc getName(self: ActiveItem): string {.slot.} = 
     return self.item.name
 
@@ -68,11 +77,11 @@ QtObject:
   QtProperty[int] type:
     read = getType
 
-  proc getHasNotification(self: ActiveItem): bool {.slot.} = 
-    return self.item.hasNotification
+  proc getHasUnreadMessages(self: ActiveItem): bool {.slot.} = 
+    return self.item.hasUnreadMessages
 
-  QtProperty[bool] hasNotification:
-    read = getHasNotification
+  QtProperty[bool] hasUnreadMessages:
+    read = getHasUnreadMessages
 
   proc getNotificationCount(self: ActiveItem): int {.slot.} = 
     return self.item.notificationsCount

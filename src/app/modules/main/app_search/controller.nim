@@ -116,8 +116,10 @@ method searchMessages*(self: Controller, searchTerm: string) =
 
   self.messageService.asyncSearchMessages(communities, chats, self.searchTerm, false)
 
-method getOneToOneChatNameAndImage*(self: Controller, chatId: string): tuple[name: string, image: string] =
+method getOneToOneChatNameAndImage*(self: Controller, chatId: string): 
+  tuple[name: string, image: string, isIdenticon: bool] =
   return self.chatService.getOneToOneChatNameAndImage(chatId)
 
-method getContactNameAndImage*(self: Controller, contactId: string): tuple[name: string, image: string] =
+method getContactNameAndImage*(self: Controller, contactId: string): 
+  tuple[name: string, image: string, isIdenticon: bool] =
   return self.contactsService.getContactNameAndImage(contactId)
