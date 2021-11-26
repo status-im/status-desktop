@@ -66,13 +66,6 @@ method viewDidLoad*(self: Module) =
 method getModuleAsVariant*(self: Module): QVariant =
   return self.viewVariant
 
-proc getContactNameAndImage(self: Module, id: string): tuple[name: string, image: string] =
-  let contactDto = self.controller.getContactById(id)
-  result.name = contactDto.userNameOrAlias()
-  result.image = contactDto.identicon
-  if(contactDto.image.thumbnail.len > 0): 
-    result.image = contactDto.image.thumbnail
-
 proc buildLocationMenuForChat(self: Module): location_menu_item.Item =
   var item = location_menu_item.initItem(conf.CHAT_SECTION_ID, SEARCH_MENU_LOCATION_CHAT_SECTION_NAME, "", "chat", "", 
   false)
@@ -85,7 +78,7 @@ proc buildLocationMenuForChat(self: Module): location_menu_item.Item =
     var chatName = c.name
     var chatImage = c.identicon
     if(c.chatType == ChatType.OneToOne):
-      (chatName, chatImage) = self.getContactNameAndImage(c.id)
+      (chatName, chatImage) = self.controller.getOneToOneChatNameAndImage(c.id)
 
     let subItem = location_menu_sub_item.initSubItem(c.id, chatName, chatImage, "", c.color, chatImage.len == 0)
     subItems.add(subItem)
@@ -189,7 +182,7 @@ method onSearchMessagesDone*(self: Module, messages: seq[MessageDto]) =
       var chatName = c.name
       var chatImage = c.identicon
       if(c.chatType == ChatType.OneToOne):
-        (chatName, chatImage) = self.getContactNameAndImage(c.id)
+        (chatName, chatImage) = self.controller.getOneToOneChatNameAndImage(c.id)
 
       var rawChatName = chatName
       if(chatName.startsWith("@")):
@@ -210,12 +203,12 @@ method onSearchMessagesDone*(self: Module, messages: seq[MessageDto]) =
       continue
 
     let chatDto = self.controller.getChatDetails("", m.chatId)
-    let (senderName, senderImage) = self.getContactNameAndImage(m.`from`)
+    let (senderName, senderImage) = self.controller.getContactNameAndImage(m.`from`)
     if(chatDto.communityId.len == 0):
       var chatName = chatDto.name
       var chatImage = chatDto.identicon
       if(chatDto.chatType == ChatType.OneToOne):
-        (chatName, chatImage) = self.getContactNameAndImage(chatDto.id)
+        (chatName, chatImage) = self.controller.getOneToOneChatNameAndImage(chatDto.id)
 
       let item = result_item.initItem(m.id, m.text, $m.timestamp, m.`from`, senderName, 
       SEARCH_RESULT_MESSAGES_SECTION_NAME, senderImage, "", chatName, "", chatImage, chatDto.color, chatImage.len == 0)

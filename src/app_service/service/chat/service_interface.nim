@@ -23,7 +23,8 @@ method getChatsOfChatTypes*(self: ServiceInterface, types: seq[chat_dto.ChatType
 method getChatById*(self: ServiceInterface, chatId: string): ChatDto {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method prettyChatName*(self: ServiceInterface, chatId: string): string {.base.} =
+method getOneToOneChatNameAndImage*(self: ServiceInterface, chatId: string): tuple[name: string, image: string] 
+  {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method parseChatResponse*(self: ServiceInterface, response: string): (seq[Chat], seq[Message]) {.base.} =
