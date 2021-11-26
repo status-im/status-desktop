@@ -359,7 +359,7 @@ Item {
                     for(let i = this.children.length - 1; i >=0; i--)
                     {
                         var obj = this.children[i];
-                        if(obj && obj.sectionId == mainModule.activeSection.id)
+                        if(obj && obj.sectionId && obj.sectionId == mainModule.activeSection.id)
                         {
                             return i
                         }
@@ -406,7 +406,9 @@ Item {
                     browserLayoutContainer.active = true;
                 }
 
-                timelineLayoutContainer.active = obj === timelineLayoutContainer
+                if(obj === timelineLayoutContainer){
+                    timelineLayoutContainer.active = true
+                }
 
                 if(obj === walletLayoutContainer){
                     walletLayoutContainer.showSigningPhrasePopup();
@@ -435,7 +437,7 @@ Item {
                 }
 
                 Component.onCompleted: {
-                    store = mainModule.getChatSectionModule()
+                    chatCommunitySectionModule = mainModule.getChatSectionModule()
                 }
             }
 
@@ -531,7 +533,7 @@ Item {
                                 // we cannot return QVariant if we pass another parameter in a function call
                                 // that's why we're using it this way
                                 mainModule.prepareCommunitySectionModuleForCommunityId(model.id)
-                                store = mainModule.getCommunitySectionModule()
+                                chatCommunitySectionModule = mainModule.getCommunitySectionModule()
                             }
                         }
                     }
@@ -539,70 +541,72 @@ Item {
             }
         }
 
+    // This doesn't exists, not sure how this part ended up here?!?!
+    // We need to figure out what happened and fix this.
+    // So far just want to discard this, but leave it in order to check it later.
+//        Connections {
+//            target: profileModel
 
-        Connections {
-            target: profileModel
+//            onSettingsFileChanged: {
+//                // Since https://github.com/status-im/status-desktop/commit/93668ff75
+//                // we're hiding the setting to change appearance for compact normal mode
+//                // of the UI. For now, compact mode is the new default.
+//                //
+//                // Prior to this change, most likely many users are still using the
+//                // normal mode configuration, so we have to enforce compact mode for
+//                // those.
+//                if (!localAccountSensitiveSettings.useCompactMode) {
+//                    localAccountSensitiveSettings.useCompactMode = true
+//                }
 
-            onSettingsFileChanged: {
-                // Since https://github.com/status-im/status-desktop/commit/93668ff75
-                // we're hiding the setting to change appearance for compact normal mode
-                // of the UI. For now, compact mode is the new default.
-                //
-                // Prior to this change, most likely many users are still using the
-                // normal mode configuration, so we have to enforce compact mode for
-                // those.
-                if (!localAccountSensitiveSettings.useCompactMode) {
-                    localAccountSensitiveSettings.useCompactMode = true
-                }
+//                const whitelist = profileModel.getLinkPreviewWhitelist()
+//                try {
+//                    const whiteListedSites = JSON.parse(whitelist)
+//                    let settingsUpdated = false
 
-                const whitelist = profileModel.getLinkPreviewWhitelist()
-                try {
-                    const whiteListedSites = JSON.parse(whitelist)
-                    let settingsUpdated = false
+//                    // Add Status links to whitelist
+//                    whiteListedSites.push({title: "Status", address: Constants.deepLinkPrefix, imageSite: false})
+//                    whiteListedSites.push({title: "Status", address: Constants.joinStatusLink, imageSite: false})
+//                    let settings = localAccountSensitiveSettings.whitelistedUnfurlingSites
 
-                    // Add Status links to whitelist
-                    whiteListedSites.push({title: "Status", address: Constants.deepLinkPrefix, imageSite: false})
-                    whiteListedSites.push({title: "Status", address: Constants.joinStatusLink, imageSite: false})
-                    let settings = localAccountSensitiveSettings.whitelistedUnfurlingSites
+//                    if (!settings) {
+//                        settings = {}
+//                    }
 
-                    if (!settings) {
-                        settings = {}
-                    }
+//                    // Set Status links as true. We intercept thoseURLs so it is privacy-safe
+//                    if (!settings[Constants.deepLinkPrefix] || !settings[Constants.joinStatusLink]) {
+//                        settings[Constants.deepLinkPrefix] = true
+//                        settings[Constants.joinStatusLink] = true
+//                        settingsUpdated = true
+//                    }
 
-                    // Set Status links as true. We intercept thoseURLs so it is privacy-safe
-                    if (!settings[Constants.deepLinkPrefix] || !settings[Constants.joinStatusLink]) {
-                        settings[Constants.deepLinkPrefix] = true
-                        settings[Constants.joinStatusLink] = true
-                        settingsUpdated = true
-                    }
+//                    const whitelistedHostnames = []
 
-                    const whitelistedHostnames = []
-
-                    // Add whitelisted sites in to app settings that are not already there
-                    whiteListedSites.forEach(site => {
-                                                if (!settings.hasOwnProperty(site.address))  {
-                                                    settings[site.address] = false
-                                                    settingsUpdated = true
-                                                }
-                                                whitelistedHostnames.push(site.address)
-                                            })
-                    // Remove any whitelisted sites from app settings that don't exist in the
-                    // whitelist from status-go
-                    Object.keys(settings).forEach(settingsHostname => {
-                        if (!whitelistedHostnames.includes(settingsHostname)) {
-                            delete settings[settingsHostname]
-                            settingsUpdated = true
-                        }
-                    })
-                    if (settingsUpdated) {
-                        localAccountSensitiveSettings.whitelistedUnfurlingSites = settings
-                    }
-                } catch (e) {
-                    console.error('Could not parse the whitelist for sites', e)
-                }
-                appMain.settingsLoaded()
-            }
-        }
+//                    // Add whitelisted sites in to app settings that are not already there
+//                    whiteListedSites.forEach(site => {
+//                                                if (!settings.hasOwnProperty(site.address))  {
+//                                                    settings[site.address] = false
+//                                                    settingsUpdated = true
+//                                                }
+//                                                whitelistedHostnames.push(site.address)
+//                                            })
+//                    // Remove any whitelisted sites from app settings that don't exist in the
+//                    // whitelist from status-go
+//                    Object.keys(settings).forEach(settingsHostname => {
+//                        if (!whitelistedHostnames.includes(settingsHostname)) {
+//                            delete settings[settingsHostname]
+//                            settingsUpdated = true
+//                        }
+//                    })
+//                    if (settingsUpdated) {
+//                        localAccountSensitiveSettings.whitelistedUnfurlingSites = settings
+//                    }
+//                } catch (e) {
+//                    console.error('Could not parse the whitelist for sites', e)
+//                }
+//                appMain.settingsLoaded()
+//            }
+//        }
 
         Connections {
             target: chatsModel

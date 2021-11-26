@@ -21,8 +21,14 @@ Item {
     width: 304
     height: parent.height
 
+    // Important:
+    // We're here in case of ChatSection
+    // This module is set from `ChatLayout` (each `ChatLayout` has its own chatSectionModule)
+    property var chatSectionModule
+
     property var store
-    property int chatGroupsListViewCount: channelList.chatListItems.count
+    // Not Refactored Yet
+    //property int chatGroupsListViewCount: channelList.model.count
     signal openProfileClicked()
     signal openAppSearch()
 
@@ -223,41 +229,35 @@ Item {
         StatusChatList {
             id: channelList
 
-            chatNameFn: function (chatItem) {
-                return chatItem.chatType !== Constants.chatTypePublic ?
-                            Emoji.parse(Utils.removeStatusEns(Utils.filterXSS(chatItem.name))) :
-                            Utils.filterXSS(chatItem.name)
-            }
-
-            profileImageFn: function (id) {
-                return appMain.getProfileImage(id)
-            }
-
             Connections {
                 target: root.store.allContacts
                 onContactChanged: {
-                    for (var i = 0; i < channelList.chatListItems.count; i++) {
-                        if (!!channelList.statusChatListItems) {
-                            let chatItem = !!channelList.statusChatListItems.model.items ?
-                                    channelList.statusChatListItems.model.items.get(i) : null
-                            if (chatItem && chatItem.chatId === pubkey) {
-                                let profileImage = appMain.getProfileImage(pubkey)
-                                if (!!profileImage) {
-                                    chatItem.image.isIdenticon = false
-                                    chatItem.image.source = profileImage
-                                }
-                                break;
-                            }
-                        }
-                    }
+                    // Not Refactored Yet
+//                    for (var i = 0; i < channelList.chatListItems.count; i++) {
+//                        if (!!channelList.statusChatListItems) {
+//                            let chatItem = !!channelList.statusChatListItems.model.items ?
+//                                    channelList.statusChatListItems.model.items.get(i) : null
+//                            if (chatItem && chatItem.chatId === pubkey) {
+//                                let profileImage = appMain.getProfileImage(pubkey)
+//                                if (!!profileImage) {
+//                                    chatItem.image.isIdenticon = false
+//                                    chatItem.image.source = profileImage
+//                                }
+//                                break;
+//                            }
+//                        }
+//                    }
                 }
             }
 
-            chatListItems.model: root.store.chatsModelInst.channelView.chats
-            selectedChatId: root.store.chatsModelInst.channelView.activeChannel.id
+            model: root.chatSectionModule.model
+            onChatItemSelected: root.chatSectionModule.setActiveItem(id, "")
 
-            onChatItemSelected: root.store.chatsModelInst.channelView.setActiveChannel(id)
-            onChatItemUnmuted: root.store.chatsModelInst.channelView.unmuteChatItem(id)
+//            chatListItems.model: root.store.chatsModelInst.channelView.chats
+//            selectedChatId: root.store.chatsModelInst.channelView.activeChannel.id
+
+//            onChatItemSelected: root.store.chatsModelInst.channelView.setActiveChannel(id)
+//            onChatItemUnmuted: root.store.chatsModelInst.channelView.unmuteChatItem(id)
 
             popupMenu: ChatContextMenuView {
                 id: chatContextMenuView

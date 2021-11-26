@@ -51,9 +51,10 @@ method getChatDetails*(self: AccessInterface, communityId, chatId: string): Chat
 method searchMessages*(self: AccessInterface, searchTerm: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getOneToOneChatNameAndImage*(self: AccessInterface, chatId: string): tuple[name: string, image: string] 
-  {.base.} =
+method getOneToOneChatNameAndImage*(self: AccessInterface, chatId: string): 
+  tuple[name: string, image: string, isIdenticon: bool] {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getContactNameAndImage*(self: AccessInterface, contactId: string): tuple[name: string, image: string] {.base.} =
+method getContactNameAndImage*(self: AccessInterface, contactId: string): 
+  tuple[name: string, image: string, isIdenticon: bool] {.base.} =
   raise newException(ValueError, "No implementation available")

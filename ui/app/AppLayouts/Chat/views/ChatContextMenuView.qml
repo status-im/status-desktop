@@ -13,7 +13,8 @@ StatusPopupMenu {
     id: root
     property var chatItem
     property var store
-    property bool communityActive: root.store.chatsModelInst.communities.activeCommunity.active
+    // Not Refactored Yet
+    property bool communityActive: false // root.store.chatsModelInst.communities.activeCommunity.active
 
     StatusMenuItem {
         id: viewProfileMenuItem
