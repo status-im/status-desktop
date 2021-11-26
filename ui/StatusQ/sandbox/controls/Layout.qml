@@ -56,9 +56,8 @@ Column {
             readonly property int community: 1
             readonly property int wallet: 2
             readonly property int browser: 3
-            readonly property int timeline: 4
-            readonly property int nodeManagement: 5
-            readonly property int profileSettings: 6
+            readonly property int nodeManagement: 4
+            readonly property int profileSettings: 5
         }
 
         StatusAppNavBar {
@@ -91,8 +90,7 @@ Column {
                 ListElement {sectionId: "0x0001"; sectionType: 1; name: "Test Community"; active: false; image: ""; icon: ""; color: "#00ff00"; hasNotification: true; notificationsCount: 12}
                 ListElement {sectionId: "wallet"; sectionType: 2; name: "Wallet"; active: false; image: ""; icon: "wallet"; color: ""; hasNotification: false; notificationsCount: 0}
                 ListElement {sectionId: "browser"; sectionType: 3; name: "Browser"; active: false; image: ""; icon: "bigger/browser"; color: ""; hasNotification: false; notificationsCount: 0}
-                ListElement {sectionId: "timeline"; sectionType: 4; name: "Timeline"; active: false; image: ""; icon: "bigger/status-update"; color: ""; hasNotification: false; notificationsCount: 0}
-                ListElement {sectionId: "profile"; sectionType: 6; name: "Profile"; active: false; image: ""; icon: "bigger/settings"; color: ""; hasNotification: true; notificationsCount: 0}
+                ListElement {sectionId: "profile"; sectionType: 5; name: "Profile"; active: false; image: ""; icon: "bigger/settings"; color: ""; hasNotification: true; notificationsCount: 0}
             }
 
             property bool communityAdded: false
@@ -267,8 +265,7 @@ Column {
                 ListElement {sectionId: "0x0004"; sectionType: 1; name: "Test Community"; active: false; image: ""; icon: ""; color: "#00ff00"; hasNotification: true; notificationsCount: 0}
                 ListElement {sectionId: "wallet"; sectionType: 2; name: "Wallet"; active: false; image: ""; icon: "wallet"; color: ""; hasNotification: false; notificationsCount: 0}
                 ListElement {sectionId: "browser"; sectionType: 3; name: "Browser"; active: false; image: ""; icon: "bigger/browser"; color: ""; hasNotification: false; notificationsCount: 0}
-                ListElement {sectionId: "timeline"; sectionType: 4; name: "Timeline"; active: false; image: ""; icon: "bigger/status-update"; color: ""; hasNotification: false; notificationsCount: 0}
-                ListElement {sectionId: "profile"; sectionType: 6; name: "Profile"; active: false; image: ""; icon: "bigger/settings"; color: ""; hasNotification: false; notificationsCount: 0}
+                ListElement {sectionId: "profile"; sectionType: 5; name: "Profile"; active: false; image: ""; icon: "bigger/settings"; color: ""; hasNotification: false; notificationsCount: 0}
             }
 
             property bool communityAdded: false
@@ -363,8 +360,7 @@ Column {
                 ListElement {sectionId: "0x0010"; sectionType: 1; name: "Test Community"; active: false; image: ""; icon: ""; color: "#00ff00"; hasNotification: true; notificationsCount: 11}
                 ListElement {sectionId: "wallet"; sectionType: 2; name: "Wallet"; active: false; image: ""; icon: "wallet"; color: ""; hasNotification: false; notificationsCount: 0}
                 ListElement {sectionId: "browser"; sectionType: 3; name: "Browser"; active: false; image: ""; icon: "bigger/browser"; color: ""; hasNotification: false; notificationsCount: 0}
-                ListElement {sectionId: "timeline"; sectionType: 4; name: "Timeline"; active: false; image: ""; icon: "bigger/status-update"; color: ""; hasNotification: false; notificationsCount: 0}
-                ListElement {sectionId: "profile"; sectionType: 6; name: "Profile"; active: false; image: ""; icon: "bigger/settings"; color: ""; hasNotification: true; notificationsCount: 0}
+                ListElement {sectionId: "profile"; sectionType: 5; name: "Profile"; active: false; image: ""; icon: "bigger/settings"; color: ""; hasNotification: true; notificationsCount: 0}
             }
 
             property bool communityAdded: false

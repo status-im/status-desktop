@@ -339,9 +339,8 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
     //    community: 1
     //    wallet: 2
     //    browser: 3
-    //    timeline: 4
-    //    nodeManagement: 5
-    //    profileSettings: 6
+    //    nodeManagement: 4
+    //    profileSettings: 5
     //    apiDocumentation: 100
     //    demoApp: 101
 
@@ -411,17 +410,6 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
             active: false
             image: ""
             icon: "bigger/browser"
-            color: ""
-            hasNotification: false
-            notificationsCount: 0
-        }
-        ListElement {
-            sectionId: "timeline"
-            sectionType: 4
-            name: "Timeline"
-            active: false
-            image: ""
-            icon: "bigger/status-update"
             color: ""
             hasNotification: false
             notificationsCount: 0
