@@ -367,6 +367,8 @@ Column {
             messageContextMenu: root.messageContextMenu
             store: root.rootStore
             messageStore: root.messageStore
+            repliedMessageUserIdenticon: root.repliedMessageUserIdenticon
+            repliedMessageUserImage: root.repliedMessageUserImage
             onAddEmoji: {
                 root.clickMessage(isProfileClick, isSticker, isImage , image, emojiOnly, hideEmojiPicker);
             }
