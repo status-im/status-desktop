@@ -6,10 +6,11 @@ type
     `type`: int
     subItems: SubModel
 
-proc initItem*(id, name, icon, color, description: string, `type`: int, hasNotification: bool, notificationsCount: int, 
-  muted, active: bool, position: int): Item =
+proc initItem*(id, name, icon: string, isIdenticon: bool, color, description: string, `type`: int, hasUnreadMessages: bool, 
+  notificationsCount: int, muted, active: bool, position: int): Item =
   result = Item()
-  result.setup(id, name, icon, color, description, hasNotification, notificationsCount, muted, active, position)
+  result.setup(id, name, icon, isIdenticon, color, description, hasUnreadMessages, notificationsCount, muted, active, 
+  position)
   result.`type` = `type`
   result.subItems = newSubModel()
 
@@ -25,13 +26,14 @@ proc type*(self: Item): int {.inline.} =
 
 proc `$`*(self: Item): string =
   result = fmt"""ChatSectionItem(
-    id: {self.id}, 
+    itemId: {self.id}, 
     name: {self.name}, 
     icon: {self.icon},
+    isIdenticon: {self.isIdenticon},
     color: {self.color}, 
     description: {self.description},
     type: {self.`type`},
-    hasNotification: {self.hasNotification}, 
+    hasUnreadMessages: {self.hasUnreadMessages}, 
     notificationsCount: {self.notificationsCount},
     muted: {self.muted},
     active: {self.active},

@@ -53,7 +53,8 @@ method getChatById*(self: Service, chatId: string): ChatDto =
 
   return self.chats[chatId]
 
-method getOneToOneChatNameAndImage*(self: Service, chatId: string): tuple[name: string, image: string] =
+method getOneToOneChatNameAndImage*(self: Service, chatId: string): 
+  tuple[name: string, image: string, isIdenticon: bool] =
   return self.contactService.getContactNameAndImage(chatId)
 
 # TODO refactor this to new object types

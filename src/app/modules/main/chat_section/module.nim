@@ -73,10 +73,11 @@ proc buildChatUI(self: Module, events: EventEmitter, chatService: chat_service.S
     let notificationsCount = c.unviewedMentionsCount
     var chatName = c.name
     var chatImage = c.identicon
+    var isIdenticon = false
     if(c.chatType == ChatType.OneToOne):
-      (chatName, chatImage) = self.controller.getOneToOneChatNameAndImage(c.id)
+      (chatName, chatImage, isIdenticon) = self.controller.getOneToOneChatNameAndImage(c.id)
 
-    let item = initItem(c.id, chatName, chatImage, c.color, c.description, c.chatType.int, hasNotification, 
+    let item = initItem(c.id, chatName, chatImage, isIdenticon, c.color, c.description, c.chatType.int, hasNotification, 
     notificationsCount, c.muted, false, 0)
     self.view.appendItem(item)
     self.addSubmodule(c.id, false, events, chatService, communityService, messageService)
@@ -93,6 +94,9 @@ proc buildCommunityUI(self: Module, events: EventEmitter, chatService: chat_serv
   var selectedSubItemId = ""
   let communityIds = self.controller.getCommunityIds()
   for cId in communityIds:
+    if(self.controller.getMySectionId() != cId):
+      continue
+    
     # handle channels which don't belong to any category
     let chats = self.controller.getChats(cId, "")
     for c in chats:
@@ -100,7 +104,7 @@ proc buildCommunityUI(self: Module, events: EventEmitter, chatService: chat_serv
 
       let hasNotification = chatDto.unviewedMessagesCount > 0 or chatDto.unviewedMentionsCount > 0
       let notificationsCount = chatDto.unviewedMentionsCount
-      let channelItem = initItem(chatDto.id, chatDto.name, chatDto.identicon, chatDto.color, chatDto.description, 
+      let channelItem = initItem(chatDto.id, chatDto.name, chatDto.identicon, false, chatDto.color, chatDto.description, 
       chatDto.chatType.int, hasNotification, notificationsCount, chatDto.muted, false, c.position)
       self.view.appendItem(channelItem)
       self.addSubmodule(chatDto.id, true, events, chatService, communityService, messageService)
@@ -126,8 +130,8 @@ proc buildCommunityUI(self: Module, events: EventEmitter, chatService: chat_serv
         hasNotificationPerCategory = hasNotificationPerCategory or hasNotification
         notificationsCountPerCategory += notificationsCount
 
-        let channelItem = initSubItem(chatDto.id, chatDto.name, chatDto.identicon, chatDto.color, chatDto.description, 
-        hasNotification, notificationsCount, chatDto.muted, false, c.position)
+        let channelItem = initSubItem(chatDto.id, cat.id, chatDto.name, chatDto.identicon, false, chatDto.color, 
+        chatDto.description, hasNotification, notificationsCount, chatDto.muted, false, c.position)
         categoryChannels.add(channelItem)
         self.addSubmodule(chatDto.id, true, events, chatService, communityService, messageService)
 
@@ -137,7 +141,7 @@ proc buildCommunityUI(self: Module, events: EventEmitter, chatService: chat_serv
           selectedItemId = cat.id
           selectedSubItemId = channelItem.id
 
-      var categoryItem = initItem(cat.id, cat.name, "", "", "", ChatType.Unknown.int, hasNotificationPerCategory, 
+      var categoryItem = initItem(cat.id, cat.name, "", false, "", "", ChatType.Unknown.int, hasNotificationPerCategory, 
       notificationsCountPerCategory, false, false, cat.position)
       categoryItem.prependSubItems(categoryChannels)
       self.view.appendItem(categoryItem)

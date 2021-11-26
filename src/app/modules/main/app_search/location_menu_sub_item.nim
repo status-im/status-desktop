@@ -6,7 +6,7 @@ export base_item
 type 
   SubItem* = ref object of BaseItem
 
-proc initSubItem*(value, text, image, icon, iconColor: string = "", isIdenticon: bool = true): SubItem =
+proc initSubItem*(value, text, image, icon, iconColor: string, isIdenticon: bool): SubItem =
   result = SubItem()
   result.setup(value, text, image, icon, iconColor, isIdenticon)
 

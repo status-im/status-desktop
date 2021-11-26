@@ -78,10 +78,11 @@ proc buildLocationMenuForChat(self: Module): location_menu_item.Item =
   for c in displayedChats:
     var chatName = c.name
     var chatImage = c.identicon
+    var isIdenticon = false
     if(c.chatType == ChatType.OneToOne):
-      (chatName, chatImage) = self.controller.getOneToOneChatNameAndImage(c.id)
+      (chatName, chatImage, isIdenticon) = self.controller.getOneToOneChatNameAndImage(c.id)
 
-    let subItem = location_menu_sub_item.initSubItem(c.id, chatName, chatImage, "", c.color, chatImage.len == 0)
+    let subItem = location_menu_sub_item.initSubItem(c.id, chatName, chatImage, "", c.color, isIdenticon)
     subItems.add(subItem)
     
   item.setSubItems(subItems)
@@ -157,7 +158,7 @@ method onSearchMessagesDone*(self: Module, messages: seq[MessageDto]) =
   for co in communities:
     if(self.controller.searchLocation().len == 0 and co.name.toLower.startsWith(self.controller.searchTerm().toLower)):
       let item = result_item.initItem(co.id, "", "", co.id, co.name, SEARCH_RESULT_COMMUNITIES_SECTION_NAME, 
-        co.images.thumbnail, co.color, "", "", co.images.thumbnail, co.color)
+        co.images.thumbnail, co.color, "", "", co.images.thumbnail, co.color, false)
 
       items.add(item)
 
@@ -169,7 +170,7 @@ method onSearchMessagesDone*(self: Module, messages: seq[MessageDto]) =
         if(c.name.toLower.startsWith(self.controller.searchTerm().toLower)):
           let item = result_item.initItem(chatDto.id, "", "", chatDto.id, chatDto.name, 
           SEARCH_RESULT_CHANNELS_SECTION_NAME, chatDto.identicon, chatDto.color, "", "", chatDto.identicon, chatDto.color, 
-          chatDto.identicon.len > 0)
+          false)
 
           channels.add(item)
 
@@ -182,8 +183,9 @@ method onSearchMessagesDone*(self: Module, messages: seq[MessageDto]) =
     for c in displayedChats:
       var chatName = c.name
       var chatImage = c.identicon
+      var isIdenticon = false
       if(c.chatType == ChatType.OneToOne):
-        (chatName, chatImage) = self.controller.getOneToOneChatNameAndImage(c.id)
+        (chatName, chatImage, isIdenticon) = self.controller.getOneToOneChatNameAndImage(c.id)
 
       var rawChatName = chatName
       if(chatName.startsWith("@")):
@@ -191,7 +193,7 @@ method onSearchMessagesDone*(self: Module, messages: seq[MessageDto]) =
 
       if(rawChatName.toLower.startsWith(self.controller.searchTerm().toLower)):
         let item = result_item.initItem(c.id, "", "", c.id, chatName, SEARCH_RESULT_CHATS_SECTION_NAME, chatImage, 
-        c.color, "", "", chatImage, c.color, chatImage.len > 0)
+        c.color, "", "", chatImage, c.color, isIdenticon)
 
         items.add(item)
 
@@ -204,18 +206,19 @@ method onSearchMessagesDone*(self: Module, messages: seq[MessageDto]) =
       continue
 
     let chatDto = self.controller.getChatDetails("", m.chatId)
-    var (senderName, senderImage) = self.controller.getContactNameAndImage(m.`from`)
+    var (senderName, senderImage, senderIsIdenticon) = self.controller.getContactNameAndImage(m.`from`)
     if(m.`from` == singletonInstance.userProfile.getPubKey()):
       senderName = "You"
       
     if(chatDto.communityId.len == 0):
       var chatName = chatDto.name
       var chatImage = chatDto.identicon
+      var isIdenticon = false
       if(chatDto.chatType == ChatType.OneToOne):
-        (chatName, chatImage) = self.controller.getOneToOneChatNameAndImage(chatDto.id)
+        (chatName, chatImage, isIdenticon) = self.controller.getOneToOneChatNameAndImage(chatDto.id)
 
       let item = result_item.initItem(m.id, m.text, $m.timestamp, m.`from`, senderName, 
-      SEARCH_RESULT_MESSAGES_SECTION_NAME, senderImage, "", chatName, "", chatImage, chatDto.color, chatImage.len == 0)
+      SEARCH_RESULT_MESSAGES_SECTION_NAME, senderImage, "", chatName, "", chatImage, chatDto.color, isIdenticon)
 
       items.add(item)
     else:
@@ -224,7 +227,7 @@ method onSearchMessagesDone*(self: Module, messages: seq[MessageDto]) =
 
       let item = result_item.initItem(m.id, m.text, $m.timestamp, m.`from`, senderName, 
       SEARCH_RESULT_MESSAGES_SECTION_NAME, senderImage, "", community.name, channelName, community.images.thumbnail, 
-      community.color, community.images.thumbnail.len == 0)
+      community.color, false)
 
       items.add(item)
 
