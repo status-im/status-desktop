@@ -79,16 +79,16 @@ QtObject {
     property bool isStatusUpdate: false
     property int statusAgeEpoch: 0
 
-    property int replyMessageIndex: chatsModel.messageView.messageList.getMessageIndex(responseTo);
-    property string repliedMessageAuthor: replyMessageIndex > -1 ? chatsModel.messageView.messageList.getMessageData(replyMessageIndex, "userName") : "";
-    property string repliedMessageAuthorPubkey: replyMessageIndex > -1 ? chatsModel.messageView.messageList.getMessageData(replyMessageIndex, "publicKey") : "";
-    property bool repliedMessageAuthorIsCurrentUser: replyMessageIndex > -1 ? repliedMessageAuthorPubkey === profileModel.profile.pubKey : "";
-    property bool repliedMessageIsEdited: replyMessageIndex > -1 ? chatsModel.messageView.messageList.getMessageData(replyMessageIndex, "isEdited") === "true" : false;
-    property string repliedMessageContent: replyMessageIndex > -1 ? chatsModel.messageView.messageList.getMessageData(replyMessageIndex, "message") : "";
-    property int repliedMessageType: replyMessageIndex > -1 ? parseInt(chatsModel.messageView.messageList.getMessageData(replyMessageIndex, "contentType")) : 0;
-    property string repliedMessageImage: replyMessageIndex > -1 ? chatsModel.messageView.messageList.getMessageData(replyMessageIndex, "image") : "";
-    property string repliedMessageUserIdenticon: replyMessageIndex > -1 ? chatsModel.messageView.messageList.getMessageData(replyMessageIndex, "identicon") : "";
-    property string repliedMessageUserImage: replyMessageIndex > -1 ? appMain.getProfileImage(repliedMessageAuthorPubkey, repliedMessageAuthorIsCurrentUser , false) || "" : "";
+//    property int replyMessageIndex: chatsModel.messageView.messageList.getMessageIndex(responseTo);
+//    property string repliedMessageAuthor: replyMessageIndex > -1 ? chatsModel.messageView.messageList.getMessageData(replyMessageIndex, "userName") : "";
+//    property string repliedMessageAuthorPubkey: replyMessageIndex > -1 ? chatsModel.messageView.messageList.getMessageData(replyMessageIndex, "publicKey") : "";
+    property bool repliedMessageAuthorIsCurrentUser: replyMessageIndex > -1 ? repliedMessageAuthorPubkey === userProfile.pubKey : "";
+//    property bool repliedMessageIsEdited: replyMessageIndex > -1 ? chatsModel.messageView.messageList.getMessageData(replyMessageIndex, "isEdited") === "true" : false;
+//    property string repliedMessageContent: replyMessageIndex > -1 ? chatsModel.messageView.messageList.getMessageData(replyMessageIndex, "message") : "";
+//    property int repliedMessageType: replyMessageIndex > -1 ? parseInt(chatsModel.messageView.messageList.getMessageData(replyMessageIndex, "contentType")) : 0;
+//    property string repliedMessageImage: replyMessageIndex > -1 ? chatsModel.messageView.messageList.getMessageData(replyMessageIndex, "image") : "";
+//    property string repliedMessageUserIdenticon: replyMessageIndex > -1 ? chatsModel.messageView.messageList.getMessageData(replyMessageIndex, "identicon") : "";
+//    property string repliedMessageUserImage: replyMessageIndex > -1 ? appMain.getProfileImage(repliedMessageAuthorPubkey, repliedMessageAuthorIsCurrentUser , false) || "" : "";
 
     property var imageClick: function () {}
     property var scrollToBottom: function () {}
