@@ -51,8 +51,9 @@ method getChatDetails*(self: AccessInterface, communityId, chatId: string): Chat
 method searchMessages*(self: AccessInterface, searchTerm: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getPrettyChatName*(self: AccessInterface, chatId: string): string {.base.} =
+method getOneToOneChatNameAndImage*(self: AccessInterface, chatId: string): tuple[name: string, image: string] 
+  {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getContactById*(self: AccessInterface, contactId: string): ContactsDto {.base.} =
+method getContactNameAndImage*(self: AccessInterface, contactId: string): tuple[name: string, image: string] {.base.} =
   raise newException(ValueError, "No implementation available")

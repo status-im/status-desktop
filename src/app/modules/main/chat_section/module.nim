@@ -72,9 +72,11 @@ proc buildChatUI(self: Module, events: EventEmitter, chatService: chat_service.S
     let hasNotification = c.unviewedMessagesCount > 0 or c.unviewedMentionsCount > 0
     let notificationsCount = c.unviewedMentionsCount
     var chatName = c.name
+    var chatImage = c.identicon
     if(c.chatType == ChatType.OneToOne):
-      chatName = self.controller.getPrettyChatName(c.id)
-    let item = initItem(c.id, chatName, c.identicon, c.color, c.description, c.chatType.int, hasNotification, 
+      (chatName, chatImage) = self.controller.getOneToOneChatNameAndImage(c.id)
+
+    let item = initItem(c.id, chatName, chatImage, c.color, c.description, c.chatType.int, hasNotification, 
     notificationsCount, c.muted, false, 0)
     self.view.appendItem(item)
     self.addSubmodule(c.id, false, events, chatService, communityService, messageService)

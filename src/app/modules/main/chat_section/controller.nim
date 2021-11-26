@@ -76,5 +76,5 @@ method setActiveItemSubItem*(self: Controller, itemId: string, subItemId: string
 
   self.delegate.activeItemSubItemSet(self.activeItemId, self.activeSubItemId)
 
-method getPrettyChatName*(self: Controller, chatId: string): string =
-  return self.chatService.prettyChatName(chatId)
+method getOneToOneChatNameAndImage*(self: Controller, chatId: string): tuple[name: string, image: string] =
+  return self.chatService.getOneToOneChatNameAndImage(chatId)
