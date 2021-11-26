@@ -32,8 +32,8 @@ StatusWindow {
     objectName: "mainWindow"
     minimumWidth: 900
     minimumHeight: 600
-    width: Math.min(1232, Screen.desktopAvailableWidth - 64)
-    height: Math.min(770, Screen.desktopAvailableHeight - 64)
+    width: localAppSettings.appWidth
+    height: localAppSettings.appHeight
     color: Style.current.background
     title: {
         // Set application settings
@@ -44,6 +44,17 @@ StatusWindow {
         return Qt.application.name
     }
     visible: true
+
+    function storeWidth() {
+        localAppSettings.appWidth = width
+    }
+
+    function storeHeight() {
+        localAppSettings.appHeight = height
+    }
+
+    onWidthChanged: Qt.callLater(storeWidth)
+    onHeightChanged: Qt.callLater(storeHeight)
 
     Action {
         shortcut: StandardKey.FullScreen
@@ -184,6 +195,11 @@ StatusWindow {
         setX(Qt.application.screens[0].width / 2 - width / 2);
         setY(Qt.application.screens[0].height / 2 - height / 2);
 
+        if (!localAppSettings.appSizeInitialized) {
+            width = Screen.desktopAvailableWidth - 125
+            height = Screen.desktopAvailableHeight - 125
+            localAppSettings.appSizeInitialized = true
+        }
         applicationWindow.updatePosition();
     }
 
