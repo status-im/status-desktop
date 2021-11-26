@@ -20,9 +20,15 @@ Item {
     width: 304
     height: parent.height
 
+    // Important:
+    // We're here in case of CommunitySection
+    // This module is set from `ChatLayout` (each `ChatLayout` has its own communitySectionModule)
+    property var communitySectionModule
+
     property var store
     // TODO unhardcode
-    property int chatGroupsListViewCount: communityChatListAndCategories.chatList.count
+    // Not Refactored Yet
+    //property int chatGroupsListViewCount: communityChatListAndCategories.chatList.count
     property Component pinnedMessagesPopupComponent
 
     StatusChatInfoToolBar {
@@ -30,26 +36,27 @@ Item {
         anchors.top: parent.top
         anchors.horizontalCenter: parent.horizontalCenter
 
-        chatInfoButton.title: root.store.chatsModelInst.communities.activeCommunity.name
-        chatInfoButton.subTitle: root.store.chatsModelInst.communities.activeCommunity.nbMembers === 1 ?
-            //% "1 Member"
-            qsTrId("1-member") : 
-            //% "%1 Members"
-            qsTrId("-1-members").arg(root.store.chatsModelInst.communities.activeCommunity.nbMembers)
-        chatInfoButton.image.source: root.store.chatsModelInst.communities.activeCommunity.thumbnailImage
-        chatInfoButton.icon.color: root.store.chatsModelInst.communities.activeCommunity.communityColor
-        menuButton.visible: root.store.chatsModelInst.communities.activeCommunity.admin && root.store.chatsModelInst.communities.activeCommunity.canManageUsers
-        chatInfoButton.onClicked: openPopup(communityProfilePopup, {
-            store: root.store,
-            community: root.store.chatsModelInst.communities.activeCommunity
-        })
+        // Not Refactored Yet
+//        chatInfoButton.title: root.store.chatsModelInst.communities.activeCommunity.name
+//        chatInfoButton.subTitle: root.store.chatsModelInst.communities.activeCommunity.nbMembers === 1 ?
+//            //% "1 Member"
+//            qsTrId("1-member") :
+//            //% "%1 Members"
+//            qsTrId("-1-members").arg(root.store.chatsModelInst.communities.activeCommunity.nbMembers)
+//        chatInfoButton.image.source: root.store.chatsModelInst.communities.activeCommunity.thumbnailImage
+//        chatInfoButton.icon.color: root.store.chatsModelInst.communities.activeCommunity.communityColor
+//        menuButton.visible: root.store.chatsModelInst.communities.activeCommunity.admin && root.store.chatsModelInst.communities.activeCommunity.canManageUsers
+//        chatInfoButton.onClicked: openPopup(communityProfilePopup, {
+//            store: root.store,
+//            community: root.store.chatsModelInst.communities.activeCommunity
+//        })
 
         popupMenu: StatusPopupMenu {
             StatusMenuItem {
                 //% "Create channel"
                 text: qsTrId("create-channel")
                 icon.name: "channel"
-                enabled: root.store.chatsModelInst.communities.activeCommunity.admin
+                //enabled: root.store.chatsModelInst.communities.activeCommunity.admin
                 onTriggered: openPopup(createChannelPopup, {communityId: chatsModel.communities.activeCommunity.id})
             }
 
@@ -57,7 +64,7 @@ Item {
                 //% "Create category"
                 text: qsTrId("create-category")
                 icon.name: "channel-category"
-                enabled: root.store.chatsModelInst.communities.activeCommunity.admin
+                //enabled: root.store.chatsModelInst.communities.activeCommunity.admin
                 onTriggered: openPopup(createCategoryPopup, {communityId: chatsModel.communities.activeCommunity.id})
             }
 
@@ -67,7 +74,7 @@ Item {
                 //% "Invite people"
                 text: qsTrId("invite-people")
                 icon.name: "share-ios"
-                enabled: root.store.chatsModelInst.communities.activeCommunity.canManageUsers
+                //enabled: root.store.chatsModelInst.communities.activeCommunity.canManageUsers
                 onTriggered: openPopup(inviteFriendsToCommunityPopup, {
                     community: root.store.chatsModelInst.communities.activeCommunity
                 })
@@ -77,13 +84,17 @@ Item {
     Loader {
         id: membershipRequests
 
-        property int nbRequests: root.store.chatsModelInst.communities.activeCommunity.communityMembershipRequests.nbRequests
+        // Not Refactored Yet
+        property int nbRequests: 0
+        //property int nbRequests: root.store.chatsModelInst.communities.activeCommunity.communityMembershipRequests.nbRequests
 
         anchors.top: communityHeader.bottom
         anchors.topMargin: active ? 8 : 0
         anchors.horizontalCenter: parent.horizontalCenter
 
-        active: root.store.chatsModelInst.communities.activeCommunity.admin && nbRequests > 0
+        // Not Refactored Yet
+        active: nbRequests > 0
+        //active: root.store.chatsModelInst.communities.activeCommunity.admin && nbRequests > 0
         height: nbRequests > 0 ? 64 : 0
         sourceComponent: Component {
             StatusContactRequestsIndicatorListItem {
@@ -127,29 +138,36 @@ Item {
                 return implicitHeight
             }
               
-            draggableItems: root.store.chatsModelInst.communities.activeCommunity.admin
-            draggableCategories: root.store.chatsModelInst.communities.activeCommunity.admin
-            chatList.model: root.store.chatsModelInst.communities.activeCommunity.chats
+//            draggableItems: root.store.chatsModelInst.communities.activeCommunity.admin
+//            draggableCategories: root.store.chatsModelInst.communities.activeCommunity.admin
+            //chatList.model: root.store.chatsModelInst.communities.activeCommunity.chats
 
-            categoryList.model: root.store.chatsModelInst.communities.activeCommunity.categories
-
-            showCategoryActionButtons: root.store.chatsModelInst.communities.activeCommunity.admin
-            showPopupMenu: root.store.chatsModelInst.communities.activeCommunity.admin && chatsModel.communities.activeCommunity.canManageUsers
-            selectedChatId: root.store.chatsModelInst.channelView.activeChannel.id
-
-            onChatItemSelected: root.store.chatsModelInst.channelView.setActiveChannel(id)
-            onChatItemUnmuted: root.store.chatsModelInst.channelView.unmuteChatItem(id)
-            onChatItemReordered: function (categoryId, id, from, to) {
-                root.store.chatsModelInst.communities.reorderCommunityChannel(chatsModel.communities.activeCommunity.id, categoryId, id, to);
-            }
-            onChatListCategoryReordered: function (categoryId, from, to) {
-                root.store.chatsModelInst.communities.reorderCommunityCategories(chatsModel.communities.activeCommunity.id, categoryId, to);
+            //categoryList.model: root.store.chatsModelInst.communities.activeCommunity.categories
+            model: root.communitySectionModule.model
+            onChatItemSelected: {
+                if(categoryId === "")
+                    root.communitySectionModule.setActiveItem(id, "")
+                else
+                    root.communitySectionModule.setActiveItem(categoryId, id)
             }
 
-            onCategoryAddButtonClicked: openPopup(createChannelPopup, {
-                communityId: root.store.chatsModelInst.communities.activeCommunity.id,
-                categoryId: id
-            })
+//            showCategoryActionButtons: root.store.chatsModelInst.communities.activeCommunity.admin
+//            showPopupMenu: root.store.chatsModelInst.communities.activeCommunity.admin && chatsModel.communities.activeCommunity.canManageUsers
+            //selectedChatId: root.store.chatsModelInst.channelView.activeChannel.id
+
+//            onChatItemSelected: root.store.chatsModelInst.channelView.setActiveChannel(id)
+//            onChatItemUnmuted: root.store.chatsModelInst.channelView.unmuteChatItem(id)
+//            onChatItemReordered: function (categoryId, id, from, to) {
+//                root.store.chatsModelInst.communities.reorderCommunityChannel(chatsModel.communities.activeCommunity.id, categoryId, id, to);
+//            }
+//            onChatListCategoryReordered: function (categoryId, from, to) {
+//                root.store.chatsModelInst.communities.reorderCommunityCategories(chatsModel.communities.activeCommunity.id, categoryId, to);
+//            }
+
+//            onCategoryAddButtonClicked: openPopup(createChannelPopup, {
+//                communityId: root.store.chatsModelInst.communities.activeCommunity.id,
+//                categoryId: id
+//            })
 
             popupMenu: StatusPopupMenu {
                 StatusMenuItem {
@@ -164,7 +182,9 @@ Item {
                     //% "Create category"
                     text: qsTrId("create-category")
                     icon.name: "channel-category"
-                    enabled: root.store.chatsModelInst.communities.activeCommunity.admin
+                    // Not Refactored Yet
+                    enabled: false
+                    //enabled: root.store.chatsModelInst.communities.activeCommunity.admin
                     onTriggered: openPopup(createCategoryPopup, {communityId: root.store.chatsModelInst.communities.activeCommunity.id})
                 }
 
@@ -174,7 +194,9 @@ Item {
                     //% "Invite people"
                     text: qsTrId("invite-people")
                     icon.name: "share-ios"
-                    enabled: root.store.chatsModelInst.communities.activeCommunity.canManageUsers
+                    // Not Refactored Yet
+                    enabled: false
+                    //enabled: root.store.chatsModelInst.communities.activeCommunity.canManageUsers
                     onTriggered: openPopup(inviteFriendsToCommunityPopup, {
                         community: root.store.chatsModelInst.communities.activeCommunity
                     })
@@ -190,7 +212,9 @@ Item {
                 }
 
                 StatusMenuItem { 
-                    enabled: root.store.chatsModelInst.communities.activeCommunity.admin
+                    // Not Refactored Yet
+                    enabled: true
+                    //enabled: root.store.chatsModelInst.communities.activeCommunity.admin
                     //% "Edit Category"
                     text: qsTrId("edit-category")
                     icon.name: "edit"
@@ -205,11 +229,15 @@ Item {
                 }
 
                 StatusMenuSeparator {
-                    visible: root.store.chatsModelInst.communities.activeCommunity.admin
+                    // Not Refactored Yet
+                    visible: true
+                    //visible: root.store.chatsModelInst.communities.activeCommunity.admin
                 }
 
                 StatusMenuItem {
-                    enabled: root.store.chatsModelInst.communities.activeCommunity.admin
+                    // Not Refactored Yet
+                    enabled: true
+                    //enabled: root.store.chatsModelInst.communities.activeCommunity.admin
                     //% "Delete Category"
                     text: qsTrId("delete-category")
                     icon.name: "delete"
@@ -373,9 +401,3 @@ Item {
         }
     }
 }
-
-/*##^##
-Designer {
-    D{i:0;autoSize:true;formeditorColor:"#ffffff";height:480;width:640}
-}
-##^##*/

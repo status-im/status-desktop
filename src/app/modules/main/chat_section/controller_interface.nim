@@ -38,6 +38,6 @@ method getChatDetailsForChatTypes*(self: AccessInterface, types: seq[ChatType]):
 method setActiveItemSubItem*(self: AccessInterface, itemId: string, subItemId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getOneToOneChatNameAndImage*(self: AccessInterface, chatId: string): tuple[name: string, image: string] 
-  {.base.} =
+method getOneToOneChatNameAndImage*(self: AccessInterface, chatId: string): 
+  tuple[name: string, image: string, isIdenticon: bool] {.base.} =
   raise newException(ValueError, "No implementation available")

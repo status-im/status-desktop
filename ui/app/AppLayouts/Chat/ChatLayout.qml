@@ -25,7 +25,10 @@ StatusAppThreePanelLayout {
 
     handle: SplitViewHandle { implicitWidth: 5 }
 
-    property var store
+    // Important:
+    // Each `ChatLayout` has its own chatCommunitySectionModule
+    // (on the backend chat and community sections share the same module since they are actually the same)
+    property var chatCommunitySectionModule
 
     // Not Refactored
    property var messageStore
@@ -59,13 +62,13 @@ StatusAppThreePanelLayout {
 
     leftPanel: Loader {
         id: contactColumnLoader
-        sourceComponent: store.isCommunity()? communtiyColumnComponent : contactsColumnComponent
+        sourceComponent: chatCommunitySectionModule.isCommunity()? communtiyColumnComponent : contactsColumnComponent
     }
 
     centerPanel: ChatColumnView {
         id: chatColumn
         rootStore: root.rootStore
-        chatGroupsListViewCount: contactColumnLoader.item.chatGroupsListViewCount
+        //chatGroupsListViewCount: contactColumnLoader.item.chatGroupsListViewCount
 
         onOpenAppSearch: {
             root.openAppSearch()
@@ -74,38 +77,40 @@ StatusAppThreePanelLayout {
 
     showRightPanel: (localAccountSensitiveSettings.expandUsersList && (localAccountSensitiveSettings.showOnlineUsers || chatsModel.communities.activeCommunity.active)
                     && (chatsModel.channelView.activeChannel.chatType !== Constants.chatTypeOneToOne))
-    rightPanel: localAccountSensitiveSettings.communitiesEnabled && chatsModel.communities.activeCommunity.active ? communityUserListComponent : userListComponent
+    rightPanel: localAccountSensitiveSettings.communitiesEnabled && chatCommunitySectionModule.isCommunity()? communityUserListComponent : userListComponent
 
     Component {
         id: communityUserListComponent
         CommunityUserListPanel {
-            currentTime: chatColumn.currentTime
+            //Not Refactored Yet
+            //currentTime: chatColumn.currentTime
             messageContextMenu: quickActionMessageOptionsMenu
-            profilePubKey: userProfile.pubKey
-            community: root.rootStore.chatsModelInst.communities.activeCommunity
-            currentUserName: Utils.removeStatusEns(root.rootStore.profileModelInst.ens.preferredUsername
-                                                  || root.rootStore.profileModelInst.profile.username)
-            currentUserOnline: root.rootStore.userProfileInst.userStatus
-            contactsList: root.rootStore.allContacts
+//            profilePubKey: userProfile.pubKey
+//            community: root.rootStore.chatsModelInst.communities.activeCommunity
+//            currentUserName: Utils.removeStatusEns(root.rootStore.profileModelInst.ens.preferredUsername
+//                                                  || root.rootStore.profileModelInst.profile.username)
+//            currentUserOnline: root.store.userProfileInst.userStatus
+//            contactsList: root.rootStore.allContacts
         }
     }
 
     Component {
         id: userListComponent
         UserListPanel {
-            currentTime: chatColumn.currentTime
-            userList: chatColumn.userList
+            //Not Refactored Yet
+            //currentTime: chatColumn.currentTime
+            //userList: chatColumn.userList
             messageContextMenu: quickActionMessageOptionsMenu
-            profilePubKey: userProfile.pubKey
-            contactsList: root.rootStore.allContacts
-            isOnline: root.rootStore.chatsModelInst.isOnline
+//            profilePubKey: userProfile.pubKey
+//            contactsList: root.rootStore.allContacts
+//            isOnline: root.rootStore.chatsModelInst.isOnline
         }
     }
 
     Component {
         id: contactsColumnComponent
         ContactsColumnView {
-            // Not Refactored
+            chatSectionModule: root.chatCommunitySectionModule
             store: root.rootStore
             onOpenProfileClicked: {
                 root.profileButtonClicked();
@@ -120,8 +125,9 @@ StatusAppThreePanelLayout {
     Component {
         id: communtiyColumnComponent
         CommunityColumnView {
-            store: root.store
-            pinnedMessagesPopupComponent: chatColumn.pinnedMessagesPopupComponent
+            communitySectionModule: root.chatCommunitySectionModule
+            store: root.rootStore
+            //pinnedMessagesPopupComponent: chatColumn.pinnedMessagesPopupComponent
         }
     }
 
@@ -130,7 +136,7 @@ StatusAppThreePanelLayout {
         GroupInfoPopup {
             // Not Refactored
             store: root.rootStore
-            pinnedMessagesPopupComponent: chatColumn.pinnedMessagesPopupComponent
+            //pinnedMessagesPopupComponent: chatColumn.pinnedMessagesPopupComponent
         }
     }
 
@@ -150,11 +156,12 @@ StatusAppThreePanelLayout {
         //% "Are you sure you want to remove this contact?"
         confirmationText: qsTrId("are-you-sure-you-want-to-remove-this-contact-")
         onConfirmButtonClicked: {
-            if (root.rootStore.contactsModuleInst.model.isAdded(chatColumn.contactToRemove)) {
-                root.rootStore.contactsModuleInst.model.removeContact(chatColumn.contactToRemove)
-            }
-            removeContactConfirmationDialog.parentPopup.close();
-            removeContactConfirmationDialog.close();
+            // Not Refactored Yet
+//            if (root.rootStore.contactsModuleInst.model.isAdded(chatColumn.contactToRemove)) {
+//                root.rootStore.contactsModuleInst.model.removeContact(chatColumn.contactToRemove)
+//            }
+//            removeContactConfirmationDialog.parentPopup.close();
+//            removeContactConfirmationDialog.close();
         }
     }
 

@@ -7,10 +7,11 @@ type
     Id = UserRole + 1
     Name
     Icon
+    IsIdenticon
     Color
     Description
     Type
-    HasNotification
+    HasUnreadMessages
     NotificationsCount
     Muted
     Active
@@ -56,13 +57,14 @@ QtObject:
 
   method roleNames(self: Model): Table[int, string] =
     {
-      ModelRole.Id.int:"id",
+      ModelRole.Id.int:"itemId",
       ModelRole.Name.int:"name",
       ModelRole.Icon.int:"icon",
+      ModelRole.IsIdenticon.int:"isIdenticon",
       ModelRole.Color.int:"color",
       ModelRole.Description.int:"description",
       ModelRole.Type.int:"type",
-      ModelRole.HasNotification.int:"hasNotification",
+      ModelRole.HasUnreadMessages.int:"hasUnreadMessages",
       ModelRole.NotificationsCount.int:"notificationsCount",
       ModelRole.Muted.int:"muted",
       ModelRole.Active.int:"active",
@@ -87,14 +89,16 @@ QtObject:
       result = newQVariant(item.name)
     of ModelRole.Icon: 
       result = newQVariant(item.icon)
+    of ModelRole.IsIdenticon:
+      result = newQVariant(item.isIdenticon)
     of ModelRole.Color: 
       result = newQVariant(item.color)
     of ModelRole.Description: 
       result = newQVariant(item.description)
     of ModelRole.Type: 
       result = newQVariant(item.`type`)
-    of ModelRole.HasNotification: 
-      result = newQVariant(item.hasNotification)
+    of ModelRole.HasUnreadMessages: 
+      result = newQVariant(item.hasUnreadMessages)
     of ModelRole.NotificationsCount: 
       result = newQVariant(item.notificationsCount)
     of ModelRole.Muted: 

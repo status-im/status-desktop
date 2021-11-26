@@ -18,55 +18,73 @@ QtObject:
   proc setActiveSubItemData*(self: ActiveSubItem, item: SubItem) =
     self.item = item
 
-  proc getId(self: ActiveSubItem): string {.slot.} = 
+  proc getId*(self: ActiveSubItem): string {.slot.} = 
+    if(self.item.isNil):
+      return ""
     return self.item.id
 
   QtProperty[string] id:
     read = getId
 
   proc getName(self: ActiveSubItem): string {.slot.} = 
+    if(self.item.isNil):
+      return ""
     return self.item.name
 
   QtProperty[string] name:
     read = getName
 
   proc getIcon(self: ActiveSubItem): string {.slot.} =
+    if(self.item.isNil):
+      return ""
     return self.item.icon
 
   QtProperty[string] icon:
     read = getIcon
 
   proc getColor(self: ActiveSubItem): string {.slot.} =
+    if(self.item.isNil):
+      return ""
     return self.item.color
 
   QtProperty[string] color:
     read = getColor
 
   proc getDescription(self: ActiveSubItem): string {.slot.} = 
+    if(self.item.isNil):
+      return ""
     return self.item.description
 
   QtProperty[string] description:
     read = getDescription
 
-  proc getHasNotification(self: ActiveSubItem): bool {.slot.} = 
-    return self.item.hasNotification
+  proc getHasUnreadMessages(self: ActiveSubItem): bool {.slot.} = 
+    if(self.item.isNil):
+      return false
+    return self.item.hasUnreadMessages
 
-  QtProperty[bool] hasNotification:
-    read = getHasNotification
+  QtProperty[bool] hasUnreadMessages:
+    read = getHasUnreadMessages
 
   proc getNotificationCount(self: ActiveSubItem): int {.slot.} = 
+    if(self.item.isNil):
+      return 0
     return self.item.notificationsCount
 
   QtProperty[int] notificationCount:
     read = getNotificationCount
 
   proc getMuted(self: ActiveSubItem): bool {.slot.} = 
+    if(self.item.isNil):
+      return false
     return self.item.muted
 
   QtProperty[bool] muted:
     read = getMuted
 
   proc getPosition(self: ActiveSubItem): int {.slot.} = 
+    if(self.item.isNil):
+      return 0
     return self.item.position
 
   QtProperty[int] position:
