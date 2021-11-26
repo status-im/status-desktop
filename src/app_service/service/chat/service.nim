@@ -53,9 +53,8 @@ method getChatById*(self: Service, chatId: string): ChatDto =
 
   return self.chats[chatId]
 
-method prettyChatName*(self: Service, chatId: string): string =
-  let contact = self.contactService.getContactById(chatId)
-  return contact.userNameOrAlias()
+method getOneToOneChatNameAndImage*(self: Service, chatId: string): tuple[name: string, image: string] =
+  return self.contactService.getContactNameAndImage(chatId)
 
 # TODO refactor this to new object types
 proc parseChatResponse*(self: Service, response: string): (seq[Chat], seq[Message]) =
