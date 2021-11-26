@@ -8,6 +8,10 @@ Item {
     height: childrenRect.height + Style.current.smallPadding * 2
     anchors.left: parent.left
     anchors.right: parent.right
+    //TODO remove dynamic scoping
+//    property int gapFrom
+//    property int gapTo
+
     signal clicked()
     Separator {
         id: sep1
@@ -41,7 +45,7 @@ Item {
         color: Style.current.secondaryText
         //% "before %1"
         //% "Between %1 and %2"
-        text: qsTrId("between--1-and--2").arg(new Date(root.gapFrom*1000)).arg(new Date(root.gapTo*1000))
+        text: qsTrId("between--1-and--2").arg(new Date(gapFrom * 1000)).arg(new Date(gapTo * 1000))
     }
     Separator {
         anchors.top: fetchDate.bottom
