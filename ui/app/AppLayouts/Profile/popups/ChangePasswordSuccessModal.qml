@@ -32,6 +32,7 @@ StatusModal {
             Layout.alignment: Qt.AlignHCenter
             font.pixelSize: 18
             text: qsTr("<b>Password changed</b>")
+            color: Theme.palette.directColor1
         }
         StatusBaseText {
             Layout.alignment: Qt.AlignHCenter
