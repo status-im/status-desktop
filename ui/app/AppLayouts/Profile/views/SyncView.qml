@@ -20,8 +20,9 @@ Item {
 
     Connections {
         target: root.store.mailservers
-        onActiveMailserverChanged: (activeMailserver) => {
-            root.activeMailserver = root.store.getMailserverName(activeMailserver)
+        onActiveMailserverChanged: function(activeMailserverName){
+            var mName = root.store.getMailserverName(activeMailserverName)
+            root.activeMailserver = mName
         }
     }
 
@@ -174,7 +175,7 @@ Item {
 
         StatusBaseText {
             //% "..."
-            text: qsTr("Active mailserver: %1").arg(activeMailserver) || qsTrId("---")
+            text: qsTr("Active mailserver: %1").arg(activeMailserver || qsTrId("---"))
             anchors.left: parent.left
             anchors.leftMargin: 24
             anchors.top: switchLbl.bottom
