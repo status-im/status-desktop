@@ -76,37 +76,6 @@ Item {
             }
         }
 
-        RowLayout {
-            Layout.fillWidth: true
-            StatusBaseText {
-                color: Theme.palette.primaryColor1
-                text: qsTr("Active Mailserver")
-                Layout.rightMargin: Style.current.padding
-                Layout.leftMargin: Style.current.padding
-                Layout.fillWidth: true
-                font.weight: Font.Medium
-                font.pixelSize: 20
-            }
-            StatusBaseText {
-                id: activeMailserverTxt
-                color: Theme.palette.directColor1
-                text: "..."
-                Layout.rightMargin: Style.current.padding
-                Layout.leftMargin: Style.current.padding
-                Layout.fillWidth: true
-                wrapMode: Text.Wrap
-                font.weight: Font.Medium
-                font.pixelSize: 14
-            }
-        }
-
-        Connections {
-            target: root.store.profileModelInst.mailservers
-            onActiveMailserverChanged: (activeMailserver) => {
-                activeMailserverTxt.text = root.store.getMailserverName(activeMailserver) + "\n" + activeMailserver
-            }
-        }
-
         ColumnLayout {
             id: mailserverLogsContainer
             height: 300
