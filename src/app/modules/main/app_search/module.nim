@@ -8,6 +8,7 @@ import location_menu_sub_model, location_menu_sub_item
 import result_model, result_item
 import ../../shared_models/message_item
 
+import ../../../global/global_singleton
 import ../../../global/app_sections_config as conf
 import ../../../../app_service/service/contacts/service as contact_service
 import ../../../../app_service/service/chat/service as chat_service
@@ -203,7 +204,10 @@ method onSearchMessagesDone*(self: Module, messages: seq[MessageDto]) =
       continue
 
     let chatDto = self.controller.getChatDetails("", m.chatId)
-    let (senderName, senderImage) = self.controller.getContactNameAndImage(m.`from`)
+    var (senderName, senderImage) = self.controller.getContactNameAndImage(m.`from`)
+    if(m.`from` == singletonInstance.userProfile.getPubKey()):
+      senderName = "You"
+      
     if(chatDto.communityId.len == 0):
       var chatName = chatDto.name
       var chatImage = chatDto.identicon
