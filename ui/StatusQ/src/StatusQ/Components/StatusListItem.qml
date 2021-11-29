@@ -81,6 +81,7 @@ Rectangle {
 
     property alias statusListItemIcon: iconOrImage
     property alias statusListItemTitle: statusListItemTitle
+    property alias statusListItemTitleAside: statusListItemTitleAsideText
     property alias statusListItemSubTitle: statusListItemSubTitle
     property alias statusListItemTertiaryTitle: statusListItemTertiaryTitle
     property alias statusListItemComponentsSlot: statusListItemComponentsSlot
