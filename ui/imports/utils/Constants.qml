@@ -15,20 +15,18 @@ QtObject {
         readonly property int wallet: 2
         readonly property int walletv2: 3
         readonly property int browser: 4
-        readonly property int timeline: 5
-        readonly property int profile: 6
-        readonly property int node: 7
+        readonly property int profile: 5
+        readonly property int node: 6
     }
 
     readonly property QtObject appViewStackIndex: QtObject {
         readonly property int chat: 0
-        readonly property int community: 7 // any stack layout children with the index 7 or higher is community
+        readonly property int community: 6 // any stack layout children with the index 7 or higher is community
         readonly property int wallet: 1
-        readonly property int walletv2: 6
+        readonly property int walletv2: 5
         readonly property int browser: 2
-        readonly property int timeline: 3
-        readonly property int profile: 4
-        readonly property int node: 5
+        readonly property int profile: 3
+        readonly property int node: 4
     }
 
     readonly property QtObject osNotificationType: QtObject{
@@ -47,7 +45,6 @@ QtObject {
     readonly property int chatTypeOneToOne: 1
     readonly property int chatTypePublic: 2
     readonly property int chatTypePrivateGroupChat: 3
-    readonly property int chatTypeStatusUpdate: 4
     readonly property int chatTypeCommunity: 6
 
     readonly property int communityChatPublicAccess: 1

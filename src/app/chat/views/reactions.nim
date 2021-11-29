@@ -36,8 +36,6 @@ QtObject:
   proc messageEmojiReactionId(self: ReactionView, chatId: string, messageId: string, emojiId: int): string =
     let chat = self.status.chat.channels[chatId]
     var chatId = chatId
-    if chat.chatType == ChatType.Profile:
-      chatId = status_utils.getTimelineChatId()
 
     if (self.messageList[][chatId].getReactions(messageId) == "") :
       return ""
@@ -68,9 +66,6 @@ QtObject:
 
       let chat = self.status.chat.channels[chatId]
       var messageList = self.messageList[][chatId]
-
-      if chat.chatType == ChatType.Profile:
-        messageList = self.messageList[][status_utils.getTimelineChatId()]
 
       var emojiReactions = messageList.getReactions(reaction.messageId)
       var oldReactions: JsonNode
