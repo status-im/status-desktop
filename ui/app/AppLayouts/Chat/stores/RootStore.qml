@@ -31,6 +31,22 @@ QtObject {
     property var addedContacts: contactsModuleInst.model.addedContacts
     property var allContacts: contactsModuleInst.model.list
 
+    property ListModel addToGroupContacts: ListModel {}
+
+    function getAddToGroupContacts(channel) {
+        const contacts = getContactListObject()
+
+        if (channel) {
+            contacts.forEach(function (contact) {
+                if(channel.contains(contact.pubKey) ||
+                        !contact.isContact) {
+                    return;
+                }
+                addToGroupContacts.append(contact)
+            })
+        }
+    }
+
     function copyToClipboard(text) {
         chatsModelInst.copyToClipboard(text);
     }

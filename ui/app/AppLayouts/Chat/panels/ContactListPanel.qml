@@ -6,7 +6,7 @@ import utils 1.0
 import "../controls"
 
 ScrollView {
-    property alias membersData: membersData
+    property alias model: groupMembers.model
     property string searchString
     property bool selectMode: true
     property var onItemChecked
@@ -17,13 +17,10 @@ ScrollView {
     ScrollBar.vertical.policy: groupMembers.contentHeight > groupMembers.height ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
 
     ListView {
+        id: groupMembers
         anchors.fill: parent
-        model: ListModel {
-            id: membersData
-        }
         spacing: 0
         clip: true
-        id: groupMembers
         delegate: Contact {
             isVisible: {
                 if (selectMode) {

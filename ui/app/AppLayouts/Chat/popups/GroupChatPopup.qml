@@ -32,11 +32,11 @@ ModalPopup {
         memberCount = 1;
         pubKeys = [];
 
-        contactList.membersData.clear();
+        popup.store.addToGroupContacts.clear();
 
-        getContactListObject(contactList.membersData)
+        getContactListObject(popup.store.addToGroupContacts)
 
-        contactList.membersData.append({
+        popup.store.addToGroupContacts.append({
             //% "(You)"
             name: userProfile.username + " " + qsTrId("(you)"),
             pubKey: userProfile.pubKey,
@@ -135,6 +135,7 @@ ModalPopup {
 
     ContactListPanel {
         id: contactList
+        model: popup.store.addToGroupContacts
         searchString: searchBox.text.toLowerCase()
         selectMode: selectChatMembers && memberCount < maxMembers
         anchors.topMargin: 50

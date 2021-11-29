@@ -2,26 +2,28 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 
+import StatusQ.Controls 0.1
+import StatusQ.Components 0.1
+import StatusQ.Popups 0.1
+import StatusQ.Core 0.1
+import StatusQ.Core.Theme 0.1
+
 import utils 1.0
-import shared 1.0
 import shared.views 1.0
 import shared.panels 1.0
-import shared.popups 1.0
 import shared.status 1.0
 import shared.controls 1.0
 
-import StatusQ.Controls 0.1 as StatusQControls
-import StatusQ.Components 0.1 as StatusQ
-
 import "../panels"
 
-// TODO: replace with StatusModal
-ModalPopup {
+StatusModal {
     id: popup
+
     enum ChannelType {
         ActiveChannel,
         ContextChannel
     }
+
     property var store
     property bool addMembers: false
     property int currMemberCount: 1
@@ -33,25 +35,46 @@ ModalPopup {
     property bool isAdmin: false
     property Component pinnedMessagesPopupComponent
 
-    function resetSelectedMembers(){
+    function resetSelectedMembers() {
         pubKeys = [];
 
-        memberCount = channel ? channel.members.rowCount() : 0;
-        currMemberCount = memberCount;
-        contactList.membersData.clear();
+        memberCount = channel ? channel.members.rowCount() : 0
+        currMemberCount = memberCount
+        popup.store.addToGroupContacts.clear()
+        popup.store.getAddToGroupContacts(channel)
+    }
 
-        const contacts = getContactListObject()
+    function doAddMembers(){
+        if(pubKeys.length === 0) return;
+        if (popup.channel) {
+            chatsModel.groups.addMembers(popup.channel.id, JSON.stringify(pubKeys));
+        }
+        popup.close();
+    }
 
-        if (channel) {
-            contacts.forEach(function (contact) {
-                if(popup.channel.contains(contact.publicKey) ||
-                        !contact.isContact) {
-                    return;
-                }
-                contactList.membersData.append(contact)
-            })
+    height: 504
+    anchors.centerIn: parent
+
+    //% "Add members"
+    header.title: addMembers ? qsTrId("add-members") : (popup.channel ? popup.channel.name : "")
+    header.subTitle:  {
+        let cnt = memberCount;
+        if(addMembers){
+            //% "%1 / 10 members"
+            return qsTrId("%1-/-10-members").arg(cnt)
+        } else {
+            //% "%1 members"
+            if(cnt > 1) return qsTrId("%1-members").arg(cnt);
+            //% "1 member"
+            return qsTrId("1-member");
         }
     }
+    header.editable: !addMembers && popup.isAdmin
+    header.icon.isLetterIdenticon: true
+    header.icon.name: popup.channel ? popup.channel.name : ""
+    header.icon.background.color: popup.channel ? popup.channel.color : "transparent"
+
+    onEditButtonClicked: renameGroupPopup.open()
 
     onClosed: {
         popup.destroy();
@@ -66,113 +89,10 @@ ModalPopup {
         resetSelectedMembers();
     }
 
-    function doAddMembers(){
-        if(pubKeys.length === 0) return;
-        if (popup.channel) {
-            chatsModel.groups.addMembers(popup.channel.id, JSON.stringify(pubKeys));
-        }
-        popup.close();
-    }
-
-    header: Item {
-        height: children[0].height
-        width: parent.width
-
-
-        StatusQ.StatusLetterIdenticon {
-            id: letterIdenticon
-            width: 36
-            height: 36
-            anchors.top: parent.top
-            color: popup.channel ? popup.channel.color : "transparent"
-            name: popup.channel ? popup.channel.name : ""
-        }
-
-        StyledTextEdit {
-            id: groupNameTxt
-            //% "Add members"
-            text: addMembers ? qsTrId("add-members")
-                             : (popup.channel ? popup.channel.name : "")
-            anchors.top: parent.top
-            anchors.topMargin: 2
-            anchors.left: letterIdenticon.right
-            anchors.leftMargin: Style.current.smallPadding
-            font.bold: true
-            font.pixelSize: 14
-            readOnly: true
-            wrapMode: Text.WordWrap
-        }
-
-        StyledText {
-            text: {
-                let cnt = memberCount;
-                if(addMembers){
-                    //% "%1 / 10 members"
-                    return qsTrId("%1-/-10-members").arg(cnt)
-                } else {
-                    //% "%1 members"
-                    if(cnt > 1) return qsTrId("%1-members").arg(cnt);
-                    //% "1 member"
-                    return qsTrId("1-member");
-                }
-            }
-            width: 160
-            anchors.left: letterIdenticon.right
-            anchors.leftMargin: Style.current.smallPadding
-            anchors.top: groupNameTxt.bottom
-            anchors.topMargin: 2
-            font.pixelSize: 14
-            color: Style.current.secondaryText
-        }
-
-        Rectangle {
-            id: editGroupNameBtn
-            visible: !addMembers && popup.isAdmin
-            height: 24
-            width: 24
-            anchors.verticalCenter: groupNameTxt.verticalCenter
-            anchors.leftMargin: Style.current.halfPadding
-            anchors.left: groupNameTxt.right
-            radius: 8
-
-            SVGImage {
-                id: editGroupImg
-                source: Style.svg("edit-group")
-                height: 16
-                width: 16
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.verticalCenter: parent.verticalCenter
-            }
-
-            MouseArea {
-                id: closeModalMouseArea
-                cursorShape: Qt.PointingHandCursor
-                anchors.fill: parent
-                hoverEnabled: true
-                onExited: {
-                    editGroupNameBtn.color = Style.current.white
-                }
-                onEntered: {
-                    editGroupNameBtn.color = Style.current.grey
-                }
-                onClicked: renameGroupPopup.open()
-            }
-        }
-
-        RenameGroupPopup {
-            id: renameGroupPopup
-            activeChannelName: popup.store.chatsModelInst.channelView.activeChannel.name
-            onDoRename: {
-                popup.store.chatsModelInst.groups.rename(groupName);
-                groupNameTxt.text = groupName
-                close();
-            }
-        }
-    }
-
     Item {
         id: addMembersItem
         anchors.fill: parent
+        visible: addMembers
 
         SearchBox {
             id: searchBox
@@ -184,14 +104,14 @@ ModalPopup {
         }
 
         NoFriendsRectangle {
-            visible: contactList.membersData.count === 0 && memberCount === 0
+            visible: popup.store.addToGroupContacts.count === 0 && memberCount === 0
             anchors.top: searchBox.bottom
             anchors.topMargin: Style.current.xlPadding
             anchors.horizontalCenter: parent.horizontalCenter
         }
 
         NoFriendsRectangle {
-            visible: contactList.membersData.count === 0 && memberCount > 0
+            visible: popup.store.addToGroupContacts.count === 0 && memberCount > 0
             width: 340
             //% "All your contacts are already in the group"
             text: qsTrId("group-chat-all-contacts-invited")
@@ -203,10 +123,11 @@ ModalPopup {
 
         ContactListPanel {
             id: contactList
-            visible: addMembers && contactList.membersData.count > 0
+            visible: addMembers && popup.store.addToGroupContacts.count > 0
             anchors.fill: parent
             anchors.topMargin: 50
             anchors.top: searchBox.bottom
+            model: popup.store.addToGroupContacts
             selectMode: memberCount < maxMembers
             searchString: searchBox.text.toLowerCase()
             onItemChecked: function(pubKey, itemChecked){
@@ -226,45 +147,32 @@ ModalPopup {
         }
     }
 
-    Item {
+    ColumnLayout {
         id: groupInfoItem
-        anchors.fill: parent
 
-        Separator {
-            id: separator
-            visible: !addMembers
-            anchors.left: parent.left
-            anchors.leftMargin: -Style.current.padding
-            anchors.right: parent.right
-            anchors.rightMargin: -Style.current.padding
-        }
+        width: parent.width - 2*Style.current.padding
+        height: parent.height
+        anchors.top: parent.top
+        anchors.topMargin: Style.current.padding
+        anchors.horizontalCenter: parent.horizontalCenter
+
+        visible: !addMembers
+        spacing: Style.current.padding
 
         StatusSettingsLineButton {
             property int pinnedCount: popup.store.chatsModelInst.messageView.pinnedMessagesList.count
 
             id: pinnedMessagesBtn
             visible: pinnedCount > 0
-            height: visible ? implicitHeight : 0
             //% "Pinned messages"
             text: qsTrId("pinned-messages")
             currentValue: pinnedCount
-            anchors.top: separator.bottom
-            anchors.topMargin: visible ? Style.current.halfPadding : 0
-            anchors.leftMargin: 0
-            anchors.rightMargin: 0
             onClicked: openPopup(pinnedMessagesPopupComponent)
             iconSource: Style.svg("pin")
         }
 
         Separator {
-            id: separator2
             visible: pinnedMessagesBtn.visible
-            anchors.left: parent.left
-            anchors.leftMargin: -Style.current.padding
-            anchors.right: parent.right
-            anchors.rightMargin: -Style.current.padding
-            anchors.top: pinnedMessagesBtn.bottom
-            anchors.topMargin: visible ? Style.current.halfPadding : 0
         }
 
         Connections {
@@ -285,154 +193,106 @@ ModalPopup {
 
         ListView {
             id: memberList
-            anchors.top: separator2.bottom
-            anchors.bottom: parent.bottom
-            anchors.topMargin: addMembers ? 30 : Style.current.padding
-            anchors.bottomMargin: Style.current.padding
-            anchors.left: parent.left
-            anchors.leftMargin: Style.current.padding
-            anchors.right: parent.right
-            anchors.rightMargin: Style.current.padding
             spacing: Style.current.padding
             Layout.fillWidth: true
             Layout.fillHeight: true
             model: popup.channel? popup.channel.members : []
-            delegate: Item {
+            delegate: StatusListItem {
                 id: contactRow
-                width: parent.width
-                height: identicon.height
 
                 property string nickname: appMain.getUserNickname(model.publicKey)
 
-                StatusQ.StatusSmartIdenticon {
-                    id: identicon
-                    anchors.left: parent.left
-                    image.source: appMain.getProfileImage(model.publicKey)|| model.identicon
-                    image.isIdenticon: true
-                }
-
-                StyledText {
-                    text: !model.userName.endsWith(".eth") && !!contactRow.nickname ?
-                              contactRow.nickname : Utils.removeStatusEns(model.userName)
-                    anchors.left: identicon.right
-                    anchors.leftMargin: Style.current.padding
-                    anchors.verticalCenter: parent.verticalCenter
-                    font.pixelSize: 17
-
-                    StyledText {
-                        visible: model.publicKey === userProfile.pubKey
-                        anchors.left: parent.right
-                        anchors.leftMargin: 5
-                        //% "(You)"
-                        text: qsTrId("-you-")
-                        color: Style.current.secondaryText
-                        font.pixelSize: parent.font.pixelSize
-                    }
-                    MouseArea {
-                        anchors.fill: parent
-                        cursorShape: Qt.PointingHandCursor
-                        onClicked: {
-                            const userProfileImage = appMain.getProfileImage(model.publicKey)
-                            openProfilePopup(model.userName, model.publicKey, userProfileImage || model.identicon, '', contactRow.nickname, popup)
-                        }
-                    }
-                }
-
-                StyledText {
-                    id: adminLabel
-                    visible: model.isAdmin
-                    //% "Admin"
-                    text: qsTrId("group-chat-admin")
-                    anchors.right: parent.right
-                    anchors.verticalCenter: parent.verticalCenter
-                    font.pixelSize: 13
-                    color: Style.current.secondaryText
-                }
-
-                StyledText {
-                    id: moreActionsBtn
-                    visible: !model.isAdmin && popup.isAdmin
-                    text: "..."
-                    anchors.right: parent.right
-                    anchors.rightMargin: Style.current.smallPadding
-                    anchors.verticalCenter: parent.verticalCenter
-                    font.pixelSize: 20
-                    font.bold: true
-                    color: Style.current.secondaryText
-                    MouseArea {
-                        anchors.fill: parent
+                title: !model.userName.endsWith(".eth") && !!contactRow.nickname ?
+                           contactRow.nickname : Utils.removeStatusEns(model.userName)
+                //% "(You)"
+                titleAsideText: model.publicKey === userProfile.pubKey ? qsTrId("-you-") : ""
+                //% "Admin"
+                statusListItemTitle.font.pixelSize: 17
+                statusListItemTitleAside.font.pixelSize: 17
+                label: model.isAdmin ? qsTrId("group-chat-admin"): ""
+                image.source: appMain.getProfileImage(model.publicKey)|| model.identicon
+                image.isIdenticon: true
+                components: [
+                    StatusFlatRoundButton {
+                        id: moreActionsBtn
+                        type: StatusFlatRoundButton.Type.Tertiary
+                        color: "transparent"
+                        icon.name: "more"
+                        icon.color: Theme.palette.baseColor1
+                        visible: !model.isAdmin && popup.isAdmin
                         onClicked: {
                             contextMenu.popup(-contextMenu.width / 2 + moreActionsBtn.width / 2, moreActionsBtn.height + 10)
                         }
-                        cursorShape: Qt.PointingHandCursor
-                        // TODO: replace with StatusPopupMenu
-                        PopupMenu {
+                        StatusPopupMenu {
                             id: contextMenu
-                            Action {
-                                icon.source: Style.svg("make-admin")
-                                icon.width: 16
-                                icon.height: 16
+                            StatusMenuItem {
+                                image.source: Style.svg("make-admin")
+                                image.width: 16
+                                image.height: 16
                                 //% "Make Admin"
                                 text: qsTrId("make-admin")
                                 onTriggered: popup.store.chatsModelInst.groups.makeAdmin(popup.channel.id,  model.publicKey)
                             }
-                            Action {
-                                icon.source: Style.svg("remove-from-group")
-                                icon.width: 16
-                                icon.height: 16
-                                icon.color: Style.current.red
+                            StatusMenuItem {
+                                image.source: Style.svg("remove-from-group")
+                                image.width: 16
+                                image.height: 16
+                                type: StatusMenuItem.Type.Danger
                                 //% "Remove From Group"
                                 text: qsTrId("remove-from-group")
                                 onTriggered: popup.store.chatsModelInst.groups.kickMember(popup.channel.id,  model.publicKey)
                             }
                         }
                     }
+                ]
+                onTitleClicked:  {
+                    const userProfileImage = appMain.getProfileImage(model.publicKey)
+                    openProfilePopup(model.userName, model.publicKey, userProfileImage || model.identicon, '', contactRow.nickname, popup)
                 }
             }
         }
     }
 
-    footer: Item {
-        visible: popup.isAdmin
-        width: parent.width
-        height: children[0].height
-        StatusQControls.StatusButton {
-            visible: !addMembers
-            anchors.right: parent.right
-            //% "Add members"
-            text: qsTrId("add-members")
-            anchors.bottom: parent.bottom
-            onClicked: {
-                addMembers = true;
-            }
-        }
-
-        StatusQControls.StatusRoundButton {
-            id: btnBack
-            visible: addMembers
-            anchors.bottom: parent.bottom
-            anchors.left: parent.left
+    leftButtons: [
+        StatusRoundButton {
+            visible: popup.addMembers
             icon.name: "arrow-right"
             icon.width: 20
             icon.height: 16
             icon.rotation: 180
-            onClicked : {
-                addMembers = false;
-                resetSelectedMembers();
+            onClicked: {
+                popup.addMembers = false;
+                popup.resetSelectedMembers();
             }
         }
+    ]
 
-        StatusQControls.StatusButton {
+    rightButtons: [
+        StatusButton {
+            visible: !popup.addMembers
+            //% "Add members"
+            text: qsTrId("add-members")
+            onClicked: {
+                popup.addMembers = true;
+            }
+        },
+        StatusButton {
             id: btnSelectMembers
-            visible: addMembers
-            enabled: memberCount >= currMemberCount
-            anchors.right: parent.right
+            visible: popup.addMembers
+            enabled: popup.memberCount >= popup.currMemberCount
             //% "Add selected"
             text: qsTrId("add-selected")
-            anchors.bottom: parent.bottom
-            onClicked: doAddMembers()
+            onClicked: popup.doAddMembers()
+        }
+    ]
+
+    RenameGroupPopup {
+        id: renameGroupPopup
+        activeChannelName: popup.store.chatsModelInst.channelView.activeChannel.name
+        onDoRename: {
+            popup.store.chatsModelInst.groups.rename(groupName)
+            popup.header.title = groupName
+            close()
         }
     }
-
-    content: addMembers ? addMembersItem : groupInfoItem
 }

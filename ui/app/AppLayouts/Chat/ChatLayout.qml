@@ -124,7 +124,6 @@ StatusAppThreePanelLayout {
     Component {
         id: groupInfoPopupComponent
         GroupInfoPopup {
-            // Not Refactored
             store: root.rootStore
             pinnedMessagesPopupComponent: chatColumn.pinnedMessagesPopupComponent
         }

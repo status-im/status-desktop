@@ -38,8 +38,8 @@ StatusModal {
             anchors.topMargin: Style.current.padding
             //% "Group name"
             placeholderText: qsTrId("group-name")
-            Keys.onEnterPressed: doRename()
-            Keys.onReturnPressed: doRename()
+            Keys.onEnterPressed: doRename(groupName.text)
+            Keys.onReturnPressed: doRename(groupName.text)
         }
     }
 
