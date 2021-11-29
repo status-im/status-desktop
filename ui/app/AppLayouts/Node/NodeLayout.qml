@@ -103,6 +103,7 @@ Item {
         Connections {
             target: root.store.profileModelInst.mailservers
             onActiveMailserverChanged: (activeMailserver) => {
+                console.log("activeMailserverChanged from node layout")
                 activeMailserverTxt.text = root.store.getMailserverName(activeMailserver) + "\n" + activeMailserver
             }
         }

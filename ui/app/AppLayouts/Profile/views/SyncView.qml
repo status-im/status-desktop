@@ -21,6 +21,7 @@ Item {
     Connections {
         target: root.store.mailservers
         onActiveMailserverChanged: (activeMailserver) => {
+            console.log("onActiveMailserverChanged from syncview")
             root.activeMailserver = root.store.getMailserverName(activeMailserver)
         }
     }
