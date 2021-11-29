@@ -24,4 +24,4 @@ const NODEMANAGEMENT_SECTION_ICON* = "node"
 
 const SETTINGS_SECTION_ID* = "profileSettings"
 const SETTINGS_SECTION_NAME* = "Settings"
-const SETTINGS_SECTION_ICON* = "status-update"
+const SETTINGS_SECTION_ICON* = "settings"
