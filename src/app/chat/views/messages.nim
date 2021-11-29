@@ -54,7 +54,6 @@ QtObject:
     result.communities = communitiesView
     result.messageList = initOrderedTable[string, ChatMessageList]()
     result.pinnedMessagesList = initOrderedTable[string, ChatMessageList]()
-    result.messageList[status_utils.getTimelineChatId()] = newChatMessageList(status_utils.getTimelineChatId(), result.status, false)
     result.loadingMessages = false
     result.unreadMessageCnt = 0
     result.unreadDirectMessagesAndMentionsCount = 0
@@ -168,7 +167,7 @@ QtObject:
     let channel = self.channelView.getChannelById(id)
     if (channel == nil):
       return
-    self.messageList[id].clear(not channel.isNil and channel.chatType != ChatType.Profile)
+    self.messageList[id].clear(not channel.isNil)
     self.messagesCleared()
 
   proc getBlockedContacts*(self: MessageView): seq[string] =
@@ -189,7 +188,7 @@ QtObject:
 
     if not self.messageList.hasKey(channel):
       self.beginInsertRows(newQModelIndex(), self.messageList.len, self.messageList.len)
-      self.messageList[channel] = newChatMessageList(channel, self.status, not chat.isNil and chat.chatType != ChatType.Profile, blockedContacts)
+      self.messageList[channel] = newChatMessageList(channel, self.status, not chat.isNil, blockedContacts)
       self.channelOpenTime[channel] = now().toTime.toUnix * 1000
       self.endInsertRows();
     if not self.pinnedMessagesList.hasKey(channel):
@@ -226,19 +225,11 @@ QtObject:
       msg.userName = self.status.chat.getUserName(msg.fromAuthor, msg.alias)
       var msgIndex:int;
       if self.status.chat.channels.hasKey(msg.chatId):
-        let chat = self.status.chat.channels[msg.chatId]
-        if (chat.chatType == ChatType.Profile):
-          let timelineChatId = status_utils.getTimelineChatId()
-          self.messageList[timelineChatId].add(msg)
+        self.messageList[msg.chatId].add(msg)
+        if self.pinnedMessagesList[msg.chatId].contains(msg):
+          self.pinnedMessagesList[msg.chatId].add(msg)
 
-          if self.channelView.activeChannel.id == timelineChatId: self.channelView.activeChannelChanged()
-          msgIndex = self.messageList[timelineChatId].count - 1
-        else:
-          self.messageList[msg.chatId].add(msg)
-          if self.pinnedMessagesList[msg.chatId].contains(msg):
-            self.pinnedMessagesList[msg.chatId].add(msg)
-
-          msgIndex = self.messageList[msg.chatId].count - 1
+        msgIndex = self.messageList[msg.chatId].count - 1
 
       self.messagePushed(msgIndex)
       if self.channelOpenTime.getOrDefault(msg.chatId, high(int64)) < msg.timestamp.parseFloat.fromUnixFloat.toUnix:

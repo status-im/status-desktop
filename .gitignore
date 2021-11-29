@@ -5,6 +5,7 @@ noBackup/
 *.pro.user
 *.pro.autosave
 *.qml.autosave
+*.log
 .update.timestamp
 .vscode
 bin/

@@ -92,7 +92,6 @@ Column {
                              || contentType === Constants.communityInviteType || contentType === Constants.transactionType
 
     property bool isExpired: (outgoingStatus === "sending" && (Math.floor(timestamp) + 180000) < Date.now())
-    property bool isStatusUpdate: false
     property int statusAgeEpoch: 0
 
     property int replyMessageIndex: !!root.chatsModel ? root.chatsModel.messageView.messageList.getMessageIndex(responseTo) : -1
@@ -241,8 +240,7 @@ Column {
                 case Constants.gapType:
                     return gapComponent
                 default:
-                    return isStatusUpdate ? statusUpdateComponent :
-                                            (localAccountSensitiveSettings.useCompactMode ? compactMessageComponent : messageComponent)
+                    return localAccountSensitiveSettings.useCompactMode ? compactMessageComponent : messageComponent
 
             }
         }
@@ -324,34 +322,6 @@ Column {
             container: root
             store: root.rootStore
             messageStore: root.messageStore
-        }
-    }
-
-    Component {
-        id: statusUpdateComponent
-        StatusUpdateView {
-            statusAgeEpoch: root.statusAgeEpoch
-            container: root
-            store: root.rootStore
-            messageContextMenu: root.messageContextMenu
-            onAddEmoji: {
-                root.clickMessage(isProfileClick, isSticker, isImage , image, emojiOnly, hideEmojiPicker);
-            }
-            onChatImageClicked: {
-                messageStore.imageClick(image);
-            }
-            onUserNameClicked: {
-                root.parent.clickMessage(isProfileClick);
-            }
-            onEmojiBtnClicked: {
-                root.parent.clickMessage(isProfileClick, isSticker, isImage, image, emojiOnly);
-            }
-            onClickMessage: {
-                root.parent.clickMessage(isProfileClick, isSticker, isImage, image, emojiOnly, hideEmojiPicker, isReply);
-            }
-            onSetMessageActive: {
-                root.messageStore.setMessageActive(messageId, active);;
-            }
         }
     }
 

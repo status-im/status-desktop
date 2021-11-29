@@ -39,7 +39,6 @@ type
     Community,
     Wallet,
     Browser,
-    Timeline,
     NodeManagement,
     ProfileSettings
 
@@ -145,7 +144,6 @@ method load*[T](self: Module[T]) =
   "wallet", "", 0, 0)
   self.view.addItem(chatSectionItem)
   self.walletSectionModule.load()
-
   self.browserSectionModule.load()
   
   let browserSectionItem = initItem("browser", SectionType.Browser.int, "Browser")

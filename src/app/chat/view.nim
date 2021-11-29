@@ -89,7 +89,6 @@ QtObject:
       communities*: CommunitiesView
       replyTo: string
       connected: bool
-      timelineChat: Chat
       pubKey*: string
 
   proc setup(self: ChatsView) = self.QAbstractListModel.setup
@@ -244,12 +243,6 @@ QtObject:
       self.activityNotificationList.addActivityNotificationItemToList(activityCenterNotification)
     self.activityNotificationsChanged()
 
-  proc setActiveChannelToTimeline*(self: ChatsView) {.slot.} =
-    if not self.channelView.activeChannel.chatItem.isNil:
-      self.channelView.previousActiveChannelIndex = self.channelView.chats.chats.findIndexById(self.channelView.activeChannel.id)
-    self.channelView.activeChannel.setChatItem(self.timelineChat)
-    self.activeChannelChanged()
-
   proc updateUsernames*(self:ChatsView, contacts: seq[Profile]) =
     if contacts.len > 0:
       # Updating usernames for all the messages list
@@ -277,9 +270,6 @@ QtObject:
   proc pushChatItem*(self: ChatsView, chatItem: Chat) =
     discard self.channelView.chats.addChatItemToList(chatItem)
     self.messageView.messagePushed(self.messageView.messageList[chatItem.id].count - 1)
-
-  proc setTimelineChat*(self: ChatsView, chatItem: Chat) =
-    self.timelineChat = chatItem
 
   proc copyToClipboard*(self: ChatsView, content: string) {.slot.} =
     setClipBoardText(content)
@@ -320,15 +310,7 @@ QtObject:
     self.messageView.removeChat(chatId)
 
   proc toggleReaction*(self: ChatsView, messageId: string, emojiId: int) {.slot.} =
-    if self.channelView.activeChannel.id == status_utils.getTimelineChatId():
-      let message = self.messageView.messageList[status_utils.getTimelineChatId()].getMessageById(messageId)
-      self.reactions.toggle(messageId, message.chatId, emojiId)
-    else:
       self.reactions.toggle(messageId, self.channelView.activeChannel.id, emojiId)
-
-  proc removeMessagesFromTimeline*(self: ChatsView, chatId: string) =
-    self.messageView.messageList[status_utils.getTimelineChatId()].deleteMessagesByChatId(chatId)
-    self.channelView.activeChannelChanged()
 
   proc updateChats*(self: ChatsView, chats: seq[Chat]) =
     for chat in chats:

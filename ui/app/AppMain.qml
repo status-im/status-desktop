@@ -9,7 +9,6 @@ import shared.panels 1.0
 import shared.popups 1.0
 import shared.status 1.0
 import "./AppLayouts"
-import "./AppLayouts/Timeline"
 import "./AppLayouts/Wallet"
 import "./AppLayouts/WalletV2"
 import "./AppLayouts/Chat/popups"
@@ -406,8 +405,6 @@ Item {
                     browserLayoutContainer.active = true;
                 }
 
-                timelineLayoutContainer.active = obj === timelineLayoutContainer
-
                 if(obj === walletLayoutContainer){
                     walletLayoutContainer.showSigningPhrasePopup();
                 }
@@ -456,21 +453,6 @@ Item {
                 property var _walletModel: walletModel
                 property var _utilsModel: utilsModel
                 property var _web3Provider: web3Provider
-            }
-
-            Loader {
-                id: timelineLayoutContainer
-                sourceComponent: Component {
-                    TimelineLayout {
-                        messageStore: appMain.rootStore.messageStore
-                        rootStore: appMain.rootStore
-                    }
-                }
-                onLoaded: timelineLayoutContainer.item.onActivated()
-                active: false
-                Layout.fillWidth: true
-                Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                Layout.fillHeight: true
             }
 
             ProfileLayout {

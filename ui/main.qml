@@ -436,7 +436,7 @@ StatusWindow {
                                    // in timeline view
                                    loader.item.appLayout.appView.currentIndex === timelineView ||
                                    // In community section
-                                   chatsModel.communities.activeCommunity.active
+                                   loader.item.appLayout.appView.currentIndex === chatsModel.communities.activeCommunity.active
                                    )
 
         width: applicationWindow.width
