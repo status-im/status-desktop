@@ -9,8 +9,6 @@ type ChatType* {.pure.}= enum
   OneToOne = 1, 
   Public = 2,
   PrivateGroupChat = 3,
-  Profile = 4,
-  Timeline = 5
   CommunityChat = 6
 
 type ChatDto* = object

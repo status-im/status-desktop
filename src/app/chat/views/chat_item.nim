@@ -143,11 +143,6 @@ QtObject:
     read = getMembers
     notify = membershipChanged
 
-  proc isTimelineChat*(self: ChatItemView): bool {.slot.} = result = ?.self.chatItem.id == status_utils.getTimelineChatId()
-
-  QtProperty[bool] isTimelineChat:
-    read = isTimelineChat
-
 
   proc mentionsCount*(self: ChatItemView): int {.slot.} = result = ?.self.chatItem.mentionsCount
 

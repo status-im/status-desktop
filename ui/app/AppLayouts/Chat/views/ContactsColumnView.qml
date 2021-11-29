@@ -250,7 +250,7 @@ Item {
                 }
             }
 
-            model: root.chatSectionModule.model
+            chatListItems.model: root.chatSectionModule.model
             onChatItemSelected: root.chatSectionModule.setActiveItem(id, "")
 
 //            chatListItems.model: root.store.chatsModelInst.channelView.chats

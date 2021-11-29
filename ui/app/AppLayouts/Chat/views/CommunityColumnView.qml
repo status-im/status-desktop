@@ -143,7 +143,7 @@ Item {
             //chatList.model: root.store.chatsModelInst.communities.activeCommunity.chats
 
             //categoryList.model: root.store.chatsModelInst.communities.activeCommunity.categories
-            model: root.communitySectionModule.model
+            categoryList.model: root.communitySectionModule.model
             onChatItemSelected: {
                 if(categoryId === "")
                     root.communitySectionModule.setActiveItem(id, "")

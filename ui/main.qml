@@ -403,10 +403,8 @@ StatusWindow {
                                         chatsModel.channelView.activeChannel.chatType === Constants.chatTypePrivateGroupChat
                                         )
                                     ) ||
-                                   // in timeline view
-                                   loader.item.appLayout.appView.currentIndex === Constants.appViewStackIndex.timeline ||
                                    // In community section
-                                   chatsModel.communities.activeCommunity.active
+                                   loader.item.appLayout.appView.currentIndex === chatsModel.communities.activeCommunity.active
                                    )
 
         width: applicationWindow.width

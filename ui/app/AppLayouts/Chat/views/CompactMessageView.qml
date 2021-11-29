@@ -33,7 +33,6 @@ Item {
             case Constants.chatTypePrivateGroupChat: return root.store.chatsModelInst.channelView.activeChannel.isAdmin(userProfile.pubKey) ? true : isCurrentUser
             case Constants.chatTypePublic: return isCurrentUser
             case Constants.chatTypeCommunity: return root.store.chatsModelInst.communities.activeCommunity.admin ? true : isCurrentUser
-            case Constants.chatTypeStatusUpdate: return false
             default: return false
             }
         }

@@ -59,12 +59,6 @@ proc decodeContentHash*(value: string): string =
     error "Error decoding sticker", hash=value, exception=e.msg
     raise
 
-proc getTimelineChatId*(pubKey: string = ""): string =
-  if pubKey == "":
-    return "@timeline70bd746ddcc12beb96b2c9d572d0784ab137ffc774f5383e50585a932080b57cca0484b259e61cecbaa33a4c98a300a"
-  else:
-    return "@" & pubKey
-
 proc isWakuEnabled(): bool =
   true # TODO:
 

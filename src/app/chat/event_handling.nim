@@ -102,10 +102,8 @@ proc handleChatEvents(self: ChatController) =
 
   self.status.events.on("channelLoaded") do(e: Args):
     var channel = ChannelArgs(e)
-    if channel.chat.chatType == ChatType.Timeline:
-      self.view.setTimelineChat(channel.chat)
     # Do not add community chats to the normal chat list
-    elif channel.chat.chatType != ChatType.Profile and channel.chat.chatType != status_chat.ChatType.CommunityChat:
+    if channel.chat.chatType != status_chat.ChatType.CommunityChat:
       discard self.view.channelView.chats.addChatItemToList(channel.chat)
       self.view.messageView.upsertChannel(channel.chat.id)
       self.view.messageView.messageList[channel.chat.id].addChatMembers(channel.chat.members)
@@ -130,11 +128,8 @@ proc handleChatEvents(self: ChatController) =
 
   self.status.events.on("channelJoined") do(e: Args):
     var channel = ChannelArgs(e)
-    if channel.chat.chatType == ChatType.Timeline:
-      self.view.setTimelineChat(channel.chat)
-    elif channel.chat.chatType != ChatType.Profile:
-      discard self.view.channelView.chats.addChatItemToList(channel.chat)
-      self.view.setActiveChannel(channel.chat.id)
+    discard self.view.channelView.chats.addChatItemToList(channel.chat)
+    self.view.setActiveChannel(channel.chat.id)
 
     self.status.chat.statusUpdates()
 
@@ -142,7 +137,6 @@ proc handleChatEvents(self: ChatController) =
     let chatId = ChatIdArg(e).chatId
     self.view.removeChat(chatId)
     self.view.calculateUnreadMessages()
-    self.view.removeMessagesFromTimeline(chatId)
 
   self.status.events.on("activeChannelChanged") do(e: Args):
     self.view.setActiveChannel(ChatIdArg(e).chatId)

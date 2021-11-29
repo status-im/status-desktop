@@ -40,8 +40,8 @@ Rectangle {
     property var stickerPackList
 
     property int extraHeightFactor: calculateExtraHeightFactor()
-    property int messageLimit: control.isStatusUpdateInput ? 300 : 2000
-    property int messageLimitVisible: control.isStatusUpdateInput ? 50 : 200
+    property int messageLimit: 2000
+    property int messageLimitVisible: 200
 
     property int chatType
 
@@ -49,7 +49,6 @@ Rectangle {
     property string chatInputPlaceholder: qsTrId("type-a-message-")
 
     property alias textInput: messageInputField
-    property bool isStatusUpdateInput: chatType === Constants.chatTypeStatusUpdate
 
     property var fileUrls: []
 
@@ -64,15 +63,15 @@ Rectangle {
 
     height: {
         if (extendedArea.visible) {
-            return messageInput.height + extendedArea.height + (control.isStatusUpdateInput ? 0 : Style.current.bigPadding)
+            return messageInput.height + extendedArea.height + Style.current.bigPadding
         }
         if (messageInput.height > messageInput.defaultInputFieldHeight) {
             if (messageInput.height >= messageInput.maxInputFieldHeight) {
-                return messageInput.maxInputFieldHeight + (control.isStatusUpdateInput ? 0 : Style.current.bigPadding)
+                return (messageInput.maxInputFieldHeight + Style.current.bigPadding)
             }
-            return messageInput.height + (control.isStatusUpdateInput ? 0 : Style.current.bigPadding)
+            return (messageInput.height + Style.current.bigPadding)
         }
-        return control.isStatusUpdateInput ? 56 : 64
+        return 64
     }
     anchors.left: parent.left
     anchors.right: parent.right
@@ -159,10 +158,6 @@ Rectangle {
             if (checkTextInsert()) {
                 event.accepted = true;
                 return
-            }
-
-            if (control.isStatusUpdateInput) {
-                return // Status update require the send button to be clicked
             }
             if (messageInputField.length < messageLimit) {
                 control.sendMessage(event)
@@ -581,7 +576,6 @@ Rectangle {
         ]
         onAccepted: {
             imageBtn.highlighted = false
-            imageBtn2.highlighted = false
             let validImages = validateImages(imageDialog.fileUrls)
             if (validImages.length > 0) {
                 control.showImageArea(validImages)
@@ -590,7 +584,6 @@ Rectangle {
         }
         onRejected: {
             imageBtn.highlighted = false
-            imageBtn2.highlighted = false
         }
     }
 
@@ -713,7 +706,7 @@ Rectangle {
         anchors.bottomMargin: 16
         icon.name: "chat-commands"
         type: StatusQ.StatusFlatRoundButton.Type.Tertiary
-        visible: !isEdit && control.chatType === Constants.chatTypeOneToOne && !control.isStatusUpdateInput
+        visible: !isEdit && control.chatType === Constants.chatTypeOneToOne
         enabled: !control.isContactBlocked
         onClicked: {
             chatCommandsPopup.opened ?
@@ -732,7 +725,7 @@ Rectangle {
         anchors.bottomMargin: 16
         icon.name: "image"
         type: StatusQ.StatusFlatRoundButton.Type.Tertiary
-        visible: !isEdit && control.chatType !== Constants.chatTypePublic && !control.isStatusUpdateInput
+        visible: !isEdit && control.chatType !== Constants.chatTypePublic
         enabled: !control.isContactBlocked
         onClicked: {
             highlighted = true
@@ -743,13 +736,12 @@ Rectangle {
     Rectangle {
         id: messageInput
         enabled: !control.isContactBlocked
-        property int maxInputFieldHeight: control.isStatusUpdateInput ? 124 : 112
-        property int defaultInputFieldHeight: control.isStatusUpdateInput ? 56 : 40
+        property int maxInputFieldHeight: 112
+        property int defaultInputFieldHeight: 40
         anchors.left: imageBtn.visible ? imageBtn.right : parent.left
         anchors.leftMargin: imageBtn.visible ? 5 : Style.current.smallPadding
-        anchors.top: control.isStatusUpdateInput ? parent.top : undefined
-        anchors.bottom: !control.isStatusUpdateInput ? parent.bottom : undefined
-        anchors.bottomMargin: control.isStatusUpdateInput ? 0 : 12
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 12
         anchors.right: unblockBtn.visible ? unblockBtn.left : parent.right
         anchors.rightMargin: Style.current.smallPadding
         height: {
@@ -763,8 +755,7 @@ Rectangle {
         }
 
         color: isEdit ? Theme.palette.statusChatInput.secondaryBackgroundColor : Style.current.inputBackground
-        radius: control.isStatusUpdateInput ? 36 :
-                                              height > defaultInputFieldHeight + 1 || extendedArea.visible ? 16 : 32
+        radius: height > defaultInputFieldHeight + 1 || extendedArea.visible ? 16 : 32
 
         ColumnLayout {
             id: validators
@@ -803,29 +794,25 @@ Rectangle {
             }
             anchors.left: messageInput.left
             anchors.right: messageInput.right
-            anchors.bottom: control.isStatusUpdateInput ? undefined : messageInput.top
-            anchors.top: control.isStatusUpdateInput ? messageInput.bottom : undefined
-            anchors.topMargin: control.isStatusUpdateInput ? -Style.current.halfPadding : 0
+            anchors.bottom: messageInput.top
             color: isEdit ? Style.current.secondaryInputBackground : Style.current.inputBackground
-            radius: control.isStatusUpdateInput ? 36 : 16
+            radius: 16
 
             Rectangle {
                 color: parent.color
                 anchors.right: parent.right
                 anchors.left: parent.left
-                height: control.isStatusUpdateInput ? 64 : 30
-                anchors.top: control.isStatusUpdateInput ? parent.top : undefined
-                anchors.topMargin: control.isStatusUpdateInput ? -24 : 0
-                anchors.bottom: control.isStatusUpdateInput ? undefined : parent.bottom
-                anchors.bottomMargin: control.isStatusUpdateInput ? 0 : -height/2
+                height: 30
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: -height/2
             }
 
             StatusChatInputImageArea {
                 id: imageArea
                 anchors.left: parent.left
-                anchors.leftMargin: control.isStatusUpdateInput ? profileImage.width + Style.current.padding : Style.current.halfPadding
+                anchors.leftMargin: Style.current.halfPadding
                 anchors.right: parent.right
-                anchors.rightMargin: control.isStatusUpdateInput ? actions.width + 2* Style.current.padding : Style.current.halfPadding
+                anchors.rightMargin: Style.current.halfPadding
                 anchors.top: parent.top
                 anchors.topMargin: Style.current.halfPadding
                 visible: isImage
@@ -855,17 +842,6 @@ Rectangle {
             }
         }
 
-        StatusSmartIdenticon {
-            id: profileImage
-            anchors.left: parent.left
-            anchors.leftMargin: Style.current.smallPadding
-            anchors.top: parent.top
-            anchors.topMargin: Style.current.halfPadding
-            image.source: userProfile.icon
-            image.isIdenticon: userProfile.isIdenticon
-            visible: control.isStatusUpdateInput
-        }
-
         ScrollView {
             id: scrollView
             anchors.top: parent.top
@@ -887,8 +863,8 @@ Rectangle {
                 placeholderTextColor: Style.current.secondaryText
                 selectByMouse: true
                 color: isEdit ? Theme.palette.directColor1 : Style.current.textColor
-                topPadding: control.isStatusUpdateInput ? 18 : Style.current.smallPadding
-                bottomPadding: control.isStatusUpdateInput ? 14 : 12
+                topPadding: Style.current.smallPadding
+                bottomPadding: 12
                 Keys.onPressed: onKeyPress(event)
                 Keys.onReleased: onRelease(event) // gives much more up to date cursorPosition
                 Keys.onShortcutOverride: event.accepted = isUploadFilePressed(event)
@@ -1032,7 +1008,6 @@ Rectangle {
             color: parent.color
             anchors.bottom: parent.bottom
             anchors.right: parent.right
-            visible: !control.isStatusUpdateInput
             height: parent.height / 2
             width: 32
             radius: Style.current.radius
@@ -1046,54 +1021,19 @@ Rectangle {
             color: (remainingChars <= 0) ? Style.current.danger : Style.current.textColor
             anchors.right: parent.right
             anchors.bottom: actions.top
-            anchors.rightMargin: control.isStatusUpdateInput ? Style.current.padding : Style.current.radius
+            anchors.rightMargin: Style.current.radius
             leftPadding: Style.current.halfPadding
             rightPadding: Style.current.halfPadding
         }
 
         Item {
             id: actions
-            width: control.isStatusUpdateInput ?
-                       imageBtn2.width + sendBtn.anchors.leftMargin + sendBtn.width :
-                       emojiBtn.width + stickersBtn.anchors.leftMargin + stickersBtn.width
-            anchors.bottom: control.isStatusUpdateInput && extendedArea.visible ? extendedArea.bottom : parent.bottom
-            anchors.bottomMargin: control.isStatusUpdateInput ? Style.current.smallPadding+2: 4
+            width: emojiBtn.width + stickersBtn.anchors.leftMargin + stickersBtn.width
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 4
             anchors.right: parent.right
             anchors.rightMargin: Style.current.radius
             height: emojiBtn.height
-
-            StatusQ.StatusFlatRoundButton {
-                id: imageBtn2
-                implicitHeight: 32
-                implicitWidth: 32
-                anchors.right: sendBtn.left
-                anchors.rightMargin: 2
-                anchors.bottom: parent.bottom
-                icon.name: "image"
-                type: StatusQ.StatusFlatRoundButton.Type.Tertiary
-                visible: control.isStatusUpdateInput
-
-                onClicked: {
-                    highlighted = true
-                    imageDialog.open()
-                }
-            }
-
-            StatusQ.StatusFlatButton {
-                id: sendBtn
-                icon.name: "send"
-                text: qsTr("Send")
-                size: StatusQ.StatusBaseButton.Size.Small
-                anchors.right: parent.right
-                anchors.rightMargin: Style.current.halfPadding
-                anchors.verticalCenter: parent.verticalCenter
-                visible: imageBtn2.visible
-                enabled: (chatsModel.plainText(Emoji.deparse(messageInputField.text)).length > 0 || isImage) && messageInputField.length < messageLimit
-                onClicked: function (event) {
-                    control.sendMessage(event)
-                    control.hideExtendedArea();
-                }
-            }
 
             StatusQ.StatusFlatRoundButton {
                 id: emojiBtn
@@ -1101,7 +1041,6 @@ Rectangle {
                 implicitWidth: 32
                 anchors.left: parent.left
                 anchors.bottom: parent.bottom
-                visible: !imageBtn2.visible
                 icon.name: "emojis"
                 type: StatusQ.StatusFlatRoundButton.Type.Tertiary
                 color: "transparent"
