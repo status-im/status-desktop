@@ -76,7 +76,6 @@ QtObject {
                              || contentType === Constants.communityInviteType || contentType === Constants.transactionType
 
     property bool isExpired: (outgoingStatus === "sending" && (Math.floor(timestamp) + 180000) < Date.now())
-    property bool isStatusUpdate: false
     property int statusAgeEpoch: 0
 
 //    property int replyMessageIndex: chatsModel.messageView.messageList.getMessageIndex(responseTo);

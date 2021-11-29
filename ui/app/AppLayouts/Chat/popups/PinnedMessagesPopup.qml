@@ -22,7 +22,6 @@ ModalPopup {
     property bool userCanPin: {
         switch (popup.rootStore.chatsModelInst.channelView.activeChannel.chatType) {
         case Constants.chatTypePublic: return false
-        case Constants.chatTypeStatusUpdate: return false
         case Constants.chatTypeOneToOne: return true
         case Constants.chatTypePrivateGroupChat: return popup.rootStore.chatsModelInst.channelView.activeChannel.isAdmin(userProfile.pubKey)
         case Constants.chatTypeCommunity: return popup.rootStore.chatsModelInst.communities.activeCommunity.admin

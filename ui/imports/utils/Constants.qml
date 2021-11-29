@@ -16,7 +16,6 @@ QtObject {
     readonly property int chatTypeOneToOne: 1
     readonly property int chatTypePublic: 2
     readonly property int chatTypePrivateGroupChat: 3
-    readonly property int chatTypeStatusUpdate: 4
     readonly property int chatTypeCommunity: 6
 
     readonly property int communityChatPublicAccess: 1
@@ -48,7 +47,6 @@ QtObject {
     readonly property string chat: "chat"
     readonly property string wallet: "wallet"
     readonly property string walletv2: "walletV2"
-    readonly property string timeline: "timeline"
     readonly property string browser: "browser"
     readonly property string profile: "profile"
     readonly property string node: "node"

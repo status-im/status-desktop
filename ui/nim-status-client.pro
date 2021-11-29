@@ -43,7 +43,6 @@ SOURCES = *.qml \
           app/AppLayouts/Profile/Sections/Data/*.qml \
           app/AppLayouts/Profile/Sections/Ens/*.qml \
           app/AppLayouts/Profile/Sections/Privileges/*.qml \
-          app/AppLayouts/Timeline/*.qml\
           app/AppLayouts/Wallet/*.qml \
           app/AppLayouts/Wallet/components/*.qml \
           app/AppLayouts/Wallet/components/collectiblesComponents/*.qml \
