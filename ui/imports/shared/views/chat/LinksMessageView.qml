@@ -20,7 +20,6 @@ Column {
     property string linkUrls: ""
     property bool isCurrentUser: false
     property bool isImageLink: false
-    readonly property string uuid: Utils.uuid()
     spacing: Style.current.halfPadding
 
     ListModel {
@@ -44,6 +43,8 @@ Column {
             property bool fetched: false
             property var linkData
             property int linkWidth: linksRepeater.width
+            readonly property string uuid: Utils.uuid()
+
 
             active: true
             
@@ -78,7 +79,7 @@ Column {
                     }
 
 
-                    if (response.uuid !== root.uuid) return
+                    if (response.uuid !== linkMessageLoader.uuid) return
 
                     linkFetchConnections.enabled = false
 
@@ -180,7 +181,7 @@ Column {
                     }
 
                     linkFetchConnections.enabled = true
-                    return root.store.chatsModelInst.getLinkPreviewData(link, root.uuid)
+                    return root.store.chatsModelInst.getLinkPreviewData(link, linkMessageLoader.uuid)
                 }
                 // setting the height to 0 allows the "enable link" dialog to
                 // disappear correctly when localAccountSensitiveSettings.neverAskAboutUnfurlingAgain
