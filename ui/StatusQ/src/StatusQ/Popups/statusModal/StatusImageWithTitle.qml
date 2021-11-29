@@ -135,17 +135,15 @@ Row {
                 font.bold: true
                 elide: statusImageWithTitle.titleElide
                 color: Theme.palette.directColor1
-                width: !editButton.visible ? parent.width :
-                                             parent.width - editButton.width - parent.spacing
+                width: implicitWidth > parent.width - editButton.width ? parent.width - editButton.width: implicitWidth
             }
             StatusFlatRoundButton {
                 id: editButton
                 objectName: "editAvatarbButton"
                 visible: statusImageWithTitle.editable
-                anchors.bottom: headerTitle.bottom
-                anchors.bottomMargin: -1
+                anchors.verticalCenter: headerTitle.verticalCenter
                 height: 24
-                width: 24
+                width: visible ? 24 : 0
                 type: StatusFlatRoundButton.Type.Secondary
                 icon.name: "pencil"
                 icon.color: Theme.palette.directColor1

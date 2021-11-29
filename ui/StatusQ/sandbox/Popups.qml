@@ -73,6 +73,11 @@ Column {
         onClicked: spellMenu.open()
     }
 
+    StatusButton {
+        text: "Modal with Editable Title"
+        onClicked: editTitleModal.open()
+    }
+
     StatusModal {
         id: simpleModal
         anchors.centerIn: parent
@@ -339,6 +344,13 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
                 popupMenu.dismiss()
             }
         }
+    }
+
+    StatusModal {
+        id: editTitleModal
+        anchors.centerIn: parent
+        header.title: "This title can be edited"
+        header.editable: true
     }
 
     ListModel {
