@@ -14,6 +14,7 @@ import utils 1.0
 
 import "../../controls"
 
+import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 
 Item {
@@ -28,7 +29,7 @@ Item {
     property string currentUserName: ""
     property bool currentUserOnline: true
 
-    StyledText {
+    StatusBaseText {
         id: titleText
         anchors.top: parent.top
         anchors.topMargin: Style.current.padding
@@ -37,7 +38,8 @@ Item {
         opacity: (root.width > 58) ? 1.0 : 0.0
         visible: (opacity > 0.1)
         font.pixelSize: Style.current.primaryTextFontSize
-        font.bold: true
+        font.weight: Font.Medium
+        color: Theme.palette.directColor1
         //% "Members"
         text: qsTrId("members-label")
     }
@@ -53,7 +55,6 @@ Item {
             topMargin: Style.current.padding
             left: parent.left
             right: parent.right
-            rightMargin: Style.current.halfPadding
             bottom: parent.bottom
             bottomMargin: Style.current.bigPadding
         }
@@ -66,7 +67,7 @@ Item {
             Item {
                 width: parent.width
                 height: 24
-                StyledText {
+                StatusBaseText {
                     anchors.fill: parent
                     anchors.leftMargin: Style.current.padding
                     verticalAlignment: Text.AlignVCenter
@@ -87,16 +88,16 @@ Item {
         ]
         model: community.members
         delegate: UserDelegate {
-            publicKey: model.pubKey
             name: model.userName
+            publicKey: model.pubKey
+            profilePubKey: root.profilePubKey
             identicon: model.identicon
+            contactsList: root.contactsList
             lastSeen: model.lastSeen
             statusType: model.statusType
             currentTime: root.currentTime
             isOnline: (model.userName === root.currentUserName) ?
                       root.currentUserOnline : model.online
-            contactsList: root.contactsList
-            profilePubKey: root.profilePubKey
             messageContextMenu: root.messageContextMenu
         }
     }
