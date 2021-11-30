@@ -9,138 +9,95 @@ import StatusQ.Components 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core 0.1
 
-Item {
-    id: wrapper
+StatusListItem {
+    id: root
     anchors.right: parent.right
+    anchors.rightMargin: 8
     anchors.left: parent.left
-    height: rectangle.height + 4
+    anchors.leftMargin: 8
+    implicitHeight: 44
+    leftPadding: 8
+    rightPadding: 8
 
-    property string publicKey: ""
-    property string profilePubKey
     property var contactsList
-    property string name: "channelName"
-    property string lastSeen: ""
-    property string identicon
     property int statusType: -1
-    property bool hovered: false
-    property bool enableMouseArea: true
+    property string name: ""
+    property string publicKey: ""
+    property string profilePubKey: ""
+    property string identicon: ""
+    property bool isCurrentUser: (publicKey === profilePubKey)
+    property string profileImage: appMain.getProfileImage(publicKey) || ""
+    property bool highlighted: false
+    property string lastSeen: ""
     property bool isOnline: false
     property var currentTime
     property var messageContextMenu
-    property color color: {
-        if (wrapper.hovered) {
-            return Style.current.menuBackgroundHover
+
+
+    title: isCurrentUser ? qsTr("You") : Emoji.parse(Utils.removeStatusEns(Utils.filterXSS(root.name)))
+    image.source: profileImage || identicon
+    image.isIdenticon: !profileImage
+    image.width: 24
+    image.height: 24
+    statusListItemIcon.anchors.topMargin: 10
+    statusListItemTitle.elide: Text.ElideRight
+    statusListItemTitle.wrapMode: Text.NoWrap
+    color: sensor.containsMouse ? 
+        Theme.palette.statusChatListItem.hoverBackgroundColor : 
+        Theme.palette.baseColor4
+
+    sensor.onClicked: {
+        if (mouse.button === Qt.LeftButton) {
+            //TODO remove dynamic scoping
+            openProfilePopup(root.name, root.publicKey, (root.profileImage || root.identicon), "", appMain.getUserNickname(root.publicKey));
         }
- return Style.current.transparent
+          else if (mouse.button === Qt.RightButton && !!messageContextMenu) {
+            // Set parent, X & Y positions for the messageContextMenu
+            messageContextMenu.parent = root
+            messageContextMenu.setXPosition = function() { return 0}
+            messageContextMenu.setYPosition = function() { return root.height}
+            messageContextMenu.isProfile = true;
+            messageContextMenu.show(root.name, root.publicKey, (root.profileImage || root.identicon), "", appMain.getUserNickname(root.publicKey))
+        }
     }
-    //TODO remove dynamic scoping
-    property string profileImage: appMain.getProfileImage(publicKey) || ""
-    property bool isCurrentUser: (publicKey === profilePubKey)
 
-    Rectangle {
-        id: rectangle
-        width: parent.width
-        height: 40
-        radius: 8
-        color: wrapper.color
-        Connections {
-            enabled: !!wrapper.contactsList
-            target: wrapper.contactsList
-            onContactChanged: {
-                if (pubkey === wrapper.publicKey) {
-                    wrapper.profileImage = !!appMain.getProfileImage(wrapper.publicKey) ?
-                                appMain.getProfileImage(wrapper.publicKey) : ""
-                }
+    Connections {
+        enabled: !!root.contactsList
+        target: root.contactsList
+        onContactChanged: {
+            if (pubkey === root.publicKey) {
+                root.profileImage = !!appMain.getProfileImage(root.publicKey) ?
+                            appMain.getProfileImage(root.publicKey) : ""
             }
         }
+    }
 
-        StatusSmartIdenticon {
-            id: contactImage
-            anchors.left: parent.left
-            anchors.leftMargin: Style.current.padding
-            anchors.verticalCenter: parent.verticalCenter
-            image: StatusImageSettings {
-                width: 28
-                height: 28
-                source: wrapper.profileImage || wrapper.identicon
-                isIdenticon: true
-            }
-            icon: StatusIconSettings {
-                width: 28
-                height: 28
-                letterSize: 15
-            }
-            name: wrapper.name
-        }
-
-        StyledText {
-            id: contactInfo
-            text: Emoji.parse(Utils.removeStatusEns(Utils.filterXSS(wrapper.name))) + (isCurrentUser ? " " + qsTrId("(you)") : "")
-            anchors.right: parent.right
-            anchors.rightMargin: Style.current.smallPadding
-            elide: Text.ElideRight
-            color: Style.current.textColor
-            font.weight: Font.Medium
-            font.pixelSize: 15
-            anchors.left: contactImage.right
-            anchors.leftMargin: Style.current.halfPadding
-            anchors.verticalCenter: parent.verticalCenter
-        }
-
-        StatusBadge {
-            id: statusBadge
-            width: 15
-            height: 15
-            anchors.left: contactImage.right
-            anchors.leftMargin: -Style.current.smallPadding
-            anchors.bottom: contactImage.bottom
-            visible: wrapper.isOnline && !((statusType === -1) && (lastSeenMinutesAgo > 7))
-            border.width: 3
-            border.color: Theme.palette.statusAppNavBar.backgroundColor
-            property real lastSeenMinutesAgo: ((currentTime/1000 - parseInt(lastSeen)) / 60);
-            color: {
-                if (visible) {
-                    if (statusType === Constants.statusType_DoNotDisturb) {
-                        return Style.current.red;
-                    } else if (isCurrentUser || (lastSeenMinutesAgo < 5.5)) {
-                        return Style.current.green;
-                    } else if (((statusType !== -1) && (lastSeenMinutesAgo > 5.5)) ||
-                               ((statusType === -1) && (lastSeenMinutesAgo < 7))) {
-                        return Style.current.orange;
-                    } else if ((statusType === -1) && (lastSeenMinutesAgo > 7)) {
-                        return "transparent";
-                    }
-                } else {
+    StatusBadge {
+        id: statusBadge
+        width: 15
+        height: 15
+        anchors.left: parent.left
+        anchors.leftMargin: 22
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 6
+        visible: root.isOnline && !((root.statusType === -1) && (lastSeenMinutesAgo > 7))
+        border.width: 3
+        border.color: root.sensor.containsMouse ? Theme.palette.baseColor2 : Theme.palette.baseColor4
+        property real lastSeenMinutesAgo: ((currentTime/1000 - parseInt(lastSeen)) / 60);
+        color: {
+            if (visible) {
+                if (statusType === Constants.statusType_DoNotDisturb) {
+                    return Style.current.red;
+                } else if (isCurrentUser || (lastSeenMinutesAgo < 5.5)) {
+                    return Style.current.green;
+                } else if (((statusType !== -1) && (lastSeenMinutesAgo > 5.5)) ||
+                            ((statusType === -1) && (lastSeenMinutesAgo < 7))) {
+                    return Style.current.orange;
+                } else if ((statusType === -1) && (lastSeenMinutesAgo > 7)) {
                     return "transparent";
                 }
-            }
-        }
-
-        MouseArea {
-            enabled: enableMouseArea
-            cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
-            acceptedButtons: Qt.LeftButton | Qt.RightButton
-            anchors.fill: parent
-            hoverEnabled: true
-            onEntered: {
-                wrapper.hovered = true
-            }
-            onExited: {
-                wrapper.hovered = false
-            }
-            onClicked: {
-                if (mouse.button === Qt.LeftButton) {
-                    //TODO remove dynamic scoping
-                    openProfilePopup(wrapper.name, wrapper.publicKey, (wrapper.profileImage || wrapper.identicon), "", appMain.getUserNickname(wrapper.publicKey));
-                }
-                 else if (mouse.button === Qt.RightButton && !!messageContextMenu) {
-                    // Set parent, X & Y positions for the messageContextMenu
-                    messageContextMenu.parent = rectangle
-                    messageContextMenu.setXPosition = function() { return 0}
-                    messageContextMenu.setYPosition = function() { return rectangle.height}
-                    messageContextMenu.isProfile = true;
-                    messageContextMenu.show(wrapper.name, wrapper.publicKey, (wrapper.profileImage || wrapper.identicon), "", appMain.getUserNickname(wrapper.publicKey))
-                }
+            } else {
+                return "transparent";
             }
         }
     }

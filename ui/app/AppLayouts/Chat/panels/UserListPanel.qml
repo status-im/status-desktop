@@ -44,11 +44,10 @@ Item {
             policy: ScrollBar.AsNeeded
         }
         anchors {
-            left: parent.left
             top: titleText.bottom
             topMargin: Style.current.padding
+            left: parent.left
             right: parent.right
-            rightMargin: Style.current.halfPadding
             bottom: parent.bottom
             bottomMargin: Style.current.bigPadding
         }
@@ -65,14 +64,14 @@ Item {
         ]
         model: root.userList
         delegate: UserDelegate {
-            publicKey: model.publicKey
             name: model.userName
+            publicKey: model.publicKey
+            profilePubKey: root.profilePubKey
             identicon: model.identicon
+            contactsList: root.contactsList
             lastSeen: model.lastSeen / 1000
             currentTime: root.currentTime
             isOnline: root.isOnline
-            contactsList: root.contactsList
-            profilePubKey: root.profilePubKey
         }
     }
 }
