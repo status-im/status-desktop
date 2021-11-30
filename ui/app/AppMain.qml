@@ -539,14 +539,23 @@ Item {
                 // Whole this Connection object should be moved to the nim side.
                 // Left here only cause we don't have a way to deal with translations on the nim side.
 
+                const title = isContact ? qsTrId("contact-request-accepted") :
+                                          //% "New contact request"
+                                          qsTrId("new-contact-request")
+
+                const message = //% "You can now chat with %1"
+                              isContact ? qsTrId("you-can-now-chat-with--1").arg(Utils.removeStatusEns(name)) :
+                                          //% "%1 requests to become contacts"
+                                          qsTrId("-1-requests-to-become-contacts").arg(Utils.removeStatusEns(name))
+
+                if (Qt.platform.os === "linux") {
+                    // Linux Notifications are not implemented in Nim/C++ yet
+                    return systemTray.showMessage(title, message, systemTray.icon.source, 4000)
+                }
+
                 //% "Contact request accepted"
-                profileModel.showOSNotification(isContact ? qsTrId("contact-request-accepted") :
-                                                            //% "New contact request"
-                                                            qsTrId("new-contact-request"),
-                                                //% "You can now chat with %1"
-                                                isContact ? qsTrId("you-can-now-chat-with--1").arg(Utils.removeStatusEns(name)) :
-                                                            //% "%1 requests to become contacts"
-                                                            qsTrId("-1-requests-to-become-contacts").arg(Utils.removeStatusEns(name)),
+                profileModel.showOSNotification(title,
+                                                message,
                                                 isContact? Constants.osNotificationType.acceptedContactRequest :
                                                            Constants.osNotificationType.newContactRequest,
                                                 localAccountSensitiveSettings.useOSNotifications)
