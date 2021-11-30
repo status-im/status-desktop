@@ -29,6 +29,18 @@ StatusAppThreePanelLayout {
     // Each `ChatLayout` has its own chatCommunitySectionModule
     // (on the backend chat and community sections share the same module since they are actually the same)
     property var chatCommunitySectionModule
+    // Since qml component doesn't follow encaptulation from the backend side, we're introducing
+    // a method which will return appropriate chat content module for selected chat/channel
+    function currentChatContentModule(){
+        // When we decide to have the same struct as it's on the backend we will remove this function.
+        // So far this is a way to deal with refactord backend from the current qml structure.
+        if(chatCommunitySectionModule.activeItem.isSubItemActive)
+            chatCommunitySectionModule.prepareChatContentModuleForChatId(chatCommunitySectionModule.activeItem.activeSubItem.id)
+        else
+            chatCommunitySectionModule.prepareChatContentModuleForChatId(chatCommunitySectionModule.activeItem.id)
+
+        return chatCommunitySectionModule.getChatContentModule()
+    }
 
     // Not Refactored
    property var messageStore
@@ -72,35 +84,37 @@ StatusAppThreePanelLayout {
         }
     }
 
-    showRightPanel: (localAccountSensitiveSettings.expandUsersList && (localAccountSensitiveSettings.showOnlineUsers || chatsModel.communities.activeCommunity.active)
-                    && (chatsModel.channelView.activeChannel.chatType !== Constants.chatTypeOneToOne))
+    showRightPanel: {
+        // Check if user list is available as an option for particular chat content module.
+        let usersListAvailable = currentChatContentModule().isUsersListAvailable()
+        return localAccountSensitiveSettings.showOnlineUsers && usersListAvailable && localAccountSensitiveSettings.expandUsersList
+    }
+
     rightPanel: localAccountSensitiveSettings.communitiesEnabled && chatCommunitySectionModule.isCommunity()? communityUserListComponent : userListComponent
 
     Component {
         id: communityUserListComponent
         CommunityUserListPanel {
-            //Not Refactored Yet
-            //currentTime: chatColumn.currentTime
             messageContextMenu: quickActionMessageOptionsMenu
-//            profilePubKey: userProfile.pubKey
-//            community: root.rootStore.chatsModelInst.communities.activeCommunity
-//            currentUserName: Utils.removeStatusEns(root.rootStore.profileModelInst.ens.preferredUsername
-//                                                  || root.rootStore.profileModelInst.profile.username)
-//            currentUserOnline: root.store.userProfileInst.userStatus
-//            contactsList: root.rootStore.allContacts
+            usersModule: {
+                if(chatCommunitySectionModule.activeItem.isSubItemActive)
+                    chatCommunitySectionModule.prepareChatContentModuleForChatId(chatCommunitySectionModule.activeItem.activeSubItem.id)
+                else
+                    chatCommunitySectionModule.prepareChatContentModuleForChatId(chatCommunitySectionModule.activeItem.id)
+
+                return chatCommunitySectionModule.getChatContentModule().usersModule
+            }
         }
     }
 
     Component {
         id: userListComponent
         UserListPanel {
-            //Not Refactored Yet
-            //currentTime: chatColumn.currentTime
-            //userList: chatColumn.userList
             messageContextMenu: quickActionMessageOptionsMenu
-//            profilePubKey: userProfile.pubKey
-//            contactsList: root.rootStore.allContacts
-//            isOnline: root.rootStore.chatsModelInst.isOnline
+            usersModule: {
+                chatCommunitySectionModule.prepareChatContentModuleForChatId(chatCommunitySectionModule.activeItem.id)
+                return chatCommunitySectionModule.getChatContentModule().usersModule
+            }
         }
     }
 

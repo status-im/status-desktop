@@ -84,8 +84,8 @@ proc newModule*[T](
   result.moduleLoaded = false
 
   # Submodules
-  result.chatSectionModule = chat_section_module.newModule(result, events, conf.CHAT_SECTION_ID, false, chatService, 
-  communityService, messageService)
+  result.chatSectionModule = chat_section_module.newModule(result, events, conf.CHAT_SECTION_ID, false, contactsService, 
+  chatService, communityService, messageService)
   result.communitySectionsModule = initOrderedTable[string, chat_section_module.AccessInterface]()
   result.walletSectionModule = wallet_section_module.newModule[Module[T]](result, events, tokenService, 
     transactionService, collectible_service, walletAccountService, settingsService)
@@ -114,6 +114,7 @@ method delete*[T](self: Module[T]) =
 method load*[T](
     self: Module[T],
     events: EventEmitter,
+    contactsService: contacts_service.Service,
     chatService: chat_service.Service,
     communityService: community_service.Service,
     messageService: message_service.Service
@@ -131,6 +132,7 @@ method load*[T](
       events,
       c.id,
       true,
+      contactsService,
       chatService, 
       communityService,
       messageService
@@ -209,9 +211,9 @@ method load*[T](
     activeSection = profileSettingsSectionItem
 
   # Load all sections
-  self.chatSectionModule.load(events, chatService, communityService, messageService)
+  self.chatSectionModule.load(events, contactsService, chatService, communityService, messageService)
   for cModule in self.communitySectionsModule.values:
-    cModule.load(events, chatService, communityService, messageService)
+    cModule.load(events, contactsService, chatService, communityService, messageService)
   self.walletSectionModule.load()
   # self.walletV2SectionModule.load()
   self.browserSectionModule.load()

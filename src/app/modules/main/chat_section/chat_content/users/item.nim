@@ -1,24 +1,26 @@
 type
   OnlineStatus* {.pure.} = enum
-    Online = 0
-    Idle
+    Offline = 0
+    Online
     DoNotDisturb
+    Idle
     Invisible
-    Offline
-
+    
 type 
   Item* = ref object
     id: string
     name: string
     onlineStatus: OnlineStatus
-    identicon: string
+    icon: string
+    isIdenticon: bool
 
-proc initItem*(id: string, name: string, onlineStatus: OnlineStatus, identicon: string): Item =
+proc initItem*(id: string, name: string, onlineStatus: OnlineStatus, icon: string, isidenticon: bool): Item =
   result = Item()
   result.id = id
   result.name = name
   result.onlineStatus = onlineStatus
-  result.identicon = identicon
+  result.icon = icon
+  result.isIdenticon = isidenticon
 
 proc id*(self: Item): string {.inline.} = 
   self.id
@@ -35,5 +37,14 @@ proc onlineStatus*(self: Item): OnlineStatus {.inline.} =
 proc `onlineStatus=`*(self: Item, value: OnlineStatus) {.inline.} = 
   self.onlineStatus = value
 
-proc identicon*(self: Item): string {.inline.} = 
-  self.identicon
+proc icon*(self: Item): string {.inline.} = 
+  self.icon
+
+proc `icon=`*(self: Item, value: string) {.inline.} = 
+  self.icon = value
+
+proc isIdenticon*(self: Item): bool {.inline.} = 
+  self.isIdenticon
+
+proc `isIdenticon=`*(self: Item, value: bool) {.inline.} = 
+  self.isIdenticon = value
