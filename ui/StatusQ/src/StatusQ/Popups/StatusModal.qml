@@ -18,6 +18,7 @@ QC.Popup {
     property alias leftButtons: footerImpl.leftButtons
     property bool showHeader: true
     property bool showFooter: true
+    property alias hasCloseButton: headerImpl.hasCloseButton
 
     signal editButtonClicked()
     signal headerImageClicked()

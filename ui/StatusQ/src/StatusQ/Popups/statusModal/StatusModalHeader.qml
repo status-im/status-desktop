@@ -19,6 +19,7 @@ Rectangle {
     property alias icon: imageWithTitle.icon
     property bool editable: false
     property alias headerImageEditable: imageWithTitle.headerImageEditable
+    property bool hasCloseButton: true
     property Component popupMenu
 
     signal editButtonClicked
@@ -76,7 +77,7 @@ Rectangle {
     Loader {
         id: actionButtonLoader
         objectName: "actionButtonloader"
-        anchors.right: closeButton.left
+        anchors.right: closeButton.visible ? closeButton.left : parent.right
         anchors.rightMargin: 8
         anchors.top: parent.top
         anchors.topMargin: 16
@@ -96,6 +97,7 @@ Rectangle {
         icon.color: Theme.palette.directColor1
         icon.width: 20
         icon.height: 20
+        visible: statusModalHeader.hasCloseButton
 
         onClicked: statusModalHeader.close()
     }
