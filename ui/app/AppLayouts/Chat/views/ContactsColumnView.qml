@@ -349,7 +349,7 @@ Item {
         id: importCommunitiesPopupComponent
         AccessExistingCommunityPopup {
             anchors.centerIn: parent
-            error: root.store.chatsModelInst.communities.importCommunity(communityKey, Utils.uuid())
+            store: root.store
             onClosed: {
                 destroy()
             }
