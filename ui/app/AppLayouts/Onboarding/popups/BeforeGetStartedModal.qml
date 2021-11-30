@@ -4,85 +4,89 @@ import QtQuick.Layouts 1.14
 
 import utils 1.0
 
+import StatusQ.Core 0.1
+import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
+import StatusQ.Popups 0.1
 
-import shared.panels 1.0
-import shared.popups 1.0
-
-// TODO: replace with StatusModal
-ModalPopup {
+StatusModal {
     id: popup
 
-    displayCloseButton: false
+    anchors.centerIn: parent
     //% "Before you get started..."
-    title: qsTrId("before-you-get-started---")
-    width: 480
-    height: 318
+    header.title: qsTrId("before-you-get-started---")
+    hasCloseButton: false
 
-    ColumnLayout {
-        anchors.centerIn: parent
-        width: parent.width
+    contentItem: Item {
+        implicitHeight: childrenRect.height
+        width: popup.width
+        Column {
+            spacing: 12
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.leftMargin: 32
+            anchors.rightMargin: 32
 
-        StatusCheckBox {
-            id: acknowledge
-            objectName: "acknowledgeCheckBox"
-            Layout.preferredWidth: parent.width
-            //% "I acknowledge that Status Desktop is in Beta and by using it, I take the full responsibility for all risks concerning my data and funds."
-            text: qsTrId("i-acknowledge-that-status-desktop-is-in-beta-and-by-using-it--i-take-the-full-responsibility-for-all-risks-concerning-my-data-and-funds-")
-        }
+            Item { height: 12;  width: parent.width }
 
-        StatusCheckBox {
-            id: termsOfUse
-            objectName: "termsOfUseCheckBox"
-            Layout.preferredWidth: parent.width
+            StatusCheckBox {
+                id: acknowledge
+                objectName: "acknowledgeCheckBox"
+                width: parent.width
+                //% "I acknowledge that Status Desktop is in Beta and by using it, I take the full responsibility for all risks concerning my data and funds."
+                text: qsTrId("i-acknowledge-that-status-desktop-is-in-beta-and-by-using-it--i-take-the-full-responsibility-for-all-risks-concerning-my-data-and-funds-")
+            }
 
-            contentItem: Row {
-                spacing: 4
-                leftPadding: termsOfUse.indicator.width + termsOfUse.spacing
+            StatusCheckBox {
+                id: termsOfUse
+                objectName: "termsOfUseCheckBox"
 
-                StyledText {
-                    //% "I accept"
-                    text: qsTrId("i-accept")
-                }
+                contentItem: Row {
+                    spacing: 4
+                    leftPadding: termsOfUse.indicator.width + termsOfUse.spacing
 
-                StyledText {
-                    //% "Terms of Use"
-                    text: qsTrId("terms-of-service")
-                    color: Style.current.blue
-                    objectName: "termsOfUseLink"
+                    StatusBaseText {
+                        //% "I accept"
+                        text: qsTrId("i-accept")
+                        color: Theme.palette.directColor1
+                    }
 
-                    MouseArea {
-                        anchors.fill: parent
-                        cursorShape: Qt.PointingHandCursor
-                        hoverEnabled: true
-                        onEntered: {
-                            parent.font.underline = true
-                        }
-                        onExited: {
-                            parent.font.underline = false
-                        }
-                        onClicked: {
-                            Qt.openUrlExternally("https://status.im/terms-of-service/")
+                    StatusBaseText {
+                        //% "Terms of Use"
+                        text: qsTrId("terms-of-service")
+                        color: Theme.palette.primaryColor1
+                        objectName: "termsOfUseLink"
+
+                        MouseArea {
+                            anchors.fill: parent
+                            cursorShape: Qt.PointingHandCursor
+                            hoverEnabled: true
+                            onEntered: {
+                                parent.font.underline = true
+                            }
+                            onExited: {
+                                parent.font.underline = false
+                            }
+                            onClicked: {
+                                Qt.openUrlExternally("https://status.im/terms-of-service/")
+                            }
                         }
                     }
                 }
             }
+
+            Item { height: 12;  width: parent.width }
         }
     }
 
-    footer: Item {
-        width: parent.width
-        implicitHeight: getStartedButton.height > ppText.height?
-                            getStartedButton.height : ppText.height
-
-        StyledText {
+    leftButtons: [
+        StatusBaseText {
             id: ppText
             //% "Privacy Policy"
             objectName: "privacyPolicyLink"
             text: qsTrId("privacy-policy")
-            color: Style.current.blue
+            color: Theme.palette.primaryColor1
             anchors.verticalCenter: parent.verticalCenter
-            anchors.left: parent.left
 
             MouseArea {
                 anchors.fill: parent
@@ -100,19 +104,18 @@ ModalPopup {
             }
         }
 
+    ]
+
+    rightButtons: [
         StatusButton {
             id: getStartedButton
             objectName: "getStartedStatusButton"
-            anchors.right: parent.right
             enabled: acknowledge.checked && termsOfUse.checked
-            width: 130
-            height: 44
             //% "Get Started"
             text: qsTrId("get-started")
-
             onClicked: {
                 popup.close()
             }
         }
-    }
+    ]
 }
