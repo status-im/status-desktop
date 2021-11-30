@@ -16,6 +16,7 @@ StatusModal {
     width: 400
     height: 400
 
+    property var store
     property string error: ""
     property string keyValidationError: ""
     property string communityKey: ""
@@ -81,6 +82,8 @@ StatusModal {
                     communityKey = "0x" + communityKey;
                 }
 
+
+                root.error = root.store.chatsModelInst.communities.importCommunity(communityKey, Utils.uuid())
                 if (!!root.error) {
                     creatingError.text = error;
                     return creatingError.open();
