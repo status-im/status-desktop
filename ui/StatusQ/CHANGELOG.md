@@ -1,5 +1,21 @@
 <a name=""></a>
-##  (2021-11-19)
+##  Version 0.18.0 (2021-11-30)
+
+
+#### Bug Fixes
+
+* **StatusAppNavBar:**  Fixed position of profile button on the NavBar ([419b7384](419b7384))
+* **StatusImageWithTitle:**  Fix position of the edit title button ([8d2121ad](8d2121ad))
+* **StatusListItem:**  ensure title is elided ([b7883e82](b7883e82))
+
+#### Features
+
+* **StatusListItem:**  Expose the Aside text so that it can be modified from the outside ([f82ce8b7](f82ce8b7))
+
+
+
+<a name=""></a>
+##  Version 0.17.1 (2021-11-19)
 
 
 #### Bug Fixes
