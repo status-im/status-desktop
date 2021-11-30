@@ -611,6 +611,11 @@ Item {
 
                     currentlyHasANotification = true
 
+                    if (Qt.platform.os === "linux") {
+                        // Linux Notifications are not implemented in Nim/C++ yet
+                        return systemTray.showMessage(name, message, systemTray.icon.source, 4000)
+                    }
+
                     // Note:
                     // Show notification should be moved to the nim side.
                     // Left here only cause we don't have a way to deal with translations on the nim side.

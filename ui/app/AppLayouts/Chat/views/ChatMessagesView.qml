@@ -220,11 +220,20 @@ Item {
             onMembershipRequestChanged: function (communityId, communityName, accepted) {
                 chatColumnLayout.currentNotificationChatId = null
                 chatColumnLayout.currentNotificationCommunityId = communityId
-                root.store.chatsModelInst.showOSNotification("Status",
-                                              //% "You have been accepted into the ‘%1’ community"
-                                              accepted ? qsTrId("you-have-been-accepted-into-the---1--community").arg(communityName) :
-                                                         //% "Your request to join the ‘%1’ community was declined"
-                                                         qsTrId("your-request-to-join-the---1--community-was-declined").arg(communityName),
+
+                const title = "Status"
+                const message = //% "You have been accepted into the ‘%1’ community"
+                              accepted ? qsTrId("you-have-been-accepted-into-the---1--community").arg(communityName) :
+                                         //% "Your request to join the ‘%1’ community was declined"
+                                         qsTrId("your-request-to-join-the---1--community-was-declined").arg(communityName)
+
+                if (Qt.platform.os === "linux") {
+                    // Linux Notifications are not implemented in Nim/C++ yet
+                    return systemTray.showMessage(title, message, systemTray.icon.source, 4000)
+                }
+
+                root.store.chatsModelInst.showOSNotification(title,
+                                              message,
                                               accepted? Constants.osNotificationType.acceptedIntoCommunity :
                                                         Constants.osNotificationType.rejectedByCommunity,
                                               communityId,
@@ -236,10 +245,19 @@ Item {
             onMembershipRequestPushed: function (communityId, communityName, pubKey) {
                 chatColumnLayout.currentNotificationChatId = null
                 chatColumnLayout.currentNotificationCommunityId = communityId
+
                 //% "New membership request"
-                root.store.chatsModelInst.showOSNotification(qsTrId("new-membership-request"),
-                                              //% "%1 asks to join ‘%2’"
-                                              qsTrId("-1-asks-to-join---2-").arg(Utils.getDisplayName(pubKey)).arg(communityName),
+                const title = qsTrId("new-membership-request")
+                //% "%1 asks to join ‘%2’"
+                const message = qsTrId("-1-asks-to-join---2-").arg(Utils.getDisplayName(pubKey)).arg(communityName)
+
+                if (Qt.platform.os === "linux") {
+                    // Linux Notifications are not implemented in Nim/C++ yet
+                    return systemTray.showMessage(title, message, systemTray.icon.source, 4000)
+                }
+
+                root.store.chatsModelInst.showOSNotification(title,
+                                              message,
                                               Constants.osNotificationType.joinCommunityRequest,
                                               communityId,
                                               "",
