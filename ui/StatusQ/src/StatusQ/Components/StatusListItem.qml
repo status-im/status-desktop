@@ -143,6 +143,8 @@ Rectangle {
                 font.pixelSize: 15
                 height: visible ? contentHeight : 0
                 wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+                anchors.left: parent.left
+                anchors.right: !statusListItem.titleAsideText ? parent.right : undefined
                 color: {
                   if (!statusListItem.enabled) {
                     return Theme.palette.baseColor1
