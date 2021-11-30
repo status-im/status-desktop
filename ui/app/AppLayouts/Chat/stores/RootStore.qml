@@ -23,6 +23,22 @@ QtObject {
     property var currentAccount: walletSectionCurrent
     property var currentCurrency: walletSection.currentCurrency
 
+    property ListModel addToGroupContacts: ListModel {}
+
+    function reCalculateAddToGroupContacts(channel) {
+        const contacts = getContactListObject()
+
+        if (channel) {
+            contacts.forEach(function (contact) {
+                if(channel.contains(contact.pubKey) ||
+                        !contact.isContact) {
+                    return;
+                }
+                addToGroupContacts.append(contact)
+            })
+        }
+    }
+
     function copyToClipboard(text) {
         chatsModelInst.copyToClipboard(text);
     }

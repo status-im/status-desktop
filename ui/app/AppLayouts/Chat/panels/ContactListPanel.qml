@@ -1,47 +1,54 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.3
 
+import StatusQ.Components 0.1
+import StatusQ.Controls 0.1
+
 import utils 1.0
 
-import "../controls"
-
 ScrollView {
-    property alias membersData: membersData
+    id: contactListPanel
+
+    property alias model: groupMembers.model
     property string searchString
     property bool selectMode: true
     property var onItemChecked
-    anchors.fill: parent
 
-    id: root
     ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
     ScrollBar.vertical.policy: groupMembers.contentHeight > groupMembers.height ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
 
     ListView {
+        id: groupMembers
         anchors.fill: parent
-        model: ListModel {
-            id: membersData
-        }
         spacing: 0
         clip: true
-        id: groupMembers
-        delegate: Contact {
-            isVisible: {
+        delegate: StatusListItem {
+            id: contactDelegate
+            property bool isChecked: false
+            title: !model.name.endsWith(".eth") && !!model.localNickname ?
+                       model.localNickname : Utils.removeStatusEns(model.name)
+            image.source: appMain.getProfileImage(model.pubKey) || model.identicon
+            image.isIdenticon: !!model.identicon
+            visible: {
                 if (selectMode) {
                     return !searchString || model.name.toLowerCase().includes(searchString)
                 }
-
-                return isChecked || isUser
+                return checkbox.checked || model.isUser
             }
-            showCheckbox: root.selectMode
-            pubKey: model.pubKey
-            isContact: !!model.isContact
-            isUser: model.isUser
-            name: !model.name.endsWith(".eth") && !!model.localNickname ?
-                      model.localNickname : Utils.removeStatusEns(model.name)
-            address: model.address
-            identicon: model.thumbnailImage || model.identicon
-            onItemChecked: function (pubKey, itemChecked) {
-                root.onItemChecked(pubKey, itemChecked)
+            components: [
+                StatusCheckBox {
+                    id: checkbox
+                    visible: contactListPanel.selectMode && !model.isUser
+                    checked: contactDelegate.isChecked
+                    onClicked: {
+                        contactDelegate.isChecked = !contactDelegate.isChecked
+                        onItemChecked(model.pubKey, contactDelegate.isChecked)
+                    }
+                }
+            ]
+            onClicked: {
+                contactDelegate.isChecked = !contactDelegate.isChecked
+                onItemChecked(model.pubKey, contactDelegate.isChecked)
             }
         }
     }
