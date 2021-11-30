@@ -10,6 +10,7 @@ import input_area/module as input_area_module
 import messages/module as messages_module
 import users/module as users_module
 
+import ../../../../../app_service/service/contacts/service as contact_service
 import ../../../../../app_service/service/chat/service as chat_service
 import ../../../../../app_service/service/community/service as community_service
 import ../../../../../app_service/service/message/service as message_service
@@ -32,7 +33,8 @@ type
     usersModule: users_module.AccessInterface
     moduleLoaded: bool
 
-proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitter, chatId: string, belongsToCommunity: bool, 
+proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitter, sectionId: string, chatId: string, 
+  belongsToCommunity: bool, isUsersListAvailable: bool, contactService: contact_service.Service, 
   chatService: chat_service.ServiceInterface, communityService: community_service.ServiceInterface, 
   messageService: message_service.Service): 
   Module =
@@ -40,14 +42,15 @@ proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitt
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, events, chatId, belongsToCommunity, chatService, communityService, 
-  messageService)
+  result.controller = controller.newController(result, events, chatId, belongsToCommunity, isUsersListAvailable,
+  chatService, communityService, messageService)
   result.moduleLoaded = false
 
   result.inputAreaModule = input_area_module.newModule(result, chatId, belongsToCommunity, chatService, communityService)
   result.messagesModule = messages_module.newModule(result, events, chatId, belongsToCommunity, chatService, 
   communityService, messageService)
-  result.usersModule = users_module.newModule(result, chatId, belongsToCommunity, chatService, communityService)
+  result.usersModule = users_module.newModule(result, events, sectionId, chatId, belongsToCommunity, isUsersListAvailable, 
+  contactService, communityService, messageService)
 
 method delete*(self: Module) =
   self.inputAreaModule.delete
@@ -148,3 +151,5 @@ method onPinMessage*(self: Module, messageId: string) =
 
   self.view.model.appendItem(item)
   
+method isUsersListAvailable*(self: Module): bool =
+  self.controller.isUsersListAvailable()

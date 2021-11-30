@@ -14,3 +14,6 @@ method getUsersModule*(self: AccessInterface): QVariant {.base.} =
 
 method unpinMessage*(self: AccessInterface, messageId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method isUsersListAvailable*(self: AccessInterface): bool {.base.} =
+  raise newException(ValueError, "No implementation available")

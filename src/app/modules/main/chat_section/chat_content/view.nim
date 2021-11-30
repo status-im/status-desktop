@@ -53,3 +53,6 @@ QtObject:
 
   proc unpinMessage*(self: View, messageId: string) {.slot.} = 
     self.delegate.unpinMessage(messageId)
+
+  proc isUsersListAvailable*(self: View): bool {.slot.} =
+    return self.delegate.isUsersListAvailable()

@@ -1,4 +1,4 @@
-import ../../../../../../app_service/service/community/service_interface as community_service
+import ../../../../../../app_service/service/contacts/service as contacts_service
 
 type 
   AccessInterface* {.pure inheritable.} = ref object of RootObj
@@ -13,7 +13,12 @@ method init*(self: AccessInterface) {.base.} =
 method getChatId*(self: AccessInterface): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method belongsToCommunity*(self: AccessInterface): bool {.base.} =
+method getMembersPublicKeys*(self: AccessInterface): seq[string] {.base.} =
   raise newException(ValueError, "No implementation available")
 
-    
+method getContactNameAndImage*(self: AccessInterface, contactId: string): 
+  tuple[name: string, image: string, isIdenticon: bool] {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getStatusForContact*(self: AccessInterface, contactId: string): StatusUpdateDto {.base.} =
+  raise newException(ValueError, "No implementation available")
