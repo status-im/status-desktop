@@ -80,6 +80,10 @@ StatusPopupMenu {
         popup()
     }
 
+    function openProfileClicked() {
+        openProfilePopup(userName, fromAuthor, identicon, "", nickname);
+    }
+
     Item {
         id: emojiContainer
         width: emojiRow.width
@@ -150,7 +154,7 @@ StatusPopupMenu {
             hoverEnabled: true
             cursorShape: Qt.PointingHandCursor
             onClicked: {
-                openProfilePopup(userName, fromAuthor, identicon);
+                root.openProfileClicked()
                 root.close()
             }
         }
@@ -235,7 +239,7 @@ StatusPopupMenu {
         //% "View Profile"
         text: qsTrId("view-profile")
         onTriggered: {
-            openProfilePopup(userName, fromAuthor, identicon, "", nickname);
+            root.openProfileClicked()
             root.close()
         }
         icon.name: "profile"
