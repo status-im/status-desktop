@@ -22,3 +22,6 @@ method unpinMessage*(self: AccessInterface, messageId: string) {.base.} =
 method getMessageDetails*(self: AccessInterface, messageId: string): 
   tuple[message: MessageDto, reactions: seq[ReactionDto], error: string] {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method isUsersListAvailable*(self: AccessInterface): bool {.base.} =
+  raise newException(ValueError, "No implementation available")

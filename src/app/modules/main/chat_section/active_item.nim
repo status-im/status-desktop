@@ -33,6 +33,8 @@ QtObject:
     self.activeSubItemChanged()
 
   proc getId(self: ActiveItem): string {.slot.} = 
+    if(self.item.isNil):
+      return ""
     return self.item.id
 
   QtProperty[string] id:
@@ -48,54 +50,72 @@ QtObject:
     read = getIsSubItemActive
 
   proc getName(self: ActiveItem): string {.slot.} = 
+    if(self.item.isNil):
+      return ""
     return self.item.name
 
   QtProperty[string] name:
     read = getName
 
   proc getIcon(self: ActiveItem): string {.slot.} =
+    if(self.item.isNil):
+      return ""
     return self.item.icon
 
   QtProperty[string] icon:
     read = getIcon
 
   proc getColor(self: ActiveItem): string {.slot.} =
+    if(self.item.isNil):
+      return ""
     return self.item.color
 
   QtProperty[string] color:
     read = getColor
 
   proc getDescription(self: ActiveItem): string {.slot.} = 
+    if(self.item.isNil):
+      return ""
     return self.item.description
 
   QtProperty[string] description:
     read = getDescription
 
   proc getType(self: ActiveItem): int {.slot.} = 
+    if(self.item.isNil):
+      return 0
     return self.item.`type`
 
   QtProperty[int] type:
     read = getType
 
   proc getHasUnreadMessages(self: ActiveItem): bool {.slot.} = 
+    if(self.item.isNil):
+      return false
     return self.item.hasUnreadMessages
 
   QtProperty[bool] hasUnreadMessages:
     read = getHasUnreadMessages
 
   proc getNotificationCount(self: ActiveItem): int {.slot.} = 
+    if(self.item.isNil):
+      return 0
     return self.item.notificationsCount
 
   QtProperty[int] notificationCount:
     read = getNotificationCount
 
   proc getMuted(self: ActiveItem): bool {.slot.} = 
+    if(self.item.isNil):
+      return false
     return self.item.muted
 
   QtProperty[bool] muted:
     read = getMuted
 
   proc getPosition(self: ActiveItem): int {.slot.} = 
+    if(self.item.isNil):
+      return 0
     return self.item.position
 
   QtProperty[int] position:

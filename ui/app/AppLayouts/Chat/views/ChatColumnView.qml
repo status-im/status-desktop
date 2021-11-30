@@ -28,6 +28,18 @@ Item {
     // Important: we have parent module in this context only cause qml components
     // don't follow struct from we have on the backend.
     property var parentModule
+    // Since qml component doesn't follow encaptulation from the backend side, we're introducing
+    // a method which will return appropriate chat content module for selected chat/channel
+    function currentChatContentModule(){
+        // When we decide to have the same struct as it's on the backend we will remove this function.
+        // So far this is a way to deal with refactord backend from the current qml structure.
+        if(parentModule.activeItem.isSubItemActive)
+            parentModule.prepareChatContentModuleForChatId(chatCommunitySectionModule.activeItem.activeSubItem.id)
+        else
+            parentModule.prepareChatContentModuleForChatId(chatCommunitySectionModule.activeItem.id)
+
+        return parentModule.getChatContentModule()
+    }
 
     property var rootStore
     property alias pinnedMessagesPopupComponent: pinnedMessagesPopupComponent
@@ -210,8 +222,11 @@ Item {
                     }
                 }
 
-                membersButton.visible: (localAccountSensitiveSettings.showOnlineUsers || root.rootStore.chatsModelInst.communities.activeCommunity.active)
-                                       && root.rootStore.chatsModelInst.channelView.activeChannel.chatType !== Constants.chatTypeOneToOne
+                membersButton.visible: {
+                    // Check if user list is available as an option for particular chat content module.
+                    let usersListAvailable = currentChatContentModule().isUsersListAvailable()
+                    return localAccountSensitiveSettings.showOnlineUsers && usersListAvailable
+                }
                 membersButton.highlighted: localAccountSensitiveSettings.expandUsersList
                 notificationButton.visible: localAccountSensitiveSettings.isActivityCenterEnabled
                 notificationButton.tooltip.offset: localAccountSensitiveSettings.expandUsersList ? 0 : 14

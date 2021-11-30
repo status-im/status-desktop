@@ -17,6 +17,7 @@ type ContactsDto* = object
   alias*: string
   identicon*: string
   lastUpdated*: int64
+  lastUpdatedLocally*: int64
   localNickname*: string
   image*: Images
   added*: bool
@@ -36,9 +37,10 @@ proc `$`*(self: ContactsDto): string =
     id: {self.id},
     name: {self.name},
     ensVerified: {self.ensVerified},
-    alias: {self.alias},
-    identicon: {self.identicon},
-    lastUpdated: {self.lastUpdated},
+    alias: {self.alias}, 
+    identicon: {self.identicon}, 
+    lastUpdated: {self.lastUpdated}, 
+    lastUpdatedLocally: {self.lastUpdatedLocally},
     localNickname: {self.localNickname},
     image:[
       {$self.image}
@@ -69,6 +71,7 @@ proc toContactsDto*(jsonObj: JsonNode): ContactsDto =
   discard jsonObj.getProp("alias", result.alias)
   discard jsonObj.getProp("identicon", result.identicon)
   discard jsonObj.getProp("lastUpdated", result.lastUpdated)
+  discard jsonObj.getProp("lastUpdatedLocally", result.lastUpdatedLocally)
   discard jsonObj.getProp("localNickname", result.localNickname)
 
   var imageObj: JsonNode

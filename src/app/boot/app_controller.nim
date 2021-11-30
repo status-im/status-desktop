@@ -362,6 +362,7 @@ proc load(self: AppController) =
   # load main module
   self.mainModule.load(
     self.statusFoundation.status.events,
+    self.contactsService,
     self.chatService,
     self.communityService,
     self.messageService

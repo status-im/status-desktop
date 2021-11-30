@@ -18,18 +18,20 @@ type
     events: EventEmitter
     chatId: string
     belongsToCommunity: bool
+    isUsersListAvailable: bool #users list is not available for 1:1 chat
     chatService: chat_service.ServiceInterface
     communityService: community_service.ServiceInterface
     messageService: message_service.Service
 
 proc newController*(delegate: io_interface.AccessInterface, events: EventEmitter, chatId: string, 
-  belongsToCommunity: bool, chatService: chat_service.ServiceInterface, 
+  belongsToCommunity: bool, isUsersListAvailable: bool, chatService: chat_service.ServiceInterface, 
   communityService: community_service.ServiceInterface, messageService: message_service.Service): Controller =
   result = Controller()
   result.delegate = delegate
   result.events = events
   result.chatId = chatId
   result.belongsToCommunity = belongsToCommunity
+  result.isUsersListAvailable = isUsersListAvailable
   result.chatService = chatService
   result.communityService = communityService
   result.messageService = messageService
@@ -68,3 +70,6 @@ method unpinMessage*(self: Controller, messageId: string) =
 method getMessageDetails*(self: Controller, messageId: string): 
   tuple[message: MessageDto, reactions: seq[ReactionDto], error: string] =
   return self.messageService.getDetailsForMessage(self.chatId, messageId)
+
+method isUsersListAvailable*(self: Controller): bool =
+  return self.isUsersListAvailable

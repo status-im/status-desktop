@@ -1,11 +1,5 @@
 import QtQuick 2.13
-import Qt.labs.platform 1.1
 import QtQuick.Controls 2.13
-import QtQuick.Window 2.13
-import QtQuick.Layouts 1.13
-import QtQml.Models 2.13
-import QtGraphicalEffects 1.13
-import QtQuick.Dialogs 1.3
 import shared 1.0
 import shared.panels 1.0
 import shared.status 1.0
@@ -17,11 +11,11 @@ import utils 1.0
 Item {
     id: root
     anchors.fill: parent
-    property var userList
-    property var currentTime
-    property bool isOnline
-    property var contactsList
-    property string profilePubKey
+
+    // Important:
+    // Each chat/community has its own ChatContentModule and each ChatContentModule has a single usersModule
+    // usersModule on the backend contains everything needed for this component
+    property var usersModule
     property var messageContextMenu
 
     StyledText {
@@ -52,26 +46,14 @@ Item {
             bottomMargin: Style.current.bigPadding
         }
         boundsBehavior: Flickable.StopAtBounds
-        model: userListDelegate
-    }
-
-    DelegateModelGeneralized {
-        id: userListDelegate
-        lessThan: [
-            function (left, right) {
-                return (left.lastSeen > right.lastSeen);
-            }
-        ]
-        model: root.userList
+        model: usersModule.model
         delegate: UserDelegate {
-            name: model.userName
-            publicKey: model.publicKey
-            profilePubKey: root.profilePubKey
-            identicon: model.identicon
-            contactsList: root.contactsList
-            lastSeen: model.lastSeen / 1000
-            currentTime: root.currentTime
-            isOnline: root.isOnline
+            publicKey: model.id
+            name: model.name
+            identicon: model.icon
+            isIdenticon: model.isIdenticon
+            userStatus: model.onlineStatus
+            messageContextMenu: root.messageContextMenu
         }
     }
 }

@@ -1,3 +1,4 @@
+import os
 import status/ens as status_ens
 
 include ../../common/json_utils
@@ -17,3 +18,16 @@ const lookupContactTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   if not id.startsWith("0x"):
     id = status_ens.pubkey(id)
   arg.finish(id)
+
+#################################################
+# Async timer
+#################################################
+
+type
+  TimerTaskArg = ref object of QObjectTaskArg
+    timeoutInMilliseconds: int
+
+const timerTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[TimerTaskArg](argEncoded)
+  sleep(arg.timeoutInMilliseconds)
+  arg.finish("done")

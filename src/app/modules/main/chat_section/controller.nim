@@ -3,6 +3,7 @@ import Tables
 import controller_interface
 import io_interface
 
+import ../../../../app_service/service/contacts/service as contact_service
 import ../../../../app_service/service/chat/service_interface as chat_service
 import ../../../../app_service/service/community/service_interface as community_service
 import ../../../../app_service/service/message/service as message_service
@@ -19,19 +20,20 @@ type
     activeItemId: string
     activeSubItemId: string
     events: EventEmitter
+    contactService: contact_service.Service
     chatService: chat_service.ServiceInterface
     communityService: community_service.ServiceInterface
     messageService: message_service.Service
 
 proc newController*(delegate: io_interface.AccessInterface, sectionId: string, isCommunity: bool, events: EventEmitter,
-  chatService: chat_service.ServiceInterface,
-  communityService: community_service.ServiceInterface,
-  messageService: message_service.Service): Controller =
+  contactService: contact_service.Service, chatService: chat_service.ServiceInterface,
+  communityService: community_service.ServiceInterface, messageService: message_service.Service): Controller =
   result = Controller()
   result.delegate = delegate
   result.sectionId = sectionId
   result.isCommunitySection = isCommunity
   result.events = events
+  result.contactService = contactService
   result.chatService = chatService
   result.communityService = communityService
   result.messageService = messageService
@@ -87,5 +89,5 @@ method getOneToOneChatNameAndImage*(self: Controller, chatId: string):
 method createPublicChat*(self: Controller, chatId: string) =
   let response = self.chatService.createPublicChat(chatId)
   if(response.success):
-    self.delegate.addNewPublicChat(response.chatDto, self.events, self.chatService, self.communityService, 
-    self.messageService)
+    self.delegate.addNewPublicChat(response.chatDto, self.events, self.contactService, self.chatService, 
+    self.communityService, self.messageService)

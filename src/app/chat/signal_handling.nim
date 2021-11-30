@@ -4,7 +4,7 @@ import
 proc handleSignals(self: ChatController) =
   self.status.events.on(SignalType.Message.event) do(e:Args):
     var data = MessageSignal(e)
-    self.status.chat.update(data.chats, data.messages, data.emojiReactions, data.communities, data.membershipRequests, data.pinnedMessages, data.activityCenterNotification, data.statusUpdates, data.deletedMessages)
+    #self.status.chat.update(data.chats, data.messages, data.emojiReactions, data.communities, data.membershipRequests, data.pinnedMessages, data.activityCenterNotification, data.statusUpdates, data.deletedMessages)
 
   self.status.events.on(SignalType.DiscoverySummary.event) do(e:Args):
     ## Handle mailserver peers being added and removed
@@ -39,8 +39,9 @@ proc handleSignals(self: ChatController) =
         self.view.messageView.messageList[chatId].checkTimeout(messageId)
 
   self.status.events.on(SignalType.CommunityFound.event) do(e: Args):
-    var data = CommunitySignal(e)
-    self.view.communities.addCommunityToList(data.community)
+    discard
+    # var data = CommunitySignal(e)
+    # self.view.communities.addCommunityToList(data.community)
 
   self.status.events.on(SignalType.MailserverRequestCompleted.event) do(e:Args):
     # TODO: if the signal contains a cursor, request additional messages

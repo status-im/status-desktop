@@ -17,6 +17,14 @@ template getProp(obj: JsonNode, prop: string, value: var typedesc[int64]): bool 
 
   success
 
+template getProp(obj: JsonNode, prop: string, value: var typedesc[uint64]): bool =
+  var success = false
+  if (obj.kind == JObject and obj.contains(prop)):
+    value = uint64(obj[prop].getBiggestInt)
+    success = true
+
+  success
+
 template getProp(obj: JsonNode, prop: string, value: var typedesc[string]): bool =
   var success = false
   if (obj.kind == JObject and obj.contains(prop)):
