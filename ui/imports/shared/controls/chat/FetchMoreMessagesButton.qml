@@ -10,8 +10,6 @@ Item {
     height: childrenRect.height + Style.current.smallPadding * 2
     anchors.left: parent.left
     anchors.right: parent.right
-//    property int nextMessageIndex
-//    property string nextMsgTimestamp
     signal clicked()
     signal timerTriggered()
     Timer {
@@ -72,7 +70,11 @@ Item {
         horizontalAlignment: Text.AlignHCenter
         color: Style.current.secondaryText
         //% "before %1"
-        text: qsTrId("before--1").arg((nextMessageIndex > -1 ? new Date(nextMsgTimestamp * 1) : new Date()).toLocaleString(Qt.locale(localAppSettings.locale)))
+        text: {
+            let d = chatsModel.channelView.activeChannel.syncedTo == 0 ? new Date() : new Date(chatsModel.channelView.activeChannel.syncedTo * 1000)
+            return qsTrId("before--1").arg(d.toLocaleString(Qt.locale(localAppSettings.locale)))
+        }
+
     }
     Separator {
         anchors.top: fetchDate.bottom

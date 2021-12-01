@@ -260,8 +260,6 @@ Column {
     Component {
         id: fetchMoreMessagesButtonComponent
         FetchMoreMessagesButton {
-//            nextMessageIndex: root.messageStore.nextMessageIndex
-//            nextMsgTimestamp: root.messageStore.nextMsgTimestamp
             onClicked: {
                 root.chatsModel.messageView.hideLoadingIndicator();
             }
