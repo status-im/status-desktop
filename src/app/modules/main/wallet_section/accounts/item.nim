@@ -38,8 +38,7 @@ proc initItem*(
   result.assets = assets
 
 proc `$`*(self: Item): string =
-  result = fmt"""AllTokensItem(
-    name: {self.name}, 
+  result = fmt"""WalletAccountItem(
     name: {self.name},
     address: {self.address},
     path: {self.path},

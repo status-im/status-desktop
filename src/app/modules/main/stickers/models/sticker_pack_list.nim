@@ -1,8 +1,7 @@
 import NimQml, Tables, sequtils, sugar
 import ./sticker_list
-import ../io_interface
+import ../io_interface, ../item
 # TODO remove those uses of services stuff
-import ../../../../../app_service/service/stickers/dto/stickers as stickers_dto
 import ../../../../../app_service/service/eth/utils as eth_utils
 
 type
@@ -19,7 +18,7 @@ type
     Pending = UserRole + 10
 
 type
-  StickerPackView* = tuple[pack: StickerPackDto, stickers: StickerList, installed, bought, pending: bool]
+  StickerPackView* = tuple[pack: PackItem, stickers: StickerList, installed, bought, pending: bool]
 
 QtObject:
   type
@@ -93,12 +92,12 @@ QtObject:
   proc hasKey*(self: StickerPackList, packId: int): bool =
     result = self.packs.anyIt(it.pack.id == packId)
   
-  proc `[]`*(self: StickerPackList, packId: int): StickerPackDto =
+  proc `[]`*(self: StickerPackList, packId: int): PackItem =
     if not self.hasKey(packId):
       raise newException(ValueError, "Sticker pack list does not have a pack with id " & $packId)
     result = eth_utils.find(self.packs, (view: StickerPackView) => view.pack.id == packId).pack
 
-  proc addStickerPackToList*(self: StickerPackList, pack: StickerPackDto, stickers: StickerList, installed, bought, pending: bool) =
+  proc addStickerPackToList*(self: StickerPackList, pack: PackItem, stickers: StickerList, installed, bought, pending: bool) =
     self.beginInsertRows(newQModelIndex(), 0, 0)
     self.packs.insert((pack: pack, stickers: stickers, installed: installed, bought: bought, pending: pending), 0)
     self.endInsertRows()
