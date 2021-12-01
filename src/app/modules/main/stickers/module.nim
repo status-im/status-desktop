@@ -1,7 +1,7 @@
-import NimQml, Tables, stint
+import NimQml, Tables, stint, sugar, sequtils
 
 import eventemitter
-import ./io_interface, ./view, ./controller
+import ./io_interface, ./view, ./controller, ./item
 import ../../../global/global_singleton
 import ../../../../app_service/service/stickers/service as stickers_service
 
@@ -73,14 +73,15 @@ method decodeContentHash*[T](self: Module[T], hash: string): string =
 method wei2Eth*[T](self: Module[T], price: Stuint[256]): string =
   self.controller.wei2Eth(price)
 
-method sendSticker*[T](self: Module[T], channelId: string, replyTo: string, sticker: StickerDto) =
-  self.controller.sendSticker(channelId, replyTo, sticker)
+method sendSticker*[T](self: Module[T], channelId: string, replyTo: string, sticker: Item) =
+  let stickerDto = StickerDto(hash: sticker.getHash, packId: sticker.getPackId)
+  self.controller.sendSticker(channelId, replyTo, stickerDto)
 
 method estimate*[T](self: Module[T], packId: int, address: string, price: string, uuid: string) =
   self.controller.estimate(packId, address, price, uuid)
 
 method addRecentStickerToList*[T](self: Module[T], sticker: StickerDto) =
-  self.view.addRecentStickerToList(sticker)
+  self.view.addRecentStickerToList(initItem(sticker.hash, sticker.packId))
 
 method clearStickerPacks*[T](self: Module[T]) =
   self.view.clearStickerPacks()
@@ -89,10 +90,31 @@ method allPacksLoaded*[T](self: Module[T]) =
   self.view.allPacksLoaded()
 
 method populateInstalledStickerPacks*[T](self: Module[T], stickers: Table[int, StickerPackDto]) =
-  self.view.populateInstalledStickerPacks(stickers)
+  var stickerPackItems: seq[PackItem] = @[]
+  for stickerPack in stickers.values:
+    stickerPackItems.add(initPackItem(
+      stickerPack.id,
+      stickerPack.name,
+      stickerPack.author,
+      stickerPack.price,
+      stickerPack.preview,
+      stickerPack.stickers.map(s => initItem(s.hash, s.packId)),
+      stickerPack.thumbnail
+    ))
+
+  self.view.populateInstalledStickerPacks(stickerPackItems)
 
 method gasEstimateReturned*[T](self: Module[T], estimate: int, uuid: string) =
   self.view.gasEstimateReturned(estimate, uuid)
 
 method addStickerPackToList*[T](self: Module[T], stickerPack: StickerPackDto, isInstalled: bool, isBought: bool, isPending: bool) =
-  self.view.addStickerPackToList(stickerPack, isInstalled, isBought, isPending)
+  let stickerPackItem = initPackItem(
+          stickerPack.id,
+          stickerPack.name,
+          stickerPack.author,
+          stickerPack.price,
+          stickerPack.preview,
+          stickerPack.stickers.map(s => initItem(s.hash, s.packId)),
+          stickerPack.thumbnail
+        )
+  self.view.addStickerPackToList(stickerPackItem, isInstalled, isBought, isPending)
