@@ -24,7 +24,7 @@ Column {
 
     property var filterFn
 
-    signal chatItemSelected(string id)
+    signal chatItemSelected(string categoryId, string id)
     signal chatItemUnmuted(string id)
     signal chatItemReordered(string id, int from, int to)
 
@@ -136,7 +136,7 @@ Column {
                             return
                         }
                         if (!statusChatListItem.selected) {
-                            statusChatList.chatItemSelected(model.itemId)
+                            statusChatList.chatItemSelected(model.parentItemId, model.itemId)
                         }
                     }
                     onUnmute: statusChatList.chatItemUnmuted(model.itemId)

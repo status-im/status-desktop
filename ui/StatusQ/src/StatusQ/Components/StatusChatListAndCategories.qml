@@ -34,7 +34,7 @@ Item {
     property Component chatListPopupMenu
     property Component popupMenu
 
-    signal chatItemSelected(string id)
+    signal chatItemSelected(string categoryId, string id)
     signal chatItemUnmuted(string id)
     signal chatItemReordered(string categoryId, string chatId, int from, int to)
     signal chatListCategoryReordered(string categoryId, int from, int to)
@@ -70,7 +70,7 @@ Item {
                 id: statusChatList
                 anchors.horizontalCenter: parent.horizontalCenter
                 visible: statusChatList.model.count > 0
-                onChatItemSelected: statusChatListAndCategories.chatItemSelected(id)
+                onChatItemSelected: statusChatListAndCategories.chatItemSelected(categoryId, id)
                 onChatItemUnmuted: statusChatListAndCategories.chatItemUnmuted(id)
                 onChatItemReordered: statusChatListAndCategories.chatItemReordered(categoryId, id, from, to)
                 draggableItems: statusChatListAndCategories.draggableItems
@@ -139,7 +139,7 @@ Item {
                         addButton.onClicked: statusChatListAndCategories.categoryAddButtonClicked(model.itemId)
 
                         chatList.model: model.subItems
-                        chatList.onChatItemSelected: statusChatListAndCategories.chatItemSelected(id)
+                        chatList.onChatItemSelected: statusChatListAndCategories.chatItemSelected(categoryId, id)
                         chatList.onChatItemUnmuted: statusChatListAndCategories.chatItemUnmuted(id)
                         chatList.onChatItemReordered: statusChatListAndCategories.chatItemReordered(model.itemId, id, from, to)
                         chatList.draggableItems: statusChatListAndCategories.draggableItems
