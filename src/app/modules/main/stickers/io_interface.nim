@@ -1,4 +1,5 @@
 import Tables, stint
+import ./item
 import ../../../../app_service/service/wallet_account/service as wallet_account_service
 import ../../../../app_service/service/stickers/service as stickers_service
 
@@ -60,7 +61,7 @@ method wei2Eth*(self: AccessInterface, price: Stuint[256]): string {.base.} =
 method removeRecentStickers*(self: AccessInterface, packId: int) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method sendSticker*(self: AccessInterface, channelId: string, replyTo: string, sticker: StickerDto) {.base.} =
+method sendSticker*(self: AccessInterface, channelId: string, replyTo: string, sticker: Item) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method populateInstalledStickerPacks*(self: AccessInterface, stickers: Table[int, StickerPackDto]) {.base.} =

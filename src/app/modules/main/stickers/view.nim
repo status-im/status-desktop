@@ -1,8 +1,7 @@
-import NimQml, json, strutils, tables, json_serialization
+import NimQml, json, strutils, json_serialization
 
 import ./models/[sticker_list, sticker_pack_list]
-import ./io_interface
-import ../../../../app_service/service/stickers/dto/stickers
+import ./io_interface, ./item
 
 QtObject:
   type
@@ -24,7 +23,7 @@ QtObject:
   proc load*(self: View) =
     self.delegate.viewDidLoad()
 
-  proc addStickerPackToList*(self: View, stickerPack: StickerPackDto, isInstalled, isBought, isPending: bool) =
+  proc addStickerPackToList*(self: View, stickerPack: PackItem, isInstalled, isBought, isPending: bool) =
     self.stickerPacks.addStickerPackToList(
       stickerPack,
       newStickerList(self.delegate, stickerPack.stickers),
@@ -71,10 +70,9 @@ QtObject:
   proc clearStickerPacks*(self: View) =
     self.stickerPacks.clear()
 
-  proc populateInstalledStickerPacks*(self: View, installedStickerPacks: Table[int, StickerPackDto]) =
-    for stickerPack in installedStickerPacks.values:
+  proc populateInstalledStickerPacks*(self: View, installedStickerPacks: seq[PackItem]) =
+    for stickerPack in installedStickerPacks:
       self.addStickerPackToList(stickerPack, isInstalled = true, isBought = true, isPending = false)
-
 
   proc getNumInstalledStickerPacks(self: View): int {.slot.} =
     self.delegate.getNumInstalledStickerPacks()
@@ -99,7 +97,7 @@ QtObject:
     self.installedStickerPacksUpdated()
     self.recentStickersUpdated()
 
-  proc addRecentStickerToList*(self: View, sticker: StickerDto) =
+  proc addRecentStickerToList*(self: View, sticker: Item) =
     self.recentStickers.addStickerToList(sticker)
 
   proc allPacksLoaded*(self: View) =
@@ -107,7 +105,7 @@ QtObject:
     self.installedStickerPacksUpdated()
 
   proc send*(self: View, channelId: string, hash: string, replyTo: string, pack: int) {.slot.} =
-    let sticker = StickerDto(hash: hash, packId: pack)
+    let sticker = initItem(hash, pack)
     self.addRecentStickerToList(sticker)
     self.delegate.sendSticker(channelId, replyTo, sticker)
 
