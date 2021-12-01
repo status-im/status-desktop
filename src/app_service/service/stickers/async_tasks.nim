@@ -1,28 +1,10 @@
 include ../../common/json_utils
 include ../../../app/core/tasks/common
 
-# type
-#   EstimateTaskArg = ref object of QObjectTaskArg
-#     packId: int
-#     address: string
-#     price: string
-#     uuid: string
-#   ObtainAvailableStickerPacksTaskArg = ref object of QObjectTaskArg
-#     running*: ByteAddress # pointer to threadpool's `.running` Atomic[bool]
-#     contract*: ContractDto
-
 type
-  # EstimateTaskArg = ref object of QObjectTaskArg
-  #   packId: int
-  #   address: string
-  #   price: string
-  #   uuid: string
   EstimateTaskArg = ref object of QObjectTaskArg
     data:  JsonNode
     uuid: string
-    # tx: TransactionDataDto
-    # approveAndCall: ApproveAndCall[100]
-    # sntContract: Erc20ContractDto
   ObtainAvailableStickerPacksTaskArg = ref object of QObjectTaskArg
     running*: ByteAddress # pointer to threadpool's `.running` Atomic[bool]
     contract*: ContractDto

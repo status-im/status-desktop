@@ -1,4 +1,4 @@
-import chronicles, json, sequtils, tables
+import chronicles, json, sequtils, tables, sugar
 
 import service_interface, ./dto/settings
 import status/statusgo_backend_new/settings as status_go
@@ -325,12 +325,12 @@ method isEIP1559Enabled*(self: Service, blockNumber: int): bool =
 method isEIP1559Enabled*(self: Service): bool =
   result = self.eip1559Enabled 
 
-method getRecentStickers*(self: Service): seq[StickerDto] =
-  result = self.settings.recentStickers
+method getRecentStickers*(self: Service): seq[string] =
+  result = self.settings.recentStickerHashes
 
 method saveRecentStickers*(self: Service, recentStickers: seq[StickerDto]): bool =
   if(self.saveSetting(KEY_RECENT_STICKERS, %(recentStickers.mapIt($it.hash)))):
-    self.settings.recentStickers = recentStickers
+    self.settings.recentStickerHashes = recentStickers.map(s => s.hash)
     return true
   return false
 
@@ -342,7 +342,7 @@ method saveRecentStickers*(self: Service, installedStickerPacks: Table[int, Stic
   for packId, pack in installedStickerPacks.pairs:
     json[$packId] = %(pack)
 
-  if(self.saveSetting(KEY_INSTALLED_STICKER_PACKS, $json)):
+  if(self.saveSetting(KEY_INSTALLED_STICKER_PACKS, json)):
     self.settings.installedStickerPacks = installedStickerPacks
     return true
   return false
