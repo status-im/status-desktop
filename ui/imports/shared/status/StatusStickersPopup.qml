@@ -47,6 +47,21 @@ Popup {
             root.close()
         }
     }
+
+    Component.onCompleted: {
+        if (stickersModule.packsLoaded) {
+            root.setStickersReady()
+        }
+    }
+
+    function setStickersReady() {
+        root.stickerPacksLoaded = true
+        stickerPackListView.visible = true
+        loadingGrid.active = false
+        loadingStickerPackListView.model = []
+        noStickerPacks.visible = installedPacksCount === 0 || stickersModule.recent.rowCount() === 0
+    }
+
     contentItem: ColumnLayout {
         anchors.fill: parent
         spacing: 0
@@ -261,13 +276,11 @@ Popup {
         }
     }
     Connections {
+        id: loadedConnection
         target: stickersModule
         onStickerPacksLoaded: {
-            root.stickerPacksLoaded = true
-            stickerPackListView.visible = true
-            loadingGrid.active = false
-            loadingStickerPackListView.model = []
-            noStickerPacks.visible = installedPacksCount === 0 || stickersModule.recent.rowCount() === 0
+            root.setStickersReady()
+            loadedConnection.enabled = false
         }
     }
 }
