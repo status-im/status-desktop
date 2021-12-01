@@ -1,4 +1,4 @@
-import json, options, tables, strutils
+import json, options, tables, strutils, sequtils
 import ../../stickers/dto/stickers
 
 include  ../../../common/json_utils
@@ -99,7 +99,7 @@ type
     walletVisibleTokens*: WalletVisibleTokens
     nodeConfig*: JsonNode
     wakuBloomFilterMode*: bool
-    recentStickers*: seq[StickerDto]
+    recentStickerHashes*: seq[string]
     installedStickerPacks*: Table[int, StickerPackDto]
 
 proc toUpstreamConfig*(jsonObj: JsonNode): UpstreamConfig =
@@ -151,12 +151,6 @@ proc toSettingsDto*(jsonObj: JsonNode): SettingsDto =
       for networkObj in networksArr:
         result.availableNetworks.add(toNetwork(networkObj))
 
-  var recentStickersArr: JsonNode
-  if(jsonObj.getProp(KEY_RECENT_STICKERS, recentStickersArr)):
-    if(recentStickersArr.kind == JArray):
-      for recentStickerObj in recentStickersArr:
-        result.recentStickers.add(recentStickerObj.toStickerDto)
-
   var installedStickerPacksArr: JsonNode
   if(jsonObj.getProp(KEY_INSTALLED_STICKER_PACKS, installedStickerPacksArr)):
     if(installedStickerPacksArr.kind == JObject):
@@ -164,6 +158,13 @@ proc toSettingsDto*(jsonObj: JsonNode): SettingsDto =
       for i in installedStickerPacksArr.keys:
         let packId = parseInt(i)
         result.installedStickerPacks[packId] = installedStickerPacksArr[i].toStickerPackDto
+
+    
+  var recentStickersArr: JsonNode
+  if(jsonObj.getProp(KEY_RECENT_STICKERS, recentStickersArr)):
+    if(recentStickersArr.kind == JArray):
+      for stickerHash in recentStickersArr:
+        result.recentStickerHashes.add(stickerHash.getStr)
 
   discard jsonObj.getProp(KEY_DAPPS_ADDRESS, result.dappsAddress)
   discard jsonObj.getProp(KEY_EIP1581_ADDRESS, result.eip1581Address)

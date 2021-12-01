@@ -345,11 +345,11 @@ QtObject:
     var stickers = newSeq[StickerDto]()
     for hash in recentStickers:
       # pack id is not returned from status-go settings, populate here
-      let packId = getPackIdForSticker(installedStickers, $hash)
+      let packId = getPackIdForSticker(installedStickers, hash)
       # .insert instead of .add to effectively reverse the order stickers because
       # stickers are re-reversed when added to the view due to the nature of
       # inserting recent stickers at the front of the list
-      stickers.insert(StickerDto(hash: $hash, packId: packId), 0)
+      stickers.insert(StickerDto(hash: hash, packId: packId), 0)
 
     for sticker in stickers:
       self.addStickerToRecent(sticker)
