@@ -7,6 +7,7 @@ QtObject:
   type
     View* = ref object of QObject
       delegate: io_interface.AccessInterface
+      packsLoaded*: bool
       stickerPacks*: StickerPackList
       recentStickers*: StickerList
 
@@ -100,7 +101,15 @@ QtObject:
   proc addRecentStickerToList*(self: View, sticker: Item) =
     self.recentStickers.addStickerToList(sticker)
 
+  proc getAllPacksLoaded(self: View): bool {.slot.} =
+    self.packsLoaded
+
+  QtProperty[bool] packsLoaded:
+    read = getAllPacksLoaded
+    notify = stickerPacksLoaded
+
   proc allPacksLoaded*(self: View) =
+    self.packsLoaded = true
     self.stickerPacksLoaded()
     self.installedStickerPacksUpdated()
 
