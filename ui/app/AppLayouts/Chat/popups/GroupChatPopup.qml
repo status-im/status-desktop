@@ -38,11 +38,11 @@ ModalPopup {
 
         contactList.membersData.append({
             //% "(You)"
-            name: userProfile.username + " " + qsTrId("(you)"),
+            name: userProfile.name + " " + qsTrId("(you)"),
             pubKey: userProfile.pubKey,
             address: "",
-            identicon: userProfile.identicon,
-            thumbnailImage: userProfile.thumbnailImage,
+            identicon: userProfile.icon,
+            thumbnailImage: userProfile.icon,
             isUser: true
         });
         noContactsRect.visible = !popup.store.allContacts.hasAddedContacts();

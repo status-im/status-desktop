@@ -8,6 +8,7 @@ QtObject:
     identicon: string
     pubKey: string
     # fields which may change during runtime
+    isIdenticon: bool
     ensName: string
     thumbnailImage: string
     largeImage: string
@@ -29,16 +30,7 @@ QtObject:
     self.address = address
     self.identicon = identicon
     self.pubKey = pubKey
-
-  proc getIdenticon*(self: UserProfile): string {.slot.} =
-    self.identicon
-  
-  proc getUsername*(self: UserProfile): string {.slot.} = 
-    self.username
-  
-  QtProperty[string] username:
-    read = getUsername
-
+    self.isIdenticon = true
 
   proc getAddress*(self: UserProfile): string {.slot.} = 
     self.address
@@ -54,7 +46,14 @@ QtObject:
     read = getPubKey
 
 
-  proc ensNameChanged*(self: UserProfile) {.signal.}
+  proc nameChanged*(self: UserProfile) {.signal.}
+
+  proc getUsername*(self: UserProfile): string {.slot.} = 
+    self.username
+  
+  QtProperty[string] username:
+    read = getUsername
+    notify = nameChanged
 
   proc getEnsName*(self: UserProfile): string {.slot.} =
     self.ensName
@@ -64,16 +63,38 @@ QtObject:
     if(self.ensName == name):
       return
     self.ensName = name
-    self.ensNameChanged()
+    self.nameChanged()
       
   QtProperty[string] ensName:
     read = getEnsName
-    notify = ensNameChanged
+    notify = nameChanged
+
+  proc getName*(self: UserProfile): string {.slot.} =
+    if(self.ensName.len > 0):
+      return self.ensName
+    return self.username
+      
+  QtProperty[string] name:
+    read = getName
+    notify = nameChanged
 
 
-  proc thumbnailImageChanged*(self: UserProfile) {.signal.}
+  proc imageChanged*(self: UserProfile) {.signal.}
+
+  proc getIsIdenticon*(self: UserProfile): bool {.slot.} =
+    return self.isIdenticon
+
+  proc getIdenticon*(self: UserProfile): string {.slot.} =
+    self.identicon
 
   proc getThumbnailImage*(self: UserProfile): string {.slot.} =
+    return self.thumbnailImage
+
+  QtProperty[bool] isIdenticon:
+    read = getIsIdenticon
+    notify = imageChanged
+
+  proc getIcon*(self: UserProfile): string {.slot.} =
     if(self.thumbnailImage.len > 0):
       return self.thumbnailImage
 
@@ -85,12 +106,20 @@ QtObject:
       return
 
     self.thumbnailImage = image
-    self.thumbnailImageChanged()
-      
+    self.isIdenticon = self.thumbnailImage.len == 0
+    self.imageChanged()
+
+  QtProperty[string] icon:
+    read = getIcon
+    notify = imageChanged
+
+  QtProperty[string] identicon:
+    read = getIdenticon
+    notify = imageChanged
+
   QtProperty[string] thumbnailImage:
     read = getThumbnailImage
-    notify = thumbnailImageChanged
-
+    notify = imageChanged
   
   proc largeImageChanged*(self: UserProfile) {.signal.}
 

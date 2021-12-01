@@ -861,8 +861,8 @@ Rectangle {
             anchors.leftMargin: Style.current.smallPadding
             anchors.top: parent.top
             anchors.topMargin: Style.current.halfPadding
-            image.source: userProfile.thumbnailImage
-            image.isIdenticon: true
+            image.source: userProfile.icon
+            image.isIdenticon: userProfile.isIdenticon
             visible: control.isStatusUpdateInput
         }
 
