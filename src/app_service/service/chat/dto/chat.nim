@@ -23,8 +23,8 @@ type ChatDto* = object
   chatType*: ChatType
   timestamp*: int64 # indicates the last time this chat has received/sent a message
   lastClockValue*: int64 # indicates the last clock value to be used when sending messages
-  deletedAtClockValue*: int64 # indicates the clock value at time of deletion, 
-  # messages with lower clock value of this should be discarded
+  deletedAtClockValue*: int64 # indicates the clock value at time of deletion, messages with lower clock value of this should be discarded
+  readMessagesAtClockValue*: int64
   unviewedMessagesCount*: int
   unviewedMentionsCount*: int
   #lastMessage*: Message ???? It's a question why do we need it here within this context ????
@@ -51,6 +51,7 @@ proc `$`*(self: ChatDto): string =
     timestamp: {self.timestamp}, 
     lastClockValue: {self.lastClockValue}, 
     deletedAtClockValue: {self.deletedAtClockValue}, 
+    readMessagesAtClockValue: {self.readMessagesAtClockValue}, 
     unviewedMessagesCount: {self.unviewedMessagesCount}, 
     unviewedMentionsCount: {self.unviewedMentionsCount}, 
     alias: {self.alias}, 
@@ -81,6 +82,7 @@ proc toChatDto*(jsonObj: JsonNode): ChatDto =
   discard jsonObj.getProp("timestamp", result.timestamp)
   discard jsonObj.getProp("lastClockValue", result.lastClockValue)
   discard jsonObj.getProp("deletedAtClockValue", result.deletedAtClockValue)
+  discard jsonObj.getProp("ReadMessagesAtClockValue", result.readMessagesAtClockValue)
   discard jsonObj.getProp("unviewedMessagesCount", result.unviewedMessagesCount)
   discard jsonObj.getProp("unviewedMentionsCount", result.unviewedMentionsCount)
   discard jsonObj.getProp("alias", result.alias)

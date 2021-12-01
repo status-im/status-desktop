@@ -82,3 +82,6 @@ QtObject:
       return newQVariant()
     
     return chatContentVariant
+
+  proc createPublicChat*(self: View, chatId: string) {.slot.} =
+    self.delegate.createPublicChat(chatId)

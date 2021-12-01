@@ -275,7 +275,7 @@ Item {
             width: parent.width
             anchors.top: channelList.bottom
             anchors.topMargin: Style.current.padding
-            onSuggestedMessageClicked: root.store.chatsModelInst.channelView.joinPublicChat(channel)
+            onSuggestedMessageClicked: chatSectionModule.createPublicChat(channel)
         }
     }
 
@@ -283,10 +283,10 @@ Item {
         id: publicChatPopupComponent
         PublicChatPopup {
             onJoinPublicChat: {
-                root.store.chatsModelInst.channelView.joinPublicChat(name);
+                chatSectionModule.createPublicChat(name)
             }
             onSuggestedMessageClicked: {
-                root.store.chatsModelInst.channelView.joinPublicChat(channel);
+                chatSectionModule.createPublicChat(channel)
             }
 
             onClosed: {
