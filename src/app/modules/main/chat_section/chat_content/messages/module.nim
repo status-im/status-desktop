@@ -6,8 +6,8 @@ import ../../../../shared_models/message_model
 import ../../../../shared_models/message_item
 import ../../../../../global/global_singleton
 
-import ../../../../../../app_service/service/chat/service as chat_service
-import ../../../../../../app_service/service/community/service as community_service
+import ../../../../../../app_service/service/chat/service_interface as chat_service
+import ../../../../../../app_service/service/community/service_interface as community_service
 import ../../../../../../app_service/service/message/service as message_service
 
 import eventemitter
@@ -23,7 +23,7 @@ type
     moduleLoaded: bool
 
 proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitter, chatId: string, 
-  belongsToCommunity: bool, chatService: chat_service.Service, communityService: community_service.Service, 
+  belongsToCommunity: bool, chatService: chat_service.ServiceInterface, communityService: community_service.ServiceInterface, 
   messageService: message_service.Service): 
   Module =
   result = Module()

@@ -4,8 +4,8 @@ import ../io_interface as delegate_interface
 import view, controller
 import ../../../../../global/global_singleton
 
-import ../../../../../../app_service/service/chat/service as chat_service
-import ../../../../../../app_service/service/community/service as community_service
+import ../../../../../../app_service/service/chat/service_interface as chat_service
+import ../../../../../../app_service/service/community/service_interface as community_service
 
 export io_interface
 
@@ -18,7 +18,7 @@ type
     moduleLoaded: bool
 
 proc newModule*(delegate: delegate_interface.AccessInterface, chatId: string, belongsToCommunity: bool, 
-  chatService: chat_service.Service, communityService: community_service.Service): 
+  chatService: chat_service.ServiceInterface, communityService: community_service.ServiceInterface): 
   Module =
   result = Module()
   result.delegate = delegate

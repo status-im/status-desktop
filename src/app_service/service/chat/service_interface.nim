@@ -1,4 +1,6 @@
 import ./dto/chat as chat_dto
+
+# TODO: We need to remove these `status-lib` types from here
 import status/types/[message]
 import status/types/chat as chat_type
 
@@ -25,6 +27,9 @@ method getChatById*(self: ServiceInterface, chatId: string): ChatDto {.base.} =
 
 method getOneToOneChatNameAndImage*(self: ServiceInterface, chatId: string): 
   tuple[name: string, image: string, isIdenticon: bool] {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method createPublicChat*(self: ServiceInterface, chatId: string): tuple[chatDto: ChatDto, success: bool] {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method parseChatResponse*(self: ServiceInterface, response: string): (seq[Chat], seq[Message]) {.base.} =

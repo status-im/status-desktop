@@ -5,8 +5,8 @@ import view, controller, item, sub_item, model, sub_model
 
 import chat_content/module as chat_content_module
 
-import ../../../../app_service/service/chat/service as chat_service
-import ../../../../app_service/service/community/service as community_service
+import ../../../../app_service/service/chat/service_interface as chat_service
+import ../../../../app_service/service/community/service_interface as community_service
 import ../../../../app_service/service/message/service as message_service
 
 import eventemitter
@@ -31,15 +31,15 @@ proc newModule*(
     events: EventEmitter,
     sectionId: string,
     isCommunity: bool, 
-    chatService: chat_service.Service,
-    communityService: community_service.Service, 
+    chatService: chat_service.ServiceInterface,
+    communityService: community_service.ServiceInterface, 
     messageService: message_service.Service
   ): Module =
   result = Module()
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, sectionId, isCommunity, chatService, communityService, 
+  result.controller = controller.newController(result, sectionId, isCommunity, events, chatService, communityService, 
   messageService)
   result.moduleLoaded = false
   
@@ -57,13 +57,13 @@ method isCommunity*(self: Module): bool =
   return self.controller.isCommunity()
 
 proc addSubmodule(self: Module, chatId: string, belongToCommunity: bool, events: EventEmitter, 
-  chatService: chat_service.Service, communityService: community_service.Service, 
+  chatService: chat_service.ServiceInterface, communityService: community_service.ServiceInterface, 
   messageService: message_service.Service) =
   self.chatContentModule[chatId] = chat_content_module.newModule(self, events, chatId, belongToCommunity, chatService, 
       communityService, messageService)
 
-proc buildChatUI(self: Module, events: EventEmitter, chatService: chat_service.Service, 
-  communityService: community_service.Service, messageService: message_service.Service) =
+proc buildChatUI(self: Module, events: EventEmitter, chatService: chat_service.ServiceInterface, 
+  communityService: community_service.ServiceInterface, messageService: message_service.Service) =
   let types = @[ChatType.OneToOne, ChatType.Public, ChatType.PrivateGroupChat]
   let chats = self.controller.getChatDetailsForChatTypes(types)
 
@@ -88,8 +88,8 @@ proc buildChatUI(self: Module, events: EventEmitter, chatService: chat_service.S
 
   self.setActiveItemSubItem(selectedItemId, "")
 
-proc buildCommunityUI(self: Module, events: EventEmitter, chatService: chat_service.Service, 
-  communityService: community_service.Service, messageService: message_service.Service) =
+proc buildCommunityUI(self: Module, events: EventEmitter, chatService: chat_service.ServiceInterface, 
+  communityService: community_service.ServiceInterface, messageService: message_service.Service) =
   var selectedItemId = ""
   var selectedSubItemId = ""
   let communityIds = self.controller.getCommunityIds()
@@ -148,8 +148,8 @@ proc buildCommunityUI(self: Module, events: EventEmitter, chatService: chat_serv
 
   self.setActiveItemSubItem(selectedItemId, selectedSubItemId)
 
-method load*(self: Module, events: EventEmitter, chatService: chat_service.Service, 
-  communityService: community_service.Service, messageService: message_service.Service) =
+method load*(self: Module, events: EventEmitter, chatService: chat_service.ServiceInterface, 
+  communityService: community_service.ServiceInterface, messageService: message_service.Service) =
   self.controller.init()
   self.view.load()
   
@@ -218,3 +218,26 @@ method onActiveSectionChange*(self: Module, sectionId: string) =
     return
   
   self.delegate.onActiveChatChange(self.controller.getMySectionId(), self.controller.getActiveChatId())
+
+method createPublicChat*(self: Module, chatId: string) =
+  if(self.controller.isCommunity()):
+    debug "creating public chat is not allowed for community, most likely it's an error in qml"
+    return
+
+  if(self.chatContentModule.hasKey(chatId)):
+    error "error: public chat is already added, ", chatId
+    return
+
+  self.controller.createPublicChat(chatId)
+
+method addNewPublicChat*(self: Module, chatDto: ChatDto, events: EventEmitter, chatService: chat_service.ServiceInterface, 
+  communityService: community_service.ServiceInterface, messageService: message_service.Service) =
+  let hasNotification = chatDto.unviewedMessagesCount > 0 or chatDto.unviewedMentionsCount > 0
+  let notificationsCount = chatDto.unviewedMentionsCount
+  let item = initItem(chatDto.id, chatDto.name, chatDto.identicon, true, chatDto.color, chatDto.description, 
+  chatDto.chatType.int, hasNotification, notificationsCount, chatDto.muted, false, 0)
+  self.view.appendItem(item)
+  self.addSubmodule(chatDto.id, false, events, chatService, communityService, messageService)
+
+  # make new added chat active one
+  self.setActiveItemSubItem(item.id, "")

@@ -23,6 +23,11 @@ import "../../Wallet"
 Item {
     id: root
     anchors.fill: parent
+
+    // Important: we have parent module in this context only cause qml components
+    // don't follow struct from we have on the backend.
+    property var parentModule
+
     property var rootStore
     property alias pinnedMessagesPopupComponent: pinnedMessagesPopupComponent
     // Not Refactored Yet
@@ -118,25 +123,27 @@ Item {
         reactionModel: root.rootStore.emojiReactionsModel
     }
 
+    StatusImageModal {
+        id: imagePopup
+        onClicked: {
+            if (button === Qt.LeftButton) {
+                imagePopup.close()
+            }
+            else if(button === Qt.RightButton) {
+                contextmenu.imageSource = imagePopup.imageSource
+                contextmenu.hideEmojiPicker = true
+                contextmenu.isRightClickOnImage = true;
+                contextmenu.show()
+            }
+        }
+    }
+
     StackLayout {
         anchors.fill: parent
-        // Not Refactored Yet
-//        currentIndex:  root.rootStore.chatsModelInst.channelView.activeChannelIndex > -1
-//                       && chatGroupsListViewCount > 0 ? 0 : 1
+        currentIndex: parentModule.model.count === 0? 0 : 1
 
-        StatusImageModal {
-            id: imagePopup
-            onClicked: {
-                if (button === Qt.LeftButton) {
-                    imagePopup.close()
-                }
-                else if(button === Qt.RightButton) {
-                    contextmenu.imageSource = imagePopup.imageSource
-                    contextmenu.hideEmojiPicker = true
-                    contextmenu.isRightClickOnImage = true;
-                    contextmenu.show()
-                }
-            }
+        EmptyChatPanel {
+            onShareChatKeyClicked: openProfilePopup(userProfile.name, userProfile.pubKey, userProfile.icon);
         }
 
         ColumnLayout {
@@ -436,10 +443,7 @@ Item {
                 }
             }
         }
-
-        EmptyChatPanel {
-            onShareChatKeyClicked: openProfilePopup(userProfile.name, userProfile.pubKey, userProfile.icon);
-        }
+    }
 
         Loader {
             id: txModalLoader
@@ -670,11 +674,4 @@ Item {
                 toastMessage.open()
             }
         }
-    }
 }
-
-/*##^##
-Designer {
-    D{i:0;formeditorColor:"#ffffff";height:770;width:800}
-}
-##^##*/
