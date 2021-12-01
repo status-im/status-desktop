@@ -199,8 +199,7 @@ StatusModal {
             onClicked: {
                 let error
                 if (access === Constants.communityChatOnRequestAccess && !root.isMember) {
-                    error = root.store.chatsModelInst.communities.requestToJoinCommunity(root.communityId,
-                            root.store.profileModelInst.profile.ensVerified ? userProfile.username : "")
+                    error = root.store.chatsModelInst.communities.requestToJoinCommunity(root.communityId, userProfile.name)
                     if (!error) {
                         enabled = false
                         //% "Pending"

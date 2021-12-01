@@ -51,7 +51,7 @@ Item {
 
     function getProfileImage(pubkey, isCurrentUser, useLargeImage) {
         if (isCurrentUser || (isCurrentUser === undefined && pubkey === userProfile.pubKey)) {
-            return userProfile.thumbnailImage
+            return userProfile.icon
         }
 
         const index = appMain.rootStore.contactsModuleInst.model.list.getContactIndexByPubkey(pubkey)
@@ -313,7 +313,7 @@ Item {
                 id: profileButton
                 property bool opened: false
 
-                icon.source: userProfile.thumbnailImage
+                icon.source: appMain.rootStore.userProfileInst.icon
                 badge.visible: true
                 badge.anchors.rightMargin: 4
                 badge.anchors.topMargin: 25
