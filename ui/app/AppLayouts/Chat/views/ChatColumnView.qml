@@ -415,7 +415,7 @@ Item {
         }
 
         EmptyChatPanel {
-            onShareChatKeyClicked: openProfilePopup(userProfile.username, userProfile.pubKey, userProfile.thumbnailImage);
+            onShareChatKeyClicked: openProfilePopup(userProfile.name, userProfile.pubKey, userProfile.icon);
         }
 
         Loader {

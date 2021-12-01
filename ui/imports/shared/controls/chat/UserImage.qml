@@ -43,7 +43,7 @@ Loader {
                         return profileImageSource
                     }
                     identiconImage.showLoadingIndicator = false
-                    return !isCurrentUser || isReplyImage ? identicon : userProfile.thumbnailImage
+                    return !isCurrentUser || isReplyImage ? identicon : userProfile.icon
                 }
                 smooth: false
                 antialiasing: true
