@@ -33,7 +33,7 @@ type
     moduleLoaded: bool
 
 proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitter, chatId: string, belongsToCommunity: bool, 
-  chatService: chat_service.Service, communityService: community_service.Service, 
+  chatService: chat_service.ServiceInterface, communityService: community_service.ServiceInterface, 
   messageService: message_service.Service): 
   Module =
   result = Module()

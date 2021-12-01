@@ -60,12 +60,13 @@ Item {
 
                 if (!foundChannelObj)
                 {
-                    root.store.chatsModelInst.channelView.joinPublicChat(channelName)
-                    if(root.store.chatsModelInst.communities.activeCommunity.active)
-                    {
-                        root.store.chatsModelInst.channelView.joinPublicChat(channelName)
-                        appMain.changeAppSectionBySectionType(Constants.appSection.chat)
-                    }
+                    // Not Refactored Yet
+//                    root.store.chatsModelInst.channelView.joinPublicChat(channelName)
+//                    if(root.store.chatsModelInst.communities.activeCommunity.active)
+//                    {
+//                        root.store.chatsModelInst.channelView.joinPublicChat(channelName)
+//                        appMain.changeAppSectionBySectionType(Constants.appSection.chat)
+//                    }
                     return
                 }
 
@@ -73,11 +74,12 @@ Item {
 
                 if(obj.chatType === -1 || obj.chatType === Constants.chatTypePublic)
                 {
-                    if(root.store.chatsModelInst.communities.activeCommunity.active) {
-                        root.store.chatsModelInst.channelView.joinPublicChat(channelName)
-                        appMain.changeAppSectionBySectionType(Constants.appSection.chat)
-                    }
-                    root.store.chatsModelInst.channelView.setActiveChannel(channelName);
+                    // Not Refactored Yet
+//                    if(root.store.chatsModelInst.communities.activeCommunity.active) {
+//                        root.store.chatsModelInst.channelView.joinPublicChat(channelName)
+//                        appMain.changeAppSectionBySectionType(Constants.appSection.chat)
+//                    }
+//                    root.store.chatsModelInst.channelView.setActiveChannel(channelName);
                 }
                 else if(obj.communityId === root.store.chatsModelInst.communities.activeCommunity.id &&
                         obj.chatType === Constants.chatTypeCommunity &&

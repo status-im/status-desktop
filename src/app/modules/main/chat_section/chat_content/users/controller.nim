@@ -1,7 +1,7 @@
 import controller_interface
 import io_interface
 
-import ../../../../../../app_service/service/community/service as community_service
+import ../../../../../../app_service/service/community/service_interface as community_service
 
 export controller_interface
 

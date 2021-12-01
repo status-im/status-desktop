@@ -67,6 +67,7 @@ StatusAppThreePanelLayout {
 
     centerPanel: ChatColumnView {
         id: chatColumn
+        parentModule: chatCommunitySectionModule
         rootStore: root.rootStore
         //chatGroupsListViewCount: contactColumnLoader.item.chatGroupsListViewCount
 

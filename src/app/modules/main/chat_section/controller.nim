@@ -3,9 +3,11 @@ import Tables
 import controller_interface
 import io_interface
 
-import ../../../../app_service/service/chat/service as chat_service
-import ../../../../app_service/service/community/service as community_service
+import ../../../../app_service/service/chat/service_interface as chat_service
+import ../../../../app_service/service/community/service_interface as community_service
 import ../../../../app_service/service/message/service as message_service
+
+import eventemitter
 
 export controller_interface
 
@@ -13,21 +15,23 @@ type
   Controller* = ref object of controller_interface.AccessInterface
     delegate: io_interface.AccessInterface
     sectionId: string
-    isCommunityModule: bool
+    isCommunitySection: bool
     activeItemId: string
     activeSubItemId: string
+    events: EventEmitter
     chatService: chat_service.ServiceInterface
     communityService: community_service.ServiceInterface
     messageService: message_service.Service
 
-proc newController*(delegate: io_interface.AccessInterface, sectionId: string, isCommunity: bool, 
+proc newController*(delegate: io_interface.AccessInterface, sectionId: string, isCommunity: bool, events: EventEmitter,
   chatService: chat_service.ServiceInterface,
   communityService: community_service.ServiceInterface,
   messageService: message_service.Service): Controller =
   result = Controller()
   result.delegate = delegate
   result.sectionId = sectionId
-  result.isCommunityModule = isCommunity
+  result.isCommunitySection = isCommunity
+  result.events = events
   result.chatService = chatService
   result.communityService = communityService
   result.messageService = messageService
@@ -48,7 +52,7 @@ method getActiveChatId*(self: Controller): string =
     return self.activeItemId
 
 method isCommunity*(self: Controller): bool =
-  return self.isCommunityModule
+  return self.isCommunitySection
 
 method getCommunityIds*(self: Controller): seq[string] =
   return self.communityService.getCommunityIds()
@@ -79,3 +83,9 @@ method setActiveItemSubItem*(self: Controller, itemId: string, subItemId: string
 method getOneToOneChatNameAndImage*(self: Controller, chatId: string): 
   tuple[name: string, image: string, isIdenticon: bool] =
   return self.chatService.getOneToOneChatNameAndImage(chatId)
+
+method createPublicChat*(self: Controller, chatId: string) =
+  let response = self.chatService.createPublicChat(chatId)
+  if(response.success):
+    self.delegate.addNewPublicChat(response.chatDto, self.events, self.chatService, self.communityService, 
+    self.messageService)
