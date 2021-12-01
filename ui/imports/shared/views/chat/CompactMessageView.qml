@@ -379,7 +379,7 @@ Item {
                     isEdit: true
                     textInput.text: editMessageLoader.sourceText
                     onSendMessage: {
-                        saveBtn.clicked()
+                        saveBtn.clicked(null)
                     }
                     suggestions.onVisibleChanged: {
                         if (suggestions.visible) {
