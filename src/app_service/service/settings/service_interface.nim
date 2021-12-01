@@ -213,7 +213,7 @@ method isEIP1559Enabled*(self: ServiceInterface, blockNumber: int): bool {.base.
 method isEIP1559Enabled*(self: ServiceInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getRecentStickers*(self: ServiceInterface): seq[StickerDto] {.base.} =
+method getRecentStickers*(self: ServiceInterface): seq[string] {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method saveRecentStickers*(self: ServiceInterface, recentStickers: seq[StickerDto]): bool {.base.} =
