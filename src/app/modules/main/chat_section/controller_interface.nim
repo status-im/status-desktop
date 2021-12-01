@@ -1,5 +1,5 @@
-import ../../../../app_service/service/chat/service_interface as chat_service
-import ../../../../app_service/service/community/service_interface as community_service
+import ../../../../app_service/service/chat/dto/[chat]
+import ../../../../app_service/service/community/dto/[community]
 
 type 
   AccessInterface* {.pure inheritable.} = ref object of RootObj
@@ -40,4 +40,7 @@ method setActiveItemSubItem*(self: AccessInterface, itemId: string, subItemId: s
 
 method getOneToOneChatNameAndImage*(self: AccessInterface, chatId: string): 
   tuple[name: string, image: string, isIdenticon: bool] {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method createPublicChat*(self: AccessInterface, chatId: string) {.base.} =
   raise newException(ValueError, "No implementation available")

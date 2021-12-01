@@ -475,18 +475,20 @@ QtObject {
             return result
         }
 
-        // Public chat
-        // This needs to be the last check because it is as VERY loose check
-        index = link.lastIndexOf("/")
-        if (index > -1) {
-            const chatId = link.substring(index + 1)
-            //% "Join the %1 public channel"
-            result.title = qsTrId("join-the--1-public-channel").arg(chatId)
-            result.callback = function () {
-                chatsModel.channelView.joinPublicChat(chatId);
-            }
-            return result
-        }
+
+        // Not Refactored Yet (when we get to this we will most likely remove it, since other approach will be used)
+//        // Public chat
+//        // This needs to be the last check because it is as VERY loose check
+//        index = link.lastIndexOf("/")
+//        if (index > -1) {
+//            const chatId = link.substring(index + 1)
+//            //% "Join the %1 public channel"
+//            result.title = qsTrId("join-the--1-public-channel").arg(chatId)
+//            result.callback = function () {
+//                chatsModel.channelView.joinPublicChat(chatId);
+//            }
+//            return result
+//        }
 
         return result
     }
