@@ -1,13 +1,11 @@
 import NimQml, Tables, json, sequtils, chronicles, strutils, atomics, sets, strutils, tables, stint
-import status/types/[transaction, sticker]
 
 import httpclient
 import eventemitter
 import ../../../app/core/[main]
 import ../../../app/core/tasks/[qt, threadpool]
 
-import
-  web3/ethtypes, web3/conversions, stew/byteutils, nimcrypto, json_serialization, chronicles
+import web3/ethtypes, web3/conversions, stew/byteutils, nimcrypto, json_serialization, chronicles
 import json, tables, json_serialization
 
 import status/statusgo_backend_new/stickers as status_stickers
@@ -28,6 +26,7 @@ import ../eth/dto/edn_dto as edn_helper
 
 # TODO Remove those imports once chat is refactored
 import status/statusgo_backend/chat as status_chat
+import status/types/[sticker]
 
 export StickerDto
 export StickerPackDto
@@ -154,7 +153,7 @@ QtObject:
         result,
         address,
         $sntContract.address,
-        transaction.PendingTransactionType.BuyStickerPack,
+        transactions.PendingTransactionType.BuyStickerPack,
         $packId
       )
 
