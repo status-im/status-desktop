@@ -21,6 +21,7 @@ StatusModal {
     property var store
     property bool isEdit: false
     property QtObject community: popup.store.chatsModelInst.communities.activeCommunity
+    property var onSave: () => {}
     readonly property int maxCommunityNameLength: 30
     readonly property int maxCommunityDescLength: 140
     readonly property var communityColorValidator: Utils.Validate.NoEmpty
@@ -438,7 +439,7 @@ StatusModal {
                     creatingError.text = error.error
                     return creatingError.open()
                 }
-
+                popup.onSave()
                 popup.close()
             }
         }

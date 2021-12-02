@@ -65,7 +65,8 @@ StatusModal {
                 }
                 onEditButtonClicked: openPopup(editCommunityPopup, {
                     store: root.store,
-                    community: root.community
+                    community: root.community,
+                    onSave: root.close
                 })
                 onTransferOwnershipButtonClicked: openPopup(transferOwnershiproot, {
                     privateKey: root.store.exportCommunity(),
