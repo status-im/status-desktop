@@ -58,7 +58,7 @@ Rectangle {
         if (selected) {
             return Theme.palette.statusChatListItem.selectedBackgroundColor
         }
-        return sensor.containsMouse || highlighted ? Theme.palette.statusChatListItem.hoverBackgroundColor : Theme.palette.baseColor4
+        return hoverHander.hovered || highlighted ? Theme.palette.statusChatListItem.hoverBackgroundColor : Theme.palette.baseColor4
     }
 
     opacity: dragged ? 0.7 : 1
@@ -66,10 +66,13 @@ Rectangle {
     MouseArea {
         id: sensor
 
+        HoverHandler {
+            id: hoverHander
+        }
+
         anchors.fill: parent
         cursorShape: Qt.PointingHandCursor
         acceptedButtons: Qt.LeftButton | Qt.RightButton
-        hoverEnabled: true
 
         onClicked: statusChatListItem.clicked(mouse)
 
@@ -92,7 +95,7 @@ Rectangle {
             width: 14
             visible: statusChatListItem.type !== StatusChatListItem.Type.OneToOneChat
             opacity: {
-                if (statusChatListItem.muted && !sensor.containsMouse && !statusChatListItem.highlighted) {
+                if (statusChatListItem.muted && !hoverHander.hovered && !statusChatListItem.highlighted) {
                     return 0.4
                 }
                 return statusChatListItem.hasMention ||
@@ -100,7 +103,7 @@ Rectangle {
                         statusChatListItem.selected ||
                         statusChatListItem.highlighted ||
                         statusBadge.visible ||
-                        sensor.containsMouse ? 1.0 : 0.7
+                        hoverHander.hovered ? 1.0 : 0.7
             }
 
             icon: {
@@ -135,14 +138,14 @@ Rectangle {
                       statusChatListItem.name)
             elide: Text.ElideRight
             color: {
-                if (statusChatListItem.muted && !sensor.containsMouse && !statusChatListItem.highlighted) {
+                if (statusChatListItem.muted && !hoverHander.hovered && !statusChatListItem.highlighted) {
                     return Theme.palette.directColor5
                 }
                 return statusChatListItem.hasMention ||
                         statusChatListItem.hasUnreadMessages ||
                         statusChatListItem.selected ||
                         statusChatListItem.highlighted ||
-                        sensor.containsMouse ||
+                        hoverHander.hovered ||
                         statusBadge.visible ? Theme.palette.directColor1 : Theme.palette.directColor4
             }
             font.weight: !statusChatListItem.muted &&
