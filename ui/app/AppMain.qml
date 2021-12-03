@@ -57,12 +57,16 @@ Item {
 
         if (localAccountSensitiveSettings.onlyShowContactsProfilePics) {
             const isContact = appMain.rootStore.contactsModuleInst.model.list.rowData(index, "isContact")
-            if (isContact === "false") {
+            if (isContact === "true") {
+                return appMain.rootStore.contactsModuleInst.model.list.rowData(index, useLargeImage ? "largeImage" : "thumbnailImage")
+            } else {
                 return
             }
         }
 
-        return appMain.rootStore.contactsModuleInst.model.list.rowData(index, useLargeImage ? "largeImage" : "thumbnailImage")
+        return  useLargeImage ? appMain.rootStore.chatsModelInst.getProfileImageLarge(pubkey)
+                              : appMain.rootStore.chatsModelInst.getProfileThumbnail(pubkey)
+
     }
 
     function openPopup(popupComponent, params = {}) {

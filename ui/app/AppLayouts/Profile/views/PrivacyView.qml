@@ -166,10 +166,15 @@ Item {
                 StatusQControls.StatusSwitch {
                     id: switch1
                     checked: !localAccountSensitiveSettings.onlyShowContactsProfilePics
+                    onCheckedChanged: {
+                        if (localAccountSensitiveSettings.onlyShowContactsProfilePics !== !checked) {
+                            localAccountSensitiveSettings.onlyShowContactsProfilePics = !checked
+                        }
+                    }
                 }
             ]
             sensor.onClicked: {
-                switch1.checked = localAccountSensitiveSettings.onlyShowContactsProfilePics = !switch1.checked
+                switch1.checked = !switch1.checked
             }
         }
 
@@ -185,10 +190,15 @@ Item {
                 StatusQControls.StatusSwitch {
                     id: switch2               
                     checked: localAccountSensitiveSettings.displayChatImages
+                    onCheckedChanged: {
+                        if (localAccountSensitiveSettings.displayChatImages !== checked) {
+                            localAccountSensitiveSettings.displayChatImages !== checked
+                        }
+                    }
                 }
             ]
             sensor.onClicked: {
-                switch2.checked = localAccountSensitiveSettings.displayChatImages = !switch2.checked
+                switch2.checked = !switch2.checked
             }
         }
 
@@ -263,10 +273,15 @@ Item {
                 StatusQControls.StatusSwitch {
                     id: switch3
                     checked: !root.store.messagesFromContactsOnly
+                    onCheckedChanged: {
+                        if (root.store.messagesFromContactsOnly !== !checked) {
+                            root.store.messagesFromContactsOnly = !checked
+                        }
+                    }
                 }
             ]
             sensor.onClicked: {
-                switch3.checked = root.store.setMessagesFromContactsOnly(!switch3.checked)
+                switch3.checked = !switch3.checked
             }
         }
     }
