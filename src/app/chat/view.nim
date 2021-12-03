@@ -220,6 +220,18 @@ QtObject:
       return status_ens.userNameOrAlias(self.status.chat.getContacts()[pubKey])
     generateAlias(pubKey)
 
+  proc getProfileThumbnail*(self: ChatsView, pubKey: string): string {.slot.} =
+    if self.status.chat.getContacts().hasKey(pubKey):
+      return self.status.chat.getContacts()[pubKey].identityImage.thumbnail
+    else:
+      return ""
+  
+  proc getProfileImageLarge*(self: ChatsView, pubKey: string): string {.slot.} =
+    if self.status.chat.getContacts().hasKey(pubKey):
+      return self.status.chat.getContacts()[pubKey].identityImage.large
+    else:
+      return ""
+
   proc activityNotificationsChanged*(self: ChatsView) {.signal.}
 
   proc getActivityNotificationList(self: ChatsView): QVariant {.slot.} =
