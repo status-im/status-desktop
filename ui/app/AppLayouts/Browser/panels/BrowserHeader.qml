@@ -63,8 +63,8 @@ Rectangle {
 
         StatusQControls.StatusFlatRoundButton {
             id: backButton
-            width: 32
-            height: 32
+            Layout.preferredWidth: 32
+            Layout.preferredHeight: 32
             icon.height: 20
             icon.width: 20
             icon.name: "left"
@@ -82,8 +82,8 @@ Rectangle {
 
         StatusQControls.StatusFlatRoundButton {
             id: forwardButton
-            width: 32
-            height: 32
+            Layout.preferredWidth: 32
+            Layout.preferredHeight: 32
             icon.width: 20
             icon.height: 20
             icon.name: "right"
@@ -101,7 +101,7 @@ Rectangle {
 
         StyledTextField {
             id: addressBar
-            height: 40
+            Layout.preferredHeight: 40
             Layout.fillWidth: true
             background: Rectangle {
                 color: Style.current.inputBackground
@@ -110,6 +110,7 @@ Rectangle {
                 radius: 20
             }
             leftPadding: Style.current.padding
+            rightPadding: addFavoriteBtn.width + reloadBtn.width + Style.current.bigPadding
             //% "Enter URL"
             placeholderText: qsTrId("enter-url")
             focus: true
@@ -250,8 +251,8 @@ Rectangle {
 
         StatusQControls.StatusFlatRoundButton {
             id: settingsMenuButton
-            implicitHeight: 32
-            implicitWidth: 32
+            Layout.preferredHeight: 32
+            Layout.preferredWidth: 32
             icon.width: 24
             icon.height: 24
             icon.name: "more"
