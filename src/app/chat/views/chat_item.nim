@@ -1,6 +1,6 @@
 import NimQml, Tables, std/wrapnils
 import status/[chat/chat, status, ens, accounts, settings]
-import status/utils as status_utils
+#import status/utils as status_utils
 import status/types/[setting]
 
 import chat_members
@@ -26,8 +26,6 @@ QtObject:
     result.chatMembers = newChatMembersView(status)
     result.setup
 
-  proc chatItemChanged*(self: ChatItemView) {.signal.}
-
   proc membershipChanged*(self: ChatItemView) {.signal.}
 
   proc setChatItem*(self: ChatItemView, chatItem: Chat) =
@@ -37,7 +35,6 @@ QtObject:
     self.chatItem = chatItem
     self.chatMembers.setMembers(chatItem.members)
     self.membershipChanged()
-    self.chatItemChanged()
 
   proc id*(self: ChatItemView): string {.slot.} = result = ?.self.chatItem.id
   
@@ -146,6 +143,14 @@ QtObject:
     read = getMembers
     notify = membershipChanged
 
+  proc isTimelineChat*(self: ChatItemView): bool {.slot.} = 
+    # Not Refactored Yet
+    #result = ?.self.chatItem.id == status_utils.getTimelineChatId()
+    return false
+
+  QtProperty[bool] isTimelineChat:
+    read = isTimelineChat
+
 
   proc mentionsCount*(self: ChatItemView): int {.slot.} = result = ?.self.chatItem.mentionsCount
 
@@ -208,15 +213,3 @@ QtObject:
     self.chatItem.muted = false
     self.status.chat.unmuteChat(self.chatItem)
     self.mutedChanged()
-
-  proc syncedFrom*(self: ChatItemView): string {.slot.} = result = $(?.self.chatItem.syncedFrom)
-  
-  proc syncedTo*(self: ChatItemView): string {.slot.} = result = $(?.self.chatItem.syncedTo)
-
-  QtProperty[string] syncedFrom:
-    read = syncedFrom
-    notify = chatItemChanged
-
-  QtProperty[string] syncedTo:
-    read = syncedTo
-    notify = chatItemChanged

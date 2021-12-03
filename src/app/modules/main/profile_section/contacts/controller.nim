@@ -6,9 +6,6 @@ import ../../../../../app_service/service/contacts/service as contacts_service
 import ../../../../../app_service/service/contacts/dto/contacts
 import ../../../../../app_service/service/accounts/service as accounts_service
 
-import status/signals
-
-# import ./item as item
 import eventemitter
 
 export controller_interface

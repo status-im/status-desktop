@@ -132,29 +132,36 @@ QtObject:
     else:
       contact.blocked = false
 
+    let response = status_contacts.addContact(contact.id, contact.name)
+    if(not response.error.isNil):
+      let msg = response.error.message
+      error "error adding contact ", msg
+      return
     self.saveContact(contact)
-
-    var ensName = ""
-    if contact.name.endsWith(".eth"):
-      ensName = contact.name
-
-    status_contacts.addContact(contact.id, ensName)
     self.events.emit(SIGNAL_CONTACT_ADDED, ContactAddedArgs(contact: contact))
 
   proc rejectContactRequest*(self: Service, publicKey: string) =
     var contact = self.getContactById(publicKey)
     contact.hasAddedUs = false
 
+    let response = status_contacts.rejectContactRequest(contact.id)
+    if(not response.error.isNil):
+      let msg = response.error.message
+      error "error rejecting contact ", msg
+      return
     self.saveContact(contact)
-    status_contacts.rejectContactRequest(contact.id)
     self.events.emit(SIGNAL_CONTACT_REMOVED, ContactArgs(contactId: contact.id))
 
   proc changeContactNickname*(self: Service, publicKey: string, nickname: string) =
     var contact = self.getContactById(publicKey)
     contact.localNickname = nickname
 
+    let response = status_contacts.setContactLocalNickname(contact.id, contact.localNickname)
+    if(not response.error.isNil):
+      let msg = response.error.message
+      error "error setting local name ", msg
+      return
     self.saveContact(contact)
-    status_contacts.setContactLocalNickname(contact.id, contact.localNickname)
     let data = ContactNicknameUpdatedArgs(contactId: contact.id, nickname: nickname)
     self.events.emit(SIGNAL_CONTACT_NICKNAME_CHANGED, data)
 
@@ -162,16 +169,24 @@ QtObject:
     var contact = self.getContactById(publicKey)
     contact.blocked = false
 
+    let response = status_contacts.unblockContact(contact.id)
+    if(not response.error.isNil):
+      let msg = response.error.message
+      error "error unblocking contact ", msg
+      return
     self.saveContact(contact)
-    status_contacts.unblockContact(contact.id)
     self.events.emit(SIGNAL_CONTACT_UNBLOCKED, ContactArgs(contactId: contact.id))
 
   proc blockContact*(self: Service, publicKey: string) =
     var contact = self.getContactById(publicKey)
     contact.blocked = true
 
+    let response = status_contacts.blockContact(contact.id)
+    if(not response.error.isNil):
+      let msg = response.error.message
+      error "error blocking contact ", msg
+      return
     self.saveContact(contact)
-    status_contacts.blockContact(contact.id)
     self.events.emit(SIGNAL_CONTACT_BLOCKED, ContactArgs(contactId: contact.id))
 
   proc removeContact*(self: Service, publicKey: string) =
@@ -179,8 +194,12 @@ QtObject:
     contact.added = false
     contact.hasAddedUs = false
 
+    let response = status_contacts.removeContact(contact.id)
+    if(not response.error.isNil):
+      let msg = response.error.message
+      error "error removing contact ", msg
+      return
     self.saveContact(contact)
-    status_contacts.removeContact(contact.id)
     self.events.emit(SIGNAL_CONTACT_REMOVED, ContactArgs(contactId: contact.id))
 
   proc ensResolved*(self: Service, id: string) {.slot.} =

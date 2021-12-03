@@ -1,7 +1,7 @@
 import NimQml, tables, json, chronicles
-import status/[status, chat/chat, settings]
+import status/[status, settings]
 import message_list, chat_item
-import status/utils as status_utils
+#import status/utils as status_utils
 import status/types/[message, setting]
 
 logScope:
@@ -36,6 +36,9 @@ QtObject:
   proc messageEmojiReactionId(self: ReactionView, chatId: string, messageId: string, emojiId: int): string =
     let chat = self.status.chat.channels[chatId]
     var chatId = chatId
+    # Not Rrefactored Yet
+    # if chat.chatType == ChatType.Profile:
+    #   chatId = status_utils.getTimelineChatId()
 
     if (self.messageList[][chatId].getReactions(messageId) == "") :
       return ""
@@ -66,6 +69,10 @@ QtObject:
 
       let chat = self.status.chat.channels[chatId]
       var messageList = self.messageList[][chatId]
+
+      # Not Rrefactored Yet
+      # if chat.chatType == ChatType.Profile:
+      #   messageList = self.messageList[][status_utils.getTimelineChatId()]
 
       var emojiReactions = messageList.getReactions(reaction.messageId)
       var oldReactions: JsonNode

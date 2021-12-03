@@ -55,10 +55,11 @@ method isTelemetryEnabled*[T](self: Controller[T]): bool =
   return self.settingsService.getTelemetryServerUrl().len > 0
 
 method toggleAutoMessage*[T](self: Controller[T]) = 
-  self.settingsService.toggleAutoMessage()
+  let enabled = self.settingsService.autoMessageEnabled()
+  discard self.settingsService.saveAutoMessageEnabled(not enabled)
 
 method isAutoMessageEnabled*[T](self: Controller[T]): bool = 
-  return self.settingsService.isAutoMessageEnabled()
+  return self.settingsService.autoMessageEnabled()
 
 method toggleDebug*[T](self: Controller[T]) = 
   discard

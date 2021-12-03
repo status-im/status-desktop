@@ -1,7 +1,7 @@
 import chronicles, json, sequtils, tables, sugar
 
 import service_interface, ./dto/settings
-import status/statusgo_backend_new/settings as status_go
+import status/statusgo_backend_new/settings as status_settings
 
 export service_interface
 
@@ -22,7 +22,7 @@ proc newService*(): Service =
 
 method init*(self: Service) =
   try:
-    let response = status_go.getSettings()
+    let response = status_settings.getSettings()
     self.settings = response.result.toSettingsDto()
   except Exception as e:
     let errDesription = e.msg
@@ -30,7 +30,7 @@ method init*(self: Service) =
     return
 
 proc saveSetting(self: Service, attribute: string, value: string | JsonNode | bool | int): bool =
-  let response = status_go.saveSettings(attribute, value)
+  let response = status_settings.saveSettings(attribute, value)
   if(not response.error.isNil):
     error "error saving settings: ", errDescription = response.error.message
     return false
@@ -300,38 +300,6 @@ method getPinnedMailservers*(self: Service): PinnedMailservers =
 method getWalletVisibleTokens*(self: Service): seq[string] =
   self.settings.walletVisibleTokens.tokens
 
-method toggleTelemetry*(self: Service) =
-  let telemetryServerUrl = status_go_settings.getSetting[string](Setting.TelemetryServerUrl)
-  var newValue = ""
-  if telemetryServerUrl == "":
-    newValue = "https://telemetry.status.im"
-
-  discard status_go_settings.saveSetting(Setting.TelemetryServerUrl, newValue)
-
-method isTelemetryEnabled*(self: Service): bool =
-  let telemetryServerUrl = status_go_settings.getSetting[string](Setting.TelemetryServerUrl)
-  return telemetryServerUrl != ""
-
-method toggleAutoMessage*(self: Service) =
-  let enabled = status_go_settings.getSetting[bool](Setting.AutoMessageEnabled)
-  discard status_go_settings.saveSetting(Setting.AutoMessageEnabled, not enabled)
-
-method isAutoMessageEnabled*(self: Service): bool =
-  return status_go_settings.getSetting[bool](Setting.AutoMessageEnabled)
-
-method toggleDebug*(self: Service) =
-  var nodeConfig = status_go_settings.getNodeConfig()
-  if nodeConfig["LogLevel"].getStr() == $LogLevel.INFO:
-    nodeConfig["LogLevel"] = newJString($LogLevel.DEBUG)
-  else:
-    nodeConfig["LogLevel"] = newJString($LogLevel.INFO)
-  discard status_go_settings.saveSetting(Setting.NodeConfig, nodeConfig)
-  quit(QuitSuccess) # quits the app TODO: change this to logout instead when supported
-
-method isDebugEnabled*(self: Service): bool =
-  let nodeConfig = status_go_settings.getNodeConfig()
-  return nodeConfig["LogLevel"].getStr() != $LogLevel.INFO
-
 method saveWalletVisibleTokens*(self: Service, tokens: seq[string]): bool =
   var obj = newJObject()
   obj[self.getCurrentNetwork()] = %* tokens
@@ -379,7 +347,6 @@ method saveRecentStickers*(self: Service, installedStickerPacks: Table[int, Stic
     return true
   return false
 
-
 method saveNodeConfiguration*(self: Service, value: JsonNode): bool =
   if(self.saveSetting(KEY_NODE_CONFIG, value)):
     self.settings.nodeConfig = value
@@ -391,3 +358,12 @@ method saveWakuBloomFilterMode*(self: Service, value: bool): bool =
     self.settings.wakuBloomFilterMode = value
     return true
   return false
+
+method saveAutoMessageEnabled*(self: Service, value: bool): bool =
+  if(self.saveSetting(KEY_AUTO_MESSAGE_ENABLED, value)):
+    self.settings.autoMessageEnabled = value
+    return true
+  return false
+
+method autoMessageEnabled*(self: Service): bool =
+  return self.settings.autoMessageEnabled

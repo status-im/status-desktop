@@ -55,10 +55,6 @@ StatusAppThreePanelLayout {
 //        root.rootStore.chatsModelInst.channelView.restorePreviousActiveChannel();
 //        chatColumn.onActivated();
 //    }
-    // Not Refactored
-   property RootStore rootStore: RootStore {
-       messageStore: root.messageStore
-   }
 
     leftPanel: Loader {
         id: contactColumnLoader

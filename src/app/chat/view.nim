@@ -1,6 +1,6 @@
 import NimQml, Tables, json, sequtils, chronicles, strutils, os, strformat
 import status/[status]
-import status/utils as status_utils
+#import status/utils as status_utils
 import status/chat as status_chat
 import status/messages as status_messages
 import status/mailservers
@@ -308,15 +308,19 @@ QtObject:
     self.messageView.removeChat(chatId)
 
   proc toggleReaction*(self: ChatsView, messageId: string, emojiId: int) {.slot.} =
-    if self.channelView.activeChannel.id == status_utils.getTimelineChatId():
-      let message = self.messageView.messageList[status_utils.getTimelineChatId()].getMessageById(messageId)
-      self.reactions.toggle(messageId, message.chatId, emojiId)
-    else:
-      self.reactions.toggle(messageId, self.channelView.activeChannel.id, emojiId)
+    discard
+    # Not Refactored Yet
+    # if self.channelView.activeChannel.id == status_utils.getTimelineChatId():
+    #   let message = self.messageView.messageList[status_utils.getTimelineChatId()].getMessageById(messageId)
+    #   self.reactions.toggle(messageId, message.chatId, emojiId)
+    # else:
+    #   self.reactions.toggle(messageId, self.channelView.activeChannel.id, emojiId)
 
   proc removeMessagesFromTimeline*(self: ChatsView, chatId: string) =
-    self.messageView.messageList[status_utils.getTimelineChatId()].deleteMessagesByChatId(chatId)
-    self.channelView.activeChannelChanged()
+    discard
+    # Not Refactored Yet
+    # self.messageView.messageList[status_utils.getTimelineChatId()].deleteMessagesByChatId(chatId)
+    # self.channelView.activeChannelChanged()
 
   proc updateChats*(self: ChatsView, chats: seq[Chat]) =
     for chat in chats:
