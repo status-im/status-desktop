@@ -142,12 +142,11 @@ Item {
                     return clearable ? clearButtonLoader.width + 12 : 
                         (statusIcon.visible && !leftIcon) || !!statusBaseInput.component ? 8 : 0
                 }
-                anchors.topMargin: statusBaseInput.topPadding
-                anchors.bottomMargin: statusBaseInput.bottomPadding
                 contentWidth: edit.paintedWidth
                 contentHeight: edit.paintedHeight
                 boundsBehavior: Flickable.StopAtBounds
                 QC.ScrollBar.vertical: QC.ScrollBar { interactive: multiline; enabled: multiline }
+                clip: true
                 function ensureVisible(r) {
                     if (contentX >= r.x)
                         contentX = r.x;
