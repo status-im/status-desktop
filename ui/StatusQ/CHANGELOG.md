@@ -1,4 +1,18 @@
 <a name=""></a>
+##  Version 0.19.0 (2021-12-03)
+
+
+#### Bug Fixes
+
+* **StatusChatListItem:**  This change fixes the issue of the chat list items getting a highlight even when they are not really hovered ([ab6bdf54](ab6bdf54))
+
+#### Features
+
+* **StatusModal:**  introduce `hasCloseButton` property ([2336b6aa](2336b6aa))
+
+
+
+<a name=""></a>
 ##  Version 0.18.0 (2021-11-30)
 
 
