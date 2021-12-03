@@ -67,12 +67,6 @@ QtObject:
     self.blockedContacts.changeNicknameForContactWithId(id, nickname)
     self.contactRequests.changeNicknameForContactWithId(id, nickname)
 
-  proc changeNicknameForContactWithId*(self: Model, id: string, nickname: string) =
-    self.contactList.changeNicknameForContactWithId(id, nickname)
-    self.addedContacts.changeNicknameForContactWithId(id, nickname)
-    self.blockedContacts.changeNicknameForContactWithId(id, nickname)
-    self.contactRequests.changeNicknameForContactWithId(id, nickname)
-
   proc updateContactList*(self: Model, contacts: seq[ContactsDto]) =
     for contact in contacts:
       var requestAlreadyAdded = false

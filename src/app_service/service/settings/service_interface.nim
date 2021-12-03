@@ -123,15 +123,6 @@ method saveDefaultSyncPeriod*(self: ServiceInterface, value: int): bool {.base.}
 method getDefaultSyncPeriod*(self: ServiceInterface): int {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method toggleAutoMessage*(self: ServiceInterface) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method isAutoMessageEnabled*(self: ServiceInterface): bool {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method toggleDebug*(self: ServiceInterface) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method saveSendPushNotifications*(self: ServiceInterface, value: bool): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -225,9 +216,14 @@ method getInstalledStickerPacks*(self: ServiceInterface): Table[int, StickerPack
 method saveRecentStickers*(self: ServiceInterface, installedStickerPacks: Table[int, StickerPackDto]): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
-
 method saveNodeConfiguration*(self: ServiceInterface, value: JsonNode): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method saveWakuBloomFilterMode*(self: ServiceInterface, value: bool): bool {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method saveAutoMessageEnabled*(self: ServiceInterface, value: bool): bool {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method autoMessageEnabled*(self: ServiceInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")

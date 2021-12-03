@@ -1,4 +1,4 @@
-import json, options, tables, strutils, sequtils
+import json, options, tables, strutils
 import ../../stickers/dto/stickers
 
 include  ../../../common/json_utils
@@ -38,6 +38,7 @@ const KEY_INSTALLED_STICKER_PACKS* = "stickers/packs-installed"
 const KEY_FLEET* = "fleet"
 const KEY_NODE_CONFIG* = "node-config"
 const KEY_WAKU_BLOOM_FILTER_MODE* = "waku-bloom-filter-mode"
+const KEY_AUTO_MESSAGE_ENABLED* = "auto-message-enabled?"
 
 type UpstreamConfig* = object
   enabled*: bool
@@ -101,6 +102,7 @@ type
     wakuBloomFilterMode*: bool
     recentStickerHashes*: seq[string]
     installedStickerPacks*: Table[int, StickerPackDto]
+    autoMessageEnabled*: bool
 
 proc toUpstreamConfig*(jsonObj: JsonNode): UpstreamConfig =
   discard jsonObj.getProp("Enabled", result.enabled)
@@ -189,6 +191,7 @@ proc toSettingsDto*(jsonObj: JsonNode): SettingsDto =
   discard jsonObj.getProp(KEY_SEND_STATUS_UPDATES, result.sendStatusUpdates)
   discard jsonObj.getProp(KEY_TELEMETRY_SERVER_URL, result.telemetryServerUrl)
   discard jsonObj.getProp(KEY_FLEET, result.fleet)
+  discard jsonObj.getProp(KEY_AUTO_MESSAGE_ENABLED, result.autoMessageEnabled)
 
   var pinnedMailserversObj: JsonNode
   if(jsonObj.getProp(KEY_PINNED_MAILSERVERS, pinnedMailserversObj)):

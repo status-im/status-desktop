@@ -2,7 +2,7 @@ import NimQml, Tables, json, sequtils, chronicles, times, re, strutils, sugar
 
 import status/[status, contacts]
 import status/messages as status_messages
-import status/utils as status_utils
+#import status/utils as status_utils
 import status/chat/[chat]
 import status/types/[message, profile]
 
@@ -54,7 +54,8 @@ QtObject:
     result.communities = communitiesView
     result.messageList = initOrderedTable[string, ChatMessageList]()
     result.pinnedMessagesList = initOrderedTable[string, ChatMessageList]()
-    result.messageList[status_utils.getTimelineChatId()] = newChatMessageList(status_utils.getTimelineChatId(), result.status, false)
+    # Not Rrefactored Yet
+    # result.messageList[status_utils.getTimelineChatId()] = newChatMessageList(status_utils.getTimelineChatId(), result.status, false)
     result.loadingMessages = false
     result.unreadMessageCnt = 0
     result.unreadDirectMessagesAndMentionsCount = 0
@@ -228,7 +229,8 @@ QtObject:
       if self.status.chat.channels.hasKey(msg.chatId):
         let chat = self.status.chat.channels[msg.chatId]
         if (chat.chatType == ChatType.Profile):
-          let timelineChatId = status_utils.getTimelineChatId()
+          # Not Rrefactored Yet
+          let timelineChatId = "" #status_utils.getTimelineChatId()
           self.messageList[timelineChatId].add(msg)
 
           if self.channelView.activeChannel.id == timelineChatId: self.channelView.activeChannelChanged()
