@@ -434,8 +434,6 @@ StatusWindow {
 //                                        chatsModel.channelView.activeChannel.chatType === Constants.chatType.privateGroupChat
 //                                        )
 //                                    ) ||
-//                                   // in timeline view
-//                                   loader.item.appLayout.appView.currentIndex === Constants.appViewStackIndex.timeline ||
 //                                   // In community section
 //                                   chatsModel.communities.activeCommunity.active
 //                                   )

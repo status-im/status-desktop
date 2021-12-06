@@ -7,7 +7,6 @@ type
     Wallet,
     WalletV2,
     Browser,
-    Timeline,
     ProfileSettings,
     NodeManagement
 
