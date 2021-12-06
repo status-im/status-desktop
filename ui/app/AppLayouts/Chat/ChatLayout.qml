@@ -186,7 +186,7 @@ StatusAppThreePanelLayout {
             community: root.rootStore.chatsModelInst.communities.activeCommunity
             currentUserName: Utils.removeStatusEns(root.rootStore.profileModelInst.ens.preferredUsername
                                                   || root.rootStore.profileModelInst.profile.username)
-            currentUserOnline: root.store.userProfileInst.userStatus
+            currentUserOnline: root.rootStore.userProfileInst.userStatus
             contactsList: root.rootStore.allContacts
         }
     }
