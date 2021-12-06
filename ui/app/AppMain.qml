@@ -317,16 +317,6 @@ Item {
                 },
 
                 StatusNavBarTabButton {
-                    enabled: isExperimental === "1" || localAccountSensitiveSettings.timelineEnabled
-                    visible: enabled
-                    //% "Timeline"
-                    tooltip.text: qsTrId("timeline")
-                    icon.name: "status-update"
-                    checked: appView.currentIndex == Utils.getAppSectionIndex(Constants.timeline)
-                    onClicked: appMain.changeAppSection(Constants.timeline)
-                },
-
-                StatusNavBarTabButton {
                     enabled: isExperimental === "1" || localAccountSensitiveSettings.nodeManagementEnabled
                     visible: enabled
                     tooltip.text: qsTr("Node Management")
@@ -412,7 +402,7 @@ Item {
                 if(obj === walletV2LayoutContainer){
                     walletV2LayoutContainer.showSigningPhrasePopup();
                 }
-                localAccountSensitiveSettings.lastModeActiveTab = (currentIndex === Utils.getAppSectionIndex(Constants.timeline)) ? 0 : currentIndex
+                localAccountSensitiveSettings.lastModeActiveTab = currentIndex
             }
 
             ChatLayout {

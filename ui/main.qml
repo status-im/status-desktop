@@ -421,7 +421,6 @@ StatusWindow {
         signal droppedOnValidScreen(var drop)
         property alias droppedUrls: rptDraggedPreviews.model
         readonly property int chatView: Utils.getAppSectionIndex(Constants.chat)
-        readonly property int timelineView: Utils.getAppSectionIndex(Constants.timeline)
         property bool enabled: !drag.source && !!loader.item && !!loader.item.appLayout &&
                                (
                                    // in chat view
@@ -433,8 +432,6 @@ StatusWindow {
                                         chatsModel.channelView.activeChannel.chatType === Constants.chatTypePrivateGroupChat
                                         )
                                     ) ||
-                                   // in timeline view
-                                   loader.item.appLayout.appView.currentIndex === timelineView ||
                                    // In community section
                                    loader.item.appLayout.appView.currentIndex === chatsModel.communities.activeCommunity.active
                                    )
