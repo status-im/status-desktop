@@ -65,7 +65,7 @@ Item {
                     if(root.store.chatsModelInst.communities.activeCommunity.active)
                     {
                         root.store.chatsModelInst.channelView.joinPublicChat(channelName)
-                        appMain.changeAppSectionBySectionType(Constants.appSection.chat)
+                        Global.changeAppSectionBySectionType(Constants.appSection.chat)
                     }
                     return
                 }
@@ -76,7 +76,7 @@ Item {
                 {
                     if(root.store.chatsModelInst.communities.activeCommunity.active) {
                         root.store.chatsModelInst.channelView.joinPublicChat(channelName)
-                        appMain.changeAppSectionBySectionType(Constants.appSection.chat)
+                        Global.changeAppSectionBySectionType(Constants.appSection.chat)
                     }
                     root.store.chatsModelInst.channelView.setActiveChannel(channelName);
                 }
@@ -104,7 +104,7 @@ Item {
             }
 
 
-            appMain.openLink(link)
+            Global.openLink(link)
         }
 
         onLinkHovered: {

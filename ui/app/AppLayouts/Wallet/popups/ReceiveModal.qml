@@ -54,7 +54,7 @@ ModalPopup {
         anchors.horizontalCenter: parent.horizontalCenter
         width: 240
         dropdownWidth: parent.width - (Style.current.padding * 2)
-        dropdownAlignment: Select.MenuAlignment.Center
+        dropdownAlignment: StatusSelect.MenuAlignment.Center
         onSelectedAccountChanged: {
             if (selectedAccount.address) {
                 qrCodeImage.source = RootStore.getQrCode(selectedAccount.address)

@@ -136,14 +136,14 @@ ModalPopup {
             // TODO the loading doesn't work because the function freezes the view. Might need to use threads
             loading = true
             if (!validate() || !seedPhraseTextArea.validateSeed()) {
-                errorSound.play()
+                Global.playErrorSound();
                 return loading = false
             }
 
             const errMessage = RootStore.addAccountsFromSeed(seedPhraseTextArea.textArea.text, passwordInput.text, accountNameInput.text, accountColorInput.selectedColor)
             loading = false
             if (errMessage) {
-                errorSound.play();
+                Global.playErrorSound();
                 if (Utils.isInvalidPasswordMessage(errMessage)) {
                     //% "Wrong password"
                     popup.passwordValidationError = qsTrId("wrong-password")

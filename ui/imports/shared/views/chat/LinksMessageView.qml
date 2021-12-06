@@ -282,7 +282,7 @@ Column {
                         return linkData.callback()
                     }
 
-                    appMain.openLink(linkData.address)
+                    Global.openLink(linkData.address)
                 }
             }
         }
@@ -361,7 +361,7 @@ Column {
                 //% "Enable in Settings"
                 text: qsTrId("enable-in-settings")
                 onClicked: {
-                    appMain.changeAppSectionBySectionType(Constants.appSection.profile)
+                    Global.changeAppSectionBySectionType(Constants.appSection.profile)
                     // TODO: replace with shared store constant
                     // Profile/RootStore.privacy_and_security_id
                     profileLayoutContainer.changeProfileSection(3)

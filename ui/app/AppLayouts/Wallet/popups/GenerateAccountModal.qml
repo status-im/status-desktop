@@ -108,7 +108,7 @@ ModalPopup {
             // TODO the loaidng doesn't work because the function freezes th eview. Might need to use threads
             loading = true
             if (!validate()) {
-                errorSound.play()
+                Global.playErrorSound();
                 return loading = false
             }
 
@@ -116,7 +116,7 @@ ModalPopup {
             console.log(errMessage)
             loading = false
             if (errMessage) {
-                errorSound.play();
+                Global.playErrorSound();
                 if (Utils.isInvalidPasswordMessage(errMessage)) {
                     //% "Wrong password"
                     popup.passwordValidationError = qsTrId("wrong-password")

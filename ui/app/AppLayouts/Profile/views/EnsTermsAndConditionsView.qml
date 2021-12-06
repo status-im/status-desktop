@@ -176,7 +176,7 @@ Item {
                     text: qsTrId("-a-href---1-2--look-up-on-etherscan--a-").arg(root.store.etherscanLink.replace("/tx", "/address")).arg(root.store.getEnsUsernameRegistrar())
                     anchors.left: parent.left
                     anchors.right: parent.right
-                    onLinkActivated: appMain.openLink(link)
+                    onLinkActivated: Global.openLink(link)
                     color: Theme.palette.directColor1
                     MouseArea {
                         anchors.fill: parent
@@ -200,7 +200,7 @@ Item {
                     text: qsTrId("-a-href---1-2--look-up-on-etherscan--a-").arg(root.store.etherscanLink.replace("/tx", "/address")).arg(root.store.getEnsRegistry())
                     anchors.left: parent.left
                     anchors.right: parent.right
-                    onLinkActivated: appMain.openLink(link)
+                    onLinkActivated: Global.openLink(link)
                     color: Theme.palette.directColor1
                     MouseArea {
                         anchors.fill: parent

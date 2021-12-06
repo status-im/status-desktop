@@ -16,13 +16,15 @@ import "../panels"
 Item {
     id: walletContainer
 
+    property var changeSelectedAccount
     property alias currentTabIndex: walletTabBar.currentIndex
 
     WalletHeader {
         id: walletHeader
-        changeSelectedAccount: leftTab.changeSelectedAccount
-        currentAccount: RootStore.currentAccount
+        locale: RootStore.locale
         currency: RootStore.currentCurrency
+        currentAccount: RootStore.currentAccount
+        changeSelectedAccount: changeSelectedAccount
     }
 
     RowLayout {

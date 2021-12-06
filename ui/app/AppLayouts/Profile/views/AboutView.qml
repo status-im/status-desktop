@@ -81,7 +81,7 @@ Item {
                     parent.font.underline = false
                 }
                 onClicked: {
-                    appMain.openLink("https://status.im/privacy-policy/")
+                    Global.openLink("https://status.im/privacy-policy/")
                 }
             }
         }

@@ -149,7 +149,7 @@ ModalPopup {
                 onAccepted: {
                     const error = RootStore.deleteAccount(currentAccount.address)
                     if (error) {
-                        errorSound.play()
+                        Global.playErrorSound();
                         deleteError.text = error
                         deleteError.open()
                         return
@@ -177,7 +177,7 @@ ModalPopup {
 
             MessageDialog {
                 id: changeError
-                title: "Changing settings failed"
+                title: qsTr("Changing settings failed")
                 icon: StandardIcon.Critical
                 standardButtons: StandardButton.Ok
             }
@@ -190,7 +190,7 @@ ModalPopup {
                 const error = RootStore.updateCurrentAccount(currentAccount.address, accountNameInput.text, accountColorInput.selectedColor);
 
                 if (error) {
-                    errorSound.play()
+                    Global.playErrorSound();
                     changeError.text = error
                     changeError.open()
                     return

@@ -259,12 +259,12 @@ Item {
             onCountChanged: searchResults.isAddedContact = searchResults.isContactAdded()
 
             onContactClicked: {
-                root.store.changeAppSectionBySectionType(Constants.appSection.chat)
+                Global.changeAppSectionBySectionType(Constants.appSection.chat)
                 root.store.joinPrivateChat(contact.address)
             }
 
             onSendMessageActionTriggered: {
-                root.store.changeAppSectionBySectionType(Constants.appSection.chat)
+                Global.changeAppSectionBySectionType(Constants.appSection.chat)
                 root.store.joinPrivateChat(contact.address)
             }
 

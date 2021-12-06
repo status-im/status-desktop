@@ -120,7 +120,7 @@ Item {
                    text: qsTrId("chat-notification-preferences")
                    onTriggered: {
                        activityCenter.close()
-                       appMain.changeAppSectionBySectionType(Constants.appSection.profile)
+                       Global.changeAppSectionBySectionType(Constants.appSection.profile)
                         // TODO: replace with shared store constant
                         // Profile/RootStore.notifications_id
                        profileLayoutContainer.changeProfileSection(7)

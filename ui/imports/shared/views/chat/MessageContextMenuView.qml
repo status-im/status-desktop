@@ -255,7 +255,7 @@ StatusPopupMenu {
                   qsTrId("reply-to")
         onTriggered: {
             if (root.isProfile) {
-                appMain.changeAppSectionBySectionType(Constants.appSection.chat)
+                Global.changeAppSectionBySectionType(Constants.appSection.chat)
                 root.store.chatsModelInst.channelView.joinPrivateChat(fromAuthor, "")
             } else {
                 showReplyArea()

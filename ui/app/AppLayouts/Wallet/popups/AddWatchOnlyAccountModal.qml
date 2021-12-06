@@ -108,14 +108,14 @@ ModalPopup {
             // TODO the loaidng doesn't work because the function freezes th eview. Might need to use threads
             loading = true
             if (!validate()) {
-                errorSound.play()
+                Global.playErrorSound();
                 return loading = false
             }
 
             const error = RootStore.addWatchOnlyAccount(addressInput.text, accountNameInput.text, accountColorInput.selectedColor);
             loading = false
             if (error) {
-                errorSound.play()
+                Global.playErrorSound();
                 accountError.text = error
                 return accountError.open()
             }

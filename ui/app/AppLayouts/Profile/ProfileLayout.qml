@@ -32,7 +32,7 @@ StatusAppTwoPanelLayout {
         property int profileContentWidth: Math.max(contentMinWidth, Math.min(profileContainer.width * 0.8, contentMaxWidth))
         anchors.fill: parent
 
-        currentIndex: Config.currentMenuTab
+        currentIndex: Global.currentMenuTab
 
         onCurrentIndexChanged: {
             if(visibleChildren[0] === ensContainer){

@@ -15,6 +15,7 @@ import "../stores"
 Item {
     id: walletHeader
 
+    property string locale: ""
     property string currency: ""
     property var currentAccount
     property var changeSelectedAccount
@@ -55,7 +56,7 @@ Item {
     StyledText {
         id: walletBalance
         text: {
-            Utils.toLocaleString(currentAccount.currencyBalance.toFixed(2), localAppSettings.locale, {"currency": true}) + " " + walletHeader.currency.toUpperCase()
+            Utils.toLocaleString(currentAccount.currencyBalance.toFixed(2), locale, {"currency": true}) + " " + walletHeader.currency.toUpperCase()
         }
         anchors.left: separatorDot.right
         anchors.leftMargin: 8
@@ -97,6 +98,12 @@ Item {
         TokenSettingsModal {
             onClosed: {
                 destroy();
+            }
+            onAddCustomTokenTriggered: {
+                addCustomTokenModal.openEditable();
+            }
+            onTokenDetailsTriggered: {
+                addCustomTokenModal.openWithData(address, name, symbol, decimals);
             }
         }
     }

@@ -143,7 +143,7 @@ ModalPopup {
             
             loading = false
             if (errMessage) {
-                errorSound.play();
+                Global.playErrorSound();
                 if (Utils.isInvalidPasswordMessage(errMessage)) {
                     //% "Wrong password"
                     popup.passwordValidationError = qsTrId("wrong-password")

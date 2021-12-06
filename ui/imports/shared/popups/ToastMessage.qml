@@ -125,7 +125,7 @@ Popup {
                 font.pixelSize: 13
                 font.weight: Font.Medium
                 onLinkActivated: {
-                    appMain.openLink(root.link)
+                    Global.openLink(root.link)
                     root.close()
                 }
             }
