@@ -14,10 +14,6 @@ const BROWSER_SECTION_ID* = "browser"
 const BROWSER_SECTION_NAME* = "Browser"
 const BROWSER_SECTION_ICON* = "browser"
 
-const TIMELINE_SECTION_ID* = "timeline"
-const TIMELINE_SECTION_NAME* = "Timeline"
-const TIMELINE_SECTION_ICON* = "status-update"
-
 const NODEMANAGEMENT_SECTION_ID* = "nodeManagement"
 const NODEMANAGEMENT_SECTION_NAME* = "Node Management"
 const NODEMANAGEMENT_SECTION_ICON* = "node"

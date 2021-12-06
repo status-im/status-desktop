@@ -187,14 +187,6 @@ method load*[T](
   if(activeSectionId == browserSectionItem.id):
     activeSection = browserSectionItem
 
-  # Timeline Section
-  let timelineSectionItem = initItem(conf.TIMELINE_SECTION_ID, SectionType.Timeline, conf.TIMELINE_SECTION_NAME, "", 
-  conf.TIMELINE_SECTION_ICON, "", false, 0, 
-  false, singletonInstance.localAccountSensitiveSettings.getTimelineEnabled())
-  self.view.addItem(timelineSectionItem)
-  if(activeSectionId == timelineSectionItem.id):
-    activeSection = timelineSectionItem
-
   # Node Management Section
   let nodeManagementSectionItem = initItem(conf.NODEMANAGEMENT_SECTION_ID, SectionType.NodeManagement, 
   conf.NODEMANAGEMENT_SECTION_NAME, "", conf.NODEMANAGEMENT_SECTION_ICON, "", false, 0, false, 
