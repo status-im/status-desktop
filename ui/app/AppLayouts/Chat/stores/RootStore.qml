@@ -136,6 +136,9 @@ QtObject {
 
     function leaveCommunity(communityId) {
         chatsModelInst.communities.leaveCommunity(communityId);
+        if (communityId == chatsModelInst.communities.activeCommunity.id) {
+            localAccountSensitiveSettings.lastModeActiveCommunity = ""
+        }
     }
 
     function setCommunityMuted(communityId, checked) {
