@@ -17,6 +17,7 @@ Item {
     property var customTokenList
     signal toggleVisibleClicked(string symbol)
     signal removeCustomTokenTriggered(string address)
+    signal tokenDetailsTriggered(string address, string name, string symbol, string decimals)
 
     SearchBox {
         id: searchBox
@@ -101,7 +102,9 @@ Item {
                         icon.source: Style.svg("make-admin")
                         //% "Token details"
                         text: qsTrId("token-details")
-                        onTriggered: addCustomTokenModal.openWithData(address, name, symbol, decimals)
+                        onTriggered: {
+                            modalBody.tokenDetailsTriggered(address, name, symbol, decimals);
+                        }
                     }
                     Action {
                         icon.source: Style.svg("remove-from-group")

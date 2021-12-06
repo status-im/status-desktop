@@ -4,9 +4,12 @@ import QtQuick 2.13
 
 QtObject {
     id: root
-
     property var currentAccount: walletSectionCurrent
     property var accounts: walletSectionAccounts.model
+    property var appSettings: localAppSettings
+    property var accountSensitiveSettings: localAccountSensitiveSettings
+    property string locale: appSettings.locale
+    property bool hideSignPhraseModal: accountSensitiveSettings.hideSignPhraseModal
 
     property string currentCurrency: walletSection.currentCurrency
     property string totalCurrencyBalance: walletSection.totalCurrencyBalance
@@ -62,12 +65,16 @@ QtObject {
 
     property ListModel exampleAssetModel: ListModel {
         ListElement {
-            value: "123 USD"
+            name: "Ethereum"
             symbol: "ETH"
-            fullTokenName: "Ethereum"
-            fiatBalanceDisplay: "3423 ETH"
-            image: "token-icons/eth"
+            balance: "3423 ETH"
+            address: "token-icons/eth"
+            currencyBalance: "123 USD"
         }
+    }
+
+    function hideSignPhraseModal(value) {
+        localAccountSensitiveSettings.hideSignPhraseModal = value;
     }
 
     function getLatestBlockNumber() {

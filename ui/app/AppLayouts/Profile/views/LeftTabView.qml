@@ -12,7 +12,7 @@ Item {
     property var store
 
     property var changeProfileSection: function (sectionId) {
-        Config.currentMenuTab = sectionId
+        Global.currentMenuTab = sectionId
     }
 
     StatusNavigationPanelHeadline {
@@ -47,7 +47,7 @@ Item {
                 if (!!menu_item.function_name && menu_item.function_name === "exit") {
                     return confirmDialog.open()
                 }
-                Config.currentMenuTab = menu_item.menu_id
+                Global.currentMenuTab = menu_item.menu_id
             }
         }
     }

@@ -105,8 +105,7 @@ StatusModal {
                             cursorShape: Qt.PointingHandCursor
 
                             onClicked: {
-                                //TOOD improve this to not use dynamic scoping
-                                appMain.openLink(siteUrl);
+                                Global.openLink(siteUrl);
                                 cryptoServicesPopupRoot.close();
                             }
                         }

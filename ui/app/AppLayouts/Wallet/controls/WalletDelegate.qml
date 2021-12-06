@@ -8,6 +8,7 @@ import shared.panels 1.0
 Rectangle {
     id: walletDelegate
 
+    property string locale: ""
     property string currency: ""
     property int selectedAccountIndex
     property bool selected: index === selectedAccountIndex
@@ -81,7 +82,7 @@ Rectangle {
     StyledText {
         id: walletBalance
         text: {
-            Utils.toLocaleString(currencyBalance.toFixed(2), localAppSettings.locale, {"currency": true}) + " " + walletDelegate.currency.toUpperCase()
+            Utils.toLocaleString(currencyBalance.toFixed(2), locale, {"currency": true}) + " " + walletDelegate.currency.toUpperCase()
         }
         anchors.top: parent.top
         anchors.topMargin: Style.current.smallPadding

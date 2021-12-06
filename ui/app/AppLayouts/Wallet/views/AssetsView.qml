@@ -22,9 +22,10 @@ Item {
             id: assetListView
             spacing: Style.current.padding * 2
             anchors.fill: parent
-            // model: RootStore.exampleAssetModel
+            //model: RootStore.exampleAssetModel
             model: RootStore.assets
             delegate: AssetDelegate {
+                locale: RootStore.locale
                 currency: RootStore.currentCurrency
             }
             boundsBehavior: Flickable.StopAtBounds

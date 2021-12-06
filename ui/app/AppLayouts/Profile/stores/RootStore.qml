@@ -197,10 +197,6 @@ QtObject {
         return utilsModelInst.generateAlias(pubKey)
     }
 
-    function changeAppSectionBySectionType(section) {
-        appMain.changeAppSectionBySectionType(section)
-    }
-
     function joinPrivateChat(address) {
         chatsModelInst.channelView.joinPrivateChat(address, "");
     }

@@ -23,7 +23,7 @@ Column {
             itemId: model.menu_id
             title: model.text
             icon.name: model.icon
-            selected: Config.currentMenuTab === model.menu_id
+            selected: Global.currentMenuTab === model.menu_id
             onClicked: root.menuItemClicked(model)
         }
     }
@@ -37,7 +37,7 @@ Column {
             itemId: model.menu_id
             title: model.text
             icon.name: model.icon
-            selected: Config.currentMenuTab === model.menu_id
+            selected: Global.currentMenuTab === model.menu_id
             onClicked: root.menuItemClicked(model)
             visible: model.ifEnabled !== "browser" || root.browserMenuItemEnabled
             badge.value: !mnemonicModule.isBackedUp && settingsMenuDelegate.title === qsTr("Privacy and security")
@@ -56,7 +56,7 @@ Column {
             itemId: model.menu_id
             title: model.text
             icon.name: model.icon
-            selected: Config.currentMenuTab === model.menu_id
+            selected: Global.currentMenuTab === model.menu_id
             visible: model.ifEnabled !== "browser" || root.browserMenuItemEnabled
             onClicked: root.menuItemClicked(model)
         }

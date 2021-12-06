@@ -2,10 +2,9 @@ import QtQuick 2.13
 import QtGraphicalEffects 1.13
 
 import utils 1.0
-import "../../../../shared"
-import "../../../../shared/popups"
-import "../../../../shared/panels"
-import "../../../../shared/status"
+import shared.popups 1.0
+import shared.panels 1.0
+import shared.status 1.0
 
 // TODO: replace with StatusModal
 ModalPopup {
@@ -62,8 +61,7 @@ ModalPopup {
         anchors.rightMargin: Style.current.padding
         text: qsTr("View in Opensea")
         onClicked: {
-            //TOOD improve this to not use dynamic scoping
-            appMain.openLink(root.permalink);
+            Global.openLink(root.permalink);
             root.close();
         }
     }

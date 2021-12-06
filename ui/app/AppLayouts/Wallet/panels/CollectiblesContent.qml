@@ -62,7 +62,7 @@ ScrollView {
                     anchors.top: somethingWentWrongText.bottom
                     anchors.topMargin: Style.current.halfPadding
                     onClicked: {
-                        reloadCollectibleClicked(collectibleType)
+                        reloadCollectibles(collectibleType);
                     }
                 }
             }

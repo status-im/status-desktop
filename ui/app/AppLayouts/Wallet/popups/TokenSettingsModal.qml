@@ -14,7 +14,9 @@ ModalPopup {
     id: popup
     //% "Manage Assets"
     title: qsTrId("manage-assets")
-    
+    signal addCustomTokenTriggered()
+    signal tokenDetailsTriggered(string address, string address, string address, string address)
+
     TokenSettingsModalContent {
         id: settingsModalContent
         anchors.left: parent.left
@@ -32,6 +34,9 @@ ModalPopup {
         onRemoveCustomTokenTriggered: {
             RootStore.removeCustomToken(address)
         }
+        onTokenDetailsTriggered: {
+            popup.tokenDetailsTriggered(address, name, symbol, decimals);
+        }
     }
 
     footer: StatusButton {
@@ -39,6 +44,8 @@ ModalPopup {
         //% "Add custom token"
         text: qsTrId("add-custom-token")
         anchors.top: parent.top
-        onClicked: addCustomTokenModal.openEditable()
+        onClicked: {
+            popup.addCustomTokenTriggered();
+        }
     }
 }

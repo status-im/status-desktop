@@ -8,6 +8,7 @@ import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
 
 import "../"
+import "../../stores"
 import "../../controls"
 
 StackDetailBase {
