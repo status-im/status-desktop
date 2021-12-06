@@ -846,7 +846,7 @@ Rectangle {
             id: scrollView
             anchors.top: parent.top
             anchors.bottom: parent.bottom
-            anchors.left: profileImage.visible ? profileImage.right : parent.left
+            anchors.left: parent.left
             anchors.leftMargin: Style.current.smallPadding
             anchors.right: actions.left
             anchors.rightMargin: Style.current.halfPadding
