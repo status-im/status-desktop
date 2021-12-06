@@ -158,7 +158,7 @@ Item {
                         parent.font.underline = false
                     }
                     onClicked: {
-                        appMain.openLink("https://status.im/docs/FAQs.html")
+                        Global.openLink("https://status.im/docs/FAQs.html")
                     }
                 }
             }
@@ -182,7 +182,7 @@ Item {
                         parent.font.underline = false
                     }
                     onClicked: {
-                        appMain.openLink("https://github.com/status-im/nim-status-client/issues/new")
+                        Global.openLink("https://github.com/status-im/nim-status-client/issues/new")
                     }
                 }
             }
@@ -206,7 +206,7 @@ Item {
                         parent.font.underline = false
                     }
                     onClicked: {
-                        appMain.openLink("https://discuss.status.im/c/features/51")
+                        Global.openLink("https://discuss.status.im/c/features/51")
                     }
                 }
             }

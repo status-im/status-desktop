@@ -115,8 +115,7 @@ QtObject {
     function addAccount(text, model, keyOrSeedValid, accountNameInput) {
         root.loadingAccounts = true;
         if (!root.validateAddAccountPopup(text, model, keyOrSeedValid, accountNameInput.nameInputValid)) {
-            //TOOD improve this to not use dynamic scoping
-            errorSound.play();
+            Global.playErrorSound();
             root.loadingAccounts = false;
         } else {
             //TODO account color to be verified with design
@@ -138,8 +137,7 @@ QtObject {
                     accountError.text = resultJson.error;
                     accountError.open();
                 }
-                //TOOD improve this to not use dynamic scoping
-                errorSound.play();
+                Global.playErrorSound();
                 return;
             }
         }

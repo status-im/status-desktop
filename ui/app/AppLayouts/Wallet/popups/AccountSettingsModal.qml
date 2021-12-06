@@ -146,8 +146,16 @@ ModalPopup {
                 text: qsTrId("a-deleted-account-cannot-be-retrieved-later.-only-press-yes-if-you-backed-up-your-key/seed-or-don't-care-about-this-account-anymore")
                 icon: StandardIcon.Warning
                 standardButtons: StandardButton.Yes |  StandardButton.No
-                onYes: {
-                    RootStore.deleteAccount(currentAccount.address)// Change active account to the first
+                onAccepted: {
+                    const error = RootStore.deleteAccount(currentAccount.address)
+                    if (error) {
+                        Global.playErrorSound();
+                        deleteError.text = error
+                        deleteError.open()
+                        return
+                    }
+
+                    // Change active account to the first
                     changeSelectedAccount(0)
                     popup.close();
                 }
@@ -169,7 +177,7 @@ ModalPopup {
 
             MessageDialog {
                 id: changeError
-                title: "Changing settings failed"
+                title: qsTr("Changing settings failed")
                 icon: StandardIcon.Critical
                 standardButtons: StandardButton.Ok
             }
@@ -182,7 +190,7 @@ ModalPopup {
                 const error = RootStore.updateCurrentAccount(currentAccount.address, accountNameInput.text, accountColorInput.selectedColor);
 
                 if (error) {
-                    errorSound.play()
+                    Global.playErrorSound();
                     changeError.text = error
                     changeError.open()
                     return

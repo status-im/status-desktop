@@ -64,7 +64,7 @@ ModalPopup {
               qsTr("Download") :
               qsTr("Ok")
         anchors.right: parent.right
-        onClicked: newVersionAvailable ? appMain.openLink(downloadURL) : close()
+        onClicked: newVersionAvailable ? Global.openLink(downloadURL) : close()
     }
 }
 

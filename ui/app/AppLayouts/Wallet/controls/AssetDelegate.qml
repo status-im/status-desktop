@@ -8,6 +8,7 @@ import shared.panels 1.0
 Item {
     id: assetDelegate
 
+    property string locale: ""
     property string currency: ""
 
     anchors.right: parent.right
@@ -49,7 +50,7 @@ Item {
     }
     StyledText {
         id: assetBalance
-        text: Utils.toLocaleString(balance, localAppSettings.locale) + " " + symbol.toUpperCase()
+        text: Utils.toLocaleString(balance, locale) + " " + symbol.toUpperCase()
         anchors.right: parent.right
         anchors.rightMargin: 0
         font.pixelSize: 15
@@ -58,7 +59,7 @@ Item {
     StyledText {
         id: assetCurrencyBalance
         color: Style.current.secondaryText
-        text: Utils.toLocaleString(currencyBalance.toFixed(2), localAppSettings.locale) + " " + assetDelegate.currency.toUpperCase()
+        text: Utils.toLocaleString(currencyBalance.toFixed(2), locale) + " " + assetDelegate.currency.toUpperCase()
         anchors.right: parent.right
         anchors.rightMargin: 0
         anchors.bottom: parent.bottom

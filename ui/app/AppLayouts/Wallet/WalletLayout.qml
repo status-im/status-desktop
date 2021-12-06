@@ -18,7 +18,7 @@ Item {
     property bool hideSignPhraseModal: false
 
     function showSigningPhrasePopup(){
-        if(!hideSignPhraseModal && !localAccountSensitiveSettings.hideSignPhraseModal){
+        if(!hideSignPhraseModal && !RootStore.hideSignPhraseModal){
             signPhrasePopup.open();
         }
     }
@@ -26,7 +26,7 @@ Item {
     SignPhraseModal {
         id: signPhrasePopup
         onRemindLaterClicked: hideSignPhraseModal = true
-        onAcceptClicked: localAccountSensitiveSettings.hideSignPhraseModal = true
+        onAcceptClicked: { RootStore.hideSignPhraseModal(true); }
     }
 
     SeedPhraseBackupWarning {
@@ -73,6 +73,7 @@ Item {
         rightPanel: RightTabView {
             id: walletContainer
             anchors.fill: parent
+            changeSelectedAccount: leftTab.changeSelectedAccount
         }
     }
 }

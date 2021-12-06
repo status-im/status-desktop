@@ -12,6 +12,11 @@ PopupMenu {
     width: 260
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
 
+    signal generateNewAccountTriggered();
+    signal addWatchAccountTriggered();
+    signal enterSeedPhraseTriggered();
+    signal enterPrivateKeyTriggered();
+
     Action {
         //% "Generate an account"
         text: qsTrId("generate-a-new-account")
@@ -19,7 +24,7 @@ PopupMenu {
         icon.width: 19
         icon.height: 19
         onTriggered: {
-            generateAccountModal.open()
+            newAccountMenu.generateNewAccountTriggered();
         }
     }
     Action {
@@ -29,7 +34,7 @@ PopupMenu {
         icon.width: 19
         icon.height: 19
         onTriggered: {
-            addWatchOnlyAccountModal.open()
+            newAccountMenu.addWatchAccountTriggered();
         }
     }
     Action {
@@ -39,7 +44,7 @@ PopupMenu {
         icon.width: 19
         icon.height: 19
         onTriggered: {
-            addAccountWithSeedModal.open()
+            newAccountMenu.enterSeedPhraseTriggered();
         }
     }
     Action {
@@ -49,7 +54,7 @@ PopupMenu {
         icon.width: 19
         icon.height: 19
         onTriggered: {
-            addAccountWithPrivateKeydModal.open()
+            newAccountMenu.enterPrivateKeyTriggered();
         }
     }
 }

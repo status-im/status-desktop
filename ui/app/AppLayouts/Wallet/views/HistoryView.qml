@@ -81,6 +81,7 @@ Item {
         model: RootStore.historyTransactions
         delegate: TransactionDelegate {
             tokens: RootStore.tokens
+            locale: RootStore.locale
             currentAccountAddress: RootStore.currentAccount.address
             ethValue: RootStore.hex2Eth(value)
             onLaunchTransactionModal: {

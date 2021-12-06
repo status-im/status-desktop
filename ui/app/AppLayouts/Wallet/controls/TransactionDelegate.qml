@@ -13,6 +13,7 @@ Rectangle {
     property string ethValue: ""
     property bool isHovered: false
     property string symbol: ""
+    property string locale: ""
     property bool isIncoming: to === currentAccountAddress
 
     signal launchTransactionModal()
@@ -141,7 +142,7 @@ Rectangle {
         }
         StyledText {
             id: timeValue
-            text: new Date(parseInt(timestamp)*1000).toLocaleString(localAppSettings.locale)
+            text: new Date(parseInt(timestamp)).toLocaleString(locale)
             font.pixelSize: Style.current.primaryTextFontSize
             anchors.rightMargin: Style.current.smallPadding
         }

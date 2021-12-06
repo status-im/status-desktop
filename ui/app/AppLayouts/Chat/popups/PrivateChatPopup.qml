@@ -82,7 +82,7 @@ ModalPopup {
             cursorShape: "PointingHandCursor"
             onClicked: {
                 popup.profileClicked();
-                Config.currentMenuTab = 0;
+                Global.currentMenuTab = 0;
                 popup.close();
             }
         }

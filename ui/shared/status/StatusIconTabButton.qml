@@ -29,7 +29,7 @@ TabButton {
         }
 
         chatsModel.communities.activeCommunity.active = false
-        appMain.changeAppSectionBySectionType(section)
+        Global.changeAppSectionBySectionType(section)
     }
 
     icon.height: 24

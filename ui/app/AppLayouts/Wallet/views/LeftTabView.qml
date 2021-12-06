@@ -92,6 +92,18 @@ Rectangle {
             addAccountButton.state = "default";
             addAccountButton.checked = false;
         }
+        onGenerateNewAccountTriggered: {
+            generateAccountModal.open();
+        }
+        onAddWatchAccountTriggered: {
+            addWatchOnlyAccountModal.open();
+        }
+        onEnterSeedPhraseTriggered: {
+            addAccountWithSeedModal.open();
+        }
+        onEnterPrivateKeyTriggered: {
+            addAccountWithPrivateKeydModal.open();
+        }
     }
 
     GenerateAccountModal {
@@ -134,6 +146,7 @@ Rectangle {
 
             delegate: WalletDelegate {
                 currency: RootStore.currentCurrency
+                locale: RootStore.locale
                 selectedAccountIndex: walletInfoContainer.selectedAccountIndex
                 onClicked: {
                     changeSelectedAccount(index)

@@ -41,8 +41,14 @@ Item {
     signal settingsLoaded()
     signal openContactsPopup()
 
-    function changeAppSectionBySectionType(sectionType) {
-        mainModule.setActiveSectionBySectionType(sectionType)
+    Connections {
+        target: Global
+        onOpenLinkInBrowser: {
+            browserLayoutContainer.item.openUrlInNewTab(link);
+        }
+        onOpenChooseBrowserPopup: {
+            appMain.openPopup(chooseBrowserPopupComponent, {link: link})
+        }
     }
 
     function changeAppSectionBySectionId(sectionId) {
@@ -115,19 +121,6 @@ Item {
         return ""
     }
 
-    function openLink(link) {
-        if (localAccountSensitiveSettings.showBrowserSelector) {
-            appMain.openPopup(chooseBrowserPopupComponent, {link: link})
-        } else {
-            if (localAccountSensitiveSettings.openLinksInStatus) {
-                appMain.changeAppSectionBySectionType(Constants.appSection.browser)
-                browserLayoutContainer.item.openUrlInNewTab(link)
-            } else {
-                Qt.openUrlExternally(link)
-            }
-        }
-    }
-
     function openProfilePopup(userNameParam, fromAuthorParam, identiconParam, textParam, nicknameParam, parentPopup){
         var popup = profilePopupComponent.createObject(appMain);
         if(parentPopup){
@@ -156,11 +149,6 @@ Item {
                 destroy();
             }
         }
-    }
-
-    Audio {
-        id: errorSound
-        track: "error.mp3"
     }
 
     Audio {
@@ -429,7 +417,7 @@ Item {
                 Layout.alignment: Qt.AlignLeft | Qt.AlignTop
                 Layout.fillHeight: true
                 onProfileButtonClicked: {
-                    appMain.changeAppSectionBySectionType(Constants.appSection.profile);
+                    Global.changeAppSectionBySectionType(Constants.appSection.profile);
                 }
 
                 onOpenAppSearch: {
@@ -522,7 +510,7 @@ Item {
                             Layout.fillHeight: true
 
                             onProfileButtonClicked: {
-                                appMain.changeAppSectionBySectionType(Constants.appSection.profile);
+                                Global.changeAppSectionBySectionType(Constants.appSection.profile);
                             }
 
                             onOpenAppSearch: {
@@ -774,19 +762,19 @@ Item {
 
         Action {
             shortcut: "Ctrl+1"
-            onTriggered: changeAppSectionBySectionType(Constants.appSection.chat)
+            onTriggered: Global.changeAppSectionBySectionType(Constants.appSection.chat)
         }
         Action {
             shortcut: "Ctrl+2"
-            onTriggered: changeAppSectionBySectionType(Constants.appSection.browser)
+            onTriggered: Global.changeAppSectionBySectionType(Constants.appSection.browser)
         }
         Action {
             shortcut: "Ctrl+3"
-            onTriggered: changeAppSectionBySectionType(Constants.appSection.wallet)
+            onTriggered: Global.changeAppSectionBySectionType(Constants.appSection.wallet)
         }
         Action {
             shortcut: "Ctrl+4, Ctrl+,"
-            onTriggered: changeAppSectionBySectionType(Constants.appSection.profile)
+            onTriggered: Global.changeAppSectionBySectionType(Constants.appSection.profile)
         }
         Action {
             shortcut: "Ctrl+K"
@@ -837,7 +825,7 @@ Item {
                                                             });
             }
             onClicked: function (index) {
-                appMain.changeAppSectionBySectionType(Constants.appSection.chat)
+                Global.changeAppSectionBySectionType(Constants.appSection.chat)
                 chatsModel.channelView.setActiveChannelByIndex(index)
                 channelPicker.close()
             }

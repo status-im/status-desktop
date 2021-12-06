@@ -1,6 +1,6 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
-import QtQuick.Layouts 1.13
+import QtQuick.Dialogs 1.3
 
 import utils 1.0
 
@@ -148,6 +148,13 @@ ModalPopup {
         height: addBtn.height
         visible: editable
 
+        MessageDialog {
+            id: changeError
+            title: qsTr("Changing settings failed")
+            icon: StandardIcon.Critical
+            standardButtons: StandardButton.Ok
+        }
+
         StatusButton {
             id: addBtn
             anchors.top: parent.top
@@ -162,10 +169,10 @@ ModalPopup {
                 const error = RootStore.addCustomToken(addressInput.text, nameInput.text, symbolInput.text, decimalsInput.text);
 
                 if (error) {
-                    errorSound.play()
-                    changeError.text = error
-                    changeError.open()
-                    return
+                    Global.playErrorSound();
+                    changeError.text = error;
+                    changeError.open();
+                    return;
                 }
                 popup.close();
             }
