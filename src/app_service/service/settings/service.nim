@@ -18,6 +18,7 @@ logScope:
   topics = "settings-service"
 
 const DEFAULT_NETWORK_NAME = "mainnet_rpc"
+const TELEMETRY_BASE_URL = "https://telemetry.status.im"
 
 type 
   Service* = ref object of ServiceInterface
@@ -81,11 +82,19 @@ method getCurrentNetworkDetails*(self: Service): NetworkDetails =
     if n.id == currNetwork:
       return n
 
+method enableDeveloperFeatures*(self: Service) =
+  discard status_go_settings.saveSetting(Setting.TelemetryServerUrl, TELEMETRY_BASE_URL)
+  discard status_go_settings.saveSetting(Setting.AutoMessageEnabled, true)
+  var nodeConfig = status_go_settings.getNodeConfig()
+  nodeConfig["LogLevel"] = newJString($LogLevel.DEBUG)
+  discard status_go_settings.saveSetting(Setting.NodeConfig, nodeConfig)
+  quit(QuitSuccess) # quits the app TODO: change this to logout instead when supported
+
 method toggleTelemetry*(self: Service) =
   let telemetryServerUrl = status_go_settings.getSetting[string](Setting.TelemetryServerUrl)
   var newValue = ""
   if telemetryServerUrl == "":
-    newValue = "https://telemetry.status.im"
+    newValue = TELEMETRY_BASE_URL
 
   discard status_go_settings.saveSetting(Setting.TelemetryServerUrl, newValue)
 
@@ -107,7 +116,6 @@ method toggleDebug*(self: Service) =
   else:
     nodeConfig["LogLevel"] = newJString($LogLevel.INFO)
   discard status_go_settings.saveSetting(Setting.NodeConfig, nodeConfig)
-  quit(QuitSuccess) # quits the app TODO: change this to logout instead when supported
 
 method isDebugEnabled*(self: Service): bool =
   let nodeConfig = status_go_settings.getNodeConfig()

@@ -9,6 +9,9 @@ method delete*(self: AccessInterface) {.base.} =
 method init*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method enableDeveloperFeatures*(self: AccessInterface) {.base.} = 
+  raise newException(ValueError, "No implementation available")
+
 method toggleTelemetry*(self: AccessInterface) {.base.} = 
   raise newException(ValueError, "No implementation available")
 

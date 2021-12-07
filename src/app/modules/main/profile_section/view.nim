@@ -11,7 +11,7 @@ QtObject:
       isDebugEnabled: bool
       isAutoMessageEnabled: bool
 
-  proc setup(self: View) = 
+  proc setup(self: View) =
     self.QObject.setup
 
   proc delete*(self: View) =
@@ -35,7 +35,7 @@ QtObject:
     read = getIsTelemetryEnabled
     notify = isTelemetryEnabledChanged
 
-  proc toggleTelemetry*(self: View) {.slot.} = 
+  proc toggleTelemetry*(self: View) {.slot.} =
     self.delegate.toggleTelemetry()
     self.setIsTelemetryEnabled(not self.isTelemetryEnabled)
 
@@ -52,7 +52,7 @@ QtObject:
     read = getIsDebugEnabled
     notify = isDebugEnabledChanged
 
-  proc toggleDebug*(self: View) {.slot.} = 
+  proc toggleDebug*(self: View) {.slot.} =
     self.delegate.toggleDebug()
     self.setIsDebugEnabled(not self.isDebugEnabled)
 
@@ -69,6 +69,12 @@ QtObject:
     read = getIsAutoMessageEnabled
     notify = isAutoMessageEnabledChanged
 
-  proc toggleAutoMessage*(self: View) {.slot.} = 
+  proc toggleAutoMessage*(self: View) {.slot.} =
     self.delegate.toggleAutoMessage()
     self.setIsAutoMessageEnabled(not self.isAutoMessageEnabled)
+
+  proc enableDeveloperFeatures*(self: View) {.slot.} =
+    self.delegate.enableDeveloperFeatures()
+    self.setIsTelemetryEnabled(true)
+    self.setIsDebugEnabled(true)
+    self.setIsAutoMessageEnabled(true)
