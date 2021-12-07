@@ -1,5 +1,4 @@
 import QtQuick 2.13
-import QtQuick.Controls 2.13
 import QtQuick.Controls 1.0 as QQC1
 
 import "../controls/styles"
@@ -7,8 +6,12 @@ import "../controls/styles"
 QQC1.TabView {
     id: tabs
 
-    property int tabHeight: 40
+    property var currentWebEngineProfile
     property var tabComponent
+    property var determineRealURL: function(url) {}
+    readonly property int tabHeight: 40
+
+    signal openNewTabTriggered()
 
     function createEmptyTab(profile, createAsStartPage) {
         var tab = addTab("", tabComponent);
@@ -55,27 +58,19 @@ QQC1.TabView {
         return -1
     }
 
+    function openNewTabClicked() {
+         openNewTabTriggered()
+     }
+
     function removeView(index) {
         if (tabs.count === 1) {
-            tabs.createEmptyTab(currentWebView.profile, true)
+            tabs.createEmptyTab(currentWebEngineProfile, true)
         }
         tabs.removeTab(index)
     }
 
-    function openNewTabClicked() {
-        addNewTab()
-    }
-
     function closeButtonClicked(index) {
         removeView(index)
-    }
-
-    Component.onCompleted: {
-        defaultProfile.downloadRequested.connect(onDownloadRequested);
-        otrProfile.downloadRequested.connect(onDownloadRequested);
-        var tab = createEmptyTab(defaultProfile);
-        // For Devs: Uncomment the next lien if you want to use the simpeldapp on first load
-        // tab.item.url = Web3ProviderStore.determineRealURL("https://simpledapp.eth");
     }
 
     style: BrowserTabStyle {}

@@ -10,6 +10,10 @@ RowLayout {
 
     property alias bookmarkModel: bookmarkList.model
 
+    property var favoritesMenu
+    property var setAsCurrentWebUrl: function(url){}
+    property var addFavModal: function(){}
+
     spacing: 0
     height: 38
 
@@ -41,22 +45,19 @@ RowLayout {
                     }
 
                     if (mouse.button === Qt.RightButton) {
-                        favoriteMenu.url = url
-                        favoriteMenu.x = favoriteBtn.x + mouse.x
-                        favoriteMenu.y = Qt.binding(function () {return mouse.y + favoriteMenu.height})
-                        favoriteMenu.open()
+                        favoritesMenu.url = url
+                        favoritesMenu.x = favoriteBtn.x + mouse.x
+                        favoritesMenu.y = Qt.binding(function () {return mouse.y + favoritesMenu.height})
+                        favoritesMenu.open()
                         return
                     }
 
                     if (isAddBookmarkButton) {
-                        addFavoriteModal.toolbarMode = true
-                        addFavoriteModal.ogUrl = browserHeader.currentFavorite ? browserHeader.currentFavorite.url : currentWebView.url
-                        addFavoriteModal.ogName = browserHeader.currentFavorite ? browserHeader.currentFavorite.name : currentWebView.title
-                        addFavoriteModal.open()
+                        addFavModal()
                         return
                     }
 
-                    currentWebView.url = determineRealURL(url)
+                    setAsCurrentWebUrl(url)
                 }
             }
         }

@@ -50,8 +50,18 @@
 
 import QtQuick 2.13
 import QtQuick.Controls 2.14
+import QtWebEngine 1.10
 
 Item {
+    id: shortcutActions
+
+    property var currentWebView
+    property var findBarComponent
+    property var browserHeaderComponent
+
+    signal addNewDownloadTab()
+    signal removeView()
+
     Action {
         shortcut: "Ctrl+D"
         onTriggered: {
@@ -61,8 +71,8 @@ Item {
     Action {
         shortcut: "Ctrl+L"
         onTriggered: {
-            browserHeader.addressBar.forceActiveFocus();
-            browserHeader.addressBar.selectAll();
+            browserHeaderComponent.addressBar.forceActiveFocus();
+            browserHeaderComponent.addressBar.selectAll();
         }
     }
     Action {
@@ -74,9 +84,7 @@ Item {
     }
     Action {
         shortcut: "Ctrl+W"
-        onTriggered: {
-            tabs.removeView(tabs.currentIndex)
-        }
+        onTriggered: removeView()
     }
     Action {
         shortcut: StandardKey.Close
@@ -87,8 +95,8 @@ Item {
     Action {
         shortcut: "Escape"
         onTriggered: {
-            if (findBar.visible)
-                findBar.visible = false;
+            if (findBarComponent.visible)
+                findBarComponent.visible = false;
         }
     }
     Action {
@@ -129,10 +137,10 @@ Item {
     }
     Action {
         shortcut: StandardKey.FindNext
-        onTriggered: findBar.findNext()
+        onTriggered: findBarComponent.findNext()
     }
     Action {
         shortcut: StandardKey.FindPrevious
-        onTriggered: findBar.findPrevious()
+        onTriggered: findBarComponent.findPrevious()
     }
 }

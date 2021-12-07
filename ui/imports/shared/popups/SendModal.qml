@@ -107,7 +107,7 @@ ModalPopup {
             RecipientSelector {
                 id: selectRecipient
                 accounts: root.store.accounts
-                contacts: popup.store.addedContacts
+                contacts: root.store.addedContacts
                 //% "Recipient"
                 label: qsTrId("recipient")
                 anchors.top: separator.bottom
