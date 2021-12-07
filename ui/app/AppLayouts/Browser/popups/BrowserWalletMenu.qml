@@ -3,11 +3,12 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import QtGraphicalEffects 1.13
 
-import utils 1.0
-import shared.controls 1.0
-import shared.panels 1.0
-
 import StatusQ.Controls 0.1
+import StatusQ.Core 0.1
+
+import shared.controls 1.0
+
+import utils 1.0
 
 import "../../Wallet/views"
 import "../stores"
@@ -15,6 +16,11 @@ import "../stores"
 // TODO: replace with StatusPopupMenu
 Popup {
     id: popup
+
+    signal sendTriggered(var selectedAccount)
+    signal disconnect()
+    signal reload()
+
     modal: false
 
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
@@ -26,7 +32,7 @@ Popup {
         color: Style.current.background
         radius: Style.current.radius
         layer.enabled: true
-        layer.effect: DropShadow{
+        layer.effect: DropShadow {
             width: bgPopup.width
             height: bgPopup.height
             x: bgPopup.x
@@ -62,7 +68,7 @@ Popup {
             anchors.verticalCenter: parent.verticalCenter
         }
 
-        StyledText {
+        StatusBaseText {
             id: networkText
             text: {
                 switch (RootStore.currentNetwork) {
@@ -80,7 +86,7 @@ Popup {
             anchors.leftMargin: Style.current.halfPadding
         }
 
-        StyledText {
+        StatusBaseText {
             id: disconectBtn
             //% "Disconnect"
             text: qsTrId("disconnect")
@@ -92,11 +98,7 @@ Popup {
             MouseArea {
                 cursorShape: Qt.PointingHandCursor
                 anchors.fill: parent
-                onClicked: {
-                    Web3ProviderStore.web3ProviderInst.disconnect();
-                    provider.postMessage("web3-disconnect-account", "{}");
-                    popup.close();
-                }
+                onClicked: disconnect()
             }
         }
     }
@@ -131,10 +133,8 @@ Popup {
                 accountSelectorRow.currentAddress = selectedAccount.address
                 Web3ProviderStore.web3ProviderInst.dappsAddress = selectedAccount.address;
                 WalletStore.setDappBrowserAddress()
-                Web3ProviderStore.revokeAllPermissions();
-                for (let i = 0; i < tabs.count; ++i){
-                    tabs.getTab(i).item.reload();
-                }
+                Web3ProviderStore.revokeAllPermissions()
+                reload()
             }
         }
 
@@ -157,10 +157,7 @@ Popup {
             anchors.top: parent.top
             anchors.topMargin: Style.current.halfPadding
             icon.name: "send"
-            onClicked: {
-                sendModal.selectedAccount = accountSelector.selectedAccount
-                sendModal.open()
-            }
+            onClicked: sendTriggered(accountSelector.selectedAccount)
         }
     }
 

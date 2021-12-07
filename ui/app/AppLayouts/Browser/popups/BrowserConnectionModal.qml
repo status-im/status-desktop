@@ -3,7 +3,6 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 
 import utils 1.0
-import shared.controls 1.0
 import shared.panels 1.0
 
 import StatusQ.Controls 0.1
@@ -14,13 +13,13 @@ import "../controls"
 import "../stores"
 
 StatusModal {
+    id: browserConnectionModal
 
     property var currentTab
     property var request: ({"hostname": "", "title": "", "permission": ""})
     property string currentAddress: ""
     property bool interactedWith: false
-
-    id: browserConnectionModal
+    property var web3Response: function(){}
 
     width: 360
     height: 480
@@ -31,16 +30,14 @@ StatusModal {
 
     function postMessage(isAllowed){
         interactedWith = true
-        currentTabConnected = isAllowed
-        if(isAllowed){
-            Web3ProviderStore.addPermission(request.hostname, request.permission)
-        }
-        provider.web3Response(Web3ProviderStore.web3ProviderInst.postMessage("api-request", JSON.stringify(request)));
+        request.isAllowed = isAllowed;
+        RootStore.currentTabConnected = isAllowed
+        web3Response(Web3ProviderStore.web3ProviderInst.postMessage(JSON.stringify(request)))
     }
 
     onClosed: {
         if(!interactedWith){
-            currentTabConnected = false
+            RootStore.currentTabConnected = false
             postMessage(false);
         }
     }

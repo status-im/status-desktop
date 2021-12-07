@@ -5,7 +5,6 @@ import QtQuick 2.13
 QtObject {
     id: root
 
-    // Seems like this vould be a BookMarks Store which has everything related to bookmarks
     property var bookmarksModel: bookmarkModule.model
 
     function addBookmark(url, name)
@@ -43,5 +42,4 @@ QtObject {
             image: bookmarkModule.model.rowData(index, 'imageUrl')
         }
     }
-    // END >> Seems like this vould be a BookMarks Store which has everything related to bookmarks
 }

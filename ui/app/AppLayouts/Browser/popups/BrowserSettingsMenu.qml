@@ -1,18 +1,28 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.3
 import QtWebEngine 1.9
-import utils 1.0
 
 import shared 1.0
 import shared.panels 1.0
 import shared.status 1.0
 import shared.popups 1.0
 
-import "../../Chat/popups"
+import utils 1.0
 
 // TODO: replace with StatusPopupMenu
 PopupMenu {
-    property var addNewTab: function () {}
+    id: browserSettingsMenu
+
+    property bool isIncognito: false
+
+    signal addNewTab()
+    signal goIncognito(bool checked)
+    signal zoomIn()
+    signal zoomOut()
+    signal changeZoomFactor()
+    signal launchFindBar()
+    signal toggleCompatibilityMode(bool checked)
+    signal launchBrowserSettings()
 
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
 
@@ -20,9 +30,7 @@ PopupMenu {
         //% "New Tab"
         text: qsTrId("new-tab")
         shortcut: StandardKey.AddTab
-        onTriggered: {
-            addNewTab()
-        }
+        onTriggered: addNewTab()
     }
 
     Action {
@@ -34,12 +42,8 @@ PopupMenu {
                   //% "Go Incognito"
                   qsTrId("go-incognito")
         checkable: true
-        checked: currentWebView && currentWebView.profile === otrProfile
-        onToggled: function(checked) {
-            if (currentWebView) {
-                currentWebView.profile = checked ? otrProfile : defaultProfile;
-            }
-        }
+        checked: isIncognito
+        onToggled: goIncognito(checked)
     }
 
     Separator {}
@@ -49,23 +53,19 @@ PopupMenu {
         //% "Zoom In"
         text: qsTrId("zoom-in")
         shortcut: StandardKey.ZoomIn
-        onTriggered: {
-            const newZoom = currentWebView.zoomFactor + 0.1
-            currentWebView.changeZoomFactor(newZoom)
-        }
+        onTriggered: zoomIn()
     }
+
     Action {
         //% "Zoom Out"
         text: qsTrId("zoom-out")
         shortcut: StandardKey.ZoomOut
-        onTriggered: {
-            const newZoom = currentWebView.zoomFactor - 0.1
-            currentWebView.changeZoomFactor(newZoom)
-        }
+        onTriggered: zoomOut()
     }
+
     Action {
         shortcut: "Ctrl+0"
-        onTriggered: currentWebView.changeZoomFactor(1.0)
+        onTriggered: changeZoomFactor()
     }
 
     Separator {}
@@ -74,12 +74,7 @@ PopupMenu {
         //% "Find"
         text: qsTrId("find")
         shortcut: StandardKey.Find
-        onTriggered: {
-            if (!findBar.visible) {
-                findBar.visible = true;
-                findBar.forceActiveFocus()
-            }
-        }
+        onTriggered: launchFindBar()
     }
 
     Action {
@@ -87,18 +82,7 @@ PopupMenu {
         text: qsTrId("compatibility-mode")
         checkable: true
         checked: true
-        onToggled: {
-            for (let i = 0; i < tabs.count; ++i){
-                tabs.getTab(i).item.stop(); // Stop all loading tabs
-            }
-
-            localAccountSensitiveSettings.compatibilityMode = checked;
-
-            for (let i = 0; i < tabs.count; ++i){
-                tabs.getTab(i).item.reload(); // Reload them with new user agent
-            }
-                            
-        }
+        onToggled: toggleCompatibilityMode(checked)
     }
 
     Action {
@@ -116,11 +100,6 @@ PopupMenu {
         //% "Settings"
         text: qsTrId("settings")
         shortcut: "Ctrl+,"
-        onTriggered: {
-            Global.changeAppSectionBySectionType(Constants.appSection.profile)
-            // TODO: replace with shared store constant
-            // Profile/RootStore.browser_settings_id
-            profileLayoutContainer.changeProfileSection(10)
-        }
+        onTriggered: launchBrowserSettings()
     }
 }

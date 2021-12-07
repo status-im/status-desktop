@@ -5,9 +5,6 @@ import utils 1.0
 
 import StatusQ.Controls 0.1
 
-import shared 1.0
-import shared.status 1.0
-
 import "../controls"
 
 Rectangle {
@@ -16,8 +13,10 @@ Rectangle {
 
     property bool isVisible: false
     property var downloadsModel
+    property var downloadsMenu
 
     signal openDownloadClicked(bool downloadComplete, int index)
+    signal addNewDownloadTab()
 
     visible: isVisible && !!listView.count
     color: Style.current.background
@@ -78,15 +77,15 @@ Rectangle {
                     openDownloadClicked(downloadComplete, index)
                 }
                 onOptionsButtonClicked: {
-                    downloadMenu.index = index
-                    downloadMenu.downloadComplete = Qt.binding(function() {return downloadElement.downloadComplete})
-
-                    downloadMenu.x =  listView.width + downloadElement.x  + 50
-                    downloadMenu.y = downloadBar.y - downloadMenu.height
-                    downloadMenu.open()
+                    downloadsMenu.index = index
+                    downloadsMenu.downloadComplete = Qt.binding(function() {return downloadElement.downloadComplete})
+                    downloadsMenu.parent = downloadElement
+                    downloadsMenu.x =  xVal + 20
+                    downloadsMenu.y =  -downloadsMenu.height
+                    downloadsMenu.open()
                 }
                 Connections {
-                    target: downloadMenu
+                    target: downloadsMenu
                     onCancelClicked: {
                         isCanceled = true
                     }
