@@ -20,7 +20,7 @@ RadioButtonSelector {
         if (checked) {
             if (profileModel.network.current === root.network) return;
             root.newNetwork = root.network;
-            openPopup(confirmDialogComponent)
+            Global.openPopup(confirmDialogComponent)
         }
     }
 

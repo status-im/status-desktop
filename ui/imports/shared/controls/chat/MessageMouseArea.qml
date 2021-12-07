@@ -43,7 +43,7 @@ MouseArea {
                 isHovered = false;
             }
             //TODO remove dynamic scoping
-            openPopup(statusStickerPackClickPopup, {packId: stickerPackId} )
+            Global.openPopup(statusStickerPackClickPopup, {packId: stickerPackId} )
             return;
         }
     }

@@ -200,7 +200,7 @@ Item {
                 chatInfoButton.pinnedMessagesCount: root.rootStore.chatsModelInst.messageView.pinnedMessagesList.count
                 chatInfoButton.muted: root.rootStore.chatsModelInst.channelView.activeChannel.muted
 
-                chatInfoButton.onPinnedMessagesCountClicked: openPopup(pinnedMessagesPopupComponent)
+                chatInfoButton.onPinnedMessagesCountClicked: Global.openPopup(pinnedMessagesPopupComponent)
                 chatInfoButton.onUnmute: root.rootStore.chatsModelInst.channelView.unmuteChatItem(chatsModel.channelView.activeChannel.id)
 
                 chatInfoButton.sensor.enabled: root.rootStore.chatsModelInst.channelView.activeChannel.chatType !== Constants.chatTypePublic &&
@@ -208,7 +208,7 @@ Item {
                 chatInfoButton.onClicked: {
                     switch (root.rootStore.chatsModelInst.channelView.activeChannel.chatType) {
                     case Constants.chatTypePrivateGroupChat:
-                        openPopup(groupInfoPopupComponent, {
+                        Global.openPopup(groupInfoPopupComponent, {
                             channelType: GroupInfoPopup.ChannelType.ActiveChannel,
                             channel: root.rootStore.chatsModelInst.channelView.activeChannel
                         })

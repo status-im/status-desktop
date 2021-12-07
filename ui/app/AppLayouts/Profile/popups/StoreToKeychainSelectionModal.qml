@@ -54,7 +54,7 @@ ModalPopup {
             checked: localAccountSettings.storeToKeychainValue === Constants.storeToKeychainValueStore
             onCheckedChanged: {
                 if (checked && localAccountSettings.storeToKeychainValue !== Constants.storeToKeychainValueStore) {
-                    var storePassPopup = openPopup(storePasswordModal)
+                    var storePassPopup = Global.openPopup(storePasswordModal)
                     if(storePassPopup)
                     {
                         storePassPopup.closed.connect(function(){

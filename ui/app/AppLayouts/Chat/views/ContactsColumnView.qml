@@ -34,7 +34,7 @@ Item {
 
     Component.onCompleted: {
         appMain.openContactsPopup.connect(function(){
-            openPopup(contactRequestsPopup)
+            Global.openPopup(contactRequestsPopup)
         })
     }
 
@@ -161,28 +161,28 @@ Item {
                     //% "Start new chat"
                     text: qsTrId("start-new-chat")
                     icon.name: "private-chat"
-                    onTriggered: openPopup(privateChatPopupComponent)
+                    onTriggered: Global.openPopup(privateChatPopupComponent)
                 }
 
                 StatusMenuItem {
                     //% "Start group chat"
                     text: qsTrId("start-group-chat")
                     icon.name: "group-chat"
-                    onTriggered: openPopup(groupChatPopupComponent)
+                    onTriggered: Global.openPopup(groupChatPopupComponent)
                 }
 
                 StatusMenuItem {
                     //% "Join public chat"
                     text: qsTrId("new-public-group-chat")
                     icon.name: "public-chat"
-                    onTriggered: openPopup(publicChatPopupComponent)
+                    onTriggered: Global.openPopup(publicChatPopupComponent)
                 }
 
                 StatusMenuItem {
                     //% "Communities"
                     text: qsTrId("communities")
                     icon.name: "communities"
-                    onTriggered: openPopup(communitiesPopupComponent)
+                    onTriggered: Global.openPopup(communitiesPopupComponent)
                     enabled: localAccountSensitiveSettings.communitiesEnabled
                 }
             }
@@ -205,7 +205,7 @@ Item {
         title: qsTrId("contact-requests")
         requestsCount: nbRequests
 
-        sensor.onClicked: openPopup(contactRequestsPopup)
+        sensor.onClicked: Global.openPopup(contactRequestsPopup)
     }
 
     ScrollView {

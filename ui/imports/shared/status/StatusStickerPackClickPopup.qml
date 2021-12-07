@@ -102,7 +102,7 @@ ModalPopup {
         onCancelClicked: function(){}
         onUpdateClicked: function(){}
         onBuyClicked: {
-            openPopup(stickerPackPurchaseModal)
+            Global.openPopup(stickerPackPurchaseModal)
             root.buyClicked(packId)
         }
     }

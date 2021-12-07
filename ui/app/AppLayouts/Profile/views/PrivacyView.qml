@@ -105,7 +105,7 @@ Item {
                     color: Theme.palette.baseColor1
                 }
             ]
-            sensor.onClicked: openPopup(storeToKeychainSelectionModal)
+            sensor.onClicked: Global.openPopup(storeToKeychainSelectionModal)
 
             Component {
                 id: storePasswordModal
@@ -218,7 +218,7 @@ Item {
                     color: Theme.palette.baseColor1
                 }
             ]
-            sensor.onClicked: openPopup(chatLinksPreviewModal)
+            sensor.onClicked: Global.openPopup(chatLinksPreviewModal)
         }
 
         Component {
@@ -248,7 +248,7 @@ Item {
                     color: Theme.palette.baseColor1
                 }
             ]
-            sensor.onClicked: openPopup(openLinksWithModal)
+            sensor.onClicked: Global.openPopup(openLinksWithModal)
         }
 
         StatusListItem {

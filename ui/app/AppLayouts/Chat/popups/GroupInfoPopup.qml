@@ -178,7 +178,7 @@ StatusModal {
             //% "Pinned messages"
             text: qsTrId("pinned-messages")
             currentValue: pinnedCount
-            onClicked: openPopup(pinnedMessagesPopupComponent)
+            onClicked: Global.openPopup(pinnedMessagesPopupComponent)
             iconSource: Style.svg("pin")
         }
 

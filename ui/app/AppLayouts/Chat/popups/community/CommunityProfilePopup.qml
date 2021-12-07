@@ -63,12 +63,12 @@ StatusModal {
                 onNotificationsButtonClicked: {
                     root.store.setCommunityMuted(root.community.id, checked);
                 }
-                onEditButtonClicked: openPopup(editCommunityPopup, {
+                onEditButtonClicked: Global.openPopup(editCommunityPopup, {
                     store: root.store,
                     community: root.community,
                     onSave: root.close
                 })
-                onTransferOwnershipButtonClicked: openPopup(transferOwnershiproot, {
+                onTransferOwnershipButtonClicked: Global.openPopup(transferOwnershiproot, {
                     privateKey: root.store.exportCommunity(),
                     store: root.store
                 })

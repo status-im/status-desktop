@@ -59,7 +59,7 @@ Item {
                 }
                 onClicked: {
                     root.store.checkForUpdates();
-                    openPopup(downloadModalComponent, {newVersionAvailable: newVersionJSON.available, downloadURL: newVersionJSON.url})
+                    Global.openPopup(downloadModalComponent, {newVersionAvailable: newVersionJSON.available, downloadURL: newVersionJSON.url})
                 }
             }
         }
