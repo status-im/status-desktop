@@ -38,6 +38,9 @@ method delete*[T](self: Controller[T]) =
 method init*[T](self: Controller[T]) = 
   discard
 
+method enableDeveloperFeatures*[T](self: Controller[T]) = 
+  self.settingsService.enableDeveloperFeatures()
+
 method toggleTelemetry*[T](self: Controller[T]) = 
   self.settingsService.toggleTelemetry()
 

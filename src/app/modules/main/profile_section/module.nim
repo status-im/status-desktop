@@ -98,6 +98,9 @@ method isLoaded*[T](self: Module[T]): bool =
 method viewDidLoad*(self: Module) =
   discard
 
+method enableDeveloperFeatures*[T](self: Module[T]) = 
+  self.controller.enableDeveloperFeatures()
+
 method toggleTelemetry*[T](self: Module[T]) = 
   self.controller.toggleTelemetry()
 

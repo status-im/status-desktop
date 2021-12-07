@@ -8,7 +8,7 @@ export network_details
 export node_config
 export upstream_config
 
-type 
+type
   ServiceInterface* {.pure inheritable.} = ref object of RootObj
   ## Abstract class for this service access.
 
@@ -67,4 +67,7 @@ method toggleDebug*(self: ServiceInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method isDebugEnabled*(self: ServiceInterface): bool {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method enableDeveloperFeatures*(self: ServiceInterface) {.base.} =
   raise newException(ValueError, "No implementation available")

@@ -11,6 +11,9 @@ method load*(self: AccessInterface) {.base.} =
 method isLoaded*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method enableDeveloperFeatures*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method toggleTelemetry*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
