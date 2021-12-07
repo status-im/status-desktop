@@ -65,7 +65,7 @@ ModalPopup {
                 MouseArea {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
-                    onClicked: openPopup(addNetworkPopupComponent)
+                    onClicked: Global.openPopup(addNetworkPopupComponent)
                 }
             }
 

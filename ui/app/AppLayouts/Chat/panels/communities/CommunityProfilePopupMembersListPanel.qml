@@ -66,7 +66,7 @@ Item {
             //% "Membership requests"
             title: qsTrId("membership-requests")
             requestsCount: nbRequests
-            sensor.onClicked: openPopup(membershipRequestPopup)
+            sensor.onClicked: Global.openPopup(membershipRequestPopup)
         }
 
         StatusModalDivider {
@@ -171,7 +171,7 @@ Item {
                                     //% "View Profile"
                                     text: qsTrId("view-profile")
                                     icon.name: "channel"
-                                    onTriggered: openPopup(profilePopup, {
+                                    onTriggered: Global.openPopup(profilePopup, {
                                        noFooter: userProfile.pubKey !== model.pubKey,
                                        userName: model.userName,
                                        fromAuthor: model.pubKey, 

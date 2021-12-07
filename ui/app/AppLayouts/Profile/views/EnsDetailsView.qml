@@ -137,7 +137,7 @@ Item {
         anchors.leftMargin: 24
         text: qsTrId("Release username")
         onClicked: {
-            openPopup(transactionDialogComponent)
+            Global.openPopup(transactionDialogComponent)
         }
     }
 

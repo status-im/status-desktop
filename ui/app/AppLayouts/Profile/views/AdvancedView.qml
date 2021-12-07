@@ -281,7 +281,7 @@ ScrollView {
                     btnText: qsTrId("light-node")
                     onToggled: {
                         if (root.store.bloomLevel != "light") {
-                            openPopup(bloomConfirmationDialogComponent, {mode: "light"})
+                            Global.openPopup(bloomConfirmationDialogComponent, {mode: "light"})
                         } else {
                             btnBloomLight.click()
                         }
@@ -296,7 +296,7 @@ ScrollView {
                     btnText: qsTrId("normal")
                     onToggled: {
                         if (root.store.bloomLevel != "normal") {
-                            openPopup(bloomConfirmationDialogComponent, {mode: "normal"})
+                            Global.openPopup(bloomConfirmationDialogComponent, {mode: "normal"})
                         } else {
                             btnBloomNormal.click()
                         }
@@ -311,7 +311,7 @@ ScrollView {
                     btnText: qsTrId("full-node")
                     onToggled: {
                         if (root.store.bloomLevel != "full") {
-                            openPopup(bloomConfirmationDialogComponent, {mode: "full"})
+                            Global.openPopup(bloomConfirmationDialogComponent, {mode: "full"})
                         } else {
                             btnBloomFull.click()
                         }
@@ -363,7 +363,7 @@ ScrollView {
                     btnText: qsTrId("light-node")
                     onToggled: {
                         if (!root.store.isWakuV2LightClient) {
-                            openPopup(wakuV2ModeConfirmationDialogComponent, {mode: true})
+                            Global.openPopup(wakuV2ModeConfirmationDialogComponent, {mode: true})
                         } else {
                             btnWakuV2Light.click()
                         }
@@ -378,7 +378,7 @@ ScrollView {
                     btnText: qsTrId("full-node")
                     onToggled: {
                         if (root.store.isWakuV2LightClient) {
-                            openPopup(wakuV2ModeConfirmationDialogComponent, {mode: false})
+                            Global.openPopup(wakuV2ModeConfirmationDialogComponent, {mode: false})
                         } else {
                             btnWakuV2Full.click()
                         }
@@ -413,7 +413,7 @@ ScrollView {
                 isSwitch: true
                 switchChecked: root.store.profileModuleInst.isTelemetryEnabled
                 onClicked: {
-                    openPopup(enableTelemetryConfirmationDialogComponent, {light: false})
+                    Global.openPopup(enableTelemetryConfirmationDialogComponent, {light: false})
                 }
             }
 
@@ -423,7 +423,7 @@ ScrollView {
                 isSwitch: true
                 switchChecked: root.store.profileModuleInst.isDebugEnabled
                 onClicked: {
-                    openPopup(enableDebugComponent)
+                    Global.openPopup(enableDebugComponent)
                 }
             }
 
@@ -433,7 +433,7 @@ ScrollView {
                 isSwitch: true
                 switchChecked: root.store.profileModuleInst.isAutoMessageEnabled
                 onClicked: {
-                    openPopup(enableAutoMessageConfirmationDialogComponent, {light: false})
+                    Global.openPopup(enableAutoMessageConfirmationDialogComponent, {light: false})
                 }
             }
         }

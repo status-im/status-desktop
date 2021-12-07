@@ -163,7 +163,7 @@ StatusModal {
             icon.name: "delete"
             type: StatusListItem.Type.Danger
             sensor.onClicked: {
-                openPopup(deleteCategoryConfirmationDialogComponent, {
+                Global.openPopup(deleteCategoryConfirmationDialogComponent, {
                     //% "Delete %1 category"
                     title: qsTrId("delete--1-category").arg(root.contentItem.categoryName.input.text),
                     //% "Are you sure you want to delete %1 category? Channels inside the category won’t be deleted."

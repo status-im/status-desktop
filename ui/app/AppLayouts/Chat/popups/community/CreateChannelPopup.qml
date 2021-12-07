@@ -180,7 +180,7 @@ StatusModal {
                     }
                 ]
 
-                sensor.onClicked: openPopup(pinnedMessagesPopupComponent)
+                sensor.onClicked: Global.openPopup(pinnedMessagesPopupComponent)
             }
 
             Item {

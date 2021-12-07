@@ -225,7 +225,7 @@ ModalPopup {
 
                     if(gasSelector.eip1599Enabled && stack.currentGroup === group2 && gasSelector.advancedMode){
                         if(gasSelector.showPriceLimitWarning || gasSelector.showTipLimitWarning){
-                            openPopup(transactionSettingsConfirmationPopupComponent, {
+                            Global.openPopup(transactionSettingsConfirmationPopupComponent, {
                                 currentBaseFee: gasSelector.latestBaseFeeGwei,
                                 currentMinimumTip: gasSelector.perGasTipLimitFloor,
                                 currentAverageTip: gasSelector.perGasTipLimitAverage,

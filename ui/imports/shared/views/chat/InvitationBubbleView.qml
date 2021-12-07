@@ -323,7 +323,7 @@ Item {
                             if (localAccountSensitiveSettings.communitiesEnabled) {
                                 onBtnClick();
                             } else {
-                                openPopup(confirmationPopupComponent, { onConfirmed: onBtnClick });
+                                Global.openPopup(confirmationPopupComponent, { onConfirmed: onBtnClick });
                             }
                         }
 
