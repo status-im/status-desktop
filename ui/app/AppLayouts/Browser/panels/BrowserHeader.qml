@@ -5,13 +5,11 @@ import Qt.labs.settings 1.0
 import QtQuick.Controls.Styles 1.0
 import QtWebEngine 1.10
 
-import utils 1.0
-import shared.controls 1.0
-import StatusQ.Controls 0.1 as StatusQControls
+import StatusQ.Controls 0.1
 
-import shared 1.0
-import shared.panels 1.0
-import shared.status 1.0
+import shared.controls 1.0
+
+import utils 1.0
 
 import "../popups"
 import "../controls"
@@ -22,13 +20,29 @@ Rectangle {
     property alias favoriteComponent: favoritesBarLoader.sourceComponent
     property alias addressBar: addressBar
 
-    readonly property int innerMargin: 12
+    property var currentUrl
+    property bool isLoading: false
+    property bool canGoBack: false
+    property bool canGoForward: false
     property var currentFavorite
-    property var addNewTab: function () {}
+    property bool currentTabConnected: false
     property string dappBrowserAccName: ""
     property string dappBrowserAccIcon: ""
+    property var settingMenu
+    property var walletMenu
 
     signal addNewFavoritelClicked(var xPos)
+    signal launchInBrowser(var url)
+    signal openHistoryPopup(var xPos, var yPos)
+    signal goForward()
+    signal goBack()
+    signal reload()
+    signal stopLoading()
+
+    QtObject {
+        id: _internal
+        readonly property int innerMargin: 12
+    }
 
     width: parent.width
     height: barRow.height + (favoritesBarLoader.active ? favoritesBarLoader.height : 0)
@@ -39,29 +53,9 @@ Rectangle {
         id: barRow
         width: parent.width
         height: 45
-        spacing: browserHeader.innerMargin
+        spacing: _internal.innerMargin
 
-        Menu {
-            id: historyMenu
-            Instantiator {
-                model: currentWebView && currentWebView.navigationHistory.items
-                MenuItem {
-                    text: model.title
-                    onTriggered: currentWebView.goBackOrForward(model.offset)
-                    checkable: !enabled
-                    checked: !enabled
-                    enabled: model.offset
-                }
-                onObjectAdded: function(index, object) {
-                    historyMenu.insertItem(index, object)
-                }
-                onObjectRemoved: function(index, object) {
-                    historyMenu.removeItem(object)
-                }
-            }
-        }
-
-        StatusQControls.StatusFlatRoundButton {
+        StatusFlatRoundButton {
             id: backButton
             width: 32
             height: 32
@@ -69,18 +63,18 @@ Rectangle {
             icon.width: 20
             icon.name: "left"
             icon.disabledColor: Style.current.lightGrey
-            type: StatusQControls.StatusFlatRoundButton.Type.Tertiary
-            enabled: currentWebView && currentWebView.canGoBack
-            Layout.leftMargin: browserHeader.innerMargin
-            onClicked: currentWebView.goBack()
+            type: StatusFlatRoundButton.Type.Tertiary
+            enabled: canGoBack
+            Layout.leftMargin: _internal.innerMargin
+            onClicked: goBack()
             onPressAndHold: {
-                if (currentWebView && (currentWebView.canGoBack || currentWebView.canGoForward)){
-                    historyMenu.popup(backButton.x, backButton.y + backButton.height)
+                if (canGoBack || canGoForward) {
+                    openHistoryPopup(backButton.x, backButton.y + backButton.height)
                 }
             }
         }
 
-        StatusQControls.StatusFlatRoundButton {
+        StatusFlatRoundButton {
             id: forwardButton
             width: 32
             height: 32
@@ -88,13 +82,13 @@ Rectangle {
             icon.height: 20
             icon.name: "right"
             icon.disabledColor: Style.current.lightGrey
-            type: StatusQControls.StatusFlatRoundButton.Type.Tertiary
-            enabled: currentWebView && currentWebView.canGoForward
-            Layout.leftMargin: -browserHeader.innerMargin/2
-            onClicked: currentWebView.goForward()
+            type: StatusFlatRoundButton.Type.Tertiary
+            enabled: canGoForward
+            Layout.leftMargin: -_internal.innerMargin/2
+            onClicked: goForward()
             onPressAndHold: {
-                if (currentWebView && (currentWebView.canGoBack || currentWebView.canGoForward)){
-                    historyMenu.popup(forwardButton.x, forwardButton.y + forwardButton.height)
+                if (canGoBack || canGoForward) {
+                    openHistoryPopup(backButton.x, backButton.y + backButton.height)
                 }
             }
         }
@@ -122,79 +116,37 @@ Rectangle {
             }
 
             Keys.onPressed: {
-                // TODO: disable browsing local files?  file://
                 if (event.key === Qt.Key_Enter || event.key === Qt.Key_Return) {
-                    if (localAccountSensitiveSettings.useBrowserEthereumExplorer !== Constants.browserEthereumExplorerNone && text.startsWith("0x")) {
-                        switch (localAccountSensitiveSettings.useBrowserEthereumExplorer) {
-                        case Constants.browserEthereumExplorerEtherscan:
-                            if (text.length > 42) {
-                                currentWebView.url = "https://etherscan.io/tx/" + text; break;
-                            } else {
-                                currentWebView.url = "https://etherscan.io/address/" + text; break;
-                            }
-                        case Constants.browserEthereumExplorerEthplorer:
-                            if (text.length > 42) {
-                                currentWebView.url = "https://ethplorer.io/tx/" + text; break;
-                            } else {
-                                currentWebView.url = "https://ethplorer.io/address/" + text; break;
-                            }
-                        case Constants.browserEthereumExplorerBlockchair:
-                            if (text.length > 42) {
-                                currentWebView.url = "https://blockchair.com/ethereum/transaction/" + text; break;
-                            } else {
-                                currentWebView.url = "https://blockchair.com/ethereum/address/" + text; break;
-                            }
-                        }
-                        return
-                    }
-                    if (localAccountSensitiveSettings.shouldShowBrowserSearchEngine !== Constants.browserSearchEngineNone && !Utils.isURL(text) && !Utils.isURLWithOptionalProtocol(text)) {
-                        switch (localAccountSensitiveSettings.shouldShowBrowserSearchEngine) {
-                        case Constants.browserSearchEngineGoogle: currentWebView.url = "https://www.google.com/search?q=" + text; break;
-                        case Constants.browserSearchEngineYahoo: currentWebView.url = "https://search.yahoo.com/search?p=" + text; break;
-                        case Constants.browserSearchEngineDuckDuckGo: currentWebView.url = "https://duckduckgo.com/?q=" + text; break;
-                        }
-
-                        return
-                    } else if (Utils.isURLWithOptionalProtocol(text)) {
-                        text = "https://" + text
-                    }
-
-                    currentWebView.url = determineRealURL(text);
+                    launchInBrowser(text)
                 }
             }
 
-            StatusQControls.StatusFlatRoundButton {
+            StatusFlatRoundButton {
                 id: addFavoriteBtn
                 width: 24
                 height: 24
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.right: reloadBtn.left
                 anchors.rightMargin: Style.current.halfPadding
-                visible: !!currentWebView && !!currentWebView.url
+                visible: !!currentUrl
                 icon.source: !!browserHeader.currentFavorite ? Style.svg("browser/favoriteActive") : Style.svg("browser/favorite")
                 color: "transparent"
-                type: StatusQControls.StatusFlatRoundButton.Type.Tertiary
+                type: StatusFlatRoundButton.Type.Tertiary
                 onClicked: addNewFavoritelClicked(addFavoriteBtn.x)
             }
 
-            StatusQControls.StatusFlatRoundButton {
+            StatusFlatRoundButton {
                 id: reloadBtn
                 width: 24
                 height: 24
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.right: parent.right
                 anchors.rightMargin: Style.current.halfPadding
-                icon.name: currentWebView && currentWebView.loading ? "close-circle" : "refresh"
+                icon.name: isLoading ? "close-circle" : "refresh"
                 color: "transparent"
-                type: StatusQControls.StatusFlatRoundButton.Type.Tertiary
-                onClicked: currentWebView && currentWebView.loading ? currentWebView.stop() : currentWebView.reload()
+                type: StatusFlatRoundButton.Type.Tertiary
+                onClicked: isLoading ? stopLoading(): reload()
             }
-        }
-
-        BrowserWalletMenu {
-            id: browserWalletMenu
-            y: browserHeader.height + browserHeader.anchors.topMargin
-            x: parent.width - width - Style.current.halfPadding
         }
 
         Loader {
@@ -204,19 +156,19 @@ Rectangle {
 
         Component {
             id: notConnectedBtnCompoent
-            StatusQControls.StatusFlatRoundButton {
+            StatusFlatRoundButton {
                 id: accountBtn
                 width: 24
                 height: 24
                 icon.width: 24
                 icon.height: 24
                 icon.name: "filled-account"
-                type: StatusQControls.StatusFlatRoundButton.Type.Tertiary
+                type: StatusFlatRoundButton.Type.Tertiary
                 onClicked: {
-                    if (browserWalletMenu.opened) {
-                        browserWalletMenu.close()
+                    if (walletMenu.opened) {
+                        walletMenu.close()
                     } else {
-                        browserWalletMenu.open()
+                        walletMenu.open()
                     }
                 }
             }
@@ -224,7 +176,7 @@ Rectangle {
 
         Component {
             id: connectedBtnComponent
-            StatusQControls.StatusFlatButton {
+            StatusFlatButton {
                 id: accountBtnConnected
                 icon.name: "wallet"
                 icon.width: 18
@@ -232,36 +184,29 @@ Rectangle {
                 icon.color: dappBrowserAccIcon
                 text: dappBrowserAccName
                 onClicked: {
-                    if (browserWalletMenu.opened) {
-                        browserWalletMenu.close()
+                    if (walletMenu.opened) {
+                        walletMenu.close()
                     } else {
-                        browserWalletMenu.open()
+                        walletMenu.open()
                     }
                 }
             }
         }
 
-        BrowserSettingsMenu {
-            id: settingsMenu
-            addNewTab: browserHeader.addNewTab
-            x: parent.width - width
-            y: parent.height
-        }
-
-        StatusQControls.StatusFlatRoundButton {
+        StatusFlatRoundButton {
             id: settingsMenuButton
             implicitHeight: 32
             implicitWidth: 32
             icon.width: 24
             icon.height: 24
             icon.name: "more"
-            type: StatusQControls.StatusFlatRoundButton.Type.Tertiary
-            Layout.rightMargin: browserHeader.innerMargin
+            type: StatusFlatRoundButton.Type.Tertiary
+            Layout.rightMargin: _internal.innerMargin
             onClicked: {
-                if (settingsMenu.opened) {
-                    settingsMenu.close()
+                if (settingMenu.opened) {
+                    settingMenu.close()
                 } else {
-                    settingsMenu.open()
+                    settingMenu.open()
                 }
             }
         }

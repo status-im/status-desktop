@@ -1,19 +1,15 @@
 import QtQuick 2.1
-import QtQuick.Controls 1.0
-import QtQuick.Controls.Styles 1.0
-import QtWebEngine 1.9
-import QtQuick.Layouts 1.0
-
-import shared 1.0
-import shared.status 1.0
-import "../controls"
 
 import utils 1.0
 
-Rectangle {
+import "../controls"
+
+    Rectangle {
     id: downloadView
 
     property alias downloadsModel: listView.model
+
+    property var downloadsMenu
 
     signal openDownloadClicked(bool downloadComplete, int index)
 
@@ -56,15 +52,15 @@ Rectangle {
                 openDownloadClicked(downloadComplete, index)
             }
             onOptionsButtonClicked: {
-                downloadMenu.index = index
-                downloadMenu.downloadComplete = Qt.binding(function() {return downloadElement.downloadComplete})
-
-                downloadMenu.x = xVal + 80
-                downloadMenu.y = listView.y + downloadElement.y + downloadElement.height
-                downloadMenu.open()
+                downloadsMenu.index = index
+                downloadsMenu.downloadComplete = Qt.binding(function() {return downloadElement.downloadComplete})
+                downloadsMenu.parent = downloadElement
+                downloadsMenu.x =  xVal
+                downloadsMenu.y = downloadView.y - downloadsMenu.height
+                downloadsMenu.open()
             }
             Connections {
-                target: downloadMenu
+                target: downloadsMenu
                 onCancelClicked: {
                     isCanceled = true
                 }

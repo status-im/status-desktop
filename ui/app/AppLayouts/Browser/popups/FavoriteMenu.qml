@@ -1,23 +1,23 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.3
-import QtWebEngine 1.9
-import shared 1.0
+
 import shared.panels 1.0
-import shared.status 1.0
 import shared.popups 1.0
-import "../stores"
 
 import utils 1.0
 
-import "../../Chat/popups"
+import "../stores"
 
 // TODO: replace with StatusPopupMenu
 PopupMenu {
+    id: favoritePopupMenu
+
     property var openInNewTab: function () {}
     property string url
     property var currentFavorite: BookmarksStore.getCurrentFavorite(url)
 
-    id: root
+    signal editFavoriteTriggered()
+
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
 
     Action {
@@ -27,7 +27,7 @@ PopupMenu {
         icon.width: 16
         icon.height: 16
         onTriggered: {
-            openInNewTab(root.url)
+            openInNewTab(favoritePopupMenu.url)
         }
     }
 
@@ -39,12 +39,7 @@ PopupMenu {
         icon.source: Style.svg("edit")
         icon.width: 16
         icon.height: 16
-        onTriggered: {
-            addFavoriteModal.modifiyModal = true
-            addFavoriteModal.ogUrl = root.currentFavorite ? root.currentFavorite.url : currentWebView.url
-            addFavoriteModal.ogName = root.currentFavorite ? root.currentFavorite.name : currentWebView.title
-            addFavoriteModal.open()
-        }
+        onTriggered: editFavoriteTriggered()
     }
 
     Action {
@@ -55,7 +50,7 @@ PopupMenu {
         icon.width: 16
         icon.height: 16
         onTriggered: {
-            BookmarksStore.deleteBookmark(root.url)
+            BookmarksStore.deleteBookmark(favoritePopupMenu.url)
         }
     }
 }

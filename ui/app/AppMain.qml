@@ -439,6 +439,7 @@ Item {
                 id: browserLayoutComponent
                 BrowserLayout {
                     globalStore: appMain.rootStore
+                    sendTransactionModal: sendModal
                 }
             }
 
@@ -751,6 +752,7 @@ Item {
                 // this.sourceComponent = undefined // kill an opened instance
                 this.active = false
             }
+            property var selectedAccount
             sourceComponent: SendModal {
                 store: appMain.rootStore
                 onOpened: {
@@ -758,6 +760,11 @@ Item {
                 }
                 onClosed: {
                     sendModal.closed()
+                }
+            }
+            onLoaded: {
+                if(!!sendModal.selectedAccount) {
+                    item.selectFromAccount.selectedAccount = sendModal.selectedAccount
                 }
             }
         }

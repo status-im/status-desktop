@@ -1,31 +1,37 @@
 import QtQuick 2.13
-import shared 1.0
-import shared.status 1.0
-import "../controls"
 
 import utils 1.0
 
+import "../controls"
+
 GridView {
     id: bookmarkGrid
+
+    property var determineRealURLFn: function(url){}
+    property var setAsCurrentWebUrl: function(url){}
+    property var favMenu
+    property var addFavModal
+
     cellWidth: 100
     cellHeight: 100
+
     delegate: BookmarkButton {
         id: bookmarkBtn
         text: name
         source: imageUrl
-        webUrl: determineRealURL(url)
+        webUrl: determineRealURLFn(url)
         onClicked: {
             if (!webUrl.toString()) {
-                addFavoriteModal.open()
+                addFavModal.open()
             } else {
-                currentWebView.url = webUrl
+                setAsCurrentWebUrl(webUrl)
             }
         }
         onRightClicked: {
-            favoriteMenu.url = url
-            favoriteMenu.x = bookmarkGrid.x + bookmarkBtn.x + mouse.x
-            favoriteMenu.y = Qt.binding(function () {return bookmarkGrid.y + mouse.y + favoriteMenu.height})
-            favoriteMenu.open()
+            favMenu.url = url
+            favMenu.x = bookmarkGrid.x + bookmarkBtn.x + mouse.x
+            favMenu.y = Qt.binding(function () {return bookmarkGrid.y + mouse.y + favMenu.height})
+            favMenu.open()
         }
     }
 }
