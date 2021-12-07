@@ -19,7 +19,7 @@ RadioButtonSelector {
         if (checked) {
             if (profileModel.fleets.fleet === root.fleetName) return;
             root.newFleet = root.fleetName;
-            openPopup(confirmDialogComponent)
+            Global.openPopup(confirmDialogComponent)
         }
     }
 

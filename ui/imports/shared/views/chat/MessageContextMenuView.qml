@@ -307,7 +307,7 @@ StatusPopupMenu {
 
             if (!canPin) {
                 // Open pin modal so that the user can unpin one
-                openPopup(pinnedMessagesPopupComponent, {messageToPin: messageId})
+                Global.openPopup(pinnedMessagesPopupComponent, {messageToPin: messageId})
                 return
             }
 

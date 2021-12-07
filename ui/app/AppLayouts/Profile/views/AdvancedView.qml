@@ -281,7 +281,7 @@ ScrollView {
                     btnText: qsTrId("light-node")
                     onToggled: {
                         if (root.store.bloomLevel != "light") {
-                            openPopup(bloomConfirmationDialogComponent, {mode: "light"})
+                            Global.openPopup(bloomConfirmationDialogComponent, {mode: "light"})
                         } else {
                             btnBloomLight.click()
                         }
@@ -296,7 +296,7 @@ ScrollView {
                     btnText: qsTrId("normal")
                     onToggled: {
                         if (root.store.bloomLevel != "normal") {
-                            openPopup(bloomConfirmationDialogComponent, {mode: "normal"})
+                            Global.openPopup(bloomConfirmationDialogComponent, {mode: "normal"})
                         } else {
                             btnBloomNormal.click()
                         }
@@ -311,7 +311,7 @@ ScrollView {
                     btnText: qsTrId("full-node")
                     onToggled: {
                         if (root.store.bloomLevel != "full") {
-                            openPopup(bloomConfirmationDialogComponent, {mode: "full"})
+                            Global.openPopup(bloomConfirmationDialogComponent, {mode: "full"})
                         } else {
                             btnBloomFull.click()
                         }
@@ -363,7 +363,7 @@ ScrollView {
                     btnText: qsTrId("light-node")
                     onToggled: {
                         if (!root.store.isWakuV2LightClient) {
-                            openPopup(wakuV2ModeConfirmationDialogComponent, {mode: true})
+                            Global.openPopup(wakuV2ModeConfirmationDialogComponent, {mode: true})
                         } else {
                             btnWakuV2Light.click()
                         }
@@ -378,47 +378,12 @@ ScrollView {
                     btnText: qsTrId("full-node")
                     onToggled: {
                         if (root.store.isWakuV2LightClient) {
-                            openPopup(wakuV2ModeConfirmationDialogComponent, {mode: false})
+                            Global.openPopup(wakuV2ModeConfirmationDialogComponent, {mode: false})
                         } else {
                             btnWakuV2Full.click()
                         }
                     }
                 }
-            }
-
-            StatusSectionHeadline {
-                text: qsTr("Developer features")
-                topPadding: Style.current.bigPadding
-                bottomPadding: Style.current.padding
-            }
-
-            Separator {
-                anchors.topMargin: Style.current.bigPadding
-                anchors.left: parent.left
-                anchors.leftMargin: -Style.current.padding
-                anchors.right: parent.right
-                anchors.rightMargin: -Style.current.padding
-            }
-
-            StatusSettingsLineButton {
-                text: qsTr("Full developer mode")
-                isEnabled: {
-                    return !localAccountSensitiveSettings.downloadChannelMessagesEnabled ||
-                        !root.store.profileModuleInst.isTelemetryEnabled ||
-                        !root.store.profileModuleInst.isDebugEnabled ||
-                        !root.store.profileModuleInst.isAutoMessageEnabled
-                }
-                onClicked: {
-                    openPopup(enableDeveloperFeaturesConfirmationDialogComponent)
-                }
-            }
-
-            Separator {
-                anchors.topMargin: Style.current.bigPadding
-                anchors.left: parent.left
-                anchors.leftMargin: -Style.current.padding
-                anchors.right: parent.right
-                anchors.rightMargin: -Style.current.padding
             }
 
             // TODO: replace with StatusQ component
@@ -433,11 +398,22 @@ ScrollView {
 
             // TODO: replace with StatusQ component
             StatusSettingsLineButton {
-                text: qsTr("Telemetry")
+                text: qsTr("Stickers/ENS on ropsten")
+                visible: root.store.currentNetwork === Constants.networkRopsten
+                isSwitch: true
+                switchChecked: localAccountSensitiveSettings.stickersEnsRopsten
+                onClicked: {
+                    localAccountSensitiveSettings.stickersEnsRopsten = !localAccountSensitiveSettings.stickersEnsRopsten
+                }
+            }
+
+            // TODO: replace with StatusQ component
+            StatusSettingsLineButton {
+                text: qsTr("Enable Telemetry")
                 isSwitch: true
                 switchChecked: root.store.profileModuleInst.isTelemetryEnabled
                 onClicked: {
-                    openPopup(enableTelemetryConfirmationDialogComponent)
+                    Global.openPopup(enableTelemetryConfirmationDialogComponent, {light: false})
                 }
             }
 
@@ -447,28 +423,17 @@ ScrollView {
                 isSwitch: true
                 switchChecked: root.store.profileModuleInst.isDebugEnabled
                 onClicked: {
-                    openPopup(enableDebugComponent)
+                    Global.openPopup(enableDebugComponent)
                 }
             }
 
             // TODO: replace with StatusQ component
             StatusSettingsLineButton {
-                text: qsTr("Auto message")
+                text: qsTr("Enable Auto message")
                 isSwitch: true
                 switchChecked: root.store.profileModuleInst.isAutoMessageEnabled
                 onClicked: {
-                    openPopup(enableAutoMessageConfirmationDialogComponent)
-                }
-            }
-
-            // TODO: replace with StatusQ component
-            StatusSettingsLineButton {
-                text: qsTr("Stickers/ENS on ropsten")
-                visible: root.store.currentNetwork === Constants.networkRopsten
-                isSwitch: true
-                switchChecked: localAccountSensitiveSettings.stickersEnsRopsten
-                onClicked: {
-                    localAccountSensitiveSettings.stickersEnsRopsten = !localAccountSensitiveSettings.stickersEnsRopsten
+                    Global.openPopup(enableAutoMessageConfirmationDialogComponent, {light: false})
                 }
             }
         }
@@ -480,26 +445,6 @@ ScrollView {
         FleetsModal {
             id: fleetModal
         }
-
-        Component {
-            id: enableDeveloperFeaturesConfirmationDialogComponent
-            ConfirmationDialog {
-                property bool mode: false
-
-                id: confirmDialog
-                showCancelButton: true
-                confirmationText: qsTr("Are you sure you want to enable all the develoer features? The app will be restarted.")
-                onConfirmButtonClicked: {
-                    localAccountSensitiveSettings.downloadChannelMessagesEnabled = true
-                    Qt.callLater(root.store.profileModuleInst.enableDeveloperFeatures)
-                    close()
-                }
-                onCancelButtonClicked: {
-                    close()
-                }
-            }
-        }
-
 
         Component {
             id: enableTelemetryConfirmationDialogComponent
@@ -544,7 +489,7 @@ ScrollView {
 
                 id: confirmDialog
                 showCancelButton: true
-                confirmationText: qsTr("Are you sure you want to %1 debug mode? You need to restart the app for this change to take effect.").arg(root.store.profileModuleInst.isDebugEnabled ? 
+                confirmationText: qsTr("Are you sure you want to %1 debug mode? The app will be restarted for this change to take effect.").arg(root.store.profileModuleInst.isDebugEnabled ? 
                     qsTr("disable") : 
                     qsTr("enable"))
                 onConfirmButtonClicked: {

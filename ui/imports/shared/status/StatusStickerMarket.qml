@@ -89,7 +89,7 @@ Item {
                     onCancelClicked: root.cancelClicked(packId)
                     onUpdateClicked: root.updateClicked(packId)
                     onBuyClicked: {
-                        root.stickerPurchasePopup = openPopup(stickerPackPurchaseModal)
+                        root.stickerPurchasePopup = Global.openPopup(stickerPackPurchaseModal)
                         root.buyClicked(packId)
                     }
                 }
@@ -157,7 +157,7 @@ Item {
                             confirmationPopup.open()
                             return
                         }
-                        root.stickerPurchasePopup = openPopup(stickerPackPurchaseModal)
+                        root.stickerPurchasePopup = Global.openPopup(stickerPackPurchaseModal)
                         root.buyClicked(packId)
                     }
                 }
@@ -171,7 +171,7 @@ Item {
                 onConfirmButtonClicked: {
                     localAccountSensitiveSettings.isWalletEnabled = true
                     close()
-                    root.stickerPurchasePopup = openPopup(stickerPackPurchaseModal)
+                    root.stickerPurchasePopup = Global.openPopup(stickerPackPurchaseModal)
                     root.buyClicked(packId)
                 }
 

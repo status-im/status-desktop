@@ -46,7 +46,7 @@ Item {
 //        chatInfoButton.image.source: root.store.chatsModelInst.communities.activeCommunity.thumbnailImage
 //        chatInfoButton.icon.color: root.store.chatsModelInst.communities.activeCommunity.communityColor
 //        menuButton.visible: root.store.chatsModelInst.communities.activeCommunity.admin && root.store.chatsModelInst.communities.activeCommunity.canManageUsers
-//        chatInfoButton.onClicked: openPopup(communityProfilePopup, {
+//        chatInfoButton.onClicked: Global.openPopup(communityProfilePopup, {
 //            store: root.store,
 //            community: root.store.chatsModelInst.communities.activeCommunity
 //        })
@@ -57,7 +57,7 @@ Item {
                 text: qsTrId("create-channel")
                 icon.name: "channel"
                 //enabled: root.store.chatsModelInst.communities.activeCommunity.admin
-                onTriggered: openPopup(createChannelPopup, {communityId: chatsModel.communities.activeCommunity.id})
+                onTriggered: Global.openPopup(createChannelPopup, {communityId: chatsModel.communities.activeCommunity.id})
             }
 
             StatusMenuItem {
@@ -65,7 +65,7 @@ Item {
                 text: qsTrId("create-category")
                 icon.name: "channel-category"
                 //enabled: root.store.chatsModelInst.communities.activeCommunity.admin
-                onTriggered: openPopup(createCategoryPopup, {communityId: chatsModel.communities.activeCommunity.id})
+                onTriggered: Global.openPopup(createCategoryPopup, {communityId: chatsModel.communities.activeCommunity.id})
             }
 
            StatusMenuSeparator {}
@@ -75,7 +75,7 @@ Item {
                 text: qsTrId("invite-people")
                 icon.name: "share-ios"
                 //enabled: root.store.chatsModelInst.communities.activeCommunity.canManageUsers
-                onTriggered: openPopup(inviteFriendsToCommunityPopup, {
+                onTriggered: Global.openPopup(inviteFriendsToCommunityPopup, {
                     community: root.store.chatsModelInst.communities.activeCommunity
                 })
             }
@@ -101,7 +101,7 @@ Item {
                 //% "Membership requests"
                 title: qsTrId("membership-requests")
                 requestsCount: membershipRequests.nbRequests
-                sensor.onClicked: openPopup(membershipRequestPopup)
+                sensor.onClicked: Global.openPopup(membershipRequestPopup)
             }
         }
     }
@@ -164,7 +164,7 @@ Item {
 //                root.store.chatsModelInst.communities.reorderCommunityCategories(chatsModel.communities.activeCommunity.id, categoryId, to);
 //            }
 
-//            onCategoryAddButtonClicked: openPopup(createChannelPopup, {
+//            onCategoryAddButtonClicked: Global.openPopup(createChannelPopup, {
 //                communityId: root.store.chatsModelInst.communities.activeCommunity.id,
 //                categoryId: id
 //            })
@@ -175,7 +175,7 @@ Item {
                     text: qsTrId("create-channel")
                     icon.name: "channel"
                     enabled: chatsModel.communities.activeCommunity.admin
-                    onTriggered: openPopup(createChannelPopup, {communityId: root.store.chatsModelInst.communities.activeCommunity.id})
+                    onTriggered: Global.openPopup(createChannelPopup, {communityId: root.store.chatsModelInst.communities.activeCommunity.id})
                 }
 
                 StatusMenuItem {
@@ -185,7 +185,7 @@ Item {
                     // Not Refactored Yet
                     enabled: false
                     //enabled: root.store.chatsModelInst.communities.activeCommunity.admin
-                    onTriggered: openPopup(createCategoryPopup, {communityId: root.store.chatsModelInst.communities.activeCommunity.id})
+                    onTriggered: Global.openPopup(createCategoryPopup, {communityId: root.store.chatsModelInst.communities.activeCommunity.id})
                 }
 
                 StatusMenuSeparator {}
@@ -197,7 +197,7 @@ Item {
                     // Not Refactored Yet
                     enabled: false
                     //enabled: root.store.chatsModelInst.communities.activeCommunity.canManageUsers
-                    onTriggered: openPopup(inviteFriendsToCommunityPopup, {
+                    onTriggered: Global.openPopup(inviteFriendsToCommunityPopup, {
                         community: root.store.chatsModelInst.communities.activeCommunity
                     })
                 }
@@ -219,7 +219,7 @@ Item {
                     text: qsTrId("edit-category")
                     icon.name: "edit"
                     onTriggered: {
-                        openPopup(createCategoryPopup, {
+                        Global.openPopup(createCategoryPopup, {
                             communityId: root.store.chatsModelInst.communities.activeCommunity.id,
                             isEdit: true,
                             categoryId: categoryItem.id,
@@ -243,7 +243,7 @@ Item {
                     icon.name: "delete"
                     type: StatusMenuItem.Type.Danger
                     onTriggered: {
-                        openPopup(deleteCategoryConfirmationDialogComponent, {
+                        Global.openPopup(deleteCategoryConfirmationDialogComponent, {
                             //% "Delete %1 category"
                             title: qsTrId("delete--1-category").arg(categoryItem.name),
                             //% "Are you sure you want to delete %1 category? Channels inside the category won’t be deleted."
@@ -301,7 +301,7 @@ Item {
                         id: backupBanner
                         activeCommunity: store.activeCommunity
                         onBackupButtonClicked: {
-                            openPopup(transferOwnershipPopup, { 
+                            Global.openPopup(transferOwnershipPopup, {
                                 privateKey: root.store.exportCommunity(),
                                 store: root.store
                             })

@@ -44,7 +44,7 @@ Item {
                 if (root.state === Constants.addressRequested) {
                     selectAccountModal.open()
                 } else if (root.state === Constants.transactionRequested) {
-                    openPopup(signTxComponent)
+                    Global.openPopup(signTxComponent)
                 }
             }
         }

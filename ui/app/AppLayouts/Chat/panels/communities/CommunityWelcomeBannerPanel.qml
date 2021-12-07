@@ -88,7 +88,7 @@ Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: manageBtn.top
         anchors.bottomMargin: Style.current.halfPadding
-        onClicked: openPopup(inviteFriendsToCommunityPopup, {
+        onClicked: Global.openPopup(inviteFriendsToCommunityPopup, {
             community: root.activeCommunity
         })
     }
@@ -100,7 +100,7 @@ Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.bottom
         anchors.bottomMargin: Style.current.padding
-        onClicked: openPopup(communityProfilePopup, {
+        onClicked: Global.openPopup(communityProfilePopup, {
             store: rootStore,
             community: root.activeCommunity
         })

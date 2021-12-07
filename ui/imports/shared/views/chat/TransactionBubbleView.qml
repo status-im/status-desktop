@@ -205,8 +205,7 @@ Item {
                 }
                 onSendTransaction: {
                     root.store.walletModelInst.accountsView.setFocusedAccountByAddress(fromAddress);
-                    //TODO remove dynamic scoping
-                    openPopup(signTxComponent, {selectedAccount: {
+                    Global.openPopup(signTxComponent, {selectedAccount: {
                                       name: acc.name,
                                       address: fromAddress,
                                       iconColor: acc.iconColor,

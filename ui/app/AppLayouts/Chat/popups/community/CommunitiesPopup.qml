@@ -40,7 +40,7 @@ StatusModal {
                 icon.name: "download"
                 //% "Access existing community"
                 text: qsTrId("access-existing-community")
-                onTriggered: openPopup(importCommunitiesPopupComponent)
+                onTriggered: Global.openPopup(importCommunitiesPopupComponent)
             }
         }
     }
@@ -132,7 +132,7 @@ StatusModal {
                             popup.setActiveCommunity(id);
                         } else {
                             popup.setObservedCommunity(id);
-                            openPopup(communityDetailPopup)
+                            Global.openPopup(communityDetailPopup)
                         }
                         popup.close()
                     }
@@ -146,7 +146,7 @@ StatusModal {
             //% "Create a community"
             text: qsTrId("create-community")
             onClicked: {
-                openPopup(createCommunitiesPopupComponent)
+                Global.openPopup(createCommunitiesPopupComponent)
                 popup.close()
             }
         }

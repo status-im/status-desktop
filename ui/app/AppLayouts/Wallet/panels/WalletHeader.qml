@@ -147,7 +147,7 @@ Item {
             //% "Receive"
             text: qsTrId("receive")
             onClicked: function () {
-                openPopup(receiveModalComponent);
+                Global.openPopup(receiveModalComponent);
             }
             anchors.left: sendBtn.right
             anchors.leftMargin: walletMenu.btnOuterMargin
@@ -180,7 +180,7 @@ Item {
                     icon.source: Style.svg("manage-wallet")
                     icon.width: 16
                     icon.height: 16
-                    onTriggered: openPopup(accountSettingsModalComponent)
+                    onTriggered: Global.openPopup(accountSettingsModalComponent)
                 }
                 Action {
                     //% "Manage Assets"
@@ -189,7 +189,7 @@ Item {
                     icon.width: 16
                     icon.height: 16
                     onTriggered: {
-                        openPopup(tokenSettingsModalComponent)
+                        Global.openPopup(tokenSettingsModalComponent)
                     }
                 }
                 Action {
@@ -199,7 +199,7 @@ Item {
                     icon.width: 16
                     icon.height: 16
                     onTriggered: {
-                        openPopup(setCurrencyModalComponent)
+                        Global.openPopup(setCurrencyModalComponent)
                     }
                 }
             }

@@ -47,7 +47,7 @@ StatusPopupMenu {
                 )
             }
             if (chatItem.chatType === Constants.chatTypePrivateGroupChat) {
-                return openPopup(groupInfoPopupComponent, {
+                return Global.openPopup(groupInfoPopupComponent, {
                     channel: chatItem,
                     channelType: GroupInfoPopup.ChannelType.ContextChannel
                 })
@@ -104,7 +104,7 @@ StatusPopupMenu {
         icon.name: "edit"
         enabled: communityActive &&
             root.store.chatsModelInst.communities.activeCommunity.admin
-        onTriggered: openPopup(editChannelPopup, {
+        onTriggered: Global.openPopup(editChannelPopup, {
             store: root.store,
             communityId: root.store.chatsModelInst.communities.activeCommunity.id,
             channel: chatItem
@@ -140,7 +140,7 @@ StatusPopupMenu {
 
         type: StatusMenuItem.Type.Danger
         onTriggered: {
-            openPopup(deleteChatConfirmationDialogComponent)
+            Global.openPopup(deleteChatConfirmationDialogComponent)
         }
 
         enabled: !communityActive || root.store.chatsModelInst.communities.activeCommunity.admin

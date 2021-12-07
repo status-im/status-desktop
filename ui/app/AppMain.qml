@@ -47,7 +47,12 @@ Item {
             browserLayoutContainer.item.openUrlInNewTab(link);
         }
         onOpenChooseBrowserPopup: {
-            appMain.openPopup(chooseBrowserPopupComponent, {link: link})
+            Global.openPopup(chooseBrowserPopupComponent, {link: link});
+        }
+        onOpenPopupRequested: {
+            const popup = popupComponent.createObject(appMain, params);
+            popup.open();
+            return popup;
         }
     }
 
@@ -73,12 +78,6 @@ Item {
         }
 
         return appMain.rootStore.contactsModuleInst.model.list.rowData(index, useLargeImage ? "largeImage" : "thumbnailImage")
-    }
-
-    function openPopup(popupComponent, params = {}) {
-        const popup = popupComponent.createObject(appMain, params);
-        popup.open()
-        return popup
     }
 
     function getContactListObject(dataModel) {
@@ -170,7 +169,7 @@ Item {
         text: qsTr("A new  version of Status (%1) is available").arg(newVersionJSON.version)
         btnText: qsTr("Download") 
         onClick: function(){
-            openPopup(downloadModalComponent, {newVersionAvailable: newVersionJSON.available, downloadURL: newVersionJSON.url})
+            Global.openPopup(downloadModalComponent, {newVersionAvailable: newVersionJSON.available, downloadURL: newVersionJSON.url})
         }
     }
 
@@ -260,7 +259,7 @@ Item {
                         text: qsTrId("invite-people")
                         icon.name: "share-ios"
                         enabled: chatsModel.communities.observedCommunity.canManageUsers
-                        onTriggered: openPopup(inviteFriendsToCommunityPopup, {
+                        onTriggered: Global.openPopup(inviteFriendsToCommunityPopup, {
                                                    community: chatsModel.communities.observedCommunity
                                                })
                     }
@@ -269,7 +268,7 @@ Item {
                         //% "View Community"
                         text: qsTrId("view-community")
                         icon.name: "group-chat"
-                        onTriggered: openPopup(communityProfilePopup, {
+                        onTriggered: Global.openPopup(communityProfilePopup, {
                             store: appMain.rootStore,
                             community: chatsModel.communities.observedCommunity
                         })
@@ -280,7 +279,7 @@ Item {
                         //% "Edit Community"
                         text: qsTrId("edit-community")
                         icon.name: "edit"
-                        onTriggered: openPopup(editCommunityPopup, {store: appMain.rootStore, community: chatsModel.communities.observedCommunity})
+                        onTriggered: Global.openPopup(editCommunityPopup, {store: appMain.rootStore, community: chatsModel.communities.observedCommunity})
                     }
 
                     StatusMenuSeparator {}

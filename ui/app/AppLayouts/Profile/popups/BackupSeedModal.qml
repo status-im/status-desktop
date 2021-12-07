@@ -282,7 +282,7 @@ ModalPopup {
 
                         validationError = "";
                         txtFieldWord.text = "";
-                        openPopup(removeSeedPhraseConfirmDialogComponent);
+                        Global.openPopup(removeSeedPhraseConfirmDialogComponent);
                     }
                 }
             }

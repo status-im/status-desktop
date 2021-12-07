@@ -63,8 +63,7 @@ Item {
         anchors.fill: accountRow
         cursorShape: Qt.PointingHandCursor
         onClicked: {
-            //TOOD improve this to not use dynamic scoping
-            openPopup(shareModalComponent);
+            Global.openPopup(shareModalComponent);
         }
     }
 

@@ -3,15 +3,21 @@ pragma Singleton
 import QtQuick 2.13
 
 QtObject {
-
+    id: root
     property int currentMenuTab: 0
     property var errorSound: Audio {
         id: errorSound
         track: Qt.resolvedUrl("../assets/audio/error.mp3")
     }
     property var mainModuleInst: mainModule
+
     signal openLinkInBrowser(string link)
     signal openChooseBrowserPopup(string link)
+    signal openPopupRequested(var popupComponent, var params)
+
+    function openPopup(popupComponent, params = {}) {
+        root.openPopupRequested(popupComponent, params);
+    }
 
     function changeAppSectionBySectionType(sectionType) {
         mainModuleInst.setActiveSectionBySectionType(sectionType)

@@ -84,8 +84,7 @@ Item {
             rightPadding: 11
             visible: !root.loading
             onClicked: {
-                //TODO improve this to not use dynamic scoping
-                appMain.openPopup(addEditSavedAddress)
+                Global.openPopup(addEditSavedAddress)
             }
         }
         StatusLoadingIndicator {
@@ -119,8 +118,7 @@ Item {
                 StatusRoundButton {
                     icon.name: "pencil"
                     visible: showButtons
-                    //TODO improve this to not use dynamic scoping
-                    onClicked: appMain.openPopup(addEditSavedAddress,
+                    onClicked: Global.openPopup(addEditSavedAddress,
                     {
                         edit: true,
                         address: address,
