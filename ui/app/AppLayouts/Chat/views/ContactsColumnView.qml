@@ -287,6 +287,10 @@ Item {
                 onMarkAllMessagesRead: {
                     root.chatSectionModule.markAllMessagesRead(id)
                 }
+
+                onClearChatHistory: {
+                    root.chatSectionModule.clearChatHistory(id)
+                }
             }
         }
 

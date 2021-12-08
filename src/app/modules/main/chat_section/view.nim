@@ -107,3 +107,6 @@ QtObject:
 
   proc markAllMessagesRead*(self: View, chatId: string) {.slot.} = 
     self.delegate.markAllMessagesRead(chatId)
+
+  proc clearChatHistory*(self: View, chatId: string) {.slot.} = 
+    self.delegate.clearChatHistory(chatId)

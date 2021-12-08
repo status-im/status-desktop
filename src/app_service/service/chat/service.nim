@@ -58,6 +58,7 @@ const SIGNAL_SENDING_SUCCESS* = "messageSendingSuccess_new"
 const SIGNAL_MESSAGE_DELETED* = "messageDeleted_new"
 const SIGNAL_CHAT_MUTED* = "new-chatMuted"
 const SIGNAL_CHAT_UNMUTED* = "new-chatUnmuted"
+const SIGNAL_CHAT_HISTORY_CLEARED* = "new-chatHistoryCleared"
 
 QtObject:
   type Service* = ref object of QObject
@@ -317,6 +318,20 @@ QtObject:
         return
       
       self.events.emit(SIGNAL_CHAT_UNMUTED, ChatArgs(chatId: chatId))
+    except Exception as e:
+      let errDesription = e.msg
+      error "error: ", errDesription
+      return
+
+  method clearChatHistory*(self: Service, chatId: string) =
+    try:
+      let response = status_chat.deleteMessagesByChatId(chatId)
+      if(not response.error.isNil):
+        let msg = response.error.message & " chatId=" & chatId 
+        error "error while clearing chat history ", msg
+        return
+      
+      self.events.emit(SIGNAL_CHAT_HISTORY_CLEARED, ChatArgs(chatId: chatId))
     except Exception as e:
       let errDesription = e.msg
       error "error: ", errDesription
