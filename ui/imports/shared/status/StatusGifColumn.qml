@@ -7,6 +7,7 @@ import StatusQ.Controls 0.1
 
 
 import utils 1.0
+import shared.stores 1.0
 
 
 Column {
@@ -110,7 +111,7 @@ Column {
                 onClicked: function (event) {
                     root.gifSelected(event, model.url)
                     // Not Refactored Yet
-//                    chatsModel.gif.addToRecents(model.id)
+//                    RootStore.chatsModelInst.gif.addToRecents(model.id)
                 }
             }
         }

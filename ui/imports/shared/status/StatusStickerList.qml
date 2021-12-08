@@ -9,6 +9,8 @@ import shared.panels 1.0
 
 GridView {
     id: root
+    property int packId: -1
+    property var stickerGrid
     visible: count > 0
     anchors.fill: parent
     cellWidth: 88
@@ -18,8 +20,8 @@ GridView {
     clip: true
     signal stickerClicked(string hash, int packId)
     delegate: Item {
-        width: stickerGrid.cellWidth
-        height: stickerGrid.cellHeight
+        width: root.cellWidth
+        height: root.cellHeight
         Column {
             anchors.fill: parent
             anchors.topMargin: 4

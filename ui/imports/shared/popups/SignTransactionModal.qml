@@ -14,7 +14,6 @@ import shared.panels 1.0
 import shared.popups 1.0
 import "../../../app/AppLayouts/Wallet"
 
-//TODO remove dynamic scoping
 StatusModal {
     id: root
     //% "Send"
@@ -28,7 +27,7 @@ StatusModal {
     property var selectedAmount
     property var selectedFiatAmount
     property bool outgoing: true
-
+    property string msgId: ""
     property string trxData: ""
 
     property alias transactionSigner: transactionSigner
@@ -75,6 +74,7 @@ StatusModal {
         icon: StandardIcon.Critical
         standardButtons: StandardButton.Ok
     }
+    signal openGasEstimateErrorPopup(string message)
 
     onClosed: {
         stack.pop(groupPreview, StackView.Immediate)
@@ -134,6 +134,7 @@ StatusModal {
                     // Not Refactored Yet
 //                    contacts: root.store.profileModelInst.contacts.addedContacts
                     selectedRecipient: root.selectedRecipient
+                    currentIndex: index
                     readOnly: true
                 }
             }
@@ -175,13 +176,8 @@ StatusModal {
 //                            trxData))
 
 //                        if (!gasEstimate.success) {
-//                            //% "Error estimating gas: %1"
 //                            let message = qsTrId("error-estimating-gas---1").arg(gasEstimate.error.message)
-
-//                            //% ". The transaction will probably fail."
-//                            gasEstimateErrorPopup.confirmationText = message + qsTrId("--the-transaction-will-probably-fail-")
-//                            gasEstimateErrorPopup.open()
-//                            return
+//                            root.openGasEstimateErrorPopup(message);
 //                        }
 //                        selectedGasLimit = gasEstimate.result
 //                        defaultGasLimit = selectedGasLimit
@@ -339,9 +335,7 @@ StatusModal {
 
     Component {
         id: transactionSettingsConfirmationPopupComponent
-        TransactionSettingsConfirmationPopup {
-
-        }
+        TransactionSettingsConfirmationPopup { }
     }
 
     // Not Refactored Yet
@@ -366,17 +360,16 @@ StatusModal {
 //                }
 
 //                // Not Refactored Yet
-////                chatsModel.transactions.acceptRequestTransaction(transactionId,
-////                                                        messageId,
-////                                                        root.store.profileModelInst.profile.pubKey + transactionId.substr(2))
+//                root.store.chatsModelInst.transactions.acceptRequestTransaction(transactionId, msgId,
+//                                                        root.store.profileModelInst.profile.pubKey + transactionId.substr(2))
 
 //                //% "Transaction pending..."
-//                toastMessage.title = qsTrId("ens-transaction-pending")
-//                toastMessage.source = Style.svg("loading")
-//                toastMessage.iconColor = Style.current.primary
-//                toastMessage.iconRotates = true
-//                toastMessage.link = `${root.store.walletModelInst.utilsView.etherscanLink}/${transactionId}`
-//                toastMessage.open()
+//                Global.toastMessage.title = qsTrId("ens-transaction-pending")
+//                Global.toastMessage.source = Style.svg("loading")
+//                Global.toastMessage.iconColor = Style.current.primary
+//                Global.toastMessage.iconRotates = true
+//                Global.toastMessage.link = `${root.store.walletModelInst.utilsView.etherscanLink}/${transactionId}`
+//                Global.toastMessage.open()
 
 //                root.close()
 //            } catch (e) {

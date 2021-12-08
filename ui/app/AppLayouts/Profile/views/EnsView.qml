@@ -13,7 +13,6 @@ Item {
 
     property var store
     property var messageStore
-    property bool networkGuarded: false
     property int profileContentWidth
     property bool showSearchScreen: false
     property string addedUsername: ""
@@ -28,7 +27,7 @@ Item {
     signal goToList();
 
     function goToStart(){
-        if(ensView.store.ens.rowCount() > 0 && networkGuarded){
+        if(ensView.store.ens.rowCount() > 0 && Global.networkGuarded){
             goToList();
         } else {
             goToWelcome();
@@ -214,7 +213,6 @@ Item {
         EnsWelcomeView {
             username: ensView.store.username
             onStartBtnClicked: next(null)
-            networkGuarded: ensView.networkGuarded
             profileContentWidth: ensView.profileContentWidth
         }
     }
@@ -319,17 +317,17 @@ Item {
         target: ensView.store.ens
         onTransactionWasSent: {
             //% "Transaction pending..."
-            toastMessage.title = qsTrId("ens-transaction-pending")
-            toastMessage.source = Style.svg("loading")
-            toastMessage.iconColor = Style.current.primary
-            toastMessage.iconRotates = true
-            toastMessage.link = `${ensView.store.etherscanLink}/${txResult}`
-            toastMessage.open()
+            Global.toastMessage.title = qsTrId("ens-transaction-pending")
+            Global.toastMessage.source = Style.svg("loading")
+            Global.toastMessage.iconColor = Style.current.primary
+            Global.toastMessage.iconRotates = true
+            Global.toastMessage.link = `${root.store.etherscanLink}/${txResult}`
+            Global.toastMessage.open()
         }
         onTransactionCompleted: {
             switch(trxType){
                 case "RegisterENS":
-                    toastMessage.title = !success ? 
+                    Global.toastMessage.title = !success ?
                                          //% "ENS Registration failed"
                                          qsTrId("ens-registration-failed")
                                          :
@@ -337,7 +335,7 @@ Item {
                                          qsTrId("ens-registration-completed");
                     break;
                 case "SetPubKey":
-                    toastMessage.title = !success ? 
+                    Global.toastMessage.title = !success ?
                                          //% "Updating ENS pubkey failed"
                                          qsTrId("updating-ens-pubkey-failed")
                                          :
@@ -347,15 +345,14 @@ Item {
             }
 
             if (success) {
-                toastMessage.source = Style.svg("check-circle")
-                toastMessage.iconColor = Style.current.success
+                Global.toastMessage.source = Style.svg("check-circle")
+                Global.toastMessage.iconColor = Style.current.success
             } else {
-                toastMessage.source = Style.svg("block-icon")
-                toastMessage.iconColor = Style.current.danger
+                Global.toastMessage.source = Style.svg("block-icon")
+                Global.toastMessage.iconColor = Style.current.danger
             }
-
-            toastMessage.link = `${ensView.store.etherscanLink}/${txHash}`
-            toastMessage.open()
+            Global.toastMessage.link = `${root.store.etherscanLink}/${txHash}`
+            Global.toastMessage.open()
         }
     }
 }

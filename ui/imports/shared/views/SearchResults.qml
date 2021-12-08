@@ -3,6 +3,7 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 
 import utils 1.0
+import shared.stores 1.0
 
 import StatusQ.Controls 0.1
 
@@ -44,7 +45,7 @@ Item {
     function isContactAdded() {
         // Not Refactored Yet
         return false
-//        return pubKey != "" ? chatsModel.messageView.isAddedContact(pubKey) : false
+//        return pubKey != "" ? RootStore.chatsModelInst.messageView.isAddedContact(pubKey) : false
     }
 
     width: parent.width

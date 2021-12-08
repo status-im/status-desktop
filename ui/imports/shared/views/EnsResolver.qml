@@ -5,6 +5,7 @@ import QtGraphicalEffects 1.13
 
 import StatusQ.Components 0.1
 import utils 1.0
+import shared.stores 1.0
 
 Item {
     id: root
@@ -15,7 +16,7 @@ Item {
         root.isPending = true
         var name = inputValue.startsWith("@") ? inputValue.substring(1) : inputValue
         // Not Refactored Yet
-//        chatsModel.ensView.resolveENSWithUUID(name, uuid)
+//        RootStore.chatsModelInst.ensView.resolveENSWithUUID(name, uuid)
     });
     signal resolved(string resolvedAddress)
 
@@ -40,9 +41,8 @@ Item {
             height: root.height
         }
     }
-
 //    Connections {
-//        target: chatsModel.ensView
+//        target: RootStore.chatsModelInst.ensView
 //        onEnsWasResolved: {
 //            if (uuid !== root.uuid) {
 //                return

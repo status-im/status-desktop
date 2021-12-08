@@ -11,8 +11,9 @@ Item {
 
     property var store
     property bool longChatText: true
-    property bool veryLongChatText: false
-//    property bool veryLongChatText: !!root.store ? root.store.chatsModelInst.plainText(message).length > Constants.limitLongChatTextCompactMode : false
+    // Not Refactored Yet
+    property bool veryLongChatText: false // !!root.store ? root.store.chatsModelInst.plainText(message).length >
+                                    //Constants.limitLongChatTextCompactMode : false
     property bool readMore: false
     property alias textField: chatText
 
@@ -91,8 +92,8 @@ Item {
 
 //            if (link.startsWith('//')) {
 //                let pk = link.replace("//", "");
-//                const userProfileImage = appMain.getProfileImage(pk)
-//                openProfilePopup(root.store.chatsModelInst.userNameOrAlias(pk), pk, userProfileImage || root.store.utilsModelInst.generateIdenticon(pk))
+//                const userProfileImage = Global.getProfileImage(pk)
+//                Global.openProfilePopup(root.store.chatsModelInst.userNameOrAlias(pk), pk, userProfileImage || root.store.utilsModelInst.generateIdenticon(pk))
 //                return;
 //            }
 

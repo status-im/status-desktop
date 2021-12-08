@@ -23,7 +23,6 @@ StatusWindow {
     property bool hasAccounts: startupModule.appState !== Constants.appState.onboarding
     property bool removeMnemonicAfterLogin: false
     property alias dragAndDrop: dragTarget
-    property bool popupOpened: false
     property bool displayBeforeGetStartedModal: !hasAccounts
 
     Universal.theme: Universal.System
@@ -192,6 +191,7 @@ StatusWindow {
     }
 
     Component.onCompleted: {
+        Global.applicationWindow = this;
         Style.changeTheme(localAppSettings.theme, systemPalette.isCurrentSystemThemeDark())
         setX(Qt.application.screens[0].width / 2 - width / 2);
         setY(Qt.application.screens[0].height / 2 - height / 2);

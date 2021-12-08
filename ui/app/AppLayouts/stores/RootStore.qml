@@ -29,6 +29,8 @@ QtObject {
     property var contactsModuleInst: contactsModule
     property var addedContacts: contactsModuleInst.model.addedContacts
 
+    property real volume: !!localAccountSensitiveSettings ? localAccountSensitiveSettings.volume : 0.0
+    property bool notificationSoundsEnabled: !!localAccountSensitiveSettings ? localAccountSensitiveSettings.notificationSoundsEnabled : false
 
     function setCommunityMuted(communityId, checked) {
         // Not Refactored Yet

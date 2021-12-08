@@ -24,6 +24,7 @@ ModalPopup {
     property bool bought: false;
     property bool pending: false;
     property var stickers;
+    signal buyClicked(int packId)
 
     Component.onCompleted: {
         const idx = stickersModule.stickerPacks.findIndexById(packId, false);
@@ -55,6 +56,7 @@ ModalPopup {
         model: stickers
         anchors.fill: parent
         anchors.topMargin: Style.current.padding
+        packId: stickerPackDetailsPopup.packId
         Component {
             id: stickerPackPurchaseModal
             StatusSNTTransactionModal {
@@ -103,8 +105,8 @@ ModalPopup {
         onCancelClicked: function(){}
         onUpdateClicked: function(){}
         onBuyClicked: {
-            Global.openPopup(stickerPackPurchaseModal)
-            root.buyClicked(packId)
+            Global.openPopup(stickerPackPurchaseModal);
+            stickerPackDetailsPopup.buyClicked(packId);
         }
     }
 }

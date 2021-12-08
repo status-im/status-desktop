@@ -72,6 +72,7 @@ Popup {
             Layout.fillWidth: true
             Layout.fillHeight: true
             stickerPacks: stickerPackList
+            packId: stickerPackListView.selectedPackId
             onInstallClicked: {
                 stickersModule.install(packId)
                 stickerGrid.model = stickers
@@ -169,6 +170,7 @@ Popup {
             StatusStickerList {
                 id: stickerGrid
                 model: recentStickers
+                packId: stickerPackListView.selectedPackId
                 onStickerClicked: {
                     root.stickerSelected(hash, packId)
                     root.close()

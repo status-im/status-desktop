@@ -78,8 +78,11 @@ StatusAppThreePanelLayout {
         parentModule: chatCommunitySectionModule
         rootStore: root.rootStore
         pinnedMessagesPopupComponent: root.pinnedMessagesListPopupComponent
+        stickersLoaded: root.stickersLoaded
         //chatGroupsListViewCount: contactColumnLoader.item.chatGroupsListViewCount
-
+        onOpenStickerPackPopup: {
+            Global.openPopup(statusStickerPackClickPopup, {packId: stickerPackId} )
+        }
         onOpenAppSearch: {
             root.openAppSearch()
         }
@@ -177,7 +180,7 @@ StatusAppThreePanelLayout {
         id: quickActionMessageOptionsMenu
 
         onOpenProfileClicked: {
-            openProfilePopup(displayName, publicKey, icon, "", displayName)
+            Global.openProfilePopup(displayName, publicKey, icon, "", displayName)
         }
         onCreateOneToOneChat: {
             Global.changeAppSectionBySectionType(Constants.appSection.chat)

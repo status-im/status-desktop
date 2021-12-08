@@ -268,21 +268,6 @@ ColumnLayout {
         }
     }
 
-    StatusImageModal {
-        id: imagePopup
-        onClicked: {
-            if (button === Qt.LeftButton) {
-                imagePopup.close()
-            }
-            else if(button === Qt.RightButton) {
-                contextmenu.imageSource = imagePopup.imageSource
-                contextmenu.hideEmojiPicker = true
-                contextmenu.isRightClickOnImage = true;
-                contextmenu.popup()
-            }
-        }
-    }
-
     ColumnLayout {
         Layout.fillWidth: true
         Layout.fillHeight: true

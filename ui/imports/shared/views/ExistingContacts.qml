@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.13
 
 import utils 1.0
 import shared.status 1.0
+import shared.stores 1.0
 // TODO move Contact into shared to get rid of that import
 import "../../../app/AppLayouts/Chat/controls"
 
@@ -51,7 +52,7 @@ Item {
 //                    root.matchesAlias(model.name.toLowerCase(), root.filterText.toLowerCase()) ||
 //                    model.name.toLowerCase().includes(root.filterText.toLowerCase()) ||
 //                    model.address.toLowerCase().includes(root.filterText.toLowerCase())) &&
-//                    (!root.hideCommunityMembers || !chatsModel.communities.activeCommunity.hasMember(model.pubKey))
+//                    (!root.hideCommunityMembers || !RootStore.chatsModelInst.communities.activeCommunity.hasMember(model.pubKey))
                 onContactClicked: function () {
                     root.contactClicked(model)
                 }

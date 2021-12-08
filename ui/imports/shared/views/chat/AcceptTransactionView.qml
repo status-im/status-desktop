@@ -14,6 +14,10 @@ Item {
     height: childrenRect.height
 
     property var store
+    property var commandParametersObject
+    property var token
+    property string tokenAmount
+    property string fiatValue
     property int state: Constants.addressRequested
 
     Separator {
@@ -97,6 +101,7 @@ Item {
         id: signTxComponent
         SignTransactionModal {
             store: root.store
+            msgId: messageId
             onOpened: {
                 // Not Refactored Yet
 //                root.store.walletModelInst.gasView.getGasPrice()
@@ -104,6 +109,12 @@ Item {
             onClosed: {
                 destroy();
             }
+            onOpenGasEstimateErrorPopup: {
+                gasEstimateErrorPopup.confirmationText = message + qsTrId("--the-transaction-will-probably-fail-");
+                gasEstimateErrorPopup.open();
+                return;
+            }
+
             selectedAccount: {}
             selectedRecipient: {
                 return {

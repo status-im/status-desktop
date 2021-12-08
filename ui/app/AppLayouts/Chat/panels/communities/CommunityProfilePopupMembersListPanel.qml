@@ -127,7 +127,7 @@ Item {
                     id: memberItem
 
                     property string nickname: appMain.getUserNickname(model.pubKey)
-                    property string profileImage: appMain.getProfileImage(model.pubKey) || ""
+                    property string profileImage: Global.getProfileImage(model.pubKey) || ""
 
                     visible: !!!memberSearch.input.text || 
                         model.userName.toLowerCase().includes(memberSearch.input.text.toLowerCase()) ||

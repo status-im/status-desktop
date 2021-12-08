@@ -11,10 +11,6 @@ Item {
 
     property var store
 
-    property var changeProfileSection: function (sectionId) {
-        Global.currentMenuTab = sectionId
-    }
-
     StatusNavigationPanelHeadline {
         id: title
         text: qsTr("Settings")

@@ -56,7 +56,14 @@ StatusPopupMenu {
             root.chatType === Constants.chatType.privateGroupChat
         onTriggered: {
             if (root.chatType === Constants.chatType.oneToOne) {
-                root.displayProfilePopup(root.chatId)
+                const userProfileImage = Global.getProfileImage(root.chatId)
+                return Global.openProfilePopup(
+                    root.chatName,
+                    root.chatId,
+                    root.chatIcon,
+                    "",
+                    root.chatName
+                )
             }
             if (root.chatType === Constants.chatType.privateGroupChat) {
                 root.displayGroupInfoPopup(root.chatId)
@@ -120,7 +127,7 @@ StatusPopupMenu {
         icon.name: "edit"
         enabled: root.isCommunityChat && root.isCommunityAdmin
         onTriggered: {
-            let popup = Global.createPopup(editChannelPopup, {
+            let popup = Global.openPopup(editChannelPopup, {
                                           isEdit: true,
                                           channelName: root.chatName,
                                           channelDescription: root.chatDescription

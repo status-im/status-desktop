@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.13
 import QtGraphicalEffects 1.13
 
 import utils 1.0
+import shared.stores 1.0
 
 import StatusQ.Controls 0.1
 
@@ -12,6 +13,7 @@ import "../panels"
 import "."
 
 Item {
+    id: root
     //% "Insufficient balance"
     property string balanceErrorMessage: qsTrId("insufficient-balance")
     //% "Must be greater than or equal to 0"
@@ -33,8 +35,6 @@ Item {
     property bool isValid: false
     property string validationError
     property var formattedInputValue
-
-    id: root
 
     height: inputAmount.height + (inputAmount.validationError ? -16 - inputAmount.validationErrorTopMargin : 0) + txtFiatBalance.height + txtFiatBalance.anchors.topMargin
     anchors.right: parent.right
@@ -74,12 +74,12 @@ Item {
     }
 
     onSelectedAccountChanged: {
-        selectAsset.assets = Qt.binding(function() { 
+        selectAsset.assets = Qt.binding(function() {
             if (selectedAccount) {
                 return selectedAccount.assets
             }
         })
-        txtBalance.text = Qt.binding(function() { 
+        txtBalance.text = Qt.binding(function() {
             return selectAsset.selectedAsset ? Utils.stripTrailingZeros(selectAsset.selectedAsset.value) : ""
         })
     }
@@ -177,7 +177,7 @@ Item {
          anchors.rightMargin: Style.current.smallPadding
          defaultToken: Style.png("tokens/DEFAULT-TOKEN@3x")
          getCurrencyBalanceString: function (currencyBalance) {
-             return Utils.toLocaleString(currencyBalance.toFixed(2), localAppSettings.locale, {"currency": true}) + " " + root.currentCurrency.toUpperCase()
+             return Utils.toLocaleString(currencyBalance.toFixed(2), RootStore.locale, {"currency": true}) + " " + root.currentCurrency.toUpperCase()
          }
          tokenAssetSourceFn: function (symbol) {
              return symbol ? Style.png("tokens/" + symbol) : defaultToken

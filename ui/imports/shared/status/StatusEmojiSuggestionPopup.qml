@@ -7,9 +7,10 @@ import utils 1.0
 import shared 1.0
 
 StatusInputListPopup {
-    property string shortname
-
     id: emojiSuggestions
+    property string shortname
+    property string unicode: emojiSuggestions.modelList[listView.currentIndex].unicode_alternates || emojiSuggestions.modelList[listView.currentIndex].unicode
+
     getImageSource: function (modelData) {
         return `../../assets/twemoji/72x72/${modelData.unicode}.png`
     }
@@ -24,15 +25,5 @@ StatusInputListPopup {
         modelList = emojisParam
         shortname = shortnameParam
         emojiSuggestions.open()
-    }
-
-    function addEmoji(index) {
-        if (index === undefined) {
-            index = listView.currentIndex
-        }
-
-        const message = extrapolateCursorPosition();
-        const unicode = emojiSuggestions.modelList[index].unicode_alternates || emojiSuggestions.modelList[index].unicode
-        replaceWithEmoji(message, emojiSuggestions.shortname, unicode)
     }
 }

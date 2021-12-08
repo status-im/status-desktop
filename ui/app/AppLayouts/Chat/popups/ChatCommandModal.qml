@@ -20,6 +20,7 @@ StatusModal {
     property string finalButtonLabel: "Request address"
     property var sendChatCommand: function () {}
     property bool isRequested: false
+    property bool isContact: false
 
     id: root
     anchors.centerIn: parent
@@ -100,6 +101,7 @@ StatusModal {
                     anchors.top: separator.bottom
                     anchors.topMargin: 10
                     width: stack.width
+                    isContact: root.isContact
                     onSelectedRecipientChanged: {
                         addressRequiredValidator.address = root.isRequested ? selectFromAccount.selectedAccount.address : selectRecipient.selectedRecipient.address
                     }

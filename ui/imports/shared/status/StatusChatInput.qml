@@ -11,6 +11,7 @@ import utils 1.0
 import shared 1.0
 import shared.panels 1.0
 import shared.popups 1.0
+import shared.stores 1.0
 
 //TODO remove this dependency
 import "../../../app/AppLayouts/Chat/panels"
@@ -144,7 +145,7 @@ Rectangle {
 
     function checkTextInsert() {
         if (emojiSuggestions.visible) {
-            emojiSuggestions.addEmoji();
+            replaceWithEmoji(extrapolateCursorPosition(), emojiSuggestions.shortname, emojiSuggestions.unicode);
             return true
         }
         if (suggestionsBox.visible) {
@@ -286,7 +287,7 @@ Rectangle {
 
         // Not Refactored Yet
         return ""
-//        return chatsModel.plainText(deparsedEmoji);
+        //return RootStore.chatsModelInst.plainText(deparsedEmoji);
     }
 
     function removeMentions(currentText) {
@@ -561,7 +562,7 @@ Rectangle {
     }
 
     Connections {
-        target: applicationWindow.dragAndDrop
+        target: Global.applicationWindow.dragAndDrop
         onDroppedOnValidScreen: (drop) => {
                                     let validImages = validateImages(drop.urls)
                                     if (validImages.length > 0) {
@@ -608,17 +609,17 @@ Rectangle {
 
     StatusEmojiSuggestionPopup {
         id: emojiSuggestions
+        messageInput: messageInput
     }
 
     SuggestionBoxPanel {
         id: suggestionsBox
-
-        // Not Refactored Yet
+            // Not Refactored Yet
 //        model: {
-//            if (chatsModel.communities.activeCommunity.active) {
-//                return chatsModel.communities.activeCommunity.members
+//            if (RootStore.chatsModelInst.communities.activeCommunity.active) {
+//                return RootStore.chatsModelInst.communities.activeCommunity.members
 //            }
-//            return chatsModel.messageView.messageList.userList
+//            return RootStore.chatsModelInst.messageView.messageList.userList
 //        }
         x : messageInput.x
         y: -height - Style.current.smallPadding
@@ -933,63 +934,51 @@ Rectangle {
                 }
 
                 StatusTextFormatMenu {
-                    readonly property var formationChars: (["*", "`", "~"])
-                    property string selectedTextWithFormationChars: {
-                        let i = 1
-                        let text = ""
-                        while(true) {
-                            if (messageInputField.selectionStart - i < 0 && messageInputField.selectionEnd + i > messageInputField.length) {
-                                break
-                            }
-
-                            text = messageInputField.getText(messageInputField.selectionStart - i, messageInputField.selectionEnd + i)
-
-                            if (!formationChars.includes(text.charAt(0)) ||
-                                    !formationChars.includes(text.charAt(text.length - 1))) {
-                                break
-                            }
-                            i++
-                        }
-                        return text
-                    }
-
                     id: textFormatMenu
-                    function surroundedBy(chars) {
-                        if (selectedTextWithFormationChars === "") {
-                            return false
-                        }
 
-                        const firstIndex = selectedTextWithFormationChars.indexOf(chars)
-                        if (firstIndex === -1) {
-                            return false
-                        }
-
-                        return selectedTextWithFormationChars.lastIndexOf(chars) > firstIndex
-                    }
                     StatusChatInputTextFormationAction {
                         wrapper: "**"
                         icon.name: "bold"
                         //% "Bold"
                         text: qsTrId("bold")
+                        selectedTextWithFormationChars: RootStore.selectedTextWithFormationChars
+                        onActionTriggered: checked ?
+                                         unwrapSelection(wrapper, RootStore.getSelectedTextWithFormationChars(messageInputField)) :
+                                         wrapSelection(wrapper)
                     }
                     StatusChatInputTextFormationAction {
                         wrapper: "*"
                         icon.name: "italic"
                         //% "Italic"
                         text: qsTrId("italic")
-                        checked: (textFormatMenu.surroundedBy("*") && !textFormatMenu.surroundedBy("**")) || textFormatMenu.surroundedBy("***")
+                        selectedTextWithFormationChars: RootStore.selectedTextWithFormationChars
+                        checked: (surroundedBy("*") && !surroundedBy("**")) || surroundedBy("***")
+                        onActionTriggered: checked ?
+                                         unwrapSelection(wrapper, RootStore.getSelectedTextWithFormationChars(messageInputField)) :
+                                         wrapSelection(wrapper)
                     }
                     StatusChatInputTextFormationAction {
                         wrapper: "~~"
                         icon.name: "strikethrough"
                         //% "Strikethrough"
                         text: qsTrId("strikethrough")
+                        selectedTextWithFormationChars: RootStore.selectedTextWithFormationChars
+                        onActionTriggered: checked ?
+                                         unwrapSelection(wrapper, RootStore.getSelectedTextWithFormationChars(messageInputField)) :
+                                         wrapSelection(wrapper)
                     }
                     StatusChatInputTextFormationAction {
                         wrapper: "`"
                         icon.name: "code"
                         //% "Code"
                         text: qsTrId("code")
+                        selectedTextWithFormationChars: RootStore.selectedTextWithFormationChars
+                        onActionTriggered: checked ?
+                                         unwrapSelection(wrapper, RootStore.getSelectedTextWithFormationChars(messageInputField)) :
+                                         wrapSelection(wrapper)
+                    }
+                    onClosed: {
+                        messageInputField.deselect();
                     }
                 }
             }
@@ -1092,8 +1081,8 @@ Rectangle {
                 anchors.rightMargin: Style.current.halfPadding
                 anchors.verticalCenter: parent.verticalCenter
                 visible: imageBtn2.visible
-                // Not Refactored Yet
-//                enabled: (chatsModel.plainText(Emoji.deparse(messageInputField.text)).length > 0 || isImage) && messageInputField.length < messageLimit
+                         // Not Refactored Yet
+//                enabled: (RootStore.chatsModelInst.plainText(Emoji.deparse(messageInputField.text)).length > 0 || isImage) && messageInputField.length < messageLimit
                 onClicked: function (event) {
                     control.sendMessage(event)
                     control.hideExtendedArea();
@@ -1120,7 +1109,7 @@ Rectangle {
                 anchors.right: emojiBtn.left
                 anchors.rightMargin: 2
                 anchors.bottom: parent.bottom
-                visible: !isEdit && localAccountSensitiveSettings.isGifWidgetEnabled
+                visible: !isEdit && RootStore.isGifWidgetEnabled
                 icon.name: "gif"
                 type: StatusQ.StatusFlatRoundButton.Type.Tertiary
                 color: "transparent"
@@ -1137,7 +1126,7 @@ Rectangle {
                 anchors.bottom: parent.bottom
                 icon.name: "stickers"
                 type: StatusQ.StatusFlatRoundButton.Type.Tertiary
-                visible: !isEdit && networkGuarded && emojiBtn.visible
+                visible: !isEdit && Global.networkGuarded && emojiBtn.visible
                 color: "transparent"
                 onClicked: togglePopup(stickersPopup, stickersBtn)
             }
@@ -1155,8 +1144,8 @@ Rectangle {
         text: qsTr("Unblock")
         type: StatusQ.StatusBaseButton.Type.Danger
         onClicked: function (event) {
-            // Not Refactored Yet
-//            contactsModule.unblockContact(chatsModel.channelView.activeChannel.id)
+        // Not Refactored Yet
+//            RootStore.contactsModuleInst.unblockContact(RootStore.chatsModelInst.channelView.activeChannel.id)
         }
     }
 }

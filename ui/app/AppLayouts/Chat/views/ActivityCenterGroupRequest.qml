@@ -104,9 +104,9 @@ Item {
 
         function openProfile() {
             const pk = model.author
-            const userProfileImage = appMain.getProfileImage(pk)
+            const userProfileImage = Global.getProfileImage(pk)
             // Not Refactored Yet
-//            openProfilePopup(root.store.chatsModelInst.userNameOrAlias(pk), pk, userProfileImage || utilsModel.generateIdenticon(pk))
+            Global.openProfilePopup(root.store.chatsModelInst.userNameOrAlias(pk), pk, userProfileImage || utilsModel.generateIdenticon(pk))
         }
 
         StyledTextEdit {
