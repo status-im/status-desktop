@@ -149,3 +149,8 @@ QtObject:
   proc getPublicKeys*(self: Model): seq[string] = 
     for i in self.items:
       result.add(i.pubKey)
+
+  proc clear*(self: Model) = 
+     self.beginResetModel()
+     self.items = @[]
+     self.endResetModel()

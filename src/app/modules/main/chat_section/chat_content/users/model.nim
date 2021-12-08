@@ -152,3 +152,10 @@ QtObject:
     item.onlineStatus = onlineStatus
     self.removeItemWithIndex(ind)
     self.addItem(item) 
+  
+  proc removeItemById*(self: Model, id: string) =
+    let ind = self.findIndexForMessageId(id)
+    if(ind == -1):
+      return
+    
+    self.removeItemWithIndex(ind)

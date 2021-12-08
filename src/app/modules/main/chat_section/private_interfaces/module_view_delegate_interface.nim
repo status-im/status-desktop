@@ -56,3 +56,30 @@ method rejectAllContactRequests*(self: AccessInterface) {.base.} =
 
 method blockContact*(self: AccessInterface, publicKey: string) {.base.} =
   raise newException(ValueError, "No implementation available")
+  
+method addGroupMembers*(self: AccessInterface, chatId: string, pubKeys: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method removeMemberFromGroupChat*(self: AccessInterface, chatId: string, pubKey: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method renameGroupChat*(self: AccessInterface, chatId: string, newName: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method makeAdmin*(self: AccessInterface, chatId: string, pubKey: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method createGroupChat*(self: AccessInterface, groupName: string, pubKeys: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method joinGroup*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method joinGroupChatFromInvitation*(self: AccessInterface, groupName: string, chatId: string, adminPK: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method initListOfMyContacts*(self: AccessInterface) {.base.}  =
+  raise newException(ValueError, "No implementation available")
+
+method clearListOfMyContacts*(self: AccessInterface) {.base.}  =
+  raise newException(ValueError, "No implementation available")

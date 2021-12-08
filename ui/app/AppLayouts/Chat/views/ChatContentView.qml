@@ -108,11 +108,10 @@ ColumnLayout {
         chatInfoButton.onClicked: {
             switch (chatContentModule.chatDetails.type) {
             case Constants.chatType.privateGroupChat:
-                // Not Refactored Yet
-                // openPopup(groupInfoPopupComponent, {
-                //                 channelType: GroupInfoPopup.ChannelType.ActiveChannel,
-                //                 channel: chatContentRoot.rootStore.chatsModelInst.channelView.activeChannel
-                //             })
+                Global.openPopup(groupInfoPopupComponent, {
+                              channelType: GroupInfoPopup.ChannelType.ActiveChannel,
+                              channel: chatContentModule.chatDetails
+                          })
                 break;
             case Constants.chatType.oneToOne:
                 Global.openProfilePopup(chatContentModule.chatDetails.id)
@@ -214,7 +213,10 @@ ColumnLayout {
             }
 
             onDisplayGroupInfoPopup: {
-                // Not Refactored Yet
+                Global.openPopup(groupInfoPopupComponent, {
+                              channelType: GroupInfoPopup.ChannelType.ActiveChannel,
+                              channel: chatContentModule.chatDetails
+                          })
             }
 
             onEditCommunityChannel: {
