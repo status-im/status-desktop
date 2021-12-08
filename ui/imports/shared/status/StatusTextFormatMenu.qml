@@ -12,10 +12,6 @@ Menu {
     width: 132
     height: 36
 
-    onClosed: {
-        messageInputField.deselect()
-    }
-
     background: Item {
         id: menuBackground
         Rectangle {

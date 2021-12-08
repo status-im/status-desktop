@@ -31,6 +31,7 @@ Item {
     property string selectAContact: qsTrId("select-a-contact")
     //% "Contact does not have an ENS address. Please send a transaction in chat."
     property string noEnsAddressMessage: qsTrId("contact-does-not-have-an-ens-address--please-send-a-transaction-in-chat-")
+    property bool isContact: false
 
     function resolveEns() {
         if (selectedContact.ensVerified) {

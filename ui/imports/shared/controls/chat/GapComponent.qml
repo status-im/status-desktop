@@ -37,7 +37,7 @@ Item {
         anchors.horizontalCenter: parent.horizontalCenter
         horizontalAlignment: Text.AlignHCenter
         color: Style.current.secondaryText
-        text: qsTrId("between--1-and--2").arg(new Date(root.gapFrom * 1000)).arg(new Date(root.gapTo * 1000))
+        text: qsTrId("between--1-and--2").arg(new Date(gapFrom * 1000)).arg(new Date(gapTo * 1000))
     }
     Separator {
         anchors.top: fetchDate.bottom

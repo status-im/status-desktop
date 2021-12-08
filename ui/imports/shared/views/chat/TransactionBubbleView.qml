@@ -183,6 +183,10 @@ Item {
             AcceptTransactionView {
                 state: root.state
                 store: root.store
+                token: root.token
+                fiatValue: root.fiatValue
+                tokenAmount: root.tokenAmount
+                commandParametersObject: root.commandParametersObject
             }
         }
 

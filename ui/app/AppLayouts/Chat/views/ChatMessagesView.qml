@@ -24,6 +24,7 @@ Item {
     property var store
     property var messageStore
 
+    property bool stickersLoaded: false
     property alias chatLogView: chatLogView
     property alias scrollToMessage: chatLogView.scrollToMessage
 
@@ -31,6 +32,9 @@ Item {
 
     property real scrollY: chatLogView.visibleArea.yPosition * chatLogView.contentHeight
     property int newMessages: 0
+
+    property int countOnStartUp: 0
+    signal openStickerPackPopup(string stickerPackId)
 
     ListView {
         id: chatLogView
@@ -320,6 +324,9 @@ Item {
             prevMessageAsJsonObj: messageStore.getMessageByIndexAsJson(index - 1)
             nextMessageIndex: index + 1
             nextMessageAsJsonObj: messageStore.getMessageByIndexAsJson(index + 1)
+            onOpenStickerPackPopup: {
+                root.openStickerPackPopup(stickerPackId);
+            }
         }
     }
 

@@ -35,9 +35,9 @@ Item {
     property int communityIndex: -1 //root.store.chatsModelInst.communities.joinedCommunities.getCommunityIndex(model.message.communityId)
     function openProfile() {
         const pk = model.author
-        const userProfileImage = appMain.getProfileImage(pk)
+        const userProfileImage = Global.getProfileImage(pk)
         // Not Refactored Yet
-//        openProfilePopup(root.store.chatsModelInst.userNameOrAlias(pk), pk, userProfileImage || utilsModel.generateIdenticon(pk))
+        Global.openProfilePopup(root.store.chatsModelInst.userNameOrAlias(pk), pk, userProfileImage || utilsModel.generateIdenticon(pk))
     }
 
     Component {
@@ -128,7 +128,6 @@ Item {
 //            contentType: model.message.contentType
 //            outgoingStatus: model.message.outgoingStatus
 //            responseTo: model.message.responseTo
-//            imageClick: imagePopup.openPopup.bind(imagePopup)
 //            messageId: model.message.messageId
 //            linkUrls: model.message.linkUrls
 //            communityId: model.message.communityId
@@ -138,6 +137,7 @@ Item {
 //            pinnedMessage: model.message.isPinned
 //            activityCenterMessage: true
 //            read: model.read
+//            onImageClick: { Global.openImagePopup(image); }
 //            clickMessage: function (isProfileClick) {
 //                if (isProfileClick) {
 //                    const pk = model.message.fromAuthor
@@ -154,7 +154,6 @@ Item {
 //                root.store.chatsModelInst.channelView.setActiveChannel(model.message.chatId)
 //                positionAtMessage(model.message.messageId)
 //            }
-
 //            prevMessageIndex: previousNotificationIndex
 //            prevMsgTimestamp: previousNotificationTimestamp
 //            Component.onCompleted: {
@@ -173,7 +172,6 @@ Item {
 //                messageStore.contentType = model.message.contentType;
 //                messageStore.outgoingStatus = model.message.outgoingStatus;
 //                messageStore.responseTo = model.message.responseTo;
-//                messageStore.imageClick = imagePopup.openPopup.bind(imagePopup);
 //                messageStore.messageId = model.message.messageId;
 //                messageStore.linkUrls = model.message.linkUrls;
 //                messageStore.communityId = model.message.communityId;
@@ -190,7 +188,6 @@ Item {
 //                        const userProfileImage = appMain.getProfileImage(pk)
 //                        return openProfilePopup(root.store.chatsModelInst.userNameOrAlias(pk), pk, userProfileImage || root.store.utilsModelInst.generateIdenticon(pk))
 //                    }
-
 //                    activityCenter.close()
 
 //                    if (model.message.communityId) {
@@ -253,7 +250,7 @@ Item {
 //                }
 //                return chatType
             }
-            profileImage: realChatType === Constants.chatType.oneToOne ? appMain.getProfileImage(chatId) || ""  : ""
+            profileImage: realChatType === Constants.chatType.oneToOne ? Global.getProfileImage(chatId) || ""  : ""
             // Not Refactored Yet
 //            channelName: root.store.chatsModelInst.getChannelNameById(badge.chatId)
             // Not Refactored Yet
@@ -278,7 +275,7 @@ Item {
                 target: root.store.allContacts
                 onContactChanged: {
                     if (pubkey === badge.chatId) {
-                        badge.profileImage = appMain.getProfileImage(badge.chatId)
+                        badge.profileImage = Global.getProfileImage(badge.chatId)
                     }
                 }
             }

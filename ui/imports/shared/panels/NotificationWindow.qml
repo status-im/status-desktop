@@ -83,7 +83,7 @@ Item {
                 onVisibleChanged: {
                     if (visible) {
                         timer.running = true
-                        if (applicationWindow.active) {
+                        if (Global.applicationWindow.active) {
                             this.flags |= Qt.Popup
                         } else {
                             this.flags = Qt.FramelessWindowHint | Qt.WA_ShowWithoutActivating

@@ -12,13 +12,13 @@ import shared.controls 1.0
 
 import shared 1.0
 import shared.status 1.0
+import shared.popups 1.0
 
 import "popups"
 import "controls"
 import "views"
 import "panels"
 import "stores"
-import "../Chat/popups"
 
 // Code based on https://code.qt.io/cgit/qt/qtwebengine.git/tree/examples/webengine/quicknanobrowser/BrowserWindow.qml?h=5.15 
 // Licensed under BSD
@@ -470,10 +470,9 @@ Rectangle {
             }
         }
         onLaunchBrowserSettings: {
-            Global.changeAppSectionBySectionType(Constants.appSection.profile)
             // TODO: replace with shared store constant
             // Profile/RootStore.browser_settings_id
-            profileLayoutContainer.changeProfileSection(10)
+            Global.changeAppSectionBySectionType(Constants.appSection.profile, 10);
         }
     }
 

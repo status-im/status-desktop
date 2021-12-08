@@ -225,7 +225,7 @@ StatusModal {
                 statusListItemTitle.font.pixelSize: 17
                 statusListItemTitleAside.font.pixelSize: 17
                 label: model.isAdmin ? qsTrId("group-chat-admin"): ""
-                image.source: appMain.getProfileImage(model.publicKey) || model.identicon
+                image.source: Global.getProfileImage(model.publicKey) || model.identicon
                 image.isIdenticon: model.identicon
                 components: [
                     StatusFlatRoundButton {
@@ -263,8 +263,8 @@ StatusModal {
                     }
                 ]
                 onTitleClicked:  {
-                    const userProfileImage = appMain.getProfileImage(model.publicKey)
-                    openProfilePopup(model.userName, model.publicKey, userProfileImage || model.identicon, '', contactRow.nickname, popup)
+                    const userProfileImage = Global.getProfileImage(model.publicKey)
+                    Global.openProfilePopup(model.userName, model.publicKey, userProfileImage || model.identicon, '', contactRow.nickname, popup)
                 }
             }
         }

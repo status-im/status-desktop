@@ -34,10 +34,10 @@ Popup {
         radius: 8
     }
     onOpened: {
-        popupOpened = true
+        Global.popupOpened = true
     }
     onClosed: {
-        popupOpened = false
+        Global.popupOpened = false
     }
     padding: 0
     contentItem: Item {

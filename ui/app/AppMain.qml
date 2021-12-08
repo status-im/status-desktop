@@ -43,9 +43,6 @@ Item {
             return {}
         }
     }
-    property bool profilePopupOpened: false
-    // Not Refactored Yet
-//    property bool networkGuarded: profileModel.network.current === Constants.networkMainnet || (profileModel.network.current === Constants.networkRopsten && localAccountSensitiveSettings.stickersEnsRopsten)
 
     signal openContactsPopup()
 
@@ -67,30 +64,18 @@ Item {
             popup.open()
             return popup
         }
+        onOpenProfilePopupRequested: {
+            var popup = profilePopupComponent.createObject(appMain);
+            if (parentPopup){
+                popup.parentPopup = parentPopup;
+            }
+            popup.openPopup(userProfile.pubKey !== fromAuthorParam, userNameParam, fromAuthorParam, identiconParam, textParam, nicknameParam);
+            Global.profilePopupOpened = true;
+        }
     }
 
     function changeAppSectionBySectionId(sectionId) {
         mainModule.setActiveSectionById(sectionId)
-    }
-
-    function getProfileImage(pubkey, isCurrentUser, useLargeImage) {
-        if (isCurrentUser || (isCurrentUser === undefined && pubkey === userProfile.pubKey)) {
-            return userProfile.icon
-        }
-
-        const index = appMain.rootStore.contactsModuleInst.model.list.getContactIndexByPubkey(pubkey)
-        if (index === -1) {
-            return
-        }
-
-        if (localAccountSensitiveSettings.onlyShowContactsProfilePics) {
-            const isContact = appMain.rootStore.contactsModuleInst.model.list.rowData(index, "isContact")
-            if (isContact === "false") {
-                return
-            }
-        }
-
-        return appMain.rootStore.contactsModuleInst.model.list.rowData(index, useLargeImage ? "largeImage" : "thumbnailImage")
     }
 
     function getContactListObject(dataModel) {
@@ -133,27 +118,6 @@ Item {
         return ""
     }
 
-    function openProfilePopup(userNameParam, fromAuthorParam, identiconParam, textParam, nicknameParam, parentPopup){
-        var popup = profilePopupComponent.createObject(appMain);
-        if(parentPopup){
-            popup.parentPopup = parentPopup;
-        }
-        popup.openPopup(userProfile.pubKey !== fromAuthorParam, userNameParam, fromAuthorParam, identiconParam, textParam, nicknameParam);
-        profilePopupOpened = true
-    }
-
-    property Component profilePopupComponent: ProfilePopup {
-        id: profilePopup
-        store: rootStore
-        onClosed: {
-            if(profilePopup.parentPopup){
-                profilePopup.parentPopup.close();
-            }
-            profilePopupOpened = false
-            destroy()
-        }
-    }
-
     Component {
         id: downloadModalComponent
         DownloadModal {
@@ -163,13 +127,27 @@ Item {
         }
     }
 
+    property Component profilePopupComponent: ProfilePopup {
+        id: profilePopup
+        store: appMain.rootStore
+        onClosed: {
+            if  (profilePopup.parentPopup) {
+                profilePopup.parentPopup.close();
+            }
+            Global.profilePopupOpened = false;
+            destroy();
+        }
+    }
+
     Audio {
         id: sendMessageSound
+        store: rootStore
         track: "send_message.wav"
     }
 
     Audio {
         id: notificationSound
+        store: rootStore
         track: "notification.wav"
     }
 
@@ -472,11 +450,11 @@ Item {
                     // Loaders do not have access to the context, so props need to be set
                     // Adding a "_" to avoid a binding loop
                     // Not Refactored Yet
-    //                property var _chatsModel: chatsModel.messageView
+                    //                property var _chatsModel: chatsModel.messageView
                     // Not Refactored Yet
-    //                property var _walletModel: walletModel
+                    //                property var _walletModel: walletModel
                     // Not Refactored Yet
-    //                property var _utilsModel: utilsModel
+                    //                property var _utilsModel: utilsModel
                     property var _web3Provider: web3Provider
                 }
 
@@ -487,7 +465,6 @@ Item {
                     Layout.fillHeight: true
                     globalStore: appMain.rootStore
                     systemPalette: appMain.sysPalette
-                    networkGuarded: appMain.networkGuarded
                 }
 
                 NodeLayout {
@@ -504,7 +481,7 @@ Item {
                     Layout.fillHeight: true
                 }
 
-                Repeater{
+                Repeater {
                     model: mainModule.sectionsModel
 
                     delegate: DelegateChooser {
@@ -544,7 +521,7 @@ Item {
 //        Connections {
 //            target: chatsModel
 //            onNotificationClicked: {
-//                applicationWindow.makeStatusAppActive()
+//                Global.applicationWindow.makeStatusAppActive()
 
 //                switch(notificationType){
 //                case Constants.osNotificationType.newContactRequest:
@@ -575,6 +552,11 @@ Item {
 //                mnemonicModule.remove()
 //            }
 //        }
+//                Global.settingsLoaded()
+//            }
+//        }
+
+
 
         Connections {
             target: appMain.rootStore.contactsModuleInst.model
@@ -686,6 +668,9 @@ Item {
 
         ToastMessage {
             id: toastMessage
+            Component.onCompleted: {
+                Global.toastMessage = this;
+            }
         }
         
         // Add SendModal here as it is used by the Wallet as well as the Browser
@@ -845,7 +830,6 @@ Item {
 //        } catch (e) {
 //            console.error('Could not parse the whitelist for sites', e)
 //        }
-        Global.settingsHasLoaded()
-        Global.appRootComponent = appMain
+        Global.settingsHasLoaded();
     }
 }

@@ -71,7 +71,7 @@ PopupMenu {
             hoverEnabled: true
             cursorShape: Qt.PointingHandCursor
             onClicked: {
-                openProfilePopup(root.store.userProfileInst.name, root.store.userProfileInst.pubKey, root.store.userProfileInst.icon)
+                Global.openProfilePopup(root.store.userProfileInst.name, root.store.userProfileInst.pubKey, root.store.userProfileInst.icon)
                 root.close()
             }
         }

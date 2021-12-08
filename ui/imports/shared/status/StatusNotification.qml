@@ -22,7 +22,7 @@ Rectangle {
     width: 366
     height: 75
 
-    anchors.top: applicationWindow.top
+    anchors.top: Global.applicationWindow.top
     radius: Style.current.radius
 
     Loader {

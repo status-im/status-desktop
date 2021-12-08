@@ -31,7 +31,7 @@ Item {
 
         loading = true
         LoginStore.login(password)
-        applicationWindow.prepareForStoring(password, false)
+        Global.applicationWindow.prepareForStoring(password, false)
         txtPassword.textField.clear()
     }
 

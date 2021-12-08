@@ -4,6 +4,7 @@ import QtGraphicalEffects 1.13
 
 import StatusQ.Controls 0.1 as StatusQ
 import utils 1.0
+import shared.stores 1.0
 
 import "./"
 import "../"
@@ -58,7 +59,7 @@ Rectangle {
         onClicked: {
             if (textToCopy) {
                 // Not Refactored Yet
-//                chatsModel.copyToClipboard(textToCopy)
+                //RootStore.copyToClipboard(textToCopy)
             }
             onClick()
         }

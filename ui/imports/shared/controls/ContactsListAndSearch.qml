@@ -3,6 +3,7 @@ import QtQuick.Controls 2.13
 import QtGraphicalEffects 1.13
 
 import utils 1.0
+import shared.stores 1.0
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 
@@ -38,7 +39,7 @@ Item {
         searchResults.loading = true
         searchResults.showProfileNotFoundMessage = false
         // Not Refactored Yet
-//        chatsModel.ensView.resolveENS(ensName)
+        //RootStore.chatsModelInst.ensView.resolveENS(ensName)
     });
 
     function validate() {
@@ -46,7 +47,7 @@ Item {
             root.validationError = qsTr("Enter a valid chat key or ENS username");
             pubKey = ""
             ensUsername = "";
-        } else if (userProfile.pubKey === chatKey.text) {
+        } else if (RootStore.userProfileInst.pubKey === chatKey.text) {
             //% "Can't chat with yourself"
             root.validationError = qsTrId("can-t-chat-with-yourself");
         } else {
@@ -74,7 +75,7 @@ Item {
 
                 if (Utils.isChatKey(chatKey.text)) {
                     pubKey = chatKey.text;
-                    if (!contactsModule.model.isAdded(pubKey)) {
+                    if (!RootStore.contactsModuleInst.model.isAdded(pubKey)) {
                         // Not Refactored Yet
 //                        searchResults.username = utilsModel.generateAlias(pubKey);
                         searchResults.userAlias = Utils.compactAddress(pubKey, 4);
@@ -93,7 +94,7 @@ Item {
 
         // Not Refactored Yet
 //        Connections {
-//            target: chatsModel.ensView
+//            target: RootStore.chatsModelInst.ensView
 //            onEnsWasResolved: {
 //                if (chatKey.text == "") {
 //                    ensUsername.text = "";
@@ -187,7 +188,7 @@ Item {
             }
             root.pubKeys = pubKeysCopy
 
-            userClicked(true, contact.pubKey, contactsModule.model.addedContacts.userName(contact.pubKey, contact.name), contact.address)
+            userClicked(true, contact.pubKey, RootStore.contactsModuleInst.model.addedContacts.userName(contact.pubKey, contact.name), contact.address)
         }
         expanded: !searchResults.loading && pubKey === "" && !searchResults.showProfileNotFoundMessage
     }
@@ -207,7 +208,7 @@ Item {
             }
             userClicked(false, pubKey, chatKey.text, searchResults.address)
         }
-        onAddToContactsButtonClicked: contactsModule.addContact(pubKey)
+        onAddToContactsButtonClicked: RootStore.contactsModuleInst.addContact(pubKey)
     }
 
     NoFriendsRectangle {

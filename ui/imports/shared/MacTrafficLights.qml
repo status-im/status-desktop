@@ -30,9 +30,9 @@ MouseArea {
             radius: width / 2
             antialiasing: true
 
-            color: closeSensor.pressed ? "#B24F47" : (applicationWindow.active || statusMacWindowButtons.containsMouse ? Qt.lighter("#E9685C", 1.07)
+            color: closeSensor.pressed ? "#B24F47" : (Global.applicationWindow.active || statusMacWindowButtons.containsMouse ? Qt.lighter("#E9685C", 1.07)
                                                                         : inactive )
-            border.color:closeSensor.pressed ? "#943229" : (applicationWindow.active ? "#D14C40"
+            border.color:closeSensor.pressed ? "#943229" : (Global.applicationWindow.active ? "#D14C40"
                                                                               : inactiveBorder)
             border.width: Style.current.name === Constants.lightThemeName ? 0.5 : 0
 
@@ -58,9 +58,9 @@ MouseArea {
             radius: width / 2
             antialiasing: true
 
-            color: miniSensor.pressed ? "#878E3B" :  (applicationWindow.active || statusMacWindowButtons.containsMouse ? Qt.lighter("#EDB84C", 1.07)
+            color: miniSensor.pressed ? "#878E3B" :  (Global.applicationWindow.active || statusMacWindowButtons.containsMouse ? Qt.lighter("#EDB84C", 1.07)
                                                                        : inactive)
-            border.color:miniSensor.pressed ? "#986E29" : (applicationWindow.active ? "#D79F3D"
+            border.color:miniSensor.pressed ? "#986E29" : (Global.applicationWindow.active ? "#D79F3D"
                                                                              : inactiveBorder)
             border.width: Style.current.name === Constants.lightThemeName ? 0.5 : 0
 
@@ -86,9 +86,9 @@ MouseArea {
             radius: width / 2
             antialiasing: true
 
-            color: maxiSensor.pressed ? "#48943f" : (applicationWindow.active || statusMacWindowButtons.containsMouse ?  Qt.lighter("#62C454", 1.06)
+            color: maxiSensor.pressed ? "#48943f" : (Global.applicationWindow.active || statusMacWindowButtons.containsMouse ?  Qt.lighter("#62C454", 1.06)
                                                                        : inactive)
-            border.color: maxiSensor.pressed ? "#357225" : (applicationWindow.active ? "#53A73E"
+            border.color: maxiSensor.pressed ? "#357225" : (Global.applicationWindow.active ? "#53A73E"
                                                                               : inactiveBorder)
             border.width: Style.current.name === Constants.lightThemeName ? 0.5 : 0
 

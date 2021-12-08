@@ -6,6 +6,7 @@ import shared.panels 1.0
 import shared.status 1.0
 import shared.controls 1.0
 import shared.panels.chat 1.0
+import shared.views.chat 1.0
 import shared.controls.chat 1.0
 
 import StatusQ.Controls 0.1 as StatusQControls
@@ -19,9 +20,12 @@ Item {
 
     property int chatHorizontalPadding: Style.current.halfPadding
     property int chatVerticalPadding: 7
-
     property bool headerRepeatCondition: (authorCurrentMsg !== authorPrevMsg ||
                                           shouldRepeatHeader || dateGroupLbl.visible || chatReply.active)
+    property bool stickersLoaded: false
+    property bool isMessageActive: false
+    property bool isCurrentUser: false
+    property bool isHovered: false
     property bool showMoreButton: {
         let chatTypeThisMessageBelongsTo = messageStore.getChatType()
         switch (chatTypeThisMessageBelongsTo) {
@@ -43,7 +47,7 @@ Item {
             return false
         }
     }
-
+    signal openStickerPackPopup(string stickerPackId)
     signal addEmoji(bool isProfileClick, bool isSticker, bool isImage , var image, bool emojiOnly, bool hideEmojiPicker)
     signal clickMessage(bool isProfileClick, bool isSticker, bool isImage, var image, bool emojiOnly, bool hideEmojiPicker, bool isReply, bool isRightClickOnImage, string imageSource)
 
@@ -87,6 +91,9 @@ Item {
         placeholderMsg: placeholderMessage
         onClickMessage: {
             root.clickMessage(isProfileClick, isSticker, isImage, image, emojiOnly, hideEmojiPicker, false, false, "");
+        }
+        onReplyClicked: {
+            showReplyArea();
         }
     }
 
@@ -242,7 +249,7 @@ Item {
             anchors.left: chatImage.left
             anchors.right: parent.right
             anchors.rightMargin: Style.current.padding
-
+            isCurrentUser: root.isCurrentUser
             longReply: active && textFieldImplicitWidth > width
             container: root.container
             chatHorizontalPadding: chatHorizontalPadding
@@ -269,6 +276,7 @@ Item {
                 // Not Refactored Yet
 //                messageStore.scrollToBottom(isit, root.container);
             }
+
             onClickMessage: {
                 root.clickMessage(isProfileClick, isSticker, isImage, image, emojiOnly, hideEmojiPicker, isReply, false, "")
             }
@@ -536,10 +544,18 @@ Item {
                 anchors.fill: stickerLoader.active ? stickerLoader : chatText
                 z: activityCenterMessage ? chatText.z + 1 : chatText.z -1
                 messageContextMenu: root.messageContextMenu
+                messageContextMenuParent: root
+                isHovered: root.isHovered
+                isMessageActive: root.isMessageActive
                 isActivityCenterMessage: activityCenterMessage
+                stickersLoaded: root.stickersLoaded
                 onClickMessage: {
                     root.clickMessage(isProfileClick, isSticker, isImage, null, false, false, false, false, "");
                 }
+                onOpenStickerPackPopup: {
+                    root.openStickerPackPopup();
+                }
+
                 onSetMessageActive: {
                     setMessageActive(messageId, active);
                 }
@@ -639,8 +655,8 @@ Item {
 
     HoverHandler {
         enabled: !activityCenterMessage &&
-                 (forceHoverHandler || (typeof root.messageContextMenu !== "undefined" && typeof profilePopupOpened !== "undefined" &&
-                                        !root.messageContextMenu.opened && !profilePopupOpened && !popupOpened))
+                 (forceHoverHandler || (typeof root.messageContextMenu !== "undefined" && typeof Global.profilePopupOpened !== "undefined" &&
+                                        !root.messageContextMenu.opened && !Global.profilePopupOpened && !Global.popupOpened))
         onHoveredChanged: {
             setHovered(messageId, hovered);
         }

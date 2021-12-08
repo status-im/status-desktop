@@ -2,6 +2,7 @@ import QtQuick 2.3
 import QtMultimedia 5.14
 import shared 1.0
 import shared.panels 1.0
+import shared.stores 1.0
 
 import utils 1.0
 
@@ -14,6 +15,7 @@ Item {
     Audio {
         id: audioMessage
         source: audioSource
+        store: RootStore
         notifyInterval: 150
     }
 

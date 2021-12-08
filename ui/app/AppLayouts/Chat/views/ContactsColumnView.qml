@@ -238,7 +238,7 @@ Item {
 //                            let chatItem = !!channelList.statusChatListItems.model.items ?
 //                                    channelList.statusChatListItems.model.items.get(i) : null
 //                            if (chatItem && chatItem.chatId === pubkey) {
-//                                let profileImage = appMain.getProfileImage(pubkey)
+//                                let profileImage = Global.getProfileImage(pubkey)
 //                                if (!!profileImage) {
 //                                    chatItem.image.isIdenticon = false
 //                                    chatItem.image.source = profileImage
@@ -455,39 +455,39 @@ Item {
 
 //            if (state === Constants.communityImported)
 //            {
-//                if (toastMessage.uuid !== communityImportingProcessId)
+//                if (Global.toastMessage.uuid !== communityImportingProcessId)
 //                    return
 
-//                toastMessage.close()
+//                Global.toastMessage.close()
 
 //                //% "Community imported"
-//                toastMessage.title = qsTrId("community-imported")
-//                toastMessage.source = ""
-//                toastMessage.iconRotates = false
-//                toastMessage.dissapearInMs = 4000
+//                Global.toastMessage.title = qsTrId("community-imported")
+//                Global.toastMessage.source = ""
+//                Global.toastMessage.iconRotates = false
+//                Global.toastMessage.dissapearInMs = 4000
 //            }
 //            else if (state === Constants.communityImportingInProgress)
 //            {
-//                toastMessage.uuid = communityImportingProcessId
+//                Global.toastMessage.uuid = communityImportingProcessId
 //                //% "Importing community is in progress"
-//                toastMessage.title = qsTrId("importing-community-is-in-progress")
-//                toastMessage.source = Style.svg("loading")
-//                toastMessage.iconRotates = true
-//                toastMessage.dissapearInMs = -1
+//                Global.toastMessage.title = qsTrId("importing-community-is-in-progress")
+//                Global.toastMessage.source = Style.svg("loading")
+//                Global.toastMessage.iconRotates = true
+//                Global.toastMessage.dissapearInMs = -1
 //            }
 //            else if (state === Constants.communityImportingError)
 //            {
-//                if (toastMessage.uuid !== communityImportingProcessId)
+//                if (Global.toastMessage.uuid !== communityImportingProcessId)
 //                    return
 
-//                toastMessage.close()
+//                Global.toastMessage.close()
 //                return
 //            }
 
-//            toastMessage.displayCloseButton = false
-//            toastMessage.displayLink = false
-//            toastMessage.iconColor = Style.current.primary
-//            toastMessage.open()
+//            Global.toastMessage.displayCloseButton = false
+//            Global.toastMessage.displayLink = false
+//            Global.toastMessage.iconColor = Style.current.primary
+//            Global.toastMessage.open()
 //        }
 //    }
 }

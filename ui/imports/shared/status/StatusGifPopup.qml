@@ -8,6 +8,7 @@ import StatusQ.Controls 0.1
 
 import utils 1.0
 import shared.panels 1.0
+import shared.stores 1.0
 import shared.controls 1.0
 
 Popup {
@@ -22,7 +23,7 @@ Popup {
     property var gifSelected: function () {}
     property var searchGif: Backpressure.debounce(searchBox, 500, function (query) {
         // Not Refactored Yet
-//        chatsModel.gif.search(query)
+//        RootStore.chatsModelInst.gif.search(query)
     });
     property var toggleCategory: function(newCategory) {
         previousCategory = currentCategory
@@ -30,16 +31,15 @@ Popup {
         searchBox.text = ""
         // Not Refactored Yet
 //        if (currentCategory === StatusGifPopup.Category.Trending) {
-//            chatsModel.gif.getTrendings()
+//            RootStore.chatsModelInst.gif.getTrendings()
 //        } else if(currentCategory === StatusGifPopup.Category.Favorite) {
-//            chatsModel.gif.getFavorites()
+//            RootStore.chatsModelInst.gif.getFavorites()
 //        } else if(currentCategory === StatusGifPopup.Category.Recent) {
-//            chatsModel.gif.getRecents()
+//            RootStore.chatsModelInst.gif.getRecents()
 //        }
     }
     property var toggleFavorite: function(item) {
-        // Not Refactored Yet
-//        chatsModel.gif.toggleFavorite(item.id, currentCategory === StatusGifPopup.Category.Favorite)
+//        RootStore.chatsModelInst.gif.toggleFavorite(item.id, currentCategory === StatusGifPopup.Category.Favorite)
     }
     property alias searchString: searchBox.text
     property int currentCategory: StatusGifPopup.Category.Trending
@@ -67,9 +67,8 @@ Popup {
     onOpened: {
         searchBox.text = ""
         searchBox.forceActiveFocus(Qt.MouseFocusReason)
-        if (localAccountSensitiveSettings.isTenorWarningAccepted) {
-            // Not Refactored Yet
-//            chatsModel.gif.getTrendings()
+        if (RootStore.isTenorWarningAccepted) {
+//            RootStore.chatsModelInst.gif.getTrendings()
         } else {
             confirmationPopup.open()
         }
@@ -98,7 +97,7 @@ Popup {
             SearchBox {
                 id: searchBox
                 placeholderText: qsTr("Search Tenor")
-                enabled: localAccountSensitiveSettings.isTenorWarningAccepted
+                enabled: RootStore.isTenorWarningAccepted
                 anchors.right: parent.right
                 anchors.rightMargin: gifHeader.headerMargin
                 anchors.top: parent.top
@@ -165,7 +164,7 @@ Popup {
             }
             // Not Refactored Yet
             sourceComponent: empty
-//            sourceComponent: chatsModel.gif.columnA.rowCount() == 0 ? empty : gifItems
+//            sourceComponent: RootStore.chatsModelInst.gif.columnA.rowCount() == 0 ? empty : gifItems
         }
 
         Row {
@@ -182,7 +181,7 @@ Popup {
                 onClicked: {
                     toggleCategory(StatusGifPopup.Category.Trending)
                 }
-                enabled: localAccountSensitiveSettings.isTenorWarningAccepted
+                enabled: RootStore.isTenorWarningAccepted
             }
 
             StatusTabBarIconButton {
@@ -191,7 +190,7 @@ Popup {
                 onClicked: {
                     toggleCategory(StatusGifPopup.Category.Recent)
                 }
-                enabled: localAccountSensitiveSettings.isTenorWarningAccepted
+                enabled: RootStore.isTenorWarningAccepted
             }
 
             StatusTabBarIconButton {
@@ -200,7 +199,7 @@ Popup {
                 onClicked: {
                     toggleCategory(StatusGifPopup.Category.Favorite)
                 }
-                enabled: localAccountSensitiveSettings.isTenorWarningAccepted
+                enabled: RootStore.isTenorWarningAccepted
             }
         }
     }
@@ -262,9 +261,9 @@ Popup {
                 anchors.horizontalCenter: parent.horizontalCenter
                 text: qsTr("Enable")
                 onClicked: {
-                    localAccountSensitiveSettings.isTenorWarningAccepted = true
+                    RootStore.setIsTenorWarningAccepted(true);
                     // Not Refactored Yet
-//                    chatsModel.gif.getTrendings()
+//                    RootStore.chatsModelInst.gif.getTrendings()
                     confirmationPopup.close()
                 }
             }
@@ -305,7 +304,7 @@ Popup {
                 onClicked: {
                     if (searchBox.text === "") {
                         // Not Refactored Yet
-//                        chatsModel.gif.getTrendings()
+//                        RootStore.chatsModelInst.gif.getTrendings()
                         return
                     }
 
@@ -337,7 +336,7 @@ Popup {
 
                 StatusGifColumn {
                     // Not Refactored Yet
-//                    gifList.model: chatsModel.gif.columnA
+//                    gifList.model: RootStore.chatsModelInst.gif.columnA
                     gifWidth: (popup.width / 3) - Style.current.padding
                     gifSelected: popup.gifSelected
                     toggleFavorite: popup.toggleFavorite
@@ -349,7 +348,7 @@ Popup {
 
                 StatusGifColumn {
                     // Not Refactored Yet
-//                    gifList.model: chatsModel.gif.columnB
+//                    gifList.model: RootStore.chatsModelInst.gif.columnB
                     gifWidth: (popup.width / 3) - Style.current.padding
                     gifSelected: popup.gifSelected
                     toggleFavorite: popup.toggleFavorite
@@ -361,7 +360,7 @@ Popup {
 
                 StatusGifColumn {
                     // Not Refactored Yet
-//                    gifList.model: chatsModel.gif.columnC
+//                    gifList.model: RootStore.chatsModelInst.gif.columnC
                     gifWidth: (popup.width / 3) - Style.current.padding
                     gifSelected: popup.gifSelected
                     toggleFavorite: popup.toggleFavorite
@@ -371,7 +370,6 @@ Popup {
                     }
                 }
             }
-
         }
     }
 }

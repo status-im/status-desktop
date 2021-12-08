@@ -4,6 +4,7 @@ import QtGraphicalEffects 1.13
 
 import utils 1.0
 import shared.popups 1.0
+import shared.stores 1.0
 
 import StatusQ.Controls 0.1
 
@@ -47,7 +48,7 @@ Popup {
             text: qsTrId("send-transaction")
             icon.color: Style.current.purple
             icon.name: "send"
-            onClicked: localAccountSensitiveSettings.isWalletEnabled ? root.sendTransactionCommandButtonClicked() : sendConfirmationPopup.open()
+            onClicked: RootStore.isWalletEnabled ? root.sendTransactionCommandButtonClicked() : sendConfirmationPopup.open()
         }
 
 
@@ -57,7 +58,7 @@ Popup {
             icon.color: Style.current.orange
             icon.name: "send"
             icon.rotation: 180
-            onClicked: localAccountSensitiveSettings.isWalletEnabled ? root.receiveTransactionCommandButtonClicked() : receiveConfirmationPopup.open()
+            onClicked: RootStore.isWalletEnabled ? root.receiveTransactionCommandButtonClicked() : receiveConfirmationPopup.open()
         }
 
         ConfirmationDialog {
@@ -66,7 +67,7 @@ Popup {
             confirmationText: qsTr("This feature is experimental and is meant for testing purposes by core contributors and the community. It's not meant for real use and makes no claims of security or integrity of funds or data. Use at your own risk.")
             confirmButtonLabel: qsTr("I understand")
             onConfirmButtonClicked: {
-                localAccountSensitiveSettings.isWalletEnabled = true
+                RootStore.enableWallet();
                 close()
                 root.sendTransactionCommandButtonClicked()
             }
@@ -82,7 +83,7 @@ Popup {
             confirmationText: qsTr("This feature is experimental and is meant for testing purposes by core contributors and the community. It's not meant for real use and makes no claims of security or integrity of funds or data. Use at your own risk.")
             confirmButtonLabel: qsTr("I understand")
             onConfirmButtonClicked: {
-                localAccountSensitiveSettings.isWalletEnabled = true
+                RootStore.enableWallet();
                 close()
                 root.receiveTransactionCommandButtonClicked()
             }
