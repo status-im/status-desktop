@@ -23,3 +23,6 @@ method unmuteChat*(self: AccessInterface, chatId: string) {.base.} =
 
 method markAllMessagesRead*(self: AccessInterface, chatId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method clearChatHistory*(self: AccessInterface, chatId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
