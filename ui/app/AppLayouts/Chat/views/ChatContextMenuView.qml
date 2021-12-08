@@ -25,7 +25,7 @@ StatusPopupMenu {
     signal requestAllHistoricMessages(string id)
     signal unmuteChat(string id)
     signal muteChat(string id)
-    signal markAsRead(string id)
+    signal markAllMessagesRead(string id)
     signal clearChatHistory(string id)
     signal editChannel(string id)
     signal downloadMessages(string file)
@@ -112,7 +112,7 @@ StatusPopupMenu {
         icon.name: "checkmark-circle"
         enabled: root.chatType !== Constants.chatType.privateGroupChat
         onTriggered: {
-            root.markAsRead(root.chatId)
+            root.markAllMessagesRead(root.chatId)
         }
 
         // Will be deleted later
