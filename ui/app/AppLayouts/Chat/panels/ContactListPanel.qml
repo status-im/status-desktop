@@ -33,7 +33,7 @@ ScrollView {
                 if (selectMode) {
                     return !searchString || model.name.toLowerCase().includes(searchString)
                 }
-                return checkbox.checked || model.isUser
+                return checkbox.checked || model.isContact
             }
             components: [
                 StatusCheckBox {

@@ -15,6 +15,8 @@ QtObject:
       tmpChatId: string # shouldn't be used anywhere except in prepareChatContentModuleForChatId/getChatContentModule procs
       contactRequestsModel: contacts_model.Model
       contactRequestsModelVariant: QVariant
+      listOfMyContacts: contacts_model.Model
+      listOfMyContactsVariant: QVariant
       
   proc delete*(self: View) =
     self.model.delete
@@ -23,6 +25,8 @@ QtObject:
     self.activeItemVariant.delete
     self.contactRequestsModel.delete
     self.contactRequestsModelVariant.delete
+    self.listOfMyContacts.delete
+    self.listOfMyContactsVariant.delete
     self.QObject.delete
 
   proc newView*(delegate: io_interface.AccessInterface): View =
@@ -34,7 +38,9 @@ QtObject:
     result.activeItem = newActiveItem()
     result.activeItemVariant = newQVariant(result.activeItem)
     result.contactRequestsModel = contacts_model.newModel()
-    result.contactRequestsModelVariant = newQVariant(result.contactRequestsModel)      
+    result.contactRequestsModelVariant = newQVariant(result.contactRequestsModel)
+    result.listOfMyContacts = contacts_model.newModel()
+    result.listOfMyContactsVariant = newQVariant(result.listOfMyContacts)      
 
   proc load*(self: View) =
     self.delegate.viewDidLoad()
@@ -57,6 +63,25 @@ QtObject:
     return self.contactRequestsModelVariant
   QtProperty[QVariant] contactRequestsModel:
     read = getContactRequestsModel
+
+  proc listOfMyContactsChanged*(self: View) {.signal.}
+  
+  proc populateMyContacts*(self: View) {.slot.} = 
+    self.delegate.initListOfMyContacts()
+    self.listOfMyContactsChanged()
+
+  proc clearMyContacts*(self: View) {.slot.} =
+    self.delegate.clearListOfMyContacts()
+    self.listOfMyContactsChanged()
+
+  proc listOfMyContacts*(self: View): contacts_model.Model =
+    return self.listOfMyContacts
+
+  proc getListOfMyContacts(self: View): QVariant {.slot.} =
+    return self.listOfMyContactsVariant
+  QtProperty[QVariant] listOfMyContacts:
+    read = getListOfMyContacts
+    notify = listOfMyContactsChanged
 
   proc activeItemChanged*(self:View) {.signal.}
 
@@ -134,3 +159,24 @@ QtObject:
 
   proc removeChat*(self: View, chatId: string) {.slot} =
     self.delegate.removeChat(chatId)
+    
+  proc addGroupMembers*(self: View, chatId: string, pubKeys: string) {.slot.} =
+    self.delegate.addGroupMembers(chatId, pubKeys)
+
+  proc removeMemberFromGroupChat*(self: View, chatId: string, pubKey: string) {.slot.} =
+    self.delegate.removeMemberFromGroupChat(chatId, pubKey)
+
+  proc renameGroupChat*(self: View, chatId: string, newName: string) {.slot.} =
+    self.delegate.renameGroupChat(chatId, newName)
+
+  proc makeAdmin*(self: View, chatId: string, pubKey: string) {.slot.} =
+    self.delegate.makeAdmin(chatId, pubKey)
+
+  proc createGroupChat*(self: View, groupName: string, pubKeys: string) {.slot.} =
+    self.delegate.createGroupChat(groupName, pubKeys)
+
+  proc joinGroup*(self: View) {.slot.} =
+    self.delegate.joinGroup()
+
+  proc joinGroupChatFromInvitation*(self: View, groupName: string, chatId: string, adminPK: string) {.slot.} =
+    self.delegate.joinGroupChatFromInvitation(groupName, chatId, adminPK)

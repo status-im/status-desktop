@@ -130,6 +130,10 @@ method init*(self: Controller) =
     var args = ContactArgs(e)
     self.delegate.onContactDetailsUpdated(args.contactId)
 
+  self.events.on(SIGNAL_CHAT_RENAMED) do(e: Args):
+    var args = ChatRenameArgs(e)
+    self.delegate.onChatRenamed(args.id, args.newName)
+
 method getMySectionId*(self: Controller): string =
   return self.sectionId
 
@@ -233,3 +237,30 @@ method rejectContactRequest*(self: Controller, publicKey: string) =
 
 method blockContact*(self: Controller, publicKey: string) =
   self.contactService.blockContact(publicKey)
+
+method addGroupMembers*(self: Controller, chatId: string, pubKeys: seq[string]) =
+  self.chatService.addGroupMembers(chatId, pubKeys)
+  
+method removeMemberFromGroupChat*(self: Controller, chatId: string, pubKey: string) =
+   self.chatService.removeMemberFromGroupChat(chatId, pubKey)
+
+method renameGroupChat*(self: Controller, chatId: string, newName: string) =
+  self.chatService.renameGroupChat(chatId, newName)
+
+method makeAdmin*(self: Controller, chatId: string, pubKey: string) =
+  self.chatService.makeAdmin(chatId, pubKey)
+
+method createGroupChat*(self: Controller, groupName: string, pubKeys: seq[string]) =
+  let response = self.chatService.createGroupChat(groupName, pubKeys)
+  if(response.success):
+    self.delegate.addNewChat(response.chatDto, false, self.events, self.settingsService, self.contactService, self.chatService, 
+    self.communityService, self.messageService, self.gifService)
+
+method joinGroup*(self: Controller) =
+  self.chatService.confirmJoiningGroup(self.getActiveChatId())
+
+method joinGroupChatFromInvitation*(self: Controller, groupName: string, chatId: string, adminPK: string) =
+  let response = self.chatService.createGroupChatFromInvitation(groupName, chatId, adminPK)
+  if(response.success):
+    self.delegate.addNewChat(response.chatDto, false, self.events, self.settingsService, self.contactService, self.chatService, 
+    self.communityService, self.messageService, self.gifService)

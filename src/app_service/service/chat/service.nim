@@ -45,6 +45,19 @@ type
     id*: string
     channel*: string
 
+  ChatRenameArgs* = ref object of Args
+    id*: string
+    newName*: string
+
+  ChatMembersAddedArgs* = ref object of Args
+    chatId*: string
+    ids*: seq[string]
+  
+  ChatMemberRemovedArgs* = ref object of Args
+    chatId*: string
+    id*: string
+  
+
 # Signals which may be emitted by this service:
 const SIGNAL_CHAT_UPDATE* = "chatUpdate_new"
 const SIGNAL_CHAT_LEFT* = "channelLeft_new"
@@ -54,6 +67,9 @@ const SIGNAL_MESSAGE_DELETED* = "messageDeleted"
 const SIGNAL_CHAT_MUTED* = "chatMuted"
 const SIGNAL_CHAT_UNMUTED* = "chatUnmuted"
 const SIGNAL_CHAT_HISTORY_CLEARED* = "chatHistoryCleared"
+const SIGNAL_CHAT_RENAMED* = "chatRenamed"
+const SIGNAL_CHAT_MEMBERS_ADDED* = "chatMemberAdded"
+const SIGNAL_CHAT_MEMBER_REMOVED* = "chatMemberRemoved"
 
 QtObject:
   type Service* = ref object of QObject
@@ -350,3 +366,59 @@ QtObject:
       let errDesription = e.msg
       error "error: ", errDesription
       return
+
+  method addGroupMembers*(self: Service, chatId: string, pubKeys: seq[string]) =
+    try: 
+      let response = status_chat.addGroupMembers(chatId, pubKeys)
+      if (response.error.isNil):
+        self.events.emit(SIGNAL_CHAT_MEMBERS_ADDED, ChatMembersAddedArgs(chatId: chatId, ids: pubKeys))
+    except Exception as e:
+      error "error while adding group members: ", msg = e.msg
+
+  method removeMemberFromGroupChat*(self: Service, chatId: string, pubKey: string) =
+    try: 
+      let response = status_chat.removeMembersFromGroupChat(chatId, pubKey)
+      if (response.error.isNil):
+        self.events.emit(SIGNAL_CHAT_MEMBER_REMOVED, ChatMemberRemovedArgs(chatId: chatId, id: pubkey))
+    except Exception as e:
+      error "error while removing member from group: ", msg = e.msg
+
+
+  method renameGroupChat*(self: Service, chatId: string, newName: string) =
+    try: 
+      let response = status_chat.renameGroupChat(chatId, newName)
+      if (response.error.isNil):
+        self.events.emit(SIGNAL_CHAT_RENAMED, ChatRenameArgs(id: chatId, newName: newName))
+    except Exception as e:
+      error "error while renaming group chat: ", msg = e.msg
+
+
+  method makeAdmin*(self: Service, chatId: string, pubKey: string) =
+    try: 
+      let response = status_chat.makeAdmin(chatId, pubKey)
+      self.emitUpdate(response)
+    except Exception as e:
+      error "error while making user admin: ", msg = e.msg
+
+
+  method confirmJoiningGroup*(self: Service, chatId: string) =
+    try:
+      let response = status_chat.confirmJoiningGroup(chatId)
+      self.emitUpdate(response)
+    except Exception as e:
+      error "error while confirmation joining to group: ", msg = e.msg
+
+  method createGroupChatFromInvitation*(self: Service, groupName: string, chatId: string, adminPK: string): tuple[chatDto: ChatDto, success: bool]  =
+    try:
+      let response = status_chat.createGroupChatFromInvitation(groupName, chatId, adminPK)
+      result = self.createChatFromResponse(response)
+    except Exception as e:
+      error "error while creating group from invitation: ", msg = e.msg
+
+  method createGroupChat*(self: Service, groupName: string, pubKeys: seq[string]): tuple[chatDto: ChatDto, success: bool] =
+    try: 
+      let response = status_chat.createGroupChat(groupName, pubKeys)
+      result = self.createChatFromResponse(response)
+    except Exception as e:
+      error "error while creating group chat", msg = e.msg
+

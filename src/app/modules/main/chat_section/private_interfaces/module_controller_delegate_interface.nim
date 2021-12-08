@@ -34,3 +34,6 @@ method onContactDetailsUpdated*(self: AccessInterface, contactId: string) {.base
 
 method onCommunityChannelDeleted*(self: AccessInterface, chatId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
+  
+method onChatRenamed*(self: AccessInterface, chatId: string, newName: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
