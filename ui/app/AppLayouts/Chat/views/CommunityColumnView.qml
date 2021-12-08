@@ -288,6 +288,10 @@ Item {
                 onMarkAllMessagesRead: {
                     root.communitySectionModule.markAllMessagesRead(id)
                 }
+
+                onClearChatHistory: {
+                    root.communitySectionModule.clearChatHistory(id)
+                }
             }
         }
 

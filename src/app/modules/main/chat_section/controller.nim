@@ -135,3 +135,6 @@ method unmuteChat*(self: Controller, chatId: string) =
 
 method markAllMessagesRead*(self: Controller, chatId: string) =
   self.messageService.markAllMessagesRead(chatId)
+
+method clearChatHistory*(self: Controller, chatId: string) =
+  self.chatService.clearChatHistory(chatId)
