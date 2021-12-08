@@ -42,13 +42,17 @@ method delete*(self: Controller) =
   discard
 
 method init*(self: Controller) = 
-  self.events.on(SIGNAL_CHAT_MUTED) do(e:Args):
-    let args = ChatArgs(e)
+  self.events.on(chat_service.SIGNAL_CHAT_MUTED) do(e:Args):
+    let args = chat_service.ChatArgs(e)
     self.delegate.onChatMuted(args.chatId)
 
-  self.events.on(SIGNAL_CHAT_UNMUTED) do(e:Args):
-    let args = ChatArgs(e)
+  self.events.on(chat_service.SIGNAL_CHAT_UNMUTED) do(e:Args):
+    let args = chat_service.ChatArgs(e)
     self.delegate.onChatUnmuted(args.chatId)
+
+  self.events.on(message_service.SIGNAL_MESSAGES_MARKED_AS_READ) do(e: Args):
+    let args = message_service.MessagesMarkedAsReadArgs(e)
+    self.delegate.onMarkAllMessagesRead(args.chatId)
 
 method getMySectionId*(self: Controller): string =
   return self.sectionId
@@ -128,3 +132,6 @@ method muteChat*(self: Controller, chatId: string) =
 
 method unmuteChat*(self: Controller, chatId: string) =
   self.chatService.unmuteChat(chatId)
+
+method markAllMessagesRead*(self: Controller, chatId: string) =
+  self.messageService.markAllMessagesRead(chatId)
