@@ -6,6 +6,7 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Popups 0.1
 import shared.controls 1.0
+import shared.stores 1.0
 
 StatusModal {
     property bool pairingPasswordFieldValid: false
@@ -59,7 +60,7 @@ StatusModal {
             onClicked: {
                 submitted = true
                 // Not Refactored Yet
-//                keycardModel.pair(pairingPasswordField.text)
+                RootStore.keycardModelInst.pair(pairingPasswordField.text)
                 popup.close()
             }
         }

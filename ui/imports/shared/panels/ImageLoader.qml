@@ -4,6 +4,7 @@ import QtGraphicalEffects 1.13
 import StatusQ.Components 0.1
 
 import utils 1.0
+import shared.stores 1.0
 import "./"
 
 Rectangle {
@@ -52,7 +53,7 @@ Rectangle {
     ]
 
 //    Connections {
-//        target: chatsModel
+//        target: RootStore.chatsModelInst
 //        onOnlineStatusChanged: {
 //            if (connected && root.state !== "ready" &&
 //                root.visible &&

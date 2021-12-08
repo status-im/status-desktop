@@ -15,6 +15,7 @@ Item {
     id: root
     property var stickerPacks: StickerPackData {}
     property var stickerPurchasePopup
+    property int packId: -1
 
     signal backClicked
     signal uninstallClicked(int packId)
@@ -49,7 +50,7 @@ Item {
                 height: 220
                 width: parent.width
                 radius: 12
-                source: "https://ipfs.infura.io/ipfs/" + preview
+                source: "https://ipfs.infura.io/ipfs/" + model.preview
                 onClicked: {
                     stickerPackDetailsPopup.open()
                 }
@@ -74,6 +75,7 @@ Item {
                     anchors.fill: parent
                     anchors.topMargin: Style.current.padding
                     model: stickers
+                    packId: root.packId
                 }
 
                 footer: StatusStickerButton {
@@ -154,7 +156,7 @@ Item {
                     onCancelClicked: root.cancelClicked(packId)
                     onUpdateClicked: root.updateClicked(packId)
                     onBuyClicked: {
-                        if (!localAccountSensitiveSettings.isWalletEnabled) {
+                        if (!RootStore.isWalletEnabled) {
                             confirmationPopup.open()
                             return
                         }
@@ -170,7 +172,7 @@ Item {
                 confirmationText: qsTr("This feature is experimental and is meant for testing purposes by core contributors and the community. It's not meant for real use and makes no claims of security or integrity of funds or data. Use at your own risk.")
                 confirmButtonLabel: qsTr("I understand")
                 onConfirmButtonClicked: {
-                    localAccountSensitiveSettings.isWalletEnabled = true
+                    RootStore.enableWallet();
                     close()
                     root.stickerPurchasePopup = Global.openPopup(stickerPackPurchaseModal)
                     root.buyClicked(packId)

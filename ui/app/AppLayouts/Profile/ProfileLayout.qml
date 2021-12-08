@@ -14,12 +14,9 @@ import StatusQ.Layout 0.1
 StatusAppTwoPanelLayout {
     id: profileView
 
-    property alias changeProfileSection: leftTab.changeProfileSection
-
     property RootStore store: RootStore { }
     property var globalStore
     property var systemPalette
-    property bool networkGuarded: false
 
     QtObject {
         id: _internal
@@ -61,7 +58,6 @@ StatusAppTwoPanelLayout {
             id: ensContainer
             store: profileView.store
             messageStore: profileView.globalStore.messageStore
-            networkGuarded: profileView.networkGuarded
             profileContentWidth: _internal.profileContentWidth
         }
 
@@ -120,10 +116,3 @@ StatusAppTwoPanelLayout {
         }
     }
 }
-
-
-
-
-
-
-

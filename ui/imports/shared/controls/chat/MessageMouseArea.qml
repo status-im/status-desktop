@@ -7,14 +7,16 @@ MouseArea {
     id: mouseArea
     z: 50
     enabled: !placeholderMessage
-
 //TODO remove dynamic scoping
-//    property bool isHovered: false
 //    property bool isSticker: false
 //    property bool placeholderMessage: false
-//    property var isMessageActive
+    property bool isHovered: false
+    property bool stickersLoaded: false
+    property bool isMessageActive
     property bool isActivityCenterMessage: false
     property var messageContextMenu
+    property var messageContextMenuParent
+    signal openStickerPackPopup()
     signal setMessageActive(string messageId, bool active)
     signal clickMessage(bool isProfileClick, bool isSticker, bool isImage)
 
@@ -30,7 +32,7 @@ MouseArea {
         if (mouse.button === Qt.RightButton) {
             if (!!mouseArea.messageContextMenu) {
                 // Set parent, X & Y positions for the messageContextMenu
-                messageContextMenu.parent = root
+                messageContextMenu.parent = messageContextMenuParent;
                 messageContextMenu.setXPosition = function() { return (mouse.x)};
                 messageContextMenu.setYPosition = function() { return (mouse.y)};
             }
@@ -44,8 +46,7 @@ MouseArea {
             if (isHovered) {
                 isHovered = false;
             }
-            //TODO remove dynamic scoping
-            Global.openPopup(statusStickerPackClickPopup, {packId: stickerPackId} )
+            openStickerPackPopup();
             return;
         }
     }

@@ -27,7 +27,7 @@ ScrollView {
             property bool isChecked: false
             title: !model.name.endsWith(".eth") && !!model.localNickname ?
                        model.localNickname : Utils.removeStatusEns(model.name)
-            image.source: appMain.getProfileImage(model.pubKey) || model.identicon
+            image.source: Global.getProfileImage(model.pubKey) || model.identicon
             image.isIdenticon: !!model.identicon
             visible: {
                 if (selectMode) {

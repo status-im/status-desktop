@@ -3,6 +3,7 @@ import QtQuick 2.13
 import StatusQ.Components 0.1
 
 import shared.panels 1.0
+import shared.stores 1.0
 import utils 1.0
 
 Item {
@@ -72,7 +73,7 @@ Item {
         horizontalAlignment: Text.AlignHCenter
         color: Style.current.secondaryText
         //% "before %1"
-        text: qsTrId("before--1").arg((nextMessageIndex > -1 ? new Date(nextMsgTimestamp * 1) : new Date()).toLocaleString(Qt.locale(localAppSettings.locale)))
+        text: qsTrId("before--1").arg((nextMessageIndex > -1 ? new Date(nextMsgTimestamp * 1) : new Date()).toLocaleString(Qt.locale(RootStore.locale)))
     }
     Separator {
         anchors.top: fetchDate.bottom

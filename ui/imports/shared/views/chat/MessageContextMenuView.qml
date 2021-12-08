@@ -67,6 +67,28 @@ StatusPopupMenu {
         root.x = setXPosition()
     }
 
+    function show(userNameParam, fromAuthorParam, identiconParam, textParam, nicknameParam, emojiReactionsModel) {
+        userName = userNameParam || ""
+        nickname = nicknameParam || ""
+        fromAuthor = fromAuthorParam || ""
+        identicon = identiconParam || ""
+        text = textParam || ""
+        let newEmojiReactions = []
+        if (!!emojiReactionsModel) {
+            emojiReactionsModel.forEach(function (emojiReaction) {
+                newEmojiReactions[emojiReaction.emojiId] = emojiReaction.currentUserReacted
+            })
+        }
+        emojiReactionsReactedByUser = newEmojiReactions;
+
+        /* // copy link feature not ready yet
+        const numLinkUrls = root.linkUrls.split(" ").length
+        copyLinkMenu.enabled = numLinkUrls > 1
+        copyLinkAction.enabled = !!root.linkUrls && numLinkUrls === 1 && !emojiOnly && !root.isProfile
+        */
+        popup()
+    }
+
     Item {
         id: emojiContainer
         width: emojiRow.width

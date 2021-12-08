@@ -1,4 +1,5 @@
 import QtQuick 2.13
+import utils 1.0
 
 Item {
     id: component
@@ -48,7 +49,7 @@ Item {
                 alias: sourceModel.rowData(i, "alias"),
                 userName: sourceModel.rowData(i, "userName"),
                 publicKey: publicKey,
-                identicon: getProfileImage(publicKey, false, false) || sourceModel.rowData(i, "identicon"),
+                identicon: Global.getProfileImage(publicKey, false, false) || sourceModel.rowData(i, "identicon"),
                 localName: sourceModel.rowData(i, "localName")
             }
             if (all || isAcceptedItem(filter, item)) {

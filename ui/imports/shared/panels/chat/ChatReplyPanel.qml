@@ -11,7 +11,6 @@ import shared.controls.chat 1.0
 
 Loader {
     id: root
-
     property bool amISenderOfTheRepliedMessage
     property int repliedMessageContentType
     property string repliedMessageSenderIcon
@@ -20,7 +19,7 @@ Loader {
     property string repliedMessageSender
     property string repliedMessageContent
     property string repliedMessageImage
-
+    property bool isCurrentUser: false
     property int nameMargin: 6
     property int textFieldWidth: item ? item.textField.width : 0
     property int textFieldImplicitWidth: 0

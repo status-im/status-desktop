@@ -8,13 +8,14 @@ import utils 1.0
 import StatusQ.Controls 0.1
 import shared.views 1.0
 import shared.popups 1.0
+import shared.stores 1.0
 import shared.controls 1.0
 
 // TODO: replace with StatusModal
 ModalPopup {
     id: root
     // Not Refactored Yet
-    readonly property var asset: "" //JSON.parse(walletModel.tokensView.getStatusToken())
+//    readonly property var asset: "" //JSON.parse(RootStore.walletModelInst.tokensView.getStatusToken())
     property string assetPrice
     property string contractAddress
     property var estimateGasFunction: (function(userAddress, uuid) { return 0; })
@@ -23,7 +24,7 @@ ModalPopup {
 
     Component.onCompleted: {
         // Not Refactored Yet
-//        walletModel.gasView.getGasPrice()
+//        RootStore.walletModelInst.gasView.getGasPrice()
     }
 
     height: 540
@@ -111,10 +112,11 @@ ModalPopup {
                 id: selectRecipient
                 visible: false
                 // Not Refactored Yet
-//                accounts: walletModel.accountsView.accounts
-                contacts: contactsModule.model.addedContacts
+//                accounts: RootStore.walletModelInst.accountsView.accounts
+                contacts: RootStore.contactsModuleInst.model.addedContacts
                 selectedRecipient: { "address": contractAddress, "type": RecipientSelector.Type.Address }
                 readOnly: true
+                currentIndex: index
                 onSelectedRecipientChanged: if (isValid) { gasSelector.estimateGas() }
             }
             GasSelector {
@@ -122,10 +124,10 @@ ModalPopup {
                 anchors.top: selectFromAccount.bottom
                 anchors.topMargin: Style.current.padding
                 // Not Refactored Yet
-//                gasPrice: parseFloat(walletModel.gasView.gasPrice)
-//                getGasEthValue: walletModel.gasView.getGasEthValue
-//                getFiatValue: walletModel.balanceView.getFiatValue
-                defaultCurrency: walletSection.currentCurrency
+//                gasPrice: parseFloat(RootStore.gasPrice)
+//                getGasEthValue: RootStore.gasEthValue
+//                getFiatValue: RootStore.fiatValue
+                defaultCurrency: RootStore.currentCurrency
                 width: stack.width
                 
                 property var estimateGas: Backpressure.debounce(gasSelector, 600, function() {
@@ -161,10 +163,9 @@ ModalPopup {
                 }
                 toAccount: selectRecipient.selectedRecipient
                 asset: root.asset
-                currency: walletSection.currentCurrency
-                // Not Refactored Yet
+                currency: RootStore.walletSectionInst.currentCurrency
 //                amount: {
-//                    const fiatValue = walletModel.balanceView.getFiatValue(root.assetPrice || 0, root.asset.symbol, currency)
+//                    const fiatValue = RootStore.walletModelInst.balanceView.getFiatValue(root.assetPrice || 0, root.asset.symbol, currency)
 //                    return { "value": root.assetPrice, "fiatValue": fiatValue }
 //                }
             }
@@ -180,7 +181,7 @@ ModalPopup {
                 id: transactionSigner
                 width: stack.width
                 // Not Refactored Yet
-//                signingPhrase: walletModel.utilsView.signingPhrase
+//                signingPhrase: RootStore.walletModelInst.utilsView.signingPhrase
             }
         }
     }

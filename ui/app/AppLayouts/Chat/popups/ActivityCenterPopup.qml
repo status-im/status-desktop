@@ -48,12 +48,12 @@ Popup {
             color: Style.current.dropShadow
         }
     }
-    x: applicationWindow.width - activityCenter.width - Style.current.halfPadding
+    x: Global.applicationWindow.width - activityCenter.width - Style.current.halfPadding
     onOpened: {
-        popupOpened = true
+        Global.popupOpened = true
     }
     onClosed: {
-        popupOpened = false
+        Global.popupOpened = false
     }
     padding: 0
 
@@ -75,10 +75,9 @@ Popup {
         }
         onPreferencesClicked: {
             activityCenter.close()
-            appMain.changeAppSection(Constants.profile)
             // TODO: replace with shared store constant
             // Profile/RootStore.notifications_id
-            profileLayoutContainer.changeProfileSection(7)
+            Global.changeAppSection(Constants.profile, 7);
         }
         onMarkAllReadClicked: {
             errorText = activityCenter.store.activityCenterModuleInst.markAllActivityCenterNotificationsRead()

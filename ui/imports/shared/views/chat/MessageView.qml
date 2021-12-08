@@ -113,7 +113,6 @@ Column {
 
     //////////////////////////////////////
 
-
     property bool isEmoji: contentType === Constants.messageContentType.emojiType
     property bool isImage: contentType === Constants.messageContentType.imageType
     property bool isAudio: contentType === Constants.messageContentType.audioType
@@ -127,7 +126,7 @@ Column {
     property bool isStatusUpdate: false
     property int statusAgeEpoch: 0
 
-    property var imageClick: function () {}
+    signal imageClick(var image)
     property var scrollToBottom: function () {}
 
     property var clickMessage: function(isProfileClick,
@@ -195,6 +194,8 @@ Column {
 //    }
     /////////////////////////////////////////////
 
+
+    signal openStickerPackPopup(string stickerPackId)
     // Not Refactored Yet
 //    Connections {
 //        enabled: (!placeholderMessage && !!root.rootStore)
@@ -330,7 +331,7 @@ Column {
             }
             onChatImageClicked: {
             // Not Refactored Yet - Should do it via messageStore
-//                messageStore.imageClick(image);
+//                root.imageClick(image);
             }
             onUserNameClicked: {
                 // Not Refactored Yet - Should do it via messageStore
@@ -354,13 +355,15 @@ Column {
         id: compactMessageComponent
         CompactMessageView {
             messageContextMenu: root.messageContextMenu
-            container: root
             onAddEmoji: {
                 root.clickMessage(isProfileClick, isSticker, isImage , image, emojiOnly, hideEmojiPicker)
             }
 
             onClickMessage: {
                 root.clickMessage(isProfileClick, isSticker, isImage, image, emojiOnly, hideEmojiPicker, isReply, isRightClickOnImage, imageSource)
+            }
+            onOpenStickerPackPopup: {
+                root.openStickerPackPopup(stickerPackId);
             }
         }
     }

@@ -10,7 +10,7 @@ Item {
     property int imageWidth: 350
     property bool isCurrentUser: false
     property url source
-    property bool playing: applicationWindow.active
+    property bool playing: Global.applicationWindow.active
     property bool isAnimated: !!source && source.toString().endsWith('.gif')
     signal clicked(var image, var mouse)
     property var container
@@ -22,9 +22,9 @@ Item {
     height: loadingImage.visible ? loadingImage.height : imageMessage.paintedHeight
 
     Connections {
-        target: applicationWindow
+        target: Global.applicationWindow
         onActiveChanged: {
-            if (applicationWindow.active === false) {
+            if (Global.applicationWindow.active === false) {
                 imageMessage.playing = false
             } else {
                 imageMessage.playing = Qt.binding(function () {return imageContainer.playing})

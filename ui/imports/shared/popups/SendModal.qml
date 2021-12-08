@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.13
 import QtQuick.Dialogs 1.3
 
 import utils 1.0
+import shared.stores 1.0
 
 import StatusQ.Controls 0.1
 
@@ -19,6 +20,7 @@ ModalPopup {
     property alias selectRecipient: selectRecipient
     property alias stack: stack
     property var store
+    property bool isContact: false
 
     //% "Send"
     title: qsTrId("command-button-send")
@@ -33,32 +35,32 @@ ModalPopup {
     }
 
     function sendTransaction() {
-        // Not Refactored Yet
+// Not Refactored Yet
 //        stack.currentGroup.isPending = true
 //        let success = false
 //        if(txtAmount.selectedAsset.address === "" || txtAmount.selectedAsset.address === Constants.zeroAddress){
-//            success = walletModel.transactionsView.transferEth(
-//                                                 selectFromAccount.selectedAccount.address,
-//                                                 selectRecipient.selectedRecipient.address,
-//                                                 txtAmount.selectedAmount,
-//                                                 gasSelector.selectedGasLimit,
-//                                                 gasSelector.eip1599Enabled ? "" : gasSelector.selectedGasPrice,
-//                                                 gasSelector.selectedTipLimit,
-//                                                 gasSelector.selectedOverallLimit,
-//                                                 transactionSigner.enteredPassword,
-//                                                 stack.uuid)
+//            success = RootStore.transferEth(
+//                        selectFromAccount.selectedAccount.address,
+//                        selectRecipient.selectedRecipient.address,
+//                        txtAmount.selectedAmount,
+//                        gasSelector.selectedGasLimit,
+//                        gasSelector.eip1599Enabled ? "" : gasSelector.selectedGasPrice,
+//                        gasSelector.selectedTipLimit,
+//                        gasSelector.selectedOverallLimit,
+//                        transactionSigner.enteredPassword,
+//                        stack.uuid)
 //        } else {
-//            success = walletModel.transactionsView.transferTokens(
-//                                                 selectFromAccount.selectedAccount.address,
-//                                                 selectRecipient.selectedRecipient.address,
-//                                                 txtAmount.selectedAsset.address,
-//                                                 txtAmount.selectedAmount,
-//                                                 gasSelector.selectedGasLimit,
-//                                                 gasSelector.eip1599Enabled ? "" : gasSelector.selectedGasPrice,
-//                                                 gasSelector.selectedTipLimit,
-//                                                 gasSelector.selectedOverallLimit,
-//                                                 transactionSigner.enteredPassword,
-//                                                 stack.uuid)
+//            success = RootStore.transferTokens(
+//                        selectFromAccount.selectedAccount.address,
+//                        selectRecipient.selectedRecipient.address,
+//                        txtAmount.selectedAsset.address,
+//                        txtAmount.selectedAmount,
+//                        gasSelector.selectedGasLimit,
+//                        gasSelector.eip1599Enabled ? "" : gasSelector.selectedGasPrice,
+//                        gasSelector.selectedTipLimit,
+//                        gasSelector.selectedOverallLimit,
+//                        transactionSigner.enteredPassword,
+//                        stack.uuid)
 //        }
 
 //        if(!success){
@@ -95,7 +97,7 @@ ModalPopup {
                     return null
                 }
                 // Not Refactored Yet
-//                currency: walletModel.balanceView.defaultCurrency
+//                currency: RootStore.defaultCurrency
                 width: stack.width
                 //% "From account"
                 label: qsTrId("from-account")
@@ -110,11 +112,13 @@ ModalPopup {
                 id: selectRecipient
                 accounts: root.store.accounts
                 contacts: root.store.addedContacts
+                currentIndex: index
                 //% "Recipient"
                 label: qsTrId("recipient")
                 anchors.top: separator.bottom
                 anchors.topMargin: 10
                 width: stack.width
+                isContact: root.isContact
                 onSelectedRecipientChanged: if (isValid) { gasSelector.estimateGas() }
             }
         }
@@ -129,11 +133,11 @@ ModalPopup {
                 id: txtAmount
                 selectedAccount: selectFromAccount.selectedAccount
                 // Not Refactored Yet
-//                defaultCurrency: walletModel.balanceView.defaultCurrency
-                currentCurrency: walletSection.currentCurrency
+//                defaultCurrency: RootStore.defaultCurrency
                 // Not Refactored Yet
-//                getFiatValue: walletModel.balanceView.getFiatValue
-//                getCryptoValue: walletModel.balanceView.getCryptoValue
+                currentCurrency: RootStore.currentCurrency
+//                getFiatValue: RootStore.fiatValue
+//                getCryptoValue: RootStore.cryptoValue
                 width: stack.width
                 onSelectedAssetChanged: if (isValid) { gasSelector.estimateGas() }
                 onSelectedAmountChanged: if (isValid) { gasSelector.estimateGas() }
@@ -143,19 +147,19 @@ ModalPopup {
                 anchors.top: txtAmount.bottom
                 anchors.topMargin: Style.current.padding
                 // Not Refactored Yet
-//                gasPrice: parseFloat(walletModel.gasView.gasPrice)
-//                getGasEthValue: walletModel.gasView.getGasEthValue
-//                getFiatValue: walletModel.balanceView.getFiatValue
-//                defaultCurrency: walletModel.balanceView.defaultCurrency
-                
+//                gasPrice: parseFloat(RootStore.gasPrice)
+//                getGasEthValue: RootStore.gasEthValue
+//                getFiatValue: RootStore.fiatValue
+//                defaultCurrency: RootStore.defaultCurrency
+
                 width: stack.width
                 property var estimateGas: Backpressure.debounce(gasSelector, 600, function() {
-                    // Not Refactored Yet
+                      // Not Refactored Yet
 //                    if (!(selectFromAccount.selectedAccount && selectFromAccount.selectedAccount.address &&
 //                        selectRecipient.selectedRecipient && selectRecipient.selectedRecipient.address &&
 //                        txtAmount.selectedAsset && txtAmount.selectedAsset.address &&
 //                        txtAmount.selectedAmount)) return
-                    
+
 //                    let gasEstimate = JSON.parse(walletModel.gasView.estimateGas(
 //                        selectFromAccount.selectedAccount.address,
 //                        selectRecipient.selectedRecipient.address,
@@ -220,8 +224,8 @@ ModalPopup {
             TransactionSigner {
                 id: transactionSigner
                 width: stack.width
-                // Not Refactored Yet
-//                signingPhrase: walletModel.utilsView.signingPhrase
+                       // Not Refactored Yet
+//                signingPhrase: RootStore.signingPhrase
             }
         }
     }
@@ -246,7 +250,7 @@ ModalPopup {
         Component {
             id: transactionSettingsConfirmationPopupComponent
             TransactionSettingsConfirmationPopup {
-                
+
             }
         }
 
@@ -291,13 +295,13 @@ ModalPopup {
 
         // Not Refactored Yet
 //        Connections {
-//            target: walletModel.transactionsView
+//            target: RootStore.walletModelInst.transactionsView
 //            onTransactionWasSent: {
 //                try {
 //                    let response = JSON.parse(txResult)
 
 //                    if (response.uuid !== stack.uuid) return
-                    
+
 //                    stack.currentGroup.isPending = false
 
 //                    if (!response.success) {
@@ -310,13 +314,14 @@ ModalPopup {
 //                        return sendingError.open()
 //                    }
 
-//                    //% "Transaction pending..."
-//                    toastMessage.title = qsTrId("ens-transaction-pending")
-//                    toastMessage.source = Style.svg("loading")
-//                    toastMessage.iconColor = Style.current.primary
-//                    toastMessage.iconRotates = true
-//                    toastMessage.link = `${walletModel.utilsView.etherscanLink}/${response.result}`
-//                    toastMessage.open()
+
+                    //% "Transaction pending..."
+//                    Global.toastMessage.title = qsTrId("ens-transaction-pending")
+//                    Global.toastMessage.source = Style.svg("loading")
+//                    Global.toastMessage.iconColor = Style.current.primary
+//                    Global.toastMessage.iconRotates = true
+//                    Global.toastMessage.link = `${walletModel.utilsView.etherscanLink}/${response.result}`
+//                    Global.toastMessage.open()
 //                    root.close()
 //                } catch (e) {
 //                    console.error('Error parsing the response', e)
@@ -325,17 +330,17 @@ ModalPopup {
 //            onTransactionCompleted: {
 //                if (success) {
 //                    //% "Transaction completed"
-//                    toastMessage.title = qsTrId("transaction-completed")
-//                    toastMessage.source = Style.svg("check-circle")
-//                    toastMessage.iconColor = Style.current.success
+//                    Global.toastMessage.title = qsTrId("transaction-completed")
+//                    Global.toastMessage.source = Style.svg("check-circle")
+//                    Global.toastMessage.iconColor = Style.current.success
 //                } else {
 //                    //% "Transaction failed"
-//                    toastMessage.title = qsTrId("ens-registration-failed-title")
-//                    toastMessage.source = Style.svg("block-icon")
-//                    toastMessage.iconColor = Style.current.danger
+//                    Global.toastMessage.title = qsTrId("ens-registration-failed-title")
+//                    Global.toastMessage.source = Style.svg("block-icon")
+//                    Global.toastMessage.iconColor = Style.current.danger
 //                }
-//                toastMessage.link = `${walletModel.utilsView.etherscanLink}/${txHash}`
-//                toastMessage.open()
+//                Global.toastMessage.link = `${walletModel.utilsView.etherscanLink}/${txHash}`
+//                Global.toastMessage.open()
 //            }
 //        }
     }

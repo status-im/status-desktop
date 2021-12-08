@@ -9,6 +9,7 @@ import StatusQ.Controls 0.1
 
 import shared.views 1.0
 import shared.popups 1.0
+import shared.stores 1.0
 import shared.controls 1.0
 
 // TODO: replace with StatusModal
@@ -24,7 +25,7 @@ ModalPopup {
 
     Component.onCompleted: {
         // Not Refactored Yet
-//        walletModel.gasView.getGasPricePredictions()
+//        RootStore.walletModelInst.gasView.getGasPricePredictions()
     }
 
     height: 540
@@ -32,7 +33,7 @@ ModalPopup {
     function sendTransaction() {
         // Not Refactored Yet
 //        try {
-//            let responseStr = profileModel.ens.setPubKey(root.ensUsername,
+//            let responseStr = RootStore.profileModelInst.ens.setPubKey(root.ensUsername,
 //                                                        selectFromAccount.selectedAccount.address,
 //                                                        gasSelector.selectedGasLimit,
 //                                                        gasSelector.eip1599Enabled ? "" : gasSelector.selectedGasPrice,
@@ -95,7 +96,7 @@ ModalPopup {
                     return null
                 }
                 // Not Refactored Yet
-//                currency: walletModel.balanceView.defaultCurrency
+//                currency: RootStore.defaultCurrency
                 width: stack.width
                 //% "Choose account"
                 label: qsTrId("choose-account")
@@ -107,11 +108,11 @@ ModalPopup {
                 id: selectRecipient
                 visible: false
                 // Not Refactored Yet
-//                accounts: walletModel.accountsView.accounts
-                contacts: contactsModule.model.addedContacts
-                // Not Refactored Yet
-//                selectedRecipient: { "address": utilsModel.ensRegisterAddress, "type": RecipientSelector.Type.Address }
+//                accounts: RootStore.walletModelInst.accountsView.accounts
+                contacts: RootStore.contactsModuleInst.model.addedContacts
+                selectedRecipient: { "address": RootStore.utilsModelInst.ensRegisterAddress, "type": RecipientSelector.Type.Address }
                 readOnly: true
+                currentIndex: index
                 onSelectedRecipientChanged: if (isValid) { gasSelector.estimateGas() }
             }
             GasSelector {
@@ -120,10 +121,10 @@ ModalPopup {
                 anchors.top: selectFromAccount.bottom
                 anchors.topMargin: Style.current.padding
                 // Not Refactored Yet
-//                gasPrice: parseFloat(walletModel.gasView.gasPrice)
-//                getGasEthValue: walletModel.gasView.getGasEthValue
-//                getFiatValue: walletModel.balanceView.getFiatValue
-//                defaultCurrency: walletModel.balanceView.defaultCurrency
+//                gasPrice: parseFloat(RootStore.gasPrice)
+//                getGasEthValue: RootStore.gasEthValue
+//                getFiatValue: RootStore.fiatValue
+//                defaultCurrency: RootStore.defaultCurrency
                 
                 property var estimateGas: Backpressure.debounce(gasSelector, 600, function() {
                     let estimatedGas = root.estimateGasFunction(selectFromAccount.selectedAccount);
@@ -158,9 +159,9 @@ ModalPopup {
                 toAccount: selectRecipient.selectedRecipient
                 asset: root.asset
                 // Not Refactored Yet
-//                currency: walletModel.balanceView.defaultCurrency
+//                currency: RootStore.defaultCurrency
 //                amount: {
-//                    const fiatValue = walletModel.balanceView.getFiatValue(0, root.asset.symbol, currency)
+//                    const fiatValue = RootStore.walletModelInst.balanceView.getFiatValue(0, root.asset.symbol, currency)
 //                    return { "value": 0, "fiatValue": fiatValue }
 //                }
             }
@@ -175,7 +176,7 @@ ModalPopup {
                 id: transactionSigner
                 width: stack.width
                 // Not Refactored Yet
-//                signingPhrase: walletModel.utilsView.signingPhrase
+//                signingPhrase: RootStore.walletModelInst.utilsView.signingPhrase
             }
         }
     }

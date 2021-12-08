@@ -10,12 +10,15 @@ Rectangle {
     property bool parentIsHovered: false
     property int containerMargin: 2
     property int contentType: 2
+    property bool isCurrentUser: false
+    property bool isMessageActive: false
     property var messageContextMenu
     property bool showMoreButton: true
     property bool activityCenterMsg
     property bool placeholderMsg
     property string fromAuthor
     property alias editBtnActive: editBtn.active
+    signal replyClicked()
     signal hoverChanged(bool hovered)
     signal setMessageActive(string messageId, bool active)
     signal clickMessage(bool isProfileClick, bool isSticker, bool isImage, var image, bool emojiOnly, bool hideEmojiPicker)
@@ -93,7 +96,7 @@ Rectangle {
             tooltip.text: qsTrId("message-reply")
             onClicked: {
                 SelectedMessage.set(messageId, fromAuthor);
-                showReplyArea()
+                buttonsContainer.replyClicked();
                 if (messageContextMenu.closeParentPopup) {
                     messageContextMenu.closeParentPopup()
                 }

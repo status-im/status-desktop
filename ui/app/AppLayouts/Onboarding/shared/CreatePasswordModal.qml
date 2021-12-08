@@ -159,14 +159,14 @@ ModalPopup {
             onClicked: {
                 if (storingPasswordModal)
                 {
-                    applicationWindow.prepareForStoring(repeatPasswordField.text, true)
+                    Global.applicationWindow.prepareForStoring(repeatPasswordField.text, true)
                     popup.close()
                 }
                 else
                 {
                     loading = true
                     onboardingModule.storeSelectedAccountAndLogin(repeatPasswordField.text);
-                    applicationWindow.prepareForStoring(repeatPasswordField.text, false)
+                    Global.applicationWindow.prepareForStoring(repeatPasswordField.text, false)
                 }
             }
         }

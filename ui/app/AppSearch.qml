@@ -124,8 +124,8 @@ Item {
         onResultItemTitleClicked: {
             // Not Refactored
             //const pk = titleId
-            //const userProfileImage = appMain.getProfileImage(pk)
-            //return openProfilePopup(root.rootStore.chatsModelInst.userNameOrAlias(pk), pk, userProfileImage || root.rootStore.utilsModelInst.generateIdenticon(pk))
+            //const userProfileImage = Global.getProfileImage(pk)
+            //return Global.openProfilePopup(root.rootStore.chatsModelInst.userNameOrAlias(pk), pk, userProfileImage || root.rootStore.utilsModelInst.generateIdenticon(pk))
         }
     }
 }

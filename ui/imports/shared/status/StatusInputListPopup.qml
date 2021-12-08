@@ -20,6 +20,7 @@ Popup {
     property int imageHeight: 22
     property string title
     property bool showSearchBox: false
+    property var messageInput
 
     function openPopup(listParam) {
         modelList = listParam
@@ -107,7 +108,7 @@ Popup {
             } while (!listView.currentItem.visible)
         }
 
-        Keys.onReleased: function onKeyPress(event) {
+        Keys.onReleased: {
             if (event.key === Qt.Key_Down) {
                 searchBox.goToNextAvailableIndex(false)
             }

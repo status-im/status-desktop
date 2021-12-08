@@ -49,10 +49,12 @@ Item {
     property string currentNotificationCommunityId
     property var currentTime: 0
     property var idMap: ({})
+    property bool stickersLoaded: false
     property Timer timer: Timer { }
     property var userList
 
     signal openAppSearch()
+    signal openStickerPackPopup(string stickerPackId)
 
     // Not Refactored Yet
 //    function hideChatInputExtendedArea () {
@@ -103,9 +105,9 @@ Item {
         // notificaiton bubble this part should be updated accordingly.
         //
         // I removed part of this function which caused app crash.
-        applicationWindow.show()
-        applicationWindow.raise()
-        applicationWindow.requestActivate()
+        Global.applicationWindow.show()
+        Global.applicationWindow.raise()
+        Global.applicationWindow.requestActivate()
     }
 
     function positionAtMessage(messageId, isSearch = false) {
@@ -123,6 +125,31 @@ Item {
         }
     }
 
+    MessageContextMenuView {
+        id: contextmenu
+        reactionModel: root.rootStore.emojiReactionsModel
+    }
+
+    StatusImageModal {
+        id: imagePopup
+        onClicked: {
+            if (button === Qt.LeftButton) {
+                imagePopup.close()
+            } else if(button === Qt.RightButton) {
+                contextmenu.imageSource = imagePopup.imageSource
+                contextmenu.hideEmojiPicker = true
+                contextmenu.isRightClickOnImage = true;
+                contextmenu.show()
+            }
+        }
+        Connections {
+            target: Global
+            onOpenImagePopup: {
+                imagePopup.openPopup(image);
+            }
+        }
+    }
+
     StackLayout {
         anchors.fill: parent
         currentIndex: {
@@ -136,6 +163,7 @@ Item {
                         let myChatId = obj.chatContentModule.getMyChatId()
                         if(myChatId === root.activeChatId || myChatId === root.activeSubItemId)
                             return i
+
                     }
                 }
 
@@ -148,7 +176,7 @@ Item {
         }
 
         EmptyChatPanel {
-            onShareChatKeyClicked: openProfilePopup(userProfile.name, userProfile.pubKey, userProfile.icon);
+            onShareChatKeyClicked: Global.openProfilePopup(userProfile.name, userProfile.pubKey, userProfile.icon);
         }
 
         // This is kind of a solution for applying backend refactored changes with the minimal qml changes.
@@ -217,6 +245,7 @@ Item {
             ChatCommandModal {
                 id: sendTransactionNoEns
                 store: root.rootStore
+                isContact: root.isContact
                 onClosed: {
                     txModalLoader.closed()
                 }
@@ -247,6 +276,7 @@ Item {
             ChatCommandModal {
                 id: receiveTransaction
                 store: root.rootStore
+                isContact: root.isContact
                 onClosed: {
                     txModalLoader.closed()
                 }
@@ -283,6 +313,7 @@ Item {
                 onClosed: {
                     txModalLoader.closed()
                 }
+                isContact: root.isContact
                 selectRecipient.readOnly: true
                 selectRecipient.selectedRecipient: {
                     return {

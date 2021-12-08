@@ -9,6 +9,7 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 
 import shared.status 1.0
+import shared.stores 1.0
 import shared.panels 1.0
 import shared.panels.chat 1.0
 import shared.controls.chat 1.0
@@ -129,13 +130,13 @@ Column {
                 // for more information
                 this.height = undefined
                 if (Utils.hasImageExtension(link)) {
-                    if (localAccountSensitiveSettings.displayChatImages) {
+                    if (RootStore.displayChatImages) {
                         linkData = {
                             thumbnailUrl: link
                         }
                         return unfurledImageComponent
                     } else {
-                        if (localAccountSensitiveSettings.neverAskAboutUnfurlingAgain || (isImageLink && index > 0)) {
+                        if (RootStore.neverAskAboutUnfurlingAgain || (isImageLink && index > 0)) {
                             return
                         }
 
@@ -156,7 +157,7 @@ Column {
                     }
                     return exists
                 })
-                if (!linkWhiteListed && linkExists && !localAccountSensitiveSettings.neverAskAboutUnfurlingAgain) {
+                if (!linkWhiteListed && linkExists && !RootStore.neverAskAboutUnfurlingAgain) {
                     return enableLinkComponent
                 }
                 if (linkWhiteListed) {
@@ -189,7 +190,7 @@ Column {
 //                    return root.store.chatsModelInst.getLinkPreviewData(link, linkMessageLoader.uuid)
                 }
                 // setting the height to 0 allows the "enable link" dialog to
-                // disappear correctly when localAccountSensitiveSettings.neverAskAboutUnfurlingAgain
+                // disappear correctly when RootStore.neverAskAboutUnfurlingAgain
                 // is true. The height is reset at the top of this method.
                 this.height = 0
                 return undefined
@@ -366,10 +367,9 @@ Column {
                 //% "Enable in Settings"
                 text: qsTrId("enable-in-settings")
                 onClicked: {
-                    Global.changeAppSectionBySectionType(Constants.appSection.profile)
                     // TODO: replace with shared store constant
                     // Profile/RootStore.privacy_and_security_id
-                    profileLayoutContainer.changeProfileSection(3)
+                    Global.changeAppSectionBySectionType(Constants.appSection.profile, 3);
                 }
                 width: parent.width
                 anchors.top: sep1.bottom
@@ -385,7 +385,7 @@ Column {
                 //% "Don't ask me again"
                 text: qsTrId("dont-ask")
                 onClicked: {
-                    localAccountSensitiveSettings.neverAskAboutUnfurlingAgain = true
+                    RootStore.setNeverAskAboutUnfurlingAgain(true);
                 }
                 width: parent.width
                 anchors.top: sep2.bottom

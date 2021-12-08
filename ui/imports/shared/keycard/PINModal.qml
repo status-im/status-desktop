@@ -8,7 +8,9 @@ import StatusQ.Popups 0.1
 
 import shared 1.0
 import shared.controls 1.0
+import shared.stores 1.0
 import utils 1.0 as Imports
+
 
 StatusModal {
     property bool pinFieldValid: false
@@ -62,7 +64,7 @@ StatusModal {
             onClicked: {
                 submitted = true
                 // Not Refactored Yet
-//                keycardModel.authenticate(pinField.text)
+                RootStore.keycardModelInst.authenticate(pinField.text)
                 popup.close()
             }
         }
