@@ -50,3 +50,4 @@ proc delete*(self: AppService) =
 
 proc onLoggedIn*(self: AppService) =
   self.marathon.onLoggedIn()
+  self.osNotificationService.onLoggedIn()
