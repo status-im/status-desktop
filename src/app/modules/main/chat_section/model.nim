@@ -170,3 +170,12 @@ QtObject:
       var found = false
       if self.items[i].subItems.muteUnmuteItemById(id, mute):
         return
+
+  proc setHasUnreadMessage*(self: Model, id: string, value: bool) =
+    for i in 0 ..< self.items.len:
+      if(self.items[i].id == id):
+        let index = self.createIndex(i, 0, nil)
+        self.items[i].BaseItem.hasUnreadMessages = value
+        self.dataChanged(index, index, @[ModelRole.HasUnreadMessages.int])
+        return
+  

@@ -95,3 +95,6 @@ QtObject:
 
   proc unmuteChat*(self: View, chatId: string) {.slot.} = 
     self.delegate.unmuteChat(chatId)
+
+  proc markAllMessagesRead*(self: View, chatId: string) {.slot.} = 
+    self.delegate.markAllMessagesRead(chatId)

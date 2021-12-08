@@ -41,7 +41,7 @@ type
     chatId*: string
     messageId*: string
 
-  MessagesMarkedAsReadArgs = ref object of Args
+  MessagesMarkedAsReadArgs* = ref object of Args
     chatId*: string
     allMessagesMarked*: bool
     messagesIds*: seq[string] 

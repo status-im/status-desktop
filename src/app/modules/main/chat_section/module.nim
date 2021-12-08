@@ -257,8 +257,14 @@ method unmuteChat*(self: Module, chatId: string) =
   self.controller.unmuteChat(chatId)
 
 method onChatMuted*(self: Module, chatId: string) =
-  self.view.model().muteUnmuteItemOrSubItemById(chatId, true)
+  self.view.model().muteUnmuteItemOrSubItemById(chatId, mute=true)
 
 method onChatUnmuted*(self: Module, chatId: string) =
-  self.view.model().muteUnmuteItemOrSubItemById(chatId, false)
+  self.view.model().muteUnmuteItemOrSubItemById(chatId, mute=false)
+
+method onMarkAllMessagesRead*(self: Module, chatId: string) =
+  self.view.model().setHasUnreadMessage(chatId, value=false)
+
+method markAllMessagesRead*(self: Module, chatId: string) =
+  self.controller.markAllMessagesRead(chatId)
   
