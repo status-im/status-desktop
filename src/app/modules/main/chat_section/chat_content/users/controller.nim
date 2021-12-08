@@ -5,6 +5,8 @@ import io_interface
 import ../../../../../../app_service/service/contacts/service as contact_service
 import ../../../../../../app_service/service/community/service as community_service
 import ../../../../../../app_service/service/message/service as message_service
+import ../../../../../../app_service/service/chat/service as chat_service
+ 
 
 import ../../../../../core/eventemitter
 
@@ -63,6 +65,16 @@ method init*(self: Controller) =
 
     self.events.on(SIGNAL_LOGGEDIN_USER_IMAGE_CHANGED) do(e: Args):
       self.delegate.loggedInUserImageChanged()
+
+    self.events.on(SIGNAL_CHAT_MEMBERS_ADDED) do(e: Args):
+      var args = ChatMembersAddedArgs(e)
+      if (args.chatId == self.chatId): 
+        self.delegate.onChatMembersAdded(args.ids)
+
+    self.events.on(SIGNAL_CHAT_MEMBER_REMOVED) do(e: Args):
+      var args = ChatMemberRemovedArgs(e)
+      if (args.chatId == self.chatId): 
+        self.delegate.onChatMemberRemoved(args.id)
 
 method getMembersPublicKeys*(self: Controller): seq[string] = 
   # in case of 1:1 chat, there is no a members list

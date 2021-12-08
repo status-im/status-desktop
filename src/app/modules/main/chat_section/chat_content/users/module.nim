@@ -88,3 +88,16 @@ method contactUpdated*(self: Module, publicKey: string) =
 method loggedInUserImageChanged*(self: Module) =
   self.view.model().setIcon(singletonInstance.userProfile.getPubKey(), singletonInstance.userProfile.getIcon(),
   singletonInstance.userProfile.getIsIdenticon())
+
+method onChatMembersAdded*(self: Module,  ids: seq[string]) =
+  for id in ids:
+    if(self.view.model().isContactWithIdAdded(id)):
+      continue
+
+    let (name, image, isIdenticon) = self.controller.getContactNameAndImage(id)
+    let statusUpdateDto = self.controller.getStatusForContact(id)
+    let status = statusUpdateDto.statusType.int.OnlineStatus
+    self.view.model().addItem(initItem(id, name, status, image, isidenticon))
+
+method onChatMemberRemoved*(self: Module, id: string) =
+    self.view.model().removeItemById(id)

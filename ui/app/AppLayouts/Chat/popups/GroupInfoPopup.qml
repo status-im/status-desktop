@@ -23,6 +23,7 @@ StatusModal {
         ActiveChannel,
         ContextChannel
     }
+    property var chatSectionModule
     property var store
     property bool addMembers: false
     property int currMemberCount: 1
@@ -46,8 +47,7 @@ StatusModal {
     function doAddMembers(){
         if(pubKeys.length === 0) return;
         if (popup.channel) {
-            // Not Refactored Yet
-//            chatsModel.groups.addMembers(popup.channel.id, JSON.stringify(pubKeys));
+            popup.chatSectionModule.addGroupMembers(popup.channel.id, JSON.stringify(pubKeys));
         }
         popup.close();
     }
@@ -83,7 +83,7 @@ StatusModal {
     onOpened: {
         addMembers = false;
         if (popup.channel) {
-            popup.isAdmin = popup.channel.isAdmin(userProfile.pubKey)
+            popup.isAdmin = popup.chatSectionModule.activeItem.amIChatAdmin
         }
         btnSelectMembers.enabled = false;
         resetSelectedMembers();
@@ -246,8 +246,7 @@ StatusModal {
                                 icon.height: 16
                                 //% "Make Admin"
                                 text: qsTrId("make-admin")
-                                // Not Refactored Yet
-//                                onTriggered: popup.store.chatsModelInst.groups.makeAdmin(popup.channel.id,  model.publicKey)
+                                onTriggered: popup.chatSectionModule.makeAdmin(popup.channel.id,  model.publicKey)
                             }
                             StatusMenuItem {
                                 icon.name: "remove-contact"
@@ -256,8 +255,7 @@ StatusModal {
                                 type: StatusMenuItem.Type.Danger
                                 //% "Remove From Group"
                                 text: qsTrId("remove-from-group")
-                                // Not Refactored Yet
-//                                onTriggered: popup.store.chatsModelInst.groups.kickMember(popup.channel.id,  model.publicKey)
+                                onTriggered: popup.chatSectionModule.removeMemberFromGroupChat(popup.channel.id,  model.publicKey)
                             }
                         }
                     }
@@ -304,12 +302,11 @@ StatusModal {
 
     RenameGroupPopup {
         id: renameGroupPopup
-        // Not Refactored Yet
-//        activeChannelName: popup.store.chatsModelInst.channelView.activeChannel.name
-//        onDoRename: {
-//            popup.store.chatsModelInst.groups.rename(groupName)
-//            popup.header.title = groupName
-//            close()
-//        }
+        activeChannelName: popup.chatSectionModule.activeItem.name
+        onDoRename: {
+            popup.chatSectionModule.renameGroupChat(popup.chatSectionModule.activeItem.id, groupName)
+            popup.header.title = groupName
+            close()
+        }
     }
 }

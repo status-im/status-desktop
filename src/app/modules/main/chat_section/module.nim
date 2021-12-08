@@ -1,4 +1,4 @@
-import NimQml, Tables, chronicles
+import NimQml, Tables, chronicles, json, sequtils
 import io_interface
 import ../io_interface as delegate_interface
 import view, controller, item, sub_item, model, sub_model
@@ -215,6 +215,20 @@ proc initContactRequestsModel(self: Module) =
       contactsWhoAddedMe.add(item)
 
   self.view.contactRequestsModel().addItems(contactsWhoAddedMe)
+
+method initListOfMyContacts*(self: Module) =
+  var myContacts: seq[contacts_item.Item]
+  let contacts =  self.controller.getContacts()
+  for c in contacts:
+    if(c.isContact() and not c.isBlocked()):
+      let item = self.createItemFromPublicKey(c.id)
+      myContacts.add(item)
+  
+  self.view.listOfMyContacts().addItems(myContacts)
+
+method clearListOfMyContacts*(self: Module) =
+  self.view.listOfMyContacts().clear()
+    
 
 method load*(self: Module, events: EventEmitter, 
   settingsService: settings_service.ServiceInterface,
@@ -462,3 +476,30 @@ method onNewMessagesReceived*(self: Module, chatId: string, unviewedMessagesCoun
     self.controller.markAllMessagesRead(chatId)
   else:
     self.updateNotifications(chatId, unviewedMessagesCount, unviewedMentionsCount)
+
+proc convertPubKeysToJson(self: Module, pubKeys: string): seq[string] =
+  return map(parseJson(pubKeys).getElems(), proc(x:JsonNode):string = x.getStr)
+
+method addGroupMembers*(self: Module, chatId: string, pubKeys: string) =
+  self.controller.addGroupMembers(chatId, self.convertPubKeysToJson(pubKeys))
+
+method removeMemberFromGroupChat*(self: Module, chatId: string, pubKey: string) =
+  self.controller.removeMemberFromGroupChat(chatId, pubKey)
+
+method renameGroupChat*(self: Module, chatId: string, newName: string) =
+  self.controller.renameGroupChat(chatId, newName)
+
+method makeAdmin*(self: Module, chatId: string, pubKey: string) =
+  self.controller.makeAdmin(chatId, pubKey)
+
+method createGroupChat*(self: Module, groupName: string, pubKeys: string) =
+  self.controller.createGroupChat(groupName, self.convertPubKeysToJson(pubKeys))
+
+method joinGroup*(self: Module) =
+  self.controller.joinGroup()
+
+method joinGroupChatFromInvitation*(self: Module, groupName: string, chatId: string, adminPK: string) =
+  self.controller.joinGroupChatFromInvitation(groupName, chatId, adminPK)
+
+method onChatRenamed*(self: Module, chatId: string, newName: string) =
+  self.view.chatsModel().renameItem(chatId, newName)

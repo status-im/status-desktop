@@ -15,3 +15,9 @@ method contactUpdated*(self: AccessInterface, publicKey: string) {.base.} =
 
 method loggedInUserImageChanged*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method onChatMembersAdded*(self: AccessInterface, ids: seq[string]) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onChatMemberRemoved*(self: AccessInterface, ids: string) {.base.} =
+  raise newException(ValueError, "No implementation available")

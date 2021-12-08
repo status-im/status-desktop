@@ -18,6 +18,7 @@ import "../controls"
 ModalPopup {
     id: popup
 
+    property var chatSectionModule
     property var store
     property var pubKeys: []
     property bool selectChatMembers: true
@@ -32,25 +33,16 @@ ModalPopup {
         memberCount = 1;
         pubKeys = [];
 
-        popup.store.addToGroupContacts.clear();
+        chatSectionModule.populateMyContacts()
 
-        getContactListObject(popup.store.addToGroupContacts)
-
-        popup.store.addToGroupContacts.append({
-            //% "(You)"
-            name: userProfile.name + " " + qsTrId("(you)"),
-            pubKey: userProfile.pubKey,
-            address: "",
-            identicon: userProfile.icon,
-            thumbnailImage: userProfile.icon,
-            isUser: true
-        });
-//        noContactsRect.visible = !popup.store.allContacts.hasAddedContacts();
+        noContactsRect.visible = !chatSectionModule.listOfMyContacts.rowCount() > 0
         contactList.visible = !noContactsRect.visible;
         if (!contactList.visible) {
             memberCount = 0;
         }
     }
+
+    onClosed: chatSectionModule.clearMyContacts()
 
     function validate() {
         if (groupName.text === "") {
@@ -73,8 +65,8 @@ ModalPopup {
         if (pubKeys.length === 0) {
             return;
         }
-        // Not Refactored Yet
-//        popup.store.chatsModelInst.groups.create(Utils.filterXSS(groupName.text), JSON.stringify(pubKeys));
+
+        popup.chatSectionModule.createGroupChat(Utils.filterXSS(groupName.text), JSON.stringify(pubKeys));
         popup.close();
     }
 
@@ -137,7 +129,7 @@ ModalPopup {
     ContactListPanel {
         id: contactList
         anchors.fill: parent
-        model: popup.store.addToGroupContacts
+        model: chatSectionModule.listOfMyContacts
         searchString: searchBox.text.toLowerCase()
         selectMode: selectChatMembers && memberCount < maxMembers
         anchors.topMargin: 50
