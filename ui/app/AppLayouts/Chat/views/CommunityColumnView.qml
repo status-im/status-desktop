@@ -284,6 +284,10 @@ Item {
                 onUnmuteChat: {
                     root.communitySectionModule.unmuteChat(id)
                 }
+
+                onMarkAllMessagesRead: {
+                    root.communitySectionModule.markAllMessagesRead(id)
+                }
             }
         }
 
