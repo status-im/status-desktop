@@ -11,16 +11,15 @@ QtObject:
   type OsNotificationService* = ref object of QObject
     status: Status
     notification: StatusOSNotification
+    notificationSetUp: bool
 
   proc setup(self: OsNotificationService, status: Status) = 
     self.QObject.setup
     self.status = status
-    self.notification = newStatusOSNotification()
-    signalConnect(self.notification, "notificationClicked(QString)", self,
-    "onNotificationClicked(QString)", 2)
   
   proc delete*(self: OsNotificationService) =
-    self.notification.delete
+    if self.notificationSetUp:
+      self.notification.delete
     self.QObject.delete
 
   proc newOsNotificationService*(status: Status): OsNotificationService =
@@ -46,3 +45,8 @@ QtObject:
     ## This slot is called once user clicks a notificaiton bubble, "identifier"
     ## contains data which uniquely define that notification.
     self.status.osnotifications.onNotificationClicked(identifier)
+
+  proc onLoggedIn*(self: OsNotificationService) =
+    self.notification = newStatusOSNotification()
+    self.notificationSetUp = true
+    signalConnect(self.notification, "notificationClicked(QString)", self, "onNotificationClicked(QString)", 2)
