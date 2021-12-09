@@ -11,48 +11,61 @@ import "../popups"
 
 StatusPopupMenu {
     id: root
-    property var chatItem
-    property var store
-    property var chatSectionModule
-    // Not Refactored Yet
-    property bool communityActive: false // root.store.chatsModelInst.communities.activeCommunity.active
+
+    property string currentFleet: ""
+    property bool isCommunityChat: false
+    property bool isCommunityAdmin: false
+    property string chatId: ""
+    property string chatName: ""
+    property string chatIcon: ""
+    property int chatType: -1
+    property bool chatMuted: false
+
+    signal viewGroupOrProfile(string id)
+    signal requestAllHistoricMessages(string id)
+    signal unmuteChat(string id)
+    signal muteChat(string id)
+    signal markAsRead(string id)
+    signal clearChatHistory(string id)
+    signal editChannel(string id)
+    signal downloadMessages(string file)
+    signal deleteChat(string id)
 
     StatusMenuItem {
         id: viewProfileMenuItem
         text: {
-            if (chatItem) {
-                switch (chatItem.chatType) {
-                    case Constants.chatTypeOneToOne:
-                      //% "View Profile"
-                      return qsTrId("view-profile")
-                    case Constants.chatTypePrivateGroupChat:
-                      //% "View Group"
-                      return qsTrId("view-group")
-                }
+            switch (root.chatType) {
+            case Constants.chatType.oneToOne:
+                //% "View Profile"
+                return qsTrId("view-profile")
+            case Constants.chatType.privateGroupChat:
+                //% "View Group"
+                return qsTrId("view-group")
+            default:
+                return ""
             }
-            return ""
         }
         icon.name: "group-chat"
-        enabled: chatItem && 
-            (chatItem.chatType === Constants.chatTypeOneToOne ||
-            chatItem.chatType === Constants.chatTypePrivateGroupChat)
+        enabled: root.chatType === Constants.chatType.oneToOne ||
+            root.chatType === Constants.chatType.privateGroupChat
         onTriggered: {
-            if (chatItem.chatType === Constants.chatTypeOneToOne) {
-                const userProfileImage = appMain.getProfileImage(chatItem.id)
+            if (root.chatType === Constants.chatType.oneToOne) {
+                const userProfileImage = appMain.getProfileImage(root.chatId)
                 return openProfilePopup(
-                    chatItem.name,
-                    chatItem.id,
-                    userProfileImage || chatItem.identicon,
+                    root.chatName,
+                    root.chatId,
+                    root.chatIcon,
                     "",
-                    chatItem.name
+                    root.chatName
                 )
             }
-            if (chatItem.chatType === Constants.chatTypePrivateGroupChat) {
-                return Global.openPopup(groupInfoPopupComponent, {
-                    channel: chatItem,
-                    channelType: GroupInfoPopup.ChannelType.ContextChannel
-                })
-            }
+            // Not Refactored Yet
+//            if (root.chatType === Constants.chatType.privateGroupChat) {
+//                return Global.openPopup(groupInfoPopupComponent, {
+//                    channel: chatItem,
+//                    channelType: GroupInfoPopup.ChannelType.ContextChannel
+//                })
+//            }
         }
     }
 
@@ -60,27 +73,36 @@ StatusPopupMenu {
         visible: viewProfileMenuItem.enabled
     }
 
-
     Action {
-        enabled: root.store.profileModelInst.fleets.fleet == Constants.waku_prod || root.store.profileModelInst.fleets.fleet === Constants.waku_test
+        enabled: root.currentFleet
+
+        // Will be deleted later
+//        enabled: root.store.profileModelInst.fleets.fleet == Constants.waku_prod ||
+//                 root.store.profileModelInst.fleets.fleet === Constants.waku_test
+
         //% "Test WakuV2 - requestAllHistoricMessages"
         text: qsTrId("test-wakuv2---requestallhistoricmessages")
-        onTriggered: root.store.chatsModelInst.requestAllHistoricMessages()
+        onTriggered: {
+            root.requestAllHistoricMessages(root.chatId)
+        }
+
+        // Will be deleted later
+        //onTriggered: root.store.chatsModelInst.requestAllHistoricMessages()
     }
 
     StatusMenuItem {
-        text: chatItem && chatItem.muted ? 
+        text: root.chatMuted ?
               //% "Unmute chat"
               qsTrId("unmute-chat") : 
               //% "Mute chat"
               qsTrId("mute-chat")
         icon.name: "notification"
-        enabled: chatItem && chatItem.chatType !== Constants.chatTypePrivateGroupChat
+        enabled: root.chatType !== Constants.chatType.privateGroupChat
         onTriggered: {
-            if (chatItem && chatItem.muted) {
-                return root.store.chatsModelInst.channelView.unmuteChatItem(chatItem.id)
-            }
-            root.store.chatsModelInst.channelView.muteChatItem(chatItem.id)
+            if(root.chatMuted)
+                root.unmuteChat(root.chatId)
+            else
+                root.muteChat(root.chatId)
         }
     }
 
@@ -88,15 +110,25 @@ StatusPopupMenu {
         //% "Mark as Read"
         text: qsTrId("mark-as-read")
         icon.name: "checkmark-circle"
-        enabled: chatItem && chatItem.chatType !== Constants.chatTypePrivateGroupChat
-        onTriggered: root.store.chatsModelInst.channelView.markChatItemAsRead(chatItem.id)
+        enabled: root.chatType !== Constants.chatType.privateGroupChat
+        onTriggered: {
+            root.markAsRead(root.chatId)
+        }
+
+        // Will be deleted later
+        //onTriggered: root.store.chatsModelInst.channelView.markChatItemAsRead(chatItem.id)
     }
 
     StatusMenuItem {
         //% "Clear history"
         text: qsTrId("clear-history")
         icon.name: "close-circle"
-        onTriggered: root.store.chatsModelInst.channelView.clearChatHistory(chatItem.id)
+        onTriggered: {
+            root.clearChatHistory(root.chatId)
+        }
+
+        // Will be deleted later
+        //onTriggered: root.store.chatsModelInst.channelView.clearChatHistory(chatItem.id)
     }
 
     StatusMenuItem {
@@ -105,11 +137,12 @@ StatusPopupMenu {
         icon.name: "edit"
         enabled: communityActive &&
             root.store.chatsModelInst.communities.activeCommunity.admin
-        onTriggered: Global.openPopup(editChannelPopup, {
-            store: root.store,
-            communityId: root.store.chatsModelInst.communities.activeCommunity.id,
-            channel: chatItem
-        })
+        // Not Refactored Yet
+//        onTriggered: Global.openPopup(editChannelPopup, {
+//            store: root.store,
+//            communityId: root.store.chatsModelInst.communities.activeCommunity.id,
+//            channel: chatItem
+//        })
     }
 
     StatusMenuItem {
@@ -126,25 +159,28 @@ StatusPopupMenu {
     StatusMenuItem {
         id: deleteOrLeaveMenuItem
         text: {
-            if (communityActive) {
+            if (isCommunityChat) {
                 return qsTr("Delete Channel")
             }
-            return chatItem && chatItem.chatType === Constants.chatTypeOneToOne ?
+            return root.chatType === Constants.chatType.oneToOne ?
                         //% "Delete chat"
                         qsTrId("delete-chat") :
                         //% "Leave chat"
                         qsTrId("leave-chat")
         }
-        icon.name: chatItem && chatItem.chatType === Constants.chatTypeOneToOne || communityActive ? "delete" : "arrow-right"
-        icon.width: chatItem && chatItem.chatType === Constants.chatTypeOneToOne || communityActive ? 18 : 14
-        iconRotation: chatItem && chatItem.chatType === Constants.chatTypeOneToOne || communityActive ? 0 : 180
+        icon.name: root.chatType === Constants.chatType.oneToOne || isCommunityChat ? "delete" : "arrow-right"
+        icon.width: root.chatType === Constants.chatType.oneToOne || isCommunityChat ? 18 : 14
+        iconRotation: root.chatType === Constants.chatType.oneToOne || isCommunityChat ? 0 : 180
 
         type: StatusMenuItem.Type.Danger
         onTriggered: {
             Global.openPopup(deleteChatConfirmationDialogComponent)
         }
 
-        enabled: !communityActive || root.store.chatsModelInst.communities.activeCommunity.admin
+        enabled: !isCommunityChat || isCommunityAdmin
+
+        // Will be deleted later
+//        enabled: !communityActive || root.store.chatsModelInst.communities.activeCommunity.admin
     }
 
     FileDialog {
@@ -154,28 +190,33 @@ StatusPopupMenu {
         title: qsTr("Download messages")
         currentFile: StandardPaths.writableLocation(StandardPaths.DocumentsLocation) + "/messages.json"
         defaultSuffix: "json"
+
         onAccepted: {
-            root.store.chatsModelInst.messageView.downloadMessages(downdloadDialog.currentFile)
+            root.downloadMessages(downdloadDialog.currentFile)
         }
+
+        // Will be deleted later
+//        onAccepted: {
+//            root.store.chatsModelInst.messageView.downloadMessages(downdloadDialog.currentFile)
+//        }
     }
 
     Component {
         id: deleteChatConfirmationDialogComponent
         ConfirmationDialog {
-            property string chatId: !!chatItem ? chatItem.id : ""
             btnType: "warn"
-            header.title: communityActive && chatItem ? qsTr("Delete #%1").arg(chatItem.name) :
-                                            chatItem && chatItem.chatType === Constants.chatTypeOneToOne ?
+            header.title: isCommunityChat ? qsTr("Delete #%1").arg(root.chatName) :
+                                            root.chatType === Constants.chatType.oneToOne ?
                                             //% "Delete chat"
                                             qsTrId("delete-chat") :
                                             //% "Leave chat"
                                             qsTrId("leave-chat")
-            confirmButtonLabel: communityActive ? qsTr("Delete") : header.title
-            confirmationText: communityActive && chatItem ? qsTr("Are you sure you want to delete #%1 channel?").arg(chatItem.name) :
-                                                chatItem && chatItem.chatType === Constants.chatTypeOneToOne ?
+            confirmButtonLabel: isCommunityChat ? qsTr("Delete") : header.title
+            confirmationText: isCommunityChat ? qsTr("Are you sure you want to delete #%1 channel?").arg(root.chatName) :
+                                                root.chatType === Constants.chatType.oneToOne ?
                                                 qsTr("Are you sure you want to delete this chat?"):
                                                 qsTr("Are you sure you want to leave this chat?")
-            showCancelButton: communityActive
+            showCancelButton: isCommunityChat
 
             onClosed: {
                 destroy()
@@ -184,13 +225,18 @@ StatusPopupMenu {
                 close()
             }
             onConfirmButtonClicked: {
-                if (communityActive) {
-                    root.store.chatsModelInst.communities.deleteCommunityChat(root.store.chatsModelInst.communities.activeCommunity.id, chatId)
-                } else {
-                    chatSectionModule.leaveChat(chatId)
-                }
-                close();
+                root.deleteChat(root.chatId)
             }
+
+            // Will be deleted later
+//            onConfirmButtonClicked: {
+//                if (communityActive) {
+//                    root.store.chatsModelInst.communities.deleteCommunityChat(root.store.chatsModelInst.communities.activeCommunity.id, chatId)
+//                } else {
+//                    root.store.chatsModelInst.channelView.leaveChat(chatId)
+//                }
+//                close();
+//            }
         }
     }
 }

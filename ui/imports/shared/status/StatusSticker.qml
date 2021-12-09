@@ -12,7 +12,7 @@ Loader {
     signal loaded()
 
     id: root
-    active: contentType === Constants.stickerType
+    active: contentType === Constants.messageContentType.stickerType
 
     sourceComponent: Component {
         ImageLoader {

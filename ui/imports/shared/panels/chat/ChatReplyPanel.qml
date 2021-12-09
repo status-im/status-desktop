@@ -12,47 +12,41 @@ import shared.controls.chat 1.0
 Loader {
     id: root
 
+    property bool amISenderOfTheRepliedMessage
+    property int repliedMessageContentType
+    property string repliedMessageSenderIcon
+    property bool repliedMessageSenderIconIsIdenticon
+    property bool repliedMessageIsEdited
+    property string repliedMessageSender
+    property string repliedMessageContent
+    property string repliedMessageImage
+
     property int nameMargin: 6
     property int textFieldWidth: item ? item.textField.width : 0
     property int textFieldImplicitWidth: 0
     property int authorWidth: item ? item.authorMetrics.width : 0
     property bool longReply: false
-    property color elementsColor: isCurrentUser ? Style.current.chatReplyCurrentUser : Style.current.secondaryText
+    property color elementsColor: amISenderOfTheRepliedMessage ? Style.current.chatReplyCurrentUser : Style.current.secondaryText
     property var container
     property int chatHorizontalPadding
     property var stickerData
-    signal clickMessage(bool isProfileClick, bool isSticker, bool isImage, var image, bool emojiOnly, bool hideEmojiPicker, bool isReply)
 
-//    TODO bring those back and remove dynamic scoping
-//    property bool isCurrentUser: false
-//    property int repliedMessageType
-//    property string repliedMessageImage
-    property string repliedMessageUserIdenticon: ""
-//    property bool repliedMessageIsEdited
-    property string repliedMessageUserImage: ""
-//    property string repliedMessageAuthor
-//    property string repliedMessageContent
-//    property string responseTo: ""
-//    signal scrollToBottom(bool isit, var container)
+    signal clickMessage(bool isProfileClick, bool isSticker, bool isImage, var image, bool emojiOnly, bool hideEmojiPicker, bool isReply)
+    signal scrollToBottom(bool isit, var container)
 
     sourceComponent: Component {
         Item {
             property alias textField: lblReplyMessage
             property alias authorMetrics: txtAuthorMetrics
-            property var messageEdited: function(id, content) {
-                if (responseTo === id){
-                    lblReplyMessage.text = Utils.getReplyMessageStyle(Emoji.parse(Utils.linkifyAndXSS(content + Constants.editLabel), Emoji.size.small), isCurrentUser, localAccountSensitiveSettings.useCompactMode)
-                }
-            }
 
             id: chatReply
             // childrenRect.height shows a binding loop for some reason, so we use heights instead
             height: {
                 const h = userImage.height + 4
-                if (repliedMessageType === Constants.imageType) {
+                if (repliedMessageContentType === Constants.messageContentType.imageType) {
                     return h + imgReplyImage.height
                 }
-                if (repliedMessageType === Constants.stickerType) {
+                if (repliedMessageContentType === Constants.messageContentType.stickerType) {
                     return h + stickerLoader.height
                 }
                 return h + lblReplyMessage.height
@@ -107,10 +101,8 @@ Loader {
                 active: true
                 anchors.left: replyCorner.right
                 anchors.leftMargin: Style.current.halfPadding
-                identiconImageSource: repliedMessageUserIdenticon
-                isReplyImage: true
-                profileImage: repliedMessageUserImage
-//                isCurrentUser: isCurrentUser
+                icon: repliedMessageSenderIcon
+                isIdenticon: repliedMessageSenderIconIsIdenticon
                 onClickMessage: {
                     root.clickMessage(true, false, false, null, false, false, isReplyImage)
                 }
@@ -118,7 +110,7 @@ Loader {
 
             StyledTextEdit {
                 id: lblReplyAuthor
-                text: repliedMessageAuthor
+                text: repliedMessageSender
                 color: root.elementsColor
                 readOnly: true
                 font.pixelSize: Style.current.secondaryTextFontSize
@@ -131,7 +123,7 @@ Loader {
 
             StatusChatImage {
                 id: imgReplyImage
-                visible: repliedMessageType === Constants.imageType
+                visible: repliedMessageContentType === Constants.messageContentType.imageType
                 imageWidth: 50
                 imageSource: repliedMessageImage
                 anchors.top: lblReplyAuthor.bottom
@@ -144,7 +136,7 @@ Loader {
 
             Loader {
                 id: stickerLoader
-                active: repliedMessageType === Constants.stickerType
+                active: repliedMessageContentType === Constants.messageContentType.stickerType
                 anchors.top: lblReplyAuthor.bottom
                 anchors.topMargin: nameMargin
                 anchors.left: userImage.left
@@ -154,7 +146,7 @@ Loader {
                         imageHeight: 56
                         imageWidth: 56
                         stickerData: root.stickerData
-                        contentType: repliedMessageType
+                        contentType: repliedMessageContentType
                         onLoaded: {
                             scrollToBottom(true, root.container)
                         }
@@ -164,16 +156,16 @@ Loader {
 
             StyledTextEdit {
                 id: lblReplyMessage
-                visible: repliedMessageType !== Constants.imageType && repliedMessageType !== Constants.stickerType
+                visible: repliedMessageContentType !== Constants.messageContentType.imageType && repliedMessageContentType !== Constants.messageContentType.stickerType
                 Component.onCompleted: textFieldImplicitWidth = implicitWidth
                 anchors.top: lblReplyAuthor.bottom
                 anchors.topMargin: nameMargin
                 text: {
                     if (repliedMessageIsEdited){
                         let index = repliedMessageContent.length - 4
-                        return Utils.getReplyMessageStyle(Emoji.parse(Utils.linkifyAndXSS(repliedMessageContent.slice(0, index) + Constants.editLabel + repliedMessageContent.slice(index)), Emoji.size.small), isCurrentUser, localAccountSensitiveSettings.useCompactMode)
+                        return Utils.getReplyMessageStyle(Emoji.parse(Utils.linkifyAndXSS(repliedMessageContent.slice(0, index) + Constants.editLabel + repliedMessageContent.slice(index)), Emoji.size.small), amISenderOfTheRepliedMessage, localAccountSensitiveSettings.useCompactMode)
                     } else {
-                        return Utils.getReplyMessageStyle(Emoji.parse(Utils.linkifyAndXSS(repliedMessageContent), Emoji.size.small), isCurrentUser, localAccountSensitiveSettings.useCompactMode)
+                        return Utils.getReplyMessageStyle(Emoji.parse(Utils.linkifyAndXSS(repliedMessageContent), Emoji.size.small), amISenderOfTheRepliedMessage, localAccountSensitiveSettings.useCompactMode)
                     }
                 }
                 textFormat: Text.RichText

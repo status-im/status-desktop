@@ -10,8 +10,8 @@ Item {
     height: childrenRect.height + Style.current.smallPadding * 2
     anchors.left: parent.left
     anchors.right: parent.right
-//    property int nextMessageIndex
-//    property string nextMsgTimestamp
+    property int nextMessageIndex
+    property string nextMsgTimestamp
     signal clicked()
     signal timerTriggered()
     Timer {
