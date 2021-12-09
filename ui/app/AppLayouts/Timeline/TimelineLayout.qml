@@ -78,7 +78,7 @@ ScrollView {
             id: statusUpdateInput
             anchors.top: parent.top
             anchors.topMargin: 40
-            chatType: Constants.chatTypeStatusUpdate
+            chatType: Constants.chatType.profile
             imageErrorMessageLocation: StatusChatInput.ImageErrorMessageLocation.Bottom
             z: 1
             onSendMessage: {
@@ -90,7 +90,7 @@ ScrollView {
                 var msg = root.store.getPlainTextFromRichText(Emoji.deparse(statusUpdateInput.textInput.text))
                 if (msg.length > 0){
                     msg = statusUpdateInput.interpretMessage(msg)
-                    root.store.sendMessage(msg, Utils.isOnlyEmoji(msg) ? Constants.emojiType : Constants.messageType);
+                    root.store.sendMessage(msg, Utils.isOnlyEmoji(msg) ? Constants.messageContentType.emojiType : Constants.messageContentType.messageType);
                     statusUpdateInput.textInput.text = "";
                     if(event) event.accepted = true
                     sendMessageSound.stop()
@@ -148,74 +148,75 @@ ScrollView {
             // TODO: Replace with StatusQ component once it lives there.
             delegate: MessageView {
                 id: msgDelegate
-                rootStore: root.rootStore
-                messageStore: root.messageStore
-                /////////TODO Remove
-                fromAuthor: model.fromAuthor
-                chatId: model.chatId
-                userName: model.userName
-                alias: model.alias
-                localName: model.localName
-                message: model.message
-                plainText: model.plainText
-                identicon: model.identicon
-                isCurrentUser: model.isCurrentUser
-                timestamp: model.timestamp
-                sticker: model.sticker
-                contentType: model.contentType
-                outgoingStatus: model.outgoingStatus
-                responseTo: model.responseTo
-                authorCurrentMsg: msgDelegate.ListView.section
-                authorPrevMsg: msgDelegate.ListView.previousSection
-                imageClick: imagePopup.openPopup.bind(imagePopup)
-                messageId: model.messageId
-                emojiReactions: model.emojiReactions
-                isStatusUpdate: true
-                statusAgeEpoch: ageUpdateTimer.epoch
-                // This is used in order to have access to the previous message and determine the timestamp
-                // we can't rely on the index because the sequence of messages is not ordered on the nim side
-                prevMessageIndex: {
-                    // This is used in order to have access to the previous message and determine the timestamp
-                    // we can't rely on the index because the sequence of messages is not ordered on the nim side
-                    if(msgDelegate.DelegateModel.itemsIndex > 0){
-                        return messageListDelegate.items.get(msgDelegate.DelegateModel.itemsIndex - 1).model.index
-                    }
-                    return -1;
-                }
-                timeout: model.timeout
-                messageContextMenu: msgCntxtMenu
-                Component.onCompleted: {
-                    messageStore.fromAuthor = model.fromAuthor;
-                    messageStore.chatId = model.chatId;
-                    messageStore.userName = model.userName;
-                    messageStore.alias = model.alias;
-                    messageStore.localName = model.localName;
-                    messageStore.message = model.message;
-                    messageStore.plainText = model.plainText;
-                    messageStore.identicon = model.identicon;
-                    messageStore.isCurrentUser = model.isCurrentUser;
-                    messageStore.timestamp = model.timestamp;
-                    messageStore.sticker = model.sticker;
-                    messageStore.contentType = model.contentType;
-                    messageStore.outgoingStatus = model.outgoingStatus;
-                    messageStore.responseTo = model.responseTo;
-                    messageStore.authorCurrentMsg = msgDelegate.ListView.section;
-                    messageStore.authorPrevMsg = msgDelegate.ListView.previousSection;
-                    messageStore.imageClick = imagePopup.openPopup.bind(imagePopup);
-                    messageStore.messageId = model.messageId;
-                    messageStore.emojiReactions = model.emojiReactions;
-                    messageStore.isStatusUpdate = true;
-                    messageStore.statusAgeEpoch = ageUpdateTimer.epoch;
-                    // This is used in order to have access to the previous message and determine the timestamp
-                    // we can't rely on the index because the sequence of messages is not ordered on the nim side
-                    messageStore.prevMessageIndex =
-                        // This is used in order to have access to the previous message and determine the timestamp
-                        // we can't rely on the index because the sequence of messages is not ordered on the nim side
-                        (msgDelegate.DelegateModel.itemsIndex > 0) ?
-                        messageListDelegate.items.get(msgDelegate.DelegateModel.itemsIndex - 1).model.index : -1;
-                    messageStore.timeout = model.timeout;
-                    messageStore.messageContextMenu = msgCntxtMenu;
-                }
+                // Not Refactored Yet
+
+//                rootStore: root.rootStore
+//                messageStore: root.messageStore
+//                fromAuthor: model.fromAuthor
+//                chatId: model.chatId
+//                userName: model.userName
+//                alias: model.alias
+//                localName: model.localName
+//                message: model.message
+//                plainText: model.plainText
+//                identicon: model.identicon
+//                isCurrentUser: model.isCurrentUser
+//                timestamp: model.timestamp
+//                sticker: model.sticker
+//                contentType: model.contentType
+//                outgoingStatus: model.outgoingStatus
+//                responseTo: model.responseTo
+//                authorCurrentMsg: msgDelegate.ListView.section
+//                authorPrevMsg: msgDelegate.ListView.previousSection
+//                imageClick: imagePopup.openPopup.bind(imagePopup)
+//                messageId: model.messageId
+//                emojiReactions: model.emojiReactions
+//                isStatusUpdate: true
+//                statusAgeEpoch: ageUpdateTimer.epoch
+//                // This is used in order to have access to the previous message and determine the timestamp
+//                // we can't rely on the index because the sequence of messages is not ordered on the nim side
+//                prevMessageIndex: {
+//                    // This is used in order to have access to the previous message and determine the timestamp
+//                    // we can't rely on the index because the sequence of messages is not ordered on the nim side
+//                    if(msgDelegate.DelegateModel.itemsIndex > 0){
+//                        return messageListDelegate.items.get(msgDelegate.DelegateModel.itemsIndex - 1).model.index
+//                    }
+//                    return -1;
+//                }
+//                timeout: model.timeout
+//                messageContextMenu: msgCntxtMenu
+//                Component.onCompleted: {
+//                    messageStore.fromAuthor = model.fromAuthor;
+//                    messageStore.chatId = model.chatId;
+//                    messageStore.userName = model.userName;
+//                    messageStore.alias = model.alias;
+//                    messageStore.localName = model.localName;
+//                    messageStore.message = model.message;
+//                    messageStore.plainText = model.plainText;
+//                    messageStore.identicon = model.identicon;
+//                    messageStore.isCurrentUser = model.isCurrentUser;
+//                    messageStore.timestamp = model.timestamp;
+//                    messageStore.sticker = model.sticker;
+//                    messageStore.contentType = model.contentType;
+//                    messageStore.outgoingStatus = model.outgoingStatus;
+//                    messageStore.responseTo = model.responseTo;
+//                    messageStore.authorCurrentMsg = msgDelegate.ListView.section;
+//                    messageStore.authorPrevMsg = msgDelegate.ListView.previousSection;
+//                    messageStore.imageClick = imagePopup.openPopup.bind(imagePopup);
+//                    messageStore.messageId = model.messageId;
+//                    messageStore.emojiReactions = model.emojiReactions;
+//                    messageStore.isStatusUpdate = true;
+//                    messageStore.statusAgeEpoch = ageUpdateTimer.epoch;
+//                    // This is used in order to have access to the previous message and determine the timestamp
+//                    // we can't rely on the index because the sequence of messages is not ordered on the nim side
+//                    messageStore.prevMessageIndex =
+//                        // This is used in order to have access to the previous message and determine the timestamp
+//                        // we can't rely on the index because the sequence of messages is not ordered on the nim side
+//                        (msgDelegate.DelegateModel.itemsIndex > 0) ?
+//                        messageListDelegate.items.get(msgDelegate.DelegateModel.itemsIndex - 1).model.index : -1;
+//                    messageStore.timeout = model.timeout;
+//                    messageStore.messageContextMenu = msgCntxtMenu;
+//                }
                 MessageContextMenuView {
                     id: msgCntxtMenu
                     store: root.store

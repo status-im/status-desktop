@@ -86,7 +86,7 @@ StatusAppThreePanelLayout {
 
     showRightPanel: {
         // Check if user list is available as an option for particular chat content module.
-        let usersListAvailable = currentChatContentModule().isUsersListAvailable()
+        let usersListAvailable = currentChatContentModule().chatDetails.isUsersListAvailable
         return localAccountSensitiveSettings.showOnlineUsers && usersListAvailable && localAccountSensitiveSettings.expandUsersList
     }
 

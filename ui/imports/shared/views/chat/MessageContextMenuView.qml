@@ -320,11 +320,11 @@ StatusPopupMenu {
                 return false
 
             switch (root.store.chatsModelInst.channelView.activeChannel.chatType) {
-            case Constants.chatTypePublic: return false
-            case Constants.chatTypeStatusUpdate: return false
-            case Constants.chatTypeOneToOne: return true
-            case Constants.chatTypePrivateGroupChat: return root.store.chatsModelInst.channelView.activeChannel.isAdmin(userProfile.pubKey)
-            case Constants.chatTypeCommunity: return root.store.chatsModelInst.communities.activeCommunity.admin
+            case Constants.chatType.publicChat: return false
+            case Constants.chatType.profile: return false
+            case Constants.chatType.oneToOne: return true
+            case Constants.chatType.privateGroupChat: return root.store.chatsModelInst.channelView.activeChannel.isAdmin(userProfile.pubKey)
+            case Constants.chatType.communityChat: return root.store.chatsModelInst.communities.activeCommunity.admin
             }
 
             return false
@@ -339,11 +339,11 @@ StatusPopupMenu {
     StatusMenuItem {
         id: deleteMessageAction
         enabled: isCurrentUser && !isProfile && !emojiOnly && !pinnedPopup && !isRightClickOnImage &&
-                 (contentType === Constants.messageType ||
-                  contentType === Constants.stickerType ||
-                  contentType === Constants.emojiType ||
-                  contentType === Constants.imageType ||
-                  contentType === Constants.audioType)
+                 (contentType === Constants.messageContentType.messageType ||
+                  contentType === Constants.messageContentType.stickerType ||
+                  contentType === Constants.messageContentType.emojiType ||
+                  contentType === Constants.messageContentType.imageType ||
+                  contentType === Constants.messageContentType.audioType)
         //% "Delete message"
         text: qsTrId("delete-message")
         onTriggered: {

@@ -20,14 +20,14 @@ Item {
     property bool hideSecondIcon: false
     property int chatType: chatsModel.channelView.chats.getChannelType(chatId)
     property int realChatType: {
-        if (chatType === Constants.chatTypeCommunity) {
+        if (chatType === Constants.chatType.communityChat) {
             // TODO add a check for private community chats once it is created
-            return Constants.chatTypePubliccommunityComponent
+            return Constants.chatType.publicChatcommunityComponent
         }
         return chatType
     }
 
-    property string profileImage: realChatType === Constants.chatTypeOneToOne ? appMain.getProfileImage(chatId) || ""  : ""
+    property string profileImage: realChatType === Constants.chatType.oneToOne ? appMain.getProfileImage(chatId) || ""  : ""
 
     height: 24
     width: childrenRect.width
@@ -161,7 +161,7 @@ Item {
             height: parent.height
 
             Connections {
-                enabled: realChatType === Constants.chatTypeOneToOne
+                enabled: realChatType === Constants.chatType.oneToOne
                 // TODO use a store once it is available
                 target: contactsModule.model.list
                 onContactChanged: {
@@ -176,7 +176,7 @@ Item {
                 width: 16
                 height: 16
                 fillMode: Image.PreserveAspectFit
-                source: Style.svg("channel-icon-" + (wrapper.realChatType === Constants.chatTypePublic ? "public-chat" : "group"))
+                source: Style.svg("channel-icon-" + (wrapper.realChatType === Constants.chatType.publicChat ? "public-chat" : "group"))
                 anchors.left: parent.left
                 anchors.verticalCenter:parent.verticalCenter
             }
@@ -202,7 +202,7 @@ Item {
 
             StyledText {
                 id: contactInfo
-                text: wrapper.realChatType !== Constants.chatTypePublic ?
+                text: wrapper.realChatType !== Constants.chatType.publicChat ?
                           Emoji.parse(Utils.removeStatusEns(Utils.filterXSS(wrapper.name))) :
                           "#" + Utils.filterXSS(wrapper.name)
                 anchors.left: contactImage.right

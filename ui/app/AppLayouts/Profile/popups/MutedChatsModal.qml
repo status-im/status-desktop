@@ -63,7 +63,7 @@ ModalPopup {
 
             StyledText {
                 id: contactInfo
-                text: model.chatType !== Constants.chatTypePublic ?
+                text: model.chatType !== Constants.chatType.publicChat ?
                     Emoji.parse(Utils.removeStatusEns(Utils.filterXSS(model.name)), "26x26") :
               "#" + Utils.filterXSS(model.name)
                 anchors.right: unmuteButton.left

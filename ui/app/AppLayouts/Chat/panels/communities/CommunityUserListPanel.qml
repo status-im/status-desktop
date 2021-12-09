@@ -16,7 +16,7 @@ Item {
     anchors.fill: parent
 
     // Important:
-    // Each chat/community has its own ChatContentModule and each ChatContentModule has a single usersModule
+    // Each chat/channel has its own ChatContentModule and each ChatContentModule has a single usersModule
     // usersModule on the backend contains everything needed for this component
     property var usersModule
     property var messageContextMenu

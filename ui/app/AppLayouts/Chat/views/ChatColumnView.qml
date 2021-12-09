@@ -3,6 +3,7 @@ import Qt.labs.platform 1.1
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import QtGraphicalEffects 1.0
+import Qt.labs.qmlmodels 1.0
 
 import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
@@ -26,20 +27,8 @@ Item {
     anchors.fill: parent
 
     // Important: we have parent module in this context only cause qml components
-    // don't follow struct from we have on the backend.
+    // don't follow struct we have on the backend.
     property var parentModule
-    // Since qml component doesn't follow encaptulation from the backend side, we're introducing
-    // a method which will return appropriate chat content module for selected chat/channel
-    function currentChatContentModule(){
-        // When we decide to have the same struct as it's on the backend we will remove this function.
-        // So far this is a way to deal with refactord backend from the current qml structure.
-        if(parentModule.activeItem.isSubItemActive)
-            parentModule.prepareChatContentModuleForChatId(chatCommunitySectionModule.activeItem.activeSubItem.id)
-        else
-            parentModule.prepareChatContentModuleForChatId(chatCommunitySectionModule.activeItem.id)
-
-        return parentModule.getChatContentModule()
-    }
 
     property var rootStore
     property alias pinnedMessagesPopupComponent: pinnedMessagesPopupComponent
@@ -60,17 +49,14 @@ Item {
     property var idMap: ({})
     property Timer timer: Timer { }
     property var userList
-//    property var onActivated: function () {
-//        if(stackLayoutChatMessages.currentIndex >= 0 && stackLayoutChatMessages.currentIndex < stackLayoutChatMessages.children.length)
-//            stackLayoutChatMessages.children[stackLayoutChatMessages.currentIndex].chatInput.textInput.forceActiveFocus(Qt.MouseFocusReason)
-//    }
 
     signal openAppSearch()
 
-    function hideChatInputExtendedArea () {
-        if(stackLayoutChatMessages.currentIndex >= 0 && stackLayoutChatMessages.currentIndex < stackLayoutChatMessages.children.length)
-            stackLayoutChatMessages.children[stackLayoutChatMessages.currentIndex].chatInput.hideExtendedArea()
-    }
+    // Not Refactored Yet
+//    function hideChatInputExtendedArea () {
+//        if(stackLayoutChatMessages.currentIndex >= 0 && stackLayoutChatMessages.currentIndex < stackLayoutChatMessages.children.length)
+//            stackLayoutChatMessages.children[stackLayoutChatMessages.currentIndex].chatInput.hideExtendedArea()
+//    }
 
     function showReplyArea() {
         isReply = true;
@@ -84,8 +70,9 @@ Item {
         let sticker = root.rootStore.chatsModelInst.messageView.messageList.getMessageData(replyMessageIndex, "sticker")
         let contentType = root.rootStore.chatsModelInst.messageView.messageList.getMessageData(replyMessageIndex, "contentType")
 
-        if(stackLayoutChatMessages.currentIndex >= 0 && stackLayoutChatMessages.currentIndex < stackLayoutChatMessages.children.length)
-            stackLayoutChatMessages.children[stackLayoutChatMessages.currentIndex].chatInput.showReplyArea(userName, message, identicon, contentType, image, sticker)
+        // Not Refactored Yet
+//        if(stackLayoutChatMessages.currentIndex >= 0 && stackLayoutChatMessages.currentIndex < stackLayoutChatMessages.children.length)
+//            stackLayoutChatMessages.children[stackLayoutChatMessages.currentIndex].chatInput.showReplyArea(userName, message, identicon, contentType, image, sticker)
     }
 
     function requestAddressForTransaction(address, amount, tokenAddress, tokenDecimals = 18) {
@@ -117,7 +104,8 @@ Item {
     }
 
     function positionAtMessage(messageId, isSearch = false) {
-        stackLayoutChatMessages.children[stackLayoutChatMessages.currentIndex].message.scrollToMessage(messageId, isSearch);
+        // Not Refactored Yet
+//        stackLayoutChatMessages.children[stackLayoutChatMessages.currentIndex].message.scrollToMessage(messageId, isSearch);
     }
 
     Timer {
@@ -153,311 +141,74 @@ Item {
 
     StackLayout {
         anchors.fill: parent
-        currentIndex: parentModule.model.count === 0? 0 : 1
+        currentIndex: {
+            if(chatCommunitySectionModule.activeItem.id !== "")
+            {
+                for(let i = 1; i < this.children.length; i++)
+                {
+                    var obj = this.children[i];
+                    if(obj && obj.chatContentModule)
+                    {
+                        let myChatId = obj.chatContentModule.getMyChatId()
+                        if(myChatId == parentModule.activeItem.id || myChatId == parentModule.activeItem.activeSubItem.id)
+                            return i
+                    }
+                }
+
+                // Should never be here, correct index must be returned from the `for` loop above
+                console.error("Wrong chat/channel index, active item id: ", parentModule.activeItem.id,
+                              " active subitem id: ", parentModule.activeItem.activeSubItem.id)
+            }
+
+            return 0
+        }
 
         EmptyChatPanel {
             onShareChatKeyClicked: openProfilePopup(userProfile.name, userProfile.pubKey, userProfile.icon);
         }
 
-        ColumnLayout {
-            spacing: 0
+        // This is kind of a solution for applying backend refactored changes with the minimal qml changes.
+        // The best would be if we made qml to follow the struct we have on the backend side.
+        Repeater {
+            model: parentModule.model
+            delegate: delegateChooser
 
-            StatusChatToolBar {
-                id: topBar
-                Layout.fillWidth: true
-
-                property string chatId: root.rootStore.chatsModelInst.channelView.activeChannel.id
-                property string profileImage: appMain.getProfileImage(chatId) || ""
-
-                chatInfoButton.title: Utils.removeStatusEns(root.rootStore.chatsModelInst.channelView.activeChannel.name)
-                chatInfoButton.subTitle: {
-                    switch (root.rootStore.chatsModelInst.channelView.activeChannel.chatType) {
-                    case Constants.chatTypeOneToOne:
-                        return (root.rootStore.contactsModuleInst.model.isAdded(topBar.chatId) ?
-                                    //% "Contact"
-                                    qsTrId("chat-is-a-contact") :
-                                    //% "Not a contact"
-                                    qsTrId("chat-is-not-a-contact"))
-                    case Constants.chatTypePublic:
-                        //% "Public chat"
-                        return qsTrId("public-chat")
-                    case Constants.chatTypePrivateGroupChat:
-                        let cnt = root.rootStore.chatsModelInst.channelView.activeChannel.members.rowCount();
-                        //% "%1 members"
-                        if(cnt > 1) return qsTrId("-1-members").arg(cnt);
-                        //% "1 member"
-                        return qsTrId("1-member");
-                    case Constants.chatTypeCommunity:
-                        return Utils.linkifyAndXSS(root.rootStore.chatsModelInst.channelView.activeChannel.description).trim()
-                    default:
-                        return ""
-                    }
-                }
-                chatInfoButton.image.source: profileImage || root.rootStore.chatsModelInst.channelView.activeChannel.identicon
-                chatInfoButton.image.isIdenticon: !!!profileImage && root.rootStore.chatsModelInst.channelView.activeChannel.identicon
-                chatInfoButton.icon.color: root.rootStore.chatsModelInst.channelView.activeChannel.color
-                chatInfoButton.type: root.rootStore.chatsModelInst.channelView.activeChannel.chatType
-                chatInfoButton.pinnedMessagesCount: root.rootStore.chatsModelInst.messageView.pinnedMessagesList.count
-                chatInfoButton.muted: root.rootStore.chatsModelInst.channelView.activeChannel.muted
-
-                chatInfoButton.onPinnedMessagesCountClicked: Global.openPopup(pinnedMessagesPopupComponent)
-                chatInfoButton.onUnmute: root.rootStore.chatsModelInst.channelView.unmuteChatItem(chatsModel.channelView.activeChannel.id)
-
-                chatInfoButton.sensor.enabled: root.rootStore.chatsModelInst.channelView.activeChannel.chatType !== Constants.chatTypePublic &&
-                                               root.rootStore.chatsModelInst.channelView.activeChannel.chatType !== Constants.chatTypeCommunity
-                chatInfoButton.onClicked: {
-                    switch (root.rootStore.chatsModelInst.channelView.activeChannel.chatType) {
-                    case Constants.chatTypePrivateGroupChat:
-                        Global.openPopup(groupInfoPopupComponent, {
-                            channelType: GroupInfoPopup.ChannelType.ActiveChannel,
-                            channel: root.rootStore.chatsModelInst.channelView.activeChannel
-                        })
-                        break;
-                    case Constants.chatTypeOneToOne:
-                        openProfilePopup(root.rootStore.chatsModelInst.userNameOrAlias(chatsModel.channelView.activeChannel.id),
-                                         root.rootStore.chatsModelInst.channelView.activeChannel.id, profileImage
-                                         || root.rootStore.chatsModelInst.channelView.activeChannel.identicon,
-                                         "", root.rootStore.chatsModelInst.channelView.activeChannel.nickname)
-                        break;
-                    }
-                }
-
-                membersButton.visible: {
-                    // Check if user list is available as an option for particular chat content module.
-                    let usersListAvailable = currentChatContentModule().isUsersListAvailable()
-                    return localAccountSensitiveSettings.showOnlineUsers && usersListAvailable
-                }
-                membersButton.highlighted: localAccountSensitiveSettings.expandUsersList
-                notificationButton.visible: localAccountSensitiveSettings.isActivityCenterEnabled
-                notificationButton.tooltip.offset: localAccountSensitiveSettings.expandUsersList ? 0 : 14
-                notificationCount: root.rootStore.chatsModelInst.activityNotificationList.unreadCount
-
-                onSearchButtonClicked: root.openAppSearch()
-
-                onMembersButtonClicked: localAccountSensitiveSettings.expandUsersList = !localAccountSensitiveSettings.expandUsersList
-                onNotificationButtonClicked: activityCenter.open()
-
-                popupMenu: ChatContextMenuView {
-                    store: root.rootStore
-                    onOpened: {
-                        chatItem = root.rootStore.chatsModelInst.channelView.activeChannel
-                    }
-                }
-            }
-
-            Rectangle {
-                id: connectedStatusRect
-                Layout.fillWidth: true
-                height: 40
-                Layout.alignment: Qt.AlignHCenter
-                z: 60
-                visible: false
-                color: isConnected ? Style.current.green : Style.current.darkGrey
-                Text {
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.verticalCenter: parent.verticalCenter
-                    color: Style.current.white
-                    id: connectedStatusLbl
-                    text: isConnected ?
-                              //% "Connected"
-                              qsTrId("connected") :
-                              //% "Disconnected"
-                              qsTrId("disconnected")
-                }
-
-                Connections {
-                    target: root.rootStore.chatsModelInst
-                    onOnlineStatusChanged: {
-                        if (connected == isConnected) return;
-                        isConnected = connected;
-                        if(isConnected){
-                            timer.setTimeout(function(){
-                                connectedStatusRect.visible = false;
-                            }, 5000);
-                        } else {
-                            connectedStatusRect.visible = true;
-                        }
-                    }
-                }
-                Component.onCompleted: {
-                    isConnected = root.rootStore.chatsModelInst.isOnline
-                    if(!isConnected){
-                        connectedStatusRect.visible = true
-                    }
-                }
-            }
-
-            Item {
-                Layout.fillWidth: true
-                Layout.preferredHeight: 40
-                Layout.alignment: Qt.AlignHCenter
-                visible: isBlocked
-
-                Rectangle {
-                    id: blockedBanner
-                    anchors.fill: parent
-                    color: Style.current.red
-                    opacity: 0.1
-                }
-
-                Text {
-                    id: blockedText
-                    anchors.centerIn: blockedBanner
-                    color: Style.current.red
-                    text: qsTr("Blocked")
-                }
-            }
-
-            StackLayout {
-                id: stackLayoutChatMessages
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                clip: true
-                currentIndex: root.rootStore.chatsModelInst.messageView.getMessageListIndex(root.rootStore.chatsModelInst.channelView.activeChannelIndex)
-                Repeater {
-                    model: root.rootStore.chatsModelInst.messageView
-                    ColumnLayout {
-                        property alias chatInput: chatInput
-                        property alias message: messageLoader.item
-                        Loader {
-                            id: messageLoader
-                            Layout.alignment: Qt.AlignHCenter | Qt.AlignBottom
-                            Layout.fillWidth: true
-                            Layout.fillHeight: true
-                            Layout.preferredWidth: parent.width
-
-                            active: stackLayoutChatMessages.currentIndex === index
-                            sourceComponent: ChatMessagesView {
-                                id: chatMessages
-                                store: root.rootStore
-                                messageList: messages
-                                messageContextMenuInst: contextmenu
-                                Component.onCompleted: {
-                                    root.userList = chatMessages.messageList.userList;
-                                }
-                            }
-                        }
-                        Item {
-                            id: inputArea
-                            Layout.alignment: Qt.AlignHCenter | Qt.AlignBottom
-                            Layout.fillWidth: true
-                            Layout.preferredWidth: parent.width
-                            height: chatInput.height
-                            Layout.preferredHeight: height
-
-                            Connections {
-                                target: root.rootStore.chatsModelInst.messageView
-                                onLoadingMessagesChanged:
-                                    if(value){
-                                        loadingMessagesIndicator.active = true
-                                    } else {
-                                        timer.setTimeout(function(){
-                                            loadingMessagesIndicator.active = false;
-                                        }, 5000);
-                                    }
-                            }
-
-                            Loader {
-                                id: loadingMessagesIndicator
-                                active: root.rootStore.chatsModelInst.messageView.loadingMessages
-                                sourceComponent: loadingIndicator
-                                anchors.right: parent.right
-                                anchors.bottom: chatInput.top
-                                anchors.rightMargin: Style.current.padding
-                                anchors.bottomMargin: Style.current.padding
-                            }
-
-                            Component {
-                                id: loadingIndicator
-                                LoadingAnimation { }
-                            }
-
-                            StatusChatInput {
-                                id: chatInput
-                                visible: {
-                                    if (root.rootStore.chatsModelInst.channelView.activeChannel.chatType === Constants.chatTypePrivateGroupChat) {
-                                        return root.rootStore.chatsModelInst.channelView.activeChannel.isMember
-                                    }
-                                    if (root.rootStore.chatsModelInst.channelView.activeChannel.chatType === Constants.chatTypeOneToOne) {
-                                        return isContact
-                                    }
-                                    const community = root.rootStore.chatsModelInst.communities.activeCommunity
-                                    return !community.active ||
-                                            community.access === Constants.communityChatPublicAccess ||
-                                            community.admin ||
-                                            root.rootStore.chatsModelInst.channelView.activeChannel.canPost
-                                }
-                                isContactBlocked: isBlocked
-                                chatInputPlaceholder: isBlocked ?
-                                                          //% "This user has been blocked."
-                                                          qsTrId("this-user-has-been-blocked-") :
-                                                          //% "Type a message."
-                                                          qsTrId("type-a-message-")
-                                anchors.bottom: parent.bottom
-                                recentStickers: root.rootStore.stickersModuleInst.recent
-                                stickerPackList: root.rootStore.stickersModuleInst.stickerPacks
-                                chatType: root.rootStore.chatsModelInst.channelView.activeChannel.chatType
-                                onSendTransactionCommandButtonClicked: {
-                                    if (root.rootStore.chatsModelInst.channelView.activeChannel.ensVerified) {
-                                        txModalLoader.sourceComponent = cmpSendTransactionWithEns
-                                    } else {
-                                        txModalLoader.sourceComponent = cmpSendTransactionNoEns
-                                    }
-                                    txModalLoader.item.open()
-                                }
-                                onReceiveTransactionCommandButtonClicked: {
-                                    txModalLoader.sourceComponent = cmpReceiveTransaction
-                                    txModalLoader.item.open()
-                                }
-                                onStickerSelected: {
-                                    root.rootStore.stickersModuleInst.send(root.rootStore.chatsModelInst.channelView.activeChannel.id,
-                                                                           hashId,
-                                                                           chatInput.isReply ? SelectedMessage.messageId : "",
-                                                                           packId)
-                                }
-                                onSendMessage: {
-                                    if (chatInput.fileUrls.length > 0){
-                                        root.rootStore.chatsModelInst.sendImages(JSON.stringify(fileUrls));
-                                    }
-                                    let msg = root.rootStore.chatsModelInst.plainText(Emoji.deparse(chatInput.textInput.text))
-                                    if (msg.length > 0){
-                                        msg = chatInput.interpretMessage(msg)
-                                        root.rootStore.chatsModelInst.messageView.sendMessage(msg, chatInput.isReply ? SelectedMessage.messageId : "", Utils.isOnlyEmoji(msg) ? Constants.emojiType : Constants.messageType, false);
-                                        if(event) event.accepted = true
-                                        sendMessageSound.stop();
-                                        Qt.callLater(sendMessageSound.play);
-
-                                        chatInput.textInput.clear();
-                                        chatInput.textInput.textFormat = TextEdit.PlainText;
-                                        chatInput.textInput.textFormat = TextEdit.RichText;
-                                    }
-                                }
-                            }
-                        }
-                        Connections {
-                            target: root.rootStore.chatsModelInst.channelView
-                            onActiveChannelChanged: {
-                                isBlocked = root.rootStore.contactsModuleInst.model.isContactBlocked(activeChatId);
-                                chatInput.suggestions.hide();
-                                if(stackLayoutChatMessages.currentIndex >= 0 && stackLayoutChatMessages.currentIndex < stackLayoutChatMessages.children.length)
-                                    stackLayoutChatMessages.children[stackLayoutChatMessages.currentIndex].chatInput.textInput.forceActiveFocus(Qt.MouseFocusReason)
+            DelegateChooser {
+                id: delegateChooser
+                role: "type"
+                DelegateChoice { // In case of category
+                    roleValue: Constants.chatType.unknown
+                    delegate: Repeater {
+                        model: subItems
+                        delegate: ChatContentView {
+                            Component.onCompleted: {
+                                parentModule.prepareChatContentModuleForChatId(model.itemId)
+                                chatContentModule = parentModule.getChatContentModule()
                             }
                         }
                     }
                 }
-            }
-
-            ChatRequestMessagePanel {
-                Layout.alignment: Qt.AlignHCenter | Qt.AlignBottom
-                Layout.fillWidth: true
-                Layout.bottomMargin: Style.current.bigPadding
-                isContact: root.isContact
-                visible: root.rootStore.chatsModelInst.channelView.activeChannel.chatType === Constants.chatTypeOneToOne
-                    && (!root.isContact /*|| !contactRequestReceived*/)
-                onAddContactClicked: {
-                    root.rootStore.addContact(activeChatId);
+                DelegateChoice { // In all other cases
+                    delegate: ChatContentView {
+                        Component.onCompleted: {
+                            parentModule.prepareChatContentModuleForChatId(itemId)
+                            chatContentModule = parentModule.getChatContentModule()
+                        }
+                    }
                 }
             }
+        }
+    }
+
+    ChatRequestMessagePanel {
+        Layout.alignment: Qt.AlignHCenter | Qt.AlignBottom
+        Layout.fillWidth: true
+        Layout.bottomMargin: Style.current.bigPadding
+        isContact: root.isContact
+        visible: root.rootStore.chatsModelInst.channelView.activeChannel.chatType === Constants.chatType.oneToOne
+            && (!root.isContact /*|| !contactRequestReceived*/)
+        onAddContactClicked: {
+            root.rootStore.addContact(activeChatId);
         }
     }
 
@@ -560,8 +311,8 @@ Item {
 
         ActivityCenterPopup {
             id: activityCenter
-            height: root.height - (topBar.height * 2) // TODO get screen size
-            y: topBar.height
+            height: root.height - 56 * 2 // TODO get screen size // Taken from old code top bar height was fixed there to 56
+            y: 56
             store: root.rootStore
         }
 
@@ -620,19 +371,19 @@ Item {
                     let name;
                     if (localAccountSensitiveSettings.notificationMessagePreviewSetting === Constants.notificationPreviewAnonymous) {
                         name = "Status"
-                    } else if (chatType === Constants.chatTypePublic) {
+                    } else if (chatType === Constants.chatType.publicChat) {
                         name = chatId
                     } else {
-                        name = chatType === Constants.chatTypePrivateGroupChat ? Utils.filterXSS(channelName) : Utils.removeStatusEns(username)
+                        name = chatType === Constants.chatType.privateGroupChat ? Utils.filterXSS(channelName) : Utils.removeStatusEns(username)
                     }
 
                     let message;
                     if (localAccountSensitiveSettings.notificationMessagePreviewSetting > Constants.notificationPreviewNameOnly) {
                         switch(contentType){
                             //% "Image"
-                        case Constants.imageType: message = qsTrId("image"); break
+                        case Constants.messageContentType.imageType: message = qsTrId("image"); break
                             //% "Sticker"
-                        case Constants.stickerType: message = qsTrId("sticker"); break
+                        case Constants.messageContentType.stickerType: message = qsTrId("sticker"); break
                         default: message = msg // don't parse emojis here as it emits HTML
                         }
                     } else {
@@ -659,11 +410,6 @@ Item {
                                                   localAccountSensitiveSettings.useOSNotifications)
                 }
             }
-        }
-
-        Component.onCompleted: {
-            if(stackLayoutChatMessages.currentIndex >= 0 && stackLayoutChatMessages.currentIndex < stackLayoutChatMessages.children.length)
-                stackLayoutChatMessages.children[stackLayoutChatMessages.currentIndex].chatInput.textInput.forceActiveFocus(Qt.MouseFocusReason)
         }
 
         Connections {

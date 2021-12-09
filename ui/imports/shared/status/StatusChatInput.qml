@@ -49,7 +49,7 @@ Rectangle {
     property string chatInputPlaceholder: qsTrId("type-a-message-")
 
     property alias textInput: messageInputField
-    property bool isStatusUpdateInput: chatType === Constants.chatTypeStatusUpdate
+    property bool isStatusUpdateInput: chatType === Constants.chatType.profile
 
     property var fileUrls: []
 
@@ -713,7 +713,7 @@ Rectangle {
         anchors.bottomMargin: 16
         icon.name: "chat-commands"
         type: StatusQ.StatusFlatRoundButton.Type.Tertiary
-        visible: !isEdit && control.chatType === Constants.chatTypeOneToOne && !control.isStatusUpdateInput
+        visible: !isEdit && control.chatType === Constants.chatType.oneToOne && !control.isStatusUpdateInput
         enabled: !control.isContactBlocked
         onClicked: {
             chatCommandsPopup.opened ?
@@ -732,7 +732,7 @@ Rectangle {
         anchors.bottomMargin: 16
         icon.name: "image"
         type: StatusQ.StatusFlatRoundButton.Type.Tertiary
-        visible: !isEdit && control.chatType !== Constants.chatTypePublic && !control.isStatusUpdateInput
+        visible: !isEdit && control.chatType !== Constants.chatType.publicChat && !control.isStatusUpdateInput
         enabled: !control.isContactBlocked
         onClicked: {
             highlighted = true

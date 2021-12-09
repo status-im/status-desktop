@@ -72,7 +72,7 @@ Item {
 
                 let obj = JSON.parse(foundChannelObj)
 
-                if(obj.chatType === -1 || obj.chatType === Constants.chatTypePublic)
+                if(obj.chatType === -1 || obj.chatType === Constants.chatType.publicChat)
                 {
                     // Not Refactored Yet
 //                    if(root.store.chatsModelInst.communities.activeCommunity.active) {
@@ -82,7 +82,7 @@ Item {
 //                    root.store.chatsModelInst.channelView.setActiveChannel(channelName);
                 }
                 else if(obj.communityId === root.store.chatsModelInst.communities.activeCommunity.id &&
-                        obj.chatType === Constants.chatTypeCommunity &&
+                        obj.chatType === Constants.chatType.communityChat &&
                         root.store.chatsModelInst.channelView.activeChannel.id !== obj.id
                         )
                 {
@@ -113,7 +113,7 @@ Item {
         }
 
         text: {
-            if(contentType === Constants.stickerType) return "";
+            if(contentType === Constants.messageContentType.stickerType) return "";
             let msg = Utils.linkifyAndXSS(message);
             if(isEmoji) {
                 return Emoji.parse(msg, Emoji.size.middle);
