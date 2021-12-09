@@ -1,4 +1,4 @@
-import NimQml
+import NimQml, json
 import model, item, sub_item, active_item
 import io_interface
 
@@ -94,3 +94,13 @@ QtObject:
 
   proc leaveChat*(self: View, id: string) {.slot.} =
     self.delegate.leaveChat(id)
+
+  proc getItemAsJson*(self: View, itemId: string): string {.slot.} = 
+    let jsonObj = self.model.getItemOrSubItemByIdAsJson(itemId)  
+    return $jsonObj
+
+  proc muteChat*(self: View, chatId: string) {.slot.} = 
+    self.delegate.muteChat(chatId)
+
+  proc unmuteChat*(self: View, chatId: string) {.slot.} = 
+    self.delegate.unmuteChat(chatId)

@@ -151,7 +151,6 @@ method searchMessages*(self: Module, searchTerm: string) =
 method onSearchMessagesDone*(self: Module, messages: seq[MessageDto]) =
   var items: seq[result_item.Item]
   var channels: seq[result_item.Item]
-  let myPublicKey = "" # This will be updated once we add userProfile    #getSetting[string](Setting.PublicKey, "0x0")
 
   # Add communities
   let communities = self.controller.getCommunities()

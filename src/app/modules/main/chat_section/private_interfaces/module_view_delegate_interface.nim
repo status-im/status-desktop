@@ -26,3 +26,9 @@ method removeChat*(self: AccessInterface, chatId: string) {.base.} =
 
 method getActiveChatId*(self: AccessInterface): string {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method muteChat*(self: AccessInterface, chatId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method unmuteChat*(self: AccessInterface, chatId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")

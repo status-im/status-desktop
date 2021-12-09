@@ -1,4 +1,4 @@
-import NimQml, Tables, strformat
+import NimQml, Tables, strformat, json
 
 import sub_item
 
@@ -11,6 +11,7 @@ type
     IsIdenticon
     Color
     Description
+    Type
     HasUnreadMessages
     NotificationsCount
     Muted
@@ -63,6 +64,7 @@ QtObject:
       ModelRole.IsIdenticon.int:"isIdenticon",
       ModelRole.Color.int:"color",
       ModelRole.Description.int:"description",
+      ModelRole.Type.int:"type",
       ModelRole.HasUnreadMessages.int:"hasUnreadMessages",
       ModelRole.NotificationsCount.int:"notificationsCount",
       ModelRole.Muted.int:"muted",
@@ -95,6 +97,8 @@ QtObject:
       result = newQVariant(item.color)
     of ModelRole.Description: 
       result = newQVariant(item.description)
+    of ModelRole.Type: 
+      result = newQVariant(item.`type`)
     of ModelRole.HasUnreadMessages: 
       result = newQVariant(item.hasUnreadMessages)
     of ModelRole.NotificationsCount: 
@@ -166,3 +170,20 @@ QtObject:
         let index = self.createIndex(i, 0, nil)
         self.items[i].BaseItem.active= true
         self.dataChanged(index, index, @[ModelRole.Active.int])
+
+  proc getItemByIdAsJson*(self: SubModel, id: string, found: var bool): JsonNode =
+    found = false
+    for it in self.items:
+      if(it.id == id):
+        found = true
+        return it.toJsonNode()
+
+  proc muteUnmuteItemById*(self: SubModel, id: string, mute: bool): bool =
+    for i in 0 ..< self.items.len:
+      if(self.items[i].id == id):
+        let index = self.createIndex(i, 0, nil)
+        self.items[i].BaseItem.muted = mute
+        self.dataChanged(index, index, @[ModelRole.Muted.int])
+        return true
+
+    return false

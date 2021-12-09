@@ -41,3 +41,15 @@ QtObject:
 
   proc unpinMessage*(self: View, messageId: string) {.slot.} = 
     self.delegate.pinUnpinMessage(messageId, false)
+
+  proc getMessageByIdAsJson*(self: View, messageId: string): string {.slot.} = 
+    let jsonObj = self.model.getMessageByIdAsJson(messageId)  
+    if(jsonObj.isNil):
+      return ""
+    return $jsonObj
+
+  proc getMessageByIndexAsJson*(self: View, index: int): string {.slot.} = 
+    let jsonObj = self.model.getMessageByIndexAsJson(index)  
+    if(jsonObj.isNil):
+      return ""
+    return $jsonObj

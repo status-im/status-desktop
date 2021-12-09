@@ -15,5 +15,11 @@ method getUsersModule*(self: AccessInterface): QVariant {.base.} =
 method unpinMessage*(self: AccessInterface, messageId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method isUsersListAvailable*(self: AccessInterface): bool {.base.} =
+method getMyChatId*(self: AccessInterface): string {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method isMyContact*(self: AccessInterface, contactId: string): bool {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method unmuteChat*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")

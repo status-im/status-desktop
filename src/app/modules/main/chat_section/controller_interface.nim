@@ -53,3 +53,9 @@ method createOneToOneChat*(self: AccessInterface, chatId: string, ensName: strin
 
 method leaveChat*(self: AccessInterface, chatId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method muteChat*(self: AccessInterface, chatId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method unmuteChat*(self: AccessInterface, chatId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
