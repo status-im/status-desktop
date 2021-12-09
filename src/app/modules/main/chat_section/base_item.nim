@@ -2,6 +2,7 @@ type
   BaseItem* {.pure inheritable.} = ref object of RootObj
     id: string
     name: string
+    `type`: int
     icon: string
     isIdenticon: bool
     color: string
@@ -12,25 +13,26 @@ type
     active: bool
     position: int
 
-proc setup*(self: BaseItem, id, name, icon: string, isIdenticon: bool, color, description: string, hasUnreadMessages: bool, 
-  notificationsCount: int, muted, active: bool, position: int) =
+proc setup*(self: BaseItem, id, name, icon: string, isIdenticon: bool, color, description: string, `type`: int,
+  hasUnreadMessages: bool, notificationsCount: int, muted, active: bool, position: int) =
   self.id = id
   self.name = name
   self.icon = icon
   self.isIdenticon = isIdenticon
   self.color = color
   self.description = description
+  self.`type` = `type`
   self.hasUnreadMessages = hasUnreadMessages
   self.notificationsCount = notificationsCount
   self.muted = muted
   self.active = active
   self.position = position
 
-proc initBaseItem*(id, name, icon: string, isIdenticon: bool, color, description: string, hasUnreadMessages: bool, 
-  notificationsCount: int, muted, active: bool, position: int): BaseItem =
+proc initBaseItem*(id, name, icon: string, isIdenticon: bool, color, description: string, `type`: int, 
+  hasUnreadMessages: bool, notificationsCount: int, muted, active: bool, position: int): BaseItem =
   result = BaseItem()
-  result.setup(id, name, icon, isIdenticon, color, description, hasUnreadMessages, notificationsCount, muted, active, 
-  position)
+  result.setup(id, name, icon, isIdenticon, color, description, `type`, hasUnreadMessages, notificationsCount, muted, 
+  active, position)
 
 proc delete*(self: BaseItem) = 
   discard
@@ -52,6 +54,9 @@ method color*(self: BaseItem): string {.inline base.} =
 
 method description*(self: BaseItem): string {.inline base.} = 
   self.description
+
+proc type*(self: BaseItem): int {.inline.} = 
+  self.`type`
 
 method hasUnreadMessages*(self: BaseItem): bool {.inline base.} = 
   self.hasUnreadMessages

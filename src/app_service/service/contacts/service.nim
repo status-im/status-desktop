@@ -1,6 +1,5 @@
-import NimQml, Tables, json, sequtils, strformat, chronicles, strutils, times
+import NimQml, Tables, json, sequtils, strformat, chronicles, strutils, times, sugar
 
-import eventemitter
 import ../../../app/global/global_singleton
 import ../../../app/core/signals/types
 import ../../../app/core/tasks/[qt, threadpool]
@@ -11,6 +10,8 @@ import status/statusgo_backend_new/contacts as status_contacts
 import status/statusgo_backend_new/accounts as status_accounts
 import status/statusgo_backend_new/chat as status_chat
 import status/statusgo_backend_new/utils as status_utils
+
+import eventemitter
 
 export contacts_dto, status_update_dto
 
@@ -135,6 +136,15 @@ QtObject:
 
   proc getContacts*(self: Service): seq[ContactsDto] =
     return toSeq(self.contacts.values)
+
+  proc getAddedContacts*(self: Service): seq[ContactsDto] =
+    return self.getContacts().filter(x => x.added)
+
+  proc getBlockedContacts*(self: Service): seq[ContactsDto] =
+    return self.getContacts().filter(x => x.blocked)
+
+  proc getContactsWhoAddedMe*(self: Service): seq[ContactsDto] =
+    return self.getContacts().filter(x => x.hasAddedUs)
 
   proc fetchContact(self: Service, id: string): ContactsDto =
     try:

@@ -42,6 +42,14 @@ QtObject:
   QtProperty[string] icon:
     read = getIcon
 
+  proc getIsIdenticon(self: ActiveSubItem): bool {.slot.} =
+    if(self.item.isNil):
+      return true
+    return self.item.isIdenticon
+
+  QtProperty[bool] isIdenticon:
+    read = getIsIdenticon
+
   proc getColor(self: ActiveSubItem): string {.slot.} =
     if(self.item.isNil):
       return ""

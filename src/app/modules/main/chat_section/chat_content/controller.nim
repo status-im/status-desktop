@@ -3,6 +3,7 @@ import Tables
 import controller_interface
 import io_interface
 
+import ../../../../../app_service/service/contacts/service as contact_service
 import ../../../../../app_service/service/chat/service as chat_service
 import ../../../../../app_service/service/community/service as community_service
 import ../../../../../app_service/service/message/service as message_service
@@ -19,19 +20,22 @@ type
     chatId: string
     belongsToCommunity: bool
     isUsersListAvailable: bool #users list is not available for 1:1 chat
-    chatService: chat_service.ServiceInterface
+    contactService: contact_service.Service
+    chatService: chat_service.Service
     communityService: community_service.ServiceInterface
     messageService: message_service.Service
 
 proc newController*(delegate: io_interface.AccessInterface, events: EventEmitter, chatId: string, 
-  belongsToCommunity: bool, isUsersListAvailable: bool, chatService: chat_service.ServiceInterface, 
-  communityService: community_service.ServiceInterface, messageService: message_service.Service): Controller =
+  belongsToCommunity: bool, isUsersListAvailable: bool, contactService: contact_service.Service,
+  chatService: chat_service.Service, communityService: community_service.ServiceInterface, 
+  messageService: message_service.Service): Controller =
   result = Controller()
   result.delegate = delegate
   result.events = events
   result.chatId = chatId
   result.belongsToCommunity = belongsToCommunity
   result.isUsersListAvailable = isUsersListAvailable
+  result.contactService = contactService
   result.chatService = chatService
   result.communityService = communityService
   result.messageService = messageService
@@ -58,8 +62,26 @@ method init*(self: Controller) =
       return
     self.delegate.onUnpinMessage(args.messageId)
 
-method getChatId*(self: Controller): string =
+  self.events.on(SIGNAL_CHAT_MUTED) do(e:Args):
+    let args = ChatArgs(e)
+    if(self.chatId != args.chatId):
+      return
+    self.delegate.onChatMuted()
+
+  self.events.on(SIGNAL_CHAT_UNMUTED) do(e:Args):
+    let args = ChatArgs(e)
+    if(self.chatId != args.chatId):
+      return
+    self.delegate.onChatUnmuted()
+
+method getMyChatId*(self: Controller): string =
   return self.chatId
+
+method getChatDetails*(self: Controller): ChatDto =
+  return self.chatService.getChatById(self.chatId)
+
+method getOneToOneChatNameAndImage*(self: Controller): tuple[name: string, image: string, isIdenticon: bool] =
+  return self.chatService.getOneToOneChatNameAndImage(self.chatId)
 
 method belongsToCommunity*(self: Controller): bool =
   return self.belongsToCommunity
@@ -73,3 +95,12 @@ method getMessageDetails*(self: Controller, messageId: string):
 
 method isUsersListAvailable*(self: Controller): bool =
   return self.isUsersListAvailable
+
+method getMyAddedContacts*(self: Controller): seq[ContactsDto] =
+  return self.contactService.getAddedContacts()
+
+method unmuteChat*(self: Controller) =
+  self.chatService.unmuteChat(self.chatId)
+
+method getContactById*(self: Controller, contactId: string): ContactsDto =
+  return self.contactService.getContactById(contactId)
