@@ -10,11 +10,10 @@ Item {
     id: root
 
     property var store
-    //TODO remove when dynamic scoping is cleaned up
-    property var messageStore
     property bool longChatText: true
-    property bool veryLongChatText: !!root.store ? root.store.chatsModelInst.plainText(message).length >
-                                    (localAccountSensitiveSettings.useCompactMode ? Constants.limitLongChatTextCompactMode : Constants.limitLongChatText) : false
+    property bool veryLongChatText: false
+//    property bool veryLongChatText: !!root.store ? root.store.chatsModelInst.plainText(message).length >
+//                                    (localAccountSensitiveSettings.useCompactMode ? Constants.limitLongChatTextCompactMode : Constants.limitLongChatText) : false
     property bool readMore: false
     property alias textField: chatText
 
@@ -53,7 +52,6 @@ Item {
         height: root.veryLongChatText && !root.readMore ? Math.min(implicitHeight, 200) : implicitHeight
         clip: height < implicitHeight
         onLinkActivated: {
-
             root.linkActivated(link)
             if(link.startsWith("#")) {
                 const channelName = link.substring(1);
@@ -112,7 +110,7 @@ Item {
         }
 
         text: {
-            if(contentType === Constants.stickerType) return "";
+            if(contentType === Constants.messageContentType.stickerType) return "";
             let msg = Utils.linkifyAndXSS(message);
             if(isEmoji) {
                 return Emoji.parse(msg, Emoji.size.middle);

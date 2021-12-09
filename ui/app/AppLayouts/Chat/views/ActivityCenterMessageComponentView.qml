@@ -106,96 +106,96 @@ Item {
         MessageView {
             id: notificationMessage
             anchors.right: undefined
-            rootStore: root.store
-            messageStore: root.store.messageStore
+//            rootStore: root.store
+//            messageStore: root.store.messageStore
             //TODO Remove
-            fromAuthor: model.message.fromAuthor
-            chatId: model.message.chatId
-            userName: model.message.userName
-            alias: model.message.alias
-            localName: model.message.localName
-            message: model.message.message
-            plainText: model.message.plainText
-            identicon: model.message.identicon
-            isCurrentUser: model.message.isCurrentUser
-            timestamp: model.message.timestamp
-            sticker: model.message.sticker
-            contentType: model.message.contentType
-            outgoingStatus: model.message.outgoingStatus
-            responseTo: model.message.responseTo
-            imageClick: imagePopup.openPopup.bind(imagePopup)
-            messageId: model.message.messageId
-            linkUrls: model.message.linkUrls
-            communityId: model.message.communityId
-            hasMention: model.message.hasMention
-            stickerPackId: model.message.stickerPackId
-            pinnedBy: model.message.pinnedBy
-            pinnedMessage: model.message.isPinned
-            activityCenterMessage: true
-            read: model.read
-            clickMessage: function (isProfileClick) {
-                if (isProfileClick) {
-                    const pk = model.message.fromAuthor
-                    const userProfileImage = appMain.getProfileImage(pk)
-                    return openProfilePopup(root.store.chatsModelInst.userNameOrAlias(pk), pk, userProfileImage || root.store.utilsModelInst.generateIdenticon(pk))
-                }
+//            fromAuthor: model.message.fromAuthor
+//            chatId: model.message.chatId
+//            userName: model.message.userName
+//            alias: model.message.alias
+//            localName: model.message.localName
+//            message: model.message.message
+//            plainText: model.message.plainText
+//            identicon: model.message.identicon
+//            isCurrentUser: model.message.isCurrentUser
+//            timestamp: model.message.timestamp
+//            sticker: model.message.sticker
+//            contentType: model.message.contentType
+//            outgoingStatus: model.message.outgoingStatus
+//            responseTo: model.message.responseTo
+//            imageClick: imagePopup.openPopup.bind(imagePopup)
+//            messageId: model.message.messageId
+//            linkUrls: model.message.linkUrls
+//            communityId: model.message.communityId
+//            hasMention: model.message.hasMention
+//            stickerPackId: model.message.stickerPackId
+//            pinnedBy: model.message.pinnedBy
+//            pinnedMessage: model.message.isPinned
+//            activityCenterMessage: true
+//            read: model.read
+//            clickMessage: function (isProfileClick) {
+//                if (isProfileClick) {
+//                    const pk = model.message.fromAuthor
+//                    const userProfileImage = appMain.getProfileImage(pk)
+//                    return openProfilePopup(root.store.chatsModelInst.userNameOrAlias(pk), pk, userProfileImage || root.store.utilsModelInst.generateIdenticon(pk))
+//                }
 
-                activityCenter.close()
+//                activityCenter.close()
 
-                if (model.message.communityId) {
-                    root.store.chatsModelInst.communities.setActiveCommunity(model.message.communityId)
-                }
+//                if (model.message.communityId) {
+//                    root.store.chatsModelInst.communities.setActiveCommunity(model.message.communityId)
+//                }
 
-                root.store.chatsModelInst.channelView.setActiveChannel(model.message.chatId)
-                positionAtMessage(model.message.messageId)
-            }
+//                root.store.chatsModelInst.channelView.setActiveChannel(model.message.chatId)
+//                positionAtMessage(model.message.messageId)
+//            }
 
-            prevMessageIndex: previousNotificationIndex
-            prevMsgTimestamp: previousNotificationTimestamp
-            Component.onCompleted: {
-                messageStore.activityCenterMessage = true;
-                messageStore.fromAuthor = model.message.fromAuthor;
-                messageStore.chatId = model.message.chatId;
-                messageStore.userName = model.message.userName;
-                messageStore.alias = model.message.alias;
-                messageStore.localName = model.message.localName;
-                messageStore.message = model.message.message;
-                messageStore.plainText = model.message.plainText;
-                messageStore.identicon = model.message.identicon;
-                messageStore.isCurrentUser = model.message.isCurrentUser;
-                messageStore.timestamp = model.message.timestamp;
-                messageStore.sticker = model.message.sticker;
-                messageStore.contentType = model.message.contentType;
-                messageStore.outgoingStatus = model.message.outgoingStatus;
-                messageStore.responseTo = model.message.responseTo;
-                messageStore.imageClick = imagePopup.openPopup.bind(imagePopup);
-                messageStore.messageId = model.message.messageId;
-                messageStore.linkUrls = model.message.linkUrls;
-                messageStore.communityId = model.message.communityId;
-                messageStore.hasMention = model.message.hasMention;
-                messageStore.stickerPackId = model.message.stickerPackId;
-                messageStore.pinnedBy = model.message.pinnedBy;
-                messageStore.pinnedMessage = model.message.isPinned;
-                messageStore.read = model.read;
-                messageStore.prevMessageIndex = previousNotificationIndex;
-                messageStore.prevMsgTimestamp = previousNotificationTimestamp;
-                messageStore.clickMessage = function (isProfileClick) {
-                    if (isProfileClick) {
-                        const pk = model.message.fromAuthor
-                        const userProfileImage = appMain.getProfileImage(pk)
-                        return openProfilePopup(root.store.chatsModelInst.userNameOrAlias(pk), pk, userProfileImage || root.store.utilsModelInst.generateIdenticon(pk))
-                    }
+//            prevMessageIndex: previousNotificationIndex
+//            prevMsgTimestamp: previousNotificationTimestamp
+//            Component.onCompleted: {
+//                messageStore.activityCenterMessage = true;
+//                messageStore.fromAuthor = model.message.fromAuthor;
+//                messageStore.chatId = model.message.chatId;
+//                messageStore.userName = model.message.userName;
+//                messageStore.alias = model.message.alias;
+//                messageStore.localName = model.message.localName;
+//                messageStore.message = model.message.message;
+//                messageStore.plainText = model.message.plainText;
+//                messageStore.identicon = model.message.identicon;
+//                messageStore.isCurrentUser = model.message.isCurrentUser;
+//                messageStore.timestamp = model.message.timestamp;
+//                messageStore.sticker = model.message.sticker;
+//                messageStore.contentType = model.message.contentType;
+//                messageStore.outgoingStatus = model.message.outgoingStatus;
+//                messageStore.responseTo = model.message.responseTo;
+//                messageStore.imageClick = imagePopup.openPopup.bind(imagePopup);
+//                messageStore.messageId = model.message.messageId;
+//                messageStore.linkUrls = model.message.linkUrls;
+//                messageStore.communityId = model.message.communityId;
+//                messageStore.hasMention = model.message.hasMention;
+//                messageStore.stickerPackId = model.message.stickerPackId;
+//                messageStore.pinnedBy = model.message.pinnedBy;
+//                messageStore.pinnedMessage = model.message.isPinned;
+//                messageStore.read = model.read;
+//                messageStore.prevMessageIndex = previousNotificationIndex;
+//                messageStore.prevMsgTimestamp = previousNotificationTimestamp;
+//                messageStore.clickMessage = function (isProfileClick) {
+//                    if (isProfileClick) {
+//                        const pk = model.message.fromAuthor
+//                        const userProfileImage = appMain.getProfileImage(pk)
+//                        return openProfilePopup(root.store.chatsModelInst.userNameOrAlias(pk), pk, userProfileImage || root.store.utilsModelInst.generateIdenticon(pk))
+//                    }
 
-                    activityCenter.close()
+//                    activityCenter.close()
 
-                    if (model.message.communityId) {
-                        root.store.chatsModelInst.communities.setActiveCommunity(model.message.communityId)
-                    }
+//                    if (model.message.communityId) {
+//                        root.store.chatsModelInst.communities.setActiveCommunity(model.message.communityId)
+//                    }
 
-                    root.store.chatsModelInst.channelView.setActiveChannel(model.message.chatId)
-                    positionAtMessage(model.message.messageId)
-                }
-            }
+//                    root.store.chatsModelInst.channelView.setActiveChannel(model.message.chatId)
+//                    positionAtMessage(model.message.messageId)
+//                }
+//            }
         }
 
         Rectangle {
@@ -239,13 +239,13 @@ Item {
             repliedMessageContent: replyMessageIndex > -1 ? root.store.chatsModelInst.messageView.getMessageData(chatId, replyMessageIndex, "message") : ""
             realChatType: {
                 var chatType = root.store.chatsModelInst.channelView.chats.getChannelType(model.chatId)
-                if (chatType === Constants.chatTypeCommunity) {
+                if (chatType === Constants.chatType.communityChat) {
                     // TODO add a check for private community chats once it is created
-                    return Constants.chatTypePublic
+                    return Constants.chatType.publicChat
                 }
                 return chatType
             }
-            profileImage: realChatType === Constants.chatTypeOneToOne ? appMain.getProfileImage(chatId) || ""  : ""
+            profileImage: realChatType === Constants.chatType.oneToOne ? appMain.getProfileImage(chatId) || ""  : ""
             channelName: root.store.chatsModelInst.getChannelNameById(badge.chatId)
             communityName: root.communityIndex > -1 ? root.store.chatsModelInst.communities.joinedCommunities.rowData(root.communityIndex, "name") : ""
             communityThumbnailImage: root.communityIndex > -1 ? root.store.chatsModelInst.communities.joinedCommunities.rowData(root.communityIndex, "thumbnailImage") : ""
@@ -260,7 +260,7 @@ Item {
             }
 
             Connections {
-                enabled: badge.realChatType === Constants.chatTypeOneToOne
+                enabled: badge.realChatType === Constants.chatType.oneToOne
                 target: root.store.allContacts
                 onContactChanged: {
                     if (pubkey === badge.chatId) {

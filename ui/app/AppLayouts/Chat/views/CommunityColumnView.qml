@@ -257,12 +257,32 @@ Item {
 
             chatListPopupMenu: ChatContextMenuView {
                 id: chatContextMenuView
-                store: root.store
-                chatSectionModule: communitySectionModule
+
                 openHandler: function (id) {
-                    root.store.chatsModelInst.channelView.setContextChannel(id)
-                    chatContextMenuView.chatItem = root.store.chatsModelInst.channelView.contextChannel
-                
+                    let jsonObj = root.communitySectionModule.getItemAsJson(id)
+                    let obj = JSON.parse(jsonObj)
+                    if (obj.error) {
+                        console.error("error parsing chat item json object, id: ", id, " error: ", obj.error)
+                        close()
+                        return
+                    }
+
+                    isCommunityChat = root.communitySectionModule.isCommunity()
+                    chatId = obj.itemId
+                    chatName = obj.name
+                    chatType = obj.type
+                    chatMuted = obj.muted
+
+                    // TODO
+                    //currentFleet
+                }
+
+                onMuteChat: {
+                    root.communitySectionModule.muteChat(id)
+                }
+
+                onUnmuteChat: {
+                    root.communitySectionModule.unmuteChat(id)
                 }
             }
         }

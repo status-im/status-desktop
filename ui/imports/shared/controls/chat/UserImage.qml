@@ -6,16 +6,12 @@ import utils 1.0
 
 Loader {
     id: root
-    active: isMessage
     height: active ? item.height : 0
     property int imageHeight: 36
     property int imageWidth: 36
-    property string profileImage: ""
-    property string identiconImageSource: ""
-    property bool isReplyImage: false
-//    property var messageContextMenu
-//    property bool isCurrentUser: false
-//    property bool isMessage: false
+    property string icon: ""
+    property bool isIdenticon: false
+
     signal clickMessage(bool isProfileClick, bool isSticker, bool isImage, var image, bool emojiOnly, bool hideEmojiPicker, bool isReply)
 
     sourceComponent: Component {
@@ -28,23 +24,9 @@ Loader {
                 id: identiconImage
                 width: root.imageWidth
                 height: root.imageHeight
-                border.width: 1
+                border.width: root.isIdenticon ? 1 : 0
                 border.color: Style.current.border
-                source: {
-                    if (root.isReplyImage) {
-                        if (root.profileImage) {
-                            return root.profileImage
-                        }
-                        if (root.identiconImageSource) {
-                            return root.identiconImageSource
-                        }
-                    }
-                    if (profileImageSource) {
-                        return profileImageSource
-                    }
-                    identiconImage.showLoadingIndicator = false
-                    return !isCurrentUser || isReplyImage ? identicon : userProfile.icon
-                }
+                source: root.icon
                 smooth: false
                 antialiasing: true
 

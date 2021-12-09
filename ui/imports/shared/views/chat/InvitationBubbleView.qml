@@ -201,7 +201,7 @@ Item {
                 StatusBaseText {
                     id: invitedYou
                     text: {
-                        if (root.store.chatsModelInst.channelView.activeChannel.chatType === Constants.chatTypeOneToOne) {
+                        if (root.store.chatsModelInst.channelView.activeChannel.chatType === Constants.chatType.oneToOne) {
                             return isCurrentUser ?
                                         //% "You invited %1 to join a community"
                                         qsTrId("you-invited--1-to-join-a-community").arg(root.store.chatsModelInst.userNameOrAlias(root.store.chatsModelInst.channelView.activeChannel.id))

@@ -330,7 +330,6 @@ Item {
                     width: parent.width
                     anchors.right: parent.right
                     store: root.store
-                    messageStore: root.messageStore
                 }
 
                 RectangleCorner {}

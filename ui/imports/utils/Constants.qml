@@ -47,15 +47,36 @@ QtObject {
         readonly property int idle: 3
     }
 
+    readonly property QtObject chatType: QtObject{
+        readonly property int unknown: 0
+        readonly property int oneToOne: 1
+        readonly property int publicChat: 2
+        readonly property int privateGroupChat: 3
+        readonly property int profile: 4
+        readonly property int timeline: 5
+        readonly property int communityChat: 6
+    }
+
+    readonly property QtObject messageContentType: QtObject {
+        readonly property int fetchMoreMessagesButton: -2
+        readonly property int chatIdentifier: -1
+        readonly property int unknownContentType: 0
+        readonly property int messageType: 1
+        readonly property int stickerType: 2
+        readonly property int statusType: 3
+        readonly property int emojiType: 4
+        readonly property int transactionType: 5
+        readonly property int systemMessagePrivateGroupType: 6
+        readonly property int imageType: 7
+        readonly property int audioType: 8
+        readonly property int communityInviteType: 9
+        readonly property int gapType: 10
+        readonly property int editType: 11
+    }
+
     readonly property int communityImported: 0
     readonly property int communityImportingInProgress: 1
     readonly property int communityImportingError: 2
-
-    readonly property int chatTypeOneToOne: 1
-    readonly property int chatTypePublic: 2
-    readonly property int chatTypePrivateGroupChat: 3
-    readonly property int chatTypeStatusUpdate: 4
-    readonly property int chatTypeCommunity: 6
 
     readonly property int communityChatPublicAccess: 1
     readonly property int communityChatInvitationOnlyAccess: 2
@@ -96,20 +117,6 @@ QtObject {
     readonly property int notificationPreviewAnonymous: 0
     readonly property int notificationPreviewNameOnly: 1
     readonly property int notificationPreviewNameAndMessage: 2
-    readonly property int fetchMoreMessagesButton: -2
-    readonly property int chatIdentifier: -1
-    readonly property int unknownContentType: 0
-    readonly property int messageType: 1
-    readonly property int stickerType: 2
-    readonly property int statusType: 3
-    readonly property int emojiType: 4
-    readonly property int transactionType: 5
-    readonly property int systemMessagePrivateGroupType: 6
-    readonly property int imageType: 7
-    readonly property int audioType: 8
-    readonly property int communityInviteType: 9
-    readonly property int gapType: 10
-    readonly property int editType: 11
 
     readonly property string watchWalletType: "watch"
     readonly property string keyWalletType: "key"

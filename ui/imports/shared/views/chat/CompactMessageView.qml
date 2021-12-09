@@ -12,39 +12,35 @@ import StatusQ.Controls 0.1 as StatusQControls
 
 Item {
     id: root
-    property var store
-    property var messageStore
+
+    property var messageContextMenu
+    property var container
+
+
     property int chatHorizontalPadding: Style.current.halfPadding
     property int chatVerticalPadding: 7
-    property string linkUrls: root.messageStore.linkUrls
-    property int contentType: 2
-    property var container
-    property bool isCurrentUser: false
-    property bool isExpired: false
-    property bool timeout: false
-    property bool isHovered: typeof root.messageStore.hoveredMessage !== "undefined" && root.messageStore.hoveredMessage === messageId
-    property bool isMessageActive: typeof root.messageStore.activeMessage !== "undefined" && root.messageStore.activeMessage === messageId
-    property bool headerRepeatCondition: (authorCurrentMsg !== authorPrevMsg || shouldRepeatHeader || dateGroupLbl.visible || chatReply.active)
-    property bool showMoreButton: {
-        if (!!root.store) {
-            switch (root.store.chatsModelInst.channelView.activeChannel.chatType) {
-            case Constants.chatTypeOneToOne: return true
-            case Constants.chatTypePrivateGroupChat: return root.store.chatsModelInst.channelView.activeChannel.isAdmin(userProfile.pubKey) ? true : isCurrentUser
-            case Constants.chatTypePublic: return isCurrentUser
-            case Constants.chatTypeCommunity: return root.store.chatsModelInst.communities.activeCommunity.admin ? true : isCurrentUser
-            case Constants.chatTypeStatusUpdate: return false
-            default: return false
-            }
-        }
-        else {
-            return false;
-        }
-    }
-    property string repliedMessageUserIdenticon
-    property string repliedMessageUserImage
 
-    property bool showEdit: true
-    property var messageContextMenu
+    property bool headerRepeatCondition: (authorCurrentMsg !== authorPrevMsg ||
+                                          shouldRepeatHeader || dateGroupLbl.visible || chatReply.active)
+    property bool showMoreButton: {
+        // Not Refactored Yet
+
+        return false
+//        if (!!rootStore) {
+//            switch (rootStore.chatsModelInst.channelView.activeChannel.chatType) {
+//            case Constants.chatType.oneToOne: return true
+//            case Constants.chatType.privateGroupChat: return rootStore.chatsModelInst.channelView.activeChannel.isAdmin(userProfile.pubKey) ? true : isCurrentUser
+//            case Constants.chatType.publicChat: return isCurrentUser
+//            case Constants.chatType.communityChat: return rootStore.chatsModelInst.communities.activeCommunity.admin ? true : isCurrentUser
+//            case Constants.chatType.profile: return false
+//            default: return false
+//            }
+//        }
+//        else {
+//            return false;
+//        }
+    }
+
     signal addEmoji(bool isProfileClick, bool isSticker, bool isImage , var image, bool emojiOnly, bool hideEmojiPicker)
 
     width: parent.width
@@ -69,10 +65,10 @@ Item {
     }
 
     ChatButtonsPanel {
-        contentType: root.contentType
-        parentIsHovered: !isEdit && root.isHovered
+        contentType: contentType
+        parentIsHovered: !isEdit && isHovered
         onHoverChanged: {
-            hovered && root.messageStore.setHovered(messageId, hovered)
+            hovered && setHovered(messageId, hovered)
         }
         anchors.right: parent.right
         anchors.rightMargin: 20
@@ -80,8 +76,8 @@ Item {
         // This is not exactly like the design because the hover becomes messed up with the buttons on top of another Message
         anchors.topMargin: -Style.current.halfPadding
         messageContextMenu: root.messageContextMenu
-        showMoreButton: root.showMoreButton
-        fromAuthor: fromAuthor
+        showMoreButton: showMoreButton
+        fromAuthor: senderId
         editBtnActive: isText && !isEdit && isCurrentUser && showEdit
         onClickMessage: {
             parent.parent.parent.clickMessage(isProfileClick, isSticker, isImage, image, emojiOnly, hideEmojiPicker);
@@ -89,12 +85,12 @@ Item {
     }
 
     Loader {
-        active: typeof messageContextMenu !== "undefined"
+        active: typeof root.messageContextMenu !== "undefined"
         sourceComponent: Component {
             Connections {
-                enabled: root.isMessageActive
-                target: messageContextMenu
-                onClosed: root.messageStore.setMessageActive(messageId, false)
+                enabled: isMessageActive
+                target: root.messageContextMenu
+                onClosed: setMessageActive(messageId, false)
             }
         }
     }
@@ -156,6 +152,7 @@ Item {
                 + (pinnedRectangleLoader.active ? Style.current.smallPadding : 0)
                 + (isEdit ? 25 : 0)
         width: parent.width
+
         color: {
             if (isEdit) {
                 return Style.current.backgroundHoverLight
@@ -170,10 +167,10 @@ Item {
             }
 
             if (pinnedMessage) {
-                return root.isHovered || isMessageActive ? Style.current.pinnedMessageBackgroundHovered : Style.current.pinnedMessageBackground
+                return isHovered || isMessageActive ? Style.current.pinnedMessageBackgroundHovered : Style.current.pinnedMessageBackground
             }
 
-            return root.isHovered || isMessageActive ? (hasMention ? Style.current.mentionMessageHoverColor : Style.current.backgroundHoverLight) :
+            return isHovered || isMessageActive ? (hasMention ? Style.current.mentionMessageHoverColor : Style.current.backgroundHoverLight) :
                                                        (hasMention ? Style.current.mentionMessageColor : Style.current.transparent)
         }
 
@@ -210,7 +207,7 @@ Item {
 
                     StyledText {
                         //% "Pinned by %1"
-                        text: qsTrId("pinned-by--1").arg(root.store.chatsModelInst.alias(pinnedBy))
+                        text: qsTrId("pinned-by--1").arg(rootStore.chatsModelInst.alias(pinnedBy))
                         anchors.left: pinImage.right
                         anchors.verticalCenter: parent.verticalCenter
                         font.pixelSize: 13
@@ -221,8 +218,8 @@ Item {
 
 
         Connections {
-            enabled: !!root.store
-            target: enabled ? root.store.chatsModelInst.messageView : null
+            enabled: !!rootStore
+            target: enabled ? rootStore.chatsModelInst.messageView : null
             onMessageEdited: {
                 if(chatReply.item)
                     chatReply.item.messageEdited(editedMessageId, editedMessageContent)
@@ -239,24 +236,33 @@ Item {
 
             longReply: active && textFieldImplicitWidth > width
             container: root.container
-            chatHorizontalPadding: root.chatHorizontalPadding
-            stickerData: !!root.store ? root.store.chatsModelInst.messageView.messageList.getMessageData(replyMessageIndex, "sticker") : null
-            active: responseTo !== "" && replyMessageIndex > -1 && !activityCenterMessage
-//            To-Do move to store later?
-//            isCurrentUser: root.messageStore.isCurrentUser
-//            repliedMessageType: root.messageStore.repliedMessageType
-//            repliedMessageImage: root.messageStore.repliedMessageImage
-            repliedMessageUserIdenticon: root.repliedMessageUserIdenticon
-//            repliedMessageIsEdited: root.messageStore.repliedMessageIsEdited
-            repliedMessageUserImage: root.repliedMessageUserImage
-//            repliedMessageAuthor: root.messageStore.repliedMessageAuthor
-//            repliedMessageContent: root.messageStore.repliedMessageContent
-//            responseTo: root.messageStore.responseTo
-//            onScrollToBottom: {
-//                root.messageStore.scrollToBottom(isit, container);
-//            }
+            chatHorizontalPadding: chatHorizontalPadding
+            // Not Refactored Yet
+//            stickerData: !!rootStore ? rootStore.chatsModelInst.messageView.messageList.getMessageData(replyMessageIndex, "sticker") : null
+            active: responseTo !== "" && !activityCenterMessage
+
+            Component.onCompleted: {
+                let obj = messageStore.getMessageByIdAsJson(messageId)
+                if(!obj)
+                    return
+
+                amISenderOfTheRepliedMessage = obj.amISender
+                repliedMessageContentType = obj.contentType
+                repliedMessageSenderIcon = obj.senderIcon
+                repliedMessageSenderIconIsIdenticon = obj.isSenderIconIdenticon
+                // TODO: not sure about is edited at the moment
+                repliedMessageIsEdited = false
+                repliedMessageSender = obj.senderDisplayName
+                repliedMessageContent = obj.messageText
+                repliedMessageImage = obj.messageImage
+            }
+            onScrollToBottom: {
+                // Not Refactored Yet
+//                messageStore.scrollToBottom(isit, root.container);
+            }
             onClickMessage: {
-                parent.parent.parent.clickMessage(isProfileClick, isSticker, isImage, image, emojiOnly, hideEmojiPicker, isReply);
+                // Not Refactored Yet
+//                parent.parent.parent.clickMessage(isProfileClick, isSticker, isImage, image, emojiOnly, hideEmojiPicker, isReply);
             }
         }
 
@@ -269,11 +275,8 @@ Item {
             anchors.top: chatReply.active ? chatReply.bottom :
                                             pinnedRectangleLoader.active ? pinnedRectangleLoader.bottom : parent.top
             anchors.topMargin: chatReply.active || pinnedRectangleLoader.active ? 4 : Style.current.smallPadding
-//            messageContextMenu: root.messageStore.messageContextMenu
-//            isCurrentUser: root.messageStore.isCurrentUser
-//            profileImage: root.messageStore.profileImageSource
-//            isMessage: root.messageStore.isMessage
-//            identiconImageSource: root.messageStore.identicon
+            icon: senderIcon
+            isIdenticon: isSenderIconIdenticon
             onClickMessage: {
                 parent.parent.parent.parent.clickMessage(isProfileClick, isSticker, isImage, image, emojiOnly, hideEmojiPicker, isReply);
             }
@@ -282,14 +285,12 @@ Item {
         UsernameLabel {
             id: chatName
             visible: !isEdit && isMessage && headerRepeatCondition
-            anchors.leftMargin: root.chatHorizontalPadding
+            anchors.leftMargin: chatHorizontalPadding
             anchors.top: chatImage.top
             anchors.left: chatImage.right
-//            messageContextMenu: root.messageStore.messageContextMenu
-//            isCurrentUser: root.messageStore.isCurrentUser
-//            localName: root.messageStore.localName
-//            userName: root.messageStore.userName
-//            displayUserName: root.messageStore.displayUserName
+            displayName: senderDisplayName
+            localName: senderLocalName
+            amISender: amISender
             onClickMessage: {
                 parent.parent.parent.parent.clickMessage(true, false, false, null, false, false, false);
             }
@@ -310,9 +311,9 @@ Item {
             active: isEdit
             anchors.top: chatReply.active ? chatReply.bottom : parent.top
             anchors.left: chatImage.right
-            anchors.leftMargin: root.chatHorizontalPadding
+            anchors.leftMargin: chatHorizontalPadding
             anchors.right: parent.right
-            anchors.rightMargin: root.chatHorizontalPadding
+            anchors.rightMargin: chatHorizontalPadding
             height: (item !== null && typeof(item)!== 'undefined')? item.height: 0
             property string sourceText
 
@@ -375,7 +376,7 @@ Item {
                 StatusChatInput {
                     id: editTextInput
                     chatInputPlaceholder: qsTrId("type-a-message-")
-                    chatType: root.store.chatsModelInst.channelView.activeChannel.chatType
+                    chatType: rootStore.chatsModelInst.channelView.activeChannel.chatType
                     isEdit: true
                     textInput.text: editMessageLoader.sourceText
                     onSendMessage: {
@@ -411,12 +412,13 @@ Item {
                     text: qsTrId("save")
                     enabled: editTextInput.textInput.text.trim().length > 0
                     onClicked: {
-                        let msg = root.store.chatsModelInst.plainText(Emoji.deparse(editTextInput.textInput.text))
-                        if (msg.length > 0){
-                            msg = chatInput.interpretMessage(msg)
-                            isEdit = false
-                            root.store.chatsModelInst.messageView.editMessage(messageId, contentType == Constants.editType ? replaces : messageId, msg);
-                        }
+                        // Not Refactored Yet
+//                        let msg = rootStore.chatsModelInst.plainText(Emoji.deparse(editTextInput.textInput.text))
+//                        if (msg.length > 0){
+//                            msg = chatInput.interpretMessage(msg)
+//                            isEdit = false
+//                            rootStore.chatsModelInst.messageView.editMessage(messageId, contentType == Constants.messageContentType.editType ? replaces : messageId, msg);
+//                        }
                     }
                 }
             }
@@ -429,17 +431,16 @@ Item {
                                             chatReply.active ? chatReply.bottom :
                                                 pinnedRectangleLoader.active ? pinnedRectangleLoader.bottom : parent.top
             anchors.left: chatImage.right
-            anchors.leftMargin: root.chatHorizontalPadding
+            anchors.leftMargin: chatHorizontalPadding
             anchors.right: parent.right
-            anchors.rightMargin: root.chatHorizontalPadding
+            anchors.rightMargin: chatHorizontalPadding
             visible: !isEdit
             ChatTextView {
                 id: chatText
-                store: root.store
-                messageStore: root.messageStore
-                readonly property int leftPadding: chatImage.anchors.leftMargin + chatImage.width + root.chatHorizontalPadding
+                store: rootStore
+                readonly property int leftPadding: chatImage.anchors.leftMargin + chatImage.width + chatHorizontalPadding
                 visible: {
-                    const urls = root.linkUrls.split(" ")
+                    const urls = linkUrls.split(" ")
                     if (urls.length === 1 && Utils.hasImageExtension(urls[0]) && localAccountSensitiveSettings.displayChatImages) {
                         return false
                     }
@@ -475,14 +476,14 @@ Item {
                         imageWidth: 200
                         onClicked: {
                             if (mouse.button === Qt.LeftButton) {
-                                root.messageStore.imageClick(image)
+                                messageStore.imageClick(image)
                             }
                             else if (mouse.button === Qt.RightButton) {
                                 // Set parent, X & Y positions for the messageContextMenu
-                                messageContextMenu.parent = root
-                                messageContextMenu.setXPosition = function() { return (mouse.x)}
-                                messageContextMenu.setYPosition = function() { return (mouse.y)}
-                                root.clickMessage(false, false, true, image, false, true, false, true, imageSource)
+                                root.messageContextMenu.parent = root
+                                root.messageContextMenu.setXPosition = function() { return (mouse.x)}
+                                root.messageContextMenu.setYPosition = function() { return (mouse.y)}
+                                clickMessage(false, false, true, image, false, true, false, true, imageSource)
                             }
                         }
                         container: root.container
@@ -492,29 +493,29 @@ Item {
 
             Loader {
                 id: stickerLoader
-                active: contentType === Constants.stickerType
+                active: contentType === Constants.messageContentType.stickerType
                 anchors.top: parent.top
                 anchors.topMargin: active ? Style.current.halfPadding : 0
                 sourceComponent: Component {
                     Rectangle {
                         id: stickerContainer
                         color: Style.current.transparent
-                        border.color: root.isHovered ? Qt.darker(Style.current.border, 1.1) : Style.current.border
+                        border.color: isHovered ? Qt.darker(Style.current.border, 1.1) : Style.current.border
                         border.width: 1
                         radius: 16
-                        width: stickerId.width + 2 * root.chatVerticalPadding
-                        height: stickerId.height + 2 * root.chatVerticalPadding
+                        width: stickerId.width + 2 * chatVerticalPadding
+                        height: stickerId.height + 2 * chatVerticalPadding
 
                         StatusSticker {
                             id: stickerId
                             anchors.top: parent.top
-                            anchors.topMargin: root.chatVerticalPadding
+                            anchors.topMargin: chatVerticalPadding
                             anchors.left: parent.left
-                            anchors.leftMargin: root.chatVerticalPadding
-                            contentType: root.contentType
+                            anchors.leftMargin: chatVerticalPadding
+                            contentType: contentType
                             stickerData: sticker
                             onLoaded: {
-                                root.messageStore.scrollToBottom(true, root.container)
+                                messageStore.scrollToBottom(true, root.container)
                             }
                         }
                     }
@@ -531,22 +532,22 @@ Item {
                     parent.parent.parent.parent.parent.clickMessage(isProfileClick, isSticker, isImage);
                 }
                 onSetMessageActive: {
-                    root.messageStore.setMessageActive(messageId, active);
+                    setMessageActive(messageId, active);
                 }
             }
 
             Loader {
                 id: linksLoader
-                active: !!root.linkUrls
+                active: !!linkUrls
                 anchors.top: chatText.bottom
                 anchors.topMargin: active ? Style.current.halfPadding : 0
 
                 sourceComponent: Component {
                     LinksMessageView {
-                        store: root.store
-                        linkUrls: root.linkUrls
+                        store: rootStore
+                        linkUrls: linkUrls
                         container: root.container
-                        isCurrentUser: root.isCurrentUser
+                        isCurrentUser: isCurrentUser
                     }
                 }
             }
@@ -564,28 +565,28 @@ Item {
                 }
             }
 
-            Loader {
-                id: transactionBubbleLoader
-                active: contentType === Constants.transactionType
-                anchors.top: parent.top
-                anchors.topMargin: active ? (chatName.visible ? 4 : 6) : 0
-                sourceComponent: Component {
-                    TransactionBubbleView {
-                        store: root.store
-                    }
-                }
-            }
+//            Loader {
+//                id: transactionBubbleLoader
+//                active: contentType === Constants.messageContentType.transactionType
+//                anchors.top: parent.top
+//                anchors.topMargin: active ? (chatName.visible ? 4 : 6) : 0
+//                sourceComponent: Component {
+//                    TransactionBubbleView {
+//                        store: rootStore
+//                    }
+//                }
+//            }
 
             Loader {
-                active: contentType === Constants.communityInviteType
+                active: contentType === Constants.messageContentType.communityInviteType
                 anchors.left: parent.left
                 anchors.top: parent.top
                 anchors.topMargin: active ? 8 : 0
                 sourceComponent: Component {
                     id: invitationBubble
                     InvitationBubbleView {
-                        store: root.store
-                        communityId: container.communityId
+                        store: rootStore
+                        communityId: root.container.communityId
                     }
                 }
             }
@@ -599,11 +600,12 @@ Item {
             anchors.top: chatTime.visible ? chatTime.top : messageContent.bottom
             anchors.topMargin: chatTime.visible ? 0 : -4
             anchors.bottom: chatTime.visible ? chatTime.bottom : undefined
-            isCurrentUser: root.isCurrentUser
-            isExpired: root.isExpired
-            timeout: root.timeout
+            isCurrentUser: isCurrentUser
+            isExpired: isExpired
+            timeout: timeout
             onClicked: {
-                root.store.chatsModelInst.messageView.resendMessage(chatId, messageId)
+                // Not Refactored Yet
+//                rootStore.chatsModelInst.messageView.resendMessage(chatId, messageId)
             }
         }
     }
@@ -626,9 +628,10 @@ Item {
 
     HoverHandler {
         enabled: !activityCenterMessage &&
-                 (forceHoverHandler || (typeof messageContextMenu !== "undefined" && typeof profilePopupOpened !== "undefined" && !messageContextMenu.opened && !profilePopupOpened && !popupOpened))
+                 (forceHoverHandler || (typeof root.messageContextMenu !== "undefined" && typeof profilePopupOpened !== "undefined" &&
+                                        !root.messageContextMenu.opened && !profilePopupOpened && !popupOpened))
         onHoveredChanged: {
-            root.messageStore.setHovered(messageId, hovered);
+            setHovered(messageId, hovered);
         }
     }
 
@@ -643,22 +646,24 @@ Item {
         sourceComponent: Component {
             EmojiReactionsPanel {
                 id: emojiRect
-//                emojiReactionsModel: root.messageStore.emojiReactionsModel
+                emojiReactionsModel: emojiReactionsModel
                 onHoverChanged: {
-                    root.messageStore.setHovered(messageId, hovered)
+                    setHovered(messageId, hovered)
                 }
-//                isMessageActive: root.messageStore.isMessageActive
+                isMessageActive: isMessageActive
+                isCurrentUser: isCurrentUser
                 onAddEmojiClicked: {
                     root.addEmoji(false, false, false, null, true, false);
                     // Set parent, X & Y positions for the messageContextMenu
-                    messageContextMenu.parent = emojiReactionLoader
-                    messageContextMenu.setXPosition = function() { return (messageContextMenu.parent.x + 4)}
-                    messageContextMenu.setYPosition = function() { return (-messageContextMenu.height - 4)}
+                    root.messageContextMenu.parent = emojiReactionLoader
+                    root.messageContextMenu.setXPosition = function() { return (root.messageContextMenu.parent.x + 4)}
+                    root.messageContextMenu.setYPosition = function() { return (-root.messageContextMenu.height - 4)}
                 }
-                onToggleReaction: root.store.chatsModelInst.toggleReaction(messageId, emojiID)
+                // Not Refactored Yet
+//                onToggleReaction: rootStore.chatsModelInst.toggleReaction(messageId, emojiID)
 
                 onSetMessageActive: {
-                    root.messageStore.setMessageActive(messageId, active);;
+                    setMessageActive(messageId, active);;
                 }
             }
         }
