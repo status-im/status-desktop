@@ -20,6 +20,7 @@ Item {
     id: root
 
     property var store
+    property int profileContentWidth
 
     property alias searchStr: searchBox.text
     property bool isPending: false
@@ -31,7 +32,7 @@ Item {
         anchors.top: parent.top
         anchors.topMargin: 32
         anchors.bottom: parent.bottom
-        width: profileContainer.profileContentWidth
+        width: profileContentWidth
 
         anchors.horizontalCenter: parent.horizontalCenter
 

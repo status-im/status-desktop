@@ -14,6 +14,9 @@ import "../panels"
 
 Item {
     id: helpContainer
+
+    property int profileContentWidth
+
     height: parent.height
     Layout.fillWidth: true
     clip: true
@@ -27,7 +30,7 @@ Item {
             id: glossary
             anchors.top: parent.top
             height: this.childrenRect.height
-            width: profileContainer.profileContentWidth
+            width: profileContentWidth
 
             anchors.horizontalCenter: parent.horizontalCenter
 
@@ -134,7 +137,7 @@ Item {
             anchors.top: glossary.bottom
             anchors.topMargin: Style.current.bigPadding * 2
             height: this.childrenRect.height
-            width: profileContainer.profileContentWidth
+            width: profileContentWidth
 
             anchors.horizontalCenter: parent.horizontalCenter
 

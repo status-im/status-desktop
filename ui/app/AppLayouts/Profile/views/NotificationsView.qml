@@ -18,16 +18,18 @@ import "./"
 
 ScrollView {
     id: root
+
+    property var store
+    property int profileContentWidth
+
     height: parent.height
     width: parent.width
     contentHeight: notificationsContainer.height
     clip: true
 
-    property var store
-
     Item {
         id: notificationsContainer
-        width: profileContainer.profileContentWidth
+        width: profileContentWidth
         anchors.horizontalCenter: parent.horizontalCenter
         height: this.childrenRect.height + 100
 

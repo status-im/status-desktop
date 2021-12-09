@@ -10,9 +10,12 @@ import utils 1.0
 
 Item {
     id: root
+
     signal startBtnClicked()
 
     property string username: ""
+    property int profileContentWidth
+    property bool networkGuarded: false
 
     ScrollView {
         id: sview
@@ -28,7 +31,7 @@ Item {
 
         Item {
             id: contentItem
-            width: profileContainer.profileContentWidth
+            width: profileContentWidth
             anchors.horizontalCenter: parent.horizontalCenter
 
             Image {

@@ -504,7 +504,9 @@ StatusWindow {
 
     Component {
         id: app
-        AppMain {}
+        AppMain {
+            sysPalette: systemPalette
+        }
     }
 
     Component {

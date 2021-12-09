@@ -12,14 +12,21 @@ import "views"
 import StatusQ.Layout 0.1
 
 StatusAppTwoPanelLayout {
-
     id: profileView
+
+    property alias changeProfileSection: leftTab.changeProfileSection
 
     property RootStore store: RootStore { }
     property var globalStore
-    property int contentMaxWidth: 624
-    property int contentMinWidth: 450
-    property alias changeProfileSection: leftTab.changeProfileSection
+    property var systemPalette
+    property bool networkGuarded: false
+
+    QtObject {
+        id: _internal
+        readonly property int contentMaxWidth: 624
+        readonly property int contentMinWidth: 450
+        property int profileContentWidth: Math.max(contentMinWidth, Math.min(profileContainer.width * 0.8, contentMaxWidth))
+    }
 
     leftPanel: LeftTabView {
         id: leftTab
@@ -29,7 +36,7 @@ StatusAppTwoPanelLayout {
 
     rightPanel: StackLayout {
         id: profileContainer
-        property int profileContentWidth: Math.max(contentMinWidth, Math.min(profileContainer.width * 0.8, contentMaxWidth))
+
         anchors.fill: parent
 
         currentIndex: Global.currentMenuTab
@@ -42,39 +49,51 @@ StatusAppTwoPanelLayout {
 
         MyProfileView {
             store: profileView.store
+            profileContentWidth: _internal.profileContentWidth
         }
 
         ContactsView {
             store: profileView.store
+            profileContentWidth: _internal.profileContentWidth
         }
 
         EnsView {
             id: ensContainer
             store: profileView.store
             messageStore: profileView.globalStore.messageStore
+            networkGuarded: profileView.networkGuarded
+            profileContentWidth: _internal.profileContentWidth
         }
 
         PrivacyView {
             store: profileView.store
+            profileContentWidth: _internal.profileContentWidth
         }
 
         AppearanceView {
             store: profileView.store
             globalStore: profileView.globalStore
+            profileContentWidth: _internal.profileContentWidth
+            systemPalette: profileView.systemPalette
         }
 
-        SoundsView {}
+        SoundsView {
+            profileContentWidth: _internal.profileContentWidth
+        }
 
         LanguageView {
             store: profileView.store
+            profileContentWidth: _internal.profileContentWidth
         }
 
         NotificationsView {
             store: profileView.store
+            profileContentWidth: _internal.profileContentWidth
         }
 
         SyncView {
             store: profileView.store
+            profileContentWidth: _internal.profileContentWidth
         }
 
         DevicesView {
@@ -83,16 +102,21 @@ StatusAppTwoPanelLayout {
 
         BrowserView {
             store: profileView.store
+            profileContentWidth: _internal.profileContentWidth
         }
 
         AdvancedView {
             store: profileView.store
+            profileContentWidth: _internal.profileContentWidth
         }
 
-        HelpView {}
+        HelpView {
+            profileContentWidth: _internal.profileContentWidth
+        }
 
         AboutView {
             store: profileView.store
+            profileContentWidth: _internal.profileContentWidth
         }
     }
 }

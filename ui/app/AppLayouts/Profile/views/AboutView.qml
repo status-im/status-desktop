@@ -16,13 +16,14 @@ Item {
     clip: true
 
     property var store
+    property int profileContentWidth
 
     Column {
         id: generalColumn
         spacing: Style.current.bigPadding
         anchors.top: parent.top
         anchors.topMargin: 46
-        width: profileContainer.profileContentWidth
+        width: profileContentWidth
         anchors.horizontalCenter: parent.horizontalCenter
 
         // TODO: replace with StatusListItem
@@ -59,7 +60,7 @@ Item {
                 }
                 onClicked: {
                     root.store.checkForUpdates();
-                    Global.openPopup(downloadModalComponent, {newVersionAvailable: newVersionJSON.available, downloadURL: newVersionJSON.url})
+                    Global.openDownloadModal()
                 }
             }
         }
@@ -87,9 +88,3 @@ Item {
         }
     }
 }
-
-/*##^##
-Designer {
-    D{i:0;height:600;width:800}
-}
-##^##*/

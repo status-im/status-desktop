@@ -15,17 +15,19 @@ import "../panels"
 
 ScrollView {
     id: root
+
+    property bool isWakuV2: store.fleet == Constants.waku_prod || store.fleet === Constants.waku_test
+    property var store
+    property int profileContentWidth
+
     height: parent.height
     width: parent.width
     contentHeight: advancedContainer.height + 100
     clip: true
-    property bool isWakuV2: store.fleet == Constants.waku_prod || store.fleet === Constants.waku_test
-
-    property var store
 
     Item {
         id: advancedContainer
-        width: profileContainer.profileContentWidth
+        width: profileContentWidth
         anchors.horizontalCenter: parent.horizontalCenter
         height: generalColumn.height
 
@@ -524,9 +526,3 @@ ScrollView {
         }
     }
 }
-
-/*##^##
-Designer {
-    D{i:0;height:400;width:700}
-}
-##^##*/

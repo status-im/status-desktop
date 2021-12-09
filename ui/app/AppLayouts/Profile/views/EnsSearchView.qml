@@ -16,6 +16,7 @@ Item {
     id: root
 
     property var store
+    property int profileContentWidth
 
     signal continueClicked(string output, string username)
     signal usernameUpdated(username: string);
@@ -89,7 +90,7 @@ Item {
     Item {
         id: ensContainer
         anchors.top: parent.top
-        width: profileContainer.profileContentWidth
+        width: profileContentWidth
         anchors.horizontalCenter: parent.horizontalCenter
 
         Rectangle {
