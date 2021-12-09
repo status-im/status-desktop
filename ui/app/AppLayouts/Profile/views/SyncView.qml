@@ -13,10 +13,13 @@ import shared.controls 1.0
 
 Item {
     id: root
-    Layout.fillHeight: true
-    Layout.fillWidth: true
+
     property var store
     property string activeMailserver: ""
+    property int profileContentWidth
+
+    Layout.fillHeight: true
+    Layout.fillWidth: true
 
     Connections {
         target: root.store.mailservers
@@ -27,7 +30,7 @@ Item {
     }
 
     Item {
-        width: profileContainer.profileContentWidth
+        width: profileContentWidth
         anchors.top: parent.top
         anchors.bottom: parent.bottom
         anchors.horizontalCenter: parent.horizontalCenter

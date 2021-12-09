@@ -21,6 +21,7 @@ Item {
     signal selectEns(string username)
 
     property var store
+    property int profileContentWidth
 
     // Defaults to show message
     property bool isMessage: true
@@ -45,7 +46,7 @@ Item {
 
     Item {
         anchors.top: parent.top
-        width: profileContainer.profileContentWidth
+        width: profileContentWidth
         anchors.horizontalCenter: parent.horizontalCenter
 
         Component {

@@ -44,15 +44,9 @@ ModalPopup {
                 model: root.store.dappList
                 delegate: Dapp {
                   name: model.name
-                  onDappClicked: permissionListPopup.createObject(appMain, {dapp: dapp}).open()
+                  onDappClicked: Global.openPopup(permissionListPopup, {dapp: dapp})
                 }
             }
         }
     }
 }
-
-/*##^##
-Designer {
-    D{i:0;height:300;width:300}
-}
-##^##*/

@@ -20,6 +20,7 @@ Item {
     clip: true
 
     property var store
+    property int profileContentWidth
 
     property Component dappListPopup: DappList {
         store: root.store
@@ -33,7 +34,7 @@ Item {
         anchors.top: parent.top
         anchors.topMargin: 64
         anchors.bottom: parent.bottom
-        width: profileContainer.profileContentWidth
+        width: profileContentWidth
 
         anchors.horizontalCenter: parent.horizontalCenter
 
@@ -139,9 +140,3 @@ Item {
         }
     }
 }
-
-/*##^##
-Designer {
-    D{i:0;height:400;width:700}
-}
-##^##*/

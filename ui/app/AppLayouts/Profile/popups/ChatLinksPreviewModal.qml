@@ -1,14 +1,15 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 
-import utils 1.0
+import StatusQ.Controls 0.1
+import StatusQ.Core 0.1
+import StatusQ.Core.Theme 0.1
 
-import StatusQ.Controls 0.1 as StatusQControls
-
-import shared 1.0
 import shared.panels 1.0
 import shared.popups 1.0
 import shared.status 1.0
+
+import utils 1.0
 
 // TODO: replace with StatusModal
 ModalPopup {
@@ -45,7 +46,7 @@ ModalPopup {
             text: qsTrId("websites")
             width: parent.width
 
-            StatusQControls.StatusFlatButton {
+            StatusFlatButton {
                 //% "Enable all"
                 text: qsTrId("enable-all")
                 anchors.right: parent.right
@@ -64,7 +65,7 @@ ModalPopup {
         }
 
         Connections {
-            target: appMain
+            target: Global
             onSettingsLoaded: {
                 popup.populatePreviewableSites()
             }
@@ -149,9 +150,10 @@ ModalPopup {
                             }
                         }
 
-                        StyledText {
+                        StatusBaseText {
                             id: siteTitle
                             text: title
+                            color: Theme.palette.directColor1
                             font.pixelSize: 15
                             font.weight: Font.Medium
                             anchors.top: thumbnail.top
@@ -159,7 +161,7 @@ ModalPopup {
                             anchors.leftMargin: Style.current.padding
                         }
 
-                        StyledText {
+                        StatusBaseText {
                             text: address
                             font.pixelSize: 15
                             font.weight: Font.Thin
@@ -168,7 +170,7 @@ ModalPopup {
                             anchors.left: siteTitle.left
                         }
 
-                        StatusQControls.StatusSwitch {
+                        StatusSwitch {
                             id: settingSwitch
                             checked: !!isWhitelisted
                             anchors.verticalCenter: parent.verticalCenter
@@ -203,7 +205,7 @@ ModalPopup {
             }
         }
 
-        StyledText {
+        StatusBaseText {
             id: infoText
             //% "Previewing links from these websites may share your metadata with their owners."
             text: qsTrId("previewing-links-from-these-websites-may-share-your-metadata-with-their-owners-")
@@ -216,9 +218,3 @@ ModalPopup {
         }
     }
 }
-
-/*##^##
-Designer {
-    D{i:0;autoSize:true;height:480;width:640}
-}
-##^##*/

@@ -17,6 +17,7 @@ Item {
     clip: true
 
     property var store
+    property int profileContentWidth
     property Component languagePopup: LanguageModal {
         store: languageContainer.store
     }
@@ -25,7 +26,7 @@ Item {
         anchors.top: parent.top
         anchors.topMargin: 64
         anchors.bottom: parent.bottom
-        width: profileContainer.profileContentWidth
+        width: profileContentWidth
 
         anchors.horizontalCenter: parent.horizontalCenter
 

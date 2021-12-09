@@ -6,7 +6,6 @@ import QtGraphicalEffects 1.13
 import utils 1.0
 import shared.panels 1.0
 import shared.status 1.0
-import "../../Onboarding/shared" as OnboardingComponents
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -22,12 +21,13 @@ Item {
     clip: true
 
     property var store
+    property int profileContentWidth
 
     Column {
         id: containerColumn
         anchors.top: parent.top
         anchors.topMargin: 64
-        width: profileContainer.profileContentWidth
+        width: profileContentWidth
 
         anchors.horizontalCenter: parent.horizontalCenter
 
@@ -108,14 +108,6 @@ Item {
             sensor.onClicked: Global.openPopup(storeToKeychainSelectionModal)
 
             Component {
-                id: storePasswordModal
-                OnboardingComponents.CreatePasswordModal {
-                    storingPasswordModal: true
-                    height: 350
-                }
-            }
-
-            Component {
                 id: storeToKeychainSelectionModal
                 StoreToKeychainSelectionModal {}
             }
@@ -128,8 +120,7 @@ Item {
         ChangePasswordModal {
             id: changePasswordModal
             anchors.centerIn: parent
-
-            onPasswordChanged: successPopup.open()
+            successPopup: successPopup
         }
 
         ChangePasswordSuccessModal {
@@ -167,15 +158,10 @@ Item {
                 StatusQControls.StatusSwitch {
                     id: switch1
                     checked: !localAccountSensitiveSettings.onlyShowContactsProfilePics
-                    onCheckedChanged: {
-                        if (localAccountSensitiveSettings.onlyShowContactsProfilePics !== !checked) {
-                            localAccountSensitiveSettings.onlyShowContactsProfilePics = !checked
-                        }
-                    }
                 }
             ]
             sensor.onClicked: {
-                switch1.checked = !switch1.checked
+                switch1.checked = localAccountSensitiveSettings.onlyShowContactsProfilePics = !switch1.checked
             }
         }
 
@@ -189,17 +175,12 @@ Item {
             implicitHeight: 52
             components: [
                 StatusQControls.StatusSwitch {
-                    id: switch2
+                    id: switch2               
                     checked: localAccountSensitiveSettings.displayChatImages
-                    onCheckedChanged: {
-                        if (localAccountSensitiveSettings.displayChatImages !== checked) {
-                            localAccountSensitiveSettings.displayChatImages !== checked
-                        }
-                    }
                 }
             ]
             sensor.onClicked: {
-                switch2.checked = !switch2.checked
+                switch2.checked = localAccountSensitiveSettings.displayChatImages = !switch2.checked
             }
         }
 
@@ -274,22 +255,11 @@ Item {
                 StatusQControls.StatusSwitch {
                     id: switch3
                     checked: !root.store.messagesFromContactsOnly
-                    onCheckedChanged: {
-                        if (root.store.messagesFromContactsOnly !== !checked) {
-                            root.store.messagesFromContactsOnly = !checked
-                        }
-                    }
                 }
             ]
             sensor.onClicked: {
-                switch3.checked = !switch3.checked
+                root.store.setMessagesFromContactsOnly(!switch3.checked)
             }
         }
     }
 }
-
-/*##^##
-Designer {
-    D{i:0;autoSize:true;formeditorColor:"#ffffff";height:480;width:640}
-}
-##^##*/

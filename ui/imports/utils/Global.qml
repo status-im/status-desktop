@@ -14,6 +14,12 @@ QtObject {
     signal openLinkInBrowser(string link)
     signal openChooseBrowserPopup(string link)
     signal openPopupRequested(var popupComponent, var params)
+    signal openDownloadModalRequested()
+    signal settingsLoaded()
+
+    function openDownloadModal(){
+        openDownloadModalRequested()
+    }
 
     function openPopup(popupComponent, params = {}) {
         root.openPopupRequested(popupComponent, params);
@@ -38,5 +44,9 @@ QtObject {
 
     function playErrorSound() {
         errorSound.play();
+    }
+
+    function settingsHasLoaded() {
+        settingsLoaded()
     }
 }

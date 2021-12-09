@@ -5,42 +5,39 @@ import QtQml.StateMachine 1.14 as DSM
 
 import utils 1.0
 import shared 1.0
-/* import "./Ens" */
 
 import "../stores"
-import "."
 
 Item {
-    id: root
-
-    Layout.fillHeight: true
-    Layout.fillWidth: true
-    clip: true
+    id: ensView
 
     property var store
-
+    property var messageStore
+    property bool networkGuarded: false
+    property int profileContentWidth
     property bool showSearchScreen: false
     property string addedUsername: ""
     property string selectedUsername: ""
-    property var messageStore
 
     signal next(output: string)
     signal back()
     signal done(ensUsername: string)
     signal connect(ensUsername: string)
     signal changePubKey(ensUsername: string)
-
-
     signal goToWelcome();
     signal goToList();
 
     function goToStart(){
-        if(root.store.ens.rowCount() > 0 && networkGuarded){
+        if(ensView.store.ens.rowCount() > 0 && networkGuarded){
             goToList();
         } else {
             goToWelcome();
         }
     }
+
+    Layout.fillHeight: true
+    Layout.fillWidth: true
+    clip: true
 
     DSM.StateMachine {
         id: stateMachine
@@ -215,15 +212,18 @@ Item {
     Component {
         id: welcome
         EnsWelcomeView {
-            username: root.store.username
+            username: ensView.store.username
             onStartBtnClicked: next(null)
+            networkGuarded: ensView.networkGuarded
+            profileContentWidth: ensView.profileContentWidth
         }
     }
 
     Component {
         id: search
         EnsSearchView {
-            store: root.store
+            store: ensView.store
+            profileContentWidth: ensView.profileContentWidth
             onContinueClicked: {
                 if(output === "connected"){
                     connect(username)
@@ -242,7 +242,7 @@ Item {
     Component {
         id: termsAndConditions
         EnsTermsAndConditionsView {
-            store: root.store
+            store: ensView.store
             username: selectedUsername
             onBackBtnClicked: back();
             onUsernameRegistered: done(userName);
@@ -283,11 +283,12 @@ Item {
     Component {
         id: list
         EnsListView {
-            store: root.store
-            messageStore: ensContainer.messageStore
+            store: ensView.store
+            messageStore: ensView.messageStore
+            profileContentWidth: ensView.profileContentWidth
             onAddBtnClicked: next("search")
             onSelectEns: {
-                root.store.ensDetails(username)
+                ensView.store.ensDetails(username)
                 selectedUsername = username;
                 next("details")
             }
@@ -297,7 +298,7 @@ Item {
     Component {
         id: details
         EnsDetailsView {
-            store: root.store
+            store: ensView.store
             username: selectedUsername
             onBackBtnClicked: back();
             onUsernameReleased: {
@@ -308,21 +309,21 @@ Item {
     }
 
     Connections {
-        target: root
+        target: ensView
         onConnect: {
             addedUsername = ensUsername;
         }
     }
 
     Connections {
-        target: root.store.ens
+        target: ensView.store.ens
         onTransactionWasSent: {
             //% "Transaction pending..."
             toastMessage.title = qsTrId("ens-transaction-pending")
             toastMessage.source = Style.svg("loading")
             toastMessage.iconColor = Style.current.primary
             toastMessage.iconRotates = true
-            toastMessage.link = `${root.store.etherscanLink}/${txResult}`
+            toastMessage.link = `${ensView.store.etherscanLink}/${txResult}`
             toastMessage.open()
         }
         onTransactionCompleted: {
@@ -353,7 +354,7 @@ Item {
                 toastMessage.iconColor = Style.current.danger
             }
 
-            toastMessage.link = `${root.store.etherscanLink}/${txHash}`
+            toastMessage.link = `${ensView.store.etherscanLink}/${txHash}`
             toastMessage.open()
         }
     }

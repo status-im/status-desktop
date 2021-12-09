@@ -18,6 +18,7 @@ Item {
     id: root
 
     property var store
+    property int profileContentWidth
 
     property string ensName: store.preferredUsername || store.firstEnsUsername || ""
     property string username: store.username
@@ -45,7 +46,7 @@ Item {
         id: profileImgNameContainer
         anchors.top: parent.top
         anchors.topMargin: 64
-        width: profileContainer.profileContentWidth
+        width: profileContentWidth
 
         anchors.horizontalCenter: parent.horizontalCenter
 

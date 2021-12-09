@@ -32,6 +32,8 @@ Item {
     anchors.fill: parent
 
     property alias appLayout: appLayout
+    // set from main.qml
+    property var sysPalette
     // Not Refactored Yet
     property var newVersionJSON: "" //JSON.parse(utilsModel.newVersion)
     property bool profilePopupOpened: false
@@ -39,7 +41,6 @@ Item {
 //    property bool networkGuarded: profileModel.network.current === Constants.networkMainnet || (profileModel.network.current === Constants.networkRopsten && localAccountSensitiveSettings.stickersEnsRopsten)
     property RootStore rootStore: RootStore { }
 
-    signal settingsLoaded()
     signal openContactsPopup()
 
     Connections {
@@ -54,6 +55,11 @@ Item {
             const popup = popupComponent.createObject(appMain, params);
             popup.open();
             return popup;
+        }
+        onOpenDownloadModalRequested: {
+            const popup = downloadModalComponent.createObject(appMain, {newVersionAvailable: newVersionJSON.available, downloadURL: newVersionJSON.url})
+            popup.open()
+            return popup
         }
     }
 
@@ -170,7 +176,7 @@ Item {
         text: qsTr("A new  version of Status (%1) is available").arg(newVersionJSON.version)
         btnText: qsTr("Download") 
         onClick: function(){
-            Global.openPopup(downloadModalComponent, {newVersionAvailable: newVersionJSON.available, downloadURL: newVersionJSON.url})
+            Global.openDownloadModal()
         }
     }
 
@@ -467,6 +473,8 @@ Item {
                 Layout.alignment: Qt.AlignLeft | Qt.AlignTop
                 Layout.fillHeight: true
                 globalStore: appMain.rootStore
+                systemPalette: appMain.sysPalette
+                networkGuarded: appMain.networkGuarded
             }
 
             NodeLayout {
@@ -815,6 +823,6 @@ Item {
 //        } catch (e) {
 //            console.error('Could not parse the whitelist for sites', e)
 //        }
-        appMain.settingsLoaded()
+        Global.settingsHasLoaded()
     }
 }

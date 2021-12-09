@@ -10,12 +10,16 @@ import StatusQ.Controls 0.1
 
 Item {
     id: soundsContainer
+
+    property var store
+    property int profileContentWidth
+
     Layout.fillHeight: true
     Layout.fillWidth: true
     clip: true
 
     Item {
-        width: profileContainer.profileContentWidth
+        width: profileContentWidth
 
         anchors.horizontalCenter: parent.horizontalCenter
 
