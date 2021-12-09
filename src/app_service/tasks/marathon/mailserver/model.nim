@@ -38,7 +38,6 @@ type
     nodes*: Table[string, MailserverStatus]
     activeMailserver*: string
     lastConnectionAttempt*: float
-    fleet*: FleetModel
     wakuVersion*: int
 
   MailserverStatus* = enum
@@ -63,25 +62,33 @@ proc newMailserverModel*(vptr: ByteAddress): MailserverModel =
   result.events = newMailserverEvents(vptr)
   result.nodes = initTable[string, MailserverStatus]()
   result.activeMailserver = ""
+  result.mailservers = @[]
 
 proc init*(self: MailserverModel) =
   trace "MailserverModel::init()"
-  let fleets =
-    if defined(windows) and defined(production):
+  
+  self.wakuVersion = status_settings.getWakuVersion()
+
+  let nodeConfig = status_settings.getNodeConfig()
+  if self.wakuVersion == 2:
+    # TODO:
+    # Instead of obtaining the waku2 fleet from fleet.json, expose a method in status-go that will
+    # return the list of store nodes. (The cluster config can ontain dns-discovery urls so it cannot be
+    # used to populate the list of mailservers)
+    let fleets = if defined(windows) and defined(production):
       "/../resources/fleets.json"
     else:
       "/../fleets.json"
+    let fleetConfig = readFile(joinPath(getAppDir(), fleets))
+    let fleet = newFleetModel(fleetConfig)
+    self.mailservers = toSeq(fleet.config.getMailservers(status_settings.getFleet(), true).values)
+  else:
+    for mailserver in nodeConfig["ClusterConfig"]["TrustedMailServers"].getElems():
+      self.mailservers.add(mailserver.getStr())
 
-  self.wakuVersion = status_settings.getWakuVersion()
-
-  let fleetConfig = readFile(joinPath(getAppDir(), fleets))
-  self.fleet = newFleetModel(fleetConfig)
-  self.wakuVersion = status_settings.getWakuVersion()
-
-  self.mailservers = toSeq(self.fleet.config.getMailservers(status_settings.getFleet(), self.wakuVersion == 2).values)
-  
   for mailserver in status_settings.getMailservers().getElems():
     self.mailservers.add(mailserver["address"].getStr())
+
 
 proc getActiveMailserver*(self: MailserverModel): string = self.activeMailserver
 
