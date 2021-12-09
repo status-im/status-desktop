@@ -95,7 +95,7 @@ Column {
                     opacity: dragSensor.active ? 0.0 : 1.0
                     originalOrder: model.position
                     chatId: model.itemId
-                    categoryId: model.parentItemId
+                    categoryId: model.parentItemId? model.parentItemId : ""
                     name: model.name
                     type: !!model.type ? model.type : StatusChatListItem.Type.CommunityChat
                     muted: model.muted
