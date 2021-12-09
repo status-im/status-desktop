@@ -121,7 +121,12 @@ QtObject:
       contact.blocked = false
 
     self.saveContact(contact)
-    status_contacts.addContact(contact.id, contact.name)
+
+    var ensName = ""
+    if contact.name.endsWith(".eth"):
+      ensName = contact.name
+
+    status_contacts.addContact(contact.id, ensName)
     self.events.emit(SIGNAL_CONTACT_ADDED, ContactAddedArgs(contact: contact))
 
   proc rejectContactRequest*(self: Service, publicKey: string) =
