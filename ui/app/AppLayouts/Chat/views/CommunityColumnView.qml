@@ -258,6 +258,7 @@ Item {
             chatListPopupMenu: ChatContextMenuView {
                 id: chatContextMenuView
                 store: root.store
+                chatSectionModule: communitySectionModule
                 openHandler: function (id) {
                     root.store.chatsModelInst.channelView.setContextChannel(id)
                     chatContextMenuView.chatItem = root.store.chatsModelInst.channelView.contextChannel

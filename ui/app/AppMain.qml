@@ -463,6 +463,9 @@ Item {
                     TimelineLayout {
                         messageStore: appMain.rootStore.messageStore
                         rootStore: appMain.rootStore
+                        Component.onCompleted: {
+                            chatCommunitySectionModule = mainModule.getChatSectionModule()
+                        }
                     }
                 }
                 onLoaded: timelineLayoutContainer.item.onActivated()

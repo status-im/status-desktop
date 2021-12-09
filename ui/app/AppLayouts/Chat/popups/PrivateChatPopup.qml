@@ -16,10 +16,11 @@ ModalPopup {
     //% "New chat"
     title: qsTrId("new-chat")
     property var store
+    signal joinPrivateChat(string publicKey, string ensName)
 
     signal profileClicked()
     function doJoin(pk, ensName) {
-        popup.store.chatsModelInst.channelView.joinPrivateChat(pk, Utils.isChatKey(pk) ? "" : ensName);
+        popup.joinPrivateChat(pk, Utils.isChatKey(pk) ? "" : ensName);
         popup.close();
     }
 
@@ -39,8 +40,7 @@ ModalPopup {
         width: parent.width
         addContactEnabled: false
         onUserClicked: function (isContact, pubKey, ensName) {
-            popup.store.chatsModelInst.channelView.joinPrivateChat(pubKey, Utils.isChatKey(pubKey) ? "" : ensName);
-            popup.close();
+            popup.doJoin(pubKey, ensName);
         }
     }
 

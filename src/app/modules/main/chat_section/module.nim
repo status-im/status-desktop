@@ -64,6 +64,11 @@ proc addSubmodule(self: Module, chatId: string, belongToCommunity: bool, isUsers
   self.chatContentModule[chatId] = chat_content_module.newModule(self, events, self.controller.getMySectionId(), chatId,
     belongToCommunity, isUsersListAvailable, contactService, chatService, communityService, messageService)
 
+proc removeSubmodule(self: Module, chatId: string) =
+  if(not self.chatContentModule.contains(chatId)):
+    return
+  self.chatContentModule.del(chatId)
+
 proc buildChatUI(self: Module, events: EventEmitter, contactService: contact_service.Service, 
   chatService: chat_service.ServiceInterface, communityService: community_service.ServiceInterface, 
   messageService: message_service.Service) =
@@ -232,12 +237,12 @@ method createPublicChat*(self: Module, chatId: string) =
     return
 
   if(self.chatContentModule.hasKey(chatId)):
-    error "error: public chat is already added, ", chatId
+    error "error: public chat is already added", chatId
     return
 
   self.controller.createPublicChat(chatId)
 
-method addNewPublicChat*(self: Module, chatDto: ChatDto, events: EventEmitter, contactService: contact_service.Service,
+method addNewChat*(self: Module, chatDto: ChatDto, events: EventEmitter, contactService: contact_service.Service,
   chatService: chat_service.ServiceInterface, communityService: community_service.ServiceInterface, 
   messageService: message_service.Service) =
   let hasNotification = chatDto.unviewedMessagesCount > 0 or chatDto.unviewedMentionsCount > 0
@@ -249,3 +254,27 @@ method addNewPublicChat*(self: Module, chatDto: ChatDto, events: EventEmitter, c
 
   # make new added chat active one
   self.setActiveItemSubItem(item.id, "")
+
+method removeChat*(self: Module, chatId: string) =
+  if(not self.chatContentModule.contains(chatId)):
+    return
+
+  self.view.removeItem(chatId)
+  self.removeSubmodule(chatId)
+
+  # remove active state form the removed chat (if applicable)
+  self.controller.removeActiveFromThisChat(chatId)
+
+method createOneToOneChat*(self: Module, chatId: string, ensName: string) =
+  if(self.controller.isCommunity()):
+    debug "creating an one to one chat is not allowed for community, most likely it's an error in qml"
+    return
+
+  if(self.chatContentModule.hasKey(chatId)):
+    error "error: one to one chat is already added", chatId
+    return
+
+  self.controller.createOneToOneChat(chatId, ensName)
+
+method leaveChat*(self: Module, chatId: string) =
+  self.controller.leaveChat(chatId)

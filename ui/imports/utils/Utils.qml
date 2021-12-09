@@ -416,7 +416,9 @@ QtObject {
                             .arg(isChatKey(pk) ? utilsModel.generateAlias(pk) : ("@" + removeStatusEns(pk)))
             result.callback = function () {
                 if(isChatKey(pk)){
-                    chatsModel.channelView.joinPrivateChat(pk, "");
+                    // TODO refector those to call a store (somehow)
+                    let chatCommunitySectionModule = mainModule.getChatSectionModule()
+                    chatCommunitySectionModule.createOneToOneChat(pk, "")
                 } else {
                     chatsModel.channelView.joinWithENS(pk);
                 }
