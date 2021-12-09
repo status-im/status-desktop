@@ -19,6 +19,7 @@ import StatusQ.Controls 0.1 as StatusQControls
 ModalPopup {
     property var rootStore
     property var messageStore
+    property var chatSectionModule
     property bool userCanPin: {
         switch (popup.rootStore.chatsModelInst.channelView.activeChannel.chatType) {
         case Constants.chatTypePublic: return false
@@ -211,6 +212,7 @@ ModalPopup {
             id: msgContextMenu
             pinnedPopup: true
             pinnedMessage: true
+            chatSectionModule: popup.chatSectionModule
             store: popup.rootStore
             reactionModel: popup.rootStore.emojiReactionsModel
             onShouldCloseParentPopup: {

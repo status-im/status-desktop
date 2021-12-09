@@ -13,6 +13,7 @@ StatusPopupMenu {
     id: root
     property var chatItem
     property var store
+    property var chatSectionModule
     // Not Refactored Yet
     property bool communityActive: false // root.store.chatsModelInst.communities.activeCommunity.active
 
@@ -186,7 +187,7 @@ StatusPopupMenu {
                 if (communityActive) {
                     root.store.chatsModelInst.communities.deleteCommunityChat(root.store.chatsModelInst.communities.activeCommunity.id, chatId)
                 } else {
-                    root.store.chatsModelInst.channelView.leaveChat(chatId)
+                    chatSectionModule.leaveChat(chatId)
                 }
                 close();
             }

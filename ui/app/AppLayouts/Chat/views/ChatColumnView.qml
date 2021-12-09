@@ -132,6 +132,7 @@ Item {
 
     MessageContextMenuView {
         id: contextmenu
+        chatSectionModule: root.parentModule
         store: root.rootStore
         reactionModel: root.rootStore.emojiReactionsModel
     }
@@ -239,6 +240,7 @@ Item {
 
                 popupMenu: ChatContextMenuView {
                     store: root.rootStore
+                    chatSectionModule: parentModule
                     onOpened: {
                         chatItem = root.rootStore.chatsModelInst.channelView.activeChannel
                     }
@@ -416,8 +418,10 @@ Item {
                                                                            packId)
                                 }
                                 onSendMessage: {
-                                    if (chatInput.fileUrls.length > 0){
-                                        root.rootStore.chatsModelInst.sendImages(JSON.stringify(fileUrls));
+                                    if (chatInput.fileUrls.length > 0) {
+                                        let inputAreaModule = parentModule.getChatContentModule.getInputAreaModule()
+                                        inputAreaModule.sendImages(JSON.stringify(fileUrls));
+                                        return
                                     }
                                     let msg = root.rootStore.chatsModelInst.plainText(Emoji.deparse(chatInput.textInput.text))
                                     if (msg.length > 0){
@@ -593,6 +597,7 @@ Item {
             id: pinnedMessagesPopupComponent
             PinnedMessagesPopup {
                 id: pinnedMessagesPopup
+                chatSectionModule: root.parentModule
                 rootStore: root.rootStore
                 messageStore: root.rootStore.messageStore
                 onClosed: destroy()

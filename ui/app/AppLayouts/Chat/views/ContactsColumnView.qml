@@ -34,7 +34,7 @@ Item {
 
     Component.onCompleted: {
         appMain.openContactsPopup.connect(function(){
-            Global.openPopup(contactRequestsPopup)
+            Global.openPopup(contactRequestsPopup, {chatSectionModule})
         })
     }
 
@@ -262,6 +262,7 @@ Item {
             popupMenu: ChatContextMenuView {
                 id: chatContextMenuView
                 store: root.store
+                chatSectionModule: root.chatSectionModule
                 openHandler: function (id) {
                     root.store.chatsModelInst.channelView.setContextChannel(id)
                     chatContextMenuView.chatItem = root.store.chatsModelInst.channelView.contextChannel
@@ -309,6 +310,9 @@ Item {
         id: privateChatPopupComponent
         PrivateChatPopup {
             store: root.store
+            onJoinPrivateChat: {
+                chatSectionModule.createOneToOneChat(publicKey, ensName)
+            }
             onClosed: {
                 destroy()
             }

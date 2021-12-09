@@ -120,6 +120,28 @@ QtObject:
 
     self.countChanged()
 
+  proc getItemIdxById*(self: Model, id: string): int =
+    var idx = 0
+    for it in self.items:
+      if(it.id == id):
+        return idx
+      idx.inc
+    return -1
+
+  proc removeItemById*(self: Model, id: string) =
+    let idx = self.getItemIdxById(id)
+    if idx == -1:
+      return
+
+    let parentModelIndex = newQModelIndex()
+    defer: parentModelIndex.delete
+
+    self.beginRemoveRows(parentModelIndex, idx, idx)
+    self.items.delete(idx)
+    self.endRemoveRows()
+
+    self.countChanged()
+
   proc prependItem*(self: Model, item: Item) =
     let parentModelIndex = newQModelIndex()
     defer: parentModelIndex.delete

@@ -178,6 +178,7 @@ StatusAppThreePanelLayout {
 
     MessageContextMenuView {
         id: quickActionMessageOptionsMenu
+        chatSectionModule: root.chatCommunitySectionModule
         // Not Refactored
        store: root.rootStore
 //        reactionModel: root.rootStore.emojiReactionsModel

@@ -22,6 +22,7 @@ ScrollView {
     id: root
 
     property RootStore store: RootStore { }
+    property var chatSectionModule
 
     Layout.fillWidth: true
     Layout.fillHeight: true
@@ -219,6 +220,7 @@ ScrollView {
                 MessageContextMenuView {
                     id: msgCntxtMenu
                     store: root.store
+                    chatSectionModule: root.chatSectionModule
                     reactionModel: EmojiReactions { }
                 }
             }
