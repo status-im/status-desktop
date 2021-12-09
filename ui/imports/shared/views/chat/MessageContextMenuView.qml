@@ -19,6 +19,10 @@ StatusPopupMenu {
     width: emojiContainer.visible ? emojiContainer.width : 176
 
     property var store
+    // Important:
+    // We're here in case of ChatSection
+    // This module is set from `ChatLayout` (each `ChatLayout` has its own chatSectionModule)
+    property var chatSectionModule
     property string messageId
     property int contentType
     property bool isProfile: false
@@ -256,7 +260,7 @@ StatusPopupMenu {
         onTriggered: {
             if (root.isProfile) {
                 Global.changeAppSectionBySectionType(Constants.appSection.chat)
-                root.store.chatsModelInst.channelView.joinPrivateChat(fromAuthor, "")
+                chatSectionModule.createOneToOneChat(fromAuthor, "")
             } else {
                 showReplyArea()
             }

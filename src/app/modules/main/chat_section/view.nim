@@ -49,6 +49,9 @@ QtObject:
   proc appendItem*(self: View, item: Item) =
     self.model.appendItem(item)
 
+  proc removeItem*(self: View, id: string) =
+    self.model.removeItemById(id)
+
   proc prependItem*(self: View, item: Item) =
     self.model.prependItem(item)
 
@@ -85,3 +88,9 @@ QtObject:
 
   proc createPublicChat*(self: View, chatId: string) {.slot.} =
     self.delegate.createPublicChat(chatId)
+
+  proc createOneToOneChat*(self: View, chatId: string, ensName: string) {.slot.} =
+    self.delegate.createOneToOneChat(chatId, ensName)
+
+  proc leaveChat*(self: View, id: string) {.slot.} =
+    self.delegate.leaveChat(id)

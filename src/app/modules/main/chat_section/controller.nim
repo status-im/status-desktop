@@ -82,6 +82,20 @@ method setActiveItemSubItem*(self: Controller, itemId: string, subItemId: string
 
   self.delegate.activeItemSubItemSet(self.activeItemId, self.activeSubItemId)
 
+method removeActiveFromThisChat*(self: Controller, itemId: string) =
+  if self.activeItemId != itemId:
+    return
+
+  let allChats = self.chatService.getAllChats()
+
+  self.activeSubItemId = ""
+  if allChats.len == 0:
+    self.activeItemId = ""
+  else:
+    self.activeItemId = allChats[0].id
+
+  self.delegate.activeItemSubItemSet(self.activeItemId, self.activeSubItemId)
+
 method getOneToOneChatNameAndImage*(self: Controller, chatId: string): 
   tuple[name: string, image: string, isIdenticon: bool] =
   return self.chatService.getOneToOneChatNameAndImage(chatId)
@@ -89,5 +103,16 @@ method getOneToOneChatNameAndImage*(self: Controller, chatId: string):
 method createPublicChat*(self: Controller, chatId: string) =
   let response = self.chatService.createPublicChat(chatId)
   if(response.success):
-    self.delegate.addNewPublicChat(response.chatDto, self.events, self.contactService, self.chatService, 
+    self.delegate.addNewChat(response.chatDto, self.events, self.contactService, self.chatService,
     self.communityService, self.messageService)
+
+method createOneToOneChat*(self: Controller, chatId: string, ensName: string) =
+  let response = self.chatService.createOneToOneChat(chatId, ensName)
+  if(response.success):
+    self.delegate.addNewChat(response.chatDto, self.events, self.contactService, self.chatService,
+    self.communityService, self.messageService)
+
+method leaveChat*(self: Controller, chatId: string) =
+  let success = self.chatService.leaveChat(chatId)
+  if success:
+    self.delegate.removeChat(chatId)

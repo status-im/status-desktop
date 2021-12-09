@@ -198,7 +198,8 @@ QtObject {
     }
 
     function joinPrivateChat(address) {
-        chatsModelInst.channelView.joinPrivateChat(address, "");
+        let chatCommunitySectionModule = mainModule.getChatSectionModule()
+        chatCommunitySectionModule.createOneToOneChat(address, "")
     }
 
     function unblockContact(address) {

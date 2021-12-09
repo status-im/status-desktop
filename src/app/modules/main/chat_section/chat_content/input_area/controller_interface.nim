@@ -1,4 +1,3 @@
-import ../../../../../../app_service/service/community/service_interface as community_service
 
 type 
   AccessInterface* {.pure inheritable.} = ref object of RootObj
@@ -16,4 +15,24 @@ method getChatId*(self: AccessInterface): string {.base.} =
 method belongsToCommunity*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method sendImages*(self: AccessInterface, imagePathsJson: string): string {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method requestAddressForTransaction*(self: AccessInterface, chatId: string, fromAddress: string, amount: string, tokenAddress: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method requestTransaction*(self: AccessInterface, chatId: string, fromAddress: string, amount: string, tokenAddress: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method declineRequestTransaction*(self: AccessInterface, messageId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method declineRequestAddressForTransaction*(self: AccessInterface, messageId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method acceptRequestAddressForTransaction*(self: AccessInterface, messageId: string, address: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method acceptRequestTransaction*(self: AccessInterface, transactionHash: string, messageId: string, signature: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
     
