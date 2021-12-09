@@ -6,6 +6,8 @@ import utils 1.0
 import shared.popups 1.0
 import shared.controls 1.0
 
+import "../../Onboarding/shared" as OnboardingComponents
+
 // TODO: replace with StatusModal
 ModalPopup {
     id: popup
@@ -87,6 +89,14 @@ ModalPopup {
                 if (checked) {
                     localAccountSettings.storeToKeychainValue = Constants.storeToKeychainValueNever
                 }
+            }
+        }
+
+        Component {
+            id: storePasswordModal
+            OnboardingComponents.CreatePasswordModal {
+                storingPasswordModal: true
+                height: 350
             }
         }
     }

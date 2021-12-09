@@ -182,7 +182,7 @@ Popup {
 
     Connections {
         id: connectionSettings
-        target: appMain
+        target: Global
         onSettingsLoaded: {
             connectionSettings.enabled = false
             // Add recent

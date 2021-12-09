@@ -16,13 +16,12 @@ import StatusQ.Controls 0.1 as StatusQ
 import "../popups"
 
 ScrollView {
-    height: parent.height
-    width: parent.width
-    id: root
-    contentHeight: appearanceContainer.height
-    clip: true
+    id: appearanceView
+
+    property var systemPalette
     property var store
     property var globalStore
+    property int profileContentWidth
 
     enum Theme {
         Light,
@@ -39,9 +38,14 @@ ScrollView {
         Style.changeFontSize(fontSize)
     }
 
+    height: parent.height
+    width: parent.width
+    contentHeight: appearanceContainer.height
+    clip: true
+
     Item {
         id: appearanceContainer
-        width: profileContainer.profileContentWidth
+        width: profileContentWidth
 
         anchors.horizontalCenter: parent.horizontalCenter
         height: this.childrenRect.height + 100
@@ -82,8 +86,8 @@ ScrollView {
                 anchors.topMargin: Style.current.padding*2
                 anchors.left: parent.left
                 anchors.leftMargin: Style.current.smallPadding
-//                rootStore: root.rootStore
-//                messageStore: root.globalStore.messageStore
+//                rootStore: appearanceView.rootStore
+//                messageStore: appearanceView.globalStore.messageStore
                 ///////////TODO Remove
 //                userName: "@vitalik"
 //                identicon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAb0lEQVR4Ae3UQQqAIBRF0Wj9ba9Bq6l5JBQqfn/ngDMH3YS3AAB/tO3H+XRG3b9bR/+gVoREI2RapVXpfd5+X5oXERKNkHS+rk3tOpWkeREh0QiZVu91ql2zNC8iJBoh0yqtSqt1slpCghICANDPBc0ESPh0bHkHAAAAAElFTkSuQmCC"
@@ -135,7 +139,7 @@ ScrollView {
             value: localAccountSensitiveSettings.fontSize
             onValueChanged: {
                 localAccountSensitiveSettings.fontSize = value
-                root.updateFontSize(value)
+                appearanceView.updateFontSize(value)
             }
 
             RowLayout {
@@ -214,7 +218,7 @@ ScrollView {
         StatusQ.StatusSlider {
             id: zoomSlider
             readonly property int initialValue: {
-                let scaleFactorStr = root.store.readTextFile(uiScaleFilePath)
+                let scaleFactorStr = appearanceView.store.readTextFile(uiScaleFilePath)
                 if (scaleFactorStr === "") {
                     return 100
                 }
@@ -234,7 +238,7 @@ ScrollView {
             value: initialValue
             onValueChanged: {
                 if (value !== initialValue) {
-                    root.store.writeTextFile(uiScaleFilePath, value / 100.0)
+                    appearanceView.store.writeTextFile(uiScaleFilePath, value / 100.0)
                 }
             }
             onPressedChanged: {
@@ -328,7 +332,7 @@ ScrollView {
                 control.checked: localAppSettings.theme === Universal.Light
                 onRadioCheckedChanged: {
                     if (checked) {
-                        root.updateTheme(Universal.Light)
+                        appearanceView.updateTheme(Universal.Light)
                     }
                 }
             }
@@ -344,7 +348,7 @@ ScrollView {
                 control.checked: localAppSettings.theme === Universal.Dark
                 onRadioCheckedChanged: {
                     if (checked) {
-                        root.updateTheme(Universal.Dark)
+                        appearanceView.updateTheme(Universal.Dark)
                     }
                 }
             }
@@ -360,7 +364,7 @@ ScrollView {
                 control.checked: localAppSettings.theme === Universal.System
                 onRadioCheckedChanged: {
                     if (checked) {
-                        root.updateTheme(Universal.System)
+                        appearanceView.updateTheme(Universal.System)
                     }
                 }
             }

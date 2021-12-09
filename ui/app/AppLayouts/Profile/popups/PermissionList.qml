@@ -2,15 +2,12 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 
-import StatusQ.Core 0.1
-import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 
-import utils 1.0
-import shared 1.0
 import shared.popups 1.0
 
-import "./"
+import utils 1.0
+
 import "../panels"
 
 // TODO: replace with StatusModal
@@ -63,7 +60,7 @@ ModalPopup {
     
     footer: StatusButton {
         anchors.horizontalCenter: parent.horizontalCenter
-        type: StatusBaseButton.type.Danger
+        type: StatusBaseButton.Type.Danger
         //% "Revoke all access"
         text: qsTrId("revoke-all-access")
         onClicked: {
@@ -73,9 +70,3 @@ ModalPopup {
         }
     }
 }
-
-/*##^##
-Designer {
-    D{i:0;height:300;width:300}
-}
-##^##*/
