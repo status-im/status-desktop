@@ -22,10 +22,11 @@ ModalPopup {
     property var chatSectionModule
     property bool userCanPin: {
         switch (popup.rootStore.chatsModelInst.channelView.activeChannel.chatType) {
-        case Constants.chatTypePublic: return false
-        case Constants.chatTypeOneToOne: return true
-        case Constants.chatTypePrivateGroupChat: return popup.rootStore.chatsModelInst.channelView.activeChannel.isAdmin(userProfile.pubKey)
-        case Constants.chatTypeCommunity: return popup.rootStore.chatsModelInst.communities.activeCommunity.admin
+        case Constants.chatType.publicChat: return false
+        case Constants.chatType.profile: return false
+        case Constants.chatType.oneToOne: return true
+        case Constants.chatType.privateGroupChat: return popup.rootStore.chatsModelInst.channelView.activeChannel.isAdmin(userProfile.pubKey)
+        case Constants.chatType.communityChat: return popup.rootStore.chatsModelInst.communities.activeCommunity.admin
         default: return false
         }
     }
@@ -118,69 +119,69 @@ ModalPopup {
 
                 MessageView {
                     id: messageItem
-                    rootStore: popup.rootStore
-                    messageStore: popup.messageStore
+//                    rootStore: popup.rootStore
+//                    messageStore: popup.messageStore
                     /////////////TODO Remove
-                    fromAuthor: model.fromAuthor
-                    chatId: model.chatId
-                    userName: model.userName
-                    alias: model.alias
-                    localName: model.localName
-                    message: model.message
-                    plainText: model.plainText
-                    identicon: model.identicon
-                    isCurrentUser: model.isCurrentUser
-                    timestamp: model.timestamp
-                    sticker: model.sticker
-                    contentType: model.contentType
-                    outgoingStatus: model.outgoingStatus
-                    responseTo: model.responseTo
-                    imageClick: imagePopup.openPopup.bind(imagePopup)
-                    messageId: model.messageId
-                    emojiReactions: model.emojiReactions
-                    linkUrls: model.linkUrls
-                    communityId: model.communityId
-                    hasMention: model.hasMention
-                    stickerPackId: model.stickerPackId
-                    timeout: model.timeout
-                    pinnedMessage: true
-                    pinnedBy: model.pinnedBy
-                    forceHoverHandler: !messageToPin
-                    activityCenterMessage: false
-                    isEdited: model.isEdited
-                    showEdit: false
-                    messageContextMenu: msgContextMenu
-                    Component.onCompleted: {
-                        messageStore.fromAuthor = model.fromAuthor;
-                        messageStore.chatId = model.chatId;
-                        messageStore.userName = model.userName;
-                        messageStore.alias = model.alias;
-                        messageStore.localName = model.localName;
-                        messageStore.message = model.message;
-                        messageStore.plainText = model.plainText;
-                        messageStore.identicon = model.identicon;
-                        messageStore.isCurrentUser = model.isCurrentUser;
-                        messageStore.timestamp = model.timestamp;
-                        messageStore.sticker = model.sticker;
-                        messageStore.contentType = model.contentType;
-                        messageStore.outgoingStatus = model.outgoingStatus;
-                        messageStore.responseTo = model.responseTo;
-                        messageStore.imageClick = imagePopup.openPopup.bind(imagePopup);
-                        messageStore.messageId = model.messageId;
-                        messageStore.emojiReactions = model.emojiReactions;
-                        messageStore.linkUrls = model.linkUrls;
-                        messageStore.communityId = model.communityId;
-                        messageStore.hasMention = model.hasMention;
-                        messageStore.stickerPackId = model.stickerPackId;
-                        messageStore.timeout = model.timeout;
-                        messageStore.pinnedMessage = true;
-                        messageStore.pinnedBy = model.pinnedBy;
-                        messageStore.forceHoverHandler = !messageToPin;
-                        messageStore.activityCenterMessage = false;
-                        messageStore.isEdited = model.isEdited;
-                        messageStore.showEdit = false;
-                        messageStore.messageContextMenu = msgContextMenu;
-                    }
+//                    fromAuthor: model.fromAuthor
+//                    chatId: model.chatId
+//                    userName: model.userName
+//                    alias: model.alias
+//                    localName: model.localName
+//                    message: model.message
+//                    plainText: model.plainText
+//                    identicon: model.identicon
+//                    isCurrentUser: model.isCurrentUser
+//                    timestamp: model.timestamp
+//                    sticker: model.sticker
+//                    contentType: model.contentType
+//                    outgoingStatus: model.outgoingStatus
+//                    responseTo: model.responseTo
+//                    imageClick: imagePopup.openPopup.bind(imagePopup)
+//                    messageId: model.messageId
+//                    emojiReactions: model.emojiReactions
+//                    linkUrls: model.linkUrls
+//                    communityId: model.communityId
+//                    hasMention: model.hasMention
+//                    stickerPackId: model.stickerPackId
+//                    timeout: model.timeout
+//                    pinnedMessage: true
+//                    pinnedBy: model.pinnedBy
+//                    forceHoverHandler: !messageToPin
+//                    activityCenterMessage: false
+//                    isEdited: model.isEdited
+//                    showEdit: false
+//                    messageContextMenu: msgContextMenu
+//                    Component.onCompleted: {
+//                        messageStore.fromAuthor = model.fromAuthor;
+//                        messageStore.chatId = model.chatId;
+//                        messageStore.userName = model.userName;
+//                        messageStore.alias = model.alias;
+//                        messageStore.localName = model.localName;
+//                        messageStore.message = model.message;
+//                        messageStore.plainText = model.plainText;
+//                        messageStore.identicon = model.identicon;
+//                        messageStore.isCurrentUser = model.isCurrentUser;
+//                        messageStore.timestamp = model.timestamp;
+//                        messageStore.sticker = model.sticker;
+//                        messageStore.contentType = model.contentType;
+//                        messageStore.outgoingStatus = model.outgoingStatus;
+//                        messageStore.responseTo = model.responseTo;
+//                        messageStore.imageClick = imagePopup.openPopup.bind(imagePopup);
+//                        messageStore.messageId = model.messageId;
+//                        messageStore.emojiReactions = model.emojiReactions;
+//                        messageStore.linkUrls = model.linkUrls;
+//                        messageStore.communityId = model.communityId;
+//                        messageStore.hasMention = model.hasMention;
+//                        messageStore.stickerPackId = model.stickerPackId;
+//                        messageStore.timeout = model.timeout;
+//                        messageStore.pinnedMessage = true;
+//                        messageStore.pinnedBy = model.pinnedBy;
+//                        messageStore.forceHoverHandler = !messageToPin;
+//                        messageStore.activityCenterMessage = false;
+//                        messageStore.isEdited = model.isEdited;
+//                        messageStore.showEdit = false;
+//                        messageStore.messageContextMenu = msgContextMenu;
+//                    }
                 }
 
                 MouseArea {

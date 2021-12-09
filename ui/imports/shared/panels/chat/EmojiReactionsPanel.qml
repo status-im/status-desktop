@@ -19,10 +19,9 @@ Item {
     signal toggleReaction(int emojiID)
     signal setMessageActive(string messageId, bool active)
 
-//    TODO bring those back and remove dynamic scoping
-//    property bool isCurrentUser
-//    property var emojiReactionsModel
-//    property bool isMessageActive
+    property bool isCurrentUser
+    property var emojiReactionsModel
+    property bool isMessageActive
 
     Row {
         spacing: root.imageMargin
@@ -30,7 +29,7 @@ Item {
         Repeater {
             id: reactionRepeater
             width: childrenRect.width
-            model: emojiReactionsModel
+            model: root.emojiReactionsModel
 
             Rectangle {
                 property bool isHovered: false
@@ -55,9 +54,9 @@ Item {
                     width: 10
                     height: 10
                     anchors.top: parent.top
-                    anchors.left: !isCurrentUser || localAccountSensitiveSettings.useCompactMode ? parent.left : undefined
+                    anchors.left: !root.isCurrentUser || localAccountSensitiveSettings.useCompactMode ? parent.left : undefined
                     anchors.leftMargin: 0
-                    anchors.right: !isCurrentUser || localAccountSensitiveSettings.useCompactMode ? undefined : parent.right
+                    anchors.right: !root.isCurrentUser || localAccountSensitiveSettings.useCompactMode ? undefined : parent.right
                     anchors.rightMargin: 0
                     radius: 2
                     z: -1
@@ -84,9 +83,9 @@ Item {
                                 width: 10
                                 height: 10
                                 anchors.top: parent.top
-                                anchors.left: !isCurrentUser || localAccountSensitiveSettings.useCompactMode ? parent.left : undefined
+                                anchors.left: !root.isCurrentUser || localAccountSensitiveSettings.useCompactMode ? parent.left : undefined
                                 anchors.leftMargin: 0
-                                anchors.right: !isCurrentUser || localAccountSensitiveSettings.useCompactMode ? undefined : parent.right
+                                anchors.right: !root.isCurrentUser || localAccountSensitiveSettings.useCompactMode ? undefined : parent.right
                                 anchors.rightMargin: 0
                                 radius: 2
                                 z: -1
@@ -176,7 +175,7 @@ Item {
                 onEntered: addEmojiBtn.isHovered = true
                 onExited: addEmojiBtn.isHovered = false
                 onClicked: {
-                    if (typeof isMessageActive !== "undefined") {
+                    if (typeof root.isMessageActive !== "undefined") {
                         setMessageActive(messageId, true);
                     }
                     root.addEmojiClicked();

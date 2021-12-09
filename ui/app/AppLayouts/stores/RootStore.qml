@@ -20,7 +20,7 @@ QtObject {
     property var profileModelInst: profileModel
 
     property var assets: walletSectionAccountTokens.model
-    property MessageStore messageStore: MessageStore { }
+//    property MessageStore messageStore: MessageStore { }
 
     property var contactsModuleInst: contactsModule
     property var addedContacts: contactsModuleInst.model.addedContacts

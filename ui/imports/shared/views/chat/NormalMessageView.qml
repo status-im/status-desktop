@@ -13,13 +13,7 @@ Item {
     height: childrenRect.height + this.anchors.topMargin + (dateGroupLbl.visible ? dateGroupLbl.height : 0)
     width: parent.width
 
-    property var store
-    property var messageStore
-    property string linkUrls: ""
-    property bool isCurrentUser: false
-    property bool isExpired: false
-    property bool timeout: false
-    property int contentType: 2
+
     property var container
     property bool headerRepeatCondition: (authorCurrentMsg !== authorPrevMsg
                                          || shouldRepeatHeader || dateGroupLbl.visible)
@@ -34,15 +28,13 @@ Item {
 
     UserImage {
         id: chatImage
-        active: root.store.chatsModelInst.channelView.activeChannel.chatType !== Constants.chatTypeOneToOne && isMessage && headerRepeatCondition && !root.isCurrentUser
+        //active: rootStore.chatsModelInst.channelView.activeChannel.chatType !== Constants.chatType.oneToOne && isMessage && headerRepeatCondition && !root.isCurrentUser
         anchors.left: parent.left
         anchors.leftMargin: Style.current.padding
         anchors.top:  dateGroupLbl.visible ? dateGroupLbl.bottom : parent.top
         anchors.topMargin: 20
-//        isCurrentUser: root.messageStore.isCurrentUser
-//        profileImage: root.messageStore.profileImageSource
-//        isMessage: root.messageStore.isMessage
-//        identiconImageSource: root.messageStore.identicon
+        icon: senderIcon
+        isIdenticon: isSenderIconIdenticon
         onClickMessage: {
             root.parent.clickMessage(isProfileClick, isSticker, isImage, image, emojiOnly, hideEmojiPicker, isReply);
         }
@@ -50,15 +42,14 @@ Item {
 
     UsernameLabel {
         id: chatName
-        visible: root.store.chatsModelInst.channelView.activeChannel.chatType !== Constants.chatTypeOneToOne && isMessage && headerRepeatCondition && !root.isCurrentUser
+        //visible: rootStore.chatsModelInst.channelView.activeChannel.chatType !== Constants.chatType.oneToOne && isMessage && headerRepeatCondition && !root.isCurrentUser
         anchors.leftMargin: 20
         anchors.top: dateGroupLbl.visible ? dateGroupLbl.bottom : parent.top
         anchors.topMargin: 0
         anchors.left: chatImage.right
-//        isCurrentUser: root.messageStore.isCurrentUser
-//        userName: root.messageStore.userName
-//        localName: root.messageStore.localName
-//        displayUserName: root.messageStore.displayUserName
+        displayName: senderDisplayName
+        localName: senderLocalName
+        amISender: amISender
         onClickMessage: {
             root.parent.clickMessage(true, false, false, null, false, false, false);
         }
@@ -72,9 +63,11 @@ Item {
         property int chatVerticalPadding: isImage ? 4 : 6
         property int chatHorizontalPadding: isImage ? 0 : 12
         property bool longReply: chatReply.active && repliedMessageContent.length > maxMessageChars
-        property bool longChatText: root.store.chatsModelInst.plainText(root.messageStore.message).split('\n').some(function (messagePart) {
-            return messagePart.length > maxMessageChars
-        })
+        property bool longChatText: false
+        // Not Refactored Yet
+//        property bool longChatText: rootStore.chatsModelInst.plainText(messageStore.message).split('\n').some(function (messagePart) {
+//            return messagePart.length > maxMessageChars
+//        })
 
         id: chatBox
         color: {
@@ -91,10 +84,10 @@ Item {
         height: {
            let h = (3 * chatVerticalPadding)
            switch(contentType){
-                case Constants.stickerType:
+                case Constants.messageContentType.stickerType:
                     h += stickerId.height;
                     break;
-                case Constants.audioType:
+                case Constants.messageContentType.audioType:
                     h += audioPlayerLoader.height;
                     break;
                 default:
@@ -110,9 +103,9 @@ Item {
         }
         width: {
             switch(contentType) {
-                case Constants.stickerType:
+                case Constants.messageContentType.stickerType:
                     return stickerId.width + (2 * chatBox.chatHorizontalPadding);
-                case Constants.imageType:
+                case Constants.messageContentType.imageType:
                     return chatImageContent.width
                 default:
                     if (longChatText || longReply) {
@@ -134,13 +127,13 @@ Item {
         }
 
         radius: 16
-        anchors.left: !root.isCurrentUser ? chatImage.right : undefined
-        anchors.leftMargin: !root.isCurrentUser ? 8 : 0
-        anchors.right: !root.isCurrentUser ? undefined : parent.right
-        anchors.rightMargin: !root.isCurrentUser ? 0 : Style.current.padding
-        anchors.top: headerRepeatCondition && !root.isCurrentUser ? chatImage.top : (dateGroupLbl.visible ? dateGroupLbl.bottom : parent.top)
+        anchors.left: !isCurrentUser ? chatImage.right : undefined
+        anchors.leftMargin: !isCurrentUser ? 8 : 0
+        anchors.right: !isCurrentUser ? undefined : parent.right
+        anchors.rightMargin: !isCurrentUser ? 0 : Style.current.padding
+        anchors.top: headerRepeatCondition && !isCurrentUser ? chatImage.top : (dateGroupLbl.visible ? dateGroupLbl.bottom : parent.top)
         anchors.topMargin: 0
-        visible: isMessage && contentType !== Constants.transactionType
+        visible: isMessage && contentType !== Constants.messageContentType.transactionType
 
         ChatReplyPanel {
             id: chatReply
@@ -153,34 +146,44 @@ Item {
             anchors.rightMargin: chatBox.chatHorizontalPadding
             container: root.container
             chatHorizontalPadding: chatBox.chatHorizontalPadding
-            stickerData: root.store.chatsModelInst.messageView.messageList.getMessageData(replyMessageIndex, "sticker")
-            active: responseTo !== "" && replyMessageIndex > -1 && !activityCenterMessage
-//            To-Do move to store later?
-//            isCurrentUser: root.messageStore.isCurrentUser
-//            repliedMessageType: root.messageStore.repliedMessageType
-//            repliedMessageImage: root.messageStore.repliedMessageImage
-//            repliedMessageUserIdenticon: root.messageStore.repliedMessageUserIdenticon
-//            repliedMessageIsEdited: root.messageStore.repliedMessageIsEdited
-//            repliedMessageUserImage: root.messageStore.repliedMessageUserImage
-//            repliedMessageAuthor: root.messageStore.repliedMessageAuthor
-//            repliedMessageContent: root.messageStore.repliedMessageContent
-//            responseTo: root.messageStore.responseTo
-//            onScrollToBottom: {
-//                root.messageStore.scrollToBottom(isit, container);
-//            }
+            // Not Refactored Yet
+            //stickerData: rootStore.chatsModelInst.messageView.messageList.getMessageData(replyMessageIndex, "sticker")
+            active: responseTo !== "" && !activityCenterMessage
+
+            Component.onCompleted: {
+                let obj = messageStore.getMessageByIdAsJson(messageId)
+                if(!obj)
+                    return
+
+                amISenderOfTheRepliedMessage = obj.amISender
+                repliedMessageContentType = obj.contentType
+                repliedMessageSenderIcon = obj.senderIcon
+                repliedMessageSenderIconIsIdenticon = obj.isSenderIconIdenticon
+                // TODO: not sure about is edited at the moment
+                repliedMessageIsEdited = false
+                repliedMessageSender = obj.senderDisplayName
+                repliedMessageContent = obj.messageText
+                repliedMessageImage = obj.messageImage
+            }
+
+            onScrollToBottom: {
+                // Not Refactored Yet
+//                messageStore.scrollToBottom(isit, root.container);
+            }
             onClickMessage: {
-                root.parent.clickMessage(isProfileClick, isSticker, isImage, image, emojiOnly, hideEmojiPicker, isReply);
+                // Not Refactored Yet
+//                root.parent.clickMessage(isProfileClick, isSticker, isImage, image, emojiOnly, hideEmojiPicker, isReply);
             }
         }
 
 
-        Connections {
-            target: root.store.chatsModelInst.messageView
-            onMessageEdited: {
-                if(chatReply.item)
-                    chatReply.item.messageEdited(editedMessageId, editedMessageContent)
-            }
-        }
+//        Connections {
+//            target: rootStore.chatsModelInst.messageView
+//            onMessageEdited: {
+//                if(chatReply.item)
+//                    chatReply.item.messageEdited(editedMessageId, editedMessageContent)
+//            }
+//        }
 
         ChatTextView {
             id: chatText
@@ -191,9 +194,8 @@ Item {
             anchors.leftMargin: chatBox.chatHorizontalPadding
             anchors.right: chatBox.longChatText ? parent.right : undefined
             anchors.rightMargin: chatBox.longChatText ? chatBox.chatHorizontalPadding : 0
-            store: root.store
-            messageStore: root.store.messageStore
-            textField.color: !root.isCurrentUser ? Style.current.textColor : Style.current.currentUserTextColor
+            store: rootStore
+            textField.color: !isCurrentUser ? Style.current.textColor : Style.current.currentUserTextColor
             Connections {
                 target: localAccountSensitiveSettings.useCompactMode ? null : chatBox
                 onLongChatTextChanged: {
@@ -202,15 +204,16 @@ Item {
             }
 
             onLinkActivated: {
-                if (root.messageStore.activityCenterMessage) {
-                    clickMessage(false, root.messageStore.isSticker, false)
-                }
+                // Not Refactored Yet
+//                if (activityCenterMessage) {
+//                    clickMessage(false, isSticker, false)
+//                }
             }
         }
 
         Loader {
             id: chatImageContent
-            active: root.messageStore.isImage && !!image
+            active: isImage && !!image
             anchors.top: parent.top
             anchors.topMargin: Style.current.smallPadding
             anchors.left: parent.left
@@ -226,7 +229,7 @@ Item {
                         id: chatImageComponent
                         imageSource: image
                         imageWidth: 250
-                        isCurrentUser: root.isCurrentUser
+                        isCurrentUser: isCurrentUser
                         onClicked: imageClick(image)
                         container: root.container
                     }
@@ -236,7 +239,7 @@ Item {
 
         Loader {
             id: audioPlayerLoader
-            active: root.messageStore.isAudio
+            active: isAudio
             sourceComponent: audioPlayer
             anchors.verticalCenter: parent.verticalCenter
         }
@@ -255,42 +258,44 @@ Item {
             anchors.top: parent.top
             anchors.topMargin: chatBox.chatVerticalPadding
             color: Style.current.transparent
-            contentType: root.contentType
-            stickerData: root.messageStore.sticker
+            contentType: contentType
+            stickerData: sticker
             onLoaded: {
-                root.messageStore.scrollToBottom(true, root.container)
+                // Not Refactored Yet
+                //messageStore.scrollToBottom(true, root.container)
             }
         }
 
         MessageMouseArea {
             anchors.fill: parent
             enabled: !chatText.linkHovered
-            isActivityCenterMessage: root.messageStore.activityCenterMessage
+            isActivityCenterMessage: activityCenterMessage
             onClickMessage: {
-                root.parent.clickMessage(isProfileClick, root.messageStore.isSticker, root.messageStore.isImage)
+                // Not Refactored Yet
+                //root.parent.clickMessage(isProfileClick, isSticker, isImage)
             }
             onSetMessageActive: {
-                root.messageStore.setMessageActive(root.messageStore.messageId, active);
+                setMessageActive(messageId, active);
             }
         }
 
         RectangleCorner {
             // TODO find a way to show the corner for stickers since they have a border
-            visible: root.messageStore.isMessage
-            isCurrentUser: root.isCurrentUser
+            visible: isMessage
+            isCurrentUser: isCurrentUser
         }
     }
 
     Loader {
         id: transactionBubbleLoader
-        active: contentType === Constants.transactionType
+        active: contentType === Constants.messageContentType.transactionType
         anchors.left: !isCurrentUser ? chatImage.right : undefined
         anchors.leftMargin: isCurrentUser ? 0 : Style.current.halfPadding
         anchors.right: isCurrentUser ? parent.right : undefined
         anchors.rightMargin: Style.current.padding
         sourceComponent: Component {
             TransactionBubbleView {
-                store: root.store
+                store: rootStore
             }
         }
     }
@@ -311,19 +316,18 @@ Item {
 
     ChatTimePanel {
         id: chatTime
-        visible: root.messageStore.isMessage && !emojiReactionLoader.active
+        visible: isMessage && !emojiReactionLoader.active
         anchors.top: isImage ? undefined : (linksLoader.active ? linksLoader.bottom : chatBox.bottom)
         anchors.topMargin: isImage ? 0 : 4
         anchors.verticalCenter: isImage ? dateTimeBackground.verticalCenter : undefined
         anchors.right: isImage ? dateTimeBackground.right : (linksLoader.active ? linksLoader.right : chatBox.right)
-        anchors.rightMargin: isImage ? 6 : (root.isCurrentUser ? 5 : Style.current.padding)
-        //timestamp: root.messageStore.timestamp
+        anchors.rightMargin: isImage ? 6 : (isCurrentUser ? 5 : Style.current.padding)
+        timestamp: timestamp
     }
 
     SentMessage {
         id: sentMessage
-        visible: root.isCurrentUser && !root.messageStore.timeout && !root.messageStore.isExpired
-                 && root.messageStore.isMessage && root.messageStore.outgoingStatus === "sent"
+        visible: isCurrentUser && !timeout && !isExpired && isMessage && outgoingStatus === "sent"
         anchors.verticalCenter: chatTime.verticalCenter
         anchors.right: chatTime.left
         anchors.rightMargin: 5
@@ -334,31 +338,32 @@ Item {
         anchors.verticalCenter: chatTime.verticalCenter
         anchors.right: chatTime.left
         anchors.rightMargin: 5
-        isCurrentUser: root.isCurrentUser
-        isExpired: root.isExpired
-        timeout: root.timeout
+        isCurrentUser: isCurrentUser
+        isExpired: isExpired
+        timeout: timeout
         onClicked: {
-            root.store.chatsModelInst.messageView.resendMessage(chatId, messageId)
+            // Not Refactored Yet
+//            rootStore.chatsModelInst.messageView.resendMessage(chatId, messageId)
         }
     }
 
     Loader {
         id: linksLoader
-        active: !!root.linkUrls
-        anchors.left: !root.isCurrentUser ? chatImage.right : undefined
-        anchors.leftMargin: !root.isCurrentUser ? 8 : 0
-        anchors.right: !root.isCurrentUser ? undefined : parent.right
-        anchors.rightMargin: !root.isCurrentUser ? 0 : Style.current.padding
+        active: !!linkUrls
+        anchors.left: !isCurrentUser ? chatImage.right : undefined
+        anchors.leftMargin: !isCurrentUser ? 8 : 0
+        anchors.right: !isCurrentUser ? undefined : parent.right
+        anchors.rightMargin: !isCurrentUser ? 0 : Style.current.padding
         anchors.top: chatBox.bottom
         anchors.topMargin: Style.current.halfPadding
         anchors.bottomMargin: Style.current.halfPadding
 
         sourceComponent: Component {
             LinksMessageView {
-                store: root.store
-                linkUrls: root.linkUrls
+                store: rootStore
+                linkUrls: linkUrls
                 container: root.container
-                isCurrentUser: root.isCurrentUser
+                isCurrentUser: isCurrentUser
             }
         }
     }
@@ -367,9 +372,9 @@ Item {
         id: emojiReactionLoader
         active: emojiReactions !== ""
         sourceComponent: emojiReactionsComponent
-        anchors.left: root.isCurrentUser ? undefined : chatBox.left
-        anchors.right: root.isCurrentUser ? chatBox.right : undefined
-        anchors.leftMargin: root.isCurrentUser ? Style.current.halfPadding : 1
+        anchors.left: isCurrentUser ? undefined : chatBox.left
+        anchors.right: isCurrentUser ? chatBox.right : undefined
+        anchors.leftMargin: isCurrentUser ? Style.current.halfPadding : 1
         anchors.top: chatBox.bottom
         anchors.topMargin: 2
     }
@@ -377,12 +382,13 @@ Item {
     Component {
         id: emojiReactionsComponent
         EmojiReactionsPanel {
-//            isMessageActive: root.store.messageStore.isMessageActive
-//            emojiReactionsModel: root.store.messageStore.emojiReactionsModel
+            isMessageActive: isMessageActive
+            emojiReactionsModel: emojiReactionsModel
             onSetMessageActive: {
-                root.store.messageStore.setMessageActive(messageId, active);;
+                setMessageActive(messageId, active);;
             }
-            onToggleReaction: root.store.chatsModelInst.toggleReaction(messageId, emojiID)
+            // Not Refactored Yet
+            //onToggleReaction: rootStore.chatsModelInst.toggleReaction(messageId, emojiID)
         }
     }
 }

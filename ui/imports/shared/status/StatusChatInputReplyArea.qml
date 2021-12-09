@@ -8,9 +8,9 @@ import shared.panels 1.0
 
 Rectangle {
     id: root
-    height: (root.contentType === Constants.imageType) ?
+    height: (root.contentType === Constants.messageContentType.imageType) ?
                 replyToUsername.height + imageThumbnail.height + Style.current.padding :
-                (root.contentType === Constants.stickerType) ?
+                (root.contentType === Constants.messageContentType.stickerType) ?
                     replyToUsername.height + stickerThumbnail.height + Style.current.padding  : 50
     color: Style.current.replyBackground
     radius: 16
@@ -55,7 +55,7 @@ Rectangle {
         anchors.bottom: parent.bottom
         clip: true
         color: Style.current.transparent
-        visible: (root.contentType !== Constants.imageType) && (root.contentType !== Constants.stickerType)
+        visible: (root.contentType !== Constants.messageContentType.imageType) && (root.contentType !== Constants.messageContentType.stickerType)
 
         StyledText {
             id: replyText
@@ -78,7 +78,7 @@ Rectangle {
         imageSource: root.image
         chatHorizontalPadding: 0
         container: root.container
-        visible: root.contentType === Constants.imageType
+        visible: root.contentType === Constants.messageContentType.imageType
     }
 
     StatusSticker {

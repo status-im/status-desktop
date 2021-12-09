@@ -252,20 +252,36 @@ Item {
 
             model: root.chatSectionModule.model
             onChatItemSelected: root.chatSectionModule.setActiveItem(id, "")
-
-//            chatListItems.model: root.store.chatsModelInst.channelView.chats
-//            selectedChatId: root.store.chatsModelInst.channelView.activeChannel.id
-
-//            onChatItemSelected: root.store.chatsModelInst.channelView.setActiveChannel(id)
-//            onChatItemUnmuted: root.store.chatsModelInst.channelView.unmuteChatItem(id)
+            onChatItemUnmuted: root.chatSectionModule.unmuteChat(id)
 
             popupMenu: ChatContextMenuView {
                 id: chatContextMenuView
-                store: root.store
-                chatSectionModule: root.chatSectionModule
+
                 openHandler: function (id) {
-                    root.store.chatsModelInst.channelView.setContextChannel(id)
-                    chatContextMenuView.chatItem = root.store.chatsModelInst.channelView.contextChannel
+                    let jsonObj = root.chatSectionModule.getItemAsJson(id)
+                    let obj = JSON.parse(jsonObj)
+                    if (obj.error) {
+                        console.error("error parsing chat item json object, id: ", id, " error: ", obj.error)
+                        close()
+                        return
+                    }
+
+                    isCommunityChat = root.chatSectionModule.isCommunity()
+                    chatId = obj.itemId
+                    chatName = obj.name
+                    chatType = obj.type
+                    chatMuted = obj.muted
+
+                    // TODO
+                    //currentFleet
+                }
+
+                onMuteChat: {
+                    root.chatSectionModule.muteChat(id)
+                }
+
+                onUnmuteChat: {
+                    root.chatSectionModule.unmuteChat(id)
                 }
             }
         }

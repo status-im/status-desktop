@@ -22,10 +22,10 @@ Column {
         width: 120
         height: 120
         radius: 120
-        border.width: root.store.chatsModelInst.channelView.activeChannel.chatType === Constants.chatTypeOneToOne ? 2 : 0
+        border.width: root.store.chatsModelInst.channelView.activeChannel.chatType === Constants.chatType.oneToOne ? 2 : 0
         border.color: Style.current.border
         color: {
-            if (root.store.chatsModelInst.channelView.activeChannel.chatType === Constants.chatTypeOneToOne) {
+            if (root.store.chatsModelInst.channelView.activeChannel.chatType === Constants.chatType.oneToOne) {
                 return Style.current.transparent
             }
             if (root.store.chatsModelInst.channelView.activeChannel.color) {
@@ -39,7 +39,7 @@ Column {
         }
 
         RoundedImage {
-            visible: root.store.chatsModelInst.channelView.activeChannel.chatType === Constants.chatTypeOneToOne
+            visible: root.store.chatsModelInst.channelView.activeChannel.chatType === Constants.chatType.oneToOne
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
             width: 120
@@ -50,7 +50,7 @@ Column {
         }
 
         StyledText {
-            visible: root.store.chatsModelInst.channelView.activeChannel.chatType !== Constants.chatTypeOneToOne
+            visible: root.store.chatsModelInst.channelView.activeChannel.chatType !== Constants.chatType.oneToOne
             text: Utils.removeStatusEns((root.store.chatsModelInst.channelView.activeChannel.name.charAt(0) === "#" ?
                                          root.store.chatsModelInst.channelView.activeChannel.name.charAt(1) :
                                          root.store.chatsModelInst.channelView.activeChannel.name.charAt(0)).toUpperCase())
@@ -68,8 +68,8 @@ Column {
         wrapMode: Text.Wrap
         text: {
             switch(root.store.chatsModelInst.channelView.activeChannel.chatType) {
-                case Constants.chatTypePublic: return "#" + root.store.chatsModelInst.channelView.activeChannel.name;
-                case Constants.chatTypeOneToOne: return Utils.removeStatusEns(root.store.chatsModelInst.userNameOrAlias(chatsModel.channelView.activeChannel.id))
+                case Constants.chatType.publicChat: return "#" + root.store.chatsModelInst.channelView.activeChannel.name;
+                case Constants.chatType.oneToOne: return Utils.removeStatusEns(root.store.chatsModelInst.userNameOrAlias(chatsModel.channelView.activeChannel.id))
                 default: return root.store.chatsModelInst.channelView.activeChannel.name
             }
         }
@@ -87,9 +87,9 @@ Column {
         text: {
             switch(root.store.chatsModelInst.channelView.activeChannel.chatType) {
                 //% "Welcome to the beginning of the <span style='color: %1'>%2</span> group!"
-                case Constants.chatTypePrivateGroupChat: return qsTrId("welcome-to-the-beginning-of-the--span-style--color---1---2--span--group-").arg(Style.current.textColor).arg(root.store.chatsModelInst.channelView.activeChannel.name);
+                case Constants.chatType.privateGroupChat: return qsTrId("welcome-to-the-beginning-of-the--span-style--color---1---2--span--group-").arg(Style.current.textColor).arg(root.store.chatsModelInst.channelView.activeChannel.name);
                 //% "Any messages you send here are encrypted and can only be read by you and <span style='color: %1'>%2</span>"
-                case Constants.chatTypeOneToOne: return qsTrId("any-messages-you-send-here-are-encrypted-and-can-only-be-read-by-you-and--span-style--color---1---2--span-").arg(Style.current.textColor).arg(channelName.text)
+                case Constants.chatType.oneToOne: return qsTrId("any-messages-you-send-here-are-encrypted-and-can-only-be-read-by-you-and--span-style--color---1---2--span-").arg(Style.current.textColor).arg(channelName.text)
                 default: return "";
             }
         }
@@ -100,7 +100,7 @@ Column {
     }
 
     Item {
-        visible: root.store.chatsModelInst.channelView.activeChannel.chatType === Constants.chatTypePrivateGroupChat
+        visible: root.store.chatsModelInst.channelView.activeChannel.chatType === Constants.chatType.privateGroupChat
                  && root.store.chatsModelInst.channelView.activeChannel.isMemberButNotJoined
         anchors.horizontalCenter: parent.horizontalCenter
         width: visible ? joinChat.width : 0

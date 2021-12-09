@@ -11,19 +11,17 @@ Item {
     height: childrenRect.height
     width: chatName.width + (ensOrAlias.visible ? ensOrAlias.width + ensOrAlias.anchors.leftMargin : 0)
     property alias label: chatName
-//    property var messageContextMenu
-//    property bool isCurrentUser: false
-//    property string userName: ""
-//    property string localName: ""
-//    property string displayUserName: ""
+
+    property string displayName
+    property string localName
+    property bool amISender
+
     signal clickMessage(bool isProfileClick)
-    //TODO remove dynamic scoping
-    //visible: isMessage && authorCurrentMsg != authorPrevMsg
 
     StyledTextEdit {
         id: chatName
-        text: displayUserName
-        color: text.startsWith("@") || isCurrentUser || localName !== "" ? Style.current.blue : Style.current.secondaryText
+        text: displayName
+        color: text.startsWith("@") || amISender || localName !== "" ? Style.current.blue : Style.current.secondaryText
         font.weight: Font.Medium
         font.pixelSize: Style.current.secondaryTextFontSize
         font.underline: root.isHovered
@@ -55,8 +53,8 @@ Item {
 
     StyledText {
         id: ensOrAlias
-        visible: localName !== "" && userName.startsWith("@")
-        text: userName
+        visible: localName !== "" && displayName.startsWith("@")
+        text: displayName
         color: Style.current.secondaryText
         font.pixelSize: chatName.font.pixelSize
         anchors.left: chatName.right

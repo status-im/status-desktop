@@ -8,14 +8,13 @@ import utils 1.0
 StyledText {
     id: chatTime
     color: Style.current.secondaryText
-    //TODO uncomment when dynamic scoping is cleaned up
-    //property string timestamp
-    text: Utils.formatTime(timestamp)
+    property string timestamp
+    text: Utils.formatTime(chatTime.timestamp)
     font.pixelSize: Style.current.asideTextFontSize
     
     StatusQ.StatusToolTip {
         visible: hhandler.hovered
-        text: new Date(parseInt(timestamp, 10)).toLocaleString(Qt.locale(localAppSettings.locale))
+        text: new Date(parseInt(chatTime.timestamp, 10)).toLocaleString(Qt.locale(localAppSettings.locale))
         maxWidth: 350
     }
 

@@ -25,7 +25,7 @@ Item {
         width: 16
         height: 16
         fillMode: Image.PreserveAspectFit
-        source: Style.svg("channel-icon-" + (realChatType === Constants.chatTypePublic ? "public-chat" : "group"))
+        source: Style.svg("channel-icon-" + (realChatType === Constants.chatType.publicChat ? "public-chat" : "group"))
         anchors.left: parent.left
         anchors.verticalCenter:parent.verticalCenter
     }
@@ -51,7 +51,7 @@ Item {
 
     StyledText {
         id: contactInfo
-        text: realChatType !== Constants.chatTypePublic ?
+        text: realChatType !== Constants.chatType.publicChat ?
                   Emoji.parse(Utils.removeStatusEns(Utils.filterXSS(name))) :
                   "#" + Utils.filterXSS(name)
         anchors.left: contactImage.right
