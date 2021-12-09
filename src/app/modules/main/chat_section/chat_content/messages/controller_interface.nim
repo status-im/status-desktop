@@ -1,4 +1,4 @@
-import ../../../../../../app_service/service/community/service_interface as community_service
+import ../../../../../../app_service/service/contacts/service as contact_service
 
 type 
   AccessInterface* {.pure inheritable.} = ref object of RootObj
@@ -23,4 +23,7 @@ method removeReaction*(self: AccessInterface, messageId: string, reactionId: str
   raise newException(ValueError, "No implementation available")
 
 method pinUnpinMessage*(self: AccessInterface, messageId: string, pin: bool) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getContactById*(self: AccessInterface, contactId: string): ContactsDto {.base.} =
   raise newException(ValueError, "No implementation available")

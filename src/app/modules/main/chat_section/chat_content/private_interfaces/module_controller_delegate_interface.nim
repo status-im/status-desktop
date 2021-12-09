@@ -8,3 +8,9 @@ method onUnpinMessage*(self: AccessInterface, messageId: string) {.base.} =
 
 method onPinMessage*(self: AccessInterface, mmessageId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method onChatMuted*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onChatUnmuted*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")

@@ -1,28 +1,41 @@
 import NimQml
 import ../../../shared_models/message_model as pinned_msg_model
 import io_interface
+import chat_details
 
 QtObject:
   type
     View* = ref object of QObject
       delegate: io_interface.AccessInterface
-      model*: pinned_msg_model.Model
-      modelVariant: QVariant
+      pinnedMessagesModel: pinned_msg_model.Model
+      pinnedMessagesModelVariant: QVariant
+      chatDetails: ChatDetails
+      chatDetailsVariant: QVariant
       
   proc delete*(self: View) =
-    self.model.delete
-    self.modelVariant.delete
+    self.pinnedMessagesModel.delete
+    self.pinnedMessagesModelVariant.delete
+    self.chatDetails.delete
+    self.chatDetailsVariant.delete
     self.QObject.delete
 
   proc newView*(delegate: io_interface.AccessInterface): View =
     new(result, delete)
     result.QObject.setup
     result.delegate = delegate
-    result.model = pinned_msg_model.newModel()
-    result.modelVariant = newQVariant(result.model)
+    result.pinnedMessagesModel = pinned_msg_model.newModel()
+    result.pinnedMessagesModelVariant = newQVariant(result.pinnedMessagesModel)
+    result.chatDetails = newChatDetails()
+    result.chatDetailsVariant = newQVariant(result.chatDetails)
 
-  proc load*(self: View) =
+  proc load*(self: View, id: string, `type`: int, belongsToCommunity, isUsersListAvailable: bool, name, icon: string, 
+    isIdenticon: bool, color, description: string, hasUnreadMessages: bool, notificationsCount: int, muted: bool) =
+    self.chatDetails.setChatDetails(id, `type`, belongsToCommunity, isUsersListAvailable, name, icon, isIdenticon, 
+    color, description, hasUnreadMessages, notificationsCount, muted)
     self.delegate.viewDidLoad()
+
+  proc pinnedModel*(self: View): pinned_msg_model.Model =
+    return self.pinnedMessagesModel
 
   proc getInputAreaModule(self: View): QVariant {.slot.} =
     return self.delegate.getInputAreaModule()
@@ -45,14 +58,28 @@ QtObject:
     read = getUsersModule
 
 
-  proc getModel(self: View): QVariant {.slot.} =
-    return self.modelVariant
+  proc getPinnedMessagesModel(self: View): QVariant {.slot.} =
+    return self.pinnedMessagesModelVariant
 
-  QtProperty[QVariant] model:
-    read = getModel
+  QtProperty[QVariant] pinnedMessagesModel:
+    read = getPinnedMessagesModel
 
   proc unpinMessage*(self: View, messageId: string) {.slot.} = 
     self.delegate.unpinMessage(messageId)
 
-  proc isUsersListAvailable*(self: View): bool {.slot.} =
-    return self.delegate.isUsersListAvailable()
+  proc getMyChatId*(self: View): string {.slot.} =
+    return self.delegate.getMyChatId()
+
+  proc isMyContact*(self: View, contactId: string): bool {.slot.} =
+    return self.delegate.isMyContact(contactId)
+
+  proc unmuteChat*(self: View) {.slot.} = 
+    self.delegate.unmuteChat()
+
+  proc setMuted*(self: View, muted: bool) = 
+    self.chatDetails.setMuted(muted)
+
+  proc getChatDetails(self: View): QVariant {.slot.} =
+    return self.chatDetailsVariant
+  QtProperty[QVariant] chatDetails:
+    read = getChatDetails

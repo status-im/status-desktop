@@ -20,15 +20,19 @@ type
 type 
   Item* = ref object
     id: string
-    `from`: string
-    alias: string
-    identicon: string
+    responseToMessageWithId: string
+    senderId: string
+    senderDisplayName: string
+    senderLocalName: string
+    amISender: bool
+    senderIcon: string
+    isSenderIconIdenticon: bool
     seen: bool
     outgoingStatus: string
-    text: string
+    messageText: string
+    messageImage: string
     stickerHash: string
-    stickerPack: int 
-    image: string
+    stickerPack: int     
     gapFrom: int64
     gapTo: int64
     timestamp: int64
@@ -38,16 +42,21 @@ type
     reactionIds: seq[string]
     pinned: bool
 
-proc initItem*(id, `from`, alias, identicon, outgoingStatus, text: string, seen: bool, timestamp: int64, 
-  contentType: ContentType, messageType: int): Item =
+proc initItem*(id, responseToMessageWithId, senderId, senderDisplayName, senderLocalName, senderIcon: string, isSenderIconIdenticon, amISender: bool, 
+  outgoingStatus, text, image: string, seen: bool, timestamp: int64, contentType: ContentType, messageType: int): Item =
   result = Item()
   result.id = id
-  result.`from` = `from`
-  result.alias = alias
-  result.identicon = identicon
+  result.responseToMessageWithId = responseToMessageWithId
+  result.senderId = senderId
+  result.senderDisplayName = senderDisplayName
+  result.senderLocalName = senderLocalName
+  result.amISender = amISender
+  result.senderIcon = senderIcon
+  result.isSenderIconIdenticon = isSenderIconIdenticon
   result.seen = seen
   result.outgoingStatus = outgoingStatus
-  result.text = text
+  result.messageText = text
+  result.messageImage = image
   result.timestamp = timestamp
   result.contentType = contentType
   result.messageType = messageType
@@ -56,20 +65,35 @@ proc initItem*(id, `from`, alias, identicon, outgoingStatus, text: string, seen:
 proc id*(self: Item): string {.inline.} = 
   self.id
 
-proc `from`*(self: Item): string {.inline.} = 
-  self.`from`
+proc responseToMessageWithId*(self: Item): string {.inline.} = 
+  self.responseToMessageWithId
 
-proc alias*(self: Item): string {.inline.} = 
-  self.alias
+proc senderId*(self: Item): string {.inline.} = 
+  self.senderId
 
-proc identicon*(self: Item): string {.inline.} = 
-  self.identicon
+proc senderDisplayName*(self: Item): string {.inline.} = 
+  self.senderDisplayName
+
+proc senderLocalName*(self: Item): string {.inline.} = 
+  self.senderLocalName
+
+proc senderIcon*(self: Item): string {.inline.} = 
+  self.senderIcon
+
+proc isSenderIconIdenticon*(self: Item): bool {.inline.} = 
+  self.isSenderIconIdenticon
+
+proc amISender*(self: Item): bool {.inline.} = 
+  self.amISender
 
 proc outgoingStatus*(self: Item): string {.inline.} = 
   self.outgoingStatus
 
-proc text*(self: Item): string {.inline.} = 
-  self.text
+proc messageText*(self: Item): string {.inline.} = 
+  self.messageText
+
+proc messageImage*(self: Item): string {.inline.} = 
+  self.messageImage
 
 proc seen*(self: Item): bool {.inline.} = 
   self.seen
@@ -146,3 +170,27 @@ proc getCountsForReactions*(self: Item): seq[JsonNode] =
       continue
 
     result.add(%* {"emojiId": k, "counts": v.len})
+
+proc toJsonNode*(self: Item): JsonNode =
+  result = %* {
+    "id": self.id, 
+    "responseToMessageWithId": self.responseToMessageWithId,
+    "senderId": self.senderId, 
+    "senderDisplayName": self.senderDisplayName,
+    "senderLocalName": self.senderLocalName,
+    "amISender": self.amISender, 
+    "senderIcon": self.senderIcon,
+    "isSenderIconIdenticon": self.isSenderIconIdenticon,
+    "seen": self.seen, 
+    "outgoingStatus": self.outgoingStatus,
+    "messageText": self.messageText,
+    "messageImage": self.messageImage,
+    "stickerHash": self.stickerHash,
+    "stickerPack": self.stickerPack,
+    "gapFrom": self.gapFrom,
+    "gapTo": self.gapTo,
+    "timestamp": self.timestamp,
+    "contentType": self.contentType.int,
+    "messageType": self.messageType,
+    "pinned": self.pinned
+  }

@@ -1,17 +1,15 @@
-import strformat
+import strformat, json
 import base_item, sub_model, sub_item
 
 type 
   Item* = ref object of BaseItem
-    `type`: int
     subItems: SubModel
 
 proc initItem*(id, name, icon: string, isIdenticon: bool, color, description: string, `type`: int, hasUnreadMessages: bool, 
   notificationsCount: int, muted, active: bool, position: int): Item =
   result = Item()
-  result.setup(id, name, icon, isIdenticon, color, description, hasUnreadMessages, notificationsCount, muted, active, 
-  position)
-  result.`type` = `type`
+  result.setup(id, name, icon, isIdenticon, color, description, `type`, hasUnreadMessages, notificationsCount, muted, 
+  active, position)
   result.subItems = newSubModel()
 
 proc delete*(self: Item) = 
@@ -20,9 +18,6 @@ proc delete*(self: Item) =
 
 proc subItems*(self: Item): SubModel {.inline.} = 
   self.subItems
-
-proc type*(self: Item): int {.inline.} = 
-  self.`type`
 
 proc `$`*(self: Item): string =
   result = fmt"""ChatSectionItem(
@@ -41,6 +36,22 @@ proc `$`*(self: Item): string =
     subItems:[
       {$self.subItems}
     ]"""
+
+proc toJsonNode*(self: Item): JsonNode =
+  result = %* {
+    "itemId": self.id, 
+    "name": self.name, 
+    "icon": self.icon,
+    "isIdenticon": self.isIdenticon,
+    "color": self.color, 
+    "description": self.description,
+    "type": self.`type`,
+    "hasUnreadMessages": self.hasUnreadMessages, 
+    "notificationsCount": self.notificationsCount,
+    "muted": self.muted,
+    "active": self.active,
+    "position": self.position
+  }
 
 proc appendSubItems*(self: Item, items: seq[SubItem]) =
   self.subItems.appendItems(items)

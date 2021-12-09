@@ -6,8 +6,7 @@ import ../../../../shared_models/message_model
 import ../../../../shared_models/message_item
 import ../../../../../global/global_singleton
 
-import ../../../../../../app_service/service/chat/service_interface as chat_service
-import ../../../../../../app_service/service/community/service_interface as community_service
+import ../../../../../../app_service/service/contacts/service as contact_service
 import ../../../../../../app_service/service/message/service as message_service
 
 import eventemitter
@@ -23,14 +22,13 @@ type
     moduleLoaded: bool
 
 proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitter, chatId: string, 
-  belongsToCommunity: bool, chatService: chat_service.ServiceInterface, communityService: community_service.ServiceInterface, 
-  messageService: message_service.Service): 
+  belongsToCommunity: bool, contactService: contact_service.Service, messageService: message_service.Service): 
   Module =
   result = Module()
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, events, chatId, belongsToCommunity, communityService, 
+  result.controller = controller.newController(result, events, chatId, belongsToCommunity, contactService, 
   messageService)
   result.moduleLoaded = false
 
@@ -57,8 +55,18 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
   pinnedMessages: seq[PinnedMessageDto]) = 
   var viewItems: seq[Item] 
   for m in messages:
-    var item = initItem(m.id, m.`from`, m.alias, m.identicon, m.outgoingStatus, m.text, m.seen, m.timestamp, 
-    m.contentType.ContentType, m.messageType)
+    let sender = self.controller.getContactById(m.`from`)
+    let senderDisplayName = sender.userNameOrAlias()
+    let amISender = m.`from` == singletonInstance.userProfile.getPubKey()
+    var senderIcon = sender.identicon
+    var isSenderIconIdenticon = sender.identicon.len > 0
+    if(sender.image.thumbnail.len > 0): 
+      senderIcon = sender.image.thumbnail
+      isSenderIconIdenticon = false
+
+    var item = initItem(m.id, m.responseTo, m.`from`, senderDisplayName, sender.localNickname, senderIcon, 
+    isSenderIconIdenticon, amISender, m.outgoingStatus, m.text, m.image, m.seen, m.timestamp, m.contentType.ContentType, 
+    m.messageType)
 
     for r in reactions:
       if(r.messageId == m.id):
@@ -76,7 +84,7 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
 
 method toggleReaction*(self: Module, messageId: string, emojiId: int) =
   let item = self.view.model.getItemWithMessageId(messageId)
-  let myName = "MY_NAME" #once we have "userProfile" merged, we will request alias/ens name from there
+  let myName = singletonInstance.userProfile.getName()
   if(item.shouldAddReaction(emojiId, myName)):
     self.controller.addReaction(messageId, emojiId)
   else:
@@ -84,7 +92,7 @@ method toggleReaction*(self: Module, messageId: string, emojiId: int) =
     self.controller.removeReaction(messageId, reactionId)
 
 method onReactionAdded*(self: Module, messageId: string, emojiId: int, reactionId: string) =
-  let myName = "MY_NAME" #once we have "userProfile" merged, we will request alias/ens name from there
+  let myName = singletonInstance.userProfile.getName()
   self.view.model.addReaction(messageId, emojiId, myName, reactionId)
 
 method onReactionRemoved*(self: Module, messageId: string, reactionId: string) =

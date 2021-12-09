@@ -1,4 +1,6 @@
+import ../../../../../app_service/service/contacts/dto/[contacts]
 import ../../../../../app_service/service/message/dto/[message, reaction]
+import ../../../../../app_service/service/chat/dto/[chat]
 
 type 
   AccessInterface* {.pure inheritable.} = ref object of RootObj
@@ -10,7 +12,14 @@ method delete*(self: AccessInterface) {.base.} =
 method init*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getChatId*(self: AccessInterface): string {.base.} =
+method getMyChatId*(self: AccessInterface): string {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getChatDetails*(self: AccessInterface): ChatDto {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getOneToOneChatNameAndImage*(self: AccessInterface): tuple[name: string, image: string, isIdenticon: bool] 
+  {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method belongsToCommunity*(self: AccessInterface): bool {.base.} =
@@ -24,4 +33,13 @@ method getMessageDetails*(self: AccessInterface, messageId: string):
   raise newException(ValueError, "No implementation available")
 
 method isUsersListAvailable*(self: AccessInterface): bool {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getMyAddedContacts*(self: AccessInterface): seq[ContactsDto] {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method unmuteChat*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getContactById*(self: AccessInterface, contactId: string): ContactsDto {.base.} =
   raise newException(ValueError, "No implementation available")

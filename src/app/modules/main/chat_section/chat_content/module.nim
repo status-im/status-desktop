@@ -1,4 +1,4 @@
-import NimQml, chronicles
+import NimQml, chronicles, sequtils, sugar
 import io_interface
 import ../io_interface as delegate_interface
 import view, controller
@@ -35,7 +35,7 @@ type
 
 proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitter, sectionId: string, chatId: string, 
   belongsToCommunity: bool, isUsersListAvailable: bool, contactService: contact_service.Service, 
-  chatService: chat_service.ServiceInterface, communityService: community_service.ServiceInterface, 
+  chatService: chat_service.Service, communityService: community_service.ServiceInterface, 
   messageService: message_service.Service): 
   Module =
   result = Module()
@@ -43,12 +43,12 @@ proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitt
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
   result.controller = controller.newController(result, events, chatId, belongsToCommunity, isUsersListAvailable,
-  chatService, communityService, messageService)
+  contactService, chatService, communityService, messageService)
   result.moduleLoaded = false
 
   result.inputAreaModule = input_area_module.newModule(result, chatId, belongsToCommunity, chatService, communityService)
-  result.messagesModule = messages_module.newModule(result, events, chatId, belongsToCommunity, chatService, 
-  communityService, messageService)
+  result.messagesModule = messages_module.newModule(result, events, chatId, belongsToCommunity, contactService, 
+  messageService)
   result.usersModule = users_module.newModule(result, events, sectionId, chatId, belongsToCommunity, isUsersListAvailable, 
   contactService, communityService, messageService)
 
@@ -62,7 +62,19 @@ method delete*(self: Module) =
 
 method load*(self: Module) =
   self.controller.init()
-  self.view.load()
+
+  let chatDto = self.controller.getChatDetails()
+  let hasNotification = chatDto.unviewedMessagesCount > 0 or chatDto.unviewedMentionsCount > 0
+  let notificationsCount = chatDto.unviewedMentionsCount
+  var chatName = chatDto.name
+  var chatImage = chatDto.identicon
+  var isIdenticon = false
+  if(chatDto.chatType == ChatType.OneToOne):
+    (chatName, chatImage, isIdenticon) = self.controller.getOneToOneChatNameAndImage()
+
+  self.view.load(chatDto.id, chatDto.chatType.int, self.controller.belongsToCommunity(), 
+  self.controller.isUsersListAvailable(), chatName, chatImage, isIdenticon, chatDto.color, chatDto.description, 
+  hasNotification, notificationsCount, chatDto.muted)
  
   self.inputAreaModule.load()
   self.messagesModule.load()
@@ -116,8 +128,18 @@ proc buildPinnedMessageItem(self: Module, messageId: string, item: var pinned_ms
   if(err.len > 0):
     return false
 
-  item = initItem(m.id, m.`from`, m.alias, m.identicon, m.outgoingStatus, m.text, m.seen, m.timestamp, 
-  m.contentType.ContentType, m.messageType)
+  let sender = self.controller.getContactById(m.`from`)
+  let senderDisplayName = sender.userNameOrAlias()
+  let amISender = m.`from` == singletonInstance.userProfile.getPubKey()
+  var senderIcon = sender.identicon
+  var isSenderIconIdenticon = sender.identicon.len > 0
+  if(sender.image.thumbnail.len > 0): 
+    senderIcon = sender.image.thumbnail
+    isSenderIconIdenticon = false
+    
+  var item = initItem(m.id, m.responseTo, m.`from`, senderDisplayName, sender.localNickname, senderIcon, 
+  isSenderIconIdenticon, amISender, m.outgoingStatus, m.text, m.image, m.seen, m.timestamp, m.contentType.ContentType, 
+  m.messageType)
   item.pinned = true
 
   for r in reactions:
@@ -136,20 +158,32 @@ method newPinnedMessagesLoaded*(self: Module, pinnedMessages: seq[PinnedMessageD
 
     viewItems = item & viewItems # messages are sorted from the most recent to the least recent one
 
-  self.view.model.prependItems(viewItems)
+  self.view.pinnedModel().prependItems(viewItems)
 
 method unpinMessage*(self: Module, messageId: string) =
   self.controller.unpinMessage(messageId)
 
 method onUnpinMessage*(self: Module, messageId: string) =
-  self.view.model.removeItem(messageId)
+  self.view.pinnedModel().removeItem(messageId)
 
 method onPinMessage*(self: Module, messageId: string) =
   var item: pinned_msg_item.Item
   if(not self.buildPinnedMessageItem(messageId, item)):
     return
 
-  self.view.model.appendItem(item)
+  self.view.pinnedModel().appendItem(item)
   
-method isUsersListAvailable*(self: Module): bool =
-  self.controller.isUsersListAvailable()
+method getMyChatId*(self: Module): string =
+  self.controller.getMyChatId()
+
+method isMyContact*(self: Module, contactId: string): bool =
+  self.controller.getMyAddedContacts().filter(x => x.id == contactId).len > 0
+
+method unmuteChat*(self: Module) =
+  self.controller.unmuteChat()
+
+method onChatMuted*(self: Module) =
+  self.view.setMuted(true)
+
+method onChatUnmuted*(self: Module) =
+  self.view.setMuted(false)

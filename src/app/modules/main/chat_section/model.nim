@@ -1,6 +1,6 @@
-import NimQml, Tables, strutils, strformat
+import NimQml, Tables, strutils, strformat, json
 
-import item, base_item
+import item, base_item, sub_model
 
 type
   ModelRole {.pure.} = enum
@@ -148,3 +148,25 @@ QtObject:
         let index = self.createIndex(i, 0, nil)
         self.items[i].BaseItem.active = true
         self.dataChanged(index, index, @[ModelRole.Active.int])
+
+  proc getItemOrSubItemByIdAsJson*(self: Model, id: string): JsonNode =
+    for it in self.items:
+      if(it.id == id):
+        return it.toJsonNode()
+
+      var found = false
+      let jsonObj = it.subItems.getItemByIdAsJson(id, found)
+      if(found):
+        return jsonObj
+
+  proc muteUnmuteItemOrSubItemById*(self: Model, id: string, mute: bool) =
+    for i in 0 ..< self.items.len:
+      if(self.items[i].id == id):
+        let index = self.createIndex(i, 0, nil)
+        self.items[i].BaseItem.muted = mute
+        self.dataChanged(index, index, @[ModelRole.Muted.int])
+        return
+
+      var found = false
+      if self.items[i].subItems.muteUnmuteItemById(id, mute):
+        return

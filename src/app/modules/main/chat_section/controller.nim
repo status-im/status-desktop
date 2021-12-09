@@ -4,7 +4,7 @@ import controller_interface
 import io_interface
 
 import ../../../../app_service/service/contacts/service as contact_service
-import ../../../../app_service/service/chat/service_interface as chat_service
+import ../../../../app_service/service/chat/service as chat_service
 import ../../../../app_service/service/community/service_interface as community_service
 import ../../../../app_service/service/message/service as message_service
 
@@ -21,12 +21,12 @@ type
     activeSubItemId: string
     events: EventEmitter
     contactService: contact_service.Service
-    chatService: chat_service.ServiceInterface
+    chatService: chat_service.Service
     communityService: community_service.ServiceInterface
     messageService: message_service.Service
 
 proc newController*(delegate: io_interface.AccessInterface, sectionId: string, isCommunity: bool, events: EventEmitter,
-  contactService: contact_service.Service, chatService: chat_service.ServiceInterface,
+  contactService: contact_service.Service, chatService: chat_service.Service,
   communityService: community_service.ServiceInterface, messageService: message_service.Service): Controller =
   result = Controller()
   result.delegate = delegate
@@ -42,7 +42,13 @@ method delete*(self: Controller) =
   discard
 
 method init*(self: Controller) = 
-  discard
+  self.events.on(SIGNAL_CHAT_MUTED) do(e:Args):
+    let args = ChatArgs(e)
+    self.delegate.onChatMuted(args.chatId)
+
+  self.events.on(SIGNAL_CHAT_UNMUTED) do(e:Args):
+    let args = ChatArgs(e)
+    self.delegate.onChatUnmuted(args.chatId)
 
 method getMySectionId*(self: Controller): string =
   return self.sectionId
@@ -91,3 +97,9 @@ method createPublicChat*(self: Controller, chatId: string) =
   if(response.success):
     self.delegate.addNewPublicChat(response.chatDto, self.events, self.contactService, self.chatService, 
     self.communityService, self.messageService)
+
+method muteChat*(self: Controller, chatId: string) =
+  self.chatService.muteChat(chatId)
+
+method unmuteChat*(self: Controller, chatId: string) =
+  self.chatService.unmuteChat(chatId)

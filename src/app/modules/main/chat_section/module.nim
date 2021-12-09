@@ -6,7 +6,7 @@ import view, controller, item, sub_item, model, sub_model
 import chat_content/module as chat_content_module
 
 import ../../../../app_service/service/contacts/service as contact_service
-import ../../../../app_service/service/chat/service_interface as chat_service
+import ../../../../app_service/service/chat/service as chat_service
 import ../../../../app_service/service/community/service_interface as community_service
 import ../../../../app_service/service/message/service as message_service
 
@@ -33,7 +33,7 @@ proc newModule*(
     sectionId: string,
     isCommunity: bool, 
     contactService: contact_service.Service,
-    chatService: chat_service.ServiceInterface,
+    chatService: chat_service.Service,
     communityService: community_service.ServiceInterface, 
     messageService: message_service.Service
   ): Module =
@@ -59,13 +59,13 @@ method isCommunity*(self: Module): bool =
   return self.controller.isCommunity()
 
 proc addSubmodule(self: Module, chatId: string, belongToCommunity: bool, isUsersListAvailable: bool, events: EventEmitter, 
-  contactService: contact_service.Service, chatService: chat_service.ServiceInterface, 
+  contactService: contact_service.Service, chatService: chat_service.Service, 
   communityService: community_service.ServiceInterface, messageService: message_service.Service) =
   self.chatContentModule[chatId] = chat_content_module.newModule(self, events, self.controller.getMySectionId(), chatId,
     belongToCommunity, isUsersListAvailable, contactService, chatService, communityService, messageService)
 
 proc buildChatUI(self: Module, events: EventEmitter, contactService: contact_service.Service, 
-  chatService: chat_service.ServiceInterface, communityService: community_service.ServiceInterface, 
+  chatService: chat_service.Service, communityService: community_service.ServiceInterface, 
   messageService: message_service.Service) =
   let types = @[ChatType.OneToOne, ChatType.Public, ChatType.PrivateGroupChat]
   let chats = self.controller.getChatDetailsForChatTypes(types)
@@ -94,7 +94,7 @@ proc buildChatUI(self: Module, events: EventEmitter, contactService: contact_ser
   self.setActiveItemSubItem(selectedItemId, "")
 
 proc buildCommunityUI(self: Module, events: EventEmitter, contactService: contact_service.Service, 
-  chatService: chat_service.ServiceInterface, communityService: community_service.ServiceInterface, 
+  chatService: chat_service.Service, communityService: community_service.ServiceInterface, 
   messageService: message_service.Service) =
   var selectedItemId = ""
   var selectedSubItemId = ""
@@ -113,7 +113,7 @@ proc buildCommunityUI(self: Module, events: EventEmitter, contactService: contac
       let channelItem = initItem(chatDto.id, chatDto.name, chatDto.identicon, false, chatDto.color, chatDto.description, 
       chatDto.chatType.int, hasNotification, notificationsCount, chatDto.muted, false, c.position)
       self.view.appendItem(channelItem)
-      self.addSubmodule(chatDto.id, true, false, events, contactService, chatService, communityService, messageService)
+      self.addSubmodule(chatDto.id, true, true, events, contactService, chatService, communityService, messageService)
 
       # make the first channel which doesn't belong to any category active when load the app
       if(selectedItemId.len == 0):
@@ -137,9 +137,9 @@ proc buildCommunityUI(self: Module, events: EventEmitter, contactService: contac
         notificationsCountPerCategory += notificationsCount
 
         let channelItem = initSubItem(chatDto.id, cat.id, chatDto.name, chatDto.identicon, false, chatDto.color, 
-        chatDto.description, hasNotification, notificationsCount, chatDto.muted, false, c.position)
+        chatDto.description, chatDto.chatType.int, hasNotification, notificationsCount, chatDto.muted, false, c.position)
         categoryChannels.add(channelItem)
-        self.addSubmodule(chatDto.id, true, false, events, contactService, chatService, communityService, messageService)
+        self.addSubmodule(chatDto.id, true, true, events, contactService, chatService, communityService, messageService)
 
         # in case there is no channels beyond categories, 
         # make the first channel of the first category active when load the app
@@ -155,7 +155,7 @@ proc buildCommunityUI(self: Module, events: EventEmitter, contactService: contac
   self.setActiveItemSubItem(selectedItemId, selectedSubItemId)
 
 method load*(self: Module, events: EventEmitter, contactService: contact_service.Service, 
-  chatService: chat_service.ServiceInterface, communityService: community_service.ServiceInterface, 
+  chatService: chat_service.Service, communityService: community_service.ServiceInterface, 
   messageService: message_service.Service) =
   self.controller.init()
   self.view.load()
@@ -238,7 +238,7 @@ method createPublicChat*(self: Module, chatId: string) =
   self.controller.createPublicChat(chatId)
 
 method addNewPublicChat*(self: Module, chatDto: ChatDto, events: EventEmitter, contactService: contact_service.Service,
-  chatService: chat_service.ServiceInterface, communityService: community_service.ServiceInterface, 
+  chatService: chat_service.Service, communityService: community_service.ServiceInterface, 
   messageService: message_service.Service) =
   let hasNotification = chatDto.unviewedMessagesCount > 0 or chatDto.unviewedMentionsCount > 0
   let notificationsCount = chatDto.unviewedMentionsCount
@@ -249,3 +249,16 @@ method addNewPublicChat*(self: Module, chatDto: ChatDto, events: EventEmitter, c
 
   # make new added chat active one
   self.setActiveItemSubItem(item.id, "")
+
+method muteChat*(self: Module, chatId: string) =
+  self.controller.muteChat(chatId)
+
+method unmuteChat*(self: Module, chatId: string) =
+  self.controller.unmuteChat(chatId)
+
+method onChatMuted*(self: Module, chatId: string) =
+  self.view.model().muteUnmuteItemOrSubItemById(chatId, true)
+
+method onChatUnmuted*(self: Module, chatId: string) =
+  self.view.model().muteUnmuteItemOrSubItemById(chatId, false)
+  

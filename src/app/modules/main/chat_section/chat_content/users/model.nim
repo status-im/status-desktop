@@ -26,6 +26,13 @@ QtObject:
     new(result, delete)
     result.setup
 
+  proc countChanged(self: Model) {.signal.}
+  proc getCount(self: Model): int {.slot.} =
+    self.items.len
+  QtProperty[int] count:
+    read = getCount
+    notify = countChanged
+
   method rowCount(self: Model, index: QModelIndex = nil): int =
     return self.items.len
 
@@ -79,6 +86,7 @@ QtObject:
     self.beginInsertRows(parentModelIndex, position, position)
     self.items.insert(item, position)
     self.endInsertRows()
+    self.countChanged()
 
   proc findIndexForMessageId(self: Model, id: string): int = 
     for i in 0 ..< self.items.len:
@@ -94,6 +102,7 @@ QtObject:
     self.beginRemoveRows(parentModelIndex, index, index)
     self.items.delete(index)
     self.endRemoveRows()
+    self.countChanged()
 
   proc isContactWithIdAdded*(self: Model, id: string): bool = 
     return self.findIndexForMessageId(id) != -1
