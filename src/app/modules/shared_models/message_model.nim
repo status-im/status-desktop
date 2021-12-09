@@ -5,18 +5,22 @@ import message_item
 type
   ModelRole {.pure.} = enum
     Id = UserRole + 1
-    From
-    Alias
-    Identicon
+    ResponseToMessageWithId
+    SenderId
+    SenderDisplayName
+    SenderLocalName
+    SenderIcon
+    IsSenderIconIdenticon
+    AmISender
     Seen
     OutgoingStatus
-    Text
+    MessageText
+    MessageImage
     Timestamp
     ContentType
     MessageType
     # StickerHash
     # StickerPack
-    # Image
     # GapFrom
     # GapTo
     Pinned
@@ -38,24 +42,35 @@ QtObject:
     new(result, delete)
     result.setup
 
+  proc countChanged(self: Model) {.signal.}
+  proc getCount(self: Model): int {.slot.} =
+    self.items.len
+  QtProperty[int] count:
+    read = getCount
+    notify = countChanged
+
   method rowCount(self: Model, index: QModelIndex = nil): int =
     return self.items.len
 
   method roleNames(self: Model): Table[int, string] =
     {
       ModelRole.Id.int:"id",
-      ModelRole.From.int:"from",
-      ModelRole.Alias.int:"alias",
-      ModelRole.Identicon.int:"identicon",
+      ModelRole.ResponseToMessageWithId.int:"responseToMessageWithId",
+      ModelRole.SenderId.int:"senderId",
+      ModelRole.SenderDisplayName.int:"senderDisplayName",
+      ModelRole.SenderLocalName.int:"senderLocalName",
+      ModelRole.SenderIcon.int:"senderIcon",
+      ModelRole.IsSenderIconIdenticon.int:"isSenderIconIdenticon",
+      ModelRole.AmISender.int:"amISender",
       ModelRole.Seen.int:"seen",
       ModelRole.OutgoingStatus.int:"outgoingStatus",
-      ModelRole.Text.int:"text",
+      ModelRole.MessageText.int:"messageText",
+      ModelRole.MessageImage.int:"messageImage",
       ModelRole.Timestamp.int:"timestamp",
       ModelRole.ContentType.int:"contentType",
       ModelRole.MessageType.int:"messageType",
       # ModelRole.StickerHash.int:"stickerHash",
       # ModelRole.StickerPack.int:"stickerPack",
-      # ModelRole.Image.int:"image",
       # ModelRole.GapFrom.int:"gapFrom",
       # ModelRole.GapTo.int:"gapTo",
       ModelRole.Pinned.int:"pinned",
@@ -75,18 +90,28 @@ QtObject:
     case enumRole:
     of ModelRole.Id: 
       result = newQVariant(item.id)
-    of ModelRole.From: 
-      result = newQVariant(item.`from`)
-    of ModelRole.Alias: 
-      result = newQVariant(item.alias)
-    of ModelRole.Identicon: 
-      result = newQVariant(item.identicon)
+    of ModelRole.ResponseToMessageWithId: 
+      result = newQVariant(item.responseToMessageWithId)
+    of ModelRole.SenderId: 
+      result = newQVariant(item.senderId)
+    of ModelRole.SenderDisplayName: 
+      result = newQVariant(item.senderDisplayName)
+    of ModelRole.SenderLocalName: 
+      result = newQVariant(item.senderLocalName)
+    of ModelRole.SenderIcon: 
+      result = newQVariant(item.senderIcon)
+    of ModelRole.IsSenderIconIdenticon: 
+      result = newQVariant(item.isSenderIconIdenticon)
+    of ModelRole.AmISender: 
+      result = newQVariant(item.amISender)
     of ModelRole.Seen: 
       result = newQVariant(item.seen)
     of ModelRole.OutgoingStatus: 
       result = newQVariant(item.outgoingStatus)
-    of ModelRole.Text: 
-      result = newQVariant(item.text)
+    of ModelRole.MessageText: 
+      result = newQVariant(item.messageText)
+    of ModelRole.MessageImage: 
+      result = newQVariant(item.messageImage)
     of ModelRole.Timestamp: 
       result = newQVariant(item.timestamp)
     of ModelRole.ContentType: 
@@ -97,8 +122,6 @@ QtObject:
     #   result = newQVariant(item.stickerHash)
     # of ModelRole.StickerPack: 
     #   result = newQVariant(item.stickerPack)
-    # of ModelRole.Image: 
-    #   result = newQVariant(item.image)
     # of ModelRole.GapFrom: 
     #   result = newQVariant(item.gapFrom)
     # of ModelRole.GapTo: 
@@ -124,6 +147,7 @@ QtObject:
     self.beginInsertRows(parentModelIndex, first, last)
     self.items = items & self.items
     self.endInsertRows()
+    self.countChanged()
 
   proc appendItem*(self: Model, item: Item) =
     let parentModelIndex = newQModelIndex()
@@ -132,6 +156,7 @@ QtObject:
     self.beginInsertRows(parentModelIndex, self.items.len, self.items.len)
     self.items.add(item)
     self.endInsertRows()
+    self.countChanged()
 
   proc removeItem*(self: Model, messageId: string) =
     let ind = self.findIndexForMessageId(messageId)
@@ -144,6 +169,7 @@ QtObject:
     self.beginRemoveRows(parentModelIndex, ind, ind)
     self.items.delete(ind)
     self.endRemoveRows()
+    self.countChanged()
 
   proc getItemWithMessageId*(self: Model, messageId: string): Item = 
     let ind = self.findIndexForMessageId(messageId)
@@ -186,3 +212,13 @@ QtObject:
     
     let index = self.createIndex(ind, 0, nil)
     self.dataChanged(index, index, @[ModelRole.Pinned.int])
+
+  proc getMessageByIdAsJson*(self: Model, messageId: string): JsonNode =
+    for it in self.items:
+      if(it.id == messageId):
+        return it.toJsonNode()
+    
+  proc getMessageByIndexAsJson*(self: Model, index: int): JsonNode =
+    if(index < 0 or index >= self.items.len):
+      return
+    self.items[index].toJsonNode()

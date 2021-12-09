@@ -12,13 +12,13 @@ type
     chatId: string
     belongsToCommunity: bool
     communityService: community_service.ServiceInterface
-    chatService: chat_service.ServiceInterface
+    chatService: chat_service.Service
 
 proc newController*(
     delegate: io_interface.AccessInterface,
     chatId: string,
     belongsToCommunity: bool,
-    chatService: chat_service.ServiceInterface, 
+    chatService: chat_service.Service, 
     communityService: community_service.ServiceInterface
     ): Controller =
   result = Controller()

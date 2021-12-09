@@ -65,7 +65,7 @@ method init*(self: Controller) =
       self.delegate.loggedInUserImageChanged()
 
 method getMembersPublicKeys*(self: Controller): seq[string] = 
-  # in case of chat section, there is no a members list
+  # in case of 1:1 chat, there is no a members list
   if(not self.belongsToCommunity):
     return
 
