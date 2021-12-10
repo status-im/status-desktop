@@ -16,9 +16,7 @@ Column {
     anchors.right: !isCurrentUser ? undefined : parent.right
     z: (typeof chatLogView === "undefined") ? 1 : (chatLogView.count - index)
 
-    property var rootStore
     property var messageStore
-    //property var chatsModel: !!root.rootStore ? root.rootStore.chatsModelInst : null
 
     property string messageId: ""
     property string responseToMessageWithId: ""
@@ -34,6 +32,10 @@ Column {
     property string messageOutgoingStatus: ""
     property int messageContentType: 1
     property bool pinnedMessage: false
+
+    // Used only in case of ChatIdentifier
+    property int chatTypeThisMessageBelongsTo: -1
+    property string chatColorThisMessageBelongsTo: ""
 
     property int prevMessageIndex: -1
     property var prevMessageAsJsonObj
@@ -91,35 +93,18 @@ Column {
     property bool shouldRepeatHeader: ((parseInt(timestamp, 10) - parseInt(prevMsgTimestamp, 10)) / 60 / 1000) > Constants.repeatHeaderInterval
 
     //////////////////////////////////////
-    //TODO REMOVE
-//    property string fromAuthor: "0x0011223344556677889910"
-//    property string userName: "Jotaro Kujo"
-//    property string alias: ""
-//    property string localName: ""
-//    property string message: "That's right. We're friends...  Of justice, that is."
+    //TODO CHECCK - REMOVE
     property string plainText: "That's right. We're friends...  Of justice, that is."
-//    property string identicon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAZAAAAGQAQMAAAC6caSPAAAABlBMVEXMzMz////TjRV2AAAAAWJLR0QB/wIt3gAAACpJREFUGBntwYEAAAAAw6D7Uw/gCtUAAAAAAAAAAAAAAAAAAAAAAAAAgBNPsAABAjKCqQAAAABJRU5ErkJggg=="
-//    property bool isCurrentUser: false
-//    property string timestamp: "1234567"
     property string sticker: "Qme8vJtyrEHxABcSVGPF95PtozDgUyfr1xGjePmFdZgk9v"
-//    property int contentType: 1 // constants don't work in default props
-    property string chatId: "chatId"
-//    property string outgoingStatus: ""
-//    property string responseTo: ""
-//    property string messageId: ""
     property string emojiReactions: ""
-//    property int prevMessageIndex: -1
-//    property int nextMessageIndex: -1
     property bool timeout: false
     property bool hasMention: false
     property string linkUrls: ""
     property bool placeholderMessage: false
     property bool activityCenterMessage: false
-//    property bool pinnedMessage: false
     property bool read: true
     property string pinnedBy
     property bool forceHoverHandler: false // Used to force the HoverHandler to be active (useful for messages in popups)
-    property string communityId: ""
     property int stickerPackId: -1
     property int gapFrom: 0
     property int gapTo: 0
@@ -128,29 +113,8 @@ Column {
     property bool isEdited: false
     property bool showEdit: true
     property var messageContextMenu
-//    property string displayUserName: {
-//        if (isCurrentUser) {
-//            //% "You"
-//            return qsTrId("You")
-//        }
+    //////////////////////////////////////
 
-//        if (localName !== "") {
-//            return localName
-//        }
-
-//        if (userName !== "") {
-//            return Utils.removeStatusEns(userName)
-//        }
-//        return Utils.removeStatusEns(alias)
-//    }
-
-//    property string authorCurrentMsg: "authorCurrentMsg"
-//    property string authorPrevMsg: "authorPrevMsg"
-
-//    property string prevMsgTimestamp: !!root.chatsModel ? root.chatsModel.messageView.messageList.getMessageData(prevMessageIndex, "timestamp") : ""
-//    property string nextMsgTimestamp: !!root.chatsModel ? root.chatsModel.messageView.messageList.getMessageData(nextMessageIndex, "timestamp"): ""
-
-//    property bool shouldRepeatHeader: ((parseInt(timestamp, 10) - parseInt(prevMsgTimestamp, 10)) / 60 / 1000) > Constants.repeatHeaderInterval
 
     property bool isEmoji: contentType === Constants.messageContentType.emojiType
     property bool isImage: contentType === Constants.messageContentType.imageType
@@ -165,30 +129,8 @@ Column {
     property bool isStatusUpdate: false
     property int statusAgeEpoch: 0
 
-    // TODO: we don't use replyMessageIndex any more, but messageId
-//    property int replyMessageIndex: !!root.chatsModel ? root.chatsModel.messageView.messageList.getMessageIndex(responseTo) : -1
-//    property string repliedMessageAuthor: replyMessageIndex > -1 ? !!root.chatsModel ? root.chatsModel.messageView.messageList.getMessageData(replyMessageIndex, "userName") : "" : "";
-//    property string repliedMessageAuthorPubkey: replyMessageIndex > -1 ? root.chatsModel.messageView.messageList.getMessageData(replyMessageIndex, "publicKey") : "";
-//    property bool repliedMessageAuthorIsCurrentUser: replyMessageIndex > -1 ? repliedMessageAuthorPubkey === userProfile.pubKey : "";
-//    property bool repliedMessageIsEdited: replyMessageIndex > -1 ? !!root.chatsModel ? root.chatsModel.messageView.messageList.getMessageData(replyMessageIndex, "isEdited") === "true" : false : false;
-//    property string repliedMessageContent: replyMessageIndex > -1 ? !!root.chatsModel ? root.chatsModel.messageView.messageList.getMessageData(replyMessageIndex, "message") : "" : "";
-//    property int repliedMessageType: replyMessageIndex > -1 ? !!root.chatsModel ? parseInt(root.chatsModel.messageView.messageList.getMessageData(replyMessageIndex, "contentType")) : 0 : 0;
-//    property string repliedMessageImage: replyMessageIndex > -1 ? !!root.chatsModel ? root.chatsModel.messageView.messageList.getMessageData(replyMessageIndex, "image") : "" : "";
-//    property string repliedMessageUserIdenticon: replyMessageIndex > -1 ? !!root.chatsModel ? root.chatsModel.messageView.messageList.getMessageData(replyMessageIndex, "identicon") : "" : "";
-//    property string repliedMessageUserImage: replyMessageIndex > -1 ? appMain.getProfileImage(repliedMessageAuthorPubkey, repliedMessageAuthorIsCurrentUser , false) || "" : "";
-
     property var imageClick: function () {}
     property var scrollToBottom: function () {}
-//    property string userPubKey: {
-//        if (contentType === Constants.messageContentType.chatIdentifier) {
-//            return chatId
-//        }
-//        return fromAuthor
-//    }
-//    property bool useLargeImage: contentType === Constants.messageContentType.chatIdentifier
-
-    // Not Refactored Yet - This will be determined on the backend
-//    property string profileImageSource: !placeholderMessage && appMain.getProfileImage(userPubKey, isCurrentUser, useLargeImage) || ""
 
     property var emojiReactionsModel: {
         // Not Refactored Yet
@@ -327,7 +269,7 @@ Column {
         id: gapComponent
         GapComponent {
             onClicked: {
-                // Not Refactored Yet
+                // Not Refactored Yet - Should do it via messageStore
 //                root.chatsModel.messageView.fillGaps(messageStore.messageId);
 //                root.visible = false;
 //                root.height = 0;
@@ -338,14 +280,14 @@ Column {
     Component {
         id: fetchMoreMessagesButtonComponent
         FetchMoreMessagesButton {
-//            nextMessageIndex: root.messageStore.nextMessageIndex
-//            nextMsgTimestamp: root.messageStore.nextMsgTimestamp
+            nextMessageIndex: root.nextMessageIndex
+            nextMsgTimestamp: root.nextMsgTimestamp
             onClicked: {
-                // Not Refactored Yet
+                // Not Refactored Yet - Should do it via messageStore
 //                root.chatsModel.messageView.hideLoadingIndicator();
             }
             onTimerTriggered: {
-                // Not Refactored Yet
+                // Not Refactored Yet - Should do it via messageStore
 //                root.chatsModel.requestMoreMessages(Constants.fetchRangeLast24Hours);
             }
         }
@@ -353,17 +295,13 @@ Column {
 
     Component {
         id: channelIdentifierComponent
-        Rectangle {
-            color: "blue"
-            width: 100
-            height: 100
+        ChannelIdentifierView {
+            chatName: root.senderDisplayName
+            chatType: root.chatTypeThisMessageBelongsTo
+            chatColor: root.chatColorThisMessageBelongsTo
+            chatIcon: root.senderIcon
+            chatIconIsIdenticon: root.isSenderIconIdenticon
         }
-        // Not Refactored Yet
-//        ChannelIdentifierView {
-//            store: root.rootStore
-//            profileImage: profileImageSource
-//            authorCurrentMsg: root.authorCurrentMsg
-//        }
     }
 
     // Private group Messages
@@ -402,25 +340,31 @@ Column {
         StatusUpdateView {
             statusAgeEpoch: root.statusAgeEpoch
             container: root
-            store: root.rootStore
+            // Not Refactored Yet
+//            store: root.rootStore
             messageContextMenu: root.messageContextMenu
             onAddEmoji: {
                 root.clickMessage(isProfileClick, isSticker, isImage , image, emojiOnly, hideEmojiPicker);
             }
             onChatImageClicked: {
-                messageStore.imageClick(image);
+            // Not Refactored Yet - Should do it via messageStore
+//                messageStore.imageClick(image);
             }
             onUserNameClicked: {
-                root.parent.clickMessage(isProfileClick);
+                // Not Refactored Yet - Should do it via messageStore
+//                root.parent.clickMessage(isProfileClick);
             }
             onEmojiBtnClicked: {
-                root.parent.clickMessage(isProfileClick, isSticker, isImage, image, emojiOnly);
+                // Not Refactored Yet - Should do it via messageStore
+//                root.parent.clickMessage(isProfileClick, isSticker, isImage, image, emojiOnly);
             }
             onClickMessage: {
-                root.parent.clickMessage(isProfileClick, isSticker, isImage, image, emojiOnly, hideEmojiPicker, isReply);
+                // Not Refactored Yet - Should do it via messageStore
+//                root.parent.clickMessage(isProfileClick, isSticker, isImage, image, emojiOnly, hideEmojiPicker, isReply);
             }
             onSetMessageActive: {
-                root.messageStore.setMessageActive(messageId, active);;
+                // Not Refactored Yet - Should do it via messageStore
+//                root.messageStore.setMessageActive(messageId, active);;
             }
         }
     }

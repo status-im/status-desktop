@@ -7,11 +7,14 @@ import ../../../../shared_models/message_item
 import ../../../../../global/global_singleton
 
 import ../../../../../../app_service/service/contacts/service as contact_service
+import ../../../../../../app_service/service/chat/service as chat_service
 import ../../../../../../app_service/service/message/service as message_service
 
 import eventemitter
 
 export io_interface
+
+const CHAT_IDENTIFIER_MESSAGE_ID = "chat-identifier-message-id"
 
 type 
   Module* = ref object of io_interface.AccessInterface
@@ -22,15 +25,19 @@ type
     moduleLoaded: bool
 
 proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitter, chatId: string, 
-  belongsToCommunity: bool, contactService: contact_service.Service, messageService: message_service.Service): 
+  belongsToCommunity: bool, contactService: contact_service.Service, chatService: chat_service.Service,
+  messageService: message_service.Service): 
   Module =
   result = Module()
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, events, chatId, belongsToCommunity, contactService, 
+  result.controller = controller.newController(result, events, chatId, belongsToCommunity, contactService, chatService,
   messageService)
   result.moduleLoaded = false
+
+# Forward declaration
+proc createChatIdentifierItem(self: Module): Item
 
 method delete*(self: Module) =
   self.view.delete
@@ -45,15 +52,32 @@ method isLoaded*(self: Module): bool =
   return self.moduleLoaded
 
 method viewDidLoad*(self: Module) =
+  # The first message in the model must be always ChatIdentifier message.
+  self.view.model().appendItem(self.createChatIdentifierItem())
+
   self.moduleLoaded = true
   self.delegate.messagesDidLoad()
 
 method getModuleAsVariant*(self: Module): QVariant =
   return self.viewVariant
 
+proc createChatIdentifierItem(self: Module): Item =
+  let chatDto = self.controller.getChatDetails()
+  var chatName = chatDto.name
+  var chatIcon = chatDto.identicon
+  var isIdenticon = false
+  if(chatDto.chatType == ChatType.OneToOne):
+    (chatName, chatIcon, isIdenticon) = self.controller.getOneToOneChatNameAndImage()
+
+  result = initItem(CHAT_IDENTIFIER_MESSAGE_ID, "", chatDto.id, chatName, "", chatIcon, isIdenticon, false, "", "", "", 
+  true, 0, ContentType.ChatIdentifier, -1)
+  result.chatColorThisMessageBelongsTo = chatDto.color
+  result.chatTypeThisMessageBelongsTo = chatDto.chatType.int
+
 method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: seq[ReactionDto], 
   pinnedMessages: seq[PinnedMessageDto]) = 
-  var viewItems: seq[Item] 
+  var viewItems: seq[Item]
+  
   for m in messages:
     let sender = self.controller.getContactById(m.`from`)
     let senderDisplayName = sender.userNameOrAlias()
@@ -77,8 +101,13 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
         item.pinned = true
 
     # messages are sorted from the most recent to the least recent one
-    viewItems = item & viewItems
+    viewItems.add(item)
 
+  # ChatIdentifier message will be always the first message (the oldest one)
+  viewItems.add(self.createChatIdentifierItem())
+  # Delete the old ChatIdentifier message first
+  self.view.model().removeItem(CHAT_IDENTIFIER_MESSAGE_ID)
+  # Add new loaded messages
   self.view.model().prependItems(viewItems)
 
 method toggleReaction*(self: Module, messageId: string, emojiId: int) =

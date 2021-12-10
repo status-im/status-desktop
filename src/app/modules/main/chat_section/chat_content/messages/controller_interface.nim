@@ -1,4 +1,5 @@
-import ../../../../../../app_service/service/contacts/service as contact_service
+import ../../../../../../app_service/service/contacts/dto/[contacts]
+import ../../../../../../app_service/service/chat/dto/[chat]
 
 type 
   AccessInterface* {.pure inheritable.} = ref object of RootObj
@@ -11,6 +12,13 @@ method init*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getChatId*(self: AccessInterface): string {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getChatDetails*(self: AccessInterface): ChatDto {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getOneToOneChatNameAndImage*(self: AccessInterface): tuple[name: string, image: string, isIdenticon: bool] 
+  {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method belongsToCommunity*(self: AccessInterface): bool {.base.} =
