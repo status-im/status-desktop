@@ -317,8 +317,7 @@ Column {
                 case Constants.messageContentType.gapType:
                     return gapComponent
                 default:
-                    return isStatusUpdate ? statusUpdateComponent :
-                                            (localAccountSensitiveSettings.useCompactMode ? compactMessageComponent : messageComponent)
+                    return isStatusUpdate ? statusUpdateComponent : compactMessageComponent
 
             }
         }
@@ -395,13 +394,6 @@ Column {
             anchors.horizontalCenter: parent.horizontalCenter
             textFormat: Text.RichText
             topPadding: root.prevMessageIndex === 1 ? Style.current.bigPadding : 0
-        }
-    }
-
-    Component {
-        id: messageComponent
-        NormalMessageView {
-            container: root
         }
     }
 

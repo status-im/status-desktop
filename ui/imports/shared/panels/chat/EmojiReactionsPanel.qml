@@ -54,9 +54,9 @@ Item {
                     width: 10
                     height: 10
                     anchors.top: parent.top
-                    anchors.left: !root.isCurrentUser || localAccountSensitiveSettings.useCompactMode ? parent.left : undefined
+                    anchors.left: !root.isCurrentUser? parent.left : undefined
                     anchors.leftMargin: 0
-                    anchors.right: !root.isCurrentUser || localAccountSensitiveSettings.useCompactMode ? undefined : parent.right
+                    anchors.right: !root.isCurrentUser? undefined : parent.right
                     anchors.rightMargin: 0
                     radius: 2
                     z: -1
@@ -83,9 +83,9 @@ Item {
                                 width: 10
                                 height: 10
                                 anchors.top: parent.top
-                                anchors.left: !root.isCurrentUser || localAccountSensitiveSettings.useCompactMode ? parent.left : undefined
+                                anchors.left: !root.isCurrentUser? parent.left : undefined
                                 anchors.leftMargin: 0
-                                anchors.right: !root.isCurrentUser || localAccountSensitiveSettings.useCompactMode ? undefined : parent.right
+                                anchors.right: !root.isCurrentUser? undefined : parent.right
                                 anchors.rightMargin: 0
                                 radius: 2
                                 z: -1

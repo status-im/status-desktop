@@ -532,73 +532,6 @@ Item {
             }
         }
 
-    // This doesn't exists, not sure how this part ended up here?!?!
-    // We need to figure out what happened and fix this.
-    // So far just want to discard this, but leave it in order to check it later.
-//        Connections {
-//            target: profileModel
-
-//            onSettingsFileChanged: {
-//                // Since https://github.com/status-im/status-desktop/commit/93668ff75
-//                // we're hiding the setting to change appearance for compact normal mode
-//                // of the UI. For now, compact mode is the new default.
-//                //
-//                // Prior to this change, most likely many users are still using the
-//                // normal mode configuration, so we have to enforce compact mode for
-//                // those.
-//                if (!localAccountSensitiveSettings.useCompactMode) {
-//                    localAccountSensitiveSettings.useCompactMode = true
-//                }
-
-//                const whitelist = profileModel.getLinkPreviewWhitelist()
-//                try {
-//                    const whiteListedSites = JSON.parse(whitelist)
-//                    let settingsUpdated = false
-
-//                    // Add Status links to whitelist
-//                    whiteListedSites.push({title: "Status", address: Constants.deepLinkPrefix, imageSite: false})
-//                    whiteListedSites.push({title: "Status", address: Constants.joinStatusLink, imageSite: false})
-//                    let settings = localAccountSensitiveSettings.whitelistedUnfurlingSites
-
-//                    if (!settings) {
-//                        settings = {}
-//                    }
-
-//                    // Set Status links as true. We intercept thoseURLs so it is privacy-safe
-//                    if (!settings[Constants.deepLinkPrefix] || !settings[Constants.joinStatusLink]) {
-//                        settings[Constants.deepLinkPrefix] = true
-//                        settings[Constants.joinStatusLink] = true
-//                        settingsUpdated = true
-//                    }
-
-//                    const whitelistedHostnames = []
-
-//                    // Add whitelisted sites in to app settings that are not already there
-//                    whiteListedSites.forEach(site => {
-//                                                if (!settings.hasOwnProperty(site.address))  {
-//                                                    settings[site.address] = false
-//                                                    settingsUpdated = true
-//                                                }
-//                                                whitelistedHostnames.push(site.address)
-//                                            })
-//                    // Remove any whitelisted sites from app settings that don't exist in the
-//                    // whitelist from status-go
-//                    Object.keys(settings).forEach(settingsHostname => {
-//                        if (!whitelistedHostnames.includes(settingsHostname)) {
-//                            delete settings[settingsHostname]
-//                            settingsUpdated = true
-//                        }
-//                    })
-//                    if (settingsUpdated) {
-//                        localAccountSensitiveSettings.whitelistedUnfurlingSites = settings
-//                    }
-//                } catch (e) {
-//                    console.error('Could not parse the whitelist for sites', e)
-//                }
-//                appMain.settingsLoaded()
-//            }
-//        }
-
         Connections {
             target: chatsModel
             onNotificationClicked: {
@@ -845,13 +778,6 @@ Item {
         // Since https://github.com/status-im/status-desktop/commit/93668ff75
         // we're hiding the setting to change appearance for compact normal mode
         // of the UI. For now, compact mode is the new default.
-        //
-        // Prior to this change, most likely many users are still using the
-        // normal mode configuration, so we have to enforce compact mode for
-        // those.
-        if (!localAccountSensitiveSettings.useCompactMode) {
-            localAccountSensitiveSettings.useCompactMode = true
-        }
 
         const whitelist = profileModel.getLinkPreviewWhitelist()
         try {

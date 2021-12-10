@@ -48,7 +48,7 @@ QtObject {
         return Style.current.accountColors[colorIndex]
     }
 
-    function getMessageWithStyle(msg, useCompactMode, isCurrentUser, hoveredLink = "") {
+    function getMessageWithStyle(msg, isCurrentUser, hoveredLink = "") {
         return `<style type="text/css">` +
                     `p, img, a, del, code, blockquote { margin: 0; padding: 0; }` +
                     `code {` +
@@ -97,10 +97,10 @@ QtObject {
                 `${msg}`
     }
 
-    function getReplyMessageStyle(msg, isCurrentUser, useCompactMode) {
+    function getReplyMessageStyle(msg, isCurrentUser) {
         return `<style type="text/css">`+
                     `a {`+
-                        `color: ${isCurrentUser && !useCompactMode ? Style.current.white : Style.current.textColor};`+
+                        `color: ${isCurrentUser? Style.current.white : Style.current.textColor};`+
                     `}`+
                     `a.mention {`+
                         `color: ${isCurrentUser ? Style.current.mentionColor : Style.current.turquoise};`+
