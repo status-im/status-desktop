@@ -26,18 +26,13 @@ Item {
         // Not Refactored Yet
 
         return false
-//        if (!!rootStore) {
-//            switch (rootStore.chatsModelInst.channelView.activeChannel.chatType) {
-//            case Constants.chatType.oneToOne: return true
-//            case Constants.chatType.privateGroupChat: return rootStore.chatsModelInst.channelView.activeChannel.isAdmin(userProfile.pubKey) ? true : isCurrentUser
-//            case Constants.chatType.publicChat: return isCurrentUser
-//            case Constants.chatType.communityChat: return rootStore.chatsModelInst.communities.activeCommunity.admin ? true : isCurrentUser
-//            case Constants.chatType.profile: return false
-//            default: return false
-//            }
-//        }
-//        else {
-//            return false;
+//        switch (chatTypeThisMessageBelongsTo) {
+//        case Constants.chatType.oneToOne: return true
+//        case Constants.chatType.privateGroupChat: return rootStore.chatsModelInst.channelView.activeChannel.isAdmin(userProfile.pubKey) ? true : isCurrentUser
+//        case Constants.chatType.publicChat: return isCurrentUser
+//        case Constants.chatType.communityChat: return rootStore.chatsModelInst.communities.activeCommunity.admin ? true : isCurrentUser
+//        case Constants.chatType.profile: return false
+//        default: return false
 //        }
     }
 
@@ -206,8 +201,10 @@ Item {
                     }
 
                     StyledText {
-                        //% "Pinned by %1"
-                        text: qsTrId("pinned-by--1").arg(rootStore.chatsModelInst.alias(pinnedBy))
+                        // Not Refactored Yet
+                        text: ""
+//                        //% "Pinned by %1"
+//                        text: qsTrId("pinned-by--1").arg(rootStore.chatsModelInst.alias(pinnedBy))
                         anchors.left: pinImage.right
                         anchors.verticalCenter: parent.verticalCenter
                         font.pixelSize: 13
@@ -217,14 +214,15 @@ Item {
         }
 
 
-        Connections {
-            enabled: !!rootStore
-            target: enabled ? rootStore.chatsModelInst.messageView : null
-            onMessageEdited: {
-                if(chatReply.item)
-                    chatReply.item.messageEdited(editedMessageId, editedMessageContent)
-            }
-        }
+        // Not Refactored Yet
+//        Connections {
+//            enabled: !!rootStore
+//            target: enabled ? rootStore.chatsModelInst.messageView : null
+//            onMessageEdited: {
+//                if(chatReply.item)
+//                    chatReply.item.messageEdited(editedMessageId, editedMessageContent)
+//            }
+//        }
 
         ChatReplyPanel {
             id: chatReply
@@ -303,7 +301,7 @@ Item {
             anchors.left: chatName.right
             anchors.leftMargin: 4
             color: Style.current.secondaryText
-            //timestamp: timestamp
+            timestamp: messageTimestamp
         }
 
         Loader {
@@ -376,7 +374,7 @@ Item {
                 StatusChatInput {
                     id: editTextInput
                     chatInputPlaceholder: qsTrId("type-a-message-")
-                    chatType: rootStore.chatsModelInst.channelView.activeChannel.chatType
+                    chatType: chatTypeThisMessageBelongsTo
                     isEdit: true
                     textInput.text: editMessageLoader.sourceText
                     onSendMessage: {
@@ -437,7 +435,8 @@ Item {
             visible: !isEdit
             ChatTextView {
                 id: chatText
-                store: rootStore
+                // Not Refactored Yet
+//                store: rootStore
                 readonly property int leftPadding: chatImage.anchors.leftMargin + chatImage.width + chatHorizontalPadding
                 visible: {
                     const urls = linkUrls.split(" ")
@@ -544,7 +543,8 @@ Item {
 
                 sourceComponent: Component {
                     LinksMessageView {
-                        store: rootStore
+                        // Not Refactored Yet
+//                        store: rootStore
                         linkUrls: linkUrls
                         container: root.container
                         isCurrentUser: isCurrentUser
@@ -585,7 +585,8 @@ Item {
                 sourceComponent: Component {
                     id: invitationBubble
                     InvitationBubbleView {
-                        store: rootStore
+                        // Not Refactored Yet
+//                        store: rootStore
                         communityId: root.container.communityId
                     }
                 }

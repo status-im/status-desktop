@@ -64,6 +64,9 @@ QtObject:
     result.msgCursor = initTable[string, string]()
     result.pinnedMsgCursor = initTable[string, string]()
 
+  proc initialMessagesFetched(self: Service, chatId: string): bool =
+    return self.msgCursor.hasKey(chatId)
+    
   proc getCurrentMessageCursor(self: Service, chatId: string): string =
     if(not self.msgCursor.hasKey(chatId)):
       self.msgCursor[chatId] = ""
@@ -140,6 +143,9 @@ QtObject:
     self.threadpool.start(arg)
 
   proc asyncLoadInitialMessagesForChat*(self: Service, chatId: string) =
+    if(self.initialMessagesFetched(chatId)):
+      return
+
     if(self.getCurrentMessageCursor(chatId).len > 0):
       return
 

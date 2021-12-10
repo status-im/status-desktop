@@ -31,7 +31,6 @@ Item {
 
     property real scrollY: chatLogView.visibleArea.yPosition * chatLogView.contentHeight
     property int newMessages: 0
-    property int countOnStartUp: 0
 
     ListView {
         id: chatLogView
@@ -286,41 +285,16 @@ Item {
 //            }
 //        }
 
-        model: messageListDelegate
+        model: messageStore.messageModule.model
         section.property: "sectionIdentifier"
         section.criteria: ViewSection.FullString
 
         // Not Refactored Yet
         //Component.onCompleted: scrollToBottom(true)
-    }
-
-//    MessageDialog {
-//        id: sendingMsgFailedPopup
-//        standardButtons: StandardButton.Ok
-//        //% "Failed to send message."
-//        text: qsTrId("failed-to-send-message-")
-//        icon: StandardIcon.Critical
-//    }
-
-    Timer {
-        id: modelLoadingDelayTimer
-        interval: 1000
-        onTriggered: {
-            root.countOnStartUp = messageListDelegate.count;
-        }
-    }
-
-    DelegateModelGeneralized {
-        id: messageListDelegate
-        lessThan: [
-            function(left, right) { return left.clock > right.clock }
-        ]
-
-        model: messageStore.messageModule.model
 
         delegate: MessageView {
             id: msgDelegate
-            rootStore: root.store
+
             messageStore: root.messageStore
 
             messageId: model.id
@@ -338,6 +312,10 @@ Item {
             messageContentType: model.contentType
             pinnedMessage: model.pinned
 
+            // Used only in case of ChatIdentifier
+            chatTypeThisMessageBelongsTo: model.chatTypeThisMessageBelongsTo
+            chatColorThisMessageBelongsTo: model.chatColorThisMessageBelongsTo
+
             // This is possible since we have all data loaded before we load qml.
             // When we fetch messages to fulfill a gap we have to set them at once.
             prevMessageIndex: index - 1
@@ -345,125 +323,16 @@ Item {
             nextMessageIndex: index + 1
             nextMessageAsJsonObj: messageStore.getMessageByIndexAsJson(index + 1)
 
-
-            /////////////TODO Remove
-//            fromAuthor: model.fromAuthor
-//            chatId: model.chatId
-//            userName: model.userName
-//            alias: model.alias
-//            localName: model.localName
-//            message: model.message
-//            plainText: model.plainText
-//            identicon: model.identicon
-//            isCurrentUser: model.isCurrentUser
-//            timestamp: model.timestamp
-//            sticker: model.sticker
-//            contentType: model.contentType
-//            replaces: model.replaces
-//            isEdited: model.isEdited
-//            outgoingStatus: model.outgoingStatus
-//            responseTo: model.responseTo
-//            authorCurrentMsg: msgDelegate.ListView.section
-//            // The previous message is actually the nextSection since we reversed the list order
-//            authorPrevMsg: msgDelegate.ListView.nextSection
-//            imageClick: imagePopup.openPopup.bind(imagePopup)
-//            messageId: model.messageId
-//            emojiReactions: model.emojiReactions
-//            linkUrls: model.linkUrls
-//            communityId: model.communityId
-//            hasMention: model.hasMention
-//            stickerPackId: model.stickerPackId
-//            pinnedMessage: model.isPinned
-//            pinnedBy: model.pinnedBy
-//            gapFrom: model.gapFrom
-//            gapTo: model.gapTo
-//            visible: !model.hide
-//            messageContextMenu: root.messageContextMenuInst
-
-//            prevMessageIndex: {
-//                // This is used in order to have access to the previous message and determine the timestamp
-//                // we can't rely on the index because the sequence of messages is not ordered on the nim side
-//                if (msgDelegate.DelegateModel.itemsIndex < messageListDelegate.items.count - 1) {
-//                    return messageListDelegate.items.get(msgDelegate.DelegateModel.itemsIndex + 1).model.index
-//                }
-//                return -1;
-//            }
-//            nextMessageIndex: {
-//                if (msgDelegate.DelegateModel.itemsIndex < 1) {
-//                    return -1
-//                }
-//                return messageListDelegate.items.get(msgDelegate.DelegateModel.itemsIndex - 1).model.index
-//            }
-//            scrollToBottom: chatLogView.scrollToBottom
-//            timeout: model.timeout
-
             Component.onCompleted: {
-                if ((root.countOnStartUp > 0) && (root.countOnStartUp - 1) < index) {
-                    //new message, increment z order
-                    z = index;
-                }
-
-//                messageStore.messageId = model.id
-//                messageStore.responseToMessageWithId = model.responseToMessageWithId
-//                messageStore.senderId = model.senderId
-//                messageStore.senderDisplayName = model.senderDisplayName
-//                messageStore.senderLocalName = model.senderLocalName
-//                messageStore.senderIcon = model.senderIcon
-//                messageStore.isSenderIconIdenticon = model.isSenderIconIdenticon
-//                messageStore.amISender = model.amISender
-//                messageStore.message = model.messageText
-//                messageStore.messageImage = model.messageImage
-//                messageStore.messageTimestamp = model.timestamp
-//                messageStore.messageOutgoingStatus = model.outgoingStatus
-//                messageStore.messageContentType = model.contentType
-//                messageStore.pinnedMessage = model.pinned
-
-
-//                messageStore.fromAuthor = model.fromAuthor;
-//                messageStore.chatId = model.chatId;
-//                messageStore.userName = model.userName;
-//                messageStore.alias = model.alias;
-//                messageStore.localName = model.localName;
-//                messageStore.message = model.message;
-//                messageStore.plainText = model.plainText;
-//                messageStore.identicon = model.identicon;
-//                messageStore.isCurrentUser = model.isCurrentUser;
-//                messageStore.timestamp = model.timestamp;
-//                messageStore.sticker = model.sticker;
-//                messageStore.contentType = model.contentType;
-//                messageStore.replaces = model.replaces;
-//                messageStore.isEdited = model.isEdited;
-//                messageStore.outgoingStatus = model.outgoingStatus;
-//                messageStore.responseTo = model.responseTo;
-//                messageStore.authorCurrentMsg = msgDelegate.ListView.section;
-//                // The previous message is actually the nextSection since we reversed the list order
-//                messageStore.authorPrevMsg = msgDelegate.ListView.nextSection;
-//                messageStore.imageClick = imagePopup.openPopup.bind(imagePopup);
-//                messageStore.messageId = model.messageId;
-//                messageStore.emojiReactions = model.emojiReactions;
-//                messageStore.linkUrls = model.linkUrls;
-//                messageStore.communityId = model.communityId;
-//                messageStore.hasMention = model.hasMention;
-//                messageStore.stickerPackId = model.stickerPackId;
-//                messageStore.pinnedMessage = model.isPinned;
-//                messageStore.pinnedBy = model.pinnedBy;
-//                messageStore.gapFrom = model.gapFrom;
-//                messageStore.gapTo = model.gapTo;
-//                messageStore.messageContextMenu = root.messageContextMenuInst;
-//                messageStore.prevMessageIndex =
-//                    // This is used in order to have access to the previous message and determine the timestamp
-//                    // we can't rely on the index because the sequence of messages is not ordered on the nim side
-//                   (msgDelegate.DelegateModel.itemsIndex < messageListDelegate.items.count - 1) ?
-//                      messageListDelegate.items.get(msgDelegate.DelegateModel.itemsIndex + 1).model.index
-//                    : -1;
-//                messageStore.nextMessageIndex = (msgDelegate.DelegateModel.itemsIndex < 1) ?
-//                        -1 : messageListDelegate.items.get(msgDelegate.DelegateModel.itemsIndex - 1).model.index;
-//                messageStore.scrollToBottom = chatLogView.scrollToBottom;
-//                messageStore.timeout = model.timeout;
             }
         }
-        Component.onCompleted: {
-            modelLoadingDelayTimer.start();
-        }
     }
+
+//    MessageDialog {
+//        id: sendingMsgFailedPopup
+//        standardButtons: StandardButton.Ok
+//        //% "Failed to send message."
+//        text: qsTrId("failed-to-send-message-")
+//        icon: StandardIcon.Critical
+//    }
 }

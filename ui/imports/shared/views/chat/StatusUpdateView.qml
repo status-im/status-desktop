@@ -12,7 +12,7 @@ import StatusQ.Controls 0.1
 
 MouseArea {
     id: root
-    property var store
+//    property var store
     property bool hovered: containsMouse
     property var container
     property int statusAgeEpoch: 0
@@ -111,7 +111,7 @@ MouseArea {
             anchors.leftMargin: Style.current.halfPadding
             anchors.right: parent.right
             anchors.rightMargin: Style.current.padding
-            store: root.store
+//            store: root.store
         }
 
         Loader {

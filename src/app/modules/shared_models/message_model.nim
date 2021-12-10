@@ -1,4 +1,4 @@
-import NimQml, Tables, json, strutils
+import NimQml, Tables, json, strutils, strformat
 
 import message_item
 
@@ -25,6 +25,8 @@ type
     # GapTo
     Pinned
     CountsForReactions
+    ChatTypeThisMessageBelongsTo
+    ChatColorThisMessageBelongsTo
 
 QtObject:
   type
@@ -41,6 +43,12 @@ QtObject:
   proc newModel*(): Model =
     new(result, delete)
     result.setup
+
+  proc `$`*(self: Model): string =
+    for i in 0 ..< self.items.len:
+      result &= fmt"""MessageModel:
+      [{i}]:({$self.items[i]})
+      """
 
   proc countChanged(self: Model) {.signal.}
   proc getCount(self: Model): int {.slot.} =
@@ -75,6 +83,8 @@ QtObject:
       # ModelRole.GapTo.int:"gapTo",
       ModelRole.Pinned.int:"pinned",
       ModelRole.CountsForReactions.int:"countsForReactions",
+      ModelRole.ChatTypeThisMessageBelongsTo.int:"chatTypeThisMessageBelongsTo",
+      ModelRole.ChatColorThisMessageBelongsTo.int:"chatColorThisMessageBelongsTo",
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -130,6 +140,10 @@ QtObject:
       result = newQVariant(item.pinned)
     of ModelRole.CountsForReactions: 
       result = newQVariant($(%* item.getCountsForReactions))
+    of ModelRole.ChatTypeThisMessageBelongsTo: 
+      result = newQVariant(item.chatTypeThisMessageBelongsTo)
+    of ModelRole.ChatColorThisMessageBelongsTo: 
+      result = newQVariant(item.chatColorThisMessageBelongsTo)
 
   proc findIndexForMessageId(self: Model, messageId: string): int = 
     for i in 0 ..< self.items.len:
