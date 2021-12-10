@@ -427,8 +427,9 @@ Item {
             anchors.top: chatName.visible ? chatName.bottom :
                                             chatReply.active ? chatReply.bottom :
                                                 pinnedRectangleLoader.active ? pinnedRectangleLoader.bottom : parent.top
-            anchors.left: chatImage.right
-            anchors.leftMargin: root.chatHorizontalPadding
+            // This entire component needs to be reworked and moved to StatusQ, hence providing a hardcoded fix for #4211.
+            anchors.left: parent.left
+            anchors.leftMargin: chatImage.imageWidth + Style.current.padding + root.chatHorizontalPadding
             anchors.right: parent.right
             anchors.rightMargin: root.chatHorizontalPadding
             visible: !isEdit
