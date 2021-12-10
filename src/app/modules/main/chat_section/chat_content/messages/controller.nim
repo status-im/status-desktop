@@ -81,3 +81,7 @@ method pinUnpinMessage*(self: Controller, messageId: string, pin: bool) =
 
 method getContactById*(self: Controller, contactId: string): ContactsDto =
   return self.contactService.getContactById(contactId)
+
+method getContactNameAndImage*(self: Controller, contactId: string): 
+  tuple[name: string, image: string, isIdenticon: bool] =
+  return self.contactService.getContactNameAndImage(contactId)

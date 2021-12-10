@@ -6,7 +6,7 @@ QtObject:
   type
     View* = ref object of QObject
       delegate: io_interface.AccessInterface
-      model*: Model
+      model: Model
       modelVariant: QVariant
       
   proc delete*(self: View) =
@@ -24,6 +24,9 @@ QtObject:
   proc load*(self: View) =
     self.delegate.viewDidLoad()
 
+  proc model*(self: View): Model =
+    return self.model
+
   proc getModel(self: View): QVariant {.slot.} =
     return self.modelVariant
 
@@ -33,8 +36,8 @@ QtObject:
   proc toggleReaction*(self: View, messageId: string, emojiId: int) {.slot.} = 
     self.delegate.toggleReaction(messageId, emojiId)
 
-  proc getNamesForReaction*(self: View, messageId: string, emojiId: int): string {.slot.} = 
-    return $(%* self.model.getNamesForReaction(messageId, emojiId))
+  proc getNamesReactedWithEmojiIdForMessageId*(self: View, messageId: string, emojiId: int): string {.slot.} = 
+    return $(%* self.delegate.getNamesReactedWithEmojiIdForMessageId(messageId, emojiId))
 
   proc pinMessage*(self: View, messageId: string) {.slot.} = 
     self.delegate.pinUnpinMessage(messageId, true)
