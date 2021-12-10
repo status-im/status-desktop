@@ -1,4 +1,4 @@
-import Tables, json
+import Tables, json, strformat
 
 type
   ContentType* {.pure.} = enum
@@ -41,9 +41,13 @@ type
     reactions: OrderedTable[int, seq[tuple[publicKey: string, reactionId: string]]] # [emojiId, list of [user publicKey reacted with the emojiId, reaction id]]
     reactionIds: seq[string]
     pinned: bool
+    # used in case of ContentType.ChatIdentifier only
+    chatTypeThisMessageBelongsTo: int
+    chatColorThisMessageBelongsTo: string
 
-proc initItem*(id, responseToMessageWithId, senderId, senderDisplayName, senderLocalName, senderIcon: string, isSenderIconIdenticon, amISender: bool, 
-  outgoingStatus, text, image: string, seen: bool, timestamp: int64, contentType: ContentType, messageType: int): Item =
+proc initItem*(id, responseToMessageWithId, senderId, senderDisplayName, senderLocalName, senderIcon: string, 
+  isSenderIconIdenticon, amISender: bool, outgoingStatus, text, image: string, seen: bool, timestamp: int64, 
+  contentType: ContentType, messageType: int): Item =
   result = Item()
   result.id = id
   result.responseToMessageWithId = responseToMessageWithId
@@ -113,6 +117,19 @@ proc pinned*(self: Item): bool {.inline.} =
 proc `pinned=`*(self: Item, value: bool) {.inline.} = 
   self.pinned = value
 
+proc chatTypeThisMessageBelongsTo*(self: Item): int {.inline.} = 
+  self.chatTypeThisMessageBelongsTo
+
+proc `chatTypeThisMessageBelongsTo=`*(self: Item, value: int) {.inline.} = 
+  self.chatTypeThisMessageBelongsTo = value
+
+proc chatColorThisMessageBelongsTo*(self: Item): string {.inline.} = 
+  self.chatColorThisMessageBelongsTo
+
+proc `chatColorThisMessageBelongsTo=`*(self: Item, value: string) {.inline.} = 
+  self.chatColorThisMessageBelongsTo = value
+
+
 proc shouldAddReaction*(self: Item, emojiId: int, publicKey: string): bool = 
   for k, values in self.reactions:
     if(k != emojiId):
@@ -174,6 +191,21 @@ proc getCountsForReactions*(self: Item): seq[JsonNode] =
       continue
 
     result.add(%* {"emojiId": k, "counts": v.len})
+
+proc `$`*(self: Item): string =
+  result = fmt"""MessageItem(
+    id: {self.id}, 
+    responseToMessageWithId: {self.responseToMessageWithId},
+    senderId: {self.senderId}, 
+    senderDisplayName: {self.senderDisplayName},
+    senderLocalName: {self.senderLocalName},
+    timestamp: {self.timestamp}, 
+    contentType: {self.contentType.int}, 
+    messageType:{self.messageType},
+    chatTypeThisMessageBelongsTo:{self.chatTypeThisMessageBelongsTo},
+    chatColorThisMessageBelongsTo:{self.chatColorThisMessageBelongsTo},
+    pinned:{self.pinned}
+    ]"""
 
 proc toJsonNode*(self: Item): JsonNode =
   result = %* {

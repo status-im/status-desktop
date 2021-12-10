@@ -3,6 +3,7 @@ import controller_interface
 import io_interface
 
 import ../../../../../../app_service/service/contacts/service as contact_service
+import ../../../../../../app_service/service/chat/service as chat_service
 import ../../../../../../app_service/service/message/service as message_service
 
 import ../../../../../core/signals/types
@@ -20,16 +21,19 @@ type
     chatId: string
     belongsToCommunity: bool
     contactService: contact_service.Service
+    chatService: chat_service.Service
     messageService: message_service.Service
 
 proc newController*(delegate: io_interface.AccessInterface, events: EventEmitter, chatId: string, belongsToCommunity: bool, 
-  contactService: contact_service.Service, messageService: message_service.Service): Controller =
+  contactService: contact_service.Service, chatService: chat_service.Service, messageService: message_service.Service): 
+  Controller =
   result = Controller()
   result.delegate = delegate
   result.events = events
   result.chatId = chatId
   result.belongsToCommunity = belongsToCommunity
   result.contactService = contactService
+  result.chatService = chatService
   result.messageService = messageService
   
 method delete*(self: Controller) =
@@ -56,6 +60,12 @@ method init*(self: Controller) =
 
 method getChatId*(self: Controller): string =
   return self.chatId
+
+method getChatDetails*(self: Controller): ChatDto =
+  return self.chatService.getChatById(self.chatId)
+
+method getOneToOneChatNameAndImage*(self: Controller): tuple[name: string, image: string, isIdenticon: bool] =
+  return self.chatService.getOneToOneChatNameAndImage(self.chatId)
 
 method belongsToCommunity*(self: Controller): bool =
   return self.belongsToCommunity
