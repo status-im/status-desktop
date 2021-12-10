@@ -28,8 +28,6 @@ const LSS_KEY_IS_TENOR_WARNING_ACCEPTED* = "isTenorWarningAccepted"
 const DEFAULT_IS_TENOR_WARNING_ACCEPTED = false
 const LSS_KEY_DISPLAY_CHAT_IMAGES* = "displayChatImages"
 const DEFAULT_DISPLAY_CHAT_IMAGES = false
-const LSS_KEY_USE_COMPACT_MODE* = "useCompactMode"
-const DEFAULT_USE_COMPACT_MODE = true
 const LSS_KEY_TIMELINE_ENABLED* = "timelineEnabled"
 const DEFAULT_TIMELINE_ENABLED = true
 const LSS_KEY_RECENT_EMOJIS* = "recentEmojis"
@@ -344,19 +342,6 @@ QtObject:
     read = getDisplayChatImages
     write = setDisplayChatImages
     notify = displayChatImagesChanged
-
-
-  proc useCompactModeChanged*(self: LocalAccountSensitiveSettings) {.signal.}
-  proc getUseCompactMode*(self: LocalAccountSensitiveSettings): bool {.slot.} =
-    getSettingsProp[bool](self, LSS_KEY_USE_COMPACT_MODE, newQVariant(DEFAULT_USE_COMPACT_MODE))
-  proc setUseCompactMode*(self: LocalAccountSensitiveSettings, value: bool) {.slot.} =
-    setSettingsProp(self, LSS_KEY_USE_COMPACT_MODE, newQVariant(value)):
-      self.useCompactModeChanged()
-
-  QtProperty[bool] useCompactMode:
-    read = getUseCompactMode
-    write = setUseCompactMode
-    notify = useCompactModeChanged
 
 
   proc timelineEnabledChanged*(self: LocalAccountSensitiveSettings) {.signal.}
@@ -874,7 +859,6 @@ QtObject:
       of LSS_KEY_IS_GIF_WIDGET_ENABLED: self.isGifWidgetEnabledChanged()
       of LSS_KEY_IS_TENOR_WARNING_ACCEPTED: self.isTenorWarningAcceptedChanged()
       of LSS_KEY_DISPLAY_CHAT_IMAGES: self.displayChatImagesChanged()
-      of LSS_KEY_USE_COMPACT_MODE: self.useCompactModeChanged()
       of LSS_KEY_TIMELINE_ENABLED: self.timelineEnabledChanged()
       of LSS_KEY_RECENT_EMOJIS: self.recentEmojisChanged()
       of LSS_KEY_HIDDEN_COMMUNITY_WELCOME_BANNERS: self.hiddenCommunityWelcomeBannersChanged()

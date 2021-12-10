@@ -163,9 +163,9 @@ Loader {
                 text: {
                     if (repliedMessageIsEdited){
                         let index = repliedMessageContent.length - 4
-                        return Utils.getReplyMessageStyle(Emoji.parse(Utils.linkifyAndXSS(repliedMessageContent.slice(0, index) + Constants.editLabel + repliedMessageContent.slice(index)), Emoji.size.small), amISenderOfTheRepliedMessage, localAccountSensitiveSettings.useCompactMode)
+                        return Utils.getReplyMessageStyle(Emoji.parse(Utils.linkifyAndXSS(repliedMessageContent.slice(0, index) + Constants.editLabel + repliedMessageContent.slice(index)), Emoji.size.small), amISenderOfTheRepliedMessage)
                     } else {
-                        return Utils.getReplyMessageStyle(Emoji.parse(Utils.linkifyAndXSS(repliedMessageContent), Emoji.size.small), amISenderOfTheRepliedMessage, localAccountSensitiveSettings.useCompactMode)
+                        return Utils.getReplyMessageStyle(Emoji.parse(Utils.linkifyAndXSS(repliedMessageContent), Emoji.size.small), amISenderOfTheRepliedMessage)
                     }
                 }
                 textFormat: Text.RichText
