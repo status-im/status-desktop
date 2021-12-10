@@ -27,3 +27,7 @@ method pinUnpinMessage*(self: AccessInterface, messageId: string, pin: bool) {.b
 
 method getContactById*(self: AccessInterface, contactId: string): ContactsDto {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method getContactNameAndImage*(self: AccessInterface, contactId: string): 
+  tuple[name: string, image: string, isIdenticon: bool] {.base.} =
+  raise newException(ValueError, "No implementation available")

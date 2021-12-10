@@ -38,7 +38,7 @@ type
     timestamp: int64
     contentType: ContentType
     messageType: int
-    reactions: OrderedTable[int, seq[tuple[name: string, reactionId: string]]] # [emojiId, list of [names reacted with the emojiId, reaction id]]
+    reactions: OrderedTable[int, seq[tuple[publicKey: string, reactionId: string]]] # [emojiId, list of [user publicKey reacted with the emojiId, reaction id]]
     reactionIds: seq[string]
     pinned: bool
 
@@ -113,38 +113,38 @@ proc pinned*(self: Item): bool {.inline.} =
 proc `pinned=`*(self: Item, value: bool) {.inline.} = 
   self.pinned = value
 
-proc shouldAddReaction*(self: Item, emojiId: int, name: string): bool = 
+proc shouldAddReaction*(self: Item, emojiId: int, publicKey: string): bool = 
   for k, values in self.reactions:
     if(k != emojiId):
       continue
 
     for t in values:
-      if(t.name == name):
+      if(t.publicKey == publicKey):
         return false
 
   return true
 
-proc getReactionId*(self: Item, emojiId: int, name: string): string = 
+proc getReactionId*(self: Item, emojiId: int, publicKey: string): string = 
   for k, values in self.reactions:
     if(k != emojiId):
       continue
 
     for t in values:
-      if(t.name == name):
+      if(t.publicKey == publicKey):
         return t.reactionId
 
   # we should never be here, since this is a controlled call
   return ""
 
-proc addReaction*(self: Item, emojiId: int, name: string, reactionId: string) = 
+proc addReaction*(self: Item, emojiId: int, publicKey: string, reactionId: string) = 
   if(not self.reactions.contains(emojiId)):
     self.reactions[emojiId] = @[]
     
-  self.reactions[emojiId].add((name, reactionId))
+  self.reactions[emojiId].add((publicKey, reactionId))
 
 proc removeReaction*(self: Item, reactionId: string) = 
-  var key: int
-  var index: int
+  var key = -1
+  var index = -1
   for k, values in self.reactions:
     var i = -1
     for t in values:
@@ -152,17 +152,21 @@ proc removeReaction*(self: Item, reactionId: string) =
       if(t.reactionId == reactionId):
         key = k
         index = i
+        break
+
+  if(key == -1 or index == -1):
+    return
 
   self.reactions[key].del(index)
   if(self.reactions[key].len == 0):
     self.reactions.del(key)
 
-proc getNamesForReactions*(self: Item, emojiId: int): seq[string] = 
+proc getPubKeysReactedWithEmojiId*(self: Item, emojiId: int): seq[string] = 
   if(not self.reactions.contains(emojiId)):
     return
 
   for v in self.reactions[emojiId]:
-    result.add(v.name)
+    result.add(v.publicKey)
 
 proc getCountsForReactions*(self: Item): seq[JsonNode] = 
   for k, v in self.reactions:

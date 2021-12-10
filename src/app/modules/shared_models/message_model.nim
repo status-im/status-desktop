@@ -198,10 +198,10 @@ QtObject:
     let index = self.createIndex(ind, 0, nil)
     self.dataChanged(index, index, @[ModelRole.CountsForReactions.int])
 
-  proc getNamesForReaction*(self: Model, messageId: string, emojiId: int): seq[string] = 
+  proc getPubKeysReactedWithEmojiIdForMessageId*(self: Model, messageId: string, emojiId: int): seq[string] = 
     for i in 0 ..< self.items.len:
       if(self.items[i].id == messageId):
-        return self.items[i].getNamesForReactions(emojiId)
+        return self.items[i].getPubKeysReactedWithEmojiId(emojiId)
 
   proc pinUnpinMessage*(self: Model, messageId: string, pin: bool) = 
     let ind = self.findIndexForMessageId(messageId)
