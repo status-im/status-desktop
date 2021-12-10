@@ -36,7 +36,7 @@ Item {
     ListView {
         id: chatLogView
         anchors.fill: parent
-        spacing: localAccountSensitiveSettings.useCompactMode ? 0 : 4
+        spacing: 0
         boundsBehavior: Flickable.StopAtBounds
         clip: true
         verticalLayoutDirection: ListView.BottomToTop
@@ -79,7 +79,7 @@ Item {
 //                    item = messageListDelegate.items.get(i);
 //                    if (item.model.messageId === msgId) {
 //                        chatLogView.positionViewAtIndex(i, ListView.Beginning);
-//                        if (localAccountSensitiveSettings.useCompactMode && isSearch) {
+//                        if (isSearch) {
 //                            chatLogView.itemAtIndex(i).startMessageFoundAnimation();
 //                        }
 //                    }

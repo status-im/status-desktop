@@ -12,8 +12,7 @@ Item {
     property var store
     property bool longChatText: true
     property bool veryLongChatText: false
-//    property bool veryLongChatText: !!root.store ? root.store.chatsModelInst.plainText(message).length >
-//                                    (localAccountSensitiveSettings.useCompactMode ? Constants.limitLongChatTextCompactMode : Constants.limitLongChatText) : false
+//    property bool veryLongChatText: !!root.store ? root.store.chatsModelInst.plainText(message).length > Constants.limitLongChatTextCompactMode : false
     property bool readMore: false
     property alias textField: chatText
 
@@ -117,9 +116,9 @@ Item {
             } else {
                 if(isEdited){
                     let index = msg.endsWith("code>") ? msg.length : msg.length - 4
-                    return Utils.getMessageWithStyle(Emoji.parse(msg.slice(0, index) + Constants.editLabel + msg.slice(index)), localAccountSensitiveSettings.useCompactMode, isCurrentUser, hoveredLink)
+                    return Utils.getMessageWithStyle(Emoji.parse(msg.slice(0, index) + Constants.editLabel + msg.slice(index)), isCurrentUser, hoveredLink)
                 }
-                return Utils.getMessageWithStyle(Emoji.parse(msg), localAccountSensitiveSettings.useCompactMode, isCurrentUser, hoveredLink)
+                return Utils.getMessageWithStyle(Emoji.parse(msg), isCurrentUser, hoveredLink)
             }
         }
     }

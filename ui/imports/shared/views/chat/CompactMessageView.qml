@@ -358,7 +358,7 @@ Item {
                     sourceText = sourceText.replace(new RegExp(key, 'g'), value)
                 }
                 sourceText = sourceText.replace(/\n/g, "<br />")
-                sourceText = Utils.getMessageWithStyle(sourceText, localAccountSensitiveSettings.useCompactMode, isCurrentUser)
+                sourceText = Utils.getMessageWithStyle(sourceText, isCurrentUser)
             }
 
             sourceComponent: Item {
