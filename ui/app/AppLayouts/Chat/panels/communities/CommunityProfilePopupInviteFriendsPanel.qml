@@ -21,14 +21,15 @@ Column {
     property alias contactListSearch: contactFieldAndList
 
     function sendInvites(pubKeys) {
-        const error = chatsModel.communities.inviteUsersToCommunityById(root.community.id, JSON.stringify(pubKeys))
-        if (error) {
-            console.error('Error inviting', error)
-            contactFieldAndList.validationError = error
-            return
-        }
-        //% "Invite successfully sent"
-        contactFieldAndList.successMessage = qsTrId("invite-successfully-sent")
+        // Not Refactored Yet
+//        const error = chatsModel.communities.inviteUsersToCommunityById(root.community.id, JSON.stringify(pubKeys))
+//        if (error) {
+//            console.error('Error inviting', error)
+//            contactFieldAndList.validationError = error
+//            return
+//        }
+//        //% "Invite successfully sent"
+//        contactFieldAndList.successMessage = qsTrId("invite-successfully-sent")
     }
 
     StatusDescriptionListItem {
@@ -39,9 +40,10 @@ Column {
         tooltip.text: qsTrId("copy-to-clipboard")
         icon.name: "copy"
         iconButton.onClicked: {
-            let link = `${Constants.communityLinkPrefix}${root.community.id}`
-            chatsModel.copyToClipboard(link)
-            tooltip.visible = !tooltip.visible
+            // Not Refactored Yet
+//            let link = `${Constants.communityLinkPrefix}${root.community.id}`
+//            chatsModel.copyToClipboard(link)
+//            tooltip.visible = !tooltip.visible
         }
         width: parent.width
     }

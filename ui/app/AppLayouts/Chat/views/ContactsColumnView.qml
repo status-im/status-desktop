@@ -350,13 +350,14 @@ Item {
         id: communitiesPopupComponent
         CommunitiesPopup {
             anchors.centerIn: parent
-            communitiesList: root.store.chatsModelInst.communities.list
-            onSetActiveCommunity: {
-                root.store.chatsModelInst.communities.setActiveCommunity(id)
-            }
-            onSetObservedCommunity: {
-                root.store.chatsModelInst.communities.setObservedCommunity(id)
-            }
+            // Not Refactored Yet
+//            communitiesList: root.store.chatsModelInst.communities.list
+//            onSetActiveCommunity: {
+//                root.store.chatsModelInst.communities.setActiveCommunity(id)
+//            }
+//            onSetObservedCommunity: {
+//                root.store.chatsModelInst.communities.setObservedCommunity(id)
+//            }
             onClosed: {
                 destroy()
             }
@@ -378,7 +379,8 @@ Item {
         id: importCommunitiesPopupComponent
         AccessExistingCommunityPopup {
             anchors.centerIn: parent
-            error: root.store.chatsModelInst.communities.importCommunity(communityKey, Utils.uuid())
+            // Not Refactored Yet
+//            error: root.store.chatsModelInst.communities.importCommunity(communityKey, Utils.uuid())
             onClosed: {
                 destroy()
             }
@@ -406,51 +408,52 @@ Item {
         }
     }
 
-    Connections {
-        target: root.store.chatsModelInst.communities
-        onImportingCommunityStateChanged: {
-            if (state !== Constants.communityImported &&
-                state !== Constants.communityImportingInProgress &&
-                state !== Constants.communityImportingError)
-            {
-                return
-            }
+    // Not Refactored Yet
+//    Connections {
+//        target: root.store.chatsModelInst.communities
+//        onImportingCommunityStateChanged: {
+//            if (state !== Constants.communityImported &&
+//                state !== Constants.communityImportingInProgress &&
+//                state !== Constants.communityImportingError)
+//            {
+//                return
+//            }
 
-            if (state === Constants.communityImported)
-            {
-                if (toastMessage.uuid !== communityImportingProcessId)
-                    return
+//            if (state === Constants.communityImported)
+//            {
+//                if (toastMessage.uuid !== communityImportingProcessId)
+//                    return
 
-                toastMessage.close()
+//                toastMessage.close()
 
-                //% "Community imported"
-                toastMessage.title = qsTrId("community-imported")
-                toastMessage.source = ""
-                toastMessage.iconRotates = false
-                toastMessage.dissapearInMs = 4000
-            }
-            else if (state === Constants.communityImportingInProgress)
-            {
-                toastMessage.uuid = communityImportingProcessId
-                //% "Importing community is in progress"
-                toastMessage.title = qsTrId("importing-community-is-in-progress")
-                toastMessage.source = Style.svg("loading")
-                toastMessage.iconRotates = true
-                toastMessage.dissapearInMs = -1
-            }
-            else if (state === Constants.communityImportingError)
-            {
-                if (toastMessage.uuid !== communityImportingProcessId)
-                    return
+//                //% "Community imported"
+//                toastMessage.title = qsTrId("community-imported")
+//                toastMessage.source = ""
+//                toastMessage.iconRotates = false
+//                toastMessage.dissapearInMs = 4000
+//            }
+//            else if (state === Constants.communityImportingInProgress)
+//            {
+//                toastMessage.uuid = communityImportingProcessId
+//                //% "Importing community is in progress"
+//                toastMessage.title = qsTrId("importing-community-is-in-progress")
+//                toastMessage.source = Style.svg("loading")
+//                toastMessage.iconRotates = true
+//                toastMessage.dissapearInMs = -1
+//            }
+//            else if (state === Constants.communityImportingError)
+//            {
+//                if (toastMessage.uuid !== communityImportingProcessId)
+//                    return
 
-                toastMessage.close()
-                return
-            }
+//                toastMessage.close()
+//                return
+//            }
 
-            toastMessage.displayCloseButton = false
-            toastMessage.displayLink = false
-            toastMessage.iconColor = Style.current.primary
-            toastMessage.open()
-        }
-    }
+//            toastMessage.displayCloseButton = false
+//            toastMessage.displayLink = false
+//            toastMessage.iconColor = Style.current.primary
+//            toastMessage.open()
+//        }
+//    }
 }

@@ -9,14 +9,17 @@ QtObject {
     property var accounts: walletSectionAccounts.model
     property string defaultCurrency: walletSection.currentCurrency
     property string signingPhrase: walletSection.signingPhrase
-    property string etherscanString: walletModel.utilsView.etherscanLink
+    // Not Refactored Yet
+    property string etherscanString: ""// walletModel.utilsView.etherscanLink
 
     function setDappBrowserAddress() {
-        walletModel.setDappBrowserAddress()
+        // Not Refactored Yet
+//        walletModel.setDappBrowserAddress()
     }
 
     function getGasPrice(){
-        walletModel.gasView.getGasPrice()
+        // Not Refactored Yet
+//        walletModel.gasView.getGasPrice()
     }
 
 }

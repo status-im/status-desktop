@@ -23,39 +23,41 @@ ModalPopup {
     property var onSuccess: (function(){})
 
     Component.onCompleted: {
-        walletModel.gasView.getGasPricePredictions()
+        // Not Refactored Yet
+//        walletModel.gasView.getGasPricePredictions()
     }
 
     height: 540
 
     function sendTransaction() {
-        try {
-            let responseStr = profileModel.ens.setPubKey(root.ensUsername,
-                                                        selectFromAccount.selectedAccount.address,
-                                                        gasSelector.selectedGasLimit,
-                                                        gasSelector.eip1599Enabled ? "" : gasSelector.selectedGasPrice,
-                                                        gasSelector.selectedTipLimit,
-                                                        gasSelector.selectedOverallLimit,
-                                                        transactionSigner.enteredPassword)
-            let response = JSON.parse(responseStr)
+        // Not Refactored Yet
+//        try {
+//            let responseStr = profileModel.ens.setPubKey(root.ensUsername,
+//                                                        selectFromAccount.selectedAccount.address,
+//                                                        gasSelector.selectedGasLimit,
+//                                                        gasSelector.eip1599Enabled ? "" : gasSelector.selectedGasPrice,
+//                                                        gasSelector.selectedTipLimit,
+//                                                        gasSelector.selectedOverallLimit,
+//                                                        transactionSigner.enteredPassword)
+//            let response = JSON.parse(responseStr)
 
-            if (!response.success) {
-                if (Utils.isInvalidPasswordMessage(response.result)){
-                    //% "Wrong password"
-                    transactionSigner.validationError = qsTrId("wrong-password")
-                    return
-                }
-                sendingError.text = response.result
-                return sendingError.open()
-            }
+//            if (!response.success) {
+//                if (Utils.isInvalidPasswordMessage(response.result)){
+//                    //% "Wrong password"
+//                    transactionSigner.validationError = qsTrId("wrong-password")
+//                    return
+//                }
+//                sendingError.text = response.result
+//                return sendingError.open()
+//            }
 
-            onSuccess();
-            root.close();
-        } catch (e) {
-            console.error('Error sending the transaction', e)
-            sendingError.text = "Error sending the transaction: " + e.message;
-            return sendingError.open()
-        }
+//            onSuccess();
+//            root.close();
+//        } catch (e) {
+//            console.error('Error sending the transaction', e)
+//            sendingError.text = "Error sending the transaction: " + e.message;
+//            return sendingError.open()
+//        }
     }
 
     property MessageDialog sendingError: MessageDialog {
@@ -92,7 +94,8 @@ ModalPopup {
                     }
                     return null
                 }
-                currency: walletModel.balanceView.defaultCurrency
+                // Not Refactored Yet
+//                currency: walletModel.balanceView.defaultCurrency
                 width: stack.width
                 //% "Choose account"
                 label: qsTrId("choose-account")
@@ -103,9 +106,11 @@ ModalPopup {
             RecipientSelector {
                 id: selectRecipient
                 visible: false
-                accounts: walletModel.accountsView.accounts
+                // Not Refactored Yet
+//                accounts: walletModel.accountsView.accounts
                 contacts: contactsModule.model.addedContacts
-                selectedRecipient: { "address": utilsModel.ensRegisterAddress, "type": RecipientSelector.Type.Address }
+                // Not Refactored Yet
+//                selectedRecipient: { "address": utilsModel.ensRegisterAddress, "type": RecipientSelector.Type.Address }
                 readOnly: true
                 onSelectedRecipientChanged: if (isValid) { gasSelector.estimateGas() }
             }
@@ -114,10 +119,11 @@ ModalPopup {
                 visible: true
                 anchors.top: selectFromAccount.bottom
                 anchors.topMargin: Style.current.padding
-                gasPrice: parseFloat(walletModel.gasView.gasPrice)
-                getGasEthValue: walletModel.gasView.getGasEthValue
-                getFiatValue: walletModel.balanceView.getFiatValue
-                defaultCurrency: walletModel.balanceView.defaultCurrency
+                // Not Refactored Yet
+//                gasPrice: parseFloat(walletModel.gasView.gasPrice)
+//                getGasEthValue: walletModel.gasView.getGasEthValue
+//                getFiatValue: walletModel.balanceView.getFiatValue
+//                defaultCurrency: walletModel.balanceView.defaultCurrency
                 
                 property var estimateGas: Backpressure.debounce(gasSelector, 600, function() {
                     let estimatedGas = root.estimateGasFunction(selectFromAccount.selectedAccount);
@@ -151,11 +157,12 @@ ModalPopup {
                 }
                 toAccount: selectRecipient.selectedRecipient
                 asset: root.asset
-                currency: walletModel.balanceView.defaultCurrency
-                amount: {
-                    const fiatValue = walletModel.balanceView.getFiatValue(0, root.asset.symbol, currency)
-                    return { "value": 0, "fiatValue": fiatValue }
-                }
+                // Not Refactored Yet
+//                currency: walletModel.balanceView.defaultCurrency
+//                amount: {
+//                    const fiatValue = walletModel.balanceView.getFiatValue(0, root.asset.symbol, currency)
+//                    return { "value": 0, "fiatValue": fiatValue }
+//                }
             }
         }
         TransactionFormGroup {
@@ -167,7 +174,8 @@ ModalPopup {
             TransactionSigner {
                 id: transactionSigner
                 width: stack.width
-                signingPhrase: walletModel.utilsView.signingPhrase
+                // Not Refactored Yet
+//                signingPhrase: walletModel.utilsView.signingPhrase
             }
         }
     }

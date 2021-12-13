@@ -58,7 +58,8 @@ ModalPopup {
         Component {
             id: stickerPackPurchaseModal
             StatusSNTTransactionModal {
-                contractAddress: utilsModel.stickerMarketAddress
+                // Not Refactored Yet
+//                contractAddress: utilsModel.stickerMarketAddress
                 assetPrice: price
                 estimateGasFunction: function(selectedAccount, uuid) {
                     if (packId < 0  || !selectedAccount || !price) return 325000

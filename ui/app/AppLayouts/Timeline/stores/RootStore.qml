@@ -6,23 +6,29 @@ import utils 1.0
 QtObject {
     id: root
 
-    property var chatsModelInst: chatsModel
-    property var profileModelInst: profileModel
+    // Not Refactored Yet
+//    property var chatsModelInst: chatsModel
+    // Not Refactored Yet
+//    property var profileModelInst: profileModel
 
     function setActiveChannelToTimeline() {
-        chatsModelInst.setActiveChannelToTimeline()
+        // Not Refactored Yet
+//        chatsModelInst.setActiveChannelToTimeline()
     }
 
     function getPlainTextFromRichText(text) {
-        return chatsModelInst.plainText(text)
+        // Not Refactored Yet
+//        return chatsModelInst.plainText(text)
     }
 
     function sendMessage(message, contentType) {
-        chatsModelInst.messageView.sendMessage(message, "", contentType, true)
+        // Not Refactored Yet
+//        chatsModelInst.messageView.sendMessage(message, "", contentType, true)
     }
 
     function sendImage(url) {
-        chatsModelInst.sendImage(url, true)
+        // Not Refactored Yet
+//        chatsModelInst.sendImage(url, true)
     }
 
 }

@@ -81,7 +81,8 @@ Item {
            width: 32
            height: 32
            onClicked: {
-               errorText.text = chatsModel.activityNotificationList.markAllActivityCenterNotificationsRead()
+               // Not Refactored Yet
+//               errorText.text = chatsModel.activityNotificationList.markAllActivityCenterNotificationsRead()
            }
 
            StatusToolTip {

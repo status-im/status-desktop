@@ -74,11 +74,12 @@ Item {
             anchors.fill: parent
             cursorShape: Qt.PointingHandCursor
             onClicked: {
-                if (root.state === Constants.addressRequested) {
-                    root.store.chatsModelInst.transactions.declineAddressRequest(messageId)
-                } else if (root.state === Constants.transactionRequested) {
-                    root.store.chatsModelInst.transactions.declineRequest(messageId)
-                }
+                // Not Refactored Yet
+//                if (root.state === Constants.addressRequested) {
+//                    root.store.chatsModelInst.transactions.declineAddressRequest(messageId)
+//                } else if (root.state === Constants.transactionRequested) {
+//                    root.store.chatsModelInst.transactions.declineRequest(messageId)
+//                }
 
             }
         }
@@ -97,7 +98,8 @@ Item {
         SignTransactionModal {
             store: root.store
             onOpened: {
-                root.store.walletModelInst.gasView.getGasPrice()
+                // Not Refactored Yet
+//                root.store.walletModelInst.gasView.getGasPrice()
             }
             onClosed: {
                 destroy();
@@ -106,8 +108,9 @@ Item {
             selectedRecipient: {
                 return {
                     address: commandParametersObject.address,
-                    identicon: root.store.chatsModelInst.channelView.activeChannel.identicon,
-                    name: root.store.chatsModelInst.channelView.activeChannel.name,
+                    // Not Refactored Yet
+//                    identicon: root.store.chatsModelInst.channelView.activeChannel.identicon,
+//                    name: root.store.chatsModelInst.channelView.activeChannel.name,
                     type: RecipientSelector.Type.Contact
                 }
             }
@@ -119,11 +122,13 @@ Item {
 
     SelectAccountModal {
         id: selectAccountModal
-        accounts: root.store.walletModelInst.accountsView.accounts
-        currency: root.store.walletModelInst.balanceView.defaultCurrency
+        // Not Refactored Yet
+//        accounts: root.store.walletModelInst.accountsView.accounts
+//        currency: root.store.walletModelInst.balanceView.defaultCurrency
         onSelectAndShareAddressButtonClicked: {
-            root.store.chatsModelInst.transactions.acceptAddressRequest(messageId, accountSelector.selectedAccount.address)
-            selectAccountModal.close()
+            // Not Refactored Yet
+//            root.store.chatsModelInst.transactions.acceptAddressRequest(messageId, accountSelector.selectedAccount.address)
+//            selectAccountModal.close()
         }
     }
 }

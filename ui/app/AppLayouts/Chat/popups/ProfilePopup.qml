@@ -51,15 +51,18 @@ StatusModal {
         fromAuthor = fromAuthorParam || ""
         identicon = identiconParam || ""
         text = textParam || ""
-        isEnsVerified = chatsModel.ensView.isEnsVerified(this.fromAuthor)
+        // Not Refactored Yet
+//        isEnsVerified = chatsModel.ensView.isEnsVerified(this.fromAuthor)
         isBlocked = popup.store.contactsModuleInst.model.isContactBlocked(this.fromAuthor);
-        alias = chatsModel.alias(this.fromAuthor) || ""
+        // Not Refactored Yet
+//        alias = chatsModel.alias(this.fromAuthor) || ""
         isCurrentUser = userProfile.pubKey === this.fromAuthor
         showFooter = _showFooter;
         popup.open()
     }
 
-    header.title: Utils.removeStatusEns(isCurrentUser ? profileModel.ens.preferredUsername || userName : userName)
+    // Not Refactored Yet
+//    header.title: Utils.removeStatusEns(isCurrentUser ? profileModel.ens.preferredUsername || userName : userName)
     header.subTitle: isEnsVerified ? alias : fromAuthor
     header.subTitleElide: Text.ElideMiddle
     header.image.source: identicon
@@ -95,13 +98,15 @@ StatusModal {
             }
 
             StatusDescriptionListItem {
-                title: ((isCurrentUser && profileModel.ens.preferredUsername) || isEnsVerified) ? qsTr("ENS username") : qsTr("Username")
-                subTitle: isCurrentUser ? profileModel.ens.preferredUsername || userName : userName
+                // Not Refactored Yet
+//                title: ((isCurrentUser && profileModel.ens.preferredUsername) || isEnsVerified) ? qsTr("ENS username") : qsTr("Username")
+//                subTitle: isCurrentUser ? profileModel.ens.preferredUsername || userName : userName
                 tooltip.text: qsTr("Copy to clipboard")
                 icon.name: "copy"
                 iconButton.onClicked: {
-                    chatsModel.copyToClipboard(userName)
-                    tooltip.visible = !tooltip.visible
+                    // Not Refactored Yet
+//                    chatsModel.copyToClipboard(userName)
+//                    tooltip.visible = !tooltip.visible
                 }
                 width: parent.width
             }
@@ -115,8 +120,9 @@ StatusModal {
                 tooltip.text: qsTr("Copy to clipboard")
                 icon.name: "copy"
                 iconButton.onClicked: {
-                    chatsModel.copyToClipboard(fromAuthor)
-                    tooltip.visible = !tooltip.visible
+                    // Not Refactored Yet
+//                    chatsModel.copyToClipboard(fromAuthor)
+//                    tooltip.visible = !tooltip.visible
                 }
                 width: parent.width
             }
@@ -131,7 +137,8 @@ StatusModal {
                 subTitle: {
                     let user = ""
                     if (isCurrentUser) {
-                        user = profileModel.ens.preferredUsername
+                        // Not Refactored Yet
+//                        user = profileModel.ens.preferredUsername
                     } else {
                         if (isEnsVerified) {
                             user = userName.startsWith("@") ? userName.substring(1) : userName
@@ -147,7 +154,8 @@ StatusModal {
                 iconButton.onClicked: {
                     let user = ""
                     if (isCurrentUser) {
-                        user = profileModel.ens.preferredUsername
+                        // Not Refactored Yet
+//                        user = profileModel.ens.preferredUsername
                     } else {
                         if (isEnsVerified) {
                             user = userName.startsWith("@") ? userName.substring(1) : userName
@@ -157,7 +165,8 @@ StatusModal {
                         user = fromAuthor
                     }
 
-                    chatsModel.copyToClipboard(Constants.userLinkPrefix + user)
+                    // Not Refactored Yet
+//                    chatsModel.copyToClipboard(Constants.userLinkPrefix + user)
                     tooltip.visible = !tooltip.visible
                 }
                 width: parent.width
@@ -196,7 +205,8 @@ StatusModal {
             Image {
                 asynchronous: true
                 fillMode: Image.PreserveAspectFit
-                source: profileModel.qrCode(fromAuthor)
+                // Not Refactored Yet
+//                source: profileModel.qrCode(fromAuthor)
                 anchors.horizontalCenter: parent.horizontalCenter
                 height: 212
                 width: 212
@@ -249,9 +259,10 @@ StatusModal {
                 popup.nickname = newNickname;
                 popup.store.contactsModuleInst.changeContactNickname(fromAuthor, newNickname);
                 popup.close()
-                if (!!chatsModel.communities.activeCommunity) {
-                    chatsModel.communities.activeCommunity.triggerMembersUpdate();
-                }
+                // Not Refactored Yet
+//                if (!!chatsModel.communities.activeCommunity) {
+//                    chatsModel.communities.activeCommunity.triggerMembersUpdate();
+//                }
             }
         }
     }

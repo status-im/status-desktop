@@ -81,7 +81,8 @@ Popup {
             profileLayoutContainer.changeProfileSection(7)
         }
         onMarkAllReadClicked: {
-            errorText = activityCenter.store.chatsModelInst.activityNotificationList.markAllActivityCenterNotificationsRead()
+            // Not Refactored Yet
+//            errorText = activityCenter.store.chatsModelInst.activityNotificationList.markAllActivityCenterNotificationsRead()
         }
     }
 
@@ -145,7 +146,9 @@ Popup {
                     function(left, right) { return left.timestamp > right.timestamp }
                 ]
 
-                model: activityCenter.store.chatsModelInst.activityNotificationList
+                // Not Refactored Yet
+                model: []
+//                model: activityCenter.store.chatsModelInst.activityNotificationList
 
                 delegate: Item {
                     id: notificationDelegate
@@ -183,7 +186,9 @@ Popup {
                             }
                             return -1;
                         }
-                        property string previousNotificationTimestamp: notificationDelegate.idx === 0 ? "" : chatsModel.activityNotificationList.getNotificationData(previousNotificationIndex, "timestamp")
+                        // Not Refactored Yet
+                        property string previousNotificationTimestamp: ""
+//                        property string previousNotificationTimestamp: notificationDelegate.idx === 0 ? "" : chatsModel.activityNotificationList.getNotificationData(previousNotificationIndex, "timestamp")
                         onPreviousNotificationTimestampChanged: {
                             activityCenter.store.messageStore.prevMsgTimestamp = previousNotificationTimestamp;
                         }
@@ -222,7 +227,8 @@ Popup {
             }
 
             Item {
-                visible: activityCenter.store.chatsModelInst.activityNotificationList.hasMoreToShow
+                // Not Refactored Yet
+//                visible: activityCenter.store.chatsModelInst.activityNotificationList.hasMoreToShow
                 width: parent.width
                 height: visible ? showMoreBtn.height + showMoreBtn.anchors.topMargin : 0
                 StatusButton {
@@ -232,7 +238,8 @@ Popup {
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.top: parent.top
                     anchors.topMargin: Style.current.smallPadding
-                    onClicked: activityCenter.store.chatsModelInst.activityNotificationList.loadMoreNotifications()
+                    // Not Refactored Yet
+//                    onClicked: activityCenter.store.chatsModelInst.activityNotificationList.loadMoreNotifications()
                 }
             }
         }

@@ -7,10 +7,14 @@ QtObject {
     id: root
 
     property CollectiblesStore collectiblesStore: CollectiblesStore { }
-    property var walletModelInst: walletModel
-    property var walletModelV2Inst: walletV2Model
-    property var profileModelInst: profileModel
-    property var chatsModelInst: chatsModel
+    // Not Refactored Yet
+//    property var walletModelInst: walletModel
+    // Not Refactored Yet
+//    property var walletModelV2Inst: walletV2Model
+    // Not Refactored Yet
+//    property var profileModelInst: profileModel
+    // Not Refactored Yet
+//    property var chatsModelInst: chatsModel
 
     // This should be exposed to the UI via "walletModule", WalletModule should use
     // Accounts Service which keeps the info about that (isFirstTimeAccountLogin).
@@ -37,27 +41,31 @@ QtObject {
     }
 
     function copyText(text) {
-        root.chatsModelInst.copyToClipboard(text);
+        // Not Refactored Yet
+//        root.chatsModelInst.copyToClipboard(text);
     }
 
     function changeSelectedAccount(newIndex) {
-        if (newIndex > root.walletModelV2Inst.accountsView.accounts) {
-            return;
-        }
-        root.selectedAccount = newIndex;
-        root.walletModelV2Inst.setCurrentAccountByIndex(newIndex);
+        // Not Refactored Yet
+//        if (newIndex > root.walletModelV2Inst.accountsView.accounts) {
+//            return;
+//        }
+//        root.selectedAccount = newIndex;
+//        root.walletModelV2Inst.setCurrentAccountByIndex(newIndex);
     }
 
     function afterAddAccount() {
-        changeSelectedAccount(walletModelInst.accountsView.accounts.rowCount() - 1);
+        // Not Refactored Yet
+//        changeSelectedAccount(walletModelInst.accountsView.accounts.rowCount() - 1);
     }
 
     function getCollectionMaxValue(traitType, value, maxValue, collectionIndex) {
-        if(maxValue !== "")
-            return parseInt(value) + qsTr(" of ") + maxValue;
-        else
-            return parseInt(value) + qsTr(" of ") +
-            walletModelV2Inst.collectiblesView.collections.getCollectionTraitMaxValue(collectionIndex, traitType).toString();
+        // Not Refactored Yet
+//        if(maxValue !== "")
+//            return parseInt(value) + qsTr(" of ") + maxValue;
+//        else
+//            return parseInt(value) + qsTr(" of ") +
+//            walletModelV2Inst.collectiblesView.collections.getCollectionTraitMaxValue(collectionIndex, traitType).toString();
     }
 
     property bool seedPhraseInserted: false
@@ -113,34 +121,35 @@ QtObject {
     }
 
     function addAccount(text, model, keyOrSeedValid, accountNameInput) {
-        root.loadingAccounts = true;
-        if (!root.validateAddAccountPopup(text, model, keyOrSeedValid, accountNameInput.nameInputValid)) {
-            Global.playErrorSound();
-            root.loadingAccounts = false;
-        } else {
-            //TODO account color to be verified with design
-            var result;
-            if (root.isSeedCountValid && !root.seedPhraseNotFound(text)) {
-                for (var i = 0; i < model.count; i++) {
-                    //TODO add authorization process when Authorization moadl is ready
-                    if (!!model.itemAtIndex(i)) {
-                        result = root.walletModelInst.accountsView.addAccountsFromSeed(model.itemAtIndex(i).accountAddress, "qwqwqw", model.itemAtIndex(i).accountName, "")
-                    }
-                }
-            } else {
-                result = root.walletModelInst.accountsView.addAccountsFromPrivateKey(text, "qwqwqw", accountNameInput.text, "");
-            }
-            root.loadingAccounts = false;
-            if (result) {
-                let resultJson = JSON.parse(result);
-                if (!Utils.isInvalidPasswordMessage(resultJson.error)) {
-                    accountError.text = resultJson.error;
-                    accountError.open();
-                }
-                Global.playErrorSound();
-                return;
-            }
-        }
+        // Not Refactored Yet
+//        root.loadingAccounts = true;
+//        if (!root.validateAddAccountPopup(text, model, keyOrSeedValid, accountNameInput.nameInputValid)) {
+//            Global.playErrorSound();
+//            root.loadingAccounts = false;
+//        } else {
+//            //TODO account color to be verified with design
+//            var result;
+//            if (root.isSeedCountValid && !root.seedPhraseNotFound(text)) {
+//                for (var i = 0; i < model.count; i++) {
+//                    //TODO add authorization process when Authorization moadl is ready
+//                    if (!!model.itemAtIndex(i)) {
+//                        result = root.walletModelInst.accountsView.addAccountsFromSeed(model.itemAtIndex(i).accountAddress, "qwqwqw", model.itemAtIndex(i).accountName, "")
+//                    }
+//                }
+//            } else {
+//                result = root.walletModelInst.accountsView.addAccountsFromPrivateKey(text, "qwqwqw", accountNameInput.text, "");
+//            }
+//            root.loadingAccounts = false;
+//            if (result) {
+//                let resultJson = JSON.parse(result);
+//                if (!Utils.isInvalidPasswordMessage(resultJson.error)) {
+//                    accountError.text = resultJson.error;
+//                    accountError.open();
+//                }
+//                Global.playErrorSound();
+//                return;
+//            }
+//        }
     }
 
     property MessageDialog accountError: MessageDialog {
@@ -151,7 +160,8 @@ QtObject {
     }
 
     function deleteAccount(address) {
-        walletModelInst.accountsView.deleteAccount(address);
+        // Not Refactored Yet
+//        walletModelInst.accountsView.deleteAccount(address);
     }
 
     property ListModel exampleWalletModel: ListModel {

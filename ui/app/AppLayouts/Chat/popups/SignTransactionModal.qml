@@ -35,36 +35,37 @@ StatusModal {
 
     property var sendTransaction: function(selectedGasLimit, selectedGasPrice, selectedTipLimit, selectedOveralLimit, enteredPassword) {
         let success = false
-        if(root.selectedAsset.address == Constants.zeroAddress){
-            success = root.store.walletModelInst.transactionsView.transferEth(
-                                                selectFromAccount.selectedAccount.address,
-                                                 selectRecipient.selectedRecipient.address,
-                                                 root.selectedAmount,
-                                                 selectedGasLimit,
-                                                 gasSelector.eip1599Enabled ? "" : gasSelector.selectedGasPrice,
-                                                 gasSelector.selectedTipLimit,
-                                                 gasSelector.selectedOverallLimit,
-                                                 enteredPassword,
-                                                 stack.uuid)
-        } else {
-            success = root.store.walletModelInst.transactionsView.transferTokens(
-                                                 selectFromAccount.selectedAccount.address,
-                                                 selectRecipient.selectedRecipient.address,
-                                                 root.selectedAsset.address,
-                                                 root.selectedAmount,
-                                                 selectedGasLimit,
-                                                 gasSelector.eip1599Enabled ? "" : gasSelector.selectedGasPrice,
-                                                 gasSelector.selectedTipLimit,
-                                                 gasSelector.selectedOverallLimit,
-                                                 enteredPassword,
-                                                 stack.uuid)
-        }
+        // Not Refactored Yet
+//        if(root.selectedAsset.address == Constants.zeroAddress){
+//            success = root.store.walletModelInst.transactionsView.transferEth(
+//                                                selectFromAccount.selectedAccount.address,
+//                                                 selectRecipient.selectedRecipient.address,
+//                                                 root.selectedAmount,
+//                                                 selectedGasLimit,
+//                                                 gasSelector.eip1599Enabled ? "" : gasSelector.selectedGasPrice,
+//                                                 gasSelector.selectedTipLimit,
+//                                                 gasSelector.selectedOverallLimit,
+//                                                 enteredPassword,
+//                                                 stack.uuid)
+//        } else {
+//            success = root.store.walletModelInst.transactionsView.transferTokens(
+//                                                 selectFromAccount.selectedAccount.address,
+//                                                 selectRecipient.selectedRecipient.address,
+//                                                 root.selectedAsset.address,
+//                                                 root.selectedAmount,
+//                                                 selectedGasLimit,
+//                                                 gasSelector.eip1599Enabled ? "" : gasSelector.selectedGasPrice,
+//                                                 gasSelector.selectedTipLimit,
+//                                                 gasSelector.selectedOverallLimit,
+//                                                 enteredPassword,
+//                                                 stack.uuid)
+//        }
 
-        if(!success){
-            //% "Invalid transaction parameters"
-            sendingError.text = qsTrId("invalid-transaction-parameters")
-            sendingError.open()
-        }
+//        if(!success){
+//            //% "Invalid transaction parameters"
+//            sendingError.text = qsTrId("invalid-transaction-parameters")
+//            sendingError.open()
+//        }
     }
 
     property MessageDialog sendingError: MessageDialog {
@@ -95,12 +96,13 @@ StatusModal {
             TransactionFormGroup {
                 id: groupSelectAcct
                 headerText: {
-                    if(trxData.startsWith("0x095ea7b3")){
-                        const approveData = JSON.parse(root.store.walletModelInst.tokensView.decodeTokenApproval(selectedRecipient.address, trxData))
-                        if(approveData.symbol)
-                            //% "Authorize %1 %2"
-                            return qsTrId("authorize--1--2").arg(approveData.amount).arg(approveData.symbol)    
-                    }
+                    // Not Refactored Yet
+//                    if(trxData.startsWith("0x095ea7b3")){
+//                        const approveData = JSON.parse(root.store.walletModelInst.tokensView.decodeTokenApproval(selectedRecipient.address, trxData))
+//                        if(approveData.symbol)
+//                            //% "Authorize %1 %2"
+//                            return qsTrId("authorize--1--2").arg(approveData.amount).arg(approveData.symbol)
+//                    }
                     return qsTrId("command-button-send");
                 }
                 //% "Continue"
@@ -113,8 +115,9 @@ StatusModal {
                 }
                 StatusAccountSelector {
                     id: selectFromAccount
-                    accounts: root.store.walletModelInst.accountsView.accounts
-                    currency: root.store.walletModelInst.balanceView.defaultCurrency
+                    // Not Refactored Yet
+//                    accounts: root.store.walletModelInst.accountsView.accounts
+//                    currency: root.store.walletModelInst.balanceView.defaultCurrency
                     width: stack.width
                     selectedAccount: root.selectedAccount
                     //% "Choose account"
@@ -126,7 +129,8 @@ StatusModal {
                 RecipientSelector {
                     id: selectRecipient
                     visible: false
-                    accounts: root.store.walletModelInst.accountsView.accounts
+                    // Not Refactored Yet
+//                    accounts: root.store.walletModelInst.accountsView.accounts
                     contacts: root.store.addedContacts
                     selectedRecipient: root.selectedRecipient
                     readOnly: true
@@ -144,40 +148,42 @@ StatusModal {
                 GasSelector {
                     id: gasSelector
                     anchors.topMargin: Style.current.padding
-                    gasPrice: parseFloat(root.store.walletModelInst.gasView.gasPrice)
-                    getGasEthValue: root.store.walletModelInst.gasView.getGasEthValue
-                    getFiatValue: root.store.walletModelInst.balanceView.getFiatValue
-                    defaultCurrency: root.store.walletModelInst.balanceView.defaultCurrency
+                    // Not Refactored Yet
+//                    gasPrice: parseFloat(root.store.walletModelInst.gasView.gasPrice)
+//                    getGasEthValue: root.store.walletModelInst.gasView.getGasEthValue
+//                    getFiatValue: root.store.walletModelInst.balanceView.getFiatValue
+//                    defaultCurrency: root.store.walletModelInst.balanceView.defaultCurrency
                     width: stack.width
         
                     property var estimateGas: Backpressure.debounce(gasSelector, 600, function() {
-                        if (!(selectFromAccount.selectedAccount && selectFromAccount.selectedAccount.address &&
-                            selectRecipient.selectedRecipient && selectRecipient.selectedRecipient.address &&
-                            root.selectedAsset && root.selectedAsset.address &&
-                            root.selectedAmount)) {
-                            selectedGasLimit = 250000
-                            defaultGasLimit = selectedGasLimit
-                            return
-                        }
+                        // Not Refactored Yet
+//                        if (!(selectFromAccount.selectedAccount && selectFromAccount.selectedAccount.address &&
+//                            selectRecipient.selectedRecipient && selectRecipient.selectedRecipient.address &&
+//                            root.selectedAsset && root.selectedAsset.address &&
+//                            root.selectedAmount)) {
+//                            selectedGasLimit = 250000
+//                            defaultGasLimit = selectedGasLimit
+//                            return
+//                        }
                         
-                        let gasEstimate = JSON.parse(root.store.walletModelInst.gasView.estimateGas(
-                            selectFromAccount.selectedAccount.address,
-                            selectRecipient.selectedRecipient.address,
-                            root.selectedAsset.address,
-                            root.selectedAmount,
-                            trxData))
+//                        let gasEstimate = JSON.parse(root.store.walletModelInst.gasView.estimateGas(
+//                            selectFromAccount.selectedAccount.address,
+//                            selectRecipient.selectedRecipient.address,
+//                            root.selectedAsset.address,
+//                            root.selectedAmount,
+//                            trxData))
 
-                        if (!gasEstimate.success) {
-                            //% "Error estimating gas: %1"
-                            let message = qsTrId("error-estimating-gas---1").arg(gasEstimate.error.message)
+//                        if (!gasEstimate.success) {
+//                            //% "Error estimating gas: %1"
+//                            let message = qsTrId("error-estimating-gas---1").arg(gasEstimate.error.message)
 
-                            //% ". The transaction will probably fail."
-                            gasEstimateErrorPopup.confirmationText = message + qsTrId("--the-transaction-will-probably-fail-")
-                            gasEstimateErrorPopup.open()
-                            return
-                        }
-                        selectedGasLimit = gasEstimate.result
-                        defaultGasLimit = selectedGasLimit
+//                            //% ". The transaction will probably fail."
+//                            gasEstimateErrorPopup.confirmationText = message + qsTrId("--the-transaction-will-probably-fail-")
+//                            gasEstimateErrorPopup.open()
+//                            return
+//                        }
+//                        selectedGasLimit = gasEstimate.result
+//                        defaultGasLimit = selectedGasLimit
                     })
                 }
                 GasValidator {
@@ -214,7 +220,8 @@ StatusModal {
                     toAccount: selectRecipient.selectedRecipient
                     asset: root.selectedAsset
                     amount: { "value": root.selectedAmount, "fiatValue": root.selectedFiatAmount }
-                    currency: root.store.walletModelInst.balanceView.defaultCurrency
+                    // Not Refactored Yet
+//                    currency: root.store.walletModelInst.balanceView.defaultCurrency
                     isFromEditable: false
                     trxData: root.trxData
                     isGasEditable: true
@@ -255,7 +262,8 @@ StatusModal {
                 TransactionSigner {
                     id: transactionSigner
                     width: stack.width
-                    signingPhrase: root.store.walletModelInst.utilsView.signingPhrase
+                    // Not Refactored Yet
+//                    signingPhrase: root.store.walletModelInst.utilsView.signingPhrase
                 }
             }
         }
@@ -334,43 +342,45 @@ StatusModal {
         }
     }
 
-    Connections {
-        target: root.store.walletModelInst.transactionsView
-        onTransactionWasSent: {
-            try {
-                let response = JSON.parse(txResult)
-                if (response.uuid !== stack.uuid)
-                    return
+    // Not Refactored Yet
+//    Connections {
+//        target: root.store.walletModelInst.transactionsView
+//        onTransactionWasSent: {
+//            try {
+//                let response = JSON.parse(txResult)
+//                if (response.uuid !== stack.uuid)
+//                    return
 
-                let transactionId = response.result
+//                let transactionId = response.result
 
-                if (!response.success) {
-                    if (Utils.isInvalidPasswordMessage(transactionId)){
-                        //% "Wrong password"
-                        transactionSigner.validationError = qsTrId("wrong-password")
-                        return
-                    }
-                    sendingError.text = transactionId
-                    return sendingError.open()
-                }
+//                if (!response.success) {
+//                    if (Utils.isInvalidPasswordMessage(transactionId)){
+//                        //% "Wrong password"
+//                        transactionSigner.validationError = qsTrId("wrong-password")
+//                        return
+//                    }
+//                    sendingError.text = transactionId
+//                    return sendingError.open()
+//                }
 
-                chatsModel.transactions.acceptRequestTransaction(transactionId,
-                                                        messageId,
-                                                        userProfile.pubKey + transactionId.substr(2))
+//                // Not Refactored Yet
+////                chatsModel.transactions.acceptRequestTransaction(transactionId,
+////                                                        messageId,
+////                                                        userProfile.pubKey + transactionId.substr(2))
 
-                //% "Transaction pending..."
-                toastMessage.title = qsTrId("ens-transaction-pending")
-                toastMessage.source = Style.svg("loading")
-                toastMessage.iconColor = Style.current.primary
-                toastMessage.iconRotates = true
-                toastMessage.link = `${root.store.walletModelInst.utilsView.etherscanLink}/${transactionId}`
-                toastMessage.open()
+//                //% "Transaction pending..."
+//                toastMessage.title = qsTrId("ens-transaction-pending")
+//                toastMessage.source = Style.svg("loading")
+//                toastMessage.iconColor = Style.current.primary
+//                toastMessage.iconRotates = true
+//                toastMessage.link = `${root.store.walletModelInst.utilsView.etherscanLink}/${transactionId}`
+//                toastMessage.open()
 
-                root.close()
-            } catch (e) {
-                console.error('Error parsing the response', e)
-            }
-        }
-    }
+//                root.close()
+//            } catch (e) {
+//                console.error('Error parsing the response', e)
+//            }
+//        }
+//    }
 }
 

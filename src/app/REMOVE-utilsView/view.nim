@@ -54,11 +54,11 @@ QtObject:
   proc joinPath*(self: UtilsView, start: string, ending: string): string {.slot.} =
     result = os.joinPath(start, ending)
 
-  proc join3Paths*(self: UtilsView, start: string, middle: string, ending: string): string {.slot.} =
-    result = os.joinPath(start, middle, ending)
+  # proc join3Paths*(self: UtilsView, start: string, middle: string, ending: string): string {.slot.} =
+  #   result = os.joinPath(start, middle, ending)
 
-  proc getSNTAddress*(self: UtilsView): string {.slot.} =
-    result = status_tokens.getSNTAddress()
+  # proc getSNTAddress*(self: UtilsView): string {.slot.} =
+  #   result = status_tokens.getSNTAddress()
 
   proc getSNTBalance*(self: UtilsView): string {.slot.} =
     let currAcct = self.status.wallet.getWalletAccounts()[0]

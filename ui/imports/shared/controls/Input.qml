@@ -172,18 +172,19 @@ Item {
                         font.pixelSize: 12
                         size: StatusBaseButton.Size.Small
                         onClicked: {
-                            if (inputBox.copyToClipboard) {
-                                chatsModel.copyToClipboard(inputBox.textToCopy ? inputBox.textToCopy : inputValue.text)
-                            } else {
-                                if (inputValue.canPaste) {
-                                    inputValue.paste()
-                                }
-                            }
+                            // Not Refactored Yet
+//                            if (inputBox.copyToClipboard) {
+//                                chatsModel.copyToClipboard(inputBox.textToCopy ? inputBox.textToCopy : inputValue.text)
+//                            } else {
+//                                if (inputValue.canPaste) {
+//                                    inputValue.paste()
+//                                }
+//                            }
 
-                            copyBtn.copied = true
-                            timer.setTimeout(function() {
-                                copyBtn.copied = false
-                            }, 2000);
+//                            copyBtn.copied = true
+//                            timer.setTimeout(function() {
+//                                copyBtn.copied = false
+//                            }, 2000);
                         }
                     }
                 }

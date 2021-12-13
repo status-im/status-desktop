@@ -124,13 +124,14 @@ StatusModal {
             }
 
             onClicked: {
-                root.loading = true;
-                root.beforeSave();
-                edit ?
-                    root.store.walletModelV2Inst.savedAddressesView.editSavedAddress(name, address) :
-                    root.store.walletModelV2Inst.savedAddressesView.addSavedAddress(name, address);
-                root.close()
-                root.loading = false;
+                // Not Refactored Yet
+//                root.loading = true;
+//                root.beforeSave();
+//                edit ?
+//                    root.store.walletModelV2Inst.savedAddressesView.editSavedAddress(name, address) :
+//                    root.store.walletModelV2Inst.savedAddressesView.addSavedAddress(name, address);
+//                root.close()
+//                root.loading = false;
             }
         }
     ]

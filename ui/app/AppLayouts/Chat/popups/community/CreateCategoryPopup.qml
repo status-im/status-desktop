@@ -30,7 +30,8 @@ StatusModal {
     onOpened: {
         if(isEdit){
             root.contentItem.categoryName.input.text = categoryName
-            channels = JSON.parse(root.store.chatsModelInst.communities.activeCommunity.getChatIdsByCategory(categoryId))
+            // Not Refactored Yet
+//            channels = JSON.parse(root.store.chatsModelInst.communities.activeCommunity.getChatIdsByCategory(categoryId))
         }
         root.contentItem.categoryName.input.forceActiveFocus(Qt.MouseFocusReason)
     }
@@ -109,7 +110,8 @@ StatusModal {
                     anchors.top: channelsLabel.bottom
                     height: childrenRect.height
                     width: parent.width
-                    model: root.store.activeCommunityChatsModel
+                    // Not Refactored Yet
+//                    model: root.store.activeCommunityChatsModel
                     interactive: false
                     clip: true
 

@@ -259,11 +259,12 @@ ScrollView {
                             root.store.setBloomLevel(mode)
                         }
                         onClosed: {
-                            switch(root.store.nodeModelInst.bloomLevel){
-                                case "light":  btnBloomLight.click(); break;
-                                case "normal":  btnBloomNormal.click(); break;
-                                case "full":  btnBloomFull.click(); break;
-                            }
+                            // Not Refactored Yet
+//                            switch(root.store.nodeModelInst.bloomLevel){
+//                                case "light":  btnBloomLight.click(); break;
+//                                case "normal":  btnBloomNormal.click(); break;
+//                                case "full":  btnBloomFull.click(); break;
+//                            }
                             destroy()
                         }
                     }

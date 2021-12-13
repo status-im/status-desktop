@@ -13,7 +13,8 @@ import shared.controls 1.0
 // TODO: replace with StatusModal
 ModalPopup {
     id: root
-    readonly property var asset: JSON.parse(walletModel.tokensView.getStatusToken())
+    // Not Refactored Yet
+    readonly property var asset: "" //JSON.parse(walletModel.tokensView.getStatusToken())
     property string assetPrice
     property string contractAddress
     property var estimateGasFunction: (function(userAddress, uuid) { return 0; })
@@ -21,7 +22,8 @@ ModalPopup {
     property var onSuccess: (function(){})
 
     Component.onCompleted: {
-        walletModel.gasView.getGasPrice()
+        // Not Refactored Yet
+//        walletModel.gasView.getGasPrice()
     }
 
     height: 540
@@ -108,7 +110,8 @@ ModalPopup {
             RecipientSelector {
                 id: selectRecipient
                 visible: false
-                accounts: walletModel.accountsView.accounts
+                // Not Refactored Yet
+//                accounts: walletModel.accountsView.accounts
                 contacts: contactsModule.model.addedContacts
                 selectedRecipient: { "address": contractAddress, "type": RecipientSelector.Type.Address }
                 readOnly: true
@@ -118,9 +121,10 @@ ModalPopup {
                 id: gasSelector
                 anchors.top: selectFromAccount.bottom
                 anchors.topMargin: Style.current.padding
-                gasPrice: parseFloat(walletModel.gasView.gasPrice)
-                getGasEthValue: walletModel.gasView.getGasEthValue
-                getFiatValue: walletModel.balanceView.getFiatValue
+                // Not Refactored Yet
+//                gasPrice: parseFloat(walletModel.gasView.gasPrice)
+//                getGasEthValue: walletModel.gasView.getGasEthValue
+//                getFiatValue: walletModel.balanceView.getFiatValue
                 defaultCurrency: walletSection.currentCurrency
                 width: stack.width
                 
@@ -158,10 +162,11 @@ ModalPopup {
                 toAccount: selectRecipient.selectedRecipient
                 asset: root.asset
                 currency: walletSection.currentCurrency
-                amount: {
-                    const fiatValue = walletModel.balanceView.getFiatValue(root.assetPrice || 0, root.asset.symbol, currency)
-                    return { "value": root.assetPrice, "fiatValue": fiatValue }
-                }
+                // Not Refactored Yet
+//                amount: {
+//                    const fiatValue = walletModel.balanceView.getFiatValue(root.assetPrice || 0, root.asset.symbol, currency)
+//                    return { "value": root.assetPrice, "fiatValue": fiatValue }
+//                }
             }
         }
         TransactionFormGroup {
@@ -174,7 +179,8 @@ ModalPopup {
             TransactionSigner {
                 id: transactionSigner
                 width: stack.width
-                signingPhrase: walletModel.utilsView.signingPhrase
+                // Not Refactored Yet
+//                signingPhrase: walletModel.utilsView.signingPhrase
             }
         }
     }

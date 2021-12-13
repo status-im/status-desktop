@@ -13,14 +13,16 @@ RadioButtonSelector {
     property string newFleet: ""
 
     title: fleetName
-    checked: profileModel.fleets.fleet === root.fleetName
+    // Not Refactored Yet
+//    checked: profileModel.fleets.fleet === root.fleetName
 
     onCheckedChanged: {
-        if (checked) {
-            if (profileModel.fleets.fleet === root.fleetName) return;
-            root.newFleet = root.fleetName;
-            Global.openPopup(confirmDialogComponent)
-        }
+        // Not Refactored Yet
+//        if (checked) {
+//            if (profileModel.fleets.fleet === root.fleetName) return;
+//            root.newFleet = root.fleetName;
+//            Global.openPopup(confirmDialogComponent)
+//        }
     }
 
     Component {
@@ -30,9 +32,11 @@ RadioButtonSelector {
             header.title: qsTrId("close-app-title")
             //% "Change fleet to %1"
             confirmationText: qsTrId("change-fleet-to--1").arg(root.newFleet)
-            onConfirmButtonClicked: profileModel.fleets.setFleet(root.newFleet)
+            // Not Refactored Yet
+//            onConfirmButtonClicked: profileModel.fleets.setFleet(root.newFleet)
             onClosed: {
-                profileModel.fleets.triggerFleetChange()
+                // Not Refactored Yet
+//                profileModel.fleets.triggerFleetChange()
                 destroy();
             }
         }

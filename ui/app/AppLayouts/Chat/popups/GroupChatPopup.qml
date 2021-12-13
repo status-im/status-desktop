@@ -73,7 +73,8 @@ ModalPopup {
         if (pubKeys.length === 0) {
             return;
         }
-        popup.store.chatsModelInst.groups.create(Utils.filterXSS(groupName.text), JSON.stringify(pubKeys));
+        // Not Refactored Yet
+//        popup.store.chatsModelInst.groups.create(Utils.filterXSS(groupName.text), JSON.stringify(pubKeys));
         popup.close();
     }
 

@@ -257,7 +257,7 @@ ColumnLayout {
                 anchors.bottom: parent.bottom
                 recentStickers: root.rootStore.stickersModuleInst.recent
                 stickerPackList: root.rootStore.stickersModuleInst.stickerPacks
-                chatType: root.rootStore.chatsModelInst.channelView.activeChannel.chatType
+//                chatType: root.rootStore.chatsModelInst.channelView.activeChannel.chatType
                 onSendTransactionCommandButtonClicked: {
                     // Not Refactored Yet
                     //                if (root.rootStore.chatsModelInst.channelView.activeChannel.ensVerified) {

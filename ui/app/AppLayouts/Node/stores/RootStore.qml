@@ -5,15 +5,18 @@ import utils 1.0
 QtObject {
     id: root
 
-    property var nodeModelInst: nodeModel
-    property var profileModelInst: profileModel
+//    property var nodeModelInst: nodeModel
+//    property var profileModelInst: profileModel
 
     function getMailserverName(activeMailServer) {
-        return profileModelInst.mailservers.list.getMailserverName(activeMailServer)
+        // Not Refactored Yet
+        return ""
+//        return profileModelInst.mailservers.list.getMailserverName(activeMailServer)
     }
 
     function onSend(text) {
-        nodeModelInst.onSend(text)
+        // Not Refactored Yet
+//        nodeModelInst.onSend(text)
     }
 }
 

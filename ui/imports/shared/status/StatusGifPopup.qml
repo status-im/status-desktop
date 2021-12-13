@@ -21,22 +21,25 @@ Popup {
     id: popup
     property var gifSelected: function () {}
     property var searchGif: Backpressure.debounce(searchBox, 500, function (query) {
-        chatsModel.gif.search(query)
+        // Not Refactored Yet
+//        chatsModel.gif.search(query)
     });
     property var toggleCategory: function(newCategory) {
         previousCategory = currentCategory
         currentCategory = newCategory
         searchBox.text = ""
-        if (currentCategory === StatusGifPopup.Category.Trending) {
-            chatsModel.gif.getTrendings()
-        } else if(currentCategory === StatusGifPopup.Category.Favorite) {
-            chatsModel.gif.getFavorites()
-        } else if(currentCategory === StatusGifPopup.Category.Recent) {
-            chatsModel.gif.getRecents()
-        }
+        // Not Refactored Yet
+//        if (currentCategory === StatusGifPopup.Category.Trending) {
+//            chatsModel.gif.getTrendings()
+//        } else if(currentCategory === StatusGifPopup.Category.Favorite) {
+//            chatsModel.gif.getFavorites()
+//        } else if(currentCategory === StatusGifPopup.Category.Recent) {
+//            chatsModel.gif.getRecents()
+//        }
     }
     property var toggleFavorite: function(item) {
-        chatsModel.gif.toggleFavorite(item.id, currentCategory === StatusGifPopup.Category.Favorite)
+        // Not Refactored Yet
+//        chatsModel.gif.toggleFavorite(item.id, currentCategory === StatusGifPopup.Category.Favorite)
     }
     property alias searchString: searchBox.text
     property int currentCategory: StatusGifPopup.Category.Trending
@@ -65,7 +68,8 @@ Popup {
         searchBox.text = ""
         searchBox.forceActiveFocus(Qt.MouseFocusReason)
         if (localAccountSensitiveSettings.isTenorWarningAccepted) {
-            chatsModel.gif.getTrendings()
+            // Not Refactored Yet
+//            chatsModel.gif.getTrendings()
         } else {
             confirmationPopup.open()
         }
@@ -159,7 +163,9 @@ Popup {
                 const headerTextHeight = searchBox.text === "" ? headerText.height : 0
                 return 400 - gifHeader.height - headerTextHeight
             }
-            sourceComponent: chatsModel.gif.columnA.rowCount() == 0 ? empty : gifItems
+            // Not Refactored Yet
+            sourceComponent: empty
+//            sourceComponent: chatsModel.gif.columnA.rowCount() == 0 ? empty : gifItems
         }
 
         Row {
@@ -257,7 +263,8 @@ Popup {
                 text: qsTr("Enable")
                 onClicked: {
                     localAccountSensitiveSettings.isTenorWarningAccepted = true
-                    chatsModel.gif.getTrendings()
+                    // Not Refactored Yet
+//                    chatsModel.gif.getTrendings()
                     confirmationPopup.close()
                 }
             }
@@ -297,7 +304,8 @@ Popup {
                 visible: currentCategory === StatusGifPopup.Category.Trending || currentCategory === StatusGifPopup.Category.Search
                 onClicked: {
                     if (searchBox.text === "") {
-                        chatsModel.gif.getTrendings()
+                        // Not Refactored Yet
+//                        chatsModel.gif.getTrendings()
                         return
                     }
 
@@ -328,7 +336,8 @@ Popup {
                 property string lastHoveredId
 
                 StatusGifColumn {
-                    gifList.model: chatsModel.gif.columnA
+                    // Not Refactored Yet
+//                    gifList.model: chatsModel.gif.columnA
                     gifWidth: (popup.width / 3) - Style.current.padding
                     gifSelected: popup.gifSelected
                     toggleFavorite: popup.toggleFavorite
@@ -339,7 +348,8 @@ Popup {
                 }
 
                 StatusGifColumn {
-                    gifList.model: chatsModel.gif.columnB
+                    // Not Refactored Yet
+//                    gifList.model: chatsModel.gif.columnB
                     gifWidth: (popup.width / 3) - Style.current.padding
                     gifSelected: popup.gifSelected
                     toggleFavorite: popup.toggleFavorite
@@ -350,7 +360,8 @@ Popup {
                 }
 
                 StatusGifColumn {
-                    gifList.model: chatsModel.gif.columnC
+                    // Not Refactored Yet
+//                    gifList.model: chatsModel.gif.columnC
                     gifWidth: (popup.width / 3) - Style.current.padding
                     gifSelected: popup.gifSelected
                     toggleFavorite: popup.toggleFavorite

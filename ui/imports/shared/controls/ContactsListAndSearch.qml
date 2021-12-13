@@ -37,7 +37,8 @@ Item {
         noContactsRect.visible = false
         searchResults.loading = true
         searchResults.showProfileNotFoundMessage = false
-        chatsModel.ensView.resolveENS(ensName)
+        // Not Refactored Yet
+//        chatsModel.ensView.resolveENS(ensName)
     });
 
     function validate() {
@@ -74,7 +75,8 @@ Item {
                 if (Utils.isChatKey(chatKey.text)) {
                     pubKey = chatKey.text;
                     if (!contactsModule.model.isAdded(pubKey)) {
-                        searchResults.username = utilsModel.generateAlias(pubKey);
+                        // Not Refactored Yet
+//                        searchResults.username = utilsModel.generateAlias(pubKey);
                         searchResults.userAlias = Utils.compactAddress(pubKey, 4);
                         searchResults.pubKey = pubKey
                     }
@@ -89,35 +91,36 @@ Item {
         }
         textField.anchors.rightMargin: clearBtn.width + Style.current.padding + 2
 
-        Connections {
-            target: chatsModel.ensView
-            onEnsWasResolved: {
-                if (chatKey.text == "") {
-                    ensUsername.text = "";
-                    pubKey = "";
-                } else if(resolvedPubKey == ""){
-                    ensUsername.text = "";
-                    searchResults.pubKey = pubKey = "";
-                    searchResults.address = "";
-                    searchResults.showProfileNotFoundMessage = true
-                } else {
-                    if (userProfile.pubKey === resolvedPubKey) {
-                        //% "Can't chat with yourself"
-                        root.validationError = qsTrId("can-t-chat-with-yourself");
-                    } else {
-                        searchResults.username = chatsModel.ensView.formatENSUsername(chatKey.text)
-                        let userAlias = utilsModel.generateAlias(resolvedPubKey)
-                        userAlias = userAlias.length > 20 ? userAlias.substring(0, 19) + "..." : userAlias
-                        searchResults.userAlias =  userAlias + " • " + Utils.compactAddress(resolvedPubKey, 4)
-                        searchResults.pubKey = pubKey = resolvedPubKey;
-                        searchResults.address = resolvedAddress;
-                    }
-                    searchResults.showProfileNotFoundMessage = false
-                }
-                searchResults.loading = false;
-                noContactsRect.visible = pubKey === ""  && ensUsername.text === "" && !contactsModule.model.list.hasAddedContacts() && !profileNotFoundMessage.visible
-            }
-        }
+        // Not Refactored Yet
+//        Connections {
+//            target: chatsModel.ensView
+//            onEnsWasResolved: {
+//                if (chatKey.text == "") {
+//                    ensUsername.text = "";
+//                    pubKey = "";
+//                } else if(resolvedPubKey == ""){
+//                    ensUsername.text = "";
+//                    searchResults.pubKey = pubKey = "";
+//                    searchResults.address = "";
+//                    searchResults.showProfileNotFoundMessage = true
+//                } else {
+//                    if (userProfile.pubKey === resolvedPubKey) {
+//                        //% "Can't chat with yourself"
+//                        root.validationError = qsTrId("can-t-chat-with-yourself");
+//                    } else {
+//                        searchResults.username = chatsModel.ensView.formatENSUsername(chatKey.text)
+//                        let userAlias = utilsModel.generateAlias(resolvedPubKey)
+//                        userAlias = userAlias.length > 20 ? userAlias.substring(0, 19) + "..." : userAlias
+//                        searchResults.userAlias =  userAlias + " • " + Utils.compactAddress(resolvedPubKey, 4)
+//                        searchResults.pubKey = pubKey = resolvedPubKey;
+//                        searchResults.address = resolvedAddress;
+//                    }
+//                    searchResults.showProfileNotFoundMessage = false
+//                }
+//                searchResults.loading = false;
+//                noContactsRect.visible = pubKey === ""  && ensUsername.text === "" && !contactsModule.model.list.hasAddedContacts() && !profileNotFoundMessage.visible
+//            }
+//        }
 
         StatusFlatRoundButton {
             id: clearBtn

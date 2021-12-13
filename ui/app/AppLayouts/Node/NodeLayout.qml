@@ -43,7 +43,8 @@ Item {
             StatusBaseText {
                 id: peerNumber
                 color: Theme.palette.primaryColor1
-                text: root.store.nodeModelInst.peerSize
+                // Not Refactored Yet
+//                text: root.store.nodeModelInst.peerSize
                 Layout.rightMargin: Style.current.padding
                 Layout.leftMargin: Style.current.padding
                 Layout.fillWidth: true
@@ -67,7 +68,8 @@ Item {
             StatusBaseText {
                 id: bloomPerc
                 color: Theme.palette.primaryColor1
-                text: ((root.store.nodeModelInst.bloomBits / 512) * 100).toFixed(2) + "%"
+                // Not Refactored Yet
+//                text: ((root.store.nodeModelInst.bloomBits / 512) * 100).toFixed(2) + "%"
                 Layout.rightMargin: Style.current.padding
                 Layout.leftMargin: Style.current.padding
                 Layout.fillWidth: true
@@ -119,27 +121,28 @@ Item {
             }
         }
 
-        Connections {
-            target: root.store.nodeModelInst
-            function onLog(logContent) {
-                // TODO: this is ugly, but there's not even a design for this section
-                if(logContent.indexOf("mailserver") > 0){
-                    let lines = mailserverLogTxt.text.split("\n");
-                    if (lines.length > 10){
-                        lines.shift();
-                    }
-                    lines.push(logContent.trim())
-                    mailserverLogTxt.text = lines.join("\n")
-                } else {
-                    let lines = logsTxt.text.split("\n");
-                    if (lines.length > 5){
-                        lines.shift();
-                    }
-                    lines.push(logContent.trim())
-                    logsTxt.text = lines.join("\n")
-                }
-            }
-        }
+        // Not Refactored Yet
+//        Connections {
+//            target: root.store.nodeModelInst
+//            function onLog(logContent) {
+//                // TODO: this is ugly, but there's not even a design for this section
+//                if(logContent.indexOf("mailserver") > 0){
+//                    let lines = mailserverLogTxt.text.split("\n");
+//                    if (lines.length > 10){
+//                        lines.shift();
+//                    }
+//                    lines.push(logContent.trim())
+//                    mailserverLogTxt.text = lines.join("\n")
+//                } else {
+//                    let lines = logsTxt.text.split("\n");
+//                    if (lines.length > 5){
+//                        lines.shift();
+//                    }
+//                    lines.push(logContent.trim())
+//                    logsTxt.text = lines.join("\n")
+//                }
+//            }
+//        }
 
         ColumnLayout {
             id: messageContainer
@@ -157,7 +160,8 @@ Item {
             StatusBaseText {
                 id: test
                 color: Theme.palette.primaryColor1
-                text: root.store.nodeModelInst.lastMessage
+                // Not Refactored Yet
+//                text: root.store.nodeModelInst.lastMessage
                 Layout.rightMargin: Style.current.padding
                 Layout.leftMargin: Style.current.padding
                 Layout.fillWidth: true
@@ -172,7 +176,8 @@ Item {
             Layout.rightMargin: Style.current.padding
             Layout.leftMargin: Style.current.padding
             // TODO: replace with StatusTextArea once it lives in StatusQ.
-            TextArea { id: callResult; Layout.fillWidth: true; text: nodeModel.callResult; readOnly: true }
+            // Not Refactored Yet
+//            TextArea { id: callResult; Layout.fillWidth: true; text: nodeModel.callResult; readOnly: true }
         }
 
         RowLayout {
@@ -208,7 +213,8 @@ Item {
                         anchors.right: parent.right
                         anchors.rightMargin: 16
                         onClicked: {
-                            nodeModel.onSend(txtData.text)
+                            // Not Refactored Yet
+//                            nodeModel.onSend(txtData.text)
                             txtData.text = ""
                         }
                         enabled: txtData.text !== ""

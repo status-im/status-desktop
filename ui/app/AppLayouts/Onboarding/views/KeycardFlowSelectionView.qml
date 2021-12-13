@@ -56,59 +56,60 @@ Item {
         }
     }
 
-    Connections {
-        id: connection
-        target: OnboardingStore.keycardModelInst
-        ignoreUnknownSignals: true
+    // Not Refactored Yet
+//    Connections {
+//        id: connection
+//        target: OnboardingStore.keycardModelInst
+//        ignoreUnknownSignals: true
 
-        onCardUnpaired: {
-            pairingModal.open()
-        }
+//        onCardUnpaired: {
+//            pairingModal.open()
+//        }
 
-        onCardPaired: {
-            pinModal.open()
-        }
+//        onCardPaired: {
+//            pinModal.open()
+//        }
 
-        onCardAuthenticated: {
-            switch (flow) {
-                case OnboardingFlow.Recover: {
-                    KeycardStore.recoverAccount();
-                    break;
-                }
-                case OnboardingFlow.Generate: {
-                    break;
-                }
-                case OnboardingFlow.ImportMnemonic: {
-                    break;
-                }
-            }
-        }
+//        onCardAuthenticated: {
+//            switch (flow) {
+//                case OnboardingFlow.Recover: {
+//                    KeycardStore.recoverAccount();
+//                    break;
+//                }
+//                case OnboardingFlow.Generate: {
+//                    break;
+//                }
+//                case OnboardingFlow.ImportMnemonic: {
+//                    break;
+//                }
+//            }
+//        }
 
-        //TODO: support the states below
+//        //TODO: support the states below
 
-        onCardPreInit: {
-            createPinModal.open()
-        }
+//        onCardPreInit: {
+//            createPinModal.open()
+//        }
 
-        onCardFrozen: {
-            keycardView.onClosed()
+//        onCardFrozen: {
+//            keycardView.onClosed()
 
-        }
+//        }
 
-        onCardBlocked: {
-            keycardView.onClosed()
-        }
+//        onCardBlocked: {
+//            keycardView.onClosed()
+//        }
 
-        // TODO: handle these by showing an error an prompting for another card
-        // later add factory reset option for the NoFreeSlots case
+//        // TODO: handle these by showing an error an prompting for another card
+//        // later add factory reset option for the NoFreeSlots case
 
-        onCardNoFreeSlots: {
-            keycardView.onClosed()
-        }
+//        onCardNoFreeSlots: {
+//            keycardView.onClosed()
+//        }
 
-        onCardNotKeycard: {
-            keycardView.onClosed()
-        }
+//        onCardNotKeycard: {
+//            keycardView.onClosed()
+//        }
 
-    }
+//    }
 }
