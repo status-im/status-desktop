@@ -58,11 +58,10 @@ Item {
             tooltip.x: -tooltip.width - Style.current.padding
             tooltip.y: markReadBtn.height / 2 - height / 2 + 4
             onClicked: {
-                // Not Refactored Yet
-//                if (!model.read) {
-//                    return root.store.chatsModelInst.activityNotificationList.markActivityCenterNotificationRead(model.id, model.message.communityId, model.message.chatId, model.notificationType)
-//                }
-//                return root.store.chatsModelInst.activityNotificationList.markActivityCenterNotificationUnread(model.id, model.message.communityId, model.message.chatId, model.notificationType)
+                if (!model.read) {
+                    return root.store.activityCenterModuleInst.markActivityCenterNotificationRead(model.id, model.message.communityId, model.message.chatId, model.notificationType)
+                }
+                return root.store.activityCenterModuleInst.markActivityCenterNotificationUnread(model.id, model.message.communityId, model.message.chatId, model.notificationType)
             }
         }
     }
@@ -77,13 +76,12 @@ Item {
 //                const setActiveChannel = root.store.chatsModelInst.channelView.setActiveChannel
 //                const chatId = model.message.chatId
 //                const messageId = model.message.messageId
-//                root.store.profileModuleInst.addContact(model.author)
+                root.store.activityCenterModuleInst.acceptActivityCenterNotification(model.id)
 //                root.store.chatsModelInst.activityNotificationList.acceptActivityCenterNotification(model.id)
 //                setActiveChannel(chatId)
 //                positionAtMessage(messageId)
             }
-            // Not Refactored Yet
-//            onDeclineClicked: root.store.chatsModelInst.activityNotificationList.dismissActivityCenterNotification(model.id)
+            onDeclineClicked: root.store.activityCenterModuleInst.dismissActivityCenterNotification(model.id)
             onProfileClicked: root.openProfile()
             onBlockClicked: {
                 // Not Refactored Yet
@@ -98,8 +96,8 @@ Item {
                 onBlockButtonClicked: {
                     // Not Refactored Yet
 //                    root.store.profileModuleInst.blockContact(blockContactConfirmationDialog.contactAddress)
-//                    root.store.chatsModelInst.activityNotificationList.dismissActivityCenterNotification(model.id)
-//                    blockContactConfirmationDialog.close()
+                    root.store.activityCenterModuleInst.dismissActivityCenterNotification(model.id)
+                    blockContactConfirmationDialog.close()
                 }
             }
         }

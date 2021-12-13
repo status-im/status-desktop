@@ -155,10 +155,8 @@ Item {
             anchors.right: parent.right
             anchors.rightMargin: Style.current.halfPadding
             anchors.verticalCenter: parent.verticalCenter
-            // Not Refactored Yet
-//            onAcceptClicked: root.store.chatsModelInst.activityNotificationList.acceptActivityCenterNotification(model.id)
-            // Not Refactored Yet
-//            onDeclineClicked: root.store.chatsModelInst.activityNotificationList.dismissActivityCenterNotification(model.id)
+            onAcceptClicked: root.store.activityCenterModuleInst.acceptActivityCenterNotification(model.id)
+            onDeclineClicked: root.store.activityCenterModuleInst.dismissActivityCenterNotification(model.id)
             onProfileClicked: groupRequestContent.openProfile()
             onBlockClicked: {
                 // Not Refactored Yet
@@ -171,10 +169,9 @@ Item {
             BlockContactConfirmationDialog {
                 id: blockContactConfirmationDialog
                 onBlockButtonClicked: {
-                    // Not Refactored Yet
-//                    root.store.profileModuleInst.blockContact(blockContactConfirmationDialog.contactAddress)
-//                    root.store.chatsModelInst.activityNotificationList.dismissActivityCenterNotification(model.id)
-//                    blockContactConfirmationDialog.close()
+                    root.store.profileModuleInst.blockContact(blockContactConfirmationDialog.contactAddress)
+                    root.store.activityCenterModuleInst.dismissActivityCenterNotification(model.id)
+                    blockContactConfirmationDialog.close()
                 }
             }
         }

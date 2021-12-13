@@ -9,6 +9,7 @@ import status/types/community as old_community
 import ../../../../app_service/service/message/dto/[message, pinned_message, reaction]
 import ../../../../app_service/service/chat/dto/[chat]
 import ../../../../app_service/service/community/dto/[community]
+import ../../../../app_service/service/activity_center/dto/[notification]
 import ../../../../app_service/service/contacts/dto/[contacts, status_update]
 
 type MessageSignal* = ref object of Signal
@@ -20,7 +21,7 @@ type MessageSignal* = ref object of Signal
   emojiReactions*: seq[ReactionDto]
   communities*: seq[CommunityDto]
   membershipRequests*: seq[old_community.CommunityMembershipRequest]
-  activityCenterNotification*: seq[ActivityCenterNotification]
+  activityCenterNotifications*: seq[ActivityCenterNotificationDto]
   statusUpdates*: seq[StatusUpdateDto]
   deletedMessages*: seq[RemovedMessage]
 
@@ -70,7 +71,7 @@ proc fromEvent*(T: type MessageSignal, event: JsonNode): MessageSignal =
 
   if event["event"]{"activityCenterNotifications"} != nil:
     for jsonNotification in event["event"]["activityCenterNotifications"]:
-      signal.activityCenterNotification.add(jsonNotification.toActivityCenterNotification())
+      signal.activityCenterNotifications.add(jsonNotification.toActivityCenterNotificationDto())
 
   if event["event"]{"pinMessages"} != nil:
     discard

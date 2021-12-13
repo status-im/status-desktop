@@ -2,6 +2,7 @@ import NimQml, Tables, json, sequtils, strformat, chronicles, os
 
 import ./dto/chat as chat_dto
 import ../message/dto/message as message_dto
+import ../activity_center/dto/notification as notification_dto
 import ../contacts/service as contact_service
 import status/statusgo_backend_new/chat as status_chat
 import status/statusgo_backend_new/chatCommands as status_chat_commands
@@ -34,7 +35,7 @@ type
     # emojiReactions*: seq[Reaction]
     # communities*: seq[Community]
     # communityMembershipRequests*: seq[CommunityMembershipRequest]
-    # activityCenterNotifications*: seq[ActivityCenterNotification]
+    activityCenterNotifications*: seq[ActivityCenterNotificationDto]
     # statusUpdates*: seq[StatusUpdate]
     # deletedMessages*: seq[RemovedMessage]
   
