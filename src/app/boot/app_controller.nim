@@ -36,23 +36,6 @@ import ../global/global_singleton
 
 import ../core/[main]
 
-#################################################
-# This will be removed later once we move to c++ and handle there async things
-# and improved some services, like EventsService which should implement 
-# provider/subscriber principe, similar we should have SettingsService.
-import ../../constants
-import eventemitter
-import ../profile/core as profile
-import ../chat/core as chat
-import ../wallet/v1/core as wallet
-import ../wallet/v2/core as walletV2
-import ../node/core as node
-import ../utilsView/core as utilsView
-import ../keycard/core as keycard
-import status/types/[account, setting]
-#################################################
-
-
 var i18nPath = ""
 if defined(development):
   i18nPath = joinPath(getAppDir(), "../ui/i18n")
@@ -115,17 +98,6 @@ type
     startupModule: startup_module.AccessInterface
     mainModule: main_module.AccessInterface
 
-    #################################################
-    # At the end of refactoring this will be moved to appropriate place or removed:
-    profile: ProfileController
-    wallet: wallet.WalletController
-    wallet2: walletV2.WalletController
-    chat: ChatController
-    node: NodeController
-    utilsController: UtilsController
-    keycard: KeycardController
-    #################################################
-
 #################################################
 # Forward declaration section
 proc load(self: AppController)
@@ -140,26 +112,10 @@ proc userLoggedIn*(self: AppController)
 proc mainDidLoad*(self: AppController)
 #################################################
 
-#################################################
-# At the end of refactoring this will be moved to appropriate place or removed:
 proc connect(self: AppController) =
-  self.statusFoundation.status.events.once("loginCompleted") do(a: Args):
-    var args = AccountArgs(a)
-    self.statusFoundation.status.startMessenger()
-    self.profile.init(args.account)
-    self.wallet.init()
-    self.wallet2.init()
-    self.chat.init()
-    self.utilsController.init()
-    self.node.init()
-    self.wallet.onLogin()
-
   self.statusFoundation.status.events.once("nodeStopped") do(a: Args):
     # TODO: remove this once accounts are not tracked in the AccountsModel
     self.statusFoundation.status.reset()
-    # 2. Re-init controllers that don't require a running node
-    self.keycard.init()
-#################################################
 
 proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result = AppController()
@@ -243,17 +199,8 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
     result.stickersService
   )
 
-  #################################################
-  # At the end of refactoring this will be moved to appropriate place or removed:
-  result.profile = profile.newController(statusFoundation.status, statusFoundation, changeLanguage)
-  result.wallet = wallet.newController(statusFoundation.status, statusFoundation)
-  result.wallet2 = walletV2.newController(statusFoundation.status, statusFoundation)
-  result.chat = chat.newController(statusFoundation.status, statusFoundation, OPENURI)
-  result.node = node.newController(statusFoundation)
-  result.utilsController = utilsView.newController(statusFoundation.status, statusFoundation)
-  result.keycard = keycard.newController(statusFoundation.status)
+  # Do connections
   result.connect()
-  #################################################
 
 proc delete*(self: AppController) =
   self.osNotificationService.delete
@@ -265,17 +212,6 @@ proc delete*(self: AppController) =
   self.mainModule.delete
   self.ethService.delete
   
-  #################################################
-  # At the end of refactoring this will be moved to appropriate place or removed:
-  self.profile.delete
-  self.wallet.delete
-  self.wallet2.delete
-  self.chat.delete
-  self.node.delete
-  self.utilsController.delete
-  self.keycard.delete
-  #################################################
-
   self.localAppSettingsVariant.delete
   self.localAccountSettingsVariant.delete
   self.localAccountSensitiveSettingsVariant.delete
@@ -298,17 +234,6 @@ proc delete*(self: AppController) =
   self.stickersService.delete
 
 proc startupDidLoad*(self: AppController) =
-  #################################################
-  # At the end of refactoring this will be moved to appropriate place or removed:
-  singletonInstance.engine.setRootContextProperty("profileModel", self.profile.variant)
-  singletonInstance.engine.setRootContextProperty("walletModel", self.wallet.variant)
-  singletonInstance.engine.setRootContextProperty("walletV2Model", self.wallet2.variant)
-  singletonInstance.engine.setRootContextProperty("chatsModel", self.chat.variant)
-  singletonInstance.engine.setRootContextProperty("nodeModel", self.node.variant)
-  singletonInstance.engine.setRootContextProperty("utilsModel", self.utilsController.variant)
-  singletonInstance.engine.setRootContextProperty("keycardModel", self.keycard.variant)
-  #################################################
-
   singletonInstance.engine.setRootContextProperty("localAppSettings", self.localAppSettingsVariant)
   singletonInstance.engine.setRootContextProperty("localAccountSettings", self.localAccountSettingsVariant)
   singletonInstance.engine.load(newQUrl("qrc:///main.qml"))
@@ -324,11 +249,6 @@ proc mainDidLoad*(self: AppController) =
   self.mainModule.checkForStoringPassword()
 
 proc start*(self: AppController) =
-  #################################################
-  # At the end of refactoring this will be moved to appropriate place or removed:
-  self.keycard.init()
-  #################################################
-
   self.ethService.init()
   self.accountsService.init()
   
@@ -369,12 +289,7 @@ proc load(self: AppController) =
   )
 
 proc userLoggedIn*(self: AppController) =
-  #################################################
-  # At the end of refactoring this will be removed:
-  let loggedInUser = self.accountsService.getLoggedInAccount()
-  let account = Account(name: loggedInUser.name, keyUid: loggedInUser.keyUid)
-  self.statusFoundation.status.events.emit("loginCompleted", AccountArgs(account: account))
-  #################################################
+  self.statusFoundation.status.startMessenger()
   self.load()
 
 proc buildAndRegisterLocalAccountSensitiveSettings(self: AppController) = 
