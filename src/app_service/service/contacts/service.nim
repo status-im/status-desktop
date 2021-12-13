@@ -36,6 +36,13 @@ type
   ContactsStatusUpdatedArgs* = ref object of Args
     statusUpdates*: seq[StatusUpdateDto]
 
+  ContactDetails* = ref object of RootObj
+    displayName*: string
+    localNickname*: string
+    icon*: string
+    isIconIdenticon*: bool
+    isCurrentUser*: bool
+
 # Local Constants:
 const CheckStatusIntervalInMilliseconds = 5000 # 5 seconds, this is timeout how often do we check for user status.
 const OnlineLimitInSeconds = int(5.5 * 60) # 5.5 minutes
@@ -341,3 +348,15 @@ QtObject:
       timeoutInMilliseconds: CheckStatusIntervalInMilliseconds
     )
     self.threadpool.start(arg)
+
+  proc getContactDetails*(self: Service, pubKey: string): ContactDetails =
+    result = ContactDetails()
+    let contact = self.getContactById(pubKey)
+    result.displayName = contact.userNameOrAlias()
+    result.isCurrentUser = pubKey == singletonInstance.userProfile.getPubKey()
+    result.icon = contact.identicon
+    result.isIconIdenticon = contact.identicon.len > 0
+    if(contact.image.thumbnail.len > 0): 
+      result.icon = contact.image.thumbnail
+      result.isIconIdenticon = false
+    

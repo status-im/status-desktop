@@ -27,6 +27,7 @@ import ../../app_service/service/stickers/service as stickers_service
 import ../../app_service/service/about/service as about_service
 import ../../app_service/service/node_configuration/service as node_configuration_service
 import ../../app_service/service/network/service as network_service
+import ../../app_service/service/activity_center/service as activity_center_service
 
 import ../modules/startup/module as startup_module
 import ../modules/main/module as main_module
@@ -89,6 +90,7 @@ type
     stickersService: stickers_service.Service
     aboutService: about_service.Service
     networkService: network_service.Service
+    activityCenterService: activity_center_service.Service
     languageService: language_service.Service
     mnemonicService: mnemonic_service.Service
     privacyService: privacy_service.Service
@@ -140,6 +142,7 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result.chatService = chat_service.newService(statusFoundation.status.events, result.contactsService)
   result.communityService = community_service.newService(result.chatService)
   result.messageService = message_service.newService(statusFoundation.status.events, statusFoundation.threadpool)
+  result.activityCenterService = activity_center_service.newService(statusFoundation.status.events, statusFoundation.threadpool, result.chatService)
   result.tokenService = token_service.newService(statusFoundation.status.events, statusFoundation.threadpool, 
   result.settingsService)
   result.collectibleService = collectible_service.newService(result.settingsService)
@@ -196,7 +199,8 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
     result.mnemonicService,
     result.privacyService,
     result.providerService,
-    result.stickersService
+    result.stickersService,
+    result.activityCenterService
   )
 
   # Do connections
@@ -226,6 +230,7 @@ proc delete*(self: AppController) =
   self.walletAccountService.delete
   self.aboutService.delete
   self.networkService.delete
+  self.activityCenterService.delete
   self.dappPermissionsService.delete
   self.providerService.delete
   self.ensService.delete
@@ -270,6 +275,7 @@ proc load(self: AppController) =
   self.languageService.init()
   self.stickersService.init()
   self.networkService.init()
+  self.activityCenterService.init()
 
   let pubKey = self.settingsService.getPublicKey()
   singletonInstance.localAccountSensitiveSettings.setFileName(pubKey)

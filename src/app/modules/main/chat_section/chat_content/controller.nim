@@ -104,3 +104,6 @@ method unmuteChat*(self: Controller) =
 
 method getContactById*(self: Controller, contactId: string): ContactsDto =
   return self.contactService.getContactById(contactId)
+
+method getContactDetails*(self: Controller, contactId: string): ContactDetails =
+  return self.contactService.getContactDetails(contactId)

@@ -66,6 +66,27 @@ proc initItem*(id, responseToMessageWithId, senderId, senderDisplayName, senderL
   result.messageType = messageType
   result.pinned = false
 
+proc `$`*(self: Item): string =
+  result = fmt"""Item(
+    id: {$self.id}, 
+    responseToMessageWithId: {self.responseToMessageWithId},
+    senderId: {self.senderId},
+    senderDisplayName: {$self.senderDisplayName},
+    senderLocalName: {self.senderLocalName},
+    amISender: {$self.amISender},
+    isSenderIconIdenticon: {$self.isSenderIconIdenticon},
+    seen: {$self.seen},
+    outgoingStatus:{$self.outgoingStatus},
+    messageText:{self.messageText},
+    messageImage:{self.messageImage},
+    timestamp:{$self.timestamp},
+    contentType:{$self.contentType.int},
+    messageType:{$self.messageType},
+    chatTypeThisMessageBelongsTo:{self.chatTypeThisMessageBelongsTo},
+    chatColorThisMessageBelongsTo:{self.chatColorThisMessageBelongsTo},
+    pinned:{$self.pinned}
+    )"""
+
 proc id*(self: Item): string {.inline.} = 
   self.id
 
@@ -98,6 +119,12 @@ proc messageText*(self: Item): string {.inline.} =
 
 proc messageImage*(self: Item): string {.inline.} = 
   self.messageImage
+
+proc stickerPack*(self: Item): int {.inline.} = 
+  self.stickerPack
+
+proc stickerHash*(self: Item): string {.inline.} = 
+  self.stickerHash
 
 proc seen*(self: Item): bool {.inline.} = 
   self.seen
@@ -191,21 +218,6 @@ proc getCountsForReactions*(self: Item): seq[JsonNode] =
       continue
 
     result.add(%* {"emojiId": k, "counts": v.len})
-
-proc `$`*(self: Item): string =
-  result = fmt"""MessageItem(
-    id: {self.id}, 
-    responseToMessageWithId: {self.responseToMessageWithId},
-    senderId: {self.senderId}, 
-    senderDisplayName: {self.senderDisplayName},
-    senderLocalName: {self.senderLocalName},
-    timestamp: {self.timestamp}, 
-    contentType: {self.contentType.int}, 
-    messageType:{self.messageType},
-    chatTypeThisMessageBelongsTo:{self.chatTypeThisMessageBelongsTo},
-    chatColorThisMessageBelongsTo:{self.chatColorThisMessageBelongsTo},
-    pinned:{self.pinned}
-    ]"""
 
 proc toJsonNode*(self: Item): JsonNode =
   result = %* {
