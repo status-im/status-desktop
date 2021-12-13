@@ -128,18 +128,25 @@ proc buildPinnedMessageItem(self: Module, messageId: string, item: var pinned_ms
   if(err.len > 0):
     return false
 
-  let sender = self.controller.getContactById(m.`from`)
-  let senderDisplayName = sender.userNameOrAlias()
-  let amISender = m.`from` == singletonInstance.userProfile.getPubKey()
-  var senderIcon = sender.identicon
-  var isSenderIconIdenticon = sender.identicon.len > 0
-  if(sender.image.thumbnail.len > 0): 
-    senderIcon = sender.image.thumbnail
-    isSenderIconIdenticon = false
+  let contactDetails = self.controller.getContactDetails(m.`from`)
     
-  var item = initItem(m.id, m.responseTo, m.`from`, senderDisplayName, sender.localNickname, senderIcon, 
-  isSenderIconIdenticon, amISender, m.outgoingStatus, m.text, m.image, m.seen, m.timestamp, m.contentType.ContentType, 
-  m.messageType)
+  var item = initItem(
+    m.id,
+    m.responseTo,
+    m.`from`,
+    contactDetails.displayName,
+    contactDetails.localNickname,
+    contactDetails.icon, 
+    contactDetails.isIconIdenticon,
+    contactDetails.isCurrentUser,
+    m.outgoingStatus,
+    m.text,
+    m.image,
+    m.seen,
+    m.timestamp,
+    m.contentType.ContentType, 
+    m.messageType
+  )
   item.pinned = true
 
   for r in reactions:

@@ -10,6 +10,7 @@ import browser_section/module as browser_section_module
 import profile_section/module as profile_section_module
 import app_search/module as app_search_module
 import stickers/module as stickers_module
+import activity_center/module as activity_center_module
 
 import ../../../app_service/service/keychain/service as keychain_service
 import ../../../app_service/service/chat/service as chat_service
@@ -31,6 +32,7 @@ import ../../../app_service/service/language/service as language_service
 import ../../../app_service/service/mnemonic/service as mnemonic_service
 import ../../../app_service/service/privacy/service as privacy_service
 import ../../../app_service/service/stickers/service as stickers_service
+import ../../../app_service/service/activity_center/service as activity_center_service
 
 import eventemitter
 
@@ -48,6 +50,7 @@ type
     browserSectionModule: browser_section_module.AccessInterface
     profileSectionModule: profile_section_module.AccessInterface
     stickersModule: stickers_module.AccessInterface
+    activityCenterModule: activity_center_module.AccessInterface
     appSearchModule: app_search_module.AccessInterface
     moduleLoaded: bool
 
@@ -73,7 +76,8 @@ proc newModule*[T](
   mnemonicService: mnemonic_service.ServiceInterface,
   privacyService: privacy_service.ServiceInterface,
   providerService: provider_service.ServiceInterface,
-  stickersService: stickers_service.Service
+  stickersService: stickers_service.Service,
+  activityCenterService: activity_center_service.Service
   ): Module[T] =
   result = Module[T]()
   result.delegate = delegate
@@ -94,6 +98,7 @@ proc newModule*[T](
   result.profileSectionModule = profile_section_module.newModule(result, events, accountsService, settingsService, 
   profileService, contactsService, aboutService, languageService, mnemonicService, privacyService)
   result.stickersModule = stickers_module.newModule(result, events, stickersService)
+  result.activityCenterModule = activity_center_module.newModule(result, events, activityCenterService, contactsService)
   result.appSearchModule = app_search_module.newModule(result, events, contactsService, chatService, communityService, 
   messageService)
 
@@ -101,6 +106,7 @@ method delete*[T](self: Module[T]) =
   self.chatSectionModule.delete
   self.profileSectionModule.delete
   self.stickersModule.delete
+  self.activityCenterModule.delete
   for cModule in self.communitySectionsModule.values:
     cModule.delete
   self.communitySectionsModule.clear
@@ -221,6 +227,7 @@ method load*[T](
   # self.nodeManagementSectionModule.load()
   self.profileSectionModule.load()
   self.stickersModule.load()
+  self.activityCenterModule.load()
   self.appSearchModule.load()
 
   # Set active section on app start
@@ -249,6 +256,9 @@ proc checkIfModuleDidLoad [T](self: Module[T]) =
   if(not self.stickersModule.isLoaded()):
     return
 
+  if(not self.activityCenterModule.isLoaded()):
+    return
+
   if(not self.appSearchModule.isLoaded()):
     return
 
@@ -265,6 +275,9 @@ method appSearchDidLoad*[T](self: Module[T]) =
   self.checkIfModuleDidLoad()
 
 proc stickersDidLoad*[T](self: Module[T]) =
+  self.checkIfModuleDidLoad()
+
+proc activityCenterDidLoad*[T](self: Module[T]) =
   self.checkIfModuleDidLoad()
 
 proc walletSectionDidLoad*[T](self: Module[T]) =

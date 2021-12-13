@@ -1,6 +1,7 @@
 import ../../../../../app_service/service/contacts/dto/[contacts]
 import ../../../../../app_service/service/message/dto/[message, reaction]
 import ../../../../../app_service/service/chat/dto/[chat]
+import ../../../../../app_service/service/contacts/service
 
 type 
   AccessInterface* {.pure inheritable.} = ref object of RootObj
@@ -42,4 +43,7 @@ method unmuteChat*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getContactById*(self: AccessInterface, contactId: string): ContactsDto {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getContactDetails*(self: AccessInterface, contactId: string): ContactDetails {.base.} =
   raise newException(ValueError, "No implementation available")
