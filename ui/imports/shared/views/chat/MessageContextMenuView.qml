@@ -48,8 +48,10 @@ StatusPopupMenu {
     property var setXPosition: function() {return 0}
     property var setYPosition: function() {return 0}
     property bool canPin: {
-        const nbPinnedMessages = root.store.chatsModelInst.messageView.pinnedMessagesList.count
-        return nbPinnedMessages < Constants.maxNumberOfPins
+        // Not Refactored Yet
+        return false
+//        const nbPinnedMessages = root.store.chatsModelInst.messageView.pinnedMessagesList.count
+//        return nbPinnedMessages < Constants.maxNumberOfPins
     }
 
     onHeightChanged: {
@@ -107,7 +109,8 @@ StatusPopupMenu {
                     emojiId: model.emojiId
                     reactedByUser: !!root.emojiReactionsReactedByUser[model.emojiId]
                     onCloseModal: {
-                        chatsModel.toggleReaction(SelectedMessage.messageId, emojiId)
+                        // Not Refactored Yet
+//                        chatsModel.toggleReaction(SelectedMessage.messageId, emojiId)
                         root.close()
                     }
                 }
@@ -137,7 +140,8 @@ StatusPopupMenu {
 
         StyledText {
             id: username
-            text: Utils.removeStatusEns(isCurrentUser ? root.store.profileModelInst.ens.preferredUsername || userName : userName)
+            // Not Refactored Yet
+//            text: Utils.removeStatusEns(isCurrentUser ? root.store.profileModelInst.ens.preferredUsername || userName : userName)
             elide: Text.ElideRight
             maximumLineCount: 3
             horizontalAlignment: Text.AlignHCenter
@@ -220,7 +224,8 @@ StatusPopupMenu {
         id: copyImageAction
         text: qsTr("Copy image")
         onTriggered: {
-            root.store.chatsModelInst.copyImageToClipboard(imageSource ? imageSource : "")
+            // Not Refactored Yet
+//            root.store.chatsModelInst.copyImageToClipboard(imageSource ? imageSource : "")
             root.close()
         }
         icon.name: "copy"
@@ -287,7 +292,8 @@ StatusPopupMenu {
         icon.name: "chat"
         enabled: store.isDebugEnabled
         onTriggered: {
-            root.store.chatsModelInst.copyToClipboard(SelectedMessage.messageId)
+            // Not Refactored Yet
+//            root.store.chatsModelInst.copyToClipboard(SelectedMessage.messageId)
             close()
         }
     }
@@ -305,7 +311,8 @@ StatusPopupMenu {
         }
         onTriggered: {
             if (pinnedMessage) {
-                root.store.chatsModelInst.messageView.unPinMessage(messageId, root.store.chatsModelInst.channelView.activeChannel.id)
+                // Not Refactored Yet
+//                root.store.chatsModelInst.messageView.unPinMessage(messageId, root.store.chatsModelInst.channelView.activeChannel.id)
                 return
             }
 
@@ -315,7 +322,8 @@ StatusPopupMenu {
                 return
             }
 
-            root.store.chatsModelInst.messageView.pinMessage(messageId, root.store.chatsModelInst.channelView.activeChannel.id)
+            // Not Refactored Yet
+//            root.store.chatsModelInst.messageView.pinMessage(messageId, root.store.chatsModelInst.channelView.activeChannel.id)
             root.close()
         }
         icon.name: "pin"
@@ -323,13 +331,14 @@ StatusPopupMenu {
             if(isProfile || emojiOnly || isRightClickOnImage)
                 return false
 
-            switch (root.store.chatsModelInst.channelView.activeChannel.chatType) {
-            case Constants.chatType.publicChat: return false
-            case Constants.chatType.profile: return false
-            case Constants.chatType.oneToOne: return true
-            case Constants.chatType.privateGroupChat: return root.store.chatsModelInst.channelView.activeChannel.isAdmin(userProfile.pubKey)
-            case Constants.chatType.communityChat: return root.store.chatsModelInst.communities.activeCommunity.admin
-            }
+            // Not Refactored Yet
+//            switch (root.store.chatsModelInst.channelView.activeChannel.chatType) {
+//            case Constants.chatType.publicChat: return false
+//            case Constants.chatType.profile: return false
+//            case Constants.chatType.oneToOne: return true
+//            case Constants.chatType.privateGroupChat: return root.store.chatsModelInst.channelView.activeChannel.isAdmin(userProfile.pubKey)
+//            case Constants.chatType.communityChat: return root.store.chatsModelInst.communities.activeCommunity.admin
+//            }
 
             return false
         }
@@ -352,7 +361,8 @@ StatusPopupMenu {
         text: qsTrId("delete-message")
         onTriggered: {
             if (!localAccountSensitiveSettings.showDeleteMessageWarning) {
-                return root.store.chatsModelInst.messageView.deleteMessage(messageId)
+                // Not Refactored Yet
+//                return root.store.chatsModelInst.messageView.deleteMessage(messageId)
             }
 
             let confirmationDialog = openPopup(genericConfirmationDialog, {
@@ -368,7 +378,8 @@ StatusPopupMenu {
                                                        }
 
                                                        confirmationDialog.close()
-                                                       root.store.chatsModelInst.messageView.deleteMessage(messageId)
+                                                       // Not Refactored Yet
+//                                                       root.store.chatsModelInst.messageView.deleteMessage(messageId)
                                                    }
                                                })
         }
@@ -393,7 +404,8 @@ StatusPopupMenu {
         selectFolder: true
         modality: Qt.NonModal
         onAccepted: {
-            root.store.chatsModelInst.downloadImage(imageSource ? imageSource : "", fileDialog.fileUrls)
+            // Not Refactored Yet
+//            root.store.chatsModelInst.downloadImage(imageSource ? imageSource : "", fileDialog.fileUrls)
             fileDialog.close()
         }
         onRejected: {

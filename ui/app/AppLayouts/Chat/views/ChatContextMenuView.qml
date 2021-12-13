@@ -135,8 +135,9 @@ StatusPopupMenu {
         //% "Edit Channel"
         text: qsTrId("edit-channel")
         icon.name: "edit"
-        enabled: communityActive &&
-            root.store.chatsModelInst.communities.activeCommunity.admin
+        // Not Refactored Yet
+//        enabled: communityActive &&
+//            root.store.chatsModelInst.communities.activeCommunity.admin
         // Not Refactored Yet
 //        onTriggered: Global.openPopup(editChannelPopup, {
 //            store: root.store,

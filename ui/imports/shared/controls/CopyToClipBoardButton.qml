@@ -57,7 +57,8 @@ Rectangle {
         }
         onClicked: {
             if (textToCopy) {
-                chatsModel.copyToClipboard(textToCopy)
+                // Not Refactored Yet
+//                chatsModel.copyToClipboard(textToCopy)
             }
             onClick()
         }

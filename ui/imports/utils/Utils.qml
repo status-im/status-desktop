@@ -131,7 +131,9 @@ QtObject {
         }
 
         if (contactIndex === -1) {
-            return utilsModel.generateAlias(publicKey)
+            // Not Refactored Yet
+            return ""
+//            return utilsModel.generateAlias(publicKey)
         }
         const ensVerified = contactsModule.model.list.rowData(contactIndex, 'ensVerified')
         if (!ensVerified) {
@@ -420,7 +422,8 @@ QtObject {
                     let chatCommunitySectionModule = mainModule.getChatSectionModule()
                     chatCommunitySectionModule.createOneToOneChat(pk, "")
                 } else {
-                    chatsModel.channelView.joinWithENS(pk);
+                // Not Refactored Yet
+//                    chatsModel.channelView.joinWithENS(pk);
                 }
             }
             return result
@@ -431,11 +434,13 @@ QtObject {
         if (index > -1) {
             const communityId = link.substring(index + 3)
 
-            const communityName = chatsModel.communities.getCommunityNameById(communityId)
+            // Not Refactored Yet
+            const communityName = "" //chatsModel.communities.getCommunityNameById(communityId)
 
             if (!communityName) {
+                // Not Refactored Yet
                 // Unknown community, fetch the info if possible
-                chatsModel.communities.requestCommunityInfo(communityId)
+//                chatsModel.communities.requestCommunityInfo(communityId)
                 result.communityId = communityId
                 result.fetching = true
                 return result
@@ -445,15 +450,19 @@ QtObject {
             result.title = qsTrId("join-the--1-community").arg(communityName)
             result.communityId = communityId
             result.callback = function () {
-                const isUserMemberOfCommunity = chatsModel.communities.isUserMemberOfCommunity(communityId)
+                // Not Refactored Yet
+                const isUserMemberOfCommunity = ""//chatsModel.communities.isUserMemberOfCommunity(communityId)
                 if (isUserMemberOfCommunity) {
-                    chatsModel.communities.setActiveCommunity(communityId)
+                    // Not Refactored Yet
+//                    chatsModel.communities.setActiveCommunity(communityId)
                     return
                 }
-                const userCanJoin = chatsModel.communities.userCanJoin(communityId)
+                // Not Refactored Yet
+                const userCanJoin = "" //chatsModel.communities.userCanJoin(communityId)
                 // TODO find what to do when you can't join
                 if (userCanJoin) {
-                    chatsModel.communities.joinCommunity(communityId, true)
+                // Not Refactored Yet
+//                    chatsModel.communities.joinCommunity(communityId, true)
                 }
             }
             return result
@@ -471,7 +480,8 @@ QtObject {
             //% "Join the %1 group chat"
             result.title = qsTrId("join-the--1-group-chat").arg(chatName)
             result.callback = function () {
-                chatsModel.groups.joinGroupChatFromInvitation(chatName, chatId, pubKey);
+                // Not Refactored Yet
+//                chatsModel.groups.joinGroupChatFromInvitation(chatName, chatId, pubKey);
             }
 
             return result

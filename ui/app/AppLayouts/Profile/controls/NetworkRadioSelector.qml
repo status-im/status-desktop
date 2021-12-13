@@ -18,9 +18,10 @@ RadioButtonSelector {
 
     onCheckedChanged: {
         if (checked) {
-            if (profileModel.network.current === root.network) return;
-            root.newNetwork = root.network;
-            Global.openPopup(confirmDialogComponent)
+            // Not Refactored Yet
+//            if (profileModel.network.current === root.network) return;
+//            root.newNetwork = root.network;
+//            Global.openPopup(confirmDialogComponent)
         }
     }
 
@@ -33,10 +34,12 @@ RadioButtonSelector {
             //% "The account will be logged out. When you unlock it again, the selected network will be used"
             confirmationText: qsTrId("logout-app-content")
             onConfirmButtonClicked: {
-                profileModel.network.current = root.newNetwork;
+                // Not Refactored Yet
+//                profileModel.network.current = root.newNetwork;
             }
             onClosed: {
-                profileModel.network.triggerNetworkChange()
+                // Not Refactored Yet
+//                profileModel.network.triggerNetworkChange()
                 destroy()
             }
         }

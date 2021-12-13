@@ -64,62 +64,65 @@ Column {
                     linkMessageLoader.sourceComponent = linkMessageLoader.getSourceComponent()
                 }
             }
-            Connections {
-                id: linkFetchConnections
-                enabled: false
-                target: root.store.chatsModelInst
-                onLinkPreviewDataWasReceived: {
-                    let response
-                    try {
-                        response = JSON.parse(previewData)
 
-                    } catch (e) {
-                        console.error(previewData, e)
-                        return
-                    }
+            // Not Refactored Yet
+//            Connections {
+//                id: linkFetchConnections
+//                enabled: false
+//                target: root.store.chatsModelInst
+//                onLinkPreviewDataWasReceived: {
+//                    let response
+//                    try {
+//                        response = JSON.parse(previewData)
+
+//                    } catch (e) {
+//                        console.error(previewData, e)
+//                        return
+//                    }
 
 
-                    if (response.uuid !== linkMessageLoader.uuid) return
+//                    if (response.uuid !== linkMessageLoader.uuid) return
 
-                    linkFetchConnections.enabled = false
+//                    linkFetchConnections.enabled = false
 
-                    if (!response.success) {
-                        console.error(response.result.error)
-                        return undefined
-                    }
+//                    if (!response.success) {
+//                        console.error(response.result.error)
+//                        return undefined
+//                    }
 
-                    linkData = response.result
+//                    linkData = response.result
 
-                    if (linkData.contentType.startsWith("image/")) {
-                        return linkMessageLoader.sourceComponent = unfurledImageComponent
-                    }
-                    if (linkData.site && linkData.title) {
-                        linkData.address = link
-                        return linkMessageLoader.sourceComponent = unfurledLinkComponent
-                    }
-                }
-            }
+//                    if (linkData.contentType.startsWith("image/")) {
+//                        return linkMessageLoader.sourceComponent = unfurledImageComponent
+//                    }
+//                    if (linkData.site && linkData.title) {
+//                        linkData.address = link
+//                        return linkMessageLoader.sourceComponent = unfurledLinkComponent
+//                    }
+//                }
+//            }
 
-            Connections {
-                id: linkCommunityFetchConnections
-                enabled: false
-                target: root.store.chatsModelInst.communities
-                onCommunityAdded: {
-                    if (communityId !== linkData.communityId) {
-                        return
-                    }
-                    linkCommunityFetchConnections.enabled = false
-                    const data = Utils.getLinkDataForStatusLinks(link)
-                    if (data) {
-                        linkData = data
-                        if (!data.fetching && data.communityId) {
-                            return linkMessageLoader.sourceComponent = invitationBubble
-                        }
+            // Not Refactored Yet
+//            Connections {
+//                id: linkCommunityFetchConnections
+//                enabled: false
+//                target: root.store.chatsModelInst.communities
+//                onCommunityAdded: {
+//                    if (communityId !== linkData.communityId) {
+//                        return
+//                    }
+//                    linkCommunityFetchConnections.enabled = false
+//                    const data = Utils.getLinkDataForStatusLinks(link)
+//                    if (data) {
+//                        linkData = data
+//                        if (!data.fetching && data.communityId) {
+//                            return linkMessageLoader.sourceComponent = invitationBubble
+//                        }
 
-                        return linkMessageLoader.sourceComponent = unfurledLinkComponent
-                    }
-                }
-            }
+//                        return linkMessageLoader.sourceComponent = unfurledLinkComponent
+//                    }
+//                }
+//            }
 
             function getSourceComponent() {
                 // Reset the height in case we set it to 0 below. See note below
@@ -181,7 +184,9 @@ Column {
                     }
 
                     linkFetchConnections.enabled = true
-                    return root.store.chatsModelInst.getLinkPreviewData(link, linkMessageLoader.uuid)
+                    // Not Refactored Yet
+                    return ""
+//                    return root.store.chatsModelInst.getLinkPreviewData(link, linkMessageLoader.uuid)
                 }
                 // setting the height to 0 allows the "enable link" dialog to
                 // disappear correctly when localAccountSensitiveSettings.neverAskAboutUnfurlingAgain

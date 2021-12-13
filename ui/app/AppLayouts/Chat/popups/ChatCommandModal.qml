@@ -58,7 +58,8 @@ StatusModal {
                         }
                         return null
                     }
-                    currency: root.store.walletModelInst.balanceView.defaultCurrency
+                    // Not Refactored Yet
+//                    currency: root.store.walletModelInst.balanceView.defaultCurrency
                     width: stack.width
                     label: {
                         return root.isRequested ? 
@@ -88,7 +89,8 @@ StatusModal {
 
                 RecipientSelector {
                     id: selectRecipient
-                    accounts: root.store.walletModelInst.accountsView.accounts
+                    // Not Refactored Yet
+//                    accounts: root.store.walletModelInst.accountsView.accounts
                     contacts: root.store.addedContacts
                     label: root.isRequested ?
                       //% "From"
@@ -112,10 +114,12 @@ StatusModal {
                 AssetAndAmountInput {
                     id: txtAmount
                     selectedAccount: selectFromAccount.selectedAccount
-                    defaultCurrency: root.store.walletModelInst.balanceView.defaultCurrency
+                    // Not Refactored Yet
+//                    defaultCurrency: root.store.walletModelInst.balanceView.defaultCurrency
                     currentCurrency: root.store.currentCurrency
-                    getFiatValue: root.store.walletModelInst.balanceView.getFiatValue
-                    getCryptoValue: root.store.walletModelInst.balanceView.getCryptoValue
+                    // Not Refactored Yet
+//                    getFiatValue: root.store.walletModelInst.balanceView.getFiatValue
+//                    getCryptoValue: root.store.walletModelInst.balanceView.getCryptoValue
                     validateBalance: !root.isRequested
                     width: stack.width
                 }
@@ -137,7 +141,8 @@ StatusModal {
                     asset: txtAmount.selectedAsset
                     amount: { "value": txtAmount.selectedAmount, "fiatValue": txtAmount.selectedFiatAmount }
                     toWarn: addressRequiredValidator.isWarn
-                    currency: walletModel.balanceView.defaultCurrency
+                    // Not Refactored Yet
+//                    currency: walletModel.balanceView.defaultCurrency
                 }
 
                 AddressRequiredValidator {

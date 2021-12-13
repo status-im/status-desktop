@@ -5,13 +5,16 @@ QtObject {
     property var mainModuleInst: mainModule
     property var profileModuleInst: profileModule
 
-    property var chatsModelInst: chatsModel
-    property var walletModelInst: walletModel
+    // Not Refactored Yet
+//    property var chatsModelInst: chatsModel
+    // Not Refactored Yet
+//    property var walletModelInst: walletModel
     property var userProfileInst: userProfile
 
     property var accounts: walletSectionAccounts.model
     property var currentAccount: walletSectionCurrent
-    property var profileModelInst: profileModel
+    // Not Refactored Yet
+//    property var profileModelInst: profileModel
 
     property var assets: walletSectionAccountTokens.model
 //    property MessageStore messageStore: MessageStore { }
@@ -21,26 +24,32 @@ QtObject {
 
 
     function setCommunityMuted(communityId, checked) {
-        chatsModelInst.communities.setCommunityMuted(communityId, checked);
+        // Not Refactored Yet
+//        chatsModelInst.communities.setCommunityMuted(communityId, checked);
     }
 
     function exportCommunity() {
-        chatsModelInst.communities.exportCommunity();
+        // Not Refactored Yet
+//        chatsModelInst.communities.exportCommunity();
     }
 
     function leaveCommunity(communityId) {
-        chatsModelInst.communities.leaveCommunity(communityId);
+        // Not Refactored Yet
+//        chatsModelInst.communities.leaveCommunity(communityId);
     }
 
     function createCommunity(communityName, communityDescription, checkedMembership, ensOnlySwitchChecked, communityColor, communityImage, imageCropperModalaX, imageCropperModalaY, imageCropperModalbX, imageCropperModalbY) {
-        chatsModelInst.communities.createCommunity(communityName, communityDescription, checkedMembership, ensOnlySwitchChecked, communityColor, communityImage, imageCropperModalaX, imageCropperModalaY, imageCropperModalbX, imageCropperModalbY);
+        // Not Refactored Yet
+//        chatsModelInst.communities.createCommunity(communityName, communityDescription, checkedMembership, ensOnlySwitchChecked, communityColor, communityImage, imageCropperModalaX, imageCropperModalaY, imageCropperModalbX, imageCropperModalbY);
     }
 
     function editCommunity(communityId, communityName, communityDescription, checkedMembership, ensOnlySwitchChecked, communityColor, communityImage, imageCropperModalaX, imageCropperModalaY, imageCropperModalbX, imageCropperModalbY) {
-        chatsModelInst.communities.editCommunity(communityId, communityName, communityDescription, checkedMembership, ensOnlySwitchChecked, communityColor, communityImage, imageCropperModalaX, imageCropperModalaY, imageCropperModalbX, imageCropperModalbY);
+        // Not Refactored Yet
+//        chatsModelInst.communities.editCommunity(communityId, communityName, communityDescription, checkedMembership, ensOnlySwitchChecked, communityColor, communityImage, imageCropperModalaX, imageCropperModalaY, imageCropperModalbX, imageCropperModalbY);
     }
 
     function copyToClipboard(text) {
-        chatsModelInst.copyToClipboard(text);
+        // Not Refactored Yet
+//        chatsModelInst.copyToClipboard(text);
     }
 }

@@ -28,7 +28,8 @@ TabButton {
             return
         }
 
-        chatsModel.communities.activeCommunity.active = false
+        // Not Refactored Yet
+//        chatsModel.communities.activeCommunity.active = false
         Global.changeAppSectionBySectionType(section)
     }
 

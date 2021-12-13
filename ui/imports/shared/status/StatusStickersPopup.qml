@@ -41,12 +41,12 @@ Popup {
         footerContent.visible = true
         stickersContainer.visible = true
     }
-    Connections {
-        target: chatsModel
-        onOnlineStatusChanged: {
-            root.close()
-        }
-    }
+//    Connections {
+//        target: chatsModel
+//        onOnlineStatusChanged: {
+//            root.close()
+//        }
+//    }
 
     Component.onCompleted: {
         if (stickersModule.packsLoaded) {

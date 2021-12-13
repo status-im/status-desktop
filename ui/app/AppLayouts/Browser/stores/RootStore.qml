@@ -7,30 +7,37 @@ import utils 1.0
 QtObject {
     id: root
 
-    property string activeChannelName: chatsModel.channelView.activeChannel.name
+    // Not Refactored Yet
+//    property string activeChannelName: chatsModel.channelView.activeChannel.name
 
-    property var currentNetwork: profileModel.network.current
+    // Not Refactored Yet
+//    property var currentNetwork: profileModel.network.current
 
     property bool currentTabConnected: false
 
     function getUrlFromUserInput(input) {
-        return utilsModel.urlFromUserInput(input)
+        // Not Refactored Yet
+//        return utilsModel.urlFromUserInput(input)
     }
 
     function getAscii2Hex(input) {
-        return utilsModel.ascii2Hex(input)
+        // Not Refactored Yet
+//        return utilsModel.ascii2Hex(input)
     }
 
     function getHex2Ascii(input) {
-        return utilsModel.hex2Ascii(input)
+        // Not Refactored Yet
+//        return utilsModel.hex2Ascii(input)
     }
 
     function getWei2Eth(wei,decimals) {
-        return utilsModel.wei2Eth(wei,decimals)
+        // Not Refactored Yet
+//        return utilsModel.wei2Eth(wei,decimals)
     }
 
     function generateIdenticon(pk) {
-        return utilsModel.generateIdenticon(pk)
+        // Not Refactored Yet
+//        return utilsModel.generateIdenticon(pk)
     }
 
     function get0xFormedUrl(browserExplorer, url) {

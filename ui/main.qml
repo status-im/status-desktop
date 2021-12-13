@@ -160,21 +160,22 @@ StatusWindow {
         onEventReceived: {
             let event = JSON.parse(eventStr)
             if (event.hasOwnProperty("uri")) {
-                chatsModel.handleProtocolUri(event.uri)
+                // Not Refactored Yet
+//                chatsModel.handleProtocolUri(event.uri)
             } else {
                 console.warn("Unknown event received: " + eventStr)
             }
         }
     }
 
-    Connections {
-        target: profileModel
-        ignoreUnknownSignals: true
-        enabled: removeMnemonicAfterLogin
-        onInitialized: {
-            mnemonicModule.remove()
-        }
-    }
+//    Connections {
+//        target: profileModel
+//        ignoreUnknownSignals: true
+//        enabled: removeMnemonicAfterLogin
+//        onInitialized: {
+//            mnemonicModule.remove()
+//        }
+//    }
 
     // The easiest way to get current system theme (is it light or dark) without using
     // OS native methods is to check lightness (0 - 1.0) of the window color.
@@ -420,22 +421,24 @@ StatusWindow {
 
         signal droppedOnValidScreen(var drop)
         property alias droppedUrls: rptDraggedPreviews.model
-        property bool enabled: !drag.source && !!loader.item && !!loader.item.appLayout &&
-                               (
-                                   // in chat view
-                                   (loader.item.appLayout.appView.currentIndex === Constants.appViewStackIndex.chat &&
-                                    (
-                                        // in a one-to-one chat
-                                        chatsModel.channelView.activeChannel.chatType === Constants.chatType.oneToOne ||
-                                        // in a private group chat
-                                        chatsModel.channelView.activeChannel.chatType === Constants.chatType.privateGroupChat
-                                        )
-                                    ) ||
-                                   // in timeline view
-                                   loader.item.appLayout.appView.currentIndex === Constants.appViewStackIndex.timeline ||
-                                   // In community section
-                                   chatsModel.communities.activeCommunity.active
-                                   )
+        property bool enabled: !drag.source && !!loader.item && !!loader.item.appLayout
+
+        // Not Refactored Yet
+//                               && (
+//                                   // in chat view
+//                                   (loader.item.appLayout.appView.currentIndex === Constants.appViewStackIndex.chat &&
+//                                    (
+//                                        // in a one-to-one chat
+//                                        chatsModel.channelView.activeChannel.chatType === Constants.chatType.oneToOne ||
+//                                        // in a private group chat
+//                                        chatsModel.channelView.activeChannel.chatType === Constants.chatType.privateGroupChat
+//                                        )
+//                                    ) ||
+//                                   // in timeline view
+//                                   loader.item.appLayout.appView.currentIndex === Constants.appViewStackIndex.timeline ||
+//                                   // In community section
+//                                   chatsModel.communities.activeCommunity.active
+//                                   )
 
         width: applicationWindow.width
         height: applicationWindow.height

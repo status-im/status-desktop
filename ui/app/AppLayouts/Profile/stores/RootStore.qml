@@ -4,7 +4,8 @@ import utils 1.0
 QtObject {
     id: root
 
-    property var profileModelInst: profileModel
+    // Not Refactored Yet
+//    property var profileModelInst: profileModel
     property var profileModuleInst: profileSectionModule
     property var profile: profileModule.model
     property var contactsModuleInst: contactsModule
@@ -12,40 +13,55 @@ QtObject {
     property var languageModuleInst: languageModule
     property var mnemonicModuleInst: mnemonicModule
 
-    property var chatsModelInst: chatsModel
-    property var utilsModelInst: utilsModel
-    property var walletModelInst: walletModel
-    property var nodeModelInst: nodeModel
+    // Not Refactored Yet
+//    property var chatsModelInst: chatsModel
+    // Not Refactored Yet
+//    property var utilsModelInst: utilsModel
+    // Not Refactored Yet
+//    property var walletModelInst: walletModel
+    // Not Refactored Yet
+//    property var nodeModelInst: nodeModel
 
-    property var ens: profileModelInst.ens
+    // Not Refactored Yet
+//    property var ens: profileModelInst.ens
     property var dappList: dappPermissionsModule.dapps
     property var permissionList: dappPermissionsModule.permissions
-    property var mailservers: profileModelInst.mailservers
-    property var mailserversList: profileModelInst.mailservers.list
+    // Not Refactored Yet
+//    property var mailservers: profileModelInst.mailservers
+//    property var mailserversList: profileModelInst.mailservers.list
     property var contacts: contactsModuleInst.model.list
     property var blockedContacts: contactsModuleInst.model.blockedContacts
     property var addedContacts: contactsModuleInst.model.addedContacts
-    property var mutedChatsContacts: profileModelInst.mutedChats.contacts
-    property var mutedChats: profileModelInst.mutedChats.chats
-    property var devicesList: profileModelInst.devices.list
+    // Not Refactored Yet
+//    property var mutedChatsContacts: profileModelInst.mutedChats.contacts
+//    property var mutedChats: profileModelInst.mutedChats.chats
+//    property var devicesList: profileModelInst.devices.list
 
-    property string ensRegisterAddress: utilsModelInst.ensRegisterAddress
-    property string etherscanLink: walletModelInst.utilsView.etherscanLink
+    // Not Refactored Yet
+    property string ensRegisterAddress: "" //utilsModelInst.ensRegisterAddress
+    // Not Refactored Yet
+    property string etherscanLink: "" //walletModelInst.utilsView.etherscanLink
     property string pubKey: profile.pubKey
-    property string fleet: profileModelInst.fleets.fleet
-    property string bloomLevel: nodeModelInst.bloomLevel
-    property string currentNetwork: profileModelInst.network.current
-    property string preferredUsername: profileModelInst.ens.preferredUsername
-    property string firstEnsUsername: profileModelInst.ens.firstEnsUsername
+    // Not Refactored Yet
+//    property string fleet: profileModelInst.fleets.fleet
+    // Not Refactored Yet
+//    property string bloomLevel: nodeModelInst.bloomLevel
+    // Not Refactored Yet
+//    property string currentNetwork: profileModelInst.network.current
+//    property string preferredUsername: profileModelInst.ens.preferredUsername
+//    property string firstEnsUsername: profileModelInst.ens.firstEnsUsername
     property string username: profile.username
     property string identicon: profile.identicon
     property string profileLargeImage: profile.largeImage
     property string profileThumbnailImage: profile.thumbnailImage
 
     property bool profileHasIdentityImage: profile.hasIdentityImage
-    property bool automaticMailserverSelection: profileModelInst.mailservers.automaticSelection
-    property bool isWakuV2LightClient: nodeModelInst.WakuV2LightClient
-    property bool devicesSetup: profileModelInst.devices.isSetup
+    // Not Refactored Yet
+//    property bool automaticMailserverSelection: profileModelInst.mailservers.automaticSelection
+    // Not Refactored Yet
+//    property bool isWakuV2LightClient: nodeModelInst.WakuV2LightClient
+    // Not Refactored Yet
+//    property bool devicesSetup: profileModelInst.devices.isSetup
     property bool mnemonicBackedUp: mnemonicModuleInst.isBackedUp
     property bool messagesFromContactsOnly: profile.messagesFromContactsOnly
 
@@ -170,11 +186,13 @@ QtObject {
     }
 
     function getQrCodeSource(publicKey) {
-        return profileModelInst.qrCode(publicKey)
+        // Not Refactored Yet
+//        return profileModelInst.qrCode(publicKey)
     }
 
     function copyToClipboard(value) {
-        chatsModelInst.copyToClipboard(value)
+        // Not Refactored Yet
+//        chatsModelInst.copyToClipboard(value)
     }
 
     function uploadImage(source, aX, aY, bX, bY) {
@@ -194,7 +212,8 @@ QtObject {
     }
 
     function generateAlias(pubKey) {
-        return utilsModelInst.generateAlias(pubKey)
+        // Not Refactored Yet
+//        return utilsModelInst.generateAlias(pubKey)
     }
 
     function joinPrivateChat(address) {
@@ -219,60 +238,74 @@ QtObject {
     }
 
     function ensDetails(username) {
-        profileModelInst.ens.details(username)
+        // Not Refactored Yet
+//        profileModelInst.ens.details(username)
     }
 
     function ensPendingLen() {
-        return profileModelInst.ens.pendingLen()
+        // Not Refactored Yet
+//        return profileModelInst.ens.pendingLen()
     }
 
     function validateEns(ensName, isStatus) {
-        profileModelInst.ens.validate(ensName, isStatus)
+        // Not Refactored Yet
+//        profileModelInst.ens.validate(ensName, isStatus)
     }
 
     function registerEnsGasEstimate(username, address) {
-        return profileModelInst.ens.registerENSGasEstimate(username, address)
+        // Not Refactored Yet
+//        return profileModelInst.ens.registerENSGasEstimate(username, address)
     }
 
     function registerEns(username, address, gasLimit, tipLimit, overallLimit, gasPrice, password) {
-        return profileModelInst.ens.registerENS(username,
-            address, gasLimit, tipLimit, overallLimit, gasPrice, password)
+        // Not Refactored Yet
+//        return profileModelInst.ens.registerENS(username,
+//            address, gasLimit, tipLimit, overallLimit, gasPrice, password)
     }
 
     function getEnsUsernameRegistrar() {
-         return profileModelInst.ens.getUsernameRegistrar()
+        // Not Refactored Yet
+//         return profileModelInst.ens.getUsernameRegistrar()
     }
 
     function getEnsRegistry() {
-        return profileModelInst.ens.getENSRegistry()
+        // Not Refactored Yet
+//        return profileModelInst.ens.getENSRegistry()
     }
 
     function releaseEnsEstimate(username, address) {
-        return profileModelInst.ens.releaseEstimate(username, address)
+        // Not Refactored Yet
+//        return profileModelInst.ens.releaseEstimate(username, address)
     }
 
     function releaseEns(username, address, gasLimit, gasPrice, password) {
-        return profileModelInst.ens.release(username, address, gasLimit, gasPrice, password)
+        // Not Refactored Yet
+//        return profileModelInst.ens.release(username, address, gasLimit, gasPrice, password)
     }
 
     function getGasPrice() {
-        walletModelInst.gasView.getGasPrice()
+        // Not Refactored Yet
+//        walletModelInst.gasView.getGasPrice()
     }
 
     function getGasPricePredictions() {
-        walletModelInst.gasView.getGasPricePredictions()
+        // Not Refactored Yet
+//        walletModelInst.gasView.getGasPricePredictions()
     }
 
     function ensConnectOwnedUsername(name, isStatus) {
-        profileModelInst.ens.connectOwnedUsername(name, isStatus)
+        // Not Refactored Yet
+//        profileModelInst.ens.connectOwnedUsername(name, isStatus)
     }
 
     function getWalletDefaultAddress() {
-        return walletModelInst.getDefaultAddress()
+        // Not Refactored Yet
+//        return walletModelInst.getDefaultAddress()
     }
 
     function getSntBalance() {
-        return utilsModelInst.getSNTBalance()
+        // Not Refactored Yet
+//        return utilsModelInst.getSNTBalance()
     }
 
     function changeLocale(l) {
@@ -281,35 +314,43 @@ QtObject {
     }
 
     function getMailserverName(mailserver) {
-        return profileModelInst.mailservers.list.getMailserverName(mailserver)
+        // Not Refactored Yet
+//        return profileModelInst.mailservers.list.getMailserverName(mailserver)
     }
 
     function setMailserver(mailserver) {
-        profileModelInst.mailservers.setMailserver(mailserver);
+        // Not Refactored Yet
+//        profileModelInst.mailservers.setMailserver(mailserver);
     }
 
     function saveMailserver(name, enode) {
-        profileModelInst.mailservers.save(name, enode)
+        // Not Refactored Yet
+//        profileModelInst.mailservers.save(name, enode)
     }
 
     function enableAutomaticMailserverSelection(checked) {
-        profileModelInst.mailservers.enableAutomaticSelection(checked)
+        // Not Refactored Yet
+//        profileModelInst.mailservers.enableAutomaticSelection(checked)
     }
 
     function getNetworkName() {
-        return utilsModelInst.getNetworkName()
+        // Not Refactored Yet
+//        return utilsModelInst.getNetworkName()
     }
 
     function logDir() {
-        return profileModelInst.logDir()
+        // Not Refactored Yet
+//        return profileModelInst.logDir()
     }
 
     function setBloomLevel(mode) {
-        nodeModelInst.setBloomLevel(mode)
+        // Not Refactored Yet
+//        nodeModelInst.setBloomLevel(mode)
     }
 
     function setWakuV2LightClient(mode) {
-        nodeModelInst.setWakuV2LightClient(mode)
+        // Not Refactored Yet
+//        nodeModelInst.setWakuV2LightClient(mode)
     }
 
     function getCurrentVersion() {
@@ -321,50 +362,62 @@ QtObject {
     }
 
     function checkForUpdates() {
-        utilsModelInst.checkForUpdates()
+        // Not Refactored Yet
+//        utilsModelInst.checkForUpdates()
     }
 
     function setPubKeyGasEstimate(username, address) {
-        return profileModelInst.ens.setPubKeyGasEstimate(username, address)
+        // Not Refactored Yet
+//        return profileModelInst.ens.setPubKeyGasEstimate(username, address)
     }
 
     function setPubKey(username, address, gasLimit, gasPrice, password) {
-        return profileModelInst.ens.setPubKey(username, address, gasLimit, gasPrice, password)
+        // Not Refactored Yet
+//        return profileModelInst.ens.setPubKey(username, address, gasLimit, gasPrice, password)
     }
 
     function setDeviceName(name) {
-        profileModelInst.devices.setName(name)
+        // Not Refactored Yet
+//        profileModelInst.devices.setName(name)
     }
 
     function advertiseDevice() {
-        profileModelInst.devices.advertise()
+        // Not Refactored Yet
+//        profileModelInst.devices.advertise()
     }
 
     function enableDeviceInstallation(id, pairedSwitch) {
-        profileModelInst.devices.enableInstallation(id, pairedSwitch)
+        // Not Refactored Yet
+//        profileModelInst.devices.enableInstallation(id, pairedSwitch)
     }
 
     function syncAllDevices() {
-        profileModelInst.devices.syncAll()
+        // Not Refactored Yet
+//        profileModelInst.devices.syncAll()
     }
 
     function readTextFile(path) {
-        return utilsModelInst.readTextFile(path)
+        // Not Refactored Yet
+//        return utilsModelInst.readTextFile(path)
     }
 
     function writeTextFile(path, value) {
-        utilsModelInst.writeTextFile(path, value)
+        // Not Refactored Yet
+//        utilsModelInst.writeTextFile(path, value)
     }
 
     function setMessagesFromContactsOnly(checked) {
-        profileModelInst.setMessagesFromContactsOnly(checked)
+        // Not Refactored Yet
+//        profileModelInst.setMessagesFromContactsOnly(checked)
     }
 
     function userNameOrAlias(pk) {
-        return chatsModelInst.userNameOrAlias(pk);
+        // Not Refactored Yet
+//        return chatsModelInst.userNameOrAlias(pk);
     }
 
     function generateIdenticon(pk) {
-        return utilsModelInst.generateIdenticon(pk);
+        // Not Refactored Yet
+//        return utilsModelInst.generateIdenticon(pk);
     }
 }

@@ -80,8 +80,9 @@ StatusModal {
                     addNetworkPopup.networkId = parseInt(networkInput.text, 10);
                 }
 
-                profileModel.network.add(nameInput.text, rpcInput.text, addNetworkPopup.networkId, addNetworkPopup.networkType)
-                profileModel.network.reloadCustomNetworks();
+                // Not Refactored Yet
+//                profileModel.network.add(nameInput.text, rpcInput.text, addNetworkPopup.networkId, addNetworkPopup.networkType)
+//                profileModel.network.reloadCustomNetworks();
                 addNetworkPopup.close()
             }
         }

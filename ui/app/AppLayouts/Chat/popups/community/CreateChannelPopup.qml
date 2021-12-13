@@ -171,7 +171,8 @@ StatusModal {
                 //% "Pinned messages"
                 title: qsTrId("pinned-messages")
                 icon.name: "pin"
-                label: popup.store.chatsModelInst.messageView.pinnedMessagesList.count
+                // Not Refactored Yet
+//                label: popup.store.chatsModelInst.messageView.pinnedMessagesList.count
                 components: [
                     StatusIcon {
                         icon: "chevron-down"

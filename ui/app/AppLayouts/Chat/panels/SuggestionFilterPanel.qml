@@ -62,7 +62,9 @@ Item {
             return
         }
 
-        return chatsModel.plainText(this.filter)
+        // Not Refactored Yet
+        return ""
+//        return chatsModel.plainText(this.filter)
     }
 
     function shouldShowAll(filter) {

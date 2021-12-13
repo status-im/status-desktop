@@ -12,8 +12,9 @@ Item {
     property var store
     property var messageStore
     property bool longChatText: true
-    property bool veryLongChatText: !!root.store ? root.store.chatsModelInst.plainText(message).length >
-                                    Constants.limitLongChatTextCompactMode : false
+    // Not Refactored Yet
+    property bool veryLongChatText: false // !!root.store ? root.store.chatsModelInst.plainText(message).length >
+                                    //Constants.limitLongChatTextCompactMode : false
     property bool readMore: false
     property alias textField: chatText
 
@@ -53,59 +54,60 @@ Item {
         clip: height < implicitHeight
         onLinkActivated: {
 
-            root.linkActivated(link)
-            if(link.startsWith("#")) {
-                const channelName = link.substring(1);
-                const foundChannelObj = root.store.chatsModelInst.getChannel(channelName);
+            // Not Refactored Yet
+//            root.linkActivated(link)
+//            if(link.startsWith("#")) {
+//                const channelName = link.substring(1);
+//                const foundChannelObj = root.store.chatsModelInst.getChannel(channelName);
 
-                if (!foundChannelObj)
-                {
-                    // Not Refactored Yet
-//                    root.store.chatsModelInst.channelView.joinPublicChat(channelName)
-//                    if(root.store.chatsModelInst.communities.activeCommunity.active)
-//                    {
-//                        root.store.chatsModelInst.channelView.joinPublicChat(channelName)
-//                        Global.changeAppSectionBySectionType(Constants.appSection.chat)
-//                    }
-                    return
-                }
+//                if (!foundChannelObj)
+//                {
+//                    // Not Refactored Yet
+////                    root.store.chatsModelInst.channelView.joinPublicChat(channelName)
+////                    if(root.store.chatsModelInst.communities.activeCommunity.active)
+////                    {
+////                        root.store.chatsModelInst.channelView.joinPublicChat(channelName)
+////                        Global.changeAppSectionBySectionType(Constants.appSection.chat)
+////                    }
+//                    return
+//                }
 
-                let obj = JSON.parse(foundChannelObj)
+//                let obj = JSON.parse(foundChannelObj)
 
-                if(obj.chatType === -1 || obj.chatType === Constants.chatType.publicChat)
-                {
-                    // Not Refactored Yet
-//                    if(root.store.chatsModelInst.communities.activeCommunity.active) {
-//                        root.store.chatsModelInst.channelView.joinPublicChat(channelName)
-//                        Global.changeAppSectionBySectionType(Constants.appSection.chat)
-//                    }
+//                if(obj.chatType === -1 || obj.chatType === Constants.chatType.publicChat)
+//                {
+//                    // Not Refactored Yet
+////                    if(root.store.chatsModelInst.communities.activeCommunity.active) {
+////                        root.store.chatsModelInst.channelView.joinPublicChat(channelName)
+////                        Global.changeAppSectionBySectionType(Constants.appSection.chat)
+////                    }
+////                    root.store.chatsModelInst.channelView.setActiveChannel(channelName);
+//                }
+//                else if(obj.communityId === root.store.chatsModelInst.communities.activeCommunity.id &&
+//                        obj.chatType === Constants.chatType.communityChat &&
+//                        root.store.chatsModelInst.channelView.activeChannel.id !== obj.id
+//                        )
+//                {
 //                    root.store.chatsModelInst.channelView.setActiveChannel(channelName);
-                }
-                else if(obj.communityId === root.store.chatsModelInst.communities.activeCommunity.id &&
-                        obj.chatType === Constants.chatType.communityChat &&
-                        root.store.chatsModelInst.channelView.activeChannel.id !== obj.id
-                        )
-                {
-                    root.store.chatsModelInst.channelView.setActiveChannel(channelName);
-                }
+//                }
 
-                return
-            }
+//                return
+//            }
 
-            if (link.startsWith('//')) {
-                let pk = link.replace("//", "");
-                const userProfileImage = appMain.getProfileImage(pk)
-                openProfilePopup(root.store.userNameOrAlias(pk), pk, userProfileImage || root.store.generateIdenticon(pk))
-                return;
-            }
+//            if (link.startsWith('//')) {
+//                let pk = link.replace("//", "");
+//                const userProfileImage = appMain.getProfileImage(pk)
+//                openProfilePopup(root.store.userNameOrAlias(pk), pk, userProfileImage || root.store.generateIdenticon(pk))
+//                return;
+//            }
 
-            const data = Utils.getLinkDataForStatusLinks(link)
-            if (data && data.callback) {
-                return data.callback()
-            }
+//            const data = Utils.getLinkDataForStatusLinks(link)
+//            if (data && data.callback) {
+//                return data.callback()
+//            }
 
 
-            Global.openLink(link)
+//            Global.openLink(link)
         }
 
         onLinkHovered: {

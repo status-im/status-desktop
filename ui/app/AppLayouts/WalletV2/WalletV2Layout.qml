@@ -33,7 +33,8 @@ Item {
 
     SignPhraseModal {
         id: signPhrasePopup
-        signingPhraseText: walletView.store.walletModelInst.utilsView.signingPhrase
+        // Not Refactored Yet
+//        signingPhraseText: walletView.store.walletModelInst.utilsView.signingPhrase
         onRemindLaterButtonClicked: {
             hideSignPhraseModal = true;
             signPhrasePopup.close();
@@ -95,14 +96,15 @@ Item {
                         id: walletInfoContent
                         WalletHeaderPanel {
                             id: walletHeader
-                            accountsModel: walletView.store.walletModelV2Inst.accountsView.accounts
-                            currentAccount: walletView.store.walletModelV2Inst.accountsView.currentAccount
-                            qrCode: walletView.store.profileModelInst.qrCode(walletView.store.selectedAccount.address)
-                            allNetworksModel: walletView.store.walletModelV2Inst.networksView.allNetworks
-                            enabledNetworksModel: walletView.store.walletModelV2Inst.networksView.enabledNetworks
-                            onToggleNetwork: {
-                                walletView.store.walletModelV2Inst.networksView.toggleNetwork(chainId)
-                            }
+                            // Not Refactored Yet
+//                            accountsModel: walletView.store.walletModelV2Inst.accountsView.accounts
+//                            currentAccount: walletView.store.walletModelV2Inst.accountsView.currentAccount
+//                            qrCode: walletView.store.profileModelInst.qrCode(walletView.store.selectedAccount.address)
+//                            allNetworksModel: walletView.store.walletModelV2Inst.networksView.allNetworks
+//                            enabledNetworksModel: walletView.store.walletModelV2Inst.networksView.enabledNetworks
+//                            onToggleNetwork: {
+//                                walletView.store.walletModelV2Inst.networksView.toggleNetwork(chainId)
+//                            }
                             onCopyText: {
                                 walletView.store.copyText(text);
                             }
@@ -195,7 +197,8 @@ Item {
             WalletFooterPanel {
                 id: walletFooter
                 anchors.bottom: parent.bottom
-                walletV2Model: walletView.store.walletModelV2Inst
+                // Not Refactored Yet
+//                walletV2Model: walletView.store.walletModelV2Inst
             }
         }
     }

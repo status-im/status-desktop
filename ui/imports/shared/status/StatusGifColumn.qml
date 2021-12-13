@@ -109,7 +109,8 @@ Column {
                 hoverEnabled: true
                 onClicked: function (event) {
                     root.gifSelected(event, model.url)
-                    chatsModel.gif.addToRecents(model.id)
+                    // Not Refactored Yet
+//                    chatsModel.gif.addToRecents(model.id)
                 }
             }
         }

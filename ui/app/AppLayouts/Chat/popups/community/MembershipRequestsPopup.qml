@@ -53,7 +53,8 @@ StatusModal {
             ListView {
                 id: membershipRequestList
                 anchors.fill: parent
-                model: popup.store.chatsModelInst.communities.activeCommunity.communityMembershipRequests
+                // Not Refactored Yet
+//                model: popup.store.chatsModelInst.communities.activeCommunity.communityMembershipRequests
                 clip: true
 
                 delegate: StatusListItem {

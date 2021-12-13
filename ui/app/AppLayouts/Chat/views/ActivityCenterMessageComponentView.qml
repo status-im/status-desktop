@@ -31,11 +31,13 @@ Item {
     }
 
     property var store
-    property int communityIndex: root.store.chatsModelInst.communities.joinedCommunities.getCommunityIndex(model.message.communityId)
+    // Not Refactored Yet
+    property int communityIndex: -1 //root.store.chatsModelInst.communities.joinedCommunities.getCommunityIndex(model.message.communityId)
     function openProfile() {
         const pk = model.author
         const userProfileImage = appMain.getProfileImage(pk)
-        openProfilePopup(root.store.chatsModelInst.userNameOrAlias(pk), pk, userProfileImage || utilsModel.generateIdenticon(pk))
+        // Not Refactored Yet
+//        openProfilePopup(root.store.chatsModelInst.userNameOrAlias(pk), pk, userProfileImage || utilsModel.generateIdenticon(pk))
     }
 
     Component {
@@ -56,10 +58,11 @@ Item {
             tooltip.x: -tooltip.width - Style.current.padding
             tooltip.y: markReadBtn.height / 2 - height / 2 + 4
             onClicked: {
-                if (!model.read) {
-                    return root.store.chatsModelInst.activityNotificationList.markActivityCenterNotificationRead(model.id, model.message.communityId, model.message.chatId, model.notificationType)
-                }
-                return root.store.chatsModelInst.activityNotificationList.markActivityCenterNotificationUnread(model.id, model.message.communityId, model.message.chatId, model.notificationType)
+                // Not Refactored Yet
+//                if (!model.read) {
+//                    return root.store.chatsModelInst.activityNotificationList.markActivityCenterNotificationRead(model.id, model.message.communityId, model.message.chatId, model.notificationType)
+//                }
+//                return root.store.chatsModelInst.activityNotificationList.markActivityCenterNotificationUnread(model.id, model.message.communityId, model.message.chatId, model.notificationType)
             }
         }
     }
@@ -70,29 +73,33 @@ Item {
         AcceptRejectOptionsButtonsPanel {
             id: buttons
             onAcceptClicked: {
-                const setActiveChannel = root.store.chatsModelInst.channelView.setActiveChannel
-                const chatId = model.message.chatId
-                const messageId = model.message.messageId
-                root.store.profileModuleInst.addContact(model.author)
-                root.store.chatsModelInst.activityNotificationList.acceptActivityCenterNotification(model.id)
-                setActiveChannel(chatId)
-                positionAtMessage(messageId)
+                // Not Refactored Yet
+//                const setActiveChannel = root.store.chatsModelInst.channelView.setActiveChannel
+//                const chatId = model.message.chatId
+//                const messageId = model.message.messageId
+//                root.store.profileModuleInst.addContact(model.author)
+//                root.store.chatsModelInst.activityNotificationList.acceptActivityCenterNotification(model.id)
+//                setActiveChannel(chatId)
+//                positionAtMessage(messageId)
             }
-            onDeclineClicked: root.store.chatsModelInst.activityNotificationList.dismissActivityCenterNotification(model.id)
+            // Not Refactored Yet
+//            onDeclineClicked: root.store.chatsModelInst.activityNotificationList.dismissActivityCenterNotification(model.id)
             onProfileClicked: root.openProfile()
             onBlockClicked: {
-                const pk = model.author
-                blockContactConfirmationDialog.contactName = chatsModel.userNameOrAlias(pk)
-                blockContactConfirmationDialog.contactAddress = pk
-                blockContactConfirmationDialog.open()
+                // Not Refactored Yet
+//                const pk = model.author
+//                blockContactConfirmationDialog.contactName = chatsModel.userNameOrAlias(pk)
+//                blockContactConfirmationDialog.contactAddress = pk
+//                blockContactConfirmationDialog.open()
             }
 
             BlockContactConfirmationDialog {
                 id: blockContactConfirmationDialog
                 onBlockButtonClicked: {
-                    root.store.profileModuleInst.blockContact(blockContactConfirmationDialog.contactAddress)
-                    root.store.chatsModelInst.activityNotificationList.dismissActivityCenterNotification(model.id)
-                    blockContactConfirmationDialog.close()
+                    // Not Refactored Yet
+//                    root.store.profileModuleInst.blockContact(blockContactConfirmationDialog.contactAddress)
+//                    root.store.chatsModelInst.activityNotificationList.dismissActivityCenterNotification(model.id)
+//                    blockContactConfirmationDialog.close()
                 }
             }
         }
@@ -235,28 +242,37 @@ Item {
             chatId: model.chatId
             notificationType: model.notificationType
             communityId: model.message.communityId
-            replyMessageIndex: root.store.chatsModelInst.messageView.getMessageIndex(model.chatId, model.responseTo)
-            repliedMessageContent: replyMessageIndex > -1 ? root.store.chatsModelInst.messageView.getMessageData(chatId, replyMessageIndex, "message") : ""
+            // Not Refactored Yet
+//            replyMessageIndex: root.store.chatsModelInst.messageView.getMessageIndex(model.chatId, model.responseTo)
+            // Not Refactored Yet
+//            repliedMessageContent: replyMessageIndex > -1 ? root.store.chatsModelInst.messageView.getMessageData(chatId, replyMessageIndex, "message") : ""
             realChatType: {
-                var chatType = root.store.chatsModelInst.channelView.chats.getChannelType(model.chatId)
-                if (chatType === Constants.chatType.communityChat) {
-                    // TODO add a check for private community chats once it is created
-                    return Constants.chatType.publicChat
-                }
-                return chatType
+                // Not Refactored Yet
+//                var chatType = root.store.chatsModelInst.channelView.chats.getChannelType(model.chatId)
+//                if (chatType === Constants.chatType.communityChat) {
+//                    // TODO add a check for private community chats once it is created
+//                    return Constants.chatType.publicChat
+//                }
+//                return chatType
             }
             profileImage: realChatType === Constants.chatType.oneToOne ? appMain.getProfileImage(chatId) || ""  : ""
-            channelName: root.store.chatsModelInst.getChannelNameById(badge.chatId)
-            communityName: root.communityIndex > -1 ? root.store.chatsModelInst.communities.joinedCommunities.rowData(root.communityIndex, "name") : ""
-            communityThumbnailImage: root.communityIndex > -1 ? root.store.chatsModelInst.communities.joinedCommunities.rowData(root.communityIndex, "thumbnailImage") : ""
-            communityColor: !model.image && root.communityIndex > -1 ? root.store.chatsModelInst.communities.joinedCommunities.rowData(root.communityIndex, "communityColor"): ""
+            // Not Refactored Yet
+//            channelName: root.store.chatsModelInst.getChannelNameById(badge.chatId)
+            // Not Refactored Yet
+//            communityName: root.communityIndex > -1 ? root.store.chatsModelInst.communities.joinedCommunities.rowData(root.communityIndex, "name") : ""
+            // Not Refactored Yet
+//            communityThumbnailImage: root.communityIndex > -1 ? root.store.chatsModelInst.communities.joinedCommunities.rowData(root.communityIndex, "thumbnailImage") : ""
+            // Not Refactored Yet
+//            communityColor: !model.image && root.communityIndex > -1 ? root.store.chatsModelInst.communities.joinedCommunities.rowData(root.communityIndex, "communityColor"): ""
 
             onCommunityNameClicked: {
-                root.store.chatsModelInst.communities.setActiveCommunity(badge.communityId)
+                // Not Refactored Yet
+//                root.store.chatsModelInst.communities.setActiveCommunity(badge.communityId)
             }
             onChannelNameClicked: {
-                root.store.chatsModelInst.communities.setActiveCommunity(badge.communityId)
-                root.store.chatsModelInst.setActiveChannel(badge.chatId)
+                // Not Refactored Yet
+//                root.store.chatsModelInst.communities.setActiveCommunity(badge.communityId)
+//                root.store.chatsModelInst.setActiveChannel(badge.chatId)
             }
 
             Connections {

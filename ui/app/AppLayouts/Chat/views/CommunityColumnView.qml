@@ -56,16 +56,18 @@ Item {
                 //% "Create channel"
                 text: qsTrId("create-channel")
                 icon.name: "channel"
+                // Not Refactored Yet
                 //enabled: root.store.chatsModelInst.communities.activeCommunity.admin
-                onTriggered: Global.openPopup(createChannelPopup, {communityId: chatsModel.communities.activeCommunity.id})
+//                onTriggered: Global.openPopup(createChannelPopup, {communityId: chatsModel.communities.activeCommunity.id})
             }
 
             StatusMenuItem {
                 //% "Create category"
                 text: qsTrId("create-category")
                 icon.name: "channel-category"
+                // Not Refactored Yet
                 //enabled: root.store.chatsModelInst.communities.activeCommunity.admin
-                onTriggered: Global.openPopup(createCategoryPopup, {communityId: chatsModel.communities.activeCommunity.id})
+//                onTriggered: Global.openPopup(createCategoryPopup, {communityId: chatsModel.communities.activeCommunity.id})
             }
 
            StatusMenuSeparator {}
@@ -74,10 +76,11 @@ Item {
                 //% "Invite people"
                 text: qsTrId("invite-people")
                 icon.name: "share-ios"
+                // Not Refactored Yet
                 //enabled: root.store.chatsModelInst.communities.activeCommunity.canManageUsers
-                onTriggered: Global.openPopup(inviteFriendsToCommunityPopup, {
-                    community: root.store.chatsModelInst.communities.activeCommunity
-                })
+//                onTriggered: Global.openPopup(inviteFriendsToCommunityPopup, {
+//                    community: root.store.chatsModelInst.communities.activeCommunity
+//                })
             }
         }
     }
@@ -174,8 +177,9 @@ Item {
                     //% "Create channel"
                     text: qsTrId("create-channel")
                     icon.name: "channel"
-                    enabled: chatsModel.communities.activeCommunity.admin
-                    onTriggered: Global.openPopup(createChannelPopup, {communityId: root.store.chatsModelInst.communities.activeCommunity.id})
+                    // Not Refactored Yet
+//                    enabled: chatsModel.communities.activeCommunity.admin
+//                    onTriggered: Global.openPopup(createChannelPopup, {communityId: root.store.chatsModelInst.communities.activeCommunity.id})
                 }
 
                 StatusMenuItem {
@@ -185,7 +189,7 @@ Item {
                     // Not Refactored Yet
                     enabled: false
                     //enabled: root.store.chatsModelInst.communities.activeCommunity.admin
-                    onTriggered: Global.openPopup(createCategoryPopup, {communityId: root.store.chatsModelInst.communities.activeCommunity.id})
+//                    onTriggered: Global.openPopup(createCategoryPopup, {communityId: root.store.chatsModelInst.communities.activeCommunity.id})
                 }
 
                 StatusMenuSeparator {}
@@ -197,9 +201,9 @@ Item {
                     // Not Refactored Yet
                     enabled: false
                     //enabled: root.store.chatsModelInst.communities.activeCommunity.canManageUsers
-                    onTriggered: Global.openPopup(inviteFriendsToCommunityPopup, {
-                        community: root.store.chatsModelInst.communities.activeCommunity
-                    })
+//                    onTriggered: Global.openPopup(inviteFriendsToCommunityPopup, {
+//                        community: root.store.chatsModelInst.communities.activeCommunity
+//                    })
                 }
             }
 
@@ -208,7 +212,8 @@ Item {
                 property var categoryItem
 
                 openHandler: function (id) {
-                    categoryItem = root.store.chatsModelInst.communities.activeCommunity.getCommunityCategoryItemById(id)
+                    // Not Refactored Yet
+//                    categoryItem = root.store.chatsModelInst.communities.activeCommunity.getCommunityCategoryItemById(id)
                 }
 
                 StatusMenuItem { 
@@ -219,12 +224,13 @@ Item {
                     text: qsTrId("edit-category")
                     icon.name: "edit"
                     onTriggered: {
-                        Global.openPopup(createCategoryPopup, {
-                            communityId: root.store.chatsModelInst.communities.activeCommunity.id,
-                            isEdit: true,
-                            categoryId: categoryItem.id,
-                            categoryName: categoryItem.name
-                        })
+                        // Not Refactored Yet
+//                        Global.openPopup(createCategoryPopup, {
+//                            communityId: root.store.chatsModelInst.communities.activeCommunity.id,
+//                            isEdit: true,
+//                            categoryId: categoryItem.id,
+//                            categoryName: categoryItem.name
+//                        })
                     }
                 }
 
@@ -297,9 +303,10 @@ Item {
 
         Loader {
             id: emptyViewAndSuggestionsLoader
-            active: root.store.chatsModelInst.communities.activeCommunity.admin &&
-                     (!localAccountSensitiveSettings.hiddenCommunityWelcomeBanners ||
-                      !localAccountSensitiveSettings.hiddenCommunityWelcomeBanners.includes(root.store.chatsModelInst.communities.activeCommunity.id))
+            // Not Refactored Yet
+//            active: root.store.chatsModelInst.communities.activeCommunity.admin &&
+//                     (!localAccountSensitiveSettings.hiddenCommunityWelcomeBanners ||
+//                      !localAccountSensitiveSettings.hiddenCommunityWelcomeBanners.includes(root.store.chatsModelInst.communities.activeCommunity.id))
             width: parent.width
             height: active ? item.height : 0
             anchors.top: communityChatListAndCategories.bottom
@@ -314,9 +321,10 @@ Item {
 
         Loader {
             id: backUpBannerLoader
-            active: root.store.chatsModelInst.communities.activeCommunity.admin &&
-                        (!localAccountSensitiveSettings.hiddenCommunityBackUpBanners ||
-                         !localAccountSensitiveSettings.hiddenCommunityBackUpBanners.includes(root.store.chatsModelInst.communities.activeCommunity.id))
+            // Not Refactored Yet
+//            active: root.store.chatsModelInst.communities.activeCommunity.admin &&
+//                        (!localAccountSensitiveSettings.hiddenCommunityBackUpBanners ||
+//                         !localAccountSensitiveSettings.hiddenCommunityBackUpBanners.includes(root.store.chatsModelInst.communities.activeCommunity.id))
             width: parent.width
             height: active ? item.height : 0
             anchors.top: emptyViewAndSuggestionsLoader.bottom
@@ -386,12 +394,13 @@ Item {
                 close();
             }
             onConfirmButtonClicked: function(){
-                const error = root.store.chatsModelInst.communities.deleteCommunityCategory(root.store.chatsModelInst.communities.activeCommunity.id, categoryId)
-                if (error) {
-                    creatingError.text = error
-                    return creatingError.open()
-                }
-                close();
+                // Not Refactored Yet
+//                const error = root.store.chatsModelInst.communities.deleteCommunityCategory(root.store.chatsModelInst.communities.activeCommunity.id, categoryId)
+//                if (error) {
+//                    creatingError.text = error
+//                    return creatingError.open()
+//                }
+//                close();
             }
         }
     }

@@ -143,14 +143,15 @@ ModalPopup {
                     anchors.rightMargin: -Style.current.padding
                 }
 
-                Repeater {
-                    model: profileModel.network.customNetworkList
-                    delegate: NetworkRadioSelector {
-                        networkName: name
-                        network: customNetworkId
-                        buttonGroup: radioGroup
-                    }
-                }
+                // Not Refactored Yet
+//                Repeater {
+//                    model: profileModel.network.customNetworkList
+//                    delegate: NetworkRadioSelector {
+//                        networkName: name
+//                        network: customNetworkId
+//                        buttonGroup: radioGroup
+//                    }
+//                }
             }
         }
     }

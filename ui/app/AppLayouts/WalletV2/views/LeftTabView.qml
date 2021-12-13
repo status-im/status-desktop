@@ -169,7 +169,8 @@ Rectangle {
             anchors.fill: parent
             spacing: 5
             boundsBehavior: Flickable.StopAtBounds
-            model: walletInfoContainer.store.walletModelV2Inst.accountsView.accounts
+            // Not Refactored Yet
+//            model: walletInfoContainer.store.walletModelV2Inst.accountsView.accounts
             delegate: walletDelegate
             ListModel {
                 id: exampleWalletModel

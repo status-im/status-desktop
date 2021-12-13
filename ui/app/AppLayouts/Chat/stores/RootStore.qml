@@ -8,10 +8,14 @@ QtObject {
     property var messageStore
     property EmojiReactions emojiReactionsModel: EmojiReactions { }
 
-    property var chatsModelInst: chatsModel
-    property var utilsModelInst: utilsModel
-    property var walletModelInst: walletModel
-    property var profileModelInst: profileModel
+    // Not Refactored Yet
+//    property var chatsModelInst: chatsModel
+    // Not Refactored Yet
+//    property var utilsModelInst: utilsModel
+    // Not Refactored Yet
+//    property var walletModelInst: walletModel
+    // Not Refactored Yet
+//    property var profileModelInst: profileModel
     property var profileModuleInst: profileModule
 
     property var userProfileInst: userProfile
@@ -40,18 +44,21 @@ QtObject {
     property var contactsModuleInst: contactsModule
     property var stickersModuleInst: stickersModule
 
-    property var activeCommunity: chatsModelInst.communities.activeCommunity
+    // Not Refactored Yet
+//    property var activeCommunity: chatsModelInst.communities.activeCommunity
 
     property var contactRequests: contactsModuleInst.model.contactRequests
     property var addedContacts: contactsModuleInst.model.addedContacts
     property var allContacts: contactsModuleInst.model.list
 
     function copyToClipboard(text) {
-        chatsModelInst.copyToClipboard(text);
+        // Not Refactored Yet
+//        chatsModelInst.copyToClipboard(text);
     }
 
     function deleteMessage(messageId) {
-        chatsModelInst.messageView.deleteMessage(messageId);
+        // Not Refactored Yet
+//        chatsModelInst.messageView.deleteMessage(messageId);
     }
 
     function lastTwoItems(nodes) {
@@ -95,86 +102,102 @@ QtObject {
     }
 
     function getCommunity(communityId) {
-        try {
-            const communityJson = chatsModelInst.communities.list.getCommunityByIdJson(communityId);
-            if (!communityJson) {
-                return null;
-            }
+        // Not Refactored Yet
+//        try {
+//            const communityJson = chatsModelInst.communities.list.getCommunityByIdJson(communityId);
+//            if (!communityJson) {
+//                return null;
+//            }
 
-            let community = JSON.parse(communityJson);
-            if (community) {
-                community.nbMembers = community.members.length;
-            }
-            return community
-        } catch (e) {
-            console.error("Error parsing community", e);
-        }
+//            let community = JSON.parse(communityJson);
+//            if (community) {
+//                community.nbMembers = community.members.length;
+//            }
+//            return community
+//        } catch (e) {
+//            console.error("Error parsing community", e);
+//        }
 
        return null;
     }
 
-    property var activeCommunityChatsModel: chatsModelInst.communities.activeCommunity.chats
+    // Not Refactored Yet
+    property var activeCommunityChatsModel: "" //chatsModelInst.communities.activeCommunity.chats
 
     function createCommunity(communityName, communityDescription, checkedMembership, ensOnlySwitchChecked, communityColor, communityImage, imageCropperModalaX, imageCropperModalaY, imageCropperModalbX, imageCropperModalbY) {
-        chatsModelInst.communities.createCommunity(communityName, communityDescription, checkedMembership, ensOnlySwitchChecked, communityColor, communityImage, imageCropperModalaX, imageCropperModalaY, imageCropperModalbX, imageCropperModalbY);
+        // Not Refactored Yet
+//        chatsModelInst.communities.createCommunity(communityName, communityDescription, checkedMembership, ensOnlySwitchChecked, communityColor, communityImage, imageCropperModalaX, imageCropperModalaY, imageCropperModalbX, imageCropperModalbY);
     }
 
     function editCommunity(communityId, communityName, communityDescription, checkedMembership, ensOnlySwitchChecked, communityColor, communityImage, imageCropperModalaX, imageCropperModalaY, imageCropperModalbX, imageCropperModalbY) {
-        chatsModelInst.communities.editCommunity(communityId, communityName, communityDescription, checkedMembership, ensOnlySwitchChecked, communityColor, communityImage, imageCropperModalaX, imageCropperModalaY, imageCropperModalbX, imageCropperModalbY);
+        // Not Refactored Yet
+//        chatsModelInst.communities.editCommunity(communityId, communityName, communityDescription, checkedMembership, ensOnlySwitchChecked, communityColor, communityImage, imageCropperModalaX, imageCropperModalaY, imageCropperModalbX, imageCropperModalbY);
     }
 
     function createCommunityCategory(communityId, categoryName, channels) {
-        chatsModelInst.communities.createCommunityCategory(communityId, categoryName, channels);
+        // Not Refactored Yet
+//        chatsModelInst.communities.createCommunityCategory(communityId, categoryName, channels);
     }
 
     function editCommunityCategory(communityId, categoryId, categoryName, channels) {
-        chatsModelInst.communities.editCommunityCategory(communityId, categoryId, categoryName, channels);
+        // Not Refactored Yet
+//        chatsModelInst.communities.editCommunityCategory(communityId, categoryId, categoryName, channels);
     }
 
     function deleteCommunityCategory(categoryId) {
-        chatsModelInst.communities.deleteCommunityCategory(chatsModelInst.communities.activeCommunity.id, categoryId);
+        // Not Refactored Yet
+//        chatsModelInst.communities.deleteCommunityCategory(chatsModelInst.communities.activeCommunity.id, categoryId);
     }
 
     function leaveCommunity(communityId) {
-        chatsModelInst.communities.leaveCommunity(communityId);
+        // Not Refactored Yet
+//        chatsModelInst.communities.leaveCommunity(communityId);
     }
 
     function setCommunityMuted(communityId, checked) {
-        chatsModelInst.communities.setCommunityMuted(communityId, checked);
+        // Not Refactored Yet
+//        chatsModelInst.communities.setCommunityMuted(communityId, checked);
     }
 
     function exportCommunity() {
-        return chatsModelInst.communities.exportCommunity();
+        // Not Refactored Yet
+//        return chatsModelInst.communities.exportCommunity();
     }
 
     function createCommunityChannel(communityId, channelName, channelDescription, categoryId) {
         // TODO: pass the private value when private channels
         // are implemented
         //privateSwitch.checked)
-        chatsModelInst.createCommunityChannel(communityId, channelName, channelDescription, categoryId);
+        // Not Refactored Yet
+//        chatsModelInst.createCommunityChannel(communityId, channelName, channelDescription, categoryId);
     }
 
     function editCommunityChannel(communityId, channelId, channelName, channelDescription, channelCategoryId, popupPosition) {
         // TODO: pass the private value when private channels
         // are implemented
         //privateSwitch.checked)
-        chatsModelInst.editCommunityChannel(communityId, channelId, channelName, channelDescription, channelCategoryId, popupPosition);
+        // Not Refactored Yet
+//        chatsModelInst.editCommunityChannel(communityId, channelId, channelName, channelDescription, channelCategoryId, popupPosition);
     }
 
     function acceptRequestToJoinCommunity(id) {
-        chatsModelInst.communities.acceptRequestToJoinCommunity(id);
+        // Not Refactored Yet
+//        chatsModelInst.communities.acceptRequestToJoinCommunity(id);
     }
 
     function declineRequestToJoinCommunity(id) {
-        chatsModelInst.communities.declineRequestToJoinCommunity(id);
+        // Not Refactored Yet
+//        chatsModelInst.communities.declineRequestToJoinCommunity(id);
     }
 
     function userNameOrAlias(pk) {
-        return chatsModelInst.userNameOrAlias(pk);
+        // Not Refactored Yet
+//        return chatsModelInst.userNameOrAlias(pk);
     }
 
     function generateIdenticon(pk) {
-        return utilsModelInst.generateIdenticon(pk);
+        // Not Refactored Yet
+//        return utilsModelInst.generateIdenticon(pk);
     }
 
     function addContact(pubKey) {

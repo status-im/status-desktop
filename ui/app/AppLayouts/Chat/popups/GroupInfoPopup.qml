@@ -46,7 +46,8 @@ StatusModal {
     function doAddMembers(){
         if(pubKeys.length === 0) return;
         if (popup.channel) {
-            chatsModel.groups.addMembers(popup.channel.id, JSON.stringify(pubKeys));
+            // Not Refactored Yet
+//            chatsModel.groups.addMembers(popup.channel.id, JSON.stringify(pubKeys));
         }
         popup.close();
     }
@@ -171,7 +172,8 @@ StatusModal {
         spacing: Style.current.padding
 
         StatusSettingsLineButton {
-            property int pinnedCount: popup.store.chatsModelInst.messageView.pinnedMessagesList.count
+            // Not Refactored Yet
+            property int pinnedCount: 0 // popup.store.chatsModelInst.messageView.pinnedMessagesList.count
 
             id: pinnedMessagesBtn
             visible: pinnedCount > 0
@@ -187,21 +189,22 @@ StatusModal {
             visible: pinnedMessagesBtn.visible
         }
 
-        Connections {
-            target: popup.store.chatsModelInst.channelView
-            onActiveChannelChanged: {
-                if (popup.channelType === GroupInfoPopup.ChannelType.ActiveChannel) {
-                    popup.channel = popup.store.chatsModelInst.channelView.activeChannel
-                    resetSelectedMembers()
-                }
-            }
-            onContextChannelChanged: {
-                if (popup.channelType === GroupInfoPopup.ChannelType.ContextChannel) {
-                    popup.channel = popup.store.chatsModelInst.channelView.contextChannel
-                    resetSelectedMembers()
-                }
-            }
-        }
+        // Not Refactored Yet
+//        Connections {
+//            target: popup.store.chatsModelInst.channelView
+//            onActiveChannelChanged: {
+//                if (popup.channelType === GroupInfoPopup.ChannelType.ActiveChannel) {
+//                    popup.channel = popup.store.chatsModelInst.channelView.activeChannel
+//                    resetSelectedMembers()
+//                }
+//            }
+//            onContextChannelChanged: {
+//                if (popup.channelType === GroupInfoPopup.ChannelType.ContextChannel) {
+//                    popup.channel = popup.store.chatsModelInst.channelView.contextChannel
+//                    resetSelectedMembers()
+//                }
+//            }
+//        }
 
         ListView {
             id: memberList
@@ -243,7 +246,8 @@ StatusModal {
                                 icon.height: 16
                                 //% "Make Admin"
                                 text: qsTrId("make-admin")
-                                onTriggered: popup.store.chatsModelInst.groups.makeAdmin(popup.channel.id,  model.publicKey)
+                                // Not Refactored Yet
+//                                onTriggered: popup.store.chatsModelInst.groups.makeAdmin(popup.channel.id,  model.publicKey)
                             }
                             StatusMenuItem {
                                 icon.name: "remove-contact"
@@ -252,7 +256,8 @@ StatusModal {
                                 type: StatusMenuItem.Type.Danger
                                 //% "Remove From Group"
                                 text: qsTrId("remove-from-group")
-                                onTriggered: popup.store.chatsModelInst.groups.kickMember(popup.channel.id,  model.publicKey)
+                                // Not Refactored Yet
+//                                onTriggered: popup.store.chatsModelInst.groups.kickMember(popup.channel.id,  model.publicKey)
                             }
                         }
                     }
@@ -300,11 +305,12 @@ StatusModal {
 
     RenameGroupPopup {
         id: renameGroupPopup
-        activeChannelName: popup.store.chatsModelInst.channelView.activeChannel.name
-        onDoRename: {
-            popup.store.chatsModelInst.groups.rename(groupName)
-            popup.header.title = groupName
-            close()
-        }
+        // Not Refactored Yet
+//        activeChannelName: popup.store.chatsModelInst.channelView.activeChannel.name
+//        onDoRename: {
+//            popup.store.chatsModelInst.groups.rename(groupName)
+//            popup.header.title = groupName
+//            close()
+//        }
     }
 }

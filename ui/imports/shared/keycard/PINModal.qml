@@ -61,7 +61,8 @@ StatusModal {
 
             onClicked: {
                 submitted = true
-                keycardModel.authenticate(pinField.text)
+                // Not Refactored Yet
+//                keycardModel.authenticate(pinField.text)
                 popup.close()
             }
         }

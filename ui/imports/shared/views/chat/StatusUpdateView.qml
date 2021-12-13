@@ -189,7 +189,8 @@ MouseArea {
                     messageContextMenu.setXPosition = function() { return (messageContextMenu.parent.x + 4)}
                     messageContextMenu.setYPosition = function() { return (-messageContextMenu.height - 4)}
                 }
-                onToggleReaction: chatsModel.toggleReaction(messageId, emojiID)
+                // Not Refactored Yet
+//                onToggleReaction: chatsModel.toggleReaction(messageId, emojiID)
 
 //                onSetMessageActive: {
 //                    root.setMessageActive(messageId, active);;

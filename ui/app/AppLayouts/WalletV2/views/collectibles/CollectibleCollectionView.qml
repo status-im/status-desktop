@@ -17,12 +17,13 @@ Item {
     property var store
     signal collectibleClicked()
 
-    Connections {
-        target: root.store.walletV2ModelInst.collectiblesView.getAssetsList(root.slug)
-        onAssetsChanged: {
-            root.assetsLoaded = true;
-        }
-    }
+    // Not Refactored Yet
+//    Connections {
+//        target: root.store.walletV2ModelInst.collectiblesView.getAssetsList(root.slug)
+//        onAssetsChanged: {
+//            root.assetsLoaded = true;
+//        }
+//    }
 
     Loader {
         id: contentLoader
@@ -57,7 +58,8 @@ Item {
             spacing: 24
 
             Repeater {
-                model: root.store.walletV2ModelInst.collectiblesView.getAssetsList(root.slug)
+                // Not Refactored Yet
+//                model: root.store.walletV2ModelInst.collectiblesView.getAssetsList(root.slug)
                 StatusRoundedImage {
                     id: image
                     width: 146
@@ -91,6 +93,7 @@ Item {
     }
 
     Component.onCompleted: {
-        root.store.walletV2ModelInst.collectiblesView.loadAssets(root.store.walletV2ModelInst.accountsView.currentAccount.address, root.slug);
+        // Not Refactored Yet
+//        root.store.walletV2ModelInst.collectiblesView.loadAssets(root.store.walletV2ModelInst.accountsView.currentAccount.address, root.slug);
     }
 }

@@ -33,38 +33,39 @@ ModalPopup {
     }
 
     function sendTransaction() {
-        stack.currentGroup.isPending = true
-        let success = false
-        if(txtAmount.selectedAsset.address === "" || txtAmount.selectedAsset.address === Constants.zeroAddress){
-            success = walletModel.transactionsView.transferEth(
-                                                 selectFromAccount.selectedAccount.address,
-                                                 selectRecipient.selectedRecipient.address,
-                                                 txtAmount.selectedAmount,
-                                                 gasSelector.selectedGasLimit,
-                                                 gasSelector.eip1599Enabled ? "" : gasSelector.selectedGasPrice,
-                                                 gasSelector.selectedTipLimit,
-                                                 gasSelector.selectedOverallLimit,
-                                                 transactionSigner.enteredPassword,
-                                                 stack.uuid)
-        } else {
-            success = walletModel.transactionsView.transferTokens(
-                                                 selectFromAccount.selectedAccount.address,
-                                                 selectRecipient.selectedRecipient.address,
-                                                 txtAmount.selectedAsset.address,
-                                                 txtAmount.selectedAmount,
-                                                 gasSelector.selectedGasLimit,
-                                                 gasSelector.eip1599Enabled ? "" : gasSelector.selectedGasPrice,
-                                                 gasSelector.selectedTipLimit,
-                                                 gasSelector.selectedOverallLimit,
-                                                 transactionSigner.enteredPassword,
-                                                 stack.uuid)
-        }
+        // Not Refactored Yet
+//        stack.currentGroup.isPending = true
+//        let success = false
+//        if(txtAmount.selectedAsset.address === "" || txtAmount.selectedAsset.address === Constants.zeroAddress){
+//            success = walletModel.transactionsView.transferEth(
+//                                                 selectFromAccount.selectedAccount.address,
+//                                                 selectRecipient.selectedRecipient.address,
+//                                                 txtAmount.selectedAmount,
+//                                                 gasSelector.selectedGasLimit,
+//                                                 gasSelector.eip1599Enabled ? "" : gasSelector.selectedGasPrice,
+//                                                 gasSelector.selectedTipLimit,
+//                                                 gasSelector.selectedOverallLimit,
+//                                                 transactionSigner.enteredPassword,
+//                                                 stack.uuid)
+//        } else {
+//            success = walletModel.transactionsView.transferTokens(
+//                                                 selectFromAccount.selectedAccount.address,
+//                                                 selectRecipient.selectedRecipient.address,
+//                                                 txtAmount.selectedAsset.address,
+//                                                 txtAmount.selectedAmount,
+//                                                 gasSelector.selectedGasLimit,
+//                                                 gasSelector.eip1599Enabled ? "" : gasSelector.selectedGasPrice,
+//                                                 gasSelector.selectedTipLimit,
+//                                                 gasSelector.selectedOverallLimit,
+//                                                 transactionSigner.enteredPassword,
+//                                                 stack.uuid)
+//        }
 
-        if(!success){
-            //% "Invalid transaction parameters"
-            sendingError.text = qsTrId("invalid-transaction-parameters")
-            sendingError.open()
-        }
+//        if(!success){
+//            //% "Invalid transaction parameters"
+//            sendingError.text = qsTrId("invalid-transaction-parameters")
+//            sendingError.open()
+//        }
     }
 
     TransactionStackView {
@@ -93,7 +94,8 @@ ModalPopup {
                     }
                     return null
                 }
-                currency: walletModel.balanceView.defaultCurrency
+                // Not Refactored Yet
+//                currency: walletModel.balanceView.defaultCurrency
                 width: stack.width
                 //% "From account"
                 label: qsTrId("from-account")
@@ -126,10 +128,12 @@ ModalPopup {
             AssetAndAmountInput {
                 id: txtAmount
                 selectedAccount: selectFromAccount.selectedAccount
-                defaultCurrency: walletModel.balanceView.defaultCurrency
+                // Not Refactored Yet
+//                defaultCurrency: walletModel.balanceView.defaultCurrency
                 currentCurrency: walletSection.currentCurrency
-                getFiatValue: walletModel.balanceView.getFiatValue
-                getCryptoValue: walletModel.balanceView.getCryptoValue
+                // Not Refactored Yet
+//                getFiatValue: walletModel.balanceView.getFiatValue
+//                getCryptoValue: walletModel.balanceView.getCryptoValue
                 width: stack.width
                 onSelectedAssetChanged: if (isValid) { gasSelector.estimateGas() }
                 onSelectedAmountChanged: if (isValid) { gasSelector.estimateGas() }
@@ -138,33 +142,35 @@ ModalPopup {
                 id: gasSelector
                 anchors.top: txtAmount.bottom
                 anchors.topMargin: Style.current.padding
-                gasPrice: parseFloat(walletModel.gasView.gasPrice)
-                getGasEthValue: walletModel.gasView.getGasEthValue
-                getFiatValue: walletModel.balanceView.getFiatValue
-                defaultCurrency: walletModel.balanceView.defaultCurrency
+                // Not Refactored Yet
+//                gasPrice: parseFloat(walletModel.gasView.gasPrice)
+//                getGasEthValue: walletModel.gasView.getGasEthValue
+//                getFiatValue: walletModel.balanceView.getFiatValue
+//                defaultCurrency: walletModel.balanceView.defaultCurrency
                 
                 width: stack.width
                 property var estimateGas: Backpressure.debounce(gasSelector, 600, function() {
-                    if (!(selectFromAccount.selectedAccount && selectFromAccount.selectedAccount.address &&
-                        selectRecipient.selectedRecipient && selectRecipient.selectedRecipient.address &&
-                        txtAmount.selectedAsset && txtAmount.selectedAsset.address &&
-                        txtAmount.selectedAmount)) return
+                    // Not Refactored Yet
+//                    if (!(selectFromAccount.selectedAccount && selectFromAccount.selectedAccount.address &&
+//                        selectRecipient.selectedRecipient && selectRecipient.selectedRecipient.address &&
+//                        txtAmount.selectedAsset && txtAmount.selectedAsset.address &&
+//                        txtAmount.selectedAmount)) return
                     
-                    let gasEstimate = JSON.parse(walletModel.gasView.estimateGas(
-                        selectFromAccount.selectedAccount.address,
-                        selectRecipient.selectedRecipient.address,
-                        txtAmount.selectedAsset.address,
-                        txtAmount.selectedAmount,
-                        ""))
+//                    let gasEstimate = JSON.parse(walletModel.gasView.estimateGas(
+//                        selectFromAccount.selectedAccount.address,
+//                        selectRecipient.selectedRecipient.address,
+//                        txtAmount.selectedAsset.address,
+//                        txtAmount.selectedAmount,
+//                        ""))
 
-                    if (!gasEstimate.success) {
-                        //% "Error estimating gas: %1"
-                        console.warn(qsTrId("error-estimating-gas---1").arg(gasEstimate.error.message))
-                        return
-                    }
+//                    if (!gasEstimate.success) {
+//                        //% "Error estimating gas: %1"
+//                        console.warn(qsTrId("error-estimating-gas---1").arg(gasEstimate.error.message))
+//                        return
+//                    }
 
-                    selectedGasLimit = gasEstimate.result
-                    defaultGasLimit = selectedGasLimit
+//                    selectedGasLimit = gasEstimate.result
+//                    defaultGasLimit = selectedGasLimit
                 })
             }
             GasValidator {
@@ -195,7 +201,8 @@ ModalPopup {
                 toAccount: selectRecipient.selectedRecipient
                 asset: txtAmount.selectedAsset
                 amount: { "value": txtAmount.selectedAmount, "fiatValue": txtAmount.selectedFiatAmount }
-                currency: walletModel.balanceView.defaultCurrency
+                // Not Refactored Yet
+//                currency: walletModel.balanceView.defaultCurrency
             }
             SendToContractWarning {
                 id: sendToContractWarning
@@ -213,7 +220,8 @@ ModalPopup {
             TransactionSigner {
                 id: transactionSigner
                 width: stack.width
-                signingPhrase: walletModel.utilsView.signingPhrase
+                // Not Refactored Yet
+//                signingPhrase: walletModel.utilsView.signingPhrase
             }
         }
     }
@@ -281,54 +289,55 @@ ModalPopup {
             }
         }
 
-        Connections {
-            target: walletModel.transactionsView
-            onTransactionWasSent: {
-                try {
-                    let response = JSON.parse(txResult)
+        // Not Refactored Yet
+//        Connections {
+//            target: walletModel.transactionsView
+//            onTransactionWasSent: {
+//                try {
+//                    let response = JSON.parse(txResult)
 
-                    if (response.uuid !== stack.uuid) return
+//                    if (response.uuid !== stack.uuid) return
                     
-                    stack.currentGroup.isPending = false
+//                    stack.currentGroup.isPending = false
 
-                    if (!response.success) {
-                        if (Utils.isInvalidPasswordMessage(response.result)){
-                            //% "Wrong password"
-                            transactionSigner.validationError = qsTrId("wrong-password")
-                            return
-                        }
-                        sendingError.text = response.result
-                        return sendingError.open()
-                    }
+//                    if (!response.success) {
+//                        if (Utils.isInvalidPasswordMessage(response.result)){
+//                            //% "Wrong password"
+//                            transactionSigner.validationError = qsTrId("wrong-password")
+//                            return
+//                        }
+//                        sendingError.text = response.result
+//                        return sendingError.open()
+//                    }
 
-                    //% "Transaction pending..."
-                    toastMessage.title = qsTrId("ens-transaction-pending")
-                    toastMessage.source = Style.svg("loading")
-                    toastMessage.iconColor = Style.current.primary
-                    toastMessage.iconRotates = true
-                    toastMessage.link = `${walletModel.utilsView.etherscanLink}/${response.result}`
-                    toastMessage.open()
-                    root.close()
-                } catch (e) {
-                    console.error('Error parsing the response', e)
-                }
-            }
-            onTransactionCompleted: {
-                if (success) {
-                    //% "Transaction completed"
-                    toastMessage.title = qsTrId("transaction-completed")
-                    toastMessage.source = Style.svg("check-circle")
-                    toastMessage.iconColor = Style.current.success
-                } else {
-                    //% "Transaction failed"
-                    toastMessage.title = qsTrId("ens-registration-failed-title")
-                    toastMessage.source = Style.svg("block-icon")
-                    toastMessage.iconColor = Style.current.danger
-                }
-                toastMessage.link = `${walletModel.utilsView.etherscanLink}/${txHash}`
-                toastMessage.open()
-            }
-        }
+//                    //% "Transaction pending..."
+//                    toastMessage.title = qsTrId("ens-transaction-pending")
+//                    toastMessage.source = Style.svg("loading")
+//                    toastMessage.iconColor = Style.current.primary
+//                    toastMessage.iconRotates = true
+//                    toastMessage.link = `${walletModel.utilsView.etherscanLink}/${response.result}`
+//                    toastMessage.open()
+//                    root.close()
+//                } catch (e) {
+//                    console.error('Error parsing the response', e)
+//                }
+//            }
+//            onTransactionCompleted: {
+//                if (success) {
+//                    //% "Transaction completed"
+//                    toastMessage.title = qsTrId("transaction-completed")
+//                    toastMessage.source = Style.svg("check-circle")
+//                    toastMessage.iconColor = Style.current.success
+//                } else {
+//                    //% "Transaction failed"
+//                    toastMessage.title = qsTrId("ens-registration-failed-title")
+//                    toastMessage.source = Style.svg("block-icon")
+//                    toastMessage.iconColor = Style.current.danger
+//                }
+//                toastMessage.link = `${walletModel.utilsView.etherscanLink}/${txHash}`
+//                toastMessage.open()
+//            }
+//        }
     }
 }
 

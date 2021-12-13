@@ -284,7 +284,9 @@ Rectangle {
 
         const deparsedEmoji = Emoji.deparse(textWithoutMention);
 
-        return chatsModel.plainText(deparsedEmoji);
+        // Not Refactored Yet
+        return ""
+//        return chatsModel.plainText(deparsedEmoji);
     }
 
     function removeMentions(currentText) {
@@ -610,12 +612,14 @@ Rectangle {
 
     SuggestionBoxPanel {
         id: suggestionsBox
-        model: {
-            if (chatsModel.communities.activeCommunity.active) {
-                return chatsModel.communities.activeCommunity.members
-            }
-            return chatsModel.messageView.messageList.userList
-        }
+
+        // Not Refactored Yet
+//        model: {
+//            if (chatsModel.communities.activeCommunity.active) {
+//                return chatsModel.communities.activeCommunity.members
+//            }
+//            return chatsModel.messageView.messageList.userList
+//        }
         x : messageInput.x
         y: -height - Style.current.smallPadding
         width: messageInput.width
@@ -1088,7 +1092,8 @@ Rectangle {
                 anchors.rightMargin: Style.current.halfPadding
                 anchors.verticalCenter: parent.verticalCenter
                 visible: imageBtn2.visible
-                enabled: (chatsModel.plainText(Emoji.deparse(messageInputField.text)).length > 0 || isImage) && messageInputField.length < messageLimit
+                // Not Refactored Yet
+//                enabled: (chatsModel.plainText(Emoji.deparse(messageInputField.text)).length > 0 || isImage) && messageInputField.length < messageLimit
                 onClicked: function (event) {
                     control.sendMessage(event)
                     control.hideExtendedArea();
@@ -1150,7 +1155,8 @@ Rectangle {
         text: qsTr("Unblock")
         type: StatusQ.StatusBaseButton.Type.Danger
         onClicked: function (event) {
-            contactsModule.unblockContact(chatsModel.channelView.activeChannel.id)
+            // Not Refactored Yet
+//            contactsModule.unblockContact(chatsModel.channelView.activeChannel.id)
         }
     }
 }
