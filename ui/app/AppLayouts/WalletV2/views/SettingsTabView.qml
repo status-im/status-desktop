@@ -27,9 +27,10 @@ Item {
             anchors.right: parent.right
             anchors.rightMargin: 20
 
-            visible : (root.store.walletModelV2Inst.accountsView.currentAccount.walletType !== Constants.seedWalletType) &&
-                      (root.store.walletModelV2Inst.accountsView.currentAccount.walletType !== Constants.watchWalletType) &&
-                      (root.store.walletModelV2Inst.accountsView.currentAccount.walletType !== Constants.keyWalletType)
+            // Not Refactored Yet
+//            visible : (root.store.walletModelV2Inst.accountsView.currentAccount.walletType !== Constants.seedWalletType) &&
+//                      (root.store.walletModelV2Inst.accountsView.currentAccount.walletType !== Constants.watchWalletType) &&
+//                      (root.store.walletModelV2Inst.accountsView.currentAccount.walletType !== Constants.keyWalletType)
             expandable: false
             icon.name: "seed-phrase"
             primaryText: qsTr("Back up seed phrase")
@@ -45,7 +46,8 @@ Item {
             anchors.right: parent.right
             anchors.rightMargin: 20
 
-            visible : root.store.walletModelV2Inst.accountsView.currentAccount.walletType !== Constants.watchWalletType
+            // Not Refactored Yet
+//            visible : root.store.walletModelV2Inst.accountsView.currentAccount.walletType !== Constants.watchWalletType
             expandable: true
             icon.name: "secret"
             primaryText: qsTr("Account signing phrase")
@@ -59,8 +61,9 @@ Item {
             anchors.right: parent.right
             anchors.rightMargin: 20
 
-            visible : (root.store.walletModelV2Inst.accountsView.currentAccount.walletType === Constants.keyWalletType) ||
-                      (root.store.walletModelV2Inst.accountsView.currentAccount.walletType === Constants.seedWalletType)
+            // Not Refactored Yet
+//            visible : (root.store.walletModelV2Inst.accountsView.currentAccount.walletType === Constants.keyWalletType) ||
+//                      (root.store.walletModelV2Inst.accountsView.currentAccount.walletType === Constants.seedWalletType)
             expandable: true
             icon.name: "seed-phrase"
             primaryText: qsTr("View private key")
@@ -133,7 +136,8 @@ Item {
                     lineHeightMode: Text.FixedHeight
                     elide: Text.ElideRight
                     wrapMode: Text.Wrap
-                    text: root.store.walletModelV2Inst.settingsView.signingPhrase
+                    // Not Refactored Yet
+//                    text: root.store.walletModelV2Inst.settingsView.signingPhrase
                 }
             }
             Rectangle {

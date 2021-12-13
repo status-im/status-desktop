@@ -42,7 +42,9 @@ Item {
     }
 
     function isContactAdded() {
-        return pubKey != "" ? chatsModel.messageView.isAddedContact(pubKey) : false
+        // Not Refactored Yet
+        return false
+//        return pubKey != "" ? chatsModel.messageView.isAddedContact(pubKey) : false
     }
 
     width: parent.width
@@ -84,7 +86,8 @@ Item {
             anchors.verticalCenter: parent.verticalCenter
             anchors.left: parent.left
             anchors.leftMargin: Style.current.padding
-            image.source: utilsModel.generateIdenticon(root.pubKey)
+            // Not Refactored Yet
+//            image.source: utilsModel.generateIdenticon(root.pubKey)
             image.isIdenticon: true
         }
 

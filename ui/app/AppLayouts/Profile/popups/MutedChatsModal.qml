@@ -32,7 +32,8 @@ ModalPopup {
         visible: true
         anchors.left: parent.left
         anchors.right: parent.right
-        model: root.showMutedContacts ? profileModel.mutedChats.contacts : profileModel.mutedChats.chats
+        // Not Refactored Yet
+//        model: root.showMutedContacts ? profileModel.mutedChats.contacts : profileModel.mutedChats.chats
         delegate: Rectangle {
             id: channelItem
             property bool isHovered: false
@@ -99,7 +100,8 @@ ModalPopup {
                         channelItem.isHovered = true
                     }
                     onClicked: {
-                        chatsModel.channelView.unmuteChatItem(model.id)
+                        // Not Refactored Yet
+//                        chatsModel.channelView.unmuteChatItem(model.id)
                     }
                 }
             }

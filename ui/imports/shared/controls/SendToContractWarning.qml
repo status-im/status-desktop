@@ -23,12 +23,13 @@ Item {
             return root.isValid
         }
         txtValidationError.text = ""
-        if (walletModel.tokensView.isKnownTokenContract(selectedRecipient.address)) {
-            // do not set isValid = false here because it would make the
-            // TransactionStackGroup invalid and therefore not let the user
-            // continue in the modal
-            txtValidationError.text = sendToContractWarningMessage
-        }
+        // Not Refactored Yet
+//        if (walletModel.tokensView.isKnownTokenContract(selectedRecipient.address)) {
+//            // do not set isValid = false here because it would make the
+//            // TransactionStackGroup invalid and therefore not let the user
+//            // continue in the modal
+//            txtValidationError.text = sendToContractWarningMessage
+//        }
         return isValid
     }
 

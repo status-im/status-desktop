@@ -14,7 +14,8 @@ Item {
     readonly property var validateAsync: Backpressure.debounce(inpAddress, debounceDelay, function (inputValue) {
         root.isPending = true
         var name = inputValue.startsWith("@") ? inputValue.substring(1) : inputValue
-        chatsModel.ensView.resolveENSWithUUID(name, uuid)
+        // Not Refactored Yet
+//        chatsModel.ensView.resolveENSWithUUID(name, uuid)
     });
     signal resolved(string resolvedAddress)
 
@@ -40,14 +41,14 @@ Item {
         }
     }
 
-    Connections {
-        target: chatsModel.ensView
-        onEnsWasResolved: {
-            if (uuid !== root.uuid) {
-                return
-            }
-            root.isPending = false
-            root.resolved(resolvedAddress)
-        }
-    }
+//    Connections {
+//        target: chatsModel.ensView
+//        onEnsWasResolved: {
+//            if (uuid !== root.uuid) {
+//                return
+//            }
+//            root.isPending = false
+//            root.resolved(resolvedAddress)
+//        }
+//    }
 }

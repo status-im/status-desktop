@@ -33,9 +33,11 @@ Item {
     anchors.fill: parent
 
     property alias appLayout: appLayout
-    property var newVersionJSON: JSON.parse(utilsModel.newVersion)
+    // Not Refactored Yet
+    property var newVersionJSON: "" //JSON.parse(utilsModel.newVersion)
     property bool profilePopupOpened: false
-    property bool networkGuarded: profileModel.network.current === Constants.networkMainnet || (profileModel.network.current === Constants.networkRopsten && localAccountSensitiveSettings.stickersEnsRopsten)
+    // Not Refactored Yet
+//    property bool networkGuarded: profileModel.network.current === Constants.networkMainnet || (profileModel.network.current === Constants.networkRopsten && localAccountSensitiveSettings.stickersEnsRopsten)
     property RootStore rootStore: RootStore { }
 
     signal settingsLoaded()
@@ -251,35 +253,40 @@ Item {
                     id: communityContextMenu
 
                     openHandler: function () {
-                        chatsModel.communities.setObservedCommunity(model.id)
+                        // Not Refactored Yet
+//                        chatsModel.communities.setObservedCommunity(model.id)
                     }
 
                     StatusMenuItem {
                         //% "Invite People"
                         text: qsTrId("invite-people")
                         icon.name: "share-ios"
-                        enabled: chatsModel.communities.observedCommunity.canManageUsers
-                        onTriggered: Global.openPopup(inviteFriendsToCommunityPopup, {
-                                                   community: chatsModel.communities.observedCommunity
-                                               })
+                        // Not Refactored Yet
+//                        enabled: chatsModel.communities.observedCommunity.canManageUsers
+//                        onTriggered: Global.openPopup(inviteFriendsToCommunityPopup, {
+//                                                   community: chatsModel.communities.observedCommunity
+//                                               })
                     }
 
                     StatusMenuItem {
                         //% "View Community"
                         text: qsTrId("view-community")
                         icon.name: "group-chat"
-                        onTriggered: Global.openPopup(communityProfilePopup, {
-                            store: appMain.rootStore,
-                            community: chatsModel.communities.observedCommunity
-                        })
+                        // Not Refactored Yet
+//                        onTriggered: Global.openPopup(communityProfilePopup, {
+//                            store: appMain.rootStore,
+//                            community: chatsModel.communities.observedCommunity
+//                        })
                     }
 
                     StatusMenuItem {
-                        enabled: chatsModel.communities.observedCommunity.admin
+                        // Not Refactored Yet
+//                        enabled: chatsModel.communities.observedCommunity.admin
                         //% "Edit Community"
                         text: qsTrId("edit-community")
                         icon.name: "edit"
-                        onTriggered: Global.openPopup(editCommunityPopup, {store: appMain.rootStore, community: chatsModel.communities.observedCommunity})
+                        // Not Refactored Yet
+//                        onTriggered: Global.openPopup(editCommunityPopup, {store: appMain.rootStore, community: chatsModel.communities.observedCommunity})
                     }
 
                     StatusMenuSeparator {}
@@ -291,7 +298,8 @@ Item {
                         icon.width: 14
                         iconRotation: 180
                         type: StatusMenuItem.Type.Danger
-                        onTriggered: chatsModel.communities.leaveCommunity(model.id)
+                        // Not Refactored Yet
+//                        onTriggered: chatsModel.communities.leaveCommunity(model.id)
                     }
                 }
             }
@@ -452,9 +460,12 @@ Item {
                 Layout.fillHeight: true
                 // Loaders do not have access to the context, so props need to be set
                 // Adding a "_" to avoid a binding loop
-                property var _chatsModel: chatsModel.messageView
-                property var _walletModel: walletModel
-                property var _utilsModel: utilsModel
+                // Not Refactored Yet
+//                property var _chatsModel: chatsModel.messageView
+                // Not Refactored Yet
+//                property var _walletModel: walletModel
+                // Not Refactored Yet
+//                property var _utilsModel: utilsModel
                 property var _web3Provider: web3Provider
             }
 
@@ -532,40 +543,40 @@ Item {
             }
         }
 
-        Connections {
-            target: chatsModel
-            onNotificationClicked: {
-                applicationWindow.makeStatusAppActive()
+//        Connections {
+//            target: chatsModel
+//            onNotificationClicked: {
+//                applicationWindow.makeStatusAppActive()
 
-                switch(notificationType){
-                case Constants.osNotificationType.newContactRequest:
-                    appView.currentIndex = Constants.appViewStackIndex.chat
-                    appMain.openContactsPopup()
-                    break
-                case Constants.osNotificationType.acceptedContactRequest:
-                    appView.currentIndex = Constants.appViewStackIndex.chat
-                    break
-                case Constants.osNotificationType.joinCommunityRequest:
-                case Constants.osNotificationType.acceptedIntoCommunity:
-                case Constants.osNotificationType.rejectedByCommunity:
-                    // Not Refactored - Need to check what community exactly we need to switch to.
-//                    appView.currentIndex = Utils.getAppSectionIndex(Constants.community)
-                    break
-                case Constants.osNotificationType.newMessage:
-                    appView.currentIndex = Constants.appViewStackIndex.chat
-                    break
-                }
-            }
-        }
+//                switch(notificationType){
+//                case Constants.osNotificationType.newContactRequest:
+//                    appView.currentIndex = Constants.appViewStackIndex.chat
+//                    appMain.openContactsPopup()
+//                    break
+//                case Constants.osNotificationType.acceptedContactRequest:
+//                    appView.currentIndex = Constants.appViewStackIndex.chat
+//                    break
+//                case Constants.osNotificationType.joinCommunityRequest:
+//                case Constants.osNotificationType.acceptedIntoCommunity:
+//                case Constants.osNotificationType.rejectedByCommunity:
+//                    // Not Refactored - Need to check what community exactly we need to switch to.
+////                    appView.currentIndex = Utils.getAppSectionIndex(Constants.community)
+//                    break
+//                case Constants.osNotificationType.newMessage:
+//                    appView.currentIndex = Constants.appViewStackIndex.chat
+//                    break
+//                }
+//            }
+//        }
 
-        Connections {
-            target: profileModel
-            ignoreUnknownSignals: true
-            enabled: removeMnemonicAfterLogin
-            onInitialized: {
-                mnemonicModule.remove()
-            }
-        }
+//        Connections {
+//            target: profileModel
+//            ignoreUnknownSignals: true
+//            enabled: removeMnemonicAfterLogin
+//            onInitialized: {
+//                mnemonicModule.remove()
+//            }
+//        }
 
         Connections {
             target: appMain.rootStore.contactsModuleInst.model
@@ -594,12 +605,13 @@ Item {
                     return systemTray.showMessage(title, message, systemTray.icon.source, 4000)
                 }
 
+                // Not Refactored Yet
                 //% "Contact request accepted"
-                profileModel.showOSNotification(title,
-                                                message,
-                                                isContact? Constants.osNotificationType.acceptedContactRequest :
-                                                           Constants.osNotificationType.newContactRequest,
-                                                localAccountSensitiveSettings.useOSNotifications)
+//                profileModel.showOSNotification(title,
+//                                                message,
+//                                                isContact? Constants.osNotificationType.acceptedContactRequest :
+//                                                           Constants.osNotificationType.newContactRequest,
+//                                                localAccountSensitiveSettings.useOSNotifications)
             }
         }
 
@@ -689,7 +701,8 @@ Item {
             sourceComponent: SendModal {
                 store: appMain.rootStore
                 onOpened: {
-                    walletModel.gasView.getGasPrice()
+                    // Not Refactored Yet
+//                    walletModel.gasView.getGasPrice()
                 }
                 onClosed: {
                     sendModal.closed()
@@ -756,7 +769,8 @@ Item {
             width: 350
             x: parent.width / 2 - width / 2
             y: parent.height / 2 - height / 2
-            modelList: chatsModel.channelView.chats
+            // Not Refactored Yet
+//            modelList: chatsModel.channelView.chats
             getText: function (modelData) {
                 return modelData.name
             }
@@ -766,11 +780,13 @@ Item {
                                                                      name: modelData.name
                                                             });
             }
-            onClicked: function (index) {
-                Global.changeAppSectionBySectionType(Constants.appSection.chat)
-                chatsModel.channelView.setActiveChannelByIndex(index)
-                channelPicker.close()
-            }
+
+            // Not Refactored Yet
+//            onClicked: function (index) {
+//                Global.changeAppSectionBySectionType(Constants.appSection.chat)
+//                chatsModel.channelView.setActiveChannelByIndex(index)
+//                channelPicker.close()
+//            }
         }
     }
 
@@ -779,51 +795,52 @@ Item {
         // we're hiding the setting to change appearance for compact normal mode
         // of the UI. For now, compact mode is the new default.
 
-        const whitelist = profileModel.getLinkPreviewWhitelist()
-        try {
-            const whiteListedSites = JSON.parse(whitelist)
-            let settingsUpdated = false
+        // Not Refactored Yet
+//        const whitelist = profileModel.getLinkPreviewWhitelist()
+//        try {
+//            const whiteListedSites = JSON.parse(whitelist)
+//            let settingsUpdated = false
 
-            // Add Status links to whitelist
-            whiteListedSites.push({title: "Status", address: Constants.deepLinkPrefix, imageSite: false})
-            whiteListedSites.push({title: "Status", address: Constants.joinStatusLink, imageSite: false})
-            let settings = localAccountSensitiveSettings.whitelistedUnfurlingSites
+//            // Add Status links to whitelist
+//            whiteListedSites.push({title: "Status", address: Constants.deepLinkPrefix, imageSite: false})
+//            whiteListedSites.push({title: "Status", address: Constants.joinStatusLink, imageSite: false})
+//            let settings = localAccountSensitiveSettings.whitelistedUnfurlingSites
 
-            if (!settings) {
-                settings = {}
-            }
+//            if (!settings) {
+//                settings = {}
+//            }
 
-            // Set Status links as true. We intercept thoseURLs so it is privacy-safe
-            if (!settings[Constants.deepLinkPrefix] || !settings[Constants.joinStatusLink]) {
-                settings[Constants.deepLinkPrefix] = true
-                settings[Constants.joinStatusLink] = true
-                settingsUpdated = true
-            }
+//            // Set Status links as true. We intercept thoseURLs so it is privacy-safe
+//            if (!settings[Constants.deepLinkPrefix] || !settings[Constants.joinStatusLink]) {
+//                settings[Constants.deepLinkPrefix] = true
+//                settings[Constants.joinStatusLink] = true
+//                settingsUpdated = true
+//            }
 
-            const whitelistedHostnames = []
+//            const whitelistedHostnames = []
 
-            // Add whitelisted sites in to app settings that are not already there
-            whiteListedSites.forEach(site => {
-                                        if (!settings.hasOwnProperty(site.address))  {
-                                            settings[site.address] = false
-                                            settingsUpdated = true
-                                        }
-                                        whitelistedHostnames.push(site.address)
-                                    })
-            // Remove any whitelisted sites from app settings that don't exist in the
-            // whitelist from status-go
-            Object.keys(settings).forEach(settingsHostname => {
-                if (!whitelistedHostnames.includes(settingsHostname)) {
-                    delete settings[settingsHostname]
-                    settingsUpdated = true
-                }
-            })
-            if (settingsUpdated) {
-                localAccountSensitiveSettings.whitelistedUnfurlingSites = settings
-            }
-        } catch (e) {
-            console.error('Could not parse the whitelist for sites', e)
-        }
+//            // Add whitelisted sites in to app settings that are not already there
+//            whiteListedSites.forEach(site => {
+//                                        if (!settings.hasOwnProperty(site.address))  {
+//                                            settings[site.address] = false
+//                                            settingsUpdated = true
+//                                        }
+//                                        whitelistedHostnames.push(site.address)
+//                                    })
+//            // Remove any whitelisted sites from app settings that don't exist in the
+//            // whitelist from status-go
+//            Object.keys(settings).forEach(settingsHostname => {
+//                if (!whitelistedHostnames.includes(settingsHostname)) {
+//                    delete settings[settingsHostname]
+//                    settingsUpdated = true
+//                }
+//            })
+//            if (settingsUpdated) {
+//                localAccountSensitiveSettings.whitelistedUnfurlingSites = settings
+//            }
+//        } catch (e) {
+//            console.error('Could not parse the whitelist for sites', e)
+//        }
         appMain.settingsLoaded()
     }
 }

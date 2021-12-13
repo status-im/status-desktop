@@ -8,8 +8,6 @@ import utils 1.0
 import shared 1.0
 import shared.popups 1.0
 
-import "../../Profile/popups"
-
 import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
@@ -26,7 +24,6 @@ StatusModal {
 //TODO ---------------------------------------
 //use one PofilePopup instance and pass the store there
     property var store
-    property var profileStore
     property var identicon: ""
     property var userName: ""
     property string nickname: ""
@@ -54,19 +51,21 @@ StatusModal {
         fromAuthor = fromAuthorParam || ""
         identicon = identiconParam || ""
         text = textParam || ""
-        isEnsVerified = chatsModel.ensView.isEnsVerified(this.fromAuthor)
+        // Not Refactored Yet
+//        isEnsVerified = chatsModel.ensView.isEnsVerified(this.fromAuthor)
         isBlocked = popup.store.contactsModuleInst.model.isContactBlocked(this.fromAuthor);
-        alias = chatsModel.alias(this.fromAuthor) || ""
+        // Not Refactored Yet
+//        alias = chatsModel.alias(this.fromAuthor) || ""
         isCurrentUser = userProfile.pubKey === this.fromAuthor
         showFooter = _showFooter;
         popup.open()
     }
 
-    header.title: Utils.removeStatusEns(isCurrentUser ? profileModel.ens.preferredUsername || userName : userName)
+    // Not Refactored Yet
+//    header.title: Utils.removeStatusEns(isCurrentUser ? profileModel.ens.preferredUsername || userName : userName)
     header.subTitle: isEnsVerified ? alias : fromAuthor
     header.subTitleElide: Text.ElideMiddle
     header.image.source: identicon
-    header.headerImageEditable: isCurrentUser
 
     headerActionButton: StatusFlatRoundButton {
         type: StatusFlatRoundButton.Type.Secondary
@@ -77,27 +76,6 @@ StatusModal {
         icon.height: 20
         icon.name: "qr"
         onClicked: contentItem.qrCodePopup.open()
-    }
-
-    property var popupLink: null
-
-    onHeaderImageClicked: {
-        popupLink = changeProfileModalComponent.createObject(applicationWindow);
-        popupLink.open()
-    }
-
-    Component {
-        id: changeProfileModalComponent
-        ChangeProfilePicModal {
-            largeImage: profileStore.profileLargeImage
-            hasIdentityImage: profileStore.profileHasIdentityImage
-            onCropFinished: {
-                uploadError = profileStore.uploadImage(selectedImage, aX, aY, bX, bY)
-            }
-            onRemoveImageButtonClicked: {
-                uploadError = profileStore.removeImage()
-            }
-        }
     }
 
     contentItem: Item {
@@ -114,28 +92,21 @@ StatusModal {
             anchors.top: parent.top
             width: parent.width
 
-            // Blocked User Status Bar
-            StatusBanner {
-                id: blockedUsrBar               
-                width: parent.width
-                visible: isBlocked
-                type: StatusBanner.Type.Danger
-                statusText: qsTr("Blocked")
-            }           
-
             Item {
                 height: 16
                 width: parent.width
             }
 
-            StatusDescriptionListItem {               
-                title: ((isCurrentUser && profileModel.ens.preferredUsername) || isEnsVerified) ? qsTr("ENS username") : qsTr("Username")
-                subTitle: isCurrentUser ? profileModel.ens.preferredUsername || userName : userName
+            StatusDescriptionListItem {
+                // Not Refactored Yet
+//                title: ((isCurrentUser && profileModel.ens.preferredUsername) || isEnsVerified) ? qsTr("ENS username") : qsTr("Username")
+//                subTitle: isCurrentUser ? profileModel.ens.preferredUsername || userName : userName
                 tooltip.text: qsTr("Copy to clipboard")
                 icon.name: "copy"
                 iconButton.onClicked: {
-                    chatsModel.copyToClipboard(userName)
-                    tooltip.visible = !tooltip.visible
+                    // Not Refactored Yet
+//                    chatsModel.copyToClipboard(userName)
+//                    tooltip.visible = !tooltip.visible
                 }
                 width: parent.width
             }
@@ -149,10 +120,16 @@ StatusModal {
                 tooltip.text: qsTr("Copy to clipboard")
                 icon.name: "copy"
                 iconButton.onClicked: {
-                    chatsModel.copyToClipboard(fromAuthor)
-                    tooltip.visible = !tooltip.visible
+                    // Not Refactored Yet
+//                    chatsModel.copyToClipboard(fromAuthor)
+//                    tooltip.visible = !tooltip.visible
                 }
                 width: parent.width
+            }
+
+            StatusModalDivider {
+                topPadding: 12
+                bottomPadding: 16
             }
 
             StatusDescriptionListItem {
@@ -160,7 +137,8 @@ StatusModal {
                 subTitle: {
                     let user = ""
                     if (isCurrentUser) {
-                        user = profileModel.ens.preferredUsername
+                        // Not Refactored Yet
+//                        user = profileModel.ens.preferredUsername
                     } else {
                         if (isEnsVerified) {
                             user = userName.startsWith("@") ? userName.substring(1) : userName
@@ -176,7 +154,8 @@ StatusModal {
                 iconButton.onClicked: {
                     let user = ""
                     if (isCurrentUser) {
-                        user = profileModel.ens.preferredUsername
+                        // Not Refactored Yet
+//                        user = profileModel.ens.preferredUsername
                     } else {
                         if (isEnsVerified) {
                             user = userName.startsWith("@") ? userName.substring(1) : userName
@@ -186,10 +165,17 @@ StatusModal {
                         user = fromAuthor
                     }
 
-                    chatsModel.copyToClipboard(Constants.userLinkPrefix + user)
+                    // Not Refactored Yet
+//                    chatsModel.copyToClipboard(Constants.userLinkPrefix + user)
                     tooltip.visible = !tooltip.visible
                 }
                 width: parent.width
+            }
+
+            StatusModalDivider {
+                visible: !isCurrentUser
+                topPadding: 8
+                bottomPadding: 12
             }
 
             StatusDescriptionListItem {
@@ -219,7 +205,8 @@ StatusModal {
             Image {
                 asynchronous: true
                 fillMode: Image.PreserveAspectFit
-                source: profileModel.qrCode(fromAuthor)
+                // Not Refactored Yet
+//                source: profileModel.qrCode(fromAuthor)
                 anchors.horizontalCenter: parent.horizontalCenter
                 height: 212
                 width: 212
@@ -272,9 +259,10 @@ StatusModal {
                 popup.nickname = newNickname;
                 popup.store.contactsModuleInst.changeContactNickname(fromAuthor, newNickname);
                 popup.close()
-                if (!!chatsModel.communities.activeCommunity) {
-                    chatsModel.communities.activeCommunity.triggerMembersUpdate();
-                }
+                // Not Refactored Yet
+//                if (!!chatsModel.communities.activeCommunity) {
+//                    chatsModel.communities.activeCommunity.triggerMembersUpdate();
+//                }
             }
         }
     }

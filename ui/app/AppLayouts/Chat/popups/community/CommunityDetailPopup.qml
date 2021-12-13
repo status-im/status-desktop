@@ -15,7 +15,8 @@ StatusModal {
     id: root
 
     property var store
-    property QtObject community: root.store.chatsModelInst.communities.observedCommunity
+    // Not Refactored Yet
+    property QtObject community: null // root.store.chatsModelInst.communities.observedCommunity
     property string communityId: community.id
     property string name: community.name
     property string description: community.description
@@ -158,13 +159,15 @@ StatusModal {
                 if (access !== Constants.communityChatOnRequestAccess) {
                     return false
                 }
-                return root.store.chatsModelInst.communities.isCommunityRequestPending(root.communityId)
+                // Not Refactored Yet
+//                return root.store.chatsModelInst.communities.isCommunityRequestPending(root.communityId)
             }
             text: {
-                if (root.ensOnly && !root.store.profileModelInst.profile.ensVerified) {
-                    //% "Membership requires an ENS username"
-                    return qsTrId("membership-requires-an-ens-username")
-                }
+                // Not Refactored Yet
+//                if (root.ensOnly && !root.store.profileModelInst.profile.ensVerified) {
+//                    //% "Membership requires an ENS username"
+//                    return qsTrId("membership-requires-an-ens-username")
+//                }
                 if (root.canJoin) {
                     //% "Join ‘%1’"
                     return qsTrId("join---1-").arg(root.name);
@@ -185,9 +188,10 @@ StatusModal {
                 }
             }
             enabled: {
-                if (root.ensOnly && !root.store.profileModelInst.profile.ensVerified) {
-                    return false
-                }
+                // Not Refactored Yet
+//                if (root.ensOnly && !root.store.profileModelInst.profile.ensVerified) {
+//                    return false
+//                }
                 if (root.access === Constants.communityChatInvitationOnlyAccess || isPendingRequest) {
                     return false
                 }
@@ -197,24 +201,25 @@ StatusModal {
                 return true
             }
             onClicked: {
-                let error
-                if (access === Constants.communityChatOnRequestAccess && !root.isMember) {
-                    error = root.store.chatsModelInst.communities.requestToJoinCommunity(root.communityId, userProfile.name)
-                    if (!error) {
-                        enabled = false
-                        //% "Pending"
-                        text = qsTrId("invite-chat-pending")
-                    }
-                } else {
-                    error = root.store.chatsModelInst.communities.joinCommunity(root.communityId, true)
-                }
+                // Not Refactored Yet
+//                let error
+//                if (access === Constants.communityChatOnRequestAccess && !root.isMember) {
+//                    error = root.store.chatsModelInst.communities.requestToJoinCommunity(root.communityId, userProfile.name)
+//                    if (!error) {
+//                        enabled = false
+//                        //% "Pending"
+//                        text = qsTrId("invite-chat-pending")
+//                    }
+//                } else {
+//                    error = root.store.chatsModelInst.communities.joinCommunity(root.communityId, true)
+//                }
 
-                if (error) {
-                    joiningError.text = error
-                    return joiningError.open()
-                }
+//                if (error) {
+//                    joiningError.text = error
+//                    return joiningError.open()
+//                }
 
-                root.close()
+//                root.close()
             }
         }
     ]

@@ -17,15 +17,17 @@ StatusModal {
 
     onOpened: {
         loader.active = true;
-        cryptoServicesPopupRoot.walletV2Model.cryptoServiceController.fetchCryptoServices();
+        // Not Refactored Yet
+//        cryptoServicesPopupRoot.walletV2Model.cryptoServiceController.fetchCryptoServices();
     }
 
-    Connections {
-        target: cryptoServicesPopupRoot.walletV2Model.cryptoServiceController
-        function onFetchCryptoServicesFetched() {
-            loader.sourceComponent = servicesComponent;
-        }
-    }
+    // Not Refactored Yet
+//    Connections {
+//        target: cryptoServicesPopupRoot.walletV2Model.cryptoServiceController
+//        function onFetchCryptoServicesFetched() {
+//            loader.sourceComponent = servicesComponent;
+//        }
+//    }
 
     Loader {
         id: loader
@@ -56,7 +58,8 @@ StatusModal {
                     anchors.bottom: parent.bottom
                     anchors.topMargin: Style.current.padding
                     width: parent.width
-                    model: cryptoServicesPopupRoot.walletV2Model.cryptoServiceController.cryptoServiceModel
+                    // Not Refactored Yet
+//                    model: cryptoServicesPopupRoot.walletV2Model.cryptoServiceController.cryptoServiceModel
                     focus: true
                     spacing: Style.current.padding
                     clip: true

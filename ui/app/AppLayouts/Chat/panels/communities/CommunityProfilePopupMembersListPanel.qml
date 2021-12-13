@@ -192,7 +192,8 @@ Item {
                                     iconRotation: 180
                                     type: StatusMenuItem.Type.Danger
                                     enabled: root.community.admin
-                                    onTriggered: chatsModel.communities.removeUserFromCommunity(model.pubKey)
+                                    // Not Refactored Yet
+//                                    onTriggered: chatsModel.communities.removeUserFromCommunity(model.pubKey)
                                 }
 
                                 StatusMenuItem {
@@ -201,7 +202,8 @@ Item {
                                     icon.name: "cancel"
                                     type: StatusMenuItem.Type.Danger
                                     enabled: root.community.admin
-                                    onTriggered: chatsModel.communities.banUserFromCommunity(model.pubKey, root.community.id)
+                                    // Not Refactored Yet
+//                                    onTriggered: chatsModel.communities.banUserFromCommunity(model.pubKey, root.community.id)
                                 }
                             }
                         }

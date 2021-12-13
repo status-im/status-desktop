@@ -105,32 +105,34 @@ Item {
         function openProfile() {
             const pk = model.author
             const userProfileImage = appMain.getProfileImage(pk)
-            openProfilePopup(root.store.chatsModelInst.userNameOrAlias(pk), pk, userProfileImage || utilsModel.generateIdenticon(pk))
+            // Not Refactored Yet
+//            openProfilePopup(root.store.chatsModelInst.userNameOrAlias(pk), pk, userProfileImage || utilsModel.generateIdenticon(pk))
         }
 
         StyledTextEdit {
             id: inviteText
             visible: !!model.author
-            text: {
-                if (!visible) {
-                    return ""
-                }
+            // Not Refactored Yet
+//            text: {
+//                if (!visible) {
+//                    return ""
+//                }
 
-                let name = root.store.chatsModelInst.userNameOrAlias(model.author)
-                if (name.length > 20) {
-                    name = name.substring(0, 9) + "..." + name.substring(name.length - 10)
-                }
+//                let name = root.store.chatsModelInst.userNameOrAlias(model.author)
+//                if (name.length > 20) {
+//                    name = name.substring(0, 9) + "..." + name.substring(name.length - 10)
+//                }
 
-                //% "%1 invited you to join the group"
-                return qsTrId("-1-invited-you-to-join-the-group")
-                .arg(`<style type="text/css">`+
-                     `a {`+
-                     `color: ${Style.current.primary};`+
-                     `text-decoration: none;` +
-                     `}`+
-                     `</style>`+
-                     `<a href="#">${name}</a>`)
-            }
+//                //% "%1 invited you to join the group"
+//                return qsTrId("-1-invited-you-to-join-the-group")
+//                .arg(`<style type="text/css">`+
+//                     `a {`+
+//                     `color: ${Style.current.primary};`+
+//                     `text-decoration: none;` +
+//                     `}`+
+//                     `</style>`+
+//                     `<a href="#">${name}</a>`)
+//            }
             anchors.bottom: parent.bottom
             anchors.bottomMargin: Style.current.halfPadding
             anchors.left: nameItem.left
@@ -153,22 +155,26 @@ Item {
             anchors.right: parent.right
             anchors.rightMargin: Style.current.halfPadding
             anchors.verticalCenter: parent.verticalCenter
-            onAcceptClicked: root.store.chatsModelInst.activityNotificationList.acceptActivityCenterNotification(model.id)
-            onDeclineClicked: root.store.chatsModelInst.activityNotificationList.dismissActivityCenterNotification(model.id)
+            // Not Refactored Yet
+//            onAcceptClicked: root.store.chatsModelInst.activityNotificationList.acceptActivityCenterNotification(model.id)
+            // Not Refactored Yet
+//            onDeclineClicked: root.store.chatsModelInst.activityNotificationList.dismissActivityCenterNotification(model.id)
             onProfileClicked: groupRequestContent.openProfile()
             onBlockClicked: {
-                const pk = model.author
-                blockContactConfirmationDialog.contactName = root.store.chatsModelInst.userNameOrAlias(pk)
-                blockContactConfirmationDialog.contactAddress = pk
-                blockContactConfirmationDialog.open()
+                // Not Refactored Yet
+//                const pk = model.author
+//                blockContactConfirmationDialog.contactName = root.store.chatsModelInst.userNameOrAlias(pk)
+//                blockContactConfirmationDialog.contactAddress = pk
+//                blockContactConfirmationDialog.open()
             }
 
             BlockContactConfirmationDialog {
                 id: blockContactConfirmationDialog
                 onBlockButtonClicked: {
-                    root.store.profileModuleInst.blockContact(blockContactConfirmationDialog.contactAddress)
-                    root.store.chatsModelInst.activityNotificationList.dismissActivityCenterNotification(model.id)
-                    blockContactConfirmationDialog.close()
+                    // Not Refactored Yet
+//                    root.store.profileModuleInst.blockContact(blockContactConfirmationDialog.contactAddress)
+//                    root.store.chatsModelInst.activityNotificationList.dismissActivityCenterNotification(model.id)
+//                    blockContactConfirmationDialog.close()
                 }
             }
         }

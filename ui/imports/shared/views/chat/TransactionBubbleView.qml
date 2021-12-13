@@ -4,7 +4,6 @@ import shared 1.0
 import shared.panels 1.0
 import shared.popups 1.0
 import shared.views.chat 1.0
-import shared.controls 1.0
 import shared.controls.chat 1.0
 
 Item {
@@ -40,8 +39,10 @@ Item {
         if (!tokenAmount || !token.symbol) {
             return "0"
         }
-        var defaultFiatSymbol = root.store.walletModelInst.balanceView.defaultCurrency
-        return root.store.walletModelInst.balanceView.getFiatValue(tokenAmount, token.symbol, defaultFiatSymbol) + " " + defaultFiatSymbol.toUpperCase()
+        // Not Refactored Yet
+//        var defaultFiatSymbol = root.store.walletModelInst.balanceView.defaultCurrency
+//        return root.store.walletModelInst.balanceView.getFiatValue(tokenAmount, token.symbol, defaultFiatSymbol) + " " + defaultFiatSymbol.toUpperCase()
+        return "0"
     }
     property int state: commandParametersObject.commandState
 
@@ -190,7 +191,8 @@ Item {
 
             SendTransactionButton {
                 // outgoing: root.outgoing
-                acc: root.store.currentAccount
+                // Not Refactored Yet
+//                acc: root.store.walletModelInst.accountsView.focusedAccount
                 selectedAsset: token
                 selectedAmount: tokenAmount
                 selectedFiatAmount: fiatValue
@@ -198,19 +200,21 @@ Item {
                 selectedRecipient: {
                     return {
                         address: commandParametersObject.address,
-                        identicon: root.store.chatsModelInst.channelView.activeChannel.identicon,
-                        name: root.store.chatsModelInst.channelView.activeChannel.name,
+                        // Not Refactored Yet
+//                        identicon: root.store.chatsModelInst.channelView.activeChannel.identicon,
+//                        name: root.store.chatsModelInst.channelView.activeChannel.name,
                         type: RecipientSelector.Type.Contact
                     }
                 }
                 onSendTransaction: {
-                    root.store.walletModelInst.accountsView.setFocusedAccountByAddress(fromAddress);
-                    Global.openPopup(signTxComponent, {selectedAccount: {
-                                      name: acc.name,
-                                      address: fromAddress,
-                                      iconColor: acc.iconColor,
-                                      assets: acc.assets
-                                  }})
+                    // Not Refactored Yet
+//                    root.store.walletModelInst.accountsView.setFocusedAccountByAddress(fromAddress);
+//                    Global.openPopup(signTxComponent, {selectedAccount: {
+//                                      name: acc.name,
+//                                      address: fromAddress,
+//                                      iconColor: acc.iconColor,
+//                                      assets: acc.assets
+//                                  }})
                 }
             }
         }
@@ -218,21 +222,18 @@ Item {
         Component {
             id: signTxComponent
             SignTransactionModal {
-                anchors.centerIn: parent
                 store: root.store
-                selectedAsset: token
-                selectedAmount: tokenAmount
-                selectedRecipient: {
-                    return {
-                        address: commandParametersObject.address,
-                        identicon: root.store.chatsModelInst.channelView.activeChannel.identicon,
-                        name: root.store.chatsModelInst.channelView.activeChannel.name,
-                        type: RecipientSelector.Type.Contact
-                    }
+                selectedAsset: root.selectedAsset
+                selectedAmount: root.selectedAmount
+                selectedRecipient: root.selectedRecipient
+                selectedFiatAmount: root.selectedFiatAmount
+                onOpened: {
+                    // Not Refactored Yet
+//                    root.store.walletModelInst.gasView.getGasPrice();
                 }
-                selectedFiatAmount: fiatValue
-                onOpened: root.store.walletModelInst.gasView.getGasPrice();
-                onClosed: destroy();
+                onClosed: {
+                    destroy();
+                }
             }
         }
 

@@ -21,14 +21,16 @@ ModalPopup {
     property var messageStore
     property var chatSectionModule
     property bool userCanPin: {
-        switch (popup.rootStore.chatsModelInst.channelView.activeChannel.chatType) {
-        case Constants.chatType.publicChat: return false
-        case Constants.chatType.profile: return false
-        case Constants.chatType.oneToOne: return true
-        case Constants.chatType.privateGroupChat: return popup.rootStore.chatsModelInst.channelView.activeChannel.isAdmin(userProfile.pubKey)
-        case Constants.chatType.communityChat: return popup.rootStore.chatsModelInst.communities.activeCommunity.admin
-        default: return false
-        }
+        // Not Refactored Yet
+        return false
+//        switch (popup.rootStore.chatsModelInst.channelView.activeChannel.chatType) {
+//        case Constants.chatType.publicChat: return false
+//        case Constants.chatType.profile: return false
+//        case Constants.chatType.oneToOne: return true
+//        case Constants.chatType.privateGroupChat: return popup.rootStore.chatsModelInst.channelView.activeChannel.isAdmin(userProfile.pubKey)
+//        case Constants.chatType.communityChat: return popup.rootStore.chatsModelInst.communities.activeCommunity.admin
+//        default: return false
+//        }
     }
     property string messageToPin
     property string messageToUnpin
@@ -100,7 +102,8 @@ ModalPopup {
 
         ListView {
             id: pinnedMessageListView
-            model: popup.rootStore.chatsModelInst.messageView.pinnedMessagesList
+            // Not Refactored Yet
+//            model: popup.rootStore.chatsModelInst.messageView.pinnedMessagesList
             height: parent.height
             anchors.left: parent.left
             anchors.leftMargin: -Style.current.padding
@@ -235,9 +238,10 @@ ModalPopup {
             type: StatusQControls.StatusBaseButton.Type.Danger
             anchors.right: parent.right
             onClicked: {
-                const chatId = popup.rootStore.chatsModelInst.channelView.activeChannel.id
-                popup.rootStore.chatsModelInst.messageView.unPinMessage(messageToUnpin, chatId)
-                popup.rootStore.chatsModelInst.messageView.pinMessage(messageToPin, chatId)
+                // Not Refactored Yet
+//                const chatId = popup.rootStore.chatsModelInst.channelView.activeChannel.id
+//                popup.rootStore.chatsModelInst.messageView.unPinMessage(messageToUnpin, chatId)
+//                popup.rootStore.chatsModelInst.messageView.pinMessage(messageToPin, chatId)
                 messageToUnpin = messageToPin = ""
                 popup.close()
             }

@@ -51,6 +51,7 @@ Item {
     CryptoServicesModal {
         id: cryptoServicesModal
         anchors.centerIn: parent
-        walletV2Model: walletFooterRoot.walletV2Model
+        // Not Refactored Yet
+//        walletV2Model: walletFooterRoot.walletV2Model
     }
 }

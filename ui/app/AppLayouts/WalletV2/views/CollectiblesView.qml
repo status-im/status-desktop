@@ -24,12 +24,13 @@ Item {
         height: parent.height
 
         sourceComponent: {
-            if (root.store.walletModelV2Inst.collectiblesView.isLoading) {
-                return loading;
-            }
-            if (root.store.walletModelV2Inst.collectiblesView.collections.rowCount() === 0) {
-                return empty;
-            }
+            // Not Refactored Yet
+//            if (root.store.walletModelV2Inst.collectiblesView.isLoading) {
+//                return loading;
+//            }
+//            if (root.store.walletModelV2Inst.collectiblesView.collections.rowCount() === 0) {
+//                return empty;
+//            }
             return loaded;
         }
     }
@@ -72,7 +73,8 @@ Item {
 
                 Repeater {
                     id: collectionsRepeater
-                    model: root.store.walletModelV2Inst.collectiblesView.collections
+                    // Not Refactored Yet
+//                    model: root.store.walletModelV2Inst.collectiblesView.collections
                     //model: 5
                     delegate: StatusExpandableItem {
                         width: parent.width - 156

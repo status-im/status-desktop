@@ -123,12 +123,13 @@ ScrollView {
             section.property: "sectionIdentifier"
             section.criteria: ViewSection.FullString
 
-            Connections {
-                target: root.store.chatsModelInst.messageView
-                onMessagesLoaded: {
-                    Qt.callLater(chatLogView.positionViewAtBeginning)
-                }
-            }
+            // Not Refactored Yet
+//            Connections {
+//                target: root.store.chatsModelInst.messageView
+//                onMessagesLoaded: {
+//                    Qt.callLater(chatLogView.positionViewAtBeginning)
+//                }
+//            }
         }
 
         Timer {
@@ -145,7 +146,8 @@ ScrollView {
             lessThan: [
                 function(left, right) { return left.clock > right.clock }
             ]
-            model: root.store.chatsModelInst.messageView.messageList
+            // Not Refactored Yet
+//            model: root.store.chatsModelInst.messageView.messageList
             // TODO: Replace with StatusQ component once it lives there.
             delegate: MessageView {
                 id: msgDelegate

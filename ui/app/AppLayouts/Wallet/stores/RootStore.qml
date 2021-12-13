@@ -26,8 +26,10 @@ QtObject {
     property CollectiblesStore collectiblesStore: CollectiblesStore { }
     property var collectionList: walletSectionCollectiblesCollections.model
 
+    property var history: walletSectionTransactions
     property var historyTransactions: walletSectionTransactions.model
-    property var isNonArchivalNode:  walletSectionTransactions.isNonArchivalNode
+//    property var transactions: walletModel.transactionsView.transactions
+//    property var historyView: walletModel.historyView
 
     // This should be exposed to the UI via "walletModule", WalletModule should use
     // Accounts Service which keeps the info about that (isFirstTimeAccountLogin).
@@ -77,11 +79,18 @@ QtObject {
 
     function getLatestBlockNumber() {
         // TODO: Move to transaction root module and not wallet
-        return walletModel.getLatestBlockNumber()
+        // Not Refactored Yet
+//        return walletModel.getLatestBlockNumber()
+    }
+
+    function isNonArchivalNode() {
+        // Not Refactored Yet
+//        return walletModel.isNonArchivalNode
     }
 
     function setInitialRange() {
-        walletModel.setInitialRange()
+        // Not Refactored Yet
+//        walletModel.setInitialRange()
     }
 
     function switchAccount(newIndex) {
@@ -130,31 +139,36 @@ QtObject {
 
     function getQrCode(address) {
         // TODO: Move to transaction root module and not wallet
-        return profileModel.qrCode(address)
+        // Not Refactored Yet
+//        return profileModel.qrCode(address)
     }
 
     function hex2Dec(value) {
         // TODO: Move to transaction root module and not wallet
-        return utilsModel.hex2Dec(value)
+        // Not Refactored Yet
+//        return utilsModel.hex2Dec(value)
     }
 
     function hex2Eth(value) {
         // TODO: Move to transaction module
-        return utilsModel.hex2Eth(value)
+        // Not Refactored Yet
+//        return utilsModel.hex2Eth(value)
     }
 
     function checkRecentHistory() {
-        walletSectionTransactions.checkRecentHistory()
+        history.checkRecentHistory()
     }
 
     function isFetchingHistory() {
-        return walletSectionTransactions.isFetchingHistory(walletModel.accountsView.currentAccount.address)
+        // Not Refactored Yet
+//        return history.isFetchingHistory(walletModel.accountsView.currentAccount.address)
     }
 
     function loadTransactionsForAccount(pageSize) {
-        walletSectionTransactions.loadTransactionsForAccount(walletModel.accountsView.currentAccount.address,
-                                                           historyTransactions.getLastTxBlockNumber(),
-                                                           pageSize, true)
+        // Not Refactored Yet
+//        history.loadTransactionsForAccount(walletModel.accountsView.currentAccount.address,
+//                                                           historyTransactions.getLastTxBlockNumber(),
+//                                                           pageSize, true)
     }
 
     function fetchCollectionCollectiblesList(slug) {
@@ -166,10 +180,11 @@ QtObject {
     }
 
     function getCollectionMaxValue(traitType, value, maxValue, collectionIndex) {
-        if(maxValue !== "")
-            return parseInt(value) + qsTr(" of ") + maxValue;
-        else
-            return parseInt(value) + qsTr(" of ") +
-            walletModelV2Inst.collectiblesView.collections.getCollectionTraitMaxValue(collectionIndex, traitType).toString();
+        // Not Refactored Yet
+//        if(maxValue !== "")
+//            return parseInt(value) + qsTr(" of ") + maxValue;
+//        else
+//            return parseInt(value) + qsTr(" of ") +
+//            walletModelV2Inst.collectiblesView.collections.getCollectionTraitMaxValue(collectionIndex, traitType).toString();
     }
 }

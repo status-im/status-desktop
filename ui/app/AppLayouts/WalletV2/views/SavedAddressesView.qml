@@ -171,57 +171,61 @@ Item {
                 type: StatusBaseButton.Type.Danger
                 text: qsTr("Delete")
                 onClicked: {
-                    root.loading = true
-                    root.store.walletModelV2Inst.savedAddressesView.deleteSavedAddress(
-                        deleteAddressConfirm.address)
-                    deleteAddressConfirm.close()
+                    // Not Refactored Yet
+//                    root.loading = true
+//                    root.store.walletModelV2Inst.savedAddressesView.deleteSavedAddress(
+//                        deleteAddressConfirm.address)
+//                    deleteAddressConfirm.close()
                 }
             }
         ]
 
     }
-    Connections {
-        target: root.store.walletModelV2Inst.savedAddressesView
-        onAddEditResultChanged: {
-            root.loading = false
-            let resultRaw = root.store.walletModelV2Inst.savedAddressesView.addEditResult
-            let result = JSON.parse(resultRaw)
-            if (result.o) {
-                root.error = SavedAddressesView.Error.None
-                root.store.walletModelV2Inst.savedAddressesView.loadSavedAddresses();
-            } else {
-                root.error = parseInt(result.e)
-            }
-        }
-    }
-    Connections {
-        target: root.store.walletModelV2Inst.savedAddressesView
-        onDeleteResultChanged: {
-            root.loading = false
-            let resultRaw = root.store.walletModelV2Inst.savedAddressesView.deleteResult
-            let result = JSON.parse(resultRaw)
-            if (result.o) {
-                root.error = SavedAddressesView.Error.None
-                root.store.walletModelV2Inst.savedAddressesView.loadSavedAddresses();
-                deleteAddressConfirm.close();
-            } else {
-                root.error = parseInt(result.e)
-            }
-        }
-    }
-    Connections {
-        target: root.store.walletModelV2Inst.savedAddressesView
-        onLoadResultChanged: {
-            root.loading = false
-            let resultRaw = root.store.walletModelV2Inst.savedAddressesView.loadResult
-            let result = JSON.parse(resultRaw)
-            if (result.o) {
-                root.error = SavedAddressesView.Error.None
-            } else {
-                root.error = parseInt(result.e)
-            }
-        }
-    }
+    // Not Refactored Yet
+//    Connections {
+//        target: root.store.walletModelV2Inst.savedAddressesView
+//        onAddEditResultChanged: {
+//            root.loading = false
+//            let resultRaw = root.store.walletModelV2Inst.savedAddressesView.addEditResult
+//            let result = JSON.parse(resultRaw)
+//            if (result.o) {
+//                root.error = SavedAddressesView.Error.None
+//                root.store.walletModelV2Inst.savedAddressesView.loadSavedAddresses();
+//            } else {
+//                root.error = parseInt(result.e)
+//            }
+//        }
+//    }
+    // Not Refactored Yet
+//    Connections {
+//        target: root.store.walletModelV2Inst.savedAddressesView
+//        onDeleteResultChanged: {
+//            root.loading = false
+//            let resultRaw = root.store.walletModelV2Inst.savedAddressesView.deleteResult
+//            let result = JSON.parse(resultRaw)
+//            if (result.o) {
+//                root.error = SavedAddressesView.Error.None
+//                root.store.walletModelV2Inst.savedAddressesView.loadSavedAddresses();
+//                deleteAddressConfirm.close();
+//            } else {
+//                root.error = parseInt(result.e)
+//            }
+//        }
+//    }
+    // Not Refactored Yet
+//    Connections {
+//        target: root.store.walletModelV2Inst.savedAddressesView
+//        onLoadResultChanged: {
+//            root.loading = false
+//            let resultRaw = root.store.walletModelV2Inst.savedAddressesView.loadResult
+//            let result = JSON.parse(resultRaw)
+//            if (result.o) {
+//                root.error = SavedAddressesView.Error.None
+//            } else {
+//                root.error = parseInt(result.e)
+//            }
+//        }
+//    }
 
     SavedAddressesError {
         id: errorMessage
@@ -258,7 +262,8 @@ Item {
         ListView {
             id: listView
             //model: root.store.exampleWalletModel
-            model: root.store.walletModelV2Inst.savedAddressesView.savedAddresses
+            // Not Refactored Yet
+//            model: root.store.walletModelV2Inst.savedAddressesView.savedAddresses
             clip: true
             spacing: 5
             anchors.fill: parent

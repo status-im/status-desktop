@@ -17,9 +17,10 @@ Item {
     property double gasPrice: 0
 
    
-    property bool eip1599Enabled: walletModel.transactionsView.isEIP1559Enabled
-    property var suggestedFees: JSON.parse(walletModel.gasView.suggestedFees)
-    property var latestBaseFee: JSON.parse(walletModel.transactionsView.latestBaseFee)
+    // Not Refactored Yet
+    property bool eip1599Enabled: false //walletModel.transactionsView.isEIP1559Enabled
+    property var suggestedFees: "" //JSON.parse(walletModel.gasView.suggestedFees)
+    property var latestBaseFee: "" //JSON.parse(walletModel.transactionsView.latestBaseFee)
     
     property double latestBaseFeeGwei: {
         if (!eip1599Enabled) return 0;

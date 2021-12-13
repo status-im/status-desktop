@@ -39,7 +39,8 @@ Item {
     property bool isExtendedInput: isReply || isImage
     property bool isConnected: false
     property string contactToRemove: ""
-    property string activeChatId: root.rootStore.chatsModelInst.channelView.activeChannel.id
+    // Not Refactored Yet
+//    property string activeChatId: "" //root.rootStore.chatsModelInst.channelView.activeChannel.id
     property bool isBlocked: root.rootStore.contactsModuleInst.model.isContactBlocked(activeChatId)
     property bool isContact: root.rootStore.isContactAdded(activeChatId)
 //    property bool contactRequestReceived: root.rootStore.contactsModuleInst.model.contactRequestReceived(activeChatId)
@@ -61,14 +62,15 @@ Item {
     function showReplyArea() {
         isReply = true;
         isImage = false;
-        let replyMessageIndex = root.rootStore.chatsModelInst.messageView.messageList.getMessageIndex(SelectedMessage.messageId);
-        if (replyMessageIndex === -1) return;
-        let userName = root.rootStore.chatsModelInst.messageView.messageList.getMessageData(replyMessageIndex, "userName")
-        let message = root.rootStore.chatsModelInst.messageView.messageList.getMessageData(replyMessageIndex, "message")
-        let identicon = root.rootStore.chatsModelInst.messageView.messageList.getMessageData(replyMessageIndex, "identicon")
-        let image = root.rootStore.chatsModelInst.messageView.messageList.getMessageData(replyMessageIndex, "image")
-        let sticker = root.rootStore.chatsModelInst.messageView.messageList.getMessageData(replyMessageIndex, "sticker")
-        let contentType = root.rootStore.chatsModelInst.messageView.messageList.getMessageData(replyMessageIndex, "contentType")
+        // Not Refactored Yet
+//        let replyMessageIndex = root.rootStore.chatsModelInst.messageView.messageList.getMessageIndex(SelectedMessage.messageId);
+//        if (replyMessageIndex === -1) return;
+//        let userName = root.rootStore.chatsModelInst.messageView.messageList.getMessageData(replyMessageIndex, "userName")
+//        let message = root.rootStore.chatsModelInst.messageView.messageList.getMessageData(replyMessageIndex, "message")
+//        let identicon = root.rootStore.chatsModelInst.messageView.messageList.getMessageData(replyMessageIndex, "identicon")
+//        let image = root.rootStore.chatsModelInst.messageView.messageList.getMessageData(replyMessageIndex, "image")
+//        let sticker = root.rootStore.chatsModelInst.messageView.messageList.getMessageData(replyMessageIndex, "sticker")
+//        let contentType = root.rootStore.chatsModelInst.messageView.messageList.getMessageData(replyMessageIndex, "contentType")
 
         // Not Refactored Yet
 //        if(stackLayoutChatMessages.currentIndex >= 0 && stackLayoutChatMessages.currentIndex < stackLayoutChatMessages.children.length)
@@ -76,19 +78,21 @@ Item {
     }
 
     function requestAddressForTransaction(address, amount, tokenAddress, tokenDecimals = 18) {
-        amount =  root.rootStore.utilsModelInst.eth2Wei(amount.toString(), tokenDecimals)
-        root.rootStore.chatsModelInst.transactions.requestAddress(activeChatId,
-                                               address,
-                                               amount,
-                                               tokenAddress)
+        // Not Refactored Yet
+//        amount =  root.rootStore.utilsModelInst.eth2Wei(amount.toString(), tokenDecimals)
+//        root.rootStore.chatsModelInst.transactions.requestAddress(activeChatId,
+//                                               address,
+//                                               amount,
+//                                               tokenAddress)
         txModalLoader.close()
     }
     function requestTransaction(address, amount, tokenAddress, tokenDecimals = 18) {
-        amount =  root.rootStore.utilsModelInst.eth2Wei(amount.toString(), tokenDecimals)
-        root.rootStore.chatsModelInst.transactions.request(activeChatId,
-                                        address,
-                                        amount,
-                                        tokenAddress)
+        // Not Refactored Yet
+//        amount =  root.rootStore.utilsModelInst.eth2Wei(amount.toString(), tokenDecimals)
+//        root.rootStore.chatsModelInst.transactions.request(activeChatId,
+//                                        address,
+//                                        amount,
+//                                        tokenAddress)
         txModalLoader.close()
     }
 
@@ -206,8 +210,9 @@ Item {
         Layout.fillWidth: true
         Layout.bottomMargin: Style.current.bigPadding
         isContact: root.isContact
-        visible: root.rootStore.chatsModelInst.channelView.activeChannel.chatType === Constants.chatType.oneToOne
-            && (!root.isContact /*|| !contactRequestReceived*/)
+        // Not Refactored Yet
+//        visible: root.rootStore.chatsModelInst.channelView.activeChannel.chatType === Constants.chatType.oneToOne
+//            && (!root.isContact /*|| !contactRequestReceived*/)
         onAddContactClicked: {
             root.rootStore.addContact(activeChatId);
         }
@@ -245,9 +250,10 @@ Item {
                 selectRecipient.selectedRecipient: {
                     return {
                         address: Constants.zeroAddress, // Setting as zero address since we don't have the address yet
-                        alias: root.rootStore.chatsModelInst.channelView.activeChannel.alias,
-                        identicon: root.rootStore.chatsModelInst.channelView.activeChannel.identicon,
-                        name: root.rootStore.chatsModelInst.channelView.activeChannel.name,
+                        // Not Refactored Yet
+//                        alias: root.rootStore.chatsModelInst.channelView.activeChannel.alias,
+//                        identicon: root.rootStore.chatsModelInst.channelView.activeChannel.identicon,
+//                        name: root.rootStore.chatsModelInst.channelView.activeChannel.name,
                         type: RecipientSelector.Type.Contact
                     }
                 }
@@ -274,9 +280,10 @@ Item {
                 selectRecipient.selectedRecipient: {
                     return {
                         address: Constants.zeroAddress, // Setting as zero address since we don't have the address yet
-                        alias: root.rootStore.chatsModelInst.channelView.activeChannel.alias,
-                        identicon: root.rootStore.chatsModelInst.channelView.activeChannel.identicon,
-                        name: root.rootStore.chatsModelInst.channelView.activeChannel.name,
+                        // Not Refactored Yet
+//                        alias: root.rootStore.chatsModelInst.channelView.activeChannel.alias,
+//                        identicon: root.rootStore.chatsModelInst.channelView.activeChannel.identicon,
+//                        name: root.rootStore.chatsModelInst.channelView.activeChannel.name,
                         type: RecipientSelector.Type.Contact
                     }
                 }
@@ -290,7 +297,8 @@ Item {
             SendModal {
                 id: sendTransactionWithEns
                 onOpened: {
-                    root.rootStore.walletModelInst.gasView.getGasPrice()
+                    // Not Refactored Yet
+//                    root.rootStore.walletModelInst.gasView.getGasPrice()
                 }
                 onClosed: {
                     txModalLoader.closed()
@@ -299,9 +307,10 @@ Item {
                 selectRecipient.selectedRecipient: {
                     return {
                         address: "",
-                        alias: root.rootStore.chatsModelInst.channelView.activeChannel.alias,
-                        identicon: root.rootStore.chatsModelInst.channelView.activeChannel.identicon,
-                        name: root.rootStore.chatsModelInst.channelView.activeChannel.name,
+                        // Not Refactored Yet
+//                        alias: root.rootStore.chatsModelInst.channelView.activeChannel.alias,
+//                        identicon: root.rootStore.chatsModelInst.channelView.activeChannel.identicon,
+//                        name: root.rootStore.chatsModelInst.channelView.activeChannel.name,
                         type: RecipientSelector.Type.Contact,
                         ensVerified: true
                     }
@@ -325,14 +334,15 @@ Item {
             }
         }
 
-        Connections {
-            target: root.rootStore.chatsModelInst.channelView
-            onActiveChannelChanged: {
-                root.rootStore.chatsModelInst.messageView.hideLoadingIndicator()
-                SelectedMessage.reset();
-                chatColumn.isReply = false;
-            }
-        }
+        // Not Refactored Yet
+//        Connections {
+//            target: root.rootStore.chatsModelInst.channelView
+//            onActiveChannelChanged: {
+//                root.rootStore.chatsModelInst.messageView.hideLoadingIndicator()
+//                SelectedMessage.reset();
+//                chatColumn.isReply = false;
+//            }
+//        }
 
         Connections {
             target: systemTray
@@ -352,96 +362,98 @@ Item {
             }
         }
 
-        Connections {
-            target: root.rootStore.chatsModelInst.messageView
+        // Not Refactored Yet
+//        Connections {
+//            target: root.rootStore.chatsModelInst.messageView
 
-            onSearchedMessageLoaded: {
-                positionAtMessage(messageId, true);
-            }
+//            onSearchedMessageLoaded: {
+//                positionAtMessage(messageId, true);
+//            }
 
-            onMessageNotificationPushed: function(messageId, communityId, chatId, msg, contentType, chatType, timestamp, identicon, username, hasMention, isAddedContact, channelName) {
-                if (localAccountSensitiveSettings.notificationSetting == Constants.notifyAllMessages ||
-                        (localAccountSensitiveSettings.notificationSetting == Constants.notifyJustMentions && hasMention)) {
-                    if (chatId === root.rootStore.chatsModelInst.channelView.activeChannel.id && applicationWindow.active === true) {
-                        // Do not show the notif if we are in the channel already and the window is active and focused
-                        return
-                    }
+//            onMessageNotificationPushed: function(messageId, communityId, chatId, msg, contentType, chatType, timestamp, identicon, username, hasMention, isAddedContact, channelName) {
+//                if (localAccountSensitiveSettings.notificationSetting == Constants.notifyAllMessages ||
+//                        (localAccountSensitiveSettings.notificationSetting == Constants.notifyJustMentions && hasMention)) {
+//                    if (chatId === root.rootStore.chatsModelInst.channelView.activeChannel.id && applicationWindow.active === true) {
+//                        // Do not show the notif if we are in the channel already and the window is active and focused
+//                        return
+//                    }
 
-                    root.currentNotificationChatId = chatId
-                    root.currentNotificationCommunityId = null
+//                    root.currentNotificationChatId = chatId
+//                    root.currentNotificationCommunityId = null
 
-                    let name;
-                    if (localAccountSensitiveSettings.notificationMessagePreviewSetting === Constants.notificationPreviewAnonymous) {
-                        name = "Status"
-                    } else if (chatType === Constants.chatType.publicChat) {
-                        name = chatId
-                    } else {
-                        name = chatType === Constants.chatType.privateGroupChat ? Utils.filterXSS(channelName) : Utils.removeStatusEns(username)
-                    }
+//                    let name;
+//                    if (localAccountSensitiveSettings.notificationMessagePreviewSetting === Constants.notificationPreviewAnonymous) {
+//                        name = "Status"
+//                    } else if (chatType === Constants.chatType.publicChat) {
+//                        name = chatId
+//                    } else {
+//                        name = chatType === Constants.chatType.privateGroupChat ? Utils.filterXSS(channelName) : Utils.removeStatusEns(username)
+//                    }
 
-                    let message;
-                    if (localAccountSensitiveSettings.notificationMessagePreviewSetting > Constants.notificationPreviewNameOnly) {
-                        switch(contentType){
-                            //% "Image"
-                        case Constants.messageContentType.imageType: message = qsTrId("image"); break
-                            //% "Sticker"
-                        case Constants.messageContentType.stickerType: message = qsTrId("sticker"); break
-                        default: message = msg // don't parse emojis here as it emits HTML
-                        }
-                    } else {
-                        //% "You have a new message"
-                        message = qsTrId("you-have-a-new-message")
-                    }
+//                    let message;
+//                    if (localAccountSensitiveSettings.notificationMessagePreviewSetting > Constants.notificationPreviewNameOnly) {
+//                        switch(contentType){
+//                            //% "Image"
+//                        case Constants.messageContentType.imageType: message = qsTrId("image"); break
+//                            //% "Sticker"
+//                        case Constants.messageContentType.stickerType: message = qsTrId("sticker"); break
+//                        default: message = msg // don't parse emojis here as it emits HTML
+//                        }
+//                    } else {
+//                        //% "You have a new message"
+//                        message = qsTrId("you-have-a-new-message")
+//                    }
 
-                    currentlyHasANotification = true
+//                    currentlyHasANotification = true
 
-                    if (Qt.platform.os === "linux") {
-                        // Linux Notifications are not implemented in Nim/C++ yet
-                        return systemTray.showMessage(name, message, systemTray.icon.source, 4000)
-                    }
+//                    if (Qt.platform.os === "linux") {
+//                        // Linux Notifications are not implemented in Nim/C++ yet
+//                        return systemTray.showMessage(name, message, systemTray.icon.source, 4000)
+//                    }
 
-                    // Note:
-                    // Show notification should be moved to the nim side.
-                    // Left here only cause we don't have a way to deal with translations on the nim side.
-                    root.rootStore.chatsModelInst.showOSNotification(name,
-                                                  message,
-                                                  Constants.osNotificationType.newMessage,
-                                                  communityId,
-                                                  chatId,
-                                                  messageId,
-                                                  localAccountSensitiveSettings.useOSNotifications)
-                }
-            }
-        }
+//                    // Note:
+//                    // Show notification should be moved to the nim side.
+//                    // Left here only cause we don't have a way to deal with translations on the nim side.
+//                    root.rootStore.chatsModelInst.showOSNotification(name,
+//                                                  message,
+//                                                  Constants.osNotificationType.newMessage,
+//                                                  communityId,
+//                                                  chatId,
+//                                                  messageId,
+//                                                  localAccountSensitiveSettings.useOSNotifications)
+//                }
+//            }
+//        }
 
-        Connections {
-            target: root.rootStore.chatsModelInst.stickers
-            onTransactionWasSent: {
-                //% "Transaction pending..."
-                toastMessage.title = qsTr("Transaction pending...")
-                toastMessage.source = Style.svg("loading")
-                toastMessage.iconColor = Style.current.primary
-                toastMessage.iconRotates = true
-                toastMessage.link = `${walletModel.utilsView.etherscanLink}/${txResult}`
-                toastMessage.open()
-            }
-            onTransactionCompleted: {
-                toastMessage.title = !success ?
-                                     //% "Could not buy Stickerpack"
-                                     qsTrId("could-not-buy-stickerpack")
-                                     :
-                                     //% "Stickerpack bought successfully"
-                                     qsTrId("stickerpack-bought-successfully");
-                if (success) {
-                    toastMessage.source = Style.svg("check-circle")
-                    toastMessage.iconColor = Style.current.success
-                } else {
-                    toastMessage.source = Style.svg("block-icon")
-                    toastMessage.iconColor = Style.current.danger
-                }
+        // Not Refactored Yet
+//        Connections {
+//            target: root.rootStore.chatsModelInst.stickers
+//            onTransactionWasSent: {
+//                //% "Transaction pending..."
+//                toastMessage.title = qsTr("Transaction pending...")
+//                toastMessage.source = Style.svg("loading")
+//                toastMessage.iconColor = Style.current.primary
+//                toastMessage.iconRotates = true
+//                toastMessage.link = `${walletModel.utilsView.etherscanLink}/${txResult}`
+//                toastMessage.open()
+//            }
+//            onTransactionCompleted: {
+//                toastMessage.title = !success ?
+//                                     //% "Could not buy Stickerpack"
+//                                     qsTrId("could-not-buy-stickerpack")
+//                                     :
+//                                     //% "Stickerpack bought successfully"
+//                                     qsTrId("stickerpack-bought-successfully");
+//                if (success) {
+//                    toastMessage.source = Style.svg("check-circle")
+//                    toastMessage.iconColor = Style.current.success
+//                } else {
+//                    toastMessage.source = Style.svg("block-icon")
+//                    toastMessage.iconColor = Style.current.danger
+//                }
 
-                toastMessage.link = `${walletModel.utilsView.etherscanLink}/${txHash}`
-                toastMessage.open()
-            }
-        }
+//                toastMessage.link = `${walletModel.utilsView.etherscanLink}/${txHash}`
+//                toastMessage.open()
+//            }
+//        }
 }

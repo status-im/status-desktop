@@ -58,7 +58,8 @@ StatusModal {
 
             onClicked: {
                 submitted = true
-                keycardModel.pair(pairingPasswordField.text)
+                // Not Refactored Yet
+//                keycardModel.pair(pairingPasswordField.text)
                 popup.close()
             }
         }

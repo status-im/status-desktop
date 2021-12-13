@@ -50,7 +50,8 @@ Item {
         anchors.bottomMargin: 10
         clip: true
         //TODO replace with active accounts model
-        model: root.store.walletModelInst.accountsView.accounts
+        // Not Refactored Yet
+//        model: root.store.walletModelInst.accountsView.accounts
         delegate: SeedAccountDetailsDelegate {
             deleteButtonVisible: (activeAccountsView.count > 1)
             onDeleteClicked: {

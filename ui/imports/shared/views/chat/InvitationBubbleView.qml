@@ -23,20 +23,21 @@ Item {
     property var store
 
     function getCommunity() {
-        try {
-            const communityJson = root.store.chatsModelInst.communities.list.getCommunityByIdJson(communityId)
-            if (!communityJson) {
-                return null
-            }
+        // Not Refactored Yet
+//        try {
+//            const communityJson = root.store.chatsModelInst.communities.list.getCommunityByIdJson(communityId)
+//            if (!communityJson) {
+//                return null
+//            }
 
-            let community = JSON.parse(communityJson);
-            if (community) {
-                community.nbMembers = community.members.length;
-            }
-            return community
-        } catch (e) {
-            console.error("Error parsing community", e)
-        }
+//            let community = JSON.parse(communityJson);
+//            if (community) {
+//                community.nbMembers = community.members.length;
+//            }
+//            return community
+//        } catch (e) {
+//            console.error("Error parsing community", e)
+//        }
 
        return null
     }
@@ -45,14 +46,14 @@ Item {
         root.invitedCommunity = getCommunity()
     }
 
-    Connections {
-        target: root.store.chatsModelInst.communities
-        onCommunityChanged: function (communityId) {
-            if (communityId === root.communityId) {
-                root.invitedCommunity = getCommunity()
-            }
-        }
-    }
+//    Connections {
+//        target: root.store.chatsModelInst.communities
+//        onCommunityChanged: function (communityId) {
+//            if (communityId === root.communityId) {
+//                root.invitedCommunity = getCommunity()
+//            }
+//        }
+//    }
 
     Component {
         id: confirmationPopupComponent
@@ -88,7 +89,8 @@ Item {
             Rectangle {
                 id: rectangleBubble
                 property alias button: joinBtn
-                property bool isPendingRequest: root.store.chatsModelInst.communities.isCommunityRequestPending(communityId)
+                // Not Refactored Yet
+                property bool isPendingRequest: false //root.store.chatsModelInst.communities.isCommunityRequestPending(communityId)
                 width: 270
                 height: title.height + title.anchors.topMargin +
                         invitedYou.height + invitedYou.anchors.topMargin +
@@ -106,7 +108,8 @@ Item {
                 states: [
                     State {
                         name: "requiresEns"
-                        when: invitedCommunity.ensOnly && !root.store.profileModelInst.profile.ensVerified
+                        // Not Refactored Yet
+//                        when: invitedCommunity.ensOnly && !root.store.profileModelInst.profile.ensVerified
                         PropertyChanges {
                             target: joinBtn
                             //% "Membership requires an ENS username"
@@ -172,14 +175,15 @@ Item {
                     }
                 ]
 
-                Connections {
-                    target: root.store.chatsModelInst.communities
-                    onMembershipRequestChanged: function(communityId, communityName, requestAccepted) {
-                        if (communityId === root.communityId) {
-                            rectangleBubble.isPendingRequest = false
-                        }
-                    }
-                }
+                // Not Refactored Yet
+//                Connections {
+//                    target: root.store.chatsModelInst.communities
+//                    onMembershipRequestChanged: function(communityId, communityName, requestAccepted) {
+//                        if (communityId === root.communityId) {
+//                            rectangleBubble.isPendingRequest = false
+//                        }
+//                    }
+//                }
 
                 // TODO add check if verified
                 StatusBaseText {
@@ -201,19 +205,21 @@ Item {
                 StatusBaseText {
                     id: invitedYou
                     text: {
-                        if (root.store.chatsModelInst.channelView.activeChannel.chatType === Constants.chatType.oneToOne) {
-                            return isCurrentUser ?
-                                        //% "You invited %1 to join a community"
-                                        qsTrId("you-invited--1-to-join-a-community").arg(root.store.chatsModelInst.userNameOrAlias(root.store.chatsModelInst.channelView.activeChannel.id))
-                                        //% "%1 invited you to join a community"
-                                      : qsTrId("-1-invited-you-to-join-a-community").arg(displayUserName)
-                        } else {
-                            return isCurrentUser ?
-                                        //% "You shared a community"
-                                        qsTrId("you-shared-a-community")
-                                        //% "A community has been shared"
-                                      : qsTrId("a-community-has-been-shared")
-                        }
+                        // Not Refactored Yet
+                        return ""
+//                        if (root.store.chatsModelInst.channelView.activeChannel.chatType === Constants.chatType.oneToOne) {
+//                            return isCurrentUser ?
+//                                        //% "You invited %1 to join a community"
+//                                        qsTrId("you-invited--1-to-join-a-community").arg(root.store.chatsModelInst.userNameOrAlias(root.store.chatsModelInst.channelView.activeChannel.id))
+//                                        //% "%1 invited you to join a community"
+//                                      : qsTrId("-1-invited-you-to-join-a-community").arg(displayUserName)
+//                        } else {
+//                            return isCurrentUser ?
+//                                        //% "You shared a community"
+//                                        qsTrId("you-shared-a-community")
+//                                        //% "A community has been shared"
+//                                      : qsTrId("a-community-has-been-shared")
+//                        }
                     }
                     anchors.top: title.bottom
                     anchors.topMargin: 4
@@ -298,33 +304,34 @@ Item {
                         //% "Unsupported state"
                         text: qsTrId("unsupported-state")
                         onClicked: {
-                            let onBtnClick = function(){
-                                let error
+                            // Not Refactored Yet
+//                            let onBtnClick = function(){
+//                                let error
 
-                                if (rectangleBubble.state === "joined") {
-                                    root.store.chatsModelInst.communities.setActiveCommunity(communityId);
-                                    return
-                                } else if (rectangleBubble.state === "unjoined") {
-                                    error = root.store.chatsModelInst.communities.joinCommunity(communityId, true)
-                                }
-                                else if (rectangleBubble.state === "requestToJoin") {
-                                    error = root.store.chatsModelInst.communities.requestToJoinCommunity(communityId, userProfile.name)
-                                    if (!error) {
-                                        rectangleBubble.isPendingRequest = root.store.chatsModelInst.communities.isCommunityRequestPending(communityId)
-                                    }
-                                }
+//                                if (rectangleBubble.state === "joined") {
+//                                    root.store.chatsModelInst.communities.setActiveCommunity(communityId);
+//                                    return
+//                                } else if (rectangleBubble.state === "unjoined") {
+//                                    error = root.store.chatsModelInst.communities.joinCommunity(communityId, true)
+//                                }
+//                                else if (rectangleBubble.state === "requestToJoin") {
+//                                    error = root.store.chatsModelInst.communities.requestToJoinCommunity(communityId, userProfile.name)
+//                                    if (!error) {
+//                                        rectangleBubble.isPendingRequest = root.store.chatsModelInst.communities.isCommunityRequestPending(communityId)
+//                                    }
+//                                }
 
-                                if (error) {
-                                    joiningError.text = error
-                                    return joiningError.open()
-                                }
-                            }
+//                                if (error) {
+//                                    joiningError.text = error
+//                                    return joiningError.open()
+//                                }
+//                            }
 
-                            if (localAccountSensitiveSettings.communitiesEnabled) {
-                                onBtnClick();
-                            } else {
-                                Global.openPopup(confirmationPopupComponent, { onConfirmed: onBtnClick });
-                            }
+//                            if (localAccountSensitiveSettings.communitiesEnabled) {
+//                                onBtnClick();
+//                            } else {
+//                                Global.openPopup(confirmationPopupComponent, { onConfirmed: onBtnClick });
+//                            }
                         }
 
                         MessageDialog {
