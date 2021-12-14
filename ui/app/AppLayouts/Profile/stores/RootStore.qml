@@ -304,7 +304,7 @@ QtObject {
     }
 
     function getSntBalance() {
-        // Not Refactored Yet
+        // Not Refactored Yet - This should be fetched from corresponding module, not from the global Utils
 //        return utilsModelInst.getSNTBalance()
     }
 
@@ -397,13 +397,11 @@ QtObject {
     }
 
     function readTextFile(path) {
-        // Not Refactored Yet
-//        return utilsModelInst.readTextFile(path)
+        return globalUtils.readTextFile(path)
     }
 
     function writeTextFile(path, value) {
-        // Not Refactored Yet
-//        utilsModelInst.writeTextFile(path, value)
+        globalUtils.writeTextFile(path, value)
     }
 
     function setMessagesFromContactsOnly(checked) {
