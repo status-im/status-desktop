@@ -106,7 +106,7 @@ StatusAppTwoPanelLayout {
         }
 
         AdvancedView {
-            store: profileView.store
+            advancedStore: profileView.store.advancedStore
             profileContentWidth: _internal.profileContentWidth
         }
 

@@ -217,7 +217,7 @@ proc getAccountSettings(self: Service, accountId: string,
 proc getDefaultNodeConfig*(self: Service, installationId: string): JsonNode =
   let networkConfig = getNetworkConfig(DEFAULT_NETWORK_NAME)
   let upstreamUrl = networkConfig["config"]["UpstreamConfig"]["URL"]
-  let fleet = Fleet.PROD
+  let fleet = Fleet.Prod
 
   var newDataDir = networkConfig["config"]["DataDir"].getStr
   newDataDir.removeSuffix("_rpc")

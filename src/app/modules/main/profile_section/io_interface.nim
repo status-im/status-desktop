@@ -1,3 +1,5 @@
+import NimQml
+
 type 
   AccessInterface* {.pure inheritable.} = ref object of RootObj
   ## Abstract class for any input/interaction with this module.
@@ -9,18 +11,6 @@ method load*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method isLoaded*(self: AccessInterface): bool {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method enableDeveloperFeatures*(self: AccessInterface) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method toggleTelemetry*(self: AccessInterface) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method toggleAutoMessage*(self: AccessInterface) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method toggleDebug*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 # View Delegate Interface
@@ -46,6 +36,12 @@ method privacyModuleDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method aboutModuleDidLoad*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method advancedModuleDidLoad*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getAdvancedModule*(self: AccessInterface): QVariant {.base.} =
   raise newException(ValueError, "No implementation available")
 
 type
