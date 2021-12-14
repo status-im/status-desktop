@@ -52,6 +52,7 @@ QtObject:
     threadpool: ThreadPool
     msgCursor: Table[string, string]
     pinnedMsgCursor: Table[string, string]
+    numOfPinnedMessagesPerChat: Table[string, int] # [chat_id, num_of_pinned_messages]
   
   proc delete*(self: Service) =
     self.QObject.delete
@@ -110,6 +111,9 @@ QtObject:
     var pinnedMessages: seq[PinnedMessageDto]
     if(responseObj.getProp("pinnedMessages", pinnedMsgArr)):
       pinnedMessages = map(pinnedMsgArr.getElems(), proc(x: JsonNode): PinnedMessageDto = x.toPinnedMessageDto())
+
+    # set initial number of pinned messages
+    self.numOfPinnedMessagesPerChat[chatId] = pinnedMessages.len
 
     # handling reactions
     var reactionsArr: JsonNode
@@ -198,9 +202,11 @@ QtObject:
         var pinned = false
         if(pinMessagesObj.getProp("pinned", pinned)):
           if(pinned and pin):
+            self.numOfPinnedMessagesPerChat[chatId] = self.numOfPinnedMessagesPerChat[chatId] + 1
             self.events.emit(SIGNAL_MESSAGE_PINNED, data)
         else:
           if(not pinned and not pin):
+            self.numOfPinnedMessagesPerChat[chatId] = self.numOfPinnedMessagesPerChat[chatId] - 1
             self.events.emit(SIGNAL_MESSAGE_UNPINNED, data)
 
     except Exception as e:
@@ -360,3 +366,6 @@ QtObject:
     )
 
     self.threadpool.start(arg)
+
+  proc getNumOfPinnedMessages*(self: Service, chatId: string): int =
+    return self.numOfPinnedMessagesPerChat[chatId]

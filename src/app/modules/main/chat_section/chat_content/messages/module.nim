@@ -71,8 +71,6 @@ proc createChatIdentifierItem(self: Module): Item =
 
   result = initItem(CHAT_IDENTIFIER_MESSAGE_ID, "", chatDto.id, chatName, "", chatIcon, isIdenticon, false, "", "", "", 
   true, 0, ContentType.ChatIdentifier, -1)
-  result.chatColorThisMessageBelongsTo = chatDto.color
-  result.chatTypeThisMessageBelongsTo = chatDto.chatType.int
 
 method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: seq[ReactionDto], 
   pinnedMessages: seq[PinnedMessageDto]) = 
@@ -137,3 +135,17 @@ method pinUnpinMessage*(self: Module, messageId: string, pin: bool) =
 
 method onPinUnpinMessage*(self: Module, messageId: string, pin: bool) =
   self.view.model().pinUnpinMessage(messageId, pin)
+
+method getChatType*(self: Module): int =
+  let chatDto = self.controller.getChatDetails()
+  return chatDto.chatType.int
+
+method getChatColor*(self: Module): string =
+  let chatDto = self.controller.getChatDetails()
+  return chatDto.color
+
+method amIChatAdmin*(self: Module): bool =
+  return false
+
+method getNumberOfPinnedMessages*(self: Module): int =
+  return self.controller.getNumOfPinnedMessages()

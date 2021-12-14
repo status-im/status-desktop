@@ -4,6 +4,7 @@ import utils 1.0
 import shared 1.0
 
 MouseArea {
+    id: mouseArea
     z: 50
     enabled: !placeholderMessage
 
@@ -23,16 +24,17 @@ MouseArea {
 
     onClicked: {
         if (isActivityCenterMessage) {
-            return clickMessage(false, isSticker, false)
+            mouseArea.clickMessage(false, isSticker, false)
+            return
         }
         if (mouse.button === Qt.RightButton) {
-            if (!!messageContextMenu) {
+            if (!!mouseArea.messageContextMenu) {
                 // Set parent, X & Y positions for the messageContextMenu
                 messageContextMenu.parent = root
                 messageContextMenu.setXPosition = function() { return (mouse.x)};
                 messageContextMenu.setYPosition = function() { return (mouse.y)};
             }
-            clickMessage(false, isSticker, false)
+            mouseArea.clickMessage(false, isSticker, false)
             if (typeof isMessageActive !== "undefined") {
                 setMessageActive(messageId, true)
             }

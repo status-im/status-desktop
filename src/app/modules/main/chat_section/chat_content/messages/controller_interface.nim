@@ -39,3 +39,6 @@ method getContactById*(self: AccessInterface, contactId: string): ContactsDto {.
 method getContactNameAndImage*(self: AccessInterface, contactId: string): 
   tuple[name: string, image: string, isIdenticon: bool] {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method getNumOfPinnedMessages*(self: AccessInterface): int {.base.} =
+  raise newException(ValueError, "No implementation available")

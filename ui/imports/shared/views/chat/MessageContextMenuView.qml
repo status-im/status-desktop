@@ -18,41 +18,45 @@ StatusPopupMenu {
     id: root
     width: emojiContainer.visible ? emojiContainer.width : 176
 
-    property var store
-    // Important:
-    // We're here in case of ChatSection
-    // This module is set from `ChatLayout` (each `ChatLayout` has its own chatSectionModule)
-    property var chatSectionModule
-    property string messageId
-    property int contentType
-    property bool isProfile: false
-    property bool isSticker: false
-    property bool emojiOnly: false
-    property bool hideEmojiPicker: false
-    property bool pinnedMessage: false
-    property bool pinnedPopup: false
-    property bool isText: false
-    property bool isCurrentUser: false
-    property bool isRightClickOnImage: false
-    property string linkUrls: ""
-    property alias emojiContainer: emojiContainer
-    property var identicon: ""
-    property var userName: ""
-    property string nickname: ""
-    property var fromAuthor: ""
-    property var text: ""
-    property var emojiReactionsReactedByUser: []
-    property var onClickEdit: function(){}
     property var reactionModel
+    property alias emojiContainer: emojiContainer
+
+    property string myPublicKey: ""
+    property bool amIAdmin: false
+    property bool isMyMessage: {
+        return root.messageSenderId !== "" && root.messageSenderId == root.myPublicKey
+    }
+
+    property int chatType: Constants.chatType.publicChat
+    property string messageId: ""
+    property string messageSenderId: ""
+    property int messageContentType: Constants.messageContentType.unknownContentType
+    property string selectedUserPublicKey: ""
+    property string selectedUserDisplayName: ""
+    property string selectedUserIcon: ""
+    property bool isSelectedUserIconIdenticon: true
     property string imageSource: ""
+
+    property bool isProfile: false
+    property bool isRightClickOnImage: false
+    property bool pinnedPopup: false
+    property bool isDebugEnabled: false
+    property bool emojiOnly: false
+    property bool hideEmojiPicker: true
+    property bool pinnedMessage: false
+    property bool canPin: false
+
     property var setXPosition: function() {return 0}
     property var setYPosition: function() {return 0}
-    property bool canPin: {
-        // Not Refactored Yet
-        return false
-//        const nbPinnedMessages = root.store.chatsModelInst.messageView.pinnedMessagesList.count
-//        return nbPinnedMessages < Constants.maxNumberOfPins
-    }
+
+    signal openProfileClicked(string publicKey, string displayName, string icon) // TODO: optimization, only publicKey is more than enough to be sent from here
+    signal pinMessage(string messageId)
+    signal unpinMessage(string messageId)
+    signal pinnedMessagesLimitReached(string messageId)
+    signal jumpToMessage(string messageId)
+    signal shouldCloseParentPopup()
+    signal createOneToOneChat(string chatId, string ensName)
+    signal showReplyArea()
 
     onHeightChanged: {
         root.y = setYPosition()
@@ -62,39 +66,11 @@ StatusPopupMenu {
         root.x = setXPosition()
     }
 
-    signal shouldCloseParentPopup
-
-    function show(userNameParam, fromAuthorParam, identiconParam, textParam, nicknameParam, emojiReactionsModel) {
-        userName = userNameParam || ""
-        nickname = nicknameParam || ""
-        fromAuthor = fromAuthorParam || ""
-        identicon = identiconParam || ""
-        text = textParam || ""
-        let newEmojiReactions = []
-        if (!!emojiReactionsModel) {
-            emojiReactionsModel.forEach(function (emojiReaction) {
-                newEmojiReactions[emojiReaction.emojiId] = emojiReaction.currentUserReacted
-            })
-        }
-        emojiReactionsReactedByUser = newEmojiReactions;
-
-        /* // copy link feature not ready yet
-        const numLinkUrls = root.linkUrls.split(" ").length
-        copyLinkMenu.enabled = numLinkUrls > 1
-        copyLinkAction.enabled = !!root.linkUrls && numLinkUrls === 1 && !emojiOnly && !root.isProfile
-        */
-        popup()
-    }
-
-    function openProfileClicked() {
-        openProfilePopup(userName, fromAuthor, identicon, "", nickname);
-    }
-
     Item {
         id: emojiContainer
         width: emojiRow.width
         height: visible ? emojiRow.height : 0
-        visible: !hideEmojiPicker && (root.emojiOnly || !root.isProfile)
+        visible: !root.hideEmojiPicker && (root.emojiOnly || !root.isProfile)
         Row {
             id: emojiRow
             spacing: Style.current.halfPadding
@@ -134,14 +110,13 @@ StatusPopupMenu {
             anchors.top: parent.top
             anchors.topMargin: 4
             anchors.horizontalCenter: parent.horizontalCenter
-            image.source: identicon
-            image.isIdenticon: true
+            image.source: root.selectedUserIcon
+            image.isIdenticon: root.isSelectedUserIconIdenticon
         }
 
         StyledText {
             id: username
-            // Not Refactored Yet
-//            text: Utils.removeStatusEns(isCurrentUser ? root.store.profileModelInst.ens.preferredUsername || userName : userName)
+            text: selectedUserDisplayName
             elide: Text.ElideRight
             maximumLineCount: 3
             horizontalAlignment: Text.AlignHCenter
@@ -162,7 +137,7 @@ StatusPopupMenu {
             hoverEnabled: true
             cursorShape: Qt.PointingHandCursor
             onClicked: {
-                root.openProfileClicked()
+                root.openProfileClicked(root.selectedUserPublicKey, root.selectedUserDisplayName, root.selectedUserIcon)
                 root.close()
             }
         }
@@ -173,63 +148,16 @@ StatusPopupMenu {
         visible: !root.emojiOnly && !root.hideEmojiPicker
     }
 
-    /*  // copy link feature not ready yet
-    StatusMenuItem {
-        id: copyLinkAction
-        //% "Copy link"
-        text: qsTrId("copy-link")
-        onTriggered: {
-            root.store.chatsModelInst.copyToClipboard(linkUrls.split(" ")[0])
-            root.close()
-        }
-        icon.name: "link"
-        enabled: false
-    }
-
-    // TODO: replace with StatusPopupMenu
-    PopupMenu {
-        id: copyLinkMenu
-        //% "Copy link"
-        title: qsTrId("copy-link")
-
-        Repeater {
-            id: linksRepeater
-            model: root.linkUrls.split(" ")
-            delegate: MenuItem {
-                id: popupMenuItem
-                text: modelData
-                onTriggered: {
-                    root.store.chatsModelInst.copyToClipboard(modelData)
-                    root.close()
-                }
-                contentItem: StyledText {
-                    text: popupMenuItem.text
-                    font: popupMenuItem.font
-                    color: Style.current.textColor
-                    horizontalAlignment: Text.AlignLeft
-                    verticalAlignment: Text.AlignVCenter
-                    elide: Text.ElideRight
-                }
-                background: Rectangle {
-                    implicitWidth: 220
-                    implicitHeight: 34
-                    color: popupMenuItem.highlighted ? Style.current.backgroundHover: Style.current.transparent
-                }
-            }
-        }
-    }
-    */
-
     StatusMenuItem {
         id: copyImageAction
         text: qsTr("Copy image")
         onTriggered: {
-            // Not Refactored Yet
+            // Not Refactored Yet - Should be in GlobalUtils
 //            root.store.chatsModelInst.copyImageToClipboard(imageSource ? imageSource : "")
             root.close()
         }
         icon.name: "copy"
-        enabled: isRightClickOnImage
+        enabled: root.isRightClickOnImage
     }
 
     StatusMenuItem {
@@ -240,7 +168,7 @@ StatusPopupMenu {
             root.close()
         }
         icon.name: "download"
-        enabled: isRightClickOnImage
+        enabled: root.isRightClickOnImage
     }
 
     StatusMenuItem {
@@ -248,11 +176,11 @@ StatusPopupMenu {
         //% "View Profile"
         text: qsTrId("view-profile")
         onTriggered: {
-            root.openProfileClicked()
+            root.openProfileClicked(root.selectedUserPublicKey, root.selectedUserDisplayName, root.selectedUserIcon)
             root.close()
         }
         icon.name: "profile"
-        enabled: isProfile
+        enabled: root.isProfile
     }
 
     StatusMenuItem {
@@ -264,15 +192,18 @@ StatusPopupMenu {
                   qsTrId("reply-to")
         onTriggered: {
             if (root.isProfile) {
-                Global.changeAppSectionBySectionType(Constants.appSection.chat)
-                chatSectionModule.createOneToOneChat(fromAuthor, "")
+                root.createOneToOneChat(root.selectedUserPublicKey, "")
             } else {
-                showReplyArea()
+                root.showReplyArea()
             }
             root.close()
         }
         icon.name: "chat"
-        enabled: isProfile || (!hideEmojiPicker && !emojiOnly && !isProfile && !isRightClickOnImage)
+        enabled: root.isProfile ||
+                 (!root.hideEmojiPicker &&
+                  !root.emojiOnly &&
+                  !root.isProfile &&
+                  !root.isRightClickOnImage)
     }
 
     StatusMenuItem {
@@ -283,16 +214,20 @@ StatusPopupMenu {
             onClickEdit();
         }
         icon.name: "edit"
-        enabled: isCurrentUser && !hideEmojiPicker && !emojiOnly && !isProfile && !isRightClickOnImage
+        enabled: root.isMyMessage &&
+                 !root.hideEmojiPicker &&
+                 !root.emojiOnly &&
+                 !root.isProfile &&
+                 !root.isRightClickOnImage
     }
 
     StatusMenuItem {
         id: copyMessageIdAction
         text: qsTr("Copy Message Id")
         icon.name: "chat"
-        enabled: store.isDebugEnabled
+        enabled: root.isDebugEnabled
         onTriggered: {
-            // Not Refactored Yet
+            // Not Refactored Yet - Should be in GlobalUtils
 //            root.store.chatsModelInst.copyToClipboard(SelectedMessage.messageId)
             close()
         }
@@ -301,7 +236,7 @@ StatusPopupMenu {
     StatusMenuItem {
         id: pinAction
         text: {
-            if (pinnedMessage) {
+            if (root.pinnedMessage) {
                 //% "Unpin"
                 return qsTrId("unpin")
             }
@@ -310,53 +245,61 @@ StatusPopupMenu {
 
         }
         onTriggered: {
-            if (pinnedMessage) {
-                // Not Refactored Yet
-//                root.store.chatsModelInst.messageView.unPinMessage(messageId, root.store.chatsModelInst.channelView.activeChannel.id)
+            if (root.pinnedMessage) {
+                root.unpinMessage(root.messageId)
                 return
             }
 
-            if (!canPin) {
-                // Open pin modal so that the user can unpin one
-                Global.openPopup(pinnedMessagesPopupComponent, {messageToPin: messageId})
+            if (!root.canPin) {
+                root.pinnedMessagesLimitReached(root.messageId)
                 return
             }
 
-            // Not Refactored Yet
-//            root.store.chatsModelInst.messageView.pinMessage(messageId, root.store.chatsModelInst.channelView.activeChannel.id)
+            root.pinMessage(root.messageId)
             root.close()
         }
         icon.name: "pin"
         enabled: {
-            if(isProfile || emojiOnly || isRightClickOnImage)
+            if(root.isProfile || root.emojiOnly || root.isRightClickOnImage)
                 return false
 
-            // Not Refactored Yet
-//            switch (root.store.chatsModelInst.channelView.activeChannel.chatType) {
-//            case Constants.chatType.publicChat: return false
-//            case Constants.chatType.profile: return false
-//            case Constants.chatType.oneToOne: return true
-//            case Constants.chatType.privateGroupChat: return root.store.chatsModelInst.channelView.activeChannel.isAdmin(userProfile.pubKey)
-//            case Constants.chatType.communityChat: return root.store.chatsModelInst.communities.activeCommunity.admin
-//            }
-
-            return false
+            switch (root.chatType) {
+            case Constants.chatType.publicChat:
+                return false
+            case Constants.chatType.profile:
+                return false
+            case Constants.chatType.oneToOne:
+                return true
+            case Constants.chatType.privateGroupChat:
+                return root.amIAdmin
+            case Constants.chatType.communityChat:
+                return root.amIAdmin
+            default:
+                return false
+            }
         }
     }
 
     StatusMenuSeparator {
-        visible: deleteMessageAction.enabled && (viewProfileAction.visible
-                || sendMessageOrReplyTo.visible || editMessageAction.visible || pinAction.visible)
+        visible: deleteMessageAction.enabled &&
+                 (viewProfileAction.visible ||
+                  sendMessageOrReplyTo.visible ||
+                  editMessageAction.visible ||
+                  pinAction.visible)
     }
 
     StatusMenuItem {
         id: deleteMessageAction
-        enabled: isCurrentUser && !isProfile && !emojiOnly && !pinnedPopup && !isRightClickOnImage &&
-                 (contentType === Constants.messageContentType.messageType ||
-                  contentType === Constants.messageContentType.stickerType ||
-                  contentType === Constants.messageContentType.emojiType ||
-                  contentType === Constants.messageContentType.imageType ||
-                  contentType === Constants.messageContentType.audioType)
+        enabled: root.isMyMessage &&
+                 !root.isProfile &&
+                 !root.emojiOnly &&
+                 !root.pinnedPopup &&
+                 !root.isRightClickOnImage &&
+                 (root.messageContentType === Constants.messageContentType.messageType ||
+                  root.messageContentType === Constants.messageContentType.stickerType ||
+                  root.messageContentType === Constants.messageContentType.emojiType ||
+                  root.messageContentType === Constants.messageContentType.imageType ||
+                  root.messageContentType === Constants.messageContentType.audioType)
         //% "Delete message"
         text: qsTrId("delete-message")
         onTriggered: {
@@ -388,10 +331,11 @@ StatusPopupMenu {
     }
 
     StatusMenuItem {
+        id: jumpToAction
         enabled: root.pinnedPopup
         text: qsTr("Jump to")
         onTriggered: {
-            positionAtMessage(root.messageId)
+            root.jumpToMessage(root.messageId)
             root.close()
             root.shouldCloseParentPopup()
         }
@@ -404,7 +348,7 @@ StatusPopupMenu {
         selectFolder: true
         modality: Qt.NonModal
         onAccepted: {
-            // Not Refactored Yet
+            // Not Refactored Yet - Should be in GlobalUtils
 //            root.store.chatsModelInst.downloadImage(imageSource ? imageSource : "", fileDialog.fileUrls)
             fileDialog.close()
         }

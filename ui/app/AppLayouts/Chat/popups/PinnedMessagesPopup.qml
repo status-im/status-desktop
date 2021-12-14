@@ -215,9 +215,9 @@ ModalPopup {
             id: msgContextMenu
             pinnedPopup: true
             pinnedMessage: true
-            chatSectionModule: popup.chatSectionModule
-            store: popup.rootStore
-            reactionModel: popup.rootStore.emojiReactionsModel
+//            chatSectionModule: popup.chatSectionModule
+//            store: popup.rootStore
+//            reactionModel: popup.rootStore.emojiReactionsModel
             onShouldCloseParentPopup: {
                 popup.close()
             }

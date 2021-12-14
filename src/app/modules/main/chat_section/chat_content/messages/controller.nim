@@ -95,3 +95,6 @@ method getContactById*(self: Controller, contactId: string): ContactsDto =
 method getContactNameAndImage*(self: Controller, contactId: string): 
   tuple[name: string, image: string, isIdenticon: bool] =
   return self.contactService.getContactNameAndImage(contactId)
+
+method getNumOfPinnedMessages*(self: Controller): int =
+  return self.messageService.getNumOfPinnedMessages(self.chatId)

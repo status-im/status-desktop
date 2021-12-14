@@ -17,11 +17,12 @@ Item {
 
     property string publicKey: ""
     property string name: ""
-    property string identicon: ""
+    property string icon: ""
     property bool isIdenticon: true
     property int userStatus: Constants.userStatus.offline
     property var messageContextMenu
     property bool enableMouseArea: true
+    property bool hovered: false
     property color color: {
         if (wrapper.hovered) {
             return Style.current.menuBackgroundHover
@@ -44,7 +45,7 @@ Item {
             image: StatusImageSettings {
                 width: 28
                 height: 28
-                source: wrapper.identicon
+                source: wrapper.icon
                 isIdenticon: wrapper.isIdenticon
             }
             icon: StatusIconSettings {
@@ -106,15 +107,21 @@ Item {
             onClicked: {
                 if (mouse.button === Qt.LeftButton) {
                     //TODO remove dynamic scoping
-                    openProfilePopup(wrapper.name, wrapper.publicKey, wrapper.identicon, "", wrapper.name);
+                    openProfilePopup(wrapper.name, wrapper.publicKey, wrapper.icon, "", wrapper.name);
                 }
                  else if (mouse.button === Qt.RightButton && !!messageContextMenu) {
                     // Set parent, X & Y positions for the messageContextMenu
                     messageContextMenu.parent = rectangle
                     messageContextMenu.setXPosition = function() { return 0}
                     messageContextMenu.setYPosition = function() { return rectangle.height}
-                    messageContextMenu.isProfile = true;
-                    messageContextMenu.show(wrapper.name, wrapper.publicKey, wrapper.identicon, "", wrapper.name)
+
+                    messageContextMenu.isProfile = true
+                    messageContextMenu.myPublicKey = userProfile.pubKey
+                    messageContextMenu.selectedUserPublicKey = wrapper.publicKey
+                    messageContextMenu.selectedUserDisplayName = wrapper.name
+                    messageContextMenu.selectedUserIcon = wrapper.icon
+                    messageContextMenu.isSelectedUserIconIdenticon = wrapper.isIdenticon
+                    messageContextMenu.popup()
                 }
             }
         }

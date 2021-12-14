@@ -296,6 +296,7 @@ Item {
             id: msgDelegate
 
             messageStore: root.messageStore
+            messageContextMenu: messageContextMenuInst
 
             messageId: model.id
             responseToMessageWithId: model.responseToMessageWithId
@@ -311,10 +312,6 @@ Item {
             messageOutgoingStatus: model.outgoingStatus
             messageContentType: model.contentType
             pinnedMessage: model.pinned
-
-            // Used only in case of ChatIdentifier
-            chatTypeThisMessageBelongsTo: model.chatTypeThisMessageBelongsTo
-            chatColorThisMessageBelongsTo: model.chatColorThisMessageBelongsTo
 
             // This is possible since we have all data loaded before we load qml.
             // When we fetch messages to fulfill a gap we have to set them at once.
