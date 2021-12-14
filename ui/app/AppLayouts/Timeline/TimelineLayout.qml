@@ -220,12 +220,12 @@ ScrollView {
 //                    messageStore.timeout = model.timeout;
 //                    messageStore.messageContextMenu = msgCntxtMenu;
 //                }
-                MessageContextMenuView {
-                    id: msgCntxtMenu
-                    store: root.store
-                    chatSectionModule: root.chatSectionModule
-                    reactionModel: EmojiReactions { }
-                }
+//                MessageContextMenuView {
+//                    id: msgCntxtMenu
+//                    store: root.store
+//                    chatSectionModule: root.chatSectionModule
+//                    reactionModel: EmojiReactions { }
+//                }
             }
         }
 

@@ -104,7 +104,7 @@ Loader {
                 icon: repliedMessageSenderIcon
                 isIdenticon: repliedMessageSenderIconIsIdenticon
                 onClickMessage: {
-                    root.clickMessage(true, false, false, null, false, false, isReplyImage)
+                    root.clickMessage(true, false, false, null, false, false, true)
                 }
             }
 

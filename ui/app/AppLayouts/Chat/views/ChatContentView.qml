@@ -178,6 +178,38 @@ ColumnLayout {
         }
     }
 
+    MessageStore{
+        id: messageStore
+        messageModule: chatContentModule.messagesModule
+    }
+
+    MessageContextMenuView {
+        id: contextmenu
+        reactionModel: root.rootStore.emojiReactionsModel
+        onPinMessage: {
+            messageStore.pinMessage(messageId)
+        }
+
+        onUnpinMessage: {
+            messageStore.unpinMessage(messageId)
+        }
+    }
+
+    StatusImageModal {
+        id: imagePopup
+        onClicked: {
+            if (button === Qt.LeftButton) {
+                imagePopup.close()
+            }
+            else if(button === Qt.RightButton) {
+                contextmenu.imageSource = imagePopup.imageSource
+                contextmenu.hideEmojiPicker = true
+                contextmenu.isRightClickOnImage = true;
+                contextmenu.popup()
+            }
+        }
+    }
+
     ColumnLayout {
         Layout.fillWidth: true
         Layout.fillHeight: true
@@ -189,9 +221,7 @@ ColumnLayout {
             Layout.fillHeight: true
             store: root.rootStore
             messageContextMenuInst: contextmenu
-            messageStore: MessageStore{
-                messageModule: chatContentModule.messagesModule
-            }
+            messageStore: messageStore
         }
 
         Item {

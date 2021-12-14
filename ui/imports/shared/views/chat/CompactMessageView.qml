@@ -23,20 +23,29 @@ Item {
     property bool headerRepeatCondition: (authorCurrentMsg !== authorPrevMsg ||
                                           shouldRepeatHeader || dateGroupLbl.visible || chatReply.active)
     property bool showMoreButton: {
-        // Not Refactored Yet
-
-        return false
-//        switch (chatTypeThisMessageBelongsTo) {
-//        case Constants.chatType.oneToOne: return true
-//        case Constants.chatType.privateGroupChat: return rootStore.chatsModelInst.channelView.activeChannel.isAdmin(userProfile.pubKey) ? true : isCurrentUser
-//        case Constants.chatType.publicChat: return isCurrentUser
-//        case Constants.chatType.communityChat: return rootStore.chatsModelInst.communities.activeCommunity.admin ? true : isCurrentUser
-//        case Constants.chatType.profile: return false
-//        default: return false
-//        }
+        let chatTypeThisMessageBelongsTo = messageStore.getChatType()
+        switch (chatTypeThisMessageBelongsTo) {
+        case Constants.chatType.oneToOne:
+            return true
+        case Constants.chatType.privateGroupChat:
+            // Not Refactored Yet
+            return false
+//            return rootStore.chatsModelInst.channelView.activeChannel.isAdmin(userProfile.pubKey) ? true : isCurrentUser
+        case Constants.chatType.publicChat:
+            return amISender
+        case Constants.chatType.communityChat:
+            // Not Refactored Yet
+            return false
+//            return rootStore.chatsModelInst.communities.activeCommunity.admin ? true : amISender
+        case Constants.chatType.profile:
+            return false
+        default:
+            return false
+        }
     }
 
     signal addEmoji(bool isProfileClick, bool isSticker, bool isImage , var image, bool emojiOnly, bool hideEmojiPicker)
+    signal clickMessage(bool isProfileClick, bool isSticker, bool isImage, var image, bool emojiOnly, bool hideEmojiPicker, bool isReply, bool isRightClickOnImage, string imageSource)
 
     width: parent.width
     height: messageContainer.height + messageContainer.anchors.topMargin
@@ -60,7 +69,7 @@ Item {
     }
 
     ChatButtonsPanel {
-        contentType: contentType
+        contentType: messageContentType
         parentIsHovered: !isEdit && isHovered
         onHoverChanged: {
             hovered && setHovered(messageId, hovered)
@@ -71,11 +80,11 @@ Item {
         // This is not exactly like the design because the hover becomes messed up with the buttons on top of another Message
         anchors.topMargin: -Style.current.halfPadding
         messageContextMenu: root.messageContextMenu
-        showMoreButton: showMoreButton
+        showMoreButton: root.showMoreButton
         fromAuthor: senderId
         editBtnActive: isText && !isEdit && isCurrentUser && showEdit
         onClickMessage: {
-            parent.parent.parent.clickMessage(isProfileClick, isSticker, isImage, image, emojiOnly, hideEmojiPicker);
+            root.clickMessage(isProfileClick, isSticker, isImage, image, emojiOnly, hideEmojiPicker, false, false, "");
         }
     }
 
@@ -240,7 +249,7 @@ Item {
             active: responseTo !== "" && !activityCenterMessage
 
             Component.onCompleted: {
-                let obj = messageStore.getMessageByIdAsJson(messageId)
+                let obj = messageStore.getMessageByIdAsJson(responseTo)
                 if(!obj)
                     return
 
@@ -259,8 +268,7 @@ Item {
 //                messageStore.scrollToBottom(isit, root.container);
             }
             onClickMessage: {
-                // Not Refactored Yet
-//                parent.parent.parent.clickMessage(isProfileClick, isSticker, isImage, image, emojiOnly, hideEmojiPicker, isReply);
+                root.clickMessage(isProfileClick, isSticker, isImage, image, emojiOnly, hideEmojiPicker, isReply, false, "")
             }
         }
 
@@ -276,7 +284,7 @@ Item {
             icon: senderIcon
             isIdenticon: isSenderIconIdenticon
             onClickMessage: {
-                parent.parent.parent.parent.clickMessage(isProfileClick, isSticker, isImage, image, emojiOnly, hideEmojiPicker, isReply);
+                root.clickMessage(isProfileClick, isSticker, isImage, image, emojiOnly, hideEmojiPicker, isReply, false, "")
             }
         }
 
@@ -290,7 +298,7 @@ Item {
             localName: senderLocalName
             amISender: amISender
             onClickMessage: {
-                parent.parent.parent.parent.clickMessage(true, false, false, null, false, false, false);
+                root.clickMessage(true, false, false, null, false, false, false, false, "")
             }
         }
 
@@ -374,7 +382,7 @@ Item {
                 StatusChatInput {
                     id: editTextInput
                     chatInputPlaceholder: qsTrId("type-a-message-")
-                    chatType: chatTypeThisMessageBelongsTo
+                    chatType: messageStore.getChatType()
                     isEdit: true
                     textInput.text: editMessageLoader.sourceText
                     onSendMessage: {
@@ -458,7 +466,7 @@ Item {
 
                 onLinkActivated: {
                     if (activityCenterMessage) {
-                        clickMessage(false, isSticker, false)
+                        root.clickMessage(false, isSticker, false, null, false, false, false, false, "")
                     }
                 }
             }
@@ -482,7 +490,7 @@ Item {
                                 root.messageContextMenu.parent = root
                                 root.messageContextMenu.setXPosition = function() { return (mouse.x)}
                                 root.messageContextMenu.setYPosition = function() { return (mouse.y)}
-                                clickMessage(false, false, true, image, false, true, false, true, imageSource)
+                                root.clickMessage(false, false, true, image, false, true, false, true, imageSource)
                             }
                         }
                         container: root.container
@@ -528,7 +536,7 @@ Item {
                 messageContextMenu: root.messageContextMenu
                 isActivityCenterMessage: activityCenterMessage
                 onClickMessage: {
-                    parent.parent.parent.parent.parent.clickMessage(isProfileClick, isSticker, isImage);
+                    root.clickMessage(isProfileClick, isSticker, isImage, null, false, false, false, false, "");
                 }
                 onSetMessageActive: {
                     setMessageActive(messageId, active);

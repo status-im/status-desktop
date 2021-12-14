@@ -17,6 +17,7 @@ Column {
     z: (typeof chatLogView === "undefined") ? 1 : (chatLogView.count - index)
 
     property var messageStore
+    property var messageContextMenu
 
     property string messageId: ""
     property string responseToMessageWithId: ""
@@ -32,10 +33,6 @@ Column {
     property string messageOutgoingStatus: ""
     property int messageContentType: 1
     property bool pinnedMessage: false
-
-    // Used only in case of ChatIdentifier
-    property int chatTypeThisMessageBelongsTo: -1
-    property string chatColorThisMessageBelongsTo: ""
 
     property int prevMessageIndex: -1
     property var prevMessageAsJsonObj
@@ -112,7 +109,7 @@ Column {
     property string replaces: ""
     property bool isEdited: false
     property bool showEdit: true
-    property var messageContextMenu
+
     //////////////////////////////////////
 
 
@@ -166,41 +163,59 @@ Column {
 //        }
     }
 
-    property var clickMessage: function(isProfileClick, isSticker = false, isImage = false, image = null, emojiOnly = false, hideEmojiPicker = false, isReply = false, isRightClickOnImage = false, imageSource = "") {
-        // Not Refactored Yet
-//        if (placeholderMessage || activityCenterMessage) {
-//            return
-//        }
+    property var clickMessage: function(isProfileClick,
+                                        isSticker = false,
+                                        isImage = false,
+                                        image = null,
+                                        emojiOnly = false,
+                                        hideEmojiPicker = false,
+                                        isReply = false,
+                                        isRightClickOnImage = false,
+                                        imageSource = "") {
 
-//        if (!isProfileClick) {
-//            SelectedMessage.set(messageId, fromAuthor);
-//        }
+        if (placeholderMessage || activityCenterMessage) {
+            return
+        }
 
-//        messageContextMenu.messageId = root.messageId
-//        messageContextMenu.contentType = root.contentType
-//        messageContextMenu.linkUrls = root.linkUrls;
-//        messageContextMenu.isProfile = !!isProfileClick;
-//        messageContextMenu.isCurrentUser = root.isCurrentUser
-//        messageContextMenu.isText = root.isText
-//        messageContextMenu.isSticker = isSticker;
-//        messageContextMenu.emojiOnly = emojiOnly;
-//        messageContextMenu.hideEmojiPicker = hideEmojiPicker;
-//        messageContextMenu.pinnedMessage = pinnedMessage;
-//        messageContextMenu.isCurrentUser = isCurrentUser;
-//        messageContextMenu.isRightClickOnImage = isRightClickOnImage
-//        messageContextMenu.imageSource = imageSource
-//        messageContextMenu.onClickEdit = function() {root.isEdit = true}
+        messageContextMenu.myPublicKey = userProfile.pubKey
+        messageContextMenu.amIAdmin = messageStore.amIChatAdmin()
+        messageContextMenu.chatType = messageStore.getChatType()
 
-//        if (isReply) {
-//            let nickname = appMain.getUserNickname(repliedMessageAuthor)
-//            messageContextMenu.show(repliedMessageAuthor, repliedMessageAuthorPubkey, repliedMessageUserImage || repliedMessageUserIdenticon, plainText, nickname, emojiReactionsModel);
-//        } else {
-//            let nickname = appMain.getUserNickname(fromAuthor)
-//            messageContextMenu.show(userName, fromAuthor, root.profileImageSource || identicon, plainText, nickname, emojiReactionsModel);
-//        }
+        messageContextMenu.messageId = root.messageId
+        messageContextMenu.messageSenderId = root.senderId
+        messageContextMenu.messageContentType = root.messageContentType
+        messageContextMenu.pinnedMessage = root.pinnedMessage
+        messageContextMenu.canPin = messageStore.getNumberOfPinnedMessages() <= Constants.maxNumberOfPins
 
-//         messageContextMenu.x = messageContextMenu.setXPosition()
-//         messageContextMenu.y = messageContextMenu.setYPosition()
+        messageContextMenu.selectedUserPublicKey = root.senderId
+        messageContextMenu.selectedUserDisplayName = root.senderDisplayName
+        messageContextMenu.selectedUserIcon = root.senderIcon
+        messageContextMenu.isSelectedUserIconIdenticon = root.isSenderIconIdenticon
+
+        messageContextMenu.imageSource = imageSource
+
+        messageContextMenu.isProfile = !!isProfileClick
+        messageContextMenu.isRightClickOnImage = isRightClickOnImage
+        messageContextMenu.emojiOnly = emojiOnly
+        messageContextMenu.hideEmojiPicker = hideEmojiPicker
+
+        if(isReply){
+            let obj = messageStore.getMessageByIdAsJson(responseTo)
+            if(!obj)
+                return
+
+            messageContextMenu.messageSenderId = obj.id
+            messageContextMenu.selectedUserPublicKey = obj.id
+            messageContextMenu.selectedUserDisplayName = obj.senderDisplayName
+            messageContextMenu.selectedUserIcon = obj.senderIcon
+            messageContextMenu.isSelectedUserIconIdenticon = obj.isSenderIconIdenticon
+        }
+
+
+        messageContextMenu.x = messageContextMenu.setXPosition()
+        messageContextMenu.y = messageContextMenu.setYPosition()
+
+        messageContextMenu.popup()
     }
 
 
@@ -297,8 +312,8 @@ Column {
         id: channelIdentifierComponent
         ChannelIdentifierView {
             chatName: root.senderDisplayName
-            chatType: root.chatTypeThisMessageBelongsTo
-            chatColor: root.chatColorThisMessageBelongsTo
+            chatType: messageStore.getChatType()
+            chatColor: messageStore.getChatColor()
             chatIcon: root.senderIcon
             chatIconIsIdenticon: root.isSenderIconIdenticon
         }
@@ -375,7 +390,11 @@ Column {
             messageContextMenu: root.messageContextMenu
             container: root
             onAddEmoji: {
-                root.clickMessage(isProfileClick, isSticker, isImage , image, emojiOnly, hideEmojiPicker);
+                root.clickMessage(isProfileClick, isSticker, isImage , image, emojiOnly, hideEmojiPicker)
+            }
+
+            onClickMessage: {
+                root.clickMessage(isProfileClick, isSticker, isImage, image, emojiOnly, hideEmojiPicker, isReply, isRightClickOnImage, imageSource)
             }
         }
     }

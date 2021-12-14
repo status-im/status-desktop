@@ -122,28 +122,6 @@ Item {
         }
     }
 
-    MessageContextMenuView {
-        id: contextmenu
-        chatSectionModule: root.parentModule
-        store: root.rootStore
-        reactionModel: root.rootStore.emojiReactionsModel
-    }
-
-    StatusImageModal {
-        id: imagePopup
-        onClicked: {
-            if (button === Qt.LeftButton) {
-                imagePopup.close()
-            }
-            else if(button === Qt.RightButton) {
-                contextmenu.imageSource = imagePopup.imageSource
-                contextmenu.hideEmojiPicker = true
-                contextmenu.isRightClickOnImage = true;
-                contextmenu.show()
-            }
-        }
-    }
-
     StackLayout {
         anchors.fill: parent
         currentIndex: {
