@@ -119,13 +119,14 @@ StatusModal {
                     anchors.horizontalCenter: parent.horizontalCenter
                     title: name
                     subTitle: description
+                    // TODO refactor members in the backend
                     //% "%1 members"
-                    tertiaryTitle: qsTrId("-1-members").arg(nbMembers)
+                    // tertiaryTitle: qsTrId("-1-members").arg(nbMembers)
                     statusListItemTitle.font.weight: Font.Bold
                     statusListItemTitle.font.pixelSize: 17
-                    image.source: thumbnailImage
-                    icon.isLetterIdenticon: !!!thumbnailImage
-                    icon.background.color: communityColor
+                    image.source: model.image
+                    icon.isLetterIdenticon: !image
+                    icon.background.color: color
 
                     sensor.onClicked: {
                         if (joined && isMember) {

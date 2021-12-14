@@ -11,7 +11,7 @@ method delete*(self: AccessInterface) {.base.} =
 method init*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getCommunities*(self: AccessInterface): seq[community_service.CommunityDto] {.base.} =
+method getJoinedCommunities*(self: AccessInterface): seq[community_service.CommunityDto] {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method checkForStoringPassword*(self: AccessInterface) {.base.} =
@@ -26,7 +26,7 @@ method setActiveSection*(self: AccessInterface, sectionId: string, sectionType: 
 method getNumOfNotificaitonsForChat*(self: AccessInterface): tuple[unviewed:int, mentions:int] {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getNumOfNotificaitonsForCommunity*(self: AccessInterface, communityId: string): tuple[unviewed:int, mentions:int] 
+method getNumOfNotificationsForCommunity*(self: AccessInterface, communityId: string): tuple[unviewed:int, mentions:int] 
   {.base.} =
   raise newException(ValueError, "No implementation available")
 

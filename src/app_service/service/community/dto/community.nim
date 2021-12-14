@@ -1,7 +1,8 @@
 {.used.}
 
-import json
+import json, sequtils
 
+import status/statusgo_backend_new/communities
 include ../../../common/json_utils
 
 type
@@ -140,3 +141,7 @@ proc toCommunityDto*(jsonObj: JsonNode): CommunityDto =
   discard jsonObj.getProp("requestedToJoinAt", result.requestedToJoinAt)
   discard jsonObj.getProp("isMember", result.isMember)
   discard jsonObj.getProp("muted", result.muted)
+
+proc parseCommunities*(response: RpcResponse[JsonNode]): seq[CommunityDto] =
+  result = map(response.result.getElems(), 
+    proc(x: JsonNode): CommunityDto = x.toCommunityDto())

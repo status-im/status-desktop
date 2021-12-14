@@ -7,6 +7,7 @@ type
     Id = UserRole + 1
     SectionType
     Name
+    Description
     Image
     Icon
     Color
@@ -54,6 +55,7 @@ QtObject:
       ModelRole.Id.int:"id",
       ModelRole.SectionType.int:"sectionType",
       ModelRole.Name.int:"name",
+      ModelRole.Description.int:"description",
       ModelRole.Image.int:"image",
       ModelRole.Icon.int:"icon",
       ModelRole.Color.int:"color",
@@ -80,6 +82,8 @@ QtObject:
       result = newQVariant(item.sectionType.int)
     of ModelRole.Name: 
       result = newQVariant(item.name)
+    of ModelRole.Description: 
+      result = newQVariant(item.description)
     of ModelRole.Image: 
       result = newQVariant(item.image)
     of ModelRole.Icon: 

@@ -20,6 +20,9 @@ QtObject {
     property var activityCenterModuleInst: activityCenterModule
     property var activityCenterList: activityCenterModuleInst.model
 
+    property var communitiesModuleInst: communitiesModule
+    property var communitiesList: communitiesModuleInst.model
+
     property var userProfileInst: userProfile
 
     property bool isDebugEnabled: profileSectionModule.isDebugEnabled
