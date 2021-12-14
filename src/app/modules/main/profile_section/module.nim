@@ -10,6 +10,7 @@ import ../../../../app_service/service/about/service as about_service
 import ../../../../app_service/service/language/service as language_service
 import ../../../../app_service/service/mnemonic/service as mnemonic_service
 import ../../../../app_service/service/privacy/service as privacy_service
+import ../../../../app_service/service/node_configuration/service_interface as node_configuration_service
 
 import ./profile/module as profile_module
 import ./contacts/module as contacts_module
@@ -17,6 +18,7 @@ import ./language/module as language_module
 import ./mnemonic/module as mnemonic_module
 import ./privacy/module as privacy_module
 import ./about/module as about_module
+import ./advanced/module as advanced_module
 
 import eventemitter
 
@@ -36,6 +38,7 @@ type
     mnemonicModule: mnemonic_module.AccessInterface
     privacyModule: privacy_module.AccessInterface
     aboutModule: about_module.AccessInterface
+    advancedModule: advanced_module.AccessInterface
 
 proc newModule*[T](delegate: T,
   events: EventEmitter,
@@ -46,14 +49,15 @@ proc newModule*[T](delegate: T,
   aboutService: about_service.ServiceInterface,
   languageService: language_service.ServiceInterface,
   mnemonicService: mnemonic_service.ServiceInterface,
-  privacyService: privacy_service.ServiceInterface
+  privacyService: privacy_service.ServiceInterface,
+  nodeConfigurationService: node_configuration_service.ServiceInterface
   ):
   Module[T] =
   result = Module[T]()
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController[Module[T]](result, accountsService, settingsService, profileService, languageService, mnemonicService, privacyService)
+  result.controller = controller.newController[Module[T]](result)
   result.moduleLoaded = false
 
   result.profileModule = profile_module.newModule(result, accountsService, settingsService, profileService)
@@ -62,6 +66,7 @@ proc newModule*[T](delegate: T,
   result.mnemonicModule = mnemonic_module.newModule(result, mnemonicService)
   result.privacyModule = privacy_module.newModule(result, privacyService, accountsService)
   result.aboutModule = about_module.newModule(result, aboutService)
+  result.advancedModule = advanced_module.newModule(result, settingsService, nodeConfigurationService)
 
   singletonInstance.engine.setRootContextProperty("profileSectionModule", result.viewVariant)
 
@@ -72,6 +77,7 @@ method delete*[T](self: Module[T]) =
   self.mnemonicModule.delete
   self.privacyModule.delete
   self.aboutModule.delete
+  self.advancedModule.delete
 
   self.view.delete
   self.viewVariant.delete
@@ -85,6 +91,7 @@ method load*[T](self: Module[T]) =
   self.mnemonicModule.load()
   self.privacyModule.load()
   self.aboutModule.load()
+  self.advancedModule.load()
 
 method isLoaded*[T](self: Module[T]): bool =
   return self.moduleLoaded
@@ -108,13 +115,13 @@ proc checkIfModuleDidLoad[T](self: Module[T]) =
   if(not self.aboutModule.isLoaded()):
     return
 
+  if(not self.advancedModule.isLoaded()):
+    return
+
   self.moduleLoaded = true
   self.delegate.profileSectionDidLoad()
 
 method viewDidLoad*[T](self: Module[T]) =
-  self.view.setIsTelemetryEnabled(self.controller.isTelemetryEnabled())
-  self.view.setIsDebugEnabled(self.controller.isDebugEnabled())
-  self.view.setIsAutoMessageEnabled(self.controller.isAutoMessageEnabled())
   self.checkIfModuleDidLoad()
 
 method profileModuleDidLoad*[T](self: Module[T]) =
@@ -135,11 +142,8 @@ method privacyModuleDidLoad*[T](self: Module[T]) =
 method aboutModuleDidLoad*[T](self: Module[T]) =
   self.checkIfModuleDidLoad()
 
-method toggleTelemetry*[T](self: Module[T]) = 
-  self.controller.toggleTelemetry()
+method advancedModuleDidLoad*[T](self: Module[T]) =
+  self.checkIfModuleDidLoad()
 
-method toggleAutoMessage*[T](self: Module[T]) = 
-  self.controller.toggleAutoMessage()
-
-method toggleDebug*[T](self: Module[T]) =
-  self.controller.toggleDebug()
+method getAdvancedModule*[T](self: Module[T]): QVariant =
+  self.advancedModule.getModuleAsVariant()

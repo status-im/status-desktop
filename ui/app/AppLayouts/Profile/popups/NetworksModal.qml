@@ -19,7 +19,7 @@ ModalPopup {
     //% "Network"
     title: qsTrId("network")
 
-    property string newNetwork: "";
+    property var advancedStore
  
     ScrollView {
         id: svNetworks
@@ -100,16 +100,19 @@ ModalPopup {
 
 
                 NetworkRadioSelector {
+                    advancedStore: popup.advancedStore
                     network: Constants.networkMainnet
                     buttonGroup: radioGroup
                 }
 
                 NetworkRadioSelector {
+                    advancedStore: popup.advancedStore
                     network: Constants.networkPOA
                     buttonGroup: radioGroup
                 }
 
                 NetworkRadioSelector {
+                    advancedStore: popup.advancedStore
                     network: Constants.networkXDai
                     buttonGroup: radioGroup
                 }
@@ -122,16 +125,19 @@ ModalPopup {
                 }
 
                 NetworkRadioSelector {
+                    advancedStore: popup.advancedStore
                     network: Constants.networkGoerli
                     buttonGroup: radioGroup
                 }
 
                 NetworkRadioSelector {
+                    advancedStore: popup.advancedStore
                     network: Constants.networkRinkeby
                     buttonGroup: radioGroup
                 }
 
                 NetworkRadioSelector {
+                    advancedStore: popup.advancedStore
                     network: Constants.networkRopsten
                     buttonGroup: radioGroup
                 }
@@ -147,6 +153,7 @@ ModalPopup {
 //                Repeater {
 //                    model: profileModel.network.customNetworkList
 //                    delegate: NetworkRadioSelector {
+//                        advancedStore: popup.advancedStore
 //                        networkName: name
 //                        network: customNetworkId
 //                        buttonGroup: radioGroup

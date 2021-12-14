@@ -35,6 +35,7 @@ import ../../../app_service/service/privacy/service as privacy_service
 import ../../../app_service/service/stickers/service as stickers_service
 import ../../../app_service/service/activity_center/service as activity_center_service
 import ../../../app_service/service/saved_address/service as saved_address_service
+import ../../../app_service/service/node_configuration/service_interface as node_configuration_service
 
 import eventemitter
 
@@ -81,8 +82,9 @@ proc newModule*[T](
   providerService: provider_service.ServiceInterface,
   stickersService: stickers_service.Service,
   activityCenterService: activity_center_service.Service,
-  savedAddressService: saved_address_service.ServiceInterface
-): Module[T] =
+  savedAddressService: saved_address_service.ServiceInterface,
+  nodeConfigurationService: node_configuration_service.ServiceInterface
+  ): Module[T] =
   result = Module[T]()
   result.delegate = delegate
   result.view = view.newView(result)
@@ -112,7 +114,8 @@ proc newModule*[T](
   result.browserSectionModule = browser_section_module.newModule(result, bookmarkService, settingsService, 
   dappPermissionsService, providerService)
   result.profileSectionModule = profile_section_module.newModule(result, events, accountsService, settingsService, 
-  profileService, contactsService, aboutService, languageService, mnemonicService, privacyService)
+  profileService, contactsService, aboutService, languageService, mnemonicService, privacyService,
+  nodeConfigurationService)
   result.stickersModule = stickers_module.newModule(result, events, stickersService)
   result.activityCenterModule = activity_center_module.newModule(result, events, activityCenterService, contactsService)
   result.communitiesModule = communities_module.newModule(result, events, communityService)

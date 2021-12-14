@@ -206,7 +206,8 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
     result.providerService,
     result.stickersService,
     result.activityCenterService,
-    result.savedAddressService
+    result.savedAddressService,
+    result.nodeConfigurationService
   )
 
   # Do connections

@@ -25,6 +25,8 @@ ScrollView {
     contentHeight: advancedContainer.height + 100
     clip: true
 
+    property var advancedStore
+
     Item {
         id: advancedContainer
         width: profileContentWidth
@@ -42,7 +44,7 @@ ScrollView {
             StatusSettingsLineButton {
                 //% "Network"
                 text: qsTrId("network")
-                currentValue: root.store.getNetworkName()
+                currentValue: root.advancedStore.currentNetworkName
                 onClicked: networksModal.open()
             }
 
@@ -50,7 +52,7 @@ ScrollView {
             StatusSettingsLineButton {
                 //% "Fleet"
                 text: qsTrId("fleet")
-                currentValue: root.store.fleet
+                currentValue: root.advancedStore.fleet
                 onClicked: fleetModal.open()
             }
 
@@ -80,7 +82,7 @@ ScrollView {
                     cursorShape: Qt.PointingHandCursor
                     hoverEnabled: true
                     onClicked: {
-                        Qt.openUrlExternally(root.store.logDir())
+                        Qt.openUrlExternally(root.advancedStore.logDir())
                     }
                 }
             }
@@ -236,7 +238,7 @@ ScrollView {
             }
 
             StatusSectionHeadline {
-                visible: !isWakuV2
+                visible: !root.advancedStore.isWakuV2
                 //% "Bloom filter level"
                 text: qsTrId("bloom-filter-level")
                 topPadding: Style.current.bigPadding
@@ -244,7 +246,7 @@ ScrollView {
             }
 
             Row {
-                visible: !isWakuV2
+                visible: !root.advancedStore.isWakuV2
                 spacing: 11
 
                 Component {
@@ -258,15 +260,14 @@ ScrollView {
                         //% "The account will be logged out. When you login again, the selected mode will be enabled"
                         confirmationText: qsTrId("the-account-will-be-logged-out--when-you-login-again--the-selected-mode-will-be-enabled")
                         onConfirmButtonClicked: {
-                            root.store.setBloomLevel(mode)
+                            root.advancedStore.setBloomLevel(mode)
                         }
                         onClosed: {
-                            // Not Refactored Yet
-//                            switch(root.store.nodeModelInst.bloomLevel){
-//                                case "light":  btnBloomLight.click(); break;
-//                                case "normal":  btnBloomNormal.click(); break;
-//                                case "full":  btnBloomFull.click(); break;
-//                            }
+                            switch(root.advancedStore.bloomLevel){
+                                case "light":  btnBloomLight.click(); break;
+                                case "normal":  btnBloomNormal.click(); break;
+                                case "full":  btnBloomFull.click(); break;
+                            }
                             destroy()
                         }
                     }
@@ -279,11 +280,11 @@ ScrollView {
                 BloomSelectorButton {
                     id: btnBloomLight
                     buttonGroup: bloomGroup
-                    checkedByDefault: root.store.bloomLevel == "light"
+                    checkedByDefault: root.advancedStore.bloomLevel == "light"
                     //% "Light Node"
                     btnText: qsTrId("light-node")
                     onToggled: {
-                        if (root.store.bloomLevel != "light") {
+                        if (root.advancedStore.bloomLevel != "light") {
                             Global.openPopup(bloomConfirmationDialogComponent, {mode: "light"})
                         } else {
                             btnBloomLight.click()
@@ -294,11 +295,11 @@ ScrollView {
                 BloomSelectorButton {
                     id: btnBloomNormal
                     buttonGroup: bloomGroup
-                    checkedByDefault: root.store.bloomLevel == "normal"
+                    checkedByDefault: root.advancedStore.bloomLevel == "normal"
                     //% "Normal"
                     btnText: qsTrId("normal")
                     onToggled: {
-                        if (root.store.bloomLevel != "normal") {
+                        if (root.advancedStore.bloomLevel != "normal") {
                             Global.openPopup(bloomConfirmationDialogComponent, {mode: "normal"})
                         } else {
                             btnBloomNormal.click()
@@ -309,11 +310,11 @@ ScrollView {
                 BloomSelectorButton {
                     id: btnBloomFull
                     buttonGroup: bloomGroup
-                    checkedByDefault: root.store.bloomLevel == "full"
+                    checkedByDefault: root.advancedStore.bloomLevel == "full"
                     //% "Full Node"
                     btnText: qsTrId("full-node")
                     onToggled: {
-                        if (root.store.bloomLevel != "full") {
+                        if (root.advancedStore.bloomLevel != "full") {
                             Global.openPopup(bloomConfirmationDialogComponent, {mode: "full"})
                         } else {
                             btnBloomFull.click()
@@ -323,7 +324,7 @@ ScrollView {
             }
 
             StatusSectionHeadline {
-                visible: isWakuV2
+                visible: root.advancedStore.isWakuV2
                 text: qsTr("WakuV2 mode")
                 topPadding: Style.current.bigPadding
                 bottomPadding: Style.current.padding
@@ -331,7 +332,7 @@ ScrollView {
 
             Row {
                 spacing: 11
-                visible: isWakuV2
+                visible: root.advancedStore.isWakuV2
                 Component {
                     id: wakuV2ModeConfirmationDialogComponent
                     ConfirmationDialog {
@@ -341,10 +342,10 @@ ScrollView {
                         //% "The account will be logged out. When you login again, the selected mode will be enabled"
                         confirmationText: qsTrId("the-account-will-be-logged-out--when-you-login-again--the-selected-mode-will-be-enabled")
                         onConfirmButtonClicked: {
-                            root.store.setWakuV2LightClient(mode)
+                            root.advancedStore.setWakuV2LightClientEnabled(mode)
                         }
                         onClosed: {
-                            if(root.store.isWakuV2LightClient){
+                            if(root.advancedStore.wakuV2LightClientEnabled){
                                 btnWakuV2Light.click()
                             } else {
                                 btnWakuV2Full.click();
@@ -361,11 +362,11 @@ ScrollView {
                 BloomSelectorButton {
                     id: btnWakuV2Light
                     buttonGroup: wakuV2Group
-                    checkedByDefault: root.store.isWakuV2LightClient
+                    checkedByDefault: root.advancedStore.wakuV2LightClientEnabled
                     //% "Light Node"
                     btnText: qsTrId("light-node")
                     onToggled: {
-                        if (!root.store.isWakuV2LightClient) {
+                        if (!root.advancedStore.wakuV2LightClientEnabled) {
                             Global.openPopup(wakuV2ModeConfirmationDialogComponent, {mode: true})
                         } else {
                             btnWakuV2Light.click()
@@ -376,11 +377,11 @@ ScrollView {
                 BloomSelectorButton {
                     id: btnWakuV2Full
                     buttonGroup: wakuV2Group
-                    checkedByDefault: !root.store.isWakuV2LightClient
+                    checkedByDefault: !root.advancedStore.wakuV2LightClientEnabled
                     //% "Full Node"
                     btnText: qsTrId("full-node")
                     onToggled: {
-                        if (root.store.isWakuV2LightClient) {
+                        if (root.advancedStore.wakuV2LightClientEnabled) {
                             Global.openPopup(wakuV2ModeConfirmationDialogComponent, {mode: false})
                         } else {
                             btnWakuV2Full.click()
@@ -402,7 +403,7 @@ ScrollView {
             // TODO: replace with StatusQ component
             StatusSettingsLineButton {
                 text: qsTr("Stickers/ENS on ropsten")
-                visible: root.store.currentNetwork === Constants.networkRopsten
+                visible: root.advancedStore.currentNetworkId === Constants.networkRopsten
                 isSwitch: true
                 switchChecked: localAccountSensitiveSettings.stickersEnsRopsten
                 onClicked: {
@@ -414,7 +415,7 @@ ScrollView {
             StatusSettingsLineButton {
                 text: qsTr("Enable Telemetry")
                 isSwitch: true
-                switchChecked: root.store.profileModuleInst.isTelemetryEnabled
+                switchChecked: root.advancedStore.isTelemetryEnabled
                 onClicked: {
                     Global.openPopup(enableTelemetryConfirmationDialogComponent, {light: false})
                 }
@@ -424,7 +425,7 @@ ScrollView {
             StatusSettingsLineButton {
                 text: qsTr("Debug")
                 isSwitch: true
-                switchChecked: root.store.profileModuleInst.isDebugEnabled
+                switchChecked: root.advancedStore.isDebugEnabled
                 onClicked: {
                     Global.openPopup(enableDebugComponent)
                 }
@@ -434,7 +435,7 @@ ScrollView {
             StatusSettingsLineButton {
                 text: qsTr("Enable Auto message")
                 isSwitch: true
-                switchChecked: root.store.profileModuleInst.isAutoMessageEnabled
+                switchChecked: root.advancedStore.isAutoMessageEnabled
                 onClicked: {
                     Global.openPopup(enableAutoMessageConfirmationDialogComponent, {light: false})
                 }
@@ -443,10 +444,12 @@ ScrollView {
 
         NetworksModal {
             id: networksModal
+            advancedStore: root.advancedStore
         }
 
         FleetsModal {
             id: fleetModal
+            advancedStore: root.advancedStore
         }
 
         Component {
@@ -458,7 +461,7 @@ ScrollView {
                 showCancelButton: true
                 confirmationText: qsTr("Are you sure you want to enable telemetry? This will reduce your privacy level while using Status. You need to restart the app for this change to take effect.")
                 onConfirmButtonClicked: {
-                    root.store.profileModuleInst.toggleTelemetry()
+                    root.advancedStore.toggleTelemetry()
                     close()
                 }
                 onCancelButtonClicked: {
@@ -476,7 +479,7 @@ ScrollView {
                 showCancelButton: true
                 confirmationText: qsTr("Are you sure you want to enable auto message? You need to restart the app for this change to take effect.")
                 onConfirmButtonClicked: {
-                    root.store.profileModuleInst.toggleAutoMessage()
+                    root.advancedStore.toggleAutoMessage()
                     close()
                 }
                 onCancelButtonClicked: {
@@ -492,11 +495,11 @@ ScrollView {
 
                 id: confirmDialog
                 showCancelButton: true
-                confirmationText: qsTr("Are you sure you want to %1 debug mode? The app will be restarted for this change to take effect.").arg(root.store.profileModuleInst.isDebugEnabled ? 
+                confirmationText: qsTr("Are you sure you want to %1 debug mode? The app will be restarted for this change to take effect.").arg(root.advancedStore.isDebugEnabled ?
                     qsTr("disable") : 
                     qsTr("enable"))
                 onConfirmButtonClicked: {
-                    root.store.profileModuleInst.toggleDebug()
+                    root.advancedStore.toggleDebug()
                     close()
                 }
                 onCancelButtonClicked: {

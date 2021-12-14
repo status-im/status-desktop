@@ -2,6 +2,7 @@ import json
 import tables
 import ./dto/settings as settings_dto
 import ../stickers/dto/stickers as stickers_dto
+import ../../../app/core/fleets/fleet_configuration
 
 export settings_dto
 export stickers_dto
@@ -10,6 +11,7 @@ export stickers_dto
 const DEFAULT_CURRENT_NETWORK* = "mainnet_rpc"
 const DEFAULT_CURRENCY* = "usd"
 const DEFAULT_TELEMETRY_SERVER_URL* = "https://telemetry.status.im"
+const DEFAULT_FLEET* = $Fleet.Prod
 
 type 
   ServiceInterface* {.pure inheritable.} = ref object of RootObj
