@@ -4,11 +4,13 @@ import local_account_settings
 import local_account_sensitive_settings
 import local_app_settings
 import user_profile
+import utils
 
 export local_account_settings
 export local_account_sensitive_settings
 export local_app_settings
 export user_profile
+export utils
 
 type 
   GlobalSingleton = object 
@@ -51,6 +53,13 @@ proc userProfile*(self: GlobalSingleton): UserProfile =
     userProfile = newUserProfile()
 
   return userProfile
+
+proc utils*(self: GlobalSingleton): Utils =
+  var utils {.global.}: Utils
+  if (utils.isNil):
+    utils = newUtils()
+
+  return utils
 
 proc delete*(self: GlobalSingleton) =
   self.engine.delete()

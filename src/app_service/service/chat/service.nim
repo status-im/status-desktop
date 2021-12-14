@@ -6,7 +6,7 @@ import ../activity_center/dto/notification as notification_dto
 import ../contacts/service as contact_service
 import status/statusgo_backend_new/chat as status_chat
 import status/statusgo_backend_new/chatCommands as status_chat_commands
-import ../../../app/utils/image_utils
+import ../../../app/global/global_singleton
 import ../../../constants
 
 from ../../common/account_constants import ZERO_ADDRESS
@@ -241,7 +241,7 @@ QtObject:
       var images = Json.decode(imagePathsJson, seq[string])
 
       for imagePath in images.mitems:
-        var image = image_utils.formatImagePath(imagePath)
+        var image = singletonInstance.utils.formatImagePath(imagePath)
         imagePath = image_resizer(image, 2000, TMPDIR)
 
       discard status_chat.sendImages(chatId, images)

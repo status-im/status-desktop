@@ -144,15 +144,11 @@ QtObject {
     }
 
     function hex2Dec(value) {
-        // TODO: Move to transaction root module and not wallet
-        // Not Refactored Yet
-//        return utilsModel.hex2Dec(value)
+        return globalUtils.hex2Dec(value)
     }
 
     function hex2Eth(value) {
-        // TODO: Move to transaction module
-        // Not Refactored Yet
-//        return utilsModel.hex2Eth(value)
+        return globalUtils.hex2Eth(value)
     }
 
     function checkRecentHistory() {

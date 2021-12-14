@@ -16,23 +16,19 @@ QtObject {
     property bool currentTabConnected: false
 
     function getUrlFromUserInput(input) {
-        // Not Refactored Yet
-//        return utilsModel.urlFromUserInput(input)
+        return globalUtils.urlFromUserInput(input)
     }
 
     function getAscii2Hex(input) {
-        // Not Refactored Yet
-//        return utilsModel.ascii2Hex(input)
+        return globalUtils.ascii2Hex(input)
     }
 
     function getHex2Ascii(input) {
-        // Not Refactored Yet
-//        return utilsModel.hex2Ascii(input)
+        return globalUtils.hex2Ascii(input)
     }
 
     function getWei2Eth(wei,decimals) {
-        // Not Refactored Yet
-//        return utilsModel.wei2Eth(wei,decimals)
+        return globalUtils.wei2Eth(wei,decimals)
     }
 
     function generateIdenticon(pk) {
