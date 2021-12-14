@@ -56,3 +56,15 @@ QtObject:
     if(jsonObj.isNil):
       return ""
     return $jsonObj
+
+  proc getChatType*(self: View): int {.slot.} = 
+    return self.delegate.getChatType()
+
+  proc getChatColor*(self: View): string {.slot.} = 
+    return self.delegate.getChatColor()
+
+  proc amIChatAdmin*(self: View): bool {.slot.} = 
+    return self.delegate.amIChatAdmin()
+
+  proc getNumberOfPinnedMessages*(self: View): int {.slot.} = 
+    return self.delegate.getNumberOfPinnedMessages()

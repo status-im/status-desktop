@@ -77,7 +77,7 @@ Rectangle {
                 buttonsContainer.messageContextMenu.parent = buttonsContainer
                 buttonsContainer.messageContextMenu.setXPosition = function() { return (-Math.abs(buttonsContainer.width - buttonsContainer.messageContextMenu.emojiContainer.width))}
                 buttonsContainer.messageContextMenu.setYPosition = function() { return (-buttonsContainer.messageContextMenu.height - 4)}
-                clickMessage(false, false, false, null, true, false)
+                buttonsContainer.clickMessage(false, false, false, null, true, false)
             }
             onHoveredChanged: buttonsContainer.hoverChanged(this.hovered)
         }
@@ -120,7 +120,7 @@ Rectangle {
             id: otherBtn
             width: 32
             height: 32
-            visible: showMoreButton
+            visible: buttonsContainer.showMoreButton
             icon.name: "more"
             type: StatusFlatRoundButton.Type.Tertiary
             //% "More"
@@ -133,7 +133,7 @@ Rectangle {
                 buttonsContainer.messageContextMenu.parent = buttonsContainer
                 buttonsContainer.messageContextMenu.setXPosition = function() { return (-Math.abs(buttonsContainer.width - 176))}
                 buttonsContainer.messageContextMenu.setYPosition = function() { return (-buttonsContainer.messageContextMenu.height - 4)}
-                clickMessage(false, isSticker, false, null, false, true);
+                buttonsContainer.clickMessage(false, isSticker, false, null, false, true);
             }
             onHoveredChanged: buttonsContainer.hoverChanged(this.hovered)
         }

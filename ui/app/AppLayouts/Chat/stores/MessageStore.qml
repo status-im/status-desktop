@@ -1,4 +1,5 @@
 import QtQuick 2.13
+import utils 1.0
 
 QtObject {
     id: root
@@ -31,5 +32,47 @@ QtObject {
         }
 
         return obj
+    }
+
+    function getChatType () {
+        if(!messageModule)
+            return Constants.chatType.unknown
+
+        return messageModule.getChatType()
+    }
+
+    function getChatColor () {
+        if(!messageModule)
+            return Style.current.blue
+
+        return messageModule.getChatColor()
+    }
+
+    function amIChatAdmin () {
+        if(!messageModule)
+            return false
+
+        return messageModule.amIChatAdmin()
+    }
+
+    function getNumberOfPinnedMessages () {
+        if(!messageModule)
+            return 0
+
+        return messageModule.getNumberOfPinnedMessages()
+    }
+
+    function pinMessage (messageId) {
+        if(!messageModule)
+            return
+
+        return messageModule.pinMessage(messageId)
+    }
+
+    function unpinMessage (messageId) {
+        if(!messageModule)
+            return
+
+        return messageModule.unpinMessage(messageId)
     }
 }

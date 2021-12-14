@@ -10,3 +10,15 @@ method pinUnpinMessage*(self: AccessInterface, messageId: string, pin: bool) {.b
 method getNamesReactedWithEmojiIdForMessageId*(self: AccessInterface, messageId: string, emojiId: int): seq[string] 
   {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method getChatType*(self: AccessInterface): int {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getChatColor*(self: AccessInterface): string {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method amIChatAdmin*(self: AccessInterface): bool {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getNumberOfPinnedMessages*(self: AccessInterface): int {.base.} =
+  raise newException(ValueError, "No implementation available")

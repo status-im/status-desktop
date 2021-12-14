@@ -55,7 +55,7 @@ Item {
         delegate: UserDelegate {
             publicKey: model.id
             name: model.name
-            identicon: model.icon
+            icon: model.icon
             isIdenticon: model.isIdenticon
             userStatus: model.onlineStatus
             messageContextMenu: root.messageContextMenu

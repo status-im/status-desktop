@@ -97,12 +97,8 @@ StatusAppThreePanelLayout {
         CommunityUserListPanel {
             messageContextMenu: quickActionMessageOptionsMenu
             usersModule: {
-                if(chatCommunitySectionModule.activeItem.isSubItemActive)
-                    chatCommunitySectionModule.prepareChatContentModuleForChatId(chatCommunitySectionModule.activeItem.activeSubItem.id)
-                else
-                    chatCommunitySectionModule.prepareChatContentModuleForChatId(chatCommunitySectionModule.activeItem.id)
-
-                return chatCommunitySectionModule.getChatContentModule().usersModule
+                let chatContentModule = currentChatContentModule()
+                return chatContentModule.usersModule
             }
         }
     }
@@ -112,8 +108,8 @@ StatusAppThreePanelLayout {
         UserListPanel {
             messageContextMenu: quickActionMessageOptionsMenu
             usersModule: {
-                chatCommunitySectionModule.prepareChatContentModuleForChatId(chatCommunitySectionModule.activeItem.id)
-                return chatCommunitySectionModule.getChatContentModule().usersModule
+                let chatContentModule = currentChatContentModule()
+                return chatContentModule.usersModule
             }
         }
     }
@@ -178,15 +174,13 @@ StatusAppThreePanelLayout {
 
     MessageContextMenuView {
         id: quickActionMessageOptionsMenu
-        chatSectionModule: root.chatCommunitySectionModule
-        // Not Refactored
-       store: root.rootStore
-//        reactionModel: root.rootStore.emojiReactionsModel
+
+        onOpenProfileClicked: {
+            openProfilePopup(displayName, publicKey, icon, "", displayName)
+        }
+        onCreateOneToOneChat: {
+            Global.changeAppSectionBySectionType(Constants.appSection.chat)
+            root.chatCommunitySectionModule.createOneToOneChat(chatId, ensName)
+        }
     }
 }
-
-/*##^##
-Designer {
-    D{i:0;formeditorColor:"#ffffff";formeditorZoom:1.25;height:770;width:1152}
-}
-##^##*/
