@@ -4,14 +4,16 @@ import utils 1.0
 QtObject {
     id: root
 
-    // Not Refactored Yet
-//    property var profileModelInst: profileModel
-    property var profileModuleInst: profileSectionModule
     property var profile: profileModule.model
     property var contactsModuleInst: contactsModule
     property var aboutModuleInst: aboutModule
     property var languageModuleInst: languageModule
     property var mnemonicModuleInst: mnemonicModule
+
+    property var profileModuleInst: profileSectionModule
+    property AdvancedStore advancedStore: AdvancedStore {
+        advancedModule: profileModuleInst.advancedModule
+    }
 
     // Not Refactored Yet
 //    property var chatsModelInst: chatsModel
@@ -43,11 +45,6 @@ QtObject {
     property string etherscanLink: "" //walletModelInst.utilsView.etherscanLink
     property string pubKey: profile.pubKey
     // Not Refactored Yet
-//    property string fleet: profileModelInst.fleets.fleet
-    // Not Refactored Yet
-//    property string bloomLevel: nodeModelInst.bloomLevel
-    // Not Refactored Yet
-//    property string currentNetwork: profileModelInst.network.current
 //    property string preferredUsername: profileModelInst.ens.preferredUsername
 //    property string firstEnsUsername: profileModelInst.ens.firstEnsUsername
     property string username: profile.username
@@ -58,8 +55,6 @@ QtObject {
     property bool profileHasIdentityImage: profile.hasIdentityImage
     // Not Refactored Yet
 //    property bool automaticMailserverSelection: profileModelInst.mailservers.automaticSelection
-    // Not Refactored Yet
-//    property bool isWakuV2LightClient: nodeModelInst.WakuV2LightClient
     // Not Refactored Yet
 //    property bool devicesSetup: profileModelInst.devices.isSetup
     property bool mnemonicBackedUp: mnemonicModuleInst.isBackedUp
@@ -336,11 +331,6 @@ QtObject {
     function getNetworkName() {
         // Not Refactored Yet
 //        return utilsModelInst.getNetworkName()
-    }
-
-    function logDir() {
-        // Not Refactored Yet
-//        return profileModelInst.logDir()
     }
 
     function setBloomLevel(mode) {

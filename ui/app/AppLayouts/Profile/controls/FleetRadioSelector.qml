@@ -9,20 +9,22 @@ import shared.controls 1.0
 RadioButtonSelector {
     id: root
 
+    property var advancedStore
+
     property string fleetName: ""
     property string newFleet: ""
 
     title: fleetName
-    // Not Refactored Yet
-//    checked: profileModel.fleets.fleet === root.fleetName
+    checked: root.advancedStore.fleet === root.fleetName
 
     onCheckedChanged: {
-        // Not Refactored Yet
-//        if (checked) {
-//            if (profileModel.fleets.fleet === root.fleetName) return;
-//            root.newFleet = root.fleetName;
-//            Global.openPopup(confirmDialogComponent)
-//        }
+        if (checked) {
+            if (root.advancedStore.fleet === root.fleetName)
+                return
+
+            root.newFleet = root.fleetName;
+            Global.openPopup(confirmDialogComponent)
+        }
     }
 
     Component {
@@ -32,11 +34,10 @@ RadioButtonSelector {
             header.title: qsTrId("close-app-title")
             //% "Change fleet to %1"
             confirmationText: qsTrId("change-fleet-to--1").arg(root.newFleet)
-            // Not Refactored Yet
-//            onConfirmButtonClicked: profileModel.fleets.setFleet(root.newFleet)
+            onConfirmButtonClicked: {
+                root.advancedStore.setFleet(root.newFleet)
+            }
             onClosed: {
-                // Not Refactored Yet
-//                profileModel.fleets.triggerFleetChange()
                 destroy();
             }
         }

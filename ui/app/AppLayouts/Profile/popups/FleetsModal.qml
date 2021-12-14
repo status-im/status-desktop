@@ -15,6 +15,8 @@ ModalPopup {
     //% "Fleet"
     title: qsTrId("fleet")
 
+    property var advancedStore
+
     property string newFleet: "";
     
     Column {
@@ -31,26 +33,31 @@ ModalPopup {
         ButtonGroup { id: fleetSettings }
 
         FleetRadioSelector {
+            advancedStore: popup.advancedStore
             fleetName: Constants.eth_prod
             buttonGroup: fleetSettings
         }
 
         FleetRadioSelector {
+            advancedStore: popup.advancedStore
             fleetName: Constants.eth_staging
             buttonGroup: fleetSettings
         }
 
         FleetRadioSelector {
+            advancedStore: popup.advancedStore
             fleetName: Constants.eth_test
             buttonGroup: fleetSettings
         }
 
         FleetRadioSelector {
+            advancedStore: popup.advancedStore
             fleetName: Constants.waku_prod
             buttonGroup: fleetSettings
         }
 
         FleetRadioSelector {
+            advancedStore: popup.advancedStore
             fleetName: Constants.waku_test
             buttonGroup: fleetSettings
         }

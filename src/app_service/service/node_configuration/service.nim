@@ -46,20 +46,41 @@ method init*(self: Service) =
     error "error: ", errDesription
     return
 
-proc saveConfiguration(self: Service, configuration: NodeConfigDto) =
+proc saveConfiguration(self: Service, configuration: NodeConfigDto): bool =
   if(not self.settingsService.saveNodeConfiguration(configuration.toJsonNode())):
     error "error saving node configuration "
-    return
+    return false
   self.configuration = configuration
+  return true
   
 method getWakuVersion*(self: Service): int =
   if self.configuration.WakuConfig.Enabled:
     return WAKU_VERSION_1
   elif self.configuration.WakuV2Config.Enabled:
     return WAKU_VERSION_2
+  
+  error "unsupported waku version"
   return 0
 
-method setWakuVersion*(self: Service, wakuVersion: int) =
+method getBloomLevel*(self: Service): string =
+  let wakuVersion = self.getWakuVersion()
+  if wakuVersion == WAKU_VERSION_2:
+    error "get - bloom level is supported only for a waku version 1"
+    return BLOOM_LEVEL_NORMAL
+
+  if wakuVersion == WAKU_VERSION_1:
+    let bloomFilterMode = self.configuration.WakuConfig.BloomFilterMode
+    let fullNode = self.configuration.WakuConfig.FullNode
+  
+    if (bloomFilterMode):
+      if(fullNode):
+        return BLOOM_LEVEL_FULL
+      else:
+        return BLOOM_LEVEL_NORMAL
+    else:
+      return BLOOM_LEVEL_LIGHT
+
+method setWakuVersion*(self: Service, wakuVersion: int): bool =
   var newConfiguration = self.configuration
   newConfiguration.RegisterTopics = @["whispermail"]
   newConfiguration.WakuConfig.Enabled = wakuVersion == WAKU_VERSION_1
@@ -73,12 +94,12 @@ method setWakuVersion*(self: Service, wakuVersion: int) =
     newConfiguration.Rendezvous = false
     newConfiguration.WakuV2Config.DiscoveryLimit = 20
     newConfiguration.WakuV2Config.Rendezvous = true
-  self.saveConfiguration(newConfiguration)
+  return self.saveConfiguration(newConfiguration)
 
-method setNetwork*(self: Service, network: string) =
+method setNetwork*(self: Service, network: string): bool =
   if(not self.settingsService.saveCurrentNetwork(network)):
     error "error saving network ", network, methodName="setNetwork"
-    return
+    return false
 
   let currentNetworkDetails = self.settingsService.getCurrentNetworkDetails()
   var dataDir = currentNetworkDetails.config.dataDir
@@ -89,29 +110,47 @@ method setNetwork*(self: Service, network: string) =
   newConfiguration.DataDir = dataDir
   newConfiguration.UpstreamConfig.Enabled = currentNetworkDetails.config.upstreamConfig.enabled
   newConfiguration.UpstreamConfig.URL = currentNetworkDetails.config.upstreamConfig.url
-  self.saveConfiguration(newConfiguration)
+  return self.saveConfiguration(newConfiguration)
   
-method setBloomFilterMode*(self: Service, bloomFilterMode: bool) =
+method setBloomFilterMode*(self: Service, bloomFilterMode: bool): bool =
   if(not self.settingsService.saveWakuBloomFilterMode(bloomFilterMode)):
     error "error saving waku bloom filter mode ", methodName="setBloomFilterMode"
-    return
+    return false
 
   var newConfiguration = self.configuration
   newConfiguration.WakuConfig.BloomFilterMode = bloomFilterMode
-  self.saveConfiguration(newConfiguration)
+  return self.saveConfiguration(newConfiguration)
 
-method setBloomLevel*(self: Service, bloomFilterMode: bool, fullNode: bool) =
+method setBloomLevel*(self: Service, bloomLevel: string): bool =
+  let wakuVersion = self.getWakuVersion()
+  if wakuVersion == WAKU_VERSION_2:
+    error "set - bloom level is supported only for a waku version 1"
+    return false
+
+  # default is BLOOM_LEVEL_NORMAL
+  var bloomFilterMode = false
+  var fullNode = true
+  if (bloomLevel == BLOOM_LEVEL_LIGHT):
+    bloomFilterMode = false
+    fullNode = false
+  elif (bloomLevel == BLOOM_LEVEL_FULL):
+    bloomFilterMode = true
+    fullNode = true
+
   if(not self.settingsService.saveWakuBloomFilterMode(bloomFilterMode)):
     error "error saving waku bloom filter mode ", methodName="setBloomLevel"
-    return
+    return false
 
-  var newConfiguration = self.configuration
-  newConfiguration.WakuConfig.BloomFilterMode = bloomFilterMode
-  newConfiguration.WakuConfig.FullNode = fullNode
-  newConfiguration.WakuConfig.LightClient = not fullNode
-  self.saveConfiguration(newConfiguration)
+  if wakuVersion == WAKU_VERSION_1:
+    var newConfiguration = self.configuration
+    newConfiguration.WakuConfig.BloomFilterMode = bloomFilterMode
+    newConfiguration.WakuConfig.FullNode = fullNode
+    newConfiguration.WakuConfig.LightClient = not fullNode
+    return self.saveConfiguration(newConfiguration)
 
-method setFleet*(self: Service, fleet: string) =
+  return false
+
+method setFleet*(self: Service, fleet: string): bool =
   if(not self.settingsService.saveFleet(fleet)):
     error "error saving fleet ", methodName="setFleet"
     return
@@ -130,9 +169,20 @@ method setFleet*(self: Service, fleet: string) =
   #TODO: in the meantime we're using the go-waku test fleet for rendezvous.
   #      once we have a prod fleet this code needs to be updated
   newConfiguration.ClusterConfig.WakuRendezvousNodes = self.fleetConfiguration.getNodes(Fleet.GoWakuTest, FleetNodes.LibP2P)
-  self.saveConfiguration(newConfiguration)
+  return self.saveConfiguration(newConfiguration)
 
-method setV2LightMode*(self: Service, enabled: bool) =
+method getV2LightMode*(self: Service): bool =
+  return self.configuration.WakuV2Config.LightClient
+
+method setV2LightMode*(self: Service, enabled: bool): bool =
   var newConfiguration = self.configuration
   newConfiguration.WakuV2Config.LightClient = enabled
-  self.saveConfiguration(newConfiguration)
+  return self.saveConfiguration(newConfiguration)
+
+method getDebugLevel*(self: Service): string =
+  return self.configuration.LogLevel
+
+method setDebugLevel*(self: Service, logLevel: LogLevel): bool =
+  var newConfiguration = self.configuration
+  newConfiguration.LogLevel = $logLevel
+  return self.saveConfiguration(newConfiguration)

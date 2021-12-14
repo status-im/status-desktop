@@ -275,6 +275,8 @@ method saveFleet*(self: Service, value: string): bool =
   return false
 
 method getFleet*(self: Service): string =
+  if(self.settings.fleet.len == 0):
+    self.settings.fleet = DEFAULT_FLEET
   return self.settings.fleet
 
 method getAvailableNetworks*(self: Service): seq[Network] =
@@ -329,7 +331,8 @@ method getRecentStickers*(self: Service): seq[string] =
   result = self.settings.recentStickerHashes
 
 method saveRecentStickers*(self: Service, recentStickers: seq[StickerDto]): bool =
-  if(self.saveSetting(KEY_RECENT_STICKERS, %(recentStickers.mapIt($it.hash)))):
+  let json = %(recentStickers.mapIt($it.hash))
+  if(self.saveSetting(KEY_RECENT_STICKERS, json)):
     self.settings.recentStickerHashes = recentStickers.map(s => s.hash)
     return true
   return false

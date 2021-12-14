@@ -140,9 +140,9 @@ type
   
   PushNotificationServerConfig* = object
     Enabled*: bool
-    Identity*: seq[string] # not sure about the type, but we don't use it, so doesn't matter
+    #Identity*: seq[string] # not sure about the type, but we don't use it, so doesn't matter
     GorushURL*: string
-    Logger*: seq[string] # not sure about the type, but we don't use it, so doesn't matter
+    #Logger*: seq[string] # not sure about the type, but we don't use it, so doesn't matter
 
 type
   NodeConfigDto* = object
@@ -160,11 +160,11 @@ type
     HTTPEnabled*: bool
     HTTPHost*: string
     HTTPPort*: int
-    HTTPVirtualHosts*: string
-    HTTPCors*: string
+    # HTTPVirtualHosts*: string # not sure about the type, but we don't use it, so doesn't matter
+    # HTTPCors*: string # not sure about the type, but we don't use it, so doesn't matter
     IPCEnabled*: bool
     IPCFile*: string
-    TLSenabled*: bool
+    TLSEnabled*: bool
     MaxPeers*: int
     MaxPendingPeers*: int
     LogEnabled*: bool
@@ -385,16 +385,16 @@ proc toPushNotificationServerConfig*(jsonObj: JsonNode): PushNotificationServerC
   discard jsonObj.getProp("Enabled", result.Enabled)
   discard jsonObj.getProp("GorushURL", result.GorushURL)
 
-  var arr: JsonNode
-  if(jsonObj.getProp("Identity", arr)):
-    if(arr.kind == JArray):
-      for valueObj in arr:
-        result.Identity.add(valueObj.getStr)
+  # var arr: JsonNode
+  # if(jsonObj.getProp("Identity", arr)):
+  #   if(arr.kind == JArray):
+  #     for valueObj in arr:
+  #       result.Identity.add(valueObj.getStr)
 
-  if(jsonObj.getProp("Logger", arr)):
-    if(arr.kind == JArray):
-      for valueObj in arr:
-        result.Logger.add(valueObj.getStr)
+  # if(jsonObj.getProp("Logger", arr)):
+  #   if(arr.kind == JArray):
+  #     for valueObj in arr:
+  #       result.Logger.add(valueObj.getStr)
 
 proc toNodeConfigDto*(jsonObj: JsonNode): NodeConfigDto =
   discard jsonObj.getProp("NetworkId", result.NetworkId)
@@ -411,8 +411,8 @@ proc toNodeConfigDto*(jsonObj: JsonNode): NodeConfigDto =
   discard jsonObj.getProp("HTTPEnabled", result.HTTPEnabled)
   discard jsonObj.getProp("HTTPHost", result.HTTPHost)
   discard jsonObj.getProp("HTTPPort", result.HTTPPort)
-  discard jsonObj.getProp("HTTPVirtualHosts", result.HTTPVirtualHosts)
-  discard jsonObj.getProp("HTTPCors", result.HTTPCors)
+  # discard jsonObj.getProp("HTTPVirtualHosts", result.HTTPVirtualHosts)
+  # discard jsonObj.getProp("HTTPCors", result.HTTPCors)
   discard jsonObj.getProp("IPCEnabled", result.IPCEnabled)
   discard jsonObj.getProp("IPCFile", result.IPCFile)
   discard jsonObj.getProp("TLSEnabled", result.TLSEnabled)
@@ -446,7 +446,7 @@ proc toNodeConfigDto*(jsonObj: JsonNode): NodeConfigDto =
     result.ClusterConfig = toClusterConfig(clusterConfigObj)
 
   var lightEthConfigObj: JsonNode
-  if(jsonObj.getProp("ClusterConfig", lightEthConfigObj)):
+  if(jsonObj.getProp("LightEthConfig", lightEthConfigObj)):
     result.LightEthConfig = toLightEthConfig(lightEthConfigObj)
 
   var wakuConfigObj: JsonNode
