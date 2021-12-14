@@ -33,7 +33,7 @@ method searchSubLocation*(self: AccessInterface): string {.base.} =
 method setSearchLocation*(self: AccessInterface, location: string, subLocation: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getCommunities*(self: AccessInterface): seq[CommunityDto] {.base.} =
+method getJoinedCommunities*(self: AccessInterface): seq[CommunityDto] {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getCommunityById*(self: AccessInterface, communityId: string): CommunityDto {.base.} =

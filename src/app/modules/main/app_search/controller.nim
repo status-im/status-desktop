@@ -70,8 +70,8 @@ method setSearchLocation*(self: Controller, location: string, subLocation: strin
     self.searchLocation = location
     self.searchSubLocation = subLocation
 
-method getCommunities*(self: Controller): seq[CommunityDto] =
-  return self.communityService.getCommunities()
+method getJoinedCommunities*(self: Controller): seq[CommunityDto] =
+  return self.communityService.getJoinedCommunities()
 
 method getCommunityById*(self: Controller, communityId: string): CommunityDto =
   return self.communityService.getCommunityById(communityId)

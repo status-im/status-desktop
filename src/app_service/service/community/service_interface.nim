@@ -13,7 +13,13 @@ method delete*(self: ServiceInterface) {.base.} =
 method init*(self: ServiceInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getCommunities*(self: ServiceInterface): seq[CommunityDto] {.base.} =
+method getJoinedCommunities*(self: ServiceInterface): seq[CommunityDto] {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method loadAllCommunities*(self: ServiceInterface): seq[CommunityDto] {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method loadJoinedComunities*(self: ServiceInterface): seq[CommunityDto] {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getCommunityById*(self: ServiceInterface, communityId: string): CommunityDto {.base.} =

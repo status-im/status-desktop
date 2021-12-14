@@ -350,8 +350,8 @@ Item {
         id: communitiesPopupComponent
         CommunitiesPopup {
             anchors.centerIn: parent
+           communitiesList: root.store.communitiesList
             // Not Refactored Yet
-//            communitiesList: root.store.chatsModelInst.communities.list
 //            onSetActiveCommunity: {
 //                root.store.chatsModelInst.communities.setActiveCommunity(id)
 //            }
