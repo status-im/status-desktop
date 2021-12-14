@@ -32,7 +32,7 @@ method getNetworks*[T](self: Controller[T]): seq[NetworkDetails] =
   self.settingsService.getNetworks()
 
 method changeNetwork*[T](self: Controller[T], network: string) =
-  self.networkService.changeNetwork(network)
+  self.settingsService.changeNetwork(network)
 
 method addCustomNetwork*[T](self: Controller[T], name: string, endpoint: string, networkId: int, networkType: string) =
-  self.networkService.addCustomNetwork(name, endpoint, networkId, networkType)
+  self.settingsService.addNetwork(name, endpoint, networkId, networkType)

@@ -1,4 +1,4 @@
-import json, json_serialization, chronicles
+import json, json_serialization, chronicles, uuids
 
 import status/types/[rpc_response]
 
@@ -138,3 +138,35 @@ method toggleDebug*(self: Service) =
 method isDebugEnabled*(self: Service): bool =
   let nodeConfig = status_go_settings.getNodeConfig()
   return nodeConfig["LogLevel"].getStr() != $LogLevel.INFO
+
+method addNetwork*(self: Service, name: string, endpoint: string, networkId: int, networkType: string) =
+  var networks = status_go_settings.getSetting[JsonNode](Setting.Networks_Networks)
+  let id = genUUID()
+  networks.elems.add(%*{
+    "id": $genUUID(),
+    "name": name,
+    "config": {
+      "NetworkId": networkId,
+      "DataDir": "/ethereum/" & networkType,
+      "UpstreamConfig": {
+        "Enabled": true,
+        "URL": endpoint
+      }
+    }
+  })
+  discard status_go_settings.saveSetting(Setting.Networks_Networks, networks)
+
+method changeNetwork*(self: Service, network: string) =
+  var statusGoResult = status_go_settings.setNetwork(network)
+  if statusGoResult.error != "":
+    error "Error saving updated node config", msg=statusGoResult.error
+
+  # remove all installed sticker packs (pack ids do not match across networks)
+  statusGoResult = saveSetting(Setting.Stickers_PacksInstalled, %* {})
+  if statusGoResult.error != "":
+    error "Error removing all installed sticker packs", msg=statusGoResult.error
+
+  # remove all recent stickers (pack ids do not match across networks)
+  statusGoResult = saveSetting(Setting.Stickers_Recent, %* {})
+  if statusGoResult.error != "":
+    error "Error removing all recent stickers", msg=statusGoResult.error 
