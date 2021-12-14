@@ -1,7 +1,4 @@
-import dto
 import status/types/[installation]
-
-export dto
 
 type 
   ServiceInterface* {.pure inheritable.} = ref object of RootObj

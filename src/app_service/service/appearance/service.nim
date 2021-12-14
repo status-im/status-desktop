@@ -1,6 +1,6 @@
 import os, json, json_serialization, sequtils, chronicles
 
-import ./service_interface, ./dto
+import ./service_interface
 
 export service_interface
 
@@ -18,13 +18,7 @@ proc newService*(): Service =
   result = Service()
 
 method init*(self: Service) =
-  try:
-    echo "init"
-
-  except Exception as e:
-    let errDesription = e.msg
-    error "error: ", errDesription
-    return
+  discard
 
 method readTextFile*(self: Service, filepath: string): string =
   try:

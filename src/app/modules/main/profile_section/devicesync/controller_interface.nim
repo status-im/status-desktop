@@ -1,5 +1,3 @@
-# import ../../../../../app_service/service/profile/service as profile_service
-
 import status/types/[installation]
 
 type 

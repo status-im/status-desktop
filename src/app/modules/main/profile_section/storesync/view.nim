@@ -9,7 +9,6 @@ import ../../../../../app_service/[main]
 import ../../../../../app_service/tasks/[qt, threadpool]
 import ../../../../../app_service/tasks/marathon/mailserver/worker
 
-# import ./controller_interface
 import ./io_interface
 
 QtObject:

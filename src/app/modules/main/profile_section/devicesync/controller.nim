@@ -5,8 +5,6 @@ import status/types/[installation]
 import status/signals
 import ../../../../../app_service/service/devicesync/service as devicesync_service
 
-# import ./item as item
-
 export controller_interface
 
 type 

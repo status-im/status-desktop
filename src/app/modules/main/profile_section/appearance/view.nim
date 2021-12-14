@@ -1,6 +1,5 @@
 import NimQml
 
-# import ./controller_interface
 import ./io_interface
 
 QtObject:
@@ -16,7 +15,7 @@ QtObject:
     result.QObject.setup
     result.delegate = delegate
 
-  # TODO: copied over, but we should redo this to use an hardcoded path
+  # TODO: those probably belong in some kind of utils module instead
   proc readTextFile*(self: View, path: string): string {.slot.} =
     return self.delegate.readTextFile(path)
 

@@ -1,8 +1,6 @@
 import ./controller_interface
 import ../../../../../app_service/service/appearance/service as appearance_service
 
-# import ./item as item
-
 export controller_interface
 
 type 
