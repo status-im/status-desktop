@@ -13,44 +13,60 @@ logScope:
 
 type 
   Service* = ref object of service_interface.ServiceInterface
-    communities: Table[string, CommunityDto] # [community_id, CommunityDto]
+    joinedCommunities: Table[string, CommunityDto] # [community_id, CommunityDto]
+    allCommunities: Table[string, CommunityDto] # [community_id, CommunityDto]
     chatService: chat_service.Service
+
+# Forward declaration
+method loadAllCommunities(self: Service): seq[CommunityDto]
+method loadJoinedComunities(self: Service): seq[CommunityDto]
 
 method delete*(self: Service) =
   discard
 
 proc newService*(chatService: chat_service.Service): Service =
   result = Service()
-  result.communities = initTable[string, CommunityDto]()
+  result.joinedCommunities = initTable[string, CommunityDto]()
   result.chatService = chatService
 
 method init*(self: Service) =
   try:
-    let response = status_go.getJoinedComunities()
+    let joinedCommunities = self.loadJoinedComunities()
+    for community in joinedCommunities:
+      self.joinedCommunities[community.id] = community
 
-    let communities = map(response.result.getElems(), 
-    proc(x: JsonNode): CommunityDto = x.toCommunityDto())
-
-    for community in communities:
-      self.communities[community.id] = community
+    let allCommunities = self.loadAllCommunities()
+    for community in allCommunities:
+      self.allCommunities[community.id] = community
 
   except Exception as e:
     let errDesription = e.msg
     error "error: ", errDesription
     return
 
-method getCommunities*(self: Service): seq[CommunityDto] =
-  return toSeq(self.communities.values)
+method loadAllCommunities(self: Service): seq[CommunityDto] =
+  let response = status_go.getAllCommunities()
+  return parseCommunities(response)
+
+method loadJoinedComunities(self: Service): seq[CommunityDto] =
+  let response = status_go.getJoinedComunities()
+  return parseCommunities(response)
+
+method getJoinedCommunities*(self: Service): seq[CommunityDto] =
+  return toSeq(self.joinedCommunities.values)
+
+method getAllCommunities*(self: Service): seq[CommunityDto] =
+  return toSeq(self.allCommunities.values)
 
 method getCommunityById*(self: Service, communityId: string): CommunityDto =
-  if(not self.communities.hasKey(communityId)):
+  if(not self.joinedCommunities.hasKey(communityId)):
     error "error: requested community doesn't exists"
     return
 
-  return self.communities[communityId]
+  return self.joinedCommunities[communityId]
 
 method getCommunityIds*(self: Service): seq[string] =
-  return toSeq(self.communities.keys)
+  return toSeq(self.joinedCommunities.keys)
 
 proc sortAsc[T](t1, t2: T): int =
   if(t1.position > t2.position):
@@ -69,11 +85,11 @@ proc sortDesc[T](t1, t2: T): int =
     return 0
 
 method getCategories*(self: Service, communityId: string, order: SortOrder = SortOrder.Ascending): seq[Category] =
-  if(not self.communities.contains(communityId)):
+  if(not self.joinedCommunities.contains(communityId)):
     error "trying to get community categories for an unexisting community id"
     return
 
-  result = self.communities[communityId].categories
+  result = self.joinedCommunities[communityId].categories
   if(order == SortOrder.Ascending):
     result.sort(sortAsc[Category])
   else:
@@ -83,11 +99,11 @@ method getChats*(self: Service, communityId: string, categoryId = "", order = So
   ## By default returns chats which don't belong to any category, for passed `communityId`.
   ## If `categoryId` is set then only chats belonging to that category for passed `communityId` will be returned.
   ## Returned chats are sorted by position following set `order` parameter.
-  if(not self.communities.contains(communityId)):
+  if(not self.joinedCommunities.contains(communityId)):
     error "trying to get community chats for an unexisting community id"
     return
 
-  for chat in self.communities[communityId].chats:
+  for chat in self.joinedCommunities[communityId].chats:
     if(chat.categoryId != categoryId):
       continue
 
@@ -101,11 +117,11 @@ method getChats*(self: Service, communityId: string, categoryId = "", order = So
 method getAllChats*(self: Service, communityId: string, order = SortOrder.Ascending): seq[Chat] =
   ## Returns all chats belonging to the community with passed `communityId`, sorted by position.
   ## Returned chats are sorted by position following set `order` parameter.
-  if(not self.communities.contains(communityId)):
+  if(not self.joinedCommunities.contains(communityId)):
     error "trying to get all community chats for an unexisting community id"
     return
 
-  result = self.communities[communityId].chats
+  result = self.joinedCommunities[communityId].chats
 
   if(order == SortOrder.Ascending):
     result.sort(sortAsc[Chat])

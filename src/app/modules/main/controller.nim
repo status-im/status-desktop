@@ -79,8 +79,8 @@ method init*(self: Controller) =
     ##   self.delegate.disableSection(sectionType)
     discard    
 
-method getCommunities*(self: Controller): seq[CommunityDto] =
-  return self.communityService.getCommunities()
+method getJoinedCommunities*(self: Controller): seq[CommunityDto] =
+  return self.communityService.getJoinedCommunities()
 
 method checkForStoringPassword*(self: Controller) =
   # This method is called once user is logged in irrespective he is logged in 
@@ -130,7 +130,7 @@ method getNumOfNotificaitonsForChat*(self: Controller): tuple[unviewed:int, ment
     result.unviewed += chat.unviewedMessagesCount
     result.mentions += chat.unviewedMentionsCount
 
-method getNumOfNotificaitonsForCommunity*(self: Controller, communityId: string): tuple[unviewed:int, mentions:int] =
+method getNumOfNotificationsForCommunity*(self: Controller, communityId: string): tuple[unviewed:int, mentions:int] =
   result.unviewed = 0
   result.mentions = 0
   let chats = self.chatService.getAllChats()

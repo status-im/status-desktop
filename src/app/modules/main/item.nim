@@ -15,6 +15,7 @@ type
     sectionType: SectionType
     id: string
     name: string
+    description: string
     image: string
     icon: string
     color: string
@@ -23,11 +24,23 @@ type
     active: bool
     enabled: bool
 
-proc initItem*(id: string, sectionType: SectionType, name, image = "", icon = "", color = "", hasNotification = false, 
-  notificationsCount: int = 0, active = false, enabled = true): Item =
+proc initItem*(
+    id: string,
+    sectionType: SectionType,
+    name,
+    description = "",
+    image = "",
+    icon = "",
+    color = "",
+    hasNotification = false, 
+    notificationsCount: int = 0,
+    active = false,
+    enabled = true
+    ): Item =
   result.id = id
   result.sectionType = sectionType
   result.name = name
+  result.description = description
   result.image = image
   result.icon = icon
   result.color = color
@@ -41,13 +54,14 @@ proc isEmpty*(self: Item): bool =
 
 proc `$`*(self: Item): string =
   result = fmt"""MainModuleItem(
-    id: {self.id}, 
+    id: {self.id},
     sectionType: {self.sectionType.int},
-    name: {self.name}, 
+    name: {self.name},
+    description: {self.description}, 
     image: {self.image},
     icon: {self.icon},
-    color: {self.color}, 
-    hasNotification: {self.hasNotification}, 
+    color: {self.color},
+    hasNotification: {self.hasNotification},
     notificationsCount:{self.notificationsCount},
     active:{self.active},
     enabled:{self.enabled}
@@ -61,6 +75,9 @@ proc sectionType*(self: Item): SectionType {.inline.} =
 
 proc name*(self: Item): string {.inline.} = 
   self.name
+
+proc description*(self: Item): string {.inline.} = 
+  self.description
 
 proc image*(self: Item): string {.inline.} = 
   self.image

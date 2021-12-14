@@ -107,7 +107,7 @@ method prepareLocationMenuModel*(self: Module) =
   var items: seq[location_menu_item.Item]
   items.add(self.buildLocationMenuForChat())
   
-  let communities = self.controller.getCommunities()
+  let communities = self.controller.getJoinedCommunities()
   for c in communities:
     items.add(self.buildLocationMenuForCommunity(c))
 
@@ -153,7 +153,7 @@ method onSearchMessagesDone*(self: Module, messages: seq[MessageDto]) =
   var channels: seq[result_item.Item]
 
   # Add communities
-  let communities = self.controller.getCommunities()
+  let communities = self.controller.getJoinedCommunities()
   for co in communities:
     if(self.controller.searchLocation().len == 0 and co.name.toLower.startsWith(self.controller.searchTerm().toLower)):
       let item = result_item.initItem(co.id, "", "", co.id, co.name, SEARCH_RESULT_COMMUNITIES_SECTION_NAME, 

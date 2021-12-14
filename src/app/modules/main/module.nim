@@ -11,6 +11,7 @@ import profile_section/module as profile_section_module
 import app_search/module as app_search_module
 import stickers/module as stickers_module
 import activity_center/module as activity_center_module
+import communities/module as communities_module
 
 import ../../../app_service/service/keychain/service as keychain_service
 import ../../../app_service/service/chat/service as chat_service
@@ -52,6 +53,7 @@ type
     profileSectionModule: profile_section_module.AccessInterface
     stickersModule: stickers_module.AccessInterface
     activityCenterModule: activity_center_module.AccessInterface
+    communitiesModule: communities_module.AccessInterface
     appSearchModule: app_search_module.AccessInterface
     moduleLoaded: bool
 
@@ -105,6 +107,7 @@ proc newModule*[T](
   profileService, contactsService, aboutService, languageService, mnemonicService, privacyService)
   result.stickersModule = stickers_module.newModule(result, events, stickersService)
   result.activityCenterModule = activity_center_module.newModule(result, events, activityCenterService, contactsService)
+  result.communitiesModule = communities_module.newModule(result, events, communityService)
   result.appSearchModule = app_search_module.newModule(result, events, contactsService, chatService, communityService, 
   messageService)
 
@@ -113,6 +116,7 @@ method delete*[T](self: Module[T]) =
   self.profileSectionModule.delete
   self.stickersModule.delete
   self.activityCenterModule.delete
+  self.communitiesModule.delete
   for cModule in self.communitySectionsModule.values:
     cModule.delete
   self.communitySectionsModule.clear
@@ -135,10 +139,10 @@ method load*[T](
   self.controller.init()
   self.view.load()
 
-  # Create community modules here, since we don't know earlier how many communities we have.
-  let communities = self.controller.getCommunities()
+  # Create community modules here, since we don't know earlier how many joined communities we have.
+  let joinedCommunities = self.controller.getJoinedCommunities()
 
-  for c in communities:
+  for c in joinedCommunities:
     self.communitySectionsModule[c.id] = chat_section_module.newModule(
       self,
       events,
@@ -157,7 +161,7 @@ method load*[T](
   let (unviewedCount, mentionsCount) = self.controller.getNumOfNotificaitonsForChat()
   let hasNotification = unviewedCount > 0 or mentionsCount > 0
   let notificationsCount = mentionsCount
-  let chatSectionItem = initItem(conf.CHAT_SECTION_ID, SectionType.Chat, conf.CHAT_SECTION_NAME, "", 
+  let chatSectionItem = initItem(conf.CHAT_SECTION_ID, SectionType.Chat, conf.CHAT_SECTION_NAME, "", "",
   conf.CHAT_SECTION_ICON, "", hasNotification, notificationsCount, 
   false, true)
   self.view.addItem(chatSectionItem)
@@ -165,18 +169,18 @@ method load*[T](
     activeSection = chatSectionItem
 
   # Community Section
-  for c in communities:
-    let (unviewedCount, mentionsCount) = self.controller.getNumOfNotificaitonsForCommunity(c.id)
+  for c in joinedCommunities:
+    let (unviewedCount, mentionsCount) = self.controller.getNumOfNotificationsForCommunity(c.id)
     let hasNotification = unviewedCount > 0 or mentionsCount > 0
     let notificationsCount = mentionsCount # we need to add here number of requests
-    let communitySectionItem = initItem(c.id, SectionType.Community, c.name, c.images.thumbnail, "", c.color, 
-    hasNotification, notificationsCount, false, singletonInstance.localAccountSensitiveSettings.getCommunitiesEnabled())
+    let communitySectionItem = initItem(c.id, SectionType.Community, c.name, c.description, c.images.thumbnail, "",
+      c.color, hasNotification, notificationsCount, false, singletonInstance.localAccountSensitiveSettings.getCommunitiesEnabled())
     self.view.addItem(communitySectionItem)
     if(activeSectionId == communitySectionItem.id):
       activeSection = communitySectionItem
 
   # Wallet Section
-  let walletSectionItem = initItem(conf.WALLET_SECTION_ID, SectionType.Wallet, conf.WALLET_SECTION_NAME, "", 
+  let walletSectionItem = initItem(conf.WALLET_SECTION_ID, SectionType.Wallet, conf.WALLET_SECTION_NAME, "", "",
   conf.WALLET_SECTION_ICON, "", false, 0, false,
   singletonInstance.localAccountSensitiveSettings.getIsWalletEnabled())
   self.view.addItem(walletSectionItem)
@@ -184,7 +188,7 @@ method load*[T](
     activeSection = walletSectionItem
 
   # WalletV2 Section
-  let walletV2SectionItem = initItem(conf.WALLETV2_SECTION_ID, SectionType.WalletV2, conf.WALLETV2_SECTION_NAME, "", 
+  let walletV2SectionItem = initItem(conf.WALLETV2_SECTION_ID, SectionType.WalletV2, conf.WALLETV2_SECTION_NAME, "", "",
   conf.WALLETV2_SECTION_ICON, "", false, 0, false, 
   singletonInstance.localAccountSensitiveSettings.getIsWalletV2Enabled())
   self.view.addItem(walletV2SectionItem)
@@ -192,7 +196,7 @@ method load*[T](
     activeSection = walletV2SectionItem
 
   # Browser Section
-  let browserSectionItem = initItem(conf.BROWSER_SECTION_ID, SectionType.Browser, conf.BROWSER_SECTION_NAME, "", 
+  let browserSectionItem = initItem(conf.BROWSER_SECTION_ID, SectionType.Browser, conf.BROWSER_SECTION_NAME, "", "",
   conf.BROWSER_SECTION_ICON, "", false, 0, false,
   singletonInstance.localAccountSensitiveSettings.getIsBrowserEnabled())
   self.view.addItem(browserSectionItem)
@@ -201,7 +205,7 @@ method load*[T](
 
   # Node Management Section
   let nodeManagementSectionItem = initItem(conf.NODEMANAGEMENT_SECTION_ID, SectionType.NodeManagement, 
-  conf.NODEMANAGEMENT_SECTION_NAME, "", conf.NODEMANAGEMENT_SECTION_ICON, "", false, 0, false, 
+  conf.NODEMANAGEMENT_SECTION_NAME, "", "", conf.NODEMANAGEMENT_SECTION_ICON, "", false, 0, false, 
   singletonInstance.localAccountSensitiveSettings.getNodeManagementEnabled())
   self.view.addItem(nodeManagementSectionItem)
   if(activeSectionId == nodeManagementSectionItem.id):
@@ -209,7 +213,7 @@ method load*[T](
 
   # Profile Section
   let profileSettingsSectionItem = initItem(conf.SETTINGS_SECTION_ID, SectionType.ProfileSettings, 
-  conf.SETTINGS_SECTION_NAME, "", conf.SETTINGS_SECTION_ICON, "", false, 0, false, true)
+  conf.SETTINGS_SECTION_NAME, "", "", conf.SETTINGS_SECTION_ICON, "", false, 0, false, true)
   self.view.addItem(profileSettingsSectionItem)
   if(activeSectionId == profileSettingsSectionItem.id):
     activeSection = profileSettingsSectionItem
@@ -226,6 +230,7 @@ method load*[T](
   self.profileSectionModule.load()
   self.stickersModule.load()
   self.activityCenterModule.load()
+  self.communitiesModule.load()
   self.appSearchModule.load()
 
   # Set active section on app start
@@ -257,6 +262,9 @@ proc checkIfModuleDidLoad [T](self: Module[T]) =
   if(not self.activityCenterModule.isLoaded()):
     return
 
+  if(not self.communitiesModule.isLoaded()):
+    return
+
   if(not self.appSearchModule.isLoaded()):
     return
 
@@ -276,6 +284,9 @@ proc stickersDidLoad*[T](self: Module[T]) =
   self.checkIfModuleDidLoad()
 
 proc activityCenterDidLoad*[T](self: Module[T]) =
+  self.checkIfModuleDidLoad()
+
+proc communitiesModuleDidLoad*[T](self: Module[T]) =
   self.checkIfModuleDidLoad()
 
 proc walletSectionDidLoad*[T](self: Module[T]) =
