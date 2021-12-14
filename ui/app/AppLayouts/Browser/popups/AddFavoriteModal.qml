@@ -16,8 +16,8 @@ import "../stores"
 
 // TODO: replace with StatusModal
 ModalPopup {
-    property string ogUrl
-    property string ogName
+    property string ogUrl: "emptyString"
+    property string ogName: "emptyString"
     property bool modifiyModal: false
     property bool toolbarMode: false
 

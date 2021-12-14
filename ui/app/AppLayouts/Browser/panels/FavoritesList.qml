@@ -16,6 +16,8 @@ GridView {
         webUrl: determineRealURL(url)
         onClicked: {
             if (!webUrl.toString()) {
+                addFavoriteModal.ogName = ""
+                addFavoriteModal.ogUrl = ""
                 addFavoriteModal.open()
             } else {
                 currentWebView.url = webUrl
