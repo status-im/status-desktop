@@ -11,6 +11,7 @@ import ./all_tokens/module as all_tokens_module
 import ./collectibles/module as collectibles_module
 import ./current_account/module as current_account_module
 import ./transactions/module as transactions_module
+import ./saved_addresses/module as saved_addresses_module
 
 
 import ../../../../app_service/service/token/service as token_service
@@ -18,6 +19,7 @@ import ../../../../app_service/service/transaction/service as transaction_servic
 import ../../../../app_service/service/collectible/service as collectible_service
 import ../../../../app_service/service/wallet_account/service as wallet_account_service
 import ../../../../app_service/service/settings/service_interface as settings_service
+import ../../../../app_service/service/saved_address/service_interface as saved_address_service
 
 import io_interface
 export io_interface
@@ -36,6 +38,7 @@ type
     collectiblesModule: collectibles_module.AccessInterface
     currentAccountModule: current_account_module.AccessInterface
     transactionsModule: transactions_module.AccessInterface
+    savedAddressesModule: saved_addresses_module.AccessInterface
 
 proc newModule*[T](
   delegate: T,
@@ -44,7 +47,8 @@ proc newModule*[T](
   transactionService: transaction_service.Service,
   collectibleService: collectible_service.ServiceInterface,
   walletAccountService: wallet_account_service.ServiceInterface,
-  settingsService: settings_service.ServiceInterface
+  settingsService: settings_service.ServiceInterface,
+  savedAddressService: saved_address_service.ServiceInterface,
 ): Module[T] =
   result = Module[T]()
   result.delegate = delegate
@@ -59,6 +63,7 @@ proc newModule*[T](
   result.collectiblesModule = collectibles_module.newModule(result, events, collectibleService, walletAccountService)
   result.currentAccountModule = current_account_module.newModule(result, events, walletAccountService)
   result.transactionsModule = transactions_module.newModule(result, events, transactionService, walletAccountService)
+  result.savedAddressesModule = saved_addresses_module.newModule(result, events, savedAddressService)
 
 method delete*[T](self: Module[T]) =
   self.accountTokensModule.delete
@@ -67,6 +72,7 @@ method delete*[T](self: Module[T]) =
   self.collectiblesModule.delete
   self.currentAccountModule.delete
   self.transactionsModule.delete
+  self.savedAddressesModule.delete
   self.controller.delete
   self.view.delete
 
@@ -102,6 +108,7 @@ method load*[T](self: Module[T]) =
   self.collectiblesModule.load()
   self.currentAccountModule.load()
   self.transactionsModule.load()
+  self.savedAddressesModule.load()
 
 method isLoaded*[T](self: Module[T]): bool =
   return self.moduleLoaded
@@ -123,6 +130,9 @@ proc checkIfModuleDidLoad[T](self: Module[T]) =
     return
 
   if(not self.transactionsModule.isLoaded()):
+    return
+
+  if(not self.savedAddressesModule.isLoaded()):
     return
 
   self.switchAccount(0)
@@ -154,4 +164,7 @@ method currentAccountModuleDidLoad*[T](self: Module[T]) =
   self.checkIfModuleDidLoad()
 
 method transactionsModuleDidLoad*[T](self: Module[T]) =
+  self.checkIfModuleDidLoad()
+
+method savedAddressesModuleDidLoad*[T](self: Module[T]) =
   self.checkIfModuleDidLoad()

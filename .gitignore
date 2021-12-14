@@ -30,3 +30,4 @@ status-react-translations/
 /.update.timestamp
 notarization.log
 status-desktop.log
+nim_status_client.log
