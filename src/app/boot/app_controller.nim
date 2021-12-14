@@ -28,6 +28,7 @@ import ../../app_service/service/about/service as about_service
 import ../../app_service/service/node_configuration/service as node_configuration_service
 import ../../app_service/service/network/service as network_service
 import ../../app_service/service/activity_center/service as activity_center_service
+import ../../app_service/service/saved_address/service as saved_address_service
 
 import ../modules/startup/module as startup_module
 import ../modules/main/module as main_module
@@ -95,6 +96,7 @@ type
     mnemonicService: mnemonic_service.Service
     privacyService: privacy_service.Service
     nodeConfigurationService: node_configuration_service.Service
+    savedAddressService: saved_address_service.Service
 
     # Modules
     startupModule: startup_module.AccessInterface
@@ -169,6 +171,7 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result.privacyService = privacy_service.newService()
   result.ensService = ens_service.newService()
   result.providerService = provider_service.newService(result.dappPermissionsService, result.settingsService, result.ensService)
+  result.savedAddressService = saved_address_service.newService()
 
   # Modules
   result.startupModule = startup_module.newModule[AppController](
@@ -178,10 +181,10 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
     result.accountsService
   )
   result.mainModule = main_module.newModule[AppController](
-    result, 
+    result,
     statusFoundation.status.events,
     result.keychainService,
-    result.accountsService, 
+    result.accountsService,
     result.chatService,
     result.communityService,
     result.messageService,
@@ -200,7 +203,8 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
     result.privacyService,
     result.providerService,
     result.stickersService,
-    result.activityCenterService
+    result.activityCenterService,
+    result.savedAddressService
   )
 
   # Do connections
@@ -237,6 +241,7 @@ proc delete*(self: AppController) =
   self.nodeConfigurationService.delete
   self.settingsService.delete
   self.stickersService.delete
+  self.savedAddressService.delete
 
 proc startupDidLoad*(self: AppController) =
   singletonInstance.engine.setRootContextProperty("localAppSettings", self.localAppSettingsVariant)
@@ -276,6 +281,7 @@ proc load(self: AppController) =
   self.stickersService.init()
   self.networkService.init()
   self.activityCenterService.init()
+  self.savedAddressService.init()
 
   let pubKey = self.settingsService.getPublicKey()
   singletonInstance.localAccountSensitiveSettings.setFileName(pubKey)

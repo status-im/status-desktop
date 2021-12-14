@@ -1,0 +1,53 @@
+import NimQml, sugar, sequtils
+import eventemitter
+import ../io_interface as delegate_interface
+import ../../../../global/global_singleton
+import ../../../../../app_service/service/saved_address/service as saved_address_service
+
+import ./io_interface, ./view, ./controller, ./item
+
+export io_interface
+
+type
+  Module* = ref object of io_interface.AccessInterface
+    delegate: delegate_interface.AccessInterface
+    events: EventEmitter
+    view: View
+    moduleLoaded: bool
+    controller: controller.AccessInterface
+
+proc newModule*(
+  delegate: delegate_interface.AccessInterface,
+  events: EventEmitter,
+  savedAddressService: saved_address_service.ServiceInterface,
+): Module =
+  result = Module()
+  result.delegate = delegate
+  result.events = events
+  result.view = newView(result)
+  result.controller = newController(result, savedAddressService)
+  result.moduleLoaded = false
+
+method delete*(self: Module) =
+  self.view.delete
+
+method load*(self: Module) =
+  singletonInstance.engine.setRootContextProperty("walletSectionSavedAddresses", newQVariant(self.view))
+
+  let savedAddresses = self.controller.getSavedAddresses()
+  self.view.setItems(
+    savedAddresses.map(s => initItem(
+      s.name,
+      s.address,
+    ))
+  )
+
+  self.controller.init()
+  self.view.load()
+
+method isLoaded*(self: Module): bool =
+  return self.moduleLoaded
+
+method viewDidLoad*(self: Module) =
+  self.moduleLoaded = true
+  self.delegate.savedAddressesModuleDidLoad()

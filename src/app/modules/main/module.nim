@@ -33,6 +33,7 @@ import ../../../app_service/service/mnemonic/service as mnemonic_service
 import ../../../app_service/service/privacy/service as privacy_service
 import ../../../app_service/service/stickers/service as stickers_service
 import ../../../app_service/service/activity_center/service as activity_center_service
+import ../../../app_service/service/saved_address/service as saved_address_service
 
 import eventemitter
 
@@ -66,7 +67,7 @@ proc newModule*[T](
   transactionService: transaction_service.Service,
   collectibleService: collectible_service.Service,
   walletAccountService: wallet_account_service.Service,
-  bookmarkService: bookmark_service.ServiceInterface, 
+  bookmarkService: bookmark_service.ServiceInterface,
   profileService: profile_service.ServiceInterface,
   settingsService: settings_service.ServiceInterface,
   contactsService: contacts_service.Service,
@@ -77,22 +78,27 @@ proc newModule*[T](
   privacyService: privacy_service.ServiceInterface,
   providerService: provider_service.ServiceInterface,
   stickersService: stickers_service.Service,
-  activityCenterService: activity_center_service.Service
-  ): Module[T] =
+  activityCenterService: activity_center_service.Service,
+  savedAddressService: saved_address_service.ServiceInterface
+): Module[T] =
   result = Module[T]()
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, events, settingsService, keychainService, accountsService, 
-  chatService, communityService)
+  result.controller = controller.newController(
+    result, events, settingsService, keychainService, accountsService, chatService, communityService
+  )
   result.moduleLoaded = false
 
   # Submodules
   result.chatSectionModule = chat_section_module.newModule(result, events, conf.CHAT_SECTION_ID, false, contactsService, 
   chatService, communityService, messageService)
   result.communitySectionsModule = initOrderedTable[string, chat_section_module.AccessInterface]()
-  result.walletSectionModule = wallet_section_module.newModule[Module[T]](result, events, tokenService, 
-    transactionService, collectible_service, walletAccountService, settingsService)
+  result.walletSectionModule = wallet_section_module.newModule[Module[T]](
+    result, events, tokenService,
+    transactionService, collectible_service, walletAccountService,
+    settingsService, savedAddressService
+  )
   result.browserSectionModule = browser_section_module.newModule(result, bookmarkService, settingsService, 
   dappPermissionsService, providerService)
   result.profileSectionModule = profile_section_module.newModule(result, events, accountsService, settingsService, 
@@ -139,7 +145,7 @@ method load*[T](
       c.id,
       true,
       contactsService,
-      chatService, 
+      chatService,
       communityService,
       messageService
     )
