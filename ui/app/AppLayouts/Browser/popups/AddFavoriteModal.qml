@@ -13,8 +13,8 @@ import "../stores"
 
 // TODO: replace with StatusModal
 ModalPopup {
-    property string ogUrl
-    property string ogName
+    property string ogUrl: ""
+    property string ogName: ""
     property bool modifiyModal: false
     property bool toolbarMode: false
 
@@ -152,7 +152,7 @@ ModalPopup {
                       //% "Add"
                       qsTrId("add")
             anchors.bottom: parent.bottom
-            enabled: nameInput.valid && urlInput.valid
+            enabled: nameInput.valid && !!nameInput.text && urlInput.valid && !!urlInput.text
             onClicked: {
                 if (!popup.modifiyModal) {
                     // remove "add favorite" button at the end, add new bookmark, add "add favorite" button back

@@ -22,7 +22,7 @@ GridView {
         webUrl: determineRealURLFn(url)
         onClicked: {
             if (!webUrl.toString()) {
-                addFavModal.open()
+                Global.openPopup(addFavModal)
             } else {
                 setAsCurrentWebUrl(webUrl)
             }
