@@ -238,13 +238,13 @@ Rectangle {
         onReload: _internal.currentWebView.reload()
         onStopLoading: _internal.currentWebView.stop()
         onAddNewFavoritelClicked: {
-            addFavoriteModal.modifiyModal = browserHeader.currentFavorite
-            addFavoriteModal.toolbarMode = true
-            addFavoriteModal.x = xPos - 30
-            addFavoriteModal.y = browserHeader.y + browserHeader.height + 4
-            addFavoriteModal.ogUrl = browserHeader.currentFavorite ? browserHeader.currentFavorite.url : _internal.currentWebView.url
-            addFavoriteModal.ogName = browserHeader.currentFavorite ? browserHeader.currentFavorite.name : _internal.currentWebView.title
-            addFavoriteModal.open()
+            Global.openPopup(addFavoriteModal, {
+                                 x = xPos - 30,
+                                 y = browserHeader.y + browserHeader.height + 4,
+                                 modifiyModal: browserHeader.currentFavorite,
+                                 toolbarMode: true,
+                                 ogUrl: browserHeader.currentFavorite ? browserHeader.currentFavorite.url : _internal.currentWebView.url,
+                                 ogName: browserHeader.currentFavorite ? browserHeader.currentFavorite.name : _internal.currentWebView.title})
         }
         onLaunchInBrowser: {
             // TODO: disable browsing local files?  file://
@@ -315,8 +315,9 @@ Rectangle {
         z: 100
     }
 
-    AddFavoriteModal {
+    Component {
         id: addFavoriteModal
+        AddFavoriteModal {}
     }
 
     FavoriteMenu {
@@ -324,11 +325,11 @@ Rectangle {
         openInNewTab: function (url) {
             browserWindow.openUrlInNewTab(url)
         }
-        onEditFavoriteTriggered:         {
-            addFavoriteModal.modifiyModal = true
-            addFavoriteModal.ogUrl = favoriteMenu.currentFavorite ? favoriteMenu.currentFavorite.url : _internal.currentWebView.url
-            addFavoriteModal.ogName = favoriteMenu.currentFavorite ? favoriteMenu.currentFavorite.name : _internal.currentWebView.title
-            addFavoriteModal.open()
+        onEditFavoriteTriggered: {
+            Global.openPopup(addFavoriteModal, {
+                                 modifiyModal: true,
+                                 ogUrl: favoriteMenu.currentFavorite ? favoriteMenu.currentFavorite.url : _internal.currentWebView.url,
+                                 ogName: favoriteMenu.currentFavorite ? favoriteMenu.currentFavorite.name : _internal.currentWebView.title})
         }
     }
 
@@ -525,10 +526,9 @@ Rectangle {
                 _internal.currentWebView.url = _internal.determineRealURL(url)
             }
             addFavModal: function() {
-                addFavoriteModal.toolbarMode = true
-                addFavoriteModal.ogUrl = browserHeader.currentFavorite ? browserHeader.currentFavorite.url : _internal.currentWebView.url
-                addFavoriteModal.ogName = browserHeader.currentFavorite ? browserHeader.currentFavorite.name : _internal.currentWebView.title
-                addFavoriteModal.open()
+                Global.openPopup(addFavoriteModal, {toolbarMode: true,
+                                     ogUrl: browserHeader.currentFavorite ? browserHeader.currentFavorite.url : _internal.currentWebView.url,
+                                     ogName: browserHeader.currentFavorite ? browserHeader.currentFavorite.name : _internal.currentWebView.title})
             }
         }
     }
