@@ -5,7 +5,7 @@ import ./model
 import ./io_interface
 import status/profile as status_profile
 import status/status
-import ../../../../utils/image_utils
+import ../../../../global/global_singleton
 
 import status/types/[identity_image, profile]
 
@@ -45,7 +45,7 @@ QtObject:
     self.modelChanged()
 
   proc upload*(self: View, imageUrl: string, aX: int, aY: int, bX: int, bY: int): string {.slot.} =
-    var image = image_utils.formatImagePath(imageUrl)
+    var image = singletonInstance.utils.formatImagePath(imageUrl)
     # FIXME the function to get the file size is messed up
     # var size = image_getFileSize(image)
     # TODO find a way to i18n this (maybe send just a code and then QML sets the right string)

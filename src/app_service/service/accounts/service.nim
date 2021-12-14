@@ -1,4 +1,4 @@
-import Tables, json, sequtils, strutils, strformat, uuids
+import json, sequtils, strutils, uuids
 import json_serialization, chronicles
 
 import service_interface
@@ -42,8 +42,11 @@ method getImportedAccount*(self: Service): GeneratedAccountDto =
 method isFirstTimeAccountLogin*(self: Service): bool =
   return self.isFirstTimeAccountLogin
 
-method generateAlias*(self: Service, publicKey: string): string =
+proc generateAliasFromPk*(publicKey: string): string =
   return status_account.generateAlias(publicKey).result.getStr
+
+proc generateIdenticonFromPk*(publicKey: string): string =
+  return status_account.generateIdenticon(publicKey).result.getStr
 
 method init*(self: Service) =
   try:
@@ -53,10 +56,8 @@ method init*(self: Service) =
     proc(x: JsonNode): GeneratedAccountDto = toGeneratedAccountDto(x))
 
     for account in self.generatedAccounts.mitems:
-      account.alias = self.generateAlias(account.derivedAccounts.whisper.publicKey)
-      
-      let responseIdenticon = status_account.generateIdenticon(account.derivedAccounts.whisper.publicKey)
-      account.identicon = responseIdenticon.result.getStr
+      account.alias = generateAliasFromPk(account.derivedAccounts.whisper.publicKey)
+      account.identicon = generateIdenticonFromPk(account.derivedAccounts.whisper.publicKey)
   
   except Exception as e:
     error "error: ", methodName="init", errName = e.name, errDesription = e.msg
@@ -276,10 +277,8 @@ method importMnemonic*(self: Service, mnemonic: string): bool =
     let responseDerived = status_account.deriveAccounts(self.importedAccount.id, PATHS)
     self.importedAccount.derivedAccounts = toDerivedAccounts(responseDerived.result)
 
-    self.importedAccount.alias= self.generateAlias(self.importedAccount.derivedAccounts.whisper.publicKey)
-    
-    let responseIdenticon = status_account.generateIdenticon(self.importedAccount.derivedAccounts.whisper.publicKey)
-    self.importedAccount.identicon = responseIdenticon.result.getStr
+    self.importedAccount.alias= generateAliasFromPk(self.importedAccount.derivedAccounts.whisper.publicKey)
+    self.importedAccount.identicon = generateIdenticonFromPk(self.importedAccount.derivedAccounts.whisper.publicKey)
 
     return self.importedAccount.isValid()
   

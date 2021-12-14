@@ -68,6 +68,7 @@ type
     localAccountSettingsVariant: QVariant
     localAccountSensitiveSettingsVariant: QVariant
     userProfileVariant: QVariant
+    globalUtilsVariant: QVariant
 
     # Services
     osNotificationService: os_notification_service.Service
@@ -130,6 +131,7 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result.localAccountSettingsVariant = newQVariant(singletonInstance.localAccountSettings)
   result.localAccountSensitiveSettingsVariant = newQVariant(singletonInstance.localAccountSensitiveSettings)
   result.userProfileVariant = newQVariant(singletonInstance.userProfile)
+  result.globalUtilsVariant = newQVariant(singletonInstance.utils)
 
   # Services
   result.settingsService = settings_service.newService()
@@ -224,6 +226,7 @@ proc delete*(self: AppController) =
   self.localAccountSettingsVariant.delete
   self.localAccountSensitiveSettingsVariant.delete
   self.userProfileVariant.delete
+  self.globalUtilsVariant.delete
 
   self.accountsService.delete
   self.chatService.delete
@@ -286,6 +289,7 @@ proc load(self: AppController) =
   let pubKey = self.settingsService.getPublicKey()
   singletonInstance.localAccountSensitiveSettings.setFileName(pubKey)
   singletonInstance.engine.setRootContextProperty("localAccountSensitiveSettings", self.localAccountSensitiveSettingsVariant)
+  singletonInstance.engine.setRootContextProperty("globalUtils", self.globalUtilsVariant)
 
   # other global instances
   self.buildAndRegisterLocalAccountSensitiveSettings()  

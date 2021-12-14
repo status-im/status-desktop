@@ -78,8 +78,8 @@ Item {
     }
 
     function requestAddressForTransaction(address, amount, tokenAddress, tokenDecimals = 18) {
+        amount =  globalUtils.eth2Wei(amount.toString(), tokenDecimals)
         // Not Refactored Yet
-//        amount =  root.rootStore.utilsModelInst.eth2Wei(amount.toString(), tokenDecimals)
 //        root.rootStore.chatsModelInst.transactions.requestAddress(activeChatId,
 //                                               address,
 //                                               amount,
@@ -87,8 +87,8 @@ Item {
         txModalLoader.close()
     }
     function requestTransaction(address, amount, tokenAddress, tokenDecimals = 18) {
+        amount =  globalUtils.eth2Wei(amount.toString(), tokenDecimals)
         // Not Refactored Yet
-//        amount =  root.rootStore.utilsModelInst.eth2Wei(amount.toString(), tokenDecimals)
 //        root.rootStore.chatsModelInst.transactions.request(activeChatId,
 //                                        address,
 //                                        amount,
