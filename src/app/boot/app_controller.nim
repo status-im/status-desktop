@@ -171,7 +171,7 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result.privacyService = privacy_service.newService()
   result.ensService = ens_service.newService()
   result.providerService = provider_service.newService(result.dappPermissionsService, result.settingsService, result.ensService)
-  result.savedAddressService = saved_address_service.newService()
+  result.savedAddressService = saved_address_service.newService(statusFoundation.status.events)
 
   # Modules
   result.startupModule = startup_module.newModule[AppController](

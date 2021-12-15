@@ -28,8 +28,8 @@ QtObject {
 
     property var history: walletSectionTransactions
     property var historyTransactions: walletSectionTransactions.model
-//    property var transactions: walletModel.transactionsView.transactions
-//    property var historyView: walletModel.historyView
+
+    property var savedAddresses: walletSectionSavedAddresses.model
 
     // This should be exposed to the UI via "walletModule", WalletModule should use
     // Accounts Service which keeps the info about that (isFirstTimeAccountLogin).
@@ -186,5 +186,13 @@ QtObject {
 //        else
 //            return parseInt(value) + qsTr(" of ") +
 //            walletModelV2Inst.collectiblesView.collections.getCollectionTraitMaxValue(collectionIndex, traitType).toString();
+    }
+
+    function createOrUpdateSavedAddress(name, address) {
+        walletSectionSavedAddresses.createOrUpdateSavedAddress(name, address)
+    }
+
+    function deleteSavedAddress(address) {
+        walletSectionSavedAddresses.deleteSavedAddress(address)
     }
 }
