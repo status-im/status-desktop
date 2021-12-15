@@ -327,7 +327,7 @@ $(NIM_STATUS_CLIENT): $(NIM_SOURCES) | $(DOTHERSIDE) $(STATUSGO) $(KEYCARDGO) $(
 			@rpath/libkeycard.dylib \
 			bin/nim_status_client) || true)
 
-nim_status_client: $(NIM_STATUS_CLIENT)
+nim_status_client: force-rebuild-status-go $(NIM_STATUS_CLIENT)
 
 _APPIMAGE_TOOL := appimagetool-x86_64.AppImage
 APPIMAGE_TOOL := tmp/linux/tools/$(_APPIMAGE_TOOL)
@@ -534,6 +534,9 @@ zip-windows: check-pkg-target-windows $(STATUS_CLIENT_7Z)
 clean: | clean-common
 	rm -rf bin/* node_modules bottles/* pkg/* tmp/* $(STATUSGO) $(KEYCARDGO)
 	+ $(MAKE) -C vendor/DOtherSide/build --no-print-directory clean
+
+force-rebuild-status-go:
+	bash ./scripts/force-rebuild-status-go.sh $(STATUSGO)
 
 run: $(RUN_TARGET)
 
