@@ -11,7 +11,6 @@ export io_interface
 type
   Module* = ref object of io_interface.AccessInterface
     delegate: delegate_interface.AccessInterface
-    events: EventEmitter
     view: View
     moduleLoaded: bool
     controller: controller.AccessInterface
@@ -23,17 +22,14 @@ proc newModule*(
 ): Module =
   result = Module()
   result.delegate = delegate
-  result.events = events
   result.view = newView(result)
-  result.controller = newController(result, savedAddressService)
+  result.controller = newController(result, events, savedAddressService)
   result.moduleLoaded = false
 
 method delete*(self: Module) =
   self.view.delete
 
-method load*(self: Module) =
-  singletonInstance.engine.setRootContextProperty("walletSectionSavedAddresses", newQVariant(self.view))
-
+method loadSavedAddresses*(self: Module) =
   let savedAddresses = self.controller.getSavedAddresses()
   self.view.setItems(
     savedAddresses.map(s => initItem(
@@ -42,6 +38,10 @@ method load*(self: Module) =
     ))
   )
 
+method load*(self: Module) =
+  singletonInstance.engine.setRootContextProperty("walletSectionSavedAddresses", newQVariant(self.view))
+
+  self.loadSavedAddresses()
   self.controller.init()
   self.view.load()
 
@@ -51,3 +51,9 @@ method isLoaded*(self: Module): bool =
 method viewDidLoad*(self: Module) =
   self.moduleLoaded = true
   self.delegate.savedAddressesModuleDidLoad()
+
+method createOrUpdateSavedAddress*(self: Module, name: string, address: string) =
+  self.controller.createOrUpdateSavedAddress(name, address)
+
+method deleteSavedAddress*(self: Module, address: string) =
+  self.controller.deleteSavedAddress(address)
