@@ -136,6 +136,7 @@ Rectangle {
                     }
                 }
             ]
+
         }
 
         appView: Loader {
