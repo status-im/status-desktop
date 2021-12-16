@@ -1,12 +1,14 @@
 import NimQml
-import model, item, active_section
+import ../shared_models/section_model
+import ../shared_models/section_item
+import ../shared_models/active_section
 import io_interface
 
 QtObject:
   type
     View* = ref object of QObject
       delegate: io_interface.AccessInterface
-      model: Model
+      model: SectionModel
       modelVariant: QVariant
       activeSection: ActiveSection
       activeSectionVariant: QVariant
@@ -32,10 +34,10 @@ QtObject:
     # In some point, here, we will setup some exposed main module related things.
     self.delegate.viewDidLoad()
 
-  proc addItem*(self: View, item: Item) =
+  proc addItem*(self: View, item: SectionItem) =
     self.model.addItem(item)
 
-  proc model*(self: View): Model =
+  proc model*(self: View): SectionModel =
     return self.model
 
   proc modelChanged*(self: View) {.signal.}
@@ -74,7 +76,7 @@ QtObject:
     read = getActiveSection
     notify = activeSectionChanged
 
-  proc activeSectionSet*(self: View, item: Item) =
+  proc activeSectionSet*(self: View, item: SectionItem) =
     self.activeSection.setActiveSectionData(item)
     self.activeSectionChanged()
 

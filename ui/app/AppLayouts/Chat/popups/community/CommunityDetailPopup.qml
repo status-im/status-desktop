@@ -15,19 +15,19 @@ StatusModal {
     id: root
 
     property var store
-    // Not Refactored Yet
-    property QtObject community: null // root.store.chatsModelInst.communities.observedCommunity
+    property QtObject community: root.store.communitiesModuleInst.observedCommunity
     property string communityId: community.id
     property string name: community.name
     property string description: community.description
     property int access: community.access
-    property string source: community.thumbnailImage
-    property int nbMembers: community.nbMembers
+    property string source: community.image
+    // TODO members needs to be refactored on the backend
+    property int nbMembers: 0//community.nbMembers
     property bool ensOnly: community.ensOnly
     property bool canJoin: community.canJoin
     property bool canRequestAccess: community.canRequestAccess
     property bool isMember: community.isMember
-    property string communityColor: community.communityColor || Style.current.blue
+    property string communityColor: community.color || Style.current.blue
 
     header.title: name
     header.subTitle: {
@@ -45,8 +45,8 @@ StatusModal {
                 //% "On request community"
                 subTitle = qsTrId("on-request-community");
                 break;
-            default: 
-                subTitle = qsTrId("Unknown community");
+            default:
+                subTitle = qsTr("Unknown community");
                 break;
         }
         if (ensOnly) {
@@ -202,24 +202,26 @@ StatusModal {
             }
             onClicked: {
                 // Not Refactored Yet
-//                let error
-//                if (access === Constants.communityChatOnRequestAccess && !root.isMember) {
-//                    error = root.store.chatsModelInst.communities.requestToJoinCommunity(root.communityId, userProfile.name)
-//                    if (!error) {
-//                        enabled = false
-//                        //% "Pending"
-//                        text = qsTrId("invite-chat-pending")
-//                    }
-//                } else {
-//                    error = root.store.chatsModelInst.communities.joinCommunity(root.communityId, true)
-//                }
+               let error
+               if (access === Constants.communityChatOnRequestAccess && !root.isMember) {
+                   // TODO refactor
+                   return
+                //    error = root.store.chatsModelInst.communities.requestToJoinCommunity(root.communityId, userProfile.name)
+                //    if (!error) {
+                //        enabled = false
+                //        //% "Pending"
+                //        text = qsTrId("invite-chat-pending")
+                //    }
+               } else {
+                   error = root.store.communitiesModuleInst.joinCommunity(root.communityId)
+               }
 
-//                if (error) {
-//                    joiningError.text = error
-//                    return joiningError.open()
-//                }
+               if (error) {
+                   joiningError.text = error
+                   return joiningError.open()
+               }
 
-//                root.close()
+               root.close()
             }
         }
     ]
