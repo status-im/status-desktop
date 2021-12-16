@@ -73,15 +73,15 @@ proc init*(self: MailserverModel) =
   if self.wakuVersion == 2:
     # TODO:
     # Instead of obtaining the waku2 fleet from fleet.json, expose a method in status-go that will
-    # return the list of store nodes. (The cluster config can ontain dns-discovery urls so it cannot be
+    # return the list of store nodes. (The cluster config can contain dns-discovery urls so it cannot be
     # used to populate the list of mailservers)
     let fleets = if defined(windows) and defined(production):
       "/../resources/fleets.json"
     else:
       "/../fleets.json"
     let fleetConfig = readFile(joinPath(getAppDir(), fleets))
-    let fleet = newFleetModel(fleetConfig)
-    self.mailservers = toSeq(fleet.config.getMailservers(status_settings.getFleet(), true).values)
+    let fleetModel = newFleetModel(fleetConfig)
+    self.mailservers = toSeq(fleetModel.config.getMailservers(status_settings.getFleet(), isWakuV2=true).values)
   else:
     for mailserver in nodeConfig["ClusterConfig"]["TrustedMailServers"].getElems():
       self.mailservers.add(mailserver.getStr())
