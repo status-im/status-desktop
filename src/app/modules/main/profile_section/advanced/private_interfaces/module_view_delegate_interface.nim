@@ -48,3 +48,7 @@ method isDebugEnabled*(self: AccessInterface): bool {.base.} =
 
 method toggleDebug*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method addCustomNetwork*(self: AccessInterface, name: string, endpoint: string, networkId: int, networkType: string) 
+  {.slot.} =
+  raise newException(ValueError, "No implementation available") 

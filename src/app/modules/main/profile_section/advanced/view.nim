@@ -1,18 +1,25 @@
 import NimQml
 import io_interface
+import custom_networks_model
 
 QtObject:
   type
     View* = ref object of QObject
       delegate: io_interface.AccessInterface
+      customNetworksModel: Model
+      customNetworksModelVariant: QVariant
       
   proc delete*(self: View) =
+    self.customNetworksModel.delete
+    self.customNetworksModelVariant.delete
     self.QObject.delete
 
   proc newView*(delegate: io_interface.AccessInterface): View =
     new(result, delete)
     result.QObject.setup
     result.delegate = delegate
+    result.customNetworksModel = newModel()
+    result.customNetworksModelVariant = newQVariant(result.customNetworksModel)
 
   proc load*(self: View) =
     self.delegate.viewDidLoad()
@@ -121,3 +128,16 @@ QtObject:
 
   proc toggleDebug*(self: View) {.slot.} = 
     self.delegate.toggleDebug()
+
+  proc customNetworksModel*(self: View): Model =
+    return self.customNetworksModel
+
+  proc customNetworksModelChanged*(self: View) {.signal.}
+  proc getCustomNetworksModel(self: View): QVariant {.slot.} =
+    return self.customNetworksModelVariant
+  QtProperty[QVariant] customNetworksModel:
+    read = getCustomNetworksModel
+    notify = customNetworksModelChanged
+
+  proc addCustomNetwork*(self: View, name: string, endpoint: string, networkId: int, networkType: string) {.slot.} = 
+    self.delegate.addCustomNetwork(name, endpoint, networkId, networkType)

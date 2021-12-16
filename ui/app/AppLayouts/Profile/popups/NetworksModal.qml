@@ -73,6 +73,7 @@ ModalPopup {
                 id: addNetworkPopupComponent
                 NewCustomNetworkModal {
                     anchors.centerIn: parent
+                    advancedStore: popup.advancedStore
                     onClosed: {
                         destroy()
                     }
@@ -149,16 +150,15 @@ ModalPopup {
                     anchors.rightMargin: -Style.current.padding
                 }
 
-                // Not Refactored Yet
-//                Repeater {
-//                    model: profileModel.network.customNetworkList
-//                    delegate: NetworkRadioSelector {
-//                        advancedStore: popup.advancedStore
-//                        networkName: name
-//                        network: customNetworkId
-//                        buttonGroup: radioGroup
-//                    }
-//                }
+                Repeater {
+                    model: popup.advancedStore.customNetworksModel
+                    delegate: NetworkRadioSelector {
+                        advancedStore: popup.advancedStore
+                        networkName: model.name
+                        network: model.id
+                        buttonGroup: radioGroup
+                    }
+                }
             }
         }
     }

@@ -14,6 +14,8 @@ StatusModal {
     header.title: qsTrId("add-network")
     height: 644
 
+    property var advancedStore
+
     property string nameValidationError: ""
     property string rpcValidationError: ""
     property string networkValidationError: ""
@@ -80,9 +82,10 @@ StatusModal {
                     addNetworkPopup.networkId = parseInt(networkInput.text, 10);
                 }
 
-                // Not Refactored Yet
-//                profileModel.network.add(nameInput.text, rpcInput.text, addNetworkPopup.networkId, addNetworkPopup.networkType)
-//                profileModel.network.reloadCustomNetworks();
+                addNetworkPopup.advancedStore.addCustomNetwork(nameInput.text,
+                                                               rpcInput.text,
+                                                               addNetworkPopup.networkId,
+                                                               addNetworkPopup.networkType)
                 addNetworkPopup.close()
             }
         }

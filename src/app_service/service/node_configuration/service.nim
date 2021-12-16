@@ -27,7 +27,7 @@ proc newService*(fleetConfiguration: FleetConfiguration, settingsService: settin
 
 proc adaptNodeSettingsForTheAppNeed(self: Service) = 
   let currentNetworkDetails = self.settingsService.getCurrentNetworkDetails()
-  var dataDir = currentNetworkDetails.config.dataDir
+  var dataDir = currentNetworkDetails.config.DataDir
   dataDir.removeSuffix("_rpc")
   
   self.configuration.DataDir = dataDir
@@ -102,14 +102,14 @@ method setNetwork*(self: Service, network: string): bool =
     return false
 
   let currentNetworkDetails = self.settingsService.getCurrentNetworkDetails()
-  var dataDir = currentNetworkDetails.config.dataDir
+  var dataDir = currentNetworkDetails.config.DataDir
   dataDir.removeSuffix("_rpc")
 
   var newConfiguration = self.configuration
-  newConfiguration.NetworkId = currentNetworkDetails.config.networkId
+  newConfiguration.NetworkId = currentNetworkDetails.config.NetworkId
   newConfiguration.DataDir = dataDir
-  newConfiguration.UpstreamConfig.Enabled = currentNetworkDetails.config.upstreamConfig.enabled
-  newConfiguration.UpstreamConfig.URL = currentNetworkDetails.config.upstreamConfig.url
+  newConfiguration.UpstreamConfig.Enabled = currentNetworkDetails.config.UpstreamConfig.Enabled
+  newConfiguration.UpstreamConfig.URL = currentNetworkDetails.config.UpstreamConfig.URL
   return self.saveConfiguration(newConfiguration)
   
 method setBloomFilterMode*(self: Service, bloomFilterMode: bool): bool =
