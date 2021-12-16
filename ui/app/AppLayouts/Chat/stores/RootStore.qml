@@ -47,14 +47,15 @@ QtObject {
         }
     }
     property var contactsModuleInst: contactsModule
+    property var contactsModuleModel: contactsModuleInst.model || {}
     property var stickersModuleInst: stickersModule
 
     // Not Refactored Yet
 //    property var activeCommunity: chatsModelInst.communities.activeCommunity
 
-    property var contactRequests: contactsModuleInst.model.contactRequests
-    property var addedContacts: contactsModuleInst.model.addedContacts
-    property var allContacts: contactsModuleInst.model.list
+    property var contactRequests: contactsModuleModel.contactRequests
+    property var addedContacts: contactsModuleModel.addedContacts
+    property var allContacts: contactsModuleModel.list
 
     function copyToClipboard(text) {
         // Not Refactored Yet
@@ -210,6 +211,14 @@ QtObject {
     }
 
     function isContactAdded(address) {
-        return contactsModuleInst.model.isAdded(address);
+        return contactsModuleModel.isAdded(address);
+    }
+
+    function contactRequestReceived(activeChatId) {
+        return contactsModuleModel.contactRequestReceived(activeChatId)
+    }
+
+    function isContactBlocked(activeChatId) {
+        return contactsModuleModel.isContactBlocked(activeChatId)
     }
 }
