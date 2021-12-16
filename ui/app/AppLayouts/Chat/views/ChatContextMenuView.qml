@@ -11,7 +11,6 @@ import "../popups"
 
 StatusPopupMenu {
     id: root
-
     property string currentFleet: ""
     property bool isCommunityChat: false
     property bool isCommunityAdmin: false
@@ -36,6 +35,9 @@ StatusPopupMenu {
     signal openPinnedMessagesList(string chatId)
     signal createCommunityChannel(string chatId, string newName, string newDescription)
     signal editCommunityChannel(string chatId, string newName, string newDescription)
+
+    signal editChannel(string id)
+    signal viewGroupOrProfile(string id)
 
     StatusMenuItem {
         id: viewProfileMenuItem
@@ -213,18 +215,18 @@ StatusPopupMenu {
             showCancelButton: root.isCommunityChat
 
             onClosed: {
-                destroy()
+                destroy();
             }
             onCancelButtonClicked: {
-                close()
+                close();
             }
             onConfirmButtonClicked: {
-                if(root.isCommunityChat || root.chatType === Constants.chatType.oneToOne)
-                    root.deleteChat(root.chatId)
-                else
-                    root.leaveChat(root.chatId)
-
-                close()
+                if (root.isCommunityChat || root.chatType === Constants.chatType.oneToOne) {
+                    root.deleteChat(root.chatId);
+                } else {
+                    root.leaveChat(root.chatId);
+                }
+                close();
             }
         }
     }

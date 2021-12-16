@@ -17,10 +17,7 @@ ModalPopup {
     id: popup
 
     property var store
-    // Important:
-    // We're here in case of ChatSection
-    // This module is set from `ChatLayout` (each `ChatLayout` has its own chatSectionModule)
-    property var chatSectionModule
+
     //% "Contact requests"
     title: qsTrId("contact-requests")
 
@@ -55,7 +52,7 @@ ModalPopup {
                 blockContactConfirmationDialog.open()
             }
             onAcceptClicked: {
-                chatSectionModule.createOneToOneChat(model.address, "")
+                popup.store.chatCommunitySectionModule.createOneToOneChat(model.address, "")
                 popup.store.contactsModuleInst.addContact(model.address)
             }
             onDeclineClicked: {

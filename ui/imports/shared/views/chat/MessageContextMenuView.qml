@@ -37,6 +37,9 @@ StatusPopupMenu {
     property bool isSelectedUserIconIdenticon: true
     property string imageSource: ""
 
+    property var store
+
+    property int contentType
     property bool isProfile: false
     property bool isRightClickOnImage: false
     property bool pinnedPopup: false
@@ -214,7 +217,8 @@ StatusPopupMenu {
                   qsTrId("reply-to")
         onTriggered: {
             if (root.isProfile) {
-                root.createOneToOneChat(root.selectedUserPublicKey, "")
+                Global.changeAppSectionBySectionType(Constants.appSection.chat);
+                root.createOneToOneChat(root.selectedUserPublicKey, "");
             } else {
                 root.showReplyArea()
             }

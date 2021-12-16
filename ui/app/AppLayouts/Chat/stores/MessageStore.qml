@@ -31,11 +31,11 @@ QtObject {
         return obj
     }
 
-    function getMessageByIndexAsJson (index) {
+    function getMessageByIndexAsJson(index) {
         if(!messageModule)
             return false
 
-        let jsonObj = messageModule.getMessageByIndexAsJson(index)
+        let jsonObj = messageModule.getMessageByIndexAsJson(index);
         let obj = JSON.parse(jsonObj)
         if (obj.error) {
             // This log is available only in debug mode, if it's annoying we can remove it

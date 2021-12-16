@@ -20,16 +20,12 @@ import "../controls"
 import "../popups"
 import "../panels"
 import "../../Wallet"
-import "../stores"
 
 ColumnLayout {
-    id: chatContentRoot
+    id: root
     spacing: 0
 
-    // Important:
-    // Each chat/channel has its own ChatContentModule
-    property var chatContentModule
-    property var rootStore
+    property var store
 
     property Component sendTransactionNoEnsModal
     property Component receiveTransactionModal
@@ -39,13 +35,13 @@ ColumnLayout {
         id: topBar
         Layout.fillWidth: true
 
-        chatInfoButton.title: chatContentModule.chatDetails.name
+        chatInfoButton.title: root.store.chatContentModule.chatDetails.name
         chatInfoButton.subTitle: {
             // In some moment in future this should be part of the backend logic.
             // (once we add transaltion on the backend side)
-            switch (chatContentModule.chatDetails.type) {
+            switch (root.store.chatContentModule.chatDetails.type) {
             case Constants.chatType.oneToOne:
-                return (chatContentModule.isMyContact(chatContentModule.chatDetails.id) ?
+                return (root.store.chatContentModule.isMyContact(root.store.chatContentModule.chatDetails.id) ?
                             //% "Contact"
                             qsTrId("chat-is-a-contact") :
                             //% "Not a contact"
@@ -54,59 +50,57 @@ ColumnLayout {
                 //% "Public chat"
                 return qsTrId("public-chat")
             case Constants.chatType.privateGroupChat:
-                let cnt = chatContentModule.usersModule.model.count
+                let cnt = root.store.chatContentModule.usersModule.model.count
                 //% "%1 members"
                 if(cnt > 1) return qsTrId("-1-members").arg(cnt);
                 //% "1 member"
                 return qsTrId("1-member");
             case Constants.chatType.communityChat:
-                return Utils.linkifyAndXSS(chatContentModule.chatDetails.description).trim()
+                return Utils.linkifyAndXSS(root.store.chatContentModule.chatDetails.description).trim()
             default:
                 return ""
             }
         }
-        chatInfoButton.image.source: chatContentModule.chatDetails.icon
-        chatInfoButton.image.isIdenticon: chatContentModule.chatDetails.isIdenticon
-        chatInfoButton.icon.color: chatContentModule.chatDetails.color
-        chatInfoButton.type: chatContentModule.chatDetails.type
-        chatInfoButton.pinnedMessagesCount: chatContentModule.pinnedMessagesModel.count
-        chatInfoButton.muted: chatContentModule.chatDetails.muted
-
+        chatInfoButton.image.source: root.store.chatContentModule.chatDetails.icon
+        chatInfoButton.image.isIdenticon: root.store.chatContentModule.chatDetails.isIdenticon
+        chatInfoButton.icon.color: root.store.chatContentModule.chatDetails.color
+        chatInfoButton.type: root.store.chatContentModule.chatDetails.type
+        chatInfoButton.pinnedMessagesCount: root.store.chatContentModule.pinnedMessagesModel.count
+        chatInfoButton.muted: root.store.chatContentModule.chatDetails.muted
         chatInfoButton.onPinnedMessagesCountClicked: {
             Global.openPopup(pinnedMessagesPopupComponent, {
-                          messageStore: messageStore,
-                          pinnedMessagesModel: chatContentModule.pinnedMessagesModel,
+                          pinnedMessagesModel: root.store.chatContentModule.pinnedMessagesModel,
                           messageToPin: ""
                       })
         }
-        chatInfoButton.onUnmute: chatContentModule.unmuteChat()
+        chatInfoButton.onUnmute: root.store.chatContentModule.unmuteChat()
 
-        chatInfoButton.sensor.enabled: chatContentModule.chatDetails.type !== Constants.chatType.publicChat &&
-                                       chatContentModule.chatDetails.type !== Constants.chatType.communityChat
+        chatInfoButton.sensor.enabled: root.store.chatContentModule.chatDetails.type !== Constants.chatType.publicChat &&
+                                       root.store.chatContentModule.chatDetails.type !== Constants.chatType.communityChat
         chatInfoButton.onClicked: {
             // Not Refactored Yet
-//            switch (chatContentRoot.rootStore.chatsModelInst.channelView.activeChannel.chatType) {
+//            switch (root.rootStore.chatsModelInst.channelView.activeChannel.chatType) {
 //            case Constants.chatType.privateGroupChat:
 //                openPopup(groupInfoPopupComponent, {
 //                              channelType: GroupInfoPopup.ChannelType.ActiveChannel,
-//                              channel: chatContentRoot.rootStore.chatsModelInst.channelView.activeChannel
+//                              channel: root.rootStore.chatsModelInst.channelView.activeChannel
 //                          })
 //                break;
 //            case Constants.chatType.oneToOne:
-//                openProfilePopup(chatContentRoot.rootStore.chatsModelInst.userNameOrAlias(chatsModel.channelView.activeChannel.id),
-//                                 chatContentRoot.rootStore.chatsModelInst.channelView.activeChannel.id, profileImage
-//                                 || chatContentRoot.rootStore.chatsModelInst.channelView.activeChannel.identicon,
-//                                 "", chatContentRoot.rootStore.chatsModelInst.channelView.activeChannel.nickname)
+//                openProfilePopup(root.rootStore.chatsModelInst.userNameOrAlias(chatsModel.channelView.activeChannel.id),
+//                                 root.rootStore.chatsModelInst.channelView.activeChannel.id, profileImage
+//                                 || root.rootStore.chatsModelInst.channelView.activeChannel.identicon,
+//                                 "", root.rootStore.chatsModelInst.channelView.activeChannel.nickname)
 //                break;
 //            }
         }
 
-        membersButton.visible: localAccountSensitiveSettings.showOnlineUsers && chatContentModule.chatDetails.isUsersListAvailable
+        membersButton.visible: localAccountSensitiveSettings.showOnlineUsers && root.store.chatContentModule.chatDetails.isUsersListAvailable
         membersButton.highlighted: localAccountSensitiveSettings.expandUsersList
         notificationButton.visible: localAccountSensitiveSettings.isActivityCenterEnabled
         notificationButton.tooltip.offset: localAccountSensitiveSettings.expandUsersList ? 0 : 14
 
-        notificationCount: chatContentModule.chatDetails.notificationCount
+        notificationCount: root.store.chatContentModule.chatDetails.notificationCount
 
         onSearchButtonClicked: root.openAppSearch()
 
@@ -115,30 +109,30 @@ ColumnLayout {
 
         popupMenu: ChatContextMenuView {
             openHandler: function () {
-                currentFleet = chatContentModule.getCurrentFleet()
-                isCommunityChat = chatContentModule.chatDetails.belongsToCommunity
-                isCommunityAdmin = chatContentModule.amIChatAdmin()
-                chatId = chatContentModule.chatDetails.id
-                chatName = chatContentModule.chatDetails.name
-                chatDescription = chatContentModule.chatDetails.description
-                chatType = chatContentModule.chatDetails.type
-                chatMuted = chatContentModule.chatDetails.muted
+                currentFleet = root.store.chatContentModule.getCurrentFleet()
+                isCommunityChat = root.store.chatContentModule.chatDetails.belongsToCommunity
+                isCommunityAdmin = root.store.chatContentModule.amIChatAdmin()
+                chatId = root.store.chatContentModule.chatDetails.id
+                chatName = root.store.chatContentModule.chatDetails.name
+                chatDescription = root.store.chatContentModule.chatDetails.description
+                chatType = root.store.chatContentModule.chatDetails.type
+                chatMuted = root.store.chatContentModule.chatDetails.muted
             }
 
             onMuteChat: {
-                chatContentModule.muteChat()
+                root.store.chatContentModule.muteChat()
             }
 
             onUnmuteChat: {
-                chatContentModule.unmuteChat()
+                root.store.chatContentModule.unmuteChat()
             }
 
             onMarkAllMessagesRead: {
-                chatContentModule.markAllMessagesRead()
+                root.store.chatContentModule.markAllMessagesRead()
             }
 
             onClearChatHistory: {
-                chatContentModule.clearChatHistory()
+                root.store.chatContentModule.clearChatHistory()
             }
 
             onRequestAllHistoricMessages: {
@@ -146,7 +140,7 @@ ColumnLayout {
             }
 
             onLeaveChat: {
-                chatContentModule.leaveChat()
+                root.store.chatContentModule.leaveChat(chatId);
             }
 
             onDeleteChat: {
@@ -171,8 +165,7 @@ ColumnLayout {
 
             onOpenPinnedMessagesList: {
                 Global.openPopup(pinnedMessagesPopupComponent, {
-                                     messageStore: messageStore,
-                                     pinnedMessagesModel: chatContentModule.pinnedMessagesModel,
+                                     pinnedMessagesModel: root.store.chatContentModule.pinnedMessagesModel,
                                      messageToPin: ""
                                  })
             }
@@ -243,32 +236,27 @@ ColumnLayout {
         }
     }
 
-    MessageStore{
-        id: messageStore
-        messageModule: chatContentModule.messagesModule
-    }
-
     MessageContextMenuView {
         id: contextmenu
-        reactionModel: chatContentRoot.rootStore.emojiReactionsModel
+        reactionModel: root.store.emojiReactionsModel
         onPinMessage: {
-            messageStore.pinMessage(messageId)
+            root.store.messageStore.pinMessage(messageId)
         }
 
         onUnpinMessage: {
-            messageStore.unpinMessage(messageId)
+            root.store.messageStore.unpinMessage(messageId)
         }
 
         onPinnedMessagesLimitReached: {
             Global.openPopup(pinnedMessagesPopupComponent, {
-                          messageStore: messageStore,
-                          pinnedMessagesModel: chatContentModule.pinnedMessagesModel,
+                          messageStore: root.store.messageStore,
+                          pinnedMessagesModel: root.store.chatContentModule.pinnedMessagesModel,
                           messageToPin: messageId
                       })
         }
 
         onToggleReaction: {
-            messageStore.toggleReaction(messageId, emojiId)
+            root.store.messageStore.toggleReaction(messageId, emojiId)
         }
     }
 
@@ -281,9 +269,9 @@ ColumnLayout {
             id: chatMessages
             Layout.fillWidth: true
             Layout.fillHeight: true
-            store: chatContentRoot.rootStore
+            store: root.store
             messageContextMenuInst: contextmenu
-            messageStore: messageStore
+            messageStore: root.store.messageStore
         }
 
         Item {
@@ -361,33 +349,33 @@ ColumnLayout {
                     Global.openPopup(chatContentRoot.receiveTransactionModal)
                 }
                 onStickerSelected: {
-                    chatContentRoot.rootStore.sendSticker(chatContentModule.getMyChatId(),
-                                                hashId,
-                                                chatInput.isReply ? SelectedMessage.messageId : "",
-                                                packId)
+//                    root.store.sendSticker(root.store.chatContentModule.getMyChatId(),
+//                                                hashId,
+//                                                chatInput.isReply ? SelectedMessage.messageId : "",
+//                                                packId)
                 }
                 onSendMessage: {
-                    if (chatInput.fileUrls.length > 0){
-                        chatContentModule.inputAreaModule.sendImages(JSON.stringify(fileUrls));
-                    }
-                    let msg = globalUtils.plainText(Emoji.deparse(chatInput.textInput.text))
-                    if (msg.length > 0) {
-                        msg = chatInput.interpretMessage(msg)
+//                    if (chatInput.fileUrls.length > 0){
+//                        root.store.chatContentModule.inputAreaModule.sendImages(JSON.stringify(fileUrls));
+//                    }
+//                    let msg = globalUtils.plainText(Emoji.deparse(chatInput.textInput.text))
+//                    if (msg.length > 0) {
+//                        msg = chatInput.interpretMessage(msg)
 
-                        chatContentModule.inputAreaModule.sendMessage(
-                            msg,
-                            chatInput.isReply ? SelectedMessage.messageId : "",
-                            Utils.isOnlyEmoji(msg) ? Constants.messageContentType.emojiType : Constants.messageContentType.messageType,
-                            false)
+//                        root.store.chatContentModule.inputAreaModule.sendMessage(
+//                            msg,
+//                            chatInput.isReply ? SelectedMessage.messageId : "",
+//                            Utils.isOnlyEmoji(msg) ? Constants.messageContentType.emojiType : Constants.messageContentType.messageType,
+//                            false)
 
-                        if (event) event.accepted = true
-                        sendMessageSound.stop();
-                        Qt.callLater(sendMessageSound.play);
+//                        if (event) event.accepted = true
+//                        sendMessageSound.stop();
+//                        Qt.callLater(sendMessageSound.play);
 
-                        chatInput.textInput.clear();
-                        chatInput.textInput.textFormat = TextEdit.PlainText;
-                        chatInput.textInput.textFormat = TextEdit.RichText;
-                    }
+//                        chatInput.textInput.clear();
+//                        chatInput.textInput.textFormat = TextEdit.PlainText;
+//                        chatInput.textInput.textFormat = TextEdit.RichText;
+//                    }
                 }
             }
         }

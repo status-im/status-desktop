@@ -4,9 +4,36 @@ import utils 1.0
 
 QtObject {
     id: root
-    objectName: "hello!"
-    property var messageStore
+
+    property var messageStore: MessageStore { }
     property EmojiReactions emojiReactionsModel: EmojiReactions { }
+
+    // Important:
+    // Each `ChatLayout` has its own chatCommunitySectionModule
+    // (on the backend chat and community sections share the same module since they are actually the same)
+    property var chatCommunitySectionModule
+
+    // Important:
+    // Each chat/channel has its own ChatContentModule
+    property var chatContentModule: currentChatContentModule()
+    onChatContentModuleChanged: {
+        if (!!messageStore) {
+            messageStore.messageModule = chatContentModule.messagesModule;
+        }
+    }
+
+    // Since qml component doesn't follow encaptulation from the backend side, we're introducing
+    // a method which will return appropriate chat content module for selected chat/channel
+    function currentChatContentModule() {
+        // When we decide to have the same struct as it's on the backend we will remove this function.
+        // So far this is a way to deal with refactord backend from the current qml structure.
+        if (chatCommunitySectionModule.activeItem.isSubItemActive) {
+            chatCommunitySectionModule.prepareChatContentModuleForChatId(chatCommunitySectionModule.activeItem.activeSubItem.id);
+        } else {
+            chatCommunitySectionModule.prepareChatContentModuleForChatId(chatCommunitySectionModule.activeItem.id);
+        }
+        return chatCommunitySectionModule.getChatContentModule();
+    }
 
     // Not Refactored Yet
 //    property var chatsModelInst: chatsModel
@@ -178,16 +205,12 @@ QtObject {
         return contactsModuleModel.isAdded(address);
     }
 
-    function contactRequestReceived(pubkey) {
-        return contactsModuleModel.contactRequestReceived(pubkey)
-    }
-
     function isContactBlocked(pubkey) {
         return contactsModuleModel.isContactBlocked(pubkey)
     }
 
-    function isEnsVerified(pubkey) {
-        return contactsModuleInst.isEnsVerified(pubkey)
+    function contactRequestReceived(activeChatId) {
+        return !!contactsModuleModel ? contactsModuleModel.contactRequestReceived(activeChatId) : false;
     }
 
     function alias(pubkey) {

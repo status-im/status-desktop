@@ -26,10 +26,6 @@ Item {
     id: root
     anchors.fill: parent
 
-    // Important: we have parent module in this context only cause qml components
-    // don't follow struct we have on the backend.
-    property var parentModule
-
     property var rootStore
     property Component pinnedMessagesPopupComponent
     // Not Refactored Yet
@@ -39,8 +35,8 @@ Item {
     property bool isExtendedInput: isReply || isImage
     property bool isConnected: false
     property string contactToRemove: ""
-    property string activeChatId: parentModule && parentModule.activeItem.id
-    property string activeSubItemId: parentModule && parentModule.activeItem.activeSubItem.id
+    property string activeChatId: root.rootStore.chatCommunitySectionModule.activeItem.id
+    property string activeSubItemId: root.rootStore.chatCommunitySectionModule.activeSubItem.id
     property string activeChatType: parentModule && parentModule.activeItem.type
     property bool isBlocked: root.rootStore.isContactBlocked(activeChatId)
     property bool isContact: root.rootStore.isContactAdded(activeChatId)
@@ -155,26 +151,22 @@ Item {
     StackLayout {
         anchors.fill: parent
         currentIndex: {
-            if(root.activeChatId !== "")
-            {
-                for(let i = 1; i < this.children.length; i++)
-                {
+            if (root.rootStore.chatCommunitySectionModule.activeItem.id !== "") {
+                for (let i = 1; i < this.children.length; i++) {
                     var obj = this.children[i];
-                    if(obj && obj.chatContentModule)
-                    {
-                        let myChatId = obj.chatContentModule.getMyChatId()
-                        if(myChatId === root.activeChatId || myChatId === root.activeSubItemId)
-                            return i
-
+                    if (obj && !!root.rootStore.chatContentModule) {
+                        let myChatId = root.rootStore.chatContentModule.getMyChatId();
+                        if ((myChatId === root.rootStore.chatCommunitySectionModule.activeItem.id) || (myChatId === root.rootStore.chatCommunitySectionModule.activeItem.activeSubItem.id))
+                            return i;
                     }
                 }
 
                 // Should never be here, correct index must be returned from the `for` loop above
-                console.error("Wrong chat/channel index, active item id: ", root.activeChatId,
-                              " active subitem id: ", root.activeSubItemId)
-            }
+                console.error("Wrong chat/channel index, active item id: ", root.rootStore.chatCommunitySectionModule.activeItem.id,
+                              " active subitem id: ", root.rootStore.chatCommunitySectionModule.activeItem.activeSubItem.id)
 
-            return 0
+            }
+            return 0;
         }
 
         EmptyChatPanel {
@@ -184,7 +176,7 @@ Item {
         // This is kind of a solution for applying backend refactored changes with the minimal qml changes.
         // The best would be if we made qml to follow the struct we have on the backend side.
         Repeater {
-            model: parentModule && parentModule.model
+            model: root.rootStore.chatCommunitySectionModule.model
             delegate: delegateChooser
 
             DelegateChooser {
@@ -195,27 +187,19 @@ Item {
                     delegate: Repeater {
                         model: subItems
                         delegate: ChatContentView {
-                            rootStore: root.rootStore
+                            store: root.rootStore
                             sendTransactionNoEnsModal: cmpSendTransactionNoEns
                             receiveTransactionModal: cmpReceiveTransaction
                             sendTransactionWithEnsModal: cmpSendTransactionWithEns
-                            Component.onCompleted: {
-                                parentModule.prepareChatContentModuleForChatId(model.itemId)
-                                chatContentModule = parentModule.getChatContentModule()
-                            }
                         }
                     }
                 }
                 DelegateChoice { // In all other cases
                     delegate: ChatContentView {
-                        rootStore: root.rootStore
+                        store: root.rootStore
                         sendTransactionNoEnsModal: cmpSendTransactionNoEns
                         receiveTransactionModal: cmpReceiveTransaction
                         sendTransactionWithEnsModal: cmpSendTransactionWithEns
-                        Component.onCompleted: {
-                            parentModule.prepareChatContentModuleForChatId(itemId)
-                            chatContentModule = parentModule.getChatContentModule()
-                        }
                     }
                 }
             }
@@ -358,6 +342,16 @@ Item {
             target: systemTray
             onMessageClicked: function () {
                 clickOnNotification()
+            }
+        }
+
+        Component {
+            id: pinnedMessagesPopupComponent
+            PinnedMessagesPopup {
+                id: pinnedMessagesPopup
+                rootStore: root.rootStore
+                messageStore: root.rootStore.messageStore
+                onClosed: destroy()
             }
         }
 

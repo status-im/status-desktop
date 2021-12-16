@@ -14,8 +14,9 @@ import StatusQ.Controls 0.1 as StatusQControls
 Item {
     id: root
 
-    property var messageContextMenu
+    property var messageStore
     property var container
+    property var messageContextMenu
 
 
     property int chatHorizontalPadding: Style.current.halfPadding

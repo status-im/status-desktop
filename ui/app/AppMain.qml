@@ -421,7 +421,7 @@ Item {
                     }
 
                     Component.onCompleted: {
-                        chatCommunitySectionModule = mainModule.getChatSectionModule()
+                        rootStore.chatCommunitySectionModule = mainModule.getChatSectionModule()
                     }
                 }
 
@@ -509,7 +509,7 @@ Item {
                                     // we cannot return QVariant if we pass another parameter in a function call
                                     // that's why we're using it this way
                                     mainModule.prepareCommunitySectionModuleForCommunityId(model.id)
-                                    chatCommunitySectionModule = mainModule.getCommunitySectionModule()
+                                    rootStore.chatCommunitySectionModule = mainModule.getCommunitySectionModule()
                                 }
                             }
                         }

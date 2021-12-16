@@ -20,11 +20,6 @@ Item {
     width: 304
     height: parent.height
 
-    // Important:
-    // We're here in case of CommunitySection
-    // This module is set from `ChatLayout` (each `ChatLayout` has its own communitySectionModule)
-    property var communitySectionModule
-
     property var store
     // TODO unhardcode
     // Not Refactored Yet
@@ -146,12 +141,10 @@ Item {
             //chatList.model: root.store.chatsModelInst.communities.activeCommunity.chats
 
             //categoryList.model: root.store.chatsModelInst.communities.activeCommunity.categories
-            model: root.communitySectionModule.model
+            model: root.store.chatCommunitySectionModule.model
             onChatItemSelected: {
-                if(categoryId === "")
-                    root.communitySectionModule.setActiveItem(id, "")
-                else
-                    root.communitySectionModule.setActiveItem(categoryId, id)
+                root.store.chatCommunitySectionModule.setActiveItem(categoryId === "" ? id : categoryId, id !== "" ? id : "");
+                root.store.chatCommunitySectionModule.prepareChatContentModuleForChatId(categoryId === "" ? id : categoryId);
             }
 
 //            showCategoryActionButtons: root.store.chatsModelInst.communities.activeCommunity.admin
@@ -265,17 +258,16 @@ Item {
                 id: chatContextMenuView
 
                 openHandler: function (id) {
-                    let jsonObj = root.communitySectionModule.getItemAsJson(id)
+                    let jsonObj = root.store.chatCommunitySectionModule.getItemAsJson(id)
                     let obj = JSON.parse(jsonObj)
                     if (obj.error) {
                         console.error("error parsing chat item json object, id: ", id, " error: ", obj.error)
                         close()
                         return
                     }
-
-                    currentFleet = root.communitySectionModule.getCurrentFleet()
-                    isCommunityChat = root.communitySectionModule.isCommunity()
+                    currentFleet = root.chatContentModule.getCurrentFleet()
                     isCommunityAdmin = obj.amIChatAdmin
+                    isCommunityChat = root.store.chatCommunitySectionModule.isCommunity()
                     chatId = obj.itemId
                     chatName = obj.name
                     chatDescription = obj.description
@@ -284,19 +276,19 @@ Item {
                 }
 
                 onMuteChat: {
-                    root.communitySectionModule.muteChat(chatId)
+                    root.store.chatCommunitySectionModule.muteChat(id)
                 }
 
                 onUnmuteChat: {
-                    root.communitySectionModule.unmuteChat(chatId)
+                    root.store.chatCommunitySectionModule.unmuteChat(id)
                 }
 
                 onMarkAllMessagesRead: {
-                    root.communitySectionModule.markAllMessagesRead(chatId)
+                    root.store.chatCommunitySectionModule.markAllMessagesRead(id)
                 }
 
                 onClearChatHistory: {
-                    root.communitySectionModule.clearChatHistory(chatId)
+                    root.store.chatCommunitySectionModule.clearChatHistory(id)
                 }
 
                 onRequestAllHistoricMessages: {
@@ -304,7 +296,7 @@ Item {
                 }
 
                 onLeaveChat: {
-                    root.communitySectionModule.leaveChat(chatId)
+                    root.store.chatCommunitySectionModule.leaveChat(chatId);
                 }
 
                 onDeleteChat: {
@@ -328,10 +320,10 @@ Item {
                 }
 
                 onOpenPinnedMessagesList: {
-                    chatCommunitySectionModule.prepareChatContentModuleForChatId(chatId)
-                    let chatContentModule = chatCommunitySectionModule.getChatContentModule()
+                    root.store.chatCommunitySectionModule.prepareChatContentModuleForChatId(chatId)
+                    let chatContentModule = root.store.chatCommunitySectionModule.getChatContentModule()
                     Global.openPopup(pinnedMessagesPopupComponent, {
-                                         messageStore: messageStore,
+                                         messageStore: root.store.messageStore,
                                          pinnedMessagesModel: chatContentModule.pinnedMessagesModel,
                                          messageToPin: ""
                                      })

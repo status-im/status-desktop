@@ -25,30 +25,8 @@ StatusAppThreePanelLayout {
 
     handle: SplitViewHandle { implicitWidth: 5 }
 
-    // Important:
-    // Each `ChatLayout` has its own chatCommunitySectionModule
-    // (on the backend chat and community sections share the same module since they are actually the same)
-    property var chatCommunitySectionModule
-    // Since qml component doesn't follow encaptulation from the backend side, we're introducing
-    // a method which will return appropriate chat content module for selected chat/channel
-    function currentChatContentModule(){
-        // When we decide to have the same struct as it's on the backend we will remove this function.
-        // So far this is a way to deal with refactord backend from the current qml structure.
-        if(chatCommunitySectionModule.activeItem.isSubItemActive)
-            chatCommunitySectionModule.prepareChatContentModuleForChatId(chatCommunitySectionModule.activeItem.activeSubItem.id)
-        else
-            chatCommunitySectionModule.prepareChatContentModuleForChatId(chatCommunitySectionModule.activeItem.id)
-
-        return chatCommunitySectionModule.getChatContentModule()
-    }
-
     // Not Refactored
-   property var messageStore
-
-    // Not Refactored
-   property RootStore rootStore: RootStore {
-       messageStore: root.messageStore
-   }
+   property RootStore rootStore: RootStore { }
 
     property Component pinnedMessagesListPopupComponent
     property bool stickersLoaded: false
@@ -70,12 +48,11 @@ StatusAppThreePanelLayout {
 
     leftPanel: Loader {
         id: contactColumnLoader
-        sourceComponent: chatCommunitySectionModule.isCommunity()? communtiyColumnComponent : contactsColumnComponent
+        sourceComponent: root.rootStore.chatCommunitySectionModule.isCommunity()? communtiyColumnComponent : contactsColumnComponent
     }
 
     centerPanel: ChatColumnView {
         id: chatColumn
-        parentModule: chatCommunitySectionModule
         rootStore: root.rootStore
         pinnedMessagesPopupComponent: root.pinnedMessagesListPopupComponent
         stickersLoaded: root.stickersLoaded
@@ -90,20 +67,17 @@ StatusAppThreePanelLayout {
 
     showRightPanel: {
         // Check if user list is available as an option for particular chat content module.
-        let usersListAvailable = currentChatContentModule().chatDetails.isUsersListAvailable
+        let usersListAvailable = root.rootStore.currentChatContentModule().chatDetails.isUsersListAvailable
         return localAccountSensitiveSettings.showOnlineUsers && usersListAvailable && localAccountSensitiveSettings.expandUsersList
     }
 
-    rightPanel: localAccountSensitiveSettings.communitiesEnabled && chatCommunitySectionModule.isCommunity()? communityUserListComponent : userListComponent
+    rightPanel: localAccountSensitiveSettings.communitiesEnabled && root.rootStore.chatCommunitySectionModule.isCommunity()? communityUserListComponent : userListComponent
 
     Component {
         id: communityUserListComponent
         CommunityUserListPanel {
             messageContextMenu: quickActionMessageOptionsMenu
-            usersModule: {
-                let chatContentModule = currentChatContentModule()
-                return chatContentModule.usersModule
-            }
+            usersModule: root.rootStore.chatContentModule.usersModule
         }
     }
 
@@ -111,17 +85,13 @@ StatusAppThreePanelLayout {
         id: userListComponent
         UserListPanel {
             messageContextMenu: quickActionMessageOptionsMenu
-            usersModule: {
-                let chatContentModule = currentChatContentModule()
-                return chatContentModule.usersModule
-            }
+            usersModule: root.rootStore.chatContentModule.usersModule
         }
     }
 
     Component {
         id: contactsColumnComponent
         ContactsColumnView {
-            chatSectionModule: root.chatCommunitySectionModule
             store: root.rootStore
             onOpenProfileClicked: {
                 root.profileButtonClicked();
@@ -136,7 +106,6 @@ StatusAppThreePanelLayout {
     Component {
         id: communtiyColumnComponent
         CommunityColumnView {
-            communitySectionModule: root.chatCommunitySectionModule
             store: root.rootStore
             pinnedMessagesPopupComponent: root.pinnedMessagesListPopupComponent
         }
@@ -178,13 +147,15 @@ StatusAppThreePanelLayout {
 
     MessageContextMenuView {
         id: quickActionMessageOptionsMenu
+        store: root.rootStore
+        // Not Refactored
+//        reactionModel: root.rootStore.emojiReactionsModel
 
         onOpenProfileClicked: {
             Global.openProfilePopup(displayName, publicKey, icon, "", displayName)
         }
         onCreateOneToOneChat: {
-            Global.changeAppSectionBySectionType(Constants.appSection.chat)
-            root.chatCommunitySectionModule.createOneToOneChat(chatId, ensName)
+            root.rootStore.chatCommunitySectionModule.createOneToOneChat(chatId, ensName);
         }
     }
 }
