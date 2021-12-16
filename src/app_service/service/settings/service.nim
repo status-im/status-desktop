@@ -1,5 +1,6 @@
 import chronicles, json, sequtils, tables, sugar
 
+import ../../common/[network_constants]
 import service_interface, ./dto/settings
 import status/statusgo_backend_new/settings as status_settings
 
@@ -282,6 +283,9 @@ method getFleet*(self: Service): string =
 method getAvailableNetworks*(self: Service): seq[Network] =
   return self.settings.availableNetworks
 
+method getAvailableCustomNetworks*(self: Service): seq[Network] =
+  return self.settings.availableNetworks.filterIt(it.id notin DEFAULT_NETWORKS_IDS)
+
 method getCurrentNetworkDetails*(self: Service): Network =
   for n in self.settings.availableNetworks:
     if(n.id == self.getCurrentNetwork()):
@@ -290,8 +294,18 @@ method getCurrentNetworkDetails*(self: Service): Network =
   # we should never be here
   error "error: current network is not among available networks"
 
+method addCustomNetwork*(self: Service, network: Network): bool =
+  var newAvailableNetworks = self.settings.availableNetworks
+  newAvailableNetworks.add(network)
+  let availableNetworksAsJson = availableNetworksToJsonNode(newAvailableNetworks)
+
+  if(self.saveSetting(KEY_NETWORKS_ALL_NETWORKS, availableNetworksAsJson)):
+    self.settings.availableNetworks = newAvailableNetworks
+    return true
+  return false
+
 method getCurrentNetworkId*(self: Service): int =
-  self.getCurrentNetworkDetails().config.networkId
+  self.getCurrentNetworkDetails().config.NetworkId
 
 method getCurrentUserStatus*(self: Service): CurrentUserStatus =
   self.settings.currentUserStatus
@@ -311,7 +325,7 @@ method saveWalletVisibleTokens*(self: Service, tokens: seq[string]): bool =
   return false
 
 method isEIP1559Enabled*(self: Service, blockNumber: int): bool =
-  let networkId = self.getCurrentNetworkDetails().config.networkId
+  let networkId = self.getCurrentNetworkDetails().config.NetworkId
   let activationBlock = case networkId:
     of 3: 10499401 # Ropsten
     of 4: 8897988 # Rinkeby

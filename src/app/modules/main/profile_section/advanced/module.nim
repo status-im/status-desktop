@@ -1,7 +1,7 @@
-import NimQml, chronicles
+import NimQml, chronicles, uuids
 import io_interface
 import ../io_interface as delegate_interface
-import view, controller
+import view, controller, custom_networks_model
 
 import ../../../../../constants
 import ../../../../global/global_singleton
@@ -43,6 +43,10 @@ method isLoaded*(self: Module): bool =
   return self.moduleLoaded
 
 method viewDidLoad*(self: Module) =
+  let customNetworks = self.controller.getCustomNetworks()
+  for n in customNetworks:
+    self.view.customNetworksModel().add(n.id, n.name)
+
   self.moduleLoaded = true
   self.delegate.advancedModuleDidLoad()
 
@@ -123,4 +127,16 @@ method onDebugToggled*(self: Module) =
   info "quit the app because of successful debug level changed"
   quit(QuitSuccess) # quits the app TODO: change this to logout instead when supported
 
-  
+method addCustomNetwork*(self: Module, name: string, endpoint: string, networkId: int, networkType: string) = 
+  var network: settings_service.Network
+  network.id = $genUUID()
+  network.name = name
+  network.config.NetworkId = networkId
+  network.config.DataDir = "/ethereum/" & networkType
+  network.config.UpstreamConfig.Enabled = true
+  network.config.UpstreamConfig.URL = endpoint
+
+  self.controller.addCustomNetwork(network)
+
+method onCustomNetworkAdded*(self: Module, network: settings_service.Network) =
+  self.view.customNetworksModel().add(network.id, network.name)

@@ -136,3 +136,14 @@ method toggleDebug*(self: Controller) =
 
 method isDebugEnabled*(self: Controller): bool = 
   return self.nodeConfigurationService.getDebugLevel() == $LogLevel.DEBUG
+
+method getCustomNetworks*(self: Controller): seq[settings_service.Network] =
+  return self.settingsService.getAvailableCustomNetworks()
+
+method addCustomNetwork*(self: Controller, network: settings_service.Network) = 
+  if (not self.settingsService.addCustomNetwork(network)):
+    # in the future we may do a call from here to show a popup about this error
+    error "an error occurred, we couldn't add a custom network"
+    return
+  
+  self.delegate.onCustomNetworkAdded(network)

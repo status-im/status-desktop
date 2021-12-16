@@ -1,4 +1,4 @@
-import json, random, times, strutils
+import json, random, times, strutils, os
 
 import signing_phrases
 
@@ -24,3 +24,28 @@ proc first*(jArray: JsonNode, fieldName, id: string): JsonNode =
 proc prettyEnsName*(ensName: string): string =
   if ensName.endsWith(".eth"):
     return "@" & ensName.split(".")[0]
+
+const sep = when defined(windows): "\\" else: "/"
+
+proc defaultDataDir(): string =
+  let homeDir = getHomeDir()
+  let parentDir =
+    if defined(development):
+      parentDir(getAppDir())
+    elif homeDir == "":
+      getCurrentDir()
+    elif defined(macosx):
+      joinPath(homeDir, "Library", "Application Support")
+    elif defined(windows):
+      let targetDir = getEnv("LOCALAPPDATA").string
+      if targetDir == "":
+        joinPath(homeDir, "AppData", "Local")
+      else:
+        targetDir
+    else:
+      let targetDir = getEnv("XDG_CONFIG_HOME").string
+      if targetDir == "":
+        joinPath(homeDir, ".config")
+      else:
+        targetDir
+  absolutePath(joinPath(parentDir, "Status"))
