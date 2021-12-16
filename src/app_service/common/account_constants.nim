@@ -116,6 +116,9 @@ var NODE_CONFIG* = %* {
   "ClusterConfig": {
     "Enabled": true
   },
+  "Web3ProviderConfig": {
+    "Enabled": true
+  },
   "DataDir": "./ethereum/mainnet",
   "EnableNTPSync": true,
   "KeyStoreDir": "./keystore",

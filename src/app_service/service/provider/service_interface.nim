@@ -8,7 +8,7 @@ method delete*(self: ServiceInterface) {.base.} =
 method init*(self: ServiceInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method postMessage*(self: ServiceInterface, message: string): string {.base.} =
+method postMessage*(self: ServiceInterface, requestType: string, message: string): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method ensResourceURL*(self: ServiceInterface, ens: string, url: string): (string, string, string, string, bool) =

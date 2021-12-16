@@ -59,6 +59,9 @@ QtObject:
   proc hasPermission(self: View, hostname: string, permission: string): bool {.slot.} =
     return self.delegate.hasPermission(hostname, permission)
   
+  proc addPermission(self: View, hostname: string, permission: string) {.slot.} =
+    self.delegate.addPermission(hostname, permission)
+
   proc clearPermissions(self: View, dapp: string): string {.slot.} =
     self.delegate.clearPermissions(dapp)
 

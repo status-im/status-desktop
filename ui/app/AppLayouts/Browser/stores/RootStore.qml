@@ -28,4 +28,12 @@ QtObject {
     function generateIdenticon(pk) {
         return utilsModel.generateIdenticon(pk)
     }
+
+    function getEth2Hex(eth) {
+        return utilsModel.eth2Hex(eth)
+    }
+
+    function getGwei2Hex(gwei){
+        return utilsModel.gwei2Hex(gwei)
+    }
 }

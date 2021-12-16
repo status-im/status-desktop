@@ -59,8 +59,8 @@ QtObject:
   proc disconnect*(self: View) {.slot.} =
     self.delegate.disconnect()
 
-  proc postMessage*(self: View, message: string): string {.slot.} =
-    return self.delegate.postMessage(message)
+  proc postMessage*(self: View, requestType: string, message: string): string {.slot.} =
+    return self.delegate.postMessage(requestType, message)
 
   proc hasPermission(self: View, hostname: string, permission: string): bool {.slot.} =
     return self.delegate.hasPermission(hostname, permission)

@@ -64,6 +64,9 @@ method viewDidLoad*(self: Module) =
 method hasPermission*(self: Module, hostname: string, permission: string): bool =
   self.controller.hasPermission(hostname, permission.toPermission())
 
+method addPermission*(self: Module, hostname: string, permission: string) =
+  self.controller.addPermission(hostname, permission.toPermission())
+
 method clearPermissions*(self: Module, dapp: string) =
   self.controller.clearPermissions(dapp)
 

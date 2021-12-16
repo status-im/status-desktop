@@ -1,4 +1,4 @@
-import Tables
+import tables
 import controller_interface
 import io_interface
 
@@ -44,8 +44,8 @@ method getCurrentNetworkDetails*(self: Controller): NetworkDetails =
 method disconnect*(self: Controller) =
   discard self.dappPermissionsService.revoke("web3".toPermission())
 
-method postMessage*(self: Controller, message: string): string =
-  return self.providerService.postMessage(message)
+method postMessage*(self: Controller, requestType: string, message: string): string =
+  return self.providerService.postMessage(requestType, message)
 
 method hasPermission*(self: Controller, hostname: string, permission: string): bool =
   return self.dappPermissionsService.hasPermission(hostname, permission.toPermission())

@@ -94,7 +94,7 @@ Popup {
                 anchors.fill: parent
                 onClicked: {
                     Web3ProviderStore.web3ProviderInst.disconnect();
-                    provider.postMessage(`{"type":"web3-disconnect-account"}`);
+                    provider.postMessage("web3-disconnect-account", "{}");
                     popup.close();
                 }
             }
