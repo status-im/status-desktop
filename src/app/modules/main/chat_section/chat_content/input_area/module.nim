@@ -5,7 +5,7 @@ import view, controller
 import ../../../../../global/global_singleton
 
 import ../../../../../../app_service/service/chat/service as chat_service
-import ../../../../../../app_service/service/community/service_interface as community_service
+import ../../../../../../app_service/service/community/service as community_service
 
 export io_interface
 
@@ -22,7 +22,7 @@ proc newModule*(
     chatId: string,
     belongsToCommunity: bool, 
     chatService: chat_service.Service,
-    communityService: community_service.ServiceInterface
+    communityService: community_service.Service
     ):
   Module =
   result = Module()

@@ -35,7 +35,7 @@ type
 
 proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitter, sectionId: string, chatId: string, 
   belongsToCommunity: bool, isUsersListAvailable: bool, contactService: contact_service.Service, 
-  chatService: chat_service.Service, communityService: community_service.ServiceInterface, 
+  chatService: chat_service.Service, communityService: community_service.Service, 
   messageService: message_service.Service): 
   Module =
   result = Module()

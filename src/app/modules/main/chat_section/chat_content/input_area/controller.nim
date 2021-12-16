@@ -11,7 +11,7 @@ type
     delegate: io_interface.AccessInterface
     chatId: string
     belongsToCommunity: bool
-    communityService: community_service.ServiceInterface
+    communityService: community_service.Service
     chatService: chat_service.Service
 
 proc newController*(
@@ -19,7 +19,7 @@ proc newController*(
     chatId: string,
     belongsToCommunity: bool,
     chatService: chat_service.Service, 
-    communityService: community_service.ServiceInterface
+    communityService: community_service.Service
     ): Controller =
   result = Controller()
   result.delegate = delegate

@@ -56,7 +56,15 @@ type CommunityDto* = object
   requestedToJoinAt*: int64
   isMember*: bool
   muted*: bool
-  
+
+type CommunityMembershipRequestDto* = object
+  id*: string
+  publicKey*: string
+  chatId*: string
+  communityId*: string
+  state*: int
+  our*: string
+
 proc toPermission(jsonObj: JsonNode): Permission =
   result = Permission()
   discard jsonObj.getProp("access", result.access)
@@ -73,7 +81,7 @@ proc toImages(jsonObj: JsonNode): Images =
   if(jsonObj.getProp("thumbnail", thumbnailObj)):
     discard thumbnailObj.getProp("uri", result.thumbnail)
 
-proc toChat(jsonObj: JsonNode): Chat =
+proc toChat*(jsonObj: JsonNode): Chat =
   result = Chat()
   discard jsonObj.getProp("id", result.id)
   discard jsonObj.getProp("name", result.name)
@@ -87,13 +95,14 @@ proc toChat(jsonObj: JsonNode): Chat =
   discard jsonObj.getProp("position", result.position)
   discard jsonObj.getProp("categoryID", result.categoryId)
 
-proc toCategory(jsonObj: JsonNode): Category =
+proc toCategory*(jsonObj: JsonNode): Category =
   result = Category()
-  discard jsonObj.getProp("id", result.id)
+  if (not jsonObj.getProp("category_id", result.id)):
+    discard jsonObj.getProp("id", result.id)
   discard jsonObj.getProp("name", result.name)
   discard jsonObj.getProp("position", result.position)
 
-proc toMember(jsonObj: JsonNode, memberId: string): Member =
+proc toMember*(jsonObj: JsonNode, memberId: string): Member =
   # Mapping this DTO is not strightforward since only keys are used for id. We 
   # handle it a bit different.
   result = Member()
@@ -143,6 +152,15 @@ proc toCommunityDto*(jsonObj: JsonNode): CommunityDto =
   discard jsonObj.getProp("requestedToJoinAt", result.requestedToJoinAt)
   discard jsonObj.getProp("isMember", result.isMember)
   discard jsonObj.getProp("muted", result.muted)
+
+proc toCommunityMembershipRequestDto*(jsonObj: JsonNode): CommunityMembershipRequestDto =
+  result = CommunityMembershipRequestDto()
+  discard jsonObj.getProp("id", result.id)
+  discard jsonObj.getProp("publicKey", result.publicKey)
+  discard jsonObj.getProp("chatId", result.chatId)
+  discard jsonObj.getProp("state", result.state)
+  discard jsonObj.getProp("communityId", result.communityId)
+  discard jsonObj.getProp("our", result.our)
 
 proc parseCommunities*(response: RpcResponse[JsonNode]): seq[CommunityDto] =
   result = map(response.result.getElems(), 

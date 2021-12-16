@@ -18,7 +18,7 @@ type
     events: EventEmitter
     contactsService: contact_service.Service
     chatService: chat_service.Service
-    communityService: community_service.ServiceInterface
+    communityService: community_service.Service
     messageService: message_service.Service
     activeSectionId: string
     activeChatId: string
@@ -27,7 +27,7 @@ type
     searchTerm: string
 
 proc newController*(delegate: io_interface.AccessInterface, events: EventEmitter, contactsService: contact_service.Service,
-  chatService: chat_service.Service, communityService: community_service.ServiceInterface, 
+  chatService: chat_service.Service, communityService: community_service.Service, 
   messageService: message_service.Service): Controller =
   result = Controller()
   result.delegate = delegate
