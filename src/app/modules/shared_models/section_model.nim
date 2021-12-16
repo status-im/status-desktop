@@ -1,6 +1,6 @@
 import NimQml, Tables, strutils, strformat
 
-import item
+import section_item
 
 type
   ModelRole {.pure.} = enum
@@ -15,42 +15,44 @@ type
     NotificationsCount
     Active
     Enabled
+    Joined
+    IsMember
 
 QtObject:
   type
-    Model* = ref object of QAbstractListModel
-      items: seq[Item]
+    SectionModel* = ref object of QAbstractListModel
+      items: seq[SectionItem]
 
-  proc delete(self: Model) =
+  proc delete(self: SectionModel) =
     self.items = @[]
     self.QAbstractListModel.delete
 
-  proc setup(self: Model) =
+  proc setup(self: SectionModel) =
     self.QAbstractListModel.setup
 
-  proc newModel*(): Model =
+  proc newModel*(): SectionModel =
     new(result, delete)
     result.setup
 
-  proc `$`*(self: Model): string =
+  proc `$`*(self: SectionModel): string =
     for i in 0 ..< self.items.len:
       result &= fmt"""
       [{i}]:({$self.items[i]})
       """
 
-  proc countChanged(self: Model) {.signal.}
+  proc countChanged(self: SectionModel) {.signal.}
 
-  proc getCount(self: Model): int {.slot.} =
+  proc getCount(self: SectionModel): int {.slot.} =
     self.items.len
 
   QtProperty[int] count:
     read = getCount
     notify = countChanged
 
-  method rowCount(self: Model, index: QModelIndex = nil): int =
+  method rowCount(self: SectionModel, index: QModelIndex = nil): int =
     return self.items.len
 
-  method roleNames(self: Model): Table[int, string] =
+  method roleNames(self: SectionModel): Table[int, string] =
     {
       ModelRole.Id.int:"id",
       ModelRole.SectionType.int:"sectionType",
@@ -62,10 +64,12 @@ QtObject:
       ModelRole.HasNotification.int:"hasNotification",
       ModelRole.NotificationsCount.int:"notificationsCount",
       ModelRole.Active.int:"active",
-      ModelRole.Enabled.int:"enabled"
+      ModelRole.Enabled.int:"enabled",
+      ModelRole.Joined.int:"joined",
+      ModelRole.IsMember.int:"isMember"
     }.toTable
 
-  method data(self: Model, index: QModelIndex, role: int): QVariant =
+  method data(self: SectionModel, index: QModelIndex, role: int): QVariant =
     if (not index.isValid):
       return
 
@@ -98,8 +102,12 @@ QtObject:
       result = newQVariant(item.active)
     of ModelRole.Enabled: 
       result = newQVariant(item.enabled)
+    of ModelRole.Joined: 
+      result = newQVariant(item.joined)
+    of ModelRole.IsMember: 
+      result = newQVariant(item.isMember)
 
-  proc addItem*(self: Model, item: Item) =
+  proc addItem*(self: SectionModel, item: SectionItem) =
     let parentModelIndex = newQModelIndex()
     defer: parentModelIndex.delete
 
@@ -109,17 +117,17 @@ QtObject:
 
     self.countChanged()
 
-  proc getItemById*(self: Model, id: string): Item =
+  proc getItemById*(self: SectionModel, id: string): SectionItem =
     for it in self.items:
       if(it.id == id):
         return it
 
-  proc getItemBySectionType*(self: Model, sectionType: SectionType): Item =
+  proc getItemBySectionType*(self: SectionModel, sectionType: SectionType): SectionItem =
     for it in self.items:
       if(it.sectionType == sectionType):
         return it
 
-  proc setActiveSection*(self: Model, id: string) =
+  proc setActiveSection*(self: SectionModel, id: string) =
     for i in 0 ..< self.items.len:
       if(self.items[i].active):
         let index = self.createIndex(i, 0, nil)
@@ -131,7 +139,7 @@ QtObject:
         self.items[i].active = true
         self.dataChanged(index, index, @[ModelRole.Active.int])
 
-  proc enableDisableSection(self: Model, sectionType: SectionType, value: bool) =
+  proc enableDisableSection(self: SectionModel, sectionType: SectionType, value: bool) =
     if(sectionType != SectionType.Community):
       for i in 0 ..< self.items.len:
         if(self.items[i].sectionType == sectionType):
@@ -153,8 +161,8 @@ QtObject:
       let bottomIndex = self.createIndex(bottomInd, 0, nil)
       self.dataChanged(topIndex, bottomIndex, @[ModelRole.Enabled.int])
 
-  proc enableSection*(self: Model, sectionType: SectionType) =
+  proc enableSection*(self: SectionModel, sectionType: SectionType) =
     self.enableDisableSection(sectionType, true)
 
-  proc disableSection*(self: Model, sectionType: SectionType) =
+  proc disableSection*(self: SectionModel, sectionType: SectionType) =
     self.enableDisableSection(sectionType, false)

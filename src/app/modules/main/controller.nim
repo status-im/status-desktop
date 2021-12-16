@@ -1,4 +1,4 @@
-import item, controller_interface, io_interface, chronicles
+import ../shared_models/section_item, controller_interface, io_interface, chronicles
 import ../../global/global_singleton
 
 import ../../../app_service/service/settings/service_interface as settings_service
@@ -6,6 +6,8 @@ import ../../../app_service/service/keychain/service as keychain_service
 import ../../../app_service/service/accounts/service_interface as accounts_service
 import ../../../app_service/service/chat/service as chat_service
 import ../../../app_service/service/community/service as community_service
+import ../../../app_service/service/contacts/service as contacts_service
+import ../../../app_service/service/message/service as message_service
 
 import ../../core/signals/types
 import eventemitter
@@ -24,6 +26,8 @@ type
     accountsService: accounts_service.ServiceInterface
     chatService: chat_service.Service
     communityService: community_service.ServiceInterface
+    messageService: message_service.Service
+    contactsService: contacts_service.Service
     activeSectionId: string
 
 proc newController*(delegate: io_interface.AccessInterface, 
@@ -32,7 +36,9 @@ proc newController*(delegate: io_interface.AccessInterface,
   keychainService: keychain_service.Service,
   accountsService: accounts_service.ServiceInterface,
   chatService: chat_service.Service,
-  communityService: community_service.ServiceInterface): 
+  communityService: community_service.ServiceInterface,
+  contactsService: contacts_service.Service,
+  messageService: message_service.Service): 
   Controller =
   result = Controller()
   result.delegate = delegate
@@ -42,6 +48,8 @@ proc newController*(delegate: io_interface.AccessInterface,
   result.accountsService = accountsService
   result.chatService = chatService
   result.communityService = communityService
+  result.contactsService = contactsService
+  result.messageService = messageService
   
 method delete*(self: Controller) =
   discard
@@ -66,6 +74,17 @@ method init*(self: Controller) =
     let args = KeyChainServiceArg(e)
     singletonInstance.localAccountSettings.removeKey(LS_KEY_STORE_TO_KEYCHAIN)
     self.delegate.emitStoringPasswordError(args.errDescription)
+
+  self.events.on(SIGNAL_COMMUNITY_JOINED) do(e:Args):
+    let args = CommunityArgs(e)
+    self.delegate.communityJoined(
+      args.community,
+      self.events,
+      self.contactsService,
+      self.chatService,
+      self.communityService,
+      self.messageService
+      )
 
   self.events.on("sectionAvailabilityChanged") do(e:Args):
     ## We will receive here a signal with two fields:

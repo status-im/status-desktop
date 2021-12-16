@@ -1,5 +1,6 @@
 import Tables, json, sequtils, std/algorithm, strformat, chronicles
 
+import eventemitter
 import service_interface, ./dto/community
 
 import ../chat/service as chat_service
@@ -11,11 +12,19 @@ export service_interface
 logScope:
   topics = "community-service"
 
+
+type
+  CommunityArgs* = ref object of Args
+    community*: CommunityDto
+
+# Signals which may be emitted by this service:
+const SIGNAL_COMMUNITY_JOINED* = "SIGNAL_COMMUNITY_JOINED"
+
 type 
   Service* = ref object of service_interface.ServiceInterface
+    events: EventEmitter
     joinedCommunities: Table[string, CommunityDto] # [community_id, CommunityDto]
     allCommunities: Table[string, CommunityDto] # [community_id, CommunityDto]
-    chatService: chat_service.Service
 
 # Forward declaration
 method loadAllCommunities(self: Service): seq[CommunityDto]
@@ -24,10 +33,11 @@ method loadJoinedComunities(self: Service): seq[CommunityDto]
 method delete*(self: Service) =
   discard
 
-proc newService*(chatService: chat_service.Service): Service =
+proc newService*(events: EventEmitter): Service =
   result = Service()
+  result.events = events
   result.joinedCommunities = initTable[string, CommunityDto]()
-  result.chatService = chatService
+  result.allCommunities = initTable[string, CommunityDto]()
 
 method init*(self: Service) =
   try:
@@ -127,3 +137,27 @@ method getAllChats*(self: Service, communityId: string, order = SortOrder.Ascend
     result.sort(sortAsc[Chat])
   else:
     result.sort(sortDesc[Chat])
+
+method isUserMemberOfCommunity*(self: Service, communityId: string): bool =
+  if(not self.allCommunities.contains(communityId)):
+    return false
+  return self.allCommunities[communityId].joined and self.allCommunities[communityId].isMember
+
+method userCanJoin*(self: Service, communityId: string): bool =
+  if(not self.allCommunities.contains(communityId)):
+    return false
+  return self.allCommunities[communityId].canJoin
+
+method joinCommunity*(self: Service, communityId: string): string =
+  result = ""
+  try:
+    if (not self.userCanJoin(communityId) or self.isUserMemberOfCommunity(communityId)):
+      return
+    discard status_go.joinCommunity(communityId)
+    var community = self.allCommunities[communityId]
+    self.joinedCommunities[communityId] = community
+
+    self.events.emit(SIGNAL_COMMUNITY_JOINED, CommunityArgs(community: community))
+  except Exception as e:
+    error "Error joining the community", msg = e.msg
+    result = fmt"Error joining the community: {e.msg}"

@@ -1,9 +1,9 @@
 import NimQml
-import item
+import section_item
 
 QtObject:
   type ActiveSection* = ref object of QObject
-    item: Item
+    item: SectionItem
 
   proc setup(self: ActiveSection) =
     self.QObject.setup
@@ -15,7 +15,7 @@ QtObject:
     new(result, delete)
     result.setup
 
-  proc setActiveSectionData*(self: ActiveSection, item: Item) =
+  proc setActiveSectionData*(self: ActiveSection, item: SectionItem) =
     self.item = item
 
   proc getId(self: ActiveSection): string {.slot.} = 
@@ -35,6 +35,12 @@ QtObject:
 
   QtProperty[string] name:
     read = getName
+
+  proc description(self: ActiveSection): string {.slot.} = 
+    return self.item.description
+
+  QtProperty[string] description:
+    read = description
 
   proc getImage(self: ActiveSection): string {.slot.} = 
     return self.item.image
@@ -65,5 +71,41 @@ QtObject:
 
   QtProperty[int] notificationCount:
     read = getNotificationCount
+
+  proc canJoin(self: ActiveSection): bool {.slot.} = 
+    return self.item.canJoin
+
+  QtProperty[bool] canJoin:
+    read = canJoin
+
+  proc canRequestAccess(self: ActiveSection): bool {.slot.} = 
+    return self.item.canRequestAccess
+
+  QtProperty[bool] canRequestAccess:
+    read = canRequestAccess
+
+  proc getJoined(self: ActiveSection): bool {.slot.} = 
+    return self.item.joined
+
+  QtProperty[bool] joined:
+    read = getJoined
+
+  proc getIsMember(self: ActiveSection): bool {.slot.} = 
+    return self.item.isMember
+
+  QtProperty[bool] isMember:
+    read = getIsMember
+
+  proc access(self: ActiveSection): int {.slot.} = 
+    return self.item.access
+
+  QtProperty[int] access:
+    read = access
+
+  proc ensOnly(self: ActiveSection): bool {.slot.} = 
+    return self.item.ensOnly
+
+  QtProperty[bool] ensOnly:
+    read = ensOnly
 
   

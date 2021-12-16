@@ -1,4 +1,4 @@
-import item
+import ../shared_models/section_item
 import ../../../app_service/service/community/service_interface as community_service
 
 type 
