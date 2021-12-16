@@ -25,7 +25,7 @@ type
     keychainService: keychain_service.Service
     accountsService: accounts_service.ServiceInterface
     chatService: chat_service.Service
-    communityService: community_service.ServiceInterface
+    communityService: community_service.Service
     messageService: message_service.Service
     contactsService: contacts_service.Service
     activeSectionId: string
@@ -36,7 +36,7 @@ proc newController*(delegate: io_interface.AccessInterface,
   keychainService: keychain_service.Service,
   accountsService: accounts_service.ServiceInterface,
   chatService: chat_service.Service,
-  communityService: community_service.ServiceInterface,
+  communityService: community_service.Service,
   contactsService: contacts_service.Service,
   messageService: message_service.Service): 
   Controller =

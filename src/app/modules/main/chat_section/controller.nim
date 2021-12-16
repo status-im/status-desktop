@@ -5,7 +5,7 @@ import io_interface
 
 import ../../../../app_service/service/contacts/service as contact_service
 import ../../../../app_service/service/chat/service as chat_service
-import ../../../../app_service/service/community/service_interface as community_service
+import ../../../../app_service/service/community/service as community_service
 import ../../../../app_service/service/message/service as message_service
 
 import eventemitter
@@ -22,12 +22,12 @@ type
     events: EventEmitter
     contactService: contact_service.Service
     chatService: chat_service.Service
-    communityService: community_service.ServiceInterface
+    communityService: community_service.Service
     messageService: message_service.Service
 
 proc newController*(delegate: io_interface.AccessInterface, sectionId: string, isCommunity: bool, events: EventEmitter,
   contactService: contact_service.Service, chatService: chat_service.Service,
-  communityService: community_service.ServiceInterface, messageService: message_service.Service): Controller =
+  communityService: community_service.Service, messageService: message_service.Service): Controller =
   result = Controller()
   result.delegate = delegate
   result.sectionId = sectionId

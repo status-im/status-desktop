@@ -395,7 +395,7 @@ method communityJoined*[T](
     events: EventEmitter,
     contactsService: contacts_service.Service,
     chatService: chat_service.Service,
-    communityService: community_service.ServiceInterface,
+    communityService: community_service.Service,
     messageService: message_service.Service
     ) =
   self.communitySectionsModule[community.id] = chat_section_module.newModule(
