@@ -39,11 +39,12 @@ Item {
     property bool isExtendedInput: isReply || isImage
     property bool isConnected: false
     property string contactToRemove: ""
-    // Not Refactored Yet
-//    property string activeChatId: "" //root.rootStore.chatsModelInst.channelView.activeChannel.id
-    property bool isBlocked: root.rootStore.contactsModuleInst.model.isContactBlocked(activeChatId)
+    property string activeChatId: parentModule && parentModule.activeItem.id
+    property string activeSubItemId: parentModule && parentModule.activeItem.activeSubItem.id
+    property string activeChatType: parentModule && parentModule.activeItem.type
+    property bool isBlocked: root.rootStore.isContactBlocked(activeChatId)
     property bool isContact: root.rootStore.isContactAdded(activeChatId)
-//    property bool contactRequestReceived: root.rootStore.contactsModuleInst.model.contactRequestReceived(activeChatId)
+    property bool contactRequestReceived: root.rootStore.contactRequestReceived(activeChatId)
     property string currentNotificationChatId
     property string currentNotificationCommunityId
     property var currentTime: 0
@@ -147,7 +148,7 @@ Item {
     StackLayout {
         anchors.fill: parent
         currentIndex: {
-            if(chatCommunitySectionModule.activeItem.id !== "")
+            if(root.activeChatId !== "")
             {
                 for(let i = 1; i < this.children.length; i++)
                 {
@@ -155,14 +156,14 @@ Item {
                     if(obj && obj.chatContentModule)
                     {
                         let myChatId = obj.chatContentModule.getMyChatId()
-                        if(myChatId == parentModule.activeItem.id || myChatId == parentModule.activeItem.activeSubItem.id)
+                        if(myChatId === root.activeChatId || myChatId === root.activeSubItemId)
                             return i
                     }
                 }
 
                 // Should never be here, correct index must be returned from the `for` loop above
-                console.error("Wrong chat/channel index, active item id: ", parentModule.activeItem.id,
-                              " active subitem id: ", parentModule.activeItem.activeSubItem.id)
+                console.error("Wrong chat/channel index, active item id: ", root.activeChatId,
+                              " active subitem id: ", root.activeSubItemId)
             }
 
             return 0
@@ -175,7 +176,7 @@ Item {
         // This is kind of a solution for applying backend refactored changes with the minimal qml changes.
         // The best would be if we made qml to follow the struct we have on the backend side.
         Repeater {
-            model: parentModule.model
+            model: parentModule && parentModule.model
             delegate: delegateChooser
 
             DelegateChooser {
@@ -210,11 +211,10 @@ Item {
         Layout.fillWidth: true
         Layout.bottomMargin: Style.current.bigPadding
         isContact: root.isContact
-        // Not Refactored Yet
-//        visible: root.rootStore.chatsModelInst.channelView.activeChannel.chatType === Constants.chatType.oneToOne
-//            && (!root.isContact /*|| !contactRequestReceived*/)
+       visible: root.activeChatType === Constants.chatType.oneToOne
+           && (!root.isContact /*|| !contactRequestReceived*/)
         onAddContactClicked: {
-            root.rootStore.addContact(activeChatId);
+            root.rootStore.addContact(root.activeChatId);
         }
     }
 
@@ -327,7 +327,7 @@ Item {
         }
 
         Connections {
-            target: root.rootStore.contactsModuleInst.model
+            target: root.rootStore.contactsModuleModel
             onContactListChanged: {
                 root.isBlocked = root.rootStore.contactsModuleInst.model.isContactBlocked(activeChatId);
                 root.isContact = root.rootStore.contactsModuleInst.model.isAdded(activeChatId);
