@@ -5,7 +5,7 @@ import view, item, model, controller
 import ../../../../../global/global_singleton
 
 import ../../../../../../app_service/service/contacts/service as contact_service
-import ../../../../../../app_service/service/community/service_interface as community_service
+import ../../../../../../app_service/service/community/service as community_service
 import ../../../../../../app_service/service/message/service as message_service
 
 import eventemitter
@@ -22,7 +22,7 @@ type
 
 proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitter, sectionId: string, chatId: string, 
   belongsToCommunity: bool, isUsersListAvailable: bool, contactService: contact_service.Service, 
-  communityService: community_service.ServiceInterface, messageService: message_service.Service): 
+  communityService: community_service.Service, messageService: message_service.Service): 
   Module =
   result = Module()
   result.delegate = delegate

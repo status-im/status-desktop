@@ -1,5 +1,5 @@
 import ../shared_models/section_item
-import ../../../app_service/service/community/service_interface as community_service
+import ../../../app_service/service/community/service as community_service
 
 type 
   AccessInterface* {.pure inheritable.} = ref object of RootObj
