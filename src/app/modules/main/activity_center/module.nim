@@ -107,7 +107,7 @@ method getActivityCenterNotifications*[T](self: Module[T]): seq[notification_ite
 method markAllActivityCenterNotificationsRead*[T](self: Module[T]): string =
   self.controller.markAllActivityCenterNotificationsRead()
 
-method markAllActivityCenterNotificationsReadDone*[T](self: Module[T]): string =
+method markAllActivityCenterNotificationsReadDone*[T](self: Module[T]) =
   self.view.markAllActivityCenterNotificationsReadDone()
 
 method markActivityCenterNotificationRead*[T](
