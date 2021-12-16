@@ -182,6 +182,12 @@ method getFleet*(self: ServiceInterface): string {.base.} =
 method getAvailableNetworks*(self: ServiceInterface): seq[Network] {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method getAvailableCustomNetworks*(self: ServiceInterface): seq[Network] {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method addCustomNetwork*(self: ServiceInterface, network: Network): bool {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method getCurrentNetworkDetails*(self: ServiceInterface): Network {.base.} =
   raise newException(ValueError, "No implementation available")
 

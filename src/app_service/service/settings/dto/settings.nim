@@ -1,4 +1,4 @@
-import json, options, tables, strutils
+import json, options, tables, strutils, marshal
 import ../../stickers/dto/stickers
 
 include  ../../../common/json_utils
@@ -41,13 +41,13 @@ const KEY_WAKU_BLOOM_FILTER_MODE* = "waku-bloom-filter-mode"
 const KEY_AUTO_MESSAGE_ENABLED* = "auto-message-enabled?"
 
 type UpstreamConfig* = object
-  enabled*: bool
-  url*: string
+  Enabled*: bool
+  URL*: string
 
 type Config* = object
-  networkId*: int
-  dataDir*: string
-  upstreamConfig*: UpstreamConfig
+  NetworkId*: int
+  DataDir*: string
+  UpstreamConfig*: UpstreamConfig
 
 type Network* = object
   id*: string
@@ -105,16 +105,16 @@ type
     autoMessageEnabled*: bool
 
 proc toUpstreamConfig*(jsonObj: JsonNode): UpstreamConfig =
-  discard jsonObj.getProp("Enabled", result.enabled)
-  discard jsonObj.getProp("URL", result.url)
+  discard jsonObj.getProp("Enabled", result.Enabled)
+  discard jsonObj.getProp("URL", result.URL)
 
 proc toConfig*(jsonObj: JsonNode): Config =
-  discard jsonObj.getProp("NetworkId", result.networkId)
-  discard jsonObj.getProp("DataDir", result.dataDir)
+  discard jsonObj.getProp("NetworkId", result.NetworkId)
+  discard jsonObj.getProp("DataDir", result.DataDir)
 
   var upstreamConfigObj: JsonNode
   if(jsonObj.getProp("UpstreamConfig", upstreamConfigObj)):
-    result.upstreamConfig = toUpstreamConfig(upstreamConfigObj)
+    result.UpstreamConfig = toUpstreamConfig(upstreamConfigObj)
 
 proc toNetwork*(jsonObj: JsonNode): Network =
   discard jsonObj.getProp("id", result.id)
@@ -207,3 +207,23 @@ proc toSettingsDto*(jsonObj: JsonNode): SettingsDto =
 
   discard jsonObj.getProp(KEY_NODE_CONFIG, result.nodeConfig)
   discard jsonObj.getProp(KEY_WAKU_BLOOM_FILTER_MODE, result.wakuBloomFilterMode)
+
+proc configToJsonNode*(config: Config): JsonNode =
+  let configAsString = $$config
+  result = parseJson(configAsString)
+
+proc networkToJsonNode*(network: Network): JsonNode =
+  ## we cannot use the same technique as we did for `configToJsonNode` cause we cannot have 
+  ## variable name with a dash in order to map `etherscan-link` appropriatelly
+  return %*{
+    "id": network.id,
+    "etherscan-link": network.etherscanLink,
+    "name": network.name,
+    "config": configToJsonNode(network.config)
+  }
+
+proc availableNetworksToJsonNode*(networks: seq[Network]): JsonNode =
+  var availableNetworksAsJson = newJArray()
+  for n in networks:
+    availableNetworksAsJson.add(networkToJsonNode(n))
+  return availableNetworksAsJson

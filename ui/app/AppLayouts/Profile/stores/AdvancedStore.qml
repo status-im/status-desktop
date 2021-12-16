@@ -16,6 +16,8 @@ QtObject {
     property bool isAutoMessageEnabled: advancedModule.isAutoMessageEnabled
     property bool isDebugEnabled: advancedModule.isDebugEnabled
 
+    property var customNetworksModel: advancedModule.customNetworksModel
+
     property bool isWakuV2: root.fleet === Constants.waku_prod ||
                             root.fleet === Constants.waku_test
 
@@ -49,5 +51,9 @@ QtObject {
 
     function toggleDebug() {
         root.advancedModule.toggleDebug()
+    }
+
+    function addCustomNetwork(name, endpoint, networkId, networkType) {
+        root.advancedModule.addCustomNetwork(name, endpoint, networkId, networkType)
     }
 }

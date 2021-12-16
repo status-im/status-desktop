@@ -8,7 +8,7 @@ import status/statusgo_backend_new/accounts as status_account
 import status/statusgo_backend_new/general as status_general
 
 import ../../../app/core/fleets/fleet_configuration
-import ../../common/[account_constants, utils, string_utils]
+import ../../common/[account_constants, network_constants, utils, string_utils]
 import ../../../constants as main_constants
 export service_interface
 
