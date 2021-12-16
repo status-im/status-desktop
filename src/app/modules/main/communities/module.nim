@@ -2,7 +2,7 @@ import NimQml, sequtils
 
 import eventemitter
 import ./io_interface, ./view, ./controller
-import ../item
+import ../../shared_models/section_item
 import ../../../global/global_singleton
 import ../../../../app_service/service/community/service as community_service
 
@@ -56,5 +56,18 @@ method setAllCommunities*[T](self: Module[T], communities: seq[CommunityDto]) =
       c.description,
       c.images.thumbnail,
       icon = "",
-      c.color)
+      c.color,
+      hasNotification = false, 
+      notificationsCount = 0,
+      active = false,
+      enabled = true,
+      c.joined,
+      c.canJoin,
+      c.canRequestAccess,
+      c.isMember,
+      c.permissions.access,
+      c.permissions.ensOnly)
     self.view.addItem(communityItem)
+
+method joinCommunity*[T](self: Module[T], communityId: string): string =
+  self.controller.joinCommunity(communityId)

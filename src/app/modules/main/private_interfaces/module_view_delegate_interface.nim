@@ -1,5 +1,5 @@
 import NimQml
-import ../item
+import ../../shared_models/section_item
 
 method viewDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available") 
@@ -7,7 +7,7 @@ method viewDidLoad*(self: AccessInterface) {.base.} =
 method storePassword*(self: AccessInterface, password: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method setActiveSection*(self: AccessInterface, item: Item) {.base.} =
+method setActiveSection*(self: AccessInterface, item: SectionItem) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method setUserStatus*(self: AccessInterface, status: bool) {.base.} =

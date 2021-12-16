@@ -8,6 +8,7 @@ include ../../../common/json_utils
 type
   Permission* = object
     access*: int
+    ensOnly*: bool
 
 type
   Images* = object
@@ -59,6 +60,7 @@ type CommunityDto* = object
 proc toPermission(jsonObj: JsonNode): Permission =
   result = Permission()
   discard jsonObj.getProp("access", result.access)
+  discard jsonObj.getProp("ens_only", result.ensOnly)
 
 proc toImages(jsonObj: JsonNode): Images =
   result = Images()

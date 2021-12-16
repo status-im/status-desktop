@@ -19,6 +19,9 @@ method viewDidLoad*(self: AccessInterface) {.base.} =
 method setAllCommunities*(self: AccessInterface, communities: seq[CommunityDto]) {.base.} =
   raise newException(ValueError, "No implementation available") 
 
+method joinCommunity*(self: AccessInterface, communityId: string): string {.base.} =
+  raise newException(ValueError, "No implementation available") 
+
 type
   ## Abstract class (concept) which must be implemented by object/s used in this 
   ## module.

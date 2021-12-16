@@ -1,6 +1,6 @@
 import NimQml, Tables
 
-import io_interface, view, controller, item, model
+import io_interface, view, controller, ../shared_models/section_item, ../shared_models/section_model
 import ../../global/app_sections_config as conf
 import ../../global/global_singleton
 
@@ -88,7 +88,15 @@ proc newModule*[T](
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
   result.controller = controller.newController(
-    result, events, settingsService, keychainService, accountsService, chatService, communityService
+    result,
+    events,
+    settingsService,
+    keychainService,
+    accountsService,
+    chatService,
+    communityService,
+    contactsService,
+    messageService
   )
   result.moduleLoaded = false
 
@@ -127,6 +135,23 @@ method delete*[T](self: Module[T]) =
   self.viewVariant.delete
   self.controller.delete
 
+method createCommunityItem*[T](self: Module[T], c: CommunityDto): SectionItem = 
+  let (unviewedCount, mentionsCount) = self.controller.getNumOfNotificationsForCommunity(c.id)
+  let hasNotification = unviewedCount > 0 or mentionsCount > 0
+  let notificationsCount = mentionsCount # we need to add here number of requests
+  result = initItem(
+    c.id,
+    SectionType.Community,
+    c.name,
+    c.description,
+    c.images.thumbnail,
+    "",
+    c.color,
+    hasNotification,
+    notificationsCount,
+    false,
+    singletonInstance.localAccountSensitiveSettings.getCommunitiesEnabled())
+
 method load*[T](
     self: Module[T],
     events: EventEmitter,
@@ -147,14 +172,14 @@ method load*[T](
       self,
       events,
       c.id,
-      true,
+      isCommunity = true,
       contactsService,
       chatService,
       communityService,
       messageService
     )
 
-  var activeSection: Item
+  var activeSection: SectionItem
   var activeSectionId = singletonInstance.localAccountSensitiveSettings.getActiveSection()
 
   # Chat Section
@@ -170,11 +195,7 @@ method load*[T](
 
   # Community Section
   for c in joinedCommunities:
-    let (unviewedCount, mentionsCount) = self.controller.getNumOfNotificationsForCommunity(c.id)
-    let hasNotification = unviewedCount > 0 or mentionsCount > 0
-    let notificationsCount = mentionsCount # we need to add here number of requests
-    let communitySectionItem = initItem(c.id, SectionType.Community, c.name, c.description, c.images.thumbnail, "",
-      c.color, hasNotification, notificationsCount, false, singletonInstance.localAccountSensitiveSettings.getCommunitiesEnabled())
+    let communitySectionItem = self.createCommunityItem(c)
     self.view.addItem(communitySectionItem)
     if(activeSectionId == communitySectionItem.id):
       activeSection = communitySectionItem
@@ -316,7 +337,7 @@ method emitStoringPasswordError*[T](self: Module[T], errorDescription: string) =
 method emitStoringPasswordSuccess*[T](self: Module[T]) =
   self.view.emitStoringPasswordSuccess()
 
-method setActiveSection*[T](self: Module[T], item: Item) =
+method setActiveSection*[T](self: Module[T], item: SectionItem) =
   if(item.isEmpty()):
     echo "section is empty and cannot be made as active one"
     return
@@ -367,3 +388,26 @@ method onActiveChatChange*[T](self: Module[T], sectionId: string, chatId: string
 
 method getAppSearchModule*[T](self: Module[T]): QVariant =
   self.appSearchModule.getModuleAsVariant()
+
+method communityJoined*[T](
+    self: Module[T],
+    community: CommunityDto,
+    events: EventEmitter,
+    contactsService: contacts_service.Service,
+    chatService: chat_service.Service,
+    communityService: community_service.ServiceInterface,
+    messageService: message_service.Service
+    ) =
+  self.communitySectionsModule[community.id] = chat_section_module.newModule(
+      self,
+      events,
+      community.id,
+      isCommunity = true,
+      contactsService,
+      chatService,
+      communityService,
+      messageService
+    )
+
+  self.view.addItem(self.createCommunityItem(community))
+  # TODO do we need to set it as active

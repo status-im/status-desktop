@@ -355,9 +355,9 @@ Item {
 //            onSetActiveCommunity: {
 //                root.store.chatsModelInst.communities.setActiveCommunity(id)
 //            }
-//            onSetObservedCommunity: {
-//                root.store.chatsModelInst.communities.setObservedCommunity(id)
-//            }
+           onSetObservedCommunity: {
+               root.store.communitiesModuleInst.setObservedCommunity(id)
+           }
             onClosed: {
                 destroy()
             }

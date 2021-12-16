@@ -31,3 +31,6 @@ method init*[T](self: Controller[T]) =
   let communities = self.communityService.getAllCommunities()
   self.delegate.setAllCommunities(communities)
 
+method joinCommunity*[T](self: Controller[T], communityId: string): string =
+  self.communityService.joinCommunity(communityId)
+

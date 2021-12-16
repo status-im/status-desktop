@@ -38,3 +38,12 @@ method getChats*(self: ServiceInterface, communityId: string, categoryId = "", o
 
 method getAllChats*(self: ServiceInterface, communityId: string, order = SortOrder.Ascending): seq[Chat] {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method isUserMemberOfCommunity*(self: ServiceInterface, communityId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method userCanJoin*(self: ServiceInterface, communityId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method joinCommunity*(self: ServiceInterface, communityId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
