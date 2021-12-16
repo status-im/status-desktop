@@ -34,6 +34,9 @@ method getDapp*(self: Controller, dapp:string): Option[dapp_permissions_service.
 method hasPermission*(self: Controller, dapp: string, permission: dapp_permissions_service.Permission):bool =
   return self.dappPermissionsService.hasPermission(dapp, permission)
 
+method addPermission*(self: Controller, dapp: string, permission: dapp_permissions_service.Permission) =
+  discard self.dappPermissionsService.addPermission(dapp, permission)
+
 method clearPermissions*(self: Controller, dapp: string) =
   discard self.dappPermissionsService.clearPermissions(dapp)
 

@@ -14,6 +14,10 @@ QtObject {
         dappPermissionsModule.revokeAllPermissions()
     }
 
+    function addPermission(permission, hostName  ){
+        dappPermissionsModule.addPermission(permission, hostName)
+    }
+
     function determineRealURL(text){
         var url = RootStore.getUrlFromUserInput(text);
         var host = providerModule.getHost(url);

@@ -68,6 +68,12 @@ QtObject:
     let uintValue = status_utils.eth2Wei(parseFloat(eth), decimals)
     return uintValue.toString()
 
+  proc eth2Hex*(self: UtilsView, eth: float): string {.slot.} =
+    return "0x" & status_utils.eth2Wei(eth, 18).toHex()
+
+  proc gwei2Hex*(self: UtilsView, gwei: float): string {.slot.} =
+    return "0x" & status_utils.gwei2wei(gwei).toHex()
+
   proc getStickerMarketAddress(self: UtilsView): string {.slot.} =
     $self.status.stickers.getStickerMarketAddress
 

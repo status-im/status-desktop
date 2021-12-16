@@ -58,8 +58,8 @@ method viewDidLoad*(self: Module) =
 method disconnect*(self: Module) =
   self.controller.disconnect()
 
-method postMessage*(self: Module, message: string): string =
-  return self.controller.postMessage(message)
+method postMessage*(self: Module, requestType: string, message: string): string =
+  return self.controller.postMessage(requestType, message)
 
 method hasPermission*(self: Module, hostname: string, permission: string): bool =
   return self.controller.hasPermission(hostname, permission)

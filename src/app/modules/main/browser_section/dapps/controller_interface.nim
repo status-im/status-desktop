@@ -17,6 +17,9 @@ method getDapps*(self: AccessInterface): seq[dapp_permissions_service.Dapp] {.ba
 method getDapp*(self: AccessInterface, dapp: string): Option[dapp_permissions_service.Dapp] {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method addPermission*(self: AccessInterface, dapp: string, permission: dapp_permissions_service.Permission) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method hasPermission*(self: AccessInterface, dapp: string, permission: dapp_permissions_service.Permission):bool {.base.} =
   raise newException(ValueError, "No implementation available")
 

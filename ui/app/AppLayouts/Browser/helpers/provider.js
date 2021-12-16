@@ -858,30 +858,17 @@ You may add additional accurate notices of copyright ownership.
       window.ethereum.on("accountsChanged", () => {});
     });
 
-    const bridgeSend = data => {
+    const bridgeSend = (requestType, data) => {
         data.hostname = new URL(document.location).host;
         data.title = document.title;
-        backend.postMessage(JSON.stringify(data));
+        backend.postMessage(requestType, JSON.stringify(data));
     }
-
-    let history = window.history;
-    let pushState = history.pushState;
-    history.pushState = function(state) {
-      setTimeout(function () {
-        bridgeSend({
-          type: "history-state-changed",
-          navState: { url: location.href, title: document.title },
-        });
-      }, 100);
-      return pushState.apply(history, arguments);
-    };
 
     function sendAPIrequest(permission, params) {
       const messageId = callbackId++;
       params = params || {};  
       
-      bridgeSend({
-          type: 'api-request',
+      bridgeSend('api-request', {
           permission: permission,
           messageId: messageId,
           params: params
@@ -1047,8 +1034,7 @@ You may add additional accurate notices of copyright ownership.
         params: requestArguments.params,
       };  
 
-      bridgeSend({
-        type: "web3-send-async-read-only",
+      bridgeSend("web3-send-async-read-only", {
         messageId: messageId,
         payload: payload,
       });  
@@ -1094,16 +1080,14 @@ You may add additional accurate notices of copyright ownership.
           };
 
           for (let i in payload) {
-            bridgeSend({
-              type: "web3-send-async-read-only",
+            bridgeSend("web3-send-async-read-only", {
               messageId: messageId,
               payload: payload[i],
             });
           }
         } else {
           callbacks[messageId] = { callback: callback };
-          bridgeSend({
-            type: "web3-send-async-read-only",
+          bridgeSend("web3-send-async-read-only", {
             messageId: messageId,
             payload: payload,
           });

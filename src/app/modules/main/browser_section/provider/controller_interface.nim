@@ -22,7 +22,7 @@ method getCurrentNetworkDetails*(self: AccessInterface): NetworkDetails {.base.}
 method disconnect*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method postMessage*(self: AccessInterface, message: string): string {.base.} =
+method postMessage*(self: AccessInterface, requestType: string, message: string): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method hasPermission*(self: AccessInterface, hostname: string, permission: string): bool {.base.} =

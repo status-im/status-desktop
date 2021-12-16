@@ -31,9 +31,11 @@ StatusModal {
 
     function postMessage(isAllowed){
         interactedWith = true
-        request.isAllowed = isAllowed;
         currentTabConnected = isAllowed
-        provider.web3Response(Web3ProviderStore.web3ProviderInst.postMessage(JSON.stringify(request)));
+        if(isAllowed){
+            Web3ProviderStore.addPermission(request.hostname, request.permission)
+        }
+        provider.web3Response(Web3ProviderStore.web3ProviderInst.postMessage("api-request", JSON.stringify(request)));
     }
 
     onClosed: {
