@@ -83,6 +83,8 @@ Item {
         showMoreButton: root.showMoreButton
         fromAuthor: senderId
         editBtnActive: isText && !isEdit && isCurrentUser && showEdit
+        activityCenterMsg: activityCenterMessage
+        placeholderMsg: placeholderMessage
         onClickMessage: {
             root.clickMessage(isProfileClick, isSticker, isImage, image, emojiOnly, hideEmojiPicker, false, false, "");
         }
@@ -479,7 +481,7 @@ Item {
                 z: 51
                 sourceComponent: Component {
                     StatusChatImage {
-                        imageSource: image
+                        imageSource: messageImage
                         imageWidth: 200
                         onClicked: {
                             if (mouse.button === Qt.LeftButton) {

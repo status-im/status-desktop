@@ -12,14 +12,15 @@ Rectangle {
     property int contentType: 2
     property var messageContextMenu
     property bool showMoreButton: true
-    property bool activityCenterMessage
+    property bool activityCenterMsg
+    property bool placeholderMsg
     property string fromAuthor
     property alias editBtnActive: editBtn.active
     signal hoverChanged(bool hovered)
     signal setMessageActive(string messageId, bool active)
     signal clickMessage(bool isProfileClick, bool isSticker, bool isImage, var image, bool emojiOnly, bool hideEmojiPicker)
 
-    visible: !placeholderMessage && !activityCenterMessage &&
+    visible: !buttonsContainer.placeholderMsg && !buttonsContainer.activityCenterMsg &&
              (buttonsContainer.parentIsHovered || isMessageActive)
              && contentType !== Constants.messageContentType.transactionType
     width: buttonRow.width + buttonsContainer.containerMargin * 2

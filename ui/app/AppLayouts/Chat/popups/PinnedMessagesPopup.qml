@@ -17,25 +17,12 @@ import StatusQ.Controls 0.1 as StatusQControls
 
 // TODO: replace with StatusMOdal
 ModalPopup {
-    property var rootStore
+    id: popup
+
     property var messageStore
-    property var chatSectionModule
-    property bool userCanPin: {
-        // Not Refactored Yet
-        return false
-//        switch (popup.rootStore.chatsModelInst.channelView.activeChannel.chatType) {
-//        case Constants.chatType.publicChat: return false
-//        case Constants.chatType.profile: return false
-//        case Constants.chatType.oneToOne: return true
-//        case Constants.chatType.privateGroupChat: return popup.rootStore.chatsModelInst.channelView.activeChannel.isAdmin(userProfile.pubKey)
-//        case Constants.chatType.communityChat: return popup.rootStore.chatsModelInst.communities.activeCommunity.admin
-//        default: return false
-//        }
-    }
+    property var pinnedMessagesModel //this doesn't belong to the messageStore, it is a part of the ChatContentStore, but we didn't introduce it yet.
     property string messageToPin
     property string messageToUnpin
-
-    id: popup
 
     header: Item {
         height: childrenRect.height
@@ -44,7 +31,7 @@ ModalPopup {
         StyledText {
             id: title
             //% "Pin limit reached"
-            text: !!messageToPin ? qsTrId("pin-limit-reached") :
+            text: !!popup.messageToPin ? qsTrId("pin-limit-reached") :
                                                //% "Pinned messages"
                                                qsTrId("pinned-messages")
             anchors.top: parent.top
@@ -58,7 +45,7 @@ ModalPopup {
 
             id: nbPinnedMessages
             text: {
-                if (!!messageToPin) {
+                if (!!popup.messageToPin) {
                     //% "Unpin a previous message first"
                     return qsTrId("unpin-a-previous-message-first")
                 }
@@ -102,8 +89,7 @@ ModalPopup {
 
         ListView {
             id: pinnedMessageListView
-            // Not Refactored Yet
-//            model: popup.rootStore.chatsModelInst.messageView.pinnedMessagesList
+            model: popup.pinnedMessagesModel
             height: parent.height
             anchors.left: parent.left
             anchors.leftMargin: -Style.current.padding
@@ -113,7 +99,7 @@ ModalPopup {
             anchors.top: parent.top
             anchors.topMargin: -Style.current.halfPadding
             clip: true
-            
+
             delegate: Item {
                 id: messageDelegate
                 property var listView: ListView.view
@@ -122,74 +108,38 @@ ModalPopup {
 
                 MessageView {
                     id: messageItem
-//                    rootStore: popup.rootStore
-//                    messageStore: popup.messageStore
-                    /////////////TODO Remove
-//                    fromAuthor: model.fromAuthor
-//                    chatId: model.chatId
-//                    userName: model.userName
-//                    alias: model.alias
-//                    localName: model.localName
-//                    message: model.message
-//                    plainText: model.plainText
-//                    identicon: model.identicon
-//                    isCurrentUser: model.isCurrentUser
-//                    timestamp: model.timestamp
-//                    sticker: model.sticker
-//                    contentType: model.contentType
-//                    outgoingStatus: model.outgoingStatus
-//                    responseTo: model.responseTo
-//                    imageClick: imagePopup.openPopup.bind(imagePopup)
-//                    messageId: model.messageId
-//                    emojiReactions: model.emojiReactions
-//                    linkUrls: model.linkUrls
-//                    communityId: model.communityId
-//                    hasMention: model.hasMention
-//                    stickerPackId: model.stickerPackId
-//                    timeout: model.timeout
-//                    pinnedMessage: true
-//                    pinnedBy: model.pinnedBy
-//                    forceHoverHandler: !messageToPin
-//                    activityCenterMessage: false
-//                    isEdited: model.isEdited
-//                    showEdit: false
-//                    messageContextMenu: msgContextMenu
-//                    Component.onCompleted: {
-//                        messageStore.fromAuthor = model.fromAuthor;
-//                        messageStore.chatId = model.chatId;
-//                        messageStore.userName = model.userName;
-//                        messageStore.alias = model.alias;
-//                        messageStore.localName = model.localName;
-//                        messageStore.message = model.message;
-//                        messageStore.plainText = model.plainText;
-//                        messageStore.identicon = model.identicon;
-//                        messageStore.isCurrentUser = model.isCurrentUser;
-//                        messageStore.timestamp = model.timestamp;
-//                        messageStore.sticker = model.sticker;
-//                        messageStore.contentType = model.contentType;
-//                        messageStore.outgoingStatus = model.outgoingStatus;
-//                        messageStore.responseTo = model.responseTo;
-//                        messageStore.imageClick = imagePopup.openPopup.bind(imagePopup);
-//                        messageStore.messageId = model.messageId;
-//                        messageStore.emojiReactions = model.emojiReactions;
-//                        messageStore.linkUrls = model.linkUrls;
-//                        messageStore.communityId = model.communityId;
-//                        messageStore.hasMention = model.hasMention;
-//                        messageStore.stickerPackId = model.stickerPackId;
-//                        messageStore.timeout = model.timeout;
-//                        messageStore.pinnedMessage = true;
-//                        messageStore.pinnedBy = model.pinnedBy;
-//                        messageStore.forceHoverHandler = !messageToPin;
-//                        messageStore.activityCenterMessage = false;
-//                        messageStore.isEdited = model.isEdited;
-//                        messageStore.showEdit = false;
-//                        messageStore.messageContextMenu = msgContextMenu;
-//                    }
+                    messageStore: popup.messageStore
+                    messageContextMenu: msgContextMenu
+
+                    messageId: model.id
+                    responseToMessageWithId: model.responseToMessageWithId
+                    senderId: model.senderId
+                    senderDisplayName: model.senderDisplayName
+                    senderLocalName: model.senderLocalName
+                    senderIcon: model.senderIcon
+                    isSenderIconIdenticon: model.isSenderIconIdenticon
+                    amISender: model.amISender
+                    message: model.messageText
+                    messageImage: model.messageImage
+                    messageTimestamp: model.timestamp
+                    messageOutgoingStatus: model.outgoingStatus
+                    messageContentType: model.contentType
+                    pinnedMessage: model.pinned
+
+                    // This is possible since we have all data loaded before we load qml.
+                    // When we fetch messages to fulfill a gap we have to set them at once.
+                    prevMessageIndex: index - 1
+                    prevMessageAsJsonObj: popup.messageStore? popup.messageStore.getMessageByIndexAsJson(index - 1) : {}
+                    nextMessageIndex: index + 1
+                    nextMessageAsJsonObj: popup.messageStore? popup.messageStore.messageStore.getMessageByIndexAsJson(index + 1) : {}
+
+                    // Additional params
+                    forceHoverHandler: !popup.messageToPin
                 }
 
                 MouseArea {
                     anchors.fill: parent
-                    enabled: !!messageToPin
+                    enabled: !!popup.messageToPin
                     cursorShape: Qt.PointingHandCursor
                     z: 55
                     onClicked: radio.toggle()
@@ -197,7 +147,7 @@ ModalPopup {
 
                 StatusQControls.StatusRadioButton {
                     id: radio
-                    visible: !!messageToPin
+                    visible: !!popup.messageToPin
                     anchors.right: parent.right
                     anchors.rightMargin: 18
                     anchors.verticalCenter: parent.verticalCenter
@@ -205,7 +155,7 @@ ModalPopup {
                     function toggle() {
                         radio.checked = !radio.checked
                         if (radio.checked) {
-                            messageToUnpin = model.messageId
+                            popup.messageToUnpin = model.id
                         }
                     }
                 }
@@ -215,11 +165,16 @@ ModalPopup {
             id: msgContextMenu
             pinnedPopup: true
             pinnedMessage: true
-//            chatSectionModule: popup.chatSectionModule
-//            store: popup.rootStore
-//            reactionModel: popup.rootStore.emojiReactionsModel
             onShouldCloseParentPopup: {
                 popup.close()
+            }
+
+            onPinMessage: {
+                popup.messageStore.pinMessage(messageId)
+            }
+
+            onUnpinMessage: {
+                popup.messageStore.unpinMessage(messageId)
             }
         }
     }
@@ -231,18 +186,16 @@ ModalPopup {
 
         StatusQControls.StatusButton {
             id: btnUnpin
-            visible: !!messageToPin
-            enabled: !!messageToUnpin
+            visible: !!popup.messageToPin
+            enabled: !!popup.messageToUnpin
             //% "Unpin"
             text: qsTrId("unpin")
             type: StatusQControls.StatusBaseButton.Type.Danger
             anchors.right: parent.right
             onClicked: {
-                // Not Refactored Yet
-//                const chatId = popup.rootStore.chatsModelInst.channelView.activeChannel.id
-//                popup.rootStore.chatsModelInst.messageView.unPinMessage(messageToUnpin, chatId)
-//                popup.rootStore.chatsModelInst.messageView.pinMessage(messageToPin, chatId)
-                messageToUnpin = messageToPin = ""
+                popup.messageStore.unpinMessage(popup.messageToUnpin)
+                popup.messageToUnpin = ""
+                popup.messageToPin = ""
                 popup.close()
             }
         }
