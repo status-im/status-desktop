@@ -214,11 +214,19 @@ QtObject {
         return contactsModuleModel.isAdded(address);
     }
 
-    function contactRequestReceived(activeChatId) {
-        return contactsModuleModel.contactRequestReceived(activeChatId)
+    function contactRequestReceived(pubkey) {
+        return contactsModuleModel.contactRequestReceived(pubkey)
     }
 
-    function isContactBlocked(activeChatId) {
-        return contactsModuleModel.isContactBlocked(activeChatId)
+    function isContactBlocked(pubkey) {
+        return contactsModuleModel.isContactBlocked(pubkey)
+    }
+
+    function isEnsVerified(pubkey) {
+        return contactsModuleModel.isEnsVerified(pubkey)
+    }
+
+    function alias(pubkey) {
+        return contactsModuleModel.alias(pubkey)
     }
 }
