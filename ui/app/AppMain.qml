@@ -35,7 +35,7 @@ Item {
     // set from main.qml
     property var sysPalette
     // Not Refactored Yet
-    property var newVersionJSON: "" //JSON.parse(utilsModel.newVersion)
+    property var newVersionJSON: ({}) //JSON.parse(utilsModel.newVersion)
     property bool profilePopupOpened: false
     // Not Refactored Yet
 //    property bool networkGuarded: profileModel.network.current === Constants.networkMainnet || (profileModel.network.current === Constants.networkRopsten && localAccountSensitiveSettings.stickersEnsRopsten)
@@ -167,19 +167,6 @@ Item {
         track: "notification.wav"
     }
 
-    ModuleWarning {
-        id: versionWarning
-        width: parent.width
-        visible: newVersionJSON.available
-        color: Style.current.green
-        btnWidth: 100
-        text: qsTr("A new  version of Status (%1) is available").arg(newVersionJSON.version)
-        btnText: qsTr("Download") 
-        onClick: function(){
-            Global.openDownloadModal()
-        }
-    }
-
     AppSearch{
         id: appSearch
         store: mainModule.appSearchModule
@@ -190,12 +177,10 @@ Item {
 
         width: parent.width
         anchors.top: parent.top
-        anchors.topMargin: versionWarning.visible ? 32 : 0
         anchors.bottom: parent.bottom
 
         appNavBar: StatusAppNavBar {
             height: appMain.height
-
             communityTypeRole: "sectionType"
             communityTypeValue: Constants.appSection.community
             sectionModel: mainModule.sectionsModel
@@ -347,177 +332,197 @@ Item {
             }
         }
 
-        appView: StackLayout {
-            id: appView
+        appView: ColumnLayout {
             anchors.fill: parent
-            currentIndex: {
-                if(mainModule.activeSection.sectionType === Constants.appSection.chat) {
-                    return Constants.appViewStackIndex.chat
-                }
-                else if(mainModule.activeSection.sectionType === Constants.appSection.community) {
 
-                    for(let i = this.children.length - 1; i >=0; i--)
-                    {
-                        var obj = this.children[i];
-                        if(obj && obj.sectionId && obj.sectionId == mainModule.activeSection.id)
+            ModuleWarning {
+                id: versionWarning
+                width: parent.width
+                visible: !!newVersionJSON.available
+                color: Style.current.green
+                btnWidth: 100
+                text: qsTr("A new version of Status (%1) is available").arg(newVersionJSON.version)
+                btnText: qsTr("Download")
+                onClick: function(){
+                    Global.openDownloadModal()
+                }
+            }
+
+            StackLayout {
+                id: appView
+                width: parent.width
+
+                Layout.fillHeight: true
+
+                currentIndex: {
+                    if(mainModule.activeSection.sectionType === Constants.appSection.chat) {
+                        return Constants.appViewStackIndex.chat
+                    }
+                    else if(mainModule.activeSection.sectionType === Constants.appSection.community) {
+
+                        for(let i = this.children.length - 1; i >=0; i--)
                         {
-                            return i
+                            var obj = this.children[i];
+                            if(obj && obj.sectionId && obj.sectionId == mainModule.activeSection.id)
+                            {
+                                return i
+                            }
                         }
+
+                        // Should never be here, correct index must be returned from the for loop above
+                        console.error("Wrong section type: ", mainModule.activeSection.sectionType,
+                                      " or section id: ", mainModule.activeSection.id)
+                        return Constants.appViewStackIndex.community
+                    }
+                    else if(mainModule.activeSection.sectionType === Constants.appSection.wallet) {
+                        return Constants.appViewStackIndex.wallet
+                    }
+                    else if(mainModule.activeSection.sectionType === Constants.appSection.walletv2) {
+                        return Constants.appViewStackIndex.walletv2
+                    }
+                    else if(mainModule.activeSection.sectionType === Constants.appSection.browser) {
+                        return Constants.appViewStackIndex.browser
+                    }
+                    else if(mainModule.activeSection.sectionType === Constants.appSection.profile) {
+                        return Constants.appViewStackIndex.profile
+                    }
+                    else if(mainModule.activeSection.sectionType === Constants.appSection.node) {
+                        return Constants.appViewStackIndex.node
                     }
 
-                    // Should never be here, correct index must be returned from the for loop above
-                    console.error("Wrong section type: ", mainModule.activeSection.sectionType,
-                                  " or section id: ", mainModule.activeSection.id)
-                    return Constants.appViewStackIndex.community
-                }
-                else if(mainModule.activeSection.sectionType === Constants.appSection.wallet) {
-                    return Constants.appViewStackIndex.wallet
-                }
-                else if(mainModule.activeSection.sectionType === Constants.appSection.walletv2) {
-                    return Constants.appViewStackIndex.walletv2
-                }
-                else if(mainModule.activeSection.sectionType === Constants.appSection.browser) {
-                    return Constants.appViewStackIndex.browser
-                }
-                else if(mainModule.activeSection.sectionType === Constants.appSection.profile) {
-                    return Constants.appViewStackIndex.profile
-                }
-                else if(mainModule.activeSection.sectionType === Constants.appSection.node) {
-                    return Constants.appViewStackIndex.node
+                    // We should never end up here
+                    console.error("Unknown section type")
                 }
 
-                // We should never end up here
-                console.error("Unknown section type")
-            }
+                onCurrentIndexChanged: {
+                    var obj = this.children[currentIndex];
+                    if(!obj)
+                        return
 
-            onCurrentIndexChanged: {
-                var obj = this.children[currentIndex];
-                if(!obj)
-                    return
+                    if (obj.onActivated && typeof obj.onActivated === "function") {
+                        this.children[currentIndex].onActivated()
+                    }
 
-                if (obj.onActivated && typeof obj.onActivated === "function") {
-                    this.children[currentIndex].onActivated()
+                    if(obj === browserLayoutContainer && browserLayoutContainer.active == false){
+                        browserLayoutContainer.active = true;
+                    }
+
+                    if(obj === walletLayoutContainer){
+                        walletLayoutContainer.showSigningPhrasePopup();
+                    }
+
+                    if(obj === walletV2LayoutContainer){
+                        walletV2LayoutContainer.showSigningPhrasePopup();
+                    }
                 }
 
-                if(obj === browserLayoutContainer && browserLayoutContainer.active == false){
-                    browserLayoutContainer.active = true;
+                // NOTE:
+                // If we ever change stack layout component order we need to updade
+                // Constants.appViewStackIndex accordingly
+
+                ChatLayout {
+                    id: chatLayoutContainer
+                    Layout.fillWidth: true
+                    Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+                    Layout.fillHeight: true
+                    onProfileButtonClicked: {
+                        Global.changeAppSectionBySectionType(Constants.appSection.profile);
+                    }
+
+                    onOpenAppSearch: {
+                        appSearch.openSearchPopup()
+                    }
+
+                    Component.onCompleted: {
+                        chatCommunitySectionModule = mainModule.getChatSectionModule()
+                    }
                 }
 
-                if(obj === walletLayoutContainer){
-                    walletLayoutContainer.showSigningPhrasePopup();
+                WalletLayout {
+                    id: walletLayoutContainer
+                    Layout.fillWidth: true
+                    Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+                    Layout.fillHeight: true
                 }
 
-                if(obj === walletV2LayoutContainer){
-                    walletV2LayoutContainer.showSigningPhrasePopup();
-                }
-            }
-
-            // NOTE:
-            // If we ever change stack layout component order we need to updade
-            // Constants.appViewStackIndex accordingly
-
-            ChatLayout {
-                id: chatLayoutContainer
-                Layout.fillWidth: true
-                Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                Layout.fillHeight: true
-                onProfileButtonClicked: {
-                    Global.changeAppSectionBySectionType(Constants.appSection.profile);
+                Component {
+                    id: browserLayoutComponent
+                    BrowserLayout {
+                        globalStore: appMain.rootStore
+                        sendTransactionModal: sendModal
+                    }
                 }
 
-                onOpenAppSearch: {
-                    appSearch.openSearchPopup()
+                Loader {
+                    id: browserLayoutContainer
+                    sourceComponent: browserLayoutComponent
+                    active: false
+                    Layout.fillWidth: true
+                    Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+                    Layout.fillHeight: true
+                    // Loaders do not have access to the context, so props need to be set
+                    // Adding a "_" to avoid a binding loop
+                    // Not Refactored Yet
+    //                property var _chatsModel: chatsModel.messageView
+                    // Not Refactored Yet
+    //                property var _walletModel: walletModel
+                    // Not Refactored Yet
+    //                property var _utilsModel: utilsModel
+                    property var _web3Provider: web3Provider
                 }
 
-                Component.onCompleted: {
-                    chatCommunitySectionModule = mainModule.getChatSectionModule()
-                }
-            }
-
-            WalletLayout {
-                id: walletLayoutContainer
-                Layout.fillWidth: true
-                Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                Layout.fillHeight: true
-            }
-
-            Component {
-                id: browserLayoutComponent
-                BrowserLayout {
+                ProfileLayout {
+                    id: profileLayoutContainer
+                    Layout.fillWidth: true
+                    Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+                    Layout.fillHeight: true
                     globalStore: appMain.rootStore
-                    sendTransactionModal: sendModal
+                    systemPalette: appMain.sysPalette
+                    networkGuarded: appMain.networkGuarded
                 }
-            }
 
-            Loader {
-                id: browserLayoutContainer
-                sourceComponent: browserLayoutComponent
-                active: false
-                Layout.fillWidth: true
-                Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                Layout.fillHeight: true
-                // Loaders do not have access to the context, so props need to be set
-                // Adding a "_" to avoid a binding loop
-                // Not Refactored Yet
-//                property var _chatsModel: chatsModel.messageView
-                // Not Refactored Yet
-//                property var _walletModel: walletModel
-                // Not Refactored Yet
-//                property var _utilsModel: utilsModel
-                property var _web3Provider: web3Provider
-            }
+                NodeLayout {
+                    id: nodeLayoutContainer
+                    Layout.fillWidth: true
+                    Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+                    Layout.fillHeight: true
+                }
 
-            ProfileLayout {
-                id: profileLayoutContainer
-                Layout.fillWidth: true
-                Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                Layout.fillHeight: true
-                globalStore: appMain.rootStore
-                systemPalette: appMain.sysPalette
-                networkGuarded: appMain.networkGuarded
-            }
+                WalletV2Layout {
+                    id: walletV2LayoutContainer
+                    Layout.fillWidth: true
+                    Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+                    Layout.fillHeight: true
+                }
 
-            NodeLayout {
-                id: nodeLayoutContainer
-                Layout.fillWidth: true
-                Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                Layout.fillHeight: true
-            }
+                Repeater{
+                    model: mainModule.sectionsModel
 
-            WalletV2Layout {
-                id: walletV2LayoutContainer
-                Layout.fillWidth: true
-                Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                Layout.fillHeight: true
-            }
+                    delegate: DelegateChooser {
+                        id: delegateChooser
+                        role: "sectionType"
+                        DelegateChoice {
+                            roleValue: Constants.appSection.community
+                            delegate: ChatLayout {
+                                property string sectionId: model.id
+                                Layout.fillWidth: true
+                                Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+                                Layout.fillHeight: true
 
-            Repeater{
-                model: mainModule.sectionsModel
+                                onProfileButtonClicked: {
+                                    Global.changeAppSectionBySectionType(Constants.appSection.profile);
+                                }
 
-                delegate: DelegateChooser {
-                    id: delegateChooser
-                    role: "sectionType"
-                    DelegateChoice {
-                        roleValue: Constants.appSection.community
-                        delegate: ChatLayout {
-                            property string sectionId: model.id
-                            Layout.fillWidth: true
-                            Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                            Layout.fillHeight: true
+                                onOpenAppSearch: {
+                                    appSearch.openSearchPopup()
+                                }
 
-                            onProfileButtonClicked: {
-                                Global.changeAppSectionBySectionType(Constants.appSection.profile);
-                            }
-
-                            onOpenAppSearch: {
-                                appSearch.openSearchPopup()
-                            }
-
-                            Component.onCompleted: {
-                                // we cannot return QVariant if we pass another parameter in a function call
-                                // that's why we're using it this way
-                                mainModule.prepareCommunitySectionModuleForCommunityId(model.id)
-                                chatCommunitySectionModule = mainModule.getCommunitySectionModule()
+                                Component.onCompleted: {
+                                    // we cannot return QVariant if we pass another parameter in a function call
+                                    // that's why we're using it this way
+                                    mainModule.prepareCommunitySectionModuleForCommunityId(model.id)
+                                    chatCommunitySectionModule = mainModule.getCommunitySectionModule()
+                                }
                             }
                         }
                     }
