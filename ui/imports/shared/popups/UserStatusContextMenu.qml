@@ -86,9 +86,9 @@ PopupMenu {
     Action {
         text: qsTr("Online")
         onTriggered: {
-            if (userProfile.sendUserStatus != true) {
-                // Not Refactored Yet
-//                root.store.profileModelInst.profile.setSendUserStatus(true)
+            //TODO move this to the store as soon as #4274 is merged
+            if (userProfile.userStatus !== true) {
+                mainModule.setUserStatus(true);
             }
             root.close();
         }
@@ -101,9 +101,9 @@ PopupMenu {
     Action {
         text: qsTr("Offline")
         onTriggered: {
-            if (userProfile.sendUserStatus != false) {
-                // Not Refactored Yet
-//                root.store.profileModelInst.profile.setSendUserStatus(false)
+            //TODO move this to the store as soon as #4274 is merged
+            if (userProfile.userStatus !== false) {
+                mainModule.setUserStatus(false);
             }
             root.close();
         }
