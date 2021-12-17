@@ -128,3 +128,10 @@ QtObject:
 
   proc removeContact*(self: View, publicKey: string) {.slot.} =
     self.delegate.removeContact(publicKey)
+
+  proc isEnsVerified*(self: View, publicKey: string): bool {.slot.} =
+    return self.delegate.getContact(publicKey).ensVerified
+
+  proc alias*(self: View, publicKey: string): string {.slot.} =
+    return self.delegate.getContact(publicKey).alias
+
