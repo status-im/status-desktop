@@ -51,11 +51,9 @@ StatusModal {
         fromAuthor = fromAuthorParam || ""
         identicon = identiconParam || ""
         text = textParam || ""
-        // Not Refactored Yet
-//        isEnsVerified = chatsModel.ensView.isEnsVerified(this.fromAuthor)
-        isBlocked = popup.store.contactsModuleInst.model.isContactBlocked(this.fromAuthor);
-        // Not Refactored Yet
-//        alias = chatsModel.alias(this.fromAuthor) || ""
+        isEnsVerified = popup.store.isEnsVerified(this.fromAuthor)
+        isBlocked = popup.store.isContactBlocked(this.fromAuthor);
+        alias = popup.store.alias(this.fromAuthor) || ""
         isCurrentUser = userProfile.pubKey === this.fromAuthor
         showFooter = _showFooter;
         popup.open()
@@ -98,15 +96,15 @@ StatusModal {
             }
 
             StatusDescriptionListItem {
-                // Not Refactored Yet
-//                title: ((isCurrentUser && profileModel.ens.preferredUsername) || isEnsVerified) ? qsTr("ENS username") : qsTr("Username")
-//                subTitle: isCurrentUser ? profileModel.ens.preferredUsername || userName : userName
+                title: ((isCurrentUser && userProfile.ensName) || isEnsVerified) ?
+                    qsTr("ENS username") :
+                    qsTr("Username")
+                subTitle: isCurrentUser ? userProfile.name : userName
                 tooltip.text: qsTr("Copy to clipboard")
                 icon.name: "copy"
                 iconButton.onClicked: {
-                    // Not Refactored Yet
-//                    chatsModel.copyToClipboard(userName)
-//                    tooltip.visible = !tooltip.visible
+                    globalUtils.copyToClipboard(userName)
+                    tooltip.visible = !tooltip.visible
                 }
                 width: parent.width
             }
@@ -120,9 +118,8 @@ StatusModal {
                 tooltip.text: qsTr("Copy to clipboard")
                 icon.name: "copy"
                 iconButton.onClicked: {
-                    // Not Refactored Yet
-//                    chatsModel.copyToClipboard(fromAuthor)
-//                    tooltip.visible = !tooltip.visible
+                    globalUtils.copyToClipboard(userName)
+                    tooltip.visible = !tooltip.visible
                 }
                 width: parent.width
             }
@@ -137,8 +134,7 @@ StatusModal {
                 subTitle: {
                     let user = ""
                     if (isCurrentUser) {
-                        // Not Refactored Yet
-//                        user = profileModel.ens.preferredUsername
+                         user = userProfile.name
                     } else {
                         if (isEnsVerified) {
                             user = userName.startsWith("@") ? userName.substring(1) : userName
@@ -154,8 +150,7 @@ StatusModal {
                 iconButton.onClicked: {
                     let user = ""
                     if (isCurrentUser) {
-                        // Not Refactored Yet
-//                        user = profileModel.ens.preferredUsername
+                         user = userProfile.name
                     } else {
                         if (isEnsVerified) {
                             user = userName.startsWith("@") ? userName.substring(1) : userName
@@ -165,8 +160,7 @@ StatusModal {
                         user = fromAuthor
                     }
 
-                    // Not Refactored Yet
-//                    chatsModel.copyToClipboard(Constants.userLinkPrefix + user)
+                    globalUtils.copyToClipboard(Constants.userLinkPrefix + user)
                     tooltip.visible = !tooltip.visible
                 }
                 width: parent.width
@@ -205,8 +199,7 @@ StatusModal {
             Image {
                 asynchronous: true
                 fillMode: Image.PreserveAspectFit
-                // Not Refactored Yet
-//                source: profileModel.qrCode(fromAuthor)
+                source: globalUtils.qrCode(fromAuthor)
                 anchors.horizontalCenter: parent.horizontalCenter
                 height: 212
                 width: 212
@@ -302,8 +295,7 @@ StatusModal {
             text: qsTr("Add to contacts")
             visible: !isBlocked && !isAdded
             onClicked: {
-                // TODO make a store for this
-                contactsModule.addContact(fromAuthor)
+                popup.store.addContact(fromAuthor);
                 popup.contactAdded(fromAuthor);
                 popup.close();
             }
