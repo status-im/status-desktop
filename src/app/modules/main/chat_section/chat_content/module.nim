@@ -130,7 +130,7 @@ proc buildPinnedMessageItem(self: Module, messageId: string, item: var pinned_ms
 
   let contactDetails = self.controller.getContactDetails(m.`from`)
     
-  var item = initItem(
+  item = pinned_msg_item.initItem(
     m.id,
     m.responseTo,
     m.`from`,
@@ -157,7 +157,7 @@ proc buildPinnedMessageItem(self: Module, messageId: string, item: var pinned_ms
   return true
 
 method newPinnedMessagesLoaded*(self: Module, pinnedMessages: seq[PinnedMessageDto]) = 
-  var viewItems: seq[Item] 
+  var viewItems: seq[pinned_msg_item.Item] 
   for p in pinnedMessages:
     var item: pinned_msg_item.Item
     if(not self.buildPinnedMessageItem(p.message.id, item)):

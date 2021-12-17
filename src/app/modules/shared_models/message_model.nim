@@ -145,6 +145,9 @@ QtObject:
     return -1
 
   proc prependItems*(self: Model, items: seq[Item]) =
+    if(items.len == 0):
+      return
+      
     let parentModelIndex = newQModelIndex()
     defer: parentModelIndex.delete
 
