@@ -13,6 +13,7 @@ QtObject {
         let jsonObj = messageModule.getMessageByIdAsJson(id)
         let obj = JSON.parse(jsonObj)
         if (obj.error) {
+            // This log is available only in debug mode, if it's annoying we can remove it
             console.debug("error parsing message for index: ", id, " error: ", obj.error)
             return false
         }
@@ -27,6 +28,7 @@ QtObject {
         let jsonObj = messageModule.getMessageByIndexAsJson(index)
         let obj = JSON.parse(jsonObj)
         if (obj.error) {
+            // This log is available only in debug mode, if it's annoying we can remove it
             console.debug("error parsing message for index: ", index, " error: ", obj.error)
             return false
         }

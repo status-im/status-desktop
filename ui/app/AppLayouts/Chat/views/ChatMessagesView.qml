@@ -319,9 +319,6 @@ Item {
             prevMessageAsJsonObj: messageStore.getMessageByIndexAsJson(index - 1)
             nextMessageIndex: index + 1
             nextMessageAsJsonObj: messageStore.getMessageByIndexAsJson(index + 1)
-
-            Component.onCompleted: {
-            }
         }
     }
 

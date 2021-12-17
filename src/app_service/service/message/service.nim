@@ -194,20 +194,23 @@ QtObject:
 
   proc pinUnpinMessage*(self: Service, chatId: string, messageId: string, pin: bool) =
     try:
-      let response = status_go.pinUnpinMessage(messageId, chatId, pin)
+      let response = status_go.pinUnpinMessage(chatId, messageId, pin)
       
       var pinMessagesObj: JsonNode
       if(response.result.getProp("pinMessages", pinMessagesObj)):
-        let data = MessagePinUnpinArgs(chatId: chatId, messageId: messageId)
-        var pinned = false
-        if(pinMessagesObj.getProp("pinned", pinned)):
-          if(pinned and pin):
-            self.numOfPinnedMessagesPerChat[chatId] = self.numOfPinnedMessagesPerChat[chatId] + 1
-            self.events.emit(SIGNAL_MESSAGE_PINNED, data)
-        else:
-          if(not pinned and not pin):
-            self.numOfPinnedMessagesPerChat[chatId] = self.numOfPinnedMessagesPerChat[chatId] - 1
-            self.events.emit(SIGNAL_MESSAGE_UNPINNED, data)
+        let pinnedMessagesArr = pinMessagesObj.getElems()
+        if(pinnedMessagesArr.len > 0): # an array is returned
+          let pinMessageObj = pinnedMessagesArr[0]
+          let data = MessagePinUnpinArgs(chatId: chatId, messageId: messageId)
+          var pinned = false
+          if(pinMessageObj.getProp("pinned", pinned)):
+            if(pinned and pin):
+              self.numOfPinnedMessagesPerChat[chatId] = self.numOfPinnedMessagesPerChat[chatId] + 1
+              self.events.emit(SIGNAL_MESSAGE_PINNED, data)
+          else:
+            if(not pinned and not pin):
+              self.numOfPinnedMessagesPerChat[chatId] = self.numOfPinnedMessagesPerChat[chatId] - 1
+              self.events.emit(SIGNAL_MESSAGE_UNPINNED, data)
 
     except Exception as e:
       error "error: ", methodName="pinUnpinMessage", errName = e.name, errDesription = e.msg

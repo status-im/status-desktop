@@ -333,9 +333,6 @@ Item {
             id: pinnedMessagesPopupComponent
             PinnedMessagesPopup {
                 id: pinnedMessagesPopup
-                chatSectionModule: root.parentModule
-                rootStore: root.rootStore
-                messageStore: root.rootStore.messageStore
                 onClosed: destroy()
             }
         }

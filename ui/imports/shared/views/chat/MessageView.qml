@@ -185,7 +185,7 @@ Column {
         messageContextMenu.messageSenderId = root.senderId
         messageContextMenu.messageContentType = root.messageContentType
         messageContextMenu.pinnedMessage = root.pinnedMessage
-        messageContextMenu.canPin = messageStore.getNumberOfPinnedMessages() <= Constants.maxNumberOfPins
+        messageContextMenu.canPin = messageStore.getNumberOfPinnedMessages() < Constants.maxNumberOfPins
 
         messageContextMenu.selectedUserPublicKey = root.senderId
         messageContextMenu.selectedUserDisplayName = root.senderDisplayName

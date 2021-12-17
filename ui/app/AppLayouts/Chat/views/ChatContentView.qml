@@ -67,7 +67,13 @@ ColumnLayout {
         chatInfoButton.pinnedMessagesCount: chatContentModule.pinnedMessagesModel.count
         chatInfoButton.muted: chatContentModule.chatDetails.muted
 
-        chatInfoButton.onPinnedMessagesCountClicked: openPopup(pinnedMessagesPopupComponent)
+        chatInfoButton.onPinnedMessagesCountClicked: {
+            Global.openPopup(pinnedMessagesPopupComponent, {
+                          messageStore: messageStore,
+                          pinnedMessagesModel: chatContentModule.pinnedMessagesModel,
+                          messageToPin: ""
+                      })
+        }
         chatInfoButton.onUnmute: chatContentModule.unmuteChat()
 
         chatInfoButton.sensor.enabled: chatContentModule.chatDetails.type !== Constants.chatType.publicChat &&
@@ -192,6 +198,14 @@ ColumnLayout {
 
         onUnpinMessage: {
             messageStore.unpinMessage(messageId)
+        }
+
+        onPinnedMessagesLimitReached: {
+            Global.openPopup(pinnedMessagesPopupComponent, {
+                          messageStore: messageStore,
+                          pinnedMessagesModel: chatContentModule.pinnedMessagesModel,
+                          messageToPin: messageId
+                      })
         }
     }
 
