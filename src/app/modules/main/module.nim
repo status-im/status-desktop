@@ -74,7 +74,7 @@ proc newModule*[T](
   profileService: profile_service.ServiceInterface,
   settingsService: settings_service.ServiceInterface,
   contactsService: contacts_service.Service,
-  aboutService: about_service.ServiceInterface,
+  aboutService: about_service.Service,
   dappPermissionsService: dapp_permissions_service.ServiceInterface,
   languageService: language_service.ServiceInterface,
   mnemonicService: mnemonic_service.ServiceInterface,

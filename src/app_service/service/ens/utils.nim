@@ -4,26 +4,20 @@ import options
 import chronicles, libp2p/[multihash, multicodec, cid]
 import nimcrypto
 include ../../common/json_utils
-import service_interface
 import status/statusgo_backend_new/ens as status_go
-export service_interface
 
 logScope:
-  topics = "ens-service"
+  topics = "ens-utils"
 
-type 
-  Service* = ref object of ServiceInterface
+type
+  ENSType* {.pure.} = enum
+    IPFS,
+    SWARM,
+    IPNS,
+    UNKNOWN
 
-method delete*(self: Service) =
-  discard
 
-proc newService*(): Service =
-  result = Service()
-
-method init*(self: Service) =
-  discard
-
-method getContentHash*(self: Service, ens: string): Option[string] =
+proc getContentHash*(ens: string): Option[string] =
   try:
     let contentHash = status_go.contenthash(ens)
     if contentHash != "":
@@ -33,7 +27,7 @@ method getContentHash*(self: Service, ens: string): Option[string] =
     error "error: ", errDescription
   return none(string)
 
-method decodeENSContentHash*(self: Service, value: string): tuple[ensType: ENSType, output: string] =
+proc decodeENSContentHash*(value: string): tuple[ensType: ENSType, output: string] =
   if value == "":
     return (ENSType.UNKNOWN, "")
 

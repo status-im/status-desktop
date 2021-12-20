@@ -17,6 +17,12 @@ method getAppVersion*(self: AccessInterface): string {.base.} =
 method getNodeVersion*(self: AccessInterface): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method versionFetched*(self: AccessInterface, version: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method checkForUpdates*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 # View Delegate Interface
 # Delegate for the view must be declared here due to use of QtObject and multi 
 # inheritance, which is not well supported in Nim.

@@ -1,4 +1,5 @@
-import NimQml, Tables
+import NimQml
+import eventemitter
 
 import ./io_interface, ./view, ./controller
 import ../io_interface as delegate_interface
@@ -16,12 +17,16 @@ type
     viewVariant: QVariant
     moduleLoaded: bool
 
-proc newModule*(delegate: delegate_interface.AccessInterface, aboutService: about_service.ServiceInterface): Module =
+proc newModule*(
+    delegate: delegate_interface.AccessInterface,
+    events: EventEmitter,
+    aboutService: about_service.Service
+    ): Module =
   result = Module()
   result.delegate = delegate
   result.view = newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, aboutService)
+  result.controller = controller.newController(result, events, aboutService)
   result.moduleLoaded = false
 
   singletonInstance.engine.setRootContextProperty("aboutModule", result.viewVariant)
@@ -31,6 +36,7 @@ method delete*(self: Module) =
 
 method load*(self: Module) =
   self.view.load()
+  self.controller.init()
 
 method isLoaded*(self: Module): bool =
   return self.moduleLoaded
@@ -44,3 +50,9 @@ method getAppVersion*(self: Module): string =
 
 method getNodeVersion*(self: Module): string =
   return self.controller.getNodeVersion()
+
+method checkForUpdates*(self: Module) =
+  self.controller.checkForUpdates()
+
+method versionFetched*(self: Module, version: string) =
+  self.view.versionFetched(version)
