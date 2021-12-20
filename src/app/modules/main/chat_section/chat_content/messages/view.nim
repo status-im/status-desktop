@@ -36,9 +36,6 @@ QtObject:
   proc toggleReaction*(self: View, messageId: string, emojiId: int) {.slot.} = 
     self.delegate.toggleReaction(messageId, emojiId)
 
-  proc getNamesReactedWithEmojiIdForMessageId*(self: View, messageId: string, emojiId: int): string {.slot.} = 
-    return $(%* self.delegate.getNamesReactedWithEmojiIdForMessageId(messageId, emojiId))
-
   proc pinMessage*(self: View, messageId: string) {.slot.} = 
     self.delegate.pinUnpinMessage(messageId, true)
 

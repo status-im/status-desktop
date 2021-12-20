@@ -19,6 +19,7 @@ Item {
     signal toggleReaction(int emojiID)
     signal setMessageActive(string messageId, bool active)
 
+    property var store
     property bool isCurrentUser
     property var emojiReactionsModel
     property bool isMessageActive
@@ -38,14 +39,14 @@ Item {
                 width: emojiImage.width + emojiCount.width + (root.imageMargin * 2) +  + 8
                 height: 20
                 radius: 10
-                color: modelData.currentUserReacted ?
+                color: model.didIReactWithThisEmoji ?
                            (isHovered ? Style.current.emojiReactionActiveBackgroundHovered : Style.current.secondaryBackground) :
                            (isHovered ? Style.current.emojiReactionBackgroundHovered : Style.current.emojiReactionBackground)
 
                 StatusQ.StatusToolTip {
                     visible: mouseArea.containsMouse
                     maxWidth: 400
-                    text: showReactionAuthors(modelData.fromAccounts, modelData.emojiId)
+                    text: root.store.showReactionAuthors(model.jsonArrayOfUsersReactedWithThisEmoji, model.emojiId)
                 }
 
                 // Rounded corner to cover one corner
@@ -64,7 +65,7 @@ Item {
 
                 // This is a workaround to get a "border" around the rectangle including the weird rectangle
                 Loader {
-                    active: modelData.currentUserReacted
+                    active: model.didIReactWithThisEmoji
                     anchors.top: parent.top
                     anchors.topMargin: -1
                     anchors.left: parent.left
@@ -100,7 +101,7 @@ Item {
                     height: 15
                     fillMode: Image.PreserveAspectFit
                     source: {
-                        switch (modelData.emojiId) {
+                        switch (model.emojiId) {
                         case 1: return Style.svg("emojiReactions/heart")
                         case 2: return Style.svg("emojiReactions/thumbsUp")
                         case 3: return Style.svg("emojiReactions/thumbsDown")
@@ -117,12 +118,12 @@ Item {
 
                 StyledText {
                     id: emojiCount
-                    text: modelData.count
+                    text: model.numberOfReactions
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.left: emojiImage.right
                     anchors.leftMargin: root.imageMargin
                     font.pixelSize: 12
-                    color: modelData.currentUserReacted ? Style.current.textColorTertiary : Style.current.textColor
+                    color: model.didIReactWithThisEmoji ? Style.current.textColorTertiary : Style.current.textColor
                 }
 
                 MouseArea {
@@ -139,7 +140,7 @@ Item {
                         emojiContainer.isHovered = false
                     }
                     onClicked: {
-                        toggleReaction(modelData.emojiId)
+                        toggleReaction(model.emojiId)
                     }
                 }
             }

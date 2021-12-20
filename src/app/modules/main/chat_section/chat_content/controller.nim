@@ -74,6 +74,18 @@ method init*(self: Controller) =
       return
     self.delegate.onChatUnmuted()
 
+  self.events.on(SIGNAL_MESSAGE_REACTION_ADDED) do(e:Args):
+    let args = MessageAddRemoveReactionArgs(e)
+    if(self.chatId != args.chatId):
+      return
+    self.delegate.onReactionAdded(args.messageId, args.emojiId, args.reactionId)
+
+  self.events.on(SIGNAL_MESSAGE_REACTION_REMOVED) do(e:Args):
+    let args = MessageAddRemoveReactionArgs(e)
+    if(self.chatId != args.chatId):
+      return
+    self.delegate.onReactionRemoved(args.messageId, args.emojiId, args.reactionId)
+
 method getMyChatId*(self: Controller): string =
   return self.chatId
 

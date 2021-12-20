@@ -27,7 +27,7 @@ method belongsToCommunity*(self: AccessInterface): bool {.base.} =
 method addReaction*(self: AccessInterface, messageId: string, emojiId: int) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method removeReaction*(self: AccessInterface, messageId: string, reactionId: string) {.base.} =
+method removeReaction*(self: AccessInterface, messageId: string, emojiId: int, reactionId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method pinUnpinMessage*(self: AccessInterface, messageId: string, pin: bool) {.base.} =
