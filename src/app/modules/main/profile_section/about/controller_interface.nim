@@ -16,6 +16,9 @@ method getAppVersion*(self: AccessInterface): string {.base.} =
 method getNodeVersion*(self: AccessInterface): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method checkForUpdates*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 type
   ## Abstract class (concept) which must be implemented by object/s used in this 
   ## module.

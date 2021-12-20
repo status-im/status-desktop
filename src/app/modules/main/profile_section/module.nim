@@ -46,7 +46,7 @@ proc newModule*[T](delegate: T,
   settingsService: settings_service.ServiceInterface,
   profileService: profile_service.ServiceInterface,
   contactsService: contacts_service.Service,
-  aboutService: about_service.ServiceInterface,
+  aboutService: about_service.Service,
   languageService: language_service.ServiceInterface,
   mnemonicService: mnemonic_service.ServiceInterface,
   privacyService: privacy_service.ServiceInterface,
@@ -65,7 +65,7 @@ proc newModule*[T](delegate: T,
   result.languageModule = language_module.newModule(result, languageService)
   result.mnemonicModule = mnemonic_module.newModule(result, mnemonicService)
   result.privacyModule = privacy_module.newModule(result, privacyService, accountsService)
-  result.aboutModule = about_module.newModule(result, aboutService)
+  result.aboutModule = about_module.newModule(result, events, aboutService)
   result.advancedModule = advanced_module.newModule(result, settingsService, nodeConfigurationService)
 
   singletonInstance.engine.setRootContextProperty("profileSectionModule", result.viewVariant)

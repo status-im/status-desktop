@@ -20,7 +20,6 @@ import ../../app_service/service/dapp_permissions/service as dapp_permissions_se
 import ../../app_service/service/mnemonic/service as mnemonic_service
 import ../../app_service/service/privacy/service as privacy_service
 import ../../app_service/service/provider/service as provider_service
-import ../../app_service/service/ens/service as ens_service
 import ../../app_service/service/profile/service as profile_service
 import ../../app_service/service/settings/service as settings_service
 import ../../app_service/service/stickers/service as stickers_service
@@ -85,7 +84,6 @@ type
     walletAccountService: wallet_account_service.Service
     bookmarkService: bookmark_service.Service
     dappPermissionsService: dapp_permissions_service.Service
-    ensService: ens_service.Service
     providerService: provider_service.Service
     profileService: profile_service.Service
     settingsService: settings_service.Service
@@ -166,13 +164,12 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
     result.networkService,
     result.chatService
   )
-  result.aboutService = about_service.newService()
+  result.aboutService = about_service.newService(statusFoundation.status.events, statusFoundation.threadpool, result.settingsService)
   result.dappPermissionsService = dapp_permissions_service.newService()
   result.languageService = language_service.newService()
   result.mnemonicService = mnemonic_service.newService()
   result.privacyService = privacy_service.newService()
-  result.ensService = ens_service.newService()
-  result.providerService = provider_service.newService(result.dappPermissionsService, result.settingsService, result.ensService)
+  result.providerService = provider_service.newService(result.dappPermissionsService, result.settingsService)
   result.savedAddressService = saved_address_service.newService(statusFoundation.status.events)
 
   # Modules
@@ -241,7 +238,6 @@ proc delete*(self: AppController) =
   self.activityCenterService.delete
   self.dappPermissionsService.delete
   self.providerService.delete
-  self.ensService.delete
   self.nodeConfigurationService.delete
   self.settingsService.delete
   self.stickersService.delete
@@ -277,7 +273,6 @@ proc load(self: AppController) =
   self.bookmarkService.init()
   self.tokenService.init()
   self.dappPermissionsService.init()
-  self.ensService.init()
   self.providerService.init()
   self.walletAccountService.init()
   self.transactionService.init()
@@ -286,6 +281,7 @@ proc load(self: AppController) =
   self.networkService.init()
   self.activityCenterService.init()
   self.savedAddressService.init()
+  self.aboutService.init()
 
   let pubKey = self.settingsService.getPublicKey()
   singletonInstance.localAccountSensitiveSettings.setFileName(pubKey)

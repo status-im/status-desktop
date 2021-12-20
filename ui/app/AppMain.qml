@@ -32,14 +32,20 @@ Item {
     anchors.fill: parent
 
     property alias appLayout: appLayout
+    property RootStore rootStore: RootStore { }
     // set from main.qml
     property var sysPalette
-    // Not Refactored Yet
-    property var newVersionJSON: ({}) //JSON.parse(utilsModel.newVersion)
+    property var newVersionJSON: {
+        try {
+            return JSON.parse(rootStore.aboutModuleInst.newVersion)
+        } catch (e) {
+            console.error("Error parsing version data", e)
+            return {}
+        }
+    }
     property bool profilePopupOpened: false
     // Not Refactored Yet
 //    property bool networkGuarded: profileModel.network.current === Constants.networkMainnet || (profileModel.network.current === Constants.networkRopsten && localAccountSensitiveSettings.stickersEnsRopsten)
-    property RootStore rootStore: RootStore { }
 
     signal openContactsPopup()
 

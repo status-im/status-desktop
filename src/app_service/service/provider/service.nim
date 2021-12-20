@@ -5,7 +5,7 @@ import strutils
 include ../../common/json_utils
 import ../dapp_permissions/service as dapp_permissions_service
 import ../settings/service_interface as settings_service
-import ../ens/service as ens_service
+import ../ens/utils as ens_utils
 import service_interface
 import status/statusgo_backend_new/permissions as status_go_permissions
 import status/statusgo_backend_new/accounts as status_go_accounts
@@ -86,24 +86,19 @@ proc toAPIRequest(message: string): APIRequest =
     hostname: data{"hostname"}.getStr()
   )
 
-
-
 type 
   Service* = ref object of service_interface.ServiceInterface
     dappPermissionsService: dapp_permissions_service.ServiceInterface
     settingsService: settings_service.ServiceInterface
-    ensService: ens_service.ServiceInterface
 
 method delete*(self: Service) =
   discard
 
 proc newService*(dappPermissionsService: dapp_permissions_service.ServiceInterface, 
-    settingsService: settings_service.ServiceInterface,
-    ensService: ens_service.ServiceInterface): Service =
+    settingsService: settings_service.ServiceInterface): Service =
   result = Service()
   result.dappPermissionsService = dappPermissionsService
   result.settingsService = settingsService
-  result.ensService = ensService
 
 method init*(self: Service) =
   discard
@@ -299,11 +294,11 @@ method postMessage*(self: Service, message: string): string =
   else:  """{"type":"TODO-IMPLEMENT-THIS"}""" ##################### TODO:
 
 method ensResourceURL*(self: Service, ens: string, url: string): (string, string, string, string, bool) =
-  let contentHash = self.ensService.getContentHash(ens)
+  let contentHash = ens_utils.getContentHash(ens)
   if contentHash.isNone(): # ENS does not have a content hash
     return (url, url, HTTPS_SCHEME, "", false)
 
-  let decodedHash = self.ensService.decodeENSContentHash(contentHash.get())
+  let decodedHash = ens_utils.decodeENSContentHash(contentHash.get())
 
   case decodedHash[0]:
     of ENSType.IPFS:

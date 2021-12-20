@@ -1,11 +1,15 @@
-import json, json_serialization, sequtils, chronicles
-# import status/statusgo_backend_new/custom_tokens as custom_tokens
+import NimQml, json, chronicles
 
-import status/statusgo_backend/settings as status_go_settings
+import eventemitter
+import ../../../app/core/[main]
+import ../../../app/core/tasks/[qt, threadpool]
 
-import ./service_interface, ./dto
+import ../settings/service as settings_service
+import ../network/types
+import status/statusgo_backend_new/about as status_about
+import ./update
 
-export service_interface
+include async_tasks
 
 logScope:
   topics = "settings-service"
@@ -13,27 +17,70 @@ logScope:
 # This is changed during compilation by reading the VERSION file
 const DESKTOP_VERSION {.strdefine.} = "0.0.0"
 
-type 
-  Service* = ref object of ServiceInterface
-    # profile: Dto
+type
+  VersionArgs* = ref object of Args
+    version*: string
 
-method delete*(self: Service) =
-  discard
+const SIGNAL_VERSION_FETCHED* = "SIGNAL_VERSION_FETCHED"
 
-proc newService*(): Service =
-  result = Service()
+QtObject:
+  type 
+    Service* = ref object of QObject
+      events: EventEmitter
+      threadpool: ThreadPool
+      settingsService: settings_service.Service
 
-method init*(self: Service) =
-  try:
-    echo "init"
+  # Forward declaration
+  proc asyncRequestLatestVersion(self: Service)
 
-  except Exception as e:
-    let errDesription = e.msg
-    error "error: ", errDesription
-    return
+  proc delete*(self: Service) =
+    discard
 
-method getAppVersion*(self: Service): string =
-  return DESKTOP_VERSION
+  proc newService*(
+      events: EventEmitter,
+      threadpool: ThreadPool,
+      settingsService: settings_service.Service
+      ): Service =
+    result = Service()
+    result.events = events
+    result.threadpool = threadpool
+    result.settingsService = settingsService
 
-method getNodeVersion*(self: Service): string =
-  return status_go_settings.getWeb3ClientVersion()
+  proc init*(self: Service) =
+    # TODO uncomment this once the latest version calls is fixed
+      # to fix this, you need to re-upload the version and files to IPFS and pin them
+    # self.asyncRequestLatestVersion()
+    discard
+
+  proc getAppVersion*(self: Service): string =
+    return DESKTOP_VERSION
+
+  proc getNodeVersion*(self: Service): string =
+    try:
+      return status_about.getWeb3ClientVersion().result.getStr
+    except Exception as e:
+      error "Error getting Node version"
+
+  proc asyncRequestLatestVersion(self: Service) =
+    let networkType = self.settingsService.getCurrentNetwork().toNetworkType()
+    if networkType != NetworkType.Mainnet: return
+    let arg = CheckForNewVersionTaskArg(
+      tptr: cast[ByteAddress](checkForUpdatesTask),
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "latestVersionSuccess"
+    )
+    self.threadpool.start(arg)
+
+  proc checkForUpdates*(self: Service) =
+    self.asyncRequestLatestVersion()
+
+  proc latestVersionSuccess*(self: Service, latestVersionJSON: string) {.slot.} =
+    let latestVersionObj = parseJSON(latestVersionJSON)
+    let latestVersion = latestVersionObj{"version"}.getStr()
+    if latestVersion == "": return
+
+    let available = isNewer(DESKTOP_VERSION, latestVersion)
+    latestVersionObj["available"] = newJBool(available)
+
+    self.events.emit(SIGNAL_VERSION_FETCHED,
+      VersionArgs(version: $(%*latestVersionObj)))
