@@ -207,6 +207,10 @@ ColumnLayout {
                           messageToPin: messageId
                       })
         }
+
+        onToggleReaction: {
+            messageStore.toggleReaction(messageId, emojiId)
+        }
     }
 
     StatusImageModal {

@@ -26,6 +26,8 @@ const SIGNAL_MESSAGE_PINNED* = "new-messagePinned"
 const SIGNAL_MESSAGE_UNPINNED* = "new-messageUnpinned"
 const SIGNAL_SEARCH_MESSAGES_LOADED* = "new-searchMessagesLoaded"
 const SIGNAL_MESSAGES_MARKED_AS_READ* = "new-messagesMarkedAsRead"
+const SIGNAL_MESSAGE_REACTION_ADDED* = "new-messageReactionAdded"
+const SIGNAL_MESSAGE_REACTION_REMOVED* = "new-messageReactionRemoved"
 
 type
   SearchMessagesLoadedArgs* = ref object of Args
@@ -45,6 +47,12 @@ type
     chatId*: string
     allMessagesMarked*: bool
     messagesIds*: seq[string] 
+
+  MessageAddRemoveReactionArgs* = ref object of Args
+    chatId*: string
+    messageId*: string
+    emojiId*: int
+    reactionId*: string
 
 QtObject:
   type Service* = ref object of QObject
@@ -157,14 +165,13 @@ QtObject:
     self.asyncLoadMoreMessagesForChat(chatId)
 
   
-  proc addReaction*(self: Service, chatId: string, messageId: string, emojiId: int): 
-    tuple[result: string, error: string] =
+  proc addReaction*(self: Service, chatId: string, messageId: string, emojiId: int) =
     try:
       let response = status_go.addReaction(chatId, messageId, emojiId)
       
-      result.error = "response doesn't contain \"error\""
       if(response.result.contains("error")):
-        result.error = response.result["error"].getStr
+        let errMsg = response.result["error"].getStr
+        error "error: ", methodName="addReaction", errDesription = errMsg
         return
 
       var reactionsArr: JsonNode
@@ -172,24 +179,31 @@ QtObject:
       if(response.result.getProp("emojiReactions", reactionsArr)):
         reactions = map(reactionsArr.getElems(), proc(x: JsonNode): ReactionDto = x.toReactionDto())
 
+      var reactionId: string
       if(reactions.len > 0):
-        result.result = reactions[0].id
+        reactionId = reactions[0].id
+
+      let data = MessageAddRemoveReactionArgs(chatId: chatId, messageId: messageId, emojiId: emojiId, 
+      reactionId: reactionId)
+      self.events.emit(SIGNAL_MESSAGE_REACTION_ADDED, data)
 
     except Exception as e:
-      result.error = e.msg
       error "error: ", methodName="addReaction", errName = e.name, errDesription = e.msg
 
-  proc removeReaction*(self: Service, reactionId: string): tuple[result: string, error: string] =
+  proc removeReaction*(self: Service, reactionId: string, chatId: string, messageId: string, emojiId: int) =
     try:
       let response = status_go.removeReaction(reactionId)
       
-      result.error = "response doesn't contain \"error\""
       if(response.result.contains("error")):
-        result.error = response.result["error"].getStr
+        let errMsg = response.result["error"].getStr
+        error "error: ", methodName="removeReaction", errDesription = errMsg
         return
 
+      let data = MessageAddRemoveReactionArgs(chatId: chatId, messageId: messageId, emojiId: emojiId, 
+      reactionId: reactionId)
+      self.events.emit(SIGNAL_MESSAGE_REACTION_REMOVED, data)
+
     except Exception as e:
-      result.error = e.msg
       error "error: ", methodName="removeReaction", errName = e.name, errDesription = e.msg
 
   proc pinUnpinMessage*(self: Service, chatId: string, messageId: string, pin: bool) =

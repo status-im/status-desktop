@@ -1,6 +1,6 @@
 import NimQml, Tables, json, strutils, strformat
 
-import message_item
+import message_item, message_reaction_item
 
 type
   ModelRole {.pure.} = enum
@@ -24,7 +24,7 @@ type
     # GapFrom
     # GapTo
     Pinned
-    CountsForReactions
+    Reactions
 
 QtObject:
   type
@@ -80,7 +80,7 @@ QtObject:
       # ModelRole.GapFrom.int:"gapFrom",
       # ModelRole.GapTo.int:"gapTo",
       ModelRole.Pinned.int:"pinned",
-      ModelRole.CountsForReactions.int:"countsForReactions",
+      ModelRole.Reactions.int:"reactions",
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -134,8 +134,8 @@ QtObject:
     #   result = newQVariant(item.gapTo)
     of ModelRole.Pinned: 
       result = newQVariant(item.pinned)
-    of ModelRole.CountsForReactions: 
-      result = newQVariant($(%* item.getCountsForReactions))
+    of ModelRole.Reactions: 
+      result = newQVariant(item.reactionsModel)
 
   proc findIndexForMessageId(self: Model, messageId: string): int = 
     for i in 0 ..< self.items.len:
@@ -187,30 +187,26 @@ QtObject:
 
     return self.items[ind]
 
-  proc addReaction*(self: Model, messageId: string, emojiId: int, name: string, reactionId: string) = 
+  proc addReaction*(self: Model, messageId: string, emojiId: EmojiId, didIReactWithThisEmoji: bool, 
+    userPublicKey: string, userDisplayName: string, reactionId: string) = 
     let ind = self.findIndexForMessageId(messageId)
     if(ind == -1):
       return
 
-    self.items[ind].addReaction(emojiId, name, reactionId)
+    self.items[ind].addReaction(emojiId, didIReactWithThisEmoji, userPublicKey, userDisplayName, reactionId)
     
     let index = self.createIndex(ind, 0, nil)
-    self.dataChanged(index, index, @[ModelRole.CountsForReactions.int])
+    self.dataChanged(index, index, @[ModelRole.Reactions.int])
 
-  proc removeReaction*(self: Model, messageId: string, reactionId: string) = 
+  proc removeReaction*(self: Model, messageId: string, emojiId: EmojiId, reactionId: string) = 
     let ind = self.findIndexForMessageId(messageId)
     if(ind == -1):
       return
 
-    self.items[ind].removeReaction(reactionId)
+    self.items[ind].removeReaction(emojiId, reactionId)
     
     let index = self.createIndex(ind, 0, nil)
-    self.dataChanged(index, index, @[ModelRole.CountsForReactions.int])
-
-  proc getPubKeysReactedWithEmojiIdForMessageId*(self: Model, messageId: string, emojiId: int): seq[string] = 
-    for i in 0 ..< self.items.len:
-      if(self.items[i].id == messageId):
-        return self.items[i].getPubKeysReactedWithEmojiId(emojiId)
+    self.dataChanged(index, index, @[ModelRole.Reactions.int])
 
   proc pinUnpinMessage*(self: Model, messageId: string, pin: bool) = 
     let ind = self.findIndexForMessageId(messageId)

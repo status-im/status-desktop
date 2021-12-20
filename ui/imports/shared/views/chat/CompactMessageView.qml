@@ -648,7 +648,7 @@ Item {
 
     Loader {
         id: emojiReactionLoader
-        active: emojiReactionsModel.length
+        active: reactionsModel.count > 0
         anchors.bottom: messageContainer.bottom
         anchors.bottomMargin: Style.current.halfPadding
         anchors.left: messageContainer.left
@@ -657,7 +657,8 @@ Item {
         sourceComponent: Component {
             EmojiReactionsPanel {
                 id: emojiRect
-                emojiReactionsModel: emojiReactionsModel
+                store: messageStore
+                emojiReactionsModel: reactionsModel
                 onHoverChanged: {
                     setHovered(messageId, hovered)
                 }
@@ -670,8 +671,8 @@ Item {
                     root.messageContextMenu.setXPosition = function() { return (root.messageContextMenu.parent.x + 4)}
                     root.messageContextMenu.setYPosition = function() { return (-root.messageContextMenu.height - 4)}
                 }
-                // Not Refactored Yet
-//                onToggleReaction: rootStore.chatsModelInst.toggleReaction(messageId, emojiID)
+
+                onToggleReaction: messageStore.toggleReaction(messageId, emojiID)
 
                 onSetMessageActive: {
                     setMessageActive(messageId, active);;

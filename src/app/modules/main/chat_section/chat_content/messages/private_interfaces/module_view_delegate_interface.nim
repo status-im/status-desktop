@@ -7,10 +7,6 @@ method toggleReaction*(self: AccessInterface, messageId: string, emojiId: int) {
 method pinUnpinMessage*(self: AccessInterface, messageId: string, pin: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getNamesReactedWithEmojiIdForMessageId*(self: AccessInterface, messageId: string, emojiId: int): seq[string] 
-  {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method getChatType*(self: AccessInterface): int {.base.} =
   raise newException(ValueError, "No implementation available")
 
