@@ -89,3 +89,21 @@ method importCommunity*(self: ServiceInterface, communityKey: string) {.base.} =
 
 method exportCommunity*(self: ServiceInterface, communityId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method acceptRequestToJoinCommunity*(self: ServiceInterface, communityId: string, requestId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method declineRequestToJoinCommunity*(self: ServiceInterface, communityId: string, requestId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method inviteUsersToCommunityById*(self: ServiceInterface, communityId: string, pubKeys: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method removeUserFromCommunity*(self: ServiceInterface, communityId: string, pubKeys: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method banUserFromCommunity*(self: ServiceInterface, communityId: string, pubKey: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method setCommunityMuted*(self: ServiceInterface, communityId: string, muted: bool) {.base.} =
+  raise newException(ValueError, "No implementation available")

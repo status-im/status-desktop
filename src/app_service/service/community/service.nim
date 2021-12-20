@@ -446,3 +446,45 @@ QtObject:
     except Exception as e:
       error "Error exporting community", msg = e.msg
       raise newException(RpcException, "Error exporting community: " & e.msg)
+
+  proc acceptRequestToJoinCommunity*(self: Service, requestId: string) =
+    try:
+      let response = status_go.acceptRequestToJoinCommunity(requestId)
+    except Exception as e:
+      error "Error exporting community", msg = e.msg
+      raise newException(RpcException, "Error exporting community: " & e.msg)
+
+   proc declineRequestToJoinCommunity*(self: Service, requestId: string) =
+    try:
+      let response = status_go.declineRequestToJoinCommunity(requestId)
+    except Exception as e:
+      error "Error exporting community", msg = e.msg
+      raise newException(RpcException, "Error exporting community: " & e.msg)
+
+  proc inviteUsersToCommunityById*(self: Service, communityId: string, pubKeys: string) =
+    try:
+      let response = status_go.inviteUsersToCommunityById(communityId, pubKeys)
+    except Exception as e:
+      error "Error exporting community", msg = e.msg
+      raise newException(RpcException, "Error exporting community: " & e.msg)
+
+  proc removeUserFromCommunity*(self: Service, communityId: string, pubKeys: string)  =
+    try:
+      let response = status_go.removeUserFromCommunity(communityId, pubKeys)
+    except Exception as e:
+      error "Error exporting community", msg = e.msg
+      raise newException(RpcException, "Error exporting community: " & e.msg)
+
+  proc banUserFromCommunity*(self: Service, communityId: string, pubKey: string)  =
+    try:
+      let response = status_go.banUserFromCommunity(communityId, pubKeys)
+    except Exception as e:
+      error "Error exporting community", msg = e.msg
+      raise newException(RpcException, "Error exporting community: " & e.msg)
+
+  proc setCommunityMuted*(self: Service, communityId: string, muted: bool) {.base.} =
+   try:
+      let response = status_go.setCommunityMuted(communityId, muted)
+    except Exception as e:
+      error "Error exporting community", msg = e.msg
+      raise newException(RpcException, "Error exporting community: " & e.msg)

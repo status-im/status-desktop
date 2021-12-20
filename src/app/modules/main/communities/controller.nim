@@ -33,43 +33,43 @@ method init*[T](self: Controller[T]) =
 
   self.events.on(SIGNAL_COMMUNITY_MY_REQUEST_ADDED) do(e:Args):
     let args = CommunityRequestArgs(e)
-    # TODO process the request being added
+    self.delegate.requestAdded()
 
   self.events.on(SIGNAL_COMMUNITY_LEFT) do(e:Args):
     let args = CommunityIdArgs(e)
-    # TODO process the community being left
+    self.delegate.communityLeft(args.communityId)
 
   self.events.on(SIGNAL_COMMUNITY_CREATED) do(e:Args):
     let args = CommunityArgs(e)
-    # TODO process the community being created
+    self.delegate.communityCreated()
 
   self.events.on(SIGNAL_COMMUNITY_CHANNEL_CREATED) do(e:Args):
     let args = CommunityChatArgs(e)
-    # TODO process the community chat being created
+    self.delegate.communityChannelCreated()
 
   self.events.on(SIGNAL_COMMUNITY_CHANNEL_EDITED) do(e:Args):
     let args = CommunityChatArgs(e)
-    # TODO process the community chat being edited
+    self.delegate.communityChannelEdited()
 
   self.events.on(SIGNAL_COMMUNITY_CHANNEL_REORDERED) do(e:Args):
     let args = CommunityChatOrderArgs(e)
-    # TODO process the community chat being reordered
+    self.delegate.communityChannelReordered()
 
   self.events.on(SIGNAL_COMMUNITY_CHANNEL_DELETED) do(e:Args):
     let args = CommunityChatIdArgs(e)
-    # TODO process the community chat being deleted
+    self.delegate.communityChannelDeleted()
 
   self.events.on(SIGNAL_COMMUNITY_CATEGORY_CREATED) do(e:Args):
     let args = CommunityCategoryArgs(e)
-    # TODO process the community category being created
+    self.delegate.communityCategoryCreated()
 
   self.events.on(SIGNAL_COMMUNITY_CATEGORY_EDITED) do(e:Args):
     let args = CommunityCategoryArgs(e)
-    # TODO process the community category being edited
+    self.delegate.communityCategoryEdited()
 
   self.events.on(SIGNAL_COMMUNITY_CATEGORY_DELETED) do(e:Args):
     let args = CommunityCategoryArgs(e)
-    # TODO process the community category being deleted
+    self.delegate.communityCategoryDeleted()
 
 method joinCommunity*[T](self: Controller[T], communityId: string): string =
   self.communityService.joinCommunity(communityId)
@@ -168,3 +168,21 @@ method importCommunity*[T](self: Controller[T], communityKey: string) =
 
 method exportCommunity*[T](self: Controller[T], communityId: string): string =
   self.communityService.exportCommunity(communityId)
+
+method acceptRequestToJoinCommunity*[T](self: Controller[T], communityId: string, requestId: string) =
+  self.communityService.acceptRequestToJoinCommunity(communityId, requestId)
+
+method declineRequestToJoinCommunity*[T](self: Controller[T], communityId: string, requestId: string) =
+  self.communityService.declineRequestToJoinCommunity(communityId, requestId)
+
+method inviteUsersToCommunityById*[T](self: Controller[T], communityId: string, pubKeys: string) =
+  self.communityService.inviteUsersToCommunityById(communityId, pubKeys)
+
+method removeUserFromCommunity*[T](self: Controller[T], communityId: string, pubKeys: string) =
+  self.communityService.removeUserFromCommunity(communityId, pubKeys)
+
+method banUserFromCommunity*[T](self: Controller[T], communityId: string, pubKey: string) =
+  self.communityService.removeUserFromCommunity(communityId, pubKey)
+
+method setCommunityMuted*[T](self: Controller[T], communityId: string, muted: bool) =
+  self.communityService.setCommunityMuted(communityId, muted)
