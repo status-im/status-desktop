@@ -17,8 +17,5 @@ method delete*(self: ServiceInterface) {.base.} =
 method init*(self: ServiceInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getContentHash*(self: ServiceInterface, ens: string): Option[string] {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method decodeENSContentHash*(self: ServiceInterface, value: string): tuple[ensType: ENSType, output: string] =
+method resourceUrl*(self: ServiceInterface, username: string): (string, string, string) {.base.} =
   raise newException(ValueError, "No implementation available")

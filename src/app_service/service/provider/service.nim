@@ -10,8 +10,6 @@ import service_interface
 import status/statusgo_backend_new/permissions as status_go_permissions
 import status/statusgo_backend_new/accounts as status_go_accounts
 import status/statusgo_backend_new/core as status_go_core
-from stew/base32 import nil
-from stew/base58 import nil
 import stew/byteutils
 export service_interface
 
@@ -19,8 +17,6 @@ logScope:
   topics = "provider-service"
 
 const HTTPS_SCHEME* = "https"
-const IPFS_GATEWAY* =  ".infura.status.im"
-const SWARM_GATEWAY* = "swarm-gateways.net"
 
 type
   RequestTypes {.pure.} = enum
@@ -298,27 +294,9 @@ method postMessage*(self: Service, message: string): string =
   of RequestTypes.APIRequest: self.process(message.toAPIRequest())
   else:  """{"type":"TODO-IMPLEMENT-THIS"}""" ##################### TODO:
 
-method ensResourceURL*(self: Service, ens: string, url: string): (string, string, string, string, bool) =
-  let contentHash = self.ensService.getContentHash(ens)
-  if contentHash.isNone(): # ENS does not have a content hash
+method ensResourceURL*(self: Service, username: string, url: string): (string, string, string, string, bool) =
+  let (scheme, host, path) = self.ensService.resourceUrl(username)
+  if host == "":
     return (url, url, HTTPS_SCHEME, "", false)
 
-  let decodedHash = self.ensService.decodeENSContentHash(contentHash.get())
-
-  case decodedHash[0]:
-    of ENSType.IPFS:
-      let
-        base58bytes = base58.decode(base58.BTCBase58, decodedHash[1])
-        base32Hash = base32.encode(base32.Base32Lower, base58bytes)
-
-      result = (url, base32Hash & IPFS_GATEWAY, HTTPS_SCHEME, "", true)
-
-    of ENSType.SWARM:
-      result = (url, SWARM_GATEWAY, HTTPS_SCHEME,
-        "/bzz:/" & decodedHash[1] & "/", true)
-
-    of ENSType.IPNS:
-      result = (url, decodedHash[1], HTTPS_SCHEME, "", true)
-
-    else:
-      warn "Unknown content for", ens, contentHash
+  return (url, host, scheme, path, true)
