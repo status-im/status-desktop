@@ -1,9 +1,10 @@
-import NimQml
+import NimQml, chronicles
 import io_interface
 import ../io_interface as delegate_interface
 import view, controller
 import ../../../../shared_models/message_model
 import ../../../../shared_models/message_item
+import ../../../../shared_models/message_reaction_item
 import ../../../../../global/global_singleton
 
 import ../../../../../../app_service/service/contacts/service as contact_service
@@ -13,6 +14,9 @@ import ../../../../../../app_service/service/message/service as message_service
 import eventemitter
 
 export io_interface
+
+logScope:
+  topics = "messages-module"
 
 const CHAT_IDENTIFIER_MESSAGE_ID = "chat-identifier-message-id"
 
@@ -92,7 +96,14 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
 
     for r in reactions:
       if(r.messageId == m.id):
-        item.addReaction(r.emojiId, m.`from`, r.id)
+        var emojiIdAsEnum: EmojiId
+        if(message_reaction_item.toEmojiIdAsEnum(r.emojiId, emojiIdAsEnum)):
+          let userWhoAddedThisReaction = self.controller.getContactById(r.`from`)
+          let didIReactWithThisEmoji = userWhoAddedThisReaction.id == singletonInstance.userProfile.getPubKey()
+          item.addReaction(emojiIdAsEnum, didIReactWithThisEmoji, userWhoAddedThisReaction.id, 
+          userWhoAddedThisReaction.userNameOrAlias(), r.id)
+        else:
+          error "wrong emoji id found when loading messages"
 
     for p in pinnedMessages:
       if(p.message.id == m.id):
@@ -109,26 +120,33 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
   self.view.model().prependItems(viewItems)
 
 method toggleReaction*(self: Module, messageId: string, emojiId: int) =
-  let item = self.view.model().getItemWithMessageId(messageId)
-  let myName = singletonInstance.userProfile.getName()
-  if(item.shouldAddReaction(emojiId, myName)):
-    self.controller.addReaction(messageId, emojiId)
+  var emojiIdAsEnum: EmojiId
+  if(message_reaction_item.toEmojiIdAsEnum(emojiId, emojiIdAsEnum)):
+    let item = self.view.model().getItemWithMessageId(messageId)
+    let myPublicKey = singletonInstance.userProfile.getPubKey()
+    if(item.shouldAddReaction(emojiIdAsEnum, myPublicKey)):
+      self.controller.addReaction(messageId, emojiId)
+    else:
+      let reactionId = item.getReactionId(emojiIdAsEnum, myPublicKey)
+      self.controller.removeReaction(messageId, emojiId, reactionId)
   else:
-    let reactionId = item.getReactionId(emojiId, myName)
-    self.controller.removeReaction(messageId, reactionId)
+    error "wrong emoji id found on reaction added response", emojiId
 
 method onReactionAdded*(self: Module, messageId: string, emojiId: int, reactionId: string) =
-  let myName = singletonInstance.userProfile.getName()
-  self.view.model().addReaction(messageId, emojiId, myName, reactionId)
+  var emojiIdAsEnum: EmojiId
+  if(message_reaction_item.toEmojiIdAsEnum(emojiId, emojiIdAsEnum)):
+    let myPublicKey = singletonInstance.userProfile.getPubKey()
+    let myName = singletonInstance.userProfile.getName()
+    self.view.model().addReaction(messageId, emojiIdAsEnum, true, myPublicKey, myName, reactionId)
+  else:
+    error "wrong emoji id found on reaction added response", emojiId
 
-method onReactionRemoved*(self: Module, messageId: string, reactionId: string) =
-  self.view.model().removeReaction(messageId, reactionId)
-
-method getNamesReactedWithEmojiIdForMessageId*(self: Module, messageId: string, emojiId: int): seq[string] = 
-  let pubKeysForEmojiId = self.view.model().getPubKeysReactedWithEmojiIdForMessageId(messageId, emojiId)
-  for pk in pubKeysForEmojiId:
-    let (name, _, _) = self.controller.getContactNameAndImage(pk)
-    result.add(name)
+method onReactionRemoved*(self: Module, messageId: string, emojiId: int, reactionId: string) =
+  var emojiIdAsEnum: EmojiId
+  if(message_reaction_item.toEmojiIdAsEnum(emojiId, emojiIdAsEnum)):
+    self.view.model().removeReaction(messageId, emojiIdAsEnum, reactionId)
+  else:
+    error "wrong emoji id found on reaction remove response", emojiId
 
 method pinUnpinMessage*(self: Module, messageId: string, pin: bool) =
   self.controller.pinUnpinMessage(messageId, pin)

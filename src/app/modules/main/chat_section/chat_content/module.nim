@@ -4,6 +4,7 @@ import ../io_interface as delegate_interface
 import view, controller
 import ../../../shared_models/message_model as pinned_msg_model
 import ../../../shared_models/message_item as pinned_msg_item
+import ../../../shared_models/message_reaction_item as pinned_msg_reaction_item
 import ../../../../global/global_singleton
 
 import input_area/module as input_area_module
@@ -151,8 +152,14 @@ proc buildPinnedMessageItem(self: Module, messageId: string, item: var pinned_ms
 
   for r in reactions:
     if(r.messageId == m.id):
-      # m.`from` should be replaced by appropriate ens/alias when we have that part refactored
-      item.addReaction(r.emojiId, m.`from`, r.id)
+      var emojiIdAsEnum: pinned_msg_reaction_item.EmojiId
+      if(pinned_msg_reaction_item.toEmojiIdAsEnum(r.emojiId, emojiIdAsEnum)):
+        let userWhoAddedThisReaction = self.controller.getContactById(r.`from`)
+        let didIReactWithThisEmoji = userWhoAddedThisReaction.id == singletonInstance.userProfile.getPubKey()
+        item.addReaction(emojiIdAsEnum, didIReactWithThisEmoji, userWhoAddedThisReaction.id, 
+        userWhoAddedThisReaction.userNameOrAlias(), r.id)
+      else:
+        error "wrong emoji id found when loading messages"
 
   return true
 
@@ -194,3 +201,19 @@ method onChatMuted*(self: Module) =
 
 method onChatUnmuted*(self: Module) =
   self.view.setMuted(false)
+
+method onReactionAdded*(self: Module, messageId: string, emojiId: int, reactionId: string) =
+  var emojiIdAsEnum: EmojiId
+  if(pinned_msg_reaction_item.toEmojiIdAsEnum(emojiId, emojiIdAsEnum)):
+    let myPublicKey = singletonInstance.userProfile.getPubKey()
+    let myName = singletonInstance.userProfile.getName()
+    self.view.pinnedModel().addReaction(messageId, emojiIdAsEnum, true, myPublicKey, myName, reactionId)
+  else:
+    error "(pinned) wrong emoji id found on reaction added response", emojiId
+
+method onReactionRemoved*(self: Module, messageId: string, emojiId: int, reactionId: string) =
+  var emojiIdAsEnum: EmojiId
+  if(pinned_msg_reaction_item.toEmojiIdAsEnum(emojiId, emojiIdAsEnum)):
+    self.view.pinnedModel().removeReaction(messageId, emojiIdAsEnum, reactionId)
+  else:
+    error "(pinned) wrong emoji id found on reaction remove response", emojiId

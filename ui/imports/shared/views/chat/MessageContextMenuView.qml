@@ -57,6 +57,7 @@ StatusPopupMenu {
     signal shouldCloseParentPopup()
     signal createOneToOneChat(string chatId, string ensName)
     signal showReplyArea()
+    signal toggleReaction(string messageId, int emojiId)
 
     onHeightChanged: {
         root.y = setYPosition()
@@ -85,8 +86,7 @@ StatusPopupMenu {
                     emojiId: model.emojiId
                     reactedByUser: !!root.emojiReactionsReactedByUser[model.emojiId]
                     onCloseModal: {
-                        // Not Refactored Yet
-//                        chatsModel.toggleReaction(SelectedMessage.messageId, emojiId)
+                        root.toggleReaction(root.messageId, emojiId)
                         root.close()
                     }
                 }

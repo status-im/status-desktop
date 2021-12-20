@@ -312,6 +312,7 @@ Item {
             messageOutgoingStatus: model.outgoingStatus
             messageContentType: model.contentType
             pinnedMessage: model.pinned
+            reactionsModel: model.reactions
 
             // This is possible since we have all data loaded before we load qml.
             // When we fetch messages to fulfill a gap we have to set them at once.

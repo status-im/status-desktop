@@ -33,6 +33,7 @@ Column {
     property string messageOutgoingStatus: ""
     property int messageContentType: 1
     property bool pinnedMessage: false
+    property var reactionsModel
 
     property int prevMessageIndex: -1
     property var prevMessageAsJsonObj
@@ -128,40 +129,6 @@ Column {
 
     property var imageClick: function () {}
     property var scrollToBottom: function () {}
-
-    property var emojiReactionsModel: {
-        // Not Refactored Yet
-        return []
-//        if (!emojiReactions) {
-//            return []
-//        }
-
-//        try {
-//            // group by id
-//            var allReactions = Object.values(JSON.parse(emojiReactions))
-//            var byEmoji = {}
-//            allReactions.forEach(function (reaction) {
-//                if (!byEmoji[reaction.emojiId]) {
-//                    byEmoji[reaction.emojiId] = {
-//                        emojiId: reaction.emojiId,
-//                        fromAccounts: [],
-//                        count: 0,
-//                        currentUserReacted: false
-//                    }
-//                }
-//                byEmoji[reaction.emojiId].count++;
-//                byEmoji[reaction.emojiId].fromAccounts.push(root.chatsModel.userNameOrAlias(reaction.from));
-//                if (!byEmoji[reaction.emojiId].currentUserReacted && reaction.from === userProfile.pubKey) {
-//                    byEmoji[reaction.emojiId].currentUserReacted = true
-//                }
-
-//            })
-//            return Object.values(byEmoji)
-//        } catch (e) {
-//            console.error('Error parsing emoji reactions', e)
-//            return []
-//        }
-    }
 
     property var clickMessage: function(isProfileClick,
                                         isSticker = false,
@@ -378,8 +345,7 @@ Column {
 //                root.parent.clickMessage(isProfileClick, isSticker, isImage, image, emojiOnly, hideEmojiPicker, isReply);
             }
             onSetMessageActive: {
-                // Not Refactored Yet - Should do it via messageStore
-//                root.messageStore.setMessageActive(messageId, active);;
+                root.setMessageActive(messageId, active);
             }
         }
     }

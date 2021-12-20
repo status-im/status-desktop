@@ -58,6 +58,18 @@ method init*(self: Controller) =
       return
     self.delegate.onPinUnpinMessage(args.messageId, false)
 
+  self.events.on(SIGNAL_MESSAGE_REACTION_ADDED) do(e:Args):
+    let args = MessageAddRemoveReactionArgs(e)
+    if(self.chatId != args.chatId):
+      return
+    self.delegate.onReactionAdded(args.messageId, args.emojiId, args.reactionId)
+
+  self.events.on(SIGNAL_MESSAGE_REACTION_REMOVED) do(e:Args):
+    let args = MessageAddRemoveReactionArgs(e)
+    if(self.chatId != args.chatId):
+      return
+    self.delegate.onReactionRemoved(args.messageId, args.emojiId, args.reactionId)
+    
 method getChatId*(self: Controller): string =
   return self.chatId
 
@@ -71,20 +83,10 @@ method belongsToCommunity*(self: Controller): bool =
   return self.belongsToCommunity
 
 method addReaction*(self: Controller, messageId: string, emojiId: int) =
-  let (res, err) = self.messageService.addReaction(self.chatId, messageId, emojiId)
-  if(err.len != 0):
-    error "an error has occurred while saving reaction: ", err
-    return
+  self.messageService.addReaction(self.chatId, messageId, emojiId)
 
-  self.delegate.onReactionAdded(messageId, emojiId, res)
-
-method removeReaction*(self: Controller, messageId: string, reactionId: string) =
-  let (res, err) = self.messageService.removeReaction(reactionId)
-  if(err.len != 0):
-    error "an error has occurred while removing reaction: ", err
-    return
-
-  self.delegate.onReactionRemoved(messageId, reactionId)
+method removeReaction*(self: Controller, messageId: string, emojiId: int, reactionId: string) =
+  self.messageService.removeReaction(reactionId, self.chatId, messageId, emojiId)
 
 method pinUnpinMessage*(self: Controller, messageId: string, pin: bool) =
   self.messageService.pinUnpinMessage(self.chatId, messageId, pin)

@@ -77,4 +77,57 @@ QtObject {
 
         return messageModule.unpinMessage(messageId)
     }
+
+    function toggleReaction(messageId, emojiId) {
+        if(!messageModule)
+            return
+
+        return messageModule.toggleReaction(messageId, emojiId)
+    }
+
+    function lastTwoItems(nodes) {
+        //% " and "
+        return nodes.join(qsTrId("-and-"));
+    }
+
+    function showReactionAuthors(jsonArrayOfUsersReactedWithThisEmoji, emojiId) {
+        let listOfUsers = JSON.parse(jsonArrayOfUsersReactedWithThisEmoji)
+        if (listOfUsers.error) {
+            console.error("error parsing users who reacted to a message, error: ", obj.error)
+            return
+        }
+
+        let tooltip
+        if (listOfUsers.length === 1) {
+            tooltip = listOfUsers[0]
+        } else if (listOfUsers.length === 2) {
+            tooltip = lastTwoItems(listOfUsers);
+        } else {
+            var leftNode = [];
+            var rightNode = [];
+            const maxReactions = 12
+            let maximum = Math.min(maxReactions, listOfUsers.length)
+
+            if (listOfUsers.length > maxReactions) {
+                leftNode = listOfUsers.slice(0, maxReactions);
+                rightNode = listOfUsers.slice(maxReactions, listOfUsers.length);
+                return (rightNode.length === 1) ?
+                            lastTwoItems([leftNode.join(", "), rightNode[0]]) :
+                            //% "%1 more"
+                            lastTwoItems([leftNode.join(", "), qsTrId("-1-more").arg(rightNode.length)]);
+            }
+
+            leftNode = listOfUsers.slice(0, maximum - 1);
+            rightNode = listOfUsers.slice(maximum - 1, listOfUsers.length);
+            tooltip = lastTwoItems([leftNode.join(", "), rightNode[0]])
+        }
+
+        //% " reacted with "
+        tooltip += qsTrId("-reacted-with-");
+        let emojiHtml = Emoji.getEmojiFromId(emojiId);
+        if (emojiHtml) {
+            tooltip += emojiHtml;
+        }
+        return tooltip
+    }
 }

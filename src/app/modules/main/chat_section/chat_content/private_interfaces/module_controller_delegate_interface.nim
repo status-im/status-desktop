@@ -14,3 +14,9 @@ method onChatMuted*(self: AccessInterface) {.base.} =
 
 method onChatUnmuted*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method onReactionAdded*(self: AccessInterface, messageId: string, emojiId: int, reactionId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onReactionRemoved*(self: AccessInterface, messageId: string, emojiId: int, reactionId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
