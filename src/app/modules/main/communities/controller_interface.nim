@@ -49,7 +49,7 @@ method requestCommunityInfo*(self: AccessInterface, communityId: string) {.base.
 method importCommunity*(self: AccessInterface, communityKey: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method exportCommunity*(self: AccessInterface, communityId: string) {.base.} =
+method exportCommunity*(self: AccessInterface, communityId: string): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
 type
