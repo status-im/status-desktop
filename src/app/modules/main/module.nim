@@ -138,7 +138,7 @@ method delete*[T](self: Module[T]) =
   self.viewVariant.delete
   self.controller.delete
 
-method createCommunityItem*[T](self: Module[T], c: CommunityDto): SectionItem = 
+proc createCommunityItem[T](self: Module[T], c: CommunityDto): SectionItem = 
   let (unviewedCount, mentionsCount) = self.controller.getNumOfNotificationsForCommunity(c.id)
   let hasNotification = unviewedCount > 0 or mentionsCount > 0
   let notificationsCount = mentionsCount # we need to add here number of requests
