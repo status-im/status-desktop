@@ -56,7 +56,7 @@ QtObject {
     // Not Refactored Yet
 //    property bool automaticMailserverSelection: profileModelInst.mailservers.automaticSelection
     // Not Refactored Yet
-//    property bool devicesSetup: profileModelInst.devices.isSetup
+    property bool devicesSetup: false //profileModelInst.devices.isSetup
     property bool mnemonicBackedUp: mnemonicModuleInst.isBackedUp
     property bool messagesFromContactsOnly: profile.messagesFromContactsOnly
 
