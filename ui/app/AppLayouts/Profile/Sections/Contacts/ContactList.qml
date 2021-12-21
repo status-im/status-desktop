@@ -5,6 +5,7 @@ import "./samples/"
 
 import utils 1.0
 import shared 1.0
+import shared.popups 1.0
 import "../../../Chat/popups"
 import "."
 

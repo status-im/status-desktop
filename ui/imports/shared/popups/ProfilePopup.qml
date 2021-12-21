@@ -7,6 +7,7 @@ import QtGraphicalEffects 1.13
 import utils 1.0
 import shared 1.0
 import shared.popups 1.0
+import shared.stores 1.0
 
 import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
@@ -19,10 +20,6 @@ StatusModal {
 
     property Popup parentPopup
 
-//ProfilePopup is either instantiated in some files
-//and called to open via the openProfilePopup in others
-//TODO ---------------------------------------
-//use one PofilePopup instance and pass the store there
     property var store
     property var identicon: ""
     property var userName: ""
@@ -51,9 +48,9 @@ StatusModal {
         fromAuthor = fromAuthorParam || ""
         identicon = identiconParam || ""
         text = textParam || ""
-        isEnsVerified = popup.store.isEnsVerified(this.fromAuthor)
-        isBlocked = popup.store.isContactBlocked(this.fromAuthor);
-        alias = popup.store.alias(this.fromAuthor) || ""
+        isEnsVerified = RootStore.isEnsVerified(this.fromAuthor)
+        isBlocked = RootStore.isContactBlocked(this.fromAuthor);
+        alias = RootStore.alias(this.fromAuthor) || ""
         isCurrentUser = userProfile.pubKey === this.fromAuthor
         showFooter = _showFooter;
         popup.open()
@@ -211,7 +208,7 @@ StatusModal {
         UnblockContactConfirmationDialog {
             id: unblockContactConfirmationDialog
             onUnblockButtonClicked: {
-                popup.store.contactsModuleInst.unblockContact(fromAuthor)
+                RootStore.contactsModuleInst.unblockContact(fromAuthor)
                 unblockContactConfirmationDialog.close();
                 popup.close()
                 popup.contactUnblocked(fromAuthor)
@@ -221,7 +218,7 @@ StatusModal {
         BlockContactConfirmationDialog {
             id: blockContactConfirmationDialog
             onBlockButtonClicked: {
-                popup.store.contactsModuleInst.blockContact(fromAuthor)
+                RootStore.contactsModuleInst.blockContact(fromAuthor)
                 blockContactConfirmationDialog.close();
                 popup.close()
 
@@ -234,8 +231,8 @@ StatusModal {
             header.title: qsTr("Remove contact")
             confirmationText: qsTr("Are you sure you want to remove this contact?")
             onConfirmButtonClicked: {
-                if (popup.store.contactsModuleInst.model.isAdded(fromAuthor)) {
-                    popup.store.contactsModuleInst.removeContact(fromAuthor);
+                if (RootStore.contactsModuleModel.isAdded(fromAuthor)) {
+                    RootStore.contactsModuleInst.removeContact(fromAuthor);
                 }
                 removeContactConfirmationDialog.close();
                 popup.close();
@@ -250,7 +247,7 @@ StatusModal {
                     popup.userName = newUsername;
                 }
                 popup.nickname = newNickname;
-                popup.store.contactsModuleInst.changeContactNickname(fromAuthor, newNickname);
+                RootStore.contactsModuleInst.changeContactNickname(fromAuthor, newNickname);
                 popup.close()
                 // Not Refactored Yet
 //                if (!!chatsModel.communities.activeCommunity) {
@@ -280,7 +277,7 @@ StatusModal {
         },
 
         StatusFlatButton {
-            property bool isAdded: popup.store.contactsModuleInst.model.isAdded(fromAuthor)
+            property bool isAdded: RootStore.contactsModuleModel.isAdded(fromAuthor)
             visible: !isBlocked && isAdded
             type: StatusBaseButton.Type.Danger
             text: qsTr('Remove Contact')
@@ -291,7 +288,7 @@ StatusModal {
         },
 
         StatusButton {
-            property bool isAdded: popup.store.contactsModuleInst.model.isAdded(fromAuthor)
+            property bool isAdded: RootStore.contactsModuleModel.isAdded(fromAuthor)
             text: qsTr("Add to contacts")
             visible: !isBlocked && !isAdded
             onClicked: {
