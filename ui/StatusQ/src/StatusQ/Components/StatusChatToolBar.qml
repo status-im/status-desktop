@@ -93,6 +93,25 @@ Rectangle {
 
             property bool showMoreMenu: false
             onClicked: {
+                menuButton.highlighted = true
+
+                let originalOpenHandler = popupMenuSlot.item.openHandler
+                let originalCloseHandler = popupMenuSlot.item.closeHandler
+
+                popupMenuSlot.item.openHandler = function () {
+                    if (!!originalOpenHandler) {
+                        originalOpenHandler()
+                    }
+                }
+
+                popupMenuSlot.item.closeHandler = function () {
+                    menuButton.highlighted = false
+                    if (!!originalCloseHandler) {
+                        originalCloseHandler()
+                    }
+                }
+
+                popupMenuSlot.item.openHandler = originalOpenHandler
                 popupMenuSlot.item.popup(-popupMenuSlot.item.width + menuButton.width, menuButton.height + 4)
                 statusChatToolBar.menuButtonClicked()
             }
@@ -100,15 +119,6 @@ Rectangle {
             Loader {
                 id: popupMenuSlot
                 active: !!statusChatToolBar.popupMenu
-                onLoaded: {
-                    popupMenuSlot.item.closeHandler = function () {
-                        menuButton.highlighted = false
-                    }
-
-                    popupMenuSlot.item.openHandler = function () {
-                        menuButton.highlighted = true
-                    }
-                }
             }
         }
 
