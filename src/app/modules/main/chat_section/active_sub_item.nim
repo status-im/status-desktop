@@ -34,6 +34,14 @@ QtObject:
   QtProperty[string] name:
     read = getName
 
+  proc getAmIChatAdmin(self: ActiveSubItem): bool {.slot.} = 
+    if(self.item.isNil):
+      return false
+    return self.item.amIChatAdmin
+
+  QtProperty[bool] amIChatAdmin:
+    read = getAmIChatAdmin
+
   proc getIcon(self: ActiveSubItem): string {.slot.} =
     if(self.item.isNil):
       return ""

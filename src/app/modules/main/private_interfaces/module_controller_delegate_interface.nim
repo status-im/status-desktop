@@ -18,5 +18,10 @@ method enableSection*(self: AccessInterface, sectionType: SectionType) {.base.} 
 method disableSection*(self: AccessInterface, sectionType: SectionType) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method communityJoined*(self: AccessInterface, community: CommunityDto, events: EventEmitter, contactsService: contacts_service.Service, chatService: chat_service.Service, communityService: community_service.Service, messageService: message_service.Service) {.base.} =
+method communityJoined*(self: AccessInterface, community: CommunityDto, events: EventEmitter, 
+  settingsService: settings_service.ServiceInterface,
+  contactsService: contacts_service.Service, 
+  chatService: chat_service.Service, 
+  communityService: community_service.Service, 
+  messageService: message_service.Service) {.base.} =
   raise newException(ValueError, "No implementation available")

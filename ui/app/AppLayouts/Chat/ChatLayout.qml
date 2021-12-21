@@ -50,7 +50,7 @@ StatusAppThreePanelLayout {
        messageStore: root.messageStore
    }
 
-    property alias chatColumn: chatColumn
+    property Component pinnedMessagesListPopupComponent
     property bool stickersLoaded: false
     signal profileButtonClicked()
     signal openAppSearch()
@@ -77,6 +77,7 @@ StatusAppThreePanelLayout {
         id: chatColumn
         parentModule: chatCommunitySectionModule
         rootStore: root.rootStore
+        pinnedMessagesPopupComponent: root.pinnedMessagesListPopupComponent
         //chatGroupsListViewCount: contactColumnLoader.item.chatGroupsListViewCount
 
         onOpenAppSearch: {
@@ -134,7 +135,7 @@ StatusAppThreePanelLayout {
         CommunityColumnView {
             communitySectionModule: root.chatCommunitySectionModule
             store: root.rootStore
-            //pinnedMessagesPopupComponent: chatColumn.pinnedMessagesPopupComponent
+            pinnedMessagesPopupComponent: root.pinnedMessagesListPopupComponent
         }
     }
 
@@ -143,7 +144,7 @@ StatusAppThreePanelLayout {
         GroupInfoPopup {
             // Not Refactored
             store: root.rootStore
-            //pinnedMessagesPopupComponent: chatColumn.pinnedMessagesPopupComponent
+            pinnedMessagesPopupComponent: root.pinnedMessagesListPopupComponent
         }
     }
 

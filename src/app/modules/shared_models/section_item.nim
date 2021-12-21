@@ -15,6 +15,7 @@ type
     sectionType: SectionType
     id: string
     name: string
+    amISectionAdmin: bool
     description: string
     image: string
     icon: string
@@ -33,7 +34,8 @@ type
 proc initItem*(
     id: string,
     sectionType: SectionType,
-    name,
+    name: string,
+    amISectionAdmin = false,
     description = "",
     image = "",
     icon = "",
@@ -52,6 +54,7 @@ proc initItem*(
   result.id = id
   result.sectionType = sectionType
   result.name = name
+  result.amISectionAdmin = amISectionAdmin
   result.description = description
   result.image = image
   result.icon = icon
@@ -75,6 +78,7 @@ proc `$`*(self: SectionItem): string =
     id: {self.id},
     sectionType: {self.sectionType.int},
     name: {self.name},
+    amISectionAdmin: {self.amISectionAdmin},
     description: {self.description}, 
     image: {self.image},
     icon: {self.icon},
@@ -99,6 +103,9 @@ proc sectionType*(self: SectionItem): SectionType {.inline.} =
 
 proc name*(self: SectionItem): string {.inline.} = 
   self.name
+
+proc amISectionAdmin*(self: SectionItem): bool {.inline.} = 
+  self.amISectionAdmin
 
 proc description*(self: SectionItem): string {.inline.} = 
   self.description

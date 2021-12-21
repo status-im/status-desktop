@@ -109,14 +109,68 @@ ColumnLayout {
         onNotificationButtonClicked: activityCenter.open()
 
         popupMenu: ChatContextMenuView {
-            isCommunityChat: chatContentModule.chatDetails.belongsToCommunity
-            chatId: chatContentModule.chatDetails.id
-            chatName: chatContentModule.chatDetails.name
-            chatType: chatContentModule.chatDetails.type
-            chatMuted: chatContentModule.chatDetails.muted
+            openHandler: function () {
+                currentFleet = chatContentModule.getCurrentFleet()
+                isCommunityChat = chatContentModule.chatDetails.belongsToCommunity
+                isCommunityAdmin = chatContentModule.amIChatAdmin()
+                chatId = chatContentModule.chatDetails.id
+                chatName = chatContentModule.chatDetails.name
+                chatDescription = chatContentModule.chatDetails.description
+                chatType = chatContentModule.chatDetails.type
+                chatMuted = chatContentModule.chatDetails.muted
+            }
 
-            // TODO
-            //currentFleet
+            onMuteChat: {
+                chatContentModule.muteChat()
+            }
+
+            onUnmuteChat: {
+                chatContentModule.unmuteChat()
+            }
+
+            onMarkAllMessagesRead: {
+                chatContentModule.markAllMessagesRead()
+            }
+
+            onClearChatHistory: {
+                chatContentModule.clearChatHistory()
+            }
+
+            onRequestAllHistoricMessages: {
+                // Not Refactored Yet - Check in the `master` branch if this is applicable here.
+            }
+
+            onLeaveChat: {
+                chatContentModule.leaveChat()
+            }
+
+            onDeleteChat: {
+                // Not Refactored Yet
+            }
+
+            onDownloadMessages: {
+                // Not Refactored Yet
+            }
+
+            onDisplayProfilePopup: {
+                // Not Refactored Yet
+            }
+
+            onDisplayGroupInfoPopup: {
+                // Not Refactored Yet
+            }
+
+            onEditCommunityChannel: {
+                // Not Refactored Yet
+            }
+
+            onOpenPinnedMessagesList: {
+                Global.openPopup(pinnedMessagesPopupComponent, {
+                                     messageStore: messageStore,
+                                     pinnedMessagesModel: chatContentModule.pinnedMessagesModel,
+                                     messageToPin: ""
+                                 })
+            }
         }
     }
 

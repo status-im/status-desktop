@@ -73,8 +73,20 @@ QtObject:
   proc isMyContact*(self: View, contactId: string): bool {.slot.} =
     return self.delegate.isMyContact(contactId)
 
+  proc muteChat*(self: View) {.slot.} = 
+    self.delegate.muteChat()
+
   proc unmuteChat*(self: View) {.slot.} = 
     self.delegate.unmuteChat()
+
+  proc markAllMessagesRead*(self: View) {.slot.} = 
+    self.delegate.markAllMessagesRead()
+
+  proc clearChatHistory*(self: View) {.slot.} = 
+    self.delegate.clearChatHistory()
+
+  proc leaveChat*(self: View) {.slot.} =
+    self.delegate.leaveChat()
 
   proc setMuted*(self: View, muted: bool) = 
     self.chatDetails.setMuted(muted)
@@ -83,3 +95,9 @@ QtObject:
     return self.chatDetailsVariant
   QtProperty[QVariant] chatDetails:
     read = getChatDetails
+
+  proc getCurrentFleet*(self: View): string {.slot.} =
+    self.delegate.getCurrentFleet()
+
+  proc amIChatAdmin*(self: View): bool {.slot.} = 
+    return self.delegate.amIChatAdmin()

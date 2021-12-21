@@ -80,6 +80,7 @@ method init*(self: Controller) =
     self.delegate.communityJoined(
       args.community,
       self.events,
+      self.settingsService,
       self.contactsService,
       self.chatService,
       self.communityService,

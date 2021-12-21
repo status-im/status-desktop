@@ -295,6 +295,7 @@ proc load(self: AppController) =
   # load main module
   self.mainModule.load(
     self.statusFoundation.status.events,
+    self.settingsService,
     self.contactsService,
     self.chatService,
     self.communityService,

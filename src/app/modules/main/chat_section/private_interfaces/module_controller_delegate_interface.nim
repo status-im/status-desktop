@@ -2,8 +2,9 @@ method activeItemSubItemSet*(self: AccessInterface, itemId: string, subItemId: s
   raise newException(ValueError, "No implementation available")
 
 method addNewChat*(self: AccessInterface, chatDto: ChatDto, events: EventEmitter, 
-  contactService: contact_service.Service, chatService: chat_service.Service, 
-  communityService: community_service.Service, messageService: message_service.Service) {.base.} =
+  settingsService: settings_service.ServiceInterface, contactService: contact_service.Service, 
+  chatService: chat_service.Service, communityService: community_service.Service, 
+  messageService: message_service.Service) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onChatMuted*(self: AccessInterface, chatId: string) {.base.} =

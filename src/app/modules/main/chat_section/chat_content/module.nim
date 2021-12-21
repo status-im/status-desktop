@@ -11,6 +11,7 @@ import input_area/module as input_area_module
 import messages/module as messages_module
 import users/module as users_module
 
+import ../../../../../app_service/service/settings/service_interface as settings_service
 import ../../../../../app_service/service/contacts/service as contact_service
 import ../../../../../app_service/service/chat/service as chat_service
 import ../../../../../app_service/service/community/service as community_service
@@ -35,21 +36,21 @@ type
     moduleLoaded: bool
 
 proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitter, sectionId: string, chatId: string, 
-  belongsToCommunity: bool, isUsersListAvailable: bool, contactService: contact_service.Service, 
-  chatService: chat_service.Service, communityService: community_service.Service, 
-  messageService: message_service.Service): 
+  belongsToCommunity: bool, isUsersListAvailable: bool, settingsService: settings_service.ServiceInterface, 
+  contactService: contact_service.Service, chatService: chat_service.Service, 
+  communityService: community_service.Service, messageService: message_service.Service): 
   Module =
   result = Module()
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, events, chatId, belongsToCommunity, isUsersListAvailable,
-  contactService, chatService, communityService, messageService)
+  result.controller = controller.newController(result, events, sectionId, chatId, belongsToCommunity, 
+  isUsersListAvailable, settingsService, contactService, chatService, communityService, messageService)
   result.moduleLoaded = false
 
   result.inputAreaModule = input_area_module.newModule(result, chatId, belongsToCommunity, chatService, communityService)
-  result.messagesModule = messages_module.newModule(result, events, chatId, belongsToCommunity, contactService, 
-  chatService, messageService)
+  result.messagesModule = messages_module.newModule(result, events, sectionId, chatId, belongsToCommunity, 
+  contactService, communityService, chatService, messageService)
   result.usersModule = users_module.newModule(result, events, sectionId, chatId, belongsToCommunity, isUsersListAvailable, 
   contactService, communityService, messageService)
 
@@ -193,8 +194,20 @@ method getMyChatId*(self: Module): string =
 method isMyContact*(self: Module, contactId: string): bool =
   self.controller.getMyAddedContacts().filter(x => x.id == contactId).len > 0
 
+method muteChat*(self: Module) =
+  self.controller.muteChat()
+
 method unmuteChat*(self: Module) =
   self.controller.unmuteChat()
+
+method markAllMessagesRead*(self: Module) =
+  self.controller.markAllMessagesRead()
+
+method clearChatHistory*(self: Module) =
+  self.controller.clearChatHistory()
+
+method leaveChat*(self: Module) =
+  self.controller.leaveChat()
 
 method onChatMuted*(self: Module) =
   self.view.setMuted(true)
@@ -217,3 +230,17 @@ method onReactionRemoved*(self: Module, messageId: string, emojiId: int, reactio
     self.view.pinnedModel().removeReaction(messageId, emojiIdAsEnum, reactionId)
   else:
     error "(pinned) wrong emoji id found on reaction remove response", emojiId
+
+method getCurrentFleet*(self: Module): string =
+  return self.controller.getCurrentFleet()
+
+method amIChatAdmin*(self: Module): bool =
+  if(not self.controller.belongsToCommunity()):
+    let chatDto = self.controller.getChatDetails()
+    for m in chatDto.members:
+      if (m.id == singletonInstance.userProfile.getPubKey() and m.admin):
+        return true
+    return false
+  else:
+    let communityDto = self.controller.getCommunityDetails()
+    return communityDto.admin
