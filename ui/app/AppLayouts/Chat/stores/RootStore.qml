@@ -186,10 +186,6 @@ QtObject {
         return contactsModuleModel.isContactBlocked(pubkey)
     }
 
-    function isEnsVerified(pubkey) {
-        return contactsModuleModel.isEnsVerified(pubkey)
-    }
-
     function alias(pubkey) {
         return contactsModuleModel.alias(pubkey)
     }

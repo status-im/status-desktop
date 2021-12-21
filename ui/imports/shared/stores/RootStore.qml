@@ -12,6 +12,7 @@ QtObject {
     property var profileModelInst: !!profileModel ? profileModel : null
     property var walletSectionInst: !!walletSection ? walletSection : null
     property var contactsModuleInst: !!contactsModule ? contactsModule : null
+    property var contactsModuleModel: contactsModuleInst.model || {}
     property var appSettings: !!localAppSettings ? localAppSettings : null
     property var accountSensitiveSettings: !!localAccountSensitiveSettings ? localAccountSensitiveSettings : null
     property real volume: !!accountSensitiveSettings ? accountSensitiveSettings.volume : 0.0
@@ -71,6 +72,18 @@ QtObject {
     }
 
     function copyToClipboard(textToCopy) {
-        chatsModelInst.copyToClipboard(textToCopy);
+        chatsModelInst.copyToClipboard(textToCopy)
+    }
+
+    function isEnsVerified(pubkey) {
+        return contactsModuleInst.isEnsVerified(pubkey);
+    }
+
+    function isContactBlocked(pubkey) {
+        return contactsModuleModel.isContactBlocked(pubkey);
+    }
+
+    function alias(pubkey) {
+        return contactsModuleInst.alias(pubkey);
     }
 }
