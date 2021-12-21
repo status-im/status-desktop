@@ -4,6 +4,8 @@ import QtQuick 2.13
 
 QtObject {
     id: root
+
+    property var appRootComponent
     property int currentMenuTab: 0
     property var errorSound: Audio {
         id: errorSound
@@ -23,6 +25,10 @@ QtObject {
 
     function openPopup(popupComponent, params = {}) {
         root.openPopupRequested(popupComponent, params);
+    }
+
+    function createPopup(popupComponent, params = {}) {
+        return popupComponent.createObject(root.appRootComponent, params);
     }
 
     function changeAppSectionBySectionType(sectionType) {

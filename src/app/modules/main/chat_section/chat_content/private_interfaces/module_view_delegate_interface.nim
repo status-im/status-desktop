@@ -21,5 +21,23 @@ method getMyChatId*(self: AccessInterface): string {.base.} =
 method isMyContact*(self: AccessInterface, contactId: string): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method muteChat*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method unmuteChat*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method markAllMessagesRead*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method clearChatHistory*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method leaveChat*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getCurrentFleet*(self: AccessInterface): string {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method amIChatAdmin*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")

@@ -273,30 +273,68 @@ Item {
                         return
                     }
 
+                    currentFleet = root.communitySectionModule.getCurrentFleet()
                     isCommunityChat = root.communitySectionModule.isCommunity()
+                    isCommunityAdmin = obj.amIChatAdmin
                     chatId = obj.itemId
                     chatName = obj.name
+                    chatDescription = obj.description
                     chatType = obj.type
                     chatMuted = obj.muted
-
-                    // TODO
-                    //currentFleet
                 }
 
                 onMuteChat: {
-                    root.communitySectionModule.muteChat(id)
+                    root.communitySectionModule.muteChat(chatId)
                 }
 
                 onUnmuteChat: {
-                    root.communitySectionModule.unmuteChat(id)
+                    root.communitySectionModule.unmuteChat(chatId)
                 }
 
                 onMarkAllMessagesRead: {
-                    root.communitySectionModule.markAllMessagesRead(id)
+                    root.communitySectionModule.markAllMessagesRead(chatId)
                 }
 
                 onClearChatHistory: {
-                    root.communitySectionModule.clearChatHistory(id)
+                    root.communitySectionModule.clearChatHistory(chatId)
+                }
+
+                onRequestAllHistoricMessages: {
+                    // Not Refactored Yet - Check in the `master` branch if this is applicable here.
+                }
+
+                onLeaveChat: {
+                    root.communitySectionModule.leaveChat(chatId)
+                }
+
+                onDeleteChat: {
+                    // Not Refactored Yet
+                }
+
+                onDownloadMessages: {
+                    // Not Refactored Yet
+                }
+
+                onDisplayProfilePopup: {
+                    // Not Refactored Yet
+                }
+
+                onDisplayGroupInfoPopup: {
+                    // Not Refactored Yet
+                }
+
+                onEditCommunityChannel: {
+                    // Not Refactored Yet
+                }
+
+                onOpenPinnedMessagesList: {
+                    chatCommunitySectionModule.prepareChatContentModuleForChatId(chatId)
+                    let chatContentModule = chatCommunitySectionModule.getChatContentModule()
+                    Global.openPopup(pinnedMessagesPopupComponent, {
+                                         messageStore: messageStore,
+                                         pinnedMessagesModel: chatContentModule.pinnedMessagesModel,
+                                         messageToPin: ""
+                                     })
                 }
             }
         }
@@ -362,8 +400,6 @@ Item {
         id: createChannelPopup
         CreateChannelPopup {
             anchors.centerIn: parent
-            store: root.store
-            pinnedMessagesPopupComponent: root.pinnedMessagesPopupComponent
             onClosed: {
                 destroy()
             }

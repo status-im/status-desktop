@@ -1,4 +1,5 @@
 import ../../../../../../app_service/service/contacts/dto/[contacts]
+import ../../../../../../app_service/service/community/dto/[community]
 import ../../../../../../app_service/service/chat/dto/[chat]
 
 type 
@@ -11,10 +12,16 @@ method delete*(self: AccessInterface) {.base.} =
 method init*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getChatId*(self: AccessInterface): string {.base.} =
+method getMySectionId*(self: AccessInterface): string {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getMyChatId*(self: AccessInterface): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getChatDetails*(self: AccessInterface): ChatDto {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getCommunityDetails*(self: AccessInterface): CommunityDto {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getOneToOneChatNameAndImage*(self: AccessInterface): tuple[name: string, image: string, isIdenticon: bool] 

@@ -169,9 +169,15 @@ QtObject:
       return
 
   proc generateAlias*(self: Service, publicKey: string): string =
+    if(publicKey.len == 0):
+      error "cannot generate an alias from the empty public key"
+      return
     return status_accounts.generateAlias(publicKey).result.getStr
 
   proc generateIdenticon*(self: Service, publicKey: string): string =
+    if(publicKey.len == 0):
+      error "cannot generate an identicon from the empty public key"
+      return 
     return status_accounts.generateIdenticon(publicKey).result.getStr
 
   proc getContactById*(self: Service, id: string): ContactsDto =

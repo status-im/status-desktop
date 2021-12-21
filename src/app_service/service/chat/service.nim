@@ -212,13 +212,13 @@ QtObject:
       error "error: ", errDesription
       return
 
-  proc leaveChat*(self: Service, chatId: string): bool =
+  proc leaveChat*(self: Service, chatId: string) =
     try:
       if self.chats.len == 0:
-        return false
+        return
       if(not self.chats.contains(chatId)):
         error "trying to leave chat for an unexisting chat id", chatId
-        return false
+        return
 
       let chat = self.chats[chatId]
       if chat.chatType == chat_dto.ChatType.PrivateGroupChat:
@@ -230,10 +230,9 @@ QtObject:
       self.chats.del(chatId)
       discard status_chat.clearChatHistory(chatId)
       self.events.emit(SIGNAL_CHAT_LEFT, ChatArgs(chatId: chatId))
-      return true
     except Exception as e:
       error "Error deleting channel", chatId, msg = e.msg
-      return false
+      return
     
   proc sendImages*(self: Service, chatId: string, imagePathsJson: string): string =
     result = ""

@@ -7,6 +7,7 @@ type
     Id = UserRole + 1
     ParentId
     Name
+    AmIChatAdmin
     Icon
     IsIdenticon
     Color
@@ -60,6 +61,7 @@ QtObject:
       ModelRole.Id.int:"itemId",
       ModelRole.ParentId.int:"parentItemId",
       ModelRole.Name.int:"name",
+      ModelRole.AmIChatAdmin.int:"amIChatAdmin",
       ModelRole.Icon.int:"icon",
       ModelRole.IsIdenticon.int:"isIdenticon",
       ModelRole.Color.int:"color",
@@ -89,6 +91,8 @@ QtObject:
       result = newQVariant(item.parentId)
     of ModelRole.Name: 
       result = newQVariant(item.name)
+    of ModelRole.AmIChatAdmin: 
+      result = newQVariant(item.amIChatAdmin)
     of ModelRole.Icon: 
       result = newQVariant(item.icon)
     of ModelRole.IsIdenticon:

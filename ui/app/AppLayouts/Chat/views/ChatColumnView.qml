@@ -31,7 +31,7 @@ Item {
     property var parentModule
 
     property var rootStore
-    property alias pinnedMessagesPopupComponent: pinnedMessagesPopupComponent
+    property Component pinnedMessagesPopupComponent
     // Not Refactored Yet
     //property int chatGroupsListViewCount: 0
     property bool isReply: false
@@ -326,14 +326,6 @@ Item {
             target: systemTray
             onMessageClicked: function () {
                 clickOnNotification()
-            }
-        }
-
-        Component {
-            id: pinnedMessagesPopupComponent
-            PinnedMessagesPopup {
-                id: pinnedMessagesPopup
-                onClosed: destroy()
             }
         }
 

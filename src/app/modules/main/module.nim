@@ -103,8 +103,8 @@ proc newModule*[T](
   result.moduleLoaded = false
 
   # Submodules
-  result.chatSectionModule = chat_section_module.newModule(result, events, conf.CHAT_SECTION_ID, false, contactsService, 
-  chatService, communityService, messageService)
+  result.chatSectionModule = chat_section_module.newModule(result, events, conf.CHAT_SECTION_ID, false, settingsService,
+  contactsService, chatService, communityService, messageService)
   result.communitySectionsModule = initOrderedTable[string, chat_section_module.AccessInterface]()
   result.walletSectionModule = wallet_section_module.newModule[Module[T]](
     result, events, tokenService,
@@ -146,18 +146,20 @@ proc createCommunityItem[T](self: Module[T], c: CommunityDto): SectionItem =
     c.id,
     SectionType.Community,
     c.name,
+    c.admin,
     c.description,
     c.images.thumbnail,
-    "",
+    icon = "",
     c.color,
     hasNotification,
     notificationsCount,
-    false,
-    singletonInstance.localAccountSensitiveSettings.getCommunitiesEnabled())
+    active = false,
+    enabled = singletonInstance.localAccountSensitiveSettings.getCommunitiesEnabled())
 
 method load*[T](
     self: Module[T],
     events: EventEmitter,
+    settingsService: settings_service.ServiceInterface,
     contactsService: contacts_service.Service,
     chatService: chat_service.Service,
     communityService: community_service.Service,
@@ -176,6 +178,7 @@ method load*[T](
       events,
       c.id,
       isCommunity = true,
+      settingsService,
       contactsService,
       chatService,
       communityService,
@@ -189,9 +192,16 @@ method load*[T](
   let (unviewedCount, mentionsCount) = self.controller.getNumOfNotificaitonsForChat()
   let hasNotification = unviewedCount > 0 or mentionsCount > 0
   let notificationsCount = mentionsCount
-  let chatSectionItem = initItem(conf.CHAT_SECTION_ID, SectionType.Chat, conf.CHAT_SECTION_NAME, "", "",
-  conf.CHAT_SECTION_ICON, "", hasNotification, notificationsCount, 
-  false, true)
+  let chatSectionItem = initItem(conf.CHAT_SECTION_ID, SectionType.Chat, conf.CHAT_SECTION_NAME, 
+  amISectionAdmin = false, 
+  description = "", 
+  image = "", 
+  conf.CHAT_SECTION_ICON, 
+  color = "", 
+  hasNotification, 
+  notificationsCount, 
+  active = false, 
+  enabled = true)
   self.view.addItem(chatSectionItem)
   if(activeSectionId == chatSectionItem.id):
     activeSection = chatSectionItem
@@ -204,48 +214,86 @@ method load*[T](
       activeSection = communitySectionItem
 
   # Wallet Section
-  let walletSectionItem = initItem(conf.WALLET_SECTION_ID, SectionType.Wallet, conf.WALLET_SECTION_NAME, "", "",
-  conf.WALLET_SECTION_ICON, "", false, 0, false,
-  singletonInstance.localAccountSensitiveSettings.getIsWalletEnabled())
+  let walletSectionItem = initItem(conf.WALLET_SECTION_ID, SectionType.Wallet, conf.WALLET_SECTION_NAME, 
+  amISectionAdmin = false, 
+  description = "", 
+  image = "", 
+  conf.WALLET_SECTION_ICON, 
+  color = "", 
+  hasNotification = false, 
+  notificationsCount = 0, 
+  active = false,
+  enabled = singletonInstance.localAccountSensitiveSettings.getIsWalletEnabled())
   self.view.addItem(walletSectionItem)
   if(activeSectionId == walletSectionItem.id):
     activeSection = walletSectionItem
 
   # WalletV2 Section
-  let walletV2SectionItem = initItem(conf.WALLETV2_SECTION_ID, SectionType.WalletV2, conf.WALLETV2_SECTION_NAME, "", "",
-  conf.WALLETV2_SECTION_ICON, "", false, 0, false, 
-  singletonInstance.localAccountSensitiveSettings.getIsWalletV2Enabled())
+  let walletV2SectionItem = initItem(conf.WALLETV2_SECTION_ID, SectionType.WalletV2, conf.WALLETV2_SECTION_NAME, 
+  amISectionAdmin = false,
+  description = "", 
+  image = "", 
+  conf.WALLETV2_SECTION_ICON, 
+  color = "", 
+  hasNotification = false, 
+  notificationsCount = 0, 
+  active = false, 
+  enabled = singletonInstance.localAccountSensitiveSettings.getIsWalletV2Enabled())
   self.view.addItem(walletV2SectionItem)
   if(activeSectionId == walletV2SectionItem.id):
     activeSection = walletV2SectionItem
 
   # Browser Section
-  let browserSectionItem = initItem(conf.BROWSER_SECTION_ID, SectionType.Browser, conf.BROWSER_SECTION_NAME, "", "",
-  conf.BROWSER_SECTION_ICON, "", false, 0, false,
-  singletonInstance.localAccountSensitiveSettings.getIsBrowserEnabled())
+  let browserSectionItem = initItem(conf.BROWSER_SECTION_ID, SectionType.Browser, conf.BROWSER_SECTION_NAME, 
+  amISectionAdmin = false, 
+  description = "", 
+  image = "", 
+  conf.BROWSER_SECTION_ICON, 
+  color = "", 
+  hasNotification = false, 
+  notificationsCount = 0, 
+  active = false,
+  enabled = singletonInstance.localAccountSensitiveSettings.getIsBrowserEnabled())
   self.view.addItem(browserSectionItem)
   if(activeSectionId == browserSectionItem.id):
     activeSection = browserSectionItem
 
   # Node Management Section
   let nodeManagementSectionItem = initItem(conf.NODEMANAGEMENT_SECTION_ID, SectionType.NodeManagement, 
-  conf.NODEMANAGEMENT_SECTION_NAME, "", "", conf.NODEMANAGEMENT_SECTION_ICON, "", false, 0, false, 
-  singletonInstance.localAccountSensitiveSettings.getNodeManagementEnabled())
+  conf.NODEMANAGEMENT_SECTION_NAME, 
+  amISectionAdmin = false, 
+  description = "", 
+  image = "", 
+  conf.NODEMANAGEMENT_SECTION_ICON, 
+  color = "", 
+  hasNotification = false, 
+  notificationsCount = 0, 
+  active = false, 
+  enabled = singletonInstance.localAccountSensitiveSettings.getNodeManagementEnabled())
   self.view.addItem(nodeManagementSectionItem)
   if(activeSectionId == nodeManagementSectionItem.id):
     activeSection = nodeManagementSectionItem
 
   # Profile Section
   let profileSettingsSectionItem = initItem(conf.SETTINGS_SECTION_ID, SectionType.ProfileSettings, 
-  conf.SETTINGS_SECTION_NAME, "", "", conf.SETTINGS_SECTION_ICON, "", false, 0, false, true)
+  conf.SETTINGS_SECTION_NAME, 
+  amISectionAdmin = false, 
+  description = "", 
+  image = "", 
+  conf.SETTINGS_SECTION_ICON, 
+  color = "", 
+  hasNotification = false, 
+  notificationsCount = 0, 
+  active = false, 
+  enabled = true)
   self.view.addItem(profileSettingsSectionItem)
   if(activeSectionId == profileSettingsSectionItem.id):
     activeSection = profileSettingsSectionItem
 
   # Load all sections
-  self.chatSectionModule.load(events, contactsService, chatService, communityService, messageService)
+  self.chatSectionModule.load(events, settingsService, contactsService, chatService, communityService, messageService)
   for cModule in self.communitySectionsModule.values:
-    cModule.load(events, contactsService, chatService, communityService, messageService)
+    cModule.load(events, settingsService, contactsService, chatService, communityService, messageService)
   self.walletSectionModule.load()
   # self.walletV2SectionModule.load()
   self.browserSectionModule.load()
@@ -396,6 +444,7 @@ method communityJoined*[T](
     self: Module[T],
     community: CommunityDto,
     events: EventEmitter,
+    settingsService: settings_service.ServiceInterface,
     contactsService: contacts_service.Service,
     chatService: chat_service.Service,
     communityService: community_service.Service,
@@ -406,6 +455,7 @@ method communityJoined*[T](
       events,
       community.id,
       isCommunity = true,
+      settingsService,
       contactsService,
       chatService,
       communityService,

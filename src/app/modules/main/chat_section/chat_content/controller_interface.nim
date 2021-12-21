@@ -1,5 +1,6 @@
 import ../../../../../app_service/service/contacts/dto/[contacts]
 import ../../../../../app_service/service/message/dto/[message, reaction]
+import ../../../../../app_service/service/community/dto/[community]
 import ../../../../../app_service/service/chat/dto/[chat]
 import ../../../../../app_service/service/contacts/service
 
@@ -17,6 +18,9 @@ method getMyChatId*(self: AccessInterface): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getChatDetails*(self: AccessInterface): ChatDto {.base.} =
+  raise newException(ValueError, "No implementation available")
+  
+method getCommunityDetails*(self: AccessInterface): CommunityDto {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getOneToOneChatNameAndImage*(self: AccessInterface): tuple[name: string, image: string, isIdenticon: bool] 
@@ -39,11 +43,26 @@ method isUsersListAvailable*(self: AccessInterface): bool {.base.} =
 method getMyAddedContacts*(self: AccessInterface): seq[ContactsDto] {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method muteChat*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method unmuteChat*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method markAllMessagesRead*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method clearChatHistory*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method leaveChat*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getContactById*(self: AccessInterface, contactId: string): ContactsDto {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getContactDetails*(self: AccessInterface, contactId: string): ContactDetails {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getCurrentFleet*(self: AccessInterface): string {.base.} =
   raise newException(ValueError, "No implementation available")

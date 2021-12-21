@@ -3,6 +3,7 @@ import controller_interface
 import io_interface
 
 import ../../../../../../app_service/service/contacts/service as contact_service
+import ../../../../../../app_service/service/community/service as community_service
 import ../../../../../../app_service/service/chat/service as chat_service
 import ../../../../../../app_service/service/message/service as message_service
 
@@ -18,21 +19,26 @@ type
   Controller* = ref object of controller_interface.AccessInterface
     delegate: io_interface.AccessInterface
     events: EventEmitter
+    sectionId: string
     chatId: string
     belongsToCommunity: bool
     contactService: contact_service.Service
+    communityService: community_service.Service
     chatService: chat_service.Service
     messageService: message_service.Service
 
-proc newController*(delegate: io_interface.AccessInterface, events: EventEmitter, chatId: string, belongsToCommunity: bool, 
-  contactService: contact_service.Service, chatService: chat_service.Service, messageService: message_service.Service): 
+proc newController*(delegate: io_interface.AccessInterface, events: EventEmitter, sectionId: string, chatId: string, 
+  belongsToCommunity: bool, contactService: contact_service.Service, communityService: community_service.Service,
+  chatService: chat_service.Service, messageService: message_service.Service): 
   Controller =
   result = Controller()
   result.delegate = delegate
   result.events = events
+  result.sectionId = sectionId
   result.chatId = chatId
   result.belongsToCommunity = belongsToCommunity
   result.contactService = contactService
+  result.communityService = communityService
   result.chatService = chatService
   result.messageService = messageService
   
@@ -69,12 +75,18 @@ method init*(self: Controller) =
     if(self.chatId != args.chatId):
       return
     self.delegate.onReactionRemoved(args.messageId, args.emojiId, args.reactionId)
-    
-method getChatId*(self: Controller): string =
+
+method getMySectionId*(self: Controller): string =
+  return self.sectionId
+
+method getMyChatId*(self: Controller): string =
   return self.chatId
 
 method getChatDetails*(self: Controller): ChatDto =
   return self.chatService.getChatById(self.chatId)
+
+method getCommunityDetails*(self: Controller): CommunityDto =
+  return self.communityService.getCommunityById(self.sectionId)
 
 method getOneToOneChatNameAndImage*(self: Controller): tuple[name: string, image: string, isIdenticon: bool] =
   return self.chatService.getOneToOneChatNameAndImage(self.chatId)

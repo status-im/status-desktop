@@ -110,3 +110,6 @@ QtObject:
 
   proc clearChatHistory*(self: View, chatId: string) {.slot.} = 
     self.delegate.clearChatHistory(chatId)
+
+  proc getCurrentFleet*(self: View): string {.slot.} =
+    self.delegate.getCurrentFleet()

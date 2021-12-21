@@ -9,7 +9,14 @@ type ChatType* {.pure.}= enum
   OneToOne = 1, 
   Public = 2,
   PrivateGroupChat = 3,
+  Profile = 4,
+  Timeline = 5
   CommunityChat = 6
+
+type ChatMember* = object
+  id*: string
+  admin*: bool
+  joined*: bool
 
 type ChatDto* = object
   id*: string # ID is the id of the chat, for public chats it is the name e.g. status, 
@@ -28,7 +35,7 @@ type ChatDto* = object
   unviewedMessagesCount*: int
   unviewedMentionsCount*: int
   #lastMessage*: Message ???? It's a question why do we need it here within this context ????
-  #members*: seq[ChatMember] ???? It's always null and a question why do we need it here within this context ????
+  members*: seq[ChatMember]
   #membershipUpdateEvents*: seq[ChatMembershipEvent]  ???? It's always null and a question why do we need it here within this context ????
   alias*: string
   identicon*: string
@@ -64,6 +71,12 @@ proc `$`*(self: ChatDto): string =
     syncedFrom: {self.syncedFrom}
     )"""
 
+proc toChatMember(jsonObj: JsonNode): ChatMember =
+  result = ChatMember()
+  discard jsonObj.getProp("id", result.id)
+  discard jsonObj.getProp("admin", result.admin)
+  discard jsonObj.getProp("joined", result.joined)
+
 proc toChatDto*(jsonObj: JsonNode): ChatDto =
   result = ChatDto()
   discard jsonObj.getProp("id", result.id)
@@ -72,13 +85,6 @@ proc toChatDto*(jsonObj: JsonNode): ChatDto =
   discard jsonObj.getProp("color", result.color)
   discard jsonObj.getProp("emoji", result.emoji)
   discard jsonObj.getProp("active", result.active)
-  
-  result.chatType = ChatType.Unknown
-  var chatTypeInt: int
-  if (jsonObj.getProp("chatType", chatTypeInt) and
-    (chatTypeInt >= ord(low(ChatType)) or chatTypeInt <= ord(high(ChatType)))): 
-      result.chatType = ChatType(chatTypeInt)
-
   discard jsonObj.getProp("timestamp", result.timestamp)
   discard jsonObj.getProp("lastClockValue", result.lastClockValue)
   discard jsonObj.getProp("deletedAtClockValue", result.deletedAtClockValue)
@@ -93,3 +99,14 @@ proc toChatDto*(jsonObj: JsonNode): ChatDto =
   discard jsonObj.getProp("joined", result.joined)
   discard jsonObj.getProp("syncedTo", result.syncedTo)
   discard jsonObj.getProp("syncedFrom", result.syncedFrom)
+
+  result.chatType = ChatType.Unknown
+  var chatTypeInt: int
+  if (jsonObj.getProp("chatType", chatTypeInt) and
+    (chatTypeInt >= ord(low(ChatType)) or chatTypeInt <= ord(high(ChatType)))): 
+      result.chatType = ChatType(chatTypeInt)
+
+  var membersObj: JsonNode
+  if(jsonObj.getProp("members", membersObj) and membersObj.kind == JArray):
+    for memberObj in membersObj:
+      result.members.add(toChatMember(memberObj))

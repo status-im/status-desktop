@@ -53,6 +53,7 @@ method setAllCommunities*[T](self: Module[T], communities: seq[CommunityDto]) =
       c.id,
       SectionType.Community,
       c.name,
+      c.admin,
       c.description,
       c.images.thumbnail,
       icon = "",

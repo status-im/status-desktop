@@ -5,11 +5,11 @@ type
   Item* = ref object of BaseItem
     subItems: SubModel
 
-proc initItem*(id, name, icon: string, isIdenticon: bool, color, description: string, `type`: int, hasUnreadMessages: bool, 
-  notificationsCount: int, muted, active: bool, position: int): Item =
+proc initItem*(id, name, icon: string, isIdenticon: bool, color, description: string, `type`: int, amIChatAdmin: bool,
+  hasUnreadMessages: bool, notificationsCount: int, muted, active: bool, position: int): Item =
   result = Item()
-  result.setup(id, name, icon, isIdenticon, color, description, `type`, hasUnreadMessages, notificationsCount, muted, 
-  active, position)
+  result.setup(id, name, icon, isIdenticon, color, description, `type`, amIChatAdmin, hasUnreadMessages, 
+  notificationsCount, muted, active, position)
   result.subItems = newSubModel()
 
 proc delete*(self: Item) = 
@@ -23,6 +23,7 @@ proc `$`*(self: Item): string =
   result = fmt"""ChatSectionItem(
     itemId: {self.id}, 
     name: {self.name}, 
+    amIChatAdmin: {self.amIChatAdmin},
     icon: {self.icon},
     isIdenticon: {self.isIdenticon},
     color: {self.color}, 
@@ -41,6 +42,7 @@ proc toJsonNode*(self: Item): JsonNode =
   result = %* {
     "itemId": self.id, 
     "name": self.name, 
+    "amIChatAdmin": self.amIChatAdmin,
     "icon": self.icon,
     "isIdenticon": self.isIdenticon,
     "color": self.color, 

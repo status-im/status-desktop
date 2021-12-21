@@ -36,6 +36,12 @@ QtObject:
   QtProperty[string] name:
     read = getName
 
+  proc getAmISectionAdmin(self: ActiveSection): bool {.slot.} = 
+    return self.item.amISectionAdmin
+
+  QtProperty[bool] amISectionAdmin:
+    read = getAmISectionAdmin
+
   proc description(self: ActiveSection): string {.slot.} = 
     return self.item.description
 
