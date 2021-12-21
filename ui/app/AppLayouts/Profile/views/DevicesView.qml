@@ -26,13 +26,14 @@ Item {
 
     Item {
         id: firstTimeSetup
-        anchors.left: root.left
+        anchors.left: parent.left
         anchors.leftMargin: Style.current.padding
         anchors.top: parent.top
         anchors.topMargin: 24
-        anchors.right: root.right
+        anchors.right: parent.right
         anchors.rightMargin: Style.current.padding
         visible: !root.store.devicesSetup
+        height: visible ? childrenRect.height : 0
 
         StatusBaseText {
             id: deviceNameLbl
@@ -64,14 +65,14 @@ Item {
 
     Item {
         id: advertiseDeviceItem
-        anchors.left: root.left
+        anchors.left: parent.left
         anchors.leftMargin: Style.current.padding
-        anchors.top: parent.top
+        anchors.top: firstTimeSetup.visible ? firstTimeSetup.bottom : parent.top
         anchors.topMargin: Style.current.padding
-        anchors.right: root.right
+        anchors.right: parent.right
         anchors.rightMargin: Style.current.padding
         visible: root.store.devicesSetup
-        height: childrenRect.height
+        height: visible ? childrenRect.height : 0
 
         Rectangle {
             id: advertiseDevice
@@ -146,14 +147,13 @@ Item {
         id: deviceListItem
         anchors.left: root.left
         anchors.leftMargin: Style.current.padding
-        anchors.top: advertiseDeviceItem.bottom
+        anchors.top: advertiseDeviceItem.visible ? advertiseDeviceItem.bottom : parent.top
         anchors.topMargin: Style.current.padding * 2
         anchors.bottom: syncAllBtn.top
         anchors.bottomMargin: Style.current.padding
         anchors.right: root.right
         anchors.rightMargin: Style.current.padding
         visible: root.store.devicesSetup
-
 
         StatusBaseText {
             id: deviceListLbl
