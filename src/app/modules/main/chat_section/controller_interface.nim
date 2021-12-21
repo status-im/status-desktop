@@ -20,7 +20,7 @@ method getActiveChatId*(self: AccessInterface): string {.base.} =
 method isCommunity*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getCommunityIds*(self: AccessInterface): seq[string] {.base.} =
+method getJoinedCommunities*(self: AccessInterface): seq[CommunityDto] {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getCategories*(self: AccessInterface, communityId: string): seq[Category] {.base.} =
@@ -64,4 +64,7 @@ method markAllMessagesRead*(self: AccessInterface, chatId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method clearChatHistory*(self: AccessInterface, chatId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getCurrentFleet*(self: AccessInterface): string {.base.} =
   raise newException(ValueError, "No implementation available")

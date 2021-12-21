@@ -12,17 +12,17 @@ import StatusQ.Popups 0.1
 
 StatusModal {
     id: popup
-    property var store
-    property string communityId
-    property QtObject channel
+
     property bool isEdit: false
-    property string categoryId: ""
-    property var position: null
+    property string channelName: ""
+    property string channelDescription: ""
 
     readonly property int maxChannelNameLength: 30
     readonly property int maxChannelDescLength: 140
     
-    property Component pinnedMessagesPopupComponent
+    signal createCommunityChannel(string chName, string chDescription)
+    signal editCommunityChannel(string chName, string chDescription)
+    signal openPinnedMessagesPopup()
 
     //% "New channel"
     header.title: qsTrId("create-channel-title")
@@ -32,12 +32,9 @@ StatusModal {
         contentItem.channelName.input.forceActiveFocus(Qt.MouseFocusReason)
         if (isEdit) {
             //% "Edit #%1"
-            header.title = qsTrId("edit---1").arg(channel.name);
-            contentItem.channelId = channel.id
-            contentItem.channelCategoryId = channel.categoryId
-            contentItem.channelName.input.text = channel.name
-            contentItem.channelDescription.input.text = channel.description
-            position = channel.position
+            header.title = qsTrId("edit---1").arg(popup.channelName);
+            contentItem.channelName.input.text = popup.channelName
+            contentItem.channelDescription.input.text = popup.channelDescription
         }
     }
 
@@ -56,8 +53,6 @@ StatusModal {
 
         property alias channelName: nameInput
         property alias channelDescription: descriptionTextArea
-        property string channelId
-        property string channelCategoryId
 
         contentHeight: content.height
         height: Math.min(content.height, 432)
@@ -171,8 +166,6 @@ StatusModal {
                 //% "Pinned messages"
                 title: qsTrId("pinned-messages")
                 icon.name: "pin"
-                // Not Refactored Yet
-//                label: popup.store.chatsModelInst.messageView.pinnedMessagesList.count
                 components: [
                     StatusIcon {
                         icon: "chevron-down"
@@ -181,7 +174,9 @@ StatusModal {
                     }
                 ]
 
-                sensor.onClicked: Global.openPopup(pinnedMessagesPopupComponent)
+                sensor.onClicked: {
+                    popup.openPinnedMessagesPopup()
+                }
             }
 
             Item {
@@ -206,20 +201,11 @@ StatusModal {
                 }
                 let error = "";
                 if (!isEdit) {
-                    error = popup.store.createCommunityChannel(communityId,
-                                                                Utils.filterXSS(popup.contentItem.channelName.input.text),
-                                                                Utils.filterXSS(popup.contentItem.channelDescription.input.text),
-                                                                categoryId)
+                    popup.createCommunityChannel(Utils.filterXSS(popup.contentItem.channelName.input.text),
+                                                 Utils.filterXSS(popup.contentItem.channelDescription.input.text))
                 } else {
-                    error = popup.store.editCommunityChannel(communityId,
-                                                                popup.contentItem.channelId,
-                                                                Utils.filterXSS(popup.contentItem.channelName.input.text),
-                                                                Utils.filterXSS(popup.contentItem.channelDescription.input.text),
-                                                                popup.contentItem.channelCategoryId,
-                                                                popup.position)
-                                                                // TODO: pass the private value when private channels
-                                                                // are implemented
-                                                                //privateSwitch.checked)
+                    popup.editCommunityChannel(Utils.filterXSS(popup.contentItem.channelName.input.text),
+                                                 Utils.filterXSS(popup.contentItem.channelDescription.input.text))
                 }
 
                 if (error) {

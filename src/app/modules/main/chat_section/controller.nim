@@ -3,6 +3,7 @@ import Tables
 import controller_interface
 import io_interface
 
+import ../../../../app_service/service/settings/service_interface as settings_service
 import ../../../../app_service/service/contacts/service as contact_service
 import ../../../../app_service/service/chat/service as chat_service
 import ../../../../app_service/service/community/service as community_service
@@ -20,19 +21,22 @@ type
     activeItemId: string
     activeSubItemId: string
     events: EventEmitter
+    settingsService: settings_service.ServiceInterface
     contactService: contact_service.Service
     chatService: chat_service.Service
     communityService: community_service.Service
     messageService: message_service.Service
 
 proc newController*(delegate: io_interface.AccessInterface, sectionId: string, isCommunity: bool, events: EventEmitter,
-  contactService: contact_service.Service, chatService: chat_service.Service,
-  communityService: community_service.Service, messageService: message_service.Service): Controller =
+  settingsService: settings_service.ServiceInterface, contactService: contact_service.Service, 
+  chatService: chat_service.Service, communityService: community_service.Service, 
+  messageService: message_service.Service): Controller =
   result = Controller()
   result.delegate = delegate
   result.sectionId = sectionId
   result.isCommunitySection = isCommunity
   result.events = events
+  result.settingsService = settingsService
   result.contactService = contactService
   result.chatService = chatService
   result.communityService = communityService
@@ -54,6 +58,10 @@ method init*(self: Controller) =
     let args = message_service.MessagesMarkedAsReadArgs(e)
     self.delegate.onMarkAllMessagesRead(args.chatId)
 
+  self.events.on(chat_service.SIGNAL_CHAT_LEFT) do(e: Args):
+    let args = chat_service.ChatArgs(e)
+    self.delegate.removeChat(args.chatId)
+
 method getMySectionId*(self: Controller): string =
   return self.sectionId
 
@@ -66,8 +74,8 @@ method getActiveChatId*(self: Controller): string =
 method isCommunity*(self: Controller): bool =
   return self.isCommunitySection
 
-method getCommunityIds*(self: Controller): seq[string] =
-  return self.communityService.getCommunityIds()
+method getJoinedCommunities*(self: Controller): seq[CommunityDto] =
+  return self.communityService.getJoinedCommunities()
 
 method getCategories*(self: Controller, communityId: string): seq[Category] =
   return self.communityService.getCategories(communityId)
@@ -113,19 +121,17 @@ method getOneToOneChatNameAndImage*(self: Controller, chatId: string):
 method createPublicChat*(self: Controller, chatId: string) =
   let response = self.chatService.createPublicChat(chatId)
   if(response.success):
-    self.delegate.addNewChat(response.chatDto, self.events, self.contactService, self.chatService,
+    self.delegate.addNewChat(response.chatDto, self.events, self.settingsService, self.contactService, self.chatService,
     self.communityService, self.messageService)
 
 method createOneToOneChat*(self: Controller, chatId: string, ensName: string) =
   let response = self.chatService.createOneToOneChat(chatId, ensName)
   if(response.success):
-    self.delegate.addNewChat(response.chatDto, self.events, self.contactService, self.chatService,
+    self.delegate.addNewChat(response.chatDto, self.events, self.settingsService, self.contactService, self.chatService,
     self.communityService, self.messageService)
 
 method leaveChat*(self: Controller, chatId: string) =
-  let success = self.chatService.leaveChat(chatId)
-  if success:
-    self.delegate.removeChat(chatId)
+  self.chatService.leaveChat(chatId)
 
 method muteChat*(self: Controller, chatId: string) =
   self.chatService.muteChat(chatId)
@@ -138,3 +144,6 @@ method markAllMessagesRead*(self: Controller, chatId: string) =
 
 method clearChatHistory*(self: Controller, chatId: string) =
   self.chatService.clearChatHistory(chatId)
+
+method getCurrentFleet*(self: Controller): string =
+  return self.settingsService.getFleet()

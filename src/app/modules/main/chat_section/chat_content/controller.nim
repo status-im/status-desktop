@@ -3,6 +3,7 @@ import Tables
 import controller_interface
 import io_interface
 
+import ../../../../../app_service/service/settings/service_interface as settings_service
 import ../../../../../app_service/service/contacts/service as contact_service
 import ../../../../../app_service/service/chat/service as chat_service
 import ../../../../../app_service/service/community/service as community_service
@@ -17,24 +18,28 @@ type
   Controller* = ref object of controller_interface.AccessInterface
     delegate: io_interface.AccessInterface
     events: EventEmitter
+    sectionId: string
     chatId: string
     belongsToCommunity: bool
     isUsersListAvailable: bool #users list is not available for 1:1 chat
+    settingsService: settings_service.ServiceInterface
     contactService: contact_service.Service
     chatService: chat_service.Service
     communityService: community_service.Service
     messageService: message_service.Service
 
-proc newController*(delegate: io_interface.AccessInterface, events: EventEmitter, chatId: string, 
-  belongsToCommunity: bool, isUsersListAvailable: bool, contactService: contact_service.Service,
-  chatService: chat_service.Service, communityService: community_service.Service, 
-  messageService: message_service.Service): Controller =
+proc newController*(delegate: io_interface.AccessInterface, events: EventEmitter, sectionId: string, chatId: string, 
+  belongsToCommunity: bool, isUsersListAvailable: bool, settingsService: settings_service.ServiceInterface,
+  contactService: contact_service.Service, chatService: chat_service.Service, 
+  communityService: community_service.Service, messageService: message_service.Service): Controller =
   result = Controller()
   result.delegate = delegate
   result.events = events
+  result.sectionId = sectionId
   result.chatId = chatId
   result.belongsToCommunity = belongsToCommunity
   result.isUsersListAvailable = isUsersListAvailable
+  result.settingsService = settingsService
   result.contactService = contactService
   result.chatService = chatService
   result.communityService = communityService
@@ -92,6 +97,9 @@ method getMyChatId*(self: Controller): string =
 method getChatDetails*(self: Controller): ChatDto =
   return self.chatService.getChatById(self.chatId)
 
+method getCommunityDetails*(self: Controller): CommunityDto =
+  return self.communityService.getCommunityById(self.sectionId)
+
 method getOneToOneChatNameAndImage*(self: Controller): tuple[name: string, image: string, isIdenticon: bool] =
   return self.chatService.getOneToOneChatNameAndImage(self.chatId)
 
@@ -111,11 +119,26 @@ method isUsersListAvailable*(self: Controller): bool =
 method getMyAddedContacts*(self: Controller): seq[ContactsDto] =
   return self.contactService.getAddedContacts()
 
+method muteChat*(self: Controller) =
+  self.chatService.muteChat(self.chatId)
+
 method unmuteChat*(self: Controller) =
   self.chatService.unmuteChat(self.chatId)
+
+method markAllMessagesRead*(self: Controller) =
+  self.messageService.markAllMessagesRead(self.chatId)
+
+method clearChatHistory*(self: Controller) =
+  self.chatService.clearChatHistory(self.chatId)
+
+method leaveChat*(self: Controller) =
+  self.chatService.leaveChat(self.chatId)
 
 method getContactById*(self: Controller, contactId: string): ContactsDto =
   return self.contactService.getContactById(contactId)
 
 method getContactDetails*(self: Controller, contactId: string): ContactDetails =
   return self.contactService.getContactDetails(contactId)
+
+method getCurrentFleet*(self: Controller): string =
+  return self.settingsService.getFleet()

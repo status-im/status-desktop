@@ -8,6 +8,7 @@ import ../../../../shared_models/message_reaction_item
 import ../../../../../global/global_singleton
 
 import ../../../../../../app_service/service/contacts/service as contact_service
+import ../../../../../../app_service/service/community/service as community_service
 import ../../../../../../app_service/service/chat/service as chat_service
 import ../../../../../../app_service/service/message/service as message_service
 
@@ -28,16 +29,16 @@ type
     controller: controller.AccessInterface
     moduleLoaded: bool
 
-proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitter, chatId: string, 
-  belongsToCommunity: bool, contactService: contact_service.Service, chatService: chat_service.Service,
-  messageService: message_service.Service): 
+proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitter, sectionId: string, chatId: string, 
+  belongsToCommunity: bool, contactService: contact_service.Service, communityService: community_service.Service,
+  chatService: chat_service.Service, messageService: message_service.Service): 
   Module =
   result = Module()
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, events, chatId, belongsToCommunity, contactService, chatService,
-  messageService)
+  result.controller = controller.newController(result, events, sectionId, chatId, belongsToCommunity, contactService, 
+  communityService, chatService, messageService)
   result.moduleLoaded = false
 
 # Forward declaration
@@ -163,7 +164,15 @@ method getChatColor*(self: Module): string =
   return chatDto.color
 
 method amIChatAdmin*(self: Module): bool =
-  return false
+  if(not self.controller.belongsToCommunity()):
+    let chatDto = self.controller.getChatDetails()
+    for m in chatDto.members:
+      if (m.id == singletonInstance.userProfile.getPubKey() and m.admin):
+        return true
+    return false
+  else:
+    let communityDto = self.controller.getCommunityDetails()
+    return communityDto.admin
 
 method getNumberOfPinnedMessages*(self: Module): int =
   return self.controller.getNumOfPinnedMessages()

@@ -431,6 +431,9 @@ Item {
                     Layout.fillWidth: true
                     Layout.alignment: Qt.AlignLeft | Qt.AlignTop
                     Layout.fillHeight: true
+
+                    pinnedMessagesListPopupComponent: pinnedMessagesPopupComponent
+
                     onProfileButtonClicked: {
                         Global.changeAppSectionBySectionType(Constants.appSection.profile);
                     }
@@ -514,6 +517,8 @@ Item {
                                 Layout.fillWidth: true
                                 Layout.alignment: Qt.AlignLeft | Qt.AlignTop
                                 Layout.fillHeight: true
+
+                                pinnedMessagesListPopupComponent: pinnedMessagesPopupComponent
 
                                 onProfileButtonClicked: {
                                     Global.changeAppSectionBySectionType(Constants.appSection.profile);
@@ -652,12 +657,18 @@ Item {
         }
 
         Component {
+            id: pinnedMessagesPopupComponent
+            PinnedMessagesPopup {
+                id: pinnedMessagesPopup
+                onClosed: destroy()
+            }
+        }
+
+        Component {
             id: editChannelPopup
             CreateChannelPopup {
                 anchors.centerIn: parent
                 isEdit: true
-                // Not Refactored
-//                pinnedMessagesPopupComponent: chatLayoutContainer.chatColumn.pinnedMessagesPopupComponent
                 onClosed: {
                     destroy()
                 }
@@ -835,5 +846,6 @@ Item {
 //            console.error('Could not parse the whitelist for sites', e)
 //        }
         Global.settingsHasLoaded()
+        Global.appRootComponent = appMain
     }
 }

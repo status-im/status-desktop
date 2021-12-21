@@ -266,30 +266,64 @@ Item {
                         return
                     }
 
+                    currentFleet = root.chatSectionModule.getCurrentFleet()
                     isCommunityChat = root.chatSectionModule.isCommunity()
+                    isCommunityAdmin = obj.amIChatAdmin
                     chatId = obj.itemId
                     chatName = obj.name
+                    chatDescription = obj.description
                     chatType = obj.type
                     chatMuted = obj.muted
-
-                    // TODO
-                    //currentFleet
                 }
 
                 onMuteChat: {
-                    root.chatSectionModule.muteChat(id)
+                    root.chatSectionModule.muteChat(chatId)
                 }
 
                 onUnmuteChat: {
-                    root.chatSectionModule.unmuteChat(id)
+                    root.chatSectionModule.unmuteChat(chatId)
                 }
 
                 onMarkAllMessagesRead: {
-                    root.chatSectionModule.markAllMessagesRead(id)
+                    root.chatSectionModule.markAllMessagesRead(chatId)
                 }
 
                 onClearChatHistory: {
-                    root.chatSectionModule.clearChatHistory(id)
+                    root.chatSectionModule.clearChatHistory(chatId)
+                }
+
+                onRequestAllHistoricMessages: {
+                    // Not Refactored Yet - Check in the `master` branch if this is applicable here.
+                }
+
+                onLeaveChat: {
+                    root.chatSectionModule.leaveChat(chatId)
+                }
+
+                onDeleteChat: {
+                    // Not Refactored Yet
+                }
+
+                onDownloadMessages: {
+                    // Not Refactored Yet
+                }
+
+                onDisplayProfilePopup: {
+                    // Not Refactored Yet
+                }
+
+                onDisplayGroupInfoPopup: {
+                    // Not Refactored Yet
+                }
+
+                onOpenPinnedMessagesList: {
+                    chatCommunitySectionModule.prepareChatContentModuleForChatId(chatId)
+                    let chatContentModule = chatCommunitySectionModule.getChatContentModule()
+                    Global.openPopup(pinnedMessagesPopupComponent, {
+                                         messageStore: messageStore,
+                                         pinnedMessagesModel: chatContentModule.pinnedMessagesModel,
+                                         messageToPin: ""
+                                     })
                 }
             }
         }

@@ -8,10 +8,10 @@ type
     parentId: string
 
 proc initSubItem*(id, parentId, name, icon: string, isIdenticon: bool, color, description: string, `type`: int, 
-  hasUnreadMessages: bool, notificationsCount: int, muted, active: bool, position: int): SubItem =
+  amIChatAdmin: bool, hasUnreadMessages: bool, notificationsCount: int, muted, active: bool, position: int): SubItem =
   result = SubItem()
-  result.setup(id, name, icon, isIdenticon, color, description, `type`, hasUnreadMessages, notificationsCount, muted, 
-  active, position)
+  result.setup(id, name, icon, isIdenticon, color, description, `type`, amIChatAdmin, hasUnreadMessages, 
+  notificationsCount, muted, active, position)
   result.parentId = parentId
 
 proc delete*(self: SubItem) = 
@@ -25,6 +25,7 @@ proc `$`*(self: SubItem): string =
     itemId: {self.id}, 
     parentItemId: {self.parentId}, 
     name: {self.name}, 
+    amIChatAdmin: {self.amIChatAdmin},
     icon: {self.icon},
     isIdenticon: {self.isIdenticon},
     color: {self.color}, 
@@ -40,7 +41,8 @@ proc `$`*(self: SubItem): string =
 proc toJsonNode*(self: SubItem): JsonNode =
   result = %* {
     "itemId": self.id, 
-    "name": self.name, 
+    "name": self.name,
+    "amIChatAdmin": self.amIChatAdmin,
     "icon": self.icon,
     "isIdenticon": self.isIdenticon,
     "color": self.color, 
