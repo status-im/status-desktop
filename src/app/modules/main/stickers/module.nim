@@ -75,7 +75,11 @@ method wei2Eth*[T](self: Module[T], price: Stuint[256]): string =
 
 method sendSticker*[T](self: Module[T], channelId: string, replyTo: string, sticker: Item) =
   let stickerDto = StickerDto(hash: sticker.getHash, packId: sticker.getPackId)
-  self.controller.sendSticker(channelId, replyTo, stickerDto)
+  self.controller.sendSticker(
+    channelId,
+    replyTo,
+    stickerDto,
+    singletonInstance.userProfile.getEnsName())
 
 method estimate*[T](self: Module[T], packId: int, address: string, price: string, uuid: string) =
   self.controller.estimate(packId, address, price, uuid)

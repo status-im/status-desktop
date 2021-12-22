@@ -65,7 +65,7 @@ method convertToItems*[T](
   result = activityCenterNotifications.map(
     proc(n: ActivityCenterNotificationDto): Item =
       var messageItem = MessageItem()
-      if (n.message.id == ""):
+      if (n.message.id != ""):
         # If there is a message in the Notification, transfer it to a MessageItem (QObject)
         let contactDetails = self.controller.getContactDetails(n.message.`from`)
         messageItem = message_item_qobject.newMessageItem(initItem(

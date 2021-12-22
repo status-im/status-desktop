@@ -12,13 +12,16 @@ method isLoaded*(self: AccessInterface): bool {.base.} =
 method getModuleAsVariant*(self: AccessInterface): QVariant {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method sendChatMessage*(self: AccessInterface, msg: string, replyTo: string, contentType: int) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method sendImages*(self: AccessInterface, imagePathsJson: string): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method requestAddressForTransaction*(self: AccessInterface, chatId: string, fromAddress: string, amount: string, tokenAddress: string) {.base.} =
+method requestAddressForTransaction*(self: AccessInterface, fromAddress: string, amount: string, tokenAddress: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method requestTransaction*(self: AccessInterface, chatId: string, fromAddress: string, amount: string, tokenAddress: string) {.base.} =
+method requestTransaction*(self: AccessInterface, fromAddress: string, amount: string, tokenAddress: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method declineRequestTransaction*(self: AccessInterface, messageId: string) {.base.} =

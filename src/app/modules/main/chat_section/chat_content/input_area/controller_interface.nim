@@ -18,10 +18,13 @@ method belongsToCommunity*(self: AccessInterface): bool {.base.} =
 method sendImages*(self: AccessInterface, imagePathsJson: string): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method requestAddressForTransaction*(self: AccessInterface, chatId: string, fromAddress: string, amount: string, tokenAddress: string) {.base.} =
+method sendChatMessage*(self: AccessInterface, msg: string, replyTo: string, contentType: int, preferredUsername: string = "") {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method requestTransaction*(self: AccessInterface, chatId: string, fromAddress: string, amount: string, tokenAddress: string) {.base.} =
+method requestAddressForTransaction*(self: AccessInterface, fromAddress: string, amount: string, tokenAddress: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method requestTransaction*(self: AccessInterface, fromAddress: string, amount: string, tokenAddress: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method declineRequestTransaction*(self: AccessInterface, messageId: string) {.base.} =

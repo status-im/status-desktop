@@ -44,7 +44,7 @@ method decodeContentHash*(self: AccessInterface, hash: string): string {.base.} 
 method wei2Eth*(self: AccessInterface, price: Stuint[256]): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method sendSticker*(self: AccessInterface, channelId: string, replyTo: string, sticker: StickerDto) {.base.} =
+method sendSticker*(self: AccessInterface, channelId: string, replyTo: string, sticker: StickerDto, preferredUsername: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 type

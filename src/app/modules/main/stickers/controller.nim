@@ -87,8 +87,13 @@ method uninstallStickerPack*[T](self: Controller[T], packId: int) =
 method removeRecentStickers*[T](self: Controller[T], packId: int) =
   self.stickerService.removeRecentStickers(packId)
 
-method sendSticker*[T](self: Controller[T], channelId: string, replyTo: string, sticker: StickerDto) =
-  self.stickerService.sendSticker(channelId, replyTo, sticker)
+method sendSticker*[T](
+    self: Controller[T],
+    channelId: string,
+    replyTo: string,
+    sticker: StickerDto,
+    preferredUsername: string) =
+  self.stickerService.sendSticker(channelId, replyTo, sticker, preferredUsername)
 
 method decodeContentHash*[T](self: Controller[T], hash: string): string =
   eth_utils.decodeContentHash(hash)
