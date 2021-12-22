@@ -110,3 +110,6 @@ QtObject:
 
   proc qrCode*(self: Utils, text:string): string {.slot.} =
     result = "data:image/svg+xml;utf8," & self.generateQRCodeSVG(text, 2)
+
+  proc plainText*(self: Utils, text: string): string {.slot.} =
+    result = plain_text(text)

@@ -21,6 +21,13 @@ QtObject:
   proc load*(self: View) =
     self.delegate.viewDidLoad()
   
+  proc sendMessage*(
+      self: View,
+      msg: string,
+      replyTo: string,
+      contentType: int) {.slot.} =
+    self.delegate.sendChatMessage(msg, replyTo, contentType)
+
   proc sendImages*(self: View, sendImages: string): string {.slot.} =
     self.delegate.sendImages(sendImages)
 
@@ -30,11 +37,11 @@ QtObject:
   proc declineAddressRequest*(self: View, messageId: string) {.slot.} =
     self.delegate.declineRequestAddressForTransaction(messageId)
 
-  proc requestAddress*(self: View, chatId: string, fromAddress: string, amount: string, tokenAddress: string) {.slot.} =
-    self.delegate.requestAddressForTransaction(chatId, fromAddress, amount, tokenAddress)
+  proc requestAddress*(self: View, fromAddress: string, amount: string, tokenAddress: string) {.slot.} =
+    self.delegate.requestAddressForTransaction(fromAddress, amount, tokenAddress)
 
-  proc request*(self: View, chatId: string, fromAddress: string, amount: string, tokenAddress: string) {.slot.} =
-    self.delegate.requestTransaction(chatId, fromAddress, amount, tokenAddress)
+  proc request*(self: View, fromAddress: string, amount: string, tokenAddress: string) {.slot.} =
+    self.delegate.requestTransaction(fromAddress, amount, tokenAddress)
 
   proc declineRequest*(self: View, messageId: string) {.slot.} =
     self.delegate.declineRequestTransaction(messageId)

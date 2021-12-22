@@ -207,8 +207,7 @@ QtObject {
     }
 
     function generateAlias(pubKey) {
-        // Not Refactored Yet
-//        return utilsModelInst.generateAlias(pubKey)
+       return globalUtils.generateAlias(pubKey)
     }
 
     function joinPrivateChat(address) {
