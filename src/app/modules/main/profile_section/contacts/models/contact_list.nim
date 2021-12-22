@@ -140,7 +140,7 @@ QtObject:
   # There are much better ways of notifying qml about this change than sending this signal. 
   # It also may has an impact to the app performances since it's handled on multiple places on the qml side.
   # Would be good to get rid of it durign refactor phase.
-  proc contactChanged*(self: ContactList, pubkey: string) {.signal.}
+  proc contactChanged*(self: ContactList, pubkey: string, localNickname: string) {.signal.}
 
   proc updateContact*(self: ContactList, contact: ContactsDto) =
     var found = false
@@ -158,7 +158,7 @@ QtObject:
       self.addContactToList(contact)
     else:
       self.dataChanged(topLeft, bottomRight, @[ContactRoles.Name.int])
-    self.contactChanged(contact.id)
+    self.contactChanged(contact.id, contact.localNickname)
 
   proc setNewData*(self: ContactList, contactList: seq[ContactsDto]) =
     self.beginResetModel()
@@ -176,5 +176,5 @@ QtObject:
       self.dataChanged(index, index, @[ContactRoles.LocalNickname.int])
   
       # Wrote about it where this signal is defined, it's emitted from here just because of the qml part.
-      self.contactChanged(self.contacts[i].id)
+      self.contactChanged(self.contacts[i].id, nickname)
       return

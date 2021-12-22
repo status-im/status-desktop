@@ -5,6 +5,10 @@ import # status-desktop libs
   status/chat/chat as status_chat,
   ./views/communities,
   ./views/messages
+from ../../app_service/service/contacts/service import ContactArgs
+from ../../app_service/service/contacts/service import ContactNicknameUpdatedArgs
+import status/types/profile
+import status/contacts
 import ../../app_service/tasks/[qt, threadpool]
 import ../../app_service/tasks/marathon/mailserver/worker
 
@@ -28,6 +32,19 @@ proc handleChatEvents(self: ChatController) =
   self.status.events.on("activityCenterNotificationsLoaded") do(e:Args):
     let notifications = ActivityCenterNotificationsArgs(e).activityCenterNotifications
     self.view.pushActivityCenterNotifications(notifications)
+
+  # This is a new event emitted and introduced by app_service when
+  # the local nickname of a contact was changed. `contactUpdate` is
+  # no longer emitted in such cases, so we need to make sure to also update
+  # the view when this new event is emitted.
+  self.status.events.on("new-contactNicknameChanged") do(e: Args):
+    var evArgs = ContactNicknameUpdatedArgs(e)
+    let contact = Profile(
+     id: evArgs.contactId,
+     localNickname: evArgs.nickname
+    )
+    self.view.updateUsernames(@[contact])
+    self.view.updateChannelForContacts(@[contact])
 
   self.status.events.on("contactUpdate") do(e: Args):
     var evArgs = ContactUpdateArgs(e)

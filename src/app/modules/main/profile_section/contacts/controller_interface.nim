@@ -36,7 +36,7 @@ method blockContact*(self: AccessInterface, publicKey: string): void {.base.} =
 method removeContact*(self: AccessInterface, publicKey: string): void {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method changeContactNickname*(self: AccessInterface, accountKeyUID: string, publicKey: string, nicknameToSet: string): void {.base.} =
+method changeContactNickname*(self: AccessInterface, publicKey: string, nicknameToSet: string): void {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method lookupContact*(self: AccessInterface, value: string): void {.base.} =
