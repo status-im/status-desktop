@@ -36,9 +36,33 @@ Item {
     property int countOnStartUp: 0
     signal openStickerPackPopup(string stickerPackId)
 
+    Item {
+        id: loadingMessagesIndicator
+        visible: messageStore.messageModule.loadingHistoryMessagesInProgress
+        anchors.top: parent.top
+        anchors.left: parent.left
+        height: visible? 20 : 0
+        width: parent.width
+
+        Loader {
+            active: messageStore.messageModule.loadingHistoryMessagesInProgress
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
+            sourceComponent: Component {
+                LoadingAnimation {
+                    width: 18
+                    height: 18
+                }
+            }
+        }
+    }
+
     ListView {
         id: chatLogView
-        anchors.fill: parent
+        anchors.top: loadingMessagesIndicator.bottom
+        anchors.bottom: parent.bottom
+        anchors.left: parent.left
+        anchors.right: parent.right
         spacing: 0
         boundsBehavior: Flickable.StopAtBounds
         clip: true
@@ -92,9 +116,9 @@ Item {
 //            }
 //        }
 
-//        ScrollBar.vertical: ScrollBar {
-//            visible: chatLogView.visibleArea.heightRatio < 1
-//        }
+        ScrollBar.vertical: ScrollBar {
+            visible: chatLogView.visibleArea.heightRatio < 1
+        }
 
 //        Connections {
 //            id: contentHeightConnection
@@ -112,80 +136,79 @@ Item {
             id: timer
         }
 
-//        Button {
-//            readonly property int buttonPadding: 5
+        Button {
+            readonly property int buttonPadding: 5
 
-//            id: scrollDownButton
-//            visible: false
-//            height: 32
-//            width: nbMessages.width + arrowImage.width + 2 * Style.current.halfPadding + (nbMessages.visible ? scrollDownButton.buttonPadding : 0)
-//            anchors.bottom: parent.bottom
-//            anchors.right: parent.right
-//            anchors.rightMargin: Style.current.padding
-//            background: Rectangle {
-//                color: Style.current.buttonSecondaryColor
-//                border.width: 0
-//                radius: 16
-//            }
-//            onClicked: {
-//                newMessages = 0
-//                scrollDownButton.visible = false
-//                chatLogView.scrollToBottom(true)
-//            }
+            id: scrollDownButton
+            visible: false
+            height: 32
+            width: nbMessages.width + arrowImage.width + 2 * Style.current.halfPadding + (nbMessages.visible ? scrollDownButton.buttonPadding : 0)
+            anchors.bottom: parent.bottom
+            anchors.right: parent.right
+            anchors.rightMargin: Style.current.padding
+            background: Rectangle {
+                color: Style.current.buttonSecondaryColor
+                border.width: 0
+                radius: 16
+            }
+            onClicked: {
+                newMessages = 0
+                scrollDownButton.visible = false
+                chatLogView.scrollToBottom(true)
+            }
 
-//            StyledText {
-//                id: nbMessages
-//                visible: newMessages > 0
-//                width: visible ? implicitWidth : 0
-//                text: newMessages
-//                anchors.verticalCenter: parent.verticalCenter
-//                anchors.left: parent.left
-//                color: Style.current.pillButtonTextColor
-//                font.pixelSize: 15
-//                anchors.leftMargin: Style.current.halfPadding
-//            }
+            StyledText {
+                id: nbMessages
+                visible: newMessages > 0
+                width: visible ? implicitWidth : 0
+                text: newMessages
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.left: parent.left
+                color: Style.current.pillButtonTextColor
+                font.pixelSize: 15
+                anchors.leftMargin: Style.current.halfPadding
+            }
 
-//            SVGImage {
-//                id: arrowImage
-//                width: 24
-//                height: 24
-//                anchors.verticalCenter: parent.verticalCenter
-//                anchors.left: nbMessages.right
-//                source: Style.svg("leave_chat")
-//                anchors.leftMargin: nbMessages.visible ? scrollDownButton.buttonPadding : 0
-//                rotation: -90
+            SVGImage {
+                id: arrowImage
+                width: 24
+                height: 24
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.left: nbMessages.right
+                source: Style.svg("leave_chat")
+                anchors.leftMargin: nbMessages.visible ? scrollDownButton.buttonPadding : 0
+                rotation: -90
 
-//                ColorOverlay {
-//                    anchors.fill: parent
-//                    source: parent
-//                    color: Style.current.pillButtonTextColor
-//                }
-//            }
+                ColorOverlay {
+                    anchors.fill: parent
+                    source: parent
+                    color: Style.current.pillButtonTextColor
+                }
+            }
 
-//            MouseArea {
-//                cursorShape: Qt.PointingHandCursor
-//                anchors.fill: parent
-//                onPressed: mouse.accepted = false
-//            }
-//        }
+            MouseArea {
+                cursorShape: Qt.PointingHandCursor
+                anchors.fill: parent
+                onPressed: mouse.accepted = false
+            }
+        }
 
         function scrollToBottom(force, caller) {
-            // Not Refactored Yet
-//            if (!force && !chatLogView.atYEnd) {
-//                // User has scrolled up, we don't want to scroll back
-//                return false
-//            }
-//            if (caller && caller !== chatLogView.itemAtIndex(chatLogView.count - 1)) {
-//                // If we have a caller, only accept its request if it's the last message
-//                return false
-//            }
-//            // Call this twice and with a timer since the first scroll to bottom might have happened before some stuff loads
-//            // meaning that the scroll will not actually be at the bottom on switch
-//            // Add a small delay because images, even though they say they say they are loaed, they aren't shown yet
-//            Qt.callLater(chatLogView.positionViewAtBeginning)
-//            timer.setTimeout(function() {
-//                Qt.callLater(chatLogView.positionViewAtBeginning)
-//            }, 100);
+            if (!force && !chatLogView.atYEnd) {
+                // User has scrolled up, we don't want to scroll back
+                return false
+            }
+            if (caller && caller !== chatLogView.itemAtIndex(chatLogView.count - 1)) {
+                // If we have a caller, only accept its request if it's the last message
+                return false
+            }
+            // Call this twice and with a timer since the first scroll to bottom might have happened before some stuff loads
+            // meaning that the scroll will not actually be at the bottom on switch
+            // Add a small delay because images, even though they say they say they are loaed, they aren't shown yet
+            Qt.callLater(chatLogView.positionViewAtBeginning)
+            timer.setTimeout(function() {
+                Qt.callLater(chatLogView.positionViewAtBeginning)
+            }, 100);
             return true
         }
 
@@ -198,24 +221,24 @@ Item {
 //            }
 //        }
 
-//        Connections {
-        // Not Refactored Yet
-//            target: root.store.chatsModelInst.messageView
+        Connections {
+            target: messageStore.messageModule
 
-//            onSendingMessageSuccess: {
-//                chatLogView.scrollToBottom(true)
-//            }
+            onMessageSuccessfullySent: {
+                chatLogView.scrollToBottom(true)
+            }
 
-//            onSendingMessageFailed: {
-//                sendingMsgFailedPopup.open();
-//            }
+            onSendingMessageFailed: {
+                sendingMsgFailedPopup.open();
+            }
 
+            // Not Refactored Yet
 //            onNewMessagePushed: {
 //                if (!chatLogView.scrollToBottom()) {
 //                    newMessages++
 //                }
 //            }
-//        }
+        }
 
 //        Connections {
         // Not Refactored Yet
@@ -274,24 +297,15 @@ Item {
 //            }
 //        }
 
-        // Not Refactored Yet
-//        property var loadMsgs : Backpressure.oneInTime(chatLogView, 500, function() {
-//            if(!messages.initialMessagesLoaded || messages.loadingHistoryMessages)
-//                return
+        onContentYChanged: {
+            scrollDownButton.visible = contentHeight - (scrollY + height) > 400
+            let loadMore = scrollDownButton.visible && scrollY < 500
+            if(loadMore){
+                messageStore.loadMoreMessages()
+            }
+        }
 
-//            root.store.chatsModelInst.messageView.loadMoreMessages(chatId);
-//        });
-
-//        onContentYChanged: {
-//            scrollDownButton.visible = (contentHeight - (scrollY + height) > 400)
-//            if(scrollDownButton.visible && scrollY < 500){
-//                loadMsgs();
-//            }
-//        }
-
-        model: messageStore.messageModule.model
-        section.property: "sectionIdentifier"
-        section.criteria: ViewSection.FullString
+        model: messageStore.messagesModel
 
         // Not Refactored Yet
         //Component.onCompleted: scrollToBottom(true)
@@ -330,11 +344,11 @@ Item {
         }
     }
 
-//    MessageDialog {
-//        id: sendingMsgFailedPopup
-//        standardButtons: StandardButton.Ok
-//        //% "Failed to send message."
-//        text: qsTrId("failed-to-send-message-")
-//        icon: StandardIcon.Critical
-//    }
+    MessageDialog {
+        id: sendingMsgFailedPopup
+        standardButtons: StandardButton.Ok
+        //% "Failed to send message."
+        text: qsTrId("failed-to-send-message-")
+        icon: StandardIcon.Critical
+    }
 }
