@@ -81,44 +81,73 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
   pinnedMessages: seq[PinnedMessageDto]) = 
   var viewItems: seq[Item]
   
-  for m in messages:
-    let sender = self.controller.getContactById(m.`from`)
-    let senderDisplayName = sender.userNameOrAlias()
-    let amISender = m.`from` == singletonInstance.userProfile.getPubKey()
-    var senderIcon = sender.identicon
-    var isSenderIconIdenticon = sender.identicon.len > 0
-    if(sender.image.thumbnail.len > 0): 
-      senderIcon = sender.image.thumbnail
-      isSenderIconIdenticon = false
+  if(messages.len > 0):
+    for m in messages:
+      let sender = self.controller.getContactById(m.`from`)
+      let senderDisplayName = sender.userNameOrAlias()
+      let amISender = m.`from` == singletonInstance.userProfile.getPubKey()
+      var senderIcon = sender.identicon
+      var isSenderIconIdenticon = sender.identicon.len > 0
+      if(sender.image.thumbnail.len > 0): 
+        senderIcon = sender.image.thumbnail
+        isSenderIconIdenticon = false
 
-    var item = initItem(m.id, m.responseTo, m.`from`, senderDisplayName, sender.localNickname, senderIcon, 
-    isSenderIconIdenticon, amISender, m.outgoingStatus, m.text, m.image, m.seen, m.timestamp, m.contentType.ContentType, 
-    m.messageType)
+      var item = initItem(m.id, m.responseTo, m.`from`, senderDisplayName, sender.localNickname, senderIcon, 
+      isSenderIconIdenticon, amISender, m.outgoingStatus, m.text, m.image, m.seen, m.timestamp, m.contentType.ContentType, 
+      m.messageType)
 
-    for r in reactions:
-      if(r.messageId == m.id):
-        var emojiIdAsEnum: EmojiId
-        if(message_reaction_item.toEmojiIdAsEnum(r.emojiId, emojiIdAsEnum)):
-          let userWhoAddedThisReaction = self.controller.getContactById(r.`from`)
-          let didIReactWithThisEmoji = userWhoAddedThisReaction.id == singletonInstance.userProfile.getPubKey()
-          item.addReaction(emojiIdAsEnum, didIReactWithThisEmoji, userWhoAddedThisReaction.id, 
-          userWhoAddedThisReaction.userNameOrAlias(), r.id)
-        else:
-          error "wrong emoji id found when loading messages"
+      for r in reactions:
+        if(r.messageId == m.id):
+          var emojiIdAsEnum: EmojiId
+          if(message_reaction_item.toEmojiIdAsEnum(r.emojiId, emojiIdAsEnum)):
+            let userWhoAddedThisReaction = self.controller.getContactById(r.`from`)
+            let didIReactWithThisEmoji = userWhoAddedThisReaction.id == singletonInstance.userProfile.getPubKey()
+            item.addReaction(emojiIdAsEnum, didIReactWithThisEmoji, userWhoAddedThisReaction.id, 
+            userWhoAddedThisReaction.userNameOrAlias(), r.id)
+          else:
+            error "wrong emoji id found when loading messages"
 
-    for p in pinnedMessages:
-      if(p.message.id == m.id):
-        item.pinned = true
+      for p in pinnedMessages:
+        if(p.message.id == m.id):
+          item.pinned = true
 
-    # messages are sorted from the most recent to the least recent one
-    viewItems.add(item)
+      # messages are sorted from the most recent to the least recent one
+      viewItems.add(item)
 
-  # ChatIdentifier message will be always the first message (the oldest one)
-  viewItems.add(self.createChatIdentifierItem())
-  # Delete the old ChatIdentifier message first
-  self.view.model().removeItem(CHAT_IDENTIFIER_MESSAGE_ID)
-  # Add new loaded messages
-  self.view.model().prependItems(viewItems)
+    # ChatIdentifier message will be always the first message (the oldest one)
+    viewItems.add(self.createChatIdentifierItem())
+    # Delete the old ChatIdentifier message first
+    self.view.model().removeItem(CHAT_IDENTIFIER_MESSAGE_ID)
+    # Add new loaded messages
+    self.view.model().appendItems(viewItems)
+
+  if(not self.view.getInitialMessagesLoaded()):
+    self.view.initialMessagesAreLoaded()
+   
+  self.view.setLoadingHistoryMessagesInProgress(false)
+
+method onSendingMessageSuccess*(self: Module, message: MessageDto) =
+  let sender = self.controller.getContactById(message.`from`)
+  let senderDisplayName = sender.userNameOrAlias()
+  let amISender = message.`from` == singletonInstance.userProfile.getPubKey()
+  var senderIcon = sender.identicon
+  var isSenderIconIdenticon = sender.identicon.len > 0
+  if(sender.image.thumbnail.len > 0): 
+    senderIcon = sender.image.thumbnail
+    isSenderIconIdenticon = false
+
+  var item = initItem(message.id, message.responseTo, message.`from`, senderDisplayName, sender.localNickname, 
+  senderIcon, isSenderIconIdenticon, amISender, message.outgoingStatus, message.text, message.image, message.seen, 
+  message.timestamp, message.contentType.ContentType, message.messageType)
+
+  self.view.model().prependItem(item)
+  self.view.emitSendingMessageSuccessSignal()
+
+method onSendingMessageError*(self: Module) =
+  self.view.emitSendingMessageErrorSignal()
+
+method loadMoreMessages*(self: Module) =
+  self.controller.loadMoreMessages()
 
 method toggleReaction*(self: Module, messageId: string, emojiId: int) =
   var emojiIdAsEnum: EmojiId

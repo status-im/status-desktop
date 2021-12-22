@@ -1,4 +1,4 @@
-import Tables, json, strformat
+import json, strformat
 import ../../../app_service/common/types
 
 export types.ContentType

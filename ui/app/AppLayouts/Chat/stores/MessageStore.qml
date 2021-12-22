@@ -5,6 +5,16 @@ QtObject {
     id: root
 
     property var messageModule
+    property var messagesModel: messageModule.model
+
+    function loadMoreMessages () {
+        if(!messageModule)
+            return
+        if(!messageModule.initialMessagesLoaded || messageModule.loadingHistoryMessagesInProgress)
+            return
+
+        messageModule.loadMoreMessages()
+    }
 
     function getMessageByIdAsJson (id) {
         if(!messageModule)

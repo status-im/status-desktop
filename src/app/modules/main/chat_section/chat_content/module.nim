@@ -173,6 +173,8 @@ method newPinnedMessagesLoaded*(self: Module, pinnedMessages: seq[PinnedMessageD
 
     viewItems = item & viewItems # messages are sorted from the most recent to the least recent one
 
+  if(viewItems.len == 0):
+    return
   self.view.pinnedModel().prependItems(viewItems)
 
 method unpinMessage*(self: Module, messageId: string) =

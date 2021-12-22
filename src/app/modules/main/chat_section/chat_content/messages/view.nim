@@ -8,6 +8,8 @@ QtObject:
       delegate: io_interface.AccessInterface
       model: Model
       modelVariant: QVariant
+      initialMessagesLoaded: bool
+      loadingHistoryMessagesInProgress: bool 
       
   proc delete*(self: View) =
     self.model.delete
@@ -20,6 +22,8 @@ QtObject:
     result.delegate = delegate
     result.model = newModel()
     result.modelVariant = newQVariant(result.model)
+    result.initialMessagesLoaded = false
+    result.loadingHistoryMessagesInProgress = false
 
   proc load*(self: View) =
     self.delegate.viewDidLoad()
@@ -29,7 +33,6 @@ QtObject:
 
   proc getModel(self: View): QVariant {.slot.} =
     return self.modelVariant
-
   QtProperty[QVariant] model:
     read = getModel
 
@@ -65,3 +68,41 @@ QtObject:
 
   proc getNumberOfPinnedMessages*(self: View): int {.slot.} = 
     return self.delegate.getNumberOfPinnedMessages()
+
+  proc initialMessagesLoadedChanged*(self: View) {.signal.}
+  proc getInitialMessagesLoaded*(self: View): bool {.slot.} =
+    return self.initialMessagesLoaded
+  QtProperty[bool] initialMessagesLoaded:
+    read = getInitialMessagesLoaded
+    notify = initialMessagesLoadedChanged
+
+  proc initialMessagesAreLoaded*(self: View) = # this is not a slot
+    if (self.initialMessagesLoaded):
+      return
+    self.initialMessagesLoaded = true
+    self.initialMessagesLoadedChanged()
+
+  proc loadingHistoryMessagesInProgressChanged*(self: View) {.signal.}
+  proc getLoadingHistoryMessagesInProgress*(self: View): bool {.slot.} =
+    return self.loadingHistoryMessagesInProgress
+  QtProperty[bool] loadingHistoryMessagesInProgress:
+    read = getLoadingHistoryMessagesInProgress
+    notify = loadingHistoryMessagesInProgressChanged
+
+  proc setLoadingHistoryMessagesInProgress*(self: View, value: bool) = # this is not a slot
+    if (value == self.loadingHistoryMessagesInProgress):
+      return
+    self.loadingHistoryMessagesInProgress = value
+    self.loadingHistoryMessagesInProgressChanged()
+
+  proc loadMoreMessages*(self: View) {.slot.} =
+    self.setLoadingHistoryMessagesInProgress(true)
+    self.delegate.loadMoreMessages()
+
+  proc messageSuccessfullySent*(self: View) {.signal.}
+  proc emitSendingMessageSuccessSignal*(self: View) =
+    self.messageSuccessfullySent()
+
+  proc sendingMessageFailed*(self: View) {.signal.}
+  proc emitSendingMessageErrorSignal*(self: View) =
+    self.sendingMessageFailed()
