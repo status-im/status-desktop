@@ -17,6 +17,8 @@ Item {
     property var store
     property string username: ""
 
+    readonly property string ensRegistry: "0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e"
+
     signal backBtnClicked();
     signal usernameRegistered(userName: string);
 
@@ -187,7 +189,7 @@ Item {
 
                 StatusBaseText {
                     //% "%1 (ENS Registry)."
-                    text: qsTrId("-1--ens-registry--").arg(root.store.getEnsRegistry())
+                    text: qsTrId("-1--ens-registry--").arg(root.ensRegistry)
                     wrapMode: Text.WordWrap
                     anchors.left: parent.left
                     anchors.right: parent.right
@@ -197,7 +199,7 @@ Item {
 
                 StatusBaseText {
                     //% "<a href='%1%2'>Look up on Etherscan</a>"
-                    text: qsTrId("-a-href---1-2--look-up-on-etherscan--a-").arg(root.store.etherscanLink.replace("/tx", "/address")).arg(root.store.getEnsRegistry())
+                    text: qsTrId("-a-href---1-2--look-up-on-etherscan--a-").arg(root.store.etherscanLink.replace("/tx", "/address")).arg(root.ensRegistry)
                     anchors.left: parent.left
                     anchors.right: parent.right
                     onLinkActivated: appMain.openLink(link)

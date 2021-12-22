@@ -228,9 +228,6 @@ QtObject:
   proc getUsernameRegistrar(self: EnsManager): string {.slot.} =
     result = statusRegistrarAddress()
 
-  proc getENSRegistry(self: EnsManager): string {.slot.} =
-    result = registry
-
   proc formatUsername(username: string, isStatus: bool): string =
     result = username 
     if isStatus: 

@@ -22,7 +22,7 @@ method init*(self: Service) =
 
 method resourceUrl*(self: Service, username: string): (string, string, string) =
   try:
-    let response = status_go.resourceURL(username)
+    let response = status_go.resourceURL(chainId=1, username=username)
     return (response.result{"Scheme"}.getStr, response.result{"Host"}.getStr, response.result{"Path"}.getStr)
   except Exception as e:
     error "Error getting ENS resourceUrl", username=username, exception=e.msg
