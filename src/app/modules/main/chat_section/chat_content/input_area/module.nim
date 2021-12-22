@@ -19,6 +19,7 @@ type
 
 proc newModule*(
     delegate: delegate_interface.AccessInterface,
+    sectionId: string,
     chatId: string,
     belongsToCommunity: bool, 
     chatService: chat_service.Service,
@@ -29,7 +30,7 @@ proc newModule*(
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, chatId, belongsToCommunity, chatService, communityService)
+  result.controller = controller.newController(result, sectionId, chatId, belongsToCommunity, chatService, communityService)
   result.moduleLoaded = false
 
 method delete*(self: Module) =
@@ -57,11 +58,19 @@ method getChatId*(self: Module): string =
 method sendImages*(self: Module, imagePathsJson: string): string =
   self.controller.sendImages(imagePathsJson)
 
-method requestAddressForTransaction*(self: Module, chatId: string, fromAddress: string, amount: string, tokenAddress: string) =
-  self.controller.requestAddressForTransaction(chatId, fromAddress, amount, tokenAddress)
+method sendChatMessage*(
+    self: Module,
+    msg: string,
+    replyTo: string,
+    contentType: int) =
+  self.controller.sendChatMessage(msg, replyTo, contentType,
+    singletonInstance.userProfile.getEnsName())
 
-method requestTransaction*(self: Module, chatId: string, fromAddress: string, amount: string, tokenAddress: string) =
-  self.controller.requestTransaction(chatId, fromAddress, amount, tokenAddress)
+method requestAddressForTransaction*(self: Module, fromAddress: string, amount: string, tokenAddress: string) =
+  self.controller.requestAddressForTransaction(fromAddress, amount, tokenAddress)
+
+method requestTransaction*(self: Module, fromAddress: string, amount: string, tokenAddress: string) =
+  self.controller.requestTransaction(fromAddress, amount, tokenAddress)
 
 method declineRequestTransaction*(self: Module, messageId: string) =
   self.controller.declineRequestTransaction(messageId)

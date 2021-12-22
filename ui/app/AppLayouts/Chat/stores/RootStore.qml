@@ -57,6 +57,10 @@ QtObject {
     property var addedContacts: contactsModuleModel.addedContacts
     property var allContacts: contactsModuleModel.list
 
+    function sendSticker(channelId, hash, replyTo, pack) {
+        stickersModuleInst.send(channelId, hash, replyTo, pack)
+    }
+
     function copyToClipboard(text) {
         // Not Refactored Yet
 //        chatsModelInst.copyToClipboard(text);

@@ -9,6 +9,7 @@ export controller_interface
 type 
   Controller* = ref object of controller_interface.AccessInterface
     delegate: io_interface.AccessInterface
+    sectionId: string
     chatId: string
     belongsToCommunity: bool
     communityService: community_service.Service
@@ -16,6 +17,7 @@ type
 
 proc newController*(
     delegate: io_interface.AccessInterface,
+    sectionId: string,
     chatId: string,
     belongsToCommunity: bool,
     chatService: chat_service.Service, 
@@ -23,6 +25,7 @@ proc newController*(
     ): Controller =
   result = Controller()
   result.delegate = delegate
+  result.sectionId = chatId
   result.chatId = chatId
   result.belongsToCommunity = belongsToCommunity
   result.chatService = chatService
@@ -43,11 +46,23 @@ method belongsToCommunity*(self: Controller): bool =
 method sendImages*(self: Controller, imagePathsJson: string): string =
   self.chatService.sendImages(self.chatId, imagePathsJson)
 
-method requestAddressForTransaction*(self: Controller, chatId: string, fromAddress: string, amount: string, tokenAddress: string) =
-  self.chatService.requestAddressForTransaction(chatId, fromAddress, amount, tokenAddress)
+method sendChatMessage*(
+    self: Controller,
+    msg: string,
+    replyTo: string,
+    contentType: int,
+    preferredUsername: string = "") =
+  var communityId = ""
+  if self.belongsToCommunity:
+    communityId = self.sectionId
 
-method requestTransaction*(self: Controller, chatId: string, fromAddress: string, amount: string, tokenAddress: string) =
-  self.chatService.requestAddressForTransaction(chatId, fromAddress, amount, tokenAddress)
+  self.chatService.sendChatMessage(self.chatId, msg, replyTo, contentType, preferredUsername, communityId)
+
+method requestAddressForTransaction*(self: Controller, fromAddress: string, amount: string, tokenAddress: string) =
+  self.chatService.requestAddressForTransaction(self.chatId, fromAddress, amount, tokenAddress)
+
+method requestTransaction*(self: Controller, fromAddress: string, amount: string, tokenAddress: string) =
+  self.chatService.requestAddressForTransaction(self.chatId, fromAddress, amount, tokenAddress)
 
 method declineRequestTransaction*(self: Controller, messageId: string) =
   self.chatService.declineRequestTransaction(messageId)

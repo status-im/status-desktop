@@ -94,24 +94,7 @@ QtObject:
   proc hasChannel*(self: Service, chatId: string): bool =
     self.chats.hasKey(chatId)
 
-  # TODO refactor this to new object types
-  proc parseChatResponse*(self: Service, response: string): (seq[chat_type.Chat], seq[Message]) =
-    var parsedResponse = parseJson(response)
-    var chats: seq[Chat] = @[]
-    var messages: seq[Message] = @[]
-    if parsedResponse{"result"}{"messages"} != nil:
-      for jsonMsg in parsedResponse["result"]["messages"]:
-        messages.add(jsonMsg.toMessage())
-    if parsedResponse{"result"}{"chats"} != nil:
-      for jsonChat in parsedResponse["result"]["chats"]:
-        let chat = chat_type.toChat(jsonChat)
-        # TODO add the channel back to `chat` when it is refactored
-        # self.channels[chat.id] = chat
-        chats.add(chat) 
-    result = (chats, messages)
-
-  # TODO refactor this to new object types
-  proc parseChatResponse2*(self: Service, response: RpcResponse[JsonNode]): (seq[ChatDto], seq[MessageDto]) =
+  proc parseChatResponse*(self: Service, response: RpcResponse[JsonNode]): (seq[ChatDto], seq[MessageDto]) =
     var chats: seq[ChatDto] = @[]
     var messages: seq[MessageDto] = @[]
     if response.result{"messages"} != nil:
@@ -125,8 +108,8 @@ QtObject:
         chats.add(chat) 
     result = (chats, messages)
 
-  proc processMessageUpdateAfterSend(self: Service, response: RpcResponse[JsonNode]): (seq[ChatDto], seq[MessageDto])  =
-    result = self.parseChatResponse2(response)
+  proc processMessageUpdateAfterSend*(self: Service, response: RpcResponse[JsonNode]): (seq[ChatDto], seq[MessageDto])  =
+    result = self.parseChatResponse(response)
     var (chats, messages) = result
     if chats.len == 0 and messages.len == 0:
       self.events.emit(SIGNAL_SENDING_FAILED, Args())
@@ -146,7 +129,7 @@ QtObject:
     self.events.emit(SIGNAL_MESSAGE_DELETED, MessageArgs(id: messageId, channel: chats[0].id))
 
   proc emitUpdate(self: Service, response: RpcResponse[JsonNode]) =
-    var (chats, messages) = self.parseChatResponse2(response)
+    var (chats, messages) = self.parseChatResponse(response)
     self.events.emit(SIGNAL_CHAT_UPDATE, ChatUpdateArgsNew(messages: messages, chats: chats))
 
   proc getAllChats*(self: Service): seq[ChatDto] =
@@ -250,6 +233,27 @@ QtObject:
     except Exception as e:
       error "Error sending images", msg = e.msg
       result = fmt"Error sending images: {e.msg}"
+
+  proc sendChatMessage*(
+    self: Service,
+    chatId: string,
+    msg: string,
+    replyTo: string,
+    contentType: int,
+    preferredUsername: string = "",
+    communityId: string = "") =
+    try:
+      let response = status_chat.sendChatMessage(
+        chatId,
+        msg,
+        replyTo,
+        contentType,
+        preferredUsername,
+        communityId)
+
+      discard self.processMessageUpdateAfterSend(response)
+    except Exception as e:
+      error "Error sending message", msg = e.msg
 
   proc requestAddressForTransaction*(self: Service, chatId: string, fromAddress: string, amount: string, tokenAddress: string) =
     try:

@@ -165,6 +165,7 @@ Item {
                     delegate: Repeater {
                         model: subItems
                         delegate: ChatContentView {
+                            rootStore: root.rootStore
                             Component.onCompleted: {
                                 parentModule.prepareChatContentModuleForChatId(model.itemId)
                                 chatContentModule = parentModule.getChatContentModule()
@@ -174,6 +175,7 @@ Item {
                 }
                 DelegateChoice { // In all other cases
                     delegate: ChatContentView {
+                        rootStore: root.rootStore
                         Component.onCompleted: {
                             parentModule.prepareChatContentModuleForChatId(itemId)
                             chatContentModule = parentModule.getChatContentModule()

@@ -9,6 +9,7 @@ import web3/ethtypes, web3/conversions, stew/byteutils, nimcrypto, json_serializ
 import json, tables, json_serialization
 
 import status/statusgo_backend_new/stickers as status_stickers
+import status/statusgo_backend_new/chat as status_chat
 import status/statusgo_backend_new/transactions as transactions
 import status/statusgo_backend_new/response_type
 import status/statusgo_backend_new/eth
@@ -19,14 +20,11 @@ import ../wallet_account/service as wallet_account_service
 import ../transaction/service as transaction_service
 import ../network/service as network_service
 import ../chat/service as chat_service
+import ../../common/types
 
 import ../eth/utils as status_utils
 
 import ../eth/dto/edn_dto as edn_helper
-
-# TODO Remove those imports once chat is refactored
-import status/statusgo_backend/chat as status_chat
-import status/types/[sticker]
 
 export StickerDto
 export StickerPackDto
@@ -375,18 +373,24 @@ QtObject:
 
     discard self.settingsService.saveRecentStickers(installedStickerPacks)
 
-  proc sendSticker*(self: Service, chatId: string, replyTo: string, sticker: StickerDto) =
-    # TODO change this to StcikerDto once it's available
-    let stickerToSend = Sticker(
-        hash: sticker.hash,
-        packId: sticker.packId
-      )
-    # TODO change this to the new chat service call once it is available
-    var response = status_chat.sendStickerMessage(chatId, replyTo, stickerToSend)
+  proc sendSticker*(
+      self: Service,
+      chatId: string,
+      replyTo: string,
+      sticker: StickerDto,
+      preferredUsername: string) =
+    let response = status_chat.sendChatMessage(
+        chatId,
+        "Update to latest version to see a nice sticker here!",
+        replyTo,
+        ContentType.Sticker.int,
+        preferredUsername,
+        communityId = "", # communityId is not ncessary when sending a sticker
+        sticker.hash,
+        sticker.packId)
+    discard self.chatService.processMessageUpdateAfterSend(response)
+    
     self.addStickerToRecent(sticker, true)
-    var (chats, messages) = self.chatService.parseChatResponse(response)
-    # TODO change this event when the chat is refactored
-    self.events.emit("chatUpdate", ChatUpdateArgs(messages: messages, chats: chats))
 
   proc removeRecentStickers*(self: Service, packId: int) =
     self.recentStickers.keepItIf(it.packId != packId)

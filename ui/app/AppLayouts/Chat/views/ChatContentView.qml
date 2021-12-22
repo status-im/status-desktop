@@ -29,6 +29,7 @@ ColumnLayout {
     // Important:
     // Each chat/channel has its own ChatContentModule
     property var chatContentModule
+    property var rootStore
 
     StatusChatToolBar {
         id: topBar
@@ -80,18 +81,18 @@ ColumnLayout {
                                        chatContentModule.chatDetails.type !== Constants.chatType.communityChat
         chatInfoButton.onClicked: {
             // Not Refactored Yet
-//            switch (root.rootStore.chatsModelInst.channelView.activeChannel.chatType) {
+//            switch (chatContentRoot.rootStore.chatsModelInst.channelView.activeChannel.chatType) {
 //            case Constants.chatType.privateGroupChat:
 //                openPopup(groupInfoPopupComponent, {
 //                              channelType: GroupInfoPopup.ChannelType.ActiveChannel,
-//                              channel: root.rootStore.chatsModelInst.channelView.activeChannel
+//                              channel: chatContentRoot.rootStore.chatsModelInst.channelView.activeChannel
 //                          })
 //                break;
 //            case Constants.chatType.oneToOne:
-//                openProfilePopup(root.rootStore.chatsModelInst.userNameOrAlias(chatsModel.channelView.activeChannel.id),
-//                                 root.rootStore.chatsModelInst.channelView.activeChannel.id, profileImage
-//                                 || root.rootStore.chatsModelInst.channelView.activeChannel.identicon,
-//                                 "", root.rootStore.chatsModelInst.channelView.activeChannel.nickname)
+//                openProfilePopup(chatContentRoot.rootStore.chatsModelInst.userNameOrAlias(chatsModel.channelView.activeChannel.id),
+//                                 chatContentRoot.rootStore.chatsModelInst.channelView.activeChannel.id, profileImage
+//                                 || chatContentRoot.rootStore.chatsModelInst.channelView.activeChannel.identicon,
+//                                 "", chatContentRoot.rootStore.chatsModelInst.channelView.activeChannel.nickname)
 //                break;
 //            }
         }
@@ -196,7 +197,7 @@ ColumnLayout {
 
         // Not Refactored Yet
 //        Connections {
-//            target: root.rootStore.chatsModelInst
+//            target: chatContentRoot.rootStore.chatsModelInst
 //            onOnlineStatusChanged: {
 //                if (connected == isConnected) return;
 //                isConnected = connected;
@@ -210,7 +211,7 @@ ColumnLayout {
 //            }
 //        }
 //        Component.onCompleted: {
-//            isConnected = root.rootStore.chatsModelInst.isOnline
+//            isConnected = chatContentRoot.rootStore.chatsModelInst.isOnline
 //            if(!isConnected){
 //                connectedStatusRect.visible = true
 //            }
@@ -245,7 +246,7 @@ ColumnLayout {
 
     MessageContextMenuView {
         id: contextmenu
-        reactionModel: root.rootStore.emojiReactionsModel
+        reactionModel: chatContentRoot.rootStore.emojiReactionsModel
         onPinMessage: {
             messageStore.pinMessage(messageId)
         }
@@ -291,7 +292,7 @@ ColumnLayout {
             id: chatMessages
             Layout.fillWidth: true
             Layout.fillHeight: true
-            store: root.rootStore
+            store: chatContentRoot.rootStore
             messageContextMenuInst: contextmenu
             messageStore: messageStore
         }
@@ -306,7 +307,7 @@ ColumnLayout {
 
             // Not Refactored Yet
 //            Connections {
-//                target: root.rootStore.chatsModelInst.messageView
+//                target: chatContentRoot.rootStore.chatsModelInst.messageView
 //                onLoadingMessagesChanged:
 //                    if(value){
 //                        loadingMessagesIndicator.active = true
@@ -320,7 +321,7 @@ ColumnLayout {
             // Not Refactored Yet
 //            Loader {
 //                id: loadingMessagesIndicator
-//                active: root.rootStore.chatsModelInst.messageView.loadingMessages
+//                active: chatContentRoot.rootStore.chatsModelInst.messageView.loadingMessages
 //                sourceComponent: loadingIndicator
 //                anchors.right: parent.right
 //                anchors.bottom: chatInput.top
@@ -338,17 +339,17 @@ ColumnLayout {
                 visible: {
                     // Not Refactored Yet
                     return true
-                    //                if (root.rootStore.chatsModelInst.channelView.activeChannel.chatType === Constants.chatType.privateGroupChat) {
-                    //                    return root.rootStore.chatsModelInst.channelView.activeChannel.isMember
+                    //                if (chatContentRoot.rootStore.chatsModelInst.channelView.activeChannel.chatType === Constants.chatType.privateGroupChat) {
+                    //                    return chatContentRoot.rootStore.chatsModelInst.channelView.activeChannel.isMember
                     //                }
-                    //                if (root.rootStore.chatsModelInst.channelView.activeChannel.chatType === Constants.chatType.oneToOne) {
+                    //                if (chatContentRoot.rootStore.chatsModelInst.channelView.activeChannel.chatType === Constants.chatType.oneToOne) {
                     //                    return isContact
                     //                }
-                    //                const community = root.rootStore.chatsModelInst.communities.activeCommunity
+                    //                const community = chatContentRoot.rootStore.chatsModelInst.communities.activeCommunity
                     //                return !community.active ||
                     //                        community.access === Constants.communityChatPublicAccess ||
                     //                        community.admin ||
-                    //                        root.rootStore.chatsModelInst.channelView.activeChannel.canPost
+                    //                        chatContentRoot.rootStore.chatsModelInst.channelView.activeChannel.canPost
                 }
                 isContactBlocked: isBlocked
                 chatInputPlaceholder: isBlocked ?
@@ -357,12 +358,12 @@ ColumnLayout {
                                           //% "Type a message."
                                           qsTrId("type-a-message-")
                 anchors.bottom: parent.bottom
-                recentStickers: root.rootStore.stickersModuleInst.recent
-                stickerPackList: root.rootStore.stickersModuleInst.stickerPacks
-//                chatType: root.rootStore.chatsModelInst.channelView.activeChannel.chatType
+                recentStickers: chatContentRoot.rootStore.stickersModuleInst.recent
+                stickerPackList: chatContentRoot.rootStore.stickersModuleInst.stickerPacks
+//                chatType: chatContentRoot.rootStore.chatsModelInst.channelView.activeChannel.chatType
                 onSendTransactionCommandButtonClicked: {
                     // Not Refactored Yet
-                    //                if (root.rootStore.chatsModelInst.channelView.activeChannel.ensVerified) {
+                    //                if (chatContentRoot.rootStore.chatsModelInst.channelView.activeChannel.ensVerified) {
                     //                    txModalLoader.sourceComponent = cmpSendTransactionWithEns
                     //                } else {
                     //                    txModalLoader.sourceComponent = cmpSendTransactionNoEns
@@ -375,29 +376,33 @@ ColumnLayout {
                     //                txModalLoader.item.open()
                 }
                 onStickerSelected: {
-                    // Not Refactored Yet
-                    //                root.rootStore.stickersModuleInst.send(root.rootStore.chatsModelInst.channelView.activeChannel.id,
-                    //                                                       hashId,
-                    //                                                       chatInput.isReply ? SelectedMessage.messageId : "",
-                    //                                                       packId)
+                    chatContentRoot.rootStore.sendSticker(chatContentModule.getMyChatId(),
+                                                hashId,
+                                                chatInput.isReply ? SelectedMessage.messageId : "",
+                                                packId)
                 }
                 onSendMessage: {
-                    // Not Refactored Yet
-                    //                if (chatInput.fileUrls.length > 0){
-                    //                    root.rootStore.chatsModelInst.sendImages(JSON.stringify(fileUrls));
-                    //                }
-                    //                let msg = root.rootStore.chatsModelInst.plainText(Emoji.deparse(chatInput.textInput.text))
-                    //                if (msg.length > 0){
-                    //                    msg = chatInput.interpretMessage(msg)
-                    //                    root.rootStore.chatsModelInst.messageView.sendMessage(msg, chatInput.isReply ? SelectedMessage.messageId : "", Utils.isOnlyEmoji(msg) ? Constants.messageContentType.emojiType : Constants.messageContentType.messageType, false);
-                    //                    if(event) event.accepted = true
-                    //                    sendMessageSound.stop();
-                    //                    Qt.callLater(sendMessageSound.play);
+                    if (chatInput.fileUrls.length > 0){
+                        chatContentModule.inputAreaModule.sendImages(JSON.stringify(fileUrls));
+                    }
+                    let msg = globalUtils.plainText(Emoji.deparse(chatInput.textInput.text))
+                    if (msg.length > 0) {
+                        msg = chatInput.interpretMessage(msg)
 
-                    //                    chatInput.textInput.clear();
-                    //                    chatInput.textInput.textFormat = TextEdit.PlainText;
-                    //                    chatInput.textInput.textFormat = TextEdit.RichText;
-                    //                }
+                        chatContentModule.inputAreaModule.sendMessage(
+                            msg,
+                            chatInput.isReply ? SelectedMessage.messageId : "",
+                            Utils.isOnlyEmoji(msg) ? Constants.messageContentType.emojiType : Constants.messageContentType.messageType,
+                            false)
+
+                        if (event) event.accepted = true
+                        sendMessageSound.stop();
+                        Qt.callLater(sendMessageSound.play);
+
+                        chatInput.textInput.clear();
+                        chatInput.textInput.textFormat = TextEdit.PlainText;
+                        chatInput.textInput.textFormat = TextEdit.RichText;
+                    }
                 }
             }
         }

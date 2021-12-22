@@ -175,7 +175,7 @@ QtObject:
     try:
       let response = status_activity_center.acceptActivityCenterNotifications(notificationIds)
 
-      let (chats, messages) = self.chatService.parseChatResponse2(response)
+      let (chats, messages) = self.chatService.parseChatResponse(response)
       self.events.emit(chat_service.SIGNAL_CHAT_UPDATE,
         ChatUpdateArgsNew(messages: messages, chats: chats))
 

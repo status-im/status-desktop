@@ -52,6 +52,12 @@ method init*(self: Controller) =
       return
     self.delegate.newMessagesLoaded(args.messages, args.reactions, args.pinnedMessages)
 
+  self.events.on(SIGNAL_SENDING_SUCCESS) do(e:Args):
+    let args = MessageSendingSuccess(e)
+    if(self.chatId != args.chat.id):
+      return
+    self.delegate.newMessagesLoaded(@[args.message], @[], @[])
+
   self.events.on(SIGNAL_MESSAGE_PINNED) do(e:Args):
     let args = MessagePinUnpinArgs(e)
     if(self.chatId != args.chatId):
