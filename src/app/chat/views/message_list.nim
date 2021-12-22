@@ -442,7 +442,8 @@ QtObject:
       for m in self.messages.mitems:
         if m.fromAuthor == c.id:
           m.userName = userNameOrAlias(c)
-          m.alias = c.alias
+          if c.alias != "":
+            m.alias = c.alias
           m.localName = c.localNickname
           self.userList.updateUsernames(c.id, m.username, m.alias, m.localname)
 

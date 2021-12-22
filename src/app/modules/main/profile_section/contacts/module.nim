@@ -95,8 +95,8 @@ method blockContact*[T](self: Module[T], publicKey: string) =
 method removeContact*[T](self: Module[T], publicKey: string) =
   self.controller.removeContact(publicKey)
 
-method changeContactNickname*[T](self: Module[T], accountKeyUID: string, publicKey: string, nicknameToSet: string): void =
-  self.controller.changeContactNickname(accountKeyUID, publicKey, nicknameToSet)
+method changeContactNickname*[T](self: Module[T], publicKey: string, nicknameToSet: string): void =
+  self.controller.changeContactNickname(publicKey, nicknameToSet)
 
 method lookupContact*[T](self: Module[T], value: string) =
   self.controller.lookupContact(value)
