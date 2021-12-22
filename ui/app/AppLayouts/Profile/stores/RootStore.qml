@@ -246,10 +246,6 @@ QtObject {
          return profileModelInst.ens.getUsernameRegistrar()
     }
 
-    function getEnsRegistry() {
-        return profileModelInst.ens.getENSRegistry()
-    }
-
     function releaseEnsEstimate(username, address) {
         return profileModelInst.ens.releaseEstimate(username, address)
     }
