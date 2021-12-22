@@ -158,12 +158,35 @@ QtObject:
     self.endInsertRows()
     self.countChanged()
 
+  proc appendItems*(self: Model, items: seq[Item]) =
+    if(items.len == 0):
+      return
+      
+    let parentModelIndex = newQModelIndex()
+    defer: parentModelIndex.delete
+
+    let first = self.items.len
+    let last = first + items.len - 1
+    self.beginInsertRows(parentModelIndex, first, last)
+    self.items.add(items)
+    self.endInsertRows()
+    self.countChanged()
+
   proc appendItem*(self: Model, item: Item) =
     let parentModelIndex = newQModelIndex()
     defer: parentModelIndex.delete
 
     self.beginInsertRows(parentModelIndex, self.items.len, self.items.len)
     self.items.add(item)
+    self.endInsertRows()
+    self.countChanged()
+
+  proc prependItem*(self: Model, item: Item) =
+    let parentModelIndex = newQModelIndex()
+    defer: parentModelIndex.delete
+
+    self.beginInsertRows(parentModelIndex, 0, 0)
+    self.items.insert(item, 0)
     self.endInsertRows()
     self.countChanged()
 

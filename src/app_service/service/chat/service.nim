@@ -111,8 +111,8 @@ QtObject:
   proc processMessageUpdateAfterSend*(self: Service, response: RpcResponse[JsonNode]): (seq[ChatDto], seq[MessageDto])  =
     result = self.parseChatResponse(response)
     var (chats, messages) = result
-    if chats.len == 0 and messages.len == 0:
-      self.events.emit(SIGNAL_SENDING_FAILED, Args())
+    if chats.len == 0 or messages.len == 0:
+      error "no chats or messages in the parsed response"
       return
 
     # This fixes issue#3490
@@ -251,7 +251,9 @@ QtObject:
         preferredUsername,
         communityId)
 
-      discard self.processMessageUpdateAfterSend(response)
+      let (chats, messages) = self.processMessageUpdateAfterSend(response)
+      if chats.len == 0 or messages.len == 0:
+        self.events.emit(SIGNAL_SENDING_FAILED, ChatArgs(chatId: chatId))
     except Exception as e:
       error "Error sending message", msg = e.msg
 

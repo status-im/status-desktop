@@ -56,7 +56,13 @@ method init*(self: Controller) =
     let args = MessageSendingSuccess(e)
     if(self.chatId != args.chat.id):
       return
-    self.delegate.newMessagesLoaded(@[args.message], @[], @[])
+    self.delegate.onSendingMessageSuccess(args.message)
+
+  self.events.on(SIGNAL_SENDING_FAILED) do(e:Args):
+    let args = ChatArgs(e)
+    if(self.chatId != args.chatId):
+      return
+    self.delegate.onSendingMessageError()
 
   self.events.on(SIGNAL_MESSAGE_PINNED) do(e:Args):
     let args = MessagePinUnpinArgs(e)
@@ -99,6 +105,9 @@ method getOneToOneChatNameAndImage*(self: Controller): tuple[name: string, image
 
 method belongsToCommunity*(self: Controller): bool =
   return self.belongsToCommunity
+
+method loadMoreMessages*(self: Controller) =
+  self.messageService.asyncLoadMoreMessagesForChat(self.chatId)
 
 method addReaction*(self: Controller, messageId: string, emojiId: int) =
   self.messageService.addReaction(self.chatId, messageId, emojiId)

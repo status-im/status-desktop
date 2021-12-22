@@ -13,12 +13,11 @@ export message_dto
 export pinned_msg_dto
 export reaction_dto
 
-include async_tasks
-
 logScope:
   topics = "messages-service"
 
 const MESSAGES_PER_PAGE = 20
+const CURSOR_VALUE_IGNORE = "ignore"
 
 # Signals which may be emitted by this service:
 const SIGNAL_MESSAGES_LOADED* = "new-messagesLoaded" #Once we are done with refactoring we should remove "new-" from all signals
@@ -28,6 +27,8 @@ const SIGNAL_SEARCH_MESSAGES_LOADED* = "new-searchMessagesLoaded"
 const SIGNAL_MESSAGES_MARKED_AS_READ* = "new-messagesMarkedAsRead"
 const SIGNAL_MESSAGE_REACTION_ADDED* = "new-messageReactionAdded"
 const SIGNAL_MESSAGE_REACTION_REMOVED* = "new-messageReactionRemoved"
+
+include async_tasks
 
 type
   SearchMessagesLoadedArgs* = ref object of Args
@@ -59,7 +60,9 @@ QtObject:
     events: EventEmitter
     threadpool: ThreadPool
     msgCursor: Table[string, string]
+    lastUsedMsgCursor: Table[string, string]
     pinnedMsgCursor: Table[string, string]
+    lastUsedPinnedMsgCursor: Table[string, string]
     numOfPinnedMessagesPerChat: Table[string, int] # [chat_id, num_of_pinned_messages]
   
   proc delete*(self: Service) =
@@ -71,7 +74,9 @@ QtObject:
     result.events = events
     result.threadpool = threadpool
     result.msgCursor = initTable[string, string]()
+    result.lastUsedMsgCursor = initTable[string, string]()
     result.pinnedMsgCursor = initTable[string, string]()
+    result.lastUsedPinnedMsgCursor = initTable[string, string]()
 
   proc initialMessagesFetched(self: Service, chatId: string): bool =
     return self.msgCursor.hasKey(chatId)
@@ -99,11 +104,18 @@ QtObject:
   
     var chatId: string
     discard responseObj.getProp("chatId", chatId)
+
+    # this is important case we don't want to fetch the same messages multiple times.
+    self.lastUsedMsgCursor[chatId] = self.msgCursor[chatId] 
+    self.lastUsedPinnedMsgCursor[chatId] = self.pinnedMsgCursor[chatId]
   
     # handling messages
     var msgCursor: string
     if(responseObj.getProp("messagesCursor", msgCursor)):
-      self.msgCursor[chatId] = msgCursor
+      if(msgCursor.len > 0):
+        self.msgCursor[chatId] = msgCursor
+      else:
+        self.msgCursor[chatId] = self.lastUsedMsgCursor[chatId]
 
     var messagesArr: JsonNode
     var messages: seq[MessageDto]
@@ -113,7 +125,10 @@ QtObject:
     # handling pinned messages
     var pinnedMsgCursor: string
     if(responseObj.getProp("pinnedMessagesCursor", pinnedMsgCursor)):
-      self.pinnedMsgCursor[chatId] = pinnedMsgCursor
+      if(pinnedMsgCursor.len > 0):
+        self.pinnedMsgCursor[chatId] = pinnedMsgCursor
+      else:
+        self.pinnedMsgCursor[chatId] = self.lastUsedPinnedMsgCursor[chatId]
 
     var pinnedMsgArr: JsonNode
     var pinnedMessages: seq[PinnedMessageDto]
@@ -142,13 +157,27 @@ QtObject:
       error "empty chat id", methodName="asyncLoadMoreMessagesForChat"
       return
 
+    var msgCursor = self.getCurrentMessageCursor(chatId)
+    if(self.lastUsedMsgCursor.hasKey(chatId) and msgCursor == self.lastUsedMsgCursor[chatId]):
+      msgCursor = CURSOR_VALUE_IGNORE
+
+    var pinnedMsgCursor = self.getCurrentPinnedMessageCursor(chatId)
+    if(self.lastUsedPinnedMsgCursor.hasKey(chatId) and pinnedMsgCursor == self.lastUsedPinnedMsgCursor[chatId]):
+      pinnedMsgCursor = CURSOR_VALUE_IGNORE
+
+    if(msgCursor == CURSOR_VALUE_IGNORE and pinnedMsgCursor == CURSOR_VALUE_IGNORE):
+      # it's important to emit signal in case we are not fetching messages, so we can update the view appropriatelly. 
+      let data = MessagesLoadedArgs(chatId: chatId)
+      self.events.emit(SIGNAL_MESSAGES_LOADED, data)
+      return
+
     let arg = AsyncFetchChatMessagesTaskArg(
       tptr: cast[ByteAddress](asyncFetchChatMessagesTask),
       vptr: cast[ByteAddress](self.vptr),
       slot: "onAsyncLoadMoreMessagesForChat",
       chatId: chatId,
-      msgCursor: self.getCurrentMessageCursor(chatId),
-      pinnedMsgCursor: self.getCurrentPinnedMessageCursor(chatId),
+      msgCursor: msgCursor,
+      pinnedMsgCursor: pinnedMsgCursor,
       limit: MESSAGES_PER_PAGE
     )
 
