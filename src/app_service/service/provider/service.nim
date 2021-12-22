@@ -44,6 +44,7 @@ method ensResourceURL*(self: Service, username: string, url: string): (string, s
   let (scheme, host, path) = self.ensService.resourceUrl(username)
   if host == "":
     return (url, url, HTTPS_SCHEME, "", false)
+  return (url, host, scheme, path, true)
 
 
 method postMessage*(self: Service, requestType: string, message: string): string =
