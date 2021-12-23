@@ -60,7 +60,6 @@ Item {
                 }
                 onClicked: {
                     root.store.checkForUpdates();
-                    Global.openDownloadModal()
                 }
             }
         }
