@@ -660,17 +660,6 @@ Item {
         }
 
         Component {
-            id: editChannelPopup
-            CreateChannelPopup {
-                anchors.centerIn: parent
-                isEdit: true
-                onClosed: {
-                    destroy()
-                }
-            }
-        }
-
-        Component {
             id: genericConfirmationDialog
             ConfirmationDialog {
                 onClosed: {
