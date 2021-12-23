@@ -62,7 +62,7 @@ method requestAddressForTransaction*(self: Controller, fromAddress: string, amou
   self.chatService.requestAddressForTransaction(self.chatId, fromAddress, amount, tokenAddress)
 
 method requestTransaction*(self: Controller, fromAddress: string, amount: string, tokenAddress: string) =
-  self.chatService.requestAddressForTransaction(self.chatId, fromAddress, amount, tokenAddress)
+  self.chatService.requestTransaction(self.chatId, fromAddress, amount, tokenAddress)
 
 method declineRequestTransaction*(self: Controller, messageId: string) =
   self.chatService.declineRequestTransaction(messageId)

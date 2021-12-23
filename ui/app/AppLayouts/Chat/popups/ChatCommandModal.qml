@@ -59,8 +59,7 @@ StatusModal {
                         }
                         return null
                     }
-                    // Not Refactored Yet
-//                    currency: root.store.walletModelInst.balanceView.defaultCurrency
+                    currency: root.store.currentCurrency
                     width: stack.width
                     label: {
                         return root.isRequested ? 
@@ -90,9 +89,9 @@ StatusModal {
 
                 RecipientSelector {
                     id: selectRecipient
-                    // Not Refactored Yet
-//                    accounts: root.store.walletModelInst.accountsView.accounts
+                    accounts: root.store.accounts
                     contacts: root.store.addedContacts
+                    ensModule: root.store.contactsModuleInst
                     label: root.isRequested ?
                       //% "From"
                       qsTrId("from") :
@@ -116,8 +115,6 @@ StatusModal {
                 AssetAndAmountInput {
                     id: txtAmount
                     selectedAccount: selectFromAccount.selectedAccount
-                    // Not Refactored Yet
-//                    defaultCurrency: root.store.walletModelInst.balanceView.defaultCurrency
                     currentCurrency: root.store.currentCurrency
                     // Not Refactored Yet
 //                    getFiatValue: root.store.walletModelInst.balanceView.getFiatValue
@@ -143,8 +140,7 @@ StatusModal {
                     asset: txtAmount.selectedAsset
                     amount: { "value": txtAmount.selectedAmount, "fiatValue": txtAmount.selectedFiatAmount }
                     toWarn: addressRequiredValidator.isWarn
-                    // Not Refactored Yet
-//                    currency: walletModel.balanceView.defaultCurrency
+                    currency: root.store.currentCurrency
                 }
 
                 AddressRequiredValidator {
@@ -179,10 +175,11 @@ StatusModal {
                 const validity = stack.currentGroup.validate()
                 if (validity.isValid && !validity.isPending) {
                     if (stack.isLastGroup) {
-                        return root.sendChatCommand(selectFromAccount.selectedAccount.address,
+                        root.sendChatCommand(selectFromAccount.selectedAccount.address,
                                                     txtAmount.selectedAmount,
                                                     txtAmount.selectedAsset.address,
                                                     txtAmount.selectedAsset.decimals)
+                        return root.close()
                     }
                     stack.next()
                 }

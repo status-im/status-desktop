@@ -186,7 +186,15 @@ QtObject {
         return contactsModuleModel.isContactBlocked(pubkey)
     }
 
+    function isEnsVerified(pubkey) {
+        return contactsModuleInst.isEnsVerified(pubkey)
+    }
+
     function alias(pubkey) {
-        return contactsModuleModel.alias(pubkey)
+        return contactsModuleInst.alias(pubkey)
+    }
+
+    function resolveENSWithUUID(value, uuid) {
+        contactsModuleInst.resolveENSWithUUID(value, uuid)
     }
 }

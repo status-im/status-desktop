@@ -32,8 +32,12 @@ method delete*(self: Controller) =
 
 method init*(self: Controller) =
   self.events.on(SIGNAL_CONTACT_LOOKED_UP) do(e: Args):
-    var args = ContactArgs(e)
-    self.delegate.contactLookedUp(args.contactId)
+    var args = ResolvedContactArgs(e)
+    self.delegate.contactLookedUp(args.pubkey)
+
+  self.events.on(SIGNAL_ENS_RESOLVED_WITH_UUID) do(e: Args):
+    var args = ResolvedContactArgs(e)
+    self.delegate.resolvedENSWithUUID(args.address, args.uuid)
 
   self.events.on(SIGNAL_CONTACT_ADDED) do(e: Args):
     var args = ContactAddedArgs(e)
@@ -84,3 +88,6 @@ method changeContactNickname*(self: Controller, publicKey: string, nickname: str
 
 method lookupContact*(self: Controller, value: string) =
   self.contactsService.lookupContact(value)
+
+method resolveENSWithUUID*(self: Controller, value: string, uuid: string) =
+  self.contactsService.resolveENSWithUUID(value, uuid)

@@ -31,6 +31,10 @@ ColumnLayout {
     property var chatContentModule
     property var rootStore
 
+    property Component sendTransactionNoEnsModal
+    property Component receiveTransactionModal
+    property Component sendTransactionWithEnsModal
+
     StatusChatToolBar {
         id: topBar
         Layout.fillWidth: true
@@ -345,20 +349,16 @@ ColumnLayout {
                 anchors.bottom: parent.bottom
                 recentStickers: chatContentRoot.rootStore.stickersModuleInst.recent
                 stickerPackList: chatContentRoot.rootStore.stickersModuleInst.stickerPacks
-//                chatType: chatContentRoot.rootStore.chatsModelInst.channelView.activeChannel.chatType
+                chatType: chatContentModule.chatDetails.type
                 onSendTransactionCommandButtonClicked: {
-                    // Not Refactored Yet
-                    //                if (chatContentRoot.rootStore.chatsModelInst.channelView.activeChannel.ensVerified) {
-                    //                    txModalLoader.sourceComponent = cmpSendTransactionWithEns
-                    //                } else {
-                    //                    txModalLoader.sourceComponent = cmpSendTransactionNoEns
-                    //                }
-                    //                txModalLoader.item.open()
+                    if (chatContentRoot.rootStore.isEnsVerified(chatContentModule.getMyChatId())) {
+                        Global.openPopup(chatContentRoot.sendTransactionWithEnsModal)
+                    } else {
+                        Global.openPopup(chatContentRoot.sendTransactionNoEnsModal)
+                    }
                 }
                 onReceiveTransactionCommandButtonClicked: {
-                    // Not Refactored Yet
-                    //                txModalLoader.sourceComponent = cmpReceiveTransaction
-                    //                txModalLoader.item.open()
+                    Global.openPopup(chatContentRoot.receiveTransactionModal)
                 }
                 onStickerSelected: {
                     chatContentRoot.rootStore.sendSticker(chatContentModule.getMyChatId(),

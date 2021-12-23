@@ -108,6 +108,7 @@ ModalPopup {
                 id: selectRecipient
                 visible: false
                 // Not Refactored Yet
+                // ensModule: root.store.contactsModuleInst
 //                accounts: RootStore.walletModelInst.accountsView.accounts
                 contacts: RootStore.contactsModuleInst.model.addedContacts
                 selectedRecipient: { "address": RootStore.utilsModelInst.ensRegisterAddress, "type": RecipientSelector.Type.Address }

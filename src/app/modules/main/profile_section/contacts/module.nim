@@ -107,3 +107,9 @@ method lookupContact*(self: Module, value: string) =
 
 method contactLookedUp*(self: Module, id: string) =
   self.view.contactLookedUp(id)
+
+method resolveENSWithUUID*(self: Module, value: string, uuid: string) =
+  self.controller.resolveENSWithUUID(value, uuid)
+
+method resolvedENSWithUUID*(self: Module, address: string, uuid: string) =
+  self.view.resolvedENSWithUUID(address, uuid)

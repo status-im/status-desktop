@@ -42,6 +42,9 @@ method changeContactNickname*(self: AccessInterface, publicKey: string, nickname
 method lookupContact*(self: AccessInterface, value: string): void {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method resolveENSWithUUID*(self: AccessInterface, value: string, uuid: string): void {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 type
   ## Abstract class (concept) which must be implemented by object/s used in this 
   ## module.
