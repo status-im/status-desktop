@@ -8,6 +8,7 @@ import StatusQ.Popups 0.1
 
 import shared.popups 1.0
 import "../popups"
+import "../popups/community"
 
 StatusPopupMenu {
     id: root
@@ -127,23 +128,31 @@ StatusPopupMenu {
         icon.name: "edit"
         enabled: root.isCommunityChat && root.isCommunityAdmin
         onTriggered: {
-            let popup = Global.openPopup(editChannelPopup, {
-                                          isEdit: true,
-                                          channelName: root.chatName,
-                                          channelDescription: root.chatDescription
-        })
+            Global.openPopup(editChannelPopup, {
+                isEdit: true,
+                channelName: root.chatName,
+                channelDescription: root.chatDescription
+            });
+        }
+    }
 
-            popup.createCommunityChannel.connect(function(chName, chDescription){
-                root.createCommunityChannel(root.chatId, chName, chDescription)
-            })
-            popup.editCommunityChannel.connect(function(chName, chDescription){
-                root.editCommunityChannel(root.chatId, chName, chDescription)
-            })
-            popup.openPinnedMessagesPopup.connect(function(){
-                root.openPinnedMessagesList(root.chatId)
-            })
-
-            popup.open()
+    Component {
+        id: editChannelPopup
+        CreateChannelPopup {
+            anchors.centerIn: parent
+            isEdit: true
+            onCreateCommunityChannel: {
+                root.createCommunityChannel(root.chatId, chName, chDescription);
+            }
+            onEditCommunityChannel: {
+                root.editCommunityChannel(root.chatId, chName, chDescription);
+            }
+            onOpenPinnedMessagesPopup: {
+                root.openPinnedMessagesList(root.chatId, chName, chDescription);
+            }
+            onClosed: {
+                destroy()
+            }
         }
     }
 
