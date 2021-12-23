@@ -11,13 +11,23 @@ include ../../../app/core/tasks/common
 type
   LookupContactTaskArg = ref object of QObjectTaskArg
     value: string
+    uuid: string
 
 const lookupContactTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[LookupContactTaskArg](argEncoded)
-  var id = arg.value
-  if not id.startsWith("0x"):
-    id = status_ens.pubkey(id)
-  arg.finish(id)
+  var pubkey = arg.value
+  var address = ""
+  if not pubkey.startsWith("0x"):
+    # TODO refactor those calls to use the new backend and also do it in a signle call
+    pubkey = status_ens.pubkey(arg.value)
+    address = status_ens.address(arg.value)
+  
+  let output = %*{
+    "id": pubkey,
+    "address": address,
+    "uuid": arg.uuid
+  }
+  arg.finish(output)
 
 #################################################
 # Async timer

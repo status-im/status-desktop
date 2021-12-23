@@ -72,6 +72,8 @@ QtObject:
 
   proc ensWasResolved*(self: View, resolvedPubKey: string) {.signal.}
 
+  proc resolvedENSWithUUID*(self: View, resolvedAddress: string, uuid: string) {.signal.}
+
   proc contactLookedUp*(self: View, id: string) {.slot.} =
     self.ensWasResolved(id)
 
@@ -97,6 +99,12 @@ QtObject:
       return
 
     self.delegate.lookupContact(value)
+
+  proc resolveENSWithUUID*(self: View, value: string, uuid: string) {.slot.} =
+    if value == "":
+      return
+
+    self.delegate.resolveENSWithUUID(value, uuid)
 
   proc addContact*(self: View, publicKey: string) {.slot.} =
     self.delegate.addContact(publicKey)

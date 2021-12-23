@@ -82,21 +82,23 @@ Item {
 
     function requestAddressForTransaction(address, amount, tokenAddress, tokenDecimals = 18) {
         amount =  globalUtils.eth2Wei(amount.toString(), tokenDecimals)
-        // Not Refactored Yet
-//        root.rootStore.chatsModelInst.transactions.requestAddress(activeChatId,
-//                                               address,
-//                                               amount,
-//                                               tokenAddress)
+
+        parentModule.prepareChatContentModuleForChatId(activeChatId)
+        let chatContentModule = parentModule.getChatContentModule()
+        chatContentModule.inputAreaModule.requestAddress(address,
+                                                    amount,
+                                                    tokenAddress)
         txModalLoader.close()
     }
     function requestTransaction(address, amount, tokenAddress, tokenDecimals = 18) {
-        amount =  globalUtils.eth2Wei(amount.toString(), tokenDecimals)
-        // Not Refactored Yet
-//        root.rootStore.chatsModelInst.transactions.request(activeChatId,
-//                                        address,
-//                                        amount,
-//                                        tokenAddress)
-        txModalLoader.close()
+        amount = globalUtils.eth2Wei(amount.toString(), tokenDecimals)
+
+
+        parentModule.prepareChatContentModuleForChatId(activeChatId)
+        let chatContentModule = parentModule.getChatContentModule()
+        chatContentModule.inputAreaModule.request(address,
+                                                    amount,
+                                                    tokenAddress)
     }
 
     function clickOnNotification() {
@@ -194,6 +196,9 @@ Item {
                         model: subItems
                         delegate: ChatContentView {
                             rootStore: root.rootStore
+                            sendTransactionNoEnsModal: cmpSendTransactionNoEns
+                            receiveTransactionModal: cmpReceiveTransaction
+                            sendTransactionWithEnsModal: cmpSendTransactionWithEns
                             Component.onCompleted: {
                                 parentModule.prepareChatContentModuleForChatId(model.itemId)
                                 chatContentModule = parentModule.getChatContentModule()
@@ -204,6 +209,9 @@ Item {
                 DelegateChoice { // In all other cases
                     delegate: ChatContentView {
                         rootStore: root.rootStore
+                        sendTransactionNoEnsModal: cmpSendTransactionNoEns
+                        receiveTransactionModal: cmpReceiveTransaction
+                        sendTransactionWithEnsModal: cmpSendTransactionWithEns
                         Component.onCompleted: {
                             parentModule.prepareChatContentModuleForChatId(itemId)
                             chatContentModule = parentModule.getChatContentModule()
@@ -226,20 +234,6 @@ Item {
         }
     }
 
-        Loader {
-            id: txModalLoader
-            function close() {
-                if (!this.item) {
-                    return
-                }
-                this.item.close()
-                this.closed()
-            }
-            function closed() {
-                this.sourceComponent = undefined
-            }
-        }
-
         Component {
             id: cmpSendTransactionNoEns
             ChatCommandModal {
@@ -247,7 +241,7 @@ Item {
                 store: root.rootStore
                 isContact: root.isContact
                 onClosed: {
-                    txModalLoader.closed()
+                    destroy()
                 }
                 sendChatCommand: root.requestAddressForTransaction
                 isRequested: false
@@ -257,12 +251,13 @@ Item {
                 //% "Request Address"
                 finalButtonLabel: qsTrId("request-address")
                 selectRecipient.selectedRecipient: {
+                    parentModule.prepareChatContentModuleForChatId(activeChatId)
+                    let chatContentModule = parentModule.getChatContentModule()
                     return {
                         address: Constants.zeroAddress, // Setting as zero address since we don't have the address yet
-                        // Not Refactored Yet
-//                        alias: root.rootStore.chatsModelInst.channelView.activeChannel.alias,
-//                        identicon: root.rootStore.chatsModelInst.channelView.activeChannel.identicon,
-//                        name: root.rootStore.chatsModelInst.channelView.activeChannel.name,
+                        alias: chatContentModule.chatDetails.name, // Do we need the alias for real or name works?
+                        identicon: chatContentModule.chatDetails.icon,
+                        name: chatContentModule.chatDetails.name,
                         type: RecipientSelector.Type.Contact
                     }
                 }
@@ -278,7 +273,7 @@ Item {
                 store: root.rootStore
                 isContact: root.isContact
                 onClosed: {
-                    txModalLoader.closed()
+                    destroy()
                 }
                 sendChatCommand: root.requestTransaction
                 isRequested: true
@@ -288,12 +283,13 @@ Item {
                 //% "Request"
                 finalButtonLabel: qsTrId("wallet-request")
                 selectRecipient.selectedRecipient: {
+                    parentModule.prepareChatContentModuleForChatId(activeChatId)
+                    let chatContentModule = parentModule.getChatContentModule()
                     return {
                         address: Constants.zeroAddress, // Setting as zero address since we don't have the address yet
-                        // Not Refactored Yet
-//                        alias: root.rootStore.chatsModelInst.channelView.activeChannel.alias,
-//                        identicon: root.rootStore.chatsModelInst.channelView.activeChannel.identicon,
-//                        name: root.rootStore.chatsModelInst.channelView.activeChannel.name,
+                        alias: chatContentModule.chatDetails.name, // Do we need the alias for real or name works?
+                        identicon: chatContentModule.chatDetails.icon,
+                        name: chatContentModule.chatDetails.name,
                         type: RecipientSelector.Type.Contact
                     }
                 }
@@ -306,22 +302,25 @@ Item {
             id: cmpSendTransactionWithEns
             SendModal {
                 id: sendTransactionWithEns
+                store: root.rootStore
                 onOpened: {
                     // Not Refactored Yet
 //                    root.rootStore.walletModelInst.gasView.getGasPrice()
                 }
                 onClosed: {
-                    txModalLoader.closed()
+                    destroy()
                 }
                 isContact: root.isContact
                 selectRecipient.readOnly: true
                 selectRecipient.selectedRecipient: {
+                    parentModule.prepareChatContentModuleForChatId(activeChatId)
+                    let chatContentModule = parentModule.getChatContentModule()
+
                     return {
                         address: "",
-                        // Not Refactored Yet
-//                        alias: root.rootStore.chatsModelInst.channelView.activeChannel.alias,
-//                        identicon: root.rootStore.chatsModelInst.channelView.activeChannel.identicon,
-//                        name: root.rootStore.chatsModelInst.channelView.activeChannel.name,
+                        alias: chatContentModule.chatDetails.name, // Do we need the alias for real or name works?
+                        identicon: chatContentModule.chatDetails.icon,
+                        name: chatContentModule.chatDetails.name,
                         type: RecipientSelector.Type.Contact,
                         ensVerified: true
                     }
