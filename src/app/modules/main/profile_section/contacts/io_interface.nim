@@ -64,6 +64,12 @@ method lookupContact*(self: AccessInterface, value: string) {.base.} =
 method contactLookedUp*(self: AccessInterface, id: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method resolveENSWithUUID*(self: AccessInterface, value: string, uuid: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method resolvedENSWithUUID*(self: AccessInterface, address: string, uuid: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 # View Delegate Interface
 # Delegate for the view must be declared here due to use of QtObject and multi 
 # inheritance, which is not well supported in Nim.

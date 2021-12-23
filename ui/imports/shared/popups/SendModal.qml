@@ -113,6 +113,7 @@ ModalPopup {
                 accounts: root.store.accounts
                 contacts: root.store.addedContacts
                 currentIndex: index
+                    ensModule: root.store.contactsModuleInst
                 //% "Recipient"
                 label: qsTrId("recipient")
                 anchors.top: separator.bottom

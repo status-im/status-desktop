@@ -18,6 +18,7 @@ Item {
     id: root
     property var contacts
     property var selectedContact
+    property var ensModule
     height: select.height
     property int dropdownWidth: width
     //% "Please select a contact"
@@ -25,6 +26,7 @@ Item {
     property alias validationErrorAlignment: select.validationErrorAlignment
     property bool isValid: false
     property alias isPending: ensResolver.isPending
+
     property bool readOnly: false
     property bool isResolvedAddress: false
     //% "Select a contact"
@@ -143,6 +145,7 @@ Item {
         anchors.right: select.right
         anchors.topMargin: Style.current.halfPadding
         debounceDelay: 0
+        ensModule: root.ensModule
         onResolved: {
             root.isResolvedAddress = true
             var selectedContact = root.selectedContact

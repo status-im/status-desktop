@@ -22,8 +22,7 @@ Item {
     property string invalidInputErrorMessage: qsTrId("this-needs-to-be-a-number")
     //% "Please enter an amount"
     property string noInputErrorMessage: qsTrId("please-enter-an-amount")
-    property string defaultCurrency: "USD"
-    property string currentCurrency: ""
+    property string currentCurrency: "USD"
     property alias selectedFiatAmount: txtFiatBalance.text
     property alias selectedAmount: inputAmount.text
     property var selectedAccount
@@ -122,7 +121,7 @@ Item {
                 }
                 onClicked: {
                     inputAmount.text = Utils.stripTrailingZeros(selectAsset.selectedAsset.value)
-                    txtFiatBalance.text = root.getFiatValue(inputAmount.text, selectAsset.selectedAsset.symbol, root.defaultCurrency)
+                    txtFiatBalance.text = root.getFiatValue(inputAmount.text, selectAsset.selectedAsset.symbol, root.currentCurrency)
                 }
             }
         }
@@ -158,7 +157,7 @@ Item {
             if (amount === "") {
                 txtFiatBalance.text = "0.00"
             } else {
-                txtFiatBalance.text = root.getFiatValue(amount, selectAsset.selectedAsset.symbol, root.defaultCurrency)
+                txtFiatBalance.text = root.getFiatValue(amount, selectAsset.selectedAsset.symbol, root.currentCurrency)
             }
         }
         onTextChanged: {
@@ -190,7 +189,7 @@ Item {
              if (inputAmount.text === "" || isNaN(inputAmount.text)) {
                  return
              }
-            txtFiatBalance.text = root.getFiatValue(inputAmount.text, selectAsset.selectedAsset.symbol, root.defaultCurrency)
+            txtFiatBalance.text = root.getFiatValue(inputAmount.text, selectAsset.selectedAsset.symbol, root.currentCurrency)
             root.validate(true)
         }
     }
@@ -220,13 +219,13 @@ Item {
                 if (balance === "" || isNaN(balance)) {
                     return
                 }
-                inputAmount.text = root.getCryptoValue(balance, root.defaultCurrency, selectAsset.selectedAsset.symbol)
+                inputAmount.text = root.getCryptoValue(balance, root.currentCurrency, selectAsset.selectedAsset.symbol)
             }
         }
 
         StyledText {
             id: txtFiatSymbol
-            text: root.defaultCurrency.toUpperCase()
+            text: root.currentCurrency.toUpperCase()
             font.weight: Font.Medium
             font.pixelSize: 12
             color: Style.current.secondaryText

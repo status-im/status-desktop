@@ -15,6 +15,7 @@ Item {
     property var accounts
     property var contacts
     property int currentIndex
+    property var ensModule
     property int inputWidth: 272
     property int sourceSelectWidth: 136
     property alias label: txtLabel.text
@@ -174,6 +175,7 @@ Item {
             dropdownWidth: parent.width
             readOnly: root.readOnly
             isContact: root.isContact
+            ensModule: root.ensModule
             Layout.preferredWidth: selAddressSource.visible ? root.inputWidth : parent.width
             Layout.alignment: Qt.AlignTop
             Layout.fillWidth: true

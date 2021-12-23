@@ -129,6 +129,7 @@ StatusModal {
                 RecipientSelector {
                     id: selectRecipient
                     visible: false
+                    ensModule: root.store.contactsModuleInst
                     // Not Refactored Yet
 //                    accounts: root.store.walletModelInst.accountsView.accounts
                     contacts: root.store.addedContacts

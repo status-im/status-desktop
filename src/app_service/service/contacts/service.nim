@@ -24,6 +24,11 @@ type
   ContactArgs* = ref object of Args
     contactId*: string
 
+  ResolvedContactArgs* = ref object of Args
+    pubkey*: string
+    address*: string
+    uuid*: string
+
   ContactNicknameUpdatedArgs* = ref object of ContactArgs
     nickname*: string
 
@@ -50,6 +55,7 @@ const IdleLimitInSeconds = int(7 * 60) # 7 minutes
 
 # Signals which may be emitted by this service:
 const SIGNAL_CONTACT_LOOKED_UP* = "SIGNAL_CONTACT_LOOKED_UP"
+const SIGNAL_ENS_RESOLVED_WITH_UUID* = "SIGNAL_ENS_RESOLVED_WITH_UUID"
 # Remove new when old code is removed
 const SIGNAL_CONTACT_ADDED* = "new-contactAdded"
 const SIGNAL_CONTACT_BLOCKED* = "new-contactBlocked"
@@ -301,20 +307,35 @@ QtObject:
     self.saveContact(contact)
     self.events.emit(SIGNAL_CONTACT_REMOVED, ContactArgs(contactId: contact.id))
 
-  proc ensResolved*(self: Service, id: string) {.slot.} =
-    let data = ContactArgs(contactId: id)
-    self.events.emit(SIGNAL_CONTACT_LOOKED_UP, data)
+  proc ensResolved*(self: Service, jsonObj: string) {.slot.} =
+    let jsonObj = jsonObj.parseJson()
+    if (jsonObj["uuid"].getStr != ""):
+      let data = ResolvedContactArgs(
+        pubkey: jsonObj["id"].getStr,
+        address: jsonObj["address"].getStr,
+        uuid: jsonObj["uuid"].getStr)
+      self.events.emit(SIGNAL_ENS_RESOLVED_WITH_UUID, data)
+    else:
+      let data = ResolvedContactArgs(
+        pubkey: jsonObj["id"].getStr,
+        address: jsonObj["address"].getStr)
+      self.events.emit(SIGNAL_CONTACT_LOOKED_UP, data)
 
-  proc lookupContact*(self: Service, value: string) =
+  proc resolveENSWithUUID*(self: Service, value: string, uuid: string) =
     if(self.closingApp):
       return
     let arg = LookupContactTaskArg(
       tptr: cast[ByteAddress](lookupContactTask),
       vptr: cast[ByteAddress](self.vptr),
       slot: "ensResolved",
-      value: value
+      value: value,
+      uuid: uuid
     )
     self.threadpool.start(arg)
+
+
+  proc lookupContact*(self: Service, value: string) =
+    self.resolveENSWithUUID(value, "")
 
   proc checkContactsStatus*(self: Service, response: string) {.slot.} =
     let nowInMyLocalZone = now()
