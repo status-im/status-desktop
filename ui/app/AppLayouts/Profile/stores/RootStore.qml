@@ -351,8 +351,7 @@ QtObject {
     }
 
     function checkForUpdates() {
-        // Not Refactored Yet
-//        utilsModelInst.checkForUpdates()
+        aboutModuleInst.checkForUpdates()
     }
 
     function setPubKeyGasEstimate(username, address) {

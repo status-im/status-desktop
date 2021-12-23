@@ -1,7 +1,6 @@
 import NimQml, json, chronicles
 
 import eventemitter
-import ../../../app/core/[main]
 import ../../../app/core/tasks/[qt, threadpool]
 
 import ../settings/service as settings_service
@@ -41,7 +40,8 @@ QtObject:
       threadpool: ThreadPool,
       settingsService: settings_service.Service
       ): Service =
-    result = Service()
+    new(result, delete)
+    result.QObject.setup
     result.events = events
     result.threadpool = threadpool
     result.settingsService = settingsService
@@ -61,10 +61,23 @@ QtObject:
     except Exception as e:
       error "Error getting Node version"
 
+  proc emitSignal(self: Service, versionJsonObj: JsonNode) =
+    self.events.emit(SIGNAL_VERSION_FETCHED, VersionArgs(version: $versionJsonObj))
+
   proc asyncRequestLatestVersion(self: Service) =
     let networkType = self.settingsService.getCurrentNetwork().toNetworkType()
-    if networkType != NetworkType.Mainnet: return
-    let arg = CheckForNewVersionTaskArg(
+    if networkType != NetworkType.Mainnet: 
+      # Seems that we return that there is no updates for all but the `Mainnet` network type,
+      # not sure why, but that's how it was in the old code.
+      let emptyJsonObj = %*{
+        "version": "",
+        "url": "",
+        "available": false
+      }
+      self.emitSignal(emptyJsonObj)
+      return
+
+    let arg = QObjectTaskArg(
       tptr: cast[ByteAddress](checkForUpdatesTask),
       vptr: cast[ByteAddress](self.vptr),
       slot: "latestVersionSuccess"
@@ -75,12 +88,14 @@ QtObject:
     self.asyncRequestLatestVersion()
 
   proc latestVersionSuccess*(self: Service, latestVersionJSON: string) {.slot.} =
-    let latestVersionObj = parseJSON(latestVersionJSON)
+    var latestVersionObj = parseJSON(latestVersionJSON)
+
+    var newVersionAvailable = false
     let latestVersion = latestVersionObj{"version"}.getStr()
-    if latestVersion == "": return
+    if(latestVersion.len > 0):
+      newVersionAvailable = isNewer(DESKTOP_VERSION, latestVersion)
 
-    let available = isNewer(DESKTOP_VERSION, latestVersion)
-    latestVersionObj["available"] = newJBool(available)
+    latestVersionObj["available"] = newJBool(newVersionAvailable)
 
-    self.events.emit(SIGNAL_VERSION_FETCHED,
-      VersionArgs(version: $(%*latestVersionObj)))
+    self.emitSignal(latestVersionObj)
+    
