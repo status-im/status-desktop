@@ -90,16 +90,6 @@ QtObject:
     let item = self.model.getItemBySectionType(sectionType.SectionType)
     self.delegate.setActiveSection(item)
 
-  proc enableSection*(self: View, sectionType: SectionType) =
-    # Since enable/disable section is possible only from the `Profile` tab, there is no need for setting
-    # `activeSection` in this moment, as it will be in any case set to `ProfileSettings` type.
-    self.model.enableSection(sectionType)
-
-  proc disableSection*(self: View, sectionType: SectionType) =
-    # Since enable/disable section is possible only from the `Profile` tab, there is no need for setting
-    # `activeSection` in this moment, as it will be in any case set to `ProfileSettings` type.
-    self.model.disableSection(sectionType)
-
   proc setUserStatus*(self: View, status: bool) {.slot.} =
     self.delegate.setUserStatus(status)
 
