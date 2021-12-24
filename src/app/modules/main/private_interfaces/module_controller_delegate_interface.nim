@@ -12,10 +12,7 @@ method emitStoringPasswordSuccess*(self: AccessInterface) {.base.} =
 method activeSectionSet*(self: AccessInterface, sectionId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method enableSection*(self: AccessInterface, sectionType: SectionType) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method disableSection*(self: AccessInterface, sectionType: SectionType) {.base.} =
+method toggleSection*(self: AccessInterface, sectionType: SectionType) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method communityJoined*(self: AccessInterface, community: CommunityDto, events: EventEmitter, 

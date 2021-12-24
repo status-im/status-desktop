@@ -57,3 +57,15 @@ method getCustomNetworks*(self: AccessInterface): seq[settings_service_type.Netw
 
 method addCustomNetwork*(self: AccessInterface, network: Network) {.base.} = 
   raise newException(ValueError, "No implementation available") 
+
+method toggleWalletSection*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+  
+method toggleBrowserSection*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method toggleCommunitySection*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method toggleNodeManagementSection*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
