@@ -16,8 +16,6 @@ import "../panels"
 ScrollView {
     id: root
 
-    property bool isWakuV2: store.fleet == Constants.waku_prod || store.fleet === Constants.waku_test
-    property var store
     property int profileContentWidth
 
     height: parent.height
@@ -116,25 +114,10 @@ ScrollView {
                 switchChecked: localAccountSensitiveSettings.isWalletEnabled
                 onClicked: {
                     if (!localAccountSensitiveSettings.isWalletEnabled) {
-                        confirmationPopup.settingsProp = "isWalletEnabled"
+                        confirmationPopup.experimentalFeature = root.advancedStore.experimentalFeatures.wallet
                         confirmationPopup.open()
                     } else {
-                        localAccountSensitiveSettings.isWalletEnabled = false
-                    }
-                }
-            }
-
-            // TODO: replace with StatusQ component
-            StatusSettingsLineButton {
-                text: qsTr("Wallet v2 - do not use, under active development")
-                isSwitch: true
-                switchChecked: localAccountSensitiveSettings.isWalletV2Enabled
-                onClicked: {
-                    if (!localAccountSensitiveSettings.isWalletV2Enabled) {
-                        confirmationPopup.settingsProp = "isWalletV2Enabled"
-                        confirmationPopup.open()
-                    } else {
-                        localAccountSensitiveSettings.isWalletV2Enabled = false
+                        root.advancedStore.toggleExperimentalFeature(root.advancedStore.experimentalFeatures.wallet)
                     }
                 }
             }
@@ -147,10 +130,10 @@ ScrollView {
                 switchChecked: localAccountSensitiveSettings.isBrowserEnabled
                 onClicked: {
                     if (!localAccountSensitiveSettings.isBrowserEnabled) {
-                        confirmationPopup.settingsProp = "isBrowserEnabled"
+                        confirmationPopup.experimentalFeature = root.advancedStore.experimentalFeatures.browser
                         confirmationPopup.open()
                     } else {
-                        localAccountSensitiveSettings.isBrowserEnabled = false
+                        root.advancedStore.toggleExperimentalFeature(root.advancedStore.experimentalFeatures.browser)
                     }
                 }
             }
@@ -163,10 +146,10 @@ ScrollView {
                 switchChecked: localAccountSensitiveSettings.communitiesEnabled
                 onClicked: {
                     if (!localAccountSensitiveSettings.communitiesEnabled) {
-                        confirmationPopup.settingsProp = "communitiesEnabled"
+                        confirmationPopup.experimentalFeature = root.advancedStore.experimentalFeatures.communities
                         confirmationPopup.open()
                     } else {
-                        localAccountSensitiveSettings.communitiesEnabled = false
+                        root.advancedStore.toggleExperimentalFeature(root.advancedStore.experimentalFeatures.communities)
                     }
                 }
             }
@@ -179,10 +162,10 @@ ScrollView {
                 switchChecked: localAccountSensitiveSettings.isActivityCenterEnabled
                 onClicked: {
                     if (!localAccountSensitiveSettings.isActivityCenterEnabled) {
-                        confirmationPopup.settingsProp = "isActivityCenterEnabled"
+                        confirmationPopup.experimentalFeature = root.advancedStore.experimentalFeatures.activityCenter
                         confirmationPopup.open()
                     } else {
-                        localAccountSensitiveSettings.isActivityCenterEnabled = false
+                        root.advancedStore.toggleExperimentalFeature(root.advancedStore.experimentalFeatures.activityCenter)
                     }
                 }
             }
@@ -195,10 +178,10 @@ ScrollView {
                 switchChecked: localAccountSensitiveSettings.nodeManagementEnabled
                 onClicked: {
                     if (!localAccountSensitiveSettings.nodeManagementEnabled) {
-                        confirmationPopup.settingsProp = "nodeManagementEnabled"
+                        confirmationPopup.experimentalFeature = root.advancedStore.experimentalFeatures.nodeManagement
                         confirmationPopup.open()
                     } else {
-                        localAccountSensitiveSettings.nodeManagementEnabled = false
+                        root.advancedStore.toggleExperimentalFeature(root.advancedStore.experimentalFeatures.nodeManagement)
                     }
                 }
             }
@@ -211,7 +194,7 @@ ScrollView {
                 isSwitch: true
                 switchChecked: localAccountSensitiveSettings.showOnlineUsers
                 onClicked: {
-                    localAccountSensitiveSettings.showOnlineUsers = !localAccountSensitiveSettings.showOnlineUsers
+                    root.advancedStore.toggleExperimentalFeature(root.advancedStore.experimentalFeatures.onlineUsers)
                 }
             }
 
@@ -222,7 +205,7 @@ ScrollView {
                 isSwitch: true
                 switchChecked: localAccountSensitiveSettings.isGifWidgetEnabled
                 onClicked: {
-                    localAccountSensitiveSettings.isGifWidgetEnabled = !localAccountSensitiveSettings.isGifWidgetEnabled
+                    root.advancedStore.toggleExperimentalFeature(root.advancedStore.experimentalFeatures.gifWidget)
                 }
             }
 
@@ -233,7 +216,7 @@ ScrollView {
                 isSwitch: true
                 switchChecked: localAccountSettings.isKeycardEnabled
                 onClicked: {
-                    localAccountSettings.isKeycardEnabled = !localAccountSettings.isKeycardEnabled
+                    root.advancedStore.toggleExperimentalFeature(root.advancedStore.experimentalFeatures.keycard)
                 }
             }
 
@@ -510,16 +493,15 @@ ScrollView {
 
         ConfirmationDialog {
             id: confirmationPopup
-            property string settingsProp: ""
+            property string experimentalFeature: ""
             showCancelButton: true
             //% "This feature is experimental and is meant for testing purposes by core contributors and the community. It's not meant for real use and makes no claims of security or integrity of funds or data. Use at your own risk."
-            confirmationText: (settingsProp === "isWalletV2Enabled" ? qsTr("<b>--DO NOT USE - UNDER ACTIVE DEVELOPMENT--</b>\n") : "") +
-                qsTrId("this-feature-is-experimental-and-is-meant-for-testing-purposes-by-core-contributors-and-the-community--it-s-not-meant-for-real-use-and-makes-no-claims-of-security-or-integrity-of-funds-or-data--use-at-your-own-risk-")
+            confirmationText: qsTrId("this-feature-is-experimental-and-is-meant-for-testing-purposes-by-core-contributors-and-the-community--it-s-not-meant-for-real-use-and-makes-no-claims-of-security-or-integrity-of-funds-or-data--use-at-your-own-risk-")
             //% "I understand"
             confirmButtonLabel: qsTrId("i-understand")
             onConfirmButtonClicked: {
-                localAccountSensitiveSettings[settingsProp] = true
-                settingsProp = ""
+                root.advancedStore.toggleExperimentalFeature(experimentalFeature)
+                experimentalFeature = ""
                 close()
             }
 

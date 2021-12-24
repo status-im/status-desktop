@@ -176,6 +176,12 @@ Item {
             communityTypeValue: Constants.appSection.community
             sectionModel: mainModule.sectionsModel
 
+            Component.onCompleted: {
+                mainModule.sectionsModel.sectionVisibilityUpdated.connect(function(){
+                    triggerUpdate()
+                })
+            }
+
             property bool communityAdded: false
 
             onAboutToUpdateFilteredRegularModel: {

@@ -1,6 +1,6 @@
 import ../shared_models/section_item, controller_interface, io_interface, chronicles
 import ../../global/global_singleton
-
+import ../../global/app_signals
 import ../../../app_service/service/settings/service_interface as settings_service
 import ../../../app_service/service/keychain/service as keychain_service
 import ../../../app_service/service/accounts/service_interface as accounts_service
@@ -87,16 +87,9 @@ method init*(self: Controller) =
       self.messageService
       )
 
-  self.events.on("sectionAvailabilityChanged") do(e:Args):
-    ## We will receive here a signal with two fields:
-    ## sectionType: int
-    ## enabled: bool
-    ## 
-    ## Then we only need to do something like:
-    ## if(enabled):
-    ##   self.delegate.enableSection(sectionType)
-    ## else:
-    ##   self.delegate.disableSection(sectionType)
+  self.events.on(TOGGLE_SECTION) do(e:Args):
+    let args = ToggleSectionArgs(e)
+    self.delegate.toggleSection(args.sectionType)
     discard    
 
 method getJoinedCommunities*(self: Controller): seq[CommunityDto] =
