@@ -37,6 +37,10 @@ Rectangle {
         }
     }
 
+    function triggerUpdate(){
+        navBarModel.update()
+    }
+
     StatusAppNavBarFilterModel {
         id: navBarModel
 
