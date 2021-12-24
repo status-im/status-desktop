@@ -141,3 +141,15 @@ QtObject:
 
   proc addCustomNetwork*(self: View, name: string, endpoint: string, networkId: int, networkType: string) {.slot.} = 
     self.delegate.addCustomNetwork(name, endpoint, networkId, networkType)
+
+  proc toggleWalletSection*(self: View) {.slot.} =
+    self.delegate.toggleWalletSection()
+  
+  proc toggleBrowserSection*(self: View) {.slot.} =
+    self.delegate.toggleBrowserSection()
+
+  proc toggleCommunitySection*(self: View) {.slot.} =
+    self.delegate.toggleCommunitySection()
+
+  proc toggleNodeManagementSection*(self: View) {.slot.} =
+    self.delegate.toggleNodeManagementSection()

@@ -3,8 +3,11 @@ import controller_interface
 import io_interface
 
 import ../../../../core/fleets/fleet_configuration
+import ../../../../global/app_signals
 import ../../../../../app_service/service/settings/service_interface as settings_service
 import ../../../../../app_service/service/node_configuration/service_interface as node_configuration_service
+
+import eventemitter
 
 export controller_interface
 
@@ -14,13 +17,16 @@ logScope:
 type 
   Controller* = ref object of controller_interface.AccessInterface
     delegate: io_interface.AccessInterface
+    events: EventEmitter
     settingsService: settings_service.ServiceInterface
     nodeConfigurationService: node_configuration_service.ServiceInterface
 
-proc newController*(delegate: io_interface.AccessInterface, settingsService: settings_service.ServiceInterface,
+proc newController*(delegate: io_interface.AccessInterface, events: EventEmitter,
+  settingsService: settings_service.ServiceInterface,
   nodeConfigurationService: node_configuration_service.ServiceInterface): Controller =
   result = Controller()
   result.delegate = delegate
+  result.events = events
   result.settingsService = settingsService
   result.nodeConfigurationService = nodeConfigurationService
   
@@ -147,3 +153,15 @@ method addCustomNetwork*(self: Controller, network: settings_service.Network) =
     return
   
   self.delegate.onCustomNetworkAdded(network)
+
+method toggleWalletSection*(self: Controller) =
+  self.events.emit(TOGGLE_SECTION, ToggleSectionArgs(sectionType: SectionType.Wallet))
+  
+method toggleBrowserSection*(self: Controller) =
+  self.events.emit(TOGGLE_SECTION, ToggleSectionArgs(sectionType: SectionType.Browser))
+
+method toggleCommunitySection*(self: Controller) =
+  self.events.emit(TOGGLE_SECTION, ToggleSectionArgs(sectionType: SectionType.Community))
+
+method toggleNodeManagementSection*(self: Controller) =
+  self.events.emit(TOGGLE_SECTION, ToggleSectionArgs(sectionType: SectionType.NodeManagement))

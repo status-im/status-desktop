@@ -143,6 +143,8 @@ QtObject:
         self.items[i].active = true
         self.dataChanged(index, index, @[ModelRole.Active.int])
 
+  proc sectionVisibilityUpdated*(self: SectionModel) {.signal.}
+
   proc enableDisableSection(self: SectionModel, sectionType: SectionType, value: bool) =
     if(sectionType != SectionType.Community):
       for i in 0 ..< self.items.len:
@@ -164,6 +166,10 @@ QtObject:
       let topIndex = self.createIndex(topInd, 0, nil)
       let bottomIndex = self.createIndex(bottomInd, 0, nil)
       self.dataChanged(topIndex, bottomIndex, @[ModelRole.Enabled.int])
+
+    # This signal is emitted to update buttons visibility in the left navigation bar,
+    # `dataChanged` signal doesn't do the job because of `DelegateModel` used in `StatusAppNavBar` component
+    self.sectionVisibilityUpdated()
 
   proc enableSection*(self: SectionModel, sectionType: SectionType) =
     self.enableDisableSection(sectionType, true)
