@@ -56,8 +56,13 @@ type Network* = object
   name*: string
   config*: Config
 
-type PinnedMailservers* = object
+type PinnedMailserver* = object
   ethProd*: string
+  ethStaging*: string
+  ethTest*: string
+  wakuv2Prod*: string
+  wakuv2Test*: string
+  goWakuTest*: string
 
 type CurrentUserStatus* = object
   statusType*: int
@@ -84,7 +89,7 @@ type
     mnemonic*: string
     name*: string # user alias
     photoPath*: string
-    pinnedMailservers*: PinnedMailservers
+    pinnedMailserver*: PinnedMailserver
     previewPrivacy*: bool
     publicKey*: string
     signingPhrase*: string
@@ -127,8 +132,14 @@ proc toNetwork*(jsonObj: JsonNode): Network =
   if(jsonObj.getProp("config", configObj)):
     result.config = toConfig(configObj)
 
-proc toPinnedMailservers*(jsonObj: JsonNode): PinnedMailservers =
+proc toPinnedMailserver*(jsonObj: JsonNode): PinnedMailserver =
+  # we maintain pinned mailserver per fleet
   discard jsonObj.getProp("eth.prod", result.ethProd)
+  discard jsonObj.getProp("eth.staging", result.ethStaging)
+  discard jsonObj.getProp("eth.test", result.ethTest)
+  discard jsonObj.getProp("wakuv2.prod", result.wakuv2Prod)
+  discard jsonObj.getProp("wakuv2.test", result.wakuv2Test)
+  discard jsonObj.getProp("go-waku.test", result.goWakuTest)
 
 proc toCurrentUserStatus*(jsonObj: JsonNode): CurrentUserStatus =
   discard jsonObj.getProp("statusType", result.statusType)
@@ -196,9 +207,9 @@ proc toSettingsDto*(jsonObj: JsonNode): SettingsDto =
   discard jsonObj.getProp(KEY_FLEET, result.fleet)
   discard jsonObj.getProp(KEY_AUTO_MESSAGE_ENABLED, result.autoMessageEnabled)
 
-  var pinnedMailserversObj: JsonNode
-  if(jsonObj.getProp(KEY_PINNED_MAILSERVERS, pinnedMailserversObj)):
-    result.pinnedMailservers = toPinnedMailservers(pinnedMailserversObj)
+  var pinnedMailserverObj: JsonNode
+  if(jsonObj.getProp(KEY_PINNED_MAILSERVERS, pinnedMailserverObj)):
+    result.pinnedMailserver = toPinnedMailserver(pinnedMailserverObj)
 
   var currentUserStatusObj: JsonNode
   if(jsonObj.getProp(KEY_CURRENT_USER_STATUS, currentUserStatusObj)):
@@ -230,3 +241,13 @@ proc availableNetworksToJsonNode*(networks: seq[Network]): JsonNode =
   for n in networks:
     availableNetworksAsJson.add(networkToJsonNode(n))
   return availableNetworksAsJson
+
+proc pinnedMailserverToJsonNode*(mailserver: PinnedMailserver): JsonNode =
+  return %*{
+    "eth.prod": mailserver.ethProd,
+    "eth.staging": mailserver.ethStaging,
+    "eth.test": mailserver.ethTest,
+    "wakuv2.prod": mailserver.wakuv2Prod,
+    "wakuv2.test": mailserver.wakuv2Test,
+    "go-waku.test": mailserver.goWakuTest
+  }

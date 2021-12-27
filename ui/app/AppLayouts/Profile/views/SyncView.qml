@@ -14,20 +14,12 @@ import shared.controls 1.0
 Item {
     id: root
 
-    property var store
-    property string activeMailserver: ""
+    property var syncStore
+
     property int profileContentWidth
 
     Layout.fillHeight: true
     Layout.fillWidth: true
-
-    Connections {
-        target: root.store.mailservers
-        onActiveMailserverChanged: function(activeMailserverName){
-            var mName = root.store.getMailserverName(activeMailserverName)
-            root.activeMailserver = mName
-        }
-    }
 
     Item {
         width: profileContentWidth
@@ -41,10 +33,10 @@ Item {
             StatusRadioButton {
                 id: rbSetMailsever
                 text: name
-                checked: name === activeMailserver
+                checked: nodeAddress === root.syncStore.activeMailserver
                 onClicked: {
                     if (checked) {
-                        root.store.setMailserver(name)
+                        root.syncStore.setActiveMailserver(nodeAddress)
                     }
                 }
             }
@@ -127,7 +119,7 @@ Item {
                         if (!addMailserverPopup.validate()) {
                             return;
                         }
-                        root.store.saveMailserver(nameInput.text, enodeInput.text)
+                        root.syncStore.saveNewMailserver(nameInput.text, enodeInput.text)
                         addMailserverPopup.close()
                     }
                 }
@@ -168,8 +160,8 @@ Item {
 
         StatusSwitch {
             id: automaticSelectionSwitch
-            checked: root.store.automaticMailserverSelection
-            onCheckedChanged: root.store.enableAutomaticMailserverSelection(checked)
+            checked: root.syncStore.automaticMailserverSelection
+            onCheckedChanged: root.syncStore.enableAutomaticMailserverSelection(checked)
             anchors.top: addMailserver.bottom
             anchors.topMargin: Style.current.padding
             anchors.left: switchLbl.right
@@ -178,7 +170,7 @@ Item {
 
         StatusBaseText {
             //% "..."
-            text: qsTr("Active mailserver: %1").arg(activeMailserver || qsTrId("---"))
+            text: qsTr("Active mailserver: %1").arg(root.syncStore.getMailserverNameForNodeAddress(root.syncStore.activeMailserver))
             anchors.left: parent.left
             anchors.leftMargin: 24
             anchors.top: switchLbl.bottom
@@ -192,7 +184,7 @@ Item {
             anchors.topMargin: 20
             anchors.top: automaticSelectionSwitch.bottom
             anchors.bottom: parent.bottom
-            model: root.store.mailserversList
+            model: root.syncStore.mailservers
             delegate: mailserversList
             visible: !automaticSelectionSwitch.checked
         }

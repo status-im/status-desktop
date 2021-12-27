@@ -29,6 +29,7 @@ import ../../app_service/service/network/service as network_service
 import ../../app_service/service/activity_center/service as activity_center_service
 import ../../app_service/service/saved_address/service as saved_address_service
 import ../../app_service/service/devices/service as devices_service
+import ../../app_service/service/mailservers/service as mailservers_service
 
 import ../modules/startup/module as startup_module
 import ../modules/main/module as main_module
@@ -98,6 +99,7 @@ type
     nodeConfigurationService: node_configuration_service.Service
     savedAddressService: saved_address_service.Service
     devicesService: devices_service.Service
+    mailserversService: mailservers_service.Service
 
     # Modules
     startupModule: startup_module.AccessInterface
@@ -146,7 +148,8 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result.chatService = chat_service.newService(statusFoundation.status.events, result.contactsService)
   result.communityService = community_service.newService(statusFoundation.status.events)
   result.messageService = message_service.newService(statusFoundation.status.events, statusFoundation.threadpool)
-  result.activityCenterService = activity_center_service.newService(statusFoundation.status.events, statusFoundation.threadpool, result.chatService)
+  result.activityCenterService = activity_center_service.newService(statusFoundation.status.events, 
+  statusFoundation.threadpool, result.chatService)
   result.tokenService = token_service.newService(statusFoundation.status.events, statusFoundation.threadpool, 
   result.settingsService)
   result.collectibleService = collectible_service.newService(result.settingsService)
@@ -166,7 +169,8 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
     result.networkService,
     result.chatService
   )
-  result.aboutService = about_service.newService(statusFoundation.status.events, statusFoundation.threadpool, result.settingsService)
+  result.aboutService = about_service.newService(statusFoundation.status.events, statusFoundation.threadpool, 
+  result.settingsService)
   result.dappPermissionsService = dapp_permissions_service.newService()
   result.languageService = language_service.newService()
   result.mnemonicService = mnemonic_service.newService()
@@ -174,6 +178,8 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result.providerService = provider_service.newService(result.dappPermissionsService, result.settingsService)
   result.savedAddressService = saved_address_service.newService(statusFoundation.status.events)
   result.devicesService = devices_service.newService(statusFoundation.status.events, result.settingsService)
+  result.mailserversService = mailservers_service.newService(statusFoundation.status.events, statusFoundation.marathon,
+  result.settingsService, result.nodeConfigurationService, statusFoundation.fleetConfiguration)
 
   # Modules
   result.startupModule = startup_module.newModule[AppController](
@@ -208,7 +214,8 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
     result.activityCenterService,
     result.savedAddressService,
     result.nodeConfigurationService,
-    result.devicesService
+    result.devicesService,
+    result.mailserversService
   )
 
   # Do connections
@@ -247,6 +254,7 @@ proc delete*(self: AppController) =
   self.stickersService.delete
   self.savedAddressService.delete
   self.devicesService.delete
+  self.mailserversService.delete
 
 proc startupDidLoad*(self: AppController) =
   singletonInstance.engine.setRootContextProperty("localAppSettings", self.localAppSettingsVariant)
@@ -288,6 +296,7 @@ proc load(self: AppController) =
   self.savedAddressService.init()
   self.aboutService.init()
   self.devicesService.init()
+  self.mailserversService.init()
 
   let pubKey = self.settingsService.getPublicKey()
   singletonInstance.localAccountSensitiveSettings.setFileName(pubKey)

@@ -12,6 +12,7 @@ import ../../../../app_service/service/mnemonic/service as mnemonic_service
 import ../../../../app_service/service/privacy/service as privacy_service
 import ../../../../app_service/service/node_configuration/service_interface as node_configuration_service
 import ../../../../app_service/service/devices/service as devices_service
+import ../../../../app_service/service/mailservers/service as mailservers_service
 
 import ./profile/module as profile_module
 import ./contacts/module as contacts_module
@@ -21,6 +22,7 @@ import ./privacy/module as privacy_module
 import ./about/module as about_module
 import ./advanced/module as advanced_module
 import ./devices/module as devices_module
+import ./sync/module as sync_module
 
 import eventemitter
 
@@ -42,6 +44,7 @@ type
     aboutModule: about_module.AccessInterface
     advancedModule: advanced_module.AccessInterface
     devicesModule: devices_module.AccessInterface
+    syncModule: sync_module.AccessInterface
 
 proc newModule*[T](delegate: T,
   events: EventEmitter,
@@ -54,7 +57,8 @@ proc newModule*[T](delegate: T,
   mnemonicService: mnemonic_service.ServiceInterface,
   privacyService: privacy_service.ServiceInterface,
   nodeConfigurationService: node_configuration_service.ServiceInterface,
-  devicesService: devices_service.Service
+  devicesService: devices_service.Service,
+  mailserversService: mailservers_service.Service
   ):
   Module[T] =
   result = Module[T]()
@@ -72,6 +76,7 @@ proc newModule*[T](delegate: T,
   result.aboutModule = about_module.newModule(result, events, aboutService)
   result.advancedModule = advanced_module.newModule(result, events, settingsService, nodeConfigurationService)
   result.devicesModule = devices_module.newModule(result, events, settingsService, devicesService)
+  result.syncModule = sync_module.newModule(result, events, settingsService, mailserversService)
 
   singletonInstance.engine.setRootContextProperty("profileSectionModule", result.viewVariant)
 
@@ -84,6 +89,7 @@ method delete*[T](self: Module[T]) =
   self.aboutModule.delete
   self.advancedModule.delete
   self.devicesModule.delete
+  self.syncModule.delete
 
   self.view.delete
   self.viewVariant.delete
@@ -99,6 +105,7 @@ method load*[T](self: Module[T]) =
   self.aboutModule.load()
   self.advancedModule.load()
   self.devicesModule.load()
+  self.syncModule.load()
 
 method isLoaded*[T](self: Module[T]): bool =
   return self.moduleLoaded
@@ -126,6 +133,9 @@ proc checkIfModuleDidLoad[T](self: Module[T]) =
     return
 
   if(not self.devicesModule.isLoaded()):
+    return
+
+  if(not self.syncModule.isLoaded()):
     return
 
   self.moduleLoaded = true
@@ -163,3 +173,9 @@ method devicesModuleDidLoad*[T](self: Module[T]) =
 
 method getDevicesModule*[T](self: Module[T]): QVariant =
   self.devicesModule.getModuleAsVariant()
+
+method syncModuleDidLoad*[T](self: Module[T]) =
+  self.checkIfModuleDidLoad()
+
+method getSyncModule*[T](self: Module[T]): QVariant =
+  self.syncModule.getModuleAsVariant()
