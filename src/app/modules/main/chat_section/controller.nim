@@ -146,4 +146,4 @@ method clearChatHistory*(self: Controller, chatId: string) =
   self.chatService.clearChatHistory(chatId)
 
 method getCurrentFleet*(self: Controller): string =
-  return self.settingsService.getFleet()
+  return self.settingsService.getFleetAsString()

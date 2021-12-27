@@ -60,7 +60,7 @@ method changeCurrentNetworkTo*(self: Controller, network: string) =
   self.delegate.onCurrentNetworkSet()
 
 method getFleet*(self: Controller): string =
-  self.settingsService.getFleet()
+  self.settingsService.getFleetAsString()
 
 method changeFleetTo*(self: Controller, fleet: string) =
   if (not self.nodeConfigurationService.setFleet(fleet)):

@@ -1,6 +1,7 @@
-import chronicles, json, sequtils, tables, sugar
+import chronicles, json, strutils, sequtils, tables, sugar
 
 import ../../common/[network_constants]
+import ../../../app/core/fleets/fleet_configuration
 import service_interface, ./dto/settings
 import status/statusgo_backend_new/settings as status_settings
 
@@ -284,10 +285,15 @@ method saveFleet*(self: Service, value: string): bool =
     return true
   return false
 
-method getFleet*(self: Service): string =
+method getFleetAsString*(self: Service): string =
   if(self.settings.fleet.len == 0):
     self.settings.fleet = DEFAULT_FLEET
   return self.settings.fleet
+
+method getFleet*(self: Service): Fleet =
+  let fleetAsString = self.getFleetAsString()
+  let fleet = parseEnum[Fleet](fleetAsString)
+  return fleet
 
 method getAvailableNetworks*(self: Service): seq[Network] =
   return self.settings.availableNetworks
@@ -319,8 +325,42 @@ method getCurrentNetworkId*(self: Service): int =
 method getCurrentUserStatus*(self: Service): CurrentUserStatus =
   self.settings.currentUserStatus
 
-method getPinnedMailservers*(self: Service): PinnedMailservers =
-  self.settings.pinnedMailservers
+method getPinnedMailserver*(self: Service, fleet: Fleet): string =
+  if (fleet == Fleet.Prod):
+    return self.settings.pinnedMailserver.ethProd
+  elif (fleet == Fleet.Staging):
+    return self.settings.pinnedMailserver.ethStaging
+  elif (fleet == Fleet.Test):
+    return self.settings.pinnedMailserver.ethTest
+  elif (fleet == Fleet.WakuV2Prod):
+    return self.settings.pinnedMailserver.wakuv2Prod
+  elif (fleet == Fleet.WakuV2Test):
+    return self.settings.pinnedMailserver.wakuv2Test
+  elif (fleet == Fleet.GoWakuTest):
+    return self.settings.pinnedMailserver.goWakuTest
+  return ""
+
+method pinMailserver*(self: Service, address: string, fleet: Fleet): bool =
+  var newMailserverJsonObj = self.settings.pinnedMailserver.pinnedMailserverToJsonNode()
+  newMailserverJsonObj[$fleet] = %* address
+  if(self.saveSetting(KEY_PINNED_MAILSERVERS, newMailserverJsonObj)):
+    if (fleet == Fleet.Prod):
+      self.settings.pinnedMailserver.ethProd = address
+    elif (fleet == Fleet.Staging):
+      self.settings.pinnedMailserver.ethStaging = address
+    elif (fleet == Fleet.Test):
+      self.settings.pinnedMailserver.ethTest = address
+    elif (fleet == Fleet.WakuV2Prod):
+      self.settings.pinnedMailserver.wakuv2Prod = address
+    elif (fleet == Fleet.WakuV2Test):
+      self.settings.pinnedMailserver.wakuv2Test = address
+    elif (fleet == Fleet.GoWakuTest):
+      self.settings.pinnedMailserver.goWakuTest = address
+    return true
+  return false
+
+method unpinMailserver*(self: Service, fleet: Fleet): bool =
+  return self.pinMailserver("", fleet)
 
 method getWalletVisibleTokens*(self: Service): seq[string] =
   self.settings.walletVisibleTokens.tokens
