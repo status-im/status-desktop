@@ -141,4 +141,4 @@ method getContactDetails*(self: Controller, contactId: string): ContactDetails =
   return self.contactService.getContactDetails(contactId)
 
 method getCurrentFleet*(self: Controller): string =
-  return self.settingsService.getFleet()
+  return self.settingsService.getFleetAsString()

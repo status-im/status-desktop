@@ -88,7 +88,7 @@ StatusAppTwoPanelLayout {
         }
 
         SyncView {
-            store: profileView.store
+            syncStore: profileView.store.syncStore
             profileContentWidth: _internal.profileContentWidth
         }
 

@@ -20,6 +20,10 @@ QtObject {
         devicesModule: profileModuleInst.devicesModule
     }
 
+    property SyncStore syncStore: SyncStore {
+        syncModule: profileModuleInst.syncModule
+    }
+
     // Not Refactored Yet
 //    property var chatsModelInst: chatsModel
     // Not Refactored Yet
@@ -33,9 +37,6 @@ QtObject {
 //    property var ens: profileModelInst.ens
     property var dappList: dappPermissionsModule.dapps
     property var permissionList: dappPermissionsModule.permissions
-    // Not Refactored Yet
-//    property var mailservers: profileModelInst.mailservers
-//    property var mailserversList: profileModelInst.mailservers.list
     property var contacts: contactsModuleInst.model.list
     property var blockedContacts: contactsModuleInst.model.blockedContacts
     property var addedContacts: contactsModuleInst.model.addedContacts
@@ -57,8 +58,6 @@ QtObject {
     property string profileThumbnailImage: profile.thumbnailImage
 
     property bool profileHasIdentityImage: profile.hasIdentityImage
-    // Not Refactored Yet
-//    property bool automaticMailserverSelection: profileModelInst.mailservers.automaticSelection
     property bool mnemonicBackedUp: mnemonicModuleInst.isBackedUp
     property bool messagesFromContactsOnly: profile.messagesFromContactsOnly
 
@@ -307,26 +306,6 @@ QtObject {
     function changeLocale(l) {
         localAppSettings.locale = l
         languageModuleInst.changeLocale(l)
-    }
-
-    function getMailserverName(mailserver) {
-        // Not Refactored Yet
-//        return profileModelInst.mailservers.list.getMailserverName(mailserver)
-    }
-
-    function setMailserver(mailserver) {
-        // Not Refactored Yet
-//        profileModelInst.mailservers.setMailserver(mailserver);
-    }
-
-    function saveMailserver(name, enode) {
-        // Not Refactored Yet
-//        profileModelInst.mailservers.save(name, enode)
-    }
-
-    function enableAutomaticMailserverSelection(checked) {
-        // Not Refactored Yet
-//        profileModelInst.mailservers.enableAutomaticSelection(checked)
     }
 
     function getNetworkName() {

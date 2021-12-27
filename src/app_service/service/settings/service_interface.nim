@@ -182,7 +182,10 @@ method getTelemetryServerUrl*(self: ServiceInterface): string {.base.} =
 method saveFleet*(self: ServiceInterface, value: string): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getFleet*(self: ServiceInterface): string {.base.} =
+method getFleetAsString*(self: ServiceInterface): string {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getFleet*(self: ServiceInterface): Fleet {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getAvailableNetworks*(self: ServiceInterface): seq[Network] {.base.} =
@@ -203,7 +206,13 @@ method getCurrentNetworkId*(self: ServiceInterface): int {.base.} =
 method getCurrentUserStatus*(self: ServiceInterface): CurrentUserStatus {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getPinnedMailservers*(self: ServiceInterface): PinnedMailservers {.base.} =
+method getPinnedMailserver*(self: ServiceInterface, fleet: Fleet): string {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method pinMailserver*(self: ServiceInterface, address: string, fleet: Fleet): bool {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method unpinMailserver*(self: ServiceInterface, fleet: Fleet): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getWalletVisibleTokens*(self: ServiceInterface): seq[string] {.base.} =

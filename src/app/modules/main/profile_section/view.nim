@@ -30,3 +30,8 @@ QtObject:
     return self.delegate.getDevicesModule()
   QtProperty[QVariant] devicesModule:
     read = getDevicesModule
+
+  proc getSyncModule(self: View): QVariant {.slot.} =
+    return self.delegate.getSyncModule()
+  QtProperty[QVariant] syncModule:
+    read = getSyncModule
