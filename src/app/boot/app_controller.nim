@@ -28,6 +28,7 @@ import ../../app_service/service/node_configuration/service as node_configuratio
 import ../../app_service/service/network/service as network_service
 import ../../app_service/service/activity_center/service as activity_center_service
 import ../../app_service/service/saved_address/service as saved_address_service
+import ../../app_service/service/devices/service as devices_service
 
 import ../modules/startup/module as startup_module
 import ../modules/main/module as main_module
@@ -96,6 +97,7 @@ type
     privacyService: privacy_service.Service
     nodeConfigurationService: node_configuration_service.Service
     savedAddressService: saved_address_service.Service
+    devicesService: devices_service.Service
 
     # Modules
     startupModule: startup_module.AccessInterface
@@ -171,6 +173,7 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result.privacyService = privacy_service.newService()
   result.providerService = provider_service.newService(result.dappPermissionsService, result.settingsService)
   result.savedAddressService = saved_address_service.newService(statusFoundation.status.events)
+  result.devicesService = devices_service.newService(statusFoundation.status.events, result.settingsService)
 
   # Modules
   result.startupModule = startup_module.newModule[AppController](
@@ -204,7 +207,8 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
     result.stickersService,
     result.activityCenterService,
     result.savedAddressService,
-    result.nodeConfigurationService
+    result.nodeConfigurationService,
+    result.devicesService
   )
 
   # Do connections
@@ -242,6 +246,7 @@ proc delete*(self: AppController) =
   self.settingsService.delete
   self.stickersService.delete
   self.savedAddressService.delete
+  self.devicesService.delete
 
 proc startupDidLoad*(self: AppController) =
   singletonInstance.engine.setRootContextProperty("localAppSettings", self.localAppSettingsVariant)
@@ -282,6 +287,7 @@ proc load(self: AppController) =
   self.activityCenterService.init()
   self.savedAddressService.init()
   self.aboutService.init()
+  self.devicesService.init()
 
   let pubKey = self.settingsService.getPublicKey()
   singletonInstance.localAccountSensitiveSettings.setFileName(pubKey)

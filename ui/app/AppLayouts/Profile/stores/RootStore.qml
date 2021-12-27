@@ -11,8 +11,13 @@ QtObject {
     property var mnemonicModuleInst: mnemonicModule
 
     property var profileModuleInst: profileSectionModule
+
     property AdvancedStore advancedStore: AdvancedStore {
         advancedModule: profileModuleInst.advancedModule
+    }
+
+    property DevicesStore devicesStore: DevicesStore {
+        devicesModule: profileModuleInst.devicesModule
     }
 
     // Not Refactored Yet
@@ -37,7 +42,6 @@ QtObject {
     // Not Refactored Yet
 //    property var mutedChatsContacts: profileModelInst.mutedChats.contacts
 //    property var mutedChats: profileModelInst.mutedChats.chats
-//    property var devicesList: profileModelInst.devices.list
 
     // Not Refactored Yet
     property string ensRegisterAddress: "" //utilsModelInst.ensRegisterAddress
@@ -55,8 +59,6 @@ QtObject {
     property bool profileHasIdentityImage: profile.hasIdentityImage
     // Not Refactored Yet
 //    property bool automaticMailserverSelection: profileModelInst.mailservers.automaticSelection
-    // Not Refactored Yet
-    property bool devicesSetup: false //profileModelInst.devices.isSetup
     property bool mnemonicBackedUp: mnemonicModuleInst.isBackedUp
     property bool messagesFromContactsOnly: profile.messagesFromContactsOnly
 
@@ -362,26 +364,6 @@ QtObject {
     function setPubKey(username, address, gasLimit, gasPrice, password) {
         // Not Refactored Yet
 //        return profileModelInst.ens.setPubKey(username, address, gasLimit, gasPrice, password)
-    }
-
-    function setDeviceName(name) {
-        // Not Refactored Yet
-//        profileModelInst.devices.setName(name)
-    }
-
-    function advertiseDevice() {
-        // Not Refactored Yet
-//        profileModelInst.devices.advertise()
-    }
-
-    function enableDeviceInstallation(id, pairedSwitch) {
-        // Not Refactored Yet
-//        profileModelInst.devices.enableInstallation(id, pairedSwitch)
-    }
-
-    function syncAllDevices() {
-        // Not Refactored Yet
-//        profileModelInst.devices.syncAll()
     }
 
     function readTextFile(path) {

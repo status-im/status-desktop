@@ -15,7 +15,8 @@ import shared.controls 1.0
 Item {
     id: root
 
-    property var store
+    property var devicesStore
+
     property bool isSyncing: false
 
     width: 200
@@ -32,7 +33,7 @@ Item {
         anchors.topMargin: 24
         anchors.right: parent.right
         anchors.rightMargin: Style.current.padding
-        visible: !root.store.devicesSetup
+        visible: !root.devicesStore.isDeviceSetup
         height: visible ? childrenRect.height : 0
 
         StatusBaseText {
@@ -59,7 +60,7 @@ Item {
             //% "Continue"
             text: qsTrId("continue")
             enabled: deviceNameTxt.text !== ""
-            onClicked : root.store.setDeviceName(deviceNameTxt.text.trim())
+            onClicked : root.devicesStore.setName(deviceNameTxt.text.trim())
         }
     }
 
@@ -71,7 +72,7 @@ Item {
         anchors.topMargin: Style.current.padding
         anchors.right: parent.right
         anchors.rightMargin: Style.current.padding
-        visible: root.store.devicesSetup
+        visible: root.devicesStore.isDeviceSetup
         height: visible ? childrenRect.height : 0
 
         Rectangle {
@@ -122,7 +123,7 @@ Item {
             MouseArea {
                 cursorShape: Qt.PointingHandCursor
                 anchors.fill: parent
-                onClicked: root.store.advertiseDevice()
+                onClicked: root.devicesStore.advertise()
             }
         }
 
@@ -153,7 +154,7 @@ Item {
         anchors.bottomMargin: Style.current.padding
         anchors.right: root.right
         anchors.rightMargin: Style.current.padding
-        visible: root.store.devicesSetup
+        visible: root.devicesStore.isDeviceSetup
 
         StatusBaseText {
             id: deviceListLbl
@@ -193,7 +194,7 @@ Item {
                         //% "No info"
                         let labelText = `${model.name || qsTrId("pairing-no-info")} ` +
                             //% "you"
-                            `(${model.isUserDevice ? qsTrId("you") + ", ": ""}${deviceId})`;
+                            `(${model.isCurrentDevice ? qsTrId("you") + ", ": ""}${deviceId})`;
                         return labelText;
                     }
                     elide: Text.ElideRight
@@ -204,15 +205,15 @@ Item {
                 }
                 StatusSwitch { 
                     id: devicePairedSwitch
-                    visible: !model.isUserDevice
-                    checked: model.isEnabled 
+                    visible: !model.isCurrentDevice
+                    checked: model.enabled
                     anchors.left: deviceItemLbl.right
                     anchors.leftMargin: Style.current.padding
                     anchors.top: deviceItemLbl.top
-                    onClicked: root.store.enableDeviceInstallation(model.installationId, devicePairedSwitch)
+                    onClicked: root.devicesStore.enableDevice(model.installationId, devicePairedSwitch)
                 }
             }
-            model: root.store.devicesList
+            model: root.devicesStore.devicesModel
         }
     }
 
@@ -229,7 +230,7 @@ Item {
         enabled: !isSyncing
         onClicked : {
             isSyncing = true;
-            root.store.syncAllDevices()
+            root.devicesStore.syncAll()
             // Currently we don't know how long it takes, so we just disable for 10s, to avoid spamming
             timer.setTimeout(function(){ 
                 isSyncing = false

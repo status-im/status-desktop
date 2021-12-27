@@ -33,6 +33,8 @@ proc newModule*(
 
 method delete*(self: Module) =
   self.view.delete
+  self.viewVariant.delete
+  self.controller.delete
 
 method load*(self: Module) =
   self.view.load()

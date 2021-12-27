@@ -11,7 +11,7 @@ import ./update
 include async_tasks
 
 logScope:
-  topics = "settings-service"
+  topics = "about-service"
 
 # This is changed during compilation by reading the VERSION file
 const DESKTOP_VERSION {.strdefine.} = "0.0.0"
@@ -33,7 +33,7 @@ QtObject:
   proc asyncRequestLatestVersion(self: Service)
 
   proc delete*(self: Service) =
-    discard
+    self.QObject.delete
 
   proc newService*(
       events: EventEmitter,
