@@ -3,7 +3,7 @@ import json
 import base
 
 # Step by step we should remove all these types from `status-lib`
-import status/types/[installation, activity_center_notification, removed_message]
+import status/types/[activity_center_notification, removed_message]
 import status/types/community as old_community
 
 import ../../../../app_service/service/message/dto/[message, pinned_message, reaction]
@@ -11,13 +11,14 @@ import ../../../../app_service/service/chat/dto/[chat]
 import ../../../../app_service/service/community/dto/[community]
 import ../../../../app_service/service/activity_center/dto/[notification]
 import ../../../../app_service/service/contacts/dto/[contacts, status_update]
+import ../../../../app_service/service/devices/dto/[device]
 
 type MessageSignal* = ref object of Signal
   messages*: seq[MessageDto]
   pinnedMessages*: seq[PinnedMessageDto]
   chats*: seq[ChatDto]
   contacts*: seq[ContactsDto]
-  installations*: seq[Installation]
+  devices*: seq[DeviceDto]
   emojiReactions*: seq[ReactionDto]
   communities*: seq[CommunityDto]
   membershipRequests*: seq[old_community.CommunityMembershipRequest]
@@ -50,8 +51,8 @@ proc fromEvent*(T: type MessageSignal, event: JsonNode): MessageSignal =
       signal.statusUpdates.add(statusUpdate) 
 
   if event["event"]{"installations"} != nil:
-    for jsonInstallation in event["event"]["installations"]:
-      signal.installations.add(jsonInstallation.toInstallation)
+    for jsonDevice in event["event"]["installations"]:
+      signal.devices.add(jsonDevice.toDeviceDto())
 
   if event["event"]{"emojiReactions"} != nil:
     for jsonReaction in event["event"]["emojiReactions"]:
