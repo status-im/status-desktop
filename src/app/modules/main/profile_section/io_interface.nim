@@ -44,6 +44,12 @@ method advancedModuleDidLoad*(self: AccessInterface) {.base.} =
 method getAdvancedModule*(self: AccessInterface): QVariant {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method devicesModuleDidLoad*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getDevicesModule*(self: AccessInterface): QVariant {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 type
   ## Abstract class (concept) which must be implemented by object/s used in this 
   ## module.

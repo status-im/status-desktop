@@ -11,6 +11,7 @@ import ../../../../app_service/service/language/service as language_service
 import ../../../../app_service/service/mnemonic/service as mnemonic_service
 import ../../../../app_service/service/privacy/service as privacy_service
 import ../../../../app_service/service/node_configuration/service_interface as node_configuration_service
+import ../../../../app_service/service/devices/service as devices_service
 
 import ./profile/module as profile_module
 import ./contacts/module as contacts_module
@@ -19,6 +20,7 @@ import ./mnemonic/module as mnemonic_module
 import ./privacy/module as privacy_module
 import ./about/module as about_module
 import ./advanced/module as advanced_module
+import ./devices/module as devices_module
 
 import eventemitter
 
@@ -39,6 +41,7 @@ type
     privacyModule: privacy_module.AccessInterface
     aboutModule: about_module.AccessInterface
     advancedModule: advanced_module.AccessInterface
+    devicesModule: devices_module.AccessInterface
 
 proc newModule*[T](delegate: T,
   events: EventEmitter,
@@ -50,7 +53,8 @@ proc newModule*[T](delegate: T,
   languageService: language_service.ServiceInterface,
   mnemonicService: mnemonic_service.ServiceInterface,
   privacyService: privacy_service.ServiceInterface,
-  nodeConfigurationService: node_configuration_service.ServiceInterface
+  nodeConfigurationService: node_configuration_service.ServiceInterface,
+  devicesService: devices_service.Service
   ):
   Module[T] =
   result = Module[T]()
@@ -67,6 +71,7 @@ proc newModule*[T](delegate: T,
   result.privacyModule = privacy_module.newModule(result, privacyService, accountsService)
   result.aboutModule = about_module.newModule(result, events, aboutService)
   result.advancedModule = advanced_module.newModule(result, events, settingsService, nodeConfigurationService)
+  result.devicesModule = devices_module.newModule(result, events, settingsService, devicesService)
 
   singletonInstance.engine.setRootContextProperty("profileSectionModule", result.viewVariant)
 
@@ -78,6 +83,7 @@ method delete*[T](self: Module[T]) =
   self.privacyModule.delete
   self.aboutModule.delete
   self.advancedModule.delete
+  self.devicesModule.delete
 
   self.view.delete
   self.viewVariant.delete
@@ -92,6 +98,7 @@ method load*[T](self: Module[T]) =
   self.privacyModule.load()
   self.aboutModule.load()
   self.advancedModule.load()
+  self.devicesModule.load()
 
 method isLoaded*[T](self: Module[T]): bool =
   return self.moduleLoaded
@@ -116,6 +123,9 @@ proc checkIfModuleDidLoad[T](self: Module[T]) =
     return
 
   if(not self.advancedModule.isLoaded()):
+    return
+
+  if(not self.devicesModule.isLoaded()):
     return
 
   self.moduleLoaded = true
@@ -147,3 +157,9 @@ method advancedModuleDidLoad*[T](self: Module[T]) =
 
 method getAdvancedModule*[T](self: Module[T]): QVariant =
   self.advancedModule.getModuleAsVariant()
+
+method devicesModuleDidLoad*[T](self: Module[T]) =
+  self.checkIfModuleDidLoad()
+
+method getDevicesModule*[T](self: Module[T]): QVariant =
+  self.devicesModule.getModuleAsVariant()

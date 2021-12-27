@@ -98,6 +98,15 @@ method saveInstallationId*(self: Service, value: string): bool =
 method getInstallationId*(self: Service): string =
   return self.settings.installationId
 
+method savePreferredName*(self: Service, value: string): bool =
+  if(self.saveSetting(KEY_PREFERRED_NAME, value)):
+    self.settings.preferredName = value
+    return true
+  return false
+
+method getPreferredName*(self: Service): string =
+  return self.settings.preferredName
+
 method saveKeyUid*(self: Service, value: string): bool =
   if(self.saveSetting(KEY_KEY_UID, value)):
     self.settings.keyUid = value

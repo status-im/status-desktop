@@ -11,6 +11,7 @@ const KEY_NETWORKS_ALL_NETWORKS* = "networks/networks"
 const KEY_DAPPS_ADDRESS* = "dapps-address"
 const KEY_EIP1581_ADDRESS* = "eip1581-address"
 const KEY_INSTALLATION_ID* = "installation-id"
+const KEY_PREFERRED_NAME* = "preferred-name"
 const KEY_KEY_UID* = "key-uid"
 const KEY_LATEST_DERIVED_PATH* = "latest-derived-path"
 const KEY_LINK_PREVIEW_REQUEST_ENABLED* = "link-preview-request-enabled"
@@ -75,6 +76,7 @@ type
     dappsAddress*: string
     eip1581Address*: string
     installationId*: string
+    preferredName*: string
     keyUid*: string
     latestDerivedPath*: int
     linkPreviewRequestEnabled*: bool
@@ -171,6 +173,7 @@ proc toSettingsDto*(jsonObj: JsonNode): SettingsDto =
   discard jsonObj.getProp(KEY_DAPPS_ADDRESS, result.dappsAddress)
   discard jsonObj.getProp(KEY_EIP1581_ADDRESS, result.eip1581Address)
   discard jsonObj.getProp(KEY_INSTALLATION_ID, result.installationId)
+  discard jsonObj.getProp(KEY_PREFERRED_NAME, result.preferredName)
   discard jsonObj.getProp(KEY_KEY_UID, result.keyUid)
   discard jsonObj.getProp(KEY_LATEST_DERIVED_PATH, result.latestDerivedPath)
   discard jsonObj.getProp(KEY_LINK_PREVIEW_REQUEST_ENABLED, result.linkPreviewRequestEnabled)
