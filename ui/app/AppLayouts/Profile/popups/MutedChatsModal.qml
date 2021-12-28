@@ -19,8 +19,11 @@ ModalPopup {
     id: root
     //% "Muted chats"
     title: qsTrId("muted-chats")
-    property bool showMutedContacts: false
+
+    property var model: []
     property string noContentText: ""
+
+    signal unmuteChat(string chatId)
 
     onClosed: {
         root.destroy()
@@ -28,12 +31,8 @@ ModalPopup {
 
     ListView {
         id: mutedChatsList
-        anchors.top: parent.top
-        visible: true
-        anchors.left: parent.left
-        anchors.right: parent.right
-        // Not Refactored Yet
-//        model: root.showMutedContacts ? profileModel.mutedChats.contacts : profileModel.mutedChats.chats
+        anchors.fill: parent
+        model: root.model
         delegate: Rectangle {
             id: channelItem
             property bool isHovered: false
@@ -50,8 +49,8 @@ ModalPopup {
                 image: StatusImageSettings {
                     width: 40
                     height: 40
-                    source: model.identicon
-                    isIdenticon: true
+                    source: model.icon
+                    isIdenticon: model.isIdenticon
                 }
                 icon: StatusIconSettings {
                     width: 40
@@ -64,9 +63,7 @@ ModalPopup {
 
             StyledText {
                 id: contactInfo
-                text: model.chatType !== Constants.chatType.publicChat ?
-                    Emoji.parse(Utils.removeStatusEns(Utils.filterXSS(model.name)), "26x26") :
-              "#" + Utils.filterXSS(model.name)
+                text: model.name
                 anchors.right: unmuteButton.left
                 anchors.rightMargin: Style.current.smallPadding
                 elide: Text.ElideRight
@@ -100,8 +97,7 @@ ModalPopup {
                         channelItem.isHovered = true
                     }
                     onClicked: {
-                        // Not Refactored Yet
-//                        chatsModel.channelView.unmuteChatItem(model.id)
+                        root.unmuteChat(model.itemId)
                     }
                 }
             }

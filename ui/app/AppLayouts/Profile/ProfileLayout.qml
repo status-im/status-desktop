@@ -83,7 +83,7 @@ StatusAppTwoPanelLayout {
         }
 
         NotificationsView {
-            store: profileView.store
+            notificationsStore: profileView.store.notificationsStore
             profileContentWidth: _internal.profileContentWidth
         }
 
