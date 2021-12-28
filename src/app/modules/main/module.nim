@@ -2,7 +2,6 @@ import NimQml, Tables
 
 import io_interface, view, controller, ../shared_models/section_item, ../shared_models/section_model
 import ../../global/app_sections_config as conf
-import ../../global/app_signals
 import ../../global/global_singleton
 
 import chat_section/module as chat_section_module
@@ -416,29 +415,11 @@ method activeSectionSet*[T](self: Module[T], sectionId: string) =
 
   self.notifySubModulesAboutChange(sectionId)
 
-proc setSectionAvailability[T](self: Module[T], sectionType: SectionType, available: bool) =
-  if(available):
-    self.view.model().enableSection(sectionType)
-  else:
-    self.view.model().disableSection(sectionType)    
+method enableSection*[T](self: Module[T], sectionType: SectionType) =
+  self.view.model().enableSection(sectionType)
 
-method toggleSection*[T](self: Module[T], sectionType: SectionType) =
-  if (sectionType == SectionType.Wallet):
-    let enabled = singletonInstance.localAccountSensitiveSettings.getIsWalletEnabled()
-    self.setSectionAvailability(sectionType, not enabled)
-    singletonInstance.localAccountSensitiveSettings.setIsWalletEnabled(not enabled)
-  elif (sectionType == SectionType.Browser):
-    let enabled = singletonInstance.localAccountSensitiveSettings.getIsBrowserEnabled()
-    self.setSectionAvailability(sectionType, not enabled)
-    singletonInstance.localAccountSensitiveSettings.setIsBrowserEnabled(not enabled)
-  elif (sectionType == SectionType.Community):
-    let enabled = singletonInstance.localAccountSensitiveSettings.getCommunitiesEnabled()
-    self.setSectionAvailability(sectionType, not enabled)
-    singletonInstance.localAccountSensitiveSettings.setCommunitiesEnabled(not enabled)
-  elif (sectionType == SectionType.NodeManagement):
-    let enabled = singletonInstance.localAccountSensitiveSettings.getNodeManagementEnabled()
-    self.setSectionAvailability(sectionType, not enabled)
-    singletonInstance.localAccountSensitiveSettings.setNodeManagementEnabled(not enabled)
+method disableSection*[T](self: Module[T], sectionType: SectionType) =
+  self.view.disableSection(sectionType)
 
 method setUserStatus*[T](self: Module[T], status: bool) =
   self.controller.setUserStatus(status)

@@ -52,15 +52,3 @@ method toggleDebug*(self: AccessInterface) {.base.} =
 method addCustomNetwork*(self: AccessInterface, name: string, endpoint: string, networkId: int, networkType: string) 
   {.slot.} =
   raise newException(ValueError, "No implementation available") 
-
-method toggleWalletSection*(self: AccessInterface) {.base.} =
-  raise newException(ValueError, "No implementation available")
-  
-method toggleBrowserSection*(self: AccessInterface) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method toggleCommunitySection*(self: AccessInterface) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method toggleNodeManagementSection*(self: AccessInterface) {.base.} =
-  raise newException(ValueError, "No implementation available")

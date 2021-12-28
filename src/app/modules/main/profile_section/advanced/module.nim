@@ -8,8 +8,6 @@ import ../../../../global/global_singleton
 import ../../../../../app_service/service/settings/service_interface as settings_service
 import ../../../../../app_service/service/node_configuration/service_interface as node_configuration_service
 
-import eventemitter
-
 export io_interface
 
 logScope:
@@ -23,14 +21,13 @@ type
     controller: controller.AccessInterface
     moduleLoaded: bool
 
-proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitter,
-  settingsService: settings_service.ServiceInterface,
+proc newModule*(delegate: delegate_interface.AccessInterface, settingsService: settings_service.ServiceInterface,
   nodeConfigurationService: node_configuration_service.ServiceInterface): Module =
   result = Module()
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, events, settingsService, nodeConfigurationService)
+  result.controller = controller.newController(result, settingsService, nodeConfigurationService)
   result.moduleLoaded = false
   
 method delete*(self: Module) =
@@ -143,15 +140,3 @@ method addCustomNetwork*(self: Module, name: string, endpoint: string, networkId
 
 method onCustomNetworkAdded*(self: Module, network: settings_service.Network) =
   self.view.customNetworksModel().add(network.id, network.name)
-
-method toggleWalletSection*(self: Module) =
-  self.controller.toggleWalletSection()
-  
-method toggleBrowserSection*(self: Module) =
-  self.controller.toggleBrowserSection()
-
-method toggleCommunitySection*(self: Module) =
-  self.controller.toggleCommunitySection()
-
-method toggleNodeManagementSection*(self: Module) =
-  self.controller.toggleNodeManagementSection()
