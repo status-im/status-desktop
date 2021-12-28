@@ -35,3 +35,8 @@ QtObject:
     return self.delegate.getSyncModule()
   QtProperty[QVariant] syncModule:
     read = getSyncModule
+
+  proc getNotificationsModule(self: View): QVariant {.slot.} =
+    return self.delegate.getNotificationsModule()
+  QtProperty[QVariant] notificationsModule:
+    read = getNotificationsModule

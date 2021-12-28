@@ -120,7 +120,7 @@ proc newModule*[T](
   dappPermissionsService, providerService)
   result.profileSectionModule = profile_section_module.newModule(result, events, accountsService, settingsService, 
   profileService, contactsService, aboutService, languageService, mnemonicService, privacyService,
-  nodeConfigurationService, devicesService, mailserversService)
+  nodeConfigurationService, devicesService, mailserversService, chatService)
   result.stickersModule = stickers_module.newModule(result, events, stickersService)
   result.activityCenterModule = activity_center_module.newModule(result, events, activityCenterService, contactsService)
   result.communitiesModule = communities_module.newModule(result, events, communityService)

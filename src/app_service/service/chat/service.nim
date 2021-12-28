@@ -303,6 +303,10 @@ QtObject:
 
   proc muteChat*(self: Service, chatId: string) =
     try:
+      if(chatId.len == 0):
+        error "error trying to mute chat with an empty id"
+        return
+
       let response = status_chat.muteChat(chatId)
       if(not response.error.isNil):
         let msg = response.error.message & " chatId=" & chatId 
@@ -317,6 +321,10 @@ QtObject:
 
   proc unmuteChat*(self: Service, chatId: string) =
     try:
+      if(chatId.len == 0):
+        error "error trying to unmute chat with an empty id"
+        return
+
       let response = status_chat.unmuteChat(chatId)
       if(not response.error.isNil):
         let msg = response.error.message & " chatId=" & chatId 

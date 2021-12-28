@@ -24,6 +24,10 @@ QtObject {
         syncModule: profileModuleInst.syncModule
     }
 
+    property NotificationsStore notificationsStore: NotificationsStore {
+        notificationsModule: profileModuleInst.notificationsModule
+    }
+
     // Not Refactored Yet
 //    property var chatsModelInst: chatsModel
     // Not Refactored Yet

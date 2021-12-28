@@ -19,7 +19,8 @@ import "./"
 ScrollView {
     id: root
 
-    property var store
+    property var notificationsStore
+
     property int profileContentWidth
 
     height: parent.height
@@ -285,17 +286,22 @@ ScrollView {
             StatusSettingsLineButton {
                 //% "Muted users"
                 text: qsTrId("muted-users")
-                //% "None"
-                currentValue: root.store.mutedChatsContacts.rowCount() > 0 ? root.store.mutedChatsContacts.rowCount() : qsTrId("none")
+                currentValue: root.notificationsStore.mutedContactsModel.count > 0 ?
+                                  //% "None"
+                                  root.notificationsStore.mutedContactsModel.count : qsTrId("none")
                 isSwitch: false
                 onClicked: {
-                    const mutedChatsModal = notificationsContainer.mutedChatsModalComponent.createObject(notificationsContainer, {
-                        showMutedContacts: true
-                    })
+                    const mutedChatsModal = notificationsContainer.mutedChatsModalComponent.createObject(notificationsContainer)
+                    mutedChatsModal.model = root.notificationsStore.notificationsModule.mutedContactsModel
                     //% "Muted contacts"
                     mutedChatsModal.title = qsTrId("muted-contacts");
                     //% "Muted contacts will appear here"
                     mutedChatsModal.noContentText = qsTrId("muted-contacts-will-appear-here");
+
+                    mutedChatsModal.unmuteChat.connect(function(chatId){
+                        root.notificationsStore.unmuteChat(chatId)
+                    })
+
                     mutedChatsModal.open();
                 }
             }
@@ -304,17 +310,22 @@ ScrollView {
             StatusSettingsLineButton {
                 //% "Muted chats"
                 text: qsTrId("muted-chats")
-                //% "None"
-                currentValue: root.store.mutedChats.rowCount() > 0 ? root.store.mutedChats.rowCount() : qsTrId("none")
+                currentValue: root.notificationsStore.mutedChatsModel.count > 0 ?
+                                  //% "None"
+                                  root.notificationsStore.mutedChatsModel.count : qsTrId("none")
                 isSwitch: false
                 onClicked: {
-                    const mutedChatsModal = notificationsContainer.mutedChatsModalComponent.createObject(notificationsContainer, {
-                        showMutedContacts: false
-                    })
+                    const mutedChatsModal = notificationsContainer.mutedChatsModalComponent.createObject(notificationsContainer)
+                    mutedChatsModal.model = root.notificationsStore.notificationsModule.mutedChatsModel
                     //% "Muted chats"
                     mutedChatsModal.title = qsTrId("muted-chats");
                     //% "Muted chats will appear here"
                     mutedChatsModal.noContentText = qsTrId("muted-chats-will-appear-here");
+
+                    mutedChatsModal.unmuteChat.connect(function(chatId){
+                        root.notificationsStore.unmuteChat(chatId)
+                    })
+
                     mutedChatsModal.open();
                 }
 
