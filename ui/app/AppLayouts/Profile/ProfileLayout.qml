@@ -93,7 +93,7 @@ StatusAppTwoPanelLayout {
         }
 
         DevicesView {
-            devicesStore: profileView.store.devicesStore
+            store: profileView.store
         }
 
         BrowserView {

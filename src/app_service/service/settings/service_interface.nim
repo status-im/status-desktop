@@ -59,12 +59,6 @@ method saveInstallationId*(self: ServiceInterface, value: string): bool {.base.}
 method getInstallationId*(self: ServiceInterface): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method savePreferredName*(self: ServiceInterface, value: string): bool {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method getPreferredName*(self: ServiceInterface): string {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method saveKeyUid*(self: ServiceInterface, value: string): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 

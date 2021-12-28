@@ -23,10 +23,6 @@ QtObject:
 
   proc getAdvancedModule(self: View): QVariant {.slot.} =
     return self.delegate.getAdvancedModule()
+
   QtProperty[QVariant] advancedModule:
     read = getAdvancedModule
-
-  proc getDevicesModule(self: View): QVariant {.slot.} =
-    return self.delegate.getDevicesModule()
-  QtProperty[QVariant] devicesModule:
-    read = getDevicesModule
