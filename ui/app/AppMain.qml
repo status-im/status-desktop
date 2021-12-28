@@ -47,13 +47,6 @@ Item {
     signal openContactsPopup()
 
     Connections {
-        target: rootStore.aboutModuleInst
-        onAppVersionFetched: {
-            Global.openDownloadModal()
-        }
-    }
-
-    Connections {
         target: Global
         onOpenLinkInBrowser: {
             browserLayoutContainer.item.openUrlInNewTab(link);

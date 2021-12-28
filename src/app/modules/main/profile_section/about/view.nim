@@ -18,8 +18,8 @@ QtObject:
     result.delegate = delegate
     result.newVersion = $(%*{
       "available": false,
-      "version": "",
-      "url": ""
+      "version": "0.0.0",
+      "url": "about:blank"
     })
 
   proc load*(self: View) =
@@ -31,11 +31,11 @@ QtObject:
   proc nodeVersion*(self: View): string {.slot.} =
     return self.delegate.getNodeVersion()
 
-  proc appVersionFetched(self: View) {.signal.}
+  proc newVersionChanged(self: View) {.signal.}
 
   proc versionFetched*(self: View, version: string) =
     self.newVersion = version
-    self.appVersionFetched()
+    self.newVersionChanged()
 
   proc checkForUpdates*(self: View) {.slot.} =
     self.delegate.checkForUpdates()
@@ -45,4 +45,4 @@ QtObject:
 
   QtProperty[string] newVersion:
     read = getNewVersion
-    notify = appVersionFetched
+    notify = newVersionChanged
