@@ -24,6 +24,7 @@ proc first*(jArray: JsonNode, fieldName, id: string): JsonNode =
 proc prettyEnsName*(ensName: string): string =
   if ensName.endsWith(".eth"):
     return "@" & ensName.split(".")[0]
+  return ensName
 
 const sep = when defined(windows): "\\" else: "/"
 

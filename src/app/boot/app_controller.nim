@@ -1,7 +1,5 @@
 import NimQml
 
-import ../../app_service/common/utils
-
 import ../../app_service/service/os_notification/service as os_notification_service
 import ../../app_service/service/eth/service as eth_service
 import ../../app_service/service/keychain/service as keychain_service
@@ -305,6 +303,9 @@ proc buildAndRegisterLocalAccountSensitiveSettings(self: AppController) =
 
 proc buildAndRegisterUserProfile(self: AppController) = 
   let pubKey = self.settingsService.getPublicKey()
+  let preferredName = self.settingsService.getPreferredName()
+  let ensUsernames = self.settingsService.getEnsUsernames()
+  let firstEnsName = if (ensUsernames.len > 0): ensUsernames[0] else: ""
   let sendUserStatus = self.settingsService.getSendStatusUpdates()
   ## This is still not in use. Read a comment in UserProfile.
   ## let currentUserStatus = self.settingsService.getCurrentUserStatus()
@@ -318,13 +319,12 @@ proc buildAndRegisterUserProfile(self: AppController) =
       thumbnail = img.uri
 
   let meAsContact = self.contactsService.getContactById(pubKey)
-  var ensName: string
-  if(meAsContact.ensVerified):
-    ensName = utils.prettyEnsName(meAsContact.name)
 
   singletonInstance.userProfile.setFixedData(loggedInAccount.name, loggedInAccount.keyUid, loggedInAccount.identicon, 
   pubKey)
-  singletonInstance.userProfile.setEnsName(ensName)
+  singletonInstance.userProfile.setPreferredName(preferredName)
+  singletonInstance.userProfile.setEnsName(meAsContact.name)
+  singletonInstance.userProfile.setFirstEnsName(firstEnsName)
   singletonInstance.userProfile.setThumbnailImage(thumbnail)
   singletonInstance.userProfile.setLargeImage(large)
   singletonInstance.userProfile.setUserStatus(sendUserStatus)

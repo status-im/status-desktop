@@ -1,5 +1,7 @@
 import NimQml
 
+import ../../app_service/common/utils
+
 QtObject:
   type UserProfile* = ref object of QObject
     # fields which cannot change
@@ -10,6 +12,8 @@ QtObject:
     # fields which may change during runtime
     isIdenticon: bool
     ensName: string
+    firstEnsName: string
+    preferredName: string
     thumbnailImage: string
     largeImage: string
     userStatus: bool
@@ -55,23 +59,73 @@ QtObject:
     read = getUsername
     notify = nameChanged
 
-  proc getEnsName*(self: UserProfile): string {.slot.} =
-    self.ensName
-
   # this is not a slot
   proc setEnsName*(self: UserProfile, name: string) = 
     if(self.ensName == name):
       return
     self.ensName = name
     self.nameChanged()
-      
+
+  proc getEnsName*(self: UserProfile): string {.slot.} =
+    self.ensName      
   QtProperty[string] ensName:
     read = getEnsName
     notify = nameChanged
 
+  proc getPrettyEnsName*(self: UserProfile): string {.slot.} =
+    utils.prettyEnsName(self.ensName)
+  QtProperty[string] prettyEnsName:
+    read = getPrettyEnsName
+    notify = nameChanged
+
+
+  # this is not a slot
+  proc setFirstEnsName*(self: UserProfile, name: string) = 
+    if(self.firstEnsName == name):
+      return
+    self.firstEnsName = name
+    self.nameChanged()
+
+  proc getFirstEnsName*(self: UserProfile): string {.slot.} =
+    self.firstEnsName      
+  QtProperty[string] firstEnsName:
+    read = getFirstEnsName
+    notify = nameChanged
+
+  proc getPrettyFirstEnsName*(self: UserProfile): string {.slot.} =
+    utils.prettyEnsName(self.firstEnsName)
+  QtProperty[string] prettyFirstEnsName:
+    read = getPrettyFirstEnsName
+    notify = nameChanged
+
+
+  # this is not a slot
+  proc setPreferredName*(self: UserProfile, name: string) = 
+    if(self.preferredName == name):
+      return
+    self.preferredName = name
+    self.nameChanged()
+      
+  proc getPreferredName*(self: UserProfile): string {.slot.} =
+    self.preferredName
+  QtProperty[string] preferredName:
+    read = getPreferredName
+    notify = nameChanged
+
+  proc getPrettyPreferredName*(self: UserProfile): string {.slot.} =
+    utils.prettyEnsName(self.preferredName)
+  QtProperty[string] prettyPreferredName:
+    read = getPrettyPreferredName
+    notify = nameChanged
+
+
   proc getName*(self: UserProfile): string {.slot.} =
-    if(self.ensName.len > 0):
-      return self.ensName
+    if(self.preferredName.len > 0):
+      return self.getPrettyPreferredName()
+    elif(self.firstEnsName.len > 0):
+      return self.getPrettyFirstEnsName()
+    elif(self.ensName.len > 0):
+      return self.getPrettyEnsName()
     return self.username
       
   QtProperty[string] name:

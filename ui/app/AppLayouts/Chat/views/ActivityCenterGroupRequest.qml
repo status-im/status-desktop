@@ -169,7 +169,8 @@ Item {
             BlockContactConfirmationDialog {
                 id: blockContactConfirmationDialog
                 onBlockButtonClicked: {
-                    root.store.profileModuleInst.blockContact(blockContactConfirmationDialog.contactAddress)
+                    // Not Refactored Yet
+//                    root.store.profileModuleInst.blockContact(blockContactConfirmationDialog.contactAddress)
                     root.store.activityCenterModuleInst.dismissActivityCenterNotification(model.id)
                     blockContactConfirmationDialog.close()
                 }

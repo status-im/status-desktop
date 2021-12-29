@@ -12,6 +12,7 @@ const KEY_DAPPS_ADDRESS* = "dapps-address"
 const KEY_EIP1581_ADDRESS* = "eip1581-address"
 const KEY_INSTALLATION_ID* = "installation-id"
 const KEY_PREFERRED_NAME* = "preferred-name"
+const KEY_ENS_USERNAMES* = "usernames"
 const KEY_KEY_UID* = "key-uid"
 const KEY_LATEST_DERIVED_PATH* = "latest-derived-path"
 const KEY_LINK_PREVIEW_REQUEST_ENABLED* = "link-preview-request-enabled"
@@ -82,6 +83,7 @@ type
     eip1581Address*: string
     installationId*: string
     preferredName*: string
+    ensUsernames*: seq[string]
     keyUid*: string
     latestDerivedPath*: int
     linkPreviewRequestEnabled*: bool
@@ -221,6 +223,12 @@ proc toSettingsDto*(jsonObj: JsonNode): SettingsDto =
 
   discard jsonObj.getProp(KEY_NODE_CONFIG, result.nodeConfig)
   discard jsonObj.getProp(KEY_WAKU_BLOOM_FILTER_MODE, result.wakuBloomFilterMode)
+
+  var usernamesArr: JsonNode
+  if(jsonObj.getProp(KEY_ENS_USERNAMES, usernamesArr)):
+    if(usernamesArr.kind == JArray):
+      for username in usernamesArr:
+        result.ensUsernames.add(username.getStr)
 
 proc configToJsonNode*(config: Config): JsonNode =
   let configAsString = $$config

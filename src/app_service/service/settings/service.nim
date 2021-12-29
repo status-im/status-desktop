@@ -108,6 +108,19 @@ method savePreferredName*(self: Service, value: string): bool =
 method getPreferredName*(self: Service): string =
   return self.settings.preferredName
 
+method saveNewEnsUsername*(self: Service, username: string): bool =
+  var newEnsUsernames = self.settings.ensUsernames
+  newEnsUsernames.add(username)
+  let newEnsUsernamesAsJson = %* newEnsUsernames
+
+  if(self.saveSetting(KEY_ENS_USERNAMES, newEnsUsernamesAsJson)):
+    self.settings.ensUsernames = newEnsUsernames
+    return true
+  return false
+
+method getEnsUsernames*(self: Service): seq[string] =
+  return self.settings.ensUsernames
+
 method saveKeyUid*(self: Service, value: string): bool =
   if(self.saveSetting(KEY_KEY_UID, value)):
     self.settings.keyUid = value

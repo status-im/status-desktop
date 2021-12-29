@@ -1,7 +1,7 @@
-import json, sequtils, chronicles
-import status/statusgo_backend/accounts
+import json, chronicles
 
-import ./service_interface, ./dto
+import ./service_interface
+import status/statusgo_backend_new/accounts as status_accounts
 
 export service_interface
 
@@ -10,7 +10,6 @@ logScope:
 
 type 
   Service* = ref object of ServiceInterface
-    profile: Dto
 
 method delete*(self: Service) =
   discard
@@ -19,26 +18,25 @@ proc newService*(): Service =
   result = Service()
 
 method init*(self: Service) =
+  discard
+  
+method storeIdentityImage*(self: Service, address: string, image: string, aX: int, aY: int, bX: int, bY: int): seq[Image] =
   try:
-    self.profile = self.getProfile()
+    let response = status_accounts.storeIdentityImage(address, image, aX, aY, bX, bY)
+
+    if(response.result.kind != JArray):
+      error "error: ", methodName="storeIdentityImage", errDesription = "response is not an array"
+      return
+    
+    for img in response.result:
+      result.add(toImage(img))
 
   except Exception as e:
-    let errDesription = e.msg
-    error "error: ", errDesription
-    return
-
-method getProfile*(self: Service): Dto =
-    return Dto(
-        username: "test username",
-        identicon: "",
-        largeImage: "",
-        thumbnailImage: "",
-        hasIdentityImage: false,
-        messagesFromContactsOnly: false
-    )
+    error "error: ", methodName="storeIdentityImage", errName = e.name, errDesription = e.msg
   
-method storeIdentityImage*(self: Service, address: string, image: string, aX: int, aY: int, bX: int, bY: int): IdentityImage =
-  storeIdentityImage(address, image, aX, aY, bX, bY)
+method deleteIdentityImage*(self: Service, address: string) =
+  try:
+    let response = status_accounts.deleteIdentityImage(address)
   
-method deleteIdentityImage*(self: Service, address: string): string =
-  deleteIdentityImage(address)
+  except Exception as e:
+    error "error: ", methodName="deleteIdentityImage", errName = e.name, errDesription = e.msg

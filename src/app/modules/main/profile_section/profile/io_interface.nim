@@ -1,4 +1,4 @@
-import status/types/identity_image
+import NimQml
 
 type 
   AccessInterface* {.pure inheritable.} = ref object of RootObj
@@ -13,11 +13,13 @@ method load*(self: AccessInterface) {.base.} =
 method isLoaded*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method storeIdentityImage*(self: AccessInterface, address: string, image: string, aX: int, aY: int, bX: int, bY: int): 
-  identity_image.IdentityImage {.base.} =
+method getModuleAsVariant*(self: AccessInterface): QVariant {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method deleteIdentityImage*(self: AccessInterface, address: string): string {.base.} =
+method storeIdentityImage*(self: AccessInterface, imageUrl: string, aX: int, aY: int, bX: int, bY: int) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method deleteIdentityImage*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 # View Delegate Interface

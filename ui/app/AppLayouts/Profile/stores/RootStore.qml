@@ -4,34 +4,37 @@ import utils 1.0
 QtObject {
     id: root
 
-    property var profile: profileModule.model
     property var contactsModuleInst: contactsModule
     property var aboutModuleInst: aboutModule
     property var mnemonicModuleInst: mnemonicModule
 
-    property var profileModuleInst: profileSectionModule
+    property var profileSectionModuleInst: profileSectionModule
 
     property AdvancedStore advancedStore: AdvancedStore {
-        advancedModule: profileModuleInst.advancedModule
+        advancedModule: profileSectionModuleInst.advancedModule
     }
 
     property DevicesStore devicesStore: DevicesStore {
-        devicesModule: profileModuleInst.devicesModule
+        devicesModule: profileSectionModuleInst.devicesModule
     }
 
     property SyncStore syncStore: SyncStore {
-        syncModule: profileModuleInst.syncModule
+        syncModule: profileSectionModuleInst.syncModule
     }
 
     property NotificationsStore notificationsStore: NotificationsStore {
-        notificationsModule: profileModuleInst.notificationsModule
+        notificationsModule: profileSectionModuleInst.notificationsModule
     }
 
     property LanguageStore languageStore: LanguageStore {
-        languageModule: profileModuleInst.languageModule
+        languageModule: profileSectionModuleInst.languageModule
     }
 
     property AppearanceStore appearanceStore: AppearanceStore {
+    }
+
+    property ProfileStore profileStore: ProfileStore {
+        profileModule: profileSectionModuleInst.profileModule
     }
 
     // Not Refactored Yet
@@ -58,18 +61,11 @@ QtObject {
     property string ensRegisterAddress: "" //utilsModelInst.ensRegisterAddress
     // Not Refactored Yet
     property string etherscanLink: "" //walletModelInst.utilsView.etherscanLink
-    property string pubKey: profile.pubKey
     // Not Refactored Yet
-//    property string preferredUsername: profileModelInst.ens.preferredUsername
-//    property string firstEnsUsername: profileModelInst.ens.firstEnsUsername
-    property string username: profile.username
-    property string identicon: profile.identicon
-    property string profileLargeImage: profile.largeImage
-    property string profileThumbnailImage: profile.thumbnailImage
-
-    property bool profileHasIdentityImage: profile.hasIdentityImage
+//    property string preferredUsername: userProfile.preferredName // was:  profileModelInst.ens.preferredUsername
+//    property string firstEnsUsername: userProfile.firstEnsName // was: profileModelInst.ens.firstEnsUsername
     property bool mnemonicBackedUp: mnemonicModuleInst.isBackedUp
-    property bool messagesFromContactsOnly: profile.messagesFromContactsOnly
+    property bool messagesFromContactsOnly: false //profile.messagesFromContactsOnly
 
     property int profile_id: 0
     property int contacts_id: 1
@@ -189,24 +185,6 @@ QtObject {
 
     function initDappList() {
         dappPermissionsModule.fetchDapps()
-    }
-
-    function getQrCodeSource(publicKey) {
-        // Not Refactored Yet
-//        return profileModelInst.qrCode(publicKey)
-    }
-
-    function copyToClipboard(value) {
-        // Not Refactored Yet
-//        chatsModelInst.copyToClipboard(value)
-    }
-
-    function uploadImage(source, aX, aY, bX, bY) {
-        return profileModule.upload(source, aX, aY, bX, bY)
-    }
-
-    function removeImage() {
-        return profileModule.remove()
     }
 
     function lookupContact(value) {

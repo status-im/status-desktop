@@ -9,7 +9,6 @@ QtObject {
     readonly property ProfileStores.RootStore profileStore: ProfileStores.RootStore {}
 
     property var mainModuleInst: mainModule
-    property var profileModuleInst: profileModule
     property var aboutModuleInst: aboutModule
 
     // Not Refactored Yet
