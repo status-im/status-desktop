@@ -16,10 +16,10 @@ Item {
     Layout.fillWidth: true
     clip: true
 
-    property var store
+    property var languageStore
     property int profileContentWidth
     property Component languagePopup: LanguageModal {
-        store: languageContainer.store
+        languageStore: languageContainer.languageStore
     }
 
     Item {

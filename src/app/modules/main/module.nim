@@ -30,7 +30,7 @@ import ../../../app_service/service/accounts/service as accounts_service
 import ../../../app_service/service/settings/service_interface as settings_service
 import ../../../app_service/service/contacts/service as contacts_service
 import ../../../app_service/service/about/service as about_service
-import ../../../app_service/service/language/service as language_service
+import ../../../app_service/service/language/service_interface as language_service
 import ../../../app_service/service/mnemonic/service as mnemonic_service
 import ../../../app_service/service/privacy/service as privacy_service
 import ../../../app_service/service/stickers/service as stickers_service
