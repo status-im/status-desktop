@@ -17,12 +17,9 @@ import StatusQ.Controls 0.1
 Item {
     id: root
 
-    property var store
-    property int profileContentWidth
+    property var profileStore
 
-    property string ensName: store.preferredUsername || store.firstEnsUsername || ""
-    property string username: store.username
-    property string pubkey: store.pubKey
+    property int profileContentWidth
 
     clip: true
     height: parent.height
@@ -31,13 +28,13 @@ Item {
     Component {
         id: changeProfileModalComponent
         ChangeProfilePicModal {
-            largeImage: store.profileLargeImage
-            hasIdentityImage: store.profileHasIdentityImage
+            largeImage: !root.profileStore.isIdenticon? root.profileStore.profileLargeImage : root.profileStore.icon
+            hasIdentityImage: !root.profileStore.isIdenticon
             onCropFinished: {
-                uploadError = store.uploadImage(selectedImage, aX, aY, bX, bY)
+                uploadError = root.profileStore.uploadImage(selectedImage, aX, aY, bX, bY)
             }
             onRemoveImageButtonClicked: {
-                uploadError = store.removeImage()
+                uploadError = root.profileStore.removeImage()
             }
         }
     }
@@ -63,7 +60,7 @@ Item {
                 height: 64
                 border.width: 1
                 border.color: Style.current.border
-                source: root.store.profileThumbnailImage
+                source: root.profileStore.icon
                 smooth: false
                 antialiasing: true
             }
@@ -92,7 +89,7 @@ Item {
 
         StatusBaseText {
             id: profileName
-            text: root.ensName !== "" ? root.ensName : root.username
+            text: root.profileStore.name
             anchors.left: profileImgContainer.right
             anchors.leftMargin: Style.current.halfPadding
             anchors.top: profileImgContainer.top
@@ -104,7 +101,7 @@ Item {
 
         Address {
             id: pubkeyText
-            text: root.ensName !== "" ? root.username : root.pubkey
+            text: root.profileStore.ensName !== "" ? root.profileStore.username : root.profileStore.pubkey
             anchors.bottom: profileImgContainer.bottom
             anchors.left: profileName.left
             anchors.bottomMargin: 4
@@ -137,7 +134,7 @@ Item {
         Image {
             asynchronous: true
             fillMode: Image.PreserveAspectFit
-            source: root.store.getQrCodeSource(pubkey)
+            source: root.profileStore.getQrCodeSource(root.profileStore.pubkey)
             anchors.verticalCenterOffset: 20
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
@@ -156,12 +153,12 @@ Item {
 
         StatusDescriptionListItem {
             title: qsTr("ENS username")
-            subTitle: root.ensName
+            subTitle: root.profileStore.ensName
             tooltip.text: qsTr("Copy to clipboard")
             icon.name: "copy"
-            visible: !!root.ensName
+            visible: !!root.profileStore.ensName
             iconButton.onClicked: {
-                root.store.copyToClipboard(root.ensName)
+                root.profileStore.copyToClipboard(root.profileStore.ensName)
                 tooltip.visible = !tooltip.visible
             }
             width: parent.width
@@ -169,14 +166,14 @@ Item {
 
         StatusDescriptionListItem {
             title: qsTr("Chat key")
-            subTitle: root.pubkey
+            subTitle: root.profileStore.pubkey
             subTitleComponent.elide: Text.ElideMiddle
             subTitleComponent.width: 320
             subTitleComponent.font.family: Theme.palette.monoFont.name
             tooltip.text: qsTr("Copy to clipboard")
             icon.name: "copy"
             iconButton.onClicked: {
-                root.store.copyToClipboard(root.pubkey)
+                root.profileStore.copyToClipboard(root.profileStore.pubkey)
                 tooltip.visible = !tooltip.visible
             }
             width: parent.width
@@ -184,11 +181,11 @@ Item {
 
         StatusDescriptionListItem {
             title: qsTr("Share Profile URL")
-            subTitle: `${Constants.userLinkPrefix}${root.ensName !== "" ? root.ensName : (root.pubkey.substring(0, 5) + "..." + root.pubkey.substring(root.pubkey.length - 5))}`
+            subTitle: `${Constants.userLinkPrefix}${root.profileStore.ensName !== "" ? root.profileStore.ensName : (root.profileStore.pubkey.substring(0, 5) + "..." + root.profileStore.pubkey.substring(root.profileStore.pubkey.length - 5))}`
             tooltip.text: qsTr("Copy to clipboard")
             icon.name: "copy"
             iconButton.onClicked: {
-                root.store.copyToClipboard(Constants.userLinkPrefix + (root.ensName !== "" ? root.ensName : root.pubkey))
+                root.profileStore.copyToClipboard(Constants.userLinkPrefix + (root.profileStore.ensName !== "" ? root.profileStore.ensName : root.profileStore.pubkey))
                 tooltip.visible = !tooltip.visible
             }
             width: parent.width

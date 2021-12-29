@@ -1,16 +1,15 @@
-import NimQml, Tables
+import NimQml, chronicles
 
-import ./io_interface, ./view, ./controller, ./item
+import ./io_interface, ./view, ./controller
 import ../io_interface as delegate_interface
 import ../../../../global/global_singleton
 
-import ../../../../../app_service/service/profile/service as profile_service
-import ../../../../../app_service/service/accounts/service as accounts_service
-import ../../../../../app_service/service/settings/service_interface as settings_service
-
-import status/types/identity_image
+import ../../../../../app_service/service/profile/service_interface as profile_service
 
 export io_interface
+
+logScope:
+  topics = "profile-section-profile-module"
 
 type 
   Module* = ref object of io_interface.AccessInterface
@@ -20,19 +19,19 @@ type
     viewVariant: QVariant
     moduleLoaded: bool
 
-proc newModule*(delegate: delegate_interface.AccessInterface, accountsService: accounts_service.ServiceInterface, 
-  settingsService: settings_service.ServiceInterface, profileService: profile_service.ServiceInterface): Module =
+proc newModule*(delegate: delegate_interface.AccessInterface, 
+  profileService: profile_service.ServiceInterface): Module =
   result = Module()
   result.delegate = delegate
-  result.view = newView(result)
+  result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, accountsService, settingsService, profileService)
+  result.controller = controller.newController(result, profileService)
   result.moduleLoaded = false
-
-  singletonInstance.engine.setRootContextProperty("profileModule", result.viewVariant)
 
 method delete*(self: Module) =
   self.view.delete
+  self.viewVariant.delete
+  self.controller.delete
 
 method load*(self: Module) =
   self.controller.init()
@@ -41,15 +40,29 @@ method load*(self: Module) =
 method isLoaded*(self: Module): bool =
   return self.moduleLoaded
 
-method viewDidLoad*(self: Module) =
-  let profile = self.controller.getProfile()
-  self.view.setProfile(profile)
-  
+method getModuleAsVariant*(self: Module): QVariant =
+  return self.viewVariant
+
+method viewDidLoad*(self: Module) =  
   self.moduleLoaded = true
   self.delegate.profileModuleDidLoad()
 
-method storeIdentityImage*(self: Module, address: string, image: string, aX: int, aY: int, bX: int, bY: int): identity_image.IdentityImage =
-  self.controller.storeIdentityImage(address, image, aX, aY, bX, bY)
+method storeIdentityImage*(self: Module, imageUrl: string, aX: int, aY: int, bX: int, bY: int) =
+  let address = singletonInstance.userProfile.getAddress()
+  let image = singletonInstance.utils.formatImagePath(imageUrl)
+  let storedImages = self.controller.storeIdentityImage(address, image, aX, aY, bX, bY)
+  if(storedImages.len == 0):
+    error "error: array of stored images is empty"
+    return
 
-method deleteIdentityImage*(self: Module, address: string): string =
+  for img in storedImages:
+    if(img.imgType == "large"):
+      singletonInstance.userProfile.setLargeImage(img.uri)      
+    elif(img.imgType == "thumbnail"):
+      singletonInstance.userProfile.setThumbnailImage(img.uri)
+
+method deleteIdentityImage*(self: Module) =
+  let address = singletonInstance.userProfile.getAddress()
   self.controller.deleteIdentityImage(address)
+  singletonInstance.userProfile.setLargeImage("")
+  singletonInstance.userProfile.setThumbnailImage("")

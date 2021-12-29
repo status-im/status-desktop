@@ -26,6 +26,11 @@ QtObject:
   QtProperty[QVariant] languageModule:
     read = getLanguageModule
 
+  proc getProfileModule(self: View): QVariant {.slot.} =
+    return self.delegate.getProfileModule()
+  QtProperty[QVariant] profileModule:
+    read = getProfileModule
+
   proc getAdvancedModule(self: View): QVariant {.slot.} =
     return self.delegate.getAdvancedModule()
   QtProperty[QVariant] advancedModule:

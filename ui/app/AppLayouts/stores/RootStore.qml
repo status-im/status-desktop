@@ -3,7 +3,6 @@ import QtQuick 2.13
 QtObject {
     id: root
     property var mainModuleInst: mainModule
-    property var profileModuleInst: profileModule
     property var aboutModuleInst: aboutModule
 
     // Not Refactored Yet

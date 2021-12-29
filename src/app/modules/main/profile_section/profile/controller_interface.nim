@@ -1,6 +1,4 @@
-import ../../../../../app_service/service/profile/service as profile_service
-import ./item
-import status/types/identity_image
+import ../../../../../app_service/service/profile/dto/profile as profile_dto
 
 type 
   AccessInterface* {.pure inheritable.} = ref object of RootObj
@@ -12,16 +10,9 @@ method delete*(self: AccessInterface) {.base.} =
 method init*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getProfile*(self: AccessInterface): Item {.base.} =
+method storeIdentityImage*(self: AccessInterface, address: string, image: string, aX: int, aY: int, bX: int, bY: int): 
+  seq[Image] {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method storeIdentityImage*(self: AccessInterface, address: string, image: string, aX: int, aY: int, bX: int, bY: int): identity_image.IdentityImage {.base.} =
+method deleteIdentityImage*(self: AccessInterface, address: string) {.base.} =
   raise newException(ValueError, "No implementation available")
-
-method deleteIdentityImage*(self: AccessInterface, address: string): string {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-type
-  ## Abstract class (concept) which must be implemented by object/s used in this 
-  ## module.
-  DelegateInterface* = concept c
