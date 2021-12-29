@@ -96,5 +96,5 @@ method contactUpdated*(self: Module, contact: ContactsDto) =
   self.view.model().updateItem(contact.id, contact.userNameOrAlias(), icon, isIdenticon)
 
 method loggedInUserImageChanged*(self: Module) =
-  self.view.model().setIcon(singletonInstance.userProfile.getPubKey(), singletonInstance.userProfile.getThumbnailImage(),
+  self.view.model().setIcon(singletonInstance.userProfile.getPubKey(), singletonInstance.userProfile.getIcon(),
   singletonInstance.userProfile.getIsIdenticon())

@@ -72,7 +72,7 @@ proc newModule*[T](delegate: T,
   result.controller = controller.newController[Module[T]](result)
   result.moduleLoaded = false
 
-  result.profileModule = profile_module.newModule(result, accountsService, settingsService, profileService)
+  result.profileModule = profile_module.newModule(result, profileService)
   result.contactsModule = contacts_module.newModule(result, events, contactsService, accountsService)
   result.languageModule = language_module.newModule(result, languageService)
   result.mnemonicModule = mnemonic_module.newModule(result, mnemonicService)
@@ -155,6 +155,9 @@ method viewDidLoad*[T](self: Module[T]) =
 
 method profileModuleDidLoad*[T](self: Module[T]) =
   self.checkIfModuleDidLoad()
+
+method getProfileModule*[T](self: Module[T]): QVariant =
+  self.profileModule.getModuleAsVariant()
 
 method contactsModuleDidLoad*[T](self: Module[T]) =
   self.checkIfModuleDidLoad()

@@ -45,7 +45,7 @@ StatusAppTwoPanelLayout {
         }
 
         MyProfileView {
-            store: profileView.store
+            profileStore: profileView.store.profileStore
             profileContentWidth: _internal.profileContentWidth
         }
 

@@ -16,7 +16,6 @@ QtObject {
 //    property var walletModelInst: walletModel
     // Not Refactored Yet
 //    property var profileModelInst: profileModel
-    property var profileModuleInst: profileModule
     property var activityCenterModuleInst: activityCenterModule
     property var activityCenterList: activityCenterModuleInst.model
 
