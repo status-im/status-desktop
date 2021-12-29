@@ -78,7 +78,7 @@ StatusAppTwoPanelLayout {
         }
 
         LanguageView {
-            store: profileView.store
+            languageStore: profileView.store.languageStore
             profileContentWidth: _internal.profileContentWidth
         }
 

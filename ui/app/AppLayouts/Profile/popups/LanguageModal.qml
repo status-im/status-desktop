@@ -13,7 +13,7 @@ ModalPopup {
     //% "Language"
     title: qsTrId("Language")
 
-    property var store
+    property var languageStore
 
     onClosed: {
         destroy()
@@ -37,7 +37,7 @@ ModalPopup {
                 confirmButtonLabel: qsTr("Close the app now")
                 cancelButtonLabel: qsTr("I'll do that later")
                 onConfirmButtonClicked: {
-                    root.store.changeLocale(newLocale)
+                    root.languageStore.changeLocale(newLocale)
                     Qt.quit();
                 }
                 onCancelButtonClicked: {
@@ -81,7 +81,7 @@ ModalPopup {
                                     languageChangeConfirmationDialog.item.newLocale = modelData.locale
                                     languageChangeConfirmationDialog.item.open()
                                 } else {
-                                    root.store.changeLocale(modelData.locale)
+                                    root.languageStore.changeLocale(modelData.locale)
                                 }
                             }
                         }

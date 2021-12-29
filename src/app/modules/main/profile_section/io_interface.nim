@@ -29,6 +29,9 @@ method contactsModuleDidLoad*(self: AccessInterface) {.base.} =
 method languageModuleDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method getLanguageModule*(self: AccessInterface): QVariant {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method mnemonicModuleDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 

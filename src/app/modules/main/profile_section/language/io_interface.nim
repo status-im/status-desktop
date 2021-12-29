@@ -1,3 +1,5 @@
+import NimQml
+
 type 
   AccessInterface* {.pure inheritable.} = ref object of RootObj
   ## Abstract class for any input/interaction with this module.
@@ -9,6 +11,9 @@ method load*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method isLoaded*(self: AccessInterface): bool {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getModuleAsVariant*(self: AccessInterface): QVariant {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method changeLanguage*(self: AccessInterface, locale: string) {.base.} =

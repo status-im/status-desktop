@@ -1,4 +1,4 @@
-import NimQml, os, strformat
+import NimQml
 
 import ../../app_service/common/utils
 
@@ -38,28 +38,6 @@ import ../global/local_account_settings
 import ../global/global_singleton
 
 import ../core/[main]
-
-var i18nPath = ""
-if defined(development):
-  i18nPath = joinPath(getAppDir(), "../ui/i18n")
-elif (defined(windows)):
-  i18nPath = joinPath(getAppDir(), "../resources/i18n")
-elif (defined(macosx)):
-  i18nPath = joinPath(getAppDir(), "../i18n")
-elif (defined(linux)):
-  i18nPath = joinPath(getAppDir(), "../i18n")
-
-proc setLanguage(locale: string) =
-  let shouldRetranslate = not defined(linux)
-  singletonInstance.engine.setTranslationPackage(joinPath(i18nPath, fmt"qml_{locale}.qm"), shouldRetranslate)
-
-proc changeLanguage(locale: string) =
-  let currentLanguageCode = singletonInstance.localAppSettings.getLocale()
-  if (locale == currentLanguageCode):
-    return
-
-  singletonInstance.localAppSettings.setLocale(locale)
-  setLanguage(locale)
 
 type 
   AppController* = ref object of RootObj 
@@ -230,6 +208,7 @@ proc delete*(self: AppController) =
   self.startupModule.delete
   self.mainModule.delete
   self.ethService.delete
+  self.languageService.delete
   
   self.localAppSettingsVariant.delete
   self.localAccountSettingsVariant.delete
@@ -261,9 +240,8 @@ proc startupDidLoad*(self: AppController) =
   singletonInstance.engine.setRootContextProperty("localAccountSettings", self.localAccountSettingsVariant)
   singletonInstance.engine.load(newQUrl("qrc:///main.qml"))
 
-  # We need to set a language once qml is loaded
-  let locale = singletonInstance.localAppSettings.getLocale()
-  setLanguage(locale)
+  # We need to init a language service once qml is loaded
+  self.languageService.init()
 
 proc mainDidLoad*(self: AppController) =
   self.statusFoundation.onLoggedIn()
@@ -289,7 +267,6 @@ proc load(self: AppController) =
   self.providerService.init()
   self.walletAccountService.init()
   self.transactionService.init()
-  self.languageService.init()
   self.stickersService.init()
   self.networkService.init()
   self.activityCenterService.init()

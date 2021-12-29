@@ -4,7 +4,7 @@ import ./io_interface, ./view, ./controller
 import ../io_interface as delegate_interface
 import ../../../../global/global_singleton
 
-import ../../../../../app_service/service/language/service as language_service
+import ../../../../../app_service/service/language/service_interface as language_service
 
 export io_interface
 
@@ -24,8 +24,6 @@ proc newModule*(delegate: delegate_interface.AccessInterface, languageService: l
   result.controller = controller.newController(result, languageService)
   result.moduleLoaded = false
 
-  singletonInstance.engine.setRootContextProperty("languageModule", result.viewVariant)
-
 method delete*(self: Module) =
   self.view.delete
 
@@ -39,6 +37,9 @@ method isLoaded*(self: Module): bool =
 method viewDidLoad*(self: Module) =
   self.moduleLoaded = true
   self.delegate.languageModuleDidLoad()
+
+method getModuleAsVariant*(self: Module): QVariant =
+  return self.viewVariant
 
 method changeLanguage*(self: Module, locale: string) =
   self.controller.changeLanguage(locale)
