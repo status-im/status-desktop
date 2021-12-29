@@ -31,6 +31,9 @@ QtObject {
         languageModule: profileModuleInst.languageModule
     }
 
+    property AppearanceStore appearanceStore: AppearanceStore {
+    }
+
     // Not Refactored Yet
 //    property var chatsModelInst: chatsModel
     // Not Refactored Yet
@@ -345,14 +348,6 @@ QtObject {
     function setPubKey(username, address, gasLimit, gasPrice, password) {
         // Not Refactored Yet
 //        return profileModelInst.ens.setPubKey(username, address, gasLimit, gasPrice, password)
-    }
-
-    function readTextFile(path) {
-        return globalUtils.readTextFile(path)
-    }
-
-    function writeTextFile(path, value) {
-        globalUtils.writeTextFile(path, value)
     }
 
     function setMessagesFromContactsOnly(checked) {

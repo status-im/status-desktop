@@ -33,7 +33,7 @@ Column {
     property string messageOutgoingStatus: ""
     property int messageContentType: 1
     property bool pinnedMessage: false
-    property var reactionsModel
+    property var reactionsModel: []
 
     property int prevMessageIndex: -1
     property var prevMessageAsJsonObj
