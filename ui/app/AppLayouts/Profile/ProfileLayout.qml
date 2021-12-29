@@ -67,8 +67,7 @@ StatusAppTwoPanelLayout {
         }
 
         AppearanceView {
-            store: profileView.store
-            globalStore: profileView.globalStore
+            appearanceStore: profileView.store.appearanceStore
             profileContentWidth: _internal.profileContentWidth
             systemPalette: profileView.systemPalette
         }

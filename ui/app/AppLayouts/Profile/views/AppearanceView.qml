@@ -17,10 +17,14 @@ import "../popups"
 
 ScrollView {
     id: appearanceView
+    height: parent.height
+    width: parent.width
+    contentHeight: appearanceContainer.height
+    clip: true
+
+    property var appearanceStore
 
     property var systemPalette
-    property var store
-    property var globalStore
     property int profileContentWidth
 
     enum Theme {
@@ -38,10 +42,9 @@ ScrollView {
         Style.changeFontSize(fontSize)
     }
 
-    height: parent.height
-    width: parent.width
-    contentHeight: appearanceContainer.height
-    clip: true
+    Component.onCompleted: {
+        appearanceView.updateFontSize(localAccountSensitiveSettings.fontSize)
+    }
 
     Item {
         id: appearanceContainer
@@ -88,7 +91,7 @@ ScrollView {
                 anchors.leftMargin: Style.current.smallPadding
                 isMessage: true
                 shouldRepeatHeader: true
-                messageStore: appearanceView.globalStore.messageStore
+                messageTimestamp:Date.now()
                 senderDisplayName: "@vitalik"
                 senderIcon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAb0lEQVR4Ae3UQQqAIBRF0Wj9ba9Bq6l5JBQqfn/ngDMH3YS3AAB/tO3H+XRG3b9bR/+gVoREI2RapVXpfd5+X5oXERKNkHS+rk3tOpWkeREh0QiZVu91ql2zNC8iJBoh0yqtSqt1slpCghICANDPBc0ESPh0bHkHAAAAAElFTkSuQmCC"
                 //% "Blockchains will drop search costs, causing a kind of decomposition that allows you to have markets of entities that are horizontally segregated and vertically segregated."
@@ -210,7 +213,7 @@ ScrollView {
         StatusQ.StatusSlider {
             id: zoomSlider
             readonly property int initialValue: {
-                let scaleFactorStr = appearanceView.store.readTextFile(uiScaleFilePath)
+                let scaleFactorStr = appearanceView.appearanceStore.readTextFile(uiScaleFilePath)
                 if (scaleFactorStr === "") {
                     return 100
                 }
@@ -230,7 +233,7 @@ ScrollView {
             value: initialValue
             onValueChanged: {
                 if (value !== initialValue) {
-                    appearanceView.store.writeTextFile(uiScaleFilePath, value / 100.0)
+                    appearanceView.appearanceStore.writeTextFile(uiScaleFilePath, value / 100.0)
                 }
             }
             onPressedChanged: {
