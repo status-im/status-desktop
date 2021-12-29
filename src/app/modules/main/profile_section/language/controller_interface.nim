@@ -1,5 +1,3 @@
-import ../../../../../app_service/service/language/service as language_service
-
 type 
   AccessInterface* {.pure inheritable.} = ref object of RootObj
   ## Abstract class for any input/interaction with this module.
@@ -12,8 +10,3 @@ method init*(self: AccessInterface) {.base.} =
 
 method changeLanguage*(self: AccessInterface, locale: string) {.base.} =
   raise newException(ValueError, "No implementation available")
-
-type
-  ## Abstract class (concept) which must be implemented by object/s used in this 
-  ## module.
-  DelegateInterface* = concept c

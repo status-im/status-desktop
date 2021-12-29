@@ -1,6 +1,6 @@
 import NimQml
 import json, json_serialization, sequtils, chronicles, os, strformat
-import ./service_interface, ./dto
+import ./service_interface
 import ../../../app/global/global_singleton
 
 export service_interface
@@ -10,14 +10,15 @@ logScope:
 
 type 
   Service* = ref object of ServiceInterface
-    i18nPath*: string
-    currentLanguageCode*: string
+    i18nPath: string
+    shouldRetranslate: bool
 
 method delete*(self: Service) =
   discard
 
 proc newService*(): Service =
   result = Service()
+  result.shouldRetranslate = not defined(linux)
 
 method init*(self: Service) =
   try:
@@ -31,15 +32,17 @@ method init*(self: Service) =
     elif (defined(linux)):
       self.i18nPath = joinPath(getAppDir(), "../i18n")
 
+    let locale = singletonInstance.localAppSettings.getLocale()
+    singletonInstance.engine.setTranslationPackage(joinPath(self.i18nPath, fmt"qml_{locale}.qm"), self.shouldRetranslate)
+
   except Exception as e:
     let errDesription = e.msg
     error "error: ", errDesription
     return
 
 method setLanguage*(self: Service, locale: string) =
-  if (locale == self.currentLanguageCode):
+  if (locale == singletonInstance.localAppSettings.getLocale()):
     return
-  self.currentLanguageCode = locale
-  let shouldRetranslate = not defined(linux)
-  singletonInstance.engine.setTranslationPackage(
-    joinPath(self.i18nPath, fmt"qml_{locale}.qm"), shouldRetranslate)
+  
+  singletonInstance.localAppSettings.setLocale(locale)
+  singletonInstance.engine.setTranslationPackage(joinPath(self.i18nPath, fmt"qml_{locale}.qm"), self.shouldRetranslate)

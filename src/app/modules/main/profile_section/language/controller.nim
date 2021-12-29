@@ -1,8 +1,6 @@
 import ./controller_interface
 import io_interface
-import ../../../../../app_service/service/language/service as language_service
-
-# import ./item as item
+import ../../../../../app_service/service/language/service_interface as language_service
 
 export controller_interface
 

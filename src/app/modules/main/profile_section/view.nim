@@ -21,6 +21,11 @@ QtObject:
   proc load*(self: View) =
     self.delegate.viewDidLoad()
 
+  proc getLanguageModule(self: View): QVariant {.slot.} =
+    return self.delegate.getLanguageModule()
+  QtProperty[QVariant] languageModule:
+    read = getLanguageModule
+
   proc getAdvancedModule(self: View): QVariant {.slot.} =
     return self.delegate.getAdvancedModule()
   QtProperty[QVariant] advancedModule:

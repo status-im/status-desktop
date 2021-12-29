@@ -7,7 +7,6 @@ QtObject {
     property var profile: profileModule.model
     property var contactsModuleInst: contactsModule
     property var aboutModuleInst: aboutModule
-    property var languageModuleInst: languageModule
     property var mnemonicModuleInst: mnemonicModule
 
     property var profileModuleInst: profileSectionModule
@@ -26,6 +25,10 @@ QtObject {
 
     property NotificationsStore notificationsStore: NotificationsStore {
         notificationsModule: profileModuleInst.notificationsModule
+    }
+
+    property LanguageStore languageStore: LanguageStore {
+        languageModule: profileModuleInst.languageModule
     }
 
     // Not Refactored Yet
@@ -305,11 +308,6 @@ QtObject {
     function getSntBalance() {
         // Not Refactored Yet - This should be fetched from corresponding module, not from the global Utils
 //        return utilsModelInst.getSNTBalance()
-    }
-
-    function changeLocale(l) {
-        localAppSettings.locale = l
-        languageModuleInst.changeLocale(l)
     }
 
     function getNetworkName() {
