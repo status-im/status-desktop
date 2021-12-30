@@ -13,6 +13,7 @@ import StatusQ.Components 0.1
 import StatusQ.Controls 0.1 as StatusQControls
 
 import "../popups"
+import "../stores"
 
 Item {
     id: root
@@ -20,7 +21,8 @@ Item {
     Layout.fillWidth: true
     clip: true
 
-    property var store
+    property PrivacyStore privacyStore
+
     property int profileContentWidth
 
     Column {
@@ -46,12 +48,12 @@ Item {
             anchors.rightMargin: -Style.current.padding
             //% "Backup Seed Phrase"
             title: qsTrId("backup-seed-phrase")
-            enabled: !root.store.mnemonicBackedUp
+            enabled: !root.privacyStore.mnemonicBackedUp
             implicitHeight: 52
             components: [
                 StatusBadge {
-                    value: !root.store.mnemonicBackedUp
-                    visible: !root.store.mnemonicBackedUp
+                    value: !root.privacyStore.mnemonicBackedUp
+                    visible: !root.privacyStore.mnemonicBackedUp
                     anchors.verticalCenter: parent.verticalCenter
                 },
                 StatusIcon {
@@ -60,7 +62,7 @@ Item {
                     color: Theme.palette.baseColor1
                 }
             ]
-            sensor.onClicked: backupSeedModal.open()
+            sensor.onClicked: Global.openBackUpSeedPopup()
         }
 
         StatusListItem {
@@ -113,12 +115,9 @@ Item {
             }
         }
 
-        BackupSeedModal {
-            id: backupSeedModal
-        }
-
         ChangePasswordModal {
             id: changePasswordModal
+            privacyStore: root.privacyStore
             anchors.centerIn: parent
             successPopup: successPopup
         }
@@ -215,7 +214,9 @@ Item {
 
         Component {
             id: chatLinksPreviewModal
-            ChatLinksPreviewModal {}
+            ChatLinksPreviewModal {
+                privacyStore: root.privacyStore
+            }
         }
 
         Component {
@@ -254,11 +255,11 @@ Item {
             components: [
                 StatusQControls.StatusSwitch {
                     id: switch3
-                    checked: !root.store.messagesFromContactsOnly
+                    checked: !root.privacyStore.messagesFromContactsOnly
                 }
             ]
             sensor.onClicked: {
-                root.store.setMessagesFromContactsOnly(!switch3.checked)
+                switch3.checked = root.privacyStore.messagesFromContactsOnly = !switch3.checked
             }
         }
     }

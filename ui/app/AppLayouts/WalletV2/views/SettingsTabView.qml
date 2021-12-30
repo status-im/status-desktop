@@ -36,8 +36,9 @@ Item {
             primaryText: qsTr("Back up seed phrase")
             secondaryText: qsTr("Back up your seed phrase now to secure this account")
             button.text: qsTr("Back up seed phrase")
-            button.enabled: !mnemonicModule.isBackedUp
-            button.onClicked: backupSeedModal.open()
+            // Not Refactored Yet (there is no wallet 2 is `base_bc`)
+//            button.enabled: !mnemonicModule.isBackedUp
+            button.onClicked: Global.openBackUpSeedPopup()
         }
 
         StatusExpandableItem {
@@ -162,9 +163,5 @@ Item {
                 }
             }
         }
-    }
-
-    BackupSeedModal {
-        id: backupSeedModal
     }
 }

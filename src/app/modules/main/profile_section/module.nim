@@ -8,7 +8,6 @@ import ../../../../app_service/service/settings/service_interface as settings_se
 import ../../../../app_service/service/contacts/service as contacts_service
 import ../../../../app_service/service/about/service as about_service
 import ../../../../app_service/service/language/service_interface as language_service
-import ../../../../app_service/service/mnemonic/service as mnemonic_service
 import ../../../../app_service/service/privacy/service as privacy_service
 import ../../../../app_service/service/node_configuration/service_interface as node_configuration_service
 import ../../../../app_service/service/devices/service as devices_service
@@ -18,7 +17,6 @@ import ../../../../app_service/service/chat/service as chat_service
 import ./profile/module as profile_module
 import ./contacts/module as contacts_module
 import ./language/module as language_module
-import ./mnemonic/module as mnemonic_module
 import ./privacy/module as privacy_module
 import ./about/module as about_module
 import ./advanced/module as advanced_module
@@ -41,7 +39,6 @@ type
     profileModule: profile_module.AccessInterface
     languageModule: language_module.AccessInterface
     contactsModule: contacts_module.AccessInterface
-    mnemonicModule: mnemonic_module.AccessInterface
     privacyModule: privacy_module.AccessInterface
     aboutModule: about_module.AccessInterface
     advancedModule: advanced_module.AccessInterface
@@ -57,8 +54,7 @@ proc newModule*[T](delegate: T,
   contactsService: contacts_service.Service,
   aboutService: about_service.Service,
   languageService: language_service.ServiceInterface,
-  mnemonicService: mnemonic_service.ServiceInterface,
-  privacyService: privacy_service.ServiceInterface,
+  privacyService: privacy_service.Service,
   nodeConfigurationService: node_configuration_service.ServiceInterface,
   devicesService: devices_service.Service,
   mailserversService: mailservers_service.Service,
@@ -75,8 +71,7 @@ proc newModule*[T](delegate: T,
   result.profileModule = profile_module.newModule(result, profileService)
   result.contactsModule = contacts_module.newModule(result, events, contactsService, accountsService)
   result.languageModule = language_module.newModule(result, languageService)
-  result.mnemonicModule = mnemonic_module.newModule(result, mnemonicService)
-  result.privacyModule = privacy_module.newModule(result, privacyService, accountsService)
+  result.privacyModule = privacy_module.newModule(result, events, settingsService, privacyService)
   result.aboutModule = about_module.newModule(result, events, aboutService)
   result.advancedModule = advanced_module.newModule(result, events, settingsService, nodeConfigurationService)
   result.devicesModule = devices_module.newModule(result, events, settingsService, devicesService)
@@ -89,7 +84,6 @@ method delete*[T](self: Module[T]) =
   self.profileModule.delete
   self.contactsModule.delete
   self.languageModule.delete
-  self.mnemonicModule.delete
   self.privacyModule.delete
   self.aboutModule.delete
   self.advancedModule.delete
@@ -105,7 +99,6 @@ method load*[T](self: Module[T]) =
   self.profileModule.load()
   self.contactsModule.load()
   self.languageModule.load()
-  self.mnemonicModule.load()
   self.privacyModule.load()
   self.aboutModule.load()
   self.advancedModule.load()
@@ -124,9 +117,6 @@ proc checkIfModuleDidLoad[T](self: Module[T]) =
     return
 
   if(not self.languageModule.isLoaded()):
-    return
-
-  if(not self.mnemonicModule.isLoaded()):
     return
 
   if(not self.privacyModule.isLoaded()):
@@ -168,11 +158,11 @@ method languageModuleDidLoad*[T](self: Module[T]) =
 method getLanguageModule*[T](self: Module[T]): QVariant =
   self.languageModule.getModuleAsVariant()
 
-method mnemonicModuleDidLoad*[T](self: Module[T]) =
-  self.checkIfModuleDidLoad()
-
 method privacyModuleDidLoad*[T](self: Module[T]) =
   self.checkIfModuleDidLoad()
+
+method getPrivacyModule*[T](self: Module[T]): QVariant =
+  self.privacyModule.getModuleAsVariant()
 
 method aboutModuleDidLoad*[T](self: Module[T]) =
   self.checkIfModuleDidLoad()

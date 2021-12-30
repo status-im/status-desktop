@@ -10,6 +10,7 @@ Column {
     id: root
     spacing: 4
 
+    property var privacyStore
     property alias mainMenuItems: mainMenuItems.model
     property alias settingsMenuItems: settingsMenuItems.model
     property alias extraMenuItems: extraMenuItems.model
@@ -40,7 +41,7 @@ Column {
             selected: Global.currentMenuTab === model.menu_id
             onClicked: root.menuItemClicked(model)
             visible: model.ifEnabled !== "browser" || root.browserMenuItemEnabled
-            badge.value: !mnemonicModule.isBackedUp && settingsMenuDelegate.title === qsTr("Privacy and security")
+            badge.value: !root.privacyStore.mnemonicBackedUp && settingsMenuDelegate.title === qsTr("Privacy and security")
         }
     }
 

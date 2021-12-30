@@ -15,6 +15,8 @@ import utils 1.0
 ModalPopup {
     id: popup
 
+    property var privacyStore
+
     //% "Chat link previews"
     title: qsTrId("chat-link-previews")
 
@@ -23,7 +25,10 @@ ModalPopup {
     }
 
     function populatePreviewableSites() {
-        let whitelist = JSON.parse(privacyModule.getLinkPreviewWhitelist())
+        let whitelistAsString = popup.privacyStore.getLinkPreviewWhitelist()
+        if(whitelistAsString == "")
+            return
+        let whitelist = JSON.parse(whitelistAsString)
         if (!localAccountSensitiveSettings.whitelistedUnfurlingSites) {
             localAccountSensitiveSettings.whitelistedUnfurlingSites = {}
         }

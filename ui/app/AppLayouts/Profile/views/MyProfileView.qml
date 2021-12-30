@@ -8,6 +8,7 @@ import shared.panels 1.0
 import shared.popups 1.0
 
 import "../popups"
+import "../stores"
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -17,7 +18,7 @@ import StatusQ.Controls 0.1
 Item {
     id: root
 
-    property var profileStore
+    property ProfileStore profileStore
 
     property int profileContentWidth
 

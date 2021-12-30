@@ -50,3 +50,8 @@ QtObject:
     return self.delegate.getNotificationsModule()
   QtProperty[QVariant] notificationsModule:
     read = getNotificationsModule
+
+  proc getPrivacyModule(self: View): QVariant {.slot.} =
+    return self.delegate.getPrivacyModule()
+  QtProperty[QVariant] privacyModule:
+    read = getPrivacyModule

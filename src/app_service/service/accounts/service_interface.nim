@@ -46,3 +46,6 @@ method clear*(self: ServiceInterface) {.base.} =
 
 method generateAlias*(self: ServiceInterface, publicKey: string): string {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method verifyAccountPassword*(self: ServiceInterface, account: string, password: string): bool {.base.} =
+  raise newException(ValueError, "No implementation available")

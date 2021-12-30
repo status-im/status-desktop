@@ -6,7 +6,6 @@ QtObject {
 
     property var contactsModuleInst: contactsModule
     property var aboutModuleInst: aboutModule
-    property var mnemonicModuleInst: mnemonicModule
 
     property var profileSectionModuleInst: profileSectionModule
 
@@ -37,6 +36,10 @@ QtObject {
         profileModule: profileSectionModuleInst.profileModule
     }
 
+    property PrivacyStore privacyStore: PrivacyStore {
+        privacyModule: profileSectionModuleInst.privacyModule
+    }
+
     // Not Refactored Yet
 //    property var chatsModelInst: chatsModel
     // Not Refactored Yet
@@ -64,8 +67,6 @@ QtObject {
     // Not Refactored Yet
 //    property string preferredUsername: userProfile.preferredName // was:  profileModelInst.ens.preferredUsername
 //    property string firstEnsUsername: userProfile.firstEnsName // was: profileModelInst.ens.firstEnsUsername
-    property bool mnemonicBackedUp: mnemonicModuleInst.isBackedUp
-    property bool messagesFromContactsOnly: false //profile.messagesFromContactsOnly
 
     property int profile_id: 0
     property int contacts_id: 1
@@ -326,11 +327,6 @@ QtObject {
     function setPubKey(username, address, gasLimit, gasPrice, password) {
         // Not Refactored Yet
 //        return profileModelInst.ens.setPubKey(username, address, gasLimit, gasPrice, password)
-    }
-
-    function setMessagesFromContactsOnly(checked) {
-        // Not Refactored Yet
-//        profileModelInst.setMessagesFromContactsOnly(checked)
     }
 
     function userNameOrAlias(pk) {

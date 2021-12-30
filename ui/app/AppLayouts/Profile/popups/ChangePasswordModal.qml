@@ -22,6 +22,8 @@ StatusModal {
         reset();
     }
 
+    property var privacyStore
+
     property var successPopup
     property string indicationText: ""
     property bool passwordInputValid
@@ -37,6 +39,23 @@ StatusModal {
         passwordInput.validationError = "";
         popup.passwordInputValid = false;
         popup.currPasswordInputValid = false;
+    }
+
+    function onChangePasswordResponse(success) {
+        if (success) {
+            popup.successPopup.open();
+            submitBtn.enabled = false;
+        } else {
+            reset();
+            passwordInput.validationError = " ";
+            popup.currPasswordValidationError = qsTr("Incorrect password");
+        }
+        submitBtn.loading = false;
+    }
+
+    Connections {
+        target: popup.privacyStore.privacyModule
+        onPasswordChanged: onChangePasswordResponse(success)
     }
 
     contentItem: ColumnLayout {
@@ -119,7 +138,7 @@ StatusModal {
                 id: pause
                 interval: 20
                 onTriggered: {
-                    submitBtn.changePasswordBegin();
+                    popup.privacyStore.changePassword(currentPasswordInput.text, passwordInput.text)
                 }
             }
 
@@ -129,18 +148,6 @@ StatusModal {
                 //have any affect until changePassword is done. Getting around it with a
                 //small pause (timer) in order to get the desired behavior
                 pause.start();
-            }
-
-            function changePasswordBegin() {
-                if (privacyModule.changePassword(currentPasswordInput.text, passwordInput.text)) {
-                    popup.successPopup.open();
-                    submitBtn.enabled = false;
-                } else {
-                    reset();
-                    passwordInput.validationError = " ";
-                    popup.currPasswordValidationError = qsTr("Incorrect password");
-                }
-                submitBtn.loading = false;
             }
         }
     ]
