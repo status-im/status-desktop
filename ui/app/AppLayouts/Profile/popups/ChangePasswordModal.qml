@@ -12,138 +12,94 @@ import StatusQ.Popups 0.1
 import StatusQ.Controls 0.1
 
 StatusModal {
-    id: root
-
-    signal passwordChanged()
-
+    id: popup
     width: 480
     height: 510
     closePolicy: Popup.NoAutoClose
     header.title: qsTr("Change password")
 
-    onOpened: d.reset()
+    onOpened: {
+        reset();
+    }
 
-    QtObject {
-        id: d
+    property var privacyStore
 
-        function lengthValidator(text) {
-            return text.length >= 6 ? "" : qsTr("At least 6 characters")
+    property var successPopup
+    property string indicationText: ""
+    property bool passwordInputValid
+    property bool currPasswordInputValid
+    property string currPasswordValidationError: ""
+
+    function reset() {
+        passwordInput.text = "";
+        currentPasswordInput.text = "";
+        currentPasswordInput.forceActiveFocus(Qt.MouseFocusReason);
+        popup.indicationText = "At least 6 characters. Your password protects your keys. You need it to unlock Status and transact.";
+        popup.currPasswordValidationError = "";
+        passwordInput.validationError = "";
+        popup.passwordInputValid = false;
+        popup.currPasswordInputValid = false;
+    }
+
+    function onChangePasswordResponse(success) {
+        if (success) {
+            popup.successPopup.open();
+            submitBtn.enabled = false;
+        } else {
+            reset();
+            passwordInput.validationError = " ";
+            popup.currPasswordValidationError = qsTr("Incorrect password");
         }
+        submitBtn.loading = false;
+    }
 
-        function reset() {
-            currentPasswordInput.state = "init"
-            passwordInput.state = "init"
-            confirmPasswordInput.state = "init"
-            currentPasswordInput.forceActiveFocus(Qt.MouseFocusReason)
-        }
+    Connections {
+        target: popup.privacyStore.privacyModule
+        onPasswordChanged: onChangePasswordResponse(success)
     }
 
     contentItem: ColumnLayout {
         id: contentItem
         anchors.fill: parent
         anchors {
-            topMargin: Style.current.xlPadding + root.topPadding
+            topMargin: (Style.current.xlPadding + popup.topPadding)
             leftMargin: Style.current.xlPadding
             rightMargin: Style.current.xlPadding
-            bottomMargin: Style.current.xlPadding + root.bottomPadding
+            bottomMargin: (Style.current.xlPadding + popup.bottomPadding)
         }
         spacing: Style.current.padding
 
-        // TODO replace with StatusInput as soon as it supports password
+        //TODO replace with StatusInput as soon as it supports password
         Input {
             id: currentPasswordInput
-
-            readonly property bool ready: state == "typing" && validationError == ""
-
             anchors.left: undefined
             anchors.right: undefined
             Layout.fillWidth: true
-            label: qsTr("Current password")
-
-            textField.echoMode: TextInput.Password
-            keepHeight: true
             placeholderText: ""
-            state: "init"
-
-            onTextChanged: if (text != "" && state != "typing") state = "typing"
-            onStateChanged: if (state == "init") resetInternal()
-
-            states: [
-                State {
-                    name: "init"
-                },
-                State {
-                    name: "typing"
-                    PropertyChanges { target: currentPasswordInput; validationError: d.lengthValidator(text) }
-                },
-                State {
-                    name: "incorrect"
-                    PropertyChanges { target: currentPasswordInput; validationError: qsTr("Incorrect password") }
-                }
-            ]
+            label: qsTr("Current password")
+            textField.echoMode: TextInput.Password
+            onTextChanged: {
+                popup.currPasswordInputValid = (currentPasswordInput.text.length >= 6);
+            }
         }
 
-        // TODO replace with StatusInput as soon as it supports password
+        //TODO replace with StatusInput as soon as it supports password
         Input {
             id: passwordInput
-
-            readonly property bool ready: state == "typing" && validationError == ""
-
             anchors.left: undefined
             anchors.right: undefined
             Layout.fillWidth: true
-            label: qsTr("New password")
-
-            textField.echoMode: TextInput.Password
-            keepHeight: true
             placeholderText: ""
-            state: "init"
-
-            onTextChanged: if (text != "" && state != "typing") state = "typing"
-            onStateChanged: if (state == "init") resetInternal()
-
-            states: [
-                State {
-                    name: "init"
-                },
-                State {
-                    name: "typing"
-                    PropertyChanges { target: passwordInput; validationError: d.lengthValidator(text) }
-                }
-            ]
-        }
-
-        // TODO replace with StatusInput as soon as it supports password
-        Input {
-            id: confirmPasswordInput
-
-            readonly property bool ready: state == "typing" && validationError == ""
-
-            anchors.left: undefined
-            anchors.right: undefined
-            Layout.fillWidth: true
-            label: qsTr("Confirm new password")
-
+            label: qsTrId("new-password...")
             textField.echoMode: TextInput.Password
-            keepHeight: true
-            placeholderText: ""
-            state: "init"
-
-            onTextChanged: if (text != "" && state != "typing") state = "typing"
-            onStateChanged: if (state == "init") resetInternal()
-
-            states: [
-                State {
-                    name: "init"
-                },
-                State {
-                    name: "typing"
-                    PropertyChanges {
-                        target: confirmPasswordInput;
-                        validationError: confirmPasswordInput.text != passwordInput.text ? qsTr("Password does not match") : ""
-                    }
-                }
-            ]
+            onTextChanged: {
+                popup.passwordInputValid = ((passwordInput.text !== "") && (passwordInput.text.length >= 6));
+                //setting validationError so that input becomes red
+                passwordInput.validationError = (!popup.passwordInputValid) ? " " : "";
+                popup.indicationText = (!popup.passwordInputValid ? "<font color=\"#FF2D55\">" : "")
+                    + "At least 6 characters." + (!popup.passwordInputValid ? "</font>" : "")
+                    + "Your password protects your keys. You need it to unlock Status and transact."
+            }
         }
 
         Item {
@@ -151,7 +107,18 @@ StatusModal {
         }
 
         StyledText {
-            text: qsTr("Your password protects your keys. You need it to unlock Status and transact.")
+            id: validationError
+            Layout.preferredWidth: parent.width
+            Layout.alignment: Qt.AlignHCenter
+            horizontalAlignment: Text.AlignHCenter
+            visible: (text !== "")
+            font.pixelSize: Style.current.tertiaryTextFontSize
+            color: Style.current.danger
+            text: popup.currPasswordValidationError
+        }
+
+        StyledText {
+            text: qsTr(indicationText)
             wrapMode: Text.WordWrap
             Layout.preferredWidth: 340
             Layout.alignment: Qt.AlignHCenter
@@ -164,16 +131,14 @@ StatusModal {
     rightButtons: [
         StatusButton {
             id: submitBtn
-
             text: qsTr("Change password")
-            enabled: !submitBtn.loading && currentPasswordInput.ready &&
-                     passwordInput.ready && confirmPasswordInput.ready
+            enabled: (popup.passwordInputValid && popup.currPasswordInputValid && !submitBtn.loading)
 
             property Timer sim: Timer {
                 id: pause
                 interval: 20
                 onTriggered: {
-                    submitBtn.changePasswordBegin();
+                    popup.privacyStore.changePassword(currentPasswordInput.text, passwordInput.text)
                 }
             }
 
@@ -183,17 +148,6 @@ StatusModal {
                 //have any affect until changePassword is done. Getting around it with a
                 //small pause (timer) in order to get the desired behavior
                 pause.start();
-            }
-
-            function changePasswordBegin() {
-                if (privacyModule.changePassword(currentPasswordInput.text, passwordInput.text)) {
-                    passwordChanged()
-                    submitBtn.enabled = false;
-                } else {
-                    currentPasswordInput.state = "incorrect"
-                    currentPasswordInput.forceActiveFocus(Qt.MouseFocusReason)
-                }
-                submitBtn.loading = false;
             }
         }
     ]

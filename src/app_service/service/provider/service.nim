@@ -8,8 +8,8 @@ import ../settings/service_interface as settings_service
 import ../ens/utils as ens_utils
 import service_interface
 import status/statusgo_backend_new/permissions as status_go_permissions
-import status/statusgo_backend_new/accounts as status_go_accounts
 import status/statusgo_backend_new/core as status_go_core
+import ../../common/utils as status_utils
 from stew/base32 import nil
 from stew/base58 import nil
 import stew/byteutils
@@ -201,7 +201,7 @@ proc process(self: Service, data: Web3SendAsyncReadOnly): string =
     try:
       let request = data.request.parseJson
       var params = request["params"]
-      let password = hashPassword(request["password"].getStr())
+      let password = status_utils.hashPassword(request["password"].getStr())
       let dappAddress = self.settingsService.getDappsAddress()
       var rpcResult = "{}"
 

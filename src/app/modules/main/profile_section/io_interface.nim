@@ -41,6 +41,9 @@ method mnemonicModuleDidLoad*(self: AccessInterface) {.base.} =
 method privacyModuleDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method getPrivacyModule*(self: AccessInterface): QVariant {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method aboutModuleDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 

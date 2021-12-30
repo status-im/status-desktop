@@ -12,10 +12,12 @@ import utils 1.0
 import shared.panels 1.0
 import shared.controls 1.0
 
+import "../stores"
+
 Item {
     id: root
 
-    property var devicesStore
+    property DevicesStore devicesStore
 
     property bool isSyncing: false
 

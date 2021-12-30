@@ -23,7 +23,6 @@ Item {
             wentNext = true
             enterSeedPhraseModal.close()
             OnboardingStore.importMnemonic(mnemonic)
-            removeMnemonicAfterLogin = true
             recoverySuccessModal.open()
         }
         onClosed: function () {

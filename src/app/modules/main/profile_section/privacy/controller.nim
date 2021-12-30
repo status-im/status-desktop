@@ -1,32 +1,60 @@
 import ./controller_interface
 import io_interface
-import ../../../../../app_service/service/accounts/service as accounts_service
+
+import ../../../../../app_service/service/settings/service_interface as settings_service
 import ../../../../../app_service/service/privacy/service as privacy_service
+
+import eventemitter
 
 export controller_interface
 
 type 
   Controller* = ref object of controller_interface.AccessInterface
     delegate: io_interface.AccessInterface
-    accountsService: accounts_service.ServiceInterface
-    privacyService: privacy_service.ServiceInterface
+    events: EventEmitter
+    settingsService: settings_service.ServiceInterface
+    privacyService: privacy_service.Service
 
-proc newController*(delegate: io_interface.AccessInterface, privacyService: privacy_service.ServiceInterface, 
-  accountsService: accounts_service.ServiceInterface): Controller =
+proc newController*(delegate: io_interface.AccessInterface, events: EventEmitter, 
+  settingsService: settings_service.ServiceInterface,
+  privacyService: privacy_service.Service): Controller =
   result = Controller()
   result.delegate = delegate
-  result.accountsService = accountsService
+  result.events = events
+  result.settingsService = settingsService
   result.privacyService = privacyService
 
 method delete*(self: Controller) =
   discard
 
 method init*(self: Controller) = 
-  discard
+  self.events.on(SIGNAL_MNEMONIC_REMOVAL) do(e: Args):
+    self.delegate.onMnemonicUpdated()
+
+  self.events.on(SIGNAL_PASSWORD_CHANGED) do(e: Args):
+    var args = OperationSuccessArgs(e)
+    self.delegate.onPasswordChanged(args.success)
+
+method isMnemonicBackedUp*(self: Controller): bool =
+  return self.privacyService.isMnemonicBackedUp()
 
 method getLinkPreviewWhitelist*(self: Controller): string =
   return self.privacyService.getLinkPreviewWhitelist()
 
-method changePassword*(self: Controller, password: string, newPassword: string): bool =
-  let loggedInAccount = self.accountsService.getLoggedInAccount()
-  return self.privacyService.changePassword(loggedInAccount.keyUid, password, newPassword)
+method changePassword*(self: Controller, password: string, newPassword: string) =
+  self.privacyService.changePassword(password, newPassword)
+
+method getMnemonic*(self: Controller): string =
+  return self.privacyService.getMnemonic()
+
+method removeMnemonic*(self: Controller) =
+  self.privacyService.removeMnemonic()
+
+method getMnemonicWordAtIndex*(self: Controller, index: int): string =
+  return self.privacyService.getMnemonicWordAtIndex(index)
+
+method getMessagesFromContactsOnly*(self: Controller): bool =
+  return self.settingsService.getMessagesFromContactsOnly()
+
+method setMessagesFromContactsOnly*(self: Controller, value: bool): bool =
+  return self.settingsService.saveMessagesFromContactsOnly(value)

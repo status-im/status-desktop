@@ -12,6 +12,7 @@ import shared.panels 1.0
 import shared.status 1.0
 import shared.controls 1.0
 
+import "../stores"
 import "../popups"
 import "../panels"
 import "./"
@@ -19,7 +20,7 @@ import "./"
 ScrollView {
     id: root
 
-    property var notificationsStore
+    property NotificationsStore notificationsStore
 
     property int profileContentWidth
 

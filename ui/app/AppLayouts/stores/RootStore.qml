@@ -1,15 +1,14 @@
 import QtQuick 2.13
 
-import "../Profile/stores" as ProfileStores
-
+import "../Profile/stores"
 
 QtObject {
     id: root
-
-    readonly property ProfileStores.RootStore profileStore: ProfileStores.RootStore {}
-
     property var mainModuleInst: mainModule
     property var aboutModuleInst: aboutModule
+
+    property ProfileSectionStore profileSectionStore: ProfileSectionStore {
+    }
 
     // Not Refactored Yet
 //    property var chatsModelInst: chatsModel

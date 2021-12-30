@@ -33,6 +33,7 @@ Item {
 
         MenuPanel {
             id: profileMenu
+            privacyStore: store.privacyStore
             mainMenuItems: store.mainMenuItems
             settingsMenuItems: store.settingsMenuItems
             extraMenuItems: store.extraMenuItems

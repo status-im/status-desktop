@@ -9,6 +9,7 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
 
 import "../popups"
+import "../stores"
 
 Item {
     id: languageContainer
@@ -16,7 +17,7 @@ Item {
     Layout.fillWidth: true
     clip: true
 
-    property var languageStore
+    property LanguageStore languageStore
     property int profileContentWidth
     property Component languagePopup: LanguageModal {
         languageStore: languageContainer.languageStore

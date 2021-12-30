@@ -6,7 +6,6 @@ import QtGraphicalEffects 1.13
 import utils 1.0
 import shared 1.0
 import shared.panels 1.0
-import "../../Profile/popups"
 import "../stores"
 
 Rectangle {
@@ -56,7 +55,7 @@ Rectangle {
             MouseArea {
                 cursorShape: Qt.PointingHandCursor
                 anchors.fill: parent
-                onClicked: backupSeedModal.open()
+                onClicked: Global.openBackUpSeedPopup()
             }
         }
     }
@@ -84,8 +83,5 @@ Rectangle {
             PropertyAnimation { target: root; property: "visible"; to: false; }
             PropertyAnimation { target: root; property: "y"; to: -1 * root.height }
         }
-    }
-    BackupSeedModal {
-        id: backupSeedModal
     }
 }

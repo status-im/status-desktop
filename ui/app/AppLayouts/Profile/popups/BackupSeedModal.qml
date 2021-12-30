@@ -12,6 +12,8 @@ import StatusQ.Controls 0.1
 // TODO: replace with StatusModal
 ModalPopup {
     id: popup
+
+    property var privacyStore
     
     property bool showWarning: true
     property int seedWord1Idx: -1;
@@ -74,7 +76,7 @@ ModalPopup {
 
                     Repeater {
                         id: mnemonicRepeater
-                        model: mnemonicModule.get.split(" ")
+                        model: popup.privacyStore.getMnemonic().split(" ")
                         Rectangle {
                             id: word
                             height: 40
@@ -208,7 +210,7 @@ ModalPopup {
                 //% "You will not be able to see the whole seed phrase again"
                 confirmationText: qsTrId("are-you-sure-description")
                 onConfirmButtonClicked: {
-                    mnemonicModule.remove()
+                    popup.privacyStore.removeMnemonic()
                     popup.close();
                     confirmPopup.close();
                 }
@@ -261,7 +263,7 @@ ModalPopup {
                     seedWord1Idx = Math.floor(Math.random() * 12);
                 } else {
                     if(seedWord2Idx == -1){
-                        if(mnemonicModule.getWord(seedWord1Idx) !== txtFieldWord.text){
+                        if(popup.privacyStore.getMnemonicWordAtIndex(seedWord1Idx) !== txtFieldWord.text){
                             //% "Wrong word"
                             validationError = qsTrId("wrong-word");
                             return;
@@ -274,7 +276,7 @@ ModalPopup {
                             seedWord2Idx = Math.floor(Math.random() * 12);
                         } while(seedWord2Idx == seedWord1Idx);
                     } else {
-                        if(mnemonicModule.getWord(seedWord2Idx) !== txtFieldWord.text){
+                        if(popup.privacyStore.getMnemonicWordAtIndex(seedWord2Idx) !== txtFieldWord.text){
                             //% "Wrong word"
                             validationError = qsTrId("wrong-word");
                             return;

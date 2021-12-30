@@ -11,10 +11,12 @@ import utils 1.0
 import shared.popups 1.0
 import shared.controls 1.0
 
+import "../stores"
+
 Item {
     id: root
 
-    property var syncStore
+    property SyncStore syncStore
 
     property int profileContentWidth
 

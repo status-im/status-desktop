@@ -21,7 +21,6 @@ import "./app"
 
 StatusWindow {
     property bool hasAccounts: startupModule.appState !== Constants.appState.onboarding
-    property bool removeMnemonicAfterLogin: false
     property alias dragAndDrop: dragTarget
     property bool displayBeforeGetStartedModal: !hasAccounts
 
@@ -166,15 +165,6 @@ StatusWindow {
             }
         }
     }
-
-//    Connections {
-//        target: profileModel
-//        ignoreUnknownSignals: true
-//        enabled: removeMnemonicAfterLogin
-//        onInitialized: {
-//            mnemonicModule.remove()
-//        }
-//    }
 
     // The easiest way to get current system theme (is it light or dark) without using
     // OS native methods is to check lightness (0 - 1.0) of the window color.
@@ -522,7 +512,6 @@ StatusWindow {
         id: existingKey
         ExistingKeyView {
             onClosed: function () {
-                removeMnemonicAfterLogin = false
                 if (hasAccounts) {
                     applicationWindow.navigateTo("InitialState")
                 } else {

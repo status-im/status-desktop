@@ -31,7 +31,6 @@ import ../../../app_service/service/settings/service_interface as settings_servi
 import ../../../app_service/service/contacts/service as contacts_service
 import ../../../app_service/service/about/service as about_service
 import ../../../app_service/service/language/service_interface as language_service
-import ../../../app_service/service/mnemonic/service as mnemonic_service
 import ../../../app_service/service/privacy/service as privacy_service
 import ../../../app_service/service/stickers/service as stickers_service
 import ../../../app_service/service/activity_center/service as activity_center_service
@@ -80,8 +79,7 @@ proc newModule*[T](
   aboutService: about_service.Service,
   dappPermissionsService: dapp_permissions_service.ServiceInterface,
   languageService: language_service.ServiceInterface,
-  mnemonicService: mnemonic_service.ServiceInterface,
-  privacyService: privacy_service.ServiceInterface,
+  privacyService: privacy_service.Service,
   providerService: provider_service.ServiceInterface,
   stickersService: stickers_service.Service,
   activityCenterService: activity_center_service.Service,
@@ -119,8 +117,8 @@ proc newModule*[T](
   result.browserSectionModule = browser_section_module.newModule(result, bookmarkService, settingsService, 
   dappPermissionsService, providerService)
   result.profileSectionModule = profile_section_module.newModule(result, events, accountsService, settingsService, 
-  profileService, contactsService, aboutService, languageService, mnemonicService, privacyService,
-  nodeConfigurationService, devicesService, mailserversService, chatService)
+  profileService, contactsService, aboutService, languageService, privacyService, nodeConfigurationService, 
+  devicesService, mailserversService, chatService)
   result.stickersModule = stickers_module.newModule(result, events, stickersService)
   result.activityCenterModule = activity_center_module.newModule(result, events, activityCenterService, contactsService)
   result.communitiesModule = communities_module.newModule(result, events, communityService)

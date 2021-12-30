@@ -26,6 +26,7 @@ QtObject {
     signal openPopupRequested(var popupComponent, var params)
     signal openDownloadModalRequested()
     signal settingsLoaded()
+    signal openBackUpSeedPopup()
 
     signal openProfilePopupRequested(string userNameParam, string fromAuthorParam, string identiconParam, string textParam, string nicknameParam, var parentPopup)
 
