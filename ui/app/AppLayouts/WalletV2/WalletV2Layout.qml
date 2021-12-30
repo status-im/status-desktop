@@ -45,7 +45,8 @@ Item {
         id: seedPhraseWarning
         width: parent.width
         anchors.top: parent.top
-        visible: !mnemonicModule.isBackedUp
+        // Not Refactored Yet (there is no wallet 2 is `base_bc`)
+//        visible: !mnemonicModule.isBackedUp
     }
 
     StatusAppTwoPanelLayout {

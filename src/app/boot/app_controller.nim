@@ -15,7 +15,6 @@ import ../../app_service/service/collectible/service as collectible_service
 import ../../app_service/service/wallet_account/service as wallet_account_service
 import ../../app_service/service/bookmarks/service as bookmark_service
 import ../../app_service/service/dapp_permissions/service as dapp_permissions_service
-import ../../app_service/service/mnemonic/service as mnemonic_service
 import ../../app_service/service/privacy/service as privacy_service
 import ../../app_service/service/provider/service as provider_service
 import ../../app_service/service/profile/service as profile_service
@@ -70,7 +69,7 @@ type
     networkService: network_service.Service
     activityCenterService: activity_center_service.Service
     languageService: language_service.Service
-    mnemonicService: mnemonic_service.Service
+    # mnemonicService: mnemonic_service.Service
     privacyService: privacy_service.Service
     nodeConfigurationService: node_configuration_service.Service
     savedAddressService: saved_address_service.Service
@@ -130,7 +129,7 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result.settingsService)
   result.collectibleService = collectible_service.newService(result.settingsService)
   result.walletAccountService = wallet_account_service.newService(statusFoundation.status.events, result.settingsService, 
-  result.tokenService)
+  result.accountsService, result.tokenService)
   result.transactionService = transaction_service.newService(statusFoundation.status.events, statusFoundation.threadpool, 
   result.walletAccountService)
   result.bookmarkService = bookmark_service.newService()
@@ -149,8 +148,9 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result.settingsService)
   result.dappPermissionsService = dapp_permissions_service.newService()
   result.languageService = language_service.newService()
-  result.mnemonicService = mnemonic_service.newService()
-  result.privacyService = privacy_service.newService()
+  # result.mnemonicService = mnemonic_service.newService()
+  result.privacyService = privacy_service.newService(statusFoundation.status.events, result.settingsService, 
+  result.accountsService)
   result.providerService = provider_service.newService(result.dappPermissionsService, result.settingsService)
   result.savedAddressService = saved_address_service.newService(statusFoundation.status.events)
   result.devicesService = devices_service.newService(statusFoundation.status.events, result.settingsService)
@@ -183,7 +183,7 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
     result.aboutService,
     result.dappPermissionsService,
     result.languageService,
-    result.mnemonicService,
+    # result.mnemonicService,
     result.privacyService,
     result.providerService,
     result.stickersService,
@@ -199,9 +199,8 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
 
 proc delete*(self: AppController) =
   self.osNotificationService.delete
+  self.keychainService.delete
   self.contactsService.delete
-  self.chatService.delete
-  self.communityService.delete
   self.bookmarkService.delete
   self.startupModule.delete
   self.mainModule.delete
@@ -232,6 +231,9 @@ proc delete*(self: AppController) =
   self.savedAddressService.delete
   self.devicesService.delete
   self.mailserversService.delete
+  self.messageService.delete
+  self.privacyService.delete
+  self.profileService.delete
 
 proc startupDidLoad*(self: AppController) =
   singletonInstance.engine.setRootContextProperty("localAppSettings", self.localAppSettingsVariant)
@@ -295,6 +297,12 @@ proc load(self: AppController) =
 proc userLoggedIn*(self: AppController) =
   self.statusFoundation.status.startMessenger()
   self.load()
+
+  # Once user is logged in and main module is loaded we need to check if it gets here importing mnemonic or not
+  # and delete mnemonic in the first case.
+  let importedAccount = self.accountsService.getImportedAccount()
+  if(importedAccount.isValid()):
+    self.privacyService.removeMnemonic()
 
 proc buildAndRegisterLocalAccountSensitiveSettings(self: AppController) = 
   var pubKey = self.settingsService.getPublicKey()

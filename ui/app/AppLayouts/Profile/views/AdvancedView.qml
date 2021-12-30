@@ -9,6 +9,7 @@ import shared.panels 1.0
 import shared.popups 1.0
 import shared.status 1.0
 
+import "../stores"
 import "../controls"
 import "../popups"
 import "../panels"
@@ -23,7 +24,7 @@ ScrollView {
     contentHeight: advancedContainer.height + 100
     clip: true
 
-    property var advancedStore
+    property AdvancedStore advancedStore
 
     Item {
         id: advancedContainer

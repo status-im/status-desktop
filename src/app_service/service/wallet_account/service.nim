@@ -3,9 +3,9 @@ import web3/[ethtypes, conversions]
 import eventemitter
 
 import ../settings/service_interface as settings_service
+import ../accounts/service_interface as accounts_service
 import ../token/service as token_service
 import ../../common/account_constants
-import ../../../constants
 
 import ./service_interface, ./dto
 import status/statusgo_backend_new/accounts as status_go_accounts
@@ -102,6 +102,7 @@ type
   Service* = ref object of service_interface.ServiceInterface
     events: EventEmitter
     settingsService: settings_service.ServiceInterface
+    accountsService: accounts_service.ServiceInterface
     tokenService: token_service.Service
     accounts: OrderedTable[string, WalletAccountDto]
 
@@ -109,11 +110,14 @@ method delete*(self: Service) =
   discard
 
 proc newService*(
-  events: EventEmitter, settingsService: settings_service.ServiceInterface, tokenService: token_service.Service): 
+  events: EventEmitter, settingsService: settings_service.ServiceInterface,
+  accountsService: accounts_service.ServiceInterface,
+  tokenService: token_service.Service): 
   Service =
   result = Service()
   result.events = events
   result.settingsService = settingsService
+  result.accountsService = accountsService
   result.tokenService = tokenService
   result.accounts = initOrderedTable[string, WalletAccountDto]()
 
@@ -240,7 +244,7 @@ method generateNewAccount*(self: Service, password: string, accountName: string,
     walletRootAddress = self.settingsService.getWalletRootAddress()
     walletIndex = self.settingsService.getLatestDerivedPath() + 1
     defaultAccount = self.getDefaultAccount()
-    isPasswordOk = status_go_accounts.verifyAccountPassword(defaultAccount, password, KEYSTOREDIR)
+    isPasswordOk = self.accountsService.verifyAccountPassword(defaultAccount, password)
 
   if not isPasswordOk:
     return "Error generating new account: invalid password"
@@ -270,7 +274,7 @@ method addAccountsFromPrivateKey*(self: Service, privateKey: string, password: s
   let
     accountResponse = status_go_accounts.multiAccountImportPrivateKey(privateKey)
     defaultAccount = self.getDefaultAccount()
-    isPasswordOk = status_go_accounts.verifyAccountPassword(defaultAccount, password, KEYSTOREDIR)
+    isPasswordOk = self.accountsService.verifyAccountPassword(defaultAccount, password)
 
   if not isPasswordOk:
     return "Error generating new account: invalid password"
@@ -296,7 +300,7 @@ method addAccountsFromSeed*(self: Service, seedPhrase: string, password: string,
 
   let
     defaultAccount = self.getDefaultAccount()
-    isPasswordOk = status_go_accounts.verifyAccountPassword(defaultAccount, password, KEYSTOREDIR)
+    isPasswordOk = self.accountsService.verifyAccountPassword(defaultAccount, password)
 
   if not isPasswordOk:
     return "Error generating new account: invalid password"

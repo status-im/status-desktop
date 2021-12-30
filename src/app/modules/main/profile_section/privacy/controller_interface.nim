@@ -1,5 +1,3 @@
-# import ../../../../../app_service/service/profile/service as profile_service
-
 type 
   AccessInterface* {.pure inheritable.} = ref object of RootObj
   ## Abstract class for any input/interaction with this module.
@@ -10,13 +8,26 @@ method delete*(self: AccessInterface) {.base.} =
 method init*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method isMnemonicBackedUp*(self: AccessInterface): bool {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method getLinkPreviewWhitelist*(self: AccessInterface): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method changePassword*(self: AccessInterface, password: string, newPassword: string): bool {.base.} =
+method changePassword*(self: AccessInterface, password: string, newPassword: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-type
-  ## Abstract class (concept) which must be implemented by object/s used in this 
-  ## module.
-  DelegateInterface* = concept c
+method getMnemonic*(self: AccessInterface): string {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method removeMnemonic*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getMnemonicWordAtIndex*(self: AccessInterface, index: int): string {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getMessagesFromContactsOnly*(self: AccessInterface): bool {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method setMessagesFromContactsOnly*(self: AccessInterface, value: bool): bool {.base.} =
+  raise newException(ValueError, "No implementation available")

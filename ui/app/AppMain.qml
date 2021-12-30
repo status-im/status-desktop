@@ -15,6 +15,7 @@ import "./AppLayouts/WalletV2"
 import "./AppLayouts/Chat/popups"
 import "./AppLayouts/Chat/popups/community"
 import "./AppLayouts/Profile/Sections"
+import "./AppLayouts/Profile/popups"
 import "./AppLayouts/stores"
 
 import Qt.labs.platform 1.1
@@ -79,6 +80,10 @@ Item {
             popup.openPopup(userProfile.pubKey !== fromAuthorParam, userNameParam, fromAuthorParam, identiconParam, textParam, nicknameParam);
             Global.profilePopupOpened = true;
         }
+        onOpenBackUpSeedPopup : {
+            var popup = backupSeedModalComponent.createObject(appMain)
+            popup.open()
+        }
     }
 
     function changeAppSectionBySectionId(sectionId) {
@@ -123,6 +128,11 @@ Item {
             }
         }
         return ""
+    }
+
+    property Component backupSeedModalComponent: BackupSeedModal {
+        id: backupSeedModal
+        privacyStore: appMain.rootStore.profileSectionStore.privacyStore
     }
 
     Component {
@@ -476,6 +486,8 @@ Item {
                     Layout.fillWidth: true
                     Layout.alignment: Qt.AlignLeft | Qt.AlignTop
                     Layout.fillHeight: true
+
+                    store: appMain.rootStore.profileSectionStore
                     globalStore: appMain.rootStore
                     systemPalette: appMain.sysPalette
                 }
@@ -554,18 +566,6 @@ Item {
 //                    appView.currentIndex = Constants.appViewStackIndex.chat
 //                    break
 //                }
-//            }
-//        }
-
-//        Connections {
-//            target: profileModel
-//            ignoreUnknownSignals: true
-//            enabled: removeMnemonicAfterLogin
-//            onInitialized: {
-//                mnemonicModule.remove()
-//            }
-//        }
-//                Global.settingsLoaded()
 //            }
 //        }
 

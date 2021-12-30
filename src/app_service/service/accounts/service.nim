@@ -10,6 +10,7 @@ import status/statusgo_backend_new/general as status_general
 import ../../../app/core/fleets/fleet_configuration
 import ../../common/[account_constants, network_constants, utils, string_utils]
 import ../../../constants as main_constants
+
 export service_interface
 
 logScope:
@@ -312,3 +313,16 @@ method login*(self: Service, account: AccountDto, password: string): string =
   except Exception as e:
     error "error: ", methodName="setupAccount", errName = e.name, errDesription = e.msg
     return e.msg
+
+method verifyAccountPassword*(self: Service, account: string, password: string): bool =
+  try:
+    let response = status_account.verifyAccountPassword(account, password, main_constants.KEYSTOREDIR)
+    if(response.result.contains("error")):
+      let errMsg = response.result["error"].getStr
+      if(errMsg.len == 0):
+        return true
+      else:
+        error "error: ", methodName="verifyAccountPassword", errDesription = errMsg
+    return false
+  except Exception as e:
+    error "error: ", methodName="verifyAccountPassword", errName = e.name, errDesription = e.msg

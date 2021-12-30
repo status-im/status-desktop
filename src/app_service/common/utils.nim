@@ -1,6 +1,9 @@
 import json, random, times, strutils, os
-
+import nimcrypto
 import signing_phrases
+
+proc hashPassword*(password: string): string =
+  result = "0x" & $keccak_256.digest(password)
 
 proc generateSigningPhrase*(count: int): string =
   let now = getTime()

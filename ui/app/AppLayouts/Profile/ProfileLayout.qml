@@ -14,7 +14,7 @@ import StatusQ.Layout 0.1
 StatusAppTwoPanelLayout {
     id: profileView
 
-    property RootStore store: RootStore { }
+    property ProfileSectionStore store
     property var globalStore
     property var systemPalette
 
@@ -62,7 +62,7 @@ StatusAppTwoPanelLayout {
         }
 
         PrivacyView {
-            store: profileView.store
+            privacyStore: profileView.store.privacyStore
             profileContentWidth: _internal.profileContentWidth
         }
 

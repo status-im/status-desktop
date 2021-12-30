@@ -14,6 +14,7 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1 as StatusQ
 
 import "../popups"
+import "../stores"
 
 ScrollView {
     id: appearanceView
@@ -22,7 +23,7 @@ ScrollView {
     contentHeight: appearanceContainer.height
     clip: true
 
-    property var appearanceStore
+    property AppearanceStore appearanceStore
 
     property var systemPalette
     property int profileContentWidth
