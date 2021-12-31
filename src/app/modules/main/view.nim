@@ -116,3 +116,6 @@ QtObject:
 
   QtProperty[QVariant] appSearchModule:
     read = getAppSearchModule
+
+  proc getContactDetailsAsJson(self: View, publicKey: string): string {.slot.} =
+    return self.delegate.getContactDetailsAsJson(publicKey)

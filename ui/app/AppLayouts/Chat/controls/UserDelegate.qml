@@ -106,7 +106,7 @@ Item {
             }
             onClicked: {
                 if (mouse.button === Qt.LeftButton) {
-                    Global.openProfilePopup(wrapper.name, wrapper.publicKey, wrapper.identicon, "", wrapper.name);
+                    Global.openProfilePopup(wrapper.publicKey);
                 }
                  else if (mouse.button === Qt.RightButton && !!messageContextMenu) {
                     // Set parent, X & Y positions for the messageContextMenu

@@ -69,7 +69,7 @@ proc newModule*[T](delegate: T,
   result.moduleLoaded = false
 
   result.profileModule = profile_module.newModule(result, profileService)
-  result.contactsModule = contacts_module.newModule(result, events, contactsService, accountsService)
+  result.contactsModule = contacts_module.newModule(result, events, contactsService)
   result.languageModule = language_module.newModule(result, languageService)
   result.privacyModule = privacy_module.newModule(result, events, settingsService, privacyService)
   result.aboutModule = about_module.newModule(result, events, aboutService)
@@ -151,6 +151,9 @@ method getProfileModule*[T](self: Module[T]): QVariant =
 
 method contactsModuleDidLoad*[T](self: Module[T]) =
   self.checkIfModuleDidLoad()
+
+method getContactsModule*[T](self: Module[T]): QVariant =
+  self.contactsModule.getModuleAsVariant()
 
 method languageModuleDidLoad*[T](self: Module[T]) =
   self.checkIfModuleDidLoad()

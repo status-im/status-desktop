@@ -18,11 +18,6 @@ ListView {
     property string contactToRemove: ""
     property bool hideBlocked: false
 
-    property Component profilePopupComponent: ProfilePopup {
-        id: profilePopup
-        onClosed: destroy()
-    }
-
     width: parent.width
 
     model: contacts
@@ -35,8 +30,7 @@ ListView {
         isContact: model.isContact
         isBlocked: model.isBlocked
         profileClick: function (showFooter, userName, fromAuthor, identicon, textParam, nickName) {
-            var popup = profilePopupComponent.createObject(contactList);
-            popup.openPopup(showFooter, userName, fromAuthor, identicon, textParam, nickName);
+            Global.openProfilePopup(fromAuthor)
         }
         visible: {
           if (hideBlocked && model.isBlocked) {

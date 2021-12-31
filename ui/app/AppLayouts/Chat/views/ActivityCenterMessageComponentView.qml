@@ -34,10 +34,7 @@ Item {
     // Not Refactored Yet
     property int communityIndex: -1 //root.store.chatsModelInst.communities.joinedCommunities.getCommunityIndex(model.message.communityId)
     function openProfile() {
-        const pk = model.author
-        const userProfileImage = Global.getProfileImage(pk)
-        // Not Refactored Yet
-        Global.openProfilePopup(root.store.chatsModelInst.userNameOrAlias(pk), pk, userProfileImage || utilsModel.generateIdenticon(pk))
+        Global.openProfilePopup(model.author)
     }
 
     Component {
@@ -140,9 +137,7 @@ Item {
 //            onImageClick: { Global.openImagePopup(image); }
 //            clickMessage: function (isProfileClick) {
 //                if (isProfileClick) {
-//                    const pk = model.message.fromAuthor
-//                    const userProfileImage = appMain.getProfileImage(pk)
-//                    return openProfilePopup(root.store.chatsModelInst.userNameOrAlias(pk), pk, userProfileImage || root.store.utilsModelInst.generateIdenticon(pk))
+//                    return openProfilePopup(model.message.fromAuthor)
 //                }
 
 //                activityCenter.close()
@@ -184,9 +179,7 @@ Item {
 //                messageStore.prevMsgTimestamp = previousNotificationTimestamp;
 //                messageStore.clickMessage = function (isProfileClick) {
 //                    if (isProfileClick) {
-//                        const pk = model.message.fromAuthor
-//                        const userProfileImage = appMain.getProfileImage(pk)
-//                        return openProfilePopup(root.store.chatsModelInst.userNameOrAlias(pk), pk, userProfileImage || root.store.utilsModelInst.generateIdenticon(pk))
+//                        return openProfilePopup(model.message.fromAuthor)
 //                    }
 //                    activityCenter.close()
 
@@ -270,15 +263,16 @@ Item {
 //                root.store.chatsModelInst.setActiveChannel(badge.chatId)
             }
 
-            Connections {
-                enabled: badge.realChatType === Constants.chatType.oneToOne
-                target: root.store.allContacts
-                onContactChanged: {
-                    if (pubkey === badge.chatId) {
-                        badge.profileImage = Global.getProfileImage(badge.chatId)
-                    }
-                }
-            }
+            // Not Refactored Yet
+//            Connections {
+//                enabled: badge.realChatType === Constants.chatType.oneToOne
+//                target: root.store.allContacts
+//                onContactChanged: {
+//                    if (pubkey === badge.chatId) {
+//                        badge.profileImage = Global.getProfileImage(badge.chatId)
+//                    }
+//                }
+//            }
         }
     }
 }

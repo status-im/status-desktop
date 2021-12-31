@@ -63,7 +63,7 @@ StatusModal {
                     property int contactIndex: popup.store.allContacts.getContactIndexByPubkey(model.publicKey)
                     property string nickname: appMain.getUserNickname(model.publicKey)
                     property string profileImage: contactIndex === -1 ? "" : popup.store.allContacts.rowData(contactIndex, 'thumbnailImage')
-                    property string displayName: Utils.getDisplayName(publicKey, contactIndex)
+                    property string displayName: Utils.getContactDetailsAsJson(publicKey).displayName
 
                     image.isIdenticon: !profileImage && model.identicon
                     image.source: profileImage || model.identicon

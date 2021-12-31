@@ -125,26 +125,6 @@ QtObject {
                 `<a href="${link}">${link}</a>`
     }
 
-    function getDisplayName(publicKey, contactIndex) {
-        if (contactIndex === undefined) {
-            contactIndex = contactsModule.model.list.getContactIndexByPubkey(publicKey)
-        }
-
-        if (contactIndex === -1) {
-            // Not Refactored Yet
-            return ""
-//            return utilsModel.generateAlias(publicKey)
-        }
-        const ensVerified = contactsModule.model.list.rowData(contactIndex, 'ensVerified')
-        if (!ensVerified) {
-            const nickname = contactsModule.model.list.rowData(contactIndex, 'localNickname')
-            if (nickname) {
-                return nickname
-            }
-        }
-        return contactsModule.model.list.rowData(contactIndex, 'name')
-    }
-
     function isMnemonic(value) {
         if(!value.match(/^([a-z\s]+)$/)){
             return false;
@@ -715,6 +695,38 @@ QtObject {
     }
 
     /* Validation section end */
+
+
+    function getContactDetailsAsJson(publicKey) {
+        let jsonObj = mainModule.getContactDetailsAsJson(publicKey)
+        let obj = JSON.parse(jsonObj)
+        if (obj.error) {
+            // This log is available only in debug mode, if it's annoying we can remove it
+            console.debug("error parsing contact details for public key: ", publicKey, " error: ", obj.error)
+            return {
+                displayName: "",
+                displayIcon: "",
+                isDisplayIconIdenticon: true,
+                publicKey: publicKey,
+                name: "",
+                ensVerified: false,
+                alias: "",
+                lastUpdated: 0,
+                lastUpdatedLocally: 0,
+                localNickname: "",
+                identicon: "",
+                thumbnailImage: "",
+                largeImage: "",
+                isContact: false,
+                isBlocked: false,
+                requestReceived: false,
+                isSyncing: false,
+                removed: false
+            }
+        }
+
+        return obj
+    }
 
 
 

@@ -29,15 +29,6 @@ type
     address*: string
     uuid*: string
 
-  ContactNicknameUpdatedArgs* = ref object of ContactArgs
-    nickname*: string
-
-  ContactAddedArgs* = ref object of Args
-    contact*: ContactsDto
-
-  ContactUpdatedArgs* = ref object of Args
-    contact*: ContactsDto
-
   ContactsStatusUpdatedArgs* = ref object of Args
     statusUpdates*: seq[StatusUpdateDto]
 
@@ -135,7 +126,7 @@ QtObject:
           receivedContact.localNickname = localContact.localNickname
           self.saveContact(receivedContact)
 
-          let data = ContactUpdatedArgs(contact: receivedContact)
+          let data = ContactArgs(contactId: c.id)
           self.events.emit(SIGNAL_CONTACT_UPDATED, data)
 
   proc init*(self: Service) =
@@ -243,7 +234,7 @@ QtObject:
       error "error adding contact ", msg
       return
     self.saveContact(contact)
-    self.events.emit(SIGNAL_CONTACT_ADDED, ContactAddedArgs(contact: contact))
+    self.events.emit(SIGNAL_CONTACT_ADDED, ContactArgs(contactId: contact.id))
 
   proc rejectContactRequest*(self: Service, publicKey: string) =
     var contact = self.getContactById(publicKey)
@@ -267,7 +258,7 @@ QtObject:
       error "error setting local name ", msg
       return
     self.saveContact(contact)
-    let data = ContactNicknameUpdatedArgs(contactId: contact.id, nickname: nickname)
+    let data = ContactArgs(contactId: contact.id)
     self.events.emit(SIGNAL_CONTACT_NICKNAME_CHANGED, data)
 
   proc unblockContact*(self: Service, publicKey: string) =
@@ -379,11 +370,9 @@ QtObject:
   proc getContactDetails*(self: Service, pubKey: string): ContactDetails =
     result = ContactDetails()
     let contact = self.getContactById(pubKey)
-    result.displayName = contact.userNameOrAlias()
+    let (name, icon, isIdenticon) = self.getContactNameAndImage(pubKey)
+    result.displayName = name
     result.isCurrentUser = pubKey == singletonInstance.userProfile.getPubKey()
-    result.icon = contact.identicon
-    result.isIconIdenticon = contact.identicon.len > 0
-    if(contact.image.thumbnail.len > 0): 
-      result.icon = contact.image.thumbnail
-      result.isIconIdenticon = false
+    result.icon = icon
+    result.isIconIdenticon = isIdenticon
     

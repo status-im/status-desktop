@@ -50,7 +50,7 @@ StatusAppTwoPanelLayout {
         }
 
         ContactsView {
-            store: profileView.store
+            contactsStore: profileView.store.contactsStore
             profileContentWidth: _internal.profileContentWidth
         }
 
