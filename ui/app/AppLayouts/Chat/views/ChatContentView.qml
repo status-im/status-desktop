@@ -93,10 +93,7 @@ ColumnLayout {
 //                          })
 //                break;
 //            case Constants.chatType.oneToOne:
-//                openProfilePopup(chatContentRoot.rootStore.chatsModelInst.userNameOrAlias(chatsModel.channelView.activeChannel.id),
-//                                 chatContentRoot.rootStore.chatsModelInst.channelView.activeChannel.id, profileImage
-//                                 || chatContentRoot.rootStore.chatsModelInst.channelView.activeChannel.identicon,
-//                                 "", chatContentRoot.rootStore.chatsModelInst.channelView.activeChannel.nickname)
+//                openProfilePopup(chatContentRoot.rootStore.chatsModelInst.channelView.activeChannel.id)
 //                break;
 //            }
         }

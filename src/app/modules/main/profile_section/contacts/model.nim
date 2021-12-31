@@ -1,148 +1,140 @@
-import NimQml, chronicles, sequtils, sugar, strutils, json
+import NimQml, item
+import Tables
 
-import ../../../../../app_service/service/contacts/dto/contacts
-import status/utils as status_utils
-import status/chat/chat
-import status/types/profile
-import status/ens as status_ens
+import NimQml, Tables
+import item
 
-import ./models/contact_list
+type
+  ModelRole {.pure.} = enum
+    PubKey = UserRole + 1
+    Name
+    Icon
+    IsIdenticon
+    IsContact
+    IsBlocked
+    RequestReceived
 
 QtObject:
-  type Model* = ref object of QObject
-    contactList*: ContactList
-    contactRequests*: ContactList
-    addedContacts*: ContactList
-    blockedContacts*: ContactList
+  type Model* = ref object of QAbstractListModel
+    items*: seq[Item]
 
-  proc setup(self: Model) =
-    self.QObject.setup
+  proc setup(self: Model) = 
+    self.QAbstractListModel.setup
 
-  proc delete*(self: Model) =
-    self.contactList.delete
-    self.addedContacts.delete
-    self.contactRequests.delete
-    self.blockedContacts.delete
-    self.QObject.delete
+  proc delete(self: Model) =
+    self.items = @[]
+    self.QAbstractListModel.delete
 
   proc newModel*(): Model =
     new(result, delete)
-    result.contactList = newContactList()
-    result.contactRequests = newContactList()
-    result.addedContacts = newContactList()
-    result.blockedContacts = newContactList()
     result.setup
 
-  proc contactListChanged*(self: Model) {.signal.}
-  proc contactRequestAdded*(self: Model, name: string, address: string) {.signal.}
+  proc countChanged(self: Model) {.signal.}
+  proc getCount(self: Model): int {.slot.} =
+    self.items.len
+  QtProperty[int] count:
+    read = getCount
+    notify = countChanged
 
-  proc contactAdded*(self: Model, contact: ContactsDto) =
-    self.contactList.updateContact(contact)
-    self.addedContacts.addContactToList(contact)
-    self.blockedContacts.removeContactFromList(contact.id)
-    self.contactRequests.removeContactFromList(contact.id)
-    self.contactListChanged()
+  method rowCount(self: Model, index: QModelIndex = nil): int =
+    return self.items.len
 
-  proc contactBlocked*(self: Model, contact: ContactsDto) =
-    self.contactList.updateContact(contact)
-    self.addedContacts.removeContactFromList(contact.id)
-    self.blockedContacts.addContactToList(contact)
-    self.contactRequests.removeContactFromList(contact.id)
-    self.contactListChanged()
+  method roleNames(self: Model): Table[int, string] =
+    {
+      ModelRole.PubKey.int:"pubKey",
+      ModelRole.Name.int:"name",
+      ModelRole.Icon.int:"icon",
+      ModelRole.IsIdenticon.int:"isIdenticon",
+      ModelRole.IsContact.int:"isContact",
+      ModelRole.IsBlocked.int:"isBlocked",
+      ModelRole.RequestReceived.int:"requestReceived"
+    }.toTable
 
-  proc contactUnblocked*(self: Model, contact: ContactsDto) =
-    self.contactList.updateContact(contact)
-    self.blockedContacts.removeContactFromList(contact.id)
-    self.contactListChanged()
+  method data(self: Model, index: QModelIndex, role: int): QVariant =
+    if not index.isValid:
+      return
+    if index.row < 0 or index.row >= self.items.len:
+      return
+    let item = self.items[index.row]
+    let enumRole = role.ModelRole
 
-  proc contactRemoved*(self: Model, contact: ContactsDto) =
-    self.contactList.updateContact(contact)
-    self.addedContacts.removeContactFromList(contact.id)
-    self.contactRequests.removeContactFromList(contact.id)
-    self.contactListChanged()
+    case enumRole:
+      of ModelRole.PubKey: 
+        result = newQVariant(item.pubKey)
+      of ModelRole.Name: 
+        result = newQVariant(item.name)
+      of ModelRole.Icon: 
+        result = newQVariant(item.icon)
+      of ModelRole.IsIdenticon: 
+        result = newQVariant(item.isIdenticon)
+      of ModelRole.IsContact: 
+        result = newQVariant(item.isContact)
+      of ModelRole.IsBlocked: 
+        result = newQVariant(item.isBlocked)
+      of ModelRole.RequestReceived: 
+        result = newQVariant(item.requestReceived)
 
-  proc changeNicknameForContactWithId*(self: Model, id: string, nickname: string) =
-    self.contactList.changeNicknameForContactWithId(id, nickname)
-    self.addedContacts.changeNicknameForContactWithId(id, nickname)
-    self.blockedContacts.changeNicknameForContactWithId(id, nickname)
-    self.contactRequests.changeNicknameForContactWithId(id, nickname)
+  proc addItems*(self: Model, items: seq[Item]) =
+    if(items.len == 0):
+      return
+      
+    let parentModelIndex = newQModelIndex()
+    defer: parentModelIndex.delete
 
-  proc updateContactList*(self: Model, contacts: seq[ContactsDto]) =
-    for contact in contacts:
-      var requestAlreadyAdded = false
-      for existingContact in self.contactList.contacts:
-        if existingContact.id == contact.id and existingContact.requestReceived():
-          requestAlreadyAdded = true
-          break
+    let first = self.items.len
+    let last = first + items.len - 1
+    self.beginInsertRows(parentModelIndex, first, last)
+    self.items.add(items)
+    self.endInsertRows()
+    self.countChanged()
 
-      self.contactList.updateContact(contact)
-      if contact.added:
-        self.addedContacts.updateContact(contact)
+  proc addItem*(self: Model, item: Item) =
+    let parentModelIndex = newQModelIndex()
+    defer: parentModelIndex.delete
 
-      if contact.isBlocked():
-        self.blockedContacts.updateContact(contact)
+    self.beginInsertRows(parentModelIndex, self.items.len, self.items.len)
+    self.items.add(item)
+    self.endInsertRows()
+    self.countChanged()
 
-      if contact.requestReceived() and not contact.added and not contact.blocked:
-        self.contactRequests.updateContact(contact)
+  proc findIndexByPubKey(self: Model, pubKey: string): int = 
+    for i in 0 ..< self.items.len:
+      if(self.items[i].pubKey == pubKey):
+        return i
+    return -1
 
-      if not requestAlreadyAdded and contact.requestReceived():
-        # TODO add back userNameOrAlias call
-        self.contactRequestAdded(contact.name, contact.id)
-        # self.contactRequestAdded(status_ens.userNameOrAlias(contact), contact.address)
+  proc containsItemWithPubKey*(self: Model, pubKey: string): bool = 
+    return self.findIndexByPubKey(pubKey) != -1
 
-    self.contactListChanged()
+  proc removeItemWithPubKey*(self: Model, pubKey: string) =
+    let ind = self.findIndexByPubKey(pubKey)
+    if(ind == -1):
+      return
 
-  proc getContactList(self: Model): QVariant {.slot.} =
-    return newQVariant(self.contactList)
+    let parentModelIndex = newQModelIndex()
+    defer: parentModelIndex.delete
 
-  proc setContactList*(self: Model, contactList: seq[ContactsDto]) =
-    self.contactList.setNewData(contactList)
-    self.addedContacts.setNewData(contactList.filter(c => c.added))
-    self.blockedContacts.setNewData(contactList.filter(c => c.blocked))
-    self.contactRequests.setNewData(contactList.filter(c => c.hasAddedUs and not c.added and not c.blocked))
+    self.beginRemoveRows(parentModelIndex, ind, ind)
+    self.items.delete(ind)
+    self.endRemoveRows()
+    self.countChanged()
 
-    self.contactListChanged()
+  proc updateItem*(self: Model, item: Item) = 
+    let ind = self.findIndexByPubKey(item.pubKey)
+    if(ind == -1):
+      return
 
-  QtProperty[QVariant] list:
-    read = getContactList
-    write = setContactList
-    notify = contactListChanged
+    self.items[ind] = item
 
-  proc getAddedContacts(self: Model): QVariant {.slot.} =
-    return newQVariant(self.addedContacts)
+    let index = self.createIndex(ind, 0, nil)
+    self.dataChanged(index, index, @[]) # all roles
 
-  QtProperty[QVariant] addedContacts:
-    read = getAddedContacts
-    notify = contactListChanged
+  proc updateName*(self: Model, pubKey: string, name: string) =
+    let ind = self.findIndexByPubKey(pubKey)
+    if(ind == -1):
+      return
 
-  proc getBlockedContacts(self: Model): QVariant {.slot.} =
-    return newQVariant(self.blockedContacts)
-
-  QtProperty[QVariant] blockedContacts:
-    read = getBlockedContacts
-    notify = contactListChanged
-
-  proc isContactBlocked*(self: Model, pubkey: string): bool {.slot.} =
-    for contact in self.blockedContacts.contacts:
-      if contact.id == pubkey:
-        return true
-    return false
-
-  proc getContactRequests(self: Model): QVariant {.slot.} =
-    return newQVariant(self.contactRequests)
-
-  QtProperty[QVariant] contactRequests:
-    read = getContactRequests
-    notify = contactListChanged
-
-  proc isAdded*(self: Model, pubkey: string): bool {.slot.} =
-    for contact in self.addedContacts.contacts:
-      if contact.id == pubkey:
-        return true
-    return false
-
-proc contactRequestReceived*(self: Model, pubkey: string): bool {.slot.} =
-    for contact in self.contactRequests.contacts:
-      if contact.id == pubkey:
-        return true
-    return false
+    let first = self.createIndex(ind, 0, nil)
+    let last = self.createIndex(ind, 0, nil)
+    self.items[ind].name = name
+    self.dataChanged(first, last, @[ModelRole.Name.int])

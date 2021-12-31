@@ -4,10 +4,13 @@ import utils 1.0
 QtObject {
     id: root
 
-    property var contactsModuleInst: contactsModule
     property var aboutModuleInst: aboutModule
 
     property var profileSectionModuleInst: profileSectionModule
+
+    property ContactsStore contactsStore: ContactsStore {
+        contactsModule: profileSectionModuleInst.contactsModule
+    }
 
     property AdvancedStore advancedStore: AdvancedStore {
         advancedModule: profileSectionModuleInst.advancedModule
@@ -53,9 +56,6 @@ QtObject {
 //    property var ens: profileModelInst.ens
     property var dappList: dappPermissionsModule.dapps
     property var permissionList: dappPermissionsModule.permissions
-    property var contacts: contactsModuleInst.model.list
-    property var blockedContacts: contactsModuleInst.model.blockedContacts
-    property var addedContacts: contactsModuleInst.model.addedContacts
     // Not Refactored Yet
 //    property var mutedChatsContacts: profileModelInst.mutedChats.contacts
 //    property var mutedChats: profileModelInst.mutedChats.chats
@@ -186,39 +186,6 @@ QtObject {
 
     function initDappList() {
         dappPermissionsModule.fetchDapps()
-    }
-
-    function lookupContact(value) {
-        contactsModuleInst.lookupContact(value)
-    }
-
-    function addContact(pubKey) {
-        contactsModuleInst.addContact(pubKey)
-    }
-
-    function generateAlias(pubKey) {
-       return globalUtils.generateAlias(pubKey)
-    }
-
-    function joinPrivateChat(address) {
-        let chatCommunitySectionModule = mainModule.getChatSectionModule()
-        chatCommunitySectionModule.createOneToOneChat(address, "")
-    }
-
-    function unblockContact(address) {
-        contactsModuleInst.unblockContact(address)
-    }
-
-    function blockContact(address) {
-        contactsModuleInst.blockContact(address)
-    }
-
-    function isContactAdded(address) {
-        return contactsModuleInst.model.isAdded(address)
-    }
-
-    function removeContact(address) {
-        contactsModuleInst.removeContact(address)
     }
 
     function ensDetails(username) {

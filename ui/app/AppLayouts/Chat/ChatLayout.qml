@@ -180,7 +180,7 @@ StatusAppThreePanelLayout {
         id: quickActionMessageOptionsMenu
 
         onOpenProfileClicked: {
-            Global.openProfilePopup(displayName, publicKey, icon, "", displayName)
+            Global.openProfilePopup(publicKey)
         }
         onCreateOneToOneChat: {
             Global.changeAppSectionBySectionType(Constants.appSection.chat)

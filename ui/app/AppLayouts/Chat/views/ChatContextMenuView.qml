@@ -58,13 +58,7 @@ StatusPopupMenu {
         onTriggered: {
             if (root.chatType === Constants.chatType.oneToOne) {
                 const userProfileImage = Global.getProfileImage(root.chatId)
-                return Global.openProfilePopup(
-                    root.chatName,
-                    root.chatId,
-                    root.chatIcon,
-                    "",
-                    root.chatName
-                )
+                return Global.openProfilePopup(root.chatId)
             }
             if (root.chatType === Constants.chatType.privateGroupChat) {
                 root.displayGroupInfoPopup(root.chatId)

@@ -20,18 +20,21 @@ StatusModal {
 
     property Popup parentPopup
 
-    property var store
-    property var identicon: ""
-    property var userName: ""
-    property string nickname: ""
-    property var fromAuthor: ""
-    property var text: ""
-    property var alias: ""
+    property var contactsStore
+
+    property string userPublicKey: ""
+    property string userDisplayName: ""
+    property string userName: ""
+    property string userNickname: ""
+    property string userEnsName: ""
+    property string userIcon: ""
+    property string text: ""
+
 
     readonly property int innerMargin: 20
 
-    property bool isEnsVerified: false
-    property bool isBlocked: false
+    property bool userIsEnsVerified: false
+    property bool userIsBlocked: false
     property bool isCurrentUser: false
 
     signal blockButtonClicked(name: string, address: string)
@@ -42,25 +45,28 @@ StatusModal {
     signal contactBlocked(publicKey: string)
     signal contactAdded(publicKey: string)
 
-    function openPopup(_showFooter, userNameParam, fromAuthorParam, identiconParam, textParam, nicknameParam) {
-        userName = userNameParam || ""
-        nickname = nicknameParam || ""
-        fromAuthor = fromAuthorParam || ""
-        identicon = identiconParam || ""
-        text = textParam || ""
-        isEnsVerified = RootStore.isEnsVerified(this.fromAuthor)
-        isBlocked = RootStore.isContactBlocked(this.fromAuthor);
-        alias = RootStore.alias(this.fromAuthor) || ""
-        isCurrentUser = userProfile.pubKey === this.fromAuthor
-        showFooter = _showFooter;
+    function openPopup(publicKey) {
+        // All this should be improved more, but for now we leave it like this.
+        let contactDetails = Utils.getContactDetailsAsJson(publicKey)
+        userPublicKey = publicKey
+        userDisplayName = contactDetails.displayName
+        userName = contactDetails.alias
+        userNickname = contactDetails.localNickname
+        userEnsName = contactDetails.name
+        userIcon = contactDetails.displayIcon
+        userIsEnsVerified = contactDetails.ensVerified
+        userIsBlocked = contactDetails.isBlocked
+
+        text = "" // this is most likely unneeded
+        isCurrentUser = userProfile.pubKey === publicKey
+        showFooter = !isCurrentUser
         popup.open()
     }
 
-    // Not Refactored Yet
-//    header.title: Utils.removeStatusEns(isCurrentUser ? profileModel.ens.preferredUsername || userName : userName)
-    header.subTitle: isEnsVerified ? alias : fromAuthor
+    header.title: userDisplayName
+    header.subTitle: userIsEnsVerified ? userName : userPublicKey
     header.subTitleElide: Text.ElideMiddle
-    header.image.source: identicon
+    header.image.source: userIcon
 
     headerActionButton: StatusFlatRoundButton {
         type: StatusFlatRoundButton.Type.Secondary
@@ -93,14 +99,14 @@ StatusModal {
             }
 
             StatusDescriptionListItem {
-                title: ((isCurrentUser && userProfile.ensName) || isEnsVerified) ?
+                title: userIsEnsVerified ?
                     qsTr("ENS username") :
                     qsTr("Username")
-                subTitle: isCurrentUser ? userProfile.name : userName
+                subTitle: userIsEnsVerified ? userEnsName : userName
                 tooltip.text: qsTr("Copy to clipboard")
                 icon.name: "copy"
                 iconButton.onClicked: {
-                    globalUtils.copyToClipboard(userName)
+                    globalUtils.copyToClipboard(subTitle)
                     tooltip.visible = !tooltip.visible
                 }
                 width: parent.width
@@ -108,14 +114,14 @@ StatusModal {
 
             StatusDescriptionListItem {
                 title: qsTr("Chat key")
-                subTitle: fromAuthor
+                subTitle: userPublicKey
                 subTitleComponent.elide: Text.ElideMiddle
                 subTitleComponent.width: 320
                 subTitleComponent.font.family: Theme.palette.monoFont.name
                 tooltip.text: qsTr("Copy to clipboard")
                 icon.name: "copy"
                 iconButton.onClicked: {
-                    globalUtils.copyToClipboard(userName)
+                    globalUtils.copyToClipboard(subTitle)
                     tooltip.visible = !tooltip.visible
                 }
                 width: parent.width
@@ -133,12 +139,12 @@ StatusModal {
                     if (isCurrentUser) {
                          user = userProfile.name
                     } else {
-                        if (isEnsVerified) {
-                            user = userName.startsWith("@") ? userName.substring(1) : userName
+                        if (userIsEnsVerified) {
+                            user = userEnsName
                         }
                     }
                     if (user === ""){
-                        user = fromAuthor.substr(0, 4) + "..." + fromAuthor.substr(fromAuthor.length - 5)
+                        user = userPublicKey.substr(0, 4) + "..." + userPublicKey.substr(userPublicKey.length - 5)
                     }
                     return Constants.userLinkPrefix +  user;
                 }
@@ -149,15 +155,15 @@ StatusModal {
                     if (isCurrentUser) {
                          user = userProfile.name
                     } else {
-                        if (isEnsVerified) {
+                        if (userIsEnsVerified) {
                             user = userName.startsWith("@") ? userName.substring(1) : userName
                         }
                     }
                     if (user === ""){
-                        user = fromAuthor
+                        user = userPublicKey
                     }
 
-                    globalUtils.copyToClipboard(Constants.userLinkPrefix + user)
+                    globalUtils.copyToClipboard(subTitle)
                     tooltip.visible = !tooltip.visible
                 }
                 width: parent.width
@@ -173,7 +179,7 @@ StatusModal {
                 visible: !isCurrentUser
                 title: qsTr("Chat settings")
                 subTitle: qsTr("Nickname")
-                value: nickname ? nickname : qsTr("None")
+                value: userNickname ? userNickname : qsTr("None")
                 sensor.enabled: true
                 sensor.onClicked: {
                     nicknamePopup.open()
@@ -196,7 +202,7 @@ StatusModal {
             Image {
                 asynchronous: true
                 fillMode: Image.PreserveAspectFit
-                source: globalUtils.qrCode(fromAuthor)
+                source: globalUtils.qrCode(userPublicKey)
                 anchors.horizontalCenter: parent.horizontalCenter
                 height: 212
                 width: 212
@@ -208,21 +214,21 @@ StatusModal {
         UnblockContactConfirmationDialog {
             id: unblockContactConfirmationDialog
             onUnblockButtonClicked: {
-                RootStore.contactsModuleInst.unblockContact(fromAuthor)
+                popup.contactsStore.unblockContact(userPublicKey)
                 unblockContactConfirmationDialog.close();
                 popup.close()
-                popup.contactUnblocked(fromAuthor)
+                popup.contactUnblocked(userPublicKey)
             }
         }
 
         BlockContactConfirmationDialog {
             id: blockContactConfirmationDialog
             onBlockButtonClicked: {
-                RootStore.contactsModuleInst.blockContact(fromAuthor)
+                popup.contactsStore.blockContact(userPublicKey)
                 blockContactConfirmationDialog.close();
                 popup.close()
 
-                popup.contactBlocked(fromAuthor)
+                popup.contactBlocked(userPublicKey)
             }
         }
 
@@ -231,8 +237,8 @@ StatusModal {
             header.title: qsTr("Remove contact")
             confirmationText: qsTr("Are you sure you want to remove this contact?")
             onConfirmButtonClicked: {
-                if (RootStore.contactsModuleModel.isAdded(fromAuthor)) {
-                    RootStore.contactsModuleInst.removeContact(fromAuthor);
+                if (popup.contactsStore.isContactAdded(userPublicKey)) {
+                    popup.contactsStore.removeContact(userPublicKey);
                 }
                 removeContactConfirmationDialog.close();
                 popup.close();
@@ -243,42 +249,38 @@ StatusModal {
             id: nicknamePopup
             onDoneClicked: {
                 // Change username title only if it was not an ENS name
-                if (isEnsVerified) {
+                if (userIsEnsVerified) {
                     popup.userName = newUsername;
                 }
-                popup.nickname = newNickname;
-                RootStore.contactsModuleInst.changeContactNickname(fromAuthor, newNickname);
+                popup.userNickname = newNickname;
+                popup.contactsStore.changeContactNickname(userPublicKey, newNickname);
                 popup.close()
-                // Not Refactored Yet
-//                if (!!chatsModel.communities.activeCommunity) {
-//                    chatsModel.communities.activeCommunity.triggerMembersUpdate();
-//                }
             }
         }
     }
 
     rightButtons: [
         StatusFlatButton {
-            text: isBlocked ?
+            text: userIsBlocked ?
                 qsTr("Unblock User") :
                 qsTr("Block User")
             type: StatusBaseButton.Type.Danger
             onClicked: {
-                if (isBlocked) {
+                if (userIsBlocked) {
                     contentItem.unblockContactConfirmationDialog.contactName = userName;
-                    contentItem.unblockContactConfirmationDialog.contactAddress = fromAuthor;
+                    contentItem.unblockContactConfirmationDialog.contactAddress = userPublicKey;
                     contentItem.unblockContactConfirmationDialog.open();
                     return;
                 }
                 contentItem.blockContactConfirmationDialog.contactName = userName;
-                contentItem.blockContactConfirmationDialog.contactAddress = fromAuthor;
+                contentItem.blockContactConfirmationDialog.contactAddress = userPublicKey;
                 contentItem.blockContactConfirmationDialog.open();
             }
         },
 
         StatusFlatButton {
-            property bool isAdded: RootStore.contactsModuleModel.isAdded(fromAuthor)
-            visible: !isBlocked && isAdded
+            property bool isAdded: popup.contactsStore.isContactAdded(userPublicKey)
+            visible: !userIsBlocked && isAdded
             type: StatusBaseButton.Type.Danger
             text: qsTr('Remove Contact')
             onClicked: {
@@ -288,12 +290,12 @@ StatusModal {
         },
 
         StatusButton {
-            property bool isAdded: RootStore.contactsModuleModel.isAdded(fromAuthor)
+            property bool isAdded: popup.contactsStore.isContactAdded(userPublicKey)
             text: qsTr("Add to contacts")
-            visible: !isBlocked && !isAdded
+            visible: !userIsBlocked && !isAdded
             onClicked: {
-                popup.store.addContact(fromAuthor);
-                popup.contactAdded(fromAuthor);
+                popup.contactsStore.addContact(userPublicKey);
+                popup.contactAdded(userPublicKey);
                 popup.close();
             }
         }

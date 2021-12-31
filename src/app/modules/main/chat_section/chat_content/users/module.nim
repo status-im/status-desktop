@@ -74,26 +74,18 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto]) =
     let status = statusUpdateDto.statusType.int.OnlineStatus
     self.view.model().addItem(initItem(m.`from`, name, status, image, isidenticon))
 
-method contactNicknameChanged*(self: Module, publicKey: string, nickname: string) =
-  if(nickname.len == 0):
-    let (name, _, _) = self.controller.getContactNameAndImage(publicKey)
-    self.view.model().setName(publicKey, name)
-  else:
-    self.view.model().setName(publicKey, nickname)
+method contactNicknameChanged*(self: Module, publicKey: string) =
+  let (name, _, _) = self.controller.getContactNameAndImage(publicKey)
+  self.view.model().setName(publicKey, name)
 
 method contactsStatusUpdated*(self: Module, statusUpdates: seq[StatusUpdateDto]) =
   for s in statusUpdates:
     let status = s.statusType.int.OnlineStatus
     self.view.model().setOnlineStatus(s.publicKey, status)
 
-method contactUpdated*(self: Module, contact: ContactsDto) =
-  var icon = contact.identicon
-  var isIdenticon = contact.identicon.len > 0
-  if(contact.image.thumbnail.len > 0): 
-    icon = contact.image.thumbnail
-    isIdenticon = false
-
-  self.view.model().updateItem(contact.id, contact.userNameOrAlias(), icon, isIdenticon)
+method contactUpdated*(self: Module, publicKey: string) =
+  let (name, image, isIdenticon) = self.controller.getContactNameAndImage(publicKey)
+  self.view.model().updateItem(publicKey, name, image, isIdenticon)
 
 method loggedInUserImageChanged*(self: Module) =
   self.view.model().setIcon(singletonInstance.userProfile.getPubKey(), singletonInstance.userProfile.getIcon(),

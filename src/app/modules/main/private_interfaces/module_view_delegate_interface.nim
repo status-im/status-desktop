@@ -21,3 +21,6 @@ method getCommunitySectionModule*(self: AccessInterface, communityId: string): Q
 
 method getAppSearchModule*(self: AccessInterface): QVariant {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method getContactDetailsAsJson*(self: AccessInterface, publicKey: string): string {.base.} =
+  raise newException(ValueError, "No implementation available")

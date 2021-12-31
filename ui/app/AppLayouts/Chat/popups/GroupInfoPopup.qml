@@ -263,8 +263,7 @@ StatusModal {
                     }
                 ]
                 onTitleClicked:  {
-                    const userProfileImage = Global.getProfileImage(model.publicKey)
-                    Global.openProfilePopup(model.userName, model.publicKey, userProfileImage || model.identicon, '', contactRow.nickname, popup)
+                    Global.openProfilePopup(model.publicKey, popup)
                 }
             }
         }

@@ -42,28 +42,13 @@ ScrollView {
     }
 
     function openProfilePopup(userNameParam, fromAuthorParam, identiconParam, textParam, nicknameParam, parentPopup){
-        var popup = profilePopupComponent.createObject(root);
-        if(parentPopup){
-            popup.parentPopup = parentPopup;
-        }
-        popup.openPopup(userProfile.pubKey !== fromAuthorParam, userNameParam, fromAuthorParam, identiconParam, textParam, nicknameParam);
+        Global.openProfilePopup(fromAuthorParam)
     }
 
     StatusImageModal {
         id: imagePopup
         onClicked: {
             close()
-        }
-    }
-
-    property Component profilePopupComponent: ProfilePopup {
-        id: profilePopup
-        store: root.store
-        onClosed: {
-            if(profilePopup.parentPopup){
-                profilePopup.parentPopup.close();
-            }
-            destroy()
         }
     }
 

@@ -21,6 +21,11 @@ QtObject:
   proc load*(self: View) =
     self.delegate.viewDidLoad()
 
+  proc getContactsModule(self: View): QVariant {.slot.} =
+    return self.delegate.getContactsModule()
+  QtProperty[QVariant] contactsModule:
+    read = getContactsModule
+
   proc getLanguageModule(self: View): QVariant {.slot.} =
     return self.delegate.getLanguageModule()
   QtProperty[QVariant] languageModule:

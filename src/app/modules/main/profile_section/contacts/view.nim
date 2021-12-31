@@ -1,110 +1,85 @@
-import NimQml, sequtils, sugar, json, strutils
+import NimQml
 
-# import ./item
-import ../../../../../app_service/service/contacts/dto/contacts
 import ./model
-import status/types/profile
-import models/[contact_list]
 import ./io_interface
-
-# import status/types/[identity_image, profile]
-
-import ../../../../core/[main]
-import ../../../../core/tasks/[qt, threadpool]
 
 QtObject:
   type
     View* = ref object of QObject
       delegate: io_interface.AccessInterface
-      model: Model
-      modelVariant: QVariant
-      contactToAdd*: ContactsDto
+      myContactsModel: Model
+      myContactsModelVariant: QVariant
+      blockedContactsModel: Model
+      blockedContactsModelVariant: QVariant
+      contactsWhoAddedMeModel: Model
+      contactsWhoAddedMeModelVariant: QVariant
 
   proc delete*(self: View) =
-    self.model.delete
-    self.modelVariant.delete
+    self.myContactsModel.delete
+    self.myContactsModelVariant.delete
+    self.blockedContactsModel.delete
+    self.blockedContactsModelVariant.delete
+    self.contactsWhoAddedMeModel.delete
+    self.contactsWhoAddedMeModelVariant.delete
     self.QObject.delete
 
   proc newView*(delegate: io_interface.AccessInterface): View =
     new(result, delete)
     result.QObject.setup
     result.delegate = delegate
-    result.model = newModel()
-    result.modelVariant = newQVariant(result.model)
-    result.contactToAdd = ContactsDto()
+    result.myContactsModel = newModel()
+    result.myContactsModelVariant = newQVariant(result.myContactsModel)
+    result.blockedContactsModel = newModel()
+    result.blockedContactsModelVariant = newQVariant(result.blockedContactsModel)
+    result.contactsWhoAddedMeModel = newModel()
+    result.contactsWhoAddedMeModelVariant = newQVariant(result.contactsWhoAddedMeModel)
 
   proc load*(self: View) =
     self.delegate.viewDidLoad()
     
-  proc model*(self: View): Model =
-    return self.model
+  proc myContactsModel*(self: View): Model =
+    return self.myContactsModel
 
-  proc modelChanged*(self: View) {.signal.}
+  proc blockedContactsModel*(self: View): Model =
+    return self.blockedContactsModel
 
-  proc getModel*(self: View): QVariant {.slot.} =
-    return self.modelVariant
+  proc contactsWhoAddedMeModel*(self: View): Model =
+    return self.contactsWhoAddedMeModel
 
-  QtProperty[QVariant] model:
-    read = getModel
-    notify = modelChanged
+  proc myContactsModelChanged(self: View) {.signal.}
+  proc getMyContactsModel(self: View): QVariant {.slot.} =
+    return self.myContactsModelVariant
+  QtProperty[QVariant] myContactsModel:
+    read = getMyContactsModel
+    notify = myContactsModelChanged
 
-  proc contactToAddChanged*(self: View) {.signal.}
+  proc blockedContactsModelChanged(self: View) {.signal.}
+  proc getBlockedContactsModel(self: View): QVariant {.slot.} =
+    return self.blockedContactsModelVariant
+  QtProperty[QVariant] blockedContactsModel:
+    read = getBlockedContactsModel
+    notify = blockedContactsModelChanged
 
-  proc getContactToAddUsername(self: View): QVariant {.slot.} =
-    var username = self.contactToAdd.alias;
-
-    if self.contactToAdd.ensVerified and self.contactToAdd.name != "":
-      username = self.contactToAdd.name
-
-    return newQVariant(username)
-
-  QtProperty[QVariant] contactToAddUsername:
-    read = getContactToAddUsername
-    notify = contactToAddChanged
-
-  proc getContactToAddPubKey(self: View): QVariant {.slot.} =
-    # TODO cofirm that id is the pubKey
-    return newQVariant(self.contactToAdd.id)
-
-  QtProperty[QVariant] contactToAddPubKey:
-    read = getContactToAddPubKey
-    notify = contactToAddChanged  
-
+  proc contactsWhoAddedMeModelChanged(self: View) {.signal.}
+  proc getContactsWhoAddedMeModel(self: View): QVariant {.slot.} =
+    return self.contactsWhoAddedMeModelVariant
+  QtProperty[QVariant] contactsWhoAddedMeModel:
+    read = getContactsWhoAddedMeModel
+    notify = contactsWhoAddedMeModelChanged
+  
   proc ensWasResolved*(self: View, resolvedPubKey: string) {.signal.}
+  proc emitEnsWasResolvedSignal*(self: View, resolvedPubKey: string) =
+    self.ensWasResolved(resolvedPubKey)
 
   proc resolvedENSWithUUID*(self: View, resolvedAddress: string, uuid: string) {.signal.}
+  proc emitrEsolvedENSWithUUIDSignal*(self: View, resolvedAddress: string, uuid: string) =
+    self.resolvedENSWithUUID(resolvedAddress, uuid)
 
-  proc contactLookedUp*(self: View, id: string) {.slot.} =
-    self.ensWasResolved(id)
+  proc lookupContact*(self: View, publicKey: string) {.slot.} =
+    self.delegate.lookupContact(publicKey)
 
-    if id == "":
-      self.contactToAddChanged()
-      return
-
-    let contact = self.delegate.getContact(id)
-
-    if contact.id != "":
-      self.contactToAdd = contact
-    else:
-      self.contactToAdd = ContactsDto(
-        id: id,
-        alias: self.delegate.generateAlias(id),
-        ensVerified: false
-      )
-
-    self.contactToAddChanged()
-
-  proc lookupContact*(self: View, value: string) {.slot.} =
-    if value == "":
-      return
-
-    self.delegate.lookupContact(value)
-
-  proc resolveENSWithUUID*(self: View, value: string, uuid: string) {.slot.} =
-    if value == "":
-      return
-
-    self.delegate.resolveENSWithUUID(value, uuid)
+  proc resolveENSWithUUID*(self: View, ensName: string, uuid: string) {.slot.} =
+    self.delegate.resolveENSWithUUID(ensName, uuid)
 
   proc addContact*(self: View, publicKey: string) {.slot.} =
     self.delegate.addContact(publicKey)
@@ -113,14 +88,10 @@ QtObject:
     self.delegate.rejectContactRequest(publicKey)
 
   proc rejectContactRequests*(self: View, publicKeysJSON: string) {.slot.} =
-    let publicKeys = publicKeysJSON.parseJson
-    for pubkey in publicKeys:
-      self.rejectContactRequest(pubkey.getStr)
+    self.delegate.rejectContactRequest(publicKeysJSON)
 
   proc acceptContactRequests*(self: View, publicKeysJSON: string) {.slot.} =
-    let publicKeys = publicKeysJSON.parseJson
-    for pubkey in publicKeys:
-      self.addContact(pubkey.getStr)
+    self.delegate.addContact(publicKeysJSON)
 
   proc changeContactNickname*(self: View, publicKey: string, nickname: string) {.slot.} =
     self.delegate.changeContactNickname(publicKey, nickname)
@@ -128,18 +99,20 @@ QtObject:
   proc unblockContact*(self: View, publicKey: string) {.slot.} =
     self.delegate.unblockContact(publicKey)
 
-  proc contactBlocked*(self: View, publicKey: string) {.signal.}
-
   proc blockContact*(self: View, publicKey: string) {.slot.} =
-    self.contactBlocked(publicKey)
     self.delegate.blockContact(publicKey)
 
   proc removeContact*(self: View, publicKey: string) {.slot.} =
     self.delegate.removeContact(publicKey)
 
+  proc isContactAdded*(self: View, publicKey: string): bool {.slot.} =
+    return self.delegate.isContactAdded(publicKey)
+
+  proc isContactBlocked*(self: View, publicKey: string): bool {.slot.} =
+    return self.delegate.isContactBlocked(publicKey)
+
   proc isEnsVerified*(self: View, publicKey: string): bool {.slot.} =
-    return self.delegate.getContact(publicKey).ensVerified
+    return self.delegate.isEnsVerified(publicKey)
 
   proc alias*(self: View, publicKey: string): string {.slot.} =
-    return self.delegate.getContact(publicKey).alias
-
+    return self.delegate.alias(publicKey)

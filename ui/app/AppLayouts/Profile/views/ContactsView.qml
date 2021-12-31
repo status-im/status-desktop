@@ -13,13 +13,14 @@ import shared.panels 1.0
 import shared.popups 1.0
 import shared.controls 1.0
 
+import "../stores"
 import "../panels"
 import "../popups"
 
 Item {
     id: root
 
-    property var store
+    property ContactsStore contactsStore
     property int profileContentWidth
 
     property alias searchStr: searchBox.text
@@ -84,7 +85,7 @@ Item {
             anchors.top: addNewContact.bottom
             anchors.topMargin: Style.current.bigPadding
             width: parent.width
-            visible: root.store.blockedContacts.count > 0
+            visible: root.contactsStore.blockedContactsModel.count > 0
             height: 64
 
             StatusRoundButton {
@@ -109,7 +110,7 @@ Item {
 
             StyledText {
                 id: numberOfBlockedContacts
-                text: root.store.blockedContacts.count
+                text: root.contactsStore.blockedContactsModel.count
                 color: Style.current.darkGrey
                 anchors.right: parent.right
                 anchors.rightMargin: Style.current.padding
@@ -132,18 +133,21 @@ Item {
             title: qsTrId("blocked-contacts")
 
             ContactsListPanel {
-                store: root.store
                 anchors.top: parent.top
                 anchors.bottom: parent.bottom
-                contacts: root.store.blockedContacts
+                contactsModel: root.contactsStore.blockedContactsModel
+
+                onOpenProfilePopup: {
+                    Global.openProfilePopup(contact.pubKey)
+                }
 
                 onRemoveContactActionTriggered: {
-                    removeContactConfirmationDialog.value = contact.address
+                    removeContactConfirmationDialog.value = contact.pubKey
                     removeContactConfirmationDialog.open()
                 }
 
                 onUnblockContactActionTriggered: {
-                    root.store.unblockContact(contact.address)
+                    root.contactsStore.unblockContact(contact.pubKey)
                 }
             }
         }
@@ -165,7 +169,7 @@ Item {
             function validate(value) {
                 if (!Utils.isChatKey(value) && !Utils.isValidETHNamePrefix(value)) {
                     addContactModal.validationError = qsTr("Enter a valid chat key or ENS username");
-                } else if (root.store.pubKey === value) {
+                } else if (root.contactsStore.myPublicKey === value) {
                     //% "You can't add yourself"
                     addContactModal.validationError = qsTrId("you-can-t-add-yourself");
                 } else {
@@ -177,7 +181,7 @@ Item {
             property var lookupContact: Backpressure.debounce(addContactSearchInput, 400, function (value) {
                 root.isPending = true
                 searchResults.showProfileNotFoundMessage = false
-                root.store.lookupContact(value)
+                root.contactsStore.lookupContact(value)
             })
 
             onOpened: {
@@ -208,7 +212,7 @@ Item {
 
 
                 Connections {
-                    target: root.store.contactsModuleInst
+                    target: root.contactsStore.contactsModule
                     onEnsWasResolved: function (resolvedPubKey) {
                         if (resolvedPubKey === "") {
                             searchResults.pubKey = ""
@@ -216,7 +220,7 @@ Item {
                             root.isPending = false
                             return
                         }
-                        searchResults.username = Utils.isChatKey(addContactSearchInput.text) ? root.store.generateAlias(resolvedPubKey) : Utils.addStatusEns(addContactSearchInput.text.trim())
+                        searchResults.username = Utils.isChatKey(addContactSearchInput.text) ? root.contactsStore.generateAlias(resolvedPubKey) : Utils.addStatusEns(addContactSearchInput.text.trim())
                         searchResults.userAlias = Utils.compactAddress(resolvedPubKey, 4)
                         searchResults.pubKey = resolvedPubKey
                         searchResults.showProfileNotFoundMessage = false
@@ -242,17 +246,16 @@ Item {
                 anchors.topMargin: Style.current.xlPadding
                 loading: root.isPending
                 resultClickable: false
-                onAddToContactsButtonClicked: root.store.addContact(pubKey)
+                onAddToContactsButtonClicked: root.contactsStore.addContact(pubKey)
             }
         }
 
         ContactsListPanel {
             id: contactListView
-            store: root.store
             anchors.top: blockedContactsButton.visible ? blockedContactsButton.bottom : addNewContact.bottom
             anchors.topMargin: Style.current.bigPadding
             anchors.bottom: parent.bottom
-            contacts: root.store.addedContacts
+            contactsModel: root.contactsStore.myContactsModel
             hideBlocked: true
             searchString: searchBox.text
 
@@ -260,34 +263,36 @@ Item {
             onCountChanged: searchResults.isAddedContact = searchResults.isContactAdded()
 
             onContactClicked: {
-                Global.changeAppSectionBySectionType(Constants.appSection.chat)
-                root.store.joinPrivateChat(contact.address)
+                root.contactsStore.joinPrivateChat(contact.pubKey)
+            }
+
+            onOpenProfilePopup: {
+                Global.openProfilePopup(contact.pubKey)
             }
 
             onSendMessageActionTriggered: {
-                Global.changeAppSectionBySectionType(Constants.appSection.chat)
-                root.store.joinPrivateChat(contact.address)
+                root.contactsStore.joinPrivateChat(contact.pubKey)
             }
 
             onBlockContactActionTriggered: {
-                blockContactConfirmationDialog.contactName = Utils.removeStatusEns(contact.name)
-                blockContactConfirmationDialog.contactAddress = contact.address
+                blockContactConfirmationDialog.contactName = contact.name
+                blockContactConfirmationDialog.contactAddress = contact.pubKey
                 blockContactConfirmationDialog.open()
             }
 
             onRemoveContactActionTriggered: {
-                removeContactConfirmationDialog.value = contact.address
+                removeContactConfirmationDialog.value = contact.pubKey
                 removeContactConfirmationDialog.open()
             }
 
             onUnblockContactActionTriggered: {
-                root.store.unblockContact(contact.address)
+                root.contactsStore.unblockContact(contact.pubKey)
             }
         }
 
         NoFriendsRectangle {
             id: element
-            visible: root.store.addedContacts.count === 0
+            visible: root.contactsStore.myContactsModel.count === 0
             //% "You don’t have any contacts yet"
             text: qsTrId("you-don-t-have-any-contacts-yet")
             width: parent.width
@@ -299,7 +304,7 @@ Item {
     BlockContactConfirmationDialog {
         id: blockContactConfirmationDialog
         onBlockButtonClicked: {
-            root.store.blockContact(blockContactConfirmationDialog.contactAddress)
+            root.contactsStore.blockContact(blockContactConfirmationDialog.contactAddress)
             blockContactConfirmationDialog.close()
         }
     }
@@ -313,8 +318,8 @@ Item {
         //% "Are you sure you want to remove this contact?"
         confirmationText: qsTrId("are-you-sure-you-want-to-remove-this-contact-")
         onConfirmButtonClicked: {
-            if (root.store.isContactAdded(removeContactConfirmationDialog.value)) {
-              root.store.removeContact(removeContactConfirmationDialog.value);
+            if (root.contactsStore.isContactAdded(removeContactConfirmationDialog.value)) {
+              root.contactsStore.removeContact(removeContactConfirmationDialog.value);
             }
             removeContactConfirmationDialog.close()
         }

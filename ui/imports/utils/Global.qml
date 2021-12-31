@@ -28,10 +28,10 @@ QtObject {
     signal settingsLoaded()
     signal openBackUpSeedPopup()
 
-    signal openProfilePopupRequested(string userNameParam, string fromAuthorParam, string identiconParam, string textParam, string nicknameParam, var parentPopup)
+    signal openProfilePopupRequested(string publicKey, var parentPopup)
 
-    function openProfilePopup(userNameParam, fromAuthorParam, identiconParam, textParam, nicknameParam, parentPopup){
-        openProfilePopupRequested(userNameParam, fromAuthorParam, identiconParam, textParam, nicknameParam, parentPopup);
+    function openProfilePopup(publicKey, parentPopup){
+        openProfilePopupRequested(publicKey, parentPopup);
     }
 
     function openPopup(popupComponent, params = {}) {
@@ -54,19 +54,12 @@ QtObject {
             return userProfile.icon;
         }
 
-        const index = contactsModule.model.list.getContactIndexByPubkey(pubkey);
-        if (index === -1) {
+        let contactDetails = Utils.getContactDetailsAsJson(publicKey)
+        if (localAccountSensitiveSettings.onlyShowContactsProfilePics && !contactDetails.isContact) {
             return;
         }
 
-        if (localAccountSensitiveSettings.onlyShowContactsProfilePics) {
-            const isContact = contactsModule.model.list.rowData(index, "isContact");
-            if (isContact === "false") {
-                return;
-            }
-        }
-
-        return contactsModule.model.list.rowData(index, useLargeImage ? "largeImage" : "thumbnailImage");
+        return contactDetails.displayIcon
     }
 
     function openLink(link) {

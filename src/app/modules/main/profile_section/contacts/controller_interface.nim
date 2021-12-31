@@ -1,6 +1,4 @@
-import ../../../../../app_service/service/profile/service as profile_service
-import ../../../../../app_service/service/contacts/dto/contacts as ContactDto
-# import ./item
+import ../../../../../app_service/service/contacts/dto/contacts as contacts_dto
 
 type 
   AccessInterface* {.pure inheritable.} = ref object of RootObj
@@ -12,13 +10,14 @@ method delete*(self: AccessInterface) {.base.} =
 method init*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getContacts*(self: AccessInterface): seq[ContactDto.ContactsDto] {.base.} =
+method getContacts*(self: AccessInterface): seq[ContactsDto] {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getContact*(self: AccessInterface, id: string): ContactDto.ContactsDto {.base.} =
+method getContact*(self: AccessInterface, id: string): ContactsDto {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method generateAlias*(self: AccessInterface, publicKey: string): string {.base.} =
+method getContactNameAndImage*(self: AccessInterface, contactId: string): 
+  tuple[name: string, image: string, isIdenticon: bool] {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method addContact*(self: AccessInterface, publicKey: string): void {.base.} =
@@ -39,10 +38,10 @@ method removeContact*(self: AccessInterface, publicKey: string): void {.base.} =
 method changeContactNickname*(self: AccessInterface, publicKey: string, nickname: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method lookupContact*(self: AccessInterface, value: string): void {.base.} =
+method lookupContact*(self: AccessInterface, publicKey: string): void {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method resolveENSWithUUID*(self: AccessInterface, value: string, uuid: string): void {.base.} =
+method resolveENSWithUUID*(self: AccessInterface, ensName: string, uuid: string): void {.base.} =
   raise newException(ValueError, "No implementation available")
 
 type

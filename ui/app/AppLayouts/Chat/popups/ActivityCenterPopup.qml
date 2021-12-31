@@ -101,12 +101,6 @@ Popup {
             width: parent.width
             spacing: 0
 
-            property Component profilePopupComponent: ProfilePopup {
-                id: profilePopup
-                store: activityCenter.store
-                onClosed: destroy()
-            }
-
             // TODO remove this once it is handled by the activity center
 //            Repeater {
 //                id: contactList
@@ -123,8 +117,7 @@ Popup {
 //                    color: Utils.setColorAlpha(Style.current.blue, 0.1)
 //                    radius: 0
 //                    profileClick: function (showFooter, userName, fromAuthor, identicon, textParam, nickName) {
-//                        var popup = profilePopupComponent.createObject(contactList);
-//                        popup.openPopup(showFooter, userName, fromAuthor, identicon, textParam, nickName);
+//                        Global.openProfilePopup(fromAuthor)
 //                    }
 //                    onBlockContactActionTriggered: {
 //                        blockContactConfirmationDialog.contactName = name
