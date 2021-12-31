@@ -229,27 +229,6 @@ Item {
         StatusChatList {
             id: channelList
 
-            Connections {
-                target: root.store.allContacts
-                onContactChanged: {
-                    // Not Refactored Yet
-//                    for (var i = 0; i < channelList.chatListItems.count; i++) {
-//                        if (!!channelList.statusChatListItems) {
-//                            let chatItem = !!channelList.statusChatListItems.model.items ?
-//                                    channelList.statusChatListItems.model.items.get(i) : null
-//                            if (chatItem && chatItem.chatId === pubkey) {
-//                                let profileImage = Global.getProfileImage(pubkey)
-//                                if (!!profileImage) {
-//                                    chatItem.image.isIdenticon = false
-//                                    chatItem.image.source = profileImage
-//                                }
-//                                break;
-//                            }
-//                        }
-//                    }
-                }
-            }
-
             model: root.chatSectionModule.model
             onChatItemSelected: root.chatSectionModule.setActiveItem(id, "")
             onChatItemUnmuted: root.chatSectionModule.unmuteChat(id)

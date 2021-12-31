@@ -77,7 +77,7 @@ Item {
             if (parentPopup){
                 popup.parentPopup = parentPopup;
             }
-            popup.openPopup(userProfile.pubKey !== fromAuthorParam, userNameParam, fromAuthorParam, identiconParam, textParam, nicknameParam);
+            popup.openPopup(publicKey);
             Global.profilePopupOpened = true;
         }
         onOpenBackUpSeedPopup : {
@@ -91,31 +91,35 @@ Item {
     }
 
     function getContactListObject(dataModel) {
-        const nbContacts = appMain.rootStore.contactsModuleInst.model.list.rowCount()
-        const contacts = []
-        let contact
-        for (let i = 0; i < nbContacts; i++) {
-            if (appMain.rootStore.contactsModuleInst.model.list.rowData(i, "isBlocked") === "true") {
-                continue
-            }
+        // Not Refactored Yet - This should be part of Chat Section Module
 
-            contact = {
-                name: appMain.rootStore.contactsModuleInst.model.list.rowData(i, "name"),
-                localNickname: appMain.rootStore.contactsModuleInst.model.list.rowData(i, "localNickname"),
-                pubKey: appMain.rootStore.contactsModuleInst.model.list.rowData(i, "pubKey"),
-                address: appMain.rootStore.contactsModuleInst.model.list.rowData(i, "address"),
-                identicon: appMain.rootStore.contactsModuleInst.model.list.rowData(i, "identicon"),
-                thumbnailImage: appMain.rootStore.contactsModuleInst.model.list.rowData(i, "thumbnailImage"),
-                isUser: false,
-                isContact: appMain.rootStore.contactsModuleInst.model.list.rowData(i, "isContact") !== "false"
-            }
+//        const nbContacts = appMain.rootStore.contactsModuleInst.model.list.rowCount()
+//        const contacts = []
+//        let contact
+//        for (let i = 0; i < nbContacts; i++) {
+//            if (appMain.rootStore.contactsModuleInst.model.list.rowData(i, "isBlocked") === "true") {
+//                continue
+//            }
 
-            contacts.push(contact)
-            if (dataModel) {
-                dataModel.append(contact);
-            }
-        }
-        return contacts
+//            contact = {
+//                name: appMain.rootStore.contactsModuleInst.model.list.rowData(i, "name"),
+//                localNickname: appMain.rootStore.contactsModuleInst.model.list.rowData(i, "localNickname"),
+//                pubKey: appMain.rootStore.contactsModuleInst.model.list.rowData(i, "pubKey"),
+//                address: appMain.rootStore.contactsModuleInst.model.list.rowData(i, "address"),
+//                identicon: appMain.rootStore.contactsModuleInst.model.list.rowData(i, "identicon"),
+//                thumbnailImage: appMain.rootStore.contactsModuleInst.model.list.rowData(i, "thumbnailImage"),
+//                isUser: false,
+//                isContact: appMain.rootStore.contactsModuleInst.model.list.rowData(i, "isContact") !== "false"
+//            }
+
+//            contacts.push(contact)
+//            if (dataModel) {
+//                dataModel.append(contact);
+//            }
+//        }
+//        return contacts
+
+        return []
     }
 
     function getUserNickname(pubKey) {
@@ -146,7 +150,7 @@ Item {
 
     property Component profilePopupComponent: ProfilePopup {
         id: profilePopup
-        store: appMain.rootStore
+        contactsStore: appMain.rootStore.profileSectionStore.contactsStore
         onClosed: {
             if  (profilePopup.parentPopup) {
                 profilePopup.parentPopup.close();
@@ -570,43 +574,43 @@ Item {
 //        }
 
 
+        // Not Refactored Yet
+        // This
+//        Connections {
+//            target: appMain.rootStore.contactsModuleInst.model
+//            onContactRequestAdded: {
+//                if (!localAccountSensitiveSettings.notifyOnNewRequests) {
+//                    return
+//                }
 
-        Connections {
-            target: appMain.rootStore.contactsModuleInst.model
-            onContactRequestAdded: {
-                if (!localAccountSensitiveSettings.notifyOnNewRequests) {
-                    return
-                }
+//                const isContact = appMain.rootStore.contactsModuleInst.model.isAdded(address)
 
-                const isContact = appMain.rootStore.contactsModuleInst.model.isAdded(address)
+//                // Note:
+//                // Whole this Connection object should be moved to the nim side.
+//                // Left here only cause we don't have a way to deal with translations on the nim side.
 
-                // Note:
-                // Whole this Connection object should be moved to the nim side.
-                // Left here only cause we don't have a way to deal with translations on the nim side.
+//                const title = isContact ? qsTrId("contact-request-accepted") :
+//                                          //% "New contact request"
+//                                          qsTrId("new-contact-request")
 
-                const title = isContact ? qsTrId("contact-request-accepted") :
-                                          //% "New contact request"
-                                          qsTrId("new-contact-request")
+//                const message = //% "You can now chat with %1"
+//                              isContact ? qsTrId("you-can-now-chat-with--1").arg(Utils.removeStatusEns(name)) :
+//                                          //% "%1 requests to become contacts"
+//                                          qsTrId("-1-requests-to-become-contacts").arg(Utils.removeStatusEns(name))
 
-                const message = //% "You can now chat with %1"
-                              isContact ? qsTrId("you-can-now-chat-with--1").arg(Utils.removeStatusEns(name)) :
-                                          //% "%1 requests to become contacts"
-                                          qsTrId("-1-requests-to-become-contacts").arg(Utils.removeStatusEns(name))
+//                if (Qt.platform.os === "linux") {
+//                    // Linux Notifications are not implemented in Nim/C++ yet
+//                    return systemTray.showMessage(title, message, systemTray.icon.source, 4000)
+//                }
 
-                if (Qt.platform.os === "linux") {
-                    // Linux Notifications are not implemented in Nim/C++ yet
-                    return systemTray.showMessage(title, message, systemTray.icon.source, 4000)
-                }
-
-                // Not Refactored Yet
-                //% "Contact request accepted"
+//                //% "Contact request accepted"
 //                profileModel.showOSNotification(title,
 //                                                message,
 //                                                isContact? Constants.osNotificationType.acceptedContactRequest :
 //                                                           Constants.osNotificationType.newContactRequest,
 //                                                localAccountSensitiveSettings.useOSNotifications)
-            }
-        }
+//            }
+//        }
 
         Component {
             id: chooseBrowserPopupComponent

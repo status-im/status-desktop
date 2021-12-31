@@ -1,4 +1,5 @@
 import ../shared_models/section_item
+import ../../../app_service/service/contacts/dto/contacts as contacts_dto
 import ../../../app_service/service/community/service as community_service
 
 type 
@@ -31,4 +32,11 @@ method getNumOfNotificationsForCommunity*(self: AccessInterface, communityId: st
   raise newException(ValueError, "No implementation available")
 
 method setUserStatus*(self: AccessInterface, status: bool) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getContact*(self: AccessInterface, id: string): ContactsDto {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getContactNameAndImage*(self: AccessInterface, contactId: string): 
+  tuple[name: string, image: string, isIdenticon: bool] {.base.} =
   raise newException(ValueError, "No implementation available")

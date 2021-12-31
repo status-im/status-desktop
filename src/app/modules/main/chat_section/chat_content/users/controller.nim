@@ -50,16 +50,16 @@ method init*(self: Controller) =
       self.delegate.newMessagesLoaded(args.messages)
 
     self.events.on(SIGNAL_CONTACT_NICKNAME_CHANGED) do(e: Args):
-      var args = ContactNicknameUpdatedArgs(e)
-      self.delegate.contactNicknameChanged(args.contactId, args.nickname)
+      var args = ContactArgs(e)
+      self.delegate.contactNicknameChanged(args.contactId)
 
     self.events.on(SIGNAL_CONTACTS_STATUS_UPDATED) do(e: Args):
       var args = ContactsStatusUpdatedArgs(e)
       self.delegate.contactsStatusUpdated(args.statusUpdates)
 
     self.events.on(SIGNAL_CONTACT_UPDATED) do(e: Args):
-      var args = ContactUpdatedArgs(e)
-      self.delegate.contactUpdated(args.contact)
+      var args = ContactArgs(e)
+      self.delegate.contactUpdated(args.contactId)
 
     self.events.on(SIGNAL_LOGGEDIN_USER_IMAGE_CHANGED) do(e: Args):
       self.delegate.loggedInUserImageChanged()

@@ -192,8 +192,4 @@ QtObject {
     function alias(pubkey) {
         return contactsModuleInst.alias(pubkey)
     }
-
-    function resolveENSWithUUID(value, uuid) {
-        contactsModuleInst.resolveENSWithUUID(value, uuid)
-    }
 }

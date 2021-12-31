@@ -11,20 +11,16 @@ import "."
 
 ListView {
     id: contactList
-    property var contacts
-    property var store
+    property var contactsModel
+
     property string searchStr: ""
     property string searchString: ""
     property string lowerCaseSearchString: searchString.toLowerCase()
     property string contactToRemove: ""
     property bool hideBlocked: false
 
-    property Component profilePopupComponent: ProfilePopup {
-        id: profilePopup
-        onClosed: destroy()
-    }
-
     signal contactClicked(var contact)
+    signal openProfilePopup(var contact)
     signal sendMessageActionTriggered(var contact)
     signal unblockContactActionTriggered(var contact)
     signal blockContactActionTriggered(var contact)
@@ -32,20 +28,19 @@ ListView {
 
     width: parent.width
 
-    model: contacts
+    model: contactList.contactsModel
 
     delegate: ContactPanel {
-        name: Utils.removeStatusEns(model.name)
-        address: model.address
-        localNickname: model.localNickname
-        identicon: model.thumbnailImage || model.identicon
+        id: panelDelegate
+        name: model.name
+        publicKey: model.pubKey
+        icon: model.icon
+        isIdenticon: model.isIdenticon
         isContact: model.isContact
         isBlocked: model.isBlocked
-        profileClick: function (showFooter, userName, fromAuthor, identicon, textParam, nickName) {
-            var popup = profilePopupComponent.createObject(contactList, {store: contactList.store});
-            popup.openPopup(showFooter, userName, fromAuthor, identicon, textParam, nickName);
-        }
+
         onClicked: contactList.contactClicked(model)
+        onOpenProfilePopup: contactList.openProfilePopup(model)
         onSendMessageActionTriggered: contactList.sendMessageActionTriggered(model)
         onUnblockContactActionTriggered: contactList.unblockContactActionTriggered(model)
         onBlockContactActionTriggered: contactList.blockContactActionTriggered(model)
@@ -57,14 +52,8 @@ ListView {
           }
 
           return searchString === "" ||
-            model.name.toLowerCase().includes(lowerCaseSearchString) ||
-            model.address.toLowerCase().includes(lowerCaseSearchString)
+            panelDelegate.name.toLowerCase().includes(lowerCaseSearchString) ||
+            panelDelegate.publicKey.toLowerCase().includes(lowerCaseSearchString)
         }
     }
 }
-/*##^##
-Designer {
-    D{i:0;autoSize:true;height:480;width:640}
-}
-##^##*/
-

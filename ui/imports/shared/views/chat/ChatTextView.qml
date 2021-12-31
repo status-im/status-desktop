@@ -92,8 +92,7 @@ Item {
 
 //            if (link.startsWith('//')) {
 //                let pk = link.replace("//", "");
-//                const userProfileImage = Global.getProfileImage(pk)
-//                Global.openProfilePopup(root.store.chatsModelInst.userNameOrAlias(pk), pk, userProfileImage || root.store.utilsModelInst.generateIdenticon(pk))
+//                Global.openProfilePopup(pk)
 //                return;
 //            }
 

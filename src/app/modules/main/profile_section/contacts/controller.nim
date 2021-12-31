@@ -1,10 +1,7 @@
 import ./controller_interface
 import io_interface
 
-import ../../../../core/signals/types
 import ../../../../../app_service/service/contacts/service as contacts_service
-import ../../../../../app_service/service/contacts/dto/contacts
-import ../../../../../app_service/service/accounts/service as accounts_service
 
 import eventemitter
 
@@ -15,17 +12,14 @@ type
     delegate: io_interface.AccessInterface
     events: EventEmitter
     contactsService: contacts_service.Service
-    accountsService: accounts_service.ServiceInterface
 
 proc newController*(delegate: io_interface.AccessInterface, 
   events: EventEmitter,
-  contactsService: contacts_service.Service,
-  accountsService: accounts_service.ServiceInterface): Controller =
+  contactsService: contacts_service.Service): Controller =
   result = Controller()
   result.delegate = delegate
   result.events = events
   result.contactsService = contactsService
-  result.accountsService = accountsService
 
 method delete*(self: Controller) =
   discard
@@ -40,8 +34,8 @@ method init*(self: Controller) =
     self.delegate.resolvedENSWithUUID(args.address, args.uuid)
 
   self.events.on(SIGNAL_CONTACT_ADDED) do(e: Args):
-    var args = ContactAddedArgs(e)
-    self.delegate.contactAdded(args.contact)
+    var args = ContactArgs(e)
+    self.delegate.contactAdded(args.contactId)
 
   self.events.on(SIGNAL_CONTACT_BLOCKED) do(e: Args):
     var args = ContactArgs(e)
@@ -56,8 +50,12 @@ method init*(self: Controller) =
     self.delegate.contactRemoved(args.contactId)
 
   self.events.on(SIGNAL_CONTACT_NICKNAME_CHANGED) do(e: Args):
-    var args = ContactNicknameUpdatedArgs(e)
-    self.delegate.contactNicknameChanged(args.contactId, args.nickname)
+    var args = ContactArgs(e)
+    self.delegate.contactNicknameChanged(args.contactId)
+
+  self.events.on(SIGNAL_CONTACT_UPDATED) do(e: Args):
+    var args = ContactArgs(e)
+    self.delegate.contactUpdated(args.contactId)
 
 method getContacts*(self: Controller): seq[ContactsDto] =
   return self.contactsService.getContacts()
@@ -65,8 +63,9 @@ method getContacts*(self: Controller): seq[ContactsDto] =
 method getContact*(self: Controller, id: string): ContactsDto =
   return self.contactsService.getContactById(id)
 
-method generateAlias*(self: Controller, publicKey: string): string =
-  return self.accountsService.generateAlias(publicKey)
+method getContactNameAndImage*(self: Controller, contactId: string): 
+  tuple[name: string, image: string, isIdenticon: bool] =
+  return self.contactsService.getContactNameAndImage(contactId)
 
 method addContact*(self: Controller, publicKey: string) =
   self.contactsService.addContact(publicKey)
@@ -86,8 +85,8 @@ method removeContact*(self: Controller, publicKey: string) =
 method changeContactNickname*(self: Controller, publicKey: string, nickname: string) =
   self.contactsService.changeContactNickname(publicKey, nickname)
 
-method lookupContact*(self: Controller, value: string) =
-  self.contactsService.lookupContact(value)
+method lookupContact*(self: Controller, publicKey: string) =
+  self.contactsService.lookupContact(publicKey)
 
-method resolveENSWithUUID*(self: Controller, value: string, uuid: string) =
-  self.contactsService.resolveENSWithUUID(value, uuid)
+method resolveENSWithUUID*(self: Controller, ensName: string, uuid: string) =
+  self.contactsService.resolveENSWithUUID(ensName, uuid)

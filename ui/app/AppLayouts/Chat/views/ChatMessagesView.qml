@@ -280,7 +280,7 @@ Item {
 //                //% "New membership request"
 //                const title = qsTrId("new-membership-request")
 //                //% "%1 asks to join ‘%2’"
-//                const message = qsTrId("-1-asks-to-join---2-").arg(Utils.getDisplayName(pubKey)).arg(communityName)
+//                const message = qsTrId("-1-asks-to-join---2-").arg(Utils.getContactDetailsAsJson(pubKey).displayName).arg(communityName)
 
 //                if (Qt.platform.os === "linux") {
 //                    // Linux Notifications are not implemented in Nim/C++ yet

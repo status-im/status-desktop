@@ -9,31 +9,30 @@ import StatusQ.Popups 0.1
 import utils 1.0
 
 StatusListItem {
-    property string name: "Jotaro Kujo"
-    property string address: "0x04d8c07dd137bd1b73a6f51df148b4f77ddaa11209d36e43d8344c0a7d6db1cad6085f27cfb75dd3ae21d86ceffebe4cf8a35b9ce8d26baa19dc264efe6d8f221b"
-    property string identicon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII="
-    property string localNickname: "JoJo"
-    property var profileClick: function() {}
-    property bool isContact: true
-    property bool isBlocked: false
-    property string searchStr: ""
-    signal sendMessageActionTriggered()
-    signal unblockContactActionTriggered()
-    signal blockContactActionTriggered(name: string, address: string)
-    signal removeContactActionTriggered(address: string)
-
     id: container
-
-    visible: isContact && (searchStr == "" || name.includes(searchStr))
-    height: visible ? implicitHeight : 0
-
     anchors.right: parent.right
     anchors.left: parent.left
     anchors.leftMargin: -Style.current.padding
     anchors.rightMargin: -Style.current.padding
+    visible: container.isContact && (searchStr == "" || container.name.includes(searchStr))
+    height: visible ? implicitHeight : 0
+    title: container.name
+    image.source: container.icon
 
-    title: name
-    image.source: identicon
+    property string name: "Jotaro Kujo"
+    property string publicKey: "0x04d8c07dd137bd1b73a6f51df148b4f77ddaa11209d36e43d8344c0a7d6db1cad6085f27cfb75dd3ae21d86ceffebe4cf8a35b9ce8d26baa19dc264efe6d8f221b"
+    property string icon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII="
+    property bool isIdenticon
+
+    property bool isContact: true
+    property bool isBlocked: false
+    property string searchStr: ""
+
+    signal openProfilePopup(string publicKey)
+    signal sendMessageActionTriggered(string publicKey)
+    signal unblockContactActionTriggered(string publicKey)
+    signal blockContactActionTriggered(string publicKey)
+    signal removeContactActionTriggered(string publicKey)
 
     components: [
         StatusFlatRoundButton {
@@ -58,7 +57,7 @@ StatusListItem {
                     text: qsTr("View Profile")
                     icon.name: "profile"
                     onTriggered: {
-                        container.profileClick(true, name, address, identicon, "", localNickname)
+                        container.openProfilePopup(container.publicKey)
                         menuButton.highlighted = false
                     }
                 }
@@ -67,7 +66,7 @@ StatusListItem {
                     text: qsTr("Send message")
                     icon.name: "chat"
                     onTriggered: {
-                        container.sendMessageActionTriggered()
+                        container.sendMessageActionTriggered(container.publicKey)
                         menuButton.highlighted = false
                     }
                     enabled: !container.isBlocked
@@ -79,7 +78,7 @@ StatusListItem {
                     enabled: !container.isBlocked
                     type: StatusMenuItem.Type.Danger
                     onTriggered: {
-                        container.blockContactActionTriggered(name, address)
+                        container.blockContactActionTriggered(container.publicKey)
                         menuButton.highlighted = false
                     }
                 }
@@ -90,7 +89,7 @@ StatusListItem {
                     enabled: container.isContact
                     type: StatusMenuItem.Type.Danger
                     onTriggered: {
-                        container.removeContactActionTriggered(address)
+                        container.removeContactActionTriggered(container.publicKey)
                         menuButton.highlighted = false
                     }
                 }
@@ -101,7 +100,7 @@ StatusListItem {
                     enabled: container.isBlocked
                     type: StatusMenuItem.Type.Danger
                     onTriggered: {
-                        container.unblockContactActionTriggered()
+                        container.unblockContactActionTriggered(container.publicKey)
                         menuButton.highlighted = false
                         contactContextMenu.close()
                     }

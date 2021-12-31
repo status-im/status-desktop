@@ -27,12 +27,6 @@ ModalPopup {
     ListView {
         id: contactList
 
-        property Component profilePopupComponent: ProfilePopup {
-            id: profilePopup
-            store: popup.store
-            onClosed: destroy()
-        }
-
         anchors.fill: parent
         anchors.leftMargin: -Style.current.halfPadding
         anchors.rightMargin: -Style.current.halfPadding
@@ -46,8 +40,7 @@ ModalPopup {
             localNickname: model.localNickname
             identicon: model.thumbnailImage || model.identicon
             profileClick: function (showFooter, userName, fromAuthor, identicon, textParam, nickName) {
-                var popup = profilePopupComponent.createObject(contactList);
-                popup.openPopup(showFooter, userName, fromAuthor, identicon, textParam, nickName);
+                Global.openProfilePopup(fromAuthor)
             }
             onBlockContactActionTriggered: {
                 blockContactConfirmationDialog.contactName = name

@@ -178,7 +178,7 @@ Item {
         }
 
         EmptyChatPanel {
-            onShareChatKeyClicked: Global.openProfilePopup(userProfile.name, userProfile.pubKey, userProfile.icon);
+            onShareChatKeyClicked: Global.openProfilePopup(userProfile.pubKey);
         }
 
         // This is kind of a solution for applying backend refactored changes with the minimal qml changes.

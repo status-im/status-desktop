@@ -1,4 +1,4 @@
-import ../../../../../app_service/service/contacts/dto/contacts
+import NimQml
 
 type 
   AccessInterface* {.pure inheritable.} = ref object of RootObj
@@ -10,40 +10,37 @@ method delete*(self: AccessInterface) {.base.} =
 method load*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method setContactList*(self: AccessInterface, contacts: seq[ContactsDto]) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method updateContactList*(self: AccessInterface, contacts: seq[ContactsDto]) {.base.} =
+method getModuleAsVariant*(self: AccessInterface): QVariant {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method isLoaded*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getContact*(self: AccessInterface, id: string): ContactsDto {.base.} =
+# View Delegate Interface
+# Delegate for the view must be declared here due to use of QtObject and multi 
+# inheritance, which is not well supported in Nim.
+method viewDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method generateAlias*(self: AccessInterface, publicKey: string): string {.base.} =
+method lookupContact*(self: AccessInterface, publicKey: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method resolveENSWithUUID*(self: AccessInterface, ensName: string, uuid: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method addContact*(self: AccessInterface, publicKey: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method contactAdded*(self: AccessInterface, contact: ContactsDto) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method contactBlocked*(self: AccessInterface, publicKey: string) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method contactUnblocked*(self: AccessInterface, publicKey: string) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method contactRemoved*(self: AccessInterface, publicKey: string) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method contactNicknameChanged*(self: AccessInterface, publicKey: string, nickname: string) {.base.} =
+method acceptContactRequests*(self: AccessInterface, publicKeysJSON: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method rejectContactRequest*(self: AccessInterface, publicKey: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method rejectContactRequests*(self: AccessInterface, publicKeysJSON: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method changeContactNickname*(self: AccessInterface, publicKey: string, nickname: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method unblockContact*(self: AccessInterface, publicKey: string) {.base.} =
@@ -55,23 +52,40 @@ method blockContact*(self: AccessInterface, publicKey: string) {.base.} =
 method removeContact*(self: AccessInterface, publicKey: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method changeContactNickname*(self: AccessInterface, publicKey: string, nickname: string) {.base.} =
+method isContactAdded*(self: AccessInterface, publicKey: string): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method lookupContact*(self: AccessInterface, value: string) {.base.} =
+method isContactBlocked*(self: AccessInterface, publicKey: string): bool {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method isEnsVerified*(self: AccessInterface, publicKey: string): bool {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method alias*(self: AccessInterface, publicKey: string): string {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+# Controller Delegate Interface
+
+method contactAdded*(self: AccessInterface, publicKey: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method contactBlocked*(self: AccessInterface, publicKey: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method contactUnblocked*(self: AccessInterface, publicKey: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method contactRemoved*(self: AccessInterface, publicKey: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method contactNicknameChanged*(self: AccessInterface, publicKey: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method contactLookedUp*(self: AccessInterface, id: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method resolveENSWithUUID*(self: AccessInterface, value: string, uuid: string) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method resolvedENSWithUUID*(self: AccessInterface, address: string, uuid: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-# View Delegate Interface
-# Delegate for the view must be declared here due to use of QtObject and multi 
-# inheritance, which is not well supported in Nim.
-method viewDidLoad*(self: AccessInterface) {.base.} =
+method contactUpdated*(self: AccessInterface, publicKey: string) {.base.} =
   raise newException(ValueError, "No implementation available")

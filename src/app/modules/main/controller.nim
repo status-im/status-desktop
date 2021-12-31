@@ -159,3 +159,10 @@ method setUserStatus*(self: Controller, status: bool) =
     singletonInstance.userProfile.setUserStatus(status)
   else:
     error "error updating user status"
+
+method getContact*(self: Controller, id: string): ContactsDto =
+  return self.contactsService.getContactById(id)
+
+method getContactNameAndImage*(self: Controller, contactId: string): 
+  tuple[name: string, image: string, isIdenticon: bool] =
+  return self.contactsService.getContactNameAndImage(contactId)

@@ -1,4 +1,4 @@
-import NimQml, Tables
+import NimQml, Tables, json
 
 import io_interface, view, controller, ../shared_models/section_item, ../shared_models/section_model
 import ../../global/app_sections_config as conf
@@ -485,3 +485,28 @@ method communityJoined*[T](
 
   self.view.addItem(self.createCommunityItem(community))
   # TODO do we need to set it as active
+
+method getContactDetailsAsJson*[T](self: Module[T], publicKey: string): string =
+  let contact =  self.controller.getContact(publicKey)
+  let (name, image, isIdenticon) = self.controller.getContactNameAndImage(contact.id)
+  let jsonObj = %* {
+    "displayName": name,
+    "displayIcon": image,
+    "isDisplayIconIdenticon": isIdenticon,
+    "publicKey": contact.id,
+    "name": contact.name,
+    "ensVerified": contact.ensVerified,
+    "alias": contact.alias, 
+    "lastUpdated": contact.lastUpdated, 
+    "lastUpdatedLocally": contact.lastUpdatedLocally,
+    "localNickname": contact.localNickname,
+    "identicon": contact.identicon, 
+    "thumbnailImage": contact.image.large,
+    "largeImage": contact.image.thumbnail,
+    "isContact":contact.added,
+    "isBlocked":contact.blocked,
+    "requestReceived":contact.hasAddedUs,
+    "isSyncing":contact.isSyncing,
+    "removed":contact.removed
+  }
+  return $jsonObj

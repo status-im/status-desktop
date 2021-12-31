@@ -172,14 +172,7 @@ Item {
                                     //% "View Profile"
                                     text: qsTrId("view-profile")
                                     icon.name: "channel"
-                                    onTriggered: Global.openPopup(profilePopup, {
-                                       noFooter: userProfile.pubKey !== model.pubKey,
-                                       userName: model.userName,
-                                       fromAuthor: model.pubKey, 
-                                       identicon: memberItem.image.source,
-                                       text: '', 
-                                       nickname: memberItem.nickname
-                                    })
+                                    onTriggered: Global.openProfilePopup(model.pubKey)
                                 }
 
                                 StatusMenuSeparator {
@@ -218,16 +211,6 @@ Item {
         id: membershipRequestPopup
         MembershipRequestsPopup {
             anchors.centerIn: parent
-            onClosed: {
-                destroy()
-            }
-        }
-    }
-
-    Component {
-        id: profilePopup
-        ProfilePopup {
-            store: root.store
             onClosed: {
                 destroy()
             }
