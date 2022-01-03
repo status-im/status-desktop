@@ -482,7 +482,7 @@ Item {
                                 messageContextMenu.parent = root
                                 messageContextMenu.setXPosition = function() { return (mouse.x)}
                                 messageContextMenu.setYPosition = function() { return (mouse.y)}
-                                root.clickMessage(false, false, true, image, false, true, false, true, imageSource)
+                                clickMessage(false, false, true, image, false, true, false, true, imageSource)
                             }
                         }
                         container: root.container
