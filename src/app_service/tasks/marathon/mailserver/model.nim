@@ -78,7 +78,7 @@ proc init*(self: MailserverModel) =
     let fleets = if defined(windows) and defined(production):
       "/../resources/fleets.json"
     else:
-      "/../fleets.json"
+      "/../resources/fleets.json"
     let fleetConfig = readFile(joinPath(getAppDir(), fleets))
     let fleetModel = newFleetModel(fleetConfig)
     self.mailservers = toSeq(fleetModel.config.getMailservers(status_settings.getFleet(), isWakuV2=true).values)

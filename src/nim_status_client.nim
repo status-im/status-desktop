@@ -18,6 +18,7 @@ import constants
 import app/core/global_singleton
 import app/boot/app_controller
 
+const fleetConfig = staticRead("../resources/fleets.json")
 
 var signalsQObjPointer: pointer
 
@@ -29,15 +30,8 @@ proc mainProc() =
     setCurrentDir(getAppDir())
 
   ensureDirectories(DATADIR, TMPDIR, LOGDIR)
-
-  let fleets =
-    if defined(windows) and defined(production):
-      "/../resources/fleets.json"
-    else:
-      "/../fleets.json"
-
+  
   let
-    fleetConfig = readFile(joinPath(getAppDir(), fleets))
     status = statuslib.newStatusInstance(fleetConfig)
     mailserverController = mailserver_controller.newController(status)
     mailserverWorker = mailserver_worker.newMailserverWorker(cast[ByteAddress](mailserverController.vptr))
@@ -61,7 +55,10 @@ proc mainProc() =
     if defined(windows) and defined(production):
       "/../resources/resources.rcc"
     else:
-      "/../resources.rcc"
+      if defined(linux) and defined(production) and defined(deb):
+        "/../share/status-desktop/resources.rcc"
+      else:
+        "/../resources.rcc"
   QResource.registerResource(app.applicationDirPath & resources)
 
   var eventStr = ""
@@ -80,7 +77,10 @@ proc mainProc() =
       elif defined(windows):
         "/../resources/status.svg"
       else:
-        "/../status.svg"
+        if defined(appimage):
+          "/../status.svg"
+        else:
+          "/../share/status-desktop/status.svg"
     else:
       if defined(macosx):
         "" # not used in macOS

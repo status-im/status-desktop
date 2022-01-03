@@ -69,19 +69,22 @@ ifeq ($(detected_OS),Darwin)
  CGO_CFLAGS := -mmacosx-version-min=10.14
  export CGO_CFLAGS
  LIBSTATUS_EXT := dylib
+ LIBKEYCARD_EXT := dylib
  MACOSX_DEPLOYMENT_TARGET := 10.14
  export MACOSX_DEPLOYMENT_TARGET
  PKG_TARGET := pkg-macos
  RUN_TARGET := run-macos
 else ifeq ($(detected_OS),Windows)
  LIBSTATUS_EXT := dll
+ LIBKEYCARD_EXT := dll
  PKG_TARGET := pkg-windows
  QRCODEGEN_MAKE_PARAMS := CC=gcc
  RUN_TARGET := run-windows
  VCINSTALLDIR ?= C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\BuildTools\\VC\\
  export VCINSTALLDIR
 else
- LIBSTATUS_EXT := so
+ LIBSTATUS_EXT := so.0
+ LIBKEYCARD_EXT := so
  PKG_TARGET := pkg-linux
  RUN_TARGET := run-linux
 endif
@@ -219,7 +222,7 @@ $(STATUSGO): | deps
 	  $(MAKE) statusgo-shared-library $(HANDLE_OUTPUT)
 
 
-KEYCARDGO := vendor/status-lib/vendor/nim-keycard-go/go/keycard/build/libkeycard/libkeycard.$(LIBSTATUS_EXT)
+KEYCARDGO := vendor/status-lib/vendor/nim-keycard-go/go/keycard/build/libkeycard/libkeycard.$(LIBKEYCARD_EXT)
 KEYCARDGO_LIBDIR := $(shell pwd)/$(shell dirname "$(KEYCARDGO)")
 export KEYCARDGO_LIBDIR
 
@@ -236,7 +239,7 @@ $(QRCODEGEN): | deps
 	+ cd vendor/QR-Code-generator/c && \
 	  $(MAKE) $(QRCODEGEN_MAKE_PARAMS)
 
-FLEETS := fleets.json
+FLEETS := resources/fleets.json
 $(FLEETS):
 	echo -e $(BUILD_MSG) "Getting latest $(FLEETS)"
 	curl -s https://fleets.status.im/ \
@@ -329,6 +332,8 @@ $(NIM_STATUS_CLIENT): $(NIM_SOURCES) | $(DOTHERSIDE) $(STATUSGO) $(KEYCARDGO) $(
 
 nim_status_client: force-rebuild-status-go $(NIM_STATUS_CLIENT)
 
+LINUX_DIST := $(shell pwd)/tmp/linux/status-desktop_$(DESKTOP_VERSION)
+
 _APPIMAGE_TOOL := appimagetool-x86_64.AppImage
 APPIMAGE_TOOL := tmp/linux/tools/$(_APPIMAGE_TOOL)
 
@@ -336,7 +341,7 @@ $(APPIMAGE_TOOL):
 	echo -e "\e[92mFetching:\e[39m appimagetool"
 	rm -rf tmp/linux
 	mkdir -p tmp/linux/tools
-	wget -nv https://github.com/AppImage/AppImageKit/releases/download/continuous/$(_APPIMAGE_TOOL)
+	wget -nv --no-check-certificate https://github.com/AppImage/AppImageKit/releases/download/continuous/$(_APPIMAGE_TOOL)
 	mv $(_APPIMAGE_TOOL) tmp/linux/tools/
 	chmod +x $(APPIMAGE_TOOL)
 
@@ -344,43 +349,41 @@ STATUS_CLIENT_APPIMAGE ?= pkg/Status.AppImage
 STATUS_CLIENT_TARBALL ?= pkg/Status.tar.gz
 STATUS_CLIENT_TARBALL_FULL ?= $(shell realpath $(STATUS_CLIENT_TARBALL))
 
-$(STATUS_CLIENT_APPIMAGE): override RESOURCES_LAYOUT := -d:production
-$(STATUS_CLIENT_APPIMAGE): nim_status_client $(APPIMAGE_TOOL) nim-status.desktop
+$(STATUS_CLIENT_APPIMAGE): override RESOURCES_LAYOUT := -d:production -d:appimage
+$(STATUS_CLIENT_APPIMAGE): nim_status_client $(APPIMAGE_TOOL)
 	rm -rf pkg/*.AppImage
-	rm -rf tmp/linux/dist
-	mkdir -p tmp/linux/dist/usr/bin
-	mkdir -p tmp/linux/dist/usr/lib
-	mkdir -p tmp/linux/dist/usr/qml
+	rm -rf $(LINUX_DIST)
+	mkdir -p $(LINUX_DIST)/usr/bin
+	mkdir -p $(LINUX_DIST)/usr/lib
+	mkdir -p $(LINUX_DIST)/usr/bin/dictionaries
+	mkdir -p $(LINUX_DIST)/usr/i18n
 
 	# General Files
-	cp bin/nim_status_client tmp/linux/dist/usr/bin
-	mkdir -p tmp/linux/dist/usr/bin/dictionaries
-	cp -R spellchecking/dictionaries tmp/linux/dist/usr/bin/dictionaries
-	cp nim-status.desktop tmp/linux/dist/.
-	cp status.svg tmp/linux/dist/status.svg
-	cp status.svg tmp/linux/dist/usr/.
-	cp -R resources.rcc tmp/linux/dist/usr/.
-	cp -R $(FLEETS) tmp/linux/dist/usr/.
-	mkdir -p tmp/linux/dist/usr/i18n
-	cp ui/i18n/* tmp/linux/dist/usr/i18n
+	cp bin/nim_status_client $(LINUX_DIST)/usr/bin/status-desktop
+	cp -R spellchecking/dictionaries $(LINUX_DIST)/usr/bin/dictionaries
+	cp resources/pkg/AppImage/status.desktop $(LINUX_DIST)/.
+	cp status.svg $(LINUX_DIST)/.
+	cp status.svg $(LINUX_DIST)/usr/.
+	cp -R resources.rcc $(LINUX_DIST)/usr/.
+	cp ui/i18n/* $(LINUX_DIST)/usr/i18n
 
 	# Libraries
-	cp -r /usr/lib/x86_64-linux-gnu/nss tmp/linux/dist/usr/lib/
-	cp -P /usr/lib/x86_64-linux-gnu/libgst* tmp/linux/dist/usr/lib/
-	cp -r /usr/lib/x86_64-linux-gnu/gstreamer-1.0 tmp/linux/dist/usr/lib/
-	cp -r /usr/lib/x86_64-linux-gnu/gstreamer1.0 tmp/linux/dist/usr/lib/
-	cp vendor/status-lib/vendor/status-go/build/bin/libstatus.so tmp/linux/dist/usr/lib/
-	cp vendor/status-lib/vendor/status-go/build/bin/libstatus.so.0 tmp/linux/dist/usr/lib/
-	cp $(KEYCARDGO) tmp/linux/dist/usr/lib/
+	cp -r /usr/lib/x86_64-linux-gnu/nss $(LINUX_DIST)/usr/lib/
+	cp -P /usr/lib/x86_64-linux-gnu/libgst* $(LINUX_DIST)/usr/lib/
+	cp -r /usr/lib/x86_64-linux-gnu/gstreamer-1.0 $(LINUX_DIST)/usr/lib/
+	cp -r /usr/lib/x86_64-linux-gnu/gstreamer1.0 $(LINUX_DIST)/usr/lib/
+	cp vendor/status-lib/vendor/status-go/build/bin/libstatus.so $(LINUX_DIST)/usr/lib/
+	cp vendor/status-lib/vendor/status-go/build/bin/libstatus.so.0 $(LINUX_DIST)/usr/lib/
+	cp vendor/status-lib/vendor/nim-keycard-go/go/keycard/build/libkeycard/libkeycard.so $(LINUX_DIST)/usr/lib/
 
 	echo -e $(BUILD_MSG) "AppImage"
-	linuxdeployqt tmp/linux/dist/nim-status.desktop -no-copy-copyright-files -qmldir=ui -qmlimport=$(QTDIR)/qml -bundle-non-qt-libs
+	linuxdeployqt $(LINUX_DIST)/status.desktop -no-copy-copyright-files -qmldir=ui -qmlimport=$(QTDIR)/qml -bundle-non-qt-libs
+	
+	rm $(LINUX_DIST)/AppRun
+	cp resources/pkg/AppImage/AppRun $(LINUX_DIST)/.
 
-	rm tmp/linux/dist/AppRun
-	cp AppRun tmp/linux/dist/.
-
-	mkdir -p pkg
-	$(APPIMAGE_TOOL) tmp/linux/dist $(STATUS_CLIENT_APPIMAGE)
+	$(APPIMAGE_TOOL) $(LINUX_DIST) $(STATUS_CLIENT_APPIMAGE)
+	
 # if LINUX_GPG_PRIVATE_KEY_FILE is not set then we don't generate a signature
 ifdef LINUX_GPG_PRIVATE_KEY_FILE
 	scripts/sign-linux-file.sh $(STATUS_CLIENT_APPIMAGE)
@@ -392,6 +395,50 @@ $(STATUS_CLIENT_TARBALL): $(STATUS_CLIENT_APPIMAGE)
 		$(shell basename $(STATUS_CLIENT_APPIMAGE)){,.asc}
 ifdef LINUX_GPG_PRIVATE_KEY_FILE
 	scripts/sign-linux-file.sh $(STATUS_CLIENT_TARBALL)
+endif
+
+
+STATUS_CLIENT_DEB ?= pkg/status-desktop_$(DESKTOP_VERSION)_amd64.deb
+$(STATUS_CLIENT_DEB): override RESOURCES_LAYOUT := -d:production -d:deb
+$(STATUS_CLIENT_DEB): $(DOTHERSIDE) nim_status_client
+	rm -rf pkg/*.deb
+	rm -rf $(LINUX_DIST)
+
+	mkdir -p $(LINUX_DIST)/usr/bin
+	mkdir -p $(LINUX_DIST)/usr/lib/x86_64-linux-gnu
+	mkdir -p $(LINUX_DIST)/usr/share/applications
+	mkdir -p $(LINUX_DIST)/usr/share/status-desktop/
+	mkdir -p $(LINUX_DIST)/usr/share/pixmap/
+	mkdir -p $(LINUX_DIST)/usr/share/status-desktop/i18n
+
+	# General Files
+	cp status.svg $(LINUX_DIST)/usr/share/status-desktop/.
+	cp -R resources.rcc $(LINUX_DIST)/usr/share/status-desktop/.
+	cp ui/i18n/* $(LINUX_DIST)/usr/share/status-desktop/i18n/.
+	cp bin/nim_status_client $(LINUX_DIST)/usr/bin/status-desktop
+	cp resources/pkg/deb/status.desktop $(LINUX_DIST)/usr/share/applications/.
+
+	# Libraries
+	cp vendor/status-lib/vendor/status-go/build/bin/libstatus.so.0 $(LINUX_DIST)/usr/lib/x86_64-linux-gnu/.
+	cp vendor/status-lib/vendor/nim-keycard-go/go/keycard/build/libkeycard/libkeycard.so $(LINUX_DIST)/usr/lib/x86_64-linux-gnu/.
+
+	# TODO: fix dictionaries
+	# mkdir -p $(LINUX_DIST)/usr/bin/dictionaries
+	# cp -R spellchecking/dictionaries $(LINUX_DIST)/usr/bin/dictionaries
+
+	# .deb specific files
+	mkdir -p $(LINUX_DIST)/DEBIAN
+	sed "s/%VERSION%/$(DESKTOP_VERSION)/" resources/pkg/deb/control > $(LINUX_DIST)/DEBIAN/control
+	cp resources/pkg/deb/shlibs $(LINUX_DIST)/DEBIAN/.
+	cp resources/pkg/deb/triggers $(LINUX_DIST)/DEBIAN/.
+	strip --strip-unneeded $(LINUX_DIST)/usr/bin/status-desktop
+	strip --strip-unneeded $(LINUX_DIST)/usr/lib/x86_64-linux-gnu/libstatus.so.0
+	fakeroot dpkg-deb --build $(LINUX_DIST)
+
+	mv $(LINUX_DIST).deb $(STATUS_CLIENT_DEB)
+
+ifdef LINUX_GPG_PRIVATE_KEY_FILE
+	scripts/sign-linux-file.sh $(STATUS_CLIENT_DEB)
 endif
 
 DMG_TOOL := node_modules/.bin/create-dmg
@@ -416,7 +463,6 @@ $(STATUS_CLIENT_DMG): nim_status_client $(DMG_TOOL)
 	cp status.icns $(MACOS_OUTER_BUNDLE)/Contents/Resources/
 	cp status-macos.svg $(MACOS_OUTER_BUNDLE)/Contents/
 	cp -R resources.rcc $(MACOS_OUTER_BUNDLE)/Contents/
-	cp -R $(FLEETS) $(MACOS_OUTER_BUNDLE)/Contents/
 	mkdir -p $(MACOS_OUTER_BUNDLE)/Contents/i18n
 	cp ui/i18n/* $(MACOS_OUTER_BUNDLE)/Contents/i18n
 
@@ -437,7 +483,6 @@ ifdef MACOS_CODESIGN_IDENT
 		--entitlements QtWebEngineProcess.plist
 endif
 	echo -e $(BUILD_MSG) "dmg"
-	mkdir -p pkg
 	# See: https://github.com/sindresorhus/create-dmg#dmg-icon
 	# GraphicsMagick must be installed for create-dmg to make the custom
 	# DMG icon based on app icon, but should otherwise work without it
@@ -484,7 +529,7 @@ $(STATUS_CLIENT_EXE): nim_status_client nim_windows_launcher $(NIM_WINDOWS_PREBU
 	rm -rf pkg/*.exe tmp/windows/dist
 	mkdir -p $(OUTPUT)/bin $(OUTPUT)/resources $(OUTPUT)/vendor $(OUTPUT)/resources/i18n
 	cat windows-install.txt | unix2dos > $(OUTPUT)/INSTALL.txt
-	cp status.ico status.svg resources.rcc $(FLEETS) $(OUTPUT)/resources/
+	cp status.ico status.svg resources.rcc $(OUTPUT)/resources/
 	cp ui/i18n/* $(OUTPUT)/resources/i18n
 	cp cacert.pem $(OUTPUT)/bin/cacert.pem
 	cp bin/nim_status_client.exe $(OUTPUT)/bin/Status.exe
@@ -522,6 +567,8 @@ $(STATUS_CLIENT_7Z): $(STATUS_CLIENT_EXE)
 pkg: $(PKG_TARGET)
 
 pkg-linux: check-pkg-target-linux $(STATUS_CLIENT_APPIMAGE)
+
+deb-linux: check-pkg-target-linux $(STATUS_CLIENT_DEB)
 
 tgz-linux: $(STATUS_CLIENT_TARBALL)
 

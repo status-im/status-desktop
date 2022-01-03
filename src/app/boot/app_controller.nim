@@ -47,7 +47,10 @@ elif (defined(windows)):
 elif (defined(macosx)):
   i18nPath = joinPath(getAppDir(), "../i18n")
 elif (defined(linux)):
-  i18nPath = joinPath(getAppDir(), "../i18n")
+  if defined(production) and defined(deb):
+    i18nPath = joinPath(getAppDir(), "../share/status-desktop/i18n")
+  else:
+    i18nPath = joinPath(getAppDir(), "../i18n")
 
 proc setLanguage(locale: string) =
   let shouldRetranslate = not defined(linux)

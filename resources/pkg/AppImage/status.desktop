@@ -1,8 +1,9 @@
 [Desktop Entry]
 Type=Application
 Name=Status Desktop
-Exec=nim_status_client
+Exec=status-desktop
 Icon=status
 Comment=Desktop client for the Status Network
-Terminal=true
-Categories=Network;
+Terminal=false
+Categories=Network;InstantMessaging;Chat;
+StartupNotify=true

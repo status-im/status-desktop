@@ -29,7 +29,10 @@ method init*(self: Service) =
     elif (defined(macosx)):
       self.i18nPath = joinPath(getAppDir(), "../i18n")
     elif (defined(linux)):
-      self.i18nPath = joinPath(getAppDir(), "../i18n")
+      if defined(production) and defined(deb):
+        self.i18nPath = joinPath(getAppDir(), "../share/status-desktop/i18n")
+      else:
+        self.i18nPath = joinPath(getAppDir(), "../i18n")
 
   except Exception as e:
     let errDesription = e.msg
