@@ -77,7 +77,7 @@ Rectangle {
     anchors.right: parent.right
 
     color: Style.current.transparent
-    
+
     function calculateExtraHeightFactor() {
         const factor = (messageInputField.length / 500) + 1;
         return (factor > 5) ? 5 : factor;
@@ -226,11 +226,19 @@ Rectangle {
 
         isColonPressed = (event.key === Qt.Key_Colon) && (event.modifiers & Qt.ShiftModifier);
 
-        if (event.key === Qt.Key_Space && suggestionsBox.formattedPlainTextFilter.length > 1 && suggestionsBox.formattedPlainTextFilter.trim().split(" ").length === 1) {
-            let aliasName = suggestionsBox.formattedPlainTextFilter
-            let lastCursorPosition = suggestionsBox.suggestionFilter.cursorPosition
-            let lastAtPosition = suggestionsBox.suggestionFilter.lastAtPosition
-            insertMention(aliasName, lastAtPosition, lastCursorPosition)
+        if (suggestionsBox.visible) {
+            let aliasName = suggestionsBox.formattedPlainTextFilter;
+            let lastCursorPosition = suggestionsBox.suggestionFilter.cursorPosition;
+            let lastAtPosition = suggestionsBox.suggestionFilter.lastAtPosition;
+            if (aliasName.toLowerCase() === suggestionsBox.suggestionsModel.get(suggestionsBox.listView.currentIndex).alias.toLowerCase()
+                && (event.key !== Qt.Key_Backspace) && (event.key !== Qt.Key_Delete)) {
+                insertMention(aliasName, lastAtPosition, lastCursorPosition);
+            } else if (event.key === Qt.Key_Space) {
+                var plainTextToReplace = messageInputField.getText(lastAtPosition, lastCursorPosition);
+                messageInputField.remove(lastAtPosition, lastCursorPosition);
+                messageInputField.insert(lastAtPosition, plainTextToReplace);
+                suggestionsBox.hide();
+            }
         }
     }
 
