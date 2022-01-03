@@ -6,17 +6,25 @@ FROM ubuntu:18.04 AS qt-install
 ARG QT_VERSION
 
 RUN apt update && apt full-upgrade -y && apt install -y --no-install-recommends \
-    sudo python3 python3-pip \
+    sudo python3 python3-pip git \
     && apt-get -qq clean
 
 RUN python3 -m pip install setuptools
 
 RUN chmod -R 777 /opt
 
+RUN mkdir -p /opt/qt
+RUN chmod -R 777 /opt/qt
+
+
+ENV QT_VERSION=$QT_VERSION \
+    QT_PATH=/opt/qt
+
 RUN groupadd -r user && useradd --create-home --gid user user && echo 'user ALL=NOPASSWD: ALL' > /etc/sudoers.d/user
 
 
 COPY scripts/install-qt.sh /home/user/
+COPY scripts/aqt.ini /home/user/
 RUN chown user:user /home/user/install-qt.sh
 RUN chmod a+x /home/user/install-qt.sh
 
@@ -32,7 +40,7 @@ RUN sudo sed /home/user/install-qt.sh -i \
       -e 's/^QT_CI_PACKAGES=.*/export QT_CI_PACKAGES=qt.qt5.5152.gcc_64,qt.qt5.5152.qtwebengine,qt.qt5/' \
       -e '\#^/tmp/build/bin/extract-qt-installer.*#i export http_proxy=invalid' \
  && sudo -E /home/user/install-qt.sh
- 
+
 
 
 # Build Image ------------------------------------------------------------------
@@ -106,7 +114,7 @@ RUN locale-gen en_US.UTF-8 && dpkg-reconfigure locales \
 
 # Copy QT toolchain
 RUN chmod -R 777 /opt && mkdir -p /opt/qt/$QT_VERSION
-COPY --from=qt-install /home/user/$QT_VERSION /opt/qt/$QT_VERSION/.
+COPY --from=qt-install /opt/qt/$QT_VERSION /opt/qt/$QT_VERSION/.
 
 USER user
 WORKDIR /home/user
