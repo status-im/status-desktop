@@ -24,3 +24,6 @@ method getAppSearchModule*(self: AccessInterface): QVariant {.base.} =
 
 method getContactDetailsAsJson*(self: AccessInterface, publicKey: string): string {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method resolveENS*(self: AccessInterface, ensName: string, uuid: string) {.base.} =
+  raise newException(ValueError, "No implementation available")

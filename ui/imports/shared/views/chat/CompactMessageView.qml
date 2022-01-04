@@ -16,7 +16,7 @@ Item {
 
     property var messageContextMenu
     property var container
-
+    property var contactsStore
 
     property int chatHorizontalPadding: Style.current.halfPadding
     property int chatVerticalPadding: 7
@@ -219,10 +219,8 @@ Item {
                     }
 
                     StyledText {
-                        // Not Refactored Yet
-                        text: ""
-//                        //% "Pinned by %1"
-//                        text: qsTrId("pinned-by--1").arg(rootStore.chatsModelInst.alias(pinnedBy))
+                        //% "Pinned by %1"
+                        text: qsTrId("pinned-by--1").arg(Utils.getContactDetailsAsJson(pinnedBy).displayName)
                         anchors.left: pinImage.right
                         anchors.verticalCenter: parent.verticalCenter
                         font.pixelSize: 13
@@ -591,17 +589,18 @@ Item {
                 }
             }
 
-//            Loader {
-//                id: transactionBubbleLoader
-//                active: contentType === Constants.messageContentType.transactionType
-//                anchors.top: parent.top
-//                anchors.topMargin: active ? (chatName.visible ? 4 : 6) : 0
-//                sourceComponent: Component {
-//                    TransactionBubbleView {
-//                        store: rootStore
-//                    }
-//                }
-//            }
+            Loader {
+                id: transactionBubbleLoader
+                active: contentType === Constants.messageContentType.transactionType
+                anchors.top: parent.top
+                anchors.topMargin: active ? (chatName.visible ? 4 : 6) : 0
+                sourceComponent: Component {
+                    TransactionBubbleView {
+                        //store: rootStore
+                        contactsStore: root.contactsStore
+                    }
+                }
+            }
 
             Loader {
                 active: contentType === Constants.messageContentType.communityInviteType

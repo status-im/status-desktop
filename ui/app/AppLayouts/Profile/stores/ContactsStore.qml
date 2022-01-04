@@ -13,12 +13,8 @@ QtObject {
     property var myContactsModel: contactsModule.myContactsModel
     property var blockedContactsModel: contactsModule.blockedContactsModel
 
-    function lookupContact(value) {
-        root.contactsModule.lookupContact(value)
-    }
-
-    function resolveENSWithUUID(value, uuid) {
-        root.contactsModule.resolveENSWithUUID(value, uuid)
+    function resolveENS(value) {
+        root.mainModuleInst.resolveENS(value, "")
     }
 
     function generateAlias(pubKey) {
@@ -43,24 +39,8 @@ QtObject {
         root.contactsModule.blockContact(pubKey)
     }
 
-    function isContactAdded(pubKey) {
-        return root.contactsModule.isContactAdded(pubKey)
-    }
-
-    function isContactBlocked(pubKey) {
-        return root.contactsModule.isContactBlocked(pubKey)
-    }
-
     function removeContact(pubKey) {
         root.contactsModule.removeContact(pubKey)
-    }
-
-    function isEnsVerified(pubKey) {
-        return root.contactsModule.isEnsVerified(pubKey)
-    }
-
-    function userAlias(pubKey) {
-        return root.contactsModule.alias(pubKey)
     }
 
     function changeContactNickname(pubKey, nickname) {

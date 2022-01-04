@@ -16,6 +16,8 @@ ModalPopup {
     //% "New chat"
     title: qsTrId("new-chat")
     property var store
+    property var contactsStore
+
     signal joinPrivateChat(string publicKey, string ensName)
 
     signal profileClicked()
@@ -29,7 +31,8 @@ ModalPopup {
         contactFieldAndList.pubKey = ""
         contactFieldAndList.ensUsername = ""
         contactFieldAndList.chatKey.forceActiveFocus(Qt.MouseFocusReason)
-        contactFieldAndList.existingContacts.visible = popup.store.allContacts.hasAddedContacts()
+        // Not Refactored Yet
+//        contactFieldAndList.existingContacts.visible = popup.store.allContacts.hasAddedContacts()
         contactFieldAndList.noContactsRect.visible = !contactFieldAndList.existingContacts.visible
     }
 
@@ -39,6 +42,9 @@ ModalPopup {
         anchors.bottom: parent.bottom
         width: parent.width
         addContactEnabled: false
+
+        contactsStore: popup.contactsStore
+
         onUserClicked: function (isContact, pubKey, ensName) {
             popup.doJoin(pubKey, ensName);
         }

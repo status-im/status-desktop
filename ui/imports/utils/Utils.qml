@@ -395,7 +395,7 @@ QtObject {
             const pk = link.substring(index + 3)
             //% "Start a 1-on-1 chat with %1"
             result.title = qsTrId("start-a-1-on-1-chat-with--1")
-                            .arg(isChatKey(pk) ? utilsModel.generateAlias(pk) : ("@" + removeStatusEns(pk)))
+                            .arg(isChatKey(pk) ? globalUtils.generateAlias(pk) : ("@" + removeStatusEns(pk)))
             result.callback = function () {
                 if(isChatKey(pk)){
                     // TODO refector those to call a store (somehow)
@@ -699,10 +699,14 @@ QtObject {
 
     function getContactDetailsAsJson(publicKey) {
         let jsonObj = mainModule.getContactDetailsAsJson(publicKey)
-        let obj = JSON.parse(jsonObj)
-        if (obj.error) {
+        try {
+            let obj = JSON.parse(jsonObj)
+            return obj
+        }
+        catch (e) {
             // This log is available only in debug mode, if it's annoying we can remove it
-            console.debug("error parsing contact details for public key: ", publicKey, " error: ", obj.error)
+            console.debug("error parsing contact details for public key: ", publicKey, " error: ", e.message)
+
             return {
                 displayName: "",
                 displayIcon: "",
@@ -724,8 +728,6 @@ QtObject {
                 removed: false
             }
         }
-
-        return obj
     }
 
 

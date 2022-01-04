@@ -45,7 +45,7 @@ ModalPopup {
             thumbnailImage: userProfile.icon,
             isUser: true
         });
-        noContactsRect.visible = !popup.store.allContacts.hasAddedContacts();
+//        noContactsRect.visible = !popup.store.allContacts.hasAddedContacts();
         contactList.visible = !noContactsRect.visible;
         if (!contactList.visible) {
             memberCount = 0;

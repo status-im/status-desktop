@@ -130,7 +130,8 @@ StatusModal {
                 contactListSearch.pubKey: ""
                 contactListSearch.pubKeys: []
                 contactListSearch.ensUsername: ""
-                contactListSearch.existingContacts.visible: root.store.allContacts.hasAddedContacts()
+                // Not Refactored Yet
+//                contactListSearch.existingContacts.visible: root.store.allContacts.hasAddedContacts()
                 contactListSearch.noContactsRect.visible: !contactListSearch.existingContacts.visible
             }
         }

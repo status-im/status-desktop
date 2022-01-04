@@ -12,6 +12,9 @@ Item {
     id: root
     anchors.left: parent.left
     anchors.right: parent.right
+
+    property var contactsStore
+
     property string filterText: ""
     property bool expanded: true
     property bool showCheckbox: false
@@ -37,7 +40,7 @@ Item {
             spacing: 0
             clip: true
             id: contactListView
-            model: contactsModule.model.list
+            model: root.contactsStore.myContactsModel
             delegate: Contact {
                 showCheckbox: root.showCheckbox
                 isChecked: root.pubKeys.indexOf(model.pubKey) > -1
@@ -45,14 +48,13 @@ Item {
                 isContact: model.isContact
                 isUser: false
                 name: model.name
-                address: model.address
-                identicon: model.thumbnailImage || model.identicon
-                // Not Refactored Yet
-//                visible: model.isContact && !model.isBlocked && (root.filterText === "" ||
-//                    root.matchesAlias(model.name.toLowerCase(), root.filterText.toLowerCase()) ||
-//                    model.name.toLowerCase().includes(root.filterText.toLowerCase()) ||
-//                    model.address.toLowerCase().includes(root.filterText.toLowerCase())) &&
-//                    (!root.hideCommunityMembers || !RootStore.chatsModelInst.communities.activeCommunity.hasMember(model.pubKey))
+                identicon: model.icon
+                isIdenticon: model.isIdenticon
+                visible: model.isContact && !model.isBlocked && (root.filterText === "" ||
+                    root.matchesAlias(model.name.toLowerCase(), root.filterText.toLowerCase()) ||
+                    model.name.toLowerCase().includes(root.filterText.toLowerCase()) ||
+                    model.pubKey.toLowerCase().includes(root.filterText.toLowerCase())) &&
+                    !root.hideCommunityMembers
                 onContactClicked: function () {
                     root.contactClicked(model)
                 }

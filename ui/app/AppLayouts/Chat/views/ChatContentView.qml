@@ -30,6 +30,7 @@ ColumnLayout {
     // Each chat/channel has its own ChatContentModule
     property var chatContentModule
     property var rootStore
+    property var contactsStore
 
     property Component sendTransactionNoEnsModal
     property Component receiveTransactionModal
@@ -279,6 +280,7 @@ ColumnLayout {
             Layout.fillWidth: true
             Layout.fillHeight: true
             store: chatContentRoot.rootStore
+            contactsStore: chatContentRoot.contactsStore
             messageContextMenuInst: contextmenu
             messageStore: messageStore
         }
@@ -348,7 +350,7 @@ ColumnLayout {
                 stickerPackList: chatContentRoot.rootStore.stickersModuleInst.stickerPacks
                 chatType: chatContentModule.chatDetails.type
                 onSendTransactionCommandButtonClicked: {
-                    if (chatContentRoot.rootStore.isEnsVerified(chatContentModule.getMyChatId())) {
+                    if (Utils.getContactDetailsAsJson(chatContentModule.getMyChatId()).ensVerified) {
                         Global.openPopup(chatContentRoot.sendTransactionWithEnsModal)
                     } else {
                         Global.openPopup(chatContentRoot.sendTransactionNoEnsModal)

@@ -14,6 +14,11 @@ import "../status"
 import "."
 
 Item {
+    id: root
+    height: childrenRect.height + 24
+
+    property var contactsStore
+
     property string validationError: ""
     property string successMessage: ""
     property alias chatKey: chatKey
@@ -26,20 +31,17 @@ Item {
     property bool showCheckbox: false
     property bool showContactList: true
     property bool showSearch: true
-    signal userClicked(bool isContact, string pubKey, string ensName, string address)
+    signal userClicked(string pubKey)
     property var pubKeys: ([])
     property bool hideCommunityMembers: false
     property bool addContactEnabled: true
 
-    id: root
-    height: childrenRect.height + 24
 
     property var resolveENS: Backpressure.debounce(root, 500, function (ensName) {
         noContactsRect.visible = false
         searchResults.loading = true
         searchResults.showProfileNotFoundMessage = false
-        // Not Refactored Yet
-        //RootStore.chatsModelInst.ensView.resolveENS(ensName)
+        mainModule.resolveENS(ensName, "")
     });
 
     function validate() {
@@ -75,9 +77,9 @@ Item {
 
                 if (Utils.isChatKey(chatKey.text)) {
                     pubKey = chatKey.text;
-                    if (!RootStore.contactsModuleInst.model.isAdded(pubKey)) {
-                        // Not Refactored Yet
-//                        searchResults.username = utilsModel.generateAlias(pubKey);
+                    let contactDetails = Utils.getContactDetailsAsJson(pubKey)
+                    if (!contactDetails.isContact) {
+                        searchResults.username = contactDetails.alias
                         searchResults.userAlias = Utils.compactAddress(pubKey, 4);
                         searchResults.pubKey = pubKey
                     }
@@ -92,36 +94,38 @@ Item {
         }
         textField.anchors.rightMargin: clearBtn.width + Style.current.padding + 2
 
-        // Not Refactored Yet
-//        Connections {
-//            target: RootStore.chatsModelInst.ensView
-//            onEnsWasResolved: {
-//                if (chatKey.text == "") {
-//                    ensUsername.text = "";
-//                    pubKey = "";
-//                } else if(resolvedPubKey == ""){
-//                    ensUsername.text = "";
-//                    searchResults.pubKey = pubKey = "";
-//                    searchResults.address = "";
-//                    searchResults.showProfileNotFoundMessage = true
-//                } else {
-//                    if (userProfile.pubKey === resolvedPubKey) {
-//                        //% "Can't chat with yourself"
-//                        root.validationError = qsTrId("can-t-chat-with-yourself");
-//                    } else {
-//                        searchResults.username = chatsModel.ensView.formatENSUsername(chatKey.text)
-//                        let userAlias = utilsModel.generateAlias(resolvedPubKey)
-//                        userAlias = userAlias.length > 20 ? userAlias.substring(0, 19) + "..." : userAlias
-//                        searchResults.userAlias =  userAlias + " • " + Utils.compactAddress(resolvedPubKey, 4)
-//                        searchResults.pubKey = pubKey = resolvedPubKey;
-//                        searchResults.address = resolvedAddress;
-//                    }
-//                    searchResults.showProfileNotFoundMessage = false
-//                }
-//                searchResults.loading = false;
-//                noContactsRect.visible = pubKey === ""  && ensUsername.text === "" && !contactsModule.model.list.hasAddedContacts() && !profileNotFoundMessage.visible
-//            }
-//        }
+        Connections {
+            target: mainModule
+            onResolvedENS: {
+                if (chatKey.text == "") {
+                    ensUsername.text = "";
+                    pubKey = "";
+                } else if(resolvedPubKey == ""){
+                    ensUsername.text = "";
+                    searchResults.pubKey = pubKey = "";
+                    searchResults.address = "";
+                    searchResults.showProfileNotFoundMessage = true
+                } else {
+                    if (userProfile.pubKey === resolvedPubKey) {
+                        //% "Can't chat with yourself"
+                        root.validationError = qsTrId("can-t-chat-with-yourself");
+                    } else {
+                        searchResults.username = chatsModel.ensView.formatENSUsername(chatKey.text)
+                        let userAlias = globalUtils.generateAlias(resolvedPubKey)
+                        userAlias = userAlias.length > 20 ? userAlias.substring(0, 19) + "..." : userAlias
+                        searchResults.userAlias =  userAlias + " • " + Utils.compactAddress(resolvedPubKey, 4)
+                        searchResults.pubKey = pubKey = resolvedPubKey;
+                        searchResults.address = resolvedAddress;
+                    }
+                    searchResults.showProfileNotFoundMessage = false
+                }
+                searchResults.loading = false;
+                noContactsRect.visible = pubKey === ""  &&
+                        ensUsername.text === "" &&
+                        root.contactsStore.myContactsModel.count === 0 &&
+                        !profileNotFoundMessage.visible
+            }
+        }
 
         StatusFlatRoundButton {
             id: clearBtn
@@ -161,6 +165,9 @@ Item {
 
     ExistingContacts {
         id: existingContacts
+
+        contactsStore: root.contactsStore
+
         visible: showContactList
         hideCommunityMembers: root.hideCommunityMembers
         anchors.topMargin: this.height > 0 ? Style.current.halfPadding : 0
@@ -188,7 +195,7 @@ Item {
             }
             root.pubKeys = pubKeysCopy
 
-            userClicked(true, contact.pubKey, RootStore.contactsModuleInst.model.addedContacts.userName(contact.pubKey, contact.name), contact.address)
+            userClicked(contact.pubKey)
         }
         expanded: !searchResults.loading && pubKey === "" && !searchResults.showProfileNotFoundMessage
     }
@@ -206,9 +213,11 @@ Item {
             if (!validate()) {
                 return
             }
-            userClicked(false, pubKey, chatKey.text, searchResults.address)
+            userClicked(pubKey)
         }
-        onAddToContactsButtonClicked: RootStore.contactsModuleInst.addContact(pubKey)
+        onAddToContactsButtonClicked: {
+            root.contactsStore.addContact(pubKey)
+        }
     }
 
     NoFriendsRectangle {

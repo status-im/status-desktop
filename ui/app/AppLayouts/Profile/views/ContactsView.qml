@@ -181,7 +181,7 @@ Item {
             property var lookupContact: Backpressure.debounce(addContactSearchInput, 400, function (value) {
                 root.isPending = true
                 searchResults.showProfileNotFoundMessage = false
-                root.contactsStore.lookupContact(value)
+                root.contactsStore.resolveENS(value)
             })
 
             onOpened: {
@@ -212,8 +212,8 @@ Item {
 
 
                 Connections {
-                    target: root.contactsStore.contactsModule
-                    onEnsWasResolved: function (resolvedPubKey) {
+                    target: root.contactsStore.mainModuleInst
+                    onResolvedENS: function (resolvedPubKey) {
                         if (resolvedPubKey === "") {
                             searchResults.pubKey = ""
                             searchResults.showProfileNotFoundMessage = true
@@ -318,7 +318,7 @@ Item {
         //% "Are you sure you want to remove this contact?"
         confirmationText: qsTrId("are-you-sure-you-want-to-remove-this-contact-")
         onConfirmButtonClicked: {
-            if (root.contactsStore.isContactAdded(removeContactConfirmationDialog.value)) {
+            if (Utils.getContactDetailsAsJson(removeContactConfirmationDialog.value).isContact) {
               root.contactsStore.removeContact(removeContactConfirmationDialog.value);
             }
             removeContactConfirmationDialog.close()

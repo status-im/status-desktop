@@ -36,6 +36,7 @@ StatusModal {
     property bool userIsEnsVerified: false
     property bool userIsBlocked: false
     property bool isCurrentUser: false
+    property bool isAddedContact: false
 
     signal blockButtonClicked(name: string, address: string)
     signal unblockButtonClicked(name: string, address: string)
@@ -56,6 +57,7 @@ StatusModal {
         userIcon = contactDetails.displayIcon
         userIsEnsVerified = contactDetails.ensVerified
         userIsBlocked = contactDetails.isBlocked
+        isAddedContact = contactDetails.isContact
 
         text = "" // this is most likely unneeded
         isCurrentUser = userProfile.pubKey === publicKey
@@ -237,7 +239,7 @@ StatusModal {
             header.title: qsTr("Remove contact")
             confirmationText: qsTr("Are you sure you want to remove this contact?")
             onConfirmButtonClicked: {
-                if (popup.contactsStore.isContactAdded(userPublicKey)) {
+                if (isAddedContact) {
                     popup.contactsStore.removeContact(userPublicKey);
                 }
                 removeContactConfirmationDialog.close();
@@ -279,8 +281,7 @@ StatusModal {
         },
 
         StatusFlatButton {
-            property bool isAdded: popup.contactsStore.isContactAdded(userPublicKey)
-            visible: !userIsBlocked && isAdded
+            visible: !userIsBlocked && isAddedContact
             type: StatusBaseButton.Type.Danger
             text: qsTr('Remove Contact')
             onClicked: {
@@ -290,9 +291,8 @@ StatusModal {
         },
 
         StatusButton {
-            property bool isAdded: popup.contactsStore.isContactAdded(userPublicKey)
             text: qsTr("Add to contacts")
-            visible: !userIsBlocked && !isAdded
+            visible: !userIsBlocked && !isAddedContact
             onClicked: {
                 popup.contactsStore.addContact(userPublicKey);
                 popup.contactAdded(userPublicKey);

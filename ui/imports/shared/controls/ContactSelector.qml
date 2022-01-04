@@ -16,9 +16,8 @@ import "./"
 
 Item {
     id: root
-    property var contacts
+    property var contactsStore
     property var selectedContact
-    property var ensModule
     height: select.height
     property int dropdownWidth: width
     //% "Please select a contact"
@@ -42,12 +41,13 @@ Item {
         }
     }
 
-    onContactsChanged: {
-        if (root.readOnly) {
-            return
-        }
-        root.selectedContact = { name: selectAContact }
-    }
+    // This should be removed most likely.
+//    onContactsChanged: {
+//        if (root.readOnly) {
+//            return
+//        }
+//        root.selectedContact = { name: selectAContact }
+//    }
 
     onSelectedContactChanged: validate()
 
@@ -92,7 +92,7 @@ Item {
     StatusSelect {
         id: select
         label: ""
-        model: root.contacts
+        model: root.contactsStore.myContactsModel
         width: parent.width
         visible: !root.readOnly
         menuAlignment: StatusSelect.MenuAlignment.Left
@@ -145,7 +145,6 @@ Item {
         anchors.right: select.right
         anchors.topMargin: Style.current.halfPadding
         debounceDelay: 0
-        ensModule: root.ensModule
         onResolved: {
             root.isResolvedAddress = true
             var selectedContact = root.selectedContact
@@ -164,7 +163,7 @@ Item {
         MenuItem {
             id: itemContainer
             property bool isFirstItem: index === 0
-            property bool isLastItem: index === contacts.rowCount() - 1
+            property bool isLastItem: index === root.contactsStore.myContactsModel.count - 1
 
             width: parent.width
             height: visible ? 72 : 0

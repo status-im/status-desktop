@@ -12,12 +12,11 @@ Item {
     property bool isPending: false
     readonly property string uuid: Utils.uuid()
     property int debounceDelay: 600
-    property var ensModule
 
     readonly property var validateAsync: Backpressure.debounce(inpAddress, debounceDelay, function (inputValue) {
         root.isPending = true
         var name = inputValue.startsWith("@") ? inputValue.substring(1) : inputValue
-        root.ensModule.resolveENSWithUUID(name, uuid)
+        mainModule.resolveENS(name, uuid)
     });
     signal resolved(string resolvedAddress)
 
@@ -44,9 +43,8 @@ Item {
     }
 
     Connections {
-        enabled: !!root.ensModule
-        target: root.ensModule
-        onResolvedENSWithUUID: {
+        target: mainModule
+        onResolvedENS: {
             if (uuid !== root.uuid) {
                 return
             }
