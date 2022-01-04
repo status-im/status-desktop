@@ -27,6 +27,8 @@ Item {
     property var chatSectionModule
 
     property var store
+    property var contactsStore
+
     // Not Refactored Yet
     //property int chatGroupsListViewCount: channelList.model.count
     signal openProfileClicked()
@@ -192,7 +194,7 @@ Item {
     StatusContactRequestsIndicatorListItem {
         id: contactRequests
 
-        property int nbRequests: root.store.contactRequests.count
+        property int nbRequests: root.store.contactRequestsModel.count
 
         anchors.top: searchInputWrapper.bottom
         anchors.topMargin: visible ? Style.current.padding : 0
@@ -347,6 +349,7 @@ Item {
         id: privateChatPopupComponent
         PrivateChatPopup {
             store: root.store
+            contactsStore: root.contactsStore
             onJoinPrivateChat: {
                 chatSectionModule.createOneToOneChat(publicKey, ensName)
             }

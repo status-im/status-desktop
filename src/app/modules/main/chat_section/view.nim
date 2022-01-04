@@ -1,32 +1,40 @@
 import NimQml, json
-import model, item, sub_item, active_item
+import model as chats_model
+import item, sub_item, active_item
+import ../../shared_models/contacts_model as contacts_model
 import io_interface
 
 QtObject:
   type
     View* = ref object of QObject
       delegate: io_interface.AccessInterface
-      model: Model
+      model: chats_model.Model
       modelVariant: QVariant
       activeItem: ActiveItem
       activeItemVariant: QVariant
       tmpChatId: string # shouldn't be used anywhere except in prepareChatContentModuleForChatId/getChatContentModule procs
+      contactRequestsModel: contacts_model.Model
+      contactRequestsModelVariant: QVariant
       
   proc delete*(self: View) =
     self.model.delete
     self.modelVariant.delete
     self.activeItem.delete
     self.activeItemVariant.delete
+    self.contactRequestsModel.delete
+    self.contactRequestsModelVariant.delete
     self.QObject.delete
 
   proc newView*(delegate: io_interface.AccessInterface): View =
     new(result, delete)
     result.QObject.setup
     result.delegate = delegate
-    result.model = newModel()
+    result.model = chats_model.newModel()
     result.modelVariant = newQVariant(result.model)
     result.activeItem = newActiveItem()
     result.activeItemVariant = newQVariant(result.activeItem)
+    result.contactRequestsModel = contacts_model.newModel()
+    result.contactRequestsModelVariant = newQVariant(result.contactRequestsModel)      
 
   proc load*(self: View) =
     self.delegate.viewDidLoad()
@@ -34,17 +42,21 @@ QtObject:
   proc isCommunity(self: View): bool {.slot.} =
     return self.delegate.isCommunity()
 
-  proc model*(self: View): Model =
+  proc chatsModel*(self: View): chats_model.Model =
     return self.model
-
-  proc modelChanged*(self: View) {.signal.}
 
   proc getModel(self: View): QVariant {.slot.} =
     return self.modelVariant
-
   QtProperty[QVariant] model:
     read = getModel
-    notify = modelChanged
+
+  proc contactRequestsModel*(self: View): contacts_model.Model =
+    return self.contactRequestsModel
+
+  proc getContactRequestsModel(self: View): QVariant {.slot.} =
+    return self.contactRequestsModelVariant
+  QtProperty[QVariant] contactRequestsModel:
+    read = getContactRequestsModel
 
   proc appendItem*(self: View, item: Item) =
     self.model.appendItem(item)
@@ -113,3 +125,18 @@ QtObject:
 
   proc getCurrentFleet*(self: View): string {.slot.} =
     self.delegate.getCurrentFleet()
+
+  proc acceptContactRequest*(self: View, publicKey: string) {.slot.} =
+    self.delegate.acceptContactRequest(publicKey)
+
+  proc acceptAllContactRequests*(self: View) {.slot.} =
+    self.delegate.acceptAllContactRequests()
+  
+  proc rejectContactRequest*(self: View, publicKey: string) {.slot.} =
+    self.delegate.rejectContactRequest(publicKey)
+
+  proc rejectAllContactRequests*(self: View) {.slot.} =
+    self.delegate.rejectAllContactRequests()
+
+  proc blockContact*(self: View, publicKey: string) {.slot.} =
+    self.delegate.blockContact(publicKey)

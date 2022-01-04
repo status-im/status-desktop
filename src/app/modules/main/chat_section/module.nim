@@ -2,6 +2,8 @@ import NimQml, Tables, chronicles
 import io_interface
 import ../io_interface as delegate_interface
 import view, controller, item, sub_item, model, sub_model
+import ../../shared_models/contacts_item as contacts_item
+import ../../shared_models/contacts_model as contacts_model
 
 import chat_content/module as chat_content_module
 
@@ -42,10 +44,10 @@ proc newModule*(
   ): Module =
   result = Module()
   result.delegate = delegate
-  result.view = view.newView(result)
-  result.viewVariant = newQVariant(result.view)
   result.controller = controller.newController(result, sectionId, isCommunity, events, settingsService, contactService, 
   chatService, communityService, messageService)
+  result.view = view.newView(result)
+  result.viewVariant = newQVariant(result.view)
   result.moduleLoaded = false
   
   result.chatContentModules = initOrderedTable[string, chat_content_module.AccessInterface]()
@@ -187,6 +189,23 @@ proc buildCommunityUI(self: Module, events: EventEmitter,
 
   self.setActiveItemSubItem(selectedItemId, selectedSubItemId)
 
+proc createItemFromPublicKey(self: Module, publicKey: string): contacts_item.Item =
+  let contact =  self.controller.getContact(publicKey)
+  let (name, image, isIdenticon) = self.controller.getContactNameAndImage(contact.id)
+  
+  return contacts_item.initItem(contact.id, name, image, isIdenticon, contact.isContact(), contact.isBlocked(), 
+  contact.requestReceived())
+
+proc initContactRequestsModel(self: Module) =
+  var contactsWhoAddedMe: seq[contacts_item.Item]
+  let contacts =  self.controller.getContacts()
+  for c in contacts:
+    if(c.requestReceived() and not c.isContact() and not c.isBlocked()):
+      let item = self.createItemFromPublicKey(c.id)
+      contactsWhoAddedMe.add(item)
+
+  self.view.contactRequestsModel().addItems(contactsWhoAddedMe)
+
 method load*(self: Module, events: EventEmitter, 
   settingsService: settings_service.ServiceInterface,
   contactService: contact_service.Service, 
@@ -200,6 +219,7 @@ method load*(self: Module, events: EventEmitter,
     self.buildCommunityUI(events, settingsService, contactService, chatService, communityService, messageService)
   else:
     self.buildChatUI(events, settingsService, contactService, chatService, communityService, messageService)
+    self.initContactRequestsModel() # we do this only in case of chat section (not in case of communities)
 
   for cModule in self.chatContentModules.values:
     cModule.load()
@@ -231,7 +251,7 @@ method setActiveItemSubItem*(self: Module, itemId: string, subItemId: string) =
   self.controller.setActiveItemSubItem(itemId, subItemId)
 
 method activeItemSubItemSet*(self: Module, itemId: string, subItemId: string) =
-  let item = self.view.model().getItemById(itemId)
+  let item = self.view.chatsModel().getItemById(itemId)
   if(item.isNil):
     # Should never be here
     error "chat-view unexisting item id: ", itemId
@@ -241,7 +261,7 @@ method activeItemSubItemSet*(self: Module, itemId: string, subItemId: string) =
   # to any category have empty `subItemId`
   let subItem = item.subItems.getItemById(subItemId)
   
-  self.view.model().setActiveItemSubItem(itemId, subItemId)
+  self.view.chatsModel().setActiveItemSubItem(itemId, subItemId)
   self.view.activeItemSubItemSet(item, subItem)
 
   self.delegate.onActiveChatChange(self.controller.getMySectionId(), self.controller.getActiveChatId())
@@ -329,13 +349,13 @@ method unmuteChat*(self: Module, chatId: string) =
   self.controller.unmuteChat(chatId)
 
 method onChatMuted*(self: Module, chatId: string) =
-  self.view.model().muteUnmuteItemOrSubItemById(chatId, mute=true)
+  self.view.chatsModel().muteUnmuteItemOrSubItemById(chatId, mute=true)
 
 method onChatUnmuted*(self: Module, chatId: string) =
-  self.view.model().muteUnmuteItemOrSubItemById(chatId, false)
+  self.view.chatsModel().muteUnmuteItemOrSubItemById(chatId, false)
 
 method onMarkAllMessagesRead*(self: Module, chatId: string) =
-  self.view.model().setHasUnreadMessage(chatId, value=false)
+  self.view.chatsModel().setHasUnreadMessage(chatId, value=false)
 
 method markAllMessagesRead*(self: Module, chatId: string) =
   self.controller.markAllMessagesRead(chatId)
@@ -345,3 +365,31 @@ method clearChatHistory*(self: Module, chatId: string) =
 
 method getCurrentFleet*(self: Module): string =
   return self.controller.getCurrentFleet()
+
+method acceptContactRequest*(self: Module, publicKey: string) =
+  self.controller.addContact(publicKey)
+
+method onContactAccepted*(self: Module, publicKey: string) =
+  self.view.contactRequestsModel().removeItemWithPubKey(publicKey)
+
+method acceptAllContactRequests*(self: Module) =
+  let pubKeys = self.view.contactRequestsModel().getPublicKeys()
+  for pk in pubKeys:
+    self.acceptContactRequest(pk)
+
+method rejectContactRequest*(self: Module, publicKey: string) =
+  self.controller.rejectContactRequest(publicKey)
+
+method onContactRejected*(self: Module, publicKey: string) =
+  self.view.contactRequestsModel().removeItemWithPubKey(publicKey)
+
+method rejectAllContactRequests*(self: Module) =
+  let pubKeys = self.view.contactRequestsModel().getPublicKeys()
+  for pk in pubKeys:
+    self.rejectContactRequest(pk)
+
+method blockContact*(self: Module, publicKey: string) =
+  self.controller.blockContact(publicKey)
+
+method onContactBlocked*(self: Module, publicKey: string) =
+  self.view.contactRequestsModel().removeItemWithPubKey(publicKey)

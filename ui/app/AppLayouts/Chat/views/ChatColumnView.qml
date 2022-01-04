@@ -31,6 +31,8 @@ Item {
     property var parentModule
 
     property var rootStore
+    property var contactsStore
+
     property Component pinnedMessagesPopupComponent
     // Not Refactored Yet
     //property int chatGroupsListViewCount: 0
@@ -42,9 +44,6 @@ Item {
     property string activeChatId: parentModule && parentModule.activeItem.id
     property string activeSubItemId: parentModule && parentModule.activeItem.activeSubItem.id
     property string activeChatType: parentModule && parentModule.activeItem.type
-    property bool isBlocked: root.rootStore.isContactBlocked(activeChatId)
-    property bool isContact: root.rootStore.isContactAdded(activeChatId)
-    property bool contactRequestReceived: root.rootStore.contactRequestReceived(activeChatId)
     property string currentNotificationChatId
     property string currentNotificationCommunityId
     property var currentTime: 0
@@ -52,6 +51,11 @@ Item {
     property bool stickersLoaded: false
     property Timer timer: Timer { }
     property var userList
+
+    property var contactDetails: Utils.getContactDetailsAsJson(publicKey)
+    property bool isBlocked: root.contactDetails.isContact
+    property bool isContact: root.contactDetails.isBlocked
+    property bool contactRequestReceived: root.contactDetails.requestReceived
 
     signal openAppSearch()
     signal openStickerPackPopup(string stickerPackId)
@@ -196,6 +200,7 @@ Item {
                         model: subItems
                         delegate: ChatContentView {
                             rootStore: root.rootStore
+                            contactsStore: root.contactsStore
                             sendTransactionNoEnsModal: cmpSendTransactionNoEns
                             receiveTransactionModal: cmpReceiveTransaction
                             sendTransactionWithEnsModal: cmpSendTransactionWithEns
@@ -209,6 +214,7 @@ Item {
                 DelegateChoice { // In all other cases
                     delegate: ChatContentView {
                         rootStore: root.rootStore
+                        contactsStore: root.contactsStore
                         sendTransactionNoEnsModal: cmpSendTransactionNoEns
                         receiveTransactionModal: cmpReceiveTransaction
                         sendTransactionWithEnsModal: cmpSendTransactionWithEns
@@ -239,6 +245,7 @@ Item {
             ChatCommandModal {
                 id: sendTransactionNoEns
                 store: root.rootStore
+                contactsStore: root.contactsStore
                 isContact: root.isContact
                 onClosed: {
                     destroy()
@@ -271,6 +278,7 @@ Item {
             ChatCommandModal {
                 id: receiveTransaction
                 store: root.rootStore
+                contactsStore: root.contactsStore
                 isContact: root.isContact
                 onClosed: {
                     destroy()
@@ -303,6 +311,7 @@ Item {
             SendModal {
                 id: sendTransactionWithEns
                 store: root.rootStore
+                contactsStore: root.contactsStore
                 onOpened: {
                     // Not Refactored Yet
 //                    root.rootStore.walletModelInst.gasView.getGasPrice()
@@ -334,14 +343,6 @@ Item {
             height: root.height - 56 * 2 // TODO get screen size // Taken from old code top bar height was fixed there to 56
             y: 56
             store: root.rootStore
-        }
-
-        Connections {
-            target: root.rootStore.contactsModuleModel
-            onContactListChanged: {
-                root.isBlocked = root.rootStore.contactsModuleInst.model.isContactBlocked(activeChatId);
-                root.isContact = root.rootStore.contactsModuleInst.model.isAdded(activeChatId);
-            }
         }
 
         // Not Refactored Yet

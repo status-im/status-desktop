@@ -9,12 +9,11 @@ import shared.panels 1.0
 import StatusQ.Components 0.1
 
 Rectangle {
-    property string name
-    property string address
-    property string identicon
-    property string localNickname
-    property var profileClick: function() {}
-    signal blockContactActionTriggered(name: string, address: string)
+    property string contactName
+    property string contactIcon
+    property string contactIconIsIdenticon
+    signal openProfilePopup()
+    signal blockContactActionTriggered()
     signal acceptClicked()
     signal declineClicked()
     property bool isHovered: false
@@ -32,13 +31,13 @@ Rectangle {
         anchors.left: parent.left
         anchors.leftMargin: Style.current.padding
         anchors.verticalCenter: parent.verticalCenter
-        image.source: identicon
-        image.isIdenticon: true
+        image.source: contactIcon
+        image.isIdenticon: contactIconIsIdenticon
     }
 
     StyledText {
         id: usernameText
-        text: name
+        text: contactName
         elide: Text.ElideRight
         font.pixelSize: 17
         anchors.top: accountImage.top
@@ -60,7 +59,7 @@ Rectangle {
         anchors.verticalCenter: parent.verticalCenter
         onAcceptClicked: container.acceptClicked()
         onDeclineClicked: container.declineClicked()
-        onProfileClicked: container.profileClick(true, name, address, identicon, "", localNickname)
-        onBlockClicked: container.blockContactActionTriggered(name, address)
+        onProfileClicked: container.openProfilePopup()
+        onBlockClicked: container.blockContactActionTriggered()
     }
 }

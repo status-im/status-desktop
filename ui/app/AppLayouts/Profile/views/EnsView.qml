@@ -12,6 +12,8 @@ Item {
     id: ensView
 
     property var store
+    property var contactsStore
+
     property var messageStore
     property int profileContentWidth
     property bool showSearchScreen: false
@@ -221,6 +223,7 @@ Item {
         id: search
         EnsSearchView {
             store: ensView.store
+            contactsStore: ensView.contactsStore
             profileContentWidth: ensView.profileContentWidth
             onContinueClicked: {
                 if(output === "connected"){
@@ -297,6 +300,7 @@ Item {
         id: details
         EnsDetailsView {
             store: ensView.store
+            contactsStore: ensView.contactsStore
             username: selectedUsername
             onBackBtnClicked: back();
             onUsernameReleased: {

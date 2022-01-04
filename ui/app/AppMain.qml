@@ -14,7 +14,6 @@ import "./AppLayouts/Wallet"
 import "./AppLayouts/WalletV2"
 import "./AppLayouts/Chat/popups"
 import "./AppLayouts/Chat/popups/community"
-import "./AppLayouts/Profile/Sections"
 import "./AppLayouts/Profile/popups"
 import "./AppLayouts/stores"
 
@@ -91,7 +90,7 @@ Item {
     }
 
     function getContactListObject(dataModel) {
-        // Not Refactored Yet - This should be part of Chat Section Module
+        // Not Refactored Yet - This should be resolved in a proper way in Chat Section Module most likely
 
 //        const nbContacts = appMain.rootStore.contactsModuleInst.model.list.rowCount()
 //        const contacts = []
@@ -120,18 +119,6 @@ Item {
 //        return contacts
 
         return []
-    }
-
-    function getUserNickname(pubKey) {
-        // Get contact nickname
-        const contactList = appMain.rootStore.contactsModuleInst.model.list
-        const contactCount = contactList.rowCount()
-        for (let i = 0; i < contactCount; i++) {
-            if (contactList.rowData(i, 'pubKey') === pubKey) {
-                return contactList.rowData(i, 'localNickname')
-            }
-        }
-        return ""
     }
 
     property Component backupSeedModalComponent: BackupSeedModal {
@@ -439,6 +426,8 @@ Item {
 
                     pinnedMessagesListPopupComponent: pinnedMessagesPopupComponent
 
+                    contactsStore: appMain.rootStore.profileSectionStore.contactsStore
+
                     onProfileButtonClicked: {
                         Global.changeAppSectionBySectionType(Constants.appSection.profile);
                     }
@@ -448,7 +437,7 @@ Item {
                     }
 
                     Component.onCompleted: {
-                        chatCommunitySectionModule = mainModule.getChatSectionModule()
+                        rootStore.chatCommunitySectionModule = mainModule.getChatSectionModule()
                     }
                 }
 
@@ -526,6 +515,8 @@ Item {
 
                                 pinnedMessagesListPopupComponent: pinnedMessagesPopupComponent
 
+                                contactsStore: appMain.rootStore.profileSectionStore.contactsStore
+
                                 onProfileButtonClicked: {
                                     Global.changeAppSectionBySectionType(Constants.appSection.profile);
                                 }
@@ -538,7 +529,7 @@ Item {
                                     // we cannot return QVariant if we pass another parameter in a function call
                                     // that's why we're using it this way
                                     mainModule.prepareCommunitySectionModuleForCommunityId(model.id)
-                                    chatCommunitySectionModule = mainModule.getCommunitySectionModule()
+                                    rootStore.chatCommunitySectionModule = mainModule.getCommunitySectionModule()
                                 }
                             }
                         }
@@ -625,7 +616,8 @@ Item {
             id: inviteFriendsToCommunityPopup
             InviteFriendsToCommunityPopup {
                 anchors.centerIn: parent
-                hasAddedContacts: appMain.rootStore.allContacts.hasAddedContacts()
+                // Not Refactored Yet
+//                hasAddedContacts: appMain.rootStore.allContacts.hasAddedContacts()
                 onClosed: {
                     destroy()
                 }
@@ -695,6 +687,7 @@ Item {
             property var selectedAccount
             sourceComponent: SendModal {
                 store: appMain.rootStore
+                contactsStore: appMain.rootStore.profileSectionStore.contactsStore
                 onOpened: {
                     // Not Refactored Yet
 //                    walletModel.gasView.getGasPrice()

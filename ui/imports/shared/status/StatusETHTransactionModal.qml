@@ -15,6 +15,9 @@ import shared.controls 1.0
 // TODO: replace with StatusModal
 ModalPopup {
     id: root
+
+    property var contactsStore
+
     readonly property var asset: {"name": "Ethereum", "symbol": "ETH"}
 
     title: qsTr("Contract interaction")
@@ -108,9 +111,8 @@ ModalPopup {
                 id: selectRecipient
                 visible: false
                 // Not Refactored Yet
-                // ensModule: root.store.contactsModuleInst
 //                accounts: RootStore.walletModelInst.accountsView.accounts
-                contacts: RootStore.contactsModuleInst.model.addedContacts
+                contactsStore: root.contactsStore
                 selectedRecipient: { "address": RootStore.utilsModelInst.ensRegisterAddress, "type": RecipientSelector.Type.Address }
                 readOnly: true
                 currentIndex: index

@@ -16,6 +16,8 @@ import "."
 // TODO: replace with StatusModal
 ModalPopup {
     id: root
+    property var contactsStore
+
     property alias selectFromAccount: selectFromAccount
     property alias selectRecipient: selectRecipient
     property alias stack: stack
@@ -111,9 +113,8 @@ ModalPopup {
             RecipientSelector {
                 id: selectRecipient
                 accounts: root.store.accounts
-                contacts: root.store.addedContacts
+                contactsStore: root.contactsStore
                 currentIndex: index
-                    ensModule: root.store.contactsModuleInst
                 //% "Recipient"
                 label: qsTrId("recipient")
                 anchors.top: separator.bottom

@@ -32,8 +32,7 @@ QtObject {
     }
 
     function generateIdenticon(pk) {
-        // Not Refactored Yet
-//        return utilsModel.generateIdenticon(pk)
+        return globalUtils.generateIdenticon(pk)
     }
 
     function get0xFormedUrl(browserExplorer, url) {

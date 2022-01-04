@@ -22,6 +22,8 @@ StatusModal {
     height: 540
 
     property var store
+    property var contactsStore
+
     property var selectedAccount
     property var selectedRecipient
     property var selectedAsset
@@ -129,10 +131,9 @@ StatusModal {
                 RecipientSelector {
                     id: selectRecipient
                     visible: false
-                    ensModule: root.store.contactsModuleInst
                     // Not Refactored Yet
 //                    accounts: root.store.walletModelInst.accountsView.accounts
-                    contacts: root.store.addedContacts
+                    contactsStore: root.contactsStore
                     selectedRecipient: root.selectedRecipient
                     readOnly: true
                 }

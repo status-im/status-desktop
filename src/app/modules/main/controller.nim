@@ -92,6 +92,10 @@ method init*(self: Controller) =
     self.delegate.toggleSection(args.sectionType)
     discard    
 
+  self.events.on(SIGNAL_ENS_RESOLVED) do(e: Args):
+    var args = ResolvedContactArgs(e)
+    self.delegate.resolvedENS(args.pubkey, args.address, args.uuid)
+
 method getJoinedCommunities*(self: Controller): seq[CommunityDto] =
   return self.communityService.getJoinedCommunities()
 
@@ -166,3 +170,6 @@ method getContact*(self: Controller, id: string): ContactsDto =
 method getContactNameAndImage*(self: Controller, contactId: string): 
   tuple[name: string, image: string, isIdenticon: bool] =
   return self.contactsService.getContactNameAndImage(contactId)
+
+method resolveENS*(self: Controller, ensName: string, uuid: string = "") =
+  self.contactsService.resolveENS(ensName, uuid)

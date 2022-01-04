@@ -29,7 +29,7 @@ Item {
     property bool resultClickable: true
     property bool addContactEnabled: true
 
-    property bool isAddedContact: isContactAdded()
+    property bool isAddedContact: root.pubKey != "" ? Utils.getContactDetailsAsJson(root.pubKey).isContact : false
 
     signal resultClicked(string pubKey)
     signal addToContactsButtonClicked(string pubKey)
@@ -40,12 +40,6 @@ Item {
         username = ""
         userAlias = ""
         pubKey = ""
-    }
-
-    function isContactAdded() {
-        // Not Refactored Yet
-        return false
-//        return pubKey != "" ? RootStore.chatsModelInst.messageView.isAddedContact(pubKey) : false
     }
 
     width: parent.width
@@ -87,8 +81,7 @@ Item {
             anchors.verticalCenter: parent.verticalCenter
             anchors.left: parent.left
             anchors.leftMargin: Style.current.padding
-            // Not Refactored Yet
-//            image.source: utilsModel.generateIdenticon(root.pubKey)
+            image.source: globalUtils.generateIdenticon(root.pubKey)
             image.isIdenticon: true
         }
 

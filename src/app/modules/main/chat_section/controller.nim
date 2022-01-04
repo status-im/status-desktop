@@ -62,6 +62,18 @@ method init*(self: Controller) =
     let args = chat_service.ChatArgs(e)
     self.delegate.removeChat(args.chatId)
 
+  self.events.on(SIGNAL_CONTACT_ADDED) do(e: Args):
+    var args = ContactArgs(e)
+    self.delegate.onContactAccepted(args.contactId)
+
+  self.events.on(SIGNAL_CONTACT_REMOVED) do(e: Args):
+    var args = ContactArgs(e)
+    self.delegate.onContactRejected(args.contactId)
+
+  self.events.on(SIGNAL_CONTACT_BLOCKED) do(e: Args):
+    var args = ContactArgs(e)
+    self.delegate.onContactBlocked(args.contactId)
+
 method getMySectionId*(self: Controller): string =
   return self.sectionId
 
@@ -147,3 +159,22 @@ method clearChatHistory*(self: Controller, chatId: string) =
 
 method getCurrentFleet*(self: Controller): string =
   return self.settingsService.getFleetAsString()
+
+method getContacts*(self: Controller): seq[ContactsDto] =
+  return self.contactService.getContacts()
+
+method getContact*(self: Controller, id: string): ContactsDto =
+  return self.contactService.getContactById(id)
+
+method getContactNameAndImage*(self: Controller, contactId: string): 
+  tuple[name: string, image: string, isIdenticon: bool] =
+  return self.contactService.getContactNameAndImage(contactId)
+
+method addContact*(self: Controller, publicKey: string) =
+  self.contactService.addContact(publicKey)
+
+method rejectContactRequest*(self: Controller, publicKey: string) =
+  self.contactService.rejectContactRequest(publicKey)
+
+method blockContact*(self: Controller, publicKey: string) =
+  self.contactService.blockContact(publicKey)

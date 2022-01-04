@@ -1,3 +1,4 @@
+import ../../../../app_service/service/contacts/dto/[contacts]
 import ../../../../app_service/service/chat/dto/[chat]
 import ../../../../app_service/service/community/dto/[community]
 
@@ -67,4 +68,23 @@ method clearChatHistory*(self: AccessInterface, chatId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getCurrentFleet*(self: AccessInterface): string {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getContacts*(self: AccessInterface): seq[ContactsDto] {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getContact*(self: AccessInterface, id: string): ContactsDto {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getContactNameAndImage*(self: AccessInterface, contactId: string): 
+  tuple[name: string, image: string, isIdenticon: bool] {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method addContact*(self: AccessInterface, publicKey: string): void {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method rejectContactRequest*(self: AccessInterface, publicKey: string): void {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method blockContact*(self: AccessInterface, publicKey: string): void {.base.} =
   raise newException(ValueError, "No implementation available")

@@ -23,6 +23,7 @@ Item {
 
     property var store
     property var messageStore
+    property var contactsStore
 
     property bool stickersLoaded: false
     property alias chatLogView: chatLogView
@@ -314,6 +315,8 @@ Item {
             id: msgDelegate
 
             messageStore: root.messageStore
+            contactsStore: root.contactsStore
+
             messageContextMenu: messageContextMenuInst
 
             messageId: model.id

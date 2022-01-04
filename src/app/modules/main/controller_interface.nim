@@ -40,3 +40,6 @@ method getContact*(self: AccessInterface, id: string): ContactsDto {.base.} =
 method getContactNameAndImage*(self: AccessInterface, contactId: string): 
   tuple[name: string, image: string, isIdenticon: bool] {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method resolveENS*(self: AccessInterface, ensName: string, uuid: string = ""): void {.base.} =
+  raise newException(ValueError, "No implementation available")
