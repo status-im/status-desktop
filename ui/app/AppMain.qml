@@ -612,11 +612,12 @@ Item {
             id: toastMessage
         }
         
-        // Add SendModal here as it is used by the Wallet as well as the Browser
+        // ToDo: move this to Global or similar in order to get rid of dynamic scoping
         Loader {
             id: sendModal
             active: false
             
+            property var selectedAccount
             function open() {
                 this.active = true
                 this.item.open()
@@ -624,6 +625,11 @@ Item {
             function closed() {
                 // this.sourceComponent = undefined // kill an opened instance
                 this.active = false
+            }
+            onLoaded:  {
+                if( item && sendModal.selectedAccount) {
+                    item.selectFromAccount.selectedAccount = sendModal.selectedAccount
+                }
             }
             sourceComponent: SendModal {
                 store: appMain.rootStore

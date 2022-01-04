@@ -158,7 +158,7 @@ Popup {
             anchors.topMargin: Style.current.halfPadding
             icon.name: "send"
             onClicked: {
-                sendModal.selectFromAccount.selectedAccount = accountSelector.selectedAccount
+                sendModal.selectedAccount = accountSelector.selectedAccount
                 sendModal.open()
             }
         }
