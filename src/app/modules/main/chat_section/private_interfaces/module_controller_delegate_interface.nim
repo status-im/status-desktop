@@ -15,3 +15,12 @@ method onChatUnmuted*(self: AccessInterface, chatId: string) {.base.} =
 
 method onMarkAllMessagesRead*(self: AccessInterface, chatId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method onContactAccepted*(self: AccessInterface, publicKey: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onContactRejected*(self: AccessInterface, publicKey: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onContactBlocked*(self: AccessInterface, publicKey: string) {.base.} =
+  raise newException(ValueError, "No implementation available")

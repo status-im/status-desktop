@@ -8,6 +8,9 @@ import "."
 
 Item {
     id: root
+
+    property var contactsStore
+
     property string validationError: "Error"
     //% "ENS Username not found"
     property string ensAsyncValidationError: qsTrId("ens-username-not-found")
@@ -49,6 +52,9 @@ Item {
         anchors.bottom: parent.bottom
         width: parent.width
         showContactList: false
+
+        contactsStore: root.contactsStore
+
         onUserClicked: function (isContact, pubKey, ensName, address) {
             chatKey.text = address
         }

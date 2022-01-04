@@ -25,14 +25,6 @@ method delete*(self: Controller) =
   discard
 
 method init*(self: Controller) =
-  self.events.on(SIGNAL_CONTACT_LOOKED_UP) do(e: Args):
-    var args = ResolvedContactArgs(e)
-    self.delegate.contactLookedUp(args.pubkey)
-
-  self.events.on(SIGNAL_ENS_RESOLVED_WITH_UUID) do(e: Args):
-    var args = ResolvedContactArgs(e)
-    self.delegate.resolvedENSWithUUID(args.address, args.uuid)
-
   self.events.on(SIGNAL_CONTACT_ADDED) do(e: Args):
     var args = ContactArgs(e)
     self.delegate.contactAdded(args.contactId)
@@ -70,9 +62,6 @@ method getContactNameAndImage*(self: Controller, contactId: string):
 method addContact*(self: Controller, publicKey: string) =
   self.contactsService.addContact(publicKey)
 
-method rejectContactRequest*(self: Controller, publicKey: string) =
-  self.contactsService.rejectContactRequest(publicKey)
-
 method unblockContact*(self: Controller, publicKey: string) =
   self.contactsService.unblockContact(publicKey)
 
@@ -84,9 +73,3 @@ method removeContact*(self: Controller, publicKey: string) =
 
 method changeContactNickname*(self: Controller, publicKey: string, nickname: string) =
   self.contactsService.changeContactNickname(publicKey, nickname)
-
-method lookupContact*(self: Controller, publicKey: string) =
-  self.contactsService.lookupContact(publicKey)
-
-method resolveENSWithUUID*(self: Controller, ensName: string, uuid: string) =
-  self.contactsService.resolveENSWithUUID(ensName, uuid)

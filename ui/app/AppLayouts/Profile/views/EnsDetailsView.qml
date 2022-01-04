@@ -13,6 +13,7 @@ import shared.status 1.0
 Item {
     id: root
     property var store
+    property var contactsStore
     property string username: ""
     property string walletAddress: "-"
     property string key: "-"
@@ -100,6 +101,7 @@ Item {
     Component {
         id: transactionDialogComponent
         StatusETHTransactionModal {
+            contactsStore: root.contactsStore
             onOpened: {
                 root.store.getGasPricePredictions()
             }

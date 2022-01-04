@@ -4,7 +4,49 @@ import utils 1.0
 
 QtObject {
     id: root
-    objectName: "hello!"
+
+    // Important:
+    // Each `ChatLayout` has its own chatCommunitySectionModule
+    // (on the backend chat and community sections share the same module since they are actually the same)
+    property var chatCommunitySectionModule
+    // Since qml component doesn't follow encaptulation from the backend side, we're introducing
+    // a method which will return appropriate chat content module for selected chat/channel
+    function currentChatContentModule(){
+        // When we decide to have the same struct as it's on the backend we will remove this function.
+        // So far this is a way to deal with refactord backend from the current qml structure.
+        if(chatCommunitySectionModule.activeItem.isSubItemActive)
+            chatCommunitySectionModule.prepareChatContentModuleForChatId(chatCommunitySectionModule.activeItem.activeSubItem.id)
+        else
+            chatCommunitySectionModule.prepareChatContentModuleForChatId(chatCommunitySectionModule.activeItem.id)
+
+        return chatCommunitySectionModule.getChatContentModule()
+    }
+
+
+    // Contact requests related part
+    property var contactRequestsModel: chatCommunitySectionModule.contactRequestsModel
+
+    function acceptContactRequest(pubKey) {
+        chatCommunitySectionModule.acceptContactRequest(pubKey)
+    }
+
+    function acceptAllContactRequests() {
+        chatCommunitySectionModule.acceptAllContactRequests()
+    }
+
+    function rejectContactRequest(pubKey) {
+        chatCommunitySectionModule.rejectContactRequest(pubKey)
+    }
+
+    function rejectAllContactRequests() {
+        chatCommunitySectionModule.rejectAllContactRequests()
+    }
+
+    function blockContact(pubKey) {
+        chatCommunitySectionModule.blockContact(pubKey)
+    }
+
+
     property var messageStore
     property EmojiReactions emojiReactionsModel: EmojiReactions { }
 
@@ -45,16 +87,13 @@ QtObject {
             })
         }
     }
-    property var contactsModuleInst: contactsModule
-    property var contactsModuleModel: contactsModuleInst.model || {}
+
     property var stickersModuleInst: stickersModule
 
     // Not Refactored Yet
 //    property var activeCommunity: chatsModelInst.communities.activeCommunity
 
-    property var contactRequests: contactsModuleModel.contactRequests
-    property var addedContacts: contactsModuleModel.addedContacts
-    property var allContacts: contactsModuleModel.list
+
 
     function sendSticker(channelId, hash, replyTo, pack) {
         stickersModuleInst.send(channelId, hash, replyTo, pack)
@@ -167,29 +206,5 @@ QtObject {
     function generateIdenticon(pk) {
         // Not Refactored Yet
 //        return utilsModelInst.generateIdenticon(pk);
-    }
-
-    function addContact(pubKey) {
-        contactsModuleInst.addContact(pubKey);
-    }
-
-    function isContactAdded(address) {
-        return contactsModuleModel.isAdded(address);
-    }
-
-    function contactRequestReceived(pubkey) {
-        return contactsModuleModel.contactRequestReceived(pubkey)
-    }
-
-    function isContactBlocked(pubkey) {
-        return contactsModuleModel.isContactBlocked(pubkey)
-    }
-
-    function isEnsVerified(pubkey) {
-        return contactsModuleInst.isEnsVerified(pubkey)
-    }
-
-    function alias(pubkey) {
-        return contactsModuleInst.alias(pubkey)
     }
 }

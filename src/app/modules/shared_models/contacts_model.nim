@@ -1,8 +1,5 @@
-import NimQml, item
-import Tables
-
 import NimQml, Tables
-import item
+import contacts_item
 
 type
   ModelRole {.pure.} = enum
@@ -138,3 +135,7 @@ QtObject:
     let last = self.createIndex(ind, 0, nil)
     self.items[ind].name = name
     self.dataChanged(first, last, @[ModelRole.Name.int])
+
+  proc getPublicKeys*(self: Model): seq[string] = 
+    for i in self.items:
+      result.add(i.pubKey)

@@ -16,6 +16,7 @@ Item {
     id: root
 
     property var store
+    property var contactsStore
     property int profileContentWidth
 
     signal continueClicked(string output, string username)
@@ -60,6 +61,7 @@ Item {
     Component {
         id: transactionDialogComponent
         StatusETHTransactionModal {
+            contactsStore: root.contactsStore
             onOpened: {
                 root.store.getGasPrice()
             }
@@ -146,8 +148,8 @@ Item {
             }
 
             Connections {
-                target: root.store.ens
-                onEnsWasResolved: {
+                target: mainModule
+                onResolvedENS: {
                     if(!validate(ensUsername.text)) return;
                     valid = false;
                     loading = false;

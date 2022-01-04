@@ -22,12 +22,6 @@ method isLoaded*(self: AccessInterface): bool {.base.} =
 method viewDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method lookupContact*(self: AccessInterface, publicKey: string) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method resolveENSWithUUID*(self: AccessInterface, ensName: string, uuid: string) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method addContact*(self: AccessInterface, publicKey: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -52,17 +46,6 @@ method blockContact*(self: AccessInterface, publicKey: string) {.base.} =
 method removeContact*(self: AccessInterface, publicKey: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method isContactAdded*(self: AccessInterface, publicKey: string): bool {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method isContactBlocked*(self: AccessInterface, publicKey: string): bool {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method isEnsVerified*(self: AccessInterface, publicKey: string): bool {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method alias*(self: AccessInterface, publicKey: string): string {.base.} =
-  raise newException(ValueError, "No implementation available")
 
 # Controller Delegate Interface
 
@@ -79,12 +62,6 @@ method contactRemoved*(self: AccessInterface, publicKey: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method contactNicknameChanged*(self: AccessInterface, publicKey: string) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method contactLookedUp*(self: AccessInterface, id: string) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method resolvedENSWithUUID*(self: AccessInterface, address: string, uuid: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method contactUpdated*(self: AccessInterface, publicKey: string) {.base.} =

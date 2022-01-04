@@ -14,6 +14,8 @@ Item {
     height: childrenRect.height
 
     property var store
+    property var contactsStore
+
     property var commandParametersObject
     property var token
     property string tokenAmount
@@ -101,6 +103,7 @@ Item {
         id: signTxComponent
         SignTransactionModal {
             store: root.store
+            contactsStore: root.contactsStore
             msgId: messageId
             onOpened: {
                 // Not Refactored Yet

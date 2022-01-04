@@ -215,7 +215,7 @@ StatusModal {
             delegate: StatusListItem {
                 id: contactRow
 
-                property string nickname: appMain.getUserNickname(model.publicKey)
+                property string nickname: Utils.getContactDetailsAsJson(model.publicKey).localNickname
 
                 title: !model.userName.endsWith(".eth") && !!contactRow.nickname ?
                            contactRow.nickname : Utils.removeStatusEns(model.userName)

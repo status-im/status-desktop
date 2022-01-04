@@ -12,6 +12,8 @@ Item {
     height: rectangleBubble.height
 
     property var store
+    property var contactsStore
+
     property var commandParametersObject: {
         try {
             return JSON.parse(commandParameters)
@@ -183,6 +185,7 @@ Item {
             AcceptTransactionView {
                 state: root.state
                 store: root.store
+                contactsStore: root.contactsStore
                 token: root.token
                 fiatValue: root.fiatValue
                 tokenAmount: root.tokenAmount
@@ -227,6 +230,7 @@ Item {
             id: signTxComponent
             SignTransactionModal {
                 store: root.store
+                contactsStore: root.contactsStore
                 selectedAsset: root.selectedAsset
                 selectedAmount: root.selectedAmount
                 selectedRecipient: root.selectedRecipient

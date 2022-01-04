@@ -510,3 +510,12 @@ method getContactDetailsAsJson*[T](self: Module[T], publicKey: string): string =
     "removed":contact.removed
   }
   return $jsonObj
+
+method resolveENS*[T](self: Module[T], ensName: string, uuid: string) =
+  if ensName.len == 0:
+    error "error: cannot do a lookup for empty ens name"
+    return
+  self.controller.resolveENS(ensName, uuid)
+
+method resolvedENS*[T](self: Module[T], publicKey: string, address: string, uuid: string) =
+  self.view.emitResolvedENSSignal(publicKey, address, uuid)

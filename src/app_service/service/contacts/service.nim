@@ -45,8 +45,7 @@ const OnlineLimitInSeconds = int(5.5 * 60) # 5.5 minutes
 const IdleLimitInSeconds = int(7 * 60) # 7 minutes
 
 # Signals which may be emitted by this service:
-const SIGNAL_CONTACT_LOOKED_UP* = "SIGNAL_CONTACT_LOOKED_UP"
-const SIGNAL_ENS_RESOLVED_WITH_UUID* = "SIGNAL_ENS_RESOLVED_WITH_UUID"
+const SIGNAL_ENS_RESOLVED* = "ensResolved"
 # Remove new when old code is removed
 const SIGNAL_CONTACT_ADDED* = "new-contactAdded"
 const SIGNAL_CONTACT_BLOCKED* = "new-contactBlocked"
@@ -300,19 +299,13 @@ QtObject:
 
   proc ensResolved*(self: Service, jsonObj: string) {.slot.} =
     let jsonObj = jsonObj.parseJson()
-    if (jsonObj["uuid"].getStr != ""):
-      let data = ResolvedContactArgs(
+    let data = ResolvedContactArgs(
         pubkey: jsonObj["id"].getStr,
         address: jsonObj["address"].getStr,
         uuid: jsonObj["uuid"].getStr)
-      self.events.emit(SIGNAL_ENS_RESOLVED_WITH_UUID, data)
-    else:
-      let data = ResolvedContactArgs(
-        pubkey: jsonObj["id"].getStr,
-        address: jsonObj["address"].getStr)
-      self.events.emit(SIGNAL_CONTACT_LOOKED_UP, data)
+    self.events.emit(SIGNAL_ENS_RESOLVED, data)
 
-  proc resolveENSWithUUID*(self: Service, value: string, uuid: string) =
+  proc resolveENS*(self: Service, value: string, uuid: string = "") =
     if(self.closingApp):
       return
     let arg = LookupContactTaskArg(
@@ -323,10 +316,6 @@ QtObject:
       uuid: uuid
     )
     self.threadpool.start(arg)
-
-
-  proc lookupContact*(self: Service, value: string) =
-    self.resolveENSWithUUID(value, "")
 
   proc checkContactsStatus*(self: Service, response: string) {.slot.} =
     let nowInMyLocalZone = now()

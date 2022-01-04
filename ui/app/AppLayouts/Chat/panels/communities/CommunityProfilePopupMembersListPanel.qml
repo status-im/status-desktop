@@ -127,7 +127,7 @@ Item {
 
                     id: memberItem
 
-                    property string nickname: appMain.getUserNickname(model.pubKey)
+                    property string nickname: Utils.getContactDetailsAsJson(model.pubKey).localNickname
                     property string profileImage: Global.getProfileImage(model.pubKey) || ""
 
                     visible: !!!memberSearch.input.text || 

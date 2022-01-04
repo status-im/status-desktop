@@ -16,6 +16,8 @@ import shared.panels 1.0
 
 StatusModal {
     property var store
+    property var contactsStore
+
     property string commandTitle: "Send"
     property string finalButtonLabel: "Request address"
     property var sendChatCommand: function () {}
@@ -90,8 +92,7 @@ StatusModal {
                 RecipientSelector {
                     id: selectRecipient
                     accounts: root.store.accounts
-                    contacts: root.store.addedContacts
-                    ensModule: root.store.contactsModuleInst
+                    contactsStore: root.contactsStore
                     label: root.isRequested ?
                       //% "From"
                       qsTrId("from") :

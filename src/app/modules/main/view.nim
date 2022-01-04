@@ -119,3 +119,10 @@ QtObject:
 
   proc getContactDetailsAsJson(self: View, publicKey: string): string {.slot.} =
     return self.delegate.getContactDetailsAsJson(publicKey)
+
+  proc resolveENS*(self: View, ensName: string, uuid: string) {.slot.} =
+    self.delegate.resolveENS(ensName, uuid)
+
+  proc resolvedENS*(self: View, resolvedPubKey: string, resolvedAddress: string, uuid: string) {.signal.}
+  proc emitResolvedENSSignal*(self: View, resolvedPubKey: string, resolvedAddress: string, uuid: string) =
+    self.resolvedENS(resolvedPubKey, resolvedAddress, uuid)

@@ -18,8 +18,8 @@ StatusModal {
     width: 400
     height: 390
     header.title: qsTr("Nickname")
-    header.subTitle: isEnsVerified ? alias : fromAuthor
-    header.subTitleElide: !isEnsVerified ? Text.ElideMiddle : Text.ElideNone
+    header.subTitle: userIsEnsVerified ? alias : fromAuthor
+    header.subTitleElide: !userIsEnsVerified ? Text.ElideMiddle : Text.ElideNone
 
     property int nicknameLength: nicknameInput.textField.text.length
     readonly property int maxNicknameLength: 32

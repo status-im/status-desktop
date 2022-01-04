@@ -14,6 +14,9 @@ import shared.controls 1.0
 // TODO: replace with StatusModal
 ModalPopup {
     id: root
+
+    property var contactsStore
+
     // Not Refactored Yet
 //    readonly property var asset: "" //JSON.parse(RootStore.walletModelInst.tokensView.getStatusToken())
     property string assetPrice
@@ -112,9 +115,8 @@ ModalPopup {
                 id: selectRecipient
                 visible: false
                 // Not Refactored Yet
-                // ensModule: root.store.contactsModuleInst
 //                accounts: RootStore.walletModelInst.accountsView.accounts
-                contacts: RootStore.contactsModuleInst.model.addedContacts
+                contactsStore: root.contactsStore
                 selectedRecipient: { "address": contractAddress, "type": RecipientSelector.Type.Address }
                 readOnly: true
                 currentIndex: index

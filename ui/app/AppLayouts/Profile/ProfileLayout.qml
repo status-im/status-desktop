@@ -58,6 +58,7 @@ StatusAppTwoPanelLayout {
             id: ensContainer
             store: profileView.store
             messageStore: profileView.globalStore.messageStore
+            contactsStore: profileView.store.contactsStore
             profileContentWidth: _internal.profileContentWidth
         }
 

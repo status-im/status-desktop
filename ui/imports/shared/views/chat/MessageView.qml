@@ -17,6 +17,7 @@ Column {
     z: (typeof chatLogView === "undefined") ? 1 : (chatLogView.count - index)
 
     property var messageStore
+    property var contactsStore
     property var messageContextMenu
 
     property string messageId: ""
@@ -354,6 +355,7 @@ Column {
     Component {
         id: compactMessageComponent
         CompactMessageView {
+            contactsStore: root.contactsStore
             messageContextMenu: root.messageContextMenu
             onAddEmoji: {
                 root.clickMessage(isProfileClick, isSticker, isImage , image, emojiOnly, hideEmojiPicker)

@@ -9,7 +9,6 @@ import StatusQ.Controls 0.1
 
 import shared.popups 1.0
 
-import "../../Profile/Sections/Contacts"
 import "../panels"
 
 // TODO: Replace with StatusModal
@@ -31,28 +30,27 @@ ModalPopup {
         anchors.leftMargin: -Style.current.halfPadding
         anchors.rightMargin: -Style.current.halfPadding
 
-        model: popup.store.contactRequests
+        model: popup.store.contactRequestsModel
         clip: true
 
         delegate: ContactRequestPanel {
-            name: Utils.removeStatusEns(model.name)
-            address: model.address
-            localNickname: model.localNickname
-            identicon: model.thumbnailImage || model.identicon
-            profileClick: function (showFooter, userName, fromAuthor, identicon, textParam, nickName) {
-                Global.openProfilePopup(fromAuthor)
+            contactName: model.name
+            contactIcon: model.icon
+            contactIconIsIdenticon: model.isIdenticon
+            onOpenProfilePopup: {
+                Global.openProfilePopup(model.pubKey)
             }
             onBlockContactActionTriggered: {
-                blockContactConfirmationDialog.contactName = name
-                blockContactConfirmationDialog.contactAddress = address
+                blockContactConfirmationDialog.contactName = model.name
+                blockContactConfirmationDialog.contactAddress = model.pubKey
                 blockContactConfirmationDialog.open()
             }
             onAcceptClicked: {
-                chatSectionModule.createOneToOneChat(model.address, "")
-                popup.store.contactsModuleInst.addContact(model.address)
+                chatSectionModule.createOneToOneChat(model.pubKey, "")
+                popup.store.acceptContactRequest(model.pubKey)
             }
             onDeclineClicked: {
-                popup.store.contactsModuleInst.rejectContactRequest(model.address)
+                popup.store.rejectContactRequest(model.pubKey)
             }
         }
     }
@@ -64,7 +62,7 @@ ModalPopup {
         BlockContactConfirmationDialog {
             id: blockContactConfirmationDialog
             onBlockButtonClicked: {
-                popup.store.contactsModuleInst.blockContact(blockContactConfirmationDialog.contactAddress)
+                popup.store.blockContact(blockContactConfirmationDialog.contactAddress)
                 blockContactConfirmationDialog.close()
             }
         }
@@ -76,12 +74,7 @@ ModalPopup {
             //% "Are you sure you want to decline all these contact requests"
             confirmationText: qsTrId("are-you-sure-you-want-to-decline-all-these-contact-requests")
             onConfirmButtonClicked: {
-                const requests = popup.store.contactRequests
-                const pubkeys = []
-                for (let i = 0; i < requests.count; i++) {
-                    pubkeys.push(requests.rowData(i, "address"))
-                }
-                popup.store.contactsModuleInst.rejectContactRequests(JSON.stringify(pubkeys))
+                popup.store.rejectAllContactRequests()
                 declineAllDialog.close()
             }
         }
@@ -93,12 +86,7 @@ ModalPopup {
             //% "Are you sure you want to accept all these contact requests"
             confirmationText: qsTrId("are-you-sure-you-want-to-accept-all-these-contact-requests")
             onConfirmButtonClicked: {
-                const requests = popup.store.contactRequests
-                const pubkeys = []
-                for (let i = 0; i < requests.count; i++) {
-                    pubkeys.push(requests.rowData(i, "address"))
-                }
-                popup.store.contactsModuleInst.acceptContactRequests(JSON.stringify(pubkeys))
+                popup.store.acceptAllContactRequests()
                 acceptAllDialog.close()
             }
         }

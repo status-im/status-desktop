@@ -23,9 +23,6 @@ method getContactNameAndImage*(self: AccessInterface, contactId: string):
 method addContact*(self: AccessInterface, publicKey: string): void {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method rejectContactRequest*(self: AccessInterface, publicKey: string): void {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method unblockContact*(self: AccessInterface, publicKey: string): void {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -37,14 +34,3 @@ method removeContact*(self: AccessInterface, publicKey: string): void {.base.} =
 
 method changeContactNickname*(self: AccessInterface, publicKey: string, nickname: string) {.base.} =
   raise newException(ValueError, "No implementation available")
-
-method lookupContact*(self: AccessInterface, publicKey: string): void {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method resolveENSWithUUID*(self: AccessInterface, ensName: string, uuid: string): void {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-type
-  ## Abstract class (concept) which must be implemented by object/s used in this 
-  ## module.
-  DelegateInterface* = concept c

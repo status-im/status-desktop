@@ -22,3 +22,6 @@ method communityJoined*(self: AccessInterface, community: CommunityDto, events: 
   communityService: community_service.Service, 
   messageService: message_service.Service) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method resolvedENS*(self: AccessInterface, publicKey: string, address: string, uuid: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
