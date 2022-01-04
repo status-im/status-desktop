@@ -4,6 +4,7 @@ import QtGraphicalEffects 1.13
 
 import StatusQ.Components 0.1
 import StatusQ.Core.Theme 0.1
+import shared.panels 1.0
 
 import "../../stores"
 
@@ -31,7 +32,15 @@ Item {
         anchors.top: parent.top
         anchors.topMargin: 16
         anchors.horizontalCenter: parent.horizontalCenter
-        sourceComponent: root.collectiblesLoaded ? loaded : loading
+        sourceComponent: {
+            if (!root.collectiblesLoaded) {
+                return loading
+            }
+            if (RootStore.getCollectionCollectiblesList(root.slug).count == 0) {
+                return empty
+            }
+            return loaded
+        }
     }
 
     Component {
@@ -45,6 +54,22 @@ Item {
                 height: 20
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.horizontalCenter: parent.horizontalCenter
+            }
+        }
+    }
+
+    Component {
+        id: empty
+        
+        Item {
+            id: emptyContainer
+            height: 164
+            StyledText {
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.horizontalCenter: parent.horizontalCenter
+                color: Style.current.secondaryText
+                text: qsTr("No collectibles available")
+                font.pixelSize: 15
             }
         }
     }
