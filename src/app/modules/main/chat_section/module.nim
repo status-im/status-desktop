@@ -314,9 +314,10 @@ method addNewChat*(
   let amIChatAdmin = self.amIMarkedAsAdminUser(chatDto.members)
   let item = initItem(chatDto.id, chatName, chatImage, isIdenticon, chatDto.color, chatDto.description, 
   chatDto.chatType.int, amIChatAdmin, hasNotification, notificationsCount, chatDto.muted, false, 0)
-  self.view.appendItem(item)
   self.addSubmodule(chatDto.id, false, isUsersListAvailable, events, settingsService, contactService, chatService, 
   communityService, messageService)
+  self.chatContentModules[chatDto.id].load()
+  self.view.appendItem(item)
 
   # make new added chat active one
   self.setActiveItemSubItem(item.id, "")

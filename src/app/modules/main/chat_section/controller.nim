@@ -78,10 +78,10 @@ method init*(self: Controller) =
     self.events.on(SIGNAL_COMMUNITY_CHANNEL_CREATED) do(e:Args):
       let args = CommunityChatArgs(e)
       if (args.communityId == self.sectionId):
-        self.delegate.addNewChat(
-          ChatDto(
+        let chatDto = ChatDto(
             id: args.chat.id,
             name: args.chat.name,
+            chatType: ChatType.CommunityChat,
             color: args.chat.color,
             emoji: args.chat.emoji,
             description: args.chat.description,
@@ -90,7 +90,12 @@ method init*(self: Controller) =
             position: args.chat.position,
             categoryId: args.chat.categoryId,
             communityId: args.communityId
-          ),
+          )
+
+        self.chatService.updateOrAddChat(chatDto)
+        
+        self.delegate.addNewChat(
+          chatDto,
           self.events,
           self.settingsService,
           self.contactService,
