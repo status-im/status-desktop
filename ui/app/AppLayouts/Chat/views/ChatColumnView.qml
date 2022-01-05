@@ -197,7 +197,12 @@ Item {
                 DelegateChoice { // In case of category
                     roleValue: Constants.chatType.unknown
                     delegate: Repeater {
-                        model: subItems
+                        model: {
+                            if (!subItems) {
+                                console.error("We got a category with no subitems. It is possible that the channel had a type unknown")
+                            }
+                            return subItems
+                        }
                         delegate: ChatContentView {
                             rootStore: root.rootStore
                             contactsStore: root.contactsStore
