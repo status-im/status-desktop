@@ -7,7 +7,6 @@ import ../../../../../../app_service/service/community/service as community_serv
 import ../../../../../../app_service/service/chat/service as chat_service
 import ../../../../../../app_service/service/message/service as message_service
 
-import ../../../../../core/signals/types
 import eventemitter
 
 export controller_interface
@@ -51,6 +50,11 @@ method init*(self: Controller) =
     if(self.chatId != args.chatId):
       return
     self.delegate.newMessagesLoaded(args.messages, args.reactions, args.pinnedMessages)
+
+  self.events.on(SIGNAL_NEW_MESSAGE_RECEIVED) do(e: Args):
+    var evArgs = MessagesArgs(e)
+    for message in evArgs.messages:
+      self.delegate.messageAdded(message)
 
   self.events.on(SIGNAL_SENDING_SUCCESS) do(e:Args):
     let args = MessageSendingSuccess(e)

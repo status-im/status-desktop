@@ -126,7 +126,7 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
    
   self.view.setLoadingHistoryMessagesInProgress(false)
 
-method onSendingMessageSuccess*(self: Module, message: MessageDto) =
+method messageAdded*(self: Module, message: MessageDto) =
   let sender = self.controller.getContactById(message.`from`)
   let senderDisplayName = sender.userNameOrAlias()
   let amISender = message.`from` == singletonInstance.userProfile.getPubKey()
@@ -141,6 +141,9 @@ method onSendingMessageSuccess*(self: Module, message: MessageDto) =
   message.timestamp, message.contentType.ContentType, message.messageType)
 
   self.view.model().prependItem(item)
+
+method onSendingMessageSuccess*(self: Module, message: MessageDto) =
+  self.messageAdded(message)
   self.view.emitSendingMessageSuccessSignal()
 
 method onSendingMessageError*(self: Module) =

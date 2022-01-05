@@ -2,6 +2,7 @@ import NimQml, tables, json, sequtils, chronicles
 
 import eventemitter
 import ../../../app/core/tasks/[qt, threadpool]
+import ../../../app/core/signals/types
 
 import status/statusgo_backend_new/messages as status_go
 
@@ -21,6 +22,7 @@ const CURSOR_VALUE_IGNORE = "ignore"
 
 # Signals which may be emitted by this service:
 const SIGNAL_MESSAGES_LOADED* = "new-messagesLoaded" #Once we are done with refactoring we should remove "new-" from all signals
+const SIGNAL_NEW_MESSAGE_RECEIVED* = "SIGNAL_NEW_MESSAGE_RECEIVED"
 const SIGNAL_MESSAGE_PINNED* = "new-messagePinned"
 const SIGNAL_MESSAGE_UNPINNED* = "new-messageUnpinned"
 const SIGNAL_SEARCH_MESSAGES_LOADED* = "new-searchMessagesLoaded"
@@ -31,7 +33,7 @@ const SIGNAL_MESSAGE_REACTION_REMOVED* = "new-messageReactionRemoved"
 include async_tasks
 
 type
-  SearchMessagesLoadedArgs* = ref object of Args
+  MessagesArgs* = ref object of Args
     messages*: seq[MessageDto]
 
   MessagesLoadedArgs* = ref object of Args
@@ -77,6 +79,12 @@ QtObject:
     result.lastUsedMsgCursor = initTable[string, string]()
     result.pinnedMsgCursor = initTable[string, string]()
     result.lastUsedPinnedMsgCursor = initTable[string, string]()
+
+  proc init*(self: Service) =
+    self.events.on(SignalType.Message.event) do(e: Args):
+      var evArgs = MessageSignal(e)
+      if (evArgs.messages.len > 0):
+        self.events.emit(SIGNAL_NEW_MESSAGE_RECEIVED, MessagesArgs(messages: evArgs.messages))
 
   proc initialMessagesFetched(self: Service, chatId: string): bool =
     return self.msgCursor.hasKey(chatId)
@@ -279,7 +287,7 @@ QtObject:
 
   proc finishAsyncSearchMessagesWithError*(self: Service, errorMessage: string) =
     error "error: ", methodName="onAsyncSearchMessages", errDescription = errorMessage
-    self.events.emit(SIGNAL_SEARCH_MESSAGES_LOADED, SearchMessagesLoadedArgs())
+    self.events.emit(SIGNAL_SEARCH_MESSAGES_LOADED, MessagesArgs())
 
   proc onAsyncSearchMessages*(self: Service, response: string) {.slot.} =
     let responseObj = response.parseJson
@@ -303,7 +311,7 @@ QtObject:
 
     var messages = map(messagesArray.getElems(), proc(x: JsonNode): MessageDto = x.toMessageDto())
 
-    let data = SearchMessagesLoadedArgs(messages: messages)
+    let data = MessagesArgs(messages: messages)
     self.events.emit(SIGNAL_SEARCH_MESSAGES_LOADED, data)
 
   proc asyncSearchMessages*(self: Service, chatId: string, searchTerm: string, caseSensitive: bool) =
