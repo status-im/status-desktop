@@ -333,6 +333,7 @@ Item {
             messageOutgoingStatus: model.outgoingStatus
             messageContentType: model.contentType
             pinnedMessage: model.pinned
+            messagePinnedBy: model.pinnedBy
             reactionsModel: model.reactions
 
             // This is possible since we have all data loaded before we load qml.
@@ -344,6 +345,8 @@ Item {
             onOpenStickerPackPopup: {
                 root.openStickerPackPopup(stickerPackId);
             }
+
+            stickersLoaded: root.stickersLoaded
         }
     }
 

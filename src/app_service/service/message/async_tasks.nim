@@ -44,7 +44,7 @@ const asyncFetchChatMessagesTask: Task = proc(argEncoded: string) {.gcsafe, nimc
     var reactionsArr: JsonNode
     let rResponse = status_go.fetchReactions(arg.chatId, arg.msgCursor, arg.limit)
     reactionsArr = rResponse.result
-    responseJson["pinnedMessages"] = reactionsArr
+    responseJson["reactions"] = reactionsArr
 
   arg.finish(responseJson)
 

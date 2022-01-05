@@ -36,6 +36,8 @@ ColumnLayout {
     property Component receiveTransactionModal
     property Component sendTransactionWithEnsModal
 
+    property bool stickersLoaded: false
+
     StatusChatToolBar {
         id: topBar
         Layout.fillWidth: true
@@ -115,7 +117,7 @@ ColumnLayout {
             openHandler: function () {
                 currentFleet = chatContentModule.getCurrentFleet()
                 isCommunityChat = chatContentModule.chatDetails.belongsToCommunity
-                isCommunityAdmin = chatContentModule.amIChatAdmin()
+                amIChatAdmin = chatContentModule.amIChatAdmin()
                 chatId = chatContentModule.chatDetails.id
                 chatName = chatContentModule.chatDetails.name
                 chatDescription = chatContentModule.chatDetails.description
@@ -156,7 +158,7 @@ ColumnLayout {
             }
 
             onDisplayProfilePopup: {
-                // Not Refactored Yet
+                Global.openProfilePopup(publicKey)
             }
 
             onDisplayGroupInfoPopup: {
@@ -268,6 +270,10 @@ ColumnLayout {
         onToggleReaction: {
             messageStore.toggleReaction(messageId, emojiId)
         }
+
+        onOpenProfileClicked: {
+            Global.openProfilePopup(publicKey)
+        }
     }
 
     ColumnLayout {
@@ -283,6 +289,7 @@ ColumnLayout {
             contactsStore: chatContentRoot.contactsStore
             messageContextMenuInst: contextmenu
             messageStore: messageStore
+            stickersLoaded: chatContentRoot.stickersLoaded
         }
 
         Item {

@@ -22,7 +22,7 @@ StatusPopupMenu {
     property alias emojiContainer: emojiContainer
 
     property string myPublicKey: ""
-    property bool amIAdmin: false
+    property bool amIChatAdmin: false
     property bool isMyMessage: {
         return root.messageSenderId !== "" && root.messageSenderId == root.myPublicKey
     }
@@ -49,7 +49,9 @@ StatusPopupMenu {
     property var setXPosition: function() {return 0}
     property var setYPosition: function() {return 0}
 
-    signal openProfileClicked(string publicKey, string displayName, string icon) // TODO: optimization, only publicKey is more than enough to be sent from here
+    property var emojiReactionsReactedByUser: []
+
+    signal openProfileClicked(string publicKey)
     signal pinMessage(string messageId)
     signal unpinMessage(string messageId)
     signal pinnedMessagesLimitReached(string messageId)
@@ -79,7 +81,7 @@ StatusPopupMenu {
                 newEmojiReactions[emojiReaction.emojiId] = emojiReaction.currentUserReacted
             })
         }
-        emojiReactionsReactedByUser = newEmojiReactions;
+        root.emojiReactionsReactedByUser = newEmojiReactions;
 
         /* // copy link feature not ready yet
         const numLinkUrls = root.linkUrls.split(" ").length
@@ -159,7 +161,7 @@ StatusPopupMenu {
             hoverEnabled: true
             cursorShape: Qt.PointingHandCursor
             onClicked: {
-                root.openProfileClicked(root.selectedUserPublicKey, root.selectedUserDisplayName, root.selectedUserIcon)
+                root.openProfileClicked(root.selectedUserPublicKey)
                 root.close()
             }
         }
@@ -198,7 +200,7 @@ StatusPopupMenu {
         //% "View Profile"
         text: qsTrId("view-profile")
         onTriggered: {
-            root.openProfileClicked(root.selectedUserPublicKey, root.selectedUserDisplayName, root.selectedUserIcon)
+            root.openProfileClicked(root.selectedUserPublicKey)
             root.close()
         }
         icon.name: "profile"
@@ -221,7 +223,7 @@ StatusPopupMenu {
             root.close()
         }
         icon.name: "chat"
-        enabled: root.isProfile ||
+        enabled: root.isProfile && !root.isMyMessage ||
                  (!root.hideEmojiPicker &&
                   !root.emojiOnly &&
                   !root.isProfile &&
@@ -293,9 +295,9 @@ StatusPopupMenu {
             case Constants.chatType.oneToOne:
                 return true
             case Constants.chatType.privateGroupChat:
-                return root.amIAdmin
+                return root.amIChatAdmin
             case Constants.chatType.communityChat:
-                return root.amIAdmin
+                return root.amIChatAdmin
             default:
                 return false
             }
@@ -304,10 +306,10 @@ StatusPopupMenu {
 
     StatusMenuSeparator {
         visible: deleteMessageAction.enabled &&
-                 (viewProfileAction.visible ||
-                  sendMessageOrReplyTo.visible ||
-                  editMessageAction.visible ||
-                  pinAction.visible)
+                 (viewProfileAction.enabled ||
+                  sendMessageOrReplyTo.enabled ||
+                  editMessageAction.enabled ||
+                  pinAction.enabled)
     }
 
     StatusMenuItem {

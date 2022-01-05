@@ -45,6 +45,7 @@ type
   MessagePinUnpinArgs* = ref object of Args
     chatId*: string
     messageId*: string
+    actionInitiatedBy*: string 
 
   MessagesMarkedAsReadArgs* = ref object of Args
     chatId*: string
@@ -82,9 +83,21 @@ QtObject:
 
   proc init*(self: Service) =
     self.events.on(SignalType.Message.event) do(e: Args):
-      var evArgs = MessageSignal(e)
-      if (evArgs.messages.len > 0):
-        self.events.emit(SIGNAL_NEW_MESSAGE_RECEIVED, MessagesArgs(messages: evArgs.messages))
+      var receivedData = MessageSignal(e)
+
+      # Handling messages updates
+      if (receivedData.messages.len > 0):
+        self.events.emit(SIGNAL_NEW_MESSAGE_RECEIVED, MessagesArgs(messages: receivedData.messages))
+      # Handling pinned messages updates
+      if (receivedData.pinnedMessages.len > 0):
+        for pm in receivedData.pinnedMessages:
+          let data = MessagePinUnpinArgs(chatId: pm.chatId, messageId: pm.messageId, actionInitiatedBy: pm.pinnedBy)
+          if(pm.pinned):
+            self.numOfPinnedMessagesPerChat[pm.chatId] = self.numOfPinnedMessagesPerChat[pm.chatId] + 1
+            self.events.emit(SIGNAL_MESSAGE_PINNED, data)
+          else:
+            self.numOfPinnedMessagesPerChat[pm.chatId] = self.numOfPinnedMessagesPerChat[pm.chatId] - 1
+            self.events.emit(SIGNAL_MESSAGE_UNPINNED, data)
 
   proc initialMessagesFetched(self: Service, chatId: string): bool =
     return self.msgCursor.hasKey(chatId)
@@ -252,7 +265,9 @@ QtObject:
         let pinnedMessagesArr = pinMessagesObj.getElems()
         if(pinnedMessagesArr.len > 0): # an array is returned
           let pinMessageObj = pinnedMessagesArr[0]
-          let data = MessagePinUnpinArgs(chatId: chatId, messageId: messageId)
+          var doneBy: string
+          discard pinMessageObj.getProp("from", doneBy)
+          let data = MessagePinUnpinArgs(chatId: chatId, messageId: messageId, actionInitiatedBy: doneBy)
           var pinned = false
           if(pinMessageObj.getProp("pinned", pinned)):
             if(pinned and pin):

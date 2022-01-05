@@ -27,6 +27,7 @@ type
     messageType: int
     reactionsModel: MessageReactionModel 
     pinned: bool
+    pinnedBy: string
 
 proc initItem*(id, responseToMessageWithId, senderId, senderDisplayName, senderLocalName, senderIcon: string, 
   isSenderIconIdenticon, amISender: bool, outgoingStatus, text, image: string, seen: bool, timestamp: int64, 
@@ -62,11 +63,11 @@ proc `$`*(self: Item): string =
     seen: {$self.seen},
     outgoingStatus:{$self.outgoingStatus},
     messageText:{self.messageText},
-    messageImage:{self.messageImage},
     timestamp:{$self.timestamp},
     contentType:{$self.contentType.int},
     messageType:{$self.messageType},
     pinned:{$self.pinned},
+    pinnedBy:{$self.pinnedBy},
     messageReactions: [{$self.reactionsModel}]
     )"""
 
@@ -82,14 +83,26 @@ proc senderId*(self: Item): string {.inline.} =
 proc senderDisplayName*(self: Item): string {.inline.} = 
   self.senderDisplayName
 
+proc `senderDisplayName=`*(self: Item, value: string) {.inline.} = 
+  self.senderDisplayName = value
+
 proc senderLocalName*(self: Item): string {.inline.} = 
   self.senderLocalName
+
+proc `senderLocalName=`*(self: Item, value: string) {.inline.} = 
+  self.senderLocalName = value
 
 proc senderIcon*(self: Item): string {.inline.} = 
   self.senderIcon
 
+proc `senderIcon=`*(self: Item, value: string) {.inline.} = 
+  self.senderIcon = value
+
 proc isSenderIconIdenticon*(self: Item): bool {.inline.} = 
   self.isSenderIconIdenticon
+
+proc `isSenderIconIdenticon=`*(self: Item, value: bool) {.inline.} = 
+  self.isSenderIconIdenticon = value
 
 proc amISender*(self: Item): bool {.inline.} = 
   self.amISender
@@ -126,6 +139,12 @@ proc pinned*(self: Item): bool {.inline.} =
 
 proc `pinned=`*(self: Item, value: bool) {.inline.} = 
   self.pinned = value
+
+proc pinnedBy*(self: Item): string {.inline.} = 
+  self.pinnedBy
+
+proc `pinnedBy=`*(self: Item, value: string) {.inline.} = 
+  self.pinnedBy = value
 
 proc reactionsModel*(self: Item): MessageReactionModel {.inline.} = 
   self.reactionsModel
@@ -164,5 +183,6 @@ proc toJsonNode*(self: Item): JsonNode =
     "timestamp": self.timestamp,
     "contentType": self.contentType.int,
     "messageType": self.messageType,
-    "pinned": self.pinned
+    "pinned": self.pinned,
+    "pinnedBy": self.pinnedBy
   }

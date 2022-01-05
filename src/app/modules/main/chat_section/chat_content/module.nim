@@ -125,7 +125,8 @@ method getMessagesModule*(self: Module): QVariant =
 method getUsersModule*(self: Module): QVariant =
   return self.usersModule.getModuleAsVariant()
 
-proc buildPinnedMessageItem(self: Module, messageId: string, item: var pinned_msg_item.Item): bool = 
+proc buildPinnedMessageItem(self: Module, messageId: string, actionInitiatedBy: string, item: var pinned_msg_item.Item): 
+  bool = 
   let (m, reactions, err) = self.controller.getMessageDetails(messageId)
   if(err.len > 0):
     return false
@@ -137,9 +138,9 @@ proc buildPinnedMessageItem(self: Module, messageId: string, item: var pinned_ms
     m.responseTo,
     m.`from`,
     contactDetails.displayName,
-    contactDetails.localNickname,
+    contactDetails.details.localNickname,
     contactDetails.icon, 
-    contactDetails.isIconIdenticon,
+    contactDetails.isIdenticon,
     contactDetails.isCurrentUser,
     m.outgoingStatus,
     m.text,
@@ -150,6 +151,7 @@ proc buildPinnedMessageItem(self: Module, messageId: string, item: var pinned_ms
     m.messageType
   )
   item.pinned = true
+  item.pinnedBy = actionInitiatedBy
 
   for r in reactions:
     if(r.messageId == m.id):
@@ -168,7 +170,7 @@ method newPinnedMessagesLoaded*(self: Module, pinnedMessages: seq[PinnedMessageD
   var viewItems: seq[pinned_msg_item.Item] 
   for p in pinnedMessages:
     var item: pinned_msg_item.Item
-    if(not self.buildPinnedMessageItem(p.message.id, item)):
+    if(not self.buildPinnedMessageItem(p.message.id, p.pinnedBy, item)):
       continue
 
     viewItems = item & viewItems # messages are sorted from the most recent to the least recent one
@@ -183,9 +185,9 @@ method unpinMessage*(self: Module, messageId: string) =
 method onUnpinMessage*(self: Module, messageId: string) =
   self.view.pinnedModel().removeItem(messageId)
 
-method onPinMessage*(self: Module, messageId: string) =
+method onPinMessage*(self: Module, messageId: string, actionInitiatedBy: string) =
   var item: pinned_msg_item.Item
-  if(not self.buildPinnedMessageItem(messageId, item)):
+  if(not self.buildPinnedMessageItem(messageId, actionInitiatedBy, item)):
     return
 
   self.view.pinnedModel().appendItem(item)
@@ -246,3 +248,10 @@ method amIChatAdmin*(self: Module): bool =
   else:
     let communityDto = self.controller.getCommunityDetails()
     return communityDto.admin
+
+method onContactDetailsUpdated*(self: Module, contactId: string) =
+  let updatedContact = self.controller.getContactDetails(contactId)
+  self.view.pinnedModel().updateSenderDetails(contactId, updatedContact.displayName, updatedContact.details.localNickname,
+  updatedContact.icon, updatedContact.isIdenticon)
+  if(self.controller.getMyChatId() == contactId):
+    self.view.updateChatDetails(updatedContact.displayName, updatedContact.icon, updatedContact.isIdenticon)

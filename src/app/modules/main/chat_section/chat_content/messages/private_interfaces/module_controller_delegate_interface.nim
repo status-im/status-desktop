@@ -10,7 +10,10 @@ method onReactionAdded*(self: AccessInterface, messageId: string, emojiId: int, 
 method onReactionRemoved*(self: AccessInterface, messageId: string, emojiId: int, reactionId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onPinUnpinMessage*(self: AccessInterface, messageId: string, pin: bool) {.base.} =
+method onPinMessage*(self: AccessInterface, messageId: string, actionInitiatedBy: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onUnpinMessage*(self: AccessInterface, messageId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method messageAdded*(self: AccessInterface, message: MessageDto) {.base.} =
@@ -20,4 +23,7 @@ method onSendingMessageSuccess*(self: AccessInterface, message: MessageDto) {.ba
   raise newException(ValueError, "No implementation available")
 
 method onSendingMessageError*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method updateContactDetails*(self: AccessInterface, contactId: string) {.base.} =
   raise newException(ValueError, "No implementation available")

@@ -48,7 +48,7 @@ QtObject {
 
 
     property var messageStore
-    property EmojiReactions emojiReactionsModel: EmojiReactions { }
+    property var emojiReactionsModel
 
     // Not Refactored Yet
 //    property var chatsModelInst: chatsModel

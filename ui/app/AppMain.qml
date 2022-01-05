@@ -427,6 +427,7 @@ Item {
                     pinnedMessagesListPopupComponent: pinnedMessagesPopupComponent
 
                     contactsStore: appMain.rootStore.profileSectionStore.contactsStore
+                    rootStore.emojiReactionsModel: appMain.rootStore.emojiReactionsModel
 
                     onProfileButtonClicked: {
                         Global.changeAppSectionBySectionType(Constants.appSection.profile);
@@ -516,6 +517,7 @@ Item {
                                 pinnedMessagesListPopupComponent: pinnedMessagesPopupComponent
 
                                 contactsStore: appMain.rootStore.profileSectionStore.contactsStore
+                                rootStore.emojiReactionsModel: appMain.rootStore.emojiReactionsModel
 
                                 onProfileButtonClicked: {
                                     Global.changeAppSectionBySectionType(Constants.appSection.profile);
@@ -651,6 +653,7 @@ Item {
             id: pinnedMessagesPopupComponent
             PinnedMessagesPopup {
                 id: pinnedMessagesPopup
+                emojiReactionsModel: appMain.rootStore.emojiReactionsModel
                 onClosed: destroy()
             }
         }

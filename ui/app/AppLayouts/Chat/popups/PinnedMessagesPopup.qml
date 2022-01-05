@@ -23,6 +23,7 @@ ModalPopup {
     property var pinnedMessagesModel //this doesn't belong to the messageStore, it is a part of the ChatContentStore, but we didn't introduce it yet.
     property string messageToPin
     property string messageToUnpin
+    property var emojiReactionsModel
 
     header: Item {
         height: childrenRect.height
@@ -125,6 +126,7 @@ ModalPopup {
                     messageOutgoingStatus: model.outgoingStatus
                     messageContentType: model.contentType
                     pinnedMessage: model.pinned
+                    messagePinnedBy: model.pinnedBy
                     reactionsModel: model.reactions
 
                     // This is possible since we have all data loaded before we load qml.
@@ -132,7 +134,7 @@ ModalPopup {
                     prevMessageIndex: index - 1
                     prevMessageAsJsonObj: popup.messageStore? popup.messageStore.getMessageByIndexAsJson(index - 1) : {}
                     nextMessageIndex: index + 1
-                    nextMessageAsJsonObj: popup.messageStore? popup.messageStore.messageStore.getMessageByIndexAsJson(index + 1) : {}
+                    nextMessageAsJsonObj: popup.messageStore? popup.messageStore.getMessageByIndexAsJson(index + 1) : {}
 
                     // Additional params
                     forceHoverHandler: !popup.messageToPin
@@ -164,7 +166,7 @@ ModalPopup {
         }        
         MessageContextMenuView {
             id: msgContextMenu
-            reactionModel: root.rootStore.emojiReactionsModel
+            reactionModel: popup.emojiReactionsModel
             pinnedPopup: true
             pinnedMessage: true
             onShouldCloseParentPopup: {
@@ -181,6 +183,10 @@ ModalPopup {
 
             onToggleReaction: {
                 popup.messageStore.toggleReaction(messageId, emojiId)
+            }
+
+            onOpenProfileClicked: {
+                Global.openProfilePopup(publicKey)
             }
         }
     }

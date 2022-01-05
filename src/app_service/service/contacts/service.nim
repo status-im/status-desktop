@@ -6,6 +6,7 @@ import ../../../app/core/tasks/[qt, threadpool]
 
 import ./dto/contacts as contacts_dto
 import ./dto/status_update as status_update_dto
+import ./dto/contact_details
 import status/statusgo_backend_new/contacts as status_contacts
 import status/statusgo_backend_new/accounts as status_accounts
 import status/statusgo_backend_new/chat as status_chat
@@ -13,7 +14,7 @@ import status/statusgo_backend_new/utils as status_utils
 
 import eventemitter
 
-export contacts_dto, status_update_dto
+export contacts_dto, status_update_dto, contact_details
 
 include async_tasks
 
@@ -30,14 +31,7 @@ type
     uuid*: string
 
   ContactsStatusUpdatedArgs* = ref object of Args
-    statusUpdates*: seq[StatusUpdateDto]
-
-  ContactDetails* = ref object of RootObj
-    displayName*: string
-    localNickname*: string
-    icon*: string
-    isIconIdenticon*: bool
-    isCurrentUser*: bool
+    statusUpdates*: seq[StatusUpdateDto] 
 
 # Local Constants:
 const CheckStatusIntervalInMilliseconds = 5000 # 5 seconds, this is timeout how often do we check for user status.
@@ -358,10 +352,10 @@ QtObject:
 
   proc getContactDetails*(self: Service, pubKey: string): ContactDetails =
     result = ContactDetails()
-    let contact = self.getContactById(pubKey)
     let (name, icon, isIdenticon) = self.getContactNameAndImage(pubKey)
     result.displayName = name
-    result.isCurrentUser = pubKey == singletonInstance.userProfile.getPubKey()
     result.icon = icon
-    result.isIconIdenticon = isIdenticon
+    result.isIdenticon = isIdenticon
+    result.isCurrentUser = pubKey == singletonInstance.userProfile.getPubKey()
+    result.details = self.getContactById(pubKey)
     

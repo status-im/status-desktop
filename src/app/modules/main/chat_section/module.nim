@@ -397,3 +397,7 @@ method blockContact*(self: Module, publicKey: string) =
 
 method onContactBlocked*(self: Module, publicKey: string) =
   self.view.contactRequestsModel().removeItemWithPubKey(publicKey)
+
+method onContactDetailsUpdated*(self: Module, publicKey: string) =
+  let (chatName, chatImage, isIdenticon) = self.controller.getOneToOneChatNameAndImage(publicKey)
+  self.view.chatsModel().updateItemDetails(publicKey, chatName, chatImage, isIdenticon)

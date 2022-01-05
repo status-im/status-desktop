@@ -54,7 +54,7 @@ QtObject {
             return userProfile.icon;
         }
 
-        let contactDetails = Utils.getContactDetailsAsJson(publicKey)
+        let contactDetails = Utils.getContactDetailsAsJson(pubkey)
         if (localAccountSensitiveSettings.onlyShowContactsProfilePics && !contactDetails.isContact) {
             return;
         }

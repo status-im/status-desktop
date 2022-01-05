@@ -205,3 +205,12 @@ QtObject:
         self.dataChanged(index, index, @[ModelRole.HasUnreadMessages.int])
         return
   
+  proc updateItemDetails*(self: Model, id, name, icon: string, isIdenticon: bool) =
+    for i in 0 ..< self.items.len:
+      if(self.items[i].id == id):
+        self.items[i].BaseItem.name = name
+        self.items[i].BaseItem.icon = icon
+        self.items[i].BaseItem.isIdenticon = isIdenticon
+        let index = self.createIndex(i, 0, nil)
+        self.dataChanged(index, index, @[ModelRole.Name.int, ModelRole.Icon.int, ModelRole.IsIdenticon.int])
+        return

@@ -72,13 +72,13 @@ method init*(self: Controller) =
     let args = MessagePinUnpinArgs(e)
     if(self.chatId != args.chatId):
       return
-    self.delegate.onPinUnpinMessage(args.messageId, true)
+    self.delegate.onPinMessage(args.messageId, args.actionInitiatedBy)
 
   self.events.on(SIGNAL_MESSAGE_UNPINNED) do(e:Args):
     let args = MessagePinUnpinArgs(e)
     if(self.chatId != args.chatId):
       return
-    self.delegate.onPinUnpinMessage(args.messageId, false)
+    self.delegate.onUnpinMessage(args.messageId)
 
   self.events.on(SIGNAL_MESSAGE_REACTION_ADDED) do(e:Args):
     let args = MessageAddRemoveReactionArgs(e)
@@ -91,6 +91,14 @@ method init*(self: Controller) =
     if(self.chatId != args.chatId):
       return
     self.delegate.onReactionRemoved(args.messageId, args.emojiId, args.reactionId)
+
+  self.events.on(SIGNAL_CONTACT_NICKNAME_CHANGED) do(e: Args):
+    var args = ContactArgs(e)
+    self.delegate.updateContactDetails(args.contactId)
+
+  self.events.on(SIGNAL_CONTACT_UPDATED) do(e: Args):
+    var args = ContactArgs(e)
+    self.delegate.updateContactDetails(args.contactId)
 
 method getMySectionId*(self: Controller): string =
   return self.sectionId
@@ -125,9 +133,8 @@ method pinUnpinMessage*(self: Controller, messageId: string, pin: bool) =
 method getContactById*(self: Controller, contactId: string): ContactsDto =
   return self.contactService.getContactById(contactId)
 
-method getContactNameAndImage*(self: Controller, contactId: string): 
-  tuple[name: string, image: string, isIdenticon: bool] =
-  return self.contactService.getContactNameAndImage(contactId)
+method getContactDetails*(self: Controller, contactId: string): ContactDetails =
+  return self.contactService.getContactDetails(contactId)
 
 method getNumOfPinnedMessages*(self: Controller): int =
   return self.messageService.getNumOfPinnedMessages(self.chatId)
