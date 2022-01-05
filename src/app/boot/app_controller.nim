@@ -260,6 +260,7 @@ proc load(self: AppController) =
   self.nodeConfigurationService.init()
   self.contactsService.init()
   self.chatService.init()
+  self.messageService.init()
   self.communityService.init()
   self.bookmarkService.init()
   self.tokenService.init()

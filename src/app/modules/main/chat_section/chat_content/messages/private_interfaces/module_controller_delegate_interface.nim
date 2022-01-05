@@ -13,6 +13,9 @@ method onReactionRemoved*(self: AccessInterface, messageId: string, emojiId: int
 method onPinUnpinMessage*(self: AccessInterface, messageId: string, pin: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method messageAdded*(self: AccessInterface, message: MessageDto) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method onSendingMessageSuccess*(self: AccessInterface, message: MessageDto) {.base.} =
   raise newException(ValueError, "No implementation available")
 
