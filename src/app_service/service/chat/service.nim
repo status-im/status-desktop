@@ -94,6 +94,9 @@ QtObject:
   proc hasChannel*(self: Service, chatId: string): bool =
     self.chats.hasKey(chatId)
 
+  proc updateOrAddChat*(self: Service, chat: ChatDto) =
+    self.chats[chat.id] = chat
+
   proc parseChatResponse*(self: Service, response: RpcResponse[JsonNode]): (seq[ChatDto], seq[MessageDto]) =
     var chats: seq[ChatDto] = @[]
     var messages: seq[MessageDto] = @[]
@@ -104,7 +107,7 @@ QtObject:
       for jsonChat in response.result["chats"]:
         let chat = chat_dto.toChatDto(jsonChat)
         # TODO add the channel back to `chat` when it is refactored
-        self.chats[chat.id] = chat
+        self.updateOrAddChat(chat)
         chats.add(chat) 
     result = (chats, messages)
 
@@ -164,6 +167,7 @@ QtObject:
       return
 
     result.chatDto = chats[0]
+    self.updateOrAddChat(result.chatDto)
     result.success = true
 
   proc createPublicChat*(self: Service, chatId: string): tuple[chatDto: ChatDto, success: bool] =

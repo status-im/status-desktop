@@ -12,6 +12,8 @@ QtObject:
       chatDetails: ChatDetails
       chatDetailsVariant: QVariant
       
+  proc chatDetailsChanged*(self:View) {.signal.}
+
   proc delete*(self: View) =
     self.pinnedMessagesModel.delete
     self.pinnedMessagesModelVariant.delete
@@ -33,6 +35,7 @@ QtObject:
     self.chatDetails.setChatDetails(id, `type`, belongsToCommunity, isUsersListAvailable, name, icon, isIdenticon, 
     color, description, hasUnreadMessages, notificationsCount, muted)
     self.delegate.viewDidLoad()
+    self.chatDetailsChanged()
 
   proc pinnedModel*(self: View): pinned_msg_model.Model =
     return self.pinnedMessagesModel
@@ -95,6 +98,7 @@ QtObject:
     return self.chatDetailsVariant
   QtProperty[QVariant] chatDetails:
     read = getChatDetails
+    notify = chatDetailsChanged
 
   proc getCurrentFleet*(self: View): string {.slot.} =
     self.delegate.getCurrentFleet()
