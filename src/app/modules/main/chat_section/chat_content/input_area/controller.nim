@@ -52,11 +52,8 @@ method sendChatMessage*(
     replyTo: string,
     contentType: int,
     preferredUsername: string = "") =
-  var communityId = ""
-  if self.belongsToCommunity:
-    communityId = self.sectionId
 
-  self.chatService.sendChatMessage(self.chatId, msg, replyTo, contentType, preferredUsername, communityId)
+  self.chatService.sendChatMessage(self.chatId, msg, replyTo, contentType, preferredUsername)
 
 method requestAddressForTransaction*(self: Controller, fromAddress: string, amount: string, tokenAddress: string) =
   self.chatService.requestAddressForTransaction(self.chatId, fromAddress, amount, tokenAddress)

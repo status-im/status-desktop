@@ -74,6 +74,31 @@ method init*(self: Controller) =
     var args = ContactArgs(e)
     self.delegate.onContactBlocked(args.contactId)
 
+  if (self.isCommunitySection):
+    self.events.on(SIGNAL_COMMUNITY_CHANNEL_CREATED) do(e:Args):
+      let args = CommunityChatArgs(e)
+      if (args.communityId == self.sectionId):
+        self.delegate.addNewChat(
+          ChatDto(
+            id: args.chat.id,
+            name: args.chat.name,
+            color: args.chat.color,
+            emoji: args.chat.emoji,
+            description: args.chat.description,
+            # permissions: args.chat.permissions, # TODO implement chat permissions
+            canPost: args.chat.canPost,
+            position: args.chat.position,
+            categoryId: args.chat.categoryId,
+            communityId: args.communityId
+          ),
+          self.events,
+          self.settingsService,
+          self.contactService,
+          self.chatService,
+          self.communityService,
+          self.messageService
+        )
+
 method getMySectionId*(self: Controller): string =
   return self.sectionId
 

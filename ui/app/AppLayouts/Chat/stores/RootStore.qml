@@ -58,6 +58,7 @@ QtObject {
 //    property var walletModelInst: walletModel
     // Not Refactored Yet
 //    property var profileModelInst: profileModel
+    property var mainModuleInst: mainModule
     property var activityCenterModuleInst: activityCenterModule
     property var activityCenterList: activityCenterModuleInst.model
 
@@ -133,8 +134,7 @@ QtObject {
     property var activeCommunityChatsModel: "" //chatsModelInst.communities.activeCommunity.chats
 
     function createCommunity(communityName, communityDescription, checkedMembership, ensOnlySwitchChecked, communityColor, communityImage, imageCropperModalaX, imageCropperModalaY, imageCropperModalbX, imageCropperModalbY) {
-        // Not Refactored Yet
-//        chatsModelInst.communities.createCommunity(communityName, communityDescription, checkedMembership, ensOnlySwitchChecked, communityColor, communityImage, imageCropperModalaX, imageCropperModalaY, imageCropperModalbX, imageCropperModalbY);
+        communitiesModuleInst.createCommunity(communityName, communityDescription, checkedMembership, ensOnlySwitchChecked, communityColor, communityImage, imageCropperModalaX, imageCropperModalaY, imageCropperModalbX, imageCropperModalbY);
     }
 
     function editCommunity(communityId, communityName, communityDescription, checkedMembership, ensOnlySwitchChecked, communityColor, communityImage, imageCropperModalaX, imageCropperModalaY, imageCropperModalbX, imageCropperModalbY) {
@@ -172,12 +172,8 @@ QtObject {
 //        return chatsModelInst.communities.exportCommunity();
     }
 
-    function createCommunityChannel(communityId, channelName, channelDescription, categoryId) {
-        // TODO: pass the private value when private channels
-        // are implemented
-        //privateSwitch.checked)
-        // Not Refactored Yet
-//        chatsModelInst.createCommunityChannel(communityId, channelName, channelDescription, categoryId);
+    function createCommunityChannel(communityId, channelName, channelDescription) {
+       communitiesModuleInst.createCommunityChannel(communityId, channelName, channelDescription);
     }
 
     function editCommunityChannel(communityId, channelId, channelName, channelDescription, channelCategoryId, popupPosition) {

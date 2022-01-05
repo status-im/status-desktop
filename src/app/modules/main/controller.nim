@@ -90,7 +90,19 @@ method init*(self: Controller) =
   self.events.on(TOGGLE_SECTION) do(e:Args):
     let args = ToggleSectionArgs(e)
     self.delegate.toggleSection(args.sectionType)
-    discard    
+
+  self.events.on(SIGNAL_COMMUNITY_CREATED) do(e:Args):
+    let args = CommunityArgs(e)
+    self.delegate.communityJoined(
+      args.community,
+      self.events,
+      self.settingsService,
+      self.contactsService,
+      self.chatService,
+      self.communityService,
+      self.messageService
+      )
+
 
   self.events.on(SIGNAL_ENS_RESOLVED) do(e: Args):
     var args = ResolvedContactArgs(e)
