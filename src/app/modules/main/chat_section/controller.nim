@@ -104,6 +104,14 @@ method init*(self: Controller) =
           self.messageService
         )
 
+  self.events.on(SIGNAL_CONTACT_NICKNAME_CHANGED) do(e: Args):
+    var args = ContactArgs(e)
+    self.delegate.onContactDetailsUpdated(args.contactId)
+
+  self.events.on(SIGNAL_CONTACT_UPDATED) do(e: Args):
+    var args = ContactArgs(e)
+    self.delegate.onContactDetailsUpdated(args.contactId)
+
 method getMySectionId*(self: Controller): string =
   return self.sectionId
 

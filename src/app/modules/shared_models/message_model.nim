@@ -24,6 +24,7 @@ type
     # GapFrom
     # GapTo
     Pinned
+    PinnedBy
     Reactions
 
 QtObject:
@@ -80,6 +81,7 @@ QtObject:
       # ModelRole.GapFrom.int:"gapFrom",
       # ModelRole.GapTo.int:"gapTo",
       ModelRole.Pinned.int:"pinned",
+      ModelRole.PinnedBy.int:"pinnedBy",
       ModelRole.Reactions.int:"reactions",
     }.toTable
 
@@ -134,6 +136,8 @@ QtObject:
     #   result = newQVariant(item.gapTo)
     of ModelRole.Pinned: 
       result = newQVariant(item.pinned)
+    of ModelRole.PinnedBy: 
+      result = newQVariant(item.pinnedBy)
     of ModelRole.Reactions: 
       result = newQVariant(item.reactionsModel)
 
@@ -231,15 +235,16 @@ QtObject:
     let index = self.createIndex(ind, 0, nil)
     self.dataChanged(index, index, @[ModelRole.Reactions.int])
 
-  proc pinUnpinMessage*(self: Model, messageId: string, pin: bool) = 
+  proc pinUnpinMessage*(self: Model, messageId: string, pin: bool, pinnedBy: string) = 
     let ind = self.findIndexForMessageId(messageId)
     if(ind == -1):
       return
 
     self.items[ind].pinned = pin
+    self.items[ind].pinnedBy = pinnedBy
     
     let index = self.createIndex(ind, 0, nil)
-    self.dataChanged(index, index, @[ModelRole.Pinned.int])
+    self.dataChanged(index, index, @[ModelRole.Pinned.int, ModelRole.PinnedBy.int])
 
   proc getMessageByIdAsJson*(self: Model, messageId: string): JsonNode =
     for it in self.items:
@@ -250,3 +255,20 @@ QtObject:
     if(index < 0 or index >= self.items.len):
       return
     self.items[index].toJsonNode()
+
+  proc updateSenderDetails*(self: Model, contactId, displayName, localName, icon: string, isIdenticon: bool) =
+    for i in 0 ..< self.items.len:
+      var roles: seq[int]
+      if(self.items[i].senderId == contactId):
+        self.items[i].senderDisplayName = displayName
+        self.items[i].senderLocalName = localName
+        self.items[i].senderIcon = icon
+        self.items[i].isSenderIconIdenticon = isIdenticon
+        roles = @[ModelRole.SenderDisplayName.int, ModelRole.SenderLocalName.int, ModelRole.SenderIcon.int, 
+        ModelRole.IsSenderIconIdenticon.int]
+      if(self.items[i].pinnedBy == contactId):
+        roles.add(ModelRole.PinnedBy.int)
+      
+      if(roles.len > 0):
+        let index = self.createIndex(i, 0, nil)
+        self.dataChanged(index, index, roles)

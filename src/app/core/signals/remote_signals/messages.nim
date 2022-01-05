@@ -6,7 +6,7 @@ import base
 import status/types/[activity_center_notification, removed_message]
 import status/types/community as old_community
 
-import ../../../../app_service/service/message/dto/[message, pinned_message, reaction]
+import ../../../../app_service/service/message/dto/[message, pinned_message_update, reaction]
 import ../../../../app_service/service/chat/dto/[chat]
 import ../../../../app_service/service/community/dto/[community]
 import ../../../../app_service/service/activity_center/dto/[notification]
@@ -15,7 +15,7 @@ import ../../../../app_service/service/devices/dto/[device]
 
 type MessageSignal* = ref object of Signal
   messages*: seq[MessageDto]
-  pinnedMessages*: seq[PinnedMessageDto]
+  pinnedMessages*: seq[PinnedMessageUpdateDto]
   chats*: seq[ChatDto]
   contacts*: seq[ContactsDto]
   devices*: seq[DeviceDto]
@@ -75,25 +75,8 @@ proc fromEvent*(T: type MessageSignal, event: JsonNode): MessageSignal =
       signal.activityCenterNotifications.add(jsonNotification.toActivityCenterNotificationDto())
 
   if event["event"]{"pinMessages"} != nil:
-    discard
-    # Need to refactor this
-  #   for jsonPinnedMessage in event["event"]["pinMessages"]:
-  #     var contentType: ContentType
-  #     try:
-  #       contentType = ContentType(jsonPinnedMessage{"contentType"}.getInt)
-  #     except:
-  #       contentType = ContentType.Message
-  #     signal.pinnedMessages.add(Message(
-  #       id: jsonPinnedMessage{"message_id"}.getStr,
-  #       chatId: jsonPinnedMessage{"chat_id"}.getStr,
-  #       localChatId: jsonPinnedMessage{"localChatId"}.getStr,
-  #       pinnedBy: jsonPinnedMessage{"from"}.getStr,
-  #       identicon: jsonPinnedMessage{"identicon"}.getStr,
-  #       alias: jsonPinnedMessage{"alias"}.getStr,
-  #       clock: jsonPinnedMessage{"clock"}.getInt,
-  #       isPinned: jsonPinnedMessage{"pinned"}.getBool,
-  #       contentType: contentType
-  #     ))
+    for jsonPinnedMessage in event["event"]["pinMessages"]:
+      signal.pinnedMessages.add(jsonPinnedMessage.toPinnedMessageUpdateDto())
 
   result = signal
 

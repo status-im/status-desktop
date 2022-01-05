@@ -34,6 +34,7 @@ Column {
     property string messageOutgoingStatus: ""
     property int messageContentType: 1
     property bool pinnedMessage: false
+    property string messagePinnedBy: ""
     property var reactionsModel: []
 
     property int prevMessageIndex: -1
@@ -102,7 +103,6 @@ Column {
     property bool placeholderMessage: false
     property bool activityCenterMessage: false
     property bool read: true
-    property string pinnedBy
     property bool forceHoverHandler: false // Used to force the HoverHandler to be active (useful for messages in popups)
     property int stickerPackId: -1
     property int gapFrom: 0
@@ -111,7 +111,7 @@ Column {
     property string replaces: ""
     property bool isEdited: false
     property bool showEdit: true
-
+    property bool stickersLoaded: false
     //////////////////////////////////////
 
     property bool isEmoji: contentType === Constants.messageContentType.emojiType
@@ -145,7 +145,7 @@ Column {
         }
 
         messageContextMenu.myPublicKey = userProfile.pubKey
-        messageContextMenu.amIAdmin = messageStore.amIChatAdmin()
+        messageContextMenu.amIChatAdmin = messageStore.amIChatAdmin()
         messageContextMenu.chatType = messageStore.getChatType()
 
         messageContextMenu.messageId = root.messageId
@@ -357,6 +357,12 @@ Column {
         CompactMessageView {
             contactsStore: root.contactsStore
             messageContextMenu: root.messageContextMenu
+
+            stickersLoaded: root.stickersLoaded
+            isMessageActive: root.isMessageActive
+            isCurrentUser: root.amISender
+            isHovered: root.isHovered
+
             onAddEmoji: {
                 root.clickMessage(isProfileClick, isSticker, isImage , image, emojiOnly, hideEmojiPicker)
             }

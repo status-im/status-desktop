@@ -209,6 +209,7 @@ Item {
                             sendTransactionNoEnsModal: cmpSendTransactionNoEns
                             receiveTransactionModal: cmpReceiveTransaction
                             sendTransactionWithEnsModal: cmpSendTransactionWithEns
+                            stickersLoaded: root.stickersLoaded
                             Component.onCompleted: {
                                 parentModule.prepareChatContentModuleForChatId(model.itemId)
                                 chatContentModule = parentModule.getChatContentModule()
@@ -223,6 +224,7 @@ Item {
                         sendTransactionNoEnsModal: cmpSendTransactionNoEns
                         receiveTransactionModal: cmpReceiveTransaction
                         sendTransactionWithEnsModal: cmpSendTransactionWithEns
+                        stickersLoaded: root.stickersLoaded
                         Component.onCompleted: {
                             parentModule.prepareChatContentModuleForChatId(itemId)
                             chatContentModule = parentModule.getChatContentModule()

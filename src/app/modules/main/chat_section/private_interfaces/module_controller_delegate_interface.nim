@@ -24,3 +24,6 @@ method onContactRejected*(self: AccessInterface, publicKey: string) {.base.} =
 
 method onContactBlocked*(self: AccessInterface, publicKey: string) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method onContactDetailsUpdated*(self: AccessInterface, contactId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")

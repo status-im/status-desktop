@@ -18,13 +18,12 @@ StatusModal {
     width: 400
     height: 390
     header.title: qsTr("Nickname")
-    header.subTitle: userIsEnsVerified ? alias : fromAuthor
-    header.subTitleElide: !userIsEnsVerified ? Text.ElideMiddle : Text.ElideNone
 
+    property string nickname: ""
     property int nicknameLength: nicknameInput.textField.text.length
     readonly property int maxNicknameLength: 32
     property bool nicknameTooLong: nicknameLength > maxNicknameLength
-    signal doneClicked(string newUsername, string newNickname)
+    signal doneClicked(string newNickname)
 
     onOpened: {
         nicknameInput.forceActiveFocus(Qt.MouseFocusReason);
@@ -84,8 +83,7 @@ StatusModal {
             text: qsTrId("done")
             enabled: !popup.nicknameTooLong
             onClicked: {
-                // If we removed the nickname, go back to showing the alias
-                doneClicked(nicknameInput.textField.text === "" ? alias : nicknameInput.textField.text, nicknameInput.textField.text);
+                doneClicked(nicknameInput.textField.text)
             }
         }
     ]

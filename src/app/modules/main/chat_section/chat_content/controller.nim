@@ -59,7 +59,7 @@ method init*(self: Controller) =
     let args = MessagePinUnpinArgs(e)
     if(self.chatId != args.chatId):
       return
-    self.delegate.onPinMessage(args.messageId)
+    self.delegate.onPinMessage(args.messageId, args.actionInitiatedBy)
 
   self.events.on(SIGNAL_MESSAGE_UNPINNED) do(e:Args):
     let args = MessagePinUnpinArgs(e)
@@ -90,6 +90,14 @@ method init*(self: Controller) =
     if(self.chatId != args.chatId):
       return
     self.delegate.onReactionRemoved(args.messageId, args.emojiId, args.reactionId)
+
+  self.events.on(SIGNAL_CONTACT_NICKNAME_CHANGED) do(e: Args):
+    var args = ContactArgs(e)
+    self.delegate.onContactDetailsUpdated(args.contactId)
+
+  self.events.on(SIGNAL_CONTACT_UPDATED) do(e: Args):
+    var args = ContactArgs(e)
+    self.delegate.onContactDetailsUpdated(args.contactId)
 
 method getMyChatId*(self: Controller): string =
   return self.chatId

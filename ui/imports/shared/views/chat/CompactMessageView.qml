@@ -32,15 +32,11 @@ Item {
         case Constants.chatType.oneToOne:
             return true
         case Constants.chatType.privateGroupChat:
-            // Not Refactored Yet
-            return false
-//            return rootStore.chatsModelInst.channelView.activeChannel.isAdmin(userProfile.pubKey) ? true : isCurrentUser
+            return messageStore.amIChatAdmin() || amISender
         case Constants.chatType.publicChat:
             return amISender
         case Constants.chatType.communityChat:
-            // Not Refactored Yet
-            return false
-//            return rootStore.chatsModelInst.communities.activeCommunity.admin ? true : amISender
+            return messageStore.amIChatAdmin() || amISender
         case Constants.chatType.profile:
             return false
         default:
@@ -220,7 +216,7 @@ Item {
 
                     StyledText {
                         //% "Pinned by %1"
-                        text: qsTrId("pinned-by--1").arg(Utils.getContactDetailsAsJson(pinnedBy).displayName)
+                        text: qsTrId("pinned-by--1").arg(Utils.getContactDetailsAsJson(messagePinnedBy).displayName)
                         anchors.left: pinImage.right
                         anchors.verticalCenter: parent.verticalCenter
                         font.pixelSize: 13
