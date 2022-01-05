@@ -3,13 +3,11 @@ import
   tables, strutils
 from times import cpuTime
 
-import
-  status/statusgo_backend/settings as status_settings,
-  status/statusgo_backend/chat as status_chat,
-  status/statusgo_backend/mailservers as status_mailservers,
-  status/statusgo_backend/core as status_core,
-  status/fleet,
-  ./events as mailserver_events
+import ../../../fleets/fleet_configuration
+import ../../../../../app_service/service/node_configuration/service_interface as node_config_service
+
+import controller
+import events as mailserver_events
 
 logScope:
   topics = "mailserver model"
@@ -38,13 +36,9 @@ type
     nodes*: Table[string, MailserverStatus]
     activeMailserver*: string
     lastConnectionAttempt*: float
-    ## At this moment we cannot remove FleetModel from `status-lib` easily since the following error occurs:
-    ## /desktop-app/src/app/core/tasks/marathon/mailserver/worker.nim(120, 37) template/generic instantiation of `async` from here
-    ## /desktop-app/vendor/status-lib/vendor/nim-task-runner/vendor/nim-chronos/chronos/asyncmacro2.nim(210, 31) Error: 'worker' is not GC-safe as it calls 'init'
-    ## 
-    ## But at some point in future we will spend more time and figure out what's the issue.
-    fleet*: FleetModel
+    fleetConfiguration*: FleetConfiguration
     wakuVersion*: int
+    mailserverController: MailserverController
 
   MailserverStatus* = enum
     Unknown = -1,
@@ -68,6 +62,7 @@ proc newMailserverModel*(vptr: ByteAddress): MailserverModel =
   result.events = newMailserverEvents(vptr)
   result.nodes = initTable[string, MailserverStatus]()
   result.activeMailserver = ""
+  result.mailserverController = cast[MailserverController](vptr)
 
 proc init*(self: MailserverModel) =
   trace "MailserverModel::init()"
@@ -77,17 +72,16 @@ proc init*(self: MailserverModel) =
     else:
       "/../fleets.json"
 
-  self.wakuVersion = status_settings.getWakuVersion()
-
   let fleetConfig = readFile(joinPath(getAppDir(), fleets))
-  self.fleet = newFleetModel(fleetConfig)
-  self.wakuVersion = status_settings.getWakuVersion()
+  self.fleetConfiguration = newFleetConfiguration(fleetConfig)
+  self.wakuVersion = self.mailserverController.getWakuVersion()
 
-  let fleet = parseEnum[Fleet](status_settings.getFleet())
-  self.mailservers = toSeq(self.fleet.config.getMailservers(fleet, self.wakuVersion == 2).values)
+  let fleet = parseEnum[Fleet](self.mailserverController.getFleet())
+  self.mailservers = toSeq(self.fleetConfiguration.getMailservers(fleet, self.wakuVersion == WAKU_VERSION_2).values)
   
-  for mailserver in status_settings.getMailservers().getElems():
-    self.mailservers.add(mailserver["address"].getStr())
+  let mailservers = self.mailserverController.getCurrentMailservers()
+  for m in mailservers:
+    self.mailservers.add(m["address"].getStr())
 
 proc getActiveMailserver*(self: MailserverModel): string = self.activeMailserver
 
@@ -108,7 +102,7 @@ proc connect(self: MailserverModel, nodeAddr: string) =
     warn "Mailserver not known", nodeAddr
     return
 
-  self.activeMailserver = if self.wakuVersion == 2: peerIdFromMultiAddress(nodeAddr) else: nodeAddr
+  self.activeMailserver = if self.wakuVersion == WAKU_VERSION_2: peerIdFromMultiAddress(nodeAddr) else: nodeAddr
   self.events.emit("mailserver:changed", MailserverArgs(peer: nodeAddr))
 
   # Adding a peer and marking it as connected can't be executed sync in WakuV1, because
@@ -121,13 +115,13 @@ proc connect(self: MailserverModel, nodeAddr: string) =
     connected = true
   else:
     # Attempt to connect to mailserver by adding it as a peer
-    if self.wakuVersion == 2:
-      if status_core.dialPeer(nodeAddr): # WakuV2 dial is sync (should it be async?)
-        discard status_mailservers.setMailserver(self.activeMailserver)
+    if self.wakuVersion == WAKU_VERSION_2:
+      if self.mailserverController.dialPeer(nodeAddr): # WakuV2 dial is sync (should it be async?)
+        self.mailserverController.setMailserver(self.activeMailserver)
         self.nodes[self.activeMailserver] = MailserverStatus.Connected
         connected = true
     else:
-      status_mailservers.update(nodeAddr)
+      self.mailserverController.update(nodeAddr)
       self.nodes[nodeAddr] = MailserverStatus.Connecting
       
     self.lastConnectionAttempt = cpuTime()
@@ -170,25 +164,25 @@ proc peerSummaryChange*(self: MailserverModel, peers: seq[string]) =
 
 proc requestMessages*(self: MailserverModel) =
   info "Requesting messages from", mailserver=self.activeMailserver
-  discard status_mailservers.requestAllHistoricMessages()
+  self.mailserverController.requestAllHistoricMessages()
 
 proc requestStoreMessages*(self: MailserverModel, topics: seq[string], fromValue: int64 = 0, toValue: int64 = 0, force: bool = false) =
   info "Requesting messages from", mailserver=self.activeMailserver
-  let generatedSymKey = status_chat.generateSymKeyFromPassword()
-  status_mailservers.requestStoreMessages(topics, generatedSymKey, self.activeMailserver, 1000, fromValue, toValue, force)
+  let generatedSymKey = self.mailserverController.generateSymKeyFromPassword()
+  self.mailserverController.requestStoreMessages(topics, generatedSymKey, self.activeMailserver, 1000, fromValue, toValue, force)
 
 proc requestMoreMessages*(self: MailserverModel, chatId: string) =
   info "Requesting more messages from", mailserver=self.activeMailserver, chatId=chatId
-  discard status_mailservers.syncChatFromSyncedFrom(chatId)
+  self.mailserverController.syncChatFromSyncedFrom(chatId)
 
 proc fillGaps*(self: MailserverModel, chatId: string, messageIds: seq[string]) =
   info "Requesting fill gaps from", mailserver=self.activeMailserver, chatId=chatId
-  discard status_mailservers.fillGaps(chatId, messageIds)
+  self.mailserverController.fillGaps(chatId, messageIds)
 
 proc findNewMailserver(self: MailserverModel) =
   warn "Finding a new mailserver...", wakuVersion=self.wakuVersion
   
-  let mailserversReply = parseJson(status_mailservers.ping(self.mailservers, 500, self.wakuVersion == 2))["result"]
+  let mailserversReply = self.mailserverController.ping(self.mailservers, 500, self.wakuVersion == WAKU_VERSION_2)
   
   var availableMailservers:seq[(string, int)] = @[]
   for reply in mailserversReply: 
@@ -214,18 +208,21 @@ proc cycleMailservers(self: MailserverModel) =
   if self.activeMailserver != "":
     info "Disconnecting active mailserver", peer=self.activeMailserver
     self.nodes[self.activeMailserver] = MailserverStatus.Disconnected
-    if self.wakuVersion == 2:
-      dropPeerByID(self.activeMailserver)
+    if self.wakuVersion == WAKU_VERSION_2:
+      self.mailserverController.dropPeerByID(self.activeMailserver)
     else:
-      removePeer(self.activeMailserver)
+      self.mailserverController.removePeer(self.activeMailserver)
     self.activeMailserver = ""
   self.findNewMailserver()
 
 proc checkConnection*(self: MailserverModel) {.async.} =
   while true:
     info "Verifying mailserver connection state..."
-    let pinnedMailserver = status_settings.getPinnedMailserver()
-    if self.wakuVersion == 1 and pinnedMailserver != "" and self.activeMailserver != pinnedMailserver:
+    var pinnedMailserver = ""
+    if(not self.mailserverController.isNil):
+      pinnedMailserver = self.mailserverController.getPinnedMailserver()
+
+    if self.wakuVersion == WAKU_VERSION_1 and pinnedMailserver != "" and self.activeMailserver != pinnedMailserver:
       # connect to current mailserver from the settings
       self.mailservers.add(pinnedMailserver)
       self.connect(pinnedMailserver) 
