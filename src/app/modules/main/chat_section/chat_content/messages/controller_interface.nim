@@ -1,4 +1,4 @@
-import ../../../../../../app_service/service/contacts/dto/[contacts]
+import ../../../../../../app_service/service/contacts/dto/[contacts, contact_details]
 import ../../../../../../app_service/service/community/dto/[community]
 import ../../../../../../app_service/service/chat/dto/[chat]
 
@@ -46,8 +46,7 @@ method pinUnpinMessage*(self: AccessInterface, messageId: string, pin: bool) {.b
 method getContactById*(self: AccessInterface, contactId: string): ContactsDto {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getContactNameAndImage*(self: AccessInterface, contactId: string): 
-  tuple[name: string, image: string, isIdenticon: bool] {.base.} =
+method getContactDetails*(self: AccessInterface, contactId: string): ContactDetails {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getNumOfPinnedMessages*(self: AccessInterface): int {.base.} =

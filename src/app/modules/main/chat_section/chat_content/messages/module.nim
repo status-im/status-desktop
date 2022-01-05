@@ -83,18 +83,11 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
   
   if(messages.len > 0):
     for m in messages:
-      let sender = self.controller.getContactById(m.`from`)
-      let senderDisplayName = sender.userNameOrAlias()
-      let amISender = m.`from` == singletonInstance.userProfile.getPubKey()
-      var senderIcon = sender.identicon
-      var isSenderIconIdenticon = sender.identicon.len > 0
-      if(sender.image.thumbnail.len > 0): 
-        senderIcon = sender.image.thumbnail
-        isSenderIconIdenticon = false
+      let sender = self.controller.getContactDetails(m.`from`)
 
-      var item = initItem(m.id, m.responseTo, m.`from`, senderDisplayName, sender.localNickname, senderIcon, 
-      isSenderIconIdenticon, amISender, m.outgoingStatus, m.text, m.image, m.seen, m.timestamp, m.contentType.ContentType, 
-      m.messageType)
+      var item = initItem(m.id, m.responseTo, m.`from`, sender.displayName, sender.details.localNickname, sender.icon, 
+      sender.isIdenticon, sender.isCurrentUser, m.outgoingStatus, m.text, m.image, m.seen, m.timestamp, 
+      m.contentType.ContentType, m.messageType)
 
       for r in reactions:
         if(r.messageId == m.id):
@@ -110,6 +103,7 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
       for p in pinnedMessages:
         if(p.message.id == m.id):
           item.pinned = true
+          item.pinnedBy = p.pinnedBy
 
       # messages are sorted from the most recent to the least recent one
       viewItems.add(item)
@@ -127,18 +121,11 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
   self.view.setLoadingHistoryMessagesInProgress(false)
 
 method messageAdded*(self: Module, message: MessageDto) =
-  let sender = self.controller.getContactById(message.`from`)
-  let senderDisplayName = sender.userNameOrAlias()
-  let amISender = message.`from` == singletonInstance.userProfile.getPubKey()
-  var senderIcon = sender.identicon
-  var isSenderIconIdenticon = sender.identicon.len > 0
-  if(sender.image.thumbnail.len > 0): 
-    senderIcon = sender.image.thumbnail
-    isSenderIconIdenticon = false
+  let sender = self.controller.getContactDetails(message.`from`)
 
-  var item = initItem(message.id, message.responseTo, message.`from`, senderDisplayName, sender.localNickname, 
-  senderIcon, isSenderIconIdenticon, amISender, message.outgoingStatus, message.text, message.image, message.seen, 
-  message.timestamp, message.contentType.ContentType, message.messageType)
+  var item = initItem(message.id, message.responseTo, message.`from`, sender.displayName, sender.details.localNickname, 
+  sender.icon, sender.isIdenticon, sender.isCurrentUser, message.outgoingStatus, message.text, message.image, 
+  message.seen, message.timestamp, message.contentType.ContentType, message.messageType)
 
   self.view.model().prependItem(item)
 
@@ -184,8 +171,11 @@ method onReactionRemoved*(self: Module, messageId: string, emojiId: int, reactio
 method pinUnpinMessage*(self: Module, messageId: string, pin: bool) =
   self.controller.pinUnpinMessage(messageId, pin)
 
-method onPinUnpinMessage*(self: Module, messageId: string, pin: bool) =
-  self.view.model().pinUnpinMessage(messageId, pin)
+method onPinMessage*(self: Module, messageId: string, actionInitiatedBy: string) =
+  self.view.model().pinUnpinMessage(messageId, true, actionInitiatedBy)
+
+method onUnpinMessage*(self: Module, messageId: string) =
+  self.view.model().pinUnpinMessage(messageId, false, "")
 
 method getChatType*(self: Module): int =
   let chatDto = self.controller.getChatDetails()
@@ -208,3 +198,8 @@ method amIChatAdmin*(self: Module): bool =
 
 method getNumberOfPinnedMessages*(self: Module): int =
   return self.controller.getNumOfPinnedMessages()
+
+method updateContactDetails*(self: Module, contactId: string) =
+  let updatedContact = self.controller.getContactDetails(contactId)
+  self.view.model().updateSenderDetails(contactId, updatedContact.displayName, updatedContact.details.localNickname,
+  updatedContact.icon, updatedContact.isIdenticon)

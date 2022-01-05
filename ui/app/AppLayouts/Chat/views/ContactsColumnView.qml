@@ -249,7 +249,7 @@ Item {
 
                     currentFleet = root.chatSectionModule.getCurrentFleet()
                     isCommunityChat = root.chatSectionModule.isCommunity()
-                    isCommunityAdmin = obj.amIChatAdmin
+                    amIChatAdmin = obj.amIChatAdmin
                     chatId = obj.itemId
                     chatName = obj.name
                     chatDescription = obj.description
@@ -290,7 +290,7 @@ Item {
                 }
 
                 onDisplayProfilePopup: {
-                    // Not Refactored Yet
+                    Global.openProfilePopup(publicKey)
                 }
 
                 onDisplayGroupInfoPopup: {

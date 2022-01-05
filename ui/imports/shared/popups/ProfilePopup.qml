@@ -249,13 +249,15 @@ StatusModal {
 
         NicknamePopup {
             id: nicknamePopup
+            nickname: popup.userNickname
+            header.subTitle: popup.header.subTitle
+            header.subTitleElide: popup.header.subTitleElide
             onDoneClicked: {
-                // Change username title only if it was not an ENS name
-                if (userIsEnsVerified) {
-                    popup.userName = newUsername;
+                if(popup.userNickname !== newNickname)
+                {
+                    popup.userNickname = newNickname;
+                    popup.contactsStore.changeContactNickname(userPublicKey, newNickname);
                 }
-                popup.userNickname = newNickname;
-                popup.contactsStore.changeContactNickname(userPublicKey, newNickname);
                 popup.close()
             }
         }

@@ -45,14 +45,23 @@ method id*(self: BaseItem): string {.inline base.} =
 method name*(self: BaseItem): string {.inline base.} = 
   self.name
 
+method `name=`*(self: var BaseItem, value: string) {.inline base.} = 
+  self.name = value
+
 method amIChatAdmin*(self: BaseItem): bool {.inline base.} = 
   self.amIChatAdmin
 
 method icon*(self: BaseItem): string {.inline base.} = 
   self.icon
 
+method `icon=`*(self: var BaseItem, value: string) {.inline base.} = 
+  self.icon = value
+
 method isIdenticon*(self: BaseItem): bool {.inline base.} = 
   self.isIdenticon
+
+method `isIdenticon=`*(self: var BaseItem, value: bool) {.inline base.} = 
+  self.isIdenticon = value
 
 method color*(self: BaseItem): string {.inline base.} = 
   self.color
@@ -60,7 +69,7 @@ method color*(self: BaseItem): string {.inline base.} =
 method description*(self: BaseItem): string {.inline base.} = 
   self.description
 
-proc type*(self: BaseItem): int {.inline.} = 
+method type*(self: BaseItem): int {.inline base.} = 
   self.`type`
 
 method hasUnreadMessages*(self: BaseItem): bool {.inline base.} = 

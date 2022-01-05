@@ -15,7 +15,7 @@ StatusPopupMenu {
 
     property string currentFleet: ""
     property bool isCommunityChat: false
-    property bool isCommunityAdmin: false
+    property bool amIChatAdmin: false
     property string chatId: ""
     property string chatName: ""
     property string chatDescription: ""
@@ -23,7 +23,7 @@ StatusPopupMenu {
     property int chatType: -1
     property bool chatMuted: false
 
-    signal displayProfilePopup(string userId)
+    signal displayProfilePopup(string publicKey)
     signal displayGroupInfoPopup(string chatId)
     signal requestAllHistoricMessages(string chatId)
     signal unmuteChat(string chatId)
@@ -57,8 +57,7 @@ StatusPopupMenu {
             root.chatType === Constants.chatType.privateGroupChat
         onTriggered: {
             if (root.chatType === Constants.chatType.oneToOne) {
-                const userProfileImage = Global.getProfileImage(root.chatId)
-                return Global.openProfilePopup(root.chatId)
+                root.displayProfilePopup(root.chatId)
             }
             if (root.chatType === Constants.chatType.privateGroupChat) {
                 root.displayGroupInfoPopup(root.chatId)
@@ -120,7 +119,7 @@ StatusPopupMenu {
         //% "Edit Channel"
         text: qsTrId("edit-channel")
         icon.name: "edit"
-        enabled: root.isCommunityChat && root.isCommunityAdmin
+        enabled: root.isCommunityChat && root.amIChatAdmin
         onTriggered: {
             Global.openPopup(editChannelPopup, {
                 isEdit: true,
@@ -182,7 +181,7 @@ StatusPopupMenu {
             Global.openPopup(deleteChatConfirmationDialogComponent)
         }
 
-        enabled: !root.isCommunityChat || root.isCommunityAdmin
+        enabled: !root.isCommunityChat || root.amIChatAdmin
     }
 
     FileDialog {

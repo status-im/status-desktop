@@ -6,7 +6,7 @@ method newPinnedMessagesLoaded*(self: AccessInterface, pinnedMessages: seq[Pinne
 method onUnpinMessage*(self: AccessInterface, messageId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onPinMessage*(self: AccessInterface, mmessageId: string) {.base.} =
+method onPinMessage*(self: AccessInterface, mmessageId: string, actionInitiatedBy: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onChatMuted*(self: AccessInterface) {.base.} =
@@ -19,4 +19,7 @@ method onReactionAdded*(self: AccessInterface, messageId: string, emojiId: int, 
   raise newException(ValueError, "No implementation available")
 
 method onReactionRemoved*(self: AccessInterface, messageId: string, emojiId: int, reactionId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onContactDetailsUpdated*(self: AccessInterface, contactId: string) {.base.} =
   raise newException(ValueError, "No implementation available")

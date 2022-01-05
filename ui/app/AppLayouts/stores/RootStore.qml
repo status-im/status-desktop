@@ -11,6 +11,9 @@ QtObject {
     property ProfileSectionStore profileSectionStore: ProfileSectionStore {
     }
 
+    property EmojiReactions emojiReactionsModel: EmojiReactions {
+    }
+
     // Not Refactored Yet
 //    property var chatsModelInst: chatsModel
     // Not Refactored Yet
