@@ -26,6 +26,7 @@ Item {
     property var communitySectionModule
 
     property var store
+    property var communityData: store.mainModuleInst ? store.mainModuleInst.activeSection || {} : {}
     // TODO unhardcode
     // Not Refactored Yet
     //property int chatGroupsListViewCount: communityChatListAndCategories.chatList.count
@@ -36,37 +37,39 @@ Item {
         anchors.top: parent.top
         anchors.horizontalCenter: parent.horizontalCenter
 
-        // Not Refactored Yet
-//        chatInfoButton.title: root.store.chatsModelInst.communities.activeCommunity.name
-//        chatInfoButton.subTitle: root.store.chatsModelInst.communities.activeCommunity.nbMembers === 1 ?
-//            //% "1 Member"
-//            qsTrId("1-member") :
-//            //% "%1 Members"
-//            qsTrId("-1-members").arg(root.store.chatsModelInst.communities.activeCommunity.nbMembers)
-//        chatInfoButton.image.source: root.store.chatsModelInst.communities.activeCommunity.thumbnailImage
-//        chatInfoButton.icon.color: root.store.chatsModelInst.communities.activeCommunity.communityColor
-//        menuButton.visible: root.store.chatsModelInst.communities.activeCommunity.admin && root.store.chatsModelInst.communities.activeCommunity.canManageUsers
-//        chatInfoButton.onClicked: Global.openPopup(communityProfilePopup, {
-//            store: root.store,
-//            community: root.store.chatsModelInst.communities.activeCommunity
-//        })
+        chatInfoButton.title: communityData.name
+        chatInfoButton.subTitle: communityData.nbMembers <= 1 ?
+                                     //% "1 Member"
+                                     qsTrId("1-member") :
+                                     //% "%1 Members"
+                                     qsTrId("-1-members").arg(communityData.nbMembers)
+
+        chatInfoButton.image.source: communityData.image
+        chatInfoButton.icon.color: communityData.color
+        menuButton.visible: {
+        return communityData.amISectionAdmin && communityData.canManageUsers
+    }
+        // TODO remove dynamic scoping of popup component
+         chatInfoButton.onClicked: Global.openPopup(communityProfilePopup, {
+             store: root.store,
+             community: communityData
+         })
 
         popupMenu: StatusPopupMenu {
             StatusMenuItem {
                 //% "Create channel"
                 text: qsTrId("create-channel")
                 icon.name: "channel"
-                // Not Refactored Yet
-                //enabled: root.store.chatsModelInst.communities.activeCommunity.admin
-//                onTriggered: Global.openPopup(createChannelPopup, {communityId: chatsModel.communities.activeCommunity.id})
+                enabled: communityData.amISectionAdmin
+                onTriggered: Global.openPopup(createChannelPopup)
             }
 
             StatusMenuItem {
                 //% "Create category"
                 text: qsTrId("create-category")
                 icon.name: "channel-category"
+                enabled: communityData.amISectionAdmin
                 // Not Refactored Yet
-                //enabled: root.store.chatsModelInst.communities.activeCommunity.admin
 //                onTriggered: Global.openPopup(createCategoryPopup, {communityId: chatsModel.communities.activeCommunity.id})
             }
 
@@ -76,8 +79,8 @@ Item {
                 //% "Invite people"
                 text: qsTrId("invite-people")
                 icon.name: "share-ios"
+                enabled: communityData.canManageUsers
                 // Not Refactored Yet
-                //enabled: root.store.chatsModelInst.communities.activeCommunity.canManageUsers
 //                onTriggered: Global.openPopup(inviteFriendsToCommunityPopup, {
 //                    community: root.store.chatsModelInst.communities.activeCommunity
 //                })
@@ -97,7 +100,7 @@ Item {
 
         // Not Refactored Yet
         active: nbRequests > 0
-        //active: root.store.chatsModelInst.communities.activeCommunity.admin && nbRequests > 0
+        //active: communityData.amISectionAdmin && nbRequests > 0
         height: nbRequests > 0 ? 64 : 0
         sourceComponent: Component {
             StatusContactRequestsIndicatorListItem {
@@ -125,7 +128,7 @@ Item {
         clip: true
         contentHeight: communityChatListAndCategories.height
                        + emptyViewAndSuggestionsLoader.height
-                       + backUpBannerLoader.height 
+                       + backUpBannerLoader.height
                        + 16
 
         StatusChatListAndCategories {
@@ -140,9 +143,9 @@ Item {
                 }
                 return implicitHeight
             }
-              
-//            draggableItems: root.store.chatsModelInst.communities.activeCommunity.admin
-//            draggableCategories: root.store.chatsModelInst.communities.activeCommunity.admin
+
+            draggableItems: communityData.amISectionAdmin
+            draggableCategories: communityData.amISectionAdmin
             //chatList.model: root.store.chatsModelInst.communities.activeCommunity.chats
 
             //categoryList.model: root.store.chatsModelInst.communities.activeCommunity.categories
@@ -154,8 +157,8 @@ Item {
                     root.communitySectionModule.setActiveItem(categoryId, id)
             }
 
-//            showCategoryActionButtons: root.store.chatsModelInst.communities.activeCommunity.admin
-//            showPopupMenu: root.store.chatsModelInst.communities.activeCommunity.admin && chatsModel.communities.activeCommunity.canManageUsers
+            showCategoryActionButtons: communityData.amISectionAdmin
+            showPopupMenu: communityData.amISectionAdmin && communityData.canManageUsers
             //selectedChatId: root.store.chatsModelInst.channelView.activeChannel.id
 
 //            onChatItemSelected: root.store.chatsModelInst.channelView.setActiveChannel(id)
@@ -178,7 +181,7 @@ Item {
                     text: qsTrId("create-channel")
                     icon.name: "channel"
                     // Not Refactored Yet
-//                    enabled: chatsModel.communities.activeCommunity.admin
+                    enabled: communityData.amISectionAdmin
 //                    onTriggered: Global.openPopup(createChannelPopup, {communityId: root.store.chatsModelInst.communities.activeCommunity.id})
                 }
 
@@ -187,8 +190,7 @@ Item {
                     text: qsTrId("create-category")
                     icon.name: "channel-category"
                     // Not Refactored Yet
-                    enabled: false
-                    //enabled: root.store.chatsModelInst.communities.activeCommunity.admin
+                    enabled: communityData.amISectionAdmin
 //                    onTriggered: Global.openPopup(createCategoryPopup, {communityId: root.store.chatsModelInst.communities.activeCommunity.id})
                 }
 
@@ -199,8 +201,7 @@ Item {
                     text: qsTrId("invite-people")
                     icon.name: "share-ios"
                     // Not Refactored Yet
-                    enabled: false
-                    //enabled: root.store.chatsModelInst.communities.activeCommunity.canManageUsers
+                    enabled: communityData.amISectionAdmin
 //                    onTriggered: Global.openPopup(inviteFriendsToCommunityPopup, {
 //                        community: root.store.chatsModelInst.communities.activeCommunity
 //                    })
@@ -216,10 +217,9 @@ Item {
 //                    categoryItem = root.store.chatsModelInst.communities.activeCommunity.getCommunityCategoryItemById(id)
                 }
 
-                StatusMenuItem { 
+                StatusMenuItem {
                     // Not Refactored Yet
-                    enabled: true
-                    //enabled: root.store.chatsModelInst.communities.activeCommunity.admin
+                    enabled: communityData.amISectionAdmin
                     //% "Edit Category"
                     text: qsTrId("edit-category")
                     icon.name: "edit"
@@ -235,15 +235,11 @@ Item {
                 }
 
                 StatusMenuSeparator {
-                    // Not Refactored Yet
-                    visible: true
-                    //visible: root.store.chatsModelInst.communities.activeCommunity.admin
+                    visible: communityData.amISectionAdmin
                 }
 
                 StatusMenuItem {
-                    // Not Refactored Yet
-                    enabled: true
-                    //enabled: root.store.chatsModelInst.communities.activeCommunity.admin
+                    enabled: communityData.amISectionAdmin
                     //% "Delete Category"
                     text: qsTrId("delete-category")
                     icon.name: "delete"
@@ -341,12 +337,15 @@ Item {
 
         Loader {
             id: emptyViewAndSuggestionsLoader
-            // Not Refactored Yet
-//            active: root.store.chatsModelInst.communities.activeCommunity.admin &&
-//                     (!localAccountSensitiveSettings.hiddenCommunityWelcomeBanners ||
-//                      !localAccountSensitiveSettings.hiddenCommunityWelcomeBanners.includes(root.store.chatsModelInst.communities.activeCommunity.id))
+            active: communityData.amISectionAdmin &&
+                     (!localAccountSensitiveSettings.hiddenCommunityWelcomeBanners ||
+                      !localAccountSensitiveSettings.hiddenCommunityWelcomeBanners.includes(communityData.id))
             width: parent.width
-            height: active ? item.height : 0
+            height: {
+                // I dont know why, the binding doesn't work well if this isn't here
+                item.height
+                return this.active ? item.height : 0
+            }
             anchors.top: communityChatListAndCategories.bottom
             anchors.topMargin: active ? Style.current.padding : 0
             sourceComponent: Component {
@@ -359,10 +358,9 @@ Item {
 
         Loader {
             id: backUpBannerLoader
-            // Not Refactored Yet
-//            active: root.store.chatsModelInst.communities.activeCommunity.admin &&
-//                        (!localAccountSensitiveSettings.hiddenCommunityBackUpBanners ||
-//                         !localAccountSensitiveSettings.hiddenCommunityBackUpBanners.includes(root.store.chatsModelInst.communities.activeCommunity.id))
+            active: communityData.amISectionAdmin &&
+                        (!localAccountSensitiveSettings.hiddenCommunityBackUpBanners ||
+                         !localAccountSensitiveSettings.hiddenCommunityBackUpBanners.includes(communityData.id))
             width: parent.width
             height: active ? item.height : 0
             anchors.top: emptyViewAndSuggestionsLoader.bottom
@@ -400,6 +398,9 @@ Item {
         id: createChannelPopup
         CreateChannelPopup {
             anchors.centerIn: parent
+            onCreateCommunityChannel: function (chName, chDescription) {
+                root.store.createCommunityChannel(communityData.id, chName, chDescription)
+            }
             onClosed: {
                 destroy()
             }

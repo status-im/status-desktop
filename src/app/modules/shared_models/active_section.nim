@@ -90,6 +90,12 @@ QtObject:
   QtProperty[bool] canRequestAccess:
     read = canRequestAccess
 
+  proc canManageUsers(self: ActiveSection): bool {.slot.} = 
+    return self.item.canManageUsers
+
+  QtProperty[bool] canManageUsers:
+    read = canManageUsers
+
   proc getJoined(self: ActiveSection): bool {.slot.} = 
     return self.item.joined
 
@@ -113,5 +119,11 @@ QtObject:
 
   QtProperty[bool] ensOnly:
     read = ensOnly
+
+  proc nbMembers(self: ActiveSection): int {.slot.} = 
+    return self.item.members.len
+
+  QtProperty[int] nbMembers:
+    read = nbMembers
 
   

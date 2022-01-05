@@ -25,7 +25,7 @@ StatusModal {
     header.subTitle: contentItem.currentItem.headerSubtitle || ""
     header.image.source: contentItem.currentItem.headerImageSource || ""
     header.icon.isLetterIdenticon: contentItem.currentItem.headerTitle === root.community.name && !contentItem.currentItem.headerImageSource
-    header.icon.background.color: root.community.communityColor
+    header.icon.background.color: root.community.color
 
     contentItem: StackView {
         id: stack
@@ -56,7 +56,7 @@ StatusModal {
                         default: return qsTrId("unknown-community");
                     }
                 }
-                headerImageSource: root.community.thumbnailImage
+                headerImageSource: root.community.image
                 community: root.community
 
                 onMembersListButtonClicked: root.contentItem.push(membersList)
