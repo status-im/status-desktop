@@ -42,7 +42,7 @@ method delete*(self: Controller) =
 
 method init*(self: Controller) = 
   self.events.on(SIGNAL_SEARCH_MESSAGES_LOADED) do(e:Args):
-    let args = SearchMessagesLoadedArgs(e)
+    let args = MessagesArgs(e)
     self.delegate.onSearchMessagesDone(args.messages)
 
 method activeSectionId*(self: Controller): string =
