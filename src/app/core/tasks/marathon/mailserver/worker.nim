@@ -6,8 +6,7 @@ import # vendor libs
 
 import # status-desktop libs
   ../worker, ./model, ../../qt, ../../common as task_runner_common,
-  ../common as methuselash_common,
-  status/statusgo_backend/mailservers # TODO: needed for MailserverTopic type, remove?
+  ../common as methuselash_common
 
 export
   chronos, task_runner_common, json_serialization
