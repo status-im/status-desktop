@@ -30,7 +30,7 @@ type
     meta: Meta
 
 ## Forward declaration
-proc extractConfig(self: FleetConfiguration, jsonString: string)
+proc extractConfig(self: FleetConfiguration, jsonString: string) {.gcsafe.}
 
 proc newFleetConfiguration*(jsonString: string): FleetConfiguration =
   result = FleetConfiguration()
@@ -39,7 +39,7 @@ proc newFleetConfiguration*(jsonString: string): FleetConfiguration =
 proc delete*(self: FleetConfiguration) =
   discard
 
-proc extractConfig(self: FleetConfiguration, jsonString: string) =
+proc extractConfig(self: FleetConfiguration, jsonString: string) {.gcsafe.} =
   let fleetJson = jsonString.parseJSON
   self.meta.hostname = fleetJson["meta"]["hostname"].getStr
   self.meta.timestamp = fleetJson["meta"]["timestamp"].getBiggestInt.uint64
