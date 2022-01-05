@@ -9,79 +9,71 @@ import ../../../../app_service/service/community/service as community_service
 export controller_interface
 
 type 
-  Controller*[T: controller_interface.DelegateInterface] = ref object of controller_interface.AccessInterface
+  Controller* = ref object of controller_interface.AccessInterface
     delegate: io_interface.AccessInterface
     events: EventEmitter
     communityService: community_service.Service
 
-proc newController*[T](
+proc newController*(
     delegate: io_interface.AccessInterface,
     events: EventEmitter,
     communityService: community_service.Service
-    ): Controller[T] =
-  result = Controller[T]()
+    ): Controller =
+  result = Controller()
   result.delegate = delegate
   result.events = events
   result.communityService = communityService
 
-method delete*[T](self: Controller[T]) =
+method delete*(self: Controller) =
   discard
 
-method init*[T](self: Controller[T]) =
+method init*(self: Controller) =
   let communities = self.communityService.getAllCommunities()
   self.delegate.setAllCommunities(communities)
 
   self.events.on(SIGNAL_COMMUNITY_MY_REQUEST_ADDED) do(e:Args):
     let args = CommunityRequestArgs(e)
-    # TODO process the request being added
+    # self.delegate.requestAdded()
 
   self.events.on(SIGNAL_COMMUNITY_LEFT) do(e:Args):
     let args = CommunityIdArgs(e)
-    # TODO process the community being left
-
-  self.events.on(SIGNAL_COMMUNITY_CREATED) do(e:Args):
-    let args = CommunityArgs(e)
-    # TODO process the community being created
-
-  self.events.on(SIGNAL_COMMUNITY_CHANNEL_CREATED) do(e:Args):
-    let args = CommunityChatArgs(e)
-    # TODO process the community chat being created
+    # self.delegate.communityLeft(args.communityId)
 
   self.events.on(SIGNAL_COMMUNITY_CHANNEL_EDITED) do(e:Args):
     let args = CommunityChatArgs(e)
-    # TODO process the community chat being edited
+    # self.delegate.communityChannelEdited()
 
   self.events.on(SIGNAL_COMMUNITY_CHANNEL_REORDERED) do(e:Args):
     let args = CommunityChatOrderArgs(e)
-    # TODO process the community chat being reordered
+    # self.delegate.communityChannelReordered()
 
   self.events.on(SIGNAL_COMMUNITY_CHANNEL_DELETED) do(e:Args):
     let args = CommunityChatIdArgs(e)
-    # TODO process the community chat being deleted
+    # self.delegate.communityChannelDeleted()
 
   self.events.on(SIGNAL_COMMUNITY_CATEGORY_CREATED) do(e:Args):
     let args = CommunityCategoryArgs(e)
-    # TODO process the community category being created
+    # self.delegate.communityCategoryCreated()
 
   self.events.on(SIGNAL_COMMUNITY_CATEGORY_EDITED) do(e:Args):
     let args = CommunityCategoryArgs(e)
-    # TODO process the community category being edited
+    # self.delegate.communityCategoryEdited()
 
   self.events.on(SIGNAL_COMMUNITY_CATEGORY_DELETED) do(e:Args):
     let args = CommunityCategoryArgs(e)
-    # TODO process the community category being deleted
+    # self.delegate.communityCategoryDeleted()
 
-method joinCommunity*[T](self: Controller[T], communityId: string): string =
+method joinCommunity*(self: Controller, communityId: string): string =
   self.communityService.joinCommunity(communityId)
 
-method requestToJoinCommunity*[T](self: Controller[T], communityId: string, ensName: string) =
+method requestToJoinCommunity*(self: Controller, communityId: string, ensName: string) =
   self.communityService.requestToJoinCommunity(communityId, ensName)
 
-method leaveCommunity*[T](self: Controller[T], communityId: string) =
+method leaveCommunity*(self: Controller, communityId: string) =
   self.communityService.leaveCommunity(communityId)
 
-method createCommunity*[T](
-    self: Controller[T],
+method createCommunity*(
+    self: Controller,
     name: string,
     description: string,
     access: int,
@@ -98,15 +90,15 @@ method createCommunity*[T](
     imageUrl,
     aX, aY, bX, bY)
 
-method createCommunityChannel*[T](
-    self: Controller[T],
+method createCommunityChannel*(
+    self: Controller,
     communityId: string,
     name: string,
     description: string) =
   self.communityService.createCommunityChannel(communityId, name, description)
 
-method editCommunityChannel*[T](
-    self: Controller[T],
+method editCommunityChannel*(
+    self: Controller,
     communityId: string,
     channelId: string,
     name: string,
@@ -121,8 +113,8 @@ method editCommunityChannel*[T](
     categoryId,
     position)
 
-method reorderCommunityChat*[T](
-    self: Controller[T],
+method reorderCommunityChat*(
+    self: Controller,
     communityId: string,
     categoryId: string,
     chatId: string,
@@ -133,38 +125,56 @@ method reorderCommunityChat*[T](
     chatId,
     position)
 
-method deleteCommunityChat*[T](
-    self: Controller[T],
+method deleteCommunityChat*(
+    self: Controller,
     communityId: string,
     chatId: string) =
   self.communityService.deleteCommunityChat(communityId, chatId)
 
-method createCommunityCategory*[T](
-    self: Controller[T],
+method createCommunityCategory*(
+    self: Controller,
     communityId: string,
     name: string,
     channels: seq[string]) =
   self.communityService.createCommunityCategory(communityId, name, channels)
 
-method editCommunityCategory*[T](
-    self: Controller[T],
+method editCommunityCategory*(
+    self: Controller,
     communityId: string,
     categoryId: string,
     name: string,
     channels: seq[string]) =
   self.communityService.editCommunityCategory(communityId, categoryId, name, channels)
 
-method deleteCommunityCategory*[T](
-    self: Controller[T],
+method deleteCommunityCategory*(
+    self: Controller,
     communityId: string,
     categoryId: string) =
   self.communityService.deleteCommunityCategory(communityId, categoryId)
 
-method requestCommunityInfo*[T](self: Controller[T], communityId: string) =
+method requestCommunityInfo*(self: Controller, communityId: string) =
   self.communityService.requestCommunityInfo(communityId)
 
-method importCommunity*[T](self: Controller[T], communityKey: string) =
+method importCommunity*(self: Controller, communityKey: string) =
   self.communityService.importCommunity(communityKey)
 
-method exportCommunity*[T](self: Controller[T], communityId: string): string =
+method exportCommunity*(self: Controller, communityId: string): string =
   self.communityService.exportCommunity(communityId)
+
+method acceptRequestToJoinCommunity*(self: Controller, communityId: string, requestId: string) =
+  self.communityService.acceptRequestToJoinCommunity(requestId)
+
+method declineRequestToJoinCommunity*(self: Controller, communityId: string, requestId: string) =
+  self.communityService.declineRequestToJoinCommunity(requestId)
+
+# method inviteUsersToCommunityById*(self: Controller, communityId: string, pubKeys: string) =
+#   self.communityService.inviteUsersToCommunityById(communityId, pubKeys)
+
+method removeUserFromCommunity*(self: Controller, communityId: string, pubKeys: string) =
+  self.communityService.removeUserFromCommunity(communityId, pubKeys)
+
+method banUserFromCommunity*(self: Controller, communityId: string, pubKey: string) =
+  self.communityService.removeUserFromCommunity(communityId, pubKey)
+
+method setCommunityMuted*(self: Controller, communityId: string, muted: bool) =
+  self.communityService.setCommunityMuted(communityId, muted)

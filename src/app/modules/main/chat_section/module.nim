@@ -293,12 +293,15 @@ method createPublicChat*(self: Module, chatId: string) =
 
   self.controller.createPublicChat(chatId)
 
-method addNewChat*(self: Module, chatDto: ChatDto, events: EventEmitter, 
-  settingsService: settings_service.ServiceInterface,
-  contactService: contact_service.Service,
-  chatService: chat_service.Service, 
-  communityService: community_service.Service, 
-  messageService: message_service.Service) =
+method addNewChat*(
+    self: Module,
+    chatDto: ChatDto,
+    events: EventEmitter, 
+    settingsService: settings_service.ServiceInterface,
+    contactService: contact_service.Service,
+    chatService: chat_service.Service, 
+    communityService: community_service.Service, 
+    messageService: message_service.Service) =
   let hasNotification = chatDto.unviewedMessagesCount > 0 or chatDto.unviewedMentionsCount > 0
   let notificationsCount = chatDto.unviewedMentionsCount
   var chatName = chatDto.name

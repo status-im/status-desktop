@@ -249,7 +249,7 @@ QtObject:
         replyTo,
         contentType,
         preferredUsername,
-        communityId)
+        communityId) # Only send a community ID for the community invites
 
       let (chats, messages) = self.processMessageUpdateAfterSend(response)
       if chats.len == 0 or messages.len == 0:

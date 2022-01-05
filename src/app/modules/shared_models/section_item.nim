@@ -1,4 +1,5 @@
 import strformat
+import ./member_item
 
 type
   SectionType* {.pure.} = enum
@@ -27,9 +28,11 @@ type
     isMember: bool
     joined: bool
     canJoin: bool
+    canManageUsers: bool
     canRequestAccess: bool
     access: int
     ensOnly: bool
+    members: seq[MemberItem]
 
 proc initItem*(
     id: string,
@@ -46,10 +49,12 @@ proc initItem*(
     enabled = true,
     joined = false,
     canJoin = false,
+    canManageUsers = false,
     canRequestAccess = false,
     isMember = false,
     access: int = 0,
-    ensOnly = false
+    ensOnly = false,
+    members: seq[MemberItem] = @[]
     ): SectionItem =
   result.id = id
   result.sectionType = sectionType
@@ -65,16 +70,18 @@ proc initItem*(
   result.enabled = enabled
   result.joined = joined
   result.canJoin = canJoin
+  result.canManageUsers = canManageUsers
   result.canRequestAccess = canRequestAccess
   result.isMember = isMember
   result.access = access
   result.ensOnly = ensOnly
+  result.members = members
 
 proc isEmpty*(self: SectionItem): bool =
   return self.id.len == 0
 
 proc `$`*(self: SectionItem): string =
-  result = fmt"""MainModuleItem(
+  result = fmt"""SectionItem(
     id: {self.id},
     sectionType: {self.sectionType.int},
     name: {self.name},
@@ -89,10 +96,12 @@ proc `$`*(self: SectionItem): string =
     enabled:{self.enabled},
     joined:{self.joined},
     canJoin:{self.canJoin},
+    canManageUsers:{self.canManageUsers},
     canRequestAccess:{self.canRequestAccess},
     isMember:{self.isMember},
     access:{self.access},
-    ensOnly:{self.ensOnly}
+    ensOnly:{self.ensOnly},
+    members:{self.members},
     ]"""
 
 proc id*(self: SectionItem): string {.inline.} = 
@@ -152,6 +161,9 @@ proc canJoin*(self: SectionItem): bool {.inline.} =
 proc canRequestAccess*(self: SectionItem): bool {.inline.} = 
   self.canRequestAccess
 
+proc canManageUsers*(self: SectionItem): bool {.inline.} = 
+  self.canManageUsers
+
 proc isMember*(self: SectionItem): bool {.inline.} = 
   self.isMember
 
@@ -160,3 +172,6 @@ proc access*(self: SectionItem): int {.inline.} =
 
 proc ensOnly*(self: SectionItem): bool {.inline.} = 
   self.ensOnly
+
+proc members*(self: SectionItem): seq[MemberItem] {.inline.} = 
+  self.members

@@ -45,6 +45,9 @@ type ChatDto* = object
   joined*: int64 # indicates when the user joined the chat last time
   syncedTo*: int64
   syncedFrom*: int64
+  canPost*: bool
+  position*: int
+  categoryId*: string
 
 proc `$`*(self: ChatDto): string =
   result = fmt"""ChatDto(

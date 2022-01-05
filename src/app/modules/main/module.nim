@@ -1,6 +1,7 @@
-import NimQml, Tables, json
+import NimQml, Tables, json, sugar, sequtils
 
 import io_interface, view, controller, ../shared_models/section_item, ../shared_models/section_model
+import ../shared_models/member_item
 import ../../global/app_sections_config as conf
 import ../../global/app_signals
 import ../../global/global_singleton
@@ -157,7 +158,15 @@ proc createCommunityItem[T](self: Module[T], c: CommunityDto): SectionItem =
     hasNotification,
     notificationsCount,
     active = false,
-    enabled = singletonInstance.localAccountSensitiveSettings.getCommunitiesEnabled())
+    enabled = singletonInstance.localAccountSensitiveSettings.getCommunitiesEnabled(),
+    c.joined,
+    c.canJoin,
+    c.canManageUsers,
+    c.canRequestAccess,
+    c.isMember,
+    c.permissions.access,
+    c.permissions.ensOnly,
+    c.members.map(x => member_item.initItem(x.id, x.roles)))
 
 method load*[T](
     self: Module[T],
@@ -361,7 +370,7 @@ proc stickersDidLoad*[T](self: Module[T]) =
 proc activityCenterDidLoad*[T](self: Module[T]) =
   self.checkIfModuleDidLoad()
 
-proc communitiesModuleDidLoad*[T](self: Module[T]) =
+method communitiesModuleDidLoad*[T](self: Module[T]) =
   self.checkIfModuleDidLoad()
 
 proc walletSectionDidLoad*[T](self: Module[T]) =

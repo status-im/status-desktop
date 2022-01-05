@@ -52,6 +52,24 @@ method importCommunity*(self: AccessInterface, communityKey: string) {.base.} =
 method exportCommunity*(self: AccessInterface, communityId: string): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method acceptRequestToJoinCommunity*(self: AccessInterface, communityId: string, requestId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method declineRequestToJoinCommunity*(self: AccessInterface, communityId: string, requestId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method inviteUsersToCommunityById*(self: AccessInterface, communityId: string, pubKeys: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method removeUserFromCommunity*(self: AccessInterface, communityId: string, pubKeys: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method banUserFromCommunity*(self: AccessInterface, communityId: string, pubKey: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method setCommunityMuted*(self: AccessInterface, communityId: string, muted: bool) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 type
   ## Abstract class (concept) which must be implemented by object/s used in this 
   ## module.
