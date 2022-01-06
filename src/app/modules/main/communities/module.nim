@@ -50,7 +50,8 @@ method isLoaded*(self: Module): bool =
 
 method viewDidLoad*(self: Module) =
   self.moduleLoaded = true
-  self.delegate.communitiesModuleDidLoad()
+  # FIXME this works one time, then restarting the app doesn<t work
+  # self.delegate.communitiesModuleDidLoad()
 
 method setAllCommunities*(self: Module, communities: seq[CommunityDto]) =
   for c in communities:
