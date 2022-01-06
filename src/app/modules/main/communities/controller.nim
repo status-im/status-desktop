@@ -90,6 +90,26 @@ method createCommunity*(
     imageUrl,
     aX, aY, bX, bY)
 
+method editCommunity*(
+    self: Controller,
+    id: string,
+    name: string,
+    description: string,
+    access: int,
+    ensOnly: bool,
+    color: string,
+    imageUrl: string,
+    aX: int, aY: int, bX: int, bY: int) =
+  self.communityService.editCommunity(
+    id,
+    name,
+    description,
+    access,
+    ensOnly,
+    color,
+    imageUrl,
+    aX, aY, bX, bY)
+
 method createCommunityChannel*(
     self: Controller,
     communityId: string,

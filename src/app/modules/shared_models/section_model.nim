@@ -121,6 +121,29 @@ QtObject:
 
     self.countChanged()
 
+  proc getItemIndex*(self: SectionModel, id: string): int =
+    var i = 0
+    for item in self.items:
+      if item.id == id:
+        return i
+      i.inc()
+    return -1
+
+  proc editItem*(self: SectionModel, item: SectionItem) =
+    let index = self.getItemIndex(item.id)
+    if (index == -1):
+      return
+
+    self.items[index] = item
+    let dataIndex = self.createIndex(index, 0, nil)
+    self.dataChanged(dataIndex, dataIndex, @[
+      ModelRole.Name.int,
+      ModelRole.Description.int,
+      ModelRole.Image.int,
+      ModelRole.Icon.int,
+      ModelRole.Color.int
+      ])
+
   proc getItemById*(self: SectionModel, id: string): SectionItem =
     for it in self.items:
       if(it.id == id):
