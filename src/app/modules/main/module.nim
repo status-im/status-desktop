@@ -491,9 +491,11 @@ method communityJoined*[T](
       communityService,
       messageService
     )
+  self.communitySectionsModule[community.id].load(events, settingsService, contactsService, chatService, communityService, messageService)
 
+  let communitySectionItem = self.createCommunityItem(community)
   self.view.addItem(self.createCommunityItem(community))
-  # TODO do we need to set it as active
+  self.setActiveSection(communitySectionItem)
 
 method communityEdited*[T](
     self: Module[T],
