@@ -1,0 +1,76 @@
+[
+    {
+      "id": "testnet_rpc",
+      "etherscan-link": "https://ropsten.etherscan.io/address/",
+      "name": "Ropsten with upstream RPC",
+      "config": {
+        "NetworkId": 3,
+        "DataDir": "/ethereum/testnet_rpc",
+        "UpstreamConfig": {
+          "Enabled": true,
+          "URL": "https://ropsten.infura.io/v3/%INFURA_KEY%"
+        }
+      }
+    },
+    {
+      "id": "rinkeby_rpc",
+      "etherscan-link": "https://rinkeby.etherscan.io/address/",
+      "name": "Rinkeby with upstream RPC",
+      "config": {
+        "NetworkId": 4,
+        "DataDir": "/ethereum/rinkeby_rpc",
+        "UpstreamConfig": {
+          "Enabled": true,
+          "URL": "https://rinkeby.infura.io/v3/%INFURA_KEY%"
+        }
+      }
+    },
+    {
+      "id": "goerli_rpc",
+      "etherscan-link": "https://goerli.etherscan.io/address/",
+      "name": "Goerli with upstream RPC",
+      "config": {
+        "NetworkId": 5,
+        "DataDir": "/ethereum/goerli_rpc",
+        "UpstreamConfig": {
+          "Enabled": true,
+          "URL": "https://goerli.blockscout.com/"
+        }
+      }
+    },
+    {
+      "id": "mainnet_rpc",
+      "etherscan-link": "https://etherscan.io/address/",
+      "name": "Mainnet with upstream RPC",
+      "config": {
+        "NetworkId": 1,
+        "DataDir": "/ethereum/mainnet_rpc",
+        "UpstreamConfig": {
+          "Enabled": true,
+          "URL": "https://mainnet.infura.io/v3/%INFURA_KEY%"
+        }
+      }
+    },
+    {
+      "id": "xdai_rpc",
+      "name": "xDai Chain",
+      "config": {
+        "NetworkId": 100,
+        "DataDir": "/ethereum/xdai_rpc",
+        "UpstreamConfig": {
+          "Enabled": true,
+          "URL": "https://dai.poa.network"
+        }
+      }
+    },
+    {
+      "id": "poa_rpc",
+      "name": "POA Network",
+      "config": {
+        "NetworkId": 99,
+        "DataDir": "/ethereum/poa_rpc",
+        "UpstreamConfig": { "Enabled": true, "URL": "https://core.poa.network" }
+      }
+    }
+  ]
+  
