@@ -27,7 +27,8 @@ ModalPopup {
     SeedPhraseTextArea {
         id: seedPhraseTextArea
         anchors.top: parent.top
-        anchors.topMargin: 40
+        anchors.topMargin: 20
+        anchors.bottomMargin: 20
         width: parent.width
         hideRectangle: true
 
