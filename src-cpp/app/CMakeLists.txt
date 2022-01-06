@@ -1,0 +1,36 @@
+add_library(app
+    include/signals.h
+    boot/app_controller.cpp
+    core/signals/signals.cpp
+    global/singleton.cpp
+    modules/startup/controller.cpp
+    modules/startup/module.cpp
+    modules/startup/view.cpp
+    modules/startup/onboarding/controller.cpp
+    modules/startup/onboarding/item.cpp
+    modules/startup/onboarding/model.cpp
+    modules/startup/onboarding/module.cpp
+    modules/startup/onboarding/view.cpp
+    modules/startup/login/controller.cpp
+    modules/startup/login/item.cpp
+    modules/startup/login/model.cpp
+    modules/startup/login/module.cpp
+    modules/startup/login/view.cpp
+    modules/startup/login/selected_account.cpp
+
+)
+
+target_include_directories(app
+    PUBLIC
+        ./include/
+        ./modules/startup
+)
+
+target_link_libraries(app
+    PRIVATE
+        app_service
+        statusgo_shared
+        Qt${QT_VERSION_MAJOR}::Concurrent
+        Qt${QT_VERSION_MAJOR}::Core
+        Qt${QT_VERSION_MAJOR}::Quick
+)
