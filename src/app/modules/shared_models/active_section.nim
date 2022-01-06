@@ -18,7 +18,7 @@ QtObject:
   proc setActiveSectionData*(self: ActiveSection, item: SectionItem) =
     self.item = item
 
-  proc getId(self: ActiveSection): string {.slot.} = 
+  proc getId*(self: ActiveSection): string {.slot.} = 
     return self.item.id
 
   QtProperty[string] id:

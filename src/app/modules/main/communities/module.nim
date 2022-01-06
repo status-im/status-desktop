@@ -123,12 +123,14 @@ method createCommunity*(self: Module, name: string, description: string,
                         aX: int, aY: int, bX: int, bY: int) =
   self.controller.createCommunity(name, description, access, ensOnly, color, imagePath, aX, aY, bX, bY)
 
+method editCommunity*(self: Module, id: string, name: string, description: string, 
+                        access: int, ensOnly: bool, color: string,
+                        imagePath: string,
+                        aX: int, aY: int, bX: int, bY: int) =
+  self.controller.editCommunity(id, name, description, access, ensOnly, color, imagePath, aX, aY, bX, bY)
+
 method createCommunityChannel*(self: Module, communityId, name, description: string,) =
   self.controller.createCommunityChannel(communityId, name, description)
-
-method editCommunity*(self: Module, id: string, name: string, description: string, access: int, ensOnly: bool, color: string, imagePath: string, aX: int, aY: int, bX: int, bY: int) =
-#   self.controller.editCommunity(id, name, description, access, ensOnly, color, imagePath, aX, aY, bX, bY)
-  discard
 
 method createCommunityCategory*(self: Module, communityId: string, name: string, channels: string) =
   let channelsSeq = map(parseJson(channels).getElems(), proc(x:JsonNode):string = x.getStr())

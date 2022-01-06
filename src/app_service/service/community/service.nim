@@ -44,6 +44,7 @@ const SIGNAL_COMMUNITY_JOINED* = "SIGNAL_COMMUNITY_JOINED"
 const SIGNAL_COMMUNITY_MY_REQUEST_ADDED* = "SIGNAL_COMMUNITY_MY_REQUEST_ADDED"
 const SIGNAL_COMMUNITY_LEFT* = "SIGNAL_COMMUNITY_LEFT"
 const SIGNAL_COMMUNITY_CREATED* = "SIGNAL_COMMUNITY_CREATED"
+const SIGNAL_COMMUNITY_EDITED* = "SIGNAL_COMMUNITY_EDITED"
 const SIGNAL_COMMUNITY_CHANNEL_CREATED* = "SIGNAL_COMMUNITY_CHANNEL_CREATED"
 const SIGNAL_COMMUNITY_CHANNEL_EDITED* = "SIGNAL_COMMUNITY_CHANNEL_EDITED"
 const SIGNAL_COMMUNITY_CHANNEL_REORDERED* = "SIGNAL_COMMUNITY_CHANNEL_REORDERED"
@@ -261,7 +262,38 @@ QtObject:
         self.events.emit(SIGNAL_COMMUNITY_CREATED, CommunityArgs(community: community))
     except Exception as e:
       error "Error creating community", msg = e.msg
-      raise newException(RpcException, "Error creating community: " & e.msg)
+
+  proc editCommunity*(
+      self: Service,
+      id: string,
+      name: string,
+      description: string,
+      access: int,
+      ensOnly: bool,
+      color: string,
+      imageUrl: string,
+      aX: int, aY: int, bX: int, bY: int) =
+    try:
+      var image = singletonInstance.utils.formatImagePath(imageUrl)
+      let response = status_go.editCommunity(
+        id,
+        name,
+        description,
+        access,
+        ensOnly,
+        color,
+        image,
+        aX, aY, bX, bY)
+      
+      if response.error != nil:
+        let error = Json.decode($response.error, RpcError)
+        raise newException(RpcException, "Error editing community: " & error.message)
+
+      if response.result != nil and response.result.kind != JNull:
+        let community = response.result["communities"][0].toCommunityDto()
+        self.events.emit(SIGNAL_COMMUNITY_EDITED, CommunityArgs(community: community))
+    except Exception as e:
+      error "Error editing community", msg = e.msg
 
   proc createCommunityChannel*(
       self: Service,
@@ -283,7 +315,6 @@ QtObject:
         )
     except Exception as e:
       error "Error creating community channel", msg = e.msg, communityId, name, description
-      raise newException(RpcException, "Error creating community channel: " & e.msg)
 
   proc editCommunityChannel*(
       self: Service,
@@ -311,7 +342,6 @@ QtObject:
         self.events.emit(SIGNAL_COMMUNITY_CHANNEL_EDITED, CommunityChatArgs(chat: chat))
     except Exception as e:
       error "Error editing community channel", msg = e.msg, communityId, channelId
-      raise newException(RpcException, "Error editing community channel: " & e.msg)
 
   proc reorderCommunityChat*(
       self: Service,
@@ -340,7 +370,6 @@ QtObject:
       )
     except Exception as e:
       error "Error reordering community channel", msg = e.msg, communityId, chatId, position
-      raise newException(RpcException, "Error reordering community channel: " & e.msg)
 
   proc deleteCommunityChat*(self: Service, communityId: string, chatId: string) =
     try:
@@ -358,7 +387,6 @@ QtObject:
       )
     except Exception as e:
       error "Error deleting community channel", msg = e.msg, communityId, chatId
-      raise newException(RpcException, "Error deleting community channel: " & e.msg)
 
   proc createCommunityCategory*(
       self: Service,
@@ -380,7 +408,6 @@ QtObject:
           
     except Exception as e:
       error "Error creating community category", msg = e.msg, communityId, name
-      raise newException(RpcException, "Error creating community category: " & e.msg)
 
   proc editCommunityCategory*(
       self: Service,
@@ -402,7 +429,6 @@ QtObject:
             CommunityCategoryArgs(communityId: communityId, category: category, channels: channels))
     except Exception as e:
       error "Error creating community category", msg = e.msg, communityId, name
-      raise newException(RpcException, "Error creating community category: " & e.msg)
 
   proc deleteCommunityCategory*(self: Service, communityId: string, categoryId: string) =
     try:
@@ -420,7 +446,6 @@ QtObject:
       )
     except Exception as e:
       error "Error deleting community category", msg = e.msg, communityId, categoryId
-      raise newException(RpcException, "Error deleting community category: " & e.msg)
 
   proc requestCommunityInfo*(self: Service, communityId: string) =
     try:
@@ -430,7 +455,6 @@ QtObject:
         raise newException(RpcException, fmt"Error requesting community info: {error.message}")
     except Exception as e:
       error "Error requesting community info", msg = e.msg, communityId
-      raise newException(RpcException, "Error requesting community info: " & e.msg)
 
 
   proc importCommunity*(self: Service, communityKey: string) =
@@ -441,7 +465,6 @@ QtObject:
         raise newException(RpcException, fmt"Error importing the community: {error.message}")
     except Exception as e:
       error "Error requesting community info", msg = e.msg
-      raise newException(RpcException, "Error requesting community info: " & e.msg)
 
   proc exportCommunity*(self: Service, communityId: string): string =
     try:
@@ -450,46 +473,39 @@ QtObject:
         return response.result.getStr
     except Exception as e:
       error "Error exporting community", msg = e.msg
-      raise newException(RpcException, "Error exporting community: " & e.msg)
 
   proc acceptRequestToJoinCommunity*(self: Service, requestId: string) =
     try:
       discard status_go.acceptRequestToJoinCommunity(requestId)
     except Exception as e:
       error "Error exporting community", msg = e.msg
-      raise newException(RpcException, "Error exporting community: " & e.msg)
 
   proc declineRequestToJoinCommunity*(self: Service, requestId: string) =
     try:
       discard status_go.declineRequestToJoinCommunity(requestId)
     except Exception as e:
       error "Error exporting community", msg = e.msg
-      raise newException(RpcException, "Error exporting community: " & e.msg)
 
   # proc inviteUsersToCommunityById*(self: Service, communityId: string, pubKeys: string) =
   #   try:
   #     discard status_go.inviteUsersToCommunityById(communityId, pubKeys)
   #   except Exception as e:
   #     error "Error exporting community", msg = e.msg
-  #     raise newException(RpcException, "Error exporting community: " & e.msg)
 
   proc removeUserFromCommunity*(self: Service, communityId: string, pubKeys: string)  =
     try:
       discard status_go.removeUserFromCommunity(communityId, pubKeys)
     except Exception as e:
       error "Error exporting community", msg = e.msg
-      raise newException(RpcException, "Error exporting community: " & e.msg)
 
   proc banUserFromCommunity*(self: Service, communityId: string, pubKey: string)  =
     try:
       discard status_go.banUserFromCommunity(communityId, pubKey)
     except Exception as e:
       error "Error exporting community", msg = e.msg
-      raise newException(RpcException, "Error exporting community: " & e.msg)
 
   proc setCommunityMuted*(self: Service, communityId: string, muted: bool) =
     try:
       discard status_go.setCommunityMuted(communityId, muted)
     except Exception as e:
       error "Error exporting community", msg = e.msg
-      raise newException(RpcException, "Error exporting community: " & e.msg)

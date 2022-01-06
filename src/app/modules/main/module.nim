@@ -495,6 +495,11 @@ method communityJoined*[T](
   self.view.addItem(self.createCommunityItem(community))
   # TODO do we need to set it as active
 
+method communityEdited*[T](
+    self: Module[T],
+    community: CommunityDto) =
+  self.view.editItem(self.createCommunityItem(community))
+
 method getContactDetailsAsJson*[T](self: Module[T], publicKey: string): string =
   let contact =  self.controller.getContact(publicKey)
   let (name, image, isIdenticon) = self.controller.getContactNameAndImage(contact.id)

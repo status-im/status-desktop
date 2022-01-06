@@ -22,6 +22,9 @@ method leaveCommunity*(self: AccessInterface, communityId: string) {.base.} =
 method createCommunity*(self: AccessInterface, name: string, description: string, access: int, ensOnly: bool, color: string, imageUrl: string, aX: int, aY: int, bX: int, bY: int) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method editCommunity*(self: AccessInterface, id: string, name: string, description: string, access: int, ensOnly: bool, color: string, imageUrl: string, aX: int, aY: int, bX: int, bY: int) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method createCommunityChannel*(self: AccessInterface, communityId: string, name: string, description: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
