@@ -38,7 +38,7 @@ Item {
 
     StyledTextArea {
         id: mnemonicTextField
-        customHeight: 100
+        customHeight: textField.implicitHeight >= 150 ? 150 : textField.implicitHeight + 30
         hideRectangle: root.hideRectangle
         anchors.top: parent.top
         anchors.left: parent.left
