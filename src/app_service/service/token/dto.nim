@@ -25,10 +25,12 @@ proc newDto*(
     name: name, chainId: chainId, address: address, symbol: symbol, decimals: decimals, hasIcon: hasIcon, isCustom: isCustom
   )
 
-proc toTokenDto*(jsonObj: JsonNode, activeTokenSymbols: seq[string]): TokenDto =
+proc toTokenDto*(jsonObj: JsonNode, activeTokenSymbols: seq[string], hasIcon: bool = false, isCustom: bool = true): TokenDto =
   result = TokenDto()
-  result.isCustom = true
+  result.isCustom = isCustom
+  result.hasIcon = hasIcon
   result.isVisible = false
+
   discard jsonObj.getProp("name", result.name)
   discard jsonObj.getProp("chainId", result.chainId)
   discard jsonObj.getProp("address", result.address)
