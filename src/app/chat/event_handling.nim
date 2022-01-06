@@ -198,16 +198,6 @@ proc handleChatEvents(self: ChatController) =
     #Notifying communities about this change.
     self.view.communities.markNotificationsAsRead(markAsReadProps)
 
-proc handleMailserverEvents(self: ChatController) =
-  let mailserverWorker = self.appService.marathon[MailserverWorker().name]  
-  self.status.events.on("mailserverAvailable") do(e:Args):
-    self.view.messageView.setLoadingMessages(true)
-    let task = RequestMessagesTaskArg(
-      `method`: "requestMessages",
-      vptr: cast[ByteAddress](self.view.vptr),
-      slot: "requestAllHistoricMessagesResult"
-    )
-    mailserverWorker.start(task)
 
 proc handleSystemEvents(self: ChatController) =
   self.status.events.on("osNotificationClicked") do(e:Args):

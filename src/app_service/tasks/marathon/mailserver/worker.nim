@@ -6,9 +6,7 @@ import # vendor libs
 
 import # status-desktop libs
   ../worker, ./model, ../../qt, ../../common as task_runner_common,
-  ../common as methuselash_common,
-  status/statusgo_backend/mailservers # TODO: needed for MailserverTopic type, remove?
-
+  ../common as methuselash_common
 export
   chronos, task_runner_common, json_serialization
 
@@ -86,12 +84,6 @@ proc processMessage(mailserverModel: MailserverModel, received: string) =
     mailserverModel.requestMessages()
     taskArg.finish("") # TODO:
 
-  of "isActiveMailserverAvailable":
-    let
-      taskArg = decode[IsActiveMailserverAvailableTaskArg](received)
-      output = mailserverModel.isActiveMailserverAvailable()
-    taskArg.finish(output)
-
   of "requestMessages":
     let taskArg = decode[RequestMessagesTaskArg](received)
     mailserverModel.requestMessages()
@@ -103,16 +95,6 @@ proc processMessage(mailserverModel: MailserverModel, received: string) =
   of "fillGaps":
     let taskArg = decode[FillGapsTaskArg](received)
     mailserverModel.fillGaps(taskArg.chatId, taskArg.messageIds)
-
-  of "getActiveMailserver":
-    let
-      taskArg = decode[GetActiveMailserverTaskArg](received)
-      output = mailserverModel.getActiveMailserver()
-    taskArg.finish(output)
-
-  of "peerSummaryChange":
-    let taskArg = decode[PeerSummaryChangeTaskArg](received)
-    mailserverModel.peerSummaryChange(taskArg.peers)
 
   else:
     error "unknown message", message=received
@@ -140,9 +122,6 @@ proc worker(arg: WorkerThreadArg) {.async, gcsafe, nimcall.} =
       return
     else:
       unprocessedMsgs.add received
-
-  mailserverModel.init()
-  discard mailserverModel.checkConnection()
  
   for msg in unprocessedMsgs.items:
     mailserverModel.processMessage(msg)

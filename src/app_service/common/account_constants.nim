@@ -146,6 +146,7 @@ var NODE_CONFIG* = %* {
   },
   "ShhextConfig": {
     "BackupDisabledDataDir": "./",
+    "EnableMailserverCycle": true,
     "DataSyncEnabled": true,
     "InstallationID": "aef27732-8d86-5039-a32e-bdbe094d8791",
     "MailServerConfirmations": true,

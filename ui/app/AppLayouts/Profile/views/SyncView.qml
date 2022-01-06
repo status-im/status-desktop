@@ -20,8 +20,8 @@ Item {
 
     Connections {
         target: root.store.mailservers
-        onActiveMailserverChanged: function(activeMailserverName){
-            var mName = root.store.getMailserverName(activeMailserverName)
+        onActiveMailserverChanged: function(activeMailserver){
+            var mName = root.store.getMailserverName(activeMailserver)
             root.activeMailserver = mName
         }
     }
