@@ -46,9 +46,7 @@ Item {
 
         chatInfoButton.image.source: communityData.image
         chatInfoButton.icon.color: communityData.color
-        menuButton.visible: {
-        return communityData.amISectionAdmin && communityData.canManageUsers
-    }
+        menuButton.visible: communityData.amISectionAdmin && communityData.canManageUsers
         // TODO remove dynamic scoping of popup component
          chatInfoButton.onClicked: Global.openPopup(communityProfilePopup, {
              store: root.store,
@@ -182,7 +180,7 @@ Item {
                     icon.name: "channel"
                     // Not Refactored Yet
                     enabled: communityData.amISectionAdmin
-//                    onTriggered: Global.openPopup(createChannelPopup, {communityId: root.store.chatsModelInst.communities.activeCommunity.id})
+                    onTriggered: Global.openPopup(createChannelPopup)
                 }
 
                 StatusMenuItem {
@@ -350,7 +348,7 @@ Item {
             anchors.topMargin: active ? Style.current.padding : 0
             sourceComponent: Component {
                 CommunityWelcomeBannerPanel {
-                    activeCommunity: store.activeCommunity
+                    activeCommunity: communityData
                     store: root.store
                 }
             }
@@ -372,7 +370,7 @@ Item {
 
                     BackUpCommuntyBannerPanel {
                         id: backupBanner
-                        activeCommunity: store.activeCommunity
+                        activeCommunity: communityData
                         onBackupButtonClicked: {
                             Global.openPopup(transferOwnershipPopup, {
                                 privateKey: root.store.exportCommunity(),

@@ -103,6 +103,9 @@ method init*(self: Controller) =
       self.messageService
       )
 
+  self.events.on(SIGNAL_COMMUNITY_EDITED) do(e:Args):
+    let args = CommunityArgs(e)
+    self.delegate.communityEdited(args.community)
 
   self.events.on(SIGNAL_ENS_RESOLVED) do(e: Args):
     var args = ResolvedContactArgs(e)
