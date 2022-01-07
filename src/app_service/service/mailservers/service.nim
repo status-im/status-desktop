@@ -4,7 +4,6 @@ import ./dto/mailserver as mailserver_dto
 import ../../../app/core/signals/types
 import ../../../app/core/fleets/fleet_configuration
 import ../../../app/core/[main]
-import ../../../app/core/tasks/marathon/mailserver/events
 import ../../../app/core/tasks/marathon/mailserver/worker
 import ../settings/service_interface as settings_service
 import ../node_configuration/service_interface as node_configuration_service
@@ -54,11 +53,11 @@ QtObject:
     self.fetchMailservers()  
 
   proc doConnect(self: Service) =
-    self.events.on("mailserver:changed") do(e: Args):
-      let receivedData = MailserverArgs(e)
-      let peer = receivedData.peer
-      info "mailserver changed to ", peer
-      let data = ActiveMailserverChangedArgs(nodeAddress: peer)
+    self.events.on(SignalType.MailserverChanged.event) do(e: Args):
+      let receivedData = MailserverChangedSignal(e)
+      let address = receivedData.address
+      info "active mailserver changed", node=address
+      let data = ActiveMailserverChangedArgs(nodeAddress: address)
       self.events.emit(SIGNAL_ACTIVE_MAILSERVER_CHANGED, data)
     
     self.events.on(SignalType.HistoryRequestStarted.event) do(e: Args):
@@ -124,13 +123,14 @@ QtObject:
       let fleet = self.settingsService.getFleet()
       discard self.settingsService.unpinMailserver(fleet)
     else:
-      let mailserverWorker = self.marathon[MailserverWorker().name]
-      let task = GetActiveMailserverTaskArg(
-          `method`: "getActiveMailserver",
-          vptr: cast[ByteAddress](self.vptr),
-          slot: "onActiveMailserverResult"
-        )
-      mailserverWorker.start(task)
+      discard # TODO: handle pin mailservers in status-go (in progress)
+      #let mailserverWorker = self.marathon[MailserverWorker().name]
+      #let task = GetActiveMailserverTaskArg(
+      #    `method`: "getActiveMailserver",
+      #    vptr: cast[ByteAddress](self.vptr),
+      #    slot: "onActiveMailserverResult"
+      #  )
+      #mailserverWorker.start(task)
 
   proc onActiveMailserverResult*(self: Service, response: string) {.slot.} =
     let fleet = self.settingsService.getFleet()

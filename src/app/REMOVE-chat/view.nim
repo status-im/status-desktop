@@ -387,18 +387,6 @@ QtObject:
   QtProperty[QVariant] transactions:
     read = getTransactions
 
-  proc isActiveMailserverResult(self: ChatsView, resultEncoded: string) {.slot.} =
-    let isActiveMailserverAvailable = decode[bool](resultEncoded)
-    if isActiveMailserverAvailable:
-      self.messageView.setLoadingMessages(true)
-      let
-        mailserverWorker = self.statusFoundation.marathon[MailserverWorker().name]
-        task = RequestMessagesTaskArg(`method`: "requestMessages")
-      mailserverWorker.start(task)
-
-  proc requestAllHistoricMessagesResult(self: ChatsView, resultEncoded: string) {.slot.} =
-    self.messageView.setLoadingMessages(true)
-
   proc createCommunityChannel*(self: ChatsView, communityId: string, name: string, description: string, categoryId: string): string {.slot.} =
     try:
       let chat = self.status.chat.createCommunityChannel(communityId, name, description)
@@ -491,15 +479,6 @@ QtObject:
 
   proc markMessageAsSent*(self: ChatsView, chat: string, messageId: string) =
     self.messageView.markMessageAsSent(chat, messageId)
-
-  # TODO: this method was created just to test the store functionality.
-  # It should be removed, once peer management is added to status-go
-  proc requestAllHistoricMessages(self: ChatsView) {.slot.} =
-    debug "Requesting messages"
-    # TODO: the mailservers must change depending on whether we are using wakuV1 or wakuV2
-    # in the meantime I'm hardcoding a specific mailserver
-    echo self.status.mailservers.setMailserver("16Uiu2HAm4v86W3bmT1BiH6oSPzcsSr24iDQpSN5Qa992BCjjwgrD")
-    echo self.status.mailservers.requestAllHistoricMessages()
 
   proc switchTo*(self: ChatsView, communityId: string, channelId: string, 
     messageId: string) =

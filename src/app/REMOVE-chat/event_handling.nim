@@ -183,26 +183,6 @@ proc handleChatEvents(self: ChatController) =
     #Notifying communities about this change.
     self.view.communities.markNotificationsAsRead(markAsReadProps)
 
-proc handleMailserverEvents(self: ChatController) =
-  let mailserverWorker = self.statusFoundation.marathon[MailserverWorker().name]
-  # TODO: test mailserver topics when joining chat
-  
-  self.status.events.on("channelJoined") do(e:Args):
-    let task = IsActiveMailserverAvailableTaskArg(
-      `method`: "isActiveMailserverAvailable",
-      vptr: cast[ByteAddress](self.view.vptr),
-      slot: "isActiveMailserverResult"
-    )
-    mailserverWorker.start(task)
-  self.status.events.on("mailserverAvailable") do(e:Args):
-    self.view.messageView.setLoadingMessages(true)
-    let task = RequestMessagesTaskArg(
-      `method`: "requestMessages",
-      vptr: cast[ByteAddress](self.view.vptr),
-      slot: "requestAllHistoricMessagesResult"
-    )
-    mailserverWorker.start(task)
-
 proc handleSystemEvents(self: ChatController) =
   discard
   # Not refactored yet - don't delete

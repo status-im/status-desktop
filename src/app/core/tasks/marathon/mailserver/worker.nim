@@ -85,12 +85,6 @@ proc processMessage(mailserverModel: MailserverModel, received: string) =
     mailserverModel.requestMessages()
     taskArg.finish("") # TODO:
 
-  of "isActiveMailserverAvailable":
-    let
-      taskArg = decode[IsActiveMailserverAvailableTaskArg](received)
-      output = mailserverModel.isActiveMailserverAvailable()
-    taskArg.finish(output)
-
   of "requestMessages":
     let taskArg = decode[RequestMessagesTaskArg](received)
     mailserverModel.requestMessages()
@@ -102,16 +96,6 @@ proc processMessage(mailserverModel: MailserverModel, received: string) =
   of "fillGaps":
     let taskArg = decode[FillGapsTaskArg](received)
     mailserverModel.fillGaps(taskArg.chatId, taskArg.messageIds)
-
-  of "getActiveMailserver":
-    let
-      taskArg = decode[GetActiveMailserverTaskArg](received)
-      output = mailserverModel.getActiveMailserver()
-    taskArg.finish(output)
-
-  of "peerSummaryChange":
-    let taskArg = decode[PeerSummaryChangeTaskArg](received)
-    mailserverModel.peerSummaryChange(taskArg.peers)
 
   else:
     error "unknown message", message=received
@@ -139,9 +123,6 @@ proc worker(arg: WorkerThreadArg) {.async, gcsafe, nimcall.} =
       return
     else:
       unprocessedMsgs.add received
-
-  mailserverModel.init()
-  discard mailserverModel.checkConnection()
  
   for msg in unprocessedMsgs.items:
     mailserverModel.processMessage(msg)
