@@ -261,25 +261,13 @@ Item {
                 }
             }
 
-            Item {
-                Layout.fillWidth: true
-                Layout.preferredHeight: 40
-                Layout.alignment: Qt.AlignHCenter
+            // Blocked User Status Bar
+            StatusBanner {
+                id: blockedUsrBar
+                width: parent.width
                 visible: isBlocked
-
-                Rectangle {
-                    id: blockedBanner
-                    anchors.fill: parent
-                    color: Style.current.red
-                    opacity: 0.1
-                }
-
-                Text {
-                    id: blockedText
-                    anchors.centerIn: blockedBanner
-                    color: Style.current.red
-                    text: qsTr("Blocked")
-                }
+                type: StatusBanner.Type.Danger
+                statusText: qsTr("Blocked")
             }
 
             StackLayout {

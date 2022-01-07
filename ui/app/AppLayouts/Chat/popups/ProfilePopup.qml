@@ -89,12 +89,21 @@ StatusModal {
             anchors.top: parent.top
             width: parent.width
 
+            // Blocked User Status Bar
+            StatusBanner {
+                id: blockedUsrBar               
+                width: parent.width
+                visible: isBlocked
+                type: StatusBanner.Type.Danger
+                statusText: qsTr("Blocked")
+            }           
+
             Item {
                 height: 16
                 width: parent.width
             }
 
-            StatusDescriptionListItem {
+            StatusDescriptionListItem {               
                 title: ((isCurrentUser && profileModel.ens.preferredUsername) || isEnsVerified) ? qsTr("ENS username") : qsTr("Username")
                 subTitle: isCurrentUser ? profileModel.ens.preferredUsername || userName : userName
                 tooltip.text: qsTr("Copy to clipboard")
@@ -119,11 +128,6 @@ StatusModal {
                     tooltip.visible = !tooltip.visible
                 }
                 width: parent.width
-            }
-
-            StatusModalDivider {
-                topPadding: 12
-                bottomPadding: 16
             }
 
             StatusDescriptionListItem {
@@ -161,12 +165,6 @@ StatusModal {
                     tooltip.visible = !tooltip.visible
                 }
                 width: parent.width
-            }
-
-            StatusModalDivider {
-                visible: !isCurrentUser
-                topPadding: 8
-                bottomPadding: 12
             }
 
             StatusDescriptionListItem {
