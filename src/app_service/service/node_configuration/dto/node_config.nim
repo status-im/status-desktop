@@ -87,6 +87,7 @@ type
 
   ShhextConfig* = object
     PFSEnabled*: bool
+    EnableMailserverCycle*: bool
     BackupDisabledDataDir*: string
     InstallationID*: string
     MailServerConfirmations*: bool
@@ -126,6 +127,12 @@ type
     Enabled*: bool
   
   MailserversConfig* = object
+    Enabled*: bool
+
+  Web3ProviderConfig* = object
+    Enabled*: bool
+
+  EnsConfig* = object
     Enabled*: bool
 
   SwarmConfig* = object
@@ -191,6 +198,8 @@ type
     BrowsersConfig*: BrowsersConfig
     PermissionsConfig*: PermissionsConfig
     MailserversConfig*: MailserversConfig
+    Web3ProviderConfig*: Web3ProviderConfig
+    EnsConfig*: EnsConfig
     SwarmConfig*: SwarmConfig
     RegisterTopics*: seq[string]
     RequireTopics*: RequireTopics
@@ -323,6 +332,7 @@ proc toWakuConfig*(jsonObj: JsonNode): WakuConfig =
 
 proc toShhextConfig*(jsonObj: JsonNode): ShhextConfig =
   discard jsonObj.getProp("PFSEnabled", result.PFSEnabled)
+  discard jsonObj.getProp("EnableMailserverCycle", result.EnableMailserverCycle)
   discard jsonObj.getProp("BackupDisabledDataDir", result.BackupDisabledDataDir)
   discard jsonObj.getProp("InstallationID", result.InstallationID)
   discard jsonObj.getProp("MailServerConfirmations", result.MailServerConfirmations)
@@ -367,6 +377,12 @@ proc toPermissionsConfig*(jsonObj: JsonNode): PermissionsConfig =
   discard jsonObj.getProp("Enabled", result.Enabled)
 
 proc toMailserversConfig*(jsonObj: JsonNode): MailserversConfig =
+  discard jsonObj.getProp("Enabled", result.Enabled)
+
+proc toWeb3ProviderConfig*(jsonObj: JsonNode): Web3ProviderConfig =
+  discard jsonObj.getProp("Enabled", result.Enabled)
+
+proc toEnsConfig*(jsonObj: JsonNode): EnsConfig =
   discard jsonObj.getProp("Enabled", result.Enabled)
 
 proc toSwarmConfig*(jsonObj: JsonNode): SwarmConfig =
@@ -484,6 +500,14 @@ proc toNodeConfigDto*(jsonObj: JsonNode): NodeConfigDto =
   var mailserversConfigObj: JsonNode
   if(jsonObj.getProp("MailserversConfig", mailserversConfigObj)):
     result.MailserversConfig = toMailserversConfig(mailserversConfigObj)
+
+  var web3ProviderConfig: JsonNode
+  if(jsonObj.getProp("Web3ProviderConfig", web3ProviderConfig)):
+    result.Web3ProviderConfig = toWeb3ProviderConfig(web3ProviderConfig)
+
+  var ensConfig: JsonNode
+  if(jsonObj.getProp("EnsConfig", ensConfig)):
+    result.EnsConfig = toEnsConfig(ensConfig)
 
   var swarmConfigObj: JsonNode
   if(jsonObj.getProp("SwarmConfig", swarmConfigObj)):

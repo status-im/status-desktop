@@ -27,6 +27,17 @@ proc handleSignals(self: ChatController) =
       )
     mailserverWorker.start(task)
 
+  self.status.events.on(SignalType.MailserverAvailable.event) do(e:Args):
+    var data = MailserverAvailableSignal(e)
+    info "active mailserver changed", node=data.address, topics="mailserver-interaction"
+    self.view.messageView.setLoadingMessages(true)
+    let 
+      mailserverWorker = self.statusFoundation.marathon[MailserverWorker().name]
+      task = RequestMessagesTaskArg(
+        `method`: "requestMessages"
+      )
+    mailserverWorker.start(task)
+
   self.status.events.on(SignalType.EnvelopeSent.event) do(e:Args):
     var data = EnvelopeSentSignal(e)
     self.status.messages.updateStatus(data.messageIds)

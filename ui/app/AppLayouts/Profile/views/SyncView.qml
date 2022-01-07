@@ -22,7 +22,7 @@ Item {
 
     Layout.fillHeight: true
     Layout.fillWidth: true
-
+    
     Item {
         width: profileContentWidth
         anchors.top: parent.top

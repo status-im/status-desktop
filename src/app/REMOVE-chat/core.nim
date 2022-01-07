@@ -33,7 +33,6 @@ include event_handling
 include signal_handling
 
 proc init*(self: ChatController) =
-  self.handleMailserverEvents()
   self.handleChatEvents()
   self.handleSystemEvents()
   self.handleSignals()
