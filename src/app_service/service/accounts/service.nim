@@ -298,8 +298,26 @@ method login*(self: Service, account: AccountDto, password: string): string =
       elif(img.imgType == "large"):
         largeImage = img.uri
 
+    # This is moved from `status-lib` here
+    # TODO:
+    # If you added a new value in the nodeconfig in status-go, old accounts will not have this value, since the node config
+    # is stored in the database, and it's not easy to migrate using .sql 
+    # While this is fixed, you can add here any missing attribute on the node config, and it will be merged with whatever
+    # the account has in the db
+    var nodeCfg = %* {
+      "ShhextConfig": %* {
+        "EnableMailserverCycle": true
+      },
+      "Web3ProviderConfig": %* {
+        "Enabled": true
+      },
+      "EnsConfig": %* {
+        "Enabled": true
+      },
+    }
+
     let response = status_account.login(account.name, account.keyUid, hashedPassword, account.identicon, thumbnailImage, 
-    largeImage)
+    largeImage, $nodeCfg)
 
     var error = "response doesn't contain \"error\""
     if(response.result.contains("error")):

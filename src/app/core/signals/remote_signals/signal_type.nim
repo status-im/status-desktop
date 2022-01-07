@@ -27,6 +27,8 @@ type SignalType* {.pure.} = enum
   HistoryRequestFailed = "history.request.failed"
   HistoryRequestBatchProcessed = "history.request.batch.processed"
   KeycardConnected = "keycard.connected"
+  MailserverAvailable = "mailserver.available"
+  MailserverChanged = "mailserver.changed"
   Unknown
 
 proc event*(self:SignalType):string =

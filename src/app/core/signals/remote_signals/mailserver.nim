@@ -30,6 +30,12 @@ type HistoryRequestFailedSignal* = ref object of Signal
   errorMessage*: string
   error*: bool
 
+type MailserverAvailableSignal* = ref object of Signal
+  address*: string
+
+type MailserverChangedSignal* = ref object of Signal
+  address*: string
+
 proc fromEvent*(T: type MailserverRequestCompletedSignal, jsonSignal: JsonNode): MailserverRequestCompletedSignal = 
   result = MailserverRequestCompletedSignal()
   result.signalType = SignalType.MailserverRequestCompleted
@@ -70,3 +76,13 @@ proc fromEvent*(T: type HistoryRequestFailedSignal, jsonSignal: JsonNode): Histo
   if jsonSignal["event"].kind != JNull:
     result.errorMessage = jsonSignal["event"]{"errorMessage"}.getStr()
     result.error = result.errorMessage != ""
+
+proc fromEvent*(T: type MailserverAvailableSignal, jsonSignal: JsonNode): MailserverAvailableSignal = 
+  result = MailserverAvailableSignal()
+  result.signalType = SignalType.MailserverAvailable
+  result.address = jsonSignal["event"]{"address"}.getStr()
+
+proc fromEvent*(T: type MailserverChangedSignal, jsonSignal: JsonNode): MailserverChangedSignal = 
+  result = MailserverChangedSignal()
+  result.signalType = SignalType.MailserverChanged
+  result.address = jsonSignal["event"]{"address"}.getStr()
