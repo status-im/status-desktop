@@ -63,7 +63,7 @@ StatusModal {
                 onNotificationsButtonClicked: {
                     root.store.setCommunityMuted(root.community.id, checked);
                 }
-                onEditButtonClicked: Global.openPopup(editCommunityPopup, {
+                onEditButtonClicked: Global.openPopup(editCommunityroot, {
                     store: root.store,
                     community: root.community,
                     onSave: root.close

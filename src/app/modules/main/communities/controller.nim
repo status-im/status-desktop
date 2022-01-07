@@ -35,10 +35,6 @@ method init*(self: Controller) =
     let args = CommunityRequestArgs(e)
     # self.delegate.requestAdded()
 
-  self.events.on(SIGNAL_COMMUNITY_LEFT) do(e:Args):
-    let args = CommunityIdArgs(e)
-    # self.delegate.communityLeft(args.communityId)
-
   self.events.on(SIGNAL_COMMUNITY_CHANNEL_EDITED) do(e:Args):
     let args = CommunityChatArgs(e)
     # self.delegate.communityChannelEdited()
