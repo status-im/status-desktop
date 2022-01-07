@@ -1,4 +1,4 @@
-import NimQml, Tables, json, sugar, sequtils
+import NimQml, tables, json, sugar, sequtils
 
 import io_interface, view, controller, ../shared_models/section_item, ../shared_models/section_model
 import ../shared_models/member_item
@@ -494,8 +494,21 @@ method communityJoined*[T](
   self.communitySectionsModule[community.id].load(events, settingsService, contactsService, chatService, communityService, messageService)
 
   let communitySectionItem = self.createCommunityItem(community)
-  self.view.addItem(self.createCommunityItem(community))
+  self.view.addItem(communitySectionItem)
   self.setActiveSection(communitySectionItem)
+
+method communityLeft*[T](self: Module[T], communityId: string) =
+  if(not self.communitySectionsModule.contains(communityId)):
+    echo "main-module, unexisting community key to leave: ", communityId
+    return
+
+  self.communitySectionsModule.del(communityId)
+
+  self.view.model().removeItem(communityId)
+
+  if (self.controller.getActiveSectionId() == communityId):
+    let item = self.view.model().getItemById(conf.CHAT_SECTION_ID)
+    self.setActiveSection(item)
 
 method communityEdited*[T](
     self: Module[T],

@@ -157,8 +157,7 @@ QtObject {
     }
 
     function leaveCommunity(communityId) {
-        // Not Refactored Yet
-//        chatsModelInst.communities.leaveCommunity(communityId);
+        communitiesModuleInst.leaveCommunity(communityId);
     }
 
     function setCommunityMuted(communityId, checked) {

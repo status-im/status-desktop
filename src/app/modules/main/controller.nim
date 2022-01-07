@@ -103,6 +103,10 @@ method init*(self: Controller) =
       self.messageService
       )
 
+  self.events.on(SIGNAL_COMMUNITY_LEFT) do(e:Args):
+    let args = CommunityIdArgs(e)
+    self.delegate.communityLeft(args.communityId)
+
   self.events.on(SIGNAL_COMMUNITY_EDITED) do(e:Args):
     let args = CommunityArgs(e)
     self.delegate.communityEdited(args.community)
@@ -138,6 +142,9 @@ method storePassword*(self: Controller, password: string) =
     return
 
   self.keychainService.storePassword(account.name, password)
+
+method getActiveSectionId*(self: Controller): string =
+  result = self.activeSectionId
 
 method setActiveSection*(self: Controller, sectionId: string, sectionType: SectionType) =
   self.activeSectionId = sectionId

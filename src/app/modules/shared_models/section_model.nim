@@ -129,6 +129,20 @@ QtObject:
       i.inc()
     return -1
 
+  proc removeItem*(self: SectionModel, itemId: string) =
+    let index = self.getItemIndex(itemId)
+    if (index == -1):
+      return
+
+    let parentModelIndex = newQModelIndex()
+    defer: parentModelIndex.delete
+
+    self.beginRemoveRows(parentModelIndex, index, index)
+    self.items.delete(index)
+    self.endRemoveRows()
+
+    self.countChanged()
+
   proc editItem*(self: SectionModel, item: SectionItem) =
     let index = self.getItemIndex(item.id)
     if (index == -1):
