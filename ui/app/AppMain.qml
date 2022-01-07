@@ -286,8 +286,7 @@ Item {
                         icon.width: 14
                         iconRotation: 180
                         type: StatusMenuItem.Type.Danger
-                        // Not Refactored Yet
-//                        onTriggered: chatsModel.communities.leaveCommunity(model.id)
+                        onTriggered: appMain.rootStore.leaveCommunity(model.id)
                     }
                 }
             }
