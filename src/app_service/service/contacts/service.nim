@@ -2,6 +2,7 @@ import NimQml, Tables, json, sequtils, strformat, chronicles, strutils, times, s
 
 import ../../../app/global/global_singleton
 import ../../../app/core/signals/types
+import ../../../app/core/eventemitter
 import ../../../app/core/tasks/[qt, threadpool]
 
 import ./dto/contacts as contacts_dto
@@ -11,8 +12,6 @@ import status/statusgo_backend_new/contacts as status_contacts
 import status/statusgo_backend_new/accounts as status_accounts
 import status/statusgo_backend_new/chat as status_chat
 import status/statusgo_backend_new/utils as status_utils
-
-import eventemitter
 
 export contacts_dto, status_update_dto, contact_details
 

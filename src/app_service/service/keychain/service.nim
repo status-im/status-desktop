@@ -1,6 +1,6 @@
 import NimQml, chronicles
 
-import eventemitter
+import ../../../app/core/eventemitter
 
 logScope:
   topics = "keychain-service"

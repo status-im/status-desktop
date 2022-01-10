@@ -1,5 +1,5 @@
 import NimQml, json, strutils, chronicles, json_serialization
-import eventemitter
+import ../eventemitter
 
 include types
 

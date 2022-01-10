@@ -2,11 +2,10 @@ import Tables, chronicles
 import controller_interface
 import io_interface
 
+import ../../../../core/eventemitter
 import ../../../../core/fleets/fleet_configuration
 import ../../../../../app_service/service/settings/service_interface as settings_service
 import ../../../../../app_service/service/mailservers/service as mailservers_service
-
-import eventemitter
 
 export controller_interface
 

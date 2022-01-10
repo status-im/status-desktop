@@ -1,12 +1,14 @@
 import NimQml, Tables, json, sequtils, std/algorithm, strformat, chronicles, json_serialization
 
-import eventemitter
 import ./dto/community as community_dto
-export community_dto
-import ../../../app/global/global_singleton
+
 import ../chat/service as chat_service
 
+import ../../../app/global/global_singleton
+import ../../../app/core/eventemitter
 import status/statusgo_backend_new/communities as status_go
+
+export community_dto
 
 logScope:
   topics = "community-service"

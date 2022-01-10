@@ -1,5 +1,6 @@
 include ../../common/json_utils
 include ../../../app/core/tasks/common
+import strutils
 
 #################################################
 # Async load transactions
@@ -15,9 +16,10 @@ type
 const loadTransactionsTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let
     arg = decode[LoadTransactionsTaskArg](argEncoded)
+    limitAsHex = "0x" & eth_utils.stripLeadingZeros(arg.limit.toHex)
     output = %*{
       "address": arg.address,
-      "history": transactions.getTransfersByAddress(arg.address, arg.toBlock, arg.limit, arg.loadMore),
+      "history": transactions.getTransfersByAddress(arg.address, arg.toBlock, limitAsHex, arg.loadMore),
       "loadMore": arg.loadMore
     }
   arg.finish(output)

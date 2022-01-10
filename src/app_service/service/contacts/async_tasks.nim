@@ -1,5 +1,5 @@
 import os
-import status/ens as status_ens
+import ../ens/utils as ens_utils
 
 include ../../common/json_utils
 include ../../../app/core/tasks/common
@@ -19,8 +19,8 @@ const lookupContactTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   var address = ""
   if not pubkey.startsWith("0x"):
     # TODO refactor those calls to use the new backend and also do it in a signle call
-    pubkey = status_ens.pubkey(arg.value)
-    address = status_ens.address(arg.value)
+    pubkey = ens_utils.pubkey(arg.value)
+    address = ens_utils.address(arg.value)
   
   let output = %*{
     "id": pubkey,

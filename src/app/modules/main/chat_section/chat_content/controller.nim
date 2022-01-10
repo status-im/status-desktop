@@ -10,7 +10,7 @@ import ../../../../../app_service/service/community/service as community_service
 import ../../../../../app_service/service/message/service as message_service
 
 import ../../../../core/signals/types
-import eventemitter
+import ../../../../core/eventemitter
 
 export controller_interface
 

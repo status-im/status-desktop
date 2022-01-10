@@ -2,11 +2,7 @@ import json
 
 import base
 
-# Step by step we should remove all these types from `status-lib`
-import status/types/[activity_center_notification, removed_message]
-import status/types/community as old_community
-
-import ../../../../app_service/service/message/dto/[message, pinned_message_update, reaction]
+import ../../../../app_service/service/message/dto/[message, pinned_message_update, reaction, removed_message]
 import ../../../../app_service/service/chat/dto/[chat]
 import ../../../../app_service/service/community/dto/[community]
 import ../../../../app_service/service/activity_center/dto/[notification]
@@ -21,10 +17,10 @@ type MessageSignal* = ref object of Signal
   devices*: seq[DeviceDto]
   emojiReactions*: seq[ReactionDto]
   communities*: seq[CommunityDto]
-  membershipRequests*: seq[old_community.CommunityMembershipRequest]
+  membershipRequests*: seq[CommunityMembershipRequestDto]
   activityCenterNotifications*: seq[ActivityCenterNotificationDto]
   statusUpdates*: seq[StatusUpdateDto]
-  deletedMessages*: seq[RemovedMessage]
+  deletedMessages*: seq[RemovedMessageDto]
 
 proc fromEvent*(T: type MessageSignal, event: JsonNode): MessageSignal = 
   var signal:MessageSignal = MessageSignal()
@@ -64,11 +60,11 @@ proc fromEvent*(T: type MessageSignal, event: JsonNode): MessageSignal =
 
   if event["event"]{"requestsToJoinCommunity"} != nil:
     for jsonCommunity in event["event"]["requestsToJoinCommunity"]:
-      signal.membershipRequests.add(jsonCommunity.toCommunityMembershipRequest)
+      signal.membershipRequests.add(jsonCommunity.toCommunityMembershipRequestDto())
 
   if event["event"]{"removedMessages"} != nil:
     for jsonRemovedMessage in event["event"]["removedMessages"]:
-      signal.deletedMessages.add(jsonRemovedMessage.toRemovedMessage)
+      signal.deletedMessages.add(jsonRemovedMessage.toRemovedMessageDto())
 
   if event["event"]{"activityCenterNotifications"} != nil:
     for jsonNotification in event["event"]["activityCenterNotifications"]:

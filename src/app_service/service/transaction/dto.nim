@@ -36,3 +36,11 @@ proc toTransactionDto*(jsonObj: JsonNode): TransactionDto =
   discard jsonObj.getProp("value", result.value)
   discard jsonObj.getProp("from", result.fromAddress)
   discard jsonObj.getProp("to", result.to)
+
+proc cmpTransactions*(x, y: TransactionDto): int =
+  # Sort proc to compare transactions from a single account.
+  # Compares first by block number, then by nonce
+  result = cmp(x.blockNumber.parseHexInt, y.blockNumber.parseHexInt)
+  if result == 0:
+    result = cmp(x.nonce, y.nonce)
+

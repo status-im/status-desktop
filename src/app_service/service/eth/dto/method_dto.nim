@@ -6,14 +6,9 @@ import
 
 import status/statusgo_backend_new/eth as status_eth
 
-import 
-  status/types/rpc_response,
-  status/statusgo_backend/eth
-
 import
   ./transaction,
   ./coder
-
 
 
 type MethodDto* = object
@@ -83,8 +78,9 @@ proc estimateGas*(self: MethodDto, tx: var TransactionDataDto, methodDescriptor:
   success = true
   tx.data = self.encodeAbi(methodDescriptor)
   try:
-    let response = eth.estimateGas(%*[%tx])
-    result = response.result # gas estimate in hex
+    # this call should not be part of this file, we need to move it to appropriate place, or this should not be a DTO class.
+    let response = status_eth.estimateGas(%*[%tx])
+    result = response.result.getStr # gas estimate in hex
   except RpcException as e:
     success = false
     result = e.msg
@@ -95,15 +91,17 @@ proc getEstimateGasData*(self: MethodDto, tx: var TransactionDataDto, methodDesc
 
 proc send*(self: MethodDto, tx: var TransactionDataDto, methodDescriptor: object, password: string, success: var bool): string =
   tx.data = self.encodeAbi(methodDescriptor)
+  # this call should not be part of this file, we need to move it to appropriate place, or this should not be a DTO class.
   let response = status_eth.sendTransaction($(%tx), password)
   return $response.result
 
-proc call*[T](self: MethodDto, tx: var TransactionDataDto, methodDescriptor: object, success: var bool): T =
+proc call[T](self: MethodDto, tx: var TransactionDataDto, methodDescriptor: object, success: var bool): T =
   success = true
   tx.data = self.encodeAbi(methodDescriptor)
   let response: RpcResponse
   try:
-    response = eth.call(tx)
+    # this call should not be part of this file, we need to move it to appropriate place, or this should not be a DTO class.
+    response = status_eth.doEthCall(tx)
   except RpcException as e:
     success = false
     result = e.msg

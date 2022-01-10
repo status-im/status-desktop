@@ -3,14 +3,12 @@ import NimQml
 import io_interface
 import view, controller
 import ../../global/global_singleton
-
+import ../../core/eventemitter
 import onboarding/module as onboarding_module
 import login/module as login_module
 
 import ../../../app_service/service/keychain/service as keychain_service
 import ../../../app_service/service/accounts/service_interface as accounts_service
-
-import eventemitter
 
 export io_interface
 

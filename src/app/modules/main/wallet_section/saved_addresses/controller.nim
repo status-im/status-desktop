@@ -1,6 +1,6 @@
-import eventemitter
 import ./controller_interface
 import io_interface
+import ../../../../core/eventemitter
 import ../../../../../app_service/service/saved_address/service as saved_address_service
 
 export controller_interface

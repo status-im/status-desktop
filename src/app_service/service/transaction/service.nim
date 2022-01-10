@@ -1,13 +1,12 @@
 import NimQml, chronicles, sequtils, sugar, stint, json
 import status/statusgo_backend_new/transactions as transactions
-import status/statusgo_backend/wallet
-
-import eventemitter
+import status/statusgo_backend_new/wallet as status_wallet
 
 import ../../../app/core/[main]
 import ../../../app/core/tasks/[qt, threadpool]
 import ../wallet_account/service as wallet_account_service
 import ./service_interface, ./dto
+import ../eth/utils as eth_utils
 
 export service_interface
 
@@ -54,11 +53,20 @@ QtObject:
       return
 
   proc getPendingTransactions*(self: Service): string =
-    wallet.getPendingTransactions()
+    try:
+      # this may be improved (need to add some checkings) but due to removing `status-lib` dependencies, channges made
+      # in this go are as minimal as possible
+      let response = status_wallet.getPendingTransactions()
+      return response.result.getStr
+    except Exception as e:
+      let errDesription = e.msg
+      error "error: ", errDesription
+      return
 
   proc getTransfersByAddress*(self: Service, address: string, toBlock: Uint256, limit: int, loadMore: bool = false): seq[TransactionDto] =
     try:
-      let response = transactions.getTransfersByAddress(address, toBlock, limit, loadMore)
+      let limitAsHex = "0x" & eth_utils.stripLeadingZeros(limit.toHex)
+      let response = transactions.getTransfersByAddress(address, toBlock, limitAsHex, loadMore)
 
       result = map(
         response.result.getElems(),

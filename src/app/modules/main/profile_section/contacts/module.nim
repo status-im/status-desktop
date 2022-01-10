@@ -5,9 +5,8 @@ import ../../../shared_models/contacts_item
 import ../../../shared_models/contacts_model
 import ../io_interface as delegate_interface
 
+import ../../../../core/eventemitter
 import ../../../../../app_service/service/contacts/service as contacts_service
-
-import eventemitter
 
 export io_interface
 

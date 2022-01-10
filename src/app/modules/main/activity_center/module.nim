@@ -1,11 +1,11 @@
 import NimQml, Tables, stint, sugar, sequtils
 
-import eventemitter
 import ./io_interface, ./view, ./controller
 import ./item as notification_item
 import ../../shared_models/message_item as message_item
 import ../../shared_models/message_item_qobject as message_item_qobject
 import ../../../global/global_singleton
+import ../../../core/eventemitter
 import ../../../../app_service/service/activity_center/service as activity_center_service
 import ../../../../app_service/service/contacts/service as contacts_service
 

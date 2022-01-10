@@ -6,7 +6,7 @@ import ../../../../../app_service/service/chat/service as chat_service
 import ../../../../../app_service/service/community/service as community_service
 import ../../../../../app_service/service/message/service as message_service
 
-import eventemitter
+import ../../../../core/eventemitter
 
 method delete*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")

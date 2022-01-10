@@ -1,9 +1,7 @@
 import NimQml
-import eventemitter
 
 import ./controller, ./view
 import ./io_interface as io_interface
-import ../../../global/global_singleton
 
 import ./account_tokens/module as account_tokens_module
 import ./accounts/module as accountsModule
@@ -13,7 +11,8 @@ import ./current_account/module as current_account_module
 import ./transactions/module as transactions_module
 import ./saved_addresses/module as saved_addresses_module
 
-
+import ../../../global/global_singleton
+import ../../../core/eventemitter
 import ../../../../app_service/service/token/service as token_service
 import ../../../../app_service/service/transaction/service as transaction_service
 import ../../../../app_service/service/collectible/service as collectible_service

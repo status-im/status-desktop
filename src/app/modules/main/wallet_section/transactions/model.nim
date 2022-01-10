@@ -1,7 +1,7 @@
 import NimQml, Tables, strutils, strformat, sequtils, tables, sugar, algorithm
 
-import status/utils
 import ./item
+import ../../../../../app_service/service/eth/utils as eth_service_utils
 import ../../../../../app_service/service/transaction/dto
 
 type
@@ -174,7 +174,7 @@ QtObject:
 
       var allTxs = self.items.concat(newTxItems)
       allTxs.sort(cmpTransactions, SortOrder.Descending)
-      allTxs.deduplicate(tx => tx.getId())
+      eth_service_utils.deduplicate(allTxs, tx => tx.getId())
       
       self.setItems(allTxs)
       self.setHasMore(true)

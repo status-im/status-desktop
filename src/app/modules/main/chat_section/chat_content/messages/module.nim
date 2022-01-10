@@ -6,13 +6,11 @@ import ../../../../shared_models/message_model
 import ../../../../shared_models/message_item
 import ../../../../shared_models/message_reaction_item
 import ../../../../../global/global_singleton
-
+import ../../../../../core/eventemitter
 import ../../../../../../app_service/service/contacts/service as contact_service
 import ../../../../../../app_service/service/community/service as community_service
 import ../../../../../../app_service/service/chat/service as chat_service
 import ../../../../../../app_service/service/message/service as message_service
-
-import eventemitter
 
 export io_interface
 
