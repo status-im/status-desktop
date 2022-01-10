@@ -8,13 +8,12 @@ import ../../shared_models/contacts_model as contacts_model
 import chat_content/module as chat_content_module
 
 import ../../../global/global_singleton
+import ../../../core/eventemitter
 import ../../../../app_service/service/settings/service_interface as settings_service
 import ../../../../app_service/service/contacts/service as contact_service
 import ../../../../app_service/service/chat/service as chat_service
 import ../../../../app_service/service/community/service as community_service
 import ../../../../app_service/service/message/service as message_service
-
-import eventemitter
 
 export io_interface
 

@@ -1,7 +1,7 @@
 import NimQml, Tables, json, sequtils, chronicles, strutils, atomics, sets, strutils, tables, stint
 
 import httpclient
-import eventemitter
+
 import ../../../app/core/[main]
 import ../../../app/core/tasks/[qt, threadpool]
 

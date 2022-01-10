@@ -1,6 +1,6 @@
 from  ../modules/shared_models/section_item import SectionType
 
-import eventemitter
+import ../core/eventemitter
 
 export SectionType
 

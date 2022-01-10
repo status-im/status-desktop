@@ -1,7 +1,8 @@
 import NimQml, sugar, sequtils
-import eventemitter
 import ../io_interface as delegate_interface
+
 import ../../../../global/global_singleton
+import ../../../../core/eventemitter
 import ../../../../../app_service/service/saved_address/service as saved_address_service
 
 import ./io_interface, ./view, ./controller, ./item

@@ -1,9 +1,8 @@
 import NimQml, tables, json, sequtils, chronicles
 
-import eventemitter
 import ../../../app/core/tasks/[qt, threadpool]
 import ../../../app/core/signals/types
-
+import ../../../app/core/eventemitter
 import status/statusgo_backend_new/messages as status_go
 
 import ./dto/message as message_dto

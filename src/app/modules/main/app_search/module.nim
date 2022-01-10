@@ -10,12 +10,11 @@ import ../../shared_models/message_item
 
 import ../../../global/global_singleton
 import ../../../global/app_sections_config as conf
+import ../../../core/eventemitter
 import ../../../../app_service/service/contacts/service as contact_service
 import ../../../../app_service/service/chat/service as chat_service
 import ../../../../app_service/service/community/service as community_service
 import ../../../../app_service/service/message/service as message_service
-
-import eventemitter
 
 export io_interface
 

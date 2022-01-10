@@ -3,10 +3,8 @@ import io_interface
 import ../io_interface as delegate_interface
 import view, controller, item
 import ../../../global/global_singleton
-
+import ../../../core/eventemitter
 import ../../../../app_service/service/accounts/service_interface as accounts_service
-
-import eventemitter
 
 export io_interface
 

@@ -1,10 +1,12 @@
 import NimQml, json, sequtils, chronicles, strformat, strutils
-import eventemitter
+
 from sugar import `=>`
 import web3/ethtypes
 from web3/conversions import `$`
 import status/statusgo_backend_new/custom_tokens as custom_tokens
 import ../settings/service_interface as settings_service
+
+import ../../../app/core/eventemitter
 import ../../../app/core/tasks/[qt, threadpool]
 import ./dto, ./static_token
 

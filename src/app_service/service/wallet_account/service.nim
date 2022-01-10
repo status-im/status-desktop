@@ -1,6 +1,5 @@
 import Tables, json, sequtils, sugar, chronicles, strformat, stint, httpclient, net, strutils
 import web3/[ethtypes, conversions]
-import eventemitter
 
 import ../settings/service_interface as settings_service
 import ../accounts/service_interface as accounts_service
@@ -8,6 +7,8 @@ import ../token/service as token_service
 import ../../common/account_constants
 
 import ./service_interface, ./dto
+
+import ../../../app/core/eventemitter
 import status/statusgo_backend_new/accounts as status_go_accounts
 import status/statusgo_backend_new/eth as status_go_eth
 

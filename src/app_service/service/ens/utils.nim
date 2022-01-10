@@ -1,13 +1,14 @@
 import Tables, json, chronicles, strutils
-import sets
-import options
+import algorithm, strformat, sets, options
 import chronicles, libp2p/[multihash, multicodec, cid]
-import nimcrypto
+import nimcrypto, stint
 include ../../common/json_utils
-import status/statusgo_backend_new/ens as status_go
+import status/statusgo_backend_new/eth as status_eth
 
 logScope:
   topics = "ens-utils"
+
+const domain* = ".stateofus.eth"
 
 type
   ENSType* {.pure.} = enum
@@ -16,10 +17,61 @@ type
     IPNS,
     UNKNOWN
 
+proc addDomain(username: string): string =
+  if username.endsWith(".eth"):
+    return username
+  else:
+    return username & domain
+
+proc namehash(ensName:string): string =
+  let name = ensName.toLower()
+  var node:array[32, byte]
+
+  node.fill(0)
+  var parts = name.split(".")
+  for i in countdown(parts.len - 1,0):
+    let elem = keccak_256.digest(parts[i]).data
+    var concatArrays: array[64, byte]
+    concatArrays[0..31] = node
+    concatArrays[32..63] = elem
+    node = keccak_256.digest(concatArrays).data
+
+  result = "0x" & node.toHex()
+
+const registry* = "0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e"
+const resolver_signature = "0x0178b8bf"
+proc resolver(usernameHash: string): string =
+  let payload = %* [{
+    "to": registry,
+    "from": "0x0000000000000000000000000000000000000000",
+    "data": fmt"{resolver_signature}{userNameHash}"
+  }, "latest"]
+
+  var resolverAddr = status_eth.doEthCall(payload).result.getStr()
+  resolverAddr.removePrefix("0x000000000000000000000000")
+  result = "0x" & resolverAddr
+
+const contenthash_signature = "0xbc1c58d1" # contenthash(bytes32)
+proc contenthash(ensAddr: string): string =
+  var ensHash = namehash(ensAddr)
+  ensHash.removePrefix("0x")
+  let ensResolver = resolver(ensHash)
+  let payload = %* [{
+    "to": ensResolver,
+    "from": "0x0000000000000000000000000000000000000000",
+    "data": fmt"{contenthash_signature}{ensHash}"
+  }, "latest"]
+
+  let bytesResponse =  status_eth.doEthCall(payload).result.getStr()
+  if bytesResponse == "0x":
+    return ""
+
+  let size = fromHex(Stuint[256], bytesResponse[66..129]).truncate(int)
+  result = bytesResponse[130..129+size*2]
 
 proc getContentHash*(ens: string): Option[string] =
   try:
-    let contentHash = status_go.contenthash(ens)
+    let contentHash = contenthash(ens)
     if contentHash != "":
       return some(contentHash)
   except Exception as e:
@@ -67,3 +119,39 @@ proc decodeENSContentHash*(value: string): tuple[ensType: ENSType, output: strin
     return (ENSType.IPNS, parseHexStr(value[12..value.len-1]))
 
   return (ENSType.UNKNOWN, "")
+
+const pubkey_signature = "0xc8690233" # pubkey(bytes32 node)
+proc pubkey*(username: string): string =
+  var userNameHash = namehash(addDomain(username))
+  userNameHash.removePrefix("0x")
+  let ensResolver = resolver(userNameHash)
+  let payload = %* [{
+    "to": ensResolver,
+    "from": "0x0000000000000000000000000000000000000000",
+    "data": fmt"{pubkey_signature}{userNameHash}"
+  }, "latest"]
+  let response = status_eth.doEthCall(payload)
+  # TODO: error handling
+  var pubkey = response.result.getStr()
+  if pubkey == "0x" or pubkey == "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000":
+    result = ""
+  else:
+    pubkey.removePrefix("0x")
+    result = "0x04" & pubkey
+
+const address_signature = "0x3b3b57de" # addr(bytes32 node)
+proc address*(username: string): string =
+  var userNameHash = namehash(addDomain(username))
+  userNameHash.removePrefix("0x")
+  let ensResolver = resolver(userNameHash)
+  let payload = %* [{
+    "to": ensResolver,
+    "from": "0x0000000000000000000000000000000000000000",
+    "data": fmt"{address_signature}{userNameHash}"
+  }, "latest"]
+  let response = status_eth.doEthCall(payload)
+  # TODO: error handling
+  let address = response.result.getStr()
+  if address == "0x0000000000000000000000000000000000000000000000000000000000000000":
+    return ""
+  result = "0x" & address.substr(26)

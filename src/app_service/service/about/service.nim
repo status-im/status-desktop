@@ -1,6 +1,6 @@
 import NimQml, json, chronicles
 
-import eventemitter
+import ../../../app/core/eventemitter
 import ../../../app/core/tasks/[qt, threadpool]
 
 import ../settings/service as settings_service

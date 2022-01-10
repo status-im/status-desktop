@@ -1,11 +1,11 @@
 import NimQml, json, sequtils, system, chronicles
 
-import ../../../app/core/signals/types
 import ./dto/device as device_dto
 import ../settings/service as settings_service
-import status/statusgo_backend_new/installations as status_installations
 
-import eventemitter
+import ../../../app/core/signals/types
+import ../../../app/core/eventemitter
+import status/statusgo_backend_new/installations as status_installations
 
 export device_dto
 

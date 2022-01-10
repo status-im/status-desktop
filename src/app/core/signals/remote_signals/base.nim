@@ -1,8 +1,7 @@
-import json
 import json_serialization
 import signal_type
 
-import eventemitter
+import ../../eventemitter
 
 export signal_type
 

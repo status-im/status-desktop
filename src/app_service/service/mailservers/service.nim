@@ -9,8 +9,6 @@ import ../settings/service_interface as settings_service
 import ../node_configuration/service_interface as node_configuration_service
 import status/statusgo_backend_new/mailservers as status_mailservers
 
-import eventemitter
-
 logScope:
   topics = "mailservers-service"
 

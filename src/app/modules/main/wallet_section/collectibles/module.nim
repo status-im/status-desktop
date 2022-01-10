@@ -1,7 +1,6 @@
-import eventemitter
-
 import ./io_interface, ./controller
 import ../io_interface as delegate_interface
+import ../../../../core/eventemitter
 import ../../../../../app_service/service/collectible/service as collectible_service
 import ../../../../../app_service/service/wallet_account/service as wallet_account_service
 

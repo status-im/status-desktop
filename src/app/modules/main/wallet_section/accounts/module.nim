@@ -1,9 +1,9 @@
 import NimQml, sequtils, sugar
-import eventemitter
 
 import ./io_interface, ./view, ./item, ./controller
 import ../io_interface as delegate_interface
 import ../../../../global/global_singleton
+import ../../../../core/eventemitter
 import ../../../../../app_service/service/wallet_account/service as wallet_account_service
 import ../account_tokens/model as account_tokens
 import ../account_tokens/item as account_tokens_item

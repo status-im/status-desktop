@@ -1,7 +1,7 @@
 import NimQml
 import io_interface, view, controller
 import ../../../global/global_singleton
-
+import ../../../core/eventemitter
 import ../../../../app_service/service/profile/service as profile_service
 import ../../../../app_service/service/accounts/service as accounts_service
 import ../../../../app_service/service/settings/service_interface as settings_service
@@ -23,8 +23,6 @@ import ./advanced/module as advanced_module
 import ./devices/module as devices_module
 import ./sync/module as sync_module
 import ./notifications/module as notifications_module
-
-import eventemitter
 
 export io_interface
 

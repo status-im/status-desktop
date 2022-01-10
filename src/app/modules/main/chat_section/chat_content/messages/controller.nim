@@ -7,7 +7,7 @@ import ../../../../../../app_service/service/community/service as community_serv
 import ../../../../../../app_service/service/chat/service as chat_service
 import ../../../../../../app_service/service/message/service as message_service
 
-import eventemitter
+import ../../../../../core/eventemitter
 
 export controller_interface
 

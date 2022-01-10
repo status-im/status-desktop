@@ -237,3 +237,11 @@ proc isUnique*[T](key: T, existingKeys: var seq[T]): bool =
 proc deduplicate*[T](txs: var seq[T], key: (T) -> string) =
   var existingKeys: seq[string] = @[]
   txs.keepIf(tx => tx.key().isUnique(existingKeys))
+
+# TODO: make this public in nim-web3 lib
+proc stripLeadingZeros*(value: string): string =
+  var cidx = 0
+  # ignore the last character so we retain '0' on zero value
+  while cidx < value.len - 1 and value[cidx] == '0':
+    cidx.inc
+  value[cidx .. ^1]

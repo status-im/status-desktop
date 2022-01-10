@@ -3,11 +3,11 @@ import NimQml, json, strutils, chronicles
 import ../settings/service_interface as settings_service
 import ../accounts/service_interface as accounts_service
 
+import ../../../app/core/eventemitter
+
 import status/statusgo_backend_new/accounts as status_account
 import status/statusgo_backend_new/eth as status_eth
 import status/statusgo_backend_new/privacy as status_privacy
-
-import eventemitter
 
 logScope:
   topics = "privacy-service"

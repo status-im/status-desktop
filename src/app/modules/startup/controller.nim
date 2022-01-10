@@ -3,11 +3,10 @@ import Tables, chronicles
 import controller_interface
 import io_interface
 
+import ../../core/signals/types
+import ../../core/eventemitter
 import ../../../app_service/service/keychain/service as keychain_service
 import ../../../app_service/service/accounts/service_interface as accounts_service
-
-import ../../core/signals/types
-import eventemitter
 
 export controller_interface
 

@@ -1,15 +1,10 @@
-import NimQml, json, json_serialization, stint, tables, eventemitter, sugar, sequtils
+import NimQml, json, json_serialization, stint, tables, sugar, sequtils
 import ./controller_interface
 import io_interface
 import ../../../../../app_service/service/transaction/service as transaction_service
 import ../../../../../app_service/service/wallet_account/service as wallet_account_service
 
-import
-  status/[status, wallet]
-
 export controller_interface
-
-import status/types/transaction
 
 import ../../../../core/[main]
 import ../../../../core/tasks/[qt, threadpool]

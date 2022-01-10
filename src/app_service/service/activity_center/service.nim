@@ -1,6 +1,6 @@
 import NimQml, json, sequtils, chronicles, strutils, strutils, stint
 
-import eventemitter
+import ../../../app/core/eventemitter
 import ../../../app/core/[main]
 import ../../../app/core/tasks/[qt, threadpool]
 

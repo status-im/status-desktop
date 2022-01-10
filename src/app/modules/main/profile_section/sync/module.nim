@@ -3,10 +3,9 @@ import io_interface
 import ../io_interface as delegate_interface
 import view, controller, model, item
 
+import ../../../../core/eventemitter
 import ../../../../../app_service/service/settings/service_interface as settings_service
 import ../../../../../app_service/service/mailservers/service as mailservers_service
-
-import eventemitter
 
 export io_interface
 

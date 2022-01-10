@@ -1,10 +1,9 @@
 import ./controller_interface
 import io_interface
 
+import ../../../../core/eventemitter
 import ../../../../../app_service/service/settings/service_interface as settings_service
 import ../../../../../app_service/service/privacy/service as privacy_service
-
-import eventemitter
 
 export controller_interface
 

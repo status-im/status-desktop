@@ -3,10 +3,9 @@ import Tables, chronicles
 import controller_interface
 import io_interface
 
-import ../../../../app_service/service/accounts/service_interface as accounts_service
-
 import ../../../core/signals/types
-import eventemitter
+import ../../../core/eventemitter
+import ../../../../app_service/service/accounts/service_interface as accounts_service
 
 export controller_interface
 

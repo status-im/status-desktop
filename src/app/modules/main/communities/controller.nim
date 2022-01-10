@@ -1,9 +1,9 @@
 import Tables, stint
-import eventemitter
 import ./controller_interface
 import ./io_interface
 
-import ../../../../app/core/signals/types
+import ../../../core/signals/types
+import ../../../core/eventemitter
 import ../../../../app_service/service/community/service as community_service
 
 export controller_interface

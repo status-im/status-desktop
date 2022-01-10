@@ -1,6 +1,8 @@
 import ../shared_models/section_item, controller_interface, io_interface, chronicles
 import ../../global/global_singleton
 import ../../global/app_signals
+import ../../core/signals/types
+import ../../core/eventemitter
 import ../../../app_service/service/settings/service_interface as settings_service
 import ../../../app_service/service/keychain/service as keychain_service
 import ../../../app_service/service/accounts/service_interface as accounts_service
@@ -8,9 +10,6 @@ import ../../../app_service/service/chat/service as chat_service
 import ../../../app_service/service/community/service as community_service
 import ../../../app_service/service/contacts/service as contacts_service
 import ../../../app_service/service/message/service as message_service
-
-import ../../core/signals/types
-import eventemitter
 
 export controller_interface
 

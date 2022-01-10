@@ -1,9 +1,9 @@
 import Tables, stint
-import eventemitter
 import ./controller_interface
 import ./io_interface
 
-import ../../../../app/core/signals/types
+import ../../../core/eventemitter
+import ../../../core/signals/types
 import ../../../../app_service/service/activity_center/service as activity_center_service
 import ../../../../app_service/service/contacts/service as contacts_service
 import ../../../../app_service/service/chat/service as chat_service
