@@ -7,6 +7,7 @@ QtObject {
     property var mainModuleInst: mainModule
     property var aboutModuleInst: aboutModule
     property var communitiesModuleInst: communitiesModule
+    property var observedCommunity: communitiesModuleInst.observedCommunity
 
     property ProfileSectionStore profileSectionStore: ProfileSectionStore {
     }
@@ -25,11 +26,18 @@ QtObject {
     // Not Refactored Yet
 //    property var profileModelInst: profileModel
 
+    property var contactStore: profileSectionStore.contactsStore
+    property bool hasAddedContacts: contactStore.myContactsModel.count > 0
+
     property var assets: walletSectionAccountTokens.model
 //    property MessageStore messageStore: MessageStore { }
 
     property real volume: !!localAccountSensitiveSettings ? localAccountSensitiveSettings.volume : 0.0
     property bool notificationSoundsEnabled: !!localAccountSensitiveSettings ? localAccountSensitiveSettings.notificationSoundsEnabled : false
+
+    function setObservedCommunity(communityId) {
+        communitiesModuleInst.setObservedCommunity(communityId);
+    }
 
     function setCommunityMuted(communityId, checked) {
         // Not Refactored Yet
@@ -53,8 +61,11 @@ QtObject {
         communitiesModuleInst.editCommunity(communityId, communityName, communityDescription, checkedMembership, ensOnlySwitchChecked, communityColor, communityImage, imageCropperModalaX, imageCropperModalaY, imageCropperModalbX, imageCropperModalbY);
     }
 
+    function inviteUsersToCommunityById(communityId, pubkeysJson) {
+        communitiesModuleInst.inviteUsersToCommunityById(communityId, pubkeysJson);
+    }
+
     function copyToClipboard(text) {
-        // Not Refactored Yet
-//        chatsModelInst.copyToClipboard(text);
+        globalUtils.copyToClipboard(text)
     }
 }

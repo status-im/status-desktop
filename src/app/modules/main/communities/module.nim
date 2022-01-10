@@ -50,12 +50,10 @@ method isLoaded*(self: Module): bool =
 
 method viewDidLoad*(self: Module) =
   self.moduleLoaded = true
-  # FIXME this works one time, then restarting the app doesn<t work
-  # self.delegate.communitiesModuleDidLoad()
+  self.delegate.communitiesModuleDidLoad()
 
-method setAllCommunities*(self: Module, communities: seq[CommunityDto]) =
-  for c in communities:
-    let communityItem = initItem(
+method getCommunityItem(self: Module, c: CommunityDto): SectionItem =
+  return initItem(
       c.id,
       SectionType.Community,
       c.name,
@@ -76,7 +74,13 @@ method setAllCommunities*(self: Module, communities: seq[CommunityDto]) =
       c.permissions.access,
       c.permissions.ensOnly,
       c.members.map(x => member_item.initItem(x.id, x.roles)))
-    self.view.addItem(communityItem)
+
+method setAllCommunities*(self: Module, communities: seq[CommunityDto]) =
+  for community in communities:
+    self.view.addItem(self.getCommunityItem(community))
+
+method addCommunity*(self: Module, community: CommunityDto) =
+  self.view.addItem(self.getCommunityItem(community))
 
 method joinCommunity*(self: Module, communityId: string): string =
   self.controller.joinCommunity(communityId)
@@ -154,8 +158,8 @@ method removeUserFromCommunity*(self: Module, communityId: string, categoryId: s
 method leaveCommunity*(self: Module, communityId: string) =
   self.controller.leaveCommunity(communityId) 
 
-method inviteUsersToCommunityById*(self: Module, communityId: string, pubKeysJSON: string) =
-  self.controller.inviteUsersToCommunityById(communityId, pubKeysJSON)
+method inviteUsersToCommunityById*(self: Module, communityId: string, pubKeysJSON: string): string =
+  result = self.controller.inviteUsersToCommunityById(communityId, pubKeysJSON)
   
 method removeUserFromCommunity*(self: Module, communityId: string, pubKey: string) =
   self.controller.removeUserFromCommunity(communityId, pubKey)

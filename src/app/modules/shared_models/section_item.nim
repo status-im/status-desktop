@@ -175,3 +175,9 @@ proc ensOnly*(self: SectionItem): bool {.inline.} =
 
 proc members*(self: SectionItem): seq[MemberItem] {.inline.} = 
   self.members
+
+proc hasMember*(self: SectionItem, pubkey: string): bool =
+  for member in self.members:
+    if (member.id == pubkey):
+      return true
+  return false

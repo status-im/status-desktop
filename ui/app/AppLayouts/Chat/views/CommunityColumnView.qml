@@ -26,6 +26,7 @@ Item {
     property var communitySectionModule
 
     property var store
+    property bool hasAddedContacts: false
     property var communityData: store.mainModuleInst ? store.mainModuleInst.activeSection || {} : {}
     // TODO unhardcode
     // Not Refactored Yet
@@ -48,10 +49,10 @@ Item {
         chatInfoButton.icon.color: communityData.color
         menuButton.visible: communityData.amISectionAdmin && communityData.canManageUsers
         // TODO remove dynamic scoping of popup component
-         chatInfoButton.onClicked: Global.openPopup(communityProfilePopup, {
-             store: root.store,
-             community: communityData
-         })
+        chatInfoButton.onClicked: Global.openPopup(communityProfilePopup, {
+            store: root.store,
+            community: communityData
+        })
 
         popupMenu: StatusPopupMenu {
             StatusMenuItem {
@@ -78,10 +79,10 @@ Item {
                 text: qsTrId("invite-people")
                 icon.name: "share-ios"
                 enabled: communityData.canManageUsers
-                // Not Refactored Yet
-//                onTriggered: Global.openPopup(inviteFriendsToCommunityPopup, {
-//                    community: root.store.chatsModelInst.communities.activeCommunity
-//                })
+                onTriggered: Global.openPopup(inviteFriendsToCommunityPopup, {
+                    community: communityData,
+                    hasAddedContacts: root.hasAddedContacts
+                })
             }
         }
     }
@@ -198,11 +199,11 @@ Item {
                     //% "Invite people"
                     text: qsTrId("invite-people")
                     icon.name: "share-ios"
-                    // Not Refactored Yet
-                    enabled: communityData.amISectionAdmin
-//                    onTriggered: Global.openPopup(inviteFriendsToCommunityPopup, {
-//                        community: root.store.chatsModelInst.communities.activeCommunity
-//                    })
+                    enabled: communityData.canManageUsers
+                    onTriggered: Global.openPopup(inviteFriendsToCommunityPopup, {
+                        community: communityData,
+                        hasAddedContacts: root.hasAddedContacts
+                    })
                 }
             }
 
@@ -350,6 +351,7 @@ Item {
                 CommunityWelcomeBannerPanel {
                     activeCommunity: communityData
                     store: root.store
+                    hasAddedContacts: root.hasAddedContacts
                 }
             }
         }

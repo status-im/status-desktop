@@ -126,4 +126,5 @@ QtObject:
   QtProperty[int] nbMembers:
     read = nbMembers
 
-  
+  proc hasMember(self: ActiveSection, pubkey: string): bool {.slot.} =
+    return self.item.hasMember(pubkey)

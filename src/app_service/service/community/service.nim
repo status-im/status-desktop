@@ -4,6 +4,7 @@ import eventemitter
 import ./dto/community as community_dto
 export community_dto
 import ../../../app/global/global_singleton
+import ../chat/service as chat_service
 
 import status/statusgo_backend_new/communities as status_go
 
@@ -57,6 +58,7 @@ QtObject:
   type 
     Service* = ref object of QObject
       events: EventEmitter
+      chatService: chat_service.Service
       joinedCommunities: Table[string, CommunityDto] # [community_id, CommunityDto]
       allCommunities: Table[string, CommunityDto] # [community_id, CommunityDto]
       myCommunityRequests*: seq[CommunityMembershipRequestDto]
@@ -69,9 +71,10 @@ QtObject:
   proc delete*(self: Service) =
     discard
 
-  proc newService*(events: EventEmitter): Service =
+  proc newService*(events: EventEmitter, chatService: chat_service.Service): Service =
     result = Service()
     result.events = events
+    result.chatService = chatService
     result.joinedCommunities = initTable[string, CommunityDto]()
     result.allCommunities = initTable[string, CommunityDto]()
     result.myCommunityRequests = @[]
@@ -486,11 +489,17 @@ QtObject:
     except Exception as e:
       error "Error exporting community", msg = e.msg
 
-  # proc inviteUsersToCommunityById*(self: Service, communityId: string, pubKeys: string) =
-  #   try:
-  #     discard status_go.inviteUsersToCommunityById(communityId, pubKeys)
-  #   except Exception as e:
-  #     error "Error exporting community", msg = e.msg
+  proc inviteUsersToCommunityById*(self: Service, communityId: string, pubKeysJson: string): string =
+    try:
+      let pubKeysParsed = pubKeysJson.parseJson
+      var pubKeys: seq[string] = @[]
+      for pubKey in pubKeysParsed:
+        pubKeys.add(pubKey.getStr)
+      let response =  status_go.inviteUsersToCommunity(communityId, pubKeys)
+      discard self.chatService.processMessageUpdateAfterSend(response)
+    except Exception as e:
+      error "Error exporting community", msg = e.msg
+      result = "Error exporting community: " & e.msg
 
   proc removeUserFromCommunity*(self: Service, communityId: string, pubKeys: string)  =
     try:

@@ -15,6 +15,8 @@ import "../../panels/communities"
 StatusModal {
     id: popup
 
+    property var rootStore
+    property var contactsStore
     property var community
     property bool hasAddedContacts
 
@@ -35,9 +37,12 @@ StatusModal {
 
     contentItem: CommunityProfilePopupInviteFriendsPanel {
         id: contactFieldAndList
+        rootStore: popup.rootStore
+        contactsStore: popup.contactsStore
+        community: popup.community
         contactListSearch.onUserClicked: {
-            if (isContact) {
-                // those are just added to the list to by added by the bunch
+            if (isAddedContact) {
+                // those are just added to the list to be added by the bunch
                 return
             }
             contactFieldAndList.sendInvites([pubKey])

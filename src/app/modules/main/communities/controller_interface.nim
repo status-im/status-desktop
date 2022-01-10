@@ -61,7 +61,7 @@ method acceptRequestToJoinCommunity*(self: AccessInterface, communityId: string,
 method declineRequestToJoinCommunity*(self: AccessInterface, communityId: string, requestId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method inviteUsersToCommunityById*(self: AccessInterface, communityId: string, pubKeys: string) {.base.} =
+method inviteUsersToCommunityById*(self: AccessInterface, communityId: string, pubKeys: string): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method removeUserFromCommunity*(self: AccessInterface, communityId: string, pubKeys: string) {.base.} =

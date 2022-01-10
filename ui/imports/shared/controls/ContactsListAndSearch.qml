@@ -18,6 +18,7 @@ Item {
     height: childrenRect.height + 24
 
     property var contactsStore
+    property var community
 
     property string validationError: ""
     property string successMessage: ""
@@ -31,7 +32,7 @@ Item {
     property bool showCheckbox: false
     property bool showContactList: true
     property bool showSearch: true
-    signal userClicked(string pubKey)
+    signal userClicked(string pubKey, bool isAddedContact)
     property var pubKeys: ([])
     property bool hideCommunityMembers: false
     property bool addContactEnabled: true
@@ -167,6 +168,7 @@ Item {
         id: existingContacts
 
         contactsStore: root.contactsStore
+        community: root.community
 
         visible: showContactList
         hideCommunityMembers: root.hideCommunityMembers
@@ -195,7 +197,7 @@ Item {
             }
             root.pubKeys = pubKeysCopy
 
-            userClicked(contact.pubKey)
+            userClicked(contact.pubKey, contact.isContact)
         }
         expanded: !searchResults.loading && pubKey === "" && !searchResults.showProfileNotFoundMessage
     }
@@ -213,7 +215,7 @@ Item {
             if (!validate()) {
                 return
             }
-            userClicked(pubKey)
+            userClicked(pubKey, isAddedContact)
         }
         onAddToContactsButtonClicked: {
             root.contactsStore.addContact(pubKey)

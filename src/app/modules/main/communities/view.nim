@@ -12,13 +12,11 @@ QtObject:
       model: SectionModel
       modelVariant: QVariant
       observedItem: ActiveSection
-      observedItemVariant: QVariant
 
   proc delete*(self: View) =
     self.model.delete
     self.modelVariant.delete
     self.observedItem.delete
-    self.observedItemVariant.delete
     self.QObject.delete
 
   proc newView*(delegate: io_interface.AccessInterface): View =
@@ -28,7 +26,6 @@ QtObject:
     result.model = newModel()
     result.modelVariant = newQVariant(result.model)
     result.observedItem = newActiveSection()
-    result.observedItemVariant = newQVariant(result.observedItem)
 
   proc load*(self: View) =
     self.delegate.viewDidLoad()
@@ -45,7 +42,7 @@ QtObject:
   proc observedItemChanged*(self:View) {.signal.}
 
   proc getObservedItem(self: View): QVariant {.slot.} =
-    return self.observedItemVariant
+    return newQVariant(self.observedItem)
 
   QtProperty[QVariant] observedCommunity:
     read = getObservedItem
@@ -56,6 +53,7 @@ QtObject:
     if (item.id == ""):
       return
     self.observedItem.setActiveSectionData(item)
+    self.observedItemChanged()
     
   proc joinCommunity*(self: View, communityId: string): string {.slot.} =
     result = self.delegate.joinCommunity(communityId)
@@ -93,11 +91,8 @@ QtObject:
   proc leaveCommunity*(self: View, communityId: string) {.slot.} =
     self.delegate.leaveCommunity(communityId)
 
-  proc inviteUsersToCommunityById*(self: View, communityId: string, pubKeysJSON: string) {.slot.} =
-    self.delegate.inviteUsersToCommunityById(communityId, pubKeysJSON)
-
-  proc inviteUsersToCommunity*(self: View, communityId: string, pubKeysJSON: string) {.slot.} =
-    self.inviteUsersToCommunityById(communityId, pubKeysJSON)
+  proc inviteUsersToCommunityById*(self: View, communityId: string, pubKeysJSON: string): string {.slot.} =
+    result = self.delegate.inviteUsersToCommunityById(communityId, pubKeysJSON)
   
   proc removeUserFromCommunity*(self: View, communityId: string, pubKey: string) {.slot.} =
     self.delegate.removeUserFromCommunity(communityId, pubKey)
