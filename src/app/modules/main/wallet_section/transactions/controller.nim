@@ -59,6 +59,7 @@ method init*[T](self: Controller[T]) =
         let accounts = self.getWalletAccounts()
         let addresses = accounts.map(account => account.address)
         self.delegate.setHistoryFetchState(addresses, false)
+        self.delegate.setIsNonArchivalNode(true)
       else:
         echo "Unhandled wallet signal: ", data.eventType
   

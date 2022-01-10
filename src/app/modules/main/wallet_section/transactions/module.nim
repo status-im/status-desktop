@@ -76,3 +76,6 @@ method setTrxHistoryResult*[T](self: Module[T], transactions: seq[TransactionDto
 
 method setHistoryFetchState*[T](self: Module[T], addresses: seq[string], isFetching: bool) =
   self.view.setHistoryFetchStateForAccounts(addresses, isFetching)
+
+method setIsNonArchivalNode*[T](self: Module[T], isNonArchivalNode: bool) =
+  self.view.setIsNonArchivalNode(isNonArchivalNode)

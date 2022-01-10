@@ -1,4 +1,4 @@
-import strformat
+import strformat, stint
 
 type 
   Item* = object
@@ -7,7 +7,7 @@ type
     address: string
     blockNumber: string
     blockHash: string
-    timestamp: string
+    timestamp: UInt256
     gasPrice: string
     gasLimit: string
     gasUsed: string
@@ -23,8 +23,8 @@ proc initItem*(
   typ,
   address,
   blockNumber,
-  blockHash,
-  timestamp,
+  blockHash: string,
+  timestamp: UInt256,
   gasPrice,
   gasLimit,
   gasUsed,
@@ -86,7 +86,7 @@ proc getBlockHash*(self: Item): string =
   return self.blockHash
 
 proc getTimestamp*(self: Item): string = 
-  return self.timestamp
+  return $self.timestamp
 
 proc getGasPrice*(self: Item): string = 
   return self.gasPrice
