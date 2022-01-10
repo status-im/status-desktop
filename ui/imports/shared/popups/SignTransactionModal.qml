@@ -89,7 +89,7 @@ StatusModal {
             initialItem: groupPreview
             isLastGroup: stack.currentGroup === groupSignTx
             onGroupActivated: {
-                root.title = group.headerText
+                root.header.title = group.headerText
                 btnNext.text = group.footerText
             }
             TransactionFormGroup {
@@ -126,8 +126,8 @@ StatusModal {
                 RecipientSelector {
                     id: selectRecipient
                     visible: false
-                    accounts: root.store.walletModelInst.accountsView.accounts
-                    contacts: root.store.profileModelInst.contacts.addedContacts
+                    accounts: root.store.accounts
+                    contacts: root.store.addedContacts
                     selectedRecipient: root.selectedRecipient
                     readOnly: true
                 }
@@ -282,7 +282,6 @@ StatusModal {
     rightButtons: [
         StatusButton {
             id: btnNext
-            anchors.right: parent.right
             //% "Next"
             text: qsTrId("next")
             enabled: stack.currentGroup.isValid && !stack.currentGroup.isPending
