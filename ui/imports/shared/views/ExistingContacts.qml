@@ -14,6 +14,7 @@ Item {
     anchors.right: parent.right
 
     property var contactsStore
+    property var community
 
     property string filterText: ""
     property bool expanded: true
@@ -50,11 +51,14 @@ Item {
                 name: model.name
                 identicon: model.icon
                 isIdenticon: model.isIdenticon
-                visible: model.isContact && !model.isBlocked && (root.filterText === "" ||
+                isVisible: {
+                    return model.isContact && !model.isBlocked && (root.filterText === "" ||
                     root.matchesAlias(model.name.toLowerCase(), root.filterText.toLowerCase()) ||
                     model.name.toLowerCase().includes(root.filterText.toLowerCase()) ||
                     model.pubKey.toLowerCase().includes(root.filterText.toLowerCase())) &&
-                    !root.hideCommunityMembers
+                    (!root.hideCommunityMembers ||
+                    !root.community.hasMember(model.pubKey))
+                }
                 onContactClicked: function () {
                     root.contactClicked(model)
                 }

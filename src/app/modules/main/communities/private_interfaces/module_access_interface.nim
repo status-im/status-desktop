@@ -1,4 +1,5 @@
 import ../../../../../app_service/service/community/service as community_service
+import ../../../shared_models/section_item
 
 method delete*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
@@ -10,6 +11,12 @@ method isLoaded*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method setAllCommunities*(self: AccessInterface, communities: seq[CommunityDto]) {.base.} =
+  raise newException(ValueError, "No implementation available") 
+
+method getCommunityItem*(self: AccessInterface, community: CommunityDto): SectionItem {.base.} =
+  raise newException(ValueError, "No implementation available") 
+
+method addCommunity*(self: AccessInterface, community: CommunityDto) {.base.} =
   raise newException(ValueError, "No implementation available") 
 
 method joinCommunity*(self: AccessInterface, communityId: string): string {.base.} =
@@ -42,7 +49,7 @@ method reorderCommunityChannel*(self: AccessInterface, communityId: string, cate
 method leaveCommunity*(self: AccessInterface, communityId: string) {.base.} =
   raise newException(ValueError, "No implementation available") 
 
-method inviteUsersToCommunityById*(self: AccessInterface, communityId: string, pubKeysJSON: string) {.base.} =
+method inviteUsersToCommunityById*(self: AccessInterface, communityId: string, pubKeysJSON: string): string {.base.} =
   raise newException(ValueError, "No implementation available") 
 
 method removeUserFromCommunity*(self: AccessInterface, communityId: string, pubKey: string) {.base.} =

@@ -17,19 +17,20 @@ Column {
 
     property string headerTitle: ""
 
+    property var rootStore
+    property var contactsStore
     property var community
     property alias contactListSearch: contactFieldAndList
 
     function sendInvites(pubKeys) {
-        // Not Refactored Yet
-//        const error = chatsModel.communities.inviteUsersToCommunityById(root.community.id, JSON.stringify(pubKeys))
-//        if (error) {
-//            console.error('Error inviting', error)
-//            contactFieldAndList.validationError = error
-//            return
-//        }
-//        //% "Invite successfully sent"
-//        contactFieldAndList.successMessage = qsTrId("invite-successfully-sent")
+       const error = root.rootStore.inviteUsersToCommunityById(root.community.id, JSON.stringify(pubKeys))
+       if (error) {
+           console.error('Error inviting', error)
+           contactFieldAndList.validationError = error
+           return
+       }
+       //% "Invite successfully sent"
+       contactFieldAndList.successMessage = qsTrId("invite-successfully-sent")
     }
 
     StatusDescriptionListItem {
@@ -40,10 +41,9 @@ Column {
         tooltip.text: qsTrId("copy-to-clipboard")
         icon.name: "copy"
         iconButton.onClicked: {
-            // Not Refactored Yet
-//            let link = `${Constants.communityLinkPrefix}${root.community.id}`
-//            chatsModel.copyToClipboard(link)
-//            tooltip.visible = !tooltip.visible
+            let link = `${Constants.communityLinkPrefix}${root.community.id}`
+            root.rootStore.copyToClipboard(link)
+            tooltip.visible = !tooltip.visible
         }
         width: parent.width
     }
@@ -65,6 +65,8 @@ Column {
         id: contactFieldAndList
         anchors.horizontalCenter: parent.horizontalCenter
         width: parent.width - 32
+        contactsStore: root.contactsStore
+        community: root.community
         showCheckbox: true
         hideCommunityMembers: true
         showSearch: false

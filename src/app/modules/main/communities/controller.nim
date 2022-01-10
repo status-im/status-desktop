@@ -31,6 +31,10 @@ method init*(self: Controller) =
   let communities = self.communityService.getAllCommunities()
   self.delegate.setAllCommunities(communities)
 
+  self.events.on(SIGNAL_COMMUNITY_CREATED) do(e:Args):
+    let args = CommunityArgs(e)
+    self.delegate.addCommunity(args.community)
+
   self.events.on(SIGNAL_COMMUNITY_MY_REQUEST_ADDED) do(e:Args):
     let args = CommunityRequestArgs(e)
     # self.delegate.requestAdded()
@@ -183,8 +187,8 @@ method acceptRequestToJoinCommunity*(self: Controller, communityId: string, requ
 method declineRequestToJoinCommunity*(self: Controller, communityId: string, requestId: string) =
   self.communityService.declineRequestToJoinCommunity(requestId)
 
-# method inviteUsersToCommunityById*(self: Controller, communityId: string, pubKeys: string) =
-#   self.communityService.inviteUsersToCommunityById(communityId, pubKeys)
+method inviteUsersToCommunityById*(self: Controller, communityId: string, pubKeys: string): string =
+  result = self.communityService.inviteUsersToCommunityById(communityId, pubKeys)
 
 method removeUserFromCommunity*(self: Controller, communityId: string, pubKeys: string) =
   self.communityService.removeUserFromCommunity(communityId, pubKeys)

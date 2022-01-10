@@ -29,9 +29,13 @@ Item {
     property bool resultClickable: true
     property bool addContactEnabled: true
 
-    property bool isAddedContact: root.pubKey != "" ? Utils.getContactDetailsAsJson(root.pubKey).isContact : false
+    property bool isAddedContact: root.isContactAdded()
 
-    signal resultClicked(string pubKey)
+    function isContactAdded() {
+        return root.pubKey != "" ? Utils.getContactDetailsAsJson(root.pubKey).isContact : false
+    }
+
+    signal resultClicked(string pubKey, bool isAddedContact)
     signal addToContactsButtonClicked(string pubKey)
 
     function reset() {
@@ -113,7 +117,7 @@ Item {
             onExited: foundContact.hovered = false
             onClicked: {
                 if (root.resultClickable) {
-                    root.resultClicked(root.pubKey)
+                    root.resultClicked(root.pubKey, root.isAddedContact)
                 }
             }
         }

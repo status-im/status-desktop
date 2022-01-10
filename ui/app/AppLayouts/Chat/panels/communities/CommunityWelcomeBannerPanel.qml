@@ -23,6 +23,7 @@ Rectangle {
     color: Style.current.transparent
     property var activeCommunity
     property var store
+    property bool hasAddedContacts
 
     MouseArea {
         anchors.fill: parent
@@ -89,7 +90,8 @@ Rectangle {
         anchors.bottom: manageBtn.top
         anchors.bottomMargin: Style.current.halfPadding
         onClicked: Global.openPopup(inviteFriendsToCommunityPopup, {
-            community: root.activeCommunity
+            community: root.activeCommunity,
+            hasAddedContacts: root.hasAddedContacts
         })
     }
 
