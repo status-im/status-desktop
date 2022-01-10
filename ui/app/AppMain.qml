@@ -241,40 +241,39 @@ Item {
                     id: communityContextMenu
 
                     openHandler: function () {
-                        // Not Refactored Yet
-//                        chatsModel.communities.setObservedCommunity(model.id)
+                        appMain.rootStore.setObservedCommunity(model.id)
                     }
 
                     StatusMenuItem {
                         //% "Invite People"
                         text: qsTrId("invite-people")
                         icon.name: "share-ios"
-                        // Not Refactored Yet
-//                        enabled: chatsModel.communities.observedCommunity.canManageUsers
-//                        onTriggered: Global.openPopup(inviteFriendsToCommunityPopup, {
-//                                                   community: chatsModel.communities.observedCommunity
-//                                               })
+                        enabled: appMain.rootStore.observedCommunity.canManageUsers
+                        onTriggered: Global.openPopup(inviteFriendsToCommunityPopup, {
+                            community: appMain.rootStore.observedCommunity,
+                            hasAddedContacts: appMain.rootStore.hasAddedContacts
+                        })
                     }
 
                     StatusMenuItem {
                         //% "View Community"
                         text: qsTrId("view-community")
                         icon.name: "group-chat"
-                        // Not Refactored Yet
-//                        onTriggered: Global.openPopup(communityProfilePopup, {
-//                            store: appMain.rootStore,
-//                            community: chatsModel.communities.observedCommunity
-//                        })
+                        onTriggered: Global.openPopup(communityProfilePopup, {
+                            store: appMain.rootStore,
+                            community: appMain.rootStore.observedCommunity
+                        })
                     }
 
                     StatusMenuItem {
-                        // Not Refactored Yet
-//                        enabled: chatsModel.communities.observedCommunity.admin
+                        enabled: appMain.rootStore.observedCommunity.amISectionAdmin
                         //% "Edit Community"
                         text: qsTrId("edit-community")
                         icon.name: "edit"
-                        // Not Refactored Yet
-//                        onTriggered: Global.openPopup(editCommunityPopup, {store: appMain.rootStore, community: chatsModel.communities.observedCommunity})
+                        onTriggered: Global.openPopup(editCommunityPopup, {
+                            store: appMain.rootStore,
+                            community: appMain.rootStore.observedCommunity
+                        })
                     }
 
                     StatusMenuSeparator {}
@@ -425,7 +424,7 @@ Item {
 
                     pinnedMessagesListPopupComponent: pinnedMessagesPopupComponent
 
-                    contactsStore: appMain.rootStore.profileSectionStore.contactsStore
+                    contactsStore: appMain.rootStore.contactStore
                     rootStore.emojiReactionsModel: appMain.rootStore.emojiReactionsModel
 
                     onProfileButtonClicked: {
@@ -515,7 +514,7 @@ Item {
 
                                 pinnedMessagesListPopupComponent: pinnedMessagesPopupComponent
 
-                                contactsStore: appMain.rootStore.profileSectionStore.contactsStore
+                                contactsStore: appMain.rootStore.contactStore
                                 rootStore.emojiReactionsModel: appMain.rootStore.emojiReactionsModel
 
                                 onProfileButtonClicked: {
@@ -617,8 +616,8 @@ Item {
             id: inviteFriendsToCommunityPopup
             InviteFriendsToCommunityPopup {
                 anchors.centerIn: parent
-                // Not Refactored Yet
-//                hasAddedContacts: appMain.rootStore.allContacts.hasAddedContacts()
+                rootStore: appMain.rootStore
+                contactsStore: appMain.rootStore.contactStore
                 onClosed: {
                     destroy()
                 }

@@ -114,7 +114,7 @@ Column {
 
     StatusListItem {
         anchors.horizontalCenter: parent.horizontalCenter
-        visible: root.community.isAdmin || root.community.admin
+        visible: root.community.amISectionAdmin
         //% "Edit community"
         title: qsTrId("edit-community")
         icon.name: "edit"
@@ -124,7 +124,7 @@ Column {
 
     StatusListItem {
         anchors.horizontalCenter: parent.horizontalCenter
-        visible: root.community.isAdmin || root.community.admin
+        visible: root.community.amISectionAdmin
         //% "Transfer ownership"
         title: qsTrId("transfer-ownership")
         icon.name: "exchange"

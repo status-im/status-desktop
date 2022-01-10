@@ -26,6 +26,7 @@ StatusAppThreePanelLayout {
     handle: SplitViewHandle { implicitWidth: 5 }
 
     property var contactsStore
+    property bool hasAddedContacts: root.contactsStore.myContactsModel.count > 0
 
     // Not Refactored
    property var messageStore
@@ -128,6 +129,7 @@ StatusAppThreePanelLayout {
         CommunityColumnView {
             communitySectionModule: root.rootStore.chatCommunitySectionModule
             store: root.rootStore
+            hasAddedContacts: root.hasAddedContacts
             pinnedMessagesPopupComponent: root.pinnedMessagesListPopupComponent
         }
     }
