@@ -2,9 +2,8 @@ import Tables, chronicles
 import controller_interface
 import io_interface
 
+import ../../../../core/eventemitter
 import ../../../../../app_service/service/chat/service as chat_service
-
-import eventemitter
 
 export controller_interface
 

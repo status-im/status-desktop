@@ -6,8 +6,8 @@ import ../../../../app_service/service/settings/service_interface as settings_se
 import ../../../../app_service/service/node/service as node_service
 import ../../../../app_service/service/node_configuration/service as node_configuration_service
 
-import eventemitter
 import ../../../core/signals/types
+import ../../../core/eventemitter
 import ../../../core/fleets/fleet_configuration
 
 export controller_interface

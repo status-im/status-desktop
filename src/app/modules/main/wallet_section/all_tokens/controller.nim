@@ -1,6 +1,7 @@
 import ./controller_interface
 import ./io_interface
-import eventemitter
+
+import ../../../../core/eventemitter
 import ../../../../../app_service/service/token/service as token_service
 import ../../../../../app_service/service/wallet_account/service as wallet_account_service
 

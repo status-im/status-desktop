@@ -1,7 +1,9 @@
 import Tables, stint
-import eventemitter
+
 import ./controller_interface
 import ./io_interface
+
+import ../../../core/eventemitter
 import ../../../../app_service/service/stickers/service as stickers_service
 import ../../../../app_service/service/eth/utils as eth_utils
 

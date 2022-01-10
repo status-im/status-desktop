@@ -5,14 +5,11 @@ import ../io_interface as delegate_interface
 import view, controller
 
 import ../../../global/global_singleton
-
+import ../../../core/signals/types
+import ../../../core/eventemitter
 import ../../../../app_service/service/settings/service_interface as settings_service
 import ../../../../app_service/service/node/service as node_service
 import ../../../../app_service/service/node_configuration/service as node_configuration_service
-
-import ../../../core/signals/types
-
-import eventemitter
 
 export io_interface
 

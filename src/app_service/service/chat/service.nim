@@ -7,15 +7,10 @@ import ../contacts/service as contact_service
 import status/statusgo_backend_new/chat as status_chat
 import status/statusgo_backend_new/chatCommands as status_chat_commands
 import ../../../app/global/global_singleton
+import ../../../app/core/eventemitter
 import ../../../constants
 
 from ../../common/account_constants import ZERO_ADDRESS
-
-# TODO: We need to remove these `status-lib` types from here
-import status/types/[message]
-import status/types/chat as chat_type
-
-import eventemitter
 
 export chat_dto
 

@@ -42,7 +42,7 @@ import ../../../app_service/service/node_configuration/service_interface as node
 import ../../../app_service/service/devices/service as devices_service
 import ../../../app_service/service/mailservers/service as mailservers_service
 
-import eventemitter
+import ../../core/eventemitter
 
 export io_interface
 

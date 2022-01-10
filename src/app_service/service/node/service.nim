@@ -1,9 +1,8 @@
 import NimQml, chronicles, strutils, json, nimcrypto
-import status/utils
-import eventemitter
 
 import ../settings/service as settings_service
 
+import ../../../app/core/eventemitter
 import ../../../app/core/tasks/[qt, threadpool]
 import ../../../app/core/fleets/fleet_configuration
 

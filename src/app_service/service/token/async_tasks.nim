@@ -1,7 +1,8 @@
 # include strformat, json
 include ../../common/json_utils
 include ../../../app/core/tasks/common
-import status/[utils, tokens]
+import ../eth/dto/contract
+import ../eth/utils
 
 #################################################
 # Async load transactions

@@ -1,12 +1,12 @@
 import NimQml, json, sequtils, sugar
 
-import eventemitter
 import ./io_interface
 import ../io_interface as delegate_interface
 import ./view, ./controller
 import ../../shared_models/section_item
 import ../../shared_models/member_item
 import ../../../global/global_singleton
+import ../../../core/eventemitter
 import ../../../../app_service/service/community/service as community_service
 
 export io_interface

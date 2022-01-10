@@ -2,12 +2,11 @@ import Tables, chronicles
 import controller_interface
 import io_interface
 
-import ../../../../core/fleets/fleet_configuration
 import ../../../../global/app_signals
+import ../../../../core/eventemitter
+import ../../../../core/fleets/fleet_configuration
 import ../../../../../app_service/service/settings/service_interface as settings_service
 import ../../../../../app_service/service/node_configuration/service_interface as node_configuration_service
-
-import eventemitter
 
 export controller_interface
 

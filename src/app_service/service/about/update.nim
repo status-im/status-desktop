@@ -1,12 +1,11 @@
 from stew/base32 import nil
 from stew/base58 import nil
-import chronicles, httpclient, net
+import chronicles, httpclient, net, options
 import strutils
 import semver
 
 import ../provider/service as provider_service
 import ../ens/utils as ens_utils
-import status/statusgo_backend_new/ens as status_ens
 
 const APP_UPDATES_ENS* = "desktop.status.eth"
 const CHECK_VERSION_TIMEOUT_MS* = 5000
@@ -17,13 +16,13 @@ type
     url*: string
 
 proc getLatestVersion*(): VersionInfo =
-  let contentHash = contenthash(APP_UPDATES_ENS)
-  if contentHash == "":
+  let contentHash = ens_utils.getContentHash(APP_UPDATES_ENS)
+  if contentHash.isNone():
     raise newException(ValueError, "ENS does not have a content hash")
 
   var url: string = ""
 
-  let decodedHash = contentHash.decodeENSContentHash()
+  let decodedHash = ens_utils.decodeENSContentHash(contentHash.get())
 
   case decodedHash[0]:
     of ENSType.IPFS:
@@ -41,7 +40,7 @@ proc getLatestVersion*(): VersionInfo =
 
     else:
       warn "Unknown content for", contentHash
-      raise newException(ValueError, "Unknown content for " & contentHash)
+      raise newException(ValueError, "Unknown content for " & contentHash.get())
 
   # Read version from folder
   let secureSSLContext = newContext()

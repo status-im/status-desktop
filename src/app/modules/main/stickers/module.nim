@@ -1,8 +1,8 @@
 import NimQml, Tables, stint, sugar, sequtils
 
-import eventemitter
 import ./io_interface, ./view, ./controller, ./item
 import ../../../global/global_singleton
+import ../../../core/eventemitter
 import ../../../../app_service/service/stickers/service as stickers_service
 
 export io_interface

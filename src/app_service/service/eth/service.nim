@@ -1,12 +1,9 @@
 import json, sequtils, chronicles, macros, sugar, strutils, stint
-import
-  web3/ethtypes, json_serialization, chronicles, tables
+import web3/ethtypes, json_serialization, chronicles, tables
 
 import status/statusgo_backend_new/eth
 
-# TODO remove those
-import status/utils
-
+import utils
 import ./dto/contract
 import ./dto/method_dto
 import ./dto/network

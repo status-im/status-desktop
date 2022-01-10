@@ -1,8 +1,9 @@
-import NimQml, eventemitter, stint
+import NimQml, stint
 
 import ./io_interface, ./view, ./controller
 import ../io_interface as delegate_interface
 import ../../../../global/global_singleton
+import ../../../../core/eventemitter
 import ../../../../../app_service/service/transaction/service as transaction_service
 import ../../../../../app_service/service/wallet_account/service as wallet_account_service
 

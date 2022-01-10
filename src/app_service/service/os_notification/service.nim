@@ -1,6 +1,7 @@
 import NimQml, json, chronicles
 import details
-import eventemitter
+
+import ../../../app/core/eventemitter
 
 logScope:
   topics = "os-notification-service"

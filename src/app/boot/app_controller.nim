@@ -1,5 +1,6 @@
 import NimQml
 
+import ../../app_service/service/general/service as general_service
 import ../../app_service/service/os_notification/service as os_notification_service
 import ../../app_service/service/eth/service as eth_service
 import ../../app_service/service/keychain/service as keychain_service
@@ -49,6 +50,7 @@ type
     globalUtilsVariant: QVariant
 
     # Services
+    generalService: general_service.Service
     osNotificationService: os_notification_service.Service
     keychainService: keychain_service.Service
     ethService: eth_service.Service
@@ -98,9 +100,9 @@ proc mainDidLoad*(self: AppController)
 #################################################
 
 proc connect(self: AppController) =
-  self.statusFoundation.status.events.once("nodeStopped") do(a: Args):
-    # TODO: remove this once accounts are not tracked in the AccountsModel
-    self.statusFoundation.status.reset()
+  self.statusFoundation.events.once("nodeStopped") do(a: Args):
+    # not sure, but maybe we should take some actions when node stops
+    discard
 
 proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result = AppController()
@@ -114,31 +116,32 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result.globalUtilsVariant = newQVariant(singletonInstance.utils)
 
   # Services
+  result.generalService = general_service.newService()
   result.settingsService = settings_service.newService()
   result.nodeConfigurationService = node_configuration_service.newService(statusFoundation.fleetConfiguration, 
   result.settingsService)
-  result.osNotificationService = os_notification_service.newService(statusFoundation.status.events)
-  result.keychainService = keychain_service.newService(statusFoundation.status.events)
+  result.osNotificationService = os_notification_service.newService(statusFoundation.events)
+  result.keychainService = keychain_service.newService(statusFoundation.events)
   result.ethService = eth_service.newService()
   result.accountsService = accounts_service.newService(statusFoundation.fleetConfiguration)
   result.networkService = network_service.newService()
-  result.contactsService = contacts_service.newService(statusFoundation.status.events, statusFoundation.threadpool)
-  result.chatService = chat_service.newService(statusFoundation.status.events, result.contactsService)
-  result.communityService = community_service.newService(statusFoundation.status.events, result.chatService)
-  result.messageService = message_service.newService(statusFoundation.status.events, statusFoundation.threadpool)
-  result.activityCenterService = activity_center_service.newService(statusFoundation.status.events, 
+  result.contactsService = contacts_service.newService(statusFoundation.events, statusFoundation.threadpool)
+  result.chatService = chat_service.newService(statusFoundation.events, result.contactsService)
+  result.communityService = community_service.newService(statusFoundation.events, result.chatService)
+  result.messageService = message_service.newService(statusFoundation.events, statusFoundation.threadpool)
+  result.activityCenterService = activity_center_service.newService(statusFoundation.events,
   statusFoundation.threadpool, result.chatService)
-  result.tokenService = token_service.newService(statusFoundation.status.events, statusFoundation.threadpool, 
+  result.tokenService = token_service.newService(statusFoundation.events, statusFoundation.threadpool, 
   result.settingsService)
   result.collectibleService = collectible_service.newService(result.settingsService)
-  result.walletAccountService = wallet_account_service.newService(statusFoundation.status.events, result.settingsService, 
+  result.walletAccountService = wallet_account_service.newService(statusFoundation.events, result.settingsService, 
   result.accountsService, result.tokenService)
-  result.transactionService = transaction_service.newService(statusFoundation.status.events, statusFoundation.threadpool, 
+  result.transactionService = transaction_service.newService(statusFoundation.events, statusFoundation.threadpool, 
   result.walletAccountService)
   result.bookmarkService = bookmark_service.newService()
   result.profileService = profile_service.newService()
   result.stickersService = stickers_service.newService(
-    statusFoundation.status.events,
+    statusFoundation.events,
     statusFoundation.threadpool,
     result.ethService,
     result.settingsService,
@@ -147,31 +150,31 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
     result.networkService,
     result.chatService
   )
-  result.aboutService = about_service.newService(statusFoundation.status.events, statusFoundation.threadpool, 
+  result.aboutService = about_service.newService(statusFoundation.events, statusFoundation.threadpool, 
   result.settingsService)
   result.dappPermissionsService = dapp_permissions_service.newService()
   result.languageService = language_service.newService()
   # result.mnemonicService = mnemonic_service.newService()
-  result.privacyService = privacy_service.newService(statusFoundation.status.events, result.settingsService, 
+  result.privacyService = privacy_service.newService(statusFoundation.events, result.settingsService, 
   result.accountsService)
   result.providerService = provider_service.newService(result.dappPermissionsService, result.settingsService)
-  result.savedAddressService = saved_address_service.newService(statusFoundation.status.events)
-  result.devicesService = devices_service.newService(statusFoundation.status.events, result.settingsService)
-  result.mailserversService = mailservers_service.newService(statusFoundation.status.events, statusFoundation.marathon,
+  result.savedAddressService = saved_address_service.newService(statusFoundation.events)
+  result.devicesService = devices_service.newService(statusFoundation.events, result.settingsService)
+  result.mailserversService = mailservers_service.newService(statusFoundation.events, statusFoundation.marathon,
   result.settingsService, result.nodeConfigurationService, statusFoundation.fleetConfiguration)
-  result.nodeService = node_service.newService(statusFoundation.status.events, statusFoundation.threadpool, 
+  result.nodeService = node_service.newService(statusFoundation.events, statusFoundation.threadpool, 
   result.settingsService)
 
   # Modules
   result.startupModule = startup_module.newModule[AppController](
     result,
-    statusFoundation.status.events,
+    statusFoundation.events,
     result.keychainService, 
     result.accountsService
   )
   result.mainModule = main_module.newModule[AppController](
     result,
-    statusFoundation.status.events,
+    statusFoundation.events,
     result.keychainService,
     result.accountsService,
     result.chatService,
@@ -241,6 +244,7 @@ proc delete*(self: AppController) =
   self.messageService.delete
   self.privacyService.delete
   self.profileService.delete
+  self.generalService.delete
 
 proc startupDidLoad*(self: AppController) =
   singletonInstance.engine.setRootContextProperty("localAppSettings", self.localAppSettingsVariant)
@@ -257,6 +261,7 @@ proc mainDidLoad*(self: AppController) =
   self.mainModule.checkForStoringPassword()
 
 proc start*(self: AppController) =
+  self.generalService.init()
   self.ethService.init()
   self.accountsService.init()
   
@@ -294,7 +299,7 @@ proc load(self: AppController) =
 
   # load main module
   self.mainModule.load(
-    self.statusFoundation.status.events,
+    self.statusFoundation.events,
     self.settingsService,
     self.contactsService,
     self.chatService,
@@ -303,7 +308,7 @@ proc load(self: AppController) =
   )
 
 proc userLoggedIn*(self: AppController) =
-  self.statusFoundation.status.startMessenger()
+  self.generalService.startMessenger()
   self.load()
 
   # Once user is logged in and main module is loaded we need to check if it gets here importing mnemonic or not

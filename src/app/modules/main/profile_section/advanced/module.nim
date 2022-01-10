@@ -4,11 +4,10 @@ import ../io_interface as delegate_interface
 import view, controller, custom_networks_model
 
 import ../../../../../constants
+import ../../../../core/eventemitter
 import ../../../../global/global_singleton
 import ../../../../../app_service/service/settings/service_interface as settings_service
 import ../../../../../app_service/service/node_configuration/service_interface as node_configuration_service
-
-import eventemitter
 
 export io_interface
 

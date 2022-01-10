@@ -1,7 +1,7 @@
 import ./controller_interface
-import eventemitter
 import io_interface
 import ../../../../../app_service/service/about/service as about_service
+import ../../../../core/eventemitter
 
 export controller_interface
 

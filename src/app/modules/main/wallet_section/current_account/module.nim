@@ -1,6 +1,7 @@
 import NimQml
-import eventemitter
+
 import ../../../../global/global_singleton
+import ../../../../core/eventemitter
 import ../../../../../app_service/service/wallet_account/service as wallet_account_service
 
 import ./io_interface, ./view, ./controller

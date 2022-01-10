@@ -1,30 +1,14 @@
 import strutils, json
 import web3/ethtypes, web3/conversions, options, stint
+import ../utils
 
-type
-  TransactionDto* = ref object
-    id*: string
-    typeValue*: string
-    address*: string
-    blockNumber*: string
-    blockHash*: string
-    contract*: string
-    timestamp*: string
-    gasPrice*: string
-    gasLimit*: string
-    gasUsed*: string
-    nonce*: string
-    txStatus*: string
-    value*: string
-    fromAddress*: string
-    to*: string
-  
-type PendingTransactionTypeDto* {.pure.} = enum
-  RegisterENS = "RegisterENS",
-  SetPubKey = "SetPubKey",
-  ReleaseENS = "ReleaseENS",
-  BuyStickerPack = "BuyStickerPack"
-  WalletTransfer = "WalletTransfer" 
+type 
+  PendingTransactionTypeDto* {.pure.} = enum
+    RegisterENS = "RegisterENS",
+    SetPubKey = "SetPubKey",
+    ReleaseENS = "ReleaseENS",
+    BuyStickerPack = "BuyStickerPack"
+    WalletTransfer = "WalletTransfer" 
 
 type 
   TransactionDataDto* = object
@@ -38,21 +22,6 @@ type
     data*: string                # the compiled code of a contract OR the hash of the invoked method signature and encoded parameters. For details see Ethereum Contract ABI.
     nonce*: Option[Nonce]        # (optional) integer of a nonce. This allows to overwrite your own pending transactions that use the same nonce
     txType*: string
-
-proc cmpTransactions*(x, y: TransactionDto): int =
-  # Sort proc to compare transactions from a single account.
-  # Compares first by block number, then by nonce
-  result = cmp(x.blockNumber.parseHexInt, y.blockNumber.parseHexInt)
-  if result == 0:
-    result = cmp(x.nonce, y.nonce)
-
-# TODO: make this public in nim-web3 lib
-template stripLeadingZeros*(value: string): string =
-  var cidx = 0
-  # ignore the last character so we retain '0' on zero value
-  while cidx < value.len - 1 and value[cidx] == '0':
-    cidx.inc
-  value[cidx .. ^1]
 
 proc `%`*(x: TransactionDataDto): JsonNode =
   result = newJobject()

@@ -1,5 +1,6 @@
 import NimQml, times, strutils, json, json_serialization, chronicles
 
+import ../../../eventemitter
 import ../../../fleets/fleet_configuration
 import ../../../../../app_service/service/settings/service_interface as settings_service
 import ../../../../../app_service/service/node_configuration/service_interface as node_config_service
@@ -11,8 +12,6 @@ import status/statusgo_backend_new/general as status_general
 
 import events
 import ../../common as task_runner_common
-
-import eventemitter
 
 logScope:
   topics = "mailserver controller"

@@ -6,6 +6,7 @@ import ../../../shared_models/message_model as pinned_msg_model
 import ../../../shared_models/message_item as pinned_msg_item
 import ../../../shared_models/message_reaction_item as pinned_msg_reaction_item
 import ../../../../global/global_singleton
+import ../../../../core/eventemitter
 
 import input_area/module as input_area_module
 import messages/module as messages_module
@@ -16,8 +17,6 @@ import ../../../../../app_service/service/contacts/service as contact_service
 import ../../../../../app_service/service/chat/service as chat_service
 import ../../../../../app_service/service/community/service as community_service
 import ../../../../../app_service/service/message/service as message_service
-
-import eventemitter
 
 export io_interface
 
