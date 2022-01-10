@@ -10,9 +10,11 @@ import "../panels"
 import "../controls"
 
 Item {
+    id: inputBox
+
     property alias textField: inputValue
     property alias inputLabel: inputLabel
-    
+
     property string placeholderText: "My placeholder"
     property string placeholderTextColor: Style.current.secondaryText
     property alias text: inputValue.text
@@ -31,6 +33,7 @@ Item {
     property string textToCopy
     property bool pasteFromClipboard: false
     property bool readOnly: false
+    property bool keepHeight: false // determine whether validationError should affect item's height
 
     readonly property bool hasIcon: icon.toString() !== ""
     readonly property var forceActiveFocus: function () {
@@ -43,8 +46,9 @@ Item {
     signal editingFinished(string inputValue)
     signal textEdited(string inputValue)
 
-    id: inputBox
-    implicitHeight: inputRectangle.height + (hasLabel ? inputLabel.height + labelMargin : 0) + (!!validationError ? (validationErrorText.height + validationErrorTopMargin) : 0)
+    implicitHeight: inputRectangle.height +
+                    (hasLabel ? inputLabel.height + labelMargin : 0) +
+                    (!keepHeight &&!!validationError ? (validationErrorText.height + validationErrorTopMargin) : 0)
     height: implicitHeight
     anchors.right: parent.right
     anchors.left: parent.left

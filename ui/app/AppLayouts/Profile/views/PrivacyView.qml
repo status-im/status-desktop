@@ -128,7 +128,8 @@ Item {
         ChangePasswordModal {
             id: changePasswordModal
             anchors.centerIn: parent
-            successPopup: successPopup
+
+            onPasswordChanged: successPopup.open()
         }
 
         ChangePasswordSuccessModal {
@@ -183,7 +184,7 @@ Item {
             implicitHeight: 52
             components: [
                 StatusQControls.StatusSwitch {
-                    id: switch2               
+                    id: switch2
                     checked: localAccountSensitiveSettings.displayChatImages
                 }
             ]
