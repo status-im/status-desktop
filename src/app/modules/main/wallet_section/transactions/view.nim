@@ -14,6 +14,7 @@ QtObject:
       model: Model
       modelVariant: QVariant
       fetchingHistoryState: Table[string, bool]
+      isNonArchivalNode: bool
 
   proc delete*(self: View) =
     self.model.delete
@@ -85,3 +86,17 @@ QtObject:
     self.model = self.models[walletAccount.address]
     self.modelVariant = newQVariant(self.model)
     self.modelChanged()
+
+  proc getIsNonArchivalNode(self: View): QVariant {.slot.} =
+    return newQVariant(self.isNonArchivalNode)
+
+  proc isNonArchivalNodeChanged(self: View) {.signal.}
+
+  proc setIsNonArchivalNode*(self: View, isNonArchivalNode: bool) =
+    self.isNonArchivalNode = isNonArchivalNode
+    self.isNonArchivalNodeChanged()
+
+  QtProperty[QVariant] isNonArchivalNode:
+    read = getIsNonArchivalNode
+    notify = isNonArchivalNodeChanged
+

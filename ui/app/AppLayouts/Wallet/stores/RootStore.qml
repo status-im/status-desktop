@@ -23,10 +23,8 @@ QtObject {
     property CollectiblesStore collectiblesStore: CollectiblesStore { }
     property var collectionList: walletSectionCollectiblesCollections.model
 
-    property var history: walletSectionTransactions
     property var historyTransactions: walletSectionTransactions.model
-//    property var transactions: walletModel.transactionsView.transactions
-//    property var historyView: walletModel.historyView
+    property var isNonArchivalNode:  walletSectionTransactions.isNonArchivalNode
 
     // This should be exposed to the UI via "walletModule", WalletModule should use
     // Accounts Service which keeps the info about that (isFirstTimeAccountLogin).
@@ -73,10 +71,6 @@ QtObject {
     function getLatestBlockNumber() {
         // TODO: Move to transaction root module and not wallet
         return walletModel.getLatestBlockNumber()
-    }
-
-    function isNonArchivalNode() {
-        return walletModel.isNonArchivalNode
     }
 
     function setInitialRange() {
@@ -143,15 +137,15 @@ QtObject {
     }
 
     function checkRecentHistory() {
-        history.checkRecentHistory()
+        walletSectionTransactions.checkRecentHistory()
     }
 
     function isFetchingHistory() {
-        return history.isFetchingHistory(walletModel.accountsView.currentAccount.address)
+        return walletSectionTransactions.isFetchingHistory(walletModel.accountsView.currentAccount.address)
     }
 
     function loadTransactionsForAccount(pageSize) {
-        history.loadTransactionsForAccount(walletModel.accountsView.currentAccount.address,
+        walletSectionTransactions.loadTransactionsForAccount(walletModel.accountsView.currentAccount.address,
                                                            historyTransactions.getLastTxBlockNumber(),
                                                            pageSize, true)
     }
