@@ -4,6 +4,7 @@ import shared 1.0
 import shared.panels 1.0
 import shared.popups 1.0
 import shared.views.chat 1.0
+import shared.controls 1.0
 import shared.controls.chat 1.0
 
 Item {
@@ -189,7 +190,7 @@ Item {
 
             SendTransactionButton {
                 // outgoing: root.outgoing
-                acc: root.store.walletModelInst.accountsView.focusedAccount
+                acc: root.store.currentAccount
                 selectedAsset: token
                 selectedAmount: tokenAmount
                 selectedFiatAmount: fiatValue
@@ -218,17 +219,21 @@ Item {
         Component {
             id: signTxComponent
             SignTransactionModal {
+                anchors.centerIn: parent
                 store: root.store
-                selectedAsset: root.selectedAsset
-                selectedAmount: root.selectedAmount
-                selectedRecipient: root.selectedRecipient
-                selectedFiatAmount: root.selectedFiatAmount
-                onOpened: {
-                    root.store.walletModelInst.gasView.getGasPrice();
+                selectedAsset: token
+                selectedAmount: tokenAmount
+                selectedRecipient: {
+                    return {
+                        address: commandParametersObject.address,
+                        identicon: root.store.chatsModelInst.channelView.activeChannel.identicon,
+                        name: root.store.chatsModelInst.channelView.activeChannel.name,
+                        type: RecipientSelector.Type.Contact
+                    }
                 }
-                onClosed: {
-                    destroy();
-                }
+                selectedFiatAmount: fiatValue
+                onOpened: root.store.walletModelInst.gasView.getGasPrice();
+                onClosed: destroy();
             }
         }
 
