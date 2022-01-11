@@ -1,6 +1,7 @@
 import NimQml, Tables, json, sequtils, strutils, system, uuids, chronicles
 
 import ./dto/mailserver as mailserver_dto
+import ../../../app/core/signals/types
 import ../../../app/core/fleets/fleet_configuration
 import ../../../app/core/[main]
 import ../../../app/core/tasks/marathon/mailserver/events
@@ -56,9 +57,25 @@ QtObject:
     self.events.on("mailserver:changed") do(e: Args):
       let receivedData = MailserverArgs(e)
       let peer = receivedData.peer
-      debug "Mailserver changed to ", peer
+      info "mailserver changed to ", peer
       let data = ActiveMailserverChangedArgs(nodeAddress: peer)
       self.events.emit(SIGNAL_ACTIVE_MAILSERVER_CHANGED, data)
+    
+    self.events.on(SignalType.HistoryRequestStarted.event) do(e: Args):
+      let h = HistoryRequestStartedSignal(e)
+      info "history request started", requestId=h.requestId, numBatches=h.numBatches
+
+    self.events.on(SignalType.HistoryRequestBatchProcessed.event) do(e: Args):
+      let h = HistoryRequestBatchProcessedSignal(e)
+      info "history batch processed", requestId=h.requestId, batchIndex=h.batchIndex
+
+    self.events.on(SignalType.HistoryRequestCompleted.event) do(e: Args):
+      let h = HistoryRequestCompletedSignal(e)
+      info "history request completed", requestId=h.requestId
+
+    self.events.on(SignalType.HistoryRequestFailed.event) do(e: Args):
+      let h = HistoryRequestFailedSignal(e)
+      info "history request failed", requestId=h.requestId, errorMessage=h.errorMessage
 
   proc initMailservers(self: Service) =
     let wakuVersion = self.nodeConfigurationService.getWakuVersion()
