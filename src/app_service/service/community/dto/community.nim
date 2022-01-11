@@ -141,7 +141,7 @@ proc toCommunityDto*(jsonObj: JsonNode): CommunityDto =
     result.permissions = toPermission(permissionObj)
 
   var membersObj: JsonNode
-  if(jsonObj.getProp("members", membersObj) and membersObj.kind == JArray):
+  if(jsonObj.getProp("members", membersObj) and membersObj.kind == JObject):
     for memberId, memberObj in membersObj:
       result.members.add(toMember(memberObj, memberId))
 

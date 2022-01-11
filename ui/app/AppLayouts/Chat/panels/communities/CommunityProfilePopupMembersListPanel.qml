@@ -127,21 +127,24 @@ Item {
 
                     id: memberItem
 
-                    property string nickname: Utils.getContactDetailsAsJson(model.pubKey).localNickname
+                    property var contactDetail: Utils.getContactDetailsAsJson(model.pubKey)
+                    property string identicon: contactDetail.identicon || root.store.generateIdenticon(model.pubKey)
+                    property string username: contactDetail.name || root.store.generateAlias(model.pubKey)
+                    property string nickname: contactDetail.localNickname || ""
                     property string profileImage: Global.getProfileImage(model.pubKey) || ""
 
                     visible: !!!memberSearch.input.text || 
-                        model.userName.toLowerCase().includes(memberSearch.input.text.toLowerCase()) ||
+                        contactDetail.name.toLowerCase().includes(memberSearch.input.text.toLowerCase()) ||
                         nickname.toLowerCase().includes(memberSearch.input.text.toLowerCase())
                     anchors.horizontalCenter: parent.horizontalCenter
 
                     image.isIdenticon: !profileImage
-                    image.source: profileImage || model.identicon
+                    image.source: profileImage || identicon
 
                     title: {
                         if (menuButton.visible) {
-                            return !model.userName.endsWith(".eth") && !!nickname ?
-                                nickname : Utils.removeStatusEns(model.userName)
+                            return !username.endsWith(".eth") && !!nickname ?
+                                nickname : Utils.removeStatusEns(username)
                         }
                         //% "You"
                         return qsTrId("You")

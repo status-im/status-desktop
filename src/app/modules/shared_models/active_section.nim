@@ -120,11 +120,14 @@ QtObject:
   QtProperty[bool] ensOnly:
     read = ensOnly
 
-  proc nbMembers(self: ActiveSection): int {.slot.} = 
-    return self.item.members.len
+  proc members(self: ActiveSection): QVariant {.slot.} =
+    if (self.item.id == ""):
+      # FIXME (Jo) I don't know why but the Item is sometimes empty and doing anything here crashes the app
+      return newQVariant("")
+    return newQVariant(self.item.members)
 
-  QtProperty[int] nbMembers:
-    read = nbMembers
+  QtProperty[QVariant] members:
+    read = members
 
   proc hasMember(self: ActiveSection, pubkey: string): bool {.slot.} =
     return self.item.hasMember(pubkey)

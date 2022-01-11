@@ -1,5 +1,5 @@
 import strformat
-import ./member_item
+import ./members_model, ./member_item
 
 type
   SectionType* {.pure.} = enum
@@ -32,7 +32,7 @@ type
     canRequestAccess: bool
     access: int
     ensOnly: bool
-    members: seq[MemberItem]
+    membersModel: MembersModel
 
 proc initItem*(
     id: string,
@@ -75,7 +75,7 @@ proc initItem*(
   result.isMember = isMember
   result.access = access
   result.ensOnly = ensOnly
-  result.members = members
+  result.membersModel = newMembersModel(members)
 
 proc isEmpty*(self: SectionItem): bool =
   return self.id.len == 0
@@ -101,7 +101,7 @@ proc `$`*(self: SectionItem): string =
     isMember:{self.isMember},
     access:{self.access},
     ensOnly:{self.ensOnly},
-    members:{self.members},
+    members:{self.membersModel},
     ]"""
 
 proc id*(self: SectionItem): string {.inline.} = 
@@ -173,11 +173,8 @@ proc access*(self: SectionItem): int {.inline.} =
 proc ensOnly*(self: SectionItem): bool {.inline.} = 
   self.ensOnly
 
-proc members*(self: SectionItem): seq[MemberItem] {.inline.} = 
-  self.members
+proc members*(self: SectionItem): MembersModel {.inline.} =
+  self.membersModel
 
 proc hasMember*(self: SectionItem, pubkey: string): bool =
-  for member in self.members:
-    if (member.id == pubkey):
-      return true
-  return false
+  self.membersModel.hasMember(pubkey)

@@ -35,6 +35,10 @@ QtObject {
         return globalUtils.generateIdenticon(pk)
     }
 
+    function generateAlias(pk) {
+        return globalUtils.generateAlias(pk)
+    }
+
     function get0xFormedUrl(browserExplorer, url) {
         var tempUrl = ""
         switch (browserExplorer) {
