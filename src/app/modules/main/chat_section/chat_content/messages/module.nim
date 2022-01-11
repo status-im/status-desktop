@@ -125,7 +125,7 @@ method messageAdded*(self: Module, message: MessageDto) =
   sender.icon, sender.isIdenticon, sender.isCurrentUser, message.outgoingStatus, message.text, message.image, 
   message.seen, message.timestamp, message.contentType.ContentType, message.messageType)
 
-  self.view.model().prependItem(item)
+  self.view.model().insertItemBasedOnTimestamp(item)
 
 method onSendingMessageSuccess*(self: Module, message: MessageDto) =
   self.messageAdded(message)
