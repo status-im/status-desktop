@@ -112,7 +112,7 @@ StatusModal {
                 width: stack.width
                 //% "Members"
                 headerTitle: qsTrId("members-label")
-                headerSubtitle: root.community.nbMembers.toString()
+                headerSubtitle: root.community.members.count.toString()
                 community: root.community
                 onInviteButtonClicked: root.contentItem.push(inviteFriendsView)
             }

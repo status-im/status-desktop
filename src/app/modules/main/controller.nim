@@ -117,6 +117,11 @@ method init*(self: Controller) =
     let args = CommunityArgs(e)
     self.delegate.communityEdited(args.community)
 
+  self.events.on(SIGNAL_COMMUNITIES_UPDATE) do(e:Args):
+    let args = CommunitiesArgs(e)
+    for community in args.communities:
+      self.delegate.communityEdited(community)
+
   self.events.on(SIGNAL_ENS_RESOLVED) do(e: Args):
     var args = ResolvedContactArgs(e)
     self.delegate.resolvedENS(args.pubkey, args.address, args.uuid)

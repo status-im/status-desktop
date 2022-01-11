@@ -186,7 +186,10 @@ QtObject {
     }
 
     function generateIdenticon(pk) {
-        // Not Refactored Yet
-//        return utilsModelInst.generateIdenticon(pk);
+        return globalUtils.generateIdenticon(pk)
+    }
+
+    function generateAlias(pk) {
+        return globalUtils.generateAlias(pk)
     }
 }

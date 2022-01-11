@@ -75,7 +75,7 @@ Column {
         //% "Members"
         title: qsTrId("members-label")
         icon.name: "group-chat"
-        label: root.community.nbMembers.toString()
+        label: root.community.members.count.toString()
         sensor.onClicked: root.membersListButtonClicked()
 
         components: [

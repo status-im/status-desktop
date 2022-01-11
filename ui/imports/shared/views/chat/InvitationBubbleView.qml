@@ -272,7 +272,7 @@ Item {
                     id: communityNbMembers
                     // TODO add the plural support
                     //% "%1 members"
-                    text: qsTrId("-1-members").arg(invitedCommunity.nbMembers)
+                    text: qsTrId("-1-members").arg(invitedCommunity.members.count)
                     anchors.top: communityDesc.bottom
                     anchors.topMargin: 2
                     anchors.left: parent.left

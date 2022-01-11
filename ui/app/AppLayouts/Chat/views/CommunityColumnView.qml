@@ -39,11 +39,11 @@ Item {
         anchors.horizontalCenter: parent.horizontalCenter
 
         chatInfoButton.title: communityData.name
-        chatInfoButton.subTitle: communityData.nbMembers <= 1 ?
+        chatInfoButton.subTitle: communityData.members.count <= 1 ?
                                      //% "1 Member"
                                      qsTrId("1-member") :
                                      //% "%1 Members"
-                                     qsTrId("-1-members").arg(communityData.nbMembers)
+                                     qsTrId("-1-members").arg(communityData.members.count)
 
         chatInfoButton.image.source: communityData.image
         chatInfoButton.icon.color: communityData.color
