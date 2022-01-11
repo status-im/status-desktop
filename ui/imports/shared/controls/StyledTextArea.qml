@@ -24,8 +24,6 @@ Item {
 
     id: inputBox
     height: inputRectangle.height + (hasLabel ? inputLabel.height + labelMargin : 0) + (!!validationError ? validationErrorText.height : 0)
-    anchors.right: parent.right
-    anchors.left: parent.left
 
     StyledText {
         id: inputLabel

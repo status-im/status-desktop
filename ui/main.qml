@@ -95,20 +95,25 @@ StatusWindow {
     Connections {
         target: startupModule
         onAppStateChanged: {
-            mainModule.openStoreToKeychainPopup.connect(function(){
-                storeToKeychainConfirmationPopup.open()
-            })
-            if(localAccountSensitiveSettings.recentEmojis === "") {
-                 localAccountSensitiveSettings.recentEmojis = [];
-             }
-            if (localAccountSensitiveSettings.whitelistedUnfurlingSites === "") {
-                localAccountSensitiveSettings.whitelistedUnfurlingSites = {};
-            }
-            if (localAccountSensitiveSettings.hiddenCommunityWelcomeBanners === "") {
-                localAccountSensitiveSettings.hiddenCommunityWelcomeBanners = [];
-            }
-            if (localAccountSensitiveSettings.hiddenCommunityBackUpBanners === "") {
-                localAccountSensitiveSettings.hiddenCommunityBackUpBanners = [];
+            if(state === Constants.appState.main) {
+                // We set main module to the Global singleton once user is logged in and we move to the main app.
+                Global.mainModuleInst = mainModule
+
+                mainModule.openStoreToKeychainPopup.connect(function(){
+                    storeToKeychainConfirmationPopup.open()
+                })
+                if(localAccountSensitiveSettings.recentEmojis === "") {
+                    localAccountSensitiveSettings.recentEmojis = [];
+                }
+                if (localAccountSensitiveSettings.whitelistedUnfurlingSites === "") {
+                    localAccountSensitiveSettings.whitelistedUnfurlingSites = {};
+                }
+                if (localAccountSensitiveSettings.hiddenCommunityWelcomeBanners === "") {
+                    localAccountSensitiveSettings.hiddenCommunityWelcomeBanners = [];
+                }
+                if (localAccountSensitiveSettings.hiddenCommunityBackUpBanners === "") {
+                    localAccountSensitiveSettings.hiddenCommunityBackUpBanners = [];
+                }
             }
         }
     }

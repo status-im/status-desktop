@@ -4,12 +4,12 @@ import QtQuick 2.12
 
 QtObject {
     id: root
-    property var utilsModelInst: !!utilsModel ? utilsModel :  null
-    property var chatsModelInst: !!chatsModel ?chatsModel : null
-    property var userProfileInst: !!userProfile ? userProfile : null
-    property var walletModelInst: !!walletModel ? walletModel : null
-    property var keycardModelInst: !!keycardModel ? keycardModel : null
-    property var profileModelInst: !!profileModel ? profileModel : null
+//    property var utilsModelInst: !!utilsModel ? utilsModel :  null
+//    property var chatsModelInst: !!chatsModel ?chatsModel : null
+//    property var userProfileInst: !!userProfile ? userProfile : null
+//    property var walletModelInst: !!walletModel ? walletModel : null
+//    property var keycardModelInst: !!keycardModel ? keycardModel : null
+//    property var profileModelInst: !!profileModel ? profileModel : null
     property var walletSectionInst: !!walletSection ? walletSection : null
     property var appSettings: !!localAppSettings ? localAppSettings : null
     property var accountSensitiveSettings: !!localAccountSensitiveSettings ? localAccountSensitiveSettings : null
@@ -22,13 +22,13 @@ QtObject {
     property bool displayChatImages: !!accountSensitiveSettings ? accountSensitiveSettings.displayChatImages : false
 
     property string locale: !!appSettings ? appSettings.locale : ""
-    property string signingPhrase: !!walletModelInst ? walletModelInst.utilsView.signingPhrase : ""
-    property string gasPrice: !!walletModelInst ? walletModelInst.gasView.gasPrice : "0"
-    property string gasEthValue: !!walletModelInst ? walletModelInst.gasView.getGasEthValue : "0"
-    property string currentCurrency: !!walletSectionInst ? walletSectionInst.currentCurrency : ""
-    property string defaultCurrency: !!walletModelInst ? walletModelInst.balanceView.defaultCurrency : "0"
-    property string fiatValue: !!walletModelInst ? walletModelInst.balanceView.getFiatValue : "0"
-    property string cryptoValue: !!walletModelInst ? walletModelInst.balanceView.getCryptoValue : "0"
+//    property string signingPhrase: !!walletModelInst ? walletModelInst.utilsView.signingPhrase : ""
+//    property string gasPrice: !!walletModelInst ? walletModelInst.gasView.gasPrice : "0"
+//    property string gasEthValue: !!walletModelInst ? walletModelInst.gasView.getGasEthValue : "0"
+//    property string currentCurrency: !!walletSectionInst ? walletSectionInst.currentCurrency : ""
+//    property string defaultCurrency: !!walletModelInst ? walletModelInst.balanceView.defaultCurrency : "0"
+//    property string fiatValue: !!walletModelInst ? walletModelInst.balanceView.getFiatValue : "0"
+//    property string cryptoValue: !!walletModelInst ? walletModelInst.balanceView.getCryptoValue : "0"
     readonly property var formationChars: (["*", "`", "~"])
     function getSelectedTextWithFormationChars(messageInputField) {
         let i = 1
@@ -62,14 +62,14 @@ QtObject {
     }
 
     function transferEth(from, to, amount, gasLimit, gasPrice, tipLimit, overallLimit, password, uuid) {
-        return walletModelInst.transactionsView.transferEth(from, to, amount, gasLimit, gasPrice, tipLimit, overallLimit, password, uuid);
+//        return walletModelInst.transactionsView.transferEth(from, to, amount, gasLimit, gasPrice, tipLimit, overallLimit, password, uuid);
     }
 
     function transferTokens(from, to, address, amount, gasLimit, gasPrice, tipLimit, overallLimit, password, uuid) {
-        return walletModelInst.transactionsView.transferTokens(from, to, address, amount, gasLimit, gasPrice, tipLimit, overallLimit, password, uuid);
+//        return walletModelInst.transactionsView.transferTokens(from, to, address, amount, gasLimit, gasPrice, tipLimit, overallLimit, password, uuid);
     }
 
     function copyToClipboard(textToCopy) {
-        chatsModelInst.copyToClipboard(textToCopy)
+//        chatsModelInst.copyToClipboard(textToCopy)
     }
 }

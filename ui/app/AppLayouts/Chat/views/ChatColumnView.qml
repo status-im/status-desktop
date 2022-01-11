@@ -52,9 +52,9 @@ Item {
     property Timer timer: Timer { }
     property var userList
 
-    property var contactDetails: Utils.getContactDetailsAsJson(publicKey)
-    property bool isBlocked: root.contactDetails.isContact
-    property bool isContact: root.contactDetails.isBlocked
+    property var contactDetails: Utils.getContactDetailsAsJson(root.activeChatId)
+    property bool isBlocked: root.contactDetails.isBlocked
+    property bool isContact: root.contactDetails.isContact
     property bool contactRequestReceived: root.contactDetails.requestReceived
 
     signal openAppSearch()
@@ -172,10 +172,6 @@ Item {
 
                     }
                 }
-
-                // Should never be here, correct index must be returned from the `for` loop above
-                console.error("Wrong chat/channel index, active item id: ", root.activeChatId,
-                              " active subitem id: ", root.activeSubItemId)
             }
 
             return 0

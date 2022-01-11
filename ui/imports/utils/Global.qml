@@ -9,12 +9,9 @@ QtObject {
     property var applicationWindow
     property bool popupOpened: false
     property int currentMenuTab: 0
-    property var errorSound: Audio {
-        id: errorSound
-        track: Qt.resolvedUrl("../assets/audio/error.mp3")
-    }
+    property var errorSound
 
-    property var mainModuleInst: !!mainModule ? mainModule : null
+    property var mainModuleInst
     property var toastMessage
     property bool profilePopupOpened: false
     //Not refactored yet
@@ -43,6 +40,9 @@ QtObject {
     }
 
     function changeAppSectionBySectionType(sectionType, profileSectionId = -1) {
+        if(!root.mainModuleInst)
+            return
+
         mainModuleInst.setActiveSectionBySectionType(sectionType)
         if (profileSectionId > -1) {
             currentMenuTab = profileSectionId;
@@ -76,7 +76,8 @@ QtObject {
     }
 
     function playErrorSound() {
-        errorSound.play();
+        if(errorSound)
+            errorSound.play();
     }
 
     function settingsHasLoaded() {

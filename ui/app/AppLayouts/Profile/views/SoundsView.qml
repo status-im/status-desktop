@@ -43,10 +43,13 @@ Item {
             anchors.leftMargin: 24
             from: 0.0
             to: 1.0
-            value: localAccountSensitiveSettings.volume
             stepSize: 0.1
             onValueChanged: {
                 localAccountSensitiveSettings.volume = volume.value
+            }
+
+            Component.onCompleted: {
+                value = localAccountSensitiveSettings.volume
             }
         }
     }

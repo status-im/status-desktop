@@ -853,7 +853,8 @@ Rectangle {
                 anchors.rightMargin: 2
                 anchors.top: parent.top
                 anchors.topMargin: 2
-                stickerData: sticker
+                // Not Refactored Yet
+//                stickerData: sticker
                 onCloseButtonClicked: {
                     isReply = false
                 }
@@ -941,7 +942,7 @@ Rectangle {
                         icon.name: "bold"
                         //% "Bold"
                         text: qsTrId("bold")
-                        selectedTextWithFormationChars: RootStore.selectedTextWithFormationChars
+                        selectedTextWithFormationChars: RootStore.getSelectedTextWithFormationChars(messageInputField)
                         onActionTriggered: checked ?
                                          unwrapSelection(wrapper, RootStore.getSelectedTextWithFormationChars(messageInputField)) :
                                          wrapSelection(wrapper)
@@ -951,7 +952,7 @@ Rectangle {
                         icon.name: "italic"
                         //% "Italic"
                         text: qsTrId("italic")
-                        selectedTextWithFormationChars: RootStore.selectedTextWithFormationChars
+                        selectedTextWithFormationChars: RootStore.getSelectedTextWithFormationChars(messageInputField)
                         checked: (surroundedBy("*") && !surroundedBy("**")) || surroundedBy("***")
                         onActionTriggered: checked ?
                                          unwrapSelection(wrapper, RootStore.getSelectedTextWithFormationChars(messageInputField)) :
@@ -962,7 +963,7 @@ Rectangle {
                         icon.name: "strikethrough"
                         //% "Strikethrough"
                         text: qsTrId("strikethrough")
-                        selectedTextWithFormationChars: RootStore.selectedTextWithFormationChars
+                        selectedTextWithFormationChars: RootStore.getSelectedTextWithFormationChars(messageInputField)
                         onActionTriggered: checked ?
                                          unwrapSelection(wrapper, RootStore.getSelectedTextWithFormationChars(messageInputField)) :
                                          wrapSelection(wrapper)
@@ -972,7 +973,7 @@ Rectangle {
                         icon.name: "code"
                         //% "Code"
                         text: qsTrId("code")
-                        selectedTextWithFormationChars: RootStore.selectedTextWithFormationChars
+                        selectedTextWithFormationChars: RootStore.getSelectedTextWithFormationChars(messageInputField)
                         onActionTriggered: checked ?
                                          unwrapSelection(wrapper, RootStore.getSelectedTextWithFormationChars(messageInputField)) :
                                          wrapSelection(wrapper)

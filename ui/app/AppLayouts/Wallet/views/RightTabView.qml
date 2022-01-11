@@ -24,7 +24,7 @@ Item {
         locale: RootStore.locale
         currency: RootStore.currentCurrency
         currentAccount: RootStore.currentAccount
-        changeSelectedAccount: changeSelectedAccount
+        changeSelectedAccount: walletContainer.changeSelectedAccount
     }
 
     RowLayout {

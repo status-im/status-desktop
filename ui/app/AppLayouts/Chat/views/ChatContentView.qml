@@ -42,8 +42,11 @@ ColumnLayout {
         id: topBar
         Layout.fillWidth: true
 
-        chatInfoButton.title: chatContentModule.chatDetails.name
+        chatInfoButton.title: chatContentModule? chatContentModule.chatDetails.name : ""
         chatInfoButton.subTitle: {
+            if(!chatContentModule)
+                return ""
+
             // In some moment in future this should be part of the backend logic.
             // (once we add transaltion on the backend side)
             switch (chatContentModule.chatDetails.type) {
@@ -68,24 +71,39 @@ ColumnLayout {
                 return ""
             }
         }
-        chatInfoButton.image.source: chatContentModule.chatDetails.icon
-        chatInfoButton.image.isIdenticon: chatContentModule.chatDetails.isIdenticon
-        chatInfoButton.icon.color: chatContentModule.chatDetails.color
-        chatInfoButton.type: chatContentModule.chatDetails.type
-        chatInfoButton.pinnedMessagesCount: chatContentModule.pinnedMessagesModel.count
-        chatInfoButton.muted: chatContentModule.chatDetails.muted
+        chatInfoButton.image.source: chatContentModule? chatContentModule.chatDetails.icon : ""
+        chatInfoButton.image.isIdenticon: chatContentModule? chatContentModule.chatDetails.isIdenticon : false
+        chatInfoButton.icon.color: chatContentModule? chatContentModule.chatDetails.color : ""
+        chatInfoButton.type: chatContentModule? chatContentModule.chatDetails.type : Constants.chatType.unknown
+        chatInfoButton.pinnedMessagesCount: chatContentModule? chatContentModule.pinnedMessagesModel.count : 0
+        chatInfoButton.muted: chatContentModule? chatContentModule.chatDetails.muted : false
 
         chatInfoButton.onPinnedMessagesCountClicked: {
+            if(!chatContentModule) {
+                console.debug("error on open pinned messages - chat content module is not set")
+                return
+            }
             Global.openPopup(pinnedMessagesPopupComponent, {
                           messageStore: messageStore,
                           pinnedMessagesModel: chatContentModule.pinnedMessagesModel,
                           messageToPin: ""
                       })
         }
-        chatInfoButton.onUnmute: chatContentModule.unmuteChat()
+        chatInfoButton.onUnmute: {
+            if(!chatContentModule) {
+                console.debug("error on unmute chat - chat content module is not set")
+                return
+            }
+            chatContentModule.unmuteChat()
+        }
 
-        chatInfoButton.sensor.enabled: chatContentModule.chatDetails.type !== Constants.chatType.publicChat &&
-                                       chatContentModule.chatDetails.type !== Constants.chatType.communityChat
+        chatInfoButton.sensor.enabled: {
+            if(!chatContentModule)
+                return false
+
+            return chatContentModule.chatDetails.type !== Constants.chatType.publicChat &&
+                    chatContentModule.chatDetails.type !== Constants.chatType.communityChat
+        }
         chatInfoButton.onClicked: {
             // Not Refactored Yet
 //            switch (chatContentRoot.rootStore.chatsModelInst.channelView.activeChannel.chatType) {
@@ -101,12 +119,23 @@ ColumnLayout {
 //            }
         }
 
-        membersButton.visible: localAccountSensitiveSettings.showOnlineUsers && chatContentModule.chatDetails.isUsersListAvailable
+        membersButton.visible: {
+            if(!chatContentModule)
+                return false
+
+            return localAccountSensitiveSettings.showOnlineUsers &&
+                    chatContentModule.chatDetails.isUsersListAvailable
+        }
         membersButton.highlighted: localAccountSensitiveSettings.expandUsersList
         notificationButton.visible: localAccountSensitiveSettings.isActivityCenterEnabled
         notificationButton.tooltip.offset: localAccountSensitiveSettings.expandUsersList ? 0 : 14
 
-        notificationCount: chatContentModule.chatDetails.notificationCount
+        notificationCount: {
+            if(!chatContentModule)
+                return 0
+
+            return chatContentModule.chatDetails.notificationCount
+        }
 
         onSearchButtonClicked: root.openAppSearch()
 
@@ -115,6 +144,10 @@ ColumnLayout {
 
         popupMenu: ChatContextMenuView {
             openHandler: function () {
+                if(!chatContentModule) {
+                    console.debug("error on open chat context menu handler - chat content module is not set")
+                    return
+                }
                 currentFleet = chatContentModule.getCurrentFleet()
                 isCommunityChat = chatContentModule.chatDetails.belongsToCommunity
                 amIChatAdmin = chatContentModule.amIChatAdmin()
@@ -126,18 +159,34 @@ ColumnLayout {
             }
 
             onMuteChat: {
+                if(!chatContentModule) {
+                    console.debug("error on mute chat from context menu - chat content module is not set")
+                    return
+                }
                 chatContentModule.muteChat()
             }
 
             onUnmuteChat: {
+                if(!chatContentModule) {
+                    console.debug("error on unmute chat from context menu - chat content module is not set")
+                    return
+                }
                 chatContentModule.unmuteChat()
             }
 
             onMarkAllMessagesRead: {
+                if(!chatContentModule) {
+                    console.debug("error on mark all messages read from context menu - chat content module is not set")
+                    return
+                }
                 chatContentModule.markAllMessagesRead()
             }
 
             onClearChatHistory: {
+                if(!chatContentModule) {
+                    console.debug("error on clear chat history from context menu - chat content module is not set")
+                    return
+                }
                 chatContentModule.clearChatHistory()
             }
 
@@ -146,6 +195,10 @@ ColumnLayout {
             }
 
             onLeaveChat: {
+                if(!chatContentModule) {
+                    console.debug("error on leave chat from context menu - chat content module is not set")
+                    return
+                }
                 chatContentModule.leaveChat()
             }
 
@@ -170,6 +223,10 @@ ColumnLayout {
             }
 
             onOpenPinnedMessagesList: {
+                if(!chatContentModule) {
+                    console.debug("error on open pinned messages from context menu - chat content module is not set")
+                    return
+                }
                 Global.openPopup(pinnedMessagesPopupComponent, {
                                      messageStore: messageStore,
                                      pinnedMessagesModel: chatContentModule.pinnedMessagesModel,
@@ -245,7 +302,7 @@ ColumnLayout {
 
     MessageStore{
         id: messageStore
-        messageModule: chatContentModule.messagesModule
+        messageModule: chatContentModule? chatContentModule.messagesModule : null
     }
 
     MessageContextMenuView {
@@ -260,6 +317,10 @@ ColumnLayout {
         }
 
         onPinnedMessagesLimitReached: {
+            if(!chatContentModule) {
+                console.debug("error on open pinned messages limit reached from message context menu - chat content module is not set")
+                return
+            }
             Global.openPopup(pinnedMessagesPopupComponent, {
                           messageStore: messageStore,
                           pinnedMessagesModel: chatContentModule.pinnedMessagesModel,
@@ -355,8 +416,13 @@ ColumnLayout {
                 anchors.bottom: parent.bottom
                 recentStickers: chatContentRoot.rootStore.stickersModuleInst.recent
                 stickerPackList: chatContentRoot.rootStore.stickersModuleInst.stickerPacks
-                chatType: chatContentModule.chatDetails.type
+                chatType: chatContentModule? chatContentModule.chatDetails.type : Constants.chatType.unknown
                 onSendTransactionCommandButtonClicked: {
+                    if(!chatContentModule) {
+                        console.debug("error on sending transaction command - chat content module is not set")
+                        return
+                    }
+
                     if (Utils.getContactDetailsAsJson(chatContentModule.getMyChatId()).ensVerified) {
                         Global.openPopup(chatContentRoot.sendTransactionWithEnsModal)
                     } else {
@@ -373,6 +439,11 @@ ColumnLayout {
                                                 packId)
                 }
                 onSendMessage: {
+                    if(!chatContentModule) {
+                        console.debug("error on sending message - chat content module is not set")
+                        return
+                    }
+
                     if (chatInput.fileUrls.length > 0){
                         chatContentModule.inputAreaModule.sendImages(JSON.stringify(fileUrls));
                     }

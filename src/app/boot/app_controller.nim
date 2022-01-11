@@ -207,6 +207,7 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result.connect()
 
 proc delete*(self: AppController) =
+  singletonInstance.delete
   self.osNotificationService.delete
   self.keychainService.delete
   self.contactsService.delete

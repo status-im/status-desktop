@@ -5,7 +5,13 @@ QtObject {
     id: root
 
     property var messageModule
-    property var messagesModel: messageModule.model
+    property var messagesModel
+
+    onMessageModuleChanged: {
+        if(!messageModule)
+            return
+        root.messagesModel = messageModule.model
+    }
 
     function loadMoreMessages () {
         if(!messageModule)
@@ -21,6 +27,9 @@ QtObject {
             return false
 
         let jsonObj = messageModule.getMessageByIdAsJson(id)
+        if(jsonObj === "")
+            return
+
         let obj = JSON.parse(jsonObj)
         if (obj.error) {
             // This log is available only in debug mode, if it's annoying we can remove it
@@ -36,6 +45,9 @@ QtObject {
             return false
 
         let jsonObj = messageModule.getMessageByIndexAsJson(index)
+        if(jsonObj === "")
+            return
+
         let obj = JSON.parse(jsonObj)
         if (obj.error) {
             // This log is available only in debug mode, if it's annoying we can remove it
