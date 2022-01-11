@@ -51,7 +51,7 @@ method delete*(self: Controller) =
 method init*(self: Controller) = 
   self.events.on(SIGNAL_MESSAGES_LOADED) do(e:Args):
     let args = MessagesLoadedArgs(e)
-    if(self.chatId != args.chatId):
+    if(self.chatId != args.chatId or args.pinnedMessages.len == 0):
       return
     self.delegate.newPinnedMessagesLoaded(args.pinnedMessages)
 

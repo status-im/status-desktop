@@ -8,6 +8,7 @@ import status/statusgo_backend_new/messages as status_go
 import ./dto/message as message_dto
 import ./dto/pinned_message as pinned_msg_dto
 import ./dto/reaction as reaction_dto
+import ../chat/dto/chat as chat_dto
 
 export message_dto
 export pinned_msg_dto
@@ -33,6 +34,7 @@ include async_tasks
 
 type
   MessagesArgs* = ref object of Args
+    chatId*: string
     messages*: seq[MessageDto]
 
   MessagesLoadedArgs* = ref object of Args
@@ -85,8 +87,13 @@ QtObject:
       var receivedData = MessageSignal(e)
 
       # Handling messages updates
-      if (receivedData.messages.len > 0):
-        self.events.emit(SIGNAL_NEW_MESSAGE_RECEIVED, MessagesArgs(messages: receivedData.messages))
+      if (receivedData.messages.len > 0 and receivedData.chats.len > 0):
+        # We included `chats` in this condition cause that's the form how `status-go` sends updates.
+        # The first element from the `receivedData.chats` array contains details about the chat a messages received in
+        # `receivedData.messages` refer to.
+        let chatId = receivedData.chats[0].id
+        let data = MessagesArgs(chatId: chatId, messages: receivedData.messages)
+        self.events.emit(SIGNAL_NEW_MESSAGE_RECEIVED, data)
       # Handling pinned messages updates
       if (receivedData.pinnedMessages.len > 0):
         for pm in receivedData.pinnedMessages:
@@ -299,33 +306,36 @@ QtObject:
       result.error = e.msg
       error "error: ", methodName="getDetailsForMessage", errName = e.name, errDesription = e.msg
 
-  proc finishAsyncSearchMessagesWithError*(self: Service, errorMessage: string) =
+  proc finishAsyncSearchMessagesWithError*(self: Service, chatId, errorMessage: string) =
     error "error: ", methodName="onAsyncSearchMessages", errDescription = errorMessage
-    self.events.emit(SIGNAL_SEARCH_MESSAGES_LOADED, MessagesArgs())
+    self.events.emit(SIGNAL_SEARCH_MESSAGES_LOADED, MessagesArgs(chatId: chatId))
 
   proc onAsyncSearchMessages*(self: Service, response: string) {.slot.} =
     let responseObj = response.parseJson
     if (responseObj.kind != JObject):
-      self.finishAsyncSearchMessagesWithError("search messages response is not an json object")
+      self.finishAsyncSearchMessagesWithError("", "search messages response is not an json object")
       return
+
+    var chatId: string
+    discard responseObj.getProp("chatId", chatId)
 
     var messagesObj: JsonNode
     if (not responseObj.getProp("messages", messagesObj)):
-      self.finishAsyncSearchMessagesWithError("search messages response doesn't contain messages property")
+      self.finishAsyncSearchMessagesWithError(chatId, "search messages response doesn't contain messages property")
       return
 
     var messagesArray: JsonNode
     if (not messagesObj.getProp("messages", messagesArray)):
-      self.finishAsyncSearchMessagesWithError("search messages response doesn't contain messages array")
+      self.finishAsyncSearchMessagesWithError(chatId, "search messages response doesn't contain messages array")
       return
 
     if (messagesArray.kind != JArray):
-      self.finishAsyncSearchMessagesWithError("expected messages json array is not of JArray type")
+      self.finishAsyncSearchMessagesWithError(chatId, "expected messages json array is not of JArray type")
       return
 
     var messages = map(messagesArray.getElems(), proc(x: JsonNode): MessageDto = x.toMessageDto())
 
-    let data = MessagesArgs(messages: messages)
+    let data = MessagesArgs(chatId: chatId, messages: messages)
     self.events.emit(SIGNAL_SEARCH_MESSAGES_LOADED, data)
 
   proc asyncSearchMessages*(self: Service, chatId: string, searchTerm: string, caseSensitive: bool) =
