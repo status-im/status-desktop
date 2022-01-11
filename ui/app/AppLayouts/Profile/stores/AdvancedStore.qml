@@ -7,16 +7,16 @@ QtObject {
     property var advancedModule
 
     // Advanced Module Properties
-    property string currentNetworkName: advancedModule.currentNetworkName
-    property string currentNetworkId: advancedModule.currentNetworkId
-    property string fleet: advancedModule.fleet
-    property string bloomLevel: advancedModule.bloomLevel
-    property bool wakuV2LightClientEnabled: advancedModule.wakuV2LightClientEnabled
-    property bool isTelemetryEnabled: advancedModule.isTelemetryEnabled
-    property bool isAutoMessageEnabled: advancedModule.isAutoMessageEnabled
-    property bool isDebugEnabled: advancedModule.isDebugEnabled
+    property string currentNetworkName: advancedModule? advancedModule.currentNetworkName : ""
+    property string currentNetworkId: advancedModule? advancedModule.currentNetworkId : ""
+    property string fleet: advancedModule? advancedModule.fleet : ""
+    property string bloomLevel: advancedModule? advancedModule.bloomLevel : ""
+    property bool wakuV2LightClientEnabled: advancedModule? advancedModule.wakuV2LightClientEnabled : false
+    property bool isTelemetryEnabled: advancedModule? advancedModule.isTelemetryEnabled : false
+    property bool isAutoMessageEnabled: advancedModule? advancedModule.isAutoMessageEnabled : false
+    property bool isDebugEnabled: advancedModule? advancedModule.isDebugEnabled : false
 
-    property var customNetworksModel: advancedModule.customNetworksModel
+    property var customNetworksModel: advancedModule? advancedModule.customNetworksModel : []
 
     property bool isWakuV2: root.fleet === Constants.waku_prod ||
                             root.fleet === Constants.waku_test
@@ -33,42 +33,72 @@ QtObject {
     }
 
     function logDir() {
+        if(!root.advancedModule)
+            return ""
+
         return root.advancedModule.logDir()
     }
 
     function setNetworkName(networkName) {
+        if(!root.advancedModule)
+            return
+
         root.advancedModule.setNetworkName(networkName)
     }
 
     function setFleet(fleetName) {
+        if(!root.advancedModule)
+            return
+
         root.advancedModule.setFleet(fleetName)
     }
 
     function setBloomLevel(mode) {
+        if(!root.advancedModule)
+            return
+
         root.advancedModule.setBloomLevel(mode)
     }
 
     function setWakuV2LightClientEnabled(mode) {
+        if(!root.advancedModule)
+            return
+
         root.advancedModule.setWakuV2LightClientEnabled(mode)
     }
 
     function toggleTelemetry() {
+        if(!root.advancedModule)
+            return
+
         root.advancedModule.toggleTelemetry()
     }
 
     function toggleAutoMessage() {
+        if(!root.advancedModule)
+            return
+
         root.advancedModule.toggleAutoMessage()
     }
 
     function toggleDebug() {
+        if(!root.advancedModule)
+            return
+
         root.advancedModule.toggleDebug()
     }
 
     function addCustomNetwork(name, endpoint, networkId, networkType) {
+        if(!root.advancedModule)
+            return
+
         root.advancedModule.addCustomNetwork(name, endpoint, networkId, networkType)
     }
 
     function toggleExperimentalFeature(feature) {
+        if(!root.advancedModule)
+            return
+
         if (feature === experimentalFeatures.wallet) {
             advancedModule.toggleWalletSection()
         }

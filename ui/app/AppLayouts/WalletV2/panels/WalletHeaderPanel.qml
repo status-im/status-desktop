@@ -36,7 +36,7 @@ Item {
         StyledText {
             id: title
             anchors.verticalCenter: parent.verticalCenter
-            text: walletHeader.currentAccount.name
+            text: walletHeader.currentAccount? walletHeader.currentAccount.name : ""
             font.weight: Font.Medium
             font.pixelSize: 28
         }
@@ -54,7 +54,7 @@ Item {
         StyledText {
             id: walletBalance
             anchors.verticalCenter: parent.verticalCenter
-            text: walletHeader.currentAccount.balance.toUpperCase()
+            text: walletHeader.currentAccount? walletHeader.currentAccount.balance.toUpperCase() : ""
             font.pixelSize: 22
         }
     }
@@ -72,7 +72,7 @@ Item {
         anchors.top: accountRow.bottom
         anchors.left: accountRow.left
         addressWidth: 180
-        address: walletHeader.currentAccount.address
+        address: walletHeader.currentAccount? walletHeader.currentAccount.address : ""
     }
 
     NetworkSelectPanel {
