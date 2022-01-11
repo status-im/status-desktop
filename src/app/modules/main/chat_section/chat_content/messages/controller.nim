@@ -52,8 +52,10 @@ method init*(self: Controller) =
     self.delegate.newMessagesLoaded(args.messages, args.reactions, args.pinnedMessages)
 
   self.events.on(SIGNAL_NEW_MESSAGE_RECEIVED) do(e: Args):
-    var evArgs = MessagesArgs(e)
-    for message in evArgs.messages:
+    var args = MessagesArgs(e)
+    if(self.chatId != args.chatId):
+      return
+    for message in args.messages:
       self.delegate.messageAdded(message)
 
   self.events.on(SIGNAL_SENDING_SUCCESS) do(e:Args):

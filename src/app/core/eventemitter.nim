@@ -57,4 +57,3 @@ when isMainModule:
       var args = ReadyArgs(a)
       echo args.text, ": from [2nd] handler"
     evts.emit("ready", ReadyArgs(text:"Hello, World"))
-    evts.emit("ready", ReadyArgs(text:"Hello, World"))
