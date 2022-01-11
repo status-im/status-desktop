@@ -145,8 +145,13 @@ QtObject:
     for i in 0 ..< self.items.len:
       if(self.items[i].id == messageId):
         return i
-
     return -1
+
+  proc findIndexBasedOnTimestampToInsertTo(self: Model, timestamp: int64): int = 
+    for i in 0 ..< self.items.len:
+      if(timestamp > self.items[i].timestamp):
+        return i
+    return 0
 
   proc prependItems*(self: Model, items: seq[Item]) =
     if(items.len == 0):
@@ -191,6 +196,17 @@ QtObject:
 
     self.beginInsertRows(parentModelIndex, 0, 0)
     self.items.insert(item, 0)
+    self.endInsertRows()
+    self.countChanged()
+
+  proc insertItemBasedOnTimestamp*(self: Model, item: Item) =
+    let parentModelIndex = newQModelIndex()
+    defer: parentModelIndex.delete
+
+    let position = self.findIndexBasedOnTimestampToInsertTo(item.timestamp)
+
+    self.beginInsertRows(parentModelIndex, position, position)
+    self.items.insert(item, position)
     self.endInsertRows()
     self.countChanged()
 

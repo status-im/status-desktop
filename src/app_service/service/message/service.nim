@@ -82,6 +82,12 @@ QtObject:
     result.pinnedMsgCursor = initTable[string, string]()
     result.lastUsedPinnedMsgCursor = initTable[string, string]()
 
+  proc removeMessageWithId(messages: var seq[MessageDto], msgId: string) =
+    for i in 0..< messages.len:
+      if (messages[i].id == msgId):
+        messages.delete(i)
+        return
+
   proc init*(self: Service) =
     self.events.on(SignalType.Message.event) do(e: Args):
       var receivedData = MessageSignal(e)
@@ -92,6 +98,21 @@ QtObject:
         # The first element from the `receivedData.chats` array contains details about the chat a messages received in
         # `receivedData.messages` refer to.
         let chatId = receivedData.chats[0].id
+        
+        # In case of reply to a message we're receiving 2 messages in the `receivedData.messages` array (replied message
+        # and a message one replied to) but we actually need only a new replied message, that's why we need to filter 
+        # messages here.
+        # We are not sure if we can receive more replies here, also ordering in the `receivedData.messages` array is not
+        # the same (once we may have replied messages before once after the messages one replied to), that's why we are 
+        # covering the most general case here.
+        var messagesOneRepliedTo: seq[string] 
+        for m in receivedData.messages:
+          if m.responseTo.len > 0:
+            messagesOneRepliedTo.add(m.responseTo)
+
+        for msgId in messagesOneRepliedTo:
+          removeMessageWithId(receivedData.messages, msgId)
+
         let data = MessagesArgs(chatId: chatId, messages: receivedData.messages)
         self.events.emit(SIGNAL_NEW_MESSAGE_RECEIVED, data)
       # Handling pinned messages updates
