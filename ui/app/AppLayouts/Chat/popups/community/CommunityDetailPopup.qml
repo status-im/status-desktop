@@ -21,8 +21,7 @@ StatusModal {
     property string description: community.description
     property int access: community.access
     property string source: community.image
-    // TODO members needs to be refactored on the backend
-    property int nbMembers: 0//community.nbMembers
+    property int nbMembers: community.members.count
     property bool ensOnly: community.ensOnly
     property bool canJoin: community.canJoin
     property bool canRequestAccess: community.canRequestAccess

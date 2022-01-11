@@ -5,6 +5,7 @@ import ./dto/community as community_dto
 import ../chat/service as chat_service
 
 import ../../../app/global/global_singleton
+import ../../../app/core/signals/types
 import ../../../app/core/eventemitter
 import status/statusgo_backend_new/communities as status_go
 
@@ -16,6 +17,9 @@ logScope:
 type
   CommunityArgs* = ref object of Args
     community*: CommunityDto
+
+  CommunitiesArgs* = ref object of Args
+    communities*: seq[CommunityDto]
 
   CommunityChatArgs* = ref object of Args
     communityId*: string
@@ -48,6 +52,7 @@ const SIGNAL_COMMUNITY_MY_REQUEST_ADDED* = "communityMyRequestAdded"
 const SIGNAL_COMMUNITY_LEFT* = "communityLeft"
 const SIGNAL_COMMUNITY_CREATED* = "communityCreated"
 const SIGNAL_COMMUNITY_EDITED* = "communityEdited"
+const SIGNAL_COMMUNITIES_UPDATE* = "communityUpdated"
 const SIGNAL_COMMUNITY_CHANNEL_CREATED* = "communityChannelCreated"
 const SIGNAL_COMMUNITY_CHANNEL_EDITED* = "communityChannelEdited"
 const SIGNAL_COMMUNITY_CHANNEL_REORDERED* = "communityChannelReordered"
@@ -97,6 +102,13 @@ QtObject:
       let errDesription = e.msg
       error "error: ", errDesription
       return
+
+    self.events.on(SignalType.Message.event) do(e: Args):
+      var receivedData = MessageSignal(e)
+
+      # Handling community updates
+      if (receivedData.communities.len > 0):
+        self.events.emit(SIGNAL_COMMUNITIES_UPDATE, CommunitiesArgs(communities: receivedData.communities))
 
   proc loadAllCommunities(self: Service): seq[CommunityDto] =
     let response = status_go.getAllCommunities()

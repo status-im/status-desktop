@@ -5,6 +5,7 @@ import ../io_interface as delegate_interface
 import ./view, ./controller
 import ../../shared_models/section_item
 import ../../shared_models/member_item
+import ../../shared_models/members_model
 import ../../../global/global_singleton
 import ../../../core/eventemitter
 import ../../../../app_service/service/community/service as community_service
@@ -73,7 +74,8 @@ method getCommunityItem(self: Module, c: CommunityDto): SectionItem =
       c.isMember,
       c.permissions.access,
       c.permissions.ensOnly,
-      c.members.map(x => member_item.initItem(x.id, x.roles)))
+      c.members.map(x => member_item.initItem(x.id, x.roles))
+    )
 
 method setAllCommunities*(self: Module, communities: seq[CommunityDto]) =
   for community in communities:
