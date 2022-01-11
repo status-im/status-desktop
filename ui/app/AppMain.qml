@@ -16,6 +16,7 @@ import "./AppLayouts/Chat/popups"
 import "./AppLayouts/Chat/popups/community"
 import "./AppLayouts/Profile/popups"
 import "./AppLayouts/stores"
+import "./AppLayouts/Browser/stores" as BrowserStores
 
 import Qt.labs.platform 1.1
 import Qt.labs.settings 1.0
@@ -150,13 +151,19 @@ Item {
     Audio {
         id: sendMessageSound
         store: rootStore
-        track: "send_message.wav"
+        track: Qt.resolvedUrl("../imports/assets/audio/send_message.wav")
     }
 
     Audio {
         id: notificationSound
         store: rootStore
-        track: "notification.wav"
+        track: Qt.resolvedUrl("../imports/assets/audio/notification.wav")
+    }
+
+    Audio {
+        id: errorSound
+        track: Qt.resolvedUrl("../imports/assets/audio/error.mp3")
+        store: rootStore
     }
 
     AppSearch{
@@ -470,7 +477,7 @@ Item {
                     //                property var _walletModel: walletModel
                     // Not Refactored Yet
                     //                property var _utilsModel: utilsModel
-                    property var _web3Provider: web3Provider
+                    property var _web3Provider: BrowserStores.Web3ProviderStore.web3ProviderInst
                 }
 
                 ProfileLayout {
@@ -831,5 +838,6 @@ Item {
 //            console.error('Could not parse the whitelist for sites', e)
 //        }
         Global.settingsHasLoaded();
+        Global.errorSound = errorSound;
     }
 }

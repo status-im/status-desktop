@@ -9,7 +9,13 @@ import shared 1.0
 StatusInputListPopup {
     id: emojiSuggestions
     property string shortname
-    property string unicode: emojiSuggestions.modelList[listView.currentIndex].unicode_alternates || emojiSuggestions.modelList[listView.currentIndex].unicode
+    property string unicode: {
+        if(listView.currentIndex < 0 || listView.currentIndex >= emojiSuggestions.modelList.count)
+            return ""
+
+        return emojiSuggestions.modelList[listView.currentIndex].unicode_alternates ||
+                emojiSuggestions.modelList[listView.currentIndex].unicode
+    }
 
     getImageSource: function (modelData) {
         return `../../assets/twemoji/72x72/${modelData.unicode}.png`

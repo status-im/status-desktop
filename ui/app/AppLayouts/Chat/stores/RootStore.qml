@@ -67,8 +67,6 @@ QtObject {
 
     property var userProfileInst: userProfile
 
-    property bool isDebugEnabled: profileSectionModule.isDebugEnabled
-
     property var accounts: walletSectionAccounts.model
     property var currentAccount: walletSectionCurrent
     property var currentCurrency: walletSection.currentCurrency

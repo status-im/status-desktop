@@ -33,7 +33,7 @@ import shared.panels 1.0
 Rectangle {
     id: container
 
-    property QtObject model: undefined
+    property QtObject model
     property Item delegate
     property alias suggestionsModel: filterItem.model
     property alias filter: filterItem.filter

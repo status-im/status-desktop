@@ -94,6 +94,9 @@ Item {
             // TODO: replace with StatusTextArea once it lives in StatusQ.
             StyledTextArea {
                 id: mailserverLogTxt
+                Layout.rightMargin: Style.current.padding
+                Layout.leftMargin: Style.current.padding
+                Layout.fillWidth: true
                 text: ""
                 customHeight: 200
                 textField.readOnly: true
@@ -116,6 +119,9 @@ Item {
             // TODO: replace with StatusTextArea once it lives in StatusQ.
             StyledTextArea {
                 id: logsTxt
+                Layout.rightMargin: Style.current.padding
+                Layout.leftMargin: Style.current.padding
+                Layout.fillWidth: true
                 text: ""
                 customHeight: 200
                 textField.readOnly: true

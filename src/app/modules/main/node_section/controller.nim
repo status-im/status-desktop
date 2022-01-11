@@ -34,7 +34,7 @@ proc newController*(delegate: io_interface.AccessInterface,
   result.nodeService = nodeService
   result.nodeConfigurationService = nodeConfigurationService
 
-proc delete*(self: Controller) =
+method delete*(self: Controller) =
    discard
 
 proc setPeers(self: Controller, peers: seq[string]) =
