@@ -8,7 +8,10 @@ function get_gh_pkgs_token() {
 }
 
 function get_bottle_json() {
-    brew info --json=v1 "${1}" | jq '.[0].bottle.stable.files.mojave'
+    brew info --json=v1 "${1}" | jq '
+        .[0].bottle.stable.files | to_entries
+        | map(select(.key | test("(arm|linux)") | not))
+        | first.value'
 }
 
 function fetch_bottle() {
@@ -48,6 +51,11 @@ BOTTLE_JSON=$(get_bottle_json "${BOTTLE_NAME}")
 BOTTLE_URL=$(echo "${BOTTLE_JSON}" | jq -r .url)
 BOTTLE_SHA=$(echo "${BOTTLE_JSON}" | jq -r .sha256)
 
+if [[ -z "${BOTTLE_URL}" ]] || [[ -z "${BOTTLE_SHA}" ]]; then
+    echo "Failed to identify bottle URL or SHA256!" >&2
+    exit 1
+fi
+
 echo "${BOTTLE_NAME} - Fetching bottle for macOS"
 fetch_bottle "${BOTTLE_PATH}" "${BOTTLE_URL}"
 trap "rm -fr ${BOTTLE_PATH}" EXIT ERR INT QUIT
@@ -57,7 +65,7 @@ BOTTLE_LOCAL_SHA=$(shasum -a 256 "${BOTTLE_PATH}" | awk '{print $1}')
 
 if [[ "${BOTTLE_LOCAL_SHA}" != "${BOTTLE_SHA}" ]]; then
     echo "The SHA256 of downloaded bottle did not match!" >&2
-    exit 1;
+    exit 1
 fi
 
 echo "${BOTTLE_NAME} - Unpacking bottle tarball"
