@@ -20,7 +20,7 @@ void SandboxApp::startEngine()
     qmlRegisterType<SpellChecker>("Sandbox", 0, 1, "Spellchecker");
 
 #ifdef QT_DEBUG
-    const QUrl url(applicationDirPath() + "/../main.qml");
+    const QUrl url = QUrl::fromLocalFile(applicationDirPath() + "/../main.qml");
 #else
     const QUrl url(QStringLiteral("qrc:/main.qml"));
 #endif
