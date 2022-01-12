@@ -189,11 +189,17 @@ proc buildCommunityUI(self: Module, events: EventEmitter,
   self.setActiveItemSubItem(selectedItemId, selectedSubItemId)
 
 proc createItemFromPublicKey(self: Module, publicKey: string): contacts_item.Item =
-  let contact =  self.controller.getContact(publicKey)
-  let (name, image, isIdenticon) = self.controller.getContactNameAndImage(contact.id)
+  let contactDetails = self.controller.getContactDetails(publicKey)
   
-  return contacts_item.initItem(contact.id, name, image, isIdenticon, contact.isContact(), contact.isBlocked(), 
-  contact.requestReceived())
+  return contacts_item.initItem(
+    contactDetails.details.id,
+    contactDetails.displayName,
+    contactDetails.icon,
+    contactDetails.isIdenticon,
+    contactDetails.details.isContact(),
+    contactDetails.details.isBlocked(), 
+    contactDetails.details.requestReceived()
+  )
 
 proc initContactRequestsModel(self: Module) =
   var contactsWhoAddedMe: seq[contacts_item.Item]
@@ -385,6 +391,7 @@ method getCurrentFleet*(self: Module): string =
 
 method acceptContactRequest*(self: Module, publicKey: string) =
   self.controller.addContact(publicKey)
+  self.createOneToOneChat(publicKey, ensName = "")
 
 method onContactAccepted*(self: Module, publicKey: string) =
   self.view.contactRequestsModel().removeItemWithPubKey(publicKey)
@@ -412,6 +419,14 @@ method onContactBlocked*(self: Module, publicKey: string) =
   self.view.contactRequestsModel().removeItemWithPubKey(publicKey)
 
 method onContactDetailsUpdated*(self: Module, publicKey: string) =
+  let contact = self.controller.getContact(publicKey)
+  if (contact.requestReceived() and
+    not contact.isContact()and
+    not contact.isBlocked() and
+    not self.view.contactRequestsModel().containsItemWithPubKey(publicKey)):
+      let item = self.createItemFromPublicKey(publicKey)
+      self.view.contactRequestsModel().addItem(item)
+
   let (chatName, chatImage, isIdenticon) = self.controller.getOneToOneChatNameAndImage(publicKey)
   self.view.chatsModel().updateItemDetails(publicKey, chatName, chatImage, isIdenticon)
 
