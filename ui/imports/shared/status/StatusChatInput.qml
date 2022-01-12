@@ -32,6 +32,7 @@ Rectangle {
     property bool paste: false;
     property bool isColonPressed: false;
     property bool isReply: false
+    property string replyMessageId: replyArea.messageId
 
     property bool isImage: false
     property bool isEdit: false
@@ -550,7 +551,7 @@ Rectangle {
         control.fileUrls = imageArea.imageSource
     }
 
-    function showReplyArea(userName, message, identicon, contentType, image, sticker) {
+    function showReplyArea(messageId, userName, message, identicon, contentType, image, sticker) {
         isReply = true
         replyArea.userName = userName
         replyArea.message = message
@@ -558,6 +559,7 @@ Rectangle {
         replyArea.contentType = contentType
         replyArea.image = image
         replyArea.stickerData = sticker
+        replyArea.messageId = messageId
         messageInputField.forceActiveFocus();
     }
 

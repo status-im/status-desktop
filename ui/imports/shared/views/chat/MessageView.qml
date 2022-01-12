@@ -185,6 +185,8 @@ Column {
         messageContextMenu.popup()
     }
 
+    signal showReplyArea(string messageId, string author)
+
 
 //    function showReactionAuthors(fromAccounts, emojiId) {
 //        return root.rootStore.showReactionAuthors(fromAccounts, emojiId)
@@ -372,6 +374,10 @@ Column {
             }
             onOpenStickerPackPopup: {
                 root.openStickerPackPopup(stickerPackId);
+            }
+
+            onReplyClicked: {
+                root.showReplyArea(messageId, author)
             }
         }
     }
