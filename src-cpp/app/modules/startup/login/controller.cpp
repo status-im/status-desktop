@@ -52,6 +52,9 @@ Accounts::AccountDto Controller::getSelectedAccount()
 			return acc;
 		}
 	}
+
+	// TODO: For situations like this, should be better to return a std::optional instead?
+	return Accounts::AccountDto();
 }
 
 void Controller::setSelectedAccountKeyUid(QString keyUid)
