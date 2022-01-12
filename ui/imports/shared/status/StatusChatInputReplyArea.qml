@@ -21,6 +21,7 @@ Rectangle {
     property string identicon: ""
     property string image: ""
     property string stickerData: ""
+    property string messageId: ""
     property int contentType: -1
 
     signal closeButtonClicked()
@@ -126,6 +127,10 @@ Rectangle {
             root.userName = ""
             root.message = ""
             root.identicon = ""
+            root.messageId = ""
+            root.stickerData = ""
+            root.image = ""
+            root.contentType = -1
             root.closeButtonClicked()
         }
         MouseArea {

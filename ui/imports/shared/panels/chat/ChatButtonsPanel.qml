@@ -18,7 +18,7 @@ Rectangle {
     property bool placeholderMsg
     property string fromAuthor
     property alias editBtnActive: editBtn.active
-    signal replyClicked()
+    signal replyClicked(string messageId, string author)
     signal hoverChanged(bool hovered)
     signal setMessageActive(string messageId, bool active)
     signal clickMessage(bool isProfileClick, bool isSticker, bool isImage, var image, bool emojiOnly, bool hideEmojiPicker)
@@ -95,8 +95,7 @@ Rectangle {
             //% "Reply"
             tooltip.text: qsTrId("message-reply")
             onClicked: {
-                SelectedMessage.set(messageId, fromAuthor);
-                buttonsContainer.replyClicked();
+                buttonsContainer.replyClicked(messageId, fromAuthor);
                 if (messageContextMenu.closeParentPopup) {
                     messageContextMenu.closeParentPopup()
                 }
