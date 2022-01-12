@@ -1,4 +1,4 @@
-import ../../../../app_service/service/contacts/dto/[contacts]
+import ../../../../app_service/service/contacts/dto/[contacts, contact_details]
 import ../../../../app_service/service/chat/dto/[chat]
 import ../../../../app_service/service/community/dto/[community]
 
@@ -74,6 +74,9 @@ method getContacts*(self: AccessInterface): seq[ContactsDto] {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getContact*(self: AccessInterface, id: string): ContactsDto {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getContactDetails*(self: AccessInterface, id: string): ContactDetails {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getContactNameAndImage*(self: AccessInterface, contactId: string): 

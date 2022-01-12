@@ -71,6 +71,12 @@ QtObject:
       of ModelRole.RequestReceived: 
         result = newQVariant(item.requestReceived)
 
+  proc findIndexByPubKey(self: Model, pubKey: string): int = 
+    for i in 0 ..< self.items.len:
+      if(self.items[i].pubKey == pubKey):
+        return i
+    return -1
+
   proc addItems*(self: Model, items: seq[Item]) =
     if(items.len == 0):
       return
@@ -94,11 +100,6 @@ QtObject:
     self.endInsertRows()
     self.countChanged()
 
-  proc findIndexByPubKey(self: Model, pubKey: string): int = 
-    for i in 0 ..< self.items.len:
-      if(self.items[i].pubKey == pubKey):
-        return i
-    return -1
 
   proc containsItemWithPubKey*(self: Model, pubKey: string): bool = 
     return self.findIndexByPubKey(pubKey) != -1

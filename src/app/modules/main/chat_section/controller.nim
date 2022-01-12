@@ -212,6 +212,9 @@ method getContacts*(self: Controller): seq[ContactsDto] =
 method getContact*(self: Controller, id: string): ContactsDto =
   return self.contactService.getContactById(id)
 
+method getContactDetails*(self: Controller, id: string): ContactDetails =
+  return self.contactService.getContactDetails(id)
+
 method getContactNameAndImage*(self: Controller, contactId: string): 
   tuple[name: string, image: string, isIdenticon: bool] =
   return self.contactService.getContactNameAndImage(contactId)
