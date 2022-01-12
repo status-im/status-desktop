@@ -46,6 +46,14 @@ method delete*(self: Controller) =
   discard
 
 method init*(self: Controller) = 
+  self.events.on(SIGNAL_NEW_MESSAGE_RECEIVED) do(e: Args):
+    let args = MessagesArgs(e)
+    if(self.isCommunitySection and args.chatType != ChatType.CommunityChat or
+      not self.isCommunitySection and args.chatType == ChatType.CommunityChat):
+        return
+    self.delegate.onNewMessagesReceived(args.chatId, args.unviewedMessagesCount, args.unviewedMentionsCount, 
+    args.messages)
+
   self.events.on(chat_service.SIGNAL_CHAT_MUTED) do(e:Args):
     let args = chat_service.ChatArgs(e)
     self.delegate.onChatMuted(args.chatId)

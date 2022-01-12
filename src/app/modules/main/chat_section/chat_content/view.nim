@@ -94,9 +94,13 @@ QtObject:
   proc setMuted*(self: View, muted: bool) = 
     self.chatDetails.setMuted(muted)
 
-  proc updateChatDetails*(self: View, name, icon: string, isIdenticon: bool) =
+  proc updateChatDetailsNameAndIcon*(self: View, name, icon: string, isIdenticon: bool) =
     self.chatDetails.setName(name)
     self.chatDetails.setIcon(icon, isIdenticon)
+
+  proc updateChatDetailsNotifications*(self: View, hasUnreadMessages: bool, notificationCount: int) =
+    self.chatDetails.setHasUnreadMessages(hasUnreadMessages)
+    self.chatDetails.setNotificationCount(notificationCount)
 
   proc getChatDetails(self: View): QVariant {.slot.} =
     return self.chatDetailsVariant

@@ -1,6 +1,6 @@
 import NimQml, Tables, strutils, strformat, json
-
-import item, base_item, sub_model
+from ../../../../app_service/service/chat/dto/chat import ChatType
+import item, sub_item, base_item, sub_model
 
 type
   ModelRole {.pure.} = enum
@@ -161,6 +161,12 @@ QtObject:
       if(it.id == id):
         return it
 
+  proc getSubItemById*(self: Model, id: string): SubItem =
+    for it in self.items:
+      let item = it.subItems.getItemById(id)
+      if(not item.isNil):
+        return item
+
   proc setActiveItemSubItem*(self: Model, id: string, subItemId: string) =
     for i in 0 ..< self.items.len:
       self.items[i].setActiveSubItem(subItemId)
@@ -193,19 +199,11 @@ QtObject:
         self.dataChanged(index, index, @[ModelRole.Muted.int])
         return
 
-      var found = false
       if self.items[i].subItems.muteUnmuteItemById(id, mute):
         return
 
-  proc setHasUnreadMessage*(self: Model, id: string, value: bool) =
-    for i in 0 ..< self.items.len:
-      if(self.items[i].id == id):
-        let index = self.createIndex(i, 0, nil)
-        self.items[i].BaseItem.hasUnreadMessages = value
-        self.dataChanged(index, index, @[ModelRole.HasUnreadMessages.int])
-        return
-  
   proc updateItemDetails*(self: Model, id, name, icon: string, isIdenticon: bool) =
+    ## This updates only first level items, it doesn't update subitems, since subitems cannot have custom icon.
     for i in 0 ..< self.items.len:
       if(self.items[i].id == id):
         self.items[i].BaseItem.name = name
@@ -214,3 +212,28 @@ QtObject:
         let index = self.createIndex(i, 0, nil)
         self.dataChanged(index, index, @[ModelRole.Name.int, ModelRole.Icon.int, ModelRole.IsIdenticon.int])
         return
+
+  proc updateNotificationsForItemOrSubItemById*(self: Model, id: string, hasUnreadMessages: bool, 
+    notificationsCount: int) =
+    for i in 0 ..< self.items.len:
+      if(self.items[i].id == id):
+        let index = self.createIndex(i, 0, nil)
+        self.items[i].BaseItem.hasUnreadMessages = hasUnreadMessages
+        self.items[i].BaseItem.notificationsCount = notificationsCount
+        self.dataChanged(index, index, @[ModelRole.HasUnreadMessages.int, ModelRole.NotificationsCount.int])
+        return
+
+      if self.items[i].subItems.updateNotificationsForItemById(id, hasUnreadMessages, notificationsCount):
+        return
+
+  proc getAllNotifications*(self: Model): tuple[hasNotifications: bool, notificationsCount: int] =
+    result.hasNotifications = false
+    result.notificationsCount = 0
+    for i in 0 ..< self.items.len:
+      # if it's category item type is set to `ChatType.Unknown`
+      # (in one point of time we may start maintaining notifications per category as well)
+      if(self.items[i].BaseItem.`type` == ChatType.Unknown.int): 
+        continue
+
+      result.hasNotifications = result.hasNotifications or self.items[i].BaseItem.hasUnreadMessages
+      result.notificationsCount = result.notificationsCount + self.items[i].BaseItem.notificationsCount  

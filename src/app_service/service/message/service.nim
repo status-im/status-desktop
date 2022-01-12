@@ -35,6 +35,9 @@ include async_tasks
 type
   MessagesArgs* = ref object of Args
     chatId*: string
+    chatType*: ChatType
+    unviewedMessagesCount*: int
+    unviewedMentionsCount*: int
     messages*: seq[MessageDto]
 
   MessagesLoadedArgs* = ref object of Args
@@ -98,6 +101,12 @@ QtObject:
         # The first element from the `receivedData.chats` array contains details about the chat a messages received in
         # `receivedData.messages` refer to.
         let chatId = receivedData.chats[0].id
+        let chatType = receivedData.chats[0].chatType
+        let unviewedMessagesCount = receivedData.chats[0].unviewedMessagesCount
+        let unviewedMentionsCount = receivedData.chats[0].unviewedMentionsCount
+        if(chatType == ChatType.Unknown):
+          error "error: new message with an unknown chat type received for chat id ", chatId
+          return
         
         # In case of reply to a message we're receiving 2 messages in the `receivedData.messages` array (replied message
         # and a message one replied to) but we actually need only a new replied message, that's why we need to filter 
@@ -113,7 +122,12 @@ QtObject:
         for msgId in messagesOneRepliedTo:
           removeMessageWithId(receivedData.messages, msgId)
 
-        let data = MessagesArgs(chatId: chatId, messages: receivedData.messages)
+        let data = MessagesArgs(chatId: chatId, 
+          chatType: chatType, 
+          unviewedMessagesCount: unviewedMessagesCount,
+          unviewedMentionsCount: unviewedMentionsCount,
+          messages: receivedData.messages
+        )
         self.events.emit(SIGNAL_NEW_MESSAGE_RECEIVED, data)
       # Handling pinned messages updates
       if (receivedData.pinnedMessages.len > 0):

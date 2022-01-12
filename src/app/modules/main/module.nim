@@ -480,6 +480,10 @@ method getCommunitySectionModule*[T](self: Module[T], communityId: string): QVar
 method onActiveChatChange*[T](self: Module[T], sectionId: string, chatId: string) =
   self.appSearchModule.onActiveChatChange(sectionId, chatId)
 
+method onNotificationsUpdated[T](self: Module[T], sectionId: string, sectionHasUnreadMessages: bool, 
+  sectionNotificationCount: int) =
+  self.view.model().udpateNotifications(sectionId, sectionHasUnreadMessages, sectionNotificationCount)
+
 method getAppSearchModule*[T](self: Module[T]): QVariant =
   self.appSearchModule.getModuleAsVariant()
 

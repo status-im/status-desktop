@@ -108,7 +108,7 @@ proc buildChatUI(self: Module, events: EventEmitter,
 
     let item = initItem(c.id, chatName, chatImage, isIdenticon, c.color, c.description, c.chatType.int, amIChatAdmin, 
     hasNotification, notificationsCount, c.muted, false, 0)
-    self.view.appendItem(item)
+    self.view.chatsModel().appendItem(item)
     self.addSubmodule(c.id, false, isUsersListAvailable, events, settingsService, contactService, chatService, 
     communityService, messageService)
     
@@ -141,7 +141,7 @@ proc buildCommunityUI(self: Module, events: EventEmitter,
       let amIChatAdmin = comm.admin
       let channelItem = initItem(chatDto.id, chatDto.name, chatDto.identicon, false, chatDto.color, chatDto.description, 
       chatDto.chatType.int, amIChatAdmin, hasNotification, notificationsCount, chatDto.muted, false, c.position)
-      self.view.appendItem(channelItem)
+      self.view.chatsModel().appendItem(channelItem)
       self.addSubmodule(chatDto.id, true, true, events, settingsService, contactService, chatService, communityService, 
       messageService)
 
@@ -184,7 +184,7 @@ proc buildCommunityUI(self: Module, events: EventEmitter,
       var categoryItem = initItem(cat.id, cat.name, "", false, "", "", ChatType.Unknown.int, false, 
       hasNotificationPerCategory, notificationsCountPerCategory, false, false, cat.position)
       categoryItem.prependSubItems(categoryChannels)
-      self.view.appendItem(categoryItem)
+      self.view.chatsModel().appendItem(categoryItem)
 
   self.setActiveItemSubItem(selectedItemId, selectedSubItemId)
 
@@ -260,10 +260,13 @@ method activeItemSubItemSet*(self: Module, itemId: string, subItemId: string) =
   # to any category have empty `subItemId`
   let subItem = item.subItems.getItemById(subItemId)
   
+  # update view maintained by this module
   self.view.chatsModel().setActiveItemSubItem(itemId, subItemId)
   self.view.activeItemSubItemSet(item, subItem)
-
+  # notify parent module about active chat/channel
   self.delegate.onActiveChatChange(self.controller.getMySectionId(), self.controller.getActiveChatId())
+  # update notifications caused by setting active chat/channel
+  self.controller.markAllMessagesRead(self.controller.getActiveChatId())
   
 method getModuleAsVariant*(self: Module): QVariant =
   return self.viewVariant
@@ -316,7 +319,7 @@ method addNewChat*(
   self.addSubmodule(chatDto.id, false, isUsersListAvailable, events, settingsService, contactService, chatService, 
   communityService, messageService)
   self.chatContentModules[chatDto.id].load()
-  self.view.appendItem(item)
+  self.view.chatsModel().appendItem(item)
 
   # make new added chat active one
   self.setActiveItemSubItem(item.id, "")
@@ -325,7 +328,7 @@ method removeChat*(self: Module, chatId: string) =
   if(not self.chatContentModules.contains(chatId)):
     return
 
-  self.view.removeItem(chatId)
+  self.view.chatsModel().removeItemById(chatId)
   self.removeSubmodule(chatId)
 
   # remove active state form the removed chat (if applicable)
@@ -341,6 +344,16 @@ method createOneToOneChat*(self: Module, chatId: string, ensName: string) =
     return
 
   self.controller.createOneToOneChat(chatId, ensName)
+
+proc updateNotifications(self: Module, chatId: string, unviewedMessagesCount: int, unviewedMentionsCount: int) =
+  let hasUnreadMessages = unviewedMessagesCount > 0
+  # update model of this module (appropriate chat from the chats list (chats model))
+  self.view.chatsModel().updateNotificationsForItemOrSubItemById(chatId, hasUnreadMessages, unviewedMentionsCount)
+  # update child module
+  self.chatContentModules[chatId].onNotificationsUpdated(hasUnreadMessages, unviewedMentionsCount)
+  # update parent module
+  let (sectionHasUnreadMessages, sectionNotificationCount) = self.view.chatsModel().getAllNotifications()
+  self.delegate.onNotificationsUpdated(self.controller.getMySectionId(), sectionHasUnreadMessages, sectionNotificationCount)
 
 method leaveChat*(self: Module, chatId: string) =
   self.controller.leaveChat(chatId)
@@ -358,7 +371,7 @@ method onChatUnmuted*(self: Module, chatId: string) =
   self.view.chatsModel().muteUnmuteItemOrSubItemById(chatId, false)
 
 method onMarkAllMessagesRead*(self: Module, chatId: string) =
-  self.view.chatsModel().setHasUnreadMessage(chatId, value=false)
+  self.updateNotifications(chatId, unviewedMessagesCount=0, unviewedMentionsCount=0)
 
 method markAllMessagesRead*(self: Module, chatId: string) =
   self.controller.markAllMessagesRead(chatId)
@@ -400,3 +413,11 @@ method onContactBlocked*(self: Module, publicKey: string) =
 method onContactDetailsUpdated*(self: Module, publicKey: string) =
   let (chatName, chatImage, isIdenticon) = self.controller.getOneToOneChatNameAndImage(publicKey)
   self.view.chatsModel().updateItemDetails(publicKey, chatName, chatImage, isIdenticon)
+
+method onNewMessagesReceived*(self: Module, chatId: string, unviewedMessagesCount: int, unviewedMentionsCount: int, 
+  messages: seq[MessageDto]) =
+  let activeChatId = self.controller.getActiveChatId()
+  if(activeChatId == chatId):
+    self.controller.markAllMessagesRead(chatId)
+  else:
+    self.updateNotifications(chatId, unviewedMessagesCount, unviewedMentionsCount)

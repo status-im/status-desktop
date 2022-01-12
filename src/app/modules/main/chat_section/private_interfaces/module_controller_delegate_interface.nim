@@ -7,6 +7,10 @@ method addNewChat*(self: AccessInterface, chatDto: ChatDto, events: EventEmitter
   messageService: message_service.Service) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method onNewMessagesReceived*(self: AccessInterface, chatId: string, unviewedMessagesCount: int, 
+  unviewedMentionsCount: int, messages: seq[MessageDto]) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method onChatMuted*(self: AccessInterface, chatId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
