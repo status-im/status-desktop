@@ -40,17 +40,24 @@ void Service::init()
 
 QVector<AccountDto> Service::openedAccounts()
 {
-	// try
-	auto response = Backend::Accounts::openAccounts(Constants::applicationPath(Constants::DataDir));
-	QJsonArray multiAccounts = response.m_result;
-	QVector<AccountDto> result;
-	foreach(const QJsonValue& value, multiAccounts)
+	// TODO: if there's an exception, should we return an empty result? or should we look into using
+	// std::expected or std::optional or boost outcome https://www.boost.org/doc/libs/1_75_0/libs/outcome/doc/html/index.html
+	try
 	{
-		result << toAccountDto(value);
+		auto response = Backend::Accounts::openAccounts(Constants::applicationPath(Constants::DataDir));
+		QJsonArray multiAccounts = response.m_result;
+		QVector<AccountDto> result;
+		foreach(const QJsonValue& value, multiAccounts)
+		{
+			result << toAccountDto(value);
+		}
+		return result;
 	}
-	return result;
-	//} catch(const std::exception& e){
-	//	 error "error: ", methodName="openedAccounts", errName = e.name, errDesription = e.msg
+	catch(Backend::RpcException& e)
+	{
+		qWarning() << "error: methodName=openedAccounts, errDescription=" << e.what();
+		return QVector<AccountDto>();
+	}
 }
 
 QVector<GeneratedAccountDto> Service::generatedAccounts()
@@ -66,30 +73,29 @@ QVector<GeneratedAccountDto> Service::generatedAccounts()
 
 bool Service::setupAccount(QString accountId, QString password)
 {
-	//try:
-	QString installationId(QUuid::createUuid().toString(QUuid::WithoutBraces));
-	QJsonObject accountData(Service::getAccountDataForAccountId(accountId));
-	QJsonArray subAccountData(Service::getSubaccountDataForAccountId(accountId));
-	QJsonObject settings(Service::getAccountSettings(accountId, installationId));
-	QJsonObject nodeConfig(Service::getDefaultNodeConfig(installationId));
+	// TODO: would it make sense to use std::expected or std::optional or boost outcome https://www.boost.org/doc/libs/1_75_0/libs/outcome/doc/html/index.html
+	try
+	{
+		QString installationId(QUuid::createUuid().toString(QUuid::WithoutBraces));
+		QJsonObject accountData(Service::getAccountDataForAccountId(accountId));
+		QJsonArray subAccountData(Service::getSubaccountDataForAccountId(accountId));
+		QJsonObject settings(Service::getAccountSettings(accountId, installationId));
+		QJsonObject nodeConfig(Service::getDefaultNodeConfig(installationId));
 
-	// if(accountDataJson.isNil or subaccountDataJson.isNil or settingsJson.isNil or
-	// nodeConfigJson.isNil):
-	//let description = "at least one json object is not prepared well"
-	//error "error: ", methodName="setupAccount", errDesription = description
-	//return false
+		QString hashedPassword(Backend::Utils::hashString(password));
 
-	QString hashedPassword(Backend::Utils::hashString(password));
+		Service::storeDerivedAccounts(accountId, hashedPassword, PATHS);
 
-	Service::storeDerivedAccounts(accountId, hashedPassword, PATHS);
+		m_loggedInAccount =
+			Service::saveAccountAndLogin(hashedPassword, accountData, subAccountData, settings, nodeConfig);
 
-	m_loggedInAccount = Service::saveAccountAndLogin(hashedPassword, accountData, subAccountData, settings, nodeConfig);
-
-	return Service::getLoggedInAccount().isValid();
-
-	//except Exception as e:
-	// error "error: ", methodName="setupAccount", errName = e.name, errDesription = e.msg
-	//return false*/
+		return Service::getLoggedInAccount().isValid();
+	}
+	catch(exception& e)
+	{
+		qWarning() << "error: methodName=setupAccount, errDescription=" << e.what();
+		return false;
+	}
 }
 
 AccountDto Service::getLoggedInAccount()
@@ -121,37 +127,41 @@ bool Service::importMnemonic(QString mnemonic)
 
 QString Service::login(AccountDto account, QString password)
 {
-	//try:
-	QString hashedPassword(Backend::Utils::hashString(password));
-
-	QString thumbnailImage;
-	QString largeImage;
-
-	foreach(const Accounts::Image& img, account.images)
+	// TODO: would it make sense to use std::expected or std::optional or boost outcome https://www.boost.org/doc/libs/1_75_0/libs/outcome/doc/html/index.html
+	try
 	{
-		if(img.imgType == "thumbnail")
+		QString hashedPassword(Backend::Utils::hashString(password));
+
+		QString thumbnailImage;
+		QString largeImage;
+
+		foreach(const Accounts::Image& img, account.images)
 		{
-			thumbnailImage = img.uri;
+			if(img.imgType == "thumbnail")
+			{
+				thumbnailImage = img.uri;
+			}
+			else if(img.imgType == "large")
+			{
+				largeImage = img.uri;
+			}
 		}
-		else if(img.imgType == "large")
-		{
-			largeImage = img.uri;
-		}
+
+		auto response = Backend::Accounts::login(
+			account.name, account.keyUid, hashedPassword, account.identicon, thumbnailImage, largeImage);
+		// TODO: check response for errors
+
+		qDebug() << "Account logged in";
+
+		m_loggedInAccount = account;
+
+		return "";
 	}
-
-	auto response = Backend::Accounts::login(
-		account.name, account.keyUid, hashedPassword, account.identicon, thumbnailImage, largeImage);
-	// TODO: check response for errors
-
-	qDebug() << "Account logged in";
-
-	m_loggedInAccount = account;
-
-	return "";
-
-	//except Exception as e:
-	//error "error: ", methodName="setupAccount", errName = e.name, errDesription = e.msg
-	//return e.msg
+	catch(exception& e)
+	{
+		qWarning() << "error: methodName=login, errDescription=" << e.what();
+		return e.what();
+	}
 }
 
 void Service::clear()
@@ -195,14 +205,19 @@ DerivedAccounts Service::storeDerivedAccounts(QString accountId, QString hashedP
 Accounts::AccountDto Service::saveAccountAndLogin(
 	QString hashedPassword, QJsonObject account, QJsonArray subaccounts, QJsonObject settings, QJsonObject config)
 {
-	//try:
-	auto response = Backend::Accounts::saveAccountAndLogin(hashedPassword, account, subaccounts, settings, config);
+	// TODO: would it make sense to use std::expected or std::optional or boost outcome https://www.boost.org/doc/libs/1_75_0/libs/outcome/doc/html/index.html
+	try
+	{
+		auto response = Backend::Accounts::saveAccountAndLogin(hashedPassword, account, subaccounts, settings, config);
 
-	m_isFirstTimeAccountLogin = true;
-	return toAccountDto(account);
-
-	//  except Exception as e:
-	//  error "error: ", methodName="saveAccountAndLogin", errName = e.name, errDesription = e.msg
+		m_isFirstTimeAccountLogin = true;
+		return toAccountDto(account);
+	}
+	catch(exception& e)
+	{
+		qWarning() << "error: methodName=saveAccountAndLogin, errDescription=" << e.what();
+		return Accounts::AccountDto();
+	}
 }
 
 QJsonObject Service::prepareAccountJsonObject(const GeneratedAccountDto account)
@@ -233,6 +248,9 @@ QJsonObject Service::getAccountDataForAccountId(QString accountId)
 			return Service::prepareAccountJsonObject(m_importedAccount);
 		}
 	}
+
+	// TODO: Should we use instead a std::optional?
+	throw std::runtime_error("account not found");
 }
 
 QJsonArray Service::prepareSubaccountJsonObject(GeneratedAccountDto account)
@@ -255,7 +273,6 @@ QJsonArray Service::getSubaccountDataForAccountId(QString accountId)
 {
 	foreach(const GeneratedAccountDto& acc, m_generatedAccounts)
 	{
-
 		if(acc.id == accountId)
 		{
 			return prepareSubaccountJsonObject(acc);
@@ -268,6 +285,9 @@ QJsonArray Service::getSubaccountDataForAccountId(QString accountId)
 			return prepareSubaccountJsonObject(m_importedAccount);
 		}
 	}
+
+	// TODO: Should we use instead a std::optional?
+	throw std::runtime_error("account not found");
 }
 
 QString generateSigningPhrase(int count)
@@ -326,6 +346,9 @@ QJsonObject Service::getAccountSettings(QString accountId, QString installationI
 			return Service::prepareAccountSettingsJsonObject(m_importedAccount, installationId);
 		}
 	}
+
+	// TODO: Should we use instead a std::optional?
+	throw std::runtime_error("account not found");
 }
 
 QJsonArray getNodes(const QJsonObject fleet, QString nodeType)

@@ -68,7 +68,7 @@ void Module::load()
 
 		m_view->setModelItems(items);
 
-		// set the first account as slected one
+		// set the first account as selected one
 		m_controller->setSelectedAccountKeyUid(items[0].getKeyUid());
 		Module::setSelectedAccount(items[0]);
 	}
