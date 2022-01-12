@@ -21,8 +21,8 @@ ModalPopup {
     signal joinPrivateChat(string publicKey, string ensName)
 
     signal profileClicked()
-    function doJoin(pk, ensName) {
-        popup.joinPrivateChat(pk, Utils.isChatKey(pk) ? "" : ensName);
+    function doJoin(pubKey, username) {
+        popup.joinPrivateChat(pubKey, Utils.isChatKey(pubKey) ? "" : username);
         popup.close();
     }
 
@@ -31,8 +31,7 @@ ModalPopup {
         contactFieldAndList.pubKey = ""
         contactFieldAndList.ensUsername = ""
         contactFieldAndList.chatKey.forceActiveFocus(Qt.MouseFocusReason)
-        // Not Refactored Yet
-//        contactFieldAndList.existingContacts.visible = popup.store.allContacts.hasAddedContacts()
+        contactFieldAndList.existingContacts.visible = contactsStore.myContactsModel.count > 0
         contactFieldAndList.noContactsRect.visible = !contactFieldAndList.existingContacts.visible
     }
 
@@ -45,8 +44,8 @@ ModalPopup {
 
         contactsStore: popup.contactsStore
 
-        onUserClicked: function (isContact, pubKey, ensName) {
-            popup.doJoin(pubKey, ensName);
+        onUserClicked: function (pubKey, isAddedContact, username) {
+            popup.doJoin(pubKey, username);
         }
     }
 

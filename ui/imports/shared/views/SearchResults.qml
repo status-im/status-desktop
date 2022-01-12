@@ -35,7 +35,7 @@ Item {
         return root.pubKey != "" ? Utils.getContactDetailsAsJson(root.pubKey).isContact : false
     }
 
-    signal resultClicked(string pubKey, bool isAddedContact)
+    signal resultClicked(string pubKey, bool isAddedContact, string username)
     signal addToContactsButtonClicked(string pubKey)
 
     function reset() {
@@ -117,7 +117,7 @@ Item {
             onExited: foundContact.hovered = false
             onClicked: {
                 if (root.resultClickable) {
-                    root.resultClicked(root.pubKey, root.isAddedContact)
+                    root.resultClicked(root.pubKey, root.isAddedContact, root.username)
                 }
             }
         }
