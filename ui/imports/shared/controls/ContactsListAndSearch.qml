@@ -32,7 +32,7 @@ Item {
     property bool showCheckbox: false
     property bool showContactList: true
     property bool showSearch: true
-    signal userClicked(string pubKey, bool isAddedContact)
+    signal userClicked(string pubKey, bool isAddedContact, string name)
     property var pubKeys: ([])
     property bool hideCommunityMembers: false
     property bool addContactEnabled: true
@@ -197,7 +197,7 @@ Item {
             }
             root.pubKeys = pubKeysCopy
 
-            userClicked(contact.pubKey, contact.isContact)
+            userClicked(contact.pubKey, contact.isContact, contact.name)
         }
         expanded: !searchResults.loading && pubKey === "" && !searchResults.showProfileNotFoundMessage
     }
@@ -215,7 +215,7 @@ Item {
             if (!validate()) {
                 return
             }
-            userClicked(pubKey, isAddedContact)
+            userClicked(pubKey, isAddedContact, username)
         }
         onAddToContactsButtonClicked: {
             root.contactsStore.addContact(pubKey)
