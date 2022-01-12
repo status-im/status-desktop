@@ -253,4 +253,7 @@ method onContactDetailsUpdated*(self: Module, contactId: string) =
   self.view.pinnedModel().updateSenderDetails(contactId, updatedContact.displayName, updatedContact.details.localNickname,
   updatedContact.icon, updatedContact.isIdenticon)
   if(self.controller.getMyChatId() == contactId):
-    self.view.updateChatDetails(updatedContact.displayName, updatedContact.icon, updatedContact.isIdenticon)
+    self.view.updateChatDetailsNameAndIcon(updatedContact.displayName, updatedContact.icon, updatedContact.isIdenticon)
+
+method onNotificationsUpdated*(self: Module, hasUnreadMessages: bool, notificationCount: int) =
+  self.view.updateChatDetailsNotifications(hasUnreadMessages, notificationCount)
