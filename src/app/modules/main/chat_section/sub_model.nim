@@ -189,5 +189,15 @@ QtObject:
         self.items[i].BaseItem.muted = mute
         self.dataChanged(index, index, @[ModelRole.Muted.int])
         return true
+    return false
 
+  proc updateNotificationsForItemById*(self: SubModel, id: string, hasUnreadMessages: bool, 
+    notificationsCount: int): bool =
+    for i in 0 ..< self.items.len:
+      if(self.items[i].id == id):
+        let index = self.createIndex(i, 0, nil)
+        self.items[i].BaseItem.hasUnreadMessages = hasUnreadMessages
+        self.items[i].BaseItem.notificationsCount = notificationsCount
+        self.dataChanged(index, index, @[ModelRole.HasUnreadMessages.int, ModelRole.NotificationsCount.int])
+        return true
     return false

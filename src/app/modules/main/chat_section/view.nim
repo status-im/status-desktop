@@ -58,15 +58,6 @@ QtObject:
   QtProperty[QVariant] contactRequestsModel:
     read = getContactRequestsModel
 
-  proc appendItem*(self: View, item: Item) =
-    self.model.appendItem(item)
-
-  proc removeItem*(self: View, id: string) =
-    self.model.removeItemById(id)
-
-  proc prependItem*(self: View, item: Item) =
-    self.model.prependItem(item)
-
   proc activeItemChanged*(self:View) {.signal.}
 
   proc getActiveItem(self: View): QVariant {.slot.} =
