@@ -36,6 +36,7 @@ Item {
 
     property int countOnStartUp: 0
     signal openStickerPackPopup(string stickerPackId)
+    signal showReplyArea(string messageId, string author)
 
     Item {
         id: loadingMessagesIndicator
@@ -344,6 +345,10 @@ Item {
             nextMessageAsJsonObj: messageStore.getMessageByIndexAsJson(index + 1)
             onOpenStickerPackPopup: {
                 root.openStickerPackPopup(stickerPackId);
+            }
+
+            onShowReplyArea: {
+                root.showReplyArea(messageId, author)
             }
 
             stickersLoaded: root.stickersLoaded

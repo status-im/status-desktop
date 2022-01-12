@@ -84,10 +84,10 @@ ColumnLayout {
                 return
             }
             Global.openPopup(pinnedMessagesPopupComponent, {
-                          messageStore: messageStore,
-                          pinnedMessagesModel: chatContentModule.pinnedMessagesModel,
-                          messageToPin: ""
-                      })
+                                 messageStore: messageStore,
+                                 pinnedMessagesModel: chatContentModule.pinnedMessagesModel,
+                                 messageToPin: ""
+                             })
         }
         chatInfoButton.onUnmute: {
             if(!chatContentModule) {
@@ -106,17 +106,17 @@ ColumnLayout {
         }
         chatInfoButton.onClicked: {
             // Not Refactored Yet
-//            switch (chatContentRoot.rootStore.chatsModelInst.channelView.activeChannel.chatType) {
-//            case Constants.chatType.privateGroupChat:
-//                openPopup(groupInfoPopupComponent, {
-//                              channelType: GroupInfoPopup.ChannelType.ActiveChannel,
-//                              channel: chatContentRoot.rootStore.chatsModelInst.channelView.activeChannel
-//                          })
-//                break;
-//            case Constants.chatType.oneToOne:
-//                openProfilePopup(chatContentRoot.rootStore.chatsModelInst.channelView.activeChannel.id)
-//                break;
-//            }
+            //            switch (chatContentRoot.rootStore.chatsModelInst.channelView.activeChannel.chatType) {
+            //            case Constants.chatType.privateGroupChat:
+            //                openPopup(groupInfoPopupComponent, {
+            //                              channelType: GroupInfoPopup.ChannelType.ActiveChannel,
+            //                              channel: chatContentRoot.rootStore.chatsModelInst.channelView.activeChannel
+            //                          })
+            //                break;
+            //            case Constants.chatType.oneToOne:
+            //                openProfilePopup(chatContentRoot.rootStore.chatsModelInst.channelView.activeChannel.id)
+            //                break;
+            //            }
         }
 
         membersButton.visible: {
@@ -257,26 +257,26 @@ ColumnLayout {
         }
 
         // Not Refactored Yet
-//        Connections {
-//            target: chatContentRoot.rootStore.chatsModelInst
-//            onOnlineStatusChanged: {
-//                if (connected == isConnected) return;
-//                isConnected = connected;
-//                if(isConnected){
-//                    timer.setTimeout(function(){
-//                        connectedStatusRect.visible = false;
-//                    }, 5000);
-//                } else {
-//                    connectedStatusRect.visible = true;
-//                }
-//            }
-//        }
-//        Component.onCompleted: {
-//            isConnected = chatContentRoot.rootStore.chatsModelInst.isOnline
-//            if(!isConnected){
-//                connectedStatusRect.visible = true
-//            }
-//        }
+        //        Connections {
+        //            target: chatContentRoot.rootStore.chatsModelInst
+        //            onOnlineStatusChanged: {
+        //                if (connected == isConnected) return;
+        //                isConnected = connected;
+        //                if(isConnected){
+        //                    timer.setTimeout(function(){
+        //                        connectedStatusRect.visible = false;
+        //                    }, 5000);
+        //                } else {
+        //                    connectedStatusRect.visible = true;
+        //                }
+        //            }
+        //        }
+        //        Component.onCompleted: {
+        //            isConnected = chatContentRoot.rootStore.chatsModelInst.isOnline
+        //            if(!isConnected){
+        //                connectedStatusRect.visible = true
+        //            }
+        //        }
     }
 
     Item {
@@ -322,10 +322,10 @@ ColumnLayout {
                 return
             }
             Global.openPopup(pinnedMessagesPopupComponent, {
-                          messageStore: messageStore,
-                          pinnedMessagesModel: chatContentModule.pinnedMessagesModel,
-                          messageToPin: messageId
-                      })
+                                 messageStore: messageStore,
+                                 pinnedMessagesModel: chatContentModule.pinnedMessagesModel,
+                                 messageToPin: messageId
+                             })
         }
 
         onToggleReaction: {
@@ -351,6 +351,14 @@ ColumnLayout {
             messageContextMenuInst: contextmenu
             messageStore: messageStore
             stickersLoaded: chatContentRoot.stickersLoaded
+            onShowReplyArea: {
+                let obj = messageStore.getMessageByIdAsJson(messageId)
+                if (!obj) {
+                    return
+                }
+                chatInput.showReplyArea(messageId, obj.senderDisplayName, obj.messageText, obj.senderIcon, obj.contentType, obj.messageImage, obj.sticker)
+
+            }
         }
 
         Item {
@@ -362,33 +370,33 @@ ColumnLayout {
             Layout.preferredHeight: height
 
             // Not Refactored Yet
-//            Connections {
-//                target: chatContentRoot.rootStore.chatsModelInst.messageView
-//                onLoadingMessagesChanged:
-//                    if(value){
-//                        loadingMessagesIndicator.active = true
-//                    } else {
-//                        timer.setTimeout(function(){
-//                            loadingMessagesIndicator.active = false;
-//                        }, 5000);
-//                    }
-//            }
+            //            Connections {
+            //                target: chatContentRoot.rootStore.chatsModelInst.messageView
+            //                onLoadingMessagesChanged:
+            //                    if(value){
+            //                        loadingMessagesIndicator.active = true
+            //                    } else {
+            //                        timer.setTimeout(function(){
+            //                            loadingMessagesIndicator.active = false;
+            //                        }, 5000);
+            //                    }
+            //            }
 
             // Not Refactored Yet
-//            Loader {
-//                id: loadingMessagesIndicator
-//                active: chatContentRoot.rootStore.chatsModelInst.messageView.loadingMessages
-//                sourceComponent: loadingIndicator
-//                anchors.right: parent.right
-//                anchors.bottom: chatInput.top
-//                anchors.rightMargin: Style.current.padding
-//                anchors.bottomMargin: Style.current.padding
-//            }
+            //            Loader {
+            //                id: loadingMessagesIndicator
+            //                active: chatContentRoot.rootStore.chatsModelInst.messageView.loadingMessages
+            //                sourceComponent: loadingIndicator
+            //                anchors.right: parent.right
+            //                anchors.bottom: chatInput.top
+            //                anchors.rightMargin: Style.current.padding
+            //                anchors.bottomMargin: Style.current.padding
+            //            }
 
-//            Component {
-//                id: loadingIndicator
-//                LoadingAnimation { }
-//            }
+            //            Component {
+            //                id: loadingIndicator
+            //                LoadingAnimation { }
+            //            }
 
             StatusChatInput {
                 id: chatInput
@@ -434,9 +442,9 @@ ColumnLayout {
                 }
                 onStickerSelected: {
                     chatContentRoot.rootStore.sendSticker(chatContentModule.getMyChatId(),
-                                                hashId,
-                                                chatInput.isReply ? SelectedMessage.messageId : "",
-                                                packId)
+                                                          hashId,
+                                                          chatInput.isReply ? SelectedMessage.messageId : "",
+                                                          packId)
                 }
                 onSendMessage: {
                     if(!chatContentModule) {
@@ -452,10 +460,10 @@ ColumnLayout {
                         msg = chatInput.interpretMessage(msg)
 
                         chatContentModule.inputAreaModule.sendMessage(
-                            msg,
-                            chatInput.isReply ? SelectedMessage.messageId : "",
-                            Utils.isOnlyEmoji(msg) ? Constants.messageContentType.emojiType : Constants.messageContentType.messageType,
-                            false)
+                                    msg,
+                                    chatInput.isReply ? chatInput.replyMessageId : "",
+                                    Utils.isOnlyEmoji(msg) ? Constants.messageContentType.emojiType : Constants.messageContentType.messageType,
+                                    false)
 
                         if (event) event.accepted = true
                         sendMessageSound.stop();

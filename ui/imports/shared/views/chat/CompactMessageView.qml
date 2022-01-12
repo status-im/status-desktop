@@ -46,7 +46,7 @@ Item {
     signal openStickerPackPopup(string stickerPackId)
     signal addEmoji(bool isProfileClick, bool isSticker, bool isImage , var image, bool emojiOnly, bool hideEmojiPicker)
     signal clickMessage(bool isProfileClick, bool isSticker, bool isImage, var image, bool emojiOnly, bool hideEmojiPicker, bool isReply, bool isRightClickOnImage, string imageSource)
-
+    signal replyClicked(string messageId, string author)
     width: parent.width
     height: messageContainer.height + messageContainer.anchors.topMargin
             + (dateGroupLbl.visible ? dateGroupLbl.height + dateGroupLbl.anchors.topMargin : 0)
@@ -89,7 +89,7 @@ Item {
             root.clickMessage(isProfileClick, isSticker, isImage, image, emojiOnly, hideEmojiPicker, false, false, "");
         }
         onReplyClicked: {
-            showReplyArea();
+            root.replyClicked(messageId, author)
         }
     }
 
