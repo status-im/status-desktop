@@ -375,7 +375,7 @@ Item {
                         activeCommunity: communityData
                         onBackupButtonClicked: {
                             Global.openPopup(transferOwnershipPopup, {
-                                privateKey: root.store.exportCommunity(),
+                                privateKey: root.store.exportCommunity(communityData.id),
                                 store: root.store
                             })
                         }

@@ -58,6 +58,9 @@ QtObject {
 //    property var walletModelInst: walletModel
     // Not Refactored Yet
 //    property var profileModelInst: profileModel
+
+    property var globalUtilsInst: globalUtils
+
     property var mainModuleInst: mainModule
     property var activityCenterModuleInst: activityCenterModule
     property var activityCenterList: activityCenterModuleInst.model
@@ -92,14 +95,12 @@ QtObject {
     // Not Refactored Yet
 //    property var activeCommunity: chatsModelInst.communities.activeCommunity
 
-
-
     function sendSticker(channelId, hash, replyTo, pack) {
         stickersModuleInst.send(channelId, hash, replyTo, pack)
     }
 
     function copyToClipboard(text) {
-        globalUtils.copyToClipboard(text)
+        globalUtilsInst.copyToClipboard(text)
     }
 
     function deleteMessage(messageId) {
@@ -144,8 +145,7 @@ QtObject {
     }
 
     function editCommunityCategory(communityId, categoryId, categoryName, channels) {
-        // Not Refactored Yet
-//        chatsModelInst.communities.editCommunityCategory(communityId, categoryId, categoryName, channels);
+        communitiesModuleInst.editCommunityCategory(communityId, categoryId, categoryName, channels);
     }
 
     function deleteCommunityCategory(categoryId) {
@@ -158,17 +158,15 @@ QtObject {
     }
 
     function setCommunityMuted(communityId, checked) {
-        // Not Refactored Yet
-//        chatsModelInst.communities.setCommunityMuted(communityId, checked);
+        communitiesModuleInst.setCommunityMuted(communityId, checked);
     }
 
-    function exportCommunity() {
-        // Not Refactored Yet
-//        return chatsModelInst.communities.exportCommunity();
+    function exportCommunity(communityId) {
+        return communitiesModuleInst.exportCommunity(communityId);
     }
 
     function createCommunityChannel(communityId, channelName, channelDescription) {
-       communitiesModuleInst.createCommunityChannel(communityId, channelName, channelDescription);
+        communitiesModuleInst.createCommunityChannel(communityId, channelName, channelDescription);
     }
 
     function editCommunityChannel(communityId, channelId, channelName, channelDescription, channelCategoryId, popupPosition) {
@@ -179,14 +177,12 @@ QtObject {
 //        chatsModelInst.editCommunityChannel(communityId, channelId, channelName, channelDescription, channelCategoryId, popupPosition);
     }
 
-    function acceptRequestToJoinCommunity(id) {
-        // Not Refactored Yet
-//        chatsModelInst.communities.acceptRequestToJoinCommunity(id);
+    function acceptRequestToJoinCommunity(communityId, requestId) {
+        communitiesModuleInst.acceptRequestToJoinCommunity(communityId, requestId)
     }
 
-    function declineRequestToJoinCommunity(id) {
-        // Not Refactored Yet
-//        chatsModelInst.communities.declineRequestToJoinCommunity(id);
+    function declineRequestToJoinCommunity(communityId, requestId) {
+        communitiesModuleInst.declineRequestToJoinCommunity(communityId, requestId)
     }
 
     function userNameOrAlias(pk) {

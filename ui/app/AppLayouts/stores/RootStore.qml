@@ -40,13 +40,11 @@ QtObject {
     }
 
     function setCommunityMuted(communityId, checked) {
-        // Not Refactored Yet
-//        chatsModelInst.communities.setCommunityMuted(communityId, checked);
+        communitiesModuleInst.setCommunityMuted(communityId, checked);
     }
 
-    function exportCommunity() {
-        // Not Refactored Yet
-//        chatsModelInst.communities.exportCommunity();
+    function exportCommunity(communityId) {
+        return communitiesModuleInst.exportCommunity(communityId);
     }
 
     function leaveCommunity(communityId) {
