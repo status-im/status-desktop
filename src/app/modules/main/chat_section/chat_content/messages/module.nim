@@ -72,8 +72,26 @@ proc createChatIdentifierItem(self: Module): Item =
   if(chatDto.chatType == ChatType.OneToOne):
     (chatName, chatIcon, isIdenticon) = self.controller.getOneToOneChatNameAndImage()
 
-  result = initItem(CHAT_IDENTIFIER_MESSAGE_ID, "", chatDto.id, chatName, "", chatIcon, isIdenticon, false, "", "", "", 
-  false, true, 0, ContentType.ChatIdentifier, -1)
+  result = initItem(
+    CHAT_IDENTIFIER_MESSAGE_ID,
+    responseToMessageWithId = "",
+    senderId = chatDto.id,
+    senderDisplayName = chatName,
+    senderLocalName = "",
+    senderIcon = chatIcon,
+    isIdenticon,
+    amISender = false,
+    outgoingStatus = "",
+    text = "",
+    image = "", 
+    messageContainsMentions = false,
+    seen = true,
+    timestamp = 0,
+    ContentType.ChatIdentifier,
+    messageType = -1,
+    sticker = "",
+    stickerPack = -1
+  )
 
 method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: seq[ReactionDto], 
   pinnedMessages: seq[PinnedMessageDto]) = 
@@ -84,9 +102,26 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
       let sender = self.controller.getContactDetails(m.`from`)
 
       let renderedMessageText = self.controller.getRenderedText(m.parsedText)
-      var item = initItem(m.id, m.responseTo, m.`from`, sender.displayName, sender.details.localNickname, sender.icon, 
-      sender.isIdenticon, sender.isCurrentUser, m.outgoingStatus, renderedMessageText, m.image, 
-      m.containsContactMentions(), m.seen, m.timestamp, m.contentType.ContentType, m.messageType)
+      var item = initItem(
+        m.id,
+        m.responseTo,
+        m.`from`,
+        sender.displayName,
+        sender.details.localNickname,
+        sender.icon, 
+        sender.isIdenticon,
+        sender.isCurrentUser,
+        m.outgoingStatus,
+        renderedMessageText,
+        m.image, 
+        m.containsContactMentions(),
+        m.seen,
+        m.timestamp,
+        m.contentType.ContentType,
+        m.messageType,
+        sticker = self.controller.decodeContentHash(m.sticker.hash),
+        m.sticker.pack
+      )
 
       for r in reactions:
         if(r.messageId == m.id):
@@ -123,9 +158,26 @@ method messageAdded*(self: Module, message: MessageDto) =
   let sender = self.controller.getContactDetails(message.`from`)
 
   let renderedMessageText = self.controller.getRenderedText(message.parsedText)
-  var item = initItem(message.id, message.responseTo, message.`from`, sender.displayName, sender.details.localNickname, 
-  sender.icon, sender.isIdenticon, sender.isCurrentUser, message.outgoingStatus, renderedMessageText, message.image, 
-  message.containsContactMentions(), message.seen, message.timestamp, message.contentType.ContentType, message.messageType)
+  var item = initItem(
+    message.id,
+    message.responseTo,
+    message.`from`,
+    sender.displayName,
+    sender.details.localNickname, 
+    sender.icon,
+    sender.isIdenticon,
+    sender.isCurrentUser,
+    message.outgoingStatus,
+    renderedMessageText,
+    message.image, 
+    message.containsContactMentions(),
+    message.seen,
+    message.timestamp,
+    message.contentType.ContentType,
+    message.messageType,
+    sticker = self.controller.decodeContentHash(message.sticker.hash),
+    message.sticker.pack
+  )
 
   self.view.model().insertItemBasedOnTimestamp(item)
 

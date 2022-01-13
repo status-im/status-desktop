@@ -17,12 +17,15 @@ Item {
     property var messageContextMenu
     property var container
     property var contactsStore
+    property int contentType
 
     property int chatHorizontalPadding: Style.current.halfPadding
     property int chatVerticalPadding: 7
     property bool headerRepeatCondition: (authorCurrentMsg !== authorPrevMsg ||
                                           shouldRepeatHeader || dateGroupLbl.visible || chatReply.active)
     property bool stickersLoaded: false
+    property string sticker
+    property int stickerPack
     property bool isMessageActive: false
     property bool isCurrentUser: false
     property bool isHovered: false
@@ -529,8 +532,8 @@ Item {
                             anchors.topMargin: chatVerticalPadding
                             anchors.left: parent.left
                             anchors.leftMargin: chatVerticalPadding
-                            contentType: contentType
-                            stickerData: sticker
+                            contentType: root.contentType
+                            stickerData: root.sticker
                             onLoaded: {
                                 messageStore.scrollToBottom(true, root.container)
                             }
@@ -553,7 +556,7 @@ Item {
                     root.clickMessage(isProfileClick, isSticker, isImage, null, false, false, false, false, "");
                 }
                 onOpenStickerPackPopup: {
-                    root.openStickerPackPopup();
+                    root.openStickerPackPopup(root.stickerPack);
                 }
 
                 onSetMessageActive: {

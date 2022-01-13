@@ -32,6 +32,16 @@ QtObject {
         readonly property string keycard: "keycard"
     }
 
+    function setGlobalNetworkId() {
+        Global.currentNetworkId = currentNetworkId
+    }
+    Component.onCompleted: {
+        setGlobalNetworkId()
+    }
+    onCurrentNetworkIdChanged: {
+        setGlobalNetworkId()
+    }
+
     function logDir() {
         if(!root.advancedModule)
             return ""

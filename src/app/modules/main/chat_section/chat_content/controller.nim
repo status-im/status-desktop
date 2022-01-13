@@ -8,6 +8,7 @@ import ../../../../../app_service/service/contacts/service as contact_service
 import ../../../../../app_service/service/chat/service as chat_service
 import ../../../../../app_service/service/community/service as community_service
 import ../../../../../app_service/service/message/service as message_service
+import ../../../../../app_service/service/eth/utils as eth_utils
 
 import ../../../../core/signals/types
 import ../../../../core/eventemitter
@@ -160,3 +161,7 @@ method getCurrentFleet*(self: Controller): string =
 
 method getRenderedText*(self: Controller, parsedTextArray: seq[ParsedText]): string =
   return self.messageService.getRenderedText(parsedTextArray)
+
+
+method decodeContentHash*(self: Controller, hash: string): string =
+  return eth_utils.decodeContentHash(hash)

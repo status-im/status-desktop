@@ -69,3 +69,6 @@ method getCurrentFleet*(self: AccessInterface): string {.base.} =
 
 method getRenderedText*(self: AccessInterface, parsedTextArray: seq[ParsedText]): string {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method decodeContentHash*(self: AccessInterface, hash: string): string {.base.} =
+  raise newException(ValueError, "No implementation available")

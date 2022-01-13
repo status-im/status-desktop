@@ -87,7 +87,9 @@ method convertToItems*[T](
           n.message.seen,
           n.message.timestamp,
           ContentType(n.message.contentType), 
-          n.message.messageType
+          n.message.messageType,
+          self.controller.decodeContentHash(n.message.sticker.hash),
+          n.message.sticker.pack
         ))
     
       return notification_item.initItem(
