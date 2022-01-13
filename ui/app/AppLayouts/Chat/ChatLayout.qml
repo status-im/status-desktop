@@ -31,9 +31,7 @@ StatusAppThreePanelLayout {
     // Not Refactored
    property var messageStore
 
-   property RootStore rootStore: RootStore {
-       messageStore: root.messageStore
-   }
+   property RootStore rootStore: RootStore { }
 
     property Component pinnedMessagesListPopupComponent
     property bool stickersLoaded: false
@@ -65,6 +63,7 @@ StatusAppThreePanelLayout {
         parentModule: root.rootStore.chatCommunitySectionModule
         rootStore: root.rootStore
         contactsStore: root.contactsStore
+        chatSectionModule: root.rootStore.chatCommunitySectionModule
         pinnedMessagesPopupComponent: root.pinnedMessagesListPopupComponent
         stickersLoaded: root.stickersLoaded
         //chatGroupsListViewCount: contactColumnLoader.item.chatGroupsListViewCount
