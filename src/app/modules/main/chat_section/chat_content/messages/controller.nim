@@ -140,3 +140,10 @@ method getContactDetails*(self: Controller, contactId: string): ContactDetails =
 
 method getNumOfPinnedMessages*(self: Controller): int =
   return self.messageService.getNumOfPinnedMessages(self.chatId)
+
+method getRenderedText*(self: Controller, parsedTextArray: seq[ParsedText]): string =
+  return self.messageService.getRenderedText(parsedTextArray)
+
+method getMessageDetails*(self: Controller, messageId: string): 
+  tuple[message: MessageDto, reactions: seq[ReactionDto], error: string] =
+  return self.messageService.getDetailsForMessage(self.chatId, messageId)

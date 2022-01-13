@@ -150,3 +150,6 @@ method getContactDetails*(self: Controller, contactId: string): ContactDetails =
 
 method getCurrentFleet*(self: Controller): string =
   return self.settingsService.getFleetAsString()
+
+method getRenderedText*(self: Controller, parsedTextArray: seq[ParsedText]): string =
+  return self.messageService.getRenderedText(parsedTextArray)

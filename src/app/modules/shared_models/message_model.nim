@@ -16,6 +16,8 @@ type
     OutgoingStatus
     MessageText
     MessageImage
+    MessageContainsMentions # Actually we don't need to exposed this to qml since we only used it as an improved way to 
+                            # check whether we need to update mentioned contact name or not.
     Timestamp
     ContentType
     MessageType
@@ -73,6 +75,7 @@ QtObject:
       ModelRole.OutgoingStatus.int:"outgoingStatus",
       ModelRole.MessageText.int:"messageText",
       ModelRole.MessageImage.int:"messageImage",
+      ModelRole.MessageContainsMentions.int:"messageContainsMentions",
       ModelRole.Timestamp.int:"timestamp",
       ModelRole.ContentType.int:"contentType",
       ModelRole.MessageType.int:"messageType",
@@ -120,6 +123,8 @@ QtObject:
       result = newQVariant(item.messageText)
     of ModelRole.MessageImage: 
       result = newQVariant(item.messageImage)
+    of ModelRole.MessageContainsMentions:
+      result = newQVariant(item.messageContainsMentions)
     of ModelRole.Timestamp: 
       result = newQVariant(item.timestamp)
     of ModelRole.ContentType: 
@@ -272,18 +277,18 @@ QtObject:
       return
     self.items[index].toJsonNode()
 
-  proc updateSenderDetails*(self: Model, contactId, displayName, localName, icon: string, isIdenticon: bool) =
+  iterator modelContactUpdateIterator*(self: Model, contactId: string): Item =
     for i in 0 ..< self.items.len:
+      yield self.items[i]
+
       var roles: seq[int]
       if(self.items[i].senderId == contactId):
-        self.items[i].senderDisplayName = displayName
-        self.items[i].senderLocalName = localName
-        self.items[i].senderIcon = icon
-        self.items[i].isSenderIconIdenticon = isIdenticon
         roles = @[ModelRole.SenderDisplayName.int, ModelRole.SenderLocalName.int, ModelRole.SenderIcon.int, 
         ModelRole.IsSenderIconIdenticon.int]
       if(self.items[i].pinnedBy == contactId):
         roles.add(ModelRole.PinnedBy.int)
+      if(self.items[i].messageContainsMentions):
+        roles.add(@[ModelRole.MessageText.int, ModelRole.MessageContainsMentions.int])
       
       if(roles.len > 0):
         let index = self.createIndex(i, 0, nil)

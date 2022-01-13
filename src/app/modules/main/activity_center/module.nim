@@ -8,6 +8,7 @@ import ../../../global/global_singleton
 import ../../../core/eventemitter
 import ../../../../app_service/service/activity_center/service as activity_center_service
 import ../../../../app_service/service/contacts/service as contacts_service
+import ../../../../app_service/service/message/service as message_service
 
 export io_interface
 
@@ -23,7 +24,8 @@ proc newModule*[T](
     delegate: T,
     events: EventEmitter,
     activityCenterService: activity_center_service.Service,
-    contactsService: contacts_service.Service
+    contactsService: contacts_service.Service,
+    messageService: message_service.Service
     ): Module[T] =
   result = Module[T]()
   result.delegate = delegate
@@ -33,7 +35,8 @@ proc newModule*[T](
     result,
     events,
     activityCenterService,
-    contactsService
+    contactsService,
+    messageService
   )
   result.moduleLoaded = false
 
@@ -78,8 +81,9 @@ method convertToItems*[T](
           contactDetails.isIdenticon,
           contactDetails.isCurrentUser,
           n.message.outgoingStatus,
-          n.message.text,
+          self.controller.getRenderedText(n.message.parsedText),
           n.message.image,
+          n.message.containsContactMentions(),
           n.message.seen,
           n.message.timestamp,
           ContentType(n.message.contentType), 

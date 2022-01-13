@@ -1,10 +1,10 @@
-import NimQml, tables, json, sequtils, chronicles
+import NimQml, tables, json, re, sequtils, strformat, strutils, chronicles
 
 import ../../../app/core/tasks/[qt, threadpool]
 import ../../../app/core/signals/types
 import ../../../app/core/eventemitter
 import status/statusgo_backend_new/messages as status_go
-
+import ../contacts/service as contact_service
 import ./dto/message as message_dto
 import ./dto/pinned_message as pinned_msg_dto
 import ./dto/reaction as reaction_dto
@@ -17,6 +17,7 @@ export reaction_dto
 logScope:
   topics = "messages-service"
 
+let NEW_LINE = re"\n|\r" #must be defined as let, not const
 const MESSAGES_PER_PAGE = 20
 const CURSOR_VALUE_IGNORE = "ignore"
 
@@ -66,6 +67,7 @@ QtObject:
   type Service* = ref object of QObject
     events: EventEmitter
     threadpool: ThreadPool
+    contactService: contact_service.Service
     msgCursor: Table[string, string]
     lastUsedMsgCursor: Table[string, string]
     pinnedMsgCursor: Table[string, string]
@@ -75,11 +77,12 @@ QtObject:
   proc delete*(self: Service) =
     self.QObject.delete
 
-  proc newService*(events: EventEmitter, threadpool: ThreadPool): Service =
+  proc newService*(events: EventEmitter, threadpool: ThreadPool, contactService: contact_service.Service): Service =
     new(result, delete)
     result.QObject.setup
     result.events = events
     result.threadpool = threadpool
+    result.contactService = contactService
     result.msgCursor = initTable[string, string]()
     result.lastUsedMsgCursor = initTable[string, string]()
     result.pinnedMsgCursor = initTable[string, string]()
@@ -482,3 +485,61 @@ QtObject:
 
   proc getNumOfPinnedMessages*(self: Service, chatId: string): int =
     return self.numOfPinnedMessagesPerChat[chatId]
+
+# See render-inline in status-react/src/status_im/ui/screens/chat/message/message.cljs
+proc renderInline(self: Service, parsedTextChild: ParsedTextChild): string =
+  let value = escape_html(parsedTextChild.literal)
+    .multiReplace(("\r\n", "<br/>"))
+    .multiReplace(("\n", "<br/>"))
+    .multiReplace(("  ", "&nbsp;&nbsp;"))
+
+  case parsedTextChild.type:
+    of "": 
+      result = value
+    of PARSED_TEXT_CHILD_TYPE_CODE: 
+      result = fmt("<code>{value}</code>")
+    of PARSED_TEXT_CHILD_TYPE_EMPH: 
+      result = fmt("<em>{value}</em>")
+    of PARSED_TEXT_CHILD_TYPE_STRONG: 
+      result = fmt("<strong>{value}</strong>")
+    of PARSED_TEXT_CHILD_TYPE_STRONG_EMPH: 
+      result = fmt(" <strong><em>{value}</em></strong> ")
+    of PARSED_TEXT_CHILD_TYPE_MENTION: 
+      let contactDto = self.contactService.getContactById(value)
+      result = fmt("<a href=\"//{value}\" class=\"mention\">{contactDto.userNameOrAlias()}</a>")
+    of PARSED_TEXT_CHILD_TYPE_STATUS_TAG: 
+      result = fmt("<a href=\"#{value}\" class=\"status-tag\">#{value}</a>")
+    of PARSED_TEXT_CHILD_TYPE_DEL: 
+      result = fmt("<del>{value}</del>")
+    else: 
+      result = fmt(" {value} ")
+
+# See render-block in status-react/src/status_im/ui/screens/chat/message/message.cljs
+proc getRenderedText*(self: Service, parsedTextArray: seq[ParsedText]): string =
+  for parsedText in parsedTextArray:
+    case parsedText.type:
+      of PARSED_TEXT_TYPE_PARAGRAPH: 
+        result = result & "<p>"
+        for child in parsedText.children:
+          result = result & self.renderInline(child)
+        result = result & "</p>"
+      of PARSED_TEXT_TYPE_BLOCKQUOTE:
+        var
+          blockquote = escape_html(parsedText.literal)
+          lines = toSeq(blockquote.split(NEW_LINE))
+        for i in 0..(lines.len - 1):
+          if i + 1 >= lines.len:
+            continue
+          if lines[i + 1] != "":
+            lines[i] = lines[i] & "<br/>"
+        blockquote = lines.join("")
+        result = result & fmt(
+          "<table class=\"blockquote\">" &
+            "<tr>" &
+              "<td class=\"quoteline\" valign=\"middle\"></td>" &
+              "<td>{blockquote}</td>" &
+            "</tr>" &
+          "</table>")
+      of PARSED_TEXT_TYPE_CODEBLOCK:
+        result = result & "<code>" & escape_html(parsedText.literal) & "</code>"
+    result = result.strip()

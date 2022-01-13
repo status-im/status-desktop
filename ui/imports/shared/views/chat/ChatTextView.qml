@@ -52,8 +52,9 @@ Item {
         height: root.veryLongChatText && !root.readMore ? Math.min(implicitHeight, 200) : implicitHeight
         clip: height < implicitHeight
         onLinkActivated: {
+            root.linkActivated(link)
+
             // Not Refactored Yet
-//            root.linkActivated(link)
 //            if(link.startsWith("#")) {
 //                const channelName = link.substring(1);
 //                const foundChannelObj = root.store.chatsModelInst.getChannel(channelName);
@@ -90,19 +91,20 @@ Item {
 //                return
 //            }
 
-//            if (link.startsWith('//')) {
-//                let pk = link.replace("//", "");
-//                Global.openProfilePopup(pk)
-//                return;
-//            }
+            if (link.startsWith('//')) {
+                let pk = link.replace("//", "");
+                Global.openProfilePopup(pk)
+                return;
+            }
 
+            // Not Refactored Yet
 //            const data = Utils.getLinkDataForStatusLinks(link)
 //            if (data && data.callback) {
 //                return data.callback()
 //            }
 
 
-//            Global.openLink(link)
+            Global.openLink(link)
         }
 
         onLinkHovered: {

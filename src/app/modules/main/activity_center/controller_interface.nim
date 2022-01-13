@@ -1,5 +1,6 @@
 import ../../../../app_service/service/contacts/service as contacts_service
 import ../../../../app_service/service/activity_center/service as activity_center_service
+import ../../../../app_service/service/message/dto/[message]
 
 type 
   AccessInterface* {.pure inheritable.} = ref object of RootObj
@@ -37,6 +38,10 @@ method acceptActivityCenterNotifications*(self: AccessInterface, notificationIds
 
 method dismissActivityCenterNotifications*(self: AccessInterface, notificationIds: seq[string]): string {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method getRenderedText*(self: AccessInterface, parsedTextArray: seq[ParsedText]): string {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 
 type
   ## Abstract class (concept) which must be implemented by object/s used in this 

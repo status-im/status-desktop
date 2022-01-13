@@ -66,3 +66,6 @@ method getContactDetails*(self: AccessInterface, contactId: string): ContactDeta
 
 method getCurrentFleet*(self: AccessInterface): string {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method getRenderedText*(self: AccessInterface, parsedTextArray: seq[ParsedText]): string {.base.} =
+  raise newException(ValueError, "No implementation available")
