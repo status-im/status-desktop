@@ -124,7 +124,16 @@ QtObject:
     self.items[ind] = item
 
     let index = self.createIndex(ind, 0, nil)
-    self.dataChanged(index, index, @[]) # all roles
+
+    self.dataChanged(index, index, @[
+      ModelRole.Name.int,
+      ModelRole.Icon.int,
+      ModelRole.IsIdenticon.int,
+      ModelRole.IsContact.int,
+      ModelRole.IsBlocked.int,
+      ModelRole.RequestReceived.int
+      ]
+    )
 
   proc updateName*(self: Model, pubKey: string, name: string) =
     let ind = self.findIndexByPubKey(pubKey)
