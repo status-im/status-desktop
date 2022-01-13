@@ -5,6 +5,7 @@ import ../../../../../app_service/service/contacts/service as contact_service
 import ../../../../../app_service/service/chat/service as chat_service
 import ../../../../../app_service/service/community/service as community_service
 import ../../../../../app_service/service/message/service as message_service
+import ../../../../../app_service/service/gif/service as gif_service
 
 import ../../../../core/eventemitter
 
@@ -16,7 +17,8 @@ method load*(self: AccessInterface, events: EventEmitter,
   contactService: contact_service.Service, 
   chatService: chat_service.Service, 
   communityService: community_service.Service, 
-  messageService: message_service.Service) {.base.} =
+  messageService: message_service.Service,
+  gifService: gif_service.Service) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method isLoaded*(self: AccessInterface): bool {.base.} =
