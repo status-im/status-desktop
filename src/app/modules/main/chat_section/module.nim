@@ -350,7 +350,8 @@ proc updateNotifications(self: Module, chatId: string, unviewedMessagesCount: in
   # update model of this module (appropriate chat from the chats list (chats model))
   self.view.chatsModel().updateNotificationsForItemOrSubItemById(chatId, hasUnreadMessages, unviewedMentionsCount)
   # update child module
-  self.chatContentModules[chatId].onNotificationsUpdated(hasUnreadMessages, unviewedMentionsCount)
+  if (self.chatContentModules.contains(chatId)):
+    self.chatContentModules[chatId].onNotificationsUpdated(hasUnreadMessages, unviewedMentionsCount)
   # update parent module
   let (sectionHasUnreadMessages, sectionNotificationCount) = self.view.chatsModel().getAllNotifications()
   self.delegate.onNotificationsUpdated(self.controller.getMySectionId(), sectionHasUnreadMessages, sectionNotificationCount)
