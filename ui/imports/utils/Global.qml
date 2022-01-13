@@ -14,8 +14,9 @@ QtObject {
     property var mainModuleInst
     property var toastMessage
     property bool profilePopupOpened: false
-    //Not refactored yet
-    property bool networkGuarded: false //profileModel.network.current === Constants.networkMainnet || (profileModel.network.current === Constants.networkRopsten && localAccountSensitiveSettings.stickersEnsRopsten)
+    property string currentNetworkId: ""
+    property bool networkGuarded: root.currentNetworkId === Constants.networkMainnet ||
+        (root.currentNetworkId === Constants.networkRopsten && localAccountSensitiveSettings.stickersEnsRopsten)
 
     signal openImagePopup(var image)
     signal openLinkInBrowser(string link)

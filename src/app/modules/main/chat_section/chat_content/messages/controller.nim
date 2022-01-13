@@ -6,6 +6,7 @@ import ../../../../../../app_service/service/contacts/service as contact_service
 import ../../../../../../app_service/service/community/service as community_service
 import ../../../../../../app_service/service/chat/service as chat_service
 import ../../../../../../app_service/service/message/service as message_service
+import ../../../../../../app_service/service/eth/utils as eth_utils
 
 import ../../../../../core/eventemitter
 
@@ -156,3 +157,7 @@ method getMessageDetails*(self: Controller, messageId: string):
 
 method deleteMessage*(self: Controller, messageId: string) =
   self.messageService.deleteMessage(messageId)
+
+
+method decodeContentHash*(self: Controller, hash: string): string =
+  return eth_utils.decodeContentHash(hash)

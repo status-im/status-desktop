@@ -66,9 +66,9 @@ QtObject:
   QtProperty[string] messageImage:
     read = messageImage
 
-  proc stickerHash*(self: MessageItem): string {.slot.} = result = ?.self.messageItem.stickerHash
-  QtProperty[string] stickerHash:
-    read = stickerHash
+  proc sticker*(self: MessageItem): string {.slot.} = result = ?.self.messageItem.sticker
+  QtProperty[string] sticker:
+    read = sticker
 
   proc stickerPack*(self: MessageItem): int {.slot.} = result = ?.self.messageItem.stickerPack
   QtProperty[int] stickerPack:
