@@ -22,24 +22,22 @@ Popup {
     id: popup
     property var gifSelected: function () {}
     property var searchGif: Backpressure.debounce(searchBox, 500, function (query) {
-        // Not Refactored Yet
-//        RootStore.chatsModelInst.gif.search(query)
+        RootStore.searchGifs(query)
     });
     property var toggleCategory: function(newCategory) {
         previousCategory = currentCategory
         currentCategory = newCategory
         searchBox.text = ""
-        // Not Refactored Yet
-//        if (currentCategory === StatusGifPopup.Category.Trending) {
-//            RootStore.chatsModelInst.gif.getTrendings()
-//        } else if(currentCategory === StatusGifPopup.Category.Favorite) {
-//            RootStore.chatsModelInst.gif.getFavorites()
-//        } else if(currentCategory === StatusGifPopup.Category.Recent) {
-//            RootStore.chatsModelInst.gif.getRecents()
-//        }
+        if (currentCategory === StatusGifPopup.Category.Trending) {
+            RootStore.getTrendingsGifs()
+        } else if(currentCategory === StatusGifPopup.Category.Favorite) {
+            RootStore.getFavoritesGifs()
+        } else if(currentCategory === StatusGifPopup.Category.Recent) {
+            RootStore.getRecentsGifs()
+        }
     }
     property var toggleFavorite: function(item) {
-//        RootStore.chatsModelInst.gif.toggleFavorite(item.id, currentCategory === StatusGifPopup.Category.Favorite)
+        RootStore.toggleFavoriteGif(item.id, currentCategory === StatusGifPopup.Category.Favorite)
     }
     property alias searchString: searchBox.text
     property int currentCategory: StatusGifPopup.Category.Trending
@@ -68,7 +66,7 @@ Popup {
         searchBox.text = ""
         searchBox.forceActiveFocus(Qt.MouseFocusReason)
         if (RootStore.isTenorWarningAccepted) {
-//            RootStore.chatsModelInst.gif.getTrendings()
+            RootStore.getTrendingsGifs()
         } else {
             confirmationPopup.open()
         }
@@ -162,9 +160,7 @@ Popup {
                 const headerTextHeight = searchBox.text === "" ? headerText.height : 0
                 return 400 - gifHeader.height - headerTextHeight
             }
-            // Not Refactored Yet
-            sourceComponent: empty
-//            sourceComponent: RootStore.chatsModelInst.gif.columnA.rowCount() == 0 ? empty : gifItems
+            sourceComponent: RootStore.gifColumnA.rowCount() == 0 ? empty : gifItems
         }
 
         Row {
@@ -262,8 +258,7 @@ Popup {
                 text: qsTr("Enable")
                 onClicked: {
                     RootStore.setIsTenorWarningAccepted(true);
-                    // Not Refactored Yet
-//                    RootStore.chatsModelInst.gif.getTrendings()
+                    RootStore.getTrendingsGifs()
                     confirmationPopup.close()
                 }
             }
@@ -303,8 +298,8 @@ Popup {
                 visible: currentCategory === StatusGifPopup.Category.Trending || currentCategory === StatusGifPopup.Category.Search
                 onClicked: {
                     if (searchBox.text === "") {
-                        // Not Refactored Yet
-//                        RootStore.chatsModelInst.gif.getTrendings()
+                        RootStore.getTrendingsGifs()
+
                         return
                     }
 
@@ -335,36 +330,36 @@ Popup {
                 property string lastHoveredId
 
                 StatusGifColumn {
-                    // Not Refactored Yet
-//                    gifList.model: RootStore.chatsModelInst.gif.columnA
+                    gifList.model: RootStore.gifColumnA
                     gifWidth: (popup.width / 3) - Style.current.padding
                     gifSelected: popup.gifSelected
                     toggleFavorite: popup.toggleFavorite
                     lastHoveredId: gifs.lastHoveredId
+                    store: RootStore
                     onGifHovered: {
                         gifs.lastHoveredId = id
                     }
                 }
 
                 StatusGifColumn {
-                    // Not Refactored Yet
-//                    gifList.model: RootStore.chatsModelInst.gif.columnB
+                    gifList.model: RootStore.gifColumnB
                     gifWidth: (popup.width / 3) - Style.current.padding
                     gifSelected: popup.gifSelected
                     toggleFavorite: popup.toggleFavorite
                     lastHoveredId: gifs.lastHoveredId
+                    store: RootStore
                     onGifHovered: {
                         gifs.lastHoveredId = id
                     }
                 }
 
                 StatusGifColumn {
-                    // Not Refactored Yet
-//                    gifList.model: RootStore.chatsModelInst.gif.columnC
+                    gifList.model: RootStore.gifColumnC
                     gifWidth: (popup.width / 3) - Style.current.padding
                     gifSelected: popup.gifSelected
                     toggleFavorite: popup.toggleFavorite
                     lastHoveredId: gifs.lastHoveredId
+                    store: RootStore
                     onGifHovered: {
                         gifs.lastHoveredId = id
                     }

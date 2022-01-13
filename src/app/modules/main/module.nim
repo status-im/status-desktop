@@ -41,6 +41,8 @@ import ../../../app_service/service/node/service as node_service
 import ../../../app_service/service/node_configuration/service_interface as node_configuration_service
 import ../../../app_service/service/devices/service as devices_service
 import ../../../app_service/service/mailservers/service as mailservers_service
+import ../../../app_service/service/gif/service as gif_service
+
 
 import ../../core/eventemitter
 
@@ -91,8 +93,9 @@ proc newModule*[T](
   nodeConfigurationService: node_configuration_service.ServiceInterface,
   devicesService: devices_service.Service,
   mailserversService: mailservers_service.Service,
-  nodeService: node_service.Service
-  ): Module[T] =
+  nodeService: node_service.Service,
+  gifService: gif_service.Service,
+): Module[T] =
   result = Module[T]()
   result.delegate = delegate
   result.view = view.newView(result)
@@ -106,7 +109,8 @@ proc newModule*[T](
     chatService,
     communityService,
     contactsService,
-    messageService
+    messageService,
+    gifService,
   )
   result.moduleLoaded = false
 
@@ -176,14 +180,15 @@ proc createCommunityItem[T](self: Module[T], c: CommunityDto): SectionItem =
     c.members.map(x => member_item.initItem(x.id, x.roles)))
 
 method load*[T](
-    self: Module[T],
-    events: EventEmitter,
-    settingsService: settings_service.ServiceInterface,
-    contactsService: contacts_service.Service,
-    chatService: chat_service.Service,
-    communityService: community_service.Service,
-    messageService: message_service.Service
-  ) =
+  self: Module[T],
+  events: EventEmitter,
+  settingsService: settings_service.ServiceInterface,
+  contactsService: contacts_service.Service,
+  chatService: chat_service.Service,
+  communityService: community_service.Service,
+  messageService: message_service.Service,
+  gifService: gif_service.Service,
+) =
   singletonInstance.engine.setRootContextProperty("mainModule", self.viewVariant)
   self.controller.init()
   self.view.load()
@@ -201,7 +206,7 @@ method load*[T](
       contactsService,
       chatService,
       communityService,
-      messageService
+      messageService,
     )
 
   var activeSection: SectionItem
@@ -310,9 +315,9 @@ method load*[T](
     activeSection = profileSettingsSectionItem
 
   # Load all sections
-  self.chatSectionModule.load(events, settingsService, contactsService, chatService, communityService, messageService)
+  self.chatSectionModule.load(events, settingsService, contactsService, chatService, communityService, messageService, gifService)
   for cModule in self.communitySectionsModule.values:
-    cModule.load(events, settingsService, contactsService, chatService, communityService, messageService)
+    cModule.load(events, settingsService, contactsService, chatService, communityService, messageService, gifService)
   self.walletSectionModule.load()
   # self.walletV2SectionModule.load()
   self.browserSectionModule.load()
@@ -489,15 +494,16 @@ method getAppSearchModule*[T](self: Module[T]): QVariant =
   self.appSearchModule.getModuleAsVariant()
 
 method communityJoined*[T](
-    self: Module[T],
-    community: CommunityDto,
-    events: EventEmitter,
-    settingsService: settings_service.ServiceInterface,
-    contactsService: contacts_service.Service,
-    chatService: chat_service.Service,
-    communityService: community_service.Service,
-    messageService: message_service.Service
-    ) =
+  self: Module[T],
+  community: CommunityDto,
+  events: EventEmitter,
+  settingsService: settings_service.ServiceInterface,
+  contactsService: contacts_service.Service,
+  chatService: chat_service.Service,
+  communityService: community_service.Service,
+  messageService: message_service.Service,
+  gifService: gif_service.Service,
+) =
   self.communitySectionsModule[community.id] = chat_section_module.newModule(
       self,
       events,
@@ -509,7 +515,7 @@ method communityJoined*[T](
       communityService,
       messageService
     )
-  self.communitySectionsModule[community.id].load(events, settingsService, contactsService, chatService, communityService, messageService)
+  self.communitySectionsModule[community.id].load(events, settingsService, contactsService, chatService, communityService, messageService, gifService)
 
   let communitySectionItem = self.createCommunityItem(community)
   self.view.addItem(communitySectionItem)

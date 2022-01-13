@@ -16,6 +16,7 @@ import ../../../../../app_service/service/settings/service_interface as settings
 import ../../../../../app_service/service/contacts/service as contact_service
 import ../../../../../app_service/service/chat/service as chat_service
 import ../../../../../app_service/service/community/service as community_service
+import ../../../../../app_service/service/gif/service as gif_service
 import ../../../../../app_service/service/message/service as message_service
 
 export io_interface
@@ -37,7 +38,7 @@ type
 proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitter, sectionId: string, chatId: string, 
   belongsToCommunity: bool, isUsersListAvailable: bool, settingsService: settings_service.ServiceInterface, 
   contactService: contact_service.Service, chatService: chat_service.Service, 
-  communityService: community_service.Service, messageService: message_service.Service): 
+  communityService: community_service.Service, messageService: message_service.Service, gifService: gif_service.Service):
   Module =
   result = Module()
   result.delegate = delegate
@@ -47,7 +48,7 @@ proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitt
   isUsersListAvailable, settingsService, contactService, chatService, communityService, messageService)
   result.moduleLoaded = false
 
-  result.inputAreaModule = input_area_module.newModule(result, sectionId, chatId, belongsToCommunity, chatService, communityService)
+  result.inputAreaModule = input_area_module.newModule(result, sectionId, chatId, belongsToCommunity, chatService, communityService, gifService)
   result.messagesModule = messages_module.newModule(result, events, sectionId, chatId, belongsToCommunity, 
   contactService, communityService, chatService, messageService)
   result.usersModule = users_module.newModule(result, events, sectionId, chatId, belongsToCommunity, isUsersListAvailable, 

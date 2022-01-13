@@ -41,6 +41,8 @@ const KEY_FLEET* = "fleet"
 const KEY_NODE_CONFIG* = "node-config"
 const KEY_WAKU_BLOOM_FILTER_MODE* = "waku-bloom-filter-mode"
 const KEY_AUTO_MESSAGE_ENABLED* = "auto-message-enabled?"
+const KEY_GIF_FAVORITES* = "gifs/favorite-gifs"
+const KEY_GIF_RECENTS* = "gifs/recent-gifs"
 
 type UpstreamConfig* = object
   Enabled*: bool
@@ -112,6 +114,8 @@ type
     recentStickerHashes*: seq[string]
     installedStickerPacks*: Table[int, StickerPackDto]
     autoMessageEnabled*: bool
+    gifRecents*: JsonNode
+    gifFavorites*: JsonNode
 
 proc toUpstreamConfig*(jsonObj: JsonNode): UpstreamConfig =
   discard jsonObj.getProp("Enabled", result.Enabled)
@@ -208,6 +212,8 @@ proc toSettingsDto*(jsonObj: JsonNode): SettingsDto =
   discard jsonObj.getProp(KEY_TELEMETRY_SERVER_URL, result.telemetryServerUrl)
   discard jsonObj.getProp(KEY_FLEET, result.fleet)
   discard jsonObj.getProp(KEY_AUTO_MESSAGE_ENABLED, result.autoMessageEnabled)
+  discard jsonObj.getProp(KEY_GIF_RECENTS, result.gifRecents)
+  discard jsonObj.getProp(KEY_GIF_FAVORITES, result.gifFavorites)
 
   var pinnedMailserverObj: JsonNode
   if(jsonObj.getProp(KEY_PINNED_MAILSERVERS, pinnedMailserverObj)):
