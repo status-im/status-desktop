@@ -47,7 +47,8 @@ QtObject {
     }
 
 
-    property var messageStore
+    property var messageStore: MessageStore { }
+
     property var emojiReactionsModel
 
     // Not Refactored Yet

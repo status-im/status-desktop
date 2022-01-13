@@ -25,6 +25,7 @@ Popup {
 
     property bool hideReadNotifications: false
     property var store
+    property var chatSectionModule
 
     id: activityCenter
     modal: false
@@ -194,6 +195,13 @@ Popup {
                             default: return null
                             }
                         }
+                        onLoaded: {
+                            if (model.notificationType === Constants.activityCenterNotificationTypeReply ||
+                                    model.notificationType === Constants.activityCenterNotificationTypeGroupRequest) {
+                                item.previousNotificationIndex = Qt.binding(() => notifLoader.previousNotificationIndex);
+                                item.previousNotificationTimestamp = Qt.binding(() => notifLoader.previousNotificationTimestamp);
+                            }
+                        }
                     }
 
                     Component {
@@ -201,6 +209,7 @@ Popup {
 
                         ActivityCenterMessageComponentView {
                             store: activityCenter.store
+                            chatSectionModule: activityCenter.chatSectionModule
                         }
                     }
 

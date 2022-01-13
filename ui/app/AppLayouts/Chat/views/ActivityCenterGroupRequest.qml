@@ -19,10 +19,13 @@ Item {
     width: parent.width
     height: childrenRect.height + dateGroupLbl.anchors.topMargin
     property var store
+    property int previousNotificationIndex
+    property string previousNotificationTimestamp
+
     DateGroup {
         id: dateGroupLbl
-        previousMessageIndex: previousNotificationIndex
-        previousMessageTimestamp: previousNotificationTimestamp
+        previousMessageIndex: root.previousNotificationIndex
+        previousMessageTimestamp: root.previousNotificationTimestamp
         messageTimestamp: model.timestamp
         isActivityCenterMessage: true
         height: visible ? implicitHeight : 0

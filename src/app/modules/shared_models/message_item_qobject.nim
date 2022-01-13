@@ -30,6 +30,10 @@ QtObject:
   QtProperty[string] senderId:
     read = senderId
 
+  proc pinnedBy*(self: MessageItem): string {.slot.} = result = ?.self.messageItem.pinnedBy
+  QtProperty[string] pinnedBy:
+    read = pinnedBy
+
   proc senderDisplayName*(self: MessageItem): string {.slot.} = result = ?.self.messageItem.senderDisplayName
   QtProperty[string] senderDisplayName:
     read = senderDisplayName
