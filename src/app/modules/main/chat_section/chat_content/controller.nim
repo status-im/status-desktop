@@ -99,6 +99,13 @@ method init*(self: Controller) =
     var args = ContactArgs(e)
     self.delegate.onContactDetailsUpdated(args.contactId)
 
+  self.events.on(SIGNAL_MESSAGE_DELETION) do(e: Args):
+    let args = MessageDeletedArgs(e)
+    if(self.chatId != args.chatId):
+      return
+    # remove from pinned messages model
+    self.delegate.onUnpinMessage(args.messageId)
+
 method getMyChatId*(self: Controller): string =
   return self.chatId
 

@@ -152,4 +152,10 @@ QtObject {
         }
         return tooltip
     }
+
+    function deleteMessage(messageId) {
+        if(!messageModule)
+            return
+        messageModule.deleteMessage(messageId)
+    }
 }

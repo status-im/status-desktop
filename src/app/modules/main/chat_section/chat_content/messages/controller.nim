@@ -102,6 +102,12 @@ method init*(self: Controller) =
     var args = ContactArgs(e)
     self.delegate.updateContactDetails(args.contactId)
 
+  self.events.on(SIGNAL_MESSAGE_DELETION) do(e: Args):
+    let args = MessageDeletedArgs(e)
+    if(self.chatId != args.chatId):
+      return
+    self.delegate.onMessageDeleted(args.messageId)
+
 method getMySectionId*(self: Controller): string =
   return self.sectionId
 
@@ -147,3 +153,6 @@ method getRenderedText*(self: Controller, parsedTextArray: seq[ParsedText]): str
 method getMessageDetails*(self: Controller, messageId: string): 
   tuple[message: MessageDto, reactions: seq[ReactionDto], error: string] =
   return self.messageService.getDetailsForMessage(self.chatId, messageId)
+
+method deleteMessage*(self: Controller, messageId: string) =
+  self.messageService.deleteMessage(messageId)

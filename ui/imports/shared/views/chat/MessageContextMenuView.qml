@@ -60,6 +60,7 @@ StatusPopupMenu {
     signal createOneToOneChat(string chatId, string ensName)
     signal showReplyArea()
     signal toggleReaction(string messageId, int emojiId)
+    signal deleteMessage(string messageId)
 
     onHeightChanged: {
         root.y = setYPosition()
@@ -328,27 +329,11 @@ StatusPopupMenu {
         text: qsTrId("delete-message")
         onTriggered: {
             if (!localAccountSensitiveSettings.showDeleteMessageWarning) {
-                // Not Refactored Yet
-//                return root.store.chatsModelInst.messageView.deleteMessage(messageId)
+                deleteMessage(messageId)
             }
-
-            let confirmationDialog = openPopup(genericConfirmationDialog, {
-                                                   //% "Confirm deleting this message"
-                                                   title: qsTrId("confirm-deleting-this-message"),
-                                                   //% "Are you sure you want to delete this message? Be aware that other clients are not guaranteed to delete the message as well."
-                                                   confirmationText: qsTrId("are-you-sure-you-want-to-delete-this-message--be-aware-that-other-clients-are-not-guaranteed-to-delete-the-message-as-well-"),
-                                                   height: 260,
-                                                   "checkbox.visible": true,
-                                                   executeConfirm: function () {
-                                                       if (confirmationDialog.checkbox.checked) {
-                                                           localAccountSensitiveSettings.showDeleteMessageWarning = false
-                                                       }
-
-                                                       confirmationDialog.close()
-                                                       // Not Refactored Yet
-//                                                       root.store.chatsModelInst.messageView.deleteMessage(messageId)
-                                                   }
-                                               })
+            else {
+                Global.openPopup(deleteMessageConfirmationDialogComponent)
+            }
         }
         icon.name: "delete"
         type: StatusMenuItem.Type.Danger
@@ -378,6 +363,29 @@ StatusPopupMenu {
         }
         onRejected: {
             fileDialog.close()
+        }
+    }
+
+    Component {
+        id: deleteMessageConfirmationDialogComponent
+        ConfirmationDialog {
+            //% "Confirm deleting this message"
+            header.title: qsTrId("confirm-deleting-this-message")
+            //% "Are you sure you want to delete this message? Be aware that other clients are not guaranteed to delete the message as well."
+            confirmationText: qsTrId("are-you-sure-you-want-to-delete-this-message--be-aware-that-other-clients-are-not-guaranteed-to-delete-the-message-as-well-")
+            height: 260
+            checkbox.visible: true
+            executeConfirm: function () {
+                if (checkbox.checked) {
+                    localAccountSensitiveSettings.showDeleteMessageWarning = false
+                }
+
+                close()
+                root.deleteMessage(messageId)
+            }
+            onClosed: {
+                destroy()
+            }
         }
     }
 }

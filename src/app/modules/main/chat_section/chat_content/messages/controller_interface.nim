@@ -59,3 +59,6 @@ method getRenderedText*(self: AccessInterface, parsedTextArray: seq[ParsedText])
 method getMessageDetails*(self: AccessInterface, messageId: string): 
   tuple[message: MessageDto, reactions: seq[ReactionDto], error: string] {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method deleteMessage*(self: AccessInterface, messageId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")

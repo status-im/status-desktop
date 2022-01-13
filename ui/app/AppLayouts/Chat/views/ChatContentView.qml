@@ -335,6 +335,10 @@ ColumnLayout {
         onOpenProfileClicked: {
             Global.openProfilePopup(publicKey)
         }
+
+        onDeleteMessage: {
+            messageStore.deleteMessage(messageId)
+        }
     }
 
     ColumnLayout {

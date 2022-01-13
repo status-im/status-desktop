@@ -102,11 +102,6 @@ QtObject {
         globalUtils.copyToClipboard(text)
     }
 
-    function deleteMessage(messageId) {
-        // Not Refactored Yet
-//        chatsModelInst.messageView.deleteMessage(messageId);
-    }
-
     function getCommunity(communityId) {
         // Not Refactored Yet
 //        try {

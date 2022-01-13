@@ -187,6 +187,8 @@ QtObject:
     self.countChanged()
 
   proc appendItem*(self: Model, item: Item) =
+    if(self.findIndexForMessageId(item.id) != -1):
+      return
     let parentModelIndex = newQModelIndex()
     defer: parentModelIndex.delete
 
