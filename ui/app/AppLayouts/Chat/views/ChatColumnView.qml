@@ -32,6 +32,7 @@ Item {
 
     property var rootStore
     property var contactsStore
+    property var chatSectionModule
 
     property Component pinnedMessagesPopupComponent
     // Not Refactored Yet
@@ -346,6 +347,7 @@ Item {
             height: root.height - 56 * 2 // TODO get screen size // Taken from old code top bar height was fixed there to 56
             y: 56
             store: root.rootStore
+            chatSectionModule: root.chatSectionModule
         }
 
         // Not Refactored Yet

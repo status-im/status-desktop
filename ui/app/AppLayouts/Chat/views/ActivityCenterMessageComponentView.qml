@@ -31,6 +31,9 @@ Item {
     }
 
     property var store
+    property var chatSectionModule
+    property int previousNotificationIndex
+    property string previousNotificationTimestamp
     // Not Refactored Yet
     property int communityIndex: -1 //root.store.chatsModelInst.communities.joinedCommunities.getCommunityIndex(model.message.communityId)
     function openProfile() {
@@ -56,7 +59,7 @@ Item {
             tooltip.y: markReadBtn.height / 2 - height / 2 + 4
             onClicked: {
                 if (!model.read) {
-                    return root.store.activityCenterModuleInst.markActivityCenterNotificationRead(model.id, model.message.communityId, model.message.chatId, model.notificationType)
+                    return root.store.activityCenterModuleInst.markActivityCenterNotificationRead(model.id, model.message.communityId, model.chatId, model.notificationType)
                 }
                 return root.store.activityCenterModuleInst.markActivityCenterNotificationUnread(model.id, model.message.communityId, model.message.chatId, model.notificationType)
             }
@@ -104,93 +107,47 @@ Item {
         id: messageNotificationContent
         width: parent.width
         height: childrenRect.height
-
         MessageView {
             id: notificationMessage
             anchors.right: undefined
-//            rootStore: root.store
-//            messageStore: root.store.messageStore
-            //TODO Remove
-//            fromAuthor: model.message.fromAuthor
-//            chatId: model.message.chatId
-//            userName: model.message.userName
-//            alias: model.message.alias
-//            localName: model.message.localName
-//            message: model.message.message
-//            plainText: model.message.plainText
-//            identicon: model.message.identicon
-//            isCurrentUser: model.message.isCurrentUser
-//            timestamp: model.message.timestamp
-//            sticker: model.message.sticker
-//            contentType: model.message.contentType
-//            outgoingStatus: model.message.outgoingStatus
-//            responseTo: model.message.responseTo
-//            messageId: model.message.messageId
-//            linkUrls: model.message.linkUrls
-//            communityId: model.message.communityId
-//            hasMention: model.message.hasMention
-//            stickerPackId: model.message.stickerPackId
-//            pinnedBy: model.message.pinnedBy
-//            pinnedMessage: model.message.isPinned
-//            activityCenterMessage: true
-//            read: model.read
-//            onImageClick: { Global.openImagePopup(image); }
-//            clickMessage: function (isProfileClick) {
-//                if (isProfileClick) {
-//                    return openProfilePopup(model.message.fromAuthor)
-//                }
+            messageStore: root.store.messageStore
+            messageId: model.id
+            senderDisplayName: model.message.senderDisplayName
+            message: model.message.messageText
+            responseToMessageWithId: model.message.responseToMessageWithId
+            senderId: model.message.senderId
+            senderLocalName: model.message.senderLocalName
+            senderIcon: model.message.senderIcon
+            isSenderIconIdenticon: model.message.isSenderIconIdenticon
+            amISender: model.message.amISender
+            messageImage: model.message.messageImage
+            messageTimestamp: model.timestamp
+            //timestamp: model.message.timestamp
+            messageOutgoingStatus: model.message.outgoingStatus
+            messageContentType: model.message.contentType
+            //pinnedMessage: model.message.pinned
+            //messagePinnedBy: model.message.pinnedBy
+            //reactionsModel: model.message.reactions
+            activityCenterMessage: true
+            read: model.read
+            onImageClick: { Global.openImagePopup(image); }
+            scrollToBottom: null
+            clickMessage: function (isProfileClick) {
+                if (isProfileClick) {
+                    return Global.openProfilePopup(model.message.senderId);
+                }
 
-//                activityCenter.close()
+                activityCenter.close()
 
 //                if (model.message.communityId) {
-//                    root.store.chatsModelInst.communities.setActiveCommunity(model.message.communityId)
+//                    root.chatSectionModule..communities.setActiveCommunity(model.message.communityId)
 //                }
 
-//                root.store.chatsModelInst.channelView.setActiveChannel(model.message.chatId)
-//                positionAtMessage(model.message.messageId)
-//            }
-//            prevMessageIndex: previousNotificationIndex
-//            prevMsgTimestamp: previousNotificationTimestamp
-//            Component.onCompleted: {
-//                messageStore.activityCenterMessage = true;
-//                messageStore.fromAuthor = model.message.fromAuthor;
-//                messageStore.chatId = model.message.chatId;
-//                messageStore.userName = model.message.userName;
-//                messageStore.alias = model.message.alias;
-//                messageStore.localName = model.message.localName;
-//                messageStore.message = model.message.message;
-//                messageStore.plainText = model.message.plainText;
-//                messageStore.identicon = model.message.identicon;
-//                messageStore.isCurrentUser = model.message.isCurrentUser;
-//                messageStore.timestamp = model.message.timestamp;
-//                messageStore.sticker = model.message.sticker;
-//                messageStore.contentType = model.message.contentType;
-//                messageStore.outgoingStatus = model.message.outgoingStatus;
-//                messageStore.responseTo = model.message.responseTo;
-//                messageStore.messageId = model.message.messageId;
-//                messageStore.linkUrls = model.message.linkUrls;
-//                messageStore.communityId = model.message.communityId;
-//                messageStore.hasMention = model.message.hasMention;
-//                messageStore.stickerPackId = model.message.stickerPackId;
-//                messageStore.pinnedBy = model.message.pinnedBy;
-//                messageStore.pinnedMessage = model.message.isPinned;
-//                messageStore.read = model.read;
-//                messageStore.prevMessageIndex = previousNotificationIndex;
-//                messageStore.prevMsgTimestamp = previousNotificationTimestamp;
-//                messageStore.clickMessage = function (isProfileClick) {
-//                    if (isProfileClick) {
-//                        return openProfilePopup(model.message.fromAuthor)
-//                    }
-//                    activityCenter.close()
-
-//                    if (model.message.communityId) {
-//                        root.store.chatsModelInst.communities.setActiveCommunity(model.message.communityId)
-//                    }
-
-//                    root.store.chatsModelInst.channelView.setActiveChannel(model.message.chatId)
-//                    positionAtMessage(model.message.messageId)
-//                }
-//            }
+//                root.chatSectionModule.setActiveChannel(model.chatId);
+                positionAtMessage(model.id);
+            }
+            prevMessageIndex: root.previousNotificationIndex
+            prevMsgTimestamp: root.previousNotificationTimestamp
         }
 
         Rectangle {
@@ -225,16 +182,15 @@ Item {
             anchors.left: parent.left
             anchors.leftMargin: 61 // TODO find a way to align with the text of the message
             visible: model.notificationType !== Constants.activityCenterNotificationTypeOneToOne
-
             name: model.name
             chatId: model.chatId
             notificationType: model.notificationType
-            communityId: model.message.communityId
+//            communityId: model.message.communityId
             // Not Refactored Yet
 //            replyMessageIndex: root.store.chatsModelInst.messageView.getMessageIndex(model.chatId, model.responseTo)
             // Not Refactored Yet
 //            repliedMessageContent: replyMessageIndex > -1 ? root.store.chatsModelInst.messageView.getMessageData(chatId, replyMessageIndex, "message") : ""
-            realChatType: {
+//            realChatType: {
                 // Not Refactored Yet
 //                var chatType = root.store.chatsModelInst.channelView.chats.getChannelType(model.chatId)
 //                if (chatType === Constants.chatType.communityChat) {
@@ -242,7 +198,7 @@ Item {
 //                    return Constants.chatType.publicChat
 //                }
 //                return chatType
-            }
+//            }
             profileImage: realChatType === Constants.chatType.oneToOne ? Global.getProfileImage(chatId) || ""  : ""
             // Not Refactored Yet
 //            channelName: root.store.chatsModelInst.getChannelNameById(badge.chatId)

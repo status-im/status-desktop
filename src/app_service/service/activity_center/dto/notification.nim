@@ -46,7 +46,7 @@ proc toActivityCenterNotificationDto*(jsonObj: JsonNode): ActivityCenterNotifica
 
   result.notificationType = ActivityCenterNotificationType.Unknown
   var notificationTypeInt: int
-  if (jsonObj.getProp("notificationType", notificationTypeInt) and
+  if (jsonObj.getProp("type", notificationTypeInt) and
     (notificationTypeInt >= ord(low(ActivityCenterNotificationType)) or
     notificationTypeInt <= ord(high(ActivityCenterNotificationType)))): 
       result.notificationType = ActivityCenterNotificationType(notificationTypeInt)
