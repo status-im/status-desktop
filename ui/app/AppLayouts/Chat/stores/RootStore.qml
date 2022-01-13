@@ -99,8 +99,7 @@ QtObject {
     }
 
     function copyToClipboard(text) {
-        // Not Refactored Yet
-//        chatsModelInst.copyToClipboard(text);
+        globalUtils.copyToClipboard(text)
     }
 
     function deleteMessage(messageId) {

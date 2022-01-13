@@ -55,7 +55,6 @@ Column {
         icon.name: "copy"
         iconButton.onClicked: {
             let link = `${Constants.communityLinkPrefix}${root.community.id}`
-            //chatsModel.copyToClipboard(link)
             root.copyToClipboard(link);
             tooltip.visible = !tooltip.visible
         }
