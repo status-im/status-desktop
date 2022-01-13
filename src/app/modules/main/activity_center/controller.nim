@@ -7,6 +7,7 @@ import ../../../core/signals/types
 import ../../../../app_service/service/activity_center/service as activity_center_service
 import ../../../../app_service/service/contacts/service as contacts_service
 import ../../../../app_service/service/chat/service as chat_service
+import ../../../../app_service/service/message/service as message_service
 
 export controller_interface
 
@@ -16,18 +17,21 @@ type
     events: EventEmitter
     activityCenterService: activity_center_service.Service
     contactsService: contacts_service.Service
+    messageService: message_service.Service
 
 proc newController*[T](
     delegate: io_interface.AccessInterface,
     events: EventEmitter,
     activityCenterService: activity_center_service.Service,
-    contactsService: contacts_service.Service
+    contactsService: contacts_service.Service,
+    messageService: message_service.Service
     ): Controller[T] =
   result = Controller[T]()
   result.delegate = delegate
   result.events = events
   result.activityCenterService = activityCenterService
   result.contactsService = contactsService
+  result.messageService = messageService
 
 method delete*[T](self: Controller[T]) =
   discard
@@ -103,3 +107,6 @@ method acceptActivityCenterNotifications*[T](self: Controller[T], notificationId
 
 method dismissActivityCenterNotifications*[T](self: Controller[T], notificationIds: seq[string]): string =
    return self.activityCenterService.dismissActivityCenterNotifications(notificationIds)
+
+method getRenderedText*(self: Controller, parsedTextArray: seq[ParsedText]): string =
+  return self.messageService.getRenderedText(parsedTextArray)

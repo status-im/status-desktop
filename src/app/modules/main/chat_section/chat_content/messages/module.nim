@@ -73,7 +73,7 @@ proc createChatIdentifierItem(self: Module): Item =
     (chatName, chatIcon, isIdenticon) = self.controller.getOneToOneChatNameAndImage()
 
   result = initItem(CHAT_IDENTIFIER_MESSAGE_ID, "", chatDto.id, chatName, "", chatIcon, isIdenticon, false, "", "", "", 
-  true, 0, ContentType.ChatIdentifier, -1)
+  false, true, 0, ContentType.ChatIdentifier, -1)
 
 method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: seq[ReactionDto], 
   pinnedMessages: seq[PinnedMessageDto]) = 
@@ -83,9 +83,10 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
     for m in messages:
       let sender = self.controller.getContactDetails(m.`from`)
 
+      let renderedMessageText = self.controller.getRenderedText(m.parsedText)
       var item = initItem(m.id, m.responseTo, m.`from`, sender.displayName, sender.details.localNickname, sender.icon, 
-      sender.isIdenticon, sender.isCurrentUser, m.outgoingStatus, m.text, m.image, m.seen, m.timestamp, 
-      m.contentType.ContentType, m.messageType)
+      sender.isIdenticon, sender.isCurrentUser, m.outgoingStatus, renderedMessageText, m.image, 
+      m.containsContactMentions(), m.seen, m.timestamp, m.contentType.ContentType, m.messageType)
 
       for r in reactions:
         if(r.messageId == m.id):
@@ -121,9 +122,10 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
 method messageAdded*(self: Module, message: MessageDto) =
   let sender = self.controller.getContactDetails(message.`from`)
 
+  let renderedMessageText = self.controller.getRenderedText(message.parsedText)
   var item = initItem(message.id, message.responseTo, message.`from`, sender.displayName, sender.details.localNickname, 
-  sender.icon, sender.isIdenticon, sender.isCurrentUser, message.outgoingStatus, message.text, message.image, 
-  message.seen, message.timestamp, message.contentType.ContentType, message.messageType)
+  sender.icon, sender.isIdenticon, sender.isCurrentUser, message.outgoingStatus, renderedMessageText, message.image, 
+  message.containsContactMentions(), message.seen, message.timestamp, message.contentType.ContentType, message.messageType)
 
   self.view.model().insertItemBasedOnTimestamp(item)
 
@@ -199,5 +201,16 @@ method getNumberOfPinnedMessages*(self: Module): int =
 
 method updateContactDetails*(self: Module, contactId: string) =
   let updatedContact = self.controller.getContactDetails(contactId)
-  self.view.model().updateSenderDetails(contactId, updatedContact.displayName, updatedContact.details.localNickname,
-  updatedContact.icon, updatedContact.isIdenticon)
+  for item in self.view.model().modelContactUpdateIterator(contactId):
+    if(item.senderId == contactId):
+      item.senderDisplayName = updatedContact.displayName
+      item.senderLocalName = updatedContact.details.localNickname
+      item.senderIcon = updatedContact.icon
+      item.isSenderIconIdenticon = updatedContact.isIdenticon
+    if(item.messageContainsMentions):
+      let (m, _, err) = self.controller.getMessageDetails(item.id)
+      if(err.len == 0):
+        item.messageText = self.controller.getRenderedText(m.parsedText)
+        item.messageContainsMentions = m.containsContactMentions()
+
+
