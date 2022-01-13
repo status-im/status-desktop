@@ -30,6 +30,7 @@ const SIGNAL_SEARCH_MESSAGES_LOADED* = "new-searchMessagesLoaded"
 const SIGNAL_MESSAGES_MARKED_AS_READ* = "new-messagesMarkedAsRead"
 const SIGNAL_MESSAGE_REACTION_ADDED* = "new-messageReactionAdded"
 const SIGNAL_MESSAGE_REACTION_REMOVED* = "new-messageReactionRemoved"
+const SIGNAL_MESSAGE_DELETION* = "new-messageDeleted"
 
 include async_tasks
 
@@ -62,6 +63,10 @@ type
     messageId*: string
     emojiId*: int
     reactionId*: string
+
+  MessageDeletedArgs* =  ref object of Args
+    chatId*: string
+    messageId*: string
 
 QtObject:
   type Service* = ref object of QObject
@@ -142,6 +147,12 @@ QtObject:
           else:
             self.numOfPinnedMessagesPerChat[pm.chatId] = self.numOfPinnedMessagesPerChat[pm.chatId] - 1
             self.events.emit(SIGNAL_MESSAGE_UNPINNED, data)
+
+      # Handling deleted messages updates
+      if (receivedData.deletedMessages.len > 0):
+        for dm in receivedData.deletedMessages:
+          let data = MessageDeletedArgs(chatId: dm.chatId, messageId: dm.messageId)
+          self.events.emit(SIGNAL_MESSAGE_DELETION, data)
 
   proc initialMessagesFetched(self: Service, chatId: string): bool =
     return self.msgCursor.hasKey(chatId)
@@ -543,3 +554,29 @@ proc getRenderedText*(self: Service, parsedTextArray: seq[ParsedText]): string =
       of PARSED_TEXT_TYPE_CODEBLOCK:
         result = result & "<code>" & escape_html(parsedText.literal) & "</code>"
     result = result.strip()
+
+proc deleteMessage*(self: Service, messageId: string) =
+  try:
+    let response = status_go.deleteMessageAndSend(messageId)
+
+    var deletesMessagesObj: JsonNode
+    if(not response.result.getProp("removedMessages", deletesMessagesObj) or deletesMessagesObj.kind != JArray):
+      error "error: ", methodName="deleteMessage", errDesription = "no messages deleted or it's not an array"
+      return
+
+    let deletedMessagesArr = deletesMessagesObj.getElems()
+    if(deletedMessagesArr.len == 0): # an array is returned
+      error "error: ", methodName="deleteMessage", errDesription = "array has no message to delete"
+      return
+
+    let deletedMessageObj = deletedMessagesArr[0]
+    var chat_Id, message_Id: string
+    if not deletedMessageObj.getProp("chatId", chat_Id) or not deletedMessageObj.getProp("messageId", message_Id):
+      error "error: ", methodName="deleteMessage", errDesription = "there is no set chat id or message id in response"
+      return
+
+    let data = MessageDeletedArgs(chatId: chat_Id, messageId: message_Id)
+    self.events.emit(SIGNAL_MESSAGE_DELETION, data)
+
+  except Exception as e:
+    error "error: ", methodName="deleteMessage", errName = e.name, errDesription = e.msg
