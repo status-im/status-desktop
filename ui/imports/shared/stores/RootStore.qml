@@ -72,4 +72,36 @@ QtObject {
     function copyToClipboard(textToCopy) {
 //        chatsModelInst.copyToClipboard(textToCopy)
     }
+
+    property var gifColumnA: chatSectionChatContentInputArea.gifColumnA 
+    property var gifColumnB: chatSectionChatContentInputArea.gifColumnB
+    property var gifColumnC: chatSectionChatContentInputArea.gifColumnC
+
+    function searchGifs(query) {
+        chatSectionChatContentInputArea.searchGifs(query)
+    }
+
+    function getTrendingsGifs() {
+        chatSectionChatContentInputArea.getTrendingsGifs()
+    }
+
+    function getRecentsGifs() {
+        chatSectionChatContentInputArea.getRecentsGifs()
+    }
+
+    function getFavoritesGifs() {
+        return chatSectionChatContentInputArea.getFavoritesGifs()
+    }
+
+    function isFavorite(id) {
+        return chatSectionChatContentInputArea.isFavorite(id)
+    }
+
+    function toggleFavoriteGif(id, reload) {
+        chatSectionChatContentInputArea.toggleFavoriteGif(id, reload)
+    }
+
+    function addToRecentsGif(id) {
+        chatSectionChatContentInputArea.addToRecentsGif(id)
+    }
 }

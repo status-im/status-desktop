@@ -3,6 +3,8 @@ import io_interface
 
 import ../../../../../../app_service/service/community/service as community_service
 import ../../../../../../app_service/service/chat/service as chat_service
+import ../../../../../../app_service/service/gif/service as gif_service
+import ../../../../../../app_service/service/gif/dto
 
 export controller_interface
 
@@ -14,6 +16,7 @@ type
     belongsToCommunity: bool
     communityService: community_service.Service
     chatService: chat_service.Service
+    gifService: gif_service.Service
 
 proc newController*(
     delegate: io_interface.AccessInterface,
@@ -21,7 +24,8 @@ proc newController*(
     chatId: string,
     belongsToCommunity: bool,
     chatService: chat_service.Service, 
-    communityService: community_service.Service
+    communityService: community_service.Service,
+    gifService: gif_service.Service
     ): Controller =
   result = Controller()
   result.delegate = delegate
@@ -30,6 +34,7 @@ proc newController*(
   result.belongsToCommunity = belongsToCommunity
   result.chatService = chatService
   result.communityService = communityService
+  result.gifService = gifService
   
 method delete*(self: Controller) =
   discard
@@ -72,3 +77,24 @@ method acceptRequestAddressForTransaction*(self: Controller, messageId: string, 
 
 method acceptRequestTransaction*(self: Controller, transactionHash: string, messageId: string, signature: string) =
   self.chatService.acceptRequestTransaction(transactionHash, messageId, signature)
+
+method searchGifs*(self: Controller, query: string): seq[GifDto] =
+  return self.gifService.search(query)
+
+method getTrendingsGifs*(self: Controller): seq[GifDto] =
+  return self.gifService.getTrendings()
+
+method getRecentsGifs*(self: Controller): seq[GifDto] =
+  return self.gifService.getRecents()
+
+method getFavoritesGifs*(self: Controller): seq[GifDto] =
+  return self.gifService.getFavorites()
+
+method toggleFavoriteGif*(self: Controller, item: GifDto) =
+  self.gifService.toggleFavorite(item)
+
+method addToRecentsGif*(self: Controller, item: GifDto) =
+  self.gifService.addToRecents(item)
+
+method isFavorite*(self: Controller, item: GifDto): bool =
+  return self.gifService.isFavorite(item)

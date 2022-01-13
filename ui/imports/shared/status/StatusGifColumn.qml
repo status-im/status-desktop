@@ -15,6 +15,7 @@ Column {
     spacing: 8
     property alias gifList: repeater
     property var gifWidth: 0
+    property var store
     property var gifSelected: function () {}
     property var toggleFavorite: function () {}
     property string lastHoveredId
@@ -51,7 +52,7 @@ Column {
 
             StatusBaseButton {
                 id: starButton
-                property bool favorite: model.isFavorite
+                property bool favorite: RootStore.isFavorite(model.id)
 
                 type: StatusFlatRoundButton.Type.Secondary
                 textColor: hovered || favorite ? Style.current.yellow : Style.current.secondaryText
@@ -110,8 +111,7 @@ Column {
                 hoverEnabled: true
                 onClicked: function (event) {
                     root.gifSelected(event, model.url)
-                    // Not Refactored Yet
-//                    RootStore.chatsModelInst.gif.addToRecents(model.id)
+                    root.store.addToRecentsGif(model.id)
                 }
             }
         }

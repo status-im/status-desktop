@@ -1,3 +1,4 @@
+import ../../../../../../app_service/service/gif/dto
 
 type 
   AccessInterface* {.pure inheritable.} = ref object of RootObj
@@ -38,4 +39,24 @@ method acceptRequestAddressForTransaction*(self: AccessInterface, messageId: str
 
 method acceptRequestTransaction*(self: AccessInterface, transactionHash: string, messageId: string, signature: string) {.base.} =
   raise newException(ValueError, "No implementation available")
-    
+  
+method searchGifs*(self: AccessInterface, query: string): seq[GifDto] {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getTrendingsGifs*(self: AccessInterface): seq[GifDto] {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getRecentsGifs*(self: AccessInterface): seq[GifDto] {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getFavoritesGifs*(self: AccessInterface): seq[GifDto] {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method toggleFavoriteGif*(self: AccessInterface, item: GifDto) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method addToRecentsGif*(self: AccessInterface, item: GifDto) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method isFavorite*(self: AccessInterface, item: GifDto): bool {.base.} =
+  raise newException(ValueError, "No implementation available")

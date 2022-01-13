@@ -29,6 +29,7 @@ import ../../app_service/service/activity_center/service as activity_center_serv
 import ../../app_service/service/saved_address/service as saved_address_service
 import ../../app_service/service/devices/service as devices_service
 import ../../app_service/service/mailservers/service as mailservers_service
+import ../../app_service/service/gif/service as gif_service
 
 import ../modules/startup/module as startup_module
 import ../modules/main/module as main_module
@@ -80,6 +81,7 @@ type
     devicesService: devices_service.Service
     mailserversService: mailservers_service.Service
     nodeService: node_service.Service
+    gifService: gif_service.Service
 
     # Modules
     startupModule: startup_module.AccessInterface
@@ -165,6 +167,7 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result.settingsService, result.nodeConfigurationService, statusFoundation.fleetConfiguration)
   result.nodeService = node_service.newService(statusFoundation.events, statusFoundation.threadpool, 
   result.settingsService)
+  result.gifService = gif_service.newService(result.settingsService)
 
   # Modules
   result.startupModule = startup_module.newModule[AppController](
@@ -201,7 +204,8 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
     result.nodeConfigurationService,
     result.devicesService,
     result.mailserversService,
-    result.nodeService
+    result.nodeService,
+    result.gifService,
   )
 
   # Do connections
@@ -213,6 +217,7 @@ proc delete*(self: AppController) =
   self.keychainService.delete
   self.contactsService.delete
   self.bookmarkService.delete
+  self.gifService.delete
   self.startupModule.delete
   self.mainModule.delete
   self.ethService.delete
@@ -306,7 +311,8 @@ proc load(self: AppController) =
     self.contactsService,
     self.chatService,
     self.communityService,
-    self.messageService
+    self.messageService,
+    self.gifService,
   )
 
 proc userLoggedIn*(self: AppController) =
