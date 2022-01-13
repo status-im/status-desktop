@@ -21,3 +21,9 @@ method amIChatAdmin*(self: AccessInterface): bool {.base.} =
 
 method getNumberOfPinnedMessages*(self: AccessInterface): int {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method deleteMessage*(self: AccessInterface, messageId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onMessageDeleted*(self: AccessInterface, messageId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")

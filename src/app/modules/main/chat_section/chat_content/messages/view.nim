@@ -106,3 +106,6 @@ QtObject:
   proc sendingMessageFailed*(self: View) {.signal.}
   proc emitSendingMessageErrorSignal*(self: View) =
     self.sendingMessageFailed()
+
+  proc deleteMessage*(self: View, messageId: string) {.slot.} =
+    self.delegate.deleteMessage(messageId)

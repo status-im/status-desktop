@@ -213,4 +213,8 @@ method updateContactDetails*(self: Module, contactId: string) =
         item.messageText = self.controller.getRenderedText(m.parsedText)
         item.messageContainsMentions = m.containsContactMentions()
 
+method deleteMessage*(self: Module, messageId: string) =
+  self.controller.deleteMessage(messageId)
 
+method onMessageDeleted*(self: Module, messageId: string) =
+  self.view.model().removeItem(messageId)

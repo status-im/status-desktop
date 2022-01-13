@@ -218,18 +218,6 @@ Column {
 //        }
 //    }
 
-//    Connections {
-//        enabled: !!root.rootStore
-//        target: !!root.rootStore ? root.chatsModel.messageView : null
-//        onHideMessage: {
-//            // This hack is used because message_list deleteMessage sometimes does not remove the messages (there might be an issue with the delegate model)
-//            if(mId === messageId){
-//                root.visible = 0;
-//                root.height = 0;
-//            }
-//        }
-//    }
-
     Loader {
         id: messageLoader
         active: root.visible
