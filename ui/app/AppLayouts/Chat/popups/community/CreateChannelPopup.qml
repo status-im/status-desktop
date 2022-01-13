@@ -41,8 +41,8 @@ StatusModal {
     onClosed: destroy()
 
     function isFormValid() {
-        return contentItem.channelName.valid &&
-               contentItem.channelDescription.valid
+        return (scrollView.channelName.valid &&
+               scrollView.channelDescription.valid)
     }
 
     contentItem: ScrollView {
@@ -77,6 +77,7 @@ StatusModal {
                     input.text = Utils.convertSpacesToDashesAndUpperToLowerCase(input.text);
                     input.cursorPosition = input.text.length
                 }
+                validationMode: StatusInput.ValidationMode.Always
                 validators: [StatusMinLengthValidator {
                     minLength: 1
                     errorMessage: Utils.getErrorMessage(nameInput.errors, qsTr("channel name"))
@@ -96,6 +97,7 @@ StatusModal {
                 input.placeholderText: qsTr("Describe the channel")
                 input.multiline: true
                 input.implicitHeight: 88
+                validationMode: StatusInput.ValidationMode.Always
                 validators: [StatusMinLengthValidator {
                     minLength: 1
                     errorMessage:  Utils.getErrorMessage(descriptionTextArea.errors, qsTr("channel description"))
