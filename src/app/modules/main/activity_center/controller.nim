@@ -108,5 +108,5 @@ method acceptActivityCenterNotifications*[T](self: Controller[T], notificationId
 method dismissActivityCenterNotifications*[T](self: Controller[T], notificationIds: seq[string]): string =
    return self.activityCenterService.dismissActivityCenterNotifications(notificationIds)
 
-method getRenderedText*(self: Controller, parsedTextArray: seq[ParsedText]): string =
+method getRenderedText*[T](self: Controller[T], parsedTextArray: seq[ParsedText]): string =
   return self.messageService.getRenderedText(parsedTextArray)
