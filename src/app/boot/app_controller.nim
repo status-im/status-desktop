@@ -128,7 +128,8 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result.contactsService = contacts_service.newService(statusFoundation.events, statusFoundation.threadpool)
   result.chatService = chat_service.newService(statusFoundation.events, result.contactsService)
   result.communityService = community_service.newService(statusFoundation.events, result.chatService)
-  result.messageService = message_service.newService(statusFoundation.events, statusFoundation.threadpool)
+  result.messageService = message_service.newService(statusFoundation.events, statusFoundation.threadpool,
+  result.contactsService)
   result.activityCenterService = activity_center_service.newService(statusFoundation.events,
   statusFoundation.threadpool, result.chatService)
   result.tokenService = token_service.newService(statusFoundation.events, statusFoundation.threadpool, 

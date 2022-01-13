@@ -142,8 +142,9 @@ proc buildPinnedMessageItem(self: Module, messageId: string, actionInitiatedBy: 
     contactDetails.isIdenticon,
     contactDetails.isCurrentUser,
     m.outgoingStatus,
-    m.text,
+    self.controller.getRenderedText(m.parsedText),
     m.image,
+    m.containsContactMentions(),
     m.seen,
     m.timestamp,
     m.contentType.ContentType, 
@@ -250,8 +251,18 @@ method amIChatAdmin*(self: Module): bool =
 
 method onContactDetailsUpdated*(self: Module, contactId: string) =
   let updatedContact = self.controller.getContactDetails(contactId)
-  self.view.pinnedModel().updateSenderDetails(contactId, updatedContact.displayName, updatedContact.details.localNickname,
-  updatedContact.icon, updatedContact.isIdenticon)
+  for item in self.view.pinnedModel().modelContactUpdateIterator(contactId):
+    if(item.senderId == contactId):
+      item.senderDisplayName = updatedContact.displayName
+      item.senderLocalName = updatedContact.details.localNickname
+      item.senderIcon = updatedContact.icon
+      item.isSenderIconIdenticon = updatedContact.isIdenticon
+    if(item.messageContainsMentions):
+      let (m, _, err) = self.controller.getMessageDetails(item.id)
+      if(err.len == 0):
+        item.messageText = self.controller.getRenderedText(m.parsedText)
+        item.messageContainsMentions = m.containsContactMentions()
+
   if(self.controller.getMyChatId() == contactId):
     self.view.updateChatDetailsNameAndIcon(updatedContact.displayName, updatedContact.icon, updatedContact.isIdenticon)
 

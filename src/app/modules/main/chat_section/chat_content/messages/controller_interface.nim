@@ -1,6 +1,7 @@
 import ../../../../../../app_service/service/contacts/dto/[contacts, contact_details]
 import ../../../../../../app_service/service/community/dto/[community]
 import ../../../../../../app_service/service/chat/dto/[chat]
+import ../../../../../../app_service/service/message/dto/[message, reaction]
 
 type 
   AccessInterface* {.pure inheritable.} = ref object of RootObj
@@ -50,4 +51,11 @@ method getContactDetails*(self: AccessInterface, contactId: string): ContactDeta
   raise newException(ValueError, "No implementation available")
 
 method getNumOfPinnedMessages*(self: AccessInterface): int {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getRenderedText*(self: AccessInterface, parsedTextArray: seq[ParsedText]): string {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getMessageDetails*(self: AccessInterface, messageId: string): 
+  tuple[message: MessageDto, reactions: seq[ReactionDto], error: string] {.base.} =
   raise newException(ValueError, "No implementation available")

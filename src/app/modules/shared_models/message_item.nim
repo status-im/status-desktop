@@ -18,6 +18,7 @@ type
     outgoingStatus: string
     messageText: string
     messageImage: string
+    messageContainsMentions: bool
     stickerHash: string
     stickerPack: int     
     gapFrom: int64
@@ -30,8 +31,8 @@ type
     pinnedBy: string
 
 proc initItem*(id, responseToMessageWithId, senderId, senderDisplayName, senderLocalName, senderIcon: string, 
-  isSenderIconIdenticon, amISender: bool, outgoingStatus, text, image: string, seen: bool, timestamp: int64, 
-  contentType: ContentType, messageType: int): Item =
+  isSenderIconIdenticon, amISender: bool, outgoingStatus, text, image: string, messageContainsMentions, seen: bool, 
+  timestamp: int64, contentType: ContentType, messageType: int): Item =
   result = Item()
   result.id = id
   result.responseToMessageWithId = responseToMessageWithId
@@ -45,6 +46,7 @@ proc initItem*(id, responseToMessageWithId, senderId, senderDisplayName, senderL
   result.outgoingStatus = outgoingStatus
   result.messageText = text
   result.messageImage = image
+  result.messageContainsMentions = messageContainsMentions
   result.timestamp = timestamp
   result.contentType = contentType
   result.messageType = messageType
@@ -63,6 +65,7 @@ proc `$`*(self: Item): string =
     seen: {$self.seen},
     outgoingStatus:{$self.outgoingStatus},
     messageText:{self.messageText},
+    messageContainsMentions:{self.messageContainsMentions},
     timestamp:{$self.timestamp},
     contentType:{$self.contentType.int},
     messageType:{$self.messageType},
@@ -113,8 +116,17 @@ proc outgoingStatus*(self: Item): string {.inline.} =
 proc messageText*(self: Item): string {.inline.} = 
   self.messageText
 
+proc `messageText=`*(self: Item, value: string) {.inline.} = 
+  self.messageText = value
+
 proc messageImage*(self: Item): string {.inline.} = 
   self.messageImage
+
+proc messageContainsMentions*(self: Item): bool {.inline.} = 
+  self.messageContainsMentions
+
+proc `messageContainsMentions=`*(self: Item, value: bool) {.inline.} = 
+  self.messageContainsMentions = value
 
 proc stickerPack*(self: Item): int {.inline.} = 
   self.stickerPack
@@ -176,6 +188,7 @@ proc toJsonNode*(self: Item): JsonNode =
     "outgoingStatus": self.outgoingStatus,
     "messageText": self.messageText,
     "messageImage": self.messageImage,
+    "messageContainsMentions": self.messageContainsMentions,
     "stickerHash": self.stickerHash,
     "stickerPack": self.stickerPack,
     "gapFrom": self.gapFrom,

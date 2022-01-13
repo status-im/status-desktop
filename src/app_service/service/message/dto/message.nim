@@ -4,10 +4,32 @@ import json
 
 include ../../../common/json_utils
 
+const PARSED_TEXT_TYPE_PARAGRAPH* = "paragraph"
+const PARSED_TEXT_TYPE_BLOCKQUOTE* = "blockquote"
+const PARSED_TEXT_TYPE_CODEBLOCK* = "codeblock"
+
+const PARSED_TEXT_CHILD_TYPE_CODE* = "code"
+const PARSED_TEXT_CHILD_TYPE_EMPH* = "emph"
+const PARSED_TEXT_CHILD_TYPE_STRONG* = "strong"
+const PARSED_TEXT_CHILD_TYPE_STRONG_EMPH* = "strong-emph"
+const PARSED_TEXT_CHILD_TYPE_MENTION* = "mention"
+const PARSED_TEXT_CHILD_TYPE_STATUS_TAG* = "status-tag"
+const PARSED_TEXT_CHILD_TYPE_DEL* = "del"
+
+type ParsedTextChild* = object
+  `type`*: string
+  literal*: string
+  destination*: string
+
+type ParsedText* = object
+  `type`*: string
+  literal*: string
+  children*: seq[ParsedTextChild]
+
 type QuotedMessage* = object
   `from`*: string
   text*: string
-  #parsedText*: Not sure if we use it
+  parsedText*: seq[ParsedText]
 
 type Sticker* = object
   hash*: string
@@ -27,7 +49,7 @@ type MessageDto* = object
   outgoingStatus*: string
   quotedMessage*: QuotedMessage
   rtl*: bool
-  #parsedText*: Not sure if we use it
+  parsedText*: seq[ParsedText]
   lineCount*: int
   text*: string
   chatId*: string
@@ -44,10 +66,31 @@ type MessageDto* = object
   messageType*: int
   links*: seq[string]
 
+proc toParsedTextChild*(jsonObj: JsonNode): ParsedTextChild =
+  result = ParsedTextChild()
+  discard jsonObj.getProp("type", result.type)
+  discard jsonObj.getProp("literal", result.literal)
+  discard jsonObj.getProp("destination", result.destination)
+
+proc toParsedText*(jsonObj: JsonNode): ParsedText =
+  result = ParsedText()
+  discard jsonObj.getProp("type", result.type)
+  discard jsonObj.getProp("literal", result.literal)
+
+  var childrenArr: JsonNode
+  if(jsonObj.getProp("children", childrenArr) and childrenArr.kind == JArray):
+    for childObj in childrenArr:
+      result.children.add(toParsedTextChild(childObj))
+      
 proc toQuotedMessage*(jsonObj: JsonNode): QuotedMessage =
   result = QuotedMessage()
   discard jsonObj.getProp("from", result.from)
   discard jsonObj.getProp("text", result.text)
+  
+  var parsedTextArr: JsonNode
+  if(jsonObj.getProp("parsedText", parsedTextArr) and parsedTextArr.kind == JArray):
+    for pTextObj in parsedTextArr:
+      result.parsedText.add(toParsedText(pTextObj))
 
 proc toSticker*(jsonObj: JsonNode): Sticker =
   result = Sticker()
@@ -98,3 +141,15 @@ proc toMessageDto*(jsonObj: JsonNode): MessageDto =
   if(jsonObj.getProp("links", linksArr)):
     for link in linksArr:
       result.links.add(link.getStr)
+
+  var parsedTextArr: JsonNode
+  if(jsonObj.getProp("parsedText", parsedTextArr) and parsedTextArr.kind == JArray):
+    for pTextObj in parsedTextArr:
+      result.parsedText.add(toParsedText(pTextObj))
+
+proc containsContactMentions*(self: MessageDto): bool =
+  for pText in self.parsedText:
+    for child in pText.children:
+      if (child.type == PARSED_TEXT_CHILD_TYPE_MENTION):
+        return true
+  return false
