@@ -8,6 +8,7 @@ import ../../../../app_service/service/activity_center/service as activity_cente
 import ../../../../app_service/service/contacts/service as contacts_service
 import ../../../../app_service/service/chat/service as chat_service
 import ../../../../app_service/service/message/service as message_service
+import ../../../../app_service/service/eth/utils as eth_utils
 
 export controller_interface
 
@@ -110,3 +111,6 @@ method dismissActivityCenterNotifications*[T](self: Controller[T], notificationI
 
 method getRenderedText*[T](self: Controller[T], parsedTextArray: seq[ParsedText]): string =
   return self.messageService.getRenderedText(parsedTextArray)
+
+method decodeContentHash*[T](self: Controller[T], hash: string): string =
+  return eth_utils.decodeContentHash(hash)

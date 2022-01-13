@@ -21,8 +21,8 @@ type
     Timestamp
     ContentType
     MessageType
-    # StickerHash
-    # StickerPack
+    Sticker
+    StickerPack
     # GapFrom
     # GapTo
     Pinned
@@ -79,8 +79,8 @@ QtObject:
       ModelRole.Timestamp.int:"timestamp",
       ModelRole.ContentType.int:"contentType",
       ModelRole.MessageType.int:"messageType",
-      # ModelRole.StickerHash.int:"stickerHash",
-      # ModelRole.StickerPack.int:"stickerPack",
+      ModelRole.Sticker.int:"sticker",
+      ModelRole.StickerPack.int:"stickerPack",
       # ModelRole.GapFrom.int:"gapFrom",
       # ModelRole.GapTo.int:"gapTo",
       ModelRole.Pinned.int:"pinned",
@@ -131,10 +131,10 @@ QtObject:
       result = newQVariant(item.contentType.int)
     of ModelRole.MessageType: 
       result = newQVariant(item.messageType)
-    # of ModelRole.StickerHash: 
-    #   result = newQVariant(item.stickerHash)
-    # of ModelRole.StickerPack: 
-    #   result = newQVariant(item.stickerPack)
+    of ModelRole.Sticker: 
+      result = newQVariant(item.sticker)
+    of ModelRole.StickerPack: 
+      result = newQVariant(item.stickerPack)
     # of ModelRole.GapFrom: 
     #   result = newQVariant(item.gapFrom)
     # of ModelRole.GapTo: 

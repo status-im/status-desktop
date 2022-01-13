@@ -95,7 +95,6 @@ Column {
     //////////////////////////////////////
     //TODO CHECCK - REMOVE
     property string plainText: "That's right. We're friends...  Of justice, that is."
-    property string sticker: "Qme8vJtyrEHxABcSVGPF95PtozDgUyfr1xGjePmFdZgk9v"
     property string emojiReactions: ""
     property bool timeout: false
     property bool hasMention: false
@@ -104,7 +103,6 @@ Column {
     property bool activityCenterMessage: false
     property bool read: true
     property bool forceHoverHandler: false // Used to force the HoverHandler to be active (useful for messages in popups)
-    property int stickerPackId: -1
     property int gapFrom: 0
     property int gapTo: 0
     property bool isEdit: false
@@ -114,6 +112,8 @@ Column {
     property bool stickersLoaded: false
     //////////////////////////////////////
 
+    property string sticker: "Qme8vJtyrEHxABcSVGPF95PtozDgUyfr1xGjePmFdZgk9v"
+    property int stickerPack: -1
     property bool isEmoji: contentType === Constants.messageContentType.emojiType
     property bool isImage: contentType === Constants.messageContentType.imageType
     property bool isAudio: contentType === Constants.messageContentType.audioType
@@ -347,8 +347,11 @@ Column {
         CompactMessageView {
             contactsStore: root.contactsStore
             messageContextMenu: root.messageContextMenu
+            contentType: root.messageContentType
 
             stickersLoaded: root.stickersLoaded
+            sticker: root.sticker
+            stickerPack: root.stickerPack
             isMessageActive: root.isMessageActive
             isCurrentUser: root.amISender
             isHovered: root.isHovered

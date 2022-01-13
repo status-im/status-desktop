@@ -43,6 +43,9 @@ method getRenderedText*(self: AccessInterface, parsedTextArray: seq[ParsedText])
   raise newException(ValueError, "No implementation available")
 
 
+method decodeContentHash*(self: AccessInterface, hash: string): string {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 type
   ## Abstract class (concept) which must be implemented by object/s used in this 
   ## module.

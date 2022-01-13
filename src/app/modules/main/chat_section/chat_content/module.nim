@@ -149,7 +149,9 @@ proc buildPinnedMessageItem(self: Module, messageId: string, actionInitiatedBy: 
     m.seen,
     m.timestamp,
     m.contentType.ContentType, 
-    m.messageType
+    m.messageType,
+    self.controller.decodeContentHash(m.sticker.hash),
+    m.sticker.pack
   )
   item.pinned = true
   item.pinnedBy = actionInitiatedBy

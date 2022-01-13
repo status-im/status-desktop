@@ -19,7 +19,7 @@ type
     messageText: string
     messageImage: string
     messageContainsMentions: bool
-    stickerHash: string
+    sticker: string
     stickerPack: int     
     gapFrom: int64
     gapTo: int64
@@ -30,9 +30,26 @@ type
     pinned: bool
     pinnedBy: string
 
-proc initItem*(id, responseToMessageWithId, senderId, senderDisplayName, senderLocalName, senderIcon: string, 
-  isSenderIconIdenticon, amISender: bool, outgoingStatus, text, image: string, messageContainsMentions, seen: bool, 
-  timestamp: int64, contentType: ContentType, messageType: int): Item =
+proc initItem*(
+    id,
+    responseToMessageWithId,
+    senderId,
+    senderDisplayName,
+    senderLocalName,
+    senderIcon: string, 
+    isSenderIconIdenticon,
+    amISender: bool,
+    outgoingStatus,
+    text,
+    image: string,
+    messageContainsMentions,
+    seen: bool, 
+    timestamp: int64,
+    contentType: ContentType,
+    messageType: int,
+    sticker: string,
+    stickerPack: int
+    ): Item =
   result = Item()
   result.id = id
   result.responseToMessageWithId = responseToMessageWithId
@@ -52,6 +69,8 @@ proc initItem*(id, responseToMessageWithId, senderId, senderDisplayName, senderL
   result.messageType = messageType
   result.pinned = false
   result.reactionsModel = newMessageReactionModel()
+  result.sticker = sticker
+  result.stickerPack = stickerPack
 
 proc `$`*(self: Item): string =
   result = fmt"""Item(
@@ -131,8 +150,8 @@ proc `messageContainsMentions=`*(self: Item, value: bool) {.inline.} =
 proc stickerPack*(self: Item): int {.inline.} = 
   self.stickerPack
 
-proc stickerHash*(self: Item): string {.inline.} = 
-  self.stickerHash
+proc sticker*(self: Item): string {.inline.} = 
+  self.sticker
 
 proc seen*(self: Item): bool {.inline.} = 
   self.seen
@@ -189,7 +208,7 @@ proc toJsonNode*(self: Item): JsonNode =
     "messageText": self.messageText,
     "messageImage": self.messageImage,
     "messageContainsMentions": self.messageContainsMentions,
-    "stickerHash": self.stickerHash,
+    "sticker": self.sticker,
     "stickerPack": self.stickerPack,
     "gapFrom": self.gapFrom,
     "gapTo": self.gapTo,
