@@ -59,12 +59,18 @@ Item {
         }
     }
 
-    MouseArea {
+    MessageMouseArea {
         enabled: !placeholderMessage
         anchors.fill: messageContainer
         acceptedButtons: activityCenterMessage ? Qt.LeftButton : Qt.RightButton
-        onClicked: {
-            messageMouseArea.clicked(mouse)
+        messageContextMenu: root.messageContextMenu
+        messageContextMenuParent: root
+        isHovered: root.isHovered
+        isMessageActive: root.isMessageActive
+        isActivityCenterMessage: activityCenterMessage
+        stickersLoaded: root.stickersLoaded
+        onClickMessage: {
+            root.clickMessage(isProfileClick, isSticker, isImage, null, false, false, false, false, "");
         }
     }
 
