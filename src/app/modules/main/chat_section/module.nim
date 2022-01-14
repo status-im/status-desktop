@@ -41,11 +41,12 @@ proc newModule*(
     chatService: chat_service.Service,
     communityService: community_service.Service, 
     messageService: message_service.Service,
+    gifService: gif_service.Service,
   ): Module =
   result = Module()
   result.delegate = delegate
   result.controller = controller.newController(result, sectionId, isCommunity, events, settingsService, contactService, 
-  chatService, communityService, messageService)
+  chatService, communityService, messageService, gifService)
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
   result.moduleLoaded = false

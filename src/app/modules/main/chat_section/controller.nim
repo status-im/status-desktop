@@ -8,6 +8,7 @@ import ../../../../app_service/service/contacts/service as contact_service
 import ../../../../app_service/service/chat/service as chat_service
 import ../../../../app_service/service/community/service as community_service
 import ../../../../app_service/service/message/service as message_service
+import ../../../../app_service/service/gif/service as gif_service
 
 import ../../../core/eventemitter
 
@@ -26,11 +27,12 @@ type
     chatService: chat_service.Service
     communityService: community_service.Service
     messageService: message_service.Service
+    gifService: gif_service.Service
 
 proc newController*(delegate: io_interface.AccessInterface, sectionId: string, isCommunity: bool, events: EventEmitter,
   settingsService: settings_service.ServiceInterface, contactService: contact_service.Service, 
   chatService: chat_service.Service, communityService: community_service.Service, 
-  messageService: message_service.Service): Controller =
+  messageService: message_service.Service, gifService: gif_service.Service): Controller =
   result = Controller()
   result.delegate = delegate
   result.sectionId = sectionId
@@ -41,6 +43,7 @@ proc newController*(delegate: io_interface.AccessInterface, sectionId: string, i
   result.chatService = chatService
   result.communityService = communityService
   result.messageService = messageService
+  result.gifService = gifService
   
 method delete*(self: Controller) =
   discard
@@ -109,7 +112,8 @@ method init*(self: Controller) =
           self.contactService,
           self.chatService,
           self.communityService,
-          self.messageService
+          self.messageService,
+          self.gifService
         )
 
   self.events.on(SIGNAL_CONTACT_NICKNAME_CHANGED) do(e: Args):
@@ -180,13 +184,13 @@ method createPublicChat*(self: Controller, chatId: string) =
   let response = self.chatService.createPublicChat(chatId)
   if(response.success):
     self.delegate.addNewChat(response.chatDto, self.events, self.settingsService, self.contactService, self.chatService,
-    self.communityService, self.messageService)
+    self.communityService, self.messageService, self.gifService)
 
 method createOneToOneChat*(self: Controller, chatId: string, ensName: string) =
   let response = self.chatService.createOneToOneChat(chatId, ensName)
   if(response.success):
     self.delegate.addNewChat(response.chatDto, self.events, self.settingsService, self.contactService, self.chatService,
-    self.communityService, self.messageService)
+    self.communityService, self.messageService, self.gifService)
 
 method leaveChat*(self: Controller, chatId: string) =
   self.chatService.leaveChat(chatId)
