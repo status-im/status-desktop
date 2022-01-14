@@ -188,4 +188,12 @@ GridLayout {
         to: 100
         value: 40
     }
+
+    StatusBanner {
+        id: banner
+        width: 360
+        topPadding: 20
+        type: StatusBanner.Type.Danger
+        statusText: "Banner"
+    }
 }
