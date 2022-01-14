@@ -39,15 +39,14 @@ const IdleLimitInSeconds = int(7 * 60) # 7 minutes
 
 # Signals which may be emitted by this service:
 const SIGNAL_ENS_RESOLVED* = "ensResolved"
-# Remove new when old code is removed
-const SIGNAL_CONTACT_ADDED* = "new-contactAdded"
-const SIGNAL_CONTACT_BLOCKED* = "new-contactBlocked"
-const SIGNAL_CONTACT_UNBLOCKED* = "new-contactUnblocked"
-const SIGNAL_CONTACT_REMOVED* = "new-contactRemoved"
-const SIGNAL_CONTACT_NICKNAME_CHANGED* = "new-contactNicknameChanged"
-const SIGNAL_CONTACTS_STATUS_UPDATED* = "new-contactsStatusUpdated"
-const SIGNAL_CONTACT_UPDATED* = "new-contactUpdated"
-const SIGNAL_LOGGEDIN_USER_IMAGE_CHANGED* = "new-loggedInUserImageChanged"
+const SIGNAL_CONTACT_ADDED* = "contactAdded"
+const SIGNAL_CONTACT_BLOCKED* = "contactBlocked"
+const SIGNAL_CONTACT_UNBLOCKED* = "contactUnblocked"
+const SIGNAL_CONTACT_REMOVED* = "contactRemoved"
+const SIGNAL_CONTACT_NICKNAME_CHANGED* = "contactNicknameChanged"
+const SIGNAL_CONTACTS_STATUS_UPDATED* = "contactsStatusUpdated"
+const SIGNAL_CONTACT_UPDATED* = "contactUpdated"
+const SIGNAL_LOGGEDIN_USER_IMAGE_CHANGED* = "loggedInUserImageChanged"
 
 
 QtObject:

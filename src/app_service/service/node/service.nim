@@ -12,9 +12,9 @@ logScope:
   topics = "node-service"
 
 # Signals which may be emitted by this service:
-const SIGNAL_BITS_SET_FETCHED* = "SIGNAL_BITS_SET_FETCHED" 
-const SIGNAL_NETWORK_DISCONNECTED* = "SIGNAL_NETWORK_DISCONNECTED"
-const SIGNAL_NETWORK_CONNECTED* = "SIGNAL_NETWORK_CONNECTED"
+const SIGNAL_BITS_SET_FETCHED* = "bitsSetFetched" 
+const SIGNAL_NETWORK_DISCONNECTED* = "networkDisconnected"
+const SIGNAL_NETWORK_CONNECTED* = "networkConnected"
 
 type
     BitsSet* = ref object of Args

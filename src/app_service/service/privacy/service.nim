@@ -12,6 +12,7 @@ import status/statusgo_backend_new/privacy as status_privacy
 logScope:
   topics = "privacy-service"
 
+# Signals which may be emitted by this service:
 const SIGNAL_MNEMONIC_REMOVAL* = "menmonicRemoval"
 const SIGNAL_PASSWORD_CHANGED* = "passwordChanged"
 

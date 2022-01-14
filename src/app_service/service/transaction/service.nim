@@ -16,7 +16,7 @@ logScope:
 include async_tasks
 
 # Signals which may be emitted by this service:
-const SIGNAL_TRANSACTIONS_LOADED* = "SIGNAL_TRANSACTIONS_LOADED"
+const SIGNAL_TRANSACTIONS_LOADED* = "transactionsLoaded"
 
 type
   TransactionsLoadedArgs* = ref object of Args

@@ -18,7 +18,7 @@ logScope:
 include async_tasks
 
 # Signals which may be emitted by this service:
-const SIGNAL_TOKEN_DETAILS_LOADED* = "SIGNAL_TOKEN_DETAILS_LOADED"
+const SIGNAL_TOKEN_DETAILS_LOADED* = "tokenDetailsLoaded"
 
 type
   TokenDetailsLoadedArgs* = ref object of Args

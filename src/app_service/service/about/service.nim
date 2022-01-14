@@ -20,7 +20,8 @@ type
   VersionArgs* = ref object of Args
     version*: string
 
-const SIGNAL_VERSION_FETCHED* = "SIGNAL_VERSION_FETCHED"
+# Signals which may be emitted by this service:
+const SIGNAL_VERSION_FETCHED* = "versionFetched"
 
 QtObject:
   type 
