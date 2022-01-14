@@ -10,7 +10,8 @@ export service_interface
 logScope:
   topics = "saved-address-service"
 
-const SIGNAL_SAVED_ADDRESS_CHANGED* = "savedAddress/changed"
+# Signals which may be emitted by this service:
+const SIGNAL_SAVED_ADDRESS_CHANGED* = "savedAddressChanged"
 
 type 
   Service* = ref object of service_interface.ServiceInterface

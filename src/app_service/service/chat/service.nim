@@ -45,16 +45,15 @@ type
     id*: string
     channel*: string
 
-# Events this service emits
-# TODO remove new when refactor is done
+# Signals which may be emitted by this service:
 const SIGNAL_CHAT_UPDATE* = "chatUpdate_new"
 const SIGNAL_CHAT_LEFT* = "channelLeft_new"
-const SIGNAL_SENDING_FAILED* = "messageSendingFailed_new"
-const SIGNAL_SENDING_SUCCESS* = "messageSendingSuccess_new"
-const SIGNAL_MESSAGE_DELETED* = "messageDeleted_new"
-const SIGNAL_CHAT_MUTED* = "new-chatMuted"
-const SIGNAL_CHAT_UNMUTED* = "new-chatUnmuted"
-const SIGNAL_CHAT_HISTORY_CLEARED* = "new-chatHistoryCleared"
+const SIGNAL_SENDING_FAILED* = "messageSendingFailed"
+const SIGNAL_SENDING_SUCCESS* = "messageSendingSuccess"
+const SIGNAL_MESSAGE_DELETED* = "messageDeleted"
+const SIGNAL_CHAT_MUTED* = "chatMuted"
+const SIGNAL_CHAT_UNMUTED* = "chatUnmuted"
+const SIGNAL_CHAT_HISTORY_CLEARED* = "chatHistoryCleared"
 
 QtObject:
   type Service* = ref object of QObject

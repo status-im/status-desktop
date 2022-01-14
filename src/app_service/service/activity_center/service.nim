@@ -44,10 +44,9 @@ type
     notificationTypes*: seq[ActivityCenterNotificationType]
 
 # Signals which may be emitted by this service:
-# TODO remove new when refactor is done
-const SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_LOADED* = "activityCenterNotificationsLoaded-new"
-const SIGNAL_MARK_NOTIFICATIONS_AS_READ* = "markNotificationsAsRead-new"
-const SIGNAL_MARK_NOTIFICATIONS_AS_UNREAD* = "markNotificationsAsUnread-new"
+const SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_LOADED* = "activityCenterNotificationsLoaded"
+const SIGNAL_MARK_NOTIFICATIONS_AS_READ* = "markNotificationsAsRead"
+const SIGNAL_MARK_NOTIFICATIONS_AS_UNREAD* = "markNotificationsAsUnread"
 const SIGNAL_MARK_NOTIFICATIONS_AS_ACCEPTED* = "markNotificationsAsAccepted"
 const SIGNAL_MARK_NOTIFICATIONS_AS_DISMISSED* = "markNotificationsAsDismissed"
 
