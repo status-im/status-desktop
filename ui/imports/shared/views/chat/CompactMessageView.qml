@@ -449,10 +449,10 @@ Item {
             anchors.top: chatName.visible ? chatName.bottom :
                                             chatReply.active ? chatReply.bottom :
                                                 pinnedRectangleLoader.active ? pinnedRectangleLoader.bottom : parent.top
-            anchors.left: chatImage.right
-            anchors.leftMargin: chatHorizontalPadding
+            anchors.left: parent.left
+            anchors.leftMargin: chatImage.imageWidth + Style.current.padding + root.chatHorizontalPadding
             anchors.right: parent.right
-            anchors.rightMargin: chatHorizontalPadding
+            anchors.rightMargin: root.chatHorizontalPadding
             visible: !isEdit
             ChatTextView {
                 id: chatText
