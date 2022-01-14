@@ -162,7 +162,7 @@ StatusModal {
         id: groupInfoItem
 
         width: parent.width - 2*Style.current.padding
-        height: parent.height
+        height: parent.height - 2*Style.current.padding
         anchors.top: parent.top
         anchors.topMargin: Style.current.padding
         anchors.horizontalCenter: parent.horizontalCenter
@@ -205,9 +205,9 @@ StatusModal {
 
         ListView {
             id: memberList
-            spacing: Style.current.padding
             Layout.fillWidth: true
             Layout.fillHeight: true
+            clip: true
             model: popup.channel? popup.channel.members : []
             delegate: StatusListItem {
                 id: contactRow
