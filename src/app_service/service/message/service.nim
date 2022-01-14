@@ -22,15 +22,15 @@ const MESSAGES_PER_PAGE = 20
 const CURSOR_VALUE_IGNORE = "ignore"
 
 # Signals which may be emitted by this service:
-const SIGNAL_MESSAGES_LOADED* = "new-messagesLoaded" #Once we are done with refactoring we should remove "new-" from all signals
-const SIGNAL_NEW_MESSAGE_RECEIVED* = "SIGNAL_NEW_MESSAGE_RECEIVED"
-const SIGNAL_MESSAGE_PINNED* = "new-messagePinned"
-const SIGNAL_MESSAGE_UNPINNED* = "new-messageUnpinned"
-const SIGNAL_SEARCH_MESSAGES_LOADED* = "new-searchMessagesLoaded"
-const SIGNAL_MESSAGES_MARKED_AS_READ* = "new-messagesMarkedAsRead"
-const SIGNAL_MESSAGE_REACTION_ADDED* = "new-messageReactionAdded"
-const SIGNAL_MESSAGE_REACTION_REMOVED* = "new-messageReactionRemoved"
-const SIGNAL_MESSAGE_DELETION* = "new-messageDeleted"
+const SIGNAL_MESSAGES_LOADED* = "messagesLoaded"
+const SIGNAL_NEW_MESSAGE_RECEIVED* = "newMessageReceived"
+const SIGNAL_MESSAGE_PINNED* = "messagePinned"
+const SIGNAL_MESSAGE_UNPINNED* = "messageUnpinned"
+const SIGNAL_SEARCH_MESSAGES_LOADED* = "searchMessagesLoaded"
+const SIGNAL_MESSAGES_MARKED_AS_READ* = "messagesMarkedAsRead"
+const SIGNAL_MESSAGE_REACTION_ADDED* = "messageReactionAdded"
+const SIGNAL_MESSAGE_REACTION_REMOVED* = "messageReactionRemoved"
+const SIGNAL_MESSAGE_DELETION* = "messageDeleted"
 
 include async_tasks
 

@@ -7,7 +7,7 @@ logScope:
   topics = "os-notification-service"
 
 # Signals which may be emitted by this service:
-const SIGNAL_OS_NOTIFICATION_CLICKED* = "new-osNotificationClicked" #Once we are done with refactoring we should remove "new-" from all signals
+const SIGNAL_OS_NOTIFICATION_CLICKED* = "osNotificationClicked"
 
 type 
   OsNotificationsArgs* = ref object of Args

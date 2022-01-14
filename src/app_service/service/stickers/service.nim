@@ -45,9 +45,9 @@ type
     uuid*: string
 
 # Signals which may be emitted by this service:
-const SIGNAL_STICKER_PACK_LOADED* = "SIGNAL_STICKER_PACK_LOADED"
-const SIGNAL_ALL_STICKER_PACKS_LOADED* = "SIGNAL_ALL_STICKER_PACKS_LOADED"
-const SIGNAL_STICKER_GAS_ESTIMATED* = "SIGNAL_STICKER_GAS_ESTIMATED"
+const SIGNAL_STICKER_PACK_LOADED* = "stickerPackLoaded"
+const SIGNAL_ALL_STICKER_PACKS_LOADED* = "allStickerPacksLoaded"
+const SIGNAL_STICKER_GAS_ESTIMATED* = "stickerGasEstimated"
 
 QtObject:
   type Service* = ref object of QObject
