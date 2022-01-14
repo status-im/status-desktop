@@ -43,11 +43,19 @@ QtObject {
     property string profileThumbnailImage: profile.thumbnailImage
 
     property bool profileHasIdentityImage: profile.hasIdentityImage
-    property bool automaticMailserverSelection: profileModelInst.mailservers.automaticSelection
     property bool isWakuV2LightClient: nodeModelInst.WakuV2LightClient
     property bool devicesSetup: profileModelInst.devices.isSetup
     property bool mnemonicBackedUp: mnemonicModuleInst.isBackedUp
     property bool messagesFromContactsOnly: profile.messagesFromContactsOnly
+
+    property string activeMailserver: ""
+    property string pinnedMailserver: profileModelInst.mailservers.pinnedMailserver
+    property var cnxActiveMailserverChanged : Connections {
+        target: mailservers
+        onActiveMailserverChanged: function(activeMailserver){
+            root.activeMailserver = activeMailserver
+        }
+    }
 
     property int profile_id: 0
     property int contacts_id: 1
@@ -283,16 +291,12 @@ QtObject {
         return profileModelInst.mailservers.list.getMailserverName(mailserver)
     }
 
-    function setMailserver(mailserver) {
-        profileModelInst.mailservers.setMailserver(mailserver);
+    function pinMailserver(mailserver) {
+        profileModelInst.mailservers.pinMailserver(mailserver);
     }
 
     function saveMailserver(name, enode) {
         profileModelInst.mailservers.save(name, enode)
-    }
-
-    function enableAutomaticMailserverSelection(checked) {
-        profileModelInst.mailservers.enableAutomaticSelection(checked)
     }
 
     function getNetworkName() {

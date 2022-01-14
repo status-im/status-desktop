@@ -1,10 +1,10 @@
-import NimQml, chronicles
+import NimQml, chronicles, json
 import status/[status, settings]
 import status/types/mailserver
 
 import ./mailservers_list
 import ../../../app_service/[main]
-import ../../../app_service/tasks/[qt, threadpool]
+import ../../../app_service/tasks/threadpool
 import ../../../app_service/tasks/marathon/mailserver/worker
 
 logScope:
@@ -50,22 +50,18 @@ QtObject:
     read = activeMailserver
     notify = activeMailserverChanged
 
-  proc getAutomaticSelection(self: MailserversView): bool {.slot.} =
-    self.status.settings.getPinnedMailserver() == ""
+  proc getPinnedMailserver(self: MailserversView): string {.slot.} =
+    self.status.settings.getPinnedMailserver()
 
-  QtProperty[bool] automaticSelection:
-    read = getAutomaticSelection
+  proc pinnedMailserverChanged(self: MailserversView) {.signal.}
 
-  proc setMailserver(self: MailserversView, id: string) {.slot.} =
-    let enode = self.mailserversList.getMailserverEnode(id)
-    self.status.settings.pinMailserver(enode)
+  proc pinMailserver(self: MailserversView, name: string) {.slot.} =
+    self.status.settings.pinMailserver(name)
+    self.pinnedMailserverChanged()
 
-  proc enableAutomaticSelection(self: MailserversView, value: bool) {.slot.} =
-    if value:
-      self.activeMailserverChanged(self.activeMailserver)
-      self.status.settings.pinMailserver()
-    else:
-      self.activeMailserverChanged("")
+  QtProperty[string] pinnedMailserver:
+    read = getPinnedMailserver
+    notify = pinnedMailserverChanged
 
   proc save(self: MailserversView, name: string, address: string) {.slot.} =
     self.status.settings.saveMailserver(name, address)

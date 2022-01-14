@@ -16,15 +16,7 @@ Item {
     Layout.fillHeight: true
     Layout.fillWidth: true
     property var store
-    property string activeMailserver: ""
 
-    Connections {
-        target: root.store.mailservers
-        onActiveMailserverChanged: function(activeMailserver){
-            var mName = root.store.getMailserverName(activeMailserver)
-            root.activeMailserver = mName
-        }
-    }
 
     Item {
         width: profileContainer.profileContentWidth
@@ -38,10 +30,10 @@ Item {
             StatusRadioButton {
                 id: rbSetMailsever
                 text: name
-                checked: name === activeMailserver
+                checked: endpoint === root.store.pinnedMailserver
                 onClicked: {
                     if (checked) {
-                        root.store.setMailserver(name)
+                        root.store.pinMailserver(endpoint)
                     }
                 }
             }
@@ -165,8 +157,12 @@ Item {
 
         StatusSwitch {
             id: automaticSelectionSwitch
-            checked: root.store.automaticMailserverSelection
-            onCheckedChanged: root.store.enableAutomaticMailserverSelection(checked)
+            checked: root.store.pinnedMailserver === ""
+            onCheckedChanged: {
+                if(root.store.pinnedMailserver !== "" && checked){
+                    root.store.pinMailserver("")
+                }
+            }
             anchors.top: addMailserver.bottom
             anchors.topMargin: Style.current.padding
             anchors.left: switchLbl.right
@@ -175,7 +171,7 @@ Item {
 
         StatusBaseText {
             //% "..."
-            text: qsTr("Active mailserver: %1").arg(activeMailserver || qsTrId("---"))
+            text: qsTr("Active mailserver: %1").arg(root.store.getMailserverName(root.store.activeMailserver) || qsTrId("---"))
             anchors.left: parent.left
             anchors.leftMargin: 24
             anchors.top: switchLbl.bottom
