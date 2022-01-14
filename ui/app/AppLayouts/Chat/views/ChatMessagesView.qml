@@ -341,10 +341,13 @@ Item {
 
             // This is possible since we have all data loaded before we load qml.
             // When we fetch messages to fulfill a gap we have to set them at once.
-            prevMessageIndex: index - 1
-            prevMessageAsJsonObj: messageStore.getMessageByIndexAsJson(index - 1)
-            nextMessageIndex: index + 1
-            nextMessageAsJsonObj: messageStore.getMessageByIndexAsJson(index + 1)
+            // Also one important thing here is that messages are set in descending order
+            // in terms of `timestamp` of a message, that means a message with the most
+            // recent time is added at index 0.
+            prevMessageIndex: index + 1
+            prevMessageAsJsonObj: messageStore.getMessageByIndexAsJson(index + 1)
+            nextMessageIndex: index - 1
+            nextMessageAsJsonObj: messageStore.getMessageByIndexAsJson(index - 1)
             onOpenStickerPackPopup: {
                 root.openStickerPackPopup(stickerPackId);
             }
