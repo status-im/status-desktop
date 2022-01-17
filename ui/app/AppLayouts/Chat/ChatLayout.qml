@@ -77,9 +77,16 @@ StatusAppThreePanelLayout {
     }
 
     showRightPanel: {
-        // Check if user list is available as an option for particular chat content module.
-        let usersListAvailable = root.rootStore.currentChatContentModule().chatDetails.isUsersListAvailable
-        return localAccountSensitiveSettings.showOnlineUsers && usersListAvailable && localAccountSensitiveSettings.expandUsersList
+        if (!localAccountSensitiveSettings.showOnlineUsers || !localAccountSensitiveSettings.expandUsersList) {
+            return false
+        }
+        let chatContentModule = root.rootStore.currentChatContentModule()
+        if (!chatContentModule) {
+            // New communities have no chats, so no chatContentModule
+            return false
+        }
+        // Check if user list is available as an option for particular chat content module
+        return chatContentModule.chatDetails.isUsersListAvailable
     }
 
     rightPanel: localAccountSensitiveSettings.communitiesEnabled && root.rootStore.chatCommunitySectionModule.isCommunity()?
@@ -92,6 +99,10 @@ StatusAppThreePanelLayout {
             messageContextMenu: quickActionMessageOptionsMenu
             usersModule: {
                 let chatContentModule = root.rootStore.currentChatContentModule()
+                if (!chatContentModule || !chatContentModule.usersModule) {
+                    // New communities have no chats, so no chatContentModule
+                    return {}
+                }
                 return chatContentModule.usersModule
             }
         }
