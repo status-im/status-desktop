@@ -53,6 +53,8 @@ StatusModal {
             label: qsTrId("community-key")
             placeholderText: "0x0..."
             customHeight: 110
+            anchors.left: parent.left
+            anchors.right: parent.right
         }
 
         StatusBaseText {
