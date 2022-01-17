@@ -20,6 +20,7 @@ StatusModal {
 
     property Popup parentPopup
 
+    property var profileStore
     property var contactsStore
 
     property string userPublicKey: ""
@@ -60,7 +61,7 @@ StatusModal {
         isAddedContact = contactDetails.isContact
 
         text = "" // this is most likely unneeded
-        isCurrentUser = userProfile.pubKey === publicKey
+        isCurrentUser = popup.profileStore.pubkey === publicKey
         showFooter = !isCurrentUser
         popup.open()
     }
@@ -137,14 +138,15 @@ StatusModal {
             StatusDescriptionListItem {
                 title: qsTr("Share Profile URL")
                 subTitle: {
+
                     let user = ""
                     if (isCurrentUser) {
-                         user = userProfile.name
-                    } else {
-                        if (userIsEnsVerified) {
-                            user = userEnsName
-                        }
+                        user = popup.profileStore.ensName !== "" ? popup.profileStore.ensName :
+                                                                   (popup.profileStore.pubkey.substring(0, 5) + "..." + popup.profileStore.pubkey.substring(popup.profileStore.pubkey.length - 5))
+                    } else if (userIsEnsVerified) {
+                        user = userEnsName
                     }
+
                     if (user === ""){
                         user = userPublicKey.substr(0, 4) + "..." + userPublicKey.substr(userPublicKey.length - 5)
                     }
@@ -155,17 +157,11 @@ StatusModal {
                 iconButton.onClicked: {
                     let user = ""
                     if (isCurrentUser) {
-                         user = userProfile.name
+                        user = popup.profileStore.ensName !== "" ? popup.profileStore.ensName : popup.profileStore.pubkey
                     } else {
-                        if (userIsEnsVerified) {
-                            user = userName.startsWith("@") ? userName.substring(1) : userName
-                        }
+                        user = (userEnsName !== "" ? userEnsName : userPublicKey)
                     }
-                    if (user === ""){
-                        user = userPublicKey
-                    }
-
-                    globalUtils.copyToClipboard(subTitle)
+                    popup.profileStore.copyToClipboard(Constants.userLinkPrefix + user)
                     tooltip.visible = !tooltip.visible
                 }
                 width: parent.width

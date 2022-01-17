@@ -138,6 +138,7 @@ Item {
 
     property Component profilePopupComponent: ProfilePopup {
         id: profilePopup
+        profileStore: appMain.rootStore.profileSectionStore.profileStore
         contactsStore: appMain.rootStore.profileSectionStore.contactsStore
         onClosed: {
             if  (profilePopup.parentPopup) {
