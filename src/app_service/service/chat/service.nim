@@ -224,10 +224,12 @@ QtObject:
         var image = singletonInstance.utils.formatImagePath(imagePath)
         imagePath = image_resizer(image, 2000, TMPDIR)
 
-      discard status_chat.sendImages(chatId, images)
+      let response = status_chat.sendImages(chatId, images)
 
       for imagePath in images.items:
         removeFile(imagePath)
+
+      discard self.processMessageUpdateAfterSend(response)
     except Exception as e:
       error "Error sending images", msg = e.msg
       result = fmt"Error sending images: {e.msg}"
