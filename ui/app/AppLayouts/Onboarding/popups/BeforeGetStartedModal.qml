@@ -16,6 +16,7 @@ StatusModal {
     //% "Before you get started..."
     header.title: qsTrId("before-you-get-started---")
     hasCloseButton: false
+    closePolicy: Popup.NoAutoClose
 
     contentItem: Item {
         implicitHeight: childrenRect.height
