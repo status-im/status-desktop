@@ -1,6 +1,5 @@
 # include strformat, json
 include ../../common/json_utils
-include ../../../app/core/tasks/common
 import ../eth/dto/contract
 import ../eth/utils
 

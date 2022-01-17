@@ -10,10 +10,10 @@ import json, tables, json_serialization
 
 import status/statusgo_backend_new/stickers as status_stickers
 import status/statusgo_backend_new/chat as status_chat
-import status/statusgo_backend_new/transactions as transactions
 import status/statusgo_backend_new/response_type
 import status/statusgo_backend_new/eth
 import ./dto/stickers
+import ../ens/utils as ens_utils
 import ../eth/service as eth_service
 import ../settings/service as settings_service
 import ../wallet_account/service as wallet_account_service
@@ -126,7 +126,7 @@ QtObject:
       buyToken = BuyToken(packId: packId, address: address, price: price)
       buyTxAbiEncoded = stickerMktContract.methods["buyToken"].encodeAbi(buyToken)
     approveAndCall = ApproveAndCall[100](to: stickerMktContract.address, value: price, data: DynamicBytes[100].fromHex(buyTxAbiEncoded))
-    self.eth_service.buildTokenTransaction(address, sntContract.address, gas, gasPrice, isEIP1559Enabled, maxPriorityFeePerGas, maxFeePerGas)
+    ens_utils.buildTokenTransaction(address, sntContract.address, gas, gasPrice, isEIP1559Enabled, maxPriorityFeePerGas, maxFeePerGas)
 
   proc buyPack*(self: Service, packId: int, address, price, gas, gasPrice: string, isEIP1559Enabled: bool, maxPriorityFeePerGas: string, maxFeePerGas: string, password: string, success: var bool): string =
     var
@@ -147,11 +147,11 @@ QtObject:
 
     result = sntContract.methods["approveAndCall"].send(tx, approveAndCall, password, success)
     if success:
-      discard transactions.trackPendingTransaction(
+      self.transactionService.trackPendingTransaction(
         result,
         address,
         $sntContract.address,
-        transactions.PendingTransactionType.BuyStickerPack,
+        $PendingTransactionTypeDto.BuyStickerPack,
         $packId
       )
 
@@ -254,7 +254,7 @@ QtObject:
     var pendingStickerPacks = initHashSet[int]()
     if (pendingTransactions != ""):
       for trx in pendingTransactions.parseJson{"result"}.getElems():
-        if trx["type"].getStr == $PendingTransactionType.BuyStickerPack:
+        if trx["type"].getStr == $PendingTransactionTypeDto.BuyStickerPack:
           pendingStickerPacks.incl(trx["additionalData"].getStr.parseInt)
 
     for stickerPack in availableStickers:

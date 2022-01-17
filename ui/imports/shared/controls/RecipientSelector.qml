@@ -16,7 +16,6 @@ Item {
     property var contactsStore
 
     property var accounts
-    property int currentIndex
     property int inputWidth: 272
     property int sourceSelectWidth: 136
     property alias label: txtLabel.text
@@ -24,7 +23,6 @@ Item {
     property alias additionalInfo: txtAddlInfo.text
     property var selectedRecipient
     property bool readOnly: false
-    property bool isContact: false
     height: inpAddress.height + txtLabel.height
     //% "Invalid ethereum address"
     readonly property string addressValidationError: qsTrId("invalid-ethereum-address")
@@ -51,7 +49,7 @@ Item {
         { text: qsTrId("chat-is-a-contact"), value: RecipientSelector.Type.Contact, visible: true }
     ]
     property var selectedType: RecipientSelector.Type.Address
-    
+
     enum Type {
         Address,
         Contact,
@@ -149,6 +147,9 @@ Item {
 
         AddressInput {
             id: inpAddress
+
+            contactsStore: root.contactsStore
+
             width: root.inputWidth
             input.label: ""
             input.readOnly: root.readOnly
@@ -175,7 +176,6 @@ Item {
             width: root.inputWidth
             dropdownWidth: parent.width
             readOnly: root.readOnly
-            isContact: root.isContact
             Layout.preferredWidth: selAddressSource.visible ? root.inputWidth : parent.width
             Layout.alignment: Qt.AlignTop
             Layout.fillWidth: true
@@ -258,10 +258,3 @@ Item {
     }
 
 }
-
-
-/*##^##
-Designer {
-    D{i:0;autoSize:true;height:480;width:640}
-}
-##^##*/

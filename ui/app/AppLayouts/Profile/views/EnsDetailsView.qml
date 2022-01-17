@@ -12,7 +12,7 @@ import shared.status 1.0
 
 Item {
     id: root
-    property var store
+    property var ensUsernamesStore
     property var contactsStore
     property string username: ""
     property string walletAddress: "-"
@@ -50,16 +50,18 @@ Item {
     }
 
     Connections {
-        target: root.store.ens
+        target: root.ensUsernamesStore.ensUsernamesModule
         onDetailsObtained: {
-            if(username != ensName) return;
-                walletAddressLbl.subTitle = address;
-                keyLbl.subTitle = pubkey.substring(0, 20) + "..." + pubkey.substring(pubkey.length - 20);
-                walletAddressLbl.visible = true;
-                keyLbl.visible = true;
-                releaseBtn.visible = isStatus
-                releaseBtn.enabled = (Date.now() / 1000) > expirationTime && expirationTime > 0 && root.store.preferredUsername != username
-                expiration = new Date(expirationTime * 1000).getTime()
+            if(username != ensName)
+                return;
+            walletAddressLbl.subTitle = address;
+            keyLbl.subTitle = pubkey.substring(0, 20) + "..." + pubkey.substring(pubkey.length - 20);
+            walletAddressLbl.visible = true;
+            keyLbl.visible = true;
+            releaseBtn.visible = isStatus
+            releaseBtn.enabled = (Date.now() / 1000) > expirationTime && expirationTime > 0 &&
+                    root.ensUsernamesStore.preferredUsername != username
+            expiration = new Date(expirationTime * 1000).getTime()
         }
         onLoading: {
             loadingImg.active = isLoading
@@ -80,7 +82,7 @@ Item {
         icon.name: "copy"
         tooltip.text: qsTr("Copied to clipboard!")
         iconButton.onClicked: {
-            root.store.copyToClipboard(subTitle)
+            root.ensUsernamesStore.copyToClipboard(subTitle)
             tooltip.visible = !tooltip.visible
         }
     }
@@ -93,7 +95,7 @@ Item {
         icon.name: "copy"
         tooltip.text: qsTr("Copied to clipboard!")
         iconButton.onClicked: {
-            root.store.copyToClipboard(subTitle)
+            root.ensUsernamesStore.copyToClipboard(subTitle)
             tooltip.visible = !tooltip.visible
         }
     }
@@ -101,9 +103,10 @@ Item {
     Component {
         id: transactionDialogComponent
         StatusETHTransactionModal {
+            ensUsernamesStore: root.ensUsernamesStore
             contactsStore: root.contactsStore
             onOpened: {
-                root.store.getGasPricePredictions()
+                root.ensUsernamesStore.fetchGasPrice()
             }
             title: qsTr("Connect username with your pubkey")
             onClosed: {
@@ -111,10 +114,10 @@ Item {
             }
             estimateGasFunction: function(selectedAccount) {
                 if (username === "" || !selectedAccount) return 100000;
-                return root.store.releaseEnsEstimate(Utils.removeStatusEns(username), selectedAccount.address)
+                return root.ensUsernamesStore.releaseEnsEstimate(Utils.removeStatusEns(username), selectedAccount.address)
             }
             onSendTransaction: function(selectedAddress, gasLimit, gasPrice, password) {
-                return root.store.releaseEns(username,
+                return root.ensUsernamesStore.releaseEns(username,
                                               selectedAddress,
                                               gasLimit,
                                               gasPrice,

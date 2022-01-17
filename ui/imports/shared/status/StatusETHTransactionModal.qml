@@ -16,6 +16,7 @@ import shared.controls 1.0
 ModalPopup {
     id: root
 
+    property var ensUsernamesStore
     property var contactsStore
 
     readonly property var asset: {"name": "Ethereum", "symbol": "ETH"}
@@ -26,42 +27,36 @@ ModalPopup {
     property var onSendTransaction: (function(userAddress, gasLimit, gasPrice, password){ return ""; })
     property var onSuccess: (function(){})
 
-    Component.onCompleted: {
-        // Not Refactored Yet
-//        RootStore.walletModelInst.gasView.getGasPricePredictions()
-    }
-
     height: 540
 
     function sendTransaction() {
-        // Not Refactored Yet
-//        try {
-//            let responseStr = RootStore.profileModelInst.ens.setPubKey(root.ensUsername,
-//                                                        selectFromAccount.selectedAccount.address,
-//                                                        gasSelector.selectedGasLimit,
-//                                                        gasSelector.eip1599Enabled ? "" : gasSelector.selectedGasPrice,
-//                                                        gasSelector.selectedTipLimit,
-//                                                        gasSelector.selectedOverallLimit,
-//                                                        transactionSigner.enteredPassword)
-//            let response = JSON.parse(responseStr)
+        try {
+            let responseStr = root.ensUsernamesStore.setPubKey(root.ensUsername,
+                                                        selectFromAccount.selectedAccount.address,
+                                                        gasSelector.selectedGasLimit,
+                                                        gasSelector.eip1599Enabled ? "" : gasSelector.selectedGasPrice,
+                                                        gasSelector.selectedTipLimit,
+                                                        gasSelector.selectedOverallLimit,
+                                                        transactionSigner.enteredPassword)
+            let response = JSON.parse(responseStr)
 
-//            if (!response.success) {
-//                if (Utils.isInvalidPasswordMessage(response.result)){
-//                    //% "Wrong password"
-//                    transactionSigner.validationError = qsTrId("wrong-password")
-//                    return
-//                }
-//                sendingError.text = response.result
-//                return sendingError.open()
-//            }
+            if (!response.success) {
+                if (Utils.isInvalidPasswordMessage(response.result)){
+                    //% "Wrong password"
+                    transactionSigner.validationError = qsTrId("wrong-password")
+                    return
+                }
+                sendingError.text = response.result
+                return sendingError.open()
+            }
 
-//            onSuccess();
-//            root.close();
-//        } catch (e) {
-//            console.error('Error sending the transaction', e)
-//            sendingError.text = "Error sending the transaction: " + e.message;
-//            return sendingError.open()
-//        }
+            onSuccess();
+            root.close();
+        } catch (e) {
+            console.error('Error sending the transaction', e)
+            sendingError.text = "Error sending the transaction: " + e.message;
+            return sendingError.open()
+        }
     }
 
     property MessageDialog sendingError: MessageDialog {
@@ -98,8 +93,7 @@ ModalPopup {
                     }
                     return null
                 }
-                // Not Refactored Yet
-//                currency: RootStore.defaultCurrency
+                currency: root.ensUsernamesStore.getCurrentCurrency()
                 width: stack.width
                 //% "Choose account"
                 label: qsTrId("choose-account")
@@ -110,12 +104,10 @@ ModalPopup {
             RecipientSelector {
                 id: selectRecipient
                 visible: false
-                // Not Refactored Yet
-//                accounts: RootStore.walletModelInst.accountsView.accounts
+                accounts: root.ensUsernamesStore.walletAccounts
                 contactsStore: root.contactsStore
-                selectedRecipient: { "address": RootStore.utilsModelInst.ensRegisterAddress, "type": RecipientSelector.Type.Address }
+                selectedRecipient: { "address": root.ensUsernamesStore.getEnsRegisteredAddress(), "type": RecipientSelector.Type.Address }
                 readOnly: true
-                currentIndex: index
                 onSelectedRecipientChanged: if (isValid) { gasSelector.estimateGas() }
             }
             GasSelector {
@@ -123,11 +115,10 @@ ModalPopup {
                 visible: true
                 anchors.top: selectFromAccount.bottom
                 anchors.topMargin: Style.current.padding
-                // Not Refactored Yet
-//                gasPrice: parseFloat(RootStore.gasPrice)
-//                getGasEthValue: RootStore.gasEthValue
-//                getFiatValue: RootStore.fiatValue
-//                defaultCurrency: RootStore.defaultCurrency
+                gasPrice: parseFloat(root.ensUsernamesStore.gasPrice)
+                getGasEthValue: root.ensUsernamesStore.getGasEthValue
+                getFiatValue: root.ensUsernamesStore.getFiatValue
+                defaultCurrency: root.ensUsernamesStore.getCurrentCurrency()
                 
                 property var estimateGas: Backpressure.debounce(gasSelector, 600, function() {
                     let estimatedGas = root.estimateGasFunction(selectFromAccount.selectedAccount);
@@ -161,12 +152,11 @@ ModalPopup {
                 }
                 toAccount: selectRecipient.selectedRecipient
                 asset: root.asset
-                // Not Refactored Yet
-//                currency: RootStore.defaultCurrency
-//                amount: {
-//                    const fiatValue = RootStore.walletModelInst.balanceView.getFiatValue(0, root.asset.symbol, currency)
-//                    return { "value": 0, "fiatValue": fiatValue }
-//                }
+                currency: root.ensUsernamesStore.getCurrentCurrency()
+                amount: {
+                    const fiatValue = root.ensUsernamesStore.getFiatValue(0, root.asset.symbol, currency)
+                    return { "value": 0, "fiatValue": fiatValue }
+                }
             }
         }
         TransactionFormGroup {
@@ -178,8 +168,7 @@ ModalPopup {
             TransactionSigner {
                 id: transactionSigner
                 width: stack.width
-                // Not Refactored Yet
-//                signingPhrase: RootStore.walletModelInst.utilsView.signingPhrase
+                signingPhrase: root.ensUsernamesStore.getSigningPhrase()
             }
         }
     }

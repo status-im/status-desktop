@@ -135,7 +135,6 @@ StatusModal {
 //                    accounts: root.store.walletModelInst.accountsView.accounts
                     contactsStore: root.contactsStore
                     selectedRecipient: root.selectedRecipient
-                    currentIndex: index
                     readOnly: true
                 }
             }

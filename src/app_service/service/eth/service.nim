@@ -4,20 +4,9 @@ import web3/ethtypes, json_serialization, chronicles, tables
 import status/statusgo_backend_new/eth
 
 import utils
-import ./dto/contract
-import ./dto/method_dto
-import ./dto/network
-import ./dto/coder
-import ./dto/edn_dto
-import ./dto/transaction
 import ./service_interface
 
 export service_interface
-export coder
-export edn_dto
-export contract
-export method_dto
-export transaction
 
 logScope:
   topics = "eth-service"
@@ -34,12 +23,12 @@ proc newService*(): Service =
   result.contracts = @[]
 
 # Forward declaration
-method initContracts(self: Service)
+proc initContracts(self: Service)
 
 method init*(self: Service) =
   self.initContracts()
 
-method initContracts(self: Service) =
+proc initContracts(self: Service) =
   self.contracts = @[
       # Mainnet contracts
       newErc20Contract("Status Network Token", Mainnet, parseAddress("0x744d70fdbe2ba4cf95131626614a1763df805b9e"), "SNT", 18, true),
@@ -221,7 +210,7 @@ method initContracts(self: Service) =
       newErc20Contract("Orchid", Mainnet, parseAddress("0x4575f41308EC1483f3d399aa9a2826d74Da13Deb"), "OXT", 18, false),
     ]
 
-method allContracts(self: Service): seq[ContractDto] =
+proc allContracts(self: Service): seq[ContractDto] =
   result = self.contracts
 
 method findByAddress*(self: Service, contracts: seq[Erc20ContractDto], address: Address): Erc20ContractDto =
@@ -254,22 +243,3 @@ method allErc721ContractsByChainId*(self: Service, chainId: int): seq[Erc721Cont
 method findErc721Contract*(self: Service, chainId: int, name: string): Erc721ContractDto =
   let found = self.allErc721ContractsByChainId(chainId).filter(contract => contract.name.toLower == name.toLower)
   result = if found.len > 0: found[0] else: nil
-
-method buildTransaction*(self: Service, source: Address, value: Uint256, gas = "", gasPrice = "", isEIP1559Enabled = false, maxPriorityFeePerGas = "", maxFeePerGas = "", data = ""): TransactionDataDto =
-  result = TransactionDataDto(
-    source: source,
-    value: value.some,
-    gas: (if gas.isEmptyOrWhitespace: Quantity.none else: Quantity(cast[uint64](parseFloat(gas).toUInt64)).some),
-    gasPrice: (if gasPrice.isEmptyOrWhitespace: int.none else: gwei2Wei(parseFloat(gasPrice)).truncate(int).some),
-    data: data
-  )
-  if isEIP1559Enabled:
-    result.txType = "0x02"
-    result.maxPriorityFeePerGas = if maxFeePerGas.isEmptyOrWhitespace: Uint256.none else: gwei2Wei(parseFloat(maxPriorityFeePerGas)).some
-    result.maxFeePerGas = (if maxFeePerGas.isEmptyOrWhitespace: Uint256.none else: gwei2Wei(parseFloat(maxFeePerGas)).some)
-  else:
-    result.txType = "0x00"
-
-method buildTokenTransaction*(self: Service, source, contractAddress: Address, gas = "", gasPrice = "", isEIP1559Enabled = false, maxPriorityFeePerGas = "", maxFeePerGas = ""): TransactionDataDto =
-  result = self.buildTransaction(source, 0.u256, gas, gasPrice, isEIP1559Enabled, maxPriorityFeePerGas, maxFeePerGas)
-  result.to = contractAddress.some

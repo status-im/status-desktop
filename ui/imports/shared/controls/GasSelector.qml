@@ -267,10 +267,9 @@ Item {
             text: qsTrId("optimal")
             price: {
                 if (!eip1599Enabled) {
-                     const price = gasPrice
                     // Setting the gas price field here because the binding didn't work
-                    inputGasPrice.text = price
-                    return price
+                    inputGasPrice.text = root.gasPrice
+                    return root.gasPrice
                 }
 
                 return formatDec(suggestedFees.maxFeePerGasM, 6)
@@ -284,7 +283,7 @@ Item {
                     inputPerGasTipLimit.text = formatDec(suggestedFees.maxPriorityFeePerGas, 2);
                     inputGasPrice.text = formatDec(suggestedFees.maxFeePerGasM, 2);
                 } else {
-                    inputGasPrice.text = price
+                    inputGasPrice.text = root.gasPrice
                 }
                 root.updateGasEthValue()
                 root.checkLimits()

@@ -101,7 +101,6 @@ StatusModal {
                     anchors.top: separator.bottom
                     anchors.topMargin: 10
                     width: stack.width
-                    isContact: root.isContact
                     onSelectedRecipientChanged: {
                         addressRequiredValidator.address = root.isRequested ? selectFromAccount.selectedAccount.address : selectRecipient.selectedRecipient.address
                     }

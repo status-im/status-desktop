@@ -60,3 +60,8 @@ QtObject:
     return self.delegate.getPrivacyModule()
   QtProperty[QVariant] privacyModule:
     read = getPrivacyModule
+
+  proc getEnsUsernamesModule(self: View): QVariant {.slot.} =
+    return self.delegate.getEnsUsernamesModule()
+  QtProperty[QVariant] ensUsernamesModule:
+    read = getEnsUsernamesModule

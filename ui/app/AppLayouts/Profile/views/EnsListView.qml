@@ -20,7 +20,8 @@ Item {
     signal addBtnClicked()
     signal selectEns(string username)
 
-    property var store
+    property var ensUsernamesStore
+
     property int profileContentWidth
 
     // Defaults to show message
@@ -34,13 +35,11 @@ Item {
     property string authorPrevMsg: "1"
     property bool isText: true
     property var clickMessage: function(){}
-    property string identicon: store.identicon
-    //property string identicon: userProfile.icon
-    property int timestamp: 1577872140
-    property var messageStore
 
     function shouldDisplayExampleMessage(){
-        return store.ens.rowCount() > 0 && store.ensPendingLen() !== store.ens.rowCount() && store.preferredUsername !== ""
+        return root.ensUsernamesStore.ensUsernamesModel.count > 0 &&
+                root.ensUsernamesStore.numOfPendingEnsUsernames() !== root.ensUsernamesStore.ensUsernamesModel &&
+                store.ensUsernamesStore.preferredUsername !== ""
     }
     anchors.fill: parent
 
@@ -94,7 +93,7 @@ Item {
                 MouseArea {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
-                    onClicked: selectEns(model.username)
+                    onClicked: selectEns(model.ensUsername)
                 }
 
                 Rectangle {
@@ -117,8 +116,8 @@ Item {
                 }
 
                 Loader {
-                    sourceComponent: model.username.endsWith(".stateofus.eth") ? statusENS : normalENS
-                    property string username: model.username
+                    sourceComponent: model.ensUsername.endsWith(".stateofus.eth") ? statusENS : normalENS
+                    property string username: model.ensUsername
                     property bool isPending: model.isPending
                     active: true
                     anchors.left: circle.right
@@ -129,6 +128,7 @@ Item {
 
         ENSPopup {
             id: ensPopup
+            ensUsernamesStore: root.ensUsernamesStore
         }
 
         StatusBaseText {
@@ -209,7 +209,7 @@ Item {
                 ListView {
                     id: lvEns
                     anchors.fill: parent
-                    model: root.store.ens
+                    model: root.ensUsernamesStore.ensUsernamesModel
                     spacing: 10
                     clip: true
                     delegate: ensDelegate
@@ -225,7 +225,8 @@ Item {
 
         StatusBaseText {
             id: chatSettingsLabel
-            visible: root.store.ens.rowCount() > 0 && root.store.ensPendingLen() != root.store.ens.rowCount()
+            visible: root.ensUsernamesStore.ensUsernamesModel.count > 0 &&
+                     root.ensUsernamesStore.numOfPendingEnsUsernames() != root.ensUsernamesStore.ensUsernamesModel.count
             //% "Chat settings"
             text: qsTrId("chat-settings")
             anchors.left: parent.left
@@ -258,7 +259,7 @@ Item {
                 id: usernameLabel2
                 visible: chatSettingsLabel.visible
                 //% "None selected"
-                text: root.store.preferredUsername || qsTrId("none-selected")
+                text: root.ensUsernamesStore.preferredUsername || qsTrId("none-selected")
                 anchors.left: usernameLabel.right
                 anchors.leftMargin: Style.current.padding
                 font.pixelSize: 14
@@ -284,10 +285,10 @@ Item {
                 anchors.leftMargin: Style.current.padding
                 anchors.top: parent.top
                 anchors.topMargin: 20
-//                isCurrentUser: root.isCurrentUser
-//                profileImage: root.messageStore.profileImageSource
-//                isMessage: root.messageStore.isMessage
-//                identiconImageSource: root.messageStore.identicon
+
+                icon: root.ensUsernamesStore.icon
+                isIdenticon: root.ensUsernamesStore.isIdenticon
+
                 onClickMessage: {
                     root.parent.clickMessage(isProfileClick, isSticker, isImage, image, emojiOnly, hideEmojiPicker, isReply);
                 }
@@ -295,19 +296,14 @@ Item {
 
             UsernameLabel {
                 id: chatName
-                label.text: "@" + (root.store.preferredUsername.replace(".stateofus.eth", ""))
-                label.color: Style.current.blue
                 anchors.leftMargin: 20
                 anchors.top: parent.top
                 anchors.topMargin: 0
                 anchors.left: chatImage.right
-//                isCurrentUser: root.messageStore.isCurrentUser
-//                userName: root.messageStore.userName
-//                localName: root.messageStore.localName
-//                displayUserName: root.messageStore.displayUserName
-                onClickMessage: {
-                    root.parent.clickMessage(true, false, false, null, false, false, false);
-                }
+
+                displayName: "@" + (root.ensUsernamesStore.preferredUsername.replace(".stateofus.eth", ""))
+                localName: ""
+                amISender: true
             }
 
             Rectangle {
@@ -343,8 +339,8 @@ Item {
                 anchors.bottomMargin: Style.current.padding
                 anchors.right: chatBox.right
                 anchors.rightMargin: Style.current.padding
-                //timestamp: root.timestamp
-                visible: root.messageStore.isMessage
+                timestamp: new Date().getTime()
+                visible: true
             }
 
             StatusBaseText {
@@ -360,10 +356,7 @@ Item {
 
 
         Connections {
-            target: root.store.ens
-            onPreferredUsernameChanged: {
-                messagesShownAs.visible = shouldDisplayExampleMessage()
-            }
+            target: root.ensUsernamesStore.ensUsernamesModule
             onUsernameConfirmed: {
                 messagesShownAs.visible = shouldDisplayExampleMessage()
                 chatSettingsLabel.visible = true

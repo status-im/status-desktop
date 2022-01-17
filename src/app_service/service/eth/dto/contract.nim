@@ -9,6 +9,8 @@ import ./method_dto
 
 import status/statusgo_backend_new/eth as status_eth
 
+export method_dto
+
 include  ../../../common/json_utils
 
 type
