@@ -1,4 +1,19 @@
 <a name=""></a>
+##  Version 0.20.0 (2022-01-17)
+
+
+#### Features
+
+* **StatusBanner:**  introduce type variants for different banner styles ([35d12f44](35d12f44))
+
+#### Bug Fixes
+
+* **StatusBaseInput:**  Corrects allignment of the placeholder text in the StatusBaseInput. ([5a416aa1](5a416aa1))
+* **build:**  Windows build ([14ab4ce5](14ab4ce5))
+
+
+
+<a name=""></a>
 ##  Version 0.19.0 (2021-12-03)
 
 
