@@ -61,6 +61,7 @@ StatusPopupMenu {
     signal showReplyArea()
     signal toggleReaction(string messageId, int emojiId)
     signal deleteMessage(string messageId)
+    signal editClicked(string messageId)
 
     onHeightChanged: {
         root.y = setYPosition()
@@ -236,7 +237,7 @@ StatusPopupMenu {
         //% "Edit message"
         text: qsTrId("edit-message")
         onTriggered: {
-            onClickEdit();
+            editClicked(messageId)
         }
         icon.name: "edit"
         enabled: root.isMyMessage &&

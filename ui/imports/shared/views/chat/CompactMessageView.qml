@@ -46,6 +46,8 @@ Item {
             return false
         }
     }
+    property bool editModeOn: false
+
     signal openStickerPackPopup(string stickerPackId)
     signal addEmoji(bool isProfileClick, bool isSticker, bool isImage , var image, bool emojiOnly, bool hideEmojiPicker)
     signal clickMessage(bool isProfileClick, bool isSticker, bool isImage, var image, bool emojiOnly, bool hideEmojiPicker, bool isReply, bool isRightClickOnImage, string imageSource)
@@ -79,7 +81,7 @@ Item {
 
     ChatButtonsPanel {
         contentType: messageContentType
-        parentIsHovered: !isEdit && isHovered
+        parentIsHovered: !editModeOn && isHovered
         onHoverChanged: {
             hovered && setHovered(messageId, hovered)
         }
@@ -91,7 +93,7 @@ Item {
         messageContextMenu: root.messageContextMenu
         showMoreButton: root.showMoreButton
         fromAuthor: senderId
-        editBtnActive: isText && !isEdit && isCurrentUser && showEdit
+        editBtnActive: isText && !editModeOn && root.isCurrentUser
         activityCenterMsg: activityCenterMessage
         placeholderMsg: placeholderMessage
         onClickMessage: {
@@ -168,11 +170,11 @@ Item {
                 + (emojiReactionLoader.active ? emojiReactionLoader.height: 0)
                 + (retry.visible && !chatTime.visible ? Style.current.smallPadding : 0)
                 + (pinnedRectangleLoader.active ? Style.current.smallPadding : 0)
-                + (isEdit ? 25 : 0)
+                + (editModeOn ? 25 : 0)
         width: parent.width
 
         color: {
-            if (isEdit) {
+            if (editModeOn) {
                 return Style.current.backgroundHoverLight
             }
 
@@ -194,7 +196,7 @@ Item {
 
         Loader {
             id: pinnedRectangleLoader
-            active: !isEdit && pinnedMessage
+            active: !editModeOn && pinnedMessage
             anchors.left: chatName.left
             anchors.top: parent.top
             anchors.topMargin: active ? Style.current.halfPadding : 0
@@ -303,7 +305,7 @@ Item {
 
         UsernameLabel {
             id: chatName
-            visible: !isEdit && isMessage && headerRepeatCondition
+            visible: !editModeOn && isMessage && headerRepeatCondition
             anchors.leftMargin: chatHorizontalPadding
             anchors.top: chatImage.top
             anchors.left: chatImage.right
@@ -317,7 +319,7 @@ Item {
 
         ChatTimePanel {
             id: chatTime
-            visible: !isEdit && headerRepeatCondition
+            visible: !editModeOn && headerRepeatCondition
             anchors.verticalCenter: chatName.verticalCenter
             anchors.left: chatName.right
             anchors.leftMargin: 4
@@ -327,7 +329,7 @@ Item {
 
         Loader {
             id: editMessageLoader
-            active: isEdit
+            active: editModeOn
             anchors.top: chatReply.active ? chatReply.bottom : parent.top
             anchors.left: chatImage.right
             anchors.leftMargin: chatHorizontalPadding
@@ -372,7 +374,7 @@ Item {
                     index += linkTag.length
                 }
 
-                sourceText = plainText
+                sourceText =  rootStore.plainText(Emoji.deparse(message))
                 for (let [key, value] of mentionsMap) {
                     sourceText = sourceText.replace(new RegExp(key, 'g'), value)
                 }
@@ -416,7 +418,7 @@ Item {
                     //% "Cancel"
                     text: qsTrId("browsing-cancel")
                     onClicked: {
-                        isEdit = false
+                        messageStore.setEditModeOff(messageId)
                         editTextInput.textInput.text = Emoji.parse(message)
                         ensureMessageFullyVisibleTimer.start()
                     }
@@ -431,13 +433,12 @@ Item {
                     text: qsTrId("save")
                     enabled: editTextInput.textInput.text.trim().length > 0
                     onClicked: {
-                        // Not Refactored Yet
-//                        let msg = rootStore.chatsModelInst.plainText(Emoji.deparse(editTextInput.textInput.text))
-//                        if (msg.length > 0){
-//                            msg = chatInput.interpretMessage(msg)
-//                            isEdit = false
-//                            rootStore.chatsModelInst.messageView.editMessage(messageId, contentType == Constants.messageContentType.editType ? replaces : messageId, msg);
-//                        }
+                        let msg = rootStore.plainText(Emoji.deparse(editTextInput.textInput.text))
+                        if (msg.length > 0){
+                            msg = messageStore.interpretMessage(msg)
+                            messageStore.setEditModeOff(messageId)
+                            messageStore.editMessage(messageId, msg)
+                        }
                     }
                 }
             }
@@ -453,7 +454,7 @@ Item {
             anchors.leftMargin: chatImage.imageWidth + Style.current.padding + root.chatHorizontalPadding
             anchors.right: parent.right
             anchors.rightMargin: root.chatHorizontalPadding
-            visible: !isEdit
+            visible: !editModeOn
             ChatTextView {
                 id: chatText
                 // Not Refactored Yet

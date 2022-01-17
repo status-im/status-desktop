@@ -158,4 +158,33 @@ QtObject {
             return
         messageModule.deleteMessage(messageId)
     }
+
+    function setEditModeOn(messageId) {
+        if(!messageModule)
+            return
+        messageModule.setEditModeOn(messageId)
+    }
+
+    function setEditModeOff(messageId) {
+        if(!messageModule)
+            return
+        messageModule.setEditModeOff(messageId)
+    }
+
+    function editMessage(messageId, updatedMsg) {
+        if(!messageModule)
+            return
+        messageModule.editMessage(messageId, updatedMsg)
+    }
+
+    function interpretMessage(msg) {
+        if (msg.startsWith("/shrug")) {
+            return  msg.replace("/shrug", "") + " ¯\\\\\\_(ツ)\\_/¯"
+        }
+        if (msg.startsWith("/tableflip")) {
+            return msg.replace("/tableflip", "") + " (╯°□°）╯︵ ┻━┻"
+        }
+
+        return msg
+    }
 }

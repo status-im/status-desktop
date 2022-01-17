@@ -339,6 +339,8 @@ ColumnLayout {
         onDeleteMessage: {
             messageStore.deleteMessage(messageId)
         }
+
+        onEditClicked: messageStore.setEditModeOn(messageId)
     }
 
     ColumnLayout {

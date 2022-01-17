@@ -66,3 +66,6 @@ method deleteMessage*(self: AccessInterface, messageId: string) {.base.} =
 
 method decodeContentHash*(self: AccessInterface, hash: string): string {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method editMessage*(self: AccessInterface, messageId: string, updatedMsg: string) {.base.} =
+  raise newException(ValueError, "No implementation available")

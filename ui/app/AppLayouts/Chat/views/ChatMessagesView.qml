@@ -338,6 +338,8 @@ Item {
             reactionsModel: model.reactions
             sticker: model.sticker
             stickerPack: model.stickerPack
+            editModeOn: model.editMode
+            isEdited: model.isEdited
 
             // This is possible since we have all data loaded before we load qml.
             // When we fetch messages to fulfill a gap we have to set them at once.
@@ -357,6 +359,11 @@ Item {
             }
 
             stickersLoaded: root.stickersLoaded
+
+            onVisibleChanged: {
+                if(!visible && model.editMode)
+                    messageStore.setEditModeOff(model.id)
+            }
         }
     }
 
