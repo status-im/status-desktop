@@ -139,6 +139,9 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
           item.pinned = true
           item.pinnedBy = p.pinnedBy
 
+      if m.editedAt != 0:
+        item.isEdited = true
+
       # messages are sorted from the most recent to the least recent one
       viewItems.add(item)
 
@@ -270,3 +273,11 @@ method deleteMessage*(self: Module, messageId: string) =
 
 method onMessageDeleted*(self: Module, messageId: string) =
   self.view.model().removeItem(messageId)
+
+method editMessage*(self: Module, messageId: string, updatedMsg: string) =
+  self.controller.editMessage(messageId, updatedMsg)
+
+method onMessageEdited*(self: Module, message: MessageDto) =
+  let renderedMessageText = self.controller.getRenderedText(message.parsedText)
+  self.view.model().updateEditedMsg(message.id, renderedMessageText, message.containsContactMentions())
+

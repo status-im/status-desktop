@@ -109,6 +109,12 @@ method init*(self: Controller) =
       return
     self.delegate.onMessageDeleted(args.messageId)
 
+  self.events.on(SIGNAL_MESSAGE_EDITED) do(e: Args):
+    let args = MessageEditedArgs(e)
+    if(self.chatId != args.chatId):
+      return
+    self.delegate.onMessageEdited(args.message)
+
 method getMySectionId*(self: Controller): string =
   return self.sectionId
 
@@ -158,6 +164,8 @@ method getMessageDetails*(self: Controller, messageId: string):
 method deleteMessage*(self: Controller, messageId: string) =
   self.messageService.deleteMessage(messageId)
 
-
 method decodeContentHash*(self: Controller, hash: string): string =
   return eth_utils.decodeContentHash(hash)
+
+method editMessage*(self: Controller, messageId: string, updatedMsg: string) =
+  self.messageService.editMessage(messageId, updatedMsg)

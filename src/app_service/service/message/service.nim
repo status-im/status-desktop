@@ -9,6 +9,8 @@ import ./dto/message as message_dto
 import ./dto/pinned_message as pinned_msg_dto
 import ./dto/reaction as reaction_dto
 import ../chat/dto/chat as chat_dto
+import ./dto/pinned_message_update as pinned_msg_update_dto
+import ./dto/removed_message as removed_msg_dto
 
 export message_dto
 export pinned_msg_dto
@@ -31,6 +33,7 @@ const SIGNAL_MESSAGES_MARKED_AS_READ* = "messagesMarkedAsRead"
 const SIGNAL_MESSAGE_REACTION_ADDED* = "messageReactionAdded"
 const SIGNAL_MESSAGE_REACTION_REMOVED* = "messageReactionRemoved"
 const SIGNAL_MESSAGE_DELETION* = "messageDeleted"
+const SIGNAL_MESSAGE_EDITED* = "messageEdited"
 
 include async_tasks
 
@@ -68,6 +71,10 @@ type
     chatId*: string
     messageId*: string
 
+  MessageEditedArgs* = ref object of Args
+    chatId*: string
+    message*: MessageDto
+
 QtObject:
   type Service* = ref object of QObject
     events: EventEmitter
@@ -99,60 +106,75 @@ QtObject:
         messages.delete(i)
         return
 
+  proc handleMessagesUpdate(self: Service, chats: var seq[ChatDto], messages: var seq[MessageDto]) =
+    # We included `chats` in this condition cause that's the form how `status-go` sends updates.
+    # The first element from the `receivedData.chats` array contains details about the chat a messages received in
+    # `receivedData.messages` refer to.
+    let chatId = chats[0].id
+    let chatType = chats[0].chatType
+    let unviewedMessagesCount = chats[0].unviewedMessagesCount
+    let unviewedMentionsCount = chats[0].unviewedMentionsCount
+    if(chatType == ChatType.Unknown):
+      error "error: new message with an unknown chat type received for chat id ", chatId
+      return
+
+    # Handling edited message update
+    if(messages.len == 1 and messages[0].editedAt > 0):
+      # this is an update for an edited message
+      let data = MessageEditedArgs(chatId: chatId, message: messages[0])
+      self.events.emit(SIGNAL_MESSAGE_EDITED, data)
+      return
+
+    # In case of reply to a message we're receiving 2 messages in the `messages` array (replied message
+    # and a message one replied to) but we actually need only a new replied message, that's why we need to filter
+    # messages here.
+    # We are not sure if we can receive more replies here, also ordering in the `messages` array is not
+    # the same (once we may have replied messages before once after the messages one replied to), that's why we are
+    # covering the most general case here.
+    var messagesOneRepliedTo: seq[string]
+    for m in messages:
+      if m.responseTo.len > 0:
+        messagesOneRepliedTo.add(m.responseTo)
+
+    for msgId in messagesOneRepliedTo:
+      removeMessageWithId(messages, msgId)
+
+    let data = MessagesArgs(chatId: chatId,
+      chatType: chatType,
+      unviewedMessagesCount: unviewedMessagesCount,
+      unviewedMentionsCount: unviewedMentionsCount,
+      messages: messages
+    )
+    self.events.emit(SIGNAL_NEW_MESSAGE_RECEIVED, data)
+
+  proc handlePinnedMessagesUpdate(self: Service, pinnedMessages: var seq[PinnedMessageUpdateDto]) =
+    for pm in pinnedMessages:
+      let data = MessagePinUnpinArgs(chatId: pm.chatId, messageId: pm.messageId, actionInitiatedBy: pm.pinnedBy)
+      if(pm.pinned):
+        self.numOfPinnedMessagesPerChat[pm.chatId] = self.numOfPinnedMessagesPerChat[pm.chatId] + 1
+        self.events.emit(SIGNAL_MESSAGE_PINNED, data)
+      else:
+        self.numOfPinnedMessagesPerChat[pm.chatId] = self.numOfPinnedMessagesPerChat[pm.chatId] - 1
+        self.events.emit(SIGNAL_MESSAGE_UNPINNED, data)
+
+  proc handleDeletedMessagesUpdate(self: Service, deletedMessages: var seq[RemovedMessageDto]) =
+    for dm in deletedMessages:
+      let data = MessageDeletedArgs(chatId: dm.chatId, messageId: dm.messageId)
+      self.events.emit(SIGNAL_MESSAGE_DELETION, data)
+
   proc init*(self: Service) =
     self.events.on(SignalType.Message.event) do(e: Args):
       var receivedData = MessageSignal(e)
 
       # Handling messages updates
       if (receivedData.messages.len > 0 and receivedData.chats.len > 0):
-        # We included `chats` in this condition cause that's the form how `status-go` sends updates.
-        # The first element from the `receivedData.chats` array contains details about the chat a messages received in
-        # `receivedData.messages` refer to.
-        let chatId = receivedData.chats[0].id
-        let chatType = receivedData.chats[0].chatType
-        let unviewedMessagesCount = receivedData.chats[0].unviewedMessagesCount
-        let unviewedMentionsCount = receivedData.chats[0].unviewedMentionsCount
-        if(chatType == ChatType.Unknown):
-          error "error: new message with an unknown chat type received for chat id ", chatId
-          return
-        
-        # In case of reply to a message we're receiving 2 messages in the `receivedData.messages` array (replied message
-        # and a message one replied to) but we actually need only a new replied message, that's why we need to filter 
-        # messages here.
-        # We are not sure if we can receive more replies here, also ordering in the `receivedData.messages` array is not
-        # the same (once we may have replied messages before once after the messages one replied to), that's why we are 
-        # covering the most general case here.
-        var messagesOneRepliedTo: seq[string] 
-        for m in receivedData.messages:
-          if m.responseTo.len > 0:
-            messagesOneRepliedTo.add(m.responseTo)
-
-        for msgId in messagesOneRepliedTo:
-          removeMessageWithId(receivedData.messages, msgId)
-
-        let data = MessagesArgs(chatId: chatId, 
-          chatType: chatType, 
-          unviewedMessagesCount: unviewedMessagesCount,
-          unviewedMentionsCount: unviewedMentionsCount,
-          messages: receivedData.messages
-        )
-        self.events.emit(SIGNAL_NEW_MESSAGE_RECEIVED, data)
+        self.handleMessagesUpdate(receivedData.chats, receivedData.messages)
       # Handling pinned messages updates
       if (receivedData.pinnedMessages.len > 0):
-        for pm in receivedData.pinnedMessages:
-          let data = MessagePinUnpinArgs(chatId: pm.chatId, messageId: pm.messageId, actionInitiatedBy: pm.pinnedBy)
-          if(pm.pinned):
-            self.numOfPinnedMessagesPerChat[pm.chatId] = self.numOfPinnedMessagesPerChat[pm.chatId] + 1
-            self.events.emit(SIGNAL_MESSAGE_PINNED, data)
-          else:
-            self.numOfPinnedMessagesPerChat[pm.chatId] = self.numOfPinnedMessagesPerChat[pm.chatId] - 1
-            self.events.emit(SIGNAL_MESSAGE_UNPINNED, data)
-
+        self.handlePinnedMessagesUpdate(receivedData.pinnedMessages)
       # Handling deleted messages updates
       if (receivedData.deletedMessages.len > 0):
-        for dm in receivedData.deletedMessages:
-          let data = MessageDeletedArgs(chatId: dm.chatId, messageId: dm.messageId)
-          self.events.emit(SIGNAL_MESSAGE_DELETION, data)
+        self.handleDeletedMessagesUpdate(receivedData.deletedMessages)
 
   proc initialMessagesFetched(self: Service, chatId: string): bool =
     return self.msgCursor.hasKey(chatId)
@@ -580,3 +602,26 @@ proc deleteMessage*(self: Service, messageId: string) =
 
   except Exception as e:
     error "error: ", methodName="deleteMessage", errName = e.name, errDesription = e.msg
+
+proc editMessage*(self: Service, messageId: string, updatedMsg: string) =
+  try:
+    let response = status_go.editMessage(messageId, updatedMsg)
+
+    var messagesArr: JsonNode
+    var messages: seq[MessageDto]
+    if(response.result.getProp("messages", messagesArr) and messagesArr.kind == JArray):
+      messages = map(messagesArr.getElems(), proc(x: JsonNode): MessageDto = x.toMessageDto())
+
+    if(messages.len == 0):
+      error "error: ", methodName="editMessage", errDesription = "messages array is empty"
+      return
+
+    if messages[0].editedAt <= 0:
+      error "error: ", methodName="editMessage", errDesription = "message is not edited"
+      return
+
+    let data = MessageEditedArgs(chatId: messages[0].chatId, message: messages[0])
+    self.events.emit(SIGNAL_MESSAGE_EDITED, data)
+
+  except Exception as e:
+    error "error: ", methodName="editMessage", errName = e.name, errDesription = e.msg

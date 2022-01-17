@@ -27,3 +27,6 @@ method onSendingMessageError*(self: AccessInterface) {.base.} =
 
 method updateContactDetails*(self: AccessInterface, contactId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method onMessageEdited*(self: AccessInterface, message: MessageDto) {.base.} =
+  raise newException(ValueError, "No implementation available")

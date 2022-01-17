@@ -109,3 +109,13 @@ QtObject:
 
   proc deleteMessage*(self: View, messageId: string) {.slot.} =
     self.delegate.deleteMessage(messageId)
+
+  proc setEditModeOn*(self: View, messageId: string) {.slot.} =
+   self.model.setEditModeOn(messageId)
+
+  proc setEditModeOff*(self: View, messageId: string) {.slot.} =
+   self.model.setEditModeOff(messageId)
+
+  proc editMessage*(self: View, messageId: string, updatedMsg: string) {.slot.} =
+    self.delegate.editMessage(messageId, updatedMsg)
+

@@ -28,6 +28,8 @@ type
     Pinned
     PinnedBy
     Reactions
+    EditMode
+    IsEdited
 
 QtObject:
   type
@@ -86,6 +88,8 @@ QtObject:
       ModelRole.Pinned.int:"pinned",
       ModelRole.PinnedBy.int:"pinnedBy",
       ModelRole.Reactions.int:"reactions",
+      ModelRole.EditMode.int: "editMode",
+      ModelRole.IsEdited.int: "isEdited"
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -145,6 +149,10 @@ QtObject:
       result = newQVariant(item.pinnedBy)
     of ModelRole.Reactions: 
       result = newQVariant(item.reactionsModel)
+    of ModelRole.EditMode:
+      result = newQVariant(item.editMode)
+    of ModelRole.IsEdited:
+      result = newQVariant(item.isEdited)
 
   proc findIndexForMessageId(self: Model, messageId: string): int = 
     for i in 0 ..< self.items.len:
@@ -295,3 +303,37 @@ QtObject:
       if(roles.len > 0):
         let index = self.createIndex(i, 0, nil)
         self.dataChanged(index, index, roles)
+
+  proc setEditModeOn*(self: Model, messageId: string)  =
+    let ind = self.findIndexForMessageId(messageId)
+    if(ind == -1):
+      return
+
+    self.items[ind].editMode = true
+
+    let index = self.createIndex(ind, 0, nil)
+    self.dataChanged(index, index, @[ModelRole.EditMode.int])
+
+  proc setEditModeOff*(self: Model, messageId: string)  =
+    let ind = self.findIndexForMessageId(messageId)
+    if(ind == -1):
+      return
+
+    self.items[ind].editMode = false
+
+    let index = self.createIndex(ind, 0, nil)
+    self.dataChanged(index, index, @[ModelRole.EditMode.int])
+
+  proc updateEditedMsg*(self: Model,  messageId: string,  updatedMsg: string, messageContainsMentions: bool) =
+    let ind = self.findIndexForMessageId(messageId)
+    if(ind == -1):
+      return
+
+    self.items[ind].messageText = updatedMsg
+    self.items[ind].messageContainsMentions = messageContainsMentions
+    self.items[ind].isEdited = true
+
+    let index = self.createIndex(ind, 0, nil)
+    self.dataChanged(index, index, @[ModelRole.MessageText.int, ModelRole.MessageContainsMentions.int, ModelRole.IsEdited.int])
+
+
