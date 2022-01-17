@@ -14,7 +14,9 @@ import StatusQ.Components 0.1
 
 Item {
     id: root
-    property var store
+
+    property var ensUsernamesStore
+    property var contactsStore
     property string username: ""
 
     signal backBtnClicked();
@@ -43,14 +45,16 @@ Item {
             this.active = false // kill an opened instance
         }
         sourceComponent: StatusSNTTransactionModal {
+            store: root.ensUsernamesStore
+            contactsStore: root.contactsStore
             assetPrice: "10"
-            contractAddress: root.store.ensRegisterAddress
+            contractAddress: root.ensUsernamesStore.getEnsRegisteredAddress()
             estimateGasFunction: function(selectedAccount, uuid) {
                 if (username === "" || !selectedAccount) return 380000;
-                return root.store.registerEnsGasEstimate(username, selectedAccount.address)
+                return root.ensUsernamesStore.registerEnsGasEstimate(username, selectedAccount.address)
             }
             onSendTransaction: function(selectedAddress, gasLimit, gasPrice, tipLimit, overallLimit, password) {
-                return root.store.registerEns(
+                return root.ensUsernamesStore.registerEns(
                     username,
                     selectedAddress,
                     gasLimit,
@@ -163,7 +167,7 @@ Item {
 
                 StatusBaseText {
                     //% "%1 (Status UsernameRegistrar)."
-                    text: qsTrId("-1--status-usernameregistrar--").arg(root.store.getEnsUsernameRegistrar())
+                    text: qsTrId("-1--status-usernameregistrar--").arg(root.ensUsernamesStore.getEnsRegisteredAddress())
                     wrapMode: Text.WordWrap
                     anchors.left: parent.left
                     anchors.right: parent.right
@@ -173,7 +177,9 @@ Item {
 
                 StatusBaseText {
                     //% "<a href='%1%2'>Look up on Etherscan</a>"
-                    text: qsTrId("-a-href---1-2--look-up-on-etherscan--a-").arg(root.store.etherscanLink.replace("/tx", "/address")).arg(root.store.getEnsUsernameRegistrar())
+                    text: qsTrId("-a-href---1-2--look-up-on-etherscan--a-")
+                    .arg(root.ensUsernamesStore.getEtherscanLink())
+                    .arg(root.ensUsernamesStore.getEnsRegisteredAddress())
                     anchors.left: parent.left
                     anchors.right: parent.right
                     onLinkActivated: Global.openLink(link)
@@ -187,7 +193,7 @@ Item {
 
                 StatusBaseText {
                     //% "%1 (ENS Registry)."
-                    text: qsTrId("-1--ens-registry--").arg(root.store.getEnsRegistry())
+                    text: qsTrId("-1--ens-registry--").arg(root.ensUsernamesStore.getEnsRegistry())
                     wrapMode: Text.WordWrap
                     anchors.left: parent.left
                     anchors.right: parent.right
@@ -197,7 +203,9 @@ Item {
 
                 StatusBaseText {
                     //% "<a href='%1%2'>Look up on Etherscan</a>"
-                    text: qsTrId("-a-href---1-2--look-up-on-etherscan--a-").arg(root.store.etherscanLink.replace("/tx", "/address")).arg(root.store.getEnsRegistry())
+                    text: qsTrId("-a-href---1-2--look-up-on-etherscan--a-")
+                    .arg(root.ensUsernamesStore.getEtherscanLink())
+                    .arg(root.ensUsernamesStore.getEnsRegistry())
                     anchors.left: parent.left
                     anchors.right: parent.right
                     onLinkActivated: Global.openLink(link)
@@ -268,11 +276,11 @@ Item {
                 id: walletAddressLbl
                 //% "Wallet address"
                 title: qsTrId("wallet-address")
-                subTitle: root.store.getWalletDefaultAddress()
+                subTitle: root.ensUsernamesStore.getWalletDefaultAddress()
                 tooltip.text: qsTr("Copied to clipboard!")
                 icon.name: "copy"
                 iconButton.onClicked: {
-                    root.store.copyToClipboard(subTitle)
+                    root.ensUsernamesStore.copyToClipboard(subTitle)
                     tooltip.visible = !tooltip.visible
                 }
                 anchors.top: ensUsername.bottom
@@ -284,13 +292,13 @@ Item {
                 //% "Key"
                 title: qsTrId("key")
                 subTitle: {
-                    let pubKey = root.store.pubKey;
+                    let pubKey = root.ensUsernamesStore.pubkey;
                     return pubKey.substring(0, 20) + "..." + pubKey.substring(pubKey.length - 20);
                 }
                 tooltip.text: qsTr("Copied to clipboard!")
                 icon.name: "copy"
                 iconButton.onClicked: {
-                    root.store.copyToClipboard(root.store.pubKey)
+                    root.ensUsernamesStore.copyToClipboard(root.ensUsernamesStore.pubkey)
                     tooltip.visible = !tooltip.visible
                 }
                 anchors.top: walletAddressLbl.bottom
@@ -343,7 +351,7 @@ Item {
             id: image1
             height: 50
             width: height
-            source: Style.svg("status-logo")
+            source: Style.png("tokens/SNT")
             sourceSize: Qt.size(width, height)
         }
         
@@ -376,12 +384,12 @@ Item {
         anchors.bottomMargin: Style.current.padding
         anchors.right: parent.right
         anchors.rightMargin: Style.current.padding
-        text: parseFloat(root.store.getSntBalance()) < 10 ?
+        text: parseFloat(root.ensUsernamesStore.getSntBalance()) < 10 ?
           //% "Not enough SNT"
           qsTrId("not-enough-snt") :
           //% "Register"
           qsTrId("ens-register")
-        enabled: parseFloat(root.store.getSntBalance()) >= 10 && termsAndConditionsCheckbox.checked
+        enabled: parseFloat(root.ensUsernamesStore.getSntBalance()) >= 10 && termsAndConditionsCheckbox.checked
         onClicked: localAccountSensitiveSettings.isWalletEnabled ? transactionDialog.open() : confirmationPopup.open()
     }
 

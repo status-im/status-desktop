@@ -47,3 +47,6 @@ method updateWalletAccount*(self: ServiceInterface, address: string, accountName
 
 method toggleTokenVisible*(self: ServiceInterface, symbol: string) {.base.} = 
   raise newException(ValueError, "No implementation available")
+
+method getPrice*(self: ServiceInterface, crypto: string, fiat: string): float64 {.base.} = 
+  raise newException(ValueError, "No implementation available")

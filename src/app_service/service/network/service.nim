@@ -3,11 +3,9 @@ import options
 
 import status/statusgo_backend_new/network as status_network
 import ./service_interface
-import ./dto
-import ./types
 
 export service_interface
-export dto, types
+
 
 logScope:
   topics = "network-service"

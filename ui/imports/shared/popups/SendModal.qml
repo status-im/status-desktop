@@ -114,13 +114,11 @@ ModalPopup {
                 id: selectRecipient
                 accounts: root.store.accounts
                 contactsStore: root.contactsStore
-                currentIndex: index
                 //% "Recipient"
                 label: qsTrId("recipient")
                 anchors.top: separator.bottom
                 anchors.topMargin: 10
                 width: stack.width
-                isContact: root.isContact
                 onSelectedRecipientChanged: if (isValid) { gasSelector.estimateGas() }
             }
         }

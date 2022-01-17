@@ -30,6 +30,7 @@ import ../../app_service/service/saved_address/service as saved_address_service
 import ../../app_service/service/devices/service as devices_service
 import ../../app_service/service/mailservers/service as mailservers_service
 import ../../app_service/service/gif/service as gif_service
+import ../../app_service/service/ens/service as ens_service
 
 import ../modules/startup/module as startup_module
 import ../modules/main/module as main_module
@@ -82,6 +83,7 @@ type
     mailserversService: mailservers_service.Service
     nodeService: node_service.Service
     gifService: gif_service.Service
+    ensService: ens_service.Service
 
     # Modules
     startupModule: startup_module.AccessInterface
@@ -168,6 +170,9 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result.nodeService = node_service.newService(statusFoundation.events, statusFoundation.threadpool, 
   result.settingsService)
   result.gifService = gif_service.newService(result.settingsService)
+  result.ensService = ens_service.newService(statusFoundation.events, statusFoundation.threadpool, 
+  result.settingsService, result.walletAccountService, result.transactionService, result.ethService, 
+  result.networkService, result.tokenService)
 
   # Modules
   result.startupModule = startup_module.newModule[AppController](
@@ -206,6 +211,7 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
     result.mailserversService,
     result.nodeService,
     result.gifService,
+    result.ensService
   )
 
   # Do connections
@@ -252,6 +258,7 @@ proc delete*(self: AppController) =
   self.privacyService.delete
   self.profileService.delete
   self.generalService.delete
+  self.ensService.delete
 
 proc startupDidLoad*(self: AppController) =
   singletonInstance.engine.setRootContextProperty("localAppSettings", self.localAppSettingsVariant)
@@ -294,6 +301,7 @@ proc load(self: AppController) =
   self.aboutService.init()
   self.devicesService.init()
   self.mailserversService.init()
+  self.ensService.init()
 
   let pubKey = self.settingsService.getPublicKey()
   singletonInstance.localAccountSensitiveSettings.setFileName(pubKey)
