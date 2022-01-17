@@ -313,6 +313,7 @@ Item {
             anchors.leftMargin: chatHorizontalPadding
             anchors.top: chatImage.top
             anchors.left: chatImage.right
+            messageContextMenu: root.messageContextMenu
             displayName: senderDisplayName
             localName: senderLocalName
             amISender: amISender

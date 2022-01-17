@@ -1,6 +1,6 @@
 import dto, types
 
-export dto
+export dto, types
 
 type 
   ServiceInterface* {.pure inheritable.} = ref object of RootObj

@@ -37,17 +37,16 @@ Item {
     function resolveEns() {
         if (selectedContact.ensVerified) {
             root.isResolvedAddress = false
-            ensResolver.resolveEns(selectedContact.name)
+            ensResolver.resolveEns(selectedContact.alias)
         }
     }
 
-    // This should be removed most likely.
-//    onContactsChanged: {
-//        if (root.readOnly) {
-//            return
-//        }
-//        root.selectedContact = { name: selectAContact }
-//    }
+    Component.onCompleted: {
+        if (root.readOnly) {
+            return
+        }
+        root.selectedContact = { alias: selectAContact }
+    }
 
     onSelectedContactChanged: validate()
 
@@ -55,8 +54,8 @@ Item {
         if (!selectedContact) {
             return root.isValid
         }
-        let isValidAddress = Utils.isValidAddress(selectedContact.address)
-        let isDefaultValue = selectedContact.name === selectAContact
+        let isValidAddress = Utils.isValidAddress(selectedContact.publicKey)
+        let isDefaultValue = selectedContact.alias === selectAContact
         let isValid = (selectedContact.ensVerified && isValidAddress) || isPending || isValidAddress
         select.validationError = ""
         if (!isValid && !isDefaultValue && 
@@ -76,7 +75,7 @@ Item {
         visible: root.readOnly
         width: parent.width
         //% "No contact selected"
-        text: (root.selectedContact && root.selectedContact.name) ? root.selectedContact.name : qsTrId("no-contact-selected")
+        text: (root.selectedContact && root.selectedContact.alias) ? root.selectedContact.alias : qsTrId("no-contact-selected")
         textField.leftPadding: 14
         textField.topPadding: 18
         textField.bottomPadding: 18
@@ -103,15 +102,15 @@ Item {
                 anchors.left: parent.left
                 anchors.leftMargin: 14
                 anchors.verticalCenter: parent.verticalCenter
-                image.width: (!!selectedContact && !!selectedContact.identicon) ? 32 : 0
+                image.width: (!!selectedContact && !!selectedContact.displayIcon) ? 32 : 0
                 image.height: 32
-                image.source: (!!selectedContact && !!selectedContact.identicon) ? selectedContact.identicon : ""
-                image.isIdenticon: true
-                active: !!selectedContact && !!selectedContact.identicon
+                image.source: (!!selectedContact && !!selectedContact.displayIcon) ? selectedContact.displayIcon : ""
+                image.isIdenticon: (!!selectedContact && !!selectedContact.isDisplayIconIdenticon) ? selectedContact.isDisplayIconIdenticon : true
+                active: !!selectedContact && !!selectedContact.displayIcon
             }
             StatusBaseText {
                 id: selectedTextField
-                text: !!selectedContact ? selectedContact.name : ""
+                text: !!selectedContact ? selectedContact.alias : ""
                 anchors.left: iconImg.right
                 anchors.leftMargin: 4
                 anchors.verticalCenter: parent.verticalCenter
@@ -148,12 +147,12 @@ Item {
         onResolved: {
             root.isResolvedAddress = true
             var selectedContact = root.selectedContact
-            selectedContact.address = resolvedAddress
+            selectedContact.publicKey = resolvedAddress
             root.selectedContact = selectedContact
         }
         onIsPendingChanged: {
             if (isPending) {
-                root.selectedContact.address = ""
+                root.selectedContact.publicKey = ""
             }
         }
     }
@@ -165,6 +164,8 @@ Item {
             property bool isFirstItem: index === 0
             property bool isLastItem: index === root.contactsStore.myContactsModel.count - 1
 
+            property var currentContact: Utils.getContactDetailsAsJson(pubKey)
+
             width: parent.width
             height: visible ? 72 : 0
             StatusSmartIdenticon {
@@ -172,8 +173,8 @@ Item {
                 anchors.left: parent.left
                 anchors.leftMargin: Style.current.padding
                 anchors.verticalCenter: parent.verticalCenter
-                image.source: identicon
-                image.isIdenticon: true
+                image.source: currentContact.displayIcon
+                image.isIdenticon: currentContact.isDisplayIconIdenticon
             }
             Column {
                 anchors.left: iconImg.right
@@ -181,7 +182,7 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
 
                 StatusBaseText {
-                    text: name
+                    text: currentContact.alias
                     font.pixelSize: 15
                     color: Theme.palette.directColor1
                     height: 22
@@ -189,14 +190,14 @@ Item {
 
                 Row {
                     StatusBaseText {
-                      text: alias + " • "
-                      visible: ensVerified
+                      text: currentContact.name + " • "
+                      visible: currentContact.ensVerified
                       color: Theme.palette.baseColor1
                       font.pixelSize: 12
                       height: 16
                     }
                     StatusBaseText {
-                        text: address
+                        text: currentContact.publicKey
                         width: 85
                         elide: Text.ElideMiddle
                         color: Theme.palette.baseColor1
@@ -212,7 +213,7 @@ Item {
                 cursorShape: Qt.PointingHandCursor
                 anchors.fill: itemContainer
                 onClicked: {
-                    root.selectedContact = { address, name, alias, isContact, identicon, ensVerified }
+                    root.selectedContact = itemContainer.currentContact
                     resolveEns()
                     select.selectMenu.close()
                 }
@@ -220,10 +221,3 @@ Item {
         }
     }
 }
-
-
-/*##^##
-Designer {
-    D{i:0;autoSize:true;height:480;width:640}
-}
-##^##*/

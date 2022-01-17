@@ -15,24 +15,23 @@ ModalPopup {
     //% "Primary username"
     title: qsTrId("ens-primary-username")
 
+    property var ensUsernamesStore
     property string newUsername: ""
 
     onOpened: {
         for(var i in ensNames.contentItem.children){
-            // Not Refactored Yet
-//            ensNames.contentItem.children[i].checked = ensNames.contentItem.children[i].text === profileModel.ens.preferredUsername
+            ensNames.contentItem.children[i].checked = ensNames.contentItem.children[i].text === popup.ensUsernamesStore.preferredUsername
         }
     }
 
     StyledText {
         id: lbl1
-        // Not Refactored Yet
-//        text: profileModel.ens.preferredUsername ?
-//              //% "Your messages are displayed to others with this username:"
-//              qsTrId("your-messages-are-displayed-to-others-with-this-username-")
-//              :
-//              //% "Once you select a username, you won’t be able to disable it afterwards. You will only be able choose a different username to display."
-//              qsTrId("once-you-select-a-username--you-won-t-be-able-to-disable-it-afterwards--you-will-only-be-able-choose-a-different-username-to-display-")
+        text: popup.ensUsernamesStore.preferredUsername ?
+              //% "Your messages are displayed to others with this username:"
+              qsTrId("your-messages-are-displayed-to-others-with-this-username-")
+              :
+              //% "Once you select a username, you won’t be able to disable it afterwards. You will only be able choose a different username to display."
+              qsTrId("once-you-select-a-username--you-won-t-be-able-to-disable-it-afterwards--you-will-only-be-able-choose-a-different-username-to-display-")
         font.pixelSize: 15
         wrapMode: Text.WordWrap
         width: parent.width
@@ -42,8 +41,7 @@ ModalPopup {
         id: lbl2
         anchors.top: lbl1.bottom
         anchors.topMargin: Style.current.padding
-        // Not Refactored Yet
-//        text: profileModel.ens.preferredUsername
+        text: popup.ensUsernamesStore.preferredUsername
         font.pixelSize: 17
         font.weight: Font.Bold
     }
@@ -60,16 +58,14 @@ ModalPopup {
 
         ListView {
             anchors.fill: parent
-            // Not Refactored Yet
-//            model: profileModel.ens
+            model: root.ensUsernamesStore.ensUsernamesModel
             spacing: 0
             clip: true
             id: ensNames
             delegate: RadioDelegate {
                 id: radioDelegate
-                text: username
-                // Not Refactored Yet
-//                checked: profileModel.ens.preferredUsername === username
+                text: ensUsername
+                checked: popup.ensUsernamesStore.preferredUsername === ensUsername
 
                 contentItem: StyledText {
                     color: Style.current.textColor
@@ -82,7 +78,7 @@ ModalPopup {
                     anchors.fill: parent
                     onClicked: {
                         parent.checked = true
-                        newUsername = username;
+                        newUsername = ensUsername;
                     }
                 }
             }
@@ -90,8 +86,7 @@ ModalPopup {
     }
 
     onNewUsernameChanged: {
-        // Not Refactored Yet
-//        btnSelectPreferred.state = newUsername === profileModel.ens.preferredUsername ? "inactive" : "active"
+        btnSelectPreferred.state = newUsername === popup.ensUsernamesStore.preferredUsername ? "inactive" : "active"
     }
     
     footer: Item {
@@ -135,10 +130,9 @@ ModalPopup {
                 anchors.fill: parent
                 onClicked : {
                     if(btnSelectPreferred.state === "active"){
-                        // Not Refactored Yet
-//                        profileModel.ens.preferredUsername = newUsername;
-//                        newUsername = "";
-//                        popup.close();
+                        popup.ensUsernamesStore.setPrefferedEnsUsername(newUsername);
+                        newUsername = "";
+                        popup.close();
                     }
                 }
             }

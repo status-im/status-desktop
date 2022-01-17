@@ -159,6 +159,9 @@ method buildTokens(
       )
     )
 
+method getPrice*(self: Service, crypto: string, fiat: string): float64 =
+  return fetchPrice(crypto, fiat)
+
 method fetchPrices(self: Service): Table[string, float64] =
   let currency = self.settingsService.getCurrency()
   var prices = {"ETH": fetchPrice("ETH", currency)}.toTable
@@ -193,6 +196,8 @@ method getWalletAccounts*(self: Service): seq[WalletAccountDto] =
   return toSeq(self.accounts.values)
 
 method getWalletAccount*(self: Service, accountIndex: int): WalletAccountDto =
+  if(accountIndex < 0 or accountIndex >= self.getWalletAccounts().len):
+    return
   return self.getWalletAccounts()[accountIndex]
 
 method getCurrencyBalance*(self: Service): float64 =

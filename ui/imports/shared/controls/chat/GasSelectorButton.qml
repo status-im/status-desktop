@@ -29,7 +29,7 @@ Rectangle {
         if (!gasLimit) {
             return 0
         }
-        return formatDec(parseFloat(getGasEthValue(price, gasLimit)), 6)
+        return formatDec(parseFloat(getGasEthValue(gasRectangle.price, gasLimit)), 6)
     }
     property double fiatValue: getFiatValue(ethValue, "ETH", defaultCurrency)
     signal checked()

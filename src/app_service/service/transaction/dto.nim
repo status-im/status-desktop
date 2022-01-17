@@ -1,6 +1,17 @@
 import json, strutils
 include  ../../common/json_utils
 
+type 
+  PendingTransactionTypeDto* {.pure.} = enum
+    RegisterENS = "RegisterENS",
+    SetPubKey = "SetPubKey",
+    ReleaseENS = "ReleaseENS",
+    BuyStickerPack = "BuyStickerPack"
+    WalletTransfer = "WalletTransfer" 
+
+proc event*(self:PendingTransactionTypeDto):string =
+  result = "transaction:" & $self
+
 type
   TransactionDto* = ref object of RootObj
     id*: string

@@ -1,22 +1,30 @@
-import NimQml, chronicles, sequtils, sugar, stint, json
+import NimQml, chronicles, sequtils, sugar, stint, strutils, json
 import status/statusgo_backend_new/transactions as transactions
 import status/statusgo_backend_new/wallet as status_wallet
 
 import ../../../app/core/[main]
 import ../../../app/core/tasks/[qt, threadpool]
 import ../wallet_account/service as wallet_account_service
-import ./service_interface, ./dto
+import ./dto as transaction_dto
 import ../eth/utils as eth_utils
 
-export service_interface
+export transaction_dto
 
 logScope:
   topics = "transaction-service"
 
 include async_tasks
+include ../../common/json_utils
 
 # Signals which may be emitted by this service:
 const SIGNAL_TRANSACTIONS_LOADED* = "transactionsLoaded"
+
+type 
+  TransactionMinedArgs* = ref object of Args
+    data*: string
+    transactionHash*: string
+    success*: bool
+    revertReason*: string
 
 type
   TransactionsLoadedArgs* = ref object of Args
@@ -62,6 +70,14 @@ QtObject:
       let errDesription = e.msg
       error "error: ", errDesription
       return
+
+  proc trackPendingTransaction*(self: Service, hash: string, fromAddress: string, toAddress: string, trxType: string, 
+    data: string) =
+    try:
+      discard transactions.trackPendingTransaction(hash, fromAddress, toAddress, trxType, data)
+    except Exception as e:
+      let errDesription = e.msg
+      error "error: ", errDesription
 
   proc getTransfersByAddress*(self: Service, address: string, toBlock: Uint256, limit: int, loadMore: bool = false): seq[TransactionDto] =
     try:

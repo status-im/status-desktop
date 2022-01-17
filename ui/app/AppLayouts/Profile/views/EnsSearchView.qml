@@ -15,7 +15,7 @@ import shared.controls 1.0
 Item {
     id: root
 
-    property var store
+    property var ensUsernamesStore
     property var contactsStore
     property int profileContentWidth
 
@@ -30,7 +30,7 @@ Item {
     property string ensStatus: ""
 
     property var validateENS: Backpressure.debounce(root, 500, function (ensName, isStatus){
-        store.validateEns(ensName, isStatus)
+        root.ensUsernamesStore.checkEnsUsernameAvailability(ensName, isStatus)
     });
 
     function validate(ensUsername) {
@@ -61,9 +61,10 @@ Item {
     Component {
         id: transactionDialogComponent
         StatusETHTransactionModal {
+            ensUsernamesStore: root.ensUsernamesStore
             contactsStore: root.contactsStore
             onOpened: {
-                root.store.getGasPrice()
+                root.ensUsernamesStore.fetchGasPrice()
             }
             title: qsTr("Connect username with your pubkey")
             onClosed: {
@@ -71,14 +72,16 @@ Item {
             }
             estimateGasFunction: function(selectedAccount) {
                 if (ensUsername.text === "" || !selectedAccount) return 80000;
-                return root.store.setPubKeyGasEstimate(ensUsername.text + (isStatus ? ".stateofus.eth" : "" ), selectedAccount.address)
+                return root.ensUsernamesStore.setPubKeyGasEstimate(ensUsername.text + (isStatus ? ".stateofus.eth" : "" ), selectedAccount.address)
             }
             onSendTransaction: function(selectedAddress, gasLimit, gasPrice, password) {
-                return root.store.setPubKey(ensUsername.text + (isStatus ? ".stateofus.eth" : "" ),
-                                                  selectedAddress,
-                                                  gasLimit,
-                                                  gasPrice,
-                                                  password)
+                return root.ensUsernamesStore.setPubKey(ensUsername.text + (isStatus ? ".stateofus.eth" : "" ),
+                                                        selectedAddress,
+                                                        gasLimit,
+                                                        gasPrice,
+                                                        "",
+                                                        "",
+                                                        password)
             }
             onSuccess: function(){
                 usernameUpdated(ensUsername.text);
@@ -148,25 +151,25 @@ Item {
             }
 
             Connections {
-                target: mainModule
-                onResolvedENS: {
+                target: root.ensUsernamesStore.ensUsernamesModule
+                onUsernameAvailabilityChecked: {
                     if(!validate(ensUsername.text)) return;
                     valid = false;
                     loading = false;
-                    ensStatus = ensResult;
-                    switch(ensResult){
+                    ensStatus = availabilityStatus;
+                    switch(availabilityStatus){
                         case "available":
                         case "owned":
                         case "connected":
                         case "connected-different-key":
                             valid = true;
-                            validationMessage = Constants.ensState[ensResult]
+                            validationMessage = Constants.ensState[availabilityStatus]
                             break;
                         case "taken":
                             validationMessage = Constants.ensState[!isStatus ? 'taken-custom' : 'taken']
                             break;
                         case "already-connected":
-                            validationMessage = Constants.ensState[ensResult]
+                            validationMessage = Constants.ensState[availabilityStatus]
                             break;
                     }
                 }
@@ -189,7 +192,7 @@ Item {
                 if(!valid) return;
 
                 if(ensStatus === Constants.ens_connected){
-                    root.store.ensConnectOwnedUsername(ensUsername.text, isStatus);
+                    root.ensUsernamesStore.ensConnectOwnedUsername(ensUsername.text, isStatus);
                     continueClicked(ensStatus, ensUsername.text)
                     return;
                 }

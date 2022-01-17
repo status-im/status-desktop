@@ -11,10 +11,10 @@ import "../stores"
 Item {
     id: ensView
 
-    property var store
+    property EnsUsernamesStore ensUsernamesStore
+
     property var contactsStore
 
-    property var messageStore
     property int profileContentWidth
     property bool showSearchScreen: false
     property string addedUsername: ""
@@ -29,7 +29,7 @@ Item {
     signal goToList();
 
     function goToStart(){
-        if(ensView.store.ens.rowCount() > 0 && Global.networkGuarded){
+        if(ensView.ensUsernamesStore.ensUsernamesModel.count > 0 && Global.networkGuarded){
             goToList();
         } else {
             goToWelcome();
@@ -213,7 +213,7 @@ Item {
     Component {
         id: welcome
         EnsWelcomeView {
-            username: ensView.store.username
+            username: ensView.ensUsernamesStore.username
             onStartBtnClicked: next(null)
             profileContentWidth: ensView.profileContentWidth
         }
@@ -222,7 +222,7 @@ Item {
     Component {
         id: search
         EnsSearchView {
-            store: ensView.store
+            ensUsernamesStore: ensView.ensUsernamesStore
             contactsStore: ensView.contactsStore
             profileContentWidth: ensView.profileContentWidth
             onContinueClicked: {
@@ -243,7 +243,8 @@ Item {
     Component {
         id: termsAndConditions
         EnsTermsAndConditionsView {
-            store: ensView.store
+            ensUsernamesStore: ensView.ensUsernamesStore
+            contactsStore: ensView.contactsStore
             username: selectedUsername
             onBackBtnClicked: back();
             onUsernameRegistered: done(userName);
@@ -284,12 +285,12 @@ Item {
     Component {
         id: list
         EnsListView {
-            store: ensView.store
-            messageStore: ensView.messageStore
+            ensUsernamesStore: ensView.ensUsernamesStore
+
             profileContentWidth: ensView.profileContentWidth
             onAddBtnClicked: next("search")
             onSelectEns: {
-                ensView.store.ensDetails(username)
+                ensView.ensUsernamesStore.ensDetails(username)
                 selectedUsername = username;
                 next("details")
             }
@@ -299,7 +300,7 @@ Item {
     Component {
         id: details
         EnsDetailsView {
-            store: ensView.store
+            ensUsernamesStore: ensView.ensUsernamesStore
             contactsStore: ensView.contactsStore
             username: selectedUsername
             onBackBtnClicked: back();
@@ -318,14 +319,14 @@ Item {
     }
 
     Connections {
-        target: ensView.store.ens
+        target: ensView.ensUsernamesStore.ensUsernamesModule
         onTransactionWasSent: {
             //% "Transaction pending..."
             Global.toastMessage.title = qsTrId("ens-transaction-pending")
             Global.toastMessage.source = Style.svg("loading")
             Global.toastMessage.iconColor = Style.current.primary
             Global.toastMessage.iconRotates = true
-            Global.toastMessage.link = `${root.store.etherscanLink}/${txResult}`
+            Global.toastMessage.link = `${ensView.ensUsernamesStore.getEtherscanLink()}/${txResult}`
             Global.toastMessage.open()
         }
         onTransactionCompleted: {
@@ -355,7 +356,7 @@ Item {
                 Global.toastMessage.source = Style.svg("block-icon")
                 Global.toastMessage.iconColor = Style.current.danger
             }
-            Global.toastMessage.link = `${root.store.etherscanLink}/${txHash}`
+            Global.toastMessage.link = `${ensView.ensUsernamesStore.getEtherscanLink()}/${txHash}`
             Global.toastMessage.open()
         }
     }

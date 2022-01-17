@@ -43,30 +43,12 @@ QtObject {
         privacyModule: profileSectionModuleInst.privacyModule
     }
 
-    // Not Refactored Yet
-//    property var chatsModelInst: chatsModel
-    // Not Refactored Yet
-//    property var utilsModelInst: utilsModel
-    // Not Refactored Yet
-//    property var walletModelInst: walletModel
-    // Not Refactored Yet
-//    property var nodeModelInst: nodeModel
+    property EnsUsernamesStore ensUsernamesStore: EnsUsernamesStore {
+        ensUsernamesModule: profileSectionModuleInst.ensUsernamesModule
+    }
 
-    // Not Refactored Yet
-//    property var ens: profileModelInst.ens
     property var dappList: dappPermissionsModule.dapps
     property var permissionList: dappPermissionsModule.permissions
-    // Not Refactored Yet
-//    property var mutedChatsContacts: profileModelInst.mutedChats.contacts
-//    property var mutedChats: profileModelInst.mutedChats.chats
-
-    // Not Refactored Yet
-    property string ensRegisterAddress: "" //utilsModelInst.ensRegisterAddress
-    // Not Refactored Yet
-    property string etherscanLink: "" //walletModelInst.utilsView.etherscanLink
-    // Not Refactored Yet
-//    property string preferredUsername: userProfile.preferredName // was:  profileModelInst.ens.preferredUsername
-//    property string firstEnsUsername: userProfile.firstEnsName // was: profileModelInst.ens.firstEnsUsername
 
     property int profile_id: 0
     property int contacts_id: 1
@@ -188,90 +170,6 @@ QtObject {
         dappPermissionsModule.fetchDapps()
     }
 
-    function ensDetails(username) {
-        // Not Refactored Yet
-//        profileModelInst.ens.details(username)
-    }
-
-    function ensPendingLen() {
-        // Not Refactored Yet
-//        return profileModelInst.ens.pendingLen()
-    }
-
-    function validateEns(ensName, isStatus) {
-        // Not Refactored Yet
-//        profileModelInst.ens.validate(ensName, isStatus)
-    }
-
-    function registerEnsGasEstimate(username, address) {
-        // Not Refactored Yet
-//        return profileModelInst.ens.registerENSGasEstimate(username, address)
-    }
-
-    function registerEns(username, address, gasLimit, tipLimit, overallLimit, gasPrice, password) {
-        // Not Refactored Yet
-//        return profileModelInst.ens.registerENS(username,
-//            address, gasLimit, tipLimit, overallLimit, gasPrice, password)
-    }
-
-    function getEnsUsernameRegistrar() {
-        // Not Refactored Yet
-//         return profileModelInst.ens.getUsernameRegistrar()
-    }
-
-    function getEnsRegistry() {
-        // Not Refactored Yet
-//        return profileModelInst.ens.getENSRegistry()
-    }
-
-    function releaseEnsEstimate(username, address) {
-        // Not Refactored Yet
-//        return profileModelInst.ens.releaseEstimate(username, address)
-    }
-
-    function releaseEns(username, address, gasLimit, gasPrice, password) {
-        // Not Refactored Yet
-//        return profileModelInst.ens.release(username, address, gasLimit, gasPrice, password)
-    }
-
-    function getGasPrice() {
-        // Not Refactored Yet
-//        walletModelInst.gasView.getGasPrice()
-    }
-
-    function getGasPricePredictions() {
-        // Not Refactored Yet
-//        walletModelInst.gasView.getGasPricePredictions()
-    }
-
-    function ensConnectOwnedUsername(name, isStatus) {
-        // Not Refactored Yet
-//        profileModelInst.ens.connectOwnedUsername(name, isStatus)
-    }
-
-    function getWalletDefaultAddress() {
-        // Not Refactored Yet
-//        return walletModelInst.getDefaultAddress()
-    }
-
-    function getSntBalance() {
-        // Not Refactored Yet - This should be fetched from corresponding module, not from the global Utils
-//        return utilsModelInst.getSNTBalance()
-    }
-
-    function getNetworkName() {
-        // Not Refactored Yet
-//        return utilsModelInst.getNetworkName()
-    }
-
-    function setBloomLevel(mode) {
-        nodeModelInst.setBloomLevel(mode)
-    }
-
-    function setWakuV2LightClient(mode) {
-        nodeModelInst.setWakuV2LightClient(mode)
-    }
-
     function getCurrentVersion() {
         return aboutModuleInst.getCurrentVersion()
     }
@@ -282,25 +180,5 @@ QtObject {
 
     function checkForUpdates() {
         aboutModuleInst.checkForUpdates()
-    }
-
-    function setPubKeyGasEstimate(username, address) {
-        // Not Refactored Yet
-//        return profileModelInst.ens.setPubKeyGasEstimate(username, address)
-    }
-
-    function setPubKey(username, address, gasLimit, gasPrice, password) {
-        // Not Refactored Yet
-//        return profileModelInst.ens.setPubKey(username, address, gasLimit, gasPrice, password)
-    }
-
-    function userNameOrAlias(pk) {
-        // Not Refactored Yet
-//        return chatsModelInst.userNameOrAlias(pk);
-    }
-
-    function generateIdenticon(pk) {
-        // Not Refactored Yet
-//        return utilsModelInst.generateIdenticon(pk);
     }
 }

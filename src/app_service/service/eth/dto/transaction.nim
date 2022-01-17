@@ -3,14 +3,6 @@ import web3/ethtypes, web3/conversions, options, stint
 import ../utils
 
 type 
-  PendingTransactionTypeDto* {.pure.} = enum
-    RegisterENS = "RegisterENS",
-    SetPubKey = "SetPubKey",
-    ReleaseENS = "ReleaseENS",
-    BuyStickerPack = "BuyStickerPack"
-    WalletTransfer = "WalletTransfer" 
-
-type 
   TransactionDataDto* = object
     source*: Address             # the address the transaction is send from.
     to*: Option[Address]         # (optional when creating new contract) the address the transaction is directed to.

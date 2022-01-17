@@ -43,6 +43,7 @@ import ../../../app_service/service/node_configuration/service_interface as node
 import ../../../app_service/service/devices/service as devices_service
 import ../../../app_service/service/mailservers/service as mailservers_service
 import ../../../app_service/service/gif/service as gif_service
+import ../../../app_service/service/ens/service as ens_service
 
 
 import ../../core/eventemitter
@@ -96,6 +97,7 @@ proc newModule*[T](
   mailserversService: mailservers_service.Service,
   nodeService: node_service.Service,
   gifService: gif_service.Service,
+  ensService: ens_service.Service
 ): Module[T] =
   result = Module[T]()
   result.delegate = delegate
@@ -128,7 +130,7 @@ proc newModule*[T](
   dappPermissionsService, providerService)
   result.profileSectionModule = profile_section_module.newModule(result, events, accountsService, settingsService, 
   profileService, contactsService, aboutService, languageService, privacyService, nodeConfigurationService, 
-  devicesService, mailserversService, chatService)
+  devicesService, mailserversService, chatService, ensService, walletAccountService)
   result.stickersModule = stickers_module.newModule(result, events, stickersService)
   result.activityCenterModule = activity_center_module.newModule(result, events, activityCenterService, contactsService,
   messageService)
