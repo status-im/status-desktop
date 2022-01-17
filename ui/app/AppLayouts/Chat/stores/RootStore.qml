@@ -192,4 +192,8 @@ QtObject {
     function generateAlias(pk) {
         return globalUtils.generateAlias(pk)
     }
+
+    function plainText(text) {
+        return globalUtils.plainText(text)
+    }
 }

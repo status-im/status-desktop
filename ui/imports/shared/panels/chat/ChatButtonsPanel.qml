@@ -105,7 +105,7 @@ Rectangle {
 
         Loader {
             id: editBtn
-            active: isText && !isEdit && isCurrentUser && showEdit
+            active: false
             sourceComponent: StatusFlatRoundButton {
                 id: btn
                 width: 32
@@ -114,7 +114,7 @@ Rectangle {
                 type: StatusFlatRoundButton.Type.Tertiary
                 //% "Edit"
                 tooltip.text: qsTrId("edit")
-                onClicked: isEdit = true
+                onClicked: messageStore.setEditModeOn(messageId)
                 onHoveredChanged: buttonsContainer.hoverChanged(btn.hovered)
             }
         }

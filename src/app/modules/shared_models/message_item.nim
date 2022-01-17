@@ -29,6 +29,8 @@ type
     reactionsModel: MessageReactionModel 
     pinned: bool
     pinnedBy: string
+    editMode: bool
+    isEdited: bool
 
 proc initItem*(
     id,
@@ -71,6 +73,8 @@ proc initItem*(
   result.reactionsModel = newMessageReactionModel()
   result.sticker = sticker
   result.stickerPack = stickerPack
+  result.editMode = false
+  result.isEdited = false
 
 proc `$`*(self: Item): string =
   result = fmt"""Item(
@@ -90,7 +94,9 @@ proc `$`*(self: Item): string =
     messageType:{$self.messageType},
     pinned:{$self.pinned},
     pinnedBy:{$self.pinnedBy},
-    messageReactions: [{$self.reactionsModel}]
+    messageReactions: [{$self.reactionsModel}],
+    editMode:{$self.editMode},
+    isEdited:{$self.isEdited}
     )"""
 
 proc id*(self: Item): string {.inline.} = 
@@ -216,5 +222,21 @@ proc toJsonNode*(self: Item): JsonNode =
     "contentType": self.contentType.int,
     "messageType": self.messageType,
     "pinned": self.pinned,
-    "pinnedBy": self.pinnedBy
+    "pinnedBy": self.pinnedBy,
+    "editMode": self.editMode,
+    "isEdited": self.isEdited
   }
+
+proc editMode*(self: Item): bool {.inline.} =
+  self.editMode
+
+proc `editMode=`*(self: Item, value: bool) {.inline.} =
+  self.editMode = value
+
+proc isEdited*(self: Item): bool {.inline.} =
+  self.isEdited
+
+proc `isEdited=`*(self: Item, value: bool) {.inline.} =
+  self.isEdited = value
+
+

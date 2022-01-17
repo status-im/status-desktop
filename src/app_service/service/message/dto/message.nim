@@ -65,6 +65,7 @@ type MessageDto* = object
   contentType*: int
   messageType*: int
   links*: seq[string]
+  editedAt*: int
 
 proc toParsedTextChild*(jsonObj: JsonNode): ParsedTextChild =
   result = ParsedTextChild()
@@ -124,6 +125,7 @@ proc toMessageDto*(jsonObj: JsonNode): MessageDto =
   discard jsonObj.getProp("contentType", result.contentType)
   discard jsonObj.getProp("messageType", result.messageType)
   discard jsonObj.getProp("image", result.image)
+  discard jsonObj.getProp("editedAt", result.editedAt)
 
   var quotedMessageObj: JsonNode
   if(jsonObj.getProp("quotedMessage", quotedMessageObj)):

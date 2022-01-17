@@ -47,6 +47,8 @@ Column {
     property bool isHovered: typeof hoveredMessage !== "undefined" && hoveredMessage === messageId
     property bool isMessageActive: typeof activeMessage !== "undefined" && activeMessage === messageId
 
+    property bool editModeOn: false
+
     function setHovered(messageId, hovered) {
         if (hovered) {
             hoveredMessage = messageId;
@@ -105,10 +107,8 @@ Column {
     property bool forceHoverHandler: false // Used to force the HoverHandler to be active (useful for messages in popups)
     property int gapFrom: 0
     property int gapTo: 0
-    property bool isEdit: false
     property string replaces: ""
     property bool isEdited: false
-    property bool showEdit: true
     property bool stickersLoaded: false
     //////////////////////////////////////
 
@@ -355,6 +355,7 @@ Column {
             isMessageActive: root.isMessageActive
             isCurrentUser: root.amISender
             isHovered: root.isHovered
+            editModeOn: root.editModeOn
 
             onAddEmoji: {
                 root.clickMessage(isProfileClick, isSticker, isImage , image, emojiOnly, hideEmojiPicker)
