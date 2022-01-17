@@ -342,7 +342,7 @@ Item {
             width: parent.width
             height: {
                 // I dont know why, the binding doesn't work well if this isn't here
-                item.height
+                item && item.height
                 return this.active ? item.height : 0
             }
             anchors.top: communityChatListAndCategories.bottom
