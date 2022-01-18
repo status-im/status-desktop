@@ -106,18 +106,18 @@ ColumnLayout {
                     chatContentModule.chatDetails.type !== Constants.chatType.communityChat
         }
         chatInfoButton.onClicked: {
-            // Not Refactored Yet
-            //            switch (chatContentRoot.rootStore.chatsModelInst.channelView.activeChannel.chatType) {
-            //            case Constants.chatType.privateGroupChat:
-            //                openPopup(groupInfoPopupComponent, {
-            //                              channelType: GroupInfoPopup.ChannelType.ActiveChannel,
-            //                              channel: chatContentRoot.rootStore.chatsModelInst.channelView.activeChannel
-            //                          })
-            //                break;
-            //            case Constants.chatType.oneToOne:
-            //                openProfilePopup(chatContentRoot.rootStore.chatsModelInst.channelView.activeChannel.id)
-            //                break;
-            //            }
+            switch (chatContentModule.chatDetails.type) {
+            case Constants.chatType.privateGroupChat:
+                // Not Refactored Yet
+                // openPopup(groupInfoPopupComponent, {
+                //                 channelType: GroupInfoPopup.ChannelType.ActiveChannel,
+                //                 channel: chatContentRoot.rootStore.chatsModelInst.channelView.activeChannel
+                //             })
+                break;
+            case Constants.chatType.oneToOne:
+                Global.openProfilePopup(chatContentModule.chatDetails.id)
+                break;
+            }
         }
 
         membersButton.visible: {

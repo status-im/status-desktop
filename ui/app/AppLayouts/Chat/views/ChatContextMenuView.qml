@@ -221,7 +221,7 @@ StatusPopupMenu {
                 close()
             }
             onConfirmButtonClicked: {
-                if(root.isCommunityChat || root.chatType === Constants.chatType.oneToOne)
+                if(root.isCommunityChat)
                     root.deleteChat(root.chatId)
                 else
                     root.leaveChat(root.chatId)
