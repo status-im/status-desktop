@@ -72,11 +72,6 @@ StatusPopupMenu {
     }
 
     function show(userNameParam, fromAuthorParam, identiconParam, textParam, nicknameParam, emojiReactionsModel) {
-        userName = userNameParam || ""
-        nickname = nicknameParam || ""
-        fromAuthor = fromAuthorParam || ""
-        identicon = identiconParam || ""
-        text = textParam || ""
         let newEmojiReactions = []
         if (!!emojiReactionsModel) {
             emojiReactionsModel.forEach(function (emojiReaction) {
