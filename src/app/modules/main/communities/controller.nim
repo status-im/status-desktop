@@ -69,9 +69,6 @@ method joinCommunity*(self: Controller, communityId: string): string =
 method requestToJoinCommunity*(self: Controller, communityId: string, ensName: string) =
   self.communityService.requestToJoinCommunity(communityId, ensName)
 
-method leaveCommunity*(self: Controller, communityId: string) =
-  self.communityService.leaveCommunity(communityId)
-
 method createCommunity*(
     self: Controller,
     name: string,
@@ -109,13 +106,6 @@ method editCommunity*(
     color,
     imageUrl,
     aX, aY, bX, bY)
-
-method createCommunityChannel*(
-    self: Controller,
-    communityId: string,
-    name: string,
-    description: string) =
-  self.communityService.createCommunityChannel(communityId, name, description)
 
 method editCommunityChannel*(
     self: Controller,
@@ -180,12 +170,6 @@ method importCommunity*(self: Controller, communityKey: string) =
 
 method exportCommunity*(self: Controller, communityId: string): string =
   self.communityService.exportCommunity(communityId)
-
-method acceptRequestToJoinCommunity*(self: Controller, communityId: string, requestId: string) =
-  self.communityService.acceptRequestToJoinCommunity(communityId, requestId)
-
-method declineRequestToJoinCommunity*(self: Controller, communityId: string, requestId: string) =
-  self.communityService.declineRequestToJoinCommunity(communityId, requestId)
 
 method inviteUsersToCommunityById*(self: Controller, communityId: string, pubKeys: string): string =
   result = self.communityService.inviteUsersToCommunityById(communityId, pubKeys)

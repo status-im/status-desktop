@@ -260,3 +260,18 @@ method joinGroupChatFromInvitation*(self: Controller, groupName: string, chatId:
   if(response.success):
     self.delegate.addNewChat(response.chatDto, false, self.events, self.settingsService, self.contactService, self.chatService, 
     self.communityService, self.messageService, self.gifService)
+
+method acceptRequestToJoinCommunity*(self: Controller, requestId: string) =
+  self.communityService.acceptRequestToJoinCommunity(self.sectionId, requestId)
+
+method declineRequestToJoinCommunity*(self: Controller, requestId: string) =
+  self.communityService.declineRequestToJoinCommunity(self.sectionId, requestId)
+
+method createCommunityChannel*(
+    self: Controller,
+    name: string,
+    description: string) =
+  self.communityService.createCommunityChannel(self.sectionId, name, description)
+
+method leaveCommunity*(self: Controller) =
+  self.communityService.leaveCommunity(self.sectionId)
