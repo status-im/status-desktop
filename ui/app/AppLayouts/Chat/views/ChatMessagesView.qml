@@ -358,6 +358,8 @@ Item {
                 root.showReplyArea(messageId, author)
             }
 
+            onImageClicked: Global.openImagePopup(image)
+
             stickersLoaded: root.stickersLoaded
 
             onVisibleChanged: {

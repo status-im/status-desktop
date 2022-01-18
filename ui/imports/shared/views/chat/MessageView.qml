@@ -12,6 +12,7 @@ import shared.controls.chat 1.0
 
 Column {
     id: root
+
     width: parent.width
     anchors.right: !isCurrentUser ? undefined : parent.right
     z: (typeof chatLogView === "undefined") ? 1 : (chatLogView.count - index)
@@ -127,7 +128,7 @@ Column {
     property bool isStatusUpdate: false
     property int statusAgeEpoch: 0
 
-    signal imageClick(var image)
+    signal imageClicked(var image)
     property var scrollToBottom: function () {}
 
     property var clickMessage: function(isProfileClick,
@@ -320,10 +321,8 @@ Column {
             onAddEmoji: {
                 root.clickMessage(isProfileClick, isSticker, isImage , image, emojiOnly, hideEmojiPicker);
             }
-            onChatImageClicked: {
-            // Not Refactored Yet - Should do it via messageStore
-//                root.imageClick(image);
-            }
+            onChatImageClicked: root.imageClicked(image)
+
             onUserNameClicked: {
                 // Not Refactored Yet - Should do it via messageStore
 //                root.parent.clickMessage(isProfileClick);
@@ -344,7 +343,9 @@ Column {
 
     Component {
         id: compactMessageComponent
+
         CompactMessageView {
+            messageStore: root.messageStore
             contactsStore: root.contactsStore
             messageContextMenu: root.messageContextMenu
             contentType: root.messageContentType
@@ -364,6 +365,7 @@ Column {
             onClickMessage: {
                 root.clickMessage(isProfileClick, isSticker, isImage, image, emojiOnly, hideEmojiPicker, isReply, isRightClickOnImage, imageSource)
             }
+
             onOpenStickerPackPopup: {
                 root.openStickerPackPopup(stickerPackId);
             }
@@ -371,6 +373,8 @@ Column {
             onReplyClicked: {
                 root.showReplyArea(messageId, author)
             }
+
+            onImageClicked: root.imageClicked(image)
         }
     }
 }
