@@ -145,6 +145,7 @@ ThemePalette {
     miscColor9: getColor('moss2')
     miscColor10: getColor('brown3')
     miscColor11: getColor('yellow2')
+    miscColor12: getColor('green6')
 
     accountColors: [
         getColor('blue5'),

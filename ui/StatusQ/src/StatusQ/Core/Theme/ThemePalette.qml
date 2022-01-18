@@ -88,6 +88,7 @@ QtObject {
     property color miscColor9
     property color miscColor10
     property color miscColor11
+    property color miscColor12
 
     property var accountColors: []
 

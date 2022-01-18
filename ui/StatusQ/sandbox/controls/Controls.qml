@@ -196,4 +196,11 @@ GridLayout {
         type: StatusBanner.Type.Danger
         statusText: "Banner"
     }
+
+    StatusProgressBar {
+        id: progressBar        
+        text: "Weak"
+        value: 0.5
+        fillColor : Theme.palette.pinColor1
+    }
 }

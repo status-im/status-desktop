@@ -31,6 +31,8 @@ QtObject {
         'green2': '#7CDA00',
         'green3': '#60C370',
         'green4': '#93DB33',
+        'green5': '#9EA85D',
+        'green6': '#AFB551',
 
         'grey': '#F0F2F5',
         'grey2': '#F6F8FA',

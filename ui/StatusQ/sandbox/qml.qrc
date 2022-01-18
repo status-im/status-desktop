@@ -1,8 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file>main.qml</file>
-        <file>DemoApp.qml</file>
-        <file>ThemeSwitch.qml</file>
         <file>pages/StatusAccountSelectorPage.qml</file>
         <file>pages/StatusAddressPage.qml</file>
         <file>pages/StatusAssetSelectorPage.qml</file>
@@ -18,6 +16,7 @@
         <file>pages/StatusTabSwitchPage.qml</file>
         <file>pages/StatusWalletColorButtonPage.qml</file>
         <file>pages/StatusWalletColorSelectPage.qml</file>
+		<file>pages/StatusPasswordStrengthIndicatorPage.qml</file>
         <file>controls/Buttons.qml</file>
         <file>controls/Controls.qml</file>
         <file>controls/Icons.qml</file>

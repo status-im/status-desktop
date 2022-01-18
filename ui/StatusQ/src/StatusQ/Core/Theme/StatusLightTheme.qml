@@ -143,6 +143,7 @@ ThemePalette {
     miscColor9: getColor('moss')
     miscColor10: getColor('brown')
     miscColor11: getColor('brown2')
+    miscColor12: getColor('green5')
 
     accountColors: [
         getColor('blue'),
