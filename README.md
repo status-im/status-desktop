@@ -10,11 +10,18 @@ Dev Docs: [https://hackmd.io/@status-desktop/B1naRjxh_/https%3A%2F%2Fhackmd.io%2
 
 
 
-# CPP app
-
+# CPP App
+Buid&test&run:
 ```
 cd build
-cmake ..
-make
-./test-qtapp
+conan install .. -s build_type=Release --build=missing
+conan build ..
+ctest -VV -C Release
+./status-desktop
+```
+
+Instead of `conan build ..` CMake may be used:
+```
+cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake
+cmake --build . --config Release
 ```
