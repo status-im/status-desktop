@@ -89,17 +89,13 @@ Item {
     Loader {
         id: membershipRequests
 
-        // Not Refactored Yet
-        property int nbRequests: 0
-        //property int nbRequests: root.store.chatsModelInst.communities.activeCommunity.communityMembershipRequests.nbRequests
+        property int nbRequests: root.communityData.pendingRequestsToJoin.count
 
         anchors.top: communityHeader.bottom
         anchors.topMargin: active ? 8 : 0
         anchors.horizontalCenter: parent.horizontalCenter
 
-        // Not Refactored Yet
-        active: nbRequests > 0
-        //active: communityData.amISectionAdmin && nbRequests > 0
+        active: communityData.amISectionAdmin && nbRequests > 0
         height: nbRequests > 0 ? 64 : 0
         sourceComponent: Component {
             StatusContactRequestsIndicatorListItem {
@@ -455,6 +451,7 @@ Item {
         MembershipRequestsPopup {
             anchors.centerIn: parent
             store: root.store
+            pendingRequestsToJoin: root.communityData.pendingRequestsToJoin
             onClosed: {
                 destroy()
             }

@@ -1,5 +1,6 @@
 import strformat
 import ./members_model, ./member_item
+import ../main/communities/models/[pending_request_item, pending_request_model]
 
 type
   SectionType* {.pure.} = enum
@@ -33,6 +34,7 @@ type
     access: int
     ensOnly: bool
     membersModel: MembersModel
+    pendingRequestsToJoinModel: PendingRequestModel
 
 proc initItem*(
     id: string,
@@ -54,7 +56,8 @@ proc initItem*(
     isMember = false,
     access: int = 0,
     ensOnly = false,
-    members: seq[MemberItem] = @[]
+    members: seq[MemberItem] = @[],
+    pendingRequestsToJoin: seq[PendingRequestItem] = @[]
     ): SectionItem =
   result.id = id
   result.sectionType = sectionType
@@ -76,6 +79,7 @@ proc initItem*(
   result.access = access
   result.ensOnly = ensOnly
   result.membersModel = newMembersModel(members)
+  result.pendingRequestsToJoinModel = newPendingRequestModel(pendingRequestsToJoin)
 
 proc isEmpty*(self: SectionItem): bool =
   return self.id.len == 0
@@ -178,3 +182,6 @@ proc members*(self: SectionItem): MembersModel {.inline.} =
 
 proc hasMember*(self: SectionItem, pubkey: string): bool =
   self.membersModel.hasMember(pubkey)
+
+proc pendingRequestsToJoin*(self: SectionItem): PendingRequestModel {.inline.} = 
+  self.pendingRequestsToJoinModel

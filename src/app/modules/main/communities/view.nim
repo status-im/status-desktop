@@ -104,7 +104,7 @@ QtObject:
     self.delegate.requestToJoinCommunity(communityId, ensName)
    
   proc acceptRequestToJoinCommunity*(self: View, communityId: string, requestId: string) {.slot.} =
-    self.delegate.acceptRequestToJoinCommunity(communityId, requestid)
+    self.delegate.acceptRequestToJoinCommunity(communityId, requestId)
 
   proc declineRequestToJoinCommunity*(self: View, communityId: string, requestId: string) {.slot.} =
     self.delegate.declineRequestToJoinCommunity(communityId, requestId)

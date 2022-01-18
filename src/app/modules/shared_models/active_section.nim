@@ -131,3 +131,12 @@ QtObject:
 
   proc hasMember(self: ActiveSection, pubkey: string): bool {.slot.} =
     return self.item.hasMember(pubkey)
+
+  proc pendingRequestsToJoin(self: ActiveSection): QVariant {.slot.} =
+    if (self.item.id == ""):
+      # FIXME (Jo) I don't know why but the Item is sometimes empty and doing anything here crashes the app
+      return newQVariant("")
+    return newQVariant(self.item.pendingRequestsToJoin)
+
+  QtProperty[QVariant] pendingRequestsToJoin:
+    read = pendingRequestsToJoin

@@ -36,6 +36,14 @@ type Member* = object
   id*: string
   roles*: seq[int]
 
+type CommunityMembershipRequestDto* = object
+  id*: string
+  publicKey*: string
+  chatId*: string
+  communityId*: string
+  state*: int
+  our*: string
+
 type CommunityDto* = object
   id*: string
   admin*: bool
@@ -56,14 +64,7 @@ type CommunityDto* = object
   requestedToJoinAt*: int64
   isMember*: bool
   muted*: bool
-
-type CommunityMembershipRequestDto* = object
-  id*: string
-  publicKey*: string
-  chatId*: string
-  communityId*: string
-  state*: int
-  our*: string
+  pendingRequestsToJoin*: seq[CommunityMembershipRequestDto]
 
 proc toPermission(jsonObj: JsonNode): Permission =
   result = Permission()
