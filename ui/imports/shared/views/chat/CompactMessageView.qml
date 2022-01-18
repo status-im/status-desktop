@@ -14,9 +14,11 @@ import StatusQ.Controls 0.1 as StatusQControls
 Item {
     id: root
 
+    property var messageStore
+    property var contactsStore
+
     property var messageContextMenu
     property var container
-    property var contactsStore
     property int contentType
 
     property int chatHorizontalPadding: Style.current.halfPadding
@@ -52,6 +54,8 @@ Item {
     signal addEmoji(bool isProfileClick, bool isSticker, bool isImage , var image, bool emojiOnly, bool hideEmojiPicker)
     signal clickMessage(bool isProfileClick, bool isSticker, bool isImage, var image, bool emojiOnly, bool hideEmojiPicker, bool isReply, bool isRightClickOnImage, string imageSource)
     signal replyClicked(string messageId, string author)
+    signal imageClicked(var image)
+
     width: parent.width
     height: messageContainer.height + messageContainer.anchors.topMargin
             + (dateGroupLbl.visible ? dateGroupLbl.height + dateGroupLbl.anchors.topMargin : 0)
@@ -497,7 +501,7 @@ Item {
                         imageWidth: 200
                         onClicked: {
                             if (mouse.button === Qt.LeftButton) {
-                                messageStore.imageClick(image)
+                                root.imageClicked(image)
                             }
                             else if (mouse.button === Qt.RightButton) {
                                 // Set parent, X & Y positions for the messageContextMenu
