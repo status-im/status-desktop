@@ -180,3 +180,16 @@ QtObject:
 
   proc joinGroupChatFromInvitation*(self: View, groupName: string, chatId: string, adminPK: string) {.slot.} =
     self.delegate.joinGroupChatFromInvitation(groupName, chatId, adminPK)
+
+
+  proc acceptRequestToJoinCommunity*(self: View, requestId: string) {.slot.} =
+    self.delegate.acceptRequestToJoinCommunity(requestId)
+
+  proc declineRequestToJoinCommunity*(self: View, requestId: string) {.slot.} =
+    self.delegate.declineRequestToJoinCommunity(requestId)
+
+  proc createCommunityChannel*(self: View, name: string, description: string) {.slot.} =
+    self.delegate.createCommunityChannel(name, description)
+
+  proc leaveCommunity*(self: View) {.slot.} =
+    self.delegate.leaveCommunity()

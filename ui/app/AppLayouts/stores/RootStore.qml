@@ -47,10 +47,6 @@ QtObject {
         return communitiesModuleInst.exportCommunity(communityId);
     }
 
-    function leaveCommunity(communityId) {
-        communitiesModuleInst.leaveCommunity(communityId);
-    }
-
     function createCommunity(communityName, communityDescription, checkedMembership, ensOnlySwitchChecked, communityColor, communityImage, imageCropperModalaX, imageCropperModalaY, imageCropperModalbX, imageCropperModalbY) {
         communitiesModuleInst.createCommunity(communityName, communityDescription, checkedMembership, ensOnlySwitchChecked, communityColor, communityImage, imageCropperModalaX, imageCropperModalaY, imageCropperModalbX, imageCropperModalbY);
     }
@@ -65,5 +61,13 @@ QtObject {
 
     function copyToClipboard(text) {
         globalUtils.copyToClipboard(text)
+    }
+
+    function generateAlias(pk) {
+        return globalUtils.generateAlias(pk);
+    }
+
+    function generateIdenticon(pk) {
+        return globalUtils.generateIdenticon(pk);
     }
 }
