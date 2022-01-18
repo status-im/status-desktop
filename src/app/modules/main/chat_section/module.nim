@@ -310,6 +310,7 @@ method createPublicChat*(self: Module, chatId: string) =
 method addNewChat*(
     self: Module,
     chatDto: ChatDto,
+    belongsToCommunity: bool,
     events: EventEmitter, 
     settingsService: settings_service.ServiceInterface,
     contactService: contact_service.Service,
@@ -326,10 +327,14 @@ method addNewChat*(
   if(chatDto.chatType == ChatType.OneToOne):
     isUsersListAvailable = false
     (chatName, chatImage, isIdenticon) = self.controller.getOneToOneChatNameAndImage(chatDto.id)
-  let amIChatAdmin = self.amIMarkedAsAdminUser(chatDto.members)
+  var amIChatAdmin = false
+  if(belongsToCommunity):
+    amIChatAdmin = self.controller.getMyCommunity().admin
+  else:
+    amIChatAdmin = self.amIMarkedAsAdminUser(chatDto.members)
   let item = initItem(chatDto.id, chatName, chatImage, isIdenticon, chatDto.color, chatDto.description, 
   chatDto.chatType.int, amIChatAdmin, hasNotification, notificationsCount, chatDto.muted, false, 0)
-  self.addSubmodule(chatDto.id, false, isUsersListAvailable, events, settingsService, contactService, chatService, 
+  self.addSubmodule(chatDto.id, belongsToCommunity, isUsersListAvailable, events, settingsService, contactService, chatService,
   communityService, messageService, gifService)
   self.chatContentModules[chatDto.id].load()
   self.view.chatsModel().appendItem(item)
@@ -341,11 +346,24 @@ method removeChat*(self: Module, chatId: string) =
   if(not self.chatContentModules.contains(chatId)):
     return
 
+  self.controller.removeChat(chatId)
+
+method onCommunityChannelDeleted*(self: Module, chatId: string) =
+  if(not self.chatContentModules.contains(chatId)):
+    return
   self.view.chatsModel().removeItemById(chatId)
   self.removeSubmodule(chatId)
 
-  # remove active state form the removed chat (if applicable)
-  self.controller.removeActiveFromThisChat(chatId)
+  if(self.view.chatsModel().getCount() == 0):
+    return
+
+  # set first channel as the active one in model
+  let item = self.view.chatsModel().getItemAtIndex(0)
+  if(item.subItems.getCount() == 0):
+    self.setActiveItemSubItem(item.id, "")
+  else:
+    let subItem = item.subItems.getItemAtIndex(0)
+    self.setActiveItemSubItem(item.id, subItem.id)
 
 method createOneToOneChat*(self: Module, chatId: string, ensName: string) =
   if(self.controller.isCommunity()):

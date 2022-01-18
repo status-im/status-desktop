@@ -46,7 +46,7 @@ QtObject:
 
   proc countChanged(self: SubModel) {.signal.}
 
-  proc getCount(self: SubModel): int {.slot.} =
+  proc getCount*(self: SubModel): int {.slot.} =
     self.items.len
 
   QtProperty[int] count:
@@ -162,6 +162,12 @@ QtObject:
     for it in self.items:
       if(it.id == id):
         return it
+
+  proc getItemAtIndex*(self: SubModel, index: int): SubItem =
+    if(index < 0 or index >= self.items.len):
+      return
+
+    return self.items[index]
 
   proc setActiveItem*(self: SubModel, id: string) =
     for i in 0 ..< self.items.len:

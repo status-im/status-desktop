@@ -24,6 +24,9 @@ method isCommunity*(self: AccessInterface): bool {.base.} =
 method getJoinedCommunities*(self: AccessInterface): seq[CommunityDto] {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method getMyCommunity*(self: AccessInterface): CommunityDto {.base.}  =
+  raise newException(ValueError, "No implementation available")
+
 method getCategories*(self: AccessInterface, communityId: string): seq[Category] {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -39,7 +42,7 @@ method getChatDetailsForChatTypes*(self: AccessInterface, types: seq[ChatType]):
 method setActiveItemSubItem*(self: AccessInterface, itemId: string, subItemId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
     
-method removeActiveFromThisChat*(self: AccessInterface, itemId: string) {.base.} =
+method removeChat*(self: AccessInterface, itemId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getOneToOneChatNameAndImage*(self: AccessInterface, chatId: string): 
