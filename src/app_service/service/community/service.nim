@@ -244,9 +244,20 @@ QtObject:
 
   proc leaveCommunity*(self: Service, communityId: string) =
     try:
-      discard status_go.leaveCommunity(communityId)
+      let response = status_go.leaveCommunity(communityId)
 
+      if response.error != nil:
+        let error = Json.decode($response.error, RpcError)
+        raise newException(RpcException, "Error leaving community: " & error.message)
+
+      if response.result == nil or response.result.kind == JNull:
+        error "error: ", methodName="leaveCommunity", errDesription = "result is nil"
+        return
+
+      # remove this from the joinedCommunities list
+      self.joinedCommunities.del(communityId)
       self.events.emit(SIGNAL_COMMUNITY_LEFT, CommunityIdArgs(communityId: communityId))
+
     except Exception as e:
       error "Error leaving community", msg = e.msg, communityId
 
@@ -276,6 +287,10 @@ QtObject:
 
       if response.result != nil and response.result.kind != JNull:
         let community = response.result["communities"][0].toCommunityDto()
+
+        # add this to the joinedCommunities list
+        self.joinedCommunities[community.id] = community
+
         self.events.emit(SIGNAL_COMMUNITY_CREATED, CommunityArgs(community: community))
     except Exception as e:
       error "Error creating community", msg = e.msg

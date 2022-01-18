@@ -107,6 +107,7 @@ method init*(self: Controller) =
         
         self.delegate.addNewChat(
           chatDto,
+          true,
           self.events,
           self.settingsService,
           self.contactService,
@@ -115,6 +116,11 @@ method init*(self: Controller) =
           self.messageService,
           self.gifService
         )
+
+    self.events.on(SIGNAL_COMMUNITY_CHANNEL_DELETED) do(e:Args):
+      let args = CommunityChatIdArgs(e)
+      if (args.communityId == self.sectionId):
+        self.delegate.onCommunityChannelDeleted(args.chatId)
 
   self.events.on(SIGNAL_CONTACT_NICKNAME_CHANGED) do(e: Args):
     var args = ContactArgs(e)
@@ -139,6 +145,9 @@ method isCommunity*(self: Controller): bool =
 method getJoinedCommunities*(self: Controller): seq[CommunityDto] =
   return self.communityService.getJoinedCommunities()
 
+method getMyCommunity*(self: Controller): CommunityDto =
+  return self.communityService.getCommunityById(self.sectionId)
+
 method getCategories*(self: Controller, communityId: string): seq[Category] =
   return self.communityService.getCategories(communityId)
 
@@ -162,19 +171,12 @@ method setActiveItemSubItem*(self: Controller, itemId: string, subItemId: string
 
   self.delegate.activeItemSubItemSet(self.activeItemId, self.activeSubItemId)
 
-method removeActiveFromThisChat*(self: Controller, itemId: string) =
-  if self.activeItemId != itemId:
-    return
-
-  let allChats = self.chatService.getAllChats()
-
-  self.activeSubItemId = ""
-  if allChats.len == 0:
-    self.activeItemId = ""
-  else:
-    self.activeItemId = allChats[0].id
-
-  self.delegate.activeItemSubItemSet(self.activeItemId, self.activeSubItemId)
+method removeChat*(self: Controller, itemId: string) =
+  if self.isCommunitySection:
+    self.communityService.deleteCommunityChat(self.getMySectionId(), itemId)
+  # else:
+    # not implemented
+    # self.chatService.deleteChatById(itemId)
 
 method getOneToOneChatNameAndImage*(self: Controller, chatId: string): 
   tuple[name: string, image: string, isIdenticon: bool] =
@@ -183,13 +185,13 @@ method getOneToOneChatNameAndImage*(self: Controller, chatId: string):
 method createPublicChat*(self: Controller, chatId: string) =
   let response = self.chatService.createPublicChat(chatId)
   if(response.success):
-    self.delegate.addNewChat(response.chatDto, self.events, self.settingsService, self.contactService, self.chatService,
+    self.delegate.addNewChat(response.chatDto, false, self.events, self.settingsService, self.contactService, self.chatService,
     self.communityService, self.messageService, self.gifService)
 
 method createOneToOneChat*(self: Controller, chatId: string, ensName: string) =
   let response = self.chatService.createOneToOneChat(chatId, ensName)
   if(response.success):
-    self.delegate.addNewChat(response.chatDto, self.events, self.settingsService, self.contactService, self.chatService,
+    self.delegate.addNewChat(response.chatDto, false, self.events, self.settingsService, self.contactService, self.chatService,
     self.communityService, self.messageService, self.gifService)
 
 method leaveChat*(self: Controller, chatId: string) =
