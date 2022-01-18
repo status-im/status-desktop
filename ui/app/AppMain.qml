@@ -247,17 +247,23 @@ Item {
                 popupMenu: StatusPopupMenu {
                     id: communityContextMenu
 
+                    property var chatCommunitySectionModule
+
                     openHandler: function () {
-                        appMain.rootStore.setObservedCommunity(model.id)
+                        // // we cannot return QVariant if we pass another parameter in a function call
+                        // // that's why we're using it this way
+                        mainModule.prepareCommunitySectionModuleForCommunityId(model.id)
+                        communityContextMenu.chatCommunitySectionModule = mainModule.getCommunitySectionModule()
+                        
                     }
 
                     StatusMenuItem {
                         //% "Invite People"
                         text: qsTrId("invite-people")
                         icon.name: "share-ios"
-                        enabled: appMain.rootStore.observedCommunity.canManageUsers
+                        enabled: model.canManageUsers
                         onTriggered: Global.openPopup(inviteFriendsToCommunityPopup, {
-                            community: appMain.rootStore.observedCommunity,
+                            community: model,
                             hasAddedContacts: appMain.rootStore.hasAddedContacts
                         })
                     }
@@ -268,18 +274,19 @@ Item {
                         icon.name: "group-chat"
                         onTriggered: Global.openPopup(communityProfilePopup, {
                             store: appMain.rootStore,
-                            community: appMain.rootStore.observedCommunity
+                            community: model,
+                            communitySectionModule: communityContextMenu.chatCommunitySectionModule
                         })
                     }
 
                     StatusMenuItem {
-                        enabled: appMain.rootStore.observedCommunity.amISectionAdmin
+                        enabled: model.amISectionAdmin
                         //% "Edit Community"
                         text: qsTrId("edit-community")
                         icon.name: "edit"
                         onTriggered: Global.openPopup(editCommunityPopup, {
                             store: appMain.rootStore,
-                            community: appMain.rootStore.observedCommunity
+                            community: model
                         })
                     }
 
@@ -292,7 +299,7 @@ Item {
                         icon.width: 14
                         iconRotation: 180
                         type: StatusMenuItem.Type.Danger
-                        onTriggered: appMain.rootStore.leaveCommunity(model.id)
+                        onTriggered: communityContextMenu.chatCommunitySectionModule.leaveCommunity()
                     }
                 }
             }

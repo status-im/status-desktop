@@ -135,9 +135,6 @@ method editCommunity*(self: Module, id: string, name: string, description: strin
                         aX: int, aY: int, bX: int, bY: int) =
   self.controller.editCommunity(id, name, description, access, ensOnly, color, imagePath, aX, aY, bX, bY)
 
-method createCommunityChannel*(self: Module, communityId, name, description: string,) =
-  self.controller.createCommunityChannel(communityId, name, description)
-
 method createCommunityCategory*(self: Module, communityId: string, name: string, channels: string) =
   let channelsSeq = map(parseJson(channels).getElems(), proc(x:JsonNode):string = x.getStr())
   self.controller.createCommunityCategory(communityId, name, channelsSeq)
@@ -157,9 +154,6 @@ method removeUserFromCommunity*(self: Module, communityId: string, categoryId: s
   # self.controller.reorderCommunityChannel(communityId, categoryId, chatId, position)
   discard
 
-method leaveCommunity*(self: Module, communityId: string) =
-  self.controller.leaveCommunity(communityId) 
-
 method inviteUsersToCommunityById*(self: Module, communityId: string, pubKeysJSON: string): string =
   result = self.controller.inviteUsersToCommunityById(communityId, pubKeysJSON)
   
@@ -171,12 +165,6 @@ method banUserFromCommunity*(self: Module, pubKey: string, communityId: string) 
 
 method requestToJoinCommunity*(self: Module, communityId: string, ensName: string) =
   self.controller.requestToJoinCommunity(communityId, ensName)
-   
-method acceptRequestToJoinCommunity*(self: Module, communityId: string, requestId: string) =
-  self.controller.acceptRequestToJoinCommunity(communityId, requestId)
-
-method declineRequestToJoinCommunity*(self: Module, communityId: string, requestId: string) =
-  self.controller.declineRequestToJoinCommunity(communityId, requestId)
 
 method requestCommunityInfo*(self: Module, communityId: string) =
   self.controller.requestCommunityInfo(communityId)

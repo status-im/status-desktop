@@ -31,9 +31,6 @@ method editCommunity*(self: AccessInterface, id: string, name: string, descripti
 method createCommunityCategory*(self: AccessInterface, communityId: string, name: string, channels: string) {.base.} =
   raise newException(ValueError, "No implementation available") 
 
-method createCommunityChannel*(self: AccessInterface, communityId: string, name: string, description: string) {.base.} =
-  raise newException(ValueError, "No implementation available") 
-
 method editCommunityCategory*(self: AccessInterface, communityId: string, categoryId: string, name: string, channels: string) {.base.} =
   raise newException(ValueError, "No implementation available") 
 
@@ -46,9 +43,6 @@ method reorderCommunityCategories*(self: AccessInterface, communityId: string, c
 method reorderCommunityChannel*(self: AccessInterface, communityId: string, categoryId: string, chatId: string, position: int) {.base} =
   raise newException(ValueError, "No implementation available") 
 
-method leaveCommunity*(self: AccessInterface, communityId: string) {.base.} =
-  raise newException(ValueError, "No implementation available") 
-
 method inviteUsersToCommunityById*(self: AccessInterface, communityId: string, pubKeysJSON: string): string {.base.} =
   raise newException(ValueError, "No implementation available") 
 
@@ -59,12 +53,6 @@ method banUserFromCommunity*(self: AccessInterface, pubKey: string, communityId:
   raise newException(ValueError, "No implementation available") 
 
 method requestToJoinCommunity*(self: AccessInterface, communityId: string, ensName: string) {.base.} =
-  raise newException(ValueError, "No implementation available") 
-  
-method acceptRequestToJoinCommunity*(self: AccessInterface, communityId: string, requestId: string) {.base.} =
-  raise newException(ValueError, "No implementation available") 
-
-method declineRequestToJoinCommunity*(self: AccessInterface, communityId: string, requestId: string) {.base.} =
   raise newException(ValueError, "No implementation available") 
 
 method requestCommunityInfo*(self: AccessInterface, communityId: string) {.base.} =

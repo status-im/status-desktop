@@ -70,9 +70,6 @@ QtObject:
   proc editCommunity*(self: View, id: string, name: string, description: string, access: int, ensOnly: bool, color: string, imagePath: string, aX: int, aY: int, bX: int, bY: int) {.slot.} =
     self.delegate.editCommunity(id, name, description, access, ensOnly, color, imagePath, aX, aY, bX, bY)
   
-  proc createCommunityChannel*(self: View, communityId: string, name: string, description: string) {.slot.} =
-    self.delegate.createCommunityChannel(communityId, name, description)
-  
   proc createCommunityCategory*(self: View, communityId: string, name: string, channels: string) {.slot.} =
     self.delegate.createCommunityCategory(communityId, name, channels)
 
@@ -88,9 +85,6 @@ QtObject:
   proc reorderCommunityChannel*(self: View, communityId: string, categoryId: string, chatId: string, position: int): string {.slot} =
     self.delegate.reorderCommunityChannel(communityId, categoryId, chatId, position)
 
-  proc leaveCommunity*(self: View, communityId: string) {.slot.} =
-    self.delegate.leaveCommunity(communityId)
-
   proc inviteUsersToCommunityById*(self: View, communityId: string, pubKeysJSON: string): string {.slot.} =
     result = self.delegate.inviteUsersToCommunityById(communityId, pubKeysJSON)
   
@@ -102,12 +96,6 @@ QtObject:
 
   proc requestToJoinCommunity*(self: View, communityId: string, ensName: string) {.slot.} =
     self.delegate.requestToJoinCommunity(communityId, ensName)
-   
-  proc acceptRequestToJoinCommunity*(self: View, communityId: string, requestId: string) {.slot.} =
-    self.delegate.acceptRequestToJoinCommunity(communityId, requestId)
-
-  proc declineRequestToJoinCommunity*(self: View, communityId: string, requestId: string) {.slot.} =
-    self.delegate.declineRequestToJoinCommunity(communityId, requestId)
 
   proc requestCommunityInfo*(self: View, communityId: string) {.slot.} =
     self.delegate.requestCommunityInfo(communityId)

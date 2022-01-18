@@ -56,3 +56,15 @@ method rejectAllContactRequests*(self: AccessInterface) {.base.} =
 
 method blockContact*(self: AccessInterface, publicKey: string) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method acceptRequestToJoinCommunity*(self: AccessInterface, requestId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method declineRequestToJoinCommunity*(self: AccessInterface, requestId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method createCommunityChannel*(self: AccessInterface, name: string, description: string) {.base.} =
+  raise newException(ValueError, "No implementation available") 
+
+method leaveCommunity*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available") 

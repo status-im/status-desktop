@@ -372,7 +372,7 @@ Item {
 //                root.store.chatsModelInst.communities.setActiveCommunity(id)
 //            }
            onSetObservedCommunity: {
-               root.store.communitiesModuleInst.setObservedCommunity(id)
+               root.store.setObservedCommunity(id)
            }
             onClosed: {
                 destroy()
