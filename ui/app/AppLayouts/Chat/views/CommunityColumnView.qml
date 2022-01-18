@@ -302,9 +302,7 @@ Item {
                     root.communitySectionModule.leaveChat(chatId)
                 }
 
-                onDeleteChat: {
-                    // Not Refactored Yet
-                }
+                onDeleteChat:  root.store.removeChat(chatId)
 
                 onDownloadMessages: {
                     // Not Refactored Yet

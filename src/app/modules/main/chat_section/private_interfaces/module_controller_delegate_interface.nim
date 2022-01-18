@@ -1,7 +1,7 @@
 method activeItemSubItemSet*(self: AccessInterface, itemId: string, subItemId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method addNewChat*(self: AccessInterface, chatDto: ChatDto, events: EventEmitter, 
+method addNewChat*(self: AccessInterface, chatDto: ChatDto, belongsToCommunity: bool, events: EventEmitter,
   settingsService: settings_service.ServiceInterface, contactService: contact_service.Service, 
   chatService: chat_service.Service, communityService: community_service.Service, 
   messageService: message_service.Service, gifService: gif_service.Service) {.base.} =
@@ -30,4 +30,7 @@ method onContactBlocked*(self: AccessInterface, publicKey: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onContactDetailsUpdated*(self: AccessInterface, contactId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onCommunityChannelDeleted*(self: AccessInterface, chatId: string) {.base.} =
   raise newException(ValueError, "No implementation available")

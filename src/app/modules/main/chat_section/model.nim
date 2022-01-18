@@ -46,7 +46,7 @@ QtObject:
 
   proc countChanged(self: Model) {.signal.}
 
-  proc getCount(self: Model): int {.slot.} =
+  proc getCount*(self: Model): int {.slot.} =
     self.items.len
 
   QtProperty[int] count:
@@ -155,6 +155,12 @@ QtObject:
     self.endInsertRows()
 
     self.countChanged()
+
+  proc getItemAtIndex*(self: Model, index: int): Item =
+    if(index < 0 or index >= self.items.len):
+      return
+
+    return self.items[index]
 
   proc getItemById*(self: Model, id: string): Item =
     for it in self.items:

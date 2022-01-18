@@ -131,3 +131,6 @@ QtObject:
 
   proc blockContact*(self: View, publicKey: string) {.slot.} =
     self.delegate.blockContact(publicKey)
+
+  proc removeChat*(self: View, chatId: string) {.slot} =
+    self.delegate.removeChat(chatId)
