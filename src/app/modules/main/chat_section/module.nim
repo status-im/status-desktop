@@ -511,3 +511,15 @@ method onChatRenamed*(self: Module, chatId: string, newName: string) =
 
 method reorderChannels*(self: Module, chatId, categoryId: string, position: int) =
   self.view.chatsModel().reorder(chatId, categoryId, position)
+
+method acceptRequestToJoinCommunity*(self: Module, requestId: string) =
+  self.controller.acceptRequestToJoinCommunity(requestId)
+
+method declineRequestToJoinCommunity*(self: Module, requestId: string) =
+  self.controller.declineRequestToJoinCommunity(requestId)
+
+method createCommunityChannel*(self: Module, name, description: string,) =
+  self.controller.createCommunityChannel(name, description)
+
+method leaveCommunity*(self: Module) =
+  self.controller.leaveCommunity() 

@@ -18,6 +18,13 @@ type
     Enabled
     Joined
     IsMember
+    CanJoin
+    CanManageUsers
+    CanRequestAccess
+    Access
+    EnsOnly
+    MembersModel
+    PendingRequestsToJoinModel
 
 QtObject:
   type
@@ -68,7 +75,14 @@ QtObject:
       ModelRole.Active.int:"active",
       ModelRole.Enabled.int:"enabled",
       ModelRole.Joined.int:"joined",
-      ModelRole.IsMember.int:"isMember"
+      ModelRole.IsMember.int:"isMember",
+      ModelRole.CanJoin.int:"canJoin",
+      ModelRole.CanManageUsers.int:"canManageUsers",
+      ModelRole.CanRequestAccess.int:"canRequestAccess",
+      ModelRole.Access.int:"access",
+      ModelRole.EnsOnly.int:"ensOnly",
+      ModelRole.MembersModel.int:"members",
+      ModelRole.PendingRequestsToJoinModel.int:"pendingRequestsToJoin",
     }.toTable
 
   method data(self: SectionModel, index: QModelIndex, role: int): QVariant =
@@ -110,6 +124,20 @@ QtObject:
       result = newQVariant(item.joined)
     of ModelRole.IsMember: 
       result = newQVariant(item.isMember)
+    of ModelRole.CanJoin: 
+      result = newQVariant(item.canJoin)
+    of ModelRole.CanManageUsers: 
+      result = newQVariant(item.canManageUsers)
+    of ModelRole.CanRequestAccess: 
+      result = newQVariant(item.canRequestAccess)
+    of ModelRole.Access: 
+      result = newQVariant(item.access)
+    of ModelRole.EnsOnly: 
+      result = newQVariant(item.ensOnly)
+    of ModelRole.MembersModel: 
+      result = newQVariant(item.members)
+    of ModelRole.PendingRequestsToJoinModel: 
+      result = newQVariant(item.pendingRequestsToJoin)
 
   proc addItem*(self: SectionModel, item: SectionItem) =
     let parentModelIndex = newQModelIndex()
@@ -155,7 +183,14 @@ QtObject:
       ModelRole.Description.int,
       ModelRole.Image.int,
       ModelRole.Icon.int,
-      ModelRole.Color.int
+      ModelRole.Color.int,
+      ModelRole.HasNotification.int,
+      ModelRole.NotificationsCount.int,
+      ModelRole.IsMember.int,
+      ModelRole.CanJoin.int,
+      ModelRole.Joined.int,
+      ModelRole.MembersModel.int,
+      ModelRole.PendingRequestsToJoinModel.int
       ])
 
   proc getItemById*(self: SectionModel, id: string): SectionItem =

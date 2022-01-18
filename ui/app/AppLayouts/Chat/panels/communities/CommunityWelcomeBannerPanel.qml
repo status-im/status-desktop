@@ -23,6 +23,7 @@ Rectangle {
     color: Style.current.transparent
     property var activeCommunity
     property var store
+    property var communitySectionModule
     property bool hasAddedContacts
 
     MouseArea {
@@ -104,7 +105,8 @@ Rectangle {
         anchors.bottomMargin: Style.current.padding
         onClicked: Global.openPopup(communityProfilePopup, {
             store: rootStore,
-            community: root.activeCommunity
+            community: root.activeCommunity,
+            communitySectionModule: root.communitySectionModule
         })
     }
 }
