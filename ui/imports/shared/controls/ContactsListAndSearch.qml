@@ -225,8 +225,7 @@ Item {
     NoFriendsRectangle {
         id: noContactsRect
         visible: showContactList
-        anchors.top: chatKey.bottom
-        anchors.topMargin: Style.current.xlPadding * 3
+        anchors.top: chatKey.top
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
     }
