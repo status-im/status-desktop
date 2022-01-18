@@ -22,7 +22,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Debug)
-endif() 
+endif()
 
 message(STATUS "Started CMake for ${PROJECT_NAME} v${PROJECT_VERSION}...\n")
 
@@ -99,7 +99,7 @@ target_link_libraries(status-desktop
     keycard
     app_service
     app
-  ) 
+  )
 
 
 add_custom_target(rcc ALL DEPENDS resources.rcc)
@@ -133,3 +133,8 @@ add_custom_target(run-debug
   VERBATIM
   USES_TERMINAL
 )
+
+include(CTest)
+if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTING)
+    add_subdirectory(test-cpp)
+endif()
