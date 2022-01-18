@@ -74,6 +74,7 @@ QtObject:
   proc loadAllCommunities(self: Service): seq[CommunityDto]
   proc loadJoinedComunities(self: Service): seq[CommunityDto]
   proc loadMyPendingRequestsToJoin*(self: Service)
+  proc pendingRequestsToJoinForCommunity*(self: Service, communityId: string): seq[CommunityMembershipRequestDto]
 
   proc delete*(self: Service) =
     discard
@@ -86,11 +87,35 @@ QtObject:
     result.allCommunities = initTable[string, CommunityDto]()
     result.myCommunityRequests = @[]
 
+  proc doConnect(self: Service) =
+    self.events.on(SignalType.Message.event) do(e: Args):
+      var receivedData = MessageSignal(e)
+
+      # Handling community updates
+      if (receivedData.communities.len > 0):
+        self.events.emit(SIGNAL_COMMUNITIES_UPDATE, CommunitiesArgs(communities: receivedData.communities))
+
+    self.events.on(SignalType.Message.event) do(e:Args):
+      var receivedData = MessageSignal(e)
+      if(receivedData.membershipRequests.len > 0):
+        for membershipRequest in receivedData.membershipRequests:
+          if (not self.joinedCommunities.contains(membershipRequest.communityId)):
+            error "Received a membership request for an unknown community", communityId=membershipRequest.communityId
+            continue
+          var community = self.joinedCommunities[membershipRequest.communityId]
+          community.pendingRequestsToJoin.add(membershipRequest)
+          self.joinedCommunities[membershipRequest.communityId] = community
+          self.events.emit(SIGNAL_COMMUNITY_EDITED, CommunityArgs(community: community))
+
   proc init*(self: Service) =
+    self.doConnect()
+
     try:
       let joinedCommunities = self.loadJoinedComunities()
       for community in joinedCommunities:
         self.joinedCommunities[community.id] = community
+        if (community.admin):
+          self.joinedCommunities[community.id].pendingRequestsToJoin = self.pendingRequestsToJoinForCommunity(community.id)
 
       let allCommunities = self.loadAllCommunities()
       for community in allCommunities:
@@ -102,14 +127,7 @@ QtObject:
       let errDesription = e.msg
       error "error: ", errDesription
       return
-
-    self.events.on(SignalType.Message.event) do(e: Args):
-      var receivedData = MessageSignal(e)
-
-      # Handling community updates
-      if (receivedData.communities.len > 0):
-        self.events.emit(SIGNAL_COMMUNITIES_UPDATE, CommunitiesArgs(communities: receivedData.communities))
-
+          
   proc loadAllCommunities(self: Service): seq[CommunityDto] =
     let response = status_go.getAllCommunities()
     return parseCommunities(response)
@@ -242,6 +260,17 @@ QtObject:
     except Exception as e:
       error "Error fetching my community requests", msg = e.msg
 
+  proc pendingRequestsToJoinForCommunity*(self: Service, communityId: string): seq[CommunityMembershipRequestDto] =
+    try:
+      let response = status_go.pendingRequestsToJoinForCommunity(communityId)
+
+      result = @[]
+      if response.result.kind != JNull:
+        for jsonCommunityReqest in response.result:
+          result.add(jsonCommunityReqest.toCommunityMembershipRequestDto())
+    except Exception as e:
+      error "Error fetching community requests", msg = e.msg
+
   proc leaveCommunity*(self: Service, communityId: string) =
     try:
       discard status_go.leaveCommunity(communityId)
@@ -276,6 +305,7 @@ QtObject:
 
       if response.result != nil and response.result.kind != JNull:
         let community = response.result["communities"][0].toCommunityDto()
+        self.joinedCommunities[community.id] = community
         self.events.emit(SIGNAL_COMMUNITY_CREATED, CommunityArgs(community: community))
     except Exception as e:
       error "Error creating community", msg = e.msg
@@ -491,17 +521,45 @@ QtObject:
     except Exception as e:
       error "Error exporting community", msg = e.msg
 
-  proc acceptRequestToJoinCommunity*(self: Service, requestId: string) =
+  proc getPendingRequestIndex*(self: Service, communityId: string, requestId: string): int =
+    let community = self.joinedCommunities[communityId]
+    var i = 0
+    for pendingRequest in community.pendingRequestsToJoin:
+      if (pendingRequest.id == requestId):
+        return i
+      i.inc()
+    return -1
+
+  proc removeMembershipRequestFromCommunity*(self: Service, communityId: string, requestId: string) =
+    let index = self.getPendingRequestIndex(communityId, requestId)
+
+    if (index == -1):
+      raise newException(RpcException, fmt"Community request not found: {requestId}")
+
+    var community = self.joinedCommunities[communityId]
+    community.pendingRequestsToJoin.delete(index)
+
+    self.joinedCommunities[communityId] = community
+
+  proc acceptRequestToJoinCommunity*(self: Service, communityId: string, requestId: string) =
     try:
       discard status_go.acceptRequestToJoinCommunity(requestId)
-    except Exception as e:
-      error "Error exporting community", msg = e.msg
 
-  proc declineRequestToJoinCommunity*(self: Service, requestId: string) =
+      self.removeMembershipRequestFromCommunity(communityId, requestId)
+
+      self.events.emit(SIGNAL_COMMUNITY_EDITED, CommunityArgs(community: self.joinedCommunities[communityId]))
+    except Exception as e:
+      error "Error accepting request to join community", msg = e.msg
+
+  proc declineRequestToJoinCommunity*(self: Service, communityId: string, requestId: string) =
     try:
       discard status_go.declineRequestToJoinCommunity(requestId)
+
+      self.removeMembershipRequestFromCommunity(communityId, requestId)
+
+      self.events.emit(SIGNAL_COMMUNITY_EDITED, CommunityArgs(community: self.joinedCommunities[communityId]))
     except Exception as e:
-      error "Error exporting community", msg = e.msg
+      error "Error declining request to join community", msg = e.msg
 
   proc inviteUsersToCommunityById*(self: Service, communityId: string, pubKeysJson: string): string =
     try:

@@ -2,6 +2,7 @@ import NimQml, tables, json, sugar, sequtils
 
 import io_interface, view, controller, ../shared_models/section_item,../shared_models/section_model
 import ../shared_models/member_item, ../shared_models/members_model
+import ./communities/models/[pending_request_item, pending_request_model]
 import ../../global/app_sections_config as conf
 import ../../global/app_signals
 import ../../global/global_singleton
@@ -177,7 +178,15 @@ proc createCommunityItem[T](self: Module[T], c: CommunityDto): SectionItem =
     c.isMember,
     c.permissions.access,
     c.permissions.ensOnly,
-    c.members.map(x => member_item.initItem(x.id, x.roles))
+    c.members.map(x => member_item.initItem(x.id, x.roles)),
+    c.pendingRequestsToJoin.map(x => pending_request_item.initItem(
+      x.id,
+      x.publicKey,
+      x.chatId,
+      x.communityId,
+      x.state,
+      x.our
+    ))
   )
 
 method load*[T](
