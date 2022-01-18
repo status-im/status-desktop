@@ -131,3 +131,15 @@ QtObject:
 
   proc blockContact*(self: View, publicKey: string) {.slot.} =
     self.delegate.blockContact(publicKey)
+
+  proc acceptRequestToJoinCommunity*(self: View, requestId: string) {.slot.} =
+    self.delegate.acceptRequestToJoinCommunity(requestId)
+
+  proc declineRequestToJoinCommunity*(self: View, requestId: string) {.slot.} =
+    self.delegate.declineRequestToJoinCommunity(requestId)
+
+  proc createCommunityChannel*(self: View, name: string, description: string) {.slot.} =
+    self.delegate.createCommunityChannel(name, description)
+
+  proc leaveCommunity*(self: View) {.slot.} =
+    self.delegate.leaveCommunity()

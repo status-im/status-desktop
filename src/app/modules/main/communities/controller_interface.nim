@@ -16,16 +16,10 @@ method joinCommunity*(self: AccessInterface, communityId: string): string {.base
 method requestToJoinCommunity*(self: AccessInterface, communityId: string, ensName: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method leaveCommunity*(self: AccessInterface, communityId: string) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method createCommunity*(self: AccessInterface, name: string, description: string, access: int, ensOnly: bool, color: string, imageUrl: string, aX: int, aY: int, bX: int, bY: int) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method editCommunity*(self: AccessInterface, id: string, name: string, description: string, access: int, ensOnly: bool, color: string, imageUrl: string, aX: int, aY: int, bX: int, bY: int) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method createCommunityChannel*(self: AccessInterface, communityId: string, name: string, description: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method editCommunityChannel*(self: AccessInterface, communityId: string, chatId: string, name: string, description: string, categoryId: string, position: int) {.base.} =
@@ -53,12 +47,6 @@ method importCommunity*(self: AccessInterface, communityKey: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method exportCommunity*(self: AccessInterface, communityId: string): string {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method acceptRequestToJoinCommunity*(self: AccessInterface, communityId: string, requestId: string) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method declineRequestToJoinCommunity*(self: AccessInterface, communityId: string, requestId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method inviteUsersToCommunityById*(self: AccessInterface, communityId: string, pubKeys: string): string {.base.} =

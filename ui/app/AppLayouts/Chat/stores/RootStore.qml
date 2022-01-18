@@ -148,8 +148,8 @@ QtObject {
 //        chatsModelInst.communities.deleteCommunityCategory(chatsModelInst.communities.activeCommunity.id, categoryId);
     }
 
-    function leaveCommunity(communityId) {
-        communitiesModuleInst.leaveCommunity(communityId);
+    function leaveCommunity() {
+        chatCommunitySectionModule.leaveCommunity();
     }
 
     function setCommunityMuted(communityId, checked) {
@@ -160,8 +160,8 @@ QtObject {
         return communitiesModuleInst.exportCommunity(communityId);
     }
 
-    function createCommunityChannel(communityId, channelName, channelDescription) {
-        communitiesModuleInst.createCommunityChannel(communityId, channelName, channelDescription);
+    function createCommunityChannel(channelName, channelDescription) {
+        chatCommunitySectionModule.createCommunityChannel(channelName, channelDescription);
     }
 
     function editCommunityChannel(communityId, channelId, channelName, channelDescription, channelCategoryId, popupPosition) {
@@ -172,12 +172,12 @@ QtObject {
 //        chatsModelInst.editCommunityChannel(communityId, channelId, channelName, channelDescription, channelCategoryId, popupPosition);
     }
 
-    function acceptRequestToJoinCommunity(communityId, requestId) {
-        communitiesModuleInst.acceptRequestToJoinCommunity(communityId, requestId)
+    function acceptRequestToJoinCommunity(requestId) {
+        chatCommunitySectionModule.acceptRequestToJoinCommunity(requestId)
     }
 
-    function declineRequestToJoinCommunity(communityId, requestId) {
-        communitiesModuleInst.declineRequestToJoinCommunity(communityId, requestId)
+    function declineRequestToJoinCommunity(requestId) {
+        chatCommunitySectionModule.declineRequestToJoinCommunity(requestId)
     }
 
     function userNameOrAlias(pk) {

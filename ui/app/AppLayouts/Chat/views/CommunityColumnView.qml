@@ -48,10 +48,10 @@ Item {
         chatInfoButton.image.source: communityData.image
         chatInfoButton.icon.color: communityData.color
         menuButton.visible: communityData.amISectionAdmin && communityData.canManageUsers
-        // TODO remove dynamic scoping of popup component
         chatInfoButton.onClicked: Global.openPopup(communityProfilePopup, {
             store: root.store,
-            community: communityData
+            community: communityData,
+            communitySectionModule: root.communitySectionModule
         })
 
         popupMenu: StatusPopupMenu {
@@ -102,7 +102,9 @@ Item {
                 //% "Membership requests"
                 title: qsTrId("membership-requests")
                 requestsCount: membershipRequests.nbRequests
-                sensor.onClicked: Global.openPopup(membershipRequestPopup)
+                sensor.onClicked: Global.openPopup(membershipRequestPopup, {
+                    communitySectionModule: root.communitySectionModule
+                })
             }
         }
     }
@@ -348,6 +350,7 @@ Item {
                     activeCommunity: communityData
                     store: root.store
                     hasAddedContacts: root.hasAddedContacts
+                    communitySectionModule: root.communitySectionModule
                 }
             }
         }
@@ -395,7 +398,7 @@ Item {
         CreateChannelPopup {
             anchors.centerIn: parent
             onCreateCommunityChannel: function (chName, chDescription) {
-                root.store.createCommunityChannel(communityData.id, chName, chDescription)
+                root.store.createCommunityChannel(chName, chDescription)
             }
             onClosed: {
                 destroy()

@@ -14,6 +14,7 @@ StatusModal {
 
     property var store
     property var community
+    property var communitySectionModule
 
     onClosed: {
         while (contentItem.depth > 1) {
@@ -73,7 +74,7 @@ StatusModal {
                     store: root.store
                 })
                 onLeaveButtonClicked: {
-                    root.store.leaveCommunity(root.community.id);
+                    communitySectionModule.leaveCommunity();
                     root.close();
                 }
                 onCopyToClipboard: {
@@ -114,6 +115,7 @@ StatusModal {
                 headerTitle: qsTrId("members-label")
                 headerSubtitle: root.community.members.count.toString()
                 community: root.community
+                communitySectionModule: root.communitySectionModule
                 onInviteButtonClicked: root.contentItem.push(inviteFriendsView)
             }
         }

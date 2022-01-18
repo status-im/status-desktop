@@ -26,6 +26,7 @@ Item {
     property alias members: memberList.model
     property var community
     property var store
+    property var communitySectionModule
 
     signal inviteButtonClicked()
 
@@ -41,7 +42,7 @@ Item {
         StatusListItem {
             id: inviteButton
             anchors.horizontalCenter: parent.horizontalCenter
-            visible: !!(root.community.admin || root.community.isAdmin)
+            visible: root.community.amISectionAdmin
             //% "Invite People"
             title: qsTrId("invite-people")
             icon.name: "share-ios"
@@ -67,7 +68,9 @@ Item {
             //% "Membership requests"
             title: qsTrId("membership-requests")
             requestsCount: nbRequests
-            sensor.onClicked: Global.openPopup(membershipRequestPopup)
+            sensor.onClicked: Global.openPopup(membershipRequestPopup, {
+                communitySectionModule: root.communitySectionModule
+            })
         }
 
         StatusModalDivider {
@@ -179,7 +182,7 @@ Item {
                                 }
 
                                 StatusMenuSeparator {
-                                    visible: root.community.admin
+                                    visible: root.community.amISectionAdmin
                                 }
 
                                 StatusMenuItem {
@@ -188,7 +191,7 @@ Item {
                                     icon.name: "arrow-right"
                                     iconRotation: 180
                                     type: StatusMenuItem.Type.Danger
-                                    enabled: root.community.admin
+                                    enabled: root.community.amISectionAdmin
                                     // Not Refactored Yet
 //                                    onTriggered: chatsModel.communities.removeUserFromCommunity(model.pubKey)
                                 }
@@ -198,7 +201,7 @@ Item {
                                     text: qsTrId("ban")
                                     icon.name: "cancel"
                                     type: StatusMenuItem.Type.Danger
-                                    enabled: root.community.admin
+                                    enabled: root.community.amISectionAdmin
                                     // Not Refactored Yet
 //                                    onTriggered: chatsModel.communities.banUserFromCommunity(model.pubKey, root.community.id)
                                 }

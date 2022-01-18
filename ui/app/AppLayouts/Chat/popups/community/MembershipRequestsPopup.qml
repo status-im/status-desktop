@@ -14,6 +14,7 @@ import shared 1.0
 StatusModal {
     id: popup
     property var store
+    property var communitySectionModule
     property var pendingRequestsToJoin
     onOpened: {
         contentItem.errorText.text = ""
@@ -86,7 +87,7 @@ StatusModal {
                                 hoverEnabled: true
                                 anchors.fill: parent
                                 cursorShape: Qt.PointingHandCursor
-                                onClicked: popup.store.acceptRequestToJoinCommunity(model.communityId, id)
+                                onClicked: communitySectionModule.acceptRequestToJoinCommunity(id)
                             }
                         },
                         StatusRoundIcon {
@@ -100,7 +101,7 @@ StatusModal {
                                 hoverEnabled: true
                                 anchors.fill: parent
                                 cursorShape: Qt.PointingHandCursor
-                                onClicked: popup.store.declineRequestToJoinCommunity(model.communityId, id)
+                                onClicked: communitySectionModule.declineRequestToJoinCommunity(id)
                             }
                         }
                     ]

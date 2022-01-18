@@ -444,3 +444,15 @@ method onNewMessagesReceived*(self: Module, chatId: string, unviewedMessagesCoun
     self.controller.markAllMessagesRead(chatId)
   else:
     self.updateNotifications(chatId, unviewedMessagesCount, unviewedMentionsCount)
+
+method acceptRequestToJoinCommunity*(self: Module, requestId: string) =
+  self.controller.acceptRequestToJoinCommunity(requestId)
+
+method declineRequestToJoinCommunity*(self: Module, requestId: string) =
+  self.controller.declineRequestToJoinCommunity(requestId)
+
+method createCommunityChannel*(self: Module, name, description: string,) =
+  self.controller.createCommunityChannel(name, description)
+
+method leaveCommunity*(self: Module) =
+  self.controller.leaveCommunity() 
