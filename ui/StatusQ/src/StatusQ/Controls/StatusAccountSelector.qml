@@ -221,7 +221,7 @@ Item {
 
                 StatusBaseText {
                     id: accountName
-                    text: name
+                    text: model.name
                     elide: Text.ElideRight
                     font.pixelSize: 15
                     anchors.left: parent.left

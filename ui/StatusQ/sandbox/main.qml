@@ -101,6 +101,14 @@ StatusWindow {
         id: libraryDocumentationCmp
 
         StatusAppTwoPanelLayout {
+            id: mainPageView
+
+            function page(name) {
+                viewLoader.source = Qt.resolvedUrl("./pages/" + name + "Page.qml");
+            }
+            function control(name) {
+                viewLoader.source = Qt.resolvedUrl("./controls/" + name + ".qml");
+            }
 
             leftPanel: Item {
                 anchors.fill: parent
@@ -120,122 +128,122 @@ StatusWindow {
 
                         StatusListSectionHeadline { text: "StatusQ.Core" }
                         StatusNavigationListItem { 
-                            title: "Icons" 
-                            selected: page.sourceComponent == iconsComponent
-                            onClicked: page.sourceComponent = iconsComponent
+                            title: "Icons"
+                            selected: viewLoader.source.toString().includes(title)
+                            onClicked: mainPageView.control(title);
                         }
 
                         StatusListSectionHeadline { text: "StatusQ.Layout" }
                         StatusNavigationListItem { 
-                            title: "Layouts" 
-                            selected: page.sourceComponent == layoutComponent
-                            onClicked: page.sourceComponent = layoutComponent
+                            title: "Layouts"
+                            selected: viewLoader.source.toString().includes(title)
+                            onClicked: mainPageView.control(title.substring(0, title.length - 1));
                         }
 
                         StatusListSectionHeadline { text: "StatusQ.Controls" }
                         StatusNavigationListItem { 
-                            title: "Buttons" 
-                            selected: page.sourceComponent == buttonsComponent
-                            onClicked: page.sourceComponent = buttonsComponent
+                            title: "Buttons"
+                            selected: viewLoader.source.toString().includes(title)
+                            onClicked: mainPageView.control(title);
                         }
                         StatusNavigationListItem { 
-                            title: "StatusSwitchTab" 
-                            selected: page.sourceComponent == statusTabSwitchesComponent
-                            onClicked: page.sourceComponent = statusTabSwitchesComponent
+                            title: "StatusSwitchTab"
+                            selected: viewLoader.source.toString().includes(title)
+                            onClicked: mainPageView.page("StatusTabSwitch");
                         }
                         StatusNavigationListItem { 
-                            title: "StatusChatCommandButton" 
-                            selected: page.sourceComponent == statusChatCommandButtonPageComponent
-                            onClicked: page.sourceComponent = statusChatCommandButtonPageComponent
+                            title: "StatusChatCommandButton"
+                            selected: viewLoader.source.toString().includes(title)
+                            onClicked: mainPageView.page(title);
                         }
                         StatusNavigationListItem { 
-                            title: "Controls" 
-                            selected: page.sourceComponent == controlsComponent
-                            onClicked: page.sourceComponent = controlsComponent
+                            title: "Controls"
+                            selected: viewLoader.source.toString().includes(title)
+                            onClicked: mainPageView.control(title);
                         }
                         StatusNavigationListItem { 
-                            title: "StatusTabBarIconButton" 
-                            selected: page.sourceComponent == statusTabBarIconButtonPageComponent
-                            onClicked: page.sourceComponent = statusTabBarIconButtonPageComponent
+                            title: "StatusTabBarIconButton"
+                            selected: viewLoader.source.toString().includes(title)
+                            onClicked: mainPageView.page(title);
                         }
                         StatusNavigationListItem { 
-                            title: "StatusInput" 
-                            selected: page.sourceComponent == statusInputPageComponent
-                            onClicked: page.sourceComponent = statusInputPageComponent
+                            title: "StatusInput"
+                            selected: viewLoader.source.toString().includes(title)
+                            onClicked: mainPageView.page(title);
                         }
                         StatusNavigationListItem { 
-                            title: "StatusSelect" 
-                            selected: page.sourceComponent == statusSelectPageComponent
-                            onClicked: page.sourceComponent = statusSelectPageComponent
+                            title: "StatusSelect"
+                            selected: viewLoader.source.toString().includes(title)
+                            onClicked: mainPageView.page(title);
                         }
                         StatusNavigationListItem { 
-                            title: "StatusAccountSelector" 
-                            selected: page.sourceComponent == statusAccountSelectorPageComponent
-                            onClicked: page.sourceComponent = statusAccountSelectorPageComponent
+                            title: "StatusAccountSelector"
+                            selected: viewLoader.source.toString().includes(title)
+                            onClicked: mainPageView.page(title);
                         }
                         StatusNavigationListItem { 
-                            title: "StatusAssetSelector" 
-                            selected: page.sourceComponent == statusAssetSelectorPageComponent
-                            onClicked: page.sourceComponent = statusAssetSelectorPageComponent
+                            title: "StatusAssetSelector"
+                            selected: viewLoader.source.toString().includes(title)
+                            onClicked: mainPageView.page(title);
                         }
                         StatusNavigationListItem { 
-                            title: "StatusColorSelector" 
-                            selected: page.sourceComponent == statusColorSelectorPageComponent
-                            onClicked: page.sourceComponent = statusColorSelectorPageComponent
+                            title: "StatusColorSelector"
+                            selected: viewLoader.source.toString().includes(title)
+                            onClicked: mainPageView.page(title);
                         }
                         StatusNavigationListItem { 
-                            title: "StatusWalletColorButton" 
-                            selected: page.sourceComponent == statusWalletColorButtonPageComponent
-                            onClicked: page.sourceComponent = statusWalletColorButtonPageComponent
+                            title: "StatusWalletColorButton"
+                            selected: viewLoader.source.toString().includes(title)
+                            onClicked: mainPageView.page(title);
                         }
                         StatusNavigationListItem { 
-                            title: "StatusWalletColorSelect" 
-                            selected: page.sourceComponent == statusWalletColorSelectPageComponent
-                            onClicked: page.sourceComponent = statusWalletColorSelectPageComponent
+                            title: "StatusWalletColorSelect"
+                            selected: viewLoader.source.toString().includes(title)
+                            onClicked: mainPageView.page(title);
                         }
                         StatusListSectionHeadline { text: "StatusQ.Components" }
                         StatusNavigationListItem { 
                             title: "StatusAddress"
-                            selected: page.sourceComponent == statusAddressPageComponent
-                            onClicked: page.sourceComponent = statusAddressPageComponent
+                            selected: viewLoader.source.toString().includes(title)
+                            onClicked: mainPageView.page(title);
                         }
                         StatusNavigationListItem { 
                             title: "List Items"
-                            selected: page.sourceComponent == listItemsComponent
-                            onClicked: page.sourceComponent = listItemsComponent
+                            selected: viewLoader.source.toString().includes(title.replace(/\s+/g, ''))
+                            onClicked: mainPageView.control(title.replace(/\s+/g, ''));
                         }
                         StatusNavigationListItem { 
                             title: "StatusChatInfoToolBar"
-                            selected: page.sourceComponent == chatInfoToolBarComponent
-                            onClicked: page.sourceComponent = chatInfoToolBarComponent
+                            selected: viewLoader.source.toString().includes(title)
+                            onClicked: mainPageView.page(title);
                         }
                         StatusNavigationListItem { 
                             title: "Others"
-                            selected: page.sourceComponent == othersComponent
-                            onClicked: page.sourceComponent = othersComponent
+                            selected: viewLoader.source.toString().includes(title)
+                            onClicked: mainPageView.control(title);
                         }
                         StatusNavigationListItem {
                             title: "StatusExpandableItem"
-                            selected: page.sourceComponent == settingsComponent
-                            onClicked: page.sourceComponent = settingsComponent
+                            selected: viewLoader.source.toString().includes(title)
+                            onClicked: mainPageView.page("StatusExpandableSettingsItem");
                         }
                         StatusListSectionHeadline { text: "StatusQ.Popup" }
                         StatusNavigationListItem { 
                             title: "StatusPopupMenu"
-                            selected: page.sourceComponent == popupMenuComponent
-                            onClicked: page.sourceComponent = popupMenuComponent
+                            selected: viewLoader.source.toString().includes(title)
+                            onClicked: mainPageView.page(title);
                         }
 
                         StatusNavigationListItem {
                             title: "StatusModal"
-                            selected: page.sourceComponent == statusModalComponent
-                            onClicked: page.sourceComponent = statusModalComponent
+                            selected: viewLoader.source.toString().includes("Popups")
+                            onClicked: mainPageView.control("Popups");
                         }
                         StatusListSectionHeadline { text: "StatusQ.Platform" }
                         StatusNavigationListItem {
                             title: "StatusMacNotification"
-                            selected: page.sourceComponent == notificationComponent
-                            onClicked: page.sourceComponent = notificationComponent
+                            selected: viewLoader.source.toString().includes(title)
+                            onClicked: mainPageView.page(title);
                         }
                     }
                 }
@@ -255,13 +263,12 @@ StatusWindow {
                         width: rightPanel.width
                         anchors.top: parent.top
                         anchors.topMargin: 64
-                        height: Math.max(rootWindow.height, page.height + 128)
+                        height: Math.max(rootWindow.height, viewLoader.height + 128)
                         scale: rootWindow.factor
                         Loader {
-                            id: page
-                            active: true
+                            id: viewLoader
                             anchors.centerIn: parent
-                            sourceComponent: iconsComponent
+                            source: control("Icons")
                         }
                     }
                 }
@@ -290,116 +297,6 @@ StatusWindow {
         onTriggered: {
             rootWindow.factor = 1.0
         }
-    }
-
-    Component {
-        id: iconsComponent
-        Icons { iconColor: Theme.palette.primaryColor1 }
-    }
-
-    Component {
-        id: controlsComponent
-        Controls {}
-    }
-
-    Component {
-        id: statusInputPageComponent
-        StatusInputPage {}
-    }
-
-    Component {
-        id: statusSelectPageComponent
-        StatusSelectPage {}
-    }
-
-    Component {
-        id: statusAccountSelectorPageComponent
-        StatusAccountSelectorPage {}
-    }
-
-    Component {
-        id: statusAssetSelectorPageComponent
-        StatusAssetSelectorPage {}
-    }
-
-    Component {
-        id: statusColorSelectorPageComponent
-        StatusColorSelectorPage {}
-    }
-
-    Component {
-        id: statusTabBarIconButtonPageComponent
-        StatusTabBarIconButtonPage {}
-    }
-
-    Component {
-        id: statusWalletColorButtonPageComponent
-        StatusWalletColorButtonPage {}
-    }
-
-    Component {
-        id: statusWalletColorSelectPageComponent
-        StatusWalletColorSelectPage {}
-    }
-
-    Component {
-        id: listItemsComponent
-        ListItems {}
-    }
-
-    Component {
-        id: statusAddressPageComponent
-        StatusAddressPage {}
-    }
-
-    Component {
-        id: layoutComponent
-        Layout {}
-    }
-
-    Component {
-        id: othersComponent
-        Others {}
-    }
-
-    Component {
-        id: buttonsComponent
-        Buttons {}
-    }
-
-    Component {
-        id: statusChatCommandButtonPageComponent
-        StatusChatCommandButtonPage {}
-    }
-
-    Component {
-        id: popupMenuComponent
-        StatusPopupMenuPage {}
-    }
-
-    Component {
-        id: chatInfoToolBarComponent
-        StatusChatInfoToolBarPage {}
-    }
-
-    Component {
-        id: statusModalComponent
-        Popups {}
-    }
-
-    Component {
-        id: statusTabSwitchesComponent
-        StatusTabSwitchPage {}
-    }
-
-    Component {
-        id: settingsComponent
-        StatusExpandableSettingsItemPage{}
-    }
-
-    Component {
-        id: notificationComponent
-        StatusMacNotificationPage  {}
     }
 
     Component {

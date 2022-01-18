@@ -1,18 +1,36 @@
 <RCC>
     <qresource prefix="/">
         <file>main.qml</file>
-        <file>Controls.qml</file>
-        <file>Icons.qml</file>
-        <file>Others.qml</file>
-        <file>Buttons.qml</file>
         <file>DemoApp.qml</file>
-        <file>ListItems.qml</file>
-        <file>StatusChatInfoToolBarPage.qml</file>
-        <file>StatusPopupMenuPage.qml</file>
-        <file>StatusInputPage.qml</file>
         <file>ThemeSwitch.qml</file>
-        <file>Layout.qml</file>
-        <file>Popups.qml</file>
-        <file>StatusExpandableSettingsItemPage.qml</file>
+        <file>pages/StatusAccountSelectorPage.qml</file>
+        <file>pages/StatusAddressPage.qml</file>
+        <file>pages/StatusAssetSelectorPage.qml</file>
+        <file>pages/StatusChatCommandButtonPage.qml</file>
+        <file>pages/StatusChatInfoToolBarPage.qml</file>
+        <file>pages/StatusColorSelectorPage.qml</file>
+        <file>pages/StatusExpandableSettingsItemPage.qml</file>
+        <file>pages/StatusInputPage.qml</file>
+        <file>pages/StatusMacNotificationPage.qml</file>
+        <file>pages/StatusPopupMenuPage.qml</file>
+        <file>pages/StatusSelectPage.qml</file>
+        <file>pages/StatusTabBarIconButtonPage.qml</file>
+        <file>pages/StatusTabSwitchPage.qml</file>
+        <file>pages/StatusWalletColorButtonPage.qml</file>
+        <file>pages/StatusWalletColorSelectPage.qml</file>
+        <file>controls/Buttons.qml</file>
+        <file>controls/Controls.qml</file>
+        <file>controls/Icons.qml</file>
+        <file>controls/Layout.qml</file>
+        <file>controls/ListItems.qml</file>
+        <file>controls/Others.qml</file>
+        <file>controls/Popups.qml</file>
+        <file>demoapp/DemoCommunityDetailModal.qml</file>
+        <file>demoapp/DemoContactRequestsModal.qml</file>
+        <file>demoapp/StatusAppChatView.qml</file>
+        <file>demoapp/StatusAppCommunityView.qml</file>
+        <file>demoapp/StatusAppProfileSettingsView.qml</file>
+        <file>demoapp/data/Models.qml</file>
+        <file>demoapp/data/qmldir</file>
     </qresource>
 </RCC>

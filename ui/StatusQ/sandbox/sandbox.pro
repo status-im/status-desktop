@@ -24,6 +24,8 @@ SOURCES += \
 TARGET = sandboxapp
 DESTDIR = $$PWD/bin
 
+DESTDIR = $$PWD/bin
+
 macx {
     CONFIG -= app_bundle
     OBJECTIVE_SOURCES += \

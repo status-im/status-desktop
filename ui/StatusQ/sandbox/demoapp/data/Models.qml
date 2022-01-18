@@ -1,9 +1,10 @@
+pragma Singleton
 import QtQuick 2.14
 import StatusQ.Components 0.1
 
 QtObject {
 
-    property var demoChatListItems: ListModel {
+    property ListModel demoChatListItems: ListModel {
         id: demoChatListItems
         ListElement {
             chatId: "0"

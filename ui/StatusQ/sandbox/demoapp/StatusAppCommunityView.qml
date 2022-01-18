@@ -1,0 +1,283 @@
+import QtQuick 2.12
+import QtQuick.Controls 2.14
+
+import StatusQ.Core 0.1
+import StatusQ.Popups 0.1
+import StatusQ.Controls 0.1
+import StatusQ.Components 0.1
+import StatusQ.Layout 0.1
+import StatusQ.Core.Theme 0.1
+
+import "data" 1.0
+
+StatusAppThreePanelLayout {
+    id: root
+
+    property string communityDetailModalTitle: ""
+    property string communityDetailModalImage: ""
+    signal chatInfoButtonClicked()
+
+    handle: Rectangle {
+        implicitWidth: 5
+        color: SplitHandle.pressed ? Theme.palette.baseColor2
+                                   : (SplitHandle.hovered ? Qt.darker(Theme.palette.baseColor5, 1.1) : "transparent")
+    }
+    leftPanel: Item {
+        id: leftPanel
+
+        StatusChatInfoToolBar {
+            id: statusChatInfoToolBar
+
+            anchors.top: parent.top
+            anchors.horizontalCenter: parent.horizontalCenter
+
+            chatInfoButton.title: "CryptoKitties"
+            chatInfoButton.subTitle: "128 Members"
+            chatInfoButton.image.source: "https://pbs.twimg.com/profile_images/1369221718338895873/T_5fny6o_400x400.jpg"
+            chatInfoButton.icon.color: Theme.palette.miscColor6
+            chatInfoButton.onClicked:  { chatInfoButtonClicked(); }
+
+            popupMenu: StatusPopupMenu {
+
+                StatusMenuItem {
+                    text: "Create channel"
+                    icon.name: "channel"
+                }
+
+                StatusMenuItem {
+                    text: "Create category"
+                    icon.name: "channel-category"
+                }
+
+                StatusMenuSeparator {}
+
+                StatusMenuItem {
+                    text: "Invite people"
+                    icon.name: "share-ios"
+                }
+
+            }
+        }
+
+        ScrollView {
+            id: scrollView
+
+            anchors.top: statusChatInfoToolBar.bottom
+            anchors.topMargin: 8
+            anchors.bottom: parent.bottom
+            width: leftPanel.width
+
+            contentHeight: communityCategories.height
+            clip: true
+
+            StatusChatListAndCategories {
+                id: communityCategories
+                width: leftPanel.width
+                height: implicitHeight > (leftPanel.height - 64) ? implicitHeight + 8 : leftPanel.height - 64
+
+                draggableItems: true
+                draggableCategories: false
+                chatList.model: Models.demoCommunityChatListItems
+                categoryList.model: Models.demoCommunityCategoryItems
+
+                showCategoryActionButtons: true
+                onChatItemSelected: selectedChatId = id
+
+                categoryPopupMenu: StatusPopupMenu {
+
+                    property string categoryId
+
+                    openHandler: function (id) {
+                        categoryId = id
+                    }
+
+                    StatusMenuItem {
+                        text: "Mute Category"
+                        icon.name: "notification"
+                    }
+
+                    StatusMenuItem {
+                        text: "Mark as Read"
+                        icon.name: "checkmark-circle"
+                    }
+
+                    StatusMenuItem {
+                        text: "Edit Category"
+                        icon.name: "edit"
+                    }
+
+                    StatusMenuSeparator {}
+
+                    StatusMenuItem {
+                        text: "Delete Category"
+                        icon.name: "delete"
+                        type: StatusMenuItem.Type.Danger
+                    }
+                }
+
+                chatListPopupMenu: StatusPopupMenu {
+
+                    property string chatId
+
+                    StatusMenuItem {
+                        text: "Mute chat"
+                        icon.name: "notification"
+                    }
+
+                    StatusMenuItem {
+                        text: "Mark as Read"
+                        icon.name: "checkmark-circle"
+                    }
+
+                    StatusMenuItem {
+                        text: "Clear history"
+                        icon.name: "close-circle"
+                    }
+
+                    StatusMenuSeparator {}
+
+                    StatusMenuItem {
+                        text: "Delete chat"
+                        icon.name: "delete"
+                        type: StatusMenuItem.Type.Danger
+                    }
+                }
+
+                popupMenu: StatusPopupMenu {
+                    StatusMenuItem {
+                        text: "Create channel"
+                        icon.name: "channel"
+                    }
+
+                    StatusMenuItem {
+                        text: "Create category"
+                        icon.name: "channel-category"
+                    }
+
+                    StatusMenuSeparator {}
+
+                    StatusMenuItem {
+                        text: "Invite people"
+                        icon.name: "share-ios"
+                    }
+                }
+            }
+        }
+    }
+
+    centerPanel: Item {
+        StatusChatToolBar {
+            id: statusChatToolBar
+            anchors.top: parent.top
+            width: parent.width
+
+            chatInfoButton.title: "general"
+            chatInfoButton.subTitle: "Community Chat"
+            chatInfoButton.icon.color: Theme.palette.miscColor6
+            chatInfoButton.type: StatusChatInfoButton.Type.CommunityChat
+            onSearchButtonClicked: {
+                searchButton.highlighted = !searchButton.highlighted;
+                searchPopup.setSearchSelection(communityDetailModalTitle,
+                                               "",
+                                               communityDetailModalImage);
+                searchPopup.open();
+            }
+            membersButton.onClicked: membersButton.highlighted = !membersButton.highlighted
+            onMembersButtonClicked: {
+                root.showRightPanel = !root.showRightPanel;
+            }
+        }
+
+        StatusSearchPopup {
+            id: searchPopup
+            searchOptionsPopupMenu: searchPopupMenu
+            onAboutToHide: {
+                if (searchPopupMenu.visible) {
+                    searchPopupMenu.close();
+                }
+                //clear menu
+                for (var i = 2; i < searchPopupMenu.count; i++) {
+                    searchPopupMenu.removeItem(searchPopupMenu.takeItem(i));
+                }
+            }
+            onClosed: {
+                statusChatToolBar.searchButton.highlighted = false
+                searchPopupMenu.dismiss();
+            }
+            onSearchTextChanged: {
+                if (searchPopup.searchText !== "") {
+                    searchPopup.loading = true;
+                    searchModelSimTimer.start();
+                } else {
+                    searchPopup.searchResults = [];
+                    searchModelSimTimer.stop();
+                }
+            }
+            Timer {
+                id: searchModelSimTimer
+                interval: 500
+                onTriggered: {
+                    if (searchPopup.searchText.startsWith("c")) {
+                        searchPopup.searchResults = Models.searchResultsA;
+                    } else {
+                        searchPopup.searchResults = Models.searchResultsB;
+                    }
+                    searchPopup.loading = false;
+                }
+            }
+        }
+        StatusSearchLocationMenu {
+            id: searchPopupMenu
+            searchPopup: searchPopup
+            locationModel: Models.optionsModel
+        }
+    }
+
+    rightPanel: Item {
+        id: rightPanel
+        StatusBaseText {
+            id: titleText
+            anchors.top: parent.top
+            anchors.topMargin:16
+            anchors.left: parent.left
+            anchors.leftMargin: 16
+            opacity: (rightPanel.width > 50) ? 1.0 : 0.0
+            visible: (opacity > 0.1)
+            font.pixelSize: 15
+            text: qsTr("Members")
+        }
+
+        ListView {
+            anchors.top: titleText.bottom
+            anchors.topMargin: 16
+            anchors.left: parent.left
+            anchors.leftMargin: 8
+            anchors.right: parent.right
+            anchors.rightMargin: 8
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 16
+            boundsBehavior: Flickable.StopAtBounds
+            model: ["John", "Nick", "Maria", "Mike"]
+            delegate: Row {
+                width: parent.width
+                height: 30
+                spacing: 8
+                Rectangle {
+                    width: 24
+                    height: 24
+                    radius: width/2
+                    color: Qt.rgba(Math.random(), Math.random(), Math.random(), 255)
+                }
+                StatusBaseText {
+                    height: parent.height
+                    horizontalAlignment: Text.AlignHCenter
+                    opacity: (rightPanel.width > 50) ? 1.0 : 0.0
+                    visible: (opacity > 0.1)
+                    font.pixelSize: 15
+                    color: Theme.palette.directColor1
+                    text: modelData
+                }
+            }
+        }
+    }
+}
