@@ -570,23 +570,23 @@ QtObject:
       let response =  status_go.inviteUsersToCommunity(communityId, pubKeys)
       discard self.chatService.processMessageUpdateAfterSend(response)
     except Exception as e:
-      error "Error exporting community", msg = e.msg
+      error "Error inviting to community", msg = e.msg
       result = "Error exporting community: " & e.msg
 
   proc removeUserFromCommunity*(self: Service, communityId: string, pubKeys: string)  =
     try:
       discard status_go.removeUserFromCommunity(communityId, pubKeys)
     except Exception as e:
-      error "Error exporting community", msg = e.msg
+      error "Error removing user from community", msg = e.msg
 
   proc banUserFromCommunity*(self: Service, communityId: string, pubKey: string)  =
     try:
       discard status_go.banUserFromCommunity(communityId, pubKey)
     except Exception as e:
-      error "Error exporting community", msg = e.msg
+      error "Error banning user from community", msg = e.msg
 
   proc setCommunityMuted*(self: Service, communityId: string, muted: bool) =
     try:
       discard status_go.setCommunityMuted(communityId, muted)
     except Exception as e:
-      error "Error exporting community", msg = e.msg
+      error "Error setting community un/muted", msg = e.msg

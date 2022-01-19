@@ -103,3 +103,15 @@ method createCommunityChannel*(self: AccessInterface, name: string, description:
 
 method leaveCommunity*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method editCommunity*(self: AccessInterface, name: string, description: string, access: int, ensOnly: bool, color: string, imageUrl: string, aX: int, aY: int, bX: int, bY: int) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method exportCommunity*(self: AccessInterface): string {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method setCommunityMuted*(self: AccessInterface, muted: bool) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method inviteUsersToCommunity*(self: AccessInterface, pubKeys: string): string {.base.} =
+  raise newException(ValueError, "No implementation available")

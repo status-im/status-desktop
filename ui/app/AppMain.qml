@@ -265,7 +265,8 @@ Item {
                         enabled: model.canManageUsers
                         onTriggered: Global.openPopup(inviteFriendsToCommunityPopup, {
                             community: model,
-                            hasAddedContacts: appMain.rootStore.hasAddedContacts
+                            hasAddedContacts: appMain.rootStore.hasAddedContacts,
+                            communitySectionModule: communityContextMenu.chatCommunitySectionModule
                         })
                     }
 
@@ -287,7 +288,8 @@ Item {
                         icon.name: "edit"
                         onTriggered: Global.openPopup(editCommunityPopup, {
                             store: appMain.rootStore,
-                            community: model
+                            community: model,
+                            communitySectionModule: communityContextMenu.chatCommunitySectionModule
                         })
                     }
 
@@ -644,6 +646,8 @@ Item {
 
             CommunityProfilePopup {
                 anchors.centerIn: parent
+                contactsStore: appMain.rootStore.contactStore
+                hasAddedContacts: appMain.rootStore.hasAddedContacts
 
                 onClosed: {
                     destroy()

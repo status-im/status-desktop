@@ -18,6 +18,7 @@ StatusModal {
     property var rootStore
     property var contactsStore
     property var community
+    property var communitySectionModule
     property bool hasAddedContacts
 
     onOpened: {
@@ -38,6 +39,7 @@ StatusModal {
     contentItem: CommunityProfilePopupInviteFriendsPanel {
         id: contactFieldAndList
         rootStore: popup.rootStore
+        communitySectionModule: popup.communitySectionModule
         contactsStore: popup.contactsStore
         community: popup.community
         contactListSearch.onUserClicked: {

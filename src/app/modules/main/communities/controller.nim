@@ -87,26 +87,6 @@ method createCommunity*(
     imageUrl,
     aX, aY, bX, bY)
 
-method editCommunity*(
-    self: Controller,
-    id: string,
-    name: string,
-    description: string,
-    access: int,
-    ensOnly: bool,
-    color: string,
-    imageUrl: string,
-    aX: int, aY: int, bX: int, bY: int) =
-  self.communityService.editCommunity(
-    id,
-    name,
-    description,
-    access,
-    ensOnly,
-    color,
-    imageUrl,
-    aX, aY, bX, bY)
-
 method editCommunityChannel*(
     self: Controller,
     communityId: string,
@@ -168,17 +148,8 @@ method requestCommunityInfo*(self: Controller, communityId: string) =
 method importCommunity*(self: Controller, communityKey: string) =
   self.communityService.importCommunity(communityKey)
 
-method exportCommunity*(self: Controller, communityId: string): string =
-  self.communityService.exportCommunity(communityId)
-
-method inviteUsersToCommunityById*(self: Controller, communityId: string, pubKeys: string): string =
-  result = self.communityService.inviteUsersToCommunityById(communityId, pubKeys)
-
 method removeUserFromCommunity*(self: Controller, communityId: string, pubKeys: string) =
   self.communityService.removeUserFromCommunity(communityId, pubKeys)
 
 method banUserFromCommunity*(self: Controller, communityId: string, pubKey: string) =
   self.communityService.removeUserFromCommunity(communityId, pubKey)
-
-method setCommunityMuted*(self: Controller, communityId: string, muted: bool) =
-  self.communityService.setCommunityMuted(communityId, muted)

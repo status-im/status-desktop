@@ -455,4 +455,19 @@ method createCommunityChannel*(self: Module, name, description: string,) =
   self.controller.createCommunityChannel(name, description)
 
 method leaveCommunity*(self: Module) =
-  self.controller.leaveCommunity() 
+  self.controller.leaveCommunity()
+
+method editCommunity*(self: Module, name: string, description: string, 
+                        access: int, ensOnly: bool, color: string,
+                        imagePath: string,
+                        aX: int, aY: int, bX: int, bY: int) =
+  self.controller.editCommunity(name, description, access, ensOnly, color, imagePath, aX, aY, bX, bY)
+
+method exportCommunity*(self: Module): string =
+  self.controller.exportCommunity()
+
+method setCommunityMuted*(self: Module, muted: bool) =
+  self.controller.setCommunityMuted(muted)  
+
+method inviteUsersToCommunity*(self: Module, pubKeysJSON: string): string =
+  result = self.controller.inviteUsersToCommunity(pubKeysJSON)

@@ -81,7 +81,8 @@ Item {
                 enabled: communityData.canManageUsers
                 onTriggered: Global.openPopup(inviteFriendsToCommunityPopup, {
                     community: communityData,
-                    hasAddedContacts: root.hasAddedContacts
+                    hasAddedContacts: root.hasAddedContacts,
+                    communitySectionModule: root.communitySectionModule
                 })
             }
         }
@@ -200,7 +201,8 @@ Item {
                     enabled: communityData.canManageUsers
                     onTriggered: Global.openPopup(inviteFriendsToCommunityPopup, {
                         community: communityData,
-                        hasAddedContacts: root.hasAddedContacts
+                        hasAddedContacts: root.hasAddedContacts,
+                        communitySectionModule: root.communitySectionModule
                     })
                 }
             }
@@ -374,7 +376,7 @@ Item {
                         activeCommunity: communityData
                         onBackupButtonClicked: {
                             Global.openPopup(transferOwnershipPopup, {
-                                privateKey: root.store.exportCommunity(communityData.id),
+                                privateKey: communitySectionModule.exportCommunity(communityData.id),
                                 store: root.store
                             })
                         }

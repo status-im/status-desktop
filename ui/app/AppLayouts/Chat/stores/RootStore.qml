@@ -130,10 +130,6 @@ QtObject {
         communitiesModuleInst.createCommunity(communityName, communityDescription, checkedMembership, ensOnlySwitchChecked, communityColor, communityImage, imageCropperModalaX, imageCropperModalaY, imageCropperModalbX, imageCropperModalbY);
     }
 
-    function editCommunity(communityId, communityName, communityDescription, checkedMembership, ensOnlySwitchChecked, communityColor, communityImage, imageCropperModalaX, imageCropperModalaY, imageCropperModalbX, imageCropperModalbY) {
-        communitiesModuleInst.editCommunity(communityId, communityName, communityDescription, checkedMembership, ensOnlySwitchChecked, communityColor, communityImage, imageCropperModalaX, imageCropperModalaY, imageCropperModalbX, imageCropperModalbY);
-    }
-
     function createCommunityCategory(communityId, categoryName, channels) {
         // Not Refactored Yet
 //        chatsModelInst.communities.createCommunityCategory(communityId, categoryName, channels);
@@ -150,14 +146,6 @@ QtObject {
 
     function leaveCommunity() {
         chatCommunitySectionModule.leaveCommunity();
-    }
-
-    function setCommunityMuted(communityId, checked) {
-        communitiesModuleInst.setCommunityMuted(communityId, checked);
-    }
-
-    function exportCommunity(communityId) {
-        return communitiesModuleInst.exportCommunity(communityId);
     }
 
     function createCommunityChannel(channelName, channelDescription) {

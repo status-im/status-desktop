@@ -14,6 +14,8 @@ StatusModal {
 
     property var store
     property var community
+    property var contactsStore
+    property bool hasAddedContacts
     property var communitySectionModule
 
     onClosed: {
@@ -61,16 +63,15 @@ StatusModal {
                 community: root.community
 
                 onMembersListButtonClicked: root.contentItem.push(membersList)
-                onNotificationsButtonClicked: {
-                    root.store.setCommunityMuted(root.community.id, checked);
-                }
+                onNotificationsButtonClicked: root.communitySectionModule.setCommunityMuted(checked)
                 onEditButtonClicked: Global.openPopup(editCommunityroot, {
                     store: root.store,
                     community: root.community,
+                    communitySectionModule: root.communitySectionModule,
                     onSave: root.close
                 })
                 onTransferOwnershipButtonClicked: Global.openPopup(transferOwnershiproot, {
-                    privateKey: root.store.exportCommunity(root.community.id),
+                    privateKey: communitySectionModule.exportCommunity(root.community.id),
                     store: root.store
                 })
                 onLeaveButtonClicked: {
@@ -127,13 +128,14 @@ StatusModal {
                 //% "Invite friends"
                 headerTitle: qsTrId("invite-friends")
                 community: root.community
+                communitySectionModule: root.communitySectionModule
+                contactsStore: root.contactsStore
 
                 contactListSearch.chatKey.text: ""
                 contactListSearch.pubKey: ""
                 contactListSearch.pubKeys: []
                 contactListSearch.ensUsername: ""
-                // Not Refactored Yet
-//                contactListSearch.existingContacts.visible: root.store.allContacts.hasAddedContacts()
+                contactListSearch.existingContacts.visible: root.hasAddedContacts
                 contactListSearch.noContactsRect.visible: !contactListSearch.existingContacts.visible
             }
         }

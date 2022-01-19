@@ -246,3 +246,31 @@ method createCommunityChannel*(
 
 method leaveCommunity*(self: Controller) =
   self.communityService.leaveCommunity(self.sectionId)
+  
+method editCommunity*(
+    self: Controller,
+    name: string,
+    description: string,
+    access: int,
+    ensOnly: bool,
+    color: string,
+    imageUrl: string,
+    aX: int, aY: int, bX: int, bY: int) =
+  self.communityService.editCommunity(
+    self.sectionId,
+    name,
+    description,
+    access,
+    ensOnly,
+    color,
+    imageUrl,
+    aX, aY, bX, bY)
+
+method exportCommunity*(self: Controller): string =
+  self.communityService.exportCommunity(self.sectionId)
+
+method setCommunityMuted*(self: Controller, muted: bool) =
+  self.communityService.setCommunityMuted(self.sectionId, muted)
+
+method inviteUsersToCommunity*(self: Controller, pubKeys: string): string =
+  result = self.communityService.inviteUsersToCommunityById(self.sectionId, pubKeys)
