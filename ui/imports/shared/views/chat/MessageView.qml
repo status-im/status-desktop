@@ -257,10 +257,6 @@ Column {
         FetchMoreMessagesButton {
             nextMessageIndex: root.nextMessageIndex
             nextMsgTimestamp: root.nextMsgTimestamp
-            onClicked: {
-                // Not Refactored Yet - Should do it via messageStore
-//                root.chatsModel.messageView.hideLoadingIndicator();
-            }
             onTimerTriggered: {
                 // Not Refactored Yet - Should do it via messageStore
 //                root.chatsModel.requestMoreMessages(Constants.fetchRangeLast24Hours);

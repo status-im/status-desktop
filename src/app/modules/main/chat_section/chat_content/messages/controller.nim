@@ -7,7 +7,7 @@ import ../../../../../../app_service/service/community/service as community_serv
 import ../../../../../../app_service/service/chat/service as chat_service
 import ../../../../../../app_service/service/message/service as message_service
 import ../../../../../../app_service/service/eth/utils as eth_utils
-
+import ../../../../../core/signals/types
 import ../../../../../core/eventemitter
 
 export controller_interface
@@ -120,6 +120,15 @@ method init*(self: Controller) =
     if(self.chatId != args.chatId):
       return
     self.delegate.onHistoryCleared()
+
+  self.events.on(SignalType.HistoryRequestStarted.event) do(e: Args):
+    self.delegate.setLoadingHistoryMessagesInProgress(true)
+
+  self.events.on(SignalType.HistoryRequestCompleted.event) do(e:Args):
+    self.delegate.setLoadingHistoryMessagesInProgress(false)
+
+  self.events.on(SignalType.HistoryRequestFailed.event) do(e:Args):
+    self.delegate.setLoadingHistoryMessagesInProgress(false)
 
 method getMySectionId*(self: Controller): string =
   return self.sectionId

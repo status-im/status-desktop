@@ -155,8 +155,6 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
   if(not self.view.getInitialMessagesLoaded()):
     self.view.initialMessagesAreLoaded()
    
-  self.view.setLoadingHistoryMessagesInProgress(false)
-
 method messageAdded*(self: Module, message: MessageDto) =
   let sender = self.controller.getContactDetails(message.`from`)
 
@@ -289,3 +287,6 @@ method updateChatIdentifier*(self: Module) =
   self.view.model().removeItem(CHAT_IDENTIFIER_MESSAGE_ID)
   # Add new loaded messages
   self.view.model().appendItem(self.createChatIdentifierItem())
+
+method setLoadingHistoryMessagesInProgress*(self: Module, isLoading: bool) =
+  self.view.setLoadingHistoryMessagesInProgress(isLoading)
