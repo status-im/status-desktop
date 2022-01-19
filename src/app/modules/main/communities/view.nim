@@ -67,9 +67,6 @@ QtObject:
                         aX: int, aY: int, bX: int, bY: int) {.slot.} =
     self.delegate.createCommunity(name, description, access, ensOnly, color, imagePath, aX, aY, bX, bY)
   
-  proc editCommunity*(self: View, id: string, name: string, description: string, access: int, ensOnly: bool, color: string, imagePath: string, aX: int, aY: int, bX: int, bY: int) {.slot.} =
-    self.delegate.editCommunity(id, name, description, access, ensOnly, color, imagePath, aX, aY, bX, bY)
-  
   proc createCommunityCategory*(self: View, communityId: string, name: string, channels: string) {.slot.} =
     self.delegate.createCommunityCategory(communityId, name, channels)
 
@@ -85,9 +82,6 @@ QtObject:
   proc reorderCommunityChannel*(self: View, communityId: string, categoryId: string, chatId: string, position: int): string {.slot} =
     self.delegate.reorderCommunityChannel(communityId, categoryId, chatId, position)
 
-  proc inviteUsersToCommunityById*(self: View, communityId: string, pubKeysJSON: string): string {.slot.} =
-    result = self.delegate.inviteUsersToCommunityById(communityId, pubKeysJSON)
-  
   proc removeUserFromCommunity*(self: View, communityId: string, pubKey: string) {.slot.} =
     self.delegate.removeUserFromCommunity(communityId, pubKey)
 
@@ -103,17 +97,5 @@ QtObject:
   proc deleteCommunityChat*(self: View, communityId: string, channelId: string) {.slot.} =
     self.delegate.deleteCommunityChat(communityId, channelId)
 
-  proc setCommunityMuted*(self: View, communityId: string, muted: bool) {.slot.} =
-    self.delegate.setCommunityMuted(communityId, muted)
-
-  # proc markNotificationsAsRead*(self: View, markAsReadProps: MarkAsReadNotificationProperties) =
-  #   # todo
-  #   discard
-
   proc importCommunity*(self: View, communityKey: string) {.slot.} =
     self.delegate.importCommunity(communityKey)
-
-  proc exportCommunity*(self: View, communityId: string): string {.slot.} =
-    self.delegate.exportCommunity(communityId)
-
-  

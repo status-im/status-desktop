@@ -129,12 +129,6 @@ method createCommunity*(self: Module, name: string, description: string,
                         aX: int, aY: int, bX: int, bY: int) =
   self.controller.createCommunity(name, description, access, ensOnly, color, imagePath, aX, aY, bX, bY)
 
-method editCommunity*(self: Module, id: string, name: string, description: string, 
-                        access: int, ensOnly: bool, color: string,
-                        imagePath: string,
-                        aX: int, aY: int, bX: int, bY: int) =
-  self.controller.editCommunity(id, name, description, access, ensOnly, color, imagePath, aX, aY, bX, bY)
-
 method createCommunityCategory*(self: Module, communityId: string, name: string, channels: string) =
   let channelsSeq = map(parseJson(channels).getElems(), proc(x:JsonNode):string = x.getStr())
   self.controller.createCommunityCategory(communityId, name, channelsSeq)
@@ -154,9 +148,6 @@ method removeUserFromCommunity*(self: Module, communityId: string, categoryId: s
   # self.controller.reorderCommunityChannel(communityId, categoryId, chatId, position)
   discard
 
-method inviteUsersToCommunityById*(self: Module, communityId: string, pubKeysJSON: string): string =
-  result = self.controller.inviteUsersToCommunityById(communityId, pubKeysJSON)
-  
 method removeUserFromCommunity*(self: Module, communityId: string, pubKey: string) =
   self.controller.removeUserFromCommunity(communityId, pubKey)
 
@@ -172,11 +163,5 @@ method requestCommunityInfo*(self: Module, communityId: string) =
 method deleteCommunityChat*(self: Module, communityId: string, channelId: string) =
   self.controller.deleteCommunityChat(communityId, channelId)
 
-method setCommunityMuted*(self: Module, communityId: string, muted: bool) =
-  self.controller.setCommunityMuted(communityId, muted)  
-
 method importCommunity*(self: Module, communityKey: string) =
   self.controller.importCommunity(communityKey)
-
-method exportCommunity*(self: Module, communityId: string): string =
-  self.controller.exportCommunity(communityId)
