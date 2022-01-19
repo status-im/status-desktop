@@ -239,6 +239,8 @@ Item {
                 checked: model.active
                 badge.value: model.notificationsCount
                 badge.visible: model.hasNotification
+                icon.color: model.color
+                hoveredColor: model.color
                 badge.border.color: hovered ? Theme.palette.statusBadge.hoverBorderColor : Theme.palette.statusBadge.borderColor
                 badge.border.width: 2
                 onClicked: {
