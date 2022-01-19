@@ -19,6 +19,7 @@ import StatusQ.Controls 0.1 as StatusQControls
 ModalPopup {
     id: popup
 
+    property var store
     property var messageStore
     property var pinnedMessagesModel //this doesn't belong to the messageStore, it is a part of the ChatContentStore, but we didn't introduce it yet.
     property string messageToPin
@@ -167,6 +168,7 @@ ModalPopup {
         MessageContextMenuView {
             id: msgContextMenu
             reactionModel: popup.emojiReactionsModel
+            store: popup.store
             pinnedPopup: true
             pinnedMessage: true
             onShouldCloseParentPopup: {

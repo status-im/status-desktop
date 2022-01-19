@@ -103,6 +103,14 @@ QtObject {
         globalUtilsInst.copyToClipboard(text)
     }
 
+    function copyImageToClipboard(content) {
+        globalUtilsInst.copyImageToClipboard(content)
+    }
+
+    function downloadImage(content, path) {
+        globalUtilsInst.downloadImage(content, path)
+    }
+
     function getCommunity(communityId) {
         // Not Refactored Yet
 //        try {

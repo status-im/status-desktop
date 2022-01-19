@@ -18,6 +18,7 @@ StatusPopupMenu {
     id: root
     width: emojiContainer.visible ? emojiContainer.width : 176
 
+    property var store
     property var reactionModel
     property alias emojiContainer: emojiContainer
 
@@ -173,8 +174,9 @@ StatusPopupMenu {
         id: copyImageAction
         text: qsTr("Copy image")
         onTriggered: {
-            // Not Refactored Yet - Should be in GlobalUtils
-//            root.store.chatsModelInst.copyImageToClipboard(imageSource ? imageSource : "")
+            if (root.imageSource) {
+                root.store.copyImageToClipboard(root.imageSource)
+            }
             root.close()
         }
         icon.name: "copy"
@@ -248,8 +250,7 @@ StatusPopupMenu {
         icon.name: "chat"
         enabled: root.isDebugEnabled
         onTriggered: {
-            // Not Refactored Yet - Should be in GlobalUtils
-//            root.store.chatsModelInst.copyToClipboard(SelectedMessage.messageId)
+            root.store.copyToClipboard(SelectedMessage.messageId)
             close()
         }
     }
@@ -353,8 +354,9 @@ StatusPopupMenu {
         selectFolder: true
         modality: Qt.NonModal
         onAccepted: {
-            // Not Refactored Yet - Should be in GlobalUtils
-//            root.store.chatsModelInst.downloadImage(imageSource ? imageSource : "", fileDialog.fileUrls)
+            if (root.imageSource) {
+                root.store.downloadImage(root.imageSource, fileDialog.fileUrls)
+            }
             fileDialog.close()
         }
         onRejected: {

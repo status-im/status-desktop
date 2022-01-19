@@ -133,6 +133,7 @@ Item {
 
     MessageContextMenuView {
         id: contextmenu
+        store: root.rootStore
         reactionModel: root.rootStore.emojiReactionsModel
     }
 
