@@ -84,6 +84,7 @@ ColumnLayout {
                 return
             }
             Global.openPopup(pinnedMessagesPopupComponent, {
+                                 store: rootStore,
                                  messageStore: messageStore,
                                  pinnedMessagesModel: chatContentModule.pinnedMessagesModel,
                                  messageToPin: ""
@@ -228,6 +229,7 @@ ColumnLayout {
                     return
                 }
                 Global.openPopup(pinnedMessagesPopupComponent, {
+                                     store: rootStore,
                                      messageStore: messageStore,
                                      pinnedMessagesModel: chatContentModule.pinnedMessagesModel,
                                      messageToPin: ""
@@ -307,6 +309,7 @@ ColumnLayout {
 
     MessageContextMenuView {
         id: contextmenu
+        store: chatContentRoot.rootStore
         reactionModel: chatContentRoot.rootStore.emojiReactionsModel
         onPinMessage: {
             messageStore.pinMessage(messageId)
@@ -322,6 +325,7 @@ ColumnLayout {
                 return
             }
             Global.openPopup(pinnedMessagesPopupComponent, {
+                                 store: rootStore,
                                  messageStore: messageStore,
                                  pinnedMessagesModel: chatContentModule.pinnedMessagesModel,
                                  messageToPin: messageId

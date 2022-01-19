@@ -170,6 +170,7 @@ StatusAppThreePanelLayout {
 
     MessageContextMenuView {
         id: quickActionMessageOptionsMenu
+        store: root.rootStore
 
         onOpenProfileClicked: {
             Global.openProfilePopup(publicKey)
