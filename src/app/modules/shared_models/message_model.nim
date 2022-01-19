@@ -166,37 +166,45 @@ QtObject:
         return i
     return 0
 
+  proc filterExistingItems(self: Model, items: seq[Item]): seq[Item] =
+    for item in items:
+      if(self.findIndexForMessageId(item.id) < 0):
+        result &= item
+
   proc prependItems*(self: Model, items: seq[Item]) =
-    if(items.len == 0):
+    let itemsToAppend = self.filterExistingItems(items)
+    if(itemsToAppend.len == 0):
       return
       
     let parentModelIndex = newQModelIndex()
     defer: parentModelIndex.delete
 
     let first = 0
-    let last = items.len - 1
+    let last = itemsToAppend.len - 1
     self.beginInsertRows(parentModelIndex, first, last)
-    self.items = items & self.items
+    self.items = itemsToAppend & self.items
     self.endInsertRows()
     self.countChanged()
 
   proc appendItems*(self: Model, items: seq[Item]) =
-    if(items.len == 0):
+    let itemsToAppend = self.filterExistingItems(items)
+    if(itemsToAppend.len == 0):
       return
       
     let parentModelIndex = newQModelIndex()
     defer: parentModelIndex.delete
 
     let first = self.items.len
-    let last = first + items.len - 1
+    let last = first + itemsToAppend.len - 1
     self.beginInsertRows(parentModelIndex, first, last)
-    self.items.add(items)
+    self.items.add(itemsToAppend)
     self.endInsertRows()
     self.countChanged()
 
   proc appendItem*(self: Model, item: Item) =
     if(self.findIndexForMessageId(item.id) != -1):
       return
+
     let parentModelIndex = newQModelIndex()
     defer: parentModelIndex.delete
 
@@ -206,6 +214,9 @@ QtObject:
     self.countChanged()
 
   proc prependItem*(self: Model, item: Item) =
+    if(self.findIndexForMessageId(item.id) != -1):
+      return
+    
     let parentModelIndex = newQModelIndex()
     defer: parentModelIndex.delete
 
@@ -215,6 +226,9 @@ QtObject:
     self.countChanged()
 
   proc insertItemBasedOnTimestamp*(self: Model, item: Item) =
+    if(self.findIndexForMessageId(item.id) != -1):
+      return
+    
     let parentModelIndex = newQModelIndex()
     defer: parentModelIndex.delete
 
