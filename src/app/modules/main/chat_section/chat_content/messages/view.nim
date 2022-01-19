@@ -100,7 +100,6 @@ QtObject:
     self.loadingHistoryMessagesInProgressChanged()
 
   proc loadMoreMessages*(self: View) {.slot.} =
-    self.setLoadingHistoryMessagesInProgress(true)
     self.delegate.loadMoreMessages()
 
   proc messageSuccessfullySent*(self: View) {.signal.}
@@ -124,4 +123,3 @@ QtObject:
 
   proc editMessage*(self: View, messageId: string, updatedMsg: string) {.slot.} =
     self.delegate.editMessage(messageId, updatedMsg)
-

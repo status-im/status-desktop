@@ -379,34 +379,17 @@ ColumnLayout {
             height: chatInput.height
             Layout.preferredHeight: height
 
-            // Not Refactored Yet
-            //            Connections {
-            //                target: chatContentRoot.rootStore.chatsModelInst.messageView
-            //                onLoadingMessagesChanged:
-            //                    if(value){
-            //                        loadingMessagesIndicator.active = true
-            //                    } else {
-            //                        timer.setTimeout(function(){
-            //                            loadingMessagesIndicator.active = false;
-            //                        }, 5000);
-            //                    }
-            //            }
-
-            // Not Refactored Yet
-            //            Loader {
-            //                id: loadingMessagesIndicator
-            //                active: chatContentRoot.rootStore.chatsModelInst.messageView.loadingMessages
-            //                sourceComponent: loadingIndicator
-            //                anchors.right: parent.right
-            //                anchors.bottom: chatInput.top
-            //                anchors.rightMargin: Style.current.padding
-            //                anchors.bottomMargin: Style.current.padding
-            //            }
-
-            //            Component {
-            //                id: loadingIndicator
-            //                LoadingAnimation { }
-            //            }
+            Loader {
+                id: loadingMessagesIndicator
+                active: messageStore.messageModule.loadingHistoryMessagesInProgress
+                sourceComponent: LoadingAnimation { }
+                anchors {
+                    right: parent.right
+                    bottom: chatInput.top
+                    rightMargin: Style.current.padding
+                    bottomMargin: Style.current.padding
+                }
+            }
 
             StatusChatInput {
                 id: chatInput
