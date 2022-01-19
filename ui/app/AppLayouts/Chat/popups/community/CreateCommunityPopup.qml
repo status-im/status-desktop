@@ -19,6 +19,7 @@ StatusModal {
     height: 509
 
     property var store
+    property var communitySectionModule
     property bool isEdit: false
     // Not Refactored Yet
     property QtObject community: null //popup.store.chatsModelInst.communities.activeCommunity
@@ -408,8 +409,7 @@ StatusModal {
 
                 let error = false;
                 if(isEdit) {
-                    error = popup.store.editCommunity(
-                        community.id,
+                    error = communitySectionModule.editCommunity(
                         Utils.filterXSS(popup.contentItem.communityName.input.text),
                         Utils.filterXSS(popup.contentItem.communityDescription.input.text),
                         membershipRequirementSettingPopup.checkedMembership,

@@ -19,9 +19,6 @@ method requestToJoinCommunity*(self: AccessInterface, communityId: string, ensNa
 method createCommunity*(self: AccessInterface, name: string, description: string, access: int, ensOnly: bool, color: string, imageUrl: string, aX: int, aY: int, bX: int, bY: int) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method editCommunity*(self: AccessInterface, id: string, name: string, description: string, access: int, ensOnly: bool, color: string, imageUrl: string, aX: int, aY: int, bX: int, bY: int) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method editCommunityChannel*(self: AccessInterface, communityId: string, chatId: string, name: string, description: string, categoryId: string, position: int) {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -46,19 +43,10 @@ method requestCommunityInfo*(self: AccessInterface, communityId: string) {.base.
 method importCommunity*(self: AccessInterface, communityKey: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method exportCommunity*(self: AccessInterface, communityId: string): string {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method inviteUsersToCommunityById*(self: AccessInterface, communityId: string, pubKeys: string): string {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method removeUserFromCommunity*(self: AccessInterface, communityId: string, pubKeys: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method banUserFromCommunity*(self: AccessInterface, communityId: string, pubKey: string) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method setCommunityMuted*(self: AccessInterface, communityId: string, muted: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 type

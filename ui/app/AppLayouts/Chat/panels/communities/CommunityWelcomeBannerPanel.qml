@@ -92,7 +92,8 @@ Rectangle {
         anchors.bottomMargin: Style.current.halfPadding
         onClicked: Global.openPopup(inviteFriendsToCommunityPopup, {
             community: root.activeCommunity,
-            hasAddedContacts: root.hasAddedContacts
+            hasAddedContacts: root.hasAddedContacts,
+            communitySectionModule: root.communitySectionModule
         })
     }
 
