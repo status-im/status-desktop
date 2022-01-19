@@ -260,9 +260,6 @@ Column {
     Component {
         id: fetchMoreMessagesButtonComponent
         FetchMoreMessagesButton {
-            onClicked: {
-                root.chatsModel.messageView.hideLoadingIndicator();
-            }
             onTimerTriggered: {
                 root.chatsModel.requestMoreMessages(Constants.fetchRangeLast24Hours);
             }
