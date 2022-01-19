@@ -351,16 +351,6 @@ Item {
         chatSectionModule: root.chatSectionModule
     }
 
-        // Not Refactored Yet
-//        Connections {
-//            target: root.rootStore.chatsModelInst.channelView
-//            onActiveChannelChanged: {
-//                root.rootStore.chatsModelInst.messageView.hideLoadingIndicator()
-//                SelectedMessage.reset();
-//                chatColumn.isReply = false;
-//            }
-//        }
-
     Connections {
         target: systemTray
         onMessageClicked: function () {

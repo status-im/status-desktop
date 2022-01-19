@@ -53,13 +53,3 @@ proc handleSignals(self: ChatController) =
     discard
     # var data = CommunitySignal(e)
     # self.view.communities.addCommunityToList(data.community)
-
-  self.status.events.on(SignalType.MailserverRequestCompleted.event) do(e:Args):
-    # TODO: if the signal contains a cursor, request additional messages
-    # else: 
-    self.view.hideLoadingIndicator()
-
-  self.status.events.on(SignalType.MailserverRequestExpired.event) do(e:Args):
-    # TODO: retry mailserver request up to N times or change mailserver
-    # If > N, then
-    self.view.hideLoadingIndicator()

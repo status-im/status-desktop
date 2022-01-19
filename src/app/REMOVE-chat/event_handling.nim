@@ -39,7 +39,6 @@ proc handleChatEvents(self: ChatController) =
   # app to be slower
   self.status.events.on("chatUpdate") do(e: Args):
     var evArgs = ChatUpdateArgs(e)
-    self.view.hideLoadingIndicator()
     self.view.updateChats(evArgs.chats)
     self.view.pushMessages(evArgs.messages)
     self.view.pushMembers(evArgs.chats)

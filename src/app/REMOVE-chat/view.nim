@@ -446,9 +446,6 @@ QtObject:
   proc pushPinnedMessages*(self: ChatsView, pinnedMessages: var seq[Message]) =
     self.messageView.pushPinnedMessages(pinnedMessages)
 
-  proc hideLoadingIndicator*(self: ChatsView) {.slot.} =
-    self.messageView.hideLoadingIndicator()
-
   proc deleteMessage*(self: ChatsView, channelId: string, messageId: string): bool =
     result = self.messageView.deleteMessage(channelId, messageId)
 
