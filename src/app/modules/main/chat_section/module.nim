@@ -353,7 +353,7 @@ method createOneToOneChat*(self: Module, chatId: string, ensName: string) =
     return
 
   if(self.chatContentModules.hasKey(chatId)):
-    error "error: one to one chat is already added", chatId
+    self.setActiveItemSubItem(chatId, "")
     return
 
   self.controller.createOneToOneChat(chatId, ensName)
