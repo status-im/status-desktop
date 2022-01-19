@@ -307,18 +307,6 @@ Item {
                             height: chatInput.height
                             Layout.preferredHeight: height
 
-                            Connections {
-                                target: root.rootStore.chatsModelInst.messageView
-                                onLoadingMessagesChanged:
-                                    if(value){
-                                        loadingMessagesIndicator.active = true
-                                    } else {
-                                        timer.setTimeout(function(){
-                                            loadingMessagesIndicator.active = false;
-                                        }, 5000);
-                                    }
-                            }
-
                             Loader {
                                 id: loadingMessagesIndicator
                                 active: root.rootStore.chatsModelInst.messageView.loadingMessages
@@ -538,7 +526,6 @@ Item {
         Connections {
             target: root.rootStore.chatsModelInst.channelView
             onActiveChannelChanged: {
-                root.rootStore.chatsModelInst.messageView.hideLoadingIndicator()
                 SelectedMessage.reset();
                 chatColumn.isReply = false;
             }

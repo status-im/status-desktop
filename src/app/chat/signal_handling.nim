@@ -22,15 +22,14 @@ proc handleSignals(self: ChatController) =
     var data = CommunitySignal(e)
     self.view.communities.addCommunityToList(data.community)
 
-  self.status.events.on(SignalType.MailserverRequestCompleted.event) do(e:Args):
-    # TODO: if the signal contains a cursor, request additional messages
-    # else: 
-    self.view.hideLoadingIndicator()
+  self.status.events.on(SignalType.HistoryRequestStarted.event) do(e:Args):
+    self.view.messageView.setLoadingMessages(true)
 
-  self.status.events.on(SignalType.MailserverRequestExpired.event) do(e:Args):
-    # TODO: retry mailserver request up to N times or change mailserver
-    # If > N, then
-    self.view.hideLoadingIndicator()
+  self.status.events.on(SignalType.HistoryRequestCompleted.event) do(e:Args):
+    self.view.messageView.setLoadingMessages(false)
+
+  self.status.events.on(SignalType.HistoryRequestFailed.event) do(e:Args):
+    self.view.messageView.setLoadingMessages(false)
 
   let mailserverWorker = self.appService.marathon[MailserverWorker().name]  
   self.status.events.on(SignalType.MailserverAvailable.event) do(e:Args):
