@@ -1,4 +1,5 @@
 import QtQuick 2.12
+import QtQuick.Layouts 1.12
 
 import StatusQ.Controls 0.1
 import StatusQ.Popups 0.1
@@ -11,6 +12,7 @@ import "data" 1.0
 
 StatusAppThreePanelLayout {
     id: root
+    property bool createChat: false
 
     leftPanel: Item {
         anchors.fill: parent
@@ -23,113 +25,35 @@ StatusAppThreePanelLayout {
             text: "Chat"
         }
 
-        Item {
+        RowLayout {
             id: searchInputWrapper
-            anchors.top: headline.bottom
-            anchors.topMargin: 16
             width: parent.width
             height: searchInput.height
+            anchors.top: headline.bottom
+            anchors.topMargin: 16
+            anchors.right: parent.right
+            anchors.rightMargin: 8
 
             StatusBaseInput {
                 id: searchInput
-
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.left: parent.left
-                anchors.right: actionButton.left
-                anchors.leftMargin: 16
-                anchors.rightMargin: 16
-
-                height: 36
+                Layout.fillWidth: true
+                Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
+                Layout.leftMargin: 17
+                implicitHeight: 36
                 topPadding: 8
                 bottomPadding: 0
                 placeholderText: "Search"
                 icon.name: "search"
             }
 
-            StatusRoundButton {
-                id: actionButton
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.right: parent.right
-                anchors.rightMargin: 8
-                width: 32
-                height: 32
+            StatusIconTabButton {
+                icon.name: "public-chat"
+            }
 
-                type: StatusRoundButton.Type.Secondary
-                icon.name: "add"
-                state: "default"
-
-                onClicked: chatContextMenu.popup(actionButton.width-chatContextMenu.width, actionButton.height + 4)
-                states: [
-                    State {
-                        name: "default"
-                        PropertyChanges {
-                            target: actionButton
-                            icon.rotation: 0
-                            highlighted: false
-                        }
-                    },
-                    State {
-                        name: "pressed"
-                        PropertyChanges {
-                            target: actionButton
-                            icon.rotation: 45
-                            highlighted: true
-                        }
-                    }
-                ]
-
-                transitions: [
-                    Transition {
-                        from: "default"
-                        to: "pressed"
-
-                        RotationAnimation {
-                            duration: 150
-                            direction: RotationAnimation.Clockwise
-                            easing.type: Easing.InCubic
-                        }
-                    },
-                    Transition {
-                        from: "pressed"
-                        to: "default"
-                        RotationAnimation {
-                            duration: 150
-                            direction: RotationAnimation.Counterclockwise
-                            easing.type: Easing.OutCubic
-                        }
-                    }
-                ]
-
-                StatusPopupMenu {
-                    id: chatContextMenu
-
-                    onOpened: {
-                        actionButton.state = "pressed"
-                    }
-
-                    onClosed: {
-                        actionButton.state = "default"
-                    }
-
-                    StatusMenuItem {
-                        text: "Start new chat"
-                        icon.name: "private-chat"
-                    }
-
-                    StatusMenuItem {
-                        text: "Start group chat"
-                        icon.name: "group-chat"
-                    }
-
-                    StatusMenuItem {
-                        text: "Join public chat"
-                        icon.name: "public-chat"
-                    }
-
-                    StatusMenuItem {
-                        text: "Communities"
-                        icon.name: "communities"
-                    }
+            StatusIconTabButton {
+                icon.name: "edit"
+                onClicked: {
+                    root.createChat = !root.createChat;
                 }
             }
         }
@@ -201,6 +125,25 @@ StatusAppThreePanelLayout {
         }
     }
 
+    centerPanel: Loader {
+        anchors.fill: parent
+        sourceComponent: root.createChat ? createChatView : chatChannelView
+    }
+
+    Component {
+        id: createChatView
+        CreateChatView {
+            contactsModel: Models.dummyContactsModel
+        }
+    }
+
+    Component {
+        id: chatChannelView
+        ChatChannelView {
+            model: Models.chatMessagesModel
+        }
+    }
+
     rightPanel: Item {
         anchors.fill: parent
 
@@ -246,100 +189,6 @@ StatusAppThreePanelLayout {
                     type: StatusMenuItem.Type.Danger
                 }
             }
-        }
-    }
-
-    centerPanel: ListView {
-        id: messageList
-        anchors.fill: parent
-        anchors.margins: 15
-        clip: true
-        model: Models.chatMessagesModel
-        delegate: StatusMessage {
-            id: delegate
-            width: parent.width
-
-            audioMessageInfoText: "Audio Message"
-            cancelButtonText: "Cancel"
-            saveButtonText: "Save"
-            loadingImageText: "Loading image..."
-            errorLoadingImageText: "Error loading the image"
-            resendText: "Resend"
-            pinnedMsgInfoText: "Pinned by"
-
-            messageDetails: StatusMessageDetails {
-                contentType: model.contentType
-                messageContent: model.messageContent
-                amISender: model.amIsender
-                displayName: model.userName
-                secondaryName: model.localName !== "" && model.ensName.startsWith("@") ? model.ensName: ""
-                chatID: model.chatKey
-                profileImage: StatusImageSettings {
-                    width: 40
-                    height: 40
-                    source: model.profileImage
-                    isIdenticon: model.isIdenticon
-                }
-                messageText: model.message
-                hasMention: model.hasMention
-                contactType: model.contactType
-                isPinned: model.isPinned
-                pinnedBy: model.pinnedBy
-                hasExpired: model.hasExpired
-            }
-            timestamp.text: "10:00 am"
-            timestamp.tooltip.text: "10:01 am"
-            // reply related data
-            isAReply: model.isReply
-            replyDetails: StatusMessageDetails {
-                amISender:  model.isReply ? model.replyAmISender : ""
-                displayName:  model.isReply ? model.replySenderName: ""
-                profileImage: StatusImageSettings {
-                    width: 20
-                    height: 20
-                    source:  model.isReply ? model.replyProfileImage: ""
-                    isIdenticon:  model.isReply ? model.replyIsIdenticon: ""
-                }
-                messageText:  model.isReply ? model.replyMessageText: ""
-                contentType: model.replyContentType
-                messageContent: model.replyMessageContent
-            }
-            quickActions: [
-                StatusFlatRoundButton {
-                    id: emojiBtn
-                    width: 32
-                    height: 32
-                    icon.name: "reaction-b"
-                    type: StatusFlatRoundButton.Type.Tertiary
-                    tooltip.text: "Add reaction"
-                },
-                StatusFlatRoundButton {
-                    id: replyBtn
-                    width: 32
-                    height: 32
-                    icon.name: "reply"
-                    type: StatusFlatRoundButton.Type.Tertiary
-                    tooltip.text: "Reply"
-                },
-                StatusFlatRoundButton {
-                    width: 32
-                    height: 32
-                    icon.name: "tiny/edit"
-                    type: StatusFlatRoundButton.Type.Tertiary
-                    tooltip.text: "Edit"
-                    onClicked: {
-                        delegate.editMode = !delegate.editMode
-                    }
-                },
-                StatusFlatRoundButton {
-                    id: otherBtn
-                    width: 32
-                    height: 32
-                    icon.name: "more"
-                    type: StatusFlatRoundButton.Type.Tertiary
-                    tooltip.text: "More"
-                }
-            ]
         }
     }
 }

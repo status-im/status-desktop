@@ -255,6 +255,11 @@ StatusWindow {
                             selected: viewLoader.source.toString().includes(title)
                             onClicked: mainPageView.page("StatusExpandableSettingsItem");
                         }
+                        StatusNavigationListItem {
+                            title: "StatusTagSelector"
+                            selected: viewLoader.source.toString().includes(title)
+                            onClicked: mainPageView.page(title);
+                        }
                         StatusListSectionHeadline { text: "StatusQ.Popup" }
                         StatusNavigationListItem { 
                             title: "StatusPopupMenu"

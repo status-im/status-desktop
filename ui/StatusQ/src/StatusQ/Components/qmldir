@@ -26,3 +26,4 @@ StatusExpandableItem 0.1 StatusExpandableItem.qml
 StatusSmartIdenticon 0.1 StatusSmartIdenticon.qml
 StatusMessage 0.1 StatusMessage.qml
 StatusMessageDetails 0.1 StatusMessageDetails.qml
+StatusTagSelector 0.1 StatusTagSelector.qml
