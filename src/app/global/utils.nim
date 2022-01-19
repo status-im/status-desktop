@@ -92,6 +92,12 @@ QtObject:
   proc copyToClipboard*(self: Utils, content: string) {.slot.} =
     setClipBoardText(content)
 
+  proc copyImageToClipboard*(self: Utils, content: string) {.slot.} =
+    setClipBoardImage(content)
+
+  proc downloadImage*(self: Utils, content: string, path: string) {.slot.} =
+    downloadImage(content, path)
+
   proc generateQRCodeSVG*(self: Utils, text: string, border: int = 0): string =
     var qr0: array[0..qrcodegen_BUFFER_LEN_MAX, uint8]
     var tempBuffer: array[0..qrcodegen_BUFFER_LEN_MAX, uint8]
