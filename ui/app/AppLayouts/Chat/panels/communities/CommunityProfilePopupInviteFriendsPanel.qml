@@ -19,11 +19,12 @@ Column {
 
     property var rootStore
     property var contactsStore
+    property var communitySectionModule
     property var community
     property alias contactListSearch: contactFieldAndList
 
     function sendInvites(pubKeys) {
-       const error = root.rootStore.inviteUsersToCommunityById(root.community.id, JSON.stringify(pubKeys))
+       const error = communitySectionModule.inviteUsersToCommunity(JSON.stringify(pubKeys))
        if (error) {
            console.error('Error inviting', error)
            contactFieldAndList.validationError = error

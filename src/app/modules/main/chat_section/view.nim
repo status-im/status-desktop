@@ -193,3 +193,15 @@ QtObject:
 
   proc leaveCommunity*(self: View) {.slot.} =
     self.delegate.leaveCommunity()
+
+  proc editCommunity*(self: View, name: string, description: string, access: int, ensOnly: bool, color: string, imagePath: string, aX: int, aY: int, bX: int, bY: int) {.slot.} =
+    self.delegate.editCommunity(name, description, access, ensOnly, color, imagePath, aX, aY, bX, bY)
+
+  proc exportCommunity*(self: View): string {.slot.} =
+    self.delegate.exportCommunity()
+
+  proc setCommunityMuted*(self: View, muted: bool) {.slot.} =
+    self.delegate.setCommunityMuted(muted)
+
+  proc inviteUsersToCommunity*(self: View, pubKeysJSON: string): string {.slot.} =
+    result = self.delegate.inviteUsersToCommunity(pubKeysJSON)
