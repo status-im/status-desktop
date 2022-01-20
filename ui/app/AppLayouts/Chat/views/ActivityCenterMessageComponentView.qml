@@ -130,7 +130,7 @@ Item {
             //reactionsModel: model.message.reactions
             activityCenterMessage: true
             read: model.read
-            onImageClick: { Global.openImagePopup(image); }
+            onImageClicked: { Global.openImagePopup(image); }
             scrollToBottom: null
             clickMessage: function (isProfileClick) {
                 if (isProfileClick) {
