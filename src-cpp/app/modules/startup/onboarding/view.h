@@ -22,7 +22,7 @@ class View : public QObject
 	Q_PROPERTY(QString importedAccountAddress READ getImportedAccountAddress NOTIFY importedAccountChanged)
 
 public:
-	explicit View(ModuleViewDelegateInterface* d, QObject* parent = nullptr);
+	explicit View(ModuleViewDelegateInterface* delegate, QObject* parent = nullptr);
 	~View();
 	void load();
 

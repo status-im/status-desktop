@@ -26,7 +26,7 @@ private:
 	bool m_moduleLoaded;
 
 public:
-	Module(Modules::Startup::ModuleLoginDelegateInterface* d,
+	Module(Modules::Startup::ModuleLoginDelegateInterface* delegate,
 		   // keychainService
 		   Accounts::ServiceInterface* accountsService);
 	~Module();

@@ -19,7 +19,7 @@ class Controller : public QObject, ControllerInterface
 	Q_OBJECT
 
 public:
-	Controller(ModuleControllerDelegateInterface* d,
+	Controller(ModuleControllerDelegateInterface* delegate,
 			   Accounts::ServiceInterface* accountsService,
 			   QObject* parent = nullptr);
 	void init() override;

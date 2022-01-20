@@ -11,10 +11,10 @@ namespace Startup
 {
 namespace Login
 {
-View::View(ModuleViewDelegateInterface* d, QObject* parent)
+View::View(ModuleViewDelegateInterface* delegate, QObject* parent)
 	: QObject(parent)
+	, m_delegate(delegate)
 {
-	m_delegate = d;
 	m_model = new Model();
 	m_selectedAccount = new SelectedAccount();
 }

@@ -13,7 +13,7 @@ class View : public QObject
 	Q_OBJECT
 
 public:
-	explicit View(ModuleViewDelegateInterface* d, QObject* parent = nullptr);
+	explicit View(ModuleViewDelegateInterface* delegate, QObject* parent = nullptr);
 	void load();
 
 private:

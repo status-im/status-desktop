@@ -7,9 +7,9 @@ namespace Modules
 {
 namespace Main
 {
-Controller::Controller(ModuleControllerDelegateInterface* d, QObject* parent)
+Controller::Controller(ModuleControllerDelegateInterface* delegate, QObject* parent)
 	: QObject(parent)
-	, m_delegate(d)
+	, m_delegate(delegate)
 { }
 
 void Controller::init() { }

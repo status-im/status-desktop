@@ -14,12 +14,11 @@ namespace Modules
 {
 namespace Startup
 {
-Module::Module(AppControllerDelegate* d,
+Module::Module(AppControllerDelegate* delegate,
 			   /*keychainService,*/
 			   Accounts::ServiceInterface* accountsService)
-
+	: m_delegate(delegate)
 {
-	m_delegate = d;
 	m_controller = new Controller(this, accountsService);
 	m_view = new View(this);
 

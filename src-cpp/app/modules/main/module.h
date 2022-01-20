@@ -22,7 +22,7 @@ private:
 	Controller* m_controller;
 
 public:
-	Module(AppControllerDelegate* d);
+	Module(AppControllerDelegate* delegate);
 	~Module();
 	void load() override;
 	void checkIfModuleDidLoad();

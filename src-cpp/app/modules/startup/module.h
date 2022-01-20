@@ -32,7 +32,7 @@ private:
 	Modules::Startup::Login::ModuleAccessInterface* m_loginModule;
 
 public:
-	Module(AppControllerDelegate* d,
+	Module(AppControllerDelegate* delegate,
 		   /*keychainService,*/ Accounts::ServiceInterface* accountsService);
 	~Module();
 	void load() override;

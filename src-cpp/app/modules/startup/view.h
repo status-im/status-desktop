@@ -21,7 +21,7 @@ class View : public QObject
 	Q_PROPERTY(int appState READ getAppState NOTIFY appStateChanged)
 
 public:
-	explicit View(ModuleViewDelegateInterface* d, QObject* parent = nullptr);
+	explicit View(ModuleViewDelegateInterface* delegate, QObject* parent = nullptr);
 	void emitLogOut();
 	void setAppState(AppState state);
 	void load();
