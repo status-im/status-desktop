@@ -17,12 +17,16 @@ add_library(app
     modules/startup/login/module.cpp
     modules/startup/login/view.cpp
     modules/startup/login/selected_account.cpp
-
+    modules/main/controller.cpp
+    modules/main/module.cpp
+    modules/main/view.cpp
 )
 
 target_include_directories(app
     PUBLIC
         ./include/
+        ./boot/
+        ./modules/main
         ./modules/startup
 )
 
