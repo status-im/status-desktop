@@ -1,7 +1,8 @@
 #pragma once
 
 #include "accounts/service.h"
-#include "module_access_interface.h"
+#include "../modules/main/module_access_interface.h"
+#include "../modules/startup/module_access_interface.h"
 #include "app_controller_delegate.h"
 #include "app_service.h"
 
@@ -21,7 +22,7 @@ class AppController : public AppControllerDelegate
 
 	// Modules
 	Modules::Startup::ModuleAccessInterface* m_startupModule;
-	//mainModule: main_module.AccessInterface
+	Modules::Main::ModuleAccessInterface* m_mainModule;
 
 public:
 	AppController();
