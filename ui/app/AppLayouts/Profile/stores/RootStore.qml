@@ -239,7 +239,7 @@ QtObject {
 
     function registerEns(username, address, gasLimit, tipLimit, overallLimit, gasPrice, password) {
         return profileModelInst.ens.registerENS(username,
-            address, gasLimit, tipLimit, overallLimit, gasPrice, password)
+            address, gasLimit, gasPrice, tipLimit, overallLimit, password)
     }
 
     function getEnsUsernameRegistrar() {
