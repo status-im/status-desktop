@@ -271,3 +271,7 @@ method onContactDetailsUpdated*(self: Module, contactId: string) =
 
 method onNotificationsUpdated*(self: Module, hasUnreadMessages: bool, notificationCount: int) =
   self.view.updateChatDetailsNotifications(hasUnreadMessages, notificationCount)
+
+method onChatEdited*(self: Module, chatDto: ChatDto) =
+  self.view.updateChatDetails(chatDto.name, chatDto.description)
+  self.messagesModule.updateChatIdentifier()

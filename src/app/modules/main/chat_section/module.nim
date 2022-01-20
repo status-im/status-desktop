@@ -379,6 +379,11 @@ method onCommunityChannelDeleted*(self: Module, chatId: string) =
     let subItem = item.subItems.getItemAtIndex(0)
     self.setActiveItemSubItem(item.id, subItem.id)
 
+method onCommunityChannelEdited*(self: Module, chat: ChatDto) =
+  if(not self.chatContentModules.contains(chat.id)):
+    return
+  self.view.chatsModel().updateItemDetails(chat.id, chat.name, chat.description)
+
 method createOneToOneChat*(self: Module, chatId: string, ensName: string) =
   if(self.controller.isCommunity()):
     debug "creating an one to one chat is not allowed for community, most likely it's an error in qml"
@@ -503,3 +508,6 @@ method joinGroupChatFromInvitation*(self: Module, groupName: string, chatId: str
 
 method onChatRenamed*(self: Module, chatId: string, newName: string) =
   self.view.chatsModel().renameItem(chatId, newName)
+
+method reorderChannels*(self: Module, chatId, categoryId: string, position: int) =
+  self.view.chatsModel().reorder(chatId, categoryId, position)
