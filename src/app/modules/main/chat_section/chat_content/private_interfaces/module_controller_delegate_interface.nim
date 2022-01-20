@@ -1,4 +1,5 @@
 import ../../../../../../app_service/service/message/dto/pinned_message
+import ../../../../../../app_service/service/chat/dto/chat
 
 method newPinnedMessagesLoaded*(self: AccessInterface, pinnedMessages: seq[PinnedMessageDto]) {.base.} =
   raise newException(ValueError, "No implementation available")
@@ -22,4 +23,7 @@ method onReactionRemoved*(self: AccessInterface, messageId: string, emojiId: int
   raise newException(ValueError, "No implementation available")
 
 method onContactDetailsUpdated*(self: AccessInterface, contactId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onChatEdited*(self: AccessInterface, chatDto: ChatDto) {.base.} =
   raise newException(ValueError, "No implementation available")

@@ -107,6 +107,12 @@ method init*(self: Controller) =
     # remove from pinned messages model
     self.delegate.onUnpinMessage(args.messageId)
 
+  self.events.on(SIGNAL_COMMUNITY_CHANNEL_EDITED) do(e:Args):
+    let args = CommunityChatArgs(e)
+    if(args.communityId != self.sectionId or self.chatId != args.chat.id or not self.belongsToCommunity):
+      return
+    self.delegate.onChatEdited(args.chat)
+
 method getMyChatId*(self: Controller): string =
   return self.chatId
 
