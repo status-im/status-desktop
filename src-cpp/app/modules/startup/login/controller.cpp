@@ -13,13 +13,13 @@ namespace Startup
 {
 namespace Login
 {
-Controller::Controller(ModuleControllerDelegateInterface* d,
+Controller::Controller(ModuleControllerDelegateInterface* delegate,
 					   // keychainService
 					   Accounts::ServiceInterface* accountsService,
 					   QObject* parent)
 	: QObject(parent)
 	, m_accountsService(accountsService)
-	, m_delegate(d)
+	, m_delegate(delegate)
 { }
 
 void Controller::init()

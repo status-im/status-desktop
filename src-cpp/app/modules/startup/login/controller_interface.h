@@ -14,22 +14,13 @@ namespace Login
 class ControllerInterface
 {
 public:
-	virtual void init()
-	{
-		throw std::domain_error("Not implemented");
-	}
-	virtual QVector<Accounts::AccountDto> getOpenedAccounts()
-	{
-		throw std::domain_error("Not implemented");
-	}
-	virtual void setSelectedAccountKeyUid(QString keyUid)
-	{
-		throw std::domain_error("Not implemented");
-	}
-	virtual void login(QString password)
-	{
-		throw std::domain_error("Not implemented");
-	}
+	virtual void init() = 0;
+
+	virtual QVector<Accounts::AccountDto> getOpenedAccounts() = 0;
+
+	virtual void setSelectedAccountKeyUid(QString keyUid) = 0;
+
+	virtual void login(QString password) = 0;
 };
 } // namespace Login
 } // namespace Startup

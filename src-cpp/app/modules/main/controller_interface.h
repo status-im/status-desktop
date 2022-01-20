@@ -1,7 +1,5 @@
 #pragma once
 
-#include <stdexcept>
-
 namespace Modules
 {
 namespace Main
@@ -12,10 +10,7 @@ namespace Main
 class ControllerInterface
 {
 public:
-	virtual void init()
-	{
-		throw std::domain_error("Not implemented");
-	}
+	virtual void init() = 0;
 };
 } // namespace Main
 } // namespace Modules

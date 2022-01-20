@@ -1,7 +1,7 @@
 #include "view.h"
 #include "interfaces/module_view_delegate_interface.h"
-#include <QObject>
 #include <QDebug>
+#include <QObject>
 
 namespace Modules
 {
@@ -9,10 +9,10 @@ namespace Startup
 {
 namespace Onboarding
 {
-View::View(ModuleViewDelegateInterface* d, QObject* parent)
+View::View(ModuleViewDelegateInterface* delegate, QObject* parent)
 	: QObject(parent)
+	, m_delegate(delegate)
 {
-	m_delegate = d;
 	m_model = new Model();
 }
 

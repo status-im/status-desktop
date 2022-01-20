@@ -1,7 +1,6 @@
 #pragma once
 #include "../item.h"
 #include <QString>
-#include <stdexcept>
 
 namespace Modules
 {
@@ -12,20 +11,11 @@ namespace Login
 class ModuleViewDelegateInterface
 {
 public:
-	virtual void viewDidLoad()
-	{
-		throw std::domain_error("Not implemented");
-	}
+	virtual void viewDidLoad() = 0;
 
-	virtual void setSelectedAccount(Item item)
-	{
-		throw std::domain_error("Not implemented");
-	}
+	virtual void setSelectedAccount(Item item) = 0;
 
-	virtual void login(QString password)
-	{
-		throw std::domain_error("Not implemented");
-	}
+	virtual void login(QString password) = 0;
 };
 }; // namespace Login
 }; // namespace Startup

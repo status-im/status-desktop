@@ -6,7 +6,6 @@
 #include <QJsonValue>
 #include <QString>
 #include <QVector>
-#include <stdexcept>
 
 namespace Accounts
 {
@@ -14,70 +13,31 @@ namespace Accounts
 class ServiceInterface : public AppService
 {
 public:
-	virtual QVector<AccountDto> openedAccounts()
-	{
-		throw std::domain_error("Not implemented");
-	}
+	virtual QVector<AccountDto> openedAccounts() = 0;
 
-	virtual QVector<GeneratedAccountDto> generatedAccounts()
-	{
-		throw std::domain_error("Not implemented");
-	}
+	virtual QVector<GeneratedAccountDto> generatedAccounts() = 0;
 
-	virtual bool setupAccount(QString accountId, QString password)
-	{
-		throw std::domain_error("Not implemented");
-	}
+	virtual bool setupAccount(QString accountId, QString password) = 0;
 
-	virtual AccountDto getLoggedInAccount()
-	{
-		throw std::domain_error("Not implemented");
-	}
+	virtual AccountDto getLoggedInAccount() = 0;
 
-	virtual GeneratedAccountDto getImportedAccount()
-	{
-		throw std::domain_error("Not implemented");
-	}
+	virtual GeneratedAccountDto getImportedAccount() = 0;
 
-	virtual bool isFirstTimeAccountLogin()
-	{
-		throw std::domain_error("Not implemented");
-	}
+	virtual bool isFirstTimeAccountLogin() = 0;
 
-	virtual QString validateMnemonic(QString mnemonic)
-	{
-		throw std::domain_error("Not implemented");
-	}
+	virtual QString validateMnemonic(QString mnemonic) = 0;
 
-	virtual bool importMnemonic(QString mnemonic)
-	{
-		throw std::domain_error("Not implemented");
-	}
+	virtual bool importMnemonic(QString mnemonic) = 0;
 
-	virtual QString login(AccountDto account, QString password)
-	{
-		throw std::domain_error("Not implemented");
-	}
+	virtual QString login(AccountDto account, QString password) = 0;
 
-	virtual void clear()
-	{
-		throw std::domain_error("Not implemented");
-	}
+	virtual void clear() = 0;
 
-	virtual QString generateAlias(QString publicKey)
-	{
-		throw std::domain_error("Not implemented");
-	}
+	virtual QString generateAlias(QString publicKey) = 0;
 
-	virtual QString generateIdenticon(QString publicKey)
-	{
-		throw std::domain_error("Not implemented");
-	}
+	virtual QString generateIdenticon(QString publicKey) = 0;
 
-	virtual bool verifyAccountPassword(QString account, QString password)
-	{
-		throw std::domain_error("Not implemented");
-	}
+	virtual bool verifyAccountPassword(QString account, QString password) = 0;
 };
 
 } // namespace Accounts

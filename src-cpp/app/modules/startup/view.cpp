@@ -7,12 +7,11 @@ namespace Modules
 namespace Startup
 {
 
-View::View(ModuleViewDelegateInterface* d, QObject* parent)
+View::View(ModuleViewDelegateInterface* delegate, QObject* parent)
 	: QObject(parent)
 	, m_appState(AppState::OnboardingState)
-{
-	m_delegate = d;
-}
+	, m_delegate(delegate)
+{ }
 
 void View::load()
 {

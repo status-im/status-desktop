@@ -17,11 +17,11 @@ namespace Startup
 {
 namespace Login
 {
-Module::Module(Modules::Startup::ModuleLoginDelegateInterface* d,
+Module::Module(Modules::Startup::ModuleLoginDelegateInterface* delegate,
 			   // keychainService
 			   Accounts::ServiceInterface* accountsService)
+	: m_delegate(delegate)
 {
-	m_delegate = d;
 	m_controller = new Controller(this, accountsService);
 	m_view = new View(this);
 	m_moduleLoaded = false;
@@ -33,7 +33,7 @@ Module::~Module()
 	delete m_view;
 }
 
-void Module::extractImages(Accounts::AccountDto account, QString &thumbnailImage, QString &largeImage)
+void Module::extractImages(Accounts::AccountDto account, QString& thumbnailImage, QString& largeImage)
 {
 	foreach(const Accounts::Image& img, account.images)
 	{

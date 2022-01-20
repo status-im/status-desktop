@@ -1,14 +1,14 @@
 #include "module.h"
+#include "../interfaces/module_onboarding_delegate_interface.h"
 #include "accounts/generated_account.h"
 #include "accounts/service_interface.h"
-#include "../interfaces/module_onboarding_delegate_interface.h"
 #include "controller.h"
 #include "singleton.h"
 #include "view.h"
+#include <QDebug>
 #include <QObject>
 #include <QQmlContext>
 #include <QVariant>
-#include <QDebug>
 #include <iostream>
 
 namespace Modules
@@ -17,9 +17,10 @@ namespace Startup
 {
 namespace Onboarding
 {
-Module::Module(Modules::Startup::ModuleOnboardingDelegateInterface* d, Accounts::ServiceInterface* accountsService)
+Module::Module(Modules::Startup::ModuleOnboardingDelegateInterface* delegate,
+			   Accounts::ServiceInterface* accountsService)
+	: m_delegate(delegate)
 {
-	m_delegate = d;
 	m_controller = new Controller(this, accountsService);
 	m_view = new View(this);
 	m_moduleLoaded = false;

@@ -14,7 +14,7 @@ namespace Startup
 class Controller : public QObject, ControllerInterface
 {
 public:
-	Controller(ModuleControllerDelegateInterface* d,
+	Controller(ModuleControllerDelegateInterface* delegate,
 			   Accounts::ServiceInterface* accountsService,
 			   QObject* parent = nullptr);
 	void init() override;

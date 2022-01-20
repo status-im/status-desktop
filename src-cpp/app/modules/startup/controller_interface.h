@@ -10,14 +10,9 @@ namespace Startup
 class ControllerInterface
 {
 public:
-	virtual void init()
-	{
-		throw std::domain_error("Not implemented");
-	}
-	virtual bool shouldStartWithOnboardingScreen()
-	{
-		throw std::domain_error("Not implemented");
-	}
+	virtual void init() = 0;
+
+	virtual bool shouldStartWithOnboardingScreen() = 0;
 };
 } // namespace Startup
 } // namespace Modules
