@@ -2,6 +2,7 @@
 #include "accounts/service.h"
 #include "app_service.h"
 #include "modules/startup/module.h"
+#include "modules/main/module.h"
 #include <QDebug>
 
 AppController::AppController()
@@ -65,8 +66,7 @@ AppController::AppController()
 	// # Modules
 	m_startupModule = new Modules::Startup::Module(this, /*keychainService,*/ m_accountsService);
 
-	// result.mainModule = main_module.newModule[AppController](
-	// result,
+	m_mainModule = new Modules::Main::Module(this
 	// statusFoundation.status.events,
 	// result.keychainService,
 	// result.accountsService,
@@ -93,7 +93,7 @@ AppController::AppController()
 	// result.nodeConfigurationService,
 	// result.devicesService,
 	// result.mailserversService
-	// )
+ 	);
 
 	// # Do connections
 	connect();
@@ -102,6 +102,7 @@ AppController::AppController()
 AppController::~AppController()
 {
 	delete m_startupModule;
+	delete m_mainModule;
 
 	delete m_accountsService;
 }
@@ -172,14 +173,14 @@ void AppController::load()
 	// self.buildAndRegisterUserProfile()
 
 	// # load main module
-	// self.mainModule.load(
-	//     self.statusFoundation.status.events,
-	//     self.settingsService,
-	//     self.contactsService,
-	//     self.chatService,
-	//     self.communityService,
-	//     self.messageService
-	// )
+	m_mainModule->load(
+	    // self.statusFoundation.status.events,
+	    // self.settingsService,
+	    // self.contactsService,
+	    // self.chatService,
+	    // self.communityService,
+	    // self.messageService
+	);
 }
 
 void AppController::userLoggedIn()
