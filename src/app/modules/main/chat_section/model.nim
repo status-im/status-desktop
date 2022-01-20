@@ -1,4 +1,4 @@
-import NimQml, Tables, strutils, strformat, json
+import NimQml, Tables, strutils, strformat, json, algorithm
 from ../../../../app_service/service/chat/dto/chat import ChatType
 import item, sub_item, base_item, sub_model
 
@@ -43,6 +43,11 @@ QtObject:
       result &= fmt"""
       [{i}]:({$self.items[i]})
       """
+
+  proc sortChats(x, y: Item): int =
+    if x.position < y.position: -1
+    elif x.position == y.position: 0
+    else: 1
 
   proc countChanged(self: Model) {.signal.}
 
@@ -227,6 +232,16 @@ QtObject:
         self.dataChanged(index, index, @[ModelRole.Name.int])
         return
 
+  proc updateItemDetails*(self: Model, id, name, description: string) =
+    ## This updates only first level items, it doesn't update subitems, since subitems cannot have custom icon.
+    for i in 0 ..< self.items.len:
+      if(self.items[i].id == id):
+        self.items[i].BaseItem.name = name
+        self.items[i].BaseItem.description = description
+        let index = self.createIndex(i, 0, nil)
+        self.dataChanged(index, index, @[ModelRole.Name.int, ModelRole.Description.int])
+        return
+
   proc updateNotificationsForItemOrSubItemById*(self: Model, id: string, hasUnreadMessages: bool, 
     notificationsCount: int) =
     for i in 0 ..< self.items.len:
@@ -251,3 +266,20 @@ QtObject:
 
       result.hasNotifications = result.hasNotifications or self.items[i].BaseItem.hasUnreadMessages
       result.notificationsCount = result.notificationsCount + self.items[i].BaseItem.notificationsCount  
+
+
+  proc reorder*(self: Model, chatId, categoryId: string, position: int) =
+    let index = self.getItemIdxById(chatId)
+    if(index == -1 or position == index):
+      return
+
+    let idx = self.createIndex(index, 0, nil)
+    self.items[index].BaseItem.position = position
+    self.dataChanged(idx, idx, @[ModelRole.Position.int])
+
+    let tempItem = self.items[position]
+    self.beginResetModel()
+    self.items[position] = self.items[index]
+    self.items[index] = tempItem
+    self.endResetModel()
+

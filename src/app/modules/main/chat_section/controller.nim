@@ -89,24 +89,9 @@ method init*(self: Controller) =
     self.events.on(SIGNAL_COMMUNITY_CHANNEL_CREATED) do(e:Args):
       let args = CommunityChatArgs(e)
       if (args.communityId == self.sectionId):
-        let chatDto = ChatDto(
-            id: args.chat.id,
-            name: args.chat.name,
-            chatType: ChatType.CommunityChat,
-            color: args.chat.color,
-            emoji: args.chat.emoji,
-            description: args.chat.description,
-            # permissions: args.chat.permissions, # TODO implement chat permissions
-            canPost: args.chat.canPost,
-            position: args.chat.position,
-            categoryId: args.chat.categoryId,
-            communityId: args.communityId
-          )
-
-        self.chatService.updateOrAddChat(chatDto)
-        
+        self.chatService.updateOrAddChat(args.chat)
         self.delegate.addNewChat(
-          chatDto,
+          args.chat,
           true,
           self.events,
           self.settingsService,
@@ -121,6 +106,17 @@ method init*(self: Controller) =
       let args = CommunityChatIdArgs(e)
       if (args.communityId == self.sectionId):
         self.delegate.onCommunityChannelDeleted(args.chatId)
+
+    self.events.on(SIGNAL_COMMUNITY_CHANNEL_EDITED) do(e:Args):
+      let args = CommunityChatArgs(e)
+      if (args.communityId == self.sectionId):
+        self.chatService.updateOrAddChat(args.chat)
+        self.delegate.onCommunityChannelEdited(args.chat)
+
+    self.events.on(SIGNAL_COMMUNITY_CHANNEL_REORDERED) do(e:Args):
+      let args = CommunityChatOrderArgs(e)
+      if (args.communityId == self.sectionId):
+        self.delegate.reorderChannels(args.chatId, args.categoryId, args.position)
 
   self.events.on(SIGNAL_CONTACT_NICKNAME_CHANGED) do(e: Args):
     var args = ContactArgs(e)

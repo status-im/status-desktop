@@ -69,6 +69,9 @@ method color*(self: BaseItem): string {.inline base.} =
 method description*(self: BaseItem): string {.inline base.} = 
   self.description
 
+method `description=`*(self: var BaseItem, value: string) {.inline base.} =
+  self.description = value
+
 method type*(self: BaseItem): int {.inline base.} = 
   self.`type`
 

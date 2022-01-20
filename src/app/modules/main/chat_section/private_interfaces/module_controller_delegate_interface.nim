@@ -37,3 +37,9 @@ method onCommunityChannelDeleted*(self: AccessInterface, chatId: string) {.base.
   
 method onChatRenamed*(self: AccessInterface, chatId: string, newName: string) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method onCommunityChannelEdited*(self: AccessInterface, chat: ChatDto) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method reorderChannels*(self: AccessInterface, chatId, categoryId: string, position: int) {.base.} =
+  raise newException(ValueError, "No implementation available")
