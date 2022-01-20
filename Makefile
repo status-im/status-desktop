@@ -344,8 +344,24 @@ STATUS_CLIENT_APPIMAGE ?= pkg/Status.AppImage
 STATUS_CLIENT_TARBALL ?= pkg/Status.tar.gz
 STATUS_CLIENT_TARBALL_FULL ?= $(shell realpath $(STATUS_CLIENT_TARBALL))
 
+ifeq ($(detected_OS),Linux)
+ FCITX5_QT := vendor/fcitx5-qt/build/qt5/platforminputcontext/libfcitx5platforminputcontextplugin.so
+ FCITX5_QT_CMAKE_PARAMS := -DCMAKE_BUILD_TYPE=Release -DBUILD_ONLY_PLUGIN=ON -DENABLE_QT4=OFF -DENABLE_QT5=ON
+ FCITX5_QT_BUILD_CMD := cmake --build . --config Release $(HANDLE_OUTPUT)
+endif
+
+$(FCITX5_QT): | deps
+	echo -e $(BUILD_MSG) "fcitx5-qt"
+	+ cd vendor/fcitx5-qt && \
+		mkdir -p build && \
+		cd build && \
+		rm -f CMakeCache.txt && \
+		cmake $(FCITX5_QT_CMAKE_PARAMS) \
+			.. $(HANDLE_OUTPUT) && \
+		$(FCITX5_QT_BUILD_CMD)
+
 $(STATUS_CLIENT_APPIMAGE): override RESOURCES_LAYOUT := -d:production
-$(STATUS_CLIENT_APPIMAGE): nim_status_client $(APPIMAGE_TOOL) nim-status.desktop
+$(STATUS_CLIENT_APPIMAGE): nim_status_client $(APPIMAGE_TOOL) nim-status.desktop $(FCITX5_QT)
 	rm -rf pkg/*.AppImage
 	rm -rf tmp/linux/dist
 	mkdir -p tmp/linux/dist/usr/bin
@@ -375,6 +391,9 @@ $(STATUS_CLIENT_APPIMAGE): nim_status_client $(APPIMAGE_TOOL) nim-status.desktop
 
 	echo -e $(BUILD_MSG) "AppImage"
 	linuxdeployqt tmp/linux/dist/nim-status.desktop -no-copy-copyright-files -qmldir=ui -qmlimport=$(QTDIR)/qml -bundle-non-qt-libs
+
+	# Qt plugins
+	cp $(FCITX5_QT) tmp/linux/dist/usr/plugins/platforminputcontexts/
 
 	rm tmp/linux/dist/AppRun
 	cp AppRun tmp/linux/dist/.

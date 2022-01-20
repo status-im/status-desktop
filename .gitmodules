@@ -43,3 +43,6 @@
 [submodule "vendor/nim-result"]
 	path = vendor/nim-result
 	url = https://github.com/arnetheduck/nim-result
+[submodule "vendor/fcitx5-qt"]
+	path = vendor/fcitx5-qt
+	url = https://github.com/fcitx/fcitx5-qt

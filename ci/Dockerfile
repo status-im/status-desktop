@@ -8,19 +8,34 @@ ENV QTDIR="${QT_PATH}/${QT_VERSION}/${QT_PLATFORM}"
 ENV LD_LIBRARY_PATH="${QTDIR}/lib:${LD_LIBRARY_PATH}"
 # $OPENSSL_PREFIX is provided by the docker image
 ENV LIBRARY_PATH="${OPENSSL_PREFIX}/lib:${LIBRARY_PATH}"
+ENV OPENSSL_ROOT_DIR="${OPENSSL_PREFIX}"
 
 RUN export DEBIAN_FRONTEND=noninteractive \
  && sudo apt update -yq \
  && sudo apt install -yq software-properties-common \
  && sudo add-apt-repository -y ppa:git-core/ppa \
+ && sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test \
  && sudo apt update -yq \
  && sudo apt purge -yq gnupg \
  && sudo apt install -yq --fix-missing \
-      build-essential cmake jq git s3cmd gnupg2 ca-certificates \
+      jq git s3cmd gnupg2 ca-certificates \
+      build-essential extra-cmake-modules gcc-9 g++-9 \
       libpcre3-dev libnss3 libxcomposite1 libxtst6 libpcsclite-dev \
       gstreamer1.0-plugins-good gstreamer1.0-plugins-bad \
       gstreamer1.0-plugins-ugly gstreamer1.0-libav \
       gstreamer1.0-tools gstreamer1.0-alsa gstreamer1.0-pulseaudio
+
+# C++17 is required
+RUN sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 100 \
+ --slave /usr/bin/g++ g++ /usr/bin/g++-9
+
+# CMake 3.16 or higher is required
+RUN wget https://github.com/Kitware/CMake/releases/download/v3.22.1/cmake-3.22.1-linux-x86_64.sh \
+ && chmod +x cmake-3.22.1-linux-x86_64.sh \
+ && sudo mkdir /opt/cmake \
+ && sudo sh cmake-3.22.1-linux-x86_64.sh --prefix=/opt/cmake --exclude-subdir --skip-license \
+ && rm -f cmake-3.22.1-linux-x86_64.sh 
+ENV PATH="/opt/cmake/bin:${PATH}"
 
 # Fix LetsEncrypt X3 root certificate expliration
 RUN sudo sed -i 's#\(mozilla/DST_Root_CA_X3.crt\)#!\1#' /etc/ca-certificates.conf \
