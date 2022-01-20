@@ -302,7 +302,7 @@ ColumnLayout {
         }
     }
 
-    MessageStore{
+    MessageStore {
         id: messageStore
         messageModule: chatContentModule? chatContentModule.messagesModule : null
     }

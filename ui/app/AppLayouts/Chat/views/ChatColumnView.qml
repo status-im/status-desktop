@@ -158,65 +158,41 @@ Item {
         }
     }
 
-    StackLayout {
-        anchors.fill: parent
-        currentIndex: {
-            if(root.activeChatId !== "")
-            {
-                for(let i = 1; i < this.children.length; i++)
-                {
-                    var obj = this.children[i];
-                    if(obj && obj.chatContentModule)
-                    {
-                        let myChatId = obj.chatContentModule.getMyChatId()
-                        if(myChatId === root.activeChatId || myChatId === root.activeSubItemId)
-                            return i
+    
+    EmptyChatPanel {
+        visible: root.activeChatId === ""
+        onShareChatKeyClicked: Global.openProfilePopup(userProfile.pubKey);
+    }
 
-                    }
-                }
-            }
+    // This is kind of a solution for applying backend refactored changes with the minimal qml changes.
+    // The best would be if we made qml to follow the struct we have on the backend side.
+    Repeater {
+        model: parentModule && parentModule.model
+        delegate: delegateChooser
 
-            return 0
-        }
-
-        EmptyChatPanel {
-            onShareChatKeyClicked: Global.openProfilePopup(userProfile.pubKey);
-        }
-
-        // This is kind of a solution for applying backend refactored changes with the minimal qml changes.
-        // The best would be if we made qml to follow the struct we have on the backend side.
-        Repeater {
-            model: parentModule && parentModule.model
-            delegate: delegateChooser
-
-            DelegateChooser {
-                id: delegateChooser
-                role: "type"
-                DelegateChoice { // In case of category
-                    roleValue: Constants.chatType.unknown
-                    delegate: Repeater {
-                        model: {
-                            if (!subItems) {
-                                console.error("We got a category with no subitems. It is possible that the channel had a type unknown")
-                            }
-                            return subItems
+        DelegateChooser {
+            id: delegateChooser
+            role: "type"
+            DelegateChoice { // In case of category
+                roleValue: Constants.chatType.unknown
+                delegate: Repeater {
+                    model: {
+                        if (!subItems) {
+                            console.error("We got a category with no subitems. It is possible that the channel had a type unknown")
                         }
-                        delegate: ChatContentView {
-                            rootStore: root.rootStore
-                            contactsStore: root.contactsStore
-                            sendTransactionNoEnsModal: cmpSendTransactionNoEns
-                            receiveTransactionModal: cmpReceiveTransaction
-                            sendTransactionWithEnsModal: cmpSendTransactionWithEns
-                            stickersLoaded: root.stickersLoaded
-                            Component.onCompleted: {
-                                parentModule.prepareChatContentModuleForChatId(model.itemId)
-                                chatContentModule = parentModule.getChatContentModule()
-                            }
-                        }
+                        return subItems
                     }
-                }
-                DelegateChoice { // In all other cases
                     delegate: ChatContentView {
+                        width: parent.width
+                        clip: true
+                        height: {
+                            // dynamically calculate the height of the view, if the active one is the current one
+                            // then set the height to parent otherwise set it to 0
+                            let myChatId = chatContentModule.getMyChatId()
+                            if(myChatId === root.activeChatId || myChatId === root.activeSubItemId)
+                                return parent.height
+                            return 0
+                        }                   
                         rootStore: root.rootStore
                         contactsStore: root.contactsStore
                         sendTransactionNoEnsModal: cmpSendTransactionNoEns
@@ -224,9 +200,33 @@ Item {
                         sendTransactionWithEnsModal: cmpSendTransactionWithEns
                         stickersLoaded: root.stickersLoaded
                         Component.onCompleted: {
-                            parentModule.prepareChatContentModuleForChatId(itemId)
+                            parentModule.prepareChatContentModuleForChatId(model.itemId)
                             chatContentModule = parentModule.getChatContentModule()
                         }
+                    }
+                }
+            }
+            DelegateChoice { // In all other cases
+                delegate: ChatContentView {
+                    width: parent.width
+                    clip: true
+                    height: {
+                        // dynamically calculate the height of the view, if the active one is the current one
+                        // then set the height to parent otherwise set it to 0
+                        let myChatId = chatContentModule.getMyChatId()
+                        if(myChatId === root.activeChatId || myChatId === root.activeSubItemId)
+                            return parent.height
+                        return 0
+                    }    
+                    rootStore: root.rootStore
+                    contactsStore: root.contactsStore
+                    sendTransactionNoEnsModal: cmpSendTransactionNoEns
+                    receiveTransactionModal: cmpReceiveTransaction
+                    sendTransactionWithEnsModal: cmpSendTransactionWithEns
+                    stickersLoaded: root.stickersLoaded
+                    Component.onCompleted: {
+                        parentModule.prepareChatContentModuleForChatId(itemId)
+                        chatContentModule = parentModule.getChatContentModule()
                     }
                 }
             }
@@ -238,118 +238,117 @@ Item {
         Layout.fillWidth: true
         Layout.bottomMargin: Style.current.bigPadding
         isContact: root.isContact
-       visible: root.activeChatType === Constants.chatType.oneToOne
-           && (!root.isContact /*|| !contactRequestReceived*/)
+        visible: root.activeChatType === Constants.chatType.oneToOne && (!root.isContact /*|| !contactRequestReceived*/)
         onAddContactClicked: {
             root.rootStore.addContact(root.activeChatId);
         }
     }
 
-        Component {
-            id: cmpSendTransactionNoEns
-            ChatCommandModal {
-                id: sendTransactionNoEns
-                store: root.rootStore
-                contactsStore: root.contactsStore
-                isContact: root.isContact
-                onClosed: {
-                    destroy()
-                }
-                sendChatCommand: root.requestAddressForTransaction
-                isRequested: false
-                //% "Send"
-                commandTitle: qsTrId("command-button-send")
-                header.title: commandTitle
-                //% "Request Address"
-                finalButtonLabel: qsTrId("request-address")
-                selectRecipient.selectedRecipient: {
-                    parentModule.prepareChatContentModuleForChatId(activeChatId)
-                    let chatContentModule = parentModule.getChatContentModule()
-                    return {
-                        address: Constants.zeroAddress, // Setting as zero address since we don't have the address yet
-                        alias: chatContentModule.chatDetails.name, // Do we need the alias for real or name works?
-                        identicon: chatContentModule.chatDetails.icon,
-                        name: chatContentModule.chatDetails.name,
-                        type: RecipientSelector.Type.Contact
-                    }
-                }
-                selectRecipient.selectedType: RecipientSelector.Type.Contact
-                selectRecipient.readOnly: true
-            }
-        }
-
-        Component {
-            id: cmpReceiveTransaction
-            ChatCommandModal {
-                id: receiveTransaction
-                store: root.rootStore
-                contactsStore: root.contactsStore
-                isContact: root.isContact
-                onClosed: {
-                    destroy()
-                }
-                sendChatCommand: root.requestTransaction
-                isRequested: true
-                //% "Request"
-                commandTitle: qsTrId("wallet-request")
-                header.title: commandTitle
-                //% "Request"
-                finalButtonLabel: qsTrId("wallet-request")
-                selectRecipient.selectedRecipient: {
-                    parentModule.prepareChatContentModuleForChatId(activeChatId)
-                    let chatContentModule = parentModule.getChatContentModule()
-                    return {
-                        address: Constants.zeroAddress, // Setting as zero address since we don't have the address yet
-                        alias: chatContentModule.chatDetails.name, // Do we need the alias for real or name works?
-                        identicon: chatContentModule.chatDetails.icon,
-                        name: chatContentModule.chatDetails.name,
-                        type: RecipientSelector.Type.Contact
-                    }
-                }
-                selectRecipient.selectedType: RecipientSelector.Type.Contact
-                selectRecipient.readOnly: true
-            }
-        }
-
-        Component {
-            id: cmpSendTransactionWithEns
-            SendModal {
-                id: sendTransactionWithEns
-                store: root.rootStore
-                contactsStore: root.contactsStore
-                onOpened: {
-                    // Not Refactored Yet
-//                    root.rootStore.walletModelInst.gasView.getGasPrice()
-                }
-                onClosed: {
-                    destroy()
-                }
-                isContact: root.isContact
-                selectRecipient.readOnly: true
-                selectRecipient.selectedRecipient: {
-                    parentModule.prepareChatContentModuleForChatId(activeChatId)
-                    let chatContentModule = parentModule.getChatContentModule()
-
-                    return {
-                        address: "",
-                        alias: chatContentModule.chatDetails.name, // Do we need the alias for real or name works?
-                        identicon: chatContentModule.chatDetails.icon,
-                        name: chatContentModule.chatDetails.name,
-                        type: RecipientSelector.Type.Contact,
-                        ensVerified: true
-                    }
-                }
-                selectRecipient.selectedType: RecipientSelector.Type.Contact
-            }
-        }
-
-        ActivityCenterPopup {
-            id: activityCenter
-            height: root.height - 56 * 2 // TODO get screen size // Taken from old code top bar height was fixed there to 56
-            y: 56
+    Component {
+        id: cmpSendTransactionNoEns
+        ChatCommandModal {
+            id: sendTransactionNoEns
             store: root.rootStore
-            chatSectionModule: root.chatSectionModule
+            contactsStore: root.contactsStore
+            isContact: root.isContact
+            onClosed: {
+                destroy()
+            }
+            sendChatCommand: root.requestAddressForTransaction
+            isRequested: false
+            //% "Send"
+            commandTitle: qsTrId("command-button-send")
+            header.title: commandTitle
+            //% "Request Address"
+            finalButtonLabel: qsTrId("request-address")
+            selectRecipient.selectedRecipient: {
+                parentModule.prepareChatContentModuleForChatId(activeChatId)
+                let chatContentModule = parentModule.getChatContentModule()
+                return {
+                    address: Constants.zeroAddress, // Setting as zero address since we don't have the address yet
+                    alias: chatContentModule.chatDetails.name, // Do we need the alias for real or name works?
+                    identicon: chatContentModule.chatDetails.icon,
+                    name: chatContentModule.chatDetails.name,
+                    type: RecipientSelector.Type.Contact
+                }
+            }
+            selectRecipient.selectedType: RecipientSelector.Type.Contact
+            selectRecipient.readOnly: true
         }
+    }
+
+    Component {
+        id: cmpReceiveTransaction
+        ChatCommandModal {
+            id: receiveTransaction
+            store: root.rootStore
+            contactsStore: root.contactsStore
+            isContact: root.isContact
+            onClosed: {
+                destroy()
+            }
+            sendChatCommand: root.requestTransaction
+            isRequested: true
+            //% "Request"
+            commandTitle: qsTrId("wallet-request")
+            header.title: commandTitle
+            //% "Request"
+            finalButtonLabel: qsTrId("wallet-request")
+            selectRecipient.selectedRecipient: {
+                parentModule.prepareChatContentModuleForChatId(activeChatId)
+                let chatContentModule = parentModule.getChatContentModule()
+                return {
+                    address: Constants.zeroAddress, // Setting as zero address since we don't have the address yet
+                    alias: chatContentModule.chatDetails.name, // Do we need the alias for real or name works?
+                    identicon: chatContentModule.chatDetails.icon,
+                    name: chatContentModule.chatDetails.name,
+                    type: RecipientSelector.Type.Contact
+                }
+            }
+            selectRecipient.selectedType: RecipientSelector.Type.Contact
+            selectRecipient.readOnly: true
+        }
+    }
+
+    Component {
+        id: cmpSendTransactionWithEns
+        SendModal {
+            id: sendTransactionWithEns
+            store: root.rootStore
+            contactsStore: root.contactsStore
+            onOpened: {
+                // Not Refactored Yet
+//                    root.rootStore.walletModelInst.gasView.getGasPrice()
+            }
+            onClosed: {
+                destroy()
+            }
+            isContact: root.isContact
+            selectRecipient.readOnly: true
+            selectRecipient.selectedRecipient: {
+                parentModule.prepareChatContentModuleForChatId(activeChatId)
+                let chatContentModule = parentModule.getChatContentModule()
+
+                return {
+                    address: "",
+                    alias: chatContentModule.chatDetails.name, // Do we need the alias for real or name works?
+                    identicon: chatContentModule.chatDetails.icon,
+                    name: chatContentModule.chatDetails.name,
+                    type: RecipientSelector.Type.Contact,
+                    ensVerified: true
+                }
+            }
+            selectRecipient.selectedType: RecipientSelector.Type.Contact
+        }
+    }
+
+    ActivityCenterPopup {
+        id: activityCenter
+        height: root.height - 56 * 2 // TODO get screen size // Taken from old code top bar height was fixed there to 56
+        y: 56
+        store: root.rootStore
+        chatSectionModule: root.chatSectionModule
+    }
 
         // Not Refactored Yet
 //        Connections {
@@ -361,12 +360,12 @@ Item {
 //            }
 //        }
 
-        Connections {
-            target: systemTray
-            onMessageClicked: function () {
-                clickOnNotification()
-            }
+    Connections {
+        target: systemTray
+        onMessageClicked: function () {
+            clickOnNotification()
         }
+    }
 
         // Not Refactored Yet
 //        Connections {
