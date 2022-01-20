@@ -22,7 +22,6 @@ QtObject {
         return chatCommunitySectionModule.getChatContentModule()
     }
 
-
     // Contact requests related part
     property var contactRequestsModel: chatCommunitySectionModule.contactRequestsModel
 

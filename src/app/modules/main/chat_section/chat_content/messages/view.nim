@@ -70,8 +70,10 @@ QtObject:
     return self.delegate.getNumberOfPinnedMessages()
 
   proc initialMessagesLoadedChanged*(self: View) {.signal.}
+
   proc getInitialMessagesLoaded*(self: View): bool {.slot.} =
     return self.initialMessagesLoaded
+  
   QtProperty[bool] initialMessagesLoaded:
     read = getInitialMessagesLoaded
     notify = initialMessagesLoadedChanged
@@ -83,8 +85,10 @@ QtObject:
     self.initialMessagesLoadedChanged()
 
   proc loadingHistoryMessagesInProgressChanged*(self: View) {.signal.}
+
   proc getLoadingHistoryMessagesInProgress*(self: View): bool {.slot.} =
     return self.loadingHistoryMessagesInProgress
+  
   QtProperty[bool] loadingHistoryMessagesInProgress:
     read = getLoadingHistoryMessagesInProgress
     notify = loadingHistoryMessagesInProgressChanged
@@ -100,10 +104,12 @@ QtObject:
     self.delegate.loadMoreMessages()
 
   proc messageSuccessfullySent*(self: View) {.signal.}
+
   proc emitSendingMessageSuccessSignal*(self: View) =
     self.messageSuccessfullySent()
 
   proc sendingMessageFailed*(self: View) {.signal.}
+
   proc emitSendingMessageErrorSignal*(self: View) =
     self.sendingMessageFailed()
 
