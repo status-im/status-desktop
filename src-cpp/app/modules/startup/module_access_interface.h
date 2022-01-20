@@ -1,7 +1,5 @@
 #pragma once
 
-#include <stdexcept>
-
 namespace Modules
 {
 namespace Startup
@@ -9,15 +7,9 @@ namespace Startup
 class ModuleAccessInterface
 {
 public:
-	virtual void load()
-	{
-		throw std::domain_error("Not implemented");
-	}
+	virtual void load() = 0;
 
-    virtual void moveToAppState()
-	{
-		throw std::domain_error("Not implemented");
-	}
+    virtual void moveToAppState() = 0;
 };
 }; // namespace Startup
 }; // namespace Modules

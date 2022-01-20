@@ -14,34 +14,19 @@ namespace Onboarding
 class ControllerInterface
 {
 public:
-	virtual void init()
-	{
-		throw std::domain_error("Not implemented");
-	}
-	virtual QVector<Accounts::GeneratedAccountDto> getGeneratedAccounts()
-	{
-		throw std::domain_error("Not implemented");
-	}
-	virtual void setSelectedAccountByIndex(int index)
-	{
-		throw std::domain_error("Not implemented");
-	}
-	virtual void storeSelectedAccountAndLogin(QString password)
-	{
-		throw std::domain_error("Not implemented");
-	}
-	virtual Accounts::GeneratedAccountDto getImportedAccount()
-	{
-		throw std::domain_error("Not implemented");
-	}
-	virtual QString validateMnemonic(QString mnemonic)
-	{
-		throw std::domain_error("Not implemented");
-	}
-	virtual void importMnemonic(QString mnemonic)
-	{
-		throw std::domain_error("Not implemented");
-	}
+	virtual void init() = 0;
+	
+	virtual QVector<Accounts::GeneratedAccountDto> getGeneratedAccounts() = 0;
+	
+	virtual void setSelectedAccountByIndex(int index) = 0;
+	
+	virtual void storeSelectedAccountAndLogin(QString password) = 0;
+	
+	virtual Accounts::GeneratedAccountDto getImportedAccount() = 0;
+	
+	virtual QString validateMnemonic(QString mnemonic) = 0;
+	
+	virtual void importMnemonic(QString mnemonic) = 0;
 };
 } // namespace Onboarding
 } // namespace Startup

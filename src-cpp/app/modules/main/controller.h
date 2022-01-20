@@ -13,7 +13,7 @@ namespace Main
 class Controller : public QObject, ControllerInterface
 {
 public:
-	Controller(ModuleControllerDelegateInterface* d, QObject* parent = nullptr);
+	Controller(ModuleControllerDelegateInterface* delegate, QObject* parent = nullptr);
 	void init() override;
 
 private:

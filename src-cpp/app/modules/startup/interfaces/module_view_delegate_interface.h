@@ -1,7 +1,5 @@
 #pragma once
 
-#include <stdexcept>
-
 namespace Modules
 {
 namespace Startup
@@ -9,10 +7,7 @@ namespace Startup
 class ModuleViewDelegateInterface
 {
 public:
-	virtual void viewDidLoad()
-	{
-		throw std::domain_error("Not implemented");
-	}
+	virtual void viewDidLoad() = 0;
 };
 }; // namespace Startup
 }; // namespace Modules

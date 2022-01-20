@@ -13,12 +13,12 @@ namespace Startup
 {
 namespace Onboarding
 {
-Controller::Controller(ModuleControllerDelegateInterface* d,
+Controller::Controller(ModuleControllerDelegateInterface* delegate,
 					   Accounts::ServiceInterface* accountsService,
 					   QObject* parent)
 	: QObject(parent)
 	, m_accountsService(accountsService)
-	, m_delegate(d)
+	, m_delegate(delegate)
 { }
 
 void Controller::init()

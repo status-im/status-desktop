@@ -21,7 +21,7 @@ class View : public QObject
 	Q_PROPERTY(Model* accountsModel READ getModel NOTIFY modelChanged)
 
 public:
-	explicit View(ModuleViewDelegateInterface* d, QObject* parent = nullptr);
+	explicit View(ModuleViewDelegateInterface* delegate, QObject* parent = nullptr);
 	~View();
 	void load();
 

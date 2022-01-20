@@ -1,7 +1,5 @@
 #pragma once
 
-#include <stdexcept>
-
 namespace Modules
 {
 namespace Main
@@ -9,10 +7,7 @@ namespace Main
 class ModuleAccessInterface
 {
 public:
-	virtual void load()
-	{
-		throw std::domain_error("Not implemented");
-	}
+	virtual void load() = 0;
 };
 }; // namespace Main
 }; // namespace Modules

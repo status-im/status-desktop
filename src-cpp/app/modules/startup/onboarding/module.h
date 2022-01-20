@@ -25,7 +25,7 @@ private:
 	bool m_moduleLoaded;
 
 public:
-	Module(Modules::Startup::ModuleOnboardingDelegateInterface* d, Accounts::ServiceInterface* accountsService);
+	Module(Modules::Startup::ModuleOnboardingDelegateInterface* delegate, Accounts::ServiceInterface* accountsService);
 	~Module();
 	void load() override;
 	bool isLoaded() override;

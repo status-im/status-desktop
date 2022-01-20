@@ -11,10 +11,9 @@ namespace Modules
 {
 namespace Main
 {
-Module::Module(AppControllerDelegate* d)
-
+Module::Module(AppControllerDelegate* delegate)
+	: m_delegate(delegate)
 {
-	m_delegate = d;
 	m_controller = new Controller(this);
 	m_view = new View(this);
 }
