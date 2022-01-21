@@ -73,7 +73,7 @@ QtObject {
         }
     }
 
-    function hideSignPhraseModal(value) {
+    function setHideSignPhraseModal(value) {
         localAccountSensitiveSettings.hideSignPhraseModal = value;
     }
 
