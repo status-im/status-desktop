@@ -59,9 +59,9 @@ Item {
 
             id: memberRequestsButton
 
-            property int nbRequests: root.community.communityMembershipRequests.nbRequests
+            property int nbRequests: root.community.pendingRequestsToJoin.count
             width: parent.width - 32
-            visible: (root.community.isAdmin || root.community.admin) && nbRequests > 0
+            visible: root.community.amISectionAdmin && nbRequests > 0
             anchors.horizontalCenter: parent.horizontalCenter
 
             //% "Membership requests"
@@ -213,6 +213,8 @@ Item {
     Component {
         id: membershipRequestPopup
         MembershipRequestsPopup {
+            store: root.store
+            pendingRequestsToJoin: root.community.pendingRequestsToJoin
             anchors.centerIn: parent
             onClosed: {
                 destroy()

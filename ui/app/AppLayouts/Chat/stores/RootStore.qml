@@ -194,12 +194,12 @@ QtObject {
 //        return chatsModelInst.userNameOrAlias(pk);
     }
 
-    function generateIdenticon(pk) {
-        return globalUtils.generateIdenticon(pk)
+    function generateAlias(pk) {
+        return globalUtils.generateAlias(pk);
     }
 
-    function generateAlias(pk) {
-        return globalUtils.generateAlias(pk)
+    function generateIdenticon(pk) {
+        return globalUtils.generateIdenticon(pk);
     }
 
     function plainText(text) {
