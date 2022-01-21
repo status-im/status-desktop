@@ -26,7 +26,7 @@ Item {
     SignPhraseModal {
         id: signPhrasePopup
         onRemindLaterClicked: hideSignPhraseModal = true
-        onAcceptClicked: { RootStore.hideSignPhraseModal(true); }
+        onAcceptClicked: { RootStore.setHideSignPhraseModal(true); }
     }
 
     SeedPhraseBackupWarning {
