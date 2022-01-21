@@ -98,6 +98,7 @@ StatusModal {
                     minLength: 1
                     errorMessage: Utils.getErrorMessage(nameInput.errors, "community name")
                 }]
+                validationMode: StatusInput.ValidationMode.Always
             }
 
             StatusInput {
@@ -113,6 +114,7 @@ StatusModal {
                     minLength: 1
                     errorMessage: Utils.getErrorMessage(descriptionTextArea.errors, "community description")
                 }]
+                validationMode: StatusInput.ValidationMode.Always
             }
 
             StatusBaseText {
