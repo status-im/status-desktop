@@ -70,7 +70,7 @@ Column {
         id: membersListItem
         anchors.horizontalCenter: parent.horizontalCenter
 
-        property int nbRequests: root.community.communityMembershipRequests.nbRequests
+        property int nbRequests: root.community.pendingRequestsToJoin.count
 
         //% "Members"
         title: qsTrId("members-label")

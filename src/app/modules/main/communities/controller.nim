@@ -182,10 +182,10 @@ method exportCommunity*(self: Controller, communityId: string): string =
   self.communityService.exportCommunity(communityId)
 
 method acceptRequestToJoinCommunity*(self: Controller, communityId: string, requestId: string) =
-  self.communityService.acceptRequestToJoinCommunity(requestId)
+  self.communityService.acceptRequestToJoinCommunity(communityId, requestId)
 
 method declineRequestToJoinCommunity*(self: Controller, communityId: string, requestId: string) =
-  self.communityService.declineRequestToJoinCommunity(requestId)
+  self.communityService.declineRequestToJoinCommunity(communityId, requestId)
 
 method inviteUsersToCommunityById*(self: Controller, communityId: string, pubKeys: string): string =
   result = self.communityService.inviteUsersToCommunityById(communityId, pubKeys)

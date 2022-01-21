@@ -14,6 +14,7 @@ import shared 1.0
 StatusModal {
     id: popup
     property var store
+    property var pendingRequestsToJoin
     onOpened: {
         contentItem.errorText.text = ""
     }
@@ -53,22 +54,23 @@ StatusModal {
             ListView {
                 id: membershipRequestList
                 anchors.fill: parent
-                // Not Refactored Yet
-//                model: popup.store.chatsModelInst.communities.activeCommunity.communityMembershipRequests
+                model: popup.pendingRequestsToJoin
                 clip: true
 
                 delegate: StatusListItem {
                     anchors.horizontalCenter: parent.horizontalCenter
+                    property var contactDetails: Utils.getContactDetailsAsJson(model.pubKey)
 
-                    // Not Refactored Yet
-                    //property int contactIndex: popup.store.allContacts.getContactIndexByPubkey(model.publicKey)
-                    property string nickname: Utils.getContactDetailsAsJson(model.publicKey).localNickname
-                    // Not Refactored Yet
-                    property string profileImage: ""// contactIndex === -1 ? "" : popup.store.allContacts.rowData(contactIndex, 'thumbnailImage')
-                    property string displayName: Utils.getContactDetailsAsJson(publicKey).displayName
+                    property string displayName: contactDetails.displayName || root.store.generateAlias(model.pubKey)
 
-                    image.isIdenticon: !profileImage && model.identicon
-                    image.source: profileImage || model.identicon
+                    image.isIdenticon: contactDetails.isDisplayIconIdenticon === undefined ?
+                        true: contactDetails.isDisplayIconIdenticon
+                    image.source: {
+                        if (!contactDetails.identicon) {
+                            return root.store.generateIdenticon(model.pubKey)
+                        }
+                        return contactDetails.isDisplayIconIdenticon ? contactDetails.identicon : contactDetails.thumbnailImage
+                    }
 
                     title: displayName
 
@@ -84,13 +86,7 @@ StatusModal {
                                 hoverEnabled: true
                                 anchors.fill: parent
                                 cursorShape: Qt.PointingHandCursor
-                                onClicked: {
-                                    errorText.text = ""
-                                    const error = popup.store.acceptRequestToJoinCommunity(id);
-                                    if (error) {
-                                        errorText.text = error
-                                    }
-                                }
+                                onClicked: popup.store.acceptRequestToJoinCommunity(model.communityId, id)
                             }
                         },
                         StatusRoundIcon {
@@ -104,13 +100,7 @@ StatusModal {
                                 hoverEnabled: true
                                 anchors.fill: parent
                                 cursorShape: Qt.PointingHandCursor
-                                onClicked: {
-                                    errorText.text = ""
-                                    const error = popup.store.declineRequestToJoinCommunity(id);
-                                    if (error) {
-                                        errorText.text = error
-                                    }
-                                }
+                                onClicked: popup.store.declineRequestToJoinCommunity(model.communityId, id)
                             }
                         }
                     ]
