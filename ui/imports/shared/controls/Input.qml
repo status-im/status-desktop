@@ -8,6 +8,7 @@ import utils 1.0
 
 import "../panels"
 import "../controls"
+import "../stores"
 
 Item {
     property alias textField: inputValue
@@ -84,7 +85,7 @@ Item {
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 0
             anchors.right: clipboardButtonLoader.active ? clipboardButtonLoader.left : parent.right
-            anchors.rightMargin: parent.rightMargin
+            anchors.rightMargin: clipboardButtonLoader.active ? Style.current.padding : parent.rightMargin
             anchors.left: parent.left
             anchors.leftMargin: 0
             leftPadding: inputBox.hasIcon ? iconWidth + 20 : Style.current.padding
@@ -140,7 +141,7 @@ Item {
             active: inputBox.copyToClipboard || inputBox.pasteFromClipboard
             anchors.verticalCenter: parent.verticalCenter
             anchors.right: parent.right
-            anchors.rightMargin: 8
+            anchors.rightMargin: Style.current.padding
             sourceComponent: Component {
                 Item {
                     width: copyBtn.width
@@ -168,23 +169,19 @@ Item {
                                         qsTrId("paste")
 
                         }
-                        height: 28
-                        font.pixelSize: 12
-                        size: StatusBaseButton.Size.Small
                         onClicked: {
-                            // Not Refactored Yet
-//                            if (inputBox.copyToClipboard) {
-//                                chatsModel.copyToClipboard(inputBox.textToCopy ? inputBox.textToCopy : inputValue.text)
-//                            } else {
-//                                if (inputValue.canPaste) {
-//                                    inputValue.paste()
-//                                }
-//                            }
+                           if (inputBox.copyToClipboard) {
+                               RootStore.copyToClipboard(inputBox.textToCopy ? inputBox.textToCopy : inputValue.text)
+                           } else {
+                               if (inputValue.canPaste) {
+                                   inputValue.paste()
+                               }
+                           }
 
-//                            copyBtn.copied = true
-//                            timer.setTimeout(function() {
-//                                copyBtn.copied = false
-//                            }, 2000);
+                           copyBtn.copied = true
+                           timer.setTimeout(function() {
+                               copyBtn.copied = false
+                           }, 2000);
                         }
                     }
                 }
