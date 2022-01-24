@@ -81,17 +81,26 @@ ModalPopup {
         validationError: popup.passwordValidationError
     }
 
-
     StyledTextArea {
         id: accountPKeyInput
+        customHeight: 88
         anchors.top: passwordInput.bottom
         anchors.topMargin: marginBetweenInputs
-        //% "Paste the contents of your private key"
-        placeholderText: qsTrId("paste-the-contents-of-your-private-key")
+        anchors.left: parent.left
+        anchors.right: parent.right
+        validationError: popup.privateKeyValidationError
         //% "Private key"
         label: qsTrId("private-key")
-        customHeight: 88
-        validationError: popup.privateKeyValidationError
+        textField.wrapMode: Text.WordWrap
+        textField.horizontalAlignment: TextEdit.AlignHCenter
+        textField.verticalAlignment: TextEdit.AlignVCenter
+        textField.font.weight: Font.DemiBold
+        //% "Paste the contents of your private key"
+        placeholderText: qsTrId("paste-the-contents-of-your-private-key")
+        textField.placeholderTextColor: Style.current.secondaryText
+        textField.selectByKeyboard: true
+        textField.selectionColor: Style.current.secondaryBackground
+        textField.selectedTextColor: Style.current.secondaryText
     }
 
     Input {
