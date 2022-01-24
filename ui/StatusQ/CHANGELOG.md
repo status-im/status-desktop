@@ -1,4 +1,19 @@
 <a name=""></a>
+##  Version 0.21.0 (2022-01-24)
+
+
+#### Bug Fixes
+
+* **build:**  broken MacOS build (#533) ([55901cf0](55901cf0))
+
+#### Features
+
+* **StatusMessage:**  Introducing a new StatusQ Component for Chat Messages ([ea955694](ea955694))
+* **StatusQ.Controls:**  Introduce `StatusPasswordStrengthIndicator` ([626695da](626695da), closes [#528](528))
+
+
+
+<a name=""></a>
 ##  Version 0.20.0 (2022-01-17)
 
 
