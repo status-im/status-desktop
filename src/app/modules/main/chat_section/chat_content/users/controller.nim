@@ -42,7 +42,8 @@ proc newController*(delegate: io_interface.AccessInterface, events: EventEmitter
 method delete*(self: Controller) =
   discard
 
-method init*(self: Controller) = 
+method init*(self: Controller) =
+  # TODO call this function again if isUsersListAvailable changes
   if(self.isUsersListAvailable):
     self.events.on(SIGNAL_MESSAGES_LOADED) do(e:Args):
       let args = MessagesLoadedArgs(e)
@@ -52,29 +53,35 @@ method init*(self: Controller) =
       self.delegate.newMessagesLoaded(args.messages)
 
     self.events.on(SIGNAL_CONTACT_NICKNAME_CHANGED) do(e: Args):
-      var args = ContactArgs(e)
+      let args = ContactArgs(e)
       self.delegate.contactNicknameChanged(args.contactId)
 
     self.events.on(SIGNAL_CONTACTS_STATUS_UPDATED) do(e: Args):
-      var args = ContactsStatusUpdatedArgs(e)
+      let args = ContactsStatusUpdatedArgs(e)
       self.delegate.contactsStatusUpdated(args.statusUpdates)
 
     self.events.on(SIGNAL_CONTACT_UPDATED) do(e: Args):
-      var args = ContactArgs(e)
+      let args = ContactArgs(e)
       self.delegate.contactUpdated(args.contactId)
 
     self.events.on(SIGNAL_LOGGEDIN_USER_IMAGE_CHANGED) do(e: Args):
       self.delegate.loggedInUserImageChanged()
 
     self.events.on(SIGNAL_CHAT_MEMBERS_ADDED) do(e: Args):
-      var args = ChatMembersAddedArgs(e)
+      let args = ChatMembersAddedArgs(e)
       if (args.chatId == self.chatId): 
         self.delegate.onChatMembersAdded(args.ids)
 
     self.events.on(SIGNAL_CHAT_MEMBER_REMOVED) do(e: Args):
-      var args = ChatMemberRemovedArgs(e)
+      let args = ChatMemberRemovedArgs(e)
       if (args.chatId == self.chatId): 
         self.delegate.onChatMemberRemoved(args.id)
+
+    if (self.belongsToCommunity):
+      self.events.on(SIGNAL_COMMUNITY_MEMBER_APPROVED) do(e: Args):
+        let args = CommunityMemberArgs(e)
+        if (args.communityId == self.sectionId):
+          self.delegate.onChatMembersAdded(@[args.pubKey])
 
 method getMembersPublicKeys*(self: Controller): seq[string] = 
   # in case of 1:1 chat, there is no a members list
