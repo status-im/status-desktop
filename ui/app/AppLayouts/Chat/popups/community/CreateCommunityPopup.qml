@@ -33,7 +33,7 @@ StatusModal {
         if (isEdit) {
             contentItem.communityName.input.text = community.name;
             contentItem.communityDescription.input.text = community.description;
-            contentItem.communityColor.color = community.communityColor;
+            contentItem.communityColor.color = community.color;
             contentItem.communityColor.colorSelected = true
             if (community.largeImage) {
                 contentItem.communityImage.selectedImage = community.largeImage
