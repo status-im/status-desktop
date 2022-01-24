@@ -75,6 +75,9 @@ QtObject:
   proc emitStoringPasswordSuccess*(self: View) =
     self.storingPasswordSuccess()
 
+  proc activeSection*(self: View): ActiveSection =
+    return self.activeSection
+
   proc getActiveSection(self: View): QVariant {.slot.} =
     return self.activeSectionVariant
 

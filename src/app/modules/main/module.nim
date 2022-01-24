@@ -1,8 +1,8 @@
 import NimQml, tables, json, sugar, sequtils
 
-import io_interface, view, controller, ../shared_models/section_item,../shared_models/section_model
-import ../shared_models/member_item, ../shared_models/members_model
+import io_interface, view, controller
 import ./communities/models/[pending_request_item, pending_request_model]
+import ../shared_models/[user_item, user_model, section_item, section_model, active_section]
 import ../../global/app_sections_config as conf
 import ../../global/app_signals
 import ../../global/global_singleton
@@ -134,7 +134,7 @@ proc newModule*[T](
   result.stickersModule = stickers_module.newModule(result, events, stickersService)
   result.activityCenterModule = activity_center_module.newModule(result, events, activityCenterService, contactsService,
   messageService)
-  result.communitiesModule = communities_module.newModule(result, events, communityService)
+  result.communitiesModule = communities_module.newModule(result, events, communityService, contactsService)
   result.appSearchModule = app_search_module.newModule(result, events, contactsService, chatService, communityService, 
   messageService)
   result.nodeSectionModule = node_section_module.newModule(result, events, settingsService, nodeService, nodeConfigurationService)
@@ -180,7 +180,9 @@ proc createCommunityItem[T](self: Module[T], c: CommunityDto): SectionItem =
     c.isMember,
     c.permissions.access,
     c.permissions.ensOnly,
-    c.members.map(x => member_item.initItem(x.id, x.roles)),
+    c.members.map(proc(member: Member): user_item.Item =
+      let (name, image, isIdenticon) = self.controller.getContactNameAndImage(member.id)
+      result = user_item.initItem(member.id, name, OnlineStatus.Offline, image, isIdenticon)),
     c.pendingRequestsToJoin.map(x => pending_request_item.initItem(
       x.id,
       x.publicKey,
@@ -586,3 +588,7 @@ method resolveENS*[T](self: Module[T], ensName: string, uuid: string) =
 
 method resolvedENS*[T](self: Module[T], publicKey: string, address: string, uuid: string) =
   self.view.emitResolvedENSSignal(publicKey, address, uuid)
+
+method contactUpdated*[T](self: Module[T], publicKey: string) =
+  let (name, image, isIdenticon) = self.controller.getContactNameAndImage(publicKey)
+  self.view.activeSection().updateMember(publicKey, name, image, isIdenticon)

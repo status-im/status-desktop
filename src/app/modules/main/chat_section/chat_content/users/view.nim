@@ -1,5 +1,5 @@
 import NimQml
-import model
+import ../../../../shared_models/user_model
 import io_interface
 
 QtObject:

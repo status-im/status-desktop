@@ -1,5 +1,5 @@
 import strformat
-import ./members_model, ./member_item
+import ./user_model, ./user_item
 import ../main/communities/models/[pending_request_item, pending_request_model]
 
 type
@@ -33,7 +33,7 @@ type
     canRequestAccess: bool
     access: int
     ensOnly: bool
-    membersModel: MembersModel
+    membersModel: user_model.Model
     pendingRequestsToJoinModel: PendingRequestModel
 
 proc initItem*(
@@ -56,7 +56,7 @@ proc initItem*(
     isMember = false,
     access: int = 0,
     ensOnly = false,
-    members: seq[MemberItem] = @[],
+    members: seq[user_item.Item] = @[],
     pendingRequestsToJoin: seq[PendingRequestItem] = @[]
     ): SectionItem =
   result.id = id
@@ -78,8 +78,10 @@ proc initItem*(
   result.isMember = isMember
   result.access = access
   result.ensOnly = ensOnly
-  result.membersModel = newMembersModel(members)
-  result.pendingRequestsToJoinModel = newPendingRequestModel(pendingRequestsToJoin)
+  result.membersModel = newModel()
+  result.membersModel.setItems(members)
+  result.pendingRequestsToJoinModel = newPendingRequestModel()
+  result.pendingRequestsToJoinModel.setItems(pendingRequestsToJoin)
 
 proc isEmpty*(self: SectionItem): bool =
   return self.id.len == 0
@@ -177,11 +179,19 @@ proc access*(self: SectionItem): int {.inline.} =
 proc ensOnly*(self: SectionItem): bool {.inline.} = 
   self.ensOnly
 
-proc members*(self: SectionItem): MembersModel {.inline.} =
+proc members*(self: SectionItem): user_model.Model {.inline.} =
   self.membersModel
 
 proc hasMember*(self: SectionItem, pubkey: string): bool =
-  self.membersModel.hasMember(pubkey)
+  self.membersModel.isContactWithIdAdded(pubkey)
+
+proc updateMember*(
+    self: SectionItem,
+    pubkey: string,
+    name: string,
+    image: string,
+    isIdenticon: bool) =
+  self.membersModel.updateItem(pubkey, name, image, isIdenticon)
 
 proc pendingRequestsToJoin*(self: SectionItem): PendingRequestModel {.inline.} = 
   self.pendingRequestsToJoinModel

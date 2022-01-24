@@ -1,7 +1,8 @@
 import NimQml
 import io_interface
 import ../io_interface as delegate_interface
-import view, item, model, controller
+import view, controller
+import ../../../../shared_models/[user_model, user_item]
 import ../../../../../global/global_singleton
 import ../../../../../core/eventemitter
 import ../../../../../../app_service/service/contacts/service as contact_service

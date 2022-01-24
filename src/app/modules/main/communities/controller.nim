@@ -5,6 +5,7 @@ import ./io_interface
 import ../../../core/signals/types
 import ../../../core/eventemitter
 import ../../../../app_service/service/community/service as community_service
+import ../../../../app_service/service/contacts/service as contacts_service
 
 export controller_interface
 
@@ -13,24 +14,24 @@ type
     delegate: io_interface.AccessInterface
     events: EventEmitter
     communityService: community_service.Service
+    contactsService: contacts_service.Service
 
 proc newController*(
     delegate: io_interface.AccessInterface,
     events: EventEmitter,
-    communityService: community_service.Service
+    communityService: community_service.Service,
+    contactsService: contacts_service.Service
     ): Controller =
   result = Controller()
   result.delegate = delegate
   result.events = events
   result.communityService = communityService
+  result.contactsService = contactsService
 
 method delete*(self: Controller) =
   discard
 
 method init*(self: Controller) =
-  let communities = self.communityService.getAllCommunities()
-  self.delegate.setAllCommunities(communities)
-
   self.events.on(SIGNAL_COMMUNITY_CREATED) do(e:Args):
     let args = CommunityArgs(e)
     self.delegate.addCommunity(args.community)
@@ -62,6 +63,9 @@ method init*(self: Controller) =
   self.events.on(SIGNAL_COMMUNITY_CATEGORY_DELETED) do(e:Args):
     let args = CommunityCategoryArgs(e)
     # self.delegate.communityCategoryDeleted()
+
+method getAllCommunities*(self: Controller): seq[CommunityDto] =
+  result = self.communityService.getAllCommunities()
 
 method joinCommunity*(self: Controller, communityId: string): string =
   self.communityService.joinCommunity(communityId)
@@ -153,3 +157,10 @@ method removeUserFromCommunity*(self: Controller, communityId: string, pubKeys: 
 
 method banUserFromCommunity*(self: Controller, communityId: string, pubKey: string) =
   self.communityService.removeUserFromCommunity(communityId, pubKey)
+
+method setCommunityMuted*(self: Controller, communityId: string, muted: bool) =
+  self.communityService.setCommunityMuted(communityId, muted)
+
+method getContactNameAndImage*(self: Controller, contactId: string): 
+    tuple[name: string, image: string, isIdenticon: bool] =
+  return self.contactsService.getContactNameAndImage(contactId)
