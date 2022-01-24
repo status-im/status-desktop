@@ -126,6 +126,14 @@ method init*(self: Controller) =
     var args = ResolvedContactArgs(e)
     self.delegate.resolvedENS(args.pubkey, args.address, args.uuid)
 
+  self.events.on(SIGNAL_CONTACT_UPDATED) do(e: Args):
+    var args = ContactArgs(e)
+    self.delegate.contactUpdated(args.contactId)
+
+  self.events.on(SIGNAL_CONTACT_NICKNAME_CHANGED) do(e: Args):
+    var args = ContactArgs(e)
+    self.delegate.contactUpdated(args.contactId)
+
 method getJoinedCommunities*(self: Controller): seq[CommunityDto] =
   return self.communityService.getJoinedCommunities()
 

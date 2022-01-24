@@ -4,11 +4,11 @@ import ./io_interface
 import ../io_interface as delegate_interface
 import ./view, ./controller
 import ../../shared_models/section_item
-import ../../shared_models/member_item
-import ../../shared_models/members_model
+import ../../shared_models/[user_item, user_model]
 import ../../../global/global_singleton
 import ../../../core/eventemitter
 import ../../../../app_service/service/community/service as community_service
+import ../../../../app_service/service/contacts/service as contacts_service
 
 export io_interface
 
@@ -20,10 +20,14 @@ type
     viewVariant: QVariant
     moduleLoaded: bool
 
+# Forward declaration
+method setAllCommunities*(self: Module, communities: seq[CommunityDto])
+
 proc newModule*(
     delegate: delegate_interface.AccessInterface,
     events: EventEmitter,
-    communityService: community_service.Service
+    communityService: community_service.Service,
+    contactsService: contacts_service.Service
     ): Module =
   result = Module()
   result.delegate = delegate
@@ -32,7 +36,8 @@ proc newModule*(
   result.controller = controller.newController(
     result,
     events,
-    communityService
+    communityService,
+    contactsService
   )
   result.moduleLoaded = false
 
@@ -51,6 +56,9 @@ method isLoaded*(self: Module): bool =
 
 method viewDidLoad*(self: Module) =
   self.moduleLoaded = true
+
+  self.setAllCommunities(self.controller.getAllCommunities())
+
   self.delegate.communitiesModuleDidLoad()
 
 method getCommunityItem(self: Module, c: CommunityDto): SectionItem =
@@ -74,7 +82,9 @@ method getCommunityItem(self: Module, c: CommunityDto): SectionItem =
       c.isMember,
       c.permissions.access,
       c.permissions.ensOnly,
-      c.members.map(x => member_item.initItem(x.id, x.roles))
+      c.members.map(proc(member: Member): user_item.Item =
+        let (name, image, isIdenticon) = self.controller.getContactNameAndImage(member.id)
+        result = user_item.initItem(member.id, name, OnlineStatus.Offline, image, isIdenticon))
     )
 
 method setAllCommunities*(self: Module, communities: seq[CommunityDto]) =

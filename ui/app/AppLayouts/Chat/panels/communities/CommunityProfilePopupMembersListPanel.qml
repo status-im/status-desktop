@@ -127,27 +127,19 @@ Item {
                 id: memberList
                 model: root.community.members
                 delegate: StatusListItem {
-
                     id: memberItem
 
-                    property var contactDetail: Utils.getContactDetailsAsJson(model.pubKey)
-                    property string identicon: contactDetail.identicon || root.store.generateIdenticon(model.pubKey)
-                    property string username: contactDetail.name || root.store.generateAlias(model.pubKey)
-                    property string nickname: contactDetail.localNickname || ""
-                    property string profileImage: Global.getProfileImage(model.pubKey) || ""
-
                     visible: !!!memberSearch.input.text || 
-                        contactDetail.name.toLowerCase().includes(memberSearch.input.text.toLowerCase()) ||
-                        nickname.toLowerCase().includes(memberSearch.input.text.toLowerCase())
+                        model.name.toLowerCase().includes(memberSearch.input.text.toLowerCase())
                     anchors.horizontalCenter: parent.horizontalCenter
 
-                    image.isIdenticon: !profileImage
-                    image.source: profileImage || identicon
+                    image.isIdenticon: model.isIdenticon
+                    image.source: model.icon
 
                     title: {
                         if (menuButton.visible) {
-                            return !username.endsWith(".eth") && !!nickname ?
-                                nickname : Utils.removeStatusEns(username)
+                            return !model.name.endsWith(".eth") ?
+                                model.name : Utils.removeStatusEns(model.name)
                         }
                         //% "You"
                         return qsTrId("You")
@@ -158,7 +150,7 @@ Item {
                             id: menuButton
                             width: 32
                             height: 32
-                            visible: model.pubKey.toLowerCase() !== userProfile.pubKey.toLowerCase()
+                            visible: model.id.toLowerCase() !== userProfile.pubKey.toLowerCase()
                             icon.name: "more"
                             type: StatusFlatRoundButton.Type.Secondary
                             onClicked: {
@@ -178,7 +170,7 @@ Item {
                                     //% "View Profile"
                                     text: qsTrId("view-profile")
                                     icon.name: "channel"
-                                    onTriggered: Global.openProfilePopup(model.pubKey)
+                                    onTriggered: Global.openProfilePopup(model.id)
                                 }
 
                                 StatusMenuSeparator {

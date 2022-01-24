@@ -10,6 +10,9 @@ method delete*(self: AccessInterface) {.base.} =
 method init*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method getAllCommunities*(self: AccessInterface): seq[CommunityDto] {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method joinCommunity*(self: AccessInterface, communityId: string): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -47,6 +50,13 @@ method removeUserFromCommunity*(self: AccessInterface, communityId: string, pubK
   raise newException(ValueError, "No implementation available")
 
 method banUserFromCommunity*(self: AccessInterface, communityId: string, pubKey: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method setCommunityMuted*(self: AccessInterface, communityId: string, muted: bool) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getContactNameAndImage*(self: AccessInterface, contactId: string): 
+    tuple[name: string, image: string, isIdenticon: bool] {.base.} =
   raise newException(ValueError, "No implementation available")
 
 type

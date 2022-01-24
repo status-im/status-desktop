@@ -32,3 +32,6 @@ method communityLeft*(self: AccessInterface, communityId: string) {.base.} =
 
 method resolvedENS*(self: AccessInterface, publicKey: string, address: string, uuid: string) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method contactUpdated*(self: AccessInterface, publicKey: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
