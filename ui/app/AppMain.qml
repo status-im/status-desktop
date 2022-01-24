@@ -777,10 +777,13 @@ Item {
             width: 350
             x: parent.width / 2 - width / 2
             y: parent.height / 2 - height / 2
-            // Not Refactored Yet
-//            modelList: chatsModel.channelView.chats
+            // TODO improve this to work with community Chats as well
+            modelList: mainModule.getChatSectionModule().model
             getText: function (modelData) {
                 return modelData.name
+            }
+            getId: function (modelData) {
+                return modelData.itemId
             }
             getImageComponent: function (parent, modelData) {
                 return statusSmartIdenticonComponent.createObject(parent, {
@@ -789,12 +792,11 @@ Item {
                                                             });
             }
 
-            // Not Refactored Yet
-//            onClicked: function (index) {
-//                Global.changeAppSectionBySectionType(Constants.appSection.chat)
-//                chatsModel.channelView.setActiveChannelByIndex(index)
-//                channelPicker.close()
-//            }
+            onClicked: function (index, id) {
+                Global.changeAppSectionBySectionType(Constants.appSection.chat)
+                mainModule.getChatSectionModule().setActiveItem(id, "")
+                channelPicker.close()
+            }
         }
     }
 
