@@ -15,7 +15,8 @@ Popup {
     property var getImageSource
     property var getImageComponent
     property var getText: function () {}
-    property var onClicked: function () {}
+    property var getId: function () {}
+    signal clicked(int index, string id)
     property int imageWidth: 22
     property int imageHeight: 22
     property string title
@@ -119,7 +120,7 @@ Popup {
                 return popup.close()
             }
             if (event.key === Qt.Key_Enter || event.key === Qt.Key_Return) {
-                return popup.onClicked(listView.currentIndex)
+                return popup.clicked(listView.currentIndex, popup.getId(listView.currentItem.myData))
             }
             if (!listView.currentItem.visible) {
                 goToNextAvailableIndex(false)
@@ -139,12 +140,8 @@ Popup {
         clip: true
 
         delegate: Rectangle {
-            property string myText: {
-                if (typeof modelData === "undefined") {
-                    return popup.getText(model)
-                }
-                return popup.getText(modelData)
-            }
+            property variant myData: typeof modelData === "undefined" ? model : modelData
+            property string myText: popup.getText(myData)
             id: rectangle
             visible: searchBox.text === "" || myText.includes(searchBox.text)
             color: listView.currentIndex === index ? Style.current.backgroundHover : Style.current.transparent
@@ -172,10 +169,7 @@ Popup {
                         if (!popup.getImageComponent) {
                             return ""
                         }
-                        if (typeof modelData === "undefined") {
-                            return popup.getImageComponent(imageComponentContainer, model)
-                        }
-                        return popup.getImageComponent(imageComponentContainer, modelData)
+                        return popup.getImageComponent(imageComponentContainer, myData)
                     }
                 }
             }
@@ -190,10 +184,7 @@ Popup {
                         if (!popup.getImageSource) {
                             return ""
                         }
-                        if (typeof modelData === "undefined") {
-                            return popup.getImageSource(model)
-                        }
-                        return popup.getImageSource(modelData)
+                        return popup.getImageSource(myData)
                     }
                 }
             }
@@ -215,7 +206,7 @@ Popup {
                     listView.currentIndex = index
                 }
                 onClicked: {
-                    popup.onClicked(index)
+                    popup.clicked(index, popup.getId(myData))
                 }
             }
         }

@@ -23,6 +23,9 @@ StatusInputListPopup {
     getText: function (modelData) {
         return modelData.shortname
     }
+    getId: function (modelData) {
+        return modelData.unicode
+    }
     onClicked: function (index) {
         emojiSuggestions.addEmoji(index)
     }
