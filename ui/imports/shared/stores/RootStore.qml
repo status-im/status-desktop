@@ -69,8 +69,8 @@ QtObject {
 //        return walletModelInst.transactionsView.transferTokens(from, to, address, amount, gasLimit, gasPrice, tipLimit, overallLimit, password, uuid);
     }
 
-    function copyToClipboard(textToCopy) {
-//        chatsModelInst.copyToClipboard(textToCopy)
+    function copyToClipboard(text) {
+        globalUtils.copyToClipboard(text)
     }
 
     property var gifColumnA: chatSectionChatContentInputArea.gifColumnA 
