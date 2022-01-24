@@ -52,6 +52,8 @@ method viewDidLoad*(self: Module) =
   # add other memebers
   let usersKeys = self.controller.getMembersPublicKeys()
   for k in usersKeys:
+    if (k == singletonInstance.userProfile.getPubKey()):
+      continue
     let (name, image, isIdenticon) = self.controller.getContactNameAndImage(k)
     let statusUpdateDto = self.controller.getStatusForContact(k)
     let status = statusUpdateDto.statusType.int.OnlineStatus
