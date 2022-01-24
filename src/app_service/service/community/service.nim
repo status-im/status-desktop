@@ -46,6 +46,10 @@ type
     category*: Category
     channels*: seq[string]
 
+  CommunityMemberArgs* = ref object of Args
+    communityId*: string
+    pubKey*: string
+
 # Signals which may be emitted by this service:
 const SIGNAL_COMMUNITY_JOINED* = "communityJoined"
 const SIGNAL_COMMUNITY_MY_REQUEST_ADDED* = "communityMyRequestAdded"
@@ -60,6 +64,7 @@ const SIGNAL_COMMUNITY_CHANNEL_DELETED* = "communityChannelDeleted"
 const SIGNAL_COMMUNITY_CATEGORY_CREATED* = "communityCategoryCreated"
 const SIGNAL_COMMUNITY_CATEGORY_EDITED* = "communityCategoryEdited"
 const SIGNAL_COMMUNITY_CATEGORY_DELETED* = "communityCategoryDeleted"
+const SIGNAL_COMMUNITY_MEMBER_APPROVED* = "communityMemberApproved"
 
 QtObject:
   type 
@@ -646,13 +651,14 @@ QtObject:
       i.inc()
     return -1
 
-  proc removeMembershipRequestFromCommunity*(self: Service, communityId: string, requestId: string) =
+  proc removeMembershipRequestFromCommunityAndGetMemberPubkey*(self: Service, communityId: string, requestId: string): string =
     let index = self.getPendingRequestIndex(communityId, requestId)
 
     if (index == -1):
       raise newException(RpcException, fmt"Community request not found: {requestId}")
 
     var community = self.joinedCommunities[communityId]
+    result = community.pendingRequestsToJoin[index].publicKey
     community.pendingRequestsToJoin.delete(index)
 
     self.joinedCommunities[communityId] = community
@@ -661,9 +667,13 @@ QtObject:
     try:
       discard status_go.acceptRequestToJoinCommunity(requestId)
 
-      self.removeMembershipRequestFromCommunity(communityId, requestId)
+      let newMemberPubkey = self.removeMembershipRequestFromCommunityAndGetMemberPubkey(communityId, requestId)
 
-      self.events.emit(SIGNAL_COMMUNITY_EDITED, CommunityArgs(community: self.joinedCommunities[communityId]))
+      if (newMemberPubkey == ""):
+        error "Did not find pubkey in the pending request"
+        return
+
+      self.events.emit(SIGNAL_COMMUNITY_MEMBER_APPROVED, CommunityMemberArgs(communityId: communityId, pubKey: newMemberPubkey))
     except Exception as e:
       error "Error accepting request to join community", msg = e.msg
 
@@ -671,7 +681,7 @@ QtObject:
     try:
       discard status_go.declineRequestToJoinCommunity(requestId)
 
-      self.removeMembershipRequestFromCommunity(communityId, requestId)
+      discard self.removeMembershipRequestFromCommunityAndGetMemberPubkey(communityId, requestId)
 
       self.events.emit(SIGNAL_COMMUNITY_EDITED, CommunityArgs(community: self.joinedCommunities[communityId]))
     except Exception as e:
