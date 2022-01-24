@@ -138,9 +138,7 @@ QtObject {
     }
 
     function getQrCode(address) {
-        // TODO: Move to transaction root module and not wallet
-        // Not Refactored Yet
-//        return profileModel.qrCode(address)
+        return globalUtils.qrCode(address)
     }
 
     function hex2Dec(value) {
