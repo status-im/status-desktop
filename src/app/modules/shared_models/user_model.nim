@@ -1,6 +1,6 @@
-import NimQml, Tables
+import NimQml, Tables, strformat
 
-import item
+import user_item
 
 type
   ModelRole {.pure.} = enum
@@ -27,6 +27,18 @@ QtObject:
     result.setup
 
   proc countChanged(self: Model) {.signal.}
+
+  proc setItems*(self: Model, items: seq[Item]) =
+    self.beginResetModel()
+    self.items = items
+    self.endResetModel()
+    self.countChanged()
+
+  proc `$`*(self: Model): string =
+    for i in 0 ..< self.items.len:
+      result &= fmt"""User Model:
+      [{i}]:({$self.items[i]})
+      """
   proc getCount(self: Model): int {.slot.} =
     self.items.len
   QtProperty[int] count:

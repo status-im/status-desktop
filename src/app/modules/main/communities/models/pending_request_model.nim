@@ -21,12 +21,18 @@ QtObject:
     self.items = @[]
     self.QAbstractListModel.delete
 
-  proc newPendingRequestModel*(pendingRequestsToJoin: seq[PendingRequestItem]): PendingRequestModel =
+  proc newPendingRequestModel*(): PendingRequestModel =
     new(result, delete)
-    result.items = pendingRequestsToJoin
     result.setup
 
   proc countChanged(self: PendingRequestModel) {.signal.}
+
+  proc setItems*(self: PendingRequestModel, items: seq[PendingRequestItem]) =
+    self.beginResetModel()
+    self.items = items
+    self.endResetModel()
+    self.countChanged()
+
   proc getCount(self: PendingRequestModel): int {.slot.} =
     self.items.len
   QtProperty[int] count:
