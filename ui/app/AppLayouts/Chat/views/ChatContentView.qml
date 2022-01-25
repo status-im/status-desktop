@@ -202,7 +202,7 @@ ColumnLayout {
                 chatContentModule.leaveChat()
             }
 
-            onDeleteChat: root.rootStore.removeChat(chatId)
+            onDeleteCommunityChat: root.rootStore.removeCommunityChat(chatId)
 
             onDownloadMessages: {
                 // Not Refactored Yet

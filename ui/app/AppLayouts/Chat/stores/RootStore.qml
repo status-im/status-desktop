@@ -194,7 +194,7 @@ QtObject {
         return globalUtils.plainText(text)
     }
 
-    function removeChat(chatId) {
-        chatCommunitySectionModule.removeChat(chatId)
+    function removeCommunityChat(chatId) {
+        chatCommunitySectionModule.removeCommunityChat(chatId)
     }
 }

@@ -21,7 +21,7 @@ method createOneToOneChat*(self: AccessInterface, chatId: string, ensName: strin
 method leaveChat*(self: AccessInterface, chatId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method removeChat*(self: AccessInterface, chatId: string) {.base.} =
+method removeCommunityChat*(self: AccessInterface, chatId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getActiveChatId*(self: AccessInterface): string {.base.} =
