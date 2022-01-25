@@ -71,7 +71,7 @@ method init*(self: Controller) =
 
   self.events.on(chat_service.SIGNAL_CHAT_LEFT) do(e: Args):
     let args = chat_service.ChatArgs(e)
-    self.delegate.removeChat(args.chatId)
+    self.delegate.onCommunityChannelDeletedOrChatLeft(args.chatId)
 
   self.events.on(SIGNAL_CONTACT_ADDED) do(e: Args):
     var args = ContactArgs(e)
@@ -105,7 +105,7 @@ method init*(self: Controller) =
     self.events.on(SIGNAL_COMMUNITY_CHANNEL_DELETED) do(e:Args):
       let args = CommunityChatIdArgs(e)
       if (args.communityId == self.sectionId):
-        self.delegate.onCommunityChannelDeleted(args.chatId)
+        self.delegate.onCommunityChannelDeletedOrChatLeft(args.chatId)
 
     self.events.on(SIGNAL_COMMUNITY_CHANNEL_EDITED) do(e:Args):
       let args = CommunityChatArgs(e)
@@ -171,12 +171,8 @@ method setActiveItemSubItem*(self: Controller, itemId: string, subItemId: string
 
   self.delegate.activeItemSubItemSet(self.activeItemId, self.activeSubItemId)
 
-method removeChat*(self: Controller, itemId: string) =
-  if self.isCommunitySection:
-    self.communityService.deleteCommunityChat(self.getMySectionId(), itemId)
-  # else:
-    # not implemented
-    # self.chatService.deleteChatById(itemId)
+method removeCommunityChat*(self: Controller, itemId: string) =
+  self.communityService.deleteCommunityChat(self.getMySectionId(), itemId)
 
 method getOneToOneChatNameAndImage*(self: Controller, chatId: string): 
   tuple[name: string, image: string, isIdenticon: bool] =
