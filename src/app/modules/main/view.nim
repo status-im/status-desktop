@@ -36,9 +36,6 @@ QtObject:
     # In some point, here, we will setup some exposed main module related things.
     self.delegate.viewDidLoad()
 
-  proc addItem*(self: View, item: SectionItem) =
-    self.model.addItem(item)
-
   proc editItem*(self: View, item: SectionItem) =
     self.model.editItem(item)
     if (self.activeSection.getId() == item.id):

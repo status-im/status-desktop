@@ -241,14 +241,14 @@ method load*[T](
   notificationsCount, 
   active = false, 
   enabled = true)
-  self.view.addItem(chatSectionItem)
+  self.view.model().addItem(chatSectionItem)
   if(activeSectionId == chatSectionItem.id):
     activeSection = chatSectionItem
 
   # Community Section
   for c in joinedCommunities:
     let communitySectionItem = self.createCommunityItem(c)
-    self.view.addItem(communitySectionItem)
+    self.view.model().addItem(communitySectionItem)
     if(activeSectionId == communitySectionItem.id):
       activeSection = communitySectionItem
 
@@ -263,7 +263,7 @@ method load*[T](
   notificationsCount = 0, 
   active = false,
   enabled = singletonInstance.localAccountSensitiveSettings.getIsWalletEnabled())
-  self.view.addItem(walletSectionItem)
+  self.view.model().addItem(walletSectionItem)
   if(activeSectionId == walletSectionItem.id):
     activeSection = walletSectionItem
 
@@ -278,7 +278,7 @@ method load*[T](
   notificationsCount = 0, 
   active = false, 
   enabled = singletonInstance.localAccountSensitiveSettings.getIsWalletV2Enabled())
-  self.view.addItem(walletV2SectionItem)
+  self.view.model().addItem(walletV2SectionItem)
   if(activeSectionId == walletV2SectionItem.id):
     activeSection = walletV2SectionItem
 
@@ -293,7 +293,7 @@ method load*[T](
   notificationsCount = 0, 
   active = false,
   enabled = singletonInstance.localAccountSensitiveSettings.getIsBrowserEnabled())
-  self.view.addItem(browserSectionItem)
+  self.view.model().addItem(browserSectionItem)
   if(activeSectionId == browserSectionItem.id):
     activeSection = browserSectionItem
 
@@ -309,7 +309,7 @@ method load*[T](
   notificationsCount = 0, 
   active = false, 
   enabled = singletonInstance.localAccountSensitiveSettings.getNodeManagementEnabled())
-  self.view.addItem(nodeManagementSectionItem)
+  self.view.model().addItem(nodeManagementSectionItem)
   if(activeSectionId == nodeManagementSectionItem.id):
     activeSection = nodeManagementSectionItem
 
@@ -325,7 +325,7 @@ method load*[T](
   notificationsCount = 0, 
   active = false, 
   enabled = true)
-  self.view.addItem(profileSettingsSectionItem)
+  self.view.model().addItem(profileSettingsSectionItem)
   if(activeSectionId == profileSettingsSectionItem.id):
     activeSection = profileSettingsSectionItem
 
@@ -519,6 +519,9 @@ method communityJoined*[T](
   messageService: message_service.Service,
   gifService: gif_service.Service,
 ) =
+  var firstCommunityJoined = false
+  if (self.communitySectionsModule.len == 0):
+    firstCommunityJoined = true
   self.communitySectionsModule[community.id] = chat_section_module.newModule(
       self,
       events,
@@ -534,7 +537,11 @@ method communityJoined*[T](
   self.communitySectionsModule[community.id].load(events, settingsService, contactsService, chatService, communityService, messageService, gifService)
 
   let communitySectionItem = self.createCommunityItem(community)
-  self.view.addItem(communitySectionItem)
+  if (firstCommunityJoined):
+    # If there are no other communities, add the first community after the Chat section in the model so that the order is respected
+    self.view.model().addItem(communitySectionItem, self.view.model().getItemIndex(conf.CHAT_SECTION_ID) + 1)
+  else:
+    self.view.model().addItem(communitySectionItem)
   self.setActiveSection(communitySectionItem)
 
 method communityLeft*[T](self: Module[T], communityId: string) =

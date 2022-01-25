@@ -149,6 +149,16 @@ QtObject:
 
     self.countChanged()
 
+  proc addItem*(self: SectionModel, item: SectionItem, index: int) =
+    let parentModelIndex = newQModelIndex()
+    defer: parentModelIndex.delete
+
+    self.beginInsertRows(parentModelIndex, index, index)
+    self.items.insert(item, index)
+    self.endInsertRows()
+
+    self.countChanged()
+
   proc getItemIndex*(self: SectionModel, id: string): int =
     var i = 0
     for item in self.items:
