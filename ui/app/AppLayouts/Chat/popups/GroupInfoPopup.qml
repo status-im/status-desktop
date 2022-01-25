@@ -35,13 +35,14 @@ StatusModal {
     property bool isAdmin: false
     property Component pinnedMessagesPopupComponent
 
+    property var chatContentModule
+
     function resetSelectedMembers(){
         pubKeys = []
 
-        memberCount = channel ? channel.members.rowCount() : 0
+        memberCount = popup.chatContentModule.usersModule.model.rowCount()
         currMemberCount = memberCount
         popup.store.addToGroupContacts.clear()
-        popup.store.reCalculateAddToGroupContacts(channel)
     }
 
     function doAddMembers(){
@@ -77,10 +78,15 @@ StatusModal {
     onEditButtonClicked: renameGroupPopup.open()
 
     onClosed: {
+        chatSectionModule.clearMyContacts()
         popup.destroy();
     }
 
     onOpened: {
+        popup.chatContentModule = popup.store.currentChatContentModule()
+
+        chatSectionModule.populateMyContacts()
+
         addMembers = false;
         if (popup.channel) {
             popup.isAdmin = popup.chatSectionModule.activeItem.amIChatAdmin
@@ -136,10 +142,10 @@ StatusModal {
 
         ContactListPanel {
             id: contactList
-            visible: popup.store.addToGroupContacts.count > 0
+            visible: popup.chatContentModule.usersModule.model.rowCount() > 0
             Layout.fillHeight: true
             Layout.fillWidth: true
-            model: popup.store.addToGroupContacts
+            model: chatSectionModule.listOfMyContacts
             selectMode: memberCount < maxMembers
             searchString: searchBox.text.toLowerCase()
             onItemChecked: function(pubKey, itemChecked){
@@ -153,7 +159,7 @@ StatusModal {
                         pubKeys.splice(idx, 1);
                     }
                 }
-                memberCount = popup.channel.members.rowCount() + pubKeys.length;
+                memberCount = popup.chatContentModule.usersModule.model.rowCount() + pubKeys.length;
                 btnSelectMembers.enabled = pubKeys.length > 0
             }
         }
@@ -163,7 +169,7 @@ StatusModal {
         id: groupInfoItem
 
         width: parent.width - 2*Style.current.padding
-        height: parent.height - 2*Style.current.padding
+        height: parent.height
         anchors.top: parent.top
         anchors.topMargin: Style.current.padding
         anchors.horizontalCenter: parent.horizontalCenter
@@ -208,25 +214,20 @@ StatusModal {
 
         ListView {
             id: memberList
+            spacing: Style.current.padding
             Layout.fillWidth: true
             Layout.fillHeight: true
-            clip: true
-            model: popup.channel? popup.channel.members : []
+            model: popup.chatContentModule.usersModule.model
             delegate: StatusListItem {
                 id: contactRow
 
-                property string nickname: Utils.getContactDetailsAsJson(model.publicKey).localNickname
-
-                title: !model.userName.endsWith(".eth") && !!contactRow.nickname ?
-                           contactRow.nickname : Utils.removeStatusEns(model.userName)
-                //% "(You)"
-                titleAsideText: model.publicKey === userProfile.pubKey ? qsTrId("-you-") : ""
+                title: model.name
                 //% "Admin"
                 statusListItemTitle.font.pixelSize: 17
                 statusListItemTitleAside.font.pixelSize: 17
                 label: model.isAdmin ? qsTrId("group-chat-admin"): ""
-                image.source: Global.getProfileImage(model.publicKey) || model.identicon
-                image.isIdenticon: model.identicon
+                image.source: model.icon
+                image.isIdenticon: model.isIdenticon
                 components: [
                     StatusFlatRoundButton {
                         id: moreActionsBtn
@@ -246,7 +247,7 @@ StatusModal {
                                 icon.height: 16
                                 //% "Make Admin"
                                 text: qsTrId("make-admin")
-                                onTriggered: popup.chatSectionModule.makeAdmin(popup.channel.id,  model.publicKey)
+                                onTriggered: popup.chatSectionModule.makeAdmin(popup.channel.id,  model.id)
                             }
                             StatusMenuItem {
                                 icon.name: "remove-contact"
@@ -255,7 +256,7 @@ StatusModal {
                                 type: StatusMenuItem.Type.Danger
                                 //% "Remove From Group"
                                 text: qsTrId("remove-from-group")
-                                onTriggered: popup.chatSectionModule.removeMemberFromGroupChat(popup.channel.id,  model.publicKey)
+                                onTriggered: popup.chatSectionModule.removeMemberFromGroupChat(popup.channel.id,  model.id)
                             }
                         }
                     }
