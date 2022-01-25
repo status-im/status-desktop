@@ -112,16 +112,18 @@ QtObject:
           self.joinedCommunities[membershipRequest.communityId] = community
           self.events.emit(SIGNAL_COMMUNITY_EDITED, CommunityArgs(community: community))
 
-  proc mapChatToChatDto(chat: Chat): ChatDto =
+  proc mapChatToChatDto(chat: Chat, communityId: string): ChatDto =
     result = ChatDto()
     result.id = chat.id
     result.name = chat.name
+    result.chatType = ChatType.CommunityChat
     result.color = chat.color
     result.emoji = chat.emoji
     result.description = chat.description
     result.canPost = chat.canPost
     result.position = chat.position
     result.categoryId = chat.categoryId
+    result.communityId = communityId
 
   proc findChatById(id: string, chats: seq[ChatDto]): ChatDto =
     for chat in chats:
@@ -153,7 +155,9 @@ QtObject:
           chat_to_be_added.id = community.id&chat.id
           chat_to_be_added.color = updated_chat.color
 
-          self.events.emit(SIGNAL_COMMUNITY_CHANNEL_CREATED, CommunityChatArgs(communityId: community.id, chat: mapChatToChatDto(chat_to_be_added)))
+          self.events.emit(
+            SIGNAL_COMMUNITY_CHANNEL_CREATED, 
+            CommunityChatArgs(communityId: community.id, chat: mapChatToChatDto(chat_to_be_added, community.id)))
 
     # channel was removed
     elif(community.chats.len < prev_community.chats.len):
@@ -186,7 +190,9 @@ QtObject:
             if(updated_chat.color != ""):
               chat_to_be_edited.color = updated_chat.color
 
-            self.events.emit(SIGNAL_COMMUNITY_CHANNEL_EDITED, CommunityChatArgs(communityId: community.id, chat: mapChatToChatDto(chat_to_be_edited)))
+            self.events.emit(
+              SIGNAL_COMMUNITY_CHANNEL_EDITED, 
+              CommunityChatArgs(communityId: community.id, chat: mapChatToChatDto(chat_to_be_edited, community.id)))
 
     self.joinedCommunities[community.id].chats = community.chats
 
@@ -459,7 +465,7 @@ QtObject:
 
         self.events.emit(SIGNAL_COMMUNITY_CHANNEL_CREATED, CommunityChatArgs(
           communityId: communityId,
-          chat: mapChatToChatDto(chat))
+          chat: mapChatToChatDto(chat, communityId))
         )
     except Exception as e:
       error "Error creating community channel", msg = e.msg, communityId, name, description
@@ -493,7 +499,7 @@ QtObject:
         if(idx != -1):
           self.joinedCommunities[communityId].chats[idx] = chat
 
-        self.events.emit(SIGNAL_COMMUNITY_CHANNEL_EDITED, CommunityChatArgs(chat: mapChatToChatDto(chat)))
+        self.events.emit(SIGNAL_COMMUNITY_CHANNEL_EDITED, CommunityChatArgs(chat: mapChatToChatDto(chat, communityId)))
     except Exception as e:
       error "Error editing community channel", msg = e.msg, communityId, channelId
 
