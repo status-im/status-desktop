@@ -369,13 +369,12 @@ Item {
         CommunitiesPopup {
             anchors.centerIn: parent
            communitiesList: root.store.communitiesList
-            // Not Refactored Yet
-//            onSetActiveCommunity: {
-//                root.store.chatsModelInst.communities.setActiveCommunity(id)
-//            }
-           onSetObservedCommunity: {
-               root.store.setObservedCommunity(id)
-           }
+            onSetActiveCommunity: {
+                root.store.setActiveCommunity(id)
+            }
+            onSetObservedCommunity: {
+                root.store.setObservedCommunity(id)
+            }
             onClosed: {
                 destroy()
             }

@@ -25,6 +25,14 @@ QtObject {
     // Contact requests related part
     property var contactRequestsModel: chatCommunitySectionModule.contactRequestsModel
 
+    function setActiveCommunity(communityId) {
+        mainModule.setActiveSectionById(communityId);
+    }
+
+    function setObservedCommunity(communityId) {
+        communitiesModuleInst.setObservedCommunity(communityId);
+    }
+
     function acceptContactRequest(pubKey) {
         chatCommunitySectionModule.acceptContactRequest(pubKey)
     }

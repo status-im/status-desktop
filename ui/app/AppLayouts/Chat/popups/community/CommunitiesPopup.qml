@@ -113,26 +113,25 @@ StatusModal {
                             return true
                         }
                         const lowerCaseSearchStr = searchBox.input.text.toLowerCase()
-                        return name.toLowerCase().includes(lowerCaseSearchStr) || description.toLowerCase().includes(lowerCaseSearchStr)
+                        return model.name.toLowerCase().includes(lowerCaseSearchStr) || model.description.toLowerCase().includes(lowerCaseSearchStr)
                     }
                     height: visible ? implicitHeight : 0
                     anchors.horizontalCenter: parent.horizontalCenter
-                    title: name
-                    subTitle: description
-                    // TODO refactor members in the backend
+                    title: model.name
+                    subTitle: model.description
                     //% "%1 members"
-                    // tertiaryTitle: qsTrId("-1-members").arg(nbMembers)
+                    tertiaryTitle: qsTrId("-1-members").arg(model.members.count)
                     statusListItemTitle.font.weight: Font.Bold
                     statusListItemTitle.font.pixelSize: 17
                     image.source: model.image
-                    icon.isLetterIdenticon: !image
-                    icon.background.color: color
+                    icon.isLetterIdenticon: !model.image
+                    icon.background.color: model.color || Theme.palette.primaryColor1
 
                     sensor.onClicked: {
-                        if (joined && isMember) {
-                            popup.setActiveCommunity(id);
+                        if (model.joined && model.isMember) {
+                            popup.setActiveCommunity(model.id);
                         } else {
-                            popup.setObservedCommunity(id);
+                            popup.setObservedCommunity(model.id);
                             Global.openPopup(communityDetailPopup)
                         }
                         popup.close()
