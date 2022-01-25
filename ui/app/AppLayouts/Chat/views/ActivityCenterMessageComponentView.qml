@@ -122,6 +122,7 @@ Item {
             amISender: model.message.amISender
             messageImage: model.message.messageImage
             messageTimestamp: model.timestamp
+            linkUrls: model.links
             //timestamp: model.message.timestamp
             messageOutgoingStatus: model.message.outgoingStatus
             messageContentType: model.message.contentType

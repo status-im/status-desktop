@@ -52,6 +52,7 @@ Item {
         }
     }
     property bool editModeOn: false
+    property string linkUrls: ""
 
     signal openStickerPackPopup(string stickerPackId)
     signal addEmoji(bool isProfileClick, bool isSticker, bool isImage , var image, bool emojiOnly, bool hideEmojiPicker)
@@ -468,8 +469,6 @@ Item {
             visible: !editModeOn
             ChatTextView {
                 id: chatText
-                // Not Refactored Yet
-//                store: rootStore
                 readonly property int leftPadding: chatImage.anchors.leftMargin + chatImage.width + chatHorizontalPadding
                 visible: {
                     const urls = linkUrls.split(" ")
@@ -586,10 +585,9 @@ Item {
 
                 sourceComponent: Component {
                     LinksMessageView {
-                        // Not Refactored Yet
-//                        store: rootStore
-                        linkUrls: linkUrls
+                        linkUrls: root.linkUrls
                         container: root.container
+                        messageStore: root.messageStore
                         isCurrentUser: isCurrentUser
                     }
                 }

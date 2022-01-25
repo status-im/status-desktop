@@ -30,6 +30,7 @@ type
     Reactions
     EditMode
     IsEdited
+    Links
 
 QtObject:
   type
@@ -89,7 +90,8 @@ QtObject:
       ModelRole.PinnedBy.int:"pinnedBy",
       ModelRole.Reactions.int:"reactions",
       ModelRole.EditMode.int: "editMode",
-      ModelRole.IsEdited.int: "isEdited"
+      ModelRole.IsEdited.int: "isEdited",
+      ModelRole.Links.int: "links",
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -153,6 +155,8 @@ QtObject:
       result = newQVariant(item.editMode)
     of ModelRole.IsEdited:
       result = newQVariant(item.isEdited)
+    of ModelRole.Links:
+      result = newQVariant(item.links.join(" "))
 
   proc findIndexForMessageId(self: Model, messageId: string): int = 
     for i in 0 ..< self.items.len:

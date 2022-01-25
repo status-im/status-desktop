@@ -31,6 +31,7 @@ type
     pinnedBy: string
     editMode: bool
     isEdited: bool
+    links: seq[string]
 
 proc initItem*(
     id,
@@ -50,7 +51,8 @@ proc initItem*(
     contentType: ContentType,
     messageType: int,
     sticker: string,
-    stickerPack: int
+    stickerPack: int,
+    links: seq[string],
     ): Item =
   result = Item()
   result.id = id
@@ -75,6 +77,7 @@ proc initItem*(
   result.stickerPack = stickerPack
   result.editMode = false
   result.isEdited = false
+  result.links = links
 
 proc `$`*(self: Item): string =
   result = fmt"""Item(
@@ -97,6 +100,7 @@ proc `$`*(self: Item): string =
     messageReactions: [{$self.reactionsModel}],
     editMode:{$self.editMode},
     isEdited:{$self.isEdited}
+    links:{$self.links}
     )"""
 
 proc id*(self: Item): string {.inline.} = 
@@ -199,6 +203,9 @@ proc addReaction*(self: Item, emojiId: EmojiId, didIReactWithThisEmoji: bool, us
 proc removeReaction*(self: Item, emojiId: EmojiId, reactionId: string, didIRemoveThisReaction: bool) = 
   self.reactionsModel.removeReaction(emojiId, reactionId, didIRemoveThisReaction)
 
+proc links*(self: Item): seq[string] {.inline.} = 
+  self.links
+
 proc toJsonNode*(self: Item): JsonNode =
   result = %* {
     "id": self.id, 
@@ -224,7 +231,8 @@ proc toJsonNode*(self: Item): JsonNode =
     "pinned": self.pinned,
     "pinnedBy": self.pinnedBy,
     "editMode": self.editMode,
-    "isEdited": self.isEdited
+    "isEdited": self.isEdited,
+    "links": self.links
   }
 
 proc editMode*(self: Item): bool {.inline.} =

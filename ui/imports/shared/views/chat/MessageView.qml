@@ -37,6 +37,7 @@ Column {
     property bool pinnedMessage: false
     property string messagePinnedBy: ""
     property var reactionsModel: []
+    property string linkUrls: ""
 
     property int prevMessageIndex: -1
     property var prevMessageAsJsonObj
@@ -101,7 +102,6 @@ Column {
     property string emojiReactions: ""
     property bool timeout: false
     property bool hasMention: false
-    property string linkUrls: ""
     property bool placeholderMessage: false
     property bool activityCenterMessage: false
     property bool read: true
@@ -353,6 +353,7 @@ Column {
             isCurrentUser: root.amISender
             isHovered: root.isHovered
             editModeOn: root.editModeOn
+            linkUrls: root.linkUrls
 
             onAddEmoji: {
                 root.clickMessage(isProfileClick, isSticker, isImage , image, emojiOnly, hideEmojiPicker)
