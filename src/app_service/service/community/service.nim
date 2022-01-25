@@ -22,7 +22,6 @@ type
     communities*: seq[CommunityDto]
 
   CommunityChatArgs* = ref object of Args
-    communityId*: string
     chat*: ChatDto
 
   CommunityIdArgs* = ref object of Args
@@ -100,13 +99,9 @@ QtObject:
       # Handling community updates
       if (receivedData.communities.len > 0):
         # Channel added removed is notified in the chats param
-        if (receivedData.chats.len > 0):
-          self.handleCommunityUpdates(receivedData.communities, receivedData.chats)
+        self.handleCommunityUpdates(receivedData.communities, receivedData.chats)
 
-        self.events.emit(SIGNAL_COMMUNITIES_UPDATE, CommunitiesArgs(communities: receivedData.communities))
-
-    self.events.on(SignalType.Message.event) do(e:Args):
-      var receivedData = MessageSignal(e)
+      # Handling membership requests
       if(receivedData.membershipRequests.len > 0):
         for membershipRequest in receivedData.membershipRequests:
           if (not self.joinedCommunities.contains(membershipRequest.communityId)):
@@ -120,6 +115,7 @@ QtObject:
   proc mapChatToChatDto(chat: Chat, communityId: string): ChatDto =
     result = ChatDto()
     result.id = chat.id
+    result.communityId = communityId
     result.name = chat.name
     result.chatType = ChatType.CommunityChat
     result.color = chat.color
@@ -149,6 +145,7 @@ QtObject:
       return
 
     let prev_community = self.joinedCommunities[community.id]
+    self.joinedCommunities[community.id] = community
 
     # channel was added
     if(community.chats.len > prev_community.chats.len):
@@ -160,22 +157,21 @@ QtObject:
           chat_to_be_added.id = community.id&chat.id
           chat_to_be_added.color = updated_chat.color
 
-          self.events.emit(
-            SIGNAL_COMMUNITY_CHANNEL_CREATED, 
-            CommunityChatArgs(communityId: community.id, chat: mapChatToChatDto(chat_to_be_added, community.id)))
+          let data = CommunityChatArgs(chat: mapChatToChatDto(chat_to_be_added, community.id))
+          self.events.emit(SIGNAL_COMMUNITY_CHANNEL_CREATED, data)
 
     # channel was removed
     elif(community.chats.len < prev_community.chats.len):
       for prv_chat in prev_community.chats:
         if findIndexById(prv_chat.id, community.chats) == -1:
-          self.events.emit(SIGNAL_COMMUNITY_CHANNEL_DELETED, CommunityChatIdArgs(communityId: community.id, chatId: community.id&prv_chat.id))
+          self.events.emit(SIGNAL_COMMUNITY_CHANNEL_DELETED, CommunityChatIdArgs(communityId: community.id, 
+          chatId: community.id&prv_chat.id))
     # some property has changed
     else:
       for chat in community.chats:
         # id is present
         if findIndexById(chat.id, prev_community.chats) == -1:
-          error "error: chat not present"
-          return
+          continue
         # but something is different
         for prev_chat in prev_community.chats:
 
@@ -184,7 +180,8 @@ QtObject:
 
           # Handle position changes
           if(chat.id == prev_chat.id and chat.position != prev_chat.position):
-            self.events.emit(SIGNAL_COMMUNITY_CHANNEL_REORDERED, CommunityChatOrderArgs(communityId: community.id, chatId: community.id&chat.id, categoryId: chat.categoryId, position: chat.position))
+            self.events.emit(SIGNAL_COMMUNITY_CHANNEL_REORDERED, CommunityChatOrderArgs(communityId: community.id, 
+            chatId: community.id&chat.id, categoryId: chat.categoryId, position: chat.position))
 
           # Handle name/description changes
           if(chat.id == prev_chat.id and (chat.name != prev_chat.name or chat.description != prev_chat.description)):
@@ -195,11 +192,10 @@ QtObject:
             if(updated_chat.color != ""):
               chat_to_be_edited.color = updated_chat.color
 
-            self.events.emit(
-              SIGNAL_COMMUNITY_CHANNEL_EDITED, 
-              CommunityChatArgs(communityId: community.id, chat: mapChatToChatDto(chat_to_be_edited, community.id)))
+            let data = CommunityChatArgs(chat: mapChatToChatDto(chat_to_be_edited, community.id))
+            self.events.emit(SIGNAL_COMMUNITY_CHANNEL_EDITED, data)
 
-    self.joinedCommunities[community.id].chats = community.chats
+    self.events.emit(SIGNAL_COMMUNITIES_UPDATE, CommunitiesArgs(communities: communities))
 
   proc init*(self: Service) =
     self.doConnect()
@@ -458,22 +454,15 @@ QtObject:
     try:
       let response = status_go.createCommunityChannel(communityId, name, description)
 
-      if response.error != nil:
+      if not response.error.isNil:
         let error = Json.decode($response.error, RpcError)
         raise newException(RpcException, "Error creating community channel: " & error.message)
+      
+      if response.result.isNil or response.result.kind == JNull:
+        error "response is invalid", methodName="createCommunityChannel"
 
-      if response.result != nil and response.result.kind != JNull:
-        let chat = response.result["chats"][0].toChat()
-
-        # update the joined communities
-        self.joinedCommunities[communityId].chats.add(chat)
-
-        self.events.emit(SIGNAL_COMMUNITY_CHANNEL_CREATED, CommunityChatArgs(
-          communityId: communityId,
-          chat: mapChatToChatDto(chat, communityId))
-        )
     except Exception as e:
-      error "Error creating community channel", msg = e.msg, communityId, name, description
+      error "Error creating community channel", msg = e.msg, communityId, name, description, methodName="createCommunityChannel"
 
   proc editCommunityChannel*(
       self: Service,
@@ -496,17 +485,11 @@ QtObject:
         let error = Json.decode($response.error, RpcError)
         raise newException(RpcException, "Error editing community channel: " & error.message)
 
-      if response.result != nil and response.result.kind != JNull:
-        let chat = response.result["chats"][0].toChat()
+      if response.result.isNil or response.result.kind == JNull:
+        error "response is invalid", methodName="editCommunityChannel"
 
-        # update the joined communities
-        let idx = self.joinedCommunities[communityId].chats.find(chat)
-        if(idx != -1):
-          self.joinedCommunities[communityId].chats[idx] = chat
-
-        self.events.emit(SIGNAL_COMMUNITY_CHANNEL_EDITED, CommunityChatArgs(chat: mapChatToChatDto(chat, communityId)))
     except Exception as e:
-      error "Error editing community channel", msg = e.msg, communityId, channelId
+      error "Error editing community channel", msg = e.msg, communityId, channelId, methodName="editCommunityChannel"
 
   proc reorderCommunityChat*(
       self: Service,
@@ -521,46 +504,29 @@ QtObject:
         chatId,
         position)
 
-      if response.error != nil:
+      if not response.error.isNil:
         let error = Json.decode($response.error, RpcError)
         raise newException(RpcException, "Error reordering community channel: " & error.message)
 
-      self.events.emit(SIGNAL_COMMUNITY_CHANNEL_REORDERED,
-        CommunityChatOrderArgs(
-          communityId: communityId,
-          categoryId: categoryId,
-          chatId: chatId,
-          position: position
-        )
-      )
+      if response.result.isNil or response.result.kind == JNull:
+        error "response is invalid", methodName="reorderCommunityChat"
+
     except Exception as e:
-      error "Error reordering community channel", msg = e.msg, communityId, chatId, position
+      error "Error reordering community channel", msg = e.msg, communityId, chatId, position, methodName="reorderCommunityChat"
 
   proc deleteCommunityChat*(self: Service, communityId: string, chatId: string) =
     try:
       let response = status_go.deleteCommunityChat(communityId, chatId)
 
-      if response.error != nil:
+      if not response.error.isNil:
         let error = Json.decode($response.error, RpcError)
         raise newException(RpcException, "Error deleting community chat: " & error.message)
 
-      if response.result == nil or response.result.kind == JNull:
-        error "response is invalid"
-        return
+      if response.result.isNil or response.result.kind == JNull:
+        error "response is invalid", methodName="deleteCommunityChat"
 
-      let community = response.result["communities"][0].toCommunityDto()
-
-      # update the joined communities
-      self.joinedCommunities[community.id].chats = community.chats
-
-      self.events.emit(SIGNAL_COMMUNITY_CHANNEL_DELETED,
-        CommunityChatIdArgs(
-          communityId: communityId,
-          chatId: chatId
-        )
-      )
     except Exception as e:
-      error "Error deleting community channel", msg = e.msg, communityId, chatId
+      error "Error deleting community channel", msg = e.msg, communityId, chatId, methodName="deleteCommunityChat"
 
   proc createCommunityCategory*(
       self: Service,

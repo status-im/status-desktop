@@ -88,7 +88,7 @@ method init*(self: Controller) =
   if (self.isCommunitySection):
     self.events.on(SIGNAL_COMMUNITY_CHANNEL_CREATED) do(e:Args):
       let args = CommunityChatArgs(e)
-      if (args.communityId == self.sectionId):
+      if (args.chat.communityId == self.sectionId):
         self.chatService.updateOrAddChat(args.chat)
         self.delegate.addNewChat(
           args.chat,
@@ -109,7 +109,7 @@ method init*(self: Controller) =
 
     self.events.on(SIGNAL_COMMUNITY_CHANNEL_EDITED) do(e:Args):
       let args = CommunityChatArgs(e)
-      if (args.communityId == self.sectionId):
+      if (args.chat.communityId == self.sectionId):
         self.chatService.updateOrAddChat(args.chat)
         self.delegate.onCommunityChannelEdited(args.chat)
 

@@ -115,7 +115,7 @@ method init*(self: Controller) =
 
   self.events.on(SIGNAL_COMMUNITY_CHANNEL_EDITED) do(e:Args):
     let args = CommunityChatArgs(e)
-    if(args.communityId != self.sectionId or self.chatId != args.chat.id or not self.belongsToCommunity):
+    if(args.chat.communityId != self.sectionId or args.chat.id != self.chatId):
       return
     self.delegate.onChatEdited(args.chat)
 
