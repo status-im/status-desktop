@@ -281,6 +281,9 @@ method onMessageEdited*(self: Module, message: MessageDto) =
   let renderedMessageText = self.controller.getRenderedText(message.parsedText)
   self.view.model().updateEditedMsg(message.id, renderedMessageText, message.containsContactMentions())
 
+method onHistoryCleared*(self: Module) =
+  self.view.model().clear()
+
 method updateChatIdentifier*(self: Module) =
   # Delete the old ChatIdentifier message first
   self.view.model().removeItem(CHAT_IDENTIFIER_MESSAGE_ID)
