@@ -32,7 +32,7 @@ method onContactBlocked*(self: AccessInterface, publicKey: string) {.base.} =
 method onContactDetailsUpdated*(self: AccessInterface, contactId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onCommunityChannelDeleted*(self: AccessInterface, chatId: string) {.base.} =
+method onCommunityChannelDeletedOrChatLeft*(self: AccessInterface, chatId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
   
 method onChatRenamed*(self: AccessInterface, chatId: string, newName: string) {.base.} =

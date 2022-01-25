@@ -281,7 +281,7 @@ Item {
                     root.chatSectionModule.leaveChat(chatId)
                 }
 
-                onDeleteChat: {
+                onDeleteCommunityChat: {
                     // Not Refactored Yet
                 }
 

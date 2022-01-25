@@ -356,13 +356,13 @@ method addNewChat*(
   # make new added chat active one
   self.setActiveItemSubItem(item.id, "")
 
-method removeChat*(self: Module, chatId: string) =
+method removeCommunityChat*(self: Module, chatId: string) =
   if(not self.chatContentModules.contains(chatId)):
     return
 
-  self.controller.removeChat(chatId)
+  self.controller.removeCommunityChat(chatId)
 
-method onCommunityChannelDeleted*(self: Module, chatId: string) =
+method onCommunityChannelDeletedOrChatLeft*(self: Module, chatId: string) =
   if(not self.chatContentModules.contains(chatId)):
     return
   self.view.chatsModel().removeItemById(chatId)

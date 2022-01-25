@@ -31,7 +31,7 @@ StatusPopupMenu {
     signal markAllMessagesRead(string chatId)
     signal clearChatHistory(string chatId)
     signal downloadMessages(string file)
-    signal deleteChat(string chatId)
+    signal deleteCommunityChat(string chatId)
     signal leaveChat(string chatId)
 
     signal openPinnedMessagesList(string chatId)
@@ -222,7 +222,7 @@ StatusPopupMenu {
             }
             onConfirmButtonClicked: {
                 if(root.isCommunityChat)
-                    root.deleteChat(root.chatId)
+                    root.deleteCommunityChat(root.chatId)
                 else
                     root.leaveChat(root.chatId)
 
