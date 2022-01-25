@@ -196,8 +196,8 @@ proc addReaction*(self: Item, emojiId: EmojiId, didIReactWithThisEmoji: bool, us
   userDisplayName: string, reactionId: string) = 
   self.reactionsModel.addReaction(emojiId, didIReactWithThisEmoji, userPublicKey, userDisplayName, reactionId)
 
-proc removeReaction*(self: Item, emojiId: EmojiId, reactionId: string) = 
-  self.reactionsModel.removeReaction(emojiId, reactionId)
+proc removeReaction*(self: Item, emojiId: EmojiId, reactionId: string, didIRemoveThisReaction: bool) = 
+  self.reactionsModel.removeReaction(emojiId, reactionId, didIRemoveThisReaction)
 
 proc toJsonNode*(self: Item): JsonNode =
   result = %* {

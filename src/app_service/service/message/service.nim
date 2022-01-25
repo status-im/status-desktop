@@ -32,6 +32,7 @@ const SIGNAL_SEARCH_MESSAGES_LOADED* = "searchMessagesLoaded"
 const SIGNAL_MESSAGES_MARKED_AS_READ* = "messagesMarkedAsRead"
 const SIGNAL_MESSAGE_REACTION_ADDED* = "messageReactionAdded"
 const SIGNAL_MESSAGE_REACTION_REMOVED* = "messageReactionRemoved"
+const SIGNAL_MESSAGE_REACTION_FROM_OTHERS* = "messageReactionFromOthers"
 const SIGNAL_MESSAGE_DELETION* = "messageDeleted"
 const SIGNAL_MESSAGE_EDITED* = "messageEdited"
 
@@ -66,6 +67,7 @@ type
     messageId*: string
     emojiId*: int
     reactionId*: string
+    reactionFrom*: string
 
   MessageDeletedArgs* =  ref object of Args
     chatId*: string
@@ -147,7 +149,7 @@ QtObject:
     )
     self.events.emit(SIGNAL_NEW_MESSAGE_RECEIVED, data)
 
-  proc handlePinnedMessagesUpdate(self: Service, pinnedMessages: var seq[PinnedMessageUpdateDto]) =
+  proc handlePinnedMessagesUpdate(self: Service, pinnedMessages: seq[PinnedMessageUpdateDto]) =
     for pm in pinnedMessages:
       let data = MessagePinUnpinArgs(chatId: pm.chatId, messageId: pm.messageId, actionInitiatedBy: pm.pinnedBy)
       if(pm.pinned):
@@ -157,10 +159,16 @@ QtObject:
         self.numOfPinnedMessagesPerChat[pm.chatId] = self.numOfPinnedMessagesPerChat[pm.chatId] - 1
         self.events.emit(SIGNAL_MESSAGE_UNPINNED, data)
 
-  proc handleDeletedMessagesUpdate(self: Service, deletedMessages: var seq[RemovedMessageDto]) =
+  proc handleDeletedMessagesUpdate(self: Service, deletedMessages: seq[RemovedMessageDto]) =
     for dm in deletedMessages:
       let data = MessageDeletedArgs(chatId: dm.chatId, messageId: dm.messageId)
       self.events.emit(SIGNAL_MESSAGE_DELETION, data)
+
+  proc handleEmojiReactionsUpdate(self: Service, emojiReactions: seq[ReactionDto]) =
+    for r in emojiReactions:
+      let data = MessageAddRemoveReactionArgs(chatId: r.localChatId, messageId: r.messageId, emojiId: r.emojiId, 
+      reactionId: r.id, reactionFrom: r.`from`)
+      self.events.emit(SIGNAL_MESSAGE_REACTION_FROM_OTHERS, data)
 
   proc init*(self: Service) =
     self.events.on(SignalType.Message.event) do(e: Args):
@@ -175,6 +183,9 @@ QtObject:
       # Handling deleted messages updates
       if (receivedData.deletedMessages.len > 0):
         self.handleDeletedMessagesUpdate(receivedData.deletedMessages)
+      # Handling emoji reactions updates
+      if (receivedData.emojiReactions.len > 0):
+        self.handleEmojiReactionsUpdate(receivedData.emojiReactions)
 
   proc initialMessagesFetched(self: Service, chatId: string): bool =
     return self.msgCursor.hasKey(chatId)
