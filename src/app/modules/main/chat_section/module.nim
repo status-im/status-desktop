@@ -521,6 +521,12 @@ method declineRequestToJoinCommunity*(self: Module, requestId: string) =
 method createCommunityChannel*(self: Module, name, description: string,) =
   self.controller.createCommunityChannel(name, description)
 
+proc createChannelsSeq(self: Module, channels: string): seq[string] =
+  return map(parseJson(channels).getElems(), proc(x:JsonNode):string = x.getStr())
+
+method createCommunityCategory*(self: Module, name: string, channels: string) =
+  self.controller.createCommunityCategory(name, self.createChannelsSeq(channels))
+
 method leaveCommunity*(self: Module) =
   self.controller.leaveCommunity()
 

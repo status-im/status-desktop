@@ -269,6 +269,9 @@ method createCommunityChannel*(
     description: string) =
   self.communityService.createCommunityChannel(self.sectionId, name, description)
 
+method createCommunityCategory*(self: Controller, name: string, channels: seq[string]) =
+  self.communityService.createCommunityCategory(self.sectionId, name, channels)
+
 method leaveCommunity*(self: Controller) =
   self.communityService.leaveCommunity(self.sectionId)
   

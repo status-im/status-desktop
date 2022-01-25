@@ -31,7 +31,7 @@ StatusModal {
         if(isEdit){
             root.contentItem.categoryName.input.text = categoryName
             // Not Refactored Yet
-//            channels = JSON.parse(root.store.chatsModelInst.communities.activeCommunity.getChatIdsByCategory(categoryId))
+           // channels = //JSON.parse(root.store.chatsModelInst.communities.activeCommunity.getChatIdsByCategory(categoryId))
         }
         root.contentItem.categoryName.input.forceActiveFocus(Qt.MouseFocusReason)
     }
@@ -111,15 +111,15 @@ StatusModal {
                     height: childrenRect.height
                     width: parent.width
                     // Not Refactored Yet
-//                    model: root.store.activeCommunityChatsModel
+                    model: root.store.chatCommunitySectionModule.model//activeCommunityChatsModel
                     interactive: false
                     clip: true
 
                     delegate: StatusListItem {
                         anchors.horizontalCenter: parent.horizontalCenter
-                        visible: root.isEdit ?
+                        visible: true/*root.isEdit ?
                             model.categoryId === root.categoryId || model.categoryId === "" :
-                            model.categoryId === ""
+                            model.categoryId === ""*/
                         height: visible ? implicitHeight : 0
                         title: "#" + model.name
                         icon.isLetterIdenticon: true
@@ -129,12 +129,13 @@ StatusModal {
                         components: [
                             StatusCheckBox {
                                 id: channelItemCheckbox
-                                checked: root.isEdit ? root.channels.indexOf(model.id) > - 1 : false
+                                checked: root.isEdit ? root.channels.indexOf(model.itemId) > - 1 : false
                                 onCheckedChanged: {
-                                    var idx = root.channels.indexOf(model.id)
+                                    print("CHECK CHANNEL", model.itemId)
+                                    var idx = root.channels.indexOf(model.itemId)
                                     if(checked){
                                         if(idx === -1){
-                                            root.channels.push(model.id)
+                                            root.channels.push(model.itemId)
                                         }
                                     } else {
                                         if(idx > -1){
@@ -221,9 +222,9 @@ StatusModal {
                 let error = ""
 
                 if (isEdit) {
-                    error = root.store.editCommunityCategory(communityId, categoryId, Utils.filterXSS(root.contentItem.categoryName.input.text), JSON.stringify(channels));
+//                    error = root.store.editCommunityCategory(communityId, categoryId, Utils.filterXSS(root.contentItem.categoryName.input.text), JSON.stringify(channels));
                 } else {
-                    error = root.store.createCommunityCategory(communityId, Utils.filterXSS(root.contentItem.categoryName.input.text), JSON.stringify(channels));
+                    error = root.store.createCommunityCategory(root.contentItem.categoryName.input.text, JSON.stringify(channels));
                 }
 
                 if (error) {
