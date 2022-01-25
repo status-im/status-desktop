@@ -35,8 +35,5 @@ method updateContactDetails*(self: AccessInterface, contactId: string) {.base.} 
 method onMessageEdited*(self: AccessInterface, message: MessageDto) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method updateChatIdentifier*(self: AccessInterface) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method setLoadingHistoryMessagesInProgress*(self: AccessInterface, isLoading: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
