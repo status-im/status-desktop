@@ -63,6 +63,10 @@ method init*(self: Controller) =
     let args = CommunityCategoryArgs(e)
     # self.delegate.communityCategoryDeleted()
 
+  self.events.on(SIGNAL_COMMUNITY_CATEGORY_REORDERED) do(e:Args):
+    let args = CommunityCategoryOrderArgs(e)
+    # self.delegate.communityCategoryReordered()
+
 method joinCommunity*(self: Controller, communityId: string): string =
   self.communityService.joinCommunity(communityId)
 

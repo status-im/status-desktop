@@ -538,3 +538,9 @@ method setCommunityMuted*(self: Module, muted: bool) =
 
 method inviteUsersToCommunity*(self: Module, pubKeysJSON: string): string =
   result = self.controller.inviteUsersToCommunity(pubKeysJSON)
+
+method reorderCommunityCategories*(self: Module, categoryId: string, position: int) =
+  self.controller.reorderCommunityCategories(categoryId, position)
+  
+method reorderCommunityChat*(self: Module, categoryId: string, chatId: string, position: int): string =
+  self.controller.reorderCommunityChat(categoryId, chatId, position)

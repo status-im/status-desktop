@@ -41,6 +41,11 @@ type
     categoryId*: string
     position*: int
 
+  CommunityCategoryOrderArgs* = ref object of Args
+    communityId*: string
+    categoryId*: string
+    position*: int
+
   CommunityCategoryArgs* = ref object of Args
     communityId*: string
     category*: Category
@@ -60,6 +65,7 @@ const SIGNAL_COMMUNITY_CHANNEL_DELETED* = "communityChannelDeleted"
 const SIGNAL_COMMUNITY_CATEGORY_CREATED* = "communityCategoryCreated"
 const SIGNAL_COMMUNITY_CATEGORY_EDITED* = "communityCategoryEdited"
 const SIGNAL_COMMUNITY_CATEGORY_DELETED* = "communityCategoryDeleted"
+const SIGNAL_COMMUNITY_CATEGORY_REORDERED* = "communityCategoryReordered"
 
 QtObject:
   type 
@@ -609,6 +615,31 @@ QtObject:
       )
     except Exception as e:
       error "Error deleting community category", msg = e.msg, communityId, categoryId
+
+  proc reorderCommunityCategories*(
+      self: Service,
+      communityId: string,
+      categoryId: string,
+      position: int) =
+    try:
+      let response = status_go.reorderCommunityCategories(
+        communityId,
+        categoryId,
+        position)
+
+      if response.error != nil:
+        let error = Json.decode($response.error, RpcError)
+        raise newException(RpcException, "Error reordering community category: " & error.message)
+
+      self.events.emit(SIGNAL_COMMUNITY_CATEGORY_REORDERED,
+        CommunityCategoryOrderArgs(
+          communityId: communityId,
+          categoryId: categoryId,
+          position: position
+        )
+      )
+    except Exception as e:
+      error "Error reordering category channel", msg = e.msg, communityId, categoryId, position
 
   proc requestCommunityInfo*(self: Service, communityId: string) =
     try:

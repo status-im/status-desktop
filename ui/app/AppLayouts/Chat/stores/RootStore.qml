@@ -197,4 +197,12 @@ QtObject {
     function removeChat(chatId) {
         chatCommunitySectionModule.removeChat(chatId)
     }
+
+    function reorderCommunityCategories(categoryId, to){
+        chatCommunitySectionModule.reorderCommunityCategories(categoryId, to)
+    }
+
+    function reorderCommunityChat(categoryId, chatId, to){
+        chatCommunitySectionModule.reorderCommunityChat(categoryId, chatId, to)
+    }
 }

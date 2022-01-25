@@ -303,3 +303,9 @@ method setCommunityMuted*(self: Controller, muted: bool) =
 
 method inviteUsersToCommunity*(self: Controller, pubKeys: string): string =
   result = self.communityService.inviteUsersToCommunityById(self.sectionId, pubKeys)
+
+method reorderCommunityCategories*(self: Controller, categoryId: string, position: int) =
+  self.communityService.reorderCommunityCategories(self.sectionId, categoryId, position)
+  
+method reorderCommunityChat*(self: Controller, categoryId: string, chatId: string, position: int): string =
+  self.communityService.reorderCommunityChat(self.sectionId, categoryId, chatId, position)

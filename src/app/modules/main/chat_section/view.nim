@@ -205,3 +205,9 @@ QtObject:
 
   proc inviteUsersToCommunity*(self: View, pubKeysJSON: string): string {.slot.} =
     result = self.delegate.inviteUsersToCommunity(pubKeysJSON)
+
+  proc reorderCommunityCategories*(self: View, categoryId: string, position: int) {.slot} =
+    self.delegate.reorderCommunityCategories(categoryId, position)
+  
+  proc reorderCommunityChat*(self: View, categoryId: string, chatId: string, position: int): string {.slot} =
+    self.delegate.reorderCommunityChat(categoryId, chatId, position)
