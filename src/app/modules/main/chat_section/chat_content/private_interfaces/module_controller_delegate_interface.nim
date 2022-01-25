@@ -22,6 +22,10 @@ method onReactionAdded*(self: AccessInterface, messageId: string, emojiId: int, 
 method onReactionRemoved*(self: AccessInterface, messageId: string, emojiId: int, reactionId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method toggleReactionFromOthers*(self: AccessInterface, messageId: string, emojiId: int, reactionId: string, 
+  reactionFrom: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method onContactDetailsUpdated*(self: AccessInterface, contactId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
