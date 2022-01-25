@@ -69,7 +69,7 @@ Item {
                 icon.name: "channel-category"
                 enabled: communityData.amISectionAdmin
                 // Not Refactored Yet
-//                onTriggered: Global.openPopup(createCategoryPopup, {communityId: chatsModel.communities.activeCommunity.id})
+                onTriggered: Global.openPopup(createCategoryPopup, {communityId: root.store.chatCommunitySectionModule.activeItem.id})
             }
 
            StatusMenuSeparator {}
@@ -189,7 +189,7 @@ Item {
                     icon.name: "channel-category"
                     // Not Refactored Yet
                     enabled: communityData.amISectionAdmin
-//                    onTriggered: Global.openPopup(createCategoryPopup, {communityId: root.store.chatsModelInst.communities.activeCommunity.id})
+                    onTriggered: Global.openPopup(createCategoryPopup, {communityId: root.store.chatCommunitySectionModule.activeItem.id})
                 }
 
                 StatusMenuSeparator {}

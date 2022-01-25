@@ -108,3 +108,6 @@ method setCommunityMuted*(self: AccessInterface, muted: bool) {.base.} =
 
 method inviteUsersToCommunity*(self: AccessInterface, pubKeysJSON: string): string {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method createCommunityCategory*(self: AccessInterface, name: string, channels: string) {.base.} =
+  raise newException(ValueError, "No implementation available")

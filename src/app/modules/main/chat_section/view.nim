@@ -205,3 +205,6 @@ QtObject:
 
   proc inviteUsersToCommunity*(self: View, pubKeysJSON: string): string {.slot.} =
     result = self.delegate.inviteUsersToCommunity(pubKeysJSON)
+
+  proc createCommunityCategory*(self: View, name: string, channels: string) {.slot.} =
+    self.delegate.createCommunityCategory(name, channels)

@@ -146,9 +146,8 @@ QtObject {
         communitiesModuleInst.createCommunity(communityName, communityDescription, checkedMembership, ensOnlySwitchChecked, communityColor, communityImage, imageCropperModalaX, imageCropperModalaY, imageCropperModalbX, imageCropperModalbY);
     }
 
-    function createCommunityCategory(communityId, categoryName, channels) {
-        // Not Refactored Yet
-//        chatsModelInst.communities.createCommunityCategory(communityId, categoryName, channels);
+    function createCommunityCategory(categoryName, channels) {
+        chatCommunitySectionModule.createCommunityCategory(categoryName, channels)
     }
 
     function editCommunityCategory(communityId, categoryId, categoryName, channels) {
