@@ -9,14 +9,14 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 
 import shared.status 1.0
-import shared.stores 1.0
 import shared.panels 1.0
+import shared.stores 1.0
 import shared.panels.chat 1.0
 import shared.controls.chat 1.0
 
 Column {
     id: root
-    property var store
+    property var messageStore
     property var container
     property string linkUrls: ""
     property bool isCurrentUser: false
@@ -66,42 +66,37 @@ Column {
                 }
             }
 
-            // Not Refactored Yet
-//            Connections {
-//                id: linkFetchConnections
-//                enabled: false
-//                target: root.store.chatsModelInst
-//                onLinkPreviewDataWasReceived: {
-//                    let response
-//                    try {
-//                        response = JSON.parse(previewData)
+           Connections {
+               id: linkFetchConnections
+               enabled: false
+               target: root.messageStore.messageModule
+               onLinkPreviewDataWasReceived: {
+                   let response
+                   try {
+                        response = JSON.parse(previewData)
+                   } catch (e) {
+                       console.error(previewData, e)
+                       return
+                   }
+                   if (response.uuid !== linkMessageLoader.uuid) return
+                   linkFetchConnections.enabled = false
 
-//                    } catch (e) {
-//                        console.error(previewData, e)
-//                        return
-//                    }
+                   if (!response.success) {
+                       console.error("could not get preview data")
+                       return undefined
+                   }
 
+                   linkData = response.result
 
-//                    if (response.uuid !== linkMessageLoader.uuid) return
-
-//                    linkFetchConnections.enabled = false
-
-//                    if (!response.success) {
-//                        console.error(response.result.error)
-//                        return undefined
-//                    }
-
-//                    linkData = response.result
-
-//                    if (linkData.contentType.startsWith("image/")) {
-//                        return linkMessageLoader.sourceComponent = unfurledImageComponent
-//                    }
-//                    if (linkData.site && linkData.title) {
-//                        linkData.address = link
-//                        return linkMessageLoader.sourceComponent = unfurledLinkComponent
-//                    }
-//                }
-//            }
+                   if (linkData.contentType.startsWith("image/")) {
+                       return linkMessageLoader.sourceComponent = unfurledImageComponent
+                   }
+                   if (linkData.site && linkData.title) {
+                       linkData.address = link
+                       return linkMessageLoader.sourceComponent = unfurledLinkComponent
+                   }
+               }
+           }
 
             // Not Refactored Yet
 //            Connections {
@@ -185,9 +180,8 @@ Column {
                     }
 
                     linkFetchConnections.enabled = true
-                    // Not Refactored Yet
-                    return ""
-//                    return root.store.chatsModelInst.getLinkPreviewData(link, linkMessageLoader.uuid)
+
+                    root.messageStore.getLinkPreviewData(link, linkMessageLoader.uuid)
                 }
                 // setting the height to 0 allows the "enable link" dialog to
                 // disappear correctly when RootStore.neverAskAboutUnfurlingAgain
@@ -226,7 +220,7 @@ Column {
     Component {
         id: invitationBubble
         InvitationBubbleView {
-            store: root.store
+            // store: root.store
             communityId: linkData.communityId
             isLink: true
             anchors.left: parent.left

@@ -123,3 +123,11 @@ QtObject:
 
   proc editMessage*(self: View, messageId: string, updatedMsg: string) {.slot.} =
     self.delegate.editMessage(messageId, updatedMsg)
+
+  proc getLinkPreviewData*(self: View, link: string, uuid: string): string {.slot.} =
+    return self.delegate.getLinkPreviewData(link, uuid)
+
+  proc linkPreviewDataWasReceived*(self: View, previewData: string) {.signal.}
+
+  proc onPreviewDataLoaded*(self: View, previewData: string) {.slot.} =
+    self.linkPreviewDataWasReceived(previewData)

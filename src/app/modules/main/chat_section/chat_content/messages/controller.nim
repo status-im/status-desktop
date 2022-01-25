@@ -136,6 +136,10 @@ method init*(self: Controller) =
   self.events.on(SignalType.HistoryRequestFailed.event) do(e:Args):
     self.delegate.setLoadingHistoryMessagesInProgress(false)
 
+  self.events.on(SIGNAL_MESSAGE_LINK_PREVIEW_DATA_LOADED) do(e: Args):
+    let args = LinkPreviewDataArgs(e)
+    self.delegate.onPreviewDataLoaded(args.response)
+
 method getMySectionId*(self: Controller): string =
   return self.sectionId
 
@@ -190,3 +194,6 @@ method decodeContentHash*(self: Controller, hash: string): string =
 
 method editMessage*(self: Controller, messageId: string, updatedMsg: string) =
   self.messageService.editMessage(messageId, updatedMsg)
+
+method getLinkPreviewData*(self: Controller, link: string, uuid: string): string = 
+  self.messageService.asyncGetLinkPreviewData(link, uuid)

@@ -1,6 +1,9 @@
 include ../../common/json_utils
 include ../../../app/core/tasks/common
 
+import status/statusgo_backend_new/chat as status_go_chat
+
+
 #################################################
 # Async load messages
 #################################################
@@ -142,3 +145,32 @@ const asyncMarkCertainMessagesReadTask: Task = proc(argEncoded: string) {.gcsafe
   }  
   arg.finish(responseJson)
 #################################################
+
+#################################################
+# Async GetLinkPreviewData
+#################################################
+ 
+type
+  AsyncGetLinkPreviewDataTaskArg = ref object of QObjectTaskArg
+    link: string
+    uuid: string
+
+const asyncGetLinkPreviewDataTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[AsyncGetLinkPreviewDataTaskArg](argEncoded)
+
+  var success = true
+  var result: JsonNode =  %* {}
+  try:
+    let response = status_go_chat.getLinkPreviewData(arg.link)
+    result = response.result
+  except:
+    success = false
+
+  let responseJson = %*{
+      "link": arg.link,
+      "uuid": arg.uuid,
+      "success": success,
+      "result": result,
+    }  
+  
+  arg.finish(responseJson)

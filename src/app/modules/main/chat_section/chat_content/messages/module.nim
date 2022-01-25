@@ -90,7 +90,8 @@ proc createChatIdentifierItem(self: Module): Item =
     ContentType.ChatIdentifier,
     messageType = -1,
     sticker = "",
-    stickerPack = -1
+    stickerPack = -1,
+    @[],
   )
 
 method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: seq[ReactionDto], 
@@ -120,7 +121,8 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
         m.contentType.ContentType,
         m.messageType,
         sticker = self.controller.decodeContentHash(m.sticker.hash),
-        m.sticker.pack
+        m.sticker.pack,
+        m.links,
       )
 
       for r in reactions:
@@ -177,7 +179,8 @@ method messageAdded*(self: Module, message: MessageDto) =
     message.contentType.ContentType,
     message.messageType,
     sticker = self.controller.decodeContentHash(message.sticker.hash),
-    message.sticker.pack
+    message.sticker.pack,
+    message.links
   )
 
   self.view.model().insertItemBasedOnTimestamp(item)
@@ -308,3 +311,9 @@ method updateChatIdentifier*(self: Module) =
 
 method setLoadingHistoryMessagesInProgress*(self: Module, isLoading: bool) =
   self.view.setLoadingHistoryMessagesInProgress(isLoading)
+
+method getLinkPreviewData*(self: Module, link: string, uuid: string): string =
+  return self.controller.getLinkPreviewData(link, uuid)
+
+method onPreviewDataLoaded*(self: Module, previewData: string) =
+  self.view.onPreviewDataLoaded(previewData)

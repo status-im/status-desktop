@@ -35,6 +35,7 @@ const SIGNAL_MESSAGE_REACTION_REMOVED* = "messageReactionRemoved"
 const SIGNAL_MESSAGE_REACTION_FROM_OTHERS* = "messageReactionFromOthers"
 const SIGNAL_MESSAGE_DELETION* = "messageDeleted"
 const SIGNAL_MESSAGE_EDITED* = "messageEdited"
+const SIGNAL_MESSAGE_LINK_PREVIEW_DATA_LOADED* = "messageLinkPreviewDataLoaded"
 
 include async_tasks
 
@@ -76,6 +77,9 @@ type
   MessageEditedArgs* = ref object of Args
     chatId*: string
     message*: MessageDto
+
+  LinkPreviewDataArgs* = ref object of Args
+    response*: string
 
 QtObject:
   type Service* = ref object of QObject
@@ -529,6 +533,19 @@ QtObject:
 
   proc getNumOfPinnedMessages*(self: Service, chatId: string): int =
     return self.numOfPinnedMessagesPerChat[chatId]
+
+  proc onAsyncGetLinkPreviewData*(self: Service, response: string) {.slot.} =
+    self.events.emit(SIGNAL_MESSAGE_LINK_PREVIEW_DATA_LOADED, LinkPreviewDataArgs(response: response))
+
+  proc asyncGetLinkPreviewData*(self: Service, link: string, uuid: string) =
+    let arg = AsyncGetLinkPreviewDataTaskArg(
+      tptr: cast[ByteAddress](asyncGetLinkPreviewDataTask),
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "onAsyncGetLinkPreviewData",
+      link: link,
+      uuid: uuid
+    )
+    self.threadpool.start(arg)
 
 # See render-inline in status-react/src/status_im/ui/screens/chat/message/message.cljs
 proc renderInline(self: Service, parsedTextChild: ParsedTextChild): string =
