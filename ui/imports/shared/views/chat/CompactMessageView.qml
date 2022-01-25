@@ -32,7 +32,10 @@ Item {
     property bool isCurrentUser: false
     property bool isHovered: false
     property bool showMoreButton: {
-        let chatTypeThisMessageBelongsTo = messageStore.getChatType()
+        if(!root.messageStore)
+            return false
+
+        let chatTypeThisMessageBelongsTo = root.messageStore.getChatType()
         switch (chatTypeThisMessageBelongsTo) {
         case Constants.chatType.oneToOne:
             return true
@@ -162,9 +165,10 @@ Item {
     }
 
     Rectangle {
-        property alias chatText: chatText
-
         id: messageContainer
+
+        property alias messageContent: messageContent
+
         anchors.top: dateGroupLbl.visible ? dateGroupLbl.bottom : parent.top
         anchors.topMargin: dateGroupLbl.visible ? (activityCenterMessage ? 4 : Style.current.padding) : 0
         height: childrenRect.height
@@ -267,7 +271,9 @@ Item {
             active: responseTo !== "" && !activityCenterMessage
 
             Component.onCompleted: {
-                let obj = messageStore.getMessageByIdAsJson(responseTo)
+                if(!root.messageStore)
+                    return
+                let obj = root.messageStore.getMessageByIdAsJson(responseTo)
                 if(!obj)
                     return
 
@@ -541,7 +547,9 @@ Item {
                             contentType: root.contentType
                             stickerData: root.sticker
                             onLoaded: {
-                                messageStore.scrollToBottom(true, root.container)
+                                if(!root.messageStore)
+                                    return
+                                root.messageStore.scrollToBottom(true, root.container)
                             }
                         }
                     }
@@ -678,12 +686,12 @@ Item {
         anchors.bottom: messageContainer.bottom
         anchors.bottomMargin: Style.current.halfPadding
         anchors.left: messageContainer.left
-        anchors.leftMargin: messageContainer.chatText.textField.leftPadding
+        anchors.leftMargin: messageContainer.messageContent.anchors.leftMargin
 
         sourceComponent: Component {
             EmojiReactionsPanel {
                 id: emojiRect
-                store: messageStore
+                store: root.messageStore
                 emojiReactionsModel: reactionsModel
                 onHoverChanged: {
                     setHovered(messageId, hovered)
@@ -698,7 +706,15 @@ Item {
                     root.messageContextMenu.setYPosition = function() { return (-root.messageContextMenu.height - 4)}
                 }
 
-                onToggleReaction: messageStore.toggleReaction(messageId, emojiID)
+                onToggleReaction: {
+                    if(!root.messageStore)
+                    {
+                        console.error("reaction cannot be toggled, message store is not valid")
+                        return
+                    }
+
+                    root.messageStore.toggleReaction(messageId, emojiID)
+                }
 
                 onSetMessageActive: {
                     setMessageActive(messageId, active);;
