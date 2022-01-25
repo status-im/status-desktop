@@ -25,7 +25,7 @@ yarn-error.log*
 yarn.lock
 TODO
 resources.rcc
-resources.qrc
+ui/resources.qrc
 status-react-translations/
 /.update.timestamp
 notarization.log
