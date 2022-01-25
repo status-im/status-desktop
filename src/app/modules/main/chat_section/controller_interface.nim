@@ -151,3 +151,9 @@ method setCommunityMuted*(self: AccessInterface, muted: bool) {.base.} =
 
 method inviteUsersToCommunity*(self: AccessInterface, pubKeys: string): string {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method reorderCommunityCategories*(self: AccessInterface, categoryId: string, position: int) =
+  raise newException(ValueError, "No implementation available")
+
+method reorderCommunityChat*(self: AccessInterface, categoryId: string, chatId: string, position: int): string =
+  raise newException(ValueError, "No implementation available")

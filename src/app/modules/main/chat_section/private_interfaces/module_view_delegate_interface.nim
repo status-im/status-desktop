@@ -123,3 +123,9 @@ method deleteCommunityCategory*(self: AccessInterface, categoryId: string) {.bas
 
 method prepareEditCategoryModel*(self: AccessInterface, categoryId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method reorderCommunityCategories*(self: AccessInterface, categoryId: string, position: int) =
+  raise newException(ValueError, "No implementation available")
+  
+method reorderCommunityChat*(self: AccessInterface, categoryId: string, chatId: string, position: int): string =
+  raise newException(ValueError, "No implementation available")

@@ -677,3 +677,9 @@ method prepareEditCategoryModel*(self: Module, categoryId: string) =
     let item = initItem(c.id, c.name, "", false, c.color, c.description, c.chatType.int, false, 
                         false, 0, c.muted, false, active = false, c.position, categoryId)
     self.view.editCategoryChannelsModel().appendItem(item)
+
+method reorderCommunityCategories*(self: Module, categoryId: string, position: int) =
+  self.controller.reorderCommunityCategories(categoryId, position)
+  
+method reorderCommunityChat*(self: Module, categoryId: string, chatId: string, position: int): string =
+  self.controller.reorderCommunityChat(categoryId, chatId, position)
