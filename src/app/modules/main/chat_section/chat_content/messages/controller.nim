@@ -115,6 +115,12 @@ method init*(self: Controller) =
       return
     self.delegate.onMessageEdited(args.message)
 
+  self.events.on(SIGNAL_CHAT_HISTORY_CLEARED) do (e: Args):
+    var args = ChatArgs(e)
+    if(self.chatId != args.chatId):
+      return
+    self.delegate.onHistoryCleared()
+
 method getMySectionId*(self: Controller): string =
   return self.sectionId
 

@@ -350,4 +350,8 @@ QtObject:
     let index = self.createIndex(ind, 0, nil)
     self.dataChanged(index, index, @[ModelRole.MessageText.int, ModelRole.MessageContainsMentions.int, ModelRole.IsEdited.int])
 
-
+  proc clear*(self: Model) = 
+    self.beginResetModel()
+    self.items = @[]
+    self.endResetModel()
+    self.countChanged()
