@@ -168,6 +168,7 @@ Item {
     // This is kind of a solution for applying backend refactored changes with the minimal qml changes.
     // The best would be if we made qml to follow the struct we have on the backend side.
     Repeater {
+        visible: root.activeChatId !== ""
         model: parentModule && parentModule.model
         delegate: delegateChooser
 
@@ -184,6 +185,10 @@ Item {
                         return subItems
                     }
                     delegate: ChatContentView {
+                        visible: {
+                            let myChatId = chatContentModule.getMyChatId()
+                            return myChatId === root.activeChatId || myChatId === root.activeSubItemId
+                        }
                         width: parent.width
                         clip: true
                         height: {
@@ -209,6 +214,10 @@ Item {
             }
             DelegateChoice { // In all other cases
                 delegate: ChatContentView {
+                    visible: {
+                        let myChatId = chatContentModule.getMyChatId()
+                        return myChatId === root.activeChatId || myChatId === root.activeSubItemId
+                    }
                     width: parent.width
                     clip: true
                     height: {
