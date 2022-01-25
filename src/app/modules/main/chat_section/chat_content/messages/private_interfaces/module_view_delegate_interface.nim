@@ -30,3 +30,6 @@ method onMessageDeleted*(self: AccessInterface, messageId: string) {.base.} =
 
 method editMessage*(self: AccessInterface, messageId: string, updatedMsg: string) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method onHistoryCleared*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
