@@ -29,6 +29,7 @@ proc toEmojiIdAsEnum*(emojiId: int, emojiIdAsEnum: var EmojiId): bool =
 
 proc initMessageReactionItem*(emojiId: EmojiId): MessageReactionItem =
   result.emojiId = emojiId
+  result.didIReactWithThisEmoji = false
 
 proc `$`*(self: MessageReactionItem): string =
   var reactions = ""
@@ -72,16 +73,20 @@ proc getReactionId*(self: MessageReactionItem, userPublicKey: string): string =
 
 proc addReaction*(self: var MessageReactionItem, didIReactWithThisEmoji: bool, userPublicKey: string, 
   userDisplayName: string, reactionId: string) =
-  self.didIReactWithThisEmoji = didIReactWithThisEmoji
+  if(didIReactWithThisEmoji):
+    self.didIReactWithThisEmoji = true
   self.reactions.add(ReactionDetails(publicKey: userPublicKey, displayName: userDisplayName, reactionId: reactionId))
 
-proc removeReaction*(self: var MessageReactionItem, reactionId: string) = 
+proc removeReaction*(self: var MessageReactionItem, reactionId: string, didIRemoveThisReaction: bool) = 
   var index = -1
   for i in 0..<self.reactions.len:
     if (self.reactions[i].reactionId == reactionId):
       index = i
       break
   
+  if(didIRemoveThisReaction):
+    self.didIReactWithThisEmoji = false
+
   if(index == -1):
     return
 

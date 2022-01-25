@@ -270,12 +270,12 @@ QtObject:
     let index = self.createIndex(ind, 0, nil)
     self.dataChanged(index, index, @[ModelRole.Reactions.int])
 
-  proc removeReaction*(self: Model, messageId: string, emojiId: EmojiId, reactionId: string) = 
+  proc removeReaction*(self: Model, messageId: string, emojiId: EmojiId, reactionId: string, didIRemoveThisReaction: bool) = 
     let ind = self.findIndexForMessageId(messageId)
     if(ind == -1):
       return
 
-    self.items[ind].removeReaction(emojiId, reactionId)
+    self.items[ind].removeReaction(emojiId, reactionId, didIRemoveThisReaction)
     
     let index = self.createIndex(ind, 0, nil)
     self.dataChanged(index, index, @[ModelRole.Reactions.int])

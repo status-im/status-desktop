@@ -114,7 +114,8 @@ QtObject:
         return
       self.items[ind].addReaction(didIReactWithThisEmoji, userPublicKey, userDisplayName, reactionId)
       let index = self.createIndex(ind, 0, nil)
-      self.dataChanged(index, index, @[]) # all roles
+      self.dataChanged(index, index, @[ModelRole.EmojiId.int, ModelRole.DidIReactWithThisEmoji.int, 
+      ModelRole.NumberOfReactions.int, ModelRole.JsonArrayOfUsersReactedWithThisEmoji.int])
     else:
       let parentModelIndex = newQModelIndex()
       defer: parentModelIndex.delete
@@ -129,11 +130,11 @@ QtObject:
 
     self.countChanged()
 
-  proc removeReaction*(self: MessageReactionModel, emojiId: EmojiId, reactionId: string) = 
+  proc removeReaction*(self: MessageReactionModel, emojiId: EmojiId, reactionId: string, didIRemoveThisReaction: bool) = 
     let ind = self.getIndexOfTheItemWithEmojiId(emojiId)
     if(ind == -1):
       return
-    self.items[ind].removeReaction(reactionId)
+    self.items[ind].removeReaction(reactionId, didIRemoveThisReaction)
 
     if(self.items[ind].numberOfReactions() == 0):
       # remove item if there are no reactions for this emoji id
@@ -144,3 +145,7 @@ QtObject:
       self.items.delete(ind)
       self.endRemoveRows()
       self.countChanged()
+    else:
+      let index = self.createIndex(ind, 0, nil)
+      self.dataChanged(index, index, @[ModelRole.EmojiId.int, ModelRole.DidIReactWithThisEmoji.int, 
+      ModelRole.NumberOfReactions.int, ModelRole.JsonArrayOfUsersReactedWithThisEmoji.int])

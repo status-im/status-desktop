@@ -95,6 +95,12 @@ method init*(self: Controller) =
       return
     self.delegate.onReactionRemoved(args.messageId, args.emojiId, args.reactionId)
 
+  self.events.on(SIGNAL_MESSAGE_REACTION_FROM_OTHERS) do(e:Args):
+    let args = MessageAddRemoveReactionArgs(e)
+    if(self.chatId != args.chatId):
+      return
+    self.delegate.toggleReactionFromOthers(args.messageId, args.emojiId, args.reactionId, args.reactionFrom)
+
   self.events.on(SIGNAL_CONTACT_NICKNAME_CHANGED) do(e: Args):
     var args = ContactArgs(e)
     self.delegate.updateContactDetails(args.contactId)

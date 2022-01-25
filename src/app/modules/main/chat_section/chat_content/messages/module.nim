@@ -132,7 +132,7 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
             item.addReaction(emojiIdAsEnum, didIReactWithThisEmoji, userWhoAddedThisReaction.id, 
             userWhoAddedThisReaction.userNameOrAlias(), r.id)
           else:
-            error "wrong emoji id found when loading messages"
+            error "wrong emoji id found when loading messages", methodName="newMessagesLoaded"
 
       for p in pinnedMessages:
         if(p.message.id == m.id):
@@ -203,23 +203,41 @@ method toggleReaction*(self: Module, messageId: string, emojiId: int) =
       let reactionId = item.getReactionId(emojiIdAsEnum, myPublicKey)
       self.controller.removeReaction(messageId, emojiId, reactionId)
   else:
-    error "wrong emoji id found on reaction added response", emojiId
+    error "wrong emoji id found on reaction added response", emojiId, methodName="toggleReaction"
 
 method onReactionAdded*(self: Module, messageId: string, emojiId: int, reactionId: string) =
   var emojiIdAsEnum: EmojiId
   if(message_reaction_item.toEmojiIdAsEnum(emojiId, emojiIdAsEnum)):
     let myPublicKey = singletonInstance.userProfile.getPubKey()
     let myName = singletonInstance.userProfile.getName()
-    self.view.model().addReaction(messageId, emojiIdAsEnum, true, myPublicKey, myName, reactionId)
+    self.view.model().addReaction(messageId, emojiIdAsEnum, didIReactWithThisEmoji = true, myPublicKey, myName, 
+    reactionId)
   else:
-    error "wrong emoji id found on reaction added response", emojiId
+    error "wrong emoji id found on reaction added response", emojiId, methodName="onReactionAdded"
 
 method onReactionRemoved*(self: Module, messageId: string, emojiId: int, reactionId: string) =
   var emojiIdAsEnum: EmojiId
   if(message_reaction_item.toEmojiIdAsEnum(emojiId, emojiIdAsEnum)):
-    self.view.model().removeReaction(messageId, emojiIdAsEnum, reactionId)
+    self.view.model().removeReaction(messageId, emojiIdAsEnum, reactionId, didIRemoveThisReaction = true)
   else:
-    error "wrong emoji id found on reaction remove response", emojiId
+    error "wrong emoji id found on reaction remove response", emojiId, methodName="onReactionRemoved"
+
+method toggleReactionFromOthers*(self: Module, messageId: string, emojiId: int, reactionId: string, 
+  reactionFrom: string) =
+  var emojiIdAsEnum: EmojiId
+  if(message_reaction_item.toEmojiIdAsEnum(emojiId, emojiIdAsEnum)):
+    let item = self.view.model().getItemWithMessageId(messageId)
+    if(item.isNil):
+      info "message with this id is not loaded yet ", msgId=messageId, methodName="toggleReactionFromOthers"
+      return
+    if(item.shouldAddReaction(emojiIdAsEnum, reactionFrom)):
+      let userWhoAddedThisReaction = self.controller.getContactById(reactionFrom)
+      self.view.model().addReaction(messageId, emojiIdAsEnum, didIReactWithThisEmoji = false, 
+      userWhoAddedThisReaction.id, userWhoAddedThisReaction.userNameOrAlias(), reactionId)
+    else:
+      self.view.model().removeReaction(messageId, emojiIdAsEnum, reactionId, didIRemoveThisReaction = false)
+  else:
+    error "wrong emoji id found on reaction added response", emojiId, methodName="toggleReactionFromOthers"
 
 method pinUnpinMessage*(self: Module, messageId: string, pin: bool) =
   self.controller.pinUnpinMessage(messageId, pin)
