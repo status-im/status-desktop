@@ -187,4 +187,11 @@ QtObject {
 
         return msg
     }
+
+
+    function getLinkPreviewData(url, uuid) {
+        if(!messageModule)
+            return
+        return messageModule.getLinkPreviewData(url, uuid)
+    }
 }

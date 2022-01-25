@@ -33,3 +33,9 @@ method editMessage*(self: AccessInterface, messageId: string, updatedMsg: string
 
 method onHistoryCleared*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method getLinkPreviewData*(self: AccessInterface, link: string, uuid: string): string {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onPreviewDataLoaded*(self: AccessInterface, previewData: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
