@@ -111,7 +111,7 @@ Item {
                         //% "Can't chat with yourself"
                         root.validationError = qsTrId("can-t-chat-with-yourself");
                     } else {
-                        searchResults.username = chatsModel.ensView.formatENSUsername(chatKey.text)
+                        searchResults.username = Utils.addStatusEns(chatKey.text.trim())
                         let userAlias = globalUtils.generateAlias(resolvedPubKey)
                         userAlias = userAlias.length > 20 ? userAlias.substring(0, 19) + "..." : userAlias
                         searchResults.userAlias =  userAlias + " • " + Utils.compactAddress(resolvedPubKey, 4)
@@ -225,7 +225,8 @@ Item {
     NoFriendsRectangle {
         id: noContactsRect
         visible: showContactList
-        anchors.top: chatKey.top
+        anchors.top: chatKey.bottom
+        anchors.topMargin: Style.current.xlPadding * 3
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
     }
