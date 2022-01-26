@@ -33,8 +33,11 @@ QtObject:
   proc addItem*(self: View, item: SectionItem) =
     self.model.addItem(item)
 
+  proc model*(self: View): SectionModel =
+    result = self.model
+
   proc getModel(self: View): QVariant {.slot.} =
-    return newQVariant(self.modelVariant)
+    return self.modelVariant
 
   QtProperty[QVariant] model:
     read = getModel
