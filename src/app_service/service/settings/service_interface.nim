@@ -259,15 +259,3 @@ method autoMessageEnabled*(self: ServiceInterface): bool {.base.} =
   
 method getWakuBloomFilterMode*(self: ServiceInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
-
-method getGifRecents*(self: ServiceInterface): JsonNode {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method getGifFavorites*(self: ServiceInterface): JsonNode {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method saveGifRecents*(self: ServiceInterface, value: JsonNode): bool {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method saveGifFavorites*(self: ServiceInterface, value: JsonNode): bool {.base.} =
-  raise newException(ValueError, "No implementation available")

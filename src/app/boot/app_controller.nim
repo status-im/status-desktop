@@ -259,6 +259,7 @@ proc delete*(self: AppController) =
   self.profileService.delete
   self.generalService.delete
   self.ensService.delete
+  self.gifService.delete
 
 proc startupDidLoad*(self: AppController) =
   singletonInstance.engine.setRootContextProperty("localAppSettings", self.localAppSettingsVariant)
@@ -302,6 +303,7 @@ proc load(self: AppController) =
   self.devicesService.init()
   self.mailserversService.init()
   self.ensService.init()
+  self.gifService.init()
 
   let pubKey = self.settingsService.getPublicKey()
   singletonInstance.localAccountSensitiveSettings.setFileName(pubKey)
