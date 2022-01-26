@@ -450,20 +450,4 @@ method autoMessageEnabled*(self: Service): bool =
 method getWakuBloomFilterMode*(self: Service): bool =
   return self.settings.wakuBloomFilterMode
 
-method getGifRecents*(self: Service): JsonNode =
-  return self.settings.gifRecents
 
-method getGifFavorites*(self: Service): JsonNode =
-  return self.settings.gifFavorites
-
-method saveGifRecents*(self: Service, value: JsonNode): bool =
-  if(self.saveSetting(KEY_GIF_RECENTS, value)):
-    self.settings.gifRecents = value
-    return true
-  return false
-
-method saveGifFavorites*(self: Service, value: JsonNode): bool =
-  if(self.saveSetting(KEY_GIF_FAVORITES, value)):
-    self.settings.gifFavorites = value
-    return true
-  return false

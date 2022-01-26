@@ -43,6 +43,7 @@ const KEY_WAKU_BLOOM_FILTER_MODE* = "waku-bloom-filter-mode"
 const KEY_AUTO_MESSAGE_ENABLED* = "auto-message-enabled?"
 const KEY_GIF_FAVORITES* = "gifs/favorite-gifs"
 const KEY_GIF_RECENTS* = "gifs/recent-gifs"
+const KEY_GIF_API_KEY* = "gifs/api-key"
 
 type UpstreamConfig* = object
   Enabled*: bool
