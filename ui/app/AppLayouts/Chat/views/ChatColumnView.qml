@@ -137,27 +137,6 @@ Item {
         store: root.rootStore
         reactionModel: root.rootStore.emojiReactionsModel
     }
-
-    StatusImageModal {
-        id: imagePopup
-        onClicked: {
-            if (button === Qt.LeftButton) {
-                imagePopup.close()
-            } else if(button === Qt.RightButton) {
-                contextmenu.imageSource = imagePopup.imageSource
-                contextmenu.hideEmojiPicker = true
-                contextmenu.isRightClickOnImage = true;
-                contextmenu.show()
-            }
-        }
-        Connections {
-            target: Global
-            onOpenImagePopup: {
-                imagePopup.openPopup(image);
-            }
-        }
-    }
-
     
     EmptyChatPanel {
         anchors.fill: parent
