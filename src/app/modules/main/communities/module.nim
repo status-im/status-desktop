@@ -4,7 +4,7 @@ import ./io_interface
 import ../io_interface as delegate_interface
 import ./view, ./controller
 import ../../shared_models/section_item
-import ../../shared_models/[user_item, user_model]
+import ../../shared_models/[user_item, user_model, section_model]
 import ../../../global/global_singleton
 import ../../../core/eventemitter
 import ../../../../app_service/service/community/service as community_service
@@ -96,6 +96,9 @@ method addCommunity*(self: Module, community: CommunityDto) =
 
 method joinCommunity*(self: Module, communityId: string): string =
   self.controller.joinCommunity(communityId)
+
+method communityEdited*(self: Module, community: CommunityDto) =
+  self.view.model().editItem(self.getCommunityItem(community))
 
 method requestAdded*(self: Module) =
   # TODO to model or view

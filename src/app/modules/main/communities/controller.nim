@@ -36,33 +36,10 @@ method init*(self: Controller) =
     let args = CommunityArgs(e)
     self.delegate.addCommunity(args.community)
 
-  self.events.on(SIGNAL_COMMUNITY_MY_REQUEST_ADDED) do(e:Args):
-    let args = CommunityRequestArgs(e)
-    # self.delegate.requestAdded()
-
-  self.events.on(SIGNAL_COMMUNITY_CHANNEL_EDITED) do(e:Args):
-    let args = CommunityChatArgs(e)
-    # self.delegate.communityChannelEdited()
-
-  self.events.on(SIGNAL_COMMUNITY_CHANNEL_REORDERED) do(e:Args):
-    let args = CommunityChatOrderArgs(e)
-    # self.delegate.communityChannelReordered()
-
-  self.events.on(SIGNAL_COMMUNITY_CHANNEL_DELETED) do(e:Args):
-    let args = CommunityChatIdArgs(e)
-    # self.delegate.communityChannelDeleted()
-
-  self.events.on(SIGNAL_COMMUNITY_CATEGORY_CREATED) do(e:Args):
-    let args = CommunityCategoryArgs(e)
-    # self.delegate.communityCategoryCreated()
-
-  self.events.on(SIGNAL_COMMUNITY_CATEGORY_EDITED) do(e:Args):
-    let args = CommunityCategoryArgs(e)
-    # self.delegate.communityCategoryEdited()
-
-  self.events.on(SIGNAL_COMMUNITY_CATEGORY_DELETED) do(e:Args):
-    let args = CommunityCategoryArgs(e)
-    # self.delegate.communityCategoryDeleted()
+  self.events.on(SIGNAL_COMMUNITIES_UPDATE) do(e:Args):
+    let args = CommunitiesArgs(e)
+    for community in args.communities:
+      self.delegate.communityEdited(community)
 
 method getAllCommunities*(self: Controller): seq[CommunityDto] =
   result = self.communityService.getAllCommunities()

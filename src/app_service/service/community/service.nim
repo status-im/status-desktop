@@ -373,6 +373,11 @@ QtObject:
         error "error: ", methodName="leaveCommunity", errDesription = "result is nil"
         return
 
+      # Update community so that joined, member list and isMember are updated
+      let updatedCommunity = response.result["communities"][0].toCommunityDto()
+      self.allCommunities[communityId] = updatedCommunity
+      self.events.emit(SIGNAL_COMMUNITIES_UPDATE, CommunitiesArgs(communities: @[updatedCommunity]))
+
       # remove this from the joinedCommunities list
       self.joinedCommunities.del(communityId)
       self.events.emit(SIGNAL_COMMUNITY_LEFT, CommunityIdArgs(communityId: communityId))
