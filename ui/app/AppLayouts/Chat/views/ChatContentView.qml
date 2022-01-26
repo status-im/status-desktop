@@ -345,6 +345,11 @@ ColumnLayout {
         }
 
         onEditClicked: messageStore.setEditModeOn(messageId)
+
+        onCreateOneToOneChat: {
+            Global.changeAppSectionBySectionType(Constants.appSection.chat)
+            root.rootStore.chatCommunitySectionModule.createOneToOneChat(chatId, ensName)
+        }
     }
 
     ColumnLayout {
