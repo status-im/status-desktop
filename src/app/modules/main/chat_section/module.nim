@@ -186,7 +186,7 @@ proc buildCommunityUI(self: Module, events: EventEmitter,
           selectedItemId = cat.id
           selectedSubItemId = channelItem.id
 
-      var categoryItem = initItem(cat.id, cat.name, "", false, "", "", ChatType.Unknown.int, false, 
+      var categoryItem = initItem(cat.id, cat.name, "", false, "", "", ChatType.Category.int, false, 
       hasNotificationPerCategory, notificationsCountPerCategory, false, false, cat.position)
       categoryItem.prependSubItems(categoryChannels)
       self.view.chatsModel().appendItem(categoryItem)
