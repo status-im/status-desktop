@@ -270,6 +270,7 @@ Column {
             chatName: root.senderDisplayName
             chatType: messageStore.getChatType()
             chatColor: messageStore.getChatColor()
+            amIChatAdmin: messageStore.amIChatAdmin()
             chatIcon: root.senderIcon
             chatIconIsIdenticon: root.isSenderIconIdenticon
         }

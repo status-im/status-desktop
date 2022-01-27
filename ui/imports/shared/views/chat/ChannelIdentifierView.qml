@@ -11,6 +11,7 @@ Column {
     topPadding: visible ? Style.current.bigPadding : 0
     bottomPadding: visible? 50 : 0
 
+    property bool amIChatAdmin: false
     property string chatName: ""
     property int chatType: -1
     property string chatColor: ""
@@ -83,10 +84,7 @@ Column {
     }
 
     Item {
-        //NEED TO CHECK THIS
-//        visible: root.store.chatsModelInst.channelView.activeChannel.chatType === Constants.chatType.privateGroupChat
-//                 && root.store.chatsModelInst.channelView.activeChannel.isMemberButNotJoined
-        visible: root.chatType === Constants.chatType.privateGroupChat
+        visible: root.chatType === Constants.chatType.privateGroupChat && !root.amIChatAdmin
         anchors.horizontalCenter: parent.horizontalCenter
         width: visible ? joinChat.width : 0
         height: visible ? 100 : 0
