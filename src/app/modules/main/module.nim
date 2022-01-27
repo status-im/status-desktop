@@ -68,6 +68,9 @@ type
     nodeSectionModule: node_section_module.AccessInterface
     moduleLoaded: bool
 
+# Forward declaration
+method calculateProfileSectionHasNotification*[T](self: Module[T]): bool
+
 proc newModule*[T](
   delegate: T,
   events: EventEmitter,
@@ -114,6 +117,7 @@ proc newModule*[T](
     contactsService,
     messageService,
     gifService,
+    privacyService,
   )
   result.moduleLoaded = false
 
@@ -321,7 +325,7 @@ method load*[T](
   image = "", 
   conf.SETTINGS_SECTION_ICON, 
   color = "", 
-  hasNotification = false, 
+  hasNotification = self.calculateProfileSectionHasNotification(), 
   notificationsCount = 0, 
   active = false, 
   enabled = true)
@@ -599,3 +603,12 @@ method resolvedENS*[T](self: Module[T], publicKey: string, address: string, uuid
 method contactUpdated*[T](self: Module[T], publicKey: string) =
   let (name, image, isIdenticon) = self.controller.getContactNameAndImage(publicKey)
   self.view.activeSection().updateMember(publicKey, name, image, isIdenticon)
+
+method calculateProfileSectionHasNotification*[T](self: Module[T]): bool =
+  return not self.controller.isMnemonicBackedUp()
+
+method mnemonicBackedUp*[T](self: Module[T]) =
+  self.view.model().udpateNotifications(
+    conf.SETTINGS_SECTION_ID,
+    self.calculateProfileSectionHasNotification(),
+    notificationsCount = 0)

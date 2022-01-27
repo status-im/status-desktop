@@ -44,5 +44,8 @@ method getContactNameAndImage*(self: AccessInterface, contactId: string):
   tuple[name: string, image: string, isIdenticon: bool] {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method resolveENS*(self: AccessInterface, ensName: string, uuid: string = ""): void {.base.} =
+method resolveENS*(self: AccessInterface, ensName: string, uuid: string = "") {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method isMnemonicBackedUp*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")

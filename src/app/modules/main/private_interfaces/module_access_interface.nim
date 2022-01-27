@@ -25,3 +25,6 @@ method load*(
 
 method checkForStoringPassword*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method calculateProfileSectionHasNotification*(self: AccessInterface): bool {.base.} =
+  raise newException(ValueError, "No implementation available")

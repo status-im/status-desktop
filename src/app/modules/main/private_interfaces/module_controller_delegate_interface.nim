@@ -35,3 +35,6 @@ method resolvedENS*(self: AccessInterface, publicKey: string, address: string, u
 
 method contactUpdated*(self: AccessInterface, publicKey: string) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method mnemonicBackedUp*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
