@@ -12,6 +12,7 @@ type ChatType* {.pure.}= enum
   Profile = 4,
   Timeline = 5
   CommunityChat = 6
+  Category = 9999
 
 type ChatMember* = object
   id*: string
