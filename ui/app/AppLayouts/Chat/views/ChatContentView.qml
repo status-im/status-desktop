@@ -38,6 +38,14 @@ ColumnLayout {
 
     property bool stickersLoaded: false
 
+    // NOTE: Used this property change as it is the current way used for displaying new channel/chat data of content view.
+    // If in the future content is loaded dynamically, input focus should be activated when loaded / created content view.
+    onHeightChanged: {
+        if(chatContentRoot.height > 0) {
+            chatInput.forceInputActiveFocus()
+        }
+    }
+
     StatusChatToolBar {
         id: topBar
         Layout.fillWidth: true
