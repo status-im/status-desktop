@@ -18,6 +18,7 @@ type
     Active
     Position
     SubItems
+    IsCategory
 
 QtObject:
   type
@@ -77,6 +78,7 @@ QtObject:
       ModelRole.Active.int:"active",
       ModelRole.Position.int:"position",
       ModelRole.SubItems.int:"subItems",
+      ModelRole.IsCategory.int:"isCategory"
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -118,6 +120,8 @@ QtObject:
       result = newQVariant(item.position)
     of ModelRole.SubItems: 
       result = newQVariant(item.subItems)
+    of ModelRole.IsCategory:
+      result = newQVariant(item.`type` == ChatType.Category.int)
 
   proc appendItem*(self: Model, item: Item) =
     let parentModelIndex = newQModelIndex()
