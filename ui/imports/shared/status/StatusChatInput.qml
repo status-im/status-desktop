@@ -563,6 +563,10 @@ Rectangle {
         messageInputField.forceActiveFocus();
     }
 
+    function forceInputActiveFocus() {
+        messageInputField.forceActiveFocus();
+    }
+
     Connections {
         target: Global.applicationWindow.dragAndDrop
         onDroppedOnValidScreen: (drop) => {
