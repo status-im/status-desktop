@@ -6,3 +6,6 @@ method load*(self: AccessInterface) {.base.} =
 
 method moveToAppState*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method startUpUIRaised*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")

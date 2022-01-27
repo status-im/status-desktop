@@ -23,6 +23,7 @@ StatusWindow {
     property bool hasAccounts: startupModule.appState !== Constants.appState.onboarding
     property alias dragAndDrop: dragTarget
     property bool displayBeforeGetStartedModal: !hasAccounts
+    property bool appIsReady: false
 
     Universal.theme: Universal.System
 
@@ -44,10 +45,14 @@ StatusWindow {
     visible: true
 
     function storeWidth() {
+        if(!applicationWindow.appIsReady)
+            return
         localAppSettings.appWidth = width
     }
 
     function storeHeight() {
+        if(!applicationWindow.appIsReady)
+            return
         localAppSettings.appHeight = height
     }
 
@@ -94,6 +99,13 @@ StatusWindow {
 
     Connections {
         target: startupModule
+
+        onStartUpUIRaised: {
+            applicationWindow.appIsReady = true
+            applicationWindow.storeWidth()
+            applicationWindow.storeHeight()
+        }
+
         onAppStateChanged: {
             if(state === Constants.appState.main) {
                 // We set main module to the Global singleton once user is logged in and we move to the main app.

@@ -26,6 +26,7 @@ QtObject:
     # In some point, here, we will setup some exposed main module related things.
     self.delegate.viewDidLoad()
 
+  proc startUpUIRaised*(self: View) {.signal.}
   proc appStateChanged*(self: View, state: int) {.signal.}
 
   proc getAppState(self: View): int {.slot.} =
