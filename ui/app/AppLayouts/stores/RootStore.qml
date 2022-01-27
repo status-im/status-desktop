@@ -9,6 +9,10 @@ QtObject {
     property var communitiesModuleInst: communitiesModule
     property var observedCommunity: communitiesModuleInst.observedCommunity
 
+    property AppSearchStore appSearchStore: AppSearchStore {
+        appSearchModule: root.mainModuleInst.appSearchModule
+    }
+
     property ProfileSectionStore profileSectionStore: ProfileSectionStore {
     }
 

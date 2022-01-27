@@ -1,4 +1,4 @@
-import NimQml, Tables, strutils
+import NimQml, Tables, strutils, strformat
 
 import result_item
 
@@ -33,15 +33,15 @@ QtObject:
     new(result, delete)
     result.setup()
 
-  #################################################
-  # Properties
-  #################################################
+  proc `$`*(self: Model): string =
+    for i in 0 ..< self.resultList.len:
+      result &= fmt"""SearchResultMessageModel:
+      [{i}]:({$self.resultList[i]})
+      """
   
   proc countChanged*(self: Model) {.signal.}
-
   proc count*(self: Model): int {.slot.}  =
     self.resultList.len
-
   QtProperty[int] count:
     read = count
     notify = countChanged

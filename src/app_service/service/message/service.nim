@@ -36,6 +36,7 @@ const SIGNAL_MESSAGE_REACTION_FROM_OTHERS* = "messageReactionFromOthers"
 const SIGNAL_MESSAGE_DELETION* = "messageDeleted"
 const SIGNAL_MESSAGE_EDITED* = "messageEdited"
 const SIGNAL_MESSAGE_LINK_PREVIEW_DATA_LOADED* = "messageLinkPreviewDataLoaded"
+const SIGNAL_MAKE_SECTION_CHAT_ACTIVE* = "makeSectionChatActive"
 
 include async_tasks
 
@@ -80,6 +81,11 @@ type
 
   LinkPreviewDataArgs* = ref object of Args
     response*: string
+
+  ActiveSectionChatArgs* = ref object of Args
+    sectionId*: string
+    chatId*: string
+    messageId*: string
 
 QtObject:
   type Service* = ref object of QObject
@@ -653,3 +659,12 @@ proc editMessage*(self: Service, messageId: string, updatedMsg: string) =
 
   except Exception as e:
     error "error: ", methodName="editMessage", errName = e.name, errDesription = e.msg
+
+proc switchTo*(self: Service, sectionId: string, chatId: string, messageId: string) =
+  ## Calling this proc the app will switch to passed `sectionId`, after that if `chatId` is set
+  ## it will make that chat an active one and at the end if `messageId` is set it will point to
+  ## that message.
+  ## We should use this proc (or just emit a signal bellow) when we want to switch to certain
+  ## section and/or chat and/or message
+  let data = ActiveSectionChatArgs(sectionId: sectionId, chatId: chatId, messageId: messageId)
+  self.events.emit(SIGNAL_MAKE_SECTION_CHAT_ACTIVE, data)

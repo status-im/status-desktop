@@ -12,3 +12,6 @@ method getSearchLocationObject*(self: AccessInterface): string {.base.} =
 
 method searchMessages*(self: AccessInterface, searchTerm: string) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method resultItemClicked*(self: AccessInterface, itemId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")

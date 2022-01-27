@@ -103,7 +103,6 @@ QtObject:
     self.delegate.loadMoreMessages()
 
   proc messageSuccessfullySent*(self: View) {.signal.}
-
   proc emitSendingMessageSuccessSignal*(self: View) =
     self.messageSuccessfullySent()
 
@@ -131,3 +130,7 @@ QtObject:
 
   proc onPreviewDataLoaded*(self: View, previewData: string) {.slot.} =
     self.linkPreviewDataWasReceived(previewData)
+
+  proc switchToMessage(self: View, messageIndex: int) {.signal.}
+  proc emitSwitchToMessageSignal*(self: View, messageIndex: int) =
+    self.switchToMessage(messageIndex)

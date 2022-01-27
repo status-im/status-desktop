@@ -71,3 +71,12 @@ method editMessage*(self: AccessInterface, messageId: string, updatedMsg: string
 
 method getLinkPreviewData*(self: AccessInterface, link: string, uuid: string): string {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method getSearchedMessageId*(self: AccessInterface): string {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method setSearchedMessageId*(self: AccessInterface, searchedMessageId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method clearSearchedMessageId*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")

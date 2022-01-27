@@ -145,7 +145,12 @@ Item {
 //                }
 
 //                root.chatSectionModule.setActiveChannel(model.chatId);
-                positionAtMessage(model.id);
+
+                // To position to appropriate message check how it's done in AppSearch module,
+                // similar may be done here, corresponding module for activity center just need to
+                // use the mechanism done there, send the signal form message service and
+                // and the rest is already handled.
+//                positionAtMessage(model.id);
             }
             prevMessageIndex: root.previousNotificationIndex
             prevMsgTimestamp: root.previousNotificationTimestamp

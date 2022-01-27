@@ -189,7 +189,7 @@ Item {
 
     AppSearch{
         id: appSearch
-        store: mainModule.appSearchModule
+        store: appMain.rootStore.appSearchStore
     }
 
     StatusAppLayout {

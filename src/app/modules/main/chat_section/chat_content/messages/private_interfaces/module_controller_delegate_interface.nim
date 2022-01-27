@@ -37,3 +37,6 @@ method onMessageEdited*(self: AccessInterface, message: MessageDto) {.base.} =
 
 method setLoadingHistoryMessagesInProgress*(self: AccessInterface, isLoading: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method switchToMessage*(self: AccessInterface, messageId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")

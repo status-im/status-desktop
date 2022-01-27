@@ -1,7 +1,7 @@
 import NimQml, Tables, chronicles, json, sequtils
 import io_interface
 import ../io_interface as delegate_interface
-import view, controller, item, sub_item, model, sub_model
+import view, controller, item, sub_item, model, sub_model, base_item
 import ../../shared_models/contacts_item as contacts_item
 import ../../shared_models/contacts_model as contacts_model
 
@@ -275,11 +275,31 @@ method chatContentDidLoad*(self: Module) =
 method setActiveItemSubItem*(self: Module, itemId: string, subItemId: string) =
   self.controller.setActiveItemSubItem(itemId, subItemId)
 
+method makeChatWithIdActive*(self: Module, chatId: string) =
+  var item = self.view.chatsModel().getItemById(chatId)
+  var subItemId: string
+  if(item.isNil):
+    let subItem = self.view.chatsModel().getSubItemById(chatId)
+    if(subItem.isNil):
+      # Should never be here
+      error "trying to make chat/channel active for an unexisting id ", chatId, methodName="makeChatWithIdActive"
+      return
+    
+    subItemId = subItem.BaseItem.id
+    item = self.view.chatsModel().getItemById(subItem.parentId())
+    if(item.isNil):
+      # Should never be here
+      error "unexisting parent item with id ", subItemId, methodName="makeChatWithIdActive"
+      return
+
+  # here, in this step we have appropriate item and subitem assigned
+  self.setActiveItemSubItem(item.BaseItem.id, subItemId)
+
 method activeItemSubItemSet*(self: Module, itemId: string, subItemId: string) =
   let item = self.view.chatsModel().getItemById(itemId)
   if(item.isNil):
     # Should never be here
-    error "chat-view unexisting item id: ", itemId
+    error "chat-view unexisting item id: ", itemId, methodName="activeItemSubItemSet"
     return
 
   # Chats from Chat section and chats from Community section which don't belong 
@@ -299,7 +319,7 @@ method getModuleAsVariant*(self: Module): QVariant =
 
 method getChatContentModule*(self: Module, chatId: string): QVariant =
   if(not self.chatContentModules.contains(chatId)):
-    error "unexisting chat key: ", chatId
+    error "unexisting chat key: ", chatId, methodName="getChatContentModule"
     return
 
   return self.chatContentModules[chatId].getModuleAsVariant()
@@ -312,11 +332,11 @@ method onActiveSectionChange*(self: Module, sectionId: string) =
 
 method createPublicChat*(self: Module, chatId: string) =
   if(self.controller.isCommunity()):
-    debug "creating public chat is not allowed for community, most likely it's an error in qml"
+    debug "creating public chat is not allowed for community, most likely it's an error in qml", methodName="createPublicChat"
     return
 
   if(self.chatContentModules.hasKey(chatId)):
-    error "error: public chat is already added", chatId
+    error "error: public chat is already added", chatId, methodName="createPublicChat"
     return
 
   self.controller.createPublicChat(chatId)
@@ -386,7 +406,7 @@ method onCommunityChannelEdited*(self: Module, chat: ChatDto) =
 
 method createOneToOneChat*(self: Module, chatId: string, ensName: string) =
   if(self.controller.isCommunity()):
-    debug "creating an one to one chat is not allowed for community, most likely it's an error in qml"
+    debug "creating an one to one chat is not allowed for community, most likely it's an error in qml", methodName="createOneToOneChat"
     return
 
   if(self.chatContentModules.hasKey(chatId)):

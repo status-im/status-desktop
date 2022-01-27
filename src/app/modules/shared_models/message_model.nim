@@ -49,8 +49,9 @@ QtObject:
     result.setup
 
   proc `$`*(self: Model): string =
+    result = "MessageModel:\n"
     for i in 0 ..< self.items.len:
-      result &= fmt"""MessageModel:
+      result &= fmt"""
       [{i}]:({$self.items[i]})
       """
 
@@ -158,7 +159,7 @@ QtObject:
     of ModelRole.Links:
       result = newQVariant(item.links.join(" "))
 
-  proc findIndexForMessageId(self: Model, messageId: string): int = 
+  proc findIndexForMessageId*(self: Model, messageId: string): int = 
     for i in 0 ..< self.items.len:
       if(self.items[i].id == messageId):
         return i
