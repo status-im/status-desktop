@@ -134,10 +134,10 @@ proc icon*(self: SectionItem): string {.inline.} =
 proc color*(self: SectionItem): string {.inline.} = 
   self.color
 
-proc hasNotification*(self: SectionItem): bool {.inline.} = 
+proc hasNotification*(self: SectionItem): bool {.inline.} =
   self.hasNotification
 
-proc `hasNotification=`*(self: var SectionItem, value: bool) {.inline.} = 
+proc `hasNotification=`*(self: var SectionItem, value: bool) {.inline.} =
   self.hasNotification = value
 
 proc notificationsCount*(self: SectionItem): int {.inline.} = 
