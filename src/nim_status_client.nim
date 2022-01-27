@@ -94,10 +94,6 @@ proc mainProc() =
   # Register events objects
   let dockShowAppEvent = newStatusDockShowAppEventObject(singletonInstance.engine)
   let osThemeEvent = newStatusOSThemeEventObject(singletonInstance.engine)
-  # We need this global variable in order to be able to access the application
-  # from the non-closure callback passed to `statusgo_backend.setSignalEventCallback`
-  signalsManagerQObjPointer = cast[pointer](statusFoundation.signalsManager.vptr)
-  setupRemoteSignalsHandling()
 
   if not defined(macosx):
     app.icon(app.applicationDirPath & statusAppIconPath)
@@ -139,6 +135,12 @@ proc mainProc() =
   
   info "starting application controller..."
   appController.start()
+
+  # We need this global variable in order to be able to access the application
+  # from the non-closure callback passed to `statusgo_backend.setSignalEventCallback`
+  signalsManagerQObjPointer = cast[pointer](statusFoundation.signalsManager.vptr)
+  setupRemoteSignalsHandling()
+  
   info "starting application..."
   app.exec()
 

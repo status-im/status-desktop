@@ -75,7 +75,6 @@ QtObject:
     result.events = events
     result.threadpool = threadpool
     result.contacts = initTable[string, ContactsDto]()
-    signalConnect(singletonInstance.userProfile, "imageChanged()", result, "onLoggedInUserImageChange()", 2)
 
   proc addContact(self: Service, contact: ContactsDto) =
     # Private proc, used for adding contacts only.
@@ -124,6 +123,8 @@ QtObject:
     self.fetchContacts()
     self.doConnect()
     self.startCheckingContactStatuses()
+
+    signalConnect(singletonInstance.userProfile, "imageChanged()", self, "onLoggedInUserImageChange()", 2)
 
   proc onLoggedInUserImageChange*(self: Service) {.slot.} =
     let data = Args()

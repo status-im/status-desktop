@@ -81,5 +81,8 @@ method userLoggedIn*[T](self: Module[T]) =
 method moveToAppState*[T](self: Module[T]) =
   self.view.setAppState(AppState.MainAppState)
 
+method startUpUIRaised*[T](self: Module[T]) =
+  self.view.startUpUIRaised()
+
 method emitLogOut*[T](self: Module[T]) =
   self.view.emitLogOut()

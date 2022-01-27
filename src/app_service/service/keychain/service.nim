@@ -22,11 +22,6 @@ QtObject:
 
   proc setup(self: Service) =
     self.QObject.setup
-    self.keychainManager = newStatusKeychainManager("StatusDesktop", "authenticate you")
-    signalConnect(self.keychainManager, "success(QString)", self,
-    "onKeychainManagerSuccess(QString)", 2)
-    signalConnect(self.keychainManager, "error(QString, int, QString)", self,
-    "onKeychainManagerError(QString, int, QString)", 2)    
 
   proc delete*(self: Service) =
     self.keychainManager.delete
@@ -36,6 +31,13 @@ QtObject:
     new(result, delete)
     result.setup()
     result.events = events
+    result.keychainManager = newStatusKeychainManager("StatusDesktop", "authenticate you")
+
+  proc init*(self: Service) =
+    signalConnect(self.keychainManager, "success(QString)", self,
+    "onKeychainManagerSuccess(QString)", 2)
+    signalConnect(self.keychainManager, "error(QString, int, QString)", self,
+    "onKeychainManagerError(QString, int, QString)", 2)    
 
   proc storePassword*(self: Service, username: string, password: string) =
     self.keychainManager.storeDataAsync(username, password)

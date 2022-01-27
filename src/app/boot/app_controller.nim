@@ -267,6 +267,8 @@ proc startupDidLoad*(self: AppController) =
 
   # We need to init a language service once qml is loaded
   self.languageService.init()
+  # We need this to set app width/height appropriatelly on the app start.
+  self.startupModule.startUpUIRaised()
 
 proc mainDidLoad*(self: AppController) =
   self.statusFoundation.onLoggedIn()
@@ -275,6 +277,7 @@ proc mainDidLoad*(self: AppController) =
   self.mainModule.checkForStoringPassword()
 
 proc start*(self: AppController) =
+  self.keychainService.init()
   self.generalService.init()
   self.ethService.init()
   self.accountsService.init()
