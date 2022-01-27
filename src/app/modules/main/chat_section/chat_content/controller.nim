@@ -119,6 +119,12 @@ method init*(self: Controller) =
       return
     self.delegate.onChatEdited(args.chat)
 
+  self.events.on(SIGNAL_CHAT_RENAMED) do(e: Args):
+    var args = ChatRenameArgs(e)
+    if(self.chatId != args.id):
+      return
+    self.delegate.onChatRenamed(args.newName)
+
 method getMyChatId*(self: Controller): string =
   return self.chatId
 

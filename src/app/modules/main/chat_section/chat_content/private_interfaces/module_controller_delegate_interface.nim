@@ -31,3 +31,6 @@ method onContactDetailsUpdated*(self: AccessInterface, contactId: string) {.base
 
 method onChatEdited*(self: AccessInterface, chatDto: ChatDto) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method onChatRenamed*(self: AccessInterface, newName: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
