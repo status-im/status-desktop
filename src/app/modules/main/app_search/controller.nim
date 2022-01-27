@@ -1,4 +1,4 @@
-import controller_interface
+import Tables, controller_interface, chronicles
 import io_interface
 
 import ../../../global/app_sections_config as conf
@@ -11,6 +11,19 @@ import ../../../core/signals/types
 import ../../../core/eventemitter
 
 export controller_interface
+
+logScope:
+  topics = "app-search-module-controller"
+
+type ResultItemDetails = object
+  sectionId*: string
+  channelId*: string
+  messageId*: string
+
+method isEmpty(self: ResultItemDetails): bool =
+  self.sectionId.len == 0 and 
+  self.channelId.len == 0 and 
+  self.messageId.len == 0
 
 type 
   Controller* = ref object of controller_interface.AccessInterface
@@ -25,6 +38,7 @@ type
     searchLocation: string
     searchSubLocation: string
     searchTerm: string
+    resultItems: Table[string, ResultItemDetails] # [resuiltItemId, ResultItemDetails]
 
 proc newController*(delegate: io_interface.AccessInterface, events: EventEmitter, contactsService: contact_service.Service,
   chatService: chat_service.Service, communityService: community_service.Service, 
@@ -36,9 +50,10 @@ proc newController*(delegate: io_interface.AccessInterface, events: EventEmitter
   result.chatService = chatService
   result.communityService = communityService
   result.messageService = messageService
+  result.resultItems = initTable[string, ResultItemDetails]()
   
 method delete*(self: Controller) =
-  discard
+  self.resultItems.clear
 
 method init*(self: Controller) = 
   self.events.on(SIGNAL_SEARCH_MESSAGES_LOADED) do(e:Args):
@@ -87,6 +102,7 @@ method getChatDetails*(self: Controller, communityId, chatId: string): ChatDto =
   return self.chatService.getChatById(fullId)
 
 method searchMessages*(self: Controller, searchTerm: string) =
+  self.resultItems.clear
   self.searchTerm = searchTerm
 
   var chats: seq[string]
@@ -123,3 +139,15 @@ method getOneToOneChatNameAndImage*(self: Controller, chatId: string):
 method getContactNameAndImage*(self: Controller, contactId: string): 
   tuple[name: string, image: string, isIdenticon: bool] =
   return self.contactsService.getContactNameAndImage(contactId)
+
+method addResultItemDetails*(self: Controller, itemId: string, sectionId = "", channelId = "", messageId = "") =
+  self.resultItems.add(itemId, ResultItemDetails(sectionId: sectionId, channelId: channelId, messageId: messageId))
+
+method resultItemClicked*(self: Controller, itemId: string) =
+  let itemDetails = self.resultItems.getOrDefault(itemId)
+  if(itemDetails.isEmpty()):
+    # we shouldn't be here ever
+    info "important: we don't have stored details for a searched result item with id: ", itemId
+    return
+  
+  self.messageService.switchTo(itemDetails.sectionId, itemDetails.channelId, itemDetails.messageId)

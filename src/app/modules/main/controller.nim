@@ -1,4 +1,5 @@
 import ../shared_models/section_item, controller_interface, io_interface, chronicles
+import ../../global/app_sections_config as conf
 import ../../global/global_singleton
 import ../../global/app_signals
 import ../../core/signals/types
@@ -140,6 +141,11 @@ method init*(self: Controller) =
 
   self.events.on(SIGNAL_MNEMONIC_REMOVAL) do(e: Args):
     self.delegate.mnemonicBackedUp()
+
+  self.events.on(SIGNAL_MAKE_SECTION_CHAT_ACTIVE) do(e: Args):
+    var args = ActiveSectionChatArgs(e)
+    let sectionType = if args.sectionId == conf.CHAT_SECTION_ID: SectionType.Chat else: SectionType.Community
+    self.setActiveSection(args.sectionId, sectionType)
 
 method getJoinedCommunities*(self: Controller): seq[CommunityDto] =
   return self.communityService.getJoinedCommunities()

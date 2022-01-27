@@ -156,6 +156,11 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
 
   if(not self.view.getInitialMessagesLoaded()):
     self.view.initialMessagesAreLoaded()
+
+  # check if this loading was caused by the click on a messages from the app search result
+  let searchedMessageId = self.controller.getSearchedMessageId()
+  if(searchedMessageId.len > 0):
+    self.switchToMessage(searchedMessageId)
    
 method messageAdded*(self: Module, message: MessageDto) =
   let sender = self.controller.getContactDetails(message.`from`)
@@ -317,3 +322,12 @@ method getLinkPreviewData*(self: Module, link: string, uuid: string): string =
 
 method onPreviewDataLoaded*(self: Module, previewData: string) =
   self.view.onPreviewDataLoaded(previewData)
+
+method switchToMessage*(self: Module, messageId: string) =
+  let index = self.view.model().findIndexForMessageId(messageId)
+  if(index != -1):
+    self.controller.clearSearchedMessageId()
+    self.view.emitSwitchToMessageSignal(index)
+  else:
+    self.controller.setSearchedMessageId(messageId)
+    self.loadMoreMessages()

@@ -158,6 +158,7 @@ method onSearchMessagesDone*(self: Module, messages: seq[MessageDto]) =
       let item = result_item.initItem(co.id, "", "", co.id, co.name, SEARCH_RESULT_COMMUNITIES_SECTION_NAME, 
         co.images.thumbnail, co.color, "", "", co.images.thumbnail, co.color, false)
 
+      self.controller.addResultItemDetails(co.id, co.id)
       items.add(item)
 
     # Add channels
@@ -170,6 +171,7 @@ method onSearchMessagesDone*(self: Module, messages: seq[MessageDto]) =
           SEARCH_RESULT_CHANNELS_SECTION_NAME, chatDto.identicon, chatDto.color, "", "", chatDto.identicon, chatDto.color, 
           false)
 
+          self.controller.addResultItemDetails(chatDto.id, co.id, chatDto.id)
           channels.add(item)
 
   # Add chats
@@ -193,6 +195,7 @@ method onSearchMessagesDone*(self: Module, messages: seq[MessageDto]) =
         let item = result_item.initItem(c.id, "", "", c.id, chatName, SEARCH_RESULT_CHATS_SECTION_NAME, chatImage, 
         c.color, "", "", chatImage, c.color, isIdenticon)
 
+        self.controller.addResultItemDetails(c.id, conf.CHAT_SECTION_ID, c.id)
         items.add(item)
 
   # Add channels in order as requested by the design
@@ -218,6 +221,7 @@ method onSearchMessagesDone*(self: Module, messages: seq[MessageDto]) =
       let item = result_item.initItem(m.id, m.text, $m.timestamp, m.`from`, senderName, 
       SEARCH_RESULT_MESSAGES_SECTION_NAME, senderImage, "", chatName, "", chatImage, chatDto.color, isIdenticon)
 
+      self.controller.addResultItemDetails(m.id, conf.CHAT_SECTION_ID, chatDto.id, m.id)
       items.add(item)
     else:
       let community = self.controller.getCommunityById(chatDto.communityId)
@@ -227,6 +231,11 @@ method onSearchMessagesDone*(self: Module, messages: seq[MessageDto]) =
       SEARCH_RESULT_MESSAGES_SECTION_NAME, senderImage, "", community.name, channelName, community.images.thumbnail, 
       community.color, false)
 
+      self.controller.addResultItemDetails(m.id, chatDto.communityId, chatDto.id, m.id)
       items.add(item)
 
   self.view.searchResultModel().set(items)
+  self.view.emitAppSearchCompletedSignal()
+
+method resultItemClicked*(self: Module, itemId: string) =
+  self.controller.resultItemClicked(itemId)
