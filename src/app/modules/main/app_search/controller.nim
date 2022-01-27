@@ -38,7 +38,7 @@ type
     searchLocation: string
     searchSubLocation: string
     searchTerm: string
-    resultItems: Table[string, ResultItemDetails] # [resuiltItemId, ResultItemDetails]
+    resultItems: Table[string, ResultItemDetails] # [resultItemId, ResultItemDetails]
 
 proc newController*(delegate: io_interface.AccessInterface, events: EventEmitter, contactsService: contact_service.Service,
   chatService: chat_service.Service, communityService: community_service.Service, 

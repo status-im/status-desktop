@@ -48,7 +48,11 @@ Item {
             sendingMsgFailedPopup.open();
         }
 
-        onSwitchToMessage: {
+        onScrollMessagesUp: {
+            chatLogView.positionViewAtEnd()
+        }
+
+        onScrollToMessage: {
             chatLogView.positionViewAtIndex(messageIndex, ListView.Center);
             chatLogView.itemAtIndex(messageIndex).startMessageFoundAnimation();
         }
