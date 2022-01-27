@@ -11,6 +11,7 @@ import ../../../app_service/service/community/service as community_service
 import ../../../app_service/service/contacts/service as contacts_service
 import ../../../app_service/service/message/service as message_service
 import ../../../app_service/service/gif/service as gif_service
+import ../../../app_service/service/privacy/service as privacy_service
 
 export controller_interface
 
@@ -29,6 +30,7 @@ type
     messageService: message_service.Service
     contactsService: contacts_service.Service
     gifService: gif_service.Service
+    privacyService: privacy_service.Service
     activeSectionId: string
 
 proc newController*(delegate: io_interface.AccessInterface, 
@@ -41,6 +43,7 @@ proc newController*(delegate: io_interface.AccessInterface,
   contactsService: contacts_service.Service,
   messageService: message_service.Service,
   gifService: gif_service.Service,
+  privacyService: privacy_service.Service,
 ): 
   Controller =
   result = Controller()
@@ -54,6 +57,7 @@ proc newController*(delegate: io_interface.AccessInterface,
   result.contactsService = contactsService
   result.messageService = messageService
   result.gifService = gifService
+  result.privacyService = privacyService
   
 method delete*(self: Controller) =
   discard
@@ -133,6 +137,9 @@ method init*(self: Controller) =
   self.events.on(SIGNAL_CONTACT_NICKNAME_CHANGED) do(e: Args):
     var args = ContactArgs(e)
     self.delegate.contactUpdated(args.contactId)
+
+  self.events.on(SIGNAL_MNEMONIC_REMOVAL) do(e: Args):
+    self.delegate.mnemonicBackedUp()
 
 method getJoinedCommunities*(self: Controller): seq[CommunityDto] =
   return self.communityService.getJoinedCommunities()
@@ -214,3 +221,6 @@ method getContactNameAndImage*(self: Controller, contactId: string):
 
 method resolveENS*(self: Controller, ensName: string, uuid: string = "") =
   self.contactsService.resolveENS(ensName, uuid)
+
+method isMnemonicBackedUp*(self: Controller): bool =
+  result = self.privacyService.isMnemonicBackedUp()
