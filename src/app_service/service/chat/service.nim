@@ -128,14 +128,18 @@ QtObject:
       error "no chats or messages in the parsed response"
       return
 
-    # This fixes issue#3490
+    # The reason why we are sending all the messages with responseTo filled in is because
+    # the reposnse from status_go doesnt necessarily contain the last reply on the 0th position.
+    var isaReply = false
     var msg = messages[0]
     for m in messages:
       if(m.responseTo.len > 0):
+        isaReply = true
         msg = m
-        break
-    
-    self.events.emit(SIGNAL_SENDING_SUCCESS, MessageSendingSuccess(message: msg, chat: chats[0]))
+        self.events.emit(SIGNAL_SENDING_SUCCESS, MessageSendingSuccess(message: msg, chat: chats[0]))
+
+    if not isaReply:
+      self.events.emit(SIGNAL_SENDING_SUCCESS, MessageSendingSuccess(message: msg, chat: chats[0]))
 
   proc processUpdateForTransaction*(self: Service, messageId: string, response: RpcResponse[JsonNode]) =
     var (chats, messages) = self.processMessageUpdateAfterSend(response)
