@@ -94,6 +94,19 @@ proc createChatIdentifierItem(self: Module): Item =
     @[],
   )
 
+proc checkIfMessageLoadedAndScrollToItIfItIs(self: Module): bool =
+  let searchedMessageId = self.controller.getSearchedMessageId()
+  if(searchedMessageId.len > 0):
+    self.view.emitScrollMessagesUpSignal()
+    let index = self.view.model().findIndexForMessageId(searchedMessageId)
+    self.controller.increaseLoadingMessagesPerPageFactor()
+    if(index != -1):
+      self.controller.clearSearchedMessageId()
+      self.controller.resetLoadingMessagesPerPageFactor()
+      self.view.emitScrollToMessageSignal(index)
+      return true
+  return false
+
 method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: seq[ReactionDto], 
   pinnedMessages: seq[PinnedMessageDto]) = 
   var viewItems: seq[Item]
@@ -157,10 +170,10 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
   if(not self.view.getInitialMessagesLoaded()):
     self.view.initialMessagesAreLoaded()
 
+  self.setLoadingHistoryMessagesInProgress(false)
+
   # check if this loading was caused by the click on a messages from the app search result
-  let searchedMessageId = self.controller.getSearchedMessageId()
-  if(searchedMessageId.len > 0):
-    self.switchToMessage(searchedMessageId)
+  discard self.checkIfMessageLoadedAndScrollToItIfItIs()
    
 method messageAdded*(self: Module, message: MessageDto) =
   let sender = self.controller.getContactDetails(message.`from`)
@@ -198,6 +211,7 @@ method onSendingMessageError*(self: Module) =
   self.view.emitSendingMessageErrorSignal()
 
 method loadMoreMessages*(self: Module) =
+  self.setLoadingHistoryMessagesInProgress(true)
   self.controller.loadMoreMessages()
 
 method toggleReaction*(self: Module, messageId: string, emojiId: int) =
@@ -330,4 +344,8 @@ method switchToMessage*(self: Module, messageId: string) =
     self.view.emitSwitchToMessageSignal(index)
   else:
     self.controller.setSearchedMessageId(messageId)
+
+method scrollToMessage*(self: Module, messageId: string) =
+  self.controller.setSearchedMessageId(messageId)
+  if(not self.checkIfMessageLoadedAndScrollToItIfItIs()):
     self.loadMoreMessages()

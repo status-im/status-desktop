@@ -20,7 +20,8 @@ logScope:
   topics = "messages-service"
 
 let NEW_LINE = re"\n|\r" #must be defined as let, not const
-const MESSAGES_PER_PAGE = 20
+const MESSAGES_PER_PAGE* = 20
+const MESSAGES_PER_PAGE_MAX* = 300
 const CURSOR_VALUE_IGNORE = "ignore"
 
 # Signals which may be emitted by this service:
@@ -271,7 +272,7 @@ QtObject:
     self.events.emit(SIGNAL_MESSAGES_LOADED, data)
 
 
-  proc asyncLoadMoreMessagesForChat*(self: Service, chatId: string) =
+  proc asyncLoadMoreMessagesForChat*(self: Service, chatId: string, limit = MESSAGES_PER_PAGE) =
     if (chatId.len == 0):
       error "empty chat id", methodName="asyncLoadMoreMessagesForChat"
       return
@@ -297,7 +298,7 @@ QtObject:
       chatId: chatId,
       msgCursor: msgCursor,
       pinnedMsgCursor: pinnedMsgCursor,
-      limit: MESSAGES_PER_PAGE
+      limit: if(limit <= MESSAGES_PER_PAGE_MAX): limit else: MESSAGES_PER_PAGE_MAX
     )
 
     self.threadpool.start(arg)

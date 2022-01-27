@@ -134,3 +134,11 @@ QtObject:
   proc switchToMessage(self: View, messageIndex: int) {.signal.}
   proc emitSwitchToMessageSignal*(self: View, messageIndex: int) =
     self.switchToMessage(messageIndex)
+
+  proc scrollToMessage(self: View, messageIndex: int) {.signal.}
+  proc emitScrollToMessageSignal*(self: View, messageIndex: int) =
+    self.scrollToMessage(messageIndex)
+
+  proc scrollMessagesUp(self: View) {.signal.}
+  proc emitScrollMessagesUpSignal*(self: View) =
+    self.scrollMessagesUp()

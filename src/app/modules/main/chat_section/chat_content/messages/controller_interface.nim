@@ -80,3 +80,12 @@ method setSearchedMessageId*(self: AccessInterface, searchedMessageId: string) {
 
 method clearSearchedMessageId*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method getLoadingMessagesPerPageFactor*(self: AccessInterface): int {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method increaseLoadingMessagesPerPageFactor*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method resetLoadingMessagesPerPageFactor*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")

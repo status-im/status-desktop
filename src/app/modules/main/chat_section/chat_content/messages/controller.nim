@@ -23,6 +23,7 @@ type
     chatId: string
     belongsToCommunity: bool
     searchedMessageId: string
+    loadingMessagesPerPageFactor: int
     contactService: contact_service.Service
     communityService: community_service.Service
     chatService: chat_service.Service
@@ -37,6 +38,7 @@ proc newController*(delegate: io_interface.AccessInterface, events: EventEmitter
   result.events = events
   result.sectionId = sectionId
   result.chatId = chatId
+  result.loadingMessagesPerPageFactor = 1
   result.belongsToCommunity = belongsToCommunity
   result.contactService = contactService
   result.communityService = communityService
@@ -145,7 +147,7 @@ method init*(self: Controller) =
     var args = ActiveSectionChatArgs(e)
     if(self.sectionId != args.sectionId or self.chatId != args.chatId):
       return
-    self.delegate.switchToMessage(args.messageId)
+    self.delegate.scrollToMessage(args.messageId)
 
 method getMySectionId*(self: Controller): string =
   return self.sectionId
@@ -166,7 +168,8 @@ method belongsToCommunity*(self: Controller): bool =
   return self.belongsToCommunity
 
 method loadMoreMessages*(self: Controller) =
-  self.messageService.asyncLoadMoreMessagesForChat(self.chatId)
+  let limit = self.loadingMessagesPerPageFactor * MESSAGES_PER_PAGE
+  self.messageService.asyncLoadMoreMessagesForChat(self.chatId, limit)
 
 method addReaction*(self: Controller, messageId: string, emojiId: int) =
   self.messageService.addReaction(self.chatId, messageId, emojiId)
@@ -213,3 +216,12 @@ method setSearchedMessageId*(self: Controller, searchedMessageId: string) =
 
 method clearSearchedMessageId*(self: Controller) =
   self.setSearchedMessageId("")
+
+method getLoadingMessagesPerPageFactor*(self: Controller): int =
+  return self.loadingMessagesPerPageFactor
+
+method increaseLoadingMessagesPerPageFactor*(self: Controller) =
+  self.loadingMessagesPerPageFactor = self.loadingMessagesPerPageFactor + 1
+
+method resetLoadingMessagesPerPageFactor*(self: Controller) =
+  self.loadingMessagesPerPageFactor = 1
