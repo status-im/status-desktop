@@ -391,8 +391,12 @@ QtObject:
   method renameGroupChat*(self: Service, chatId: string, newName: string) =
     try: 
       let response = status_chat.renameGroupChat(chatId, newName)
-      if (response.error.isNil):
-        self.events.emit(SIGNAL_CHAT_RENAMED, ChatRenameArgs(id: chatId, newName: newName))
+      if (not response.error.isNil):
+        let msg = response.error.message & " chatId=" & chatId 
+        error "error while renaming group chat", msg
+        return
+
+      self.events.emit(SIGNAL_CHAT_RENAMED, ChatRenameArgs(id: chatId, newName: newName))
     except Exception as e:
       error "error while renaming group chat: ", msg = e.msg
 

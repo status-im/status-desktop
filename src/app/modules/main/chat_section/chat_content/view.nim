@@ -118,3 +118,7 @@ QtObject:
     self.chatDetails.setName(name)
     self.chatDetails.setDescription(description)
     self.chatDetailsChanged()
+
+  proc updateChatDetailsName*(self: View, name: string) =
+    self.chatDetails.setName(name)
+    self.chatDetailsChanged()
