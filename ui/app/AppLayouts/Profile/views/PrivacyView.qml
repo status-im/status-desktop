@@ -157,11 +157,11 @@ Item {
                 StatusQControls.StatusSwitch {
                     id: switch1
                     checked: !localAccountSensitiveSettings.onlyShowContactsProfilePics
+                    onClicked: {
+                        localAccountSensitiveSettings.onlyShowContactsProfilePics = !checked
+                    }
                 }
             ]
-            sensor.onClicked: {
-                switch1.checked = localAccountSensitiveSettings.onlyShowContactsProfilePics = !switch1.checked
-            }
         }
 
         StatusListItem {
@@ -176,11 +176,11 @@ Item {
                 StatusQControls.StatusSwitch {
                     id: switch2               
                     checked: localAccountSensitiveSettings.displayChatImages
+                    onClicked: {
+                        localAccountSensitiveSettings.displayChatImages = checked
+                    }
                 }
             ]
-            sensor.onClicked: {
-                switch2.checked = localAccountSensitiveSettings.displayChatImages = !switch2.checked
-            }
         }
 
         StatusBaseText {
