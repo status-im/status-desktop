@@ -59,3 +59,10 @@ QtObject:
 
   proc searchMessages*(self: View, searchTerm: string) {.slot.} = 
     self.delegate.searchMessages(searchTerm)
+
+  proc resultItemClicked*(self: View, itemId: string) {.slot.} = 
+    self.delegate.resultItemClicked(itemId)
+
+  proc appSearchCompleted(self: View) {.signal.}
+  proc emitAppSearchCompletedSignal*(self: View) =
+    self.appSearchCompleted()

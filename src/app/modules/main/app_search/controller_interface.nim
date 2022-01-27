@@ -58,3 +58,10 @@ method getOneToOneChatNameAndImage*(self: AccessInterface, chatId: string):
 method getContactNameAndImage*(self: AccessInterface, contactId: string): 
   tuple[name: string, image: string, isIdenticon: bool] {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method addResultItemDetails*(self: AccessInterface, itemId: string, sectionId = "", channelId = "", messageId = "") 
+  {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method resultItemClicked*(self: AccessInterface, itemId: string)  {.base.} =
+  raise newException(ValueError, "No implementation available")

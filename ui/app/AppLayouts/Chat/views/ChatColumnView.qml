@@ -117,11 +117,6 @@ Item {
         Global.applicationWindow.requestActivate()
     }
 
-    function positionAtMessage(messageId, isSearch = false) {
-        // Not Refactored Yet
-//        stackLayoutChatMessages.children[stackLayoutChatMessages.currentIndex].message.scrollToMessage(messageId, isSearch);
-    }
-
     Timer {
         interval: 60000; // 1 min
         running: true
@@ -340,10 +335,6 @@ Item {
         // Not Refactored Yet
 //        Connections {
 //            target: root.rootStore.chatsModelInst.messageView
-
-//            onSearchedMessageLoaded: {
-//                positionAtMessage(messageId, true);
-//            }
 
 //            onMessageNotificationPushed: function(messageId, communityId, chatId, msg, contentType, chatType, timestamp, identicon, username, hasMention, isAddedContact, channelName) {
 //                if (localAccountSensitiveSettings.notificationSetting == Constants.notifyAllMessages ||

@@ -9,7 +9,7 @@ Item {
 
     property var store
     readonly property var searchMessages: Backpressure.debounce(searchPopup, 400, function (value) {
-        store.searchMessages(value)
+        appSearch.store.searchMessages(value)
     })
 
     function openSearchPopup(){
@@ -17,7 +17,7 @@ Item {
     }
 
     Connections {
-        target: store.locationMenuModel
+        target: appSearch.store.locationMenuModel
         onModelAboutToBeReset: {
             for (var i = 2; i <= searchPopupMenu.count; i++) {
                 //clear menu
@@ -28,13 +28,18 @@ Item {
         }
     }
 
+    Connections {
+        target: appSearch.store.appSearchModule
+        onAppSearchCompleted: searchPopup.loading = false
+    }
+
     StatusSearchLocationMenu {
         id: searchPopupMenu
         searchPopup: searchPopup
-        locationModel: store.locationMenuModel
+        locationModel: appSearch.store.locationMenuModel
 
         onItemClicked: {
-            store.setSearchLocation(firstLevelItemValue, secondLevelItemValue)
+            appSearch.store.setSearchLocation(firstLevelItemValue, secondLevelItemValue)
             if(searchPopup.searchText !== "")
                 searchMessages(searchPopup.searchText)
         }
@@ -47,13 +52,14 @@ Item {
         defaultSearchLocationText: qsTr("Anywhere")
 
         searchOptionsPopupMenu: searchPopupMenu
-        searchResults: store.resultModel
+        searchResults: appSearch.store.resultModel
 
         formatTimestampFn: function (ts) {
             return new Date(parseInt(ts, 10)).toLocaleString(Qt.locale(localAppSettings.locale))
         }
 
         onSearchTextChanged: {
+            searchPopup.loading = true
             searchMessages(searchPopup.searchText);
         }
         onAboutToHide: {
@@ -67,9 +73,9 @@ Item {
         onOpened: {
             searchPopup.resetSearchSelection();
             searchPopup.forceActiveFocus()
-            store.prepareLocationMenuModel()
+            appSearch.store.prepareLocationMenuModel()
 
-            const jsonObj = store.getSearchLocationObject()
+            const jsonObj = appSearch.store.getSearchLocationObject()
 
             if (!jsonObj) {
                 return
@@ -78,7 +84,7 @@ Item {
             let obj = JSON.parse(jsonObj)
             if (obj.location === "") {
                 if(obj.subLocation === "") {
-                    store.setSearchLocation("", "")
+                    appSearch.store.setSearchLocation("", "")
                 }
                 else {
                     searchPopup.setSearchSelection(obj.subLocation.text,
@@ -88,7 +94,7 @@ Item {
                                                    obj.subLocation.iconName,
                                                    obj.subLocation.identiconColor)
 
-                    store.setSearchLocation("", obj.subLocation.value)
+                    appSearch.store.setSearchLocation("", obj.subLocation.value)
                 }
             }
             else {
@@ -100,7 +106,7 @@ Item {
                                                    obj.subLocation.iconName,
                                                    obj.subLocation.identiconColor)
 
-                    store.setSearchLocation(obj.location.value, obj.subLocation.value)
+                    appSearch.store.setSearchLocation(obj.location.value, obj.subLocation.value)
                 }
                 else {
                     searchPopup.setSearchSelection(obj.location.title,
@@ -110,15 +116,13 @@ Item {
                                                    obj.location.iconName,
                                                    obj.location.identiconColor)
 
-                    store.setSearchLocation(obj.location.value, obj.subLocation.value)
+                    appSearch.store.setSearchLocation(obj.location.value, obj.subLocation.value)
                 }
             }
         }
         onResultItemClicked: {
             searchPopup.close()
-
-            // Not Refactored
-            //root.rootStore.chatsModelInst.switchToSearchedItem(itemId)
+            appSearch.store.resultItemClicked(itemId)
         }
 
         onResultItemTitleClicked: {

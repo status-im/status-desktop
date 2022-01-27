@@ -27,7 +27,6 @@ Item {
 
     property bool stickersLoaded: false
     property alias chatLogView: chatLogView
-    property alias scrollToMessage: chatLogView.scrollToMessage
 
     property var messageContextMenuInst
 
@@ -37,6 +36,30 @@ Item {
     property int countOnStartUp: 0
     signal openStickerPackPopup(string stickerPackId)
     signal showReplyArea(string messageId, string author)
+
+    Connections {
+        target: root.messageStore.messageModule
+
+        onMessageSuccessfullySent: {
+            chatLogView.scrollToBottom(true)
+        }
+
+        onSendingMessageFailed: {
+            sendingMsgFailedPopup.open();
+        }
+
+        onSwitchToMessage: {
+            chatLogView.positionViewAtIndex(messageIndex, ListView.Center);
+            chatLogView.itemAtIndex(messageIndex).startMessageFoundAnimation();
+        }
+
+        // Not Refactored Yet
+//            onNewMessagePushed: {
+//                if (!chatLogView.scrollToBottom()) {
+//                    newMessages++
+//                }
+//            }
+    }
 
     Item {
         id: loadingMessagesIndicator
@@ -89,34 +112,6 @@ Item {
                 chatLogView.headerItem.height = 0
             }
         }
-
-        property var scrollToMessage: function (messageId, isSearch = false) {
-            // Not Refactored Yet
-//            delayPositioningViewTimer.msgId = messageId;
-//            delayPositioningViewTimer.isSearch = isSearch;
-//            delayPositioningViewTimer.restart();
-        }
-
-//        Timer {
-//            id: delayPositioningViewTimer
-//            interval: 1000
-//            property string msgId
-//            property bool isSearch
-//            onTriggered: {
-//                let item
-//                for (let i = 0; i < messages.rowCount(); i++) {
-//                    item = messageListDelegate.items.get(i);
-//                    if (item.model.messageId === msgId) {
-//                        chatLogView.positionViewAtIndex(i, ListView.Beginning);
-//                        if (isSearch) {
-//                            chatLogView.itemAtIndex(i).startMessageFoundAnimation();
-//                        }
-//                    }
-//                }
-//                msgId = "";
-//                isSearch = false;
-//            }
-//        }
 
         ScrollBar.vertical: ScrollBar {
             visible: chatLogView.visibleArea.heightRatio < 1
@@ -222,25 +217,6 @@ Item {
 //                chatLogView.scrollToBottom(true)
 //            }
 //        }
-
-        Connections {
-            target: messageStore.messageModule
-
-            onMessageSuccessfullySent: {
-                chatLogView.scrollToBottom(true)
-            }
-
-            onSendingMessageFailed: {
-                sendingMsgFailedPopup.open();
-            }
-
-            // Not Refactored Yet
-//            onNewMessagePushed: {
-//                if (!chatLogView.scrollToBottom()) {
-//                    newMessages++
-//                }
-//            }
-        }
 
 //        Connections {
         // Not Refactored Yet

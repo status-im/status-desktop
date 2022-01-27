@@ -22,6 +22,7 @@ type
     sectionId: string
     chatId: string
     belongsToCommunity: bool
+    searchedMessageId: string
     contactService: contact_service.Service
     communityService: community_service.Service
     chatService: chat_service.Service
@@ -140,6 +141,12 @@ method init*(self: Controller) =
     let args = LinkPreviewDataArgs(e)
     self.delegate.onPreviewDataLoaded(args.response)
 
+  self.events.on(SIGNAL_MAKE_SECTION_CHAT_ACTIVE) do(e: Args):
+    var args = ActiveSectionChatArgs(e)
+    if(self.sectionId != args.sectionId or self.chatId != args.chatId):
+      return
+    self.delegate.switchToMessage(args.messageId)
+
 method getMySectionId*(self: Controller): string =
   return self.sectionId
 
@@ -197,3 +204,12 @@ method editMessage*(self: Controller, messageId: string, updatedMsg: string) =
 
 method getLinkPreviewData*(self: Controller, link: string, uuid: string): string = 
   self.messageService.asyncGetLinkPreviewData(link, uuid)
+
+method getSearchedMessageId*(self: Controller): string =
+  return self.searchedMessageId
+
+method setSearchedMessageId*(self: Controller, searchedMessageId: string) =
+  self.searchedMessageId = searchedMessageId
+
+method clearSearchedMessageId*(self: Controller) =
+  self.setSearchedMessageId("")

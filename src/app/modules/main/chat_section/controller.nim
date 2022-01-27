@@ -130,6 +130,12 @@ method init*(self: Controller) =
     var args = ChatRenameArgs(e)
     self.delegate.onChatRenamed(args.id, args.newName)
 
+  self.events.on(SIGNAL_MAKE_SECTION_CHAT_ACTIVE) do(e: Args):
+    var args = ActiveSectionChatArgs(e)
+    if (self.sectionId != args.sectionId):
+      return
+    self.delegate.makeChatWithIdActive(args.chatId)
+
 method getMySectionId*(self: Controller): string =
   return self.sectionId
 

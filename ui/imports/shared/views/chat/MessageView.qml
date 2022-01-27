@@ -193,9 +193,9 @@ Column {
 //        return root.rootStore.showReactionAuthors(fromAccounts, emojiId)
 //    }
 
-//    function startMessageFoundAnimation() {
-//        messageLoader.item.startMessageFoundAnimation();
-//    }
+    function startMessageFoundAnimation() {
+        messageLoader.item.startMessageFoundAnimation();
+    }
     /////////////////////////////////////////////
 
 
