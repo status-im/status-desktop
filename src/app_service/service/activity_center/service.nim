@@ -79,6 +79,15 @@ QtObject:
 
   proc init*(self: Service) =
     self.asyncActivityNotificationLoad()
+    self.events.on(SignalType.Message.event) do(e: Args):
+      var receivedData = MessageSignal(e)
+
+      # Handling activityCenterNotifications updates
+      if (receivedData.activityCenterNotifications.len > 0):
+        self.events.emit(
+          SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_LOADED,
+          ActivityCenterNotificationsArgs(activityCenterNotifications: receivedData.activityCenterNotifications)
+        )
 
   proc hasMoreToShow*(self: Service): bool =
     return self.cursor != ""
