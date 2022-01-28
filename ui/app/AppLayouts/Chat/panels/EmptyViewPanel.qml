@@ -20,6 +20,8 @@ Rectangle {
     Layout.fillHeight: true
     Layout.fillWidth: true
 
+    property var rootStore
+
     signal suggestedMessageClicked(string channel)
 
     height: suggestionContainer.height + inviteFriendsContainer.height + Style.current.padding * 2
@@ -98,7 +100,8 @@ Rectangle {
 
         InviteFriendsPopup {
             id: inviteFriendsPopup
-        }
+            rootStore: emptyView.rootStore
+        }        
     }
 
     Separator {

@@ -1,32 +1,28 @@
-import QtQuick 2.12
-import QtQuick.Controls 2.3
-
+import StatusQ.Components 0.1
+import StatusQ.Popups 0.1
 import utils 1.0
-import "../controls"
-import "../panels"
-import "../"
-import "."
 
-// TODO: replace with StatusModal
-ModalPopup {
-    id: popup
+StatusModal {
+    id: root
+    anchors.centerIn: parent
+
     //% "Get Status at https://status.im"
     readonly property string getStatusText: qsTrId("get-status-at-https---status-im")
 
+    property var rootStore
+
     //% "Download Status link"
-    title: qsTrId("download-status-link")
+    header.title: qsTrId("download-status-link")
     height: 156
 
-    StyledText {
-        id: linkText
-        text: popup.getStatusText
-    }
-
-    CopyToClipBoardButton {
-        anchors.left: linkText.right
-        anchors.leftMargin: Style.current.smallPadding
-        anchors.verticalCenter: linkText.verticalCenter
-        textToCopy: popup.getStatusText.substr(popup.getStatusText.indexOf("https"))
+    StatusDescriptionListItem {
+        subTitle: root.getStatusText
+        tooltip.text: qsTr("Copy to clipboard")
+        icon.name: "copy"
+        iconButton.onClicked: {
+            root.rootStore.copyToClipboard(Constants.statusLinkPrefix)
+            tooltip.visible = !tooltip.visible
+        }
+        width: parent.width
     }
 }
-

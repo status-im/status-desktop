@@ -17,6 +17,7 @@ Item {
     id: root
     height: childrenRect.height + 24
 
+    property var rootStore
     property var contactsStore
     property var community
 
@@ -229,5 +230,6 @@ Item {
         anchors.topMargin: Style.current.xlPadding * 3
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
+        rootStore: root.rootStore
     }
 }

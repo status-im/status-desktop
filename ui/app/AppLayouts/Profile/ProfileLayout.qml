@@ -111,6 +111,7 @@ StatusAppTwoPanelLayout {
 
         AboutView {
             store: profileView.store
+            globalStore: profileView.globalStore
             profileContentWidth: _internal.profileContentWidth
         }
     }
