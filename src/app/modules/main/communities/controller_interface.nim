@@ -31,12 +31,6 @@ method reorderCommunityChat*(self: AccessInterface, communityId: string, categor
 method deleteCommunityChat*(self: AccessInterface, communityId: string, chatId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method createCommunityCategory*(self: AccessInterface, communityId: string, name: string, channels: seq[string]) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method editCommunityCategory*(self: AccessInterface, communityId: string, categoryId: string, name: string, channels: seq[string]) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method deleteCommunityCategory*(self: AccessInterface, communityId: string, categoryId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 

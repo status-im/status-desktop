@@ -139,14 +139,6 @@ method createCommunity*(self: Module, name: string, description: string,
                         aX: int, aY: int, bX: int, bY: int) =
   self.controller.createCommunity(name, description, access, ensOnly, color, imagePath, aX, aY, bX, bY)
 
-method createCommunityCategory*(self: Module, communityId: string, name: string, channels: string) =
-  let channelsSeq = map(parseJson(channels).getElems(), proc(x:JsonNode):string = x.getStr())
-  self.controller.createCommunityCategory(communityId, name, channelsSeq)
-
-method editCommunityCategory*(self: Module, communityId: string, categoryId: string, name: string, channels: string) =
-  let channelsSeq = map(parseJson(channels).getElems(), proc(x:JsonNode):string = x.getStr())
-  self.controller.editCommunityCategory(communityId, categoryid, name, channelsSeq) 
-
 method deleteCommunityCategory*(self: Module, communityId: string, categoryId: string) =
   self.controller.deleteCommunityCategory(communityId, categoryId) 
 

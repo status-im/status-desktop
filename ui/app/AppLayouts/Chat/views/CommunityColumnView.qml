@@ -68,8 +68,7 @@ Item {
                 text: qsTrId("create-category")
                 icon.name: "channel-category"
                 enabled: communityData.amISectionAdmin
-                // Not Refactored Yet
-                onTriggered: Global.openPopup(createCategoryPopup, {communityId: root.store.chatCommunitySectionModule.activeItem.id})
+                onTriggered: Global.openPopup(createCategoryPopup)
             }
 
            StatusMenuSeparator {}
@@ -187,9 +186,8 @@ Item {
                     //% "Create category"
                     text: qsTrId("create-category")
                     icon.name: "channel-category"
-                    // Not Refactored Yet
                     enabled: communityData.amISectionAdmin
-                    onTriggered: Global.openPopup(createCategoryPopup, {communityId: root.store.chatCommunitySectionModule.activeItem.id})
+                    onTriggered: Global.openPopup(createCategoryPopup)
                 }
 
                 StatusMenuSeparator {}

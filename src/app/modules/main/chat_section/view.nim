@@ -1,4 +1,4 @@
-import NimQml, json
+import NimQml, json, sequtils
 import model as chats_model
 import item, sub_item, active_item
 import ../../shared_models/contacts_model as contacts_model
@@ -207,4 +207,5 @@ QtObject:
     result = self.delegate.inviteUsersToCommunity(pubKeysJSON)
 
   proc createCommunityCategory*(self: View, name: string, channels: string) {.slot.} =
-    self.delegate.createCommunityCategory(name, channels)
+    let channelsSeq = map(parseJson(channels).getElems(), proc(x:JsonNode):string = x.getStr())
+    self.delegate.createCommunityCategory(name, channelsSeq)

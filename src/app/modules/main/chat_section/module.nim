@@ -382,6 +382,22 @@ method removeCommunityChat*(self: Module, chatId: string) =
 
   self.controller.removeCommunityChat(chatId)
 
+method onCommunityCategoryCreated*(self: Module, cat: Category, chats: seq[ChatDto]) =
+  var categoryItem = initItem(cat.id, cat.name, "", false, "", "", ChatType.Category.int, false, 
+      false, 0, false, false, cat.position)
+  var categoryChannels: seq[SubItem]
+  for chatDto in chats:
+    let hasNotification = chatDto.unviewedMessagesCount > 0 or chatDto.unviewedMentionsCount > 0
+    let notificationsCount = chatDto.unviewedMentionsCount
+    let channelItem = initSubItem(chatDto.id, cat.id, chatDto.name, chatDto.identicon, false, chatDto.color, 
+        chatDto.description, chatDto.chatType.int, true, hasNotification, notificationsCount, chatDto.muted, 
+        false, chatDto.position)
+    self.view.chatsModel().removeItemById(chatDto.id)
+    categoryChannels.add(channelItem)
+
+  categoryItem.prependSubItems(categoryChannels)
+  self.view.chatsModel().appendItem(categoryItem)
+
 method onCommunityChannelDeletedOrChatLeft*(self: Module, chatId: string) =
   if(not self.chatContentModules.contains(chatId)):
     return
@@ -541,11 +557,8 @@ method declineRequestToJoinCommunity*(self: Module, requestId: string) =
 method createCommunityChannel*(self: Module, name, description: string,) =
   self.controller.createCommunityChannel(name, description)
 
-proc createChannelsSeq(self: Module, channels: string): seq[string] =
-  return map(parseJson(channels).getElems(), proc(x:JsonNode):string = x.getStr())
-
-method createCommunityCategory*(self: Module, name: string, channels: string) =
-  self.controller.createCommunityCategory(name, self.createChannelsSeq(channels))
+method createCommunityCategory*(self: Module, name: string, channels: seq[string]) =
+  self.controller.createCommunityCategory(name, channels)
 
 method leaveCommunity*(self: Module) =
   self.controller.leaveCommunity()

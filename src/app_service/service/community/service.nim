@@ -1,4 +1,4 @@
-import NimQml, Tables, json, sequtils, std/algorithm, strformat, chronicles, json_serialization
+import NimQml, Tables, json, sequtils, std/algorithm, strformat, strutils, chronicles, json_serialization
 
 import ./dto/community as community_dto
 
@@ -43,7 +43,7 @@ type
   CommunityCategoryArgs* = ref object of Args
     communityId*: string
     category*: Category
-    channels*: seq[string]
+    chats*: seq[ChatDto]
 
   CommunityMemberArgs* = ref object of Args
     communityId*: string
@@ -132,10 +132,12 @@ QtObject:
         return chat
 
   proc findIndexById(id: string, chats: seq[Chat]): int =
+    var idx = -1
     for chat in chats:
+      inc idx
       if(chat.id == id):
-        return 0
-    return -1
+        return idx
+    return idx
 
   proc handleCommunityUpdates(self: Service, communities: seq[CommunityDto], updatedChats: seq[ChatDto]) =
     let community = communities[0]
@@ -541,10 +543,20 @@ QtObject:
         raise newException(RpcException, "Error creating community category: " & error.message)
 
       if response.result != nil and response.result.kind != JNull:
+        var chats: seq[ChatDto] = @[]
+        for chatId, v in response.result["communityChanges"].getElems()[0]["chatsModified"].pairs():
+          let idx = findIndexById(chatId, self.joinedCommunities[communityId].chats)
+          if idx > -1:
+            self.joinedCommunities[communityId].chats[idx].categoryId = v["CategoryModified"].getStr()
+            self.joinedCommunities[communityId].chats[idx].position = v["PositionModified"].getInt()
+            var c = mapChatToChatDto(self.joinedCommunities[communityId].chats[idx], communityId)
+            c.id = communityId & c.id
+            if c.categoryId != "":
+              chats.add(c)
         for k, v in response.result["communityChanges"].getElems()[0]["categoriesAdded"].pairs():
           let category = v.toCategory()
           self.events.emit(SIGNAL_COMMUNITY_CATEGORY_CREATED,
-            CommunityCategoryArgs(communityId: communityId, category: category, channels: channels))
+            CommunityCategoryArgs(communityId: communityId, category: category, chats: chats))
           
     except Exception as e:
       error "Error creating community category", msg = e.msg, communityId, name
@@ -566,7 +578,7 @@ QtObject:
         for k, v in response.result["communityChanges"].getElems()[0]["categoriesModified"].pairs():
           let category = v.toCategory()
           self.events.emit(SIGNAL_COMMUNITY_CATEGORY_EDITED,
-            CommunityCategoryArgs(communityId: communityId, category: category, channels: channels))
+            CommunityCategoryArgs(communityId: communityId, category: category #[, channels: channels]#)) # TODO: add channels
     except Exception as e:
       error "Error creating community category", msg = e.msg, communityId, name
 
