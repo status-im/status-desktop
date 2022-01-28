@@ -13,6 +13,7 @@ Item {
     property string name
     property string description
     property alias tooltipUnder: copyToClipboardBtn.tooltipUnder
+    property var store
 
     id: root
     width: parent.width
@@ -42,6 +43,7 @@ Item {
             anchors.verticalCenter: parent.verticalCenter
             anchors.left: parent.right
             anchors.leftMargin: Style.current.smallPadding
+            store: root.store
         }
     }
 }

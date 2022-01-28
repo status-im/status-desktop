@@ -43,6 +43,7 @@ ModalPopup {
         addContactEnabled: false
 
         contactsStore: popup.contactsStore
+        rootStore: popup.store
 
         onUserClicked: function (pubKey, isAddedContact, username) {
             popup.doJoin(pubKey, username);

@@ -19,6 +19,7 @@ Rectangle {
     property var onClick: function() {}
     property string textToCopy: ""
     property bool tooltipUnder: false
+    property var store
 
     Image {
         width: 20
@@ -58,8 +59,7 @@ Rectangle {
         }
         onClicked: {
             if (textToCopy) {
-                // Not Refactored Yet
-                //RootStore.copyToClipboard(textToCopy)
+                copyToClipboardButton.store.copyToClipboard(textToCopy)
             }
             onClick()
         }

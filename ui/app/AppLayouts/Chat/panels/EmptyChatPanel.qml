@@ -12,6 +12,7 @@ Item {
     Layout.fillHeight: true
     Layout.fillWidth: true
 
+    property var rootStore
 
     signal shareChatKeyClicked()
 
@@ -99,5 +100,6 @@ Item {
 
     InviteFriendsPopup {
         id: inviteFriendsPopup
+        rootStore: element.rootStore
     }
 }

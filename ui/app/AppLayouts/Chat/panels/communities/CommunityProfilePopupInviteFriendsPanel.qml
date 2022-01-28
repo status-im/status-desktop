@@ -71,5 +71,6 @@ Column {
         showCheckbox: true
         hideCommunityMembers: true
         showSearch: false
+        rootStore: root.rootStore
     }
 }

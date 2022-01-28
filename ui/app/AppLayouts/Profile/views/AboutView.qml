@@ -16,6 +16,7 @@ Item {
     clip: true
 
     property var store
+    property var globalStore
     property int profileContentWidth
 
     Column {
@@ -33,6 +34,7 @@ Item {
             //% "Version: %1"
             description: qsTrId("version---1").arg(root.store.getCurrentVersion())
             tooltipUnder: true
+            store: root.globalStore
         }
 
         // TODO: replace with StatusListItem
@@ -40,6 +42,7 @@ Item {
             //% "Node version "
             name: qsTrId("node-version-")
             description: root.store.nodeVersion()
+            store: root.globalStore
         }
 
         StatusBaseText {
