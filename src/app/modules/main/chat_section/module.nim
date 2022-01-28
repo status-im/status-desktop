@@ -186,7 +186,7 @@ proc buildCommunityUI(self: Module, events: EventEmitter,
           selectedItemId = cat.id
           selectedSubItemId = channelItem.id
 
-      var categoryItem = initItem(cat.id, cat.name, "", false, "", "", ChatType.Category.int, false, 
+      var categoryItem = initItem(cat.id, cat.name, "", false, "", "", ChatType.Unknown.int, false, 
       hasNotificationPerCategory, notificationsCountPerCategory, false, false, cat.position)
       categoryItem.prependSubItems(categoryChannels)
       self.view.chatsModel().appendItem(categoryItem)
@@ -363,7 +363,7 @@ method removeCommunityChat*(self: Module, chatId: string) =
   self.controller.removeCommunityChat(chatId)
 
 method onCommunityCategoryCreated*(self: Module, cat: Category, chats: seq[ChatDto]) =
-  var categoryItem = initItem(cat.id, cat.name, "", false, "", "", ChatType.Category.int, false, 
+  var categoryItem = initItem(cat.id, cat.name, "", false, "", "", ChatType.Unknown.int, false, 
       false, 0, false, false, cat.position)
   var categoryChannels: seq[SubItem]
   for chatDto in chats:

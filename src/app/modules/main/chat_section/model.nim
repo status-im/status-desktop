@@ -121,7 +121,7 @@ QtObject:
     of ModelRole.SubItems: 
       result = newQVariant(item.subItems)
     of ModelRole.IsCategory:
-      result = newQVariant(item.`type` == ChatType.Category.int)
+      result = newQVariant(item.`type` == ChatType.Unknown.int)
 
   proc appendItem*(self: Model, item: Item) =
     let parentModelIndex = newQModelIndex()

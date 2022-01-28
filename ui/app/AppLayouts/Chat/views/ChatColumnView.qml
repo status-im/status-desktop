@@ -154,7 +154,7 @@ Item {
             id: delegateChooser
             role: "type"
             DelegateChoice { // In case of category
-                roleValue: Constants.chatType.category
+                roleValue: Constants.chatType.unknown
                 delegate: Repeater {
                     model: {
                         if (!subItems) {
