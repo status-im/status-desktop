@@ -394,7 +394,7 @@ ColumnLayout {
 
             Loader {
                 id: loadingMessagesIndicator
-                active: messageStore.messageModule.loadingHistoryMessagesInProgress
+                active: messageStore.messageModule? messageStore.messageModule.loadingHistoryMessagesInProgress : false
                 sourceComponent: LoadingAnimation { }
                 anchors {
                     right: parent.right
