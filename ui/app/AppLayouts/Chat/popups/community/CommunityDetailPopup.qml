@@ -158,6 +158,7 @@ StatusModal {
                 if (access !== Constants.communityChatOnRequestAccess) {
                     return false
                 }
+                return false
                 // Not Refactored Yet
 //                return root.store.chatsModelInst.communities.isCommunityRequestPending(root.communityId)
             }
@@ -202,7 +203,9 @@ StatusModal {
             onClicked: {
                 // Not Refactored Yet
                let error
-               if (access === Constants.communityChatOnRequestAccess && !root.isMember) {
+               if (access === Constants.communityChatOnRequestAccess &&
+                    !root.community.amISectionAdmin
+                    && !root.isMember) {
                    // TODO refactor
                    return
                 //    error = root.store.chatsModelInst.communities.requestToJoinCommunity(root.communityId, userProfile.name)
