@@ -53,7 +53,6 @@ QtObject {
         readonly property int profile: 4
         readonly property int timeline: 5
         readonly property int communityChat: 6
-        readonly property int category: 9999
     }
 
     readonly property QtObject messageContentType: QtObject {
