@@ -239,13 +239,15 @@ Rectangle {
         onReload: _internal.currentWebView.reload()
         onStopLoading: _internal.currentWebView.stop()
         onAddNewFavoritelClicked: {
-            Global.openPopup(addFavoriteModal, {
-                                 x = xPos - 30,
-                                 y = browserHeader.y + browserHeader.height + 4,
+            Global.openPopup(addFavoriteModal,
+                             {
+                                 x: xPos - 30,
+                                 y: browserHeader.y + browserHeader.height + 4,
                                  modifiyModal: browserHeader.currentFavorite,
                                  toolbarMode: true,
                                  ogUrl: browserHeader.currentFavorite ? browserHeader.currentFavorite.url : _internal.currentWebView.url,
-                                 ogName: browserHeader.currentFavorite ? browserHeader.currentFavorite.name : _internal.currentWebView.title})
+                                 ogName: browserHeader.currentFavorite ? browserHeader.currentFavorite.name : _internal.currentWebView.title
+                             })
         }
         onLaunchInBrowser: {
             // TODO: disable browsing local files?  file://
