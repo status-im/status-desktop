@@ -9,43 +9,21 @@ import StatusQ.Controls 0.1
 Rectangle {
     id: statusListItem
 
-    implicitWidth: 448
-    implicitHeight: Math.max(64, statusListItemTitleArea.height + 16)
-
-    enum Type {
-        Primary,
-        Secondary,
-        Danger
-    }
-
-    color: {
-        if (sensor.containsMouse) {
-            switch(type) {
-                case StatusListItem.Type.Primary:
-                    return Theme.palette.baseColor2
-                case StatusListItem.Type.Secondary:
-                    return Theme.palette.statusListItem.secondaryHoverBackgroundColor
-                case StatusListItem.Type.Danger:
-                    return Theme.palette.dangerColor3
-            }
-        }
-        return Theme.palette.statusListItem.backgroundColor
-    }
-
-    radius: 8
-
     property string itemId: ""
     property string titleId: ""
-
     property string title: ""
     property string titleAsideText: ""
+    property bool titleIcon1Visible
+    property bool titleIcon2Visible
     property string subTitle: ""
-    property string tertiaryTitle: ""
-    property alias badge: statusListItemBadge
-
+    property string tertiaryTitle: ""    
+    property string label: ""
     property real leftPadding: 16
     property real rightPadding: 16
     property bool enabled: true
+    property int type: StatusListItem.Type.Primary
+    property list<Item> components
+
     property StatusIconSettings icon: StatusIconSettings {
         height: isLetterIdenticon ? 40 : 20
         width: isLetterIdenticon ? 40 : 20
@@ -73,23 +51,68 @@ Rectangle {
         height: 40
         isIdenticon: false
     }
-    property string label: ""
-
-    property int type: StatusListItem.Type.Primary
+    property StatusIconSettings titleIcon1: StatusIconSettings {
+        width: dummyImage.width
+        height: dummyImage.height
+        background: StatusIconBackgroundSettings {
+            width: 10
+            height: 10
+        }
+        // Only used to get implicit width and height from the actual image
+        property Image dummyImage: Image {
+            source: titleIcon1.name ? "../../assets/img/icons/" + titleIcon1.name + ".svg": ""
+            visible: false
+        }        
+    }
+    property StatusIconSettings titleIcon2: StatusIconSettings {
+        width: dummyImage.width
+        height: dummyImage.height
+        background: StatusIconBackgroundSettings {
+            width: 10
+            height: 10
+        }
+        // Only used to get implicit width and height from the actual image
+        property Image dummyImage: Image {
+            source: titleIcon2.name ? "../../assets/img/icons/" + titleIcon2.name + ".svg": ""
+            visible: false
+        }
+    }
 
     property alias sensor: sensor
-
+    property alias badge: statusListItemBadge
     property alias statusListItemIcon: iconOrImage
     property alias statusListItemTitle: statusListItemTitle
     property alias statusListItemTitleAside: statusListItemTitleAsideText
+    property alias statusListItemTitleArea: statusListItemTitleArea
     property alias statusListItemSubTitle: statusListItemSubTitle
     property alias statusListItemTertiaryTitle: statusListItemTertiaryTitle
     property alias statusListItemComponentsSlot: statusListItemComponentsSlot
 
-    property list<Item> components
-
     signal clicked(string itemId)
     signal titleClicked(string titleId)
+
+    enum Type {
+        Primary,
+        Secondary,
+        Danger
+    }
+
+    implicitWidth: 448
+    implicitHeight: Math.max(64, statusListItemTitleArea.height + 16)
+    color: {
+        if (sensor.containsMouse) {
+            switch(type) {
+                case StatusListItem.Type.Primary:
+                    return Theme.palette.baseColor2
+                case StatusListItem.Type.Secondary:
+                    return Theme.palette.statusListItem.secondaryHoverBackgroundColor
+                case StatusListItem.Type.Danger:
+                    return Theme.palette.dangerColor3
+            }
+        }
+        return Theme.palette.statusListItem.backgroundColor
+    }
+    radius: 8
 
     onComponentsChanged: {
         if (components.length) {
@@ -125,6 +148,7 @@ Rectangle {
             active: statusListItem.icon.isLetterIdenticon ||
                     !!statusListItem.icon.name ||
                     !!statusListItem.image.source.toString()
+            badge.border.color: statusListItem.color
         }
 
         Item {
@@ -144,7 +168,8 @@ Rectangle {
                 height: visible ? contentHeight : 0
                 wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                 anchors.left: parent.left
-                anchors.right: !statusListItem.titleAsideText ? parent.right : undefined
+                anchors.right: !statusListItem.titleAsideText && !statusListItem.titleIcon1Visible && !statusListItem.titleIcon2Visible
+                               ? parent.right : undefined
                 color: {
                   if (!statusListItem.enabled) {
                     return Theme.palette.baseColor1
@@ -181,6 +206,38 @@ Rectangle {
                 color: Theme.palette.baseColor1
                 visible: !!statusListItem.titleAsideText
             }
+
+            Row {
+                id: titleIconsRow
+                spacing: 4
+                anchors.left: !statusListItem.titleAsideText ? statusListItemTitle.right : statusListItemTitleAsideText.right
+                anchors.verticalCenter: statusListItemTitle.verticalCenter
+                anchors.leftMargin: titleIconsRow.spacing
+
+                StatusRoundIcon {
+                    visible: statusListItem.titleIcon1Visible
+                    icon.name: statusListItem.titleIcon1.name
+                    icon.width: statusListItem.titleIcon1.width
+                    icon.height: statusListItem.titleIcon1.height
+                    icon.rotation: statusListItem.titleIcon1.rotation
+                    icon.color: statusListItem.titleIcon1.color
+                    icon.background.color: statusListItem.titleIcon1.background.color
+                    icon.background.width: statusListItem.titleIcon1.background.width
+                    icon.background.height: statusListItem.titleIcon1.background.height
+                }
+
+                StatusRoundIcon {
+                    visible: statusListItem.titleIcon2Visible
+                    icon.name: statusListItem.titleIcon2.name
+                    icon.width: statusListItem.titleIcon2.width
+                    icon.height: statusListItem.titleIcon2.height
+                    icon.rotation: statusListItem.titleIcon2.rotation
+                    icon.color: statusListItem.titleIcon2.color
+                    icon.background.color: statusListItem.titleIcon2.background.color
+                    icon.background.width: statusListItem.titleIcon2.background.width
+                    icon.background.height: statusListItem.titleIcon2.background.height
+                }
+             }
 
             StatusBaseText {
                 id: statusListItemSubTitle

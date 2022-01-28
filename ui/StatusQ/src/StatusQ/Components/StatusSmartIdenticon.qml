@@ -7,6 +7,9 @@ Loader {
 
     property string name: ""
 
+    // Badge color properties must be set if badgeItem.visible = true
+    property alias badge: statusBadge
+
     property StatusIconSettings icon: StatusIconSettings {
         width: 40
         height: 40
@@ -74,5 +77,17 @@ Loader {
             name: statusSmartIdenticon.name
             letterSize: statusSmartIdenticon.icon.letterSize
         }
+    }
+
+    // State component
+    StatusBadge {
+        id: statusBadge
+        visible: false
+        anchors.bottom: statusSmartIdenticon.bottom
+        anchors.right: statusSmartIdenticon.right
+        border.width: 3
+        implicitHeight: 15
+        implicitWidth: 15
+        z: 100
     }
 }

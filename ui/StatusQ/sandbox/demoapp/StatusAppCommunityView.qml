@@ -257,26 +257,17 @@ StatusAppThreePanelLayout {
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 16
             boundsBehavior: Flickable.StopAtBounds
-            model: ["John", "Nick", "Maria", "Mike"]
-            delegate: Row {
-                width: parent.width
-                height: 30
-                spacing: 8
-                Rectangle {
-                    width: 24
-                    height: 24
-                    radius: width/2
-                    color: Qt.rgba(Math.random(), Math.random(), Math.random(), 255)
-                }
-                StatusBaseText {
-                    height: parent.height
-                    horizontalAlignment: Text.AlignHCenter
-                    opacity: (rightPanel.width > 50) ? 1.0 : 0.0
-                    visible: (opacity > 0.1)
-                    font.pixelSize: 15
-                    color: Theme.palette.directColor1
-                    text: modelData
-                }
+            model: Models.membersListModel
+            delegate: StatusMemberListItem {
+                implicitWidth: parent.width
+                nickName: model.nickName
+                userName: model.userName
+                chatKey: model.chatKey
+                trustIndicator: model.trustIndicator
+                isMutualContact: model.isMutualContact
+                image.source: model.source
+                image.isIdenticon: model.isIdenticon
+                isOnline: model.isOnline
             }
         }
     }

@@ -318,5 +318,6 @@
         <file>src/StatusQ/Controls/StatusBanner.qml</file>
         <file>src/StatusQ/Controls/StatusProgressBar.qml</file>
         <file>src/StatusQ/Controls/StatusPasswordStrengthIndicator.qml</file>
+        <file>src/StatusQ/Components/StatusMemberListItem.qml</file>
     </qresource>
 </RCC>
