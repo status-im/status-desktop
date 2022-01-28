@@ -25,12 +25,6 @@ method joinCommunity*(self: AccessInterface, communityId: string): string {.base
 method createCommunity*(self: AccessInterface, name: string, description: string, access: int, ensOnly: bool, color: string, imagePath: string, aX: int, aY: int, bX: int, bY: int) {.base.} =
   raise newException(ValueError, "No implementation available") 
 
-method createCommunityCategory*(self: AccessInterface, communityId: string, name: string, channels: string) {.base.} =
-  raise newException(ValueError, "No implementation available") 
-
-method editCommunityCategory*(self: AccessInterface, communityId: string, categoryId: string, name: string, channels: string) {.base.} =
-  raise newException(ValueError, "No implementation available") 
-
 method deleteCommunityCategory*(self: AccessInterface, communityId: string, categoryId: string) {.base.} =
   raise newException(ValueError, "No implementation available") 
 

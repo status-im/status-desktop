@@ -58,7 +58,7 @@ StatusModal {
             input.placeholderText: qsTr("Category title")
             validators: [StatusMinLengthValidator {
                 minLength: 1
-                errorMessage: Utils.getErrorMessage(errors, qsTr("category name"))
+                errorMessage: Utils.getErrorMessage(nameInput.errors, qsTr("category name"))
             }]
         }
 
@@ -117,9 +117,10 @@ StatusModal {
 
                     delegate: StatusListItem {
                         anchors.horizontalCenter: parent.horizontalCenter
-                        visible: true/*root.isEdit ?
-                            model.categoryId === root.categoryId || model.categoryId === "" :
-                            model.categoryId === ""*/
+                        visible: {
+                            // TODO: if edit, show only the subitems of the current category
+                            return root.isEdit ? null : !model.isCategory
+                        }
                         height: visible ? implicitHeight : 0
                         title: "#" + model.name
                         icon.isLetterIdenticon: true
@@ -131,7 +132,6 @@ StatusModal {
                                 id: channelItemCheckbox
                                 checked: root.isEdit ? root.channels.indexOf(model.itemId) > - 1 : false
                                 onCheckedChanged: {
-                                    print("CHECK CHANNEL", model.itemId)
                                     var idx = root.channels.indexOf(model.itemId)
                                     if(checked){
                                         if(idx === -1){

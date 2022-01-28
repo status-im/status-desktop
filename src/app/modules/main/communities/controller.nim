@@ -125,21 +125,6 @@ method deleteCommunityChat*(
     chatId: string) =
   self.communityService.deleteCommunityChat(communityId, chatId)
 
-method createCommunityCategory*(
-    self: Controller,
-    communityId: string,
-    name: string,
-    channels: seq[string]) =
-  self.communityService.createCommunityCategory(communityId, name, channels)
-
-method editCommunityCategory*(
-    self: Controller,
-    communityId: string,
-    categoryId: string,
-    name: string,
-    channels: seq[string]) =
-  self.communityService.editCommunityCategory(communityId, categoryId, name, channels)
-
 method deleteCommunityCategory*(
     self: Controller,
     communityId: string,
