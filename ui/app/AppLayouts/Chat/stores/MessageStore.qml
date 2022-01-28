@@ -188,10 +188,21 @@ QtObject {
         return msg
     }
 
-
     function getLinkPreviewData(url, uuid) {
         if(!messageModule)
             return
         return messageModule.getLinkPreviewData(url, uuid)
+    }
+
+    function requestMoreMessages() {
+        if(!messageModule)
+            return
+        return messageModule.requestMoreMessages();
+    }
+
+    function fillGaps(messageId) {
+         if(!messageModule)
+            return
+        return messageModule.fillGaps(messageId);
     }
 }

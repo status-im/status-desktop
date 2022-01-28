@@ -244,10 +244,9 @@ Column {
         id: gapComponent
         GapComponent {
             onClicked: {
-                // Not Refactored Yet - Should do it via messageStore
-//                root.chatsModel.messageView.fillGaps(messageStore.messageId);
-//                root.visible = false;
-//                root.height = 0;
+                messageStore.fillGaps(messageId)
+                root.visible = false;
+                root.height = 0;
             }
         }
     }
@@ -258,8 +257,7 @@ Column {
             nextMessageIndex: root.nextMessageIndex
             nextMsgTimestamp: root.nextMsgTimestamp
             onTimerTriggered: {
-                // Not Refactored Yet - Should do it via messageStore
-//                root.chatsModel.requestMoreMessages(Constants.fetchRangeLast24Hours);
+                messageStore.requestMoreMessages();
             }
         }
     }

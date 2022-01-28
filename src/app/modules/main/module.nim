@@ -118,12 +118,13 @@ proc newModule*[T](
     messageService,
     gifService,
     privacyService,
+    mailserversService
   )
   result.moduleLoaded = false
 
   # Submodules
   result.chatSectionModule = chat_section_module.newModule(result, events, conf.CHAT_SECTION_ID, false, settingsService,
-  contactsService, chatService, communityService, messageService, gifService)
+  contactsService, chatService, communityService, messageService, gifService, mailserversService)
   result.communitySectionsModule = initOrderedTable[string, chat_section_module.AccessInterface]()
   result.walletSectionModule = wallet_section_module.newModule[Module[T]](
     result, events, tokenService,
@@ -206,6 +207,7 @@ method load*[T](
   communityService: community_service.Service,
   messageService: message_service.Service,
   gifService: gif_service.Service,
+  mailserversService: mailservers_service.Service
 ) =
   singletonInstance.engine.setRootContextProperty("mainModule", self.viewVariant)
   self.controller.init()
@@ -226,6 +228,7 @@ method load*[T](
       communityService,
       messageService,
       gifService,
+      mailserversService
     )
 
   var activeSection: SectionItem
@@ -334,9 +337,9 @@ method load*[T](
     activeSection = profileSettingsSectionItem
 
   # Load all sections
-  self.chatSectionModule.load(events, settingsService, contactsService, chatService, communityService, messageService, gifService)
+  self.chatSectionModule.load(events, settingsService, contactsService, chatService, communityService, messageService, gifService, mailserversService)
   for cModule in self.communitySectionsModule.values:
-    cModule.load(events, settingsService, contactsService, chatService, communityService, messageService, gifService)
+    cModule.load(events, settingsService, contactsService, chatService, communityService, messageService, gifService, mailserversService)
   self.walletSectionModule.load()
   # self.walletV2SectionModule.load()
   self.browserSectionModule.load()
@@ -522,6 +525,7 @@ method communityJoined*[T](
   communityService: community_service.Service,
   messageService: message_service.Service,
   gifService: gif_service.Service,
+  mailserversService: mailservers_service.Service
 ) =
   var firstCommunityJoined = false
   if (self.communitySectionsModule.len == 0):
@@ -537,8 +541,9 @@ method communityJoined*[T](
       communityService,
       messageService,
       gifService,
+      mailserversService
     )
-  self.communitySectionsModule[community.id].load(events, settingsService, contactsService, chatService, communityService, messageService, gifService)
+  self.communitySectionsModule[community.id].load(events, settingsService, contactsService, chatService, communityService, messageService, gifService, mailserversService)
 
   let communitySectionItem = self.createCommunityItem(community)
   if (firstCommunityJoined):

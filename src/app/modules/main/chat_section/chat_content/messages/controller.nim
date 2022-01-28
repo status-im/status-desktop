@@ -6,6 +6,7 @@ import ../../../../../../app_service/service/contacts/service as contact_service
 import ../../../../../../app_service/service/community/service as community_service
 import ../../../../../../app_service/service/chat/service as chat_service
 import ../../../../../../app_service/service/message/service as message_service
+import ../../../../../../app_service/service/mailservers/service as mailservers_service
 import ../../../../../../app_service/service/eth/utils as eth_utils
 import ../../../../../core/signals/types
 import ../../../../../core/eventemitter
@@ -28,10 +29,11 @@ type
     communityService: community_service.Service
     chatService: chat_service.Service
     messageService: message_service.Service
+    mailserversService: mailservers_service.Service
 
 proc newController*(delegate: io_interface.AccessInterface, events: EventEmitter, sectionId: string, chatId: string, 
   belongsToCommunity: bool, contactService: contact_service.Service, communityService: community_service.Service,
-  chatService: chat_service.Service, messageService: message_service.Service): 
+  chatService: chat_service.Service, messageService: message_service.Service, mailserversService: mailservers_service.Service): 
   Controller =
   result = Controller()
   result.delegate = delegate
@@ -44,6 +46,7 @@ proc newController*(delegate: io_interface.AccessInterface, events: EventEmitter
   result.communityService = communityService
   result.chatService = chatService
   result.messageService = messageService
+  result.mailserversService = mailserversService
   
 method delete*(self: Controller) =
   discard
@@ -225,3 +228,9 @@ method increaseLoadingMessagesPerPageFactor*(self: Controller) =
 
 method resetLoadingMessagesPerPageFactor*(self: Controller) =
   self.loadingMessagesPerPageFactor = 1
+
+method requestMoreMessages*(self: Controller) =
+  self.mailserversService.requestMoreMessages(self.chatId)
+
+method fillGaps*(self: Controller, messageId: string) =
+  self.mailserversService.fillGaps(self.chatId, messageId)

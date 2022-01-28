@@ -89,3 +89,9 @@ method increaseLoadingMessagesPerPageFactor*(self: AccessInterface) {.base.} =
 
 method resetLoadingMessagesPerPageFactor*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method requestMoreMessages*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method fillGaps*(self: AccessInterface, messageId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")

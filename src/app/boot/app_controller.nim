@@ -165,8 +165,8 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result.providerService = provider_service.newService(result.dappPermissionsService, result.settingsService)
   result.savedAddressService = saved_address_service.newService(statusFoundation.events)
   result.devicesService = devices_service.newService(statusFoundation.events, result.settingsService)
-  result.mailserversService = mailservers_service.newService(statusFoundation.events, statusFoundation.marathon,
-  result.settingsService, result.nodeConfigurationService, statusFoundation.fleetConfiguration)
+  result.mailserversService = mailservers_service.newService(statusFoundation.events, statusFoundation.threadpool, 
+    result.settingsService, result.nodeConfigurationService, statusFoundation.fleetConfiguration)
   result.nodeService = node_service.newService(statusFoundation.events, statusFoundation.threadpool, 
   result.settingsService)
   result.gifService = gif_service.newService(result.settingsService)
@@ -326,6 +326,7 @@ proc load(self: AppController) =
     self.communityService,
     self.messageService,
     self.gifService,
+    self.mailserversService
   )
 
 proc userLoggedIn*(self: AppController) =

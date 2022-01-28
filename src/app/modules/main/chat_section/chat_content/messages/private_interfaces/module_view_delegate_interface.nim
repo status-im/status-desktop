@@ -39,3 +39,9 @@ method getLinkPreviewData*(self: AccessInterface, link: string, uuid: string): s
 
 method onPreviewDataLoaded*(self: AccessInterface, previewData: string) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method requestMoreMessages*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method fillGaps*(self: AccessInterface, messageId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")

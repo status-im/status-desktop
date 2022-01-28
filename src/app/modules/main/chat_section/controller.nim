@@ -9,6 +9,7 @@ import ../../../../app_service/service/chat/service as chat_service
 import ../../../../app_service/service/community/service as community_service
 import ../../../../app_service/service/message/service as message_service
 import ../../../../app_service/service/gif/service as gif_service
+import ../../../../app_service/service/mailservers/service as mailservers_service
 
 import ../../../core/eventemitter
 
@@ -28,11 +29,13 @@ type
     communityService: community_service.Service
     messageService: message_service.Service
     gifService: gif_service.Service
+    mailserversService: mailservers_service.Service
 
 proc newController*(delegate: io_interface.AccessInterface, sectionId: string, isCommunity: bool, events: EventEmitter,
   settingsService: settings_service.ServiceInterface, contactService: contact_service.Service, 
   chatService: chat_service.Service, communityService: community_service.Service, 
-  messageService: message_service.Service, gifService: gif_service.Service): Controller =
+  messageService: message_service.Service, gifService: gif_service.Service,
+  mailserversService: mailservers_service.Service): Controller =
   result = Controller()
   result.delegate = delegate
   result.sectionId = sectionId
@@ -44,6 +47,7 @@ proc newController*(delegate: io_interface.AccessInterface, sectionId: string, i
   result.communityService = communityService
   result.messageService = messageService
   result.gifService = gifService
+  result.mailserversService = mailserversService
   
 method delete*(self: Controller) =
   discard
@@ -98,7 +102,8 @@ method init*(self: Controller) =
           self.chatService,
           self.communityService,
           self.messageService,
-          self.gifService
+          self.gifService,
+          self.mailserversService
         )
 
     self.events.on(SIGNAL_COMMUNITY_CHANNEL_DELETED) do(e:Args):
@@ -191,13 +196,13 @@ method createPublicChat*(self: Controller, chatId: string) =
   let response = self.chatService.createPublicChat(chatId)
   if(response.success):
     self.delegate.addNewChat(response.chatDto, false, self.events, self.settingsService, self.contactService, self.chatService,
-    self.communityService, self.messageService, self.gifService)
+    self.communityService, self.messageService, self.gifService, self.mailserversService)
 
 method createOneToOneChat*(self: Controller, chatId: string, ensName: string) =
   let response = self.chatService.createOneToOneChat(chatId, ensName)
   if(response.success):
     self.delegate.addNewChat(response.chatDto, false, self.events, self.settingsService, self.contactService, self.chatService,
-    self.communityService, self.messageService, self.gifService)
+    self.communityService, self.messageService, self.gifService, self.mailserversService)
 
 method leaveChat*(self: Controller, chatId: string) =
   self.chatService.leaveChat(chatId)
@@ -255,7 +260,7 @@ method createGroupChat*(self: Controller, groupName: string, pubKeys: seq[string
   let response = self.chatService.createGroupChat(groupName, pubKeys)
   if(response.success):
     self.delegate.addNewChat(response.chatDto, false, self.events, self.settingsService, self.contactService, self.chatService, 
-    self.communityService, self.messageService, self.gifService)
+    self.communityService, self.messageService, self.gifService, self.mailserversService)
 
 method joinGroup*(self: Controller) =
   self.chatService.confirmJoiningGroup(self.getActiveChatId())
@@ -264,7 +269,7 @@ method joinGroupChatFromInvitation*(self: Controller, groupName: string, chatId:
   let response = self.chatService.createGroupChatFromInvitation(groupName, chatId, adminPK)
   if(response.success):
     self.delegate.addNewChat(response.chatDto, false, self.events, self.settingsService, self.contactService, self.chatService, 
-    self.communityService, self.messageService, self.gifService)
+    self.communityService, self.messageService, self.gifService, self.mailserversService)
 
 method acceptRequestToJoinCommunity*(self: Controller, requestId: string) =
   self.communityService.acceptRequestToJoinCommunity(self.sectionId, requestId)

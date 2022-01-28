@@ -4,7 +4,7 @@ import ./dto/mailserver as mailserver_dto
 import ../../../app/core/signals/types
 import ../../../app/core/fleets/fleet_configuration
 import ../../../app/core/[main]
-import ../../../app/core/tasks/marathon/mailserver/worker
+import ../../../app/core/tasks/[qt, threadpool]
 import ../settings/service_interface as settings_service
 import ../node_configuration/service_interface as node_configuration_service
 import status/mailservers as status_mailservers
@@ -16,14 +16,53 @@ type
   ActiveMailserverChangedArgs* = ref object of Args
     nodeAddress*: string
 
+  MailserverAvailableArgs* = ref object of Args
+
+  RequestMessagesTaskArg = ref object of QObjectTaskArg
+
+  RequestMoreMessagesTaskArg = ref object of QObjectTaskArg
+    chatId*: string
+
+  FillGapsTaskArg* = ref object of QObjectTaskArg
+    chatId*: string
+    messageIds*: seq[string]
+
 # Signals which may be emitted by this service:
 const SIGNAL_ACTIVE_MAILSERVER_CHANGED* = "activeMailserverChanged"
+const SIGNAL_MAILSERVER_AVAILABLE* = "mailserverAvailable"
+
+const requestMessagesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[RequestMessagesTaskArg](argEncoded)
+  try:
+    info "Requesting message history"
+    discard status_mailservers.requestAllHistoricMessages()
+  except Exception as e:
+    warn "Disconnecting active mailserver due to error", errDescription=e.msg
+    discard status_mailservers.disconnectActiveMailserver()
+
+const requestMoreMessagesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[RequestMoreMessagesTaskArg](argEncoded)
+  try:
+    info "Requesting additional message history for chat", chatId=arg.chatId
+    discard status_mailservers.syncChatFromSyncedFrom(arg.chatId)
+  except Exception as e:
+    warn "Disconnecting active mailserver due to error", errDescription=e.msg
+    discard status_mailservers.disconnectActiveMailserver()
+
+const fillGapsTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[FillGapsTaskArg](argEncoded)
+  try:
+    info "Requesting fill gaps", chatId=arg.chatId, messageIds=arg.messageIds
+    discard status_mailservers.fillGaps(arg.chatId, arg.messageIds)
+  except Exception as e:
+    warn "Disconnecting active mailserver due to error", errDescription=e.msg
+    discard status_mailservers.disconnectActiveMailserver()
 
 QtObject:
   type Service* = ref object of QObject
     mailservers: seq[tuple[name: string, nodeAddress: string]]
     events: EventEmitter
-    marathon: Marathon
+    threadpool: ThreadPool
     settingsService: settings_service.ServiceInterface
     nodeConfigurationService: node_configuration_service.ServiceInterface
     fleetConfiguration: FleetConfiguration
@@ -36,13 +75,14 @@ QtObject:
   proc delete*(self: Service) =
     self.QObject.delete
 
-  proc newService*(events: EventEmitter, marathon: Marathon, settingsService: settings_service.ServiceInterface, 
+  proc newService*(events: EventEmitter, threadpool: ThreadPool, 
+    settingsService: settings_service.ServiceInterface, 
     nodeConfigurationService: node_configuration_service.ServiceInterface, 
     fleetConfiguration: FleetConfiguration): Service =
     new(result, delete)
     result.QObject.setup
     result.events = events
-    result.marathon = marathon
+    result.threadpool = threadpool
     result.settingsService = settingsService
     result.nodeConfigurationService = nodeConfigurationService
     result.fleetConfiguration = fleetConfiguration
@@ -52,6 +92,30 @@ QtObject:
     self.initMailservers()
     self.fetchMailservers()  
 
+  proc requestMessages(self: Service) =
+    let arg = RequestMessagesTaskArg(
+      tptr: cast[ByteAddress](requestMessagesTask),
+      vptr: cast[ByteAddress](self.vptr)
+    )
+    self.threadpool.start(arg)
+
+  proc requestMoreMessages*(self: Service, chatId: string) =
+    let arg = RequestMoreMessagesTaskArg(
+      tptr: cast[ByteAddress](requestMoreMessagesTask),
+      vptr: cast[ByteAddress](self.vptr),
+      chatId: chatId
+    )
+    self.threadpool.start(arg)
+
+  proc fillGaps*(self: Service, chatId: string, messageId: string) =
+    let arg = FillGapsTaskArg(
+      tptr: cast[ByteAddress](fillGapsTask),
+      vptr: cast[ByteAddress](self.vptr),
+      chatId: chatId,
+      messageIds: @[messageId]
+    )
+    self.threadpool.start(arg)
+
   proc doConnect(self: Service) =
     self.events.on(SignalType.MailserverChanged.event) do(e: Args):
       let receivedData = MailserverChangedSignal(e)
@@ -60,6 +124,12 @@ QtObject:
       let data = ActiveMailserverChangedArgs(nodeAddress: address)
       self.events.emit(SIGNAL_ACTIVE_MAILSERVER_CHANGED, data)
     
+    self.events.on(SignalType.MailserverAvailable.event) do(e: Args):
+      info "mailserver available"
+      self.requestMessages()
+      let data = MailserverAvailableArgs()
+      self.events.emit(SIGNAL_MAILSERVER_AVAILABLE, data)
+
     self.events.on(SignalType.HistoryRequestStarted.event) do(e: Args):
       let h = HistoryRequestStartedSignal(e)
       info "history request started", requestId=h.requestId, numBatches=h.numBatches

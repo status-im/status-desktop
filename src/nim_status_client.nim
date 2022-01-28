@@ -88,7 +88,6 @@ proc mainProc() =
   let isProductionQVariant = newQVariant(if defined(production): true else: false)
   let isExperimentalQVariant = newQVariant(isExperimental)
   let signalsManagerQVariant = newQVariant(statusFoundation.signalsManager)
-  let mailserverControllerQVariant = newQVariant(statusFoundation.mailserverController)
 
   QResource.registerResource(app.applicationDirPath & resourcesPath)
   # Register events objects
@@ -107,7 +106,6 @@ proc mainProc() =
   singletonInstance.engine.setRootContextProperty("singleInstance", newQVariant(singleInstance))
   singletonInstance.engine.setRootContextProperty("isExperimental", isExperimentalQVariant)
   singletonInstance.engine.setRootContextProperty("signals", signalsManagerQVariant)
-  singletonInstance.engine.setRootContextProperty("mailserver", mailserverControllerQVariant)
   singletonInstance.engine.setRootContextProperty("production", isProductionQVariant)
 
   app.installEventFilter(dockShowAppEvent)
@@ -119,7 +117,6 @@ proc mainProc() =
     isProductionQVariant.delete()
     isExperimentalQVariant.delete()
     signalsManagerQVariant.delete()
-    mailserverControllerQVariant.delete()
     networkAccessFactory.delete()
     dockShowAppEvent.delete()
     osThemeEvent.delete()
