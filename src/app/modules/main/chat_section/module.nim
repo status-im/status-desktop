@@ -372,6 +372,11 @@ method onCommunityCategoryCreated*(self: Module, cat: Category, chats: seq[ChatD
     let channelItem = initSubItem(chatDto.id, cat.id, chatDto.name, chatDto.identicon, false, chatDto.color, 
         chatDto.description, chatDto.chatType.int, true, hasNotification, notificationsCount, chatDto.muted, 
         false, chatDto.position)
+
+    # Important:
+    # Since we're just adding an already added community channel to a certain commuinity, there is no need to call
+    # `self.addSubmodule` here, since submodule (chat content module and modules beneath) were already added, so we're
+    # just updating the view from here, via model.    
     self.view.chatsModel().removeItemById(chatDto.id)
     categoryChannels.add(channelItem)
 

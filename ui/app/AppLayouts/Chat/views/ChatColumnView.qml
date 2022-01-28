@@ -154,7 +154,7 @@ Item {
             id: delegateChooser
             role: "type"
             DelegateChoice { // In case of category
-                roleValue: Constants.chatType.unknown
+                roleValue: Constants.chatType.category
                 delegate: Repeater {
                     model: {
                         if (!subItems) {
@@ -168,11 +168,15 @@ Item {
                         height: {
                             // dynamically calculate the height of the view, if the active one is the current one
                             // then set the height to parent otherwise set it to 0
+                            if(!chatContentModule)
+                                return 0
+
                             let myChatId = chatContentModule.getMyChatId()
                             if(myChatId === root.activeChatId || myChatId === root.activeSubItemId)
                                 return parent.height
+
                             return 0
-                        }                   
+                        }
                         rootStore: root.rootStore
                         contactsStore: root.contactsStore
                         sendTransactionNoEnsModal: cmpSendTransactionNoEns
@@ -193,9 +197,13 @@ Item {
                     height: {
                         // dynamically calculate the height of the view, if the active one is the current one
                         // then set the height to parent otherwise set it to 0
+                        if(!chatContentModule)
+                            return 0
+
                         let myChatId = chatContentModule.getMyChatId()
                         if(myChatId === root.activeChatId || myChatId === root.activeSubItemId)
                             return parent.height
+
                         return 0
                     }    
                     rootStore: root.rootStore
