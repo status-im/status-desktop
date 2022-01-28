@@ -113,6 +113,15 @@ method init*(self: Controller) =
         self.chatService.updateOrAddChat(args.chat)
         self.delegate.onCommunityChannelEdited(args.chat)
 
+    self.events.on(SIGNAL_COMMUNITY_CATEGORY_CREATED) do(e:Args):
+      let args = CommunityCategoryArgs(e)
+      if (args.communityId == self.sectionId):
+        var chats:seq[ChatDto] = @[]
+        for chat in args.chats:
+          self.chatService.updateOrAddChat(chat)
+          chats.add(chat)
+        self.delegate.onCommunityCategoryCreated(args.category, chats)
+
     self.events.on(SIGNAL_COMMUNITY_CHANNEL_REORDERED) do(e:Args):
       let args = CommunityChatOrderArgs(e)
       if (args.communityId == self.sectionId):
