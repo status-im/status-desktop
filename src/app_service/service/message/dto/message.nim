@@ -15,16 +15,13 @@ const PARSED_TEXT_CHILD_TYPE_STRONG_EMPH* = "strong-emph"
 const PARSED_TEXT_CHILD_TYPE_MENTION* = "mention"
 const PARSED_TEXT_CHILD_TYPE_STATUS_TAG* = "status-tag"
 const PARSED_TEXT_CHILD_TYPE_DEL* = "del"
-
-type ParsedTextChild* = object
-  `type`*: string
-  literal*: string
-  destination*: string
+const PARSED_TEXT_CHILD_TYPE_LINK* = "link"
 
 type ParsedText* = object
   `type`*: string
   literal*: string
-  children*: seq[ParsedTextChild]
+  destination*: string
+  children*: seq[ParsedText]
 
 type QuotedMessage* = object
   `from`*: string
@@ -67,21 +64,16 @@ type MessageDto* = object
   links*: seq[string]
   editedAt*: int
 
-proc toParsedTextChild*(jsonObj: JsonNode): ParsedTextChild =
-  result = ParsedTextChild()
-  discard jsonObj.getProp("type", result.type)
-  discard jsonObj.getProp("literal", result.literal)
-  discard jsonObj.getProp("destination", result.destination)
-
 proc toParsedText*(jsonObj: JsonNode): ParsedText =
   result = ParsedText()
   discard jsonObj.getProp("type", result.type)
   discard jsonObj.getProp("literal", result.literal)
+  discard jsonObj.getProp("destination", result.destination)
 
   var childrenArr: JsonNode
   if(jsonObj.getProp("children", childrenArr) and childrenArr.kind == JArray):
     for childObj in childrenArr:
-      result.children.add(toParsedTextChild(childObj))
+      result.children.add(toParsedText(childObj))
       
 proc toQuotedMessage*(jsonObj: JsonNode): QuotedMessage =
   result = QuotedMessage()
