@@ -548,13 +548,13 @@ QtObject:
     self.threadpool.start(arg)
 
 # See render-inline in status-react/src/status_im/ui/screens/chat/message/message.cljs
-proc renderInline(self: Service, parsedTextChild: ParsedTextChild): string =
-  let value = escape_html(parsedTextChild.literal)
+proc renderInline(self: Service, parsedText: ParsedText): string =
+  let value = escape_html(parsedText.literal)
     .multiReplace(("\r\n", "<br/>"))
     .multiReplace(("\n", "<br/>"))
     .multiReplace(("  ", "&nbsp;&nbsp;"))
 
-  case parsedTextChild.type:
+  case parsedText.type:
     of "": 
       result = value
     of PARSED_TEXT_CHILD_TYPE_CODE: 
@@ -572,6 +572,8 @@ proc renderInline(self: Service, parsedTextChild: ParsedTextChild): string =
       result = fmt("<a href=\"#{value}\" class=\"status-tag\">#{value}</a>")
     of PARSED_TEXT_CHILD_TYPE_DEL: 
       result = fmt("<del>{value}</del>")
+    of PARSED_TEXT_CHILD_TYPE_LINK:
+      result = fmt("{parsedText.destination}")
     else: 
       result = fmt(" {value} ")
 
