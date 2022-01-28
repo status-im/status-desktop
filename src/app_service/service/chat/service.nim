@@ -155,9 +155,10 @@ QtObject:
   proc getChatsOfChatTypes*(self: Service, types: seq[chat_dto.ChatType]): seq[ChatDto] =
     return self.getAllChats().filterIt(it.chatType in types)
 
-  proc getChatById*(self: Service, chatId: string): ChatDto =
+  proc getChatById*(self: Service, chatId: string, showWarning: bool = true): ChatDto =
     if(not self.chats.contains(chatId)):
-      error "trying to get chat data for an unexisting chat id", chatId
+      if (showWarning):
+        warn "trying to get chat data for an unexisting chat id", chatId
       return
 
     return self.chats[chatId]

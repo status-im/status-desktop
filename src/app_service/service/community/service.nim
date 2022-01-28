@@ -321,6 +321,18 @@ QtObject:
       var community = self.allCommunities[communityId]
       self.joinedCommunities[communityId] = community
 
+      for k, chat in community.chats:
+        let fullChatId = communityId & chat.id
+        let currentChat =  self.chatService.getChatById(fullChatId, showWarning = false)
+        echo currentChat
+        if (currentChat.id != ""):
+          # The chat service already knows that about that chat
+          continue
+        var chatDto = mapChatToChatDto(chat, communityId)
+        chatDto.id = fullChatId
+        # TODO find a way to populate missing infos like the color
+        self.chatService.updateOrAddChat(chatDto)
+
       self.events.emit(SIGNAL_COMMUNITY_JOINED, CommunityArgs(community: community))
     except Exception as e:
       error "Error joining the community", msg = e.msg
