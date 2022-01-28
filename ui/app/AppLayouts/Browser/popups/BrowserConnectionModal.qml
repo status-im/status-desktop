@@ -8,6 +8,7 @@ import shared.panels 1.0
 import StatusQ.Controls 0.1
 import StatusQ.Popups 0.1
 import StatusQ.Core 0.1
+import StatusQ.Core.Theme 0.1
 
 import "../controls"
 import "../stores"
@@ -100,6 +101,7 @@ StatusModal {
                 Layout.maximumWidth: browserConnectionModal.width - Style.current.padding
                 Layout.fillWidth: true
                 Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
+                color: Theme.palette.directColor1
             }
 
             StatusAccountSelector {
@@ -146,7 +148,7 @@ StatusModal {
                 wrapMode: Text.WordWrap
                 font.pixelSize: 15
                 horizontalAlignment: Text.AlignHCenter
-                color: Style.current.secondaryText
+                color: Theme.palette.baseColor1
                 Layout.maximumWidth: browserConnectionModal.width - Style.current.padding
                 Layout.fillWidth: true
                 Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
