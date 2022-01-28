@@ -112,19 +112,11 @@ QtObject:
           self.joinedCommunities[membershipRequest.communityId] = community
           self.events.emit(SIGNAL_COMMUNITY_EDITED, CommunityArgs(community: community))
 
-  proc mapChatToChatDto(chat: Chat, communityId: string): ChatDto =
-    result = ChatDto()
-    result.id = chat.id
-    result.communityId = communityId
-    result.name = chat.name
-    result.chatType = ChatType.CommunityChat
-    result.color = chat.color
-    result.emoji = chat.emoji
-    result.description = chat.description
-    result.canPost = chat.canPost
-    result.position = chat.position
-    result.categoryId = chat.categoryId
-    result.communityId = communityId
+  proc updateMissingFields(chatDto: var ChatDto, chat: Chat) =
+    # This proc sets fields of `chatDto` which are available only for comminity channels.
+    chatDto.position = chat.position
+    chatDto.canPost = chat.canPost
+    chatDto.categoryId = chat.categoryId
 
   proc findChatById(id: string, chats: seq[ChatDto]): ChatDto =
     for chat in chats:
@@ -137,7 +129,7 @@ QtObject:
       inc idx
       if(chat.id == id):
         return idx
-    return idx
+    return -1
 
   proc handleCommunityUpdates(self: Service, communities: seq[CommunityDto], updatedChats: seq[ChatDto]) =
     let community = communities[0]
@@ -153,13 +145,12 @@ QtObject:
     if(community.chats.len > prev_community.chats.len):
       for chat in community.chats:
         if findIndexById(chat.id, prev_community.chats) == -1:
-          # update missing params
-          let updated_chat = findChatById(community.id&chat.id, updatedChats)
-          var chat_to_be_added = chat
-          chat_to_be_added.id = community.id&chat.id
-          chat_to_be_added.color = updated_chat.color
+          let chatFullId = community.id & chat.id
+          var createdChat = findChatById(chatFullId, updatedChats)
+          createdChat.updateMissingFields(chat)
+          self.chatService.updateOrAddChat(createdChat) # we have to update chats stored in the chat service.
 
-          let data = CommunityChatArgs(chat: mapChatToChatDto(chat_to_be_added, community.id))
+          let data = CommunityChatArgs(chat: createdChat)
           self.events.emit(SIGNAL_COMMUNITY_CHANNEL_CREATED, data)
 
     # channel was removed
@@ -187,14 +178,12 @@ QtObject:
 
           # Handle name/description changes
           if(chat.id == prev_chat.id and (chat.name != prev_chat.name or chat.description != prev_chat.description)):
-            # update missing params
-            let updated_chat = findChatById(community.id&chat.id, updatedChats)
-            var chat_to_be_edited = chat
-            chat_to_be_edited.id = community.id&chat.id
-            if(updated_chat.color != ""):
-              chat_to_be_edited.color = updated_chat.color
-
-            let data = CommunityChatArgs(chat: mapChatToChatDto(chat_to_be_edited, community.id))
+            let chatFullId = community.id & chat.id
+            var updatedChat = findChatById(chatFullId, updatedChats)
+            updatedChat.updateMissingFields(chat)
+            self.chatService.updateOrAddChat(updatedChat) # we have to update chats stored in the chat service.
+            
+            let data = CommunityChatArgs(chat: updatedChat)
             self.events.emit(SIGNAL_COMMUNITY_CHANNEL_EDITED, data)
 
     self.events.emit(SIGNAL_COMMUNITIES_UPDATE, CommunitiesArgs(communities: communities))
@@ -549,10 +538,12 @@ QtObject:
           if idx > -1:
             self.joinedCommunities[communityId].chats[idx].categoryId = v["CategoryModified"].getStr()
             self.joinedCommunities[communityId].chats[idx].position = v["PositionModified"].getInt()
-            var c = mapChatToChatDto(self.joinedCommunities[communityId].chats[idx], communityId)
-            c.id = communityId & c.id
-            if c.categoryId != "":
-              chats.add(c)
+            if self.joinedCommunities[communityId].chats[idx].categoryId.len > 0:
+              let fullChatId = communityId & chatId
+              var chatDetails = self.chatService.getChatById(fullChatId) # we are free to do this cause channel must be created before we add it to a category
+              chatDetails.updateMissingFields(self.joinedCommunities[communityId].chats[idx])
+              self.chatService.updateOrAddChat(chatDetails) # we have to update chats stored in the chat service.
+              chats.add(chatDetails)
         for k, v in response.result["communityChanges"].getElems()[0]["categoriesAdded"].pairs():
           let category = v.toCategory()
           self.events.emit(SIGNAL_COMMUNITY_CATEGORY_CREATED,
