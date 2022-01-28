@@ -7,7 +7,8 @@ method makeChatWithIdActive*(self: AccessInterface, chatId: string) {.base.} =
 method addNewChat*(self: AccessInterface, chatDto: ChatDto, belongsToCommunity: bool, events: EventEmitter,
   settingsService: settings_service.ServiceInterface, contactService: contact_service.Service, 
   chatService: chat_service.Service, communityService: community_service.Service, 
-  messageService: message_service.Service, gifService: gif_service.Service) {.base.} =
+  messageService: message_service.Service, gifService: gif_service.Service, 
+  mailserversService: mailservers_service.Service) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onNewMessagesReceived*(self: AccessInterface, chatId: string, unviewedMessagesCount: int, 

@@ -12,6 +12,7 @@ import ../../../app_service/service/community/service as community_service
 import ../../../app_service/service/contacts/service as contacts_service
 import ../../../app_service/service/message/service as message_service
 import ../../../app_service/service/gif/service as gif_service
+import ../../../app_service/service/mailservers/service as mailservers_service
 import ../../../app_service/service/privacy/service as privacy_service
 
 export controller_interface
@@ -32,6 +33,7 @@ type
     contactsService: contacts_service.Service
     gifService: gif_service.Service
     privacyService: privacy_service.Service
+    mailserversService: mailservers_service.Service
     activeSectionId: string
 
 proc newController*(delegate: io_interface.AccessInterface, 
@@ -45,6 +47,7 @@ proc newController*(delegate: io_interface.AccessInterface,
   messageService: message_service.Service,
   gifService: gif_service.Service,
   privacyService: privacy_service.Service,
+  mailserversService: mailservers_service.Service
 ): 
   Controller =
   result = Controller()
@@ -59,6 +62,7 @@ proc newController*(delegate: io_interface.AccessInterface,
   result.messageService = messageService
   result.gifService = gifService
   result.privacyService = privacyService
+  result.mailserversService = mailserversService
   
 method delete*(self: Controller) =
   discard
@@ -95,6 +99,7 @@ method init*(self: Controller) =
       self.communityService,
       self.messageService,
       self.gifService,
+      self.mailserversService
     )
 
   self.events.on(TOGGLE_SECTION) do(e:Args):
@@ -112,6 +117,7 @@ method init*(self: Controller) =
       self.communityService,
       self.messageService,
       self.gifService,
+      self.mailserversService
     )
 
   self.events.on(SIGNAL_COMMUNITY_LEFT) do(e:Args):

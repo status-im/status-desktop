@@ -11,6 +11,7 @@ import ../../../../../../app_service/service/contacts/service as contact_service
 import ../../../../../../app_service/service/community/service as community_service
 import ../../../../../../app_service/service/chat/service as chat_service
 import ../../../../../../app_service/service/message/service as message_service
+import ../../../../../../app_service/service/mailservers/service as mailservers_service
 
 export io_interface
 
@@ -18,6 +19,7 @@ logScope:
   topics = "messages-module"
 
 const CHAT_IDENTIFIER_MESSAGE_ID = "chat-identifier-message-id"
+const FETCH_MORE_MESSAGES_MESSAGE_ID = "fetch-more_messages-message-id"
 
 type 
   Module* = ref object of io_interface.AccessInterface
@@ -29,18 +31,19 @@ type
 
 proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitter, sectionId: string, chatId: string, 
   belongsToCommunity: bool, contactService: contact_service.Service, communityService: community_service.Service,
-  chatService: chat_service.Service, messageService: message_service.Service): 
+  chatService: chat_service.Service, messageService: message_service.Service, mailserversService: mailservers_service.Service): 
   Module =
   result = Module()
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
   result.controller = controller.newController(result, events, sectionId, chatId, belongsToCommunity, contactService, 
-  communityService, chatService, messageService)
+  communityService, chatService, messageService, mailserversService)
   result.moduleLoaded = false
 
 # Forward declaration
 proc createChatIdentifierItem(self: Module): Item
+proc createFetchMoreMessagesItem(self: Module): Item
 
 method delete*(self: Module) =
   self.view.delete
@@ -55,7 +58,7 @@ method isLoaded*(self: Module): bool =
   return self.moduleLoaded
 
 method viewDidLoad*(self: Module) =
-  # The first message in the model must be always ChatIdentifier message.
+  self.view.model().appendItem(self.createFetchMoreMessagesItem())
   self.view.model().appendItem(self.createChatIdentifierItem())
 
   self.moduleLoaded = true
@@ -63,6 +66,31 @@ method viewDidLoad*(self: Module) =
 
 method getModuleAsVariant*(self: Module): QVariant =
   return self.viewVariant
+
+proc createFetchMoreMessagesItem(self: Module): Item =
+  let chatDto = self.controller.getChatDetails()
+  let isIdenticon = false
+  result = initItem(
+    FETCH_MORE_MESSAGES_MESSAGE_ID,
+    responseToMessageWithId = "",
+    senderId = chatDto.id,
+    senderDisplayName = "",
+    senderLocalName = "",
+    senderIcon = "",
+    isIdenticon,
+    amISender = false,
+    outgoingStatus = "",
+    text = "",
+    image = "", 
+    messageContainsMentions = false,
+    seen = true,
+    timestamp = 0,
+    ContentType.FetchMoreMessagesButton,
+    messageType = -1,
+    sticker = "",
+    stickerPack = -1,
+    @[],
+  )
 
 proc createChatIdentifierItem(self: Module): Item =
   let chatDto = self.controller.getChatDetails()
@@ -160,9 +188,9 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
       # messages are sorted from the most recent to the least recent one
       viewItems.add(item)
 
-    # ChatIdentifier message will be always the first message (the oldest one)
+    viewItems.add(self.createFetchMoreMessagesItem())
     viewItems.add(self.createChatIdentifierItem())
-    # Delete the old ChatIdentifier message first
+    self.view.model().removeItem(FETCH_MORE_MESSAGES_MESSAGE_ID)
     self.view.model().removeItem(CHAT_IDENTIFIER_MESSAGE_ID)
     # Add new loaded messages
     self.view.model().appendItems(viewItems)
@@ -349,3 +377,9 @@ method scrollToMessage*(self: Module, messageId: string) =
   self.controller.setSearchedMessageId(messageId)
   if(not self.checkIfMessageLoadedAndScrollToItIfItIs()):
     self.loadMoreMessages()
+
+method requestMoreMessages*(self: Module) =
+  self.controller.requestMoreMessages()
+
+method fillGaps*(self: Module, messageId: string) =
+  self.controller.fillGaps(messageId)
