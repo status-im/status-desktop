@@ -110,8 +110,7 @@ StatusModal {
                     anchors.top: channelsLabel.bottom
                     height: childrenRect.height
                     width: parent.width
-                    // Not Refactored Yet
-                    model: root.store.chatCommunitySectionModule.model//activeCommunityChatsModel
+                    model: root.store.chatCommunitySectionModule.model
                     interactive: false
                     clip: true
 
@@ -119,7 +118,7 @@ StatusModal {
                         anchors.horizontalCenter: parent.horizontalCenter
                         visible: {
                             // TODO: if edit, show only the subitems of the current category
-                            return root.isEdit ? null : !model.isCategory
+                            return root.isEdit ? null : model.type != Constants.chatType.unknown
                         }
                         height: visible ? implicitHeight : 0
                         title: "#" + model.name
