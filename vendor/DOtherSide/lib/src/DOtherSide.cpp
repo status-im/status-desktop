@@ -148,10 +148,8 @@ void dos_qguiapplication_create()
 {
     static int argc = 1;
     static char *argv[] = {(char*)"Status"};
-
-    register_meta_types();
-
     new QGuiApplication(argc, argv);
+    register_meta_types();
 }
 
 void dos_qguiapplication_clipboard_setText(const char* text)
