@@ -97,6 +97,7 @@ Item {
                         id: walletInfoContent
                         WalletHeaderPanel {
                             id: walletHeader
+                            store: walletView.store
                             // Not Refactored Yet
 //                            accountsModel: walletView.store.walletModelV2Inst.accountsView.accounts
 //                            currentAccount: walletView.store.walletModelV2Inst.accountsView.currentAccount

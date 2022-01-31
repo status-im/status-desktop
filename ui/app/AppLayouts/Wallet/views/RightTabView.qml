@@ -18,6 +18,7 @@ Item {
 
     property var changeSelectedAccount
     property alias currentTabIndex: walletTabBar.currentIndex
+    property var store
 
     WalletHeader {
         id: walletHeader
@@ -25,6 +26,7 @@ Item {
         currency: RootStore.currentCurrency
         currentAccount: RootStore.currentAccount
         changeSelectedAccount: walletContainer.changeSelectedAccount
+        store: walletContainer.store
     }
 
     RowLayout {
