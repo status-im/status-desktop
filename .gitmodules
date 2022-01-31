@@ -43,3 +43,6 @@
 [submodule "vendor/nim-result"]
 	path = vendor/nim-result
 	url = https://github.com/arnetheduck/nim-result
+[submodule "vendor/edn.nim"]
+	path = vendor/edn.nim
+	url = https://github.com/status-im/edn.nim
