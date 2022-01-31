@@ -176,6 +176,7 @@ StatusModal {
                        if (!gasEstimate.success) {
                            let message = qsTr("Error estimating gas: %1").arg(gasEstimate.error.message)
                            root.openGasEstimateErrorPopup(message);
+                           return
                        }
                        selectedGasLimit = gasEstimate.result
                        defaultGasLimit = selectedGasLimit
@@ -284,7 +285,6 @@ StatusModal {
     rightButtons: [
         StatusButton {
             id: btnNext
-            anchors.right: parent.right
             //% "Next"
             text: qsTrId("next")
             enabled: stack.currentGroup.isValid && !stack.currentGroup.isPending

@@ -98,8 +98,7 @@ ModalPopup {
                     }
                     return null
                 }
-                // Not Refactored Yet
-//                currency: RootStore.defaultCurrency
+                currency: root.store.currentCurrency
                 width: stack.width
                 //% "From account"
                 label: qsTrId("from-account")
@@ -132,11 +131,8 @@ ModalPopup {
             AssetAndAmountInput {
                 id: txtAmount
                 selectedAccount: selectFromAccount.selectedAccount
-                // Not Refactored Yet
-//                defaultCurrency: RootStore.defaultCurrency
-                // Not Refactored Yet
-                currentCurrency: RootStore.currentCurrency
-//                getFiatValue: RootStore.fiatValue
+                currentCurrency: root.store.currentCurrency
+                getFiatValue: root.store.getFiatValue
 //                getCryptoValue: RootStore.cryptoValue
                 width: stack.width
                 onSelectedAssetChanged: if (isValid) { gasSelector.estimateGas() }
@@ -146,21 +142,23 @@ ModalPopup {
                 id: gasSelector
                 anchors.top: txtAmount.bottom
                 anchors.topMargin: Style.current.padding
-                // Not Refactored Yet
-//                gasPrice: parseFloat(RootStore.gasPrice)
-//                getGasEthValue: RootStore.gasEthValue
-//                getFiatValue: RootStore.fiatValue
-//                defaultCurrency: RootStore.defaultCurrency
+                gasPrice: parseFloat(root.store.gasPrice)
+                getGasEthValue: root.store.getGasEthValue
+                getFiatValue: root.store.getFiatValue
+                defaultCurrency: root.store.currentCurrency
 
                 width: stack.width
                 property var estimateGas: Backpressure.debounce(gasSelector, 600, function() {
-                      // Not Refactored Yet
                    if (!(selectFromAccount.selectedAccount && selectFromAccount.selectedAccount.address &&
                        selectRecipient.selectedRecipient && selectRecipient.selectedRecipient.address &&
                        txtAmount.selectedAsset && txtAmount.selectedAsset.address &&
-                       txtAmount.selectedAmount)) return
+                       txtAmount.selectedAmount)) {
+                        selectedGasLimit = 250000
+                        defaultGasLimit = selectedGasLimit
+                        return
+                    }
 
-                   let gasEstimate = JSON.parse(walletModel.gasView.estimateGas(
+                   let gasEstimate = JSON.parse(root.store.estimateGas(
                        selectFromAccount.selectedAccount.address,
                        selectRecipient.selectedRecipient.address,
                        txtAmount.selectedAsset.address,
@@ -205,8 +203,7 @@ ModalPopup {
                 toAccount: selectRecipient.selectedRecipient
                 asset: txtAmount.selectedAsset
                 amount: { "value": txtAmount.selectedAmount, "fiatValue": txtAmount.selectedFiatAmount }
-                // Not Refactored Yet
-//                currency: walletModel.balanceView.defaultCurrency
+                currency: root.store.currentCurrency
             }
             SendToContractWarning {
                 id: sendToContractWarning
@@ -224,8 +221,7 @@ ModalPopup {
             TransactionSigner {
                 id: transactionSigner
                 width: stack.width
-                       // Not Refactored Yet
-//                signingPhrase: RootStore.signingPhrase
+                signingPhrase: root.store.signingPhrase
             }
         }
     }
@@ -256,6 +252,7 @@ ModalPopup {
 
         StatusButton {
             id: btnNext
+            anchors.right: parent.right
             //% "Next"
             text: qsTrId("next")
             enabled: stack.currentGroup.isValid && !stack.currentGroup.isPending
