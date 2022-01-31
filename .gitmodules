@@ -46,3 +46,6 @@
 [submodule "vendor/edn.nim"]
 	path = vendor/edn.nim
 	url = https://github.com/status-im/edn.nim
+[submodule "vendor/nim-faststreams"]
+	path = vendor/nim-faststreams
+	url = https://github.com/status-im/nim-faststreams.git
