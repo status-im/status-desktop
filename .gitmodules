@@ -52,3 +52,6 @@
 [submodule "vendor/nim-stew"]
 	path = vendor/nim-stew
 	url = https://github.com/status-im/nim-stew.git
+[submodule "vendor/nim-task-runner"]
+	path = vendor/nim-task-runner
+	url = https://github.com/status-im/nim-task-runner.git
