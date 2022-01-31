@@ -112,6 +112,20 @@ QtObject:
           self.joinedCommunities[membershipRequest.communityId] = community
           self.events.emit(SIGNAL_COMMUNITY_EDITED, CommunityArgs(community: community))
 
+  proc mapChatToChatDto(chat: Chat, communityId: string): ChatDto =
+    result = ChatDto()
+    result.id = chat.id
+    result.communityId = communityId
+    result.name = chat.name
+    result.chatType = ChatType.CommunityChat
+    result.color = chat.color
+    result.emoji = chat.emoji
+    result.description = chat.description
+    result.canPost = chat.canPost
+    result.position = chat.position
+    result.categoryId = chat.categoryId
+    result.communityId = communityId
+
   proc updateMissingFields(chatDto: var ChatDto, chat: Chat) =
     # This proc sets fields of `chatDto` which are available only for comminity channels.
     chatDto.position = chat.position
