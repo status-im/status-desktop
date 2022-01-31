@@ -16,6 +16,7 @@ QtObject:
     hasUnreadMessages: bool
     notificationsCount: int
     muted: bool
+    position: int
 
   proc delete*(self: ChatDetails) =
     self.QObject.delete
@@ -25,8 +26,8 @@ QtObject:
     result.QObject.setup
 
   proc setChatDetails*(self: ChatDetails, id: string, `type`: int, belongsToCommunity, isUsersListAvailable: bool,
-    name, icon: string, isIdenticon: bool, color, description: string, hasUnreadMessages: bool, notificationsCount: int, 
-    muted: bool) =
+      name, icon: string, isIdenticon: bool, color, description: string, hasUnreadMessages: bool,
+      notificationsCount: int, muted: bool, position: int) =
     self.id = id
     self.`type` = `type`
     self.belongsToCommunity = belongsToCommunity
@@ -39,6 +40,7 @@ QtObject:
     self.hasUnreadMessages = hasUnreadMessages
     self.notificationsCount = notificationsCount
     self.muted = muted
+    self.position = position
 
   proc getId(self: ChatDetails): string {.slot.} = 
     return self.id
@@ -143,3 +145,14 @@ QtObject:
   proc setMuted*(self: ChatDetails, value: bool) = # this is not a slot
     self.muted = value
     self.mutedChanged()
+
+  proc positionChanged(self: ChatDetails) {.signal.}  
+  proc getPosition(self: ChatDetails): int {.slot.} = 
+    return self.position
+  QtProperty[int] position:
+    read = getPosition
+    notify = positionChanged
+
+  proc setPotion*(self: ChatDetails, value: int) = # this is not a slot
+    self.position = value
+    self.positionChanged()

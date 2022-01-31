@@ -68,22 +68,6 @@ method createCommunity*(
     imageUrl,
     aX, aY, bX, bY)
 
-method editCommunityChannel*(
-    self: Controller,
-    communityId: string,
-    channelId: string,
-    name: string,
-    description: string,
-    categoryId: string,
-    position: int) =
-  self.communityService.editCommunityChannel(
-    communityId,
-    channelId,
-    name,
-    description,
-    categoryId,
-    position)
-
 method reorderCommunityChat*(
     self: Controller,
     communityId: string,

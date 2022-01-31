@@ -227,10 +227,6 @@ ColumnLayout {
                           })
             }
 
-            onEditCommunityChannel: {
-                // Not Refactored Yet
-            }
-
             onOpenPinnedMessagesList: {
                 if(!chatContentModule) {
                     console.debug("error on open pinned messages from context menu - chat content module is not set")

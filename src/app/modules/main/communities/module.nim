@@ -108,14 +108,6 @@ method communityLeft*(self: Module, communityId: string) =
    # TODO to model or view
   discard
   
-method communityChannelCreated*(self: Module) =
-   # TODO to model or view
-  discard
-  
-method communityChannelEdited*(self: Module) =
-   # TODO to model or view
-  discard
-  
 method communityChannelReordered*(self: Module) =
    # TODO to model or view
   discard

@@ -273,6 +273,8 @@ Item {
                     chatDescription = obj.description
                     chatType = obj.type
                     chatMuted = obj.muted
+                    channelPosition = obj.position
+                    chatCategoryId = obj.categoryId
                 }
 
                 onMuteChat: {
@@ -320,7 +322,13 @@ Item {
                 }
 
                 onEditCommunityChannel: {
-                    // Not Refactored Yet
+                    communitySectionModule.editCommunityChannel(
+                        chatId,
+                        newName,
+                        newDescription,
+                        newCategory,
+                        channelPosition // TODO change this to the signal once it is modifiable
+                    )
                 }
 
                 onOpenPinnedMessagesList: {

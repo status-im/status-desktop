@@ -94,6 +94,9 @@ method declineRequestToJoinCommunity*(self: AccessInterface, requestId: string) 
 method createCommunityChannel*(self: AccessInterface, name: string, description: string, categoryId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method editCommunityChannel*(self: AccessInterface, channelId, name, description, categoryId: string, position: int) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method leaveCommunity*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 

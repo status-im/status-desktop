@@ -111,7 +111,7 @@ proc buildChatUI(self: Module, events: EventEmitter,
     let amIChatAdmin = self.amIMarkedAsAdminUser(c.members)
 
     let item = initItem(c.id, chatName, chatImage, isIdenticon, c.color, c.description, c.chatType.int, amIChatAdmin, 
-    hasNotification, notificationsCount, c.muted, false, 0)
+    hasNotification, notificationsCount, c.muted, active = false, c.position, c.categoryId)
     self.view.chatsModel().appendItem(item)
     self.addSubmodule(c.id, false, isUsersListAvailable, events, settingsService, contactService, chatService, 
     communityService, messageService, gifService)
@@ -144,8 +144,9 @@ proc buildCommunityUI(self: Module, events: EventEmitter,
       let hasNotification = chatDto.unviewedMessagesCount > 0 or chatDto.unviewedMentionsCount > 0
       let notificationsCount = chatDto.unviewedMentionsCount
       let amIChatAdmin = comm.admin
-      let channelItem = initItem(chatDto.id, chatDto.name, chatDto.identicon, false, chatDto.color, chatDto.description, 
-      chatDto.chatType.int, amIChatAdmin, hasNotification, notificationsCount, chatDto.muted, false, c.position)
+      let channelItem = initItem(chatDto.id, chatDto.name, chatDto.identicon, false, chatDto.color,
+        chatDto.description, chatDto.chatType.int, amIChatAdmin, hasNotification, notificationsCount,
+        chatDto.muted, active = false, c.position, c.categoryId)
       self.view.chatsModel().appendItem(channelItem)
       self.addSubmodule(chatDto.id, true, true, events, settingsService, contactService, chatService, communityService, 
       messageService, gifService)
@@ -187,7 +188,7 @@ proc buildCommunityUI(self: Module, events: EventEmitter,
           selectedSubItemId = channelItem.id
 
       var categoryItem = initItem(cat.id, cat.name, "", false, "", "", ChatType.Unknown.int, false, 
-      hasNotificationPerCategory, notificationsCountPerCategory, false, false, cat.position)
+        hasNotificationPerCategory, notificationsCountPerCategory, false, false, cat.position, cat.id)
       categoryItem.prependSubItems(categoryChannels)
       self.view.chatsModel().appendItem(categoryItem)
 
@@ -369,7 +370,8 @@ method addNewChat*(
 
   if chatDto.categoryId == "":  
     let item = initItem(chatDto.id, chatName, chatImage, isIdenticon, chatDto.color, chatDto.description, 
-                        chatDto.chatType.int, amIChatAdmin, hasNotification, notificationsCount, chatDto.muted, false, 0)
+                        chatDto.chatType.int, amIChatAdmin, hasNotification, notificationsCount, chatDto.muted,
+                        active = false, position = 0, chatDto.categoryId)
     self.addSubmodule(chatDto.id, belongsToCommunity, isUsersListAvailable, events, settingsService, contactService, chatService,
                       communityService, messageService, gifService)
     self.chatContentModules[chatDto.id].load()
@@ -395,7 +397,7 @@ method removeCommunityChat*(self: Module, chatId: string) =
 
 method onCommunityCategoryCreated*(self: Module, cat: Category, chats: seq[ChatDto]) =
   var categoryItem = initItem(cat.id, cat.name, "", false, "", "", ChatType.Unknown.int, false, 
-      false, 0, false, false, cat.position)
+      false, 0, false, false, cat.position, cat.id)
   var categoryChannels: seq[SubItem]
   for chatDto in chats:
     let hasNotification = chatDto.unviewedMessagesCount > 0 or chatDto.unviewedMentionsCount > 0
@@ -572,6 +574,10 @@ method declineRequestToJoinCommunity*(self: Module, requestId: string) =
 
 method createCommunityChannel*(self: Module, name, description, categoryId: string) =
   self.controller.createCommunityChannel(name, description, categoryId)
+
+method editCommunityChannel*(self: Module, channelId, name, description, categoryId: string,
+  position: int) =
+  self.controller.editCommunityChannel(channelId, name, description, categoryId, position)
 
 method createCommunityCategory*(self: Module, name: string, channels: seq[string]) =
   self.controller.createCommunityCategory(name, channels)

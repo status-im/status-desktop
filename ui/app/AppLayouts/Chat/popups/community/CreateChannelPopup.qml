@@ -14,6 +14,7 @@ StatusModal {
     id: popup
 
     property bool isEdit: false
+    property string chatId: ""
     property string categoryId: ""
     property string channelName: ""
     property string channelDescription: ""
@@ -22,7 +23,7 @@ StatusModal {
     readonly property int maxChannelDescLength: 140
     
     signal createCommunityChannel(string chName, string chDescription, string chCategoryId)
-    signal editCommunityChannel(string chName, string chDescription)
+    signal editCommunityChannel(string chName, string chDescription, string chCategoryId)
     signal openPinnedMessagesPopup()
 
     //% "New channel"
@@ -209,7 +210,8 @@ StatusModal {
                                                  popup.categoryId)
                 } else {
                     popup.editCommunityChannel(Utils.filterXSS(popup.contentItem.channelName.input.text),
-                                                 Utils.filterXSS(popup.contentItem.channelDescription.input.text))
+                                                 Utils.filterXSS(popup.contentItem.channelDescription.input.text),
+                                                 popup.categoryId)
                 }
 
                 if (error) {

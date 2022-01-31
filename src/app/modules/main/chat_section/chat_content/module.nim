@@ -75,8 +75,9 @@ method load*(self: Module) =
     (chatName, chatImage, isIdenticon) = self.controller.getOneToOneChatNameAndImage()
 
   self.view.load(chatDto.id, chatDto.chatType.int, self.controller.belongsToCommunity(), 
-  self.controller.isUsersListAvailable(), chatName, chatImage, isIdenticon, chatDto.color, chatDto.description, 
-  hasNotification, notificationsCount, chatDto.muted)
+    self.controller.isUsersListAvailable(), chatName, chatImage, isIdenticon,
+    chatDto.color, chatDto.description, hasNotification, notificationsCount,
+    chatDto.muted, chatDto.position)
  
   self.inputAreaModule.load()
   self.messagesModule.load()
