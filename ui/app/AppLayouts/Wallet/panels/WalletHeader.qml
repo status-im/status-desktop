@@ -99,12 +99,6 @@ Item {
             onClosed: {
                 destroy();
             }
-            onAddCustomTokenTriggered: {
-                addCustomTokenModal.openEditable();
-            }
-            onTokenDetailsTriggered: {
-                addCustomTokenModal.openWithData(address, name, symbol, decimals);
-            }
         }
     }
 
@@ -114,10 +108,6 @@ Item {
             onClosed: destroy()
             changeSelectedAccount: walletHeader.changeSelectedAccount
         }
-    }
-
-    AddCustomTokenModal{
-        id: addCustomTokenModal
     }
 
     Item {
