@@ -1,7 +1,7 @@
 import json, chronicles
 
 import ./service_interface
-import status/statusgo_backend_new/accounts as status_accounts
+import status/accounts as status_accounts
 
 export service_interface
 

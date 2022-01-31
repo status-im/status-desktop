@@ -3,7 +3,7 @@ import NimQml, tables, json, re, sequtils, strformat, strutils, chronicles
 import ../../../app/core/tasks/[qt, threadpool]
 import ../../../app/core/signals/types
 import ../../../app/core/eventemitter
-import status/statusgo_backend_new/messages as status_go
+import status/messages as status_go
 import ../contacts/service as contact_service
 import ./dto/message as message_dto
 import ./dto/pinned_message as pinned_msg_dto

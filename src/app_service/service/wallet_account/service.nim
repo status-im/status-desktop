@@ -9,8 +9,8 @@ import ../../common/account_constants
 import ./service_interface, ./dto
 
 import ../../../app/core/eventemitter
-import status/statusgo_backend_new/accounts as status_go_accounts
-import status/statusgo_backend_new/eth as status_go_eth
+import status/accounts as status_go_accounts
+import status/eth as status_go_eth
 
 export service_interface
 

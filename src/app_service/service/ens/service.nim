@@ -6,7 +6,7 @@ import web3/ethtypes
 import ../../../app/core/eventemitter
 import ../../../app/core/tasks/[qt, threadpool]
 
-import status/statusgo_backend_new/eth as status_eth
+import status/eth as status_eth
 
 import ../../common/conversion as common_conversion
 import utils as ens_utils

@@ -2,7 +2,7 @@ import Tables, json, sequtils, strformat, chronicles
 import result
 include ../../common/json_utils
 import service_interface, dto/bookmark
-import status/statusgo_backend_new/bookmarks as status_go
+import status/bookmarks as status_go
 
 export service_interface
 
