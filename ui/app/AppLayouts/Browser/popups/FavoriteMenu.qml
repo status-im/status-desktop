@@ -39,7 +39,11 @@ PopupMenu {
         icon.source: Style.svg("edit")
         icon.width: 16
         icon.height: 16
-        onTriggered: editFavoriteTriggered()
+        onTriggered: {
+            // Force reloading current favorite as it could have been modified when edited:
+            favoritePopupMenu.currentFavorite = BookmarksStore.getCurrentFavorite(url)
+            editFavoriteTriggered()
+        }
     }
 
     Action {

@@ -67,6 +67,7 @@ method updateBookmark*(self: Service, oldUrl, newUrl, newName: string): R =
 
     let response = status_go.updateBookmark(oldUrl, newUrl, newName).result
     self.bookmarks.del(oldUrl)
+    self.bookmarks[newUrl] = BookmarkDto()
     self.bookmarks[newUrl].url = newUrl
     self.bookmarks[newUrl].name = newName
     discard response.getProp("imageUrl", self.bookmarks[newurl].imageUrl)
