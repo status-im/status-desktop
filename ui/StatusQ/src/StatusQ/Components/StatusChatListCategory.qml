@@ -35,7 +35,7 @@ Column {
     StatusChatListCategoryItem {
         id: statusChatListCategoryItem
         title: statusChatListCategory.name
-        visible: (model.subItems.count > 0)
+        visible: model.isCategory
         opened: statusChatListCategory.opened
         sensor.pressAndHoldInterval: 150
 

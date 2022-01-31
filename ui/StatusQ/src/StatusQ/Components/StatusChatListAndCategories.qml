@@ -76,7 +76,7 @@ Item {
                 draggableItems: statusChatListAndCategories.draggableItems
                 model: statusChatListAndCategories.model
                 filterFn: function (model) {
-                    return (model.subItems.count === 0)
+                    return !model.isCategory
                 }
                 popupMenu: statusChatListAndCategories.chatListPopupMenu
             }
