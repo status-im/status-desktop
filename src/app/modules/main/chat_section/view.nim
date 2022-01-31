@@ -191,6 +191,22 @@ QtObject:
   proc createCommunityChannel*(self: View, name: string, description: string, categoryId: string) {.slot.} =
     self.delegate.createCommunityChannel(name, description, categoryId)
 
+  proc editCommunityChannel*(
+      self: View,
+      channelId: string,
+      name: string,
+      description: string,
+      categoryId: string,
+      position: int
+    ) {.slot.} =
+    self.delegate.editCommunityChannel(
+      channelId,
+      name,
+      description,
+      categoryId,
+      position
+    )
+
   proc leaveCommunity*(self: View) {.slot.} =
     self.delegate.leaveCommunity()
 

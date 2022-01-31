@@ -279,6 +279,21 @@ method createCommunityChannel*(
     categoryId: string) =
   self.communityService.createCommunityChannel(self.sectionId, name, description, categoryId)
 
+method editCommunityChannel*(
+    self: Controller,
+    channelId: string,
+    name: string,
+    description: string,
+    categoryId: string,
+    position: int) =
+  self.communityService.editCommunityChannel(
+    self.sectionId,
+    channelId,
+    name,
+    description,
+    categoryId,
+    position)
+
 method createCommunityCategory*(self: Controller, name: string, channels: seq[string]) =
   self.communityService.createCommunityCategory(self.sectionId, name, channels)
 

@@ -22,6 +22,8 @@ StatusPopupMenu {
     property string chatIcon: ""
     property int chatType: -1
     property bool chatMuted: false
+    property int channelPosition: -1
+    property string chatCategoryId: ""
 
     signal displayProfilePopup(string publicKey)
     signal displayGroupInfoPopup(string chatId)
@@ -36,7 +38,7 @@ StatusPopupMenu {
 
     signal openPinnedMessagesList(string chatId)
     signal createCommunityChannel(string chatId, string newName, string newDescription)
-    signal editCommunityChannel(string chatId, string newName, string newDescription)
+    signal editCommunityChannel(string chatId, string newName, string newDescription, string newCategory)
 
     StatusMenuItem {
         id: viewProfileMenuItem
@@ -124,7 +126,8 @@ StatusPopupMenu {
             Global.openPopup(editChannelPopup, {
                 isEdit: true,
                 channelName: root.chatName,
-                channelDescription: root.chatDescription
+                channelDescription: root.chatDescription,
+                categoryId: root.chatCategoryId
             });
         }
     }
@@ -138,7 +141,7 @@ StatusPopupMenu {
                 root.createCommunityChannel(root.chatId, chName, chDescription);
             }
             onEditCommunityChannel: {
-                root.editCommunityChannel(root.chatId, chName, chDescription);
+                root.editCommunityChannel(root.chatId, chName, chDescription, chCategoryId);
             }
             onOpenPinnedMessagesPopup: {
                 root.openPinnedMessagesList(root.chatId, chName, chDescription);
