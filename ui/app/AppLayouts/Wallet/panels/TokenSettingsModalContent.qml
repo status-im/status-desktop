@@ -17,7 +17,7 @@ Item {
     property var customTokenList
     signal toggleVisibleClicked(string symbol)
     signal removeCustomTokenTriggered(string address)
-    signal tokenDetailsTriggered(string address, string name, string symbol, string decimals)
+    signal showTokenDetailsTriggered(string address, string name, string symbol, string decimals)
 
     SearchBox {
         id: searchBox
@@ -103,7 +103,7 @@ Item {
                         //% "Token details"
                         text: qsTrId("token-details")
                         onTriggered: {
-                            modalBody.tokenDetailsTriggered(address, name, symbol, decimals);
+                            modalBody.showTokenDetailsTriggered(address, name, symbol, decimals);
                         }
                     }
                     Action {
