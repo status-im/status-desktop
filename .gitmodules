@@ -73,3 +73,15 @@
 [submodule "vendor/isaac"]
 	path = vendor/isaac
 	url = https://github.com/pragmagic/isaac.git
+[submodule "vendor/news"]
+	path = vendor/news
+	url = https://github.com/Tormund/news
+[submodule "vendor/nim-bearssl"]
+	path = vendor/nim-bearssl
+	url = https://github.com/status-im/nim-bearssl
+[submodule "vendor/nim-secp256k1"]
+	path = vendor/nim-secp256k1
+	url = https://github.com/status-im/nim-secp256k1
+[submodule "vendor/nim-metrics"]
+	path = vendor/nim-metrics
+	url = https://github.com/status-im/nim-metrics
