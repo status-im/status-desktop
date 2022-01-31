@@ -1,4 +1,14 @@
 <a name=""></a>
+##  Version 0.22.0 (2022-01-31)
+
+
+#### Features
+
+* **StatusMemberListItem:**  Implement `StatusMemberListItem` (#539) ([c5a605bf](c5a605bf), closes [#515](515))
+
+
+
+<a name=""></a>
 ##  Version 0.21.0 (2022-01-24)
 
 
