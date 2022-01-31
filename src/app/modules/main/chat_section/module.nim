@@ -366,15 +366,26 @@ method addNewChat*(
     amIChatAdmin = self.controller.getMyCommunity().admin
   else:
     amIChatAdmin = self.amIMarkedAsAdminUser(chatDto.members)
-  let item = initItem(chatDto.id, chatName, chatImage, isIdenticon, chatDto.color, chatDto.description, 
-  chatDto.chatType.int, amIChatAdmin, hasNotification, notificationsCount, chatDto.muted, false, 0)
-  self.addSubmodule(chatDto.id, belongsToCommunity, isUsersListAvailable, events, settingsService, contactService, chatService,
-  communityService, messageService, gifService)
-  self.chatContentModules[chatDto.id].load()
-  self.view.chatsModel().appendItem(item)
 
-  # make new added chat active one
-  self.setActiveItemSubItem(item.id, "")
+  if chatDto.categoryId == "":  
+    let item = initItem(chatDto.id, chatName, chatImage, isIdenticon, chatDto.color, chatDto.description, 
+                        chatDto.chatType.int, amIChatAdmin, hasNotification, notificationsCount, chatDto.muted, false, 0)
+    self.addSubmodule(chatDto.id, belongsToCommunity, isUsersListAvailable, events, settingsService, contactService, chatService,
+                      communityService, messageService, gifService)
+    self.chatContentModules[chatDto.id].load()
+    self.view.chatsModel().appendItem(item)
+    # make new added chat active one
+    self.setActiveItemSubItem(item.id, "")
+  else:
+    let categoryItem = self.view.chatsModel().getItemById(chatDto.categoryId)
+    let channelItem = initSubItem(chatDto.id, chatDto.categoryId, chatDto.name, chatDto.identicon, false, chatDto.color, 
+        chatDto.description, chatDto.chatType.int, amIChatAdmin, hasNotification, notificationsCount, chatDto.muted, 
+        false, chatDto.position)
+    self.addSubmodule(chatDto.id, belongsToCommunity, isUsersListAvailable, events, settingsService, contactService, chatService,
+                      communityService, messageService, gifService)
+    self.chatContentModules[chatDto.id].load()
+    categoryItem.appendSubItem(channelItem)
+    self.setActiveItemSubItem(categoryItem.id, channelItem.id)
 
 method removeCommunityChat*(self: Module, chatId: string) =
   if(not self.chatContentModules.contains(chatId)):
@@ -559,8 +570,8 @@ method acceptRequestToJoinCommunity*(self: Module, requestId: string) =
 method declineRequestToJoinCommunity*(self: Module, requestId: string) =
   self.controller.declineRequestToJoinCommunity(requestId)
 
-method createCommunityChannel*(self: Module, name, description: string,) =
-  self.controller.createCommunityChannel(name, description)
+method createCommunityChannel*(self: Module, name, description, categoryId: string) =
+  self.controller.createCommunityChannel(name, description, categoryId)
 
 method createCommunityCategory*(self: Module, name: string, channels: seq[string]) =
   self.controller.createCommunityCategory(name, channels)

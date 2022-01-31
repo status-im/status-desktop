@@ -163,8 +163,8 @@ QtObject {
         chatCommunitySectionModule.leaveCommunity();
     }
 
-    function createCommunityChannel(channelName, channelDescription) {
-        chatCommunitySectionModule.createCommunityChannel(channelName, channelDescription);
+    function createCommunityChannel(channelName, channelDescription, categoryId) {
+        chatCommunitySectionModule.createCommunityChannel(channelName, channelDescription, categoryId);
     }
 
     function editCommunityChannel(communityId, channelId, channelName, channelDescription, channelCategoryId, popupPosition) {
