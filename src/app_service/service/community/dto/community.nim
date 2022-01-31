@@ -2,7 +2,7 @@
 
 import json, sequtils
 
-import status/statusgo_backend_new/communities
+import status/communities
 include ../../../common/json_utils
 
 type

@@ -5,7 +5,7 @@ import ../../../app/core/tasks/[qt, threadpool]
 
 import ../settings/service as settings_service
 import ../network/types
-import status/statusgo_backend_new/about as status_about
+import status/about as status_about
 import ./update
 
 include async_tasks

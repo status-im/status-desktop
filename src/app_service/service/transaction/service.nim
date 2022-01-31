@@ -1,6 +1,6 @@
 import NimQml, chronicles, sequtils, sugar, stint, strutils, json
-import status/statusgo_backend_new/transactions as transactions
-import status/statusgo_backend_new/wallet as status_wallet
+import status/transactions as transactions
+import status/wallet as status_wallet
 
 import ../../../app/core/[main]
 import ../../../app/core/tasks/[qt, threadpool]

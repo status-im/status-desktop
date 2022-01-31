@@ -5,8 +5,8 @@ import ../../../fleets/fleet_configuration
 import ../../../../../app_service/service/settings/service_interface as settings_service
 import ../../../../../app_service/service/node_configuration/service_interface as node_config_service
 
-import status/statusgo_backend_new/settings as status_settings
-import status/statusgo_backend_new/mailservers as status_mailservers
+import status/settings as status_settings
+import status/mailservers as status_mailservers
 
 import ../../common as task_runner_common
 

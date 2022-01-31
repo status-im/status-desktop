@@ -7,7 +7,7 @@ import ../chat/service as chat_service
 import ../../../app/global/global_singleton
 import ../../../app/core/signals/types
 import ../../../app/core/eventemitter
-import status/statusgo_backend_new/communities as status_go
+import status/communities as status_go
 
 export community_dto
 

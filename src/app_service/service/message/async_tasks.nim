@@ -1,7 +1,7 @@
 include ../../common/json_utils
 include ../../../app/core/tasks/common
 
-import status/statusgo_backend_new/chat as status_go_chat
+import status/chat as status_go_chat
 
 
 #################################################

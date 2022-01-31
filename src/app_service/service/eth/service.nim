@@ -1,7 +1,7 @@
 import json, sequtils, chronicles, macros, sugar, strutils, stint
 import web3/ethtypes, json_serialization, chronicles, tables
 
-import status/statusgo_backend_new/eth
+import status/eth
 
 import utils
 import ./service_interface

@@ -7,7 +7,7 @@ import ../../common/conversion as common_conversion
 import ../eth/dto/transaction as eth_transaction_dto
 import ../eth/dto/coder as eth_coder_dto
 import ../eth/dto/contract as eth_contract_dto
-import status/statusgo_backend_new/eth as status_eth
+import status/eth as status_eth
 
 logScope:
   topics = "ens-utils"

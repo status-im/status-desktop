@@ -7,7 +7,7 @@ import ../../../app/core/[main]
 import ../../../app/core/tasks/marathon/mailserver/worker
 import ../settings/service_interface as settings_service
 import ../node_configuration/service_interface as node_configuration_service
-import status/statusgo_backend_new/mailservers as status_mailservers
+import status/mailservers as status_mailservers
 
 logScope:
   topics = "mailservers-service"

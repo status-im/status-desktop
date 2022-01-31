@@ -9,8 +9,8 @@ import json, tables, json_serialization
 
 import ../chat/service as chat_service
 
-import status/statusgo_backend_new/activity_center as status_activity_center
-import status/statusgo_backend_new/response_type
+import status/activity_center as status_activity_center
+import status/response_type
 import ./dto/notification
 
 export notification

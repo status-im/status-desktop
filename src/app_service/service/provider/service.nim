@@ -7,8 +7,8 @@ import ../dapp_permissions/service as dapp_permissions_service
 import ../settings/service_interface as settings_service
 import ../ens/utils as ens_utils
 import service_interface
-import status/statusgo_backend_new/permissions as status_go_permissions
-import status/statusgo_backend_new/core as status_go_core
+import status/permissions as status_go_permissions
+import status/core as status_go_core
 import ../../common/utils as status_utils
 from stew/base32 import nil
 from stew/base58 import nil
