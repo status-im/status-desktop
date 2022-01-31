@@ -97,3 +97,6 @@
 [submodule "vendor/nim-zlib"]
 	path = vendor/nim-zlib
 	url = https://github.com/status-im/nim-zlib
+[submodule "vendor/nim-chronicles"]
+	path = vendor/nim-chronicles
+	url = https://github.com/status-im/nim-chronicles.git
