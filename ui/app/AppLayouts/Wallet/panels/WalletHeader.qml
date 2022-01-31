@@ -19,6 +19,7 @@ Item {
     property string currency: ""
     property var currentAccount
     property var changeSelectedAccount
+    property var store
 
     height: walletAddress.y + walletAddress.height
     anchors.right: parent.right
@@ -72,6 +73,7 @@ Item {
         addressWidth: 180
         anchors.leftMargin: 0
         anchors.topMargin: 0
+        store: walletHeader.store
     }
 
     Component {

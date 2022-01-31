@@ -16,6 +16,7 @@ Item {
     id: walletView
 
     property bool hideSignPhraseModal: false
+    property var store
 
     function showSigningPhrasePopup(){
         if(!hideSignPhraseModal && !RootStore.hideSignPhraseModal){
@@ -74,6 +75,7 @@ Item {
             id: walletContainer
             anchors.fill: parent
             changeSelectedAccount: leftTab.changeSelectedAccount
+            store: walletView.store
         }
     }
 }
