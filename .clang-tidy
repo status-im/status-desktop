@@ -1,0 +1,20 @@
+---
+Checks:          'clang-diagnostic-*,
+                  clang-analyzer-*,
+                  bugprone-*,
+                  hicpp-*,
+                  readability-*,
+                    -readability-qualified-auto,
+                  modernize-*,
+                    -modernize-use-nodiscard,
+                    -modernize-use-trailing-return-type, # does not work well with MOC
+                  cppcoreguidelines-*,
+                    -cppcoreguidelines-non-private-member-variables-in-classes'
+WarningsAsErrors: ''
+HeaderFilterRegex: ''
+AnalyzeTemporaryDtors: false
+FormatStyle:     none
+CheckOptions:
+  - key:             cppcoreguidelines-non-private-member-variables-in-classes.IgnoreClassesWithAllMemberVariablesBeingPublic
+    value:           'true'
+...
