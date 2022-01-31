@@ -273,7 +273,12 @@ StatusWindow {
                         Loader {
                             id: viewLoader
                             anchors.centerIn: parent
-                            source: control("Icons")
+                            source: mainPageView.control("Icons")
+                            onSourceChanged: {
+                                if (source.toString().includes("Icons")) {
+                                    item.iconColor = Theme.palette.primaryColor1;
+                                }
+                            }
                         }
                     }
                 }
