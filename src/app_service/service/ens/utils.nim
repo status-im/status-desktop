@@ -195,7 +195,7 @@ proc buildTransaction*(
     maxPriorityFeePerGas = "",
     maxFeePerGas = "",
     data = ""
-    ): TransactionDataDto =
+  ): TransactionDataDto =
   result = TransactionDataDto(
     source: source,
     value: value.some,

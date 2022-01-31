@@ -56,6 +56,7 @@ QtObject {
     }
 
     property string currentCurrency: walletSection.currentCurrency
+    property string signingPhrase: walletSection.signingPhrase
     function estimateGas(from_addr, to, assetAddress, value, data) {
         return walletSectionTransactions.estimateGas(from_addr, to, assetAddress, value, data)
     }
