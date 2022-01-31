@@ -91,3 +91,6 @@
 [submodule "vendor/nim-websock"]
 	path = vendor/nim-websock
 	url = https://github.com/status-im/nim-websock
+[submodule "vendor/nim-http-utils"]
+	path = vendor/nim-http-utils
+	url = https://github.com/status-im/nim-http-utils
