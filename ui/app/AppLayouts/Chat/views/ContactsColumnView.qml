@@ -294,12 +294,19 @@ Item {
                 }
 
                 onDisplayGroupInfoPopup: {
-                    // Not Refactored Yet
+                    root.chatSectionModule.prepareChatContentModuleForChatId(chatId)
+                    let chatContentModule = root.chatSectionModule.getChatContentModule()
+                    
+                    Global.openPopup(groupInfoPopupComponent, {
+                        channelType: GroupInfoPopup.ChannelType.ActiveChannel,
+                        channel: chatContentModule.chatDetails
+                    })
                 }
 
                 onOpenPinnedMessagesList: {
-                    chatCommunitySectionModule.prepareChatContentModuleForChatId(chatId)
-                    let chatContentModule = chatCommunitySectionModule.getChatContentModule()
+                    root.chatSectionModule.prepareChatContentModuleForChatId(chatId)
+                    let chatContentModule = root.chatSectionModule.getChatContentModule()
+                    
                     Global.openPopup(pinnedMessagesPopupComponent, {
                                          store: root.store,
                                          messageStore: messageStore,
