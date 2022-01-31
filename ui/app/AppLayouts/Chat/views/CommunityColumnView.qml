@@ -310,7 +310,13 @@ Item {
                 }
 
                 onDisplayGroupInfoPopup: {
-                    // Not Refactored Yet
+                communitySectionModule.prepareChatContentModuleForChatId(chatId)
+
+                let chatContentModule = communitySectionModule.getChatContentModule()
+                Global.openPopup(groupInfoPopupComponent, {
+                              channelType: GroupInfoPopup.ChannelType.ActiveChannel,
+                              channel: chatContentModule.chatDetails
+                          })
                 }
 
                 onEditCommunityChannel: {
