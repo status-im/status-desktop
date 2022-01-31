@@ -55,3 +55,15 @@
 [submodule "vendor/nim-task-runner"]
 	path = vendor/nim-task-runner
 	url = https://github.com/status-im/nim-task-runner.git
+[submodule "vendor/nimcrypto"]
+	path = vendor/nimcrypto
+	url = https://github.com/cheatfate/nimcrypto.git
+[submodule "nim-web3"]
+	path = nim-web3
+	url = https://github.com/status-im/nim-web3.git
+[submodule "vendor/nim-eth"]
+	path = vendor/nim-eth
+	url = https://github.com/status-im/nim-eth
+[submodule "vendor/nim-libp2p"]
+	path = vendor/nim-libp2p
+	url = https://github.com/status-im/nim-libp2p
