@@ -441,9 +441,10 @@ QtObject:
       self: Service,
       communityId: string,
       name: string,
-      description: string) =
+      description: string,
+      categoryId: string) =
     try:
-      let response = status_go.createCommunityChannel(communityId, name, description)
+      let response = status_go.createCommunityChannel(communityId, name, description, categoryId)
 
       if not response.error.isNil:
         let error = Json.decode($response.error, RpcError)

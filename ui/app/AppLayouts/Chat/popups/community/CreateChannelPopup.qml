@@ -14,13 +14,14 @@ StatusModal {
     id: popup
 
     property bool isEdit: false
+    property string categoryId: ""
     property string channelName: ""
     property string channelDescription: ""
 
     readonly property int maxChannelNameLength: 30
     readonly property int maxChannelDescLength: 140
     
-    signal createCommunityChannel(string chName, string chDescription)
+    signal createCommunityChannel(string chName, string chDescription, string chCategoryId)
     signal editCommunityChannel(string chName, string chDescription)
     signal openPinnedMessagesPopup()
 
@@ -204,7 +205,8 @@ StatusModal {
                 let error = "";
                 if (!isEdit) {
                     popup.createCommunityChannel(Utils.filterXSS(popup.contentItem.channelName.input.text),
-                                                 Utils.filterXSS(popup.contentItem.channelDescription.input.text))
+                                                 Utils.filterXSS(popup.contentItem.channelDescription.input.text),
+                                                 popup.categoryId)
                 } else {
                     popup.editCommunityChannel(Utils.filterXSS(popup.contentItem.channelName.input.text),
                                                  Utils.filterXSS(popup.contentItem.channelDescription.input.text))

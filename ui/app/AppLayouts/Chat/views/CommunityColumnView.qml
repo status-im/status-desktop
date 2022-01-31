@@ -167,10 +167,9 @@ Item {
 //                root.store.chatsModelInst.communities.reorderCommunityCategories(chatsModel.communities.activeCommunity.id, categoryId, to);
 //            }
 
-//            onCategoryAddButtonClicked: Global.openPopup(createChannelPopup, {
-//                communityId: root.store.chatsModelInst.communities.activeCommunity.id,
-//                categoryId: id
-//            })
+            onCategoryAddButtonClicked: Global.openPopup(createChannelPopup, {
+                categoryId: id
+            })
 
             popupMenu: StatusPopupMenu {
                 StatusMenuItem {
@@ -396,8 +395,8 @@ Item {
         id: createChannelPopup
         CreateChannelPopup {
             anchors.centerIn: parent
-            onCreateCommunityChannel: function (chName, chDescription) {
-                root.store.createCommunityChannel(chName, chDescription)
+            onCreateCommunityChannel: function (chName, chDescription, chCategoryId) {
+                root.store.createCommunityChannel(chName, chDescription, chCategoryId)
             }
             onClosed: {
                 destroy()

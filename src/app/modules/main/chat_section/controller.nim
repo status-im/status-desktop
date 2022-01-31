@@ -275,8 +275,9 @@ method declineRequestToJoinCommunity*(self: Controller, requestId: string) =
 method createCommunityChannel*(
     self: Controller,
     name: string,
-    description: string) =
-  self.communityService.createCommunityChannel(self.sectionId, name, description)
+    description: string,
+    categoryId: string) =
+  self.communityService.createCommunityChannel(self.sectionId, name, description, categoryId)
 
 method createCommunityCategory*(self: Controller, name: string, channels: seq[string]) =
   self.communityService.createCommunityCategory(self.sectionId, name, channels)

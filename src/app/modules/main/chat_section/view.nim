@@ -188,8 +188,8 @@ QtObject:
   proc declineRequestToJoinCommunity*(self: View, requestId: string) {.slot.} =
     self.delegate.declineRequestToJoinCommunity(requestId)
 
-  proc createCommunityChannel*(self: View, name: string, description: string) {.slot.} =
-    self.delegate.createCommunityChannel(name, description)
+  proc createCommunityChannel*(self: View, name: string, description: string, categoryId: string) {.slot.} =
+    self.delegate.createCommunityChannel(name, description, categoryId)
 
   proc leaveCommunity*(self: View) {.slot.} =
     self.delegate.leaveCommunity()
