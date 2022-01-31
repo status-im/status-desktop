@@ -22,6 +22,7 @@ Item {
     property var currentAccount
     property var enabledNetworksModel
     property var allNetworksModel
+    property var store
     signal copyText(string text)
     signal toggleNetwork(int chainId)
 
@@ -73,6 +74,7 @@ Item {
         anchors.left: accountRow.left
         addressWidth: 180
         address: walletHeader.currentAccount? walletHeader.currentAccount.address : ""
+        store: walletHeader.store
     }
 
     NetworkSelectPanel {

@@ -16,6 +16,7 @@ Item {
     property bool expanded: false
     property int addressWidth
     property int originalButtonWidth
+    property var store
 
     Button {
         id: control
@@ -81,6 +82,7 @@ Item {
         anchors.leftMargin: Style.current.smallPadding
         anchors.verticalCenter: parent.verticalCenter
         textToCopy: root.address
+        store: root.store
         MouseArea {
             anchors.fill: parent
             propagateComposedEvents: true
