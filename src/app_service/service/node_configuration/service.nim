@@ -4,7 +4,7 @@ import service_interface
 import ./dto/node_config
 import ../settings/service_interface as settings_service
 import ../../../app/core/fleets/fleet_configuration
-import status/statusgo_backend_new/node_config as status_node_config
+import status/node_config as status_node_config
 
 export service_interface
 

@@ -4,7 +4,7 @@ import result
 import options
 include ../../common/json_utils
 import service_interface
-import status/statusgo_backend_new/permissions as status_go
+import status/permissions as status_go
 import dto/dapp
 import dto/permission
 export service_interface

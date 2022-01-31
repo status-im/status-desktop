@@ -1,5 +1,4 @@
 import json
-import status/types/[rpc_response]
 
 method viewDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available") 

@@ -3,7 +3,7 @@ import chronicles, sequtils, json
 import ./service_interface, ./dto
 import ../settings/service_interface as settings_service
 
-import status/statusgo_backend_new/collectibles as collectibles
+import status/collectibles as collectibles
 
 export service_interface
 
