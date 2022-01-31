@@ -100,3 +100,9 @@
 [submodule "vendor/nim-zlib"]
 	path = vendor/nim-zlib
 	url = https://github.com/status-im/nim-zlib
+[submodule "vendor/nim-json-serialization"]
+	path = vendor/nim-json-serialization
+	url = https://github.com/status-im/nim-json-serialization.git
+[submodule "vendor/nim-serialization"]
+	path = vendor/nim-serialization
+	url = https://github.com/status-im/nim-serialization.git
