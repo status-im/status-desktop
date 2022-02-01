@@ -116,7 +116,6 @@ method joinGroup*(self: AccessInterface) {.base.} =
 method joinGroupChatFromInvitation*(self: AccessInterface, groupName: string, chatId: string, adminPK: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-
 method acceptRequestToJoinCommunity*(self: AccessInterface, requestId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -130,6 +129,9 @@ method editCommunityChannel*(self: AccessInterface, channelId: string, name: str
   raise newException(ValueError, "No implementation available")
 
 method createCommunityCategory*(self: AccessInterface, name: string, channels: seq[string]) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method deleteCommunityCategory*(self: AccessInterface, categoryId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method leaveCommunity*(self: AccessInterface) {.base.} =

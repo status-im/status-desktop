@@ -194,8 +194,8 @@ StatusModal {
                 onConfirmButtonClicked: function(){
                     const error = root.store.deleteCommunityCategory(root.categoryId);
                     if (error) {
-                        creatingError.text = error
-                        return creatingError.open()
+                        categoryError.text = error
+                        return categoryError.open()
                     }
                     close();
                     root.close()

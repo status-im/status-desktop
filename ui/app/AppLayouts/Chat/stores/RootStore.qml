@@ -159,8 +159,7 @@ QtObject {
     }
 
     function deleteCommunityCategory(categoryId) {
-        // Not Refactored Yet
-//        chatsModelInst.communities.deleteCommunityCategory(chatsModelInst.communities.activeCommunity.id, categoryId);
+        chatCommunitySectionModule.deleteCommunityCategory(categoryId);
     }
 
     function leaveCommunity() {
