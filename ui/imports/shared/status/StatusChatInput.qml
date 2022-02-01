@@ -57,6 +57,8 @@ Rectangle {
 
     property var imageErrorMessageLocation: StatusChatInput.ImageErrorMessageLocation.Top
 
+    property var messageContextMenu
+
     property alias suggestions: suggestionsBox
 
     enum ImageErrorMessageLocation {
@@ -841,6 +843,7 @@ Rectangle {
                 anchors.topMargin: Style.current.halfPadding
                 visible: isImage
                 width: messageInputField.width - actions.width
+                onImageClicked: Global.openImagePopup(chatImage, messageContextMenu)
                 onImageRemoved: {
                     if (control.fileUrls.length > index && control.fileUrls[index]) {
                         control.fileUrls.splice(index, 1)

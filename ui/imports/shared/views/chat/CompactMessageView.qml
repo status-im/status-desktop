@@ -73,7 +73,7 @@ Item {
     }
 
     MessageMouseArea {
-        enabled: !placeholderMessage
+        enabled: !placeholderMessage && !isImage
         anchors.fill: messageContainer
         acceptedButtons: activityCenterMessage ? Qt.LeftButton : Qt.RightButton
         messageContextMenu: root.messageContextMenu
@@ -412,6 +412,7 @@ Item {
                     chatType: messageStore.getChatType()
                     isEdit: true
                     textInput.text: editMessageLoader.sourceText
+                    messageContextMenu: root.messageContextMenu
                     onSendMessage: {
                         saveBtn.clicked(null)
                     }

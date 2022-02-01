@@ -142,16 +142,17 @@ Item {
             if (button === Qt.LeftButton) {
                 imagePopup.close()
             } else if(button === Qt.RightButton) {
-                contextmenu.imageSource = imagePopup.imageSource
-                contextmenu.hideEmojiPicker = true
-                contextmenu.isRightClickOnImage = true;
-                contextmenu.show()
+                contextMenu.imageSource = imagePopup.imageSource
+                contextMenu.hideEmojiPicker = true
+                contextMenu.isRightClickOnImage = true;
+                contextMenu.show()
             }
         }
         Connections {
             target: Global
             onOpenImagePopup: {
-                imagePopup.openPopup(image);
+                imagePopup.contextMenu = contextMenu
+                imagePopup.openPopup(image)
             }
         }
     }

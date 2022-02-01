@@ -11,6 +11,7 @@ Row {
     spacing: 0
 
     signal imageRemoved(int index)
+    signal imageClicked(var chatImage)
     property alias imageSource: rptImages.model
 
     Repeater {
@@ -60,9 +61,7 @@ Row {
                 anchors.fill: parent
                 cursorShape: Qt.PointingHandCursor
                 hoverEnabled: true
-                onClicked: {
-                    Global.openImagePopup(chatImage);
-                }
+                onClicked: imageClicked(chatImage)
             }
 
             RoundButton {
