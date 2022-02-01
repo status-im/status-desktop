@@ -24,7 +24,6 @@ StatusModal {
     
     signal createCommunityChannel(string chName, string chDescription, string chCategoryId)
     signal editCommunityChannel(string chName, string chDescription, string chCategoryId)
-    signal openPinnedMessagesPopup()
 
     //% "New channel"
     header.title: qsTrId("create-channel-title")
@@ -159,29 +158,6 @@ StatusModal {
             //% "Limit channel members to sending one message per chose time interval"
             /*     text: qsTrId("limit-channel-members-to-sending-one-message-per-chose-time-interval") */
             /* } */
-
-            Item {
-                width: parent.width
-                height: 8
-            }
-
-            StatusListItem {
-                anchors.horizontalCenter: parent.horizontalCenter
-                //% "Pinned messages"
-                title: qsTrId("pinned-messages")
-                icon.name: "pin"
-                components: [
-                    StatusIcon {
-                        icon: "chevron-down"
-                        rotation: 270
-                        color: Theme.palette.baseColor1
-                    }
-                ]
-
-                sensor.onClicked: {
-                    popup.openPinnedMessagesPopup()
-                }
-            }
 
             Item {
                 width: parent.width
