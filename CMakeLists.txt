@@ -109,7 +109,7 @@ add_custom_command(
     COMMAND ${CMAKE_COMMAND} -E rm -f ${CMAKE_CURRENT_SOURCE_DIR}/resources.rcc
     COMMAND ${CMAKE_COMMAND} -E rm -f ${CMAKE_CURRENT_SOURCE_DIR}/ui/resources.qrc
     COMMAND go run ${CMAKE_CURRENT_SOURCE_DIR}/ui/generate-rcc.go -source=${CMAKE_CURRENT_SOURCE_DIR}/ui -output=${CMAKE_CURRENT_SOURCE_DIR}/ui/resources.qrc
-    COMMAND rcc -binary $<$<CONFIG:Debug>:"-binary --no-compress">$<$<CONFIG:Release>:-binary> ${CMAKE_CURRENT_SOURCE_DIR}/ui/resources.qrc ${CMAKE_CURRENT_SOURCE_DIR}/resources/resources.qrc -o ${CMAKE_CURRENT_SOURCE_DIR}/resources.rcc
+    COMMAND rcc $<$<CONFIG:Debug>:"-binary --no-compress">$<$<CONFIG:Release>:-binary> ${CMAKE_CURRENT_SOURCE_DIR}/ui/resources.qrc ${CMAKE_CURRENT_SOURCE_DIR}/resources/resources.qrc -o ${CMAKE_CURRENT_SOURCE_DIR}/resources.rcc
     VERBATIM
     USES_TERMINAL
 )
