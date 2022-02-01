@@ -6,6 +6,7 @@ import ../../../../shared_models/[user_model, user_item]
 import ../../../../../global/global_singleton
 import ../../../../../core/eventemitter
 import ../../../../../../app_service/service/contacts/service as contact_service
+import ../../../../../../app_service/service/chat/service as chat_service
 import ../../../../../../app_service/service/community/service as community_service
 import ../../../../../../app_service/service/message/service as message_service
 
@@ -21,14 +22,15 @@ type
 
 proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitter, sectionId: string, chatId: string, 
   belongsToCommunity: bool, isUsersListAvailable: bool, contactService: contact_service.Service, 
-  communityService: community_service.Service, messageService: message_service.Service): 
+  chatService: chat_service.Service, communityService: community_service.Service, 
+  messageService: message_service.Service): 
   Module =
   result = Module()
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
   result.controller = controller.newController(result, events, sectionId, chatId, belongsToCommunity, isUsersListAvailable, 
-  contactService, communityService, messageService)
+  contactService, chatService, communityService, messageService)
   result.moduleLoaded = false
 
 method delete*(self: Module) =
