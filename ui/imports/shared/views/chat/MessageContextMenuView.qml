@@ -93,7 +93,7 @@ StatusPopupMenu {
         id: emojiContainer
         width: emojiRow.width
         height: visible ? emojiRow.height : 0
-        visible: !root.hideEmojiPicker && (root.emojiOnly || !root.isProfile)
+        visible: !root.hideEmojiPicker && (root.emojiOnly || !root.isProfile) && !root.pinnedPopup
         Row {
             id: emojiRow
             spacing: Style.current.halfPadding
@@ -167,7 +167,7 @@ StatusPopupMenu {
 
     Separator {
         anchors.bottom: viewProfileAction.top
-        visible: !root.emojiOnly && !root.hideEmojiPicker
+        visible: !root.emojiOnly && !root.hideEmojiPicker && !pinnedPopup
     }
 
     StatusMenuItem {
@@ -180,7 +180,7 @@ StatusPopupMenu {
             root.close()
         }
         icon.name: "copy"
-        enabled: root.isRightClickOnImage
+        enabled: root.isRightClickOnImage && !root.pinnedPopup
     }
 
     StatusMenuItem {
@@ -191,7 +191,7 @@ StatusPopupMenu {
             root.close()
         }
         icon.name: "download"
-        enabled: root.isRightClickOnImage
+        enabled: root.isRightClickOnImage && !root.pinnedPopup
     }
 
     StatusMenuItem {
@@ -203,7 +203,7 @@ StatusPopupMenu {
             root.close()
         }
         icon.name: "profile"
-        enabled: root.isProfile
+        enabled: root.isProfile && !root.pinnedPopup
     }
 
     StatusMenuItem {
@@ -226,6 +226,7 @@ StatusPopupMenu {
                  (!root.hideEmojiPicker &&
                   !root.emojiOnly &&
                   !root.isProfile &&
+                  !root.pinnedPopup &&
                   !root.isRightClickOnImage)
     }
 
@@ -241,6 +242,7 @@ StatusPopupMenu {
                  !root.hideEmojiPicker &&
                  !root.emojiOnly &&
                  !root.isProfile &&
+                 !root.pinnedPopup &&
                  !root.isRightClickOnImage
     }
 
@@ -248,7 +250,7 @@ StatusPopupMenu {
         id: copyMessageIdAction
         text: qsTr("Copy Message Id")
         icon.name: "chat"
-        enabled: root.isDebugEnabled
+        enabled: root.isDebugEnabled && !pinnedPopup
         onTriggered: {
             root.store.copyToClipboard(SelectedMessage.messageId)
             close()
