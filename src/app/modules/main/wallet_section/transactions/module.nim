@@ -85,3 +85,9 @@ method estimateGas*(self: Module, from_addr: string, to: string, assetAddress: s
 
 method setIsNonArchivalNode*(self: Module, isNonArchivalNode: bool) =
   self.view.setIsNonArchivalNode(isNonArchivalNode)
+
+method transferEth*(self: Module, from_addr: string, to_addr: string, value: string, gas: string,
+    gasPrice: string, maxPriorityFeePerGas: string, maxFeePerGas: string, password: string,
+    uuid: string): bool =
+  result = self.controller.transferEth(from_addr, to_addr, value, gas, gasPrice,
+    maxPriorityFeePerGas, maxFeePerGas, password, uuid)
