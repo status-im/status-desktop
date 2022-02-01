@@ -31,7 +31,4 @@ status-react-translations/
 /.update.timestamp
 notarization.log
 status-desktop.log
-<<<<<<< HEAD
-=======
 nim_status_client.log
->>>>>>> bcc756eb3... refactor(@wallet): saved address from wallet2

@@ -40,4 +40,3 @@ proc delete*(self: StatusFoundation) =
 
 proc onLoggedIn*(self: StatusFoundation) =
   self.marathon.onLoggedIn()
-  self.osNotificationService.onLoggedIn()

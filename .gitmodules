@@ -106,3 +106,6 @@
 [submodule "vendor/nim-serialization"]
 	path = vendor/nim-serialization
 	url = https://github.com/status-im/nim-serialization.git
+[submodule "vendor/fcitx5-qt"]
+	path = vendor/fcitx5-qt
+	url = https://github.com/fcitx/fcitx5-qt
