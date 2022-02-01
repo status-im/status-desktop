@@ -669,6 +669,7 @@ method prepareEditCategoryModel*(self: Module, categoryId: string) =
     let c = self.controller.getChatDetails(communityId, chat.id)
     let item = initItem(c.id, c.name, "", false, c.color, c.description, c.chatType.int, false, 
                         false, 0, c.muted, false, active = false, c.position, "")
+
     self.view.editCategoryChannelsModel().appendItem(item)
   let catChats = self.controller.getChats(communityId, categoryId)
   for chat in catChats:
