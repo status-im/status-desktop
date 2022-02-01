@@ -332,6 +332,7 @@ Item {
         y: 56
         store: root.rootStore
         chatSectionModule: root.chatSectionModule
+        messageContextMenu: contextmenu
     }
 
     Connections {

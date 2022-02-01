@@ -26,6 +26,7 @@ Popup {
     property bool hideReadNotifications: false
     property var store
     property var chatSectionModule
+    property var messageContextMenu
 
     id: activityCenter
     modal: false
@@ -210,6 +211,7 @@ Popup {
                         ActivityCenterMessageComponentView {
                             store: activityCenter.store
                             chatSectionModule: activityCenter.chatSectionModule
+                            messageContextMenu: activityCenter.messageContextMenu
                         }
                     }
 

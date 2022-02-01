@@ -417,6 +417,7 @@ ColumnLayout {
                     //                        community.admin ||
                     //                        chatContentRoot.rootStore.chatsModelInst.channelView.activeChannel.canPost
                 }
+                messageContextMenu: contextmenu
                 isContactBlocked: isBlocked
                 chatInputPlaceholder: isBlocked ?
                                           //% "This user has been blocked."

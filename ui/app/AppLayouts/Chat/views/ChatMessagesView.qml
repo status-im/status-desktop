@@ -339,7 +339,7 @@ Item {
                 root.showReplyArea(messageId, author)
             }
 
-            onImageClicked: Global.openImagePopup(image)
+            onImageClicked: Global.openImagePopup(image, messageContextMenuInst)
 
             stickersLoaded: root.stickersLoaded
 

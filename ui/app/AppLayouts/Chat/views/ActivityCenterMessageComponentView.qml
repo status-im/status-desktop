@@ -36,6 +36,7 @@ Item {
     property string previousNotificationTimestamp
     // Not Refactored Yet
     property int communityIndex: -1 //root.store.chatsModelInst.communities.joinedCommunities.getCommunityIndex(model.message.communityId)
+    property var messageContextMenu
     function openProfile() {
         Global.openProfilePopup(model.author)
     }
@@ -131,7 +132,7 @@ Item {
             //reactionsModel: model.message.reactions
             activityCenterMessage: true
             read: model.read
-            onImageClicked: { Global.openImagePopup(image); }
+            onImageClicked: Global.openImagePopup(image, root.messageContextMenu)
             scrollToBottom: null
             clickMessage: function (isProfileClick) {
                 if (isProfileClick) {

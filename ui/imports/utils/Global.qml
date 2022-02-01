@@ -18,7 +18,7 @@ QtObject {
     property bool networkGuarded: root.currentNetworkId === Constants.networkMainnet ||
         (root.currentNetworkId === Constants.networkRopsten && localAccountSensitiveSettings.stickersEnsRopsten)
 
-    signal openImagePopup(var image)
+    signal openImagePopup(var image, var contextMenu)
     signal openLinkInBrowser(string link)
     signal openChooseBrowserPopup(string link)
     signal openPopupRequested(var popupComponent, var params)

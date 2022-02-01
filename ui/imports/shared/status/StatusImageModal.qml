@@ -12,6 +12,7 @@ Popup {
 
     signal clicked(var button)
     property string imageSource: messageImage.source
+    property var contextMenu
 
     modal: true
     Overlay.modal: Rectangle {
