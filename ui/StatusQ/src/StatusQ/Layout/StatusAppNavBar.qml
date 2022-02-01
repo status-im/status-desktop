@@ -1,156 +1,151 @@
 import QtQuick 2.13
 import QtQuick.Layouts 1.13
 import QtQuick.Controls 2.13
+import QtQml.Models 2.13
+import Qt.labs.qmlmodels 1.0
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
+import StatusQ.Popups 0.1
 
 Rectangle {
     id: statusAppNavBar
-
-    property StatusNavBarTabButton navBarChatButton
-    property StatusNavBarTabButton navBarProfileButton
-
-    property list<StatusNavBarTabButton> navBarTabButtons
-    property alias navBarCommunityTabButtons: navBarCommunityTabButtons
-
-    property int navBarContentHeight: 0
-    property int navBarContentHeightWithoutCommunityButtons: 0
 
     width: 78
     implicitHeight: 600
     color: Theme.palette.statusAppNavBar.backgroundColor
 
-    Component.onCompleted: {
-        navBarContentHeightWithoutCommunityButtons = (navBarChatButtonSlot.anchors.topMargin + navBarChatButtonSlot.height) + 
-                                  (separator.anchors.topMargin + separator.height) +
-                                  (navBarTabButtonsSlot.height + navBarTabButtonsSlot.anchors.topMargin + navBarTabButtonsSlot.anchors.bottomMargin)
-        navBarContentHeight = navBarContentHeightWithoutCommunityButtons +
-                              (navBarCommunityTabButtonsSlot.height + navBarScrollSection.anchors.topMargin)
-    }
+    property var sectionModel: []
+    property string communityTypeRole: ""
+    property int communityTypeValue: -1
+    property int navBarButtonSpacing: 12
 
-    onNavBarChatButtonChanged: {
-        if (!!navBarChatButton) {
-            navBarChatButton.parent = navBarChatButtonSlot
+    property Component regularNavBarButton
+    property Component communityNavBarButton
+
+    property var filterRegularItem: function(item) { return true; }
+    property var filterCommunityItem: function(item) { return true; }
+
+    signal aboutToUpdateFilteredRegularModel()
+    signal aboutToUpdateFilteredCommunityModel()
+
+    StatusAppNavBarFilterModel {
+        id: navBarModel
+
+        filterAcceptsItem: filterRegularItem
+
+        model: statusAppNavBar.sectionModel
+
+        onAboutToUpdateFilteredModel: {
+            statusAppNavBar.aboutToUpdateFilteredRegularModel()
         }
-    }
 
-    onNavBarProfileButtonChanged: {
-        if (!!navBarProfileButton) {
-            navBarProfileButton.parent = navBarProfileButtonSlot
+        DelegateChooser {
+            id: delegateChooser
+            role: communityTypeRole
+            DelegateChoice { roleValue: communityTypeValue; delegate: communityNavButton }
+            DelegateChoice { delegate: regularNavBarButton }
         }
+
+        delegate: delegateChooser
     }
 
-    onNavBarTabButtonsChanged: {
-        if (navBarTabButtons.length) {
-            for (let idx in navBarTabButtons) {
-                navBarTabButtons[idx].parent = navBarTabButtonsSlot
+    Component {
+        id: communityNavButton
+
+        Item {
+            width: parent.width
+            height: (necessaryHightForCommunities > maxHightForCommunities)?
+                        maxHightForCommunities : necessaryHightForCommunities
+
+            property int communityNavBarButtonHeight: 40
+
+            property int maxHightForCommunities: {
+                let numOfOtherThanCommunityBtns = navBarListView.model.count - 1
+                let numOfSpacingsForNavBar = navBarListView.model.count - 1
+
+                return navBarListView.height -
+                        numOfOtherThanCommunityBtns * communityNavBarButtonHeight -
+                        numOfSpacingsForNavBar * navBarButtonSpacing
+            }
+
+            property int necessaryHightForCommunities: {
+                let numOfSpacingsForCommunities = communityListView.model.count - 1
+                return communityListView.model.count * communityNavBarButtonHeight +
+                        numOfSpacingsForCommunities * navBarButtonSpacing +
+                        separatorBottom.height
+            }
+
+            StatusAppNavBarFilterModel {
+                id: navBarCommunityModel
+
+                filterAcceptsItem: filterCommunityItem
+
+                model: statusAppNavBar.sectionModel
+
+                delegate: communityNavBarButton
+
+                onAboutToUpdateFilteredModel: {
+                    statusAppNavBar.aboutToUpdateFilteredCommunityModel()
+                }
+            }
+
+            Item {
+                id: separatorTop
+                width: parent.width
+                height: navBarButtonSpacing
+                anchors.top: parent.top
+                visible: parent.necessaryHightForCommunities > parent.maxHightForCommunities
+
+                Rectangle {
+                    height: 1
+                    width: 30
+                    color: Theme.palette.directColor7
+                    anchors.top: parent.top
+                    anchors.horizontalCenter: parent.horizontalCenter
+                }
+            }
+
+            ListView {
+                id: communityListView
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.top: separatorTop.visible? separatorTop.bottom : parent.top
+                anchors.bottom: separatorBottom.top
+                clip: true
+
+                spacing: navBarButtonSpacing
+
+                model: navBarCommunityModel
+            }
+
+            Item {
+                id: separatorBottom
+                width: parent.width
+                height: navBarButtonSpacing
+                anchors.bottom: parent.bottom
+
+                Rectangle {
+                    height: 1
+                    width: 30
+                    color: Theme.palette.directColor7
+                    anchors.bottom: parent.bottom
+                    anchors.horizontalCenter: parent.horizontalCenter
+                }
             }
         }
     }
 
-    Item {
-        id: navBarChatButtonSlot
+    ListView {
+        id: navBarListView
+        anchors.left: parent.left
+        anchors.right: parent.right
         anchors.top: parent.top
         anchors.topMargin: 48
-        anchors.horizontalCenter: parent.horizontalCenter
-        height: visible ? statusAppNavBar.navBarChatButton.height : 0
-        width: visible ? statusAppNavBar.navBarChatButton.width : 0
-        visible: !!statusAppNavBar.navBarChatButton
-    }
-
-    Rectangle {
-        id: separatorTop
-        height: 1
-        width: 30
-        color: Theme.palette.directColor7
-        anchors.top: navBarChatButtonSlot.bottom
-        anchors.topMargin: 16
-        anchors.horizontalCenter: parent.horizontalCenter
-        visible: separator.anchors.topMargin === 0
-    }
-
-    ScrollView {
-        id: navBarScrollSection
-        anchors.top: separatorTop.visible ? separatorTop.bottom : navBarChatButtonSlot.bottom
-        anchors.topMargin: separatorTop.visible ? 0 : 12
-        anchors.horizontalCenter: statusAppNavBar.horizontalCenter
-        ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-        clip: true
-
-        Component.onCompleted: {
-            if (navBarContentHeight > statusAppNavBar.height) {
-                height = statusAppNavBar.height - 
-                         statusAppNavBar.navBarContentHeightWithoutCommunityButtons -
-                         (!!navBarTabButtonsSlot.anchors.bottom ? navBarTabButtonsSlot.anchors.bottomMargin : navBarTabButtonsSlot.anchors.topMargin) -
-                         navBarProfileButtonSlot.height -
-                         navBarProfileButtonSlot.anchors.bottomMargin
-                bottomPadding = 16
-                topPadding = 16
-            } else {
-                height = navBarCommunityTabButtons.count > 0 ? navBarCommunityTabButtonsSlot.implicitHeight : 0
-            }
-        }
-
-        Column {
-            id: navBarCommunityTabButtonsSlot
-            width: navBarScrollSection.width
-            anchors.top: parent.top
-            anchors.horizontalCenter: parent.horizontalCenter
-            spacing: 12
-
-            onImplicitHeightChanged: {
-                statusAppNavBar.Component.onCompleted()
-                navBarTabButtonsSlot.Component.onCompleted()
-                navBarScrollSection.Component.onCompleted()
-            }
-
-            Repeater {
-                id: navBarCommunityTabButtons
-            }
-        }
-    }
-
-    Rectangle {
-        id: separator
-        height: 1
-        width: 30
-        color: Theme.palette.directColor7
-        anchors.top: !!navBarCommunityTabButtons.model && navBarCommunityTabButtons.count > 0 ? navBarScrollSection.bottom : navBarChatButtonSlot.bottom
-        anchors.topMargin: navBarScrollSection.height < navBarCommunityTabButtonsSlot.implicitHeight ? 0 : 16
-        anchors.horizontalCenter: parent.horizontalCenter
-        visible: navBarChatButton !== null && navBarTabButtons.length > 0
-    }
-
-    Column {
-        id: navBarTabButtonsSlot
-        anchors.horizontalCenter: parent.horizontalCenter
-        spacing: 12
-
-        Component.onCompleted: {
-            if (navBarContentHeight > statusAppNavBar.height) {
-                anchors.top = undefined
-                anchors.topMargin = 0
-                anchors.bottom = navBarProfileButtonSlot.top
-                anchors.bottomMargin = 32
-            } else {
-                anchors.bottom = undefined
-                anchors.bottomMargin = 0
-                anchors.top = separator.visible ? separator.bottom : parent.top
-                anchors.topMargin = separator.visible ? 16 : navBarChatButtonSlot.anchors.topMargin
-            }
-        }
-    }
-
-    Item {
-        id: navBarProfileButtonSlot
-        anchors.horizontalCenter: parent.horizontalCenter
-        height: visible ? statusAppNavBar.navBarProfileButton.height : 0
-        width: visible ? statusAppNavBar.navBarProfileButton.width : 0
-        visible: !!statusAppNavBar.navBarProfileButton
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: visible ? 23 : 0
+        spacing: navBarButtonSpacing
+
+        model: navBarModel
     }
 }
-

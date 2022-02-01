@@ -276,6 +276,7 @@
         <file>src/assets/img/icons/snt.svg</file>
         <file>src/StatusQ/Popups/StatusSpellcheckingMenuItems.qml</file>
         <file>src/StatusQ/Controls/StatusSelectableText.qml</file>
+        <file>src/StatusQ/Core/StatusAppNavBarFilterModel.qml</file>
         <file>src/assets/img/icons/tiny/add.svg</file>
         <file>src/assets/img/icons/tiny/arrow-down.svg</file>
         <file>src/assets/img/icons/tiny/channel-white.svg</file>

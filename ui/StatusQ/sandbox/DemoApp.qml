@@ -17,6 +17,32 @@ Rectangle {
 
     property string titleStyle: "osx"
 
+    QtObject {
+        id: appSectionType
+        readonly property int chat: 0
+        readonly property int community: 1
+        readonly property int wallet: 2
+        readonly property int browser: 3
+        readonly property int timeline: 4
+        readonly property int nodeManagement: 5
+        readonly property int profileSettings: 6
+        readonly property int apiDocumentation: 100
+        readonly property int demoApp: 101
+    }
+
+    function setActiveItem(sectionId) {
+        for (var i = 0; i < models.demoAppSectionsModel.count; i++) {
+            let item = models.demoAppSectionsModel.get(i)
+            if (item.sectionId !== sectionId)
+            {
+                models.demoAppSectionsModel.setProperty(i, "active", false)
+                continue
+            }
+
+            models.demoAppSectionsModel.setProperty(i, "active", true);
+        }
+    }
+
     StatusMacTrafficLights {
         anchors.left: parent.left
         anchors.top: parent.top
@@ -47,32 +73,74 @@ Rectangle {
 
             id: navBar
 
-            navBarChatButton: StatusNavBarTabButton {
-                icon.name: "chat"
-                tooltip.text: "Chat"
-                checked: appView.sourceComponent == statusAppChatView
-                onClicked: {
-                    appView.sourceComponent = statusAppChatView
-                }
+            communityTypeRole: "sectionType"
+            communityTypeValue: appSectionType.community
+            sectionModel: models.demoAppSectionsModel
+
+            property bool communityAdded: false
+
+            onAboutToUpdateFilteredRegularModel: {
+                communityAdded = false
             }
 
-            navBarCommunityTabButtons.model: ListModel {
-                ListElement {
-                    name: "Status Community"
-                    tooltipText: "Status Community"
-                }
+            filterRegularItem: function(item) {
+                if(item.sectionType === appSectionType.community)
+                    if(communityAdded)
+                        return false
+                    else
+                        communityAdded = true
+
+                return true
             }
 
-            navBarCommunityTabButtons.delegate: StatusNavBarTabButton {
-                id: communityBtn
+            filterCommunityItem: function(item) {
+                return item.sectionType === appSectionType.community
+            }
+
+            regularNavBarButton: StatusNavBarTabButton {
                 anchors.horizontalCenter: parent.horizontalCenter
-                name: model.name
-                tooltip.text: model.tooltipText
-                icon.color: Theme.palette.miscColor6
-                icon.source: "https://pbs.twimg.com/profile_images/1369221718338895873/T_5fny6o_400x400.jpg"
-                checked: appView.sourceComponent == statusAppCommunityView
+                name: model.icon.length > 0? "" : model.name
+                icon.name: model.icon
+                icon.source: model.image
+                tooltip.text: model.name
+                autoExclusive: true
+                checked: model.active
+                badge.value: model.notificationsCount
+                badge.visible: model.hasNotification
+                badge.border.color: hovered ? Theme.palette.statusBadge.hoverBorderColor : Theme.palette.statusBadge.borderColor
+                badge.border.width: 2
                 onClicked: {
-                    appView.sourceComponent = statusAppCommunityView
+                    if(model.sectionType === appSectionType.chat)
+                    {
+                        appView.sourceComponent = statusAppChatView
+                        demoApp.setActiveItem(model.sectionId)
+                    }
+                    else if(model.sectionType === appSectionType.profileSettings)
+                    {
+                        appView.sourceComponent = statusAppProfileSettingsView
+                        demoApp.setActiveItem(model.sectionId)
+                    }
+                }
+            }
+
+            communityNavBarButton: StatusNavBarTabButton {
+                anchors.horizontalCenter: parent.horizontalCenter
+                name: model.icon.length > 0? "" : model.name
+                icon.name: model.icon
+                icon.source: model.image
+                tooltip.text: model.name
+                autoExclusive: true
+                checked: model.active
+                badge.value: model.notificationsCount
+                badge.visible: model.hasNotification
+                badge.border.color: hovered ? Theme.palette.statusBadge.hoverBorderColor : Theme.palette.statusBadge.borderColor
+                badge.border.width: 2
+                onClicked: {
+                    if(model.sectionType === appSectionType.community)
+                    {
+                        appView.sourceComponent = statusAppCommunityView
+                        demoApp.setActiveItem(model.sectionId)
+                    }
                 }
 
                 popupMenu: StatusPopupMenu {
@@ -103,40 +171,7 @@ Rectangle {
                         type: StatusMenuItem.Type.Danger
                     }
                 }
-
             }
-
-            navBarTabButtons: [
-                StatusNavBarTabButton {
-                    icon.name: "wallet"
-                    tooltip.text: "Wallet"
-                },
-                StatusNavBarTabButton {
-                    icon.name: "bigger/browser"
-                    tooltip.text: "Browser"
-                },
-                StatusNavBarTabButton {
-                    icon.name: "bigger/status-update"
-                    tooltip.text: "Timeline"
-                },
-                StatusNavBarTabButton {
-                    id: profileNavButton
-                    icon.name: "bigger/settings"
-                    badge.visible: true
-                    badge.anchors.rightMargin: 4
-                    badge.anchors.topMargin: 5
-                    badge.border.color: hovered ? Theme.palette.statusBadge.hoverBorderColor : Theme.palette.statusAppNavBar.backgroundColor
-                    badge.border.width: 2
-
-                    tooltip.text: "Profile"
-
-                    checked: appView.sourceComponent == statusAppProfileSettingsView
-                    onClicked: {
-                        appView.sourceComponent = statusAppProfileSettingsView
-                    }
-                }
-            ]
-
         }
 
         appView: Loader {

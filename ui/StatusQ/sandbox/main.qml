@@ -31,9 +31,37 @@ StatusWindow {
 
     Component.onCompleted: {
         Theme.palette = lightTheme
-        apiDocsButton.checked = true
-
         rootWindow.updatePosition();
+    }
+
+    QtObject {
+        id: appSectionType
+        readonly property int chat: 0
+        readonly property int community: 1
+        readonly property int wallet: 2
+        readonly property int browser: 3
+        readonly property int timeline: 4
+        readonly property int nodeManagement: 5
+        readonly property int profileSettings: 6
+        readonly property int apiDocumentation: 100
+        readonly property int demoApp: 101
+    }
+
+    Models {
+        id: models
+    }
+
+    function setActiveItem(sectionId) {
+        for (var i = 0; i < models.mainAppSectionsModel.count; i++) {
+            let item = models.mainAppSectionsModel.get(i)
+            if (item.sectionId !== sectionId)
+            {
+                models.mainAppSectionsModel.setProperty(i, "active", false)
+                continue
+            }
+
+            models.mainAppSectionsModel.setProperty(i, "active", true);
+        }
     }
 
     StatusAppLayout {
@@ -43,37 +71,36 @@ StatusWindow {
         appNavBar: StatusAppNavBar {
             height: rootWindow.height
 
-            navBarChatButton: StatusNavBarTabButton {
-                icon.name: "refresh"
-                tooltip.text: "Reload App"
-                onClicked: app.restartQml()
-            }
+            communityTypeRole: "sectionType"
+            communityTypeValue: appSectionType.community
+            sectionModel: models.mainAppSectionsModel
 
-            navBarTabButtons: [
-                StatusNavBarTabButton {
-                    id: apiDocsButton
-                    icon.name: "edit"
-                    tooltip.text: "API Documentation"
-                    onClicked: {
-                        stackView.clear()
+            regularNavBarButton: StatusNavBarTabButton {
+                anchors.horizontalCenter: parent.horizontalCenter
+                name: model.icon.length > 0? "" : model.name
+                icon.name: model.icon
+                icon.source: model.image
+                tooltip.text: model.name
+                autoExclusive: true
+                checked: model.active
+                badge.value: model.notificationsCount
+                badge.visible: model.hasNotification
+                badge.border.color: hovered ? Theme.palette.statusBadge.hoverBorderColor : Theme.palette.statusBadge.borderColor
+                badge.border.width: 2
+                onClicked: {
+                    stackView.clear()
+                    if(model.sectionType === appSectionType.apiDocumentation)
+                    {
                         stackView.push(libraryDocumentationCmp)
-                        checked = !checked
-                        demoAppButton.checked = false
+                        rootWindow.setActiveItem(sectionId)
                     }
-                },
-                StatusNavBarTabButton {
-                    id: demoAppButton
-                    icon.name: "status"
-                    tooltip.text: "Demo Application"
-                    checked: stackView.currentItem == demoAppCmp
-                    onClicked: {
-                        stackView.clear()
+                    else if(model.sectionType === appSectionType.demoApp)
+                    {
                         stackView.push(demoAppCmp)
-                        checked = !checked
-                        apiDocsButton.checked = false
+                        rootWindow.setActiveItem(model.sectionId)
                     }
                 }
-            ]
+            }
         }
 
         appView: StackView {

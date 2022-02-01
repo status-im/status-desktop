@@ -7,6 +7,7 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 import StatusQ.Layout 0.1
+import StatusQ.Popups 0.1
 
 Column {
     spacing: 5
@@ -49,247 +50,398 @@ Column {
             }
         }
 
-        StatusAppNavBar {
-            navBarChatButton: StatusNavBarTabButton {
-                icon.name: "chat"
-                badge.value: 33
-                badge.visible: true
-                badge.border.color: hovered ? Theme.palette.statusBadge.hoverBorderColor : Theme.palette.statusBadge.borderColor
-                badge.border.width: 2
-                tooltip.text: "Chat"
-            }
+        QtObject {
+            id: appSectionType
+            readonly property int chat: 0
+            readonly property int community: 1
+            readonly property int wallet: 2
+            readonly property int browser: 3
+            readonly property int timeline: 4
+            readonly property int nodeManagement: 5
+            readonly property int profileSettings: 6
         }
 
         StatusAppNavBar {
-            navBarChatButton: StatusNavBarTabButton {
-                icon.name: "chat"
-                badge.value: 33
-                badge.visible: true
-                badge.border.color: hovered ? Theme.palette.statusBadge.hoverBorderColor : Theme.palette.statusBadge.borderColor
-                badge.border.width: 2
-                tooltip.text: "Chat"
+
+            sectionModel: ListModel {
+                ListElement {sectionId: "chat"; sectionType: 0; name: "Chat"; active: true; image: ""; icon: "chat"; color: ""; hasNotification: true; notificationsCount: 12}
             }
 
-            navBarCommunityTabButtons.model: ListModel {
-                id: buttons
-                ListElement {
-                    name: "Test community"
-                    tooltipText: "Test Community"
-                }
-            }
-
-            navBarCommunityTabButtons.delegate: StatusNavBarTabButton {
-                name: model.name
-                tooltip.text: model.name
+            regularNavBarButton: StatusNavBarTabButton {
                 anchors.horizontalCenter: parent.horizontalCenter
+                name: model.icon.length > 0? "" : model.name
+                icon.name: model.icon
+                icon.source: model.image
+                tooltip.text: model.name
+                autoExclusive: true
+                checked: model.active
+                badge.value: model.notificationsCount
+                badge.visible: model.hasNotification
+                badge.border.color: hovered ? Theme.palette.statusBadge.hoverBorderColor : Theme.palette.statusBadge.borderColor
+                badge.border.width: 2
             }
-
-            navBarTabButtons: [
-                StatusNavBarTabButton {
-                    icon.name: "wallet"
-                    tooltip.text: "Wallet"
-                },
-                StatusNavBarTabButton {
-                    icon.name: "browser"
-                    tooltip.text: "Browser"
-                },
-                StatusNavBarTabButton {
-                    icon.name: "status-update"
-                    tooltip.text: "Timeline"
-                },
-                StatusNavBarTabButton {
-                    icon.name: "profile"
-                    badge.visible: true
-                    badge.anchors.rightMargin: 4
-                    badge.anchors.topMargin: 5
-                    badge.border.color: hovered ? Theme.palette.statusBadge.hoverBorderColor : Theme.palette.statusBadge.borderColor
-                    badge.border.width: 2
-
-                    tooltip.text: "Profile"
-                }
-            ]
         }
 
         StatusAppNavBar {
-            navBarChatButton: StatusNavBarTabButton {
-                icon.name: "chat"
-                badge.value: 33
-                badge.visible: true
+
+            communityTypeRole: "sectionType"
+            communityTypeValue: appSectionType.community
+            sectionModel: ListModel {
+                ListElement {sectionId: "chat"; sectionType: 0; name: "Chat"; active: true; image: ""; icon: "chat"; color: ""; hasNotification: true; notificationsCount: 12}
+                ListElement {sectionId: "0x0001"; sectionType: 1; name: "Test Community"; active: false; image: ""; icon: ""; color: "#00ff00"; hasNotification: true; notificationsCount: 12}
+                ListElement {sectionId: "wallet"; sectionType: 2; name: "Wallet"; active: false; image: ""; icon: "wallet"; color: ""; hasNotification: false; notificationsCount: 0}
+                ListElement {sectionId: "browser"; sectionType: 3; name: "Browser"; active: false; image: ""; icon: "bigger/browser"; color: ""; hasNotification: false; notificationsCount: 0}
+                ListElement {sectionId: "timeline"; sectionType: 4; name: "Timeline"; active: false; image: ""; icon: "bigger/status-update"; color: ""; hasNotification: false; notificationsCount: 0}
+                ListElement {sectionId: "profile"; sectionType: 6; name: "Profile"; active: false; image: ""; icon: "bigger/settings"; color: ""; hasNotification: true; notificationsCount: 0}
+            }
+
+            property bool communityAdded: false
+
+            filterRegularItem: function(item) {
+                if(item.sectionType === appSectionType.community)
+                    if(communityAdded)
+                        return false
+                    else
+                        communityAdded = true
+
+                return true
+            }
+
+            filterCommunityItem: function(item) {
+                return item.sectionType === appSectionType.community
+            }
+
+            regularNavBarButton: StatusNavBarTabButton {
+                anchors.horizontalCenter: parent.horizontalCenter
+                name: model.icon.length > 0? "" : model.name
+                icon.name: model.icon
+                icon.source: model.image
+                tooltip.text: model.name
+                autoExclusive: true
+                checked: model.active
+                badge.value: model.notificationsCount
+                badge.visible: model.hasNotification
                 badge.border.color: hovered ? Theme.palette.statusBadge.hoverBorderColor : Theme.palette.statusBadge.borderColor
                 badge.border.width: 2
-                tooltip.text: "Chat"
             }
 
-            navBarCommunityTabButtons.model: ListModel {
-                ListElement {
-                    name: "Test community"
-                    tooltipText: "Test Community"
-                }
-            }
-
-            navBarCommunityTabButtons.delegate: StatusNavBarTabButton {
-                name: model.name
-                tooltip.text: model.name
+            communityNavBarButton: StatusNavBarTabButton {
                 anchors.horizontalCenter: parent.horizontalCenter
-            }
+                name: model.icon.length > 0? "" : model.name
+                icon.name: model.icon
+                icon.source: model.image
+                tooltip.text: model.name
+                autoExclusive: true
+                checked: model.active
+                badge.value: model.notificationsCount
+                badge.visible: model.hasNotification
+                badge.border.color: hovered ? Theme.palette.statusBadge.hoverBorderColor : Theme.palette.statusBadge.borderColor
+                badge.border.width: 2
 
-            navBarTabButtons: [
-                StatusNavBarTabButton {
-                    icon.name: "wallet"
-                    tooltip.text: "Wallet"
-                },
-                StatusNavBarTabButton {
-                    icon.name: "browser"
-                    tooltip.text: "Browser"
+                popupMenu: StatusPopupMenu {
+
+                    StatusMenuItem {
+                        text: qsTr("Invite People")
+                        icon.name: "share-ios"
+                    }
+
+                    StatusMenuItem {
+                        text: qsTr("View Community")
+                        icon.name: "group"
+                    }
+
+                    StatusMenuItem {
+                        text: qsTr("Edit Community")
+                        icon.name: "edit"
+                        enabled: false
+                    }
+
+                    StatusMenuSeparator {}
+
+                    StatusMenuItem {
+                        text: qsTr("Leave Community")
+                        icon.name: "arrow-right"
+                        icon.width: 14
+                        iconRotation: 180
+                        type: StatusMenuItem.Type.Danger
+                    }
                 }
-            ]
+            }
         }
 
         StatusAppNavBar {
-            navBarChatButton: StatusNavBarTabButton {
-                icon.name: "chat"
-                badge.value: 33
-                badge.visible: true
+
+            communityTypeRole: "sectionType"
+            communityTypeValue: appSectionType.community
+            sectionModel: ListModel {
+                ListElement {sectionId: "chat"; sectionType: 0; name: "Chat"; active: true; image: ""; icon: "chat"; color: ""; hasNotification: true; notificationsCount: 12}
+                ListElement {sectionId: "0x0001"; sectionType: 1; name: "Test Community"; active: false; image: ""; icon: ""; color: "#00ff00"; hasNotification: true; notificationsCount: 12}
+                ListElement {sectionId: "wallet"; sectionType: 2; name: "Wallet"; active: false; image: ""; icon: "wallet"; color: ""; hasNotification: false; notificationsCount: 0}
+                ListElement {sectionId: "browser"; sectionType: 3; name: "Browser"; active: false; image: ""; icon: "bigger/browser"; color: ""; hasNotification: false; notificationsCount: 0}
+            }
+
+            property bool communityAdded: false
+
+            filterRegularItem: function(item) {
+                if(item.sectionType === appSectionType.community)
+                    if(communityAdded)
+                        return false
+                    else
+                        communityAdded = true
+
+                return true
+            }
+
+            filterCommunityItem: function(item) {
+                return item.sectionType === appSectionType.community
+            }
+
+            regularNavBarButton: StatusNavBarTabButton {
+                anchors.horizontalCenter: parent.horizontalCenter
+                name: model.icon.length > 0? "" : model.name
+                icon.name: model.icon
+                icon.source: model.image
+                tooltip.text: model.name
+                autoExclusive: true
+                checked: model.active
+                badge.value: model.notificationsCount
+                badge.visible: model.hasNotification
                 badge.border.color: hovered ? Theme.palette.statusBadge.hoverBorderColor : Theme.palette.statusBadge.borderColor
                 badge.border.width: 2
-                tooltip.text: "Chat"
             }
 
-            navBarCommunityTabButtons.model: ListModel {
-                ListElement {
-                    name: "Test community"
-                    tooltipText: "Test Community"
-                }
-
-                ListElement {
-                    name: "Test community"
-                    tooltipText: "Test Community"
-                }
-
-                ListElement {
-                    name: "Test community"
-                    tooltipText: "Test Community"
-                }
-                ListElement {
-                    name: "Test community"
-                    tooltipText: "Test Community"
-                }
-            }
-
-            navBarCommunityTabButtons.delegate: StatusNavBarTabButton {
-                name: model.name
-                tooltip.text: model.name
+            communityNavBarButton: StatusNavBarTabButton {
                 anchors.horizontalCenter: parent.horizontalCenter
+                name: model.icon.length > 0? "" : model.name
+                icon.name: model.icon
+                icon.source: model.image
+                tooltip.text: model.name
+                autoExclusive: true
+                checked: model.active
+                badge.value: model.notificationsCount
+                badge.visible: model.hasNotification
+                badge.border.color: hovered ? Theme.palette.statusBadge.hoverBorderColor : Theme.palette.statusBadge.borderColor
+                badge.border.width: 2
+
+                popupMenu: StatusPopupMenu {
+
+                    StatusMenuItem {
+                        text: qsTr("Invite People")
+                        icon.name: "share-ios"
+                    }
+
+                    StatusMenuItem {
+                        text: qsTr("View Community")
+                        icon.name: "group"
+                    }
+
+                    StatusMenuItem {
+                        text: qsTr("Edit Community")
+                        icon.name: "edit"
+                        enabled: false
+                    }
+
+                    StatusMenuSeparator {}
+
+                    StatusMenuItem {
+                        text: qsTr("Leave Community")
+                        icon.name: "arrow-right"
+                        icon.width: 14
+                        iconRotation: 180
+                        type: StatusMenuItem.Type.Danger
+                    }
+                }
+            }
+        }
+
+
+        StatusAppNavBar {
+
+            communityTypeRole: "sectionType"
+            communityTypeValue: appSectionType.community
+            sectionModel: ListModel {
+                ListElement {sectionId: "chat"; sectionType: 0; name: "Chat"; active: true; image: ""; icon: "chat"; color: ""; hasNotification: true; notificationsCount: 12}
+                ListElement {sectionId: "0x0001"; sectionType: 1; name: "Test Community"; active: false; image: ""; icon: ""; color: "#00ff00"; hasNotification: false; notificationsCount: 0}
+                ListElement {sectionId: "0x0002"; sectionType: 1; name: "Test Community"; active: false; image: ""; icon: ""; color: "#00ff00"; hasNotification: false; notificationsCount: 0}
+                ListElement {sectionId: "0x0003"; sectionType: 1; name: "Test Community"; active: false; image: ""; icon: ""; color: "#00ff00"; hasNotification: false; notificationsCount: 0}
+                ListElement {sectionId: "0x0004"; sectionType: 1; name: "Test Community"; active: false; image: ""; icon: ""; color: "#00ff00"; hasNotification: true; notificationsCount: 0}
+                ListElement {sectionId: "wallet"; sectionType: 2; name: "Wallet"; active: false; image: ""; icon: "wallet"; color: ""; hasNotification: false; notificationsCount: 0}
+                ListElement {sectionId: "browser"; sectionType: 3; name: "Browser"; active: false; image: ""; icon: "bigger/browser"; color: ""; hasNotification: false; notificationsCount: 0}
+                ListElement {sectionId: "timeline"; sectionType: 4; name: "Timeline"; active: false; image: ""; icon: "bigger/status-update"; color: ""; hasNotification: false; notificationsCount: 0}
+                ListElement {sectionId: "profile"; sectionType: 6; name: "Profile"; active: false; image: ""; icon: "bigger/settings"; color: ""; hasNotification: false; notificationsCount: 0}
             }
 
-            navBarTabButtons: [
-                StatusNavBarTabButton {
-                    icon.name: "wallet"
-                    tooltip.text: "Wallet"
-                },
-                StatusNavBarTabButton {
-                    icon.name: "browser"
-                    tooltip.text: "Browser"
-                },
-                StatusNavBarTabButton {
-                    icon.name: "status-update"
-                    tooltip.text: "Timeline"
-                },
-                StatusNavBarTabButton {
-                    icon.name: "profile"
-                    badge.visible: true
-                    badge.anchors.rightMargin: 4
-                    badge.anchors.topMargin: 5
-                    badge.border.color: hovered ? Theme.palette.statusBadge.hoverBorderColor : Theme.palette.statusBadge.borderColor
-                    badge.border.width: 2
+            property bool communityAdded: false
 
-                    tooltip.text: "Profile"
+            filterRegularItem: function(item) {
+                if(item.sectionType === appSectionType.community)
+                    if(communityAdded)
+                        return false
+                    else
+                        communityAdded = true
+
+                return true
+            }
+
+            filterCommunityItem: function(item) {
+                return item.sectionType === appSectionType.community
+            }
+
+            regularNavBarButton: StatusNavBarTabButton {
+                anchors.horizontalCenter: parent.horizontalCenter
+                name: model.icon.length > 0? "" : model.name
+                icon.name: model.icon
+                icon.source: model.image
+                tooltip.text: model.name
+                autoExclusive: true
+                checked: model.active
+                badge.value: model.notificationsCount
+                badge.visible: model.hasNotification
+                badge.border.color: hovered ? Theme.palette.statusBadge.hoverBorderColor : Theme.palette.statusBadge.borderColor
+                badge.border.width: 2
+            }
+
+            communityNavBarButton: StatusNavBarTabButton {
+                anchors.horizontalCenter: parent.horizontalCenter
+                name: model.icon.length > 0? "" : model.name
+                icon.name: model.icon
+                icon.source: model.image
+                tooltip.text: model.name
+                autoExclusive: true
+                checked: model.active
+                badge.value: model.notificationsCount
+                badge.visible: model.hasNotification
+                badge.border.color: hovered ? Theme.palette.statusBadge.hoverBorderColor : Theme.palette.statusBadge.borderColor
+                badge.border.width: 2
+
+                popupMenu: StatusPopupMenu {
+
+                    StatusMenuItem {
+                        text: qsTr("Invite People")
+                        icon.name: "share-ios"
+                    }
+
+                    StatusMenuItem {
+                        text: qsTr("View Community")
+                        icon.name: "group"
+                    }
+
+                    StatusMenuItem {
+                        text: qsTr("Edit Community")
+                        icon.name: "edit"
+                        enabled: false
+                    }
+
+                    StatusMenuSeparator {}
+
+                    StatusMenuItem {
+                        text: qsTr("Leave Community")
+                        icon.name: "arrow-right"
+                        icon.width: 14
+                        iconRotation: 180
+                        type: StatusMenuItem.Type.Danger
+                    }
                 }
-            ]
+            }
         }
 
         StatusAppNavBar {
-            id: test
-            navBarChatButton: StatusNavBarTabButton {
-                icon.name: "chat"
-                badge.value: 33
-                badge.visible: true
+
+            communityTypeRole: "sectionType"
+            communityTypeValue: appSectionType.community
+            sectionModel: ListModel {
+                ListElement {sectionId: "chat"; sectionType: 0; name: "Chat"; active: true; image: ""; icon: "chat"; color: ""; hasNotification: true; notificationsCount: 12}
+                ListElement {sectionId: "0x0001"; sectionType: 1; name: "Test Community"; active: false; image: ""; icon: ""; color: "#00ff00"; hasNotification: true; notificationsCount: 12}
+                ListElement {sectionId: "0x0002"; sectionType: 1; name: "Test Community"; active: false; image: ""; icon: ""; color: "#00ff00"; hasNotification: false; notificationsCount: 0}
+                ListElement {sectionId: "0x0003"; sectionType: 1; name: "Test Community"; active: false; image: ""; icon: ""; color: "#00ff00"; hasNotification: true; notificationsCount: 0}
+                ListElement {sectionId: "0x0004"; sectionType: 1; name: "Test Community"; active: false; image: ""; icon: ""; color: "#00ff00"; hasNotification: true; notificationsCount: 1}
+                ListElement {sectionId: "0x0005"; sectionType: 1; name: "Test Community"; active: false; image: ""; icon: ""; color: "#00ff00"; hasNotification: false; notificationsCount: 0}
+                ListElement {sectionId: "0x0006"; sectionType: 1; name: "Test Community"; active: false; image: ""; icon: ""; color: "#00ff00"; hasNotification: true; notificationsCount: 3}
+                ListElement {sectionId: "0x0007"; sectionType: 1; name: "Test Community"; active: false; image: ""; icon: ""; color: "#00ff00"; hasNotification: true; notificationsCount: 5}
+                ListElement {sectionId: "0x0008"; sectionType: 1; name: "Test Community"; active: false; image: ""; icon: ""; color: "#00ff00"; hasNotification: true; notificationsCount: 0}
+                ListElement {sectionId: "0x0009"; sectionType: 1; name: "Test Community"; active: false; image: ""; icon: ""; color: "#00ff00"; hasNotification: false; notificationsCount: 0}
+                ListElement {sectionId: "0x0010"; sectionType: 1; name: "Test Community"; active: false; image: ""; icon: ""; color: "#00ff00"; hasNotification: true; notificationsCount: 11}
+                ListElement {sectionId: "wallet"; sectionType: 2; name: "Wallet"; active: false; image: ""; icon: "wallet"; color: ""; hasNotification: false; notificationsCount: 0}
+                ListElement {sectionId: "browser"; sectionType: 3; name: "Browser"; active: false; image: ""; icon: "bigger/browser"; color: ""; hasNotification: false; notificationsCount: 0}
+                ListElement {sectionId: "timeline"; sectionType: 4; name: "Timeline"; active: false; image: ""; icon: "bigger/status-update"; color: ""; hasNotification: false; notificationsCount: 0}
+                ListElement {sectionId: "profile"; sectionType: 6; name: "Profile"; active: false; image: ""; icon: "bigger/settings"; color: ""; hasNotification: true; notificationsCount: 0}
+            }
+
+            property bool communityAdded: false
+
+            filterRegularItem: function(item) {
+                if(item.sectionType === appSectionType.community)
+                    if(communityAdded)
+                        return false
+                    else
+                        communityAdded = true
+
+                return true
+            }
+
+            filterCommunityItem: function(item) {
+                return item.sectionType === appSectionType.community
+            }
+
+            regularNavBarButton: StatusNavBarTabButton {
+                anchors.horizontalCenter: parent.horizontalCenter
+                name: model.icon.length > 0? "" : model.name
+                icon.name: model.icon
+                icon.source: model.image
+                tooltip.text: model.name
+                autoExclusive: true
+                checked: model.active
+                badge.value: model.notificationsCount
+                badge.visible: model.hasNotification
                 badge.border.color: hovered ? Theme.palette.statusBadge.hoverBorderColor : Theme.palette.statusBadge.borderColor
                 badge.border.width: 2
-                tooltip.text: "Chat"
             }
 
-            navBarCommunityTabButtons.model: ListModel {
-                ListElement {
-                    name: "Test community"
-                    tooltipText: "Test Community"
-                }
-
-                ListElement {
-                    name: "Test community"
-                    tooltipText: "Test Community"
-                }
-                ListElement {
-                    name: "Test community"
-                    tooltipText: "Test Community"
-                }
-                ListElement {
-                    name: "Test community"
-                    tooltipText: "Test Community"
-                }
-                ListElement {
-                    name: "Test community"
-                    tooltipText: "Test Community"
-                }
-                ListElement {
-                    name: "Test community"
-                    tooltipText: "Test Community"
-                }
-                ListElement {
-                    name: "Test community"
-                    tooltipText: "Test Community"
-                }
-                ListElement {
-                    name: "Test community"
-                    tooltipText: "Test Community"
-                }
-                ListElement {
-                    name: "Test community"
-                    tooltipText: "Test Community"
-                }
-            }
-
-            navBarCommunityTabButtons.delegate: StatusNavBarTabButton {
-                name: model.name
-                tooltip.text: model.name
+            communityNavBarButton: StatusNavBarTabButton {
                 anchors.horizontalCenter: parent.horizontalCenter
-            }
+                name: model.icon.length > 0? "" : model.name
+                icon.name: model.icon
+                icon.source: model.image
+                tooltip.text: model.name
+                autoExclusive: true
+                checked: model.active
+                badge.value: model.notificationsCount
+                badge.visible: model.hasNotification
+                badge.border.color: hovered ? Theme.palette.statusBadge.hoverBorderColor : Theme.palette.statusBadge.borderColor
+                badge.border.width: 2
 
-            navBarTabButtons: [
-                StatusNavBarTabButton {
-                    icon.name: "wallet"
-                    tooltip.text: "Wallet"
-                },
-                StatusNavBarTabButton {
-                    icon.name: "browser"
-                    tooltip.text: "Browser"
-                },
-                StatusNavBarTabButton {
-                    icon.name: "status-update"
-                    tooltip.text: "Timeline"
-                },
-                StatusNavBarTabButton {
-                    icon.name: "profile"
-                    badge.visible: true
-                    badge.anchors.rightMargin: 4
-                    badge.anchors.topMargin: 5
-                    badge.border.color: hovered ? Theme.palette.statusBadge.hoverBorderColor : Theme.palette.statusBadge.borderColor
-                    badge.border.width: 2
+                popupMenu: StatusPopupMenu {
 
-                    tooltip.text: "Profile"
+                    StatusMenuItem {
+                        text: qsTr("Invite People")
+                        icon.name: "share-ios"
+                    }
+
+                    StatusMenuItem {
+                        text: qsTr("View Community")
+                        icon.name: "group"
+                    }
+
+                    StatusMenuItem {
+                        text: qsTr("Edit Community")
+                        icon.name: "edit"
+                        enabled: false
+                    }
+
+                    StatusMenuSeparator {}
+
+                    StatusMenuItem {
+                        text: qsTr("Leave Community")
+                        icon.name: "arrow-right"
+                        icon.width: 14
+                        iconRotation: 180
+                        type: StatusMenuItem.Type.Danger
+                    }
                 }
-            ]
+            }
         }
+
+
     }
 }
 
