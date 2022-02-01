@@ -101,6 +101,10 @@ QtObject {
         property color backgroundColor
     }
 
+    property QtObject statusToastMessage: QtObject {
+        property color backgroundColor
+    }
+
     property QtObject statusListItem: QtObject {
         property color backgroundColor
         property color secondaryHoverBackgroundColor

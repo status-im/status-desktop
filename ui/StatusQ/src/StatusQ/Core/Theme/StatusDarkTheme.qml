@@ -167,6 +167,10 @@ ThemePalette {
         property color backgroundColor: baseColor5
     }
 
+    property QtObject statusToastMessage: QtObject {
+        property color backgroundColor: baseColor3
+    }
+
     property QtObject statusListItem: QtObject {
         property color backgroundColor: baseColor3
         property color secondaryHoverBackgroundColor: primaryColor3
