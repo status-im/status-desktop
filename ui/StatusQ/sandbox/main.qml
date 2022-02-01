@@ -12,6 +12,8 @@ import StatusQ.Components 0.1
 import StatusQ.Layout 0.1
 import StatusQ.Platform 0.1
 
+import "demoapp/data" 1.0
+
 StatusWindow {
     id: rootWindow
     width: Qt.platform.os == "ios" || Qt.platform.os == "android" ? Screen.width
@@ -46,20 +48,15 @@ StatusWindow {
         readonly property int demoApp: 101
     }
 
-    Models {
-        id: models
-    }
-
     function setActiveItem(sectionId) {
-        for (var i = 0; i < models.mainAppSectionsModel.count; i++) {
-            let item = models.mainAppSectionsModel.get(i)
-            if (item.sectionId !== sectionId)
-            {
-                models.mainAppSectionsModel.setProperty(i, "active", false)
+        for (var i = 0; i < Models.mainAppSectionsModel.count; i++) {
+            let item = Models.mainAppSectionsModel.get(i)
+            if (item.sectionId !== sectionId) {
+                Models.mainAppSectionsModel.setProperty(i, "active", false);
                 continue
             }
 
-            models.mainAppSectionsModel.setProperty(i, "active", true);
+            Models.mainAppSectionsModel.setProperty(i, "active", true);
         }
     }
 
@@ -72,7 +69,7 @@ StatusWindow {
 
             communityTypeRole: "sectionType"
             communityTypeValue: appSectionType.community
-            sectionModel: models.mainAppSectionsModel
+            sectionModel: Models.mainAppSectionsModel
 
             regularNavBarButton: StatusNavBarTabButton {
                 anchors.horizontalCenter: parent.horizontalCenter

@@ -149,10 +149,7 @@ StatusAppThreePanelLayout {
 
             StatusChatList {
                 anchors.horizontalCenter: parent.horizontalCenter
-
-                chatListItems.model: Models.demoChatListItems
-                selectedChatId: "0"
-                onChatItemSelected: selectedChatId = id
+                model: Models.demoChatListItems
                 onChatItemUnmuted: {
                     for (var i = 0; i < Models.demoChatListItems.count; i++) {
                         let item = Models.demoChatListItems.get(i);

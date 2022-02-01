@@ -4,122 +4,216 @@ import StatusQ.Components 0.1
 
 QtObject {
 
-    property ListModel demoChatListItems: ListModel {
+    property var demoChatListItems: ListModel {
         id: demoChatListItems
         ListElement {
-            chatId: "0"
+            itemId: "x012340000"
             name: "#status"
-            chatType: StatusChatListItem.Type.PublicChat
-            muted: false
-            unreadMessagesCount: 0
-            mentionsCount: 0
+            icon: ""
+            isIdenticon: false
             color: "blue"
+            description: ""
+            type: StatusChatListItem.Type.PublicChat
+            hasUnreadMessages: true
+            notificationsCount: 0
+            muted: false
+            active: false
             position: 0
+            isCategory: false
+            subItems: []
         }
         ListElement {
-            chatId: "1"
+            itemId: "x012340001"
             name: "status-desktop"
-            chatType: StatusChatListItem.Type.PublicChat
-            muted: false
+            icon: ""
+            isIdenticon: false
             color: "red"
-            unreadMessagesCount: 1
-            mentionsCount: 1
+            description: ""
+            type: StatusChatListItem.Type.PublicChat
+            hasUnreadMessages: true
+            notificationsCount: 1
+            muted: false
+            active: false
             position: 1
+            isCategory: false
+            subItems: []
         }
         ListElement {
-            chatId: "2"
+            itemId: "x012340002"
             name: "Amazing Funny Squirrel"
-            chatType: StatusChatListItem.Type.OneToOneChat
-            muted: false
-            color: "green"
-            identicon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAlklEQVR4nOzW0QmDQBAG4SSkl7SUQlJGCrElq9F3QdjjVhh/5nv3cFhY9vUIYQiNITSG0Bh
+            icon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAlklEQVR4nOzW0QmDQBAG4SSkl7SUQlJGCrElq9F3QdjjVhh/5nv3cFhY9vUIYQiNITSG0Bh
 CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2ImYgiNITTlTdG1nUZ5a92VITQxITFiJmIIjSE0htAYQrMHAAD//+wwFVpz+yqXAAAAAElFTkSuQmCC"
-            unreadMessagesCount: 0
-            position: 2
-        }
-        ListElement {
-            chatId: "3"
-            name: "Black Ops"
-            chatType: StatusChatListItem.Type.GroupChat
-            muted: false
-            color: "purple"
-            unreadMessagesCount: 0
-            position: 3
-        }
-        ListElement {
-            chatId: "4"
-            name: "Spectacular Growing Otter"
-            chatType: StatusChatListItem.Type.OneToOneChat
-            muted: true
-            color: "Orange"
-            unreadMessagesCount: 0
-            position: 4
-        }
-        ListElement {
-            chatId: "5"
-            name: "channel-with-a-super-duper-long-name"
-            chatType: StatusChatListItem.Type.PublicChat
-            muted: false
+            isIdenticon: true
             color: "green"
-            unreadMessagesCount: 0
+            description: ""
+            type: StatusChatListItem.Type.OneToOneChat
+            hasUnreadMessages: false
+            notificationsCount: 0
+            muted: false
+            active: true
+            position: 2
+            isCategory: false
+            subItems: []
+        }
+        ListElement {
+            itemId: "x012340003"
+            name: "Black Ops"
+            icon: ""
+            isIdenticon: false
+            color: "purple"
+            description: ""
+            type: StatusChatListItem.Type.OneToOneChat
+            hasUnreadMessages: false
+            notificationsCount: 0
+            muted: false
+            active: false
+            position: 3
+            isCategory: false
+            subItems: []
+        }
+        ListElement {
+            itemId: "x012340004"
+            name: "Spectacular Growing Otter"
+            icon: ""
+            isIdenticon: false
+            color: "orange"
+            description: ""
+            type: StatusChatListItem.Type.OneToOneChat
+            hasUnreadMessages: false
+            notificationsCount: 0
+            muted: false
+            active: false
+            position: 4
+            isCategory: false
+            subItems: []
+        }
+        ListElement {
+            itemId: "x012340005"
+            name: "channel-with-a-super-duper-long-name"
+            icon: ""
+            isIdenticon: false
+            color: "green"
+            description: ""
+            type: StatusChatListItem.Type.PublicChat
+            hasUnreadMessages: false
+            notificationsCount: 0
+            muted: false
+            active: false
             position: 5
+            isCategory: false
+            subItems: []
         }
     }
 
     property var demoCommunityChatListItems: ListModel {
         id: demoCommunityChatListItems
         ListElement {
-            chatId: "0"
+            itemId: "x012340000"
             name: "general"
-            chatType: StatusChatListItem.Type.CommunityChat
-            muted: false
-            unreadMessagesCount: 0
+            icon: ""
+            isIdenticon: false
             color: "orange"
+            description: ""
+            type: StatusChatListItem.Type.Unknown0
+            hasUnreadMessages: true
+            notificationsCount: 0
+            muted: false
+            active: false
             position: 0
+            isCategory: true
+            subItems: []
         }
         ListElement {
-            chatId: "1"
-            name: "random"
-            chatType: StatusChatListItem.Type.CommunityChat
+            itemId: "x0125340000"
+            name: "Pink Channel"
+            icon: ""
+            isIdenticon: false
+            color: "pink"
+            description: ""
+            type: StatusChatListItem.Type.CommunityChat
+            hasUnreadMessages: true
+            notificationsCount: 0
             muted: false
-            unreadMessagesCount: 0
-            color: "orange"
-            categoryId: "public"
+            active: false
             position: 0
+            isCategory: false
+            subItems: []
         }
         ListElement {
-            chatId: "2"
-            name: "watercooler"
-            chatType: StatusChatListItem.Type.CommunityChat
-            muted: false
-            unreadMessagesCount: 0
-            color: "orange"
-            categoryId: "public"
-            position: 1
-        }
-        ListElement {
-            chatId: "3"
-            name: "language-design"
-            chatType: StatusChatListItem.Type.CommunityChat
-            muted: false
-            unreadMessagesCount: 0
-            color: "orange"
-            categoryId: "dev"
-            position: 0
-        }
-    }
-
-    property var demoCommunityCategoryItems: ListModel {
-        id: demoCommunityCategoryItems
-        ListElement {
-            categoryId: "public"
+            itemId: "x012340001"
             name: "Public"
-            position: 0
+            icon: ""
+            isIdenticon: false
+            color: "orange"
+            description: ""
+            type: StatusChatListItem.Type.Unknown0
+            hasUnreadMessages: false
+            notificationsCount: 0
+            muted: false
+            active: true
+            position: 1
+            isCategory: true
+            subItems: [
+                ListElement {
+                    itemId: "x012340002"
+                    parentItemId: "x012340001"
+                    name: "random"
+                    icon: ""
+                    isIdenticon: false
+                    color: "orange"
+                    description: ""
+                    hasUnreadMessages: true
+                    notificationsCount: 4
+                    muted: false
+                    active: false
+                    position: 0
+                },
+                ListElement {
+                    itemId: "x012340003"
+                    parentItemId: "x012340001"
+                    name: "watercooler"
+                    icon: ""
+                    isIdenticon: false
+                    color: "orange"
+                    description: ""
+                    hasUnreadMessages: false
+                    notificationsCount: 0
+                    muted: false
+                    active: true
+                    position: 1
+                }
+            ]
         }
         ListElement {
-            categoryId: "dev"
+            itemId: "x012340004"
             name: "Development"
-            position: 1
+            icon: ""
+            isIdenticon: false
+            color: "orange"
+            description: ""
+            type: StatusChatListItem.Type.Unknown0
+            hasUnreadMessages: false
+            notificationsCount: 0
+            muted: false
+            active: false
+            position: 2
+            isCategory: true
+            subItems: [
+                ListElement {
+                    itemId: "x012340005"
+                    parentItemId: "x012340004"
+                    name: "language-design"
+                    icon: ""
+                    isIdenticon: false
+                    color: "orange"
+                    description: ""
+                    hasUnreadMessages: false
+                    notificationsCount: 0
+                    muted: true
+                    active: false
+                    position: 0
+                }
+            ]
         }
     }
 
@@ -746,12 +840,20 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
         }
         ListElement {
             nickName: "carmen.eth"
+            userName: ""
+            chatKey: ""
             trustIndicator: StatusMemberListItem.TrustedType.Untrustworthy
+            isMutualContact: false
             isOnline: false
+            source: ""
+            isIdenticon: false
         }
         ListElement {
             nickName: "This girl I know from work"
             userName:  "annabelle"
+            chatKey: ""
+            trustIndicator: StatusMemberListItem.TrustedType.None
+            isMutualContact: false
             isOnline: true
             source: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAiElEQVR4nOzXUQpAQBRGYWQvLNAyLJDV8C5qpiGnv/M9al5Ot27X0IUwhMYQGkNoDKGJCRlLH67bftx9X+ap/+P9VcxEDK
                      ExhKZ4a9Uq3TZviZmIITSG0DRvlqcbqVbrlouZiCE0htD4h0hjCI0hNN5aNIbQGKKPxEzEEBpDaAyhMYTmDAAA//+gYCErzmCpCQAAAABJRU5ErkJggg=="
@@ -767,6 +869,99 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
             source: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAlklEQVR4nOzW0QmDQBAG4SSkl7SUQlJGCrElq9F3QdjjVhh/5nv3cFhY9vUIYQiNITSG0BhCExPynn1gWf9bx498P7/
                      nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2ImYgiNITTlTdG1nUZ5a92VITQxITFiJmIIjSE0htAYQrMHAAD//+wwFVpz+yqXAAAAAElFTkSuQmCC"
             isIdenticon: true
+        }
+    }
+
+    //    App Section Types:
+    //    chat: 0
+    //    community: 1
+    //    wallet: 2
+    //    browser: 3
+    //    nodeManagement: 4
+    //    profileSettings: 5
+    //    apiDocumentation: 100
+    //    demoApp: 101
+
+    property ListModel mainAppSectionsModel: ListModel {
+        ListElement {
+            sectionId: "mainApp"
+            sectionType: 100
+            name: "API Documentation"
+            active: true
+            image: ""
+            icon: "edit"
+            color: ""
+            hasNotification: false
+            notificationsCount: 0
+        }
+        ListElement {
+            sectionId: "demoApp"
+            sectionType: 101
+            name: "Demo Application"
+            active: false
+            image: ""
+            icon: "status"
+            color: ""
+            hasNotification: false
+            notificationsCount: 0
+        }
+    }
+
+    property ListModel demoAppSectionsModel: ListModel {
+        ListElement {
+            sectionId: "chat"
+            sectionType: 0
+            name: "Chat"
+            active: true
+            image: ""
+            icon: "chat"
+            color: ""
+            hasNotification: false
+            notificationsCount: 0
+        }
+        ListElement {
+            sectionId: "0x123456789"
+            sectionType: 1
+            name: "Status Community"
+            active: false
+            image: "https://assets.brandfetch.io/51a495de903c46a.png"
+            icon: ""
+            color: ""
+            hasNotification: false
+            notificationsCount: 0
+        }
+        ListElement {
+            sectionId: "wallet"
+            sectionType: 2
+            name: "Wallet"
+            active: false
+            image: ""
+            icon: "wallet"
+            color: ""
+            hasNotification: false
+            notificationsCount: 0
+        }
+        ListElement {
+            sectionId: "browser"
+            sectionType: 3
+            name: "Browser"
+            active: false
+            image: ""
+            icon: "bigger/browser"
+            color: ""
+            hasNotification: false
+            notificationsCount: 0
+        }
+        ListElement {
+            sectionId: "profile"
+            sectionType: 6
+            name: "Profile"
+            active: false
+            image: ""
+            icon: "bigger/settings"
+            color: ""
+            hasNotification: true
+            notificationsCount: 0
         }
     }
 }

@@ -77,11 +77,9 @@ StatusAppThreePanelLayout {
 
                 draggableItems: true
                 draggableCategories: false
-                chatList.model: Models.demoCommunityChatListItems
-                categoryList.model: Models.demoCommunityCategoryItems
+                model: Models.demoCommunityChatListItems
 
                 showCategoryActionButtons: true
-                onChatItemSelected: selectedChatId = id
 
                 categoryPopupMenu: StatusPopupMenu {
 
