@@ -441,6 +441,9 @@ method emitStoringPasswordError*[T](self: Module[T], errorDescription: string) =
 method emitStoringPasswordSuccess*[T](self: Module[T]) =
   self.view.emitStoringPasswordSuccess()
 
+method getActiveSectionId*[T](self: Module[T]): string =
+  return self.controller.getActiveSectionId()
+
 method setActiveSection*[T](self: Module[T], item: SectionItem) =
   if(item.isEmpty()):
     echo "section is empty and cannot be made as active one"
