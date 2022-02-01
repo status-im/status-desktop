@@ -37,39 +37,51 @@ ModalPopup {
     }
 
     function sendTransaction() {
-// Not Refactored Yet
-//        stack.currentGroup.isPending = true
-//        let success = false
-//        if(txtAmount.selectedAsset.address === "" || txtAmount.selectedAsset.address === Constants.zeroAddress){
-//            success = RootStore.transferEth(
-//                        selectFromAccount.selectedAccount.address,
-//                        selectRecipient.selectedRecipient.address,
-//                        txtAmount.selectedAmount,
-//                        gasSelector.selectedGasLimit,
-//                        gasSelector.eip1599Enabled ? "" : gasSelector.selectedGasPrice,
-//                        gasSelector.selectedTipLimit,
-//                        gasSelector.selectedOverallLimit,
-//                        transactionSigner.enteredPassword,
-//                        stack.uuid)
-//        } else {
-//            success = RootStore.transferTokens(
-//                        selectFromAccount.selectedAccount.address,
-//                        selectRecipient.selectedRecipient.address,
-//                        txtAmount.selectedAsset.address,
-//                        txtAmount.selectedAmount,
-//                        gasSelector.selectedGasLimit,
-//                        gasSelector.eip1599Enabled ? "" : gasSelector.selectedGasPrice,
-//                        gasSelector.selectedTipLimit,
-//                        gasSelector.selectedOverallLimit,
-//                        transactionSigner.enteredPassword,
-//                        stack.uuid)
-//        }
+        stack.currentGroup.isPending = true
+        let success = false
+        if(txtAmount.selectedAsset.address === "" || txtAmount.selectedAsset.address === Constants.zeroAddress){
+            success = root.store.transferEth(
+                        selectFromAccount.selectedAccount.address,
+                        selectRecipient.selectedRecipient.address,
+                        txtAmount.selectedAmount,
+                        gasSelector.selectedGasLimit,
+                        gasSelector.eip1599Enabled ? "" : gasSelector.selectedGasPrice,
+                        gasSelector.selectedTipLimit,
+                        gasSelector.selectedOverallLimit,
+                        transactionSigner.enteredPassword,
+                        stack.uuid)
+        } else {
+            // Not Refactored Yet
+            //            success = RootStore.transferTokens(
+            //                        selectFromAccount.selectedAccount.address,
+            //                        selectRecipient.selectedRecipient.address,
+            //                        txtAmount.selectedAsset.address,
+            //                        txtAmount.selectedAmount,
+            //                        gasSelector.selectedGasLimit,
+            //                        gasSelector.eip1599Enabled ? "" : gasSelector.selectedGasPrice,
+            //                        gasSelector.selectedTipLimit,
+            //                        gasSelector.selectedOverallLimit,
+            //                        transactionSigner.enteredPassword,
+            //                        stack.uuid)
+        }
 
-//        if(!success){
-//            //% "Invalid transaction parameters"
-//            sendingError.text = qsTrId("invalid-transaction-parameters")
-//            sendingError.open()
-//        }
+        if(!success){
+            //% "Invalid transaction parameters"
+            sendingError.text = qsTrId("invalid-transaction-parameters")
+            sendingError.open()
+        } else {
+            // TODO remove this else once the thread and connection are back
+            stack.currentGroup.isPending = false
+            //% "Transaction pending..."
+            Global.toastMessage.title = qsTrId("ens-transaction-pending")
+            Global.toastMessage.source = Style.svg("loading")
+            Global.toastMessage.iconColor = Style.current.primary
+            Global.toastMessage.iconRotates = true
+            // Refactor this
+            // Global.toastMessage.link = `${walletModel.utilsView.etherscanLink}/${response.result}`
+            Global.toastMessage.open()
+            root.close()
+        }
     }
 
     TransactionStackView {

@@ -68,4 +68,9 @@ QtObject {
     function getGasEthValue(gweiValue, gasLimit) {
         return profileSectionStore.ensUsernamesStore.getGasEthValue(gweiValue, gasLimit)
     }
+
+    function transferEth(from, to, amount, gasLimit, gasPrice, tipLimit, overallLimit, password, uuid) {
+       return walletSectionTransactions.transferEth(from, to, amount, gasLimit, gasPrice, tipLimit,
+        overallLimit, password, uuid);
+    }
 }

@@ -143,7 +143,14 @@ QtObject:
     )
     self.threadpool.start(arg)
 
-  proc estimateGas*(self: Service, from_addr: string, to: string, assetAddress: string, value: string, data: string = ""): string {.slot.} =
+  proc estimateGas*(
+      self: Service,
+      from_addr: string,
+      to: string,
+      assetAddress: string,
+      value: string,
+      data: string = ""
+    ): string {.slot.} =
     var response: RpcResponse[JsonNode] 
     try:
       if assetAddress != ZERO_ADDRESS and not assetAddress.isEmptyOrWhitespace:
@@ -178,3 +185,36 @@ QtObject:
       error "Error estimating gas", msg = e.msg
       result = $(%* { "result": "-1", "success": false, "error": { "message": e.msg } })
     
+  proc transferEth*(
+      self: Service,
+      from_addr: string,
+      to_addr: string,
+      value: string,
+      gas: string,
+      gasPrice: string,
+      maxPriorityFeePerGas: string,
+      maxFeePerGas: string,
+      password: string,
+      uuid: string
+    ): bool {.slot.} =
+    try:
+      let eip1559Enabled = self.settingsService.isEIP1559Enabled()
+      eth_utils.validateTransactionInput(from_addr, to_addr, assetAddress = "", value, gas,
+        gasPrice, data = "", eip1559Enabled, maxPriorityFeePerGas, maxFeePerGas, uuid)
+
+      # TODO move this to another thread
+      var tx = ens_utils.buildTransaction(parseAddress(from_addr), eth2Wei(parseFloat(value), 18),
+          gas, gasPrice, eip1559Enabled, maxPriorityFeePerGas, maxFeePerGas)
+      tx.to = parseAddress(to_addr).some
+
+      let json: JsonNode = %tx
+      let response = eth.sendTransaction($json, password)
+      if response.error != nil:
+        raise newException(Exception, response.error.message)
+
+      self.trackPendingTransaction(response.result.getStr, from_addr, to_addr,
+        $PendingTransactionTypeDto.WalletTransfer, data = "")
+    except Exception as e:
+      error "Error sending eth transfer transaction", msg = e.msg
+      return false
+    return true
