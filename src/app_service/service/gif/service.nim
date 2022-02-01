@@ -7,7 +7,7 @@ import chronicles
 import sequtils
 
 import ../settings/service_interface as settings_service
-import status/statusgo_backend_new/gif as status_gif
+import status/gif as status_gif
 import ./dto
 import ./service_interface
 
