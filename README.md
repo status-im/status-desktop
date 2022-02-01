@@ -11,7 +11,24 @@ Dev Docs: [https://hackmd.io/@status-desktop/B1naRjxh_/https%3A%2F%2Fhackmd.io%2
 
 
 # CPP App
-Buid&test&run:
+
+### Setup:
+1. conancenter
+Execute `conan remote list`. It should return this line among the results. 
+```
+conancenter: https://center.conan.io [Verify SSL: True]
+```
+If it doesnt, consider upgrading conan with `pip install conan --upgrade` and then executing. `conan remote add -i 0 conancenter https://center.conan.io` . See [conan's documentation](https://docs.conan.io/en/latest/uploading_packages/remotes.html#conancenter) for more info.
+
+
+2. conan libstdc++11
+This applies to linux: the default conan profile does not work, since GCC uses the new C++ ABI since version 5.1 and conan, for compatibility purposes uses the old C++ ABI.
+Execute this to update the profile:
+```
+conan profile update settings.compiler.libcxx=libstdc++11 default
+```
+
+### Buid & test & run:
 ```
 cd build
 conan install .. -s build_type=Release --build=missing
