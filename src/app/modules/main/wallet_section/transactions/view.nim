@@ -103,3 +103,6 @@ QtObject:
     read = getIsNonArchivalNode
     notify = isNonArchivalNodeChanged
 
+
+  proc estimateGas*(self: View, from_addr: string, to: string, assetAddress: string, value: string, data: string): string {.slot.} =
+    result = self.delegate.estimateGas(from_addr, to, assetAddress, value, data)

@@ -75,3 +75,6 @@ method getAccountByAddress*(self: Controller, address: string): WalletAccountDto
 
 method loadTransactions*(self: Controller, address: string, toBlock: Uint256, limit: int = 20, loadMore: bool = false) =
   self.transactionService.loadTransactions(address, toBlock, limit, loadMore)
+
+method estimateGas*(self: Controller, from_addr: string, to: string, assetAddress: string, value: string, data: string): string =
+  result = self.transactionService.estimateGas(from_addr, to, assetAddress, value, data)

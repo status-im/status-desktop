@@ -9,7 +9,10 @@ import ../ens/utils as ens_utils
 import service_interface
 import status/permissions as status_go_permissions
 import status/core as status_go_core
+import status/eth as status_eth
 import ../../common/utils as status_utils
+import ../eth/utils as eth_utils
+import ../eth/dto/transaction as transaction_data_dto
 from stew/base32 import nil
 from stew/base58 import nil
 import stew/byteutils
@@ -134,17 +137,13 @@ proc process(self: Service, data: Web3SendAsyncReadOnly): string =
 
       var success: bool
       var errorMessage = ""
-      var response = ""
+      var response: RpcResponse[JsonNode]
       var validInput: bool = true
 
-
-      # TODO: use the transaction service to send the trx
-
-      #[
-      let eip1559Enabled = self.wallet.isEIP1559Enabled()
+      let eip1559Enabled: bool = self.settingsService.isEIP1559Enabled()
 
       try:
-        validateTransactionInput(fromAddress, to, "", value, selectedGasLimit, selectedGasPrice, txData, eip1559Enabled, selectedTipLimit, selectedOverallLimit, "dummy")
+        eth_utils.validateTransactionInput(fromAddress, to, "", value, selectedGasLimit, selectedGasPrice, txData, eip1559Enabled, selectedTipLimit, selectedOverallLimit, "dummy")
       except Exception as e:
         validInput = false
         success = false
@@ -152,39 +151,43 @@ proc process(self: Service, data: Web3SendAsyncReadOnly): string =
 
       if validInput:
         # TODO make this async
-        response = wallet.sendTransaction(fromAddress, to, value, selectedGasLimit, selectedGasPrice, eip1559Enabled, selectedTipLimit, selectedOverallLimit, password, success, txData)
-        errorMessage = if not success:
-          if response == "":
-            "web3-response-error"
+        var tx = ens_utils.buildTransaction(
+          parseAddress(fromAddress),
+          eth2Wei(parseFloat(value), 18),
+          selectedGasLimit,
+          selectedGasPrice,
+          eip1559Enabled,
+          selectedTipLimit,
+          selectedOverallLimit,
+          txData
+        )
+        tx.to = parseAddress(to).some
+
+        try:
+          # TODO: use the transaction service to send the trx
+          let json: JsonNode = %tx
+          response = status_eth.sendTransaction($json, password)
+          if response.error != nil:
+            success = false
+            errorMessage = response.error.message
           else:
-            response
-        else:
-          ""
+            success = true
+            errorMessage = ""
+        except Exception as e:
+          error "Error sending transaction", msg = e.msg
+          errorMessage = e.msg
+          success = false
 
-      return $ %* {
-        "type": ResponseTypes.Web3SendAsyncCallback,
-        "messageId": data.messageId,
-        "error": errorMessage,
-        "result": {
-          "jsonrpc": "2.0",
-          "id": data.payload.id,
-          "result": if (success): response else: ""
-        }
-      }
-
-      ]#
-      # TODO: delete this:
-      return $ %* {
-        "type": ResponseTypes.Web3SendAsyncCallback,
-        "messageId": data.messageId,
-        "error": "",
-        "result": {
-          "jsonrpc": "2.0",
-          "id": data.payload.id,
-          "result": ""
-        }
-      }
-
+        return $ %* {
+            "type": ResponseTypes.Web3SendAsyncCallback,
+            "messageId": data.messageId,
+            "error": errorMessage,
+            "result": {
+              "jsonrpc": "2.0",
+              "id": data.payload.id,
+              "result": if (success): response.result.getStr else: ""
+            }
+          }
 
     except Exception as e:
       error "Error sending the transaction", msg = e.msg

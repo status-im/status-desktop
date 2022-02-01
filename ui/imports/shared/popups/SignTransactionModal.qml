@@ -105,7 +105,7 @@ StatusModal {
 //                            //% "Authorize %1 %2"
 //                            return qsTrId("authorize--1--2").arg(approveData.amount).arg(approveData.symbol)
 //                    }
-                    return qsTrId("command-button-send");
+                    return qsTr("Send");
                 }
                 //% "Continue"
                 footerText: qsTrId("continue")
@@ -119,7 +119,7 @@ StatusModal {
                     id: selectFromAccount
                     // Not Refactored Yet
 //                    accounts: root.store.walletModelInst.accountsView.accounts
-//                    currency: root.store.walletModelInst.balanceView.defaultCurrency
+                    currency: root.store.currentCurrency
                     width: stack.width
                     selectedAccount: root.selectedAccount
                     //% "Choose account"
@@ -150,37 +150,35 @@ StatusModal {
                 GasSelector {
                     id: gasSelector
                     anchors.topMargin: Style.current.padding
-                    // Not Refactored Yet
-//                    gasPrice: parseFloat(root.store.walletModelInst.gasView.gasPrice)
-//                    getGasEthValue: root.store.walletModelInst.gasView.getGasEthValue
-//                    getFiatValue: root.store.walletModelInst.balanceView.getFiatValue
-//                    defaultCurrency: root.store.walletModelInst.balanceView.defaultCurrency
+                    gasPrice: parseFloat(root.store.gasPrice)
+                    getGasEthValue: root.store.getGasEthValue
+                    getFiatValue: root.store.getFiatValue
+                    defaultCurrency: root.store.currentCurrency
                     width: stack.width
         
                     property var estimateGas: Backpressure.debounce(gasSelector, 600, function() {
-                        // Not Refactored Yet
-//                        if (!(selectFromAccount.selectedAccount && selectFromAccount.selectedAccount.address &&
-//                            selectRecipient.selectedRecipient && selectRecipient.selectedRecipient.address &&
-//                            root.selectedAsset && root.selectedAsset.address &&
-//                            root.selectedAmount)) {
-//                            selectedGasLimit = 250000
-//                            defaultGasLimit = selectedGasLimit
-//                            return
-//                        }
+                       if (!(selectFromAccount.selectedAccount && selectFromAccount.selectedAccount.address &&
+                           selectRecipient.selectedRecipient && selectRecipient.selectedRecipient.address &&
+                           root.selectedAsset && root.selectedAsset.address &&
+                           root.selectedAmount)) {
+                           selectedGasLimit = 250000
+                           defaultGasLimit = selectedGasLimit
+                           return
+                       }
                         
-//                        let gasEstimate = JSON.parse(root.store.walletModelInst.gasView.estimateGas(
-//                            selectFromAccount.selectedAccount.address,
-//                            selectRecipient.selectedRecipient.address,
-//                            root.selectedAsset.address,
-//                            root.selectedAmount,
-//                            trxData))
+                       let gasEstimate = JSON.parse(root.store.estimateGas(
+                           selectFromAccount.selectedAccount.address,
+                           selectRecipient.selectedRecipient.address,
+                           root.selectedAsset.address,
+                           root.selectedAmount,
+                           trxData))
 
-//                        if (!gasEstimate.success) {
-//                            let message = qsTrId("error-estimating-gas---1").arg(gasEstimate.error.message)
-//                            root.openGasEstimateErrorPopup(message);
-//                        }
-//                        selectedGasLimit = gasEstimate.result
-//                        defaultGasLimit = selectedGasLimit
+                       if (!gasEstimate.success) {
+                           let message = qsTr("Error estimating gas: %1").arg(gasEstimate.error.message)
+                           root.openGasEstimateErrorPopup(message);
+                       }
+                       selectedGasLimit = gasEstimate.result
+                       defaultGasLimit = selectedGasLimit
                     })
                 }
                 GasValidator {
@@ -217,8 +215,7 @@ StatusModal {
                     toAccount: selectRecipient.selectedRecipient
                     asset: root.selectedAsset
                     amount: { "value": root.selectedAmount, "fiatValue": root.selectedFiatAmount }
-                    // Not Refactored Yet
-//                    currency: root.store.walletModelInst.balanceView.defaultCurrency
+                    currency: root.store.currentCurrency
                     isFromEditable: false
                     trxData: root.trxData
                     isGasEditable: true

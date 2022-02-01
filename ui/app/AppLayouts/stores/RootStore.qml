@@ -54,4 +54,17 @@ QtObject {
     function generateIdenticon(pk) {
         return globalUtils.generateIdenticon(pk);
     }
+
+    property string currentCurrency: walletSection.currentCurrency
+    function estimateGas(from_addr, to, assetAddress, value, data) {
+        return walletSectionTransactions.estimateGas(from_addr, to, assetAddress, value, data)
+    }
+    // TODO change this to use a better store once it is moved out of the ENS module
+    property string gasPrice: profileSectionStore.ensUsernamesStore.gasPrice
+    function getFiatValue(balance, cryptoSymbo, fiatSymbol) {
+        return profileSectionStore.ensUsernamesStore.getFiatValue(balance, cryptoSymbo, fiatSymbol)
+    }
+    function getGasEthValue(gweiValue, gasLimit) {
+        return profileSectionStore.ensUsernamesStore.getGasEthValue(gweiValue, gasLimit)
+    }
 }

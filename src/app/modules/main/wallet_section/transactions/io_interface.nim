@@ -40,6 +40,9 @@ method setHistoryFetchState*(self: AccessInterface, addresses: seq[string], isFe
 method setIsNonArchivalNode*(self: AccessInterface, isNonArchivalNode: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method estimateGas*(self: AccessInterface, from_addr: string, to: string, assetAddress: string, value: string, data: string): string {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 # View Delegate Interface
 # Delegate for the view must be declared here due to use of QtObject and multi 
 # inheritance, which is not well supported in Nim.
