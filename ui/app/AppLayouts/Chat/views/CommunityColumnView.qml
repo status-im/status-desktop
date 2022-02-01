@@ -209,24 +209,27 @@ Item {
                 property var categoryItem
 
                 openHandler: function (id) {
-                    // Not Refactored Yet
-//                    categoryItem = root.store.chatsModelInst.communities.activeCommunity.getCommunityCategoryItemById(id)
+                    let jsonObj = root.communitySectionModule.getItemAsJson(id)
+                    let obj = JSON.parse(jsonObj)
+                    if (obj.error) {
+                        console.error("error parsing chat item json object, id: ", id, " error: ", obj.error)
+                        close()
+                        return
+                    }
+                    categoryItem = obj
                 }
 
                 StatusMenuItem {
-                    // Not Refactored Yet
                     enabled: communityData.amISectionAdmin
                     //% "Edit Category"
                     text: qsTrId("edit-category")
                     icon.name: "edit"
                     onTriggered: {
-                        // Not Refactored Yet
-//                        Global.openPopup(createCategoryPopup, {
-//                            communityId: root.store.chatsModelInst.communities.activeCommunity.id,
-//                            isEdit: true,
-//                            categoryId: categoryItem.id,
-//                            categoryName: categoryItem.name
-//                        })
+                       Global.openPopup(createCategoryPopup, {
+                           isEdit: true,
+                           categoryId: categoryItem.categoryId,
+                           categoryName: categoryItem.name
+                       })
                     }
                 }
 
@@ -247,7 +250,7 @@ Item {
                             //% "Are you sure you want to delete %1 category? Channels inside the category won’t be deleted."
                             confirmationText: qsTrId("are-you-sure-you-want-to-delete--1-category--channels-inside-the-category-won-t-be-deleted-")
                                 .arg(categoryItem.name),
-                            categoryId: categoryItem.id
+                            categoryId: categoryItem.categoryId
                         })
                     }
                 }
@@ -442,13 +445,12 @@ Item {
                 close();
             }
             onConfirmButtonClicked: function(){
-                // Not Refactored Yet
-//                const error = root.store.chatsModelInst.communities.deleteCommunityCategory(root.store.chatsModelInst.communities.activeCommunity.id, categoryId)
-//                if (error) {
-//                    creatingError.text = error
-//                    return creatingError.open()
-//                }
-//                close();
+                const error = root.store.deleteCommunityCategory(categoryId);
+                if (error) {
+                    deleteError.text = error
+                    return deleteError.open()
+                }
+                close();
             }
         }
     }

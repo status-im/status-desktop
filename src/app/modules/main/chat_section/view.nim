@@ -225,3 +225,6 @@ QtObject:
   proc createCommunityCategory*(self: View, name: string, channels: string) {.slot.} =
     let channelsSeq = map(parseJson(channels).getElems(), proc(x:JsonNode):string = x.getStr())
     self.delegate.createCommunityCategory(name, channelsSeq)
+
+  proc deleteCommunityCategory*(self: View, categoryId: string) {.slot.} =
+    self.delegate.deleteCommunityCategory(categoryId)

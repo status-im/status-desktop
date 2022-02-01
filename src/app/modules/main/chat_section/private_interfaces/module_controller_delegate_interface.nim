@@ -49,3 +49,6 @@ method reorderChannels*(self: AccessInterface, chatId, categoryId: string, posit
 
 method onCommunityCategoryCreated*(self: AccessInterface, category: Category, chats: seq[ChatDto]) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method onCommunityCategoryDeleted*(self: AccessInterface, category: Category) {.base.} =
+  raise newException(ValueError, "No implementation available")
