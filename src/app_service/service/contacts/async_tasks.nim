@@ -21,6 +21,9 @@ const lookupContactTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
     # TODO refactor those calls to use the new backend and also do it in a signle call
     pubkey = ens_utils.pubkey(arg.value)
     address = ens_utils.address(arg.value)
+  else:
+    pubkey = ""
+    address = ""
   
   let output = %*{
     "id": pubkey,
