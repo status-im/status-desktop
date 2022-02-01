@@ -14,10 +14,11 @@ Rectangle {
     property bool isMessageActive: false
     property var messageContextMenu
     property bool showMoreButton: true
+    property bool isInPinnedPopup: false
     property bool activityCenterMsg
     property bool placeholderMsg
     property string fromAuthor
-    property alias editBtnActive: editBtn.active
+    property bool editBtnActive: false
     signal replyClicked(string messageId, string author)
     signal hoverChanged(bool hovered)
     signal setMessageActive(string messageId, bool active)
@@ -67,45 +68,52 @@ Rectangle {
         anchors.verticalCenter: buttonsContainer.verticalCenter
         height: parent.height - 2 * buttonsContainer.containerMargin
 
-        StatusFlatRoundButton {
-            id: emojiBtn
-            width: 32
-            height: 32
-            icon.name: "reaction-b"
-            type: StatusFlatRoundButton.Type.Tertiary
-            //% "Add reaction"
-            tooltip.text: qsTrId("add-reaction")
-            onClicked: {
-                setMessageActive(messageId, true)
-                // Set parent, X & Y positions for the messageContextMenu
-                buttonsContainer.messageContextMenu.parent = buttonsContainer
-                buttonsContainer.messageContextMenu.setXPosition = function() { return (-Math.abs(buttonsContainer.width - buttonsContainer.messageContextMenu.emojiContainer.width))}
-                buttonsContainer.messageContextMenu.setYPosition = function() { return (-buttonsContainer.messageContextMenu.height - 4)}
-                buttonsContainer.clickMessage(false, false, false, null, true, false)
-            }
-            onHoveredChanged: buttonsContainer.hoverChanged(this.hovered)
-        }
-
-        StatusFlatRoundButton {
-            id: replyBtn
-            width: 32
-            height: 32
-            icon.name: "reply"
-            type: StatusFlatRoundButton.Type.Tertiary
-            //% "Reply"
-            tooltip.text: qsTrId("message-reply")
-            onClicked: {
-                buttonsContainer.replyClicked(messageId, fromAuthor);
-                if (messageContextMenu.closeParentPopup) {
-                    messageContextMenu.closeParentPopup()
+        Loader {
+            active: !buttonsContainer.isInPinnedPopup
+            sourceComponent: StatusFlatRoundButton {
+                id: emojiBtn
+                width: 32
+                height: 32
+                icon.name: "reaction-b"
+                type: StatusFlatRoundButton.Type.Tertiary
+                //% "Add reaction"
+                tooltip.text: qsTrId("add-reaction")
+                onClicked: {
+                    setMessageActive(messageId, true)
+                    // Set parent, X & Y positions for the messageContextMenu
+                    buttonsContainer.messageContextMenu.parent = buttonsContainer
+                    buttonsContainer.messageContextMenu.setXPosition = function() { return (-Math.abs(buttonsContainer.width - buttonsContainer.messageContextMenu.emojiContainer.width))}
+                    buttonsContainer.messageContextMenu.setYPosition = function() { return (-buttonsContainer.messageContextMenu.height - 4)}
+                    buttonsContainer.clickMessage(false, false, false, null, true, false)
                 }
+                onHoveredChanged: buttonsContainer.hoverChanged(this.hovered)
             }
-            onHoveredChanged: buttonsContainer.hoverChanged(this.hovered)
         }
 
         Loader {
+            active: !buttonsContainer.isInPinnedPopup
+            sourceComponent: StatusFlatRoundButton {
+                id: replyBtn
+                width: 32
+                height: 32
+                icon.name: "reply"
+                type: StatusFlatRoundButton.Type.Tertiary
+                //% "Reply"
+                tooltip.text: qsTrId("message-reply")
+                onClicked: {
+                    buttonsContainer.replyClicked(messageId, fromAuthor);
+                    if (messageContextMenu.closeParentPopup) {
+                        messageContextMenu.closeParentPopup()
+                    }
+                }
+                onHoveredChanged: buttonsContainer.hoverChanged(this.hovered)
+            }
+        }
+        
+
+        Loader {
             id: editBtn
-            active: false
+            active: buttonsContainer.editBtnActive && !buttonsContainer.isInPinnedPopup
             sourceComponent: StatusFlatRoundButton {
                 id: btn
                 width: 32

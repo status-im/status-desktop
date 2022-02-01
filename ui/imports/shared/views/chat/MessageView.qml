@@ -38,6 +38,7 @@ Column {
     property string messagePinnedBy: ""
     property var reactionsModel: []
     property string linkUrls: ""
+    property bool isInPinnedPopup: false // The pinned popup limits the number of buttons shown
 
     property int prevMessageIndex: -1
     property var prevMessageAsJsonObj
@@ -355,6 +356,7 @@ Column {
             isHovered: root.isHovered
             editModeOn: root.editModeOn
             linkUrls: root.linkUrls
+            isInPinnedPopup: root.isInPinnedPopup
 
             onAddEmoji: {
                 root.clickMessage(isProfileClick, isSticker, isImage , image, emojiOnly, hideEmojiPicker)

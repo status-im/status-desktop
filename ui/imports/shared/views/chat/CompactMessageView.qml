@@ -31,6 +31,7 @@ Item {
     property bool isMessageActive: false
     property bool isCurrentUser: false
     property bool isHovered: false
+    property bool isInPinnedPopup: false
     property bool showMoreButton: {
         if(!root.messageStore)
             return false
@@ -100,6 +101,7 @@ Item {
         anchors.topMargin: -Style.current.halfPadding
         messageContextMenu: root.messageContextMenu
         showMoreButton: root.showMoreButton
+        isInPinnedPopup: root.isInPinnedPopup
         fromAuthor: senderId
         editBtnActive: isText && !editModeOn && root.isCurrentUser
         activityCenterMsg: activityCenterMessage
