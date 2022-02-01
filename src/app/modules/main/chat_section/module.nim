@@ -441,6 +441,20 @@ method onCommunityCategoryCreated*(self: Module, cat: Category, chats: seq[ChatD
   categoryItem.prependSubItems(categoryChannels)
   self.view.chatsModel().appendItem(categoryItem)
 
+method onCommunityCategoryDeleted*(self: Module, cat: Category) =
+  let chats = self.controller.getChats(self.controller.getMySectionId(), cat.id)
+  for c in chats:
+    let chatDto = self.controller.getChatDetails(self.controller.getMySectionId(), c.id)
+    let hasNotification = chatDto.unviewedMessagesCount > 0 or chatDto.unviewedMentionsCount > 0
+    let notificationsCount = chatDto.unviewedMentionsCount
+    let amIChatAdmin = self.controller.getMyCommunity().admin
+    let channelItem = initItem(chatDto.id, chatDto.name, chatDto.identicon, false, chatDto.color,
+        chatDto.description, chatDto.chatType.int, amIChatAdmin, hasNotification, notificationsCount,
+        chatDto.muted, active = false, chatDto.position, "")
+    self.view.chatsModel().appendItem(channelItem)
+
+  self.view.chatsModel().removeItemById(cat.id)
+
 method onCommunityChannelDeletedOrChatLeft*(self: Module, chatId: string) =
   if(not self.chatContentModules.contains(chatId)):
     return
@@ -598,6 +612,9 @@ method editCommunityChannel*(self: Module, channelId, name, description, categor
 
 method createCommunityCategory*(self: Module, name: string, channels: seq[string]) =
   self.controller.createCommunityCategory(name, channels)
+
+method deleteCommunityCategory*(self: Module, categoryId: string) =
+  self.controller.deleteCommunityCategory(categoryId)
 
 method leaveCommunity*(self: Module) =
   self.controller.leaveCommunity()
