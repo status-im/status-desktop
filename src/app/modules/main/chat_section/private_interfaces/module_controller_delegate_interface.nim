@@ -52,3 +52,6 @@ method onCommunityCategoryCreated*(self: AccessInterface, category: Category, ch
 
 method onCommunityCategoryDeleted*(self: AccessInterface, category: Category) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method onCommunityCategoryEdited*(self: AccessInterface, category: Category, chats: seq[ChatDto]) {.base.} =
+  raise newException(ValueError, "No implementation available")

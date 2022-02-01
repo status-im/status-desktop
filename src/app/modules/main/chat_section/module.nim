@@ -429,6 +429,30 @@ method onCommunityCategoryDeleted*(self: Module, cat: Category) =
     self.view.chatsModel().appendItem(channelItem)
 
   self.view.chatsModel().removeItemById(cat.id)
+  
+method onCommunityCategoryEdited*(self: Module, cat: Category, chats: seq[ChatDto]) =
+  var categoryItem = self.view.chatsModel().getItemById(cat.id)
+  let amIChatAdmin = self.controller.getMyCommunity().admin
+
+  self.view.chatsModel.renameItem(cat.id, cat.name)
+
+  for chatDto in chats:
+    let hasNotification = chatDto.unviewedMessagesCount > 0 or chatDto.unviewedMentionsCount > 0
+    let notificationsCount = chatDto.unviewedMentionsCount
+
+    self.view.chatsModel().removeItemById(chatDto.id)
+    categoryItem.subItems().removeItemById(chatDto.id)
+
+    if chatDto.categoryId == cat.id:
+      let channelItem = initSubItem(chatDto.id, cat.id, chatDto.name, chatDto.identicon, false, chatDto.color, 
+          chatDto.description, chatDto.chatType.int, true, hasNotification, notificationsCount, chatDto.muted, 
+          false, chatDto.position)
+      categoryItem.prependSubItem(channelItem)
+    else:
+      let channelItem = initItem(chatDto.id, chatDto.name, chatDto.identicon, false, chatDto.color,
+        chatDto.description, chatDto.chatType.int, amIChatAdmin, hasNotification, notificationsCount,
+        chatDto.muted, active = false, chatDto.position, "")
+      self.view.chatsModel().appendItem(channelItem)
 
 method onCommunityChannelDeletedOrChatLeft*(self: Module, chatId: string) =
   if(not self.chatContentModules.contains(chatId)):
@@ -596,6 +620,9 @@ method editCommunityChannel*(self: Module, channelId, name, description, categor
 method createCommunityCategory*(self: Module, name: string, channels: seq[string]) =
   self.controller.createCommunityCategory(name, channels)
 
+method editCommunityCategory*(self: Module, categoryId: string, name: string, channels: seq[string]) =
+  self.controller.editCommunityCategory(categoryId, name, channels)
+
 method deleteCommunityCategory*(self: Module, categoryId: string) =
   self.controller.deleteCommunityCategory(categoryId)
 
@@ -616,3 +643,19 @@ method setCommunityMuted*(self: Module, muted: bool) =
 
 method inviteUsersToCommunity*(self: Module, pubKeysJSON: string): string =
   result = self.controller.inviteUsersToCommunity(pubKeysJSON)
+
+method prepareEditCategoryModel*(self: Module, categoryId: string) =
+  self.view.editCategoryChannelsModel().clearItems()
+  let communityId = self.controller.getMySectionId()
+  let chats = self.controller.getChats(communityId, "")
+  for chat in chats:
+    let c = self.controller.getChatDetails(communityId, chat.id)
+    let item = initItem(c.id, c.name, "", false, c.color, c.description, c.chatType.int, false, 
+                        false, 0, c.muted, active = false, c.position, "")
+    self.view.editCategoryChannelsModel().appendItem(item)
+  let catChats = self.controller.getChats(communityId, categoryId)
+  for chat in catChats:
+    let c = self.controller.getChatDetails(communityId, chat.id)
+    let item = initItem(c.id, c.name, "", false, c.color, c.description, c.chatType.int, false, 
+                        false, 0, c.muted, active = false, c.position, categoryId)
+    self.view.editCategoryChannelsModel().appendItem(item)

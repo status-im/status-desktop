@@ -131,6 +131,9 @@ method editCommunityChannel*(self: AccessInterface, channelId: string, name: str
 method createCommunityCategory*(self: AccessInterface, name: string, channels: seq[string]) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method editCommunityCategory*(self: AccessInterface, categoryId: string, name: string, channels: seq[string]) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method deleteCommunityCategory*(self: AccessInterface, categoryId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 

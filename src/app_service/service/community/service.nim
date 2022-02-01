@@ -592,18 +592,31 @@ QtObject:
       channels: seq[string]) =
     try:
       let response = status_go.editCommunityCategory(communityId, categoryId, name, channels)
-
       if response.error != nil:
         let error = Json.decode($response.error, RpcError)
         raise newException(RpcException, "Error creating community category: " & error.message)
 
       if response.result != nil and response.result.kind != JNull:
+        var chats: seq[ChatDto] = @[]
+        for chatId, v in response.result["communityChanges"].getElems()[0]["chatsModified"].pairs():
+          let idx = findIndexById(chatId, self.joinedCommunities[communityId].chats)
+          if idx > -1:
+            self.joinedCommunities[communityId].chats[idx].categoryId = v["CategoryModified"].getStr()
+            self.joinedCommunities[communityId].chats[idx].position = v["PositionModified"].getInt()
+
+            let fullChatId = communityId & chatId
+            var chatDetails = self.chatService.getChatById(fullChatId) # we are free to do this cause channel must be created before we add it to a category
+            chatDetails.updateMissingFields(self.joinedCommunities[communityId].chats[idx])
+            self.chatService.updateOrAddChat(chatDetails) # we have to update chats stored in the chat service.
+            chats.add(chatDetails)
+
         for k, v in response.result["communityChanges"].getElems()[0]["categoriesModified"].pairs():
           let category = v.toCategory()
           self.events.emit(SIGNAL_COMMUNITY_CATEGORY_EDITED,
-            CommunityCategoryArgs(communityId: communityId, category: category #[, channels: channels]#)) # TODO: add channels
+            CommunityCategoryArgs(communityId: communityId, category: category, chats: chats))
+
     except Exception as e:
-      error "Error creating community category", msg = e.msg, communityId, name
+      error "Error editing community category", msg = e.msg, communityId, name
 
   proc deleteCommunityCategory*(self: Service, communityId: string, categoryId: string) =
     try:
