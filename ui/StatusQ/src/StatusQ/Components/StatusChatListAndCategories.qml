@@ -20,11 +20,9 @@ Item {
         text: "More"
     }
 
-    property string selectedChatId: ""
+    property var model: []
     property bool showCategoryActionButtons: false
     property bool showPopupMenu: true
-    property alias chatList: statusChatList.chatListItems
-    property alias categoryList: delegateModel
     property alias sensor: sensor
     property bool draggableItems: false
     property bool draggableCategories: false
@@ -71,26 +69,25 @@ Item {
             StatusChatList {
                 id: statusChatList
                 anchors.horizontalCenter: parent.horizontalCenter
-                visible: chatListItems.count > 0
-                selectedChatId: statusChatListAndCategories.selectedChatId
+                visible: statusChatList.model.count > 0
                 onChatItemSelected: statusChatListAndCategories.chatItemSelected(id)
                 onChatItemUnmuted: statusChatListAndCategories.chatItemUnmuted(id)
                 onChatItemReordered: statusChatListAndCategories.chatItemReordered(categoryId, id, from, to)
                 draggableItems: statusChatListAndCategories.draggableItems
+                model: statusChatListAndCategories.model
                 filterFn: function (model) {
-                    return !!!model.categoryId
+                    return (model.subItems.count === 0)
                 }
                 popupMenu: statusChatListAndCategories.chatListPopupMenu
             }
 
             DelegateModel {
                 id: delegateModel
-
+                model: statusChatListAndCategories.model
                 delegate: Item {
                     id: draggable
                     width: statusChatListCategory.width
                     height: statusChatListCategory.height
-
                     property alias chatListCategory: statusChatListCategory
 
                     StatusChatListCategory {
@@ -99,7 +96,7 @@ Item {
                         property bool dragActive: false
                         property real startY: 0
                         property real startX: 0
-                      
+
                         opacity: dragActive ? 0.0 : 1.0
 
                         dragSensor.drag.target: draggedListCategoryLoader.item
@@ -136,16 +133,15 @@ Item {
                         menuButton.tooltip: statusChatListAndCategories.categoryMenuButtonToolTip
 
                         originalOrder: model.position
-                        categoryId: model.categoryId
+                        categoryId: model.itemId
                         name: model.name
                         showActionButtons: statusChatListAndCategories.showCategoryActionButtons
-                        addButton.onClicked: statusChatListAndCategories.categoryAddButtonClicked(model.categoryId)
+                        addButton.onClicked: statusChatListAndCategories.categoryAddButtonClicked(model.itemId)
 
-                        chatList.chatListItems.model: statusChatListAndCategories.chatList.model
-                        chatList.selectedChatId: statusChatListAndCategories.selectedChatId
+                        chatList.model: model.subItems
                         chatList.onChatItemSelected: statusChatListAndCategories.chatItemSelected(id)
                         chatList.onChatItemUnmuted: statusChatListAndCategories.chatItemUnmuted(id)
-                        chatList.onChatItemReordered: statusChatListAndCategories.chatItemReordered(model.categoryId, id, from, to)
+                        chatList.onChatItemReordered: statusChatListAndCategories.chatItemReordered(model.itemId, id, from, to)
                         chatList.draggableItems: statusChatListAndCategories.draggableItems
 
                         popupMenu: statusChatListAndCategories.categoryPopupMenu
@@ -154,7 +150,7 @@ Item {
                         // Used to set the initial value of "opened" when the
                         // model is bound/changed.
                         opened: {
-                            let openedState = statusChatListAndCategories.openedCategoryState[model.categoryId]
+                            let openedState = statusChatListAndCategories.openedCategoryState[model.itemId]
                             return openedState !== undefined ? openedState : true // defaults to open
                         }
 
@@ -163,7 +159,7 @@ Item {
                         // as the state would be lost each time the model is
                         // changed.
                         onOpenedChanged: {
-                            statusChatListAndCategories.openedCategoryState[model.categoryId] = statusChatListCategory.opened
+                            statusChatListAndCategories.openedCategoryState[model.itemId] = statusChatListCategory.opened
                         }
                     }
 
@@ -212,8 +208,7 @@ Item {
                             name: draggable.chatListCategory.name
                             showActionButtons: draggable.chatListCategory.showActionButtons
 
-                            chatList.chatListItems.model: draggable.chatListCategory.chatList.chatListItems.model
-                            chatList.selectedChatId: draggable.chatListCategory.chatList.selectedChatId
+                            chatList.model: draggable.chatListCategory.chatList.model
                         }
                     }
                 }

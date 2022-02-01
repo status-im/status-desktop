@@ -35,11 +35,11 @@ Column {
     StatusChatListCategoryItem {
         id: statusChatListCategoryItem
         title: statusChatListCategory.name
+        visible: (model.subItems.count > 0)
         opened: statusChatListCategory.opened
         sensor.pressAndHoldInterval: 150
 
         showMenuButton: showActionButtons && !!statusChatListCategory.popupMenu
-
         highlighted: statusChatListCategory.dragged
         sensor.onClicked: {
             if (sensor.enabled) {
@@ -68,7 +68,7 @@ Column {
         visible: statusChatListCategory.opened
         categoryId: statusChatListCategory.categoryId
         filterFn: function (model) {
-            return !!model.categoryId && model.categoryId == statusChatList.categoryId
+            return !!model.parentItemId && model.parentItemId === statusChatList.categoryId
         }
 
         popupMenu: statusChatListCategory.chatListPopupMenu

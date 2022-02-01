@@ -18,7 +18,7 @@ Rectangle {
     property string name: ""
     property alias badge: statusBadge
     property bool hasUnreadMessages: false
-    property bool hasMention: false
+    property int notificationsCount: 0
     property bool muted: false
     property StatusImageSettings image: StatusImageSettings {
         width: 24
@@ -98,8 +98,8 @@ Rectangle {
                 if (statusChatListItem.muted && !hoverHander.hovered && !statusChatListItem.highlighted) {
                     return 0.4
                 }
-                return statusChatListItem.hasMention ||
-                        statusChatListItem.hasUnreadMessages ||
+                return statusChatListItem.hasUnreadMessages ||
+                        statusChatListItem.notificationsCount > 0 ||
                         statusChatListItem.selected ||
                         statusChatListItem.highlighted ||
                         statusBadge.visible ||
@@ -141,16 +141,16 @@ Rectangle {
                 if (statusChatListItem.muted && !hoverHander.hovered && !statusChatListItem.highlighted) {
                     return Theme.palette.directColor5
                 }
-                return statusChatListItem.hasMention ||
-                        statusChatListItem.hasUnreadMessages ||
+                return statusChatListItem.hasUnreadMessages ||
+                        statusChatListItem.notificationsCount > 0 ||
                         statusChatListItem.selected ||
                         statusChatListItem.highlighted ||
                         hoverHander.hovered ||
                         statusBadge.visible ? Theme.palette.directColor1 : Theme.palette.directColor4
             }
             font.weight: !statusChatListItem.muted &&
-                         (statusChatListItem.hasMention ||
-                          statusChatListItem.hasUnreadMessages ||
+                         (statusChatListItem.hasUnreadMessages ||
+                          statusChatListItem.notificationsCount > 0 ||
                           statusBadge.visible) ? Font.Bold : Font.Medium
             font.pixelSize: 15
         }
@@ -189,7 +189,8 @@ Rectangle {
             color: statusChatListItem.muted ? Theme.palette.primaryColor2 : Theme.palette.primaryColor1
             border.width: 4
             border.color: color
-            visible: statusBadge.value > 0
+            value: statusChatListItem.notificationsCount
+            visible: statusChatListItem.notificationsCount > 0
         }
     }
 }

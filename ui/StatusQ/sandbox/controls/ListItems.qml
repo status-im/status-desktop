@@ -85,7 +85,8 @@ GridLayout {
     StatusChatListItem {
         name: "has-mentions"
         type: StatusChatListItem.Type.PublicChat
-        badge.value: 1
+        hasUnreadMessages: true
+        notificationsCount: 1
     }
 
     StatusChatListItem {
@@ -100,7 +101,7 @@ GridLayout {
         type: StatusChatListItem.Type.PublicChat
         muted: true
         hasUnreadMessages: true
-        badge.value: 1
+        notificationsCount: 1
     }
 
     StatusChatListItem {
@@ -130,7 +131,7 @@ GridLayout {
         selected: true
         muted: true
         hasUnreadMessages: true
-        badge.value: 1
+        notificationsCount: 1
     }
 
 

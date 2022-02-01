@@ -15,8 +15,7 @@ Column {
     width: 288
 
     property string categoryId: ""
-    property string selectedChatId: ""
-    property alias chatListItems: delegateModel
+    property var model: []
     property bool draggableItems: false
 
     property alias statusChatListItems: statusChatListItems
@@ -24,8 +23,6 @@ Column {
     property Component popupMenu
 
     property var filterFn
-    property var profileImageFn
-    property var chatNameFn
 
     signal chatItemSelected(string id)
     signal chatItemUnmuted(string id)
@@ -39,17 +36,16 @@ Column {
 
     DelegateModel {
         id: delegateModel
-
+        model: statusChatList.model
         delegate: Item {
             id: draggable
             width: statusChatListItem.width
             height: statusChatListItem.height
-
             property alias chatListItem: statusChatListItem
 
             visible: {
                 if (!!statusChatList.filterFn) {
-                    return statusChatList.filterFn(model, statusChatList.categoryId)
+                    return statusChatList.filterFn(model)
                 }
                 return true
             }
@@ -96,31 +92,19 @@ Column {
                 StatusChatListItem {
 
                     id: statusChatListItem
-
-                    property string profileImage: ""
-
                     opacity: dragSensor.active ? 0.0 : 1.0
-                    Component.onCompleted: {
-                        if (typeof statusChatList.profileImageFn === "function") {
-                            profileImage = statusChatList.profileImageFn(model.chatId || model.id) || ""
-                        }
-                    }
                     originalOrder: model.position
-                    chatId: model.chatId || model.id
-                    categoryId: model.categoryId || ""
-                    name: !!statusChatList.chatNameFn ? statusChatList.chatNameFn(model) : model.name
-                    type: model.chatType
-                    muted: !!model.muted
-                    hasUnreadMessages: !!model.hasUnreadMessages || model.unviewedMessagesCount > 0
-                    hasMention: model.mentionsCount > 0
-                    badge.value: model.chatType === StatusChatListItem.Type.OneToOneChat ?
-                        model.unviewedMessagesCount || 0 :
-                        model.mentionsCount || 0
-                    selected: (model.chatId || model.id) === statusChatList.selectedChatId
-
-                    icon.color: model.color || ""
-                    image.isIdenticon: !!!profileImage && !!!model.identityImage && !!model.identicon
-                    image.source: profileImage || model.identityImage || model.identicon || ""
+                    chatId: model.itemId
+                    categoryId: model.parentItemId
+                    name: model.name
+                    type: !!model.type ? model.type : StatusChatListItem.Type.CommunityChat
+                    muted: model.muted
+                    hasUnreadMessages: model.hasUnreadMessages
+                    notificationsCount: model.notificationsCount
+                    selected: model.active
+                    icon.color: model.color
+                    image.isIdenticon: model.isIdenticon
+                    image.source: model.icon
 
                     sensor.cursorShape: dragSensor.cursorShape
                     onClicked: {
@@ -132,7 +116,7 @@ Column {
 
                             popupMenuSlot.item.openHandler = function () {
                                 if (!!originalOpenHandler) {
-                                    originalOpenHandler((model.chatId || model.id))
+                                    originalOpenHandler(model.itemId)
                                 }
                             }
 
@@ -152,10 +136,10 @@ Column {
                             return
                         }
                         if (!statusChatListItem.selected) {
-                            statusChatList.chatItemSelected(model.chatId || model.id)
+                            statusChatList.chatItemSelected(model.itemId)
                         }
                     }
-                    onUnmute: statusChatList.chatItemUnmuted(model.chatId || model.id)
+                    onUnmute: statusChatList.chatItemUnmuted(model.itemId)
                 }
             }
 
@@ -204,9 +188,8 @@ Column {
                     type: draggable.chatListItem.type
                     muted: draggable.chatListItem.muted
                     dragged: true
-                    hasUnreadMessages: draggable.chatListItem.hasUnreadMessages
-                    hasMention: draggable.chatListItem.hasMention
-                    badge.value: draggable.chatListItem.badge.value
+                    hasUnreadMessages: model.hasUnreadMessages
+                    notificationsCount: model.notificationsCount
                     selected: draggable.chatListItem.selected
 
                     icon.color: draggable.chatListItem.icon.color

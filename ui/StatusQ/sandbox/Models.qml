@@ -6,119 +6,188 @@ QtObject {
     property var demoChatListItems: ListModel {
         id: demoChatListItems
         ListElement {
-            chatId: "0"
+            itemId: "x012340000"
             name: "#status"
-            chatType: StatusChatListItem.Type.PublicChat
-            muted: false
-            unreadMessagesCount: 0
-            mentionsCount: 0
+            icon: ""
+            isIdenticon: false
             color: "blue"
+            description: ""
+            type: StatusChatListItem.Type.PublicChat
+            hasUnreadMessages: true
+            notificationsCount: 0
+            muted: false
+            active: false
             position: 0
+            subItems: []
         }
         ListElement {
-            chatId: "1"
+            itemId: "x012340001"
             name: "status-desktop"
-            chatType: StatusChatListItem.Type.PublicChat
-            muted: false
+            icon: ""
+            isIdenticon: false
             color: "red"
-            unreadMessagesCount: 1
-            mentionsCount: 1
+            description: ""
+            type: StatusChatListItem.Type.PublicChat
+            hasUnreadMessages: true
+            notificationsCount: 1
+            muted: false
+            active: false
             position: 1
+            subItems: []
         }
         ListElement {
-            chatId: "2"
+            itemId: "x012340002"
             name: "Amazing Funny Squirrel"
-            chatType: StatusChatListItem.Type.OneToOneChat
-            muted: false
-            color: "green"
-            identicon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAlklEQVR4nOzW0QmDQBAG4SSkl7SUQlJGCrElq9F3QdjjVhh/5nv3cFhY9vUIYQiNITSG0Bh
+            icon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAlklEQVR4nOzW0QmDQBAG4SSkl7SUQlJGCrElq9F3QdjjVhh/5nv3cFhY9vUIYQiNITSG0Bh
 CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2ImYgiNITTlTdG1nUZ5a92VITQxITFiJmIIjSE0htAYQrMHAAD//+wwFVpz+yqXAAAAAElFTkSuQmCC"
-            unreadMessagesCount: 0
-            position: 2
-        }
-        ListElement {
-            chatId: "3"
-            name: "Black Ops"
-            chatType: StatusChatListItem.Type.GroupChat
-            muted: false
-            color: "purple"
-            unreadMessagesCount: 0
-            position: 3
-        }
-        ListElement {
-            chatId: "4"
-            name: "Spectacular Growing Otter"
-            chatType: StatusChatListItem.Type.OneToOneChat
-            muted: true
-            color: "Orange"
-            unreadMessagesCount: 0
-            position: 4
-        }
-        ListElement {
-            chatId: "5"
-            name: "channel-with-a-super-duper-long-name"
-            chatType: StatusChatListItem.Type.PublicChat
-            muted: false
+            isIdenticon: true
             color: "green"
-            unreadMessagesCount: 0
+            description: ""
+            type: StatusChatListItem.Type.OneToOneChat
+            hasUnreadMessages: false
+            notificationsCount: 0
+            muted: false
+            active: true
+            position: 2
+            subItems: []
+        }
+        ListElement {
+            itemId: "x012340003"
+            name: "Black Ops"
+            icon: ""
+            isIdenticon: false
+            color: "purple"
+            description: ""
+            type: StatusChatListItem.Type.OneToOneChat
+            hasUnreadMessages: false
+            notificationsCount: 0
+            muted: false
+            active: false
+            position: 3
+            subItems: []
+        }
+        ListElement {
+            itemId: "x012340004"
+            name: "Spectacular Growing Otter"
+            icon: ""
+            isIdenticon: false
+            color: "orange"
+            description: ""
+            type: StatusChatListItem.Type.OneToOneChat
+            hasUnreadMessages: false
+            notificationsCount: 0
+            muted: false
+            active: false
+            position: 4
+            subItems: []
+        }
+        ListElement {
+            itemId: "x012340005"
+            name: "channel-with-a-super-duper-long-name"
+            icon: ""
+            isIdenticon: false
+            color: "green"
+            description: ""
+            type: StatusChatListItem.Type.PublicChat
+            hasUnreadMessages: false
+            notificationsCount: 0
+            muted: false
+            active: false
             position: 5
+            subItems: []
         }
     }
 
     property var demoCommunityChatListItems: ListModel {
         id: demoCommunityChatListItems
         ListElement {
-            chatId: "0"
+            itemId: "x012340000"
             name: "general"
-            chatType: StatusChatListItem.Type.CommunityChat
-            muted: false
-            unreadMessagesCount: 0
+            icon: ""
+            isIdenticon: false
             color: "orange"
+            description: ""
+            type: StatusChatListItem.Type.CommunityChat
+            hasUnreadMessages: true
+            notificationsCount: 0
+            muted: false
+            active: false
             position: 0
+            subItems: []
         }
         ListElement {
-            chatId: "1"
-            name: "random"
-            chatType: StatusChatListItem.Type.CommunityChat
-            muted: false
-            unreadMessagesCount: 0
-            color: "orange"
-            categoryId: "public"
-            position: 0
-        }
-        ListElement {
-            chatId: "2"
-            name: "watercooler"
-            chatType: StatusChatListItem.Type.CommunityChat
-            muted: false
-            unreadMessagesCount: 0
-            color: "orange"
-            categoryId: "public"
-            position: 1
-        }
-        ListElement {
-            chatId: "3"
-            name: "language-design"
-            chatType: StatusChatListItem.Type.CommunityChat
-            muted: false
-            unreadMessagesCount: 0
-            color: "orange"
-            categoryId: "dev"
-            position: 0
-        }
-    }
-
-    property var demoCommunityCategoryItems: ListModel {
-        id: demoCommunityCategoryItems
-        ListElement {
-            categoryId: "public"
+            itemId: "x012340001"
             name: "Public"
-            position: 0
+            icon: ""
+            isIdenticon: false
+            color: "orange"
+            description: ""
+            type: StatusChatListItem.Type.Unknown0
+            hasUnreadMessages: false
+            notificationsCount: 0
+            muted: false
+            active: true
+            position: 1
+            subItems: [
+                ListElement {
+                    itemId: "x012340002"
+                    parentItemId: "x012340001"
+                    name: "random"
+                    icon: ""
+                    isIdenticon: false
+                    color: "orange"
+                    description: ""
+                    hasUnreadMessages: true
+                    notificationsCount: 4
+                    muted: false
+                    active: false
+                    position: 0
+                },
+                ListElement {
+                    itemId: "x012340003"
+                    parentItemId: "x012340001"
+                    name: "watercooler"
+                    icon: ""
+                    isIdenticon: false
+                    color: "orange"
+                    description: ""
+                    hasUnreadMessages: false
+                    notificationsCount: 0
+                    muted: false
+                    active: true
+                    position: 1
+                }
+            ]
         }
         ListElement {
-            categoryId: "dev"
+            itemId: "x012340004"
             name: "Development"
-            position: 1
+            icon: ""
+            isIdenticon: false
+            color: "orange"
+            description: ""
+            type: StatusChatListItem.Type.Unknown0
+            hasUnreadMessages: false
+            notificationsCount: 0
+            muted: false
+            active: false
+            position: 2
+            subItems: [
+                ListElement {
+                    itemId: "x012340005"
+                    parentItemId: "x012340004"
+                    name: "language-design"
+                    icon: ""
+                    isIdenticon: false
+                    color: "orange"
+                    description: ""
+                    hasUnreadMessages: false
+                    notificationsCount: 0
+                    muted: true
+                    active: false
+                    position: 0
+                }
+            ]
         }
     }
 
