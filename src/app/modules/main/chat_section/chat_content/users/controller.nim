@@ -21,12 +21,14 @@ type
     belongsToCommunity: bool
     isUsersListAvailable: bool #users list is not available for 1:1 chat
     contactService: contact_service.Service
+    chatService: chat_service.Service
     communityService: community_service.Service
     messageService: message_service.Service
 
 proc newController*(delegate: io_interface.AccessInterface, events: EventEmitter, sectionId: string, chatId: string, 
   belongsToCommunity: bool, isUsersListAvailable: bool, contactService: contact_service.Service, 
-  communityService: community_service.Service, messageService: message_service.Service): 
+  chatService: chat_service.Service, communityService: community_service.Service, 
+  messageService: message_service.Service): 
   Controller =
   result = Controller()
   result.delegate = delegate
@@ -36,6 +38,7 @@ proc newController*(delegate: io_interface.AccessInterface, events: EventEmitter
   result.belongsToCommunity = belongsToCommunity
   result.isUsersListAvailable = isUsersListAvailable
   result.contactService = contactService
+  result.chatService = chatService
   result.communityService = communityService
   result.messageService = messageService
   
@@ -84,12 +87,12 @@ method init*(self: Controller) =
           self.delegate.onChatMembersAdded(@[args.pubKey])
 
 method getMembersPublicKeys*(self: Controller): seq[string] = 
-  # in case of 1:1 chat, there is no a members list
   if(not self.belongsToCommunity):
-    return
-
-  let communityDto = self.communityService.getCommunityById(self.sectionId)
-  result = communityDto.members.map(x => x.id)
+    let chatDto = self.chatService.getChatById(self.chatId)
+    return chatDto.members.map(x => x.id)
+  else:
+    let communityDto = self.communityService.getCommunityById(self.sectionId)
+    return communityDto.members.map(x => x.id)
 
 method getContactNameAndImage*(self: Controller, contactId: string): 
   tuple[name: string, image: string, isIdenticon: bool] =

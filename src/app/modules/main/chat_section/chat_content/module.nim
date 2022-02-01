@@ -54,7 +54,7 @@ proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitt
   result.messagesModule = messages_module.newModule(result, events, sectionId, chatId, belongsToCommunity, 
   contactService, communityService, chatService, messageService, mailserversService)
   result.usersModule = users_module.newModule(result, events, sectionId, chatId, belongsToCommunity, isUsersListAvailable, 
-  contactService, communityService, messageService)
+  contactService, chatService, communityService, messageService)
 
 method delete*(self: Module) =
   self.inputAreaModule.delete
