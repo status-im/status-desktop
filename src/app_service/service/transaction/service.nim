@@ -1,12 +1,22 @@
-import NimQml, chronicles, sequtils, sugar, stint, strutils, json
+import NimQml, chronicles, sequtils, sugar, stint, strutils, json, strformat
 import status/transactions as transactions
 import status/wallet as status_wallet
+import status/eth
+
+import ../ens/utils as ens_utils
+from ../../common/account_constants import ZERO_ADDRESS
 
 import ../../../app/core/[main]
 import ../../../app/core/tasks/[qt, threadpool]
 import ../wallet_account/service as wallet_account_service
+import ../eth/service as eth_service
+import ../network/service as network_service
+import ../settings/service as settings_service
+import ../eth/dto/transaction as transaction_data_dto
+import ../eth/dto/[contract, method_dto]
 import ./dto as transaction_dto
 import ../eth/utils as eth_utils
+import ../../common/conversion
 
 export transaction_dto
 
@@ -37,16 +47,29 @@ QtObject:
     events: EventEmitter
     threadpool: ThreadPool
     walletAccountService: wallet_account_service.ServiceInterface
+    ethService: eth_service.ServiceInterface
+    networkService: network_service.ServiceInterface
+    settingsService: settings_service.ServiceInterface
 
   proc delete*(self: Service) =
     self.QObject.delete
 
-  proc newService*(events: EventEmitter, threadpool: ThreadPool, walletAccountService: wallet_account_service.ServiceInterface): Service =
+  proc newService*(
+      events: EventEmitter,
+      threadpool: ThreadPool,
+      walletAccountService: wallet_account_service.ServiceInterface,
+      ethService: eth_service.ServiceInterface,
+      networkService: network_service.ServiceInterface,
+      settingsService: settings_service.ServiceInterface
+      ): Service =
     new(result, delete)
     result.QObject.setup
     result.events = events
     result.threadpool = threadpool
     result.walletAccountService = walletAccountService
+    result.ethService = ethService
+    result.networkService = networkService
+    result.settingsService = settingsService
 
   proc init*(self: Service) =
     discard
@@ -119,3 +142,39 @@ QtObject:
       loadMore: loadMore
     )
     self.threadpool.start(arg)
+
+  proc estimateGas*(self: Service, from_addr: string, to: string, assetAddress: string, value: string, data: string = ""): string {.slot.} =
+    var response: RpcResponse[JsonNode] 
+    try:
+      if assetAddress != ZERO_ADDRESS and not assetAddress.isEmptyOrWhitespace:
+        var tx = buildTokenTransaction(
+            parseAddress(from_addr),
+            parseAddress(assetAddress)
+          )
+        let networkType = self.settingsService.getCurrentNetwork().toNetworkType()
+        let network = self.networkService.getNetwork(networkType)
+        let contract = self.ethService.findErc20Contract(network.chainId, assetAddress)
+        if contract == nil:
+          raise newException(ValueError, fmt"Could not find ERC-20 contract with address '{assetAddress}' for the current network")
+
+        let transfer = Transfer(to: parseAddress(to), value: conversion.eth2Wei(parseFloat(value), contract.decimals))
+        let methodThing = contract.getMethod("transfer")
+        var success: bool
+        let gas = methodThing.estimateGas(tx, transfer, success)
+
+        result = $(%* { "result": gas, "success": success })
+      else:
+        var tx = ens_utils.buildTransaction(
+          parseAddress(from_addr),
+          eth2Wei(parseFloat(value), 18),
+          data = data
+        )
+        tx.to = parseAddress(to).some
+        response = eth.estimateGas(%*[%tx])
+
+        let res = fromHex[int](response.result.getStr)
+        result = $(%* { "result": %res, "success": true })
+    except Exception as e:
+      error "Error estimating gas", msg = e.msg
+      result = $(%* { "result": "-1", "success": false, "error": { "message": e.msg } })
+    

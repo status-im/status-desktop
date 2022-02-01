@@ -155,26 +155,26 @@ ModalPopup {
                 width: stack.width
                 property var estimateGas: Backpressure.debounce(gasSelector, 600, function() {
                       // Not Refactored Yet
-//                    if (!(selectFromAccount.selectedAccount && selectFromAccount.selectedAccount.address &&
-//                        selectRecipient.selectedRecipient && selectRecipient.selectedRecipient.address &&
-//                        txtAmount.selectedAsset && txtAmount.selectedAsset.address &&
-//                        txtAmount.selectedAmount)) return
+                   if (!(selectFromAccount.selectedAccount && selectFromAccount.selectedAccount.address &&
+                       selectRecipient.selectedRecipient && selectRecipient.selectedRecipient.address &&
+                       txtAmount.selectedAsset && txtAmount.selectedAsset.address &&
+                       txtAmount.selectedAmount)) return
 
-//                    let gasEstimate = JSON.parse(walletModel.gasView.estimateGas(
-//                        selectFromAccount.selectedAccount.address,
-//                        selectRecipient.selectedRecipient.address,
-//                        txtAmount.selectedAsset.address,
-//                        txtAmount.selectedAmount,
-//                        ""))
+                   let gasEstimate = JSON.parse(walletModel.gasView.estimateGas(
+                       selectFromAccount.selectedAccount.address,
+                       selectRecipient.selectedRecipient.address,
+                       txtAmount.selectedAsset.address,
+                       txtAmount.selectedAmount,
+                       ""))
 
-//                    if (!gasEstimate.success) {
-//                        //% "Error estimating gas: %1"
-//                        console.warn(qsTrId("error-estimating-gas---1").arg(gasEstimate.error.message))
-//                        return
-//                    }
+                   if (!gasEstimate.success) {
+                       //% "Error estimating gas: %1"
+                       console.warn(qsTrId("error-estimating-gas---1").arg(gasEstimate.error.message))
+                       return
+                   }
 
-//                    selectedGasLimit = gasEstimate.result
-//                    defaultGasLimit = selectedGasLimit
+                   selectedGasLimit = gasEstimate.result
+                   defaultGasLimit = selectedGasLimit
                 })
             }
             GasValidator {
@@ -256,7 +256,6 @@ ModalPopup {
 
         StatusButton {
             id: btnNext
-            anchors.right: parent.right
             //% "Next"
             text: qsTrId("next")
             enabled: stack.currentGroup.isValid && !stack.currentGroup.isPending

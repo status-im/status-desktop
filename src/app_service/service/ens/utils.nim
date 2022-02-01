@@ -186,8 +186,16 @@ proc owner*(username: string): string =
     return ""
   result = "0x" & ownerAddr.substr(26)
 
-proc buildTransaction*(source: Address, value: Uint256, gas = "", gasPrice = "", isEIP1559Enabled = false, 
-  maxPriorityFeePerGas = "", maxFeePerGas = "", data = ""): TransactionDataDto =
+proc buildTransaction*(
+    source: Address,
+    value: Uint256,
+    gas = "",
+    gasPrice = "",
+    isEIP1559Enabled = false, 
+    maxPriorityFeePerGas = "",
+    maxFeePerGas = "",
+    data = ""
+    ): TransactionDataDto =
   result = TransactionDataDto(
     source: source,
     value: value.some,

@@ -29,6 +29,9 @@ method loadTransactions*(self: AccessInterface, address: string, toBlock: Uint25
 method setTrxHistoryResult*(self: AccessInterface, historyJSON: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method estimateGas*(self: AccessInterface, from_addr: string, to: string, assetAddress: string, value: string, data: string): string {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 type
   ## Abstract class (concept) which must be implemented by object/s used in this 
   ## module.
