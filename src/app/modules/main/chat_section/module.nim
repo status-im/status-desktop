@@ -325,10 +325,22 @@ method getChatContentModule*(self: Module, chatId: string): QVariant =
 
   return self.chatContentModules[chatId].getModuleAsVariant()
 
+proc updateNotifications(self: Module, chatId: string, unviewedMessagesCount: int, unviewedMentionsCount: int) =
+  let hasUnreadMessages = unviewedMessagesCount > 0
+  # update model of this module (appropriate chat from the chats list (chats model))
+  self.view.chatsModel().updateNotificationsForItemOrSubItemById(chatId, hasUnreadMessages, unviewedMentionsCount)
+  # update child module
+  if (self.chatContentModules.contains(chatId)):
+    self.chatContentModules[chatId].onNotificationsUpdated(hasUnreadMessages, unviewedMentionsCount)
+  # update parent module
+  let (sectionHasUnreadMessages, sectionNotificationCount) = self.view.chatsModel().getAllNotifications()
+  self.delegate.onNotificationsUpdated(self.controller.getMySectionId(), sectionHasUnreadMessages, sectionNotificationCount)
+  
 method onActiveSectionChange*(self: Module, sectionId: string) =
   if(sectionId != self.controller.getMySectionId()):
     return
   
+  self.updateNotifications(self.controller.getActiveChatId(), unviewedMessagesCount=0, unviewedMentionsCount=0)
   self.delegate.onActiveChatChange(self.controller.getMySectionId(), self.controller.getActiveChatId())
 
 method createPublicChat*(self: Module, chatId: string) =
@@ -449,17 +461,6 @@ method createOneToOneChat*(self: Module, chatId: string, ensName: string) =
 
   self.controller.createOneToOneChat(chatId, ensName)
 
-proc updateNotifications(self: Module, chatId: string, unviewedMessagesCount: int, unviewedMentionsCount: int) =
-  let hasUnreadMessages = unviewedMessagesCount > 0
-  # update model of this module (appropriate chat from the chats list (chats model))
-  self.view.chatsModel().updateNotificationsForItemOrSubItemById(chatId, hasUnreadMessages, unviewedMentionsCount)
-  # update child module
-  if (self.chatContentModules.contains(chatId)):
-    self.chatContentModules[chatId].onNotificationsUpdated(hasUnreadMessages, unviewedMentionsCount)
-  # update parent module
-  let (sectionHasUnreadMessages, sectionNotificationCount) = self.view.chatsModel().getAllNotifications()
-  self.delegate.onNotificationsUpdated(self.controller.getMySectionId(), sectionHasUnreadMessages, sectionNotificationCount)
-
 method leaveChat*(self: Module, chatId: string) =
   self.controller.leaveChat(chatId)
 
@@ -530,11 +531,10 @@ method onContactDetailsUpdated*(self: Module, publicKey: string) =
 
 method onNewMessagesReceived*(self: Module, chatId: string, unviewedMessagesCount: int, unviewedMentionsCount: int, 
   messages: seq[MessageDto]) =
-  let activeChatId = self.controller.getActiveChatId()
-  if(activeChatId == chatId):
-    self.controller.markAllMessagesRead(chatId)
-  else:
-    self.updateNotifications(chatId, unviewedMessagesCount, unviewedMentionsCount)
+  if(self.controller.getMySectionId() == self.delegate.getActiveSectionId() and 
+    self.controller.getActiveChatId() == chatId):
+    return
+  self.updateNotifications(chatId, unviewedMessagesCount, unviewedMentionsCount)
 
 proc convertPubKeysToJson(self: Module, pubKeys: string): seq[string] =
   return map(parseJson(pubKeys).getElems(), proc(x:JsonNode):string = x.getStr)

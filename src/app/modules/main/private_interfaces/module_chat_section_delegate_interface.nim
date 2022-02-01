@@ -10,3 +10,6 @@ method onActiveChatChange*(self: AccessInterface, sectionId: string, chatId: str
 method onNotificationsUpdated*(self: AccessInterface, sectionId: string, sectionHasUnreadMessages: bool, 
   sectionNotificationCount: int) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method getActiveSectionId*(self: AccessInterface): string {.base.} =
+  raise newException(ValueError, "No implementation available")
