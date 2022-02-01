@@ -330,17 +330,6 @@ Item {
                         channelPosition // TODO change this to the signal once it is modifiable
                     )
                 }
-
-                onOpenPinnedMessagesList: {
-                    chatCommunitySectionModule.prepareChatContentModuleForChatId(chatId)
-                    let chatContentModule = chatCommunitySectionModule.getChatContentModule()
-                    Global.openPopup(pinnedMessagesPopupComponent, {
-                                         store: root.store,
-                                         messageStore: messageStore,
-                                         pinnedMessagesModel: chatContentModule.pinnedMessagesModel,
-                                         messageToPin: ""
-                                     })
-                }
             }
         }
 

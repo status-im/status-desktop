@@ -36,7 +36,6 @@ StatusPopupMenu {
     signal deleteCommunityChat(string chatId)
     signal leaveChat(string chatId)
 
-    signal openPinnedMessagesList(string chatId)
     signal createCommunityChannel(string chatId, string newName, string newDescription)
     signal editCommunityChannel(string chatId, string newName, string newDescription, string newCategory)
 
@@ -142,9 +141,6 @@ StatusPopupMenu {
             }
             onEditCommunityChannel: {
                 root.editCommunityChannel(root.chatId, chName, chDescription, chCategoryId);
-            }
-            onOpenPinnedMessagesPopup: {
-                root.openPinnedMessagesList(root.chatId, chName, chDescription);
             }
             onClosed: {
                 destroy()

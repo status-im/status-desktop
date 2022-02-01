@@ -226,19 +226,6 @@ ColumnLayout {
                               channel: chatContentModule.chatDetails
                           })
             }
-
-            onOpenPinnedMessagesList: {
-                if(!chatContentModule) {
-                    console.debug("error on open pinned messages from context menu - chat content module is not set")
-                    return
-                }
-                Global.openPopup(pinnedMessagesPopupComponent, {
-                                     store: rootStore,
-                                     messageStore: messageStore,
-                                     pinnedMessagesModel: chatContentModule.pinnedMessagesModel,
-                                     messageToPin: ""
-                                 })
-            }
         }
     }
 
