@@ -30,8 +30,8 @@ StatusModal {
     onOpened: {
         if(isEdit){
             root.contentItem.categoryName.input.text = categoryName
-            // Not Refactored Yet
-           // channels = //JSON.parse(root.store.chatsModelInst.communities.activeCommunity.getChatIdsByCategory(categoryId))
+            root.channels = []
+            root.store.prepareEditCategoryModel(categoryId);
         }
         root.contentItem.categoryName.input.forceActiveFocus(Qt.MouseFocusReason)
     }
@@ -110,16 +110,13 @@ StatusModal {
                     anchors.top: channelsLabel.bottom
                     height: childrenRect.height
                     width: parent.width
-                    model: root.store.chatCommunitySectionModule.model
+                    model: isEdit ? root.store.chatCommunitySectionModule.editCategoryChannelsModel : root.store.chatCommunitySectionModule.model
                     interactive: false
                     clip: true
 
                     delegate: StatusListItem {
                         anchors.horizontalCenter: parent.horizontalCenter
-                        visible: {
-                            // TODO: if edit, show only the subitems of the current category
-                            return root.isEdit ? null : model.type != Constants.chatType.unknown
-                        }
+                        visible: model.type != Constants.chatType.unknown
                         height: visible ? implicitHeight : 0
                         title: "#" + model.name
                         icon.isLetterIdenticon: true
@@ -129,17 +126,15 @@ StatusModal {
                         components: [
                             StatusCheckBox {
                                 id: channelItemCheckbox
-                                checked: root.isEdit ? root.channels.indexOf(model.itemId) > - 1 : false
+                                checked: root.isEdit ? model.categoryId == root.categoryId : false
                                 onCheckedChanged: {
-                                    var idx = root.channels.indexOf(model.itemId)
                                     if(checked){
+                                        var idx = root.channels.indexOf(model.itemId)
                                         if(idx === -1){
                                             root.channels.push(model.itemId)
                                         }
                                     } else {
-                                        if(idx > -1){
-                                            root.channels.splice(idx, 1);
-                                        }
+                                        root.channels = root.channels.filter(el => el !== model.itemId);
                                     }
                                 }
                             }
@@ -219,11 +214,10 @@ StatusModal {
                 }
 
                 let error = ""
-
                 if (isEdit) {
-//                    error = root.store.editCommunityCategory(communityId, categoryId, Utils.filterXSS(root.contentItem.categoryName.input.text), JSON.stringify(channels));
+                    error = root.store.editCommunityCategory(root.categoryId, Utils.filterXSS(root.contentItem.categoryName.input.text), JSON.stringify(channels));
                 } else {
-                    error = root.store.createCommunityCategory(root.contentItem.categoryName.input.text, JSON.stringify(channels));
+                    error = root.store.createCommunityCategory(Utils.filterXSS(root.contentItem.categoryName.input.text), JSON.stringify(channels));
                 }
 
                 if (error) {

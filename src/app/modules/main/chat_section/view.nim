@@ -17,6 +17,8 @@ QtObject:
       contactRequestsModelVariant: QVariant
       listOfMyContacts: contacts_model.Model
       listOfMyContactsVariant: QVariant
+      editCategoryChannelsModel: chats_model.Model
+      editCategoryChannelsVariant: QVariant
       
   proc delete*(self: View) =
     self.model.delete
@@ -27,6 +29,8 @@ QtObject:
     self.contactRequestsModelVariant.delete
     self.listOfMyContacts.delete
     self.listOfMyContactsVariant.delete
+    self.editCategoryChannelsModel.delete
+    self.editCategoryChannelsVariant.delete
     self.QObject.delete
 
   proc newView*(delegate: io_interface.AccessInterface): View =
@@ -35,6 +39,8 @@ QtObject:
     result.delegate = delegate
     result.model = chats_model.newModel()
     result.modelVariant = newQVariant(result.model)
+    result.editCategoryChannelsModel = chats_model.newModel()
+    result.editCategoryChannelsVariant = newQVariant(result.editCategoryChannelsModel)
     result.activeItem = newActiveItem()
     result.activeItemVariant = newQVariant(result.activeItem)
     result.contactRequestsModel = contacts_model.newModel()
@@ -53,8 +59,18 @@ QtObject:
 
   proc getModel(self: View): QVariant {.slot.} =
     return self.modelVariant
+
   QtProperty[QVariant] model:
     read = getModel
+
+  proc editCategoryChannelsModel*(self: View): chats_model.Model =
+    return self.editCategoryChannelsModel
+
+  proc getEditCategoryChannels(self: View): QVariant {.slot.} =
+    return self.editCategoryChannelsVariant
+
+  QtProperty[QVariant] editCategoryChannelsModel:
+    read = getEditCategoryChannels
 
   proc contactRequestsModel*(self: View): contacts_model.Model =
     return self.contactRequestsModel
@@ -225,5 +241,12 @@ QtObject:
     let channelsSeq = map(parseJson(channels).getElems(), proc(x:JsonNode):string = x.getStr())
     self.delegate.createCommunityCategory(name, channelsSeq)
 
+  proc editCommunityCategory*(self: View, categoryId: string, name: string, channels: string) {.slot.} =
+    let channelsSeq = map(parseJson(channels).getElems(), proc(x:JsonNode):string = x.getStr())
+    self.delegate.editCommunityCategory(categoryId, name, channelsSeq)
+
   proc deleteCommunityCategory*(self: View, categoryId: string) {.slot.} =
     self.delegate.deleteCommunityCategory(categoryId)
+
+  proc prepareEditCategoryModel*(self: View, categoryId: string) {.slot.} =
+    self.delegate.prepareEditCategoryModel(categoryId)

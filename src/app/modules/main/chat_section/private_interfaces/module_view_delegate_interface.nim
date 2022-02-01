@@ -115,5 +115,11 @@ method inviteUsersToCommunity*(self: AccessInterface, pubKeysJSON: string): stri
 method createCommunityCategory*(self: AccessInterface, name: string, channels: seq[string]) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method editCommunityCategory*(self: AccessInterface, categoryId: string, name: string, channels: seq[string]) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method deleteCommunityCategory*(self: AccessInterface, categoryId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method prepareEditCategoryModel*(self: AccessInterface, categoryId: string) {.base.} =
   raise newException(ValueError, "No implementation available")

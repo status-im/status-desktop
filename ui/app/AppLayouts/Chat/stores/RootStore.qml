@@ -154,13 +154,17 @@ QtObject {
         chatCommunitySectionModule.createCommunityCategory(categoryName, channels)
     }
 
-    function editCommunityCategory(communityId, categoryId, categoryName, channels) {
-        communitiesModuleInst.editCommunityCategory(communityId, categoryId, categoryName, channels);
+    function editCommunityCategory(categoryId, categoryName, channels) {
+        chatCommunitySectionModule.editCommunityCategory(categoryId, categoryName, channels);
     }
 
     function deleteCommunityCategory(categoryId) {
         chatCommunitySectionModule.deleteCommunityCategory(categoryId);
     }
+
+    function prepareEditCategoryModel(categoryId) {
+        chatCommunitySectionModule.prepareEditCategoryModel(categoryId);
+    } 
 
     function leaveCommunity() {
         chatCommunitySectionModule.leaveCommunity();
