@@ -160,7 +160,9 @@ Item {
 
 //            onChatItemSelected: root.store.chatsModelInst.channelView.setActiveChannel(id)
 //            onChatItemUnmuted: root.store.chatsModelInst.channelView.unmuteChatItem(id)
-            onChatItemReordered: root.store.reorderCommunityChat(categoryId, id, to)
+            onChatItemReordered: function(categoryId, chatId, from, to){
+                root.store.reorderCommunityChat(categoryId, chatId, to)
+            }
             onChatListCategoryReordered: root.store.reorderCommunityCategories(categoryId, to)
 
             onCategoryAddButtonClicked: Global.openPopup(createChannelPopup, {
