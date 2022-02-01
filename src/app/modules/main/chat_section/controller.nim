@@ -129,6 +129,11 @@ method init*(self: Controller) =
       let args = CommunityCategoryArgs(e)
       if (args.communityId == self.sectionId):
         self.delegate.onCommunityCategoryDeleted(args.category)
+  
+    self.events.on(SIGNAL_COMMUNITY_CATEGORY_EDITED) do(e:Args):
+      let args = CommunityCategoryArgs(e)
+      if (args.communityId == self.sectionId):
+        self.delegate.onCommunityCategoryEdited(args.category, args.chats)
 
     self.events.on(SIGNAL_COMMUNITY_CHANNEL_REORDERED) do(e:Args):
       let args = CommunityChatOrderArgs(e)
@@ -310,6 +315,9 @@ method editCommunityChannel*(
 
 method createCommunityCategory*(self: Controller, name: string, channels: seq[string]) =
   self.communityService.createCommunityCategory(self.sectionId, name, channels)
+
+method editCommunityCategory*(self: Controller, categoryId: string, name: string, channels: seq[string]) =
+  self.communityService.editCommunityCategory(self.sectionId, categoryId, name, channels)
 
 method deleteCommunityCategory*(self: Controller, categoryId: string) =
   self.communityService.deleteCommunityCategory(self.sectionId, categoryId)

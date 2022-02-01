@@ -227,6 +227,7 @@ Item {
                     onTriggered: {
                        Global.openPopup(createCategoryPopup, {
                            isEdit: true,
+                           channels: [],
                            categoryId: categoryItem.categoryId,
                            categoryName: categoryItem.name
                        })
