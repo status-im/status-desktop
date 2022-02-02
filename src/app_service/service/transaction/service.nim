@@ -151,7 +151,8 @@ QtObject:
       value: string,
       data: string = ""
     ): string {.slot.} =
-    var response: RpcResponse[JsonNode] 
+    var response: RpcResponse[JsonNode]
+    # TODO make this async
     try:
       if assetAddress != ZERO_ADDRESS and not assetAddress.isEmptyOrWhitespace:
         var tx = buildTokenTransaction(
@@ -160,16 +161,17 @@ QtObject:
           )
         let networkType = self.settingsService.getCurrentNetwork().toNetworkType()
         let network = self.networkService.getNetwork(networkType)
-        let contract = self.ethService.findErc20Contract(network.chainId, assetAddress)
+        let contract = self.ethService.findErc20Contract(network.chainId, parseAddress(assetAddress))
         if contract == nil:
           raise newException(ValueError, fmt"Could not find ERC-20 contract with address '{assetAddress}' for the current network")
 
         let transfer = Transfer(to: parseAddress(to), value: conversion.eth2Wei(parseFloat(value), contract.decimals))
-        let methodThing = contract.getMethod("transfer")
+        let transferMethod = contract.getMethod("transfer")
         var success: bool
-        let gas = methodThing.estimateGas(tx, transfer, success)
+        let gas = transferMethod.estimateGas(tx, transfer, success)
 
-        result = $(%* { "result": gas, "success": success })
+        let res = fromHex[int](gas)
+        result = $(%* { "result": res, "success": success })
       else:
         var tx = ens_utils.buildTransaction(
           parseAddress(from_addr),
@@ -216,5 +218,44 @@ QtObject:
         $PendingTransactionTypeDto.WalletTransfer, data = "")
     except Exception as e:
       error "Error sending eth transfer transaction", msg = e.msg
+      return false
+    return true
+
+  proc transferTokens*(
+      self: Service,
+      from_addr: string,
+      to_addr: string,
+      assetAddress: string,
+      value: string,
+      gas: string,
+      gasPrice: string,
+      maxPriorityFeePerGas: string,
+      maxFeePerGas: string,
+      password: string,
+      uuid: string
+      ): bool =
+    try:
+      let eip1559Enabled = self.settingsService.isEIP1559Enabled()
+      eth_utils.validateTransactionInput(from_addr, to_addr, assetAddress, value, gas,
+        gasPrice, data = "", eip1559Enabled, maxPriorityFeePerGas, maxFeePerGas, uuid)
+
+      # TODO move this to another thread
+      let networkType = self.settingsService.getCurrentNetwork().toNetworkType()
+      let network = self.networkService.getNetwork(networkType)
+      let contract = self.eth_service.findErc20Contract(network.chainId, parseAddress(assetAddress))
+
+      var tx = ens_utils.buildTokenTransaction(parseAddress(from_addr), parseAddress(assetAddress),
+        gas, gasPrice, eip1559Enabled, maxPriorityFeePerGas, maxFeePerGas)
+
+      var success: bool
+      let transfer = Transfer(to: parseAddress(to_addr),
+        value: conversion.eth2Wei(parseFloat(value), contract.decimals))
+      let transferMethod = contract.getMethod("transfer")
+      let response = transferMethod.send(tx, transfer, password, success)
+
+      self.trackPendingTransaction(response, from_addr, to_addr,
+        $PendingTransactionTypeDto.WalletTransfer, data = "")
+    except Exception as e:
+      error "Error sending token transfer transaction", msg = e.msg
       return false
     return true

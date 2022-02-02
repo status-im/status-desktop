@@ -48,6 +48,10 @@ proc fetchPrice(crypto: string, fiat: string): float64 =
     client.headers = newHttpHeaders({ "Content-Type": "application/json" })
 
     let response = client.request(url)
+    let parsedResponse = parseJson(response.body)
+    if (parsedResponse{"Response"} != nil and parsedResponse{"Response"}.getStr == "Error"):
+      error "Error while getting price", message = parsedResponse["Message"].getStr
+      return 0.0
     result = parsefloat($parseJson(response.body)[fiat.toUpper])
     priceCache[key] = result
   except Exception as e:

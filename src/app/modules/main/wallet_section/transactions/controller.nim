@@ -84,3 +84,9 @@ method transferEth*(self: Controller, from_addr: string, to_addr: string, value:
   password: string, uuid: string): bool =
   result = self.transactionService.transferEth(from_addr, to_addr, value, gas, gasPrice,
     maxPriorityFeePerGas, maxFeePerGas, password, uuid)
+
+method transferTokens*(self: Controller, from_addr: string, to_addr: string, contractAddress: string,
+    value: string, gas: string, gasPrice: string, maxPriorityFeePerGas: string,maxFeePerGas: string,
+    password: string, uuid: string): bool =
+  result = self.transactionService.transferTokens(from_addr, to_addr, contractAddress, value, gas,
+    gasPrice, maxPriorityFeePerGas, maxFeePerGas, password, uuid)
