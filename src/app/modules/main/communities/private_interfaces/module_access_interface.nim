@@ -16,9 +16,6 @@ method setAllCommunities*(self: AccessInterface, communities: seq[CommunityDto])
 method getCommunityItem*(self: AccessInterface, community: CommunityDto): SectionItem {.base.} =
   raise newException(ValueError, "No implementation available") 
 
-method addCommunity*(self: AccessInterface, community: CommunityDto) {.base.} =
-  raise newException(ValueError, "No implementation available") 
-
 method joinCommunity*(self: AccessInterface, communityId: string): string {.base.} =
   raise newException(ValueError, "No implementation available") 
 

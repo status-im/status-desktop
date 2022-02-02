@@ -146,6 +146,10 @@ QtObject {
         communitiesModuleInst.createCommunity(communityName, communityDescription, checkedMembership, ensOnlySwitchChecked, communityColor, communityImage, imageCropperModalaX, imageCropperModalaY, imageCropperModalbX, imageCropperModalbY);
     }
 
+    function importCommunity(communityKey) {
+        root.communitiesModuleInst.importCommunity(communityKey);
+    }
+
     function createCommunityCategory(categoryName, channels) {
         chatCommunitySectionModule.createCommunityCategory(categoryName, channels)
     }

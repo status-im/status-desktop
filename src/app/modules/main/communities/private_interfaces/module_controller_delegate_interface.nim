@@ -22,3 +22,12 @@ method communityCategoryDeleted*(self: AccessInterface) {.base.} =
 
 method communityEdited*(self: AccessInterface, community: CommunityDto) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method communityAdded*(self: AccessInterface, community: CommunityDto) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method communityImported*(self: AccessInterface, community: CommunityDto) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onImportCommunityErrorOccured*(self: AccessInterface, error: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
