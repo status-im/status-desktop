@@ -103,6 +103,9 @@ method onWakuV2LightClientSet*(self: Module) =
 
 method isTelemetryEnabled*(self: Module): bool =
   self.controller.isTelemetryEnabled()
+
+method enableDeveloperFeatures*(self: Module) =
+  self.controller.enableDeveloperFeatures()
   
 method toggleTelemetry*(self: Module) = 
   self.controller.toggleTelemetry()
@@ -126,8 +129,7 @@ method toggleDebug*(self: Module) =
   self.controller.toggleDebug()
 
 method onDebugToggled*(self: Module) =
-  info "quit the app because of successful debug level changed"
-  quit(QuitSuccess) # quits the app TODO: change this to logout instead when supported
+  self.view.isDebugEnabledChanged()
 
 method addCustomNetwork*(self: Module, name: string, endpoint: string, networkId: int, networkType: string) = 
   var network: settings_service.Network

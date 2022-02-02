@@ -64,3 +64,6 @@ method toggleCommunitySection*(self: AccessInterface) {.base.} =
 
 method toggleNodeManagementSection*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method enableDeveloperFeatures*(self: AccessInterface) {.base.} = 
+  raise newException(ValueError, "No implementation available")

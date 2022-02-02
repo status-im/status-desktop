@@ -374,6 +374,41 @@ ScrollView {
                 }
             }
 
+             StatusSectionHeadline {
+                text: qsTr("Developer features")
+                topPadding: Style.current.bigPadding
+                bottomPadding: Style.current.padding
+            }
+
+            Separator {
+                anchors.topMargin: Style.current.bigPadding
+                anchors.left: parent.left
+                anchors.leftMargin: -Style.current.padding
+                anchors.right: parent.right
+                anchors.rightMargin: -Style.current.padding
+            }
+
+            StatusSettingsLineButton {
+                text: qsTr("Full developer mode")
+                isEnabled: {
+                    return !localAccountSensitiveSettings.downloadChannelMessagesEnabled ||
+                        !root.advancedStore.isTelemetryEnabled ||
+                        !root.advancedStore.isDebugEnabled ||
+                        !root.advancedStore.isAutoMessageEnabled
+                }
+                onClicked: {
+                    Global.openPopup(enableDeveloperFeaturesConfirmationDialogComponent)
+                }
+            }
+
+            Separator {
+                anchors.topMargin: Style.current.bigPadding
+                anchors.left: parent.left
+                anchors.leftMargin: -Style.current.padding
+                anchors.right: parent.right
+                anchors.rightMargin: -Style.current.padding
+            }
+
             // TODO: replace with StatusQ component
             StatusSettingsLineButton {
                 text: qsTr("Download messages")
@@ -386,22 +421,11 @@ ScrollView {
 
             // TODO: replace with StatusQ component
             StatusSettingsLineButton {
-                text: qsTr("Stickers/ENS on ropsten")
-                visible: root.advancedStore.currentNetworkId === Constants.networkRopsten
-                isSwitch: true
-                switchChecked: localAccountSensitiveSettings.stickersEnsRopsten
-                onClicked: {
-                    localAccountSensitiveSettings.stickersEnsRopsten = !localAccountSensitiveSettings.stickersEnsRopsten
-                }
-            }
-
-            // TODO: replace with StatusQ component
-            StatusSettingsLineButton {
-                text: qsTr("Enable Telemetry")
+                text: qsTr("Telemetry")
                 isSwitch: true
                 switchChecked: root.advancedStore.isTelemetryEnabled
                 onClicked: {
-                    Global.openPopup(enableTelemetryConfirmationDialogComponent, {light: false})
+                    Global.openPopup(enableTelemetryConfirmationDialogComponent)
                 }
             }
 
@@ -417,11 +441,22 @@ ScrollView {
 
             // TODO: replace with StatusQ component
             StatusSettingsLineButton {
-                text: qsTr("Enable Auto message")
+                text: qsTr("Auto message")
                 isSwitch: true
                 switchChecked: root.advancedStore.isAutoMessageEnabled
                 onClicked: {
-                    Global.openPopup(enableAutoMessageConfirmationDialogComponent, {light: false})
+                    Global.openPopup(enableAutoMessageConfirmationDialogComponent)
+                }
+            }
+
+            // TODO: replace with StatusQ component
+            StatusSettingsLineButton {
+                text: qsTr("Stickers/ENS on ropsten")
+                visible: root.advancedStore.currentNetworkId === Constants.networkRopsten
+                isSwitch: true
+                switchChecked: localAccountSensitiveSettings.stickersEnsRopsten
+                onClicked: {
+                    localAccountSensitiveSettings.stickersEnsRopsten = !localAccountSensitiveSettings.stickersEnsRopsten
                 }
             }
         }
@@ -434,6 +469,25 @@ ScrollView {
         FleetsModal {
             id: fleetModal
             advancedStore: root.advancedStore
+        }
+
+        Component {
+            id: enableDeveloperFeaturesConfirmationDialogComponent
+            ConfirmationDialog {
+                property bool mode: false
+
+                id: confirmDialog
+                showCancelButton: true
+                confirmationText: qsTr("Are you sure you want to enable all the develoer features? The app will be restarted.")
+                onConfirmButtonClicked: {
+                    localAccountSensitiveSettings.downloadChannelMessagesEnabled = true
+                    Qt.callLater(root.advancedStore.enableDeveloperFeatures)
+                    close()
+                }
+                onCancelButtonClicked: {
+                    close()
+                }
+            }
         }
 
         Component {
@@ -479,7 +533,7 @@ ScrollView {
 
                 id: confirmDialog
                 showCancelButton: true
-                confirmationText: qsTr("Are you sure you want to %1 debug mode? The app will be restarted for this change to take effect.").arg(root.advancedStore.isDebugEnabled ?
+                confirmationText: qsTr("Are you sure you want to %1 debug mode? You need to restart the app for this change to take effect.").arg(root.advancedStore.isDebugEnabled ?
                     qsTr("disable") : 
                     qsTr("enable"))
                 onConfirmButtonClicked: {
