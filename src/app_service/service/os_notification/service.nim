@@ -17,15 +17,15 @@ QtObject:
   type Service* = ref object of QObject
     events: EventEmitter
     notification: StatusOSNotification
+    notificationSetUp: bool
 
   proc setup(self: Service, events: EventEmitter) = 
     self.QObject.setup
     self.events = events
-    self.notification = newStatusOSNotification()
-    signalConnect(self.notification, "notificationClicked(QString)", self, "onNotificationClicked(QString)", 2)
   
   proc delete*(self: Service) =
-    self.notification.delete
+    if self.notificationSetUp:
+      self.notification.delete
     self.QObject.delete
 
   proc newService*(events: EventEmitter): Service =
@@ -52,3 +52,8 @@ QtObject:
     ## contains data which uniquely define that notification.
     let details = toOsNotificationDetails(parseJson(identifier))
     self.events.emit(SIGNAL_OS_NOTIFICATION_CLICKED, OsNotificationsArgs(details: details))
+
+proc userLoggedIn*(self: Service) =
+  self.notification = newStatusOSNotification()
+  signalConnect(self.notification, "notificationClicked(QString)", self, "onNotificationClicked(QString)", 2)
+  self.notificationSetUp = true
