@@ -339,6 +339,8 @@ proc userLoggedIn*(self: AppController) =
   if(importedAccount.isValid()):
     self.privacyService.removeMnemonic()
 
+  self.osNotificationService.userLoggedIn()
+
 proc buildAndRegisterLocalAccountSensitiveSettings(self: AppController) = 
   var pubKey = self.settingsService.getPublicKey()
   singletonInstance.localAccountSensitiveSettings.setFileName(pubKey)
