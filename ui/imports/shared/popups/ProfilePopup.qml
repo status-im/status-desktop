@@ -96,6 +96,15 @@ StatusModal {
             anchors.top: parent.top
             width: parent.width
 
+            // Blocked User Status Bar
+           StatusBanner {
+               id: blockedUsrBar
+               width: parent.width
+               visible: popup.userIsBlocked
+               type: StatusBanner.Type.Danger
+               statusText: qsTr("Blocked")
+           }
+
             Item {
                 height: 16
                 width: parent.width
@@ -130,11 +139,6 @@ StatusModal {
                 width: parent.width
             }
 
-            StatusModalDivider {
-                topPadding: 12
-                bottomPadding: 16
-            }
-
             StatusDescriptionListItem {
                 title: qsTr("Share Profile URL")
                 subTitle: {
@@ -165,12 +169,6 @@ StatusModal {
                     tooltip.visible = !tooltip.visible
                 }
                 width: parent.width
-            }
-
-            StatusModalDivider {
-                visible: !isCurrentUser
-                topPadding: 8
-                bottomPadding: 12
             }
 
             StatusDescriptionListItem {
