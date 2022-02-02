@@ -124,12 +124,11 @@ Item {
             messageImage: model.message.messageImage
             messageTimestamp: model.timestamp
             linkUrls: model.links
-            //timestamp: model.message.timestamp
             messageOutgoingStatus: model.message.outgoingStatus
             messageContentType: model.message.contentType
-            //pinnedMessage: model.message.pinned
-            //messagePinnedBy: model.message.pinnedBy
-            //reactionsModel: model.message.reactions
+            pinnedMessage: model.message.pinned
+            messagePinnedBy: model.message.pinnedBy
+            reactionsModel: model.message.reactions
             activityCenterMessage: true
             read: model.read
             onImageClicked: Global.openImagePopup(image, root.messageContextMenu)
@@ -140,18 +139,11 @@ Item {
                 }
 
                 activityCenter.close()
-
-//                if (model.message.communityId) {
-//                    root.chatSectionModule..communities.setActiveCommunity(model.message.communityId)
-//                }
-
-//                root.chatSectionModule.setActiveChannel(model.chatId);
-
-                // To position to appropriate message check how it's done in AppSearch module,
-                // similar may be done here, corresponding module for activity center just need to
-                // use the mechanism done there, send the signal form message service and
-                // and the rest is already handled.
-//                positionAtMessage(model.id);
+                var sectionId = "chat"
+                if (model.message.communityId) {
+                    sectionId = model.message.communityId
+                }
+                root.store.activityCenterModuleInst.switchTo(sectionId, model.chatId, model.id)
             }
             prevMessageIndex: root.previousNotificationIndex
             prevMsgTimestamp: root.previousNotificationTimestamp
