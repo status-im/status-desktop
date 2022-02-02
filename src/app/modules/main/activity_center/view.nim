@@ -126,3 +126,6 @@ QtObject:
       #     self.communities.joinedCommunityList.decrementMentions(communityId, activityCenterNotification.chatId)
       self.model.addActivityNotificationItemToList(activityCenterNotification)
     self.activityNotificationsChanged()
+
+  proc switchTo*(self: View, sectionId: string, chatId: string, messageId: string) {.slot.} =
+    self.delegate.switchTo(sectionId, chatId, messageId)

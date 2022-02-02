@@ -66,6 +66,9 @@ method acceptActivityCenterNotifications*(self: AccessInterface, notificationIds
 method dismissActivityCenterNotifications*(self: AccessInterface, notificationIds: seq[string]): string {.base.} =
   raise newException(ValueError, "No implementation available") 
 
+method switchTo*(self: AccessInterface, sectionId, chatId, messageId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 type
   ## Abstract class (concept) which must be implemented by object/s used in this 
   ## module.

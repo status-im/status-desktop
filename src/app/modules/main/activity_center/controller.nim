@@ -114,3 +114,6 @@ method getRenderedText*[T](self: Controller[T], parsedTextArray: seq[ParsedText]
 
 method decodeContentHash*[T](self: Controller[T], hash: string): string =
   return eth_utils.decodeContentHash(hash)
+
+method switchTo*[T](self: Controller[T], sectionId, chatId, messageId: string) =
+  self.messageService.switchTo(sectionId, chatId, messageId)

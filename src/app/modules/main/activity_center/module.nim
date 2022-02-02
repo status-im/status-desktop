@@ -181,3 +181,6 @@ method dismissActivityCenterNotificationsDone*[T](self: Module[T], notificationI
 
 method dismissActivityCenterNotifications*[T](self: Module[T], notificationIds: seq[string]): string =
   self.controller.dismissActivityCenterNotifications(notificationIds)
+
+method switchTo*[T](self: Module[T], sectionId, chatId, messageId: string) =
+  self.controller.switchTo(sectionId, chatId, messageId)
