@@ -72,7 +72,6 @@ const SIGNAL_COMMUNITY_CHANNEL_DELETED* = "communityChannelDeleted"
 const SIGNAL_COMMUNITY_CATEGORY_CREATED* = "communityCategoryCreated"
 const SIGNAL_COMMUNITY_CATEGORY_EDITED* = "communityCategoryEdited"
 const SIGNAL_COMMUNITY_CATEGORY_DELETED* = "communityCategoryDeleted"
-const SIGNAL_COMMUNITY_CATEGORY_REORDERED* = "communityCategoryReordered"
 const SIGNAL_COMMUNITY_MEMBER_APPROVED* = "communityMemberApproved"
 
 QtObject:
@@ -660,13 +659,6 @@ QtObject:
         let error = Json.decode($response.error, RpcError)
         raise newException(RpcException, "Error reordering community category: " & error.message)
 
-      self.events.emit(SIGNAL_COMMUNITY_CATEGORY_REORDERED,
-        CommunityCategoryOrderArgs(
-          communityId: communityId,
-          categoryId: categoryId,
-          position: position
-        )
-      )
     except Exception as e:
       error "Error reordering category channel", msg = e.msg, communityId, categoryId, position
 
