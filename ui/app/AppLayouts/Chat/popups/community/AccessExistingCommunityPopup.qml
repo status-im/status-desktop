@@ -17,19 +17,9 @@ StatusModal {
     height: 400
 
     property var store
-    property string error: ""
-    property string keyValidationError: ""
-    property string communityKey: ""
 
-    function validate() {
-        keyValidationError = "";
-
-        if (keyInput.text.trim() === "") {
-            //% "You need to enter a key"
-            keyValidationError = qsTrId("you-need-to-enter-a-key");
-        }
-
-        return !keyValidationError;
+    function validate(communityKey) {
+        return communityKey.trim() !== ""
     }
 
     //% "Access existing community"
@@ -55,6 +45,10 @@ StatusModal {
             customHeight: 110
             anchors.left: parent.left
             anchors.right: parent.right
+
+            onTextChanged: {
+                importButton.enabled = root.validate(keyInput.text)
+            }
         }
 
         StatusBaseText {
@@ -72,34 +66,18 @@ StatusModal {
 
     rightButtons: [
         StatusQControls.StatusButton {
+            id: importButton
+            enabled: false
             //% "Import"
             text: qsTrId("import")
             onClicked: {
-                if (!validate()) {
-                    return;
-                }
-
-                communityKey = keyInput.text.trim();
+                let communityKey = keyInput.text.trim();
                 if (!communityKey.startsWith("0x")) {
                     communityKey = "0x" + communityKey;
                 }
 
-
-                root.error = root.store.chatsModelInst.communities.importCommunity(communityKey, Utils.uuid())
-                if (!!root.error) {
-                    creatingError.text = error;
-                    return creatingError.open();
-                }
-
+                root.store.importCommunity(communityKey);
                 root.close();
-            }
-
-            MessageDialog {
-                id: creatingError
-                //% "Error importing the community"
-                title: qsTrId("error-importing-the-community")
-                icon: StandardIcon.Critical
-                standardButtons: StandardButton.Ok
             }
         }
     ]

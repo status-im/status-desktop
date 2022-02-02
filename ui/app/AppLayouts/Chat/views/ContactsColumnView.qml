@@ -374,7 +374,7 @@ Item {
         id: communitiesPopupComponent
         CommunitiesPopup {
             anchors.centerIn: parent
-           communitiesList: root.store.communitiesList
+            communitiesList: root.store.communitiesList
             onSetActiveCommunity: {
                 root.store.setActiveCommunity(id)
             }
@@ -402,8 +402,7 @@ Item {
         id: importCommunitiesPopupComponent
         AccessExistingCommunityPopup {
             anchors.centerIn: parent
-            // Not Refactored Yet
-//            error: root.store.chatsModelInst.communities.importCommunity(communityKey, Utils.uuid())
+            store: root.store
             onClosed: {
                 destroy()
             }
@@ -431,52 +430,46 @@ Item {
         }
     }
 
-    // Not Refactored Yet
-//    Connections {
-//        target: root.store.chatsModelInst.communities
-//        onImportingCommunityStateChanged: {
-//            if (state !== Constants.communityImported &&
-//                state !== Constants.communityImportingInProgress &&
-//                state !== Constants.communityImportingError)
-//            {
-//                return
-//            }
+    Connections {
+        target: root.store.communitiesModuleInst
+        onImportingCommunityStateChanged: {
+            if (state !== Constants.communityImported &&
+                state !== Constants.communityImportingInProgress &&
+                state !== Constants.communityImportingError)
+            {
+                return
+            }
 
-//            if (state === Constants.communityImported)
-//            {
-//                if (Global.toastMessage.uuid !== communityImportingProcessId)
-//                    return
+            Global.toastMessage.close()
 
-//                Global.toastMessage.close()
+            if (state === Constants.communityImported)
+            {
+                //% "Community imported"
+                Global.toastMessage.title = qsTrId("community-imported")
+                Global.toastMessage.source = ""
+                Global.toastMessage.iconRotates = false
+                Global.toastMessage.dissapearInMs = 4000
+            }
+            else if (state === Constants.communityImportingInProgress)
+            {
+                //% "Importing community is in progress"
+                Global.toastMessage.title = qsTrId("importing-community-is-in-progress")
+                Global.toastMessage.source = Style.svg("loading")
+                Global.toastMessage.iconRotates = true
+                Global.toastMessage.dissapearInMs = -1
+            }
+            else if (state === Constants.communityImportingError)
+            {
+                Global.toastMessage.title = errorMsg
+                Global.toastMessage.source = ""
+                Global.toastMessage.iconRotates = false
+                Global.toastMessage.dissapearInMs = 4000
+            }
 
-//                //% "Community imported"
-//                Global.toastMessage.title = qsTrId("community-imported")
-//                Global.toastMessage.source = ""
-//                Global.toastMessage.iconRotates = false
-//                Global.toastMessage.dissapearInMs = 4000
-//            }
-//            else if (state === Constants.communityImportingInProgress)
-//            {
-//                Global.toastMessage.uuid = communityImportingProcessId
-//                //% "Importing community is in progress"
-//                Global.toastMessage.title = qsTrId("importing-community-is-in-progress")
-//                Global.toastMessage.source = Style.svg("loading")
-//                Global.toastMessage.iconRotates = true
-//                Global.toastMessage.dissapearInMs = -1
-//            }
-//            else if (state === Constants.communityImportingError)
-//            {
-//                if (Global.toastMessage.uuid !== communityImportingProcessId)
-//                    return
-
-//                Global.toastMessage.close()
-//                return
-//            }
-
-//            Global.toastMessage.displayCloseButton = false
-//            Global.toastMessage.displayLink = false
-//            Global.toastMessage.iconColor = Style.current.primary
-//            Global.toastMessage.open()
-//        }
-//    }
+            Global.toastMessage.displayCloseButton = false
+            Global.toastMessage.displayLink = false
+            Global.toastMessage.iconColor = Style.current.primary
+            Global.toastMessage.open()
+        }
+    }
 }

@@ -34,7 +34,14 @@ method delete*(self: Controller) =
 method init*(self: Controller) =
   self.events.on(SIGNAL_COMMUNITY_CREATED) do(e:Args):
     let args = CommunityArgs(e)
-    self.delegate.addCommunity(args.community)
+    self.delegate.communityAdded(args.community)
+
+  self.events.on(SIGNAL_COMMUNITY_IMPORTED) do(e:Args):
+    let args = CommunityArgs(e)
+    if(args.error.len > 0):
+      self.delegate.onImportCommunityErrorOccured(args.error)
+    else:
+      self.delegate.communityImported(args.community)
 
   self.events.on(SIGNAL_COMMUNITIES_UPDATE) do(e:Args):
     let args = CommunitiesArgs(e)

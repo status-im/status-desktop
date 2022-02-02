@@ -14,9 +14,12 @@ export community_dto
 logScope:
   topics = "community-service"
 
+include ../../common/json_utils
+
 type
   CommunityArgs* = ref object of Args
     community*: CommunityDto
+    error*: string
 
   CommunitiesArgs* = ref object of Args
     communities*: seq[CommunityDto]
@@ -54,6 +57,7 @@ const SIGNAL_COMMUNITY_JOINED* = "communityJoined"
 const SIGNAL_COMMUNITY_MY_REQUEST_ADDED* = "communityMyRequestAdded"
 const SIGNAL_COMMUNITY_LEFT* = "communityLeft"
 const SIGNAL_COMMUNITY_CREATED* = "communityCreated"
+const SIGNAL_COMMUNITY_IMPORTED* = "communityImported"
 const SIGNAL_COMMUNITY_EDITED* = "communityEdited"
 const SIGNAL_COMMUNITIES_UPDATE* = "communityUpdated"
 const SIGNAL_COMMUNITY_CHANNEL_CREATED* = "communityChannelCreated"
@@ -635,11 +639,48 @@ QtObject:
   proc importCommunity*(self: Service, communityKey: string) =
     try:
       let response = status_go.importCommunity(communityKey)
+      ## after `importCommunity` call everything should be handled in a slot cnnected to `SignalType.CommunityFound.event`
+      ## but because of insufficient data (chats details are missing) sent as a payload of that signal we're unable to do 
+      ## that until `status-go` part gets improved in ragards of that. 
+
       if (response.error != nil):
         let error = Json.decode($response.error, RpcError)
-        raise newException(RpcException, fmt"Error importing the community: {error.message}")
+        raise newException(RpcException, fmt"community id `{communityKey}` err: {error.message}")
+
+      if response.result == nil or response.result.kind != JObject:
+        raise newException(RpcException, fmt"response is empty or not an json object, community id `{communityKey}`")
+
+      var communityJArr: JsonNode
+      if(not response.result.getProp("communities", communityJArr)):
+        raise newException(RpcException, fmt"there is no `communities` key in the response for community id: {communityKey}")
+
+      if(communityJArr.len == 0):
+        raise newException(RpcException, fmt"`communities` array is empty in the response for community id: {communityKey}")
+      
+      var chatsJArr: JsonNode
+      if(not response.result.getProp("chats", chatsJArr)):
+        raise newException(RpcException, fmt"there is no `chats` key in the response for community id: {communityKey}")
+
+      let communityDto = communityJArr[0].toCommunityDto()
+      self.joinedCommunities[communityDto.id] = communityDto
+
+      for chatObj in chatsJArr:
+        let chatDto = chatObj.toChatDto()
+        self.chatService.updateOrAddChat(chatDto) # we have to update chats stored in the chat service.
+
+      for chat in communityDto.chats:
+        let fullChatId = communityDto.id & chat.id
+        var chatDetails =  self.chatService.getChatById(fullChatId)
+        chatDetails.updateMissingFields(chat)
+        self.chatService.updateOrAddChat(chatDetails) # we have to update chats stored in the chat service.
+    
+      self.events.emit(SIGNAL_COMMUNITY_IMPORTED, CommunityArgs(community: communityDto))
+
     except Exception as e:
-      error "Error requesting community info", msg = e.msg
+      error "Error importing the community: ", msg = e.msg
+      # We should apply some notification mechanism on the application level which will deal with errors and 
+      # notify user about them. Till then we're using this way.
+      self.events.emit(SIGNAL_COMMUNITY_IMPORTED, CommunityArgs(error: e.msg))
 
   proc exportCommunity*(self: Service, communityId: string): string =
     try:

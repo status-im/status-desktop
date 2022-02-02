@@ -160,14 +160,19 @@ QtObject:
     )
     self.events.emit(SIGNAL_NEW_MESSAGE_RECEIVED, data)
 
+  proc getNumOfPinnedMessages*(self: Service, chatId: string): int =
+    if(self.numOfPinnedMessagesPerChat.hasKey(chatId)):
+      return self.numOfPinnedMessagesPerChat[chatId]
+    return 0
+  
   proc handlePinnedMessagesUpdate(self: Service, pinnedMessages: seq[PinnedMessageUpdateDto]) =
     for pm in pinnedMessages:
       let data = MessagePinUnpinArgs(chatId: pm.chatId, messageId: pm.messageId, actionInitiatedBy: pm.pinnedBy)
       if(pm.pinned):
-        self.numOfPinnedMessagesPerChat[pm.chatId] = self.numOfPinnedMessagesPerChat[pm.chatId] + 1
+        self.numOfPinnedMessagesPerChat[pm.chatId] = self.getNumOfPinnedMessages(pm.chatId) + 1
         self.events.emit(SIGNAL_MESSAGE_PINNED, data)
       else:
-        self.numOfPinnedMessagesPerChat[pm.chatId] = self.numOfPinnedMessagesPerChat[pm.chatId] - 1
+        self.numOfPinnedMessagesPerChat[pm.chatId] = self.getNumOfPinnedMessages(pm.chatId) - 1
         self.events.emit(SIGNAL_MESSAGE_UNPINNED, data)
 
   proc handleDeletedMessagesUpdate(self: Service, deletedMessages: seq[RemovedMessageDto]) =
@@ -370,11 +375,11 @@ QtObject:
           var pinned = false
           if(pinMessageObj.getProp("pinned", pinned)):
             if(pinned and pin):
-              self.numOfPinnedMessagesPerChat[chatId] = self.numOfPinnedMessagesPerChat[chatId] + 1
+              self.numOfPinnedMessagesPerChat[chatId] = self.getNumOfPinnedMessages(chatId) + 1
               self.events.emit(SIGNAL_MESSAGE_PINNED, data)
           else:
             if(not pinned and not pin):
-              self.numOfPinnedMessagesPerChat[chatId] = self.numOfPinnedMessagesPerChat[chatId] - 1
+              self.numOfPinnedMessagesPerChat[chatId] = self.getNumOfPinnedMessages(chatId) - 1
               self.events.emit(SIGNAL_MESSAGE_UNPINNED, data)
 
     except Exception as e:
@@ -537,9 +542,6 @@ QtObject:
     )
 
     self.threadpool.start(arg)
-
-  proc getNumOfPinnedMessages*(self: Service, chatId: string): int =
-    return self.numOfPinnedMessagesPerChat[chatId]
 
   proc onAsyncGetLinkPreviewData*(self: Service, response: string) {.slot.} =
     self.events.emit(SIGNAL_MESSAGE_LINK_PREVIEW_DATA_LOADED, LinkPreviewDataArgs(response: response))

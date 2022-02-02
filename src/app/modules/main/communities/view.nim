@@ -96,3 +96,7 @@ QtObject:
 
   proc importCommunity*(self: View, communityKey: string) {.slot.} =
     self.delegate.importCommunity(communityKey)
+
+  proc importingCommunityStateChanged*(self:View, state: int, errorMsg: string) {.signal.}
+  proc emitImportingCommunityStateChangedSignal*(self: View, state: int, errorMsg: string) =
+    self.importingCommunityStateChanged(state, errorMsg)

@@ -12,6 +12,12 @@ import ../../../../app_service/service/contacts/service as contacts_service
 
 export io_interface
 
+type
+  ImportCommunityState {.pure.} = enum
+    Imported = 0
+    ImportingInProgress
+    ImportingError
+
 type 
   Module*  = ref object of io_interface.AccessInterface
     delegate: delegate_interface.AccessInterface
@@ -91,7 +97,7 @@ method setAllCommunities*(self: Module, communities: seq[CommunityDto]) =
   for community in communities:
     self.view.addItem(self.getCommunityItem(community))
 
-method addCommunity*(self: Module, community: CommunityDto) =
+method communityAdded*(self: Module, community: CommunityDto) =
   self.view.addItem(self.getCommunityItem(community))
 
 method joinCommunity*(self: Module, communityId: string): string =
@@ -160,5 +166,13 @@ method requestCommunityInfo*(self: Module, communityId: string) =
 method deleteCommunityChat*(self: Module, communityId: string, channelId: string) =
   self.controller.deleteCommunityChat(communityId, channelId)
 
+method communityImported*(self: Module, community: CommunityDto) =
+  self.view.addItem(self.getCommunityItem(community))
+  self.view.emitImportingCommunityStateChangedSignal(ImportCommunityState.Imported.int, "")
+
 method importCommunity*(self: Module, communityKey: string) =
+  self.view.emitImportingCommunityStateChangedSignal(ImportCommunityState.ImportingInProgress.int, "")
   self.controller.importCommunity(communityKey)
+
+method onImportCommunityErrorOccured*(self: Module, error: string) =
+  self.view.emitImportingCommunityStateChangedSignal(ImportCommunityState.ImportingError.int, error)
