@@ -91,3 +91,9 @@ method transferEth*(self: Module, from_addr: string, to_addr: string, value: str
     uuid: string): bool =
   result = self.controller.transferEth(from_addr, to_addr, value, gas, gasPrice,
     maxPriorityFeePerGas, maxFeePerGas, password, uuid)
+
+method transferTokens*(self: Module, from_addr: string, to_addr: string, contractAddress: string,
+    value: string, gas: string, gasPrice: string, maxPriorityFeePerGas: string,
+    maxFeePerGas: string, password: string, uuid: string): bool =
+  result = self.controller.transferTokens(from_addr, to_addr, contractAddress, value, gas, gasPrice,
+    maxPriorityFeePerGas, maxFeePerGas, password, uuid)

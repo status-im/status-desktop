@@ -73,4 +73,9 @@ QtObject {
        return walletSectionTransactions.transferEth(from, to, amount, gasLimit, gasPrice, tipLimit,
         overallLimit, password, uuid);
     }
+
+    function transferTokens(from, to, address, amount, gasLimit, gasPrice, tipLimit, overallLimit, password, uuid) {
+       return walletSectionTransactions.transferTokens(from, to, address, amount, gasLimit,
+        gasPrice, tipLimit, overallLimit, password, uuid);
+    }
 }

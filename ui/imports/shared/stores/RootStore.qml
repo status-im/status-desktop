@@ -62,14 +62,6 @@ QtObject {
         localAccountSensitiveSettings.isTenorWarningAccepted = value;
     }
 
-    function transferEth(from, to, amount, gasLimit, gasPrice, tipLimit, overallLimit, password, uuid) {
-//        return walletModelInst.transactionsView.transferEth(from, to, amount, gasLimit, gasPrice, tipLimit, overallLimit, password, uuid);
-    }
-
-    function transferTokens(from, to, address, amount, gasLimit, gasPrice, tipLimit, overallLimit, password, uuid) {
-//        return walletModelInst.transactionsView.transferTokens(from, to, address, amount, gasLimit, gasPrice, tipLimit, overallLimit, password, uuid);
-    }
-
     function copyToClipboard(text) {
         globalUtils.copyToClipboard(text)
     }

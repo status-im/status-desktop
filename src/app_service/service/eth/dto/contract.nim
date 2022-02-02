@@ -74,4 +74,4 @@ proc tokenSymbol*(contract: ContractDto): string =
   getTokenString(contract, "symbol")
 
 proc getMethod*(contract: ContractDto, methodName: string): MethodDto = 
-  return contract.methods["methodName"]
+  return contract.methods[methodName]

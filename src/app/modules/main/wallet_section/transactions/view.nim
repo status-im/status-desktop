@@ -105,9 +105,16 @@ QtObject:
 
   proc estimateGas*(self: View, from_addr: string, to: string, assetAddress: string, value: string, data: string): string {.slot.} =
     result = self.delegate.estimateGas(from_addr, to, assetAddress, value, data)
+    result = self.delegate.estimateGas(from_addr, to, assetAddress, value, data)
 
   proc transferEth*(self: View, from_addr: string, to_addr: string, value: string, gas: string,
       gasPrice: string, maxPriorityFeePerGas: string, maxFeePerGas: string, password: string,
       uuid: string): bool {.slot.} =
     result = self.delegate.transferEth(from_addr, to_addr, value, gas, gasPrice,
+      maxPriorityFeePerGas, maxFeePerGas, password, uuid)
+
+  proc transferTokens*(self: View, from_addr: string, to_addr: string, contractAddress: string,
+      value: string, gas: string, gasPrice: string, maxPriorityFeePerGas: string,
+      maxFeePerGas: string, password: string, uuid: string): bool {.slot.} =
+    result = self.delegate.transferTokens(from_addr, to_addr, contractAddress, value, gas, gasPrice,
       maxPriorityFeePerGas, maxFeePerGas, password, uuid)

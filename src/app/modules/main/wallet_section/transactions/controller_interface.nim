@@ -37,6 +37,12 @@ method transferEth*(self: AccessInterface, from_addr: string, to_addr: string, v
     password: string, uuid: string): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method transferTokens*(self: AccessInterface, from_addr: string, to_addr: string,
+    contractAddress: string, value: string, gas: string, gasPrice: string,
+    maxPriorityFeePerGas: string, maxFeePerGas: string, password: string,
+    uuid: string): bool {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 type
   ## Abstract class (concept) which must be implemented by object/s used in this 
   ## module.

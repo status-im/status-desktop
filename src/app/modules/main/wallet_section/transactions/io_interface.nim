@@ -48,6 +48,12 @@ method transferEth*(self: AccessInterface, from_addr: string, to_addr: string, v
     password: string, uuid: string): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method transferTokens*(self: AccessInterface, from_addr: string, to_addr: string,
+    contractAddress: string, value: string, gas: string, gasPrice: string,
+    maxPriorityFeePerGas: string, maxFeePerGas: string, password: string,
+    uuid: string): bool {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 # View Delegate Interface
 # Delegate for the view must be declared here due to use of QtObject and multi 
 # inheritance, which is not well supported in Nim.

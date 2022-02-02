@@ -51,18 +51,17 @@ ModalPopup {
                         transactionSigner.enteredPassword,
                         stack.uuid)
         } else {
-            // Not Refactored Yet
-            //            success = RootStore.transferTokens(
-            //                        selectFromAccount.selectedAccount.address,
-            //                        selectRecipient.selectedRecipient.address,
-            //                        txtAmount.selectedAsset.address,
-            //                        txtAmount.selectedAmount,
-            //                        gasSelector.selectedGasLimit,
-            //                        gasSelector.eip1599Enabled ? "" : gasSelector.selectedGasPrice,
-            //                        gasSelector.selectedTipLimit,
-            //                        gasSelector.selectedOverallLimit,
-            //                        transactionSigner.enteredPassword,
-            //                        stack.uuid)
+            success = root.store.transferTokens(
+                        selectFromAccount.selectedAccount.address,
+                        selectRecipient.selectedRecipient.address,
+                        txtAmount.selectedAsset.address,
+                        txtAmount.selectedAmount,
+                        gasSelector.selectedGasLimit,
+                        gasSelector.eip1599Enabled ? "" : gasSelector.selectedGasPrice,
+                        gasSelector.selectedTipLimit,
+                        gasSelector.selectedOverallLimit,
+                        transactionSigner.enteredPassword,
+                        stack.uuid)
         }
 
         if(!success){
@@ -144,6 +143,7 @@ ModalPopup {
                 id: txtAmount
                 selectedAccount: selectFromAccount.selectedAccount
                 currentCurrency: root.store.currentCurrency
+                // TODO make those use a debounce
                 getFiatValue: root.store.getFiatValue
 //                getCryptoValue: RootStore.cryptoValue
                 width: stack.width
