@@ -100,6 +100,13 @@ method setWakuV2LightClientEnabled*(self: Controller, enabled: bool) =
   
   self.delegate.onWakuV2LightClientSet()
 
+method enableDeveloperFeatures*(self: Controller) = 
+  discard self.settingsService.saveTelemetryServerUrl(DEFAULT_TELEMETRY_SERVER_URL)
+  discard self.settingsService.saveAutoMessageEnabled(true)
+  discard self.nodeConfigurationService.setDebugLevel(LogLevel.DEBUG)
+
+  quit(QuitSuccess) # quits the app TODO: change this to logout instead when supported
+
 method toggleTelemetry*(self: Controller) = 
   var value = ""
   if(not self.isTelemetryEnabled()):

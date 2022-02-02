@@ -153,3 +153,6 @@ QtObject:
 
   proc toggleNodeManagementSection*(self: View) {.slot.} =
     self.delegate.toggleNodeManagementSection()
+
+  proc enableDeveloperFeatures*(self: View) {.slot.} =
+    self.delegate.enableDeveloperFeatures()

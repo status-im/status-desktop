@@ -34,6 +34,9 @@ method getWakuV2LightClientEnabled*(self: AccessInterface): bool {.base.} =
 method setWakuV2LightClientEnabled*(self: AccessInterface, enabled: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method enableDeveloperFeatures*(self: AccessInterface) {.base.} = 
+  raise newException(ValueError, "No implementation available")
+
 method toggleTelemetry*(self: AccessInterface) {.base.} = 
   raise newException(ValueError, "No implementation available")
 

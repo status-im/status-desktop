@@ -98,6 +98,13 @@ QtObject {
         root.advancedModule.toggleDebug()
     }
 
+    function enableDeveloperFeatures() {
+        if(!root.advancedModule)
+            return
+
+        root.advancedModule.enableDeveloperFeatures()
+    }
+
     function addCustomNetwork(name, endpoint, networkId, networkType) {
         if(!root.advancedModule)
             return
