@@ -3,6 +3,7 @@ import NimQml, tables, json, re, sequtils, strformat, strutils, chronicles
 import ../../../app/core/tasks/[qt, threadpool]
 import ../../../app/core/signals/types
 import ../../../app/core/eventemitter
+import ../../../app/global/global_singleton
 import ../../../backend/messages as status_go
 import ../contacts/service as contact_service
 import ./dto/message as message_dto
@@ -167,12 +168,21 @@ QtObject:
   
   proc handlePinnedMessagesUpdate(self: Service, pinnedMessages: seq[PinnedMessageUpdateDto]) =
     for pm in pinnedMessages:
-      let data = MessagePinUnpinArgs(chatId: pm.chatId, messageId: pm.messageId, actionInitiatedBy: pm.pinnedBy)
+      var chatId: string = ""
+      if (self.numOfPinnedMessagesPerChat.contains(pm.localChatId)):
+        # In 1-1 chats, the message's chatId is the localChatId
+        chatId = pm.localChatId
+      elif (self.numOfPinnedMessagesPerChat.contains(pm.chatId)):
+        chatId = pm.chatId
+
+      let data = MessagePinUnpinArgs(chatId: chatId, messageId: pm.messageId, actionInitiatedBy: pm.pinnedBy)
       if(pm.pinned):
-        self.numOfPinnedMessagesPerChat[pm.chatId] = self.getNumOfPinnedMessages(pm.chatId) + 1
+        if (chatId != "" and pm.pinnedBy != singletonInstance.userProfile.getPubKey()):
+          self.numOfPinnedMessagesPerChat[chatId] = self.getNumOfPinnedMessages(chatId) + 1
         self.events.emit(SIGNAL_MESSAGE_PINNED, data)
       else:
-        self.numOfPinnedMessagesPerChat[pm.chatId] = self.getNumOfPinnedMessages(pm.chatId) - 1
+        if (chatId != "" and pm.pinnedBy != singletonInstance.userProfile.getPubKey()):
+          self.numOfPinnedMessagesPerChat[chatId] = self.getNumOfPinnedMessages(chatId) - 1
         self.events.emit(SIGNAL_MESSAGE_UNPINNED, data)
 
   proc handleDeletedMessagesUpdate(self: Service, deletedMessages: seq[RemovedMessageDto]) =
