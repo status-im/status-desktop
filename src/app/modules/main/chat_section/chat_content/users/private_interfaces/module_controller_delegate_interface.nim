@@ -21,3 +21,6 @@ method onChatMembersAdded*(self: AccessInterface, ids: seq[string]) {.base.} =
 
 method onChatMemberRemoved*(self: AccessInterface, ids: string) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method onChatMemberUpdated*(self: AccessInterface, id: string, admin: bool, joined: bool) {.base.} =
+  raise newException(ValueError, "No implementation available")

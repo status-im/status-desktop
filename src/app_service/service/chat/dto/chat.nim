@@ -114,3 +114,6 @@ proc toChatDto*(jsonObj: JsonNode): ChatDto =
   if(jsonObj.getProp("members", membersObj) and membersObj.kind == JArray):
     for memberObj in membersObj:
       result.members.add(toChatMember(memberObj))
+
+proc isPublicChat*(chatDto: ChatDto): bool =
+  return chatDto.chatType == ChatType.Public

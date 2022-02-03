@@ -9,6 +9,8 @@ type
     OnlineStatus
     Icon
     IsIdenticon
+    IsAdmin
+    Joined
 
 QtObject:
   type
@@ -55,6 +57,8 @@ QtObject:
       ModelRole.OnlineStatus.int:"onlineStatus",
       ModelRole.Icon.int:"icon",
       ModelRole.IsIdenticon.int:"isIdenticon",
+      ModelRole.IsAdmin.int:"isAdmin",
+      ModelRole.Joined.int:"joined",
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -78,6 +82,10 @@ QtObject:
       result = newQVariant(item.icon)
     of ModelRole.IsIdenticon: 
       result = newQVariant(item.isIdenticon)
+    of ModelRole.IsAdmin:
+      result = newQVariant(item.isAdmin)
+    of ModelRole.Joined: 
+      result = newQVariant(item.joined)
 
   proc addItem*(self: Model, item: Item) =
     # we need to maintain online contact on top, that means
@@ -140,7 +148,10 @@ QtObject:
     let index = self.createIndex(ind, 0, nil)
     self.dataChanged(index, index, @[ModelRole.Icon.int, ModelRole.IsIdenticon.int])
 
-  proc updateItem*(self: Model, id: string, name: string, icon: string, isIdenticon: bool) = 
+  proc updateItem*(
+    self: Model, id: string, name: string, icon: string, isIdenticon: bool, 
+    isAdmin: bool = false, joined: bool = false
+  ) = 
     let ind = self.findIndexForMessageId(id)
     if(ind == -1):
       return
@@ -148,9 +159,13 @@ QtObject:
     self.items[ind].name = name
     self.items[ind].icon = icon
     self.items[ind].isIdenticon = isIdenticon
+    self.items[ind].isAdmin = isAdmin
+    self.items[ind].joined = joined
     
     let index = self.createIndex(ind, 0, nil)
-    self.dataChanged(index, index, @[ModelRole.Name.int, ModelRole.Icon.int, ModelRole.IsIdenticon.int])
+    self.dataChanged(index, index, @[
+      ModelRole.Name.int, ModelRole.Icon.int, ModelRole.IsIdenticon.int, ModelRole.IsAdmin.int, ModelRole.Joined.int,
+    ])
 
   proc setOnlineStatus*(self: Model, id: string, onlineStatus: OnlineStatus) = 
     let ind = self.findIndexForMessageId(id)

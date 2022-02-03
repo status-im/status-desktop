@@ -16,20 +16,26 @@ type
     onlineStatus: OnlineStatus
     icon: string
     isIdenticon: bool
+    isAdmin: bool
+    joined: bool
 
 proc initItem*(
-    id: string,
-    name: string,
-    onlineStatus: OnlineStatus,
-    icon: string,
-    isidenticon: bool
-    ): Item =
+  id: string,
+  name: string,
+  onlineStatus: OnlineStatus,
+  icon: string,
+  isidenticon: bool,
+  isAdmin: bool = false,
+  joined: bool = false,
+): Item =
   result = Item()
   result.id = id
   result.name = name
   result.onlineStatus = onlineStatus
   result.icon = icon
   result.isIdenticon = isidenticon
+  result.isAdmin = isAdmin
+  result.joined = joined
 
 proc `$`*(self: Item): string =
   result = fmt"""User Item(
@@ -38,6 +44,8 @@ proc `$`*(self: Item): string =
     onlineStatus: {$self.onlineStatus.int},
     icon: {self.icon},
     isIdenticon: {$self.isIdenticon}
+    isAdmin: {$self.isAdmin}
+    joined: {$self.joined}
     ]"""
 
 proc id*(self: Item): string {.inline.} = 
@@ -66,3 +74,15 @@ proc isIdenticon*(self: Item): bool {.inline.} =
 
 proc `isIdenticon=`*(self: Item, value: bool) {.inline.} = 
   self.isIdenticon = value
+
+proc isAdmin*(self: Item): bool {.inline.} = 
+  self.isAdmin
+
+proc `isAdmin=`*(self: Item, value: bool) {.inline.} = 
+  self.isAdmin = value
+
+proc joined*(self: Item): bool {.inline.} = 
+  self.joined 
+
+proc `joined=`*(self: Item, value: bool) {.inline.} = 
+  self.joined = value

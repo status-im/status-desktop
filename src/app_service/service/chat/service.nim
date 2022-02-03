@@ -56,6 +56,12 @@ type
   ChatMemberRemovedArgs* = ref object of Args
     chatId*: string
     id*: string
+
+  ChatMemberUpdatedArgs* = ref object of Args
+    chatId*: string
+    id*: string
+    admin*: bool
+    joined*: bool
   
 
 # Signals which may be emitted by this service:
@@ -70,6 +76,7 @@ const SIGNAL_CHAT_HISTORY_CLEARED* = "chatHistoryCleared"
 const SIGNAL_CHAT_RENAMED* = "chatRenamed"
 const SIGNAL_CHAT_MEMBERS_ADDED* = "chatMemberAdded"
 const SIGNAL_CHAT_MEMBER_REMOVED* = "chatMemberRemoved"
+const SIGNAL_CHAT_MEMBER_UPDATED* = "chatMemberUpdated"
 
 QtObject:
   type Service* = ref object of QObject
@@ -405,7 +412,14 @@ QtObject:
   method makeAdmin*(self: Service, chatId: string, pubKey: string) =
     try: 
       let response = status_chat.makeAdmin(chatId, pubKey)
-      self.emitUpdate(response)
+      for member in self.chats[chatId].members.mitems:
+        if (member.id == pubKey):
+          member.admin = true
+          self.events.emit(
+            SIGNAL_CHAT_MEMBER_UPDATED, 
+            ChatMemberUpdatedArgs(id: member.id, admin: member.admin, chatId: chatId, joined: member.joined)
+          )
+          break
     except Exception as e:
       error "error while making user admin: ", msg = e.msg
 
