@@ -19,6 +19,8 @@ import StatusQ.Components 0.1
 Item {
     id: root
     height: 64
+    width: parent.width
+
     property bool hasExistingContacts: false
     property bool showProfileNotFoundMessage: false
     property bool loading: false
@@ -28,12 +30,7 @@ Item {
     property string address: ""
     property bool resultClickable: true
     property bool addContactEnabled: true
-
-    property bool isAddedContact: root.isContactAdded()
-
-    function isContactAdded() {
-        return root.pubKey != "" ? Utils.getContactDetailsAsJson(root.pubKey).isContact : false
-    }
+    property bool isAddedContact: false
 
     signal resultClicked(string pubKey, bool isAddedContact, string username)
     signal addToContactsButtonClicked(string pubKey)
@@ -44,9 +41,16 @@ Item {
         username = ""
         userAlias = ""
         pubKey = ""
+        isAddedContact = false
     }
 
-    width: parent.width
+    function isContactAdded() {
+        return root.pubKey != "" ? Utils.getContactDetailsAsJson(root.pubKey).isContact : false
+    }
+
+    onPubKeyChanged: {
+        root.isAddedContact = root.isContactAdded()
+    }
 
     StyledText {
         id: nonContactsLabel
