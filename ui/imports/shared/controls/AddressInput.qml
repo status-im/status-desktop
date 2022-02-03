@@ -55,9 +55,8 @@ Item {
 
         contactsStore: root.contactsStore
 
-        onUserClicked: function (pubKey, isContact) {
-            console.warning("This is not refactored yet. We need to figure out where to get the address from")
-            //chatKey.text = address
+        onUserClicked: function (isContact, pubKey, ensName, address) {
+            chatKey.text = address
         }
         searchResultsWidth: parentWidth
         chatKey.customHeight: 56
