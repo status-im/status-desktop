@@ -213,7 +213,7 @@ Item {
 
                 Connections {
                     target: root.contactsStore.mainModuleInst
-                    onResolvedENS: function (resolvedPubKey) {
+                    onResolvedENS: {
                         if (resolvedPubKey === "") {
                             searchResults.pubKey = ""
                             searchResults.showProfileNotFoundMessage = true
