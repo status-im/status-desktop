@@ -208,25 +208,25 @@ $(DOTHERSIDE): | deps
 			.. $(HANDLE_OUTPUT) && \
 		$(DOTHERSIDE_BUILD_CMD)
 
-STATUSGO := vendor/status-lib/vendor/status-go/build/bin/libstatus.$(LIBSTATUS_EXT)
+STATUSGO := vendor/status-go/build/bin/libstatus.$(LIBSTATUS_EXT)
 STATUSGO_LIBDIR := $(shell pwd)/$(shell dirname "$(STATUSGO)")
 export STATUSGO_LIBDIR
 
 status-go: $(STATUSGO)
 $(STATUSGO): | deps
 	echo -e $(BUILD_MSG) "status-go"
-	+ cd vendor/status-lib/vendor/status-go && \
+	+ cd vendor/status-go && \
 	  $(MAKE) statusgo-shared-library $(HANDLE_OUTPUT)
 
 
-KEYCARDGO := vendor/status-lib/vendor/nim-keycard-go/go/keycard/build/libkeycard/libkeycard.$(LIBSTATUS_EXT)
+KEYCARDGO := vendor/nim-keycard-go/go/keycard/build/libkeycard/libkeycard.$(LIBSTATUS_EXT)
 KEYCARDGO_LIBDIR := $(shell pwd)/$(shell dirname "$(KEYCARDGO)")
 export KEYCARDGO_LIBDIR
 
 keycard-go: $(KEYCARDGO)
 $(KEYCARDGO): | deps
 	echo -e $(BUILD_MSG) "keycard-go"
-	+ cd vendor/status-lib/vendor/nim-keycard-go && \
+	+ cd vendor/nim-keycard-go && \
 	  $(MAKE) build-keycard-go $(HANDLE_OUTPUT)
 
 QRCODEGEN := vendor/QR-Code-generator/c/libqrcodegen.a
@@ -385,8 +385,8 @@ $(STATUS_CLIENT_APPIMAGE): nim_status_client $(APPIMAGE_TOOL) nim-status.desktop
 	cp -P /usr/lib/x86_64-linux-gnu/libgst* tmp/linux/dist/usr/lib/
 	cp -r /usr/lib/x86_64-linux-gnu/gstreamer-1.0 tmp/linux/dist/usr/lib/
 	cp -r /usr/lib/x86_64-linux-gnu/gstreamer1.0 tmp/linux/dist/usr/lib/
-	cp vendor/status-lib/vendor/status-go/build/bin/libstatus.so tmp/linux/dist/usr/lib/
-	cp vendor/status-lib/vendor/status-go/build/bin/libstatus.so.0 tmp/linux/dist/usr/lib/
+	cp vendor/status-go/build/bin/libstatus.so tmp/linux/dist/usr/lib/
+	cp vendor/status-go/build/bin/libstatus.so.0 tmp/linux/dist/usr/lib/
 	cp $(KEYCARDGO) tmp/linux/dist/usr/lib/
 
 	echo -e $(BUILD_MSG) "AppImage"

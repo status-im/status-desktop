@@ -1,8 +1,8 @@
 import json, chronicles
 
 import service_interface
-import status/general as status_general
-import status/keycard as status_keycard
+import ../../../backend/general as status_general
+import ../../../backend/keycard as status_keycard
 
 import ../../../constants as app_constants
 

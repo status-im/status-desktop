@@ -3,7 +3,7 @@ import chronicles, json, strutils, sequtils, tables, sugar
 import ../../common/[network_constants]
 import ../../../app/core/fleets/fleet_configuration
 import service_interface, ./dto/settings
-import status/settings as status_settings
+import ../../../backend/settings as status_settings
 
 export service_interface
 

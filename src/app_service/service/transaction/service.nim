@@ -1,7 +1,7 @@
 import NimQml, chronicles, sequtils, sugar, stint, strutils, json, strformat
-import status/transactions as transactions
-import status/wallet as status_wallet
-import status/eth
+import ../../../backend/transactions as transactions
+import ../../../backend/wallet as status_wallet
+import ../../../backend/eth
 
 import ../ens/utils as ens_utils
 from ../../common/account_constants import ZERO_ADDRESS

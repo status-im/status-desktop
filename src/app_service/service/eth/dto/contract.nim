@@ -7,7 +7,7 @@ import json, tables, json_serialization
 import web3/[ethtypes, conversions], stint
 import ./method_dto
 
-import status/eth as status_eth
+import ../../../../backend/eth as status_eth
 
 export method_dto
 

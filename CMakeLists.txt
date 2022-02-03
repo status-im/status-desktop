@@ -68,7 +68,7 @@ else()
 endif()
 
 
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/vendor/status-lib/vendor/status-go bin/status-go)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/vendor/status-go bin/status-go)
 
 # The following are dependencies that do not include CMakeList.txt files
 # Create a PR in those projects so we can include them just like it was

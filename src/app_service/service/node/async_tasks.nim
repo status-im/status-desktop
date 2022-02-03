@@ -1,4 +1,4 @@
-import status/node as status_node
+import ../../../backend/node as status_node
 import bitops, stew/byteutils, chronicles
 include ../../../app/core/tasks/common
 

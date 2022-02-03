@@ -4,7 +4,7 @@ import
 import
   nimcrypto, web3/[encoding, ethtypes]
 
-import status/eth as status_eth
+import ../../../../backend/eth as status_eth
 
 import
   ./transaction,

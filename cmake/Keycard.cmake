@@ -1,6 +1,6 @@
 # Keycard
 # TODO: create a PR in that project to build it like we do with status-go ^
-set(KEYCARD_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/vendor/status-lib/vendor/nim-keycard-go)
+set(KEYCARD_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/vendor/nim-keycard-go)
 set(KEYCARD_LIB_DIR ${KEYCARD_ROOT}/go/keycard/build/libkeycard)
 ExternalProject_Add(libkeycard
   PREFIX ${KEYCARD_ROOT}

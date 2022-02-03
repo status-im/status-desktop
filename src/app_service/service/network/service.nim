@@ -1,7 +1,7 @@
 import json, json_serialization, chronicles, atomics
 import options
 
-import status/network as status_network
+import ../../../backend/network as status_network
 import ./service_interface
 
 export service_interface
