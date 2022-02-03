@@ -211,6 +211,7 @@ ModalPopup {
             onClicked: {
                 popup.messageStore.unpinMessage(popup.messageToUnpin)
                 popup.messageToUnpin = ""
+                popup.messageStore.pinMessage(popup.messageToPin)
                 popup.messageToPin = ""
                 popup.close()
             }
