@@ -200,14 +200,16 @@ StatusWindow {
     Component.onCompleted: {
         Global.applicationWindow = this;
         Style.changeTheme(localAppSettings.theme, systemPalette.isCurrentSystemThemeDark())
+
+        if (!localAppSettings.appSizeInitialized) {
+            width = Math.min(Screen.desktopAvailableWidth - 125, 1400)
+            height =  Math.min(Screen.desktopAvailableHeight - 125, 840)
+            localAppSettings.appSizeInitialized = true
+        }
+
         setX(Qt.application.screens[0].width / 2 - width / 2);
         setY(Qt.application.screens[0].height / 2 - height / 2);
 
-        if (!localAppSettings.appSizeInitialized) {
-            width = Screen.desktopAvailableWidth - 125
-            height = Screen.desktopAvailableHeight - 125
-            localAppSettings.appSizeInitialized = true
-        }
         applicationWindow.updatePosition();
     }
 
