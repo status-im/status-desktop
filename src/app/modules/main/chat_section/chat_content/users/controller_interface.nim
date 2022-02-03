@@ -1,4 +1,5 @@
 import ../../../../../../app_service/service/contacts/service as contacts_service
+import ../../../../../../app_service/service/chat/service as chat_service
 
 type 
   AccessInterface* {.pure inheritable.} = ref object of RootObj
@@ -21,4 +22,10 @@ method getContactNameAndImage*(self: AccessInterface, contactId: string):
   raise newException(ValueError, "No implementation available")
 
 method getStatusForContact*(self: AccessInterface, contactId: string): StatusUpdateDto {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getChat*(self: AccessInterface): ChatDto {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getChatMemberInfo*(self: AccessInterface, id: string): (bool, bool) =
   raise newException(ValueError, "No implementation available")

@@ -25,11 +25,12 @@ type
     communityService: community_service.Service
     messageService: message_service.Service
 
-proc newController*(delegate: io_interface.AccessInterface, events: EventEmitter, sectionId: string, chatId: string, 
+proc newController*(
+  delegate: io_interface.AccessInterface, events: EventEmitter, sectionId: string, chatId: string, 
   belongsToCommunity: bool, isUsersListAvailable: bool, contactService: contact_service.Service, 
   chatService: chat_service.Service, communityService: community_service.Service, 
-  messageService: message_service.Service): 
-  Controller =
+  messageService: message_service.Service
+): Controller =
   result = Controller()
   result.delegate = delegate
   result.events = events
@@ -41,6 +42,7 @@ proc newController*(delegate: io_interface.AccessInterface, events: EventEmitter
   result.chatService = chatService
   result.communityService = communityService
   result.messageService = messageService
+  result.chatService = chatService
   
 method delete*(self: Controller) =
   discard
@@ -80,20 +82,36 @@ method init*(self: Controller) =
       if (args.chatId == self.chatId): 
         self.delegate.onChatMemberRemoved(args.id)
 
+    self.events.on(SIGNAL_CHAT_MEMBER_UPDATED) do(e: Args):
+      let args = ChatMemberUpdatedArgs(e)
+      if (args.chatId == self.chatId): 
+        self.delegate.onChatMemberUpdated(args.id, args.admin, args.joined)
+
     if (self.belongsToCommunity):
       self.events.on(SIGNAL_COMMUNITY_MEMBER_APPROVED) do(e: Args):
         let args = CommunityMemberArgs(e)
         if (args.communityId == self.sectionId):
           self.delegate.onChatMembersAdded(@[args.pubKey])
 
+method getChat*(self: Controller): ChatDto =
+  return self.chatService.getChatById(self.chatId)
+
+method getChatMemberInfo*(self: Controller, id: string): (bool, bool) =
+  let chat = self.getChat()
+  for member in chat.members:
+    if (member.id == id):
+      return (member.admin, member.joined)
+
+  return (false, false)
+
 method getMembersPublicKeys*(self: Controller): seq[string] = 
-  if(not self.belongsToCommunity):
-    let chatDto = self.chatService.getChatById(self.chatId)
-    return chatDto.members.map(x => x.id)
-  else:
+  if(self.belongsToCommunity):
     let communityDto = self.communityService.getCommunityById(self.sectionId)
     return communityDto.members.map(x => x.id)
-
+  else:
+    let chatDto = self.getChat()
+    return chatDto.members.map(x => x.id)
+    
 method getContactNameAndImage*(self: Controller, contactId: string): 
   tuple[name: string, image: string, isIdenticon: bool] =
   return self.contactService.getContactNameAndImage(contactId)
