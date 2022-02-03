@@ -3,7 +3,7 @@ import chronicles, sequtils, json
 import ./service_interface, ./dto
 
 import ../../../app/core/eventemitter
-import status/saved_addresses as backend
+import ../../../backend/saved_addresses as backend
 
 export service_interface
 

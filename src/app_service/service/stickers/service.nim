@@ -8,10 +8,10 @@ import ../../../app/core/tasks/[qt, threadpool]
 import web3/ethtypes, web3/conversions, stew/byteutils, nimcrypto, json_serialization, chronicles
 import json, tables, json_serialization
 
-import status/stickers as status_stickers
-import status/chat as status_chat
-import status/response_type
-import status/eth
+import ../../../backend/stickers as status_stickers
+import ../../../backend/chat as status_chat
+import ../../../backend/response_type
+import ../../../backend/eth
 import ./dto/stickers
 import ../ens/utils as ens_utils
 import ../eth/service as eth_service

@@ -5,9 +5,9 @@ import ../accounts/service_interface as accounts_service
 
 import ../../../app/core/eventemitter
 
-import status/accounts as status_account
-import status/eth as status_eth
-import status/privacy as status_privacy
+import ../../../backend/accounts as status_account
+import ../../../backend/eth as status_eth
+import ../../../backend/privacy as status_privacy
 
 logScope:
   topics = "privacy-service"

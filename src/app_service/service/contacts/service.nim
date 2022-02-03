@@ -8,10 +8,10 @@ import ../../../app/core/tasks/[qt, threadpool]
 import ./dto/contacts as contacts_dto
 import ./dto/status_update as status_update_dto
 import ./dto/contact_details
-import status/contacts as status_contacts
-import status/accounts as status_accounts
-import status/chat as status_chat
-import status/utils as status_utils
+import ../../../backend/contacts as status_contacts
+import ../../../backend/accounts as status_accounts
+import ../../../backend/chat as status_chat
+import ../../../backend/utils as status_utils
 
 export contacts_dto, status_update_dto, contact_details
 

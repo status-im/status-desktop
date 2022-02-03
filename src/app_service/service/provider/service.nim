@@ -7,9 +7,9 @@ import ../dapp_permissions/service as dapp_permissions_service
 import ../settings/service_interface as settings_service
 import ../ens/utils as ens_utils
 import service_interface
-import status/permissions as status_go_permissions
-import status/core as status_go_core
-import status/eth as status_eth
+import ../../../backend/permissions as status_go_permissions
+import ../../../backend/core as status_go_core
+import ../../../backend/eth as status_eth
 import ../../common/utils as status_utils
 import ../eth/utils as eth_utils
 import ../eth/dto/transaction as transaction_data_dto

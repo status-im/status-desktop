@@ -6,7 +6,7 @@ include  ../../../common/json_utils
 # Important note:
 # 
 # Uppercase letters are used in properties in object types deliberately, cause 
-# we're following "keys" which are received from `status-lib` (`status-go`)
+# we're following "keys" which are received from `status-go`
 #
 # Why do we do that?
 # Cause we're storing node configuration to the settings as JsonNode, and in order to 

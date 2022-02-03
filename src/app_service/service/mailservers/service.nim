@@ -7,7 +7,7 @@ import ../../../app/core/[main]
 import ../../../app/core/tasks/[qt, threadpool]
 import ../settings/service_interface as settings_service
 import ../node_configuration/service_interface as node_configuration_service
-import status/mailservers as status_mailservers
+import ../../../backend/mailservers as status_mailservers
 
 logScope:
   topics = "mailservers-service"

@@ -1,7 +1,7 @@
 import json, chronicles
 
 import ./service_interface
-import status/accounts as status_accounts
+import ../../../backend/accounts as status_accounts
 
 export service_interface
 

@@ -2,7 +2,7 @@
 
 import json, sequtils
 
-import status/communities
+import ../../../../backend/communities
 include ../../../common/json_utils
 
 type

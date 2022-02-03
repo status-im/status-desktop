@@ -34,9 +34,6 @@
 [submodule "vendor/semver.nim"]
 	path = vendor/semver.nim
 	url = https://github.com/euantorano/semver.nim
-[submodule "vendor/status-lib"]
-	path = vendor/status-lib
-	url = https://github.com/status-im/status-lib
 [submodule "spellchecking"]
 	path = spellchecking
 	url = https://github.com/status-im/desktop-spellchecking.git
@@ -109,3 +106,15 @@
 [submodule "vendor/fcitx5-qt"]
 	path = vendor/fcitx5-qt
 	url = https://github.com/fcitx/fcitx5-qt
+[submodule "vendor/status-go"]
+	path = vendor/status-go
+	url = https://github.com/status-im/status-go
+[submodule "vendor/nim-status-go"]
+	path = vendor/nim-status-go
+	url = https://github.com/status-im/nim-status-go.git
+[submodule "vendor/nim-stint"]
+	path = vendor/nim-stint
+	url = https://github.com/status-im/nim-stint.git
+[submodule "vendor/nim-keycard-go"]
+	path = vendor/nim-keycard-go
+	url = https://github.com/status-im/nim-keycard-go

@@ -5,7 +5,7 @@ import ../settings/service as settings_service
 
 import ../../../app/core/signals/types
 import ../../../app/core/eventemitter
-import status/installations as status_installations
+import ../../../backend/installations as status_installations
 
 export device_dto
 
