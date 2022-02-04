@@ -28,6 +28,7 @@ QtObject {
 
     property var history: walletSectionTransactions
     property var historyTransactions: walletSectionTransactions.model
+    property bool isNonArchivalNode:  history.isNonArchivalNode
 
     property var savedAddresses: walletSectionSavedAddresses.model
 
@@ -81,11 +82,6 @@ QtObject {
         // TODO: Move to transaction root module and not wallet
         // Not Refactored Yet
 //        return walletModel.getLatestBlockNumber()
-    }
-
-    function isNonArchivalNode() {
-        // Not Refactored Yet
-//        return walletModel.isNonArchivalNode
     }
 
     function setInitialRange() {
@@ -154,15 +150,13 @@ QtObject {
     }
 
     function isFetchingHistory() {
-        // Not Refactored Yet
-//        return history.isFetchingHistory(walletModel.accountsView.currentAccount.address)
+        return history.isFetchingHistory(currentAccount.address)
     }
 
     function loadTransactionsForAccount(pageSize) {
-        // Not Refactored Yet
-//        history.loadTransactionsForAccount(walletModel.accountsView.currentAccount.address,
-//                                                           historyTransactions.getLastTxBlockNumber(),
-//                                                           pageSize, true)
+        history.loadTransactionsForAccount(currentAccount.address,
+                                            historyTransactions.getLastTxBlockNumber(),
+                                            pageSize, true)
     }
 
     function fetchCollectionCollectiblesList(slug) {
