@@ -140,6 +140,14 @@ proc editCommunityChannel*(
       "position": position
     }])
 
+proc reorderCommunityCategories*(communityId: string, categoryId: string, position: int): RpcResponse[JsonNode] {.raises: [Exception].} =
+  result = callPrivateRPC("reorderCommunityCategories".prefix, %*[
+    {
+      "communityId": communityId,
+      "categoryId": categoryId,
+      "position": position
+    }])
+
 proc reorderCommunityChat*(
     communityId: string,
     categoryId: string,
