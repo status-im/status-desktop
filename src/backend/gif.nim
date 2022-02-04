@@ -1,7 +1,5 @@
-import json, strutils, chronicles, core
+import json, chronicles, core
 import response_type
-
-import status_go
 
 export response_type
 

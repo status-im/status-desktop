@@ -1,4 +1,4 @@
-import json, stint, chronicles, strutils
+import json, stint, chronicles
 
 import ./core as core
 
