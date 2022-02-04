@@ -33,7 +33,7 @@ StatusModal {
         interactedWith = true
         request.isAllowed = isAllowed;
         RootStore.currentTabConnected = isAllowed
-        web3Response(Web3ProviderStore.web3ProviderInst.postMessage(JSON.stringify(request)))
+        web3Response(Web3ProviderStore.web3ProviderInst.postMessage(Constants.api_request, JSON.stringify(request)))
     }
 
     onClosed: {

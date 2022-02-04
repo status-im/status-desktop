@@ -1,4 +1,4 @@
-import tables
+import strutils
 import controller_interface
 import io_interface
 
@@ -45,7 +45,7 @@ method disconnect*(self: Controller) =
   discard self.dappPermissionsService.revoke("web3".toPermission())
 
 method postMessage*(self: Controller, requestType: string, message: string): string =
-  return self.providerService.postMessage(requestType, message)
+  return self.providerService.postMessage(parseEnum[RequestTypes](requestType), message)
 
 method hasPermission*(self: Controller, hostname: string, permission: string): bool =
   return self.dappPermissionsService.hasPermission(hostname, permission.toPermission())
