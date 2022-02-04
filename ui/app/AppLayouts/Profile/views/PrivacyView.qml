@@ -157,11 +157,16 @@ Item {
                 StatusQControls.StatusSwitch {
                     id: switch1
                     checked: !localAccountSensitiveSettings.onlyShowContactsProfilePics
-                    onClicked: {
-                        localAccountSensitiveSettings.onlyShowContactsProfilePics = !checked
+                    onCheckedChanged: {
+                        if (localAccountSensitiveSettings.onlyShowContactsProfilePics === checked) {
+                            localAccountSensitiveSettings.onlyShowContactsProfilePics = !checked
+                        }
                     }
                 }
             ]
+            sensor.onClicked: {
+                switch1.checked = !switch1.checked
+            }
         }
 
         StatusListItem {
@@ -176,11 +181,16 @@ Item {
                 StatusQControls.StatusSwitch {
                     id: switch2               
                     checked: localAccountSensitiveSettings.displayChatImages
-                    onClicked: {
-                        localAccountSensitiveSettings.displayChatImages = checked
+                    onCheckedChanged: {
+                        if (localAccountSensitiveSettings.displayChatImages !== checked) {
+                            localAccountSensitiveSettings.displayChatImages = checked
+                        }
                     }
                 }
             ]
+            sensor.onClicked: {
+                switch2.checked = !switch2.checked
+            }
         }
 
         StatusBaseText {
@@ -255,11 +265,18 @@ Item {
             components: [
                 StatusQControls.StatusSwitch {
                     id: switch3
-                    checked: !root.privacyStore.messagesFromContactsOnly
+                    checked: !root.privacyStore.privacyModule.messagesFromContactsOnly
+                    onCheckedChanged: {
+                        // messagesFromContactsOnly needs to be accessed from the module (view),
+                        // because otherwise doing `messagesFromContactsOnly = value` only changes the bool property on QML 
+                        if (root.privacyStore.privacyModule.messagesFromContactsOnly === checked) {
+                            root.privacyStore.privacyModule.messagesFromContactsOnly = !checked
+                        }
+                    }
                 }
             ]
             sensor.onClicked: {
-                switch3.checked = root.privacyStore.messagesFromContactsOnly = !switch3.checked
+                switch3.checked = !switch3.checked
             }
         }
     }
