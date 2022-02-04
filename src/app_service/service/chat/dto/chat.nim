@@ -71,7 +71,8 @@ proc `$`*(self: ChatDto): string =
     joined: {self.joined}, 
     syncedTo: {self.syncedTo}, 
     syncedFrom: {self.syncedFrom},
-    categoryId: {self.categoryId}
+    categoryId: {self.categoryId},
+    position: {self.position}
     )"""
 
 proc toChatMember(jsonObj: JsonNode): ChatMember =

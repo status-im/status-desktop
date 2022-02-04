@@ -543,6 +543,20 @@ QtObject:
       if response.result.isNil or response.result.kind == JNull:
         error "response is invalid", methodName="reorderCommunityChat"
 
+      if response.result != nil and response.result.kind != JNull:
+        let updatedCommunity = response.result["communities"][0].toCommunityDto()
+        for chat in updatedCommunity.chats:
+          let prev_chat_idx = findIndexById(chat.id, self.joinedCommunities[communityId].chats)
+          if prev_chat_idx > -1:
+            let fullChatId = communityId & chat.id
+            let prev_chat = self.joinedCommunities[communityId].chats[prev_chat_idx]
+            if(chat.position != prev_chat.position and chat.categoryId == categoryId):
+              var chatDetails = self.chatService.getChatById(fullChatId) # we are free to do this cause channel must be created before we add it to a category
+              self.joinedCommunities[communityId].chats[prev_chat_idx].position = chat.position
+              chatDetails.updateMissingFields(self.joinedCommunities[communityId].chats[prev_chat_idx])
+              self.chatService.updateOrAddChat(chatDetails) # we have to update chats stored in the chat service.
+              self.events.emit(SIGNAL_COMMUNITY_CHANNEL_REORDERED, CommunityChatOrderArgs(communityId: updatedCommunity.id, chatId: fullChatId, categoryId: chat.categoryId, position: chat.position))
+          
     except Exception as e:
       error "Error reordering community channel", msg = e.msg, communityId, chatId, position, methodName="reorderCommunityChat"
 
