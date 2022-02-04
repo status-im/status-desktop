@@ -11,12 +11,13 @@ type
     hasUnreadMessages: bool
     notificationsCount: int
     muted: bool
+    blocked: bool
     active: bool
     position: int
     categoryId: string
 
 proc setup*(self: BaseItem, id, name, icon: string, isIdenticon: bool, color, description: string,
-  `type`: int, amIChatAdmin: bool, hasUnreadMessages: bool, notificationsCount: int, muted, active: bool,
+  `type`: int, amIChatAdmin: bool, hasUnreadMessages: bool, notificationsCount: int, muted, blocked, active: bool,
     position: int, categoryId: string = "") =
   self.id = id
   self.name = name
@@ -29,16 +30,17 @@ proc setup*(self: BaseItem, id, name, icon: string, isIdenticon: bool, color, de
   self.hasUnreadMessages = hasUnreadMessages
   self.notificationsCount = notificationsCount
   self.muted = muted
+  self.blocked = blocked
   self.active = active
   self.position = position
   self.categoryId = categoryId
 
 proc initBaseItem*(id, name, icon: string, isIdenticon: bool, color, description: string, `type`: int, 
-    amIChatAdmin: bool, hasUnreadMessages: bool, notificationsCount: int, muted, active: bool,
+    amIChatAdmin: bool, hasUnreadMessages: bool, notificationsCount: int, muted, blocked, active: bool,
     position: int, categoryId: string = ""): BaseItem =
   result = BaseItem()
   result.setup(id, name, icon, isIdenticon, color, description, `type`, amIChatAdmin, hasUnreadMessages, 
-  notificationsCount, muted, active, position, categoryId)
+  notificationsCount, muted, blocked, active, position, categoryId)
 
 proc delete*(self: BaseItem) = 
   discard
@@ -96,6 +98,12 @@ method muted*(self: BaseItem): bool {.inline base.} =
 
 method `muted=`*(self: var BaseItem, value: bool) {.inline base.} = 
   self.muted = value
+
+method blocked*(self: BaseItem): bool {.inline base.} = 
+  self.blocked
+
+method `blocked=`*(self: var BaseItem, value: bool) {.inline base.} = 
+  self.blocked = value
 
 method active*(self: BaseItem): bool {.inline base.} = 
   self.active

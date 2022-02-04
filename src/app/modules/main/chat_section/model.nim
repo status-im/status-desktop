@@ -15,6 +15,7 @@ type
     HasUnreadMessages
     NotificationsCount
     Muted
+    Blocked
     Active
     Position
     SubItems
@@ -75,6 +76,7 @@ QtObject:
       ModelRole.HasUnreadMessages.int:"hasUnreadMessages",
       ModelRole.NotificationsCount.int:"notificationsCount",
       ModelRole.Muted.int:"muted",
+      ModelRole.Blocked.int:"blocked",
       ModelRole.Active.int:"active",
       ModelRole.Position.int:"position",
       ModelRole.SubItems.int:"subItems",
@@ -114,7 +116,9 @@ QtObject:
       result = newQVariant(item.notificationsCount)
     of ModelRole.Muted: 
       result = newQVariant(item.muted)
-    of ModelRole.Active: 
+    of ModelRole.Blocked: 
+      result = newQVariant(item.blocked)
+    of ModelRole.Active:
       result = newQVariant(item.active)
     of ModelRole.Position: 
       result = newQVariant(item.position)
@@ -215,6 +219,17 @@ QtObject:
         return
 
       if self.items[i].subItems.muteUnmuteItemById(id, mute):
+        return
+
+  proc blockUnblockItemOrSubItemById*(self: Model, id: string, blocked: bool) =
+    for i in 0 ..< self.items.len:
+      if(self.items[i].id == id):
+        let index = self.createIndex(i, 0, nil)
+        self.items[i].BaseItem.blocked = blocked
+        self.dataChanged(index, index, @[ModelRole.Blocked.int])
+        return
+
+      if self.items[i].subItems.blockUnblockItemById(id, blocked):
         return
 
   proc updateItemDetails*(self: Model, id, name, icon: string, isIdenticon: bool) =

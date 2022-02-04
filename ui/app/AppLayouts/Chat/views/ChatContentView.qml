@@ -36,6 +36,8 @@ ColumnLayout {
     property Component receiveTransactionModal
     property Component sendTransactionWithEnsModal
 
+    property bool isBlocked: false
+
     property bool stickersLoaded: false
 
     // NOTE: Used this property change as it is the current way used for displaying new channel/chat data of content view.
@@ -272,25 +274,11 @@ ColumnLayout {
         //        }
     }
 
-    Item {
+    StatusBanner {
         Layout.fillWidth: true
-        Layout.preferredHeight: 40
-        Layout.alignment: Qt.AlignHCenter
-        visible: isBlocked
-
-        Rectangle {
-            id: blockedBanner
-            anchors.fill: parent
-            color: Style.current.red
-            opacity: 0.1
-        }
-
-        Text {
-            id: blockedText
-            anchors.centerIn: blockedBanner
-            color: Style.current.red
-            text: qsTr("Blocked")
-        }
+        visible: chatContentRoot.isBlocked
+        type: StatusBanner.Type.Danger
+        statusText: qsTr("Blocked")
     }
 
     MessageStore {
@@ -405,8 +393,8 @@ ColumnLayout {
                     //                        chatContentRoot.rootStore.chatsModelInst.channelView.activeChannel.canPost
                 }
                 messageContextMenu: contextmenu
-                isContactBlocked: isBlocked
-                chatInputPlaceholder: isBlocked ?
+                isContactBlocked: chatContentRoot.isBlocked
+                chatInputPlaceholder: chatContentRoot.isBlocked ?
                                           //% "This user has been blocked."
                                           qsTrId("this-user-has-been-blocked-") :
                                           //% "Type a message."
