@@ -10,6 +10,7 @@ ProgressBar {
     property string text
     property color fillColor
     property color backgroundColor: Theme.palette.directColor8
+    property color backgroundBorderColor: "transparent"
 
     width: 416
     height: 16
@@ -19,6 +20,7 @@ ProgressBar {
         implicitWidth: parent.width
         implicitHeight: parent.height
         color: control.backgroundColor
+        border.color: control.backgroundBorderColor
         radius: 5
     }
     contentItem: Item {

@@ -322,5 +322,6 @@
         <file>src/StatusQ/Components/StatusMemberListItem.qml</file>
         <file>src/StatusQ/Components/StatusTagSelector.qml</file>
         <file>src/StatusQ/Components/StatusToastMessage.qml</file>
+        <file>src/StatusQ/Components/StatusWizardStepper.qml</file>
     </qresource>
 </RCC>
