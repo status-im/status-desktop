@@ -54,7 +54,6 @@ Item {
     property var userList
 
     property var contactDetails: Utils.getContactDetailsAsJson(root.activeChatId)
-    property bool isBlocked: root.contactDetails.isBlocked
     property bool isContact: root.contactDetails.isContact
     property bool contactRequestReceived: root.contactDetails.requestReceived
 
@@ -179,6 +178,7 @@ Item {
                         receiveTransactionModal: cmpReceiveTransaction
                         sendTransactionWithEnsModal: cmpSendTransactionWithEns
                         stickersLoaded: root.stickersLoaded
+                        isBlocked: model.blocked
                         Component.onCompleted: {
                             parentModule.prepareChatContentModuleForChatId(model.itemId)
                             chatContentModule = parentModule.getChatContentModule()
@@ -208,6 +208,7 @@ Item {
                     receiveTransactionModal: cmpReceiveTransaction
                     sendTransactionWithEnsModal: cmpSendTransactionWithEns
                     stickersLoaded: root.stickersLoaded
+                    isBlocked: model.blocked
                     Component.onCompleted: {
                         parentModule.prepareChatContentModuleForChatId(itemId)
                         chatContentModule = parentModule.getChatContentModule()

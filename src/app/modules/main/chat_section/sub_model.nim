@@ -16,6 +16,7 @@ type
     HasUnreadMessages
     NotificationsCount
     Muted
+    Blocked
     Active
     Position
 
@@ -70,6 +71,7 @@ QtObject:
       ModelRole.HasUnreadMessages.int:"hasUnreadMessages",
       ModelRole.NotificationsCount.int:"notificationsCount",
       ModelRole.Muted.int:"muted",
+      ModelRole.Blocked.int:"blocked",
       ModelRole.Active.int:"active",
       ModelRole.Position.int:"position",
     }.toTable
@@ -109,6 +111,8 @@ QtObject:
       result = newQVariant(item.notificationsCount)
     of ModelRole.Muted: 
       result = newQVariant(item.muted)
+    of ModelRole.Blocked:
+      result = newQVariant(item.blocked)
     of ModelRole.Active: 
       result = newQVariant(item.active)
     of ModelRole.Position: 
@@ -194,6 +198,17 @@ QtObject:
         let index = self.createIndex(i, 0, nil)
         self.items[i].BaseItem.muted = mute
         self.dataChanged(index, index, @[ModelRole.Muted.int])
+        return true
+    return false
+
+  proc blockUnblockItemById*(self: SubModel, id: string, blocked: bool): bool =
+    ## even we're not able to block specific channel of community now, this is here more as a predisposition 
+    ## for that feature, which may be added easy later.
+    for i in 0 ..< self.items.len:
+      if(self.items[i].id == id):
+        let index = self.createIndex(i, 0, nil)
+        self.items[i].BaseItem.blocked = blocked
+        self.dataChanged(index, index, @[ModelRole.Blocked.int])
         return true
     return false
 

@@ -125,9 +125,15 @@ QtObject:
     if(self.item.isNil):
       return false
     return self.item.muted
-
   QtProperty[bool] muted:
     read = getMuted
+
+  proc getBlocked(self: ActiveItem): bool {.slot.} = 
+    if(self.item.isNil):
+      return false
+    return self.item.blocked
+  QtProperty[bool] blocked:
+    read = getBlocked
 
   proc getPosition(self: ActiveItem): int {.slot.} = 
     if(self.item.isNil):

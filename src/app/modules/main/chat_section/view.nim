@@ -40,7 +40,7 @@ QtObject:
     result.contactRequestsModel = contacts_model.newModel()
     result.contactRequestsModelVariant = newQVariant(result.contactRequestsModel)
     result.listOfMyContacts = contacts_model.newModel()
-    result.listOfMyContactsVariant = newQVariant(result.listOfMyContacts)      
+    result.listOfMyContactsVariant = newQVariant(result.listOfMyContacts)
 
   proc load*(self: View) =
     self.delegate.viewDidLoad()

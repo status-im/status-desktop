@@ -89,6 +89,10 @@ method init*(self: Controller) =
     var args = ContactArgs(e)
     self.delegate.onContactBlocked(args.contactId)
 
+  self.events.on(SIGNAL_CONTACT_UNBLOCKED) do(e: Args):
+    var args = ContactArgs(e)
+    self.delegate.onContactUnblocked(args.contactId)
+
   if (self.isCommunitySection):
     self.events.on(SIGNAL_COMMUNITY_CHANNEL_CREATED) do(e:Args):
       let args = CommunityChatArgs(e)

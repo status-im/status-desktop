@@ -108,14 +108,19 @@ proc buildChatUI(self: Module, events: EventEmitter,
     var chatImage = c.identicon
     var isIdenticon = false
     var isUsersListAvailable = true
+    var blocked = false
     if(c.chatType == ChatType.OneToOne):
       isUsersListAvailable = false
-      (chatName, chatImage, isIdenticon) = self.controller.getOneToOneChatNameAndImage(c.id)
+      let contactDetails = self.controller.getContactDetails(c.id)
+      chatName = contactDetails.displayName
+      chatImage = contactDetails.icon
+      isIdenticon = contactDetails.isIdenticon
+      blocked = contactDetails.details.isBlocked()
 
     let amIChatAdmin = self.amIMarkedAsAdminUser(c.members)
 
     let item = initItem(c.id, chatName, chatImage, isIdenticon, c.color, c.description, c.chatType.int, amIChatAdmin, 
-    hasNotification, notificationsCount, c.muted, active = false, c.position, c.categoryId)
+    hasNotification, notificationsCount, c.muted, blocked, active=false, c.position, c.categoryId)
     self.view.chatsModel().appendItem(item)
     self.addSubmodule(c.id, false, isUsersListAvailable, events, settingsService, contactService, chatService, 
     communityService, messageService, gifService, mailserversService)
@@ -151,7 +156,7 @@ proc buildCommunityUI(self: Module, events: EventEmitter,
       let amIChatAdmin = comm.admin
       let channelItem = initItem(chatDto.id, chatDto.name, chatDto.identicon, false, chatDto.color,
         chatDto.description, chatDto.chatType.int, amIChatAdmin, hasNotification, notificationsCount,
-        chatDto.muted, active = false, c.position, c.categoryId)
+        chatDto.muted, blocked=false, active = false, c.position, c.categoryId)
       self.view.chatsModel().appendItem(channelItem)
       self.addSubmodule(chatDto.id, true, true, events, settingsService, contactService, chatService, communityService, 
       messageService, gifService, mailserversService)
@@ -181,7 +186,7 @@ proc buildCommunityUI(self: Module, events: EventEmitter,
 
         let channelItem = initSubItem(chatDto.id, cat.id, chatDto.name, chatDto.identicon, false, chatDto.color, 
         chatDto.description, chatDto.chatType.int, amIChatAdmin, hasNotification, notificationsCount, chatDto.muted, 
-        false, c.position)
+        blocked=false, active=false, c.position)
         categoryChannels.add(channelItem)
         self.addSubmodule(chatDto.id, true, true, events, settingsService, contactService, chatService, communityService, 
         messageService, gifService, mailserversService)
@@ -193,7 +198,8 @@ proc buildCommunityUI(self: Module, events: EventEmitter,
           selectedSubItemId = channelItem.id
 
       var categoryItem = initItem(cat.id, cat.name, "", false, "", "", ChatType.Unknown.int, false, 
-        hasNotificationPerCategory, notificationsCountPerCategory, false, false, cat.position, cat.id)
+        hasNotificationPerCategory, notificationsCountPerCategory, muted=false, blocked=false, active=false, 
+        cat.position, cat.id)
       categoryItem.prependSubItems(categoryChannels)
       self.view.chatsModel().appendItem(categoryItem)
 
@@ -390,7 +396,7 @@ method addNewChat*(
   if chatDto.categoryId == "":  
     let item = initItem(chatDto.id, chatName, chatImage, isIdenticon, chatDto.color, chatDto.description, 
                         chatDto.chatType.int, amIChatAdmin, hasNotification, notificationsCount, chatDto.muted,
-                        active = false, position = 0, chatDto.categoryId)
+                        blocked=false, active=false, position = 0, chatDto.categoryId)
     self.addSubmodule(chatDto.id, belongsToCommunity, isUsersListAvailable, events, settingsService, contactService, chatService,
                       communityService, messageService, gifService, mailserversService)
     self.chatContentModules[chatDto.id].load()
@@ -401,7 +407,7 @@ method addNewChat*(
     let categoryItem = self.view.chatsModel().getItemById(chatDto.categoryId)
     let channelItem = initSubItem(chatDto.id, chatDto.categoryId, chatDto.name, chatDto.identicon, false, chatDto.color, 
         chatDto.description, chatDto.chatType.int, amIChatAdmin, hasNotification, notificationsCount, chatDto.muted, 
-        false, chatDto.position)
+        blocked=false, active=false, chatDto.position)
     self.addSubmodule(chatDto.id, belongsToCommunity, isUsersListAvailable, events, settingsService, contactService, chatService,
                       communityService, messageService, gifService, mailserversService)
     self.chatContentModules[chatDto.id].load()
@@ -416,14 +422,14 @@ method removeCommunityChat*(self: Module, chatId: string) =
 
 method onCommunityCategoryCreated*(self: Module, cat: Category, chats: seq[ChatDto]) =
   var categoryItem = initItem(cat.id, cat.name, "", false, "", "", ChatType.Unknown.int, false, 
-      false, 0, false, false, cat.position, cat.id)
+      false, 0, muted=false, blocked=false, active=false, cat.position, cat.id)
   var categoryChannels: seq[SubItem]
   for chatDto in chats:
     let hasNotification = chatDto.unviewedMessagesCount > 0 or chatDto.unviewedMentionsCount > 0
     let notificationsCount = chatDto.unviewedMentionsCount
     let channelItem = initSubItem(chatDto.id, cat.id, chatDto.name, chatDto.identicon, false, chatDto.color, 
         chatDto.description, chatDto.chatType.int, true, hasNotification, notificationsCount, chatDto.muted, 
-        false, chatDto.position)
+        blocked=false, active=false, chatDto.position)
 
     # Important:
     # Since we're just adding an already added community channel to a certain commuinity, there is no need to call
@@ -523,6 +529,10 @@ method blockContact*(self: Module, publicKey: string) =
 
 method onContactBlocked*(self: Module, publicKey: string) =
   self.view.contactRequestsModel().removeItemWithPubKey(publicKey)
+  self.view.chatsModel().blockUnblockItemOrSubItemById(publicKey, blocked=true)
+
+method onContactUnblocked*(self: Module, publicKey: string) =
+  self.view.chatsModel().blockUnblockItemOrSubItemById(publicKey, blocked=false)
 
 method onContactDetailsUpdated*(self: Module, publicKey: string) =
   let contact = self.controller.getContact(publicKey)
