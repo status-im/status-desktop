@@ -343,7 +343,6 @@ method load*[T](
   self.walletSectionModule.load()
   # self.walletV2SectionModule.load()
   self.browserSectionModule.load()
-  # self.timelineSectionModule.load()
   # self.nodeManagementSectionModule.load()
   self.profileSectionModule.load()
   self.stickersModule.load()
