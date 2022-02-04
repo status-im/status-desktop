@@ -66,10 +66,17 @@ StatusModal {
         popup.open()
     }
 
+    onHeaderImageClicked: {
+        Global.openChangeProfilePicPopup()
+    }
+
     header.title: userDisplayName
     header.subTitle: userIsEnsVerified ? userName : userPublicKey
     header.subTitleElide: Text.ElideMiddle
-    header.image.source: userIcon
+    // In the following line we need to use `icon` property as that's the easiest way
+    // to update image on change (in case of logged in user)
+    header.image.source: isCurrentUser? popup.profileStore.icon : userIcon
+    header.headerImageEditable: isCurrentUser
 
     headerActionButton: StatusFlatRoundButton {
         type: StatusFlatRoundButton.Type.Secondary

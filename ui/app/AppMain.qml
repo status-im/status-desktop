@@ -80,6 +80,10 @@ Item {
             popup.openPopup(publicKey);
             Global.profilePopupOpened = true;
         }
+        onOpenChangeProfilePicPopup: {
+            var popup = changeProfilePicComponent.createObject(appMain);
+            popup.open();
+        }
         onOpenBackUpSeedPopup : {
             var popup = backupSeedModalComponent.createObject(appMain)
             popup.open()
@@ -167,6 +171,12 @@ Item {
             }
             Global.profilePopupOpened = false;
             destroy();
+        }
+    }
+
+    property Component changeProfilePicComponent: Component {
+        ChangeProfilePicModal {
+            profileStore: appMain.rootStore.profileSectionStore.profileStore
         }
     }
 

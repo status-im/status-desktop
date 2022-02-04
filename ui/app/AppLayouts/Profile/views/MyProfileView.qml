@@ -26,20 +26,6 @@ Item {
     height: parent.height
     Layout.fillWidth: true
 
-    Component {
-        id: changeProfileModalComponent
-        ChangeProfilePicModal {
-            largeImage: !root.profileStore.isIdenticon? root.profileStore.profileLargeImage : root.profileStore.icon
-            hasIdentityImage: !root.profileStore.isIdenticon
-            onCropFinished: {
-                uploadError = root.profileStore.uploadImage(selectedImage, aX, aY, bX, bY)
-            }
-            onRemoveImageButtonClicked: {
-                uploadError = root.profileStore.removeImage()
-            }
-        }
-    }
-
     Item {
         id: profileImgNameContainer
         anchors.top: parent.top
@@ -82,8 +68,7 @@ Item {
                 anchors.fill: parent
                 cursorShape: Qt.PointingHandCursor
                 onClicked: {
-                    const popup = changeProfileModalComponent.createObject(root);
-                    popup.open()
+                    Global.openChangeProfilePicPopup()
                 }
             }
         }
