@@ -293,7 +293,7 @@ QtObject:
 
   proc reorder*(self: Model, chatId, categoryId: string, position: int) =
     let index = self.getItemIdxById(chatId)
-    if(index == -1 or position == index):
+    if(index == -1):
       return
 
     let idx = self.createIndex(index, 0, nil)
