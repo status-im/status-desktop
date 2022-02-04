@@ -27,6 +27,7 @@ QtObject {
     signal openBackUpSeedPopup()
 
     signal openProfilePopupRequested(string publicKey, var parentPopup)
+    signal openChangeProfilePicPopup()
 
     function openProfilePopup(publicKey, parentPopup){
         openProfilePopupRequested(publicKey, parentPopup);

@@ -11,19 +11,18 @@ import shared.popups 1.0
 
 // TODO: replace with StatusModal
 ModalPopup {
-    property string selectedImage // selectedImage is for us to be able to analyze it before setting it as current
-    property string uploadError
-
     id: popup
-
-    property url largeImage: ""
-    property bool hasIdentityImage: false
-
-    signal cropFinished(string selectedImage, var aX, var aY, var bX, var bY)
-    signal removeImageButtonClicked()
-
     //% "Profile picture"
     title: qsTrId("profile-picture")
+
+    property var profileStore
+
+    property string selectedImage // selectedImage is for us to be able to analyze it before setting it as current
+    property string uploadError
+    property url largeImage: !popup.profileStore.isIdenticon?
+                                 popup.profileStore.profileLargeImage :
+                                 popup.profileStore.icon
+    property bool hasIdentityImage: !popup.profileStore.isIdenticon
 
     onClosed: {
         destroy()
@@ -71,7 +70,9 @@ ModalPopup {
 
             selectedImage: popup.selectedImage
             ratio: "1:1"
-            onCropFinished: popup.cropFinished(selectedImage, aX, aY, bX, bY)
+            onCropFinished: {
+                popup.uploadError = popup.profileStore.uploadImage(selectedImage, aX, aY, bX, bY)
+            }
         }
     }
 
@@ -87,7 +88,9 @@ ModalPopup {
             anchors.right: uploadBtn.left
             anchors.rightMargin: Style.current.padding
             anchors.bottom: parent.bottom
-            onClicked: popup.removeImageButtonClicked()
+            onClicked: {
+                popup.uploadError = popup.profileStore.removeImage()
+            }
         }
 
         StatusButton {
