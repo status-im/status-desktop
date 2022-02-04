@@ -51,7 +51,6 @@ QtObject {
         readonly property int publicChat: 2
         readonly property int privateGroupChat: 3
         readonly property int profile: 4
-        readonly property int timeline: 5
         readonly property int communityChat: 6
     }
 

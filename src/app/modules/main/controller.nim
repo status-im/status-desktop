@@ -217,7 +217,7 @@ method getNumOfNotificaitonsForChat*(self: Controller): tuple[unviewed:int, ment
   result.mentions = 0
   let chats = self.chatService.getAllChats()
   for chat in chats:
-    if(chat.chatType == ChatType.Timeline or chat.chatType == ChatType.CommunityChat):
+    if(chat.chatType == ChatType.CommunityChat):
       continue
 
     result.unviewed += chat.unviewedMessagesCount
