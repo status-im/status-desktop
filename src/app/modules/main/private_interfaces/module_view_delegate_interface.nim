@@ -1,5 +1,6 @@
 import NimQml
 import ../../shared_models/section_item
+import ../chat_search_item
 
 method viewDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available") 
@@ -26,4 +27,10 @@ method getContactDetailsAsJson*(self: AccessInterface, publicKey: string): strin
   raise newException(ValueError, "No implementation available")
 
 method resolveENS*(self: AccessInterface, ensName: string, uuid: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method rebuildChatSearchModel*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method switchTo*(self: AccessInterface, sectionId, chatId: string) {.base.} =
   raise newException(ValueError, "No implementation available")

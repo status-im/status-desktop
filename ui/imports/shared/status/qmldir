@@ -21,6 +21,7 @@ StatusImageModal 1.0 StatusImageModal.qml
 StatusImageRadioButton 1.0 StatusImageRadioButton.qml
 StatusInputListPopup 1.0 StatusInputListPopup.qml
 StatusNotification 1.0 StatusNotification.qml
+StatusSearchListPopup 1.0 StatusSearchListPopup.qml
 StatusSectionDescItem 1.0 StatusSectionDescItem.qml
 StatusSectionHeadline 1.0 StatusSectionHeadline.qml
 StatusSettingsLineButton 1.0 StatusSettingsLineButton.qml

@@ -8,6 +8,8 @@ import ../../../../../app_service/service/message/service as message_service
 import ../../../../../app_service/service/gif/service as gif_service
 import ../../../../../app_service/service/mailservers/service as mailservers_service
 
+import ../model as chats_model
+
 import ../../../../core/eventemitter
 
 method delete*(self: AccessInterface) {.base.} =
@@ -30,4 +32,7 @@ method getModuleAsVariant*(self: AccessInterface): QVariant {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onActiveSectionChange*(self: AccessInterface, sectionId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method chatsModel*(self: AccessInterface): chats_model.Model {.base.} =
   raise newException(ValueError, "No implementation available")

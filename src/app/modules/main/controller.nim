@@ -252,3 +252,6 @@ method resolveENS*(self: Controller, ensName: string, uuid: string = "") =
 
 method isMnemonicBackedUp*(self: Controller): bool =
   result = self.privacyService.isMnemonicBackedUp()
+
+method switchTo*(self: Controller, sectionId, chatId: string) =
+  self.messageService.switchTo(sectionId, chatId, "")

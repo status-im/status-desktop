@@ -64,6 +64,9 @@ QtObject:
   method rowCount(self: Model, index: QModelIndex = nil): int =
     return self.items.len
 
+  proc items*(self: Model): seq[Item] =
+    return self.items
+
   method roleNames(self: Model): Table[int, string] =
     {
       ModelRole.Id.int:"itemId",

@@ -286,7 +286,7 @@ Item {
                         // // that's why we're using it this way
                         mainModule.prepareCommunitySectionModuleForCommunityId(model.id)
                         communityContextMenu.chatCommunitySectionModule = mainModule.getCommunitySectionModule()
-                        
+
                     }
 
                     StatusMenuItem {
@@ -723,12 +723,12 @@ Item {
                 Global.toastMessage = this;
             }
         }
-        
+
         // Add SendModal here as it is used by the Wallet as well as the Browser
         Loader {
             id: sendModal
             active: false
-            
+
             function open() {
                 this.active = true
                 this.item.open()
@@ -783,52 +783,44 @@ Item {
             }
         }
 
-        Component {
-            id: statusSmartIdenticonComponent
-            StatusSmartIdenticon {
-                property  string imageSource: ""
-                image: StatusImageSettings {
-                    width: channelPicker.imageWidth
-                    height: channelPicker.imageHeight
-                    source: imageSource
-                    isIdenticon: true
-                }
-                icon: StatusIconSettings {
-                    width: channelPicker.imageWidth
-                    height: channelPicker.imageHeight
-                    letterSize: 15
-                    color: Theme.palette.miscColor5
-                }
-            }
-        }
-
-        StatusInputListPopup {
+        StatusSearchListPopup {
             id: channelPicker
-            //% "Where do you want to go?"
-            title: qsTrId("where-do-you-want-to-go-")
-            showSearchBox: true
-            width: 350
+
             x: parent.width / 2 - width / 2
             y: parent.height / 2 - height / 2
-            // TODO improve this to work with community Chats as well
-            modelList: mainModule.getChatSectionModule().model
-            getText: function (modelData) {
-                return modelData.name
-            }
-            getId: function (modelData) {
-                return modelData.itemId
-            }
-            getImageComponent: function (parent, modelData) {
-                return statusSmartIdenticonComponent.createObject(parent, {
-                                                                     imageSource: modelData.identicon,
-                                                                     name: modelData.name
-                                                            });
+
+            searchBoxPlaceholder: qsTr("Where do you want to go?")
+            model: rootStore.chatSearchModel
+            delegate: StatusListItem {
+                property var modelData
+                property bool isCurrentItem: true
+                function filterAccepts(searchText) {
+                    return title.includes(searchText)
+                }
+
+                title: modelData ? modelData.name : ""
+                label: modelData? modelData.sectionName : ""
+                highlighted: isCurrentItem
+                sensor.hoverEnabled: false
+                statusListItemIcon {
+                    name: modelData ? modelData.name : ""
+                    active: true
+                }
+                icon {
+                    width: image.width
+                    height: image.height
+                    color: modelData ? modelData.color : ""
+                }
+                image {
+                    source: modelData ? modelData.icon : ""
+                    isIdenticon: true
+                }
             }
 
-            onClicked: function (index, id) {
-                Global.changeAppSectionBySectionType(Constants.appSection.chat)
-                mainModule.getChatSectionModule().setActiveItem(id, "")
-                channelPicker.close()
+            onAboutToShow: rootStore.rebuildChatSearchModel()
+            onSelected: {
+                rootStore.setActiveSectionChat(modelData.sectionId, modelData.chatId)
+                close()
             }
         }
     }
