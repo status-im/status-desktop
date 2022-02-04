@@ -8,7 +8,6 @@ QtObject {
 
     // Module Properties
     property bool mnemonicBackedUp: privacyModule.mnemonicBackedUp
-    property bool messagesFromContactsOnly: privacyModule.messagesFromContactsOnly
 
     function getLinkPreviewWhitelist() {
         return root.privacyModule.getLinkPreviewWhitelist()
