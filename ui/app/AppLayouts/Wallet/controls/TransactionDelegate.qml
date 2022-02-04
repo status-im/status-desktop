@@ -142,7 +142,7 @@ Rectangle {
         }
         StyledText {
             id: timeValue
-            text: new Date(parseInt(timestamp)).toLocaleString(locale)
+            text: new Date(parseInt(timestamp) * 1000).toLocaleString(locale)
             font.pixelSize: Style.current.primaryTextFontSize
             anchors.rightMargin: Style.current.smallPadding
         }
