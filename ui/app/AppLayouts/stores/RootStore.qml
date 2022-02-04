@@ -19,6 +19,16 @@ QtObject {
     property EmojiReactions emojiReactionsModel: EmojiReactions {
     }
 
+    property var chatSearchModel: mainModuleInst.chatSearchModel
+
+    function rebuildChatSearchModel() {
+        mainModuleInst.rebuildChatSearchModel()
+    }
+
+    function setActiveSectionChat(sectionId, chatId) {
+        mainModuleInst.switchTo(sectionId, chatId)
+    }
+
     // Not Refactored Yet
 //    property var chatsModelInst: chatsModel
     // Not Refactored Yet

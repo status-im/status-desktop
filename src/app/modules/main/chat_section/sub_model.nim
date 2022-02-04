@@ -56,6 +56,9 @@ QtObject:
   method rowCount(self: SubModel, index: QModelIndex = nil): int =
     return self.items.len
 
+  proc items*(self: SubModel): seq[SubItem] =
+    return self.items
+
   method roleNames(self: SubModel): Table[int, string] =
     {
       ModelRole.Id.int:"itemId",

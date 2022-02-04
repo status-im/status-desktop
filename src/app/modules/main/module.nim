@@ -1,12 +1,15 @@
 import NimQml, tables, json, sugar, sequtils
 
-import io_interface, view, controller
+import io_interface, view, controller, chat_search_item, chat_search_model
 import ./communities/models/[pending_request_item, pending_request_model]
 import ../shared_models/[user_item, user_model, section_item, section_model, active_section]
 import ../../global/app_sections_config as conf
 import ../../global/app_signals
 import ../../global/global_singleton
 
+import chat_section/[model, sub_item, sub_model]
+import chat_section/base_item as chat_section_base_item
+import chat_section/item as chat_section_item
 import chat_section/module as chat_section_module
 import wallet_section/module as wallet_section_module
 import browser_section/module as browser_section_module
@@ -507,6 +510,27 @@ method getCommunitySectionModule*[T](self: Module[T], communityId: string): QVar
     return
 
   return self.communitySectionsModule[communityId].getModuleAsVariant()
+
+method rebuildChatSearchModel*[T](self: Module[T]) =
+  let transformItem = proc(item: chat_section_base_item.BaseItem, sectionId, sectionName: string): chat_search_item.Item =
+    result = chat_search_item.initItem(item.id(), item.name(), item.color(), item.icon(), sectionId, sectionName)
+
+  let transform = proc(items: seq[chat_section_item.Item], sectionId, sectionName: string): seq[chat_search_item.Item] =
+    for item in items:
+      if item.type() != ChatType.Unknown.int:
+        result.add(transformItem(item, sectionId, sectionName))
+      else:
+        for subItem in item.subItems().items():
+          result.add(transformItem(subItem, sectionId, sectionName))
+
+  var items = transform(self.chatSectionModule.chatsModel().items(), conf.CHAT_SECTION_ID, conf.CHAT_SECTION_NAME)
+  for cId in self.communitySectionsModule.keys:
+    items.add(transform(self.communitySectionsModule[cId].chatsModel().items(), cId, self.view.model().getItemById(cId).name()))
+
+  self.view.chatSearchModel().setItems(items)
+
+method switchTo*[T](self: Module[T], sectionId, chatId: string) =
+  self.controller.switchTo(sectionId, chatId)
 
 method onActiveChatChange*[T](self: Module[T], sectionId: string, chatId: string) =
   self.appSearchModule.onActiveChatChange(sectionId, chatId)

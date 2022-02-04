@@ -1,7 +1,8 @@
 import NimQml, Tables, chronicles, json, sequtils
 import io_interface
 import ../io_interface as delegate_interface
-import view, controller, item, sub_item, model, sub_model, base_item
+import view, controller, item, sub_item, sub_model, base_item
+import model as chats_model
 import ../../shared_models/contacts_item as contacts_item
 import ../../shared_models/contacts_model as contacts_model
 
@@ -348,6 +349,9 @@ method onActiveSectionChange*(self: Module, sectionId: string) =
   
   self.updateNotifications(self.controller.getActiveChatId(), unviewedMessagesCount=0, unviewedMentionsCount=0)
   self.delegate.onActiveChatChange(self.controller.getMySectionId(), self.controller.getActiveChatId())
+
+method chatsModel*(self: Module): chats_model.Model =
+  return self.view.chatsModel()
 
 method createPublicChat*(self: Module, chatId: string) =
   if(self.controller.isCommunity()):

@@ -49,3 +49,6 @@ method resolveENS*(self: AccessInterface, ensName: string, uuid: string = "") {.
 
 method isMnemonicBackedUp*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method switchTo*(self: AccessInterface, sectionId, chatId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
