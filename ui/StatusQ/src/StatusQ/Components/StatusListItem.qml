@@ -21,6 +21,7 @@ Rectangle {
     property real leftPadding: 16
     property real rightPadding: 16
     property bool enabled: true
+    property bool highlighted: false
     property int type: StatusListItem.Type.Primary
     property list<Item> components
 
@@ -100,7 +101,7 @@ Rectangle {
     implicitWidth: 448
     implicitHeight: Math.max(64, statusListItemTitleArea.height + 16)
     color: {
-        if (sensor.containsMouse) {
+        if (sensor.containsMouse || statusListItem.highlighted) {
             switch(type) {
                 case StatusListItem.Type.Primary:
                     return Theme.palette.baseColor2
