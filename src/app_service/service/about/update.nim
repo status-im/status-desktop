@@ -1,11 +1,8 @@
-from stew/base32 import nil
-from stew/base58 import nil
-import chronicles, httpclient, net, options
+import json, chronicles, httpclient, net, options
 import strutils
 import semver
 
-import ../provider/service as provider_service
-import ../ens/utils as ens_utils
+import ../../../backend/ens as status_ens
 
 const APP_UPDATES_ENS* = "desktop.status.eth"
 const CHECK_VERSION_TIMEOUT_MS* = 5000
@@ -16,31 +13,12 @@ type
     url*: string
 
 proc getLatestVersion*(): VersionInfo =
-  let contentHash = ens_utils.getContentHash(APP_UPDATES_ENS)
-  if contentHash.isNone():
+  let response = status_ens.resourceUrl(chainId=1, username=APP_UPDATES_ENS)
+  let host = response.result{"Host"}.getStr
+  if host == "":
     raise newException(ValueError, "ENS does not have a content hash")
 
-  var url: string = ""
-
-  let decodedHash = ens_utils.decodeENSContentHash(contentHash.get())
-
-  case decodedHash[0]:
-    of ENSType.IPFS:
-      let
-        base58bytes = base58.decode(base58.BTCBase58, decodedHash[1])
-        base32Hash = base32.encode(base32.Base32Lower, base58bytes)
-
-      url = "https://" & base32Hash & IPFS_GATEWAY
-
-    of ENSType.SWARM:
-      url = "https://" & SWARM_GATEWAY & "/bzz:/" & decodedHash[1]
-
-    of ENSType.IPNS:
-      url = "https://" & decodedHash[1]
-
-    else:
-      warn "Unknown content for", contentHash
-      raise newException(ValueError, "Unknown content for " & contentHash.get())
+  let url = "https://" & host & response.result{"Path"}.getStr
 
   # Read version from folder
   let secureSSLContext = newContext()
