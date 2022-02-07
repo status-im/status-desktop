@@ -68,9 +68,10 @@ Item {
         Keys.onReleased: {
             successMessage = "";
             searchResults.pubKey = "";
+            root.validationError = "";
+            searchResults.showProfileNotFoundMessage = false;
             if (chatKey.text !== "") {
                 if (!validate()) {
-                    searchResults.showProfileNotFoundMessage = false;
                     noContactsRect.visible = false;
                     return;
                 }
