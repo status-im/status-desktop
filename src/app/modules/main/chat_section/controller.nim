@@ -11,6 +11,7 @@ import ../../../../app_service/service/message/service as message_service
 import ../../../../app_service/service/gif/service as gif_service
 import ../../../../app_service/service/mailservers/service as mailservers_service
 
+import ../../../core/signals/types
 import ../../../core/eventemitter
 
 export controller_interface
@@ -157,6 +158,15 @@ method init*(self: Controller) =
     if (self.sectionId != args.sectionId):
       return
     self.delegate.makeChatWithIdActive(args.chatId)
+
+  self.events.on(SignalType.HistoryRequestStarted.event) do(e: Args):
+    self.delegate.setLoadingHistoryMessagesInProgress(true)
+
+  self.events.on(SignalType.HistoryRequestCompleted.event) do(e:Args):
+    self.delegate.setLoadingHistoryMessagesInProgress(false)
+
+  self.events.on(SignalType.HistoryRequestFailed.event) do(e:Args):
+    discard
 
 method getMySectionId*(self: Controller): string =
   return self.sectionId

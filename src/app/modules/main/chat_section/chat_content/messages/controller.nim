@@ -134,15 +134,6 @@ method init*(self: Controller) =
       return
     self.delegate.onHistoryCleared()
 
-  self.events.on(SignalType.HistoryRequestStarted.event) do(e: Args):
-    self.delegate.setLoadingHistoryMessagesInProgress(true)
-
-  self.events.on(SignalType.HistoryRequestCompleted.event) do(e:Args):
-    self.delegate.setLoadingHistoryMessagesInProgress(false)
-
-  self.events.on(SignalType.HistoryRequestFailed.event) do(e:Args):
-    self.delegate.setLoadingHistoryMessagesInProgress(false)
-
   self.events.on(SIGNAL_MESSAGE_LINK_PREVIEW_DATA_LOADED) do(e: Args):
     let args = LinkPreviewDataArgs(e)
     self.delegate.onPreviewDataLoaded(args.response)
