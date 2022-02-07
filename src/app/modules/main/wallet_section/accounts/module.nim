@@ -71,19 +71,19 @@ method load*(self: Module) =
   singletonInstance.engine.setRootContextProperty("walletSectionAccounts", newQVariant(self.view))
 
   # these connections should be part of the controller's init method
-  self.events.on("walletAccount/accountSaved") do(e:Args):
+  self.events.on(SIGNAL_WALLET_ACCOUNT_SAVED) do(e:Args):
     self.refreshWalletAccounts()
 
-  self.events.on("walletAccount/accountDeleted") do(e:Args):
+  self.events.on(SIGNAL_WALLET_ACCOUNT_DELETED) do(e:Args):
     self.refreshWalletAccounts()
 
-  self.events.on("walletAccount/currencyUpdated") do(e:Args):
+  self.events.on(SIGNAL_WALLET_ACCOUNT_CURRENCY_UPDATED) do(e:Args):
     self.refreshWalletAccounts()
 
-  self.events.on("walletAccount/walletAccountUpdated") do(e:Args):
+  self.events.on(SIGNAL_WALLET_ACCOUNT_UPDATED) do(e:Args):
     self.refreshWalletAccounts()
 
-  self.events.on("walletAccount/tokenVisibilityToggled") do(e:Args):
+  self.events.on(SIGNAL_WALLET_ACCOUNT_TOKEN_VISIBILITY_UPDATED) do(e:Args):
     self.refreshWalletAccounts()
 
   self.controller.init()

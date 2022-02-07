@@ -90,13 +90,13 @@ method setTotalCurrencyBalance*[T](self: Module[T]) =
 method load*[T](self: Module[T]) =
   singletonInstance.engine.setRootContextProperty("walletSection", newQVariant(self.view))
 
-  self.events.on("walletAccount/accountSaved") do(e:Args):
+  self.events.on(SIGNAL_WALLET_ACCOUNT_SAVED) do(e:Args):
     self.setTotalCurrencyBalance()
-  self.events.on("walletAccount/accountDeleted") do(e:Args):
+  self.events.on(SIGNAL_WALLET_ACCOUNT_DELETED) do(e:Args):
     self.setTotalCurrencyBalance()
-  self.events.on("walletAccount/currencyUpdated") do(e:Args):
+  self.events.on(SIGNAL_WALLET_ACCOUNT_CURRENCY_UPDATED) do(e:Args):
     self.setTotalCurrencyBalance()
-  self.events.on("walletAccount/tokenVisibilityToggled") do(e:Args):
+  self.events.on(SIGNAL_WALLET_ACCOUNT_TOKEN_VISIBILITY_UPDATED) do(e:Args):
     self.setTotalCurrencyBalance()
 
   self.controller.init()
