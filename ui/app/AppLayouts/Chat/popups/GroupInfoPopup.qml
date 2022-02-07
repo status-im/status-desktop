@@ -148,6 +148,7 @@ StatusModal {
             model: chatSectionModule.listOfMyContacts
             selectMode: memberCount < maxMembers
             searchString: searchBox.text.toLowerCase()
+            checkedPubKeyList: pubKeys
             onItemChecked: function(pubKey, itemChecked){
                 var idx = pubKeys.indexOf(pubKey)
                 if(itemChecked){

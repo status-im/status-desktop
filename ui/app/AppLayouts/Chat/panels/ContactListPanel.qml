@@ -10,6 +10,7 @@ ScrollView {
     id: contactListPanel
 
     property alias model: groupMembers.model
+    property var checkedPubKeyList: []
     property string searchString
     property bool selectMode: true
     property var onItemChecked
@@ -33,7 +34,7 @@ ScrollView {
                 if (selectMode) {
                     return !searchString || model.name.toLowerCase().includes(searchString)
                 }
-                return checkbox.checked
+                return checkbox.checked || checkedPubKeyList.indexOf(model.pubKey) != -1
             }
             components: [
                 StatusCheckBox {
