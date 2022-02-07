@@ -35,3 +35,6 @@ QtObject:
   QtProperty[QVariant] model:
     read = getModel
     notify = modelChanged
+
+  proc isContactWithIdAdded*(self: View, id: string): bool {.slot.} = 
+    return self.model.isContactWithIdAdded(id)

@@ -130,7 +130,7 @@ StatusModal {
         }
 
         NoFriendsRectangle {
-            visible: popup.store.addToGroupContacts.count === 0 && memberCount > 0
+            visible: chatSectionModule.listOfMyContacts.rowCount() === 0 || chatSectionModule.listOfMyContacts.rowCount() <= memberCount - 1
             //% "All your contacts are already in the group"
             text: qsTrId("group-chat-all-contacts-invited")
             textColor: Style.current.textColor
@@ -142,10 +142,15 @@ StatusModal {
 
         ContactListPanel {
             id: contactList
+            chatContentModule: popup.chatContentModule
             visible: popup.chatContentModule.usersModule.model.rowCount() > 0
             Layout.fillHeight: true
             Layout.fillWidth: true
             model: chatSectionModule.listOfMyContacts
+            isMember: function (pubKey) {
+                return chatContentModule.usersModule.isContactWithIdAdded(pubKey)
+            }
+
             selectMode: memberCount < maxMembers
             searchString: searchBox.text.toLowerCase()
             onItemChecked: function(pubKey, itemChecked){

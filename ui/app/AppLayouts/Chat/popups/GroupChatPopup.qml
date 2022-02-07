@@ -19,6 +19,7 @@ ModalPopup {
     id: popup
 
     property var chatSectionModule
+    property var chatContentModule
     property var store
     property var pubKeys: []
     property bool selectChatMembers: true
@@ -27,6 +28,8 @@ ModalPopup {
     property string channelNameValidationError: ""
 
     onOpened: {
+        popup.chatContentModule = popup.store.currentChatContentModule()
+
         groupName.text = "";
         searchBox.text = "";
         selectChatMembers = true;
@@ -129,6 +132,7 @@ ModalPopup {
     ContactListPanel {
         id: contactList
         anchors.fill: parent
+        chatContentModule: popup.chatContentModule
         model: chatSectionModule.listOfMyContacts
         searchString: searchBox.text.toLowerCase()
         selectMode: selectChatMembers && memberCount < maxMembers

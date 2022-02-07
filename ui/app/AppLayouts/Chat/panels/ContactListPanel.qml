@@ -9,10 +9,15 @@ import utils 1.0
 ScrollView {
     id: contactListPanel
 
+    property var chatContentModule
     property alias model: groupMembers.model
     property string searchString
     property bool selectMode: true
     property var onItemChecked
+
+    property var isMember: function (pubkey) {
+        return false
+    }
 
     ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
     ScrollBar.vertical.policy: groupMembers.contentHeight > groupMembers.height ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
@@ -31,14 +36,15 @@ ScrollView {
             image.isIdenticon: !!model.identicon
             visible: {
                 if (selectMode) {
-                    return !searchString || model.name.toLowerCase().includes(searchString)
+                    return (!searchString || model.name.toLowerCase().includes(searchString))
+                            && !isMember(model.pubKey)
                 }
                 return checkbox.checked
             }
             components: [
                 StatusCheckBox {
                     id: checkbox
-                    visible: contactListPanel.selectMode && !model.isUser
+                    visible: contactListPanel.selectMode && !isMember(model.pubKey)
                     checked: contactDelegate.isChecked
                     onClicked: {
                         contactDelegate.isChecked = !contactDelegate.isChecked
