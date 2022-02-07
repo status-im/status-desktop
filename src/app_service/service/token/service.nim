@@ -4,11 +4,13 @@ from sugar import `=>`
 import web3/ethtypes
 from web3/conversions import `$`
 import ../../../backend/custom_tokens as custom_tokens
+import ../../../backend/tokens as token_backend
+
 import ../settings/service_interface as settings_service
 
 import ../../../app/core/eventemitter
 import ../../../app/core/tasks/[qt, threadpool]
-import ./dto, ./static_token
+import ./dto
 
 export dto
 
@@ -76,18 +78,19 @@ QtObject:
       if activeTokenSymbols.len == 0:
         activeTokenSymbols = self.getDefaultVisibleSymbols()
 
-      let static_tokens = static_token.all().map(
-        proc(x: TokenDto): TokenDto =
-          x.isVisible = activeTokenSymbols.contains(x.symbol)
-          return x
+      let chainId = self.settingsService.getCurrentNetworkId()
+      let responseTokens = token_backend.getTokens(chainId)
+      let default_tokens = map(
+        responseTokens.result.getElems(), 
+        proc(x: JsonNode): TokenDto = x.toTokenDto(activeTokenSymbols, hasIcon=true, isCustom=false)
       )
 
-      let response = custom_tokens.getCustomTokens()
+      let responseCustomTokens = custom_tokens.getCustomTokens()
       self.tokens = concat(
-        static_tokens,
-        map(response.result.getElems(), proc(x: JsonNode): TokenDto = x.toTokenDto(activeTokenSymbols))
+        default_tokens,
+        map(responseCustomTokens.result.getElems(), proc(x: JsonNode): TokenDto = x.toTokenDto(activeTokenSymbols))
       ).filter(
-        proc(x: TokenDto): bool = x.chainId == self.settingsService.getCurrentNetworkId()
+        proc(x: TokenDto): bool = x.chainId == chainId
       )
 
     except Exception as e:

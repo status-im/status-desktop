@@ -10,6 +10,7 @@ import ./service_interface, ./dto
 
 import ../../../app/core/eventemitter
 import ../../../backend/accounts as status_go_accounts
+import ../../../backend/tokens as status_go_tokens
 import ../../../backend/eth as status_go_eth
 
 export service_interface
@@ -66,20 +67,6 @@ proc fetchAccounts(): seq[WalletAccountDto] =
     x => x.toWalletAccountDto()
   ).filter(a => not a.isChat)
 
-
-proc fetchTokenBalance(tokenAddress, accountAddress: string, decimals: int): float64 =
-  let key = tokenAddress & accountAddress
-  if balanceCache.hasKey(key):
-    return balanceCache[key]
-
-  try:
-    let tokenBalanceResponse = status_go_eth.getTokenBalance(tokenAddress, accountAddress)
-    result = parsefloat(hex2Balance(tokenBalanceResponse.result.getStr, decimals))
-    balanceCache[key] = result
-  except Exception as e:
-    error "Error getting token balance", msg = e.msg
-  
-
 proc fetchEthBalance(accountAddress: string): float64 =
   let key = "0x0" & accountAddress
   if balanceCache.hasKey(key):
@@ -132,7 +119,8 @@ method getVisibleTokens(self: Service): seq[TokenDto] =
 method buildTokens(
   self: Service,
   account: WalletAccountDto,
-  prices: Table[string, float64]
+  prices: Table[string, float64],
+  balances: JsonNode
 ): seq[WalletTokenDto] =
   let balance = fetchEthBalance(account.address)
   result = @[WalletTokenDto(
@@ -148,7 +136,7 @@ method buildTokens(
   )]
 
   for token in self.getVisibleTokens():
-    let balance = fetchTokenBalance($token.address, account.address, token.decimals)
+    let balance = parsefloat(hex2Balance(balances{token.addressAsString()}.getStr, token.decimals))
     result.add(
       WalletTokenDto(
         name: token.name,
@@ -174,11 +162,19 @@ method fetchPrices(self: Service): Table[string, float64] =
 
   return prices
 
+method fetchBalances(self: Service, accounts: seq[string]): JsonNode =
+  let chainId = self.settingsService.getCurrentNetworkId()
+  let tokens = self.getVisibleTokens().map(t => t.addressAsString())
+
+  return status_go_tokens.getBalances(chainId, accounts, tokens).result
+
 method refreshBalances(self: Service) =
   let prices = self.fetchPrices()
+  let accounts = toSeq(self.accounts.keys)
+  let balances = self.fetchBalances(accounts)
 
   for account in toSeq(self.accounts.values):
-    account.tokens = self.buildTokens(account, prices)
+    account.tokens = self.buildTokens(account, prices, balances{account.address})
 
 method init*(self: Service) =
   try:
@@ -243,7 +239,9 @@ method saveAccount(
         newAccount = account
         break
 
-    newAccount.tokens = self.buildTokens(newAccount, prices)
+    let balances = self.fetchBalances(@[newAccount.address])
+    newAccount.tokens = self.buildTokens(newAccount, prices, balances{newAccount.address})
+
     self.accounts[newAccount.address] = newAccount
     self.events.emit("walletAccount/accountSaved", AccountSaved(account: newAccount))
   except Exception as e:
