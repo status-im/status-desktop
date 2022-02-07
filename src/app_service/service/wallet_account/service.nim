@@ -19,6 +19,12 @@ export service_interface
 logScope:
   topics = "wallet-account-service"
 
+const SIGNAL_WALLET_ACCOUNT_SAVED* = "walletAccount/accountSaved"
+const SIGNAL_WALLET_ACCOUNT_DELETED* = "walletAccount/accountDeleted"
+const SIGNAL_WALLET_ACCOUNT_CURRENCY_UPDATED* = "walletAccount/currencyUpdated"
+const SIGNAL_WALLET_ACCOUNT_TOKEN_VISIBILITY_UPDATED* = "walletAccount/tokenVisibilityUpdated"
+const SIGNAL_WALLET_ACCOUNT_UPDATED* = "walletAccount/walletAccountUpdated"
+
 var
   priceCache {.threadvar.}: Table[string, float64]
   balanceCache {.threadvar.}: Table[string, float64]
@@ -216,7 +222,7 @@ method addNewAccountToLocalStore(self: Service) =
   let balances = self.fetchBalances(@[newAccount.address])
   newAccount.tokens = self.buildTokens(newAccount, prices, balances{newAccount.address})
   self.accounts[newAccount.address] = newAccount
-  self.events.emit("walletAccount/accountSaved", AccountSaved(account: newAccount))
+  self.events.emit(SIGNAL_WALLET_ACCOUNT_SAVED, AccountSaved(account: newAccount))
 
 method generateNewAccount*(self: Service, password: string, accountName: string, color: string): string =
   try:
@@ -272,17 +278,17 @@ method deleteAccount*(self: Service, address: string) =
   let accountDeleted = self.accounts[address]
   self.accounts.del(address)
 
-  self.events.emit("walletAccount/accountDeleted", AccountDeleted(account: accountDeleted))
+  self.events.emit(SIGNAL_WALLET_ACCOUNT_DELETED, AccountDeleted(account: accountDeleted))
 
 method updateCurrency*(self: Service, newCurrency: string) =
   discard self.settingsService.saveCurrency(newCurrency)
   self.refreshBalances()
-  self.events.emit("walletAccount/currencyUpdated", CurrencyUpdated())
+  self.events.emit(SIGNAL_WALLET_ACCOUNT_CURRENCY_UPDATED, CurrencyUpdated())
 
 method toggleTokenVisible*(self: Service, symbol: string) =
   self.tokenService.toggleVisible(symbol)
   self.refreshBalances()
-  self.events.emit("walletAccount/tokenVisibilityToggled", TokenVisibilityToggled())
+  self.events.emit(SIGNAL_WALLET_ACCOUNT_TOKEN_VISIBILITY_UPDATED, TokenVisibilityToggled())
 
 method updateWalletAccount*(self: Service, address: string, accountName: string, color: string) =
   let account = self.accounts[address]
@@ -296,4 +302,4 @@ method updateWalletAccount*(self: Service, address: string, accountName: string,
   account.name = accountName
   account.color = color
 
-  self.events.emit("walletAccount/walletAccountUpdated", WalletAccountUpdated(account: account))
+  self.events.emit(SIGNAL_WALLET_ACCOUNT_UPDATED, WalletAccountUpdated(account: account))
