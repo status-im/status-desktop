@@ -23,7 +23,6 @@ QtObject:
     result.model = newModel()
     result.modelVariant = newQVariant(result.model)
     result.initialMessagesLoaded = false
-    result.loadingHistoryMessagesInProgress = false
 
   proc load*(self: View) =
     self.delegate.viewDidLoad()

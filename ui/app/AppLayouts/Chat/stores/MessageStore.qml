@@ -16,7 +16,8 @@ QtObject {
     function loadMoreMessages () {
         if(!messageModule)
             return
-        if(!messageModule.initialMessagesLoaded || messageModule.loadingHistoryMessagesInProgress)
+
+        if(!messageModule.initialMessagesLoaded || chatCommunitySectionModule.loadingHistoryMessagesInProgress)
             return
 
         messageModule.loadMoreMessages()

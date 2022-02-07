@@ -68,14 +68,14 @@ Item {
 
     Item {
         id: loadingMessagesIndicator
-        visible: messageStore.messageModule? messageStore.messageModule.loadingHistoryMessagesInProgress : false
+        visible: root.store.loadingHistoryMessagesInProgress
         anchors.top: parent.top
         anchors.left: parent.left
         height: visible? 20 : 0
         width: parent.width
 
         Loader {
-            active: messageStore.messageModule? messageStore.messageModule.loadingHistoryMessagesInProgress : false
+            active: root.store.loadingHistoryMessagesInProgress
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
             sourceComponent: Component {

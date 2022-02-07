@@ -372,7 +372,7 @@ ColumnLayout {
 
             Loader {
                 id: loadingMessagesIndicator
-                active: messageStore.messageModule? messageStore.messageModule.loadingHistoryMessagesInProgress : false
+                active: chatContentRoot.rootStore.loadingHistoryMessagesInProgress
                 sourceComponent: LoadingAnimation { }
                 anchors {
                     right: parent.right

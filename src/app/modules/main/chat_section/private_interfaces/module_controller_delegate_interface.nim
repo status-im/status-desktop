@@ -59,3 +59,6 @@ method onCommunityCategoryDeleted*(self: AccessInterface, category: Category) {.
 
 method onCommunityCategoryEdited*(self: AccessInterface, category: Category, chats: seq[ChatDto]) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method setLoadingHistoryMessagesInProgress*(self: AccessInterface, isLoading: bool) {.base.} =
+  raise newException(ValueError, "No implementation available")

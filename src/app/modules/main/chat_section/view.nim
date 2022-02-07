@@ -19,7 +19,8 @@ QtObject:
       listOfMyContactsVariant: QVariant
       editCategoryChannelsModel: chats_model.Model
       editCategoryChannelsVariant: QVariant
-
+      loadingHistoryMessagesInProgress: bool 
+      
   proc delete*(self: View) =
     self.model.delete
     self.modelVariant.delete
@@ -47,6 +48,7 @@ QtObject:
     result.contactRequestsModelVariant = newQVariant(result.contactRequestsModel)
     result.listOfMyContacts = contacts_model.newModel()
     result.listOfMyContactsVariant = newQVariant(result.listOfMyContacts)
+    result.loadingHistoryMessagesInProgress = false
 
   proc load*(self: View) =
     self.delegate.viewDidLoad()
@@ -256,3 +258,18 @@ QtObject:
 
   proc reorderCommunityChat*(self: View, categoryId: string, chatId: string, position: int): string {.slot} =
     self.delegate.reorderCommunityChat(categoryId, chatId, position)
+    
+  proc loadingHistoryMessagesInProgressChanged*(self: View) {.signal.}
+
+  proc getLoadingHistoryMessagesInProgress*(self: View): bool {.slot.} =
+    return self.loadingHistoryMessagesInProgress
+  
+  QtProperty[bool] loadingHistoryMessagesInProgress:
+    read = getLoadingHistoryMessagesInProgress
+    notify = loadingHistoryMessagesInProgressChanged
+
+  proc setLoadingHistoryMessagesInProgress*(self: View, value: bool) = # this is not a slot
+    if (value == self.loadingHistoryMessagesInProgress):
+      return
+    self.loadingHistoryMessagesInProgress = value
+    self.loadingHistoryMessagesInProgressChanged()

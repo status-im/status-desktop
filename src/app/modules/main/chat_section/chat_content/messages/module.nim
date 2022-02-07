@@ -225,8 +225,6 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
   if(not self.view.getInitialMessagesLoaded()):
     self.view.initialMessagesAreLoaded()
 
-  self.setLoadingHistoryMessagesInProgress(false)
-
   # check if this loading was caused by the click on a messages from the app search result
   discard self.checkIfMessageLoadedAndScrollToItIfItIs()
 
@@ -286,7 +284,6 @@ method onSendingMessageError*(self: Module) =
   self.view.emitSendingMessageErrorSignal()
 
 method loadMoreMessages*(self: Module) =
-  self.setLoadingHistoryMessagesInProgress(true)
   self.controller.loadMoreMessages()
 
 method toggleReaction*(self: Module, messageId: string, emojiId: int) =
@@ -407,9 +404,6 @@ method updateChatIdentifier*(self: Module) =
   self.view.model().removeItem(CHAT_IDENTIFIER_MESSAGE_ID)
   # Add new loaded messages
   self.view.model().appendItem(self.createChatIdentifierItem())
-
-method setLoadingHistoryMessagesInProgress*(self: Module, isLoading: bool) =
-  self.view.setLoadingHistoryMessagesInProgress(isLoading)
 
 method getLinkPreviewData*(self: Module, link: string, uuid: string): string =
   return self.controller.getLinkPreviewData(link, uuid)

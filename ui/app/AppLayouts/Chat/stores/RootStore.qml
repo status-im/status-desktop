@@ -26,6 +26,8 @@ QtObject {
     // Contact requests related part
     property var contactRequestsModel: chatCommunitySectionModule.contactRequestsModel
 
+    property var loadingHistoryMessagesInProgress: chatCommunitySectionModule.loadingHistoryMessagesInProgress
+
     function setActiveCommunity(communityId) {
         mainModule.setActiveSectionById(communityId);
     }

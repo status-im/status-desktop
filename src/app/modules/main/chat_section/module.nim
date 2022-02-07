@@ -688,3 +688,6 @@ method reorderCommunityCategories*(self: Module, categoryId: string, position: i
 
 method reorderCommunityChat*(self: Module, categoryId: string, chatId: string, position: int): string =
   self.controller.reorderCommunityChat(categoryId, chatId, position)
+  
+method setLoadingHistoryMessagesInProgress*(self: Module, isLoading: bool) =
+  self.view.setLoadingHistoryMessagesInProgress(isLoading)

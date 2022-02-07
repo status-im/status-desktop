@@ -108,3 +108,6 @@ method joinGroupChat*(self: AccessInterface) {.base.} =
 
 method leaveChat*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method setLoadingHistoryMessagesInProgress*(self: AccessInterface, isLoading: bool) {.base.} =
+  raise newException(ValueError, "No implementation available")
