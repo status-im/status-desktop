@@ -146,15 +146,8 @@ ModalPopup {
                 text: qsTrId("a-deleted-account-cannot-be-retrieved-later.-only-press-yes-if-you-backed-up-your-key/seed-or-don't-care-about-this-account-anymore")
                 icon: StandardIcon.Warning
                 standardButtons: StandardButton.Yes |  StandardButton.No
-                onAccepted: {
-                    const error = RootStore.deleteAccount(currentAccount.address)
-                    if (error) {
-                        Global.playErrorSound();
-                        deleteError.text = error
-                        deleteError.open()
-                        return
-                    }
-
+                onYes: {
+                    RootStore.deleteAccount(currentAccount.address)
                     // Change active account to the first
                     changeSelectedAccount(0)
                     popup.close();
