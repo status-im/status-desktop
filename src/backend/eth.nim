@@ -1,4 +1,4 @@
-import json, strutils, strformat
+import json
 import ./core, ./response_type
 
 export response_type
