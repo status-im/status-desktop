@@ -30,6 +30,7 @@ QtObject {
         readonly property string onlineUsers: "onlineUsers"
         readonly property string gifWidget: "gifWidget"
         readonly property string keycard: "keycard"
+        readonly property string multiNetwork: "multiNetwork"
     }
 
     function setGlobalNetworkId() {
@@ -139,6 +140,9 @@ QtObject {
         }
         else if (feature === experimentalFeatures.keycard) {
             localAccountSettings.isKeycardEnabled = !localAccountSettings.isKeycardEnabled
+        }
+        else if (feature === experimentalFeatures.multiNetwork) {
+            localAccountSensitiveSettings.isMultiNetworkEnabled = !localAccountSensitiveSettings.isMultiNetworkEnabled
         }
     }
 }
