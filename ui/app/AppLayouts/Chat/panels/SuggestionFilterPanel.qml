@@ -2,11 +2,11 @@ import QtQuick 2.13
 import utils 1.0
 
 Item {
-    id: component
+    id: suggestionsPanelRoot
     property alias model: filterModel
 
     property string formattedFilter
-    property QtObject sourceModel: undefined
+    property var sourceModel
     property string filter: ""
     property int cursorPosition: 0
     property int lastAtPosition: 0
@@ -16,6 +16,23 @@ Item {
     onPropertyChanged: invalidateFilter()
     onSourceModelChanged: invalidateFilter()
     Component.onCompleted: invalidateFilter()
+
+    ListView {
+        // This is a fake list (invisible), used just for the sake of accessing items of the `sourceModel`
+        // without exposing explicit methods from the model which would return item detail.
+        // In general the whole thing about preparing/displaying suggestion panel and list there should
+        // be handled in a much better way, at least using `ListView` and `DelegateModel` which will
+        // filter out the list instead doing all that manually here.
+        id: sourceModelList
+        visible: false
+        model: suggestionsPanelRoot.sourceModel
+        delegate: Item {
+            property string publicKey: model.id
+            property string name: model.name
+            property string icon: model.icon
+            property bool isIdenticon: model.isIdenticon
+        }
+    }
 
     ListModel {
         id: filterModel
@@ -43,14 +60,13 @@ Item {
 
         const all = shouldShowAll(filter)
 
-        for (var i = 0; i < sourceModel.rowCount(); ++i) {
-            const publicKey = sourceModel.rowData(i, "publicKey");
+        for (var i = 0; i < sourceModelList.count; ++i) {
+            let listItem = sourceModelList.itemAtIndex(i)
             const item = {
-                alias: sourceModel.rowData(i, "alias"),
-                userName: sourceModel.rowData(i, "userName"),
-                publicKey: publicKey,
-                identicon: Global.getProfileImage(publicKey, false, false) || sourceModel.rowData(i, "identicon"),
-                localName: sourceModel.rowData(i, "localName")
+                publicKey: listItem.publicKey,
+                name: listItem.name,
+                icon: listItem.icon,
+                isIdenticon: listItem.isIdenticon
             }
             if (all || isAcceptedItem(filter, item)) {
                 filterModel.append(item)
@@ -63,9 +79,7 @@ Item {
             return
         }
 
-        // Not Refactored Yet
-        return ""
-//        return chatsModel.plainText(this.filter)
+        return globalUtils.plainText(this.filter)
     }
 
     function shouldShowAll(filter) {
@@ -92,7 +106,7 @@ Item {
         
         let filterWithoutAt = filter.substring(this.lastAtPosition + 1, this.cursorPosition)
         filterWithoutAt = filterWithoutAt.replace(/\*/g, "")
-        component.formattedFilter = filterWithoutAt
+        suggestionsPanelRoot.formattedFilter = filterWithoutAt
 
         return !properties.every(p => item[p].toLowerCase().match(filterWithoutAt.toLowerCase()) === null)
     }

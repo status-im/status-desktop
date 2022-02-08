@@ -33,7 +33,7 @@ import shared.panels 1.0
 Rectangle {
     id: container
 
-    property QtObject model
+    property var model
     property Item delegate
     property alias suggestionsModel: filterItem.model
     property alias filter: filterItem.filter
@@ -193,8 +193,8 @@ Rectangle {
                     anchors.leftMargin: Style.current.smallPadding
                     image.width: 32
                     image.height: 32
-                    image.source: model.identicon
-                    image.isIdenticon: true
+                    image.source: model.icon
+                    image.isIdenticon: model.isIdenticon
                 }
 
                 StyledText {

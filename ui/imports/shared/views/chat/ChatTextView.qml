@@ -11,9 +11,7 @@ Item {
 
     property var store
     property bool longChatText: true
-    // Not Refactored Yet
-    property bool veryLongChatText: false // !!root.store ? root.store.chatsModelInst.plainText(message).length >
-                                    //Constants.limitLongChatTextCompactMode : false
+    property bool veryLongChatText: globalUtils.plainText(message).length > Constants.limitLongChatTextCompactMode
     property bool readMore: false
     property alias textField: chatText
 

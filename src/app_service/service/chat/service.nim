@@ -10,6 +10,7 @@ import ../../../app/global/global_singleton
 import ../../../app/core/eventemitter
 import ../../../constants
 
+import ../../common/message as message_common
 from ../../common/account_constants import ZERO_ADDRESS
 
 export chat_dto
@@ -271,9 +272,12 @@ QtObject:
     preferredUsername: string = "",
     communityId: string = "") =
     try:
+      let allKnownContacts = self.contactService.getContacts()
+      let processedMsg = message_common.replaceMentionsWithPubKeys(allKnownContacts, msg)
+
       let response = status_chat.sendChatMessage(
         chatId,
-        msg,
+        processedMsg,
         replyTo,
         contentType,
         preferredUsername,

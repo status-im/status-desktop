@@ -31,6 +31,12 @@ ColumnLayout {
     property var chatContentModule
     property var rootStore
     property var contactsStore
+    property UsersStore usersStore: UsersStore {}
+
+    onChatContentModuleChanged: {
+        chatContentRoot.usersStore.usersModule = chatContentRoot.chatContentModule.usersModule
+    }
+
 
     property Component sendTransactionNoEnsModal
     property Component receiveTransactionModal
@@ -70,7 +76,7 @@ ColumnLayout {
                 //% "Public chat"
                 return qsTrId("public-chat")
             case Constants.chatType.privateGroupChat:
-                let cnt = chatContentModule.usersModule.model.count
+                let cnt = chatContentRoot.usersStore.usersModule.count
                 //% "%1 members"
                 if(cnt > 1) return qsTrId("-1-members").arg(cnt);
                 //% "1 member"
@@ -344,6 +350,7 @@ ColumnLayout {
             contactsStore: chatContentRoot.contactsStore
             messageContextMenuInst: contextmenu
             messageStore: messageStore
+            usersStore: chatContentRoot.usersStore
             stickersLoaded: chatContentRoot.stickersLoaded
             onShowReplyArea: {
                 let obj = messageStore.getMessageByIdAsJson(messageId)
@@ -377,6 +384,9 @@ ColumnLayout {
 
             StatusChatInput {
                 id: chatInput
+
+                usersStore: chatContentRoot.usersStore
+
                 visible: {
                     // Not Refactored Yet
                     return true

@@ -23,6 +23,7 @@ Item {
 
     property var store
     property var messageStore
+    property var usersStore
     property var contactsStore
 
     property bool stickersLoaded: false
@@ -296,6 +297,7 @@ Item {
             id: msgDelegate
 
             messageStore: root.messageStore
+            usersStore: root.usersStore
             contactsStore: root.contactsStore
 
             messageContextMenu: messageContextMenuInst
