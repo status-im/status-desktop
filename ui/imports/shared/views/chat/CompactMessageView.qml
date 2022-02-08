@@ -15,6 +15,7 @@ Item {
     id: root
 
     property var messageStore
+    property var usersStore
     property var contactsStore
 
     property var messageContextMenu
@@ -364,12 +365,13 @@ Item {
                     if (index < 0) {
                         break
                     }
-                    let endIndex = message.indexOf("</a>", index)
+                    let startIndex = index
+                    let endIndex = message.indexOf("</a>", index) + 4
                     if (endIndex < 0) {
                         index += 8 // "<a href="
                         continue
                     }
-                    let addrIndex = rmessage.indexOf("0x", index + 8)
+                    let addrIndex = message.indexOf("0x", index + 8)
                     if (addrIndex < 0) {
                         index += 8 // "<a href="
                         continue
@@ -379,21 +381,19 @@ Item {
                         index += 8 // "<a href="
                         continue
                     }
-                    const address = '@' + message.substring(addrIndex, addrEndIndex)
-                    const linkTag = message.substring(index, endIndex + 5)
+                    const mentionLink = message.substring(startIndex, endIndex)
+                    const linkTag = message.substring(index, endIndex)
                     const linkText = linkTag.replace(/(<([^>]+)>)/ig,"").trim()
                     const atSymbol = linkText.startsWith("@") ? '' : '@'
                     const mentionTag = Constants.mentionSpanTag + atSymbol + linkText + '</span> '
-                    mentionsMap.set(address, mentionTag)
+                    mentionsMap.set(mentionLink, mentionTag)
                     index += linkTag.length
                 }
 
-                sourceText =  rootStore.plainText(Emoji.deparse(message))
+                sourceText = message
                 for (let [key, value] of mentionsMap) {
                     sourceText = sourceText.replace(new RegExp(key, 'g'), value)
                 }
-                sourceText = sourceText.replace(/\n/g, "<br />")
-                sourceText = Utils.getMessageWithStyle(sourceText, isCurrentUser)
             }
 
             sourceComponent: Item {
@@ -410,6 +410,9 @@ Item {
 
                 StatusChatInput {
                     id: editTextInput
+
+                    usersStore: root.usersStore
+
                     chatInputPlaceholder: qsTrId("type-a-message-")
                     chatType: messageStore.getChatType()
                     isEdit: true

@@ -13,6 +13,8 @@ import ../chat/dto/chat as chat_dto
 import ./dto/pinned_message_update as pinned_msg_update_dto
 import ./dto/removed_message as removed_msg_dto
 
+import ../../common/message as message_common
+
 export message_dto
 export pinned_msg_dto
 export reaction_dto
@@ -652,9 +654,12 @@ proc deleteMessage*(self: Service, messageId: string) =
   except Exception as e:
     error "error: ", methodName="deleteMessage", errName = e.name, errDesription = e.msg
 
-proc editMessage*(self: Service, messageId: string, updatedMsg: string) =
+proc editMessage*(self: Service, messageId: string, msg: string) =
   try:
-    let response = status_go.editMessage(messageId, updatedMsg)
+    let allKnownContacts = self.contactService.getContacts()
+    let processedMsg = message_common.replaceMentionsWithPubKeys(allKnownContacts, msg)
+
+    let response = status_go.editMessage(messageId, processedMsg)
 
     var messagesArr: JsonNode
     var messages: seq[MessageDto]

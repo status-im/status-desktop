@@ -18,6 +18,7 @@ Column {
     z: (typeof chatLogView === "undefined") ? 1 : (chatLogView.count - index)
 
     property var messageStore
+    property var usersStore
     property var contactsStore
     property var messageContextMenu
 
@@ -342,6 +343,7 @@ Column {
 
         CompactMessageView {
             messageStore: root.messageStore
+            usersStore: root.usersStore
             contactsStore: root.contactsStore
             messageContextMenu: root.messageContextMenu
             contentType: root.messageContentType

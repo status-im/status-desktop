@@ -28,6 +28,8 @@ Rectangle {
     signal stickerSelected(string hashId, string packId)
     signal sendMessage(var event)
 
+    property var usersStore
+
     property bool emojiEvent: false;
     property bool paste: false;
     property bool isColonPressed: false;
@@ -288,9 +290,7 @@ Rectangle {
 
         const deparsedEmoji = Emoji.deparse(textWithoutMention);
 
-        // Not Refactored Yet
-        return ""
-        //return RootStore.chatsModelInst.plainText(deparsedEmoji);
+        return globalUtils.plainText(deparsedEmoji)
     }
 
     function removeMentions(currentText) {
@@ -622,26 +622,16 @@ Rectangle {
 
     SuggestionBoxPanel {
         id: suggestionsBox
-            // Not Refactored Yet
-//        model: {
-//            if (RootStore.chatsModelInst.communities.activeCommunity.active) {
-//                return RootStore.chatsModelInst.communities.activeCommunity.members
-//            }
-//            return RootStore.chatsModelInst.messageView.messageList.userList
-//        }
+        model: control.usersStore.usersModel
         x : messageInput.x
         y: -height - Style.current.smallPadding
         width: messageInput.width
         filter: messageInputField.text
         cursorPosition: messageInputField.cursorPosition
-        property: ["userName", "localName", "alias"]
+        property: ["name"]
         onItemSelected: function (item, lastAtPosition, lastCursorPosition) {
-            const properties = "userName, alias"; // Ignore localName
-            let aliasName = item[properties.split(",").map(p => p.trim()).find(p => !!item[p])]
-            aliasName = aliasName.replace("@", "")
-            aliasName = aliasName.replace(/(\.stateofus)?\.eth/, "")
-
-            insertMention(aliasName, lastAtPosition, lastCursorPosition)
+            let name = item.name.replace("@", "")
+            insertMention(name, lastAtPosition, lastCursorPosition)
             suggestionsBox.suggestionsModel.clear()
         }
     }
@@ -1091,8 +1081,7 @@ Rectangle {
                 anchors.rightMargin: Style.current.halfPadding
                 anchors.verticalCenter: parent.verticalCenter
                 visible: imageBtn2.visible
-                         // Not Refactored Yet
-//                enabled: (RootStore.chatsModelInst.plainText(Emoji.deparse(messageInputField.text)).length > 0 || isImage) && messageInputField.length < messageLimit
+                enabled: (globalUtils.plainText(Emoji.deparse(messageInputField.text)).length > 0 || isImage) && messageInputField.length < messageLimit
                 onClicked: function (event) {
                     control.sendMessage(event)
                     control.hideExtendedArea();
