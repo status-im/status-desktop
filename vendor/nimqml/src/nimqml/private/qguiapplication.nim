@@ -35,6 +35,9 @@ proc quit*(self: QGuiApplication) =
 proc setClipboardText*(text: string = "") =
   dos_qguiapplication_clipboard_setText(text.cstring)
 
+proc installSelfSignedCertificate*(certificate: string) =
+  dos_add_self_signed_certificate(certificate.cstring)
+
 proc setClipboardImage*(text: string = "") =
   dos_qguiapplication_clipboard_setImage(text.cstring)
 

@@ -17,6 +17,9 @@ proc icon*(application: QApplication, filename: string) =
 proc setClipboardText*(text: string = "") =
   dos_qapplication_clipboard_setText(text.cstring)
 
+proc installSelfSignedCertificate*(certificate: string) =
+  dos_add_self_signed_certificate(certificate.cstring)
+
 proc installEventFilter*(application: QApplication, event: StatusEvent) =
   dos_qapplication_installEventFilter(event.vptr)
 
