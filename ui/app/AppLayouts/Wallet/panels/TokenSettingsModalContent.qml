@@ -15,9 +15,9 @@ Item {
 
     property var defaultTokenList
     property var customTokenList
-    signal toggleVisibleClicked(string symbol)
-    signal removeCustomTokenTriggered(string address)
-    signal showTokenDetailsTriggered(string address, string name, string symbol, string decimals)
+    signal toggleVisibleClicked(int chainId, string symbol)
+    signal removeCustomTokenTriggered(int chainId, string address)
+    signal showTokenDetailsTriggered(int chainId, string address, string name, string symbol, string decimals)
 
     SearchBox {
         id: searchBox
@@ -48,6 +48,13 @@ Item {
                 anchors.left: parent.left
                 anchors.leftMargin: Style.current.smallPadding
                 anchors.verticalCenter: parent.verticalCenter
+
+                onStatusChanged: {
+                    if (assetInfoImage.status == Image.Error) {
+                        assetInfoImage.source = Style.png("tokens/DEFAULT-TOKEN@3x")
+                    }
+                }
+
             }
             StyledText {
                 id: assetSymbol
@@ -73,7 +80,7 @@ Item {
                 checked: model.isVisible
                 anchors.right: parent.right
                 anchors.rightMargin: Style.current.smallPadding
-                onClicked: toggleVisibleClicked(symbol)
+                onClicked: toggleVisibleClicked(chainId, symbol)
                 anchors.verticalCenter: parent.verticalCenter
             }
 
@@ -87,7 +94,7 @@ Item {
                         return contextMenu.popup(assetSymbol.x - 100, assetSymbol.y + 25)
                     }
                     assetCheck.checked = !assetCheck.checked
-                    toggleVisibleClicked(symbol)
+                    toggleVisibleClicked(chainId, symbol)
                 }
                 onEntered: {
                     tokenContainer.hovered = true
@@ -103,7 +110,7 @@ Item {
                         //% "Token details"
                         text: qsTrId("token-details")
                         onTriggered: {
-                            modalBody.showTokenDetailsTriggered(address, name, symbol, decimals);
+                            modalBody.showTokenDetailsTriggered(chainId, address, name, symbol, decimals);
                         }
                     }
                     Action {
@@ -112,7 +119,7 @@ Item {
                         enabled: isCustom
                         //% "Remove token"
                         text: qsTrId("remove-token")
-                        onTriggered: removeCustomTokenTriggered(address)
+                        onTriggered: removeCustomTokenTriggered(chainId, address)
                     }
                 }
             }

@@ -285,8 +285,8 @@ method updateCurrency*(self: Service, newCurrency: string) =
   self.refreshBalances()
   self.events.emit(SIGNAL_WALLET_ACCOUNT_CURRENCY_UPDATED, CurrencyUpdated())
 
-method toggleTokenVisible*(self: Service, symbol: string) =
-  self.tokenService.toggleVisible(symbol)
+method toggleTokenVisible*(self: Service, chainId: int, symbol: string) =
+  self.tokenService.toggleVisible(chainId, symbol)
   self.refreshBalances()
   self.events.emit(SIGNAL_WALLET_ACCOUNT_TOKEN_VISIBILITY_UPDATED, TokenVisibilityToggled())
 

@@ -27,13 +27,13 @@ ModalPopup {
         customTokenList: RootStore.customTokenList
 
         onToggleVisibleClicked: {
-            RootStore.toggleVisible(symbol)
+            RootStore.toggleVisible(chainId, symbol)
         }
         onRemoveCustomTokenTriggered: {
-            RootStore.removeCustomToken(address)
+            RootStore.removeCustomToken(chainId, address)
         }
         onShowTokenDetailsTriggered: {
-            addShowTokenModal.openWithData(address, name, symbol, decimals);
+            addShowTokenModal.openWithData(chainId, address, name, symbol, decimals);
         }
 
         AddShowTokenModal{

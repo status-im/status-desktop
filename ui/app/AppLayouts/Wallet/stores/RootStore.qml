@@ -121,16 +121,16 @@ QtObject {
         walletSection.updateCurrency(newCurrency)
     }
 
-    function addCustomToken(address, name, symbol, decimals) {
-        return walletSectionAllTokens.addCustomToken(address, name, symbol, decimals)
+    function addCustomToken(chainId, address, name, symbol, decimals) {
+        return walletSectionAllTokens.addCustomToken(chainId, address, name, symbol, decimals)
     }
 
-    function toggleVisible(symbol) {
-        walletSectionAllTokens.toggleVisible(symbol)
+    function toggleVisible(chainId, symbol) {
+        walletSectionAllTokens.toggleVisible(chainId, symbol)
     }
 
-    function removeCustomToken(address) {
-        walletSectionAllTokens.removeCustomToken(address)
+    function removeCustomToken(chainId, address) {
+        walletSectionAllTokens.removeCustomToken(chainId, address)
     }
 
     function getQrCode(address) {

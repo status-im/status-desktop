@@ -45,7 +45,8 @@ method refreshTokens*(self: Module) =
       t.addressAsString(),
       t.decimals,
       t.isCustom,
-      t.isVisible
+      t.isVisible,
+      t.chainId,
     ))
   )
 
@@ -73,17 +74,17 @@ method viewDidLoad*(self: Module) =
   self.moduleLoaded = true
   self.delegate.allTokensModuleDidLoad()
 
-method addCustomToken*(self: Module, address: string, name: string, symbol: string, decimals: int) =
-  self.controller.addCustomToken(address, name, symbol, decimals)
+method addCustomToken*(self: Module, chainId: int, address: string, name: string, symbol: string, decimals: int) =
+  self.controller.addCustomToken(chainId, address, name, symbol, decimals)
+        
+method toggleVisible*(self: Module, chainId: int, symbol: string) =
+  self.controller.toggleVisible(chainId, symbol)
 
-method toggleVisible*(self: Module, symbol: string) =
-  self.controller.toggleVisible(symbol)
+method removeCustomToken*(self: Module, chainId: int, address: string) =
+  self.controller.removeCustomToken(chainId, address)
 
-method removeCustomToken*(self: Module, address: string) =
-  self.controller.removeCustomToken(address)
-
-method getTokenDetails*(self: Module, address: string) =
-  self.controller.getTokenDetails(address)
+method getTokenDetails*(self: Module, chainId: int, address: string) =
+  self.controller.getTokenDetails(chainId, address)
 
 method tokenDetailsWereResolved*(self: Module, tokenDetails: string) =
   self.view.tokenDetailsWereResolved(tokenDetails)

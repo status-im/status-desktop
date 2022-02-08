@@ -37,14 +37,14 @@ method init*(self: Controller) =
 method getTokens*(self: Controller): seq[token_service.TokenDto] =
   return self.tokenService.getTokens()
 
-method addCustomToken*(self: Controller, address: string, name: string, symbol: string, decimals: int) =
-  self.tokenService.addCustomToken(address, name, symbol, decimals)
+method addCustomToken*(self: Controller, chainId: int, address: string, name: string, symbol: string, decimals: int) =
+  self.tokenService.addCustomToken(chainId, address, name, symbol, decimals)
+        
+method toggleVisible*(self: Controller, chainId: int, symbol: string) =
+  self.walletAccountService.toggleTokenVisible(chainId, symbol)
 
-method toggleVisible*(self: Controller, symbol: string) =
-  self.walletAccountService.toggleTokenVisible(symbol)
+method removeCustomToken*(self: Controller, chainId: int, address: string) =
+  self.tokenService.removeCustomToken(chainId, address)
 
-method removeCustomToken*(self: Controller, address: string) =
-  self.tokenService.removeCustomToken(address)
-
-method getTokenDetails*(self: Controller, address: string) =
-  self.tokenService.getTokenDetails(address)
+method getTokenDetails*(self: Controller, chainId: int, address: string) =
+  self.tokenService.getTokenDetails(chainId, address)

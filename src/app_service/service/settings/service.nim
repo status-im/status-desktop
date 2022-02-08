@@ -375,15 +375,18 @@ method pinMailserver*(self: Service, address: string, fleet: Fleet): bool =
 method unpinMailserver*(self: Service, fleet: Fleet): bool =
   return self.pinMailserver("", fleet)
 
-method getWalletVisibleTokens*(self: Service): seq[string] =
-  self.settings.walletVisibleTokens.tokens
+method getWalletVisibleTokens*(self: Service): Table[int, seq[string]] =
+  self.settings.walletVisibleTokens
 
-method saveWalletVisibleTokens*(self: Service, tokens: seq[string]): bool =
+method saveWalletVisibleTokens*(self: Service, visibleTokens: Table[int, seq[string]]): bool =
   var obj = newJObject()
-  obj[self.getCurrentNetwork()] = %* tokens
+  for chainId, tokens in visibleTokens.pairs:
+    obj[$chainId] = %* tokens
+  
   if(self.saveSetting(KEY_WALLET_VISIBLE_TOKENS, obj)):
-    self.settings.walletVisibleTokens.tokens = tokens
+    self.settings.walletVisibleTokens = visibleTokens
     return true
+  
   return false
 
 method isEIP1559Enabled*(self: Service, blockNumber: int): bool =

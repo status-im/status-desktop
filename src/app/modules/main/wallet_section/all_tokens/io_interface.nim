@@ -11,19 +11,19 @@ method load*(self: AccessInterface) {.base.} =
 method isLoaded*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method addCustomToken*(self: AccessInterface, address: string, name: string, symbol: string, decimals: int)  {.base.} =
+method addCustomToken*(self: AccessInterface, chainId: int, address: string, name: string, symbol: string, decimals: int)  {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method toggleVisible*(self: AccessInterface, symbol: string) {.base.} =
+method toggleVisible*(self: AccessInterface, chainId: int, symbol: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method removeCustomToken*(self: AccessInterface, address: string) {.base.} =
+method removeCustomToken*(self: AccessInterface, chainId: int, address: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method refreshTokens*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getTokenDetails*(self: AccessInterface, address: string) {.base.} =
+method getTokenDetails*(self: AccessInterface, chainId: int, address: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method tokenDetailsWereResolved*(self: AccessInterface, tokenDetails: string) {.base.} =

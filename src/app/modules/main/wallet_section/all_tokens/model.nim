@@ -11,6 +11,7 @@ type
     Decimals
     IsCustom
     IsVisible
+    ChainId
 
 QtObject:
   type
@@ -52,7 +53,8 @@ QtObject:
       ModelRole.Address.int:"address",
       ModelRole.Decimals.int:"decimals",
       ModelRole.IsCustom.int:"isCustom",
-      ModelRole.IsVisible.int:"isVisible"
+      ModelRole.IsVisible.int:"isVisible",
+      ModelRole.ChainId.int:"chainId"
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -80,6 +82,8 @@ QtObject:
       result = newQVariant(item.getIsCustom())
     of ModelRole.IsVisible:
       result = newQVariant(item.getIsVisible())
+    of ModelRole.ChainId: 
+      result = newQVariant(item.getChainId())
 
   proc setItems*(self: Model, items: seq[Item]) =
     self.beginResetModel()
