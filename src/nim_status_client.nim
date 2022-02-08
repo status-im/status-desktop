@@ -80,6 +80,9 @@ proc mainProc() =
   enableHDPI(uiScaleFilePath)
   initializeOpenGL()
 
+  let imageCert = imageServerTLSCert()
+  installSelfSignedCertificate(imageCert)
+
   let app = newQGuiApplication()
   let appController = newAppController(statusFoundation)
   let singleInstance = newSingleInstance($toMD5(DATADIR), openUri)
