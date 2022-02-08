@@ -128,17 +128,19 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result.keychainService = keychain_service.newService(statusFoundation.events)
   result.ethService = eth_service.newService()
   result.accountsService = accounts_service.newService(statusFoundation.fleetConfiguration)
-  result.networkService = network_service.newService()
-  result.contactsService = contacts_service.newService(statusFoundation.events,
-    statusFoundation.threadpool, result.settingsService)
+  result.networkService = network_service.newService(result.settingsService)
+  result.contactsService = contacts_service.newService(
+    statusFoundation.events, statusFoundation.threadpool, result.settingsService
+  )
   result.chatService = chat_service.newService(statusFoundation.events, result.contactsService)
   result.communityService = community_service.newService(statusFoundation.events, result.chatService)
   result.messageService = message_service.newService(statusFoundation.events, statusFoundation.threadpool,
   result.contactsService)
   result.activityCenterService = activity_center_service.newService(statusFoundation.events,
   statusFoundation.threadpool, result.chatService)
-  result.tokenService = token_service.newService(statusFoundation.events, statusFoundation.threadpool,
-  result.settingsService)
+  result.tokenService = token_service.newService(
+    statusFoundation.events, statusFoundation.threadpool, result.settingsService, result.networkService
+  )
   result.collectibleService = collectible_service.newService(result.settingsService)
   result.walletAccountService = wallet_account_service.newService(statusFoundation.events, result.settingsService,
   result.accountsService, result.tokenService)

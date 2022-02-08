@@ -1,4 +1,4 @@
-import NimQml, json, sequtils, chronicles, strformat, strutils
+import NimQml, Tables, json, sequtils, chronicles, strformat, strutils
 
 from sugar import `=>`
 import web3/ethtypes
@@ -7,6 +7,7 @@ import ../../../backend/custom_tokens as custom_tokens
 import ../../../backend/tokens as token_backend
 
 import ../settings/service_interface as settings_service
+import ../network/service_interface as network_service
 
 import ../../../app/core/eventemitter
 import ../../../app/core/tasks/[qt, threadpool]
@@ -19,6 +20,7 @@ logScope:
 
 include async_tasks
 
+const DEFAULT_VISIBLE_TOKENS = {1: @["SNT"], 3: @["STT"], 4: @["STT"]}.toTable()
 # Signals which may be emitted by this service:
 const SIGNAL_TOKEN_DETAILS_LOADED* = "tokenDetailsLoaded"
 
@@ -43,7 +45,8 @@ QtObject:
     events: EventEmitter
     threadpool: ThreadPool
     settingsService: settings_service.ServiceInterface
-    tokens: seq[TokenDto]
+    networkService: network_service.ServiceInterface
+    tokens: Table[NetworkDto, seq[TokenDto]]
 
   proc delete*(self: Service) =
     self.QObject.delete
@@ -51,102 +54,107 @@ QtObject:
   proc newService*(
     events: EventEmitter,
     threadpool: ThreadPool,
-    settingsService: settings_service.ServiceInterface
-    ): Service =
+    settingsService: settings_service.ServiceInterface,
+    networkService: network_service.ServiceInterface,
+  ): Service =
     new(result, delete)
     result.QObject.setup
     result.events = events
     result.threadpool = threadpool
     result.settingsService = settingsService
-    result.tokens = @[]
-
-  proc getDefaultVisibleSymbols(self: Service): seq[string] =
-    let networkSlug = self.settingsService.getCurrentNetwork()
-
-    if networkSlug == DEFAULT_CURRENT_NETWORK:
-      return @["SNT"]
-
-    if networkSlug == "testnet_rpc" or networkSlug == "rinkeby_rpc":
-      return @["STT"]
-
-    return @[]
-
+    result.networkService = networkService
+    result.tokens = initTable[NetworkDto, seq[TokenDto]]()
 
   proc init*(self: Service) =
     try:
       var activeTokenSymbols = self.settingsService.getWalletVisibleTokens()
-      if activeTokenSymbols.len == 0:
-        activeTokenSymbols = self.getDefaultVisibleSymbols()
-
-      let chainId = self.settingsService.getCurrentNetworkId()
-      let responseTokens = token_backend.getTokens(chainId)
-      let default_tokens = map(
-        responseTokens.result.getElems(),
-        proc(x: JsonNode): TokenDto = x.toTokenDto(activeTokenSymbols, hasIcon=true, isCustom=false)
-      )
-
+      let networks = self.networkService.getEnabledNetworks()
       let responseCustomTokens = custom_tokens.getCustomTokens()
-      self.tokens = concat(
-        default_tokens,
-        map(responseCustomTokens.result.getElems(), proc(x: JsonNode): TokenDto = x.toTokenDto(activeTokenSymbols))
-      ).filter(
-        proc(x: TokenDto): bool = x.chainId == chainId
-      )
+
+      for network in networks:
+        if not activeTokenSymbols.hasKey(network.chainId):
+          activeTokenSymbols[network.chainId] = DEFAULT_VISIBLE_TOKENS[network.chainId]
+
+        let responseTokens = token_backend.getTokens(network.chainId)
+        let default_tokens = map(
+          responseTokens.result.getElems(), 
+          proc(x: JsonNode): TokenDto = x.toTokenDto(activeTokenSymbols[network.chainId], hasIcon=true, isCustom=false)
+        )
+
+        self.tokens[network] = concat(
+          default_tokens,
+          map(responseCustomTokens.result.getElems(), proc(x: JsonNode): TokenDto = x.toTokenDto(activeTokenSymbols[network.chainId]))
+        ).filter(
+          proc(x: TokenDto): bool = x.chainId == network.chainId
+        )
 
     except Exception as e:
       let errDesription = e.msg
       error "error: ", errDesription
       return
 
-  proc getTokens*(self: Service): seq[TokenDto] =
-    return self.tokens
+  proc getTokens*(self: Service, useCache: bool = true): seq[TokenDto] =
+    if not useCache:
+      self.init()
 
-  proc addCustomToken*(self: Service, address: string, name: string, symbol: string, decimals: int) =
-    custom_tokens.addCustomToken(address, name, symbol, decimals, "")
+    for tokens in self.tokens.values:
+      for token in tokens:
+        result.add(token)
+
+  proc addCustomToken*(self: Service, chainId: int, address: string, name: string, symbol: string, decimals: int) =
+    # TODO(alaile): use chainId rather than first enabled network
+    let networkWIP = self.networkService.getEnabledNetworks()[0]
+    custom_tokens.addCustomToken(networkWIP.chainId, address, name, symbol, decimals, "")
     let token = newDto(
       name,
-      self.settingsService.getCurrentNetworkId(),
+      networkWIP.chainId,
       fromHex(Address, address),
       symbol,
       decimals,
       false,
       true
     )
-    self.tokens.add(token)
+    let network = self.networkService.getNetwork(networkWIP.chainId)
+    self.tokens[network].add(token)
     self.events.emit("token/customTokenAdded", CustomTokenAdded(token: token))
 
-  proc toggleVisible*(self: Service, symbol: string) =
-    var tokenChanged = self.tokens[0]
-    for token in self.tokens:
+  proc toggleVisible*(self: Service, chainId: int, symbol: string) =
+    let network = self.networkService.getNetwork(chainId)
+    var tokenChanged = self.tokens[network][0]
+    for token in self.tokens[network]:
       if token.symbol == symbol:
         token.isVisible = not token.isVisible
         tokenChanged = token
         break
+      
+    var visibleSymbols = initTable[int, seq[string]]()
+    for network, tokens in self.tokens.pairs:
+      let symbols = tokens.filter(t => t.isVisible).map(t => t.symbol)
+      visibleSymbols[network.chainId] = symbols
 
-    let visibleSymbols = self.tokens.filter(t => t.isVisible).map(t => t.symbol)
     discard self.settingsService.saveWalletVisibleTokens(visibleSymbols)
     self.events.emit("token/visibilityToggled", VisibilityToggled(token: tokenChanged))
 
-  proc removeCustomToken*(self: Service, address: string) =
-    custom_tokens.removeCustomToken(address)
+  proc removeCustomToken*(self: Service, chainId: int, address: string) =
+    let network = self.networkService.getNetwork(chainId)
+    custom_tokens.removeCustomToken(chainId, address)
     var index = -1
 
-    for idx, token in self.tokens.pairs():
+    for idx, token in self.tokens[network].pairs():
       if $token.address == address:
         index = idx
         break
 
-    let tokenRemoved = self.tokens[index]
-    self.tokens.del(index)
+    let tokenRemoved = self.tokens[network][index]
+    self.tokens[network].del(index)
     self.events.emit("token/customTokenRemoved", CustomTokenRemoved(token: tokenRemoved))
 
   proc tokenDetailsResolved*(self: Service, tokenDetails: string) {.slot.} =
     self.events.emit(SIGNAL_TOKEN_DETAILS_LOADED, TokenDetailsLoadedArgs(
       tokenDetails: tokenDetails
     ))
-
-  proc getTokenDetails*(self: Service, address: string) =
-    let chainId = self.settingsService.getCurrentNetworkId()
+    
+  proc getTokenDetails*(self: Service, chainId: int, address: string) =
     let arg = GetTokenDetailsTaskArg(
       tptr: cast[ByteAddress](getTokenDetailsTask),
       vptr: cast[ByteAddress](self.vptr),

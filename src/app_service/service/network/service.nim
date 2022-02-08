@@ -1,26 +1,32 @@
 import json, json_serialization, chronicles, atomics
 import options
 
-import ../../../backend/network as status_network
-import ./service_interface
 
-export service_interface
+import ../../../app/global/global_singleton
+import ../../../backend/network as status_network
+import ../settings/service as settings_service
+import ./service_interface as network_interface
+
+export network_interface
 
 
 logScope:
   topics = "network-service"
 
-type
-  Service* = ref object of ServiceInterface
+type 
+  Service* = ref object of network_interface.ServiceInterface
     networks: seq[NetworkDto]
     networksInited: bool
     dirty: Atomic[bool]
+    settingsService: settings_service.Service
+
 
 method delete*(self: Service) =
   discard
 
-proc newService*(): Service =
+proc newService*(settingsService: settings_service.Service): Service =
   result = Service()
+  result.settingsService = settingsService
 
 method init*(self: Service) =
   discard
@@ -40,6 +46,18 @@ method getNetworks*(self: Service, useCached: bool = true): seq[NetworkDto] =
     self.networks = result
     self.networksInited = true
 
+method getEnabledNetworks*(self: Service): seq[NetworkDto] =
+  if not singletonInstance.localAccountSensitiveSettings.getIsMultiNetworkEnabled():
+    let currentNetworkType = self.settingsService.getCurrentNetwork().toNetworkType()
+    for network in self.getNetworks():
+      if currentNetworkType.toChainId() == network.chainId:
+        return @[network]
+
+  let networks = self.getNetworks()
+  for network in networks:
+    if network.enabled:
+      result.add(network)  
+
 method upsertNetwork*(self: Service, network: NetworkDto) =
   discard status_network.upsertNetwork(network.toPayload())
   self.dirty.store(true)
@@ -47,6 +65,11 @@ method upsertNetwork*(self: Service, network: NetworkDto) =
 method deleteNetwork*(self: Service, network: NetworkDto) =
   discard status_network.deleteNetwork(%* [network.chainId])
   self.dirty.store(true)
+
+method getNetwork*(self: Service, chainId: int): NetworkDto =
+  for network in self.getNetworks():
+    if chainId == network.chainId:
+      return network
 
 method getNetwork*(self: Service, networkType: NetworkType): NetworkDto =
   for network in self.getNetworks():

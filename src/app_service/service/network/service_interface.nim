@@ -15,6 +15,9 @@ method init*(self: ServiceInterface) {.base.} =
 method getNetworks*(self: ServiceInterface, useCached: bool = true): seq[NetworkDto] {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method getEnabledNetworks*(self: ServiceInterface): seq[NetworkDto] {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method upsertNetwork*(self: ServiceInterface, network: NetworkDto) {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -22,4 +25,7 @@ method deleteNetwork*(self: ServiceInterface, network: NetworkDto) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getNetwork*(self: ServiceInterface, networkType: NetworkType): NetworkDto {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getNetwork*(self: ServiceInterface, chainId: int): NetworkDto {.base.} =
   raise newException(ValueError, "No implementation available")

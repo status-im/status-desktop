@@ -1,4 +1,4 @@
-import json, options, tables, strutils, marshal
+import Tables, json, options, tables, strutils, marshal
 import ../../stickers/dto/stickers
 
 include  ../../../common/json_utils
@@ -73,9 +73,6 @@ type CurrentUserStatus* = object
   clock*: int64
   text*: string
 
-type WalletVisibleTokens* = object
-  tokens*: seq[string]
-
 type
   SettingsDto* = object # There is no point to keep all these info as settings, but we must follow status-go response
     address*: string
@@ -109,7 +106,7 @@ type
     telemetryServerUrl*: string
     fleet*: string
     currentUserStatus*: CurrentUserStatus
-    walletVisibleTokens*: WalletVisibleTokens
+    walletVisibleTokens*: Table[int, seq[string]] # [chainId, seq[tokenIds]]
     nodeConfig*: JsonNode
     wakuBloomFilterMode*: bool
     recentStickerHashes*: seq[string]
@@ -153,16 +150,17 @@ proc toCurrentUserStatus*(jsonObj: JsonNode): CurrentUserStatus =
   discard jsonObj.getProp("clock", result.clock)
   discard jsonObj.getProp("text", result.text)
 
-proc toWalletVisibleTokens*(jsonObj: JsonNode, networkId: string): WalletVisibleTokens =
-  for netId, tokenArr in jsonObj:
-    if(netId != networkId or tokenArr.kind != JArray):
+proc toWalletVisibleTokens*(jsonObj: JsonNode): Table[int, seq[string]] =
+  for chainIdStr, tokenArr in jsonObj:
+    if(tokenArr.kind != JArray):
       continue
-
+    
+    let chainId = parseInt(chainIdStr)
+    result[chainId] = @[]
     for token in tokenArr:
-      result.tokens.add(token.getStr)
+      result[chainId].add(token.getStr)
 
 proc toSettingsDto*(jsonObj: JsonNode): SettingsDto =
-
   discard jsonObj.getProp(KEY_ADDRESS, result.address)
   discard jsonObj.getProp(KEY_CURRENCY, result.currency)
   discard jsonObj.getProp(KEY_NETWORKS_CURRENT_NETWORK, result.currentNetwork)
@@ -226,7 +224,7 @@ proc toSettingsDto*(jsonObj: JsonNode): SettingsDto =
 
   var walletVisibleTokensObj: JsonNode
   if(jsonObj.getProp(KEY_WALLET_VISIBLE_TOKENS, walletVisibleTokensObj)):
-    result.walletVisibleTokens = toWalletVisibleTokens(walletVisibleTokensObj, result.currentNetwork)
+    result.walletVisibleTokens = toWalletVisibleTokens(walletVisibleTokensObj)
 
   discard jsonObj.getProp(KEY_NODE_CONFIG, result.nodeConfig)
   discard jsonObj.getProp(KEY_WAKU_BLOOM_FILTER_MODE, result.wakuBloomFilterMode)

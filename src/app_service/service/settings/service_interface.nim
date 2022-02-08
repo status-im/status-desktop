@@ -221,10 +221,10 @@ method pinMailserver*(self: ServiceInterface, address: string, fleet: Fleet): bo
 method unpinMailserver*(self: ServiceInterface, fleet: Fleet): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getWalletVisibleTokens*(self: ServiceInterface): seq[string] {.base.} =
+method getWalletVisibleTokens*(self: ServiceInterface): Table[int, seq[string]] {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method saveWalletVisibleTokens*(self: ServiceInterface, tokens: seq[string]): bool {.base.} =
+method saveWalletVisibleTokens*(self: ServiceInterface, tokens: Table[int, seq[string]]): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method isEIP1559Enabled*(self: ServiceInterface, blockNumber: int): bool {.base.} =

@@ -13,16 +13,16 @@ method init*(self: AccessInterface) {.base.} =
 method getTokens*(self: AccessInterface): seq[token_service.TokenDto] {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method addCustomToken*(self: AccessInterface, address: string, name: string, symbol: string, decimals: int) =
+method addCustomToken*(self: AccessInterface, chainId: int, address: string, name: string, symbol: string, decimals: int) =
   raise newException(ValueError, "No implementation available")
 
-method toggleVisible*(self: AccessInterface, symbol: string) =
+method toggleVisible*(self: AccessInterface, chainId: int, symbol: string) =
   raise newException(ValueError, "No implementation available")
 
-method removeCustomToken*(self: AccessInterface, address: string) =
+method removeCustomToken*(self: AccessInterface, chainId: int, address: string) =
   raise newException(ValueError, "No implementation available")
 
-method getTokenDetails*(self: AccessInterface, address: string) =
+method getTokenDetails*(self: AccessInterface, chainId: int, address: string) =
   raise newException(ValueError, "No implementation available")
 
 type

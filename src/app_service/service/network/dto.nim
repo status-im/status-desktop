@@ -1,5 +1,5 @@
 
-import strformat, json, json_serialization
+import hashes, strformat, json, json_serialization
 
 import ./types
 
@@ -18,6 +18,9 @@ type NetworkDto* = ref object
 
 proc `$`*(self: NetworkDto): string =
   return fmt"Network(chainId:{self.chainId}, name:{self.chainName}, rpcURL:{self.rpcURL}, isTest:{self.isTest}, enabled:{self.enabled})"
+
+proc hash*(self: NetworkDto): Hash =
+  return self.chainId.hash
 
 proc toPayload*(self: NetworkDto): JsonNode =
   return %* [Json.encode(self).parseJson]

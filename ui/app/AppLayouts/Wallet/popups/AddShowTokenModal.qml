@@ -166,7 +166,8 @@ ModalPopup {
             enabled: validationError === "" && addressInput.text !== "" && nameInput.text !== "" && symbolInput.text !== "" && decimalsInput.text !== ""
 
             onClicked : {
-                const error = RootStore.addCustomToken(addressInput.text, nameInput.text, symbolInput.text, decimalsInput.text);
+                // TODO(alaibe): replace the placeholder 0 with the value of the chain selector
+                const error = RootStore.addCustomToken(0, addressInput.text, nameInput.text, symbolInput.text, decimalsInput.text);
 
                 if (error) {
                     Global.playErrorSound();
