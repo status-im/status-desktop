@@ -71,22 +71,27 @@ Page {
             StatusBaseText {
                 id: contactsLabel
                 font.pixelSize: 15
+                anchors.left: parent.left
+                anchors.leftMargin: 8
                 color: Theme.palette.baseColor1
-                text: "Contacts"
+                text: qsTr("Contacts")
             }
             Control {
                 width: 360
                 anchors {
                     top: contactsLabel.bottom
                     topMargin: 8//Style.current.padding
-                    bottom: parent.bottom
+                    bottom: !statusPopupMenuBackgroundContent.visible ?  parent.bottom : undefined
                     bottomMargin: 20//Style.current.bigPadding
                 }
+                height: 16 + (!statusPopupMenuBackgroundContent.visible ? parent.height :
+                        (((userListView.count * 64) > parent.height) ? parent.height : (userListView.count * 64)))
+                x: (statusPopupMenuBackgroundContent.visible && (tagSelector.namesModel.count > 0) &&
+                   ((tagSelector.textEdit.x + 24 + statusPopupMenuBackgroundContent.width) < parent.width))
+                   ? (tagSelector.textEdit.x + 24) : 0
                 background: Rectangle {
                     id: statusPopupMenuBackgroundContent
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    height: (userListView.height + 8)
+                    anchors.fill: parent
                     visible: (tagSelector.sortedList.count > 0)
                     color: Theme.palette.statusPopupMenu.backgroundColor
                     radius: 8
@@ -107,9 +112,9 @@ Page {
                 }
                 contentItem: ListView {
                     id: userListView
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    height: (count * 64) > parent.height ? parent.height : (count * 64)
+                    anchors.fill: parent
+                    anchors.topMargin: 8
+                    anchors.bottomMargin: 8
                     clip: true
                     model: contactsModel
                     ScrollBar.vertical: ScrollBar {
@@ -125,7 +130,6 @@ Page {
                         Rectangle {
                             id: rectangle
                             anchors.fill: parent
-                            anchors.topMargin: 8
                             anchors.rightMargin: 8
                             anchors.leftMargin: 8
                             radius: 8
