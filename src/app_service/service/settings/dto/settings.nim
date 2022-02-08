@@ -106,7 +106,7 @@ type
     telemetryServerUrl*: string
     fleet*: string
     currentUserStatus*: CurrentUserStatus
-    walletVisibleTokens*: Table[int, seq[string]] # [chainId, seq[tokenIds]]
+    walletVisibleTokens*: Table[int, seq[string]]
     nodeConfig*: JsonNode
     wakuBloomFilterMode*: bool
     recentStickerHashes*: seq[string]
