@@ -27,9 +27,11 @@
 #include <QtCore/QHash>
 #include <QtCore/QResource>
 #include <QtCore/QFile>
+#include <QSslConfiguration>
 #include <QtNetwork/QNetworkAccessManager>
 #include <QtNetwork/QNetworkDiskCache>
 #include <QtNetwork/QNetworkConfigurationManager>
+#include <QtNetwork/QSslSocket>
 #include <QtGui/QGuiApplication>
 #include <QtGui/QIcon>
 #include <QtQml/QQmlContext>
@@ -112,6 +114,17 @@ QNetworkAccessManager* QMLNetworkAccessFactory::create(QObject* parent)
     return manager;
 }
 
+void dos_add_self_signed_certificate(const char* pemCertificateContent) {
+    QSslConfiguration defaultConfig = QSslConfiguration::defaultConfiguration();
+    QList<QSslCertificate> certList = defaultConfig.caCertificates();
+    QByteArray data(pemCertificateContent);
+    const auto certs = QSslCertificate::fromData(data, QSsl::Pem);
+    for (const QSslCertificate &cert : certs) {
+        certList += cert;
+    }
+    defaultConfig.setCaCertificates(certList);
+    QSslConfiguration::setDefaultConfiguration(defaultConfig);
+}
 
 char *convert_to_cstring(const QByteArray &array)
 {
