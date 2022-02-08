@@ -43,6 +43,7 @@ ScrollView {
             StatusSettingsLineButton {
                 //% "Network"
                 text: qsTrId("network")
+                visible: !localAccountSensitiveSettings.isMultiNetworkEnabled
                 currentValue: root.advancedStore.currentNetworkName
                 onClicked: networksModal.open()
             }
@@ -207,6 +208,21 @@ ScrollView {
                 switchChecked: localAccountSensitiveSettings.isGifWidgetEnabled
                 onClicked: {
                     root.advancedStore.toggleExperimentalFeature(root.advancedStore.experimentalFeatures.gifWidget)
+                }
+            }
+
+            // TODO: replace with StatusQ component
+            StatusSettingsLineButton {
+                text: qsTr("Multi network")
+                isSwitch: true
+                switchChecked: localAccountSensitiveSettings.isMultiNetworkEnabled
+                onClicked: {
+                    if (localAccountSensitiveSettings.isMultiNetworkEnabled) {
+                        root.advancedStore.toggleExperimentalFeature(root.advancedStore.experimentalFeatures.multiNetwork)
+                    } else {
+                        confirmationPopup.experimentalFeature = root.advancedStore.experimentalFeatures.multiNetwork
+                        confirmationPopup.open()
+                    }
                 }
             }
 
