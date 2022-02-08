@@ -1,4 +1,21 @@
 <a name=""></a>
+##  Version 0.23.0 (2022-02-08)
+
+
+#### Bug Fixes
+
+*   Icon components had wrong color in sandbox app ([b632c712](b632c712), closes [#538](538))
+* **StatusChatList:**  unexisting property name for chat item fixed ([c2e07517](c2e07517))
+
+#### Features
+
+* **StatusQ.Components:**
+  *  Adding StatusToastMessage ([7b290ddd](7b290ddd), closes [#521](521))
+  *  Adding StatusTagSelector component ([094dee49](094dee49), closes [#526](526))
+
+
+
+<a name=""></a>
 ##  Version 0.22.0 (2022-01-31)
 
 
