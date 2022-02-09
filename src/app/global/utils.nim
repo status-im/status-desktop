@@ -3,7 +3,7 @@ import stew/byteutils
 import ./utils/qrcodegen
 
 # Services as instances shouldn't be used in this class, just some general/global procs
-import ../../app_service/service/eth/utils as procs_from_utils
+import ../../app_service/common/conversion
 import ../../app_service/service/accounts/service as procs_from_accounts
 
 
@@ -30,14 +30,17 @@ QtObject:
     result = url_fromUserInput(input)
 
   proc eth2Wei*(self: Utils, eth: string, decimals: int): string {.slot.} =
-    let uintValue = procs_from_utils.eth2Wei(parseFloat(eth), decimals)
+    let uintValue = conversion.eth2Wei(parseFloat(eth), decimals)
     return uintValue.toString()
+
+  proc eth2Hex*(self: Utils, eth: float): string {.slot.} =
+    return "0x" & conversion.eth2Wei(eth, 18).toHex()
 
   proc wei2Eth*(self: Utils, wei: string, decimals: int): string {.slot.} =
     var weiValue = wei
     if(weiValue.startsWith("0x")):
       weiValue = fromHex(Stuint[256], weiValue).toString()
-    return procs_from_utils.wei2Eth(weiValue, decimals)
+    return conversion.wei2Eth(weiValue, decimals)
 
   proc hex2Ascii*(self: Utils, value: string): string {.slot.} =
     result = string.fromBytes(hexToSeqByte(value))
@@ -52,7 +55,10 @@ QtObject:
     return str
 
   proc hex2Eth*(self: Utils, value: string): string {.slot.} =
-    return stripTrailingZeroes(procs_from_utils.wei2Eth(stint.fromHex(StUint[256], value)))
+    return stripTrailingZeroes(conversion.wei2Eth(stint.fromHex(StUint[256], value)))
+
+  proc gwei2Hex*(self: Utils, gwei: float): string {.slot.} =
+    return "0x" & conversion.gwei2Wei(gwei).toHex()
 
   proc hex2Dec*(self: Utils, value: string): string {.slot.} =
     # somehow this value crashes the app

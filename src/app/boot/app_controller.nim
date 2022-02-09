@@ -178,8 +178,7 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result.ensService = ens_service.newService(statusFoundation.events, statusFoundation.threadpool, 
     result.settingsService, result.walletAccountService, result.transactionService, result.ethService, 
     result.networkService, result.tokenService)
-  result.providerService = provider_service.newService(result.dappPermissionsService,
-    result.settingsService, result.ensService)
+  result.providerService = provider_service.newService(result.ensService)
 
   # Modules
   result.startupModule = startup_module.newModule[AppController](

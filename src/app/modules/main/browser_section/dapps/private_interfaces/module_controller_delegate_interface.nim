@@ -1,9 +1,6 @@
 method hasPermission*(self: AccessInterface, hostname: string, permission: string): bool =
   raise newException(ValueError, "No implementation available")
 
-method addPermission*(self: AccessInterface, hostname: string, permission: string) =
-  raise newException(ValueError, "No implementation available")
-
 method clearPermissions*(self: AccessInterface, dapp: string) =
   raise newException(ValueError, "No implementation available")
 

@@ -31,9 +31,11 @@ StatusModal {
 
     function postMessage(isAllowed){
         interactedWith = true
-        request.isAllowed = isAllowed;
         RootStore.currentTabConnected = isAllowed
-        web3Response(Web3ProviderStore.web3ProviderInst.postMessage(Constants.api_request, JSON.stringify(request)))
+        if(isAllowed){
+            Web3ProviderStore.addPermission(request.hostname, request.permission)
+        }
+        browserConnectionModal.web3Response(Web3ProviderStore.web3ProviderInst.postMessage(Constants.api_request, JSON.stringify(request)))
     }
 
     onClosed: {

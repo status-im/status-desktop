@@ -41,7 +41,10 @@ QtObject {
             request.hostname = ensAddr;
         }
 
-        if (requestType === Constants.api_request) {
+        if (requestType === Constants.web3DisconnectAccount) {
+            RootStore.currentTabConnected = true
+            web3Response(JSON.stringify({type: Constants.web3DisconnectAccount}));
+        } else if (requestType === Constants.api_request) {
             if (!Web3ProviderStore.web3ProviderInst.hasPermission(request.hostname, request.permission)) {
                 RootStore.currentTabConnected = false
                 var dialog = createAccessDialogComponent()
@@ -49,7 +52,6 @@ QtObject {
                 dialog.open();
             } else {
                 RootStore.currentTabConnected = true
-                request.isAllowed = true
                 web3Response(Web3ProviderStore.web3ProviderInst.postMessage(requestType, JSON.stringify(request)));
             }
         } else if (requestType === Constants.web3SendAsyncReadOnly &&
@@ -59,12 +61,19 @@ QtObject {
             const sendDialog = createSendTransactionModalComponent(request)
 
             sendDialog.sendTransaction = function (selectedGasLimit, selectedGasPrice, selectedTipLimit, selectedOverallLimit, enteredPassword) {
-                request.payload.selectedGasLimit = selectedGasLimit
-                request.payload.selectedGasPrice = selectedGasPrice
-                request.payload.selectedTipLimit = selectedTipLimit
-                request.payload.selectedOverallLimit = selectedOverallLimit
+                let trx = request.payload.params[0]
+                // TODO: use bignumber instead of floats
+                trx.value = RootStore.getEth2Hex(parseFloat(value))
+                trx.gas = "0x" + parseInt(selectedGasLimit, 10).toString(16)
+                if (walletModel.transactionsView.isEIP1559Enabled) {
+                    trx.maxPriorityFeePerGas = RootStore.getGwei2Hex(parseFloat(selectedTipLimit))
+                    trx.maxFeePerGas = RootStore.getGwei2Hex(parseFloat(selectedOverallLimit))
+                } else {
+                    trx.gasPrice = RootStore.getGwei2Hex(parseFloat(selectedGasPrice))
+                }
+
                 request.payload.password = enteredPassword
-                request.payload.params[0].value = value
+                request.payload.params[0] = trx
 
                 const response = Web3ProviderStore.web3ProviderInst.postMessage(requestType, JSON.stringify(request))
                 provider.web3Response(response)

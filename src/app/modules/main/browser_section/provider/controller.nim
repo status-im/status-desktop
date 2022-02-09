@@ -2,9 +2,9 @@ import strutils
 import controller_interface
 import io_interface
 
-import ../../../../../app_service/service/settings/service as settings_service
+import ../../../../../app_service/service/settings/service_interface as settings_service
 import ../../../../../app_service/service/dapp_permissions/service as dapp_permissions_service
-import ../../../../../app_service/service/provider/service as provider_service
+import ../../../../../app_service/service/provider/service_interface as provider_service
 export controller_interface
 
 type
@@ -45,7 +45,7 @@ method disconnect*(self: Controller) =
   discard self.dappPermissionsService.revoke("web3".toPermission())
 
 method postMessage*(self: Controller, requestType: string, message: string): string =
-  return self.providerService.postMessage(parseEnum[RequestTypes](requestType), message)
+  return self.providerService.postMessage(requestType, message)
 
 method hasPermission*(self: Controller, hostname: string, permission: string): bool =
   return self.dappPermissionsService.hasPermission(hostname, permission.toPermission())

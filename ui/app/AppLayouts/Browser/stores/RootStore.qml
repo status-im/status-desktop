@@ -31,6 +31,14 @@ QtObject {
         return globalUtils.wei2Eth(wei,decimals)
     }
 
+    function getEth2Hex(eth) {
+        return globalUtils.eth2Hex(eth)
+    }
+
+    function getGwei2Hex(gwei){
+        return globalUtils.gwei2Hex(gwei)
+    }
+
     function generateIdenticon(pk) {
         return globalUtils.generateIdenticon(pk)
     }
