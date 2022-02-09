@@ -2,6 +2,7 @@ import Tables, stint
 import ./controller_interface
 import ./io_interface
 
+import ../../../global/app_signals
 import ../../../core/eventemitter
 import ../../../../app_service/service/activity_center/service as activity_center_service
 import ../../../../app_service/service/contacts/service as contacts_service
@@ -104,4 +105,5 @@ method decodeContentHash*[T](self: Controller[T], hash: string): string =
   return eth_utils.decodeContentHash(hash)
 
 method switchTo*[T](self: Controller[T], sectionId, chatId, messageId: string) =
-  self.messageService.switchTo(sectionId, chatId, messageId)
+  let data = ActiveSectionChatArgs(sectionId: sectionId, chatId: chatId, messageId: messageId)
+  self.events.emit(SIGNAL_MAKE_SECTION_CHAT_ACTIVE, data)

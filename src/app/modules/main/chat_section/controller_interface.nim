@@ -1,6 +1,7 @@
 import ../../../../app_service/service/contacts/dto/[contacts, contact_details]
 import ../../../../app_service/service/chat/dto/[chat]
 import ../../../../app_service/service/community/dto/[community]
+import ../../../../app_service/service/message/dto/[message]
 
 type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
@@ -76,14 +77,7 @@ method getCurrentFleet*(self: AccessInterface): string {.base.} =
 method getContacts*(self: AccessInterface): seq[ContactsDto] {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getContact*(self: AccessInterface, id: string): ContactsDto {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method getContactDetails*(self: AccessInterface, id: string): ContactDetails {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method getContactNameAndImage*(self: AccessInterface, contactId: string):
-  tuple[name: string, image: string, isIdenticon: bool] {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method addContact*(self: AccessInterface, publicKey: string): void {.base.} =
@@ -152,8 +146,11 @@ method setCommunityMuted*(self: AccessInterface, muted: bool) {.base.} =
 method inviteUsersToCommunity*(self: AccessInterface, pubKeys: string): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method reorderCommunityCategories*(self: AccessInterface, categoryId: string, position: int) =
+method reorderCommunityCategories*(self: AccessInterface, categoryId: string, position: int) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method reorderCommunityChat*(self: AccessInterface, categoryId: string, chatId: string, position: int): string =
+method reorderCommunityChat*(self: AccessInterface, categoryId: string, chatId: string, position: int): string {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getRenderedText*(self: AccessInterface, parsedTextArray: seq[ParsedText]): string {.base.} =
   raise newException(ValueError, "No implementation available")

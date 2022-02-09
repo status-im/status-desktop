@@ -1,4 +1,4 @@
-import NimQml, tables, json, sugar, sequtils
+import NimQml, tables, json, sugar, sequtils, strformat
 
 import io_interface, view, controller, chat_search_item, chat_search_model
 import ./communities/models/[pending_request_item, pending_request_model]
@@ -50,7 +50,7 @@ import ../../../app_service/service/gif/service as gif_service
 import ../../../app_service/service/ens/service as ens_service
 import ../../../app_service/service/network/service as network_service
 
-
+import ../../core/notifications/details
 import ../../core/eventemitter
 
 export io_interface
@@ -541,7 +541,7 @@ method rebuildChatSearchModel*[T](self: Module[T]) =
   self.view.chatSearchModel().setItems(items)
 
 method switchTo*[T](self: Module[T], sectionId, chatId: string) =
-  self.controller.switchTo(sectionId, chatId)
+  self.controller.switchTo(sectionId, chatId, "")
 
 method onActiveChatChange*[T](self: Module[T], sectionId: string, chatId: string) =
   self.appSearchModule.onActiveChatChange(sectionId, chatId)
@@ -663,3 +663,21 @@ method mnemonicBackedUp*[T](self: Module[T]) =
     conf.SETTINGS_SECTION_ID,
     self.calculateProfileSectionHasNotification(),
     notificationsCount = 0)
+
+method osNotificationClicked*[T](self: Module[T], details: NotificationDetails) =
+  if(details.notificationType == NotificationType.NewContactRequest):
+    self.controller.switchTo(details.sectionId, "", "")
+    self.view.emitOpenContactRequestsPopupSignal()
+  elif(details.notificationType == NotificationType.JoinCommunityRequest):
+    self.controller.switchTo(details.sectionId, "", "")
+    self.view.emitOpenCommunityMembershipRequestsPopupSignal(details.sectionId)
+  elif(details.notificationType == NotificationType.MyRequestToJoinCommunityAccepted):
+    self.controller.switchTo(details.sectionId, "", "")
+  elif(details.notificationType == NotificationType.MyRequestToJoinCommunityRejected):
+    info "There is no particular action clicking on a notification informing you about rejection to join community"
+
+method newCommunityMembershipRequestReceived*[T](self: Module[T], membershipRequest: CommunityMembershipRequestDto) =
+  let (contactName, _, _) = self.controller.getContactNameAndImage(membershipRequest.publicKey)
+  let community =  self.controller.getCommunityById(membershipRequest.communityId)
+  singletonInstance.globalEvents.newCommunityMembershipRequestNotification("New membership request",
+  fmt "{contactName} asks to join {community.name}", community.id)

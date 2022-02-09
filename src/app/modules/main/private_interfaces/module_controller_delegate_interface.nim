@@ -1,4 +1,5 @@
 import ../../shared_models/section_item
+import ../../../core/notifications/details
 
 method offerToStorePassword*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
@@ -38,4 +39,11 @@ method contactUpdated*(self: AccessInterface, publicKey: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method mnemonicBackedUp*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method osNotificationClicked*(self: AccessInterface, details: NotificationDetails) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method newCommunityMembershipRequestReceived*(self: AccessInterface, membershipRequest: CommunityMembershipRequestDto) 
+  {.base.} =
   raise newException(ValueError, "No implementation available")

@@ -78,6 +78,7 @@ const SIGNAL_COMMUNITY_CATEGORY_CREATED* = "communityCategoryCreated"
 const SIGNAL_COMMUNITY_CATEGORY_EDITED* = "communityCategoryEdited"
 const SIGNAL_COMMUNITY_CATEGORY_DELETED* = "communityCategoryDeleted"
 const SIGNAL_COMMUNITY_MEMBER_APPROVED* = "communityMemberApproved"
+const SIGNAL_NEW_REQUEST_TO_JOIN_COMMUNITY* = "newRequestToJoinCommunity"
 
 QtObject:
   type
@@ -136,6 +137,8 @@ QtObject:
           community.pendingRequestsToJoin.add(membershipRequest)
           self.joinedCommunities[membershipRequest.communityId] = community
           self.events.emit(SIGNAL_COMMUNITY_EDITED, CommunityArgs(community: community))
+
+          self.events.emit(SIGNAL_NEW_REQUEST_TO_JOIN_COMMUNITY, CommunityRequestArgs(communityRequest: membershipRequest))
 
   proc mapChatToChatDto(chat: Chat, communityId: string): ChatDto =
     result = ChatDto()

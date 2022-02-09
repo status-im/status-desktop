@@ -36,6 +36,10 @@ QtObject {
         communitiesModuleInst.setObservedCommunity(communityId);
     }
 
+    function getMySectionId() {
+        return chatCommunitySectionModule.getMySectionId()
+    }
+
     function acceptContactRequest(pubKey) {
         chatCommunitySectionModule.acceptContactRequest(pubKey)
     }

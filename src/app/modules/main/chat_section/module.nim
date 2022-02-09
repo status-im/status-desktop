@@ -1,4 +1,5 @@
-import NimQml, Tables, chronicles, json, sequtils, strutils
+import NimQml, Tables, chronicles, json, sequtils, strutils, strformat
+
 import io_interface
 import ../io_interface as delegate_interface
 import view, controller, item, sub_item, sub_model, base_item
@@ -8,6 +9,7 @@ import ../../shared_models/contacts_model as contacts_model
 
 import chat_content/module as chat_content_module
 
+import ../../../global/app_sections_config as conf
 import ../../../global/global_singleton
 import ../../../core/eventemitter
 import ../../../../app_service/service/settings/service_interface as settings_service
@@ -66,6 +68,9 @@ method delete*(self: Module) =
 
 method isCommunity*(self: Module): bool =
   return self.controller.isCommunity()
+
+method getMySectionId*(self: Module): string =
+  return self.controller.getMySectionId()
 
 proc amIMarkedAsAdminUser(self: Module, members: seq[ChatMember]): bool =
   for m in members:
@@ -342,14 +347,14 @@ method getChatContentModule*(self: Module, chatId: string): QVariant =
 
   return self.chatContentModules[chatId].getModuleAsVariant()
 
-proc updateParentNotifications(self: Module) =
+proc updateParentBadgeNotifications(self: Module) =
   var (sectionHasUnreadMessages, sectionNotificationCount) = self.view.chatsModel().getAllNotifications()
   if(not self.controller.isCommunity()):
     sectionNotificationCount += self.view.contactRequestsModel().getCount()
     sectionHasUnreadMessages = sectionHasUnreadMessages or sectionNotificationCount > 0
   self.delegate.onNotificationsUpdated(self.controller.getMySectionId(), sectionHasUnreadMessages, sectionNotificationCount)
 
-proc updateNotifications(self: Module, chatId: string, unviewedMessagesCount: int, unviewedMentionsCount: int) =
+proc updateBadgeNotifications(self: Module, chatId: string, unviewedMessagesCount: int, unviewedMentionsCount: int) =
   let hasUnreadMessages = unviewedMessagesCount > 0
   # update model of this module (appropriate chat from the chats list (chats model))
   self.view.chatsModel().updateNotificationsForItemOrSubItemById(chatId, hasUnreadMessages, unviewedMentionsCount)
@@ -357,13 +362,13 @@ proc updateNotifications(self: Module, chatId: string, unviewedMessagesCount: in
   if (self.chatContentModules.contains(chatId)):
     self.chatContentModules[chatId].onNotificationsUpdated(hasUnreadMessages, unviewedMentionsCount)
   # update parent module
-  self.updateParentNotifications()
+  self.updateParentBadgeNotifications()
 
 method onActiveSectionChange*(self: Module, sectionId: string) =
   if(sectionId != self.controller.getMySectionId()):
     return
 
-  self.updateNotifications(self.controller.getActiveChatId(), unviewedMessagesCount=0, unviewedMentionsCount=0)
+  self.updateBadgeNotifications(self.controller.getActiveChatId(), unviewedMessagesCount=0, unviewedMentionsCount=0)
   self.delegate.onActiveChatChange(self.controller.getMySectionId(), self.controller.getActiveChatId())
 
 method chatsModel*(self: Module): chats_model.Model =
@@ -547,7 +552,7 @@ method onChatUnmuted*(self: Module, chatId: string) =
   self.view.chatsModel().muteUnmuteItemOrSubItemById(chatId, false)
 
 method onMarkAllMessagesRead*(self: Module, chatId: string) =
-  self.updateNotifications(chatId, unviewedMessagesCount=0, unviewedMentionsCount=0)
+  self.updateBadgeNotifications(chatId, unviewedMessagesCount=0, unviewedMentionsCount=0)
 
 method markAllMessagesRead*(self: Module, chatId: string) =
   self.controller.markAllMessagesRead(chatId)
@@ -564,7 +569,7 @@ method acceptContactRequest*(self: Module, publicKey: string) =
 
 method onContactAccepted*(self: Module, publicKey: string) =
   self.view.contactRequestsModel().removeItemWithPubKey(publicKey)
-  self.updateParentNotifications()
+  self.updateParentBadgeNotifications()
 
 method acceptAllContactRequests*(self: Module) =
   let pubKeys = self.view.contactRequestsModel().getPublicKeys()
@@ -576,7 +581,7 @@ method rejectContactRequest*(self: Module, publicKey: string) =
 
 method onContactRejected*(self: Module, publicKey: string) =
   self.view.contactRequestsModel().removeItemWithPubKey(publicKey)
-  self.updateParentNotifications()
+  self.updateParentBadgeNotifications()
 
 method rejectAllContactRequests*(self: Module) =
   let pubKeys = self.view.contactRequestsModel().getPublicKeys()
@@ -594,16 +599,20 @@ method onContactUnblocked*(self: Module, publicKey: string) =
   self.view.chatsModel().blockUnblockItemOrSubItemById(publicKey, blocked=false)
 
 method onContactDetailsUpdated*(self: Module, publicKey: string) =
-  let contact = self.controller.getContact(publicKey)
-  if (contact.requestReceived() and
-    not contact.isContact()and
-    not contact.isBlocked() and
+  let contactDetails = self.controller.getContactDetails(publicKey)
+  if (contactDetails.details.requestReceived() and
+    not contactDetails.details.isContact()and
+    not contactDetails.details.isBlocked() and
     not self.view.contactRequestsModel().containsItemWithPubKey(publicKey)):
       let item = self.createItemFromPublicKey(publicKey)
       self.view.contactRequestsModel().addItem(item)
-      self.updateParentNotifications()
+      self.updateParentBadgeNotifications()
+      singletonInstance.globalEvents.showNewContactRequestNotification("New Contact Request", 
+      fmt "{contactDetails.displayName} added you as contact", conf.CHAT_SECTION_ID) 
 
-  let (chatName, chatImage, isIdenticon) = self.controller.getOneToOneChatNameAndImage(publicKey)
+  let chatName = contactDetails.displayName
+  let chatImage = contactDetails.icon
+  let isIdenticon = contactDetails.isIdenticon
   self.view.chatsModel().updateItemDetails(publicKey, chatName, chatImage, isIdenticon)
 
 method onNewMessagesReceived*(self: Module, chatId: string, unviewedMessagesCount: int, unviewedMentionsCount: int,
@@ -611,7 +620,20 @@ method onNewMessagesReceived*(self: Module, chatId: string, unviewedMessagesCoun
   if(self.controller.getMySectionId() == self.delegate.getActiveSectionId() and
     self.controller.getActiveChatId() == chatId):
     return
-  self.updateNotifications(chatId, unviewedMessagesCount, unviewedMentionsCount)
+  self.updateBadgeNotifications(chatId, unviewedMessagesCount, unviewedMentionsCount)
+
+  # Prepare bubble notification
+  let myPK = singletonInstance.userProfile.getPubKey()
+  for m in messages:
+    let contactDetails = self.controller.getContactDetails(m.`from`)
+    let renderedMessageText = self.controller.getRenderedText(m.parsedText)
+    let plainText = singletonInstance.utils.plainText(renderedMessageText)
+    if(m.isUserWithPkMentioned(myPK)):
+      singletonInstance.globalEvents.showMentionMessageNotification(contactDetails.displayName, plainText, 
+      self.controller.getMySectionId(), chatId, m.id)
+    else:
+      singletonInstance.globalEvents.showNormalMessageNotification(contactDetails.displayName, plainText, 
+      self.controller.getMySectionId(), chatId, m.id)
 
 method addGroupMembers*(self: Module, chatId: string, pubKeys: string) =
   self.controller.addGroupMembers(chatId, self.convertPubKeysToJson(pubKeys))

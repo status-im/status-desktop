@@ -56,6 +56,9 @@ QtObject:
   proc isCommunity(self: View): bool {.slot.} =
     return self.delegate.isCommunity()
 
+  method getMySectionId*(self: View): string {.slot.} =
+    return self.delegate.getMySectionId()
+
   proc chatsModel*(self: View): chats_model.Model =
     return self.model
 

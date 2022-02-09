@@ -4,6 +4,7 @@ import ../../global/global_singleton
 import ../../global/app_signals
 import ../../core/signals/types
 import ../../core/eventemitter
+import ../../core/notifications/notifications_manager
 import ../../../app_service/service/settings/service_interface as settings_service
 import ../../../app_service/service/keychain/service as keychain_service
 import ../../../app_service/service/accounts/service_interface as accounts_service
@@ -168,6 +169,14 @@ method init*(self: Controller) =
     var args = ActiveSectionChatArgs(e)
     let sectionType = if args.sectionId == conf.CHAT_SECTION_ID: SectionType.Chat else: SectionType.Community
     self.setActiveSection(args.sectionId, sectionType)
+  
+  self.events.on(SIGNAL_OS_NOTIFICATION_CLICKED) do(e: Args):
+    var args = ClickedNotificationArgs(e)
+    self.delegate.osNotificationClicked(args.details)
+
+  self.events.on(SIGNAL_NEW_REQUEST_TO_JOIN_COMMUNITY) do(e: Args):
+    var args = CommunityRequestArgs(e)
+    self.delegate.newCommunityMembershipRequestReceived(args.communityRequest)  
 
 method getJoinedCommunities*(self: Controller): seq[CommunityDto] =
   return self.communityService.getJoinedCommunities()
@@ -259,5 +268,9 @@ method resolveENS*(self: Controller, ensName: string, uuid: string = "") =
 method isMnemonicBackedUp*(self: Controller): bool =
   result = self.privacyService.isMnemonicBackedUp()
 
-method switchTo*(self: Controller, sectionId, chatId: string) =
-  self.messageService.switchTo(sectionId, chatId, "")
+method switchTo*(self: Controller, sectionId, chatId, messageId: string) =
+  let data = ActiveSectionChatArgs(sectionId: sectionId, chatId: chatId, messageId: messageId)
+  self.events.emit(SIGNAL_MAKE_SECTION_CHAT_ACTIVE, data)
+
+method getCommunityById*(self: Controller, communityId: string): CommunityDto =
+  return self.communityService.getCommunityById(communityId)

@@ -223,63 +223,6 @@ Item {
 //            }
 //        }
 
-//        Connections {
-        // Not Refactored Yet
-//            target: root.store.chatsModelInst.communities
-
-//            // Note:
-//            // Whole this Connection object (both slots) should be moved to the nim side.
-//            // Left here only cause we don't have a way to deal with translations on the nim side.
-
-//            onMembershipRequestChanged: function (communityId, communityName, accepted) {
-//                chatColumnLayout.currentNotificationChatId = null
-//                chatColumnLayout.currentNotificationCommunityId = communityId
-
-//                const title = "Status"
-//                const message = //% "You have been accepted into the ‘%1’ community"
-//                              accepted ? qsTrId("you-have-been-accepted-into-the---1--community").arg(communityName) :
-//                                         //% "Your request to join the ‘%1’ community was declined"
-//                                         qsTrId("your-request-to-join-the---1--community-was-declined").arg(communityName)
-
-//                if (Qt.platform.os === "linux") {
-//                    // Linux Notifications are not implemented in Nim/C++ yet
-//                    return systemTray.showMessage(title, message, systemTray.icon.source, 4000)
-//                }
-
-//                root.store.chatsModelInst.showOSNotification(title,
-//                                              message,
-//                                              accepted? Constants.osNotificationType.acceptedIntoCommunity :
-//                                                        Constants.osNotificationType.rejectedByCommunity,
-//                                              communityId,
-//                                              "",
-//                                              "",
-//                                              localAccountSensitiveSettings.useOSNotifications)
-//            }
-
-//            onMembershipRequestPushed: function (communityId, communityName, pubKey) {
-//                chatColumnLayout.currentNotificationChatId = null
-//                chatColumnLayout.currentNotificationCommunityId = communityId
-
-//                //% "New membership request"
-//                const title = qsTrId("new-membership-request")
-//                //% "%1 asks to join ‘%2’"
-//                const message = qsTrId("-1-asks-to-join---2-").arg(Utils.getContactDetailsAsJson(pubKey).displayName).arg(communityName)
-
-//                if (Qt.platform.os === "linux") {
-//                    // Linux Notifications are not implemented in Nim/C++ yet
-//                    return systemTray.showMessage(title, message, systemTray.icon.source, 4000)
-//                }
-
-//                root.store.chatsModelInst.showOSNotification(title,
-//                                              message,
-//                                              Constants.osNotificationType.joinCommunityRequest,
-//                                              communityId,
-//                                              "",
-//                                              "",
-//                                              localAccountSensitiveSettings.useOSNotifications)
-//            }
-//        }
-
         onContentYChanged: {
             scrollDownButton.visible = contentHeight - (scrollY + height) > 400
             let loadMore = scrollDownButton.visible && scrollY < 500

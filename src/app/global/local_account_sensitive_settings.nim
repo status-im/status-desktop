@@ -35,7 +35,7 @@ const DEFAULT_HIDDEN_COMMUNITY_WELCOME_BANNERS = ""
 const LSS_KEY_HIDDEN_COMMUNITY_BACKUP_BANNERS* = "hiddenCommunityBackUpBanners"
 const DEFAULT_HIDDEN_COMMUNITY_BACKUP_BANNERS = ""
 const LSS_KEY_VOLUME* = "volume"
-const DEFAULT_VOLUME: float = 0.2
+const DEFAULT_VOLUME = 2
 const LSS_KEY_NOTIFICATION_SETTING* = "notificationSetting"
 const DEFAULT_NOTIFICATION_SETTING = 1 #notifyJustMentions from qml
 const LSS_KEY_NOTIFICATION_SOUNDS_ENABLED* = "notificationSoundsEnabled"
@@ -132,16 +132,16 @@ QtObject:
 
   # float type must be exposed through QVariant property.
   proc getSettingsPropQVariant(self: LocalAccountSensitiveSettings, prop: string, default: QVariant): QVariant =
-    result = if(self.settings.isNil): newQVariant() else: self.settings.value(prop, default)
+    result = if(self.settings.isNil): default else: self.settings.value(prop, default)
 
   proc getSettingsPropString(self: LocalAccountSensitiveSettings, prop: string, default: QVariant): string =
-    result = if(self.settings.isNil): "" else: self.settings.value(prop, default).stringVal
+    result = if(self.settings.isNil): default.stringVal else: self.settings.value(prop, default).stringVal
 
   proc getSettingsPropInt(self: LocalAccountSensitiveSettings, prop: string, default: QVariant): int =
-    result = if(self.settings.isNil): 0 else: self.settings.value(prop, default).intVal
+    result = if(self.settings.isNil): default.intVal else: self.settings.value(prop, default).intVal
 
   proc getSettingsPropBool(self: LocalAccountSensitiveSettings, prop: string, default: QVariant): bool =
-    result = if(self.settings.isNil): false else: self.settings.value(prop, default).boolVal
+    result = if(self.settings.isNil): default.boolVal else: self.settings.value(prop, default).boolVal
 
   template getSettingsProp[T](self: LocalAccountSensitiveSettings, prop: string, default: QVariant): untyped =
     # This doesn't work in case of QVariant, such properties will be handled in a common way.
@@ -380,13 +380,13 @@ QtObject:
 
 
   proc volumeChanged*(self: LocalAccountSensitiveSettings) {.signal.}
-  proc getVolume*(self: LocalAccountSensitiveSettings): QVariant {.slot.} =
-    getSettingsPropQVariant(self, LSS_KEY_VOLUME, newQVariant(DEFAULT_VOLUME))
-  proc setVolume*(self: LocalAccountSensitiveSettings, value: QVariant) {.slot.} =
+  proc getVolume*(self: LocalAccountSensitiveSettings): int {.slot.} =
+    getSettingsProp[int](self, LSS_KEY_VOLUME, newQVariant(DEFAULT_VOLUME))
+  proc setVolume*(self: LocalAccountSensitiveSettings, value: int) {.slot.} =
     setSettingsProp(self, LSS_KEY_VOLUME, newQVariant(value)):
       self.volumeChanged()
 
-  QtProperty[QVariant] volume:
+  QtProperty[int] volume:
     read = getVolume
     write = setVolume
     notify = volumeChanged

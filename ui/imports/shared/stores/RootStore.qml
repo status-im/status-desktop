@@ -14,7 +14,7 @@ QtObject {
     property var walletSectionInst: !!walletSection ? walletSection : null
     property var appSettings: !!localAppSettings ? localAppSettings : null
     property var accountSensitiveSettings: !!localAccountSensitiveSettings ? localAccountSensitiveSettings : null
-    property real volume: !!accountSensitiveSettings ? accountSensitiveSettings.volume : 0.0
+    property real volume: !!accountSensitiveSettings ? accountSensitiveSettings.volume * 0.1 : 0.2
     property bool isWalletEnabled: !!accountSensitiveSettings ? accountSensitiveSettings.isWalletEnabled : false
     property bool notificationSoundsEnabled: !!accountSensitiveSettings ? accountSensitiveSettings.notificationSoundsEnabled : false
     property bool neverAskAboutUnfurlingAgain: !!accountSensitiveSettings ? accountSensitiveSettings.neverAskAboutUnfurlingAgain : false

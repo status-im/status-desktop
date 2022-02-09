@@ -476,4 +476,17 @@ Item {
             }
         }
     }
+
+    Connections {
+        target: root.store.mainModuleInst
+
+        onOpenCommunityMembershipRequestsPopup:{
+            if(root.store.getMySectionId() != sectionId)
+                return
+
+            Global.openPopup(membershipRequestPopup, {
+                                 communitySectionModule: root.communitySectionModule
+                             })
+        }
+    }
 }
