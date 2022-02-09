@@ -16,6 +16,11 @@ pipeline {
       description: 'Decides whether binaries are built with debug symbols.',
       defaultValue: params.RELEASE ?: false
     )
+    choice(
+      name: 'VERBOSE',
+      description: 'Level of verbosity based on nimbus-build-system setup.',
+      choices: ['0', '1', '2']
+    )
   }
 
   options {
@@ -33,7 +38,7 @@ pipeline {
   environment {
     TARGET = 'linux'
     /* Improve make performance */
-    MAKEFLAGS = '-j4'
+    MAKEFLAGS = "-j4 V=${params.VERBOSE}"
     /* Disable colors in Nim compiler logs */
     NIMFLAGS = '--colors:off'
     /* Makefile assumes the compiler folder is included */
