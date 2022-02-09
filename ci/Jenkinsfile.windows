@@ -4,10 +4,10 @@ pipeline {
   agent { label 'windows' }
 
   parameters {
-    string(
-      name: 'BUILD_TYPE',
-      description: 'Specify build type. Values: pr / nightly / release',
-      defaultValue: 'pr',
+    booleanParam(
+      name: 'RELEASE',
+      description: 'Decides whether binaries are built with debug symbols.',
+      defaultValue: params.RELEASE ?: false
     )
   }
 
