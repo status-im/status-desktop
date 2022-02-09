@@ -1,5 +1,4 @@
-import json, json_serialization, strformat, chronicles
-import status_go
+import json, json_serialization, chronicles
 import ./utils
 import ./core
 

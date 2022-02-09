@@ -151,7 +151,7 @@ var NODE_CONFIG* = %* {
     "VerifyTransactionURL": "https://mainnet.infura.io/v3/" & INFURA_TOKEN_RESOLVED
   },
   "Web3ProviderConfig": {
-        "Enabled": true
+    "Enabled": true
   },
   "EnsConfig": {
     "Enabled": true
