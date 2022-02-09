@@ -166,6 +166,9 @@ var NODE_CONFIG* = %* {
   "WalletConfig": {
     "Enabled": true
   },
+  "EnsConfig": {
+    "Enabled": true
+  },
   "Networks": [
     {
       "chainId": 1,

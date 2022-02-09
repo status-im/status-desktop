@@ -6,7 +6,10 @@ import web3/ethtypes
 import ../../../app/core/eventemitter
 import ../../../app/core/tasks/[qt, threadpool]
 
+import ../../../app/global/global_singleton
 import ../../../backend/eth as status_eth
+import ../../../backend/ens as status_ens
+import ../network/types as network_types
 
 import ../../common/conversion as common_conversion
 import utils as ens_utils
@@ -131,9 +134,8 @@ QtObject:
     # Response of `transactionService.getPendingTransactions()` should be appropriate DTO, that's not added at the moment
     # but once we add it, need to update this block here, since we won't need to parse json manually here.
     let pendingTransactions = self.transactionService.getPendingTransactions()
-    var pendingStickerPacks = initHashSet[int]()
-    if (pendingTransactions.len > 0):
-      for trx in pendingTransactions.parseJson{"result"}.getElems():
+    if (pendingTransactions.kind == JArray and pendingTransactions.len > 0):
+      for trx in pendingTransactions.getElems():
         let transactionType = trx["type"].getStr
         if transactionType == $PendingTransactionTypeDto.RegisterENS or
           transactionType == $PendingTransactionTypeDto.SetPubKey:
@@ -179,6 +181,7 @@ QtObject:
         vptr: cast[ByteAddress](self.vptr),
         slot: "onEnsUsernameAvailabilityChecked",
         ensUsername: ensUsername,
+        chainId: self.settingsService.getCurrentNetworkId(),
         isStatus: isStatus,
         myPublicKey: self.settingsService.getPublicKey(),
         myWalletAddress: self.walletAccountService.getWalletAccount(0).address
@@ -219,25 +222,20 @@ QtObject:
     return self.ethService.findErc20Contract(networkDto.chainId, if symbol.len > 0: symbol else: networkType.sntSymbol())
 
   proc fetchDetailsForEnsUsername*(self: Service, ensUsername: string) =
-    var contractDto = self.getCurrentNetworkContractForName("ens-usernames")
-
-    var data: string
     var isStatus = false
     if ensUsername.endsWith(ens_utils.STATUS_DOMAIN):
       let onlyUsername = ensUsername.replace(ens_utils.STATUS_DOMAIN, "")
       let label = fromHex(FixedBytes[32], label(onlyUsername))
       let expTime = ExpirationTime(label: label)
       isStatus = true
-      data = contractDto.methods["getExpirationTime"].encodeAbi(expTime)
 
     let arg = EnsUsernamDetailsTaskArg(
       tptr: cast[ByteAddress](ensUsernameDetailsTask),
       vptr: cast[ByteAddress](self.vptr),
       slot: "onEnsUsernameDetailsFetched",
       ensUsername: ensUsername,
-      isStatus: isStatus,
-      toAddress: contractDto.address,
-      data: data
+      chainId: self.settingsService.getCurrentNetworkId(),
+      isStatus: isStatus
     )
     self.threadpool.start(arg)
 
@@ -272,113 +270,87 @@ QtObject:
   proc extractCoordinates(self: Service, pubkey: string):tuple[x: string, y:string] =
     result = ("0x" & pubkey[4..67], "0x" & pubkey[68..131])
 
-  proc setPubKeyGasEstimate*(self: Service, ensUsername: string, address: string): int =
+  proc setPubKeyGasEstimate*(self: Service, ensUsername: string, address: string): int = 
     try:
-      let myPublicKey = self.settingsService.getPublicKey()
-      var hash = namehash(ensUsername)
-      hash.removePrefix("0x")
+      let
+        chainId = self.settingsService.getCurrentNetworkId()
+        txData = ens_utils.buildTransaction(parseAddress(address), 0.u256)
 
-      let label = fromHex(FixedBytes[32], "0x" & hash)
-      let coordinates = self.extractCoordinates(myPublicKey)
-      let x = fromHex(FixedBytes[32], coordinates.x)
-      let y =  fromHex(FixedBytes[32], coordinates.y)
-
-      let contractDto = self.getCurrentNetworkContractForName("ens-resolver")
-
-      let setPubkey = SetPubkey(label: label, x: x, y: y)
-      let resolverAddress = resolver(hash)
-
-      var tx = buildTokenTransaction(parseAddress(address), parseAddress(resolverAddress), "", "")
-      var success = false
-
-      let response = contractDto.methods["setPubkey"].estimateGas(tx, setPubkey, success)
-      if(success):
-        result = fromHex[int](response)
-      else:
-        result = 80000
-    except RpcException as e:
+      let resp = status_ens.setPubKeyEstimate(chainId, %txData, ensUsername,
+        singletonInstance.userProfile.getPubKey())
+      result = resp.result.getInt
+    except Exception as e:
       result = 80000
-      error "error occurred", methodName="setPubKeyGasEstimate"
+      error "error occurred", methodName="setPubKeyGasEstimate", msg = e.msg
 
-  proc setPubKey*(self: Service, ensUsername: string, address: string, gas: string, gasPrice: string,
-    maxPriorityFeePerGas: string, maxFeePerGas: string, password: string): string =
+  proc setPubKey*(
+      self: Service,
+      ensUsername: string,
+      address: string,
+      gas: string,
+      gasPrice: string, 
+      maxPriorityFeePerGas: string,
+      maxFeePerGas: string,
+      password: string
+    ): string =    
     try:
-      let eip1559Enabled = self.settingsService.isEIP1559Enabled()
-      let myPublicKey = self.settingsService.getPublicKey()
+      let
+        chainId = self.settingsService.getCurrentNetworkId()
+        eip1559Enabled = self.settingsService.isEIP1559Enabled()
+        txData = ens_utils.buildTransaction(parseAddress(address), 0.u256, gas, gasPrice,
+          eip1559Enabled, maxPriorityFeePerGas, maxFeePerGas)
 
-      var hash = namehash(ensUsername)
-      hash.removePrefix("0x")
+      let resp = status_ens.setPubKey(chainId, %txData, password, ensUsername.addDomain(),
+        singletonInstance.userProfile.getPubKey())
+      let hash = resp.result.getStr
 
-      let label = fromHex(FixedBytes[32], "0x" & hash)
-      let coordinates = self.extractCoordinates(myPublicKey)
-      let x = fromHex(FixedBytes[32], coordinates.x)
-      let y =  fromHex(FixedBytes[32], coordinates.y)
-
-      let contractDto = self.getCurrentNetworkContractForName("ens-resolver")
-
-      let setPubkey = SetPubkey(label: label, x: x, y: y)
-      let resolverAddress = resolver(hash)
-
-      var tx = buildTokenTransaction(parseAddress(address), parseAddress(resolverAddress), gas, gasPrice,
-      eip1559Enabled, maxPriorityFeePerGas, maxFeePerGas)
-      var success = false
-
-      let response = contractDto.methods["setPubkey"].send(tx, setPubkey, password, success)
-      result = $(%* { "result": %response, "success": %success })
-
-      if success:
-        self.transactionService.trackPendingTransaction(response, address, resolverAddress,
+      let resolverAddress = status_ens.resolver(chainId, ensUsername.addDomain()).result.getStr
+      self.transactionService.trackPendingTransaction(hash, $address, resolverAddress,
         $PendingTransactionTypeDto.SetPubKey, ensUsername)
-        self.pendingEnsUsernames.incl(ensUsername)
+      self.pendingEnsUsernames.incl(ensUsername)
 
-    except RpcException as e:
-      error "error occurred", methodName="setPubKey"
+      result = $(%* { "result": hash, "success": true })
+    except Exception as e:
+      error "error occurred", methodName="setPubKey", msg = e.msg
+      result = $(%* { "result": e.msg, "success": false })
 
   proc releaseEnsEstimate*(self: Service, ensUsername: string, address: string): int =
     try:
-      let label = fromHex(FixedBytes[32], label(ensUsername))
+      let
+        chainId = self.settingsService.getCurrentNetworkId()
+        txData = ens_utils.buildTransaction(parseAddress(address), 0.u256)
 
-      let contractDto = self.getCurrentNetworkContractForName("ens-resolver")
-
-      let release = Release(label: label)
-
-      var tx = buildTokenTransaction(parseAddress(address), contractDto.address, "", "")
-      var success = false
-
-      let response = contractDto.methods["release"].estimateGas(tx, release, success)
-
-      if(success):
-        result = fromHex[int](response)
-      else:
-        result = 100000
-
-    except RpcException as e:
+      let resp = status_ens.releaseEstimate(chainId, %txData, ensUsername)
+      result = resp.result.getInt
+    except Exception as e:
+      error "error occurred", methodName="releaseEnsEstimate", msg = e.msg
       result = 100000
-      error "error occurred", methodName="releaseEnsEstimate"
 
-
-  proc release*(self: Service, ensUsername: string, address: string, gas: string, gasPrice: string, password: string):
-    string =
+  proc release*(
+      self: Service,
+      ensUsername: string,
+      address: string,
+      gas: string,
+      gasPrice: string,
+      password: string
+    ): string =    
     try:
-      let label = fromHex(FixedBytes[32], label(ensUsername))
+      let
+        chainId = self.settingsService.getCurrentNetworkId()
+        txData = ens_utils.buildTransaction(parseAddress(address), 0.u256, gas, gasPrice)
 
-      let contractDto = self.getCurrentNetworkContractForName("ens-usernames")
+      let resp = status_ens.release(chainId, %txData, password, ensUsername)
+      let hash = resp.result.getStr
 
-      let release = Release(label: label)
-
-      var tx = buildTokenTransaction(parseAddress(address), contractDto.address, "", "")
-      var success = false
-
-      let response = contractDto.methods["release"].send(tx, release, password, success)
-      result = $(%* { "result": %response, "success": %success })
-
-      if(success):
-        self.transactionService.trackPendingTransaction(response, address, $contractDto.address,
+      let ensUsernamesContract = self.ethService.findContract(chainId, "ens-usernames")
+      self.transactionService.trackPendingTransaction(hash, address, $ensUsernamesContract.address,
         $PendingTransactionTypeDto.ReleaseENS, ensUsername)
-        self.pendingEnsUsernames.excl(ensUsername)
+      self.pendingEnsUsernames.excl(ensUsername)
 
+      result = $(%* { "result": hash, "success": true })
     except RpcException as e:
-      error "error occurred", methodName="release"
+      error "error occurred", methodName="release", msg = e.msg
+      result = $(%* { "result": e.msg, "success": false })
 
   proc getEnsRegisteredAddress*(self: Service): string =
     let contractDto = self.getCurrentNetworkContractForName("ens-usernames")
@@ -387,70 +359,49 @@ QtObject:
 
   proc registerENSGasEstimate*(self: Service, ensUsername: string, address: string): int =
     try:
-      let myPublicKey = self.settingsService.getPublicKey()
-      let coordinates = self.extractCoordinates(myPublicKey)
-      let x = fromHex(FixedBytes[32], coordinates.x)
-      let y =  fromHex(FixedBytes[32], coordinates.y)
+      let
+        chainId = self.settingsService.getCurrentNetworkId()
+        txData = ens_utils.buildTransaction(parseAddress(address), 0.u256)
 
-      let contractDto = self.getCurrentNetworkContractForName("ens-usernames")
-      let sntContract = self.getCurrentNetworkErc20ContractForSymbol()
+      let resp = status_ens.registerEstimate(chainId, %txData, ensUsername,
+        singletonInstance.userProfile.getPubKey())
+      result = resp.result.getInt
+    except Exception as e:
+      result = 380000
+      error "error occurred", methodName="registerENSGasEstimate", msg = e.msg
 
-      let price = getPrice(contractDto)
-      let label = fromHex(FixedBytes[32], label(ensUsername))
-
-      let register = Register(label: label, account: parseAddress(address), x: x, y: y)
-      let registerAbiEncoded = contractDto.methods["register"].encodeAbi(register)
-      let approveAndCallObj = ApproveAndCall[132](to: contractDto.address, value: price,
-      data: DynamicBytes[132].fromHex(registerAbiEncoded))
-      let approveAndCallAbiEncoded = sntContract.methods["approveAndCall"].encodeAbi(approveAndCallObj)
-
-      var tx = buildTokenTransaction(parseAddress(address), sntContract.address, "", "")
-      var success = false
-
-      let response = sntContract.methods["approveAndCall"].estimateGas(tx, approveAndCallObj, success)
-
-      if(success):
-        result = fromHex[int](response)
-      else:
-        result = 380000
-
-    except RpcException as e:
-      error "error occurred", methodName="registerENSGasEstimate"
-
-  proc registerEns*(self: Service, username: string, address: string, gas: string, gasPrice: string,
-    maxPriorityFeePerGas: string, maxFeePerGas: string, password: string): string =
+  proc registerEns*(
+      self: Service,
+      username: string,
+      address: string,
+      gas: string,
+      gasPrice: string, 
+      maxPriorityFeePerGas: string,
+      maxFeePerGas: string,
+      password: string
+    ): string =    
     try:
-      let myPublicKey = self.settingsService.getPublicKey()
-      let coordinates = self.extractCoordinates(myPublicKey)
-      let x = fromHex(FixedBytes[32], coordinates.x)
-      let y =  fromHex(FixedBytes[32], coordinates.y)
+      let
+        networkType = self.settingsService.getCurrentNetwork().toNetworkType()
+        network = self.networkService.getNetwork(networkType)
+        chainId = network.chainId
+        eip1559Enabled = self.settingsService.isEIP1559Enabled()
+        txData = ens_utils.buildTransaction(parseAddress(address), 0.u256, gas, gasPrice,
+          eip1559Enabled, maxPriorityFeePerGas, maxFeePerGas)
 
-      let contractDto = self.getCurrentNetworkContractForName("ens-usernames")
-      let sntContract = self.getCurrentNetworkErc20ContractForSymbol()
+      let resp = status_ens.register(chainId, %txData, password, username,
+        singletonInstance.userProfile.getPubKey())
+      let hash = resp.result.getStr
+      let sntContract = self.ethService.findErc20Contract(chainId, network.sntSymbol())
+      let ensUsername = self.formatUsername(username, true)
+      self.transactionService.trackPendingTransaction(hash, address, $sntContract.address,
+        $PendingTransactionTypeDto.RegisterEns, ensUsername)
 
-      let price = getPrice(contractDto)
-      let label = fromHex(FixedBytes[32], label(username))
-      let eip1559Enabled = self.settingsService.isEIP1559Enabled()
-
-      let register = Register(label: label, account: parseAddress(address), x: x, y: y)
-      let registerAbiEncoded = contractDto.methods["register"].encodeAbi(register)
-      let approveAndCallObj = ApproveAndCall[132](to: contractDto.address, value: price,
-      data: DynamicBytes[132].fromHex(registerAbiEncoded))
-
-      var tx = buildTokenTransaction(parseAddress(address), sntContract.address, gas, gasPrice, eip1559Enabled,
-      maxPriorityFeePerGas, maxFeePerGas)
-      var success = false
-
-      let response = sntContract.methods["approveAndCall"].send(tx, approveAndCallObj, password, success)
-      result = $(%* { "result": %response, "success": %success })
-      if success:
-        var ensUsername = self.formatUsername(username, true)
-        self.transactionService.trackPendingTransaction(response, address, $sntContract.address,
-        $PendingTransactionTypeDto.RegisterENS, ensUsername)
-        self.pendingEnsUsernames.incl(ensUsername)
-
-    except RpcException as e:
-      error "error occurred", methodName="registerEns"
+      self.pendingEnsUsernames.incl(ensUsername)
+      result = $(%* { "result": hash, "success": true })
+    except Exception as e:
+      error "error occurred", methodName="registerEns", msg = e.msg
+      result = $(%* { "result": e.msg, "success": false })
 
   proc getSNTBalance*(self: Service): string =
     let address = self.walletAccountService.getWalletAccount(0).address
@@ -484,3 +435,12 @@ QtObject:
       "address": sntContract.address
     }
     return $jsonObj
+
+  proc resourceUrl*(self: Service, username: string): (string, string, string) =
+    try:
+      let chainId = self.settingsService.getCurrentNetworkId()
+      let response = status_ens.resourceURL(chainId, username)
+      return (response.result{"Scheme"}.getStr, response.result{"Host"}.getStr, response.result{"Path"}.getStr)
+    except Exception as e:
+      error "Error getting ENS resourceUrl", username=username, exception=e.msg
+      raise

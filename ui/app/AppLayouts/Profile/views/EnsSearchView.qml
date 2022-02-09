@@ -203,7 +203,7 @@ Item {
                 }
 
                 if(ensStatus === Constants.ens_connected_dkey || ensStatus === Constants.ens_owned){
-                    Global.openPopup(transactionDialogComponent)
+                    Global.openPopup(transactionDialogComponent, {ensUsername: ensUsername.text})
                     return;
                 }
             }

@@ -5,6 +5,7 @@ import ../../../app/core/signals/types
 import ../../../app/core/eventemitter
 import ../../../app/core/tasks/[qt, threadpool]
 
+import ../settings/service as settings_service
 import ./dto/contacts as contacts_dto
 import ./dto/status_update as status_update_dto
 import ./dto/contact_details
@@ -52,6 +53,7 @@ const SIGNAL_LOGGEDIN_USER_IMAGE_CHANGED* = "loggedInUserImageChanged"
 QtObject:
   type Service* = ref object of QObject
     threadpool: ThreadPool
+    settingsService: settings_service.Service
     contacts: Table[string, ContactsDto] # [contact_id, ContactsDto]
     contactsStatus: Table[string, StatusUpdateDto] # [contact_id, StatusUpdateDto]
     events: EventEmitter
@@ -68,11 +70,16 @@ QtObject:
     self.contactsStatus.clear
     self.QObject.delete
 
-  proc newService*(events: EventEmitter, threadpool: ThreadPool): Service =
+  proc newService*(
+      events: EventEmitter,
+      threadpool: ThreadPool,
+      settingsService: settings_service.Service
+      ): Service =
     new(result, delete)
     result.QObject.setup
     result.closingApp = false
     result.events = events
+    result.settingsService = settingsService
     result.threadpool = threadpool
     result.contacts = initTable[string, ContactsDto]()
 
@@ -306,6 +313,7 @@ QtObject:
       vptr: cast[ByteAddress](self.vptr),
       slot: "ensResolved",
       value: value,
+      chainId: self.settingsService.getCurrentNetworkId(),
       uuid: uuid
     )
     self.threadpool.start(arg)
@@ -357,4 +365,3 @@ QtObject:
     result.isIdenticon = isIdenticon
     result.isCurrentUser = pubKey == singletonInstance.userProfile.getPubKey()
     result.details = self.getContactById(pubKey)
-

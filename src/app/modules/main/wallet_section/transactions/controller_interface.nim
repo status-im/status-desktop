@@ -11,6 +11,9 @@ method delete*(self: AccessInterface) {.base.} =
 method init*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method checkPendingTransactions*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method checkRecentHistory*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 

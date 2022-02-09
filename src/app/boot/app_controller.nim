@@ -129,7 +129,8 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result.ethService = eth_service.newService()
   result.accountsService = accounts_service.newService(statusFoundation.fleetConfiguration)
   result.networkService = network_service.newService()
-  result.contactsService = contacts_service.newService(statusFoundation.events, statusFoundation.threadpool)
+  result.contactsService = contacts_service.newService(statusFoundation.events,
+    statusFoundation.threadpool, result.settingsService)
   result.chatService = chat_service.newService(statusFoundation.events, result.contactsService)
   result.communityService = community_service.newService(statusFoundation.events, result.chatService)
   result.messageService = message_service.newService(statusFoundation.events, statusFoundation.threadpool,
@@ -162,7 +163,6 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   # result.mnemonicService = mnemonic_service.newService()
   result.privacyService = privacy_service.newService(statusFoundation.events, result.settingsService,
   result.accountsService)
-  result.providerService = provider_service.newService(result.dappPermissionsService, result.settingsService)
   result.savedAddressService = saved_address_service.newService(statusFoundation.events)
   result.devicesService = devices_service.newService(statusFoundation.events, result.settingsService)
   result.mailserversService = mailservers_service.newService(statusFoundation.events, statusFoundation.threadpool,
@@ -170,9 +170,11 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result.nodeService = node_service.newService(statusFoundation.events, statusFoundation.threadpool,
   result.settingsService)
   result.gifService = gif_service.newService(result.settingsService)
-  result.ensService = ens_service.newService(statusFoundation.events, statusFoundation.threadpool,
-  result.settingsService, result.walletAccountService, result.transactionService, result.ethService,
-  result.networkService, result.tokenService)
+  result.ensService = ens_service.newService(statusFoundation.events, statusFoundation.threadpool, 
+    result.settingsService, result.walletAccountService, result.transactionService, result.ethService, 
+    result.networkService, result.tokenService)
+  result.providerService = provider_service.newService(result.dappPermissionsService,
+    result.settingsService, result.ensService)
 
   # Modules
   result.startupModule = startup_module.newModule[AppController](

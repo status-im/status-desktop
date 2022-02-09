@@ -106,10 +106,10 @@ QtObject {
         return ensUsernamesModule.registerEnsGasEstimate(ensUsername, address)
     }
 
-    function registerEns(ensUsername, address, gasLimit, tipLimit, overallLimit, gasPrice, password) {
+    function registerEns(ensUsername, address, gasLimit, gasPrice, tipLimit, overallLimit, password) {
         if(!root.ensUsernamesModule)
             return ""
-        return ensUsernamesModule.registerEns(ensUsername, address, gasLimit, tipLimit, overallLimit, gasPrice, password)
+        return ensUsernamesModule.registerEns(ensUsername, address, gasLimit, gasPrice, tipLimit, overallLimit, password)
     }
 
     function getEnsRegistry() {

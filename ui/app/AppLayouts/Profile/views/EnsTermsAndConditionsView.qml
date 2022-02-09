@@ -58,9 +58,9 @@ Item {
                     username,
                     selectedAddress,
                     gasLimit,
+                    gasPrice,
                     tipLimit,
                     overallLimit,
-                    gasPrice,
                     password
                 )
             }

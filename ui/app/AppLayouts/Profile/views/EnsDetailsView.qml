@@ -105,6 +105,7 @@ Item {
         StatusETHTransactionModal {
             ensUsernamesStore: root.ensUsernamesStore
             contactsStore: root.contactsStore
+            ensUsername: root.username
             onOpened: {
                 root.ensUsernamesStore.fetchGasPrice()
             }
@@ -152,7 +153,7 @@ Item {
         anchors.topMargin: 2
         anchors.left: parent.left
         anchors.leftMargin: 24
-        text: qsTr("Username locked. You won’t be able to release it until %1").arg(Utils.formatShortDateStr(new Date(expiration).toDateString()))
+        text: qsTr("Username locked. You won't be able to release it until %1").arg(Utils.formatShortDateStr(new Date(expiration).toDateString()))
         color: Style.current.darkGrey
     }
 

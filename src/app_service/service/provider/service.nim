@@ -4,6 +4,7 @@ import options
 import strutils
 include ../../common/json_utils
 import ../dapp_permissions/service as dapp_permissions_service
+import ../ens/service as ens_service
 import ../settings/service_interface as settings_service
 import ../ens/utils as ens_utils
 import service_interface
@@ -13,8 +14,6 @@ import ../../../backend/eth as status_eth
 import ../../common/utils as status_utils
 import ../eth/utils as eth_utils
 import ../eth/dto/transaction as transaction_data_dto
-from stew/base32 import nil
-from stew/base58 import nil
 import stew/byteutils
 export service_interface
 
@@ -60,15 +59,20 @@ type
   Service* = ref object of service_interface.ServiceInterface
     dappPermissionsService: dapp_permissions_service.ServiceInterface
     settingsService: settings_service.ServiceInterface
+    ensService: ens_service.Service
 
 method delete*(self: Service) =
   discard
 
-proc newService*(dappPermissionsService: dapp_permissions_service.ServiceInterface,
-    settingsService: settings_service.ServiceInterface): Service =
+proc newService*(
+    dappPermissionsService: dapp_permissions_service.ServiceInterface,
+    settingsService: settings_service.ServiceInterface,
+    ensService: ens_service.Service
+  ): Service =
   result = Service()
   result.dappPermissionsService = dappPermissionsService
   result.settingsService = settingsService
+  result.ensService = ensService
 
 method init*(self: Service) =
   discard
@@ -263,27 +267,9 @@ method postMessage*(self: Service, requestType: RequestTypes, message: string): 
   of RequestTypes.APIRequest: self.process(message.toAPIRequest())
   else:  """{"type":"TODO-IMPLEMENT-THIS"}""" ##################### TODO:
 
-method ensResourceURL*(self: Service, ens: string, url: string): (string, string, string, string, bool) =
-  let contentHash = ens_utils.getContentHash(ens)
-  if contentHash.isNone(): # ENS does not have a content hash
+method ensResourceURL*(self: Service, username: string, url: string): (string, string, string, string, bool) =
+  let (scheme, host, path) = self.ensService.resourceUrl(username)
+  if host == "":
     return (url, url, HTTPS_SCHEME, "", false)
 
-  let decodedHash = ens_utils.decodeENSContentHash(contentHash.get())
-
-  case decodedHash[0]:
-    of ENSType.IPFS:
-      let
-        base58bytes = base58.decode(base58.BTCBase58, decodedHash[1])
-        base32Hash = base32.encode(base32.Base32Lower, base58bytes)
-
-      result = (url, base32Hash & IPFS_GATEWAY, HTTPS_SCHEME, "", true)
-
-    of ENSType.SWARM:
-      result = (url, SWARM_GATEWAY, HTTPS_SCHEME,
-        "/bzz:/" & decodedHash[1] & "/", true)
-
-    of ENSType.IPNS:
-      result = (url, decodedHash[1], HTTPS_SCHEME, "", true)
-
-    else:
-      warn "Unknown content for", ens, contentHash
+  return (url, host, scheme, path, true)
