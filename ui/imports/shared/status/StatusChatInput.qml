@@ -618,6 +618,14 @@ Rectangle {
     StatusEmojiSuggestionPopup {
         id: emojiSuggestions
         messageInput: messageInput
+        onClicked: function (index) {
+            if (index === undefined) {
+                index = emojiSuggestions.listView.currentIndex
+            }
+
+            const unicode = emojiSuggestions.modelList[index].unicode_alternates || emojiSuggestions.modelList[index].unicode
+            replaceWithEmoji(extrapolateCursorPosition(), emojiSuggestions.shortname, unicode);
+        }
     }
 
     SuggestionBoxPanel {
