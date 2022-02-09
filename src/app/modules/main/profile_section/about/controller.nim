@@ -5,7 +5,7 @@ import ../../../../core/eventemitter
 
 export controller_interface
 
-type 
+type
   Controller* = ref object of controller_interface.AccessInterface
     delegate: io_interface.AccessInterface
     events: EventEmitter
@@ -24,7 +24,7 @@ proc newController*(
 method delete*(self: Controller) =
   discard
 
-method init*(self: Controller) = 
+method init*(self: Controller) =
   self.events.on(SIGNAL_VERSION_FETCHED) do(e: Args):
     let args = VersionArgs(e)
     self.delegate.versionFetched(args.version)

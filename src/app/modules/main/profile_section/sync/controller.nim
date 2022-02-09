@@ -12,14 +12,14 @@ export controller_interface
 logScope:
   topics = "profile-section-sync-module-controller"
 
-type 
+type
   Controller* = ref object of controller_interface.AccessInterface
     delegate: io_interface.AccessInterface
     events: EventEmitter
     settingsService: settings_service.ServiceInterface
     mailserversService: mailservers_service.Service
-    
-proc newController*(delegate: io_interface.AccessInterface, 
+
+proc newController*(delegate: io_interface.AccessInterface,
   events: EventEmitter,
   settingsService: settings_service.ServiceInterface,
   mailserversService: mailservers_service.Service): Controller =
@@ -28,16 +28,16 @@ proc newController*(delegate: io_interface.AccessInterface,
   result.events = events
   result.settingsService = settingsService
   result.mailserversService = mailserversService
-  
+
 method delete*(self: Controller) =
   discard
 
-method init*(self: Controller) = 
+method init*(self: Controller) =
   self.events.on(SIGNAL_ACTIVE_MAILSERVER_CHANGED) do(e: Args):
     var args = ActiveMailserverChangedArgs(e)
     self.delegate.onActiveMailserverChanged(args.nodeAddress)
 
-method getAllMailservers*(self: Controller): seq[tuple[name: string, nodeAddress: string]] = 
+method getAllMailservers*(self: Controller): seq[tuple[name: string, nodeAddress: string]] =
   return self.mailserversService.getAllMailservers()
 
 method getPinnedMailserver*(self: Controller): string =

@@ -4,11 +4,11 @@ import ./item
 
 type
   ModelRole {.pure.} = enum
-    TraitType = UserRole + 1, 
+    TraitType = UserRole + 1,
     Value
     DisplayType
     MaxValue
-    
+
 QtObject:
   type
     TraitModel* = ref object of QAbstractListModel
@@ -60,13 +60,13 @@ QtObject:
     let enumRole = role.ModelRole
 
     case enumRole:
-    of ModelRole.TraitType: 
+    of ModelRole.TraitType:
       result = newQVariant(item.getTraitType())
-    of ModelRole.Value: 
+    of ModelRole.Value:
       result = newQVariant(item.getValue())
-    of ModelRole.DisplayType: 
+    of ModelRole.DisplayType:
       result = newQVariant(item.getDisplayType())
-    of ModelRole.MaxValue: 
+    of ModelRole.MaxValue:
       result = newQVariant(item.getMaxValue())
 
   proc setItems*(self: TraitModel, items: seq[Trait]) =

@@ -4,15 +4,15 @@ include  ../../../common/json_utils
 
 #################################################
 # Important note:
-# 
-# Uppercase letters are used in properties in object types deliberately, cause 
+#
+# Uppercase letters are used in properties in object types deliberately, cause
 # we're following "keys" which are received from `status-go`
 #
 # Why do we do that?
-# Cause we're storing node configuration to the settings as JsonNode, and in order to 
-# convert `NodeConfigDto` to JsonNode we're using `marshal` Nim's module, which actually 
-# follows property names inside object types and convert them to "keys" of json object. 
-# That further means if we want to have parsing methods from this file reusable we have 
+# Cause we're storing node configuration to the settings as JsonNode, and in order to
+# convert `NodeConfigDto` to JsonNode we're using `marshal` Nim's module, which actually
+# follows property names inside object types and convert them to "keys" of json object.
+# That further means if we want to have parsing methods from this file reusable we have
 # to store "keys" as they are received.
 #################################################
 
@@ -51,7 +51,7 @@ type
     Enabled*: bool
     DatabaseCache*: int
     TrustedNodes*: seq[string]
-    MinTrustedFraction*: int  
+    MinTrustedFraction*: int
 
   PGConfig* = object
     Enabled*: bool
@@ -59,7 +59,7 @@ type
 
   DatabaseConfig* = object
     PgConfig*: PGConfig
-  
+
   WakuConfig* = object
     Enabled*: bool
     LightClient*: bool
@@ -110,22 +110,22 @@ type
     AnonMetricsServerEnabled*: bool
     AnonMetricsServerPostgresURI*: string
     BandwidthStatsEnabled*: bool
-  
+
   BridgeConfig* = object
     Enabled*: bool
 
   WalletConfig* = object
     Enabled*: bool
-  
+
   LocalNotificationsConfig* = object
     Enabled*: bool
-  
+
   BrowsersConfig* = object
     Enabled*: bool
-  
+
   PermissionsConfig* = object
     Enabled*: bool
-  
+
   MailserversConfig* = object
     Enabled*: bool
 
@@ -137,14 +137,14 @@ type
 
   SwarmConfig* = object
     Enabled*: bool
-  
+
   Whisper* = object
     Min*: int
     Max*: int
 
   RequireTopics* = object
     whisper*: Whisper
-  
+
   PushNotificationServerConfig* = object
     Enabled*: bool
     #Identity*: seq[string] # not sure about the type, but we don't use it, so doesn't matter
@@ -266,7 +266,7 @@ proc toClusterConfig*(jsonObj: JsonNode): ClusterConfig =
     if(arr.kind == JArray):
       for valueObj in arr:
         result.FilterNodes.add(valueObj.getStr)
-  
+
   if(jsonObj.getProp("LightpushNodes", arr)):
     if(arr.kind == JArray):
       for valueObj in arr:
@@ -396,7 +396,7 @@ proc toRequireTopics*(jsonObj: JsonNode): RequireTopics =
   var whisperObj: JsonNode
   if(jsonObj.getProp("whisper", whisperObj)):
     result.whisper = toWhisper(whisperObj)
-  
+
 proc toPushNotificationServerConfig*(jsonObj: JsonNode): PushNotificationServerConfig =
   discard jsonObj.getProp("Enabled", result.Enabled)
   discard jsonObj.getProp("GorushURL", result.GorushURL)
@@ -526,7 +526,7 @@ proc toNodeConfigDto*(jsonObj: JsonNode): NodeConfigDto =
   var pushNotificationServerConfigObj: JsonNode
   if(jsonObj.getProp("PushNotificationServerConfig", pushNotificationServerConfigObj)):
     result.PushNotificationServerConfig = toPushNotificationServerConfig(pushNotificationServerConfigObj)
-  
+
 proc toJsonNode*(nodeConfigDto: NodeConfigDto): JsonNode =
   let nodeConfigDtoAsString = $$nodeConfigDto
   result = parseJson(nodeConfigDtoAsString)

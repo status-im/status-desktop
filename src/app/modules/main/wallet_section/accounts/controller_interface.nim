@@ -1,6 +1,6 @@
 import ../../../../../app_service/service/wallet_account/service as wallet_account_service
 
-type 
+type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
   ## Abstract class for any input/interaction with this module.
 
@@ -30,7 +30,6 @@ method deleteAccount*(self: AccessInterface, address: string) {.base.} =
 
 
 type
-  ## Abstract class (concept) which must be implemented by object/s used in this 
+  ## Abstract class (concept) which must be implemented by object/s used in this
   ## module.
   DelegateInterface* = concept c
-    

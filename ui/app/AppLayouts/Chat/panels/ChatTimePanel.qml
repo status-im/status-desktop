@@ -11,7 +11,7 @@ StyledText {
     text: Utils.formatTime(timestamp)
     font.pixelSize: Style.current.asideTextFontSize
     //property string timestamp
-    
+
     StatusQ.StatusToolTip {
         visible: hhandler.hovered
         text: new Date(parseInt(timestamp, 10)).toLocaleString(Qt.locale(localAppSettings.locale))

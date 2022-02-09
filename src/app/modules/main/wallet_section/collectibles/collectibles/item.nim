@@ -1,24 +1,24 @@
 import strformat
 
-type 
+type
   Trait* = object
     traitType, value, displayType, maxValue: string
 
-proc getTraitType*(self: Trait): string = 
+proc getTraitType*(self: Trait): string =
   return self.traitType
 
-proc getValue*(self: Trait): string = 
+proc getValue*(self: Trait): string =
   return self.value
 
-proc getDisplayType*(self: Trait): string = 
+proc getDisplayType*(self: Trait): string =
   return self.displayType
 
-proc getMaxValue*(self: Trait): string = 
+proc getMaxValue*(self: Trait): string =
   return self.maxValue
 
 proc initTrait*(
   traitType, value, displayType, maxValue: string
-): Trait = 
+): Trait =
   result.traitType = traitType
   result.value = value
   result.displayType = displayType
@@ -56,7 +56,7 @@ proc initItem*(
 
 proc `$`*(self: Item): string =
   result = fmt"""Collectibles(
-    id: {self.id}, 
+    id: {self.id},
     name: {self.name},
     imageUrl: {self.imageUrl},
     backgroundColor: {self.backgroundColor},
@@ -64,29 +64,29 @@ proc `$`*(self: Item): string =
     permalink: {self.permalink},
     ]"""
 
-proc getId*(self: Item): int = 
+proc getId*(self: Item): int =
   return self.id
 
-proc getName*(self: Item): string = 
+proc getName*(self: Item): string =
   return self.name
 
-proc getImageUrl*(self: Item): string = 
+proc getImageUrl*(self: Item): string =
   return self.imageUrl
 
-proc getBackgroundColor*(self: Item): string = 
+proc getBackgroundColor*(self: Item): string =
   return self.backgroundColor
 
-proc getDescription*(self: Item): string = 
+proc getDescription*(self: Item): string =
   return self.description
 
-proc getPermalink*(self: Item): string = 
+proc getPermalink*(self: Item): string =
   return self.permalink
 
-proc getProperties*(self: Item): seq[Trait] = 
+proc getProperties*(self: Item): seq[Trait] =
   return self.properties
 
-proc getRankings*(self: Item): seq[Trait] = 
+proc getRankings*(self: Item): seq[Trait] =
   return self.rankings
 
-proc getStats*(self: Item): seq[Trait] = 
+proc getStats*(self: Item): seq[Trait] =
   return self.stats

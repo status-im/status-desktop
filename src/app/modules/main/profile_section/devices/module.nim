@@ -12,15 +12,15 @@ export io_interface
 logScope:
   topics = "profile-section-devices-module"
 
-type 
+type
   Module* = ref object of io_interface.AccessInterface
     delegate: delegate_interface.AccessInterface
     controller: controller.AccessInterface
     view: View
-    viewVariant: QVariant    
+    viewVariant: QVariant
     moduleLoaded: bool
 
-proc newModule*(delegate: delegate_interface.AccessInterface, 
+proc newModule*(delegate: delegate_interface.AccessInterface,
   events: EventEmitter,
   settingsService: settings_service.ServiceInterface,
   devicesService: devices_service.Service): Module =
@@ -30,7 +30,7 @@ proc newModule*(delegate: delegate_interface.AccessInterface,
   result.viewVariant = newQVariant(result.view)
   result.controller = controller.newController(result, events, settingsService, devicesService)
   result.moduleLoaded = false
-  
+
 method delete*(self: Module) =
   self.view.delete
   self.viewVariant.delete
@@ -53,7 +53,7 @@ proc initModel(self: Module) =
   for d in allDevices:
     let item = initItem(d.id, d.metadata.name, d.enabled, self.isMyDevice(d.id))
     items.add(item)
-  
+
   self.view.model().addItems(items)
 
 method viewDidLoad*(self: Module) =

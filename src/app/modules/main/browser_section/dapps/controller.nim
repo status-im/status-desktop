@@ -7,22 +7,22 @@ import ../../../../../app_service/service/dapp_permissions/service as dapp_permi
 
 export controller_interface
 
-type 
+type
   Controller* = ref object of controller_interface.AccessInterface
     delegate: io_interface.AccessInterface
     dappPermissionsService: dapp_permissions_service.ServiceInterface
 
-proc newController*(delegate: io_interface.AccessInterface, 
-  dappPermissionsService: dapp_permissions_service.ServiceInterface): 
+proc newController*(delegate: io_interface.AccessInterface,
+  dappPermissionsService: dapp_permissions_service.ServiceInterface):
   Controller =
   result = Controller()
   result.delegate = delegate
   result.dappPermissionsService = dappPermissionsService
-  
+
 method delete*(self: Controller) =
   discard
 
-method init*(self: Controller) = 
+method init*(self: Controller) =
   discard
 
 method getDapps*(self: Controller): seq[dapp_permissions_service.Dapp] =

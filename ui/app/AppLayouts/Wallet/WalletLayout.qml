@@ -57,7 +57,7 @@ Item {
             repeat: true
             onTriggered: RootStore.checkRecentHistory()
         }
-        
+
         leftPanel: LeftTabView {
             id: leftTab
             anchors.fill: parent

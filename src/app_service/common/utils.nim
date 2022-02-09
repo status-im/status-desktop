@@ -9,7 +9,7 @@ proc generateSigningPhrase*(count: int): string =
   let now = getTime()
   var rng = initRand(now.toUnix * 1000000000 + now.nanosecond)
   var phrases: seq[string] = @[]
-  
+
   for i in 1..count:
     phrases.add(rng.sample(signing_phrases.phrases))
 

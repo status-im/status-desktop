@@ -149,7 +149,7 @@ ModalPopup {
             }
 
             const errMessage = RootStore.addAccountsFromPrivateKey(accountPKeyInput.text, passwordInput.text, accountNameInput.text, accountColorInput.selectedColor)
-            
+
             loading = false
             if (errMessage) {
                 Global.playErrorSound();

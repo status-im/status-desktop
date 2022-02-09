@@ -5,8 +5,8 @@ QtObject:
   type
     View* = ref object of QObject
       delegate: io_interface.AccessInterface
-      
-  proc setup(self: View) = 
+
+  proc setup(self: View) =
     self.QObject.setup
 
   proc delete*(self: View) =

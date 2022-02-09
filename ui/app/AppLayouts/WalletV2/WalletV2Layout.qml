@@ -40,7 +40,7 @@ Item {
             signPhrasePopup.close();
         }
     }
-        
+
     SeedPhraseBackupWarningPanel {
         id: seedPhraseWarning
         width: parent.width
@@ -62,7 +62,7 @@ Item {
 //                walletView.store.walletModelInst.setInitialRange();
 //            }
         }
-        
+
         leftPanel: LeftTabView {
             id: leftTab
             anchors.fill: parent

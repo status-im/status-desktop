@@ -1,4 +1,4 @@
-type 
+type
   Item* = ref object
     installationId: string
     name: string
@@ -12,20 +12,20 @@ proc initItem*(installationId, name: string, enabled, isCurrentDevice: bool): It
   result.enabled = enabled
   result.isCurrentDevice = isCurrentDevice
 
-proc installationId*(self: Item): string = 
+proc installationId*(self: Item): string =
   self.installationId
 
-proc name*(self: Item): string = 
+proc name*(self: Item): string =
   self.name
 
-proc `name=`*(self: Item, value: string) = 
+proc `name=`*(self: Item, value: string) =
   self.name = value
 
-proc enabled*(self: Item): bool = 
+proc enabled*(self: Item): bool =
   self.enabled
 
-proc `enabled=`*(self: Item, value: bool) = 
+proc `enabled=`*(self: Item, value: bool) =
   self.enabled = value
 
-proc isCurrentDevice*(self: Item): bool = 
+proc isCurrentDevice*(self: Item): bool =
   self.isCurrentDevice

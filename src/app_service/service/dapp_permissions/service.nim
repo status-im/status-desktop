@@ -12,7 +12,7 @@ export service_interface
 logScope:
   topics = "dapp-permissions-service"
 
-type 
+type
   Service* = ref object of ServiceInterface
     dapps: Table[string, Dapp]
 

@@ -2,7 +2,7 @@
 
 import json
 
-type 
+type
   OsNotificationType* {.pure.} = enum
     NewContactRequest = 1,
     AcceptedContactRequest,

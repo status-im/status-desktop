@@ -25,11 +25,11 @@ proc newService*(fleetConfiguration: FleetConfiguration, settingsService: settin
   result.fleetConfiguration = fleetConfiguration
   result.settingsService = settingsService
 
-proc adaptNodeSettingsForTheAppNeed(self: Service) = 
+proc adaptNodeSettingsForTheAppNeed(self: Service) =
   let currentNetworkDetails = self.settingsService.getCurrentNetworkDetails()
   var dataDir = currentNetworkDetails.config.DataDir
   dataDir.removeSuffix("_rpc")
-  
+
   self.configuration.DataDir = dataDir
   self.configuration.KeyStoreDir = "./keystore"
   self.configuration.LogFile = "./geth.log"
@@ -52,13 +52,13 @@ proc saveConfiguration(self: Service, configuration: NodeConfigDto): bool =
     return false
   self.configuration = configuration
   return true
-  
+
 method getWakuVersion*(self: Service): int =
   if self.configuration.WakuConfig.Enabled:
     return WAKU_VERSION_1
   elif self.configuration.WakuV2Config.Enabled:
     return WAKU_VERSION_2
-  
+
   error "unsupported waku version"
   return 0
 
@@ -71,7 +71,7 @@ method getBloomLevel*(self: Service): string =
   if wakuVersion == WAKU_VERSION_1:
     let bloomFilterMode = self.configuration.WakuConfig.BloomFilterMode
     let fullNode = self.configuration.WakuConfig.FullNode
-  
+
     if (bloomFilterMode):
       if(fullNode):
         return BLOOM_LEVEL_FULL
@@ -111,7 +111,7 @@ method setNetwork*(self: Service, network: string): bool =
   newConfiguration.UpstreamConfig.Enabled = currentNetworkDetails.config.UpstreamConfig.Enabled
   newConfiguration.UpstreamConfig.URL = currentNetworkDetails.config.UpstreamConfig.URL
   return self.saveConfiguration(newConfiguration)
-  
+
 method setBloomFilterMode*(self: Service, bloomFilterMode: bool): bool =
   if(not self.settingsService.saveWakuBloomFilterMode(bloomFilterMode)):
     error "error saving waku bloom filter mode ", methodName="setBloomFilterMode"
@@ -173,7 +173,7 @@ method setFleet*(self: Service, fleet: string): bool =
       newConfiguration.ClusterConfig.RelayNodes = @["enrtree://AOFTICU2XWDULNLZGRMQS4RIZPAZEHYMV4FYHAPW563HNRAOERP7C@test.waku.nodes.status.im"]
       newConfiguration.ClusterConfig.StoreNodes = @["enrtree://AOFTICU2XWDULNLZGRMQS4RIZPAZEHYMV4FYHAPW563HNRAOERP7C@test.waku.nodes.status.im"]
       newConfiguration.ClusterConfig.FilterNodes = @["enrtree://AOFTICU2XWDULNLZGRMQS4RIZPAZEHYMV4FYHAPW563HNRAOERP7C@test.waku.nodes.status.im"]
-      newConfiguration.ClusterConfig.LightpushNodes = @["enrtree://AOFTICU2XWDULNLZGRMQS4RIZPAZEHYMV4FYHAPW563HNRAOERP7C@test.waku.nodes.status.im"]   
+      newConfiguration.ClusterConfig.LightpushNodes = @["enrtree://AOFTICU2XWDULNLZGRMQS4RIZPAZEHYMV4FYHAPW563HNRAOERP7C@test.waku.nodes.status.im"]
     else:
       discard
 

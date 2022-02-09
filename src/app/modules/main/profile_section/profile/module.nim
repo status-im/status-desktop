@@ -11,7 +11,7 @@ export io_interface
 logScope:
   topics = "profile-section-profile-module"
 
-type 
+type
   Module* = ref object of io_interface.AccessInterface
     delegate: delegate_interface.AccessInterface
     controller: controller.AccessInterface
@@ -19,7 +19,7 @@ type
     viewVariant: QVariant
     moduleLoaded: bool
 
-proc newModule*(delegate: delegate_interface.AccessInterface, 
+proc newModule*(delegate: delegate_interface.AccessInterface,
   profileService: profile_service.ServiceInterface): Module =
   result = Module()
   result.delegate = delegate
@@ -36,14 +36,14 @@ method delete*(self: Module) =
 method load*(self: Module) =
   self.controller.init()
   self.view.load()
-  
+
 method isLoaded*(self: Module): bool =
   return self.moduleLoaded
 
 method getModuleAsVariant*(self: Module): QVariant =
   return self.viewVariant
 
-method viewDidLoad*(self: Module) =  
+method viewDidLoad*(self: Module) =
   self.moduleLoaded = true
   self.delegate.profileModuleDidLoad()
 
@@ -57,7 +57,7 @@ method storeIdentityImage*(self: Module, imageUrl: string, aX: int, aY: int, bX:
 
   for img in storedImages:
     if(img.imgType == "large"):
-      singletonInstance.userProfile.setLargeImage(img.uri)      
+      singletonInstance.userProfile.setLargeImage(img.uri)
     elif(img.imgType == "thumbnail"):
       singletonInstance.userProfile.setThumbnailImage(img.uri)
 

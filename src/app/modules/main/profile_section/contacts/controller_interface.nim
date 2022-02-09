@@ -1,6 +1,6 @@
 import ../../../../../app_service/service/contacts/dto/contacts as contacts_dto
 
-type 
+type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
   ## Abstract class for any input/interaction with this module.
 
@@ -16,7 +16,7 @@ method getContacts*(self: AccessInterface): seq[ContactsDto] {.base.} =
 method getContact*(self: AccessInterface, id: string): ContactsDto {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getContactNameAndImage*(self: AccessInterface, contactId: string): 
+method getContactNameAndImage*(self: AccessInterface, contactId: string):
   tuple[name: string, image: string, isIdenticon: bool] {.base.} =
   raise newException(ValueError, "No implementation available")
 

@@ -11,7 +11,7 @@ Item {
     readonly property int separatorWidth: (parent.width / 2) - (icon.height / 2) - iconMargin
     width: parent.width
     height: icon.height
-    
+
 
     Separator {
         id: separatorLeft

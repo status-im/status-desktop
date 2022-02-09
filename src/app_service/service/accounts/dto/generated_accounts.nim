@@ -18,7 +18,7 @@ type DerivedAccounts* = object
   eip1581*: DerivedAccountDetails
 
 type GeneratedAccountDto* = object
-  id*: string 
+  id*: string
   publicKey*: string
   address*: string
   keyUid*: string
@@ -32,9 +32,9 @@ proc isValid*(self: GeneratedAccountDto): bool =
   result = self.id.len > 0 and self.publicKey.len > 0 and
     self.address.len > 0 and self.keyUid.len > 0
 
-proc toDerivedAccountDetails(jsonObj: JsonNode, derivationPath: string): 
+proc toDerivedAccountDetails(jsonObj: JsonNode, derivationPath: string):
   DerivedAccountDetails =
-  # Mapping this DTO is not strightforward since only keys are used for id. We 
+  # Mapping this DTO is not strightforward since only keys are used for id. We
   # handle it a bit different.
   result = DerivedAccountDetails()
   result.derivationPath = derivationPath
@@ -60,7 +60,7 @@ proc toGeneratedAccountDto*(jsonObj: JsonNode): GeneratedAccountDto =
   discard jsonObj.getProp("address", result.address)
   discard jsonObj.getProp("keyUid", result.keyUid)
   discard jsonObj.getProp("mnemonic", result.mnemonic)
-  
+
   var derivationsObj: JsonNode
   if(jsonObj.getProp("derived", derivationsObj)):
     result.derivedAccounts = toDerivedAccounts(derivationsObj)

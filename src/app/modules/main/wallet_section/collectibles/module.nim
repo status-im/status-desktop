@@ -10,7 +10,7 @@ import ./collectibles/module as collectibles_module
 
 export io_interface
 
-type 
+type
   Module* = ref object of io_interface.AccessInterface
     delegate: delegate_interface.AccessInterface
     moduleLoaded: bool

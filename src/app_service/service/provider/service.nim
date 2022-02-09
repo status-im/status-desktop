@@ -56,7 +56,7 @@ proc toAPIRequest(message: string): APIRequest =
     hostname: data{"hostname"}.getStr()
   )
 
-type 
+type
   Service* = ref object of service_interface.ServiceInterface
     dappPermissionsService: dapp_permissions_service.ServiceInterface
     settingsService: settings_service.ServiceInterface
@@ -64,7 +64,7 @@ type
 method delete*(self: Service) =
   discard
 
-proc newService*(dappPermissionsService: dapp_permissions_service.ServiceInterface, 
+proc newService*(dappPermissionsService: dapp_permissions_service.ServiceInterface,
     settingsService: settings_service.ServiceInterface): Service =
   result = Service()
   result.dappPermissionsService = dappPermissionsService
@@ -245,7 +245,7 @@ proc process(self: Service, data: APIRequest): string =
 
   info "API request received", host=data.hostname, value=data.permission, isAllowed
 
-  if isAllowed: 
+  if isAllowed:
     discard self.dappPermissionsService.addPermission(data.hostname, data.permission)
 
   return $ %* {

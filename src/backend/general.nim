@@ -33,11 +33,11 @@ proc adminPeers*(): RpcResponse[JsonNode] {.raises: [Exception].} =
 proc wakuV2Peers*(): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* []
   result = core.callPrivateRPC("peers".prefix, payload)
-  
+
 proc dialPeer*(address: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* [address]
   result = core.callPrivateRPC("dialPeer".prefix, payload)
-  
+
 proc dropPeerByID*(peer: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* [peer]
   result = core.callPrivateRPC("dropPeer".prefix, payload)

@@ -52,18 +52,18 @@ QtObject:
     let enumRole = role.ModelRole
 
     case enumRole:
-    of ModelRole.EnsUsername: 
+    of ModelRole.EnsUsername:
       result = newQVariant(item.ensUsername)
-    of ModelRole.IsPending: 
+    of ModelRole.IsPending:
       result = newQVariant(item.isPending)
 
-  proc findIndexForItemWithEnsUsername(self: Model, ensUsername: string): int = 
+  proc findIndexForItemWithEnsUsername(self: Model, ensUsername: string): int =
     for i in 0 ..< self.items.len:
       if(self.items[i].ensUsername == ensUsername):
         return i
     return -1
 
-  proc containsEnsUsername*(self: Model, ensUsername: string): bool = 
+  proc containsEnsUsername*(self: Model, ensUsername: string): bool =
     return self.findIndexForItemWithEnsUsername(ensUsername) != -1
 
   proc addItem*(self: Model, item: Item) =

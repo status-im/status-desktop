@@ -9,8 +9,8 @@ QtObject:
       model: Model
       modelVariant: QVariant
       initialMessagesLoaded: bool
-      loadingHistoryMessagesInProgress: bool 
-      
+      loadingHistoryMessagesInProgress: bool
+
   proc delete*(self: View) =
     self.model.delete
     self.modelVariant.delete
@@ -36,44 +36,44 @@ QtObject:
   QtProperty[QVariant] model:
     read = getModel
 
-  proc toggleReaction*(self: View, messageId: string, emojiId: int) {.slot.} = 
+  proc toggleReaction*(self: View, messageId: string, emojiId: int) {.slot.} =
     self.delegate.toggleReaction(messageId, emojiId)
 
-  proc pinMessage*(self: View, messageId: string) {.slot.} = 
+  proc pinMessage*(self: View, messageId: string) {.slot.} =
     self.delegate.pinUnpinMessage(messageId, true)
 
-  proc unpinMessage*(self: View, messageId: string) {.slot.} = 
+  proc unpinMessage*(self: View, messageId: string) {.slot.} =
     self.delegate.pinUnpinMessage(messageId, false)
 
-  proc getMessageByIdAsJson*(self: View, messageId: string): string {.slot.} = 
-    let jsonObj = self.model.getMessageByIdAsJson(messageId)  
+  proc getMessageByIdAsJson*(self: View, messageId: string): string {.slot.} =
+    let jsonObj = self.model.getMessageByIdAsJson(messageId)
     if(jsonObj.isNil):
       return ""
     return $jsonObj
 
-  proc getMessageByIndexAsJson*(self: View, index: int): string {.slot.} = 
-    let jsonObj = self.model.getMessageByIndexAsJson(index)  
+  proc getMessageByIndexAsJson*(self: View, index: int): string {.slot.} =
+    let jsonObj = self.model.getMessageByIndexAsJson(index)
     if(jsonObj.isNil):
       return ""
     return $jsonObj
 
-  proc getChatType*(self: View): int {.slot.} = 
+  proc getChatType*(self: View): int {.slot.} =
     return self.delegate.getChatType()
 
-  proc getChatColor*(self: View): string {.slot.} = 
+  proc getChatColor*(self: View): string {.slot.} =
     return self.delegate.getChatColor()
 
-  proc amIChatAdmin*(self: View): bool {.slot.} = 
+  proc amIChatAdmin*(self: View): bool {.slot.} =
     return self.delegate.amIChatAdmin()
 
-  proc getNumberOfPinnedMessages*(self: View): int {.slot.} = 
+  proc getNumberOfPinnedMessages*(self: View): int {.slot.} =
     return self.delegate.getNumberOfPinnedMessages()
 
   proc initialMessagesLoadedChanged*(self: View) {.signal.}
 
   proc getInitialMessagesLoaded*(self: View): bool {.slot.} =
     return self.initialMessagesLoaded
-  
+
   QtProperty[bool] initialMessagesLoaded:
     read = getInitialMessagesLoaded
     notify = initialMessagesLoadedChanged
@@ -88,7 +88,7 @@ QtObject:
 
   proc getLoadingHistoryMessagesInProgress*(self: View): bool {.slot.} =
     return self.loadingHistoryMessagesInProgress
-  
+
   QtProperty[bool] loadingHistoryMessagesInProgress:
     read = getLoadingHistoryMessagesInProgress
     notify = loadingHistoryMessagesInProgressChanged
@@ -148,4 +148,3 @@ QtObject:
 
   proc fillGaps(self: View, messageId: string) {.slot.} =
     self.delegate.fillGaps(messageId)
-  

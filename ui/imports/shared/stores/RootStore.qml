@@ -66,7 +66,7 @@ QtObject {
         globalUtils.copyToClipboard(text)
     }
 
-    property var gifColumnA: chatSectionChatContentInputArea.gifColumnA 
+    property var gifColumnA: chatSectionChatContentInputArea.gifColumnA
     property var gifColumnB: chatSectionChatContentInputArea.gifColumnB
     property var gifColumnC: chatSectionChatContentInputArea.gifColumnC
 

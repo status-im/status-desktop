@@ -21,7 +21,7 @@ StatusModal {
 
     readonly property int maxChannelNameLength: 30
     readonly property int maxChannelDescLength: 140
-    
+
     signal createCommunityChannel(string chName, string chDescription, string chCategoryId)
     signal editCommunityChannel(string chName, string chDescription, string chCategoryId)
 
@@ -165,7 +165,7 @@ StatusModal {
             }
         }
     }
- 
+
     rightButtons: [
         StatusButton {
             enabled: isFormValid()

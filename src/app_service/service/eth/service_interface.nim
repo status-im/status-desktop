@@ -13,7 +13,7 @@ export coder
 export edn_dto
 export transaction
 
-type 
+type
   ServiceInterface* {.pure inheritable.} = ref object of RootObj
   ## Abstract class for this service access.
 
@@ -23,11 +23,11 @@ method delete*(self: ServiceInterface) {.base.} =
 method init*(self: ServiceInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method findByAddress*(self: ServiceInterface, contracts: seq[Erc20ContractDto], address: Address): Erc20ContractDto 
+method findByAddress*(self: ServiceInterface, contracts: seq[Erc20ContractDto], address: Address): Erc20ContractDto
   {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method findBySymbol*(self: ServiceInterface, contracts: seq[Erc20ContractDto], symbol: string): Erc20ContractDto 
+method findBySymbol*(self: ServiceInterface, contracts: seq[Erc20ContractDto], symbol: string): Erc20ContractDto
   {.base.} =
   raise newException(ValueError, "No implementation available")
 

@@ -11,14 +11,14 @@ export controller_interface
 logScope:
   topics = "profile-section-devices-module-controller"
 
-type 
+type
   Controller* = ref object of controller_interface.AccessInterface
     delegate: io_interface.AccessInterface
     events: EventEmitter
-    settingsService: settings_service.ServiceInterface  
+    settingsService: settings_service.ServiceInterface
     devicesService: devices_service.Service
-    
-proc newController*(delegate: io_interface.AccessInterface, 
+
+proc newController*(delegate: io_interface.AccessInterface,
   events: EventEmitter,
   settingsService: settings_service.ServiceInterface,
   devicesService: devices_service.Service): Controller =
@@ -27,34 +27,34 @@ proc newController*(delegate: io_interface.AccessInterface,
   result.events = events
   result.settingsService = settingsService
   result.devicesService = devicesService
-  
+
 method delete*(self: Controller) =
   discard
 
-method init*(self: Controller) = 
+method init*(self: Controller) =
   self.events.on(SIGNAL_UPDATE_DEVICE) do(e: Args):
     var args = UpdateDeviceArgs(e)
     self.delegate.updateOrAddDevice(args.deviceId, args.name, args.enabled)
 
-method getMyInstallationId*(self: Controller): string = 
+method getMyInstallationId*(self: Controller): string =
   return self.settingsService.getInstallationId()
 
-method getAllDevices*(self: Controller): seq[DeviceDto] = 
+method getAllDevices*(self: Controller): seq[DeviceDto] =
   return self.devicesService.getAllDevices()
 
-method isDeviceSetup*(self: Controller): bool = 
+method isDeviceSetup*(self: Controller): bool =
   return self.devicesService.isDeviceSetup()
 
-method setDeviceName*(self: Controller, name: string) = 
+method setDeviceName*(self: Controller, name: string) =
   self.devicesService.setDeviceName(name)
 
-method syncAllDevices*(self: Controller) = 
+method syncAllDevices*(self: Controller) =
   self.devicesService.syncAllDevices()
 
-method advertise*(self: Controller) = 
+method advertise*(self: Controller) =
   self.devicesService.advertise()
 
-method enableDevice*(self: Controller, deviceId: string, enable: bool) = 
+method enableDevice*(self: Controller, deviceId: string, enable: bool) =
   if enable:
     self.devicesService.enable(deviceId)
   else:

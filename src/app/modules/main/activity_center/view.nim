@@ -32,7 +32,7 @@ QtObject:
   QtProperty[QVariant] model:
     read = getModel
     notify = activityNotificationsChanged
-  
+
   proc hasMoreToShowChanged*(self: View) {.signal.}
 
   proc hasMoreToShow*(self: View): bool {.slot.}  =
@@ -101,7 +101,7 @@ QtObject:
 
   proc acceptActivityCenterNotificationsDone*(self: View, notificationIds: seq[string]) =
     self.model.removeNotifications(notificationIds)
-  
+
   proc acceptActivityCenterNotification(self: View, id: string): string {.slot.} =
     self.acceptActivityCenterNotifications(fmt"[""{id}""]")
 

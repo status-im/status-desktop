@@ -16,7 +16,7 @@ proc toStats(jsonMsg: JsonNode): Stats =
     downloadRate: uint64(jsonMsg{"downloadRate"}.getBiggestInt())
   )
 
-proc fromEvent*(T: type StatsSignal, event: JsonNode): StatsSignal = 
+proc fromEvent*(T: type StatsSignal, event: JsonNode): StatsSignal =
   result = StatsSignal()
   result.signalType = SignalType.Stats
   result.stats = event["event"].toStats

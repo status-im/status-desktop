@@ -1,6 +1,6 @@
 import json
 
-type 
+type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
   ## Abstract class for any input/interaction with this module.
 
@@ -19,7 +19,7 @@ method setBloomFilterMode*(self: AccessInterface, bloomFilterMode: bool): bool {
 method setBloomLevel*(self: AccessInterface, level: string): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getNodeConfig*(self: AccessInterface): JsonNode {.base.} = 
+method getNodeConfig*(self: AccessInterface): JsonNode {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method setV2LightMode*(self: AccessInterface, enabled: bool): bool {.base.} =

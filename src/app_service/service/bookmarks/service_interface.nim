@@ -3,7 +3,7 @@ import results
 
 export bookmark_dto
 
-type 
+type
   ServiceInterface* {.pure inheritable.} = ref object of RootObj
   ## Abstract class for this service access.
 

@@ -111,7 +111,7 @@ method delete*(self: Service) =
 proc newService*(
   events: EventEmitter, settingsService: settings_service.ServiceInterface,
   accountsService: accounts_service.ServiceInterface,
-  tokenService: token_service.Service): 
+  tokenService: token_service.Service):
   Service =
   result = Service()
   result.events = events

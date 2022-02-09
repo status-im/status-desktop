@@ -14,7 +14,7 @@ export io_interface
 logScope:
   topics = "profile-section-advanced-module"
 
-type 
+type
   Module* = ref object of io_interface.AccessInterface
     delegate: delegate_interface.AccessInterface
     view: View
@@ -31,7 +31,7 @@ proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitt
   result.viewVariant = newQVariant(result.view)
   result.controller = controller.newController(result, events, settingsService, nodeConfigurationService)
   result.moduleLoaded = false
-  
+
 method delete*(self: Module) =
   self.view.delete
   self.viewVariant.delete
@@ -60,7 +60,7 @@ method getCurrentNetworkName*(self: Module): string =
 
 method getCurrentNetworkId*(self: Module): string =
   return self.controller.getCurrentNetworkDetails().id
-  
+
 method setCurrentNetwork*(self: Module, network: string) =
   self.controller.changeCurrentNetworkTo(network)
 
@@ -70,7 +70,7 @@ method onCurrentNetworkSet*(self: Module) =
 
 method getFleet*(self: Module): string =
   return self.controller.getFleet()
-  
+
 method setFleet*(self: Module, fleet: string) =
   self.controller.changeFleetTo(fleet)
 
@@ -106,8 +106,8 @@ method isTelemetryEnabled*(self: Module): bool =
 
 method enableDeveloperFeatures*(self: Module) =
   self.controller.enableDeveloperFeatures()
-  
-method toggleTelemetry*(self: Module) = 
+
+method toggleTelemetry*(self: Module) =
   self.controller.toggleTelemetry()
 
 method onTelemetryToggled*(self: Module) =
@@ -116,7 +116,7 @@ method onTelemetryToggled*(self: Module) =
 method isAutoMessageEnabled*(self: Module): bool =
   self.controller.isAutoMessageEnabled()
 
-method toggleAutoMessage*(self: Module) = 
+method toggleAutoMessage*(self: Module) =
   self.controller.toggleAutoMessage()
 
 method onAutoMessageToggled*(self: Module) =
@@ -125,13 +125,13 @@ method onAutoMessageToggled*(self: Module) =
 method isDebugEnabled*(self: Module): bool =
   self.controller.isDebugEnabled()
 
-method toggleDebug*(self: Module) = 
+method toggleDebug*(self: Module) =
   self.controller.toggleDebug()
 
 method onDebugToggled*(self: Module) =
   self.view.isDebugEnabledChanged()
 
-method addCustomNetwork*(self: Module, name: string, endpoint: string, networkId: int, networkType: string) = 
+method addCustomNetwork*(self: Module, name: string, endpoint: string, networkId: int, networkType: string) =
   var network: settings_service.Network
   network.id = $genUUID()
   network.name = name
@@ -147,7 +147,7 @@ method onCustomNetworkAdded*(self: Module, network: settings_service.Network) =
 
 method toggleWalletSection*(self: Module) =
   self.controller.toggleWalletSection()
-  
+
 method toggleBrowserSection*(self: Module) =
   self.controller.toggleBrowserSection()
 

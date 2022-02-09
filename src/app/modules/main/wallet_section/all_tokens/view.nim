@@ -28,7 +28,7 @@ QtObject:
 
   proc load*(self: View) =
     self.delegate.viewDidLoad()
-    
+
   proc allChanged*(self: View) {.signal.}
 
   proc getAll(self: View): QVariant {.slot.} =
@@ -63,7 +63,7 @@ QtObject:
 
   proc addCustomToken(self: View, address: string, name: string, symbol: string, decimals: string) {.slot.} =
     self.delegate.addCustomToken(address, name, symbol, parseInt(decimals))
-        
+
   proc toggleVisible(self: View, symbol: string) {.slot.} =
     self.delegate.toggleVisible(symbol)
 

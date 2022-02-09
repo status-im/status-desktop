@@ -62,7 +62,7 @@ proc getAvailableStickerPacks*(
     getPackDataMethod: MethodDto,
     running: var Atomic[bool]
     ): Table[int, StickerPackDto] =
-  
+
   var availableStickerPacks = initTable[int, StickerPackDto]()
   try:
     let numPacksReponse = getPackCount(contract, getPackCount)

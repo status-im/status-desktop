@@ -36,11 +36,11 @@ StatusModal {
                 //% "Public community"
                 subTitle = qsTrId("public-community");
                 break;
-            case Constants.communityChatInvitationOnlyAccess: 
+            case Constants.communityChatInvitationOnlyAccess:
                 //% "Invitation only community"
                 subTitle = qsTrId("invitation-only-community");
                 break;
-            case Constants.communityChatOnRequestAccess: 
+            case Constants.communityChatOnRequestAccess:
                 //% "On request community"
                 subTitle = qsTrId("on-request-community");
                 break;

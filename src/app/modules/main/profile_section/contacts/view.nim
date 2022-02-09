@@ -30,7 +30,7 @@ QtObject:
 
   proc load*(self: View) =
     self.delegate.viewDidLoad()
-    
+
   proc myContactsModel*(self: View): Model =
     return self.myContactsModel
 

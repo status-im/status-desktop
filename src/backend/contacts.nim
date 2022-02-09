@@ -44,4 +44,4 @@ proc addContact*(id: string, ensName: string): RpcResponse[JsonNode] {.raises: [
 proc sendContactUpdate*(publicKey, ensName, thumbnail: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* [publicKey, ensName, thumbnail]
   result = callPrivateRPC("sendContactUpdate".prefix, payload)
-  
+

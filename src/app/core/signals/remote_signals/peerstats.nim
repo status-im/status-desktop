@@ -5,7 +5,7 @@ import signal_type
 type PeerStatsSignal* = ref object of Signal
   peers*: seq[string]
 
-proc fromEvent*(T: type PeerStatsSignal, jsonSignal: JsonNode): PeerStatsSignal = 
+proc fromEvent*(T: type PeerStatsSignal, jsonSignal: JsonNode): PeerStatsSignal =
   result = PeerStatsSignal()
   result.signalType = SignalType.PeerStats
   if jsonSignal["event"].kind != JNull:

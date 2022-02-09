@@ -77,7 +77,7 @@ ModalPopup {
     header: Item {
       height: 30
       width: parent.width
-   
+
       StyledText {
           id: lblNewGroup
           //% "New group chat"

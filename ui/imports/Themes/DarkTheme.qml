@@ -82,7 +82,7 @@ Theme {
     property color mainMenuBackground: "#212121"
     property color secondaryMenuBackground: graphite2
     property color tabButtonBg: translucentBlue
-    
+
     property color buttonForegroundColor: blue
     property color buttonBackgroundColor: translucentBlue
     property color buttonBackgroundColorHover: "#4d869eff"

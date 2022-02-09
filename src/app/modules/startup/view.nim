@@ -12,7 +12,7 @@ QtObject:
     View* = ref object of QObject
       delegate: io_interface.AccessInterface
       appState: AppState
-      
+
   proc delete*(self: View) =
     self.QObject.delete
 

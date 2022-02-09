@@ -21,7 +21,7 @@ type
     nodeConfigurationService: node_configuration_service.ServiceInterface
     isWakuV2: bool
 
-proc newController*(delegate: io_interface.AccessInterface, 
+proc newController*(delegate: io_interface.AccessInterface,
   events: EventEmitter,
   settingsService: settings_service.ServiceInterface,
   nodeService: node_service.Service,
@@ -41,7 +41,7 @@ proc setPeers(self: Controller, peers: seq[string]) =
   self.nodeService.peerSummaryChange(peers)
   self.delegate.setPeerSize(peers.len)
 
-method init*(self: Controller) = 
+method init*(self: Controller) =
   self.isWakuV2 = self.nodeConfigurationService.getWakuVersion() == WAKU_VERSION_2
 
   self.events.on(SignalType.Wallet.event) do(e:Args):

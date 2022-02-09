@@ -7,7 +7,7 @@ QtObject:
       delegate: io_interface.AccessInterface
       model: Model
       modelVariant: QVariant
-      
+
   proc delete*(self: View) =
     self.model.delete
     self.modelVariant.delete
@@ -39,7 +39,7 @@ QtObject:
   QtProperty[bool] isDeviceSetup:
     read = getIsDeviceSetup
     notify = deviceSetupChanged
-  
+
   proc emitDeviceSetupChangedSignal*(self: View) =
     self.deviceSetupChanged()
 

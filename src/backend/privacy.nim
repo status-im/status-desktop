@@ -9,7 +9,7 @@ export response_type
 logScope:
   topics = "rpc-privacy"
 
-proc changeDatabasePassword*(keyUID: string, password: string, newPassword: string): RpcResponse[JsonNode] 
+proc changeDatabasePassword*(keyUID: string, password: string, newPassword: string): RpcResponse[JsonNode]
   {.raises: [Exception].} =
   try:
     let hashedPassword = hashPassword(password)

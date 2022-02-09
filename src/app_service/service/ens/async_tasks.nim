@@ -11,7 +11,7 @@ type
 
 const checkEnsAvailabilityTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[CheckEnsAvailabilityTaskArg](argEncoded)
-  
+
   var desiredEnsUsername = arg.ensUsername & (if(arg.isStatus): ens_utils.STATUS_DOMAIN else: "")
 
   var availability = ""
@@ -20,7 +20,7 @@ const checkEnsAvailabilityTask: Task = proc(argEncoded: string) {.gcsafe, nimcal
     availability = ENS_AVAILABILITY_STATUS_AVAILABLE
   else:
     let ensPubkey = ens_utils.pubkey(arg.ensUsername)
-    if ownerAddr != "": 
+    if ownerAddr != "":
       if ensPubkey == "" and ownerAddr == arg.myWalletAddress:
         availability = ENS_AVAILABILITY_STATUS_OWNED # "Continuing will connect this username with your chat key."
       elif ensPubkey == arg.myPublicKey:

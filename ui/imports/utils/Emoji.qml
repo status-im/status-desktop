@@ -17,12 +17,12 @@ QtObject {
         if (!renderSize.includes("x") || renderSizes.length !== 2) {
             throw new Error("Invalid value for 'renderSize' parameter: ", renderSize);
         }
-        
+
         Twemoji.twemoji.base = base
         Twemoji.twemoji.ext = ".svg"
         Twemoji.twemoji.size = "svg"
         return Twemoji.twemoji.parse(text, {
-            attributes: function() { 
+            attributes: function() {
               return {
                 width: renderSizes[0],
                 height: renderSizes[1],

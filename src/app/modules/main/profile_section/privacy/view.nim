@@ -57,4 +57,3 @@ QtObject:
     read = getMessagesFromContactsOnly
     write = setMessagesFromContactsOnly
     notify = messagesFromContactsOnlyChanged
-    

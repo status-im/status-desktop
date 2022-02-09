@@ -1,6 +1,6 @@
 import ../../../../../../app_service/service/collectible/service_interface as collectible_service
 
-type 
+type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
   ## Abstract class for any input/interaction with this module.
 
@@ -14,7 +14,6 @@ method fetch*(self: AccessInterface, address: string, collectionSlug: string): s
   raise newException(ValueError, "No implementation available")
 
 type
-  ## Abstract class (concept) which must be implemented by object/s used in this 
+  ## Abstract class (concept) which must be implemented by object/s used in this
   ## module.
   DelegateInterface* = concept c
-    

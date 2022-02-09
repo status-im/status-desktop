@@ -4,7 +4,7 @@ import ./dto/generated_accounts as dto_generated_accounts
 export dto_accounts
 export dto_generated_accounts
 
-type 
+type
   ServiceInterface* {.pure inheritable.} = ref object of RootObj
   ## Abstract class for this service access.
 

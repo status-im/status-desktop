@@ -143,9 +143,9 @@ Item {
             id: bubbleLoader
             active: {
                 return !root.isError && (
-                    isCurrentUser || 
-                    (!isCurrentUser && 
-                        !(root.state === Constants.addressRequested || 
+                    isCurrentUser ||
+                    (!isCurrentUser &&
+                        !(root.state === Constants.addressRequested ||
                         root.state === Constants.transactionRequested)
                     )
                 )

@@ -1,6 +1,6 @@
 import strformat
 
-type 
+type
   Item* = object
     name: string
     address: string
@@ -14,12 +14,12 @@ proc initItem*(
 
 proc `$`*(self: Item): string =
   result = fmt"""AllTokensItem(
-    name: {self.name}, 
+    name: {self.name},
     address: {self.address},
     ]"""
 
-proc getName*(self: Item): string = 
+proc getName*(self: Item): string =
   return self.name
 
-proc getAddress*(self: Item): string = 
+proc getAddress*(self: Item): string =
   return self.address

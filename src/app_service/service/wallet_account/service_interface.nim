@@ -2,7 +2,7 @@ import ./dto
 
 export dto
 
-type 
+type
   ServiceInterface* {.pure inheritable.} = ref object of RootObj
   ## Abstract class for this service access.
 
@@ -45,8 +45,8 @@ method updateCurrency*(self: ServiceInterface, newCurrency: string) {.base.} =
 method updateWalletAccount*(self: ServiceInterface, address: string, accountName: string, color: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method toggleTokenVisible*(self: ServiceInterface, symbol: string) {.base.} = 
+method toggleTokenVisible*(self: ServiceInterface, symbol: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getPrice*(self: ServiceInterface, crypto: string, fiat: string): float64 {.base.} = 
+method getPrice*(self: ServiceInterface, crypto: string, fiat: string): float64 {.base.} =
   raise newException(ValueError, "No implementation available")

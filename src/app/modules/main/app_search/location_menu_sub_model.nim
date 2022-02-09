@@ -68,17 +68,17 @@ QtObject:
     let enumRole = role.SubModelRole
 
     case enumRole:
-    of SubModelRole.Value: 
+    of SubModelRole.Value:
       result = newQVariant(item.value)
-    of SubModelRole.Text: 
+    of SubModelRole.Text:
       result = newQVariant(item.text)
-    of SubModelRole.Image: 
+    of SubModelRole.Image:
       result = newQVariant(item.image)
-    of SubModelRole.Icon: 
+    of SubModelRole.Icon:
       result = newQVariant(item.icon)
-    of SubModelRole.IconColor: 
+    of SubModelRole.IconColor:
       result = newQVariant(item.iconColor)
-    of SubModelRole.IsIdenticon: 
+    of SubModelRole.IsIdenticon:
       result = newQVariant(item.isIdenticon)
 
   proc setItems*(self: SubModel, items: seq[SubItem]) =

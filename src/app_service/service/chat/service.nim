@@ -34,7 +34,7 @@ type
     activityCenterNotifications*: seq[ActivityCenterNotificationDto]
     # statusUpdates*: seq[StatusUpdate]
     # deletedMessages*: seq[RemovedMessage]
-  
+
   ChatArgs* = ref object of Args
     chatId*: string
 
@@ -53,7 +53,7 @@ type
   ChatMembersAddedArgs* = ref object of Args
     chatId*: string
     ids*: seq[string]
-  
+
   ChatMemberRemovedArgs* = ref object of Args
     chatId*: string
     id*: string
@@ -63,7 +63,7 @@ type
     id*: string
     admin*: bool
     joined*: bool
-  
+
 
 # Signals which may be emitted by this service:
 const SIGNAL_CHAT_UPDATE* = "chatUpdate_new"
@@ -126,7 +126,7 @@ QtObject:
         let chat = chat_dto.toChatDto(jsonChat)
         # TODO add the channel back to `chat` when it is refactored
         self.updateOrAddChat(chat)
-        chats.add(chat) 
+        chats.add(chat)
     result = (chats, messages)
 
   proc processMessageUpdateAfterSend*(self: Service, response: RpcResponse[JsonNode]): (seq[ChatDto], seq[MessageDto])  =
@@ -171,7 +171,7 @@ QtObject:
 
     return self.chats[chatId]
 
-  proc getOneToOneChatNameAndImage*(self: Service, chatId: string): 
+  proc getOneToOneChatNameAndImage*(self: Service, chatId: string):
     tuple[name: string, image: string, isIdenticon: bool] =
     return self.contactService.getContactNameAndImage(chatId)
 
@@ -243,7 +243,7 @@ QtObject:
     except Exception as e:
       error "Error deleting channel", chatId, msg = e.msg
       return
-    
+
   proc sendImages*(self: Service, chatId: string, imagePathsJson: string): string =
     result = ""
     try:
@@ -341,7 +341,7 @@ QtObject:
 
       let response = status_chat.muteChat(chatId)
       if(not response.error.isNil):
-        let msg = response.error.message & " chatId=" & chatId 
+        let msg = response.error.message & " chatId=" & chatId
         error "error while mute chat ", msg
         return
 
@@ -359,10 +359,10 @@ QtObject:
 
       let response = status_chat.unmuteChat(chatId)
       if(not response.error.isNil):
-        let msg = response.error.message & " chatId=" & chatId 
+        let msg = response.error.message & " chatId=" & chatId
         error "error while unmute chat ", msg
         return
-      
+
       self.events.emit(SIGNAL_CHAT_UNMUTED, ChatArgs(chatId: chatId))
     except Exception as e:
       let errDesription = e.msg
@@ -373,10 +373,10 @@ QtObject:
     try:
       let response = status_chat.deleteMessagesByChatId(chatId)
       if(not response.error.isNil):
-        let msg = response.error.message & " chatId=" & chatId 
+        let msg = response.error.message & " chatId=" & chatId
         error "error while clearing chat history ", msg
         return
-      
+
       self.events.emit(SIGNAL_CHAT_HISTORY_CLEARED, ChatArgs(chatId: chatId))
     except Exception as e:
       let errDesription = e.msg
@@ -384,7 +384,7 @@ QtObject:
       return
 
   method addGroupMembers*(self: Service, chatId: string, pubKeys: seq[string]) =
-    try: 
+    try:
       let response = status_chat.addGroupMembers(chatId, pubKeys)
       if (response.error.isNil):
         self.events.emit(SIGNAL_CHAT_MEMBERS_ADDED, ChatMembersAddedArgs(chatId: chatId, ids: pubKeys))
@@ -392,7 +392,7 @@ QtObject:
       error "error while adding group members: ", msg = e.msg
 
   method removeMemberFromGroupChat*(self: Service, chatId: string, pubKey: string) =
-    try: 
+    try:
       let response = status_chat.removeMembersFromGroupChat(chatId, pubKey)
       if (response.error.isNil):
         self.events.emit(SIGNAL_CHAT_MEMBER_REMOVED, ChatMemberRemovedArgs(chatId: chatId, id: pubkey))
@@ -401,10 +401,10 @@ QtObject:
 
 
   method renameGroupChat*(self: Service, chatId: string, newName: string) =
-    try: 
+    try:
       let response = status_chat.renameGroupChat(chatId, newName)
       if (not response.error.isNil):
-        let msg = response.error.message & " chatId=" & chatId 
+        let msg = response.error.message & " chatId=" & chatId
         error "error while renaming group chat", msg
         return
 
@@ -414,13 +414,13 @@ QtObject:
 
 
   method makeAdmin*(self: Service, chatId: string, pubKey: string) =
-    try: 
+    try:
       let response = status_chat.makeAdmin(chatId, pubKey)
       for member in self.chats[chatId].members.mitems:
         if (member.id == pubKey):
           member.admin = true
           self.events.emit(
-            SIGNAL_CHAT_MEMBER_UPDATED, 
+            SIGNAL_CHAT_MEMBER_UPDATED,
             ChatMemberUpdatedArgs(id: member.id, admin: member.admin, chatId: chatId, joined: member.joined)
           )
           break
@@ -443,7 +443,7 @@ QtObject:
       error "error while creating group from invitation: ", msg = e.msg
 
   method createGroupChat*(self: Service, groupName: string, pubKeys: seq[string]): tuple[chatDto: ChatDto, success: bool] =
-    try: 
+    try:
       let response = status_chat.createGroupChat(groupName, pubKeys)
       result = self.createChatFromResponse(response)
     except Exception as e:

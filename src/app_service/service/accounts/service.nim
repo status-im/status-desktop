@@ -18,7 +18,7 @@ logScope:
 
 const PATHS = @[PATH_WALLET_ROOT, PATH_EIP_1581, PATH_WHISPER, PATH_DEFAULT_WALLET]
 
-type 
+type
   Service* = ref object of ServiceInterface
     fleetConfiguration: FleetConfiguration
     generatedAccounts: seq[GeneratedAccountDto]
@@ -53,13 +53,13 @@ method init*(self: Service) =
   try:
     let response = status_account.generateAddresses(PATHS)
 
-    self.generatedAccounts = map(response.result.getElems(), 
+    self.generatedAccounts = map(response.result.getElems(),
     proc(x: JsonNode): GeneratedAccountDto = toGeneratedAccountDto(x))
 
     for account in self.generatedAccounts.mitems:
       account.alias = generateAliasFromPk(account.derivedAccounts.whisper.publicKey)
       account.identicon = generateIdenticonFromPk(account.derivedAccounts.whisper.publicKey)
-  
+
   except Exception as e:
     error "error: ", methodName="init", errName = e.name, errDesription = e.msg
 
@@ -72,7 +72,7 @@ method clear*(self: Service) =
 method validateMnemonic*(self: Service, mnemonic: string): string =
   try:
     let response = status_general.validateMnemonic(mnemonic)
-    
+
     var error = "response doesn't contain \"error\""
     if(response.result.contains("error")):
       error = response.result["error"].getStr
@@ -101,7 +101,7 @@ method openedAccounts*(self: Service): seq[AccountDto] =
   except Exception as e:
     error "error: ", methodName="openedAccounts", errName = e.name, errDesription = e.msg
 
-proc storeDerivedAccounts(self: Service, accountId, hashedPassword: string, 
+proc storeDerivedAccounts(self: Service, accountId, hashedPassword: string,
   paths: seq[string]): DerivedAccounts =
   try:
     let response = status_account.storeDerivedAccounts(accountId, hashedPassword, paths)
@@ -110,7 +110,7 @@ proc storeDerivedAccounts(self: Service, accountId, hashedPassword: string,
   except Exception as e:
     error "error: ", methodName="storeDerivedAccounts", errName = e.name, errDesription = e.msg
 
-proc saveAccountAndLogin(self: Service, hashedPassword: string, account, 
+proc saveAccountAndLogin(self: Service, hashedPassword: string, account,
   subaccounts, settings, config: JsonNode): AccountDto =
   try:
     let response = status_account.saveAccountAndLogin(hashedPassword, account, subaccounts, settings, config)
@@ -177,7 +177,7 @@ proc getSubaccountDataForAccountId(self: Service, accountId: string): JsonNode =
   if(self.importedAccount.isValid()):
     if(self.importedAccount.id == accountId):
       return self.prepareSubaccountJsonObject(self.importedAccount)
-  
+
 proc prepareAccountSettingsJsonObject(self: Service, account: GeneratedAccountDto,
   installationId: string): JsonNode =
   result = %* {
@@ -205,7 +205,7 @@ proc prepareAccountSettingsJsonObject(self: Service, account: GeneratedAccountDt
     "installation-id": installationId
   }
 
-proc getAccountSettings(self: Service, accountId: string, 
+proc getAccountSettings(self: Service, accountId: string,
   installationId: string): JsonNode =
   for acc in self.generatedAccounts:
     if(acc.id == accountId):
@@ -252,7 +252,7 @@ method setupAccount*(self: Service, accountId, password: string): bool =
     let settingsJson = self.getAccountSettings(accountId, installationId)
     let nodeConfigJson = self.getDefaultNodeConfig(installationId)
 
-    if(accountDataJson.isNil or subaccountDataJson.isNil or settingsJson.isNil or 
+    if(accountDataJson.isNil or subaccountDataJson.isNil or settingsJson.isNil or
       nodeConfigJson.isNil):
       let description = "at least one json object is not prepared well"
       error "error: ", methodName="setupAccount", errDesription = description
@@ -260,8 +260,8 @@ method setupAccount*(self: Service, accountId, password: string): bool =
 
     let hashedPassword = hashString(password)
     discard self.storeDerivedAccounts(accountId, hashedPassword, PATHS)
-    
-    self.loggedInAccount = self.saveAccountAndLogin(hashedPassword, accountDataJson, subaccountDataJson, settingsJson, 
+
+    self.loggedInAccount = self.saveAccountAndLogin(hashedPassword, accountDataJson, subaccountDataJson, settingsJson,
     nodeConfigJson)
 
     return self.getLoggedInAccount.isValid()
@@ -274,7 +274,7 @@ method importMnemonic*(self: Service, mnemonic: string): bool =
   try:
     let response = status_account.multiAccountImportMnemonic(mnemonic)
     self.importedAccount = toGeneratedAccountDto(response.result)
-    
+
     let responseDerived = status_account.deriveAccounts(self.importedAccount.id, PATHS)
     self.importedAccount.derivedAccounts = toDerivedAccounts(responseDerived.result)
 
@@ -282,7 +282,7 @@ method importMnemonic*(self: Service, mnemonic: string): bool =
     self.importedAccount.identicon = generateIdenticonFromPk(self.importedAccount.derivedAccounts.whisper.publicKey)
 
     return self.importedAccount.isValid()
-  
+
   except Exception as e:
     error "error: ", methodName="importMnemonic", errName = e.name, errDesription = e.msg
     return false
@@ -301,7 +301,7 @@ method login*(self: Service, account: AccountDto, password: string): string =
     # This is moved from `status-lib` here
     # TODO:
     # If you added a new value in the nodeconfig in status-go, old accounts will not have this value, since the node config
-    # is stored in the database, and it's not easy to migrate using .sql 
+    # is stored in the database, and it's not easy to migrate using .sql
     # While this is fixed, you can add here any missing attribute on the node config, and it will be merged with whatever
     # the account has in the db
     var nodeCfg = %* {
@@ -316,7 +316,7 @@ method login*(self: Service, account: AccountDto, password: string): string =
       },
     }
 
-    let response = status_account.login(account.name, account.keyUid, hashedPassword, account.identicon, thumbnailImage, 
+    let response = status_account.login(account.name, account.keyUid, hashedPassword, account.identicon, thumbnailImage,
     largeImage, $nodeCfg)
 
     var error = "response doesn't contain \"error\""

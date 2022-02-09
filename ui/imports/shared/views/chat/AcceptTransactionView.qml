@@ -30,8 +30,8 @@ Item {
         id: acceptText
         color: Style.current.blue
         //% "Accept and share address"
-        text: root.state === Constants.addressRequested ? 
-          qsTrId("accept-and-share-address") : 
+        text: root.state === Constants.addressRequested ?
+          qsTrId("accept-and-share-address") :
           //% "Accept and send"
           qsTrId("accept-and-send")
         padding: Style.current.halfPadding

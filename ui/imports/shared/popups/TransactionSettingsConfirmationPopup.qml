@@ -166,7 +166,7 @@ ModalPopup {
                     }
                 }
             }
-            
+
         }
 
         Rectangle {
@@ -230,7 +230,7 @@ ModalPopup {
         }
 
     }
-    
+
     footer: Item {
         id: footerContainer
         width: parent.width
@@ -248,7 +248,7 @@ ModalPopup {
             id: confirmButton
             type: StatusBaseButton.Type.Danger
             anchors.right: parent.right
-            anchors.rightMargin: Style.current.smallPadding        
+            anchors.rightMargin: Style.current.smallPadding
             text: qsTr("Continue anyway")
             anchors.bottom: parent.bottom
             onClicked: {

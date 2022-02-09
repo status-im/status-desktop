@@ -128,7 +128,7 @@ ModalPopup {
                 getFiatValue: root.store.getFiatValue
                 defaultCurrency: root.store.getCurrentCurrency()
                 width: stack.width
-                
+
                 property var estimateGas: Backpressure.debounce(gasSelector, 600, function() {
                     let estimatedGas = root.estimateGasFunction(selectFromAccount.selectedAccount, uuid);
                     gasSelector.selectedGasLimit = estimatedGas
@@ -223,7 +223,7 @@ ModalPopup {
             loading: stack.currentGroup.isPending
             onClicked: {
                 const validity = stack.currentGroup.validate()
-                if (validity.isValid && !validity.isPending) { 
+                if (validity.isValid && !validity.isPending) {
                     if (stack.isLastGroup) {
                         return root.sendTransaction()
                     }

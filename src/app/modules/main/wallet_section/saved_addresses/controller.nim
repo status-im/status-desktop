@@ -5,7 +5,7 @@ import ../../../../../app_service/service/saved_address/service as saved_address
 
 export controller_interface
 
-type 
+type
   Controller* = ref object of controller_interface.AccessInterface
     delegate: io_interface.AccessInterface
     events: EventEmitter
@@ -20,7 +20,7 @@ proc newController*(
   result.delegate = delegate
   result.events = events
   result.savedAddressService = savedAddressService
-  
+
 method delete*(self: Controller) =
   discard
 

@@ -1,6 +1,6 @@
 import ../../../../app_service/service/accounts/service_interface
 
-type 
+type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
   ## Abstract class for any input/interaction with this module.
 
@@ -18,7 +18,7 @@ method setSelectedAccountByIndex*(self: AccessInterface, index: int) {.base.} =
 
 method storeSelectedAccountAndLogin*(self: AccessInterface, password: string) {.base.} =
   raise newException(ValueError, "No implementation available")
-    
+
 method getImportedAccount*(self: AccessInterface): GeneratedAccountDto {.base.} =
   raise newException(ValueError, "No implementation available")
 

@@ -68,9 +68,9 @@ Rectangle {
             case Constants.addressRequested: return qsTrId("address-requested")
             //% "Waiting to accept"
             case Constants.transactionRequested: return qsTrId("waiting-to-accept")
-            case Constants.addressReceived: return (!root.outgoing ? 
+            case Constants.addressReceived: return (!root.outgoing ?
                 //% "Address shared"
-                qsTrId("address-shared") : 
+                qsTrId("address-shared") :
                 //% "Address received"
                 qsTrId("address-received"))
             case Constants.transactionDeclined:

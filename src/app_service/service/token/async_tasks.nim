@@ -16,7 +16,7 @@ type
 const getTokenDetailsTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[GetTokenDetailsTaskArg](argEncoded)
   try:
-    let 
+    let
       tkn = newErc20Contract(arg.chainId, arg.address.parseAddress)
       decimals = tkn.tokenDecimals()
       output = %* {

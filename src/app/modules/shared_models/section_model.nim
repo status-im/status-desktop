@@ -96,47 +96,47 @@ QtObject:
     let enumRole = role.ModelRole
 
     case enumRole:
-    of ModelRole.Id: 
+    of ModelRole.Id:
       result = newQVariant(item.id)
-    of ModelRole.SectionType: 
+    of ModelRole.SectionType:
       result = newQVariant(item.sectionType.int)
-    of ModelRole.Name: 
+    of ModelRole.Name:
       result = newQVariant(item.name)
-    of ModelRole.AmISectionAdmin: 
+    of ModelRole.AmISectionAdmin:
       result = newQVariant(item.amISectionAdmin)
-    of ModelRole.Description: 
+    of ModelRole.Description:
       result = newQVariant(item.description)
-    of ModelRole.Image: 
+    of ModelRole.Image:
       result = newQVariant(item.image)
-    of ModelRole.Icon: 
+    of ModelRole.Icon:
       result = newQVariant(item.icon)
-    of ModelRole.Color: 
+    of ModelRole.Color:
       result = newQVariant(item.color)
-    of ModelRole.HasNotification: 
+    of ModelRole.HasNotification:
       result = newQVariant(item.hasNotification)
-    of ModelRole.NotificationsCount: 
+    of ModelRole.NotificationsCount:
       result = newQVariant(item.notificationsCount)
-    of ModelRole.Active: 
+    of ModelRole.Active:
       result = newQVariant(item.active)
-    of ModelRole.Enabled: 
+    of ModelRole.Enabled:
       result = newQVariant(item.enabled)
-    of ModelRole.Joined: 
+    of ModelRole.Joined:
       result = newQVariant(item.joined)
-    of ModelRole.IsMember: 
+    of ModelRole.IsMember:
       result = newQVariant(item.isMember)
-    of ModelRole.CanJoin: 
+    of ModelRole.CanJoin:
       result = newQVariant(item.canJoin)
-    of ModelRole.CanManageUsers: 
+    of ModelRole.CanManageUsers:
       result = newQVariant(item.canManageUsers)
-    of ModelRole.CanRequestAccess: 
+    of ModelRole.CanRequestAccess:
       result = newQVariant(item.canRequestAccess)
-    of ModelRole.Access: 
+    of ModelRole.Access:
       result = newQVariant(item.access)
-    of ModelRole.EnsOnly: 
+    of ModelRole.EnsOnly:
       result = newQVariant(item.ensOnly)
-    of ModelRole.MembersModel: 
+    of ModelRole.MembersModel:
       result = newQVariant(item.members)
-    of ModelRole.PendingRequestsToJoinModel: 
+    of ModelRole.PendingRequestsToJoinModel:
       result = newQVariant(item.pendingRequestsToJoin)
 
   proc addItem*(self: SectionModel, item: SectionItem) =
@@ -220,7 +220,7 @@ QtObject:
         self.items[i].active = false
         self.dataChanged(index, index, @[ModelRole.Active.int])
 
-      if(self.items[i].id == id):        
+      if(self.items[i].id == id):
         let index = self.createIndex(i, 0, nil)
         self.items[i].active = true
         self.dataChanged(index, index, @[ModelRole.Active.int])

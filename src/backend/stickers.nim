@@ -14,7 +14,7 @@ proc getBalance*(address: string, data: string): RpcResponse[JsonNode] {.raises:
 
   if not response.error.isNil:
     raise newException(RpcException, "Error getting stickers balance: " & response.error.message)
-  
+
   return response
 
 proc tokenOfOwnerByIndex*(address: string, data: string): RpcResponse[JsonNode] {.raises: [Exception].} =
@@ -38,7 +38,7 @@ proc getPackIdFromTokenId*(address: string, data: string): RpcResponse[JsonNode]
   let response = eth.doEthCall(payload)
   if not response.error.isNil:
     raise newException(RpcException, "Error getting pack id from token id: " & response.error.message)
-  
+
   return response
 
 proc getPackCount*(address: string, data: string): RpcResponse[JsonNode] {.raises: [Exception].} =
@@ -51,5 +51,5 @@ proc getPackCount*(address: string, data: string): RpcResponse[JsonNode] {.raise
 
   if not response.error.isNil:
     raise newException(RpcException, "Error getting stickers balance: " & response.error.message)
-  
+
   return response

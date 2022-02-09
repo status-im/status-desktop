@@ -11,15 +11,15 @@ export io_interface
 logScope:
   topics = "profile-section-notifications-module"
 
-type 
+type
   Module* = ref object of io_interface.AccessInterface
     delegate: delegate_interface.AccessInterface
     controller: controller.AccessInterface
     view: View
-    viewVariant: QVariant    
+    viewVariant: QVariant
     moduleLoaded: bool
 
-proc newModule*(delegate: delegate_interface.AccessInterface, 
+proc newModule*(delegate: delegate_interface.AccessInterface,
   events: EventEmitter,
   chatService: chat_service.Service): Module =
   result = Module()
@@ -28,7 +28,7 @@ proc newModule*(delegate: delegate_interface.AccessInterface,
   result.viewVariant = newQVariant(result.view)
   result.controller = controller.newController(result, events, chatService)
   result.moduleLoaded = false
-  
+
 method delete*(self: Module) =
   self.view.delete
   self.viewVariant.delete

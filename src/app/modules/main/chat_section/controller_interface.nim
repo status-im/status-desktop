@@ -2,7 +2,7 @@ import ../../../../app_service/service/contacts/dto/[contacts, contact_details]
 import ../../../../app_service/service/chat/dto/[chat]
 import ../../../../app_service/service/community/dto/[community]
 
-type 
+type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
   ## Abstract class for any input/interaction with this module.
 
@@ -38,14 +38,14 @@ method getChatDetails*(self: AccessInterface, communityId, chatId: string): Chat
 
 method getChatDetailsForChatTypes*(self: AccessInterface, types: seq[ChatType]): seq[ChatDto] {.base.} =
   raise newException(ValueError, "No implementation available")
-    
+
 method setActiveItemSubItem*(self: AccessInterface, itemId: string, subItemId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
-    
+
 method removeCommunityChat*(self: AccessInterface, itemId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getOneToOneChatNameAndImage*(self: AccessInterface, chatId: string): 
+method getOneToOneChatNameAndImage*(self: AccessInterface, chatId: string):
   tuple[name: string, image: string, isIdenticon: bool] {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -82,7 +82,7 @@ method getContact*(self: AccessInterface, id: string): ContactsDto {.base.} =
 method getContactDetails*(self: AccessInterface, id: string): ContactDetails {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getContactNameAndImage*(self: AccessInterface, contactId: string): 
+method getContactNameAndImage*(self: AccessInterface, contactId: string):
   tuple[name: string, image: string, isIdenticon: bool] {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -94,7 +94,7 @@ method rejectContactRequest*(self: AccessInterface, publicKey: string): void {.b
 
 method blockContact*(self: AccessInterface, publicKey: string): void {.base.} =
   raise newException(ValueError, "No implementation available")
-  
+
 method addGroupMembers*(self: AccessInterface, chatId: string, pubKeys: seq[string]) {.base.} =
   raise newException(ValueError, "No implementation available")
 

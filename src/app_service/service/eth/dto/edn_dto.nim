@@ -33,7 +33,7 @@ proc getValueFromNode[T](node: EdnNode): T =
     raise newException(ValueError, "couldn't get '" & T.type.name & "'value from node: " & repr(node))
 
 proc parseVector[T: seq[StickerDto]](node: EdnNode, searchName: string): seq[StickerDto] =
-  # TODO: make this generic to accept any seq[T]. Issue is that instantiating result 
+  # TODO: make this generic to accept any seq[T]. Issue is that instantiating result
   # like `result = T()` is not allowed when T is `seq[StickerDto]`
   # because seq[StickerDto] isn't an object, whereas it works when T is
   # an object type (like StickerDto). IOW, StickerDto is an object type, but seq[StickerDto]

@@ -74,7 +74,7 @@ proc multiAccountImportMnemonic*(mnemonic: string): RpcResponse[JsonNode] {.rais
     "mnemonicPhrase": mnemonic,
     "Bip39Passphrase": ""
   }
-  
+
   try:
     let response = status_go.multiAccountImportMnemonic($payload)
     result.result = Json.decode(response, JsonNode)
@@ -88,7 +88,7 @@ proc deriveAccounts*(accountId: string, paths: seq[string]): RpcResponse[JsonNod
     "accountID": accountId,
     "paths": paths
   }
-  
+
   try:
     let response = status_go.multiAccountDeriveAddresses($payload)
     result.result = Json.decode(response, JsonNode)
@@ -194,7 +194,7 @@ proc addPeer*(peer: string): RpcResponse[JsonNode] {.raises: [Exception].} =
 proc saveAccountAndLogin*(hashedPassword: string, account, subaccounts, settings,
   config: JsonNode): RpcResponse[JsonNode] {.raises: [Exception].} =
   try:
-    let response = status_go.saveAccountAndLogin($account, hashedPassword, 
+    let response = status_go.saveAccountAndLogin($account, hashedPassword,
     $settings, $config, $subaccounts)
     result.result = Json.decode(response, JsonNode)
 
@@ -202,8 +202,8 @@ proc saveAccountAndLogin*(hashedPassword: string, account, subaccounts, settings
     error "error doing rpc request", methodName = "saveAccountAndLogin", exception=e.msg
     raise newException(RpcException, e.msg)
 
-proc login*(name, keyUid, hashedPassword, identicon, thumbnail, large: string, nodeCfgObj: string): 
-  RpcResponse[JsonNode] 
+proc login*(name, keyUid, hashedPassword, identicon, thumbnail, large: string, nodeCfgObj: string):
+  RpcResponse[JsonNode]
   {.raises: [Exception].} =
   try:
     var payload = %* {
@@ -235,7 +235,7 @@ proc multiAccountImportPrivateKey*(privateKey: string): RpcResponse[JsonNode] =
     error "error doing rpc request", methodName = "multiAccountImportPrivateKey", exception=e.msg
     raise newException(RpcException, e.msg)
 
-proc verifyAccountPassword*(address: string, password: string, keystoreDir: string): 
+proc verifyAccountPassword*(address: string, password: string, keystoreDir: string):
   RpcResponse[JsonNode] {.raises: [Exception].} =
   try:
     let hashedPassword = hashPassword(password)
@@ -245,8 +245,8 @@ proc verifyAccountPassword*(address: string, password: string, keystoreDir: stri
   except RpcException as e:
     error "error doing rpc request", methodName = "verifyAccountPassword", exception=e.msg
     raise newException(RpcException, e.msg)
-  
-proc storeIdentityImage*(keyUID: string, imagePath: string, aX, aY, bX, bY: int): 
+
+proc storeIdentityImage*(keyUID: string, imagePath: string, aX, aY, bX, bY: int):
   RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* [keyUID, imagePath, aX, aY, bX, bY]
   result = core.callPrivateRPC("multiaccounts_storeIdentityImage", payload)

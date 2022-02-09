@@ -1,4 +1,4 @@
-type 
+type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
   ## Abstract class for any input/interaction with this module.
 
@@ -25,7 +25,6 @@ method updateCurrency*(self: AccessInterface, currency: string) {.base.} =
 
 
 type
-  ## Abstract class (concept) which must be implemented by object/s used in this 
+  ## Abstract class (concept) which must be implemented by object/s used in this
   ## module.
   DelegateInterface* = concept c
-    

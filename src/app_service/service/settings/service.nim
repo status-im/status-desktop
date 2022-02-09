@@ -318,7 +318,7 @@ method getCurrentNetworkDetails*(self: Service): Network =
   for n in self.settings.availableNetworks:
     if(n.id == self.getCurrentNetwork()):
       return n
-  
+
   # we should never be here
   error "error: current network is not among available networks"
 
@@ -401,7 +401,7 @@ method isEIP1559Enabled*(self: Service, blockNumber: int): bool =
   self.eip1559Enabled = result
 
 method isEIP1559Enabled*(self: Service): bool =
-  result = self.eip1559Enabled 
+  result = self.eip1559Enabled
 
 method getRecentStickers*(self: Service): seq[string] =
   result = self.settings.recentStickerHashes

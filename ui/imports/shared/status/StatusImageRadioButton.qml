@@ -11,7 +11,7 @@ import StatusQ.Controls 0.1 as StatusQControls
 
 Rectangle {
     id: root
-    
+
     property int padding: Style.current.padding
     property alias control: radioControl
     property alias image: img

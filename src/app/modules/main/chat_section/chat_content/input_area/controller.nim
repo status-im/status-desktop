@@ -8,7 +8,7 @@ import ../../../../../../app_service/service/gif/dto
 
 export controller_interface
 
-type 
+type
   Controller* = ref object of controller_interface.AccessInterface
     delegate: io_interface.AccessInterface
     sectionId: string
@@ -23,7 +23,7 @@ proc newController*(
     sectionId: string,
     chatId: string,
     belongsToCommunity: bool,
-    chatService: chat_service.Service, 
+    chatService: chat_service.Service,
     communityService: community_service.Service,
     gifService: gif_service.Service
     ): Controller =
@@ -35,11 +35,11 @@ proc newController*(
   result.chatService = chatService
   result.communityService = communityService
   result.gifService = gifService
-  
+
 method delete*(self: Controller) =
   discard
 
-method init*(self: Controller) = 
+method init*(self: Controller) =
   discard
 
 method getChatId*(self: Controller): string =

@@ -2,11 +2,11 @@ import NimQml
 import item
 
 QtObject:
-  type 
+  type
     Model* = ref object of QAbstractListModel
       sections: seq[Item]
 
-  proc setup(self: Model) = 
+  proc setup(self: Model) =
     self.QAbstractListModel.setup
 
   proc delete*(self: Model) =

@@ -12,8 +12,8 @@ export local_app_settings
 export user_profile
 export utils
 
-type 
-  GlobalSingleton = object 
+type
+  GlobalSingleton = object
   # Don't export GlobalSingleton type.
   # Other global things like local/global settings will be added here.
 

@@ -1,4 +1,4 @@
-type 
+type
   Item* = ref object
     pubKey: string
     name: string
@@ -18,26 +18,26 @@ proc initItem*(pubKey, name, icon: string, isIdenticon, isContact, isBlocked, re
   result.isBlocked = isBlocked
   result.requestReceived = requestReceived
 
-proc pubKey*(self: Item): string = 
+proc pubKey*(self: Item): string =
   self.pubKey
 
-proc name*(self: Item): string = 
+proc name*(self: Item): string =
   self.name
 
-proc `name=`*(self: Item, value: string) = 
+proc `name=`*(self: Item, value: string) =
   self.name = value
 
-proc icon*(self: Item): string = 
+proc icon*(self: Item): string =
   self.icon
 
-proc isIdenticon*(self: Item): bool = 
+proc isIdenticon*(self: Item): bool =
   self.isIdenticon
 
-proc isContact*(self: Item): bool = 
+proc isContact*(self: Item): bool =
   self.isContact
 
-proc isBlocked*(self: Item): bool = 
+proc isBlocked*(self: Item): bool =
   self.isBlocked
 
-proc requestReceived*(self: Item): bool = 
+proc requestReceived*(self: Item): bool =
   self.requestReceived

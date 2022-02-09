@@ -27,7 +27,7 @@ StatusModal {
     property alias transactionSigner: transactionSigner
 
     property var signMessage: function(enteredPassword) {}
-    
+
     property var web3Response
 
 
@@ -61,7 +61,7 @@ StatusModal {
             }
             return RootStore.getHex2Ascii(input)
         }
-        return input;  
+        return input;
     }
 
     function messageToSign(){
@@ -73,8 +73,8 @@ StatusModal {
             case Constants.eth_signTypedData:
             case Constants.eth_signTypedData_v3:
                 return JSON.stringify(request.payload.params[1]); // TODO: requires design
-            default: 
-                return JSON.stringify(request.payload.params); // support for any unhandled sign method 
+            default:
+                return JSON.stringify(request.payload.params); // support for any unhandled sign method
         }
     }
 
@@ -222,9 +222,9 @@ StatusModal {
     rightButtons: [
         StatusButton {
             id: btnNext
-            text: showSigningPhrase ? 
+            text: showSigningPhrase ?
                     //% "Sign"
-                    qsTrId("transactions-sign") : 
+                    qsTrId("transactions-sign") :
                     //% "Sign with password"
                     qsTrId("sign-with-password")
             onClicked: {

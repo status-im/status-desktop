@@ -1,6 +1,6 @@
 import ../../../../app_service/service/community/service as community_service
 
-type 
+type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
   ## Abstract class for any input/interaction with this module.
 
@@ -49,11 +49,11 @@ method banUserFromCommunity*(self: AccessInterface, communityId: string, pubKey:
 method setCommunityMuted*(self: AccessInterface, communityId: string, muted: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getContactNameAndImage*(self: AccessInterface, contactId: string): 
+method getContactNameAndImage*(self: AccessInterface, contactId: string):
     tuple[name: string, image: string, isIdenticon: bool] {.base.} =
   raise newException(ValueError, "No implementation available")
 
 type
-  ## Abstract class (concept) which must be implemented by object/s used in this 
+  ## Abstract class (concept) which must be implemented by object/s used in this
   ## module.
   DelegateInterface* = concept c

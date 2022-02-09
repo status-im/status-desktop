@@ -8,7 +8,7 @@ include ../../../common/utils
 
 type ActivityCenterNotificationType* {.pure.}= enum
   Unknown = 0,
-  NewOneToOne = 1, 
+  NewOneToOne = 1,
   NewPrivateGroupChat = 2,
   Mention = 3
   Reply = 4
@@ -27,15 +27,15 @@ type ActivityCenterNotificationDto* = ref object of RootObj
 
 proc `$`*(self: ActivityCenterNotificationDto): string =
   result = fmt"""ActivityCenterNotificationDto(
-    id: {$self.id}, 
+    id: {$self.id},
     chatId: {self.chatId},
     author: {self.author},
-    notificationType: {$self.notificationType.int}, 
-    timestamp: {self.timestamp}, 
-    read: {$self.read}, 
-    dismissed: {$self.dismissed}, 
-    accepted: {$self.accepted}, 
-    message:{self.message}  
+    notificationType: {$self.notificationType.int},
+    timestamp: {self.timestamp},
+    read: {$self.read},
+    dismissed: {$self.dismissed},
+    accepted: {$self.accepted},
+    message:{self.message}
     )"""
 
 proc toActivityCenterNotificationDto*(jsonObj: JsonNode): ActivityCenterNotificationDto =
@@ -48,7 +48,7 @@ proc toActivityCenterNotificationDto*(jsonObj: JsonNode): ActivityCenterNotifica
   var notificationTypeInt: int
   if (jsonObj.getProp("type", notificationTypeInt) and
     (notificationTypeInt >= ord(low(ActivityCenterNotificationType)) or
-    notificationTypeInt <= ord(high(ActivityCenterNotificationType)))): 
+    notificationTypeInt <= ord(high(ActivityCenterNotificationType)))):
       result.notificationType = ActivityCenterNotificationType(notificationTypeInt)
 
   discard jsonObj.getProp("timestamp", result.timestamp)
@@ -56,7 +56,7 @@ proc toActivityCenterNotificationDto*(jsonObj: JsonNode): ActivityCenterNotifica
   discard jsonObj.getProp("dismissed", result.dismissed)
   discard jsonObj.getProp("accepted", result.accepted)
 
-  if jsonObj.contains("message") and jsonObj{"message"}.kind != JNull: 
+  if jsonObj.contains("message") and jsonObj{"message"}.kind != JNull:
     result.message = jsonObj{"message"}.toMessageDto()
   elif result.notificationType == ActivityCenterNotificationType.NewOneToOne and
     jsonObj.contains("lastMessage") and jsonObj{"lastMessage"}.kind != JNull:

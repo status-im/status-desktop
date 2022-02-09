@@ -47,7 +47,7 @@ method load*(self: Module) =
 method isLoaded*(self: Module): bool =
   return self.moduleLoaded
 
-method viewDidLoad*(self: Module) = 
+method viewDidLoad*(self: Module) =
   self.moduleLoaded = true
   self.delegate.nodeSectionDidLoad()
 
@@ -95,7 +95,7 @@ method setStats*(self: Module, stats: Stats) =
 method log*(self: Module, logContent: string) =
   self.view.log(logContent)
 
-method setPeerSize*(self: Module, peerSize: int) = 
+method setPeerSize*(self: Module, peerSize: int) =
   self.view.setPeerSize(peerSize)
 
 method setBitsSet*(self: Module, bitsSet: int) =

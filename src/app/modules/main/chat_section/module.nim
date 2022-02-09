@@ -23,7 +23,7 @@ export io_interface
 logScope:
   topics = "chat-section-module"
 
-type 
+type
   Module* = ref object of io_interface.AccessInterface
     delegate: delegate_interface.AccessInterface
     view: View
@@ -37,23 +37,23 @@ proc newModule*(
     delegate: delegate_interface.AccessInterface,
     events: EventEmitter,
     sectionId: string,
-    isCommunity: bool, 
+    isCommunity: bool,
     settingsService: settings_service.ServiceInterface,
     contactService: contact_service.Service,
     chatService: chat_service.Service,
-    communityService: community_service.Service, 
+    communityService: community_service.Service,
     messageService: message_service.Service,
     gifService: gif_service.Service,
     mailserversService: mailservers_service.Service
   ): Module =
   result = Module()
   result.delegate = delegate
-  result.controller = controller.newController(result, sectionId, isCommunity, events, settingsService, contactService, 
+  result.controller = controller.newController(result, sectionId, isCommunity, events, settingsService, contactService,
   chatService, communityService, messageService, gifService, mailserversService)
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
   result.moduleLoaded = false
-  
+
   result.chatContentModules = initOrderedTable[string, chat_content_module.AccessInterface]()
 
 method delete*(self: Module) =
@@ -67,22 +67,22 @@ method delete*(self: Module) =
 method isCommunity*(self: Module): bool =
   return self.controller.isCommunity()
 
-proc amIMarkedAsAdminUser(self: Module, members: seq[ChatMember]): bool = 
+proc amIMarkedAsAdminUser(self: Module, members: seq[ChatMember]): bool =
   for m in members:
     if (m.id == singletonInstance.userProfile.getPubKey() and m.admin):
       return true
   return false
 
-proc addSubmodule(self: Module, chatId: string, belongToCommunity: bool, isUsersListAvailable: bool, events: EventEmitter, 
-  settingsService: settings_service.ServiceInterface, 
-  contactService: contact_service.Service, 
-  chatService: chat_service.Service, 
-  communityService: community_service.Service, 
+proc addSubmodule(self: Module, chatId: string, belongToCommunity: bool, isUsersListAvailable: bool, events: EventEmitter,
+  settingsService: settings_service.ServiceInterface,
+  contactService: contact_service.Service,
+  chatService: chat_service.Service,
+  communityService: community_service.Service,
   messageService: message_service.Service,
   gifService: gif_service.Service,
   mailserversService: mailservers_service.Service) =
   self.chatContentModules[chatId] = chat_content_module.newModule(self, events, self.controller.getMySectionId(), chatId,
-    belongToCommunity, isUsersListAvailable, settingsService, contactService, chatService, communityService, 
+    belongToCommunity, isUsersListAvailable, settingsService, contactService, chatService, communityService,
     messageService, gifService, mailserversService)
 
 proc removeSubmodule(self: Module, chatId: string) =
@@ -90,11 +90,11 @@ proc removeSubmodule(self: Module, chatId: string) =
     return
   self.chatContentModules.del(chatId)
 
-proc buildChatUI(self: Module, events: EventEmitter, 
-  settingsService: settings_service.ServiceInterface, 
-  contactService: contact_service.Service, 
-  chatService: chat_service.Service, 
-  communityService: community_service.Service, 
+proc buildChatUI(self: Module, events: EventEmitter,
+  settingsService: settings_service.ServiceInterface,
+  contactService: contact_service.Service,
+  chatService: chat_service.Service,
+  communityService: community_service.Service,
   messageService: message_service.Service,
   gifService: gif_service.Service,
   mailserversService: mailservers_service.Service) =
@@ -120,23 +120,23 @@ proc buildChatUI(self: Module, events: EventEmitter,
 
     let amIChatAdmin = self.amIMarkedAsAdminUser(c.members)
 
-    let item = initItem(c.id, chatName, chatImage, isIdenticon, c.color, c.description, c.chatType.int, amIChatAdmin, 
+    let item = initItem(c.id, chatName, chatImage, isIdenticon, c.color, c.description, c.chatType.int, amIChatAdmin,
     hasNotification, notificationsCount, c.muted, blocked, active=false, c.position, c.categoryId)
     self.view.chatsModel().appendItem(item)
-    self.addSubmodule(c.id, false, isUsersListAvailable, events, settingsService, contactService, chatService, 
+    self.addSubmodule(c.id, false, isUsersListAvailable, events, settingsService, contactService, chatService,
     communityService, messageService, gifService, mailserversService)
-    
+
     # make the first Public chat active when load the app
     if(selectedItemId.len == 0 and c.chatType == ChatType.Public):
       selectedItemId = item.id
 
   self.setActiveItemSubItem(selectedItemId, "")
 
-proc buildCommunityUI(self: Module, events: EventEmitter, 
+proc buildCommunityUI(self: Module, events: EventEmitter,
   settingsService: settings_service.ServiceInterface,
-  contactService: contact_service.Service, 
-  chatService: chat_service.Service, 
-  communityService: community_service.Service, 
+  contactService: contact_service.Service,
+  chatService: chat_service.Service,
+  communityService: community_service.Service,
   messageService: message_service.Service,
   gifService: gif_service.Service,
   mailserversService: mailservers_service.Service) =
@@ -146,7 +146,7 @@ proc buildCommunityUI(self: Module, events: EventEmitter,
   for comm in communities:
     if(self.controller.getMySectionId() != comm.id):
       continue
-    
+
     # handle channels which don't belong to any category
     let chats = self.controller.getChats(comm.id, "")
     for c in chats:
@@ -159,7 +159,7 @@ proc buildCommunityUI(self: Module, events: EventEmitter,
         chatDto.description, chatDto.chatType.int, amIChatAdmin, hasNotification, notificationsCount,
         chatDto.muted, blocked=false, active = false, c.position, c.categoryId)
       self.view.chatsModel().appendItem(channelItem)
-      self.addSubmodule(chatDto.id, true, true, events, settingsService, contactService, chatService, communityService, 
+      self.addSubmodule(chatDto.id, true, true, events, settingsService, contactService, chatService, communityService,
       messageService, gifService, mailserversService)
 
       # make the first channel which doesn't belong to any category active when load the app
@@ -176,7 +176,7 @@ proc buildCommunityUI(self: Module, events: EventEmitter,
       let categoryChats = self.controller.getChats(comm.id, cat.id)
       for c in categoryChats:
         let chatDto = self.controller.getChatDetails(comm.id, c.id)
-        
+
         let hasNotification = chatDto.unviewedMessagesCount > 0 or chatDto.unviewedMentionsCount > 0
         let notificationsCount = chatDto.unviewedMentionsCount
 
@@ -185,21 +185,21 @@ proc buildCommunityUI(self: Module, events: EventEmitter,
 
         let amIChatAdmin = comm.admin
 
-        let channelItem = initSubItem(chatDto.id, cat.id, chatDto.name, chatDto.identicon, false, chatDto.color, 
-        chatDto.description, chatDto.chatType.int, amIChatAdmin, hasNotification, notificationsCount, chatDto.muted, 
+        let channelItem = initSubItem(chatDto.id, cat.id, chatDto.name, chatDto.identicon, false, chatDto.color,
+        chatDto.description, chatDto.chatType.int, amIChatAdmin, hasNotification, notificationsCount, chatDto.muted,
         blocked=false, active=false, c.position)
         categoryChannels.add(channelItem)
-        self.addSubmodule(chatDto.id, true, true, events, settingsService, contactService, chatService, communityService, 
+        self.addSubmodule(chatDto.id, true, true, events, settingsService, contactService, chatService, communityService,
         messageService, gifService, mailserversService)
 
-        # in case there is no channels beyond categories, 
+        # in case there is no channels beyond categories,
         # make the first channel of the first category active when load the app
         if(selectedItemId.len == 0):
           selectedItemId = cat.id
           selectedSubItemId = channelItem.id
 
-      var categoryItem = initItem(cat.id, cat.name, "", false, "", "", ChatType.Unknown.int, false, 
-        hasNotificationPerCategory, notificationsCountPerCategory, muted=false, blocked=false, active=false, 
+      var categoryItem = initItem(cat.id, cat.name, "", false, "", "", ChatType.Unknown.int, false,
+        hasNotificationPerCategory, notificationsCountPerCategory, muted=false, blocked=false, active=false,
         cat.position, cat.id)
       categoryItem.prependSubItems(categoryChannels)
       self.view.chatsModel().appendItem(categoryItem)
@@ -208,14 +208,14 @@ proc buildCommunityUI(self: Module, events: EventEmitter,
 
 proc createItemFromPublicKey(self: Module, publicKey: string): contacts_item.Item =
   let contactDetails = self.controller.getContactDetails(publicKey)
-  
+
   return contacts_item.initItem(
     contactDetails.details.id,
     contactDetails.displayName,
     contactDetails.icon,
     contactDetails.isIdenticon,
     contactDetails.details.isContact(),
-    contactDetails.details.isBlocked(), 
+    contactDetails.details.isBlocked(),
     contactDetails.details.requestReceived()
   )
 
@@ -236,24 +236,24 @@ method initListOfMyContacts*(self: Module) =
     if(c.isContact() and not c.isBlocked()):
       let item = self.createItemFromPublicKey(c.id)
       myContacts.add(item)
-  
+
   self.view.listOfMyContacts().addItems(myContacts)
 
 method clearListOfMyContacts*(self: Module) =
   self.view.listOfMyContacts().clear()
-    
 
-method load*(self: Module, events: EventEmitter, 
+
+method load*(self: Module, events: EventEmitter,
   settingsService: settings_service.ServiceInterface,
-  contactService: contact_service.Service, 
-  chatService: chat_service.Service, 
-  communityService: community_service.Service, 
+  contactService: contact_service.Service,
+  chatService: chat_service.Service,
+  communityService: community_service.Service,
   messageService: message_service.Service,
   gifService: gif_service.Service,
   mailserversService: mailservers_service.Service) =
   self.controller.init()
   self.view.load()
-  
+
   if(self.controller.isCommunity()):
     self.buildCommunityUI(events, settingsService, contactService, chatService, communityService, messageService, gifService, mailserversService)
   else:
@@ -298,7 +298,7 @@ method makeChatWithIdActive*(self: Module, chatId: string) =
       # Should never be here
       error "trying to make chat/channel active for an unexisting id ", chatId, methodName="makeChatWithIdActive"
       return
-    
+
     subItemId = subItem.BaseItem.id
     item = self.view.chatsModel().getItemById(subItem.parentId())
     if(item.isNil):
@@ -316,10 +316,10 @@ method activeItemSubItemSet*(self: Module, itemId: string, subItemId: string) =
     error "chat-view unexisting item id: ", itemId, methodName="activeItemSubItemSet"
     return
 
-  # Chats from Chat section and chats from Community section which don't belong 
+  # Chats from Chat section and chats from Community section which don't belong
   # to any category have empty `subItemId`
   let subItem = item.subItems.getItemById(subItemId)
-  
+
   # update view maintained by this module
   self.view.chatsModel().setActiveItemSubItem(itemId, subItemId)
   self.view.activeItemSubItemSet(item, subItem)
@@ -327,7 +327,7 @@ method activeItemSubItemSet*(self: Module, itemId: string, subItemId: string) =
   self.delegate.onActiveChatChange(self.controller.getMySectionId(), self.controller.getActiveChatId())
   # update notifications caused by setting active chat/channel
   self.controller.markAllMessagesRead(self.controller.getActiveChatId())
-  
+
 method getModuleAsVariant*(self: Module): QVariant =
   return self.viewVariant
 
@@ -348,11 +348,11 @@ proc updateNotifications(self: Module, chatId: string, unviewedMessagesCount: in
   # update parent module
   let (sectionHasUnreadMessages, sectionNotificationCount) = self.view.chatsModel().getAllNotifications()
   self.delegate.onNotificationsUpdated(self.controller.getMySectionId(), sectionHasUnreadMessages, sectionNotificationCount)
-  
+
 method onActiveSectionChange*(self: Module, sectionId: string) =
   if(sectionId != self.controller.getMySectionId()):
     return
-  
+
   self.updateNotifications(self.controller.getActiveChatId(), unviewedMessagesCount=0, unviewedMentionsCount=0)
   self.delegate.onActiveChatChange(self.controller.getMySectionId(), self.controller.getActiveChatId())
 
@@ -374,11 +374,11 @@ method addNewChat*(
     self: Module,
     chatDto: ChatDto,
     belongsToCommunity: bool,
-    events: EventEmitter, 
+    events: EventEmitter,
     settingsService: settings_service.ServiceInterface,
     contactService: contact_service.Service,
-    chatService: chat_service.Service, 
-    communityService: community_service.Service, 
+    chatService: chat_service.Service,
+    communityService: community_service.Service,
     messageService: message_service.Service,
     gifService: gif_service.Service,
     mailserversService: mailservers_service.Service) =
@@ -397,8 +397,8 @@ method addNewChat*(
   else:
     amIChatAdmin = self.amIMarkedAsAdminUser(chatDto.members)
 
-  if chatDto.categoryId == "":  
-    let item = initItem(chatDto.id, chatName, chatImage, isIdenticon, chatDto.color, chatDto.description, 
+  if chatDto.categoryId == "":
+    let item = initItem(chatDto.id, chatName, chatImage, isIdenticon, chatDto.color, chatDto.description,
                         chatDto.chatType.int, amIChatAdmin, hasNotification, notificationsCount, chatDto.muted,
                         blocked=false, active=false, position = 0, chatDto.categoryId)
     self.addSubmodule(chatDto.id, belongsToCommunity, isUsersListAvailable, events, settingsService, contactService, chatService,
@@ -409,8 +409,8 @@ method addNewChat*(
     self.setActiveItemSubItem(item.id, "")
   else:
     let categoryItem = self.view.chatsModel().getItemById(chatDto.categoryId)
-    let channelItem = initSubItem(chatDto.id, chatDto.categoryId, chatDto.name, chatDto.identicon, false, chatDto.color, 
-        chatDto.description, chatDto.chatType.int, amIChatAdmin, hasNotification, notificationsCount, chatDto.muted, 
+    let channelItem = initSubItem(chatDto.id, chatDto.categoryId, chatDto.name, chatDto.identicon, false, chatDto.color,
+        chatDto.description, chatDto.chatType.int, amIChatAdmin, hasNotification, notificationsCount, chatDto.muted,
         blocked=false, active=false, chatDto.position)
     self.addSubmodule(chatDto.id, belongsToCommunity, isUsersListAvailable, events, settingsService, contactService, chatService,
                       communityService, messageService, gifService, mailserversService)
@@ -425,20 +425,20 @@ method removeCommunityChat*(self: Module, chatId: string) =
   self.controller.removeCommunityChat(chatId)
 
 method onCommunityCategoryCreated*(self: Module, cat: Category, chats: seq[ChatDto]) =
-  var categoryItem = initItem(cat.id, cat.name, "", false, "", "", ChatType.Unknown.int, false, 
+  var categoryItem = initItem(cat.id, cat.name, "", false, "", "", ChatType.Unknown.int, false,
       false, 0, muted=false, blocked=false, active=false, cat.position, cat.id)
   var categoryChannels: seq[SubItem]
   for chatDto in chats:
     let hasNotification = chatDto.unviewedMessagesCount > 0 or chatDto.unviewedMentionsCount > 0
     let notificationsCount = chatDto.unviewedMentionsCount
-    let channelItem = initSubItem(chatDto.id, cat.id, chatDto.name, chatDto.identicon, false, chatDto.color, 
-        chatDto.description, chatDto.chatType.int, true, hasNotification, notificationsCount, chatDto.muted, 
+    let channelItem = initSubItem(chatDto.id, cat.id, chatDto.name, chatDto.identicon, false, chatDto.color,
+        chatDto.description, chatDto.chatType.int, true, hasNotification, notificationsCount, chatDto.muted,
         blocked=false, active=false, chatDto.position)
 
     # Important:
     # Since we're just adding an already added community channel to a certain commuinity, there is no need to call
     # `self.addSubmodule` here, since submodule (chat content module and modules beneath) were already added, so we're
-    # just updating the view from here, via model.    
+    # just updating the view from here, via model.
     self.view.chatsModel().removeItemById(chatDto.id)
     categoryChannels.add(channelItem)
 
@@ -458,7 +458,7 @@ method onCommunityCategoryDeleted*(self: Module, cat: Category) =
     self.view.chatsModel().appendItem(channelItem)
 
   self.view.chatsModel().removeItemById(cat.id)
-  
+
 method onCommunityCategoryEdited*(self: Module, cat: Category, chats: seq[ChatDto]) =
   var categoryItem = self.view.chatsModel().getItemById(cat.id)
   let amIChatAdmin = self.controller.getMyCommunity().admin
@@ -473,8 +473,8 @@ method onCommunityCategoryEdited*(self: Module, cat: Category, chats: seq[ChatDt
     categoryItem.subItems().removeItemById(chatDto.id)
 
     if chatDto.categoryId == cat.id:
-      let channelItem = initSubItem(chatDto.id, cat.id, chatDto.name, chatDto.identicon, false, chatDto.color, 
-          chatDto.description, chatDto.chatType.int, true, hasNotification, notificationsCount, chatDto.muted, 
+      let channelItem = initSubItem(chatDto.id, cat.id, chatDto.name, chatDto.identicon, false, chatDto.color,
+          chatDto.description, chatDto.chatType.int, true, hasNotification, notificationsCount, chatDto.muted,
           false, false, chatDto.position)
       categoryItem.prependSubItem(channelItem)
     else:
@@ -588,9 +588,9 @@ method onContactDetailsUpdated*(self: Module, publicKey: string) =
   let (chatName, chatImage, isIdenticon) = self.controller.getOneToOneChatNameAndImage(publicKey)
   self.view.chatsModel().updateItemDetails(publicKey, chatName, chatImage, isIdenticon)
 
-method onNewMessagesReceived*(self: Module, chatId: string, unviewedMessagesCount: int, unviewedMentionsCount: int, 
+method onNewMessagesReceived*(self: Module, chatId: string, unviewedMessagesCount: int, unviewedMentionsCount: int,
   messages: seq[MessageDto]) =
-  if(self.controller.getMySectionId() == self.delegate.getActiveSectionId() and 
+  if(self.controller.getMySectionId() == self.delegate.getActiveSectionId() and
     self.controller.getActiveChatId() == chatId):
     return
   self.updateNotifications(chatId, unviewedMessagesCount, unviewedMentionsCount)
@@ -650,7 +650,7 @@ method deleteCommunityCategory*(self: Module, categoryId: string) =
 method leaveCommunity*(self: Module) =
   self.controller.leaveCommunity()
 
-method editCommunity*(self: Module, name: string, description: string, 
+method editCommunity*(self: Module, name: string, description: string,
                         access: int, ensOnly: bool, color: string,
                         imagePath: string,
                         aX: int, aY: int, bX: int, bY: int) =
@@ -660,7 +660,7 @@ method exportCommunity*(self: Module): string =
   self.controller.exportCommunity()
 
 method setCommunityMuted*(self: Module, muted: bool) =
-  self.controller.setCommunityMuted(muted)  
+  self.controller.setCommunityMuted(muted)
 
 method inviteUsersToCommunity*(self: Module, pubKeysJSON: string): string =
   result = self.controller.inviteUsersToCommunity(pubKeysJSON)
@@ -671,19 +671,19 @@ method prepareEditCategoryModel*(self: Module, categoryId: string) =
   let chats = self.controller.getChats(communityId, "")
   for chat in chats:
     let c = self.controller.getChatDetails(communityId, chat.id)
-    let item = initItem(c.id, c.name, "", false, c.color, c.description, c.chatType.int, false, 
+    let item = initItem(c.id, c.name, "", false, c.color, c.description, c.chatType.int, false,
                         false, 0, c.muted, false, active = false, c.position, "")
 
     self.view.editCategoryChannelsModel().appendItem(item)
   let catChats = self.controller.getChats(communityId, categoryId)
   for chat in catChats:
     let c = self.controller.getChatDetails(communityId, chat.id)
-    let item = initItem(c.id, c.name, "", false, c.color, c.description, c.chatType.int, false, 
+    let item = initItem(c.id, c.name, "", false, c.color, c.description, c.chatType.int, false,
                         false, 0, c.muted, false, active = false, c.position, categoryId)
     self.view.editCategoryChannelsModel().appendItem(item)
 
 method reorderCommunityCategories*(self: Module, categoryId: string, position: int) =
   self.controller.reorderCommunityCategories(categoryId, position)
-  
+
 method reorderCommunityChat*(self: Module, categoryId: string, chatId: string, position: int): string =
   self.controller.reorderCommunityChat(categoryId, chatId, position)

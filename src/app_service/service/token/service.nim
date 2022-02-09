@@ -26,11 +26,11 @@ type
   TokenDetailsLoadedArgs* = ref object of Args
     tokenDetails*: string
 
-type 
+type
   CustomTokenAdded* = ref object of Args
     token*: TokenDto
 
-type 
+type
   CustomTokenRemoved* = ref object of Args
     token*: TokenDto
 
@@ -62,7 +62,7 @@ QtObject:
 
   proc getDefaultVisibleSymbols(self: Service): seq[string] =
     let networkSlug = self.settingsService.getCurrentNetwork()
-    
+
     if networkSlug == DEFAULT_CURRENT_NETWORK:
       return @["SNT"]
 
@@ -81,7 +81,7 @@ QtObject:
       let chainId = self.settingsService.getCurrentNetworkId()
       let responseTokens = token_backend.getTokens(chainId)
       let default_tokens = map(
-        responseTokens.result.getElems(), 
+        responseTokens.result.getElems(),
         proc(x: JsonNode): TokenDto = x.toTokenDto(activeTokenSymbols, hasIcon=true, isCustom=false)
       )
 
@@ -144,7 +144,7 @@ QtObject:
     self.events.emit(SIGNAL_TOKEN_DETAILS_LOADED, TokenDetailsLoadedArgs(
       tokenDetails: tokenDetails
     ))
-    
+
   proc getTokenDetails*(self: Service, address: string) =
     let chainId = self.settingsService.getCurrentNetworkId()
     let arg = GetTokenDetailsTaskArg(

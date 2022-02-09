@@ -60,7 +60,7 @@ Item {
 
     Component {
         id: empty
-        
+
         Item {
             id: emptyContainer
             height: 164

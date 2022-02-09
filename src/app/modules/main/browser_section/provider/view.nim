@@ -16,7 +16,7 @@ QtObject:
     new(result, delete)
     result.QObject.setup
     result.delegate = delegate
-  
+
   proc load*(self: View) =
     self.delegate.viewDidLoad()
 

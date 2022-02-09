@@ -18,9 +18,9 @@ ModalPopup {
     property Popup parentPopup
     property string contactAddress: ""
     property string contactName: ""
-    
+
     signal unblockButtonClicked()
-    
+
     //% "Unblock User"
     title: qsTrId("unblock-user")
 
@@ -32,7 +32,7 @@ ModalPopup {
         anchors.right: parent.right
         wrapMode: Text.WordWrap
     }
-    
+
 
     footer: Item {
         id: footerContainer

@@ -191,7 +191,7 @@ proc buildTransaction*(
     value: Uint256,
     gas = "",
     gasPrice = "",
-    isEIP1559Enabled = false, 
+    isEIP1559Enabled = false,
     maxPriorityFeePerGas = "",
     maxFeePerGas = "",
     data = ""
@@ -210,7 +210,7 @@ proc buildTransaction*(
   else:
     result.txType = "0x00"
 
-proc buildTokenTransaction*(source, contractAddress: Address, gas = "", gasPrice = "", isEIP1559Enabled = false, 
+proc buildTokenTransaction*(source, contractAddress: Address, gas = "", gasPrice = "", isEIP1559Enabled = false,
   maxPriorityFeePerGas = "", maxFeePerGas = ""): TransactionDataDto =
   result = buildTransaction(source, 0.u256, gas, gasPrice, isEIP1559Enabled, maxPriorityFeePerGas, maxFeePerGas)
   result.to = contractAddress.some
@@ -224,7 +224,7 @@ proc getExpirationTime*(toAddress: Address, data: string): int =
     var tx = buildTransaction(parseAddress("0x0000000000000000000000000000000000000000"), 0.u256)
     tx.to = toAddress.some
     tx.data = data
-  
+
     let payload = %*[%tx, "latest"]
     let response = status_eth.doEthCall(payload)
     result = fromHex[int](response.result.getStr)
@@ -243,7 +243,7 @@ proc getPrice*(ensUsernamesContract: ContractDto): Stuint[256] =
       error "Error getting ens username price, ", errDescription=response.error.message
     if response.result.getStr == "0x":
       error "Error getting ens username price: 0x"
-  
+
     result = fromHex(Stuint[256], response.result.getStr)
   except RpcException as e:
     error "Error obtaining expiration time", err=e.msg
@@ -253,7 +253,7 @@ proc hex2Token*(input: string, decimals: int): string =
 
   if decimals == 0:
     return fmt"{value}"
-  
+
   var p = u256(10).pow(decimals)
   var i = value.div(p)
   var r = value.mod(p)

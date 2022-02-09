@@ -25,10 +25,10 @@ Item {
     height: content.height
     signal fromClicked
     signal gasClicked
-    // Creates a mouse area around the "from account". When clicked, triggers 
+    // Creates a mouse area around the "from account". When clicked, triggers
     // the "fromClicked" signal
     property bool isFromEditable: false
-    // Creates a mouse area around the "network fee". When clicked, triggers 
+    // Creates a mouse area around the "network fee". When clicked, triggers
     // the "gasClicked" signal
     property bool isGasEditable: false
     property bool isValid: toValid && fromValid && gasValid

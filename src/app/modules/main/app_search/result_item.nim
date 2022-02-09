@@ -5,7 +5,7 @@ type Item* = object
   content: string
   time: string
   titleId: string
-  title: string  
+  title: string
   sectionName: string
   image: string
   color: string
@@ -15,8 +15,8 @@ type Item* = object
   badgeIconColor: string
   badgeIsLetterIdenticon: bool
 
-proc initItem*(itemId, content, time, titleId, title, sectionName: string, image, color, badgePrimaryText, 
-  badgeSecondaryText, badgeImage, badgeIconColor: string, badgeIsLetterIdenticon: bool): 
+proc initItem*(itemId, content, time, titleId, title, sectionName: string, image, color, badgePrimaryText,
+  badgeSecondaryText, badgeImage, badgeIconColor: string, badgeIsLetterIdenticon: bool):
   Item =
 
   result.itemId = itemId
@@ -40,7 +40,7 @@ proc `$`*(self: Item): string =
   result &= fmt"time:{self.time}, "
   result &= fmt"titleId:{self.titleId}, "
   result &= fmt"title:{self.title}"
-  result &= fmt"sectionName:{self.sectionName}"  
+  result &= fmt"sectionName:{self.sectionName}"
   result &= fmt"image:{self.image}"
   result &= fmt"color:{self.color}"
   result &= fmt"badgePrimaryText:{self.badgePrimaryText}"

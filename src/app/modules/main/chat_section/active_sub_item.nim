@@ -18,7 +18,7 @@ QtObject:
   proc setActiveSubItemData*(self: ActiveSubItem, item: SubItem) =
     self.item = item
 
-  proc getId*(self: ActiveSubItem): string {.slot.} = 
+  proc getId*(self: ActiveSubItem): string {.slot.} =
     if(self.item.isNil):
       return ""
     return self.item.id
@@ -26,7 +26,7 @@ QtObject:
   QtProperty[string] id:
     read = getId
 
-  proc getName(self: ActiveSubItem): string {.slot.} = 
+  proc getName(self: ActiveSubItem): string {.slot.} =
     if(self.item.isNil):
       return ""
     return self.item.name
@@ -34,7 +34,7 @@ QtObject:
   QtProperty[string] name:
     read = getName
 
-  proc getAmIChatAdmin(self: ActiveSubItem): bool {.slot.} = 
+  proc getAmIChatAdmin(self: ActiveSubItem): bool {.slot.} =
     if(self.item.isNil):
       return false
     return self.item.amIChatAdmin
@@ -66,7 +66,7 @@ QtObject:
   QtProperty[string] color:
     read = getColor
 
-  proc getDescription(self: ActiveSubItem): string {.slot.} = 
+  proc getDescription(self: ActiveSubItem): string {.slot.} =
     if(self.item.isNil):
       return ""
     return self.item.description
@@ -74,7 +74,7 @@ QtObject:
   QtProperty[string] description:
     read = getDescription
 
-  proc getHasUnreadMessages(self: ActiveSubItem): bool {.slot.} = 
+  proc getHasUnreadMessages(self: ActiveSubItem): bool {.slot.} =
     if(self.item.isNil):
       return false
     return self.item.hasUnreadMessages
@@ -82,7 +82,7 @@ QtObject:
   QtProperty[bool] hasUnreadMessages:
     read = getHasUnreadMessages
 
-  proc getNotificationCount(self: ActiveSubItem): int {.slot.} = 
+  proc getNotificationCount(self: ActiveSubItem): int {.slot.} =
     if(self.item.isNil):
       return 0
     return self.item.notificationsCount
@@ -90,21 +90,21 @@ QtObject:
   QtProperty[int] notificationCount:
     read = getNotificationCount
 
-  proc getMuted(self: ActiveSubItem): bool {.slot.} = 
+  proc getMuted(self: ActiveSubItem): bool {.slot.} =
     if(self.item.isNil):
       return false
     return self.item.muted
   QtProperty[bool] muted:
     read = getMuted
 
-  proc getBlocked(self: ActiveSubItem): bool {.slot.} = 
+  proc getBlocked(self: ActiveSubItem): bool {.slot.} =
     if(self.item.isNil):
       return false
     return self.item.blocked
   QtProperty[bool] blocked:
     read = getBlocked
 
-  proc getPosition(self: ActiveSubItem): int {.slot.} = 
+  proc getPosition(self: ActiveSubItem): int {.slot.} =
     if(self.item.isNil):
       return 0
     return self.item.position
@@ -112,4 +112,3 @@ QtObject:
   QtProperty[int] position:
     read = getPosition
 
-  

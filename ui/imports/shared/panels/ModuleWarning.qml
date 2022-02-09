@@ -11,11 +11,11 @@ Rectangle {
     id: root
     height: visible ? 32 : 0
     color: Style.current.red
-    
+
     property string text: ""
     property string btnText: ""
     property int btnWidth: 58
-    
+
     property var onClick: function() {}
 
     Row {

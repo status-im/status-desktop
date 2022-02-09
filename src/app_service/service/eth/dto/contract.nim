@@ -19,7 +19,7 @@ type
     chainId*: int
     address*: Address
     methods* {.dontSerialize.}: Table[string, MethodDto]
- 
+
   Erc20ContractDto* = ref object of ContractDto
     symbol*: string
     decimals*: int
@@ -67,11 +67,11 @@ proc getTokenString*(contract: ContractDto, methodName: string): string =
   let size = fromHex(Stuint[256], response.result.getStr[66..129]).truncate(int)
   result = response.result.getStr[130..129+size*2].parseHexStr
 
-proc tokenName*(contract: ContractDto): string = 
+proc tokenName*(contract: ContractDto): string =
   getTokenString(contract, "name")
 
-proc tokenSymbol*(contract: ContractDto): string = 
+proc tokenSymbol*(contract: ContractDto): string =
   getTokenString(contract, "symbol")
 
-proc getMethod*(contract: ContractDto, methodName: string): MethodDto = 
+proc getMethod*(contract: ContractDto, methodName: string): MethodDto =
   return contract.methods[methodName]

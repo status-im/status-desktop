@@ -20,7 +20,7 @@ ModalPopup {
     title: qsTrId("network")
 
     property var advancedStore
- 
+
     ScrollView {
         id: svNetworks
         width: parent.width

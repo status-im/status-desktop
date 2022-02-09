@@ -24,7 +24,7 @@ Item {
         height: 40
         source: "https://ipfs.infura.io/ipfs/" + packThumb
     }
-    
+
     Column {
         anchors.left: imgThumb.right
         anchors.leftMargin: root.spacing

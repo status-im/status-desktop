@@ -84,7 +84,7 @@ StatusPopupMenu {
     StatusMenuItem {
         text: root.chatMuted ?
               //% "Unmute chat"
-              qsTrId("unmute-chat") : 
+              qsTrId("unmute-chat") :
               //% "Mute chat"
               qsTrId("mute-chat")
         icon.name: "notification"

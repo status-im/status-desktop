@@ -179,7 +179,7 @@ Item {
             implicitHeight: 52
             components: [
                 StatusQControls.StatusSwitch {
-                    id: switch2               
+                    id: switch2
                     checked: localAccountSensitiveSettings.displayChatImages
                     onCheckedChanged: {
                         if (localAccountSensitiveSettings.displayChatImages !== checked) {
@@ -268,7 +268,7 @@ Item {
                     checked: !root.privacyStore.privacyModule.messagesFromContactsOnly
                     onCheckedChanged: {
                         // messagesFromContactsOnly needs to be accessed from the module (view),
-                        // because otherwise doing `messagesFromContactsOnly = value` only changes the bool property on QML 
+                        // because otherwise doing `messagesFromContactsOnly = value` only changes the bool property on QML
                         if (root.privacyStore.privacyModule.messagesFromContactsOnly === checked) {
                             root.privacyStore.privacyModule.messagesFromContactsOnly = !checked
                         }

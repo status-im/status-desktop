@@ -61,7 +61,7 @@ Item {
         wrapMode: Text.WordWrap
         color: Theme.palette.directColor1
     }
-    
+
     StatusBaseText {
         id: subtitle
         text: qsTr("The username %1 will be removed and your deposit will be returned once the transaction is mined").arg(ensUsername)

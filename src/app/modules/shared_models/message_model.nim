@@ -16,7 +16,7 @@ type
     OutgoingStatus
     MessageText
     MessageImage
-    MessageContainsMentions # Actually we don't need to exposed this to qml since we only used it as an improved way to 
+    MessageContainsMentions # Actually we don't need to exposed this to qml since we only used it as an improved way to
                             # check whether we need to update mentioned contact name or not.
     Timestamp
     ContentType
@@ -106,51 +106,51 @@ QtObject:
     let enumRole = role.ModelRole
 
     case enumRole:
-    of ModelRole.Id: 
+    of ModelRole.Id:
       result = newQVariant(item.id)
-    of ModelRole.ResponseToMessageWithId: 
+    of ModelRole.ResponseToMessageWithId:
       result = newQVariant(item.responseToMessageWithId)
-    of ModelRole.SenderId: 
+    of ModelRole.SenderId:
       result = newQVariant(item.senderId)
-    of ModelRole.SenderDisplayName: 
+    of ModelRole.SenderDisplayName:
       result = newQVariant(item.senderDisplayName)
-    of ModelRole.SenderLocalName: 
+    of ModelRole.SenderLocalName:
       result = newQVariant(item.senderLocalName)
-    of ModelRole.SenderIcon: 
+    of ModelRole.SenderIcon:
       result = newQVariant(item.senderIcon)
-    of ModelRole.IsSenderIconIdenticon: 
+    of ModelRole.IsSenderIconIdenticon:
       result = newQVariant(item.isSenderIconIdenticon)
-    of ModelRole.AmISender: 
+    of ModelRole.AmISender:
       result = newQVariant(item.amISender)
-    of ModelRole.Seen: 
+    of ModelRole.Seen:
       result = newQVariant(item.seen)
-    of ModelRole.OutgoingStatus: 
+    of ModelRole.OutgoingStatus:
       result = newQVariant(item.outgoingStatus)
-    of ModelRole.MessageText: 
+    of ModelRole.MessageText:
       result = newQVariant(item.messageText)
-    of ModelRole.MessageImage: 
+    of ModelRole.MessageImage:
       result = newQVariant(item.messageImage)
     of ModelRole.MessageContainsMentions:
       result = newQVariant(item.messageContainsMentions)
-    of ModelRole.Timestamp: 
+    of ModelRole.Timestamp:
       result = newQVariant(item.timestamp)
-    of ModelRole.ContentType: 
+    of ModelRole.ContentType:
       result = newQVariant(item.contentType.int)
-    of ModelRole.MessageType: 
+    of ModelRole.MessageType:
       result = newQVariant(item.messageType)
-    of ModelRole.Sticker: 
+    of ModelRole.Sticker:
       result = newQVariant(item.sticker)
-    of ModelRole.StickerPack: 
+    of ModelRole.StickerPack:
       result = newQVariant(item.stickerPack)
-    # of ModelRole.GapFrom: 
+    # of ModelRole.GapFrom:
     #   result = newQVariant(item.gapFrom)
-    # of ModelRole.GapTo: 
+    # of ModelRole.GapTo:
     #   result = newQVariant(item.gapTo)
-    of ModelRole.Pinned: 
+    of ModelRole.Pinned:
       result = newQVariant(item.pinned)
-    of ModelRole.PinnedBy: 
+    of ModelRole.PinnedBy:
       result = newQVariant(item.pinnedBy)
-    of ModelRole.Reactions: 
+    of ModelRole.Reactions:
       result = newQVariant(item.reactionsModel)
     of ModelRole.EditMode:
       result = newQVariant(item.editMode)
@@ -159,13 +159,13 @@ QtObject:
     of ModelRole.Links:
       result = newQVariant(item.links.join(" "))
 
-  proc findIndexForMessageId*(self: Model, messageId: string): int = 
+  proc findIndexForMessageId*(self: Model, messageId: string): int =
     for i in 0 ..< self.items.len:
       if(self.items[i].id == messageId):
         return i
     return -1
 
-  proc findIndexBasedOnTimestampToInsertTo(self: Model, timestamp: int64): int = 
+  proc findIndexBasedOnTimestampToInsertTo(self: Model, timestamp: int64): int =
     for i in 0 ..< self.items.len:
       if(timestamp > self.items[i].timestamp):
         return i
@@ -180,7 +180,7 @@ QtObject:
     let itemsToAppend = self.filterExistingItems(items)
     if(itemsToAppend.len == 0):
       return
-      
+
     let parentModelIndex = newQModelIndex()
     defer: parentModelIndex.delete
 
@@ -195,7 +195,7 @@ QtObject:
     let itemsToAppend = self.filterExistingItems(items)
     if(itemsToAppend.len == 0):
       return
-      
+
     let parentModelIndex = newQModelIndex()
     defer: parentModelIndex.delete
 
@@ -221,7 +221,7 @@ QtObject:
   proc prependItem*(self: Model, item: Item) =
     if(self.findIndexForMessageId(item.id) != -1):
       return
-    
+
     let parentModelIndex = newQModelIndex()
     defer: parentModelIndex.delete
 
@@ -233,7 +233,7 @@ QtObject:
   proc insertItemBasedOnTimestamp*(self: Model, item: Item) =
     if(self.findIndexForMessageId(item.id) != -1):
       return
-    
+
     let parentModelIndex = newQModelIndex()
     defer: parentModelIndex.delete
 
@@ -257,42 +257,42 @@ QtObject:
     self.endRemoveRows()
     self.countChanged()
 
-  proc getItemWithMessageId*(self: Model, messageId: string): Item = 
+  proc getItemWithMessageId*(self: Model, messageId: string): Item =
     let ind = self.findIndexForMessageId(messageId)
     if(ind == -1):
       return
 
     return self.items[ind]
 
-  proc addReaction*(self: Model, messageId: string, emojiId: EmojiId, didIReactWithThisEmoji: bool, 
-    userPublicKey: string, userDisplayName: string, reactionId: string) = 
+  proc addReaction*(self: Model, messageId: string, emojiId: EmojiId, didIReactWithThisEmoji: bool,
+    userPublicKey: string, userDisplayName: string, reactionId: string) =
     let ind = self.findIndexForMessageId(messageId)
     if(ind == -1):
       return
 
     self.items[ind].addReaction(emojiId, didIReactWithThisEmoji, userPublicKey, userDisplayName, reactionId)
-    
+
     let index = self.createIndex(ind, 0, nil)
     self.dataChanged(index, index, @[ModelRole.Reactions.int])
 
-  proc removeReaction*(self: Model, messageId: string, emojiId: EmojiId, reactionId: string, didIRemoveThisReaction: bool) = 
+  proc removeReaction*(self: Model, messageId: string, emojiId: EmojiId, reactionId: string, didIRemoveThisReaction: bool) =
     let ind = self.findIndexForMessageId(messageId)
     if(ind == -1):
       return
 
     self.items[ind].removeReaction(emojiId, reactionId, didIRemoveThisReaction)
-    
+
     let index = self.createIndex(ind, 0, nil)
     self.dataChanged(index, index, @[ModelRole.Reactions.int])
 
-  proc pinUnpinMessage*(self: Model, messageId: string, pin: bool, pinnedBy: string) = 
+  proc pinUnpinMessage*(self: Model, messageId: string, pin: bool, pinnedBy: string) =
     let ind = self.findIndexForMessageId(messageId)
     if(ind == -1):
       return
 
     self.items[ind].pinned = pin
     self.items[ind].pinnedBy = pinnedBy
-    
+
     let index = self.createIndex(ind, 0, nil)
     self.dataChanged(index, index, @[ModelRole.Pinned.int, ModelRole.PinnedBy.int])
 
@@ -300,7 +300,7 @@ QtObject:
     for it in self.items:
       if(it.id == messageId):
         return it.toJsonNode()
-    
+
   proc getMessageByIndexAsJson*(self: Model, index: int): JsonNode =
     if(index < 0 or index >= self.items.len):
       return
@@ -312,13 +312,13 @@ QtObject:
 
       var roles: seq[int]
       if(self.items[i].senderId == contactId):
-        roles = @[ModelRole.SenderDisplayName.int, ModelRole.SenderLocalName.int, ModelRole.SenderIcon.int, 
+        roles = @[ModelRole.SenderDisplayName.int, ModelRole.SenderLocalName.int, ModelRole.SenderIcon.int,
         ModelRole.IsSenderIconIdenticon.int]
       if(self.items[i].pinnedBy == contactId):
         roles.add(ModelRole.PinnedBy.int)
       if(self.items[i].messageContainsMentions):
         roles.add(@[ModelRole.MessageText.int, ModelRole.MessageContainsMentions.int])
-      
+
       if(roles.len > 0):
         let index = self.createIndex(i, 0, nil)
         self.dataChanged(index, index, roles)
@@ -355,7 +355,7 @@ QtObject:
     let index = self.createIndex(ind, 0, nil)
     self.dataChanged(index, index, @[ModelRole.MessageText.int, ModelRole.MessageContainsMentions.int, ModelRole.IsEdited.int])
 
-  proc clear*(self: Model) = 
+  proc clear*(self: Model) =
     self.beginResetModel()
     self.items = @[]
     self.endResetModel()

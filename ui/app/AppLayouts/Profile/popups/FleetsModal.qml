@@ -18,7 +18,7 @@ ModalPopup {
     property var advancedStore
 
     property string newFleet: "";
-    
+
     Column {
         id: column
         anchors.top: parent.top

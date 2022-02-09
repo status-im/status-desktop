@@ -2,7 +2,7 @@ import ../shared_models/section_item
 import ../../../app_service/service/contacts/dto/contacts as contacts_dto
 import ../../../app_service/service/community/service as community_service
 
-type 
+type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
   ## Abstract class for any input/interaction with this module.
 
@@ -30,7 +30,7 @@ method getActiveSectionId*(self: AccessInterface): string {.base.} =
 method getNumOfNotificaitonsForChat*(self: AccessInterface): tuple[unviewed:int, mentions:int] {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getNumOfNotificationsForCommunity*(self: AccessInterface, communityId: string): tuple[unviewed:int, mentions:int] 
+method getNumOfNotificationsForCommunity*(self: AccessInterface, communityId: string): tuple[unviewed:int, mentions:int]
   {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -40,7 +40,7 @@ method setUserStatus*(self: AccessInterface, status: bool) {.base.} =
 method getContact*(self: AccessInterface, id: string): ContactsDto {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getContactNameAndImage*(self: AccessInterface, contactId: string): 
+method getContactNameAndImage*(self: AccessInterface, contactId: string):
   tuple[name: string, image: string, isIdenticon: bool] {.base.} =
   raise newException(ValueError, "No implementation available")
 

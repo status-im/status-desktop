@@ -26,7 +26,7 @@ StatusModal {
         width: popup.width
         spacing: 8
 
-        Item { 
+        Item {
             width: parent.width
             height: parent.spacing
         }
@@ -149,7 +149,7 @@ StatusModal {
             anchors.leftMargin: 32
         }
 
-        Item { 
+        Item {
             width: parent.width
             height: parent.spacing
         }

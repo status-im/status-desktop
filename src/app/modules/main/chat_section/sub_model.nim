@@ -90,35 +90,35 @@ QtObject:
     let enumRole = role.ModelRole
 
     case enumRole:
-    of ModelRole.Id: 
+    of ModelRole.Id:
       result = newQVariant(item.id)
-    of ModelRole.ParentId: 
+    of ModelRole.ParentId:
       result = newQVariant(item.parentId)
-    of ModelRole.Name: 
+    of ModelRole.Name:
       result = newQVariant(item.name)
-    of ModelRole.AmIChatAdmin: 
+    of ModelRole.AmIChatAdmin:
       result = newQVariant(item.amIChatAdmin)
-    of ModelRole.Icon: 
+    of ModelRole.Icon:
       result = newQVariant(item.icon)
     of ModelRole.IsIdenticon:
       result = newQVariant(item.isIdenticon)
-    of ModelRole.Color: 
+    of ModelRole.Color:
       result = newQVariant(item.color)
-    of ModelRole.Description: 
+    of ModelRole.Description:
       result = newQVariant(item.description)
-    of ModelRole.Type: 
+    of ModelRole.Type:
       result = newQVariant(item.`type`)
-    of ModelRole.HasUnreadMessages: 
+    of ModelRole.HasUnreadMessages:
       result = newQVariant(item.hasUnreadMessages)
-    of ModelRole.NotificationsCount: 
+    of ModelRole.NotificationsCount:
       result = newQVariant(item.notificationsCount)
-    of ModelRole.Muted: 
+    of ModelRole.Muted:
       result = newQVariant(item.muted)
     of ModelRole.Blocked:
       result = newQVariant(item.blocked)
-    of ModelRole.Active: 
+    of ModelRole.Active:
       result = newQVariant(item.active)
-    of ModelRole.Position: 
+    of ModelRole.Position:
       result = newQVariant(item.position)
 
   proc appendItems*(self: SubModel, items: seq[SubItem]) =
@@ -178,12 +178,12 @@ QtObject:
 
   proc setActiveItem*(self: SubModel, id: string) =
     for i in 0 ..< self.items.len:
-      if(self.items[i].active):        
+      if(self.items[i].active):
         let index = self.createIndex(i, 0, nil)
         self.items[i].BaseItem.active = false
         self.dataChanged(index, index, @[ModelRole.Active.int])
 
-      if(self.items[i].id == id):        
+      if(self.items[i].id == id):
         let index = self.createIndex(i, 0, nil)
         self.items[i].BaseItem.active= true
         self.dataChanged(index, index, @[ModelRole.Active.int])
@@ -205,7 +205,7 @@ QtObject:
     return false
 
   proc blockUnblockItemById*(self: SubModel, id: string, blocked: bool): bool =
-    ## even we're not able to block specific channel of community now, this is here more as a predisposition 
+    ## even we're not able to block specific channel of community now, this is here more as a predisposition
     ## for that feature, which may be added easy later.
     for i in 0 ..< self.items.len:
       if(self.items[i].id == id):
@@ -225,7 +225,7 @@ QtObject:
         self.endRemoveRows()
         self.countChanged()
 
-  proc updateNotificationsForItemById*(self: SubModel, id: string, hasUnreadMessages: bool, 
+  proc updateNotificationsForItemById*(self: SubModel, id: string, hasUnreadMessages: bool,
     notificationsCount: int): bool =
     for i in 0 ..< self.items.len:
       if(self.items[i].id == id):

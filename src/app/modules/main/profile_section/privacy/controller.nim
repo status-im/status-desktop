@@ -7,14 +7,14 @@ import ../../../../../app_service/service/privacy/service as privacy_service
 
 export controller_interface
 
-type 
+type
   Controller* = ref object of controller_interface.AccessInterface
     delegate: io_interface.AccessInterface
     events: EventEmitter
     settingsService: settings_service.ServiceInterface
     privacyService: privacy_service.Service
 
-proc newController*(delegate: io_interface.AccessInterface, events: EventEmitter, 
+proc newController*(delegate: io_interface.AccessInterface, events: EventEmitter,
   settingsService: settings_service.ServiceInterface,
   privacyService: privacy_service.Service): Controller =
   result = Controller()
@@ -26,7 +26,7 @@ proc newController*(delegate: io_interface.AccessInterface, events: EventEmitter
 method delete*(self: Controller) =
   discard
 
-method init*(self: Controller) = 
+method init*(self: Controller) =
   self.events.on(SIGNAL_MNEMONIC_REMOVAL) do(e: Args):
     self.delegate.onMnemonicUpdated()
 

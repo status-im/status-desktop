@@ -9,7 +9,7 @@ export service_interface
 logScope:
   topics = "bookmarks-service"
 
-type 
+type
   Service* = ref object of ServiceInterface
     bookmarks: Table[string, BookmarkDto] # [url, BookmarkDto]
 

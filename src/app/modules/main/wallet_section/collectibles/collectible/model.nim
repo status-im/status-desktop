@@ -54,7 +54,7 @@ QtObject:
     let enumRole = role.ModelRole
 
     case enumRole:
-    of ModelRole.Name: 
+    of ModelRole.Name:
       result = newQVariant(item.getName())
 
   proc setItems*(self: Model, items: seq[Item]) =

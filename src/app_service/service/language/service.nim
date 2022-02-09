@@ -8,7 +8,7 @@ export service_interface
 logScope:
   topics = "language-service"
 
-type 
+type
   Service* = ref object of ServiceInterface
     i18nPath: string
     shouldRetranslate: bool
@@ -43,6 +43,6 @@ method init*(self: Service) =
 method setLanguage*(self: Service, locale: string) =
   if (locale == singletonInstance.localAppSettings.getLocale()):
     return
-  
+
   singletonInstance.localAppSettings.setLocale(locale)
   singletonInstance.engine.setTranslationPackage(joinPath(self.i18nPath, fmt"qml_{locale}.qm"), self.shouldRetranslate)

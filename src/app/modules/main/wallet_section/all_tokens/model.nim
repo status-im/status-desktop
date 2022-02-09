@@ -66,19 +66,19 @@ QtObject:
     let enumRole = role.ModelRole
 
     case enumRole:
-    of ModelRole.Name: 
+    of ModelRole.Name:
       result = newQVariant(item.getName())
-    of ModelRole.Symbol: 
+    of ModelRole.Symbol:
       result = newQVariant(item.getSymbol())
-    of ModelRole.HasIcon: 
+    of ModelRole.HasIcon:
       result = newQVariant(item.getHasIcon())
-    of ModelRole.Address: 
+    of ModelRole.Address:
       result = newQVariant(item.getAddress())
-    of ModelRole.Decimals: 
+    of ModelRole.Decimals:
       result = newQVariant(item.getDecimals())
-    of ModelRole.IsCustom: 
+    of ModelRole.IsCustom:
       result = newQVariant(item.getIsCustom())
-    of ModelRole.IsVisible: 
+    of ModelRole.IsVisible:
       result = newQVariant(item.getIsVisible())
 
   proc setItems*(self: Model, items: seq[Item]) =

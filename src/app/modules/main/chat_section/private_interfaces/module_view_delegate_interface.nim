@@ -1,7 +1,7 @@
 import NimQml
 
 method viewDidLoad*(self: AccessInterface) {.base.} =
-  raise newException(ValueError, "No implementation available") 
+  raise newException(ValueError, "No implementation available")
 
 method setActiveItemSubItem*(self: AccessInterface, itemId: string, subItemId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
@@ -56,7 +56,7 @@ method rejectAllContactRequests*(self: AccessInterface) {.base.} =
 
 method blockContact*(self: AccessInterface, publicKey: string) {.base.} =
   raise newException(ValueError, "No implementation available")
-  
+
 method addGroupMembers*(self: AccessInterface, chatId: string, pubKeys: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -126,6 +126,6 @@ method prepareEditCategoryModel*(self: AccessInterface, categoryId: string) {.ba
 
 method reorderCommunityCategories*(self: AccessInterface, categoryId: string, position: int) =
   raise newException(ValueError, "No implementation available")
-  
+
 method reorderCommunityChat*(self: AccessInterface, categoryId: string, chatId: string, position: int): string =
   raise newException(ValueError, "No implementation available")

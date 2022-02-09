@@ -12,7 +12,7 @@ import ../../../../../../app_service/service/message/service as message_service
 
 export io_interface
 
-type 
+type
   Module* = ref object of io_interface.AccessInterface
     delegate: delegate_interface.AccessInterface
     view: View
@@ -21,18 +21,18 @@ type
     moduleLoaded: bool
 
 proc newModule*(
-  delegate: delegate_interface.AccessInterface, events: EventEmitter, sectionId: string, chatId: string, 
-  belongsToCommunity: bool, isUsersListAvailable: bool, contactService: contact_service.Service, 
+  delegate: delegate_interface.AccessInterface, events: EventEmitter, sectionId: string, chatId: string,
+  belongsToCommunity: bool, isUsersListAvailable: bool, contactService: contact_service.Service,
   chatService: chat_service.Service, communityService: community_service.Service,
-  messageService: message_service.Service,  
+  messageService: message_service.Service,
 ): Module =
   result = Module()
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
   result.controller = controller.newController(
-    result, events, sectionId, chatId, belongsToCommunity, isUsersListAvailable, 
-    contactService, chatService, communityService, messageService, 
+    result, events, sectionId, chatId, belongsToCommunity, isUsersListAvailable,
+    contactService, chatService, communityService, messageService,
   )
   result.moduleLoaded = false
 
@@ -53,10 +53,10 @@ method viewDidLoad*(self: Module) =
   let (admin, joined) = self.controller.getChatMemberInfo(singletonInstance.userProfile.getPubKey())
   let loggedInUserDisplayName = singletonInstance.userProfile.getName() & "(You)"
   self.view.model().addItem(initItem(
-    singletonInstance.userProfile.getPubKey(), 
-    loggedInUserDisplayName, 
-    OnlineStatus.Online, 
-    singletonInstance.userProfile.getIcon(), 
+    singletonInstance.userProfile.getPubKey(),
+    loggedInUserDisplayName,
+    OnlineStatus.Online,
+    singletonInstance.userProfile.getIcon(),
     singletonInstance.userProfile.getIsIdenticon(),
     admin,
     joined,
@@ -115,7 +115,7 @@ method onChatMembersAdded*(self: Module,  ids: seq[string]) =
   for id in ids:
     if(self.view.model().isContactWithIdAdded(id)):
       continue
-    
+
     let (admin, joined) = self.controller.getChatMemberInfo(id)
     let (name, image, isIdenticon) = self.controller.getContactNameAndImage(id)
     let statusUpdateDto = self.controller.getStatusForContact(id)

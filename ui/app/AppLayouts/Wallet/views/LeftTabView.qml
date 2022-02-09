@@ -12,7 +12,7 @@ import "../controls"
 import "../popups"
 import "../stores"
 
-Rectangle {    
+Rectangle {
     id: walletInfoContainer
 
     property int selectedAccountIndex: 0

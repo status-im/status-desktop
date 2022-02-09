@@ -16,7 +16,7 @@ QtObject:
       chatSearchModel: chat_search_model.Model
       chatSearchModelVariant: QVariant
       tmpCommunityId: string # shouldn't be used anywhere except in prepareCommunitySectionModuleForCommunityId/getCommunitySectionModule procs
-      
+
   proc activeSectionChanged*(self:View) {.signal.}
 
   proc delete*(self: View) =
@@ -83,12 +83,12 @@ QtObject:
 
   proc storePassword*(self: View, password: string) {.slot.} =
     self.delegate.storePassword(password)
-  
+
   proc storingPasswordError*(self:View, errorDescription: string) {.signal.}
 
   proc emitStoringPasswordError*(self: View, errorDescription: string) =
     self.storingPasswordError(errorDescription)
-  
+
   proc storingPasswordSuccess*(self:View) {.signal.}
 
   proc emitStoringPasswordSuccess*(self: View) =
@@ -126,7 +126,7 @@ QtObject:
 
   # Since we cannot return QVariant from the proc which has arguments, so cannot have proc like this:
   # prepareCommunitySectionModuleForCommunityId(self: View, communityId: string): QVariant {.slot.}
-  # we're using combinaiton of 
+  # we're using combinaiton of
   # prepareCommunitySectionModuleForCommunityId/getCommunitySectionModule procs
   proc prepareCommunitySectionModuleForCommunityId*(self: View, communityId: string) {.slot.} =
     self.tmpCommunityId = communityId
@@ -136,7 +136,7 @@ QtObject:
     self.tmpCommunityId = ""
     if(communityVariant.isNil):
       return newQVariant()
-    
+
     return communityVariant
 
   proc getChatSectionModule*(self: View): QVariant {.slot.} =

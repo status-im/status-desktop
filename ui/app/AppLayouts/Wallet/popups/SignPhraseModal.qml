@@ -91,7 +91,7 @@ ModalPopup {
     footer: Item {
         width: parent.width
         height: btnRemindLater.height
-        
+
         StatusFlatButton {
             anchors.right: btnRemindLater.left
             anchors.rightMargin: Style.current.padding

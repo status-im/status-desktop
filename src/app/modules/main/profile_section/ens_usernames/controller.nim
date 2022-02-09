@@ -13,7 +13,7 @@ export controller_interface
 logScope:
   topics = "profile-section-ens-usernames-module-controller"
 
-type 
+type
   Controller* = ref object of controller_interface.AccessInterface
     delegate: io_interface.AccessInterface
     events: EventEmitter
@@ -21,7 +21,7 @@ type
     ensService: ens_service.Service
     walletAccountService: wallet_account_service.ServiceInterface
 
-proc newController*(delegate: io_interface.AccessInterface, events: EventEmitter, 
+proc newController*(delegate: io_interface.AccessInterface, events: EventEmitter,
   settingsService: settings_service.ServiceInterface, ensService: ens_service.Service,
   walletAccountService: wallet_account_service.ServiceInterface): Controller =
   result = Controller()
@@ -30,11 +30,11 @@ proc newController*(delegate: io_interface.AccessInterface, events: EventEmitter
   result.settingsService = settingsService
   result.ensService = ensService
   result.walletAccountService = walletAccountService
-  
+
 method delete*(self: Controller) =
   discard
 
-method init*(self: Controller) = 
+method init*(self: Controller) =
   self.events.on(SIGNAL_ENS_USERNAME_AVAILABILITY_CHECKED) do(e:Args):
     let args = EnsUsernameAvailabilityArgs(e)
     self.delegate.ensUsernameAvailabilityChecked(args.availabilityStatus)
@@ -73,7 +73,7 @@ method fetchGasPrice*(self: Controller) =
 method setPubKeyGasEstimate*(self: Controller, ensUsername: string, address: string): int =
   return self.ensService.setPubKeyGasEstimate(ensUsername, address)
 
-method setPubKey*(self: Controller, ensUsername: string, address: string, gas: string, gasPrice: string, 
+method setPubKey*(self: Controller, ensUsername: string, address: string, gas: string, gasPrice: string,
   maxPriorityFeePerGas: string, maxFeePerGas: string, password: string): string =
   return self.ensService.setPubKey(ensUsername, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, password)
 
@@ -92,7 +92,7 @@ method getPreferredEnsUsername*(self: Controller): string =
 method releaseEnsEstimate*(self: Controller, ensUsername: string, address: string): int =
   return self.ensService.releaseEnsEstimate(ensUsername, address)
 
-method release*(self: Controller, ensUsername: string, address: string, gas: string, gasPrice: string, password: string): 
+method release*(self: Controller, ensUsername: string, address: string, gas: string, gasPrice: string, password: string):
   string =
   return self.ensService.release(ensUsername, address, gas, gasPrice, password)
 
@@ -108,7 +108,7 @@ method getEnsRegisteredAddress*(self: Controller): string =
 method registerEnsGasEstimate*(self: Controller, ensUsername: string, address: string): int =
   return self.ensService.registerEnsGasEstimate(ensUsername, address)
 
-method registerEns*(self: Controller, ensUsername: string, address: string, gas: string, gasPrice: string, 
+method registerEns*(self: Controller, ensUsername: string, address: string, gas: string, gasPrice: string,
   maxPriorityFeePerGas: string, maxFeePerGas: string, password: string): string =
   return self.ensService.registerEns(ensUsername, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, password)
 

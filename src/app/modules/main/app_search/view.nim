@@ -10,7 +10,7 @@ QtObject:
       searchResultModelVariant: QVariant
       locationMenuModel: location_menu_model.Model
       locationMenuModelVariant: QVariant
-      
+
   proc delete*(self: View) =
     self.searchResultModel.delete
     self.searchResultModelVariant.delete
@@ -36,31 +36,31 @@ QtObject:
   proc locationMenuModel*(self: View): location_menu_model.Model =
     return self.locationMenuModel
 
-  proc getSearchResultModel*(self: View): QVariant {.slot.} = 
+  proc getSearchResultModel*(self: View): QVariant {.slot.} =
     return newQVariant(self.searchResultModel)
 
   QtProperty[QVariant] resultModel:
     read = getSearchResultModel
 
-  proc getLocationMenuModel*(self: View): QVariant {.slot.} = 
+  proc getLocationMenuModel*(self: View): QVariant {.slot.} =
     newQVariant(self.locationMenuModel)
 
   QtProperty[QVariant] locationMenuModel:
     read = getLocationMenuModel
 
-  proc prepareLocationMenuModel*(self: View) {.slot.} = 
+  proc prepareLocationMenuModel*(self: View) {.slot.} =
     self.delegate.prepareLocationMenuModel()
 
-  proc setSearchLocation*(self: View, location: string = "", subLocation: string = "") {.slot.} = 
+  proc setSearchLocation*(self: View, location: string = "", subLocation: string = "") {.slot.} =
     self.delegate.setSearchLocation(location, subLocation)
 
-  proc getSearchLocationObject*(self: View): string {.slot.} = 
+  proc getSearchLocationObject*(self: View): string {.slot.} =
     self.delegate.getSearchLocationObject()
 
-  proc searchMessages*(self: View, searchTerm: string) {.slot.} = 
+  proc searchMessages*(self: View, searchTerm: string) {.slot.} =
     self.delegate.searchMessages(searchTerm)
 
-  proc resultItemClicked*(self: View, itemId: string) {.slot.} = 
+  proc resultItemClicked*(self: View, itemId: string) {.slot.} =
     self.delegate.resultItemClicked(itemId)
 
   proc appSearchCompleted(self: View) {.signal.}

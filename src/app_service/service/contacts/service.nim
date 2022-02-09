@@ -30,7 +30,7 @@ type
     uuid*: string
 
   ContactsStatusUpdatedArgs* = ref object of Args
-    statusUpdates*: seq[StatusUpdateDto] 
+    statusUpdates*: seq[StatusUpdateDto]
 
 # Local Constants:
 const CheckStatusIntervalInMilliseconds = 5000 # 5 seconds, this is timeout how often do we check for user status.
@@ -108,7 +108,7 @@ QtObject:
 
         let data = ContactsStatusUpdatedArgs(statusUpdates: receivedData.statusUpdates)
         self.events.emit(SIGNAL_CONTACTS_STATUS_UPDATED, data)
-      
+
       if(receivedData.contacts.len > 0):
         for c in receivedData.contacts:
           let localContact = self.getContactById(c.id)
@@ -149,7 +149,7 @@ QtObject:
       result = response.result.toContactsDto()
       if result.id.len == 0:
         return
-      
+
       self.addContact(result)
 
     except Exception as e:
@@ -166,7 +166,7 @@ QtObject:
   proc generateIdenticon*(self: Service, publicKey: string): string =
     if(publicKey.len == 0):
       error "cannot generate an identicon from the empty public key"
-      return 
+      return
     return status_accounts.generateIdenticon(publicKey).result.getStr
 
   proc getContactById*(self: Service, id: string): ContactsDto =
@@ -205,11 +205,11 @@ QtObject:
     result.name = contactDto.userNameOrAlias()
     result.image = contactDto.identicon
     result.isIdenticon = contactDto.identicon.len > 0
-    if(contactDto.image.thumbnail.len > 0): 
+    if(contactDto.image.thumbnail.len > 0):
       result.image = contactDto.image.thumbnail
       result.isIdenticon = false
 
-  proc saveContact(self: Service, contact: ContactsDto) = 
+  proc saveContact(self: Service, contact: ContactsDto) =
     # we must keep local contacts updated
     self.contacts[contact.id] = contact
 
@@ -320,7 +320,7 @@ QtObject:
           continue
         else:
           status.statusType = StatusType.Online
-          updatedStatuses.add(status)          
+          updatedStatuses.add(status)
       elif(timestampNow - status.clock < uint64(IdleLimitInSeconds)):
         if(status.statusType == StatusType.Idle):
           continue
@@ -337,7 +337,7 @@ QtObject:
 
     self.startCheckingContactStatuses()
 
-  proc startCheckingContactStatuses(self: Service) = 
+  proc startCheckingContactStatuses(self: Service) =
     if(self.closingApp):
       return
 
@@ -357,4 +357,4 @@ QtObject:
     result.isIdenticon = isIdenticon
     result.isCurrentUser = pubKey == singletonInstance.userProfile.getPubKey()
     result.details = self.getContactById(pubKey)
-    
+

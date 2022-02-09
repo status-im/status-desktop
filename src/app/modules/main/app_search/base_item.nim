@@ -1,4 +1,4 @@
-type 
+type
   BaseItem* {.pure inheritable.} = ref object of RootObj
     value: string
     text: string
@@ -19,23 +19,23 @@ proc initBaseItem*(value, text, image, icon, iconColor: string, isIdenticon: boo
   result = BaseItem()
   result.setup(value, text, image, icon, iconColor, isIdenticon)
 
-proc delete*(self: BaseItem) = 
+proc delete*(self: BaseItem) =
   discard
 
-method value*(self: BaseItem): string {.inline base.} = 
+method value*(self: BaseItem): string {.inline base.} =
   self.value
 
-method text*(self: BaseItem): string {.inline base.} = 
+method text*(self: BaseItem): string {.inline base.} =
   self.text
 
-method image*(self: BaseItem): string {.inline base.} = 
+method image*(self: BaseItem): string {.inline base.} =
   self.image
 
-method icon*(self: BaseItem): string {.inline base.} = 
+method icon*(self: BaseItem): string {.inline base.} =
   self.icon
 
-method iconColor*(self: BaseItem): string {.inline base.} = 
+method iconColor*(self: BaseItem): string {.inline base.} =
   self.iconColor
 
-method isIdenticon*(self: BaseItem): bool {.inline base.} = 
+method isIdenticon*(self: BaseItem): bool {.inline base.} =
   self.isIdenticon

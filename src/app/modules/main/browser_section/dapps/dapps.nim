@@ -59,7 +59,7 @@ QtObject:
     for i in self.items:
       if i == item:
         return
-    
+
     self.beginInsertRows(parentModelIndex, self.items.len, self.items.len)
     self.items.add(item)
     self.endInsertRows()

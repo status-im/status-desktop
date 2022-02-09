@@ -202,7 +202,7 @@ Item {
                 targetState: listState
                 signal: next
             }
-        }       
+        }
     }
 
     Loader {

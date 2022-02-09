@@ -90,7 +90,7 @@ Item {
                 spacing: Style.current.halfPadding
                 height: childrenRect.height
                 width: parent.width
-                
+
 
                 StatusBaseText {
                     //% "Funds are deposited for 1 year. Your SNT will be locked, but not spent."
@@ -354,7 +354,7 @@ Item {
             source: Style.png("tokens/SNT")
             sourceSize: Qt.size(width, height)
         }
-        
+
         StatusBaseText {
             id: ensPriceLbl
             //% "10 SNT"

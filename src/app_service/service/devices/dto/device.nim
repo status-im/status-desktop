@@ -10,7 +10,7 @@ type Metadata* = object
   fcmToken*: string
 
 type DeviceDto* = object
-  id*: string 
+  id*: string
   identity*: string
   version*: int
   enabled*: bool
@@ -33,7 +33,7 @@ proc toDeviceDto*(jsonObj: JsonNode): DeviceDto =
   discard jsonObj.getProp("version", result.version)
   discard jsonObj.getProp("enabled", result.enabled)
   discard jsonObj.getProp("timestamp", result.timestamp)
-  
+
   var metadataObj: JsonNode
   if(jsonObj.getProp("metadata", metadataObj)):
     result.metadata = toMetadata(metadataObj)

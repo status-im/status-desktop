@@ -15,11 +15,11 @@ method activeSectionSet*(self: AccessInterface, sectionId: string) {.base.} =
 method toggleSection*(self: AccessInterface, sectionType: SectionType) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method communityJoined*(self: AccessInterface, community: CommunityDto, events: EventEmitter, 
+method communityJoined*(self: AccessInterface, community: CommunityDto, events: EventEmitter,
   settingsService: settings_service.ServiceInterface,
-  contactsService: contacts_service.Service, 
-  chatService: chat_service.Service, 
-  communityService: community_service.Service, 
+  contactsService: contacts_service.Service,
+  chatService: chat_service.Service,
+  communityService: community_service.Service,
   messageService: message_service.Service,
   gifService: gif_service.Service,
   mailserversService: mailservers_service.Service) {.base.} =

@@ -18,9 +18,9 @@ ModalPopup {
     property Popup parentPopup
     property string contactAddress: ""
     property string contactName: ""
-    
+
     signal blockButtonClicked()
-    
+
     //% "Block User"
     title: qsTrId("block-user")
 

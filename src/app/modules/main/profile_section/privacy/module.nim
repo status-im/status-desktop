@@ -9,7 +9,7 @@ import ../../../../../app_service/service/privacy/service as privacy_service
 
 export io_interface
 
-type 
+type
   Module* = ref object of io_interface.AccessInterface
     delegate: delegate_interface.AccessInterface
     controller: controller.AccessInterface
@@ -19,7 +19,7 @@ type
 
 proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitter,
   settingsService: settings_service.ServiceInterface,
-  privacyService: privacy_service.Service): 
+  privacyService: privacy_service.Service):
   Module =
   result = Module()
   result.delegate = delegate

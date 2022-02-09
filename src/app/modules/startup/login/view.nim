@@ -10,7 +10,7 @@ QtObject:
       selectedAccountVariant: QVariant
       model: Model
       modelVariant: QVariant
-      
+
   proc delete*(self: View) =
     self.selectedAccount.delete
     self.selectedAccountVariant.delete
@@ -72,7 +72,7 @@ QtObject:
 
   proc emitObtainingPasswordError*(self: View, errorDescription: string) =
     self.obtainingPasswordError(errorDescription)
-  
+
   proc obtainingPasswordSuccess*(self:View, password: string) {.signal.}
 
   proc emitObtainingPasswordSuccess*(self: View, password: string) =

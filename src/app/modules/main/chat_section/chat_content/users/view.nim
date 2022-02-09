@@ -8,7 +8,7 @@ QtObject:
       delegate: io_interface.AccessInterface
       model: Model
       modelVariant: QVariant
-      
+
   proc delete*(self: View) =
     self.model.delete
     self.modelVariant.delete
@@ -23,7 +23,7 @@ QtObject:
 
   proc model*(self: View): Model =
     return self.model
-  
+
   proc load*(self: View) =
     self.delegate.viewDidLoad()
 

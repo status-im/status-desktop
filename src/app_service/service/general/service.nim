@@ -22,7 +22,7 @@ proc newService*(): Service =
 
 method initKeycard(self: Service) =
   ## This should not be part of the "general service", but part of the "keystore service", but since we don't have
-  ## keycard in place for the refactored part yet but `status-go` part requires keycard to be initialized on the app 
+  ## keycard in place for the refactored part yet but `status-go` part requires keycard to be initialized on the app
   ## start. This call is added as a part of the "global service".
   try:
     discard status_keycard.initKeycard(app_constants.KEYSTOREDIR)
@@ -30,7 +30,7 @@ method initKeycard(self: Service) =
     let errDesription = e.msg
     error "error: ", errDesription
     return
-  
+
 method init*(self: Service) =
   self.initKeycard()
 

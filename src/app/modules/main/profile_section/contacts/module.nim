@@ -13,7 +13,7 @@ export io_interface
 logScope:
   topics = "profile-section-contacts-module"
 
-type 
+type
   Module* = ref object of io_interface.AccessInterface
     delegate: delegate_interface.AccessInterface
     controller: controller.AccessInterface
@@ -38,8 +38,8 @@ method delete*(self: Module) =
 proc createItemFromPublicKey(self: Module, publicKey: string): Item =
   let contact =  self.controller.getContact(publicKey)
   let (name, image, isIdenticon) = self.controller.getContactNameAndImage(contact.id)
-  
-  return initItem(contact.id, name, image, isIdenticon, contact.isContact(), contact.isBlocked(), 
+
+  return initItem(contact.id, name, image, isIdenticon, contact.isContact(), contact.isBlocked(),
   contact.requestReceived())
 
 proc initModels(self: Module) =
@@ -59,7 +59,7 @@ proc initModels(self: Module) =
 method load*(self: Module) =
   self.controller.init()
   self.view.load()
-  
+
 method isLoaded*(self: Module): bool =
   return self.moduleLoaded
 
@@ -113,4 +113,4 @@ method removeContact*(self: Module, publicKey: string) =
   self.controller.removeContact(publicKey)
 
 method changeContactNickname*(self: Module, publicKey: string, nickname: string) =
-  self.controller.changeContactNickname(publicKey, nickname)  
+  self.controller.changeContactNickname(publicKey, nickname)

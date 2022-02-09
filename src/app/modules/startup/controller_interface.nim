@@ -1,4 +1,4 @@
-type 
+type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
   ## Abstract class for any input/interaction with this module.
 
@@ -10,4 +10,3 @@ method init*(self: AccessInterface) {.base.} =
 
 method shouldStartWithOnboardingScreen*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
-    

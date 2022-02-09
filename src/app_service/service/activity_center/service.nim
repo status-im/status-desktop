@@ -91,7 +91,7 @@ QtObject:
 
   proc hasMoreToShow*(self: Service): bool =
     return self.cursor != ""
-  
+
   proc asyncActivityNotificationLoad*(self: Service) =
     let arg = AsyncActivityNotificationLoadTaskArg(
       tptr: cast[ByteAddress](asyncActivityNotificationLoadTask),
@@ -106,7 +106,7 @@ QtObject:
     if(self.cursor == ""): return
 
     var cursorVal: JsonNode
-  
+
     if self.cursor == "":
       cursorVal = newJNull()
     else:
@@ -129,8 +129,8 @@ QtObject:
       self.events.emit(SIGNAL_MARK_NOTIFICATIONS_AS_READ, markAsReadProps)
     except Exception as e:
       error "Error marking as read", msg = e.msg
-      result = e.msg  
-      
+      result = e.msg
+
   proc unreadActivityCenterNotificationsCount*(self: Service): int =
     try:
       let response = status_activity_center.unreadActivityCenterNotificationsCount()
@@ -150,13 +150,13 @@ QtObject:
       self.events.emit(SIGNAL_MARK_NOTIFICATIONS_AS_UNREAD, markAsUnreadProps)
     except Exception as e:
       error "Error marking as unread", msg = e.msg
-      result = e.msg  
+      result = e.msg
 
   proc markAllActivityCenterNotificationsRead*(self: Service, initialLoad: bool = true):string  =
     try:
       discard status_activity_center.markAllActivityCenterNotificationsRead()
       # This proc should accept ActivityCenterNotificationType in order to clear all notifications
-      # per type, that's why we have this part here. If we add all types to notificationsType that 
+      # per type, that's why we have this part here. If we add all types to notificationsType that
       # means that we need to clear all notifications for all types.
       var types : seq[ActivityCenterNotificationType]
       for t in ActivityCenterNotificationType:

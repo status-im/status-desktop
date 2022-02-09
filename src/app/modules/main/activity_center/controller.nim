@@ -10,7 +10,7 @@ import ../../../../app_service/service/eth/utils as eth_utils
 
 export controller_interface
 
-type 
+type
   Controller*[T: controller_interface.DelegateInterface] = ref object of controller_interface.AccessInterface
     delegate: io_interface.AccessInterface
     events: EventEmitter

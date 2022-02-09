@@ -1,6 +1,6 @@
 import ../../../../../app_service/service/wallet_account/service_interface as wallet_account_service
 
-type 
+type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
   ## Abstract class for any input/interaction with this module.
 
@@ -14,7 +14,6 @@ method getWalletAccount*(self: AccessInterface, accountIndex: int): wallet_accou
   raise newException(ValueError, "No implementation available")
 
 type
-  ## Abstract class (concept) which must be implemented by object/s used in this 
+  ## Abstract class (concept) which must be implemented by object/s used in this
   ## module.
   DelegateInterface* = concept c
-    

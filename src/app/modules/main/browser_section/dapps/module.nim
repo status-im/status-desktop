@@ -9,7 +9,7 @@ import ../../../../../app_service/service/dapp_permissions/service as dapp_permi
 import options
 export io_interface
 
-type 
+type
   Module* = ref object of io_interface.AccessInterface
     delegate: delegate_interface.AccessInterface
     view: View

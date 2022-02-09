@@ -49,15 +49,15 @@ QtObject:
     let enumRole = role.ModelRole
 
     case enumRole:
-    of ModelRole.Id: 
+    of ModelRole.Id:
       result = newQVariant(item.getId())
-    of ModelRole.Alias: 
+    of ModelRole.Alias:
       result = newQVariant(item.getAlias())
-    of ModelRole.Identicon: 
+    of ModelRole.Identicon:
       result = newQVariant(item.getIdenticon())
-    of ModelRole.Address: 
+    of ModelRole.Address:
       result = newQVariant(item.getAddress())
-    of ModelRole.KeyUid: 
+    of ModelRole.KeyUid:
       result = newQVariant(item.getKeyUid())
 
   proc setItems*(self: Model, items: seq[Item]) =

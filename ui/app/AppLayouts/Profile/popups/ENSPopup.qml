@@ -45,7 +45,7 @@ ModalPopup {
         font.pixelSize: 17
         font.weight: Font.Bold
     }
-    
+
     ScrollView {
         anchors.fill: parent
         anchors.top: lbl2.bottom
@@ -88,7 +88,7 @@ ModalPopup {
     onNewUsernameChanged: {
         btnSelectPreferred.state = newUsername === popup.ensUsernamesStore.preferredUsername ? "inactive" : "active"
     }
-    
+
     footer: Item {
         width: parent.width
         height: btnSelectPreferred.height

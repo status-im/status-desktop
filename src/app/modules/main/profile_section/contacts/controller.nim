@@ -6,13 +6,13 @@ import ../../../../../app_service/service/contacts/service as contacts_service
 
 export controller_interface
 
-type 
+type
   Controller* = ref object of controller_interface.AccessInterface
     delegate: io_interface.AccessInterface
     events: EventEmitter
     contactsService: contacts_service.Service
 
-proc newController*(delegate: io_interface.AccessInterface, 
+proc newController*(delegate: io_interface.AccessInterface,
   events: EventEmitter,
   contactsService: contacts_service.Service): Controller =
   result = Controller()
@@ -54,7 +54,7 @@ method getContacts*(self: Controller): seq[ContactsDto] =
 method getContact*(self: Controller, id: string): ContactsDto =
   return self.contactsService.getContactById(id)
 
-method getContactNameAndImage*(self: Controller, contactId: string): 
+method getContactNameAndImage*(self: Controller, contactId: string):
   tuple[name: string, image: string, isIdenticon: bool] =
   return self.contactsService.getContactNameAndImage(contactId)
 

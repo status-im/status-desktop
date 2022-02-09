@@ -101,7 +101,7 @@ Rectangle {
         InviteFriendsPopup {
             id: inviteFriendsPopup
             rootStore: emptyView.rootStore
-        }        
+        }
     }
 
     Separator {

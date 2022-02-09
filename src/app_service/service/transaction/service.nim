@@ -29,7 +29,7 @@ include ../../common/json_utils
 # Signals which may be emitted by this service:
 const SIGNAL_TRANSACTIONS_LOADED* = "transactionsLoaded"
 
-type 
+type
   TransactionMinedArgs* = ref object of Args
     data*: string
     transactionHash*: string
@@ -94,7 +94,7 @@ QtObject:
       error "error: ", errDesription
       return
 
-  proc trackPendingTransaction*(self: Service, hash: string, fromAddress: string, toAddress: string, trxType: string, 
+  proc trackPendingTransaction*(self: Service, hash: string, fromAddress: string, toAddress: string, trxType: string,
     data: string) =
     try:
       discard transactions.trackPendingTransaction(hash, fromAddress, toAddress, trxType, data)
@@ -186,7 +186,7 @@ QtObject:
     except Exception as e:
       error "Error estimating gas", msg = e.msg
       result = $(%* { "result": "-1", "success": false, "error": { "message": e.msg } })
-    
+
   proc transferEth*(
       self: Service,
       from_addr: string,

@@ -10,7 +10,7 @@ import ../account_tokens/item as account_tokens_item
 
 export io_interface
 
-type 
+type
   Module* = ref object of io_interface.AccessInterface
     delegate: delegate_interface.AccessInterface
     events: EventEmitter
@@ -34,14 +34,14 @@ method delete*(self: Module) =
   self.view.delete
   self.controller.delete
 
-method refreshWalletAccounts*(self: Module) = 
+method refreshWalletAccounts*(self: Module) =
   let walletAccounts = self.controller.getWalletAccounts()
 
 
   let items = walletAccounts.map(proc (w: WalletAccountDto): item.Item =
     let assets = account_tokens.newModel()
 
-  
+
     assets.setItems(
       w.tokens.map(t => account_tokens_item.initItem(
           t.name,
@@ -88,7 +88,7 @@ method load*(self: Module) =
 
   self.controller.init()
   self.view.load()
-  
+
 method isLoaded*(self: Module): bool =
   return self.moduleLoaded
 

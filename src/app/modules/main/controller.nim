@@ -20,7 +20,7 @@ export controller_interface
 logScope:
   topics = "main-module-controller"
 
-type 
+type
   Controller* = ref object of controller_interface.AccessInterface
     delegate: io_interface.AccessInterface
     events: EventEmitter
@@ -36,7 +36,7 @@ type
     mailserversService: mailservers_service.Service
     activeSectionId: string
 
-proc newController*(delegate: io_interface.AccessInterface, 
+proc newController*(delegate: io_interface.AccessInterface,
   events: EventEmitter,
   settingsService: settings_service.ServiceInterface,
   keychainService: keychain_service.Service,
@@ -48,7 +48,7 @@ proc newController*(delegate: io_interface.AccessInterface,
   gifService: gif_service.Service,
   privacyService: privacy_service.Service,
   mailserversService: mailservers_service.Service
-): 
+):
   Controller =
   result = Controller()
   result.delegate = delegate
@@ -63,11 +63,11 @@ proc newController*(delegate: io_interface.AccessInterface,
   result.gifService = gifService
   result.privacyService = privacyService
   result.mailserversService = mailserversService
-  
+
 method delete*(self: Controller) =
   discard
 
-method init*(self: Controller) = 
+method init*(self: Controller) =
   self.events.on("mailserverAvailable") do(e:Args):
     echo "MAILSERVER AVAILABLE: ", repr(e)
     # We need to take some actions here. This is the only pace where "mailserverAvailable" signal should be handled.
@@ -75,7 +75,7 @@ method init*(self: Controller) =
     # requestAllHistoricMessagesResult
     # requestMissingCommunityInfos
 
-  if(defined(macosx)): 
+  if(defined(macosx)):
     let account = self.accountsService.getLoggedInAccount()
     singletonInstance.localAccountSettings.setFileName(account.name)
 
@@ -173,11 +173,11 @@ method getJoinedCommunities*(self: Controller): seq[CommunityDto] =
   return self.communityService.getJoinedCommunities()
 
 method checkForStoringPassword*(self: Controller) =
-  # This method is called once user is logged in irrespective he is logged in 
+  # This method is called once user is logged in irrespective he is logged in
   # through the onboarding or login view.
 
   # This is MacOS only feature
-  if(not defined(macosx)): 
+  if(not defined(macosx)):
     return
 
   let value = singletonInstance.localAccountSettings.getStoreToKeychainValue()
@@ -243,7 +243,7 @@ method setUserStatus*(self: Controller, status: bool) =
 method getContact*(self: Controller, id: string): ContactsDto =
   return self.contactsService.getContactById(id)
 
-method getContactNameAndImage*(self: Controller, contactId: string): 
+method getContactNameAndImage*(self: Controller, contactId: string):
   tuple[name: string, image: string, isIdenticon: bool] =
   return self.contactsService.getContactNameAndImage(contactId)
 

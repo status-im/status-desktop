@@ -53,7 +53,7 @@ import ../../core/eventemitter
 
 export io_interface
 
-type 
+type
   Module*[T: io_interface.DelegateInterface] = ref object of io_interface.AccessInterface
     delegate: T
     view: View
@@ -134,16 +134,16 @@ proc newModule*[T](
     transactionService, collectible_service, walletAccountService,
     settingsService, savedAddressService
   )
-  result.browserSectionModule = browser_section_module.newModule(result, bookmarkService, settingsService, 
+  result.browserSectionModule = browser_section_module.newModule(result, bookmarkService, settingsService,
   dappPermissionsService, providerService)
-  result.profileSectionModule = profile_section_module.newModule(result, events, accountsService, settingsService, 
-  profileService, contactsService, aboutService, languageService, privacyService, nodeConfigurationService, 
+  result.profileSectionModule = profile_section_module.newModule(result, events, accountsService, settingsService,
+  profileService, contactsService, aboutService, languageService, privacyService, nodeConfigurationService,
   devicesService, mailserversService, chatService, ensService, walletAccountService)
   result.stickersModule = stickers_module.newModule(result, events, stickersService)
   result.activityCenterModule = activity_center_module.newModule(result, events, activityCenterService, contactsService,
   messageService)
   result.communitiesModule = communities_module.newModule(result, events, communityService, contactsService)
-  result.appSearchModule = app_search_module.newModule(result, events, contactsService, chatService, communityService, 
+  result.appSearchModule = app_search_module.newModule(result, events, contactsService, chatService, communityService,
   messageService)
   result.nodeSectionModule = node_section_module.newModule(result, events, settingsService, nodeService, nodeConfigurationService)
 
@@ -164,7 +164,7 @@ method delete*[T](self: Module[T]) =
   self.viewVariant.delete
   self.controller.delete
 
-proc createCommunityItem[T](self: Module[T], c: CommunityDto): SectionItem = 
+proc createCommunityItem[T](self: Module[T], c: CommunityDto): SectionItem =
   let (unviewedCount, mentionsCount) = self.controller.getNumOfNotificationsForCommunity(c.id)
   let hasNotification = unviewedCount > 0 or mentionsCount > 0
   let notificationsCount = mentionsCount # we need to add here number of requests
@@ -242,15 +242,15 @@ method load*[T](
   let (unviewedCount, mentionsCount) = self.controller.getNumOfNotificaitonsForChat()
   let hasNotification = unviewedCount > 0 or mentionsCount > 0
   let notificationsCount = mentionsCount
-  let chatSectionItem = initItem(conf.CHAT_SECTION_ID, SectionType.Chat, conf.CHAT_SECTION_NAME, 
-  amISectionAdmin = false, 
-  description = "", 
-  image = "", 
-  conf.CHAT_SECTION_ICON, 
-  color = "", 
-  hasNotification, 
-  notificationsCount, 
-  active = false, 
+  let chatSectionItem = initItem(conf.CHAT_SECTION_ID, SectionType.Chat, conf.CHAT_SECTION_NAME,
+  amISectionAdmin = false,
+  description = "",
+  image = "",
+  conf.CHAT_SECTION_ICON,
+  color = "",
+  hasNotification,
+  notificationsCount,
+  active = false,
   enabled = true)
   self.view.model().addItem(chatSectionItem)
   if(activeSectionId == chatSectionItem.id):
@@ -264,14 +264,14 @@ method load*[T](
       activeSection = communitySectionItem
 
   # Wallet Section
-  let walletSectionItem = initItem(conf.WALLET_SECTION_ID, SectionType.Wallet, conf.WALLET_SECTION_NAME, 
-  amISectionAdmin = false, 
-  description = "", 
-  image = "", 
-  conf.WALLET_SECTION_ICON, 
-  color = "", 
-  hasNotification = false, 
-  notificationsCount = 0, 
+  let walletSectionItem = initItem(conf.WALLET_SECTION_ID, SectionType.Wallet, conf.WALLET_SECTION_NAME,
+  amISectionAdmin = false,
+  description = "",
+  image = "",
+  conf.WALLET_SECTION_ICON,
+  color = "",
+  hasNotification = false,
+  notificationsCount = 0,
   active = false,
   enabled = singletonInstance.localAccountSensitiveSettings.getIsWalletEnabled())
   self.view.model().addItem(walletSectionItem)
@@ -279,29 +279,29 @@ method load*[T](
     activeSection = walletSectionItem
 
   # WalletV2 Section
-  let walletV2SectionItem = initItem(conf.WALLETV2_SECTION_ID, SectionType.WalletV2, conf.WALLETV2_SECTION_NAME, 
+  let walletV2SectionItem = initItem(conf.WALLETV2_SECTION_ID, SectionType.WalletV2, conf.WALLETV2_SECTION_NAME,
   amISectionAdmin = false,
-  description = "", 
-  image = "", 
-  conf.WALLETV2_SECTION_ICON, 
-  color = "", 
-  hasNotification = false, 
-  notificationsCount = 0, 
-  active = false, 
+  description = "",
+  image = "",
+  conf.WALLETV2_SECTION_ICON,
+  color = "",
+  hasNotification = false,
+  notificationsCount = 0,
+  active = false,
   enabled = singletonInstance.localAccountSensitiveSettings.getIsWalletV2Enabled())
   self.view.model().addItem(walletV2SectionItem)
   if(activeSectionId == walletV2SectionItem.id):
     activeSection = walletV2SectionItem
 
   # Browser Section
-  let browserSectionItem = initItem(conf.BROWSER_SECTION_ID, SectionType.Browser, conf.BROWSER_SECTION_NAME, 
-  amISectionAdmin = false, 
-  description = "", 
-  image = "", 
-  conf.BROWSER_SECTION_ICON, 
-  color = "", 
-  hasNotification = false, 
-  notificationsCount = 0, 
+  let browserSectionItem = initItem(conf.BROWSER_SECTION_ID, SectionType.Browser, conf.BROWSER_SECTION_NAME,
+  amISectionAdmin = false,
+  description = "",
+  image = "",
+  conf.BROWSER_SECTION_ICON,
+  color = "",
+  hasNotification = false,
+  notificationsCount = 0,
   active = false,
   enabled = singletonInstance.localAccountSensitiveSettings.getIsBrowserEnabled())
   self.view.model().addItem(browserSectionItem)
@@ -309,32 +309,32 @@ method load*[T](
     activeSection = browserSectionItem
 
   # Node Management Section
-  let nodeManagementSectionItem = initItem(conf.NODEMANAGEMENT_SECTION_ID, SectionType.NodeManagement, 
-  conf.NODEMANAGEMENT_SECTION_NAME, 
-  amISectionAdmin = false, 
-  description = "", 
-  image = "", 
-  conf.NODEMANAGEMENT_SECTION_ICON, 
-  color = "", 
-  hasNotification = false, 
-  notificationsCount = 0, 
-  active = false, 
+  let nodeManagementSectionItem = initItem(conf.NODEMANAGEMENT_SECTION_ID, SectionType.NodeManagement,
+  conf.NODEMANAGEMENT_SECTION_NAME,
+  amISectionAdmin = false,
+  description = "",
+  image = "",
+  conf.NODEMANAGEMENT_SECTION_ICON,
+  color = "",
+  hasNotification = false,
+  notificationsCount = 0,
+  active = false,
   enabled = singletonInstance.localAccountSensitiveSettings.getNodeManagementEnabled())
   self.view.model().addItem(nodeManagementSectionItem)
   if(activeSectionId == nodeManagementSectionItem.id):
     activeSection = nodeManagementSectionItem
 
   # Profile Section
-  let profileSettingsSectionItem = initItem(conf.SETTINGS_SECTION_ID, SectionType.ProfileSettings, 
-  conf.SETTINGS_SECTION_NAME, 
-  amISectionAdmin = false, 
-  description = "", 
-  image = "", 
-  conf.SETTINGS_SECTION_ICON, 
-  color = "", 
-  hasNotification = self.calculateProfileSectionHasNotification(), 
-  notificationsCount = 0, 
-  active = false, 
+  let profileSettingsSectionItem = initItem(conf.SETTINGS_SECTION_ID, SectionType.ProfileSettings,
+  conf.SETTINGS_SECTION_NAME,
+  amISectionAdmin = false,
+  description = "",
+  image = "",
+  conf.SETTINGS_SECTION_ICON,
+  color = "",
+  hasNotification = self.calculateProfileSectionHasNotification(),
+  notificationsCount = 0,
+  active = false,
   enabled = true)
   self.view.model().addItem(profileSettingsSectionItem)
   if(activeSectionId == profileSettingsSectionItem.id):
@@ -431,10 +431,10 @@ method viewDidLoad*[T](self: Module[T]) =
 
 method checkForStoringPassword*[T](self: Module[T]) =
   self.controller.checkForStoringPassword()
-  
+
 method offerToStorePassword*[T](self: Module[T]) =
   self.view.offerToStorePassword()
-  
+
 method storePassword*[T](self: Module[T], password: string) =
   self.controller.storePassword(password)
 
@@ -478,7 +478,7 @@ proc setSectionAvailability[T](self: Module[T], sectionType: SectionType, availa
   if(available):
     self.view.model().enableSection(sectionType)
   else:
-    self.view.model().disableSection(sectionType)    
+    self.view.model().disableSection(sectionType)
 
 method toggleSection*[T](self: Module[T], sectionType: SectionType) =
   if (sectionType == SectionType.Wallet):
@@ -535,7 +535,7 @@ method switchTo*[T](self: Module[T], sectionId, chatId: string) =
 method onActiveChatChange*[T](self: Module[T], sectionId: string, chatId: string) =
   self.appSearchModule.onActiveChatChange(sectionId, chatId)
 
-method onNotificationsUpdated[T](self: Module[T], sectionId: string, sectionHasUnreadMessages: bool, 
+method onNotificationsUpdated[T](self: Module[T], sectionId: string, sectionHasUnreadMessages: bool,
   sectionNotificationCount: int) =
   self.view.model().udpateNotifications(sectionId, sectionHasUnreadMessages, sectionNotificationCount)
 
@@ -608,11 +608,11 @@ method getContactDetailsAsJson*[T](self: Module[T], publicKey: string): string =
     "publicKey": contact.id,
     "name": contact.name,
     "ensVerified": contact.ensVerified,
-    "alias": contact.alias, 
-    "lastUpdated": contact.lastUpdated, 
+    "alias": contact.alias,
+    "lastUpdated": contact.lastUpdated,
     "lastUpdatedLocally": contact.lastUpdatedLocally,
     "localNickname": contact.localNickname,
-    "identicon": contact.identicon, 
+    "identicon": contact.identicon,
     "thumbnailImage": contact.image.large,
     "largeImage": contact.image.thumbnail,
     "isContact":contact.added,

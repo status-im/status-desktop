@@ -7,7 +7,7 @@ export permission
 
 type R = Result[Dapp, string]
 
-type 
+type
   ServiceInterface* {.pure inheritable.} = ref object of RootObj
   ## Abstract class for this service access.
 

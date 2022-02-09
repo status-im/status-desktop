@@ -34,7 +34,7 @@ Popup {
     property string linkText: defaultLinkText
     property int dissapearInMs: 4000 /* setting this to -1 makes caller responsible to close it */
     property bool displayCloseButton: true
-    property bool displayLink: true    
+    property bool displayLink: true
 
     onOpened: {
         if(dissapearInMs == -1)

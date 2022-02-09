@@ -1,4 +1,4 @@
-type 
+type
   PendingRequestItem* = ref object
     id: string
     publicKey: string
@@ -23,20 +23,20 @@ proc initItem*(
   result.state = state
   result.our = our
 
-proc id*(self: PendingRequestItem): string = 
+proc id*(self: PendingRequestItem): string =
   self.id
 
-proc pubKey*(self: PendingRequestItem): string = 
+proc pubKey*(self: PendingRequestItem): string =
   self.publicKey
 
-proc chatId*(self: PendingRequestItem): string = 
+proc chatId*(self: PendingRequestItem): string =
   self.chatId
 
-proc communityId*(self: PendingRequestItem): string = 
+proc communityId*(self: PendingRequestItem): string =
   self.communityId
 
-proc state*(self: PendingRequestItem): int = 
+proc state*(self: PendingRequestItem): int =
   self.state
 
-proc our*(self: PendingRequestItem): string = 
+proc our*(self: PendingRequestItem): string =
   self.our

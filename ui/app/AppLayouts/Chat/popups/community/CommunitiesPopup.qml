@@ -49,7 +49,7 @@ StatusModal {
         width: popup.width
         property alias searchBox: searchBox
 
-        Item { 
+        Item {
             height: 8
             width: parent.width
         }

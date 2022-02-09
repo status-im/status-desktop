@@ -8,7 +8,7 @@ import ../../../../../app_service/service/language/service_interface as language
 
 export io_interface
 
-type 
+type
   Module* = ref object of io_interface.AccessInterface
     delegate: delegate_interface.AccessInterface
     controller: controller.AccessInterface

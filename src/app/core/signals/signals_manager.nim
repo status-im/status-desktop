@@ -28,14 +28,14 @@ QtObject:
 
   proc processSignal(self: SignalsManager, statusSignal: string) =
     var jsonSignal: JsonNode
-    try: 
+    try:
       jsonSignal = statusSignal.parseJson
     except:
       error "Invalid signal received", data = statusSignal
       return
 
     trace "Raw signal data", data = $jsonSignal
-    
+
     var signal:Signal
     try:
       signal = self.decode(jsonSignal)

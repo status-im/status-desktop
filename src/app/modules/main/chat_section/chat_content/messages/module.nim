@@ -21,7 +21,7 @@ logScope:
 const CHAT_IDENTIFIER_MESSAGE_ID = "chat-identifier-message-id"
 const FETCH_MORE_MESSAGES_MESSAGE_ID = "fetch-more_messages-message-id"
 
-type 
+type
   Module* = ref object of io_interface.AccessInterface
     delegate: delegate_interface.AccessInterface
     view: View
@@ -29,15 +29,15 @@ type
     controller: controller.AccessInterface
     moduleLoaded: bool
 
-proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitter, sectionId: string, chatId: string, 
+proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitter, sectionId: string, chatId: string,
   belongsToCommunity: bool, contactService: contact_service.Service, communityService: community_service.Service,
-  chatService: chat_service.Service, messageService: message_service.Service, mailserversService: mailservers_service.Service): 
+  chatService: chat_service.Service, messageService: message_service.Service, mailserversService: mailservers_service.Service):
   Module =
   result = Module()
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, events, sectionId, chatId, belongsToCommunity, contactService, 
+  result.controller = controller.newController(result, events, sectionId, chatId, belongsToCommunity, contactService,
   communityService, chatService, messageService, mailserversService)
   result.moduleLoaded = false
 
@@ -81,7 +81,7 @@ proc createFetchMoreMessagesItem(self: Module): Item =
     amISender = false,
     outgoingStatus = "",
     text = "",
-    image = "", 
+    image = "",
     messageContainsMentions = false,
     seen = true,
     timestamp = 0,
@@ -111,7 +111,7 @@ proc createChatIdentifierItem(self: Module): Item =
     amISender = false,
     outgoingStatus = "",
     text = "",
-    image = "", 
+    image = "",
     messageContainsMentions = false,
     seen = true,
     timestamp = 0,
@@ -135,10 +135,10 @@ proc checkIfMessageLoadedAndScrollToItIfItIs(self: Module): bool =
       return true
   return false
 
-method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: seq[ReactionDto], 
-  pinnedMessages: seq[PinnedMessageDto]) = 
+method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: seq[ReactionDto],
+  pinnedMessages: seq[PinnedMessageDto]) =
   var viewItems: seq[Item]
-  
+
   if(messages.len > 0):
     for m in messages:
       let sender = self.controller.getContactDetails(m.`from`)
@@ -150,12 +150,12 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
         m.`from`,
         sender.displayName,
         sender.details.localNickname,
-        sender.icon, 
+        sender.icon,
         sender.isIdenticon,
         sender.isCurrentUser,
         m.outgoingStatus,
         renderedMessageText,
-        m.image, 
+        m.image,
         m.containsContactMentions(),
         m.seen,
         m.timestamp,
@@ -172,7 +172,7 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
           if(message_reaction_item.toEmojiIdAsEnum(r.emojiId, emojiIdAsEnum)):
             let userWhoAddedThisReaction = self.controller.getContactById(r.`from`)
             let didIReactWithThisEmoji = userWhoAddedThisReaction.id == singletonInstance.userProfile.getPubKey()
-            item.addReaction(emojiIdAsEnum, didIReactWithThisEmoji, userWhoAddedThisReaction.id, 
+            item.addReaction(emojiIdAsEnum, didIReactWithThisEmoji, userWhoAddedThisReaction.id,
             userWhoAddedThisReaction.userNameOrAlias(), r.id)
           else:
             error "wrong emoji id found when loading messages", methodName="newMessagesLoaded"
@@ -202,7 +202,7 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
 
   # check if this loading was caused by the click on a messages from the app search result
   discard self.checkIfMessageLoadedAndScrollToItIfItIs()
-   
+
 method messageAdded*(self: Module, message: MessageDto) =
   let sender = self.controller.getContactDetails(message.`from`)
 
@@ -212,13 +212,13 @@ method messageAdded*(self: Module, message: MessageDto) =
     message.responseTo,
     message.`from`,
     sender.displayName,
-    sender.details.localNickname, 
+    sender.details.localNickname,
     sender.icon,
     sender.isIdenticon,
     sender.isCurrentUser,
     message.outgoingStatus,
     renderedMessageText,
-    message.image, 
+    message.image,
     message.containsContactMentions(),
     message.seen,
     message.timestamp,
@@ -260,7 +260,7 @@ method onReactionAdded*(self: Module, messageId: string, emojiId: int, reactionI
   if(message_reaction_item.toEmojiIdAsEnum(emojiId, emojiIdAsEnum)):
     let myPublicKey = singletonInstance.userProfile.getPubKey()
     let myName = singletonInstance.userProfile.getName()
-    self.view.model().addReaction(messageId, emojiIdAsEnum, didIReactWithThisEmoji = true, myPublicKey, myName, 
+    self.view.model().addReaction(messageId, emojiIdAsEnum, didIReactWithThisEmoji = true, myPublicKey, myName,
     reactionId)
   else:
     error "wrong emoji id found on reaction added response", emojiId, methodName="onReactionAdded"
@@ -272,7 +272,7 @@ method onReactionRemoved*(self: Module, messageId: string, emojiId: int, reactio
   else:
     error "wrong emoji id found on reaction remove response", emojiId, methodName="onReactionRemoved"
 
-method toggleReactionFromOthers*(self: Module, messageId: string, emojiId: int, reactionId: string, 
+method toggleReactionFromOthers*(self: Module, messageId: string, emojiId: int, reactionId: string,
   reactionFrom: string) =
   var emojiIdAsEnum: EmojiId
   if(message_reaction_item.toEmojiIdAsEnum(emojiId, emojiIdAsEnum)):
@@ -282,7 +282,7 @@ method toggleReactionFromOthers*(self: Module, messageId: string, emojiId: int, 
       return
     if(item.shouldAddReaction(emojiIdAsEnum, reactionFrom)):
       let userWhoAddedThisReaction = self.controller.getContactById(reactionFrom)
-      self.view.model().addReaction(messageId, emojiIdAsEnum, didIReactWithThisEmoji = false, 
+      self.view.model().addReaction(messageId, emojiIdAsEnum, didIReactWithThisEmoji = false,
       userWhoAddedThisReaction.id, userWhoAddedThisReaction.userNameOrAlias(), reactionId)
     else:
       self.view.model().removeReaction(messageId, emojiIdAsEnum, reactionId, didIRemoveThisReaction = false)

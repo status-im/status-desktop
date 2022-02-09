@@ -15,7 +15,7 @@ import ../../../../core/eventemitter
 
 export controller_interface
 
-type 
+type
   Controller* = ref object of controller_interface.AccessInterface
     delegate: io_interface.AccessInterface
     events: EventEmitter
@@ -29,9 +29,9 @@ type
     communityService: community_service.Service
     messageService: message_service.Service
 
-proc newController*(delegate: io_interface.AccessInterface, events: EventEmitter, sectionId: string, chatId: string, 
+proc newController*(delegate: io_interface.AccessInterface, events: EventEmitter, sectionId: string, chatId: string,
   belongsToCommunity: bool, isUsersListAvailable: bool, settingsService: settings_service.ServiceInterface,
-  contactService: contact_service.Service, chatService: chat_service.Service, 
+  contactService: contact_service.Service, chatService: chat_service.Service,
   communityService: community_service.Service, messageService: message_service.Service): Controller =
   result = Controller()
   result.delegate = delegate
@@ -45,11 +45,11 @@ proc newController*(delegate: io_interface.AccessInterface, events: EventEmitter
   result.chatService = chatService
   result.communityService = communityService
   result.messageService = messageService
-  
+
 method delete*(self: Controller) =
   discard
 
-method init*(self: Controller) = 
+method init*(self: Controller) =
   self.events.on(SIGNAL_MESSAGES_LOADED) do(e:Args):
     let args = MessagesLoadedArgs(e)
     if(self.chatId != args.chatId or args.pinnedMessages.len == 0):
@@ -143,7 +143,7 @@ method belongsToCommunity*(self: Controller): bool =
 method unpinMessage*(self: Controller, messageId: string) =
   self.messageService.pinUnpinMessage(self.chatId, messageId, false)
 
-method getMessageDetails*(self: Controller, messageId: string): 
+method getMessageDetails*(self: Controller, messageId: string):
   tuple[message: MessageDto, reactions: seq[ReactionDto], error: string] =
   return self.messageService.getDetailsForMessage(self.chatId, messageId)
 

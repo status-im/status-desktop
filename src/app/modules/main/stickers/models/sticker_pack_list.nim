@@ -91,7 +91,7 @@ QtObject:
 
   proc hasKey*(self: StickerPackList, packId: int): bool =
     result = self.packs.anyIt(it.pack.id == packId)
-  
+
   proc `[]`*(self: StickerPackList, packId: int): PackItem =
     if not self.hasKey(packId):
       raise newException(ValueError, "Sticker pack list does not have a pack with id " & $packId)
@@ -124,7 +124,7 @@ QtObject:
   proc getStickers*(self: StickerPackList): QVariant {.slot.} =
     let packInfo = self.packs[self.packIdToRetrieve]
     result = newQVariant(packInfo.stickers)
-  
+
   proc rowData*(self: StickerPackList, row: int, data: string): string {.slot.} =
     if row < 0 or (row > self.packs.len - 1):
       return

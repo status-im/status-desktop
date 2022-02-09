@@ -4,7 +4,7 @@ import ../../../../../app_service/service/community/dto/[community]
 import ../../../../../app_service/service/chat/dto/[chat]
 import ../../../../../app_service/service/contacts/service
 
-type 
+type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
   ## Abstract class for any input/interaction with this module.
 
@@ -19,11 +19,11 @@ method getMyChatId*(self: AccessInterface): string {.base.} =
 
 method getChatDetails*(self: AccessInterface): ChatDto {.base.} =
   raise newException(ValueError, "No implementation available")
-  
+
 method getCommunityDetails*(self: AccessInterface): CommunityDto {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getOneToOneChatNameAndImage*(self: AccessInterface): tuple[name: string, image: string, isIdenticon: bool] 
+method getOneToOneChatNameAndImage*(self: AccessInterface): tuple[name: string, image: string, isIdenticon: bool]
   {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -33,7 +33,7 @@ method belongsToCommunity*(self: AccessInterface): bool {.base.} =
 method unpinMessage*(self: AccessInterface, messageId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getMessageDetails*(self: AccessInterface, messageId: string): 
+method getMessageDetails*(self: AccessInterface, messageId: string):
   tuple[message: MessageDto, reactions: seq[ReactionDto], error: string] {.base.} =
   raise newException(ValueError, "No implementation available")
 

@@ -1,6 +1,6 @@
 import json, strformat
 
-type 
+type
   Item* = object
     name: string
     url: string
@@ -13,16 +13,16 @@ proc initItem*(name, url, imageUrl: string): Item =
 
 proc `$`*(self: Item): string =
   result = fmt"""BrowserItem(
-    name: {self.name}, 
+    name: {self.name},
     url: {self.url},
     imageUrl: {self.imageUrl}
     ]"""
 
-proc getName*(self: Item): string = 
+proc getName*(self: Item): string =
   return self.name
 
-proc getUrl*(self: Item): string = 
+proc getUrl*(self: Item): string =
   return self.url
 
-proc getImageUrl*(self: Item): string = 
+proc getImageUrl*(self: Item): string =
   return self.imageUrl

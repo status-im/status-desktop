@@ -2,8 +2,8 @@ import controller_interface
 
 export controller_interface
 
-type 
-  Controller*[T: controller_interface.DelegateInterface] = 
+type
+  Controller*[T: controller_interface.DelegateInterface] =
     ref object of controller_interface.AccessInterface
     delegate: T
 
@@ -14,5 +14,5 @@ proc newController*[T](delegate: T): Controller[T] =
 method delete*[T](self: Controller[T]) =
   discard
 
-method init*[T](self: Controller[T]) = 
+method init*[T](self: Controller[T]) =
   discard

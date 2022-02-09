@@ -4,7 +4,7 @@ import ./item, ./trait_model
 
 type
   ModelRole {.pure.} = enum
-    Id = UserRole + 1, 
+    Id = UserRole + 1,
     Name
     ImageUrl
     BackgroundColor
@@ -13,7 +13,7 @@ type
     Properties
     Rankings
     Stats
-    
+
 QtObject:
   type
     Model* = ref object of QAbstractListModel
@@ -70,13 +70,13 @@ QtObject:
     let enumRole = role.ModelRole
 
     case enumRole:
-    of ModelRole.Id: 
+    of ModelRole.Id:
       result = newQVariant(item.getId())
-    of ModelRole.Name: 
+    of ModelRole.Name:
       result = newQVariant(item.getName())
-    of ModelRole.ImageUrl: 
+    of ModelRole.ImageUrl:
       result = newQVariant(item.getImageUrl())
-    of ModelRole.BackgroundColor: 
+    of ModelRole.BackgroundColor:
       result = newQVariant(item.getBackgroundColor())
     of ModelRole.Description:
       result = newQVariant(item.getDescription())

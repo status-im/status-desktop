@@ -12,7 +12,7 @@ QtObject:
       stats*: Stats
       peerSize: int
       bloomBitsSet: int
- 
+
   proc delete*(self: View) =
     self.QObject.delete
 
@@ -129,7 +129,7 @@ QtObject:
     notify = peerSizeChanged
 
   proc log*(self: View, logContent: string) {.signal.}
-  
+
   proc getWakuV2LightClient(self: View): bool {.slot.} = self.delegate.isV2LightMode()
 
   QtProperty[bool] WakuV2LightClient:

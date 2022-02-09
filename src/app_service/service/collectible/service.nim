@@ -12,7 +12,7 @@ const limit = 200
 logScope:
   topics = "collectible-service"
 
-type 
+type
   Service* = ref object of service_interface.ServiceInterface
     settingsService: settings_service.ServiceInterface
 

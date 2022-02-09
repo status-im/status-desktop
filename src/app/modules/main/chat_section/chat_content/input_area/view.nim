@@ -12,7 +12,7 @@ QtObject:
       gifColumnAModel: GifColumnModel
       gifColumnBModel: GifColumnModel
       gifColumnCModel: GifColumnModel
-      
+
   proc delete*(self: View) =
     self.model.delete
     self.QObject.delete
@@ -28,7 +28,7 @@ QtObject:
 
   proc load*(self: View) =
     self.delegate.viewDidLoad()
-  
+
   proc sendMessage*(
       self: View,
       msg: string,
@@ -53,7 +53,7 @@ QtObject:
 
   proc declineRequest*(self: View, messageId: string) {.slot.} =
     self.delegate.declineRequestTransaction(messageId)
-  
+
   proc acceptRequestTransaction*(self: View, transactionHash: string, messageId: string, signature: string) {.slot.} =
     self.delegate.acceptRequestTransaction(transactionHash, messageId, signature)
 
@@ -108,11 +108,11 @@ QtObject:
   proc searchGifs*(self: View, query: string) {.slot.} =
     let data = self.delegate.searchGifs(query)
     self.updateGifColumns(data)
-  
+
   proc getTrendingsGifs*(self: View) {.slot.} =
     let data = self.delegate.getTrendingsGifs()
     self.updateGifColumns(data)
-  
+
   proc getRecentsGifs*(self: View) {.slot.} =
     let data = self.delegate.getRecentsGifs()
     self.updateGifColumns(data)

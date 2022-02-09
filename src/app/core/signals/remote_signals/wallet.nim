@@ -12,10 +12,10 @@ type WalletSignal* = ref object of Signal
   # newTransactions*: ???
   erc20*: bool
 
-proc fromEvent*(T: type WalletSignal, jsonSignal: JsonNode): WalletSignal = 
+proc fromEvent*(T: type WalletSignal, jsonSignal: JsonNode): WalletSignal =
   result = WalletSignal()
   result.signalType = SignalType.Wallet
-  result.content = $jsonSignal  
+  result.content = $jsonSignal
   if jsonSignal["event"].kind != JNull:
     result.eventType = jsonSignal["event"]["type"].getStr
     result.blockNumber = jsonSignal["event"]{"blockNumber"}.getInt
@@ -25,4 +25,3 @@ proc fromEvent*(T: type WalletSignal, jsonSignal: JsonNode): WalletSignal =
     if jsonSignal["event"]["accounts"].kind != JNull:
       for account in jsonSignal["event"]["accounts"]:
         result.accounts.add(account.getStr)
-  

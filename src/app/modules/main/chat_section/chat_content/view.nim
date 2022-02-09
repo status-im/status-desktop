@@ -11,7 +11,7 @@ QtObject:
       pinnedMessagesModelVariant: QVariant
       chatDetails: ChatDetails
       chatDetailsVariant: QVariant
-      
+
   proc chatDetailsChanged*(self:View) {.signal.}
 
   proc delete*(self: View) =
@@ -68,7 +68,7 @@ QtObject:
   QtProperty[QVariant] pinnedMessagesModel:
     read = getPinnedMessagesModel
 
-  proc unpinMessage*(self: View, messageId: string) {.slot.} = 
+  proc unpinMessage*(self: View, messageId: string) {.slot.} =
     self.delegate.unpinMessage(messageId)
 
   proc getMyChatId*(self: View): string {.slot.} =
@@ -77,22 +77,22 @@ QtObject:
   proc isMyContact*(self: View, contactId: string): bool {.slot.} =
     return self.delegate.isMyContact(contactId)
 
-  proc muteChat*(self: View) {.slot.} = 
+  proc muteChat*(self: View) {.slot.} =
     self.delegate.muteChat()
 
-  proc unmuteChat*(self: View) {.slot.} = 
+  proc unmuteChat*(self: View) {.slot.} =
     self.delegate.unmuteChat()
 
-  proc markAllMessagesRead*(self: View) {.slot.} = 
+  proc markAllMessagesRead*(self: View) {.slot.} =
     self.delegate.markAllMessagesRead()
 
-  proc clearChatHistory*(self: View) {.slot.} = 
+  proc clearChatHistory*(self: View) {.slot.} =
     self.delegate.clearChatHistory()
 
   proc leaveChat*(self: View) {.slot.} =
     self.delegate.leaveChat()
 
-  proc setMuted*(self: View, muted: bool) = 
+  proc setMuted*(self: View, muted: bool) =
     self.chatDetails.setMuted(muted)
 
   proc updateChatDetailsNameAndIcon*(self: View, name, icon: string, isIdenticon: bool) =
@@ -112,7 +112,7 @@ QtObject:
   proc getCurrentFleet*(self: View): string {.slot.} =
     self.delegate.getCurrentFleet()
 
-  proc amIChatAdmin*(self: View): bool {.slot.} = 
+  proc amIChatAdmin*(self: View): bool {.slot.} =
     return self.delegate.amIChatAdmin()
 
   proc updateChatDetails*(self: View, name, description: string) =

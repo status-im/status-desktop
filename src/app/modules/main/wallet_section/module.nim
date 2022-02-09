@@ -23,7 +23,7 @@ import ../../../../app_service/service/saved_address/service_interface as saved_
 import io_interface
 export io_interface
 
-type 
+type
   Module* [T: io_interface.DelegateInterface] = ref object of io_interface.AccessInterface
     delegate: T
     events: EventEmitter
@@ -55,7 +55,7 @@ proc newModule*[T](
   result.moduleLoaded = false
   result.controller = newController(result, settingsService, walletAccountService)
   result.view = newView(result)
-  
+
   result.accountTokensModule = account_tokens_module.newModule(result, events, walletAccountService)
   result.accountsModule = accounts_module.newModule(result, events, walletAccountService)
   result.allTokensModule = all_tokens_module.newModule(result, events, tokenService, walletAccountService)

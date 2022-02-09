@@ -1,6 +1,6 @@
 import ../../../../../app_service/service/devices/dto/device
 
-type 
+type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
   ## Abstract class for any input/interaction with this module.
 

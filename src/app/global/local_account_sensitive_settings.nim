@@ -107,7 +107,7 @@ QtObject:
   type LocalAccountSensitiveSettings* = ref object of QObject
     settingsFileDir: string
     settings: QSettings
-    
+
   proc setup(self: LocalAccountSensitiveSettings) =
     self.QObject.setup
     self.settingsFileDir = os.joinPath(DATADIR, "qt")
@@ -118,7 +118,7 @@ QtObject:
 
     self.QObject.delete
 
-  proc newLocalAccountSensitiveSettings*(): 
+  proc newLocalAccountSensitiveSettings*():
     LocalAccountSensitiveSettings =
     new(result, delete)
     result.setup
@@ -152,7 +152,7 @@ QtObject:
     when T is bool:
       result = getSettingsPropBool(self, prop, default)
 
-  template setSettingsProp(self: LocalAccountSensitiveSettings, prop: string, value: QVariant, signal: untyped) = 
+  template setSettingsProp(self: LocalAccountSensitiveSettings, prop: string, value: QVariant, signal: untyped) =
     if(self.settings.isNil):
       return
 
@@ -237,7 +237,7 @@ QtObject:
     write = setIsWalletV2Enabled
     notify = isWalletV2EnabledChanged
 
-  
+
   proc nodeManagementEnabledChanged*(self: LocalAccountSensitiveSettings) {.signal.}
   proc getNodeManagementEnabled*(self: LocalAccountSensitiveSettings): bool {.slot.} =
     getSettingsProp[bool](self, LSS_KEY_NODE_MANAGEMENT_ENABLED, newQVariant(DEFAULT_NODE_MANAGEMENT_ENABLED))
@@ -263,7 +263,7 @@ QtObject:
     write = setIsBrowserEnabled
     notify = isBrowserEnabledChanged
 
-  
+
   proc isActivityCenterEnabledChanged*(self: LocalAccountSensitiveSettings) {.signal.}
   proc getIsActivityCenterEnabled*(self: LocalAccountSensitiveSettings): bool {.slot.} =
     getSettingsProp[bool](self, LSS_KEY_IS_ACTIVITY_CENTER_ENABLED, newQVariant(DEFAULT_IS_ACTIVITY_CENTER_ENABLED))
@@ -289,7 +289,7 @@ QtObject:
     write = setShowOnlineUsers
     notify = showOnlineUsersChanged
 
-  
+
   proc expandUsersListChanged*(self: LocalAccountSensitiveSettings) {.signal.}
   proc getExpandUsersList*(self: LocalAccountSensitiveSettings): bool {.slot.} =
     getSettingsProp[bool](self, LSS_KEY_EXPAND_USERS_LIST, newQVariant(DEFAULT_EXPAND_USERS_LIST))
@@ -354,7 +354,7 @@ QtObject:
     write = setRecentEmojis
     notify = recentEmojisChanged
 
-  
+
   proc hiddenCommunityWelcomeBannersChanged*(self: LocalAccountSensitiveSettings) {.signal.}
   proc getHiddenCommunityWelcomeBanners*(self: LocalAccountSensitiveSettings): QVariant {.slot.} =
     getSettingsPropQVariant(self, LSS_KEY_HIDDEN_COMMUNITY_WELCOME_BANNERS, newQVariant(DEFAULT_HIDDEN_COMMUNITY_WELCOME_BANNERS))
@@ -458,7 +458,7 @@ QtObject:
     write = setNotifyOnNewRequests
     notify = notifyOnNewRequestsChanged
 
-  
+
   proc whitelistedUnfurlingSitesChanged*(self: LocalAccountSensitiveSettings) {.signal.}
   proc getWhitelistedUnfurlingSites*(self: LocalAccountSensitiveSettings): QVariant {.slot.} =
     getSettingsPropQVariant(self, LSS_KEY_WITHLISTED_UNFURLING_SITES, newQVariant(DEFAULT_WITHLISTED_UNFURLING_SITES))
@@ -560,7 +560,7 @@ QtObject:
   QtProperty[string] skinColor:
     read = getSkinColor
     write = setSkinColor
-    notify = skinColorChanged  
+    notify = skinColorChanged
 
 
   proc showDeleteMessageWarningChanged*(self: LocalAccountSensitiveSettings) {.signal.}
@@ -599,7 +599,7 @@ QtObject:
   QtProperty[string] activeSection:
     read = getActiveSection
     write = setActiveSection
-    notify = activeSectionChanged  
+    notify = activeSectionChanged
 
 
   proc showBrowserSelectorChanged*(self: LocalAccountSensitiveSettings) {.signal.}
@@ -651,7 +651,7 @@ QtObject:
   QtProperty[string] browserHomepage:
     read = getBrowserHomepage
     write = setBrowserHomepage
-    notify = browserHomepageChanged 
+    notify = browserHomepageChanged
 
 
   proc shouldShowBrowserSearchEngineChanged*(self: LocalAccountSensitiveSettings) {.signal.}
@@ -821,12 +821,12 @@ QtObject:
     read = getStickersEnsRopsten
     write = setStickersEnsRopsten
     notify = stickersEnsRopstenChanged
-  
+
 
   proc removeKey*(self: LocalAccountSensitiveSettings, key: string) =
     if(self.settings.isNil):
       return
-    
+
     self.settings.remove(key)
 
     case key:

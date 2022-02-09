@@ -31,7 +31,7 @@ Item {
         anchors.leftMargin: Style.current.padding
     }
 
-    
+
     StatusBaseText {
         //% "Revoke access"
         text: qsTrId("revoke-access")
@@ -47,5 +47,5 @@ Item {
             onClicked: removeBtnClicked(name)
         }
     }
-    
+
 }

@@ -36,18 +36,18 @@ QtObject:
     self.icon = icon
     self.isIdenticon = isIdenticon
     self.color = color
-    self.description = description    
+    self.description = description
     self.hasUnreadMessages = hasUnreadMessages
     self.notificationsCount = notificationsCount
     self.muted = muted
     self.position = position
 
-  proc getId(self: ChatDetails): string {.slot.} = 
+  proc getId(self: ChatDetails): string {.slot.} =
     return self.id
   QtProperty[string] id:
     read = getId
 
-  proc getType(self: ChatDetails): int {.slot.} = 
+  proc getType(self: ChatDetails): int {.slot.} =
     return self.`type`
   QtProperty[int] type:
     read = getType
@@ -61,19 +61,19 @@ QtObject:
     return self.isUsersListAvailable
   QtProperty[bool] isUsersListAvailable:
     read = getIsUsersListAvailable
-  
-  proc nameChanged(self: ChatDetails) {.signal.}  
-  proc getName(self: ChatDetails): string {.slot.} = 
+
+  proc nameChanged(self: ChatDetails) {.signal.}
+  proc getName(self: ChatDetails): string {.slot.} =
     return self.name
   QtProperty[string] name:
     read = getName
     notify = nameChanged
-  
+
   proc setName*(self: ChatDetails, value: string) = # this is not a slot
     self.name = value
     self.nameChanged()
 
-  proc iconChanged(self: ChatDetails) {.signal.}  
+  proc iconChanged(self: ChatDetails) {.signal.}
   proc getIcon(self: ChatDetails): string {.slot.} =
     return self.icon
   QtProperty[string] icon:
@@ -91,7 +91,7 @@ QtObject:
     self.isIdenticon = isIdenticon
     self.iconChanged()
 
-  proc colorChanged(self: ChatDetails) {.signal.}  
+  proc colorChanged(self: ChatDetails) {.signal.}
   proc getColor(self: ChatDetails): string {.slot.} =
     return self.color
   QtProperty[string] color:
@@ -102,8 +102,8 @@ QtObject:
     self.color = value
     self.colorChanged()
 
-  proc descriptionChanged(self: ChatDetails) {.signal.}  
-  proc getDescription(self: ChatDetails): string {.slot.} = 
+  proc descriptionChanged(self: ChatDetails) {.signal.}
+  proc getDescription(self: ChatDetails): string {.slot.} =
     return self.description
   QtProperty[string] description:
     read = getDescription
@@ -113,8 +113,8 @@ QtObject:
     self.description = value
     self.descriptionChanged()
 
-  proc hasUnreadMessagesChanged(self: ChatDetails) {.signal.}  
-  proc getHasUnreadMessages(self: ChatDetails): bool {.slot.} = 
+  proc hasUnreadMessagesChanged(self: ChatDetails) {.signal.}
+  proc getHasUnreadMessages(self: ChatDetails): bool {.slot.} =
     return self.hasUnreadMessages
   QtProperty[bool] hasUnreadMessages:
     read = getHasUnreadMessages
@@ -124,8 +124,8 @@ QtObject:
     self.hasUnreadMessages = value
     self.hasUnreadMessagesChanged()
 
-  proc notificationCountChanged(self: ChatDetails) {.signal.}  
-  proc getNotificationCount(self: ChatDetails): int {.slot.} = 
+  proc notificationCountChanged(self: ChatDetails) {.signal.}
+  proc getNotificationCount(self: ChatDetails): int {.slot.} =
     return self.notificationsCount
   QtProperty[int] notificationCount:
     read = getNotificationCount
@@ -135,8 +135,8 @@ QtObject:
     self.notificationsCount = value
     self.notificationCountChanged()
 
-  proc mutedChanged(self: ChatDetails) {.signal.}  
-  proc getMuted(self: ChatDetails): bool {.slot.} = 
+  proc mutedChanged(self: ChatDetails) {.signal.}
+  proc getMuted(self: ChatDetails): bool {.slot.} =
     return self.muted
   QtProperty[bool] muted:
     read = getMuted
@@ -146,8 +146,8 @@ QtObject:
     self.muted = value
     self.mutedChanged()
 
-  proc positionChanged(self: ChatDetails) {.signal.}  
-  proc getPosition(self: ChatDetails): int {.slot.} = 
+  proc positionChanged(self: ChatDetails) {.signal.}
+  proc getPosition(self: ChatDetails): int {.slot.} =
     return self.position
   QtProperty[int] position:
     read = getPosition

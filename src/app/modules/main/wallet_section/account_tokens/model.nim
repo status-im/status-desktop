@@ -62,15 +62,15 @@ QtObject:
     let enumRole = role.ModelRole
 
     case enumRole:
-    of ModelRole.Name: 
+    of ModelRole.Name:
       result = newQVariant(item.getName())
-    of ModelRole.Symbol: 
+    of ModelRole.Symbol:
       result = newQVariant(item.getSymbol())
-    of ModelRole.Balance: 
+    of ModelRole.Balance:
       result = newQVariant(item.getBalance())
-    of ModelRole.Address: 
+    of ModelRole.Address:
       result = newQVariant(item.getAddress())
-    of ModelRole.CurrencyBalance: 
+    of ModelRole.CurrencyBalance:
       result = newQVariant(item.getCurrencyBalance())
 
   proc rowData(self: Model, index: int, column: string): string {.slot.} =

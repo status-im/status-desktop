@@ -39,11 +39,11 @@ Item {
         isValid = txtPassword.validationError === ""
         return isValid
     }
-  
+
     Item {
         id: signingPhraseItem
         anchors.horizontalCenter: parent.horizontalCenter
-        height: labelSigningPhrase.height 
+        height: labelSigningPhrase.height
         width: labelSigningPhrase.width + infoButton.width + infoButton.anchors.leftMargin
 
         StyledText {

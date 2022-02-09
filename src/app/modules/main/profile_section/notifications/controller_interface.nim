@@ -1,6 +1,6 @@
 import ../../../../../app_service/service/chat/dto/chat as chat_dto
 
-type 
+type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
   ## Abstract class for any input/interaction with this module.
 
@@ -16,7 +16,7 @@ method getAllChats*(self: AccessInterface): seq[ChatDto] {.base.} =
 method getChatDetails*(self: AccessInterface, chatId: string): ChatDto {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getOneToOneChatNameAndImage*(self: AccessInterface, chatId: string): 
+method getOneToOneChatNameAndImage*(self: AccessInterface, chatId: string):
   tuple[name: string, image: string, isIdenticon: bool] {.base.} =
   raise newException(ValueError, "No implementation available")
 

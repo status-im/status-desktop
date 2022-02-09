@@ -14,7 +14,7 @@ import StatusQ.Controls 0.1
 import StatusQ.Controls.Validators 0.1
 import StatusQ.Popups 0.1
 
-StatusModal {    
+StatusModal {
     id: popup
     height: 509
 
@@ -256,11 +256,11 @@ StatusModal {
 
                     property string validationError: ""
 
-                    bgColor: colorDialog.colorSelected ? 
+                    bgColor: colorDialog.colorSelected ?
                         colorDialog.color : Theme.palette.baseColor2
                     contentColor: colorDialog.colorSelected ? Theme.palette.indirectColor1 : Theme.palette.baseColor1
                     text: colorDialog.colorSelected ?
-                        colorDialog.color.toString().toUpperCase() : 
+                        colorDialog.color.toString().toUpperCase() :
                         //% "Pick a color"
                         qsTrId("pick-a-color")
 
@@ -416,7 +416,7 @@ StatusModal {
                         false,
                         popup.contentItem.communityColor.color.toString().toUpperCase(),
                         // to retain the existing image, pass "" for the image path
-                        popup.contentItem.communityImage.selectedImage ===  community.largeImage ? "" : 
+                        popup.contentItem.communityImage.selectedImage ===  community.largeImage ? "" :
                             popup.contentItem.communityImage.selectedImage,
                         popup.contentItem.imageCropperModal.aX,
                         popup.contentItem.imageCropperModal.aY,

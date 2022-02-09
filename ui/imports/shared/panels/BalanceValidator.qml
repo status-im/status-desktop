@@ -28,7 +28,7 @@ Column {
             return root.isValid
         }
         const currAcctAsset = Utils.findAssetBySymbol(account.assets, asset.symbol)
-        
+
         if (currAcctAsset && currAcctAsset.value < amount) {
             isValid = false
         }

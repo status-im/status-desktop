@@ -74,12 +74,12 @@ proc toParsedText*(jsonObj: JsonNode): ParsedText =
   if(jsonObj.getProp("children", childrenArr) and childrenArr.kind == JArray):
     for childObj in childrenArr:
       result.children.add(toParsedText(childObj))
-      
+
 proc toQuotedMessage*(jsonObj: JsonNode): QuotedMessage =
   result = QuotedMessage()
   discard jsonObj.getProp("from", result.from)
   discard jsonObj.getProp("text", result.text)
-  
+
   var parsedTextArr: JsonNode
   if(jsonObj.getProp("parsedText", parsedTextArr) and parsedTextArr.kind == JArray):
     for pTextObj in parsedTextArr:
@@ -112,7 +112,7 @@ proc toMessageDto*(jsonObj: JsonNode): MessageDto =
   discard jsonObj.getProp("clock", result.clock)
   discard jsonObj.getProp("replace", result.replace)
   discard jsonObj.getProp("responseTo", result.responseTo)
-  discard jsonObj.getProp("ensName", result.ensName)  
+  discard jsonObj.getProp("ensName", result.ensName)
   discard jsonObj.getProp("timestamp", result.timestamp)
   discard jsonObj.getProp("contentType", result.contentType)
   discard jsonObj.getProp("messageType", result.messageType)

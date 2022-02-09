@@ -12,7 +12,7 @@ export controller_interface
 logScope:
   topics = "startup-controller"
 
-type 
+type
   Controller* = ref object of controller_interface.AccessInterface
     delegate: io_interface.AccessInterface
     events: EventEmitter
@@ -20,17 +20,17 @@ type
 
 proc newController*(delegate: io_interface.AccessInterface,
   events: EventEmitter,
-  accountsService: accounts_service.ServiceInterface): 
+  accountsService: accounts_service.ServiceInterface):
   Controller =
   result = Controller()
   result.delegate = delegate
   result.events = events
   result.accountsService = accountsService
-  
+
 method delete*(self: Controller) =
   discard
 
-method init*(self: Controller) = 
+method init*(self: Controller) =
   self.events.on(SignalType.NodeLogin.event) do(e:Args):
     let signal = NodeSignal(e)
     if signal.event.error == "":

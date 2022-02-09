@@ -6,13 +6,13 @@ import ../../../../../../app_service/service/contacts/service as contact_service
 import ../../../../../../app_service/service/community/service as community_service
 import ../../../../../../app_service/service/message/service as message_service
 import ../../../../../../app_service/service/chat/service as chat_service
- 
+
 
 import ../../../../../core/eventemitter
 
 export controller_interface
 
-type 
+type
   Controller* = ref object of controller_interface.AccessInterface
     delegate: io_interface.AccessInterface
     events: EventEmitter
@@ -26,9 +26,9 @@ type
     messageService: message_service.Service
 
 proc newController*(
-  delegate: io_interface.AccessInterface, events: EventEmitter, sectionId: string, chatId: string, 
-  belongsToCommunity: bool, isUsersListAvailable: bool, contactService: contact_service.Service, 
-  chatService: chat_service.Service, communityService: community_service.Service, 
+  delegate: io_interface.AccessInterface, events: EventEmitter, sectionId: string, chatId: string,
+  belongsToCommunity: bool, isUsersListAvailable: bool, contactService: contact_service.Service,
+  chatService: chat_service.Service, communityService: community_service.Service,
   messageService: message_service.Service
 ): Controller =
   result = Controller()
@@ -43,7 +43,7 @@ proc newController*(
   result.communityService = communityService
   result.messageService = messageService
   result.chatService = chatService
-  
+
 method delete*(self: Controller) =
   discard
 
@@ -74,17 +74,17 @@ method init*(self: Controller) =
 
     self.events.on(SIGNAL_CHAT_MEMBERS_ADDED) do(e: Args):
       let args = ChatMembersAddedArgs(e)
-      if (args.chatId == self.chatId): 
+      if (args.chatId == self.chatId):
         self.delegate.onChatMembersAdded(args.ids)
 
     self.events.on(SIGNAL_CHAT_MEMBER_REMOVED) do(e: Args):
       let args = ChatMemberRemovedArgs(e)
-      if (args.chatId == self.chatId): 
+      if (args.chatId == self.chatId):
         self.delegate.onChatMemberRemoved(args.id)
 
     self.events.on(SIGNAL_CHAT_MEMBER_UPDATED) do(e: Args):
       let args = ChatMemberUpdatedArgs(e)
-      if (args.chatId == self.chatId): 
+      if (args.chatId == self.chatId):
         self.delegate.onChatMemberUpdated(args.id, args.admin, args.joined)
 
     if (self.belongsToCommunity):
@@ -104,15 +104,15 @@ method getChatMemberInfo*(self: Controller, id: string): (bool, bool) =
 
   return (false, false)
 
-method getMembersPublicKeys*(self: Controller): seq[string] = 
+method getMembersPublicKeys*(self: Controller): seq[string] =
   if(self.belongsToCommunity):
     let communityDto = self.communityService.getCommunityById(self.sectionId)
     return communityDto.members.map(x => x.id)
   else:
     let chatDto = self.getChat()
     return chatDto.members.map(x => x.id)
-    
-method getContactNameAndImage*(self: Controller, contactId: string): 
+
+method getContactNameAndImage*(self: Controller, contactId: string):
   tuple[name: string, image: string, isIdenticon: bool] =
   return self.contactService.getContactNameAndImage(contactId)
 

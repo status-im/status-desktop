@@ -61,30 +61,30 @@ QtObject:
     let enumRole = role.ModelRole
 
     case enumRole:
-    of ModelRole.EmojiId: 
+    of ModelRole.EmojiId:
       result = newQVariant(item.emojiId.int)
-    of ModelRole.DidIReactWithThisEmoji: 
+    of ModelRole.DidIReactWithThisEmoji:
       result = newQVariant(item.didIReactWithThisEmoji)
-    of ModelRole.NumberOfReactions: 
+    of ModelRole.NumberOfReactions:
       result = newQVariant(item.numberOfReactions)
-    of ModelRole.JsonArrayOfUsersReactedWithThisEmoji: 
-      # Would be good if we could return QVariant of array (seq) here, but it's not supported in our NimQml, 
+    of ModelRole.JsonArrayOfUsersReactedWithThisEmoji:
+      # Would be good if we could return QVariant of array (seq) here, but it's not supported in our NimQml,
       # because of that we're returning json array as a string.
       result = newQVariant($item.jsonArrayOfUsersReactedWithThisEmoji)
 
-  proc reactionItemWithEmojiIdExists(self: MessageReactionModel, emojiId: EmojiId): bool = 
+  proc reactionItemWithEmojiIdExists(self: MessageReactionModel, emojiId: EmojiId): bool =
     for it in self.items:
       if(it.emojiId == emojiId):
         return true
     return false
 
-  proc getIndexOfTheItemWithEmojiId(self: MessageReactionModel, emojiId: EmojiId): int = 
+  proc getIndexOfTheItemWithEmojiId(self: MessageReactionModel, emojiId: EmojiId): int =
     for i in 0..<self.items.len:
       if(self.items[i].emojiId == emojiId):
         return i
     return -1
 
-  proc findPositionForTheItemWithEmojiId(self: MessageReactionModel, emojiId: EmojiId): int = 
+  proc findPositionForTheItemWithEmojiId(self: MessageReactionModel, emojiId: EmojiId): int =
     if(self.items.len == 0):
       return 0
 
@@ -94,27 +94,27 @@ QtObject:
 
     return self.items.len
 
-  proc shouldAddReaction*(self: MessageReactionModel, emojiId: EmojiId, userPublicKey: string): bool = 
+  proc shouldAddReaction*(self: MessageReactionModel, emojiId: EmojiId, userPublicKey: string): bool =
     let ind = self.getIndexOfTheItemWithEmojiId(emojiId)
     if(ind == -1):
       return true
     return self.items[ind].shouldAddReaction(userPublicKey)
 
-  proc getReactionId*(self: MessageReactionModel, emojiId: EmojiId, userPublicKey: string): string = 
+  proc getReactionId*(self: MessageReactionModel, emojiId: EmojiId, userPublicKey: string): string =
     let ind = self.getIndexOfTheItemWithEmojiId(emojiId)
     if(ind == -1):
       return ""
     return self.items[ind].getReactionId(userPublicKey)
 
-  proc addReaction*(self: MessageReactionModel, emojiId: EmojiId, didIReactWithThisEmoji: bool, userPublicKey: string, 
-    userDisplayName: string, reactionId: string) = 
+  proc addReaction*(self: MessageReactionModel, emojiId: EmojiId, didIReactWithThisEmoji: bool, userPublicKey: string,
+    userDisplayName: string, reactionId: string) =
     if(self.reactionItemWithEmojiIdExists(emojiId)):
       let ind = self.getIndexOfTheItemWithEmojiId(emojiId)
       if(ind == -1):
         return
       self.items[ind].addReaction(didIReactWithThisEmoji, userPublicKey, userDisplayName, reactionId)
       let index = self.createIndex(ind, 0, nil)
-      self.dataChanged(index, index, @[ModelRole.EmojiId.int, ModelRole.DidIReactWithThisEmoji.int, 
+      self.dataChanged(index, index, @[ModelRole.EmojiId.int, ModelRole.DidIReactWithThisEmoji.int,
       ModelRole.NumberOfReactions.int, ModelRole.JsonArrayOfUsersReactedWithThisEmoji.int])
     else:
       let parentModelIndex = newQModelIndex()
@@ -130,7 +130,7 @@ QtObject:
 
     self.countChanged()
 
-  proc removeReaction*(self: MessageReactionModel, emojiId: EmojiId, reactionId: string, didIRemoveThisReaction: bool) = 
+  proc removeReaction*(self: MessageReactionModel, emojiId: EmojiId, reactionId: string, didIRemoveThisReaction: bool) =
     let ind = self.getIndexOfTheItemWithEmojiId(emojiId)
     if(ind == -1):
       return
@@ -147,5 +147,5 @@ QtObject:
       self.countChanged()
     else:
       let index = self.createIndex(ind, 0, nil)
-      self.dataChanged(index, index, @[ModelRole.EmojiId.int, ModelRole.DidIReactWithThisEmoji.int, 
+      self.dataChanged(index, index, @[ModelRole.EmojiId.int, ModelRole.DidIReactWithThisEmoji.int,
       ModelRole.NumberOfReactions.int, ModelRole.JsonArrayOfUsersReactedWithThisEmoji.int])
