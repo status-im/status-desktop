@@ -1,5 +1,5 @@
 method viewDidLoad*(self: AccessInterface) {.base.} =
-  raise newException(ValueError, "No implementation available") 
+  raise newException(ValueError, "No implementation available")
 
 method getCurrentNetworkName*(self: AccessInterface): string {.base.} =
   raise newException(ValueError, "No implementation available")
@@ -33,7 +33,7 @@ method setWakuV2LightClientEnabled*(self: AccessInterface, enabled: bool) {.base
 
 method isTelemetryEnabled*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
-  
+
 method toggleTelemetry*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -49,13 +49,13 @@ method isDebugEnabled*(self: AccessInterface): bool {.base.} =
 method toggleDebug*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method addCustomNetwork*(self: AccessInterface, name: string, endpoint: string, networkId: int, networkType: string) 
+method addCustomNetwork*(self: AccessInterface, name: string, endpoint: string, networkId: int, networkType: string)
   {.slot.} =
-  raise newException(ValueError, "No implementation available") 
+  raise newException(ValueError, "No implementation available")
 
 method toggleWalletSection*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
-  
+
 method toggleBrowserSection*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -65,5 +65,5 @@ method toggleCommunitySection*(self: AccessInterface) {.base.} =
 method toggleNodeManagementSection*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method enableDeveloperFeatures*(self: AccessInterface) {.base.} = 
+method enableDeveloperFeatures*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")

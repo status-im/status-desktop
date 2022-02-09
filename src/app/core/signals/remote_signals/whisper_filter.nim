@@ -23,7 +23,7 @@ proc toFilter(jsonMsg: JsonNode): Filter =
     topic: jsonMsg{"topic"}.getStr,
   )
 
-proc fromEvent*(T: type WhisperFilterSignal, event: JsonNode): WhisperFilterSignal = 
+proc fromEvent*(T: type WhisperFilterSignal, event: JsonNode): WhisperFilterSignal =
   if event["event"]{"filters"} != nil:
     for jsonMsg in event["event"]["filters"]:
       result.filters.add(jsonMsg.toFilter)

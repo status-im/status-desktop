@@ -1,8 +1,8 @@
 import ../../../../../../../app_service/service/message/dto/[message, reaction, pinned_message]
 
-method newMessagesLoaded*(self: AccessInterface, messages: seq[MessageDto], reactions: seq[ReactionDto], 
+method newMessagesLoaded*(self: AccessInterface, messages: seq[MessageDto], reactions: seq[ReactionDto],
   pinnedMessages: seq[PinnedMessageDto]) {.base.} =
-  raise newException(ValueError, "No implementation available") 
+  raise newException(ValueError, "No implementation available")
 
 method onReactionAdded*(self: AccessInterface, messageId: string, emojiId: int, reactionId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
@@ -10,7 +10,7 @@ method onReactionAdded*(self: AccessInterface, messageId: string, emojiId: int, 
 method onReactionRemoved*(self: AccessInterface, messageId: string, emojiId: int, reactionId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method toggleReactionFromOthers*(self: AccessInterface, messageId: string, emojiId: int, reactionId: string, 
+method toggleReactionFromOthers*(self: AccessInterface, messageId: string, emojiId: int, reactionId: string,
   reactionFrom: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 

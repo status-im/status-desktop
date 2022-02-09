@@ -16,7 +16,7 @@ QtObject:
   type LocalAccountSettings* = ref object of QObject
     settingsFileDir: string
     settings: QSettings
-    
+
   proc setup(self: LocalAccountSettings) =
     self.QObject.setup
     self.settingsFileDir = os.joinPath(DATADIR, "qt")
@@ -27,7 +27,7 @@ QtObject:
 
     self.QObject.delete
 
-  proc newLocalAccountSettings*(): 
+  proc newLocalAccountSettings*():
     LocalAccountSettings =
     new(result, delete)
     result.setup
@@ -45,7 +45,7 @@ QtObject:
   proc removeKey*(self: LocalAccountSettings, key: string) =
     if(self.settings.isNil):
       return
-    
+
     self.settings.remove(key)
 
     if(key == LS_KEY_STORE_TO_KEYCHAIN):
@@ -71,7 +71,7 @@ QtObject:
     write = setStoreToKeychainValue
     notify = storeToKeychainValueChanged
 
-  
+
   proc getIsKeycardEnabled*(self: LocalAccountSettings): bool {.slot.} =
     if(self.settings.isNil):
       return DEFAULT_IS_KEYCARD_ENABLED

@@ -2,7 +2,7 @@ import ./dto/profile as profile_dto
 
 export profile_dto
 
-type 
+type
   ServiceInterface* {.pure inheritable.} = ref object of RootObj
   ## Abstract class for this service access.
 

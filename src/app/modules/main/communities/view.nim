@@ -50,32 +50,32 @@ QtObject:
   QtProperty[QVariant] observedCommunity:
     read = getObservedItem
     notify = observedItemChanged
-    
+
   proc setObservedCommunity*(self: View, itemId: string) {.slot.} =
     let item = self.model.getItemById(itemId)
     if (item.id == ""):
       return
     self.observedItem.setActiveSectionData(item)
     self.observedItemChanged()
-    
+
   proc joinCommunity*(self: View, communityId: string): string {.slot.} =
     result = self.delegate.joinCommunity(communityId)
-  
+
   proc communityAdded*(self: View, communityId: string) {.signal.}
   proc communityChanged*(self: View, communityId: string) {.signal.}
 
-  proc createCommunity*(self: View, name: string, description: string, 
+  proc createCommunity*(self: View, name: string, description: string,
                         access: int, ensOnly: bool, color: string,
                         imagePath: string,
                         aX: int, aY: int, bX: int, bY: int) {.slot.} =
     self.delegate.createCommunity(name, description, access, ensOnly, color, imagePath, aX, aY, bX, bY)
-  
+
   proc deleteCommunityCategory*(self: View, communityId: string, categoryId: string): string {.slot.} =
     self.delegate.deleteCommunityCategory(communityId, categoryId)
 
   proc reorderCommunityCategories*(self: View, communityId: string, categoryId: string, position: int) {.slot} =
     self.delegate.reorderCommunityCategories(communityId, categoryId, position)
-  
+
   proc reorderCommunityChannel*(self: View, communityId: string, categoryId: string, chatId: string, position: int): string {.slot} =
     self.delegate.reorderCommunityChannel(communityId, categoryId, chatId, position)
 

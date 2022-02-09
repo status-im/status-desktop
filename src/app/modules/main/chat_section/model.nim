@@ -99,35 +99,35 @@ QtObject:
     let enumRole = role.ModelRole
 
     case enumRole:
-    of ModelRole.Id: 
+    of ModelRole.Id:
       result = newQVariant(item.id)
-    of ModelRole.Name: 
+    of ModelRole.Name:
       result = newQVariant(item.name)
-    of ModelRole.AmIChatAdmin: 
+    of ModelRole.AmIChatAdmin:
       result = newQVariant(item.amIChatAdmin)
-    of ModelRole.Icon: 
+    of ModelRole.Icon:
       result = newQVariant(item.icon)
     of ModelRole.IsIdenticon:
       result = newQVariant(item.isIdenticon)
-    of ModelRole.Color: 
+    of ModelRole.Color:
       result = newQVariant(item.color)
-    of ModelRole.Description: 
+    of ModelRole.Description:
       result = newQVariant(item.description)
-    of ModelRole.Type: 
+    of ModelRole.Type:
       result = newQVariant(item.`type`)
-    of ModelRole.HasUnreadMessages: 
+    of ModelRole.HasUnreadMessages:
       result = newQVariant(item.hasUnreadMessages)
-    of ModelRole.NotificationsCount: 
+    of ModelRole.NotificationsCount:
       result = newQVariant(item.notificationsCount)
-    of ModelRole.Muted: 
+    of ModelRole.Muted:
       result = newQVariant(item.muted)
-    of ModelRole.Blocked: 
+    of ModelRole.Blocked:
       result = newQVariant(item.blocked)
     of ModelRole.Active:
       result = newQVariant(item.active)
-    of ModelRole.Position: 
+    of ModelRole.Position:
       result = newQVariant(item.position)
-    of ModelRole.SubItems: 
+    of ModelRole.SubItems:
       result = newQVariant(item.subItems)
     of ModelRole.IsCategory:
       result = newQVariant(item.`type` == ChatType.Unknown.int)
@@ -202,7 +202,7 @@ QtObject:
         self.items[i].BaseItem.active = false
         self.dataChanged(index, index, @[ModelRole.Active.int])
 
-      if(self.items[i].id == id):        
+      if(self.items[i].id == id):
         let index = self.createIndex(i, 0, nil)
         self.items[i].BaseItem.active = true
         self.dataChanged(index, index, @[ModelRole.Active.int])
@@ -252,7 +252,7 @@ QtObject:
 
   proc renameItem*(self: Model, id: string, name: string) =
     for i in 0 ..< self.items.len:
-      if(self.items[i].id == id): 
+      if(self.items[i].id == id):
         self.items[i].BaseItem.name = name
         let index = self.createIndex(i, 0, nil)
         self.dataChanged(index, index, @[ModelRole.Name.int])
@@ -268,7 +268,7 @@ QtObject:
         self.dataChanged(index, index, @[ModelRole.Name.int, ModelRole.Description.int])
         return
 
-  proc updateNotificationsForItemOrSubItemById*(self: Model, id: string, hasUnreadMessages: bool, 
+  proc updateNotificationsForItemOrSubItemById*(self: Model, id: string, hasUnreadMessages: bool,
     notificationsCount: int) =
     for i in 0 ..< self.items.len:
       if(self.items[i].id == id):
@@ -287,11 +287,11 @@ QtObject:
     for i in 0 ..< self.items.len:
       # if it's category item type is set to `ChatType.Unknown`
       # (in one point of time we may start maintaining notifications per category as well)
-      if(self.items[i].BaseItem.`type` == ChatType.Unknown.int): 
+      if(self.items[i].BaseItem.`type` == ChatType.Unknown.int):
         continue
 
       result.hasNotifications = result.hasNotifications or self.items[i].BaseItem.hasUnreadMessages
-      result.notificationsCount = result.notificationsCount + self.items[i].BaseItem.notificationsCount  
+      result.notificationsCount = result.notificationsCount + self.items[i].BaseItem.notificationsCount
 
 
   proc reorder*(self: Model, chatId, categoryId: string, position: int) =

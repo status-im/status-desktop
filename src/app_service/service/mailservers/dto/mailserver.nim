@@ -5,7 +5,7 @@ import json
 include ../../../common/[json_utils]
 
 type MailserverDto* = object
-  id*: string 
+  id*: string
   name*: string
   address*: string
   fleet*: string

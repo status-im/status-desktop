@@ -62,7 +62,7 @@ Item {
         wrapMode: Text.WordWrap
         color: Theme.palette.directColor1
     }
-    
+
     StatusBaseText {
         id: subtitle
         //% "Nice! You own %1.stateofus.eth once the transaction is complete."

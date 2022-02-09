@@ -14,7 +14,7 @@ QtObject:
   type PendingRequestModel* = ref object of QAbstractListModel
     items*: seq[PendingRequestItem]
 
-  proc setup(self: PendingRequestModel) = 
+  proc setup(self: PendingRequestModel) =
     self.QAbstractListModel.setup
 
   proc delete(self: PendingRequestModel) =
@@ -61,20 +61,20 @@ QtObject:
     let enumRole = role.ModelRole
 
     case enumRole:
-      of ModelRole.Id: 
+      of ModelRole.Id:
         result = newQVariant(item.id)
-      of ModelRole.PubKey: 
+      of ModelRole.PubKey:
         result = newQVariant(item.pubKey)
-      of ModelRole.ChatId: 
+      of ModelRole.ChatId:
         result = newQVariant(item.chatId)
-      of ModelRole.CommunityId: 
+      of ModelRole.CommunityId:
         result = newQVariant(item.communityId)
-      of ModelRole.State: 
+      of ModelRole.State:
         result = newQVariant(item.state)
-      of ModelRole.Our: 
+      of ModelRole.Our:
         result = newQVariant(item.our)
 
-  proc findIndexById(self: PendingRequestModel, id: string): int = 
+  proc findIndexById(self: PendingRequestModel, id: string): int =
     for i in 0 ..< self.items.len:
       if(self.items[i].id == id):
         return i
@@ -83,7 +83,7 @@ QtObject:
   proc addItems*(self: PendingRequestModel, items: seq[PendingRequestItem]) =
     if(items.len == 0):
       return
-      
+
     let parentModelIndex = newQModelIndex()
     defer: parentModelIndex.delete
 
@@ -103,7 +103,7 @@ QtObject:
     self.endInsertRows()
     self.countChanged()
 
-  proc containsItemWithId*(self: PendingRequestModel, id: string): bool = 
+  proc containsItemWithId*(self: PendingRequestModel, id: string): bool =
     return self.findIndexById(id) != -1
 
   proc removeItemWithId*(self: PendingRequestModel, id: string) =

@@ -100,7 +100,7 @@ Item {
                 callback.apply(null, args);
             });
         }
-    }    
+    }
 
     QtObject {
         id: priv

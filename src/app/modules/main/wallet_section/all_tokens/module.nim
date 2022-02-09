@@ -75,7 +75,7 @@ method viewDidLoad*(self: Module) =
 
 method addCustomToken*(self: Module, address: string, name: string, symbol: string, decimals: int) =
   self.controller.addCustomToken(address, name, symbol, decimals)
-        
+
 method toggleVisible*(self: Module, symbol: string) =
   self.controller.toggleVisible(symbol)
 

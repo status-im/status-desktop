@@ -61,12 +61,12 @@ type
   MessagePinUnpinArgs* = ref object of Args
     chatId*: string
     messageId*: string
-    actionInitiatedBy*: string 
+    actionInitiatedBy*: string
 
   MessagesMarkedAsReadArgs* = ref object of Args
     chatId*: string
     allMessagesMarked*: bool
-    messagesIds*: seq[string] 
+    messagesIds*: seq[string]
 
   MessageAddRemoveReactionArgs* = ref object of Args
     chatId*: string
@@ -101,7 +101,7 @@ QtObject:
     pinnedMsgCursor: Table[string, string]
     lastUsedPinnedMsgCursor: Table[string, string]
     numOfPinnedMessagesPerChat: Table[string, int] # [chat_id, num_of_pinned_messages]
-  
+
   proc delete*(self: Service) =
     self.QObject.delete
 
@@ -167,7 +167,7 @@ QtObject:
     if(self.numOfPinnedMessagesPerChat.hasKey(chatId)):
       return self.numOfPinnedMessagesPerChat[chatId]
     return 0
-  
+
   proc handlePinnedMessagesUpdate(self: Service, pinnedMessages: seq[PinnedMessageUpdateDto]) =
     for pm in pinnedMessages:
       var chatId: string = ""
@@ -194,7 +194,7 @@ QtObject:
 
   proc handleEmojiReactionsUpdate(self: Service, emojiReactions: seq[ReactionDto]) =
     for r in emojiReactions:
-      let data = MessageAddRemoveReactionArgs(chatId: r.localChatId, messageId: r.messageId, emojiId: r.emojiId, 
+      let data = MessageAddRemoveReactionArgs(chatId: r.localChatId, messageId: r.messageId, emojiId: r.emojiId,
       reactionId: r.id, reactionFrom: r.`from`)
       self.events.emit(SIGNAL_MESSAGE_REACTION_FROM_OTHERS, data)
 
@@ -217,7 +217,7 @@ QtObject:
 
   proc initialMessagesFetched(self: Service, chatId: string): bool =
     return self.msgCursor.hasKey(chatId)
-    
+
   proc getCurrentMessageCursor(self: Service, chatId: string): string =
     if(not self.msgCursor.hasKey(chatId)):
       self.msgCursor[chatId] = ""
@@ -238,14 +238,14 @@ QtObject:
       # notify view, this is important
       self.events.emit(SIGNAL_MESSAGES_LOADED, MessagesLoadedArgs())
       return
-  
+
     var chatId: string
     discard responseObj.getProp("chatId", chatId)
 
     # this is important case we don't want to fetch the same messages multiple times.
-    self.lastUsedMsgCursor[chatId] = self.msgCursor[chatId] 
+    self.lastUsedMsgCursor[chatId] = self.msgCursor[chatId]
     self.lastUsedPinnedMsgCursor[chatId] = self.pinnedMsgCursor[chatId]
-  
+
     # handling messages
     var msgCursor: string
     if(responseObj.getProp("messagesCursor", msgCursor)):
@@ -256,7 +256,7 @@ QtObject:
 
     var messagesArr: JsonNode
     var messages: seq[MessageDto]
-    if(responseObj.getProp("messages", messagesArr)):    
+    if(responseObj.getProp("messages", messagesArr)):
       messages = map(messagesArr.getElems(), proc(x: JsonNode): MessageDto = x.toMessageDto())
 
     # handling pinned messages
@@ -281,9 +281,9 @@ QtObject:
     if(responseObj.getProp("reactions", reactionsArr)):
       reactions = map(reactionsArr.getElems(), proc(x: JsonNode): ReactionDto = x.toReactionDto())
 
-    let data = MessagesLoadedArgs(chatId: chatId, 
-    messages: messages, 
-    pinnedMessages: pinnedMessages, 
+    let data = MessagesLoadedArgs(chatId: chatId,
+    messages: messages,
+    pinnedMessages: pinnedMessages,
     reactions: reactions)
 
     self.events.emit(SIGNAL_MESSAGES_LOADED, data)
@@ -303,7 +303,7 @@ QtObject:
       pinnedMsgCursor = CURSOR_VALUE_IGNORE
 
     if(msgCursor == CURSOR_VALUE_IGNORE and pinnedMsgCursor == CURSOR_VALUE_IGNORE):
-      # it's important to emit signal in case we are not fetching messages, so we can update the view appropriatelly. 
+      # it's important to emit signal in case we are not fetching messages, so we can update the view appropriatelly.
       let data = MessagesLoadedArgs(chatId: chatId)
       self.events.emit(SIGNAL_MESSAGES_LOADED, data)
       return
@@ -330,11 +330,11 @@ QtObject:
     # we're here if initial messages are not loaded yet
     self.asyncLoadMoreMessagesForChat(chatId)
 
-  
+
   proc addReaction*(self: Service, chatId: string, messageId: string, emojiId: int) =
     try:
       let response = status_go.addReaction(chatId, messageId, emojiId)
-      
+
       if(response.result.contains("error")):
         let errMsg = response.result["error"].getStr
         error "error: ", methodName="addReaction", errDesription = errMsg
@@ -349,7 +349,7 @@ QtObject:
       if(reactions.len > 0):
         reactionId = reactions[0].id
 
-      let data = MessageAddRemoveReactionArgs(chatId: chatId, messageId: messageId, emojiId: emojiId, 
+      let data = MessageAddRemoveReactionArgs(chatId: chatId, messageId: messageId, emojiId: emojiId,
       reactionId: reactionId)
       self.events.emit(SIGNAL_MESSAGE_REACTION_ADDED, data)
 
@@ -359,13 +359,13 @@ QtObject:
   proc removeReaction*(self: Service, reactionId: string, chatId: string, messageId: string, emojiId: int) =
     try:
       let response = status_go.removeReaction(reactionId)
-      
+
       if(response.result.contains("error")):
         let errMsg = response.result["error"].getStr
         error "error: ", methodName="removeReaction", errDesription = errMsg
         return
 
-      let data = MessageAddRemoveReactionArgs(chatId: chatId, messageId: messageId, emojiId: emojiId, 
+      let data = MessageAddRemoveReactionArgs(chatId: chatId, messageId: messageId, emojiId: emojiId,
       reactionId: reactionId)
       self.events.emit(SIGNAL_MESSAGE_REACTION_REMOVED, data)
 
@@ -375,7 +375,7 @@ QtObject:
   proc pinUnpinMessage*(self: Service, chatId: string, messageId: string, pin: bool) =
     try:
       let response = status_go.pinUnpinMessage(chatId, messageId, pin)
-      
+
       var pinMessagesObj: JsonNode
       if(response.result.getProp("pinMessages", pinMessagesObj)):
         let pinnedMessagesArr = pinMessagesObj.getElems()
@@ -397,7 +397,7 @@ QtObject:
     except Exception as e:
       error "error: ", methodName="pinUnpinMessage", errName = e.name, errDesription = e.msg
 
-  proc getDetailsForMessage*(self: Service, chatId: string, messageId: string): 
+  proc getDetailsForMessage*(self: Service, chatId: string, messageId: string):
     tuple[message: MessageDto, reactions: seq[ReactionDto], error: string] =
     try:
       let msgResponse = status_go.fetchMessageByMessageId(messageId)
@@ -467,9 +467,9 @@ QtObject:
     )
     self.threadpool.start(arg)
 
-  proc asyncSearchMessages*(self: Service, communityIds: seq[string], chatIds: seq[string], searchTerm: string, 
+  proc asyncSearchMessages*(self: Service, communityIds: seq[string], chatIds: seq[string], searchTerm: string,
     caseSensitive: bool) =
-    ## Asynchronous search for messages which contain the searchTerm and belong to any chat/channel from chatIds array 
+    ## Asynchronous search for messages which contain the searchTerm and belong to any chat/channel from chatIds array
     ## or any channel of community from communityIds array.
 
     if (communityIds.len == 0 and chatIds.len == 0):
@@ -484,7 +484,7 @@ QtObject:
       vptr: cast[ByteAddress](self.vptr),
       slot: "onAsyncSearchMessages",
       communityIds: communityIds,
-      chatIds: chatIds, 
+      chatIds: chatIds,
       searchTerm: searchTerm,
       caseSensitive: caseSensitive
     )
@@ -492,7 +492,7 @@ QtObject:
 
   proc onMarkAllMessagesRead*(self: Service, response: string) {.slot.} =
     let responseObj = response.parseJson
-    
+
     var error: string
     discard responseObj.getProp("error", error)
     if(error.len > 0):
@@ -521,7 +521,7 @@ QtObject:
 
   proc onMarkCertainMessagesRead*(self: Service, response: string) {.slot.} =
     let responseObj = response.parseJson
-    
+
     var error: string
     discard responseObj.getProp("error", error)
     if(error.len > 0):
@@ -576,33 +576,33 @@ proc renderInline(self: Service, parsedText: ParsedText): string =
     .multiReplace(("  ", "&nbsp;&nbsp;"))
 
   case parsedText.type:
-    of "": 
+    of "":
       result = value
-    of PARSED_TEXT_CHILD_TYPE_CODE: 
+    of PARSED_TEXT_CHILD_TYPE_CODE:
       result = fmt("<code>{value}</code>")
-    of PARSED_TEXT_CHILD_TYPE_EMPH: 
+    of PARSED_TEXT_CHILD_TYPE_EMPH:
       result = fmt("<em>{value}</em>")
-    of PARSED_TEXT_CHILD_TYPE_STRONG: 
+    of PARSED_TEXT_CHILD_TYPE_STRONG:
       result = fmt("<strong>{value}</strong>")
-    of PARSED_TEXT_CHILD_TYPE_STRONG_EMPH: 
+    of PARSED_TEXT_CHILD_TYPE_STRONG_EMPH:
       result = fmt(" <strong><em>{value}</em></strong> ")
-    of PARSED_TEXT_CHILD_TYPE_MENTION: 
+    of PARSED_TEXT_CHILD_TYPE_MENTION:
       let contactDto = self.contactService.getContactById(value)
       result = fmt("<a href=\"//{value}\" class=\"mention\">{contactDto.userNameOrAlias()}</a>")
-    of PARSED_TEXT_CHILD_TYPE_STATUS_TAG: 
+    of PARSED_TEXT_CHILD_TYPE_STATUS_TAG:
       result = fmt("<a href=\"#{value}\" class=\"status-tag\">#{value}</a>")
-    of PARSED_TEXT_CHILD_TYPE_DEL: 
+    of PARSED_TEXT_CHILD_TYPE_DEL:
       result = fmt("<del>{value}</del>")
     of PARSED_TEXT_CHILD_TYPE_LINK:
       result = fmt("{parsedText.destination}")
-    else: 
+    else:
       result = fmt(" {value} ")
 
 # See render-block in status-react/src/status_im/ui/screens/chat/message/message.cljs
 proc getRenderedText*(self: Service, parsedTextArray: seq[ParsedText]): string =
   for parsedText in parsedTextArray:
     case parsedText.type:
-      of PARSED_TEXT_TYPE_PARAGRAPH: 
+      of PARSED_TEXT_TYPE_PARAGRAPH:
         result = result & "<p>"
         for child in parsedText.children:
           result = result & self.renderInline(child)

@@ -8,7 +8,7 @@ QtObject:
       activeMailserver: string
       model: Model
       modelVariant: QVariant
-      
+
   proc delete*(self: View) =
     self.model.delete
     self.modelVariant.delete
@@ -58,7 +58,7 @@ QtObject:
 
   proc getMailserverNameForNodeAddress*(self: View, nodeAddress: string): string {.slot.} =
     self.delegate.getMailserverNameForNodeAddress(nodeAddress)
-    
+
   proc saveNewMailserver(self: View, name: string, address: string) {.slot.} =
     self.delegate.saveNewMailserver(name, address)
 

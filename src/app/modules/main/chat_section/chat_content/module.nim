@@ -25,7 +25,7 @@ export io_interface
 logScope:
   topics = "chat-section-module"
 
-type 
+type
   Module* = ref object of io_interface.AccessInterface
     delegate: delegate_interface.AccessInterface
     view: View
@@ -36,9 +36,9 @@ type
     usersModule: users_module.AccessInterface
     moduleLoaded: bool
 
-proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitter, sectionId: string, chatId: string, 
-  belongsToCommunity: bool, isUsersListAvailable: bool, settingsService: settings_service.ServiceInterface, 
-  contactService: contact_service.Service, chatService: chat_service.Service, 
+proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitter, sectionId: string, chatId: string,
+  belongsToCommunity: bool, isUsersListAvailable: bool, settingsService: settings_service.ServiceInterface,
+  contactService: contact_service.Service, chatService: chat_service.Service,
   communityService: community_service.Service, messageService: message_service.Service, gifService: gif_service.Service,
   mailserversService: mailservers_service.Service):
   Module =
@@ -46,16 +46,16 @@ proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitt
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, events, sectionId, chatId, belongsToCommunity, 
+  result.controller = controller.newController(result, events, sectionId, chatId, belongsToCommunity,
   isUsersListAvailable, settingsService, contactService, chatService, communityService, messageService)
   result.moduleLoaded = false
 
   result.inputAreaModule = input_area_module.newModule(result, sectionId, chatId, belongsToCommunity, chatService, communityService, gifService)
-  result.messagesModule = messages_module.newModule(result, events, sectionId, chatId, belongsToCommunity, 
+  result.messagesModule = messages_module.newModule(result, events, sectionId, chatId, belongsToCommunity,
   contactService, communityService, chatService, messageService, mailserversService)
   result.usersModule = users_module.newModule(
-    result, events, sectionId, chatId, belongsToCommunity, isUsersListAvailable, 
-    contactService, chat_service, communityService, messageService, 
+    result, events, sectionId, chatId, belongsToCommunity, isUsersListAvailable,
+    contactService, chat_service, communityService, messageService,
   )
 
 method delete*(self: Module) =
@@ -78,11 +78,11 @@ method load*(self: Module) =
   if(chatDto.chatType == ChatType.OneToOne):
     (chatName, chatImage, isIdenticon) = self.controller.getOneToOneChatNameAndImage()
 
-  self.view.load(chatDto.id, chatDto.chatType.int, self.controller.belongsToCommunity(), 
+  self.view.load(chatDto.id, chatDto.chatType.int, self.controller.belongsToCommunity(),
     self.controller.isUsersListAvailable(), chatName, chatImage, isIdenticon,
     chatDto.color, chatDto.description, hasNotification, notificationsCount,
     chatDto.muted, chatDto.position)
- 
+
   self.inputAreaModule.load()
   self.messagesModule.load()
   self.usersModule.load()
@@ -130,21 +130,21 @@ method getMessagesModule*(self: Module): QVariant =
 method getUsersModule*(self: Module): QVariant =
   return self.usersModule.getModuleAsVariant()
 
-proc buildPinnedMessageItem(self: Module, messageId: string, actionInitiatedBy: string, item: var pinned_msg_item.Item): 
-  bool = 
+proc buildPinnedMessageItem(self: Module, messageId: string, actionInitiatedBy: string, item: var pinned_msg_item.Item):
+  bool =
   let (m, reactions, err) = self.controller.getMessageDetails(messageId)
   if(err.len > 0):
     return false
 
   let contactDetails = self.controller.getContactDetails(m.`from`)
-    
+
   item = pinned_msg_item.initItem(
     m.id,
     m.responseTo,
     m.`from`,
     contactDetails.displayName,
     contactDetails.details.localNickname,
-    contactDetails.icon, 
+    contactDetails.icon,
     contactDetails.isIdenticon,
     contactDetails.isCurrentUser,
     m.outgoingStatus,
@@ -153,7 +153,7 @@ proc buildPinnedMessageItem(self: Module, messageId: string, actionInitiatedBy: 
     m.containsContactMentions(),
     m.seen,
     m.timestamp,
-    m.contentType.ContentType, 
+    m.contentType.ContentType,
     m.messageType,
     self.controller.decodeContentHash(m.sticker.hash),
     m.sticker.pack,
@@ -168,15 +168,15 @@ proc buildPinnedMessageItem(self: Module, messageId: string, actionInitiatedBy: 
       if(pinned_msg_reaction_item.toEmojiIdAsEnum(r.emojiId, emojiIdAsEnum)):
         let userWhoAddedThisReaction = self.controller.getContactById(r.`from`)
         let didIReactWithThisEmoji = userWhoAddedThisReaction.id == singletonInstance.userProfile.getPubKey()
-        item.addReaction(emojiIdAsEnum, didIReactWithThisEmoji, userWhoAddedThisReaction.id, 
+        item.addReaction(emojiIdAsEnum, didIReactWithThisEmoji, userWhoAddedThisReaction.id,
         userWhoAddedThisReaction.userNameOrAlias(), r.id)
       else:
         error "wrong emoji id found when loading messages", methodName="buildPinnedMessageItem"
 
   return true
 
-method newPinnedMessagesLoaded*(self: Module, pinnedMessages: seq[PinnedMessageDto]) = 
-  var viewItems: seq[pinned_msg_item.Item] 
+method newPinnedMessagesLoaded*(self: Module, pinnedMessages: seq[PinnedMessageDto]) =
+  var viewItems: seq[pinned_msg_item.Item]
   for p in pinnedMessages:
     var item: pinned_msg_item.Item
     if(not self.buildPinnedMessageItem(p.message.id, p.pinnedBy, item)):
@@ -200,7 +200,7 @@ method onPinMessage*(self: Module, messageId: string, actionInitiatedBy: string)
     return
 
   self.view.pinnedModel().appendItem(item)
-  
+
 method getMyChatId*(self: Module): string =
   self.controller.getMyChatId()
 
@@ -233,7 +233,7 @@ method onReactionAdded*(self: Module, messageId: string, emojiId: int, reactionI
   if(pinned_msg_reaction_item.toEmojiIdAsEnum(emojiId, emojiIdAsEnum)):
     let myPublicKey = singletonInstance.userProfile.getPubKey()
     let myName = singletonInstance.userProfile.getName()
-    self.view.pinnedModel().addReaction(messageId, emojiIdAsEnum, didIReactWithThisEmoji = true, myPublicKey, myName, 
+    self.view.pinnedModel().addReaction(messageId, emojiIdAsEnum, didIReactWithThisEmoji = true, myPublicKey, myName,
     reactionId)
   else:
     error "(pinned) wrong emoji id found on reaction added response", emojiId, methodName="onReactionAdded"
@@ -245,7 +245,7 @@ method onReactionRemoved*(self: Module, messageId: string, emojiId: int, reactio
   else:
     error "(pinned) wrong emoji id found on reaction remove response", emojiId, methodName="onReactionRemoved"
 
-method toggleReactionFromOthers*(self: Module, messageId: string, emojiId: int, reactionId: string, 
+method toggleReactionFromOthers*(self: Module, messageId: string, emojiId: int, reactionId: string,
   reactionFrom: string) =
   var emojiIdAsEnum: EmojiId
   if(pinned_msg_reaction_item.toEmojiIdAsEnum(emojiId, emojiIdAsEnum)):
@@ -255,7 +255,7 @@ method toggleReactionFromOthers*(self: Module, messageId: string, emojiId: int, 
 
     if(item.shouldAddReaction(emojiIdAsEnum, reactionFrom)):
       let userWhoAddedThisReaction = self.controller.getContactById(reactionFrom)
-      self.view.pinnedModel().addReaction(messageId, emojiIdAsEnum, didIReactWithThisEmoji = false, 
+      self.view.pinnedModel().addReaction(messageId, emojiIdAsEnum, didIReactWithThisEmoji = false,
       userWhoAddedThisReaction.id, userWhoAddedThisReaction.userNameOrAlias(), reactionId)
     else:
       self.view.pinnedModel().removeReaction(messageId, emojiIdAsEnum, reactionId, didIRemoveThisReaction = false)

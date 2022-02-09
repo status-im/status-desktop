@@ -10,7 +10,7 @@ import ../../../../app_service/service/accounts/service_interface as accounts_se
 
 export controller_interface
 
-type 
+type
   Controller* = ref object of controller_interface.AccessInterface
     delegate: io_interface.AccessInterface
     events: EventEmitter
@@ -21,18 +21,18 @@ type
 proc newController*(delegate: io_interface.AccessInterface,
   events: EventEmitter,
   keychainService: keychain_service.Service,
-  accountsService: accounts_service.ServiceInterface): 
+  accountsService: accounts_service.ServiceInterface):
   Controller =
   result = Controller()
   result.delegate = delegate
   result.events = events
   result.keychainService = keychainService
   result.accountsService = accountsService
-  
+
 method delete*(self: Controller) =
   discard
 
-method init*(self: Controller) = 
+method init*(self: Controller) =
   self.events.on(SignalType.NodeLogin.event) do(e:Args):
     let signal = NodeSignal(e)
     if signal.event.error != "":
@@ -47,7 +47,7 @@ method init*(self: Controller) =
     # We are notifying user only about keychain errors.
     if (args.errType == ERROR_TYPE_AUTHENTICATION):
       return
-    
+
     singletonInstance.localAccountSettings.removeKey(LS_KEY_STORE_TO_KEYCHAIN)
     self.delegate.emitObtainingPasswordError(args.errDescription)
 
@@ -64,7 +64,7 @@ method setSelectedAccountKeyUid*(self: Controller, keyUid: string) =
   self.selectedAccountKeyUid = keyUid
 
   # Dealing with Keychain is the MacOS only feature
-  if(not defined(macosx)): 
+  if(not defined(macosx)):
     return
 
   let selectedAccount = self.getSelectedAccount()

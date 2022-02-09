@@ -19,7 +19,7 @@ const SIGNAL_PASSWORD_CHANGED* = "passwordChanged"
 type
   OperationSuccessArgs* = ref object of Args
     success*: bool
-    
+
 QtObject:
   type Service* = ref object of QObject
     events: EventEmitter
@@ -43,7 +43,7 @@ QtObject:
   proc getLinkPreviewWhitelist*(self: Service): string =
     try:
       let response = status_privacy.getLinkPreviewWhitelist()
-      
+
       if(response.result.kind != JArray):
         var errMsg = "response is not an array"
         if(response.result.contains("error")):
@@ -62,11 +62,11 @@ QtObject:
       if(response.result.kind != JArray):
         error "error: ", methodName="getDefaultAccount", errDesription = "response is not an array"
         return
-      
+
       for acc in response.result:
         # the first account is considered as the default one
         return acc.getStr
-      
+
       return ""
     except Exception as e:
       error "error: ", methodName="getDefaultAccount", errName = e.name, errDesription = e.msg

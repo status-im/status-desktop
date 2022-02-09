@@ -12,7 +12,7 @@ QtObject:
       dappsModelVariant: QVariant
       permissionsModelVariant: QVariant
 
-  proc setup(self: View) = 
+  proc setup(self: View) =
     self.QObject.setup
 
   proc delete*(self: View) =
@@ -58,7 +58,7 @@ QtObject:
 
   proc hasPermission(self: View, hostname: string, permission: string): bool {.slot.} =
     return self.delegate.hasPermission(hostname, permission)
-  
+
   proc addPermission(self: View, hostname: string, permission: string) {.slot.} =
     self.delegate.addPermission(hostname, permission)
 

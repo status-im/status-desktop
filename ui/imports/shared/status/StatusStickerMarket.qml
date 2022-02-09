@@ -130,7 +130,7 @@ Item {
                     stickerPurchasePopup.setAsyncGasLimitResult(uuid, estimate)
                 }
             }
-            
+
             StatusStickerPackDetails {
                 id: stickerPackDetails
                 height: 64 - (Style.current.smallPadding * 2)

@@ -1,13 +1,13 @@
 import json, strutils, stint
 include  ../../common/json_utils
 
-type 
+type
   PendingTransactionTypeDto* {.pure.} = enum
     RegisterENS = "RegisterENS",
     SetPubKey = "SetPubKey",
     ReleaseENS = "ReleaseENS",
     BuyStickerPack = "BuyStickerPack"
-    WalletTransfer = "WalletTransfer" 
+    WalletTransfer = "WalletTransfer"
 
 proc event*(self:PendingTransactionTypeDto):string =
   result = "transaction:" & $self

@@ -22,4 +22,3 @@ const bloomBitsSetTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
     arg = decode[BloomBitsSetTaskArg](argEncoded)
     output = getBloomFilterBitsSet()
   arg.finish(output)
-  

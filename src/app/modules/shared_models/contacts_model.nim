@@ -15,7 +15,7 @@ QtObject:
   type Model* = ref object of QAbstractListModel
     items*: seq[Item]
 
-  proc setup(self: Model) = 
+  proc setup(self: Model) =
     self.QAbstractListModel.setup
 
   proc delete(self: Model) =
@@ -56,22 +56,22 @@ QtObject:
     let enumRole = role.ModelRole
 
     case enumRole:
-      of ModelRole.PubKey: 
+      of ModelRole.PubKey:
         result = newQVariant(item.pubKey)
-      of ModelRole.Name: 
+      of ModelRole.Name:
         result = newQVariant(item.name)
-      of ModelRole.Icon: 
+      of ModelRole.Icon:
         result = newQVariant(item.icon)
-      of ModelRole.IsIdenticon: 
+      of ModelRole.IsIdenticon:
         result = newQVariant(item.isIdenticon)
-      of ModelRole.IsContact: 
+      of ModelRole.IsContact:
         result = newQVariant(item.isContact)
-      of ModelRole.IsBlocked: 
+      of ModelRole.IsBlocked:
         result = newQVariant(item.isBlocked)
-      of ModelRole.RequestReceived: 
+      of ModelRole.RequestReceived:
         result = newQVariant(item.requestReceived)
 
-  proc findIndexByPubKey(self: Model, pubKey: string): int = 
+  proc findIndexByPubKey(self: Model, pubKey: string): int =
     for i in 0 ..< self.items.len:
       if(self.items[i].pubKey == pubKey):
         return i
@@ -80,7 +80,7 @@ QtObject:
   proc addItems*(self: Model, items: seq[Item]) =
     if(items.len == 0):
       return
-      
+
     let parentModelIndex = newQModelIndex()
     defer: parentModelIndex.delete
 
@@ -101,7 +101,7 @@ QtObject:
     self.countChanged()
 
 
-  proc containsItemWithPubKey*(self: Model, pubKey: string): bool = 
+  proc containsItemWithPubKey*(self: Model, pubKey: string): bool =
     return self.findIndexByPubKey(pubKey) != -1
 
   proc removeItemWithPubKey*(self: Model, pubKey: string) =
@@ -117,7 +117,7 @@ QtObject:
     self.endRemoveRows()
     self.countChanged()
 
-  proc updateItem*(self: Model, item: Item) = 
+  proc updateItem*(self: Model, item: Item) =
     let ind = self.findIndexByPubKey(item.pubKey)
     if(ind == -1):
       return
@@ -146,11 +146,11 @@ QtObject:
     self.items[ind].name = name
     self.dataChanged(first, last, @[ModelRole.Name.int])
 
-  proc getPublicKeys*(self: Model): seq[string] = 
+  proc getPublicKeys*(self: Model): seq[string] =
     for i in self.items:
       result.add(i.pubKey)
 
-  proc clear*(self: Model) = 
+  proc clear*(self: Model) =
      self.beginResetModel()
      self.items = @[]
      self.endResetModel()

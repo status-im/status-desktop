@@ -8,7 +8,7 @@ import ../../../../app_service/service/accounts/service_interface as accounts_se
 
 export io_interface
 
-type 
+type
   Module* = ref object of io_interface.AccessInterface
     delegate: delegate_interface.AccessInterface
     view: View
@@ -17,7 +17,7 @@ type
     moduleLoaded: bool
 
 proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitter,
-  accountsService: accounts_service.ServiceInterface): 
+  accountsService: accounts_service.ServiceInterface):
   Module =
   result = Module()
   result.delegate = delegate
@@ -41,7 +41,7 @@ method load*(self: Module) =
   for acc in generatedAccounts:
     accounts.add(initItem(acc.id, acc.alias, acc.identicon, acc.address, acc.keyUid))
 
-  self.view.setAccountList(accounts)  
+  self.view.setAccountList(accounts)
 
 method isLoaded*(self: Module): bool =
   return self.moduleLoaded

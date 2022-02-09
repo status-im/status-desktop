@@ -20,7 +20,7 @@ import "views"
 import "panels"
 import "stores"
 
-// Code based on https://code.qt.io/cgit/qt/qtwebengine.git/tree/examples/webengine/quicknanobrowser/BrowserWindow.qml?h=5.15 
+// Code based on https://code.qt.io/cgit/qt/qtwebengine.git/tree/examples/webengine/quicknanobrowser/BrowserWindow.qml?h=5.15
 // Licensed under BSD
 Rectangle {
     id: browserWindow

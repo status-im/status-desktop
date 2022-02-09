@@ -1,4 +1,4 @@
-type 
+type
   Item* = object
     id: string
     alias: string
@@ -13,17 +13,17 @@ proc initItem*(id, alias, identicon, address, keyUid: string): Item =
   result.address = address
   result.keyUid = keyUid
 
-proc getId*(self: Item): string = 
+proc getId*(self: Item): string =
   return self.id
 
-proc getAlias*(self: Item): string = 
+proc getAlias*(self: Item): string =
   return self.alias
 
-proc getIdenticon*(self: Item): string = 
+proc getIdenticon*(self: Item): string =
   return self.identicon
 
-proc getAddress*(self: Item): string = 
+proc getAddress*(self: Item): string =
   return self.address
 
-proc getKeyUid*(self: Item): string = 
+proc getKeyUid*(self: Item): string =
   return self.keyUid

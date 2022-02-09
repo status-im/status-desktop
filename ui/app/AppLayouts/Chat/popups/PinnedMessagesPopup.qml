@@ -166,7 +166,7 @@ ModalPopup {
                     }
                 }
             }
-        }        
+        }
         MessageContextMenuView {
             id: msgContextMenu
             reactionModel: popup.emojiReactionsModel

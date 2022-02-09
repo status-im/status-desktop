@@ -14,7 +14,7 @@ Rectangle {
     property string btnText: qsTrId("todo")
     property bool hovered: false
     property bool checkedByDefault: false
-    
+
     signal checked()
     signal toggled(bool checked)
 

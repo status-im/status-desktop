@@ -30,12 +30,12 @@ Item {
 
         clip: true
         spacing: 10
-        ScrollBar.vertical: ScrollBar { 
+        ScrollBar.vertical: ScrollBar {
             active: true
             policy: tokenListView.contentHeight > tokenListView.height ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
         }
         boundsBehavior: Flickable.StopAtBounds
-        
+
         delegate: Component {
             Rectangle {
                 id: wrapper

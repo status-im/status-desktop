@@ -46,7 +46,7 @@ Rectangle {
         image.source: identicon
         image.isIdenticon: isIdenticon
     }
-    
+
     StyledText {
         id: usernameText
         text: name

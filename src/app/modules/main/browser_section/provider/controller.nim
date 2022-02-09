@@ -7,7 +7,7 @@ import ../../../../../app_service/service/dapp_permissions/service as dapp_permi
 import ../../../../../app_service/service/provider/service as provider_service
 export controller_interface
 
-type 
+type
   Controller* = ref object of controller_interface.AccessInterface
     delegate: io_interface.AccessInterface
     settingsService: settings_service.ServiceInterface
@@ -17,18 +17,18 @@ type
 proc newController*(delegate: io_interface.AccessInterface,
     settingsService: settings_service.ServiceInterface,
     dappPermissionsService: dapp_permissions_service.ServiceInterface,
-    providerService: provider_service.ServiceInterface): 
+    providerService: provider_service.ServiceInterface):
   Controller =
   result = Controller()
   result.delegate = delegate
   result.settingsService = settingsService
   result.dappPermissionsService = dappPermissionsService
   result.providerService = providerService
-  
+
 method delete*(self: Controller) =
   discard
 
-method init*(self: Controller) = 
+method init*(self: Controller) =
   discard
 
 method getDappsAddress*(self: Controller): string =

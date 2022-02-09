@@ -1,7 +1,7 @@
 import strformat
 import ../account_tokens/model as account_tokens
 
-type 
+type
   Item* = object
     name: string
     address: string
@@ -51,32 +51,32 @@ proc `$`*(self: Item): string =
     assets.len: {self.assets.getCount()},
     ]"""
 
-proc getName*(self: Item): string = 
+proc getName*(self: Item): string =
   return self.name
 
-proc getAddress*(self: Item): string = 
+proc getAddress*(self: Item): string =
   return self.address
 
-proc getPath*(self: Item): string = 
+proc getPath*(self: Item): string =
   return self.path
 
-proc getColor*(self: Item): string = 
+proc getColor*(self: Item): string =
   return self.color
 
-proc getPublicKey*(self: Item): string = 
+proc getPublicKey*(self: Item): string =
   return self.publicKey
 
-proc getWalletType*(self: Item): string = 
+proc getWalletType*(self: Item): string =
   return self.walletType
 
-proc getIsWallet*(self: Item): bool = 
+proc getIsWallet*(self: Item): bool =
   return self.isWallet
 
-proc getIsChat*(self: Item): bool = 
+proc getIsChat*(self: Item): bool =
   return self.isChat
 
-proc getCurrencyBalance*(self: Item): float64 = 
+proc getCurrencyBalance*(self: Item): float64 =
   return self.currencyBalance
 
-proc getAssets*(self: Item): account_tokens.Model = 
+proc getAssets*(self: Item): account_tokens.Model =
   return self.assets

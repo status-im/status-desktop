@@ -52,7 +52,7 @@ proc prepareLogging() =
   let logFile = fmt"app_{getTime().toUnix}.log"
   discard defaultChroniclesStream.outputs[1].open(LOGDIR & logFile, fmAppend)
 
-proc setupRemoteSignalsHandling() = 
+proc setupRemoteSignalsHandling() =
   # Please note that this must use the `cdecl` calling convention because
   # it will be passed as a regular C function to statusgo_backend. This means that
   # we cannot capture any local variables here (we must rely on globals)
@@ -73,7 +73,7 @@ proc mainProc() =
   let fleetsPath = determineFleetsPath()
   let openUri = determineOpenUri()
   let statusAppIconPath = determineStatusAppIconPath()
-  
+
   let fleetConfig = readFile(joinPath(getAppDir(), fleetsPath))
   let statusFoundation = newStatusFoundation(fleetConfig)
   let uiScaleFilePath = joinPath(DATADIR, "ui-scale")
@@ -84,7 +84,7 @@ proc mainProc() =
   let appController = newAppController(statusFoundation)
   let singleInstance = newSingleInstance($toMD5(DATADIR), openUri)
   let networkAccessFactory = newQNetworkAccessManagerFactory(TMPDIR & "netcache")
-  
+
   let isProductionQVariant = newQVariant(if defined(production): true else: false)
   let isExperimentalQVariant = newQVariant(isExperimental)
   let signalsManagerQVariant = newQVariant(statusFoundation.signalsManager)
@@ -110,8 +110,8 @@ proc mainProc() =
 
   app.installEventFilter(dockShowAppEvent)
   app.installEventFilter(osThemeEvent)
-  
-  defer: 
+
+  defer:
     info "shutting down..."
     signalsManagerQObjPointer = nil
     isProductionQVariant.delete()
@@ -129,7 +129,7 @@ proc mainProc() =
   if singleInstance.secondInstance():
     info "Terminating the app as the second instance"
     quit()
-  
+
   info "starting application controller..."
   appController.start()
 
@@ -137,7 +137,7 @@ proc mainProc() =
   # from the non-closure callback passed to `statusgo_backend.setSignalEventCallback`
   signalsManagerQObjPointer = cast[pointer](statusFoundation.signalsManager.vptr)
   setupRemoteSignalsHandling()
-  
+
   info "starting application..."
   app.exec()
 

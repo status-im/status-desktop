@@ -299,7 +299,7 @@ Item {
         anchors.horizontalCenter: parent.horizontalCenter
         enabled: Global.networkGuarded
         //% "Start"
-        text: enabled ? 
+        text: enabled ?
           qsTrId("start") :
           //% "Only available on Mainnet"
           qsTrId("ens-network-restriction")

@@ -24,7 +24,7 @@ type
 const SIGNAL_VERSION_FETCHED* = "versionFetched"
 
 QtObject:
-  type 
+  type
     Service* = ref object of QObject
       events: EventEmitter
       threadpool: ThreadPool
@@ -67,7 +67,7 @@ QtObject:
 
   proc asyncRequestLatestVersion(self: Service) =
     let networkType = self.settingsService.getCurrentNetwork().toNetworkType()
-    if networkType != NetworkType.Mainnet: 
+    if networkType != NetworkType.Mainnet:
       # Seems that we return that there is no updates for all but the `Mainnet` network type,
       # not sure why, but that's how it was in the old code.
       let emptyJsonObj = %*{
@@ -99,4 +99,4 @@ QtObject:
     latestVersionObj["available"] = newJBool(newVersionAvailable)
 
     self.emitSignal(latestVersionObj)
-    
+

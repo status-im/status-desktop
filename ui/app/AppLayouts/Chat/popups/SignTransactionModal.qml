@@ -156,7 +156,7 @@ StatusModal {
 //                    getFiatValue: root.store.walletModelInst.balanceView.getFiatValue
 //                    defaultCurrency: root.store.walletModelInst.balanceView.defaultCurrency
                     width: stack.width
-        
+
                     property var estimateGas: Backpressure.debounce(gasSelector, 600, function() {
                         // Not Refactored Yet
 //                        if (!(selectFromAccount.selectedAccount && selectFromAccount.selectedAccount.address &&
@@ -167,7 +167,7 @@ StatusModal {
 //                            defaultGasLimit = selectedGasLimit
 //                            return
 //                        }
-                        
+
 //                        let gasEstimate = JSON.parse(root.store.walletModelInst.gasView.estimateGas(
 //                            selectFromAccount.selectedAccount.address,
 //                            selectRecipient.selectedRecipient.address,
@@ -197,7 +197,7 @@ StatusModal {
                     selectedGasEthValue: gasSelector.selectedGasEthValue
                 }
             }
-            
+
             TransactionFormGroup {
                 id: groupPreview
                 //% "Transaction preview"

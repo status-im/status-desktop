@@ -1,5 +1,5 @@
 
-type 
+type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
   ## Abstract class for any input/interaction with this module.
 
@@ -10,7 +10,6 @@ method init*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 type
-  ## Abstract class (concept) which must be implemented by object/s used in this 
+  ## Abstract class (concept) which must be implemented by object/s used in this
   ## module.
   DelegateInterface* = concept c
-    

@@ -12,7 +12,7 @@ logScope:
   topics = "node-service"
 
 # Signals which may be emitted by this service:
-const SIGNAL_BITS_SET_FETCHED* = "bitsSetFetched" 
+const SIGNAL_BITS_SET_FETCHED* = "bitsSetFetched"
 const SIGNAL_NETWORK_DISCONNECTED* = "networkDisconnected"
 const SIGNAL_NETWORK_CONNECTED* = "networkConnected"
 
@@ -88,7 +88,7 @@ QtObject:
         if peers.len == 0 and self.connected:
             self.connected = false
             self.events.emit(SIGNAL_NETWORK_DISCONNECTED, Args())
-        
+
         if peers.len > 0 and not self.connected:
             self.connected = true
             self.events.emit(SIGNAL_NETWORK_CONNECTED, Args())

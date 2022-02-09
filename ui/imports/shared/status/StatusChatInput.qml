@@ -84,7 +84,7 @@ Rectangle {
     anchors.right: parent.right
 
     color: Style.current.transparent
-    
+
     function calculateExtraHeightFactor() {
         const factor = (messageInputField.length / 500) + 1;
         return (factor > 5) ? 5 : factor;

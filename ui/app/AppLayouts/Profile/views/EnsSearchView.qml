@@ -122,8 +122,8 @@ Item {
             StatusBaseText {
                 visible: ensStatus !== Constants.ens_taken
                 text: {
-                    if((ensStatus === Constants.ens_available || 
-                         ensStatus === Constants.ens_connected || 
+                    if((ensStatus === Constants.ens_available ||
+                         ensStatus === Constants.ens_connected ||
                          ensStatus === Constants.ens_connected_dkey)) {
                         return "✓"
                     } else {
@@ -229,7 +229,7 @@ Item {
                 height: 20
 
                 StatusBaseText {
-                    text: !isStatus ? 
+                    text: !isStatus ?
                         //% "Custom domain"
                         qsTrId("ens-custom-domain")
                         :
@@ -241,7 +241,7 @@ Item {
                 }
 
                 StatusBaseText {
-                    text: !isStatus ? 
+                    text: !isStatus ?
                         //% "I want a stateofus.eth domain"
                         qsTrId("ens-want-domain")
                         :

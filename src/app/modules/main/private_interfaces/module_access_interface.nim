@@ -21,7 +21,7 @@ method load*(
   messageService: message_service.Service,
   gifService: gif_service.Service,
   mailserversService: mailservers_service.Service
-  ) 
+  )
   {.base.} =
   raise newException(ValueError, "No implementation available")
 

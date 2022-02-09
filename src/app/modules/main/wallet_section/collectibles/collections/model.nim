@@ -60,13 +60,13 @@ QtObject:
     let enumRole = role.ModelRole
 
     case enumRole:
-    of ModelRole.Name: 
+    of ModelRole.Name:
       result = newQVariant(item.getName())
-    of ModelRole.Slug: 
+    of ModelRole.Slug:
       result = newQVariant(item.getSlug())
-    of ModelRole.ImageUrl: 
+    of ModelRole.ImageUrl:
       result = newQVariant(item.getImageUrl())
-    of ModelRole.OwnedAssetCount: 
+    of ModelRole.OwnedAssetCount:
       result = newQVariant(item.getOwnedAssetCount())
 
   proc setItems*(self: Model, items: seq[Item]) =

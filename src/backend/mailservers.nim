@@ -7,7 +7,7 @@ export response_type
 logScope:
   topics = "mailserver"
 
-proc saveMailserver*(id: string, name: string, enode: string, fleet: string): 
+proc saveMailserver*(id: string, name: string, enode: string, fleet: string):
   RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* [{
       "id": id,

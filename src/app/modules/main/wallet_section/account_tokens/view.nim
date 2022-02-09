@@ -24,7 +24,7 @@ QtObject:
 
   proc load*(self: View) =
     self.delegate.viewDidLoad()
-    
+
   proc modelChanged*(self: View) {.signal.}
 
   proc getModel(self: View): QVariant {.slot.} =

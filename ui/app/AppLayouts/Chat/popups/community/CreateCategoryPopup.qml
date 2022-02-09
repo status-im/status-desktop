@@ -43,12 +43,12 @@ StatusModal {
 
     header.title: isEdit ?
             //% "Edit category"
-            qsTrId("edit-category") : 
+            qsTrId("edit-category") :
             //% "New category"
             qsTrId("new-category")
 
     contentItem: Column {
-                
+
         width: root.width
         property alias categoryName: nameInput
 
@@ -165,7 +165,7 @@ StatusModal {
                     title: qsTrId("delete--1-category").arg(root.contentItem.categoryName.input.text),
                     //% "Are you sure you want to delete %1 category? Channels inside the category won’t be deleted."
                     confirmationText: qsTrId("are-you-sure-you-want-to-delete--1-category--channels-inside-the-category-won-t-be-deleted-").arg(root.contentItem.categoryName.input.text)
-                    
+
                 })
             }
         }
@@ -232,7 +232,7 @@ StatusModal {
 
     MessageDialog {
         id: categoryError
-        title: isEdit ? 
+        title: isEdit ?
                 //% "Error editing the category"
                 qsTrId("error-editing-the-category") :
                 //% "Error creating the category"

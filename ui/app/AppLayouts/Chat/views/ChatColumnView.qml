@@ -131,7 +131,7 @@ Item {
         store: root.rootStore
         reactionModel: root.rootStore.emojiReactionsModel
     }
-    
+
     EmptyChatPanel {
         anchors.fill: parent
         visible: root.activeChatId === ""
@@ -201,7 +201,7 @@ Item {
                             return parent.height
 
                         return 0
-                    }    
+                    }
                     rootStore: root.rootStore
                     contactsStore: root.contactsStore
                     sendTransactionNoEnsModal: cmpSendTransactionNoEns

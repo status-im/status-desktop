@@ -40,10 +40,10 @@ import ../global/global_singleton
 
 import ../core/[main]
 
-type 
-  AppController* = ref object of RootObj 
+type
+  AppController* = ref object of RootObj
     statusFoundation: StatusFoundation
-    
+
     # Global
     localAppSettingsVariant: QVariant
     localAccountSettingsVariant: QVariant
@@ -122,7 +122,7 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   # Services
   result.generalService = general_service.newService()
   result.settingsService = settings_service.newService()
-  result.nodeConfigurationService = node_configuration_service.newService(statusFoundation.fleetConfiguration, 
+  result.nodeConfigurationService = node_configuration_service.newService(statusFoundation.fleetConfiguration,
   result.settingsService)
   result.osNotificationService = os_notification_service.newService(statusFoundation.events)
   result.keychainService = keychain_service.newService(statusFoundation.events)
@@ -136,12 +136,12 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result.contactsService)
   result.activityCenterService = activity_center_service.newService(statusFoundation.events,
   statusFoundation.threadpool, result.chatService)
-  result.tokenService = token_service.newService(statusFoundation.events, statusFoundation.threadpool, 
+  result.tokenService = token_service.newService(statusFoundation.events, statusFoundation.threadpool,
   result.settingsService)
   result.collectibleService = collectible_service.newService(result.settingsService)
-  result.walletAccountService = wallet_account_service.newService(statusFoundation.events, result.settingsService, 
+  result.walletAccountService = wallet_account_service.newService(statusFoundation.events, result.settingsService,
   result.accountsService, result.tokenService)
-  result.transactionService = transaction_service.newService(statusFoundation.events, statusFoundation.threadpool, 
+  result.transactionService = transaction_service.newService(statusFoundation.events, statusFoundation.threadpool,
   result.walletAccountService, result.ethService, result.networkService, result.settingsService)
   result.bookmarkService = bookmark_service.newService()
   result.profileService = profile_service.newService()
@@ -155,30 +155,30 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
     result.networkService,
     result.chatService
   )
-  result.aboutService = about_service.newService(statusFoundation.events, statusFoundation.threadpool, 
+  result.aboutService = about_service.newService(statusFoundation.events, statusFoundation.threadpool,
   result.settingsService)
   result.dappPermissionsService = dapp_permissions_service.newService()
   result.languageService = language_service.newService()
   # result.mnemonicService = mnemonic_service.newService()
-  result.privacyService = privacy_service.newService(statusFoundation.events, result.settingsService, 
+  result.privacyService = privacy_service.newService(statusFoundation.events, result.settingsService,
   result.accountsService)
   result.providerService = provider_service.newService(result.dappPermissionsService, result.settingsService)
   result.savedAddressService = saved_address_service.newService(statusFoundation.events)
   result.devicesService = devices_service.newService(statusFoundation.events, result.settingsService)
-  result.mailserversService = mailservers_service.newService(statusFoundation.events, statusFoundation.threadpool, 
+  result.mailserversService = mailservers_service.newService(statusFoundation.events, statusFoundation.threadpool,
     result.settingsService, result.nodeConfigurationService, statusFoundation.fleetConfiguration)
-  result.nodeService = node_service.newService(statusFoundation.events, statusFoundation.threadpool, 
+  result.nodeService = node_service.newService(statusFoundation.events, statusFoundation.threadpool,
   result.settingsService)
   result.gifService = gif_service.newService(result.settingsService)
-  result.ensService = ens_service.newService(statusFoundation.events, statusFoundation.threadpool, 
-  result.settingsService, result.walletAccountService, result.transactionService, result.ethService, 
+  result.ensService = ens_service.newService(statusFoundation.events, statusFoundation.threadpool,
+  result.settingsService, result.walletAccountService, result.transactionService, result.ethService,
   result.networkService, result.tokenService)
 
   # Modules
   result.startupModule = startup_module.newModule[AppController](
     result,
     statusFoundation.events,
-    result.keychainService, 
+    result.keychainService,
     result.accountsService
   )
   result.mainModule = main_module.newModule[AppController](
@@ -228,7 +228,7 @@ proc delete*(self: AppController) =
   self.mainModule.delete
   self.ethService.delete
   self.languageService.delete
-  
+
   self.localAppSettingsVariant.delete
   self.localAccountSettingsVariant.delete
   self.localAccountSensitiveSettingsVariant.delete
@@ -282,7 +282,7 @@ proc start*(self: AppController) =
   self.generalService.init()
   self.ethService.init()
   self.accountsService.init()
-  
+
   self.startupModule.load()
 
 proc load(self: AppController) =
@@ -314,7 +314,7 @@ proc load(self: AppController) =
   singletonInstance.engine.setRootContextProperty("globalUtils", self.globalUtilsVariant)
 
   # other global instances
-  self.buildAndRegisterLocalAccountSensitiveSettings()  
+  self.buildAndRegisterLocalAccountSensitiveSettings()
   self.buildAndRegisterUserProfile()
 
   # load main module
@@ -341,12 +341,12 @@ proc userLoggedIn*(self: AppController) =
 
   self.osNotificationService.userLoggedIn()
 
-proc buildAndRegisterLocalAccountSensitiveSettings(self: AppController) = 
+proc buildAndRegisterLocalAccountSensitiveSettings(self: AppController) =
   var pubKey = self.settingsService.getPublicKey()
   singletonInstance.localAccountSensitiveSettings.setFileName(pubKey)
   singletonInstance.engine.setRootContextProperty("localAccountSensitiveSettings", self.localAccountSensitiveSettingsVariant)
 
-proc buildAndRegisterUserProfile(self: AppController) = 
+proc buildAndRegisterUserProfile(self: AppController) =
   let pubKey = self.settingsService.getPublicKey()
   let preferredName = self.settingsService.getPreferredName()
   let ensUsernames = self.settingsService.getEnsUsernames()
@@ -365,7 +365,7 @@ proc buildAndRegisterUserProfile(self: AppController) =
 
   let meAsContact = self.contactsService.getContactById(pubKey)
 
-  singletonInstance.userProfile.setFixedData(loggedInAccount.name, loggedInAccount.keyUid, loggedInAccount.identicon, 
+  singletonInstance.userProfile.setFixedData(loggedInAccount.name, loggedInAccount.keyUid, loggedInAccount.identicon,
   pubKey)
   singletonInstance.userProfile.setPreferredName(preferredName)
   singletonInstance.userProfile.setEnsName(meAsContact.name)

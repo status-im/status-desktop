@@ -75,7 +75,7 @@ const SIGNAL_COMMUNITY_CATEGORY_DELETED* = "communityCategoryDeleted"
 const SIGNAL_COMMUNITY_MEMBER_APPROVED* = "communityMemberApproved"
 
 QtObject:
-  type 
+  type
     Service* = ref object of QObject
       events: EventEmitter
       chatService: chat_service.Service
@@ -180,7 +180,7 @@ QtObject:
     elif(community.chats.len < prev_community.chats.len):
       for prv_chat in prev_community.chats:
         if findIndexById(prv_chat.id, community.chats) == -1:
-          self.events.emit(SIGNAL_COMMUNITY_CHANNEL_DELETED, CommunityChatIdArgs(communityId: community.id, 
+          self.events.emit(SIGNAL_COMMUNITY_CHANNEL_DELETED, CommunityChatIdArgs(communityId: community.id,
           chatId: community.id&prv_chat.id))
     # some property has changed
     else:
@@ -196,7 +196,7 @@ QtObject:
 
           # Handle position changes
           if(chat.id == prev_chat.id and chat.position != prev_chat.position):
-            self.events.emit(SIGNAL_COMMUNITY_CHANNEL_REORDERED, CommunityChatOrderArgs(communityId: community.id, 
+            self.events.emit(SIGNAL_COMMUNITY_CHANNEL_REORDERED, CommunityChatOrderArgs(communityId: community.id,
             chatId: community.id&chat.id, categoryId: chat.categoryId, position: chat.position))
 
           # Handle name/description changes
@@ -205,7 +205,7 @@ QtObject:
             var updatedChat = findChatById(chatFullId, updatedChats)
             updatedChat.updateMissingFields(chat)
             self.chatService.updateOrAddChat(updatedChat) # we have to update chats stored in the chat service.
-            
+
             let data = CommunityChatArgs(chat: updatedChat)
             self.events.emit(SIGNAL_COMMUNITY_CHANNEL_EDITED, data)
 
@@ -430,7 +430,7 @@ QtObject:
         color,
         image,
         aX, aY, bX, bY)
-      
+
       if response.error != nil:
         let error = Json.decode($response.error, RpcError)
         raise newException(RpcException, "Error creating community: " & error.message)
@@ -466,7 +466,7 @@ QtObject:
         color,
         image,
         aX, aY, bX, bY)
-      
+
       if response.error != nil:
         let error = Json.decode($response.error, RpcError)
         raise newException(RpcException, "Error editing community: " & error.message)
@@ -489,7 +489,7 @@ QtObject:
       if not response.error.isNil:
         let error = Json.decode($response.error, RpcError)
         raise newException(RpcException, "Error creating community channel: " & error.message)
-      
+
       if response.result.isNil or response.result.kind == JNull:
         error "response is invalid", methodName="createCommunityChannel"
 
@@ -556,7 +556,7 @@ QtObject:
               chatDetails.updateMissingFields(self.joinedCommunities[communityId].chats[prev_chat_idx])
               self.chatService.updateOrAddChat(chatDetails) # we have to update chats stored in the chat service.
               self.events.emit(SIGNAL_COMMUNITY_CHANNEL_REORDERED, CommunityChatOrderArgs(communityId: updatedCommunity.id, chatId: fullChatId, categoryId: chat.categoryId, position: chat.position))
-          
+
     except Exception as e:
       error "Error reordering community channel", msg = e.msg, communityId, chatId, position, methodName="reorderCommunityChat"
 
@@ -603,7 +603,7 @@ QtObject:
           let category = v.toCategory()
           self.events.emit(SIGNAL_COMMUNITY_CATEGORY_CREATED,
             CommunityCategoryArgs(communityId: communityId, category: category, chats: chats))
-          
+
     except Exception as e:
       error "Error creating community category", msg = e.msg, communityId, name
 
@@ -690,8 +690,8 @@ QtObject:
     try:
       let response = status_go.importCommunity(communityKey)
       ## after `importCommunity` call everything should be handled in a slot cnnected to `SignalType.CommunityFound.event`
-      ## but because of insufficient data (chats details are missing) sent as a payload of that signal we're unable to do 
-      ## that until `status-go` part gets improved in ragards of that. 
+      ## but because of insufficient data (chats details are missing) sent as a payload of that signal we're unable to do
+      ## that until `status-go` part gets improved in ragards of that.
 
       if (response.error != nil):
         let error = Json.decode($response.error, RpcError)
@@ -706,7 +706,7 @@ QtObject:
 
       if(communityJArr.len == 0):
         raise newException(RpcException, fmt"`communities` array is empty in the response for community id: {communityKey}")
-      
+
       var chatsJArr: JsonNode
       if(not response.result.getProp("chats", chatsJArr)):
         raise newException(RpcException, fmt"there is no `chats` key in the response for community id: {communityKey}")
@@ -723,12 +723,12 @@ QtObject:
         var chatDetails =  self.chatService.getChatById(fullChatId)
         chatDetails.updateMissingFields(chat)
         self.chatService.updateOrAddChat(chatDetails) # we have to update chats stored in the chat service.
-    
+
       self.events.emit(SIGNAL_COMMUNITY_IMPORTED, CommunityArgs(community: communityDto))
 
     except Exception as e:
       error "Error importing the community: ", msg = e.msg
-      # We should apply some notification mechanism on the application level which will deal with errors and 
+      # We should apply some notification mechanism on the application level which will deal with errors and
       # notify user about them. Till then we're using this way.
       self.events.emit(SIGNAL_COMMUNITY_IMPORTED, CommunityArgs(error: e.msg))
 

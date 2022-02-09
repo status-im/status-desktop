@@ -40,12 +40,12 @@ proc fetchReactionsForMessageWithId*(chatId: string, messageId: string): RpcResp
   let payload = %* [chatId, messageId]
   result = callPrivateRPC("emojiReactionsByChatIDMessageID".prefix, payload)
 
-proc fetchAllMessagesFromChatWhichMatchTerm*(chatId: string, searchTerm: string, caseSensitive: bool): 
+proc fetchAllMessagesFromChatWhichMatchTerm*(chatId: string, searchTerm: string, caseSensitive: bool):
   RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* [chatId, searchTerm, caseSensitive]
   result = callPrivateRPC("allMessagesFromChatWhichMatchTerm".prefix, payload)
 
-proc fetchAllMessagesFromChatsAndCommunitiesWhichMatchTerm*(communityIds: seq[string], chatIds: seq[string], 
+proc fetchAllMessagesFromChatsAndCommunitiesWhichMatchTerm*(communityIds: seq[string], chatIds: seq[string],
   searchTerm: string, caseSensitive: bool): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* [communityIds, chatIds, searchTerm, caseSensitive]
   result = callPrivateRPC("allMessagesFromChatsAndCommunitiesWhichMatchTerm".prefix, payload)
@@ -54,7 +54,7 @@ proc markAllMessagesFromChatWithIdAsRead*(chatId: string): RpcResponse[JsonNode]
   let payload = %* [chatId]
   result = callPrivateRPC("markAllRead".prefix, payload)
 
-proc markCertainMessagesFromChatWithIdAsRead*(chatId: string, messageIds: seq[string]): 
+proc markCertainMessagesFromChatWithIdAsRead*(chatId: string, messageIds: seq[string]):
   RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* [chatId, messageIds]
   result = callPrivateRPC("markMessagesSeen".prefix, payload)

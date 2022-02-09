@@ -21,6 +21,6 @@ proc toStatusUpdateDto*(jsonObj: JsonNode): StatusUpdateDto =
 
   result.statusType = StatusType.Offline
   var statusTypeInt: int
-  if (jsonObj.getProp("statusType", statusTypeInt) and 
-    (statusTypeInt >= ord(low(StatusType)) or statusTypeInt <= ord(high(StatusType)))): 
+  if (jsonObj.getProp("statusType", statusTypeInt) and
+    (statusTypeInt >= ord(low(StatusType)) or statusTypeInt <= ord(high(StatusType)))):
       result.statusType = StatusType(statusTypeInt)

@@ -11,7 +11,7 @@ Menu {
     property var subMenuIcons: []
     property int paddingSize: 8
     property bool hasArrow: true
-    closePolicy: Popup.CloseOnPressOutside | Popup.CloseOnReleaseOutside | Popup.CloseOnEscape 
+    closePolicy: Popup.CloseOnPressOutside | Popup.CloseOnReleaseOutside | Popup.CloseOnEscape
     id: popupMenu
     topPadding: paddingSize
     bottomPadding: paddingSize
@@ -69,7 +69,7 @@ Menu {
             width: 9
             fillMode: Image.PreserveAspectFit
             visible: popupMenuItem.subMenu && popupMenuItem.subMenu.enabled
-            
+
             ColorOverlay {
                 anchors.fill: parent
                 source: parent
@@ -88,7 +88,7 @@ Menu {
 
             Image {
                 id: menuIcon
-                source: popupMenuItem.icon.source    
+                source: popupMenuItem.icon.source
                 visible: false
                 width: parent.width
                 height: parent.width

@@ -1,4 +1,4 @@
-type 
+type
   Item* = object
     id: string
     name: string
@@ -14,17 +14,17 @@ proc initItem*(id, name, icon: string, isIdenticon: bool, color: string): Item =
   result.isIdenticon = isIdenticon
   result.color = color
 
-proc id*(self: Item): string = 
+proc id*(self: Item): string =
   self.id
 
-proc name*(self: Item): string = 
+proc name*(self: Item): string =
   self.name
 
-proc icon*(self: Item): string = 
+proc icon*(self: Item): string =
   self.icon
 
-proc isIdenticon*(self: Item): bool = 
+proc isIdenticon*(self: Item): bool =
   self.isIdenticon
 
-proc color*(self: Item): string = 
+proc color*(self: Item): string =
   self.color

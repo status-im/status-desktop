@@ -9,7 +9,7 @@ QtObject:
       mutedContactsModelVariant: QVariant
       mutedChatsModel: Model
       mutedChatsModelVariant: QVariant
-      
+
   proc delete*(self: View) =
     self.mutedContactsModel.delete
     self.mutedContactsModelVariant.delete

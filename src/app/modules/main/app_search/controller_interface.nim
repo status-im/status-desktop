@@ -2,7 +2,7 @@ import ../../../../app_service/service/contacts/dto/contacts
 import ../../../../app_service/service/chat/dto/chat
 import ../../../../app_service/service/community/dto/community
 
-type 
+type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
   ## Abstract class for any input/interaction with this module.
 
@@ -51,15 +51,15 @@ method getChatDetails*(self: AccessInterface, communityId, chatId: string): Chat
 method searchMessages*(self: AccessInterface, searchTerm: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getOneToOneChatNameAndImage*(self: AccessInterface, chatId: string): 
+method getOneToOneChatNameAndImage*(self: AccessInterface, chatId: string):
   tuple[name: string, image: string, isIdenticon: bool] {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getContactNameAndImage*(self: AccessInterface, contactId: string): 
+method getContactNameAndImage*(self: AccessInterface, contactId: string):
   tuple[name: string, image: string, isIdenticon: bool] {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method addResultItemDetails*(self: AccessInterface, itemId: string, sectionId = "", channelId = "", messageId = "") 
+method addResultItemDetails*(self: AccessInterface, itemId: string, sectionId = "", channelId = "", messageId = "")
   {.base.} =
   raise newException(ValueError, "No implementation available")
 

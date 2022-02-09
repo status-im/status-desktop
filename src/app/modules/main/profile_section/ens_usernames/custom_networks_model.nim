@@ -47,9 +47,9 @@ QtObject:
     let enumRole = role.ModelRole
 
     case enumRole:
-    of ModelRole.Id: 
+    of ModelRole.Id:
       result = newQVariant(item.id)
-    of ModelRole.Name: 
+    of ModelRole.Name:
       result = newQVariant(item.name)
 
   proc add*(self: Model, id: string, name: string) =

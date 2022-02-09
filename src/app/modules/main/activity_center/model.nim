@@ -22,7 +22,7 @@ QtObject:
 
   proc setup(self: Model) = self.QAbstractListModel.setup
 
-  proc delete(self: Model) = 
+  proc delete(self: Model) =
     self.activityCenterNotifications = @[]
     self.QAbstractListModel.delete
 
@@ -52,7 +52,7 @@ QtObject:
 
     for activityCenterNotification in self.activityCenterNotifications:
       activityCenterNotification.read = true
-    
+
     let topLeft = self.createIndex(0, 0, nil)
     let bottomRight = self.createIndex(self.activityCenterNotifications.len - 1, 0, nil)
     self.dataChanged(topLeft, bottomRight, @[NotifRoles.Read.int])
@@ -108,7 +108,7 @@ QtObject:
       NotifRoles.Dismissed.int: "dismissed",
       NotifRoles.Accepted.int: "accepted"
     }.toTable
-  
+
   proc reduceUnreadCount(self: Model, numberNotifs: int) =
     self.nbUnreadNotifications = self.nbUnreadNotifications - numberNotifs
     if (self.nbUnreadNotifications < 0):
@@ -152,7 +152,7 @@ QtObject:
           indexesToDelete.add(i)
           break
       i = i + 1
-    
+
     i = 0
     for index in indexesToDelete:
       let indexUpdated = index - i

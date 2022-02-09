@@ -12,7 +12,7 @@ QtObject:
   type Model* = ref object of QAbstractListModel
     items*: seq[Item]
 
-  proc setup(self: Model) = 
+  proc setup(self: Model) =
     self.QAbstractListModel.setup
 
   proc delete(self: Model) =
@@ -43,19 +43,19 @@ QtObject:
     let enumRole = role.ModelRole
 
     case enumRole:
-      of ModelRole.Name: 
+      of ModelRole.Name:
         result = newQVariant(item.name)
-      of ModelRole.InstallationId: 
+      of ModelRole.InstallationId:
         result = newQVariant(item.installationId)
-      of ModelRole.IsCurrentDevice: 
+      of ModelRole.IsCurrentDevice:
         result = newQVariant(item.isCurrentDevice)
-      of ModelRole.Enabled: 
+      of ModelRole.Enabled:
         result = newQVariant(item.enabled)
 
   proc addItems*(self: Model, items: seq[Item]) =
     if(items.len == 0):
       return
-      
+
     let parentModelIndex = newQModelIndex()
     defer: parentModelIndex.delete
 

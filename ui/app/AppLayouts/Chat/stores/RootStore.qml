@@ -164,7 +164,7 @@ QtObject {
 
     function prepareEditCategoryModel(categoryId) {
         chatCommunitySectionModule.prepareEditCategoryModel(categoryId);
-    } 
+    }
 
     function leaveCommunity() {
         chatCommunitySectionModule.leaveCommunity();

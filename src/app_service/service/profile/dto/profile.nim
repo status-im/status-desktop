@@ -29,7 +29,7 @@ proc toImage*(jsonObj: JsonNode): Image =
 
 proc toProfileDto*(jsonObj: JsonNode): ProfileDto =
   result = ProfileDto()
-  
+
   var imagesObj: JsonNode
   if(jsonObj.getProp("images", imagesObj) and imagesObj.kind == JArray):
     for imgObj in imagesObj:

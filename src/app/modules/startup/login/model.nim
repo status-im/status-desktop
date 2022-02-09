@@ -49,15 +49,15 @@ QtObject:
     let enumRole = role.ModelRole
 
     case enumRole:
-    of ModelRole.Name: 
+    of ModelRole.Name:
       result = newQVariant(item.getName())
-    of ModelRole.Identicon: 
+    of ModelRole.Identicon:
       result = newQVariant(item.getIdenticon())
-    of ModelRole.ThumbnailImage: 
+    of ModelRole.ThumbnailImage:
       result = newQVariant(item.getThumbnailImage())
-    of ModelRole.LargeImage: 
+    of ModelRole.LargeImage:
       result = newQVariant(item.getLargeImage())
-    of ModelRole.KeyUid: 
+    of ModelRole.KeyUid:
       result = newQVariant(item.getKeyUid())
 
   proc setItems*(self: Model, items: seq[Item]) =

@@ -6,14 +6,14 @@ method viewDidLoad*(self: AccessInterface) {.base.} =
 method setSelectedAccountByIndex*(self: AccessInterface, index: int) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method storeSelectedAccountAndLogin*(self: AccessInterface, password: string) 
+method storeSelectedAccountAndLogin*(self: AccessInterface, password: string)
   {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getImportedAccount*(self: AccessInterface): GeneratedAccountDto {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method validateMnemonic*(self: AccessInterface, mnemonic: string): 
+method validateMnemonic*(self: AccessInterface, mnemonic: string):
   string {.base.} =
   raise newException(ValueError, "No implementation available")
 

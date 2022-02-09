@@ -62,7 +62,7 @@ Item {
         wrapMode: Text.WordWrap
         color: Theme.palette.directColor1
     }
-    
+
     StatusBaseText {
         id: subtitle
         //% "%1 will be connected once the transaction is complete."

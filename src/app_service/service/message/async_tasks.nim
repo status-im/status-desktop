@@ -16,7 +16,7 @@ type
 
 const asyncFetchChatMessagesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncFetchChatMessagesTaskArg](argEncoded)
-  
+
   var responseJson = %*{
     "chatId": arg.chatId
   }
@@ -55,7 +55,7 @@ const asyncFetchChatMessagesTask: Task = proc(argEncoded: string) {.gcsafe, nimc
 # Async search messages
 #################################################
 
-type 
+type
   AsyncSearchMessagesTaskArg = ref object of QObjectTaskArg
     searchTerm: string
     caseSensitive: bool
@@ -69,7 +69,7 @@ type
 
 const asyncSearchMessagesInChatTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncSearchMessagesInChatTaskArg](argEncoded)
-  
+
   let response = status_go.fetchAllMessagesFromChatWhichMatchTerm(arg.chatId, arg.searchTerm, arg.caseSensitive)
 
   let responseJson = %*{
@@ -89,7 +89,7 @@ type
 const asyncSearchMessagesInChatsAndCommunitiesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncSearchMessagesInChatsAndCommunitiesTaskArg](argEncoded)
 
-  let response = status_go.fetchAllMessagesFromChatsAndCommunitiesWhichMatchTerm(arg.communityIds, arg.chatIds, 
+  let response = status_go.fetchAllMessagesFromChatsAndCommunitiesWhichMatchTerm(arg.communityIds, arg.chatIds,
   arg.searchTerm, arg.caseSensitive)
 
   let responseJson = %*{
@@ -110,7 +110,7 @@ const asyncMarkAllMessagesReadTask: Task = proc(argEncoded: string) {.gcsafe, ni
   let arg = decode[AsyncMarkAllMessagesReadTaskArg](argEncoded)
 
   discard status_go.markAllMessagesFromChatWithIdAsRead(arg.chatId)
-  
+
   let responseJson = %*{
     "chatId": arg.chatId,
     "error": ""
@@ -142,14 +142,14 @@ const asyncMarkCertainMessagesReadTask: Task = proc(argEncoded: string) {.gcsafe
     "chatId": arg.chatId,
     "messagesIds": arg.messagesIds,
     "error": error
-  }  
+  }
   arg.finish(responseJson)
 #################################################
 
 #################################################
 # Async GetLinkPreviewData
 #################################################
- 
+
 type
   AsyncGetLinkPreviewDataTaskArg = ref object of QObjectTaskArg
     link: string
@@ -171,6 +171,6 @@ const asyncGetLinkPreviewDataTask: Task = proc(argEncoded: string) {.gcsafe, nim
       "uuid": arg.uuid,
       "success": success,
       "result": result,
-    }  
-  
+    }
+
   arg.finish(responseJson)

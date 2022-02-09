@@ -21,11 +21,11 @@ type ResultItemDetails = object
   messageId*: string
 
 method isEmpty(self: ResultItemDetails): bool =
-  self.sectionId.len == 0 and 
-  self.channelId.len == 0 and 
+  self.sectionId.len == 0 and
+  self.channelId.len == 0 and
   self.messageId.len == 0
 
-type 
+type
   Controller* = ref object of controller_interface.AccessInterface
     delegate: io_interface.AccessInterface
     events: EventEmitter
@@ -41,7 +41,7 @@ type
     resultItems: Table[string, ResultItemDetails] # [resultItemId, ResultItemDetails]
 
 proc newController*(delegate: io_interface.AccessInterface, events: EventEmitter, contactsService: contact_service.Service,
-  chatService: chat_service.Service, communityService: community_service.Service, 
+  chatService: chat_service.Service, communityService: community_service.Service,
   messageService: message_service.Service): Controller =
   result = Controller()
   result.delegate = delegate
@@ -51,11 +51,11 @@ proc newController*(delegate: io_interface.AccessInterface, events: EventEmitter
   result.communityService = communityService
   result.messageService = messageService
   result.resultItems = initTable[string, ResultItemDetails]()
-  
+
 method delete*(self: Controller) =
   self.resultItems.clear
 
-method init*(self: Controller) = 
+method init*(self: Controller) =
   self.events.on(SIGNAL_SEARCH_MESSAGES_LOADED) do(e:Args):
     let args = MessagesArgs(e)
     self.delegate.onSearchMessagesDone(args.messages)
@@ -79,8 +79,8 @@ method searchLocation*(self: Controller): string =
 method searchSubLocation*(self: Controller): string =
   return self.searchSubLocation
 
-method setSearchLocation*(self: Controller, location: string, subLocation: string) = 
-    ## Setting location and subLocation to an empty string means we're 
+method setSearchLocation*(self: Controller, location: string, subLocation: string) =
+    ## Setting location and subLocation to an empty string means we're
     ## searching in all available chats/channels/communities.
     self.searchLocation = location
     self.searchSubLocation = subLocation
@@ -132,11 +132,11 @@ method searchMessages*(self: Controller, searchTerm: string) =
 
   self.messageService.asyncSearchMessages(communities, chats, self.searchTerm, false)
 
-method getOneToOneChatNameAndImage*(self: Controller, chatId: string): 
+method getOneToOneChatNameAndImage*(self: Controller, chatId: string):
   tuple[name: string, image: string, isIdenticon: bool] =
   return self.chatService.getOneToOneChatNameAndImage(chatId)
 
-method getContactNameAndImage*(self: Controller, contactId: string): 
+method getContactNameAndImage*(self: Controller, contactId: string):
   tuple[name: string, image: string, isIdenticon: bool] =
   return self.contactsService.getContactNameAndImage(contactId)
 
@@ -149,5 +149,5 @@ method resultItemClicked*(self: Controller, itemId: string) =
     # we shouldn't be here ever
     info "important: we don't have stored details for a searched result item with id: ", itemId
     return
-  
+
   self.messageService.switchTo(itemDetails.sectionId, itemDetails.channelId, itemDetails.messageId)

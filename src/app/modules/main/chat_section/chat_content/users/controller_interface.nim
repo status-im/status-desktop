@@ -1,7 +1,7 @@
 import ../../../../../../app_service/service/contacts/service as contacts_service
 import ../../../../../../app_service/service/chat/service as chat_service
 
-type 
+type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
   ## Abstract class for any input/interaction with this module.
 
@@ -17,7 +17,7 @@ method getChatId*(self: AccessInterface): string {.base.} =
 method getMembersPublicKeys*(self: AccessInterface): seq[string] {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getContactNameAndImage*(self: AccessInterface, contactId: string): 
+method getContactNameAndImage*(self: AccessInterface, contactId: string):
   tuple[name: string, image: string, isIdenticon: bool] {.base.} =
   raise newException(ValueError, "No implementation available")
 

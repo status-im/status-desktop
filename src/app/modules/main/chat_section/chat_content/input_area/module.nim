@@ -11,7 +11,7 @@ import ../../../../../../app_service/service/gif/dto
 
 export io_interface
 
-type 
+type
   Module* = ref object of io_interface.AccessInterface
     delegate: delegate_interface.AccessInterface
     view: View
@@ -23,7 +23,7 @@ proc newModule*(
     delegate: delegate_interface.AccessInterface,
     sectionId: string,
     chatId: string,
-    belongsToCommunity: bool, 
+    belongsToCommunity: bool,
     chatService: chat_service.Service,
     communityService: community_service.Service,
     gifService: gif_service.Service,

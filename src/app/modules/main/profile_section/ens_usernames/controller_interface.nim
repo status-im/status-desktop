@@ -1,6 +1,6 @@
 import ../../../../../app_service/service/settings/dto/settings as settings_dto
 
-type 
+type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
   ## Abstract class for any input/interaction with this module.
 
@@ -28,7 +28,7 @@ method fetchGasPrice*(self: AccessInterface) {.base.} =
 method setPubKeyGasEstimate*(self: AccessInterface, ensUsername: string, address: string): int {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method setPubKey*(self: AccessInterface, ensUsername: string, address: string, gas: string, gasPrice: string, 
+method setPubKey*(self: AccessInterface, ensUsername: string, address: string, gas: string, gasPrice: string,
   maxPriorityFeePerGas: string, maxFeePerGas: string, password: string): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -47,7 +47,7 @@ method getPreferredEnsUsername*(self: AccessInterface): string {.base.} =
 method releaseEnsEstimate*(self: AccessInterface, ensUsername: string, address: string): int {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method release*(self: AccessInterface, ensUsername: string, address: string, gas: string, gasPrice: string, 
+method release*(self: AccessInterface, ensUsername: string, address: string, gas: string, gasPrice: string,
   password: string): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -60,7 +60,7 @@ method getEnsRegisteredAddress*(self: AccessInterface): string {.base.} =
 method registerEnsGasEstimate*(self: AccessInterface, ensUsername: string, address: string): int {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method registerEns*(self: AccessInterface, ensUsername: string, address: string, gas: string, gasPrice: string, 
+method registerEns*(self: AccessInterface, ensUsername: string, address: string, gas: string, gasPrice: string,
   maxPriorityFeePerGas: string, maxFeePerGas: string, password: string): string {.base.} =
   raise newException(ValueError, "No implementation available")
 

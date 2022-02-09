@@ -1,5 +1,5 @@
 method viewDidLoad*(self: AccessInterface) {.base.} =
-  raise newException(ValueError, "No implementation available") 
+  raise newException(ValueError, "No implementation available")
 
 method checkEnsUsernameAvailability*(self: AccessInterface, desiredEnsUsername: string, statusDomain: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
@@ -16,14 +16,14 @@ method fetchGasPrice*(self: AccessInterface) {.base.} =
 method setPubKeyGasEstimate*(self: AccessInterface, ensUsername: string, address: string): int {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method setPubKey*(self: AccessInterface, ensUsername: string, address: string, gas: string, gasPrice: string, 
+method setPubKey*(self: AccessInterface, ensUsername: string, address: string, gas: string, gasPrice: string,
   maxPriorityFeePerGas: string, maxFeePerGas: string, password: string): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method releaseEnsEstimate*(self: AccessInterface, ensUsername: string, address: string): int {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method release*(self: AccessInterface, ensUsername: string, address: string, gas: string, gasPrice: string, 
+method release*(self: AccessInterface, ensUsername: string, address: string, gas: string, gasPrice: string,
   password: string): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -36,7 +36,7 @@ method getEnsRegisteredAddress*(self: AccessInterface): string {.base.} =
 method registerEnsGasEstimate*(self: AccessInterface, ensUsername: string, address: string): int {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method registerEns*(self: AccessInterface, ensUsername: string, address: string, gas: string, gasPrice: string, 
+method registerEns*(self: AccessInterface, ensUsername: string, address: string, gas: string, gasPrice: string,
   maxPriorityFeePerGas: string, maxFeePerGas: string, password: string): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -49,7 +49,7 @@ method getWalletDefaultAddress*(self: AccessInterface): string {.base.} =
 method getCurrentCurrency*(self: AccessInterface): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getFiatValue*(self: AccessInterface, cryptoBalance: string, cryptoSymbol: string, fiatSymbol: string): string 
+method getFiatValue*(self: AccessInterface, cryptoBalance: string, cryptoSymbol: string, fiatSymbol: string): string
   {.base.} =
   raise newException(ValueError, "No implementation available")
 

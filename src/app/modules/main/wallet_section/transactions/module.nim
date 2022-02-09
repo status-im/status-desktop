@@ -9,7 +9,7 @@ import ../../../../../app_service/service/wallet_account/service as wallet_accou
 
 export io_interface
 
-type 
+type
   Module* = ref object of io_interface.AccessInterface
     delegate: delegate_interface.AccessInterface
     view: View
@@ -41,7 +41,7 @@ method load*(self: Module) =
   singletonInstance.engine.setRootContextProperty("walletSectionTransactions", newQVariant(self.view))
   self.controller.init()
   self.view.load()
-  
+
 method isLoaded*(self: Module): bool =
   return self.moduleLoaded
 
@@ -71,7 +71,7 @@ method loadTransactions*(self: Module, address: string, toBlock: string = "0x0",
       limit
     else:
       limit + 1
-    
+
   self.controller.loadTransactions(address, toBlockParsed, txLimit, loadMore)
 
 method setTrxHistoryResult*(self: Module, transactions: seq[TransactionDto], address: string, wasFetchMore: bool) =

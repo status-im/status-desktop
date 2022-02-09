@@ -2,7 +2,7 @@
 import json, strformat
 import base_item, location_menu_sub_model, location_menu_sub_item
 
-type 
+type
   Item* = ref object of BaseItem
     subItems: SubModel
 
@@ -11,19 +11,19 @@ proc initItem*(value, text, image, icon, iconColor: string = "", isIdenticon: bo
   result.setup(value, text, image, icon, iconColor, isIdenticon)
   result.subItems = newSubModel()
 
-proc delete*(self: Item) = 
+proc delete*(self: Item) =
   self.subItems.delete
   self.BaseItem.delete
 
-proc subItems*(self: Item): SubModel {.inline.} = 
+proc subItems*(self: Item): SubModel {.inline.} =
   self.subItems
 
 proc `$`*(self: Item): string =
   result = fmt"""SearchMenuItem(
-    value: {self.value}, 
-    title: {self.text}, 
+    value: {self.value},
+    title: {self.text},
     imageSource: {self.image},
-    iconName: {self.icon}, 
+    iconName: {self.icon},
     iconColor: {self.iconColor},
     isIdenticon: {self.isIdenticon},
     subItems:[

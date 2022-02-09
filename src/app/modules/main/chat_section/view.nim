@@ -19,7 +19,7 @@ QtObject:
       listOfMyContactsVariant: QVariant
       editCategoryChannelsModel: chats_model.Model
       editCategoryChannelsVariant: QVariant
-      
+
   proc delete*(self: View) =
     self.model.delete
     self.modelVariant.delete
@@ -81,8 +81,8 @@ QtObject:
     read = getContactRequestsModel
 
   proc listOfMyContactsChanged*(self: View) {.signal.}
-  
-  proc populateMyContacts*(self: View) {.slot.} = 
+
+  proc populateMyContacts*(self: View) {.slot.} =
     self.delegate.initListOfMyContacts()
     self.listOfMyContactsChanged()
 
@@ -117,7 +117,7 @@ QtObject:
 
   # Since we cannot return QVariant from the proc which has arguments, so cannot have proc like this:
   # prepareChatContentModuleForChatId(self: View, chatId: string): QVariant {.slot.}
-  # we're using combinaiton of 
+  # we're using combinaiton of
   # prepareChatContentModuleForChatId/getChatContentModule procs
   proc prepareChatContentModuleForChatId*(self: View, chatId: string) {.slot.} =
     self.tmpChatId = chatId
@@ -127,7 +127,7 @@ QtObject:
     self.tmpChatId = ""
     if(chatContentVariant.isNil):
       return newQVariant()
-    
+
     return chatContentVariant
 
   proc createPublicChat*(self: View, chatId: string) {.slot.} =
@@ -139,20 +139,20 @@ QtObject:
   proc leaveChat*(self: View, id: string) {.slot.} =
     self.delegate.leaveChat(id)
 
-  proc getItemAsJson*(self: View, itemId: string): string {.slot.} = 
-    let jsonObj = self.model.getItemOrSubItemByIdAsJson(itemId)  
+  proc getItemAsJson*(self: View, itemId: string): string {.slot.} =
+    let jsonObj = self.model.getItemOrSubItemByIdAsJson(itemId)
     return $jsonObj
 
-  proc muteChat*(self: View, chatId: string) {.slot.} = 
+  proc muteChat*(self: View, chatId: string) {.slot.} =
     self.delegate.muteChat(chatId)
 
-  proc unmuteChat*(self: View, chatId: string) {.slot.} = 
+  proc unmuteChat*(self: View, chatId: string) {.slot.} =
     self.delegate.unmuteChat(chatId)
 
-  proc markAllMessagesRead*(self: View, chatId: string) {.slot.} = 
+  proc markAllMessagesRead*(self: View, chatId: string) {.slot.} =
     self.delegate.markAllMessagesRead(chatId)
 
-  proc clearChatHistory*(self: View, chatId: string) {.slot.} = 
+  proc clearChatHistory*(self: View, chatId: string) {.slot.} =
     self.delegate.clearChatHistory(chatId)
 
   proc getCurrentFleet*(self: View): string {.slot.} =
@@ -163,7 +163,7 @@ QtObject:
 
   proc acceptAllContactRequests*(self: View) {.slot.} =
     self.delegate.acceptAllContactRequests()
-  
+
   proc rejectContactRequest*(self: View, publicKey: string) {.slot.} =
     self.delegate.rejectContactRequest(publicKey)
 
@@ -175,7 +175,7 @@ QtObject:
 
   proc removeCommunityChat*(self: View, chatId: string) {.slot} =
     self.delegate.removeCommunityChat(chatId)
-    
+
   proc addGroupMembers*(self: View, chatId: string, pubKeys: string) {.slot.} =
     self.delegate.addGroupMembers(chatId, pubKeys)
 
@@ -250,9 +250,9 @@ QtObject:
 
   proc prepareEditCategoryModel*(self: View, categoryId: string) {.slot.} =
     self.delegate.prepareEditCategoryModel(categoryId)
-  
+
   proc reorderCommunityCategories*(self: View, categoryId: string, position: int) {.slot} =
     self.delegate.reorderCommunityCategories(categoryId, position)
-  
+
   proc reorderCommunityChat*(self: View, categoryId: string, chatId: string, position: int): string {.slot} =
     self.delegate.reorderCommunityChat(categoryId, chatId, position)

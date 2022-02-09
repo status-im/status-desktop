@@ -12,7 +12,7 @@ type
     ProfileSettings,
     NodeManagement
 
-type 
+type
   SectionItem* = object
     sectionType: SectionType
     id: string
@@ -45,7 +45,7 @@ proc initItem*(
     image = "",
     icon = "",
     color = "",
-    hasNotification = false, 
+    hasNotification = false,
     notificationsCount: int = 0,
     active = false,
     enabled = true,
@@ -92,7 +92,7 @@ proc `$`*(self: SectionItem): string =
     sectionType: {self.sectionType.int},
     name: {self.name},
     amISectionAdmin: {self.amISectionAdmin},
-    description: {self.description}, 
+    description: {self.description},
     image: {self.image},
     icon: {self.icon},
     color: {self.color},
@@ -110,28 +110,28 @@ proc `$`*(self: SectionItem): string =
     members:{self.membersModel},
     ]"""
 
-proc id*(self: SectionItem): string {.inline.} = 
+proc id*(self: SectionItem): string {.inline.} =
   self.id
 
-proc sectionType*(self: SectionItem): SectionType {.inline.} = 
+proc sectionType*(self: SectionItem): SectionType {.inline.} =
   self.sectionType
 
-proc name*(self: SectionItem): string {.inline.} = 
+proc name*(self: SectionItem): string {.inline.} =
   self.name
 
-proc amISectionAdmin*(self: SectionItem): bool {.inline.} = 
+proc amISectionAdmin*(self: SectionItem): bool {.inline.} =
   self.amISectionAdmin
 
-proc description*(self: SectionItem): string {.inline.} = 
+proc description*(self: SectionItem): string {.inline.} =
   self.description
 
-proc image*(self: SectionItem): string {.inline.} = 
+proc image*(self: SectionItem): string {.inline.} =
   self.image
 
-proc icon*(self: SectionItem): string {.inline.} = 
+proc icon*(self: SectionItem): string {.inline.} =
   self.icon
 
-proc color*(self: SectionItem): string {.inline.} = 
+proc color*(self: SectionItem): string {.inline.} =
   self.color
 
 proc hasNotification*(self: SectionItem): bool {.inline.} =
@@ -140,43 +140,43 @@ proc hasNotification*(self: SectionItem): bool {.inline.} =
 proc `hasNotification=`*(self: var SectionItem, value: bool) {.inline.} =
   self.hasNotification = value
 
-proc notificationsCount*(self: SectionItem): int {.inline.} = 
+proc notificationsCount*(self: SectionItem): int {.inline.} =
   self.notificationsCount
 
-proc `notificationsCount=`*(self: var SectionItem, value: int) {.inline.} = 
+proc `notificationsCount=`*(self: var SectionItem, value: int) {.inline.} =
   self.notificationsCount = value
 
-proc active*(self: SectionItem): bool {.inline.} = 
+proc active*(self: SectionItem): bool {.inline.} =
   self.active
 
-proc `active=`*(self: var SectionItem, value: bool) {.inline.} = 
+proc `active=`*(self: var SectionItem, value: bool) {.inline.} =
   self.active = value
 
-proc enabled*(self: SectionItem): bool {.inline.} = 
+proc enabled*(self: SectionItem): bool {.inline.} =
   self.enabled
 
-proc `enabled=`*(self: var SectionItem, value: bool) {.inline.} = 
+proc `enabled=`*(self: var SectionItem, value: bool) {.inline.} =
   self.enabled = value
 
-proc joined*(self: SectionItem): bool {.inline.} = 
+proc joined*(self: SectionItem): bool {.inline.} =
   self.joined
 
-proc canJoin*(self: SectionItem): bool {.inline.} = 
+proc canJoin*(self: SectionItem): bool {.inline.} =
   self.canJoin
 
-proc canRequestAccess*(self: SectionItem): bool {.inline.} = 
+proc canRequestAccess*(self: SectionItem): bool {.inline.} =
   self.canRequestAccess
 
-proc canManageUsers*(self: SectionItem): bool {.inline.} = 
+proc canManageUsers*(self: SectionItem): bool {.inline.} =
   self.canManageUsers
 
-proc isMember*(self: SectionItem): bool {.inline.} = 
+proc isMember*(self: SectionItem): bool {.inline.} =
   self.isMember
 
-proc access*(self: SectionItem): int {.inline.} = 
+proc access*(self: SectionItem): int {.inline.} =
   self.access
 
-proc ensOnly*(self: SectionItem): bool {.inline.} = 
+proc ensOnly*(self: SectionItem): bool {.inline.} =
   self.ensOnly
 
 proc members*(self: SectionItem): user_model.Model {.inline.} =
@@ -193,5 +193,5 @@ proc updateMember*(
     isIdenticon: bool) =
   self.membersModel.updateItem(pubkey, name, image, isIdenticon)
 
-proc pendingRequestsToJoin*(self: SectionItem): PendingRequestModel {.inline.} = 
+proc pendingRequestsToJoin*(self: SectionItem): PendingRequestModel {.inline.} =
   self.pendingRequestsToJoinModel

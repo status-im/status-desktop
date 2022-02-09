@@ -5,7 +5,7 @@ import strformat
 type
   RpcException* = object of CatchableError
 
-type 
+type
   RpcError* = ref object
     code*: int
     message*: string
@@ -20,5 +20,5 @@ type
 proc `$`*(self: RpcError): string =
   result = fmt"""RpcError(
     code: {self.code},
-    message: {self.message}, 
+    message: {self.message},
     ]"""

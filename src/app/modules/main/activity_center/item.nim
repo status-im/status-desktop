@@ -39,7 +39,7 @@ proc initItem*(
 
 proc `$`*(self: Item): string =
   result = fmt"""StickerItem(
-    id: {self.id}, 
+    id: {self.id},
     name: {$self.name},
     chatId: {$self.chatId},
     author: {$self.author},
@@ -51,35 +51,35 @@ proc `$`*(self: Item): string =
     # messageItem: {$self.messageItem},
     ]"""
 
-proc id*(self: Item): string = 
+proc id*(self: Item): string =
   return self.id
 
-proc name*(self: Item): string = 
+proc name*(self: Item): string =
   return self.name
 
-proc author*(self: Item): string = 
+proc author*(self: Item): string =
   return self.author
 
-proc chatId*(self: Item): string = 
+proc chatId*(self: Item): string =
   return self.chatId
 
-proc notificationType*(self: Item): int = 
+proc notificationType*(self: Item): int =
   return self.notificationType
 
-proc timestamp*(self: Item): int64 = 
+proc timestamp*(self: Item): int64 =
   return self.timestamp
 
-proc read*(self: Item): bool = 
+proc read*(self: Item): bool =
   return self.read
 
-proc `read=`*(self: Item, value: bool) = 
+proc `read=`*(self: Item, value: bool) =
   self.read = value
 
-proc dismissed*(self: Item): bool = 
+proc dismissed*(self: Item): bool =
   return self.dismissed
 
-proc accepted*(self: Item): bool = 
+proc accepted*(self: Item): bool =
   return self.accepted
 
-proc messageItem*(self: Item): MessageItem = 
+proc messageItem*(self: Item): MessageItem =
   return self.messageItem

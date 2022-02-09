@@ -38,7 +38,7 @@ QtObject:
       result &= fmt"""SearchResultMessageModel:
       [{i}]:({$self.resultList[i]})
       """
-  
+
   proc countChanged*(self: Model) {.signal.}
   proc count*(self: Model): int {.slot.}  =
     self.resultList.len
@@ -77,31 +77,31 @@ QtObject:
     let enumRole = role.ModelRole
 
     case enumRole:
-    of ModelRole.ItemId: 
+    of ModelRole.ItemId:
       result = newQVariant(item.itemId)
-    of ModelRole.Content: 
+    of ModelRole.Content:
       result = newQVariant(item.content)
-    of ModelRole.Time: 
+    of ModelRole.Time:
       result = newQVariant(item.time)
-    of ModelRole.TitleId: 
+    of ModelRole.TitleId:
       result = newQVariant(item.titleId)
-    of ModelRole.Title: 
+    of ModelRole.Title:
       result = newQVariant(item.title)
-    of ModelRole.SectionName: 
+    of ModelRole.SectionName:
       result = newQVariant(item.sectionName)
-    of ModelRole.Image: 
+    of ModelRole.Image:
       result = newQVariant(item.image)
-    of ModelRole.Color: 
+    of ModelRole.Color:
       result = newQVariant(item.color)
-    of ModelRole.BadgePrimaryText: 
+    of ModelRole.BadgePrimaryText:
       result = newQVariant(item.badgePrimaryText)
-    of ModelRole.BadgeSecondaryText: 
+    of ModelRole.BadgeSecondaryText:
       result = newQVariant(item.badgeSecondaryText)
-    of ModelRole.BadgeImage: 
+    of ModelRole.BadgeImage:
       result = newQVariant(item.badgeImage)
-    of ModelRole.BadgeIconColor: 
+    of ModelRole.BadgeIconColor:
       result = newQVariant(item.badgeIconColor)
-    of ModelRole.BadgeIsLetterIdenticon: 
+    of ModelRole.BadgeIsLetterIdenticon:
       result = newQVariant(item.badgeIsLetterIdentIcon)
 
   proc add*(self: Model, item: Item) =

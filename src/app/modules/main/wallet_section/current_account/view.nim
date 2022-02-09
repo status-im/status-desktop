@@ -104,7 +104,7 @@ QtObject:
   QtProperty[QVariant] currencyBalance:
     read = getCurrencyBalance
     notify = currencyBalanceChanged
-  
+
   proc getAssets(self: View): QVariant {.slot.} =
     return newQVariant(self.assets)
 
@@ -136,7 +136,7 @@ proc setData*(self: View, dto: wallet_account_service.WalletAccountDto) =
     self.currencyBalanceChanged()
 
     let assets = account_tokens.newModel()
-  
+
     assets.setItems(
       dto.tokens.map(t => account_tokens_item.initItem(
           t.name,

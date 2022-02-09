@@ -5,13 +5,13 @@ method makeChatWithIdActive*(self: AccessInterface, chatId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method addNewChat*(self: AccessInterface, chatDto: ChatDto, belongsToCommunity: bool, events: EventEmitter,
-  settingsService: settings_service.ServiceInterface, contactService: contact_service.Service, 
-  chatService: chat_service.Service, communityService: community_service.Service, 
-  messageService: message_service.Service, gifService: gif_service.Service, 
+  settingsService: settings_service.ServiceInterface, contactService: contact_service.Service,
+  chatService: chat_service.Service, communityService: community_service.Service,
+  messageService: message_service.Service, gifService: gif_service.Service,
   mailserversService: mailservers_service.Service) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onNewMessagesReceived*(self: AccessInterface, chatId: string, unviewedMessagesCount: int, 
+method onNewMessagesReceived*(self: AccessInterface, chatId: string, unviewedMessagesCount: int,
   unviewedMentionsCount: int, messages: seq[MessageDto]) {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -41,7 +41,7 @@ method onContactDetailsUpdated*(self: AccessInterface, contactId: string) {.base
 
 method onCommunityChannelDeletedOrChatLeft*(self: AccessInterface, chatId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
-  
+
 method onChatRenamed*(self: AccessInterface, chatId: string, newName: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 

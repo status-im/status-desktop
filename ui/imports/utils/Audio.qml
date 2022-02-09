@@ -6,7 +6,7 @@ Audio {
 
     property var store
     property string track: "error.mp3"
-    
+
     source: Qt.resolvedUrl("./../assets/audio" + track)
     audioRole: Audio.NotificationRole
     volume: store.volume

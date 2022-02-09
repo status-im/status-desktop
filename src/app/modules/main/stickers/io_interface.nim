@@ -3,7 +3,7 @@ import ./item
 import ../../../../app_service/service/wallet_account/service as wallet_account_service
 import ../../../../app_service/service/stickers/service as stickers_service
 
-type 
+type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
   ## Abstract class for any input/interaction with this module.
 
@@ -17,7 +17,7 @@ method isLoaded*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method viewDidLoad*(self: AccessInterface) {.base.} =
-  raise newException(ValueError, "No implementation available") 
+  raise newException(ValueError, "No implementation available")
 
 method buy*(self: AccessInterface, packId: int, address: string, price: string, gas: string, gasPrice: string, maxPriorityFeePerGas: string, maxFeePerGas: string, password: string): tuple[response: string, success: bool] {.base.} =
   raise newException(ValueError, "No implementation available")
@@ -74,7 +74,7 @@ method addStickerPackToList*(self: AccessInterface, stickerPack: StickerPackDto,
   raise newException(ValueError, "No implementation available")
 
 type
-  ## Abstract class (concept) which must be implemented by object/s used in this 
+  ## Abstract class (concept) which must be implemented by object/s used in this
   ## module.
   DelegateInterface* = concept c
     c.stickersDidLoad()

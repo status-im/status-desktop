@@ -14,7 +14,7 @@ ModalPopup {
     id: popup
 
     property var privacyStore
-    
+
     property bool showWarning: true
     property int seedWord1Idx: -1;
     property int seedWord2Idx: -1;
@@ -239,13 +239,13 @@ ModalPopup {
         wrapMode: Text.WordWrap
     }
 
-    
+
 
     footer: StatusButton {
         id: confirmButton
-        text: showWarning ? 
+        text: showWarning ?
                 //% "Okay, continue"
-                qsTrId("ok-continue") : 
+                qsTrId("ok-continue") :
                 //% "Next"
                 qsTrId("next")
         anchors.right: parent.right

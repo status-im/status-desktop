@@ -12,7 +12,7 @@ import ../../../app_service/service/accounts/service_interface as accounts_servi
 
 export io_interface
 
-type 
+type
   Module*[T: io_interface.DelegateInterface] = ref object of io_interface.AccessInterface
     delegate: T
     view: View
@@ -24,7 +24,7 @@ type
 proc newModule*[T](delegate: T,
   events: EventEmitter,
   keychainService: keychain_service.Service,
-  accountsService: accounts_service.ServiceInterface): 
+  accountsService: accounts_service.ServiceInterface):
   Module[T] =
   result = Module[T]()
   result.delegate = delegate
@@ -34,9 +34,9 @@ proc newModule*[T](delegate: T,
 
   # Submodules
   result.onboardingModule = onboarding_module.newModule(result, events, accountsService)
-  result.loginModule = login_module.newModule(result, events, keychainService, 
+  result.loginModule = login_module.newModule(result, events, keychainService,
   accountsService)
-  
+
 method delete*[T](self: Module[T]) =
   self.onboardingModule.delete
   self.loginModule.delete
@@ -48,12 +48,12 @@ method load*[T](self: Module[T]) =
   singletonInstance.engine.setRootContextProperty("startupModule", self.viewVariant)
   self.controller.init()
   self.view.load()
-  
+
   var initialAppState = AppState.OnboardingState
   if(not self.controller.shouldStartWithOnboardingScreen()):
     initialAppState = AppState.LoginState
   self.view.setAppState(initialAppState)
-  
+
   self.onboardingModule.load()
   self.loginModule.load()
 

@@ -16,7 +16,7 @@ ModalPopup {
     width: 400
 
     property Popup parentPopup
-    
+
     title: qsTr("Application Restart")
 
     StyledText {

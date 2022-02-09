@@ -109,7 +109,7 @@ Rectangle {
                 onHoveredChanged: buttonsContainer.hoverChanged(this.hovered)
             }
         }
-        
+
 
         Loader {
             id: editBtn

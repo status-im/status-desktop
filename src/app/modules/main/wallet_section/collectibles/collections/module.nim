@@ -14,7 +14,7 @@ type
     controller: controller.AccessInterface
     moduleLoaded: bool
 
-proc newModule*(delegate: delegate_interface.AccessInterface, collectibleService: collectible_service.ServiceInterface): 
+proc newModule*(delegate: delegate_interface.AccessInterface, collectibleService: collectible_service.ServiceInterface):
   Module =
   result = Module()
   result.delegate = delegate

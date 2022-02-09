@@ -4,14 +4,14 @@ import ../../../../app_service/service/wallet_account/service as wallet_account_
 
 export controller_interface
 
-type 
+type
   Controller*[T: controller_interface.DelegateInterface] = ref object of controller_interface.AccessInterface
     delegate: T
     settingsService: settings_service.ServiceInterface
     walletAccountService: wallet_account_service.ServiceInterface
 
 proc newController*[T](
-  delegate: T, 
+  delegate: T,
   settingsService: settings_service.ServiceInterface,
   walletAccountService: wallet_account_service.ServiceInterface,
 ): Controller[T] =
@@ -23,7 +23,7 @@ proc newController*[T](
 method delete*[T](self: Controller[T]) =
   discard
 
-method init*[T](self: Controller[T]) = 
+method init*[T](self: Controller[T]) =
   discard
 
 method getCurrency*[T](self: Controller[T]): string =

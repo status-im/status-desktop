@@ -17,14 +17,14 @@ proc initItem*(
 
 proc `$`*(self: Item): string =
   result = fmt"""StickerItem(
-    hash: {self.hash}, 
+    hash: {self.hash},
     packId: {$self.packId}
     ]"""
 
-proc getHash*(self: Item): string = 
+proc getHash*(self: Item): string =
   return self.hash
 
-proc getPackId*(self: Item): int = 
+proc getPackId*(self: Item): int =
   return self.packId
 
 #####
@@ -59,7 +59,7 @@ proc initPackItem*(
 
 proc `$`*(self: PackItem): string =
   result = fmt"""StickerItem(
-    id: {self.id}, 
+    id: {self.id},
     name: {$self.name},
     author: {$self.author},
     price: {$self.price},
@@ -68,23 +68,23 @@ proc `$`*(self: PackItem): string =
     thumbnail: {$self.thumbnail},
     ]"""
 
-proc getId*(self: PackItem): int = 
+proc getId*(self: PackItem): int =
   return self.id
 
-proc getName*(self: PackItem): string = 
+proc getName*(self: PackItem): string =
   return self.name
 
-proc getAuthor*(self: PackItem): string = 
+proc getAuthor*(self: PackItem): string =
   return self.author
 
-proc getPrice*(self: PackItem): Stuint[256] = 
+proc getPrice*(self: PackItem): Stuint[256] =
   return self.price
 
-proc getPreview*(self: PackItem): string = 
+proc getPreview*(self: PackItem): string =
   return self.preview
 
-proc getThumbnail*(self: PackItem): string = 
+proc getThumbnail*(self: PackItem): string =
   return self.thumbnail
 
-proc getStickers*(self: PackItem): seq[Item] = 
+proc getStickers*(self: PackItem): seq[Item] =
   return self.stickers

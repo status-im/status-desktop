@@ -15,7 +15,7 @@ type
     moduleLoaded: bool
     currentAddress: string
 
-proc newModule*(delegate: delegate_interface.AccessInterface, collectibleService: collectible_service.ServiceInterface): 
+proc newModule*(delegate: delegate_interface.AccessInterface, collectibleService: collectible_service.ServiceInterface):
   Module =
   result = Module()
   result.delegate = delegate
@@ -39,7 +39,7 @@ method viewDidLoad*(self: Module) =
   self.moduleLoaded = true
   self.delegate.collectiblesModuleDidLoad()
 
-method setCurrentAddress*(self: Module, address: string) = 
+method setCurrentAddress*(self: Module, address: string) =
   self.currentAddress = address
 
 method fetch*(self: Module, collectionSlug: string) =

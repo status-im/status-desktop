@@ -15,7 +15,7 @@ import ../../../core/eventemitter
 
 export controller_interface
 
-type 
+type
   Controller* = ref object of controller_interface.AccessInterface
     delegate: io_interface.AccessInterface
     sectionId: string
@@ -32,8 +32,8 @@ type
     mailserversService: mailservers_service.Service
 
 proc newController*(delegate: io_interface.AccessInterface, sectionId: string, isCommunity: bool, events: EventEmitter,
-  settingsService: settings_service.ServiceInterface, contactService: contact_service.Service, 
-  chatService: chat_service.Service, communityService: community_service.Service, 
+  settingsService: settings_service.ServiceInterface, contactService: contact_service.Service,
+  chatService: chat_service.Service, communityService: community_service.Service,
   messageService: message_service.Service, gifService: gif_service.Service,
   mailserversService: mailservers_service.Service): Controller =
   result = Controller()
@@ -48,17 +48,17 @@ proc newController*(delegate: io_interface.AccessInterface, sectionId: string, i
   result.messageService = messageService
   result.gifService = gifService
   result.mailserversService = mailserversService
-  
+
 method delete*(self: Controller) =
   discard
 
-method init*(self: Controller) = 
+method init*(self: Controller) =
   self.events.on(SIGNAL_NEW_MESSAGE_RECEIVED) do(e: Args):
     let args = MessagesArgs(e)
     if(self.isCommunitySection and args.chatType != ChatType.CommunityChat or
       not self.isCommunitySection and args.chatType == ChatType.CommunityChat):
         return
-    self.delegate.onNewMessagesReceived(args.chatId, args.unviewedMessagesCount, args.unviewedMentionsCount, 
+    self.delegate.onNewMessagesReceived(args.chatId, args.unviewedMessagesCount, args.unviewedMentionsCount,
     args.messages)
 
   self.events.on(chat_service.SIGNAL_CHAT_MUTED) do(e:Args):
@@ -129,7 +129,7 @@ method init*(self: Controller) =
       let args = CommunityCategoryArgs(e)
       if (args.communityId == self.sectionId):
         self.delegate.onCommunityCategoryDeleted(args.category)
-  
+
     self.events.on(SIGNAL_COMMUNITY_CATEGORY_EDITED) do(e:Args):
       let args = CommunityCategoryArgs(e)
       if (args.communityId == self.sectionId):
@@ -202,7 +202,7 @@ method setActiveItemSubItem*(self: Controller, itemId: string, subItemId: string
 method removeCommunityChat*(self: Controller, itemId: string) =
   self.communityService.deleteCommunityChat(self.getMySectionId(), itemId)
 
-method getOneToOneChatNameAndImage*(self: Controller, chatId: string): 
+method getOneToOneChatNameAndImage*(self: Controller, chatId: string):
   tuple[name: string, image: string, isIdenticon: bool] =
   return self.chatService.getOneToOneChatNameAndImage(chatId)
 
@@ -245,7 +245,7 @@ method getContact*(self: Controller, id: string): ContactsDto =
 method getContactDetails*(self: Controller, id: string): ContactDetails =
   return self.contactService.getContactDetails(id)
 
-method getContactNameAndImage*(self: Controller, contactId: string): 
+method getContactNameAndImage*(self: Controller, contactId: string):
   tuple[name: string, image: string, isIdenticon: bool] =
   return self.contactService.getContactNameAndImage(contactId)
 
@@ -260,7 +260,7 @@ method blockContact*(self: Controller, publicKey: string) =
 
 method addGroupMembers*(self: Controller, chatId: string, pubKeys: seq[string]) =
   self.chatService.addGroupMembers(chatId, pubKeys)
-  
+
 method removeMemberFromGroupChat*(self: Controller, chatId: string, pubKey: string) =
    self.chatService.removeMemberFromGroupChat(chatId, pubKey)
 
@@ -273,7 +273,7 @@ method makeAdmin*(self: Controller, chatId: string, pubKey: string) =
 method createGroupChat*(self: Controller, groupName: string, pubKeys: seq[string]) =
   let response = self.chatService.createGroupChat(groupName, pubKeys)
   if(response.success):
-    self.delegate.addNewChat(response.chatDto, false, self.events, self.settingsService, self.contactService, self.chatService, 
+    self.delegate.addNewChat(response.chatDto, false, self.events, self.settingsService, self.contactService, self.chatService,
     self.communityService, self.messageService, self.gifService, self.mailserversService)
 
 method joinGroup*(self: Controller) =
@@ -282,7 +282,7 @@ method joinGroup*(self: Controller) =
 method joinGroupChatFromInvitation*(self: Controller, groupName: string, chatId: string, adminPK: string) =
   let response = self.chatService.createGroupChatFromInvitation(groupName, chatId, adminPK)
   if(response.success):
-    self.delegate.addNewChat(response.chatDto, false, self.events, self.settingsService, self.contactService, self.chatService, 
+    self.delegate.addNewChat(response.chatDto, false, self.events, self.settingsService, self.contactService, self.chatService,
     self.communityService, self.messageService, self.gifService, self.mailserversService)
 
 method acceptRequestToJoinCommunity*(self: Controller, requestId: string) =
@@ -324,7 +324,7 @@ method deleteCommunityCategory*(self: Controller, categoryId: string) =
 
 method leaveCommunity*(self: Controller) =
   self.communityService.leaveCommunity(self.sectionId)
-  
+
 method editCommunity*(
     self: Controller,
     name: string,
@@ -355,6 +355,6 @@ method inviteUsersToCommunity*(self: Controller, pubKeys: string): string =
 
 method reorderCommunityCategories*(self: Controller, categoryId: string, position: int) =
   self.communityService.reorderCommunityCategories(self.sectionId, categoryId, position)
-  
+
 method reorderCommunityChat*(self: Controller, categoryId: string, chatId: string, position: int): string =
   self.communityService.reorderCommunityChat(self.sectionId, categoryId, chatId, position)

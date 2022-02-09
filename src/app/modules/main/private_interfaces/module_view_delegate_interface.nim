@@ -3,7 +3,7 @@ import ../../shared_models/section_item
 import ../chat_search_item
 
 method viewDidLoad*(self: AccessInterface) {.base.} =
-  raise newException(ValueError, "No implementation available") 
+  raise newException(ValueError, "No implementation available")
 
 method storePassword*(self: AccessInterface, password: string) {.base.} =
   raise newException(ValueError, "No implementation available")

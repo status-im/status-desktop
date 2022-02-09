@@ -8,7 +8,7 @@ import strutils, times
 #   benchmark("name") do:
 #     ...
 
-template benchmark*(benchmarkName: string, code: untyped) =  
+template benchmark*(benchmarkName: string, code: untyped) =
   block:
     let t0 = epochTime()
     code

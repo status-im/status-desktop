@@ -9,7 +9,7 @@ import ../../../../../app_service/service/bookmarks/service as bookmark_service
 
 export io_interface
 
-type 
+type
   Module* = ref object of io_interface.AccessInterface
     delegate: delegate_interface.AccessInterface
     view: View
@@ -41,7 +41,7 @@ method viewDidLoad*(self: Module) =
   let bookmarks = self.controller.getBookmarks()
   for b in bookmarks:
     self.view.addItem(initItem(b.name, b.url, b.imageUrl))
-    
+
   self.moduleLoaded = true
   self.delegate.bookmarkDidLoad()
 

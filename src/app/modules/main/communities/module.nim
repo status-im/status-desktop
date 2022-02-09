@@ -18,7 +18,7 @@ type
     ImportingInProgress
     ImportingError
 
-type 
+type
   Module*  = ref object of io_interface.AccessInterface
     delegate: delegate_interface.AccessInterface
     controller: controller.AccessInterface
@@ -77,7 +77,7 @@ method getCommunityItem(self: Module, c: CommunityDto): SectionItem =
       c.images.thumbnail,
       icon = "",
       c.color,
-      hasNotification = false, 
+      hasNotification = false,
       notificationsCount = 0,
       active = false,
       enabled = true,
@@ -113,40 +113,40 @@ method requestAdded*(self: Module) =
 method communityLeft*(self: Module, communityId: string) =
    # TODO to model or view
   discard
-  
+
 method communityChannelReordered*(self: Module) =
    # TODO to model or view
   discard
-  
+
 method communityChannelDeleted*(self: Module, communityId: string, chatId: string) =
    # TODO to model or view
   discard
-  
+
 method communityCategoryCreated*(self: Module) =
    # TODO to model or view
   discard
-  
+
 method communityCategoryEdited*(self: Module) =
    # TODO to model or view
   discard
-  
+
 method communityCategoryDeleted*(self: Module) =
    # TODO to model or view
   discard
 
-method createCommunity*(self: Module, name: string, description: string, 
+method createCommunity*(self: Module, name: string, description: string,
                         access: int, ensOnly: bool, color: string,
                         imagePath: string,
                         aX: int, aY: int, bX: int, bY: int) =
   self.controller.createCommunity(name, description, access, ensOnly, color, imagePath, aX, aY, bX, bY)
 
 method deleteCommunityCategory*(self: Module, communityId: string, categoryId: string) =
-  self.controller.deleteCommunityCategory(communityId, categoryId) 
+  self.controller.deleteCommunityCategory(communityId, categoryId)
 
 method reorderCommunityCategories*(self: Module, communityId: string, categoryId: string, position: int) =
-#   self.controller.reorderCommunityCategories(communityId, categoryId, position) 
+#   self.controller.reorderCommunityCategories(communityId, categoryId, position)
   discard
-  
+
 method removeUserFromCommunity*(self: Module, communityId: string, categoryId: string, chatId: string, position: int) =
   # self.controller.reorderCommunityChannel(communityId, categoryId, chatId, position)
   discard

@@ -18,7 +18,7 @@ QtObject:
     largeImage: string
     userStatus: bool
     #currentUserStatus: int
-    
+
   proc setup(self: UserProfile) =
     self.QObject.setup
 
@@ -36,38 +36,38 @@ QtObject:
     self.pubKey = pubKey
     self.isIdenticon = true
 
-  proc getAddress*(self: UserProfile): string {.slot.} = 
+  proc getAddress*(self: UserProfile): string {.slot.} =
     self.address
-  
+
   QtProperty[string] address:
     read = getAddress
 
 
-  proc getPubKey*(self: UserProfile): string {.slot.} = 
+  proc getPubKey*(self: UserProfile): string {.slot.} =
     self.pubKey
-  
+
   QtProperty[string] pubKey:
     read = getPubKey
 
 
   proc nameChanged*(self: UserProfile) {.signal.}
 
-  proc getUsername*(self: UserProfile): string {.slot.} = 
+  proc getUsername*(self: UserProfile): string {.slot.} =
     self.username
-  
+
   QtProperty[string] username:
     read = getUsername
     notify = nameChanged
 
   # this is not a slot
-  proc setEnsName*(self: UserProfile, name: string) = 
+  proc setEnsName*(self: UserProfile, name: string) =
     if(self.ensName == name):
       return
     self.ensName = name
     self.nameChanged()
 
   proc getEnsName*(self: UserProfile): string {.slot.} =
-    self.ensName      
+    self.ensName
   QtProperty[string] ensName:
     read = getEnsName
     notify = nameChanged
@@ -80,14 +80,14 @@ QtObject:
 
 
   # this is not a slot
-  proc setFirstEnsName*(self: UserProfile, name: string) = 
+  proc setFirstEnsName*(self: UserProfile, name: string) =
     if(self.firstEnsName == name):
       return
     self.firstEnsName = name
     self.nameChanged()
 
   proc getFirstEnsName*(self: UserProfile): string {.slot.} =
-    self.firstEnsName      
+    self.firstEnsName
   QtProperty[string] firstEnsName:
     read = getFirstEnsName
     notify = nameChanged
@@ -100,12 +100,12 @@ QtObject:
 
 
   # this is not a slot
-  proc setPreferredName*(self: UserProfile, name: string) = 
+  proc setPreferredName*(self: UserProfile, name: string) =
     if(self.preferredName == name):
       return
     self.preferredName = name
     self.nameChanged()
-      
+
   proc getPreferredName*(self: UserProfile): string {.slot.} =
     self.preferredName
   QtProperty[string] preferredName:
@@ -127,7 +127,7 @@ QtObject:
     elif(self.ensName.len > 0):
       return self.getPrettyEnsName()
     return self.username
-      
+
   QtProperty[string] name:
     read = getName
     notify = nameChanged
@@ -155,7 +155,7 @@ QtObject:
     return self.identicon
 
   # this is not a slot
-  proc setThumbnailImage*(self: UserProfile, image: string) = 
+  proc setThumbnailImage*(self: UserProfile, image: string) =
     if(self.thumbnailImage == image):
       return
 
@@ -174,7 +174,7 @@ QtObject:
   QtProperty[string] thumbnailImage:
     read = getThumbnailImage
     notify = imageChanged
-  
+
   proc largeImageChanged*(self: UserProfile) {.signal.}
 
   proc getLargeImage*(self: UserProfile): string {.slot.} =
@@ -196,8 +196,8 @@ QtObject:
 
 
   proc userStatusChanged*(self: UserProfile) {.signal.}
-  
-  proc getUserStatus*(self: UserProfile): bool {.slot.} = 
+
+  proc getUserStatus*(self: UserProfile): bool {.slot.} =
     self.userStatus
 
   # this is not a slot
@@ -213,9 +213,9 @@ QtObject:
 
 
   ## This is still not in use.
-  ## Once we decide to differ more than Online/Offline statuses we shouldn't use this code below, 
+  ## Once we decide to differ more than Online/Offline statuses we shouldn't use this code below,
   ## but update current `userStatus` which is a bool to something like the code bellow (`currentUserStatus`).
-  ## 
+  ##
   ## Proposal - some statuses we may have:
   ## type
   ##   OnlineStatus* {.pure.} = enum
@@ -224,8 +224,8 @@ QtObject:
   ##     DoNotDisturb
   ##     Invisible
   ##     Offline
-  ## 
-  ## 
+  ##
+  ##
   ## proc currentUserStatusChanged*(self: UserProfile) {.signal.}
 
   ## proc getCurrentUserStatus*(self: UserProfile): int {.slot.} =

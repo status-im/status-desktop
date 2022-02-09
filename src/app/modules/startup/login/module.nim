@@ -9,7 +9,7 @@ import ../../../../app_service/service/accounts/service_interface as accounts_se
 
 export io_interface
 
-type 
+type
   Module* = ref object of io_interface.AccessInterface
     delegate: delegate_interface.AccessInterface
     view: View
@@ -20,13 +20,13 @@ type
 proc newModule*(delegate: delegate_interface.AccessInterface,
   events: EventEmitter,
   keychainService: keychain_service.Service,
-  accountsService: accounts_service.ServiceInterface): 
+  accountsService: accounts_service.ServiceInterface):
   Module =
   result = Module()
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, events, keychainService, 
+  result.controller = controller.newController(result, events, keychainService,
   accountsService)
   result.moduleLoaded = false
 

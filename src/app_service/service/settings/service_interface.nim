@@ -13,7 +13,7 @@ const DEFAULT_CURRENCY* = "usd"
 const DEFAULT_TELEMETRY_SERVER_URL* = "https://telemetry.status.im"
 const DEFAULT_FLEET* = $Fleet.Prod
 
-type 
+type
   ServiceInterface* {.pure inheritable.} = ref object of RootObj
   ## Abstract class for this service access.
 
@@ -256,6 +256,6 @@ method saveAutoMessageEnabled*(self: ServiceInterface, value: bool): bool {.base
 
 method autoMessageEnabled*(self: ServiceInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
-  
+
 method getWakuBloomFilterMode*(self: ServiceInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")

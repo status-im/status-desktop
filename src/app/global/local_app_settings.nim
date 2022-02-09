@@ -17,7 +17,7 @@ const DEFAULT_APP_SIZE_INITIALIZED = false
 QtObject:
   type LocalAppSettings* = ref object of QObject
     settings: QSettings
-    
+
   proc setup(self: LocalAppSettings) =
     self.QObject.setup
 
@@ -43,7 +43,7 @@ QtObject:
   QtProperty[string] locale:
     read = getLocale
     write = setLocale
-    notify = localeChanged 
+    notify = localeChanged
 
 
   proc themeChanged*(self: LocalAppSettings) {.signal.}
@@ -56,7 +56,7 @@ QtObject:
   QtProperty[int] theme:
     read = getTheme
     write = setTheme
-    notify = themeChanged 
+    notify = themeChanged
 
   proc appWidthChanged*(self: LocalAppSettings) {.signal.}
   proc getAppWidth*(self: LocalAppSettings): int {.slot.} =
@@ -97,7 +97,7 @@ QtObject:
   proc removeKey*(self: LocalAppSettings, key: string) =
     if(self.settings.isNil):
       return
-    
+
     self.settings.remove(key)
 
     case key:

@@ -1,7 +1,7 @@
-import 
+import
   atomics, json, tables, sequtils, httpclient, net
 import json, random, strutils, strformat, tables, chronicles, unicode, times
-import 
+import
   json_serialization, chronicles, libp2p/[multihash, multicodec, cid], stint, nimcrypto
 from sugar import `=>`, `->`
 import stint
@@ -66,7 +66,7 @@ proc isWakuEnabled(): bool =
   true # TODO:
 
 proc prefix*(methodName: string, isExt:bool = true): string =
-  result = if isWakuEnabled(): "waku" else: "shh" 
+  result = if isWakuEnabled(): "waku" else: "shh"
   result = result & (if isExt: "ext_" else: "_")
   result = result & methodName
 
@@ -82,7 +82,7 @@ proc generateSigningPhrase*(count: int): string =
   let now = getTime()
   var rng = initRand(now.toUnix * 1000000000 + now.nanosecond)
   var phrases: seq[string] = @[]
-  
+
   for i in 1..count:
     phrases.add(rng.sample(signing_phrases.phrases))
 
@@ -147,9 +147,9 @@ proc validateTransactionInput*(from_addr, to_addr, assetAddress, value, gas, gas
   if parseFloat(value) < 0: raise newException(ValueError, "value should be a number >= 0")
   if parseInt(gas) <= 0: raise newException(ValueError, "gas should be a number > 0")
   if isEIP1599Enabled:
-    if gasPrice != "" and (maxPriorityFeePerGas != "" or maxFeePerGas != ""): 
+    if gasPrice != "" and (maxPriorityFeePerGas != "" or maxFeePerGas != ""):
       raise newException(ValueError, "gasPrice can't be used with maxPriorityFeePerGas and maxFeePerGas")
-    if gasPrice == "": 
+    if gasPrice == "":
       if parseFloat(maxPriorityFeePerGas) <= 0: raise newException(ValueError, "maxPriorityFeePerGas should be a number > 0")
       if parseFloat(maxFeePerGas) <= 0: raise newException(ValueError, "maxFeePerGas should be a number > 0")
   else:
@@ -169,7 +169,7 @@ proc hex2Time*(hex: string): Time =
 
 proc hex2LocalDateTime*(hex: string): DateTime =
   # Convert hex time (since 1970-01-01T00:00:00Z) into a DateTime using the
-  # local timezone. 
+  # local timezone.
   hex.hex2Time.local
 
 proc isUnique*[T](key: T, existingKeys: var seq[T]): bool =

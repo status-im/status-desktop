@@ -101,7 +101,7 @@ QtObject:
     # else:
     #   let installedStickerPacks = self.getInstalledStickerPacks()
     #   self.delegate.populateInstalledStickerPacks(installedStickerPacks) # use emit instead
-    
+
   proc getInstalledStickerPacks*(self: Service): Table[int, StickerPackDto] =
     self.settingsService.getInstalledStickerPacks()
 
@@ -163,12 +163,12 @@ QtObject:
     except Exception as e:
       error "Error buying sticker pack", msg = e.msg
       return (response: "", success: false)
-    
+
     var success: bool
     let response = self.buyPack(packId, address, price, gas, gasPrice, eip1559Enabled, maxPriorityFeePerGas, maxFeePerGas, password, success)
 
     result = (response: $response, success: success)
-  
+
   proc getPackIdFromTokenId*(self: Service, chainId: int, tokenId: Stuint[256]): RpcResponse[JsonNode] =
     let
       contract = self.eth_service.findContract(chainId, "sticker-pack")
@@ -176,7 +176,7 @@ QtObject:
 
     if contract == nil:
       return
-    
+
     let abi = contract.methods["tokenPackId"].encodeAbi(tokenPackId)
 
     return status_stickers.getPackIdFromTokenId($contract.address, abi)
@@ -184,14 +184,14 @@ QtObject:
   proc tokenOfOwnerByIndex*(self: Service, chainId: int, address: Address, idx: Stuint[256]): RpcResponse[JsonNode] =
     let
       contract = self.eth_service.findContract(chainId, "sticker-pack")
-      
+
     if contract == nil:
       return
-    
+
     let
       tokenOfOwnerByIndex = TokenOfOwnerByIndex(address: address, index: idx)
       data = contract.methods["tokenOfOwnerByIndex"].encodeAbi(tokenOfOwnerByIndex)
-    
+
     status_stickers.tokenOfOwnerByIndex($contract.address, data)
 
   proc getBalance*(self: Service, chainId: int, address: Address): RpcResponse[JsonNode] =
@@ -231,7 +231,7 @@ QtObject:
         var packId = 0
         if $response.result != "0x":
           packId = parseHexInt(response.result.getStr)
-        purchasedPackIds.add(packId) 
+        purchasedPackIds.add(packId)
 
       self.purchasedStickerPacks = self.purchasedStickerPacks.concat(purchasedPackIds)
       self.purchasedStickerPacks = self.purchasedStickerPacks.deduplicate()
@@ -267,7 +267,7 @@ QtObject:
         isInstalled: isInstalled,
         isBought: isBought,
         isPending: isPending
-      )) 
+      ))
     self.events.emit(SIGNAL_ALL_STICKER_PACKS_LOADED, Args())
 
   proc obtainAvailableStickerPacks*(self: Service) =
@@ -352,7 +352,7 @@ QtObject:
       self.addStickerToRecent(sticker)
 
     result = self.recentStickers
-      
+
   proc getNumInstalledStickerPacks*(self: Service): int =
     return self.settingsService.getInstalledStickerPacks().len
 
@@ -389,7 +389,7 @@ QtObject:
         sticker.hash,
         sticker.packId)
     discard self.chatService.processMessageUpdateAfterSend(response)
-    
+
     self.addStickerToRecent(sticker, true)
 
   proc removeRecentStickers*(self: Service, packId: int) =

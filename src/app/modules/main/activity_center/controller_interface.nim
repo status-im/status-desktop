@@ -2,7 +2,7 @@ import ../../../../app_service/service/contacts/service as contacts_service
 import ../../../../app_service/service/activity_center/service as activity_center_service
 import ../../../../app_service/service/message/dto/[message]
 
-type 
+type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
   ## Abstract class for any input/interaction with this module.
 
@@ -50,6 +50,6 @@ method switchTo*(self: AccessInterface, sectionId, chatId, messageId: string) {.
 
 
 type
-  ## Abstract class (concept) which must be implemented by object/s used in this 
+  ## Abstract class (concept) which must be implemented by object/s used in this
   ## module.
   DelegateInterface* = concept c

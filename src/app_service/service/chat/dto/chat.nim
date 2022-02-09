@@ -6,7 +6,7 @@ include ../../../common/json_utils
 
 type ChatType* {.pure.}= enum
   Unknown = 0,
-  OneToOne = 1, 
+  OneToOne = 1,
   Public = 2,
   PrivateGroupChat = 3,
   Profile = 4,
@@ -18,7 +18,7 @@ type ChatMember* = object
   joined*: bool
 
 type ChatDto* = object
-  id*: string # ID is the id of the chat, for public chats it is the name e.g. status, 
+  id*: string # ID is the id of the chat, for public chats it is the name e.g. status,
   # for one-to-one is the hex encoded public key and for group chats is a random
   # uuid appended with the hex encoded pk of the creator of the chat
   name*: string
@@ -50,26 +50,26 @@ type ChatDto* = object
 
 proc `$`*(self: ChatDto): string =
   result = fmt"""ChatDto(
-    id: {self.id}, 
-    name: {self.name}, 
-    description: {self.description}, 
-    color: {self.color}, 
-    emoji: {self.emoji}, 
-    active: {self.active}, 
-    chatType: {self.chatType}, 
-    timestamp: {self.timestamp}, 
-    lastClockValue: {self.lastClockValue}, 
-    deletedAtClockValue: {self.deletedAtClockValue}, 
-    readMessagesAtClockValue: {self.readMessagesAtClockValue}, 
-    unviewedMessagesCount: {self.unviewedMessagesCount}, 
-    unviewedMentionsCount: {self.unviewedMentionsCount}, 
-    alias: {self.alias}, 
-    identicon: {self.identicon}, 
-    muted: {self.muted}, 
-    communityId: {self.communityId}, 
-    profile: {self.profile}, 
-    joined: {self.joined}, 
-    syncedTo: {self.syncedTo}, 
+    id: {self.id},
+    name: {self.name},
+    description: {self.description},
+    color: {self.color},
+    emoji: {self.emoji},
+    active: {self.active},
+    chatType: {self.chatType},
+    timestamp: {self.timestamp},
+    lastClockValue: {self.lastClockValue},
+    deletedAtClockValue: {self.deletedAtClockValue},
+    readMessagesAtClockValue: {self.readMessagesAtClockValue},
+    unviewedMessagesCount: {self.unviewedMessagesCount},
+    unviewedMentionsCount: {self.unviewedMentionsCount},
+    alias: {self.alias},
+    identicon: {self.identicon},
+    muted: {self.muted},
+    communityId: {self.communityId},
+    profile: {self.profile},
+    joined: {self.joined},
+    syncedTo: {self.syncedTo},
     syncedFrom: {self.syncedFrom},
     categoryId: {self.categoryId},
     position: {self.position}
@@ -107,7 +107,7 @@ proc toChatDto*(jsonObj: JsonNode): ChatDto =
   result.chatType = ChatType.Unknown
   var chatTypeInt: int
   if (jsonObj.getProp("chatType", chatTypeInt) and
-    (chatTypeInt >= ord(low(ChatType)) or chatTypeInt <= ord(high(ChatType)))): 
+    (chatTypeInt >= ord(low(ChatType)) or chatTypeInt <= ord(high(ChatType)))):
       result.chatType = ChatType(chatTypeInt)
 
   var membersObj: JsonNode

@@ -47,7 +47,7 @@ type
     gasPrice*: string
 
   EnsTransactionArgs* = ref object of Args
-    transactionHash*: string 
+    transactionHash*: string
     ensUsername*: string
     transactionType*: string
     revertReason*: string
@@ -60,7 +60,7 @@ const SIGNAL_ENS_TRANSACTION_CONFIRMED* = "ensTransactionConfirmed"
 const SIGNAL_ENS_TRANSACTION_REVERTED* = "ensTransactionReverted"
 
 QtObject:
-  type 
+  type
     Service* = ref object of QObject
       events: EventEmitter
       threadpool: ThreadPool
@@ -101,8 +101,8 @@ QtObject:
     let data = EnsTransactionArgs(transactionHash: transactionHash, ensUsername: ensUsername, transactionType: $trxType)
     self.events.emit(SIGNAL_ENS_TRANSACTION_CONFIRMED, data)
 
-  proc revertTransaction(self: Service, trxType: string, ensUsername: string, transactionHash: string, 
-    revertReason: string) = 
+  proc revertTransaction(self: Service, trxType: string, ensUsername: string, transactionHash: string,
+    revertReason: string) =
     self.pendingEnsUsernames.excl(ensUsername)
     let data = EnsTransactionArgs(transactionHash: transactionHash, ensUsername: ensUsername, transactionType: $trxType,
     revertReason: revertReason)
@@ -114,7 +114,7 @@ QtObject:
       if receivedData.success:
         self.confirmTransaction($PendingTransactionTypeDto.RegisterENS, receivedData.data, receivedData.transactionHash)
       else:
-        self.revertTransaction($PendingTransactionTypeDto.RegisterENS, receivedData.data, receivedData.transactionHash, 
+        self.revertTransaction($PendingTransactionTypeDto.RegisterENS, receivedData.data, receivedData.transactionHash,
         receivedData.revertReason)
 
     self.events.on(PendingTransactionTypeDto.SetPubKey.event) do(e: Args):
@@ -122,7 +122,7 @@ QtObject:
       if receivedData.success:
         self.confirmTransaction($PendingTransactionTypeDto.SetPubKey, receivedData.data, receivedData.transactionHash)
       else:
-        self.revertTransaction($PendingTransactionTypeDto.SetPubKey, receivedData.data, receivedData.transactionHash, 
+        self.revertTransaction($PendingTransactionTypeDto.SetPubKey, receivedData.data, receivedData.transactionHash,
         receivedData.revertReason)
 
   proc init*(self: Service) =
@@ -155,15 +155,15 @@ QtObject:
       # notify view, this is important
       self.events.emit(SIGNAL_ENS_USERNAME_AVAILABILITY_CHECKED, EnsUsernameAvailabilityArgs())
       return
-  
+
     var availablilityStatus: string
     discard responseObj.getProp("availability", availablilityStatus)
     let data = EnsUsernameAvailabilityArgs(availabilityStatus: availablilityStatus)
     self.events.emit(SIGNAL_ENS_USERNAME_AVAILABILITY_CHECKED, data)
 
   proc formatUsername(self: Service, username: string, isStatus: bool): string =
-    result = username 
-    if isStatus: 
+    result = username
+    if isStatus:
       result = result & ens_utils.STATUS_DOMAIN
 
   proc checkEnsUsernameAvailability*(self: Service, ensUsername: string, isStatus: bool) =
@@ -181,7 +181,7 @@ QtObject:
         ensUsername: ensUsername,
         isStatus: isStatus,
         myPublicKey: self.settingsService.getPublicKey(),
-        myWalletAddress: self.walletAccountService.getWalletAccount(0).address 
+        myWalletAddress: self.walletAccountService.getWalletAccount(0).address
       )
       self.threadpool.start(arg)
 
@@ -192,7 +192,7 @@ QtObject:
       # notify view, this is important
       self.events.emit(SIGNAL_ENS_USERNAME_DETAILS_FETCHED, EnsUsernameDetailsArgs())
       return
-  
+
     var data = EnsUsernameDetailsArgs()
     discard responseObj.getProp("ensUsername", data.ensUsername)
     discard responseObj.getProp("address", data.address)
@@ -277,7 +277,7 @@ QtObject:
       let myPublicKey = self.settingsService.getPublicKey()
       var hash = namehash(ensUsername)
       hash.removePrefix("0x")
-      
+
       let label = fromHex(FixedBytes[32], "0x" & hash)
       let coordinates = self.extractCoordinates(myPublicKey)
       let x = fromHex(FixedBytes[32], coordinates.x)
@@ -300,7 +300,7 @@ QtObject:
       result = 80000
       error "error occurred", methodName="setPubKeyGasEstimate"
 
-  proc setPubKey*(self: Service, ensUsername: string, address: string, gas: string, gasPrice: string, 
+  proc setPubKey*(self: Service, ensUsername: string, address: string, gas: string, gasPrice: string,
     maxPriorityFeePerGas: string, maxFeePerGas: string, password: string): string =
     try:
       let eip1559Enabled = self.settingsService.isEIP1559Enabled()
@@ -319,15 +319,15 @@ QtObject:
       let setPubkey = SetPubkey(label: label, x: x, y: y)
       let resolverAddress = resolver(hash)
 
-      var tx = buildTokenTransaction(parseAddress(address), parseAddress(resolverAddress), gas, gasPrice, 
+      var tx = buildTokenTransaction(parseAddress(address), parseAddress(resolverAddress), gas, gasPrice,
       eip1559Enabled, maxPriorityFeePerGas, maxFeePerGas)
       var success = false
 
       let response = contractDto.methods["setPubkey"].send(tx, setPubkey, password, success)
       result = $(%* { "result": %response, "success": %success })
-      
+
       if success:
-        self.transactionService.trackPendingTransaction(response, address, resolverAddress, 
+        self.transactionService.trackPendingTransaction(response, address, resolverAddress,
         $PendingTransactionTypeDto.SetPubKey, ensUsername)
         self.pendingEnsUsernames.incl(ensUsername)
 
@@ -351,13 +351,13 @@ QtObject:
         result = fromHex[int](response)
       else:
         result = 100000
-        
+
     except RpcException as e:
       result = 100000
       error "error occurred", methodName="releaseEnsEstimate"
 
 
-  proc release*(self: Service, ensUsername: string, address: string, gas: string, gasPrice: string, password: string): 
+  proc release*(self: Service, ensUsername: string, address: string, gas: string, gasPrice: string, password: string):
     string =
     try:
       let label = fromHex(FixedBytes[32], label(ensUsername))
@@ -373,10 +373,10 @@ QtObject:
       result = $(%* { "result": %response, "success": %success })
 
       if(success):
-        self.transactionService.trackPendingTransaction(response, address, $contractDto.address, 
+        self.transactionService.trackPendingTransaction(response, address, $contractDto.address,
         $PendingTransactionTypeDto.ReleaseENS, ensUsername)
         self.pendingEnsUsernames.excl(ensUsername)
-        
+
     except RpcException as e:
       error "error occurred", methodName="release"
 
@@ -384,7 +384,7 @@ QtObject:
     let contractDto = self.getCurrentNetworkContractForName("ens-usernames")
     if contractDto != nil:
       return $contractDto.address
-  
+
   proc registerENSGasEstimate*(self: Service, ensUsername: string, address: string): int =
     try:
       let myPublicKey = self.settingsService.getPublicKey()
@@ -400,7 +400,7 @@ QtObject:
 
       let register = Register(label: label, account: parseAddress(address), x: x, y: y)
       let registerAbiEncoded = contractDto.methods["register"].encodeAbi(register)
-      let approveAndCallObj = ApproveAndCall[132](to: contractDto.address, value: price, 
+      let approveAndCallObj = ApproveAndCall[132](to: contractDto.address, value: price,
       data: DynamicBytes[132].fromHex(registerAbiEncoded))
       let approveAndCallAbiEncoded = sntContract.methods["approveAndCall"].encodeAbi(approveAndCallObj)
 
@@ -417,7 +417,7 @@ QtObject:
     except RpcException as e:
       error "error occurred", methodName="registerENSGasEstimate"
 
-  proc registerEns*(self: Service, username: string, address: string, gas: string, gasPrice: string, 
+  proc registerEns*(self: Service, username: string, address: string, gas: string, gasPrice: string,
     maxPriorityFeePerGas: string, maxFeePerGas: string, password: string): string =
     try:
       let myPublicKey = self.settingsService.getPublicKey()
@@ -434,10 +434,10 @@ QtObject:
 
       let register = Register(label: label, account: parseAddress(address), x: x, y: y)
       let registerAbiEncoded = contractDto.methods["register"].encodeAbi(register)
-      let approveAndCallObj = ApproveAndCall[132](to: contractDto.address, value: price, 
+      let approveAndCallObj = ApproveAndCall[132](to: contractDto.address, value: price,
       data: DynamicBytes[132].fromHex(registerAbiEncoded))
 
-      var tx = buildTokenTransaction(parseAddress(address), sntContract.address, gas, gasPrice, eip1559Enabled, 
+      var tx = buildTokenTransaction(parseAddress(address), sntContract.address, gas, gasPrice, eip1559Enabled,
       maxPriorityFeePerGas, maxFeePerGas)
       var success = false
 
@@ -445,29 +445,29 @@ QtObject:
       result = $(%* { "result": %response, "success": %success })
       if success:
         var ensUsername = self.formatUsername(username, true)
-        self.transactionService.trackPendingTransaction(response, address, $sntContract.address, 
+        self.transactionService.trackPendingTransaction(response, address, $sntContract.address,
         $PendingTransactionTypeDto.RegisterENS, ensUsername)
         self.pendingEnsUsernames.incl(ensUsername)
-    
+
     except RpcException as e:
       error "error occurred", methodName="registerEns"
 
   proc getSNTBalance*(self: Service): string =
-    let address = self.walletAccountService.getWalletAccount(0).address 
+    let address = self.walletAccountService.getWalletAccount(0).address
     let sntContract = self.getCurrentNetworkErc20ContractForSymbol()
 
     var postfixedAccount: string = address
     postfixedAccount.removePrefix("0x")
     let payload = %* [{
-      "to": $sntContract.address, 
-      "from": address, 
+      "to": $sntContract.address,
+      "from": address,
       "data": fmt"0x70a08231000000000000000000000000{postfixedAccount}"
     }, "latest"]
     let response = status_eth.doEthCall(payload)
     let balance = response.result.getStr
 
     var decimals = 18
-  
+
     let allTokens = self.tokenService.getTokens()
     for t in allTokens:
       if(t.address == sntContract.address):

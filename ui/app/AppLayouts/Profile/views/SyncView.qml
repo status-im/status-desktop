@@ -22,7 +22,7 @@ Item {
 
     Layout.fillHeight: true
     Layout.fillWidth: true
-    
+
     Item {
         width: profileContentWidth
         anchors.top: parent.top
@@ -30,7 +30,7 @@ Item {
         anchors.horizontalCenter: parent.horizontalCenter
         Component {
             id: mailserversList
-            
+
             // TODO: Replace with StatusQ component
             StatusRadioButton {
                 id: rbSetMailsever
@@ -59,7 +59,7 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
             }
 
-                    
+
             StatusBaseText {
                 id: usernameText
                 //% "Add mailserver"
@@ -85,11 +85,11 @@ Item {
 
                 property string nameValidationError: ""
                 property string enodeValidationError: ""
-                
+
                 function validate() {
                     nameValidationError = ""
                     enodeValidationError = ""
-                    
+
                     if (nameInput.text === "") {
                         //% "You need to enter a name"
                         nameValidationError = qsTrId("you-need-to-enter-a-name")
@@ -105,7 +105,7 @@ Item {
                 onOpened: {
                     nameInput.text = "";
                     enodeInput.text = "";
-        
+
                     nameValidationError = "";
                     enodeValidationError = "";
                 }

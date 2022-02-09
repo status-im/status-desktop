@@ -18,7 +18,7 @@ QtObject:
   proc setSelectedAccountData*(self: SelectedAccount, item: Item) =
     self.item = item
 
-  proc getName(self: SelectedAccount): string {.slot.} = 
+  proc getName(self: SelectedAccount): string {.slot.} =
     return self.item.getName()
 
   QtProperty[string] username:
@@ -36,13 +36,13 @@ QtObject:
   QtProperty[string] keyUid:
     read = getKeyUid
 
-  proc getThumbnailImage(self: SelectedAccount): string {.slot.} = 
+  proc getThumbnailImage(self: SelectedAccount): string {.slot.} =
     return self.item.getThumbnailImage()
 
   QtProperty[string] thumbnailImage:
     read = getThumbnailImage
 
-  proc getLargeImage(self: SelectedAccount): string {.slot.} = 
+  proc getLargeImage(self: SelectedAccount): string {.slot.} =
     return self.item.getLargeImage()
 
   QtProperty[string] largeImage:

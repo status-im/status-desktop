@@ -9,12 +9,12 @@ proc getLatestVersionJSON(): string =
 
   try:
     debug "Getting latest version information"
-    
+
     let latestVersion = getLatestVersion()
-    
+
     jsonObj["version"] = %*latestVersion.version
     jsonObj["url"] = %*latestVersion.url
-  
+
   except Exception as e:
     error "Error while getting latest version information", msg = e.msg
 

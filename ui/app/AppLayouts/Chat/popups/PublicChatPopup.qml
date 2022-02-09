@@ -47,7 +47,7 @@ ModalPopup {
         channelName.text = "";
         channelName.forceActiveFocus(Qt.MouseFocusReason)
     }
-    
+
     Row {
         id: description
         Layout.fillHeight: false

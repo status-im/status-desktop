@@ -1,7 +1,7 @@
 import dto
 export dto
 
-type 
+type
   ServiceInterface* {.pure inheritable.} = ref object of RootObj
   ## Abstract class for this service access.
 

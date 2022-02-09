@@ -1,6 +1,6 @@
 import ../../../../../app_service/service/profile/service as profile_service
 
-type 
+type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
   ## Abstract class for any input/interaction with this module.
 
@@ -20,6 +20,6 @@ method checkForUpdates*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 type
-  ## Abstract class (concept) which must be implemented by object/s used in this 
+  ## Abstract class (concept) which must be implemented by object/s used in this
   ## module.
   DelegateInterface* = concept c

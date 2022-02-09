@@ -18,7 +18,7 @@ logScope:
 
 include ../../../../../app_service/common/json_utils
 
-type 
+type
   Module* = ref object of io_interface.AccessInterface
     delegate: delegate_interface.AccessInterface
     view: View
@@ -26,7 +26,7 @@ type
     controller: controller.AccessInterface
     moduleLoaded: bool
 
-proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitter, 
+proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitter,
   settingsService: settings_service.ServiceInterface, ensService: ens_service.Service,
   walletAccountService: wallet_account_service.ServiceInterface): Module =
   result = Module()
@@ -35,7 +35,7 @@ proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitt
   result.viewVariant = newQVariant(result.view)
   result.controller = controller.newController(result, events, settingsService, ensService, walletAccountService)
   result.moduleLoaded = false
-  
+
 method delete*(self: Module) =
   self.view.delete
   self.viewVariant.delete
@@ -43,7 +43,7 @@ method delete*(self: Module) =
 
 method load*(self: Module) =
   self.controller.init()
-  
+
   let signingPhrase = self.controller.getSigningPhrase()
   let network = self.controller.getCurrentNetworkDetails()
   var link = network.etherscanLink.replace("/address", "/tx")
@@ -81,7 +81,7 @@ method numOfPendingEnsUsernames*(self: Module): int =
 method fetchDetailsForEnsUsername*(self: Module, ensUsername: string) =
   self.controller.fetchDetailsForEnsUsername(ensUsername)
 
-method onDetailsForEnsUsername*(self: Module, ensUsername: string, address: string, pubkey: string, isStatus: bool, 
+method onDetailsForEnsUsername*(self: Module, ensUsername: string, address: string, pubkey: string, isStatus: bool,
   expirationTime: int) =
   self.view.setDetailsForEnsUsername(ensUsername, address, pubkey, isStatus, expirationTime)
 
@@ -94,7 +94,7 @@ method gasPriceFetched*(self: Module, gasPrice: string) =
 method setPubKeyGasEstimate*(self: Module, ensUsername: string, address: string): int =
   return self.controller.setPubKeyGasEstimate(ensUsername, address)
 
-method setPubKey*(self: Module, ensUsername: string, address: string, gas: string, gasPrice: string, 
+method setPubKey*(self: Module, ensUsername: string, address: string, gas: string, gasPrice: string,
   maxPriorityFeePerGas: string, maxFeePerGas: string, password: string): string =
   let response = self.controller.setPubKey(ensUsername, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, password)
   if(response.len == 0):
@@ -110,7 +110,7 @@ method setPubKey*(self: Module, ensUsername: string, address: string, gas: strin
   if(not responseObj.getProp("success", success) or not success):
     info "remote call is not executed with success", methodName="setPubKey"
     return
-  
+
   var respResult: string
   if(responseObj.getProp("result", respResult)):
     self.view.model().addItem(Item(ensUsername: ensUsername, isPending: true))
@@ -131,7 +131,7 @@ method release*(self: Module, ensUsername: string, address: string, gas: string,
   if(responseObj.kind != JObject):
     info "expected response is not a json object", methodName="release"
     return
-  
+
   var success: bool
   if(not responseObj.getProp("success", success) or not success):
     info "remote call is not executed with success", methodName="release"
@@ -146,8 +146,8 @@ method release*(self: Module, ensUsername: string, address: string, gas: string,
   return response
 
 proc formatUsername(self: Module, ensUsername: string, isStatus: bool): string =
-  result = ensUsername 
-  if isStatus: 
+  result = ensUsername
+  if isStatus:
     result = ensUsername & ens_utils.STATUS_DOMAIN
 
 method connectOwnedUsername*(self: Module, ensUsername: string, isStatus: bool) =
@@ -170,7 +170,7 @@ method ensTransactionConfirmed*(self: Module, trxType: string, ensUsername: stri
     self.view.model().addItem(Item(ensUsername: ensUsername, isPending: false))
   self.view.emitTransactionCompletedSignal(true, transactionHash, ensUsername, trxType, "")
 
-method ensTransactionReverted*(self: Module, trxType: string, ensUsername: string, transactionHash: string, 
+method ensTransactionReverted*(self: Module, trxType: string, ensUsername: string, transactionHash: string,
   revertReason: string) =
   self.view.model().removeItemByEnsUsername(ensUsername)
   self.view.emitTransactionCompletedSignal(false, transactionHash, ensUsername, trxType, revertReason)
@@ -181,7 +181,7 @@ method getEnsRegisteredAddress*(self: Module): string =
 method registerEnsGasEstimate*(self: Module, ensUsername: string, address: string): int =
   return self.controller.registerEnsGasEstimate(ensUsername, address)
 
-method registerEns*(self: Module, ensUsername: string, address: string, gas: string, gasPrice: string, 
+method registerEns*(self: Module, ensUsername: string, address: string, gas: string, gasPrice: string,
   maxPriorityFeePerGas: string, maxFeePerGas: string, password: string): string =
   let response = self.controller.registerEns(ensUsername, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, password)
 
@@ -207,7 +207,7 @@ method getCurrentCurrency*(self: Module): string =
   return self.controller.getCurrentCurrency()
 
 method getFiatValue*(self: Module, cryptoBalance: string, cryptoSymbol: string, fiatSymbol: string): string =
-  if (cryptoBalance == "" or cryptoSymbol == "" or fiatSymbol == ""): 
+  if (cryptoBalance == "" or cryptoSymbol == "" or fiatSymbol == ""):
     return "0.00"
 
   let price = self.controller.getPrice(cryptoSymbol, fiatSymbol)
@@ -221,16 +221,16 @@ method getGasEthValue*(self: Module, gweiValue: string, gasLimit: string): strin
     info "an error occurred parsing gas limit", methodName="getGasEthValue"
     return ""
 
-  # The following check prevents app crash, cause we're trying to promote 
+  # The following check prevents app crash, cause we're trying to promote
   # gasLimitInt to unsigned 256 int, and this number must be a positive number,
   # because of overflow.
   var gwei = gweiValue.parseFloat()
   if (gwei < 0):
     gwei = 0
-  
+
   if (gasLimitInt < 0):
     gasLimitInt = 0
-  
+
   let weiValue = service_conversion.gwei2Wei(gwei) * gasLimitInt.u256
   let ethValue = service_conversion.wei2Eth(weiValue)
   return fmt"{ethValue}"

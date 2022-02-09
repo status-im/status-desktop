@@ -37,9 +37,9 @@ proc `$`*(self: ContactsDto): string =
     id: {self.id},
     name: {self.name},
     ensVerified: {self.ensVerified},
-    alias: {self.alias}, 
-    identicon: {self.identicon}, 
-    lastUpdated: {self.lastUpdated}, 
+    alias: {self.alias},
+    identicon: {self.identicon},
+    lastUpdated: {self.lastUpdated},
     lastUpdatedLocally: {self.lastUpdatedLocally},
     localNickname: {self.localNickname},
     image:[

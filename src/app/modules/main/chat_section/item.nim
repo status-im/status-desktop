@@ -1,35 +1,35 @@
 import strformat, json
 import base_item, sub_model, sub_item
 
-type 
+type
   Item* = ref object of BaseItem
     subItems: SubModel
 
 proc initItem*(id, name, icon: string, isIdenticon: bool, color, description: string, `type`: int, amIChatAdmin: bool,
   hasUnreadMessages: bool, notificationsCount: int, muted, blocked, active: bool, position: int, categoryId: string): Item =
   result = Item()
-  result.setup(id, name, icon, isIdenticon, color, description, `type`, amIChatAdmin, hasUnreadMessages, 
+  result.setup(id, name, icon, isIdenticon, color, description, `type`, amIChatAdmin, hasUnreadMessages,
   notificationsCount, muted, blocked, active, position, categoryId)
   result.subItems = newSubModel()
 
-proc delete*(self: Item) = 
+proc delete*(self: Item) =
   self.subItems.delete
   self.BaseItem.delete
 
-proc subItems*(self: Item): SubModel {.inline.} = 
+proc subItems*(self: Item): SubModel {.inline.} =
   self.subItems
 
 proc `$`*(self: Item): string =
   result = fmt"""ChatSectionItem(
-    itemId: {self.id}, 
-    name: {self.name}, 
+    itemId: {self.id},
+    name: {self.name},
     amIChatAdmin: {self.amIChatAdmin},
     icon: {self.icon},
     isIdenticon: {self.isIdenticon},
-    color: {self.color}, 
+    color: {self.color},
     description: {self.description},
     type: {self.`type`},
-    hasUnreadMessages: {self.hasUnreadMessages}, 
+    hasUnreadMessages: {self.hasUnreadMessages},
     notificationsCount: {self.notificationsCount},
     muted: {self.muted},
     blocked: {self.blocked},
@@ -42,15 +42,15 @@ proc `$`*(self: Item): string =
 
 proc toJsonNode*(self: Item): JsonNode =
   result = %* {
-    "itemId": self.id, 
-    "name": self.name, 
+    "itemId": self.id,
+    "name": self.name,
     "amIChatAdmin": self.amIChatAdmin,
     "icon": self.icon,
     "isIdenticon": self.isIdenticon,
-    "color": self.color, 
+    "color": self.color,
     "description": self.description,
     "type": self.`type`,
-    "hasUnreadMessages": self.hasUnreadMessages, 
+    "hasUnreadMessages": self.hasUnreadMessages,
     "notificationsCount": self.notificationsCount,
     "muted": self.muted,
     "blocked": self.blocked,

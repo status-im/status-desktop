@@ -74,9 +74,9 @@ QtObject:
   proc setTrxHistoryResult*(self: View, transactions: seq[TransactionDto], address: string, wasFetchMore: bool) =
     if not self.models.hasKey(address):
       self.models[address] = newModel()
-    
+
     self.models[address].addNewTransactions(transactions, wasFetchMore)
-    
+
     self.setHistoryFetchState(address, false)
 
   proc setHistoryFetchStateForAccounts*(self: View, addresses: seq[string], isFetching: bool) =

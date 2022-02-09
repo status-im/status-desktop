@@ -2,7 +2,7 @@ import json, sequtils, sugar
 
 include  ../../common/json_utils
 
-type 
+type
   WalletTokenDto* = ref object of RootObj
     name*: string
     address*: string

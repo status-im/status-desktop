@@ -22,7 +22,7 @@ ModalPopup {
       anchors.verticalCenter: parent.verticalCenter
       font.pixelSize: 15
   }
-  
+
   footer: StatusButton {
       anchors.right: parent.right
       anchors.rightMargin: Style.current.smallPadding

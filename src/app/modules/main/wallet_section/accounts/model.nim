@@ -72,7 +72,7 @@ QtObject:
     let enumRole = role.ModelRole
 
     case enumRole:
-    of ModelRole.Name: 
+    of ModelRole.Name:
       result = newQVariant(item.getName())
     of ModelRole.Address:
       result = newQVariant(item.getAddress())

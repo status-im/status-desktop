@@ -129,7 +129,7 @@ Item {
                 delegate: StatusListItem {
                     id: memberItem
 
-                    visible: !!!memberSearch.input.text || 
+                    visible: !!!memberSearch.input.text ||
                         model.name.toLowerCase().includes(memberSearch.input.text.toLowerCase())
                     anchors.horizontalCenter: parent.horizontalCenter
 

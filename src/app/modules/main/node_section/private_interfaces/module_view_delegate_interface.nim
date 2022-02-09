@@ -1,7 +1,7 @@
 import json
 
 method viewDidLoad*(self: AccessInterface) {.base.} =
-  raise newException(ValueError, "No implementation available") 
+  raise newException(ValueError, "No implementation available")
 
 method sendRPCMessageRaw*(self: AccessInterface, inputJSON: string): string {.base.} =
   raise newException(ValueError, "No implementation available")

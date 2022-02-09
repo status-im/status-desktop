@@ -4,7 +4,7 @@ import ../../../app_service/common/types
 export types.ContentType
 import message_reaction_model, message_reaction_item
 
-type 
+type
   Item* = ref object
     id: string
     responseToMessageWithId: string
@@ -20,13 +20,13 @@ type
     messageImage: string
     messageContainsMentions: bool
     sticker: string
-    stickerPack: int     
+    stickerPack: int
     gapFrom: int64
     gapTo: int64
     timestamp: int64
     contentType: ContentType
     messageType: int
-    reactionsModel: MessageReactionModel 
+    reactionsModel: MessageReactionModel
     pinned: bool
     pinnedBy: string
     editMode: bool
@@ -39,14 +39,14 @@ proc initItem*(
     senderId,
     senderDisplayName,
     senderLocalName,
-    senderIcon: string, 
+    senderIcon: string,
     isSenderIconIdenticon,
     amISender: bool,
     outgoingStatus,
     text,
     image: string,
     messageContainsMentions,
-    seen: bool, 
+    seen: bool,
     timestamp: int64,
     contentType: ContentType,
     messageType: int,
@@ -81,7 +81,7 @@ proc initItem*(
 
 proc `$`*(self: Item): string =
   result = fmt"""Item(
-    id: {$self.id}, 
+    id: {$self.id},
     responseToMessageWithId: {self.responseToMessageWithId},
     senderId: {self.senderId},
     senderDisplayName: {$self.senderDisplayName},
@@ -103,120 +103,120 @@ proc `$`*(self: Item): string =
     links:{$self.links}
     )"""
 
-proc id*(self: Item): string {.inline.} = 
+proc id*(self: Item): string {.inline.} =
   self.id
 
-proc responseToMessageWithId*(self: Item): string {.inline.} = 
+proc responseToMessageWithId*(self: Item): string {.inline.} =
   self.responseToMessageWithId
 
-proc senderId*(self: Item): string {.inline.} = 
+proc senderId*(self: Item): string {.inline.} =
   self.senderId
 
-proc senderDisplayName*(self: Item): string {.inline.} = 
+proc senderDisplayName*(self: Item): string {.inline.} =
   self.senderDisplayName
 
-proc `senderDisplayName=`*(self: Item, value: string) {.inline.} = 
+proc `senderDisplayName=`*(self: Item, value: string) {.inline.} =
   self.senderDisplayName = value
 
-proc senderLocalName*(self: Item): string {.inline.} = 
+proc senderLocalName*(self: Item): string {.inline.} =
   self.senderLocalName
 
-proc `senderLocalName=`*(self: Item, value: string) {.inline.} = 
+proc `senderLocalName=`*(self: Item, value: string) {.inline.} =
   self.senderLocalName = value
 
-proc senderIcon*(self: Item): string {.inline.} = 
+proc senderIcon*(self: Item): string {.inline.} =
   self.senderIcon
 
-proc `senderIcon=`*(self: Item, value: string) {.inline.} = 
+proc `senderIcon=`*(self: Item, value: string) {.inline.} =
   self.senderIcon = value
 
-proc isSenderIconIdenticon*(self: Item): bool {.inline.} = 
+proc isSenderIconIdenticon*(self: Item): bool {.inline.} =
   self.isSenderIconIdenticon
 
-proc `isSenderIconIdenticon=`*(self: Item, value: bool) {.inline.} = 
+proc `isSenderIconIdenticon=`*(self: Item, value: bool) {.inline.} =
   self.isSenderIconIdenticon = value
 
-proc amISender*(self: Item): bool {.inline.} = 
+proc amISender*(self: Item): bool {.inline.} =
   self.amISender
 
-proc outgoingStatus*(self: Item): string {.inline.} = 
+proc outgoingStatus*(self: Item): string {.inline.} =
   self.outgoingStatus
 
-proc messageText*(self: Item): string {.inline.} = 
+proc messageText*(self: Item): string {.inline.} =
   self.messageText
 
-proc `messageText=`*(self: Item, value: string) {.inline.} = 
+proc `messageText=`*(self: Item, value: string) {.inline.} =
   self.messageText = value
 
-proc messageImage*(self: Item): string {.inline.} = 
+proc messageImage*(self: Item): string {.inline.} =
   self.messageImage
 
-proc messageContainsMentions*(self: Item): bool {.inline.} = 
+proc messageContainsMentions*(self: Item): bool {.inline.} =
   self.messageContainsMentions
 
-proc `messageContainsMentions=`*(self: Item, value: bool) {.inline.} = 
+proc `messageContainsMentions=`*(self: Item, value: bool) {.inline.} =
   self.messageContainsMentions = value
 
-proc stickerPack*(self: Item): int {.inline.} = 
+proc stickerPack*(self: Item): int {.inline.} =
   self.stickerPack
 
-proc sticker*(self: Item): string {.inline.} = 
+proc sticker*(self: Item): string {.inline.} =
   self.sticker
 
-proc seen*(self: Item): bool {.inline.} = 
+proc seen*(self: Item): bool {.inline.} =
   self.seen
 
-proc timestamp*(self: Item): int64 {.inline.} = 
+proc timestamp*(self: Item): int64 {.inline.} =
   self.timestamp
 
-proc contentType*(self: Item): ContentType {.inline.} = 
+proc contentType*(self: Item): ContentType {.inline.} =
   self.contentType
 
-proc messageType*(self: Item): int {.inline.} = 
+proc messageType*(self: Item): int {.inline.} =
   self.messageType
 
-proc pinned*(self: Item): bool {.inline.} = 
+proc pinned*(self: Item): bool {.inline.} =
   self.pinned
 
-proc `pinned=`*(self: Item, value: bool) {.inline.} = 
+proc `pinned=`*(self: Item, value: bool) {.inline.} =
   self.pinned = value
 
-proc pinnedBy*(self: Item): string {.inline.} = 
+proc pinnedBy*(self: Item): string {.inline.} =
   self.pinnedBy
 
-proc `pinnedBy=`*(self: Item, value: string) {.inline.} = 
+proc `pinnedBy=`*(self: Item, value: string) {.inline.} =
   self.pinnedBy = value
 
-proc reactionsModel*(self: Item): MessageReactionModel {.inline.} = 
+proc reactionsModel*(self: Item): MessageReactionModel {.inline.} =
   self.reactionsModel
 
-proc shouldAddReaction*(self: Item, emojiId: EmojiId, userPublicKey: string): bool = 
+proc shouldAddReaction*(self: Item, emojiId: EmojiId, userPublicKey: string): bool =
   return self.reactionsModel.shouldAddReaction(emojiId, userPublicKey)
 
-proc getReactionId*(self: Item, emojiId: EmojiId, userPublicKey: string): string = 
+proc getReactionId*(self: Item, emojiId: EmojiId, userPublicKey: string): string =
   return self.reactionsModel.getReactionId(emojiId, userPublicKey)
 
-proc addReaction*(self: Item, emojiId: EmojiId, didIReactWithThisEmoji: bool, userPublicKey: string, 
-  userDisplayName: string, reactionId: string) = 
+proc addReaction*(self: Item, emojiId: EmojiId, didIReactWithThisEmoji: bool, userPublicKey: string,
+  userDisplayName: string, reactionId: string) =
   self.reactionsModel.addReaction(emojiId, didIReactWithThisEmoji, userPublicKey, userDisplayName, reactionId)
 
-proc removeReaction*(self: Item, emojiId: EmojiId, reactionId: string, didIRemoveThisReaction: bool) = 
+proc removeReaction*(self: Item, emojiId: EmojiId, reactionId: string, didIRemoveThisReaction: bool) =
   self.reactionsModel.removeReaction(emojiId, reactionId, didIRemoveThisReaction)
 
-proc links*(self: Item): seq[string] {.inline.} = 
+proc links*(self: Item): seq[string] {.inline.} =
   self.links
 
 proc toJsonNode*(self: Item): JsonNode =
   result = %* {
-    "id": self.id, 
+    "id": self.id,
     "responseToMessageWithId": self.responseToMessageWithId,
-    "senderId": self.senderId, 
+    "senderId": self.senderId,
     "senderDisplayName": self.senderDisplayName,
     "senderLocalName": self.senderLocalName,
-    "amISender": self.amISender, 
+    "amISender": self.amISender,
     "senderIcon": self.senderIcon,
     "isSenderIconIdenticon": self.isSenderIconIdenticon,
-    "seen": self.seen, 
+    "seen": self.seen,
     "outgoingStatus": self.outgoingStatus,
     "messageText": self.messageText,
     "messageImage": self.messageImage,

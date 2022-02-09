@@ -7,7 +7,7 @@ import ../../../../app_service/service/stickers/service as stickers_service
 
 export io_interface
 
-type 
+type
   Module* [T: io_interface.DelegateInterface] = ref object of io_interface.AccessInterface
     delegate: T
     controller: controller.AccessInterface

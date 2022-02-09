@@ -8,7 +8,7 @@ type
     WakuV2Prod = "wakuv2.prod"
     WakuV2Test = "wakuv2.test"
     GoWakuTest = "go-waku.test"
-    
+
   FleetNodes* {.pure.} = enum
     Bootnodes = "boot",
     Mailservers = "mail",
@@ -57,11 +57,11 @@ proc getNodes*(self: FleetConfiguration, fleet: Fleet, nodeType: FleetNodes = Fl
   result = toSeq(self.fleet[$fleet][$nodeType].values)
 
 proc getMailservers*(self: FleetConfiguration, fleet: Fleet, isWakuV2: bool): Table[string, string] =
-  # TODO: If using wakuV2, this assumes that Waku nodes in fleet.status.json are also store nodes. 
+  # TODO: If using wakuV2, this assumes that Waku nodes in fleet.status.json are also store nodes.
   # Maybe it make senses to add a "waku-store" section in case we want to have separate node types?
   # Discuss with @iurimatias, @cammellos and Vac team
   let fleetKey = if isWakuV2: $FleetNodes.Waku else: $FleetNodes.Mailservers
-  if not self.fleet[$fleet].hasKey(fleetKey) :  
+  if not self.fleet[$fleet].hasKey(fleetKey) :
     result = initTable[string,string]()
     return
   result = self.fleet[$fleet][fleetKey]

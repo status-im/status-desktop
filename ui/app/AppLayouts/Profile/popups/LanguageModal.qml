@@ -47,7 +47,7 @@ ModalPopup {
             }
 
         }
-        
+
 
         ScrollView {
             width: parent.width

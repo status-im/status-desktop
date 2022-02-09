@@ -1,6 +1,6 @@
 import ../../../../../../app_service/service/gif/dto
 
-type 
+type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
   ## Abstract class for any input/interaction with this module.
 
@@ -39,7 +39,7 @@ method acceptRequestAddressForTransaction*(self: AccessInterface, messageId: str
 
 method acceptRequestTransaction*(self: AccessInterface, transactionHash: string, messageId: string, signature: string) {.base.} =
   raise newException(ValueError, "No implementation available")
-  
+
 method searchGifs*(self: AccessInterface, query: string): seq[GifDto] {.base.} =
   raise newException(ValueError, "No implementation available")
 

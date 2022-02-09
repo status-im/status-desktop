@@ -155,7 +155,7 @@ StatusModal {
                     getFiatValue: root.store.getFiatValue
                     defaultCurrency: root.store.currentCurrency
                     width: stack.width
-        
+
                     property var estimateGas: Backpressure.debounce(gasSelector, 600, function() {
                        if (!(selectFromAccount.selectedAccount && selectFromAccount.selectedAccount.address &&
                            selectRecipient.selectedRecipient && selectRecipient.selectedRecipient.address &&
@@ -165,7 +165,7 @@ StatusModal {
                            defaultGasLimit = selectedGasLimit
                            return
                        }
-                        
+
                        let gasEstimate = JSON.parse(root.store.estimateGas(
                            selectFromAccount.selectedAccount.address,
                            selectRecipient.selectedRecipient.address,
@@ -191,7 +191,7 @@ StatusModal {
                     selectedGasEthValue: gasSelector.selectedGasEthValue
                 }
             }
-            
+
             TransactionFormGroup {
                 id: groupPreview
                 //% "Transaction preview"

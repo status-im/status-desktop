@@ -58,15 +58,15 @@ QtObject:
     let enumRole = role.ModelRole
 
     case enumRole:
-    of ModelRole.Id: 
+    of ModelRole.Id:
       result = newQVariant(item.id)
-    of ModelRole.Name: 
+    of ModelRole.Name:
       result = newQVariant(item.name)
-    of ModelRole.Icon: 
+    of ModelRole.Icon:
       result = newQVariant(item.icon)
     of ModelRole.IsIdenticon:
       result = newQVariant(item.isIdenticon)
-    of ModelRole.Color: 
+    of ModelRole.Color:
       result = newQVariant(item.color)
 
   proc addItem*(self: Model, item: Item) =
@@ -86,7 +86,7 @@ QtObject:
         return idx
       idx.inc
     return -1
-    
+
   proc removeItemById*(self: Model, id: string) =
     let idx = self.getItemIdxById(id)
     if idx == -1:

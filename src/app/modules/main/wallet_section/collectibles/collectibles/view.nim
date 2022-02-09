@@ -21,7 +21,7 @@ QtObject:
 
   proc load*(self: View) =
     self.delegate.viewDidLoad()
-    
+
   proc setItems*(self: View, collectionSlug: string, items: seq[Item]) =
     if not self.models.hasKey(collectionSlug):
       self.models[collectionSlug] = newModel()

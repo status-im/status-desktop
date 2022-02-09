@@ -119,7 +119,7 @@ ModalPopup {
                 getGasEthValue: root.ensUsernamesStore.getGasEthValue
                 getFiatValue: root.ensUsernamesStore.getFiatValue
                 defaultCurrency: root.ensUsernamesStore.getCurrentCurrency()
-                
+
                 property var estimateGas: Backpressure.debounce(gasSelector, 600, function() {
                     let estimatedGas = root.estimateGasFunction(selectFromAccount.selectedAccount);
                     gasSelector.selectedGasLimit = estimatedGas
@@ -193,14 +193,14 @@ ModalPopup {
                 stack.back()
             }
         }
-        
+
         Component {
             id: transactionSettingsConfirmationPopupComponent
             TransactionSettingsConfirmationPopup {
 
             }
         }
-        
+
         StatusButton {
             id: btnNext
             anchors.right: parent.right
@@ -208,8 +208,8 @@ ModalPopup {
             text: qsTrId("next")
             enabled: stack.currentGroup.isValid
             onClicked: {
-                const validity = stack.currentGroup.validate() 
-                if (validity.isValid && !validity.isPending) { 
+                const validity = stack.currentGroup.validate()
+                if (validity.isValid && !validity.isPending) {
                     if (stack.isLastGroup) {
                         return root.sendTransaction()
                     }
@@ -233,7 +233,7 @@ ModalPopup {
                             return
                         }
                     }
-                    
+
                     stack.next()
                 }
             }

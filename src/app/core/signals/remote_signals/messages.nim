@@ -22,7 +22,7 @@ type MessageSignal* = ref object of Signal
   statusUpdates*: seq[StatusUpdateDto]
   deletedMessages*: seq[RemovedMessageDto]
 
-proc fromEvent*(T: type MessageSignal, event: JsonNode): MessageSignal = 
+proc fromEvent*(T: type MessageSignal, event: JsonNode): MessageSignal =
   var signal:MessageSignal = MessageSignal()
   signal.messages = @[]
   signal.contacts = @[]
@@ -44,7 +44,7 @@ proc fromEvent*(T: type MessageSignal, event: JsonNode): MessageSignal =
   if event["event"]{"statusUpdates"} != nil:
     for jsonStatusUpdate in event["event"]["statusUpdates"]:
       var statusUpdate = jsonStatusUpdate.toStatusUpdateDto()
-      signal.statusUpdates.add(statusUpdate) 
+      signal.statusUpdates.add(statusUpdate)
 
   if event["event"]{"installations"} != nil:
     for jsonDevice in event["event"]["installations"]:

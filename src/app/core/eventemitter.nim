@@ -4,13 +4,13 @@ import # system libs
 import # deps
   uuids
 
-type 
+type
   Args* = ref object of RootObj # ...args
   Handler* = proc (args: Args) {.closure.} # callback function type
   EventEmitter* = ref object
     events: Table[string, Table[UUID, Handler]]
 
-proc createEventEmitter*(): EventEmitter = 
+proc createEventEmitter*(): EventEmitter =
   result.new
   result.events = initTable[string, Table[UUID, Handler]]()
 
@@ -19,10 +19,10 @@ proc on(this: EventEmitter, name: string, handlerId: UUID, handler: Handler): vo
   if this.events.hasKey(name):
     this.events[name].add handlerId, handler
     return
-  
+
   this.events[name] = [(handlerId, handler)].toTable
 
-proc on*(this: EventEmitter, name: string, handler: Handler): void = 
+proc on*(this: EventEmitter, name: string, handler: Handler): void =
   var uuid: UUID
   this.on(name, uuid, handler)
 

@@ -1,6 +1,6 @@
 import strformat
 
-type 
+type
   Item* = object
     name: string
     symbol: string
@@ -21,32 +21,32 @@ proc initItem*(name, symbol: string, hasIcon: bool, address: string, decimals: i
 
 proc `$`*(self: Item): string =
   result = fmt"""AllTokensItem(
-    name: {self.name}, 
+    name: {self.name},
     symbol: {self.symbol},
     hasIcon: {self.hasIcon},
-    address: {self.address}, 
+    address: {self.address},
     decimals: {self.decimals},
     isCustom:{self.isCustom},
     isVisible:{self.isVisible}
     ]"""
 
-proc getName*(self: Item): string = 
+proc getName*(self: Item): string =
   return self.name
 
-proc getSymbol*(self: Item): string = 
+proc getSymbol*(self: Item): string =
   return self.symbol
 
-proc getHasIcon*(self: Item): bool = 
+proc getHasIcon*(self: Item): bool =
   return self.hasIcon
 
-proc getAddress*(self: Item): string = 
+proc getAddress*(self: Item): string =
   return self.address
 
-proc getDecimals*(self: Item): int = 
+proc getDecimals*(self: Item): int =
   return self.decimals
 
-proc getIsCustom*(self: Item): bool = 
+proc getIsCustom*(self: Item): bool =
   return self.isCustom
 
-proc getIsVisible*(self: Item): bool = 
+proc getIsVisible*(self: Item): bool =
   return self.isVisible

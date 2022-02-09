@@ -8,7 +8,7 @@ export service_interface
 logScope:
   topics = "profile-service"
 
-type 
+type
   Service* = ref object of ServiceInterface
 
 method delete*(self: Service) =
@@ -19,7 +19,7 @@ proc newService*(): Service =
 
 method init*(self: Service) =
   discard
-  
+
 method storeIdentityImage*(self: Service, address: string, image: string, aX: int, aY: int, bX: int, bY: int): seq[Image] =
   try:
     let response = status_accounts.storeIdentityImage(address, image, aX, aY, bX, bY)
@@ -27,16 +27,16 @@ method storeIdentityImage*(self: Service, address: string, image: string, aX: in
     if(response.result.kind != JArray):
       error "error: ", methodName="storeIdentityImage", errDesription = "response is not an array"
       return
-    
+
     for img in response.result:
       result.add(toImage(img))
 
   except Exception as e:
     error "error: ", methodName="storeIdentityImage", errName = e.name, errDesription = e.msg
-  
+
 method deleteIdentityImage*(self: Service, address: string) =
   try:
     let response = status_accounts.deleteIdentityImage(address)
-  
+
   except Exception as e:
     error "error: ", methodName="deleteIdentityImage", errName = e.name, errDesription = e.msg

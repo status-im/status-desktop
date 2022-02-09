@@ -8,7 +8,7 @@ QtObject:
       delegate: io_interface.AccessInterface
       customNetworksModel: Model
       customNetworksModelVariant: QVariant
-      
+
   proc delete*(self: View) =
     self.customNetworksModel.delete
     self.customNetworksModelVariant.delete
@@ -25,33 +25,33 @@ QtObject:
     self.delegate.viewDidLoad()
 
   proc currentNetworkChanged*(self: View) {.signal.}
-  proc getCurrentNetworkName*(self: View): string {.slot.} = 
+  proc getCurrentNetworkName*(self: View): string {.slot.} =
     return self.delegate.getCurrentNetworkName()
   QtProperty[string] currentNetworkName:
     read = getCurrentNetworkName
     notify = currentNetworkChanged
 
-  proc setNetworkName*(self: View, network: string) {.slot.} = 
+  proc setNetworkName*(self: View, network: string) {.slot.} =
     self.delegate.setCurrentNetwork(network)
 
   # include this if we decide to not quit the app on network change
   # proc emitNetworkSignal*(self: View) =
   #   self.currentNetworkChanged()
 
-  proc getCurrentNetworkId*(self: View): string {.slot.} = 
+  proc getCurrentNetworkId*(self: View): string {.slot.} =
     return self.delegate.getCurrentNetworkId()
   QtProperty[string] currentNetworkId:
     read = getCurrentNetworkId
     notify = currentNetworkChanged
 
   proc fleetChanged*(self: View) {.signal.}
-  proc getFleet*(self: View): string {.slot.} = 
+  proc getFleet*(self: View): string {.slot.} =
     return self.delegate.getFleet()
   QtProperty[string] fleet:
     read = getFleet
     notify = fleetChanged
 
-  proc setFleet*(self: View, fleet: string) {.slot.} = 
+  proc setFleet*(self: View, fleet: string) {.slot.} =
     self.delegate.setFleet(fleet)
 
   # include this if we decide to not quit the app on fleet change
@@ -62,32 +62,32 @@ QtObject:
     return self.delegate.getLogDir()
 
   proc bloomLevelChanged*(self: View) {.signal.}
-  proc getBloomLevel*(self: View): string {.slot.} = 
+  proc getBloomLevel*(self: View): string {.slot.} =
     return self.delegate.getBloomLevel()
   QtProperty[string] bloomLevel:
     read = getBloomLevel
     notify = bloomLevelChanged
 
-  proc setBloomLevel*(self: View, bloomLevel: string) {.slot.} = 
+  proc setBloomLevel*(self: View, bloomLevel: string) {.slot.} =
     self.delegate.setBloomLevel(bloomLevel)
-  
+
   # include this if we decide to not quit the app on bloom level change
   # proc emitBloomLevelSignal*(self: View) =
   #   self.bloomLevelChanged()
 
   proc wakuV2LightClientEnabledChanged*(self: View) {.signal.}
-  proc getWakuV2LightClientEnabled*(self: View): bool {.slot.} = 
+  proc getWakuV2LightClientEnabled*(self: View): bool {.slot.} =
     return self.delegate.getWakuV2LightClientEnabled()
   QtProperty[bool] wakuV2LightClientEnabled:
     read = getWakuV2LightClientEnabled
     notify = wakuV2LightClientEnabledChanged
 
-  proc setWakuV2LightClientEnabled*(self: View, enabled: bool) {.slot.} = 
+  proc setWakuV2LightClientEnabled*(self: View, enabled: bool) {.slot.} =
     self.delegate.setWakuV2LightClientEnabled(enabled)
 
   # include this if we decide to not quit the app on waku v2 light client change
   # proc emitWakuV2LightClientEnabledSignal*(self: View) =
-  #   self.wakuV2LightClientEnabledChanged() 
+  #   self.wakuV2LightClientEnabledChanged()
 
   proc isTelemetryEnabledChanged*(self: View) {.signal.}
   proc getIsTelemetryEnabled*(self: View): bool {.slot.} =
@@ -99,7 +99,7 @@ QtObject:
   proc emitTelemetryEnabledSignal*(self: View) =
     self.isTelemetryEnabledChanged()
 
-  proc toggleTelemetry*(self: View) {.slot.} = 
+  proc toggleTelemetry*(self: View) {.slot.} =
     self.delegate.toggleTelemetry()
 
   proc isAutoMessageEnabledChanged*(self: View) {.signal.}
@@ -112,7 +112,7 @@ QtObject:
   proc emitAutoMessageEnabledSignal*(self: View) =
     self.isAutoMessageEnabledChanged()
 
-  proc toggleAutoMessage*(self: View) {.slot.} = 
+  proc toggleAutoMessage*(self: View) {.slot.} =
     self.delegate.toggleAutoMessage()
 
   proc isDebugEnabledChanged*(self: View) {.signal.}
@@ -126,7 +126,7 @@ QtObject:
   # proc emitDebugEnabledSignal*(self: View) =
   #   self.isDebugEnabledChanged()
 
-  proc toggleDebug*(self: View) {.slot.} = 
+  proc toggleDebug*(self: View) {.slot.} =
     self.delegate.toggleDebug()
 
   proc customNetworksModel*(self: View): Model =
@@ -139,12 +139,12 @@ QtObject:
     read = getCustomNetworksModel
     notify = customNetworksModelChanged
 
-  proc addCustomNetwork*(self: View, name: string, endpoint: string, networkId: int, networkType: string) {.slot.} = 
+  proc addCustomNetwork*(self: View, name: string, endpoint: string, networkId: int, networkType: string) {.slot.} =
     self.delegate.addCustomNetwork(name, endpoint, networkId, networkType)
 
   proc toggleWalletSection*(self: View) {.slot.} =
     self.delegate.toggleWalletSection()
-  
+
   proc toggleBrowserSection*(self: View) {.slot.} =
     self.delegate.toggleBrowserSection()
 

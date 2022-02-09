@@ -10,7 +10,7 @@ export service_interface
 logScope:
   topics = "network-service"
 
-type 
+type
   Service* = ref object of ServiceInterface
     networks: seq[NetworkDto]
     networksInited: bool
@@ -29,7 +29,7 @@ method getNetworks*(self: Service, useCached: bool = true): seq[NetworkDto] =
   let cacheIsDirty = not self.networksInited or self.dirty.load
   if useCached and not cacheIsDirty:
     result = self.networks
-  else: 
+  else:
     let payload = %* [false]
     let response = status_network.getNetworks(payload)
     if not response.error.isNil:
@@ -46,7 +46,7 @@ method upsertNetwork*(self: Service, network: NetworkDto) =
 
 method deleteNetwork*(self: Service, network: NetworkDto) =
   discard status_network.deleteNetwork(%* [network.chainId])
-  self.dirty.store(true) 
+  self.dirty.store(true)
 
 method getNetwork*(self: Service, networkType: NetworkType): NetworkDto =
   for network in self.getNetworks():

@@ -5,12 +5,12 @@ import ../../../../../app_service/service/profile/service_interface as profile_s
 
 export controller_interface
 
-type 
+type
   Controller* = ref object of controller_interface.AccessInterface
     delegate: io_interface.AccessInterface
     profileService: profile_service.ServiceInterface
 
-proc newController*(delegate: io_interface.AccessInterface, 
+proc newController*(delegate: io_interface.AccessInterface,
   profileService: profile_service.ServiceInterface): Controller =
   result = Controller()
   result.delegate = delegate
@@ -19,7 +19,7 @@ proc newController*(delegate: io_interface.AccessInterface,
 method delete*(self: Controller) =
   discard
 
-method init*(self: Controller) = 
+method init*(self: Controller) =
   discard
 
 method storeIdentityImage*(self: Controller, address: string, image: string, aX: int, aY: int, bX: int, bY: int): seq[Image] =

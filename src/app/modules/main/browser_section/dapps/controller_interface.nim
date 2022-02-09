@@ -1,7 +1,7 @@
 import ../../../../../app_service/service/dapp_permissions/service_interface as dapp_permissions_service
-import options 
+import options
 
-type 
+type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
   ## Abstract class for any input/interaction with this module.
 

@@ -10,7 +10,7 @@ proc saveChat*(
     active: bool = true,
     color: string = "#000000",
     ensName: string = "",
-    profile: string = "", 
+    profile: string = "",
     joined: int64 = 0
     ): RpcResponse[JsonNode] {.raises: [Exception].} =
   # TODO: ideally status-go/stimbus should handle some of these fields instead of having the client
@@ -101,18 +101,18 @@ proc unmuteChat*(chatId: string): RpcResponse[JsonNode] {.raises: [Exception].} 
 proc deleteMessagesByChatId*(chatId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* [chatId]
   result = callPrivateRPC("deleteMessagesByChatID".prefix, payload)
-  
+
 proc addGroupMembers*(chatId: string, pubKeys: seq[string]): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* [nil, chatId, pubKeys]
   result = callPrivateRPC("addMembersToGroupChat".prefix, payload)
 
 proc removeMembersFromGroupChat*(chatId: string, pubKey: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* [nil, chatId, pubKey]
-  result = callPrivateRPC("removeMemberFromGroupChat".prefix, payload) 
+  result = callPrivateRPC("removeMemberFromGroupChat".prefix, payload)
 
 proc renameGroupChat*(chatId: string, newName: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* [nil, chatId, newName]
-  result = callPrivateRPC("changeGroupChatName".prefix, payload) 
+  result = callPrivateRPC("changeGroupChatName".prefix, payload)
 
 proc makeAdmin*(chatId: string, pubKey: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* [nil, chatId, [pubKey]]

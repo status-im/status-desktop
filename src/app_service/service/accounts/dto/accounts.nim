@@ -15,7 +15,7 @@ type
     resizeTarget: int
 
 type AccountDto* = object
-  name*: string 
+  name*: string
   timestamp*: int64
   identicon*: string
   keycardPairing*: string
@@ -42,7 +42,7 @@ proc toAccountDto*(jsonObj: JsonNode): AccountDto =
   discard jsonObj.getProp("identicon", result.identicon)
   discard jsonObj.getProp("keycard-pairing", result.keycardPairing)
   discard jsonObj.getProp("key-uid", result.keyUid)
-  
+
   var imagesObj: JsonNode
   if(jsonObj.getProp("images", imagesObj) and imagesObj.kind == JArray):
     for imgObj in imagesObj:

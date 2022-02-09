@@ -10,7 +10,7 @@ const BLOOM_LEVEL_NORMAL* = "normal"
 const BLOOM_LEVEL_FULL* = "full"
 const BLOOM_LEVEL_LIGHT* = "light"
 
-type 
+type
   ServiceInterface* {.pure inheritable.} = ref object of RootObj
   ## Abstract class for this service access.
 

@@ -9,7 +9,7 @@ import ../../app_service/service/accounts/service as procs_from_accounts
 
 QtObject:
   type Utils* = ref object of QObject
-    
+
   proc setup(self: Utils) =
     self.QObject.setup
 
@@ -42,7 +42,7 @@ QtObject:
   proc hex2Ascii*(self: Utils, value: string): string {.slot.} =
     result = string.fromBytes(hexToSeqByte(value))
 
-  proc ascii2Hex*(self: Utils, value: string): string {.slot.} = 
+  proc ascii2Hex*(self: Utils, value: string): string {.slot.} =
     result = "0x" & toHex(value)
 
   proc stripTrailingZeroes(value: string): string =

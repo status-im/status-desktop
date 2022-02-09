@@ -18,7 +18,7 @@ ModalPopup {
     property int marginBetweenInputs: 35
     property string validationError: ""
 
-    title: editable ? 
+    title: editable ?
         //% "Add custom token"
         qsTrId("add-custom-token")
         : nameInput.text
@@ -142,7 +142,7 @@ ModalPopup {
         anchors.left: undefined
         width: parent.width / 2 - 20
     }
-    
+
     footer: Item {
         width: parent.width
         height: addBtn.height

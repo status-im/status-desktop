@@ -9,7 +9,7 @@ import ../../../../../app_service/service/provider/service as provider_service
 import ../../../../global/global_singleton
 export io_interface
 
-type 
+type
   Module* = ref object of io_interface.AccessInterface
     delegate: delegate_interface.AccessInterface
     view: View

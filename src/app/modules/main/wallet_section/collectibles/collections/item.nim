@@ -1,6 +1,6 @@
 import strformat
 
-type 
+type
   Item* = object
     name: string
     slug: string
@@ -15,13 +15,13 @@ proc initItem*(name, slug, imageUrl: string, ownedAssetCount: int): Item =
 
 proc `$`*(self: Item): string =
   result = fmt"""CollectibleCollection(
-    name: {self.name}, 
+    name: {self.name},
     slug: {self.slug},
     imageUrl: {self.imageUrl},
     ownedAssetCount: {self.ownedAssetCount}
     ]"""
 
-proc getName*(self: Item): string = 
+proc getName*(self: Item): string =
   return self.name
 
 proc getSlug*(self: Item): string =

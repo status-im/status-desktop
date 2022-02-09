@@ -205,7 +205,7 @@ Item {
                     anchors.leftMargin: Style.current.padding
                     color: Theme.palette.directColor1
                 }
-                StatusSwitch { 
+                StatusSwitch {
                     id: devicePairedSwitch
                     visible: !model.isCurrentDevice
                     checked: model.enabled
@@ -234,7 +234,7 @@ Item {
             isSyncing = true;
             root.devicesStore.syncAll()
             // Currently we don't know how long it takes, so we just disable for 10s, to avoid spamming
-            timer.setTimeout(function(){ 
+            timer.setTimeout(function(){
                 isSyncing = false
             }, 10000);
         }

@@ -3,8 +3,8 @@ import NimQml
 QtObject:
   type
     Item* = ref object of QObject
-      
-  proc setup(self: Item) = 
+
+  proc setup(self: Item) =
     self.QObject.setup
 
   proc delete*(self: Item) =
@@ -14,7 +14,7 @@ QtObject:
     new(result, delete)
     result.setup()
 
-  proc id*(self: Item): string {.slot.} = 
+  proc id*(self: Item): string {.slot.} =
     self.id
 
   QtProperty[string] id:

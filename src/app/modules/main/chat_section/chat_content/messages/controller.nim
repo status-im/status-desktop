@@ -16,7 +16,7 @@ export controller_interface
 logScope:
   topics = "messages-controller"
 
-type 
+type
   Controller* = ref object of controller_interface.AccessInterface
     delegate: io_interface.AccessInterface
     events: EventEmitter
@@ -31,9 +31,9 @@ type
     messageService: message_service.Service
     mailserversService: mailservers_service.Service
 
-proc newController*(delegate: io_interface.AccessInterface, events: EventEmitter, sectionId: string, chatId: string, 
+proc newController*(delegate: io_interface.AccessInterface, events: EventEmitter, sectionId: string, chatId: string,
   belongsToCommunity: bool, contactService: contact_service.Service, communityService: community_service.Service,
-  chatService: chat_service.Service, messageService: message_service.Service, mailserversService: mailservers_service.Service): 
+  chatService: chat_service.Service, messageService: message_service.Service, mailserversService: mailservers_service.Service):
   Controller =
   result = Controller()
   result.delegate = delegate
@@ -47,11 +47,11 @@ proc newController*(delegate: io_interface.AccessInterface, events: EventEmitter
   result.chatService = chatService
   result.messageService = messageService
   result.mailserversService = mailserversService
-  
+
 method delete*(self: Controller) =
   discard
 
-method init*(self: Controller) = 
+method init*(self: Controller) =
   self.events.on(SIGNAL_MESSAGES_LOADED) do(e:Args):
     let args = MessagesLoadedArgs(e)
     if(self.chatId != args.chatId):
@@ -195,7 +195,7 @@ method getNumOfPinnedMessages*(self: Controller): int =
 method getRenderedText*(self: Controller, parsedTextArray: seq[ParsedText]): string =
   return self.messageService.getRenderedText(parsedTextArray)
 
-method getMessageDetails*(self: Controller, messageId: string): 
+method getMessageDetails*(self: Controller, messageId: string):
   tuple[message: MessageDto, reactions: seq[ReactionDto], error: string] =
   return self.messageService.getDetailsForMessage(self.chatId, messageId)
 
@@ -208,7 +208,7 @@ method decodeContentHash*(self: Controller, hash: string): string =
 method editMessage*(self: Controller, messageId: string, updatedMsg: string) =
   self.messageService.editMessage(messageId, updatedMsg)
 
-method getLinkPreviewData*(self: Controller, link: string, uuid: string): string = 
+method getLinkPreviewData*(self: Controller, link: string, uuid: string): string =
   self.messageService.asyncGetLinkPreviewData(link, uuid)
 
 method getSearchedMessageId*(self: Controller): string =

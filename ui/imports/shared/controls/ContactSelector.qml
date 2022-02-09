@@ -58,7 +58,7 @@ Item {
         let isDefaultValue = selectedContact.alias === selectAContact
         let isValid = (selectedContact.ensVerified && isValidAddress) || isPending || isValidAddress
         select.validationError = ""
-        if (!isValid && !isDefaultValue && 
+        if (!isValid && !isDefaultValue &&
             (
                 !selectedContact.ensVerified ||
                 (selectedContact.ensVerified && isResolvedAddress)

@@ -13,7 +13,7 @@ logScope:
 # Signals which may be emitted by this service:
 const SIGNAL_SAVED_ADDRESS_CHANGED* = "savedAddressChanged"
 
-type 
+type
   Service* = ref object of service_interface.ServiceInterface
     events: EventEmitter
     savedAddresses: seq[SavedAddressDto]

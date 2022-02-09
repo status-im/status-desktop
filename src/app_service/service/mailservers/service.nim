@@ -75,9 +75,9 @@ QtObject:
   proc delete*(self: Service) =
     self.QObject.delete
 
-  proc newService*(events: EventEmitter, threadpool: ThreadPool, 
-    settingsService: settings_service.ServiceInterface, 
-    nodeConfigurationService: node_configuration_service.ServiceInterface, 
+  proc newService*(events: EventEmitter, threadpool: ThreadPool,
+    settingsService: settings_service.ServiceInterface,
+    nodeConfigurationService: node_configuration_service.ServiceInterface,
     fleetConfiguration: FleetConfiguration): Service =
     new(result, delete)
     result.QObject.setup
@@ -90,7 +90,7 @@ QtObject:
   proc init*(self: Service) =
     self.doConnect()
     self.initMailservers()
-    self.fetchMailservers()  
+    self.fetchMailservers()
 
   proc requestMessages(self: Service) =
     let arg = RequestMessagesTaskArg(
@@ -123,7 +123,7 @@ QtObject:
       info "active mailserver changed", node=address
       let data = ActiveMailserverChangedArgs(nodeAddress: address)
       self.events.emit(SIGNAL_ACTIVE_MAILSERVER_CHANGED, data)
-    
+
     self.events.on(SignalType.MailserverAvailable.event) do(e: Args):
       info "mailserver available"
       self.requestMessages()
@@ -155,7 +155,7 @@ QtObject:
     for (name, nodeAddress) in mailservers.pairs():
       info "initMailservers", topics="mailserver-interaction", name, nodeAddress
       self.mailservers.add((name: name, nodeAddress: nodeAddress))
-      
+
   proc fetchMailservers(self: Service) =
     try:
       let response = status_mailservers.getMailservers()
@@ -180,7 +180,7 @@ QtObject:
 
       let response = status_mailservers.saveMailserver(id, name, nodeAddress, fleet)
       info "save mailserver", topics="mailserver-interaction", rpc_method="mailservers_addMailserver", response
-      # once we have more info from `status-go` we may emit a signal from here and 
+      # once we have more info from `status-go` we may emit a signal from here and
       # update view or display an error accordingly
 
     except Exception as e:

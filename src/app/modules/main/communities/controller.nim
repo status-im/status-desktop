@@ -9,7 +9,7 @@ import ../../../../app_service/service/contacts/service as contacts_service
 
 export controller_interface
 
-type 
+type
   Controller* = ref object of controller_interface.AccessInterface
     delegate: io_interface.AccessInterface
     events: EventEmitter
@@ -114,6 +114,6 @@ method banUserFromCommunity*(self: Controller, communityId: string, pubKey: stri
 method setCommunityMuted*(self: Controller, communityId: string, muted: bool) =
   self.communityService.setCommunityMuted(communityId, muted)
 
-method getContactNameAndImage*(self: Controller, contactId: string): 
+method getContactNameAndImage*(self: Controller, contactId: string):
     tuple[name: string, image: string, isIdenticon: bool] =
   return self.contactsService.getContactNameAndImage(contactId)

@@ -7,9 +7,9 @@ type
     DoNotDisturb
     Idle
     Invisible
-    
+
 # TODO add role when it is needed
-type 
+type
   Item* = ref object
     id: string
     name: string
@@ -48,41 +48,41 @@ proc `$`*(self: Item): string =
     joined: {$self.joined}
     ]"""
 
-proc id*(self: Item): string {.inline.} = 
+proc id*(self: Item): string {.inline.} =
   self.id
 
-proc name*(self: Item): string {.inline.} = 
+proc name*(self: Item): string {.inline.} =
   self.name
 
-proc `name=`*(self: Item, value: string) {.inline.} = 
+proc `name=`*(self: Item, value: string) {.inline.} =
   self.name = value
 
-proc onlineStatus*(self: Item): OnlineStatus {.inline.} = 
+proc onlineStatus*(self: Item): OnlineStatus {.inline.} =
   self.onlineStatus
 
-proc `onlineStatus=`*(self: Item, value: OnlineStatus) {.inline.} = 
+proc `onlineStatus=`*(self: Item, value: OnlineStatus) {.inline.} =
   self.onlineStatus = value
 
-proc icon*(self: Item): string {.inline.} = 
+proc icon*(self: Item): string {.inline.} =
   self.icon
 
-proc `icon=`*(self: Item, value: string) {.inline.} = 
+proc `icon=`*(self: Item, value: string) {.inline.} =
   self.icon = value
 
-proc isIdenticon*(self: Item): bool {.inline.} = 
+proc isIdenticon*(self: Item): bool {.inline.} =
   self.isIdenticon
 
-proc `isIdenticon=`*(self: Item, value: bool) {.inline.} = 
+proc `isIdenticon=`*(self: Item, value: bool) {.inline.} =
   self.isIdenticon = value
 
-proc isAdmin*(self: Item): bool {.inline.} = 
+proc isAdmin*(self: Item): bool {.inline.} =
   self.isAdmin
 
-proc `isAdmin=`*(self: Item, value: bool) {.inline.} = 
+proc `isAdmin=`*(self: Item, value: bool) {.inline.} =
   self.isAdmin = value
 
-proc joined*(self: Item): bool {.inline.} = 
-  self.joined 
+proc joined*(self: Item): bool {.inline.} =
+  self.joined
 
-proc `joined=`*(self: Item, value: bool) {.inline.} = 
+proc `joined=`*(self: Item, value: bool) {.inline.} =
   self.joined = value

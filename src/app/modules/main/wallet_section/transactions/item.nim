@@ -1,6 +1,6 @@
 import strformat, stint
 
-type 
+type
   Item* = object
     id: string
     typ: string
@@ -70,47 +70,47 @@ proc `$`*(self: Item): string =
     contract: {self.contract},
     ]"""
 
-proc getId*(self: Item): string = 
+proc getId*(self: Item): string =
   return self.id
 
-proc getType*(self: Item): string = 
+proc getType*(self: Item): string =
   return self.typ
 
-proc getAddress*(self: Item): string = 
+proc getAddress*(self: Item): string =
   return self.address
 
-proc getBlockNumber*(self: Item): string = 
+proc getBlockNumber*(self: Item): string =
   return self.blockNumber
 
-proc getBlockHash*(self: Item): string = 
+proc getBlockHash*(self: Item): string =
   return self.blockHash
 
-proc getTimestamp*(self: Item): string = 
+proc getTimestamp*(self: Item): string =
   return $self.timestamp
 
-proc getGasPrice*(self: Item): string = 
+proc getGasPrice*(self: Item): string =
   return self.gasPrice
 
-proc getGasLimit*(self: Item): string = 
+proc getGasLimit*(self: Item): string =
   return self.gasLimit
 
-proc getGasUsed*(self: Item): string = 
+proc getGasUsed*(self: Item): string =
   return self.gasUsed
 
-proc getNonce*(self: Item): string = 
+proc getNonce*(self: Item): string =
   return self.nonce
 
-proc getTxStatus*(self: Item): string = 
+proc getTxStatus*(self: Item): string =
   return self.txStatus
 
-proc getValue*(self: Item): string = 
+proc getValue*(self: Item): string =
   return self.value
 
-proc getfrom*(self: Item): string = 
+proc getfrom*(self: Item): string =
   return self.fro
 
-proc getTo*(self: Item): string = 
+proc getTo*(self: Item): string =
   return self.to
 
-proc getContract*(self: Item): string = 
+proc getContract*(self: Item): string =
   return self.contract

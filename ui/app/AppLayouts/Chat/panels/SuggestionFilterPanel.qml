@@ -84,7 +84,7 @@ Item {
 
     function shouldShowAll(filter) {
         var cursorAtEnd = this.cursorPosition === filter.length;
-        var hasAtBeforeCursor = filter.charAt(this.cursorPosition - 1) === "@" 
+        var hasAtBeforeCursor = filter.charAt(this.cursorPosition - 1) === "@"
         var hasWhiteSpaceBeforeAt = filter.charAt(this.cursorPosition - 2) === " " || filter.charAt(this.cursorPosition - 2) === "\n"
         var hasWhiteSpaceAfterAt = filter.charAt(this.cursorPosition) === " "
 
@@ -103,7 +103,7 @@ Item {
         if (properties.length === 0) {
             return false
         }
-        
+
         let filterWithoutAt = filter.substring(this.lastAtPosition + 1, this.cursorPosition)
         filterWithoutAt = filterWithoutAt.replace(/\*/g, "")
         suggestionsPanelRoot.formattedFilter = filterWithoutAt

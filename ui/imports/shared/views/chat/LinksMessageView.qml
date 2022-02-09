@@ -48,7 +48,7 @@ Column {
 
 
             active: true
-            
+
             Connections {
                 target: localAccountSensitiveSettings
                 onWhitelistedUnfurlingSitesChanged: {

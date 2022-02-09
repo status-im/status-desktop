@@ -22,18 +22,18 @@ type StickerPackDto* = object
 proc `$`(self: StickerDto): string =
   result = fmt"""StickerDto(
     hash: {self.hash},
-    packId: {$self.packId}, 
+    packId: {$self.packId},
     ]"""
 
 proc `$`*(self: StickerPackDto): string =
   result = fmt"""StickerPackDto(
-    id: {$self.id}, 
+    id: {$self.id},
     name: {self.name},
     author: {self.author},
-    price: {$self.price}, 
-    preview: {self.preview}, 
-    stickersLen: {$self.stickers.len}, 
-    thumbnail:{self.thumbnail}  
+    price: {$self.price},
+    preview: {self.preview},
+    stickersLen: {$self.stickers.len},
+    thumbnail:{self.thumbnail}
     )"""
 
 

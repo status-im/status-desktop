@@ -4,10 +4,10 @@ import response_type
 
 export response_type
 
-proc setInstallationMetadata*(installationId: string, deviceName: string, deviceType: string): 
+proc setInstallationMetadata*(installationId: string, deviceName: string, deviceType: string):
   RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* [installationId, {
-    "name": deviceName, 
+    "name": deviceName,
     "deviceType": deviceType
   }]
   result = callPrivateRPC("setInstallationMetadata".prefix, payload)

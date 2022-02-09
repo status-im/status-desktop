@@ -104,7 +104,7 @@ proc toCategory*(jsonObj: JsonNode): Category =
   discard jsonObj.getProp("position", result.position)
 
 proc toMember*(jsonObj: JsonNode, memberId: string): Member =
-  # Mapping this DTO is not strightforward since only keys are used for id. We 
+  # Mapping this DTO is not strightforward since only keys are used for id. We
   # handle it a bit different.
   result = Member()
   result.id = memberId
@@ -122,7 +122,7 @@ proc toCommunityDto*(jsonObj: JsonNode): CommunityDto =
   discard jsonObj.getProp("requestedAccessAt", result.requestedAccessAt)
   discard jsonObj.getProp("name", result.name)
   discard jsonObj.getProp("description", result.description)
-  
+
   var chatsObj: JsonNode
   if(jsonObj.getProp("chats", chatsObj)):
     for _, chatObj in chatsObj:
@@ -164,5 +164,5 @@ proc toCommunityMembershipRequestDto*(jsonObj: JsonNode): CommunityMembershipReq
   discard jsonObj.getProp("our", result.our)
 
 proc parseCommunities*(response: RpcResponse[JsonNode]): seq[CommunityDto] =
-  result = map(response.result.getElems(), 
+  result = map(response.result.getElems(),
     proc(x: JsonNode): CommunityDto = x.toCommunityDto())

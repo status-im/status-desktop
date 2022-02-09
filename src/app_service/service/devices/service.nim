@@ -45,7 +45,7 @@ QtObject:
         for d in receivedData.devices:
           let data = UpdateDeviceArgs(
             deviceId: d.id,
-            name: d.metadata.name, 
+            name: d.metadata.name,
             enabled: d.enabled)
           self.events.emit(SIGNAL_UPDATE_DEVICE, data)
 
@@ -60,7 +60,7 @@ QtObject:
       let errDesription = e.msg
       error "error: ", errDesription
 
-  proc isNewDevice(self: Service, device: DeviceDto): bool = 
+  proc isNewDevice(self: Service, device: DeviceDto): bool =
     let allDevices = self.getAllDevices()
     for d in allDevices:
       if(d.id == device.id):

@@ -14,7 +14,7 @@ ModalPopup {
     id: popup
     //% "Manage Assets"
     title: qsTrId("manage-assets")
-    
+
     TokenSettingsModalContent {
         id: settingsModalContent
         anchors.left: parent.left
@@ -50,6 +50,6 @@ ModalPopup {
             addShowTokenModal.openEditable();
         }
     }
-    
-    
+
+
 }

@@ -29,7 +29,7 @@ import ./ens_usernames/module as ens_usernames_module
 
 export io_interface
 
-type 
+type
   Module* [T: io_interface.DelegateInterface] = ref object of io_interface.AccessInterface
     delegate: T
     view: View
@@ -81,7 +81,7 @@ proc newModule*[T](delegate: T,
   result.devicesModule = devices_module.newModule(result, events, settingsService, devicesService)
   result.syncModule = sync_module.newModule(result, events, settingsService, mailserversService)
   result.notificationsModule = notifications_module.newModule(result, events, chatService)
-  result.ensUsernamesModule = ens_usernames_module.newModule(result, events, settingsService, ensService, 
+  result.ensUsernamesModule = ens_usernames_module.newModule(result, events, settingsService, ensService,
   walletAccountService)
 
   singletonInstance.engine.setRootContextProperty("profileSectionModule", result.viewVariant)

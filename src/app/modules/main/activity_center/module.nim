@@ -12,7 +12,7 @@ import ../../../../app_service/service/message/service as message_service
 
 export io_interface
 
-type 
+type
   Module* [T: io_interface.DelegateInterface] = ref object of io_interface.AccessInterface
     delegate: T
     controller: controller.AccessInterface
@@ -77,7 +77,7 @@ method convertToItems*[T](
           n.message.`from`,
           contactDetails.displayName,
           contactDetails.details.localNickname,
-          contactDetails.icon, 
+          contactDetails.icon,
           contactDetails.isIdenticon,
           contactDetails.isCurrentUser,
           n.message.outgoingStatus,
@@ -86,13 +86,13 @@ method convertToItems*[T](
           n.message.containsContactMentions(),
           n.message.seen,
           n.message.timestamp,
-          ContentType(n.message.contentType), 
+          ContentType(n.message.contentType),
           n.message.messageType,
           self.controller.decodeContentHash(n.message.sticker.hash),
           n.message.sticker.pack,
           n.message.links,
         ))
-    
+
       return notification_item.initItem(
         n.id,
         n.chatId,

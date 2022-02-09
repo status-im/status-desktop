@@ -52,7 +52,7 @@ Popup {
              Repeater {
                 id: chainRepeater
                 model: popup.model
-            
+
                 Item {
                     width: content.width
                     height: 40

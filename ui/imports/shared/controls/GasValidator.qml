@@ -13,7 +13,7 @@ Column {
     anchors.horizontalCenter: parent.horizontalCenter
     visible: !isValid
     spacing: 5
-    
+
     property alias errorMessage: txtValidationError.text
     property var selectedAccount
     property double selectedAmount

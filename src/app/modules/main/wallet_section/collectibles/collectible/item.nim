@@ -1,6 +1,6 @@
 import strformat
 
-type 
+type
   Item* = object
     name: string
 
@@ -12,5 +12,5 @@ proc `$`*(self: Item): string =
     name: {self.name}
     ]"""
 
-proc getName*(self: Item): string = 
+proc getName*(self: Item): string =
   return self.name

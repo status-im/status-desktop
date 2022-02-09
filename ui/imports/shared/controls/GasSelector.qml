@@ -16,12 +16,12 @@ Item {
 
     property double gasPrice: 0
 
-   
+
     // Not Refactored Yet
     property bool eip1599Enabled: false //walletModel.transactionsView.isEIP1559Enabled
     property var suggestedFees: "" //JSON.parse(walletModel.gasView.suggestedFees)
     property var latestBaseFee: "" //JSON.parse(walletModel.transactionsView.latestBaseFee)
-    
+
     property double latestBaseFeeGwei: {
         if (!eip1599Enabled) return 0;
         return parseFloat(latestBaseFee.gwei)
@@ -94,7 +94,7 @@ Item {
         showTipLimitWarning = false
 
         let errorMsg = "";
-        
+
         if(gasLimit < 21000) {
             errorMsg = appendError(errorMsg, qsTr("Min 21000 units"))
         } else if (gasLimit < parseInt(defaultGasLimit)){
@@ -429,7 +429,7 @@ Item {
             anchors.left: parent.left
             //% "Maximum priority fee: %1 ETH"
             text: {
-                let v = selectedGasEthValue > 0.00009 ? selectedGasEthValue : 
+                let v = selectedGasEthValue > 0.00009 ? selectedGasEthValue :
                     (selectedGasEthValue < 0.000001 ? "0.000000..." : selectedGasEthValue.toFixed(6))
                 return qsTrId("maximum-priority-fee---1-eth").arg(v)
             }

@@ -26,7 +26,7 @@ StatusModal {
     }
 
     contentItem: Item {
-        width: popup.width 
+        width: popup.width
         implicitHeight: childrenRect.height
         Input {
             id: groupName

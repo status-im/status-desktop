@@ -40,6 +40,6 @@ proc toTokenDto*(jsonObj: JsonNode, activeTokenSymbols: seq[string], hasIcon: bo
 
   if activeTokenSymbols.contains(result.symbol):
     result.isVisible = true
-  
+
 proc addressAsString*(self: TokenDto): string =
   return $self.address

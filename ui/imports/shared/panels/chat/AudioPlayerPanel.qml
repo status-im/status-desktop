@@ -37,11 +37,11 @@ Item {
                   } else {
                       audioMessage.play();
                   }
-                  
+
               }
           }
     }
-    
+
     Rectangle {
         height: 2
         width: 300
@@ -80,7 +80,7 @@ Item {
                 }
             }
             transitions: Transition {
-                NumberAnimation { 
+                NumberAnimation {
                     properties: "scale";
                     duration: 100;
                     easing.type: Easing.InOutQuad

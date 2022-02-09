@@ -9,7 +9,7 @@ export controller_interface
 import ../../../../core/[main]
 import ../../../../core/tasks/[qt, threadpool]
 
-type 
+type
   Controller* = ref object of controller_interface.AccessInterface
     delegate: io_interface.AccessInterface
     events: EventEmitter
@@ -21,7 +21,7 @@ method loadTransactions*(self: Controller, address: string, toBlock: Uint256, li
 method getWalletAccounts*(self: Controller): seq[WalletAccountDto]
 
 proc newController*(
-  delegate: io_interface.AccessInterface, 
+  delegate: io_interface.AccessInterface,
   events: EventEmitter,
   transactionService: transaction_service.Service,
   walletAccountService: wallet_account_service.ServiceInterface
@@ -31,11 +31,11 @@ proc newController*(
   result.delegate = delegate
   result.transactionService = transactionService
   result.walletAccountService = walletAccountService
-  
+
 method delete*(self: Controller) =
   discard
 
-method init*(self: Controller) = 
+method init*(self: Controller) =
   self.events.on(SignalType.Wallet.event) do(e:Args):
     var data = WalletSignal(e)
     case data.eventType:
@@ -56,7 +56,7 @@ method init*(self: Controller) =
         self.delegate.setIsNonArchivalNode(true)
       else:
         echo "Unhandled wallet signal: ", data.eventType
-  
+
   self.events.on(SIGNAL_TRANSACTIONS_LOADED) do(e:Args):
     let args = TransactionsLoadedArgs(e)
     self.delegate.setTrxHistoryResult(args.transactions, args.address, args.wasFetchMore)

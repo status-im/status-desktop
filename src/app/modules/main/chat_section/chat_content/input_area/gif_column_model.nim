@@ -28,7 +28,7 @@ QtObject:
     self.gifs = gifs
     self.endResetModel()
 
-  method rowCount(self: GifColumnModel, index: QModelIndex = nil): int = 
+  method rowCount(self: GifColumnModel, index: QModelIndex = nil): int =
     self.gifs.len
 
   method data(self: GifColumnModel, index: QModelIndex, role: int): QVariant =

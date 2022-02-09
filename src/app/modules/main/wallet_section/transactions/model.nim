@@ -152,7 +152,7 @@ QtObject:
   proc addNewTransactions*(self: Model, transactions: seq[TransactionDto], wasFetchMore: bool) =
     let existingTxIds = self.items.map(tx => tx.getId())
     let hasNewTxs = transactions.len > 0 and transactions.any(tx => not existingTxIds.contains(tx.id))
-  
+
     if hasNewTxs or not wasFetchMore:
       let newTxItems = transactions.map(t => initItem(
         t.id,
@@ -175,7 +175,7 @@ QtObject:
       var allTxs = self.items.concat(newTxItems)
       allTxs.sort(cmpTransactions, SortOrder.Descending)
       eth_service_utils.deduplicate(allTxs, tx => tx.getId())
-      
+
       self.setItems(allTxs)
       self.setHasMore(true)
     else:

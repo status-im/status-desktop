@@ -64,9 +64,9 @@ StatusModal {
                     currency: root.store.currentCurrency
                     width: stack.width
                     label: {
-                        return root.isRequested ? 
+                        return root.isRequested ?
                             //% "Receive on account"
-                            qsTrId("receive-on-account") : 
+                            qsTrId("receive-on-account") :
                             //% "From account"
                             qsTrId("from-account")
                     }

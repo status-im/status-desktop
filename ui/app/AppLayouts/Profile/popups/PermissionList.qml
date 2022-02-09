@@ -57,7 +57,7 @@ ModalPopup {
             }
         }
     }
-    
+
     footer: StatusButton {
         anchors.horizontalCenter: parent.horizontalCenter
         type: StatusBaseButton.Type.Danger

@@ -60,11 +60,11 @@ QtObject:
     let enumRole = role.ModelRole
 
     case enumRole:
-    of ModelRole.Name: 
+    of ModelRole.Name:
       result = newQVariant(item.getName())
-    of ModelRole.Url: 
+    of ModelRole.Url:
       result = newQVariant(item.getUrl())
-    of ModelRole.ImageUrl: 
+    of ModelRole.ImageUrl:
       result = newQVariant(item.getImageUrl())
 
   proc rowData(self: Model, index: int, column: string): string {.slot.} =

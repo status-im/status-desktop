@@ -74,7 +74,7 @@ type CurrentUserStatus* = object
   text*: string
 
 type WalletVisibleTokens* = object
-  tokens*: seq[string] 
+  tokens*: seq[string]
 
 type
   SettingsDto* = object # There is no point to keep all these info as settings, but we must follow status-go response
@@ -181,7 +181,7 @@ proc toSettingsDto*(jsonObj: JsonNode): SettingsDto =
         let packId = parseInt(i)
         result.installedStickerPacks[packId] = installedStickerPacksArr[i].toStickerPackDto
 
-    
+
   var recentStickersArr: JsonNode
   if(jsonObj.getProp(KEY_RECENT_STICKERS, recentStickersArr)):
     if(recentStickersArr.kind == JArray):
@@ -242,7 +242,7 @@ proc configToJsonNode*(config: Config): JsonNode =
   result = parseJson(configAsString)
 
 proc networkToJsonNode*(network: Network): JsonNode =
-  ## we cannot use the same technique as we did for `configToJsonNode` cause we cannot have 
+  ## we cannot use the same technique as we did for `configToJsonNode` cause we cannot have
   ## variable name with a dash in order to map `etherscan-link` appropriatelly
   return %*{
     "id": network.id,

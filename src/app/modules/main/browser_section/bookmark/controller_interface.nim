@@ -1,6 +1,6 @@
 import ../../../../../app_service/service/bookmarks/service_interface as bookmark_service
 
-type 
+type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
   ## Abstract class for any input/interaction with this module.
 

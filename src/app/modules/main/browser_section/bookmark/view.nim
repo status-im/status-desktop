@@ -9,8 +9,8 @@ QtObject:
       delegate: io_interface.AccessInterface
       model: Model
       modelVariant: QVariant
-      
-  proc setup(self: View) = 
+
+  proc setup(self: View) =
     self.QObject.setup
 
   proc delete*(self: View) =
