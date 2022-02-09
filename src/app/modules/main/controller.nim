@@ -243,6 +243,9 @@ method setUserStatus*(self: Controller, status: bool) =
 method getContact*(self: Controller, id: string): ContactsDto =
   return self.contactsService.getContactById(id)
 
+method getContacts*(self: Controller): seq[ContactsDto] =
+  return self.contactsService.getContacts()
+
 method getContactNameAndImage*(self: Controller, contactId: string):
   tuple[name: string, image: string, isIdenticon: bool] =
   return self.contactsService.getContactNameAndImage(contactId)

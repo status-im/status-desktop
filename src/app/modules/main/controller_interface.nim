@@ -41,6 +41,9 @@ method setUserStatus*(self: AccessInterface, status: bool) {.base.} =
 method getContact*(self: AccessInterface, id: string): ContactsDto {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method getContacts*(self: AccessInterface): seq[ContactsDto] {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method getContactNameAndImage*(self: AccessInterface, contactId: string):
   tuple[name: string, image: string, isIdenticon: bool] {.base.} =
   raise newException(ValueError, "No implementation available")

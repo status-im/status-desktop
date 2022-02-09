@@ -141,13 +141,13 @@ QtObject:
     return toSeq(self.contacts.values)
 
   proc getAddedContacts*(self: Service): seq[ContactsDto] =
-    return self.getContacts().filter(x => x.added)
+    return self.getContacts().filter(x => x.isContact())
 
   proc getBlockedContacts*(self: Service): seq[ContactsDto] =
-    return self.getContacts().filter(x => x.blocked)
+    return self.getContacts().filter(x => x.isBlocked())
 
   proc getContactsWhoAddedMe*(self: Service): seq[ContactsDto] =
-    return self.getContacts().filter(x => x.hasAddedUs)
+    return self.getContacts().filter(x => x.requestReceived())
 
   proc fetchContact(self: Service, id: string): ContactsDto =
     try:
