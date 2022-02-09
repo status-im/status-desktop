@@ -39,13 +39,13 @@ class SectionItem : public QObject
     Q_PROPERTY(bool ensOnly READ getIsEnsOnly)
 
 public:
-    SectionItem(QString id,
+    SectionItem(const QString &id,
                 SectionType sectionType,
-                QString name,
-                QString description,
-                QString image,
-                QString icon,
-                QString color,
+                const QString& name,
+                const QString& description,
+                const QString& image,
+                const QString& icon,
+                const QString& color,
                 bool active = false,
                 bool enabled = true,
                 bool amISectionAdmin = false,
