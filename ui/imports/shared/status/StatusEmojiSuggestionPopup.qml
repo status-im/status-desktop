@@ -8,6 +8,7 @@ import shared 1.0
 
 StatusInputListPopup {
     id: emojiSuggestions
+
     property string shortname
     property string unicode: {
         if(listView.currentIndex < 0 || listView.currentIndex >= emojiSuggestions.modelList.count)
@@ -25,9 +26,6 @@ StatusInputListPopup {
     }
     getId: function (modelData) {
         return modelData.unicode
-    }
-    onClicked: function (index) {
-        emojiSuggestions.addEmoji(index)
     }
 
     function openPopup(emojisParam, shortnameParam) {
