@@ -1,6 +1,6 @@
 import NimQml, Tables, json, strutils, strformat
 
-import message_item, message_reaction_item
+import message_item, message_reaction_item, message_transaction_parameters_item
 
 type
   ModelRole {.pure.} = enum
@@ -31,6 +31,7 @@ type
     EditMode
     IsEdited
     Links
+    TransactionParameters
 
 QtObject:
   type
@@ -93,6 +94,7 @@ QtObject:
       ModelRole.EditMode.int: "editMode",
       ModelRole.IsEdited.int: "isEdited",
       ModelRole.Links.int: "links",
+      ModelRole.TransactionParameters.int: "transactionParameters",
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -158,6 +160,17 @@ QtObject:
       result = newQVariant(item.isEdited)
     of ModelRole.Links:
       result = newQVariant(item.links.join(" "))
+    of ModelRole.TransactionParameters:
+      result = newQVariant($(%*{
+        "id": item.transactionParameters.id,
+        "fromAddress": item.transactionParameters.fromAddress,
+        "address": item.transactionParameters.address,
+        "contract": item.transactionParameters.contract,
+        "value": item.transactionParameters.value,
+        "transactionHash": item.transactionParameters.transactionHash,
+        "commandState": item.transactionParameters.commandState,
+        "signature": item.transactionParameters.signature
+      }))
 
   proc findIndexForMessageId*(self: Model, messageId: string): int =
     for i in 0 ..< self.items.len:

@@ -98,3 +98,21 @@ QtObject:
     self.items = items
     self.endResetModel()
     self.countChanged()
+
+  proc getAccountNameByAddress*(self: Model, address: string): string =
+    for account in self.items:
+      if(account.getAddress() == address):
+        return account.getName()
+    return ""
+
+  proc getAccountIconColorByAddress*(self: Model, address: string): string =
+    for account in self.items:
+      if(account.getAddress() == address):
+        return account.getColor()
+    return ""
+
+  proc getAccountAssetsByAddress*(self: Model, address: string): QVariant =
+    for account in self.items:
+      if(account.getAddress() == address):
+        return newQVariant(account.getAssets())
+    return nil

@@ -6,6 +6,9 @@ import ../../../app/core/eventemitter
 import ../../../app/global/global_singleton
 import ../../../backend/messages as status_go
 import ../contacts/service as contact_service
+import ../eth/service as eth_service
+import ../token/service as token_service
+import ../wallet_account/service as wallet_account_service
 import ./dto/message as message_dto
 import ./dto/pinned_message as pinned_msg_dto
 import ./dto/reaction as reaction_dto
@@ -14,6 +17,11 @@ import ./dto/pinned_message_update as pinned_msg_update_dto
 import ./dto/removed_message as removed_msg_dto
 
 import ../../common/message as message_common
+import ../../common/conversion as service_conversion
+
+from ../../common/account_constants import ZERO_ADDRESS
+
+import web3/conversions
 
 export message_dto
 export pinned_msg_dto
@@ -96,6 +104,9 @@ QtObject:
     events: EventEmitter
     threadpool: ThreadPool
     contactService: contact_service.Service
+    ethService: eth_service.ServiceInterface
+    tokenService: token_service.Service
+    walletAccountService: wallet_account_service.ServiceInterface
     msgCursor: Table[string, string]
     lastUsedMsgCursor: Table[string, string]
     pinnedMsgCursor: Table[string, string]
@@ -105,12 +116,15 @@ QtObject:
   proc delete*(self: Service) =
     self.QObject.delete
 
-  proc newService*(events: EventEmitter, threadpool: ThreadPool, contactService: contact_service.Service): Service =
+  proc newService*(events: EventEmitter, threadpool: ThreadPool, contactService: contact_service.Service, ethService: eth_service.ServiceInterface, tokenService: token_service.Service, walletAccountService: wallet_account_service.ServiceInterface): Service =
     new(result, delete)
     result.QObject.setup
     result.events = events
     result.threadpool = threadpool
     result.contactService = contactService
+    result.ethService = ethService
+    result.tokenService = tokenService
+    result.walletAccountService = walletAccountService
     result.msgCursor = initTable[string, string]()
     result.lastUsedMsgCursor = initTable[string, string]()
     result.pinnedMsgCursor = initTable[string, string]()
@@ -229,6 +243,16 @@ QtObject:
       self.pinnedMsgCursor[chatId] = ""
 
     return self.pinnedMsgCursor[chatId]
+
+
+  proc getTransactionDetails*(self: Service, message: MessageDto): (string, string) =
+    let allContracts = self.ethService.allErc20Contracts()
+    let ethereum = newErc20Contract("Ethereum", Mainnet, parseAddress(ZERO_ADDRESS), "ETH", 18, true)
+    let tokenContract = if message.transactionParameters.contract == "" : ethereum else: self.ethService.findByAddress(allContracts, parseAddress(message.transactionParameters.contract))
+    let tokenContractStr = if tokenContract == nil: "{}" else: $(Json.encode(tokenContract))
+    var weiStr = if tokenContract == nil: "0" else: service_conversion.wei2Eth(message.transactionParameters.value, tokenContract.decimals)
+    weiStr.trimZeros()
+    return (tokenContractStr, weiStr)
 
   proc onAsyncLoadMoreMessagesForChat*(self: Service, response: string) {.slot.} =
     let responseObj = response.parseJson
@@ -688,3 +712,6 @@ proc switchTo*(self: Service, sectionId: string, chatId: string, messageId: stri
   ## section and/or chat and/or message
   let data = ActiveSectionChatArgs(sectionId: sectionId, chatId: chatId, messageId: messageId)
   self.events.emit(SIGNAL_MAKE_SECTION_CHAT_ACTIVE, data)
+
+proc getWalletAccounts*(self: Service): seq[wallet_account_service.WalletAccountDto] =
+  return self.walletAccountService.getWalletAccounts()

@@ -10,6 +10,7 @@ QtObject:
       delegate: io_interface.AccessInterface
       model: Model
       modelVariant: QVariant
+      tmpAddress: string
 
   proc delete*(self: View) =
     self.model.delete
@@ -52,3 +53,15 @@ QtObject:
 
   proc deleteAccount*(self: View, address: string) {.slot.} =
     self.delegate.deleteAccount(address)
+
+  proc getAccountNameByAddress*(self: View, address: string): string {.slot.} =
+    return self.model.getAccountNameByAddress(address)
+
+  proc getAccountIconColorByAddress*(self: View, address: string): string {.slot.} =
+    return self.model.getAccountIconColorByAddress(address)
+
+  proc setAddressForAssets*(self: View, address: string) {.slot.} =
+    self.tmpAddress = address
+
+  proc getAccountAssetsByAddress*(self: View): QVariant {.slot.} =
+    return self.model.getAccountAssetsByAddress(self.tmpAddress)

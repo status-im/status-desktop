@@ -28,45 +28,58 @@ StatusModal {
     property var selectedAsset
     property var selectedAmount
     property var selectedFiatAmount
+    property var selectedType: RecipientSelector.Type.Address
     property bool outgoing: true
     property string msgId: ""
     property string trxData: ""
 
     property alias transactionSigner: transactionSigner
 
-    property var sendTransaction: function(selectedGasLimit, selectedGasPrice, selectedTipLimit, selectedOveralLimit, enteredPassword) {
-        // Not Refactored Yet
-//        let success = false
-//        if(root.selectedAsset.address == Constants.zeroAddress){
-//            success = root.store.walletModelInst.transactionsView.transferEth(
-//                                                selectFromAccount.selectedAccount.address,
-//                                                 selectRecipient.selectedRecipient.address,
-//                                                 root.selectedAmount,
-//                                                 selectedGasLimit,
-//                                                 gasSelector.eip1599Enabled ? "" : gasSelector.selectedGasPrice,
-//                                                 gasSelector.selectedTipLimit,
-//                                                 gasSelector.selectedOverallLimit,
-//                                                 enteredPassword,
-//                                                 stack.uuid)
-//        } else {
-//            success = root.store.walletModelInst.transactionsView.transferTokens(
-//                                                 selectFromAccount.selectedAccount.address,
-//                                                 selectRecipient.selectedRecipient.address,
-//                                                 root.selectedAsset.address,
-//                                                 root.selectedAmount,
-//                                                 selectedGasLimit,
-//                                                 gasSelector.eip1599Enabled ? "" : gasSelector.selectedGasPrice,
-//                                                 gasSelector.selectedTipLimit,
-//                                                 gasSelector.selectedOverallLimit,
-//                                                 enteredPassword,
-//                                                 stack.uuid)
-//        }
+    property var sendTransaction: function() {
+        stack.currentGroup.isPending = true
+        let success = false
+        if(root.selectedAsset.address === "" || root.selectedAsset.address === Constants.zeroAddress){
+            success = root.store.transferEth(
+                        selectFromAccount.selectedAccount.address,
+                        selectRecipient.selectedRecipient.address,
+                        root.selectedAmount,
+                        gasSelector.selectedGasLimit,
+                        gasSelector.eip1599Enabled ? "" : gasSelector.selectedGasPrice,
+                        gasSelector.selectedTipLimit,
+                        gasSelector.selectedOverallLimit,
+                        transactionSigner.enteredPassword,
+                        stack.uuid)
+        } else {
+            success = root.store.transferTokens(
+                        selectFromAccount.selectedAccount.address,
+                        selectRecipient.selectedRecipient.address,
+                        root.selectedAsset.address,
+                        root.selectedAmount,
+                        gasSelector.selectedGasLimit,
+                        gasSelector.eip1599Enabled ? "" : gasSelector.selectedGasPrice,
+                        gasSelector.selectedTipLimit,
+                        gasSelector.selectedOverallLimit,
+                        transactionSigner.enteredPassword,
+                        stack.uuid)
+        }
 
-//        if(!success){
-//            //% "Invalid transaction parameters"
-//            sendingError.text = qsTrId("invalid-transaction-parameters")
-//            sendingError.open()
-//        }
+        if(!success){
+            //% "Invalid transaction parameters"
+            sendingError.text = qsTrId("invalid-transaction-parameters")
+            sendingError.open()
+        } else {
+            // TODO remove this else once the thread and connection are back
+            stack.currentGroup.isPending = false
+            //% "Transaction pending..."
+            Global.toastMessage.title = qsTrId("ens-transaction-pending")
+            Global.toastMessage.source = Style.svg("loading")
+            Global.toastMessage.iconColor = Style.current.primary
+            Global.toastMessage.iconRotates = true
+            // Refactor this
+            // Global.toastMessage.link = `${walletModel.utilsView.etherscanLink}/${response.result}`
+            Global.toastMessage.open()
+            root.close()
+        }
     }
 
     property MessageDialog sendingError: MessageDialog {
@@ -92,7 +105,7 @@ StatusModal {
             initialItem: groupPreview
             isLastGroup: stack.currentGroup === groupSignTx
             onGroupActivated: {
-                root.title = group.headerText
+                root.header.title = group.headerText
                 btnNext.text = group.footerText
             }
             TransactionFormGroup {
@@ -117,8 +130,7 @@ StatusModal {
                 }
                 StatusAccountSelector {
                     id: selectFromAccount
-                    // Not Refactored Yet
-//                    accounts: root.store.walletModelInst.accountsView.accounts
+                    accounts: root.store.accounts
                     currency: root.store.currentCurrency
                     width: stack.width
                     selectedAccount: root.selectedAccount
@@ -131,10 +143,10 @@ StatusModal {
                 RecipientSelector {
                     id: selectRecipient
                     visible: false
-                    // Not Refactored Yet
-//                    accounts: root.store.walletModelInst.accountsView.accounts
+                    accounts: root.store.accounts
                     contactsStore: root.contactsStore
                     selectedRecipient: root.selectedRecipient
+                    selectedType: root.selectedType
                     readOnly: true
                 }
             }
@@ -334,44 +346,31 @@ StatusModal {
         TransactionSettingsConfirmationPopup { }
     }
 
-    // Not Refactored Yet
-//    Connections {
-//        target: root.store.walletModelInst.transactionsView
-//        onTransactionWasSent: {
-//            try {
-//                let response = JSON.parse(txResult)
-//                if (response.uuid !== stack.uuid)
-//                    return
+    Connections {
+        target: root.store.walletSectionTransactionsInst
+        onTransactionSent: {
+            try {
+                let response = JSON.parse(txResult)
+                if (response.uuid !== stack.uuid)
+                    return
 
-//                let transactionId = response.result
+                let transactionId = response.result
 
-//                if (!response.success) {
-//                    if (Utils.isInvalidPasswordMessage(transactionId)){
-//                        //% "Wrong password"
-//                        transactionSigner.validationError = qsTrId("wrong-password")
-//                        return
-//                    }
-//                    sendingError.text = transactionId
-//                    return sendingError.open()
-//                }
-
-//                // Not Refactored Yet
-//                root.store.chatsModelInst.transactions.acceptRequestTransaction(transactionId, msgId,
-//                                                        root.store.profileModelInst.profile.pubKey + transactionId.substr(2))
-
-//                //% "Transaction pending..."
-//                Global.toastMessage.title = qsTrId("ens-transaction-pending")
-//                Global.toastMessage.source = Style.svg("loading")
-//                Global.toastMessage.iconColor = Style.current.primary
-//                Global.toastMessage.iconRotates = true
-//                Global.toastMessage.link = `${root.store.walletModelInst.utilsView.etherscanLink}/${transactionId}`
-//                Global.toastMessage.open()
-
-//                root.close()
-//            } catch (e) {
-//                console.error('Error parsing the response', e)
-//            }
-//        }
-//    }
+                if (!response.success) {
+                    if (Utils.isInvalidPasswordMessage(transactionId)){
+                        //% "Wrong password"
+                        transactionSigner.validationError = qsTrId("wrong-password")
+                        return
+                    }
+                    sendingError.text = transactionId
+                    return sendingError.open()
+                }
+                root.store.acceptRequestTransaction(transactionId, msgId, root.store.getPubkey() + transactionId.substr(2))
+                root.close()
+            } catch (e) {
+                console.error('Error parsing the response', e)
+            }
+        }
+    }
 }
 

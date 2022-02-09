@@ -92,7 +92,6 @@ Item {
         chatContentModule.inputAreaModule.requestAddress(address,
                                                     amount,
                                                     tokenAddress)
-        txModalLoader.close()
     }
     function requestTransaction(address, amount, tokenAddress, tokenDecimals = 18) {
         amount = globalUtils.eth2Wei(amount.toString(), tokenDecimals)
@@ -254,7 +253,8 @@ Item {
                     alias: chatContentModule.chatDetails.name, // Do we need the alias for real or name works?
                     identicon: chatContentModule.chatDetails.icon,
                     name: chatContentModule.chatDetails.name,
-                    type: RecipientSelector.Type.Contact
+                    type: RecipientSelector.Type.Contact,
+                    ensVerified: true
                 }
             }
             selectRecipient.selectedType: RecipientSelector.Type.Contact

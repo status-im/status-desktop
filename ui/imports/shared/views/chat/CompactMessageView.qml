@@ -57,6 +57,8 @@ Item {
     property bool editModeOn: false
     property string linkUrls: ""
 
+    property var transactionParams
+
     signal openStickerPackPopup(string stickerPackId)
     signal addEmoji(bool isProfileClick, bool isSticker, bool isImage , var image, bool emojiOnly, bool hideEmojiPicker)
     signal clickMessage(bool isProfileClick, bool isSticker, bool isImage, var image, bool emojiOnly, bool hideEmojiPicker, bool isReply, bool isRightClickOnImage, string imageSource)
@@ -621,7 +623,8 @@ Item {
                 anchors.topMargin: active ? (chatName.visible ? 4 : 6) : 0
                 sourceComponent: Component {
                     TransactionBubbleView {
-                        //store: rootStore
+                        transactionParams: root.transactionParams
+                        store: root.store
                         contactsStore: root.contactsStore
                     }
                 }

@@ -7,6 +7,7 @@ import ../../../../../../app_service/service/community/service as community_serv
 import ../../../../../../app_service/service/chat/service as chat_service
 import ../../../../../../app_service/service/message/service as message_service
 import ../../../../../../app_service/service/mailservers/service as mailservers_service
+import ../../../../../../app_service/service/wallet_account/service as wallet_account_service
 import ../../../../../../app_service/service/eth/utils as eth_utils
 import ../../../../../core/signals/types
 import ../../../../../core/eventemitter
@@ -234,3 +235,9 @@ method requestMoreMessages*(self: Controller) =
 
 method fillGaps*(self: Controller, messageId: string) =
   self.mailserversService.fillGaps(self.chatId, messageId)
+
+method getTransactionDetails*(self: Controller, message: MessageDto): (string,string) =
+  return self.messageService.getTransactionDetails(message)
+
+method getWalletAccounts*(self: Controller): seq[wallet_account_service.WalletAccountDto] =
+  return self.messageService.getWalletAccounts()

@@ -4,6 +4,7 @@ import ../io_interface as delegate_interface
 import view, controller
 import ../../../shared_models/message_model as pinned_msg_model
 import ../../../shared_models/message_item as pinned_msg_item
+import ../../../shared_models/message_transaction_parameters_item
 import ../../../shared_models/message_reaction_item as pinned_msg_reaction_item
 import ../../../../global/global_singleton
 import ../../../../core/eventemitter
@@ -130,6 +131,15 @@ method getMessagesModule*(self: Module): QVariant =
 method getUsersModule*(self: Module): QVariant =
   return self.usersModule.getModuleAsVariant()
 
+method currentUserWalletContainsAddress(self: Module, address: string): bool =
+  if (address.len == 0):
+    return false
+  let accounts = self.controller.getWalletAccounts()
+  for acc in accounts:
+    if (acc.address == address):
+      return true
+  return false
+
 proc buildPinnedMessageItem(self: Module, messageId: string, actionInitiatedBy: string, item: var pinned_msg_item.Item):
   bool =
   let (m, reactions, err) = self.controller.getMessageDetails(messageId)
@@ -138,6 +148,13 @@ proc buildPinnedMessageItem(self: Module, messageId: string, actionInitiatedBy: 
 
   let contactDetails = self.controller.getContactDetails(m.`from`)
 
+  var transactionContract = m.transactionParameters.contract
+  var transactionValue = m.transactionParameters.value
+  var isCurrentUser = contactDetails.isCurrentUser
+  if(m.contentType.ContentType == ContentType.Transaction):
+    (transactionContract, transactionValue) = self.controller.getTransactionDetails(m)
+    if m.transactionParameters.fromAddress != "":
+      isCurrentUser = self.currentUserWalletContainsAddress(m.transactionParameters.fromAddress)
   item = pinned_msg_item.initItem(
     m.id,
     m.responseTo,
@@ -146,7 +163,7 @@ proc buildPinnedMessageItem(self: Module, messageId: string, actionInitiatedBy: 
     contactDetails.details.localNickname,
     contactDetails.icon,
     contactDetails.isIdenticon,
-    contactDetails.isCurrentUser,
+    isCurrentUser,
     m.outgoingStatus,
     self.controller.getRenderedText(m.parsedText),
     m.image,
@@ -158,6 +175,14 @@ proc buildPinnedMessageItem(self: Module, messageId: string, actionInitiatedBy: 
     self.controller.decodeContentHash(m.sticker.hash),
     m.sticker.pack,
     m.links,
+    initTransactionParametersItem(m.transactionParameters.id,
+      m.transactionParameters.fromAddress,
+      m.transactionParameters.address,
+      transactionContract,
+      transactionValue,
+      m.transactionParameters.transactionHash,
+      m.transactionParameters.commandState,
+      m.transactionParameters.signature)
   )
   item.pinned = true
   item.pinnedBy = actionInitiatedBy

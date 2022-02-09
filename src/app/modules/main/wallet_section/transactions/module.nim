@@ -99,3 +99,7 @@ method transferTokens*(self: Module, from_addr: string, to_addr: string, contrac
     maxFeePerGas: string, password: string, uuid: string): bool =
   result = self.controller.transferTokens(from_addr, to_addr, contractAddress, value, gas, gasPrice,
     maxPriorityFeePerGas, maxFeePerGas, password, uuid)
+
+method transactionWasSent*(self: Module, result: string) =
+  self.view.transactionWasSent(result)
+

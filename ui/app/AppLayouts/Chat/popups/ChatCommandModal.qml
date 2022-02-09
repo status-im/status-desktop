@@ -116,8 +116,8 @@ StatusModal {
                     id: txtAmount
                     selectedAccount: selectFromAccount.selectedAccount
                     currentCurrency: root.store.currentCurrency
+                    getFiatValue: root.store.getFiatValue
                     // Not Refactored Yet
-//                    getFiatValue: root.store.walletModelInst.balanceView.getFiatValue
 //                    getCryptoValue: root.store.walletModelInst.balanceView.getCryptoValue
                     validateBalance: !root.isRequested
                     width: stack.width
@@ -187,10 +187,4 @@ StatusModal {
         }
     ]
 }
-
-/*##^##
-Designer {
-    D{i:0;autoSize:true;height:480;width:640}
-}
-##^##*/
 
