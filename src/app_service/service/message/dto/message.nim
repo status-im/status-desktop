@@ -1,6 +1,6 @@
 {.used.}
 
-import json
+import json, strutils
 
 include ../../../common/json_utils
 
@@ -171,5 +171,12 @@ proc containsContactMentions*(self: MessageDto): bool =
   for pText in self.parsedText:
     for child in pText.children:
       if (child.type == PARSED_TEXT_CHILD_TYPE_MENTION):
+        return true
+  return false
+
+proc isUserWithPkMentioned*(self: MessageDto, publicKey: string): bool =
+  for pText in self.parsedText:
+    for child in pText.children:
+      if (child.type == PARSED_TEXT_CHILD_TYPE_MENTION and child.literal.contains(publicKey)):
         return true
   return false

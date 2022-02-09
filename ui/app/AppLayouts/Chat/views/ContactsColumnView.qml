@@ -461,4 +461,12 @@ Item {
             Global.toastMessage.open()
         }
     }
+
+    Connections {
+        target: root.store.mainModuleInst
+
+        onOpenContactRequestsPopup:{
+            Global.openPopup(contactRequestsPopup)
+        }
+    }
 }

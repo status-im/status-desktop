@@ -150,15 +150,6 @@ StatusWindow {
                 }
             }
         }
-
-        onActiveChanged: {
-            if (applicationWindow.active && currentlyHasANotification) {
-                currentlyHasANotification = false
-                // QML doesn't have a function to hide notifications, but this does the trick
-                systemTray.hide()
-                systemTray.show()
-            }
-        }
     }
 
 	Connections {
@@ -214,8 +205,6 @@ StatusWindow {
     }
 
     signal navigateTo(string path)
-
-    property bool currentlyHasANotification: false
 
     function makeStatusAppActive() {
         applicationWindow.show()

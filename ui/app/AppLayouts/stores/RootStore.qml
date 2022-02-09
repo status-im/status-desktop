@@ -47,7 +47,7 @@ QtObject {
     property var assets: walletSectionAccountTokens.model
 //    property MessageStore messageStore: MessageStore { }
 
-    property real volume: !!localAccountSensitiveSettings ? localAccountSensitiveSettings.volume : 0.0
+    property real volume: !!localAccountSensitiveSettings ? localAccountSensitiveSettings.volume * 0.1 : 0.2
     property bool notificationSoundsEnabled: !!localAccountSensitiveSettings ? localAccountSensitiveSettings.notificationSoundsEnabled : false
 
     property var walletSectionTransactionsInst: walletSectionTransactions

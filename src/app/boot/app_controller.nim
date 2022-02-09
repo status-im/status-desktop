@@ -1,7 +1,6 @@
 import NimQml
 
 import ../../app_service/service/general/service as general_service
-import ../../app_service/service/os_notification/service as os_notification_service
 import ../../app_service/service/eth/service as eth_service
 import ../../app_service/service/keychain/service as keychain_service
 import ../../app_service/service/accounts/service as accounts_service
@@ -35,7 +34,6 @@ import ../../app_service/service/ens/service as ens_service
 import ../modules/startup/module as startup_module
 import ../modules/main/module as main_module
 
-import ../global/local_account_settings
 import ../global/global_singleton
 
 import ../core/[main]
@@ -53,7 +51,6 @@ type
 
     # Services
     generalService: general_service.Service
-    osNotificationService: os_notification_service.Service
     keychainService: keychain_service.Service
     ethService: eth_service.Service
     accountsService: accounts_service.Service
@@ -124,7 +121,6 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result.settingsService = settings_service.newService()
   result.nodeConfigurationService = node_configuration_service.newService(statusFoundation.fleetConfiguration,
   result.settingsService)
-  result.osNotificationService = os_notification_service.newService(statusFoundation.events)
   result.keychainService = keychain_service.newService(statusFoundation.events)
   result.ethService = eth_service.newService()
   result.accountsService = accounts_service.newService(statusFoundation.fleetConfiguration)
@@ -226,7 +222,6 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
 
 proc delete*(self: AppController) =
   singletonInstance.delete
-  self.osNotificationService.delete
   self.keychainService.delete
   self.contactsService.delete
   self.bookmarkService.delete
@@ -279,7 +274,6 @@ proc startupDidLoad*(self: AppController) =
   self.startupModule.startUpUIRaised()
 
 proc mainDidLoad*(self: AppController) =
-  self.statusFoundation.onLoggedIn()
   self.startupModule.moveToAppState()
 
   self.mainModule.checkForStoringPassword()
@@ -346,8 +340,6 @@ proc userLoggedIn*(self: AppController) =
   let importedAccount = self.accountsService.getImportedAccount()
   if(importedAccount.isValid()):
     self.privacyService.removeMnemonic()
-
-  self.osNotificationService.userLoggedIn()
 
 proc buildAndRegisterLocalAccountSensitiveSettings(self: AppController) =
   var pubKey = self.settingsService.getPublicKey()

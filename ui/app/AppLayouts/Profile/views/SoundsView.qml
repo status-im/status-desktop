@@ -45,11 +45,11 @@ Item {
             to: 1.0
             stepSize: 0.1
             onValueChanged: {
-                localAccountSensitiveSettings.volume = volume.value
+                localAccountSensitiveSettings.volume = volume.value * 10
             }
 
             Component.onCompleted: {
-                value = localAccountSensitiveSettings.volume
+                value = localAccountSensitiveSettings.volume * 0.1
             }
         }
     }

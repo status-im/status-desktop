@@ -104,17 +104,6 @@ Item {
                                                     tokenAddress)
     }
 
-    function clickOnNotification() {
-        // So far we're just showing this app as the top most window. Once we decide about the way
-        // how to notify the app what channle should be displayed within the app when user clicks
-        // notificaiton bubble this part should be updated accordingly.
-        //
-        // I removed part of this function which caused app crash.
-        Global.applicationWindow.show()
-        Global.applicationWindow.raise()
-        Global.applicationWindow.requestActivate()
-    }
-
     Timer {
         interval: 60000; // 1 min
         running: true
@@ -335,72 +324,6 @@ Item {
         chatSectionModule: root.chatSectionModule
         messageContextMenu: contextmenu
     }
-
-    Connections {
-        target: systemTray
-        onMessageClicked: function () {
-            clickOnNotification()
-        }
-    }
-
-        // Not Refactored Yet
-//        Connections {
-//            target: root.rootStore.chatsModelInst.messageView
-
-//            onMessageNotificationPushed: function(messageId, communityId, chatId, msg, contentType, chatType, timestamp, identicon, username, hasMention, isAddedContact, channelName) {
-//                if (localAccountSensitiveSettings.notificationSetting == Constants.notifyAllMessages ||
-//                        (localAccountSensitiveSettings.notificationSetting == Constants.notifyJustMentions && hasMention)) {
-//                    if (chatId === root.rootStore.chatsModelInst.channelView.activeChannel.id && applicationWindow.active === true) {
-//                        // Do not show the notif if we are in the channel already and the window is active and focused
-//                        return
-//                    }
-
-//                    root.currentNotificationChatId = chatId
-//                    root.currentNotificationCommunityId = null
-
-//                    let name;
-//                    if (localAccountSensitiveSettings.notificationMessagePreviewSetting === Constants.notificationPreviewAnonymous) {
-//                        name = "Status"
-//                    } else if (chatType === Constants.chatType.publicChat) {
-//                        name = chatId
-//                    } else {
-//                        name = chatType === Constants.chatType.privateGroupChat ? Utils.filterXSS(channelName) : Utils.removeStatusEns(username)
-//                    }
-
-//                    let message;
-//                    if (localAccountSensitiveSettings.notificationMessagePreviewSetting > Constants.notificationPreviewNameOnly) {
-//                        switch(contentType){
-//                            //% "Image"
-//                        case Constants.messageContentType.imageType: message = qsTrId("image"); break
-//                            //% "Sticker"
-//                        case Constants.messageContentType.stickerType: message = qsTrId("sticker"); break
-//                        default: message = msg // don't parse emojis here as it emits HTML
-//                        }
-//                    } else {
-//                        //% "You have a new message"
-//                        message = qsTrId("you-have-a-new-message")
-//                    }
-
-//                    currentlyHasANotification = true
-
-//                    if (Qt.platform.os === "linux") {
-//                        // Linux Notifications are not implemented in Nim/C++ yet
-//                        return systemTray.showMessage(name, message, systemTray.icon.source, 4000)
-//                    }
-
-//                    // Note:
-//                    // Show notification should be moved to the nim side.
-//                    // Left here only cause we don't have a way to deal with translations on the nim side.
-//                    root.rootStore.chatsModelInst.showOSNotification(name,
-//                                                  message,
-//                                                  Constants.osNotificationType.newMessage,
-//                                                  communityId,
-//                                                  chatId,
-//                                                  messageId,
-//                                                  localAccountSensitiveSettings.useOSNotifications)
-//                }
-//            }
-//        }
 
         // Not Refactored Yet
 //        Connections {

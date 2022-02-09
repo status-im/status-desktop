@@ -27,15 +27,6 @@ QtObject {
         readonly property int node: 4
     }
 
-    readonly property QtObject osNotificationType: QtObject{
-        readonly property int newContactRequest: 1
-        readonly property int acceptedContactRequest: 2
-        readonly property int joinCommunityRequest: 3
-        readonly property int acceptedIntoCommunity: 4
-        readonly property int rejectedByCommunity: 5
-        readonly property int newMessage: 6
-    }
-
     readonly property QtObject userStatus: QtObject{
         readonly property int offline: 0
         readonly property int online: 1

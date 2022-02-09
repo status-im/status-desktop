@@ -1,6 +1,7 @@
 import Tables, controller_interface, chronicles
 import io_interface
 
+import ../../../global/app_signals
 import ../../../global/app_sections_config as conf
 import ../../../../app_service/service/contacts/service as contact_service
 import ../../../../app_service/service/chat/service as chat_service
@@ -150,4 +151,7 @@ method resultItemClicked*(self: Controller, itemId: string) =
     info "important: we don't have stored details for a searched result item with id: ", itemId
     return
 
-  self.messageService.switchTo(itemDetails.sectionId, itemDetails.channelId, itemDetails.messageId)
+  let data = ActiveSectionChatArgs(sectionId: itemDetails.sectionId, 
+    chatId: itemDetails.channelId, 
+    messageId: itemDetails.messageId)
+  self.events.emit(SIGNAL_MAKE_SECTION_CHAT_ACTIVE, data)

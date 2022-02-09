@@ -12,6 +12,9 @@ method getChatContentModule*(self: AccessInterface, chatId: string): QVariant {.
 method isCommunity*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method getMySectionId*(self: AccessInterface): string {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method createPublicChat*(self: AccessInterface, chatId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
