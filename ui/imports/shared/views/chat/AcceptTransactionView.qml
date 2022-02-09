@@ -16,10 +16,10 @@ Item {
     property var store
     property var contactsStore
 
-    property var commandParametersObject
     property var token
     property string tokenAmount
     property string fiatValue
+    property var selectedRecipient
     property int state: Constants.addressRequested
 
     Separator {
@@ -80,13 +80,11 @@ Item {
             anchors.fill: parent
             cursorShape: Qt.PointingHandCursor
             onClicked: {
-                // Not Refactored Yet
-//                if (root.state === Constants.addressRequested) {
-//                    root.store.chatsModelInst.transactions.declineAddressRequest(messageId)
-//                } else if (root.state === Constants.transactionRequested) {
-//                    root.store.chatsModelInst.transactions.declineRequest(messageId)
-//                }
-
+                if (root.state === Constants.addressRequested) {
+                    root.store.declineAddressRequest(messageId)
+                } else if (root.state === Constants.transactionRequested) {
+                    root.store.declineRequest(messageId)
+                }
             }
         }
     }
@@ -102,32 +100,19 @@ Item {
     Component {
         id: signTxComponent
         SignTransactionModal {
+            anchors.centerIn: parent
             store: root.store
             contactsStore: root.contactsStore
             msgId: messageId
-            onOpened: {
-                // Not Refactored Yet
-//                root.store.walletModelInst.gasView.getGasPrice()
-            }
-            onClosed: {
-                destroy();
-            }
+            onOpened: root.store.fetchGasPrice()
+            onClosed: destroy()
             onOpenGasEstimateErrorPopup: {
                 gasEstimateErrorPopup.confirmationText = message + qsTrId("--the-transaction-will-probably-fail-");
                 gasEstimateErrorPopup.open();
                 return;
             }
-
             selectedAccount: {}
-            selectedRecipient: {
-                return {
-                    address: commandParametersObject.address,
-                    // Not Refactored Yet
-//                    identicon: root.store.chatsModelInst.channelView.activeChannel.identicon,
-//                    name: root.store.chatsModelInst.channelView.activeChannel.name,
-                    type: RecipientSelector.Type.Contact
-                }
-            }
+            selectedRecipient: root.selectedRecipient
             selectedAsset: token
             selectedAmount: tokenAmount
             selectedFiatAmount: fiatValue
@@ -136,19 +121,12 @@ Item {
 
     SelectAccountModal {
         id: selectAccountModal
-        // Not Refactored Yet
-//        accounts: root.store.walletModelInst.accountsView.accounts
-//        currency: root.store.walletModelInst.balanceView.defaultCurrency
+        anchors.centerIn: parent
+        accounts: root.store.accounts
+        currency: root.store.currentCurrency
         onSelectAndShareAddressButtonClicked: {
-            // Not Refactored Yet
-//            root.store.chatsModelInst.transactions.acceptAddressRequest(messageId, accountSelector.selectedAccount.address)
-//            selectAccountModal.close()
+            root.store.acceptAddressRequest(messageId, accountSelector.selectedAccount.address)
+            selectAccountModal.close()
         }
     }
 }
-
-/*##^##
-Designer {
-    D{i:0;formeditorColor:"#ffffff";formeditorZoom:1.25}
-}
-##^##*/

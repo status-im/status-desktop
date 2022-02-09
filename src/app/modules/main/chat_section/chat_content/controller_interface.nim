@@ -3,6 +3,7 @@ import ../../../../../app_service/service/message/dto/[message, reaction]
 import ../../../../../app_service/service/community/dto/[community]
 import ../../../../../app_service/service/chat/dto/[chat]
 import ../../../../../app_service/service/contacts/service
+import ../../../../../app_service/service/wallet_account/[dto]
 
 type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
@@ -71,4 +72,10 @@ method getRenderedText*(self: AccessInterface, parsedTextArray: seq[ParsedText])
   raise newException(ValueError, "No implementation available")
 
 method decodeContentHash*(self: AccessInterface, hash: string): string {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getTransactionDetails*(self: AccessInterface, message: MessageDto): (string,string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getWalletAccounts*(self: AccessInterface): seq[WalletAccountDto] =
   raise newException(ValueError, "No implementation available")

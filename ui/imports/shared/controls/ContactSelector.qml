@@ -54,7 +54,7 @@ Item {
         if (!selectedContact) {
             return root.isValid
         }
-        let isValidAddress = Utils.isValidAddress(selectedContact.publicKey)
+        let isValidAddress = Utils.isValidAddress(selectedContact.address)
         let isDefaultValue = selectedContact.alias === selectAContact
         let isValid = (selectedContact.ensVerified && isValidAddress) || isPending || isValidAddress
         select.validationError = ""
@@ -147,12 +147,12 @@ Item {
         onResolved: {
             root.isResolvedAddress = true
             var selectedContact = root.selectedContact
-            selectedContact.publicKey = resolvedAddress
+            selectedContact.address = resolvedAddress
             root.selectedContact = selectedContact
         }
         onIsPendingChanged: {
             if (isPending) {
-                root.selectedContact.publicKey = ""
+                root.selectedContact.address = ""
             }
         }
     }
@@ -197,7 +197,7 @@ Item {
                       height: 16
                     }
                     StatusBaseText {
-                        text: currentContact.publicKey
+                        text: currentContact.address
                         width: 85
                         elide: Text.ElideMiddle
                         color: Theme.palette.baseColor1

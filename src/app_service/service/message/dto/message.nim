@@ -36,6 +36,16 @@ type GapParameters* = object
   `from`*: int64
   to*: int64
 
+type TransactionParameters* = object
+  id*: string
+  fromAddress*: string
+  address*: string
+  contract*: string
+  value*: string
+  transactionHash*: string
+  commandState*: int
+  signature*: string
+
 type MessageDto* = object
   id*: string
   whisperTimestamp*: int64
@@ -63,6 +73,7 @@ type MessageDto* = object
   messageType*: int
   links*: seq[string]
   editedAt*: int
+  transactionParameters*: TransactionParameters
 
 proc toParsedText*(jsonObj: JsonNode): ParsedText =
   result = ParsedText()
@@ -94,6 +105,17 @@ proc toGapParameters*(jsonObj: JsonNode): GapParameters =
   result = GapParameters()
   discard jsonObj.getProp("from", result.from)
   discard jsonObj.getProp("to", result.to)
+
+proc toTransactionParameters*(jsonObj: JsonNode): TransactionParameters =
+  result = TransactionParameters()
+  discard jsonObj.getProp("id", result.id)
+  discard jsonObj.getProp("from", result.fromAddress)
+  discard jsonObj.getProp("address", result.address)
+  discard jsonObj.getProp("contract", result.contract)
+  discard jsonObj.getProp("value", result.value)
+  discard jsonObj.getProp("transactionHash", result.transactionHash)
+  discard jsonObj.getProp("commandState", result.commandState)
+  discard jsonObj.getProp("signature", result.signature)
 
 proc toMessageDto*(jsonObj: JsonNode): MessageDto =
   result = MessageDto()
@@ -140,6 +162,10 @@ proc toMessageDto*(jsonObj: JsonNode): MessageDto =
   if(jsonObj.getProp("parsedText", parsedTextArr) and parsedTextArr.kind == JArray):
     for pTextObj in parsedTextArr:
       result.parsedText.add(toParsedText(pTextObj))
+
+  var transactionParametersObj: JsonNode
+  if(jsonObj.getProp("commandParameters", transactionParametersObj)):
+    result.transactionParameters = toTransactionParameters(transactionParametersObj)
 
 proc containsContactMentions*(self: MessageDto): bool =
   for pText in self.parsedText:

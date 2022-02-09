@@ -4,6 +4,7 @@ import ./io_interface, ./view, ./controller
 import ./item as notification_item
 import ../../shared_models/message_item as message_item
 import ../../shared_models/message_item_qobject as message_item_qobject
+import ../../shared_models/message_transaction_parameters_item
 import ../../../global/global_singleton
 import ../../../core/eventemitter
 import ../../../../app_service/service/activity_center/service as activity_center_service
@@ -91,6 +92,7 @@ method convertToItems*[T](
           self.controller.decodeContentHash(n.message.sticker.hash),
           n.message.sticker.pack,
           n.message.links,
+          initTransactionParametersItem("","","","","","",-1,""),
         ))
 
       return notification_item.initItem(

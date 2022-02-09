@@ -2,7 +2,7 @@ import json, strformat
 import ../../../app_service/common/types
 
 export types.ContentType
-import message_reaction_model, message_reaction_item
+import message_reaction_model, message_reaction_item, message_transaction_parameters_item
 
 type
   Item* = ref object
@@ -32,6 +32,7 @@ type
     editMode: bool
     isEdited: bool
     links: seq[string]
+    transactionParameters: TransactionParametersItem
 
 proc initItem*(
     id,
@@ -53,6 +54,7 @@ proc initItem*(
     sticker: string,
     stickerPack: int,
     links: seq[string],
+    transactionParameters: TransactionParametersItem,
     ): Item =
   result = Item()
   result.id = id
@@ -78,6 +80,7 @@ proc initItem*(
   result.editMode = false
   result.isEdited = false
   result.links = links
+  result.transactionParameters = transactionParameters
 
 proc `$`*(self: Item): string =
   result = fmt"""Item(
@@ -99,8 +102,9 @@ proc `$`*(self: Item): string =
     pinnedBy:{$self.pinnedBy},
     messageReactions: [{$self.reactionsModel}],
     editMode:{$self.editMode},
-    isEdited:{$self.isEdited}
-    links:{$self.links}
+    isEdited:{$self.isEdited},
+    links:{$self.links},
+    transactionParameters:{$self.transactionParameters},
     )"""
 
 proc id*(self: Item): string {.inline.} =
@@ -205,6 +209,9 @@ proc removeReaction*(self: Item, emojiId: EmojiId, reactionId: string, didIRemov
 
 proc links*(self: Item): seq[string] {.inline.} =
   self.links
+
+proc transactionParameters*(self: Item): TransactionParametersItem {.inline.} =
+  self.transactionParameters
 
 proc toJsonNode*(self: Item): JsonNode =
   result = %* {

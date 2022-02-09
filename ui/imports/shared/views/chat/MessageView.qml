@@ -41,6 +41,7 @@ Column {
     property var reactionsModel: []
     property string linkUrls: ""
     property bool isInPinnedPopup: false // The pinned popup limits the number of buttons shown
+    property var transactionParams
 
     property int prevMessageIndex: -1
     property var prevMessageAsJsonObj
@@ -359,6 +360,8 @@ Column {
             editModeOn: root.editModeOn
             linkUrls: root.linkUrls
             isInPinnedPopup: root.isInPinnedPopup
+
+            transactionParams: root.transactionParams
 
             onAddEmoji: {
                 root.clickMessage(isProfileClick, isSticker, isImage , image, emojiOnly, hideEmojiPicker)

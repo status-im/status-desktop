@@ -9,6 +9,7 @@ import ../../../../../app_service/service/chat/service as chat_service
 import ../../../../../app_service/service/community/service as community_service
 import ../../../../../app_service/service/message/service as message_service
 import ../../../../../app_service/service/eth/utils as eth_utils
+import ../../../../../app_service/service/wallet_account/service as wallet_account_service
 
 import ../../../../core/signals/types
 import ../../../../core/eventemitter
@@ -180,6 +181,11 @@ method getCurrentFleet*(self: Controller): string =
 method getRenderedText*(self: Controller, parsedTextArray: seq[ParsedText]): string =
   return self.messageService.getRenderedText(parsedTextArray)
 
-
 method decodeContentHash*(self: Controller, hash: string): string =
   return eth_utils.decodeContentHash(hash)
+
+method getTransactionDetails*(self: Controller, message: MessageDto): (string,string) =
+  return self.messageService.getTransactionDetails(message)
+
+method getWalletAccounts*(self: Controller): seq[wallet_account_service.WalletAccountDto] =
+  return self.messageService.getWalletAccounts()

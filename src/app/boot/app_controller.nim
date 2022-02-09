@@ -135,8 +135,6 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result.chatService = chat_service.newService(statusFoundation.events, result.contactsService)
   result.communityService = community_service.newService(statusFoundation.events,
     statusFoundation.threadpool, result.chatService)
-  result.messageService = message_service.newService(statusFoundation.events, statusFoundation.threadpool,
-  result.contactsService)
   result.activityCenterService = activity_center_service.newService(statusFoundation.events,
   statusFoundation.threadpool, result.chatService)
   result.tokenService = token_service.newService(
@@ -147,6 +145,8 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
     statusFoundation.events, result.settingsService, result.accountsService, result.tokenService,
     result.networkService,
   )
+  result.messageService = message_service.newService(statusFoundation.events, statusFoundation.threadpool,
+    result.contactsService, result.ethService, result.tokenService, result.walletAccountService)
   result.transactionService = transaction_service.newService(statusFoundation.events, statusFoundation.threadpool, 
   result.walletAccountService, result.ethService, result.networkService, result.settingsService)
   result.bookmarkService = bookmark_service.newService()

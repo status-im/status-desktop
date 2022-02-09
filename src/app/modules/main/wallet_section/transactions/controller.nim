@@ -61,6 +61,9 @@ method init*(self: Controller) =
     let args = TransactionsLoadedArgs(e)
     self.delegate.setTrxHistoryResult(args.transactions, args.address, args.wasFetchMore)
 
+  self.events.on(SIGNAL_TRANSACTION_SENT) do(e:Args):
+    self.delegate.transactionWasSent(TransactionSentArgs(e).result)
+
 method checkPendingTransactions*(self: Controller) =
   self.transactionService.checkPendingTransactions()
 

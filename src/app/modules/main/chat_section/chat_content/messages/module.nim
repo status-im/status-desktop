@@ -5,6 +5,7 @@ import view, controller
 import ../../../../shared_models/message_model
 import ../../../../shared_models/message_item
 import ../../../../shared_models/message_reaction_item
+import ../../../../shared_models/message_transaction_parameters_item
 import ../../../../../global/global_singleton
 import ../../../../../core/eventemitter
 import ../../../../../../app_service/service/contacts/service as contact_service
@@ -90,6 +91,7 @@ proc createFetchMoreMessagesItem(self: Module): Item =
     sticker = "",
     stickerPack = -1,
     @[],
+    initTransactionParametersItem("","","","","","",-1,""),
   )
 
 proc createChatIdentifierItem(self: Module): Item =
@@ -120,6 +122,7 @@ proc createChatIdentifierItem(self: Module): Item =
     sticker = "",
     stickerPack = -1,
     @[],
+    initTransactionParametersItem("","","","","","",-1,""),
   )
 
 proc checkIfMessageLoadedAndScrollToItIfItIs(self: Module): bool =
@@ -135,6 +138,15 @@ proc checkIfMessageLoadedAndScrollToItIfItIs(self: Module): bool =
       return true
   return false
 
+method currentUserWalletContainsAddress(self: Module, address: string): bool =
+  if (address.len == 0):
+    return false
+  let accounts = self.controller.getWalletAccounts()
+  for acc in accounts:
+    if (acc.address == address):
+      return true
+  return false
+
 method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: seq[ReactionDto],
   pinnedMessages: seq[PinnedMessageDto]) =
   var viewItems: seq[Item]
@@ -144,6 +156,13 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
       let sender = self.controller.getContactDetails(m.`from`)
 
       let renderedMessageText = self.controller.getRenderedText(m.parsedText)
+      var transactionContract = m.transactionParameters.contract
+      var transactionValue = m.transactionParameters.value
+      var isCurrentUser = sender.isCurrentUser
+      if(m.contentType.ContentType == ContentType.Transaction):
+        (transactionContract, transactionValue) = self.controller.getTransactionDetails(m)
+        if m.transactionParameters.fromAddress != "":
+          isCurrentUser = self.currentUserWalletContainsAddress(m.transactionParameters.fromAddress)
       var item = initItem(
         m.id,
         m.responseTo,
@@ -152,7 +171,7 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
         sender.details.localNickname,
         sender.icon,
         sender.isIdenticon,
-        sender.isCurrentUser,
+        isCurrentUser,
         m.outgoingStatus,
         renderedMessageText,
         m.image,
@@ -164,7 +183,15 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
         sticker = self.controller.decodeContentHash(m.sticker.hash),
         m.sticker.pack,
         m.links,
-      )
+        initTransactionParametersItem(m.transactionParameters.id,
+          m.transactionParameters.fromAddress,
+          m.transactionParameters.address,
+          transactionContract,
+          transactionValue,
+          m.transactionParameters.transactionHash,
+          m.transactionParameters.commandState,
+          m.transactionParameters.signature),
+        )
 
       for r in reactions:
         if(r.messageId == m.id):
@@ -207,6 +234,18 @@ method messageAdded*(self: Module, message: MessageDto) =
   let sender = self.controller.getContactDetails(message.`from`)
 
   let renderedMessageText = self.controller.getRenderedText(message.parsedText)
+
+  var transactionContract = message.transactionParameters.contract
+  var transactionValue = message.transactionParameters.value
+  var isCurrentUser = sender.isCurrentUser
+  if message.contentType.ContentType == ContentType.Transaction:
+    (transactionContract, transactionValue) = self.controller.getTransactionDetails(message)
+    if message.transactionParameters.fromAddress != "":
+      isCurrentUser = self.currentUserWalletContainsAddress(message.transactionParameters.fromAddress)
+  # remove a message which has replace parameters filled
+  let index = self.view.model().findIndexForMessageId(message.replace)
+  if(index != -1):
+    self.view.model().removeItem(message.replace)
   var item = initItem(
     message.id,
     message.responseTo,
@@ -215,7 +254,7 @@ method messageAdded*(self: Module, message: MessageDto) =
     sender.details.localNickname,
     sender.icon,
     sender.isIdenticon,
-    sender.isCurrentUser,
+    isCurrentUser,
     message.outgoingStatus,
     renderedMessageText,
     message.image,
@@ -226,7 +265,15 @@ method messageAdded*(self: Module, message: MessageDto) =
     message.messageType,
     sticker = self.controller.decodeContentHash(message.sticker.hash),
     message.sticker.pack,
-    message.links
+    message.links,
+    initTransactionParametersItem(message.transactionParameters.id,
+                    message.transactionParameters.fromAddress,
+                    message.transactionParameters.address,
+                    transactionContract,
+                    transactionValue,
+                    message.transactionParameters.transactionHash,
+                    message.transactionParameters.commandState,
+                    message.transactionParameters.signature),
   )
 
   self.view.model().insertItemBasedOnTimestamp(item)

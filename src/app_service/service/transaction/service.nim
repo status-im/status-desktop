@@ -29,6 +29,7 @@ include ../../common/json_utils
 
 # Signals which may be emitted by this service:
 const SIGNAL_TRANSACTIONS_LOADED* = "transactionsLoaded"
+const SIGNAL_TRANSACTION_SENT* = "transactionSent"
 
 type
   TransactionMinedArgs* = ref object of Args
@@ -42,6 +43,10 @@ type
     transactions*: seq[TransactionDto]
     address*: string
     wasFetchMore*: bool
+
+type
+  TransactionSentArgs* = ref object of Args
+    result*: string
 
 QtObject:
   type Service* = ref object of QObject
@@ -275,6 +280,9 @@ QtObject:
       if response.error != nil:
         raise newException(Exception, response.error.message)
 
+      let output = %* { "result": %response.result.getStr,  "success": %(response.error == nil), "uuid": %uuid }
+      self.events.emit(SIGNAL_TRANSACTION_SENT, TransactionSentArgs(result: $output))
+
       self.trackPendingTransaction(response.result.getStr, from_addr, to_addr,
         $PendingTransactionTypeDto.WalletTransfer, data = "")
     except Exception as e:
@@ -313,6 +321,9 @@ QtObject:
         value: conversion.eth2Wei(parseFloat(value), contract.decimals))
       let transferMethod = contract.getMethod("transfer")
       let response = transferMethod.send(tx, transfer, password, success)
+
+      let output = %* { "result": %response,  "success": %success, "uuid": %uuid }
+      self.events.emit(SIGNAL_TRANSACTION_SENT, TransactionSentArgs(result: $output))
 
       self.trackPendingTransaction(response, from_addr, to_addr,
         $PendingTransactionTypeDto.WalletTransfer, data = "")

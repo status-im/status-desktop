@@ -161,7 +161,7 @@ Item {
                     }
                     PropertyChanges {
                         target: idtToContact
-                        source: root.toAccount.identicon
+                        image.source: root.toAccount.identicon
                         visible: true
                     }
                     PropertyChanges {
@@ -263,6 +263,7 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
                 image.width: 32
                 image.height: 32
+                image.isIdenticon: true
             }
             SVGImage {
                 id: toInvalid

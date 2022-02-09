@@ -71,9 +71,15 @@ QtObject {
 
     property var accounts: walletSectionAccounts.model
     property var currentAccount: walletSectionCurrent
-    property var currentCurrency: walletSection.currentCurrency
+
+    property string currentCurrency: walletSection.currentCurrency
+    property string signingPhrase: walletSection.signingPhrase
+
+    property string gasPrice: profileSectionModule.ensUsernamesModule.gasPrice
 
     property ListModel addToGroupContacts: ListModel {}
+
+    property var walletSectionTransactionsInst: walletSectionTransactions
 
     function reCalculateAddToGroupContacts(channel) {
         const contacts = getContactListObject()
@@ -354,5 +360,64 @@ QtObject {
             width: 0,
             callback: result.callback
         }
+    }
+
+    function getPubkey() {
+        return userProfile.getPubKey()
+    }
+
+    function getFiatValue(balance, cryptoSymbo, fiatSymbol) {
+        return profileSectionModule.ensUsernamesModule.getFiatValue(balance, cryptoSymbo, fiatSymbol)
+    }
+
+    function acceptRequestTransaction(transactionHash, messageId, signature) {
+        return currentChatContentModule().inputAreaModule.acceptRequestTransaction(transactionHash, messageId, signature)
+    }
+
+    function acceptAddressRequest(messageId, address) {
+        currentChatContentModule().inputAreaModule.acceptAddressRequest(messageId, address)
+    }
+
+    function declineAddressRequest(messageId) {
+        currentChatContentModule().inputAreaModule.declineAddressRequest(messageId)
+    }
+
+    function declineRequest(messageId) {
+        currentChatContentModule().inputAreaModule.declineRequest(messageId)
+    }
+
+    function getGasEthValue(gweiValue, gasLimit) {
+        return profileSectionModule.ensUsernamesModule.getGasEthValue(gweiValue, gasLimit)
+    }
+
+    function estimateGas(from_addr, to, assetAddress, value, data) {
+        return walletSectionTransactions.estimateGas(from_addr, to, assetAddress, value, data)
+    }
+
+    function transferEth(from, to, amount, gasLimit, gasPrice, tipLimit, overallLimit, password, uuid) {
+        return walletSectionTransactions.transferEth(from, to, amount, gasLimit, gasPrice, tipLimit,
+                                                     overallLimit, password, uuid);
+    }
+
+    function transferTokens(from, to, address, amount, gasLimit, gasPrice, tipLimit, overallLimit, password, uuid) {
+        return walletSectionTransactions.transferTokens(from, to, address, amount, gasLimit,
+                                                        gasPrice, tipLimit, overallLimit, password, uuid);
+    }
+
+    function getAccountNameByAddress(address) {
+        return walletSectionAccounts.getAccountNameByAddress(address)
+    }
+
+    function getAccountIconColorByAddress(address) {
+        return walletSectionAccounts.getAccountIconColorByAddress(address)
+    }
+
+    function getAccountAssetsByAddress(address) {
+        walletSectionAccounts.setAddressForAssets(address)
+        return walletSectionAccounts.getAccountAssetsByAddress()
+    }
+
+    function fetchGasPrice() {
+        profileSectionModule.ensUsernamesModule.fetchGasPrice()
     }
 }

@@ -107,6 +107,11 @@ QtObject:
     result = self.delegate.estimateGas(from_addr, to, assetAddress, value, data)
     result = self.delegate.estimateGas(from_addr, to, assetAddress, value, data)
 
+  proc transactionSent*(self: View, txResult: string) {.signal.}
+
+  proc transactionWasSent*(self: View,txResult: string) {.slot} =
+    self.transactionSent(txResult)
+
   proc transferEth*(self: View, from_addr: string, to_addr: string, value: string, gas: string,
       gasPrice: string, maxPriorityFeePerGas: string, maxFeePerGas: string, password: string,
       uuid: string): bool {.slot.} =

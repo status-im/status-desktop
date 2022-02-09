@@ -2,6 +2,7 @@ import ../../../../../../app_service/service/contacts/dto/[contacts, contact_det
 import ../../../../../../app_service/service/community/dto/[community]
 import ../../../../../../app_service/service/chat/dto/[chat]
 import ../../../../../../app_service/service/message/dto/[message, reaction]
+import ../../../../../../app_service/service/wallet_account/[dto]
 
 type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
@@ -94,4 +95,10 @@ method requestMoreMessages*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method fillGaps*(self: AccessInterface, messageId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getTransactionDetails*(self: AccessInterface, message: MessageDto): (string,string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getWalletAccounts*(self: AccessInterface): seq[WalletAccountDto] =
   raise newException(ValueError, "No implementation available")

@@ -5,6 +5,7 @@ import shared.panels 1.0
 import shared.popups 1.0
 import shared.views.chat 1.0
 import shared.controls.chat 1.0
+import shared.controls 1.0
 
 Item {
     id: root
@@ -14,12 +15,14 @@ Item {
     property var store
     property var contactsStore
 
-    property var commandParametersObject: {
+    property var transactionParams
+
+    property var transactionParamsObject: {
         try {
-            return JSON.parse(commandParameters)
+            return JSON.parse(transactionParams)
         } catch (e) {
             console.error('Error parsing command parameters')
-            console.error('JSON:', commandParameters)
+            console.error('JSON:', transactionParams)
             console.error('Error:', e)
             return {
                 id: "",
@@ -34,28 +37,46 @@ Item {
         }
     }
 
-    property var token: JSON.parse(commandParametersObject.contract) // TODO: handle {}
-    property string tokenAmount: commandParametersObject.value
+    property var token:{
+        try {
+            return JSON.parse(transactionParamsObject.contract)
+        } catch (e) {
+            console.error('Error parsing command parameters')
+            console.error('JSON:', transactionParamsObject.contract)
+            console.error('Error:', e)
+            return ""
+        }
+    }
+
+    property var selectedRecipient: {
+        return {
+            address: transactionParamsObject.address,
+            identicon: senderIcon,
+            name: senderDisplayName,
+            type: RecipientSelector.Type.Contact,
+            alias: senderDisplayName
+        }
+    }
+
+    property string tokenAmount: transactionParamsObject.value
     property string tokenSymbol: token.symbol || ""
     property string fiatValue: {
         if (!tokenAmount || !token.symbol) {
             return "0"
         }
-        // Not Refactored Yet
-//        var defaultFiatSymbol = root.store.walletModelInst.balanceView.defaultCurrency
-//        return root.store.walletModelInst.balanceView.getFiatValue(tokenAmount, token.symbol, defaultFiatSymbol) + " " + defaultFiatSymbol.toUpperCase()
-        return "0"
+        var defaultFiatSymbol = root.store.currentCurrency
+        return root.store.getFiatValue(tokenAmount, token.symbol, defaultFiatSymbol) + " " + defaultFiatSymbol.toUpperCase()
     }
-    property int state: commandParametersObject.commandState
+    property int state: transactionParamsObject.commandState
 
     // Any transaction where isCurrentUser is true is actually outgoing transaction.
     property bool outgoing: isCurrentUser
 
     property int innerMargin: 12
-    property bool isError: commandParametersObject.contract === "{}"
+    property bool isError: transactionParamsObject.contract === "{}"
     onTokenSymbolChanged: {
         if (!!tokenSymbol) {
-            tokenImage.source = `../../../../img/tokens/${root.tokenSymbol}.png`
+            tokenImage.source = Style.png("tokens/"+root.tokenSymbol)
         }
     }
 
@@ -189,7 +210,7 @@ Item {
                 token: root.token
                 fiatValue: root.fiatValue
                 tokenAmount: root.tokenAmount
-                commandParametersObject: root.commandParametersObject
+                selectedRecipient: root.selectedRecipient
             }
         }
 
@@ -197,31 +218,18 @@ Item {
             id: signAndSendComponent
 
             SendTransactionButton {
-                // outgoing: root.outgoing
-                // Not Refactored Yet
-//                acc: root.store.walletModelInst.accountsView.focusedAccount
                 selectedAsset: token
                 selectedAmount: tokenAmount
                 selectedFiatAmount: fiatValue
-                fromAddress: commandParametersObject.fromAddress
-                selectedRecipient: {
-                    return {
-                        address: commandParametersObject.address,
-                        // Not Refactored Yet
-//                        identicon: root.store.chatsModelInst.channelView.activeChannel.identicon,
-//                        name: root.store.chatsModelInst.channelView.activeChannel.name,
-                        type: RecipientSelector.Type.Contact
-                    }
-                }
+                fromAddress: transactionParamsObject.fromAddress
+                selectedRecipient: root.selectedRecipient
                 onSendTransaction: {
-                    // Not Refactored Yet
-//                    root.store.walletModelInst.accountsView.setFocusedAccountByAddress(fromAddress);
-//                    Global.openPopup(signTxComponent, {selectedAccount: {
-//                                      name: acc.name,
-//                                      address: fromAddress,
-//                                      iconColor: acc.iconColor,
-//                                      assets: acc.assets
-//                                  }})
+                    Global.openPopup(signTxComponent, {selectedAccount: {
+                                      name: root.store.getAccountNameByAddress(fromAddress),
+                                      address: fromAddress,
+                                      color: root.store.getAccountIconColorByAddress(fromAddress),
+                                      assets: root.store.getAccountAssetsByAddress(fromAddress)
+                                  }})
                 }
             }
         }
@@ -229,19 +237,17 @@ Item {
         Component {
             id: signTxComponent
             SignTransactionModal {
+                anchors.centerIn: parent
                 store: root.store
                 contactsStore: root.contactsStore
-                selectedAsset: root.selectedAsset
-                selectedAmount: root.selectedAmount
+                selectedAsset: root.token
+                selectedAmount: root.tokenAmount
                 selectedRecipient: root.selectedRecipient
-                selectedFiatAmount: root.selectedFiatAmount
-                onOpened: {
-                    // Not Refactored Yet
-//                    root.store.walletModelInst.gasView.getGasPrice();
-                }
-                onClosed: {
-                    destroy();
-                }
+                selectedFiatAmount: root.fiatValue
+                selectedType: RecipientSelector.Type.Contact
+                onOpened: root.store.fetchGasPrice()
+                onClosed: destroy()
+                msgId: messageId
             }
         }
 
