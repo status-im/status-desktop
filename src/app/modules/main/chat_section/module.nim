@@ -342,6 +342,13 @@ method getChatContentModule*(self: Module, chatId: string): QVariant =
 
   return self.chatContentModules[chatId].getModuleAsVariant()
 
+proc updateParentNotifications(self: Module) =
+  var (sectionHasUnreadMessages, sectionNotificationCount) = self.view.chatsModel().getAllNotifications()
+  if(not self.controller.isCommunity()):
+    sectionNotificationCount += self.view.contactRequestsModel().getCount()
+    sectionHasUnreadMessages = sectionHasUnreadMessages or sectionNotificationCount > 0
+  self.delegate.onNotificationsUpdated(self.controller.getMySectionId(), sectionHasUnreadMessages, sectionNotificationCount)
+
 proc updateNotifications(self: Module, chatId: string, unviewedMessagesCount: int, unviewedMentionsCount: int) =
   let hasUnreadMessages = unviewedMessagesCount > 0
   # update model of this module (appropriate chat from the chats list (chats model))
@@ -350,8 +357,7 @@ proc updateNotifications(self: Module, chatId: string, unviewedMessagesCount: in
   if (self.chatContentModules.contains(chatId)):
     self.chatContentModules[chatId].onNotificationsUpdated(hasUnreadMessages, unviewedMentionsCount)
   # update parent module
-  let (sectionHasUnreadMessages, sectionNotificationCount) = self.view.chatsModel().getAllNotifications()
-  self.delegate.onNotificationsUpdated(self.controller.getMySectionId(), sectionHasUnreadMessages, sectionNotificationCount)
+  self.updateParentNotifications()
 
 method onActiveSectionChange*(self: Module, sectionId: string) =
   if(sectionId != self.controller.getMySectionId()):
@@ -558,6 +564,7 @@ method acceptContactRequest*(self: Module, publicKey: string) =
 
 method onContactAccepted*(self: Module, publicKey: string) =
   self.view.contactRequestsModel().removeItemWithPubKey(publicKey)
+  self.updateParentNotifications()
 
 method acceptAllContactRequests*(self: Module) =
   let pubKeys = self.view.contactRequestsModel().getPublicKeys()
@@ -569,6 +576,7 @@ method rejectContactRequest*(self: Module, publicKey: string) =
 
 method onContactRejected*(self: Module, publicKey: string) =
   self.view.contactRequestsModel().removeItemWithPubKey(publicKey)
+  self.updateParentNotifications()
 
 method rejectAllContactRequests*(self: Module) =
   let pubKeys = self.view.contactRequestsModel().getPublicKeys()
@@ -593,6 +601,7 @@ method onContactDetailsUpdated*(self: Module, publicKey: string) =
     not self.view.contactRequestsModel().containsItemWithPubKey(publicKey)):
       let item = self.createItemFromPublicKey(publicKey)
       self.view.contactRequestsModel().addItem(item)
+      self.updateParentNotifications()
 
   let (chatName, chatImage, isIdenticon) = self.controller.getOneToOneChatNameAndImage(publicKey)
   self.view.chatsModel().updateItemDetails(publicKey, chatName, chatImage, isIdenticon)

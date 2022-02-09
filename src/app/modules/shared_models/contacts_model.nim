@@ -27,7 +27,7 @@ QtObject:
     result.setup
 
   proc countChanged(self: Model) {.signal.}
-  proc getCount(self: Model): int {.slot.} =
+  proc getCount*(self: Model): int {.slot.} =
     self.items.len
   QtProperty[int] count:
     read = getCount
