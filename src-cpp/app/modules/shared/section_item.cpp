@@ -4,13 +4,13 @@
 
 namespace Shared::Models
 {
-SectionItem::SectionItem(QString id,
+SectionItem::SectionItem(const QString& id,
                          SectionType sectionType,
-                         QString name,
-                         QString description,
-                         QString image,
-                         QString icon,
-                         QString color,
+                         const QString& name,
+                         const QString& description,
+                         const QString& image,
+                         const QString& icon,
+                         const QString& color,
                          bool active,
                          bool enabled,
                          bool amISectionAdmin,
