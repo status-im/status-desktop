@@ -14,6 +14,7 @@ type
   LookupContactTaskArg = ref object of QObjectTaskArg
     value: string
     uuid: string
+    chainId: int
 
 const lookupContactTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[LookupContactTaskArg](argEncoded)
@@ -28,9 +29,9 @@ const lookupContactTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
       address = ""
   else:
     # TODO refactor those calls to use the new backend and also do it in a signle call
-    pubkey = ens_utils.pubkey(arg.value)
-    address = ens_utils.address(arg.value)
-
+    pubkey = ens_utils.publicKeyOf(arg.chainId, arg.value)
+    address = ens_utils.addressOf(arg.chainid, arg.value)
+  
   let output = %*{
     "id": pubkey,
     "address": address,

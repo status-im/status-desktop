@@ -52,6 +52,8 @@ method viewDidLoad*(self: Module) =
   self.moduleLoaded = true
   self.delegate.transactionsModuleDidLoad()
 
+  self.controller.checkPendingTransactions()
+
 method switchAccount*(self: Module, accountIndex: int) =
   let walletAccount = self.controller.getWalletAccount(accountIndex)
   self.view.switchAccount(walletAccount)

@@ -7,6 +7,7 @@ import ../ens/utils as ens_utils
 from ../../common/account_constants import ZERO_ADDRESS
 
 import ../../../app/core/[main]
+import ../../../app/core/signals/types
 import ../../../app/core/tasks/[qt, threadpool]
 import ../wallet_account/service as wallet_account_service
 import ../eth/service as eth_service
@@ -51,6 +52,10 @@ QtObject:
     networkService: network_service.ServiceInterface
     settingsService: settings_service.ServiceInterface
 
+  # Forward declaration
+  proc checkPendingTransactions*(self: Service)
+  proc checkPendingTransactions*(self: Service, address: string)
+
   proc delete*(self: Service) =
     self.QObject.delete
 
@@ -71,36 +76,92 @@ QtObject:
     result.networkService = networkService
     result.settingsService = settingsService
 
+  proc doConnect*(self: Service) =
+    self.events.on(SignalType.Wallet.event) do(e:Args):
+      var data = WalletSignal(e)
+      if(data.eventType == "newblock"):
+        for acc in data.accounts:
+          self.checkPendingTransactions(acc)
+          # TODO check if these need to be added back
+          # self.status.wallet.updateAccount(acc)
+          # discard self.status.wallet.isEIP1559Enabled(data.blockNumber)
+          # self.status.wallet.setLatestBaseFee(data.baseFeePerGas)
+          # self.view.updateView()
+
   proc init*(self: Service) =
-    discard
+    self.doConnect()
 
   proc checkRecentHistory*(self: Service) =
     try:
       let addresses = self.walletAccountService.getWalletAccounts().map(a => a.address)
       transactions.checkRecentHistory(addresses)
     except Exception as e:
-      let errDesription = e.msg
-      error "error: ", errDesription
+      let errDescription = e.msg
+      error "error: ", errDescription
       return
+  
+  proc getTransactionReceipt*(self: Service, transactionHash: string): JsonNode =
+    try:
+      let response = transactions.getTransactionReceipt(transactionHash)
+      result =  response.result
+    except Exception as e:
+      let errDescription = e.msg
+      error "error getting transaction receipt: ", errDescription
+  
+  proc deletePendingTransaction*(self: Service, transactionHash: string) =
+    try:
+      discard transactions.deletePendingTransaction(transactionHash)
+    except Exception as e:
+      let errDescription = e.msg
+      error "error deleting pending transaction: ", errDescription
+  
+  proc confirmTransactionStatus(self: Service, pendingTransactions: JsonNode) =
+    for trx in pendingTransactions.getElems():
+      let transactionReceipt = self.getTransactionReceipt(trx["hash"].getStr)
+      if transactionReceipt.kind != JNull:
+        self.deletePendingTransaction(trx["hash"].getStr)
+        let ev = TransactionMinedArgs(
+                  data: trx["additionalData"].getStr,
+                  transactionHash: trx["hash"].getStr,
+                  success: transactionReceipt{"status"}.getStr == "0x1",
+                  revertReason: ""
+                )
+        self.events.emit(parseEnum[PendingTransactionTypeDto](trx["type"].getStr).event, ev)
 
-  proc getPendingTransactions*(self: Service): string =
+  proc getPendingTransactions*(self: Service): JsonNode =
     try:
       # this may be improved (need to add some checkings) but due to removing `status-lib` dependencies, channges made
       # in this go are as minimal as possible
       let response = status_wallet.getPendingTransactions()
-      return response.result.getStr
+      return response.result
     except Exception as e:
-      let errDesription = e.msg
-      error "error: ", errDesription
+      let errDescription = e.msg
+      error "error: ", errDescription
       return
 
-  proc trackPendingTransaction*(self: Service, hash: string, fromAddress: string, toAddress: string, trxType: string,
+  proc getPendingOutboundTransactionsByAddress*(self: Service, address: string): JsonNode =
+    try:
+      result = transactions.getPendingOutboundTransactionsByAddress(address).result
+    except Exception as e:
+      let errDescription = e.msg
+      error "error getting pending txs by address: ", errDescription, address
+
+  proc checkPendingTransactions*(self: Service) =
+    # TODO move this to a thread
+    let pendingTransactions = self.getPendingTransactions()
+    if (pendingTransactions.kind == JArray and pendingTransactions.len > 0):
+      self.confirmTransactionStatus(pendingTransactions)
+
+  proc checkPendingTransactions*(self: Service, address: string) =
+    self.confirmTransactionStatus(self.getPendingOutboundTransactionsByAddress(address))
+
+  proc trackPendingTransaction*(self: Service, hash: string, fromAddress: string, toAddress: string, trxType: string, 
     data: string) =
     try:
       discard transactions.trackPendingTransaction(hash, fromAddress, toAddress, trxType, data)
     except Exception as e:
-      let errDesription = e.msg
-      error "error: ", errDesription
+      let errDescription = e.msg
+      error "error: ", errDescription
 
   proc getTransfersByAddress*(self: Service, address: string, toBlock: Uint256, limit: int, loadMore: bool = false): seq[TransactionDto] =
     try:
@@ -112,8 +173,8 @@ QtObject:
         proc(x: JsonNode): TransactionDto = x.toTransactionDto()
       )
     except Exception as e:
-      let errDesription = e.msg
-      error "error: ", errDesription
+      let errDescription = e.msg
+      error "error: ", errDescription
       return
 
   proc setTrxHistoryResult*(self: Service, historyJSON: string) {.slot.} =

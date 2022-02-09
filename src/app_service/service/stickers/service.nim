@@ -252,8 +252,8 @@ QtObject:
 
     let pendingTransactions = self.transactionService.getPendingTransactions()
     var pendingStickerPacks = initHashSet[int]()
-    if (pendingTransactions != ""):
-      for trx in pendingTransactions.parseJson{"result"}.getElems():
+    if (pendingTransactions.kind == JArray and pendingTransactions.len > 0):
+      for trx in pendingTransactions.getElems():
         if trx["type"].getStr == $PendingTransactionTypeDto.BuyStickerPack:
           pendingStickerPacks.incl(trx["additionalData"].getStr.parseInt)
 

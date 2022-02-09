@@ -91,8 +91,9 @@ Item {
                 anchors.right: parent.right
 
                 MouseArea {
+                    enabled: !model.isPending
                     anchors.fill: parent
-                    cursorShape: Qt.PointingHandCursor
+                    cursorShape:enabled ?  Qt.PointingHandCursor : Qt.ArrowCursor
                     onClicked: selectEns(model.ensUsername)
                 }
 

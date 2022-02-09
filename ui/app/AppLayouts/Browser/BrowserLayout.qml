@@ -184,11 +184,11 @@ Rectangle {
                                                           })
         }
         showSendingError: function(message) {
-            _internal.sendingError.text = e.message
+            _internal.sendingError.text = message
             return _internal.sendingError.open()
         }
         showSigningError: function(message) {
-            _internal.signingError.text = e.message
+            _internal.signingError.text = message
             return _internal.signingError.open()
         }
         showToastMessage: function(result) {

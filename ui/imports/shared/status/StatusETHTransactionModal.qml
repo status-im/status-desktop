@@ -18,6 +18,7 @@ ModalPopup {
 
     property var ensUsernamesStore
     property var contactsStore
+    property string ensUsername
 
     readonly property var asset: {"name": "Ethereum", "symbol": "ETH"}
 

@@ -344,7 +344,6 @@ method load*[T](
   self.chatSectionModule.load(events, settingsService, contactsService, chatService, communityService, messageService, gifService, mailserversService)
   for cModule in self.communitySectionsModule.values:
     cModule.load(events, settingsService, contactsService, chatService, communityService, messageService, gifService, mailserversService)
-  self.walletSectionModule.load()
   # self.walletV2SectionModule.load()
   self.browserSectionModule.load()
   # self.nodeManagementSectionModule.load()
@@ -354,6 +353,8 @@ method load*[T](
   self.communitiesModule.load()
   self.appSearchModule.load()
   self.nodeSectionModule.load()
+  # Load wallet last as it triggers events that are listened by other modules
+  self.walletSectionModule.load()
 
   # Set active section on app start
   self.setActiveSection(activeSection)
