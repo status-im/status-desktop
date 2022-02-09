@@ -47,4 +47,4 @@ proc sendContactUpdate*(publicKey, ensName, thumbnail: string): RpcResponse[Json
 
 proc getImageServerURL*(): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* []
-  result = callPrivateRPC("imageServerUrl".prefix, payload)
+  result = callPrivateRPC("imageServerURL".prefix, payload)
