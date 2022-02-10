@@ -257,8 +257,7 @@ StatusModal {
                 TransactionSigner {
                     id: transactionSigner
                     width: stack.width
-                    // Not Refactored Yet
-//                    signingPhrase: root.store.walletModelInst.utilsView.signingPhrase
+                   signingPhrase: root.store.signingPhrase
                 }
             }
         }
