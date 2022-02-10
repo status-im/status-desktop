@@ -229,6 +229,11 @@ StatusWindow {
                             selected: viewLoader.source.toString().includes(title)
                             onClicked: mainPageView.page(title);
                         }
+                        StatusNavigationListItem {
+                            title: "StatusPinInput"
+                            selected: viewLoader.source.toString().includes(title)
+                            onClicked: mainPageView.page(title);
+                        }
                         StatusListSectionHeadline { text: "StatusQ.Components" }
                         StatusNavigationListItem { 
                             title: "StatusAddress"

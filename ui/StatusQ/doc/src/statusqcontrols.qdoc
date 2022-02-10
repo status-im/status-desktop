@@ -33,6 +33,7 @@
        \li \l{StatusIdenticonRing}
        \li \l{StatusInput}
        \li \l{StatusPickerButton}
+       \li \l{StatusPinInput}
        \li \l{StatusProgressBar}
        \li \l{StatusPasswordStrengthIndicator}
        \li \l{StatusSwitchTabButton}
@@ -40,5 +41,7 @@
        \li \l{StatusSelectableText}
        \li \l{StatusWalletColorButton}
        \li \l{StatusWalletColorSelect}
+       \li \l{StatusRegularExpressionValidator}
+       \li \l{StatusIntValidator}
    \endlist
 */

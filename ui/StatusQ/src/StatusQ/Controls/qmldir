@@ -25,6 +25,7 @@ StatusSelect 0.1 StatusSelect.qml
 StatusBaseInput 0.1 StatusBaseInput.qml
 StatusInput 0.1 StatusInput.qml
 StatusPickerButton 0.1 StatusPickerButton.qml
+StatusPinInput 0.1 StatusPinInput.qml
 StatusProgressBar 0.1 StatusProgressBar.qml
 StatusPasswordStrengthIndicator 0.1 StatusPasswordStrengthIndicator.qml
 StatusSwitchTabButton 0.1 StatusSwitchTabButton.qml

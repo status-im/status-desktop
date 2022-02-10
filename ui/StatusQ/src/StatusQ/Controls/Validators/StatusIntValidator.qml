@@ -1,0 +1,57 @@
+import QtQuick 2.14
+
+import StatusQ.Controls 0.1
+
+/*!
+   \qmltype StatusIntValidator
+   \inherits StatusValidator
+   \inqmlmodule StatusQ.Controls.Validators
+   \since StatusQ.Controls.Validators 0.1
+   \brief The StatusIntValidator type provides a validator for integer values.
+
+   The \c StatusIntValidator type provides a validator for integer values.
+
+   It is a wrapper of QML type \l{https://doc.qt.io/qt-5/qml-qtquick-intvalidator.html}{IntValidator}.
+
+   Example of how to use it:
+
+   \qml
+        StatusIntValidator {
+            bottom: 0
+            top: 125
+            errorMessage: qsTr("This is an invalid numeric value")
+        }
+   \endqml
+
+   For a list of components available see StatusQ.
+*/
+StatusValidator {
+    id: root
+
+    /*!
+       \qmlproperty string StatusIntValidator::bottom
+       This property holds the validator's lowest acceptable value. By default, this property's value is derived from the lowest signed integer available (typically -2147483647).
+    */
+    property int bottom
+
+    /*!
+       \qmlproperty string StatusIntValidator::locale
+       This property holds the name of the locale used to interpret the number.
+    */
+    property string locale
+
+    /*!
+       \qmlproperty string StatusIntValidator::top
+       This property holds the validator's highest acceptable value. By default, this property's value is derived from the highest signed integer available (typically 2147483647).
+    */
+    property int top
+
+    name: "intValidator"
+    errorMessage: "Please enter a valid numeric value."
+    validatorObj: IntValidator { bottom: root.bottom; locale: root.locale; top: root.top }
+
+    validate: function (t) {
+        // Basic validation management
+        return root.validatorObj.validate() === IntValidator.Acceptable
+    }
+}

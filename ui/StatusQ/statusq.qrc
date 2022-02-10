@@ -326,5 +326,8 @@
         <file>src/StatusQ/Components/StatusContactVerificationIcons.qml</file>
         <file>src/StatusQ/Controls/StatusIdenticonRing.qml</file>
         <file>src/StatusQ/Core/StatusIdenticonRingSettings.qml</file>
+        <file>src/StatusQ/Controls/StatusPinInput.qml</file>
+        <file>src/StatusQ/Controls/Validators/StatusRegularExpressionValidator.qml</file>
+        <file>src/StatusQ/Controls/Validators/StatusIntValidator.qml</file>
     </qresource>
 </RCC>

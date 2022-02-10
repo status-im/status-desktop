@@ -4,7 +4,9 @@ StatusAddressValidator 0.1 StatusAddressValidator.qml
 StatusAddressOrEnsValidator 0.1 StatusAddressOrEnsValidator.qml
 StatusAsyncValidator 0.1 StatusAsyncValidator.qml
 StatusAsyncEnsValidator 0.1 StatusAsyncEnsValidator.qml
+StatusIntValidator 0.1 StatusIntValidator.qml
 StatusMinLengthValidator 0.1 StatusMinLengthValidator.qml
 StatusMaxLengthValidator 0.1 StatusMaxLengthValidator.qml
+StatusRegularExpressionValidator 0.1 StatusRegularExpressionValidator.qml
 StatusUrlValidator 0.1 StatusUrlValidator.qml
 StatusValidator 0.1 StatusValidator.qml
