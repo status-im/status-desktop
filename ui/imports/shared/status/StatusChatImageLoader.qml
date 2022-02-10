@@ -18,8 +18,8 @@ Item {
     property bool allCornersRounded: false
 
     id: imageContainer
-    width: loadingImage.visible ? loadingImage.width : imageMessage.width
-    height: loadingImage.visible ? loadingImage.height : imageMessage.paintedHeight
+    width: loadingImageLoader.active ? loadingImageLoader.width : imageMessage.width
+    height: loadingImageLoader.active ? loadingImageLoader.height : imageMessage.paintedHeight
 
     Connections {
         target: Global.applicationWindow
@@ -88,27 +88,30 @@ Item {
         }
     }
 
-    Rectangle {
-        id: loadingImage
-        visible: imageMessage.status === Image.Loading
-                 || imageMessage.status === Image.Error
-        width: parent.width
+    Loader {
+        id: loadingImageLoader
+        active: imageMessage.status === Image.Loading
+                    || imageMessage.status === Image.Error
+        width: 300
         height: width
-        border.width: 1
-        border.color: Style.current.border
-        radius: Style.current.radius
+        sourceComponent: Rectangle {
+            anchors.fill: parent
+            border.width: 1
+            border.color: Style.current.border
+            radius: Style.current.radius
 
-        StyledText {
-            anchors.centerIn: parent
-            text: imageMessage.status === Image.Error?
-                      //% "Error loading the image"
-                      qsTrId("error-loading-the-image") :
-                      //% "Loading image..."
-                      qsTrId("loading-image---")
-            color: imageMessage.status === Image.Error?
-                       Style.current.red :
-                       Style.current.textColor
-            font.pixelSize: 15
+            StyledText {
+                anchors.centerIn: parent
+                text: imageMessage.status === Image.Error?
+                        //% "Error loading the image"
+                        qsTrId("error-loading-the-image") :
+                        //% "Loading image..."
+                        qsTrId("loading-image---")
+                color: imageMessage.status === Image.Error?
+                        Style.current.red :
+                        Style.current.textColor
+                font.pixelSize: 15
+            }
         }
     }
 }

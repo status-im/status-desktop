@@ -41,6 +41,7 @@ QtObject {
 //    property var profileModelInst: profileModel
 
     property var contactStore: profileSectionStore.contactsStore
+    property var privacyStore: profileSectionStore.privacyStore
     property bool hasAddedContacts: contactStore.myContactsModel.count > 0
 
     property var assets: walletSectionAccountTokens.model
