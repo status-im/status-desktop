@@ -314,6 +314,10 @@ method login*(self: Service, account: AccountDto, password: string): string =
       "EnsConfig": %* {
         "Enabled": true
       },
+      "WalletConfig": {
+        "Enabled": true,
+        "OpenseaAPIKey": OPENSEA_API_KEY_RESOLVED
+      },
     }
 
     let response = status_account.login(account.name, account.keyUid, hashedPassword, account.identicon, thumbnailImage,
