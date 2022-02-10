@@ -93,13 +93,17 @@ QtObject:
       error "error: ", errDesription
       return
 
-  proc getTokens*(self: Service, useCache: bool = true): seq[TokenDto] =
+  proc getTokens*(self: Service, useCache: bool = true): Table[NetworkDto, seq[TokenDto]] =
     if not useCache:
       self.init()
 
-    for tokens in self.tokens.values:
+    return self.tokens
+
+  proc getVisibleTokens*(self: Service): seq[TokenDto] =
+    for tokens in self.getTokens().values:
       for token in tokens:
-        result.add(token)
+        if token.isVisible:
+          result.add(token)
 
   proc addCustomToken*(self: Service, chainId: int, address: string, name: string, symbol: string, decimals: int) =
     # TODO(alaile): use chainId rather than first enabled network

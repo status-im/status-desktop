@@ -185,7 +185,7 @@ var NODE_CONFIG* = %* {
     },
     {
       "chainId": 3,
-      "chainName": "Ropsten",
+      "chainName": "Ethereum Ropsten",
       "rpcUrl": "https://ropsten.infura.io/v3/" & INFURA_TOKEN_RESOLVED,
       "blockExplorerUrl": "https://ropsten.etherscan.io/",
       "iconUrl": "",
@@ -198,7 +198,7 @@ var NODE_CONFIG* = %* {
     },
     {
       "chainId": 4,
-      "chainName": "Rinkeby",
+      "chainName": "Ethereum Rinkeby",
       "rpcUrl": "https://rinkeby.infura.io/v3/" & INFURA_TOKEN_RESOLVED,
       "blockExplorerUrl": "https://rinkeby.etherscan.io/",
       "iconUrl": "",
@@ -211,7 +211,7 @@ var NODE_CONFIG* = %* {
     },
     {
       "chainId": 5,
-      "chainName": "Goerli",
+      "chainName": "Ethereum Goerli",
       "rpcUrl": "http://goerli.blockscout.com/",
       "blockExplorerUrl": "https://goerli.etherscan.io/",
       "iconUrl": "",

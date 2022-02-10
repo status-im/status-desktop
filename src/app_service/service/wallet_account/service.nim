@@ -4,6 +4,7 @@ import web3/[ethtypes, conversions]
 import ../settings/service_interface as settings_service
 import ../accounts/service_interface as accounts_service
 import ../token/service as token_service
+import ../network/service as network_service
 import ../../common/account_constants
 
 import ./service_interface, ./dto
@@ -74,15 +75,14 @@ proc fetchAccounts(): seq[WalletAccountDto] =
     x => x.toWalletAccountDto()
   ).filter(a => not a.isChat)
 
-proc fetchEthBalance(accountAddress: string): float64 =
+proc fetchNativeChainBalance(network: NetworkDto, accountAddress: string): float64 =
   let key = "0x0" & accountAddress
   if balanceCache.hasKey(key):
     return balanceCache[key]
 
-  let ethBalanceResponse = status_go_eth.getEthBalance(accountAddress)
-  result = parsefloat(hex2Balance(ethBalanceResponse.result.getStr, 18))
+  let nativeBalanceResponse = status_go_eth.getNativeChainBalance(network.chainId, accountAddress)
+  result = parsefloat(hex2Balance(nativeBalanceResponse.result.getStr, network.nativeCurrencyDecimals))
   balanceCache[key] = result
-
 
 type AccountSaved = ref object of Args
   account: WalletAccountDto
@@ -103,25 +103,26 @@ type
     settingsService: settings_service.ServiceInterface
     accountsService: accounts_service.ServiceInterface
     tokenService: token_service.Service
+    networkService: network_service.Service
     accounts: OrderedTable[string, WalletAccountDto]
 
 method delete*(self: Service) =
   discard
 
 proc newService*(
-  events: EventEmitter, settingsService: settings_service.ServiceInterface,
+  events: EventEmitter, 
+  settingsService: settings_service.ServiceInterface,
   accountsService: accounts_service.ServiceInterface,
-  tokenService: token_service.Service):
-  Service =
+  tokenService: token_service.Service,
+  networkService: network_service.Service,
+): Service =
   result = Service()
   result.events = events
   result.settingsService = settingsService
   result.accountsService = accountsService
   result.tokenService = tokenService
+  result.networkService = networkService
   result.accounts = initOrderedTable[string, WalletAccountDto]()
-
-method getVisibleTokens(self: Service): seq[TokenDto] =
-  return self.tokenService.getTokens().filter(t => t.isVisible)
 
 method buildTokens(
   self: Service,
@@ -129,20 +130,22 @@ method buildTokens(
   prices: Table[string, float64],
   balances: JsonNode
 ): seq[WalletTokenDto] =
-  let balance = fetchEthBalance(account.address)
-  result = @[WalletTokenDto(
-    name:"Ethereum",
-    address: "0x0000000000000000000000000000000000000000",
-    symbol: "ETH",
-    decimals: 18,
-    hasIcon: true,
-    color: "blue",
-    isCustom: false,
-    balance: balance,
-    currencyBalance: balance * prices["ETH"]
-  )]
+  for network in self.networkService.getEnabledNetworks():
+    let balance = fetchNativeChainBalance(network, account.address)
 
-  for token in self.getVisibleTokens():
+    result.add(WalletTokenDto(
+      name: network.chainName,
+      address: "0x0000000000000000000000000000000000000000",
+      symbol: network.nativeCurrencySymbol,
+      decimals: network.nativeCurrencyDecimals,
+      hasIcon: true,
+      color: "blue",
+      isCustom: false,
+      balance: balance,
+      currencyBalance: balance * prices[network.nativeCurrencySymbol]
+    ))
+
+  for token in self.tokenService.getVisibleTokens():
     let balance = parsefloat(hex2Balance(balances{token.addressAsString()}.getStr, token.decimals))
     result.add(
       WalletTokenDto(
@@ -163,16 +166,20 @@ method getPrice*(self: Service, crypto: string, fiat: string): float64 =
 
 method fetchPrices(self: Service): Table[string, float64] =
   let currency = self.settingsService.getCurrency()
-  var prices = {"ETH": fetchPrice("ETH", currency)}.toTable
-  for token in self.getVisibleTokens():
+  var prices = initTable[string, float64]()
+  for network in self.networkService.getEnabledNetworks():
+    prices[network.nativeCurrencySymbol] = fetchPrice(network.nativeCurrencySymbol, currency)
+
+  for token in self.tokenService.getVisibleTokens():
     prices[token.symbol] = fetchPrice(token.symbol, currency)
 
   return prices
 
 method fetchBalances(self: Service, accounts: seq[string]): JsonNode =
-  let chainId = self.settingsService.getCurrentNetworkId()
-  let tokens = self.getVisibleTokens().map(t => t.addressAsString())
-  return status_go_tokens.getBalances(chainId, accounts, tokens).result
+  let visibleTokens = self.tokenService.getVisibleTokens()
+  let tokens = visibleTokens.map(t => t.addressAsString())
+  let chainIds = visibleTokens.map(t => t.chainId)
+  return status_go_tokens.getBalances(chainIds, accounts, tokens).result
 
 method refreshBalances(self: Service) =
   let prices = self.fetchPrices()
