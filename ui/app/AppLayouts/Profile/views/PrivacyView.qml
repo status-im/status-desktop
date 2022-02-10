@@ -119,7 +119,8 @@ Item {
             id: changePasswordModal
             privacyStore: root.privacyStore
             anchors.centerIn: parent
-            successPopup: successPopup
+
+            onPasswordChanged: successPopup.open()
         }
 
         ChangePasswordSuccessModal {
