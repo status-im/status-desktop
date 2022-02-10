@@ -1027,6 +1027,14 @@ DOS_API void dos_keychainmanager_delete(DosKeychainManager* vptr);
 
 #pragma endregion
 
+#pragma region SoundManager exposed methods
+
+DOS_API void dos_soundmanager_play_sound(const char* soundUrl);
+DOS_API void dos_soundmanager_set_player_volume(int volume);
+DOS_API void dos_soundmanager_stop_player();
+
+#pragma endregion
+
 DOS_API char *dos_to_local_file(const char* fileUrl);
 
 DOS_API char *dos_from_local_file(const char* filePath);
