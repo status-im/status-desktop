@@ -378,6 +378,11 @@ proc dos_keychainmanager_delete_data_async(vptr: DosStatusKeychainManager,
 proc dos_keychainmanager_delete(vptr: DosStatusKeychainManager) 
   {.cdecl, dynlib: dynLibName, importc.}
 
+# DosStatusSoundManager
+proc dos_soundmanager_play_sound(soundUrl: cstring) {.cdecl, dynlib: dynLibName, importc.}
+proc dos_soundmanager_set_player_volume(volume: int) {.cdecl, dynlib: dynLibName, importc.}
+proc dos_soundmanager_stop_player() {.cdecl, dynlib: dynLibName, importc.}
+
 proc dos_to_local_file(fileUrl: cstring): cstring
   {.cdecl, dynlib: dynLibName, importc.}
 
