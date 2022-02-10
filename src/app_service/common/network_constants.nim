@@ -11,6 +11,18 @@ let INFURA_TOKEN_RESOLVED =
   else:
     INFURA_TOKEN
 
+const OPENSEA_API_KEY {.strdefine.} = ""
+# allow runtime override via environment variable; core contributors can set a
+# an opensea API key in this way for local development
+let OPENSEA_API_KEY_ENV = $getEnv("OPENSEA_API_KEY")
+let OPENSEA_API_KEY_RESOLVED* =
+  if OPENSEA_API_KEY_ENV != "":
+    OPENSEA_API_KEY_ENV
+  else:
+    OPENSEA_API_KEY
+
+
+
 const DEFAULT_NETWORK_NAME* = "mainnet_rpc"
 const DEFAULT_NETWORKS_IDS* = @["mainnet_rpc", "testnet_rpc", "rinkeby_rpc", "goerli_rpc", "xdai_rpc", "poa_rpc" ]
 
@@ -164,7 +176,8 @@ var NODE_CONFIG* = %* {
     "LightClient": false
   },
   "WalletConfig": {
-    "Enabled": true
+    "Enabled": true,
+    "OpenseaAPIKey": OPENSEA_API_KEY_RESOLVED
   },
   "EnsConfig": {
     "Enabled": true
