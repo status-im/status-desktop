@@ -1,3 +1,4 @@
+import tables
 import ./controller_interface
 import ./io_interface
 
@@ -35,7 +36,9 @@ method init*(self: Controller) =
     self.delegate.tokenDetailsWereResolved(args.tokenDetails)
 
 method getTokens*(self: Controller): seq[token_service.TokenDto] =
-  return self.tokenService.getTokens()
+  for tokens in self.tokenService.getTokens().values:
+    for token in tokens:
+      result.add(token)
 
 method addCustomToken*(self: Controller, chainId: int, address: string, name: string, symbol: string, decimals: int) =
   self.tokenService.addCustomToken(chainId, address, name, symbol, decimals)

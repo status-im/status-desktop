@@ -71,11 +71,6 @@ method getNetwork*(self: Service, chainId: int): NetworkDto =
     if chainId == network.chainId:
       return network
 
-method getNetwork*(self: Service, chainId: int): NetworkDto =
-  for network in self.getNetworks():
-    if chainId == network.chainId:
-      return network
-
 method getNetwork*(self: Service, networkType: NetworkType): NetworkDto =
   for network in self.getNetworks():
     if networkType.toChainId() == network.chainId:

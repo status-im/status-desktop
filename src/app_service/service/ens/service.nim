@@ -420,10 +420,11 @@ QtObject:
     var decimals = 18
 
     let allTokens = self.tokenService.getTokens()
-    for t in allTokens:
-      if(t.address == sntContract.address):
-        decimals = t.decimals
-        break
+    for tokens in allTokens.values:
+      for t in tokens:
+        if(t.address == sntContract.address):
+          decimals = t.decimals
+          break
 
     result = ens_utils.hex2Token(balance, decimals)
 
