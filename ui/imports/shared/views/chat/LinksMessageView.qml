@@ -46,7 +46,6 @@ Column {
             property int linkWidth: linksRepeater.width
             readonly property string uuid: Utils.uuid()
 
-
             active: true
 
             Connections {
@@ -71,30 +70,31 @@ Column {
                enabled: false
                target: root.messageStore.messageModule
                onLinkPreviewDataWasReceived: {
-                   let response
-                   try {
-                        response = JSON.parse(previewData)
-                   } catch (e) {
-                       console.error(previewData, e)
-                       return
-                   }
-                   if (response.uuid !== linkMessageLoader.uuid) return
-                   linkFetchConnections.enabled = false
+                    let response
+                    try {
+                            response = JSON.parse(previewData)
+                    } catch (e) {
+                        console.error(previewData, e)
+                        return
+                    }
+                    if (response.uuid !== linkMessageLoader.uuid) return
+                    linkFetchConnections.enabled = false
 
-                   if (!response.success) {
-                       console.error("could not get preview data")
-                       return undefined
-                   }
+                    if (!response.success) {
+                        console.error("could not get preview data")
+                        return undefined
+                    }
 
-                   linkData = response.result
+                    linkData = response.result
 
-                   if (linkData.contentType.startsWith("image/")) {
-                       return linkMessageLoader.sourceComponent = unfurledImageComponent
-                   }
-                   if (linkData.site && linkData.title) {
-                       linkData.address = link
-                       return linkMessageLoader.sourceComponent = unfurledLinkComponent
-                   }
+                    linkMessageLoader.height = undefined // Reset height so it's not 0
+                    if (linkData.contentType.startsWith("image/")) {
+                        return linkMessageLoader.sourceComponent = unfurledImageComponent
+                    }
+                    if (linkData.site && linkData.title) {
+                        linkData.address = link
+                        return linkMessageLoader.sourceComponent = unfurledLinkComponent
+                    }
                }
            }
 
@@ -169,7 +169,8 @@ Column {
                     if (data) {
                         linkData = data
                         if (data.fetching && data.communityId) {
-                            linkCommunityFetchConnections.enabled = true
+                            // TODO uncomment when linkCommunityFetchConnections is refactored
+                            // linkCommunityFetchConnections.enabled = true
                             return
                         }
                         if (data.communityId) {
