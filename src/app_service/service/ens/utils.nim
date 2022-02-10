@@ -10,13 +10,13 @@ import ../eth/dto/contract as eth_contract_dto
 import ../../../backend/eth as status_eth
 import ../../../backend/ens as status_ens
 import ../../common/account_constants
+import ../../common/utils
 
 logScope:
   topics = "ens-utils"
 
 include ../../common/json_utils
 
-const STATUS_DOMAIN* = ".stateofus.eth"
 const ENS_REGISTRY* = "0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e"
 const RESOLVER_SIGNATURE* = "0x0178b8bf"
 const CONTENTHASH_SIGNATURE* = "0xbc1c58d1" # contenthash(bytes32)
@@ -40,7 +40,7 @@ type
     UNKNOWN
 
 proc addDomain*(username: string): string =
-  if username.endsWith(".eth"):
+  if username.endsWith(ETH_DOMAIN):
     return username
   else:
     return username & STATUS_DOMAIN

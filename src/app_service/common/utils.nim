@@ -2,6 +2,9 @@ import json, random, times, strutils, os
 import nimcrypto
 import signing_phrases
 
+const STATUS_DOMAIN* = ".stateofus.eth"
+const ETH_DOMAIN* = ".eth"
+
 proc hashPassword*(password: string): string =
   result = "0x" & $keccak_256.digest(password)
 
@@ -25,8 +28,10 @@ proc first*(jArray: JsonNode, fieldName, id: string): JsonNode =
       return child
 
 proc prettyEnsName*(ensName: string): string =
-  if ensName.endsWith(".eth"):
+  if ensName.endsWith(STATUS_DOMAIN):
     return "@" & ensName.split(".")[0]
+  elif ensName.endsWith(ETH_DOMAIN):
+    return "@" & ensName
   return ensName
 
 const sep = when defined(windows): "\\" else: "/"
