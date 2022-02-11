@@ -36,6 +36,10 @@ method init*(self: Controller) =
     let args = CommunityArgs(e)
     self.delegate.communityAdded(args.community)
 
+  self.events.on(SIGNAL_COMMUNITY_DATA_IMPORTED) do(e:Args):
+    let args = CommunityArgs(e)
+    self.delegate.communityAdded(args.community)
+
   self.events.on(SIGNAL_COMMUNITY_IMPORTED) do(e:Args):
     let args = CommunityArgs(e)
     if(args.error.len > 0):
@@ -117,3 +121,12 @@ method setCommunityMuted*(self: Controller, communityId: string, muted: bool) =
 method getContactNameAndImage*(self: Controller, contactId: string):
     tuple[name: string, image: string, isIdenticon: bool] =
   return self.contactsService.getContactNameAndImage(contactId)
+
+method isUserMemberOfCommunity*(self: Controller, communityId: string): bool =
+  return self.communityService.isUserMemberOfCommunity(communityId)
+
+method userCanJoin*(self: Controller, communityId: string): bool =
+  return self.communityService.userCanJoin(communityId)
+
+method isCommunityRequestPending*(self: Controller, communityId: string): bool =
+  return self.communityService.isCommunityRequestPending(communityId)

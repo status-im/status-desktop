@@ -110,6 +110,7 @@ ModalPopup {
 
                 MessageView {
                     id: messageItem
+                    store: popup.store
                     messageStore: popup.messageStore
                     messageContextMenu: msgContextMenu
 

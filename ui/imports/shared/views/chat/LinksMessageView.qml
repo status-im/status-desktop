@@ -16,6 +16,7 @@ import shared.controls.chat 1.0
 
 Column {
     id: root
+    property var store
     property var messageStore
     property var container
     property string linkUrls: ""
@@ -98,27 +99,26 @@ Column {
                }
            }
 
-            // Not Refactored Yet
-//            Connections {
-//                id: linkCommunityFetchConnections
-//                enabled: false
-//                target: root.store.chatsModelInst.communities
-//                onCommunityAdded: {
-//                    if (communityId !== linkData.communityId) {
-//                        return
-//                    }
-//                    linkCommunityFetchConnections.enabled = false
-//                    const data = Utils.getLinkDataForStatusLinks(link)
-//                    if (data) {
-//                        linkData = data
-//                        if (!data.fetching && data.communityId) {
-//                            return linkMessageLoader.sourceComponent = invitationBubble
-//                        }
+            Connections {
+                id: linkCommunityFetchConnections
+                enabled: false
+                target: root.store.communitiesModuleInst
+                onCommunityAdded: {
+                    if (communityId !== linkData.communityId) {
+                        return
+                    }
+                    linkCommunityFetchConnections.enabled = false
+                    const data = root.store.getLinkDataForStatusLinks(link)
+                    if (data) {
+                        linkData = data
+                        if (!data.fetching && data.communityId) {
+                            return linkMessageLoader.sourceComponent = invitationBubble
+                        }
 
-//                        return linkMessageLoader.sourceComponent = unfurledLinkComponent
-//                    }
-//                }
-//            }
+                        return linkMessageLoader.sourceComponent = unfurledLinkComponent
+                    }
+                }
+            }
 
             function getSourceComponent() {
                 // Reset the height in case we set it to 0 below. See note below
@@ -165,12 +165,11 @@ Column {
                     }
                     fetched = true
 
-                    const data = Utils.getLinkDataForStatusLinks(link)
+                    const data = root.store.getLinkDataForStatusLinks(link)
                     if (data) {
                         linkData = data
                         if (data.fetching && data.communityId) {
-                            // TODO uncomment when linkCommunityFetchConnections is refactored
-                            // linkCommunityFetchConnections.enabled = true
+                            linkCommunityFetchConnections.enabled = true
                             return
                         }
                         if (data.communityId) {
@@ -221,7 +220,7 @@ Column {
     Component {
         id: invitationBubble
         InvitationBubbleView {
-            // store: root.store
+            store: root.store
             communityId: linkData.communityId
             isLink: true
             anchors.left: parent.left

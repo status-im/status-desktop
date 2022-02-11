@@ -37,6 +37,15 @@ method deleteCommunityCategory*(self: AccessInterface, communityId: string, cate
 method requestCommunityInfo*(self: AccessInterface, communityId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method isUserMemberOfCommunity*(self: AccessInterface, communityId: string): bool {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method userCanJoin*(self: AccessInterface, communityId: string): bool {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method isCommunityRequestPending*(self: AccessInterface, communityId: string): bool {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method importCommunity*(self: AccessInterface, communityKey: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 

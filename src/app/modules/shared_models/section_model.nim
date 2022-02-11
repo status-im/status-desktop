@@ -1,6 +1,8 @@
 import NimQml, Tables, strutils, strformat
 
-import section_item
+import json, json_serialization
+
+import section_item, user_model
 
 type
   ModelRole {.pure.} = enum
@@ -267,3 +269,34 @@ QtObject:
         self.items[i].notificationsCount = notificationsCount
         self.dataChanged(index, index, @[ModelRole.HasNotification.int, ModelRole.NotificationsCount.int])
         return
+
+  proc getSectionNameById*(self: SectionModel, sectionId: string): string {.slot.} =
+    for item in self.items:
+      if item.id == sectionId:
+        return item.name
+    
+  proc getSectionByIdJson(self: SectionModel, sectionId: string): string {.slot.} =
+    for item in self.items:
+      if (item.id == sectionId):
+        let jsonObj = %* {
+          "id": item.id,
+          "name": item.name,
+          "amISectionAdmin": item.amISectionAdmin,
+          "description": item.description,
+          "image": item.image,
+          "icon": item.icon,
+          "color": item.color,
+          "hasNotification": item.hasNotification,
+          "notificationsCount": item.notificationsCount,
+          "active": item.active,
+          "enabled": item.enabled,
+          "joined": item.joined,
+          "canJoin": item.canJoin,
+          "canManageUsers": item.canManageUsers,
+          "canRequestAccess": item.canRequestAccess,
+          "isMember": item.isMember,
+          "access": item.access,
+          "ensOnly": item.ensOnly,
+          "nbMembers": item.members.getCount()
+        }
+        return $jsonObj

@@ -205,7 +205,7 @@ proc deleteCommunityCategory*(
     }])
 
 proc requestCommunityInfo*(communityId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
-  result = callPrivateRPC("requestCommunityInfoFromMailserver".prefix, %*[communityId])
+  result = callPrivateRPC("requestCommunityInfoFromMailserverAsync".prefix, %*[communityId])
 
 proc importCommunity*(communityKey: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   result = callPrivateRPC("importCommunity".prefix, %*[communityKey])

@@ -7,7 +7,11 @@ import ../chat/service as chat_service
 import ../../../app/global/global_singleton
 import ../../../app/core/signals/types
 import ../../../app/core/eventemitter
+import ../../../app/core/[main]
+import ../../../app/core/tasks/[qt, threadpool]
 import ../../../backend/communities as status_go
+
+include ./async_tasks
 
 export community_dto
 
@@ -63,6 +67,7 @@ const SIGNAL_COMMUNITY_MY_REQUEST_ADDED* = "communityMyRequestAdded"
 const SIGNAL_COMMUNITY_LEFT* = "communityLeft"
 const SIGNAL_COMMUNITY_CREATED* = "communityCreated"
 const SIGNAL_COMMUNITY_IMPORTED* = "communityImported"
+const SIGNAL_COMMUNITY_DATA_IMPORTED* = "communityDataImported" # This one is when just loading the data with requestCommunityInfo
 const SIGNAL_COMMUNITY_EDITED* = "communityEdited"
 const SIGNAL_COMMUNITIES_UPDATE* = "communityUpdated"
 const SIGNAL_COMMUNITY_CHANNEL_CREATED* = "communityChannelCreated"
@@ -77,6 +82,7 @@ const SIGNAL_COMMUNITY_MEMBER_APPROVED* = "communityMemberApproved"
 QtObject:
   type
     Service* = ref object of QObject
+      threadpool: ThreadPool
       events: EventEmitter
       chatService: chat_service.Service
       joinedCommunities: Table[string, CommunityDto] # [community_id, CommunityDto]
@@ -93,15 +99,25 @@ QtObject:
   proc delete*(self: Service) =
     discard
 
-  proc newService*(events: EventEmitter, chatService: chat_service.Service): Service =
+  proc newService*(
+      events: EventEmitter,
+      threadpool: ThreadPool,
+      chatService: chat_service.Service
+      ): Service =
     result = Service()
     result.events = events
+    result.threadpool = threadpool
     result.chatService = chatService
     result.joinedCommunities = initTable[string, CommunityDto]()
     result.allCommunities = initTable[string, CommunityDto]()
     result.myCommunityRequests = @[]
 
   proc doConnect(self: Service) =
+    self.events.on(SignalType.CommunityFound.event) do(e: Args):
+      var receivedData = CommunitySignal(e)
+      self.allCommunities[receivedData.community.id] = receivedData.community
+      self.events.emit(SIGNAL_COMMUNITY_DATA_IMPORTED, CommunityArgs(community: receivedData.community))
+
     self.events.on(SignalType.Message.event) do(e: Args):
       var receivedData = MessageSignal(e)
 
@@ -156,9 +172,7 @@ QtObject:
 
   proc handleCommunityUpdates(self: Service, communities: seq[CommunityDto], updatedChats: seq[ChatDto]) =
     let community = communities[0]
-    var sortingOrderChanged = false
     if(not self.joinedCommunities.hasKey(community.id)):
-      error "error: community doesn't exist"
       return
 
     let prev_community = self.joinedCommunities[community.id]
@@ -676,15 +690,27 @@ QtObject:
     except Exception as e:
       error "Error reordering category channel", msg = e.msg, communityId, categoryId, position
 
+
+  proc asyncActivityNotificationLoad*(self: Service, communityId: string) =
+    let arg = AsyncRequestCommunityInfoTaskArg(
+      tptr: cast[ByteAddress](asyncRequestCommunityInfoTask),
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "asyncCommunityInfoLoaded",
+      communityId: communityId
+    )
+    self.threadpool.start(arg)
+
+  proc asyncCommunityInfoLoaded*(self: Service, rpcResponse: string) {.slot.} =
+    let rpcResponseObj = rpcResponse.parseJson
+    if (rpcResponseObj{"error"}.kind != JNull):
+      let error = Json.decode($rpcResponseObj["error"], RpcError)
+      error "Error requesting community info", msg = error.message
+
   proc requestCommunityInfo*(self: Service, communityId: string) =
     try:
-      let response = status_go.requestCommunityInfo(communityId)
-      if (response.error != nil):
-        let error = Json.decode($response.error, RpcError)
-        raise newException(RpcException, fmt"Error requesting community info: {error.message}")
+      self.asyncActivityNotificationLoad(communityId)
     except Exception as e:
       error "Error requesting community info", msg = e.msg, communityId
-
 
   proc importCommunity*(self: Service, communityKey: string) =
     try:
@@ -814,3 +840,9 @@ QtObject:
       discard status_go.setCommunityMuted(communityId, muted)
     except Exception as e:
       error "Error setting community un/muted", msg = e.msg
+
+  proc isCommunityRequestPending*(self: Service, communityId: string): bool {.slot.} =
+    for communityRequest in self.myCommunityRequests:
+      if (communityRequest.communityId == communityId):
+        return true
+    return false

@@ -111,6 +111,7 @@ Item {
         MessageView {
             id: notificationMessage
             anchors.right: undefined
+            store: root.store
             messageStore: root.store.messageStore
             messageId: model.id
             senderDisplayName: model.message.senderDisplayName

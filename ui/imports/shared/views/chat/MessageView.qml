@@ -17,6 +17,7 @@ Column {
     anchors.right: !isCurrentUser ? undefined : parent.right
     z: (typeof chatLogView === "undefined") ? 1 : (chatLogView.count - index)
 
+    property var store
     property var messageStore
     property var usersStore
     property var contactsStore
@@ -342,6 +343,7 @@ Column {
         id: compactMessageComponent
 
         CompactMessageView {
+            store: root.store
             messageStore: root.messageStore
             usersStore: root.usersStore
             contactsStore: root.contactsStore

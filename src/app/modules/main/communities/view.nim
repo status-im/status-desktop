@@ -30,8 +30,12 @@ QtObject:
   proc load*(self: View) =
     self.delegate.viewDidLoad()
 
+  proc communityAdded*(self: View, communityId: string) {.signal.}
+  proc communityChanged*(self: View, communityId: string) {.signal.}
+
   proc addItem*(self: View, item: SectionItem) =
     self.model.addItem(item)
+    self.communityAdded(item.id)
 
   proc model*(self: View): SectionModel =
     result = self.model
@@ -61,9 +65,6 @@ QtObject:
   proc joinCommunity*(self: View, communityId: string): string {.slot.} =
     result = self.delegate.joinCommunity(communityId)
 
-  proc communityAdded*(self: View, communityId: string) {.signal.}
-  proc communityChanged*(self: View, communityId: string) {.signal.}
-
   proc createCommunity*(self: View, name: string, description: string,
                         access: int, ensOnly: bool, color: string,
                         imagePath: string,
@@ -90,6 +91,15 @@ QtObject:
 
   proc requestCommunityInfo*(self: View, communityId: string) {.slot.} =
     self.delegate.requestCommunityInfo(communityId)
+
+  proc isUserMemberOfCommunity*(self: View, communityId: string): bool {.slot.} =
+    self.delegate.isUserMemberOfCommunity(communityId)
+
+  proc userCanJoin*(self: View, communityId: string): bool {.slot.} =
+    self.delegate.userCanJoin(communityId)
+
+  proc isCommunityRequestPending*(self: View, communityId: string): bool {.slot.} =
+    self.delegate.isCommunityRequestPending(communityId)
 
   proc deleteCommunityChat*(self: View, communityId: string, channelId: string) {.slot.} =
     self.delegate.deleteCommunityChat(communityId, channelId)

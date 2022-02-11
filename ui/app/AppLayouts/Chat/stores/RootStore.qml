@@ -58,15 +58,6 @@ QtObject {
 
     property var emojiReactionsModel
 
-    // Not Refactored Yet
-//    property var chatsModelInst: chatsModel
-    // Not Refactored Yet
-//    property var utilsModelInst: utilsModel
-    // Not Refactored Yet
-//    property var walletModelInst: walletModel
-    // Not Refactored Yet
-//    property var profileModelInst: profileModel
-
     property var globalUtilsInst: globalUtils
 
     property var mainModuleInst: mainModule
@@ -211,11 +202,157 @@ QtObject {
         chatCommunitySectionModule.removeCommunityChat(chatId)
     }
 
-    function reorderCommunityCategories(categoryId, to){
+    function reorderCommunityCategories(categoryId, to) {
         chatCommunitySectionModule.reorderCommunityCategories(categoryId, to)
     }
 
-    function reorderCommunityChat(categoryId, chatId, to){
+    function reorderCommunityChat(categoryId, chatId, to) {
         chatCommunitySectionModule.reorderCommunityChat(categoryId, chatId, to)
+    }
+
+    function joinCommunity(id) {
+        return communitiesModuleInst.joinCommunity(id)
+    }
+
+    function requestToJoinCommunity(id, ensName) {
+        return communitiesModuleInst.requestToJoinCommunity(id, ensName)
+    }
+
+    function userCanJoin(id) {
+        return communitiesModuleInst.userCanJoin(id)
+    }
+
+    function isUserMemberOfCommunity(id) {
+        return communitiesModuleInst.isUserMemberOfCommunity(id)
+    }
+
+    function isCommunityRequestPending(id) {
+        return communitiesModuleInst.isCommunityRequestPending(id)
+    }
+
+    function getSectionNameById(id) {
+        return communitiesList.getSectionNameById(id)
+    }
+
+    function getSectionByIdJson(id) {
+        return communitiesList.getSectionByIdJson(id)
+    }
+
+    function getLinkTitleAndCb(link) {
+        const result = {
+            title: "Status",
+            callback: null
+        }
+
+        // Link to send a direct message
+        let index = link.indexOf("/u/")
+        if (index === -1) {
+            // Try /p/ as well
+            index = link.indexOf("/p/")
+        }
+        if (index > -1) {
+            const pk = link.substring(index + 3)
+            //% "Start a 1-on-1 chat with %1"
+            result.title = qsTrId("start-a-1-on-1-chat-with--1")
+                            .arg(isChatKey(pk) ? globalUtils.generateAlias(pk) : ("@" + removeStatusEns(pk)))
+            result.callback = function () {
+                if (isChatKey(pk)) {
+                    chatCommunitySectionModule.createOneToOneChat(pk, "")
+                } else {
+                // Not Refactored Yet
+//                    chatsModel.channelView.joinWithENS(pk);
+                }
+            }
+            return result
+        }
+
+        // Community
+        index = link.lastIndexOf("/c/")
+        if (index > -1) {
+            const communityId = link.substring(index + 3)
+
+            const communityName = getSectionNameById(communityId)
+
+            if (!communityName) {
+                // Unknown community, fetch the info if possible
+                communitiesModuleInst.requestCommunityInfo(communityId)
+                result.communityId = communityId
+                result.fetching = true
+                return result
+            }
+
+            //% "Join the %1 community"
+            result.title = qsTrId("join-the--1-community").arg(communityName)
+            result.communityId = communityId
+            result.callback = function () {
+                const isUserMemberOfCommunity = isUserMemberOfCommunity(communityId)
+                if (isUserMemberOfCommunity) {
+                    setActiveCommunity(communityId)
+                    return
+                }
+
+                const userCanJoin = userCanJoin(communityId)
+                // TODO find what to do when you can't join
+                if (userCanJoin) {
+                    joinCommunity(communityId, true)
+                }
+            }
+            return result
+        }
+
+        // Group chat
+        index = link.lastIndexOf("/g/")
+        if (index > -1) {
+            let indexAdminPk = link.lastIndexOf("a=")
+            let indexChatName = link.lastIndexOf("a1=")
+            let indexChatId = link.lastIndexOf("a2=")
+            const pubKey = link.substring(indexAdminPk + 2, indexChatName - 1)
+            const chatName = link.substring(indexChatName + 3, indexChatId - 1)
+            const chatId = link.substring(indexChatId + 3, link.length)
+            //% "Join the %1 group chat"
+            result.title = qsTrId("join-the--1-group-chat").arg(chatName)
+            result.callback = function () {
+                // Not Refactored Yet
+//                chatsModel.groups.joinGroupChatFromInvitation(chatName, chatId, pubKey);
+            }
+
+            return result
+        }
+
+        // Not Refactored Yet (when we get to this we will most likely remove it, since other approach will be used)
+//        // Public chat
+//        // This needs to be the last check because it is as VERY loose check
+//        index = link.lastIndexOf("/")
+//        if (index > -1) {
+//            const chatId = link.substring(index + 1)
+//            //% "Join the %1 public channel"
+//            result.title = qsTrId("join-the--1-public-channel").arg(chatId)
+//            result.callback = function () {
+//                chatsModel.channelView.joinPublicChat(chatId);
+//            }
+//            return result
+//        }
+
+        return result
+    }
+
+    function getLinkDataForStatusLinks(link) {
+        if (!link.includes(Constants.deepLinkPrefix) && !link.includes(Constants.joinStatusLink)) {
+            return
+        }
+
+        const result = getLinkTitleAndCb(link)
+
+        return {
+            site: "https://join.status.im",
+            title: result.title,
+            communityId: result.communityId,
+            fetching: result.fetching,
+            thumbnailUrl: Style.png("status"),
+            contentType: "",
+            height: 0,
+            width: 0,
+            callback: result.callback
+        }
     }
 }
