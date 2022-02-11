@@ -430,3 +430,31 @@ method requestMoreMessages*(self: Module) =
 
 method fillGaps*(self: Module, messageId: string) =
   self.controller.fillGaps(messageId)
+
+method joinGroupChat*(self: Module) =
+  self.controller.joinGroupChat()
+
+method leaveChat*(self: Module) =
+  self.controller.leaveChat()
+
+method didIJoinedChat*(self: Module): bool =
+  let chatDto = self.controller.getChatDetails()
+  if(chatDto.chatType != ChatType.PrivateGroupChat):
+    return true
+
+  let myPublicKey = singletonInstance.userProfile.getPubKey()
+  for member in chatDto.members:
+    if (member.id == myPublicKey):
+      return member.joined
+  return true
+  
+method onChatMemberUpdated*(self: Module, publicKey: string, admin: bool, joined: bool) =
+  let chatDto = self.controller.getChatDetails()
+  if(chatDto.chatType != ChatType.PrivateGroupChat):
+    return
+
+  let myPublicKey = singletonInstance.userProfile.getPubKey()
+  if(publicKey != myPublicKey):
+    return
+  
+  self.view.model().refreshItemWithId(CHAT_IDENTIFIER_MESSAGE_ID)

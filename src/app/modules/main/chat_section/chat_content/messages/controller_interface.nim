@@ -102,3 +102,9 @@ method getTransactionDetails*(self: AccessInterface, message: MessageDto): (stri
 
 method getWalletAccounts*(self: AccessInterface): seq[WalletAccountDto] =
   raise newException(ValueError, "No implementation available")
+  
+method joinGroupChat*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method leaveChat*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")

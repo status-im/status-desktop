@@ -270,11 +270,15 @@ Column {
         id: channelIdentifierComponent
         ChannelIdentifierView {
             chatName: root.senderDisplayName
-            chatType: messageStore.getChatType()
-            chatColor: messageStore.getChatColor()
-            amIChatAdmin: messageStore.amIChatAdmin()
+            chatType: root.messageStore.getChatType()
+            chatColor: root.messageStore.getChatColor()
+            amIChatAdmin: root.messageStore.amIChatAdmin()
             chatIcon: root.senderIcon
             chatIconIsIdenticon: root.isSenderIconIdenticon
+            didIJoinedChat: root.messageStore.didIJoinedChat()
+
+            onJoinChatClicked: root.messageStore.joinGroupChat()
+            onRejectJoiningChatClicked: root.messageStore.leaveChat()
         }
     }
 

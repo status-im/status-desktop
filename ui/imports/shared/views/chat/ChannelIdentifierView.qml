@@ -17,6 +17,10 @@ Column {
     property string chatColor: ""
     property string chatIcon: ""
     property bool chatIconIsIdenticon: true
+    property bool didIJoinedChat: true
+
+    signal joinChatClicked()
+    signal rejectJoiningChatClicked()
 
     Rectangle {
         id: circleId
@@ -84,11 +88,11 @@ Column {
     }
 
     Item {
-        visible: root.chatType === Constants.chatType.privateGroupChat && !root.amIChatAdmin
+        id: joinOrDecline
+        visible: root.chatType === Constants.chatType.privateGroupChat && !root.amIChatAdmin && !root.didIJoinedChat
         anchors.horizontalCenter: parent.horizontalCenter
         width: visible ? joinChat.width : 0
         height: visible ? 100 : 0
-        id: joinOrDecline
 
         StyledText {
             id: joinChat
@@ -102,8 +106,8 @@ Column {
                 cursorShape: Qt.PointingHandCursor
                 anchors.fill: parent
                 onClicked: {
-                    //NEED TO CHECK THIS
-//                    root.store.chatsModelInst.groups.join()
+                    root.joinChatClicked()
+                    joinOrDecline.visible = false // Once we start getting member `joined` updates from `status-go` we can remove this
                 }
             }
         }
@@ -120,8 +124,8 @@ Column {
                 cursorShape: Qt.PointingHandCursor
                 anchors.fill: parent
                 onClicked: {
-                    //NEED TO CHECK THIS
-//                    root.store.chatsModelInst.channelView.leaveActiveChat()
+                    root.rejectJoiningChatClicked()
+                    joinOrDecline.visible = false // Once we start getting member `joined` updates from `status-go` we can remove this
                 }
             }
         }
