@@ -296,6 +296,7 @@ Item {
         delegate: MessageView {
             id: msgDelegate
 
+            store: root.store
             messageStore: root.messageStore
             usersStore: root.usersStore
             contactsStore: root.contactsStore

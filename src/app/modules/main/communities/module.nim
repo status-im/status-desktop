@@ -105,6 +105,7 @@ method joinCommunity*(self: Module, communityId: string): string =
 
 method communityEdited*(self: Module, community: CommunityDto) =
   self.view.model().editItem(self.getCommunityItem(community))
+  self.view.communityChanged(community.id)
 
 method requestAdded*(self: Module) =
   # TODO to model or view
@@ -162,6 +163,15 @@ method requestToJoinCommunity*(self: Module, communityId: string, ensName: strin
 
 method requestCommunityInfo*(self: Module, communityId: string) =
   self.controller.requestCommunityInfo(communityId)
+
+method isUserMemberOfCommunity*(self: Module, communityId: string): bool =
+  self.controller.isUserMemberOfCommunity(communityId)
+
+method userCanJoin*(self: Module, communityId: string): bool =
+  self.controller.userCanJoin(communityId)
+
+method isCommunityRequestPending*(self: Module, communityId: string): bool =
+  self.controller.isCommunityRequestPending(communityId)
 
 method deleteCommunityChat*(self: Module, communityId: string, channelId: string) =
   self.controller.deleteCommunityChat(communityId, channelId)

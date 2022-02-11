@@ -37,6 +37,15 @@ method removeUserFromCommunity*(self: AccessInterface, communityId: string, pubK
 method banUserFromCommunity*(self: AccessInterface, pubKey: string, communityId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method isUserMemberOfCommunity*(self: AccessInterface, communityId: string): bool {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method userCanJoin*(self: AccessInterface, communityId: string): bool {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method isCommunityRequestPending*(self: AccessInterface, communityId: string): bool {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method requestToJoinCommunity*(self: AccessInterface, communityId: string, ensName: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 

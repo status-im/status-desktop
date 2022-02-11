@@ -14,6 +14,7 @@ import StatusQ.Controls 0.1 as StatusQControls
 Item {
     id: root
 
+    property var store
     property var messageStore
     property var usersStore
     property var contactsStore
@@ -594,6 +595,7 @@ Item {
                         linkUrls: root.linkUrls
                         container: root.container
                         messageStore: root.messageStore
+                        store: root.store
                         isCurrentUser: isCurrentUser
                     }
                 }

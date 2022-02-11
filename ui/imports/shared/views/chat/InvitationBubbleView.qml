@@ -23,37 +23,32 @@ Item {
     property var store
 
     function getCommunity() {
-        // Not Refactored Yet
-//        try {
-//            const communityJson = root.store.chatsModelInst.communities.list.getCommunityByIdJson(communityId)
-//            if (!communityJson) {
-//                return null
-//            }
+        try {
+            const communityJson = root.store.getSectionByIdJson(communityId)
+            if (!communityJson) {
+                return null
+            }
 
-//            let community = JSON.parse(communityJson);
-//            if (community) {
-//                community.nbMembers = community.members.length;
-//            }
-//            return community
-//        } catch (e) {
-//            console.error("Error parsing community", e)
-//        }
+            return JSON.parse(communityJson);
+        } catch (e) {
+            console.error("Error parsing community", e)
+        }
 
-       return null
+        return null
     }
 
     Component.onCompleted: {
         root.invitedCommunity = getCommunity()
     }
 
-//    Connections {
-//        target: root.store.chatsModelInst.communities
-//        onCommunityChanged: function (communityId) {
-//            if (communityId === root.communityId) {
-//                root.invitedCommunity = getCommunity()
-//            }
-//        }
-//    }
+   Connections {
+       target: root.store.communitiesModuleInst
+       onCommunityChanged: function (communityId) {
+           if (communityId === root.communityId) {
+               root.invitedCommunity = getCommunity()
+           }
+       }
+   }
 
     Component {
         id: confirmationPopupComponent
@@ -89,8 +84,7 @@ Item {
             Rectangle {
                 id: rectangleBubble
                 property alias button: joinBtn
-                // Not Refactored Yet
-                property bool isPendingRequest: false //root.store.chatsModelInst.communities.isCommunityRequestPending(communityId)
+                property bool isPendingRequest: root.store.isCommunityRequestPending(communityId)
                 width: 270
                 height: title.height + title.anchors.topMargin +
                         invitedYou.height + invitedYou.anchors.topMargin +
@@ -108,8 +102,7 @@ Item {
                 states: [
                     State {
                         name: "requiresEns"
-                        // Not Refactored Yet
-//                        when: invitedCommunity.ensOnly && !root.store.profileModelInst.profile.ensVerified
+                        when: invitedCommunity.ensOnly && !userProfile.ensName
                         PropertyChanges {
                             target: joinBtn
                             //% "Membership requires an ENS username"
@@ -152,7 +145,7 @@ Item {
                     State {
                         name: "requestToJoin"
                         when: invitedCommunity.access === Constants.communityChatOnRequestAccess &&
-                              //   !invitedCommunity.joined && !invitedCommunity.isMember
+                              !invitedCommunity.joined && !invitedCommunity.isMember &&
                               invitedCommunity.canRequestAccess
                         PropertyChanges {
                             target: joinBtn
@@ -272,7 +265,7 @@ Item {
                     id: communityNbMembers
                     // TODO add the plural support
                     //% "%1 members"
-                    text: qsTrId("-1-members").arg(invitedCommunity.members.count)
+                    text: qsTrId("-1-members").arg(invitedCommunity.nbMembers)
                     anchors.top: communityDesc.bottom
                     anchors.topMargin: 2
                     anchors.left: parent.left
@@ -304,34 +297,33 @@ Item {
                         //% "Unsupported state"
                         text: qsTrId("unsupported-state")
                         onClicked: {
-                            // Not Refactored Yet
-//                            let onBtnClick = function(){
-//                                let error
+                            let onBtnClick = function(){
+                                let error
 
-//                                if (rectangleBubble.state === "joined") {
-//                                    root.store.chatsModelInst.communities.setActiveCommunity(communityId);
-//                                    return
-//                                } else if (rectangleBubble.state === "unjoined") {
-//                                    error = root.store.chatsModelInst.communities.joinCommunity(communityId, true)
-//                                }
-//                                else if (rectangleBubble.state === "requestToJoin") {
-//                                    error = root.store.chatsModelInst.communities.requestToJoinCommunity(communityId, userProfile.name)
-//                                    if (!error) {
-//                                        rectangleBubble.isPendingRequest = root.store.chatsModelInst.communities.isCommunityRequestPending(communityId)
-//                                    }
-//                                }
+                                if (rectangleBubble.state === "joined") {
+                                    root.store.setActiveCommunity(communityId);
+                                    return
+                                } else if (rectangleBubble.state === "unjoined") {
+                                    error = root.store.joinCommunity(communityId)
+                                }
+                                else if (rectangleBubble.state === "requestToJoin") {
+                                    error = root.store.requestToJoinCommunity(communityId, userProfile.name)
+                                    if (!error) {
+                                        rectangleBubble.isPendingRequest = root.store.isCommunityRequestPending(communityId)
+                                    }
+                                }
 
-//                                if (error) {
-//                                    joiningError.text = error
-//                                    return joiningError.open()
-//                                }
-//                            }
+                                if (error) {
+                                    joiningError.text = error
+                                    return joiningError.open()
+                                }
+                            }
 
-//                            if (localAccountSensitiveSettings.communitiesEnabled) {
-//                                onBtnClick();
-//                            } else {
-//                                Global.openPopup(confirmationPopupComponent, { onConfirmed: onBtnClick });
-//                            }
+                            if (localAccountSensitiveSettings.communitiesEnabled) {
+                                onBtnClick();
+                            } else {
+                                Global.openPopup(confirmationPopupComponent, { onConfirmed: onBtnClick });
+                            }
                         }
 
                         MessageDialog {

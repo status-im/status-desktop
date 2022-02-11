@@ -41,7 +41,7 @@ QtObject:
       result &= fmt"""User Model:
       [{i}]:({$self.items[i]})
       """
-  proc getCount(self: Model): int {.slot.} =
+  proc getCount*(self: Model): int {.slot.} =
     self.items.len
   QtProperty[int] count:
     read = getCount
