@@ -37,6 +37,7 @@ QtObject:
   type
     Model* = ref object of QAbstractListModel
       items: seq[Item]
+      allKeys: seq[int]
 
   proc delete(self: Model) =
     self.items = @[]
@@ -48,6 +49,11 @@ QtObject:
   proc newModel*(): Model =
     new(result, delete)
     result.setup
+
+    # This is just a clean way to have all roles in a seq, without typing long seq manualy, and this way we're sure that
+    # all new added roles will be included here as well.
+    for i in result.roleNames().keys:
+      result.allKeys.add(i)
 
   proc `$`*(self: Model): string =
     result = "MessageModel:\n"
@@ -373,3 +379,11 @@ QtObject:
     self.items = @[]
     self.endResetModel()
     self.countChanged()
+
+  proc refreshItemWithId*(self: Model, messageId: string) =
+    let ind = self.findIndexForMessageId(messageId)
+    if(ind == -1):
+      return
+
+    let index = self.createIndex(ind, 0, nil)
+    self.dataChanged(index, index, self.allKeys)

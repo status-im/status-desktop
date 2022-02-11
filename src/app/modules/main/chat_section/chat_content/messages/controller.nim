@@ -148,10 +148,16 @@ method init*(self: Controller) =
     self.delegate.onPreviewDataLoaded(args.response)
 
   self.events.on(SIGNAL_MAKE_SECTION_CHAT_ACTIVE) do(e: Args):
-    var args = ActiveSectionChatArgs(e)
+    let args = ActiveSectionChatArgs(e)
     if(self.sectionId != args.sectionId or self.chatId != args.chatId):
       return
     self.delegate.scrollToMessage(args.messageId)
+
+  self.events.on(SIGNAL_CHAT_MEMBER_UPDATED) do(e: Args):
+    let args = ChatMemberUpdatedArgs(e)
+    if (args.chatId != self.chatId):
+      return
+    self.delegate.onChatMemberUpdated(args.id, args.admin, args.joined)
 
 method getMySectionId*(self: Controller): string =
   return self.sectionId
@@ -241,3 +247,9 @@ method getTransactionDetails*(self: Controller, message: MessageDto): (string,st
 
 method getWalletAccounts*(self: Controller): seq[wallet_account_service.WalletAccountDto] =
   return self.messageService.getWalletAccounts()
+  
+method joinGroupChat*(self: Controller) =
+  self.chatService.confirmJoiningGroup(self.chatId)
+
+method leaveChat*(self: Controller) =
+  self.chatService.leaveChat(self.chatId)

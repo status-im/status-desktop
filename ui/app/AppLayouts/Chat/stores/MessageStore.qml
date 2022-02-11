@@ -205,4 +205,22 @@ QtObject {
             return
         return messageModule.fillGaps(messageId);
     }
+
+    function joinGroupChat() {
+         if(!messageModule)
+            return
+        messageModule.joinGroupChat();
+    }
+
+    function leaveChat() {
+         if(!messageModule)
+            return
+        messageModule.leaveChat();
+    }
+
+    function didIJoinedChat() {
+         if(!messageModule)
+            return true
+        return messageModule.didIJoinedChat();
+    }
 }

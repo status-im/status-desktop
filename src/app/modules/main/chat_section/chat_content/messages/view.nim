@@ -148,3 +148,12 @@ QtObject:
 
   proc fillGaps(self: View, messageId: string) {.slot.} =
     self.delegate.fillGaps(messageId)
+
+  proc joinGroupChat*(self: View) {.slot.} =
+    self.delegate.joinGroupChat()
+
+  proc leaveChat*(self: View) {.slot.} =
+    self.delegate.leaveChat()
+
+  proc didIJoinedChat(self: View): bool {.slot.} =
+    return self.delegate.didIJoinedChat()
