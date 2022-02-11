@@ -70,6 +70,8 @@ Popup {
                 font.bold: true
                 font.pixelSize: 17
                 height: visible ? 24 : 0
+                width: visible ? parent.width - 44 : 0
+                elide: Text.ElideRight
                 visible: !!title
                 verticalAlignment: Text.AlignVCenter
             }
