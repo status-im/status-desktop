@@ -37,9 +37,10 @@ Item {
             mainMenuItems: store.mainMenuItems
             settingsMenuItems: store.settingsMenuItems
             extraMenuItems: store.extraMenuItems
+            appsMenuItems: store.appsMenuItems
             browserMenuItemEnabled: store.browserMenuItemEnabled
-
-
+            appsMenuItemsEnabled: store.appsMenuItemsEnabled
+            
             onMenuItemClicked: {
                 if (!!menu_item.function_name && menu_item.function_name === "exit") {
                     return confirmDialog.open()

@@ -218,7 +218,8 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
     result.mailserversService,
     result.nodeService,
     result.gifService,
-    result.ensService
+    result.ensService,
+    result.networkService,
   )
 
   # Do connections

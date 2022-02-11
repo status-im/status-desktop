@@ -47,6 +47,7 @@ import ../../../app_service/service/devices/service as devices_service
 import ../../../app_service/service/mailservers/service as mailservers_service
 import ../../../app_service/service/gif/service as gif_service
 import ../../../app_service/service/ens/service as ens_service
+import ../../../app_service/service/network/service as network_service
 
 
 import ../../core/eventemitter
@@ -103,7 +104,8 @@ proc newModule*[T](
   mailserversService: mailservers_service.Service,
   nodeService: node_service.Service,
   gifService: gif_service.Service,
-  ensService: ens_service.Service
+  ensService: ens_service.Service,
+  networkService: network_service.Service,
 ): Module[T] =
   result = Module[T]()
   result.delegate = delegate
@@ -136,9 +138,11 @@ proc newModule*[T](
   )
   result.browserSectionModule = browser_section_module.newModule(result, bookmarkService, settingsService,
   dappPermissionsService, providerService)
-  result.profileSectionModule = profile_section_module.newModule(result, events, accountsService, settingsService,
-  profileService, contactsService, aboutService, languageService, privacyService, nodeConfigurationService,
-  devicesService, mailserversService, chatService, ensService, walletAccountService)
+  result.profileSectionModule = profile_section_module.newModule(
+    result, events, accountsService, settingsService,
+    profileService, contactsService, aboutService, languageService, privacyService, nodeConfigurationService,
+    devicesService, mailserversService, chatService, ensService, walletAccountService, networkService,
+  )
   result.stickersModule = stickers_module.newModule(result, events, stickersService)
   result.activityCenterModule = activity_center_module.newModule(result, events, activityCenterService, contactsService,
   messageService)
