@@ -1,0 +1,36 @@
+project = StatusQ
+version = 0.1
+description = StatusQ Project
+url     = https://github.com/status-im/StatusQ
+
+#These are set implictly by qdoc as well, but only with these the module header can be found
+includepaths = -I . \
+               -I $PWD/../../src/StatusQ
+
+imagedirs = src/images
+sourcedirs += src \
+              $PWD/../../src/StatusQ/Components \
+              $PWD/../../src/StatusQ/Controls \
+              $PWD/../../src/StatusQ/Core \
+              $PWD/../../src/StatusQ/Layout \
+              $PWD/../../src/StatusQ/Platform \
+              $PWD/../../src/StatusQ/Popups \
+
+sources.fileextensions = "*.cpp *.qdoc *.qml"
+
+depends += qtcore \
+           qtquick \
+           qtqml \
+           qtgui \
+           qtdoc \
+           qtquickcontrols2
+
+navigation.homepage    = "StatusQ"
+
+outputdir  =    $PWD/html
+outputformats = HTML
+
+HTML.stylesheets = style.css
+HTML.headerstyles = "<link rel=\"stylesheet\" type=\"text/css\" href=\"style/style.css\"/>\n"
+HTML.postheader = "<p class=\"header\"><small>StatusQ - A Components selection for Status dekstop client. </p></small></p><hr/>"
+HTML.footer = "<hr/><div class=\"footer\"><p><acronym title=\"Copyright\">&copy;</acronym> 2022 Status. All rights reserved. <a href=\"https://status.im\" target=\"_blank\"><small>status.im</a></small></p></div>"

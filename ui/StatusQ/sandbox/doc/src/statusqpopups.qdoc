@@ -1,0 +1,22 @@
+/*!
+    \qmlmodule StatusQ.Popups 0.1
+    \title StatusQ Popups
+    \brief Basic set of Popups StatusQ components
+
+    This is a listing of all Popups components.
+
+    This module is part of the \l{StatusQ}{StatusQ} project.
+
+   \list
+       \li \l{StatusMenuSeparator}
+       \li \l{StatusPopupMenu}
+       \li \l{StatusMenuItem}
+       \li \l{StatusMenuItemDelegate}
+       \li \l{StatusModal}
+       \li \l{StatusSearchPopup}
+       \li \l{StatusModalDivider}
+       \li \l{StatusSearchPopupMenuItem}
+       \li \l{StatusSearchLocationMenu}
+       \li \l{StatusSpellcheckingMenuItems}
+   \endlist
+*/

@@ -1,0 +1,41 @@
+/*!
+    \qmlmodule StatusQ.Components 0.1
+    \title StatusQ Components
+    \brief Basic set of Components StatusQ components
+
+    This is a listing of all Components components.
+
+    This module is part of the \l{StatusQ}{StatusQ} project.
+
+   \list
+       \li \l{StatusAddress}
+       \li \l{StatusBadge}
+       \li \l{StatusChatInfoToolBar}
+       \li \l{StatusChatList}
+       \li \l{StatusChatListItem}
+       \li \l{StatusImageSettings}
+       \li \l{StatusChatListCategory}
+       \li \l{StatusChatListCategoryItem}
+       \li \l{StatusChatListAndCategories}
+       \li \l{StatusChatToolBar}
+       \li \l{StatusContactRequestsIndicatorListItem}
+       \li \l{StatusDescriptionListItem}
+       \li \l{StatusLetterIdenticon}
+       \li \l{StatusListItem}
+       \li \l{StatusListSectionHeadline}
+       \li \l{StatusLoadingIndicator}
+       \li \l{StatusMemberListItem}
+       \li \l{StatusNavigationListItem}
+       \li \l{StatusNavigationPanelHeadline}
+       \li \l{StatusRoundIcon}
+       \li \l{StatusRoundedImage}
+       \li \l{StatusMacWindowButtons}
+       \li \l{StatusListItemBadge}
+       \li \l{StatusExpandableItem}
+       \li \l{StatusSmartIdenticon}
+       \li \l{StatusMessage}
+       \li \l{StatusMessageDetails}
+       \li \l{StatusTagSelector}
+       \li \l{StatusToastMessage}
+   \endlist
+*/

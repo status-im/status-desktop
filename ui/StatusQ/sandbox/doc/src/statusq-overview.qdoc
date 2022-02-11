@@ -1,0 +1,19 @@
+/*!
+   \page statusq-index.html
+   \title StatusQ
+   \brief A components library for Status desktop client.
+
+
+   StatusQ provides a collection of components....
+
+   StatusQ - Components and Interfaces
+   \list
+      \li \l{StatusQ Components}{Components}
+      \li \l{StatusQ Controls}{Controls}
+      \li \l{StatusQ Core}{Core}
+      \li \l{StatusQ Layout}{Layout}
+      \li \l{StatusQ Platform}{Platform}
+      \li \l{StatusQ Popups}{Popups}
+   \endlist
+*/
+

@@ -1,0 +1,43 @@
+/*!
+    \qmlmodule StatusQ.Controls 0.1
+    \title StatusQ Controls
+    \brief Basic set of Controls StatusQ components
+
+    This is a listing of all Controls components.
+
+    This module is part of the \l{StatusQ}{StatusQ} project.
+
+   \list
+       \li \l{StatusAccountSelector}
+       \li \l{StatusAssetSelector}
+       \li \l{StatusBanner}
+       \li \l{StatusChatCommandButton}
+       \li \l{StatusChatInfoButton}
+       \li \l{StatusChatListCategoryItemButton}
+       \li \l{StatusColorSelector}
+       \li \l{StatusIconTabButton}
+       \li \l{StatusNavBarTabButton}
+       \li \l{StatusTabBarIconButton}
+       \li \l{StatusToolTip}
+       \li \l{StatusBaseButton}
+       \li \l{StatusButton}
+       \li \l{StatusFlatButton}
+       \li \l{StatusRoundButton}
+       \li \l{StatusFlatRoundButton}
+       \li \l{StatusSwitch}
+       \li \l{StatusRadioButton}
+       \li \l{StatusCheckBox}
+       \li \l{StatusSlider}
+       \li \l{StatusSelect}
+       \li \l{StatusBaseInput}
+       \li \l{StatusInput}
+       \li \l{StatusPickerButton}
+       \li \l{StatusProgressBar}
+       \li \l{StatusPasswordStrengthIndicator}
+       \li \l{StatusSwitchTabButton}
+       \li \l{StatusSwitchTabBar}
+       \li \l{StatusSelectableText}
+       \li \l{StatusWalletColorButton}
+       \li \l{StatusWalletColorSelect}
+   \endlist
+*/

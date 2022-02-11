@@ -1,0 +1,16 @@
+/*!
+    \qmlmodule StatusQ.Layout 0.1
+    \title StatusQ Layout
+    \brief Basic set of Layout StatusQ components
+
+    This is a listing of all Layout components.
+
+    This module is part of the \l{StatusQ}{StatusQ} project.
+
+   \list
+       \li \l{StatusAppLayout}
+       \li \l{StatusAppNavBar}
+       \li \l{StatusAppTwoPanelLayout}
+       \li \l{StatusAppThreePanelLayout}
+   \endlist
+*/

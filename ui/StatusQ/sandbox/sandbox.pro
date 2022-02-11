@@ -15,7 +15,7 @@ SOURCES += \
         handler.cpp \
         main.cpp \
         sandboxapp.cpp \
-        spellchecker.cpp
+        spellchecker.cpp \
 
 !macx {
     SOURCES += statuswindow.cpp

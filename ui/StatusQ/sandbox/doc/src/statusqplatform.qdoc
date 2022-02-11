@@ -1,0 +1,15 @@
+/*!
+    \qmlmodule StatusQ.Platform 0.1
+    \title StatusQ Platform
+    \brief Basic set of Platform StatusQ components
+
+    This is a listing of all Platform components.
+
+    This module is part of the \l{StatusQ}{StatusQ} project.
+
+   \list
+       \li \l{StatusMacTrafficLights}
+       \li \l{StatusMacNotification}
+       \li \l{StatusWindowsTitleBar}
+   \endlist
+*/
