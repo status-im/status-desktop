@@ -47,26 +47,31 @@ QtObject {
         ensUsernamesModule: profileSectionModuleInst.ensUsernamesModule
     }
 
+    property WalletStore walletStore: WalletStore {
+    }
+
     property var dappList: dappPermissionsModule.dapps
     property var permissionList: dappPermissionsModule.permissions
 
     property int profile_id: 0
     property int contacts_id: 1
     property int ens_id: 2
-    property int privacy_and_security_id: 3
-    property int appearance_id: 4
-    property int sound_id: 5
-    property int language_id: 6
-    property int notifications_id: 7
-    property int sync_settings_id: 8
-    property int devices_settings_id: 9
-    property int browser_settings_id: 10
-    property int advanced_id: 11
-    property int need_help_id: 12
-    property int about_id: 13
-    property int signout_id: 14
+    property int wallet_id: 3
+    property int privacy_and_security_id: 4
+    property int appearance_id: 5
+    property int sound_id: 6
+    property int language_id: 7
+    property int notifications_id: 8
+    property int sync_settings_id: 9
+    property int devices_settings_id: 10
+    property int browser_settings_id: 11
+    property int advanced_id: 12
+    property int need_help_id: 13
+    property int about_id: 14
+    property int signout_id: 15
 
     property bool browserMenuItemEnabled: localAccountSensitiveSettings.isBrowserEnabled
+    property bool appsMenuItemsEnabled: localAccountSensitiveSettings.isMultiNetworkEnabled
 
     property ListModel mainMenuItems: ListModel {
         ListElement {
@@ -86,50 +91,58 @@ QtObject {
         }
     }
 
-    property ListModel settingsMenuItems: ListModel {
+    property ListModel appsMenuItems: ListModel {
         ListElement {
             menu_id: 3
+            text: qsTr("Wallet")
+            icon: "wallet"
+        }
+    }
+
+    property ListModel settingsMenuItems: ListModel {
+        ListElement {
+            menu_id: 4
             text: qsTr("Privacy and security")
             icon: "security"
         }
         ListElement {
-            menu_id: 4
+            menu_id: 5
             text: qsTr("Appearance")
             icon: "appearance"
         }
         ListElement {
-            menu_id: 5
+            menu_id: 6
             text: qsTr("Sound")
             icon: "sound"
         }
         ListElement {
-            menu_id: 6
+            menu_id: 7
             text: qsTr("Language")
             icon: "language"
         }
         ListElement {
-            menu_id: 7
+            menu_id: 8
             text: qsTr("Notifications")
             icon: "notification"
         }
         ListElement {
-            menu_id: 8
+            menu_id: 9
             text: qsTr("Sync settings")
             icon: "mobile"
         }
         ListElement {
-            menu_id: 9
+            menu_id: 10
             text: qsTr("Devices settings")
             icon: "mobile"
         }
         ListElement {
-            menu_id: 10
+            menu_id: 11
             text: qsTr("Browser settings")
             icon: "browser"
             ifEnabled: "browser"
         }
         ListElement {
-            menu_id: 11
+            menu_id: 12
             text: qsTr("Advanced")
             icon: "settings"
         }
@@ -137,17 +150,17 @@ QtObject {
 
     property ListModel extraMenuItems: ListModel {
         ListElement {
-            menu_id: 12
+            menu_id: 13
             text: qsTr("Need help?")
             icon: "help"
         }
         ListElement {
-            menu_id: 13
+            menu_id: 14
             text: qsTr("About")
             icon: "info"
         }
         ListElement {
-            menu_id: 14
+            menu_id: 15
             function_name: "exit"
             text: qsTr("Sign out & Quit")
             icon: "logout"

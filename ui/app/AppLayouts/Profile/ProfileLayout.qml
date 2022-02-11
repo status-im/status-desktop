@@ -61,6 +61,12 @@ StatusAppTwoPanelLayout {
             profileContentWidth: _internal.profileContentWidth
         }
 
+        WalletView {
+            id: walletView
+            walletStore: profileView.store.walletStore
+            profileContentWidth: _internal.profileContentWidth
+        }
+
         PrivacyView {
             privacyStore: profileView.store.privacyStore
             profileContentWidth: _internal.profileContentWidth

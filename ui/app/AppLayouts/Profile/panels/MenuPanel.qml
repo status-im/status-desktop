@@ -14,7 +14,10 @@ Column {
     property alias mainMenuItems: mainMenuItems.model
     property alias settingsMenuItems: settingsMenuItems.model
     property alias extraMenuItems: extraMenuItems.model
+    property alias appsMenuItems: appsMenuItems.model
+
     property bool browserMenuItemEnabled: false
+    property bool appsMenuItemsEnabled: false
 
     signal menuItemClicked(var menu_item)
 
@@ -26,6 +29,24 @@ Column {
             icon.name: model.icon
             selected: Global.currentMenuTab === model.menu_id
             onClicked: root.menuItemClicked(model)
+        }
+    }
+
+    StatusListSectionHeadline { 
+        text: qsTr("Apps")
+        visible: root.appsMenuItemsEnabled
+    }
+    
+    Repeater {
+        id: appsMenuItems
+        delegate: StatusNavigationListItem {
+            id: appsMenuDelegate
+            itemId: model.menu_id
+            title: model.text
+            icon.name: model.icon
+            selected: Global.currentMenuTab === model.menu_id
+            onClicked: root.menuItemClicked(model)
+            visible: root.appsMenuItemsEnabled
         }
     }
 
