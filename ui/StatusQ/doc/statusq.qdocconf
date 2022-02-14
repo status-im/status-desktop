@@ -5,16 +5,16 @@ url     = https://github.com/status-im/StatusQ
 
 #These are set implictly by qdoc as well, but only with these the module header can be found
 includepaths = -I . \
-               -I $PWD/../../src/StatusQ
+               -I $PWD/../src/StatusQ
 
 imagedirs = src/images
 sourcedirs += src \
-              $PWD/../../src/StatusQ/Components \
-              $PWD/../../src/StatusQ/Controls \
-              $PWD/../../src/StatusQ/Core \
-              $PWD/../../src/StatusQ/Layout \
-              $PWD/../../src/StatusQ/Platform \
-              $PWD/../../src/StatusQ/Popups \
+              $PWD/../src/StatusQ/Components \
+              $PWD/../src/StatusQ/Controls \
+              $PWD/../src/StatusQ/Core \
+              $PWD/../src/StatusQ/Layout \
+              $PWD/../src/StatusQ/Platform \
+              $PWD/../src/StatusQ/Popups \
 
 sources.fileextensions = "*.cpp *.qdoc *.qml"
 
