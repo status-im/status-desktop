@@ -3,7 +3,7 @@ import NimQml, Tables, json, sequtils, chronicles, strformat, strutils
 from sugar import `=>`
 import web3/ethtypes
 from web3/conversions import `$`
-import ../../../backend/custom_tokens as custom_tokens
+import ../../../backend/backend as backend
 import ../../../backend/tokens as token_backend
 
 import ../settings/service as settings_service
@@ -71,7 +71,7 @@ QtObject:
       self.tokens = initTable[NetworkDto, seq[TokenDto]]()
       var activeTokenSymbols = self.settingsService.getWalletVisibleTokens()
       let networks = self.networkService.getEnabledNetworks()
-      let responseCustomTokens = custom_tokens.getCustomTokens()
+      let responseCustomTokens = backend.getCustomTokens()
 
       for network in networks:
         if not activeTokenSymbols.hasKey(network.chainId) and DEFAULT_VISIBLE_TOKENS.hasKey(network.chainId):
@@ -109,7 +109,10 @@ QtObject:
   proc addCustomToken*(self: Service, chainId: int, address: string, name: string, symbol: string, decimals: int) =
     # TODO(alaile): use chainId rather than first enabled network
     let networkWIP = self.networkService.getEnabledNetworks()[0]
-    custom_tokens.addCustomToken(networkWIP.chainId, address, name, symbol, decimals, "")
+    let backendToken = backend.Token(
+      name: name, chainId: networkWIP.chainId, address: address, symbol: symbol, decimals: decimals, color: ""
+    )
+    discard backend.addCustomToken(backendToken)
     let token = newDto(
       name,
       networkWIP.chainId,
@@ -142,7 +145,7 @@ QtObject:
 
   proc removeCustomToken*(self: Service, chainId: int, address: string) =
     let network = self.networkService.getNetwork(chainId)
-    custom_tokens.removeCustomToken(chainId, address)
+    discard backend.deleteCustomTokenByChainID(chainId, address)
     var index = -1
 
     for idx, token in self.tokens[network].pairs():
