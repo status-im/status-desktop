@@ -35,3 +35,6 @@ QtObject:
   QtProperty[QVariant] model:
     read = getModel
     notify = modelChanged
+  
+  proc getMembersPublicKeys*(self: View): string {.slot.} =
+    return self.delegate.getMembersPublicKeys()

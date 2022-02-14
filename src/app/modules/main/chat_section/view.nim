@@ -82,8 +82,8 @@ QtObject:
 
   proc listOfMyContactsChanged*(self: View) {.signal.}
 
-  proc populateMyContacts*(self: View) {.slot.} =
-    self.delegate.initListOfMyContacts()
+  proc populateMyContacts*(self: View, pubKeys: string) {.slot.} =
+    self.delegate.initListOfMyContacts(pubKeys)
     self.listOfMyContactsChanged()
 
   proc clearMyContacts*(self: View) {.slot.} =

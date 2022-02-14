@@ -1,4 +1,4 @@
-import NimQml
+import NimQml, strutils
 import io_interface
 import ../io_interface as delegate_interface
 import view, controller
@@ -184,3 +184,8 @@ method onChatMemberUpdated*(self: Module, publicKey: string, admin: bool, joined
     contactDetails.isidenticon,
     admin,
     joined)
+
+method getMembersPublicKeys*(self: Module): string =
+  let publicKeys = self.controller.getMembersPublicKeys()
+  return publicKeys.join(" ")
+

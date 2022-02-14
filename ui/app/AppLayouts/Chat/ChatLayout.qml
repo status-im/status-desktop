@@ -31,7 +31,9 @@ StatusAppThreePanelLayout {
     // Not Refactored
    property var messageStore
 
-   property RootStore rootStore: RootStore { }
+   property RootStore rootStore: RootStore {
+      contactsStore: root.contactsStore
+   }
 
     property Component pinnedMessagesListPopupComponent
     property bool stickersLoaded: false

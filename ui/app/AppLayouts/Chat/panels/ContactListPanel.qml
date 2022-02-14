@@ -14,8 +14,11 @@ ScrollView {
     property bool selectMode: true
     property var onItemChecked
 
+    property var selectedPubKeys: []
+
     ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
     ScrollBar.vertical.policy: groupMembers.contentHeight > groupMembers.height ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
+
 
     ListView {
         id: groupMembers
@@ -24,7 +27,7 @@ ScrollView {
         clip: true
         delegate: StatusListItem {
             id: contactDelegate
-            property bool isChecked: false
+            property bool isChecked: selectedPubKeys.indexOf(model.pubKey) !== -1
             title: !model.name.endsWith(".eth") && !!model.localNickname ?
                        model.localNickname : Utils.removeStatusEns(model.name)
             image.source: Global.getProfileImage(model.pubKey) || model.identicon
@@ -35,20 +38,34 @@ ScrollView {
                 }
                 return checkbox.checked
             }
+
+            height: visible ? implicitHeight : 0
+
+            function contactToggled(pubKey) {
+                if (contactListPanel.selectMode) {
+                    let pubkeys = contactListPanel.selectedPubKeys
+                    let idx = pubkeys.indexOf(pubKey)
+                    if (idx === -1) {
+                        pubkeys.push(pubKey)
+                    } else if (idx > -1) {
+                        pubkeys.splice(idx, 1);
+                    }
+                    contactListPanel.selectedPubKeys = pubkeys
+                }
+            }
+
             components: [
                 StatusCheckBox {
                     id: checkbox
-                    visible: contactListPanel.selectMode && !model.isUser
-                    checked: contactDelegate.isChecked
+                    visible: contactListPanel.selectMode
+                    checked: selectedPubKeys.indexOf(model.pubKey) !== -1
                     onClicked: {
-                        contactDelegate.isChecked = !contactDelegate.isChecked
-                        onItemChecked(model.pubKey, contactDelegate.isChecked)
+                        contactDelegate.contactToggled(model.pubKey)
                     }
                 }
             ]
             onClicked: {
-                contactDelegate.isChecked = !contactDelegate.isChecked
-                onItemChecked(model.pubKey, contactDelegate.isChecked)
+                contactDelegate.contactToggled(model.pubKey)
             }
         }
     }
