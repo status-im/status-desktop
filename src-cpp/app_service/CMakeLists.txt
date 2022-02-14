@@ -3,6 +3,8 @@ add_library(app_service
     service/accounts/dto/account.cpp
     service/accounts/dto/generated_account.cpp
     service/accounts/service.cpp
+    service/wallet_accounts/dto/wallet_account.cpp
+    service/wallet_accounts/service.cpp
 )
 
 target_include_directories(app_service

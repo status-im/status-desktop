@@ -2,6 +2,7 @@ add_library(backend
     accounts.cpp
     types.cpp
     utils.cpp
+    wallet_accounts.cpp
 )
 
 target_include_directories(backend

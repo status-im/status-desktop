@@ -20,6 +20,14 @@ add_library(app
     modules/main/controller.cpp
     modules/main/module.cpp
     modules/main/view.cpp
+    modules/main/wallet/controller.cpp
+    modules/main/wallet/module.cpp
+    modules/main/wallet/view.cpp
+    modules/main/wallet/accounts/controller.cpp
+    modules/main/wallet/accounts/module.cpp
+    modules/main/wallet/accounts/view.cpp
+    modules/main/wallet/accounts/model.cpp
+    modules/main/wallet/accounts/item.cpp
 )
 
 target_include_directories(app

@@ -1,15 +1,13 @@
-#include "controller.h"
-#include "accounts/service_interface.h"
-#include "interfaces/module_controller_delegate_interface.h"
 #include <QDebug>
+
+#include "controller.h"
 
 namespace Modules
 {
 namespace Main
 {
-Controller::Controller(ModuleControllerDelegateInterface* delegate, QObject* parent)
-	: QObject(parent)
-	, m_delegate(delegate)
+Controller::Controller(QObject* parent)
+    : QObject(parent)
 { }
 
 void Controller::init() { }

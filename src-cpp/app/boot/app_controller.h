@@ -1,40 +1,49 @@
-#pragma once
+#ifndef APP_CONTROLLER_H
+#define APP_CONTROLLER_H
+
+#include <QObject>
 
 #include "accounts/service.h"
-#include "../modules/main/module_access_interface.h"
+#include "wallet_accounts/service.h"
+#include "../modules/main/interfaces/module_access_interface.h"
 #include "../modules/startup/module_access_interface.h"
 #include "app_controller_delegate.h"
 #include "app_service.h"
 
-class AppController : public AppControllerDelegate
+class AppController : public QObject, AppControllerDelegate
 {
-	//statusFoundation: StatusFoundation
+    Q_OBJECT
+    //statusFoundation: StatusFoundation
 
-	// Global
-	//localAppSettingsVariant: QVariant
-	//localAccountSettingsVariant: QVariant
-	//localAccountSensitiveSettingsVariant: QVariant
-	//userProfileVariant: QVariant
-	//globalUtilsVariant: QVariant
+    // Global
+    //localAppSettingsVariant: QVariant
+    //localAccountSettingsVariant: QVariant
+    //localAccountSensitiveSettingsVariant: QVariant
+    //userProfileVariant: QVariant
+    //globalUtilsVariant: QVariant
 
-	// Services
-	Accounts::Service* m_accountsService;
+    // Services
+    Accounts::Service* m_accountsService;
+    std::shared_ptr<Wallets::Service> m_walletServicePtr;
 
-	// Modules
-	Modules::Startup::ModuleAccessInterface* m_startupModule;
-	Modules::Main::ModuleAccessInterface* m_mainModule;
+    // Modules
+    // To-Do make this a shared pointer and remove circular dependency.
+    Modules::Startup::ModuleAccessInterface* m_startupModule;
+    std::unique_ptr<Modules::Main::IModuleAccess> m_mainModulePtr;
 
 public:
-	AppController();
-	~AppController();
-	void start();
-
+    AppController();
+    ~AppController();
+    void start();
+public slots:
+    void mainDidLoad();
 private:
-	void connect();
-	void startupDidLoad() override;
-	void mainDidLoad();
-	void load();
-	void userLoggedIn() override;
-	void buildAndRegisterLocalAccountSensitiveSettings();
-	void buildAndRegisterUserProfile();
+    void connect();
+    void startupDidLoad() override;
+    void load();
+    void userLoggedIn() override;
+    void buildAndRegisterLocalAccountSensitiveSettings();
+    void buildAndRegisterUserProfile();
 };
+
+#endif // APP_CONTROLLER_H

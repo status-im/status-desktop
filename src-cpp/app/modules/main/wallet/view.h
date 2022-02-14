@@ -1,11 +1,13 @@
-#ifndef VIEW_H
-#define VIEW_H
+#ifndef WALLET_VIEW_H
+#define WALLET_VIEW_H
 
 #include <QObject>
 
 namespace Modules
 {
 namespace Main
+{
+namespace Wallet
 {
 
 class View : public QObject
@@ -17,11 +19,13 @@ public:
     ~View() = default;
 
     void load();
+
 signals:
     void viewLoaded();
 };
+} // namespace Wallet
 } // namespace Main
 } // namespace Modules
 
-#endif // VIEW_H
+#endif // WALLET_VIEW_H
 
