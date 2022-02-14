@@ -1,24 +1,27 @@
-#pragma once
+#ifndef CONTROLLER_H
+#define CONTROLLER_H
 
-#include "controller_interface.h"
-#include "interfaces/module_controller_delegate_interface.h"
-#include "signals.h"
 #include <QObject>
+
+#include "interfaces/controller_interface.h"
+#include "signals.h"
 
 namespace Modules
 {
 namespace Main
 {
 
-class Controller : public QObject, ControllerInterface
+class Controller : public QObject, IController
 {
 public:
-	Controller(ModuleControllerDelegateInterface* delegate, QObject* parent = nullptr);
-	void init() override;
+    explicit Controller(QObject* parent = nullptr);
+    ~Controller() = default;
 
-private:
-	ModuleControllerDelegateInterface* m_delegate;
+    void init() override;
 };
 
 } // namespace Main
 } // namespace Modules
+
+#endif // CONTROLLER_H
+

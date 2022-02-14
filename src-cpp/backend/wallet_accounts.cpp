@@ -1,0 +1,25 @@
+#include <QDebug>
+#include <QJsonDocument>
+#include <QJsonObject>
+
+#include "backend/wallet_accounts.h"
+#include "backend/types.h"
+#include "backend/utils.h"
+#include "libstatus.h"
+
+namespace Backend
+{
+namespace Wallet
+{
+namespace Accounts
+{
+RpcResponse<QJsonArray> getAccounts()
+{
+    QJsonObject inputJSON{{"jsonrpc", "2.0"}, {"method", "accounts_getAccounts"}, {"params", QJsonValue()}};
+    auto result = CallPrivateRPC(Utils::jsonToStr(inputJSON).toUtf8().data());
+    return RpcResponse<QJsonArray>(result, QJsonDocument::fromJson(result)["result"].toArray());
+}
+} // namespace Accounts
+} // namespace Wallet
+} // namespace Backend
+
