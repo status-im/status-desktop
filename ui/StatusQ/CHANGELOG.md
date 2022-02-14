@@ -1,4 +1,15 @@
 <a name=""></a>
+##  0.24.0 (2022-02-14)
+
+
+#### Features
+
+* **StatusListItem:**  add highlighted property ([5780f183](5780f183))
+* **StatusQ.Components:**  Adding StatusWizardSteper component ([b7d6554b](b7d6554b), closes [#522](522))
+
+
+
+<a name=""></a>
 ##  Version 0.23.0 (2022-02-08)
 
 
