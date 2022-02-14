@@ -1,4 +1,4 @@
-import NimQml, Tables, chronicles, json, sequtils
+import NimQml, Tables, chronicles, json, sequtils, strutils
 import io_interface
 import ../io_interface as delegate_interface
 import view, controller, item, sub_item, sub_model, base_item
@@ -229,11 +229,15 @@ proc initContactRequestsModel(self: Module) =
 
   self.view.contactRequestsModel().addItems(contactsWhoAddedMe)
 
-method initListOfMyContacts*(self: Module) =
+proc convertPubKeysToJson(self: Module, pubKeys: string): seq[string] =
+  return map(parseJson(pubKeys).getElems(), proc(x:JsonNode):string = x.getStr)
+
+
+method initListOfMyContacts*(self: Module, pubKeys: string) =
   var myContacts: seq[contacts_item.Item]
   let contacts =  self.controller.getContacts()
   for c in contacts:
-    if(c.isContact() and not c.isBlocked()):
+    if(c.isContact() and not c.isBlocked() and not pubKeys.contains(c.id)):
       let item = self.createItemFromPublicKey(c.id)
       myContacts.add(item)
 
@@ -594,9 +598,6 @@ method onNewMessagesReceived*(self: Module, chatId: string, unviewedMessagesCoun
     self.controller.getActiveChatId() == chatId):
     return
   self.updateNotifications(chatId, unviewedMessagesCount, unviewedMentionsCount)
-
-proc convertPubKeysToJson(self: Module, pubKeys: string): seq[string] =
-  return map(parseJson(pubKeys).getElems(), proc(x:JsonNode):string = x.getStr)
 
 method addGroupMembers*(self: Module, chatId: string, pubKeys: string) =
   self.controller.addGroupMembers(chatId, self.convertPubKeysToJson(pubKeys))

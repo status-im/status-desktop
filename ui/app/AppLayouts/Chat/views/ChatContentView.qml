@@ -125,9 +125,9 @@ ColumnLayout {
             switch (chatContentModule.chatDetails.type) {
             case Constants.chatType.privateGroupChat:
                 Global.openPopup(groupInfoPopupComponent, {
-                              channelType: GroupInfoPopup.ChannelType.ActiveChannel,
-                              channel: chatContentModule.chatDetails
-                          })
+                                     chatContentModule: chatContentModule,
+                                     chatDetails: chatContentModule.chatDetails
+                                 })
                 break;
             case Constants.chatType.oneToOne:
                 Global.openProfilePopup(chatContentModule.chatDetails.id)
@@ -230,9 +230,9 @@ ColumnLayout {
 
             onDisplayGroupInfoPopup: {
                 Global.openPopup(groupInfoPopupComponent, {
-                              channelType: GroupInfoPopup.ChannelType.ActiveChannel,
-                              channel: chatContentModule.chatDetails
-                          })
+                                     chatContentModule: chatContentModule,
+                                     chatDetails: chatContentModule.chatDetails
+                                 })
             }
         }
     }

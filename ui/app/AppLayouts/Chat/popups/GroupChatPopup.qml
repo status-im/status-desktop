@@ -20,7 +20,6 @@ ModalPopup {
 
     property var chatSectionModule
     property var store
-    property var pubKeys: []
     property bool selectChatMembers: true
     property int memberCount: 1
     readonly property int maxMembers: 10
@@ -31,9 +30,9 @@ ModalPopup {
         searchBox.text = "";
         selectChatMembers = true;
         memberCount = 1;
-        pubKeys = [];
+        contactList.selectedPubKeys = [];
 
-        chatSectionModule.populateMyContacts()
+        chatSectionModule.populateMyContacts("")
 
         noContactsRect.visible = !chatSectionModule.listOfMyContacts.rowCount() > 0
         contactList.visible = !noContactsRect.visible;
@@ -62,11 +61,11 @@ ModalPopup {
         if (!validate()) {
             return
         }
-        if (pubKeys.length === 0) {
+        if (contactList.selectedPubKeys.length === 0) {
             return;
         }
 
-        popup.chatSectionModule.createGroupChat(Utils.filterXSS(groupName.text), JSON.stringify(pubKeys));
+        popup.chatSectionModule.createGroupChat(Utils.filterXSS(groupName.text), JSON.stringify(contactList.selectedPubKeys));
         popup.close();
     }
 
@@ -134,19 +133,8 @@ ModalPopup {
         selectMode: selectChatMembers && memberCount < maxMembers
         anchors.topMargin: 50
         anchors.top: searchBox.bottom
-        onItemChecked: function(pubKey, itemChecked){
-            var idx = pubKeys.indexOf(pubKey)
-            if(itemChecked){
-                if(idx === -1){
-                    pubKeys.push(pubKey)
-                }
-            } else {
-                if(idx > -1){
-                    pubKeys.splice(idx, 1);
-                }
-            }
-            memberCount = pubKeys.length + 1;
-            btnSelectMembers.enabled = pubKeys.length > 0
+        onSelectedPubKeysChanged:{
+            memberCount = selectedPubKeys.length + 1;
         }
     }
 
@@ -162,9 +150,9 @@ ModalPopup {
             icon.name: "arrow-right"
             icon.width: 20
             icon.height: 16
-            enabled: !!pubKeys.length
+            enabled: contactList.selectedPubKeys.length > 0
             onClicked : {
-                if(pubKeys.length > 0)
+                if (contactList.selectedPubKeys.length > 0)
                     selectChatMembers = false
                     searchBox.text = ""
                     groupName.forceActiveFocus(Qt.MouseFocusReason)

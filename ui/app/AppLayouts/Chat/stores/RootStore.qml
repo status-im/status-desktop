@@ -5,6 +5,7 @@ import utils 1.0
 QtObject {
     id: root
 
+    property var contactsStore
     // Important:
     // Each `ChatLayout` has its own chatCommunitySectionModule
     // (on the backend chat and community sections share the same module since they are actually the same)

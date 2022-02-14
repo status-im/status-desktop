@@ -78,7 +78,7 @@ method joinGroup*(self: AccessInterface) {.base.} =
 method joinGroupChatFromInvitation*(self: AccessInterface, groupName: string, chatId: string, adminPK: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method initListOfMyContacts*(self: AccessInterface) {.base.}  =
+method initListOfMyContacts*(self: AccessInterface, pubKeys: string) {.base.}  =
   raise newException(ValueError, "No implementation available")
 
 method clearListOfMyContacts*(self: AccessInterface) {.base.}  =

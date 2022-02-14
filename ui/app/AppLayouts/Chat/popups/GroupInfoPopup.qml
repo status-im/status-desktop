@@ -28,27 +28,26 @@ StatusModal {
     property bool addMembers: false
     property int currMemberCount: 1
     property int memberCount: 1
-    readonly property int maxMembers: 10
-    property var pubKeys: []
+
     property int channelType: GroupInfoPopup.ChannelType.ActiveChannel
-    property QtObject channel
-    property bool isAdmin: false
+    property var chatDetails
+    property bool isAdmin: popup.chatSectionModule.activeItem.amIChatAdmin
     property Component pinnedMessagesPopupComponent
 
     property var chatContentModule
 
-    function resetSelectedMembers(){
-        pubKeys = []
+    readonly property int maxMembers: 10
+
+    function resetSelectedMembers() {
+        contactList.selectedPubKeys = []
 
         memberCount = popup.chatContentModule.usersModule.model.rowCount()
         currMemberCount = memberCount
-        popup.store.addToGroupContacts.clear()
     }
 
-    function doAddMembers(){
-        if(pubKeys.length === 0) return;
-        if (popup.channel) {
-            popup.chatSectionModule.addGroupMembers(popup.channel.id, JSON.stringify(pubKeys));
+    function doAddMembers() {
+        if (popup.chatDetails.id && contactList.selectedPubKeys.length > 0) {
+            popup.chatSectionModule.addGroupMembers(popup.chatDetails.id, JSON.stringify(contactList.selectedPubKeys));
         }
         popup.close();
     }
@@ -57,23 +56,25 @@ StatusModal {
     anchors.centerIn: parent
 
     //% "Add members"
-    header.title: addMembers ? qsTrId("add-members") : (popup.channel ? popup.channel.name : "")
+    header.title: addMembers ? qsTrId("add-members") : (popup.chatDetails ? popup.chatDetails.name : "")
     header.subTitle:  {
         let cnt = memberCount;
-        if(addMembers){
+        if (addMembers) {
             //% "%1 / 10 members"
             return qsTrId("%1-/-10-members").arg(cnt)
         } else {
             //% "%1 members"
-            if(cnt > 1) return qsTrId("%1-members").arg(cnt);
+            if (cnt > 1) {
+                return qsTrId("%1-members").arg(cnt);
+            }
             //% "1 member"
             return qsTrId("1-member");
         }
     }
     header.editable: !addMembers && popup.isAdmin
     header.icon.isLetterIdenticon: true
-    header.icon.name: popup.channel ? popup.channel.name : ""
-    header.icon.background.color: popup.channel ? popup.channel.color : "transparent"
+    header.icon.name: popup.chatDetails ? popup.chatDetails.name : ""
+    header.icon.background.color: popup.chatDetails ? popup.chatDetails.color : "transparent"
 
     onEditButtonClicked: renameGroupPopup.open()
 
@@ -83,14 +84,10 @@ StatusModal {
     }
 
     onOpened: {
-        popup.chatContentModule = popup.store.currentChatContentModule()
-
-        chatSectionModule.populateMyContacts()
+        chatSectionModule.populateMyContacts(popup.chatContentModule.usersModule.getMembersPublicKeys())
 
         addMembers = false;
-        if (popup.channel) {
-            popup.isAdmin = popup.chatSectionModule.activeItem.amIChatAdmin
-        }
+
         btnSelectMembers.enabled = false;
         resetSelectedMembers();
     }
@@ -98,11 +95,12 @@ StatusModal {
     ColumnLayout {
         id: addMembersItem
 
-        width: parent.width - 2*Style.current.padding
-        height: parent.height
         anchors.top: parent.top
         anchors.topMargin: Style.current.halfPadding
         anchors.horizontalCenter: parent.horizontalCenter
+
+        width: parent.width - 2 * Style.current.padding
+        height: parent.height
 
         visible: addMembers
 
@@ -110,57 +108,53 @@ StatusModal {
 
         StatusBaseInput {
             id: searchBox
+            Layout.fillWidth: true
+            Layout.alignment: Qt.AlignTop
+
             implicitHeight: 36
             //% "Search"
             placeholderText: qsTrId("search")
             placeholderFont.pixelSize: 15
+
             icon.name: "search"
             icon.width: 17
             icon.height: 17
-            Layout.fillWidth: true
-            Layout.alignment: Qt.AlignTop
         }
 
         NoFriendsRectangle {
-            visible: popup.store.addToGroupContacts.count === 0 && memberCount === 0
             Layout.preferredHeight: childrenRect.height
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignVCenter
             Layout.bottomMargin: childrenRect.height
+
+            visible: popup.store.contactsStore.myContactsModel.count === 0
         }
 
         NoFriendsRectangle {
-            visible: popup.store.addToGroupContacts.count === 0 && memberCount > 0
+            Layout.preferredHeight: childrenRect.height
+            Layout.fillWidth: true
+            Layout.alignment: Qt.AlignVCenter
+            Layout.bottomMargin: childrenRect.height
+
+            visible: chatSectionModule.listOfMyContacts.rowCount() === 0
             //% "All your contacts are already in the group"
             text: qsTrId("group-chat-all-contacts-invited")
             textColor: Style.current.textColor
-            Layout.preferredHeight: childrenRect.height
-            Layout.fillWidth: true
-            Layout.alignment: Qt.AlignVCenter
-            Layout.bottomMargin: childrenRect.height
         }
 
         ContactListPanel {
             id: contactList
-            visible: popup.chatContentModule.usersModule.model.rowCount() > 0
+
             Layout.fillHeight: true
             Layout.fillWidth: true
+
+            visible: popup.addMembers && chatSectionModule.listOfMyContacts.rowCount() > 0
             model: chatSectionModule.listOfMyContacts
             selectMode: memberCount < maxMembers
             searchString: searchBox.text.toLowerCase()
-            onItemChecked: function(pubKey, itemChecked){
-                var idx = pubKeys.indexOf(pubKey)
-                if(itemChecked){
-                    if(idx === -1){
-                        pubKeys.push(pubKey)
-                    }
-                } else {
-                    if(idx > -1){
-                        pubKeys.splice(idx, 1);
-                    }
-                }
-                memberCount = popup.chatContentModule.usersModule.model.rowCount() + pubKeys.length;
-                btnSelectMembers.enabled = pubKeys.length > 0
+            onSelectedPubKeysChanged: {
+                memberCount = popup.chatContentModule.usersModule.model.rowCount() + selectedPubKeys.length;
+                btnSelectMembers.enabled = selectedPubKeys.length > 0
             }
         }
     }
@@ -168,11 +162,12 @@ StatusModal {
     ColumnLayout {
         id: groupInfoItem
 
-        width: parent.width - 2*Style.current.padding
-        height: parent.height - 2*Style.current.padding
         anchors.top: parent.top
         anchors.topMargin: Style.current.padding
         anchors.horizontalCenter: parent.horizontalCenter
+
+        width: parent.width - 2*Style.current.padding
+        height: parent.height - 2*Style.current.padding
 
         visible: !addMembers
         spacing: Style.current.padding
@@ -247,7 +242,7 @@ StatusModal {
                                 icon.height: 16
                                 //% "Make Admin"
                                 text: qsTrId("make-admin")
-                                onTriggered: popup.chatSectionModule.makeAdmin(popup.channel.id,  model.id)
+                                onTriggered: popup.chatSectionModule.makeAdmin(popup.chatDetails.id,  model.id)
                             }
                             StatusMenuItem {
                                 icon.name: "remove-contact"
@@ -256,7 +251,7 @@ StatusModal {
                                 type: StatusMenuItem.Type.Danger
                                 //% "Remove From Group"
                                 text: qsTrId("remove-from-group")
-                                onTriggered: popup.chatSectionModule.removeMemberFromGroupChat(popup.channel.id,  model.id)
+                                onTriggered: popup.chatSectionModule.removeMemberFromGroupChat(popup.chatDetails.id,  model.id)
                             }
                         }
                     }

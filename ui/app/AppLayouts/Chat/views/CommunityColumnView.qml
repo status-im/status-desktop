@@ -315,12 +315,11 @@ Item {
 
                 onDisplayGroupInfoPopup: {
                 communitySectionModule.prepareChatContentModuleForChatId(chatId)
-
                 let chatContentModule = communitySectionModule.getChatContentModule()
                 Global.openPopup(groupInfoPopupComponent, {
-                              channelType: GroupInfoPopup.ChannelType.ActiveChannel,
-                              channel: chatContentModule.chatDetails
-                          })
+                                     chatContentModule: chatContentModule,
+                                     chatDetails: chatContentModule.chatDetails
+                                 })
                 }
 
                 onEditCommunityChannel: {
