@@ -32,6 +32,7 @@ QtObject:
   proc callResultChanged*(self: View, callResult: string) {.signal.}
 
   proc setCallResult(self: View, callResult: string) =
+    echo $callResult # Added so we can copy paste response from terminal
     if self.callResult == callResult: return
     self.callResult = callResult
     self.callResultChanged(callResult)

@@ -126,4 +126,3 @@ method getPrice*(self: Controller, crypto: string, fiat: string): float64 =
 
 method getStatusToken*(self: Controller): string =
   return self.ensService.getStatusToken()
-

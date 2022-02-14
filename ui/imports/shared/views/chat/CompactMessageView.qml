@@ -420,6 +420,7 @@ Item {
                 StatusChatInput {
                     id: editTextInput
 
+                    store: root.store
                     usersStore: root.usersStore
 
                     chatInputPlaceholder: qsTrId("type-a-message-")
@@ -564,7 +565,8 @@ Item {
                             onLoaded: {
                                 if(!root.messageStore)
                                     return
-                                root.messageStore.scrollToBottom(true, root.container)
+                                // Not refactored yet
+                                // root.messageStore.scrollToBottom(true, root.container)
                             }
                         }
                     }

@@ -1,22 +1,39 @@
 {.used.}
 
-import json, strformat, strutils, stint, json_serialization
+import json, strformat, strutils, stint, json_serialization, chronicles
 
 include ../../../common/json_utils
 include ../../../common/utils
 
 type StickerDto* = object
   hash*: string
-  packId*: int
+  packId*: string
+  url*: string
+
+type StickerPackStatus* = enum
+  Unknown = -1,
+  Available = 0,
+  Installed = 1,
+  Pending = 2,
+  Purchased = 3,
 
 type StickerPackDto* = object
-  id*: int
+  id*: string
   name*: string
   author*: string
   price*: Stuint[256]
   preview*: string
   stickers*: seq[StickerDto]
   thumbnail*: string
+  status* : StickerPackStatus
+
+
+proc toStickerPackStatus*(value: int): StickerPackStatus =
+  result = StickerPackStatus.Unknown
+  try:
+    result = StickerPackStatus(value)
+  except:
+    warn "Unknown stickerpack status", value
 
 
 proc `$`(self: StickerDto): string =
@@ -33,7 +50,8 @@ proc `$`*(self: StickerPackDto): string =
     price: {$self.price},
     preview: {self.preview},
     stickersLen: {$self.stickers.len},
-    thumbnail:{self.thumbnail}
+    thumbnail:{self.thumbnail},
+    status:{self.status}
     )"""
 
 
@@ -55,16 +73,19 @@ proc readValue*(reader: var JsonReader, value: var Stuint[256])
 proc toStickerDto*(jsonObj: JsonNode): StickerDto =
   result = StickerDto()
   discard jsonObj.getProp("hash", result.hash)
-  discard jsonObj.getProp("packId", result.packId)
+  discard jsonObj.getProp("packID", result.packId)
+  discard jsonObj.getProp("url", result.url)
 
 proc toStickerPackDto*(jsonObj: JsonNode): StickerPackDto =
   result = StickerPackDto()
   discard jsonObj.getProp("id", result.id)
   discard jsonObj.getProp("name", result.name)
   discard jsonObj.getProp("author", result.author)
-  result.price = stint.fromHex(Stuint[256], jsonObj["price"].getStr)
+  discard jsonObj.getProp("preview", result.preview)
   discard jsonObj.getProp("thumbnail", result.thumbnail)
 
+  result.status = jsonObj["status"].getInt(-1).toStickerPackStatus()
+  result.price = jsonObj["price"].getStr().parse(Stuint[256])
   result.stickers = @[]
   for sticker in jsonObj["stickers"]:
     result.stickers.add(sticker.toStickerDto)

@@ -2,7 +2,7 @@ import
   atomics, json, tables, sequtils, httpclient, net
 import json, random, strutils, strformat, tables, chronicles, unicode, times
 import
-  json_serialization, chronicles, libp2p/[multihash, multicodec, cid], stint, nimcrypto
+  json_serialization, chronicles, libp2p/[multihash, multibase, multicodec, cid], stint, nimcrypto
 from sugar import `=>`, `->`
 import stint
 from times import getTime, toUnix, nanosecond
@@ -56,7 +56,10 @@ proc decodeContentHash*(value: string): string =
     # ...rest = multihash digest
     let multiHash = MultiHash.init(nimcrypto.fromHex(multiHashStr)).get()
     let resultTyped = Cid.init(CIDv0, MultiCodec.codec(codec), multiHash).get()
-    result = $resultTyped
+    let base32Hash = Multibase.encode("base32", resultTyped.data.buffer)
+    if base32Hash.isOk():
+      result = "https://" & base32Hash.get() & ".ipfs.infura-ipfs.io" # TODO: eventually this will not be needed, since messages will return the decoded content hash
+
     trace "Decoded sticker hash", cid=result
   except Exception as e:
     error "Error decoding sticker", hash=value, exception=e.msg

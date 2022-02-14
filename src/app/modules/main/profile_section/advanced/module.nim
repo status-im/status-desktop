@@ -7,6 +7,7 @@ import ../../../../../constants
 import ../../../../core/eventemitter
 import ../../../../global/global_singleton
 import ../../../../../app_service/service/settings/service_interface as settings_service
+import ../../../../../app_service/service/stickers/service as stickers_service
 import ../../../../../app_service/service/node_configuration/service_interface as node_configuration_service
 
 export io_interface
@@ -24,12 +25,13 @@ type
 
 proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitter,
   settingsService: settings_service.ServiceInterface,
+  stickersService: stickers_service.Service,
   nodeConfigurationService: node_configuration_service.ServiceInterface): Module =
   result = Module()
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, events, settingsService, nodeConfigurationService)
+  result.controller = controller.newController(result, events, settingsService, stickersService, nodeConfigurationService)
   result.moduleLoaded = false
 
 method delete*(self: Module) =

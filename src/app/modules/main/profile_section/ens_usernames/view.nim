@@ -28,7 +28,7 @@ QtObject:
 
   proc load*(self: View, link: string, signingPhrase: string) =
     self.etherscanLink = link
-    self.signingPhrase = ""
+    self.signingPhrase = signingPhrase
     self.delegate.viewDidLoad()
 
   proc model*(self: View): Model =

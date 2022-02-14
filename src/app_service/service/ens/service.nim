@@ -58,7 +58,7 @@ type
 # Signals which may be emitted by this service:
 const SIGNAL_ENS_USERNAME_AVAILABILITY_CHECKED* = "ensUsernameAvailabilityChecked"
 const SIGNAL_ENS_USERNAME_DETAILS_FETCHED* = "ensUsernameDetailsFetched"
-const SIGNAL_GAS_PRICE_FETCHED* = "gasPriceFetched"
+const SIGNAL_GAS_PRICE_FETCHED* = "ensGasPriceFetched"
 const SIGNAL_ENS_TRANSACTION_CONFIRMED* = "ensTransactionConfirmed"
 const SIGNAL_ENS_TRANSACTION_REVERTED* = "ensTransactionReverted"
 

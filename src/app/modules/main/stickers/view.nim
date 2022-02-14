@@ -2,6 +2,7 @@ import NimQml, json, strutils, json_serialization
 
 import ./models/[sticker_list, sticker_pack_list]
 import ./io_interface, ./item
+import ../../../../app_service/service/eth/utils as eth_utils
 
 QtObject:
   type
@@ -10,6 +11,9 @@ QtObject:
       packsLoaded*: bool
       stickerPacks*: StickerPackList
       recentStickers*: StickerList
+      signingPhrase: string
+      stickersMarketAddress: string
+      gasPrice: string
 
   proc delete*(self: View) =
     self.QObject.delete
@@ -21,7 +25,10 @@ QtObject:
     result.stickerPacks = newStickerPackList(result.delegate)
     result.recentStickers = newStickerList(result.delegate)
 
-  proc load*(self: View) =
+  proc load*(self: View, signingPhrase: string, stickersMarketAddress: string) =
+    self.signingPhrase = signingPhrase
+    self.stickersMarketAddress = stickersMarketAddress
+    self.gasPrice = "0"
     self.delegate.viewDidLoad()
 
   proc addStickerPackToList*(self: View, stickerPack: PackItem, isInstalled, isBought, isPending: bool) =
@@ -51,18 +58,23 @@ QtObject:
 
   proc transactionCompleted*(self: View, success: bool, txHash: string, revertReason: string = "") {.signal.}
 
-  proc estimate*(self: View, packId: int, address: string, price: string, uuid: string) {.slot.} =
+  proc estimate*(self: View, packId: string, address: string, price: string, uuid: string) {.slot.} =
     self.delegate.estimate(packId, address, price, uuid)
 
   proc gasEstimateReturned*(self: View, estimate: int, uuid: string) {.signal.}
 
-  proc buy*(self: View, packId: int, address: string, price: string, gas: string, gasPrice: string, maxPriorityFeePerGas: string, maxFeePerGas: string, password: string): string {.slot.} =
-    let responseTuple = self.delegate.buy(packId, address, price, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, password)
+  proc buy*(self: View, packId: string, address: string, gas: string, gasPrice: string, maxPriorityFeePerGas: string, maxFeePerGas: string, password: string): string {.slot.} =
+    let responseTuple = self.delegate.buy(packId, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, password)
     let response = responseTuple.response
     let success = responseTuple.success
     if success:
       self.stickerPacks.updateStickerPackInList(packId, false, true)
       self.transactionWasSent(response)
+
+    result = $(%*{
+      "success": success,
+      "result": response
+    })
 
   proc stickerPacksLoaded*(self: View) {.signal.}
 
@@ -82,15 +94,15 @@ QtObject:
     read = getNumInstalledStickerPacks
     notify = installedStickerPacksUpdated
 
-  proc install*(self: View, packId: int) {.slot.} =
+  proc install*(self: View, packId: string) {.slot.} =
     self.delegate.installStickerPack(packId)
     self.stickerPacks.updateStickerPackInList(packId, true, false)
     self.installedStickerPacksUpdated()
 
-  proc resetBuyAttempt*(self: View, packId: int) {.slot.} =
+  proc resetBuyAttempt*(self: View, packId: string) {.slot.} =
     self.stickerPacks.updateStickerPackInList(packId, false, false)
 
-  proc uninstall*(self: View, packId: int) {.slot.} =
+  proc uninstall*(self: View, packId: string) {.slot.} =
     self.delegate.uninstallStickerPack(packId)
     self.delegate.removeRecentStickers(packId)
     self.stickerPacks.updateStickerPackInList(packId, false, false)
@@ -113,8 +125,52 @@ QtObject:
     self.stickerPacksLoaded()
     self.installedStickerPacksUpdated()
 
-  proc send*(self: View, channelId: string, hash: string, replyTo: string, pack: int) {.slot.} =
-    let sticker = initItem(hash, pack)
+  proc send*(self: View, channelId: string, hash: string, replyTo: string, pack: string) {.slot.} =
+    let sticker = initItem(hash, pack, eth_utils.decodeContentHash(hash))
     self.addRecentStickerToList(sticker)
     self.delegate.sendSticker(channelId, replyTo, sticker)
 
+  proc getSigningPhrase(self: View): QVariant {.slot.} =
+    return newQVariant(self.signingPhrase)
+
+  proc getStickersMarketAddress(self: View): string {.slot.} =
+    return self.stickersMarketAddress
+
+  proc getSNTBalance*(self: View): string {.slot.} =
+    return self.delegate.getSNTBalance()
+
+  proc getWalletDefaultAddress*(self: View): string {.slot.} =
+    return self.delegate.getWalletDefaultAddress()
+
+  proc getCurrentCurrency*(self: View): string {.slot.} =
+    return self.delegate.getCurrentCurrency()
+
+  proc getFiatValue*(self: View, cryptoBalance: string, cryptoSymbol: string, fiatSymbol: string): string {.slot.} =
+    return self.delegate.getFiatValue(cryptoBalance, cryptoSymbol, fiatSymbol)
+
+  proc getGasEthValue*(self: View, gweiValue: string, gasLimit: string): string {.slot.} =
+    return self.delegate.getGasEthValue(gweiValue, gasLimit)
+
+  proc getStatusToken*(self: View): string {.slot.} =
+    return self.delegate.getStatusToken()
+
+  proc fetchGasPrice*(self: View) {.slot.} =
+    self.delegate.fetchGasPrice()
+
+  proc gasPriceChanged(self: View) {.signal.}
+  proc getGasPrice(self: View): string {.slot.} =
+    return self.gasPrice
+
+  QtProperty[string] gasPrice:
+    read = getGasPrice
+    notify = gasPriceChanged
+
+  proc setGasPrice*(self: View, gasPrice: string) = # this is not a slot
+    self.gasPrice = gasPrice
+    self.gasPriceChanged()
+
+  proc transactionCompleted(self: View, success: bool, txHash: string, packID: string, trxType: string,
+    revertReason: string) {.signal.}
+  proc emitTransactionCompletedSignal*(self: View, success: bool, txHash: string, packID: string, trxType: string,
+    revertReason: string) =
+    self.transactionCompleted(success, txHash, packID, trxType, revertReason)

@@ -71,10 +71,8 @@ Item {
         if (!inputGasPrice || !inputGasLimit) {
             return
         }
-
         let ethValue = root.getGasEthValue(inputGasPrice.text, inputGasLimit.text)
         let fiatValue = root.getFiatValue(ethValue, "ETH", root.defaultCurrency)
-
         selectedGasEthValue = ethValue
         selectedGasFiatValue = fiatValue
     }
@@ -156,7 +154,7 @@ Item {
             inputGasPrice.validationError = root.noInputErrorMessage
         }
 
-        if (noPerGasTip) {
+        if (isEIP1559Enabled && noPerGasTip) {
             inputPerGasTipLimit.validationError = root.noInputErrorMessage
         }
 
@@ -167,7 +165,7 @@ Item {
             inputGasPrice.validationError = invalidInputErrorMessage
         }
 
-        if (isNaN(inputPerGasTipLimit.text)) {
+        if (isEIP1559Enabled && isNaN(inputPerGasTipLimit.text)) {
             inputPerGasTipLimit.validationError = invalidInputErrorMessage
         }
 
@@ -182,10 +180,10 @@ Item {
         if (inputPrice <= 0.00) {
             inputGasPrice.validationError = root.greaterThan0ErrorMessage
         }
-        if (inputTipLimit <= 0.00) {
+        if (isEIP1559Enabled && inputTipLimit <= 0.00) {
             inputPerGasTipLimit.validationError = root.greaterThan0ErrorMessage
         }
-        const isInputValid = inputGasLimit.validationError === "" && inputGasPrice.validationError === "" && inputPerGasTipLimit.validationError === ""
+        const isInputValid = inputGasLimit.validationError === "" && inputGasPrice.validationError === "" && (!isEIP1559Enabled  || (isEIP1559Enabled && inputPerGasTipLimit.validationError === ""))
         return isInputValid
     }
 

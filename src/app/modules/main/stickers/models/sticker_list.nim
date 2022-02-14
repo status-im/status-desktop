@@ -34,7 +34,7 @@ QtObject:
     let sticker = self.stickers[index.row]
     let stickerRole = role.StickerRoles
     case stickerRole:
-      of StickerRoles.Url: result = newQVariant(self.delegate.decodeContentHash(sticker.getHash))
+      of StickerRoles.Url: result = newQVariant(sticker.getURL)
       of StickerRoles.Hash: result = newQVariant(sticker.getHash)
       of StickerRoles.PackId: result = newQVariant(sticker.getPackId)
 
@@ -52,7 +52,7 @@ QtObject:
     self.stickers.insert(sticker, 0)
     self.endInsertRows()
 
-  proc removeStickersFromList*(self: StickerList, packId: int) =
+  proc removeStickersFromList*(self: StickerList, packId: string) =
     if not self.stickers.anyIt(it.getPackId == packId):
       return
     self.beginRemoveRows(newQModelIndex(), 0, 0)

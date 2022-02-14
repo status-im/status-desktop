@@ -16,17 +16,20 @@ ModalPopup {
     id: root
 
     property var store
+    property var stickersStore
     property var contactsStore
 
-    readonly property var asset: JSON.parse(root.store.getStatusToken())
+    readonly property var asset: JSON.parse(root.stickersStore.getStatusToken())
     property string assetPrice
     property string contractAddress
     property var estimateGasFunction: (function(userAddress, uuid) { return 0; })
     property var onSendTransaction: (function(userAddress, gasLimit, gasPrice, tipLimit, overallLimit, password){ return ""; })
     property var onSuccess: (function(){})
+    property var asyncGasEstimateTarget
 
     Component.onCompleted: {
-        root.store.fetchGasPrice()
+        root.stickersStore.fetchGasPrice();
+        gasSelector.estimateGas();
     }
 
     height: 540
@@ -46,6 +49,7 @@ ModalPopup {
         if (uuid === gasSelector.uuid) {
             gasSelector.selectedGasLimit = value
             gasSelector.defaultGasLimit = value
+            gasSelector.updateGasEthValue();
         }
     }
 
@@ -58,7 +62,6 @@ ModalPopup {
                                          transactionSigner.enteredPassword);
 
         let response = JSON.parse(responseStr)
-
         if (!response.success) {
             if (Utils.isInvalidPasswordMessage(response.result)){
                 //% "Wrong password"
@@ -113,20 +116,28 @@ ModalPopup {
             RecipientSelector {
                 id: selectRecipient
                 visible: false
-                accounts: root.store.walletAccounts
+                accounts: root.stickersStore.walletAccounts
                 contactsStore: root.contactsStore
                 selectedRecipient: { "address": contractAddress, "type": RecipientSelector.Type.Address }
                 readOnly: true
                 onSelectedRecipientChanged: if (isValid) { gasSelector.estimateGas() }
             }
+
+            Connections {
+                target: asyncGasEstimateTarget
+                onGasEstimateReturned: {
+                    root.setAsyncGasLimitResult(uuid, estimate)
+                }
+            }
+
             GasSelector {
                 id: gasSelector
                 anchors.top: selectFromAccount.bottom
                 anchors.topMargin: Style.current.padding
-                gasPrice: parseFloat(root.store.gasPrice)
-                getGasEthValue: root.store.getGasEthValue
-                getFiatValue: root.store.getFiatValue
-                defaultCurrency: root.store.getCurrentCurrency()
+                gasPrice: parseFloat(root.stickersStore.gasPrice)
+                getGasEthValue: root.stickersStore.getGasEthValue
+                getFiatValue: root.stickersStore.getFiatValue
+                defaultCurrency: root.stickersStore.getCurrentCurrency()
                 isEIP1559Enabled: root.store.isEIP1559Enabled()
                 latestBaseFeePerGas: root.store.latestBaseFeePerGas()
                 suggestedFees: root.store.suggestedFees()
@@ -134,7 +145,9 @@ ModalPopup {
 
                 property var estimateGas: Backpressure.debounce(gasSelector, 600, function() {
                     let estimatedGas = root.estimateGasFunction(selectFromAccount.selectedAccount, uuid);
-                    gasSelector.selectedGasLimit = estimatedGas
+                    if (estimatedGas !== undefined) {
+                        gasSelector.selectedGasLimit = estimatedGas
+                    }
                     return estimatedGas;
                 })
             }
@@ -166,10 +179,10 @@ ModalPopup {
                 toAccount: selectRecipient.selectedRecipient
                 asset: root.asset
                 amount: {
-                    const fiatValue = root.store.getFiatValue(root.assetPrice || 0, root.asset.symbol, currency)
+                    const fiatValue = root.stickersStore.getFiatValue(root.assetPrice || 0, root.asset.symbol, currency)
                     return { "value": root.assetPrice, "fiatValue": fiatValue }
                 }
-                currency: root.store.getCurrentCurrency()
+                currency: root.stickersStore.getCurrentCurrency()
             }
         }
         TransactionFormGroup {
@@ -182,7 +195,7 @@ ModalPopup {
             TransactionSigner {
                 id: transactionSigner
                 width: stack.width
-                signingPhrase: root.store.getSigningPhrase()
+                signingPhrase: root.stickersStore.getSigningPhrase()
             }
         }
     }

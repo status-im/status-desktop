@@ -22,7 +22,7 @@ Item {
         anchors.left: parent.left
         width: 40
         height: 40
-        source: "https://ipfs.infura.io/ipfs/" + packThumb
+        source: packThumb
     }
 
     Column {

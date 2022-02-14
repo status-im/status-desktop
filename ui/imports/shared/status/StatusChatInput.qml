@@ -30,6 +30,7 @@ Rectangle {
     signal unblockChat()
 
     property var usersStore
+    property var store
 
     property var emojiPopup: null
     // Use this to only enable the Connections only when this Input opens the Emoji popup
@@ -756,6 +757,7 @@ Rectangle {
         id: stickersPopup
         x: parent.width - width - Style.current.halfPadding
         y: -height
+        store: control.store
         enabled: !!control.recentStickers && !!control.stickerPackList
         recentStickers: control.recentStickers
         stickerPackList: control.stickerPackList

@@ -58,9 +58,9 @@ QtObject:
       of StickerPackRoles.Id: result = newQVariant(stickerPack.id)
       of StickerPackRoles.Name: result = newQVariant(stickerPack.name)
       of StickerPackRoles.Price: result = newQVariant(self.delegate.wei2Eth(stickerPack.price))
-      of StickerPackRoles.Preview: result = newQVariant(self.delegate.decodeContentHash(stickerPack.preview))
+      of StickerPackRoles.Preview: result = newQVariant(stickerPack.preview)
       of StickerPackRoles.Stickers: result = newQVariant(packInfo.stickers)
-      of StickerPackRoles.Thumbnail: result = newQVariant(self.delegate.decodeContentHash(stickerPack.thumbnail))
+      of StickerPackRoles.Thumbnail: result = newQVariant(stickerPack.thumbnail)
       of StickerPackRoles.Installed: result = newQVariant(packInfo.installed)
       of StickerPackRoles.Bought: result = newQVariant(packInfo.bought)
       of StickerPackRoles.Pending: result = newQVariant(packInfo.pending)
@@ -79,7 +79,7 @@ QtObject:
       StickerPackRoles.Pending.int: "pending"
     }.toTable
 
-  proc findIndexById*(self: StickerPackList, packId: int, mustBeInstalled: bool = false): int {.slot.} =
+  proc findIndexById*(self: StickerPackList, packId: string, mustBeInstalled: bool = false): int {.slot.} =
     result = -1
     var idx = -1
     for item in self.packs:
@@ -89,10 +89,10 @@ QtObject:
         result = idx
         break
 
-  proc hasKey*(self: StickerPackList, packId: int): bool =
+  proc hasKey*(self: StickerPackList, packId: string): bool =
     result = self.packs.anyIt(it.pack.id == packId)
 
-  proc `[]`*(self: StickerPackList, packId: int): PackItem =
+  proc `[]`*(self: StickerPackList, packId: string): PackItem =
     if not self.hasKey(packId):
       raise newException(ValueError, "Sticker pack list does not have a pack with id " & $packId)
     result = eth_utils.find(self.packs, (view: StickerPackView) => view.pack.id == packId).pack
@@ -102,13 +102,13 @@ QtObject:
     self.packs.insert((pack: pack, stickers: stickers, installed: installed, bought: bought, pending: pending), 0)
     self.endInsertRows()
 
-  proc removeStickerPackFromList*(self: StickerPackList, packId: int) =
+  proc removeStickerPackFromList*(self: StickerPackList, packId: string) =
     let idx = self.findIndexById(packId)
     self.beginRemoveRows(newQModelIndex(), idx, idx)
     self.packs.keepItIf(it.pack.id != packId)
     self.endRemoveRows()
 
-  proc updateStickerPackInList*(self: StickerPackList, packId: int, installed: bool, pending: bool) =
+  proc updateStickerPackInList*(self: StickerPackList, packId: string, installed: bool, pending: bool) =
     if not self.hasKey(packId):
       return
 
@@ -135,8 +135,8 @@ QtObject:
       of "author": result = stickerPack.author
       of "name": result = stickerPack.name
       of "price": result = self.delegate.wei2Eth(stickerPack.price)
-      of "preview": result = self.delegate.decodeContentHash(stickerPack.preview)
-      of "thumbnail": result = self.delegate.decodeContentHash(stickerPack.thumbnail)
+      of "preview": result = stickerPack.preview
+      of "thumbnail": result = stickerPack.thumbnail
       of "installed": result = $packInfo.installed
       of "bought": result = $packInfo.bought
       of "pending": result = $packInfo.pending

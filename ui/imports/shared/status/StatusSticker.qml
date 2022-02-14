@@ -21,7 +21,7 @@ Loader {
 
             width: imageWidth
             height: this.visible ? imageHeight : 0
-            source: this.visible ? ("https://ipfs.infura.io/ipfs/" + stickerData) : ""
+            source: this.visible ?  stickerData : ""
         }
     }
 }

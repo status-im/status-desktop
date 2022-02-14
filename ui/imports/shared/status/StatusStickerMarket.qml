@@ -8,13 +8,16 @@ import shared 1.0
 import shared.panels 1.0
 import shared.popups 1.0
 import shared.status 1.0
+import shared.stores 1.0 as SharedStores
+
 //TODO remove this dependency!
 import AppLayouts.Chat.stores 1.0
 
 Item {
     id: root
+
+    property var store
     property var stickerPacks: StickerPackData {}
-    property var stickerPurchasePopup
     property int packId: -1
 
     signal backClicked
@@ -50,7 +53,7 @@ Item {
                 height: 220
                 width: parent.width
                 radius: 12
-                source: "https://ipfs.infura.io/ipfs/" + model.preview
+                source: model.preview
                 onClicked: {
                     stickerPackDetailsPopup.open()
                 }
@@ -91,7 +94,7 @@ Item {
                     onCancelClicked: root.cancelClicked(packId)
                     onUpdateClicked: root.updateClicked(packId)
                     onBuyClicked: {
-                        root.stickerPurchasePopup = Global.openPopup(stickerPackPurchaseModal)
+                        Global.openPopup(stickerPackPurchaseModal)
                         root.buyClicked(packId)
                     }
                 }
@@ -99,17 +102,18 @@ Item {
             Component {
                 id: stickerPackPurchaseModal
                 StatusSNTTransactionModal {
-                    // Not Refactored Yet
-//                    contractAddress: utilsModel.stickerMarketAddress
+                    store: root.store
+                    stickersStore: root.store.stickersStore
+                    contractAddress: root.store.stickersStore.getStickersMarketAddress()
+                    contactsStore: root.store.contactsStore
                     assetPrice: price
                     estimateGasFunction: function(selectedAccount, uuid) {
                         if (packId < 0  || !selectedAccount || !price) return 325000
-                        return stickersModule.estimate(packId, selectedAccount.address, price, uuid)
+                        return root.store.stickersStore.estimate(packId, selectedAccount.address, price, uuid)
                     }
                     onSendTransaction: function(selectedAddress, gasLimit, gasPrice, tipLimit, overallLimit, password) {
-                        return stickersModule.buy(packId,
+                        return root.store.stickersStore.buy(packId,
                                                        selectedAddress,
-                                                       price,
                                                        gasLimit,
                                                        gasPrice,
                                                        tipLimit,
@@ -119,15 +123,9 @@ Item {
                     onClosed: {
                         destroy()
                     }
+                    asyncGasEstimateTarget: root.store.stickersStore.stickersModule
                     width: stickerPackDetailsPopup.width
                     height: stickerPackDetailsPopup.height
-                }
-            }
-
-            Connections {
-                target: stickersModule
-                onGasEstimateReturned: {
-                    stickerPurchasePopup.setAsyncGasLimitResult(uuid, estimate)
                 }
             }
 
@@ -156,11 +154,11 @@ Item {
                     onCancelClicked: root.cancelClicked(packId)
                     onUpdateClicked: root.updateClicked(packId)
                     onBuyClicked: {
-                        if (!RootStore.isWalletEnabled) {
+                        if (!SharedStores.RootStore.isWalletEnabled) {
                             confirmationPopup.open()
                             return
                         }
-                        root.stickerPurchasePopup = Global.openPopup(stickerPackPurchaseModal)
+                        Global.openPopup(stickerPackPurchaseModal)
                         root.buyClicked(packId)
                     }
                 }
@@ -172,9 +170,9 @@ Item {
                 confirmationText: qsTr("This feature is experimental and is meant for testing purposes by core contributors and the community. It's not meant for real use and makes no claims of security or integrity of funds or data. Use at your own risk.")
                 confirmButtonLabel: qsTr("I understand")
                 onConfirmButtonClicked: {
-                    RootStore.enableWallet();
+                    SharedStores.RootStore.enableWallet();
                     close()
-                    root.stickerPurchasePopup = Global.openPopup(stickerPackPurchaseModal)
+                    Global.openPopup(stickerPackPurchaseModal)
                     root.buyClicked(packId)
                 }
 

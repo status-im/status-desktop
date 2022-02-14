@@ -1,55 +1,53 @@
 import json
 import ./eth
+import ./utils
+import ./core, ./response_type
+import web3/[ethtypes, conversions]
 
-# Retrieves number of sticker packs owned by user
-# See https://notes.status.im/Q-sQmQbpTOOWCQcYiXtf5g#Read-Sticker-Packs-owned-by-a-user
-# for more details
-proc getBalance*(address: string, data: string): RpcResponse[JsonNode] {.raises: [Exception].} =
-  let payload = %* [{
-      "to": address,
-      "data": data
-    }, "latest"]
+proc market*(chainId: int): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* [chainId]
+  return core.callPrivateRPC("stickers_market", payload)
 
-  let response = eth.doEthCall(payload)
+proc pending*(): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* []
+  return core.callPrivateRPC("stickers_pending", payload)
 
-  if not response.error.isNil:
-    raise newException(RpcException, "Error getting stickers balance: " & response.error.message)
+proc installed*(): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* []
+  return core.callPrivateRPC("stickers_installed", payload)
 
-  return response
+proc install*(chainId: int, packId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* [chainId, packId]
+  return core.callPrivateRPC("stickers_install", payload)
 
-proc tokenOfOwnerByIndex*(address: string, data: string): RpcResponse[JsonNode] {.raises: [Exception].} =
-  let payload = %* [{
-      "to": address,
-      "data": data
-    }, "latest"]
+proc uninstall*(packId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* [packId]
+  return core.callPrivateRPC("stickers_uninstall", payload)
 
-  let response = eth.doEthCall(payload)
-  if not response.error.isNil:
-    raise newException(RpcException, "Error getting owned tokens: " & response.error.message)
+proc recent*(): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* []
+  return core.callPrivateRPC("stickers_recent", payload)
 
-  return response
+proc addRecent*(packId: string, hash: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* [{"packID": packId, "hash": hash}]
+  return core.callPrivateRPC("stickers_addRecent", payload)
 
-proc getPackIdFromTokenId*(address: string, data: string): RpcResponse[JsonNode] {.raises: [Exception].} =
-  let payload = %* [{
-      "to": address,
-      "data": data
-    }, "latest"]
+proc stickerMarketAddress*(chainId: int): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* [chainId]
+  return core.callPrivateRPC("stickers_stickerMarketAddress", payload)
 
-  let response = eth.doEthCall(payload)
-  if not response.error.isNil:
-    raise newException(RpcException, "Error getting pack id from token id: " & response.error.message)
+proc buyEstimate*(chainId: int, fromAccount: Address, packId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* [chainId, $fromAccount, packId]
+  return core.callPrivateRPC("stickers_buyEstimate", payload)
 
-  return response
+proc buy*(chainId: int, txData: JsonNode, packId: string, password: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* [chainId, txData, packID, utils.hashPassword(password)]
+  return core.callPrivateRPC("stickers_buy", payload)
 
-proc getPackCount*(address: string, data: string): RpcResponse[JsonNode] {.raises: [Exception].} =
-  let payload = %* [{
-      "to": address,
-      "data": data
-    }, "latest"]
+proc clearRecentStickers*(): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* []
+  return core.callPrivateRPC("stickers_clearRecent", payload)
 
-  let response = eth.doEthCall(payload)
-
-  if not response.error.isNil:
-    raise newException(RpcException, "Error getting stickers balance: " & response.error.message)
-
-  return response
+proc removePending*(packId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* [packId]
+  return core.callPrivateRPC("stickers_removePending", payload)
