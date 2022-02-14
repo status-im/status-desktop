@@ -158,7 +158,8 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
     result.walletAccountService,
     result.transactionService,
     result.networkService,
-    result.chatService
+    result.chatService,
+    result.tokenService
   )
   result.aboutService = about_service.newService(statusFoundation.events, statusFoundation.threadpool,
   result.settingsService)

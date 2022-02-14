@@ -142,11 +142,11 @@ proc newModule*[T](
   result.browserSectionModule = browser_section_module.newModule(result, bookmarkService, settingsService,
   dappPermissionsService, providerService)
   result.profileSectionModule = profile_section_module.newModule(
-    result, events, accountsService, settingsService,
+    result, events, accountsService, settingsService, stickersService,
     profileService, contactsService, aboutService, languageService, privacyService, nodeConfigurationService,
     devicesService, mailserversService, chatService, ensService, walletAccountService,
   )
-  result.stickersModule = stickers_module.newModule(result, events, stickersService)
+  result.stickersModule = stickers_module.newModule(result, events, stickersService, settingsService, walletAccountService)
   result.activityCenterModule = activity_center_module.newModule(result, events, activityCenterService, contactsService,
   messageService)
   result.communitiesModule = communities_module.newModule(result, events, communityService, contactsService)

@@ -13,6 +13,7 @@ import AppLayouts.Chat.stores 1.0
 
 Popup {
     id: root
+    property var store
     property var recentStickers: StickerData {}
     property var stickerPackList: StickerPackData {}
     signal stickerSelected(string hashId, string packId)
@@ -71,6 +72,7 @@ Popup {
             visible: false
             Layout.fillWidth: true
             Layout.fillHeight: true
+            store: root.store
             stickerPacks: stickerPackList
             packId: stickerPackListView.selectedPackId
             onInstallClicked: {
@@ -257,7 +259,7 @@ Popup {
                             width: 24
                             height: 24
                             selected: stickerPackListView.selectedPackId === packId
-                            source: "https://ipfs.infura.io/ipfs/" + thumbnail
+                            source: thumbnail
                             Layout.preferredHeight: height
                             Layout.preferredWidth: width
                             onClicked: {

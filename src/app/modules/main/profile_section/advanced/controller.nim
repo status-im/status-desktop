@@ -6,6 +6,7 @@ import ../../../../global/app_signals
 import ../../../../core/eventemitter
 import ../../../../core/fleets/fleet_configuration
 import ../../../../../app_service/service/settings/service_interface as settings_service
+import ../../../../../app_service/service/stickers/service as stickers_service
 import ../../../../../app_service/service/node_configuration/service_interface as node_configuration_service
 
 export controller_interface
@@ -18,10 +19,12 @@ type
     delegate: io_interface.AccessInterface
     events: EventEmitter
     settingsService: settings_service.ServiceInterface
+    stickersService: stickers_service.Service
     nodeConfigurationService: node_configuration_service.ServiceInterface
 
 proc newController*(delegate: io_interface.AccessInterface, events: EventEmitter,
   settingsService: settings_service.ServiceInterface,
+  stickersService: stickers_service.Service,
   nodeConfigurationService: node_configuration_service.ServiceInterface): Controller =
   result = Controller()
   result.delegate = delegate
@@ -44,17 +47,7 @@ method changeCurrentNetworkTo*(self: Controller, network: string) =
     error "an error occurred, we couldn't change network"
     return
 
-  var stickers: seq[StickerDto]
-  if (not self.settingsService.saveRecentStickers(stickers)):
-    # in the future we may do a call from here to show a popup about this error
-    error "an error occurred, we couldn't reset stickers for the network"
-    return
-
-  let stickerPacks = initTable[int, StickerPackDto]()
-  if (not self.settingsService.saveRecentStickers(stickerPacks)):
-    # in the future we may do a call from here to show a popup about this error
-    error "an error occurred, we couldn't reset stickers packs for the network"
-    return
+  self.stickersService.clearRecentStickers()
 
   self.delegate.onCurrentNetworkSet()
 

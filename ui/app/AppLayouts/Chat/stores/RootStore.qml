@@ -104,6 +104,10 @@ QtObject {
 
     property var stickersModuleInst: stickersModule
 
+    property var stickersStore: StickersStore {
+        stickersModule: stickersModuleInst
+    }
+
     // Not Refactored Yet
 //    property var activeCommunity: chatsModelInst.communities.activeCommunity
 
@@ -436,5 +440,17 @@ QtObject {
 
     function fetchGasPrice() {
         profileSectionModule.ensUsernamesModule.fetchGasPrice()
+    }
+
+    function isEIP1559Enabled() {
+        return walletSection.isEIP1559Enabled()
+    }
+
+    function latestBaseFeePerGas() {
+        return walletSectionTransactions.latestBaseFeePerGas()
+    }
+
+    function suggestedFees() {
+        return JSON.parse(walletSectionTransactions.suggestedFees())
     }
 }

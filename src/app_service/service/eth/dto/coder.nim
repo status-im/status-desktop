@@ -6,17 +6,6 @@ import json, tables, json_serialization
 include  ../../../common/json_utils
 
 type
-  GetPackData* = object
-    packId*: Stuint[256]
-
-  PackData* = object
-    category*: DynamicBytes[32] # bytes4[]
-    owner*: Address # address
-    mintable*: bool # bool
-    timestamp*: Stuint[256] # uint256
-    price*: Stuint[256] # uint256
-    contentHash*: DynamicBytes[64] # bytes
-
   BuyToken* = object
     packId*: Stuint[256]
     address*: Address

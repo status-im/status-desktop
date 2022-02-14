@@ -6,25 +6,32 @@ import strformat, stint
 type
   Item* = object
     hash: string
-    packId: int
+    packId: string
+    url: string
 
 proc initItem*(
   hash: string,
-  packId: int
+  packId: string,
+  url: string
 ): Item =
   result.hash = hash
   result.packId = packId
+  result.url = url
 
 proc `$`*(self: Item): string =
   result = fmt"""StickerItem(
     hash: {self.hash},
-    packId: {$self.packId}
+    packId: {$self.packId},
+    url: {$self.url},
     ]"""
 
 proc getHash*(self: Item): string =
   return self.hash
 
-proc getPackId*(self: Item): int =
+proc getURL*(self: Item): string =
+  return self.url
+
+proc getPackId*(self: Item): string =
   return self.packId
 
 #####
@@ -32,7 +39,7 @@ proc getPackId*(self: Item): int =
 #####
 type
   PackItem* = object
-    id*: int
+    id*: string
     name*: string
     author*: string
     price*: Stuint[256]
@@ -41,7 +48,7 @@ type
     thumbnail*: string
 
 proc initPackItem*(
-  id: int,
+  id: string,
   name: string,
   author: string,
   price: Stuint[256],
@@ -68,7 +75,7 @@ proc `$`*(self: PackItem): string =
     thumbnail: {$self.thumbnail},
     ]"""
 
-proc getId*(self: PackItem): int =
+proc getId*(self: PackItem): string =
   return self.id
 
 proc getName*(self: PackItem): string =

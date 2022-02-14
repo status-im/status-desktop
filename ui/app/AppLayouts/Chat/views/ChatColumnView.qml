@@ -191,6 +191,9 @@ Item {
                             stickersLoaded: root.stickersLoaded
                             isBlocked: model.blocked
                             isActiveChannel: categoryChatLoader.isActiveChannel
+                            onOpenStickerPackPopup: {
+                                root.openStickerPackPopup(stickerPackId)
+                            }
                             Component.onCompleted: {
                                 parentModule.prepareChatContentModuleForChatId(model.itemId)
                                 chatContentModule = parentModule.getChatContentModule()
@@ -234,10 +237,45 @@ Item {
                         stickersLoaded: root.stickersLoaded
                         isBlocked: model.blocked
                         isActiveChannel: chatLoader.isActiveChannel
+                        onOpenStickerPackPopup: {
+                            root.openStickerPackPopup(stickerPackId)
+                        }
                         Component.onCompleted: {
                             parentModule.prepareChatContentModuleForChatId(model.itemId)
                             chatContentModule = parentModule.getChatContentModule()
                         }
+                    }
+                }
+            }
+            DelegateChoice { // In all other cases
+                delegate: ChatContentView {
+                    width: parent.width
+                    clip: true
+                    height: {
+                        // dynamically calculate the height of the view, if the active one is the current one
+                        // then set the height to parent otherwise set it to 0
+                        if(!chatContentModule)
+                            return 0
+
+                        let myChatId = chatContentModule.getMyChatId()
+                        if(myChatId === root.activeChatId || myChatId === root.activeSubItemId)
+                            return parent.height
+
+                        return 0
+                    }
+                    rootStore: root.rootStore
+                    contactsStore: root.contactsStore
+                    sendTransactionNoEnsModal: cmpSendTransactionNoEns
+                    receiveTransactionModal: cmpReceiveTransaction
+                    sendTransactionWithEnsModal: cmpSendTransactionWithEns
+                    stickersLoaded: root.stickersLoaded
+                    isBlocked: model.blocked
+                    onOpenStickerPackPopup: {
+                        root.openStickerPackPopup(stickerPackId)
+                    }
+                    Component.onCompleted: {
+                        parentModule.prepareChatContentModuleForChatId(itemId)
+                        chatContentModule = parentModule.getChatContentModule()
                     }
                 }
             }

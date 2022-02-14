@@ -20,7 +20,6 @@ proc makePrivateRpcCall*(
     debug "NewBE_callPrivateRPC", rpc_method=methodName
     let rpcResponseRaw = status_go.callPrivateRPC($inputJSON)
     result = Json.decode(rpcResponseRaw, RpcResponse[JsonNode])
-
     if(not result.error.isNil):
       var err = "\nstatus-go error ["
       err &= fmt"methodName:{methodName}, "

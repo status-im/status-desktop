@@ -1,4 +1,4 @@
-import NimQml, Tables, json, sequtils, chronicles, strutils, atomics, sets, strutils, tables, stint
+import NimQml, Tables, json, sequtils, chronicles, strutils, atomics, sets, strutils, tables, stint, strformat
 
 import httpclient
 
@@ -11,17 +11,18 @@ import json, tables, json_serialization
 import ../../../backend/stickers as status_stickers
 import ../../../backend/chat as status_chat
 import ../../../backend/response_type
-import ../../../backend/eth
+import ../../../backend/eth as status_eth
 import ./dto/stickers
 import ../ens/utils as ens_utils
 import ../eth/service as eth_service
+import ../token/service as token_service
 import ../settings/service as settings_service
 import ../wallet_account/service as wallet_account_service
 import ../transaction/service as transaction_service
 import ../network/service as network_service
 import ../chat/service as chat_service
 import ../../common/types
-
+import ../network/types as network_types
 import ../eth/utils as status_utils
 
 import ../eth/dto/edn_dto as edn_helper
@@ -43,17 +44,27 @@ type
   StickerGasEstimatedArgs* = ref object of Args
     estimate*: int
     uuid*: string
+  GasPriceArgs* = ref object of Args
+    gasPrice*: string    
+  StickerTransactionArgs* = ref object of Args
+    transactionHash*: string
+    packID*: string
+    transactionType*: string
+    revertReason*: string
 
 # Signals which may be emitted by this service:
 const SIGNAL_STICKER_PACK_LOADED* = "stickerPackLoaded"
 const SIGNAL_ALL_STICKER_PACKS_LOADED* = "allStickerPacksLoaded"
 const SIGNAL_STICKER_GAS_ESTIMATED* = "stickerGasEstimated"
+const SIGNAL_INSTALLED_STICKER_PACKS_LOADED* = "installedStickerPacksLoaded"
+const SIGNAL_GAS_PRICE_FETCHED* = "stickersGasPriceFetched"
+const SIGNAL_STICKER_TRANSACTION_CONFIRMED* = "stickerTransactionConfirmed"
+const SIGNAL_STICKER_TRANSACTION_REVERTED* = "stickerTransactionReverted"
 
 QtObject:
   type Service* = ref object of QObject
     threadpool: ThreadPool
-    availableStickerPacks*: Table[int, StickerPackDto]
-    purchasedStickerPacks*: seq[int]
+    marketStickerPacks*: Table[string, StickerPackDto]
     recentStickers*: seq[StickerDto]
     events: EventEmitter
     ethService: eth_service.Service
@@ -62,9 +73,10 @@ QtObject:
     transactionService: transaction_service.Service
     networkService: network_service.Service
     chatService: chat_service.Service
+    tokenService: token_service.Service
 
   # Forward declaration
-  proc obtainAvailableStickerPacks*(self: Service)
+  proc obtainMarketStickerPacks*(self: Service)
 
   proc delete*(self: Service) =
     self.QObject.delete
@@ -77,7 +89,8 @@ QtObject:
       walletAccountService: wallet_account_service.Service,
       transactionService: transaction_service.Service,
       networkService: network_service.Service,
-      chatService: chat_service.Service
+      chatService: chat_service.Service,
+      tokenService: token_service.Service
       ): Service =
     new(result, delete)
     result.QObject.setup
@@ -88,202 +101,193 @@ QtObject:
     result.walletAccountService = walletAccountService
     result.transactionService = transactionService
     result.networkService = networkService
+    result.tokenService = tokenService
     result.chatService = chatService
-    result.availableStickerPacks = initTable[int, StickerPackDto]()
-    result.purchasedStickerPacks = @[]
+    result.marketStickerPacks = initTable[string, StickerPackDto]()
     result.recentStickers = @[]
 
+  proc getCurrentNetworkErc20ContractForSymbol(self: Service, symbol: string = ""): Erc20ContractDto =
+    let networkType = self.settingsService.getCurrentNetwork().toNetworkType()
+    let networkDto = self.networkService.getNetwork(networkType)
+    return self.ethService.findErc20Contract(networkDto.chainId, if symbol.len > 0: symbol else: networkDto.sntSymbol())
+
+  proc getInstalledStickerPacks*(self: Service): Table[string, StickerPackDto] =
+    result = initTable[string, StickerPackDto]()
+    try:
+      let installedResponse = status_stickers.installed()
+      for (packID, stickerPackJson) in installedResponse.result.pairs():
+        result[packID] = stickerPackJson.toStickerPackDto()
+    except RpcException:
+      error "Error obtaining installed stickers", message = getCurrentExceptionMsg()
+    
+  proc getStickerMarketAddress*(self: Service): string =
+    try:
+      let chainId = self.settingsService.getCurrentNetworkId()
+      let response = status_stickers.stickerMarketAddress(chainId)
+      return response.result.getStr()
+    except RpcException:
+      error "Error obtaining sticker market address", message = getCurrentExceptionMsg()
+
+  proc confirmTransaction(self: Service, trxType: string, packID: string, transactionHash: string) =
+    try:
+      if not self.marketStickerPacks.contains(packID):
+        let pendingStickerPacksResponse = status_stickers.pending() 
+        for (pID, stickerPackJson) in pendingStickerPacksResponse.result.pairs():
+          if packID != pID: continue
+          self.marketStickerPacks[packID] = stickerPackJson.toStickerPackDto()
+          self.marketStickerPacks[packID].status = StickerPackStatus.Purchased
+          self.events.emit(SIGNAL_STICKER_PACK_LOADED, StickerPackLoadedArgs(
+                  stickerPack: self.marketStickerPacks[packID],
+                  isInstalled: false,
+                  isBought: true,
+                  isPending: false
+                ))
+
+      discard status_stickers.removePending(packID)
+      self.marketStickerPacks[packID].status = StickerPackStatus.Purchased
+      let data = StickerTransactionArgs(transactionHash: transactionHash, packID: packID, transactionType: $trxType)
+      self.events.emit(SIGNAL_STICKER_TRANSACTION_CONFIRMED, data)
+    except:
+      error "Error confirming sticker transaction", message = getCurrentExceptionMsg()
+
+  proc revertTransaction(self: Service, trxType: string, packID: string, transactionHash: string, revertReason: string) =
+    try:
+      if not self.marketStickerPacks.contains(packID):
+        let pendingStickerPacksResponse = status_stickers.pending() 
+        for (pID, stickerPackJson) in pendingStickerPacksResponse.result.pairs():
+          if packID != pID: continue
+          self.marketStickerPacks[packID] = stickerPackJson.toStickerPackDto()
+          self.marketStickerPacks[packID].status = StickerPackStatus.Available
+          self.events.emit(SIGNAL_STICKER_PACK_LOADED, StickerPackLoadedArgs(
+                  stickerPack: self.marketStickerPacks[packID],
+                  isInstalled: false,
+                  isBought: false,
+                  isPending: false
+                ))
+      discard status_stickers.removePending(packID)
+      self.marketStickerPacks[packID].status = StickerPackStatus.Available
+      let data = StickerTransactionArgs(transactionHash: transactionHash, packID: packID, transactionType: $trxType,
+        revertReason: revertReason)
+      self.events.emit(SIGNAL_STICKER_TRANSACTION_REVERTED, data)
+    except:
+      error "Error reverting sticker transaction", message = getCurrentExceptionMsg()
+
   proc init*(self: Service) =
-    self.obtainAvailableStickerPacks()
     # TODO redo the connect check when the network is refactored
     # if self.status.network.isConnected:
-    #   self.obtainAvailableStickerPacks()
-    # else:
-    #   let installedStickerPacks = self.getInstalledStickerPacks()
-    #   self.delegate.populateInstalledStickerPacks(installedStickerPacks) # use emit instead
+    self.obtainMarketStickerPacks() # TODO: rename this to obtain sticker market items
 
-  proc getInstalledStickerPacks*(self: Service): Table[int, StickerPackDto] =
-    self.settingsService.getInstalledStickerPacks()
+    self.events.on(PendingTransactionTypeDto.BuyStickerPack.event) do(e: Args):
+      var receivedData = TransactionMinedArgs(e)
+      if receivedData.success:
+        self.confirmTransaction($PendingTransactionTypeDto.BuyStickerPack, receivedData.data, receivedData.transactionHash)
+      else:
+        self.revertTransaction($PendingTransactionTypeDto.BuyStickerPack, receivedData.data, receivedData.transactionHash,
+        receivedData.revertReason)
 
-  proc buildTransaction(
-      self: Service,
-      packId: Uint256,
-      address: Address,
-      price: Uint256,
-      approveAndCall: var ApproveAndCall[100],
-      sntContract: var Erc20ContractDto,
-      gas = "",
-      gasPrice = "",
-      isEIP1559Enabled = false,
-      maxPriorityFeePerGas = "",
-      maxFeePerGas = ""
-      ): TransactionDataDto =
-    let networkType = self.settingsService.getCurrentNetwork().toNetworkType()
-    let network = self.networkService.getNetwork(networkType)
-    sntContract = self.eth_service.findErc20Contract(network.chainId, network.sntSymbol())
+  proc buildTransaction*(
+    source: Address,
+    gas = "",
+    gasPrice = "",
+    isEIP1559Enabled = false,
+    maxPriorityFeePerGas = "",
+    maxFeePerGas = "",
+  ): TransactionDataDto =
+    result = TransactionDataDto(
+      source: source,
+      value: (0.u256).some,
+      gas: (if gas.isEmptyOrWhitespace: Quantity.none else: Quantity(cast[uint64](parseFloat(gas).toUInt64)).some)
+    )
+    if isEIP1559Enabled:
+      result.maxPriorityFeePerGas = if maxFeePerGas.isEmptyOrWhitespace: Uint256.none else: gwei2Wei(parseFloat(maxPriorityFeePerGas)).some
+      result.maxFeePerGas = (if maxFeePerGas.isEmptyOrWhitespace: Uint256.none else: gwei2Wei(parseFloat(maxFeePerGas)).some)
+    else:
+      result.gasPrice = (if gasPrice.isEmptyOrWhitespace: int.none else: gwei2Wei(parseFloat(gasPrice)).truncate(int).some)
+
+  proc buyPack*(self: Service, packId: string, address, gas, gasPrice: string, eip1559Enabled: bool, maxPriorityFeePerGas: string, maxFeePerGas: string, password: string, success: var bool): tuple[txHash: string, error: string] =
     let
-      stickerMktContract = self.eth_service.findContract(network.chainId, "sticker-market")
-      buyToken = BuyToken(packId: packId, address: address, price: price)
-      buyTxAbiEncoded = stickerMktContract.methods["buyToken"].encodeAbi(buyToken)
-    approveAndCall = ApproveAndCall[100](to: stickerMktContract.address, value: price, data: DynamicBytes[100].fromHex(buyTxAbiEncoded))
-    ens_utils.buildTokenTransaction(address, sntContract.address, gas, gasPrice, isEIP1559Enabled, maxPriorityFeePerGas, maxFeePerGas)
+      networkType = self.settingsService.getCurrentNetwork().toNetworkType()
+      network = self.networkService.getNetwork(networkType)
+      chainId = network.chainId
+      txData = buildTransaction(parseAddress(address), gas, gasPrice, eip1559Enabled, maxPriorityFeePerGas, maxFeePerGas)
 
-  proc buyPack*(self: Service, packId: int, address, price, gas, gasPrice: string, isEIP1559Enabled: bool, maxPriorityFeePerGas: string, maxFeePerGas: string, password: string, success: var bool): string =
-    var
-      sntContract: Erc20ContractDto
-      approveAndCall: ApproveAndCall[100]
-      tx = self.buildTransaction(
-        packId.u256,
-        parseAddress(address),
-        status_utils.eth2Wei(parseFloat(price), 18), # SNT
-        approveAndCall,
-        sntContract,
-        gas,
-        gasPrice,
-        isEIP1559Enabled,
-        maxPriorityFeePerGas,
-        maxFeePerGas
-      )
-
-    result = sntContract.methods["approveAndCall"].send(tx, approveAndCall, password, success)
-    if success:
+    try:
+      let transactionResponse = status_stickers.buy(chainId, %txData, packId, password)
+      let transactionHash = transactionResponse.result.getStr()
+      let sntContract = self.getCurrentNetworkErc20ContractForSymbol()
       self.transactionService.trackPendingTransaction(
-        result,
+        transactionHash,
         address,
         $sntContract.address,
         $PendingTransactionTypeDto.BuyStickerPack,
-        $packId
+        packId
       )
+      return (txHash: transactionHash, error: "")
+    except ValueError:
+      let message = getCurrentExceptionMsg()
+      var error = message
+      if message.contains("could not decrypt key with given password"):
+        error = "could not decrypt key with given password"
+      error "Error sending transaction", message
+      return (txHash: "", error: error)
+    except RpcException:
+      error "Error sending transaction", message = getCurrentExceptionMsg()
 
-  proc buy*(self: Service, packId: int, address: string, price: string, gas: string, gasPrice: string, maxPriorityFeePerGas: string, maxFeePerGas: string, password: string): tuple[response: string, success: bool] =
-    let eip1559Enabled = self.networkService.isEIP1559Enabled()
-
+  proc buy*(self: Service, packId: string, address: string, gas: string, gasPrice: string, maxPriorityFeePerGas: string, maxFeePerGas: string, password: string): tuple[response: string, success: bool] =
+    let eip1559Enabled = self.settingsService.isEIP1559Enabled()
     try:
-      status_utils.validateTransactionInput(address, address, "", price, gas, gasPrice, "", eip1559Enabled, maxPriorityFeePerGas, maxFeePerGas, "ok")
+      status_utils.validateTransactionInput(address, address, "", "0", gas, gasPrice, "", eip1559Enabled, maxPriorityFeePerGas, maxFeePerGas, "ok")
     except Exception as e:
       error "Error buying sticker pack", msg = e.msg
       return (response: "", success: false)
 
     var success: bool
-    let response = self.buyPack(packId, address, price, gas, gasPrice, eip1559Enabled, maxPriorityFeePerGas, maxFeePerGas, password, success)
+    var (response, err) = self.buyPack(packId, address, gas, gasPrice, eip1559Enabled, maxPriorityFeePerGas, maxFeePerGas, password, success)
+
+    if err != "":
+      response = err
+      success = false
+    else:
+      success = true
 
     result = (response: $response, success: success)
 
-  proc getPackIdFromTokenId*(self: Service, chainId: int, tokenId: Stuint[256]): RpcResponse[JsonNode] =
-    let
-      contract = self.eth_service.findContract(chainId, "sticker-pack")
-      tokenPackId = TokenPackId(tokenId: tokenId)
-
-    if contract == nil:
-      return
-
-    let abi = contract.methods["tokenPackId"].encodeAbi(tokenPackId)
-
-    return status_stickers.getPackIdFromTokenId($contract.address, abi)
-
-  proc tokenOfOwnerByIndex*(self: Service, chainId: int, address: Address, idx: Stuint[256]): RpcResponse[JsonNode] =
-    let
-      contract = self.eth_service.findContract(chainId, "sticker-pack")
-
-    if contract == nil:
-      return
-
-    let
-      tokenOfOwnerByIndex = TokenOfOwnerByIndex(address: address, index: idx)
-      data = contract.methods["tokenOfOwnerByIndex"].encodeAbi(tokenOfOwnerByIndex)
-
-    status_stickers.tokenOfOwnerByIndex($contract.address, data)
-
-  proc getBalance*(self: Service, chainId: int, address: Address): RpcResponse[JsonNode] =
-    let contract = self.eth_service.findContract(chainId, "sticker-pack")
-    if contract == nil: return
-
-    let balanceOf = BalanceOf(address: address)
-    let data = contract.methods["balanceOf"].encodeAbi(balanceOf)
-
-    return status_stickers.getBalance($contract.address, data)
-
-  proc getPurchasedStickerPacks*(self: Service, address: string): seq[int] =
-    try:
-      let addressObj = parseAddress(address)
-
-
-      let networkType = self.settingsService.getCurrentNetwork().toNetworkType()
-      let network = self.networkService.getNetwork(networkType)
-      let balanceRpcResponse = self.getBalance(network.chainId, addressObj)
-
-      var balance = 0
-      if $balanceRpcResponse.result != "0x":
-        balance = parseHexInt(balanceRpcResponse.result.getStr)
-
-      var tokenIds: seq[int] = @[]
-
-      for it in toSeq[0..<balance]:
-        let response = self.tokenOfOwnerByIndex(network.chainId, addressObj, it.u256)
-        var tokenId = 0
-        if $response.result != "0x":
-          tokenId = parseHexInt(response.result.getStr)
-        tokenIds.add(tokenId)
-
-      var purchasedPackIds: seq[int] = @[]
-      for tokenId in tokenIds:
-        let response = self.getPackIdFromTokenId(network.chainId, tokenId.u256)
-        var packId = 0
-        if $response.result != "0x":
-          packId = parseHexInt(response.result.getStr)
-        purchasedPackIds.add(packId)
-
-      self.purchasedStickerPacks = self.purchasedStickerPacks.concat(purchasedPackIds)
-      self.purchasedStickerPacks = self.purchasedStickerPacks.deduplicate()
-      result = self.purchasedStickerPacks
-    except RpcException:
-      error "Error getting purchased sticker packs", message = getCurrentExceptionMsg()
-      result = @[]
-
-  proc setAvailableStickerPacks*(self: Service, availableStickersJSON: string) {.slot.} =
-    let
-      accounts = self.walletAccountService.getWalletAccounts() # TODO: make generic
-      installedStickerPacks = self.getInstalledStickerPacks()
-    var
-      purchasedStickerPacks: seq[int]
-    for account in accounts:
-      purchasedStickerPacks = self.getPurchasedStickerPacks(account.address)
+  proc setMarketStickerPacks*(self: Service, availableStickersJSON: string) {.slot.} =
     let availableStickers = JSON.decode($availableStickersJSON, seq[StickerPackDto])
 
-    let pendingTransactions = self.transactionService.getPendingTransactions()
-    var pendingStickerPacks = initHashSet[int]()
-    if (pendingTransactions.kind == JArray and pendingTransactions.len > 0):
-      for trx in pendingTransactions.getElems():
-        if trx["type"].getStr == $PendingTransactionTypeDto.BuyStickerPack:
-          pendingStickerPacks.incl(trx["additionalData"].getStr.parseInt)
-
     for stickerPack in availableStickers:
-      let isInstalled = installedStickerPacks.hasKey(stickerPack.id)
-      let isBought = purchasedStickerPacks.contains(stickerPack.id)
-      let isPending = pendingStickerPacks.contains(stickerPack.id) and not isBought
-      self.availableStickerPacks[stickerPack.id] = stickerPack
+      if self.marketStickerPacks.contains(stickerPack.id): continue
+      let isBought = stickerPack.status == StickerPackStatus.Purchased
+      self.marketStickerPacks[stickerPack.id] = stickerPack
       self.events.emit(SIGNAL_STICKER_PACK_LOADED, StickerPackLoadedArgs(
         stickerPack: stickerPack,
-        isInstalled: isInstalled,
+        isInstalled: false,
         isBought: isBought,
-        isPending: isPending
+        isPending: false
       ))
+
+
+    let chainId = self.settingsService.getCurrentNetworkId()
+    let pendingStickerPacksResponse = status_stickers.pending() 
+    for (packID, stickerPackJson) in pendingStickerPacksResponse.result.pairs():
+        if self.marketStickerPacks.contains(packID): continue
+        self.marketStickerPacks[packID] = stickerPackJson.toStickerPackDto()
+        self.events.emit(SIGNAL_STICKER_PACK_LOADED, StickerPackLoadedArgs(
+          stickerPack: self.marketStickerPacks[packID],
+          isInstalled: false,
+          isBought: false,
+          isPending: true
+        ))
     self.events.emit(SIGNAL_ALL_STICKER_PACKS_LOADED, Args())
 
-  proc obtainAvailableStickerPacks*(self: Service) =
-    let networkType = self.settingsService.getCurrentNetwork().toNetworkType()
-    let network = self.networkService.getNetwork(networkType)
-    let contract = self.eth_service.findContract(network.chainId, "stickers")
-    if (contract == nil):
-      return
+  proc obtainMarketStickerPacks*(self: Service) =
+    let chainId = self.settingsService.getCurrentNetworkId()
 
-    let arg = ObtainAvailableStickerPacksTaskArg(
-      tptr: cast[ByteAddress](obtainAvailableStickerPacksTask),
+    let arg = ObtainMarketStickerPacksTaskArg(
+      tptr: cast[ByteAddress](obtainMarketStickerPacksTask),
       vptr: cast[ByteAddress](self.vptr),
-      slot: "setAvailableStickerPacks",
-      contract: contract,
-      packCountMethod: contract.methods["packCount"],
-      getPackDataMethod: contract.methods["getPackData"],
+      slot: "setMarketStickerPacks",
+      chainId: chainId,
       running: cast[ByteAddress](addr self.threadpool.running)
     )
     self.threadpool.start(arg)
@@ -295,83 +299,59 @@ QtObject:
   # the [T] here is annoying but the QtObject template only allows for one type
   # definition so we'll need to setup the type, task, and helper outside of body
   # passed to `QtObject:`
-  proc estimate*(self: Service, packId: int, address: string, price: string, uuid: string) =
-    var
-      approveAndCall: ApproveAndCall[100]
-      networkType = self.settingsService.getCurrentNetwork().toNetworkType()
-      network = self.networkService.getNetwork(networkType)
-      sntContract = self.eth_service.findErc20Contract(network.chainId, network.sntSymbol())
-      tx = self.buildTransaction(
-        packId.u256,
-        status_utils.parseAddress(address),
-        status_utils.eth2Wei(parseFloat(price), sntContract.decimals),
-        approveAndCall,
-        sntContract
-      )
-
-    var estimateData = sntContract.methods["approveAndCall"]
-      .getEstimateGasData(tx, approveAndCall)
+  proc estimate*(self: Service, packId: string, address: string, price: string, uuid: string) =
+    let chainId = self.settingsService.getCurrentNetworkId()
 
     let arg = EstimateTaskArg(
       tptr: cast[ByteAddress](estimateTask),
       vptr: cast[ByteAddress](self.vptr),
       slot: "setGasEstimate",
+      packId: packId,
       uuid: uuid,
-      data: estimateData
+      chainId: chainId,
+      fromAddress: address
     )
     self.threadpool.start(arg)
 
   proc addStickerToRecent*(self: Service, sticker: StickerDto, save: bool = false) =
-    self.recentStickers.insert(sticker, 0)
-    self.recentStickers = self.recentStickers.deduplicate()
-    if self.recentStickers.len > 24:
-      self.recentStickers = self.recentStickers[0..23] # take top 24 most recent
-    if save:
-      discard self.settingsService.saveRecentStickers(self.recentStickers)
+    try:
+      discard status_stickers.addRecent(sticker.packId, sticker.hash)
+    except RpcException:
+      error "Error adding recent sticker", message = getCurrentExceptionMsg()
 
-  proc getPackIdForSticker*(packs: Table[int, StickerPackDto], hash: string): int =
+  proc getPackIdForSticker*(packs: Table[string, StickerPackDto], hash: string): string =
     for packId, pack in packs.pairs:
       if pack.stickers.any(proc(sticker: StickerDto): bool = return sticker.hash == hash):
         return packId
-    return 0
+    return "0"
 
   proc getRecentStickers*(self: Service): seq[StickerDto] =
-    # TODO: this should be a custom `readValue` implementation of nim-json-serialization
-    let recentStickers = self.settingsService.getRecentStickers()
-    let installedStickers = self.getInstalledStickerPacks()
-    var stickers = newSeq[StickerDto]()
-    for hash in recentStickers:
-      # pack id is not returned from status-go settings, populate here
-      let packId = getPackIdForSticker(installedStickers, hash)
-      # .insert instead of .add to effectively reverse the order stickers because
-      # stickers are re-reversed when added to the view due to the nature of
-      # inserting recent stickers at the front of the list
-      stickers.insert(StickerDto(hash: hash, packId: packId), 0)
-
-    for sticker in stickers:
-      self.addStickerToRecent(sticker)
-
-    result = self.recentStickers
+    try:
+      let recentResponse = status_stickers.recent()
+      for stickerJson in recentResponse.result:
+        result = stickerJson.toStickerDto() & result
+    except RpcException:
+      error "Error obtaining installed stickers", message = getCurrentExceptionMsg()
 
   proc getNumInstalledStickerPacks*(self: Service): int =
-    return self.settingsService.getInstalledStickerPacks().len
+    try:
+      let installedResponse = status_stickers.installed()
+      return installedResponse.result.len
+    except RpcException:
+      error "Error obtaining installed stickers", message = getCurrentExceptionMsg()
+    return 0
 
-  proc installStickerPack*(self: Service, packId: int) =
-    if not self.availableStickerPacks.hasKey(packId):
+  proc installStickerPack*(self: Service, packId: string) =
+    let chainId = self.settingsService.getCurrentNetworkId()
+    if not self.marketStickerPacks.hasKey(packId):
       return
-    let pack = self.availableStickerPacks[packId]
-    var installedStickerPacks = self.settingsService.getInstalledStickerPacks()
-    installedStickerPacks[packId] = pack
-
-    discard self.settingsService.saveRecentStickers(installedStickerPacks)
-
-  proc uninstallStickerPack*(self: Service, packId: int) =
-    var installedStickerPacks = self.settingsService.getInstalledStickerPacks()
-    if not installedStickerPacks.hasKey(packId):
-      return
-    installedStickerPacks.del(packId)
-
-    discard self.settingsService.saveRecentStickers(installedStickerPacks)
+    let installResponse = status_stickers.install(chainId, packId)
+    
+  proc uninstallStickerPack*(self: Service, packId: string) =
+    try:
+      let installedResponse = status_stickers.uninstall(packId)
+    except RpcException:
+      error "Error removing installed sticker", message = getCurrentExceptionMsg()
 
   proc sendSticker*(
       self: Service,
@@ -389,9 +369,75 @@ QtObject:
         sticker.hash,
         sticker.packId)
     discard self.chatService.processMessageUpdateAfterSend(response)
+    self.addStickerToRecent(sticker)
 
-    self.addStickerToRecent(sticker, true)
-
-  proc removeRecentStickers*(self: Service, packId: int) =
+  proc removeRecentStickers*(self: Service, packId: string) =
     self.recentStickers.keepItIf(it.packId != packId)
-    discard self.settingsService.saveRecentStickers(self.recentStickers)
+
+  proc clearRecentStickers*(self: Service) =
+    try:
+      discard status_stickers.clearRecentStickers()
+    except RpcException:
+      error "Error removing recent stickers", message = getCurrentExceptionMsg()
+
+  proc getSNTBalance*(self: Service): string =
+    let address = self.walletAccountService.getWalletAccount(0).address
+    let sntContract = self.getCurrentNetworkErc20ContractForSymbol()
+
+    var postfixedAccount: string = address
+    postfixedAccount.removePrefix("0x")
+    let payload = %* [{
+      "to": $sntContract.address,
+      "from": address,
+      "data": fmt"0x70a08231000000000000000000000000{postfixedAccount}"
+    }, "latest"]
+    let response = status_eth.doEthCall(payload)
+    let balance = response.result.getStr
+
+    var decimals = 18
+
+    let allTokens = self.tokenService.getTokens()
+    for tokens in allTokens.values:
+      for t in tokens:
+        if(t.address == sntContract.address):
+          decimals = t.decimals
+          break
+
+    result = ens_utils.hex2Token(balance, decimals)
+
+  proc getStatusToken*(self: Service): string =
+    let sntContract = self.getCurrentNetworkErc20ContractForSymbol()
+    let jsonObj = %* {
+      "name": sntContract.name,
+      "symbol": sntContract.symbol,
+      "address": sntContract.address
+    }
+    return $jsonObj
+
+  proc onGasPriceFetched*(self: Service, response: string) {.slot.} =
+    let responseObj = response.parseJson
+    if (responseObj.kind != JObject):
+      info "expected response is not a json object", methodName="onGasPriceFetched"
+      # notify view, this is important
+      self.events.emit(SIGNAL_GAS_PRICE_FETCHED, GasPriceArgs(gasPrice: "0"))
+      return
+
+    var gasPriceHex: string
+    if(not responseObj.getProp("gasPrice", gasPriceHex)):
+      info "expected response doesn't contain gas price", methodName="onGasPriceFetched"
+      # notify view, this is important
+      self.events.emit(SIGNAL_GAS_PRICE_FETCHED, GasPriceArgs(gasPrice: "0"))
+      return
+
+    let gasPrice = $fromHex(Stuint[256], gasPriceHex)
+    let parsedGasPrice = parseFloat(wei2gwei(gasPrice))
+    var data = GasPriceArgs(gasPrice: fmt"{parsedGasPrice:.3f}")
+    self.events.emit(SIGNAL_GAS_PRICE_FETCHED, data)
+
+  proc fetchGasPrice*(self: Service) =
+    let arg = QObjectTaskArg(
+      tptr: cast[ByteAddress](fetchGasPriceTask),
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "onGasPriceFetched"
+    )
+    self.threadpool.start(arg)

@@ -40,6 +40,7 @@ ColumnLayout {
         chatContentRoot.usersStore.usersModule = chatContentRoot.chatContentModule.usersModule
     }
 
+    signal openStickerPackPopup(string stickerPackId)
 
     property Component sendTransactionNoEnsModal
     property Component receiveTransactionModal
@@ -376,7 +377,9 @@ ColumnLayout {
                     return
                 }
                 chatInput.showReplyArea(messageId, obj.senderDisplayName, obj.messageText, obj.senderIcon, obj.contentType, obj.messageImage, obj.sticker)
-
+            }
+            onOpenStickerPackPopup: {
+                root.openStickerPackPopup(stickerPackId);
             }
         }
 
@@ -403,6 +406,7 @@ ColumnLayout {
             StatusChatInput {
                 id: chatInput
 
+                store: root.rootStore
                 usersStore: chatContentRoot.usersStore
 
                 visible: {

@@ -129,17 +129,6 @@ proc initContracts(self: Service) =
       newErc20Contract("Bloom Token", Mainnet, parseAddress("0x107c4504cd79c5d2696ea0030a8dd4e92601b82e"), "BLT", 18, true),
       newErc20Contract("Unisocks", Mainnet, parseAddress("0x23b608675a2b2fb1890d3abbd85c5775c51691d5"), "SOCKS", 18, true),
       newErc20Contract("Hermez Network Token", Mainnet, parseAddress("0xEEF9f339514298C6A857EfCfC1A762aF84438dEE"), "HEZ", 18, true),
-      ContractDto(name: "stickers", chainId: Mainnet, address: parseAddress("0x0577215622f43a39f4bc9640806dfea9b10d2a36"),
-        methods: [
-          ("packCount", MethodDto(signature: "packCount()")),
-          ("getPackData", MethodDto(signature: "getPackData(uint256)"))
-        ].toTable
-      ),
-      ContractDto(name: "sticker-market", chainId: Mainnet, address: parseAddress("0x12824271339304d3a9f7e096e62a2a7e73b4a7e7"),
-        methods: [
-          ("buyToken", MethodDto(signature: "buyToken(uint256,address,uint256)"))
-        ].toTable
-      ),
       newErc721Contract("sticker-pack", Mainnet, parseAddress("0x110101156e8F0743948B2A61aFcf3994A8Fb172e"), "PACK", false, @[("tokenPackId", MethodDto(signature: "tokenPackId(uint256)"))]),
       # Strikers seems dead. Their website doesn't work anymore
       newErc721Contract("strikers", Mainnet, parseAddress("0xdcaad9fd9a74144d226dbf94ce6162ca9f09ed7e"), "STRK", true),
@@ -168,17 +157,6 @@ proc initContracts(self: Service) =
       newErc20Contract("Wagner Test Token", Ropsten, parseAddress("0x2e7cd05f437eb256f363417fd8f920e2efa77540"), "WGN", 10, false),
       newErc20Contract("Modest Test Token", Ropsten, parseAddress("0x57cc9b83730e6d22b224e9dc3e370967b44a2de0"), "MDS", 18, false),
       ContractDto(name: "tribute-to-talk", chainId: Ropsten, address: parseAddress("0xC61aa0287247a0398589a66fCD6146EC0F295432")),
-      ContractDto(name: "stickers", chainId: Ropsten, address: parseAddress("0x8cc272396be7583c65bee82cd7b743c69a87287d"),
-        methods: [
-          ("packCount", MethodDto(signature: "packCount()")),
-          ("getPackData", MethodDto(signature: "getPackData(uint256)"))
-        ].toTable
-      ),
-      ContractDto(name: "sticker-market", chainId: Ropsten, address: parseAddress("0x6CC7274aF9cE9572d22DFD8545Fb8c9C9Bcb48AD"),
-        methods: [
-          ("buyToken", MethodDto(signature: "buyToken(uint256,address,uint256)"))
-        ].toTable
-      ),
       newErc721Contract("sticker-pack", Ropsten, parseAddress("0xf852198d0385c4b871e0b91804ecd47c6ba97351"), "PACK", false, @[("tokenPackId", MethodDto(signature: "tokenPackId(uint256)"))]),
       newErc721Contract("kudos", Ropsten, parseAddress("0xcd520707fc68d153283d518b29ada466f9091ea8"), "KDO", true),
       ContractDto(name: "ens-usernames", chainId: Ropsten, address: parseAddress("0xdaae165beb8c06e0b7613168138ebba774aff071"),

@@ -7,6 +7,10 @@ import utils 1.0
 import shared 1.0
 import shared.popups 1.0
 import shared.status 1.0
+import shared.stores 1.0 as SharedStores
+
+//TODO remove this dependency!
+import "../../../app/AppLayouts/Chat/stores"
 
 // TODO: replace with StatusModal
 ModalPopup {
@@ -14,6 +18,7 @@ ModalPopup {
 
     property int packId: -1
 
+    property var store
     property string thumbnail: ""
     property string name: ""
     property string author: ""
@@ -58,26 +63,28 @@ ModalPopup {
         Component {
             id: stickerPackPurchaseModal
             StatusSNTTransactionModal {
-                // Not Refactored Yet
-//                contractAddress: utilsModel.stickerMarketAddress
+                store: stickerPackDetailsPopup.store
+                stickersStore: stickerPackDetailsPopup.store.stickersStore
+                contactsStore: stickerPackDetailsPopup.store.contactsStore
+                contractAddress: root.store.stickersStore.getStickersMarketAddress()
                 assetPrice: price
                 estimateGasFunction: function(selectedAccount, uuid) {
                     if (packId < 0  || !selectedAccount || !price) return 325000
-                    return stickersModule.estimate(packId, selectedAccount.address, price, uuid)
+                        return stickerPackDetailsPopup.store.stickersStore.estimate(packId, selectedAccount.address, price, uuid)
                 }
                 onSendTransaction: function(selectedAddress, gasLimit, gasPrice, tipLimit, overallLimit, password) {
-                    return stickersModule.buy(packId,
-                                                   selectedAddress,
-                                                   price,
-                                                   gasLimit,
-                                                   gasPrice,
-                                                   tipLimit,
-                                                   overallLimit,
-                                                   password)
+                    return root.store.stickersStore.buy(packId,
+                                                       selectedAddress,
+                                                       gasLimit,
+                                                       gasPrice,
+                                                       tipLimit,
+                                                       overallLimit,
+                                                       password)
                 }
                 onClosed: {
                     destroy()
                 }
+                asyncGasEstimateTarget: stickerPackDetailsPopup.store.stickersStore.stickersModule
                 width: stickerPackDetailsPopup.width
                 height: stickerPackDetailsPopup.height
             }

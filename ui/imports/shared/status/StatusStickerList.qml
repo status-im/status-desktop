@@ -29,7 +29,7 @@ GridView {
             ImageLoader {
                 width: 80
                 height: 80
-                source: "https://ipfs.infura.io/ipfs/" + url
+                source: url
                 onClicked: {
                     root.stickerClicked(hash, packId)
                 }

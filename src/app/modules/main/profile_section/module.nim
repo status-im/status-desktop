@@ -13,6 +13,7 @@ import ../../../../app_service/service/node_configuration/service_interface as n
 import ../../../../app_service/service/devices/service as devices_service
 import ../../../../app_service/service/mailservers/service as mailservers_service
 import ../../../../app_service/service/chat/service as chat_service
+import ../../../../app_service/service/stickers/service as stickersService
 import ../../../../app_service/service/ens/service as ens_service
 import ../../../../app_service/service/wallet_account/service_interface as wallet_account_service
 
@@ -52,6 +53,7 @@ proc newModule*[T](delegate: T,
   events: EventEmitter,
   accountsService: accounts_service.ServiceInterface,
   settingsService: settings_service.ServiceInterface,
+  stickersService: stickers_service.Service,
   profileService: profile_service.ServiceInterface,
   contactsService: contacts_service.Service,
   aboutService: about_service.Service,
@@ -76,7 +78,7 @@ proc newModule*[T](delegate: T,
   result.languageModule = language_module.newModule(result, languageService)
   result.privacyModule = privacy_module.newModule(result, events, settingsService, privacyService)
   result.aboutModule = about_module.newModule(result, events, aboutService)
-  result.advancedModule = advanced_module.newModule(result, events, settingsService, nodeConfigurationService)
+  result.advancedModule = advanced_module.newModule(result, events, settingsService, stickersService, nodeConfigurationService)
   result.devicesModule = devices_module.newModule(result, events, settingsService, devicesService)
   result.syncModule = sync_module.newModule(result, events, settingsService, mailserversService)
   result.notificationsModule = notifications_module.newModule(result, events, chatService)

@@ -394,28 +394,22 @@ method saveWalletVisibleTokens*(self: Service, visibleTokens: Table[int, seq[str
   
   return false
 
-method getRecentStickers*(self: Service): seq[string] =
-  result = self.settings.recentStickerHashes
+method isEIP1559Enabled*(self: Service, blockNumber: int): bool =
+  let networkId = self.getCurrentNetworkDetails().config.NetworkId
+  let activationBlock = case networkId:
+    of 3: 10499401 # Ropsten
+    of 4: 8897988 # Rinkeby
+    of 5: 5062605 # Goerli
+    of 1: 12965000 # Mainnet
+    else: -1
+  if activationBlock > -1 and blockNumber >= activationBlock:
+    result = true
+  else:
+    result = false
+  self.eip1559Enabled = result
 
-method saveRecentStickers*(self: Service, recentStickers: seq[StickerDto]): bool =
-  let json = %(recentStickers.mapIt($it.hash))
-  if(self.saveSetting(KEY_RECENT_STICKERS, json)):
-    self.settings.recentStickerHashes = recentStickers.map(s => s.hash)
-    return true
-  return false
-
-method getInstalledStickerPacks*(self: Service): Table[int, StickerPackDto] =
-  result = self.settings.installedStickerPacks
-
-method saveRecentStickers*(self: Service, installedStickerPacks: Table[int, StickerPackDto]): bool =
-  let json = %* {}
-  for packId, pack in installedStickerPacks.pairs:
-    json[$packId] = %(pack)
-
-  if(self.saveSetting(KEY_INSTALLED_STICKER_PACKS, json)):
-    self.settings.installedStickerPacks = installedStickerPacks
-    return true
-  return false
+method isEIP1559Enabled*(self: Service): bool =
+  result = self.eip1559Enabled
 
 method saveNodeConfiguration*(self: Service, value: JsonNode): bool =
   if(self.saveSetting(KEY_NODE_CONFIG, value)):

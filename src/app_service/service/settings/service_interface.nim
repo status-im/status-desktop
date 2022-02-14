@@ -230,13 +230,7 @@ method saveWalletVisibleTokens*(self: ServiceInterface, tokens: Table[int, seq[s
 method getRecentStickers*(self: ServiceInterface): seq[string] {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method saveRecentStickers*(self: ServiceInterface, recentStickers: seq[StickerDto]): bool {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method getInstalledStickerPacks*(self: ServiceInterface): Table[int, StickerPackDto] {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method saveRecentStickers*(self: ServiceInterface, installedStickerPacks: Table[int, StickerPackDto]): bool {.base.} =
+method getInstalledStickerPacks*(self: ServiceInterface): Table[string, StickerPackDto] {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method saveNodeConfiguration*(self: ServiceInterface, value: JsonNode): bool {.base.} =

@@ -36,13 +36,12 @@ StatusAppThreePanelLayout {
     signal profileButtonClicked()
     signal openAppSearch()
 
-    // Not Refactored
-//    Connections {
-//        target: root.rootStore.chatsModelInst.stickers
-//        onStickerPacksLoaded: {
-//            stickersLoaded = true;
-//        }
-//    }
+    Connections {
+        target: root.rootStore.stickersStore.stickersModule
+        onStickerPacksLoaded: {
+            root.stickersLoaded = true;
+        }
+    }
 
 //    property var onActivated: function () {
 //        root.rootStore.chatsModelInst.channelView.restorePreviousActiveChannel();
@@ -149,6 +148,7 @@ StatusAppThreePanelLayout {
     Component {
         id: statusStickerPackClickPopup
         StatusStickerPackClickPopup{
+            store: root.rootStore
             onClosed: {
                 destroy();
             }

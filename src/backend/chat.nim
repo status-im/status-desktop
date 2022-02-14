@@ -1,4 +1,4 @@
-import json, sequtils, sugar
+import json, sequtils, sugar, strutils
 import core, utils
 import response_type
 
@@ -60,7 +60,7 @@ proc sendChatMessage*(
     preferredUsername: string = "",
     communityId: string = "",
     stickerHash: string = "",
-    stickerPack: int = 0,
+    stickerPack: string = "0",
     ): RpcResponse[JsonNode] {.raises: [Exception].} =
   result = callPrivateRPC("sendChatMessage".prefix, %* [
     {
@@ -70,7 +70,7 @@ proc sendChatMessage*(
       "ensName": preferredUsername,
       "sticker": {
         "hash": stickerHash,
-        "pack": stickerPack
+        "pack": parseInt(stickerPack)
       },
       "contentType": contentType,
       "communityId": communityId
