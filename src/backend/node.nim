@@ -10,7 +10,7 @@ proc adminPeers*(): RpcResponse[JsonNode] {.raises: [Exception].} =
 
 proc wakuV2Peers*(): RpcResponse[JsonNode] {.raises: [Exception].} =
     let payload = %* []
-    result = callPrivateRPC("peers", payload)
+    result = callPrivateRPC("peers".prefix, payload)
 
 proc sendRPCMessageRaw*(inputJSON: string): string {.raises: [Exception].} =
     result = callPrivateRPCRaw(inputJSON)
