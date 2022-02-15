@@ -345,11 +345,23 @@ QtObject:
     try:
       if (not self.userCanJoin(communityId) or self.isUserMemberOfCommunity(communityId)):
         return
-      discard status_go.joinCommunity(communityId)
-      var community = self.allCommunities[communityId]
-      self.joinedCommunities[communityId] = community
 
-      for k, chat in community.chats:
+      let response = status_go.joinCommunity(communityId)
+
+      if response.error != nil:
+        let error = Json.decode($response.error, RpcError)
+        raise newException(RpcException, "Error joining community: " & error.message)
+
+      if response.result == nil or response.result.kind == JNull:
+        error "error: ", methodName="joinCommunity", errDesription = "result is nil"
+        return
+
+      let updatedCommunity = response.result["communities"][0].toCommunityDto()
+
+      self.allCommunities[communityId] = updatedCommunity
+      self.joinedCommunities[communityId] = updatedCommunity
+
+      for k, chat in updatedCommunity.chats:
         let fullChatId = communityId & chat.id
         let currentChat =  self.chatService.getChatById(fullChatId, showWarning = false)
         echo currentChat
@@ -361,7 +373,8 @@ QtObject:
         # TODO find a way to populate missing infos like the color
         self.chatService.updateOrAddChat(chatDto)
 
-      self.events.emit(SIGNAL_COMMUNITY_JOINED, CommunityArgs(community: community))
+      self.events.emit(SIGNAL_COMMUNITIES_UPDATE, CommunitiesArgs(communities: @[updatedCommunity]))
+      self.events.emit(SIGNAL_COMMUNITY_JOINED, CommunityArgs(community: updatedCommunity))
     except Exception as e:
       error "Error joining the community", msg = e.msg
       result = fmt"Error joining the community: {e.msg}"
