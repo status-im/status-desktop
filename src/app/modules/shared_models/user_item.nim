@@ -12,7 +12,10 @@ type
 type
   Item* = ref object
     id: string
-    name: string
+    displayName: string
+    ensName: string
+    localNickname: string
+    alias: string
     onlineStatus: OnlineStatus
     icon: string
     isIdenticon: bool
@@ -21,7 +24,10 @@ type
 
 proc initItem*(
   id: string,
-  name: string,
+  displayName: string,
+  ensName: string,
+  localNickname: string,
+  alias: string,
   onlineStatus: OnlineStatus,
   icon: string,
   isidenticon: bool,
@@ -30,7 +36,10 @@ proc initItem*(
 ): Item =
   result = Item()
   result.id = id
-  result.name = name
+  result.displayName = displayName
+  result.ensName = ensName
+  result.localNickname = localNickname
+  result.alias = alias
   result.onlineStatus = onlineStatus
   result.icon = icon
   result.isIdenticon = isidenticon
@@ -40,7 +49,9 @@ proc initItem*(
 proc `$`*(self: Item): string =
   result = fmt"""User Item(
     id: {self.id},
-    name: {self.name},
+    displayName: {self.displayName},
+    localNickname: {self.localNickname},
+    alias: {self.alias},
     onlineStatus: {$self.onlineStatus.int},
     icon: {self.icon},
     isIdenticon: {$self.isIdenticon}
@@ -52,10 +63,28 @@ proc id*(self: Item): string {.inline.} =
   self.id
 
 proc name*(self: Item): string {.inline.} =
-  self.name
+  self.displayName
 
 proc `name=`*(self: Item, value: string) {.inline.} =
-  self.name = value
+  self.displayName = value
+
+proc ensName*(self: Item): string {.inline.} =
+  self.ensName
+
+proc `ensName=`*(self: Item, value: string) {.inline.} =
+  self.ensName = value
+
+proc localNickname*(self: Item): string {.inline.} =
+  self.localNickname
+
+proc `localNickname=`*(self: Item, value: string) {.inline.} =
+  self.localNickname = value
+
+proc alias*(self: Item): string {.inline.} =
+  self.alias
+
+proc `alias=`*(self: Item, value: string) {.inline.} =
+  self.alias = value
 
 proc onlineStatus*(self: Item): OnlineStatus {.inline.} =
   self.onlineStatus

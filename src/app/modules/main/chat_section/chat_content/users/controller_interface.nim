@@ -21,6 +21,9 @@ method getContactNameAndImage*(self: AccessInterface, contactId: string):
   tuple[name: string, image: string, isIdenticon: bool] {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method getContactDetails*(self: AccessInterface, contactId: string): ContactDetails {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method getStatusForContact*(self: AccessInterface, contactId: string): StatusUpdateDto {.base.} =
   raise newException(ValueError, "No implementation available")
 

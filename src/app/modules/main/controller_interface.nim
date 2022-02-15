@@ -1,4 +1,5 @@
 import ../shared_models/section_item
+import ../../../app_service/service/contacts/dto/contact_details as contact_details
 import ../../../app_service/service/contacts/dto/contacts as contacts_dto
 import ../../../app_service/service/community/service as community_service
 
@@ -42,6 +43,9 @@ method getContact*(self: AccessInterface, id: string): ContactsDto {.base.} =
 
 method getContactNameAndImage*(self: AccessInterface, contactId: string):
   tuple[name: string, image: string, isIdenticon: bool] {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getContactDetails*(self: AccessInterface, contactId: string): ContactDetails {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method resolveENS*(self: AccessInterface, ensName: string, uuid: string = "") {.base.} =

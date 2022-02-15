@@ -644,7 +644,7 @@ Rectangle {
         width: messageInput.width
         filter: messageInputField.text
         cursorPosition: messageInputField.cursorPosition
-        property: ["name"]
+        property: ["name", "nickname", "ensName", "alias"]
         onItemSelected: function (item, lastAtPosition, lastCursorPosition) {
             let name = item.name.replace("@", "")
             insertMention(name, lastAtPosition, lastCursorPosition)
