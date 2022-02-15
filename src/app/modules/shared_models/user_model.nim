@@ -6,6 +6,9 @@ type
   ModelRole {.pure.} = enum
     Id = UserRole + 1
     Name
+    EnsName
+    Nickname
+    Alias
     OnlineStatus
     Icon
     IsIdenticon
@@ -54,6 +57,9 @@ QtObject:
     {
       ModelRole.Id.int:"id",
       ModelRole.Name.int:"name",
+      ModelRole.EnsName.int:"ensName",
+      ModelRole.Nickname.int:"nickname",
+      ModelRole.Alias.int:"alias",
       ModelRole.OnlineStatus.int:"onlineStatus",
       ModelRole.Icon.int:"icon",
       ModelRole.IsIdenticon.int:"isIdenticon",
@@ -76,6 +82,12 @@ QtObject:
       result = newQVariant(item.id)
     of ModelRole.Name:
       result = newQVariant(item.name)
+    of ModelRole.EnsName:
+      result = newQVariant(item.ensName)
+    of ModelRole.Nickname:
+      result = newQVariant(item.localNickname)
+    of ModelRole.Alias:
+      result = newQVariant(item.alias)
     of ModelRole.OnlineStatus:
       result = newQVariant(item.onlineStatus.int)
     of ModelRole.Icon:
@@ -127,15 +139,21 @@ QtObject:
   proc isContactWithIdAdded*(self: Model, id: string): bool =
     return self.findIndexForMessageId(id) != -1
 
-  proc setName*(self: Model, id: string, name: string) =
+  proc setName*(self: Model, id: string, name: string, ensName: string, nickname: string) =
     let ind = self.findIndexForMessageId(id)
     if(ind == -1):
       return
 
     self.items[ind].name = name
+    self.items[ind].ensName = ensName
+    self.items[ind].localNickname = nickname
 
     let index = self.createIndex(ind, 0, nil)
-    self.dataChanged(index, index, @[ModelRole.Name.int])
+    self.dataChanged(index, index, @[
+      ModelRole.Name.int,
+      ModelRole.EnsName.int,
+      ModelRole.Nickname.int,
+      ])
 
   proc setIcon*(self: Model, id: string, icon: string, isIdenticon: bool) =
     let ind = self.findIndexForMessageId(id)
@@ -149,14 +167,25 @@ QtObject:
     self.dataChanged(index, index, @[ModelRole.Icon.int, ModelRole.IsIdenticon.int])
 
   proc updateItem*(
-    self: Model, id: string, name: string, icon: string, isIdenticon: bool,
-    isAdmin: bool = false, joined: bool = false
-  ) =
+      self: Model,
+      id: string,
+      name: string,
+      ensName: string,
+      localNickname: string,
+      alias: string,
+      icon: string,
+      isIdenticon: bool,
+      isAdmin: bool = false,
+      joined: bool = false
+      ) =
     let ind = self.findIndexForMessageId(id)
     if(ind == -1):
       return
 
     self.items[ind].name = name
+    self.items[ind].ensName = ensName
+    self.items[ind].localNickname = localNickname
+    self.items[ind].alias = alias
     self.items[ind].icon = icon
     self.items[ind].isIdenticon = isIdenticon
     self.items[ind].isAdmin = isAdmin
@@ -164,7 +193,14 @@ QtObject:
 
     let index = self.createIndex(ind, 0, nil)
     self.dataChanged(index, index, @[
-      ModelRole.Name.int, ModelRole.Icon.int, ModelRole.IsIdenticon.int, ModelRole.IsAdmin.int, ModelRole.Joined.int,
+      ModelRole.Name.int,
+      ModelRole.EnsName.int,
+      ModelRole.Nickname.int,
+      ModelRole.Alias.int,
+      ModelRole.Icon.int,
+      ModelRole.IsIdenticon.int,
+      ModelRole.IsAdmin.int,
+      ModelRole.Joined.int,
     ])
 
   proc setOnlineStatus*(self: Model, id: string, onlineStatus: OnlineStatus) =

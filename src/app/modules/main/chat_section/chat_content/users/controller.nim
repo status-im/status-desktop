@@ -116,5 +116,8 @@ method getContactNameAndImage*(self: Controller, contactId: string):
   tuple[name: string, image: string, isIdenticon: bool] =
   return self.contactService.getContactNameAndImage(contactId)
 
+method getContactDetails*(self: Controller, contactId: string): ContactDetails =
+  return self.contactService.getContactDetails(contactId)
+
 method getStatusForContact*(self: Controller, contactId: string): StatusUpdateDto =
   return self.contactService.getStatusForContactWithId(contactId)

@@ -194,8 +194,17 @@ proc createCommunityItem[T](self: Module[T], c: CommunityDto): SectionItem =
     c.permissions.access,
     c.permissions.ensOnly,
     c.members.map(proc(member: Member): user_item.Item =
-      let (name, image, isIdenticon) = self.controller.getContactNameAndImage(member.id)
-      result = user_item.initItem(member.id, name, OnlineStatus.Offline, image, isIdenticon)),
+      let contactDetails = self.controller.getContactDetails(member.id)
+      result = user_item.initItem(
+        member.id,
+        contactDetails.displayName,
+        contactDetails.details.name,
+        contactDetails.details.localNickname,
+        contactDetails.details.alias,
+        OnlineStatus.Offline,
+        contactDetails.icon,
+        contactDetails.isidenticon,
+        )),
     c.pendingRequestsToJoin.map(x => pending_request_item.initItem(
       x.id,
       x.publicKey,
@@ -638,8 +647,16 @@ method resolvedENS*[T](self: Module[T], publicKey: string, address: string, uuid
   self.view.emitResolvedENSSignal(publicKey, address, uuid)
 
 method contactUpdated*[T](self: Module[T], publicKey: string) =
-  let (name, image, isIdenticon) = self.controller.getContactNameAndImage(publicKey)
-  self.view.activeSection().updateMember(publicKey, name, image, isIdenticon)
+  let contactDetails = self.controller.getContactDetails(publicKey)
+  self.view.activeSection().updateMember(
+    publicKey,
+    contactDetails.displayName,
+    contactDetails.details.name,
+    contactDetails.details.localNickname,
+    contactDetails.details.alias,
+    contactDetails.icon,
+    contactDetails.isidenticon,
+    )
 
 method calculateProfileSectionHasNotification*[T](self: Module[T]): bool =
   return not self.controller.isMnemonicBackedUp()

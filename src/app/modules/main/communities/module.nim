@@ -89,8 +89,17 @@ method getCommunityItem(self: Module, c: CommunityDto): SectionItem =
       c.permissions.access,
       c.permissions.ensOnly,
       c.members.map(proc(member: Member): user_item.Item =
-        let (name, image, isIdenticon) = self.controller.getContactNameAndImage(member.id)
-        result = user_item.initItem(member.id, name, OnlineStatus.Offline, image, isIdenticon))
+        let contactDetails = self.controller.getContactDetails(member.id)
+        result = user_item.initItem(
+          member.id,
+          contactDetails.displayName,
+          contactDetails.details.name,
+          contactDetails.details.localNickname,
+          contactDetails.details.alias,
+          OnlineStatus.Offline, # TODO get the actual status?
+          contactDetails.icon,
+          contactDetails.isidenticon,
+          ))
     )
 
 method setAllCommunities*(self: Module, communities: seq[CommunityDto]) =

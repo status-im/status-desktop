@@ -1,4 +1,5 @@
 import ../../../../app_service/service/community/service as community_service
+import ../../../../app_service/service/contacts/service as contacts_service
 
 type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
@@ -60,6 +61,9 @@ method setCommunityMuted*(self: AccessInterface, communityId: string, muted: boo
 
 method getContactNameAndImage*(self: AccessInterface, contactId: string):
     tuple[name: string, image: string, isIdenticon: bool] {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getContactDetails*(self: AccessInterface, contactId: string): ContactDetails {.base.} =
   raise newException(ValueError, "No implementation available")
 
 type

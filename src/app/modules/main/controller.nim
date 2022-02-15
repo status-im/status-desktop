@@ -247,6 +247,9 @@ method getContactNameAndImage*(self: Controller, contactId: string):
   tuple[name: string, image: string, isIdenticon: bool] =
   return self.contactsService.getContactNameAndImage(contactId)
 
+method getContactDetails*(self: Controller, contactId: string): ContactDetails =
+  return self.contactsService.getContactDetails(contactId)
+
 method resolveENS*(self: Controller, ensName: string, uuid: string = "") =
   self.contactsService.resolveENS(ensName, uuid)
 

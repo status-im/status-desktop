@@ -29,6 +29,9 @@ Item {
         delegate: Item {
             property string publicKey: model.id
             property string name: model.name
+            property string nickname: model.nickname
+            property string alias: model.alias
+            property string ensName: model.ensName
             property string icon: model.icon
             property bool isIdenticon: model.isIdenticon
         }
@@ -65,6 +68,9 @@ Item {
             const item = {
                 publicKey: listItem.publicKey,
                 name: listItem.name,
+                nickname: listItem.nickname,
+                alias: listItem.alias,
+                ensName: listItem.ensName,
                 icon: listItem.icon,
                 isIdenticon: listItem.isIdenticon
             }

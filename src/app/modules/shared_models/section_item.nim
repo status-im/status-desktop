@@ -189,9 +189,12 @@ proc updateMember*(
     self: SectionItem,
     pubkey: string,
     name: string,
+    ensName: string,
+    nickname: string,
+    alias: string,
     image: string,
     isIdenticon: bool) =
-  self.membersModel.updateItem(pubkey, name, image, isIdenticon)
+  self.membersModel.updateItem(pubkey, name, ensName, nickname, alias, image, isIdenticon)
 
 proc pendingRequestsToJoin*(self: SectionItem): PendingRequestModel {.inline.} =
   self.pendingRequestsToJoinModel

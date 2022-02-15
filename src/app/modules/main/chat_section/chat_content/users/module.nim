@@ -55,6 +55,9 @@ method viewDidLoad*(self: Module) =
   self.view.model().addItem(initItem(
     singletonInstance.userProfile.getPubKey(),
     loggedInUserDisplayName,
+    singletonInstance.userProfile.getEnsName(),
+    localNickname = "",
+    alias = singletonInstance.userProfile.getUsername(),
     OnlineStatus.Online,
     singletonInstance.userProfile.getIcon(),
     singletonInstance.userProfile.getIsIdenticon(),
@@ -69,10 +72,21 @@ method viewDidLoad*(self: Module) =
       continue
 
     let (admin, joined) = self.controller.getChatMemberInfo(publicKey)
-    let (name, image, isIdenticon) = self.controller.getContactNameAndImage(publicKey)
+    let contactDetails = self.controller.getContactDetails(publicKey)
     let statusUpdateDto = self.controller.getStatusForContact(publicKey)
     let status = statusUpdateDto.statusType.int.OnlineStatus
-    self.view.model().addItem(initItem(publicKey, name, status, image, isidenticon, admin, joined))
+    self.view.model().addItem(initItem(
+      publicKey,
+      contactDetails.displayName,
+      contactDetails.details.name,
+      contactDetails.details.localNickname,
+      contactDetails.details.alias,
+      status,
+      contactDetails.icon,
+      contactDetails.isidenticon,
+      admin, 
+      joined
+      ))
 
   self.moduleLoaded = true
   self.delegate.usersDidLoad()
@@ -89,14 +103,28 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto]) =
     if(self.view.model().isContactWithIdAdded(m.`from`)):
       continue
 
-    let (name, image, isIdenticon) = self.controller.getContactNameAndImage(m.`from`)
+    let contactDetails = self.controller.getContactDetails(m.`from`)
     let statusUpdateDto = self.controller.getStatusForContact(m.`from`)
     let status = statusUpdateDto.statusType.int.OnlineStatus
-    self.view.model().addItem(initItem(m.`from`, name, status, image, isidenticon))
+    self.view.model().addItem(initItem(
+      m.`from`,
+      contactDetails.displayName,
+      contactDetails.details.name,
+      contactDetails.details.localNickname,
+      contactDetails.details.alias,
+      status,
+      contactDetails.icon,
+      contactDetails.isidenticon,
+      ))
 
 method contactNicknameChanged*(self: Module, publicKey: string) =
-  let (name, _, _) = self.controller.getContactNameAndImage(publicKey)
-  self.view.model().setName(publicKey, name)
+  let contactDetails = self.controller.getContactDetails(publicKey)
+  self.view.model().setName(
+    publicKey,
+    contactDetails.displayName,
+    contactDetails.details.name,
+    contactDetails.details.localNickname
+    )
 
 method contactsStatusUpdated*(self: Module, statusUpdates: seq[StatusUpdateDto]) =
   for s in statusUpdates:
@@ -104,8 +132,16 @@ method contactsStatusUpdated*(self: Module, statusUpdates: seq[StatusUpdateDto])
     self.view.model().setOnlineStatus(s.publicKey, status)
 
 method contactUpdated*(self: Module, publicKey: string) =
-  let (name, image, isIdenticon) = self.controller.getContactNameAndImage(publicKey)
-  self.view.model().updateItem(publicKey, name, image, isIdenticon)
+  let contactDetails = self.controller.getContactDetails(publicKey)
+  self.view.model().updateItem(
+    publicKey,
+    contactDetails.displayName,
+    contactDetails.details.name,
+    contactDetails.details.localNickname,
+    contactDetails.details.alias,
+    contactDetails.icon,
+    contactDetails.isidenticon,
+  )
 
 method loggedInUserImageChanged*(self: Module) =
   self.view.model().setIcon(singletonInstance.userProfile.getPubKey(), singletonInstance.userProfile.getIcon(),
@@ -117,14 +153,34 @@ method onChatMembersAdded*(self: Module,  ids: seq[string]) =
       continue
 
     let (admin, joined) = self.controller.getChatMemberInfo(id)
-    let (name, image, isIdenticon) = self.controller.getContactNameAndImage(id)
+    let contactDetails = self.controller.getContactDetails(id)
     let statusUpdateDto = self.controller.getStatusForContact(id)
     let status = statusUpdateDto.statusType.int.OnlineStatus
-    self.view.model().addItem(initItem(id, name, status, image, isidenticon, admin, joined))
+    self.view.model().addItem(initItem(
+      id,
+      contactDetails.displayName,
+      contactDetails.details.name,
+      contactDetails.details.localNickname,
+      contactDetails.details.alias,
+      status,
+      contactDetails.icon,
+      contactDetails.isidenticon,
+      admin, 
+      joined
+      ))
 
 method onChatMemberRemoved*(self: Module, id: string) =
   self.view.model().removeItemById(id)
 
 method onChatMemberUpdated*(self: Module, publicKey: string, admin: bool, joined: bool) =
-  let (name, image, isIdenticon) = self.controller.getContactNameAndImage(publicKey)
-  self.view.model().updateItem(publicKey, name, image, isIdenticon, admin, joined)
+  let contactDetails = self.controller.getContactDetails(publicKey)
+  self.view.model().updateItem(
+    publicKey,
+    contactDetails.displayName,
+    contactDetails.details.name,
+    contactDetails.details.localNickname,
+    contactDetails.details.alias,
+    contactDetails.icon,
+    contactDetails.isidenticon,
+    admin,
+    joined)
