@@ -20,6 +20,7 @@ Item {
     property var currentAccount
     property var changeSelectedAccount
     property var store
+    property var walletStore
 
     height: walletAddress.y + walletAddress.height
     anchors.right: parent.right
@@ -76,13 +77,23 @@ Item {
         store: walletHeader.store
     }
 
+    NetworkFilter {
+        id: networkFilter
+        visible: walletHeader.walletStore.isMultiNetworkEnabled 
+        anchors.top: parent.top
+        anchors.topMargin: 56
+        anchors.left: walletBalance.right
+        anchors.leftMargin: 70
+        store: walletHeader.walletStore
+    }
+
     Component {
         id: receiveModalComponent
         ReceiveModal {
             onClosed: {
                 destroy();
             }
-            selectedAccount: RootStore.currentAccount
+            selectedAccount: walletHeader.walletStore.currentAccount
         }
     }
 
