@@ -37,9 +37,12 @@ StatusPopupMenu {
     signal downloadMessages(string file)
     signal deleteCommunityChat(string chatId)
     signal leaveChat(string chatId)
+    signal leaveGroup(string chatId)
 
     signal createCommunityChannel(string chatId, string newName, string newDescription, string newEmoji)
     signal editCommunityChannel(string chatId, string newName, string newDescription, string newEmoji, string newCategory)
+    signal fetchMoreMessages(int timeFrame)
+    signal addRemoveGroupMember()
 
     StatusMenuItem {
         id: viewProfileMenuItem
@@ -49,8 +52,7 @@ StatusPopupMenu {
                 //% "View Profile"
                 return qsTrId("view-profile")
             case Constants.chatType.privateGroupChat:
-                //% "View Group"
-                return qsTrId("view-group")
+                return qsTr("View Members")
             default:
                 return ""
             }
@@ -65,6 +67,16 @@ StatusPopupMenu {
             if (root.chatType === Constants.chatType.privateGroupChat) {
                 root.displayGroupInfoPopup(root.chatId)
             }
+        }
+    }
+
+    StatusMenuItem {
+        text: qsTr("Add / remove from group")
+        icon.name: "notification"
+        enabled: (root.chatType === Constants.chatType.privateGroupChat &&
+                 amIChatAdmin)
+        onTriggered: {
+            root.addRemoveGroupMember();
         }
     }
 
@@ -85,13 +97,27 @@ StatusPopupMenu {
     }
 
     StatusMenuItem {
+        text: qsTr("Edit name and image")
+        icon.name: "edit"
+        enabled: (root.isCommunityChat ||root.chatType === Constants.chatType.privateGroupChat)
+                 && root.amIChatAdmin
+        onTriggered: {
+            Global.openPopup(editChannelPopup, {
+                isEdit: true,
+                channelName: root.chatName,
+                channelDescription: root.chatDescription,
+                categoryId: root.chatCategoryId
+            });
+        }
+    }
+
+    StatusMenuItem {
         text: root.chatMuted ?
               //% "Unmute chat"
               qsTrId("unmute-chat") :
               //% "Mute chat"
               qsTrId("mute-chat")
         icon.name: "notification"
-        enabled: root.chatType !== Constants.chatType.privateGroupChat
         onTriggered: {
             if(root.chatMuted)
                 root.unmuteChat(root.chatId)
@@ -104,11 +130,44 @@ StatusPopupMenu {
         //% "Mark as Read"
         text: qsTrId("mark-as-read")
         icon.name: "checkmark-circle"
-        enabled: root.chatType !== Constants.chatType.privateGroupChat
         onTriggered: {
             root.markAllMessagesRead(root.chatId)
         }
     }
+
+    //TODO uncomment when implemented
+//    StatusPopupMenu {
+//        title: qsTr("Fetch messages")
+//        enabled: (root.chatType === Constants.chatType.oneToOne ||
+//                  root.chatType === Constants.chatType.privateGroupChat)
+//        StatusMenuItem {
+//            text: "Last 24 hours"
+//            onTriggered: {
+//                root.fetchMoreMessages();
+//            }
+//        }
+
+//        StatusMenuItem {
+//            text: "Last 2 days"
+//            onTriggered: {
+
+//            }
+//        }
+
+//        StatusMenuItem {
+//            text: "Last 3 days"
+//            onTriggered: {
+
+//            }
+//        }
+
+//        StatusMenuItem {
+//            text: "Last 7 days"
+//            onTriggered: {
+
+//            }
+//        }
+//    }
 
     StatusMenuItem {
         //% "Clear history"
@@ -170,6 +229,9 @@ StatusPopupMenu {
             if (root.isCommunityChat) {
                 return qsTr("Delete Channel")
             }
+            if (root.chatType === Constants.chatType.privateGroupChat) {
+                return qsTr("Leave group")
+            }
             return root.chatType === Constants.chatType.oneToOne ?
                         //% "Delete chat"
                         qsTrId("delete-chat") :
@@ -182,7 +244,11 @@ StatusPopupMenu {
 
         type: StatusMenuItem.Type.Danger
         onTriggered: {
-            Global.openPopup(deleteChatConfirmationDialogComponent)
+            if (root.chatType === Constants.chatType.privateGroupChat) {
+                root.leaveChat(root.chatId);
+            } else {
+                Global.openPopup(deleteChatConfirmationDialogComponent);
+            }
         }
 
         enabled: !root.isCommunityChat || root.amIChatAdmin

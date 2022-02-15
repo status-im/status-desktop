@@ -34,6 +34,7 @@ ColumnLayout {
     property var contactsStore
     property bool isActiveChannel: false
     property var emojiPopup
+    property alias textInputField: chatInput
     property UsersStore usersStore: UsersStore {}
 
     onChatContentModuleChanged: {
@@ -252,6 +253,15 @@ ColumnLayout {
                     channelPosition // TODO change this to the signal once it is modifiable
                 )
             }
+            onAddRemoveGroupMember: {
+                chatContentRoot.rootStore.addRemoveGroupMember();
+            }
+            onFetchMoreMessages: {
+                chatContentRoot.rootStore.messageStore.requestMoreMessages();
+            }
+            onLeaveGroup: {
+                chatContentModule.leaveChat();
+            }
         }
     }
 
@@ -351,7 +361,7 @@ ColumnLayout {
 
         onCreateOneToOneChat: {
             Global.changeAppSectionBySectionType(Constants.appSection.chat)
-            root.rootStore.chatCommunitySectionModule.createOneToOneChat(chatId, ensName)
+            root.rootStore.chatCommunitySectionModule.createOneToOneChat("", chatId, ensName)
         }
     }
 
@@ -362,6 +372,7 @@ ColumnLayout {
 
         ChatMessagesView {
             id: chatMessages
+            opacity: !chatContentRoot.rootStore.openCreateChat ? 1.0 : 0.0
             Layout.fillWidth: true
             Layout.fillHeight: true
             store: chatContentRoot.rootStore
@@ -393,7 +404,7 @@ ColumnLayout {
 
             Loader {
                 id: loadingMessagesIndicator
-                active: chatContentRoot.rootStore.loadingHistoryMessagesInProgress
+                visible: !chatContentRoot.rootStore.openCreateChat
                 sourceComponent: LoadingAnimation { }
                 anchors {
                     right: parent.right
@@ -405,24 +416,27 @@ ColumnLayout {
 
             StatusChatInput {
                 id: chatInput
-
-                store: root.rootStore
+                store: chatContentRoot.rootStore
                 usersStore: chatContentRoot.usersStore
 
                 visible: {
-                    // Not Refactored Yet
-                    return true
-                    //                if (chatContentRoot.rootStore.chatsModelInst.channelView.activeChannel.chatType === Constants.chatType.privateGroupChat) {
-                    //                    return chatContentRoot.rootStore.chatsModelInst.channelView.activeChannel.isMember
-                    //                }
-                    //                if (chatContentRoot.rootStore.chatsModelInst.channelView.activeChannel.chatType === Constants.chatType.oneToOne) {
-                    //                    return isContact
-                    //                }
-                    //                const community = chatContentRoot.rootStore.chatsModelInst.communities.activeCommunity
-                    //                return !community.active ||
-                    //                        community.access === Constants.communityChatPublicAccess ||
-                    //                        community.admin ||
-                    //                        chatContentRoot.rootStore.chatsModelInst.channelView.activeChannel.canPost
+                    if (chatContentRoot.rootStore.openCreateChat && chatContentRoot.rootStore.hideInput) {
+                        return false;
+                    } else {
+                        return true;
+                        // Not Refactored Yet
+                        //                if (chatContentRoot.rootStore.chatsModelInst.channelView.activeChannel.chatType === Constants.chatType.privateGroupChat) {
+                        //                    return chatContentRoot.rootStore.chatsModelInst.channelView.activeChannel.isMember
+                        //                }
+                        //                if (chatContentRoot.rootStore.chatsModelInst.channelView.activeChannel.chatType === Constants.chatType.oneToOne) {
+                        //                    return isContact
+                        //                }
+                        //                const community = chatContentRoot.rootStore.chatsModelInst.communities.activeCommunity
+                        //                return !community.active ||
+                        //                        community.access === Constants.communityChatPublicAccess ||
+                        //                        community.admin ||
+                        //                        chatContentRoot.rootStore.chatsModelInst.channelView.activeChannel.canPost
+                    }
                 }
                 messageContextMenu: contextmenu
                 emojiPopup: chatContentRoot.emojiPopup
@@ -458,32 +472,40 @@ ColumnLayout {
                                                           chatInput.isReply ? SelectedMessage.messageId : "",
                                                           packId)
                 }
+
+
                 onSendMessage: {
-                    if(!chatContentModule) {
-                        console.debug("error on sending message - chat content module is not set")
-                        return
-                    }
+                    if (chatContentRoot.rootStore.openCreateChat) {
+                        chatContentRoot.rootStore.createChatInitMessage = textInput.getText(0, textInput.cursorPosition);
+                        textInput.clear();
+                        chatContentRoot.rootStore.createChatWithMessage();
+                    } else {
+                        if (!chatContentModule) {
+                            console.debug("error on sending message - chat content module is not set")
+                            return
+                        }
 
-                    if (chatInput.fileUrls.length > 0){
-                        chatContentModule.inputAreaModule.sendImages(JSON.stringify(fileUrls));
-                    }
-                    let msg = globalUtils.plainText(StatusQUtils.Emoji.deparse(chatInput.textInput.text))
-                    if (msg.length > 0) {
-                        msg = chatInput.interpretMessage(msg)
+                        if (chatInput.fileUrls.length > 0){
+                            chatContentModule.inputAreaModule.sendImages(JSON.stringify(fileUrls));
+                        }
+                        let msg = globalUtils.plainText(StatusQUtils.Emoji.deparse(chatInput.textInput.text))
+                        if (msg.length > 0) {
+                            msg = chatInput.interpretMessage(msg)
 
-                        chatContentModule.inputAreaModule.sendMessage(
-                                    msg,
-                                    chatInput.isReply ? chatInput.replyMessageId : "",
-                                    Utils.isOnlyEmoji(msg) ? Constants.messageContentType.emojiType : Constants.messageContentType.messageType,
-                                    false)
+                            chatContentModule.inputAreaModule.sendMessage(
+                                        msg,
+                                        chatInput.isReply ? chatInput.replyMessageId : "",
+                                        Utils.isOnlyEmoji(msg) ? Constants.messageContentType.emojiType : Constants.messageContentType.messageType,
+                                        false)
 
-                        if (event) event.accepted = true
-                        sendMessageSound.stop();
-                        Qt.callLater(sendMessageSound.play);
+                            if (event) event.accepted = true
+                            sendMessageSound.stop();
+                            Qt.callLater(sendMessageSound.play);
 
-                        chatInput.textInput.clear();
-                        chatInput.textInput.textFormat = TextEdit.PlainText;
-                        chatInput.textInput.textFormat = TextEdit.RichText;
+                            chatInput.textInput.clear();
+                            chatInput.textInput.textFormat = TextEdit.PlainText;
+                            chatInput.textInput.textFormat = TextEdit.RichText;
+                        }
                     }
                 }
 

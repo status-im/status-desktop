@@ -5,6 +5,7 @@ import ../message/dto/message as message_dto
 import ../activity_center/dto/notification as notification_dto
 import ../contacts/service as contact_service
 import ../../../backend/chat as status_chat
+import ../../../backend/group_chat as status_group_chat
 import ../../../backend/chatCommands as status_chat_commands
 import ../../../app/global/global_singleton
 import ../../../app/core/eventemitter
@@ -37,6 +38,7 @@ type
     # deletedMessages*: seq[RemovedMessage]
 
   ChatArgs* = ref object of Args
+    communityId*: string
     chatId*: string
 
   ChatExtArgs* = ref object of ChatArgs
@@ -196,46 +198,40 @@ QtObject:
     return self.contactService.getContactNameAndImage(chatId)
 
   proc createChatFromResponse(self: Service, response: RpcResponse[JsonNode]): tuple[chatDto: ChatDto, success: bool] =
-    var jsonArr: JsonNode
-    if (not response.result.getProp("chats", jsonArr)):
+    var jsonChat: JsonNode
+    if (not response.result.getProp("chat", jsonChat)):
       error "error: response of creating chat doesn't contain created chats"
       result.success = false
       return
 
-    let chats = map(jsonArr.getElems(), proc(x: JsonNode): ChatDto = x.toChatDto())
-    # created chat is returned as the first elemnt of json array (it's up to `status-go`)
-    if(chats.len == 0):
-      error "error: unknown error occured creating chat"
-      result.success = false
-      return
-
-    result.chatDto = chats[0]
+    result.chatDto = jsonChat.toChatDto()
     self.updateOrAddChat(result.chatDto)
     result.success = true
 
   proc createPublicChat*(self: Service, chatId: string): tuple[chatDto: ChatDto, success: bool] =
     try:
       let response = status_chat.createPublicChat(chatId)
-      result = self.createChatFromResponse(response)
+      result.chatDto = response.result.toChatDto()
+      self.updateOrAddChat(result.chatDto)
+      result.success = true
     except Exception as e:
       let errDesription = e.msg
       error "error: ", errDesription
       return
 
-  proc createOneToOneChat*(self: Service, chatId: string, ensName: string): tuple[chatDto: ChatDto, success: bool] =
+  proc createOneToOneChat*(self: Service, communityID: string, chatId: string, ensName: string): tuple[chatDto: ChatDto, success: bool] =
     try:
       if self.hasChannel(chatId):
         # We want to show the chat to the user and for that we activate the chat
-        discard status_chat.saveChat(
+        discard status_group_chat.createOneToOneChat(
+          communityID,
           chatId,
-          chat_dto.ChatType.OneToOne.int,
-          color=self.chats[chatId].color,
           ensName=ensName)
         result.success = true
         result.chatDto = self.chats[chatId]
         return
 
-      let response =  status_chat.createOneToOneChat(chatId)
+      let response =  status_group_chat.createOneToOneChat(communityID, chatId, ensName)
       result = self.createChatFromResponse(response)
     except Exception as e:
       let errDesription = e.msg
@@ -406,41 +402,41 @@ QtObject:
       error "error: ", errDesription
       return
 
-  method addGroupMembers*(self: Service, chatId: string, pubKeys: seq[string]) =
+  method addGroupMembers*(self: Service, communityID: string, chatID: string, members: seq[string]) =
     try:
-      let response = status_chat.addGroupMembers(chatId, pubKeys)
+      let response = status_group_chat.addMembers(communityID, chatId, members)
       if (response.error.isNil):
-        self.events.emit(SIGNAL_CHAT_MEMBERS_ADDED, ChatMembersAddedArgs(chatId: chatId, ids: pubKeys))
+        self.events.emit(SIGNAL_CHAT_MEMBERS_ADDED, ChatMembersAddedArgs(chatId: chatId, ids: members))
     except Exception as e:
       error "error while adding group members: ", msg = e.msg
 
-  method removeMemberFromGroupChat*(self: Service, chatId: string, pubKey: string) =
+  method removeMemberFromGroupChat*(self: Service, communityID: string, chatID: string, member: string) =
     try:
-      let response = status_chat.removeMembersFromGroupChat(chatId, pubKey)
+      let response = status_group_chat.removeMember(communityID, chatId, member)
       if (response.error.isNil):
-        self.events.emit(SIGNAL_CHAT_MEMBER_REMOVED, ChatMemberRemovedArgs(chatId: chatId, id: pubkey))
+        self.events.emit(SIGNAL_CHAT_MEMBER_REMOVED, ChatMemberRemovedArgs(chatId: chatId, id: member))
     except Exception as e:
       error "error while removing member from group: ", msg = e.msg
 
 
-  method renameGroupChat*(self: Service, chatId: string, newName: string) =
+  method renameGroupChat*(self: Service, communityID: string, chatID: string, name: string) =
     try:
-      let response = status_chat.renameGroupChat(chatId, newName)
+      let response = status_group_chat.renameChat(communityID, chatId, name)
       if (not response.error.isNil):
         let msg = response.error.message & " chatId=" & chatId
         error "error while renaming group chat", msg
         return
 
-      self.events.emit(SIGNAL_CHAT_RENAMED, ChatRenameArgs(id: chatId, newName: newName))
+      self.events.emit(SIGNAL_CHAT_RENAMED, ChatRenameArgs(id: chatId, newName: name))
     except Exception as e:
       error "error while renaming group chat: ", msg = e.msg
 
 
-  method makeAdmin*(self: Service, chatId: string, pubKey: string) =
+  method makeAdmin*(self: Service, communityID: string, chatID: string, memberId: string) =
     try:
-      let response = status_chat.makeAdmin(chatId, pubKey)
+      let response = status_group_chat.makeAdmin(communityID, chatId, memberId)
       for member in self.chats[chatId].members.mitems:
-        if (member.id == pubKey):
+        if (member.id == memberId):
           member.admin = true
           self.events.emit(
             SIGNAL_CHAT_MEMBER_UPDATED,
@@ -451,23 +447,23 @@ QtObject:
       error "error while making user admin: ", msg = e.msg
 
 
-  method confirmJoiningGroup*(self: Service, chatId: string) =
+  method confirmJoiningGroup*(self: Service, communityID: string, chatID: string) =
     try:
-      let response = status_chat.confirmJoiningGroup(chatId)
+      let response = status_group_chat.confirmJoiningGroup(communityID, chatId)
       self.emitUpdate(response)
     except Exception as e:
       error "error while confirmation joining to group: ", msg = e.msg
 
   method createGroupChatFromInvitation*(self: Service, groupName: string, chatId: string, adminPK: string): tuple[chatDto: ChatDto, success: bool]  =
     try:
-      let response = status_chat.createGroupChatFromInvitation(groupName, chatId, adminPK)
+      let response = status_group_chat.createGroupChatFromInvitation(groupName, chatId, adminPK)
       result = self.createChatFromResponse(response)
     except Exception as e:
       error "error while creating group from invitation: ", msg = e.msg
 
-  method createGroupChat*(self: Service, groupName: string, pubKeys: seq[string]): tuple[chatDto: ChatDto, success: bool] =
+  method createGroupChat*(self: Service, communityID: string, name: string, members: seq[string]): tuple[chatDto: ChatDto, success: bool] =
     try:
-      let response = status_chat.createGroupChat(groupName, pubKeys)
+      let response = status_group_chat.createGroupChat(communityID, name, members)
       result = self.createChatFromResponse(response)
     except Exception as e:
       error "error while creating group chat", msg = e.msg

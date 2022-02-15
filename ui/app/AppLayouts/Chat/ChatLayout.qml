@@ -26,6 +26,9 @@ StatusAppThreePanelLayout {
     property var contactsStore
     property bool hasAddedContacts: root.contactsStore.myContactsModel.count > 0
 
+    // Not Refactored
+    property var messageStore
+
     property RootStore rootStore: RootStore {
         contactsStore: root.contactsStore
     }
@@ -69,7 +72,11 @@ StatusAppThreePanelLayout {
             Global.openPopup(statusStickerPackClickPopup, {packId: stickerPackId} )
         }
         onOpenAppSearch: {
-            root.openAppSearch()
+            root.openAppSearch();
+        }
+        CreateChatView {
+            activeChatId: chatColumn.activeChatId
+            rootStore: root.rootStore
         }
     }
 
@@ -180,7 +187,7 @@ StatusAppThreePanelLayout {
         }
         onCreateOneToOneChat: {
             Global.changeAppSectionBySectionType(Constants.appSection.chat)
-            root.rootStore.chatCommunitySectionModule.createOneToOneChat(chatId, ensName)
+            root.rootStore.chatCommunitySectionModule.createOneToOneChat(communityId, chatId, ensName)
         }
     }
 }

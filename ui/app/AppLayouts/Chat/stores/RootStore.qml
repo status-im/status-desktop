@@ -6,6 +6,13 @@ QtObject {
     id: root
 
     property var contactsStore
+    property bool openCreateChat: false
+    property bool hideInput: false
+    property string createChatInitMessage
+    property var chatTextInput
+    property var contactsModel: profileSectionModule.contactsModule.myContactsModel
+    signal addRemoveGroupMember()
+    signal createChatWithMessage()
     // Important:
     // Each `ChatLayout` has its own chatCommunitySectionModule
     // (on the backend chat and community sections share the same module since they are actually the same)
@@ -284,7 +291,7 @@ QtObject {
                             .arg(isChatKey(pk) ? globalUtils.generateAlias(pk) : ("@" + removeStatusEns(pk)))
             result.callback = function () {
                 if (isChatKey(pk)) {
-                    chatCommunitySectionModule.createOneToOneChat(pk, "")
+                    chatCommunitySectionModule.createOneToOneChat("", pk, "")
                 } else {
                 // Not Refactored Yet
 //                    chatsModel.channelView.joinWithENS(pk);

@@ -54,7 +54,6 @@ Item {
     property bool stickersLoaded: false
     property Timer timer: Timer { }
     property var userList
-
     property var contactDetails: Utils.getContactDetailsAsJson(root.activeChatId)
     property bool isContact: root.contactDetails.isContact
     property bool contactRequestReceived: root.contactDetails.requestReceived
@@ -211,7 +210,6 @@ Item {
                     active: false
                     width: parent.width
                     height: isActiveChannel ? parent.height : 0
-
                     Connections {
                         id: loaderConnections
                         target: chatLoader
@@ -227,6 +225,9 @@ Item {
                     sourceComponent: ChatContentView {
                         width: parent.width
                         height: parent.height
+                        onHeightChanged: {
+
+                        }
                         clip: true
                         rootStore: root.rootStore
                         contactsStore: root.contactsStore
@@ -240,9 +241,22 @@ Item {
                         onOpenStickerPackPopup: {
                             root.openStickerPackPopup(stickerPackId)
                         }
+                        onIsActiveChannelChanged: {
+                            if (isActiveChannel && root.rootStore.openCreateChat) {
+                                root.rootStore.chatTextInput = textInputField.textInput;
+                            }
+                        }
                         Component.onCompleted: {
                             parentModule.prepareChatContentModuleForChatId(model.itemId)
                             chatContentModule = parentModule.getChatContentModule()
+                            if (root.rootStore.openCreateChat) {
+                                root.rootStore.openCreateChat = false;
+                                if (root.rootStore.createChatInitMessage !== "") {
+                                    textInputField.textInput.insert(0, root.rootStore.createChatInitMessage);
+                                    root.rootStore.createChatInitMessage = "";
+                                    textInputField.sendMessage(Qt.Key_Enter);
+                                }
+                            }
                         }
                     }
                 }
