@@ -10,6 +10,7 @@ QtObject {
     property var accountSensitiveSettings: localAccountSensitiveSettings
     property string locale: appSettings.locale
     property bool hideSignPhraseModal: accountSensitiveSettings.hideSignPhraseModal
+    property bool isMultiNetworkEnabled: accountSensitiveSettings.isMultiNetworkEnabled
 
     property string currentCurrency: walletSection.currentCurrency
     property string totalCurrencyBalance: walletSection.totalCurrencyBalance

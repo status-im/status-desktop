@@ -27,6 +27,7 @@ Item {
         currentAccount: RootStore.currentAccount
         changeSelectedAccount: walletContainer.changeSelectedAccount
         store: walletContainer.store
+        walletStore: RootStore
     }
 
     RowLayout {
