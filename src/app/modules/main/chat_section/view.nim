@@ -138,8 +138,8 @@ QtObject:
   proc createPublicChat*(self: View, chatId: string) {.slot.} =
     self.delegate.createPublicChat(chatId)
 
-  proc createOneToOneChat*(self: View, chatId: string, ensName: string) {.slot.} =
-    self.delegate.createOneToOneChat(chatId, ensName)
+  proc createOneToOneChat*(self: View, communityID: string, chatId: string, ensName: string) {.slot.} =
+    self.delegate.createOneToOneChat(communityID, chatId, ensName)
 
   proc leaveChat*(self: View, id: string) {.slot.} =
     self.delegate.leaveChat(id)
@@ -181,20 +181,20 @@ QtObject:
   proc removeCommunityChat*(self: View, chatId: string) {.slot} =
     self.delegate.removeCommunityChat(chatId)
 
-  proc addGroupMembers*(self: View, chatId: string, pubKeys: string) {.slot.} =
-    self.delegate.addGroupMembers(chatId, pubKeys)
+  proc addGroupMembers*(self: View, communityID: string, chatId: string, pubKeys: string) {.slot.} =
+    self.delegate.addGroupMembers(communityID, chatId, pubKeys)
 
-  proc removeMemberFromGroupChat*(self: View, chatId: string, pubKey: string) {.slot.} =
-    self.delegate.removeMemberFromGroupChat(chatId, pubKey)
+  proc removeMemberFromGroupChat*(self: View, communityID: string, chatId: string, pubKey: string) {.slot.} =
+    self.delegate.removeMemberFromGroupChat(communityID, chatId, pubKey)
 
-  proc renameGroupChat*(self: View, chatId: string, newName: string) {.slot.} =
-    self.delegate.renameGroupChat(chatId, newName)
+  proc renameGroupChat*(self: View, communityID: string, chatId: string, newName: string) {.slot.} =
+    self.delegate.renameGroupChat(communityID, chatId, newName)
 
-  proc makeAdmin*(self: View, chatId: string, pubKey: string) {.slot.} =
-    self.delegate.makeAdmin(chatId, pubKey)
+  proc makeAdmin*(self: View, communityID: string, chatId: string, pubKey: string) {.slot.} =
+    self.delegate.makeAdmin(communityID, chatId, pubKey)
 
-  proc createGroupChat*(self: View, groupName: string, pubKeys: string) {.slot.} =
-    self.delegate.createGroupChat(groupName, pubKeys)
+  proc createGroupChat*(self: View, communityID: string, groupName: string, pubKeys: string) {.slot.} =
+    self.delegate.createGroupChat(communityID, groupName, pubKeys)
 
   proc joinGroup*(self: View) {.slot.} =
     self.delegate.joinGroup()

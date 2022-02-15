@@ -173,7 +173,7 @@ method init*(self: Controller) =
     let args = ChatExtArgs(e)
     if (self.isCommunitySection):
       return
-    self.delegate.createOneToOneChat(args.chatId, args.ensName)
+    self.delegate.createOneToOneChat(args.communityId, args.chatId, args.ensName)
 
   self.events.on(SignalType.HistoryRequestStarted.event) do(e: Args):
     self.delegate.setLoadingHistoryMessagesInProgress(true)
@@ -238,8 +238,8 @@ method createPublicChat*(self: Controller, chatId: string) =
     self.delegate.addNewChat(response.chatDto, false, self.events, self.settingsService, self.contactService, self.chatService,
     self.communityService, self.messageService, self.gifService, self.mailserversService)
 
-method createOneToOneChat*(self: Controller, chatId: string, ensName: string) =
-  let response = self.chatService.createOneToOneChat(chatId, ensName)
+method createOneToOneChat*(self: Controller, communityID: string, chatId: string, ensName: string) =
+  let response = self.chatService.createOneToOneChat(communityID, chatId, ensName)
   if(response.success):
     self.delegate.addNewChat(response.chatDto, false, self.events, self.settingsService, self.contactService, self.chatService,
     self.communityService, self.messageService, self.gifService, self.mailserversService)
@@ -280,26 +280,26 @@ method rejectContactRequest*(self: Controller, publicKey: string) =
 method blockContact*(self: Controller, publicKey: string) =
   self.contactService.blockContact(publicKey)
 
-method addGroupMembers*(self: Controller, chatId: string, pubKeys: seq[string]) =
-  self.chatService.addGroupMembers(chatId, pubKeys)
+method addGroupMembers*(self: Controller, communityID: string, chatId: string, pubKeys: seq[string]) =
+  self.chatService.addGroupMembers(communityID, chatId, pubKeys)
 
-method removeMemberFromGroupChat*(self: Controller, chatId: string, pubKey: string) =
-   self.chatService.removeMemberFromGroupChat(chatId, pubKey)
+method removeMemberFromGroupChat*(self: Controller, communityID: string, chatId: string, pubKey: string) =
+   self.chatService.removeMemberFromGroupChat(communityID, chatId, pubKey)
 
-method renameGroupChat*(self: Controller, chatId: string, newName: string) =
-  self.chatService.renameGroupChat(chatId, newName)
+method renameGroupChat*(self: Controller, communityID: string, chatId: string, newName: string) =
+  self.chatService.renameGroupChat(communityID, chatId, newName)
 
-method makeAdmin*(self: Controller, chatId: string, pubKey: string) =
-  self.chatService.makeAdmin(chatId, pubKey)
+method makeAdmin*(self: Controller, communityID: string, chatId: string, pubKey: string) =
+  self.chatService.makeAdmin(communityID, chatId, pubKey)
 
-method createGroupChat*(self: Controller, groupName: string, pubKeys: seq[string]) =
-  let response = self.chatService.createGroupChat(groupName, pubKeys)
+method createGroupChat*(self: Controller, communityID: string, groupName: string, pubKeys: seq[string]) =
+  let response = self.chatService.createGroupChat(communityID, groupName, pubKeys)
   if(response.success):
     self.delegate.addNewChat(response.chatDto, false, self.events, self.settingsService, self.contactService, self.chatService,
     self.communityService, self.messageService, self.gifService, self.mailserversService)
 
-method joinGroup*(self: Controller) =
-  self.chatService.confirmJoiningGroup(self.getActiveChatId())
+method confirmJoiningGroup*(self: Controller, communityID: string, chatID: string) =
+  self.chatService.confirmJoiningGroup(communityID, self.getActiveChatId())
 
 method joinGroupChatFromInvitation*(self: Controller, groupName: string, chatId: string, adminPK: string) =
   let response = self.chatService.createGroupChatFromInvitation(groupName, chatId, adminPK)

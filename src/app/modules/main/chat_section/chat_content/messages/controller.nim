@@ -256,8 +256,8 @@ method getTransactionDetails*(self: Controller, message: MessageDto): (string,st
 method getWalletAccounts*(self: Controller): seq[wallet_account_service.WalletAccountDto] =
   return self.messageService.getWalletAccounts()
   
-method joinGroupChat*(self: Controller) =
-  self.chatService.confirmJoiningGroup(self.chatId)
+method joinGroupChat*(self: Controller, communityID: string, chatID: string) =
+  self.chatService.confirmJoiningGroup(communityID, self.chatId)
 
 method leaveChat*(self: Controller) =
   self.chatService.leaveChat(self.chatId)
