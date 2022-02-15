@@ -21,8 +21,6 @@ Menu {
     property var closeHandler
 
     dim: true
-    Overlay.modeless: MouseArea {}
-
 
     signal menuItemClicked(int menuIndex)
 
