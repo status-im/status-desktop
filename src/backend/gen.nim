@@ -18,11 +18,22 @@ macro rpc*(rpcMethod: untyped, prefix: string, identDefs: untyped): untyped =
     let fieldNameIdent = identDef[0]
     let fieldName = fieldNameIdent.strval
 
-    params.add(nnkIdentDefs.newTree(
-      ident(fieldName),
-      ident(identDef[1][0].strVal),
-      newNimNode(nnkEmpty)
-    ))
+    if identDef[1][0].len == 0:
+      params.add(nnkIdentDefs.newTree(
+        ident(fieldName),
+        ident(identDef[1][0].strVal),
+        newNimNode(nnkEmpty)
+      ))
+
+    if identDef[1][0].len == 2:
+      params.add(nnkIdentDefs.newTree(
+        ident(fieldName),
+        nnkBracketExpr.newTree(
+          ident(identDef[1][0][0].strVal),
+          ident(identDef[1][0][1].strVal)
+        ),
+        newNimNode(nnkEmpty)
+      ))
 
     payload.add(newIdentNode(fieldName))
 

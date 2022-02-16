@@ -1,6 +1,6 @@
 import NimQml, chronicles, sequtils, sugar, stint, strutils, json, strformat, algorithm, math
 import ../../../backend/transactions as transactions
-import ../../../backend/wallet as status_wallet
+import ../../../backend/backend
 import ../../../backend/eth
 
 import ../ens/utils as ens_utils
@@ -159,7 +159,7 @@ QtObject:
     try:
       # this may be improved (need to add some checkings) but due to removing `status-lib` dependencies, channges made
       # in this go are as minimal as possible
-      let response = status_wallet.getPendingTransactions()
+      let response = backend.getPendingTransactions()
       return response.result
     except Exception as e:
       let errDescription = e.msg

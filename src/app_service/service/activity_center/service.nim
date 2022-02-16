@@ -9,7 +9,7 @@ import json, tables, json_serialization
 
 import ../chat/service as chat_service
 
-import ../../../backend/activity_center as status_activity_center
+import ../../../backend/backend
 import ../../../backend/response_type
 import ./dto/notification
 
@@ -112,7 +112,7 @@ QtObject:
     else:
       cursorVal = newJString(self.cursor)
 
-    let callResult = status_activity_center.rpcActivityCenterNotifications(cursorVal, DEFAULT_LIMIT)
+    let callResult = backend.activityCenterNotifications(cursorVal, DEFAULT_LIMIT)
     let activityCenterNotificationsTuple = parseActivityCenterNotifications(callResult.result)
 
     self.cursor = activityCenterNotificationsTuple[0];
@@ -125,7 +125,7 @@ QtObject:
       markAsReadProps: MarkAsReadNotificationProperties
       ): string =
     try:
-      discard status_activity_center.markActivityCenterNotificationsRead(@[notificationId])
+      discard backend.markActivityCenterNotificationsRead(@[notificationId])
       self.events.emit(SIGNAL_MARK_NOTIFICATIONS_AS_READ, markAsReadProps)
     except Exception as e:
       error "Error marking as read", msg = e.msg
@@ -133,7 +133,7 @@ QtObject:
 
   proc unreadActivityCenterNotificationsCount*(self: Service): int =
     try:
-      let response = status_activity_center.unreadActivityCenterNotificationsCount()
+      let response = backend.unreadActivityCenterNotificationsCount()
 
       if response.result.kind != JNull:
         return response.result.getInt
@@ -146,7 +146,7 @@ QtObject:
       markAsUnreadProps: MarkAsUnreadNotificationProperties
       ): string =
     try:
-      discard status_activity_center.markActivityCenterNotificationsUnread(@[notificationId])
+      discard backend.markActivityCenterNotificationsUnread(@[notificationId])
       self.events.emit(SIGNAL_MARK_NOTIFICATIONS_AS_UNREAD, markAsUnreadProps)
     except Exception as e:
       error "Error marking as unread", msg = e.msg
@@ -154,7 +154,7 @@ QtObject:
 
   proc markAllActivityCenterNotificationsRead*(self: Service, initialLoad: bool = true):string  =
     try:
-      discard status_activity_center.markAllActivityCenterNotificationsRead()
+      discard backend.markAllActivityCenterNotificationsRead()
       # This proc should accept ActivityCenterNotificationType in order to clear all notifications
       # per type, that's why we have this part here. If we add all types to notificationsType that
       # means that we need to clear all notifications for all types.
@@ -181,7 +181,7 @@ QtObject:
 
   proc acceptActivityCenterNotifications*(self: Service, notificationIds: seq[string]): string =
     try:
-      let response = status_activity_center.acceptActivityCenterNotifications(notificationIds)
+      let response = backend.acceptActivityCenterNotifications(notificationIds)
 
       let (chats, messages) = self.chatService.parseChatResponse(response)
       self.events.emit(chat_service.SIGNAL_CHAT_UPDATE,
@@ -193,7 +193,7 @@ QtObject:
 
   proc dismissActivityCenterNotifications*(self: Service, notificationIds: seq[string]): string =
     try:
-      discard status_activity_center.dismissActivityCenterNotifications(notificationIds)
+      discard backend.dismissActivityCenterNotifications(notificationIds)
       self.events.emit(SIGNAL_MARK_NOTIFICATIONS_AS_DISMISSED,
         MarkAsDismissedNotificationProperties(notificationIds: notificationIds))
     except Exception as e:

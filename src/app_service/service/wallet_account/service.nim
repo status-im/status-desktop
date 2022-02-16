@@ -11,8 +11,7 @@ import dto
 
 import ../../../app/core/eventemitter
 import ../../../backend/accounts as status_go_accounts
-import ../../../backend/tokens as status_go_tokens
-import ../../../backend/wallet as status_go_wallet
+import ../../../backend/backend as backend
 import ../../../backend/eth as status_go_eth
 import ../../../backend/cache
 
@@ -154,7 +153,7 @@ proc getPrice*(self: Service, crypto: string, fiat: string): float64 =
   var prices = initTable[string, float]()
 
   try:
-    let response = status_go_wallet.fetchPrices(@[crypto], fiat)
+    let response = backend.fetchPrices(@[crypto], fiat)
     for (symbol, value) in response.result.pairs:
       prices[symbol] = value.getFloat
       self.priceCache.set(cacheKey, $value.getFloat)
@@ -177,7 +176,7 @@ proc fetchPrices(self: Service): Table[string, float] =
 
   var prices = initTable[string, float]()
   try:
-    let response = status_go_wallet.fetchPrices(symbols, currency)
+    let response = backend.fetchPrices(symbols, currency)
     for (symbol, value) in response.result.pairs:
       prices[symbol] = value.getFloat
 
@@ -191,7 +190,7 @@ proc fetchBalances(self: Service, accounts: seq[string]): JsonNode =
   let visibleTokens = self.tokenService.getVisibleTokens()
   let tokens = visibleTokens.map(t => t.addressAsString())
   let chainIds = visibleTokens.map(t => t.chainId)
-  return status_go_tokens.getBalances(chainIds, accounts, tokens).result
+  return backend.getTokensBalancesForChainIDs(chainIds, accounts, tokens).result
 
 proc refreshBalances(self: Service) =
   let prices = self.fetchPrices()
@@ -251,8 +250,8 @@ proc addNewAccountToLocalStore(self: Service) =
 
 proc generateNewAccount*(self: Service, password: string, accountName: string, color: string, emoji: string): string =
   try:
-    discard status_go_wallet.generateAccount(
-      password,
+    discard backend.generateAccount(
+      hashPassword(password),
       accountName,
       color,
       emoji)
@@ -263,9 +262,9 @@ proc generateNewAccount*(self: Service, password: string, accountName: string, c
 
 proc addAccountsFromPrivateKey*(self: Service, privateKey: string, password: string, accountName: string, color: string, emoji: string): string =
   try:
-    discard status_go_wallet.addAccountWithPrivateKey(
+    discard backend.addAccountWithPrivateKey(
       privateKey,
-      password,
+      hashPassword(password),
       accountName,
       color,
       emoji
@@ -277,9 +276,9 @@ proc addAccountsFromPrivateKey*(self: Service, privateKey: string, password: str
 
 proc addAccountsFromSeed*(self: Service, mnemonic: string, password: string, accountName: string, color: string, emoji: string): string =
   try:
-    discard status_go_wallet.addAccountWithMnemonic(
+    discard backend.addAccountWithMnemonic(
       mnemonic,
-      password,
+      hashPassword(password),
       accountName,
       color,
       emoji
@@ -291,7 +290,7 @@ proc addAccountsFromSeed*(self: Service, mnemonic: string, password: string, acc
 
 proc addWatchOnlyAccount*(self: Service, address: string, accountName: string, color: string, emoji: string): string =
   try:
-    discard status_go_wallet.addAccountWatch(
+    discard backend.addAccountWatch(
       address,
       accountName,
       color,

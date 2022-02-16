@@ -2,7 +2,7 @@ import json, json_serialization, chronicles, atomics
 
 import ../../../app/core/eventemitter
 import ../../../app/global/global_singleton
-import ../../../backend/network as status_network
+import ../../../backend/backend as backend
 import ../settings/service as settings_service
 
 import dto, types
@@ -37,8 +37,7 @@ proc getNetworks*(self: Service, useCached: bool = true): seq[NetworkDto] =
   if useCached and not cacheIsDirty:
     result = self.networks
   else:
-    let payload = %* [false]
-    let response = status_network.getNetworks(payload)
+    let response = backend.getEthereumChains(false)
     if not response.error.isNil:
       raise newException(Exception, "Error getting networks: " & response.error.message)
     result =  if response.result.isNil or response.result.kind == JNull: @[]
@@ -60,11 +59,11 @@ proc getEnabledNetworks*(self: Service): seq[NetworkDto] =
       result.add(network)  
 
 proc upsertNetwork*(self: Service, network: NetworkDto) =
-  discard status_network.upsertNetwork(network.toPayload())
+  discard backend.addEthereumChain(network.toPayload())
   self.dirty.store(true)
 
 proc deleteNetwork*(self: Service, network: NetworkDto) =
-  discard status_network.deleteNetwork(%* [network.chainId])
+  discard backend.deleteEthereumChain(%* [network.chainId])
   self.dirty.store(true)
 
 proc getNetwork*(self: Service, chainId: int): NetworkDto =
