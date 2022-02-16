@@ -11,19 +11,22 @@ Item {
     readonly property var searchMessages: Backpressure.debounce(searchPopup, 400, function (value) {
         appSearch.store.searchMessages(value)
     })
+    property alias opened: searchPopup.opened
 
     function openSearchPopup(){
         searchPopup.open()
     }
 
+    function closeSearchPopup(){
+        searchPopup.close()
+    }
+
     Connections {
         target: appSearch.store.locationMenuModel
         onModelAboutToBeReset: {
-            for (var i = 2; i <= searchPopupMenu.count; i++) {
-                //clear menu
-                if (!!searchPopupMenu.takeItem(i)) {
-                    searchPopupMenu.removeItem(searchPopupMenu.takeItem(i));
-                }
+             while (searchPopupMenu.takeItem(searchPopupMenu.numDefaultItems)) {
+                // Delete the item right after the default items
+                // If takeItem returns null, it means there was nothing to remove
             }
         }
     }
@@ -124,9 +127,9 @@ Item {
             searchPopup.close()
             appSearch.store.resultItemClicked(itemId)
         }
-
-        onResultItemTitleClicked: {
-            return Global.openProfilePopup(titleId)
+        acceptsTitleClick: function (titleId) {
+            return Utils.isChatKey(titleId)
         }
+        onResultItemTitleClicked: Global.openProfilePopup(titleId)
     }
 }

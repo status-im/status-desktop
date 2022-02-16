@@ -7,15 +7,11 @@ QtObject:
     View* = ref object of QObject
       delegate: io_interface.AccessInterface
       searchResultModel: result_model.Model
-      searchResultModelVariant: QVariant
       locationMenuModel: location_menu_model.Model
-      locationMenuModelVariant: QVariant
 
   proc delete*(self: View) =
     self.searchResultModel.delete
-    self.searchResultModelVariant.delete
     self.locationMenuModel.delete
-    self.locationMenuModelVariant.delete
     self.QObject.delete
 
   proc newView*(delegate: io_interface.AccessInterface): View =
@@ -23,9 +19,7 @@ QtObject:
     result.QObject.setup
     result.delegate = delegate
     result.searchResultModel = result_model.newModel()
-    result.searchResultModelVariant = newQVariant(result.searchResultModel)
     result.locationMenuModel = location_menu_model.newModel()
-    result.locationMenuModelVariant = newQVariant(result.locationMenuModel)
 
   proc load*(self: View) =
     self.delegate.viewDidLoad()
