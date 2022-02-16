@@ -3,7 +3,7 @@ import sets
 import result
 import options
 include ../../common/json_utils
-import ../../../backend/permissions as status_go
+import ../../../backend/backend
 import dto/dapp
 import dto/permission
 
@@ -28,7 +28,7 @@ proc newService*(): Service =
 
 proc init*(self: Service) =
   try:
-    let response = status_go.getDappPermissions()
+    let response = backend.getDappPermissions()
     for dapp in response.result.getElems().mapIt(it.toDapp()):
       if dapp.address == "":
         continue
@@ -48,7 +48,7 @@ proc getDapp*(self: Service, name: string, address: string): Option[Dapp] =
 
   return none(Dapp)
 
-proc addPermission*(self: Service, name: string, address: string, permission: Permission): R =
+proc addPermission*(self: Service, name: string, address: string, perm: permission.Permission): R =
   let key = name & address
 
   try:
@@ -56,12 +56,16 @@ proc addPermission*(self: Service, name: string, address: string, permission: Pe
       self.dapps[key] = Dapp(
         name: name,
         address: address,
-        permissions: initHashSet[Permission]()
+        permissions: initHashSet[permission.Permission]()
       )
 
-    self.dapps[key].permissions.incl(permission)
+    self.dapps[key].permissions.incl(perm)
     let permissions = self.dapps[key].permissions.toSeq().mapIt($it)
-    discard status_go.addDappPermissions(name, address, permissions)
+    discard backend.addDappPermissions(backend.Permission(
+      dapp: name,
+      address: address,
+      permissions: permissions
+    ))
     result.ok self.dapps[key]
   except Exception as e:
     let errDescription = e.msg
@@ -69,11 +73,11 @@ proc addPermission*(self: Service, name: string, address: string, permission: Pe
     result.err errDescription
 
 
-proc hasPermission*(self: Service, dapp: string, address: string, permission: Permission): bool =
+proc hasPermission*(self: Service, dapp: string, address: string, perm: permission.Permission): bool =
   let key = dapp & address
   if not self.dapps.hasKey(key):
     return false
-  return self.dapps[key].permissions.contains(permission)
+  return self.dapps[key].permissions.contains(perm)
 
 proc disconnect*(self: Service, dappName: string): bool =
   try:
@@ -82,7 +86,7 @@ proc disconnect*(self: Service, dappName: string): bool =
       if dapp.name != dappName:
         continue
 
-      discard status_go.deleteDappPermissions(dapp.name, dapp.address)
+      discard backend.deleteDappPermissionsByNameAndAddress(dapp.name, dapp.address)
       addresses.add(dapp.address)
 
     for address in addresses:
@@ -99,25 +103,29 @@ proc disconnectAddress*(self: Service, dappName: string, address: string): bool 
       return
 
   try:
-    discard status_go.deleteDappPermissions(dappName, address)
+    discard backend.deleteDappPermissionsByNameAndAddress(dappName, address)
     self.dapps.del(key)
     return true
   except Exception as e:
     let errDescription = e.msg
     error "error: ", errDescription
 
-proc removePermission*(self: Service, name: string, address: string, permission: Permission): bool =
+proc removePermission*(self: Service, name: string, address: string, perm: permission.Permission): bool =
   let key = name & address
   if not self.dapps.hasKey(key):
       return
 
   try:  
-    if self.dapps[key].permissions.contains(permission):
-      self.dapps[key].permissions.excl(permission)
+    if self.dapps[key].permissions.contains(perm):
+      self.dapps[key].permissions.excl(perm)
       if self.dapps[key].permissions.len > 0:
-        discard status_go.addDappPermissions(name, address, self.dapps[key].permissions.toSeq().mapIt($it))
+        discard backend.addDappPermissions(backend.Permission(
+          dapp: name,
+          address: address, 
+          permissions: self.dapps[key].permissions.toSeq().mapIt($it)
+        ))
       else:
-        discard status_go.deleteDappPermissions(name, address)
+        discard backend.deleteDappPermissionsByNameAndAddress(name, address)
         self.dapps.del(key)
     return true
   except Exception as e:

@@ -3,7 +3,7 @@ import chronicles, sequtils, json
 import dto
 
 import ../../../app/core/eventemitter
-import ../../../backend/saved_addresses as backend
+import ../../../backend/backend
 
 export dto
 
@@ -45,11 +45,7 @@ proc getSavedAddresses*(self: Service): seq[SavedAddressDto] =
 
 proc createOrUpdateSavedAddress*(self: Service, name, address: string): string =
   try:
-    let response = backend.addSavedAddress(name, address)
-
-    if not response.error.isNil:
-      raise newException(Exception, response.error.message)
-
+    discard backend.addSavedAddress(backend.SavedAddress(name: name, address: address))
     self.fetchAddresses()
     self.events.emit(SIGNAL_SAVED_ADDRESS_CHANGED, Args())
     return ""

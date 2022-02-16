@@ -8,7 +8,7 @@ type
 
 const asyncActivityNotificationLoadTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncActivityNotificationLoadTaskArg](argEncoded)
-  let activityNotificationsCallResult = status_activity_center.rpcActivityCenterNotifications(newJString(arg.cursor), arg.limit)
+  let activityNotificationsCallResult = backend.activityCenterNotifications(newJString(arg.cursor), arg.limit)
 
   let responseJson = %*{
     "activityNotifications": activityNotificationsCallResult.result

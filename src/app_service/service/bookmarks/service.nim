@@ -2,7 +2,7 @@ import Tables, json, sequtils, strformat, chronicles
 import result
 include ../../common/json_utils
 import ./dto/bookmark as bookmark_dto
-import ../../../backend/bookmarks as status_go
+import ../../../backend/backend
 
 export bookmark_dto
 
@@ -24,7 +24,7 @@ proc newService*(): Service =
 
 proc init*(self: Service) =
   try:
-    let response = status_go.getBookmarks()
+    let response = backend.getBookmarks()
     for bookmark in response.result.getElems().mapIt(it.toBookmarkDto()):
         self.bookmarks[bookmark.url] = bookmark
 
@@ -37,7 +37,7 @@ proc getBookmarks*(self: Service): seq[BookmarkDto] =
 
 proc storeBookmark*(self: Service, url, name: string): R =
   try:
-    let response = status_go.storeBookmark(url, name).result
+    let response = backend.storeBookmark(backend.Bookmark(name: name, url: url)).result
     self.bookmarks[url] = BookmarkDto()
     self.bookmarks[url].url = url
     self.bookmarks[url].name = name
@@ -52,7 +52,7 @@ proc deleteBookmark*(self: Service, url: string): bool =
   try:
     if not self.bookmarks.hasKey(url):
       return
-    discard status_go.deleteBookmark(url)
+    discard backend.deleteBookmark(url)
     self.bookmarks.del(url)
   except Exception as e:
     let errDescription = e.msg
@@ -65,7 +65,7 @@ proc updateBookmark*(self: Service, oldUrl, newUrl, newName: string): R =
     if not self.bookmarks.hasKey(oldUrl):
       return
 
-    let response = status_go.updateBookmark(oldUrl, newUrl, newName).result
+    let response = backend.updateBookmark(oldUrl, backend.Bookmark(name: newName, url: newUrl)).result
     self.bookmarks.del(oldUrl)
     self.bookmarks[newUrl] = BookmarkDto()
     self.bookmarks[newUrl].url = newUrl
