@@ -170,13 +170,22 @@ QtObject:
         return idx
     return -1
 
+  proc saveUpdatedJoinedCommunity(self: Service, community: var CommunityDto) =
+    # Community data we get from the signals and responses don't contgain the pending requests
+    # therefore, we must keep the old one
+    community.pendingRequestsToJoin = self.joinedCommunities[community.id].pendingRequestsToJoin
+
+    # Update the joinded community list with the new data
+    self.joinedCommunities[community.id] = community
+
   proc handleCommunityUpdates(self: Service, communities: seq[CommunityDto], updatedChats: seq[ChatDto]) =
-    let community = communities[0]
+    var community = communities[0]
     if(not self.joinedCommunities.hasKey(community.id)):
       return
 
     let prev_community = self.joinedCommunities[community.id]
-    self.joinedCommunities[community.id] = community
+
+    self.saveUpdatedJoinedCommunity(community)
 
     # channel was added
     if(community.chats.len > prev_community.chats.len):
@@ -223,7 +232,7 @@ QtObject:
             let data = CommunityChatArgs(chat: updatedChat)
             self.events.emit(SIGNAL_COMMUNITY_CHANNEL_EDITED, data)
 
-    self.events.emit(SIGNAL_COMMUNITIES_UPDATE, CommunitiesArgs(communities: communities))
+    self.events.emit(SIGNAL_COMMUNITIES_UPDATE, CommunitiesArgs(communities: @[community]))
 
   proc init*(self: Service) =
     self.doConnect()
@@ -486,7 +495,10 @@ QtObject:
         raise newException(RpcException, "Error editing community: " & error.message)
 
       if response.result != nil and response.result.kind != JNull:
-        let community = response.result["communities"][0].toCommunityDto()
+        var community = response.result["communities"][0].toCommunityDto()
+
+        self.saveUpdatedJoinedCommunity(community)
+
         self.events.emit(SIGNAL_COMMUNITY_EDITED, CommunityArgs(community: community))
     except Exception as e:
       error "Error editing community", msg = e.msg
