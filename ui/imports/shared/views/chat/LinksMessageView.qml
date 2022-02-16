@@ -23,16 +23,26 @@ Column {
     property bool isCurrentUser: false
     property bool isImageLink: false
     spacing: Style.current.halfPadding
+    height: childrenRect.height
+
+    onLinkUrlsChanged: {
+        root.prepareModel()
+    }
+
+    function prepareModel() {
+        linksModel.clear()
+        if (!root.linkUrls) {
+            return
+        }
+        root.linkUrls.split(" ").forEach(link => {
+            linksModel.append({link})
+        })
+    }
 
     ListModel {
         id: linksModel
         Component.onCompleted: {
-            if (!root.linkUrls) {
-                return
-            }
-            root.linkUrls.split(" ").forEach(link => {
-                linksModel.append({link})
-            })
+            root.prepareModel()
         }
     }
 
@@ -73,7 +83,7 @@ Column {
                onLinkPreviewDataWasReceived: {
                     let response
                     try {
-                            response = JSON.parse(previewData)
+                        response = JSON.parse(previewData)
                     } catch (e) {
                         console.error(previewData, e)
                         return

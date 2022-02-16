@@ -210,6 +210,9 @@ proc removeReaction*(self: Item, emojiId: EmojiId, reactionId: string, didIRemov
 proc links*(self: Item): seq[string] {.inline.} =
   self.links
 
+proc `links=`*(self: Item, links: seq[string]) {.inline.} =
+  self.links = links
+
 proc transactionParameters*(self: Item): TransactionParametersItem {.inline.} =
   self.transactionParameters
 

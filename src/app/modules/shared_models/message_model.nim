@@ -362,7 +362,13 @@ QtObject:
     let index = self.createIndex(ind, 0, nil)
     self.dataChanged(index, index, @[ModelRole.EditMode.int])
 
-  proc updateEditedMsg*(self: Model,  messageId: string,  updatedMsg: string, messageContainsMentions: bool) =
+  proc updateEditedMsg*(
+      self: Model, 
+      messageId: string, 
+      updatedMsg: string,
+      messageContainsMentions: bool,
+      links: seq[string]
+      ) =
     let ind = self.findIndexForMessageId(messageId)
     if(ind == -1):
       return
@@ -370,9 +376,15 @@ QtObject:
     self.items[ind].messageText = updatedMsg
     self.items[ind].messageContainsMentions = messageContainsMentions
     self.items[ind].isEdited = true
+    self.items[ind].links = links
 
     let index = self.createIndex(ind, 0, nil)
-    self.dataChanged(index, index, @[ModelRole.MessageText.int, ModelRole.MessageContainsMentions.int, ModelRole.IsEdited.int])
+    self.dataChanged(index, index, @[
+      ModelRole.MessageText.int,
+      ModelRole.MessageContainsMentions.int,
+      ModelRole.IsEdited.int,
+      ModelRole.Links.int
+      ])
 
   proc clear*(self: Model) =
     self.beginResetModel()

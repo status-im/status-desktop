@@ -392,7 +392,12 @@ method editMessage*(self: Module, messageId: string, updatedMsg: string) =
 
 method onMessageEdited*(self: Module, message: MessageDto) =
   let renderedMessageText = self.controller.getRenderedText(message.parsedText)
-  self.view.model().updateEditedMsg(message.id, renderedMessageText, message.containsContactMentions())
+  self.view.model().updateEditedMsg(
+    message.id,
+    renderedMessageText,
+    message.containsContactMentions(),
+    message.links
+    )
 
 method onHistoryCleared*(self: Module) =
   self.view.model().clear()
