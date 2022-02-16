@@ -2,11 +2,7 @@
 
 #include "view.h"
 
-namespace Modules
-{
-namespace Main
-{
-namespace Wallet
+namespace Modules::Main::Wallet
 {
 View::View(QObject* parent)
     : QObject(parent)
@@ -18,6 +14,4 @@ void View::load()
     emit viewLoaded();
 }
 
-} // namespace Wallet
-} // namespace Main
-} // namespace Modules
+} // namespace Modules::Main::Wallet

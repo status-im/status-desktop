@@ -6,18 +6,12 @@
 
 #include "model.h"
 
-namespace Modules
-{
-namespace Main
-{
-namespace Wallet
-{
-namespace Accounts
+namespace Modules::Main::Wallet::Accounts
 {
 class View : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(Model* accountsModel READ getModel NOTIFY modelChanged)
+    Q_PROPERTY(Model* model READ getModel NOTIFY modelChanged)
 
 public:
     explicit View(QObject* parent = nullptr);
@@ -27,7 +21,7 @@ public:
     void setModelItems(QVector<Item> &accounts);
 
 private:
-    std::shared_ptr<Model> m_modelPtr;
+    Model* m_modelPtr;
 
 public slots:
     Model* getModel();
@@ -36,9 +30,6 @@ signals:
     void viewLoaded();
     void modelChanged();
 };
-} // namespace Accounts
-} // namespace Wallet
-} // namespace Main
-} // namespace Modules
+} // namespace Modules::Main::Wallet::Accounts
 
 #endif // WALLET_ACCOUNT_VIEW_H

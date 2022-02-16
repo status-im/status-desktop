@@ -7,11 +7,7 @@
 #include "backend/utils.h"
 #include "libstatus.h"
 
-namespace Backend
-{
-namespace Wallet
-{
-namespace Accounts
+namespace Backend::Wallet::Accounts
 {
 RpcResponse<QJsonArray> getAccounts()
 {
@@ -19,7 +15,7 @@ RpcResponse<QJsonArray> getAccounts()
     auto result = CallPrivateRPC(Utils::jsonToStr(inputJSON).toUtf8().data());
     return RpcResponse<QJsonArray>(result, QJsonDocument::fromJson(result)["result"].toArray());
 }
-} // namespace Accounts
-} // namespace Wallet
-} // namespace Backend
+
+
+} // namespace Backend::Wallet::Accounts
 

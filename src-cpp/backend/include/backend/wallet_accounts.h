@@ -5,15 +5,9 @@
 
 #include "backend/types.h"
 
-namespace Backend
-{
-namespace Wallet
-{
-namespace  Accounts
+namespace Backend::Wallet::Accounts
 {
 Backend::RpcResponse<QJsonArray> getAccounts();
-} // namespace Accounts
-} // namespace Wallet
-} // namespace Backend
+} // Backend::Wallet::Accounts
 
 #endif // WALLETACCOUNT_BACKEND_H

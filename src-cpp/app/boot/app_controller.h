@@ -29,7 +29,7 @@ class AppController : public QObject, AppControllerDelegate
     // Modules
     // To-Do make this a shared pointer and remove circular dependency.
     Modules::Startup::ModuleAccessInterface* m_startupModule;
-    std::unique_ptr<Modules::Main::IModuleAccess> m_mainModulePtr;
+    Modules::Main::IModuleAccess* m_mainModulePtr;
 
 public:
     AppController();

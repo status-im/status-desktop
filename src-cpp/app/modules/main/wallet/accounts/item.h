@@ -3,13 +3,7 @@
 
 #include <QString>
 
-namespace Modules
-{
-namespace Main
-{
-namespace Wallet
-{
-namespace Accounts
+namespace Modules::Main::Wallet::Accounts
 {
 class Item
 {
@@ -28,19 +22,16 @@ public:
     Item(QString name, QString address, QString path, QString color, QString publicKey, QString walletType, bool isWallet, bool isChat, float currencyBalance);
     ~Item() = default;
 
-    QString getName();
-    QString getAddress();
-    QString getPath();
-    QString getColor();
-    QString getPublicKey();
-    QString getWalletType();
-    bool getIsWallet();
-    bool getIsChat();
-    float getCurrencyBalance();
+    const QString& getName() const;
+    const QString& getAddress() const;
+    const QString& getPath() const;
+    const QString& getColor() const;
+    const QString& getPublicKey() const;
+    const QString& getWalletType() const;
+    bool getIsWallet() const;
+    bool getIsChat() const;
+    float getCurrencyBalance() const;
 };
-} // namespace Accounts
-} // namespace Wallet
-} // namespace Main
-} // namespace Modules
+} // namespace Modules::Main::Wallet::Accounts
 
 #endif // WALLET_ACCOUNT_ITEM_H

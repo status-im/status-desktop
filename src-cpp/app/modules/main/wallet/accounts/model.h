@@ -7,15 +7,8 @@
 
 #include "item.h"
 
-namespace Modules
+namespace Modules::Main::Wallet::Accounts
 {
-namespace Main
-{
-namespace Wallet
-{
-namespace Accounts
-{
-
 class Model : public QAbstractListModel
 {
     Q_OBJECT
@@ -38,18 +31,14 @@ public:
     explicit Model(QObject* parent = nullptr);
     ~Model() = default;
 
-    QHash<int, QByteArray> roleNames() const;
-    virtual int rowCount(const QModelIndex&) const;
-    virtual QVariant data(const QModelIndex& index, int role) const;
+    QHash<int, QByteArray> roleNames() const override;
+    int rowCount(const QModelIndex&) const override;
+    QVariant data(const QModelIndex& index, int role) const override;
     void setItems(QVector<Item> &items);
 
 private:
     QVector<Item> m_items;
 };
-
-} // namespace Accounts
-} // namespace Wallet
-} // namespace Main
-} // namespace Modules
+} // namespace Modules::Main::Wallet::Accounts
 
 #endif // WALLET_ACCOUNT_MODEL_H

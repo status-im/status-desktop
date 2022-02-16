@@ -4,18 +4,12 @@
 #include "module.h"
 #include "singleton.h"
 
-namespace Modules
+namespace Modules::Main::Wallet::Accounts
 {
-namespace Main
+Module::Module(std::shared_ptr<Wallets::ServiceInterface> walletsService, QObject *parent): QObject(parent)
 {
-namespace Wallet
-{
-namespace Accounts
-{
-Module::Module(std::shared_ptr<Wallets::ServiceInterface> walletsService)
-{
-    m_controllerPtr = std::make_unique<Controller>(walletsService);
-    m_viewPtr = std::make_unique<View>();
+    m_controllerPtr = new Controller(walletsService, this);
+    m_viewPtr = new View(this);
 
     m_moduleLoaded = false;
 
@@ -24,12 +18,12 @@ Module::Module(std::shared_ptr<Wallets::ServiceInterface> walletsService)
 
 void Module::connect()
 {
-    QObject::connect(m_viewPtr.get(), &View::viewLoaded, this, &Module::viewDidLoad);
+    QObject::connect(m_viewPtr, &View::viewLoaded, this, &Module::viewDidLoad);
 }
 
 void Module::load()
 {
-    Global::Singleton::instance()->engine()->rootContext()->setContextProperty("walletSectionAccounts", m_viewPtr.get());
+    Global::Singleton::instance()->engine()->rootContext()->setContextProperty("walletSectionAccounts", m_viewPtr);
     m_controllerPtr->init();
     m_viewPtr->load();
 }
@@ -65,8 +59,4 @@ void Module::refreshWalletAccounts()
         qWarning()<<"No accounts found!";
     }
 }
-
-} // namespace Accounts
-} // namespace Main
-} // namespace Wallet
-} // namespace Modules
+} // namespace Modules::Main::Wallet::Accounts

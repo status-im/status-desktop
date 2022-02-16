@@ -4,18 +4,17 @@
 #include "module.h"
 #include "singleton.h"
 #include "modules/main/wallet/module.h"
+#include "../shared/section_item.h"
 
-namespace Modules
+namespace Modules::Main
 {
-namespace Main
+Module::Module(std::shared_ptr<Wallets::ServiceInterface> walletsService, QObject* parent): QObject(parent)
 {
-Module::Module(std::shared_ptr<Wallets::ServiceInterface> walletsService)
-{
-    m_controllerPtr = std::make_unique<Controller>();
-    m_viewPtr = std::make_unique<View>();
+    m_controllerPtr = new Controller(this);
+    m_viewPtr = new View(this);
 
     // Submodules
-    m_walletModulePtr = std::make_unique<Modules::Main::Wallet::Module>(walletsService);
+    m_walletModulePtr = new Modules::Main::Wallet::Module(walletsService, this);
 
     m_moduleLoaded = false;
     connect();
@@ -23,16 +22,15 @@ Module::Module(std::shared_ptr<Wallets::ServiceInterface> walletsService)
 
 void Module::connect()
 {
-    QObject::connect(m_viewPtr.get(), &View::viewLoaded, this, &Module::viewDidLoad);
-    QObject::connect(dynamic_cast<QObject*>(m_walletModulePtr.get()), SIGNAL(loaded()), this, SLOT(walletDidLoad()));
+    QObject::connect(m_viewPtr, &View::viewLoaded, this, &Module::viewDidLoad);
+    QObject::connect(dynamic_cast<QObject*>(m_walletModulePtr), SIGNAL(loaded()), this, SLOT(walletDidLoad()));
 }
 
 void Module::load()
 {
-    Global::Singleton::instance()->engine()->rootContext()->setContextProperty("mainModule", m_viewPtr.get());
+    Global::Singleton::instance()->engine()->rootContext()->setContextProperty("mainModule", m_viewPtr);
     m_controllerPtr->init();
     m_viewPtr->load();
-
     m_walletModulePtr->load();
 }
 
@@ -61,5 +59,4 @@ bool Module::isLoaded()
     return m_moduleLoaded;
 }
 
-} // namespace Main
-} // namespace Modules
+} // namespace Modules::Main

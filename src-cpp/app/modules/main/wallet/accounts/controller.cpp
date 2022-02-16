@@ -2,13 +2,7 @@
 
 #include "controller.h"
 
-namespace Modules
-{
-namespace Main
-{
-namespace Wallet
-{
-namespace Accounts
+namespace Modules::Main::Wallet::Accounts
 {
 Controller::Controller(std::shared_ptr<Wallets::ServiceInterface> walletService,
                        QObject* parent)
@@ -28,7 +22,4 @@ QList<Wallets::WalletAccountDto> Controller::getWalletAccounts()
 
     return wallet_accounts;
 }
-} // namespace Accounts
-} // namespace Wallet
-} // namespace Main
-} // namespace Modules
+} // namespace Modules::Main::Wallet::Accounts

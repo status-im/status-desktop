@@ -8,15 +8,9 @@
 #include "interfaces/controller_interface.h"
 #include "signals.h"
 
-namespace Modules
+namespace Modules::Main::Wallet::Accounts
 {
-namespace Main
-{
-namespace Wallet
-{
-namespace Accounts
-{
-class Controller : public QObject, IAccountsController
+class Controller : public QObject, public IController
 {
     Q_OBJECT
 
@@ -31,9 +25,6 @@ public:
 private:
     std::shared_ptr<Wallets::ServiceInterface> m_walletServicePtr;
 };
-} // namespace Accounts
-} // namespace Wallet
-} // namespace Main
-} // namespace Modules
+} // namespace Modules::Main::Wallet::Accounts
 
 #endif // WALLET_ACCOUNT_CONTROLLER_H

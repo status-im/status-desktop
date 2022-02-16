@@ -1,12 +1,6 @@
 #include "model.h"
 
-namespace Modules
-{
-namespace Main
-{
-namespace Wallet
-{
-namespace Accounts
+namespace Modules::Main::Wallet::Accounts
 {
 Model::Model(QObject* parent)
     : QAbstractListModel(parent)
@@ -71,7 +65,4 @@ void Model::setItems(QVector<Item> &items)
     endResetModel();
 }
 
-} // namespace Accounts
-} // namespace Wallet
-} // namespace Main
-} // namespace Modules
+} // namespace Modules::Main::Wallet::Accounts
