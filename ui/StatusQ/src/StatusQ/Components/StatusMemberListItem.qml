@@ -10,14 +10,8 @@ StatusListItem {
     property string userName: ""
     property string chatKey: ""
     property bool isMutualContact: false
-    property var trustIndicator: StatusMemberListItem.TrustedType.None
+    property var trustIndicator: StatusContactVerificationIcons.TrustedType.None
     property bool isOnline: false
-
-    enum TrustedType {
-        None, //0
-        Verified, //1
-        Untrustworthy //2
-    }
 
     // Subtitle composition:
     function composeSubtitile() {
@@ -42,8 +36,10 @@ StatusListItem {
 
     // root object settings:
     title: root.nickName
-    titleIcon1Visible: root.isMutualContact
-    titleIcon2Visible: root.trustIndicator !== StatusMemberListItem.TrustedType.None
+    statusListItemTitleIcons.sourceComponent: StatusContactVerificationIcons {
+        isMutualContact: root.isMutualContact
+        trustIndicator: root.trustIndicator
+    }
     subTitle: composeSubtitile()
     statusListItemSubTitle.font.pixelSize: 10
     icon.isLetterIdenticon: !root.image.source.toString()
@@ -51,7 +47,7 @@ StatusListItem {
     statusListItemIcon.badge.color: root.isOnline ? Theme.palette.successColor1 : Theme.palette.baseColor1
     color: sensor.containsMouse ? Theme.palette.baseColor2 : Theme.palette.baseColor4
 
-    // Default sizes/positions by design
+    // Default sizes / positions by design
     implicitWidth: 256
     implicitHeight: Math.max(56, statusListItemTitleArea.height + leftPadding)
     leftPadding: 8
@@ -64,13 +60,4 @@ StatusListItem {
     statusListItemIcon.badge.border.width: 2
     statusListItemIcon.badge.implicitHeight: 12 // 8 px + 2 px * 2 borders
     statusListItemIcon.badge.implicitWidth: 12 // 8 px + 2 px * 2 borders
-
-    // Trusted type icons definition:
-    titleIcon1.name: "tiny/tiny-contact"
-    titleIcon1.color: Theme.palette.indirectColor1
-    titleIcon1.background.color: Theme.palette.primaryColor1
-    // None and Untrustworthy types, same aspect (Icon will not be visible in case of None type):
-    titleIcon2.name: trustIndicator === StatusMemberListItem.TrustedType.Verified ? "tiny/tiny-checkmark" : "tiny/subtract"
-    titleIcon2.color: Theme.palette.indirectColor1
-    titleIcon2.background.color: trustIndicator === StatusMemberListItem.TrustedType.Verified ? Theme.palette.primaryColor1 : Theme.palette.dangerColor1
 }

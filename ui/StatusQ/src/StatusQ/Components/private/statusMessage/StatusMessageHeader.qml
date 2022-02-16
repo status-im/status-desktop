@@ -19,38 +19,8 @@ Item {
     property string tertiaryDetail: ""
     property string resendText: ""
     property bool showResendButton: false
-    property StatusIconSettings icon1: StatusIconSettings {
-        width: dummyImage.width
-        height: dummyImage.height
-        rotation: 0
-        color: Theme.palette.indirectColor1
-        background: StatusIconBackgroundSettings {
-            width: 10
-            height: 10
-            color: Theme.palette.primaryColor1
-        }
-        // only used to get implicit width and height from the actual image
-        property Image dummyImage: Image {
-            source: icon1.name ? "../../../../assets/img/icons/" + icon1.name + ".svg": ""
-            visible: false
-        }
-    }
-    property StatusIconSettings icon2: StatusIconSettings {
-        width: dummyImage.width
-        height: dummyImage.height
-        rotation: 0
-        color: Theme.palette.primaryColor1
-        background: StatusIconBackgroundSettings {
-            width: 10
-            height: 10
-            color: Theme.palette.indirectColor1
-        }
-        // only used to get implicit width and height from the actual image
-        property Image dummyImage: Image {
-            source: icon2.name ? "../../../../assets/img/icons/" + icon2.name + ".svg": ""
-            visible: false
-        }
-    }
+    property bool isMutualContact: false
+    property var trustIndicator: StatusContactVerificationIcons.TrustedType.None
 
     signal clicked()
     signal resendClicked()
@@ -83,28 +53,10 @@ Item {
                 }
             }
             Layout.alignment: Qt.AlignBottom
-        }
-        StatusRoundIcon {
-            icon.background.width: icon1.background.width
-            icon.background.height: icon1.background.height
-            icon.background.color: icon1.background.color
-            icon.width: icon1.width
-            icon.height: icon1.height
-            icon.name: icon1.name
-            icon.rotation: icon1.rotation
-            icon.color: icon1.color
-            visible: !!icon.name
-        }
-        StatusRoundIcon {
-            icon.background.width: icon2.background.width
-            icon.background.height: icon2.background.height
-            icon.background.color: icon2.background.color
-            icon.width: icon2.width
-            icon.height: icon2.height
-            icon.name: icon2.name
-            icon.rotation: icon2.rotation
-            icon.color: icon2.color
-            visible: !!icon.name
+        }       
+        StatusContactVerificationIcons {
+            isMutualContact: statusMessageHeader.isMutualContact
+            trustIndicator: statusMessageHeader.trustIndicator
         }
         StatusBaseText {
             id: secondaryDisplayName

@@ -21,14 +21,6 @@ Rectangle {
         Invitation = 7
     }
 
-    enum ContactType {
-        STANDARD = 0,
-        RENAME = 1,
-        CONTACT = 2,
-        VERIFIED = 3,
-        UNTRUSTWORTHY = 4
-    }
-
     property alias messageHeader: messageHeader
     property alias quickActions:quickActionsPanel.quickActions
     property alias statusChatInput: editComponent.inputComponent
@@ -108,11 +100,8 @@ Rectangle {
                     displayName: messageDetails.displayName
                     secondaryName: messageDetails.secondaryName
                     tertiaryDetail: messageDetails.chatID
-                    icon1.name: messageDetails.contactType === StatusMessage.ContactType.CONTACT ? "tiny/tiny-contact" : ""
-                    icon2.name: messageDetails.contactType === StatusMessage.ContactType.VERIFIED ? "tiny/tiny-checkmark" :
-                                messageDetails.contactType === StatusMessage.ContactType.UNTRUSTWORTHY ? "tiny/subtract": ""
-                    icon2.background.color:  messageDetails.contactType === StatusMessage.ContactType.UNTRUSTWORTHY ? Theme.palette.dangerColor1 : Theme.palette.primaryColor1
-                    icon2.color: Theme.palette.indirectColor1
+                    isMutualContact: messageDetails.isMutualContact
+                    trustIndicator: messageDetails.trustIndicator
                     resendText: statusMessage.resendText
                     showResendButton: messageDetails.hasExpired && messageDetails.amISender
                     onClicked: statusMessage.senderNameClicked()

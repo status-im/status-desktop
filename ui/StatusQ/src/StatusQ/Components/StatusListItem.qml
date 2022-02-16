@@ -13,8 +13,6 @@ Rectangle {
     property string titleId: ""
     property string title: ""
     property string titleAsideText: ""
-    property bool titleIcon1Visible
-    property bool titleIcon2Visible
     property string subTitle: ""
     property string tertiaryTitle: ""    
     property string label: ""
@@ -52,38 +50,13 @@ Rectangle {
         height: 40
         isIdenticon: false
     }
-    property StatusIconSettings titleIcon1: StatusIconSettings {
-        width: dummyImage.width
-        height: dummyImage.height
-        background: StatusIconBackgroundSettings {
-            width: 10
-            height: 10
-        }
-        // Only used to get implicit width and height from the actual image
-        property Image dummyImage: Image {
-            source: titleIcon1.name ? "../../assets/img/icons/" + titleIcon1.name + ".svg": ""
-            visible: false
-        }        
-    }
-    property StatusIconSettings titleIcon2: StatusIconSettings {
-        width: dummyImage.width
-        height: dummyImage.height
-        background: StatusIconBackgroundSettings {
-            width: 10
-            height: 10
-        }
-        // Only used to get implicit width and height from the actual image
-        property Image dummyImage: Image {
-            source: titleIcon2.name ? "../../assets/img/icons/" + titleIcon2.name + ".svg": ""
-            visible: false
-        }
-    }
 
     property alias sensor: sensor
     property alias badge: statusListItemBadge
     property alias statusListItemIcon: iconOrImage
     property alias statusListItemTitle: statusListItemTitle
     property alias statusListItemTitleAside: statusListItemTitleAsideText
+    property alias statusListItemTitleIcons: titleIconsRow
     property alias statusListItemTitleArea: statusListItemTitleArea
     property alias statusListItemSubTitle: statusListItemSubTitle
     property alias statusListItemTertiaryTitle: statusListItemTertiaryTitle
@@ -154,9 +127,17 @@ Rectangle {
 
         Item {
             id: statusListItemTitleArea
+
+            function getStatusListItemTitleAnchorsRight() {
+                let isIconsRowVisible = false
+                if(titleIconsRow.item) {
+                    isIconsRowVisible = true//titleIconsRow.item.visible
+                }
+                return !statusListItem.titleAsideText && !isIconsRowVisible ? statusListItemTitleArea.right : undefined
+            }
+
             anchors.left: iconOrImage.active ? iconOrImage.right : parent.left
-            anchors.right: statusListItemLabel.visible ?
-                statusListItemLabel.left : statusListItemComponentsSlot.left
+            anchors.right: statusListItemLabel.visible ? statusListItemLabel.left : statusListItemComponentsSlot.left
             anchors.leftMargin: statusListItem.leftPadding
             anchors.rightMargin: statusListItem.rightPadding
             anchors.verticalCenter: parent.verticalCenter
@@ -169,8 +150,7 @@ Rectangle {
                 height: visible ? contentHeight : 0
                 wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                 anchors.left: parent.left
-                anchors.right: !statusListItem.titleAsideText && !statusListItem.titleIcon1Visible && !statusListItem.titleIcon2Visible
-                               ? parent.right : undefined
+                anchors.right: !statusListItem.titleAsideText && !titleIconsRow.sourceComponent ? parent.right : undefined
                 color: {
                   if (!statusListItem.enabled) {
                     return Theme.palette.baseColor1
@@ -208,37 +188,12 @@ Rectangle {
                 visible: !!statusListItem.titleAsideText
             }
 
-            Row {
+            Loader {
                 id: titleIconsRow
-                spacing: 4
                 anchors.left: !statusListItem.titleAsideText ? statusListItemTitle.right : statusListItemTitleAsideText.right
                 anchors.verticalCenter: statusListItemTitle.verticalCenter
-                anchors.leftMargin: titleIconsRow.spacing
-
-                StatusRoundIcon {
-                    visible: statusListItem.titleIcon1Visible
-                    icon.name: statusListItem.titleIcon1.name
-                    icon.width: statusListItem.titleIcon1.width
-                    icon.height: statusListItem.titleIcon1.height
-                    icon.rotation: statusListItem.titleIcon1.rotation
-                    icon.color: statusListItem.titleIcon1.color
-                    icon.background.color: statusListItem.titleIcon1.background.color
-                    icon.background.width: statusListItem.titleIcon1.background.width
-                    icon.background.height: statusListItem.titleIcon1.background.height
-                }
-
-                StatusRoundIcon {
-                    visible: statusListItem.titleIcon2Visible
-                    icon.name: statusListItem.titleIcon2.name
-                    icon.width: statusListItem.titleIcon2.width
-                    icon.height: statusListItem.titleIcon2.height
-                    icon.rotation: statusListItem.titleIcon2.rotation
-                    icon.color: statusListItem.titleIcon2.color
-                    icon.background.color: statusListItem.titleIcon2.background.color
-                    icon.background.width: statusListItem.titleIcon2.background.width
-                    icon.background.height: statusListItem.titleIcon2.background.height
-                }
-             }
+                anchors.leftMargin: 4
+            }
 
             StatusBaseText {
                 id: statusListItemSubTitle
@@ -283,7 +238,6 @@ Rectangle {
             color: Theme.palette.baseColor1
             visible: !!statusListItem.label
         }
-
 
         Row {
             id: statusListItemComponentsSlot

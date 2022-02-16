@@ -351,7 +351,7 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
         nickName: "This is an example"
         userName: "annabelle"
         chatKey: "0x043a7ed0e8752236a4688563652fd0296453cef00a5dcddbe252dc74f72cc1caa97a2b65e4a1a52d9c30a84c9966beaaaf6b333d659cbdd2e486b443ed1012cf04"
-        trustIndicator: StatusMemberListItem.TrustedType.Verified
+        trustIndicator: StatusContactVerificationIcons.TrustedType.Verified
         isMutualContact: true
         image.source: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAlklEQVR4nOzW0QmDQBAG4SSkl7SUQlJGCrElq9F3QdjjVhh/5nv3cFhY9vUIYQiNITSG0BhCExPynn1gWf9bx498P7/
                       nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2ImYgiNITTlTdG1nUZ5a92VITQxITFiJmIIjSE0htAYQrMHAAD//+wwFVpz+yqXAAAAAElFTkSuQmCC"
@@ -362,7 +362,7 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
     StatusMemberListItem {
         nickName: "carmen.eth"
         isOnline: false
-        trustIndicator: StatusMemberListItem.TrustedType.Untrustworthy
+        trustIndicator: StatusContactVerificationIcons.TrustedType.Untrustworthy
     }
 
     StatusMemberListItem {

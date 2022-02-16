@@ -17,12 +17,13 @@ QtObject {
     property string messageText: ""
     property int contentType: 0
     property string messageContent: ""
-    property int contactType: 0
+    property bool isMutualContact: false
+    property var trustIndicator: StatusContactVerificationIcons.TrustedType.None
     property bool hasMention: false
     property bool isPinned: false
     property string pinnedBy: ""
     property bool hasExpired: false
-    property string timestamp: ""
+    property string timestamp: ""    
 }
 
 
