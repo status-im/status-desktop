@@ -1,12 +1,6 @@
 #include "item.h"
 
-namespace Modules
-{
-namespace Main
-{
-namespace Wallet
-{
-namespace Accounts
+namespace Modules::Main::Wallet::Accounts
 {
 Item::Item(QString name, QString address, QString path, QString color, QString publicKey, QString walletType, bool isWallet, bool isChat, float currencyBalance)
     : m_name(name),
@@ -20,52 +14,49 @@ Item::Item(QString name, QString address, QString path, QString color, QString p
       m_currencyBalance(currencyBalance)
 { }
 
-QString Item::getName()
+const QString& Item::getName() const
 {
     return m_name;
 }
 
-QString Item::getAddress()
+const QString& Item::getAddress() const
 {
     return m_address;
 }
 
-QString Item::getPath()
+const QString& Item::getPath() const
 {
     return m_path;
 }
 
-QString Item::getColor()
+const QString& Item::getColor() const
 {
     return m_color;
 }
 
-QString Item::getPublicKey()
+const QString& Item::getPublicKey() const
 {
     return m_publicKey;
 }
 
-QString Item::getWalletType()
+const QString& Item::getWalletType() const
 {
     return m_walletType;
 }
 
-bool Item::getIsWallet()
+bool Item::getIsWallet() const
 {
     return m_isWallet;
 }
 
-bool Item::getIsChat()
+bool Item::getIsChat() const
 {
     return m_isChat;
 }
 
-float  Item::getCurrencyBalance()
+float  Item::getCurrencyBalance() const
 {
     return m_currencyBalance;
 }
 
-} // namespace Accounts
-} // namespace Wallet
-} // namespace Main
-} // namespace Modules
+} // namespace Modules::Main::Wallet::Accounts

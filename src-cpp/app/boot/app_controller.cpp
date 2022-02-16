@@ -67,7 +67,7 @@ AppController::AppController()
     // # Modules
     m_startupModule = new Modules::Startup::Module(this, /*keychainService,*/ m_accountsService);
 
-    m_mainModulePtr = std::make_unique<Modules::Main::Module>(m_walletServicePtr
+    m_mainModulePtr = new Modules::Main::Module(m_walletServicePtr, this);
                                                               // statusFoundation.status.events,
                                                               // result.keychainService,
                                                               // result.accountsService,
@@ -94,7 +94,6 @@ AppController::AppController()
                                                               // result.nodeConfigurationService,
                                                               // result.devicesService,
                                                               // result.mailserversService
-                                                              );
 
     // # Do connections
     connect();
@@ -111,7 +110,7 @@ void AppController::connect()
     // self.statusFoundation.status.events.once("nodeStopped") do(a: Args):
     // TODO: remove this once accounts are not tracked in the AccountsModel
     // self.statusFoundation.status.reset()
-    QObject::connect(dynamic_cast<QObject*>(m_mainModulePtr.get()), SIGNAL(loaded()), this, SLOT(mainDidLoad()));
+    QObject::connect(dynamic_cast<QObject*>(m_mainModulePtr), SIGNAL(loaded()), this, SLOT(mainDidLoad()));
 }
 
 void AppController::startupDidLoad()

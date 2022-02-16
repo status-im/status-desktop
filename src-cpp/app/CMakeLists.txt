@@ -3,6 +3,8 @@ add_library(app
     boot/app_controller.cpp
     core/signals/signals.cpp
     global/singleton.cpp
+    modules/shared/section_item.cpp
+    modules/shared/section_model.cpp
     modules/startup/controller.cpp
     modules/startup/module.cpp
     modules/startup/view.cpp
@@ -34,6 +36,7 @@ target_include_directories(app
     PUBLIC
         ./include/
         ./boot/
+        ./modules/shared
         ./modules/main
         ./modules/startup
 )

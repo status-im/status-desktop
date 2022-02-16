@@ -6,12 +6,10 @@
 #include "interfaces/controller_interface.h"
 #include "signals.h"
 
-namespace Modules
-{
-namespace Main
+namespace Modules::Main
 {
 
-class Controller : public QObject, IController
+class Controller : public QObject, public IController
 {
 public:
     explicit Controller(QObject* parent = nullptr);
@@ -20,8 +18,7 @@ public:
     void init() override;
 };
 
-} // namespace Main
-} // namespace Modules
+} // namespace Modules::Main
 
 #endif // CONTROLLER_H
 

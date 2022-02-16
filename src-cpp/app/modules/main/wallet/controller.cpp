@@ -2,11 +2,7 @@
 
 #include "controller.h"
 
-namespace Modules
-{
-namespace Main
-{
-namespace Wallet
+namespace Modules::Main::Wallet
 {
 Controller::Controller(std::shared_ptr<Wallets::ServiceInterface> walletService,
                        QObject* parent)
@@ -17,7 +13,4 @@ Controller::Controller(std::shared_ptr<Wallets::ServiceInterface> walletService,
 void Controller::init()
 {
 }
-
-} // namespace Onboarding
-} // namespace Startup
-} // namespace Modules
+} // namespace Modules::Main::Wallet

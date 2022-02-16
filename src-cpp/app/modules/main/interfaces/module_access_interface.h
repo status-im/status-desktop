@@ -3,9 +3,7 @@
 
 #include <QObject>
 
-namespace Modules
-{
-namespace Main
+namespace Modules::Main
 {
 class IModuleAccess
 {
@@ -15,8 +13,7 @@ public:
 signals:
     virtual void loaded() = 0;
 };
-}; // namespace Main
-}; // namespace Modules
+} // namespace Modules::Main
 
 Q_DECLARE_INTERFACE(Modules::Main::IModuleAccess, "Modules::Main::IModuleAccess");
 

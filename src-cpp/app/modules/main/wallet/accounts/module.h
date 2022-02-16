@@ -8,27 +8,23 @@
 #include "controller.h"
 #include "view.h"
 
-namespace Modules
+namespace Modules::Main::Wallet::Accounts
 {
-namespace Main
-{
-namespace Wallet
-{
-namespace Accounts
-{
-class Module : public QObject, virtual public IWalletAccountsModuleAccess
+class Module : public QObject, virtual public IModuleAccess
 {
     Q_OBJECT
+    Q_INTERFACES(Modules::Main::IModuleAccess)
+
 private:
-    std::unique_ptr<View> m_viewPtr;
-    std::unique_ptr<Controller> m_controllerPtr;
+    View* m_viewPtr;
+    Controller* m_controllerPtr;
 
     bool m_moduleLoaded;
 
     void connect();
     void refreshWalletAccounts();
 public:
-    explicit Module(std::shared_ptr<Wallets::ServiceInterface> walletsService);
+    explicit Module(std::shared_ptr<Wallets::ServiceInterface> walletsService, QObject* parent);
     ~Module() = default;
 
     void load() override;
@@ -40,9 +36,6 @@ public slots:
 signals:
     void loaded() override;
 };
-}; // namespace Accounts
-}; // namespace Wallet
-}; // namespace Main
-}; // namespace Modules
+} // namespace Modules::Main::Wallet::Accounts
 
 #endif // WALLET_ACCOUNT_MODULE_H

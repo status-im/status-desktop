@@ -3,13 +3,8 @@
 
 #include <QObject>
 
-namespace Modules
+namespace Modules::Main::Wallet
 {
-namespace Main
-{
-namespace Wallet
-{
-
 class View : public QObject
 {
     Q_OBJECT
@@ -23,9 +18,7 @@ public:
 signals:
     void viewLoaded();
 };
-} // namespace Wallet
-} // namespace Main
-} // namespace Modules
+} // namespace Modules::Main::Wallet
 
 #endif // WALLET_VIEW_H
 

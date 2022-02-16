@@ -2,18 +2,12 @@
 
 #include "view.h"
 
-namespace Modules
-{
-namespace Main
-{
-namespace Wallet
-{
-namespace Accounts
+namespace Modules::Main::Wallet::Accounts
 {
 View::View(QObject* parent)
     : QObject(parent)
 {
-    m_modelPtr = std::make_shared<Model>();
+    m_modelPtr = new Model(this);
 }
 
 void View::load()
@@ -23,14 +17,11 @@ void View::load()
 
 Model* View::getModel()
 {
-    return m_modelPtr.get();
+    return m_modelPtr;
 }
 
 void View::setModelItems(QVector<Item> &accounts) {
     m_modelPtr->setItems(accounts);
     modelChanged();
 }
-} // namespace Accounts
-} // namespace Wallet
-} // namespace Main
-} // namespace Modules
+} // namespace Modules::Main::Wallet::Accounts
