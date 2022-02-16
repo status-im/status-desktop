@@ -589,6 +589,7 @@ Item {
             Loader {
                 id: linksLoader
                 active: !!linkUrls
+                height: item ? item.height : 0
                 anchors.top: chatText.bottom
                 anchors.topMargin: active ? Style.current.halfPadding : 0
 
