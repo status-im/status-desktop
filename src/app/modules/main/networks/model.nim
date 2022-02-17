@@ -13,6 +13,7 @@ type
     NativeCurrencyName
     NativeCurrencySymbol
     IsTest
+    IsEnabled
 
 QtObject:
   type
@@ -57,6 +58,7 @@ QtObject:
       ModelRole.NativeCurrencyName.int:"nativeCurrencyName",
       ModelRole.NativeCurrencySymbol.int:"nativeCurrencySymbol",
       ModelRole.IsTest.int:"isTest",
+      ModelRole.IsEnabled.int:"isEnabled",
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -88,6 +90,8 @@ QtObject:
       result = newQVariant(item.getNativeCurrencySymbol())
     of ModelRole.IsTest:
       result = newQVariant(item.getIsTest())
+    of ModelRole.IsEnabled:
+      result = newQVariant(item.getIsEnabled())
 
   proc setItems*(self: Model, items: seq[Item]) =
     self.beginResetModel()

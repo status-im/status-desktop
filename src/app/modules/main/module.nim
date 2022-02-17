@@ -19,6 +19,7 @@ import stickers/module as stickers_module
 import activity_center/module as activity_center_module
 import communities/module as communities_module
 import node_section/module as node_section_module
+import networks/module as networks_module
 
 import ../../../app_service/service/keychain/service as keychain_service
 import ../../../app_service/service/chat/service as chat_service
@@ -70,6 +71,7 @@ type
     communitiesModule: communities_module.AccessInterface
     appSearchModule: app_search_module.AccessInterface
     nodeSectionModule: node_section_module.AccessInterface
+    networksModule: networks_module.AccessInterface
     moduleLoaded: bool
 
 # Forward declaration
@@ -141,7 +143,7 @@ proc newModule*[T](
   result.profileSectionModule = profile_section_module.newModule(
     result, events, accountsService, settingsService,
     profileService, contactsService, aboutService, languageService, privacyService, nodeConfigurationService,
-    devicesService, mailserversService, chatService, ensService, walletAccountService, networkService,
+    devicesService, mailserversService, chatService, ensService, walletAccountService,
   )
   result.stickersModule = stickers_module.newModule(result, events, stickersService)
   result.activityCenterModule = activity_center_module.newModule(result, events, activityCenterService, contactsService,
@@ -150,6 +152,7 @@ proc newModule*[T](
   result.appSearchModule = app_search_module.newModule(result, events, contactsService, chatService, communityService,
   messageService)
   result.nodeSectionModule = node_section_module.newModule(result, events, settingsService, nodeService, nodeConfigurationService)
+  result.networksModule = networks_module.newModule(result, events, networkService, walletAccountService)
 
 method delete*[T](self: Module[T]) =
   self.chatSectionModule.delete
@@ -164,6 +167,7 @@ method delete*[T](self: Module[T]) =
   self.browserSectionModule.delete
   self.appSearchModule.delete
   self.nodeSectionModule.delete
+  self.networksModule.delete
   self.view.delete
   self.viewVariant.delete
   self.controller.delete
@@ -342,10 +346,12 @@ method load*[T](
   self.chatSectionModule.load(events, settingsService, contactsService, chatService, communityService, messageService, gifService, mailserversService)
   for cModule in self.communitySectionsModule.values:
     cModule.load(events, settingsService, contactsService, chatService, communityService, messageService, gifService, mailserversService)
+
   self.browserSectionModule.load()
   # self.nodeManagementSectionModule.load()
   self.profileSectionModule.load()
   self.stickersModule.load()
+  self.networksModule.load()
   self.activityCenterModule.load()
   self.communitiesModule.load()
   self.appSearchModule.load()
@@ -391,6 +397,9 @@ proc checkIfModuleDidLoad [T](self: Module[T]) =
   if(not self.appSearchModule.isLoaded()):
     return
 
+  if(not self.networksModule.isLoaded()):
+    return
+
   self.moduleLoaded = true
   self.delegate.mainDidLoad()
 
@@ -422,6 +431,9 @@ proc profileSectionDidLoad*[T](self: Module[T]) =
   self.checkIfModuleDidLoad()
 
 method nodeSectionDidLoad*[T](self: Module[T]) =
+  self.checkIfModuleDidLoad()
+
+method networksModuleDidLoad*[T](self: Module[T]) =
   self.checkIfModuleDidLoad()
 
 method viewDidLoad*[T](self: Module[T]) =

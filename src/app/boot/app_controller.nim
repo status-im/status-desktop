@@ -128,7 +128,7 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result.keychainService = keychain_service.newService(statusFoundation.events)
   result.ethService = eth_service.newService()
   result.accountsService = accounts_service.newService(statusFoundation.fleetConfiguration)
-  result.networkService = network_service.newService(result.settingsService)
+  result.networkService = network_service.newService(statusFoundation.events, result.settingsService)
   result.contactsService = contacts_service.newService(
     statusFoundation.events, statusFoundation.threadpool, result.settingsService
   )
@@ -304,10 +304,8 @@ proc load(self: AppController) =
   self.tokenService.init()
   self.dappPermissionsService.init()
   self.providerService.init()
-  self.walletAccountService.init()
   self.transactionService.init()
   self.stickersService.init()
-  self.networkService.init()
   self.activityCenterService.init()
   self.savedAddressService.init()
   self.aboutService.init()
@@ -320,6 +318,9 @@ proc load(self: AppController) =
   singletonInstance.localAccountSensitiveSettings.setFileName(pubKey)
   singletonInstance.engine.setRootContextProperty("localAccountSensitiveSettings", self.localAccountSensitiveSettingsVariant)
   singletonInstance.engine.setRootContextProperty("globalUtils", self.globalUtilsVariant)
+
+  self.networkService.init()
+  self.walletAccountService.init()
 
   # other global instances
   self.buildAndRegisterLocalAccountSensitiveSettings()

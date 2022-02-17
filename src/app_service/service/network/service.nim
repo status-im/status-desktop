@@ -1,7 +1,6 @@
 import json, json_serialization, chronicles, atomics
-import options
 
-
+import ../../../app/core/eventemitter
 import ../../../app/global/global_singleton
 import ../../../backend/network as status_network
 import ../settings/service as settings_service
@@ -15,6 +14,7 @@ logScope:
 
 type 
   Service* = ref object of network_interface.ServiceInterface
+    events: EventEmitter
     networks: seq[NetworkDto]
     networksInited: bool
     dirty: Atomic[bool]
@@ -24,8 +24,9 @@ type
 method delete*(self: Service) =
   discard
 
-proc newService*(settingsService: settings_service.Service): Service =
+proc newService*(events: EventEmitter, settingsService: settings_service.Service): Service =
   result = Service()
+  result.events = events
   result.settingsService = settingsService
 
 method init*(self: Service) =
@@ -78,3 +79,9 @@ method getNetwork*(self: Service, networkType: NetworkType): NetworkDto =
 
   # Will be removed, this is used in case of legacy chain Id
   return NetworkDto(chainId: networkType.toChainId())
+
+method toggleNetwork*(self: Service, chainId: int) =
+  let network = self.getNetwork(chainId)
+
+  network.enabled = not network.enabled
+  self.upsertNetwork(network)

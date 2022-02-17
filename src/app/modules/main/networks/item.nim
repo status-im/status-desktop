@@ -11,6 +11,7 @@ type
     nativeCurrencyName: string
     nativeCurrencySymbol: string
     isTest: bool
+    isEnabled: bool
     
 proc initItem*(
   chainId: int,
@@ -21,7 +22,8 @@ proc initItem*(
   blockExplorerURL: string,
   nativeCurrencyName: string,
   nativeCurrencySymbol: string,
-  isTest: bool
+  isTest: bool,
+  isEnabled: bool,
 ): Item =
   result.chainId = chainId
   result.nativeCurrencyDecimals = nativeCurrencyDecimals
@@ -32,6 +34,7 @@ proc initItem*(
   result.nativeCurrencyName = nativeCurrencyName
   result.nativeCurrencySymbol = nativeCurrencySymbol
   result.isTest = isTest
+  result.isEnabled = isEnabled
 
 proc `$`*(self: Item): string =
   result = fmt"""NetworkItem(
@@ -44,6 +47,7 @@ proc `$`*(self: Item): string =
     nativeCurrencyName:{self.nativeCurrencyName},
     nativeCurrencySymbol:{self.nativeCurrencySymbol},
     isTest:{self.isTest}
+    isEnabled:{self.isEnabled}
     ]"""
 
 proc getChainId*(self: Item): int =
@@ -72,3 +76,6 @@ proc getNativeCurrencySymbol*(self: Item): string =
 
 proc getIsTest*(self: Item): bool =
   return self.isTest
+
+proc getIsEnabled*(self: Item): bool =
+  return self.isEnabled

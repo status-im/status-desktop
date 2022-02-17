@@ -12,7 +12,7 @@ proc getBlockByNumber*(blockNumber: string): RpcResponse[JsonNode] {.raises: [Ex
 
 proc getNativeChainBalance*(chainId: int, address: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* [address, "latest"]
-  return core.callPrivateRPC("eth_getBalance", payload)
+  return core.callPrivateRPCWithChainId("eth_getBalance", chainId, payload)
 
 proc sendTransaction*(transactionData: string, password: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   core.sendTransaction(transactionData, password)

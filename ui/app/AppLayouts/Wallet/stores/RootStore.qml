@@ -33,6 +33,12 @@ QtObject {
 
     property var savedAddresses: walletSectionSavedAddresses.model
 
+
+    property var layer1Networks: networksModule.layer1
+    property var layer2Networks: networksModule.layer2
+    property var testNetworks: networksModule.test
+    property var enabledNetworks: networksModule.enabled
+
     // This should be exposed to the UI via "walletModule", WalletModule should use
     // Accounts Service which keeps the info about that (isFirstTimeAccountLogin).
     // Then in the View of WalletModule we may have either QtProperty or
@@ -183,5 +189,9 @@ QtObject {
 
     function deleteSavedAddress(address) {
         walletSectionSavedAddresses.deleteSavedAddress(address)
+    }
+
+    function toggleNetwork(chainId) {
+        networksModule.toggleNetwork(chainId)
     }
 }

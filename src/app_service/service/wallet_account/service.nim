@@ -25,6 +25,7 @@ const SIGNAL_WALLET_ACCOUNT_DELETED* = "walletAccount/accountDeleted"
 const SIGNAL_WALLET_ACCOUNT_CURRENCY_UPDATED* = "walletAccount/currencyUpdated"
 const SIGNAL_WALLET_ACCOUNT_TOKEN_VISIBILITY_UPDATED* = "walletAccount/tokenVisibilityUpdated"
 const SIGNAL_WALLET_ACCOUNT_UPDATED* = "walletAccount/walletAccountUpdated"
+const SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED* = "walletAccount/networkEnabledUpdated"
 
 var
   priceCache {.threadvar.}: Table[string, float64]
@@ -76,13 +77,17 @@ proc fetchAccounts(): seq[WalletAccountDto] =
   ).filter(a => not a.isChat)
 
 proc fetchNativeChainBalance(network: NetworkDto, accountAddress: string): float64 =
-  let key = "0x0" & accountAddress
+  let key = "0x0" & accountAddress & $network.chainId
   if balanceCache.hasKey(key):
     return balanceCache[key]
 
-  let nativeBalanceResponse = status_go_eth.getNativeChainBalance(network.chainId, accountAddress)
-  result = parsefloat(hex2Balance(nativeBalanceResponse.result.getStr, network.nativeCurrencyDecimals))
-  balanceCache[key] = result
+  try:
+    let nativeBalanceResponse = status_go_eth.getNativeChainBalance(network.chainId, accountAddress)
+    result = parsefloat(hex2Balance(nativeBalanceResponse.result.getStr, network.nativeCurrencyDecimals))
+    balanceCache[key] = result
+  except Exception as e:
+    error "Error getting balance", message = e.msg
+    result = 0.0
 
 type AccountSaved = ref object of Args
   account: WalletAccountDto
@@ -93,6 +98,8 @@ type AccountDeleted = ref object of Args
 type CurrencyUpdated = ref object of Args
 
 type TokenVisibilityToggled = ref object of Args
+
+type NetwordkEnabledToggled = ref object of Args
 
 type WalletAccountUpdated = ref object of Args
   account: WalletAccountDto
@@ -296,6 +303,12 @@ method toggleTokenVisible*(self: Service, chainId: int, symbol: string) =
   self.tokenService.toggleVisible(chainId, symbol)
   self.refreshBalances()
   self.events.emit(SIGNAL_WALLET_ACCOUNT_TOKEN_VISIBILITY_UPDATED, TokenVisibilityToggled())
+
+method toggleNetworkEnabled*(self: Service, chainId: int) = 
+  self.networkService.toggleNetwork(chainId)
+  self.tokenService.init()
+  self.refreshBalances()
+  self.events.emit(SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED, NetwordkEnabledToggled())
 
 method updateWalletAccount*(self: Service, address: string, accountName: string, color: string) =
   let account = self.accounts[address]

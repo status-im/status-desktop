@@ -238,7 +238,7 @@ var NODE_CONFIG* = %* {
     {
       "chainId": 10,
       "chainName": "Optimistic Ethereum",
-      "rpcUrl": "https://mainnet.infura.io/v3/" & INFURA_TOKEN_RESOLVED,
+      "rpcUrl": "https://optimism-mainnet.infura.io/v3/" & INFURA_TOKEN_RESOLVED,
       "blockExplorerUrl": "https://optimistic.etherscan.io",
       "iconUrl": "",
       "nativeCurrencyName": "Ether",

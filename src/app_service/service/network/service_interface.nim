@@ -29,3 +29,6 @@ method getNetwork*(self: ServiceInterface, networkType: NetworkType): NetworkDto
 
 method getNetwork*(self: ServiceInterface, chainId: int): NetworkDto {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method toggleNetwork*(self: ServiceInterface, chainId: int) {.base.} =
+  raise newException(ValueError, "No implementation available")

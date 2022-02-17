@@ -47,6 +47,9 @@ method load*(self: Module) =
   self.events.on(SIGNAL_WALLET_ACCOUNT_TOKEN_VISIBILITY_UPDATED) do(e:Args):
     self.switchAccount(self.currentAccountIndex)
 
+  self.events.on(SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED) do(e: Args):
+    self.switchAccount(self.currentAccountIndex)
+
   self.controller.init()
   self.view.load()
 
@@ -63,4 +66,4 @@ method switchAccount*(self: Module, accountIndex: int) =
   self.view.setData(walletAccount)
 
 method update*(self: Module, address: string, accountName: string, color: string) =
-    self.controller.update(address, accountName, color)
+  self.controller.update(address, accountName, color)
