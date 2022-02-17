@@ -76,7 +76,7 @@ ColumnLayout {
                 //% "Public chat"
                 return qsTrId("public-chat")
             case Constants.chatType.privateGroupChat:
-                let cnt = chatContentRoot.usersStore.usersModule.count
+                let cnt = chatContentRoot.usersStore.usersModule.model.count
                 //% "%1 members"
                 if(cnt > 1) return qsTrId("-1-members").arg(cnt);
                 //% "1 member"
