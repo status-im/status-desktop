@@ -7,7 +7,6 @@ type
     Chat = 0
     Community,
     Wallet,
-    WalletV2,
     Browser,
     ProfileSettings,
     NodeManagement
