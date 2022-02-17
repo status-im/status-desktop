@@ -8,6 +8,7 @@ import ../../../backend/chat as status_chat
 import ../../../backend/chatCommands as status_chat_commands
 import ../../../app/global/global_singleton
 import ../../../app/core/eventemitter
+import ../../../app/core/signals/types
 import ../../../constants
 
 import ../../common/message as message_common
@@ -94,7 +95,22 @@ QtObject:
     result.contactService = contactService
     result.chats = initTable[string, ChatDto]()
 
-  proc init*(self: Service) =
+  # Forward declarations
+  proc updateOrAddChat*(self: Service, chat: ChatDto)
+
+  proc doConnect(self: Service) =
+    self.events.on(SignalType.Message.event) do(e: Args):
+      var receivedData = MessageSignal(e)
+
+      # Handling chat updates
+      if (receivedData.chats.len > 0):
+        for chatDto in receivedData.chats:
+          self.updateOrAddChat(chatDto)
+        self.events.emit(SIGNAL_CHAT_UPDATE, ChatUpdateArgsNew(messages: receivedData.messages, chats: receivedData.chats))
+  
+  proc init*(self: Service) =  
+    self.doConnect()
+
     try:
       let response = status_chat.getChats()
 

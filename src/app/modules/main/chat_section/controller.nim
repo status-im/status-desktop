@@ -94,6 +94,12 @@ method init*(self: Controller) =
     var args = ContactArgs(e)
     self.delegate.onContactUnblocked(args.contactId)
 
+  self.events.on(SIGNAL_CHAT_UPDATE) do(e: Args):
+    var args = ChatUpdateArgsNew(e)
+    self.delegate.addChatIfDontExist(args.chats, false, self.events, self.settingsService, self.contactService, self.chatService,
+        self.communityService, self.messageService, self.gifService, self.mailserversService, setChatAsActive = false)
+
+
   if (self.isCommunitySection):
     self.events.on(SIGNAL_COMMUNITY_CHANNEL_CREATED) do(e:Args):
       let args = CommunityChatArgs(e)

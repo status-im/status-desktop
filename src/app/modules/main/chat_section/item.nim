@@ -6,10 +6,10 @@ type
     subItems: SubModel
 
 proc initItem*(id, name, icon: string, isIdenticon: bool, color, description: string, `type`: int, amIChatAdmin: bool,
-  hasUnreadMessages: bool, notificationsCount: int, muted, blocked, active: bool, position: int, categoryId: string): Item =
+  hasUnreadMessages: bool, notificationsCount: int, muted, blocked, active: bool, position: int, categoryId: string, highlight: bool = false): Item =
   result = Item()
   result.setup(id, name, icon, isIdenticon, color, description, `type`, amIChatAdmin, hasUnreadMessages,
-  notificationsCount, muted, blocked, active, position, categoryId)
+  notificationsCount, muted, blocked, active, position, categoryId, highlight)
   result.subItems = newSubModel()
 
 proc delete*(self: Item) =
@@ -36,6 +36,7 @@ proc `$`*(self: Item): string =
     active: {self.active},
     position: {self.position},
     categoryId: {self.categoryId},
+    highlight: {self.highlight},
     subItems:[
       {$self.subItems}
     ]"""
@@ -56,7 +57,8 @@ proc toJsonNode*(self: Item): JsonNode =
     "blocked": self.blocked,
     "active": self.active,
     "position": self.position,
-    "categoryId": self.categoryId
+    "categoryId": self.categoryId,
+    "highlight": self.highlight
   }
 
 proc appendSubItems*(self: Item, items: seq[SubItem]) =

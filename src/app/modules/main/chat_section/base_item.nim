@@ -15,10 +15,11 @@ type
     active: bool
     position: int
     categoryId: string
+    highlight: bool
 
 proc setup*(self: BaseItem, id, name, icon: string, isIdenticon: bool, color, description: string,
   `type`: int, amIChatAdmin: bool, hasUnreadMessages: bool, notificationsCount: int, muted, blocked, active: bool,
-    position: int, categoryId: string = "") =
+    position: int, categoryId: string = "", highlight: bool = false) =
   self.id = id
   self.name = name
   self.amIChatAdmin = amIChatAdmin
@@ -34,13 +35,14 @@ proc setup*(self: BaseItem, id, name, icon: string, isIdenticon: bool, color, de
   self.active = active
   self.position = position
   self.categoryId = categoryId
+  self.highlight = highlight
 
 proc initBaseItem*(id, name, icon: string, isIdenticon: bool, color, description: string, `type`: int,
     amIChatAdmin: bool, hasUnreadMessages: bool, notificationsCount: int, muted, blocked, active: bool,
-    position: int, categoryId: string = ""): BaseItem =
+    position: int, categoryId: string = "", highlight: bool = false): BaseItem =
   result = BaseItem()
   result.setup(id, name, icon, isIdenticon, color, description, `type`, amIChatAdmin, hasUnreadMessages,
-  notificationsCount, muted, blocked, active, position, categoryId)
+  notificationsCount, muted, blocked, active, position, categoryId, highlight)
 
 proc delete*(self: BaseItem) =
   discard
@@ -122,3 +124,9 @@ method categoryId*(self: BaseItem): string {.inline base.} =
 
 method `categoryId=`*(self: var BaseItem, value: string) {.inline base.} =
   self.categoryId = value
+
+method highlight*(self: BaseItem): bool {.inline base.} =
+  self.highlight
+
+method `highlight=`*(self: var BaseItem, value: bool) {.inline base.} =
+  self.highlight = value
