@@ -47,6 +47,7 @@ type ChatDto* = object
   canPost*: bool
   position*: int
   categoryId*: string
+  highlight*: bool
 
 proc `$`*(self: ChatDto): string =
   result = fmt"""ChatDto(
@@ -72,7 +73,8 @@ proc `$`*(self: ChatDto): string =
     syncedTo: {self.syncedTo},
     syncedFrom: {self.syncedFrom},
     categoryId: {self.categoryId},
-    position: {self.position}
+    position: {self.position},
+    highlight: {self.highlight}
     )"""
 
 proc toChatMember(jsonObj: JsonNode): ChatMember =
@@ -103,6 +105,7 @@ proc toChatDto*(jsonObj: JsonNode): ChatDto =
   discard jsonObj.getProp("joined", result.joined)
   discard jsonObj.getProp("syncedTo", result.syncedTo)
   discard jsonObj.getProp("syncedFrom", result.syncedFrom)
+  discard jsonObj.getProp("highlight", result.highlight)
 
   result.chatType = ChatType.Unknown
   var chatTypeInt: int

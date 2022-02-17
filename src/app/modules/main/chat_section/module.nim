@@ -385,7 +385,8 @@ method addNewChat*(
     communityService: community_service.Service,
     messageService: message_service.Service,
     gifService: gif_service.Service,
-    mailserversService: mailservers_service.Service) =
+    mailserversService: mailservers_service.Service,
+    setChatAsActive: bool = true) =
   let hasNotification = chatDto.unviewedMessagesCount > 0 or chatDto.unviewedMentionsCount > 0
   let notificationsCount = chatDto.unviewedMentionsCount
   var chatName = chatDto.name
@@ -404,13 +405,14 @@ method addNewChat*(
   if chatDto.categoryId == "":
     let item = initItem(chatDto.id, chatName, chatImage, isIdenticon, chatDto.color, chatDto.description,
                         chatDto.chatType.int, amIChatAdmin, hasNotification, notificationsCount, chatDto.muted,
-                        blocked=false, active=false, position = 0, chatDto.categoryId)
+                        blocked=false, active=false, position = 0, chatDto.categoryId, chatDto.highlight)
     self.addSubmodule(chatDto.id, belongsToCommunity, isUsersListAvailable, events, settingsService, contactService, chatService,
                       communityService, messageService, gifService, mailserversService)
     self.chatContentModules[chatDto.id].load()
     self.view.chatsModel().appendItem(item)
     # make new added chat active one
-    self.setActiveItemSubItem(item.id, "")
+    if setChatAsActive:
+      self.setActiveItemSubItem(item.id, "")
   else:
     let categoryItem = self.view.chatsModel().getItemById(chatDto.categoryId)
     let channelItem = initSubItem(chatDto.id, chatDto.categoryId, chatDto.name, chatDto.identicon, false, chatDto.color,
@@ -421,6 +423,9 @@ method addNewChat*(
     self.chatContentModules[chatDto.id].load()
     categoryItem.appendSubItem(channelItem)
     self.setActiveItemSubItem(categoryItem.id, channelItem.id)
+
+method doesChatExist*(self: Module, chatId: string): bool =
+  return self.view.chatsModel().isItemWithIdAdded(chatId)
 
 method removeCommunityChat*(self: Module, chatId: string) =
   if(not self.chatContentModules.contains(chatId)):
@@ -691,3 +696,20 @@ method reorderCommunityChat*(self: Module, categoryId: string, chatId: string, p
   
 method setLoadingHistoryMessagesInProgress*(self: Module, isLoading: bool) =
   self.view.setLoadingHistoryMessagesInProgress(isLoading)
+
+method addChatIfDontExist*(self: Module,
+    chats: seq[ChatDto],
+    belongsToCommunity: bool,
+    events: EventEmitter,
+    settingsService: settings_service.ServiceInterface,
+    contactService: contact_service.Service,
+    chatService: chat_service.Service,
+    communityService: community_service.Service,
+    messageService: message_service.Service,
+    gifService: gif_service.Service,
+    mailserversService: mailservers_service.Service,
+    setChatAsActive: bool = true) =
+  for chatDto in chats:
+    if not self.doesChatExist(chatDto.id):
+      self.addNewChat(chatDto, belongsToCommunity, events, settingsService, contactService, chatService,
+        communityService, messageService, gifService, mailserversService, setChatAsActive)

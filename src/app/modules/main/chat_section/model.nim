@@ -21,6 +21,7 @@ type
     SubItems
     IsCategory
     CategoryId
+    Highlight
 
 QtObject:
   type
@@ -85,7 +86,8 @@ QtObject:
       ModelRole.Position.int:"position",
       ModelRole.SubItems.int:"subItems",
       ModelRole.IsCategory.int:"isCategory",
-      ModelRole.CategoryId.int:"categoryId"
+      ModelRole.CategoryId.int:"categoryId",
+      ModelRole.Highlight.int:"highlight"
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -133,6 +135,8 @@ QtObject:
       result = newQVariant(item.`type` == ChatType.Unknown.int)
     of ModelRole.CategoryId:
       result = newQVariant(item.categoryId)
+    of ModelRole.Highlight:
+      result = newQVariant(item.highlight)
 
   proc appendItem*(self: Model, item: Item) =
     let parentModelIndex = newQModelIndex()
@@ -181,6 +185,12 @@ QtObject:
       return
 
     return self.items[index]
+
+  proc isItemWithIdAdded*(self: Model, id: string): bool =
+    for it in self.items:
+      if(it.id == id):
+        return true
+    return false
 
   proc getItemById*(self: Model, id: string): Item =
     for it in self.items:
