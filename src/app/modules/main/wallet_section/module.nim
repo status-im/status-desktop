@@ -98,6 +98,8 @@ method load*[T](self: Module[T]) =
     self.setTotalCurrencyBalance()
   self.events.on(SIGNAL_WALLET_ACCOUNT_TOKEN_VISIBILITY_UPDATED) do(e:Args):
     self.setTotalCurrencyBalance()
+  self.events.on(SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED) do(e:Args):
+    self.setTotalCurrencyBalance()
 
   self.controller.init()
   self.view.load()

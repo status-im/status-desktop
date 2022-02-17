@@ -34,6 +34,9 @@ method init*(self: Controller) =
   self.events.on(SIGNAL_TOKEN_DETAILS_LOADED) do(e:Args):
     let args = TokenDetailsLoadedArgs(e)
     self.delegate.tokenDetailsWereResolved(args.tokenDetails)
+  
+  self.events.on(SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED) do(e:Args):
+    self.delegate.refreshTokens()
 
 method getTokens*(self: Controller): seq[token_service.TokenDto] =
   for tokens in self.tokenService.getTokens().values:

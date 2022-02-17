@@ -23,6 +23,7 @@ include async_tasks
 const DEFAULT_VISIBLE_TOKENS = {1: @["SNT"], 3: @["STT"], 4: @["STT"]}.toTable()
 # Signals which may be emitted by this service:
 const SIGNAL_TOKEN_DETAILS_LOADED* = "tokenDetailsLoaded"
+const SIGNAL_TOKEN_LIST_RELOADED* = "tokenListReloaded"
 
 type
   TokenDetailsLoadedArgs* = ref object of Args
@@ -67,13 +68,16 @@ QtObject:
 
   proc init*(self: Service) =
     try:
+      self.tokens = initTable[NetworkDto, seq[TokenDto]]()
       var activeTokenSymbols = self.settingsService.getWalletVisibleTokens()
       let networks = self.networkService.getEnabledNetworks()
       let responseCustomTokens = custom_tokens.getCustomTokens()
 
       for network in networks:
-        if not activeTokenSymbols.hasKey(network.chainId):
+        if not activeTokenSymbols.hasKey(network.chainId) and DEFAULT_VISIBLE_TOKENS.hasKey(network.chainId):
           activeTokenSymbols[network.chainId] = DEFAULT_VISIBLE_TOKENS[network.chainId]
+        else:
+          activeTokenSymbols[network.chainId] = @[]
 
         let responseTokens = token_backend.getTokens(network.chainId)
         let default_tokens = map(
@@ -93,10 +97,7 @@ QtObject:
       error "error: ", errDesription
       return
 
-  proc getTokens*(self: Service, useCache: bool = true): Table[NetworkDto, seq[TokenDto]] =
-    if not useCache:
-      self.init()
-
+  proc getTokens*(self: Service): Table[NetworkDto, seq[TokenDto]] =
     return self.tokens
 
   proc getVisibleTokens*(self: Service): seq[TokenDto] =

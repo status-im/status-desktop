@@ -9,7 +9,6 @@ Item {
     id: root
     width: selectRectangle.width
     height: childrenRect.height
-    signal toggleNetwork(int chainId)
 
     property var store
     
@@ -23,7 +22,7 @@ Item {
 
         StyledText {
             id: text
-            text: qsTr("All networks")
+            text: qsTr("Select networks")
             anchors.left: parent.left
             anchors.leftMargin: Style.current.padding
             anchors.verticalCenter: parent.verticalCenter
@@ -56,9 +55,12 @@ Item {
 
     Grid {
         id: enabledNetworks
-        columns: 2
+        columns: 4
         spacing: 2
         visible: (chainRepeater.count > 0)
+
+        anchors.top: selectRectangle.bottom
+        anchors.topMargin: Style.current.padding
 
         Repeater {
             id: chainRepeater
@@ -87,8 +89,10 @@ Item {
     NetworkSelectPopup {
         id: selectPopup
         x: (parent.width - width)
-        y: (root.height - networkFilterPanel.height)
-        model: store.allNetworks
+        layer1Networks: store.layer1Networks
+        layer2Networks: store.layer2Networks
+        testNetworks: store.testNetworks
+
         onToggleNetwork: {
             store.toggleNetwork(chainId)
         }

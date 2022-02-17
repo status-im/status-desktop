@@ -16,8 +16,11 @@ Popup {
     modal: false
     width: 360
     height: 432
-    closePolicy: Popup.CloseOnEscape
-    property var model
+    closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+    property var layer1Networks
+    property var layer2Networks
+    property var testNetworks
+
     signal toggleNetwork(int chainId)
 
     background: Rectangle {
@@ -49,32 +52,51 @@ Popup {
             width: popup.width
             spacing: Style.current.padding
 
-             Repeater {
-                id: chainRepeater
-                model: popup.model
+            Repeater {
+                id: chainRepeater1
+                model: popup.layer1Networks
 
-                Item {
-                    width: content.width
-                    height: 40
-                    StatusBaseText {
-                        anchors.left: parent.left
-                        anchors.leftMargin: Style.current.bigPadding
-                        anchors.verticalCenter: parent.verticalCenter
-                        font.pixelSize: Style.current.primaryTextFontSize
-                        text: model.chainName
-                        color: Theme.palette.directColor1
-                    }
+                delegate: chainItem
+            }
 
-                    StatusCheckBox {
-                        anchors.right: parent.right
-                        anchors.rightMargin: Style.current.bigPadding
-                        anchors.verticalCenter: parent.verticalCenter
-                        checked: model.enabled
-                        onCheckedChanged: {
-                            if(checked !== model.enabled){
-                                popup.toggleNetwork(model.chainId)
-                            }
-                        }
+            Repeater {
+                id: chainRepeater2
+                model: popup.layer2Networks
+
+                delegate: chainItem
+            }
+
+            Repeater {
+                id: chainRepeater3
+                model: popup.testNetworks
+
+                delegate: chainItem
+            }
+        }
+    }
+
+    Component {
+        id: chainItem
+        Item {
+            width: content.width
+            height: 40
+            StatusBaseText {
+                anchors.left: parent.left
+                anchors.leftMargin: Style.current.bigPadding
+                anchors.verticalCenter: parent.verticalCenter
+                font.pixelSize: Style.current.primaryTextFontSize
+                text: model.chainName
+                color: Theme.palette.directColor1
+            }
+
+            StatusCheckBox {
+                anchors.right: parent.right
+                anchors.rightMargin: Style.current.bigPadding
+                anchors.verticalCenter: parent.verticalCenter
+                checked: model.isEnabled
+                onCheckedChanged: {
+                    if (model.isEnabled !== checked) {
+                        popup.toggleNetwork(model.chainId)
                     }
                 }
             }

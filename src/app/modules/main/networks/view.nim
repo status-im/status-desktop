@@ -1,6 +1,6 @@
 import NimQml, sequtils, sugar
 
-import ../../../../../../app_service/service/network/dto
+import ../../../../app_service/service/network/dto
 import ./io_interface
 import ./model
 import ./item
@@ -9,6 +9,7 @@ QtObject:
   type
     View* = ref object of QObject
       delegate: io_interface.AccessInterface
+      enabled: Model
       layer1: Model
       layer2: Model
       test: Model
@@ -25,6 +26,7 @@ QtObject:
     result.layer1 = newModel()
     result.layer2 = newModel()
     result.test = newModel()
+    result.enabled = newModel()
     result.setup()
 
   proc layer1Changed*(self: View) {.signal.}
@@ -54,6 +56,15 @@ QtObject:
     read = getTest
     notify = testChanged
 
+  proc enabledChanged*(self: View) {.signal.}
+
+  proc getEnabled(self: View): QVariant {.slot.} =
+    return newQVariant(self.enabled)
+
+  QtProperty[QVariant] enabled:
+    read = getEnabled
+    notify = enabledChanged
+
   proc load*(self: View, networks: seq[NetworkDto]) =
     let items = networks.map(n => initItem(
       n.chainId,
@@ -64,10 +75,19 @@ QtObject:
       n.blockExplorerURL,
       n.nativeCurrencyName,
       n.nativeCurrencySymbol,
-      n.isTest
+      n.isTest,
+      n.enabled,
     ))
     self.layer1.setItems(items.filter(i => i.getLayer() == 1 and not i.getIsTest()))
     self.layer2.setItems(items.filter(i => i.getLayer() == 2 and not i.getIsTest()))
     self.test.setItems(items.filter(i => i.getIsTest()))
+    self.enabled.setItems(items.filter(i => i.getIsEnabled()))
+
+    self.layer1Changed()
+    self.layer2Changed()
+    self.testChanged()
 
     self.delegate.viewDidLoad()
+
+  proc toggleNetwork*(self: View, chainId: int) {.slot.} =
+    self.delegate.toggleNetwork(chainId)

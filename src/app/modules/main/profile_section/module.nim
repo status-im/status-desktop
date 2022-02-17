@@ -15,7 +15,6 @@ import ../../../../app_service/service/mailservers/service as mailservers_servic
 import ../../../../app_service/service/chat/service as chat_service
 import ../../../../app_service/service/ens/service as ens_service
 import ../../../../app_service/service/wallet_account/service_interface as wallet_account_service
-import ../../../../app_service/service/network/service as network_service
 
 import ./profile/module as profile_module
 import ./contacts/module as contacts_module
@@ -27,7 +26,6 @@ import ./devices/module as devices_module
 import ./sync/module as sync_module
 import ./notifications/module as notifications_module
 import ./ens_usernames/module as ens_usernames_module
-import ./wallet/module as wallet_module
 
 export io_interface
 
@@ -49,7 +47,6 @@ type
     syncModule: sync_module.AccessInterface
     notificationsModule: notifications_module.AccessInterface
     ensUsernamesModule: ens_usernames_module.AccessInterface
-    walletModule: wallet_module.AccessInterface
 
 proc newModule*[T](delegate: T,
   events: EventEmitter,
@@ -66,7 +63,6 @@ proc newModule*[T](delegate: T,
   chatService: chat_service.Service,
   ensService: ens_service.Service,
   walletAccountService: wallet_account_service.ServiceInterface,
-  networkService: network_service.Service,
 ): Module[T] =
   result = Module[T]()
   result.delegate = delegate
@@ -87,7 +83,6 @@ proc newModule*[T](delegate: T,
   result.ensUsernamesModule = ens_usernames_module.newModule(
     result, events, settingsService, ensService, walletAccountService
   )
-  result.walletModule = wallet_module.newModule(result, events, networkService)
 
   singletonInstance.engine.setRootContextProperty("profileSectionModule", result.viewVariant)
 
@@ -100,7 +95,6 @@ method delete*[T](self: Module[T]) =
   self.advancedModule.delete
   self.devicesModule.delete
   self.syncModule.delete
-  self.walletModule.delete
 
   self.view.delete
   self.viewVariant.delete
@@ -118,7 +112,6 @@ method load*[T](self: Module[T]) =
   self.syncModule.load()
   self.notificationsModule.load()
   self.ensUsernamesModule.load()
-  self.walletModule.load()
 
 method isLoaded*[T](self: Module[T]): bool =
   return self.moduleLoaded
@@ -154,9 +147,6 @@ proc checkIfModuleDidLoad[T](self: Module[T]) =
   if(not self.ensUsernamesModule.isLoaded()):
     return
 
-  if(not self.walletModule.isLoaded()):
-    return
-
   self.moduleLoaded = true
   self.delegate.profileSectionDidLoad()
 
@@ -168,9 +158,6 @@ method profileModuleDidLoad*[T](self: Module[T]) =
 
 method getProfileModule*[T](self: Module[T]): QVariant =
   self.profileModule.getModuleAsVariant()
-
-method walletModuleDidLoad*[T](self: Module[T]) =
-  self.checkIfModuleDidLoad()
 
 method contactsModuleDidLoad*[T](self: Module[T]) =
   self.checkIfModuleDidLoad()
