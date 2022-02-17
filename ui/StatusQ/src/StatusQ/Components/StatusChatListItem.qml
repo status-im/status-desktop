@@ -32,6 +32,7 @@ Rectangle {
     }
     property int type: StatusChatListItem.Type.PublicChat
     property bool highlighted: false
+    property bool highlightWhenCreated: false
     property bool selected: false
     property bool dragged: false
     property alias sensor: sensor
@@ -145,12 +146,14 @@ Rectangle {
                         statusChatListItem.notificationsCount > 0 ||
                         statusChatListItem.selected ||
                         statusChatListItem.highlighted ||
+                        statusChatListItem.highlightWhenCreated ||
                         hoverHander.hovered ||
                         statusBadge.visible ? Theme.palette.directColor1 : Theme.palette.directColor4
             }
             font.weight: !statusChatListItem.muted &&
                          (statusChatListItem.hasUnreadMessages ||
                           statusChatListItem.notificationsCount > 0 ||
+                          statusChatListItem.highlightWhenCreated ||
                           statusBadge.visible) ? Font.Bold : Font.Medium
             font.pixelSize: 15
         }

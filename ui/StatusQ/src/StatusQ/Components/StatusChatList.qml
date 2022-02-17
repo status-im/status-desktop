@@ -101,6 +101,7 @@ Column {
                     muted: model.muted
                     hasUnreadMessages: model.hasUnreadMessages
                     notificationsCount: model.notificationsCount
+                    highlightWhenCreated: model.highlight
                     selected: model.active
                     icon.color: model.color
                     image.isIdenticon: model.isIdenticon
@@ -108,6 +109,8 @@ Column {
 
                     sensor.cursorShape: dragSensor.cursorShape
                     onClicked: {
+                        highlightWhenCreated = false
+
                         if (mouse.button === Qt.RightButton && !!statusChatList.popupMenu) {
                             statusChatListItem.highlighted = true
 
