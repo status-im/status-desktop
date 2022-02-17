@@ -1,11 +1,13 @@
 import QtQuick 2.13
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ.Controls 0.1
 
 Loader {
     id: statusSmartIdenticon
 
     property string name: ""
+    property int dZ: 100
 
     // Badge color properties must be set if badgeItem.visible = true
     property alias badge: statusBadge
@@ -18,6 +20,12 @@ Loader {
     property StatusImageSettings image: StatusImageSettings {
         width: 40
         height: 40
+    }
+
+    property StatusIdenticonRingSettings ringSettings: StatusIdenticonRingSettings {
+        totalRingUnits: 1
+        initalAngleRad: 0
+        ringPxSize: 1.5
     }
 
     sourceComponent: statusSmartIdenticon.icon.isLetterIdenticon ? letterIdenticon :
@@ -79,6 +87,13 @@ Loader {
         }
     }
 
+    // Next components are painted above main sourceComponent
+    StatusIdenticonRing {
+        settings: statusSmartIdenticon.ringSettings
+        anchors.fill: parent
+        z: statusSmartIdenticon.dZ/2
+    }
+
     // State component
     StatusBadge {
         id: statusBadge
@@ -88,6 +103,6 @@ Loader {
         border.width: 3
         implicitHeight: 15
         implicitWidth: 15
-        z: 100
+        z: statusSmartIdenticon.dZ
     }
 }

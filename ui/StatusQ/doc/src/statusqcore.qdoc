@@ -15,6 +15,7 @@
        \li \l{StatusIcon}
        \li \l{StatusIconBackgroundSettings}
        \li \l{StatusIconSettings}
+       \li \l{StatusIdenticonRingSettings}
        \li \l{StatusImageSettings}
        \li \l{StatusModalHeaderSettings}
        \li \l{StatusTooltipSettings}

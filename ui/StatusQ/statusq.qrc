@@ -324,5 +324,7 @@
         <file>src/StatusQ/Components/StatusToastMessage.qml</file>
         <file>src/StatusQ/Components/StatusWizardStepper.qml</file>
         <file>src/StatusQ/Components/StatusContactVerificationIcons.qml</file>
+        <file>src/StatusQ/Controls/StatusIdenticonRing.qml</file>
+        <file>src/StatusQ/Core/StatusIdenticonRingSettings.qml</file>
     </qresource>
 </RCC>

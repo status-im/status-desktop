@@ -30,6 +30,7 @@
        \li \l{StatusSlider}
        \li \l{StatusSelect}
        \li \l{StatusBaseInput}
+       \li \l{StatusIdenticonRing}
        \li \l{StatusInput}
        \li \l{StatusPickerButton}
        \li \l{StatusProgressBar}

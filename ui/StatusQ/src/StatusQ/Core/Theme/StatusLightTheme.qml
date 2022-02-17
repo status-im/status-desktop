@@ -156,6 +156,13 @@ ThemePalette {
         getColor('brown')
     ]
 
+    identiconRingColors: ["#000000", "#726F6F", "#C4C4C4", "#E7E7E7", "#FFFFFF", "#00FF00",
+                          "#009800", "#B8FFBB", "#FFC413", "#9F5947", "#FFFF00", "#A8AC00",
+                          "#FFFFB0", "#FF5733", "#FF0000", "#9A0000", "#FF9D9D", "#FF0099",
+                          "#C80078", "#FF00FF", "#900090", "#FFB0FF", "#9E00FF", "#0000FF",
+                          "#000086", "#9B81FF", "#3FAEF9", "#9A6600", "#00FFFF", "#008694",
+                          "#C2FFFF", "#00F0B6"]
+
     property QtObject statusAppLayout: QtObject {
         property color backgroundColor: white
         property color rightPanelBackgroundColor: white

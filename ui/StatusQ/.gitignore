@@ -13,3 +13,4 @@ Makefile
 *_qml.cpp
 *_qmlcache.qrc
 sandbox/qmlcache_loader.cpp
+doc/html

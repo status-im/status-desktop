@@ -266,6 +266,9 @@ StatusAppThreePanelLayout {
                 image.source: model.source
                 image.isIdenticon: model.isIdenticon
                 isOnline: model.isOnline
+                ringSettings.ringSpecModel: model.ringSpecModel
+                ringSettings.distinctiveColors: Theme.palette.identiconRingColors
+                ringSettings.totalRingUnits: model.totalRingUnits
             }
         }
     }

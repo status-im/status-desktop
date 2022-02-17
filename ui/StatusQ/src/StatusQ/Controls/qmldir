@@ -8,6 +8,7 @@ StatusChatInfoButton 0.1 StatusChatInfoButton.qml
 StatusChatListCategoryItemButton 0.1 StatusChatListCategoryItemButton.qml
 StatusColorSelector 0.1 StatusColorSelector.qml
 StatusIconTabButton 0.1 StatusIconTabButton.qml
+StatusIdenticonRing 0.1 StatusIdenticonRing.qml
 StatusNavBarTabButton 0.1 StatusNavBarTabButton.qml
 StatusTabBarIconButton 0.1 StatusTabBarIconButton.qml
 StatusToolTip 0.1 StatusToolTip.qml

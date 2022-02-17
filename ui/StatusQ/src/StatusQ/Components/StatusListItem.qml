@@ -50,6 +50,11 @@ Rectangle {
         height: 40
         isIdenticon: false
     }
+    property StatusIdenticonRingSettings ringSettings: StatusIdenticonRingSettings {
+        totalRingUnits: 1
+        initalAngleRad: 0
+        ringPxSize: 1.5
+    }
 
     property alias sensor: sensor
     property alias badge: statusListItemBadge
@@ -123,6 +128,7 @@ Rectangle {
                     !!statusListItem.icon.name ||
                     !!statusListItem.image.source.toString()
             badge.border.color: statusListItem.color
+            ringSettings: statusListItem.ringSettings
         }
 
         Item {

@@ -92,6 +92,8 @@ QtObject {
 
     property var accountColors: []
 
+    property var identiconRingColors: []
+
     property QtObject statusAppLayout: QtObject {
         property color backgroundColor
         property color rightPanelBackgroundColor

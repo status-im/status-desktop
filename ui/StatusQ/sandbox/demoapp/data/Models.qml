@@ -903,6 +903,14 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
             source: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAlklEQVR4nOzW0QmDQBAG4SSkl7SUQlJGCrElq9F3QdjjVhh/5nv3cFhY9vUIYQiNITSG0BhCExPynn1gWf9bx498P7/
                             nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2ImYgiNITTlTdG1nUZ5a92VITQxITFiJmIIjSE0htAYQrMHAAD//+wwFVpz+yqXAAAAAElFTkSuQmCC"
             isIdenticon: true
+            totalRingUnits: 25
+            ringSpecModel: [ ListElement {colorId: 13; segmentLength: 5},
+                             ListElement {colorId: 31; segmentLength: 5},
+                             ListElement {colorId: 10; segmentLength: 1},
+                             ListElement {colorId: 2; segmentLength: 5},
+                             ListElement {colorId: 26; segmentLength: 2},
+                             ListElement {colorId: 19; segmentLength: 4},
+                             ListElement {colorId: 28; segmentLength: 3} ]
         }
         ListElement {
             nickName: "carmen.eth"
@@ -912,7 +920,7 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
             isMutualContact: false
             isOnline: false
             source: ""
-            isIdenticon: false
+            isIdenticon: false            
         }
         ListElement {
             nickName: "This girl I know from work"
@@ -924,6 +932,14 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
             source: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAiElEQVR4nOzXUQpAQBRGYWQvLNAyLJDV8C5qpiGnv/M9al5Ot27X0IUwhMYQGkNoDKGJCRlLH67bftx9X+ap/+P9VcxEDK
                      ExhKZ4a9Uq3TZviZmIITSG0DRvlqcbqVbrlouZiCE0htD4h0hjCI0hNN5aNIbQGKKPxEzEEBpDaAyhMYTmDAAA//+gYCErzmCpCQAAAABJRU5ErkJggg=="
             isIdenticon: true
+            totalRingUnits: 25
+            ringSpecModel: [ ListElement {colorId: 11; segmentLength: 1},
+                             ListElement {colorId: 23; segmentLength: 5},
+                             ListElement {colorId: 23; segmentLength: 5},
+                             ListElement {colorId: 10; segmentLength: 4},
+                             ListElement {colorId: 15; segmentLength: 3},
+                             ListElement {colorId: 26; segmentLength: 2},
+                             ListElement {colorId: 29; segmentLength: 5} ]
         }
         ListElement {
             nickName: "Mark Cuban"
@@ -932,9 +948,18 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
             trustIndicator: StatusContactVerificationIcons.TrustedType.Untrustworthy
             isMutualContact: true
             isOnline: false
-            source: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAlklEQVR4nOzW0QmDQBAG4SSkl7SUQlJGCrElq9F3QdjjVhh/5nv3cFhY9vUIYQiNITSG0BhCExPynn1gWf9bx498P7/
-                     nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2ImYgiNITTlTdG1nUZ5a92VITQxITFiJmIIjSE0htAYQrMHAAD//+wwFVpz+yqXAAAAAElFTkSuQmCC"
-            isIdenticon: true
+            source: ""
+            isIdenticon: false
+            totalRingUnits: 25
+            ringSpecModel: [ ListElement {colorId: 0; segmentLength: 1},
+                             ListElement {colorId: 28; segmentLength: 1},
+                             ListElement {colorId: 31; segmentLength: 1},
+                             ListElement {colorId: 22; segmentLength: 4},
+                             ListElement {colorId: 28; segmentLength: 3},
+                             ListElement {colorId: 27; segmentLength: 5},
+                             ListElement {colorId: 7; segmentLength: 5},
+                             ListElement {colorId: 13; segmentLength: 1},
+                             ListElement {colorId: 25; segmentLength: 4}]
         }
     }
 
