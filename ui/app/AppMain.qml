@@ -11,7 +11,6 @@ import shared.popups 1.0
 import shared.status 1.0
 import "./AppLayouts"
 import "./AppLayouts/Wallet"
-import "./AppLayouts/WalletV2"
 import "./AppLayouts/Chat/popups"
 import "./AppLayouts/Chat/popups/community"
 import "./AppLayouts/Profile/popups"
@@ -421,9 +420,6 @@ Item {
                     else if(mainModule.activeSection.sectionType === Constants.appSection.wallet) {
                         return Constants.appViewStackIndex.wallet
                     }
-                    else if(mainModule.activeSection.sectionType === Constants.appSection.walletv2) {
-                        return Constants.appViewStackIndex.walletv2
-                    }
                     else if(mainModule.activeSection.sectionType === Constants.appSection.browser) {
                         return Constants.appViewStackIndex.browser
                     }
@@ -453,10 +449,6 @@ Item {
 
                     if(obj === walletLayoutContainer){
                         walletLayoutContainer.showSigningPhrasePopup();
-                    }
-
-                    if(obj === walletV2LayoutContainer){
-                        walletV2LayoutContainer.showSigningPhrasePopup();
                     }
                 }
 
@@ -536,13 +528,6 @@ Item {
 
                 NodeLayout {
                     id: nodeLayoutContainer
-                    Layout.fillWidth: true
-                    Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                    Layout.fillHeight: true
-                }
-
-                WalletV2Layout {
-                    id: walletV2LayoutContainer
                     Layout.fillWidth: true
                     Layout.alignment: Qt.AlignLeft | Qt.AlignTop
                     Layout.fillHeight: true

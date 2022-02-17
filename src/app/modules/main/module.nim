@@ -291,21 +291,6 @@ method load*[T](
   if(activeSectionId == walletSectionItem.id):
     activeSection = walletSectionItem
 
-  # WalletV2 Section
-  let walletV2SectionItem = initItem(conf.WALLETV2_SECTION_ID, SectionType.WalletV2, conf.WALLETV2_SECTION_NAME,
-  amISectionAdmin = false,
-  description = "",
-  image = "",
-  conf.WALLETV2_SECTION_ICON,
-  color = "",
-  hasNotification = false,
-  notificationsCount = 0,
-  active = false,
-  enabled = singletonInstance.localAccountSensitiveSettings.getIsWalletV2Enabled())
-  self.view.model().addItem(walletV2SectionItem)
-  if(activeSectionId == walletV2SectionItem.id):
-    activeSection = walletV2SectionItem
-
   # Browser Section
   let browserSectionItem = initItem(conf.BROWSER_SECTION_ID, SectionType.Browser, conf.BROWSER_SECTION_NAME,
   amISectionAdmin = false,
@@ -357,7 +342,6 @@ method load*[T](
   self.chatSectionModule.load(events, settingsService, contactsService, chatService, communityService, messageService, gifService, mailserversService)
   for cModule in self.communitySectionsModule.values:
     cModule.load(events, settingsService, contactsService, chatService, communityService, messageService, gifService, mailserversService)
-  # self.walletV2SectionModule.load()
   self.browserSectionModule.load()
   # self.nodeManagementSectionModule.load()
   self.profileSectionModule.load()

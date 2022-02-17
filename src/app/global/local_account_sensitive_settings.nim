@@ -10,8 +10,6 @@ const LSS_KEY_COMMUNITIES_ENABLED* = "communitiesEnabled"
 const DEFAULT_COMMUNITIES_ENABLED = false
 const LSS_KEY_IS_WALLET_ENABLED* = "isWalletEnabled"
 const DEFAULT_IS_WALLET_ENABLED = false
-const LSS_KEY_IS_WALLET_V2_ENABLED* = "isWalletV2Enabled"
-const DEFAULT_IS_WALLET_V2_ENABLED = false
 const LSS_KEY_NODE_MANAGEMENT_ENABLED* = "nodeManagementEnabled"
 const DEFAULT_NODE_MANAGEMENT_ENABLED = false
 const LSS_KEY_IS_BROWSER_ENABLED* = "isBrowserEnabled"
@@ -225,20 +223,6 @@ QtObject:
     read = getIsWalletEnabled
     write = setIsWalletEnabled
     notify = isWalletEnabledChanged
-
-
-  proc isWalletV2EnabledChanged*(self: LocalAccountSensitiveSettings) {.signal.}
-  proc getIsWalletV2Enabled*(self: LocalAccountSensitiveSettings): bool {.slot.} =
-    getSettingsProp[bool](self, LSS_KEY_IS_WALLET_V2_ENABLED, newQVariant(DEFAULT_IS_WALLET_V2_ENABLED))
-  proc setIsWalletV2Enabled*(self: LocalAccountSensitiveSettings, value: bool) {.slot.} =
-    setSettingsProp(self, LSS_KEY_IS_WALLET_V2_ENABLED, newQVariant(value)):
-      self.isWalletV2EnabledChanged()
-
-  QtProperty[bool] isWalletV2Enabled:
-    read = getIsWalletV2Enabled
-    write = setIsWalletV2Enabled
-    notify = isWalletV2EnabledChanged
-
 
   proc nodeManagementEnabledChanged*(self: LocalAccountSensitiveSettings) {.signal.}
   proc getNodeManagementEnabled*(self: LocalAccountSensitiveSettings): bool {.slot.} =
@@ -849,7 +833,6 @@ QtObject:
       of LSS_KEY_PROFILE_SPLIT_VIEW: self.profileSplitViewChanged()
       of LSS_KEY_COMMUNITIES_ENABLED: self.communitiesEnabledChanged()
       of LSS_KEY_IS_WALLET_ENABLED: self.isWalletEnabledChanged()
-      of LSS_KEY_IS_WALLET_V2_ENABLED: self.isWalletV2EnabledChanged()
       of LSS_KEY_NODE_MANAGEMENT_ENABLED: self.nodeManagementEnabledChanged()
       of LSS_KEY_IS_BROWSER_ENABLED: self.isBrowserEnabledChanged()
       of LSS_KEY_IS_ACTIVITY_CENTER_ENABLED: self.isActivityCenterEnabledChanged()

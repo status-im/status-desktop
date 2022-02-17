@@ -6,10 +6,6 @@ const WALLET_SECTION_ID* = "wallet"
 const WALLET_SECTION_NAME* = "Wallet"
 const WALLET_SECTION_ICON* = "wallet"
 
-const WALLETV2_SECTION_ID* = "walletV2"
-const WALLETV2_SECTION_NAME* = "WalletV2"
-const WALLETV2_SECTION_ICON* = "cancel"
-
 const BROWSER_SECTION_ID* = "browser"
 const BROWSER_SECTION_NAME* = "Browser"
 const BROWSER_SECTION_ICON* = "browser"
