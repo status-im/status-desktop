@@ -26,7 +26,7 @@ StatusModal {
     property var chatSectionModule
     property var store
     property bool addMembers: false
-    property int currMemberCount: 1
+    property int currMemberCount: chatContentModule.usersModule.model.count
     property int memberCount: 1
 
     property int channelType: GroupInfoPopup.ChannelType.ActiveChannel
@@ -41,8 +41,7 @@ StatusModal {
     function resetSelectedMembers() {
         contactList.selectedPubKeys = []
 
-        memberCount = popup.chatContentModule.usersModule.model.rowCount()
-        currMemberCount = memberCount
+        memberCount = popup.chatContentModule.usersModule.model.count
     }
 
     function doAddMembers() {
@@ -58,14 +57,13 @@ StatusModal {
     //% "Add members"
     header.title: addMembers ? qsTrId("add-members") : (popup.chatDetails ? popup.chatDetails.name : "")
     header.subTitle:  {
-        let cnt = memberCount;
         if (addMembers) {
             //% "%1 / 10 members"
-            return qsTrId("%1-/-10-members").arg(cnt)
+            return qsTrId("%1-/-10-members").arg(memberCount)
         } else {
             //% "%1 members"
-            if (cnt > 1) {
-                return qsTrId("%1-members").arg(cnt);
+            if (currMemberCount > 1) {
+                return qsTrId("%1-members").arg(currMemberCount);
             }
             //% "1 member"
             return qsTrId("1-member");
