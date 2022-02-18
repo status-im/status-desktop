@@ -2,6 +2,7 @@ import chronicles
 import controller_interface
 import io_interface
 
+import ../../../../../../app/global/global_singleton
 import ../../../../../../app_service/service/contacts/service as contact_service
 import ../../../../../../app_service/service/community/service as community_service
 import ../../../../../../app_service/service/chat/service as chat_service
@@ -115,6 +116,9 @@ method init*(self: Controller) =
   self.events.on(SIGNAL_CONTACT_UPDATED) do(e: Args):
     var args = ContactArgs(e)
     self.delegate.updateContactDetails(args.contactId)
+
+  self.events.on(SIGNAL_LOGGEDIN_USER_IMAGE_CHANGED) do(e: Args):
+    self.delegate.updateContactDetails(singletonInstance.userProfile.getPubKey())
 
   self.events.on(SIGNAL_MESSAGE_DELETION) do(e: Args):
     let args = MessageDeletedArgs(e)

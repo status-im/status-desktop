@@ -177,6 +177,20 @@ QtObject:
     return status_accounts.generateIdenticon(publicKey).result.getStr
 
   proc getContactById*(self: Service, id: string): ContactsDto =
+    if(id == singletonInstance.userProfile.getPubKey()):
+      # If we try to get the contact details of ourselves, just return our own info
+      return ContactsDto(
+        id: singletonInstance.userProfile.getPubKey(),
+        name: singletonInstance.userProfile.getName(),
+        identicon: singletonInstance.userProfile.getIdenticon(),
+        alias: singletonInstance.userProfile.getUsername(),
+        ensVerified: singletonInstance.userProfile.getEnsName().len > 0,
+        image: Images(
+          thumbnail: singletonInstance.userProfile.getThumbnailImage(),
+          large: singletonInstance.userProfile.getLargeImage()
+        )
+      )
+
     ## Returns contact details based on passed id (public key)
     ## If we don't have stored contact localy or in the db then we create it based on public key.
     if(self.contacts.hasKey(id)):
