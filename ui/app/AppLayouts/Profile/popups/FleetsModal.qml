@@ -61,5 +61,11 @@ ModalPopup {
             fleetName: Constants.waku_test
             buttonGroup: fleetSettings
         }
+
+        FleetRadioSelector {
+            advancedStore: popup.advancedStore
+            fleetName: Constants.status_test
+            buttonGroup: fleetSettings
+        }
     }
 }

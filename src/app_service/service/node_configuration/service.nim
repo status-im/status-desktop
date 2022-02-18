@@ -174,12 +174,16 @@ method setFleet*(self: Service, fleet: string): bool =
       newConfiguration.ClusterConfig.StoreNodes = @["enrtree://AOFTICU2XWDULNLZGRMQS4RIZPAZEHYMV4FYHAPW563HNRAOERP7C@test.waku.nodes.status.im"]
       newConfiguration.ClusterConfig.FilterNodes = @["enrtree://AOFTICU2XWDULNLZGRMQS4RIZPAZEHYMV4FYHAPW563HNRAOERP7C@test.waku.nodes.status.im"]
       newConfiguration.ClusterConfig.LightpushNodes = @["enrtree://AOFTICU2XWDULNLZGRMQS4RIZPAZEHYMV4FYHAPW563HNRAOERP7C@test.waku.nodes.status.im"]
+    of Fleet.StatusTest:
+      newConfiguration.ClusterConfig.RelayNodes = self.fleetConfiguration.getNodes(fleetType, FleetNodes.TCP_P2P_Waku)
+      newConfiguration.ClusterConfig.StoreNodes = self.fleetConfiguration.getNodes(fleetType, FleetNodes.TCP_P2P_Waku)
+      newConfiguration.ClusterConfig.FilterNodes = self.fleetConfiguration.getNodes(fleetType, FleetNodes.TCP_P2P_Waku)
+      newConfiguration.ClusterConfig.LightpushNodes = self.fleetConfiguration.getNodes(fleetType, FleetNodes.TCP_P2P_Waku)
     else:
       discard
 
-  #TODO: in the meantime we're using the go-waku test fleet for rendezvous.
-  #      once we have a prod fleet this code needs to be updated
-  newConfiguration.ClusterConfig.WakuRendezvousNodes = self.fleetConfiguration.getNodes(Fleet.GoWakuTest, FleetNodes.LibP2P)
+  # Disabling go-waku rendezvous
+  # newConfiguration.ClusterConfig.WakuRendezvousNodes = self.fleetConfiguration.getNodes(Fleet.GoWakuTest, FleetNodes.LibP2P)
   return self.saveConfiguration(newConfiguration)
 
 method getV2LightMode*(self: Service): bool =
