@@ -170,27 +170,6 @@ Page {
                             font.pixelSize: 15
                         }
 
-                        StatusBadge {
-                            id: statusBadge
-                            width: 15
-                            height: 15
-                            anchors.left: contactImage.right
-                            anchors.leftMargin: -8
-                            anchors.bottom: contactImage.bottom
-                            border.width: 3
-                            border.color: Theme.palette.statusAppNavBar.backgroundColor
-                            color: {
-                                if (model.onlineStatus === 1)
-                                    return Theme.palette.successColor1;
-                                else if (model.onlineStatus === 2)
-                                    return Theme.palette.pinColor1;
-                                else if (model.onlineStatus === 3)
-                                    return Theme.palette.dangerColor1;
-
-                                return "transparent"
-                            }
-                        }
-
                         MouseArea {
                             cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
                             acceptedButtons: Qt.LeftButton | Qt.RightButton
