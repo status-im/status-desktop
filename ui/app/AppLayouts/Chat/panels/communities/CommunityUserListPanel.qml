@@ -75,7 +75,14 @@ Item {
                 verticalAlignment: Text.AlignVCenter
                 font.pixelSize: Style.current.additionalTextSize
                 color: Theme.palette.baseColor1
-                text: model.onlineStatus === Constants.userStatus.online? qsTr("Online") : qsTr("Offline")
+                text: {
+                    switch(parseInt(section)) {
+                        case Constants.userStatus.offline: return qsTr("Offline")
+                        case Constants.userStatus.online: return qsTr("Online")
+                        case Constants.userStatus.doNotDisturb: return qsTr("Do not disturb")
+                        case Constants.userStatus.idle: return qsTr("Idle")
+                    }
+                }
             }
         }
     }
