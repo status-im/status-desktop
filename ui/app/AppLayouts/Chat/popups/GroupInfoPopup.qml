@@ -279,7 +279,7 @@ StatusModal {
 
     rightButtons: [
         StatusButton {
-            visible: !popup.addMembers
+            visible: !popup.addMembers && popup.isAdmin
             //% "Add members"
             text: qsTrId("add-members")
             onClicked: {
