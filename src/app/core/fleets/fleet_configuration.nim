@@ -8,6 +8,7 @@ type
     WakuV2Prod = "wakuv2.prod"
     WakuV2Test = "wakuv2.test"
     GoWakuTest = "go-waku.test"
+    StatusTest = "status.test"
 
   FleetNodes* {.pure.} = enum
     Bootnodes = "boot",
@@ -17,6 +18,7 @@ type
     Waku = "waku"
     LibP2P = "libp2p"
     Websocket = "websocket"
+    TCP_P2P_Waku = "tcp/p2p/waku"
 
   Meta* = object
     hostname*: string
