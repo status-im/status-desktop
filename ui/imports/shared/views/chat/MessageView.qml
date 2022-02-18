@@ -359,7 +359,7 @@ Column {
             sticker: root.sticker
             stickerPack: root.stickerPack
             isMessageActive: root.isMessageActive
-            isCurrentUser: root.amISender
+            amISender: root.amISender
             isHovered: root.isHovered
             editModeOn: root.editModeOn
             linkUrls: root.linkUrls

@@ -31,7 +31,7 @@ Item {
     property string sticker
     property int stickerPack
     property bool isMessageActive: false
-    property bool isCurrentUser: false
+    property bool amISender: false
     property bool isHovered: false
     property bool isInPinnedPopup: false
     property bool showMoreButton: {
@@ -107,7 +107,7 @@ Item {
         showMoreButton: root.showMoreButton
         isInPinnedPopup: root.isInPinnedPopup
         fromAuthor: senderId
-        editBtnActive: isText && !editModeOn && root.isCurrentUser
+        editBtnActive: isText && !editModeOn && root.amISender
         activityCenterMsg: activityCenterMessage
         placeholderMsg: placeholderMessage
         onClickMessage: {
@@ -269,7 +269,7 @@ Item {
             anchors.left: chatImage.left
             anchors.right: parent.right
             anchors.rightMargin: Style.current.padding
-            isCurrentUser: root.isCurrentUser
+            isCurrentUser: root.amISender
             longReply: active && textFieldImplicitWidth > width
             container: root.container
             chatHorizontalPadding: chatHorizontalPadding
@@ -329,7 +329,7 @@ Item {
             messageContextMenu: root.messageContextMenu
             displayName: senderDisplayName
             localName: senderLocalName
-            amISender: amISender
+            amISender: root.amISender
             onClickMessage: {
                 root.clickMessage(true, false, false, null, false, false, false, false, "")
             }
@@ -599,7 +599,7 @@ Item {
                         container: root.container
                         messageStore: root.messageStore
                         store: root.store
-                        isCurrentUser: isCurrentUser
+                        isCurrentUser: root.amISender
                     }
                 }
             }
@@ -655,7 +655,7 @@ Item {
             anchors.top: chatTime.visible ? chatTime.top : messageContent.bottom
             anchors.topMargin: chatTime.visible ? 0 : -4
             anchors.bottom: chatTime.visible ? chatTime.bottom : undefined
-            isCurrentUser: isCurrentUser
+            isCurrentUser: root.amISender
             isExpired: isExpired
             timeout: timeout
             onClicked: {
@@ -707,7 +707,7 @@ Item {
                     setHovered(messageId, hovered)
                 }
                 isMessageActive: isMessageActive
-                isCurrentUser: isCurrentUser
+                isCurrentUser: root.amISender
                 onAddEmojiClicked: {
                     root.addEmoji(false, false, false, null, true, false);
                     // Set parent, X & Y positions for the messageContextMenu

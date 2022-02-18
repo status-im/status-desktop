@@ -21,8 +21,8 @@ Item {
 
     StyledTextEdit {
         id: chatName
-        text: displayName
-        color: text.startsWith("@") || amISender || localName !== "" ? Style.current.blue : Style.current.secondaryText
+        text: root.amISender ? qsTr("You") : displayName
+        color: text.startsWith("@") || root.amISender || localName !== "" ? Style.current.blue : Style.current.secondaryText
         font.weight: Font.Medium
         font.pixelSize: Style.current.secondaryTextFontSize
         font.underline: root.isHovered
