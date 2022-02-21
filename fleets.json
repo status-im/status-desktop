@@ -63,7 +63,8 @@
             },
             "mail": {
                 "mail-01.ac-cn-hongkong-c.eth.staging": "enode://b74859176c9751d314aeeffc26ec9f866a412752e7ddec91b19018a18e7cca8d637cfe2cedcb972f8eb64d816fbd5b4e89c7e8c7fd7df8a1329fa43db80b0bfe@47.52.90.156:443",
-                "mail-01.do-ams3.eth.staging": "enode://69f72baa7f1722d111a8c9c68c39a31430e9d567695f6108f31ccb6cd8f0adff4991e7fdca8fa770e75bc8a511a87d24690cbc80e008175f40c157d6f6788d48@206.189.240.16:443"
+                "mail-01.do-ams3.eth.staging": "enode://69f72baa7f1722d111a8c9c68c39a31430e9d567695f6108f31ccb6cd8f0adff4991e7fdca8fa770e75bc8a511a87d24690cbc80e008175f40c157d6f6788d48@206.189.240.16:443",
+                "mail-01.gc-us-central1-a.eth.staging": "enode://e4fc10c1f65c8aed83ac26bc1bfb21a45cc1a8550a58077c8d2de2a0e0cd18e40fd40f7e6f7d02dc6cd06982b014ce88d6e468725ffe2c138e958788d0002a7f@35.239.193.41:443"
             },
             "rendezvous": {
                 "boot-01.ac-cn-hongkong-c.eth.staging": "/ip4/47.91.229.44/tcp/30703/ethv4/16Uiu2HAmRnt2Eyoknh3auxh4fJwkRgqkH1gqrWGes8Pk1k3MV4xu",
@@ -120,11 +121,13 @@
         "waku.connect": {
             "tcp/p2p/waku": {
                 "nim-01.ac-cn-hongkong-c.waku.connect": "/ip4/47.242.185.35/tcp/30303/p2p/16Uiu2HAm75XUMGev2Ti74G3wUzhyxCtbaDKVWzNwbq3tn5WfzRd4",
-                "nim-01.do-ams3.waku.connect": "/ip4/206.189.242.0/tcp/30303/p2p/16Uiu2HAm9VLETt1xBwDAwfKxj2XvAZDw73Bn4HQf11U26JGDxqZD"
+                "nim-01.do-ams3.waku.connect": "/ip4/206.189.242.0/tcp/30303/p2p/16Uiu2HAm9VLETt1xBwDAwfKxj2XvAZDw73Bn4HQf11U26JGDxqZD",
+                "nim-01.gc-us-central1-a.waku.connect": "/ip4/35.193.87.35/tcp/30303/p2p/16Uiu2HAmMi8xaj9W22a67shGg5wtw1nZDNtfrTPHkgKA5Uhvnvbn"
             },
             "wss/p2p/waku": {
-                "nim-01.ac-cn-hongkong-c.waku.connect": "/dns4/node-01.ac-cn-hongkong-c.waku.connect.statusim.net/tcp/443/wss/p2p/16Uiu2HAm75XUMGev2Ti74G3wUzhyxCtbaDKVWzNwbq3tn5WfzRd4",
-                "nim-01.do-ams3.waku.connect": "/dns4/node-01.do-ams3.waku.connect.statusim.net/tcp/443/wss/p2p/16Uiu2HAm9VLETt1xBwDAwfKxj2XvAZDw73Bn4HQf11U26JGDxqZD"
+                "nim-01.ac-cn-hongkong-c.waku.connect": "/dns4/nim-01.ac-cn-hongkong-c.waku.connect.statusim.net/tcp/443/wss/p2p/16Uiu2HAm75XUMGev2Ti74G3wUzhyxCtbaDKVWzNwbq3tn5WfzRd4",
+                "nim-01.do-ams3.waku.connect": "/dns4/nim-01.do-ams3.waku.connect.statusim.net/tcp/443/wss/p2p/16Uiu2HAm9VLETt1xBwDAwfKxj2XvAZDw73Bn4HQf11U26JGDxqZD",
+                "nim-01.gc-us-central1-a.waku.connect": "/dns4/nim-01.gc-us-central1-a.waku.connect.statusim.net/tcp/443/wss/p2p/16Uiu2HAmMi8xaj9W22a67shGg5wtw1nZDNtfrTPHkgKA5Uhvnvbn"
             }
         },
         "wakuv2.prod": {
@@ -154,6 +157,7 @@
     },
     "meta": {
         "hostname": "node-01.do-ams3.sites.misc",
-        "timestamp": "2022-02-18T00:00:25.551634"
+        "timestamp": "2022-02-21T14:40:19.809193",
+        "warning": "This data should only be used at build time."
     }
 }
