@@ -66,3 +66,8 @@ proc url_toLocalFile*(fileUrl: string): string =
 
 proc url_fromLocalFile*(filePath: string): string =
   result = $(dos_from_local_file(filePath.cstring))
+
+proc app_isActive*(engine: QQmlApplicationEngine): bool =
+  result = dos_app_is_active(engine.vptr)
+proc app_makeItActive*(engine: QQmlApplicationEngine) =
+  dos_app_make_it_active(engine.vptr)

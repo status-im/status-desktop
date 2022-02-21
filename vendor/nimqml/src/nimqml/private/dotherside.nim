@@ -388,3 +388,6 @@ proc dos_to_local_file(fileUrl: cstring): cstring
 
 proc dos_from_local_file(filePath: cstring): cstring
   {.cdecl, dynlib: dynLibName, importc.}
+
+proc dos_app_is_active(engine: DosQQmlApplicationEngine): bool {.cdecl, dynlib: dynLibName, importc.}
+proc dos_app_make_it_active(engine: DosQQmlApplicationEngine) {.cdecl, dynlib: dynLibName, importc.}
