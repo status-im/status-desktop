@@ -7,7 +7,7 @@ namespace Startup
 class ModuleAccessInterface
 {
 public:
-	virtual void load() = 0;
+    virtual void load() = 0;
 
     virtual void moveToAppState() = 0;
 };

@@ -1,13 +1,14 @@
 #include <QDebug>
 #include <QQmlContext>
 
+#include "accounts/module.h"
 #include "module.h"
 #include "singleton.h"
-#include "accounts/module.h"
 
 namespace Modules::Main::Wallet
 {
-Module::Module(std::shared_ptr<Wallets::ServiceInterface> walletsService, QObject *parent): QObject(parent)
+Module::Module(std::shared_ptr<Wallets::ServiceInterface> walletsService, QObject* parent)
+    : QObject(parent)
 {
     m_controllerPtr = new Controller(walletsService, this);
     m_viewPtr = new View(this);
@@ -49,7 +50,7 @@ void Module::checkIfModuleDidLoad()
 }
 
 void Module::viewDidLoad()
-{   
+{
     checkIfModuleDidLoad();
 }
 

@@ -1,11 +1,11 @@
 #ifndef WALLETACCOUNTSSERVICE_H
 #define WALLETACCOUNTSSERVICE_H
 
-#include <QString>
 #include <QMap>
+#include <QString>
 
-#include "wallet_account.h"
 #include "service_interface.h"
+#include "wallet_account.h"
 
 namespace Wallets
 {

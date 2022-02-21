@@ -8,6 +8,6 @@
 namespace Backend::Wallet::Accounts
 {
 Backend::RpcResponse<QJsonArray> getAccounts();
-} // Backend::Wallet::Accounts
+} // namespace Backend::Wallet::Accounts
 
 #endif // WALLETACCOUNT_BACKEND_H

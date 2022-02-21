@@ -14,13 +14,13 @@ namespace Login
 class ControllerInterface
 {
 public:
-	virtual void init() = 0;
+    virtual void init() = 0;
 
-	virtual QVector<Accounts::AccountDto> getOpenedAccounts() = 0;
+    virtual QVector<Accounts::AccountDto> getOpenedAccounts() = 0;
 
-	virtual void setSelectedAccountKeyUid(QString keyUid) = 0;
+    virtual void setSelectedAccountKeyUid(QString keyUid) = 0;
 
-	virtual void login(QString password) = 0;
+    virtual void login(QString password) = 0;
 };
 } // namespace Login
 } // namespace Startup

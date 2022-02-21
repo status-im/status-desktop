@@ -1,17 +1,20 @@
 #include "StatusWindow.h"
 
-StatusWindow::StatusWindow(QWindow *parent)
-: QQuickWindow(parent),
-  m_isFullScreen(false)
+StatusWindow::StatusWindow(QWindow* parent)
+    : QQuickWindow(parent)
+    , m_isFullScreen(false)
 {
     removeTitleBar();
 
     connect(this, &QQuickWindow::windowStateChanged, [&](Qt::WindowState windowState) {
-        if (windowState == Qt::WindowNoState) {
+        if(windowState == Qt::WindowNoState)
+        {
             removeTitleBar();
             m_isFullScreen = false;
             emit isFullScreenChanged();
-        } else if (windowState == Qt::WindowFullScreen) {
+        }
+        else if(windowState == Qt::WindowFullScreen)
+        {
             m_isFullScreen = true;
             emit isFullScreenChanged();
             showTitleBar();
@@ -21,14 +24,17 @@ StatusWindow::StatusWindow(QWindow *parent)
 
 void StatusWindow::toggleFullScreen()
 {
-    if (m_isFullScreen) {
+    if(m_isFullScreen)
+    {
         showNormal();
-    } else {
+    }
+    else
+    {
         showFullScreen();
     }
 }
 
 bool StatusWindow::isFullScreen() const
 {
-	return m_isFullScreen;
+    return m_isFullScreen;
 }

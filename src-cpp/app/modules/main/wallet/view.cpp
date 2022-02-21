@@ -6,8 +6,7 @@ namespace Modules::Main::Wallet
 {
 View::View(QObject* parent)
     : QObject(parent)
-{
-}
+{ }
 
 void View::load()
 {

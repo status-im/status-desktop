@@ -18,31 +18,31 @@ namespace Modules
 namespace Startup
 {
 class Module : public ModuleAccessInterface,
-			   ModuleOnboardingDelegateInterface,
-			   ModuleLoginDelegateInterface,
-			   ModuleControllerDelegateInterface,
-			   ModuleViewDelegateInterface
+               ModuleOnboardingDelegateInterface,
+               ModuleLoginDelegateInterface,
+               ModuleControllerDelegateInterface,
+               ModuleViewDelegateInterface
 {
 private:
-	AppControllerDelegate* m_delegate;
-	View* m_view;
-	Controller* m_controller;
+    AppControllerDelegate* m_delegate;
+    View* m_view;
+    Controller* m_controller;
 
-	Modules::Startup::Onboarding::ModuleAccessInterface* m_onboardingModule;
-	Modules::Startup::Login::ModuleAccessInterface* m_loginModule;
+    Modules::Startup::Onboarding::ModuleAccessInterface* m_onboardingModule;
+    Modules::Startup::Login::ModuleAccessInterface* m_loginModule;
 
 public:
-	Module(AppControllerDelegate* delegate,
-		   /*keychainService,*/ Accounts::ServiceInterface* accountsService);
-	~Module();
-	void load() override;
-	void checkIfModuleDidLoad();
-	void viewDidLoad() override;
-	void onboardingDidLoad();
-	void loginDidLoad();
-	void userLoggedIn() override;
-	void moveToAppState() override;
-	void emitLogOut() override;
+    Module(AppControllerDelegate* delegate,
+           /*keychainService,*/ Accounts::ServiceInterface* accountsService);
+    ~Module();
+    void load() override;
+    void checkIfModuleDidLoad();
+    void viewDidLoad() override;
+    void onboardingDidLoad();
+    void loginDidLoad();
+    void userLoggedIn() override;
+    void moveToAppState() override;
+    void emitLogOut() override;
 };
 }; // namespace Startup
 }; // namespace Modules

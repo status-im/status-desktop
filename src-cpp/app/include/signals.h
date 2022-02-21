@@ -11,49 +11,49 @@ Q_NAMESPACE
 
 enum SignalType
 {
-	Unknown,
-	NodeLogin,
-	NodeReady,
-	NodeStarted,
-	NodeStopped,
-	NodeCrashed
+    Unknown,
+    NodeLogin,
+    NodeReady,
+    NodeStarted,
+    NodeStopped,
+    NodeCrashed
 };
 
 Q_ENUM_NS(SignalType)
 
 struct Signal
 {
-	SignalType signalType;
+    SignalType signalType;
 };
 
 struct NodeSignal : Signal
 {
-	QString error;
+    QString error;
 };
 
 class Manager : public QObject
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	static Manager* instance();
+    static Manager* instance();
 
 signals:
-	void signal(SignalType signal);
+    void signal(SignalType signal);
 
-	void nodeReady(NodeSignal signal);
-	void nodeStarted(NodeSignal signal);
-	void nodeStopped(NodeSignal signal);
-	void nodeLogin(NodeSignal signal);
-	void nodeCrashed(NodeSignal signal);
+    void nodeReady(NodeSignal signal);
+    void nodeStarted(NodeSignal signal);
+    void nodeStopped(NodeSignal signal);
+    void nodeLogin(NodeSignal signal);
+    void nodeCrashed(NodeSignal signal);
 
 private:
-	static Manager* theInstance;
-	explicit Manager(QObject* parent = nullptr);
-	static std::map<QString, SignalType> signalMap;
-	static void signalCallback(const char* data);
-	void processSignal(QString ev);
-	void decode(const QJsonObject& signalEvent);
+    static Manager* theInstance;
+    explicit Manager(QObject* parent = nullptr);
+    static std::map<QString, SignalType> signalMap;
+    static void signalCallback(const char* data);
+    void processSignal(QString ev);
+    void decode(const QJsonObject& signalEvent);
 };
 
 } // namespace Signals

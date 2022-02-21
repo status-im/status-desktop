@@ -20,7 +20,8 @@ Model* View::getModel()
     return m_modelPtr;
 }
 
-void View::setModelItems(QVector<Item> &accounts) {
+void View::setModelItems(QVector<Item>& accounts)
+{
     m_modelPtr->setItems(accounts);
     modelChanged();
 }

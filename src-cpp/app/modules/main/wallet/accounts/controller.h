@@ -3,10 +3,10 @@
 
 #include <QObject>
 
-#include "wallet_accounts/wallet_account.h"
-#include "wallet_accounts/service_interface.h"
 #include "interfaces/controller_interface.h"
 #include "signals.h"
+#include "wallet_accounts/service_interface.h"
+#include "wallet_accounts/wallet_account.h"
 
 namespace Modules::Main::Wallet::Accounts
 {

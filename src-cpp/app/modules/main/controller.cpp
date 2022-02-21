@@ -2,7 +2,7 @@
 
 #include "controller.h"
 
-namespace Modules:: Main
+namespace Modules::Main
 {
 Controller::Controller(QObject* parent)
     : QObject(parent)

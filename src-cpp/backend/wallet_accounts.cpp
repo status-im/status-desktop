@@ -2,9 +2,9 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 
-#include "backend/wallet_accounts.h"
 #include "backend/types.h"
 #include "backend/utils.h"
+#include "backend/wallet_accounts.h"
 #include "libstatus.h"
 
 namespace Backend::Wallet::Accounts
@@ -16,6 +16,4 @@ RpcResponse<QJsonArray> getAccounts()
     return RpcResponse<QJsonArray>(result, QJsonDocument::fromJson(result)["result"].toArray());
 }
 
-
 } // namespace Backend::Wallet::Accounts
-

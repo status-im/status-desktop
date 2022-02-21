@@ -6,7 +6,8 @@
 
 namespace Modules::Main::Wallet::Accounts
 {
-Module::Module(std::shared_ptr<Wallets::ServiceInterface> walletsService, QObject *parent): QObject(parent)
+Module::Module(std::shared_ptr<Wallets::ServiceInterface> walletsService, QObject* parent)
+    : QObject(parent)
 {
     m_controllerPtr = new Controller(walletsService, this);
     m_viewPtr = new View(this);
@@ -49,14 +50,15 @@ void Module::refreshWalletAccounts()
         QVector<Item> items;
         foreach(const auto& acc, walletAccounts)
         {
-            items << Item(acc.name, acc.address, acc.path, acc.color, acc.publicKey, acc.walletType, acc.isWallet, acc.isChat, 0);
+            items << Item(
+                acc.name, acc.address, acc.path, acc.color, acc.publicKey, acc.walletType, acc.isWallet, acc.isChat, 0);
         }
 
         m_viewPtr->setModelItems(items);
     }
     else
     {
-        qWarning()<<"No accounts found!";
+        qWarning() << "No accounts found!";
     }
 }
 } // namespace Modules::Main::Wallet::Accounts

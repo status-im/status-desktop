@@ -34,7 +34,7 @@ public:
     QHash<int, QByteArray> roleNames() const override;
     int rowCount(const QModelIndex&) const override;
     QVariant data(const QModelIndex& index, int role) const override;
-    void setItems(QVector<Item> &items);
+    void setItems(QVector<Item>& items);
 
 private:
     QVector<Item> m_items;

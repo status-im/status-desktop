@@ -1,42 +1,42 @@
 #pragma once
 
-#include <QString>
 #include <QJsonDocument>
+#include <QString>
 
 namespace Accounts
 {
 class DerivedAccountDetails
 {
 public:
-	QString publicKey;
-	QString address;
-	QString derivationPath;
+    QString publicKey;
+    QString address;
+    QString derivationPath;
 };
 
 class DerivedAccounts
 {
 public:
-	DerivedAccountDetails whisper;
-	DerivedAccountDetails walletRoot;
-	DerivedAccountDetails defaultWallet;
-	DerivedAccountDetails eip1581;
+    DerivedAccountDetails whisper;
+    DerivedAccountDetails walletRoot;
+    DerivedAccountDetails defaultWallet;
+    DerivedAccountDetails eip1581;
 };
 
 class GeneratedAccountDto
 {
 public:
-	QString id;
-	QString publicKey;
-	QString address;
-	QString keyUid;
-	QString mnemonic;
-	DerivedAccounts derivedAccounts;
+    QString id;
+    QString publicKey;
+    QString address;
+    QString keyUid;
+    QString mnemonic;
+    DerivedAccounts derivedAccounts;
 
-	// The following two are set additionally.
-	QString alias;
-	QString identicon;
+    // The following two are set additionally.
+    QString alias;
+    QString identicon;
 
-	bool isValid();
+    bool isValid();
 };
 
 DerivedAccountDetails toDerivedAccountDetails(const QJsonValue jsonObj, QString derivationPath);

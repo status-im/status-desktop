@@ -9,9 +9,9 @@ namespace Login
 class ModuleAccessInterface
 {
 public:
-	virtual void load() = 0;
+    virtual void load() = 0;
 
-	virtual bool isLoaded() = 0;
+    virtual bool isLoaded() = 0;
 };
 }; // namespace Login
 }; // namespace Startup

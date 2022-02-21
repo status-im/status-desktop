@@ -9,26 +9,26 @@ namespace Accounts
 class Image
 {
 public:
-	QString keyUid;
-	QString imgType;
-	QString uri;
-	int width;
-	int height;
-	int fileSize;
-	int resizeTarget;
+    QString keyUid;
+    QString imgType;
+    QString uri;
+    int width;
+    int height;
+    int fileSize;
+    int resizeTarget;
 };
 
 class AccountDto
 {
 public:
-	QString name;
-	long timestamp;
-	QString identicon;
-	QString keycardPairing;
-	QString keyUid;
-	QVector<Image> images;
+    QString name;
+    long timestamp;
+    QString identicon;
+    QString keycardPairing;
+    QString keyUid;
+    QVector<Image> images;
 
-	bool isValid();
+    bool isValid();
 };
 
 Image toImage(const QJsonValue jsonObj);

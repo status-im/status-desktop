@@ -7,7 +7,7 @@ namespace Startup
 class ModuleViewDelegateInterface
 {
 public:
-	virtual void viewDidLoad() = 0;
+    virtual void viewDidLoad() = 0;
 };
 }; // namespace Startup
 }; // namespace Modules

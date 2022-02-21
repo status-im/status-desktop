@@ -3,12 +3,12 @@
 
 #include <QObject>
 
-#include "accounts/service.h"
-#include "wallet_accounts/service.h"
 #include "../modules/main/interfaces/module_access_interface.h"
 #include "../modules/startup/module_access_interface.h"
+#include "accounts/service.h"
 #include "app_controller_delegate.h"
 #include "app_service.h"
+#include "wallet_accounts/service.h"
 
 class AppController : public QObject, AppControllerDelegate
 {
@@ -37,6 +37,7 @@ public:
     void start();
 public slots:
     void mainDidLoad();
+
 private:
     void connect();
     void startupDidLoad() override;

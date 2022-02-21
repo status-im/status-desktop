@@ -8,13 +8,13 @@ namespace Global
 class Singleton
 {
 public:
-	QQmlApplicationEngine* engine();
-	static Singleton* instance();
+    QQmlApplicationEngine* engine();
+    static Singleton* instance();
 
 private:
-	static Singleton* theInstance;
-	explicit Singleton();
-	QQmlApplicationEngine* m_engine;
+    static Singleton* theInstance;
+    explicit Singleton();
+    QQmlApplicationEngine* m_engine;
 };
 
 } // namespace Global

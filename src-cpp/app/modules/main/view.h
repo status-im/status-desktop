@@ -19,7 +19,7 @@ public:
     ~View() = default;
     void load();
 
-    void addItem(Shared::Models::SectionItem *item);
+    void addItem(Shared::Models::SectionItem* item);
 
     Shared::Models::SectionModel* getSectionsModel();
     Shared::Models::SectionItem* getActiveSection();
@@ -36,4 +36,3 @@ private:
 } // namespace Modules::Main
 
 #endif // VIEW_H
-

@@ -10,9 +10,9 @@ namespace Startup
 class ControllerInterface
 {
 public:
-	virtual void init() = 0;
+    virtual void init() = 0;
 
-	virtual bool shouldStartWithOnboardingScreen() = 0;
+    virtual bool shouldStartWithOnboardingScreen() = 0;
 };
 } // namespace Startup
 } // namespace Modules

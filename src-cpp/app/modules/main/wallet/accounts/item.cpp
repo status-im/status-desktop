@@ -2,16 +2,24 @@
 
 namespace Modules::Main::Wallet::Accounts
 {
-Item::Item(QString name, QString address, QString path, QString color, QString publicKey, QString walletType, bool isWallet, bool isChat, float currencyBalance)
-    : m_name(name),
-      m_address(address),
-      m_path(path),
-      m_color(color),
-      m_publicKey(publicKey),
-      m_walletType(walletType),
-      m_isWallet(isWallet),
-      m_isChat(isChat),
-      m_currencyBalance(currencyBalance)
+Item::Item(QString name,
+           QString address,
+           QString path,
+           QString color,
+           QString publicKey,
+           QString walletType,
+           bool isWallet,
+           bool isChat,
+           float currencyBalance)
+    : m_name(name)
+    , m_address(address)
+    , m_path(path)
+    , m_color(color)
+    , m_publicKey(publicKey)
+    , m_walletType(walletType)
+    , m_isWallet(isWallet)
+    , m_isChat(isChat)
+    , m_currencyBalance(currencyBalance)
 { }
 
 const QString& Item::getName() const
@@ -54,7 +62,7 @@ bool Item::getIsChat() const
     return m_isChat;
 }
 
-float  Item::getCurrencyBalance() const
+float Item::getCurrencyBalance() const
 {
     return m_currencyBalance;
 }
