@@ -118,15 +118,17 @@ Rectangle {
         }
     }
 
+    property var mentionsPos: []
+
     function insertMention(aliasName, lastAtPosition, lastCursorPosition) {
         const hasEmoji = Emoji.hasEmoji(messageInputField.text)
-        const spanPlusAlias = `${Constants.mentionSpanTag}@${aliasName}</span> `
+        const spanPlusAlias = `${Constants.mentionSpanTag}@${aliasName}</a></span> `
 
         let rightIndex = hasEmoji ? lastCursorPosition + 2 : lastCursorPosition
-
         messageInputField.remove(lastAtPosition, rightIndex)
         messageInputField.insert(lastAtPosition, spanPlusAlias)
-        messageInputField.cursorPosition = lastAtPosition + aliasName.length + 2
+        messageInputField.cursorPosition = lastAtPosition + aliasName.length + 2;
+        mentionsPos.push({"leftIndex":lastAtPosition, "rightIndex": (messageInputField.cursorPosition-1)});
 
         if (messageInputField.cursorPosition === 0) {
             // It reset to 0 for some reason, go back to the end
@@ -161,7 +163,7 @@ Rectangle {
         return false
     }
 
-    function onKeyPress(event){
+    function onKeyPress(event) {
         if (event.modifiers === Qt.NoModifier && (event.key === Qt.Key_Enter || event.key === Qt.Key_Return)) {
             if (checkTextInsert()) {
                 event.accepted = true;
@@ -225,15 +227,10 @@ Rectangle {
         }
 
         if (event.key === Qt.Key_Down) {
-            suggestionsBox.listView.incrementCurrentIndex()
             return emojiSuggestions.listView.incrementCurrentIndex()
         }
         if (event.key === Qt.Key_Up) {
-            suggestionsBox.listView.decrementCurrentIndex()
             return emojiSuggestions.listView.decrementCurrentIndex()
-        }
-        if (event.key === Qt.Key_Escape) {
-            suggestionsBox.hide()
         }
 
         isColonPressed = (event.key === Qt.Key_Colon) && (event.modifiers & Qt.ShiftModifier);
@@ -250,6 +247,21 @@ Rectangle {
                 messageInputField.remove(lastAtPosition, lastCursorPosition);
                 messageInputField.insert(lastAtPosition, plainTextToReplace);
                 suggestionsBox.hide();
+            }
+        }
+
+        if (mentionsPos.length > 0) {
+            for (var i = 0; i < mentionsPos.length; i++) {
+                if ((messageInputField.cursorPosition === mentionsPos[i].leftIndex) && (event.key === Qt.Key_Right)) {
+                    messageInputField.cursorPosition = mentionsPos[i].rightIndex;
+                } else if ((messageInputField.cursorPosition === mentionsPos[i].rightIndex)) {
+                    if ((event.key === Qt.Key_Backspace || event.key === Qt.Key_Delete)) {
+                        messageInputField.remove(mentionsPos[i].rightIndex, mentionsPos[i].leftIndex);
+                        mentionsPos.pop(i);
+                    } else if (event.key === Qt.Key_Left) {
+                        messageInputField.cursorPosition = mentionsPos[i].leftIndex;
+                    }
+                }
             }
         }
     }
@@ -646,10 +658,17 @@ Rectangle {
         filter: messageInputField.text
         cursorPosition: messageInputField.cursorPosition
         property: ["name", "nickname", "ensName", "alias"]
+        inputField: messageInputField
         onItemSelected: function (item, lastAtPosition, lastCursorPosition) {
+            messageInputField.forceActiveFocus();
             let name = item.name.replace("@", "")
             insertMention(name, lastAtPosition, lastCursorPosition)
             suggestionsBox.suggestionsModel.clear()
+        }
+        onVisibleChanged: {
+            if (!visible) {
+                messageInputField.forceActiveFocus();
+            }
         }
     }
 
@@ -949,7 +968,12 @@ Rectangle {
                 StatusSyntaxHighlighter {
                    quickTextDocument: messageInputField.textDocument
                 }
-
+                MouseArea {
+                    anchors.fill: parent
+                    acceptedButtons: Qt.NoButton
+                    enabled: parent.hoveredLink
+                    cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
+                }
                 StatusTextFormatMenu {
                     id: textFormatMenu
 

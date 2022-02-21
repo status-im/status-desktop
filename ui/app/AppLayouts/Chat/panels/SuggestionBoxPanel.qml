@@ -43,6 +43,7 @@ Rectangle {
     property int cursorPosition
     signal itemSelected(var item, int lastAtPosition, int lastCursorPosition)
     property alias listView: listView
+    property var inputField
     property bool shouldHide: false
 
     Timer {
@@ -76,6 +77,9 @@ Rectangle {
             // If the previous selection was made using the mouse, the currentIndex was changed to -1
             // We change it back to 0 so that it can be used to select using the keyboard
             listView.currentIndex = 0
+        }
+        if (visible) {
+            listView.forceActiveFocus();
         }
     }
 
@@ -122,7 +126,17 @@ Rectangle {
         anchors.rightMargin: Style.current.halfPadding
         anchors.bottomMargin: Style.current.halfPadding
         clip: true
-
+        Keys.priority: Keys.AfterItem
+        Keys.forwardTo: container.inputField
+        Keys.onPressed: {
+            if (event.key === Qt.Key_Enter || event.key === Qt.Key_Return) {
+                container.itemSelected(mentionsListDelegate.items.get(listView.currentIndex).model, filterItem.lastAtPosition, filterItem.cursorPosition)
+            } else if (event.key === Qt.Key_Escape) {
+                container.hide();
+            } else if (event.key !== Qt.Key_Up && event.key !== Qt.Key_Down) {
+                event.accepted = false;
+            }
+        }
         property int selectedIndex
         property var selectedItem: selectedIndex == -1 ? null : model[selectedIndex]
         signal suggestionClicked(var item)
