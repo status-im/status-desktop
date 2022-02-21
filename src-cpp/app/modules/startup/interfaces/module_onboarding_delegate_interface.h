@@ -7,7 +7,7 @@ namespace Startup
 class ModuleOnboardingDelegateInterface
 {
 public:
-	virtual void onboardingDidLoad() = 0;
+    virtual void onboardingDidLoad() = 0;
 };
 }; // namespace Startup
 }; // namespace Modules

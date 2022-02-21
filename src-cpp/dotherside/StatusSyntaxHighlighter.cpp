@@ -1,52 +1,54 @@
 #include "StatusSyntaxHighlighter.h"
 #include <QQuickTextDocument>
 
-StatusSyntaxHighlighter::StatusSyntaxHighlighter(QTextDocument *parent)
+StatusSyntaxHighlighter::StatusSyntaxHighlighter(QTextDocument* parent)
     : QSyntaxHighlighter(parent)
 {
     HighlightingRule rule;
 
-//BOLD
+    //BOLD
     singlelineBoldFormat.setFontWeight(QFont::Bold);
     rule.pattern = QRegularExpression(QStringLiteral("\\*\\*(.*?)\\*\\*"));
     rule.format = singlelineBoldFormat;
     highlightingRules.append(rule);
-//BOLD
+    //BOLD
 
-//ITALIC
+    //ITALIC
     singleLineItalicFormat.setFontItalic(true);
     rule.pattern = QRegularExpression(QStringLiteral("\\*(.*?)\\*"));
     rule.format = singleLineItalicFormat;
     highlightingRules.append(rule);
-//ITALIC
+    //ITALIC
 
-//CODE
+    //CODE
     singlelineCodeBlockFormat.setFontFamily("Roboto Mono");
     rule.pattern = QRegularExpression(QStringLiteral("\\`(.*?)\\`"));
     rule.format = singlelineCodeBlockFormat;
     highlightingRules.append(rule);
-//CODE
+    //CODE
 
-//STRIKETHROUGH
+    //STRIKETHROUGH
     singleLineStrikeThroughFormat.setFontStrikeOut(true);
     rule.pattern = QRegularExpression(QStringLiteral("\\~+(.*?)\\~+"));
     rule.format = singleLineStrikeThroughFormat;
     highlightingRules.append(rule);
-//STRIKETHROUGH
+    //STRIKETHROUGH
 
-//CODE BLOCK
+    //CODE BLOCK
     multiLineCodeBlockFormat.setFontFamily("Roboto Mono");
     rule.pattern = QRegularExpression(QStringLiteral("\\`\\`\\`(.*?)\\`\\`\\`"));
     rule.format = multiLineCodeBlockFormat;
     highlightingRules.append(rule);
-//CODE BLOCK
+    //CODE BLOCK
 }
 
-void StatusSyntaxHighlighter::highlightBlock(const QString &text)
+void StatusSyntaxHighlighter::highlightBlock(const QString& text)
 {
-    for (const HighlightingRule &rule : qAsConst(highlightingRules)) {
+    for(const HighlightingRule& rule : qAsConst(highlightingRules))
+    {
         QRegularExpressionMatchIterator matchIterator = rule.pattern.globalMatch(text);
-        while (matchIterator.hasNext()) {
+        while(matchIterator.hasNext())
+        {
             QRegularExpressionMatch match = matchIterator.next();
             setFormat(match.capturedStart(), match.capturedLength(), rule.format);
         }
@@ -54,14 +56,16 @@ void StatusSyntaxHighlighter::highlightBlock(const QString &text)
     setCurrentBlockState(0);
 }
 
-QQuickTextDocument *StatusSyntaxHighlighterHelper::quickTextDocument() const {
+QQuickTextDocument* StatusSyntaxHighlighterHelper::quickTextDocument() const
+{
     return m_quicktextdocument;
 }
 
-void StatusSyntaxHighlighterHelper::setQuickTextDocument(
-        QQuickTextDocument *quickTextDocument) {
+void StatusSyntaxHighlighterHelper::setQuickTextDocument(QQuickTextDocument* quickTextDocument)
+{
     m_quicktextdocument = quickTextDocument;
-    if (m_quicktextdocument) {
+    if(m_quicktextdocument)
+    {
         new StatusSyntaxHighlighter(m_quicktextdocument->textDocument());
     }
 }

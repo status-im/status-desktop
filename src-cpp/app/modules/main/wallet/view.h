@@ -21,4 +21,3 @@ signals:
 } // namespace Modules::Main::Wallet
 
 #endif // WALLET_VIEW_H
-

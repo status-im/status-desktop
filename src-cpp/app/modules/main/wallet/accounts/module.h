@@ -3,10 +3,10 @@
 
 #include <QObject>
 
-#include "wallet_accounts/service_interface.h"
-#include "interfaces/module_access_interface.h"
 #include "controller.h"
+#include "interfaces/module_access_interface.h"
 #include "view.h"
+#include "wallet_accounts/service_interface.h"
 
 namespace Modules::Main::Wallet::Accounts
 {
@@ -23,6 +23,7 @@ private:
 
     void connect();
     void refreshWalletAccounts();
+
 public:
     explicit Module(std::shared_ptr<Wallets::ServiceInterface> walletsService, QObject* parent);
     ~Module() = default;

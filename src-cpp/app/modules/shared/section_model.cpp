@@ -73,7 +73,8 @@ QVariant SectionModel::data(const QModelIndex& index, int role) const
     case CanManageUsers: return QVariant(item->getCanManageUsers());
     case CanRequestAccess: return QVariant(item->getCanRequestAccess());
     case Access: return QVariant(item->getAccess());
-    case EnsOnly: return QVariant(item->getIsEnsOnly());
+    case EnsOnly:
+        return QVariant(item->getIsEnsOnly());
         // To Do
     case MembersModel: return QVariant();
     case PendingRequestsToJoinModel: return QVariant();
@@ -89,18 +90,18 @@ void SectionModel::addItem(SectionItem* item)
     endInsertRows();
 }
 
-void SectionModel::setActiveSection(const QString &Id)
+void SectionModel::setActiveSection(const QString& Id)
 {
 
-    for (int i = 0; i < m_items.size(); ++i) {
+    for(int i = 0; i < m_items.size(); ++i)
+    {
         auto newIndex = createIndex(i, 0, nullptr);
         if(m_items.at(i)->getIsActive())
         {
             m_items.at(i)->setIsActive(false);
             dataChanged(newIndex, newIndex, QVector<int>(ModelRole::Active));
-
         }
-        if (m_items.at(i)->getId() == Id)
+        if(m_items.at(i)->getId() == Id)
         {
             m_items.at(i)->setIsActive(true);
             dataChanged(newIndex, newIndex, QVector<int>(ModelRole::Active));
@@ -115,10 +116,10 @@ QPointer<SectionItem> SectionModel::getActiveItem()
     {
         if(item->getIsActive())
         {
-           activeItem = item;
-           break;
+            activeItem = item;
+            break;
         }
     }
-   return activeItem;
+    return activeItem;
 }
 } // namespace Shared::Models

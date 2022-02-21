@@ -14,19 +14,19 @@ namespace Onboarding
 class ControllerInterface
 {
 public:
-	virtual void init() = 0;
-	
-	virtual QVector<Accounts::GeneratedAccountDto> getGeneratedAccounts() = 0;
-	
-	virtual void setSelectedAccountByIndex(int index) = 0;
-	
-	virtual void storeSelectedAccountAndLogin(QString password) = 0;
-	
-	virtual Accounts::GeneratedAccountDto getImportedAccount() = 0;
-	
-	virtual QString validateMnemonic(QString mnemonic) = 0;
-	
-	virtual void importMnemonic(QString mnemonic) = 0;
+    virtual void init() = 0;
+
+    virtual QVector<Accounts::GeneratedAccountDto> getGeneratedAccounts() = 0;
+
+    virtual void setSelectedAccountByIndex(int index) = 0;
+
+    virtual void storeSelectedAccountAndLogin(QString password) = 0;
+
+    virtual Accounts::GeneratedAccountDto getImportedAccount() = 0;
+
+    virtual QString validateMnemonic(QString mnemonic) = 0;
+
+    virtual void importMnemonic(QString mnemonic) = 0;
 };
 } // namespace Onboarding
 } // namespace Startup

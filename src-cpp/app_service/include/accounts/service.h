@@ -12,61 +12,61 @@ namespace Accounts
 class Service : public ServiceInterface
 {
 private:
-	QVector<GeneratedAccountDto> m_generatedAccounts;
+    QVector<GeneratedAccountDto> m_generatedAccounts;
 
-	bool m_isFirstTimeAccountLogin;
-	AccountDto m_loggedInAccount;
-	GeneratedAccountDto m_importedAccount;
+    bool m_isFirstTimeAccountLogin;
+    AccountDto m_loggedInAccount;
+    GeneratedAccountDto m_importedAccount;
 
 public:
-	Service();
+    Service();
 
-	void init() override;
+    void init() override;
 
-	virtual QVector<AccountDto> openedAccounts() override;
+    virtual QVector<AccountDto> openedAccounts() override;
 
-	QVector<GeneratedAccountDto> generatedAccounts() override;
+    QVector<GeneratedAccountDto> generatedAccounts() override;
 
-	bool setupAccount(QString accountId, QString password) override;
+    bool setupAccount(QString accountId, QString password) override;
 
-	AccountDto getLoggedInAccount() override;
+    AccountDto getLoggedInAccount() override;
 
-	GeneratedAccountDto getImportedAccount() override;
+    GeneratedAccountDto getImportedAccount() override;
 
-	bool isFirstTimeAccountLogin() override;
+    bool isFirstTimeAccountLogin() override;
 
-	QString validateMnemonic(QString mnemonic) override;
+    QString validateMnemonic(QString mnemonic) override;
 
-	bool importMnemonic(QString mnemonic) override;
+    bool importMnemonic(QString mnemonic) override;
 
-	QString login(AccountDto account, QString password) override;
+    QString login(AccountDto account, QString password) override;
 
-	void clear() override;
+    void clear() override;
 
-	QString generateAlias(QString publicKey) override;
+    QString generateAlias(QString publicKey) override;
 
-	QString generateIdenticon(QString publicKey) override;
+    QString generateIdenticon(QString publicKey) override;
 
-	bool verifyAccountPassword(QString account, QString password) override;
+    bool verifyAccountPassword(QString account, QString password) override;
 
-	DerivedAccounts storeDerivedAccounts(QString accountId, QString hashedPassword, QVector<QString> paths);
+    DerivedAccounts storeDerivedAccounts(QString accountId, QString hashedPassword, QVector<QString> paths);
 
-	QJsonObject getAccountDataForAccountId(QString accountId);
+    QJsonObject getAccountDataForAccountId(QString accountId);
 
-	QJsonArray getSubaccountDataForAccountId(QString accountId);
+    QJsonArray getSubaccountDataForAccountId(QString accountId);
 
-	QJsonObject getAccountSettings(QString accountId, QString installationId);
+    QJsonObject getAccountSettings(QString accountId, QString installationId);
 
-	QJsonObject getDefaultNodeConfig(QString installationId);
+    QJsonObject getDefaultNodeConfig(QString installationId);
 
-	QJsonObject prepareAccountJsonObject(const GeneratedAccountDto account);
+    QJsonObject prepareAccountJsonObject(const GeneratedAccountDto account);
 
-	QJsonArray prepareSubaccountJsonObject(GeneratedAccountDto account);
+    QJsonArray prepareSubaccountJsonObject(GeneratedAccountDto account);
 
-	QJsonObject prepareAccountSettingsJsonObject(const GeneratedAccountDto account, QString installationId);
+    QJsonObject prepareAccountSettingsJsonObject(const GeneratedAccountDto account, QString installationId);
 
-	AccountDto saveAccountAndLogin(
-		QString hashedPassword, QJsonObject account, QJsonArray subaccounts, QJsonObject settings, QJsonObject config);
+    AccountDto saveAccountAndLogin(
+        QString hashedPassword, QJsonObject account, QJsonArray subaccounts, QJsonObject settings, QJsonObject config);
 };
 
 } // namespace Accounts

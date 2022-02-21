@@ -28,13 +28,11 @@ const QString Websocket = "websocket";
 const QString DefaultNetworkName = "mainnet_rpc";
 //const DEFAULT_NETWORKS_IDS* = @["mainnet_rpc", "testnet_rpc", "rinkeby_rpc", "goerli_rpc", "xdai_rpc", "poa_rpc" ]
 
-
 const QString DataDir = "/data";
 const QString Keystore = "/data/keystore";
 
 QString applicationPath(QString path = "");
 QString tmpPath(QString path = "");
 QString cachePath(QString path = "");
-
 
 } // namespace Constants

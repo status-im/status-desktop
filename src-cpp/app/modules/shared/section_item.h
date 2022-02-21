@@ -15,7 +15,7 @@ enum SectionType
     ProfileSettings,
     NodeManagement
 };
-class SectionItem: public QObject
+class SectionItem : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QString id READ getId)
@@ -51,7 +51,7 @@ public:
                 bool amISectionAdmin = false,
                 bool hasNotification = false,
                 int notificationsCount = 0,
-                bool isMember  = false,
+                bool isMember = false,
                 bool joined = false,
                 bool canJoin = false,
                 bool canManageUsers = false,

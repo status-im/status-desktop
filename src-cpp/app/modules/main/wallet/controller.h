@@ -3,9 +3,9 @@
 
 #include <QObject>
 
-#include "wallet_accounts/service_interface.h"
 #include "interfaces/controller_interface.h"
 #include "signals.h"
+#include "wallet_accounts/service_interface.h"
 
 namespace Modules::Main::Wallet
 {

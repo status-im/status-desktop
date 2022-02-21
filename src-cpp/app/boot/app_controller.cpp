@@ -1,8 +1,8 @@
 #include "app_controller.h"
 #include "accounts/service.h"
 #include "app_service.h"
-#include "modules/startup/module.h"
 #include "modules/main/module.h"
+#include "modules/startup/module.h"
 #include <QDebug>
 
 AppController::AppController()
@@ -68,32 +68,32 @@ AppController::AppController()
     m_startupModule = new Modules::Startup::Module(this, /*keychainService,*/ m_accountsService);
 
     m_mainModulePtr = new Modules::Main::Module(m_walletServicePtr, this);
-                                                              // statusFoundation.status.events,
-                                                              // result.keychainService,
-                                                              // result.accountsService,
-                                                              // result.chatService,
-                                                              // result.communityService,
-                                                              // result.messageService,
-                                                              // result.tokenService,
-                                                              // result.transactionService,
-                                                              // result.collectibleService,
-                                                              // result.walletAccountService,
-                                                              // result.bookmarkService,
-                                                              // result.profileService,
-                                                              // result.settingsService,
-                                                              // result.contactsService,
-                                                              // result.aboutService,
-                                                              // result.dappPermissionsService,
-                                                              // result.languageService,
-                                                              // # result.mnemonicService,
-                                                              // result.privacyService,
-                                                              // result.providerService,
-                                                              // result.stickersService,
-                                                              // result.activityCenterService,
-                                                              // result.savedAddressService,
-                                                              // result.nodeConfigurationService,
-                                                              // result.devicesService,
-                                                              // result.mailserversService
+    // statusFoundation.status.events,
+    // result.keychainService,
+    // result.accountsService,
+    // result.chatService,
+    // result.communityService,
+    // result.messageService,
+    // result.tokenService,
+    // result.transactionService,
+    // result.collectibleService,
+    // result.walletAccountService,
+    // result.bookmarkService,
+    // result.profileService,
+    // result.settingsService,
+    // result.contactsService,
+    // result.aboutService,
+    // result.dappPermissionsService,
+    // result.languageService,
+    // # result.mnemonicService,
+    // result.privacyService,
+    // result.providerService,
+    // result.stickersService,
+    // result.activityCenterService,
+    // result.savedAddressService,
+    // result.nodeConfigurationService,
+    // result.devicesService,
+    // result.mailserversService
 
     // # Do connections
     connect();
@@ -174,13 +174,13 @@ void AppController::load()
 
     // # load main module
     m_mainModulePtr->load(
-                // self.statusFoundation.status.events,
-                // self.settingsService,
-                // self.contactsService,
-                // self.chatService,
-                // self.communityService,
-                // self.messageService
-                );
+        // self.statusFoundation.status.events,
+        // self.settingsService,
+        // self.contactsService,
+        // self.chatService,
+        // self.communityService,
+        // self.messageService
+    );
 }
 
 void AppController::userLoggedIn()

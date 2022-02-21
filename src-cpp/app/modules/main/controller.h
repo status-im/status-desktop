@@ -21,4 +21,3 @@ public:
 } // namespace Modules::Main
 
 #endif // CONTROLLER_H
-

@@ -1,10 +1,10 @@
 #ifndef WALLETACCOUNTDTO_H
 #define WALLETACCOUNTDTO_H
 
+#include "wallet_token.h"
 #include <QJsonValue>
 #include <QString>
 #include <QVector>
-#include "wallet_token.h"
 
 namespace Wallets
 {
@@ -27,6 +27,6 @@ WalletAccountDto toWalletAccountDto(const QJsonValue jsonObj);
 //WalletAccountDto getCurrencyBalance*(): float =
 //    return self.tokens.map(t => t.currencyBalance).foldl(a + b, 0.0)
 
-} // namespace Wallet
+} // namespace Wallets
 
 #endif // WALLETACCOUNTDTO_H

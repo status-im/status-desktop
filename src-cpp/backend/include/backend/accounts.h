@@ -28,7 +28,7 @@ RpcResponse<QString> generateAlias(QString publicKey);
 RpcResponse<QJsonObject> storeDerivedAccounts(QString accountId, QString hashedPassword, QVector<QString> paths);
 
 RpcResponse<QJsonObject> saveAccountAndLogin(
-	QString hashedPassword, QJsonObject account, QJsonArray subaccounts, QJsonObject settings, QJsonObject nodeConfig);
+    QString hashedPassword, QJsonObject account, QJsonArray subaccounts, QJsonObject settings, QJsonObject nodeConfig);
 
 RpcResponse<QJsonArray> openAccounts(QString path);
 

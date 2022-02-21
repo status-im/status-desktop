@@ -1,14 +1,15 @@
 #include <QDebug>
 #include <QQmlContext>
 
-#include "module.h"
-#include "singleton.h"
-#include "modules/main/wallet/module.h"
 #include "../shared/section_item.h"
+#include "module.h"
+#include "modules/main/wallet/module.h"
+#include "singleton.h"
 
 namespace Modules::Main
 {
-Module::Module(std::shared_ptr<Wallets::ServiceInterface> walletsService, QObject* parent): QObject(parent)
+Module::Module(std::shared_ptr<Wallets::ServiceInterface> walletsService, QObject* parent)
+    : QObject(parent)
 {
     m_controllerPtr = new Controller(this);
     m_viewPtr = new View(this);

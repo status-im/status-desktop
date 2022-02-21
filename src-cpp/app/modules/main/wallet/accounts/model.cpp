@@ -50,7 +50,8 @@ QVariant Model::data(const QModelIndex& index, int role) const
     case PublicKey: return QVariant(item.getPublicKey());
     case WalletType: return QVariant(item.getWalletType());
     case IsWallet: return QVariant(item.getIsWallet());
-    case IsChat: return QVariant(item.getIsChat());
+    case IsChat:
+        return QVariant(item.getIsChat());
         //    case Assets: return QVariant(item.ge());
     case CurrencyBalance: return QVariant(item.getCurrencyBalance());
     }
@@ -58,7 +59,7 @@ QVariant Model::data(const QModelIndex& index, int role) const
     return QVariant();
 }
 
-void Model::setItems(QVector<Item> &items)
+void Model::setItems(QVector<Item>& items)
 {
     beginResetModel();
     m_items = items;

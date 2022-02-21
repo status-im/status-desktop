@@ -21,6 +21,6 @@ public:
     float currencyBalance;
 };
 
-} // namespace Wallet
+} // namespace Wallets
 
 #endif // WALLETTOKENDTO_H

@@ -19,7 +19,15 @@ private:
     float m_currencyBalance;
 
 public:
-    Item(QString name, QString address, QString path, QString color, QString publicKey, QString walletType, bool isWallet, bool isChat, float currencyBalance);
+    Item(QString name,
+         QString address,
+         QString path,
+         QString color,
+         QString publicKey,
+         QString walletType,
+         bool isWallet,
+         bool isChat,
+         float currencyBalance);
     ~Item() = default;
 
     const QString& getName() const;

@@ -3,9 +3,9 @@
 
 #include <QAbstractListModel>
 #include <QHash>
+#include <QPointer>
 #include <QVector>
 #include <memory>
-#include <QPointer>
 
 #include "section_item.h"
 
@@ -49,7 +49,7 @@ public:
     QVariant data(const QModelIndex& index, int role) const override;
 
     void addItem(SectionItem* item);
-    void setActiveSection(const QString &Id);
+    void setActiveSection(const QString& Id);
     QPointer<SectionItem> getActiveItem();
 
     // To add other api's later as needed

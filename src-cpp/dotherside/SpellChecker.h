@@ -1,9 +1,9 @@
 #pragma once
 
 #include <QObject>
-#include <QVariant>
 #include <QQuickTextDocument>
 #include <QSyntaxHighlighter>
+#include <QVariant>
 
 #ifdef Q_OS_MACOS
 class Hunspell;
@@ -17,13 +17,13 @@ class SpellChecker : public QObject
     Q_PROPERTY(QString userDict READ userDict WRITE setUserDict NOTIFY userDictChanged)
 
 public:
-    explicit SpellChecker(QObject *parent = nullptr);
+    explicit SpellChecker(QObject* parent = nullptr);
     ~SpellChecker();
 
     Q_INVOKABLE bool spell(const QString& word);
-    Q_INVOKABLE QVariantList suggest(const QString &word);
-    Q_INVOKABLE void ignoreWord(const QString &word);
-    Q_INVOKABLE void addToUserWordlist(const QString &word);
+    Q_INVOKABLE QVariantList suggest(const QString& word);
+    Q_INVOKABLE void ignoreWord(const QString& word);
+    Q_INVOKABLE void addToUserWordlist(const QString& word);
     Q_INVOKABLE bool isInit() const;
 
     const QString& lang() const;
@@ -43,9 +43,9 @@ private:
     QString m_lang;
     QString m_userDict;
 
-    QQuickTextDocument *m_document;
+    QQuickTextDocument* m_document;
 #ifdef Q_OS_MACOS
-    Hunspell *m_hunspell;
+    Hunspell* m_hunspell;
 #endif
-    QTextCodec *m_codec;
+    QTextCodec* m_codec;
 };

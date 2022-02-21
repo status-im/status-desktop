@@ -16,25 +16,25 @@ namespace Onboarding
 {
 class Controller : public QObject, ControllerInterface
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	Controller(ModuleControllerDelegateInterface* delegate,
-			   Accounts::ServiceInterface* accountsService,
-			   QObject* parent = nullptr);
-	void init() override;
-	QVector<Accounts::GeneratedAccountDto> getGeneratedAccounts() override;
-	Accounts::GeneratedAccountDto getImportedAccount() override;
-	void setSelectedAccountByIndex(int index) override;
-	void storeSelectedAccountAndLogin(QString password) override;
-	QString validateMnemonic(QString mnemonic) override;
-	void importMnemonic(QString mnemonic) override;
-	void onLogin(Signals::NodeSignal signal);
+    Controller(ModuleControllerDelegateInterface* delegate,
+               Accounts::ServiceInterface* accountsService,
+               QObject* parent = nullptr);
+    void init() override;
+    QVector<Accounts::GeneratedAccountDto> getGeneratedAccounts() override;
+    Accounts::GeneratedAccountDto getImportedAccount() override;
+    void setSelectedAccountByIndex(int index) override;
+    void storeSelectedAccountAndLogin(QString password) override;
+    QString validateMnemonic(QString mnemonic) override;
+    void importMnemonic(QString mnemonic) override;
+    void onLogin(Signals::NodeSignal signal);
 
 private:
-	Accounts::ServiceInterface* m_accountsService;
-	ModuleControllerDelegateInterface* m_delegate;
-	QString m_selectedAccountId;
+    Accounts::ServiceInterface* m_accountsService;
+    ModuleControllerDelegateInterface* m_delegate;
+    QString m_selectedAccountId;
 };
 } // namespace Onboarding
 } // namespace Startup

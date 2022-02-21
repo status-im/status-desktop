@@ -24,6 +24,7 @@ private:
     bool m_moduleLoaded;
 
     void connect();
+
 public:
     explicit Module(std::shared_ptr<Wallets::ServiceInterface> walletsService, QObject* parent);
     ~Module() = default;

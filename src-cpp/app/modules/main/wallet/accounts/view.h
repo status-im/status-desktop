@@ -18,7 +18,7 @@ public:
     ~View() = default;
 
     void load();
-    void setModelItems(QVector<Item> &accounts);
+    void setModelItems(QVector<Item>& accounts);
 
 private:
     Model* m_modelPtr;

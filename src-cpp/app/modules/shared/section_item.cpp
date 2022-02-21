@@ -23,41 +23,40 @@ SectionItem::SectionItem(QString id,
                          bool canRequestAccess,
                          int access,
                          bool ensOnly,
-                         QObject *parent):
-    QObject(parent),
-    m_id(id),
-    m_sectionType(sectionType) ,
-    m_name(name),
-    m_amISectionAdmin(amISectionAdmin),
-    m_description(description),
-    m_image(image),
-    m_icon(icon),
-    m_color(color),
-    m_hasNotification(hasNotification),
-    m_notificationsCount(notificationsCount),
-    m_active(active),
-    m_enabled(enabled),
-    m_isMember(isMember),
-    m_joined(joined),
-    m_canJoin(canJoin),
-    m_canManageUsers(canManageUsers),
-    m_canRequestAccess(canRequestAccess),
-    m_access(access),
-    m_ensOnly(ensOnly)
-{
-}
+                         QObject* parent)
+    : QObject(parent)
+    , m_id(id)
+    , m_sectionType(sectionType)
+    , m_name(name)
+    , m_amISectionAdmin(amISectionAdmin)
+    , m_description(description)
+    , m_image(image)
+    , m_icon(icon)
+    , m_color(color)
+    , m_hasNotification(hasNotification)
+    , m_notificationsCount(notificationsCount)
+    , m_active(active)
+    , m_enabled(enabled)
+    , m_isMember(isMember)
+    , m_joined(joined)
+    , m_canJoin(canJoin)
+    , m_canManageUsers(canManageUsers)
+    , m_canRequestAccess(canRequestAccess)
+    , m_access(access)
+    , m_ensOnly(ensOnly)
+{ }
 
 SectionType SectionItem::getSectionType() const
 {
     return m_sectionType;
 }
 
- const QString& SectionItem::getId() const
+const QString& SectionItem::getId() const
 {
     return m_id;
 }
 
- const QString& SectionItem::getName() const
+const QString& SectionItem::getName() const
 {
     return m_name;
 }
@@ -67,22 +66,22 @@ bool SectionItem::getAmISectionAdmin() const
     return m_amISectionAdmin;
 }
 
- const QString& SectionItem::getDescription() const
+const QString& SectionItem::getDescription() const
 {
     return m_description;
 }
 
- const QString& SectionItem::getImage() const
+const QString& SectionItem::getImage() const
 {
     return m_image;
 }
 
- const QString& SectionItem::getIcon() const
+const QString& SectionItem::getIcon() const
 {
     return m_icon;
 }
 
- const QString& SectionItem::getColor() const
+const QString& SectionItem::getColor() const
 {
     return m_color;
 }
