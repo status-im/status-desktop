@@ -25,10 +25,12 @@ public:
 class RpcError
 {
 public:
-    int m_code;
+    double m_code;
     QString m_message;
 
     friend ostream& operator<<(ostream& os, Backend::RpcError& r);
+    RpcError() = default;
+    RpcError(double code, QString message);
 };
 
 template <typename T>
@@ -43,8 +45,14 @@ public:
 
 public:
     RpcResponse(QString jsonrpc, T result)
+		: m_jsonrpc(jsonrpc)
+        , m_result(result)
+	{ }
+
+    RpcResponse(QString jsonrpc, T result, RpcError error)
         : m_jsonrpc(jsonrpc)
         , m_result(result)
+        , m_error(error)
     { }
 };
 

@@ -5,8 +5,8 @@
 namespace Modules::Main::Wallet
 {
 Controller::Controller(std::shared_ptr<Wallets::ServiceInterface> walletService, QObject* parent)
-    : m_walletService(walletService)
-    , QObject(parent)
+    : QObject(parent),
+      m_walletService(walletService)
 { }
 
 void Controller::init() { }

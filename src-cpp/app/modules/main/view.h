@@ -21,8 +21,8 @@ public:
 
     void addItem(Shared::Models::SectionItem* item);
 
-    Shared::Models::SectionModel* getSectionsModel();
-    Shared::Models::SectionItem* getActiveSection();
+    Shared::Models::SectionModel* getSectionsModel() const;
+    Shared::Models::SectionItem* getActiveSection() const;
     void setActiveSection(const QString& Id);
 
 signals:

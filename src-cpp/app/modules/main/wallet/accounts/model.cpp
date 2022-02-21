@@ -34,36 +34,45 @@ QVariant Model::data(const QModelIndex& index, int role) const
         return QVariant();
     }
 
-    if(index.row() < 0 || index.row() > m_items.size())
+    if(index.row() < 0 || index.row() >= m_items.size())
     {
         return QVariant();
     }
 
-    Item item = m_items[index.row()];
+    const Item* item = m_items.at(index.row());
 
     switch(role)
     {
-    case Name: return QVariant(item.getName());
-    case Address: return QVariant(item.getAddress());
-    case Path: return QVariant(item.getPath());
-    case Color: return QVariant(item.getColor());
-    case PublicKey: return QVariant(item.getPublicKey());
-    case WalletType: return QVariant(item.getWalletType());
-    case IsWallet: return QVariant(item.getIsWallet());
-    case IsChat:
-        return QVariant(item.getIsChat());
+    case Name: return item->getName();
+    case Address: return item->getAddress();
+    case Path: return item->getPath();
+    case Color: return item->getColor();
+    case PublicKey: return item->getPublicKey();
+    case WalletType: return item->getWalletType();
+    case IsWallet: return item->getIsWallet();
+    case IsChat: return item->getIsChat();
         //    case Assets: return QVariant(item.ge());
-    case CurrencyBalance: return QVariant(item.getCurrencyBalance());
+    case CurrencyBalance: return item->getCurrencyBalance();
     }
 
     return QVariant();
 }
 
-void Model::setItems(QVector<Item>& items)
+void Model::setItems(const QVector<Item*>& items)
 {
     beginResetModel();
     m_items = items;
     endResetModel();
+}
+
+Item* Model::getItemByIndex(int index) const
+{
+    Item* returnItemPtr = nullptr;
+    if((index > 0) && (index < m_items.size()))
+    {
+        returnItemPtr = m_items.at(index);
+    }
+    return returnItemPtr;
 }
 
 } // namespace Modules::Main::Wallet::Accounts

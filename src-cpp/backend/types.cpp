@@ -9,6 +9,11 @@ ostream& operator<<(ostream& os, const Backend::RpcError& r)
                << std::endl);
 }
 
+Backend::RpcError::RpcError(double code, QString message):
+    m_code(code),
+    m_message(message)
+{}
+
 Backend::RpcException::RpcException(const std::string& message)
     : m_message(message)
 { }

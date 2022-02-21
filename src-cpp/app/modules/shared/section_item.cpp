@@ -4,7 +4,8 @@
 
 namespace Shared::Models
 {
-SectionItem::SectionItem(const QString& id,
+SectionItem::SectionItem(QObject* parent,
+                         const QString& id,
                          SectionType sectionType,
                          const QString& name,
                          const QString& description,
@@ -22,8 +23,7 @@ SectionItem::SectionItem(const QString& id,
                          bool canManageUsers,
                          bool canRequestAccess,
                          int access,
-                         bool ensOnly,
-                         QObject* parent)
+                         bool ensOnly)
     : QObject(parent)
     , m_id(id)
     , m_sectionType(sectionType)

@@ -12,7 +12,8 @@ View::View(QObject* parent)
 void View::load()
 {
     // Add Wallet Section to Sections model
-    auto walletSectionItem = new Shared::Models::SectionItem(WALLET_SECTION_ID,
+    auto walletSectionItem = new Shared::Models::SectionItem(this,
+                                                             WALLET_SECTION_ID,
                                                              Shared::Models::SectionType::Wallet,
                                                              WALLET_SECTION_NAME,
                                                              "",
@@ -20,7 +21,7 @@ void View::load()
                                                              WALLET_SECTION_ICON,
                                                              "",
                                                              false,
-                                                             this);
+                                                             true);
     addItem(walletSectionItem);
     setActiveSection(WALLET_SECTION_ID);
 
@@ -33,12 +34,12 @@ void View::addItem(Shared::Models::SectionItem* item)
     emit sectionsModelChanged();
 }
 
-Shared::Models::SectionModel* View::getSectionsModel()
+Shared::Models::SectionModel* View::getSectionsModel() const
 {
     return m_sectionModelPtr;
 }
 
-Shared::Models::SectionItem* View::getActiveSection()
+Shared::Models::SectionItem* View::getActiveSection() const
 {
     return m_sectionModelPtr->getActiveItem();
 }
